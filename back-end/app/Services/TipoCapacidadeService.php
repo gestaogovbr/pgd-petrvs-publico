@@ -6,295 +6,462 @@ use App\Models\TipoCapacidade;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\Auth;
 
-class TipoCapacidadeService extends ServiceBase {
+class TipoCapacidadeService extends ServiceBase
+{
 
-    public $tiposCapacidades = [
-        /* Capacidades do menu principal*/
-        ["MENU_CAD_ACESSO", "Permite acessar o menu cadastro"],
-        ["MENU_CONFIG_ACESSO", "Permite acessar o menu configurações"],
-        ["MENU_GESTAO_ACESSO", "Permite acessar o menu gestão"],
-        ["MENU_REL_ACESSO", "Permite acessar o menu relatórios"],
-        ["DEV_MENU_LOGS_ACESSO", "Permite acessar o menu logs"],
-        /* Capacidades do DASHBOARD */
-        ["DASH_PRG", "Permite mostrar informações do Programa de Gestão"],
-        /* Capacidades do módulo AFASTAMENTO*/
-        ["MOD_AFT", "Permite acessar item menu afastamentos"],
-        ["MOD_AFT_CONS", "Permite consultar afastamento"],
-        ["MOD_AFT_EDT", "Permite editar afastamento"],
-        ["MOD_AFT_EXCL", "Permite excluir afastamento"],
-        ["MOD_AFT_INCL", "Permite incluir afastamento"],
-        /* Capacidades do módulo ATIVIDADES*/
-        ["MOD_ATV", "Permite acessar item menu atividade"],
-        ["MOD_ATV_CONS", "Permite consultar atividade"],
-        ["MOD_ATV_EDT", "Permite editar atividades"],
-        ["MOD_ATV_EDT_OTR_OP_DT_HOM", "Permite editar data homologação"],
-        ["MOD_ATV_EDT_OTR_OP_HOM", "Permite editar dados homologado UG"],
-        ["MOD_ATV_EDT_OTR_OP_PROD", "Permite editar produtividade desativada"],
-        ["MOD_ATV_EDT_PCPL", "Permite editar atividades na guia principal"],
-        ["MOD_ATV_EDT_PRE_DEF", "Permite editar dados guia pré-definidas"],
-        ["MOD_ATV_EDT_TP_MIN", "Permite editar tempo máximo da atividade"],
-        ["MOD_ATV_EDT_UND", "Permite editar unidade associada à atividade"],
-        ["MOD_ATV_EDT_VAR_P", "Permite editar guia variação e produtividade"],
-        ["MOD_ATV_EXCL", "Permite excluir atividades"],
-        ["MOD_ATV_INCL", "Permite incluir atividades"],
-        ["MOD_ATV_INCL_OTR_OP_DHOM", "Permite incluir data homologação"],
-        ["MOD_ATV_INCL_OTR_OP_HOM", "Permite incluir dados homologado UG"],
-        ["MOD_ATV_INCL_OTR_OP_PROD", "Permite incluir produtividade desativada"],
-        ["MOD_ATV_INCL_PRE_DEF", "Permite acessar e editar guia pré-definidas"],
-        ["MOD_ATV_INCL_TP_MIN", "Permite incluir tempo máximo da atividade"],
-        ["MOD_ATV_INCL_UND", "Permite incluir unidade associada à atividade"],
-        ["MOD_ATV_INCL_VAR_P", "Permite incluir dados guia variação e produtividade"],
-        ["MOD_ATV_PCPL", "Permite incluir atividades na guia principal"],
-        /* Capacidades do módulo CONFIGURAÇÂO*/
-        ["MOD_CFG_ENTD", "Permite acessar Entidade no menu configurações"],
-        ["MOD_CFG_PERFS", "Permite configuração de perfis no petrvs"],
-        ["MOD_CFG_PREF", "Permite configurar preferências"],
-        ["MOD_CFG_UND", "Permite configurar unidade"],
-        ["MOD_CFG_USER", "Permite alterar configurações de usuário"],
-        ["MOD_CFG_USER_APELIDO", "Permite alterar valor campo apelido do usuário"],
-        ["MOD_CFG_USER_CPF", "Permite alterar valor campo CPF do usuário"],
-        ["MOD_CFG_USER_MAIL", "Permite alterar valor campo e-Mail do usuário"],
-        ["MOD_CFG_USER_MAT", "Permite alterar valor campo matrícula do usuário"],
-        ["MOD_CFG_USER_NOME", "Permite alterar valor campo nome do usuário"],
-        ["MOD_CFG_USER_PERFIL", "Permite alterar valor campo perfil do usuário"],
-        ["MOD_CFG_USER_TEL", "Permite alterar valor campo telefone do usuário"],
-        ["MOD_CFG_USER_UF", "Permite alterar valor campo UF do usuário"],
-        /* Capacidades do módulo CIDADE*/
-        ["MOD_CID", "Permite acessar item menu cidades"],
-        ["MOD_CID_CONS", "Permite consultar cidade"],
-        ["MOD_CID_EDT", "Permite editar cidades"],
-        ["MOD_CID_EXCL", "Permite excluir cidades"],
-        ["MOD_CID_INCL", "Permite incluir cidades"],
-        /* Capacidades do módulo DEMANDA*/
-        ["MOD_DMD", "Permite acessar item menu demandas"],
-        ["MOD_DMD_ATV", "Permite associar atividade com demanda"],
-        ["MOD_DMD_ATV_CMPLX", "Permite associar complexidade da atividade na demanda"],
-        ["MOD_DMD_ATV_DT_DST", "Permite associar data de distribuição com atividade em demanda"],
-        ["MOD_DMD_ATV_PL_TRB", "Permite associar plano de trabalho com ativ/demanda"],
-        ["MOD_DMD_ATV_PZ_ENTG", "Permite associar prazo entrega de atividade da demanda"],
-        ["MOD_DMD_ATV_RESP", "Permite associar responsável pela demanda"],
-        ["MOD_DMD_ATV_TP_PCT", "Permite associar tempo pactuado na atividade"],
-        ["MOD_DMD_ATV_TP_PLJ", "Permite associar tempo planejado na atividade"],
-        ["MOD_DMD_ATV_FORA_PL_TRB", "Permite associar atividade que não consta no plano de trabalho"],
-        ["MOD_DMD_CONCL", "Permite concluir demandas iniciadas "],
-        ["MOD_DMD_CONCL_ATV", "Permite concluir atividade"],
-        ["MOD_DMD_CONCL_CMPLX", "Permite concluir complexidade"],
-        ["MOD_DMD_CONCL_DSC_TEC", "Permite concluir descrição técnica"],
-        ["MOD_DMD_CONS", "Permite consultar demanda"],
-        ["MOD_DMD_EDT", "Permite editar demanda"],
-        ["MOD_DMD_EXCL", "Permite excluir demanda"],
-        ["MOD_DMD_EXT", "Permite atribuir demandas a Unidades externas"],
-        ["MOD_DMD_I_AVAL", "Permite avaliar demanda iniciada"],
-        ["MOD_DMD_I_CANC", "Permite cancelar demanda iniciada"],
-        ["MOD_DMD_I_COMT", "Permite comentar demanda iniciada"],
-        ["MOD_DMD_I_CONCL", "Permite concluir demandas iniciadas "],
-        ["MOD_DMD_I_EDT_INIC", "Permite editar início de demanda iniciada"],
-        ["MOD_DMD_I_INFO", "Permite obter informação sobre demandas iniciadas"],
-        ["MOD_DMD_I_PPRZO", "Permite prorrogar prazo de demanda iniciada"],
-        ["MOD_DMD_I_SUSP", "Permite suspender demanda iniciada"],
-        ["MOD_DMD_INCL", "Permite incluir demanda"],
-        ["MOD_DMD_INCL_COMPL", "Permite incluir complemtários para demandas"],
-        ["MOD_DMD_INCL_COMT", "Permite incluir comentários nas demandas"],
-        ["MOD_DMD_INCL_CRTZ", "Permite incluir caracterização para atividade de demanda"],
-        ["MOD_DMD_INCL_VNCL", "Permite incluir vínculos na demanda"],
-        ["MOD_DMD_INICIAR", "Permite iniciar a demanda"],
-        ["MOD_DMD_INICIO", "Permite definir início demanda"],
-        ["MOD_DMD_MDL_INICIAR", "Permite iniciar modalidade"],
-        ["MOD_DMD_NI_COMT", "Permite comentar demanda não iniciada"],
-        ["MOD_DMD_NI_EXCL", "Permite excluir demanda não iniciada"],
-        ["MOD_DMD_NI_INFO", "Permite obter informação sobre demandas não iniciadas"],
-        ["MOD_DMD_NI_INIC", "Permite iniciar demanda não iniciada"],
-        ["MOD_DMD_NI_CONCL", "Permite concluir demanda não iniciada"],
-        ["MOD_DMD_RESP_INICIAR", "Permite incluir responsável por demanda"],
-        ["MOD_DMD_SUSP_DMAIS", "Permite suspender demais demandas"],
-        ["MOD_DMD_ATV_VAZIO", "Permite deixar campo Atividade em branco na inclusão da Demanda"],
-        ["MOD_DMD_USERS_CANC_CONCL", "Permitir cancelar conclusão de demanda de qualquer usuário, inclusive de outra lotação"],
-        ["MOD_DMD_USERS_CANC_INICIAR", "Permite cancelar início de demanda de de qualquer usuário, inclusive de outra lotação"],
-        ["MOD_DMD_USERS_ALT", "Permite alterar a demanda de qualquer usuário, inclusive de outra lotação"],
-        ["MOD_DMD_USERS_CONCL", "Permite concluir a demanda de qualquer usuário, inclusive de outra lotação"],
-        ["MOD_DMD_USERS_INICIAR", "Permite iniciar a demanda de qualquer usuário, inclusive de outra lotação"],
-        ["MOD_DMD_USERS_PAUSA", "Permitir pausar/suspender demanda iniciada de qualquer usuário, inclusive de outra lotação"],
-        ["MOD_DMD_USERS_ALT_CONCL", "Permite alterar conclusão de demanda de qualquer usuário, inclusive de outra lotação"],
-        ["MOD_DMD_USERS_COMT", "Permite adicionar comentário de demanda de qualquer usuário, inclusive de outra lotação"],
-        ["MOD_DMD_USERS_PPRZO", "Permite prorrogar prazo de demanda de qualquer usuário, inclusive de outra lotação"],
-        ["MOD_DMD_USERS_AVAL", "Permite avaliar demanda de qualquer usuário, inclusive de outra lotação"],
-        ["MOD_DMD_USERS_ALT_AVAL", "Permite alterar avaliação de demanda de qualquer usuário, inclusive de outra lotação"],
-        ["MOD_DMD_USERS_EXCL", "Permite excluir demanda de qualquer usuário, inclusive de outra lotação"],
-        ["MOD_DMD_USERS_ATRIB", "Permite qualquer usuário atribuir demanda para qualqer outro"],
-        ["MOD_DMD_TRF_INCL", "Permite incluir tarefas dentro de demandas"],
-        ["MOD_DMD_TRF_EDT", "Permite editar tarefas dentro de demandas"],
-        ["MOD_DMD_TRF_EXCL", "Permite exluir tarefas dentro de demandas"],
-        ["MOD_DMD_TRF_CONS", "Permite consultar tarefas dentro de demandas"],
-        ["MOD_DMD_CLONAR", "Permite clonar demandas"],
-        /* Capacidades do módulo ENTIDADE*/
-        ["MOD_ENTD_CFG", "Permite configurar Entidade"],
-        ["MOD_ENTD_CONS", "Permite consultar Entidade"],
-        ["MOD_ENTD_EDT", "Permite editar entidade"],
-        ["MOD_ENTD_EXCL", "Permite excluir Entidade"],
-        ["MOD_ENTD_INCL", "Permite incluir Entidade"],
-        /* Capacidades do módulo ENTREGAS*/
-        ["MOD_ENTRG", "Permite acessar o item menu Entregas"],
-        ["MOD_ENTRG_CONS", "Permite consultar Entregas"],
-        ["MOD_ENTRG_INCL", "Permite incluir Entregas"],
-        ["MOD_ENTRG_EDT", "Permite editar Entregas"],
-        ["MOD_ENTRG_EXCL", "Permite excluir Entregas"],
-        /* Capacidades do módulo FERIADO*/
-        ["MOD_FER", "Permite acessar item menu feriados"],
-        ["MOD_FER_CONS", "Permite consultar feriado"],
-        ["MOD_FER_EDT", "Permite editar feriados"],
-        ["MOD_FER_ENT_EDT", "Permite editar entidades em feriado"],
-        ["MOD_FER_ENT_INCL", "Permite incluir entidades em feriado"],
-        ["MOD_FER_EXCL", "Permite excluir feriado"],
-        ["MOD_FER_INCL", "Permite incluir feriados"],
-        /* Capacidades do módulo LOGS*/
-        ["DEV_MOD_LOGS", "Permite manter registros de logs"],
-        /* Capacidades do módulo LOTAÇÃO*/
-        ["MOD_LOT_CONS", "Permite consultar lotação"],
-        ["MOD_LOT_EDT", "Permite editar lotação"],
-        ["MOD_LOT_EXCL", "Permite excluir lotação"],
-        ["MOD_LOT_INCL", "Permite incluir lotação"],
-        /* Capacidades do módulo MATERIAIS E SERVICOS*/
-        ["MOD_MATSRV", "Permite acessar item menu materiais e serviços"],
-        ["MOD_MATSRV_CONS", "Permite consultar materiais e serviços"],
-        ["MOD_MATSRV_EDT", "Permite editar materiais e serviços"],
-        ["MOD_MATSRV_EXCL", "Permite excluir materiais e serviços"],
-        ["MOD_MATSRV_INCL", "Permite incluir materiais e serviços"],
-        /* Capacidades do módulo PROJETO RECURSO*/
-        ["MOD_PROJ_REC_EDT", "Permite editar projeto recurso"],
-        ["MOD_PROJ_REC_EXCL", "Permite excluir projeto recurso"],
-        ["MOD_PROJ_REC_INCL", "Permite incluir projeto recurso"],
-        /* Capacidades do módulo PROJETO REGRA*/
-        ["MOD_PROJ_REG_EDT", "Permite editar projeto regra"],
-        ["MOD_PROJ_REG_EXCL", "Permite excluir projeto regra"],
-        ["MOD_PROJ_REG_INCL", "Permite incluir projeto regra"],
-        /* Capacidades do módulo PERFIL*/
-        ["MOD_PERF_EDT", "Permite editar perfil"],
-        ["MOD_PERF_EXCL", "Permite excluir perfil"],
-        ["MOD_PERF_INCL", "Permite incluir perfil"],
-        /* Capacidades do módulo PLANEJAMENTO INSTITUCIONAL */
-        ["MOD_PLAN_INST", "Permite visualizar/acessar os itens do menu: Cadastro/Eixos temáticos e Cadastro/Planejamento Institucional"],
-        ["MOD_PLAN_INST_CONS", "Permite consultar Eixos temáticos e/ou Planejamentos Institucionais"],
-        ["MOD_PLAN_INST_INCL", "Permite incluir Eixos temáticos e/ou Planejamentos Institucionais"],
-        ["MOD_PLAN_INST_EDT", "Permite editar Eixos temáticos e/ou Planejamentos Institucionais"],
-        ["MOD_PLAN_INST_EXCL", "Permite excluir Eixos temáticos e/ou Planejamentos Institucionais"],        
-        /* Capacidades do módulo PROG TRABALHO*/
-        ["MOD_PRGT", "Permite acessar item menu programa de gestão"],
-        ["MOD_PRGT_CONS", "Permite consultar programa de gestão"],
-        ["MOD_PRGT_EDT", "Permite editar programas de gestão"],
-        ["MOD_PRGT_EXCL", "Permite excluir programas de gestão"],
-        ["MOD_PRGT_INCL", "Permite incluir programas de gestão"],
-        ["MOD_PROC_INCL", "Permite incluir tipos de processos"],
-        /* Capacidades do módulo PROJETO*/
-        ["MOD_PROJ", "Permite acessar módulo projetos"],
-        ["MOD_PROJ_CONS", "Permite consultar projeto"],
-        ["MOD_PROJ_EDT", "Permite editar projeto"],
-        ["MOD_PROJ_EXCL", "Permite excluir projeto"],
-        ["MOD_PROJ_INCL", "Permite incluir Projetos"],
-        /* Capacidades do módulo de templates */
-        ["MOD_TEMP_INCL", "Permite incluir template"],
-        ["MOD_TEMP_CONS", "Permite consultar template"],
-        ["MOD_TEMP_EDT", "Permite editar template"],
-        ["MOD_TEMP_EXCL", "Permite excluir template"],
-        /* Capacidades do módulo PLANO TRABALHO*/
-        ["MOD_PTR", "Permite acessar item menu plano de trabalho"],
-        ["MOD_PTR_CONS", "Permite consultar plano de trabalho"],
-        ["MOD_PTR_EDT", "Permite editar planos de trabalho"],
-        ["MOD_PTR_EXCL", "Permite excluir planos de trabalho"],
-        ["MOD_PTR_INCL", "Permite incluir planos de trabalho"],
-        ["MOD_PTR_USERS_CONS", "Permite consultar planos de trabalho de usuários fora da lotação"],
-        ["MOD_PTR_USERS_EXCL", "Permite excluir planos de trabalho de usuários fora da lotação"],
-        ["MOD_PTR_USERS_INCL", "Permite incluir planos de trabalho de usuários fora da lotação"],
-        ["MOD_PTR_INCL_SEM_LOT", "Permite incluir planos de trabalho para usuários não lotado na unidade do plano"],
-        ["MOD_PTR_INTSC_DATA", "Permite incluir planos de trabalho para usuários que já possuem planos no período de mesma modalidade"],
-        /* Capacidades do módulo PLANO GESTÃO ENTREGAS*/
-/*         ["MOD_PGENTR", "Permite acessar item menu plano de gestão/entregas"],
-        ["MOD_PGENTR_CONS", "Permite consultar plano de gestão/entregas"],
-        ["MOD_PGENTR_EDT", "Permite editar planos de gestão/entregas"],
-        ["MOD_PGENTR_EXCL", "Permite excluir planos de gestão/entregas"],
-        ["MOD_PGENTR_INCL", "Permite incluir planos de gestão/entregas"], */
-        /* Capacidades do módulo TIPO ATIVIDADE*/
-        ["MOD_TIPO_ATV", "Permite acessar item de menu cadastro->tipo de atividade"],
-        ["MOD_TIPO_ATV_CONS", "Permite consultar atividade"],
-        ["MOD_TIPO_ATV_EDT", "Permite editar atividades"],
-        ["MOD_TIPO_ATV_EXCL", "Permite excluir atividades"],
-        ["MOD_TIPO_ATV_INCL", "Permite incluir tipos de atividades"],
-        /* Capacidades do módulo TIPO AVALIACAO*/
-        ["MOD_TIPO_AVAL", "Permite acessar item de menu cadastro->tipos de avaliações"],
-        ["MOD_TIPO_AVAL_CONS", "Permite consultar tipos de avaliações"],
-        ["MOD_TIPO_AVAL_EDT", "Permite editar tipos de avaliações"],
-        ["MOD_TIPO_AVAL_EXCL", "Permite excluir tipos de avaliações"],
-        ["MOD_TIPO_AVAL_INCL", "Permite incluir tipos de avaliações"],
-        /* Capacidades do módulo TIPO CAPACIDADE*/
-        ["MOD_TIPO_CAP", "Permite acessar configurações de capacidades de usuário"],
-        ["MOD_TIPO_CAP_CONS", "Permite consultar tipo de capacidade"],
-        ["MOD_TIPO_CAP_EDT", "Permite editar tipo de capacidade"],
-        ["MOD_TIPO_CAP_EXCL", "Permite excluir tipo de capacidade"],
-        ["MOD_TIPO_CAP_INCL", "Permite incluir tipos de capacidades"],
-        /* Capacidades do módulo TIPO DOCUMENTO*/
-        ["MOD_TIPO_DOC", "Permite acessar item de menu cadastro->tipo de documento"],
-        ["MOD_TIPO_DOC_CONS", "Permite consultar tipos de documentos"],
-        ["MOD_TIPO_DOC_EDT", "Permite editar tipos de documentos"],
-        ["MOD_TIPO_DOC_EXCL", "Permite excluir tipos de documentos"],
-        ["MOD_TIPO_DOC_INCL", "Permite incluir tipos de documentos"],
-        /* Capacidades do módulo TIPO JUSTIFICATIVA*/
-        ["MOD_TIPO_JUST", "Permite acessar item de menu cadastro->tipo de justificativa"],
-        ["MOD_TIPO_JUST_CONS", "Permite consultar tipos de justificativas"],
-        ["MOD_TIPO_JUST_EDT", "Permite editar tipos de justificativas"],
-        ["MOD_TIPO_JUST_EXCL", "Permite excluir tipos de justificativas"],
-        ["MOD_TIPO_JUST_INCL", "Permite incluir tipos de justificativas"],
-        /* Capacidades do módulo TIPO MODALIDADE*/
-        ["MOD_TIPO_MDL", "Permite acessar item de menu cadastro->tipo de modalidade"],
-        ["MOD_TIPO_MDL_CONS", "Permite consultar tipos de modalidades"],
-        ["MOD_TIPO_MDL_EDT", "Permite editar tipos de modalidades"],
-        ["MOD_TIPO_MDL_EXCL", "Permite excluir tipos de modalidades"],
-        ["MOD_TIPO_MDL_INCL", "Permite incluir tipos de modalidades"],
-        /* Capacidades do módulo TIPO MOTIVO AFASTAMENTO*/
-        ["MOD_TIPO_MTV_AFT", "Permite acessar item de menu cadastro->tipo de motivo de afastamento"],
-        ["MOD_TIPO_MTV_AFT_CONS", "Permite consultar tipos de motivos de afastamentos"],
-        ["MOD_TIPO_MTV_AFT_EDT", "Permite editar tipos de motivos de afastamentos"],
-        ["MOD_TIPO_MTV_AFT_EXCL", "Pemite excluir tipos de motivos de afastamentos"],
-        ["MOD_TIPO_MTV_AFT_INCL", "Permite incluir tipos de motivos de afastamentos"],
-        /* Capacidades do módulo TIPO PROCESSO*/
-        ["MOD_TIPO_PROC", "Permite acessar item de menu cadastro->tipo de processo"],
-        ["MOD_TIPO_PROC_CONS", "Permite consultar tipos de processos"],
-        ["MOD_TIPO_PROC_EDT", "Permite editar tipos de processos"],
-        ["MOD_TIPO_PROC_EXCL", "Permite excluir tipos de processos"],
-        ["MOD_TIPO_PROC_INCL", "Permite incluir tipos de processos"],
-        ["MOD_TPMAF_INCL", "Permite incluir tipos de motivos de afastamentos"],
-        /* Capacidades do módulo TAREFAS*/
-        ["MOD_TRF", "Permite acessar módulo/item de menu tarefas"],
-        ["MOD_TRF_CONS", "Permite consultar tarefa"],
-        ["MOD_TRF_EDT", "Permite editar tarefas"],
-        ["MOD_TRF_EXCL", "Permite excluir tarefas"],
-        ["MOD_TRF_INCL", "Permite incluir tarefas"],
-        /* Capacidades do módulo de UNIDADES*/
-        ["MOD_UND_CONS", "Permite consultar Unidades"],
-        ["MOD_UND_EDT", "Permite editar Unidade"],
-        ["MOD_UND_EXCL", "Permite excluir Unidade"],
-        ["MOD_UND_INCL", "Permite incluir Unidades"],
-        ["MOD_UND_UNIR", "Permite Unificar Unidades"],
-        ["MOD_UND_TUDO", "Permite consultar qualquer unidade independente de subordinação"],
-        ["MOD_UND_INATV", "Permite inativar uma unidade"],
-        /* Capacidades do módulo USUÁRIO*/
-        ["MOD_USER_CONS", "Permite consultar dados de usuário"],
-        ["MOD_USER_EDT", "Permite alterar dados de usuário"],
-        ["MOD_USER_EXCL", "Permite excluir dados de usuário"],
-        ["MOD_USER_INCL", "Permite incluir usuário"],
-        ["MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"],
-        ["MOD_PERF_CONS", "Permite consultar perfil"],
-        /* Capacidades do módulo ADESÃO*/
-        ["MOD_ADES_CONS", "Permite consultar dados de usuário"],
-        ["MOD_ADES_EDT", "Permite alterar dados de usuário"],
-        ["MOD_ADES_EXCL", "Permite excluir dados de usuário"],
-        ["MOD_ADES_INCL", "Permite incluir usuário"],
-        ["MOD_ADES", "Permite consultar qualquer usuário independente de lotação"],
+    public $tiposCapacidades =
+    [
+        [
+            "codigo" => "MOD_CTXT",
+            "descricao" => "Módulo de Acesso aos Contextos",
+            "capacidades" => [
+                /* Capacidades do menu principal*/
+                ["CTXT_GEST", "Permite acessar o contexto GESTÃO"],
+                ["CTXT_EXEC", "Permite acessar o contexto EXECUÇÃO"],
+                ["CTXT_ADM", "Permite acessar o contexto ADMINISTRADOR"],
+                ["CTXT_DEV", "Permite acessar o contexto DEV"],
+                ["CTXT_PNT", "Permite acessar o contexto PONTO"],
+                ["CTXT_PROJ", "Permite acessar o contexto PROJETO"],
+                ["CTXT_RX", "Permite acessar o contexto RAIOX"],
+            ]
+        ], [
+            "codigo" => "ACESSO",    // Não é validado no front-end
+            "descricao" => "Acesso aos Menus",  // Não é um módulo!
+            "capacidades" => [
+                ["MENU_CAD_ACESSO", "Permite acessar o menu Cadastros e Gerencial"],
+                ["MENU_CONFIG_ACESSO", "Permite acessar o menu Gerenciamento"],
+                ["MENU_GESTAO_ACESSO", "Permite acessar os menus Planejamento, Execução e Avaliação"],
+                ["MENU_DEV_ACESSO", "Permite acessar os menus Manutenção, Logs e Auditorias e Testes"],
+                ["MENU_RX_CURRICULUM_ACESSO", "Permite acessar o menu Curriculum"],
+                ["MENU_RX_OPORTUNIDADES_ACESSO", "Permite acessar o menu Oportunidades"],
+                ["MENU_RX_PESQUISAS_ACESSO", "Permite acessar o menu Pesquisas"],
+                ["MENU_RX_QUEST_DINAMICOS_ACESSO", "Permite acessar o menu Questionários Dinâmicos"],
+                ["MENU_RX_CADASTROS_ACESSO", "Permite acessar o menu Cadastros (RaioX)"],
+            ]
+        ], [
+            "codigo" => "MOD_AFT",
+            "descricao" => "Módulo de afastamentos",
+            "capacidades" => [
+                /* Capacidades do módulo AFASTAMENTO*/
+                ["MOD_AFT_EDT", "Permite editar afastamento"],
+                ["MOD_AFT_EXCL", "Permite excluir afastamento"],
+                ["MOD_AFT_INCL", "Permite incluir afastamento"]
+            ]
+        ], [
+            "codigo" => "MOD_ATV",
+            "descricao" => "Módulo Atividades",
+            "capacidades" => [
+                /* Capacidades do módulo ATIVIDADES*/
+                ["MOD_ATV_TIPO_ATV_VAZIO", "Permite incluir atividade sem tipo de atividade"],
+                ["MOD_ATV_EDT", "Permite editar atividade"],
+                ["MOD_ATV_EXCL", "Permite excluir atividade"],
+                ["MOD_ATV_USU_EXT", "Permite atribuir atividades a usuários de outra unidade"],
+                ["MOD_ATV_INCL", "Permite incluir atividade"],
+                ["MOD_ATV_INICIO", "Permite definir início atividade"],
+                ["MOD_ATV_RESP_INICIAR", "Permite incluir responsável por atividade"],
+                ["MOD_ATV_TRF_INCL", "Permite incluir tarefas dentro de atividades"],
+                ["MOD_ATV_TRF_EDT", "Permite editar tarefas dentro de atividades"],
+                ["MOD_ATV_TRF_EXCL", "Permite exluir tarefas dentro de atividades"],
+                ["MOD_ATV_TRF_CONS", "Permite consultar tarefas dentro de atividades"],
+                ["MOD_ATV_CLONAR", "Permite clonar atividades"],
+                ["MOD_ATV_DASH", "Permite mostrar o dashboard de atividades"],
+            ]
+        ], [
+            "codigo" => "MOD_CADV",
+            "descricao" => "Módulo Cadeia de Valor",
+            "capacidades" => [
+                /* Capacidades do módulo CADEIA DE VALOR*/
+                ["MOD_CADV_EDT", "Permite editar cadeia de valor"],
+                ["MOD_CADV_EXCL", "Permite excluir cadeia de valor"],
+                ["MOD_CADV_INCL", "Permite incluir cadeia de valor"],
+            ]
+        ], [
+            "codigo" => "MOD_CID", // ok
+            "descricao" => "Módulo Cidades",
+            "capacidades" => [
+                /* Capacidades do módulo CIDADE*/
+                ["MOD_CID_EDT", "Permite editar cidades"],
+                ["MOD_CID_EXCL", "Permite excluir cidades"],
+                ["MOD_CID_INCL", "Permite incluir cidades"],
+            ]
+        ], [
+            "codigo" => "MOD_DEV", // ok
+            "descricao" => "Módulo Desenvolvedor",
+            "capacidades" => [
+                /* Capacidades do módulo Desenvolvedor */
+                ["MOD_DEV_TUDO", "Permite manter registros de logs, testes e integração"],
+            ]
+        ], [
+            "codigo" => "MOD_CFG", // ok
+            "descricao" => "Módulo de configurações",
+            "capacidades" => [
+                /* Capacidades do módulo CONFIGURAÇÃO*/
+                ["MOD_CFG_ENTD", "Permite acessar Entidade no menu configurações"],
+                ["MOD_CFG_PERFS", "Permite configuração de perfis no petrvs"],
+                ["MOD_CFG_UND", "Permite configurar unidade"],
+                ["MOD_CFG_USER", "Permite alterar configurações de usuário"],
+                ["MOD_CFG_USER_CPF", "Permite alterar valor campo CPF do usuário"],
+                ["MOD_CFG_USER_MAIL", "Permite alterar valor campo e-Mail do usuário"],
+                ["MOD_CFG_USER_MAT", "Permite alterar valor campo matrícula do usuário"],
+                ["MOD_CFG_USER_PERFIL", "Permite alterar valor campo perfil do usuário"],
+                /* Capacidades do módulo Configurações de PERFIL*/
+                ["MOD_PERF_EDT", "Permite editar perfil"],
+                ["MOD_PERF_EXCL", "Permite excluir perfil"],
+                ["MOD_PERF_INCL", "Permite incluir perfil"],
+            ]
+        ], [
+            "codigo" => "MOD_ENTD", // ok
+            "descricao" => "Módulo Entidade",
+            "capacidades" => [
+                /* Capacidades do módulo ENTIDADE*/
+                ["MOD_ENTD_EDT", "Permite editar entidade"],
+                ["MOD_ENTD_EXCL", "Permite excluir Entidade"],
+                ["MOD_ENTD_INCL", "Permite incluir Entidade"],
+            ]
+        ], [
+            "codigo" => "MOD_EXTM", //ok
+            "descricao" => "Módulo Eixos Temáticos",
+            "capacidades" => [
+                /* Capacidades do módulo EIXOS TEMÁTICOS */
+                ["MOD_EXTM_INCL", "Permite incluir Eixos temáticos"],
+                ["MOD_EXTM_EDT", "Permite editar Eixos temáticos"],
+                ["MOD_EXTM_EXCL", "Permite excluir Eixos temáticos"],
+            ]
+        ], [
+            "codigo" => "MOD_ENTRG", //ok
+            "descricao" => "Módulo de Entregas",
+            "capacidades" => [
+                /* Capacidades do módulo ENTREGAS*/
+                ["MOD_ENTRG_INCL", "Permite incluir Entregas"],
+                ["MOD_ENTRG_EDT", "Permite editar Entregas"],
+                ["MOD_ENTRG_EXCL", "Permite excluir Entregas"],
+            ]
+        ], [
+            "codigo" => "MOD_FER", //ok
+            "descricao" => "Módulo feriados",
+            "capacidades" => [
+                /* Capacidades do módulo FERIADO*/
+                ["MOD_FER_EDT", "Permite editar feriados"],
+                ["MOD_FER_EXCL", "Permite excluir feriado"],
+                ["MOD_FER_INCL", "Permite incluir feriados"],
+            ]
+        ], [
+            "codigo" => "MOD_MATSRV", //ok
+            "descricao" => "Módulo materiais e serviços",
+            "capacidades" => [
+                /* Capacidades do módulo MATERIAIS E SERVIÇOS*/
+                ["MOD_MATSRV_EDT", "Permite editar materiais e serviços"],
+                ["MOD_MATSRV_EXCL", "Permite excluir materiais e serviços"],
+                ["MOD_MATSRV_INCL", "Permite incluir materiais e serviços"],
+            ]
+        ], [
+            "codigo" => "MOD_PLAN_INST", //ok
+            "descricao" => "Módulo de Planejamento Institucional",
+            "capacidades" => [
+                /* Capacidades do módulo PLANEJAMENTO INSTITUCIONAL */
+                ["MOD_PLAN_INST_INCL", "Permite incluir algum tipo de Planejamento Institucional"],
+                ["MOD_PLAN_INST_INCL_UNID_INST", "Permite incluir Planejamento Institucional para a Unidade Instituidora"],
+                ["MOD_PLAN_INST_INCL_UNEX_LOTPRI", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas para a sua lotação)"],
+                ["MOD_PLAN_INST_INCL_UNEX_QQLOT", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de suas lotações)"],
+                ["MOD_PLAN_INST_INCL_UNEX_SUBORD", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de suas lotações e suas subordinadas)"],
+                ["MOD_PLAN_INST_INCL_UNEX_QUALQUER", "Permite incluir Planejamentos Institucionais para qualquer Unidade Executora, independente de sua lotação"],
+                ["MOD_PLAN_INST_EDT", "Permite editar Planejamentos Institucionais"],
+                ["MOD_PLAN_INST_EXCL", "Permite excluir Planejamentos Institucionais"],
+            ]
+        ], [
+            "codigo" => "MOD_PTR",
+            "descricao" => "Módulo de Plano de Trabalho",
+            "capacidades" => [
+                /* Capacidades do módulo PLANO DE TRABALHO */
+                ["MOD_PTR_EDT", "Permite editar planos de trabalho"],
+                ["MOD_PTR_INCL", "Permite incluir planos de trabalho"],
+                ["MOD_PTR_EDT_ATV", "Permite editar planos de trabalho ativos"],
+                ["MOD_PTR_CNC", "Permite cancelar planos de trabalho"],
+                ["MOD_PTR_USERS_INCL",   "Permite incluir planos de trabalho para usuários que não estão lotados nas áreas de trabalho do usuário logado"],
+                ["MOD_PTR_INTSC_DATA", "Permite incluir planos de trabalho que possuam períodos conflitantes com outro plano já existente na mesma unidade executora"]
+            ]
+        ], [
+            "codigo" => "MOD_PTR_ENTR",
+            "descricao" => "Módulo de Plano de Trabalho - Entregas",
+            "capacidades" => [
+                /* Capacidades do módulo PLANO DE TRABALHO */
+                ["MOD_PTR_ENTR_EDT", "Permite editar entregas de um plano de trabalho"],
+                ["MOD_PTR_ENTR_EXCL", "Permite excluir entregas de um plano de trabalho"],
+                ["MOD_PTR_ENTR_INCL", "Permite incluir entregas de um plano de trabalho"],
+            ]
+        ], [
+            "codigo" => "MOD_PTR_CSLD", //ok
+            "descricao" => "Módulo de consolidações do Plano de Trabalho",
+            "capacidades" => [
+                ["MOD_PTR_CSLD_EDT", "Permite editar a consolidação do planos de trabalho"],
+                ["MOD_PTR_CSLD_EXCL", "Permite excluir a consolidação do planos de trabalho"],
+                ["MOD_PTR_CSLD_INCL", "Persmite incluir a consolidação do planos de trabalho"],
+                ["MOD_PTR_CSLD_CONCL", "Permite realizar conclusão (independete de ser o usuário da consolidação)"],
+                ["MOD_PTR_CSLD_DES_CONCL", "Permite desfazer conclusão (independete de ser o usuário da consolidação)"],
+                ["MOD_PTR_CSLD_CANC_AVAL", "Permite cancelar avaliação"],
+                ["MOD_PTR_CSLD_AVAL", "Permite avaliar"],
+                ["MOD_PTR_CSLD_REC_AVAL", "Permite recorrer da avaliação"]
+            ]
+        ], [
+            "codigo" => "MOD_OCOR",
+            "descricao" => "Módulo de Ocorrências",
+            "capacidades" => [
+                /* Capacidades do módulo PLANO DE TRABALHO */
+                ["MOD_OCOR_EDT", "Permite editar ocorrência"],
+                ["MOD_OCOR_EXCL", "Permite excluir ocorrência"],
+                ["MOD_OCOR_INCL", "Permite incluir ocorrência"]
+            ]
+        ], [
+            "codigo" => "MOD_PENT",
+            "descricao" => "Permite acesso ao menu e consultas do módulo Plano de Entregas.",
+            "capacidades" => [
+                /* Capacidades do módulo PLANO DE ENTREGA */
+                ["MOD_PENT_INCL", "Permite incluir planos de entregas."],
+                ["MOD_PENT_EDT", "Permite editar planos de entregas."],
+                ["MOD_PENT_EXCL", "Permite excluir planos de entregas."],
+                ["MOD_PENT_CNC", "Permite cancelar planos de entregas."],
+                ["MOD_PENT_EDT_ATV_HOMOL", "Permite editar planos de entregas que estejam no status ATIVO. O plano voltará ao status HOMOLOGANDO."],
+                ["MOD_PENT_EDT_ATV_ATV", "Permite editar planos de entregas que estejam no status ATIVO, mantendo-os neste status."],
+                ["MOD_PENT_HOMOL", "Permite homologar planos de entregas das Unidades imediatamente subordinadas à sua Unidade de lotação."],
+                ["MOD_PENT_CANC_HOMOL", "Permite cancelar a homologação dos planos de entregas das Unidades imediatamente subordinadas à sua Unidade de lotação."],
+                ["MOD_PENT_AVAL", "Permite avaliar planos de entregas das Unidades imediatamente subordinadas à sua Unidade de lotação."],
+                ["MOD_PENT_AVAL_SUBORD", "Permite avaliar planos de entregas de todas as Unidades subordinadas à sua Unidade de lotação."],
+                ["MOD_PENT_CANC_AVAL", "Permite cancelar a avaliação dos planos de entregas das Unidades imediatamente subordinadas à sua Unidade de lotação."],
+                ["MOD_PENT_EDT_FLH", "Permite alterar planos de entregas das Unidades imediatamente subordinadas à sua Unidade de lotação."],
+                ["MOD_PENT_LIB_HOMOL", "Permite liberar para homologação planos de entregas da sua Unidade de lotação."],
+                ["MOD_PENT_RET_HOMOL", "Permite retirar de homologação planos de entregas da sua Unidade de lotação."],
+                ["MOD_PENT_CONC", "Permite marcar como concluídos planos de entregas da sua Unidade de lotação."],
+                ["MOD_PENT_CANC_CONCL", "Permite cancelar a conclusão de planos de entregas da sua Unidade de lotação."],
+                ["MOD_PENT_SUSP", "Permite suspender planos de entregas da sua Unidade de lotação."],
+                ["MOD_PENT_RTV", "Permite reativar planos de entregas suspensos, desde que sejam da sua Unidade de lotação."],
+                ["MOD_PENT_ARQ", "Permite arquivar planos de entregas da sua Unidade de lotação."],
+                ["MOD_PENT_QQR_UND", "Permite Incluir/Editar planos de entregas de qualquer Unidade, desde que possua também as respectivas MOD_PENT_INCL/MOD_PENT_EDT (independente de qualquer outra condição)."],
+                /* Capacidades do módulo PLANO DE ENTREGAS - ENTREGAS*/
+                ["MOD_PENT_ENTR_EDT", "Permite editar entregas de um plano de entregas"],
+                ["MOD_PENT_ENTR_EXCL", "Permite excluir entregas de um plano de entregas"],
+                ["MOD_PENT_ENTR_INCL", "Permite incluir entregas de um plano de entregas"],
+                ["MOD_PENT_ENTR_EXTRPL", "Permite incluir entregas que extrapolem o plano de entregas"],
 
+                /* Capacidades do módulo PLANO DE ENTREGAS - ENTREGAS - PROGRESSOS*/
+                ["MOD_PENT_ENTR_PRO_INCL", "Permite incluir o progresso da entrega de um plano de entregas"],
+                ["MOD_PENT_ENTR_PRO_EDT", "Permite editar o progresso da entrega de um plano de entregas"],
+                ["MOD_PENT_ENTR_PRO_EXCL", "Permite excluir o progresso da entrega de um plano de entregas"],
+            ]
+        ], [
+            "codigo" => "MOD_PRGT",
+            "descricao" => "Módulo de Programa de Gestão",
+            "capacidades" => [
+                /* Capacidades do módulo PROGRAMA DE GESTÃO */
+                ["MOD_PRGT_EDT", "Permite editar programas de gestão"],
+                ["MOD_PRGT_EXCL", "Permite excluir programas de gestão"],
+                ["MOD_PRGT_INCL", "Permite incluir programas de gestão"],
+            ]
+        ], [
+            "codigo" => "MOD_PART",
+            "descricao" => "Módulo de Participantes do Programa de Gestão",
+            "capacidades" => [
+                /* Capacidades do módulo PARTICIPANTES DO PROGRAMA DE GESTÃO */
+                ["MOD_PART_HAB", "Permite habilitar participantes do programa"],
+                ["MOD_PART_INCL", "Permite incluir participantes do programa"],
+                ["MOD_PART_DESAB", "Permite desabilitar participantes do programa"],
+            ]
+        ], [
+            "codigo" => "MOD_PROJ", //ok
+            "descricao" => "Módulo de Projetos",
+            "capacidades" => [
+                /* Capacidades do módulo PROJETO */
+                ["MOD_PROJ_EDT", "Permite editar projeto"], //só no back
+                ["MOD_PROJ_EXCL", "Permite excluir projeto"], //só no back
+                ["MOD_PROJ_INCL", "Permite incluir Projetos"],
+                /* Capacidades do módulo PROJETO RECURSO*/
+                ["MOD_PROJ_REC_EDT", "Permite editar projeto recurso"], //só no back
+                ["MOD_PROJ_REC_EXCL", "Permite excluir projeto recurso"], //só no back
+                ["MOD_PROJ_REC_INCL", "Permite incluir projeto recurso"], //só no back
+                /* Capacidades do módulo PROJETO REGRA*/
+                ["MOD_PROJ_REG_EDT", "Permite editar projeto regra"], //só no back
+                ["MOD_PROJ_REG_EXCL", "Permite excluir projeto regra"], //só no back
+                ["MOD_PROJ_REG_INCL", "Permite incluir projeto regra"], //só no back
+            ]
+        ], [
+            "codigo" => "MOD_TEMP",
+            "descricao" => "Módulo de Templates",
+            "capacidades" => [
+                /* Capacidades do módulo de templates */
+                ["MOD_TEMP_INCL", "Permite incluir template"],
+                ["MOD_TEMP_EDT", "Permite editar template"],
+                ["MOD_TEMP_EXCL", "Permite excluir template"],
+            ]
+        ], [
+            "codigo" => "MOD_TIPO_ATV",
+            "descricao" => "Módulo de Tipos de Atividade",
+            "capacidades" => [
+                /* Capacidades do módulo TIPO ATIVIDADE*/
+                ["MOD_TIPO_ATV_EDT", "Permite editar atividades"],
+                ["MOD_TIPO_ATV_EDT_PCPL", "Permite editar atividades na guia principal"],
+                ["MOD_TIPO_ATV_EDT_PRE_DEF", "Permite editar dados guia pré-definidas"],
+                ["MOD_TIPO_ATV_EDT_TP_MIN", "Permite editar tempo máximo da atividade"],
+                ["MOD_TIPO_ATV_EDT_UND", "Permite editar unidade associada à atividade"],
+                ["MOD_TIPO_ATV_EDT_VAR_P", "Permite editar guia variação e produtividade"],
+                ["MOD_TIPO_ATV_EXCL", "Permite excluir atividades"],
+                ["MOD_TIPO_ATV_INCL", "Permite incluir atividades"],
+                ["MOD_TIPO_ATV_INCL_PRE_DEF", "Permite acessar e editar guia pré-definidas"],
+                ["MOD_TIPO_ATV_INCL_TP_MIN", "Permite incluir tempo máximo da atividade"],
+                ["MOD_TIPO_ATV_PCPL", "Permite incluir atividades na guia principal"],
+            ]
+        ], [
+            "codigo" => "MOD_TIPO_AVAL",
+            "descricao" => "Módulo de Tipos de Avaliação",
+            "capacidades" => [
+                /* Capacidades do módulo TIPO AVALIACAO*/
+                ["MOD_TIPO_AVAL_EDT", "Permite editar tipos de avaliações"],
+                ["MOD_TIPO_AVAL_EXCL", "Permite excluir tipos de avaliações"],
+                ["MOD_TIPO_AVAL_INCL", "Permite incluir tipos de avaliações"],
+            ]
+        ], [
+            "codigo" => "MOD_TIPO_CAP",
+            "descricao" => "Módulo de Tipos de Capacidade",
+            "capacidades" => [
+                /* Capacidades do módulo TIPO CAPACIDADE*/
+                ["MOD_TIPO_CAP_EDT", "Permite editar tipo de capacidade"],
+                ["MOD_TIPO_CAP_EXCL", "Permite excluir tipo de capacidade"],
+                ["MOD_TIPO_CAP_INCL", "Permite incluir tipos de capacidades"],
+            ]
+        ], [
+            "codigo" => "MOD_TIPO_DOC",
+            "descricao" => "Módulo de Tipos de Documentos",
+            "capacidades" => [
+                /* Capacidades do módulo TIPO DOCUMENTO*/
+                ["MOD_TIPO_DOC_EDT", "Permite editar tipos de documentos"],
+                ["MOD_TIPO_DOC_EXCL", "Permite excluir tipos de documentos"],
+                ["MOD_TIPO_DOC_INCL", "Permite incluir tipos de documentos"],
+            ]
+        ], [
+            "codigo" => "MOD_TIPO_JUST",
+            "descricao" => "Módulo de Tipos de Justificativa",
+            "capacidades" => [
+                /* Capacidades do módulo TIPO JUSTIFICATIVA*/
+                ["MOD_TIPO_JUST_EDT", "Permite editar tipos de justificativas"],
+                ["MOD_TIPO_JUST_EXCL", "Permite excluir tipos de justificativas"],
+                ["MOD_TIPO_JUST_INCL", "Permite incluir tipos de justificativas"],
+            ]
+        ], [
+            "codigo" => "MOD_TIPO_MDL",
+            "descricao" => "Módulo de Tipos de Modalidade",
+            "capacidades" => [
+                /* Capacidades do módulo TIPO MODALIDADE*/
+                ["MOD_TIPO_MDL_EDT", "Permite editar tipos de modalidades"],
+                ["MOD_TIPO_MDL_EXCL", "Permite excluir tipos de modalidades"],
+                ["MOD_TIPO_MDL_INCL", "Permite incluir tipos de modalidades"],
+            ]
+        ], [
+            "codigo" => "MOD_TIPO_MTV_AFT", //ok
+            "descricao" => "Módulo de Tipos de Motivos de Afastamento",
+            "capacidades" => [
+                /* Capacidades do módulo TIPO MOTIVO AFASTAMENTO*/
+                ["MOD_TIPO_MTV_AFT_EDT", "Permite editar tipos de motivos de afastamentos"],
+                ["MOD_TIPO_MTV_AFT_EXCL", "Pemite excluir tipos de motivos de afastamentos"],
+                ["MOD_TIPO_MTV_AFT_INCL", "Permite incluir tipos de motivos de afastamentos"],
+                ["MOD_TPMAF_INCL", "Permite incluir tipos de motivos de afastamentos"], //só definição
+            ]
+        ], [
+            "codigo" => "MOD_TIPO_PROC",
+            "descricao" => "Módulo de Tipos de Processos",
+            "capacidades" => [
+                /* Capacidades do módulo TIPO PROCESSO*/
+                ["MOD_TIPO_PROC_EDT", "Permite editar tipos de processos"],
+                ["MOD_TIPO_PROC_EXCL", "Permite excluir tipos de processos"],
+                ["MOD_TIPO_PROC_INCL", "Permite incluir tipos de processos"],
+            ]
+        ], [
+            "codigo" => "MOD_TRF",
+            "descricao" => "Módulo Tarefas",
+            "capacidades" => [
+                /* Capacidades do módulo TAREFAS*/
+                ["MOD_TRF_EDT", "Permite editar tarefas"],
+                ["MOD_TRF_EXCL", "Permite excluir tarefas"],
+                ["MOD_TRF_INCL", "Permite incluir tarefas"],
+            ]
+        ], [
+            "codigo" => "MOD_TIPO_TRF",
+            "descricao" => "Módulo Tipo Tarefas",
+            "capacidades" => [
+                /* Capacidades do módulo TIPO TAREFA*/
+                ["MOD_TIPO_TRF_EDT", "Permite editar tipos de tarefas"],
+                ["MOD_TIPO_TRF_EXCL", "Permite excluir tipos de tarefas"],
+                ["MOD_TIPO_TRF_INCL", "Permite incluir tipos de tarefas"],
+            ]
+        ], [
+            "codigo" => "MOD_UND",
+            "descricao" => "Módulo Unidades",
+            "capacidades" => [
+                /* Capacidades do módulo UNIDADES*/
+                ["MOD_UND_EDT", "Permite editar unidade"],
+                ["MOD_UND_EDT_FRM", "Permite editar unidades formais (SIAPE ou não)"],  // a ser implementado
+                ["MOD_UND_EXCL", "Permite excluir unidade"],
+                ["MOD_UND_INCL", "Permite incluir unidade"],
+                ["MOD_UND_INCL_FRM", "Permite incluir unidades formais (SIAPE ou não)"],    // a ser implementado
+                ["MOD_UND_UNIR", "Permite unificar unidade"],
+                ["MOD_UND_TUDO", "Permite consultar qualquer unidade independente de subordinação"],
+                ["MOD_UND_INATV", "Permite inativar uma unidade"],
+                ["MOD_UND_INTG", "Permite gerenciar integrantes da unidade"],
+                ["MOD_UND_INTG_INCL", "Permite incluir integrantes da unidade"],
+                ["MOD_UND_INTG_EDT", "Permite editar integrantes da unidade"],
+                ["MOD_UND_INTG_EXCL", "Permite excluir integrantes da unidade"],
+                ["MOD_UND_INTG_GST", "Permite alterar gestor e substituto"],
+            ]
+        ], [
+            "codigo" => "MOD_USER", //ok
+            "descricao" => "Módulo Usuários",
+            "capacidades" => [
+                /* Capacidades do módulo USUÁRIOS */
+                ["MOD_USER_EDT", "Permite alterar usuário"],
+                ["MOD_USER_EXCL", "Permite excluir usuário"],
+                ["MOD_USER_INCL", "Permite incluir usuário"],
+                ["MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"],
+                ["MOD_USER_ATRIB", "Permite gerenciar atribuições de usuário"],
+            ]
+        ], [
+            "codigo" => "MOD_RX_CURR",
+            "descricao" => "Módulo Raio-X Curriculum",
+            "capacidades" => [
+                /* Capacidades do módulo RAIO-X Curriculum */
+                ["MOD_RX_CURR_EDT", "Permite editar curricula"],
+                ["MOD_RX_CURR_INCL", "Permite inserir curricula"],
+                ["MOD_RX_CURR_EXCL", "Permite excluir curricula"],
+            ]
+        ], [
+            "codigo" => "MOD_RX_OPO",
+            "descricao" => "Módulo Raio-X Oportunidades",
+            "capacidades" => [
+                /* Capacidades do módulo RAIO-X Oportunidades*/
+                ["MOD_RX_OPO_EDT", "Permite editar oportunidades"],
+                ["MOD_RX_OPO_INCL", "Permite incluir oportunidades"],
+                ["MOD_RX_OPO_EXCL", "Permite excluir oportunidades"],
+            ]
+        ], [
+            "codigo" => "MOD_RX_OUT",
+            "descricao" => "Módulo Raio-X Outros",
+            "capacidades" => [
+                /* Capacidades do módulo RAIO-X Outros*/
+                ["MOD_RX_OUT_EDT", "Permite editar pesquisas e cadastros"],
+                ["MOD_RX_OUT_INCL", "Permite incluir pesquisas e cadastros"],
+                ["MOD_RX_OUT_EXCL", "Permite excluir pesquisas e cadastros"],
+            ]
+        ], [
+            "codigo" => "MOD_AUDIT",
+            "descricao" => "Módulo Auditoria",
+            "capacidades" => [
+                ["MOD_AUDIT_DEL", "Permite visualizar registros deletados"],
+                ["MOD_AUDIT_LOG", "Permite visualizar logs das tabelas"]
+            ]
+        ]
     ];
 
-    private function differentDev(&$data) {
-        if(!$this->isLoggedUserADeveloper()){
-            if(isset($data['where']) && count($data['where']) > 0) {
-                if(gettype($data['where'][0]) == "string") {
+    private function differentDev(&$data)
+    {
+        if (!$this->isLoggedUserADeveloper()) {
+            if (isset($data['where']) && count($data['where']) > 0) {
+                if (gettype($data['where'][0]) == "string") {
                     $data['where'] = [["not like", "DEV_%"], $data['where']];
                 } else {
                     $data['where'][] = ["not like", "DEV_%"];
@@ -305,13 +472,42 @@ class TipoCapacidadeService extends ServiceBase {
         }
     }
 
-    public function searchText($data) {
+    public function searchText($data)
+    {
         $this->differentDev($data);
         return parent::searchText($data);
     }
 
-    public function query($data) {
+    public function query($data)
+    {
         $this->differentDev($data);
         return parent::query($data);
     }
 }
+
+/*
+Navegação         Menus                     Capacidade
+----------------------------------------------------------------------------
+navGestao         Planejamento              MENU_GESTAO_ACESSO
+                  Execução                  MENU_GESTAO_ACESSO
+                  Avaliação                 MENU_GESTAO_ACESSO
+                  Gerenciamento             MENU_CONFIG_ACESSO
+                  Cadastros                 MENU_CAD_ACESSO
+                                                                      
+navAdministrador  Cadastros                 MENU_CAD_ACESSO
+                  Gerenciamento             MENU_CONFIG_ACESSO
+                                                                       
+navDev            Manutenção                MENU_DEV_ACESSO
+                  Logs e Auditorias         MENU_DEV_ACESSO
+                  Testes                    MENU_DEV_ACESSO
+                                                                      
+navPonto                                                          
+navProjeto        Cadastros                 MENU_CAD_ACESSO
+                  Gerencial                 MENU_CAD_ACESSO
+                                                                           
+navRaioX          Curriculum                MENU_RX_CURRICULUM_ACESSO
+                  Oportunidades             MENU_RX_OPORTUNIDADES_ACESSO
+                  Pesquisas                 MENU_RX_PESQUISAS_ACESSO
+                  Questionários Dinâmicos   MENU_RX_QUEST_DINAMICOS_ACESSO
+                  Cadastros                 MENU_RX_CADASTROS_ACESSO
+*/

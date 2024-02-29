@@ -32,22 +32,22 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.projetoService = injector.get<ProjetoService>(ProjetoService);
-    this.title = this.lex.noun("Projeto", true);
+    this.title = this.lex.translate("Projetos");
     this.code = "MOD_PROJ";
     this.join = ["alocacoes.recurso.usuario:id,nome,apelido", "alocacoes.recurso.unidade:id,nome", "alocacoes.regras.regra", "fase"];
     this.filter = this.fh.FormBuilder({
       nome: {default: ""},
       status: {default: null},
-      inicio: {default: null},
-      termino: {default: null}
+      data_inicio: {default: null},
+      data_fim: {default: null}
     });
   }
 
   public filterClear(filter: FormGroup) {
     filter.controls.nome.setValue("");
     filter.controls.status.setValue(null);
-    filter.controls.inicio.setValue(null);
-    filter.controls.termino.setValue(null);
+    filter.controls.data_inicio.setValue(null);
+    filter.controls.data_fim.setValue(null);
     super.filterClear(filter);
   }
 
@@ -56,13 +56,13 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
     let form: any = filter.value;
 
     if (form.nome?.length) { 
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     } else if(form.status) {
       result.push(["status", "==", form.status]);
-    } else if(form.inicio?.length) {
-      result.push(["termino", ">=", form.inicio]);
-    } else if(form.termino?.length) {
-      result.push(["inicio", "=<", form.termino]);
+    } else if(form.data_inicio?.length) {
+      result.push(["data_fim", ">=", form.data_inicio]);
+    } else if(form.data_fim?.length) {
+      result.push(["data_inicio", "=<", form.data_fim]);
     }
 
     return result;

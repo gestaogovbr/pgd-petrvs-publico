@@ -37,7 +37,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['db','single'],
             'ignore_exceptions' => false,
         ],
 
@@ -47,9 +47,16 @@ return [
             'level' => env('LOG_LEVEL', 'debug'),
         ],
 
+        'tenant' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/tenant.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 14,
+        ],
+
         'daily' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/laravel.log'),
+            'path' => storage_path('logs/tenant.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 14,
         ],
@@ -99,6 +106,10 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
+        ],
+        'db' => [
+            'driver' => 'custom',
+            'via' => App\Logging\DatabaseLogger::class
         ],
     ],
 

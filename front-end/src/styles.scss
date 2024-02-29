@@ -1,213 +1,445 @@
 /* You can add global styles to this file, and also import other style files */
 
 .petrvs {
-    /* Reseta todas as propriedades anteriores */
-    all: initial;
-    cursor: inherit;
+ 
+  html, body {
+    height:100%;
+  }
+  /* Reseta todas as propriedades anteriores */
+  all: initial;
+  cursor: inherit;
+  --bs-body-font-size: 1rem;
+
+  /* Sobrescreve propriedades do Sei */
+  * {
     --bs-body-font-size: 1rem;
-
-    /* Sobrescreve propriedades do Sei */
-    * {
-        --bs-body-font-size: 1rem;
-        font-family: var(--bs-body-font-family);
-        font-weight: var(--bs-body-font-weight);
-        color: inherit;
-    }
-
-    div {
-        margin: initial;
-    }
-
-    input,
-    button,
-    textarea,
-    select,
-    table,
-    label,
-    span,
-    legend,
-    caption,
-    a {
-        font-size: var(--bs-body-font-size);
-    }
-
-    .d-flex {
-        margin: auto;
-    }
-
-    .input-group>.form-control:not(:last-child) {
-        margin: 0px;
-    }
-
-    .form-group label {
-        margin-bottom: 0rem;
-        font: inherit;
-    }
-
-    /* Classes globais */
-    .micro-text {
-        font-size: 0.8rem !important;
-    }
-
-    .one-per-line {
-        width: min-content;
-    }
-
-    /* Reaplica todas as propriedades do <body> do bootstrap */
-    margin: 0px;
     font-family: var(--bs-body-font-family);
     font-weight: var(--bs-body-font-weight);
+    color: inherit;
+  }
+
+  div {
+    margin: initial;
+  }
+
+  input,
+  button,
+  textarea,
+  select,
+  table,
+  label,
+  span,
+  legend,
+  caption,
+  a {
     font-size: var(--bs-body-font-size);
-    line-height: var(--bs-body-line-height);
-    color: var(--bs-body-color);
-    text-align: var(--bs-body-text-align);
-    background-color: var(--bs-body-bg);
-    -webkit-text-size-adjust: 100%;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  }
 
-    /* Carrega bootrap dentro da classe petrvs */
-    @import '~bootstrap/scss/bootstrap.scss';
+  .d-flex {
+    margin: auto;
+  }
 
-    /* Define as variáveis de cor no Root */
-    :root {
-        --bs-blue-100: $blue-100;
-        --bs-blue-200: $blue-200;
-        --bs-blue-300: $blue-300;
-        --bs-blue-400: $blue-400;
-        --bs-blue-500: $blue-500;
-        --bs-blue-600: $blue-600;
-        --bs-blue-700: $blue-700;
-        --bs-blue-800: $blue-800;
-        --bs-blue-900: $blue-900;
+  .tooltip { z-index: 9000 !important; }
 
-        --bs-indigo-100: $indigo-100;
-        --bs-indigo-200: $indigo-200;
-        --bs-indigo-300: $indigo-300;
-        --bs-indigo-400: $indigo-400;
-        --bs-indigo-500: $indigo-500;
-        --bs-indigo-600: $indigo-600;
-        --bs-indigo-700: $indigo-700;
-        --bs-indigo-800: $indigo-800;
-        --bs-indigo-900: $indigo-900;
+  .input-group > .form-control:not(:last-child) {
+    margin: 0px;
+  }
 
-        --bs-purple-100: $purple-100;
-        --bs-purple-200: $purple-200;
-        --bs-purple-300: $purple-300;
-        --bs-purple-400: $purple-400;
-        --bs-purple-500: $purple-500;
-        --bs-purple-600: $purple-600;
-        --bs-purple-700: $purple-700;
-        --bs-purple-800: $purple-800;
-        --bs-purple-900: $purple-900;
+  .form-group label {
+    margin-bottom: 0rem;
+    font: inherit;
+  }
 
-        --bs-pink-100: $pink-100;
-        --bs-pink-200: $pink-200;
-        --bs-pink-300: $pink-300;
-        --bs-pink-400: $pink-400;
-        --bs-pink-500: $pink-500;
-        --bs-pink-600: $pink-600;
-        --bs-pink-700: $pink-700;
-        --bs-pink-800: $pink-800;
-        --bs-pink-900: $pink-900;
+  /* Classes globais */
+  .micro-text {
+    font-size: 0.8rem !important;
+  }
 
-        --bs-red-100: $red-100;
-        --bs-red-200: $red-200;
-        --bs-red-300: $red-300;
-        --bs-red-400: $red-400;
-        --bs-red-500: $red-500;
-        --bs-red-600: $red-600;
-        --bs-red-700: $red-700;
-        --bs-red-800: $red-800;
-        --bs-red-900: $red-900;
+  .one-per-line {
+    width: min-content;
+  }
 
-        --bs-orange-100: $orange-100;
-        --bs-orange-200: $orange-200;
-        --bs-orange-300: $orange-300;
-        --bs-orange-400: $orange-400;
-        --bs-orange-500: $orange-500;
-        --bs-orange-600: $orange-600;
-        --bs-orange-700: $orange-700;
-        --bs-orange-800: $orange-800;
-        --bs-orange-900: $orange-900;
+  /* Carrega bootrap dentro da classe petrvs */
+  @import "../node_modules/bootstrap/scss/functions";
+  @import "../node_modules/bootstrap/scss/variables";
+  @import "../node_modules/bootstrap/scss/mixins";
 
-        --bs-yellow-100: $yellow-100;
-        --bs-yellow-200: $yellow-200;
-        --bs-yellow-300: $yellow-300;
-        --bs-yellow-400: $yellow-400;
-        --bs-yellow-500: $yellow-500;
-        --bs-yellow-600: $yellow-600;
-        --bs-yellow-700: $yellow-700;
-        --bs-yellow-800: $yellow-800;
-        --bs-yellow-900: $yellow-900;
+  /* Reaplica todas as propriedades do <body> do bootstrap */
+  margin: 0px;
+  font-family: var(--bs-body-font-family);
+  font-weight: var(--bs-body-font-weight);
+  font-size: var(--bs-body-font-size);
+  line-height: var(--bs-body-line-height);
+  color: var(--bs-body-color);
+  text-align: var(--bs-body-text-align);
+  background-color: var(--bs-body-bg);
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 
-        --bs-green-100: $green-100;
-        --bs-green-200: $green-200;
-        --bs-green-300: $green-300;
-        --bs-green-400: $green-400;
-        --bs-green-500: $green-500;
-        --bs-green-600: $green-600;
-        --bs-green-700: $green-700;
-        --bs-green-800: $green-800;
-        --bs-green-900: $green-900;
+  $petrvs-colors: (
+    "petrvs-blue": #1d2143,
+    "petrvs-yellow": #fec803,
+  );
 
-        --bs-teal-100: $teal-100;
-        --bs-teal-200: $teal-200;
-        --bs-teal-300: $teal-300;
-        --bs-teal-400: $teal-400;
-        --bs-teal-500: $teal-500;
-        --bs-teal-600: $teal-600;
-        --bs-teal-700: $teal-700;
-        --bs-teal-800: $teal-800;
-        --bs-teal-900: $teal-900;
+  $theme-colors: map-merge($theme-colors, $petrvs-colors);
 
-        --bs-cyan-100: $cyan-100;
-        --bs-cyan-200: $cyan-200;
-        --bs-cyan-300: $cyan-300;
-        --bs-cyan-400: $cyan-400;
-        --bs-cyan-500: $cyan-500;
-        --bs-cyan-600: $cyan-600;
-        --bs-cyan-700: $cyan-700;
-        --bs-cyan-800: $cyan-800;
-        --bs-cyan-900: $cyan-900;
+  @import "../node_modules/bootstrap/scss/bootstrap";
+
+  /* Sobrecarrega classes com problema após compilação */
+  label .badge {
+    font-size: var(--bs-badge-font-size);
+  }
+
+  .form-check-input:checked {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%231571ff'/%3e%3c/svg%3e")!important;
+  }
+
+  .navbar {
+    box-shadow: 0px 2px 3px #ddd;
+    margin-bottom: 30px;
+
+    .dropdown-menu {
+      --bs-dropdown-border-color: #cbd0dd;
+      --bs-dropdown-border-radius: 0.375rem;
+      --bs-dropdown-box-shadow: 0px 2px 4px -2px rgba(36, 40, 46, 0.08);
+
+      &.navbar-dropdown-caret:after {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        width: 1.5rem;
+        height: 1.5rem;
+        top: -10px;
+        left: 1.5rem;
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+        background: var(--petrvs-border-color-dropdown);
+        background: inherit;
+        border-top-left-radius: 0.25rem;
+        border-width: 1px 0 0 1px;
+        border-style: solid;
+        border-color: var(--petrvs-border-color-dropdown);
+        -webkit-box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+      }
+
+      &.dropdown-menu-end {
+        --bs-position: end;
+
+        &.navbar-dropdown-caret:after {
+          right: 0.9rem;
+          left: auto;
+        }
+      }
+
+      .nav-link {
+        i {
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+
+  .arrow_box {
+    position: relative;
+    background: var(--petrvs-box-background);
+    margin-top: 30px;
+    padding: 10px;
+
+    &::after, &::before {
+      bottom: 100%;
+      left: 50%;
+      border: solid transparent;
+      content: "";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+    }
+    &::after {
+      border-color: rgba(136, 183, 213, 0);
+      border-bottom-color: var(--petrvs-box-background);
+      border-width: 20px;
+      margin-left: -20px;
+    }
+    &::before {
+      border-color: rgba(194, 225, 245, 0);
+      border-bottom-color: var(--petrvs-box-background);
+      border-width: 22px;
+      margin-left: -22px;
+    }
+  }
+
+  .shadow {
+    -webkit-box-shadow: 0px 2px 4px -2px rgba(36, 40, 46, 0.08) !important;
+    box-shadow: 0px 2px 4px -2px rgba(36, 40, 46, 0.08) !important;
+  }
+
+  .btn-light {
+    --bs-btn-bg: #fff;
+    --bs-btn-border-color: #eee;
+  }
+  
+
+  &[data-bs-theme="blue"] {
+    --bs-light-rgb: 207, 207, 207;
+    --bs-body-color: #1d2143;
+    --bs-body-bg: #f5f7fa;
+    --bs-nav-link-color: #fff;
+    --bs-emphasis-color-rgb: 255, 255, 255;
+    --bs-dropdown-link-color: #fff;
+    --bs-heading-color: #13162d;    
+    --petrvs-navbar-vertical-border-color: #cbd0dd;
+    --petrvs-navbar-top-bg-color: #1d2143;
+    --petrvs-navbar-brand-color: #fec803;
+    --petrvs-nav-link-bg-hover: #13162d;
+    --petrvs-nav-link-bg-active: #13162d;
+    --petrvs-nav-link-color: #fff;
+    --petrvs-border-color-dropdown: #13162d;
+    --petrvs-form-control-background: #fff;
+    --petrvs-box-background: #dce3ec;
+
+    .modal {
+        --bs-modal-bg: #fff;
     }
 
-    /* Sobrecarrega classes com problema após compilação */
-    label .badge {
-        font-size: var(--bs-badge-font-size);
+    .navbar-toggler-icon {
+      --bs-navbar-toggler-icon-bg: #{escape-svg($navbar-dark-toggler-icon-bg)};
     }
 
+    .form-control {
+      background-color: var(--petrvs-form-control-background);
+    }
+
+    .nav-link {
+      color: var(--bs-nav-link-color);
+    }
     .navbar {
-        box-shadow: 0px 2px 3px #ddd;
-        margin-bottom: 30px;
+        .dropdown-menu {
+            --bs-dropdown-bg: var(--petrvs-navbar-top-bg-color);
+            .card {
+                background-color: var(--petrvs-navbar-top-bg-color);
+            }
+            .dropdown-item {
+                color: var(--bs-nav-link-color);
+                &:hover {
+                    background-color: var(--petrvs-nav-link-bg-active);
+                }
+            }
+        }
     }
+    .border {
+        border: var(--bs-border-width) var(--bs-border-style) #13162d !important;
+    }
+  }
+
+  &[data-bs-theme="light"] {
+    --bs-light-rgb: 207, 207, 207;
+    --bs-body-color: #212529;
+    --bs-body-bg: #f5f7fa;
+    --petrvs-navbar-vertical-border-color: #cbd0dd;
+    --petrvs-navbar-top-bg-color: #fff;
+    --petrvs-navbar-brand-color: #5a5a5a;
+    --petrvs-nav-link-bg-hover: #e9e7e7;
+    --petrvs-nav-link-bg-active: #fec803;
+    --petrvs-nav-link-color: #2b2828;
+    --petrvs-border-color-dropdown: #ffffff;
+    --petrvs-form-control-background: #fff;
+    --petrvs-box-background: #dce3ec;
+
+    .form-control {
+      background-color: var(--petrvs-form-control-background);
+    }
+
+  }
+
+  &[data-bs-theme="dark"] {
+    --petrvs-navbar-top-bg-color: #1b1f23;
+    --petrvs-navbar-vertical-border-color: #0c0f12;
+    --petrvs-nav-link-bg-hover: #111212;
+    --petrvs-nav-link-bg-active: #111212;
+    --petrvs-box-background: #1b1f23;
+
+    .btn-light {
+      --bs-btn-bg: var(--bs-body-bg);
+      --bs-btn-border-color: var(--bs-border-color);
+      --bs-btn-color: var(--bs-body-color);
+      color: var(--bs-body-color) !important;
+      background-color: var(--bs-body-bg) !important;
+
+      &:hover, &:active {
+        background-color: var(--bs-body-bg);
+        border-color:  var(--bs-border-color);
+        color: var(--bs-body-color) !important;
+      }
+      &:disabled {
+        background-color: var(--bs-secondary-bg) !important;
+      }
+    }
+
+    .dropdown-item {
+      color: var(--bs-body-color) !important;
+    }
+
+  }
+
+  .textValue {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    padding: 3px 7px;
+    display: inline-block;
+    font-size: inherit;
+    margin-left: 3px;
+  }
+
+  .withTextValue {
+    padding: 1px;
+    i {
+      margin: 2px 5px;
+    }
+  }
+
+  input:read-only, 
+  input:disabled,
+  textarea:read-only,
+  button:disabled {
+    background-color: var(--bs-secondary-bg) !important;
+    /*background-color:#e9ecef;*/
+  }
+
+  .markdownContent {
+    p img {
+      width: 100%;
+    }
+  }
+
+  .deleted_at {
+    td {
+      background: #4b04041c;
+    }
+  }
+
+  .table-responsive {
+    height: 100%;
+  }
+
+  .buttons-home path {
+    fill: var(--bs-body-color);
+  }
+
+  .first-box {
+    &::after, &::before {
+      border: none !important;
+    }
+  }
+  
 }
 
 /* Define variáveis do bootstrap */
 :root {
-    --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    --bs-body-font-family: var(--bs-font-sans-serif);
-    --bs-body-font-size: 10px;
-    --bs-body-font-weight: 400;
-    --bs-body-line-height: 1.5;
-    --bs-body-color: #212529;
-    --bs-body-bg: #fff;
+  --bs-font-sans-serif: "Rawline", system-ui, -apple-system, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --bs-body-font-family: var(--bs-font-sans-serif);
+  --bs-body-font-size: 14px;
+  --bs-body-font-weight: 400;
+  --bs-body-line-height: 1.5;
+  --petrvs-navbar-top-height: 4rem;
+  --petrvs-btn-radius: 3px;
 }
 
 body {
-    margin: 0px;
-    //background: #f1f5f7;
-    font-size: var(--bs-body-font-size);
+  margin: 0px;
+  //background: #f1f5f7;
+  font-size: var(--bs-body-font-size);
+}
+
+.content {
+  // min-height: 100vh;
+  padding: calc(var(--petrvs-navbar-top-height) + 2rem) 1.5rem 6.375rem 1.5rem;
+  // padding-bottom: 6rem;
+}
+
+.login .content {
+  padding: 0;
 }
 
 .full-container-button-group {
-    display: flex !important;
+  display: flex !important;
 
-    .btn {
-        flex: 1;
-    }
+  .btn {
+    flex: 1;
+  }
 }
 
 .multilines-badges {
-    width: min-content;
-    display: block;
+  width: min-content;
+  display: block;
+}
+
+.width-min-content {
+  width: min-content;
+}
+
+#gbtn {
+  iframe {
+    display: inline !important;
+  }
+}
+
+
+.p-organizationchart .p-organizationchart-line-down {
+  margin: 0 auto;
+}
+.p-organizationchart-node-content .p-node-toggler .p-node-toggler-icon {
+  vertical-align: inherit;
+}
+
+.p-organizationchart-table>tbody>tr>td {
+  border-width: 1px !important;
+  border-style: revert-layer !important;
+}
+
+.p-treeselect {
+  display: flex;
+  background: var(--bs-body-bg);
+  border-color: var(--bs-border-color);
+}
+.p-tree-container {
+  padding-left: 0 !important;
+}
+.p-tree {
+  background: var(--bs-body-bg);
+  .p-highlight {
+    background: #24374f;
+  }
+}
+
+@media print {    
+  .hidden-print {
+    display: none !important;
+  }
+  .modal-content {
+    border: 0 !important;
+  }
+  .modal-content * {
+    visibility: visible;
+    overflow: visible;    
+   }
+
+  .modal {
+    position: relative  !important;
+    left: 0;
+    top: 0;
+    margin: 0;
+    padding: 0;
+    min-height: 550px;
+    visibility: visible;
+    overflow: visible !important; /* Remove scrollbar for printing. */
+    height: 100% !important;
+   }
+   .modal-dialog {
+    visibility: visible !important;
+    overflow: visible !important; /* Remove scrollbar for printing. */
+   }
 }

@@ -1,0 +1,109 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="descricao" (submit)="onSaveEntrega()" (cancel)="onCancel()">
+  <tabs #tabs display right [title]="!isModal ? title : ''">
+    <tab key="ENTREGAS" label="Entregas">
+      <div class="row">
+        <separator [title]="'Informações gerais da ' + lex.translate('entrega')" collapse [collapsed]="false">
+          <div class="row">
+            <input-text [size]="12" label="Título" controlName="descricao" [placeholder]="'Título da ' + lex.translate('entrega')" [attr.maxlength]=250 required></input-text>
+          </div>
+          <div class="row">
+            <input-textarea [size]="12" [label]="'Descrição da ' + lex.translate('entrega')" controlName="descricao_entrega" [placeholder]="'Descreva a ' + lex.translate('entrega')"></input-textarea>
+          </div>
+          <div class="row">
+            <input-search [size]="12" [label]="'Vínculo com ' + lex.translate('entrega') + ' de ' + lex.translate('plano de entrega') + ' superior'" controlName="entrega_pai_id" [dao]="planoEntregaEntregaDao" [where]="['plano_entrega.unidade_id', 'in', idsUnidadesAscendentes]" [selectRoute]="{route: ['gestao', 'plano-entrega', 'entrega-list']}" [metadata]="{'idsUnidadesAscendentes': idsUnidadesAscendentes}"></input-search>
+          </div>
+          <separator [title]="'Etapas da ' + lex.translate('entrega')" collapse [collapsed]="true">
+            <div class="row mt-4">
+              <!--div class="col-md-6"-->
+              <h5>Etapas</h5>
+              <grid [control]="form!.controls.checklist" [form]="formChecklist" [hasAdd]="true" [hasDelete]="true" editable>
+                <columns>
+                  <!--<column type="switch" title="Check" field="checked"></column>-->
+                  <column type="text" title="Texto" field="texto"></column>
+                  <column type="options"></column>
+                </columns>
+              </grid>
+              <!--/div-->
+            </div>
+          </separator>
+        </separator>
+        <separator [title]="'Especificações da ' + lex.translate('entrega')" collapse [collapsed]="false">
+          <div class="row">
+            <input-datetime date [size]="6" label="Início" controlName="data_inicio" [labelInfo]="'Início ' + lex.translate('Plano de Entregas')" required></input-datetime>
+            <input-datetime date [size]="6" label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entregas') + '(Estimativa Inicial)'" required></input-datetime>
+          </div>
+          <div class="row">
+            <input-search [size]="6" #unidade label="Demandante" controlName="unidade_id" [dao]="unidadeDao" required></input-search>
+            <input-text [size]="6" label="Destinatário" controlName="destinatario" [attr.maxlength]=250 required></input-text>
+          </div>
+        </separator>
+        <separator title="Planejamento"></separator>
+        <div class="row">
+          <input-search #entrega [size]="12" [label]="lex.translate('Tipo de Meta')" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione ou cadastre uma meta do catálogo usando a lupa" required></input-search>
+        </div>
+        <div class="row">
+          <input-textarea [size]="12" label="Descrição da meta" controlName="descricao_meta" placeholder="Descreva a meta"></input-textarea>
+        </div>
+        <div *ngIf="this.entrega?.selectedEntity; else naoSelecionou" class="row">
+          <plano-entrega-valor-meta-input icon="bi bi-graph-up-arrow" [entrega]="entrega?.selectedEntity" [size]="6" [control]="form!.controls.meta" label="Meta" labelInfo="Onde quero chegar ao final da entrega. Evolução total da entrega, podendo ultrapassar o período do plano de entregas"></plano-entrega-valor-meta-input>
+          <input-number [size]="6" label="Parcela da entrega no plano" controlName="progresso_esperado" sufix="%" labelInfo="Quanto vou caminhar nesse plano de entregas. Percentual do total da entrega que será realizado durante a vigência desse plano"></input-number>
+          <div class="row">
+            <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="entrega?.selectedEntity" [size]="6" [control]="form!.controls.realizado" label="Progresso ao início do plano" [change]="onRealizadoChange.bind(this)" labelInfo="De onde estou saindo nesse plano. Valor correspondente ao progresso verificado no planejamento do plano de entregas"></plano-entrega-valor-meta-input>
+            <input-number [size]="6" label="Progresso já realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled labelInfo="Quanto caminhei no plano atual Evolução já realizada para a meta. No ato da criação do plano, é o percentual de progresso ao início do plano em relação à meta"></input-number>
+          </div>
+        </div>
+        <ng-template #naoSelecionou>
+          <div class="row">
+            <input-number [size]="6" label="Parcela da entrega no plano" controlName="progresso_esperado" sufix="%" labelInfo="Quanto vou caminhar nesse plano de entregas. Percentual do total da entrega que será realizado durante a vigência desse plano"></input-number>
+            <input-number [size]="6" label="Progresso já realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled labelInfo="Quanto caminhei no plano atual Evolução já realizada para a meta. No ato da criação do plano, é o percentual de progresso ao início do plano em relação à meta"></input-number>
+          </div>
+        </ng-template>
+        <separator [title]="'Caracterização da ' +  lex.translate('entrega')" collapse [collapsed]="false">
+          <div class="row">
+            <input-multiselect label="Etiquetas" controlName="etiquetas" [size]="12" [control]="form!.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
+              <input-select [size]="12" #etiqueta controlName="etiqueta" [control]="form!.controls.etiqueta" [items]="etiquetas"></input-select>
+            </input-multiselect>
+          </div>
+        </separator>
+      </div>
+    </tab>
+    <tab *ngIf="planejamentoId?.length" key="OBJETIVOS" label="Objetivos">
+      <input-search [size]="12" #planejamento controlName="planejamento_id" [dao]="planejamentoDao" disabled></input-search>
+      <grid [control]="form!.controls.objetivos" [form]="formObjetivos" #gridObjetivos editable [orderBy]="orderBy" [hasDelete]="true" [hasEdit]="true" [add]="addObjetivo.bind(this)" [remove]="removeObjetivo.bind(this)" [save]="saveObjetivo.bind(this)">
+        <columns>
+          <column [titleTemplate]="titleObjetivo" [template]="columnObjetivo" [editTemplate]="editObjetivo">
+            <ng-template let-header="header" #titleObjetivo>
+              <order by="objetivo.nome" [header]="header">Objetivos</order>
+            </ng-template>
+            <ng-template let-row="row" #columnObjetivo>
+              <span>{{row.objetivo?.nome}}</span>
+            </ng-template>
+            <ng-template let-row="row" #editObjetivo>
+              <input-search [size]="12" #inputObjetivo controlName="planejamento_objetivo_id" [where]="[['planejamento_id', '==', planejamentoId]]" [dao]="planejamentoObjetivoDao" [selectRoute]="{route: ['gestao', 'planejamento', 'objetivoList'], params: {filter: {planejamento_id: planejamentoId}}}"></input-search>
+            </ng-template>
+          </column>
+          <column type="options"></column>
+        </columns>
+      </grid>
+    </tab>
+    <tab *ngIf="cadeiaValorId?.length" key="PROCESSOS" label="Processos">
+      <input-search [size]="12" #cadeiaValor controlName="cadeia_valor_id" [dao]="cadeiaValorDao" disabled></input-search>
+      <grid [control]="form!.controls.processos" [form]="formProcessos" #gridProcessos editable [orderBy]="orderBy" [hasDelete]="true" [hasEdit]="true" [add]="addProcesso.bind(this)" [remove]="removeProcesso.bind(this)" [save]="saveProcesso.bind(this)">
+        <columns>
+          <column [titleTemplate]="titleProcessos" [template]="processo" [editTemplate]="editProcesso">
+            <ng-template let-header="header" #titleProcessos>
+              <order by="processo.nome" [header]="header">Processos</order>
+            </ng-template>
+            <ng-template let-row="row" #processo>
+              <span>{{row.processo?.nome}}</span>
+            </ng-template>
+            <ng-template let-row="row" #editProcesso>
+              <input-search [size]="12" #inputProcesso label icon controlName="cadeia_processo_id" label [where]="[['cadeia_valor_id', '==', cadeiaValorId]]" [dao]="cadeiaValorProcessoDao" [selectRoute]="{route: ['gestao', 'cadeia-valor', 'processoList'], params: {filter: {cadeia_valor_id: cadeiaValorId}}}"></input-search>
+            </ng-template>
+          </column>
+          <column type="options" [dynamicButtons]="dynamicButtonsProcessos.bind(this)"></column>
+        </columns>
+      </grid>
+    </tab>
+  </tabs>
+</editable-form>

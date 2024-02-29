@@ -16,38 +16,19 @@ export class TipoModalidadeListComponent extends PageListBase<TipoModalidade, Ti
   constructor(public injector: Injector) {
     super(injector, TipoModalidade, TipoModalidadeDaoService);
     /* Inicializações */
-    this.title = "Tipos de " + this.lex.noun("Modalidade",true);
+    this.title = this.lex.translate("Tipos de Modalidade");
     this.code="MOD_TIPO_MDL";
     this.filter = this.fh.FormBuilder({
       nome: {default: ""},
       atividades_homologadas: {default: ""},
       dispensa_avaliacao: {default: ""},
       exige_assinatura: {default: ""},
-      exige_adesao: {default: ""},
       data_inicio: {default: ""},
       data_fim: {default: ""}
     });
-    // Testa se o usuário possui permissão para exibir dados do tipo de modalidade
-    if (this.auth.hasPermissionTo("MOD_TIPO_MDL_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir o tipo de modalidade
-    if (this.auth.hasPermissionTo("MOD_TIPO_MDL_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
-  }
-
-  public filterClear(filter: FormGroup) {
-    filter.controls.nome.setValue("");
-    super.filterClear(filter);
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR, "MOD_TIPO_MDL_EXCL");
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public filterWhere = (filter: FormGroup) => {
@@ -55,7 +36,7 @@ export class TipoModalidadeListComponent extends PageListBase<TipoModalidade, Ti
     let form: any = filter.value;
 
     if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
 
     return result;

@@ -17,7 +17,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   public formValidation?: (form?: FormGroup) => string | undefined | null;
   public dao?: DaoBaseService<Base>;
   public entity_id?: string; /* Se estiver preenchido, então veio por uma rota e é uma janela autocontida, com salvar e cancelar */
-  /* Dever ser sobrescritos utilizando o @Input() */
+  /* Dever ser sobrescrito utilizando o @Input() */
   public set control(value: AbstractControl | undefined) {
     if (this._control != value) {
       this._control = value;
@@ -29,15 +29,22 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   public set entity(value: any) {
     if (this._entity != value) {
       this._entity = value;
-      this.fakeControl.setValue(value);
-      this.loadData(value, this.form!);
+      this.fakeControl.setValue(this.entityToControl(value));
+      if(this.viewInit) this.loadData(value, this.form!);
     }
   }
   public get entity(): any {
     return this._entity;
   }
+  public set noPersist(value: string | undefined) {
+    if(this._noPersist != value) this._noPersist = value;
+  }
+  public get noPersist(): string | undefined {
+    return this._noPersist;
+  }
 
   protected _entity: any = undefined;
+  protected _noPersist?: string = undefined;
   protected _control: AbstractControl | undefined = undefined;
   protected fakeControl: FormControl = new FormControl();
 
@@ -45,6 +52,8 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   public join: string[] = [];
   public orderBy?: QueryOrderBy[];
   public groupBy?: GroupBy[];
+  public entityToControl = (value: any) => value;
+
   constructor(public injector: Injector) {
     super(injector);
   }
@@ -68,7 +77,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   }
 
   public get isNoPersist(): boolean {
-    return this.entity_id == "NOPERSIST";
+    return this._noPersist != undefined || this.entity_id == "NOPERSIST";
   }
 
   public get gridControl(): AbstractControl {
@@ -92,11 +101,11 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   }
 
   private onInitializeData() {
-    if (this.entity_id?.length && !this.isNoPersist) { /* Janela autocontida */
+    if (this.entity_id?.length && !this.isNoPersist) { /* entity possui ID e o componente é persistente (Janela autocontida) */
       (async () => {
         this.loading = true;
         try {
-          if (this.entity_id == "new") {
+          if (this.entity_id == "new" || this.isNew) {
             await this.initializeData(this.form);
           } else {
             this.entity = await this.dao?.getById(this.entity_id!, this.join);
@@ -114,6 +123,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   public async onSaveData() {
     this.submitting = true;
     try {
+      //
       let entity = await this.saveData(this.form!.value);
       if (entity) {
         const modalResult = this.isNoPersist ? this.entity :
@@ -134,79 +144,17 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
     this.close();
   }
 
-  /*
-  public abstract loadData(form: FormGroup): Promise<void> | void;
-
-
-  public abstract saveData(form: IIndexable): Promise<NavigateResult | boolean | undefined | null>;
-
-  private onInitializeData() {
-    (async () => {
-      this.loading = true;
-      try {
-        if (["edit", "consult"].includes(this.action)) {
-          const entity = await this.dao!.getById(this.urlParams!.get("id")!, this.join);
-          this.entity = entity!;
-          await this.loadData(this.entity, this.form!);
-        } else { /* if (this.action == "new") * /
-          await this.initializeData(this.form!);
-        }
-      } catch (erro) {
-        this.error("Erro ao carregar dados: " + erro);
-      } finally {
-        this.loading = false;
-      }
-      if(this.action == "edit" && this.titleEdit) this.title = this.titleEdit(this.entity!);
-    })();
-  }
-
-  public async onSaveData() {
-    const self = this;
-    let error: any = undefined;
-    if(this.formValidation) {
-      try {
-        error = this.formValidation(this.form!);
-      } catch (e: any) {
-        error = e;
-      }
-    }
-    //Object.keys(this.form!.controls).forEach(field => this.form!.get(field)?.updateValueAndValidity());
-    if(this.form!.valid && !error){
-      this.submitting = true;
-      try {
-        let entity = await this.saveData(this.form!.value);
-        if(entity){
-          const modalResult = typeof entity == "boolean" ? this.entity?.id : entity instanceof NavigateResult ? entity.modalResult : (await this.dao!.save(entity as M)).id;
-          if(self.modalRoute?.queryParams?.idroute?.length) self.go.setModalResult(self.modalRoute?.queryParams?.idroute, modalResult);
-          //self.dialog.alert("Sucesso", this.mensagemSalvarSucesso).then(() => self.go.back());
-          self.go.back(undefined, this.backRoute);
-        }
-      } catch (error: any) {
-        self.error(error.message ? error.message : error);
-      } finally {
-        self.submitting = false;
-      }
-    } else {
-      this.form!.markAllAsTouched();
-      if(error) {
-        this.error(error);
-      }
-      Object.entries(this.form!.controls).forEach(([key, value]) => {
-        if(value.invalid) console.log("Validate => " + key, value.value, value.errors);
-      });
-    }
-  }
-
-  public onCancel() {
-    this.go.back(undefined, this.backRoute);
-  } */
-
   public getControlByName(controlName: string): FormControl {
     return this.form!.controls[controlName] as FormControl;
   }
 
   public error = (error: string) => {
-    if (this.editableForm) this.editableForm.error = error;
+    if (this.editableForm) {
+      this.editableForm.error = error;
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      this.dialog.topAlert(error);
+    }
   }
 
   public clearErros = () => {

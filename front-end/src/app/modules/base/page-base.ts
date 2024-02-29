@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Injector, Injectable, OnInit } from '@angular/core';
-import { FormBuilder, AbstractControl, ValidatorFn, FormGroup } from '@angular/forms';
-import { ActivatedRoute, ActivatedRouteSnapshot, ParamMap, Params, Router, UrlSegment } from '@angular/router';
+import { FormBuilder, AbstractControl } from '@angular/forms';
+import { ActivatedRoute, ActivatedRouteSnapshot, ParamMap, Router, UrlSegment } from '@angular/router';
 import { LookupService } from 'src/app/services/lookup.service';
 import { DialogService } from 'src/app/services/dialog.service';
 import { GlobalsService } from 'src/app/services/globals.service';
@@ -11,7 +11,9 @@ import { FullRoute, NavigateService } from 'src/app/services/navigate.service';
 import { ModalPage } from './modal-page';
 import { Subject } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
-import { IIndexable } from 'src/app/models/base.model';
+import { EntityService } from 'src/app/services/entity.service';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+declare var bootstrap: any;
 
 @Injectable()
 export abstract class PageBase implements OnInit, ModalPage {
@@ -44,7 +46,7 @@ export abstract class PageBase implements OnInit, ModalPage {
   public set submitting(value: boolean) {
     if(!value) {
       this.dialog.closeSppinerOverlay();
-    } else if(!this._submitting) {
+    } else if(!this._submitting || !this.dialog.sppinerShowing) {
       this.dialog.showSppinerOverlay(this.mensagemSalvando);
     }
     this._submitting = value;
@@ -52,9 +54,38 @@ export abstract class PageBase implements OnInit, ModalPage {
   public get submitting(): boolean {
     return this._submitting;
   } 
+  public get MAX_LENGTH_TEXT() { return 65500};
+  public get MIN_LENGTH_TEXT() { return 10};
+
+  /* Constantes */
+  public OPTION_INFORMACOES: ToolbarButton =  {
+    icon: "bi bi-info-circle",
+    label: "Informações",
+    hint: "Informações",
+    color: "btn-outline-info",
+  };
+  public OPTION_ALTERAR: ToolbarButton = {
+    icon: "bi bi-pencil-square",
+    label: "Alterar",
+    hint: "Alterar",
+    color: "btn-outline-warning",
+  };
+  public OPTION_EXCLUIR: ToolbarButton = {
+    icon: "bi bi-trash",
+    label: "Excluir",
+    hint: "Excluir",
+    color: "btn-outline-danger",
+  };
+  public OPTION_LOGS: ToolbarButton = {
+    icon: "bi bi-list-ul",
+    label: "Logs",
+    hint: "Alterar",
+    color: "btn-outline-secondary",
+  };
 
   /* Injections */
   public lookup: LookupService;
+  public entityService: EntityService;
   public router: Router;
   public route: ActivatedRoute;
   public fb: FormBuilder;
@@ -73,6 +104,8 @@ export abstract class PageBase implements OnInit, ModalPage {
   public breadcrumbs: FullRoute[] = [];
   public backRoute: FullRoute = { route: ['home'] };
   public modalWidth: number = 1000;
+  public viewInit: boolean = false;
+  public options: ToolbarButton[] = [];
   public storeExtra?: () => any;
   private _title: string = "";
   public set title(value: string) { if(this._title != value) { this._title = value; this.titleSubscriber.next(value); }};
@@ -98,6 +131,7 @@ export abstract class PageBase implements OnInit, ModalPage {
     this.go = this.injector.get<NavigateService>(NavigateService);
     this.lex = this.injector.get<LexicalService>(LexicalService);
     this.auth = this.injector.get<AuthService>(AuthService);
+    this.entityService = injector.get<EntityService>(EntityService);
   }
 
   ngOnInit(){
@@ -119,7 +153,22 @@ export abstract class PageBase implements OnInit, ModalPage {
       this.shown = true;
       if(this.onShow) this.onShow();
     };
+
+    
+    let elements = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    elements.forEach(function(element) {
+      let tooltip  = new bootstrap.Tooltip(element, {trigger: 'hover'});
+      element.addEventListener('click', () => {
+        tooltip.hide()
+      })
+    });
+
     this.cdRef.detectChanges();
+    this.viewInit = true;
+  }
+
+  public error = (error: string) => {
+    this.dialog.topAlert(error);
   }
 
   public saveUsuarioConfig(config?: any) {
@@ -129,6 +178,10 @@ export abstract class PageBase implements OnInit, ModalPage {
 
   public defaultUsuarioConfig(): any {
     return {};
+  }
+
+  public addOption(button: ToolbarButton, capacidade?: string) {
+    if (!capacidade || this.auth.hasPermissionTo(capacidade)) this.options.push(button);
   }
 
   public isInvalid(control: AbstractControl): boolean {

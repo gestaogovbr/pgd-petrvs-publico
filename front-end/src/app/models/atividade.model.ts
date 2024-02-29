@@ -1,43 +1,91 @@
-import { TipoAtividade } from 'src/app/models/tipo-atividade.model';
 import { LookupItem } from '../services/lookup.service';
-import { Base, IIndexable } from './base.model';
-import { Md5 } from 'ts-md5/dist/md5';
+import { TipoAtividade } from './tipo-atividade.model';
+import { Base } from './base.model';
+import { Comentario, HasComentarios } from './comentario';
+import { AtividadeTarefa } from './atividade-tarefa.model';
+import { PlanoTrabalhoEntrega } from './plano-trabalho-entrega.model';
+import { PlanoTrabalho } from './plano-trabalho.model';
 import { Unidade } from './unidade.model';
+import { Usuario } from './usuario.model';
+import { BadgeButton } from '../components/badge/badge.component';
+import { Documento } from './documento.model';
+import { AtividadePausa } from './atividade-pausa.model';
+import { HasStatus, StatusJustificativa } from './status-justificativa.model';
+import { PlanoTrabalhoConsolidacao } from './plano-trabalho-consolidacao.model';
+import { HasReacoes, Reacao } from './reacao';
 
-export type Complexidade = {id: string, grau: string, fator: number, tempo: number, padrao: boolean};
+export type AtividadeStatus = "INCLUIDO" | "INICIADO" | "PAUSADO" | "CONCLUIDO";
 
-export class Atividade extends Base {
-    public observacoes: string | null = null; /* Observação sobre o afastamento */
-    public inicio_afastamento: Date = new Date(); /* Inicio do afastamento  */
-    public tipoAtividade?: TipoAtividade;
+export type AtividadeMetadadosConsolidacao = {
+    id: string,
+    status: AtividadeStatus,
+    data_conclusao: Date
+}
+
+export type AtividadeMetadados = {
+    atrasado: boolean,
+    tempo_despendido: number,
+    tempo_atraso: number,
+    pausado: boolean,
+    iniciado: boolean,
+    concluido: boolean,
+    avaliado: boolean,
+    arquivado: boolean,
+    produtividade: number,
+    consolidacoes: AtividadeMetadadosConsolidacao[],
+    extra?: any,
+    _status?: BadgeButton[],
+}
+
+export type Checklist = {
+    id: string,
+    texto: string,
+    checked: boolean
+}
+
+export class Atividade extends Base implements HasComentarios, HasStatus, HasReacoes {
+    public plano_trabalho?: PlanoTrabalho;
+    public plano_trabalho_entrega?: PlanoTrabalhoEntrega;
+    public plano_trabalho_consolidacao?: PlanoTrabalhoConsolidacao;
+    public tipo_atividade?: TipoAtividade;
+    public demandante?: Usuario;
+    public usuario?: Usuario;
     public unidade?: Unidade;
+    public documento_requisicao?: Documento;
+    public documento_entrega?: Documento;
+    public status_historico: StatusJustificativa[] = []; // Mudanças de status sofridas pela atividade (histórico)
 
-    public nome: string = "";  //Nome da classe de atividade
-    public tempo_pactuado: number = 48; //Tempo previsto para a execução da atividade
-    public dias_planejado: number = 0; //Tempo em dias previsto para a atividade
-    public tempo_minimo: number = 20; //Tempo despendido mínimo aceitável para a atividade (% do tempo pactuado)
-    public recalcula_prazo: number = 0; //Recalcular o prazo de entrega depois de iniciada a demanda
-    public desativa_produtividade: number = 0; //Desativar o cálculo de produtividade e controle de tempo de execução (para atividades do tipo monitoramento)
-    public complexidade: Complexidade[] = [
-      {id: Md5.hashStr(Math.random().toString()), grau: "Muito baixo", fator: 0.25, tempo: 2, padrao: false},
-      {id: Md5.hashStr(Math.random().toString()), grau: "Baixo", fator: 0.5, tempo: 4, padrao: false},
-      {id: Md5.hashStr(Math.random().toString()), grau: "Médio", fator: 1, tempo: 8, padrao: true},
-      {id: Md5.hashStr(Math.random().toString()), grau: "Alto", fator: 2, tempo: 16, padrao: false},
-      {id: Md5.hashStr(Math.random().toString()), grau: "Muito alto", fator: 4, tempo: 32, padrao: false}
-    ]; //Graus de complexidade da atividade (complexidade, fator, tempo_pactuado, default)
-    //public tipo_processo_id: string = ""; //Configuração predefinidos de tipos associados de processos do Sei
-    public tipos_processo: LookupItem[] = []; //Configuração predefinidos de tipos associados de processos do Sei
-    public etiquetas_predefinidas: LookupItem[] = []; //Nome das etiquetas predefinidas para a demanda
-    public checklist_predefinidos: LookupItem[] = []; //Nome dos checklist predefinidas para a demanda
-    public comentario_predefinido: string = ""; //Comentário predefinido para a demanda
-    public parametros_adotados: LookupItem[] = []; //Parametros adotados para definir a entrega da atividade (textual, para cumprir a IN65/2020-ME)
-    public entregas_esperadas: LookupItem[] = []; //Quais as entregas esperadas (textual, para cumprir a IN65/2020-ME)
-    public homologado: number = 0; //Se a atividade foi homologada pela unidade gestora do teletrabalho
-    public data_homologacao: Date = new Date() //Data em que houve a homologação
-    public data_inicio: Date = new Date(); //Data inicio da vigência
-    public data_fim: Date | null = null; //Data final da vigência
-    public unidade_id: string = "";
+    public numero: number = 0; /* Numero da atividade */
+    public descricao: string = ""; /* Assunto da atividade */
+    public data_distribuicao: Date = new Date(); /* Data de cadastro da atividade */
+    public tempo_planejado: number = 0.0; /* Diferença entre data_distribuicao e data_estipulada_entrega em horas (úteis ou corridas, configurada na unidade) */
+    public carga_horaria: number = 0.0; /* Carga horária diária (vinda do plano de trabalho) */
+    public data_estipulada_entrega: Date = new Date(); /* Data estipulada para entrega da atividade */
+    public data_inicio: Date | null = null; /* Data em que o usuário iniciou a atividade */
+    public data_entrega: Date | null = null; /* Data da entrega */
+    public esforco: number = 0.0; /* Tempo calculado a partir da atividade e utilizando o fator_complexidade */
+    public tempo_despendido: number | null = null; /* Calculado no fim da atividade, sendo o tempo líquido (considerando pausas) */
+    public data_arquivamento: Date | null = null; /* Data de arquivamento da atividade */
+    public status: AtividadeStatus | null = null; /* Status atual da atividade */
+    public etiquetas: LookupItem[] = []; /* Etiquetas */
+    public checklist: Checklist[] = []; /* Checklist */
+    public prioridade: number | null = null; /* Nível de prioridade */
+    public progresso: number = 0; /* Progresso a execução da atividade */
+    public metadados: AtividadeMetadados | undefined = undefined; /* Campo virtual contendo informações calculadas pelo servidor */
+    public comentarios: Comentario[] = []; /* Comentarios da atividade */
+    public pausas: AtividadePausa[] = []; /* Pausas da atividade */
+    public tarefas: AtividadeTarefa[] = []; /* Tarefas da atividade */
+
+    public plano_trabalho_id: string | null = null;
+    public plano_trabalho_entrega_id: string | null = null;
+    public plano_trabalho_consolidacao_id: string | null = null;
     public tipo_atividade_id: string | null = null;
+    public demandante_id: string = "";
+    public usuario_id: string | null = null;
+    public unidade_id: string = "";
+    public documento_requisicao_id: string | null = null;
+    public documento_entrega_id: string | null = null;
+    public reacoes: Reacao[] = []; /* Reações da atividade */
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

@@ -41,8 +41,8 @@ class ZAfastamentoSeeder extends Seeder
             $ia = random_int(1641006000, 1667098800);
             $afastamento = new Afastamento();
             $afastamento->fill([
-                'inicio_afastamento' => new DateTime(date('Y-m-d H:i:s', $ia)), 
-                'fim_afastamento' => new DateTime(date('Y-m-d H:i:s', $ia + $dias_afastamento[random_int(0,3)]*86400)), 
+                'data_inicio' => new DateTime(date('Y-m-d H:i:s', $ia)), 
+                'data_fim' => new DateTime(date('Y-m-d H:i:s', $ia + $dias_afastamento[random_int(0,3)]*86400)), 
                 'usuario_id' => $usuarios[random_int(0, 3)],
                 'tipo_motivo_afastamento_id' => $tipos_motivos_afastamentos_id[random_int(0, 3)],
             ]);

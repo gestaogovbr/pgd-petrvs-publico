@@ -4,15 +4,49 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Usuario;
-use App\Models\Lotacao;
-use App\Models\NotificacaoWhatsapp;
 use App\Exceptions\LogError;
-use App\Services\RawWhere;
-use DateTime;
+use App\Exceptions\ServerException;
 use Throwable;
 
-class NotificacaoController extends Controller
+class NotificacaoController extends ControllerBase
 {
+    public function checkPermissions($action, $request, $service, $unidade, $usuario) {
+        /* Bloqueia qualquer tentativa de inserir, alterar ou excluir registros*/
+        if($action != "QUERY") throw new ServerException("CapacidadeStore", "Ação não permitida");
+    }
+
+    /**
+     * Retorna a quantidade de mensagens não lidas do usuário
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function naoLidas(Request $request)
+    {
+        $data = $request->validate([]);
+        return response()->json([
+            "status" => "OK",
+            "nao_lidas" => $this->service->naoLidas()
+        ]);
+    }
+
+    /**
+     * Marca os destinatários da notificação como lidas
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function marcarComoLido(Request $request)
+    {
+        $data = $request->validate([
+            'destinatarios_ids' => ['required']
+        ]);
+        return response()->json([
+            "status" => "OK",
+            "marcadas_como_lido" => $this->service->marcarComoLido($data["destinatarios_ids"])
+        ]);
+    }
+
     /**
      * Encontra usuário pelo número de telefone
      *

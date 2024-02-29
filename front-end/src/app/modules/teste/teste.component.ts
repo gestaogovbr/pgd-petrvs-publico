@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { FormHelperService } from 'src/app/services/form-helper.service';
@@ -9,8 +8,7 @@ import { UtilService } from 'src/app/services/util.service';
 import * as moment from 'moment';
 import { CardItem } from 'src/app/components/kanban/docker/docker.component';
 import { GanttAssignment, GanttProject, GanttResource, GanttTask } from 'src/app/components/gantt/gantt-models';
-import { CalendarOptions } from '@fullcalendar/angular';
-//import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { CalendarOptions } from '@fullcalendar/core';
 import { Expediente } from 'src/app/models/expediente.model';
 import { Feriado } from 'src/app/models/feriado.model';
 import { Afastamento } from 'src/app/models/afastamento.model';
@@ -19,11 +17,12 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { MapItem } from 'src/app/components/map/map.component';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { Planejamento } from 'src/app/models/planejamento.model';
-import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { EixoTematico } from 'src/app/models/eixo-tematico.model';
-import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { Documento, HasDocumentos } from 'src/app/models/documento.model';
+import { InputLevelItem } from 'src/app/components/input/input-level/input-level.component';
+import { TemplateDataset } from '../uteis/templates/template.service';
+import { ServerService } from 'src/app/services/server.service';
 
 @Component({
   selector: 'app-teste',
@@ -55,6 +54,18 @@ export class TesteComponent implements OnInit {
     { id: "a1", title: "avaliada 1", subTitle: "avaliado 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens" }
   ];
 
+  public button_items: LookupItem[] = [
+    { key: '1', value: '1', icon: 'bi-heart-fill', color: '#107165', data: {label: 'Stretchable Button Hover Effect'} },
+    { key: '1', value: '1', icon: 'bi-emoji-smile', color: '#2b1071', data: {label: 'Embedded', selected: true} },
+    { key: '1', value: '1', icon: 'bi-hand-thumbs-down', color: '#713710', data: {label: 'Embed your icons within the HTML of your page'} },
+    { key: '1', value: '1', icon: 'bi-heart-fill', color: '#107165', data: {label: 'Stretchable Button Hover Effect'} },
+    { key: '1', value: '1', icon: 'bi-emoji-smile', color: '#2b1071', data: {label: 'Embedded', selected: true} },
+    { key: '1', value: '1', icon: 'bi-hand-thumbs-down', color: '#713710', data: {label: 'Embed your icons within the HTML of your page'} },
+    { key: '1', value: '1', icon: 'bi-heart-fill', color: '#107165', data: {label: 'Stretchable Button Hover Effect'} },
+    { key: '1', value: '1', icon: 'bi-emoji-smile', color: '#2b1071', data: {label: 'Embedded', selected: true} },
+    { key: '1', value: '1', icon: 'bi-hand-thumbs-down', color: '#713710', data: {label: 'Embed your icons within the HTML of your page'} },
+  ]
+
   public calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
     events: [
@@ -67,6 +78,18 @@ export class TesteComponent implements OnInit {
     {
       field: "nome",
       label: "Usuário: Nome"
+    },
+    {
+      field: "numero",
+      label: "Numero"
+    },
+    {
+      field: "texto",
+      label: "Texto"
+    },
+    {
+      field: "boo",
+      label: "Boolean"
     },
     {
       field: "atividades",
@@ -87,6 +110,9 @@ export class TesteComponent implements OnInit {
 
   public datasource: IIndexable = {
     nome: "Genisson Rodrigues Albuquerque",
+    numero: 10,
+    texto: "Teste",
+    boo: true,
     atividades: [
       { nome: "atividade 1", valor: 100, opcoes: [{ nome: "opc 1" }, { nome: "opc 2" }] },
       { nome: "atividade 2", valor: 200, opcoes: [] },
@@ -97,6 +123,7 @@ export class TesteComponent implements OnInit {
   public textoEditor: string = ``;
   public template: string = `
 <p>Este &eacute; o {{nome}}.</p>
+<p>{{if:texto="Teste"}}Texto é teste{{end-if}}{{if:numero!=10}}Número não é 10{{end-if}}</p>
 <table>
     <thead>
         <tr>
@@ -112,16 +139,16 @@ export class TesteComponent implements OnInit {
         <tr>
             <td>{{atividades[x].nome}}</td>
             <td>{{atividades[x].valor}}</td>
-            <td>{{atividades[x].opcoes[0].nome}}{{for:atividades[x].opcoes[1..y]}}, {{atividades[x].opcoes[y].nome}}{{end-for:atividades[x].opcoes[1..y]}}</td>
+            <td>{{atividades[x].opcoes[0].nome}}{{for:atividades[x].opcoes[1..y]}}, {{atividades[x].opcoes[y].nome}}{{end-for}}</td>
         </tr>
         <tr>
-            <td colspan="3">{{end-for:atividades[0..x];drop=tr}}</td>
+            <td colspan="3">{{end-for;drop=tr}}</td>
         </tr>
     </tbody>
 </table>
 <br>
 <br>
-atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome}}{{end-for:atividades[0..y]}}
+atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome}}{{end-for}}
   `;
 
   public buttons: ToolbarButton[] = [
@@ -129,14 +156,14 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
       label: "Calcular data fim",
       onClick: () => {
         let form = this.form.value;
-        this.efemerides = this.calendar.calculaDataTempo(form.inicio, form.tempo, form.forma, form.carga_horaria, this.expediente, form.feriados.map((x: LookupItem) => x.data), [], form.afastamentos.map((x: LookupItem) => x.data));
+        this.efemerides = this.calendar.calculaDataTempo(form.data_inicio, form.tempo, form.forma, form.carga_horaria, this.expediente, form.feriados.map((x: LookupItem) => x.data), [], form.afastamentos.map((x: LookupItem) => x.data));
       }
     },
     {
       label: "Calcular tempo",
       onClick: () => {
         let form = this.form.value;
-        this.efemerides = this.calendar.calculaDataTempo(form.inicio, form.fim, form.forma, form.carga_horaria, this.expediente, form.feriados.map((x: LookupItem) => x.data), [], form.afastamentos.map((x: LookupItem) => x.data));
+        this.efemerides = this.calendar.calculaDataTempo(form.data_inicio, form.data_fim, form.forma, form.carga_horaria, this.expediente, form.feriados.map((x: LookupItem) => x.data), [], form.afastamentos.map((x: LookupItem) => x.data));
       }
     }
   ];
@@ -193,6 +220,7 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
     public lookup: LookupService,
     public util: UtilService,
     public go: NavigateService,
+    public server: ServerService,
     public calendar: CalendarService,
     @Inject('ID_GENERATOR_BASE') public ID_GENERATOR_BASE: any
   ) {
@@ -200,6 +228,7 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
       editor: { default: this.textoEditor },
       template: { default: this.template },
       id: { default: "" },
+      level: { default: "2.4.6.8"},
       campo1: { default: "" },
       campo2: { default: new Date() },
       campo3: { default: new Date() },
@@ -210,14 +239,14 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
       tempo: { default: 0 },
       feriados: { default: [] },
       afastamentos: { default: [] },
-      inicio: { default: new Date() },
-      fim: { default: new Date() },
+      data_inicio: { default: new Date() },
+      data_fim: { default: new Date() },
       carga_horaria: { default: 24 },
       dia: { default: 0 },
       mes: { default: 0 },
       ano: { default: 0 },
-      inicio_afastamento: { default: new Date() },
-      fim_afastamento: { default: new Date() },
+      data_inicio_afastamento: { default: new Date() },
+      data_fim_afastamento: { default: new Date() },
       observacao: { default: "" },
       nome: { default: "" },
       rate: { default: 2 },
@@ -330,7 +359,7 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
   }
 
   public openDocumentos() {
-    this.go.navigate({route: ['utils', 'documentos']}, {metadata: {
+    this.go.navigate({route: ['uteis', 'documentos']}, {metadata: {
       needSign: (documento: Documento) => true,
       extraTags: (entity: HasDocumentos, documento: Documento, metadata: any) => [],
       especie: "TCR",
@@ -340,6 +369,10 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
       template_id: "ID"
     }});
   }
+
+  public validateLevel = (parents: InputLevelItem[], item: InputLevelItem, children: InputLevelItem[]): Promise<boolean> | boolean => {
+    return (item.value as number) % 2 == 0;
+  };
 
   public gridItems = [
     { id: this.util.md5(), campo1: "campo1-1", campo2: new Date(), campo3: new Date(), campo4: "campo4-1", campo5: false },
@@ -357,12 +390,12 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
       });
     } */
   ngOnInit(): void {
-    this.planejamentoDao.getById("867c7768-9690-11ed-b4ae-0242ac130002", ["objetivos.eixoTematico", "unidade", "entidade"]).then(planejamento => {
+    this.planejamentoDao.getById("867c7768-9690-11ed-b4ae-0242ac130002", ["objetivos.eixo_tematico", "unidade", "entidade"]).then(planejamento => {
       let mapa: MapItem[] = [];
       this.planejamento = planejamento || undefined;
       if (planejamento) {
         let eixos = planejamento.objetivos?.reduce((a, v) => {
-          if (!a.find(x => x.id == v.eixo_tematico_id)) a.push(v.eixoTematico!);
+          if (!a.find(x => x.id == v.eixo_tematico_id)) a.push(v.eixo_tematico!);
           return a;
         }, [] as EixoTematico[]) || [];
         mapa = eixos.map(x => {
@@ -374,10 +407,25 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
       }
       this.mapa = mapa;
     });
+
+    this.server.startBatch();
+    let usuarios = this.usuarioDao.query({limit: 100}).asPromise();    
+    let planejamentos = this.planejamentoDao.query({limit: 100}).asPromise();    
+    this.server.endBatch();
+    Promise.all([usuarios, planejamentos]).then(results => {
+      console.log(results[0]);
+      console.log(results[1]);
+    });
   }
 
   ngAfterViewInit() {
     //this.form.controls.search.setValue("dfcb36c8-4784-4d3c-b4bb-d4e9c9b2e68c");
+  }
+
+  public renderTemplate() {
+    this.server.post('api/Template/teste', {}).subscribe(response => {
+      console.log(response);
+    }, error => console.log(error));
   }
 
   public addItemHandle(): LookupItem | undefined {
@@ -413,12 +461,12 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
     let afastamento = new Afastamento({
       id: this.util.md5(),
       observacoes: form.observacao,
-      inicio_afastamento: form.inicio_afastamento,
-      fim_afastamento: form.fim_afastamento
+      data_inicio: form.data_inicio_afastamento,
+      data_fim: form.data_fim_afastamento
     });
     return {
       key: afastamento.id,
-      value: this.util.getDateTimeFormatted(afastamento.inicio_afastamento) + " até " + this.util.getDateTimeFormatted(afastamento.fim_afastamento) + " - " + afastamento.observacoes,
+      value: this.util.getDateTimeFormatted(afastamento.data_inicio) + " até " + this.util.getDateTimeFormatted(afastamento.data_fim) + " - " + afastamento.observacoes,
       data: afastamento
     };
   };

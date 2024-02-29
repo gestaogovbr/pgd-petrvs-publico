@@ -1,5 +1,6 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
+import { Projeto } from 'src/app/models/projeto.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 
 @Component({
@@ -8,6 +9,8 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
   styleUrls: ['./projeto-tarefa-form.component.scss']
 })
 export class ProjetoTarefaFormComponent extends PageFrameBase {
+
+  public projeto?: Projeto;
 
   constructor(public injector: Injector) {
     super(injector);

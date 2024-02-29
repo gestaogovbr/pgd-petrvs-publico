@@ -1,20 +1,16 @@
 import { ChangeDetectorRef, Component, Injector, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { AdesaoDaoService } from 'src/app/dao/adesao-dao.service';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
-import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
-import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
+import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Documento, DocumentoEspecie, HasDocumentos } from 'src/app/models/documento.model';
 import { Template } from 'src/app/models/template.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
-
-//export type DocumentoEspecie = 'TERMO_ADESAO' | 'SEI' | 'TCR' | 'TCR_CANCELAMENTO' | 'OUTRO';
+import { TemplateDataset, TemplateService } from '../templates/template.service';
+import { DocumentoService } from './documento.service';
 
 @Component({
   selector: 'documentos',
@@ -24,14 +20,39 @@ import { LookupItem } from 'src/app/services/lookup.service';
 export class DocumentosComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @Input() cdRef: ChangeDetectorRef;
-  @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
+  //@Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: HasDocumentos | undefined) { super.entity = value; } get entity(): HasDocumentos | undefined { return super.entity; }
+  @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() needSign: ((entity: HasDocumentos, documento: Documento) => boolean) = (e: HasDocumentos, d: Documento) => true;
   @Input() extraTags: ((entity: HasDocumentos, documento: Documento, metadata: any) => LookupItem[]) = (e: HasDocumentos, d: Documento, m: any) => [];
   @Input() especie: DocumentoEspecie = 'OUTRO';
   @Input() dataset?: TemplateDataset[];
-  @Input() datasource?: any;
+  @Input() disabled: boolean = false;
+  @Input() canEditTemplate: boolean = false;
   @Input() template?: Template;
+  @Input() set datasource(value: any) {
+    if(JSON.stringify(this._datasource) != this.JSON.stringify(value)) {
+      this._datasource = value;
+      if(!(this.grid?.editing as Documento)?.assinaturas?.length) this.form!.controls.datasource.setValue(value);
+      this.cdRef.detectChanges();
+    }
+  }
+  get datasource(): any {
+    return this._datasource;
+  }
+  @Input() set editingId(value: string | undefined | null) {
+    if(this._editingId != value) {
+      this._editingId = value;
+      if(value) {
+        this.action = "edit";
+        this.documentoId = value;
+        this.loadData(this.entity!);
+      }
+    }
+  }
+  get editingId(): string | undefined | null {
+    return this._editingId;
+  }
 
   public get items(): Documento[] {
     if(!this.gridControl.value) this.gridControl.setValue({documentos: []});
@@ -39,46 +60,35 @@ export class DocumentosComponent extends PageFrameBase {
     return this.gridControl.value.documentos;
   }
   public documentoDao: DocumentoDaoService;
-  public allPages: ListenerAllPagesService;
-  public datasourceEdit?: any;
+  public templateService: TemplateService;
+  public documentoService: DocumentoService;
   public templateEdit?: string;
-  public selected?: Documento;
+  public tituloDefault?: string;
   public documentoId?: string;
-  public editingButtons: ToolbarButton[] = [
-    {
-      label: "Gravar",
-      hint: "Salvar o texto do documento",
-      icon: "bi bi-plus-circle",
-      color: "btn-outline-success",
-      disabled: () => !this.form!.valid,
-      onClick: this.gravarEdicao.bind(this)
-    },
-    {
-      label: "Cancelar",
-      hint: "Descartar alterações",
-      icon: "bi bi-dash-circle",
-      color: "btn-outline-danger",
-      onClick: this.cancelarEdicao.bind(this)
-    } 
-  ];
+
+  private _editingId?: string | null;
+  private _datasource?: any; 
 
   constructor(public injector: Injector) {
     super(injector);
     /* Inicializações */
-    this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
+    this.templateService = injector.get<TemplateService>(TemplateService);
+    this.documentoService = injector.get<DocumentoService>(DocumentoService);
     this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       id: {default: ""},
+      tipo: {default: "HTML"},
       titulo: {default: ""},
       conteudo: {default: ""},
+      link: {default: null},
       dataset: {default: undefined},
       datasource: {default: undefined},
       template: {default: undefined},
       template_id: {default: undefined}
     }, this.cdRef, this.validate);
-    this.join = ["documentos"];
+    this.join = ["documentos.assinaturas.usuario"];
   }
 
   public ngOnInit() {
@@ -86,19 +96,18 @@ export class DocumentosComponent extends PageFrameBase {
     this.needSign = this.metadata?.needSign || this.needSign;
     this.extraTags = this.metadata?.extraTags || this.extraTags;
     this.especie = this.urlParams?.has("especie") ? this.urlParams!.get("especie") : this.metadata?.especie || this.especie;
-    this.action = this.urlParams?.has("action") ? this.urlParams!.get("action") || "" : "";
-    this.documentoId = this.urlParams?.has("documentoId") ? this.urlParams!.get("documentoId") || undefined : undefined;
+    this.action = this.urlParams?.has("action") ? this.urlParams!.get("action") || "" : this.action;
+    this.documentoId = this.urlParams?.has("documentoId") ? this.urlParams!.get("documentoId") || undefined : this.documentoId;
     this.dataset = this.metadata?.dataset || this.dataset;
     this.datasource = this.metadata?.datasource || this.datasource;
     this.template = this.metadata?.template || this.template;
+    this.tituloDefault = this.metadata?.titulo || this.tituloDefault;
     /* Obrigatório instanciar o DAO correto a depender da espécie */
-    this.dao = this.especie == "TERMO_ADESAO" ? this.injector.get<PlanoDaoService>(PlanoDaoService) :
-      ["TCR", "TCR_CANCELAMENTO"].includes(this.especie) ? this.injector.get<AdesaoDaoService>(AdesaoDaoService) : undefined;
+    this.dao = ["TCR"].includes(this.especie) ? this.injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService) : undefined;
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-
     if(controlName == "titulo" && !control?.value?.length) {
       result = "Obrigatório";
     }
@@ -107,15 +116,14 @@ export class DocumentosComponent extends PageFrameBase {
 
   public loadData(entity: IIndexable, form?: FormGroup) {
     this.entity = entity as HasDocumentos;
-    if(!this.grid!.editing && !this.grid!.adding) {
+    if(this.viewInit && !this.grid!.editing && !this.grid!.adding) {
       if(this.action == "new") this.grid!.onAddItem();
       if(this.action == "edit") this.grid!.onEditItem(this.grid!.selectById(this.documentoId || ""));
     }
-    //super.loadData(entity, form);
   }
 
   public initializeData(form?: FormGroup) {
-    this.entity = this.entity || { id: this.dao?.generateUuid(), documentos: [] } as HasDocumentos;
+    this.entity = this.entity || { id: this.dao?.generateUuid(), documentos: [], documento_id: null } as HasDocumentos;
     this.loadData(this.entity, this.form);
   }
 
@@ -124,7 +132,7 @@ export class DocumentosComponent extends PageFrameBase {
     return this.entity!;
   }
 
-  public onSelect(row: any) {
+  /*public onSelect(row: any) {
     this.selected = row as Documento;
     this.form!.patchValue({
       id: this.selected?.id || "",
@@ -135,33 +143,44 @@ export class DocumentosComponent extends PageFrameBase {
       template: this.selected?.template,
       template_id: this.selected?.template_id
     });
+    /*this.templateEdit = this.canEdit ? this.selected?.template || undefined : undefined;* /
     this.cdRef.detectChanges();
+  }*/
+
+  public get canEdit(): boolean {
+    const selected: Documento | undefined = this.grid?.selected as Documento;
+    return this.canEditTemplate && !selected?.assinaturas?.length && selected?.tipo != "LINK";
   }
 
-  public gravarEdicao() {
+  /*public gravarEdicao() {
     this.grid!.onSaveItem(this.selected!);
   }
 
   public cancelarEdicao() {
     this.grid!.onCancelItem();
+  }*/
+  
+  public editEndDocumento(id?: string) {
+    /* Garante que caso tenha editingId esteja sempre em edição * /
+    if(this.editingId?.length && !this.grid?.editing && this.action == "edit") {
+      this.grid!.onEditItem(this.grid!.selectById(this.editingId || ""));
+    }*/
   }
 
   public documentoDynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let documento: Documento = row as Documento;
-
     if(!this.isNoPersist && this.entity && this.needSign(this.entity, documento)) {
-      result.push({hint: "Assinar", icon: "bi bi-pen", onClick: this.signDocumento.bind(this) });
+      result.push({hint: "Assinar", icon: "bi bi-pen", color: "secondary", onClick: this.signDocumento.bind(this) });
     }
-    result.push({hint: "Preview", icon: "bi bi-zoom-in", onClick: ((documento: Documento) => { this.dialog.html({title: "Termo de ciência e responsabilidade", modalWidth: 1000}, documento.conteudo || ""); }).bind(this) });
-
+    //result.push({hint: "Preview", icon: "bi bi-zoom-in", onClick: this.documentoService.onDocumentoClick.bind(this.documentoService.onDocumentoClick) });
     return result;
   }
 
   /*public needSign(documento: Documento): boolean {
-    const tipoModalidade = this.entity!.tipo_modalidade!; //(this.tipoModalidade?.searchObj as TipoModalidade);
-    const usuario = this.entity!.usuario!; // (this.usuario?.searchObj as Usuario);
-    const unidade = this.entity!.unidade!; // (this.unidade?.searchObj as Unidade);
+    const tipoModalidade = this.entity!.tipo_modalidade!; //(this.tipoModalidade?.selectedEntity as TipoModalidade);
+    const usuario = this.entity!.usuario!; // (this.usuario?.selectedEntity as Usuario);
+    const unidade = this.entity!.unidade!; // (this.unidade?.selectedEntity as Unidade);
     const entidade = unidade?.entidade;
     const alredySigned = !!documento.assinaturas.find(x => x.usuario_id == this.auth.usuario!.id);
     let ids: string[] = [];
@@ -171,8 +190,10 @@ export class DocumentosComponent extends PageFrameBase {
     return !alredySigned && tipoModalidade && ids.includes(this.auth.usuario!.id);
   }*/
 
-  public signDocumento(documento: Documento) {
-    this.dialog.confirm("Assinar", "Deseja realmente assinar o documento?").then(response => {
+  public async signDocumento(documento: Documento) {
+    await this.documentoService.sign([documento]);
+    this.cdRef.detectChanges();
+    /*this.dialog.confirm("Assinar", "Deseja realmente assinar o documento?").then(response => {
       if(response) {
         this.loading = true;
         this.documentoDao.assinar([documento.id]).then(response => {
@@ -185,21 +206,26 @@ export class DocumentosComponent extends PageFrameBase {
           }
         }).finally(() => this.loading = false);
       }
-    });
+    });*/
   }
 
   public async addDocumento() {
-    const documento = new Documento();
-    documento.id = this.dao!.generateUuid();
-    documento.entidade_id = this.auth.unidade?.entidade_id || null;
-    documento.especie = this.especie;
-    documento._status = "ADD";
-
-    
-    if(this.especie == "TERMO_ADESAO") documento.plano_id = this.entity!.id;
-    if(["TCR", "TCR_CANCELAMENTO"].includes(this.especie)) documento.programa_adesao_id = this.entity!.id;
-    this.onSelect(documento);
-    return documento;
+    return new Documento({
+      id: this.dao!.generateUuid(),
+      entidade_id: this.auth.unidade?.entidade_id || null,
+      tipo: "HTML",
+      especie: this.especie,
+      link: null,
+      _status: "ADD",
+      titulo: this.tituloDefault || "",
+      dataset: this.dataset || null,
+      datasource: this.datasource || null,
+      template: this.metadata?.template.conteudo,
+      template_id: this.metadata?.template.id,
+      plano_trabalho_id: ["TCR"].includes(this.especie) ? this.entity!.id : null
+    });
+    //this.onSelect(documento);
+    //return documento;
     /*let result = await this.dialog.template({ title: "Edição de documento", modalWidth: 700 }, this.addDocumentoTemplate!, [
       {
         label: "Salvar",
@@ -211,10 +237,7 @@ export class DocumentosComponent extends PageFrameBase {
         value: false
       }
     ]).asPromise();
-    if(result.button.value) {
-
-    }*/
-
+    if(result.button.value) {}*/
     /*this.go.navigate({route: ['gestao', 'adesao', 'termo']}, {metadata: {documento: documento, adesao: this.entity}, modalClose: (modalResult) => {
         if(modalResult) {
           (async () => {
@@ -250,18 +273,53 @@ export class DocumentosComponent extends PageFrameBase {
       }});*/
   }
 
-  public async saveDocumento(form: FormGroup, item: Documento) {
-    const entity = form.value;
-    item.titulo_documento = form.controls.titulo.value;
-    item.conteudo = form.controls.conteudo.value;
-    const documento = await this.documentoDao.save(item);
-    form.controls.id.setValue(documento.id);
-    item.id = documento.id;
-    return documento;
+  public async loadDocumento(form: FormGroup, row: any) {
+    const selected: Documento = row;
+    this.form!.patchValue({
+      id: selected?.id || "",
+      tipo: selected?.tipo || "HTML",
+      titulo: selected?.titulo || "",
+      conteudo: selected?.conteudo || "",
+      link: selected?.link,
+      dataset: selected?.dataset,
+      datasource: selected?.datasource,
+      template: selected?.template,
+      template_id: selected?.template_id
+    });
+    this.cdRef.detectChanges();
   }
 
-  public onProcessoClick(row: any) {
-    this.allPages.openDocumentoSei(row.documento.id_processo, row.documento.id_documento);
+  public async removeDocumento(row: any) {
+    let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
+    if(confirm) {
+      if(this.isNoPersist) row._status = "DEL";
+      else await this.dao!.delete(row);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public async saveDocumento(form: FormGroup, item: Documento) {
+    let result = undefined;
+    this.form!.markAllAsTouched();
+    if(this.form!.valid) {
+      item.titulo = form.controls.titulo.value;
+      item.conteudo = form.controls.conteudo.value;
+      item.dataset = this.templateService.prepareDatasetToSave(item.dataset || []);
+      this.submitting = true;
+      try {
+        result = !this.isNoPersist ? await this.documentoDao.save(item) : item;
+        form.controls.id.setValue(result.id);
+        item.id = result.id;
+      } catch (error: any) {
+        this.error(error.message ? error.message : error);
+      } finally {
+        this.submitting = false;
+      }
+      this.cdRef.detectChanges();
+    }
+    return result;
   }
 
   /*public isVigente(documento: Documento): boolean {

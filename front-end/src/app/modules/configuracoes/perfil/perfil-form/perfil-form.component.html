@@ -1,31 +1,67 @@
 <h3 *ngIf="!isModal" class="my-2">{{title}}</h3>
-<editable-form [form]="form!" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
+<editable-form [form]="form!" [disabled]="formDisabled" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs display right>
         <tab key="PRINCIPAL" label="Principal">
             <div class="row">
-                <input-text [size]="10" label="Nome" controlName="nome" [control]="form!.controls.nome"></input-text>
-                <input-text numbers [size]="2" label="Nível" controlName="nivel" [control]="form!.controls.nivel"></input-text>
+                <input-text [size]="10" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
+                <input-text numbers [size]="2" label="Nível" controlName="nivel" [attr.maxlength]=250></input-text>
             </div>
             <div class="row">
-                <input-text [size]="12" label="Descrição" controlName="descricao" [control]="form!.controls.descricao"></input-text>
+                <input-text [size]="12" label="Descrição" controlName="descricao" [attr.maxlength]=250 required></input-text>
             </div>
         </tab>
-        <tab key="CAPACIDADES" *ngIf="auth.hasPermissionTo('MOD_TIPO_CAP_CONS')" label="Capacidades">
-            <grid [control]="form!.controls.capacidades" [scrollable]="true">
+        <tab key="CAPACIDADES" *ngIf="auth.hasPermissionTo('MOD_TIPO_CAP')" [label]="lex.translate('Capacidades')">
+            <grid #gridPai [items]="tiposCapacidades" [scrollable]="true">
                 <columns>
-                    <column title="Código" [template]="columnCodCapacidade">
-                        <ng-template let-row="row" #columnCodCapacidade>
-                            <span> {{row.tipo_capacidade.codigo}}</span>
+                    <column type="expand" icon="bi bi-shield-lock" [align]="'center'" [hint]="'Lista das capacidades com status módulo'" [template]="columnCapacidades" [expandTemplate]="columnExpandedCapacidades" [minWidth]="50">
+                        <ng-template let-row="row" #columnCapacidades>
+                            <span *ngIf="row.filhos?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-grid"></i> {{row.filhos?.length}}</span>
+                        </ng-template>
+                        <ng-template let-row="row" #columnExpandedCapacidades style="justify-content: inherit;">
+                            <table class="table table-hover" >
+                                <tbody>
+                                    <tr *ngFor="let row of row.filhos">
+                                        <td>
+                                            <div style="width: 220px;">
+                                            <span class="text-wrap text-center">
+                                                <small class="micro-text fw-light"><i class="bi bi-key"></i>  {{ row.codigo }}</small>
+                                                <span class="badge bg-light text-dark">
+                                                </span>
+                                            </span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div style="width: 450px;">
+                                                <span class="badge bg-light text-dark text-wrap">{{ row.descricao }}</span>
+                                            </div>
+                                        </td>
+                                        <td style="text-align: right;">
+                                            <div style="width: 60px; margin-left: 40px;">
+                                                <span class="text-align">
+                                                    <input-switch scale="medium" [size]="1" class="text-align" [size]="2" #habilitado [disabled]="action == 'consult' ? 'true' : undefined" [source]="row" path="_metadata.habilitado" (change)="onHabilitadoChangeFilha(row, habilitado.value)" style="right: 10px;"></input-switch>
+                                                </span>
+                                            </div> 
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </ng-template>
+                    </column> 
+                    <column title="Código" [template]="columnCodCapacidade" orderBy = "codigo" [minWidth]=160 [maxWidth]=160>
+                        <ng-template let-row="row" #columnCodCapacidade>                            
+                                <span class="text-wrap"> 
+                                    <strong class="grid-group-text">{{row.codigo}}</strong>
+                                </span>
                         </ng-template>
                     </column>
-                    <column title="Capacidade" [template]="columnTipoCapacidade">
+                    <column [title]="lex.translate('Módulo/Capacidade')" [template]="columnTipoCapacidade" [minWidth]="600">
                         <ng-template let-row="row" #columnTipoCapacidade>
-                            <span> {{row.tipo_capacidade.descricao}}</span>
+                            <span class="badge bg-light text-dark"> {{row.descricao}}</span>
                         </ng-template>
                     </column>
-                    <column title="Permitir" [template]="columnSelecionado">
+                    <column title="Habilitado" [template]="columnSelecionado">
                         <ng-template let-row="row" #columnSelecionado>
-                            <input-switch [size]="12" [source]="capacidades" [path]="row.tipo_capacidade.codigo"></input-switch>
+                            <input-switch style="width: 45px; margin-right: 70px;" #habilitado [disabled]="action == 'consult' ? 'true' : undefined" [source]="row" path="_metadata.habilitado" (change)="onHabilitadoChange(row, habilitado.value)"></input-switch>
                         </ng-template>
                     </column>
                 </columns>

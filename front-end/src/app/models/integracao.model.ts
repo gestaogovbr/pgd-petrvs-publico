@@ -20,16 +20,15 @@ export class Integracao extends Base {
     public usuario?: Usuario; /* Objeto do usuário */
     
     public data_execucao: string = "";
-    public usuario_id: string = "";    
-    public entidade_id: string = "";
-    public resultado?: string;
     public atualizar_unidades: boolean = false;   
     public atualizar_servidores: boolean = false;       
     public atualizar_gestores: boolean = true;         
     public usar_arquivos_locais: boolean = false;    
     public gravar_arquivos_locais: boolean = false;
+    public resultado?: string;
 
-    constructor(){
-        super();
-    }
+    public usuario_id: string = "";    
+    public entidade_id: string = "";
+
+    constructor(){ super(); }
 }

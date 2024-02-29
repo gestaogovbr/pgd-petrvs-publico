@@ -2,6 +2,8 @@ import { Component, EventEmitter, HostBinding, Injector, Input, OnInit, Output }
 import { AbstractControl, ControlContainer, FormGroup, FormGroupDirective } from '@angular/forms';
 import { InputBase, LabelPosition } from '../input-base';
 
+export type AlignRate = "left" | "center";
+
 @Component({
   selector: 'input-rate',
   templateUrl: './input-rate.component.html',
@@ -23,16 +25,20 @@ export class InputRateComponent extends InputBase implements OnInit {
   @Input() icon: string = "";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() value: number = 0;
   @Input() loading: boolean = false;
   @Input() starMargin: number = 2;
   @Input() starSize: number = 4;
-  @Input() starIcon: string = "bi bi-star text-secondary h4 mx-2";
-  @Input() starFillIcon: string = "bi bi-star-fill text-warning h4 mx-2";
+  @Input() starIcon: string = "bi bi-star text-secondary";
+  @Input() starFillIcon: string = "bi bi-star-fill text-warning";
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
+  @Input() required?: string;
+  @Input() small?: string;
+  @Input() align: AlignRate = "center";
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
   }
@@ -44,7 +50,7 @@ export class InputRateComponent extends InputBase implements OnInit {
       this._max = value;
       this.stars = Array<boolean>(value).fill(false);
       this.stars.map((x, i) => this.stars[i] = i < this.value);
-      this.cdRef.detectChanges();
+      this.detectChanges();
     }
   }
   get max(): number {
@@ -58,7 +64,7 @@ export class InputRateComponent extends InputBase implements OnInit {
   }
 
   public startClass(index: number): string {
-    return 'float-start mx-'+ this.starMargin + ' h'+ this.starSize + ' ' + (index < this.value ? this.starFillIcon : this.starIcon);
+    return 'float-start mx-'+ this.starMargin + ' ' + (index < this.value ? this.starFillIcon : this.starIcon) + (this.small ? '' : ' h4');
   }
 
   public stars: boolean[] = Array<boolean>(10).fill(false);
@@ -81,6 +87,10 @@ export class InputRateComponent extends InputBase implements OnInit {
     }
   }
 
+  public get isSmall(): boolean {
+    return this.small != undefined;
+  }
+
   public controlChange(value: number) {
     if(this.value != value) {
       this.value = value;
@@ -91,9 +101,11 @@ export class InputRateComponent extends InputBase implements OnInit {
   }
 
   public onClick(index: number) {
-    const newValue = (index + 1) == this.value && this.stars[index] ? 0 : index + 1;
-    this.control?.setValue(newValue);
-    this.controlChange(newValue);
-    this.cdRef.detectChanges();
+    if(!this.isDisabled) {
+      const newValue = (index + 1) == this.value && this.stars[index] ? 0 : index + 1;
+      this.control?.setValue(newValue);
+      this.controlChange(newValue);
+      this.cdRef.detectChanges();
+    }
   }
 }

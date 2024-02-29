@@ -1,9 +1,9 @@
 import { Injectable, Injector } from '@angular/core';
-import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
 import { Entidade } from '../models/entidade.model';
 import { CidadeDaoService } from './cidade-dao.service';
 import { DaoBaseService } from './dao-base.service';
 import { UsuarioDaoService } from './usuario-dao.service';
+import { TemplateDataset } from '../modules/uteis/templates/template.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class EntidadeDaoService extends DaoBaseService<Entidade> {
     super("Entidade", injector);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
-    this.searchFields = ["sigla", "nome"];
+    this.inputSearchConfig.searchFields = ["sigla", "nome"];
   }  
 
   public dataset(deeps?: string[]): TemplateDataset[] {
@@ -25,9 +25,9 @@ export class EntidadeDaoService extends DaoBaseService<Entidade> {
       { field: "sigla", label: "Sigla" },
       { field: "nome", label: "Nome" },
       { field: "gestor", label: "Gestor", fields: this.usuarioDao.dataset([]) },
-      { field: "gestor_substituto", label: "Gestor substituto", fields: this.usuarioDao.dataset([]) },
+      { field: "gestores_substitutos", label: "Gestor substituto", fields: this.usuarioDao.dataset([]), type: "ARRAY" },
       { field: "cidade", label: "Cidade", dao: this.cidadeDao }
-    ]);
+    ], deeps);
   }
 
   public generateApiKey(entidade_id: string): Promise<string> {

@@ -4,35 +4,32 @@
     [hasAdd]="auth.hasPermissionTo('MOD_TIPO_MDL_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_TIPO_MDL_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="12" label="Nome do tipo da Modalidade" controlName="nome"
-                [control]="filter!.controls.nome" placeholder="Nome do tipo da Modalidade"></input-text>
+            <input-text [size]="12" [label]="'Nome ' + lex.translate('tipo de Modalidade')" controlName="nome"
+                [control]="filter!.controls.nome" placeholder="Nome..." [attr.maxlength]=250></input-text>
         </div>
     </filter>
     <columns>
         <column title="Descrição" field="nome"></column>
-        <column title="Somente atividades homologadas" [template]="columnAtividades_homologadas">
-            <ng-template let-row="row" #columnAtividades_homologadas>
-                <span>{{ row.atividades_homologadas ? 'Sim' : 'Não'}}</span>
+        <column [title]="lex.translate('Plano de trabalho')" [template]="columnPlanoTrabalho">
+            <ng-template let-row="row" #columnPlanoTrabalho>
+                <div class="one-per-line">
+                    <!--badge *ngIf="row.plano_trabalho_assinatura_participante" color="light" icon="bi bi-pen" label="Assinatura do participante"></badge>
+                    <badge *ngIf="row.plano_trabalho_assinatura_gestor_unidade" color="light" icon="bi bi-pen" label="Assinatura do gestor da unidade"></badge>
+                    <badge *ngIf="row.plano_trabalho_assinatura_gestor_entidade" color="light" icon="bi bi-pen" label="Assinatura do gestor da entidade"></badge//-->
+                    <badge *ngIf="row.plano_trabalho_calcula_horas" color="light" icon="bi bi-clock" [label]="'Usa horas no ' + lex.translate('plano de trabalho')"></badge>
+                </div>
             </ng-template>
         </column>
-        <column title="Dispensa Avaliações" [template]="columnDispensa_avaliacao">
-            <ng-template let-row="row" #columnDispensa_avaliacao>
-                <span>{{ row.dispensa_avaliacao ? 'Sim' : 'Não'}}</span>
+        <column [title]="lex.translate('Atividade')" [template]="columnAtividade">
+            <ng-template let-row="row" #columnAtividade>
+                <div class="one-per-line">
+                    <badge *ngIf="row.atividade_tempo_despendido" color="light" icon="bi bi-hourglass-bottom" label="Assinatura do participante"></badge>
+                    <badge *ngIf="row.atividade_esforco" color="light" icon="bi bi-stopwatch" label="Assinatura do gestor da unidade"></badge>
+                </div>
             </ng-template>
         </column>
-        <column title="Exige Adesão" [template]="columnExige_assinatura">
-            <ng-template let-row="row" #columnExige_assinatura>
-                <span>{{ row.exige_adesao ? 'Sim' : 'Não'}}</span>
-            </ng-template>
-        </column>
-        <column title="Exige Assinatura" [template]="columnExige_assinatura">
-            <ng-template let-row="row" #columnExige_assinatura>
-                <span>{{ row.exige_assinatura ? 'Sim' : 'Não'}}</span>
-            </ng-template>
-        </column>
-        <column title="% Ganho produtividade" field="ganho_produtividade"></column>
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>

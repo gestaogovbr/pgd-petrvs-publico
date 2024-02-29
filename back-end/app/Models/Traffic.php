@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\ModelBase;
 
@@ -26,6 +25,5 @@ class Traffic extends ModelBase
     public $timestamps = false;
 
     protected $casts = [
-        'data_hora' => 'datetime',
     ];
 }

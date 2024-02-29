@@ -10,7 +10,7 @@
                         <small>{{row.nome}}</small>
                     </ng-template>
                     <ng-template let-row="row" #editRegraNome>
-                        <input-text [size]="12" controlName="nome" [control]="form!.controls.nome"></input-text>
+                        <input-text [size]="12" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250></input-text>
                     </ng-template>
                 </column>
                 <column title="Tipo do recurso" [width]="250" [template]="regraRecursoTipo" [editTemplate]="editRegraRecursoTipo">
@@ -29,12 +29,12 @@
                     </ng-template>
                     <ng-template let-row="row" #editRegraPerfis>
                         <ng-container *ngIf="form!.controls.tipo_recurso!.value == 'HUMANO'">
-                            <input-switch [size]="12" label="Acesso ao projeto" scale="small" labelPosition="right" controlName="perfil_acesso" [control]="form!.controls.perfil_acesso"></input-switch>
-                            <input-switch [size]="12" label="Gerente de projeto" scale="small" labelPosition="right" controlName="perfil_gerente" [control]="form!.controls.perfil_gerente"></input-switch>
+                            <input-switch [size]="12" [label]="'Acesso ao '+ lex.translate('projeto')" scale="small" labelPosition="right" controlName="perfil_acesso" [control]="form!.controls.perfil_acesso"></input-switch>
+                            <input-switch [size]="12" [label]="'Gerente de '+ lex.translate('projeto')" scale="small" labelPosition="right" controlName="perfil_gerente" [control]="form!.controls.perfil_gerente"></input-switch>
                         </ng-container>
                         <ng-container *ngIf="form!.controls.tipo_recurso!.value == 'DEPARTAMENTO'">
-                            <input-switch [size]="12" label="Acesso ao projeto" scale="small" labelPosition="right" controlName="perfil_acesso" [control]="form!.controls.perfil_acesso"></input-switch>
-                            <input-switch [size]="12" label="Escritório de projeto" scale="small" labelPosition="right" controlName="perfil_escritorio" [control]="form!.controls.perfil_escritorio"></input-switch>
+                            <input-switch [size]="12" [label]="'Acesso ao '+ lex.translate('projeto')" scale="small" labelPosition="right" controlName="perfil_acesso" [control]="form!.controls.perfil_acesso"></input-switch>
+                            <input-switch [size]="12" [label]="'Escritório de '+ lex.translate('projeto')" scale="small" labelPosition="right" controlName="perfil_escritorio" [control]="form!.controls.perfil_escritorio"></input-switch>
                         </ng-container>
                     </ng-template>
                 </column>

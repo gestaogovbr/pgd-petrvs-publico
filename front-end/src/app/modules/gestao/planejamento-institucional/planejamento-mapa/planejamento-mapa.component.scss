@@ -1,0 +1,84 @@
+.blockquote p {
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.eixo .descricao {
+    width: 250px;
+}
+
+.eixo .descricao h4 {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    -webkit-transform: scaleX(-1) scaleY(-1);
+    transform: scaleX(-1) scaleY(-1);
+    white-space: normal;
+    height: min-content;
+    text-align: center;
+    /*transform: rotate(-90deg);
+    width: 250px;
+    vertical-align: middle;
+    height: 100%;
+    text-align: center;*/
+}
+
+.eixo .descricao button {
+    position: absolute;
+}
+
+.eixo .w-25 {
+    margin-bottom: 10px;
+}
+
+.eixo .objetivos {
+    min-height: 100px;
+}
+
+.eixo .objetivo {
+    background: #fff;
+    margin: 0 10px;
+    //height: 100%;
+}
+
+.eixo .subobjetivo {
+    min-height: 50px;
+}
+
+.eixo .objetivo .card-text {
+    font-size: 0.8rem;
+    cursor: grab;
+}
+
+.eixo .objetivo p {
+    padding: 10px;
+    color: #5e5b5b;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.eixo .objetivo .buttons {
+    border-top: 1px solid #ddd;
+}
+
+.eixo .objetivo .buttons a {
+    cursor: pointer;
+    padding: 5px;
+}
+
+.eixo .objetivo .buttons a:hover {
+    background-color: #ddd;
+}
+
+.detalhe_entrega p {
+    font-size: 0.8rem;
+}
+
+.dndDraggingSource {
+    display: none;
+}
+
+.acao-planos {
+    .dropdown-toggle::after {
+        display: none;
+    }
+}

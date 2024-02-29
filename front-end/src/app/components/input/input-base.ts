@@ -1,11 +1,12 @@
 import { ChangeDetectorRef, ElementRef, Injectable, InjectionToken, Injector } from "@angular/core";
-import { AbstractControl, ControlContainer, FormBuilder, FormControl, FormGroup, FormGroupDirective } from "@angular/forms";
+import { AbstractControl, ControlContainer, FormBuilder, FormControl, FormGroup, FormGroupDirective, ValidationErrors, Validators } from "@angular/forms";
 import { UtilService } from "src/app/services/util.service";
 import { ComponentBase } from "../component-base";
 
 export type LabelPosition = "top" | "right" | "left" | "none";
 export type MultiselectStyle = "inline" | "rows";
 export type InputScale = "small" | "medium" | "large";
+export type ValidatorHandle = (control: AbstractControl) => ValidationErrors | null;
 export type SelectItem = {
   value: any,
   text: string,
@@ -17,20 +18,23 @@ export type SelectItem = {
 export abstract class InputBase extends ComponentBase {
     /* Public properties */
     public fb: FormBuilder;
-    public viewInit: boolean = false;
     public formDirective?: FormGroupDirective;
     public inputElement?: ElementRef;
+    public JSON = JSON;
     /* Abstract properties */
     public abstract controlName: string | null;
     public abstract control?: AbstractControl; 
     public abstract form?: FormGroup;
     public abstract disabled?: string;
+    public abstract required?: string;
     public abstract size: number;
     public abstract loading: boolean;
     public abstract class: string;
     public abstract hostClass: string;
+    public abstract labelClass?: string;
     public abstract source?: any;
     public abstract path?: string;
+    public validators: ValidatorHandle[] = [];
     /* Protected get e set */
     protected _control?: AbstractControl;
     protected _fakeControl: FormControl = new FormControl();
@@ -61,8 +65,10 @@ export abstract class InputBase extends ComponentBase {
         }
     }
 
-    public focus() {
-        this.inputElement?.nativeElement.focus();
+    public focus(): void {
+        setTimeout(() => {
+            document.getElementById(this.inputElement?.nativeElement.id)?.focus()
+        }, 1000);        
     }
 
     public onEnterKeyDown(e: Event) {
@@ -93,19 +99,41 @@ export abstract class InputBase extends ComponentBase {
     }
 
     public ngOnInit() {
-        if(this.size > 0) this.class += " " + this.hostClass + " col-md-" + this.size;
+        if(this.size > 0) this.class += " " + this.hostClass + " col-md-" + this.size;       
     }
 
     public ngAfterViewInit() {
+        super.ngAfterViewInit();
         try { this.formDirective = this.injector.get<FormGroupDirective>(FormGroupDirective); } catch {}
-        this.form = this.form || this.formDirective?.form;
-        this.viewInit = true;
+        this.form = this.form || this.formDirective?.form;      
+        if(this.isRequired){
+            this.validators.push(this.requiredValidator.bind(this));
+            if(this.control!.validator) this.validators.push(this.control!.validator);
+            this.control!.setValidators(this.proxyValidator.bind(this))
+            this.control?.updateValueAndValidity();
+        }
         this.cdRef.detectChanges();
+    }
+
+    public proxyValidator(control: AbstractControl): ValidationErrors | null {
+        for(let validator of this.validators) {
+            let result = validator(control);
+            if(result) return result;
+        }
+        return null;
+    }
+
+    public requiredValidator(control: AbstractControl): ValidationErrors | null { 
+        return this.util.empty(control.value) ? { errorMessage: "Obrigatório" } : null;
     }
 
     public get isDisabled(): boolean {
         return this.disabled != undefined;
     }
+
+    public get isRequired(): boolean {
+        return this.required != undefined;
+      }
 
     public get formControl(): FormControl {
         return this.getControl() as FormControl || this._fakeControl;

@@ -1,0 +1,178 @@
+<separator collapse [collapsed]="false" [title]="lex.translate('Atividades')" [icon]="entityService.getIcon('Atividade')">
+  <grid [items]="itemsEntregas" #gridEntregas [minHeight]="0" [hasEdit]="false">
+    <columns>
+      <column type="expand" [width]="50" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')" [align]="'center'" [hint]="lex.translate('Consolidação')" [template]="columnConsolidacao" [expandTemplate]="columnExpandedConsolidacao">
+        <ng-template let-row="row" #columnConsolidacao>
+          <span *ngIf="row.atividades?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row.atividades?.length}}</span>
+        </ng-template>
+        <ng-template let-row="row" #columnExpandedConsolidacao>
+          <grid [items]="row.atividades" [minHeight]="0" #gridAtividades [form]="formAtividade" [hasAdd]="!disabled" [hasDelete]="false" [hasEdit]="false" [add]="addAtividade.bind(this, row.entrega)" [load]="loadAtividade.bind(this)" [remove]="removeAtividade.bind(this, row.atividades)" [save]="saveAtividade.bind(this)" editable>
+            <columns>
+              <column type="expand" [width]="50" icon="bi bi-boxes" [align]="'center'" [hint]="'Tarefas da ' + lex.translate('atividade')" [template]="columnTarefas" [expandTemplate]="columnExpandedTarefas">
+                <ng-template let-row="row" #columnTarefas>
+                  <span *ngIf="row.tarefas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row.tarefas?.length}}</span>
+                </ng-template>
+                <ng-template let-row="row" #columnExpandedTarefas>
+                  <atividade-list-tarefa persist #listTarefas [atividade]="row" [consolidacao]="false"></atividade-list-tarefa>
+                </ng-template>
+              </column>
+              <column [title]="'#ID/Trabalho executado'" [width]="400" [template]="columnAtividadeDescricao" [editTemplate]="editAtividadeDescricao" [columnEditTemplate]="atividadeOptionsMetadata.disabled ? undefined : editAtividadeDescricao" [edit]="atividadeOptionsMetadata.disabled ? undefined : onColumnAtividadeDescricaoEdit.bind(this)" [save]="atividadeOptionsMetadata.disabled ? undefined : onColumnAtividadeDescricaoSave.bind(this)"><!--[title]="'#ID/' + lex.translate('Tipo de Atividade') + '\nDescrição'"-->
+                <ng-template let-row="row" #columnAtividadeDescricao>
+                  <span class="text-nowrap d-block">
+                    <badge icon="bi bi-hash" [label]="row.numero" color="light" [data]="row.numero" [click]="atividadeService.onIdClick.bind(this)"></badge>
+                    <!--badge *ngIf="row.tipo_atividade" [icon]="entityService.getIcon('TipoAtividade')" [label]="row.tipo_atividade.nome" color="light"></badge-->
+                  </span>
+                  <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>
+                  <reaction [entity]="row" origem="ATIVIDADE"></reaction>
+                </ng-template>
+                <ng-template let-row="row" #editAtividadeDescricao>
+                  <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="formAtividade!.controls.descricao" required></input-textarea>
+                  <!--input-search [label]="lex.translate('Tipo de atividade')" #tipoAtividade [size]="12" [emptyValue]="null" controlName="tipo_atividade_id" [control]="formAtividade!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" (select)="onTipoAtividadeSelect($event)" [labelInfo]="lex.translate('Tipo de atividade') + ' utilizado para classificar a atividade'" [required]="!auth.hasPermissionTo('MOD_ATV_TIPO_ATV_VAZIO') ? 'true' : undefined"></input-search-->
+                </ng-template>
+              </column>
+              <column [title]="'Início e Conclusão'" [width]="250" [template]="columnTempos" [editTemplate]="editTempos">
+                <ng-template let-row="row" #columnTempos>
+                  <div class="one-per-line">
+                    <badge *ngFor="let tempo of tempoAtividade(row)" [badge]="tempo"></badge>
+                  </div>
+                </ng-template>
+                <ng-template let-row="row" #editTempos>
+                  <!--input-datetime icon="bi bi-file-earmark-plus" [label]="lex.translate('Data de distribuição')" controlName="data_distribuicao" [control]="formAtividade!.controls.data_distribuicao" (change)="onDataDistribuicaoChange($event)" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime-->
+                  <!--input-datetime icon="bi bi-calendar-check" [label]="lex.translate('Prazo de entrega')" controlName="data_estipulada_entrega" [control]="formAtividade!.controls.data_estipulada_entrega" (change)="onDataEstipuladaEntregaChange($event)" labelInfo="Data estipulada para entrega da atividade"></input-datetime-->
+                  <separator title="Início e Conclusão" collapse [collapsed]="true">
+                    <input-datetime icon="bi bi-play-circle" label="Início" controlName="data_inicio" [control]="formAtividade!.controls.data_inicio" labelInfo="Data de inicialização da atividade"></input-datetime>
+                    <input-datetime icon="bi bi-check-circle" label="Conclusão" controlName="data_entrega" [control]="formAtividade!.controls.data_entrega" labelInfo="Data da conclusão da atividade"></input-datetime>
+                  </separator>
+                </ng-template>
+              </column>
+              <column [title]="'Progresso\nEtiquetas/Checklist'" [width]="200" [template]="columnProgressoEtiquetasChecklist" [editTemplate]="columnProgressoEtiquetasChecklist" [columnEditTemplate]="atividadeOptionsMetadata.disabled ? undefined : columnProgressoEtiquetasChecklistEdit" [edit]="atividadeOptionsMetadata.disabled ? undefined : onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="atividadeOptionsMetadata.disabled ? undefined : onColumnProgressoEtiquetasChecklistSave.bind(this)">
+                <ng-template let-row="row" #columnProgressoEtiquetasChecklist>
+                  <progress-bar [value]="row.progresso" color="success"></progress-bar>
+                  <badge *ngFor="let etiqueta of row.etiquetas" [lookup]="etiqueta"></badge>
+                  <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
+                  <table *ngIf="row.checklist?.length">
+                    <tr *ngFor="let check of row.checklist">
+                      <td><i *ngIf="check.checked" class="bi bi-check-circle"></i></td>
+                      <td class="micro-text fw-ligh">{{check.texto}}</td>
+                    </tr>
+                  </table>
+                </ng-template>
+                <ng-template let-row="row" #columnProgressoEtiquetasChecklistEdit>
+                  <input-number [size]="12" [decimals]="2" label="Progresso" sufix="%" icon="bi bi-clock" controlName="progresso" [control]="formEdit.controls.progresso" labelInfo="Progresso de execução (% Concluído)"></input-number>
+                  <input-multiselect controlName="etiquetas" [size]="12" [control]="formEdit.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
+                    <input-select [size]="12" label="Etiqueta" #etiqueta controlName="etiqueta" nullable itemNull="- Selecione -" detailsButton detailsButtonIcon="bi bi-tools" (details)="onEtiquetaConfigClick()" [control]="formEdit.controls.etiqueta" [items]="etiquetas"></input-select>
+                  </input-multiselect>
+                  <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
+                  <table *ngIf="row.checklist?.length">
+                    <tr *ngFor="let check of checklist; let i = index">
+                      <td><input-switch [size]="12" scale="small" [source]="checklist" [path]="i + '.checked'"></input-switch></td>
+                      <td class="micro-text fw-ligh">{{check.texto}}</td>
+                    </tr>
+                  </table>
+                </ng-template>
+              </column>
+              <column [title]="'nº Processo/Status\nComentários'" [width]="300" [template]="columnNumero" [editTemplate]="columnNumero">
+                <ng-template let-row="row" #columnNumero>
+                  <documentos-badge [documento]="row.documento_requisicao"></documentos-badge>
+                  <span class="d-block">
+                    <badge *ngFor="let status of atividadeService.getStatus(row, entity)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label"></badge>
+                  </span>
+                  <comentarios-widget *ngIf="!gridAtividades.editing" [entity]="row" [selectable]="false" origem="ATIVIDADE" [grid]="gridAtividades"></comentarios-widget>
+                </ng-template>
+              </column>
+              <column type="options" [metadata]="atividadeOptionsMetadata" [dynamicOptions]="atividadeService.dynamicOptions.bind(this)" [dynamicButtons]="atividadeService.dynamicButtons.bind(this)"></column>
+            </columns>
+          </grid>
+        </ng-template>
+      </column>
+      <column title="Origem" [template]="columnOrigem" [width]="200">
+        <ng-template let-row="row" #columnOrigem>
+          <badge [label]="row.badge.titulo" [color]="row.badge.cor"></badge>
+        </ng-template>
+      </column>
+      <column title="Entrega" [template]="columnEntrega">
+        <ng-template let-row="row" #columnEntrega>
+          {{row.badge.descricao || row.entrega.descricao}}<br>
+          <small>{{row.entrega.descricao}}</small>
+          <reaction [entity]="row.entrega" origem="PLANO_TRABALHO_ENTREGA"></reaction>
+        </ng-template>
+      </column>
+      <column title="% CHD Planejado" [template]="columnForcaTrabalho" [width]="100" [titleHint]="'% Carga Horária Disponível Planejada'">
+        <ng-template let-row="row" #columnForcaTrabalho>
+          <badge color="light" [label]="row.entrega.forca_trabalho + '%'"></badge>
+        </ng-template>
+      </column>
+      <column [title]="'Meta'" [template]="columnMetaRealizado" [width]="100">
+        <ng-template let-row="row" #columnMetaRealizado>
+          <badge icon="bi bi-graph-up-arrow" [textValue]="row.meta" color="light" hint="Meta"></badge><br>
+          <badge icon="bi bi-check-lg" [textValue]="row.metaRealizado" color="light" hint="Realizado"></badge>
+        </ng-template>
+      </column>
+      <column title="Progresso" [template]="columnProgresso" [width]="150">
+        <ng-template let-row="row" #columnProgresso>
+          <progress-bar [value]="row.progresso_realizado" color="success"></progress-bar>
+        </ng-template>
+      </column>
+      <!--column [title]="'Objetivos/Processos'" [template]="columnObjProc" [editTemplate]="columnObjProc" [width]="200">
+        <ng-template let-row="row" #columnObjProc>
+          <separator [title]="lex.translate('Objetivos')" *ngIf="row.objetivos?.length" collapse [collapsed]="true">
+            <div *ngFor="let pObjetivo of row.objetivos" class="objetivo d-flex align-items-center">
+              <button class="btn btn-sm btn-outline-info me-2" (click)="showPlanejamento(pObjetivo.objetivo.planejamento_id)"><i class="bi bi-eye"></i></button>
+              <small>{{pObjetivo.objetivo.nome}}</small>
+            </div>
+          </separator>
+          <separator [title]="lex.translate('Processos')" *ngIf="row.processos?.length" collapse [collapsed]="true">
+            <div *ngFor="let pProcesso of row.processos" class="objetivo d-flex align-items-center">
+              <button class="btn btn-sm btn-outline-info me-2" (click)="showCadeiaValor(pProcesso.processo.cadeia_valor_id)"><i class="bi bi-eye"></i></button>
+              <small>{{pProcesso.processo.nome}}</small>
+            </div>
+          </separator>
+        </ng-template>
+      </column-->
+      <column type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+    </columns>
+  </grid>
+</separator>
+<separator collapse [collapsed]="false" [title]="lex.translate('Ocorrências')" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')">
+  <grid [items]="itemsOcorrencias" [minHeight]="0" #gridOcorrencia [hasDelete]="false" [hasEdit]="false" [hasAdd]="!disabled" [add]="addOcorrencia.bind(this)" editable>
+    <!-- [load]="loadOcorrencia.bind(this)" [remove]="removeOcorrencia.bind(this)" [save]="saveOcorrencia.bind(this)" -->
+    <columns>
+      <column title="Início" [width]="300" type="datetime" field="data_inicio"></column>
+      <column title="Fim" [width]="300" type="datetime" field="data_fim"></column>
+      <column title="Descrição" type="textarea" field="descricao"></column>
+      <column type="options" [dynamicButtons]="ocorrenciaDynamicButtons.bind(this)"></column>
+    </columns>
+  </grid>
+</separator>
+<separator collapse [collapsed]="false" [title]="lex.translate('Afastamentos')" [icon]="entityService.getIcon('Afastamento')">
+  <grid [items]="itemsAfastamentos" [minHeight]="0" #gridAfastamento [hasEdit]="false" [hasDelete]="false" [hasAdd]="!disabled" [add]="addAfastamento.bind(this)" editable>
+    <columns>
+      <column title="Início" [width]="300" type="datetime" field="data_inicio"></column>
+      <column title="Fim" [width]="300" type="datetime" field="data_fim"></column>
+      <column title="Motivo/Observação" [template]="columnMotivoObservacao">
+        <ng-template let-row="row" #columnMotivoObservacao>
+          <badge [color]="row.tipo_motivo_afastamento.cor" [icon]="row.tipo_motivo_afastamento.icone" [label]="row.tipo_motivo_afastamento.nome"></badge>
+          {{row.observacao}}
+        </ng-template>
+      </column>
+      <column type="options" [dynamicButtons]="afastamentoDynamicButtons.bind(this)"></column>
+    </columns>
+  </grid>
+</separator>
+<separator collapse [collapsed]="false" [title]="lex.translate('Comparecimentos')" [icon]="entityService.getIcon('Comparecimento')">
+  <grid [items]="itemsComparecimentos" [minHeight]="0" #gridComparecimento [form]="formComparecimento" [hasDelete]="!disabled" [hasAdd]="!disabled" [hasEdit]="!disabled" [add]="addComparecimento.bind(this)" [load]="loadComparecimento.bind(this)" [remove]="removeComparecimento.bind(this)" [save]="saveComparecimento.bind(this)" editable>
+    <columns>
+      <column title="Data" [width]="300" type="date" field="data_comparecimento"></column>
+      <column title="Unidade" [template]="columnUnidade" [editTemplate]="editUnidade">
+        <ng-template let-row="row" #columnUnidade>
+          <badge [icon]="entityService.getIcon('Unidade')" [label]="row.unidade.sigla" [textValue]="row.unidade.nome" color="success"></badge>
+        </ng-template>
+        <ng-template let-row="row" #editUnidade>
+          <input-search label icon [size]="6" #unidade controlName="unidade_id" [dao]="unidadeDao"></input-search>
+        </ng-template>
+      </column>
+      <column title="Detalhamento" type="text" field="detalhamento"></column>
+      <column type="options" [dynamicButtons]="comparecimentoDynamicButtons.bind(this)"></column>
+    </columns>
+  </grid>
+</separator>

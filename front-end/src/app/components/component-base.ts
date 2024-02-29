@@ -10,8 +10,10 @@ export abstract class ComponentBase {
     /* Public properties */
     public isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     public cdRef: ChangeDetectorRef;
+    public viewInit: boolean = false;
     public util: UtilService;
     public selfElement: ElementRef;
+    public relativeId?: string;
     public ID_GENERATOR_BASE: string;
     /* Protected e get|set */
     protected _generatedId?: string;
@@ -40,21 +42,34 @@ export abstract class ComponentBase {
         return Object.keys(this._bgColors).includes(color || "") ? this._bgColors[color!].class : "";
     }
 
+    public getClassButtonColor(color: ComponentColor | undefined) {
+        return Object.keys(this._bgColors).includes(color || "") ? "btn-outline-" + color : color;
+    }
+
+    public getClassBorderColor(color: ComponentColor | undefined) {
+        return Object.keys(this._bgColors).includes(color || "") ? "border-" + color : color;
+    }
+
     public getHexColor(color: ComponentColor | undefined) {
         return Object.keys(this._bgColors).includes(color || "") ? this._bgColors[color!].hex : color;
     }
 
     public generatedId(relativeId?: string | null): string {
+        let relative = this.relativeId || relativeId;
         if(!this._generatedId) {
-            this._generatedId = "ID_" + this.ID_GENERATOR_BASE + "_" + this.util.onlyAlphanumeric(relativeId?.length ? relativeId : this.util.md5());
+            this._generatedId = "ID_" + this.ID_GENERATOR_BASE;
         }
-        return this._generatedId;
+        return this._generatedId + (relative?.length ? "_" + this.util.onlyAlphanumeric(relative) : ""); //this.util.md5()
     }
 
     public generatedButtonId(button: ToolbarButton, relativeId?: string) {
-        return this.generatedId((button.label || button.hint || button.icon || "_button") + (relativeId || ""));
+        return this.generatedId((button.id || button.label || button.hint || button.icon || "_button") + (relativeId || ""));
     }
-    
+
+    public detectChanges() {
+        this.viewInit ? this.cdRef.detectChanges() : this.cdRef.markForCheck();
+    }
+
     constructor(public injector: Injector) {
         this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
         this.selfElement = injector.get<ElementRef>(ElementRef);
@@ -62,4 +77,10 @@ export abstract class ComponentBase {
         this.selfElement.nativeElement.component = this;
         this.ID_GENERATOR_BASE = injector.get<string>("ID_GENERATOR_BASE" as any);
     }
+
+    ngAfterViewInit() {
+        this.viewInit = true;
+    }
+
+    public focus() {}
 }

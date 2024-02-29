@@ -11,14 +11,14 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProcedimentoTrabalharComponent", function() { return ProcedimentoTrabalharComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
-/* harmony import */ var src_app_dao_demanda_entrega_dao_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/dao/demanda-entrega-dao.service */ "O1bs");
+/* harmony import */ var src_app_dao_atividade_tarefa_dao_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/dao/atividade-tarefa-dao.service */ "+/Co");
 /* harmony import */ var src_app_dao_documento_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/documento-dao-service */ "xIT/");
 /* harmony import */ var src_app_dao_entidade_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/entidade-dao.service */ "aPFm");
 /* harmony import */ var src_app_dao_tipo_documento_dao_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/dao/tipo-documento-dao.service */ "EwcK");
-/* harmony import */ var src_app_models_demanda_entrega_model__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/models/demanda-entrega.model */ "q8oy");
+/* harmony import */ var src_app_models_atividade_tarefa_model__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/models/atividade-tarefa.model */ "KY1u");
 /* harmony import */ var src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/models/documento.model */ "xrhv");
-/* harmony import */ var src_app_modules_gestao_plano_plano_list_plano_list_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/modules/gestao/plano/plano-list/plano-list.component */ "nUpE");
-/* harmony import */ var src_app_modules_gestao_demanda_demanda_list_grid_demanda_list_grid_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/modules/gestao/demanda/demanda-list-grid/demanda-list-grid.component */ "EX7z");
+/* harmony import */ var src_app_modules_gestao_plano_trabalho_plano_trabalho_list_plano_trabalho_list_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/modules/gestao/plano-trabalho/plano-trabalho-list/plano-trabalho-list.component */ "fLNm");
+/* harmony import */ var src_app_modules_gestao_atividade_atividade_list_grid_atividade_list_grid_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/modules/gestao/atividade/atividade-list-grid/atividade-list-grid.component */ "GLIe");
 /* harmony import */ var _listener_base__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../listener-base */ "Cd0/");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/core */ "fXoL");
 
@@ -59,14 +59,14 @@ class ProcedimentoTrabalharComponent extends _listener_base__WEBPACK_IMPORTED_MO
                     menu.push({
                         icon: "bi bi-check-circle",
                         color: "btn-outline-primary",
-                        label: "Concluir " + this.lex.noun("entrega"),
+                        label: "Concluir " + this.lex.translate("entrega"),
                         onClick: this.concluirEntrega.bind(this)
                     });
                 }
                 toolbarButtons.push({
                     icon: "bi bi-boxes",
                     color: "btn-outline-secondary",
-                    hint: "Incluir " + this.lex.noun("entrega"),
+                    hint: "Incluir " + this.lex.translate("entrega"),
                     onClick: this.incluirEntrega.bind(this),
                     items: menu.length ? menu : undefined
                 });
@@ -79,71 +79,70 @@ class ProcedimentoTrabalharComponent extends _listener_base__WEBPACK_IMPORTED_MO
                     onClick: this.atualizarTiposDocumentos.bind(this)
                 });
             }
-            if (buttons.find(x => ["incluir", "concluir", "demandas"].includes(x))) {
+            if (buttons.find(x => ["incluir", "concluir", "atividades"].includes(x))) {
                 let menu = [];
                 if (buttons.includes("incluir")) {
                     menu.push({
                         icon: "bi bi-plus-circle",
                         color: "btn-outline-primary",
-                        label: "Incluir " + this.lex.noun("demanda"),
-                        onClick: this.incluirDemanda.bind(this)
+                        label: "Incluir " + this.lex.translate("atividade"),
+                        onClick: this.incluirAtividade.bind(this)
                     });
                 }
                 if (buttons.includes("concluir")) {
                     menu.push({
                         icon: "bi bi-check-circle",
                         color: "btn-outline-primary",
-                        label: "Concluir " + this.lex.noun("demanda"),
-                        onClick: this.concluirDemanda.bind(this)
+                        label: "Concluir " + this.lex.translate("atividade"),
+                        onClick: this.concluirAtividade.bind(this)
                     });
                 }
                 toolbarButtons.push({
                     icon: "bi bi-activity",
                     color: "btn-outline-success",
-                    hint: this.lex.noun("demanda"),
-                    onClick: this.demandas.bind(this),
+                    hint: this.lex.translate("atividade"),
+                    onClick: this.atividades.bind(this),
                     items: menu.length ? menu : undefined
                 });
             }
             this.gb.toolbarButtons = toolbarButtons;
         });
     }
-    incluirDemanda() {
+    incluirAtividade() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             let keys = yield this.execute("getSeiKeys", []);
             if (keys)
-                this.incluirDemandaProcessual(keys.id_processo, keys.numero_processo, keys.id_documento, keys.numero_documento);
+                this.go.navigate({ route: ["gestao", "atividade", "new"] }, { metadata: { sei: keys }, modal: true });
         });
     }
-    demandas() {
+    atividades() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             let keys = yield this.execute("getProcessoKeys", []);
             if (keys) {
-                this.go.navigate({ route: ["gestao", "demanda"], params: { filter: { numero_processo: keys.numero_processo } } }, { modal: true, modalWidth: 1200 });
+                this.go.navigate({ route: ["gestao", "atividade"], params: { filter: { numero_processo: keys.numero_processo } } }, { modal: true, modalWidth: 1200 });
             }
         });
     }
-    concluirDemanda() {
+    concluirAtividade() {
         var _a;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             let keys = yield this.execute("getDocumentKeys", []);
             if (keys) {
-                //const demanda = new DemandaListGridComponent(this.injector, new DemandaDaoService(this.injector));
-                const selected = yield src_app_modules_gestao_demanda_demanda_list_grid_demanda_list_grid_component__WEBPACK_IMPORTED_MODULE_8__["DemandaListGridComponent"].modalSelect({ fixedFilter: [["status", "==", "INICIADO"]] });
+                const selected = yield src_app_modules_gestao_atividade_atividade_list_grid_atividade_list_grid_component__WEBPACK_IMPORTED_MODULE_8__["AtividadeListGridComponent"].modalSelect({ fixedFilter: [["status", "==", "INICIADO"]] });
                 if (selected) {
                     if ((_a = selected.metadados) === null || _a === void 0 ? void 0 : _a.suspenso) {
-                        if (yield this.dialog.confirm("Demanda suspensa", "Para concluir é necessário primeiro reiniciar a demanda. Deseja reiniciar?")) {
-                            this.go.navigate({ route: ['gestao', 'demanda', selected.id, 'pausar'], params: { reiniciar: true } }, {
+                        if (yield this.dialog.confirm("Atividade suspensa", "Para concluir é necessário primeiro reiniciar a atividade. Deseja reiniciar?")) {
+                            this.go.navigate({ route: ['gestao', 'atividade', selected.id, 'pausar'], params: { reiniciar: true } }, {
                                 modal: true,
                                 modalClose: (modalResult) => {
                                     if (modalResult === null || modalResult === void 0 ? void 0 : modalResult.length)
-                                        this.go.navigate({ route: ['gestao', 'demanda', selected.id, 'concluir'] }, { modal: true });
+                                        this.go.navigate({ route: ['gestao', 'atividade', selected.id, 'concluir'] }, { modal: true });
                                 }
                             });
                         }
                     }
                     else {
-                        this.go.navigate({ route: ['gestao', 'demanda', selected.id, 'concluir'] }, { modal: true });
+                        this.go.navigate({ route: ['gestao', 'atividade', selected.id, 'concluir'] }, { modal: true });
                     }
                 }
             }
@@ -153,7 +152,7 @@ class ProcedimentoTrabalharComponent extends _listener_base__WEBPACK_IMPORTED_MO
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             let keys = yield this.execute("getProcessoKeys", []);
             if (keys) {
-                this.go.navigate({ route: ['gestao', 'demanda', 'entrega', 'concluir'], params: { id_processo: keys.id_processo } }, { modal: true });
+                this.go.navigate({ route: ['gestao', 'atividade', 'entrega', 'concluir'], params: { id_processo: keys.id_processo } }, { modal: true });
             }
         });
     }
@@ -161,21 +160,20 @@ class ProcedimentoTrabalharComponent extends _listener_base__WEBPACK_IMPORTED_MO
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             let keys = yield this.execute("getSeiKeys", []);
             if (keys) {
-                //const demanda = new DemandaListGridComponent(this.injector, new DemandaDaoService(this.injector));
-                const selected = yield src_app_modules_gestao_demanda_demanda_list_grid_demanda_list_grid_component__WEBPACK_IMPORTED_MODULE_8__["DemandaListGridComponent"].modalSelect({ fixedFilter: [["status", "==", "NAOCONCLUIDO"]] });
+                const selected = yield src_app_modules_gestao_atividade_atividade_list_grid_atividade_list_grid_component__WEBPACK_IMPORTED_MODULE_8__["AtividadeListGridComponent"].modalSelect({ fixedFilter: [["status", "==", "NAOCONCLUIDO"]] });
                 if (selected) {
-                    const entrega = new src_app_models_demanda_entrega_model__WEBPACK_IMPORTED_MODULE_5__["DemandaEntrega"]();
+                    const entrega = new src_app_models_atividade_tarefa_model__WEBPACK_IMPORTED_MODULE_5__["AtividadeTarefa"]();
                     entrega.id = this.dao.generateUuid();
                     entrega.usuario = this.auth.usuario;
                     entrega.usuario_id = this.auth.usuario.id;
-                    entrega.demanda_id = selected.id || "";
+                    entrega.atividade_id = selected.id || "";
                     entrega.comentarios = [];
                     entrega._status = "ADD";
-                    this.go.navigate({ route: ['gestao', 'demanda', 'entrega'] }, { metadata: { entrega: entrega, demanda: selected, sei: keys }, modalClose: (modalResult) => {
+                    this.go.navigate({ route: ['gestao', 'atividade', 'tarefa'] }, { metadata: { entrega: entrega, atividade: selected, sei: keys }, modalClose: (modalResult) => {
                             if (modalResult) {
                                 (() => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
                                     try {
-                                        const dao = this.injector.get(src_app_dao_demanda_entrega_dao_service__WEBPACK_IMPORTED_MODULE_1__["DemandaEntregaDaoService"]);
+                                        const dao = this.injector.get(src_app_dao_atividade_tarefa_dao_service__WEBPACK_IMPORTED_MODULE_1__["AtividadeTarefaDaoService"]);
                                         this.dialog.showSppinerOverlay("Salvando dados do formulário");
                                         yield dao.save(modalResult);
                                     }
@@ -192,18 +190,10 @@ class ProcedimentoTrabalharComponent extends _listener_base__WEBPACK_IMPORTED_MO
             }
         });
     }
-    incluirDemandaProcessual(idProcesso, numeroProcesso, idDocumento, numeroDocumento) {
-        this.go.navigate({ route: ["gestao", "demanda", "new"], params: {
-                id_processo: idProcesso,
-                numero_processo: numeroProcesso,
-                id_requisicao: idDocumento,
-                numero_requisicao: numeroDocumento
-            } }, { modal: true });
-    }
     gerarTermoAdesao() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             //const plano = new PlanoListComponent(this.injector, new PlanoDaoService(this.injector));
-            const selected = yield src_app_modules_gestao_plano_plano_list_plano_list_component__WEBPACK_IMPORTED_MODULE_7__["PlanoListComponent"].modalSelect();
+            const selected = yield src_app_modules_gestao_plano_trabalho_plano_trabalho_list_plano_trabalho_list_component__WEBPACK_IMPORTED_MODULE_7__["PlanoTrabalhoListComponent"].modalSelect();
             if (selected) {
                 let processo = yield this.execute("getProcessoKeys", []);
                 this.go.navigate({ route: ['gestao', 'plano', 'termo'] }, { metadata: { plano: selected, processo: processo }, modalClose: (modalResult) => {
@@ -216,13 +206,12 @@ class ProcedimentoTrabalharComponent extends _listener_base__WEBPACK_IMPORTED_MO
                                     if (documentoSei) {
                                         const dao = this.injector.get(src_app_dao_documento_dao_service__WEBPACK_IMPORTED_MODULE_2__["DocumentoDaoService"]);
                                         const documento = Object.assign(new src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_6__["Documento"](), {
-                                            especie: "TERMO_ADESAO",
+                                            especie: "TCR",
                                             conteudo: modalResult === null || modalResult === void 0 ? void 0 : modalResult.termo,
                                             id_processo: processo.id_processo,
                                             id_documento: documentoSei.id_documento,
                                             numero_processo: documentoSei.numero_processo,
-                                            plano_id: selected.id,
-                                            metadados: { atividades_termo_adesao: modalResult.atividades_termo_adesao },
+                                            plano_trabalho_id: selected.id,
                                             tipo_documento_id: modalResult.tipo_documento_id,
                                             status: "AGUARDANDO_SEI"
                                         });
@@ -443,14 +432,6 @@ class EditorMontarComponent extends _listener_base__WEBPACK_IMPORTED_MODULE_3__[
     loadToolbarButtons(buttons) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             this.gb.toolbarButtons = [];
-            /*if(buttons.includes("incluir")) {
-              this.gb.toolbarButtons.push({
-                icon: "bi bi-activity",
-                color: "btn-outline-success",
-                hint: "Incluir " + this.lex.noun("demanda"),
-                onClick: this.incluirDemanda.bind(this)
-              });
-            } */
         });
     }
 }

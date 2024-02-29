@@ -5,6 +5,7 @@ import {FormGroup} from "@angular/forms";
 import {CadeiaValor} from "../../../../models/cadeia-valor.model";
 import {CadeiaValorDaoService} from "../../../../dao/cadeia-valor-dao.service";
 import { LookupItem } from 'src/app/services/lookup.service';
+import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 
 @Component({
   selector: 'app-cadeia-valor-list',
@@ -13,32 +14,23 @@ import { LookupItem } from 'src/app/services/lookup.service';
 })
 export class CadeiaValorListComponent extends PageListBase<CadeiaValor, CadeiaValorDaoService>{
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-
-  public activeTab: string = "TABELA";
+  @ViewChild(TabsComponent, { static: false }) public tabs?: TabsComponent;
 
   constructor(public injector: Injector) {
     super(injector, CadeiaValor, CadeiaValorDaoService);
     /* Inicializações */
-    this.title = 'Cadeias de Valor';
-    this.filter = this.fh.FormBuilder({
-      nome: {default: ""}
-    });
+    this.code = "MOD_CADV";
+    this.title = this.lex.translate('Cadeias de Valores');
+    this.filter = this.fh.FormBuilder({});
+  }
 
-    if (this.auth.hasPermissionTo("MOD_EXTM_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
+  ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+    this.tabs!.active = ["TABELA", "MAPA"].includes(this.usuarioConfig.active_tab) ? this.usuarioConfig.active_tab : "TABELA";
+  }
 
-    if (this.auth.hasPermissionTo("MOD_EXTM_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
+  public async onSelectTab(tab: LookupItem) {
+    if(this.viewInit) this.saveUsuarioConfig({active_tab: tab.key});
   }
 
   public filterClear(filter: FormGroup) {
@@ -49,29 +41,7 @@ export class CadeiaValorListComponent extends PageListBase<CadeiaValor, CadeiaVa
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
-
-    if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
-    }
-
     return result;
   }
-
-  public async onSelectTab(tab: LookupItem) {
-    this.activeTab = tab.key;
-    this.saveUsuarioConfig({active_tab: this.activeTab});
-    // if (tab.key == "DASHBOARD") {
-    //   this.programaDao.query({where: [
-    //     ["normativa", "!=", null],
-    //     ["unidade_id", "==",this.auth.unidade!.id],
-    //     ["data_fim", "==", null],
-    //     //["data_fim_vigencia", ">=", Date.now()]
-    //   ]}).asPromise().then((programas) => {
-    //     this.programaSelecionado = programas.sort((a, b) => b.data_inicio_vigencia.getMilliseconds() - a.data_inicio_vigencia.getMilliseconds())[0];
-    //     this.programa?.loadSearch(this.programaSelecionado);
-    //   });
-    // }
-  }
-
 
 }

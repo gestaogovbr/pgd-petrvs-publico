@@ -29,10 +29,21 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+    # Azure: token válido até 21/09/2024
     'azure' => [
-        'client_id' => env('AZURE_CLIENT_ID'),
-        'client_secret' => env('AZURE_CLIENT_SECRET'),
-        'redirect' => env('AZURE_REDIRECT_URI', "/web/login-azure-callback"),
-        'tenant' => env('AZURE_TENANT_ID')
-    ]
+        'client_id' => '0b50b859-2615-403a-876e-05dbbd6aa240',
+        'client_secret' => 'QbD8Q~mMSFAmC~B-wYCL2BcHbb0TQO8xIf9redb3',
+        'redirect' => config('app.url') . '/web/login-azure-callback',
+        'tenant' => 'common',
+    ],
+    # Login Único: Uhull..
+    'govbr' => [
+      'code_verifier' => env('LOGIN_UNICO_CODE_CHALLENGE'),
+      'code_challenge' => env('LOGIN_UNICO_CODE_CHALLENGE_HASH'),
+      'code_challenge_method' => env('LOGIN_UNICO_CODE_CHALLENGE_METHOD'),
+      'client_id' => env('LOGIN_UNICO_CLIENT_ID'),
+      'client_secret' => env('LOGIN_UNICO_CLIENT_SECRET'),
+      'redirect' => env('LOGIN_UNICO_REDIRECT_URI'),
+      'environment' => env('LOGIN_UNICO_ENV')
+    ],
 ];

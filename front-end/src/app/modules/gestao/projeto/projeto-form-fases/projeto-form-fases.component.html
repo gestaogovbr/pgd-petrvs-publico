@@ -8,7 +8,7 @@
                     </ng-template>
                     <ng-template let-row="row" #editFaseNome>
                         <div class="row">
-                            <input-text [size]="8" controlName="nome" [control]="form!.controls.nome"></input-text>
+                            <input-text [size]="8" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250></input-text>
                             <input-color [size]="4" controlName="cor" [control]="form!.controls.cor"></input-color>
                         </div>
                     </ng-template>
@@ -18,23 +18,23 @@
                         <small class="d-block">{{row.descricao || ""}}</small>
                     </ng-template>
                     <ng-template let-row="row" #editFaseDescricao>
-                        <input-text [size]="12" controlName="descricao" [control]="form!.controls.descricao"></input-text>
+                        <input-text [size]="12" controlName="descricao" [control]="form!.controls.descricao" [attr.maxlength]=250></input-text>
                     </ng-template>
                 </column>
                 <column title="Início" [template]="faseInicio" [editTemplate]="editFaseInicio">
                     <ng-template let-row="row" #faseInicio>
-                        <strong class="d-block">{{util.getDateFormatted(row.inicio)}}</strong>
+                        <strong class="d-block">{{util.getDateFormatted(row.data_inicio)}}</strong>
                     </ng-template>
                     <ng-template let-row="row" #editFaseInicio>
-                        <input-datetime date [size]="12" controlName="inicio" [control]="form!.controls.inicio"></input-datetime>
+                        <input-datetime date [size]="12" controlName="data_inicio" [control]="form!.controls.data_inicio"></input-datetime>
                     </ng-template>
                 </column>
-                <column title="Termino" [template]="faseTermino" [editTemplate]="editFaseTermino">
+                <column title="Término" [template]="faseTermino" [editTemplate]="editFaseTermino">
                     <ng-template let-row="row" #faseTermino>
-                        <strong class="d-block">{{util.getDateFormatted(row.termino)}}</strong>
+                        <strong class="d-block">{{util.getDateFormatted(row.data_fim)}}</strong>
                     </ng-template>
                     <ng-template let-row="row" #editFaseTermino>
-                        <input-datetime date [size]="12" controlName="termino" [control]="form!.controls.termino"></input-datetime>
+                        <input-datetime date [size]="12" controlName="data_fim" [control]="form!.controls.data_fim"></input-datetime>
                     </ng-template>
                 </column>
                 <column type="options"></column>

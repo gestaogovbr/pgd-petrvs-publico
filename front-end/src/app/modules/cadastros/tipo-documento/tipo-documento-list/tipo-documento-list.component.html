@@ -4,9 +4,9 @@
     [hasAdd]="auth.hasPermissionTo('MOD_TIPO_DOC_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_TIPO_DOC_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="12" label="Nome do tipo do documento" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome do tipo do Documento"></input-text>
+            <input-text [size]="12" [label]="'Nome ' + lex.translate('tipo de documento')" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome..." [attr.maxlength]=250></input-text>
         </div>
     </filter>
     <columns>
@@ -20,3 +20,4 @@
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>
+ 

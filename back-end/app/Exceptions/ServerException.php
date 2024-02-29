@@ -14,15 +14,28 @@ class ServerException extends Exception
         "DprfSegurancaAuthService_User_Not_Found" => "Usuário não encontrado",
         "DprfSegurancaAuthService_Invalid_User_Or_Password" => "Usuário ou senha inválidos",
         "CapacidadeSearchText" => "Usuário não tem permissão para pesquisar nessa tabela",
-        "CapacidadeStore" => "Usuário não tem permissão para gravar nessa tabela",
+        "CapacidadeStore" => "Usuário não tem permissão para inserir/alterar nessa tabela",
+        "CapacidadeUpdate" => "Usuário não tem permissão para realizar esta alteração",
+        "CapacidadeDestroy" => "Usuário não tem permissão para excluir registros desta tabela",
+        "ValidateAvaliacao" => "Erro ao validar avaliacao",
         "ValidateAtividade" => "Erro ao validar atividade",
-        "ValidateDemanda" => "Erro ao validar demanda",
-        "ValidatePlano" => "Erro ao validar Plano",
+        "ValidateAtividadeTarefa" => "Erro ao validar tarefa da atividade",
+        "ValidateDocumento" => "Erro ao validar Documento",
+        "ValidateIntegrante" => "Erro ao validar vínculos/atribuições entre Unidade e Usuário",
+        "ValidateLotacao" => "Erro ao validar Lotação do usuário",
+        "ValidateOcorrencia" => "Erro ao validar Ocorrencia",
+        "ValidatePainel" => "Erro ao validar Painel",
+        "ValidatePlanejamentoInstitucional" => "Erro ao validar Planejamento Institucional",
+        "ValidatePlanoEntrega" => "Erro ao validar Plano de Entregas",
+        "ValidatePlanoTrabalho" => "Erro ao validar Plano de Trabalho",
+        "ValidatePlanoTrabalhoConsolidacao" => "Erro ao validar Consolidação do Plano de Trabalho",
+        "ValidatePlanoTrabalhoEntrega" => "Erro ao validar Entrega do Plano de Trabalho",
+        "ValidateProgramaParticipante" => "Erro ao validar o Participante",
         "ValidateUnidade" => "Erro ao validar Unidade",
-        "ValidateDocumento" => "Erro ao validar Documento"
+        "ValidateUsuario" => "Erro ao validar o usuário"
     ];
 
     function __construct($code, $extra = "") {
-        parent::__construct($this->exceptions[$code] . (empty($extra) ? "" : " (" . $extra . ")"));
+        parent::__construct($this->exceptions[$code] . "&" . (empty($extra) ? "" : $extra));
     }
 }

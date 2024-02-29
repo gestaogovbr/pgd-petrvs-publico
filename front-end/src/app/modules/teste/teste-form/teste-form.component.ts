@@ -3,22 +3,20 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { DemandaDaoService } from 'src/app/dao/demanda-dao.service';
 import { TipoMotivoAfastamentoDaoService } from 'src/app/dao/tipo-motivo-afastamento-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { Afastamento } from 'src/app/models/afastamento.model';
 import { IIndexable } from 'src/app/models/base.model';
-import { DemandaPausa } from 'src/app/models/demanda-pausa.model';
-import { Demanda } from 'src/app/models/demanda.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { CalendarService, Efemerides, TipoContagem } from 'src/app/services/calendar.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { NavigateResult } from 'src/app/services/navigate.service';
-import { Interval } from 'src/app/services/util.service';
-import { forEachChild } from 'typescript';
 import { PageFormBase } from '../../base/page-form-base';
+import { Atividade } from 'src/app/models/atividade.model';
+import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
+import { AtividadePausa } from 'src/app/models/atividade-pausa.model';
 
 @Component({
   selector: 'app-teste-form',
@@ -27,9 +25,8 @@ import { PageFormBase } from '../../base/page-form-base';
 })
 export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild('demandas', { static: false }) public demandas?: InputSelectComponent;
+  @ViewChild('atividades', { static: false }) public atividades?: InputSelectComponent;
 
-  //public editableForm?: EditableFormComponent | undefined;
   public calendar: CalendarService;
   public efemeridesFrontEnd?: Efemerides;
   public efemeridesBackEnd?: Efemerides;
@@ -37,9 +34,9 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
   public usuarioDao: UsuarioDaoService;
   public usuario?: Usuario;
   public unidadeDao: UnidadeDaoService;
-  public demandaDao!: DemandaDaoService;
-  public demandas_usuario: LookupItem[] = [];
-  public demanda?: Demanda;
+  public atividadeDao!: AtividadeDaoService;
+  public atividades_usuario: LookupItem[] = [];
+  public atividade?: Atividade;
   public tipoMotivoAfastamentoDao: TipoMotivoAfastamentoDaoService;
   public form: FormGroup;
   public disabled_datetime: boolean = false;
@@ -87,25 +84,25 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
-    this.demandaDao = injector.get<DemandaDaoService>(DemandaDaoService);
+    this.atividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
     this.tipoMotivoAfastamentoDao = injector.get<TipoMotivoAfastamentoDaoService>(TipoMotivoAfastamentoDaoService);
     this.form = this.fh.FormBuilder({
-      inicio: {default: new Date('2023-01-01 09:00:00 -03:00')},
+      data_inicio: {default: new Date('2023-01-01 09:00:00 -03:00')},
       tipo_calculo: {default: 1},
       datafim_fimoutempo: {default: new Date('2023-02-15 09:00:00 -03:00')},
       tempo_fimoutempo: {default: 0}, 
       carga_horaria: {default: 8},
       unidade_id: {default: ""}, 
       tipo: {default: "DISTRIBUICAO"},
-      demanda_id: {default: ""},
+      atividade_id: {default: ""},
       usuario_id: {default: ""},
-      inicio_afastamento: {default: ""},
-      fim_afastamento: {default: ""},
+      data_inicio_afastamento: {default: ""},
+      data_fim_afastamento: {default: ""},
       tipo_motivo_afastamento_id: {default: ""},
       incluir_pausas: { default: false },
       incluir_afastamentos: { default: false }
     }, this.cdRef, this.validate);
-    this.join = ['demandas', 'afastamentos'];
+    this.join = ['atividades', 'afastamentos'];
   }
 
   public loadData(entity: Usuario, form: FormGroup): void | Promise<void> {
@@ -162,21 +159,21 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
   public async onUsuarioSelect(){
     await this.dao!.getById(this.form.controls.usuario_id.value, this.join).then(usuario => {
       this.usuario = usuario!;
-      usuario?.demandas?.forEach(demanda => {
-        this.demandas_usuario.push({
-          key: demanda.id,
-          value: demanda.assunto || ''
+      usuario?.atividades?.forEach(atividade => {
+        this.atividades_usuario.push({
+          key: atividade.id,
+          value: atividade.descricao || ''
         });
       });
-      this.demandas!.items = this.demandas_usuario;
+      this.atividades!.items = this.atividades_usuario;
       this.cdRef.detectChanges();
     }
     );
   }
 
-  public async onDemandaChange(event: Event){
-    await this.demandaDao.getById(this.form.controls.demanda_id.value).then( demanda => {
-      this.demanda = demanda!;
+  public async onAtividadeChange(event: Event){
+    await this.atividadeDao.getById(this.form.controls.atividade_id.value).then(atividade => {
+      this.atividade = atividade!;
     })
   }
 
@@ -191,7 +188,7 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
     let cargaHoraria: number = this.form.controls.carga_horaria.value;
     let unidade: Unidade | null = await this.unidadeDao.getById(this.form.controls.unidade_id.value, ['entidade']);
     let tipo: TipoContagem = this.form.controls.tipo.value;
-    let pausas: DemandaPausa[]  = this.form.controls.incluir_pausas.value ? this.demanda!.pausas : [];
+    let pausas: AtividadePausa[]  = this.form.controls.incluir_pausas.value ? this.atividade!.pausas : [];
     let afastamentos: Afastamento[]  = this.form.controls.incluir_afastamentos.value ? (this.usuario!.afastamentos ?? []) : [];
 
     // chama a função no FrontEnd
@@ -207,8 +204,8 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
   public preparaParaExibicao() {
     this.efemeridesBackEnd!.inicio = new Date(this.efemeridesBackEnd!.inicio);
     this.efemeridesBackEnd!.fim = new Date(this.efemeridesBackEnd!.fim);
-    this.efemeridesBackEnd?.afastamentos.forEach(x => x.inicio_afastamento = new Date(x.inicio_afastamento));
-    this.efemeridesBackEnd?.afastamentos.forEach(x => x.fim_afastamento = new Date(x.fim_afastamento));
+    this.efemeridesBackEnd?.afastamentos.forEach(x => x.data_inicio = new Date(x.data_inicio));
+    this.efemeridesBackEnd?.afastamentos.forEach(x => x.data_fim = new Date(x.data_fim));
     this.efemeridesBackEnd?.diasDetalhes.forEach(d => d.intervalos = Object.values(d.intervalos));
     let a = 1;
   }
@@ -250,87 +247,4 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
   ngOnDestroy(){
     this.log('ngOnDestroy');
   }
-
-
-
 }
-
-/*
-   {
-      label: "Testar UNION",
-      icon: "bi bi-backspace",
-      onClick: () => {
-        let intervals_i: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-02-15T00:00:00')},
-                                       {start: new Date('2022-03-15T00:00:00'), end: new Date('2022-04-15T00:00:00')},
-                                       {start: new Date('2022-05-01T00:00:00'), end: new Date('2022-05-15T00:00:00')}];  
-        //Retorno esperado da função UNION:    15/01/22---15/02/22     15/03/22---15/04/22       01/05/22---15/05/22  
-
-        let intervals_ii: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-02-15T00:00:00')},
-                                        {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-04-01T00:00:00')},
-                                        {start: new Date('2022-05-01T00:00:00'), end: new Date('2022-05-15T00:00:00')}];
-        //Retorno esperado da função UNION:    15/01/22---01/04/22     01/05/22---15/05/22 
-
-        let intervals_iii: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-02-15T00:00:00')},
-                                         {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-04-01T00:00:00')},
-                                         {start: new Date('2022-03-15T00:00:00'), end: new Date('2022-05-15T00:00:00')}]; 
-        //Retorno esperado da função UNION:    15/01/22---15/05/22 
-
-        let intervals_iv: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-03-01T00:00:00')},
-                                        {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-02-15T00:00:00')},
-                                        {start: new Date('2022-03-15T00:00:00'), end: new Date('2022-05-15T00:00:00')},
-                                        {start: new Date('2022-04-15T00:00:00'), end: new Date('2022-05-01T00:00:00')}];
-        //Retorno esperado da função UNION:    15/01/22---01/03/22     15/03/22---15/05/22  
-
-        let intervals_v: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-05-15T00:00:00')},
-                                       {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-05-01T00:00:00')},
-                                       {start: new Date('2022-02-15T00:00:00'), end: new Date('2022-04-15T00:00:00')}];
-        //Retorno esperado da função UNION:    15/01/22---15/05/22  
-
-        let intervals_vi: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-03-01T00:00:00')},
-                                        {start: new Date('2022-04-01T00:00:00'), end: new Date('2022-05-15T00:00:00')},
-                                        {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-02-15T00:00:00')},
-                                        {start: new Date('2022-03-15T00:00:00'), end: new Date('2022-04-15T00:00:00')},
-                                        {start: new Date('2022-02-15T00:00:00'), end: new Date('2022-04-01T00:00:00')}]; 
-        //Retorno esperado da função UNION:    15/01/22---15/05/22  
-
-        let intervals_vii: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-02-01T00:00:00')},
-                                         {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-02-15T00:00:00')},
-                                         {start: new Date('2022-03-01T00:00:00'), end: new Date('2022-04-01T00:00:00')},
-                                         {start: new Date('2022-03-15T00:00:00'), end: new Date('2022-04-15T00:00:00')},
-                                         {start: new Date('2022-05-01T00:00:00'), end: new Date('2022-05-15T00:00:00')},
-                                         {start: new Date('2022-05-15T00:00:00'), end: new Date('2022-06-01T00:00:00')},
-                                         {start: new Date('2022-06-15T00:00:00'), end: new Date('2022-07-01T00:00:00')}];                                                                                                                                                                               
-        //Retorno esperado da função UNION:    15/01/22---15/02/22     01/03/22---15/04/22     01/05/22---01/06/22   15/06/22---01/07/22
-
-        let result: Interval[];
-        result = this.util.union(intervals_i);
-        console.log('Resultado Esperado: 15/01/22---15/02/22     15/03/22---15/04/22       01/05/22---15/05/22');
-        console.log('Resultado Obtido: ', result);
-
-        result = this.util.union(intervals_ii);
-        console.log('Resultado Esperado: 15/01/22---01/04/22     01/05/22---15/05/22');
-        console.log('Resultado Obtido: ', result);
-
-        result = this.util.union(intervals_iii);
-        console.log('Resultado Esperado: 15/01/22---15/05/22');
-        console.log('Resultado Obtido: ', result);
-
-        result = this.util.union(intervals_iv);
-        console.log('Resultado Esperado: 15/01/22---01/03/22     15/03/22---15/05/22');
-        console.log('Resultado Obtido: ', result);
-
-        result = this.util.union(intervals_v);
-        console.log('Resultado Esperado: 15/01/22---15/05/22');
-        console.log('Resultado Obtido: ', result);
-
-        result = this.util.union(intervals_vi);
-        console.log('Resultado Esperado: 15/01/22---15/05/22');
-        console.log('Resultado Obtido: ', result);
-
-        result = this.util.union(intervals_vii);
-        console.log('Resultado Esperado: 15/01/22---15/02/22     01/03/22---15/04/22     01/05/22---01/06/22   15/06/22---01/07/22');
-        console.log('Resultado Obtido: ', result);
-      }
-    }
-
-*/

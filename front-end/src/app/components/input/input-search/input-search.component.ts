@@ -7,6 +7,8 @@ import { FullRoute, NavigateService } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
 import { GroupBy } from '../../grid/grid.component';
 import { InputBase, LabelPosition, SelectItem } from '../input-base';
+import { EntityService } from 'src/app/services/entity.service';
+//import * as bootstrap from 'bootstrap';
 
 export class SearchGroupSeparator {
   constructor(public groups: GroupBy[]) {}
@@ -33,13 +35,12 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Output() select = new EventEmitter<SelectItem>();
   @Output() load = new EventEmitter<SelectItem | undefined>();
   @Output() change = new EventEmitter<Event>();
+  @Input() relativeId?: string;
   @Input() hostClass: string = "";
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
-  @Input() disabled?: string;
-  @Input() icon: string = "";
-  @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() loading: boolean = false;
   @Input() value: any = "";
@@ -49,14 +50,16 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Input() join?: string[];
   @Input() groupBy?: GroupBy[];
   @Input() where?: any;
+  @Input() metadata?: any;
   @Input() dao?: DaoBaseService<Base> = undefined;
   @Input() detailsButton?: string;
   @Input() addRoute?: FullRoute;
-  @Input() selectRoute?: FullRoute;
+  @Input() selectParams?: any;
   @Input() onlySelect?: string;
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
+  @Input() required?: string;
   @Input() displayOnlySelected?: string;
   @Input() displayTemplate?: TemplateRef<unknown>;
   @Input() set control(value: AbstractControl | undefined) {
@@ -71,35 +74,76 @@ export class InputSearchComponent extends InputBase implements OnInit {
   get size(): number {
     return this.getSize();
   }
+  @Input() set disabled(value: string | undefined) {
+    if(value != this._disabled) {
+      this._disabled = value;
+      this.detectChanges();
+      this.dropdown?.toString(); /* Força atualização do dropdown */
+      if(this.selectedValue) this.selectItem(this.selectedValue, false, false);
+    }
+  }
+  get disabled(): string | undefined {
+    return this._disabled;
+  }
+  @Input() set icon(value: string) {
+    if(value != this._icon) {
+      this._icon = value;
+    }
+  }
+  get icon(): string {
+    return typeof this._icon != "undefined" ? this._icon : ((this.dao ? this.entities.getIcon(this.dao.collection) : undefined) || "");
+  }
+  @Input() set label(value: string) {
+    if(value != this._label) {
+      this._label = value;
+    }
+  }
+  get label(): string {
+    return typeof this._label != "undefined" ? this._label : ((this.dao ? this.entities.getLabel(this.dao.collection) : undefined) || "");
+  }
+  @Input() set selectRoute(value: FullRoute) {
+    if(value != this._selectRoute) {
+      this._selectRoute = value;
+    }
+  }
+  get selectRoute(): FullRoute {
+    return typeof this._selectRoute != "undefined" ? this._selectRoute : (this.dao ? this.entities.getSelectRoute(this.dao!.collection) : {route: []});
+  }
 
   private DEBOUNCE_TIMER = 1000;
   private queryText: string = "";
   private timer: any = undefined;
-  private dropdown?: Dropdown;
+  private _dropdown?: Dropdown;
+  private _disabled?: string;
+  private _icon?: string;
+  private _label?: string;
+  private _selectRoute?: FullRoute;
+
   public dropdownWidth: number = 200;
   public items: (SelectItem | SearchGroupSeparator)[] = [];
   public selectedItem?: SelectItem = undefined;
   public selectedValue?: string = undefined;
+  public selectedEntity?: any = undefined;
   public searching: boolean = false;
-  public searchObj: any = undefined;
   public go: NavigateService;
+  public entities: EntityService; 
   public util: UtilService;
+  public get dropdown(): Dropdown | undefined {
+    const elm = document.getElementById(this.generatedId(this.controlName) + '_search_dropdown');
+    //@ts-ignore
+    this._dropdown = this.isDisabled ? undefined : this._dropdown || new bootstrap.Dropdown(elm as Element);
+    return this._dropdown;
+  } 
 
   constructor(public injector: Injector) {
     super(injector);
+    this.entities = this.injector.get<EntityService>(EntityService);
     this.util = this.injector.get<UtilService>(UtilService);
     this.go = injector.get<NavigateService>(NavigateService);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    if(!this.isDisabled){
-      $(() => {
-        const elm = document.getElementById(this.generatedId(this.controlName) + '_search_dropdown');
-        // @ts-ignore
-        if(elm) this.dropdown = new bootstrap.Dropdown(elm);
-      });
-    }
   }
 
   public ngAfterViewInit(): void {
@@ -117,7 +161,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
     const selected = this.items.find(x => !(x instanceof SearchGroupSeparator) && x.value == value) as SelectItem;
     const setSelect = (entity: any) => {
       if(selected) selected.entity = entity;
-      this.searchObj = entity;
+      this.selectedEntity = entity;
       this.selectedItem = selected;
       if(this.select && emitEvent) this.select.emit(selected);
       if(this.change && emitEvent) this.change.emit(new Event("change"));
@@ -126,7 +170,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
       $("#"+ this.generatedId(this.controlName)).val(selected.text);
       this.selectedValue = selected.value;
       this.control?.setValue(this.selectedValue, {emitEvent: false});
-      this.searchObj = undefined;
+      this.selectedEntity = undefined;
       if(this.selectedValue?.length) {
         if(loadEntity) {
           this.loading = true;
@@ -137,6 +181,20 @@ export class InputSearchComponent extends InputBase implements OnInit {
       }
     }
     this.cdRef.detectChanges();
+  }
+
+  public get isTextValid(): boolean {
+    let valid = !!this.selectedItem || !this.inputElement?.nativeElement.value?.length;
+    if(this.control) {
+      if(valid && this.control.errors?.incorrect) {
+        let {incorrect, ...others} = this.control.errors;
+        this.control.setErrors(Object.entries(this.control.errors).length == 1 ? null : others);
+      } else if(!valid && !this.control.errors?.incorrect) {
+        let incorrect = Object.assign(this.control.errors || {}, {incorrect: true});
+        this.control.setErrors(incorrect);
+      }
+    }
+    return valid;
   }
 
   public onItemClick(item: SelectItem | SearchGroupSeparator) {
@@ -154,17 +212,24 @@ export class InputSearchComponent extends InputBase implements OnInit {
     }});
   }
 
-  public onSelectClick(event: Event) {
-    if(this.selectRoute) {
-      const modalRoute = this.selectRoute!;
-      modalRoute.params = Object.assign(modalRoute.params || {}, { selectable: true, modal: true });
-      this.go.navigate(modalRoute, {modalClose: async (result) => {
-        if(result?.id?.length) {
-          this.control?.setValue(result.id, {emitEvent: false});
-          await this.loadSearch();
-        }
-      }});
-    }
+  public async onSelectClick(event: Event) {
+    return new Promise<string>((resolve, reject) => {
+      if(this.selectRoute) {
+        const modalRoute = this.selectRoute!;
+        modalRoute.params = Object.assign(modalRoute.params || {}, this.selectParams || {}, { selectable: true, modal: true });
+        this.go.navigate(modalRoute, {metadata: this.metadata || {}, modalClose: async (result) => {
+          if(result?.id?.length) {
+            this.control?.setValue(result.id, {emitEvent: false});
+            await this.loadSearch();
+            resolve(result?.id);
+          } else {
+            reject("Nada foi selecionado");
+          }
+        }});
+      } else {
+        reject("Rota de seleção inexistente");
+      }  
+    });
   }
 
   public onKeyDown(event: any) {
@@ -256,14 +321,14 @@ export class InputSearchComponent extends InputBase implements OnInit {
   }
 
   public onDetailsClick(event: Event) {
-    if(this.details && this.selectedItem && this.searchObj) this.details.emit({...this.selectedItem, entity: this.searchObj});
+    if(this.details && this.selectedItem && this.selectedEntity) this.details.emit({...this.selectedItem, entity: this.selectedEntity});
   }
 
   public clear(clearControl: boolean = true, emitEvent: boolean = true, clearText = true) {
     this.items = [];
     this.selectedItem = undefined;
     this.selectedValue = undefined;
-    this.searchObj = undefined;
+    this.selectedEntity = undefined;
     if(clearText && this.inputElement) this.queryText = this.inputElement!.nativeElement.value = "";
     if(clearControl && !this.isDisabled && this.control) this.control.setValue(this.emptyValue);
     if(this.change && emitEvent) this.change.emit(new Event("change"));
@@ -298,3 +363,5 @@ export class InputSearchComponent extends InputBase implements OnInit {
     }
   }
 }
+
+

@@ -6,60 +6,104 @@ use Illuminate\Database\Seeder;
 use App\Models\TipoCapacidade;
 use App\Models\Capacidade;
 use App\Models\Perfil;
-use Ramsey\Uuid\Uuid;
 use App\Services\TipoCapacidadeService;
 use App\Services\UtilService;
 
 class TipoCapacidadeSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        //TipoCapacidade::whereIn('codigo',['MOD_LOGS_CONS','MOD_LOGS_EDT','MOD_LOGS_EXCL'])->delete(); //apaga capacidades inseridas indevidamente
-        $tiposCapacidadesService = new TipoCapacidadeService();
-        $utilService = new UtilService();
+  /**
+   * Run the database seeds.
+   *
+   * @return void
+   */
+  public function run()
+  {
+    $tiposCapacidadesService = new TipoCapacidadeService();
+    $utilService = new UtilService();
 
-        //garantir que existe o Perfil Desenvolvedor
-        $perfil = Perfil::where([['nome', 'Desenvolvedor']])->first();
-        if(!$perfil){
-            $perfil = new Perfil();
-            $perfil->fill([
-                'id' => $utilService->uuid("Desenvolvedor"),   
-                'nivel' => 0,         
-                'nome' => 'Desenvolvedor',
-                'descricao' => 'Perfil de Desenvolvedor - Todas as permissões',
-            ]);
-            $perfil->save();
-        };
+    //garantir que existe o Perfil Desenvolvedor
+    $perfilDesenvolvedor = Perfil::firstOrCreate(
+      ['nome' => 'Desenvolvedor'],
+      [
+        'id' => $utilService->uuid("Desenvolvedor"),
+        'nivel' => 0,
+        'descricao' => 'Perfil de Desenvolvedor - Todas as permissões',
+      ]
+    );
+    $developerId = $perfilDesenvolvedor->id;
 
-        $developerId = $perfil->id;
+    // carrega os tipos de capacidades do vetor declarado no serviço TipoCapacidadeService
+    $dadosModulosCapacidades = $tiposCapacidadesService->tiposCapacidades;
 
-        // carrega os tipos de capacidades do vetor declarado no serviço TipoCapacidadeService
-        $dadosTiposCapacidades = array_map(fn ($capacidade) => array_merge([$utilService->uuid($capacidade[0])], $capacidade), $tiposCapacidadesService->tiposCapacidades);
-        foreach ($dadosTiposCapacidades as $linha) {
-            $registro = $linha;
-            $tipocapacidade = TipoCapacidade::where('id', $registro[0])->first() ?? new TipoCapacidade();
-            $tipocapacidade->fill([
-                'id' => $registro[0],
-                'codigo' => $registro[1],
-                'descricao' => $registro[2]
-            ]);
-            $tipocapacidade->save();
-            if (!Capacidade::where([['perfil_id', $developerId], ['tipo_capacidade_id', $registro[0]]])->exists()) {
-                $capacidade = new Capacidade();
-                $capacidade->fill([
-                    'id' => $utilService->uuid(),
-                    'data_inicio' => date("Y-m-d H:i:s"),
-                    'data_fim' => null,
-                    'perfil_id' => $developerId,
-                    'tipo_capacidade_id' => $registro[0]
-                ]);
-                $capacidade->save();
-            }
+    foreach ($dadosModulosCapacidades as $modulo) {
+      $tipoCapacidadePai = TipoCapacidade::withTrashed()->updateOrCreate(
+        ['id' => $utilService->uuid($modulo['codigo'])],
+        [
+          'codigo' => $modulo['codigo'],
+          'descricao' => $modulo['descricao'],
+          'grupo_id' => NULL,
+          'deleted_at' => NULL
+        ]
+      );
+
+      // Garante que o perfil de Desenvolvedor tenha todos os tipos de capacidades filhas
+      foreach ($modulo['capacidades'] as $capacidadeFilha) {
+        $tipoCapacidadeFilha = TipoCapacidade::withTrashed()->updateOrCreate(
+          ['id' => $utilService->uuid($capacidadeFilha[0])],
+          [
+            'codigo' => $capacidadeFilha[0],
+            'descricao' => $capacidadeFilha[1],
+            'grupo_id' => $tipoCapacidadePai->id,
+            'deleted_at' => NULL
+          ]
+        );
+
+        $capacidade = Capacidade::withTrashed()->where('perfil_id', $developerId)->where('tipo_capacidade_id', $tipoCapacidadeFilha->id)->first();
+        if ($capacidade) {
+          if ($capacidade->trashed()) {
+            $capacidade->restore();
+          }
+        } else {
+          $capacidade = new Capacidade();
+          $capacidade->fill([
+              'id' => $utilService->uuid(),
+              'perfil_id' => $developerId,
+              'tipo_capacidade_id' => $tipoCapacidadeFilha->id
+          ]);
+          $capacidade->save();       
         }
+
+      }
+
+      // Garante que o perfil de Desenvolvedor tenha todos os tipos de permissão
+      $capacidadePai = Capacidade::withTrashed()->where('perfil_id', $developerId)->where('tipo_capacidade_id', $tipoCapacidadePai->id)->first();
+
+      if ($capacidadePai) {
+        if ($capacidadePai->trashed()) {
+          $capacidadePai->restore();
+        }
+      } else {
+        $capacidadePai = Capacidade::create([
+          'id' => $utilService->uuid(),
+          'perfil_id' => $developerId,
+          'tipo_capacidade_id' => $tipoCapacidadePai->id
+        ]);
+      }
     }
+
+    // exclui os tipos de capacidades filhas que não existem mais no vetor declarado no serviço TipoCapacidadeService 
+    foreach ($dadosModulosCapacidades as $modulo) {
+      $capacidades = array_map(fn($z) => $z[0], $modulo['capacidades']);
+      // representa todos os tipos de capacidade existentes na tabela, filhas do módulo, que não existem mais
+      $filhosNulos = TipoCapacidade::where('grupo_id', $utilService->uuid($modulo['codigo']))->whereNotIn('codigo', $capacidades)->get();
+      foreach ($filhosNulos as $filhoNulo)
+        $filhoNulo->deleteCascade();
+    }
+
+    // Apagar os tipos de capacidades referentes aos próprios módulos (pais) que não contêm mais filhas, e aqueles módulos (pais) que mudaram de nome
+    $modulos = array_column($dadosModulosCapacidades, 'codigo');
+    $modulosNulos = TipoCapacidade::whereNull('grupo_id')->whereNotIn('codigo', $modulos)->get();
+    foreach ($modulosNulos as $moduloNulo)
+      $moduloNulo->deleteCascade();
+  }
 }

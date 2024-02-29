@@ -24,6 +24,7 @@ export class InputSwitchComponent extends InputBase implements OnInit {
   @Input() icon: string = "";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() loading: boolean = false;
   @Input() form?: FormGroup;
@@ -36,6 +37,7 @@ export class InputSwitchComponent extends InputBase implements OnInit {
   @Input() buttonColor?: string;
   @Input() buttonCaption?: string;
   @Input() scale: InputScale = "medium";
+  @Input() required?: string;
   @Input() set value(value: any) {
     this.setValue(value);
   }

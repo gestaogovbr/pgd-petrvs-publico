@@ -23,9 +23,10 @@ export class InputTimerComponent extends InputBase implements OnInit {
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;
-  @Input() icon: string = "";
+  @Input() icon: string = "bi bi-clock";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() value: any;
   @Input() onlyHours?: string; 
@@ -34,6 +35,7 @@ export class InputTimerComponent extends InputBase implements OnInit {
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
+  @Input() required?: string;
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
   }
@@ -43,7 +45,7 @@ export class InputTimerComponent extends InputBase implements OnInit {
   @Input() set hoursPerDay(value: number) {
     this._hoursPerDay = value;
     this.updateForm(this.value);
-    this.cdRef.detectChanges();
+    this.detectChanges();
   };
   get hoursPerDay(): number {
     return this._hoursPerDay;

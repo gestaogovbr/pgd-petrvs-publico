@@ -1,17 +1,17 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="codigo" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
-        <input-text [size]="3" label="Código" controlName="codigo" [control]="form!.controls.codigo"></input-text>
-        <input-text [size]="9" label="Nome" controlName="nome" [control]="form!.controls.nome"></input-text>
+        <input-text [size]="3" label="Código" controlName="codigo" [attr.maxlength]=250 required></input-text>
+        <input-text [size]="9" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
     </div>
     <div class="row">
-        <input-multiselect label="Etiquetas" controlName="etiquetas" [size]="8" [control]="form!.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
-            <input-text [size]="5" label="Texto" icon="bi bi-textarea-t" controlName="etiqueta_texto" [control]="form!.controls.etiqueta_texto"></input-text>
-            <input-select [size]="3" label="Ícone" icon="fas fa-sign-out-alt" controlName="etiqueta_icone" liveSearch [control]="form!.controls.etiqueta_icone" [items]="lookup.ICONES"></input-select>
-            <input-color [size]="4" label="Cor" icon="bi bi-palette" controlName="etiqueta_cor" [control]="form!.controls.etiqueta_cor"></input-color>
+        <input-multiselect label="Etiquetas" controlName="etiquetas" [size]="8" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
+            <input-text [size]="5" label="Texto" controlName="etiqueta_texto" [attr.maxlength]=250></input-text>
+            <input-select [size]="3" label="Ícone" icon="fas fa-sign-out-alt" controlName="etiqueta_icone" liveSearch [items]="lookup.ICONES"></input-select>
+            <input-color [size]="4" label="Cor" controlName="etiqueta_cor"></input-color>
         </input-multiselect>
-        <input-multiselect label="Checklists" controlName="checklist" [size]="4" [control]="form!.controls.checklist" [addItemHandle]="addItemHandleChecklist.bind(this)">
-            <input-text [size]="12" controlName="checklist_texto" [control]="form!.controls.checklist_texto"></input-text>
+        <input-multiselect label="Checklists" controlName="checklist" [size]="4" [addItemHandle]="addItemHandleChecklist.bind(this)">
+            <input-text [size]="12" controlName="checklist_texto" [attr.maxlength]=250></input-text>
         </input-multiselect>
     </div>
 </editable-form>

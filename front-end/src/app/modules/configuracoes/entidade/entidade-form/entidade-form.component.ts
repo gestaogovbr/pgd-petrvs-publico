@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
@@ -64,7 +64,7 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
 
   public async loadData(entity: Entidade, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
-    this.campos = entity.campos_ocultos_demanda || [];
+    this.campos = entity.campos_ocultos_atividade || [];
     await Promise.all ([
       this.cidade?.loadSearch(entity.cidade || entity.cidade_id),
       this.gestor!.loadSearch(entity.gestor || entity.gestor_id),
@@ -82,8 +82,8 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
     return new Promise<Entidade>((resolve, reject) => {
       let entidade = this.util.fill(new Entidade(), this.entity!);
       entidade = this.util.fillForm(entidade, this.form!.value);
-      if(entidade.abrangencia == "MUNICIPAL" && this.cidade?.searchObj) {
-        entidade.codigo_ibge = (this.cidade?.searchObj as Cidade).codigo_ibge;
+      if(entidade.abrangencia == "MUNICIPAL" && this.cidade?.selectedEntity) {
+        entidade.codigo_ibge = (this.cidade?.selectedEntity as Cidade).codigo_ibge;
       } else if(entidade.abrangencia == "ESTADUAL") {
         entidade.codigo_ibge = this.lookup.UF.find(x => x.key == entidade.uf)?.code;
       } else {
@@ -95,7 +95,7 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
   }
 
   public titleEdit = (entity: Entidade): string => {
-    return "Editando " + (entity?.sigla || "");
+    return "Editando " + this.lex.translate("Entidade") + ': ' + (entity?.sigla || "");
   }
 }
 

@@ -1,11 +1,9 @@
 import { ToolbarButton } from './../../components/toolbar/toolbar.component';
-import { OnInit, Injector, Injectable, Type } from '@angular/core';
-import { FormGroup, AbstractControl, FormControl } from '@angular/forms';
-import { Base, IIndexable } from 'src/app/models/base.model';
+import { OnInit, Injector, Injectable } from '@angular/core';
+import { FormGroup, FormControl } from '@angular/forms';
 import { PageBase } from './page-base';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { FullRoute } from 'src/app/services/navigate.service';
-import { IFormGroupHelper } from 'src/app/services/form-helper.service';
 
 @Injectable()
 export abstract class PageReportFilterBase extends PageBase implements OnInit {
@@ -18,19 +16,6 @@ export abstract class PageReportFilterBase extends PageBase implements OnInit {
     icon: "bi bi-clipboard-data",
     onClick: this.onReport.bind(this)
   }];
-  /*private _loading: boolean = false;
-  public set loading(value: boolean) {
-    if(!value) {
-      this.dialog.closeSppinerOverlay();
-    } else if(!this._loading) {
-      this.dialog.showSppinerOverlay("Carregando dados do formulário");
-    }
-    this._loading = value;
-  }
-  public get loading(): boolean {
-    return this._loading;
-  }*/
-
   public form?: FormGroup;
   public formValidation?: (form?: FormGroup) => string | undefined | null;
 

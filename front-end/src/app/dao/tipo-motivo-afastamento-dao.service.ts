@@ -9,7 +9,7 @@ export class TipoMotivoAfastamentoDaoService extends DaoBaseService<TipoMotivoAf
 
   constructor(protected injector: Injector) { 
     super("TipoMotivoAfastamento", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }  
 }
 

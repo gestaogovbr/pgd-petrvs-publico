@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
@@ -18,17 +18,9 @@ export class TipoModalidadeFormComponent extends PageFormBase<TipoModalidade, Ti
     super(injector, TipoModalidade, TipoModalidadeDaoService);
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
-      atividades_homologadas: { default: "" },
-      dispensa_avaliacao: { default: "" },
-      exige_adesao: { default: true },
-      exige_assinatura: { default: true },
-      exige_assinatura_gestor_unidade: { default: false },
-      exige_assinatura_gestor_entidade: { default: false },
-      ganho_produtividade: { default: 0 },
-      calcula_tempo_despendido: { default: true },
-      data_inicio: { default: "" },
-      data_fim: { default: "" },
-      comparecer_presencialmente: { default: true }
+      plano_trabalho_calcula_horas: { default: false },
+      atividade_tempo_despendido: { default: false },
+      atividade_esforco: { default: false },
     }, this.cdRef, this.validate);
   }
 
@@ -59,7 +51,7 @@ export class TipoModalidadeFormComponent extends PageFormBase<TipoModalidade, Ti
   }
 
   public titleEdit = (entity: TipoModalidade): string => {
-    return "Editando " + (entity?.nome || "");
+    return "Editando " + this.lex.translate("Tipo de Modalidade") + ': ' + (entity?.nome || "");
   }
 }
 

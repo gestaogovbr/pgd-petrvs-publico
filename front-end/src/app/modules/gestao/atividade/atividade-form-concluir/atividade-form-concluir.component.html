@@ -1,0 +1,46 @@
+<editable-form [form]="form!" [disabled]="formDisabled" initialFocus="tipo_atividade_id" (submit)="onSaveData()" (cancel)="onCancel()">
+  <documento-link [documento]="form!.controls.documento_entrega.value"></documento-link>
+  <div class="row">
+    <input-search [label]="'Tipo de' + lex.translate('Atividade')" #tipoAtividade [emptyValue]="null" [size]="5" controlName="tipo_atividade_id" [dao]="tipoAtividadeDao" (select)="onTipoAtividadeSelect($event)"></input-search>
+    <input-select [label]="lex.translate('Entrega do plano')" [size]="5" controlName="plano_trabalho_entrega_id" #entrega [control]="form!.controls.plano_trabalho_entrega_id" [items]="entregas" [labelInfo]="lex.translate('Entrega do plano') + ' que a ' + lex.translate('atividade') + ' é referente'" required></input-select>
+    <input-switch label="Arquivar" [size]="2" controlName="arquivar" [control]="form!.controls.arquivar" labelInfo="Arquivar automaticamente após a conclusão (Somente se o plano dispensar avaliação)"></input-switch>
+  </div>
+  <!--div class="row">
+    <input-textarea [size]="12" [rows]="2" label="Descrição técnica" controlName="descricao_tecnica" [control]="form!.controls.descricao_tecnica"></input-textarea>
+  </div-->
+  <separator [title]="'Tarefa da ' + lex.translate('atividade')" collapse [collapsed]="false">
+    <atividade-list-tarefa persist [atividade]="entity"></atividade-list-tarefa>
+  </separator>
+  <div *ngIf="!entity?.plano_trabalho?.tipo_modalidade?.atividade_esforco; else comEsforco" class="row">
+    <!--input-datetime noIcon [size]="4" [label]="lex.translate('Distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime-->
+    <input-number [size]="6" [decimals]="2" label="Progresso" disabled sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso de execução (% Concluído). Sempre será 100% na conclusão!"></input-number>
+    <input-datetime noIcon [size]="6" [label]="lex.translate('Prazo de entrega')" controlName="data_estipulada_entrega" [control]="form!.controls.data_estipulada_entrega" [labelInfo]="'Data estipulada para entrega da '+ lex.translate('atividade')"></input-datetime>
+  </div>
+  <ng-template #comEsforco>
+    <div class="row">
+      <!--input-datetime noIcon [size]="3" disabled [label]="lex.translate('Distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime-->
+      <input-timer [size]="4" [label]="lex.translate('Esforço')" icon="bi bi-stopwatch" onlyHours controlName="esforco" [control]="form!.controls.esforco" labelInfo="Tempo estimado de execução"></input-timer>
+      <input-number [size]="4" [decimals]="2" label="Progresso" disabled sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso de execução (% Concluído). Sempre será 100% na conclusão!"></input-number>
+      <input-datetime noIcon [size]="4" disabled [label]="lex.translate('Prazo de entrega')" controlName="data_estipulada_entrega" [control]="form!.controls.data_estipulada_entrega" [labelInfo]="'Data estipulada para entrega da '+ lex.translate('atividade')"></input-datetime>
+    </div>
+  </ng-template>
+  <separator title="Conclusão">
+    <div *ngIf="!entity?.plano_trabalho?.tipo_modalidade?.atividade_tempo_despendido; else comTempoDespendido" class="row">
+      <input-datetime noIcon [size]="6" label="Inicio" controlName="data_inicio" [control]="form!.controls.data_inicio" disabled [labelInfo]="'Data em que o usuário iniciou a '+ lex.translate('atividade')"></input-datetime>
+      <input-datetime noIcon [size]="6" label="Conclusão" controlName="data_entrega" [control]="form!.controls.data_entrega" (change)="onDataEntregaChange($event)" [labelInfo]="'Data da conclusão da '+ lex.translate('atividade')" required></input-datetime>
+      <!--input-datetime [size]="4" label="Data de arquivamento" controlName="data_arquivamento" [control]="form!.controls.data_inicio" disabled [labelInfo]="'Data de arquivamento da '+ lex.translate('atividade')"></input-datetime-->
+    </div>
+    <ng-template #comTempoDespendido>
+      <div class="row">
+        <input-datetime noIcon [size]="4" label="Inicio" controlName="data_inicio" [control]="form!.controls.data_inicio" disabled [labelInfo]="'Data em que o usuário iniciou a '+ lex.translate('atividade')"></input-datetime>
+        <input-datetime noIcon [size]="4" label="Conclusão" controlName="data_entrega" [control]="form!.controls.data_entrega" (change)="onDataEntregaChange($event)" [labelInfo]="'Data da conclusão da '+ lex.translate('atividade')"></input-datetime>
+        <input-timer [size]="4" label="Tempo despendido" icon="bi bi-hourglass-bottom" controlName="tempo_despendido" [control]="form!.controls.tempo_despendido" disabled [labelInfo]="'Calculado no fim da '+ lex.translate('atividade')+', sendo o tempo líquido (considerando pausas)'"></input-timer>
+        <!--input-datetime [size]="3" label="Data de arquivamento" controlName="data_arquivamento" [control]="form!.controls.data_inicio" disabled [labelInfo]="'Data de arquivamento da '+ lex.translate('atividade')"></input-datetime-->
+      </div>
+    </ng-template>
+    <documento-link [documento]="form!.controls.documento_entrega.value"></documento-link>
+  </separator>
+  <separator *ngIf="efemerides && entity?.plano_trabalho?.tipo_modalidade?.atividade_tempo_despendido" title="Cálculos das horas" collapse>
+    <calendar-efemerides [efemerides]="efemerides"></calendar-efemerides>
+  </separator>
+</editable-form>

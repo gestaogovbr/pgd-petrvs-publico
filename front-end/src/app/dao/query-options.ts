@@ -4,7 +4,10 @@ export class QueryOptions {
     public where?: any;
     public orderBy?: QueryOrderBy[];
     public limit?: number;
+    public deleted?: boolean;
     public join?: string[];
     
-    constructor() {}
+    constructor(data?: any) {
+        if(data) Object.assign(this, data);
+    }
 }

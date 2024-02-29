@@ -1,22 +1,38 @@
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
         <div class="row">
-            <input-text [size]="12" label="Nome da entrega" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
+            <input-text [size]="12" [label]="'Nome ' + lex.translate('entrega')" controlName="nome" [attr.maxlength]=1000 required></input-text>
         </div>
         <div class="row">
-            <input-select [size]="6" label="Tipo de indicador" icon="bi bi-arrow-up-right-circle" controlName="tipo_indicador" [control]="form!.controls.tipo_indicador" [items]="lookup.TIPO_INDICADOR" (select)="onSelect()"></input-select>
-            <div *ngIf="form?.controls!.tipo_indicador.value == 'QUALITATIVO' || null" class="row col-6">
-                <div class="row">
-                    <div class="row mb-3">
-                        <div class="col-12">
-                          <label for="itemQualitativo" class="radio control-label">&nbsp;</label>
-                          <input-multiselect controlName="qualitativo" [addItemHandle]="addItemHandleItemQualitativo.bind(this)">
-                            <input-text [size]="12" icon="far fa-edit" controlName="itemQualitativo" [control]="form!.controls.itemQualitativo"></input-text>
-                          </input-multiselect>
-                        </div>
-                    </div>
-                 </div>
+            <input-textarea [size]="7" [rows]="2" [label]="'Descrição ' + lex.translate('entrega')" controlName="descricao" required></input-textarea>
+            <input-select [size]="5" [label]="lex.translate('Tipo de indicador')" icon="bi bi-arrow-up-right-circle" controlName="tipo_indicador" [items]="lookup.TIPO_INDICADOR"></input-select>
+            <div *ngIf="form?.controls!.tipo_indicador.value == 'QUALITATIVO' || null"  class="row col-6">
+                <div class="col-12">
+                    <label for="itemQualitativo" class="radio control-label">&nbsp;</label>
+                    <input-multiselect label="Itens Qualitativos" controlName="lista_qualitativos" [addItemHandle]="addItemHandleItemQualitativo.bind(this)">
+                        <input-text icon="far fa-edit" controlName="item_qualitativo" [attr.maxlength]=250></input-text>
+                    </input-multiselect>
+                </div>
             </div>
         </div>
+        <!--separator title="Etiquetas e Checklist"></separator>
+        <div class="row">
+            <input-multiselect label="Etiquetas" controlName="etiquetas" [size]="7" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
+                <input-text [size]="5" label="Texto" controlName="etiqueta_texto" [attr.maxlength]=250></input-text>
+                <input-select [size]="3" label="Ícone" icon="fas fa-sign-out-alt" controlName="etiqueta_icone" liveSearch [items]="lookup.ICONES"></input-select>
+                <input-color [size]="4" label="Cor" controlName="etiqueta_cor"></input-color>
+            </input-multiselect>
+            <div class="col-md-5">
+                <br><h5>Checklist</h5>
+                <grid [control]="form!.controls.checklist" [form]="formChecklist" [hasAdd]="true" [hasDelete]="true" editable>
+                     <columns>
+                         <!-<column type="switch" title="Check" field="checked" [editable]="false"></column>->
+                         <column type="text" title="Texto" field="texto"></column>
+                         <column type="options"></column>
+                     </columns>
+                </grid>
+             </div>
+        </div-->
     </div>
 </editable-form>
+<!-- [disabled]="form?.controls?.tipo_indicador?.value ? 'true' : undefined" -->

@@ -21,9 +21,10 @@ export class InputTextareaComponent extends InputBase implements OnInit {
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;
-  @Input() icon: string = "";
+  @Input() icon: string = "bi bi-textarea";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() value: any = "";
   @Input() loading: boolean = false;
@@ -33,6 +34,7 @@ export class InputTextareaComponent extends InputBase implements OnInit {
   @Input() source?: any;
   @Input() path?: string;
   @Input() placeholder?: string;
+  @Input() required?: string;
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
   }

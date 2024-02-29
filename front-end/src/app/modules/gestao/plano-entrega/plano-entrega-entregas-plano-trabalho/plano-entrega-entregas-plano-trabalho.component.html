@@ -1,0 +1,93 @@
+<grid #accordionUser [items]="items" [loading]="loader">
+  <columns>
+    <column type="expand"  [expandTemplate]="columnExpandeEntregas" [template]="usuarioSectionTitle" [width]="40">
+      
+      <ng-template let-row="row" #usuarioSectionTitle>        
+      </ng-template>
+
+      <ng-template let-item="row" #columnExpandeEntregas>
+        <h5>Entregas do plano:</h5> 
+        <hr>
+        <div *ngFor="let plano of item.planos_trabalho" class="card mb-2">
+          <div class="card-body">
+            <grid [items]="plano.entregas">
+              <columns>
+
+                <column type="expand"  [expandTemplate]="columnExpandedAtividades" [style]="'vertical-align:middle'">
+                  <ng-template let-row="row" #columnExpandedAtividades>
+                    <plano-trabalho-entrega-atividades [entregaId]="row.id"></plano-trabalho-entrega-atividades>
+                  </ng-template>
+                </column>
+
+                <column  [template]="columnPlano" [titleTemplate]="titlePlano" >
+                  <ng-template let-header="header" #titlePlano><div class="text-center"><span><strong>Plano de trabalho</strong></span></div></ng-template>
+                  <ng-template let-row="row" #columnPlano>
+                    <span class="d-block text-center">{{PlanoTrabalhoDao!.getDateFormatted(plano.data_inicio)}} <br>{{ " até "+PlanoTrabalhoDao!.getDateFormatted(plano.data_fim)}}</span>
+                  </ng-template>
+                </column>
+
+                <column [titleTemplate]="titleOrigem" [template]="columnOrigem" [verticalAlign]="'middle'" [width]="300" [align]="'center'">
+                  <ng-template let-header="header" #titleOrigem><div class="text-center"><span><strong>Origem</strong></span></div></ng-template>
+                  <ng-template let-row="row" #columnOrigem>
+                      <div class="w-100 d-flex justify-content-center">
+                          <div class="one-per-line">
+                              <badge [label]="planoTrabalhoService.tipoEntrega(row, entity).titulo" [color]="planoTrabalhoService.tipoEntrega(row, entity).cor"></badge>
+                              <badge *ngIf="row.plano_entrega_entrega_id?.length" [label]="row.plano_entrega_entrega?.plano_entrega?.unidade?.sigla || 'Desconhecido'" [icon]="entityService.getIcon('Unidade')" color="primary"></badge>
+                              <badge *ngIf="row.orgao?.length" [label]="row.orgao" icon="bi bi-box-arrow-down-left" color="warning"></badge>
+                          </div>
+                      </div>
+                  </ng-template>
+                  
+
+              </column>
+
+
+                <column [titleTemplate]="titleForcaTrabalho" [title]="'% CHD'" [template]="columnForcaTrabalho" [width]="125" [align]="'center'" [titleHint]="'% Carga Horária Disponível'">
+                  <ng-template let-header="header" #titleForcaTrabalho>
+                      <div class="text-center">
+                          <!--<small><strong>% Força Trab.</strong></small><br>-->
+                          <small><badge icon="bi bi-calculator" [color]="totalForcaTrabalho(plano.entregas) == 100 ? 'success' : 'warning'" [label]="totalForcaTrabalho(plano.entregas) + '%'"></badge></small>
+                      </div>
+                  </ng-template>
+                  <ng-template let-row="row" #columnForcaTrabalho><small>{{  row.forca_trabalho + '%' }}</small></ng-template>
+                </column>
+
+                <column [maxWidth]="250" [titleTemplate]="titleDescricao" [template]="columnDescricao" [verticalAlign]="'middle'" [align]="'center'">
+                  <ng-template let-header="header" #titleDescricao><div class="text-center"><span><strong>Detalhamento/Descrição dos Trabalhos</strong></span></div></ng-template>
+                  <ng-template let-row="row" #columnDescricao><small class="text-center">{{ row.descricao }}</small></ng-template>
+                </column>
+
+                <column title="Status" [template]="columnStatus">
+                  <ng-template let-row="row" #columnStatus>
+                      <badge [color]="lookup.getColor(lookup.PLANO_TRABALHO_STATUS, plano.status)" [icon]="lookup.getIcon(lookup.PLANO_TRABALHO_STATUS, plano.status)" [label]="lookup.getValue(lookup.PLANO_TRABALHO_STATUS, plano.status)"></badge>
+                  </ng-template>
+                </column>
+
+              </columns>
+            </grid>
+          </div>
+        </div>
+      </ng-template>
+    </column>  
+
+    <column [titleTemplate]="titleParticipante" [template]="columnParticipante">
+      <ng-template let-header="header" #titleParticipante>
+          <b>Participante</b>
+      </ng-template>
+      <ng-template let-row="row" #columnParticipante>
+        <b>{{row.nome}}</b><br>
+        <small>{{row.apelido || ""}}</small>
+      </ng-template>
+    </column>
+
+    <column [titleTemplate]="titleForcaTrabalho" [template]="columnForcaTrabalho" [title]="'% CHD'" [titleHint]="'% Carga Horária Disponível'">
+      <ng-template let-header="header" #titleForcaTrabalho>
+          <!--<b>% Força Trab.</b>-->
+      </ng-template>
+      <ng-template let-row="row" #columnForcaTrabalho>
+        <small><badge icon="bi bi-calculator" [color]="totalForcaTrabalho(planoAtivo(row.planos_trabalho).entregas) == 100 ? 'success' : 'warning'" [label]="totalForcaTrabalho(planoAtivo(row.planos_trabalho).entregas) + '%'"></badge></small>
+      </ng-template>
+    </column>
+  
+  </columns>
+</grid>

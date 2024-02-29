@@ -7,9 +7,9 @@ import { TipoJustificativaListComponent } from './tipo-justificativa-list/tipo-j
 
 const routes: Routes = [
   { path: '', component: TipoJustificativaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Tipos de Justificativa" } },
-  { path: 'new', component: TipoJustificativaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-  { path: ':id/edit', component: TipoJustificativaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-  { path: ':id/consult', component: TipoJustificativaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+  { path: 'new', component: TipoJustificativaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Tipo de Justificativa", modal: true } },
+  { path: ':id/edit', component: TipoJustificativaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Tipo de Justificativa", modal: true } },
+  { path: ':id/consult', component: TipoJustificativaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Tipo de Justificativa", modal: true } }
 ];
 
 @NgModule({

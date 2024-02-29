@@ -26,6 +26,7 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
   @Input() icon: string = "";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() value: any = 0;
   @Input() loading: boolean = false;
@@ -34,13 +35,14 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
   @Input() path?: string;
   @Input() daysOrHours?: string;
   @Input() maxLength?: number;
+  @Input() required?: string;
   @Input() unitChange?: (newUnit: UnitWorkload) => void;
   @Input() set unit(value: UnitWorkload) {
     if(this._unit != value) {
       this._unit = value;
       this.maxValue = this.unit == "day" ? 24 : this.unit == "week" ? 120 : 480;
       this.valueToWork();
-      this.cdRef.detectChanges();
+      this.detectChanges();
     }
   }
   get unit(): UnitWorkload {

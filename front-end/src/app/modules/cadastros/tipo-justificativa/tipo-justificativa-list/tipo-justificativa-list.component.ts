@@ -16,13 +16,13 @@ export class TipoJustificativaListComponent extends PageListBase<TipoJustificati
   constructor(public injector: Injector) {
     super(injector, TipoJustificativa, TipoJustificativaDaoService);
     /* Inicializações */
-    this.title = "Tipos de " + this.lex.noun("Justificativa",true);
+    this.title = this.lex.translate("Tipos de Justificativa");
     this.code="MOD_TIPO_JUST";
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
-    });
+    }); 
     // Testa se o usuário possui permissão para exibir dados do tipo de justificativa
-    if (this.auth.hasPermissionTo("MOD_TIPO_JUST_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_TIPO_JUST")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
@@ -37,6 +37,7 @@ export class TipoJustificativaListComponent extends PageListBase<TipoJustificati
         onClick: this.delete.bind(this)
       });
     }
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public filterClear(filter: FormGroup) {
@@ -49,7 +50,7 @@ export class TipoJustificativaListComponent extends PageListBase<TipoJustificati
     let form: any = filter.value;
 
     if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
 
     return result;

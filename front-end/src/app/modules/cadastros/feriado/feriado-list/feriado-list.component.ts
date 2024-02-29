@@ -18,14 +18,13 @@ export class FeriadoListComponent extends PageListBase<Feriado, FeriadoDaoServic
     super(injector, Feriado, FeriadoDaoService);
     this.dao=dao;
     /* Inicializações */
-    //this.title = "Feriados";
-    this.title = this.lex.noun("Feriado",true);
+    this.title = this.lex.translate("Feriados");
     this.code = "MOD_FER";
     this.filter = this.fh.FormBuilder({
       nome: {default: ""},
     });
     // Testa se o usuário possui permissão para exibir dados do feriado
-    if (this.auth.hasPermissionTo("MOD_FER_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_FER")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
@@ -40,6 +39,7 @@ export class FeriadoListComponent extends PageListBase<Feriado, FeriadoDaoServic
         onClick: this.delete.bind(this)
       });
     }
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public filterClear(filter: FormGroup) {
@@ -52,7 +52,7 @@ export class FeriadoListComponent extends PageListBase<Feriado, FeriadoDaoServic
     let form: any = filter.value;
 
     if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
 
     return result;

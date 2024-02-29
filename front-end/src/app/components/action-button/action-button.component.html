@@ -1,0 +1,17 @@
+<div *ngIf="!button.dynamicVisible || button.dynamicVisible(button)" class="btn-group" role="group" [class.w-100]="isFullWidth">
+    <button type="button" [id]="generatedButtonId(button)" [class]="buttonClass" [attr.data-bs-toggle]="button.items && !button.toggle ? 'dropdown' : undefined" aria-expanded="false" 
+        (click)="onButtonClick(button)" [disabled]="buttonDisabled(button)">
+        <i *ngIf="button.icon?.length" [class]="button.icon"></i>
+        <span *ngIf="button.label?.length" class="d-none d-md-inline-block ms-2">{{button.label}}</span>
+        <span *ngIf="button.badge?.length" class="badge bg-primary ms-2">{{button.badge}}</span>
+    </button>
+    <button *ngIf="button.items && button.toggle" [attr.id]="generatedButtonId(button) + '_dropdown'" type="button" [class]="'btn dropdown-toggle dropdown-toggle-split ' + (button.color || 'btn-outline-primary')" data-bs-toggle="dropdown" aria-expanded="false">
+        <span class="visually-hidden">V</span>
+    </button>
+    <ul *ngIf="button.items" class="dropdown-menu dropdown-menu-end" [attr.aria-labelledby]="generatedButtonId(button) + (button.items && button.toggle ? '_dropdown' : '')">
+        <li *ngFor="let option of button.items">
+            <hr *ngIf="option.divider" class="dropdown-divider">
+            <a *ngIf="!option.divider" class="dropdown-item" role="button" [id]="generatedButtonId(option, '_item')" (click)="onButtonClick(option)"><i *ngIf="option.icon?.length" [class]="option.icon"></i> {{option.label || ""}}</a>
+        </li>
+    </ul>
+</div>

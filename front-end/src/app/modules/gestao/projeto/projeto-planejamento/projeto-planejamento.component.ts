@@ -1,6 +1,6 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-import { CalendarOptions, EventInput, Identity } from '@fullcalendar/angular';
+import { CalendarOptions, EventInput } from '@fullcalendar/core';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GanttTaskStatus, GanttResourceUnity, GanttResourceType, GanttProject, GanttAssignment, GanttTask, GanttResource, GanttRole } from 'src/app/components/gantt/gantt-models';
 import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
@@ -11,9 +11,7 @@ import { ProjetoRecurso, ProjetoRecursoTipo } from 'src/app/models/projeto-recur
 import { ProjetoRegra } from 'src/app/models/projeto-regra.model';
 import { ProjetoTarefa, ProjetoTarefaStatus } from 'src/app/models/projeto-tarefa.model';
 import { HasAlocacoes, HasTarefas, Projeto, ProjetoStatus } from 'src/app/models/projeto.model';
-import { Tarefa } from 'src/app/models/tarefa.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
-import * as moment from 'moment';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { KanbanComponent, KanbanDocker } from 'src/app/components/kanban/kanban.component';
 import { CardItem, DockerComponent } from 'src/app/components/kanban/docker/docker.component';
@@ -21,13 +19,16 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
 import { ProjetoService } from '../projeto.service';
 import { ComponentColor } from 'src/app/components/component-base';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+
 
 export type TarefaTotaisFilhos = {
   custo: number;
   progresso: number;
   duracao: number;
-  inicio: Date | null,
-  termino: Date | null
+  data_inicio: Date | null,
+  data_fim: Date | null
 };
 
 export type RecursoListItem = {
@@ -79,7 +80,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
   }
   public calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
-    events: []
+    events: [],
+    plugins: [dayGridPlugin, interactionPlugin]
   };
 
   constructor(public injector: Injector) {
@@ -294,7 +296,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
   }
 
   public loadEtiquetas() {
-    //this.etiquetas = this.util.merge(row.atividade?.etiquetas_predefinidas, row.unidade?.etiquetas, (a, b) => a.key == b.key); 
+    //this.etiquetas = this.util.merge(row.atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key); 
     this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key); 
   }
 
@@ -385,8 +387,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
     (tarefas || []).forEach(tarefa => {
       if(!tarefa.agrupador) {
         result.push({
-          start: tarefa.inicio,
-          end: tarefa.termino,
+          start: tarefa.data_inicio,
+          end: tarefa.data_fim,
           title: tarefa.nome
           //color?
         });
@@ -436,8 +438,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
         description: tarefa.descricao,
         extra: tarefa,
         progress: tarefa.progresso,
-        start: tarefa.inicio,
-        end: tarefa.termino,
+        start: tarefa.data_inicio,
+        end: tarefa.data_fim,
         duration: tarefa.duracao,
         startIsMilestone: tarefa.inicio_marco,
         endIsMilestone: tarefa.termino_marco,
@@ -507,8 +509,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
         description: projeto.descricao,
         extra: projeto,
         progress: projeto.progresso,
-        start: projeto.inicio,
-        end: projeto.termino,
+        start: projeto.data_inicio,
+        end: projeto.data_fim,
         duration: projeto.duracao,
         startIsMilestone: false,
         endIsMilestone: false,
@@ -618,8 +620,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
     const updateTotals = (origem: HasAlocacoes & HasTarefas, totais: TarefaTotaisFilhos) => {
       if(origem.soma_progresso_filhos) origem.progresso = totais.progresso;
       if(origem.calcula_intervalo) {
-        origem.inicio = totais.inicio || origem.inicio;
-        origem.termino = totais.termino || origem.termino;
+        origem.data_inicio = totais.data_inicio || origem.data_inicio;
+        origem.data_fim = totais.data_fim || origem.data_fim;
         origem.duracao = totais.duracao || origem.duracao;
       }
     }
@@ -628,8 +630,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
         custo: 0,
         progresso: 0,
         duracao: 0,
-        inicio: null,
-        termino: null
+        data_inicio: null,
+        data_fim: null
       };
       /* Adiciona caso não exista, ou atualiza caso já exista (A exclusão de tarefas que não existem mais será feita utilizando tasksIds) */
       this.util.mergeArrayOfObject(projeto.tarefas!, tasks, "id", false, (action, dst, src) => {
@@ -642,12 +644,10 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
             path: path,
             nome: src.name,
             descricao: src.description,
-            id_processo: origem.id_processo,
-            numero_processo: origem.numero_processo,
-            id_documento: origem.id_documento,
-            numero_documento: origem.numero_documento,
-            inicio: src.start,
-            termino: src.end,
+            documento_id: origem.documento_id,
+            documento: origem.documento,
+            data_inicio: src.start,
+            data_fim: src.end,
             duracao: src.duration,
             progresso: src.progress,
             inicio_marco: src.startIsMilestone,
@@ -670,8 +670,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
             path: path,
             nome: src.name,
             descricao: src.description,
-            inicio: src.start,
-            termino: src.end,
+            data_inicio: src.start,
+            data_fim: src.end,
             duracao: src.duration,
             progresso: src.progress,
             inicio_marco: src.startIsMilestone,
@@ -699,8 +699,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
         /* Calculos feitos para serem retornados, que são utilizados logo aqui acima */
         if(pai.soma_progresso_filhos) result.progresso += src.progress || 0;
         if(pai.calcula_intervalo) {
-          result.inicio = !result.inicio || src.start.getTime() < result.inicio.getTime() ? src.start : result.inicio;
-          result.termino = !result.termino || src.end.getTime() > result.termino.getTime() ? src.end : result.termino;
+          result.data_inicio = !result.data_inicio || src.start.getTime() < result.data_inicio.getTime() ? src.start : result.data_inicio;
+          result.data_fim = !result.data_fim || src.end.getTime() > result.data_fim.getTime() ? src.end : result.data_fim;
         }
         //if(pai.soma_recusos_alocados_filhos)  /* Não precisa fazer nada, vai ser concatenado somente para exibição no toGantt */
         if(pai.soma_custos_filhos) result.custo += tarefa.custo;
@@ -719,8 +719,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
     Object.assign(projeto, {
       nome: root.name,
       descricao: root.description,
-      inicio: root.start,
-      termino: root.end,
+      data_inicio: root.start,
+      data_fim: root.end,
       duracao: root.duration,
       progresso: root.progress,
       regras: fromGanttRules(project.roles),

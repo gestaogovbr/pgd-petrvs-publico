@@ -1,0 +1,112 @@
+.cadeia-valor .dropdown-menu {
+    border: 0;
+    padding: 0;
+    background: none;
+}
+
+.cadeia-valor .dropdown-menu-button {
+    margin-top: -5px;
+}
+
+.cadeia-valor .align-button {
+    margin-top: -10px;
+}
+
+.cadeia-valor .texto {
+    max-width: 200px;
+}
+
+.nivel-1 {
+    border: 2px solid var(--border-color);
+    padding: 5px;
+    background: var(--bg);
+    position: relative;
+    margin-bottom: 15px;
+    color: var(--color);
+}
+
+.nivel-1 h3 {
+    text-align: center;
+    font-size: 18px;
+}
+
+.nivel-1::after,
+.nivel-1::before {
+    top: 100%;
+    left: 95%;
+    border: solid #fff;
+    content: "";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.nivel-1::after {
+    border-width: 20px;
+    margin-left: -20px;
+    border-color: rgba(136, 183, 213, 0);
+    border-top-color: var(--bg);
+}
+
+.nivel-1::before {
+    border-width: 23px;
+    margin-left: -23px;
+    border-color: rgba(194, 225, 245, 0);
+    border-top-color: var(--border-color);
+}
+
+.nivel-2 {
+    position: relative;
+    padding: 10px;
+    color: var(--color);
+    background-color: var(--bg);
+    margin-bottom: 10px;
+    margin-right: 40px;
+}
+
+.nivel-2 h4 {
+    font-size: 16px;
+    text-align: center;
+}
+
+.nivel-2:before,
+.nivel-2:after {
+    width: 20px;
+    height: 50%;
+    position: absolute;
+    left: 100%;
+    content: "";
+}
+
+.nivel-2:before {
+    top: 0px;
+    background: linear-gradient(to right top, var(--bg) 50%, transparent 50%);
+}
+
+.nivel-2:after {
+    top: 50%;
+    background: linear-gradient(to right bottom, var(--bg) 50%, transparent 50%);
+}
+
+.nivel-3 {
+    background-color: var(--bg);
+    color: var(--color);
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.nivel-3 h5 {
+    font-size: 14px;
+    font-weight: 400;
+    margin: 0;
+}
+
+.nivel-3 div {
+    margin-left: 10px;
+    margin-top: 5px;
+    padding: 5px;
+    font-size: 13px;
+    background-color: var(--bg);
+    color: var(--color);
+}

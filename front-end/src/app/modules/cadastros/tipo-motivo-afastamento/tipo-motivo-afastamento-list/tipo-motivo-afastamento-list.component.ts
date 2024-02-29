@@ -16,7 +16,7 @@ export class TipoMotivoAfastamentoListComponent extends PageListBase<TipoMotivoA
   constructor(public injector: Injector) {
     super(injector, TipoMotivoAfastamento, TipoMotivoAfastamentoDaoService);
     /* Inicializações */
-    this.title = "Tipos de " + this.lex.noun("Motivo de afastamento",true);
+    this.title = this.lex.translate("Motivos de Afastamento");
     this.code="MOD_TIPO_MTV_AFT";
     this.filter = this.fh.FormBuilder({
       codigo: {default: null},
@@ -29,7 +29,7 @@ export class TipoMotivoAfastamentoListComponent extends PageListBase<TipoMotivoA
       data_fim: {default: ""},
     });
     // Testa se o usuário possui permissão para exibir dados do tipo de motivo de afastamento
-    if (this.auth.hasPermissionTo("MOD_TIPO_MTV_AFT_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_TIPO_MTV_AFT")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
@@ -44,6 +44,7 @@ export class TipoMotivoAfastamentoListComponent extends PageListBase<TipoMotivoA
         onClick: this.delete.bind(this)
       });
     }
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public filterClear(filter: FormGroup) {
@@ -56,7 +57,7 @@ export class TipoMotivoAfastamentoListComponent extends PageListBase<TipoMotivoA
     let form: any = filter.value;
 
     if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
 
     return result;

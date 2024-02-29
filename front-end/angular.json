@@ -77,35 +77,54 @@
                 "glob": "**/*", 
                 "input": "node_modules/tinymce", 
                 "output": "/tinymce/" 
+              },
+              {
+                "glob": "**/*", 
+                "input": "src/assets/documentacao",
+                "output": "/docs/"
               }
             ],
             "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.css",
-              "node_modules/bootstrap-icons/font/bootstrap-icons.css",
-              "node_modules/bootstrap-select/dist/css/bootstrap-select.min.css",
-              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
-              "src/styles.scss"
+              {
+                "input": "src/assets/scss/bootstrap4_light_blue.scss",
+                "bundleName": "blue",
+                "inject": false
+              },
+              {
+                "input": "src/assets/scss/bootstrap4_light_blue.scss",
+                "bundleName": "light",
+                "inject": false
+              },
+              {
+                "input": "src/assets/scss/bootstrap4_dark_blue.scss",
+                "bundleName": "dark",
+                "inject": false
+              },
+              "./node_modules/bootstrap/dist/css/bootstrap.css",
+              "./node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss",
+              "./node_modules/@fortawesome/fontawesome-free/scss/regular.scss",
+              "./node_modules/@fortawesome/fontawesome-free/scss/solid.scss",
+              "./node_modules/@fortawesome/fontawesome-free/scss/brands.scss",
+              "./node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+              "./node_modules/primeng/resources/primeng.min.css",
+              "src/styles.scss",
+              "./node_modules/bootstrap-icons/font/bootstrap-icons.css"
+              
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/jquery-ui/dist/jquery-ui.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.bundle.js",
-              "node_modules/bootstrap-autocomplete/dist/latest/bootstrap-autocomplete.js",
-              "node_modules/bootstrap-select/dist/js/bootstrap-select.js",
-              "node_modules/jquery-mask-plugin/dist/jquery.mask.min.js"
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+              "node_modules/jquery-mask-plugin/dist/jquery.mask.min.js",
+              "node_modules/@fortawesome/fontawesome-free/js/all.min.js",
+              "node_modules/marked/marked.min.js"
             ]
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": false,
+              "optimization": true,
               "outputHashing": "none",
-              "sourceMap": true,
+              "sourceMap": false,
               "extractLicenses": true,
               "buildOptimizer": false,
               "budgets": [
@@ -120,6 +139,10 @@
                   "maximumError": "50kb"
                 }
               ]
+            },
+            "dev": {
+              "optimization": false,
+              "sourceMap": true
             }
           }
         },
@@ -132,6 +155,9 @@
           "configurations": {
             "production": {
               "browserTarget": "petrvs:build:production"
+            },
+            "dev": {
+              "browserTarget": "petrvs:build:dev"
             }
           }
         },
@@ -185,6 +211,5 @@
         }
       }
     }
-  },
-  "defaultProject": "petrvs"
+  }
 }

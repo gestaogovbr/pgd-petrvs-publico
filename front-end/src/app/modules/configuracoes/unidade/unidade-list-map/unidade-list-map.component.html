@@ -1,0 +1,9 @@
+<ng-scrollbar autoHeightDisabled="false" track="all">
+  <div class="my-3">
+    <p-organizationChart [value]="data" (onNodeExpand)="expandeUnidade($event)">
+      <ng-template let-node pTemplate="unidade">
+        <div class="font-bold">{{ node.label }}</div>
+      </ng-template>
+    </p-organizationChart>
+  </div>
+</ng-scrollbar>

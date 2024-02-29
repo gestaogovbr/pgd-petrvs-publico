@@ -1,0 +1,12 @@
+<input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" [required]="required" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold" [isRadio]="true">
+    <div class="d-flex flex-wrap justify-content-center mt-3">
+        <ng-container *ngFor="let item of items">
+            <div class="button_avaliation text-center mb-3" [class.button_avaliation_disabled]="isDisabled" [id]="generatedId(controlName) + '_' + item.key" 
+                [style.border-color]="item.color" [style.background-color]="isChecked(item) ? item.color : ''"
+                [style.color]="item.color && isChecked(item) ? util.contrastColor(item.color) : item.color" (click)="onClick(item)">
+                <i *ngIf="item.icon" class="bi {{item.icon}}"></i>
+                <span>{{item.value}}</span>
+            </div>
+        </ng-container>
+    </div>
+</input-container>

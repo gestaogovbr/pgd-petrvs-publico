@@ -6,11 +6,11 @@ import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { TemplateDaoService } from 'src/app/dao/template-dao.service';
 import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
-import { Entidade, EntidadeNotificacoes } from 'src/app/models/entidade.model';
+import { Entidade } from 'src/app/models/entidade.model';
 import { Expediente } from 'src/app/models/expediente.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
-import { TemplateService } from 'src/app/modules/uteis/templates/template.service';
-import { NotificacaoService } from 'src/app/services/notificacao.service';
+import { NotificacaoService } from 'src/app/modules/uteis/notificacoes/notificacao.service';
+import { NotificacoesConfigComponent } from 'src/app/modules/uteis/notificacoes/notificacoes-config/notificacoes-config.component';
 
 @Component({
   selector: 'app-entidade-conf',
@@ -20,43 +20,30 @@ import { NotificacaoService } from 'src/app/services/notificacao.service';
 export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoService> implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('cargaHoraria', {static: false}) public cargaHoraria?: InputWorkloadComponent;
+  @ViewChild('notificacoes', {static: false}) public notificacoes?: NotificacoesConfigComponent;
 
   public form: FormGroup;
   public formNomenclatura: FormGroup;
   public tipoModalidadeDao: TipoModalidadeDaoService;
   public templateDao: TemplateDaoService;
-  public template: TemplateService;
   public notificacao: NotificacaoService;
 
   constructor(public injector: Injector) {
     super(injector, Entidade, EntidadeDaoService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     this.templateDao = injector.get<TemplateDaoService>(TemplateDaoService);
-    this.template = injector.get<TemplateService>(TemplateService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     this.modalWidth = 1200;
+    this.join = ["notificacoes_templates", "relatorios_templates"];
     this.form = this.fh.FormBuilder({
       url_sei: {default: ""},
       tipo_modalidade_id: {default: null},
-      notifica_demanda_distribuicao: {default: true},
-      notifica_demanda_conclusao: {default: true},
-      notifica_demanda_avaliacao: {default: true},
-      notifica_demanda_modificacao: {default: true},
-      notifica_demanda_comentario: {default: true},
-      template_demanda_distribuicao: {default: ""},
-      template_demanda_conclusao: {default: ""},
-      template_demanda_avaliacao: {default: ""},
-      template_demanda_modificacao: {default: ""},
-      template_demanda_comentario: {default: ""},
-      enviar_email: {default: true},
-      enviar_whatsapp: {default: true},
+      notificacoes: {default: []},
       nomenclatura: {default: []},
       expediente: {default: new Expediente()},
       carga_horaria_padrao: {default: 8},
       forma_contagem_carga_horaria: {default: "DIA"},
-      api_public_key: {default: ""},
-      template_adesao_id: {default: null},
-      template_adesao_cancelamento_id: {default: null}
+      api_public_key: {default: ""}
     }, this.cdRef, this.validate);
     this.formNomenclatura = this.fh.FormBuilder({
       id: {default: ""},
@@ -65,7 +52,7 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
       plural: {default: ""},
       feminino: {default: false}
     }, this.cdRef, this.validateNomenclatura);
-    this.title = "Configurando entidade";
+    this.title = "Configurando " + this.lex.translate("Entidade");
   }
 
   public validateNomenclatura = (control: AbstractControl, controlName: string) => {
@@ -130,39 +117,25 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
       }
     });
     entity.nomenclatura = nomenclatura;
-    //form.patchValue(this.util.fillForm(formValue, entity));
-    let notificacoes = this.util.fill(new EntidadeNotificacoes(), entity.notificacoes);
-    form.patchValue(this.util.fillForm(formValue, {...entity, ...{
-      notifica_demanda_distribuicao: notificacoes?.notifica_demanda_distribuicao == undefined || notificacoes?.notifica_demanda_distribuicao,
-      notifica_demanda_conclusao: notificacoes?.notifica_demanda_conclusao == undefined || notificacoes?.notifica_demanda_conclusao,
-      notifica_demanda_avaliacao: notificacoes?.notifica_demanda_avaliacao == undefined || notificacoes?.notifica_demanda_avaliacao,
-      notifica_demanda_modificacao: notificacoes?.notifica_demanda_modificacao == undefined || notificacoes?.notifica_demanda_modificacao,
-      notifica_demanda_comentario: notificacoes?.notifica_demanda_comentario == undefined || notificacoes?.notifica_demanda_comentario,
-      template_demanda_distribuicao: notificacoes?.template_demanda_distribuicao || "",
-      template_demanda_conclusao: notificacoes?.template_demanda_conclusao || "",
-      template_demanda_avaliacao: notificacoes?.template_demanda_avaliacao || "",
-      template_demanda_modificacao: notificacoes?.template_demanda_modificacao || "",
-      template_demanda_comentario: notificacoes?.template_demanda_comentario || "",
-      enviar_email: entity.notificacoes?.enviar_email == undefined || entity.notificacoes?.enviar_email,
-      enviar_whatsapp: entity.notificacoes?.enviar_whatsapp == undefined || entity.notificacoes?.enviar_whatsapp
-    }}));
+    form.patchValue(this.util.fillForm(formValue, entity));
   }
 
   public async initializeData(form: FormGroup) {
-    this.entity = (await this.dao!.getById(this.urlParams!.get("id")!))!;
+    this.entity = (await this.dao!.getById(this.urlParams!.get("id")!, this.join))!;
     await this.loadData(this.entity, form);    
   }
 
   public saveData(form: IIndexable): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      let notificacoes = this.util.fillForm(new EntidadeNotificacoes(), this.form.value);
-      let entidade = this.util.fill(new Entidade(), this.entity!);
+      this.notificacoes?.saveData();
+      let entidade = this.util.fill(new Entidade({notificacoes_templates: []}), this.entity!);
       entidade = this.util.fillForm(entidade, this.form!.value);
       this.dao!.update(entidade.id, {
         url_sei: entidade.url_sei,
         tipo_modalidade_id: entidade.tipo_modalidade_id,
         nomenclatura: entidade.nomenclatura,
-        notificacoes: notificacoes,
+        notificacoes: entidade.notificacoes,
+        notificacoes_templates: entidade.notificacoes_templates,
         expediente: entidade.expediente,
         carga_horaria_padrao: entidade.carga_horaria_padrao,
         forma_contagem_carga_horaria: entidade.forma_contagem_carga_horaria  
@@ -171,6 +144,6 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
   }
 
   public titleEdit = (entity: Entidade): string => {
-    return "Configurando";
+    return "Configurando " + this.lex.translate("Entidade") + ': ' + (entity?.sigla || "");
   }
 }

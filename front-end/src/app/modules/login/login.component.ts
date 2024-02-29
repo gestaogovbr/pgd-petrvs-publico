@@ -1,15 +1,17 @@
-import { AfterViewInit, ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, RequiredValidator, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, Inject, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormHelperService } from 'src/app/services/form-helper.service';
 import { GlobalsService } from 'src/app/services/globals.service';
-import { GoogleApiService, SocialUser } from 'src/app/services/google-api.service';
+import { GoogleApiService } from 'src/app/services/google-api.service';
 import { FullRoute, NavigateService } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
 import { ModalPage } from '../base/modal-page';
 import { DialogService } from 'src/app/services/dialog.service';
+import { DOCUMENT } from '@angular/common';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -17,7 +19,7 @@ import { DialogService } from 'src/app/services/dialog.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit, ModalPage {
+export class LoginComponent implements OnInit, ModalPage, OnDestroy {
 
   public buttonDprfSeguranca: boolean = true;
   public error: string = "";
@@ -44,8 +46,11 @@ export class LoginComponent implements OnInit, ModalPage {
     public formBuilder: FormBuilder,
     public googleApi: GoogleApiService,
     public dialog: DialogService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    @Inject(DOCUMENT) private document: any
   ) {
+    this.document.body.classList.add('login');
+
     this.login = this.fh.FormBuilder({
       usuario: { default: "" },
       senha: { default: "" },
@@ -114,6 +119,10 @@ export class LoginComponent implements OnInit, ModalPage {
     }
   };
 
+  public openModal(item: any) {
+    if(item.route) this.go.navigate({route: item.route, params: item.params}, {title: "Suporte Petrvs"});
+  }
+
   // public autoSignGoogle() {
   //   /* Faz login automaticamente caso esteja logado com o Google */
   //   if(!this.auth.logging && !this.auth.logged && this.auth.googleAuth?.isSignedIn.get()) {
@@ -152,8 +161,34 @@ export class LoginComponent implements OnInit, ModalPage {
     }
   }
 
+  public signInLoginUnico() {
+    const entidade = this.globals.ENTIDADE;
+    // Construir a URL de autenticação do SouGov com parâmetros
+    const baseUrl = 'https://sso.staging.acesso.gov.br/authorize';
+    const responseType = 'code';
+    const clientId = 'pgd-pre.dth.api.gov.br';
+    const scope = 'openid+email+profile';
+    const redirectUri = 'https://pgd-pre.dth.api.gov.br/#/login-unico';
+    const state = btoa('{"entidade":"'+entidade+'"}');
+    const nonce = 'nonce';
+    const codeChallenge = 'LwIDqJyJEGgdSQuwygHlkQDKsUXFz6jMIfkM_Jlv94w';
+    const codeChallengeMethod = 'S256';
+
+    const authUrl = `${baseUrl}?response_type=${responseType}&client_id=${clientId}&scope=${scope}&redirect_uri=${redirectUri}&state=${state}&nonce=${nonce}&code_challenge=${codeChallenge}&code_challenge_method=${codeChallengeMethod}`;
+
+    window.location.href = authUrl;
+  }
+
   public signInAzure() {
     this.auth.authAzure();
+  }
+
+  public signInLoginUnicoBackEnd() {
+    this.auth.authLoginUnicoBackEnd();
+  }
+
+  ngOnDestroy(){
+    this.document.body.classList.remove('login');
   }
 
 }

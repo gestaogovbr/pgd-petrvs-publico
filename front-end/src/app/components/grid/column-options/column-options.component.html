@@ -1,16 +1,16 @@
 <!-- Modo display -->
-<div *ngIf="!isRowEditing && !grid?.selectable" class="btn-group" [class.invisible]="grid?.editing" role="group">
-    <button *ngIf="isUpDownButtons" [id]="grid?.getId('_' + index + '_' + row.id) + '_up_button'" type="button" class="btn btn-outline-secondary" (click)="onMoveClick(true)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mover registro para cima">
+<div *ngIf="!isRowEditing && (!grid?.selectable || column.isAlways)" class="btn-group" [class.invisible]="grid?.editing" role="group">
+    <button *ngIf="isUpDownButtons" [id]="grid?.getId('_' + index + '_' + row.id) + '_up_button'" type="button" class="column-option-button btn btn-outline-secondary" (click)="onMoveClick(true)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mover registro para cima">
         <i class="bi bi-arrow-up"></i>
     </button>
-    <button *ngIf="isUpDownButtons" [id]="grid?.getId('_' + index + '_' + row.id) + '_down_button'" type="button" class="btn btn-outline-secondary" (click)="onMoveClick(false)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mover registro para baixo">
+    <button *ngIf="isUpDownButtons" [id]="grid?.getId('_' + index + '_' + row.id) + '_down_button'" type="button" class="column-option-button btn btn-outline-secondary" (click)="onMoveClick(false)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mover registro para baixo">
         <i class="bi bi-arrow-down"></i>
     </button>
-    <button *ngFor="let btn of allButtons" [id]="grid?.getId('_' + index + '_' + row.id + '_' + btn.icon) + '_button'" type="button" [class]="'btn ' + (btn.color || 'btn-outline-primary')" (click)="onButtonClick(btn)" data-bs-toggle="tooltip" data-bs-placement="top" title="{{btn.hint || btn.label || ''}}">
+    <button *ngFor="let btn of allButtons" [id]="grid?.getId('_' + index + '_' + row.id + '_' + btn.icon) + '_button'" type="button" [class]="'column-option-button btn ' + (getClassButtonColor(btn.color) || 'btn-outline-primary')" (click)="onButtonClick(btn)" data-bs-toggle="tooltip" data-bs-placement="top" title="{{btn.hint || btn.label || ''}}">
         <i *ngIf="btn.icon?.length" [class]="btn.icon"></i>
     </button>
-    <div *ngIf="allOptions.length" class="btn-group" role="group">
-        <button [id]="'btnToolbarOptions' + randomId" [id]="grid?.getId('_' + index + '_' + row.id) + '_options_button'" #optionButton type="button" class="btn btn-outline-secondary dropdown-toggle" (click)="onOptionsClick()" data-bs-toggle="dropdown" aria-expanded="false">
+    <div *ngIf="allOptions.length" class="btn-group" role="group" [ngClass]="lastRow ? 'dropup' : ''">
+        <button [id]="'btnToolbarOptions' + randomId" [id]="grid?.getId('_' + index + '_' + row.id) + '_options_button'" #optionButton type="button" class="column-option-button btn btn-outline-secondary dropdown-toggle" (click)="onOptionsClick()" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-three-dots"></i>
         </button>
         <ul class="dropdown-menu dropdown-menu-end" [attr.aria-labelledby]="grid?.getId('_' + index + '_' + row.id) + '_options_button'">
@@ -25,7 +25,7 @@
     </div>
 </div>
 <!-- Modo editando -->
-<div *ngIf="grid?.editing && isRowEditing" class="btn-group" role="group">
+<div *ngIf="grid?.editing && isRowEditing && (!grid?.sidePanel || grid?.sidePanel?.isNoToolbar)" class="btn-group" role="group">
     <button type="button" [id]="grid?.getId('_' + index + '_' + row.id) + '_edit_button'" class="btn btn-outline-primary" (click)="onSaveClick()">
         <i class="bi bi-check-circle"></i>
     </button>

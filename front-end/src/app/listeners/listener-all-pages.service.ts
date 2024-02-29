@@ -51,7 +51,7 @@ export class ListenerAllPagesService extends ListenerBase {
   }
 
   public openDocumentoSei(id_processo: number, id_documento?: number) {
-    window?.open(this.auth.unidade?.entidade?.url_sei || this.gb.URL_SEI + "sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=" + id_processo + (id_documento ? "&id_documento=" + id_documento : ""), '_blank')?.focus();
+    window?.open(this.auth.entidade?.url_sei || this.gb.URL_SEI + "sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=" + id_processo + (id_documento ? "&id_documento=" + id_documento : ""), '_blank')?.focus();
   }
 
   public visibilidadeMenuSei(visivel: boolean) {

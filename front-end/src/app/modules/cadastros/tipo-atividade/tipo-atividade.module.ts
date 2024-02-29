@@ -7,7 +7,6 @@ import { TipoAtividadeListComponent } from './tipo-atividade-list/tipo-atividade
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
-
 @NgModule({
   declarations: [
     TipoAtividadeFormComponent,
@@ -21,5 +20,3 @@ import { ReactiveFormsModule } from '@angular/forms';
   ]
 })
 export class TipoAtividadeModule { }
-
-

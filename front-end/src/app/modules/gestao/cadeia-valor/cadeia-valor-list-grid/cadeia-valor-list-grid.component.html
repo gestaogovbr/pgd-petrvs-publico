@@ -1,23 +1,38 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [selectable]="selectable" (select)="onSelect($event)">
+<grid [dao]="dao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [selectable]="selectable" (select)="onSelect($event)"
+    [hasAdd]="auth.hasPermissionTo('MOD_CADV_INCL')"
+    [hasEdit]="auth.hasPermissionTo('MOD_CADV_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="6" label="Nome Cadeia de Valor" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome"></input-text>
-            <input-datetime [size]="3" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do plano de gestão/entregas"></input-datetime>
-            <input-datetime [size]="3" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do plano de gestão/entregas"></input-datetime>
+            <!--input-text [size]="6" label="Nome" icon="bi bi-textarea-t" controlName="nome" [control]="filter!.controls.nome" [labelInfo]="'Nome ' + lex.translate('cadeia de valor')" [attr.maxlength]=250></input-text-->
+            <input-search #unidade [size]="6" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" required></input-search>
+            <input-datetime [size]="3" date label="Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="filter!.controls.data_inicio" [labelInfo]="'Início ' + lex.translate('cadeia de valor')" (change)="onChangeData()"></input-datetime>
+            <input-datetime [size]="3" date label="Fim" icon="bi bi-calendar-date" controlName="data_fim" [control]="filter!.controls.data_fim" [labelInfo]="'Fim ' + lex.translate('cadeia de valor')" (change)="onChangeData()"></input-datetime>
         </div>
     </filter>
     <columns>
-        <column title="Nome" field="nome" orderBy="nome"></column>
+        <column *ngIf="!selectable" type="expand" icon="bi bi-boxes" [align]="'center'" [hint]="lex.translate('Processos')" [template]="columnProcessos" [expandTemplate]="columnExpandedProcessos">
+            <ng-template let-row="row" #columnProcessos>
+                <span *ngIf="row?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row?.length}}</span>
+            </ng-template>
+            <ng-template let-row="row" #columnExpandedProcessos>
+                <cadeia-valor-list-processos #processos [entity]="row" [cdRef]="cdRef"></cadeia-valor-list-processos>
+            </ng-template>
+        </column>
+        <column title="Nome" orderBy="nome" [template]="columnNome">
+            <ng-template let-row="row" #columnNome>
+                <span class="text-break w-100">{{row.nome}}</span>
+            </ng-template>
+        </column>
         <column title="Início" [template]="columnInicio">
             <ng-template let-row="row" #columnInicio>
-                <span> {{dao!.getDateFormatted(row.inicio)}}</span>
+                <span>{{dao!.getDateFormatted(row.data_inicio)}}</span>
             </ng-template>
         </column>
         <column title="Fim" [template]="columnFim">
             <ng-template let-row="row" #columnFim>
-                <span> {{dao!.getDateFormatted(row.fim)}}</span>
+                <span>{{dao!.getDateFormatted(row.data_fim)}}</span>
             </ng-template>
         </column>
         <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>

@@ -1,12 +1,12 @@
 <editable-form [form]="form!" [forceInvalid]="forceInvalid" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs display right>
-        <tab key="USUARIO" label="Usuário">
+        <tab key="USUARIO" [label]="lex.translate('Usuário')">
             <preferencia-form-usuario #usuario panel [usuarioId]="auth.usuario!.id"></preferencia-form-usuario>
         </tab>
         <tab key="PETRVS" label="Petrvs">
             <preferencia-form-petrvs #petrvs panel></preferencia-form-petrvs>
         </tab>
-        <tab *ngIf="auth.unidade?.entidade" key="ENTIDADE" label="Entidade">
+        <tab *ngIf="auth.entidade" key="ENTIDADE" [label]="lex.translate('Entidade')">
             Em desenvolvimento
         </tab>
     </tabs>

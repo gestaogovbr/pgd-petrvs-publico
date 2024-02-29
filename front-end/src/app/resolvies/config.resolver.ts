@@ -1,19 +1,14 @@
 import { Injectable, Injector } from '@angular/core';
-import {
-  Router, Resolve,
-  RouterStateSnapshot,
-  ActivatedRouteSnapshot
-} from '@angular/router';
+import { RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
 import { EMPTY, Observable, of } from 'rxjs';
 import { DialogService } from '../services/dialog.service';
-import { DialogComponent } from '../services/dialog/dialog.component';
 import { GlobalsService } from '../services/globals.service';
 import { NavigateService } from '../services/navigate.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ConfigResolver implements Resolve<boolean> {
+export class ConfigResolver  {
   
   private _gb?: GlobalsService;
   private get gb(): GlobalsService { this._gb = this._gb || this.injector.get<GlobalsService>(GlobalsService); return this._gb };

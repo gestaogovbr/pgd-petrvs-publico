@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Unidade;
+use App\Models\Programa;
+use App\Models\Documento;
 use App\Models\Entidade;
 use Illuminate\Support\Facades\DB;
 
@@ -21,23 +24,27 @@ class Template extends ModelBase
     }
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'numero', /* int; NOT NULL; */// Número do template (Gerado pelo sistema)
-        'especie', /* enum('TERMO_ADESAO','SEI','TCR','TCR_CANCELAMENTO'); */// Especificação da espécie do template (interno do sistema)
-        'titulo', /* varchar(256); NOT NULL; */// Nome da tarefa
+        'especie', /* enum('SEI','TCR','OUTRO','NOTIFICACAO'); NOT NULL; */// Especificação da espécie do template (interno do sistema)
+        'codigo', /* varchar(255); */// Código opcional para o template
+        'titulo', /* varchar(256); NOT NULL; */// Título do template
         'conteudo', /* text; */// Comentário predefinida para a tarefa
-        'data_set', /* json; */// Dados da parametrização
-        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
-        'data_fim', /* datetime; */// Data fim da vigência
+        'entidade_id', /* char(36); */
+        'unidade_id', /* char(36); */
+        'dataset', /* json; */// Dados da parametrização
+        //'deleted_at', /* timestamp; */
+        //'numero', /* int; NOT NULL; */// Número do template (Gerado pelo sistema)
     ];
 
-    // Mutattors e Casts
-    public function getDatasetAttribute($value)
-    {
-        return json_decode($value);
-    }
-    public function setDatasetAttribute($value)
-    {
-        $this->attributes['data_set'] = json_encode($value);
-    }
-
+    // Casting
+    protected $casts = [
+        'dataset' => AsJson::class
+    ];
+    
+    // Has
+    public function programas() { return $this->hasMany(Programa::class); }
+    public function documentos() { return $this->hasMany(Documento::class); }
+    // Belongs
+    public function entidade() { return $this->belongsTo(Entidade::class); }      //nullable
+    public function unidade() { return $this->belongsTo(Unidade::class); }        //nullable
+    
 }

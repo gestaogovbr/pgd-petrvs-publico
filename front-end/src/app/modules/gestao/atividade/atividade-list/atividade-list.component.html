@@ -1,0 +1,17 @@
+<tabs right [title]="isModal ? '' : title" [select]="onSelectTab.bind(this)" [active]="activeTab">
+    <tab key="TABELA" icon="bi bi-table" label="Lista" [template]="grid">
+        <ng-template #grid>
+            <atividade-list-grid [snapshot]="snapshot || modalRoute || route.snapshot" [minhas]="!eGestor"></atividade-list-grid>
+        </ng-template>
+    </tab>
+    <tab key="KANBAN" icon="bi bi-card-heading" label="Quadro" [template]="kanban">
+        <ng-template #kanban>
+            <atividade-list-kanban [snapshot]="snapshot || modalRoute || route.snapshot" [minhas]="!eGestor"></atividade-list-kanban>
+        </ng-template>
+    </tab>
+    <tab *ngIf="false && auth.hasPermissionTo('MOD_ATV_DASH')" key="DASHBOARD" icon="bi bi-file-earmark-bar-graph" label="Dashboard" [template]="dashboard">
+        <ng-template #dashboard>
+            <atividade-dashboard [snapshot]="snapshot || modalRoute || route.snapshot"></atividade-dashboard>
+        </ng-template>
+    </tab>
+</tabs>

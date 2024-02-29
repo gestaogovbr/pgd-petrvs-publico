@@ -10,7 +10,7 @@ export class ChangeDaoService extends DaoBaseService<Change> {
 
   constructor(protected injector: Injector) {
     super("Change", injector);
-    this.searchFields = ["type", "date_time", "user_id", "row_id", "table_name"];
+    this.inputSearchConfig.searchFields = ["type", "date_time", "user_id", "row_id", "table_name"];
   }
 
   public showTables(): Promise<LookupItem[]> {
@@ -24,9 +24,11 @@ export class ChangeDaoService extends DaoBaseService<Change> {
     });
   }
 
-  public showResponsaveis(): Promise<LookupItem[]> {
+  public showResponsaveis(ids: string[]): Promise<LookupItem[]> {
+    console.log(ids);
+    
     return new Promise<LookupItem[]>((resolve, reject) => {
-      this.server.post('api/Change/showResponsaveis', []).subscribe(response => {
+      this.server.post('api/Change/showResponsaveis', { usuario_ids: ids }).subscribe(response => {
         resolve(response.responsaveis);
       }, error => {
         console.log("Erro ao buscar a lista dos responsáveis pelas alterações no Banco de Dados-!", error);

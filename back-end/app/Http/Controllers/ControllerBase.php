@@ -15,6 +15,8 @@ abstract class ControllerBase extends Controller
     public $service = null;
     public $updatable = [];
 
+    public static $sameTransaction = false;
+
     public function __construct() {
         if(empty($this->collection)) {
             $this->collection = str_replace("Controller", "", str_replace("App\\Http\\Controllers", "App\\Models", get_class($this)));
@@ -49,23 +51,25 @@ abstract class ControllerBase extends Controller
     }
 
     public function getUnidade(Request $request) {
+        $result = null;
         $headers = $this->getPetrvsHeader($request);
-        $unidade_id = !empty($headers) && !empty($headers["unidade_id"]) ? $headers["unidade_id"] : $request->session()->get("unidade");
+        $unidade_id = !empty($headers) && !empty($headers["unidade_id"]) ? $headers["unidade_id"] : ($request->hasSession() ? $request->session()->get("unidade_id") : "");
+        $lotacao = !empty(self::loggedUser()) ? Usuario::find(self::loggedUser()->id)?->lotacao?->unidade : null;
         if(!empty($unidade_id)) {
-            $usuario = Usuario::where("id", self::loggedUser()->id)->with(["lotacoes" => function ($query) use ($unidade_id) {
-                $query->whereNull("data_fim")->where("unidade_id", $unidade_id);
-            }, "lotacoes.unidade"])->first();
-            if(isset($usuario->lotacoes[0]) && !empty($usuario->lotacoes[0]->unidade_id)) {
-                return $usuario->lotacoes[0]->unidade;
+            $usuario = Usuario::where("id", self::loggedUser()?->id)->with(["areasTrabalho" => function ($query) use ($unidade_id) {
+                $query->where("unidade_id", $unidade_id);
+            }, "areasTrabalho.unidade"])->first();
+            if(isset($usuario->areasTrabalho[0]) && !empty($usuario->areasTrabalho[0]->unidade_id)) {
+                return $usuario->areasTrabalho[0]->unidade;
             }
+        } else if(!empty($lotacao)){ /* Caso não haja nenhuma unidade selecionada, utiliza a lotação (essa situação não deverá acontecer) */
+            return $lotacao;
         }
-        return null;
+        return $result;
     }
 
     public function getUsuario(Request $request) {
-        return Usuario::where("id", self::loggedUser()->id)->with(["lotacoes" => function ($query) {
-            $query->whereNull("data_fim");
-        }, "lotacoes.unidade"])->first();
+        return !empty(self::loggedUser()) ? Usuario::where("id", self::loggedUser()?->id)->with("areasTrabalho.unidade")->first() : null;
     }
 
     /**
@@ -183,6 +187,7 @@ abstract class ControllerBase extends Controller
                 'with' => ['array'],
                 'limit' => ['required'],
                 'orderBy' => ['array'],
+                'deleted' => ['nullable'],
                 'where' => ['array']
             ]);
             $result = $this->service->query($data);
@@ -204,10 +209,10 @@ abstract class ControllerBase extends Controller
      * @param  string $file
      * @return \Illuminate\Http\Response
      */
-    public function download(Request $request, string $file)
+    public function download(Request $request, string $tenantId, string $file)
     {
         //$this->checkPermissions("DOWNLOAD", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
-        return response()->file($this->service->download($file));
+        return response()->file($this->service->download($tenantId, $file));
     }
 
     /**
@@ -312,14 +317,14 @@ abstract class ControllerBase extends Controller
                 'with' => ['array']
             ]);
             $unidade = $this->getUnidade($request);
-            $entity = $this->service->store($data['entity'], $unidade);
+            $entity = $this->service->store($data['entity'], $unidade, !ControllerBase::$sameTransaction);
             $result = $this->service->getById([
                 'id' => $entity->id,
                 'with' => $data['with']
             ]);
             return response()->json([
                 'success' => true,
-                'rows' => [$result] 
+                'rows' => [$result]
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
@@ -341,7 +346,6 @@ abstract class ControllerBase extends Controller
                 'data' => ['required'],
                 'with' => ['array']
             ]);
-            //foreach (array_keys($request->all()) as $key) {
             foreach (array_keys($data["data"]) as $key) {
                 if($key != "id" && !in_array($key, $this->updatable)) {
                     return response()->json(['error' => "Não é possível atualizar"]);
@@ -349,14 +353,14 @@ abstract class ControllerBase extends Controller
             }
             $unidade = $this->getUnidade($request);
             $data['data']['id'] = $data['id'];
-            $entity = $this->service->update($data['data'], $unidade);
+            $entity = $this->service->update($data['data'], $unidade, !ControllerBase::$sameTransaction);
             $result = $this->service->getById([
                 'id' => $entity->id,
                 'with' => $data['with']
             ]);
             return response()->json([
                 'success' => true,
-                'rows' => [$result] //$this->service->update($request->all(), $unidade)
+                'rows' => [$result] 
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
@@ -375,7 +379,7 @@ abstract class ControllerBase extends Controller
             $this->checkPermissions("UPDATEJSON", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'id' => ['required'],
-                'data' => ['required'],
+                'data' => ['nullable'],
                 'field' => ['required'],
                 'with' => ['array']
             ]);
@@ -383,7 +387,7 @@ abstract class ControllerBase extends Controller
                 return response()->json(['error' => "Não é possível atualizar"]);
             }
             $unidade = $this->getUnidade($request);
-            $entity = $this->service->updateJson($data, $unidade);
+            $entity = $this->service->updateJson($data, $unidade, !ControllerBase::$sameTransaction);
             $result = $this->service->getById([
                 'id' => $entity->id,
                 'with' => $data['with']
@@ -410,7 +414,7 @@ abstract class ControllerBase extends Controller
             $data = $request->validate([
                 'id' => ['required']
             ]);
-            return response()->json(['success' => $this->service->destroy($data["id"])]);
+            return response()->json(['success' => $this->service->destroy($data["id"], !ControllerBase::$sameTransaction)]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }

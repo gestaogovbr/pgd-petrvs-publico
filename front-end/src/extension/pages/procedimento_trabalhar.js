@@ -78,11 +78,6 @@ $(function () {
         }
     }
 
-    /* chama a tela de inclusão de demanda passando os dados do documento e do processo */
-    methods.incluirDemandaProcessual = async (idProcesso, numeroProcesso, idDocumento, numeroDocumento) => {
-        return proxy.execute("incluirDemandaProcessual", [idProcesso, numeroProcesso, idDocumento, numeroDocumento]);
-    }
-
     methods.getTiposDocumentos = () => {
         try {
             var tipos = [];

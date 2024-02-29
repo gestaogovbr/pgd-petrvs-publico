@@ -1,0 +1,41 @@
+<grid [items]="items" #grid [form]="form!" [hasDelete]="true" [minHeight]="0"
+    [add]="addConsolidacao.bind(this)" [hasAdd]="podeInserir()" [hasEdit]="false" [hasDelete]="false" editable>
+    <h5 class="my-2">{{lex.translate("Consolidações")}} <i class="bi bi-arrow-down"></i></h5>
+    <columns>
+        <column type="expand" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')" [align]="'center'" [hint]="lex.translate('Consolidação')" [template]="columnConsolidacao" [expandTemplate]="columnExpandedConsolidacao">
+            <ng-template let-row="row" #columnConsolidacao>
+                <!--span *ngIf="row?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row?.length}}</span//-->
+            </ng-template>
+            <ng-template let-row="row" #columnExpandedConsolidacao>
+                <plano-trabalho-consolidacao-form #consolidacao [disabled]="isDisabled(row)" [entity]="row" [planoTrabalho]="entity" [cdRef]="cdRef"></plano-trabalho-consolidacao-form>
+            </ng-template>
+        </column>
+        <column title="Data início" [template]="columnDataInicio">
+            <ng-template let-row="row" #columnDataInicio>
+                {{util.getDateFormatted(row.data_inicio)}}
+            </ng-template>
+        </column>
+        <column title="Data fim" [template]="columnDataFim">
+            <ng-template let-row="row" #columnDataFim>
+                {{util.getDateFormatted(row.data_fim)}}
+            </ng-template>
+        </column>
+        <column title="Estatísticas/Avaliações" [template]="columnEstatisticas" [width]="300">
+            <ng-template let-row="row" #columnEstatisticas>
+                <avaliar-nota-badge *ngIf="row.avaliacao" [align]="'left'" [tipoAvaliacao]="row.avaliacao.tipo_avaliacao || this.entity!.programa!.tipo_avaliacao_plano_trabalho" [nota]="row.avaliacao.nota"></avaliar-nota-badge>
+                <separator *ngIf="row.avaliacao?.recurso?.length" title="Recurso da avaliação" collapse [collapsed]="false">
+                    <small>{{row.avaliacao.recurso}}</small>
+                </separator>
+            </ng-template>
+        </column>
+        <column title="Status" [template]="columnStatus">
+            <ng-template let-row="row" #columnStatus>
+                <div class="one-per-line">
+                    <badge [color]="lookup.getColor(lookup.CONSOLIDACAO_STATUS, row.status)" [icon]="lookup.getIcon(lookup.CONSOLIDACAO_STATUS, row.status)" [label]="lookup.getValue(lookup.CONSOLIDACAO_STATUS, row.status)"></badge>
+                    <badge *ngIf="row.avaliacao?.recurso?.length" icon="bi bi-journal-medical" color="warning" label="Recorrido"></badge>
+                </div>
+            </ng-template>
+        </column>
+        <column type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+    </columns>
+</grid>

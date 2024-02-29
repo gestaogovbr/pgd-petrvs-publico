@@ -1,19 +1,19 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
-        <input-text [size]="8" label="Descrição" icon="far fa-edit" controlName="nome" [control]="form!.controls.nome"></input-text>
-        <input-select [size]="4" label="Abrangência" controlName="abrangencia" [control]="form!.controls.abrangencia" [items]="lookup.ABRANGENCIA"></input-select>
+        <input-text [size]="8" label="Descrição" icon="far fa-edit" controlName="nome" [attr.maxlength]=250 required></input-text>
+        <input-select [size]="4" label="Abrangência" controlName="abrangencia" icon="bi bi-globe-americas" [items]="lookup.ABRANGENCIA"></input-select>
     </div>
     <div class="row">
-        <input-radio [size]="3" label="Recorrente" icon="fas fa-redo" controlName="recorrente" [control]="form!.controls.recorrente" [items]="lookup.SIMNAO" labelInfo="Se o feriado é recorrente todos os anos... se não, informar o ano."></input-radio>
-        <input-select [size]="3" label="Dia" icon="bi bi-calendar-date" controlName="dia" [control]="form!.controls.dia" [items]="lookup.DIA_MES"></input-select>
-        <input-select [size]="3" label="Mês" icon="bi bi-calendar-date" controlName="mes" [control]="form!.controls.mes" [items]="lookup.MESES"></input-select>
-        <input-text numbers [size]="3" label="Ano" icon="bi bi-calendar-date" controlName="ano" [control]="form!.controls.ano" [disabled]="checkAnoDisabled()"></input-text>
+        <input-radio [size]="3" label="Recorrente" icon="fas fa-redo" controlName="recorrente" [items]="lookup.SIMNAO" labelInfo="Se o feriado é recorrente todos os anos... se não, informar o ano."></input-radio>
+        <input-select [size]="3" label="Dia" icon="bi bi-calendar-date" controlName="dia" [items]="lookup.DIA_MES"></input-select>
+        <input-select [size]="3" label="Mês" icon="bi bi-calendar-date" controlName="mes" [items]="lookup.MESES"></input-select>
+        <input-text numbers [size]="3" label="Ano" icon="bi bi-calendar-date" controlName="ano" [disabled]="checkAnoDisabled()" [attr.maxlength]=250></input-text>
     </div>
     <div class="row">
-        <input-search #cidade *ngIf="form!.controls.abrangencia.value == 'MUNICIPAL'" [size]="6" label="Cidade" controlName="cidade_id" [control]="form!.controls.cidade_id" [dao]="cidadeDao" [selectRoute]="{route: ['cadastros', 'cidade']}"></input-search>
-        <input-select *ngIf="form!.controls.abrangencia.value == 'ESTADUAL'" [size]="6" label="UF" controlName="uf" [control]="form!.controls.uf" [items]="lookup.UF"></input-select>
-        <input-display *ngIf="form!.controls.abrangencia.value == 'NACIONAL'" [size]="6" label="Âmbito" value="Nacional"></input-display>
-        <input-search #entidade [size]="6" label="Entidade" icone="fas fa-university" controlName="entidade_id" [control]="form!.controls.entidade_id" [dao]="entidadeDao" [selectRoute]="{route: ['configuracoes', 'entidade']}"></input-search>
+        <input-search #cidade *ngIf="form!.controls.abrangencia.value == 'MUNICIPAL'" [size]="6" controlName="cidade_id" [dao]="cidadeDao"></input-search>
+        <input-select *ngIf="form!.controls.abrangencia.value == 'ESTADUAL'" [size]="6" label="UF" controlName="uf" icon="bi bi-flag" [items]="lookup.UF"></input-select>
+        <input-display *ngIf="form!.controls.abrangencia.value == 'NACIONAL'" [size]="6" label="Âmbito" icon="bi bi-shield-fill-check" value="Nacional"></input-display>
+        <input-search #entidade [size]="6" controlName="entidade_id" [dao]="entidadeDao"></input-search>
     </div>
 </editable-form>

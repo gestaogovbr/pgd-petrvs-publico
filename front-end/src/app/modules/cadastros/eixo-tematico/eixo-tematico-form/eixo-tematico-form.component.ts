@@ -1,7 +1,6 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
 import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { EixoTematico } from 'src/app/models/eixo-tematico.model';
@@ -24,12 +23,9 @@ export class EixoTematicoFormComponent extends PageFormBase<EixoTematico, EixoTe
       descricao: {default: ""},
     }, this.cdRef, this.validate);
   }
-
+  
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(['nome','descricao','cor','icone'].indexOf(controlName) >= 0 && !control.value?.length) {
-      result = "Obrigatório";
-    }
     return result;
   }
 
@@ -50,7 +46,7 @@ export class EixoTematicoFormComponent extends PageFormBase<EixoTematico, EixoTe
   }
 
   public titleEdit = (entity: EixoTematico): string => {
-    return "Editando "+ (entity?.nome || "");
+    return "Editando " + this.lex.translate("Eixo Temático") + ': ' + (entity?.nome || "");
   }
 
 }

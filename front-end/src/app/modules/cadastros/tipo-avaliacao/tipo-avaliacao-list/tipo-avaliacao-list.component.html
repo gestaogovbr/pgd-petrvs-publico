@@ -1,27 +1,56 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [hasAdd]="auth.hasPermissionTo('MOD_TIPO_AVAL_INCL')"
+    [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_TIPO_AVAL_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_TIPO_AVAL_EDT')">
-    <toolbar></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)"
+        [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
         <div class="row">
-            <input-text [size]="12" label="Nome do tipo da avaliação" controlName="nome"
-                [control]="filter!.controls.nome" placeholder="Nome do tipo da avaliação"></input-text>
+            <input-text [size]="12" [label]="'Nome ' + lex.translate('tipo de avaliação')" controlName="nome"
+                [control]="filter!.controls.nome" placeholder="Nome..." [attr.maxlength]=250></input-text>
         </div>
     </filter>
     <columns>
-        <column title="Descrição" [template]="columnDescricao">
-            <ng-template let-row="row" #columnDescricao>
-                <i [class]="row.icone" [style.color]="row.cor"></i><span [style.color]="row.cor"> {{row.nome}}</span>
+        <column title="Nome" [template]="columnNome">
+            <ng-template let-row="row" #columnNome>
+                {{row.nome}}
             </ng-template>
         </column>
-        <column title="Nota" field="nota_atribuida"></column>
-        <column title="Aceita entrega" [template]="columnAceita_entrega">
-            <ng-template let-row="row" #columnAceita_entrega>
-                <span>{{ row.aceita_entrega ? 'Sim' : 'Não'}}</span>
+        <column title="Notas" [template]="columnNotas">
+            <ng-template let-row="row" #columnNotas>
+                <div *ngIf="selectable; else tabelaNotas">
+                    {{getNotasText(row.notas)}}
+                </div>
+                <ng-template #tabelaNotas>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nota</th>
+                                <th scope="col">Descrição<br><small>Pergunta motivacional</small></th>
+                                <th scope="col">Opções</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let nota of notasOrdenadas(row).notas">
+                                <td>
+                                    <badge [label]="nota.nota" [icon]="nota.icon" [color]="nota.cor"></badge>
+                                </td>
+                                <td>
+                                    {{nota.descricao}}<br>
+                                    <small>{{nota.pergunta}}</small><br>
+                                </td>
+                                <td>
+                                    <badge *ngIf="nota.aprova" icon="bi bi-hand-thumbs-up" color="success"
+                                        label="Aprova"></badge>
+                                    <badge *ngIf="nota.justifica" icon="bi bi-patch-question" color="primary"
+                                        label="Justifica"></badge>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </ng-template>
             </ng-template>
         </column>
-        <column title="Pergunta Motivacional" field="pergunta"></column>
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>

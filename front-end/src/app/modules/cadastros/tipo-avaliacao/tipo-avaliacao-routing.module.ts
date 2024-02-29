@@ -7,9 +7,9 @@ import { TipoAvaliacaoListComponent } from './tipo-avaliacao-list/tipo-avaliacao
 
 const routes: Routes = [
   { path: '', component: TipoAvaliacaoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Tipos de Avaliação" } },
-  { path: 'new', component: TipoAvaliacaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-  { path: ':id/edit', component: TipoAvaliacaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-  { path: ':id/consult', component: TipoAvaliacaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+  { path: 'new', component: TipoAvaliacaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Tipo de Avaliação", modal: true } },
+  { path: ':id/edit', component: TipoAvaliacaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Tipo de Avaliação", modal: true } },
+  { path: ':id/consult', component: TipoAvaliacaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Tipo de Avaliação", modal: true } }
 ];
 
 @NgModule({

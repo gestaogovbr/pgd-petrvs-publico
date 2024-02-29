@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Casts\AsJson;
 
 class Change extends Model
 {
@@ -27,7 +28,9 @@ class Change extends Model
     public $timestamps = false;
 
     protected $casts = [
-        'date_time' => 'datetime',
+        'delta' => AsJson::class
     ];
+
+    public function usuario() { return $this->belongsTo(Usuario::class); }
 
 }

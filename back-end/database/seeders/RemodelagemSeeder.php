@@ -18,7 +18,6 @@ class RemodelagemSeeder extends Seeder
     public function run()
     {
         try {
-                Schema::disableForeignKeyConstraints();
                 $tabelas_apagar = ['entregas', 'eixos_tematicos', 'planejamentos', 'planejamentos_objetivos',
                                     'planejamentos_entregas', 'planejamentos_entregas_objetivos', 'planejamentos_pontos_controles',
                                     'planejamentos_pontos_controles_entregas', 'planos_pontos_controles',
@@ -40,8 +39,7 @@ class RemodelagemSeeder extends Seeder
                 // exclusão da chave estrangeira 'planejamento_id' na tabela planos
                 if(Schema::hasColumn('planos', 'planejamento_id')){
                     Schema::table('planos', function (Blueprint $table) {
-                        $table->dropForeign(['planejamento_id']);
-                        $table->dropColumn('planejamento_id');
+                        $table->dropConstrainedForeignId('planejamento_id');
                     });
                 }
                 Schema::enableForeignKeyConstraints();

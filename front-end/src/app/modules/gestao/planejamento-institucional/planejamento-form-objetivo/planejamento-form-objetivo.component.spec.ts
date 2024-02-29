@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { PlanejamentoFormObjetivoComponent } from './planejamento-form-objetivo.component';
 
-describe('PlanejamentoFormComponent', () => {
+describe('EixoTematicoFormComponent', () => {
   let component: PlanejamentoFormObjetivoComponent;
   let fixture: ComponentFixture<PlanejamentoFormObjetivoComponent>;
 

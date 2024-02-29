@@ -1,0 +1,7 @@
+
+<div class="card h-100" [ngStyle]="{'cursor': route ? 'pointer' : 'inherit'}" (click)="onClick()">
+  <div class="card-body text-center buttons-home">
+    <div [innerHTML]="sanitizer.bypassSecurityTrustHtml((seuCodigoSvg$ | async) ?? '')"></div>
+    <h2 class="fs-5 fw-semibold mt-3">{{title}}</h2>
+  </div>
+</div>

@@ -16,14 +16,14 @@ export class TipoCapacidadeListComponent extends PageListBase<TipoCapacidade, Ti
   constructor(public injector: Injector) {
     super(injector, TipoCapacidade, TipoCapacidadeDaoService);
     /* Inicializações */
-    this.title = "Tipos de " + this.lex.noun("Capacidade",true);
+    this.title = this.lex.translate("Tipos de Capacidade");
     this.code="MOD_TIPO_CAP";
     this.filter = this.fh.FormBuilder({
       codigo: {default: ""},
       descricao: {default: ""}
     });
     // Testa se o usuário possui permissão para exibir dados do tipo de capacidade
-    if (this.auth.hasPermissionTo("MOD_TIPO_CAP_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_TIPO_CAP")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
@@ -50,7 +50,7 @@ export class TipoCapacidadeListComponent extends PageListBase<TipoCapacidade, Ti
     let form: any = filter.value;
 
     if(form.descricao?.length) {
-      result.push(["descricao", "like", "%" + form.descricao + "%"]);
+      result.push(["descricao", "like", "%" + form.descricao.trim().replace(" ", "%") + "%"]);
     }
 
     return result;

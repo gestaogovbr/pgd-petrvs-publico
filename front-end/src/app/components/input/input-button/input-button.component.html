@@ -1,4 +1,4 @@
-<input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [loading]="false" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
+<input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" required [control]="control" [loading]="false" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
     <div class="input-group">
         <input *ngIf="viewInit" #inputElement [type]="isNumbers ? 'number' : 'text'" class="form-control" [attr.value]="!isDisabled ? undefined : control ? control.value : value"
             [class.text-uppercase]="textCase == 'upper'" [class.text-lowercase]="textCase == 'lower'"

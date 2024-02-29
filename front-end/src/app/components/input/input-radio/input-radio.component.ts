@@ -20,20 +20,24 @@ export class InputRadioComponent extends InputBase implements OnInit {
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;
-  @Input() icon: string = "";
+  @Input() icon: string = "bi bi-toggle-on";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() loading: boolean = false;
   @Input() items: LookupItem[] = [];
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
+  @Input() required?: string;
+  @Input() circle?: string;
+  @Input() inline?: string;
   @Input() change?: (value: any) => void;
   @Input() set value(value: any) {
     if(value != this._value) {
       this._value = value;
-      this.cdRef.detectChanges();
+      this.detectChanges();
       const element: any = document.getElementById(this.controlName + value);
       if(element) element.checked = true;
     }
@@ -73,6 +77,14 @@ export class InputRadioComponent extends InputBase implements OnInit {
 
   public isChecked(item: LookupItem): string | undefined {
     return this.value == item.key ? "" : undefined
+  }
+
+  public get isCircle(): boolean {
+    return this.circle != undefined;
+  }
+
+  public get isInline(): boolean {
+    return this.inline != undefined;
   }
 
   ngAfterViewInit() {

@@ -1,11 +1,10 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { TipoMotivoAfastamentoDaoService } from 'src/app/dao/tipo-motivo-afastamento-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { TipoMotivoAfastamento } from 'src/app/models/tipo-motivo-afastamento.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
-import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'app-tipo-motivo-afastamento-form',
@@ -17,6 +16,7 @@ export class TipoMotivoAfastamentoFormComponent extends PageFormBase<TipoMotivoA
 
   constructor(public injector: Injector) {
     super(injector, TipoMotivoAfastamento, TipoMotivoAfastamentoDaoService);
+    this.title = this.lex.translate("Motivos de Afastamento")
     this.form = this.fh.FormBuilder({
       codigo: {default: null},
       nome: {default: ""}, 
@@ -65,7 +65,7 @@ export class TipoMotivoAfastamentoFormComponent extends PageFormBase<TipoMotivoA
   }
 
   public titleEdit = (entity: TipoMotivoAfastamento): string => {
-    return "Editando " + (entity?.nome || "");
+    return "Editando " + this.lex.translate("Tipo de Motivo de Afastamento") + ': ' + (entity?.nome || "");
   }
 }
 

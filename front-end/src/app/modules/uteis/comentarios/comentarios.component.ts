@@ -3,15 +3,16 @@ import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputTextareaComponent } from 'src/app/components/input/input-textarea/input-textarea.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { DaoBaseService } from 'src/app/dao/dao-base.service';
-import { DemandaDaoService } from 'src/app/dao/demanda-dao.service';
-import { DemandaEntregaDaoService } from 'src/app/dao/demanda-entrega-dao.service';
+import { AtividadeTarefaDaoService } from 'src/app/dao/atividade-tarefa-dao.service';
 import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
 import { Base, IIndexable } from 'src/app/models/base.model';
 import { Comentario, ComentarioOrigem, HasComentarios } from 'src/app/models/comentario';
 import { ComentarioService } from 'src/app/services/comentario.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { PageFrameBase } from '../../base/page-frame-base';
+import { ProjetoTarefaDaoService } from 'src/app/dao/projeto-tarefa-dao.service';
+import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
+import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 
 @Component({
   selector: 'comentarios',
@@ -44,7 +45,7 @@ export class ComentariosComponent extends PageFrameBase {
   @Input() set origem(value: ComentarioOrigem) {
     if(this._origem != value) {
       this._origem = value;
-      const filter = ["PROJETO", "TAREFA"].includes(value || "") ? ["COMENTARIO", "GERENCIAL", "TECNICO"] : ["COMENTARIO", "TECNICO"];
+      const filter = ["PROJETO", "PROJETO_TAREFA"].includes(value || "") ? ["COMENTARIO", "GERENCIAL", "TECNICO"] : ["COMENTARIO", "TECNICO"];
       this.comentarioTipos =  this.lookup.COMENTARIO_TIPO.filter(x => filter.includes(x.key));
     }
   }
@@ -79,36 +80,13 @@ export class ComentariosComponent extends PageFrameBase {
       this.comentario_id = this.queryParams?.comentario_id;
     }
     switch(this.origem) {
-      case 'DEMANDA': this.dao = this.injector.get<DemandaDaoService>(DemandaDaoService); break;
-      case 'ENTREGA': this.dao = this.injector.get<DemandaEntregaDaoService>(DemandaEntregaDaoService); break;
+      case 'ATIVIDADE': this.dao = this.injector.get<AtividadeDaoService>(AtividadeDaoService); break;
+      case 'ATIVIDADE_TAREFA': this.dao = this.injector.get<AtividadeTarefaDaoService>(AtividadeTarefaDaoService); break;
       case 'PROJETO': this.dao = this.injector.get<ProjetoDaoService>(ProjetoDaoService); break;
+      case 'PROJETO_TAREFA': this.dao = this.injector.get<ProjetoTarefaDaoService>(ProjetoTarefaDaoService); break;
+      case 'PLANO_ENTREGA_ENTREGA': this.dao = this.injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService); break;
     }
   }
-
-  /*ngAfterViewInit() {
-    super.ngAfterViewInit();
-    if(this.entity_id?.length && !this.isNoPersist) { /* Janela autocontida * /
-      (async () => {
-        this.loading = true;
-        try {
-          switch(this.origem) {
-            case 'DEMANDA': this.dao = this.injector.get<DemandaDaoService>(DemandaDaoService); break;
-            case 'ENTREGA': this.dao = this.injector.get<DemandaEntregaDaoService>(DemandaEntregaDaoService); break;
-            case 'PROJETO': this.dao = this.injector.get<DemandaEntregaDaoService>(DemandaEntregaDaoService); break;
-          }
-          this.entity = await this.dao?.getById(this.entity_id!, this.join) as HasComentarios | undefined;
-          const comentario = this.comentario_id?.length ? (this.gridControl.value || []).find((x: Comentario) => x.id == this.comentario_id) : undefined;
-          this.comentario.newComentario(this.gridControl, this.comentarios!, comentario);
-          this.cdRef.detectChanges();
-          this.texto!.focus();
-        } catch (erro) {
-          this.error("Erro ao carregar dados: " + erro);
-        } finally {
-          this.loading = false;
-        }
-      })();
-    }
-  }*/
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
@@ -131,7 +109,7 @@ export class ComentariosComponent extends PageFrameBase {
     let comentario: Comentario = row as Comentario;
 
     if(comentario.usuario_id == this.auth.usuario?.id) {
-      result.push({ icon: "bi bi-pencil-square", hint: "Editar", color: "btn-outline-info", onClick: (comentario: Comentario) => { this.grid!.edit(comentario); }});
+      result.push({ icon: "bi bi-pencil-square", hint: "Alterar", color: "btn-outline-info", onClick: (comentario: Comentario) => { this.grid!.edit(comentario); }});
     }
     result.push({ hint: "Responder", color: "btn-outline-success", icon: "bi bi-reply", onClick: (comentario: Comentario) => { this.comentario.newComentario(this.gridControl, this.comentarios!, comentario); }});
     return result;
@@ -170,22 +148,4 @@ export class ComentariosComponent extends PageFrameBase {
     return { comentarios: this.gridControl.value };
   }
 
-  /*public async onSaveData() {
-    this.submitting = true;
-    try {
-      this.confirm();
-      const modalResult = this.isNoPersist ? this.entity : await this.dao?.update(this.entity!.id, { comentarios: this.gridControl.value }, this.join);
-      if(this.modalRoute?.queryParams?.idroute?.length) this.go.setModalResult(this.modalRoute?.queryParams?.idroute, modalResult);
-      this.go.back(undefined, this.backRoute);
-    } catch (erro) {
-      this.error("Erro ao carregar dados: " + erro);
-    } finally {
-      this.submitting = false;
-    }
-  }
-
-  public onCancel() {
-    this.go.back(undefined, this.backRoute);
-  }
-*/
 }

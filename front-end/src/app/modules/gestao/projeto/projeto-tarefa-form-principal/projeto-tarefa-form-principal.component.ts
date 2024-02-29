@@ -4,8 +4,9 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { ProjetoTarefaDaoService } from 'src/app/dao/projeto-tarefa-dao.service';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { ProjetoTarefa } from 'src/app/models/projeto-tarefa.model';
-import { DemandaDaoService } from 'src/app/dao/demanda-dao.service';
 import { LookupItem } from 'src/app/services/lookup.service';
+import { Projeto } from 'src/app/models/projeto.model';
+import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 
 @Component({
   selector: 'projeto-tarefa-form-principal',
@@ -17,18 +18,19 @@ export class ProjetoTarefaFormPrincipalComponent extends PageFrameBase {
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: ProjetoTarefa | undefined) { super.entity = value; } get entity(): ProjetoTarefa | undefined { return super.entity; }
   @Input() cdRef: ChangeDetectorRef;
+  @Input() projeto?: Projeto;
 
   public form: FormGroup;
-  public demandaDao!: DemandaDaoService;
+  public atividadeDao!: AtividadeDaoService;
   public tipos: LookupItem[] = [{
     key: "TAREFA",
     value: "Tarefa"
   }, {
-    key: "DEMANDA",
-    value: "Demanda"
+    key: "ATIVIDADE",
+    value: "Atividade"
   }, {
     key: "DOCUMENTO",
-    value: "Doc. SUPER/SEI"
+    value: "Doc. SEI"
   }, {
     key: "PROJETO",
     value: "Projeto"
@@ -37,9 +39,8 @@ export class ProjetoTarefaFormPrincipalComponent extends PageFrameBase {
   constructor(public injector: Injector) {
     super(injector);
     this.dao = injector.get<ProjetoTarefaDaoService>(ProjetoTarefaDaoService);
-    this.demandaDao = injector.get<DemandaDaoService>(DemandaDaoService);
+    this.atividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
-
     this.form = this.fh.FormBuilder({
       tipo: {default: "TAREFA"},
       indice: {default: ""},
@@ -64,7 +65,7 @@ export class ProjetoTarefaFormPrincipalComponent extends PageFrameBase {
       aloca_recursos_proprios: {default: true},
       calcula_intervalo: {default: true},
     }, this.cdRef, this.validate);
-    this.join = ["alocacoes", "demanda"];
+    this.join = ["alocacoes", "atividade"];
   }
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;

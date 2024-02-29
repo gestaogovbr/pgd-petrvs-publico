@@ -30,7 +30,7 @@ export class IntegracaoListComponent extends PageListBase<Integracao, Integracao
     /* Inicializações */
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
-    this.title = "Rotinas de Integração";
+    this.title = this.lex.translate("Rotinas de Integração");
     this.filter = this.fh.FormBuilder({
       usuario_id: {default: ""},
       data_inicio: {default: ""},
@@ -93,7 +93,7 @@ export class IntegracaoListComponent extends PageListBase<Integracao, Integracao
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     // Testa se o usuário possui permissão para exibir dados de uma rotina de integração
-    if (this.auth.hasPermissionTo("DEV_MOD_LOGS")) result.push({icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this)});
+    if (this.auth.hasPermissionTo("MOD_DEV_TUDO")) result.push({icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this)});
     return result;
   }
 }

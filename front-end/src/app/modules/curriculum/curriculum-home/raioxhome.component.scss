@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;800&display=swap');
+@import url('https://fonts.cdnfonts.com/css/neutra-text-alt');
+  
+body::-webkit-scrollbar, #dadospessoais::-webkit-scrollbar, #dadosP::-webkit-scrollbar, #oportunidades::-webkit-scrollbar, #atributos::-webkit-scrollbar {
+    width: 11px;
+ }
+
+ body::-webkit-scrollbar-track, #dadospessoais::-webkit-scrollbar-track, #dadosP::-webkit-scrollbar-track, #oportunidades::-webkit-scrollbar-track, #atributos::-webkit-scrollbar-track {
+     background-color: #fff;
+ }
+
+ body::-webkit-scrollbar-thumb, #dadospessoais::-webkit-scrollbar-thumb, #dadosP::-webkit-scrollbar-thumb, #oportunidades::-webkit-scrollbar-thumb, #atributos::-webkit-scrollbar-thumb {
+     background-color: #1d2143;
+     border-radius: 5px;
+ }
+    
+  .logo-raio-x, .saudacao{
+    width: 100%;
+    height: auto;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .msgSaudacao {
+    color: #1d2143;
+    font-family: neutra text;
+    font-weight: bold;
+  }
+
+  
+  .logo-raio-x img {
+    max-width: 500px;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .closing{
+    border: none;
+    background: none;
+    
+  }
+
+  button #imgBTNProf, button #imgBTNGer, button #imgBTNPessoal, button #imgBTNatributos {
+    width: auto;
+    height: 120px;
+    border:none;
+  }
+
+  
+
+  .card-group--custom {
+    display: flex;
+    justify-content: center;
+  }
+
+  .title-custom {
+    font-weight: 800;
+    font-family: 'Fira Sans', sans-serif;
+    color: #1d2143;
+  }
+
+  .card-custom {
+    border-radius: 20px 20px 20px 0px;
+    width: 260px;
+    height: auto;
+    transition: all .2s linear;
+  }
+
+  .card-custom:hover {
+      -webkit-box-shadow: 0px 0px 5px 3px rgba(0,0,0,0.2);
+      -moz-box-shadow: 0px 0px 5px 3px rgba(0,0,0,0.2);
+      box-shadow: 0px 0px 5px 3px rgba(0,0,0,0.2);
+  }
+
+
+  .card-header--custom {
+    background-color: #d9dad9;
+    border-radius: 15px 15px 0px 0px !important;
+  }
+
+
+   .card-custom {
+       width: 100% !important;
+   }
+

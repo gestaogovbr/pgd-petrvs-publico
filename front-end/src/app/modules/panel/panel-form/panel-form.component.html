@@ -1,0 +1,199 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+
+    <tabs right [title]="isModal ? '' : title" [select]="onSelectTab.bind(this)">
+        <tab key="PRINCIPAL" label="Principal">
+            <separator title="Entidade"></separator>
+            <div class="row">
+                <input-select [size]="3" label="Edição" controlName="edition" [items]="lookup.EDICOES"></input-select>
+                <input-text [size]="3" label="SIGLA" controlName="id" [disabled]="action == 'new' ? undefined : 'true'" [attr.maxlength]=250></input-text>
+                <input-text [size]="6" label="Nome" controlName="nome_entidade" [attr.maxlength]=250></input-text>
+            </div>
+            <div class="row">
+                <input-select [size]="3" label="Abrangência" controlName="abrangencia" [items]="lookup.ABRANGENCIA"></input-select>
+                <input-number [size]="3" label="Cod. IBGE" icon="bi bi-clock" [control]="form!.controls.codigo_cidade"></input-number>
+                <input-text [size]="6" label="Domínio" controlName="dominio_url" [attr.maxlength]=250></input-text>
+            </div>
+            <separator title="Super Usuário"></separator>
+            <div class="row">
+                <input-text [size]="6" label="Email" controlName="email" [attr.maxlength]=250></input-text>
+                <input-text [size]="6" label="Nome" controlName="nome_usuario" [attr.maxlength]=250></input-text>
+            </div>
+            <div class="row">
+                <input-text [size]="6" label="CPF" controlName="cpf" [attr.maxlength]=15></input-text>
+                <input-text [size]="6" label="Apelido" controlName="apelido" [attr.maxlength]=250></input-text>
+            </div>
+            <separator title="Notificações" hidden="true"></separator>
+            <div class="row" hidden="true">
+                <div class="col-md-6">
+                    <div class="row">
+                        <input-switch [size]="12" scale="small" labelPosition="right" label="Petrvs (Dentro do sistema)" controlName="notification_petrvs"></input-switch>
+                        <input-switch [size]="12" scale="small" labelPosition="right" label="E-mail" controlName="notification_mail"></input-switch>
+                        <input-switch [size]="12" scale="small" labelPosition="right" label="WhatsApp" controlName="notification_whatsapp"></input-switch>
+                    </div>
+                    <separator title="WhatsApp"></separator>
+                    <div class="row">
+                        <input-text [size]="12" label="URL" controlName="notification_whatsapp_url" [attr.maxlength]=250></input-text>
+                    </div>
+                    <div class="row">
+                        <input-text [size]="12" label="Token" controlName="notification_whatsapp_token"></input-text>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <separator title="E-mail"></separator>
+                    <div class="row">
+                        <input-text [size]="12" label="Imagem assinatura" controlName="notification_mail_signature" [attr.maxlength]=250></input-text>
+                    </div>
+                    <div class="row">
+                        <input-text [size]="6" label="Host" controlName="notification_mail_host" [attr.maxlength]=250></input-text>
+                        <input-number [size]="2" label="Porta" controlName="notification_mail_port"></input-number>
+                        <input-select [size]="4" label="Protocolo" controlName="notification_mail_encryption" [items]="encryption"></input-select>
+                    </div>
+                    <div class="row">
+                        <input-text [size]="6" label="Usuário" controlName="notification_mail_username" [attr.maxlength]=250></input-text>
+                        <input-text password [size]="6" label="Senha" controlName="notification_mail_password"></input-text>
+                    </div>
+                </div>
+            </div>
+        </tab>
+        <tab key="BANCO" label="Banco de dados">
+            <separator title="Banco de dados da aplicação"></separator>
+            <div class="row">
+                <input-text [size]="4" label="Host" controlName="tenancy_db_host" [attr.maxlength]=250></input-text>
+                <input-text [size]="4" label="Banco de dados" controlName="tenancy_db_name" [attr.maxlength]=250></input-text>
+                <input-number [size]="4" label="Porta" controlName="tenancy_db_port"></input-number>
+            </div>
+            <div class="row">
+                <input-text [size]="6" label="Usuário" controlName="tenancy_db_username" [attr.maxlength]=250></input-text>
+                <input-text password [size]="6" label="Senha" controlName="tenancy_db_password" [attr.maxlength]=250></input-text>
+            </div>
+            <separator title="Logs"></separator>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <input-text [size]="6" label="Host" controlName="log_host" [attr.maxlength]=250></input-text>
+                        <input-text [size]="4" label="Banco de dados" controlName="log_database" [attr.maxlength]=250></input-text>
+                        <input-number [size]="2" label="Porta" controlName="log_port"></input-number>
+                    </div>
+                    <div class="row">
+                        <input-text [size]="6" label="Usuário" controlName="log_username" [attr.maxlength]=250></input-text>
+                        <input-text password [size]="6" label="Senha" controlName="log_password" [attr.maxlength]=250></input-text>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <separator title="Opções de log"></separator>
+                    <div class="row">
+                        <input-switch [size]="12" scale="small" labelPosition="right" label="Tráfego (traffic)" controlName="log_traffic"></input-switch>
+                        <input-switch [size]="12" scale="small" labelPosition="right" label="Auditoria (changes)" controlName="log_changes"></input-switch>
+                        <input-switch [size]="12" scale="small" labelPosition="right" label="Erros (errors)" controlName="log_errors" disabled="true"></input-switch>
+                    </div>
+                </div>
+            </div>
+        </tab>
+        <tab key="LOGIN" label="Login">
+
+            <separator title="Google"></separator>
+            <div class="row">
+                <input-text [size]="5" label="Google Client ID" controlName="login_google_client_id" [attr.maxlength]=250></input-text>
+                <input-text [size]="5" label="Firebase Project ID" controlName="login_firebase_client_id" [attr.maxlength]=250></input-text>
+                <input-switch [size]="2" scale="large" labelPosition="right" label="" controlName="login_google"></input-switch>
+            </div>
+            <separator title="Microsoft"></separator>
+            <div class="row">
+                <input-text [size]="4" label="Azure Client ID" controlName="login_azure_client_id" [attr.maxlength]=250></input-text>
+                <input-text [size]="3" label="Azure Client Secret" controlName="login_azure_secret" [attr.maxlength]=250></input-text>
+                <input-text [size]="3" label="Azure Redirect URI" controlName="login_azure_redirect_uri" [attr.maxlength]=250></input-text>
+              <input-switch [size]="2" scale="large" labelPosition="right" label="" controlName="login_azure"></input-switch>
+            </div>
+            <separator title="Login GOVBr"></separator>
+            <div class="row">
+                <input-text [size]="5" label="Client ID" controlName="login_login_unico_client_id" [attr.maxlength]=250></input-text>
+                <input-text [size]="5" label="Secret" controlName="login_login_unico_secret" [attr.maxlength]=250></input-text>
+              <input-switch [size]="2" scale="large" labelPosition="right" label="" controlName="login_login_unico"></input-switch>
+            </div>
+        </tab>
+        <tab key="INTEGRACAO" label="Integração">
+            <div class="row">
+                <input-select [size]="4" label="Tipo da Integração" controlName="tipo_integracao" [items]="lookup.TIPO_INTEGRACAO"></input-select>
+                <input-switch [size]="2" labelPosition="top" label="Auto-incluir" controlName="integracao_auto_incluir"></input-switch>
+                <input-text [size]="6" label="Codigo unidade raiz" controlName="integracao_cod_unidade_raiz" [attr.maxlength]=250></input-text>
+            </div>
+            <div *ngIf="form?.controls!.tipo_integracao.value == 'SIAPE'" class="row">
+                <separator title="Siape-WS" labeInfo="As informações dessa tela são referentes às inseridas no cadastro do SIAPE"></separator>
+                <div class="row">
+                    <input-text [size]="6" label="URL" controlName="integracao_siape_url" [attr.maxlength]=250></input-text>
+                    <input-text [size]="3" label="Upag" controlName="integracao_siape_upag" [attr.maxlength]=250></input-text>
+                    <input-text [size]="3" label="Sigla do Sistema" controlName="integracao_siape_sigla" [attr.maxlength]=250></input-text>
+                </div>
+                <div class="row">
+                    <input-text [size]="4" label="Nome do Sistema" controlName="integracao_siape_nome" [attr.maxlength]=250></input-text>
+                    <input-text [size]="4" label="CPF" controlName="integracao_siape_cpf" [attr.maxlength]="15"></input-text>
+                    <input-text [size]="4" label="Senha" controlName="integracao_siape_senha" [attr.maxlength]=250></input-text>
+                </div>
+                <div class="row">
+                    <input-text [size]="3" label="Codigo do Órgão" controlName="integracao_siape_codorgao" [attr.maxlength]=250></input-text>
+                    <input-text [size]="3" label="Codigo UORG" controlName="integracao_siape_uorg" [attr.maxlength]=250></input-text>
+                    <input-select [size]="3" label="Existe Pagador" controlName="integracao_siape_existepag" [items]="lookup.EXISTE_PAGADOR"></input-select>
+                    <input-select [size]="3" label="Tipo de Vínculo" controlName="integracao_siape_tipovinculo" [items]="lookup.TIPO_VINCULO"></input-select>
+                </div>
+                <div class="row">
+                    <input-text [size]="6" label="Perfil Usuário Comum" controlName="integracao_usuario_comum" [attr.maxlength]=250></input-text>
+                    <input-text [size]="6" label="Perfil Usuário Chefe" controlName="integracao_usuario_chefe" [attr.maxlength]=250></input-text>
+                </div>
+            </div>
+            <div *ngIf="form?.controls?.tipo_integracao?.value == 'WSO2'" class="row">
+                <separator title="Siape-PRF"></separator>
+                <div class="row">
+                    <input-text [size]="4" label="URL" controlName="integracao_wso2_url" [attr.maxlength]=250></input-text>
+                    <input-text [size]="4" label="URL Unidades" controlName="integracao_wso2_unidades" [attr.maxlength]=250></input-text>
+                    <input-text [size]="4" label="URL Pessoas" controlName="integracao_wso2_pessoas" [attr.maxlength]=250></input-text>
+                </div>
+                <div class="row">
+                    <input-text [size]="4" label="Token URL" controlName="integracao_wso2_token_url" [attr.maxlength]=250></input-text>
+                    <input-text [size]="4" label="Token AUTHORIZATION" controlName="integracao_wso2_token_authorization"></input-text>
+                    <input-text [size]="4" label="Token Acesso" controlName="integracao_wso2_token_acesso"></input-text>
+                </div>
+                <div class="row">
+                    <input-text [size]="6" label="Token USER" controlName="integracao_wso2_token_user"></input-text>
+                    <input-text [size]="6" label="Token Password" controlName="integracao_wso2_token_password"></input-text>
+                </div>
+            </div>
+        </tab>
+        <tab key="SEI" label="Módulo SEI">
+            <div class="row">
+                <input-switch [size]="1" labelPosition="top" label="Habilitado" controlName="modulo_sei_habilitado"></input-switch>
+                <input-text [size]="11" label="Url do sei" controlName="modulo_sei_url" labelInfo="Url completa do SEI incluindo o https://, sem a barra no final"></input-text>
+            </div>
+            <separator title="Certificado digital (Comunicação B2B)">
+                <div class="row">
+                    <input-textarea [rows]="5" [size]="5" label="Chave privada" controlName="modulo_sei_private_key"></input-textarea>
+                    <input-textarea [rows]="5" [size]="5" label="Chave pública" controlName="modulo_sei_public_key"></input-textarea>
+                    <div class="col-md-2 one-per-line">
+                        <input-container label="Opções" labelInfo="Utilize os botões abaixo caso deseje gerar o certificado diretamente pelo sistema">
+                            <action-button fullWidth label="Gerar" [onClick]="gerarCertificado.bind(this)"></action-button>
+                            <action-button fullWidth label="Copiar" [onClick]="copiarPublicKeyClipboard.bind(this)"></action-button>
+                        </input-container>
+                    </div>  
+                </div>
+            </separator>
+        </tab>
+        <tab key="SEEDERS" label="Seeders">
+            <div class="row">
+                <div class="col-md-8">
+                    <input-container label="Seeders">
+                        <select (change)="onSeederChange($event)" class="form-control" controlName="selectedSeeder">
+                            <option *ngFor="let s of seeders" [value]="s">{{s}}</option>
+                        </select>
+                    </input-container>
+                </div>
+                <div class="col-md-4">
+                    <input-container label="Opções">
+                        <action-button fullWidth label="Executar" [onClick]="executeSeeder.bind(this)"></action-button>
+                    </input-container>
+
+                </div>
+            </div>
+        </tab>
+    </tabs>
+</editable-form>
+
+

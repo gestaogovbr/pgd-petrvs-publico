@@ -1,0 +1,116 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+  <div *ngIf="!questionario; else softskills">
+    Formulário de SoftSkill não encontrado no banco de dados. Contate o suporte!
+  </div>
+  <ng-template #softskills>
+    <top-alert type="warning" [message]="'Competências Gerenciais, distribua 20 pontos entre as habilidades abaixo. Restam ' + this.restante + ' pontos.'"></top-alert>
+    <div class="row justify-content-between g-4">
+      <div class="col-lg-3">
+        <div class="card h-100">
+          <img src="/assets/icons/icone_comunicacao.png" id="imgComunica" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title text-center">Comunicação</h5>
+            <div class="row justify-content-center">
+              <div class="col-md-12">
+                <p class="card-text"><input-number #comunicaV controlName="comunica" [control]="form!.controls.comunica" [attr.min]="0" [minValue]="0" [maxValue]="20" (change)="valorSoftChange(this.form!.controls.comunica)"></input-number></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3">
+        <div class="card h-100">
+          <img src="/assets/icons/icone_lideranca.png" id="imgLideranca" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title text-center">Liderança</h5>
+            <div class="row justify-content-center">
+              <div class="col-md-12">
+                <p class="card-text"><input-number #liderancaV [size]="12" controlName="lideranca" [control]="form!.controls.lideranca" [attr.min]="0" [minValue]="0" [maxValue]="20" (change)="valorSoftChange(this.form!.controls.lideranca)"></input-number></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3">
+        <div class="card h-100">
+          <img src="/assets/icons/icone_resolucao.png" id="imgResolucao" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title text-center">Resolução de Problemas</h5>
+            <div class="row justify-content-center">
+              <div class="col-md-8">
+                <p class="card-text"><input-number #resolucaoV [size]="12" controlName="resolucao" [control]="form!.controls.resolucao" [attr.min]="0" [minValue]="0" [maxValue]="20" (change)="valorSoftChange(this.form!.controls.resolucao)"></input-number></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3">
+        <div class="card h-100">
+          <img src="/assets/icons/icone_criatividade.png" id="imgCriatividade" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title text-center">Criatividade e Curiosidade</h5>
+            <div class="row justify-content-center">
+              <div class="col-md-8">
+                <p class="card-text"><input-number #criatividadeV [size]="12" controlName="criatividade" [control]="form!.controls.criatividade" [attr.min]="0" [minValue]="0" [maxValue]="20" (change)="valorSoftChange(this.form!.controls.criatividade)"></input-number></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row justify-content-between g-4 mt-3">
+      <div class="col-lg-3">
+        <div class="card h-100">
+          <img src="/assets/icons/icone_pensamento.png" id="imgPensamento" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title text-center">Pensamento Crítico</h5>
+            <div class="row justify-content-center">
+              <div class="col-md-8">
+                <p class="card-text"><input-number #pensamentoV [size]="12" controlName="pensamento" [control]="form!.controls.pensamento" [attr.min]="0" [minValue]="0" [maxValue]="20" (change)="valorSoftChange(this.form!.controls.pensamento)"></input-number></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3">
+        <div class="card h-100">
+          <img src="/assets/icons/icone_habilidades.png" id="imgHabilidade" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title text-center">Habilidade com Pessoas e Equipes</h5>
+            <div class="row justify-content-center">
+              <div class="col-md-8">
+                <p class="card-text"><input-number #habilidadeV [size]="12" controlName="habilidade" [control]="form!.controls.habilidade" [attr.min]="0" [minValue]="0" [maxValue]="20" (change)="valorSoftChange(this.form!.controls.habilidade)"></input-number></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3">
+        <div class="card h-100">
+          <img src="/assets/icons/icone_adaptabilidade.png" id="imgAdaptabilidade" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title text-center">Adaptabilidade e Resiliência</h5>
+            <div class="row justify-content-center">
+              <div class="col-md-8">
+                <p class="card-text"><input-number #adaptabilidadeV [size]="12" controlName="adaptabilidade" [control]="form!.controls.adaptabilidade" [attr.min]="0" [minValue]="0" [maxValue]="20" (change)="valorSoftChange(this.form!.controls.adaptabilidade)"></input-number></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3">
+        <div class="card h-100">
+          <img src="/assets/icons/icone_etica.png" id="imgEtica" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title text-center">Ética</h5>
+            <div class="row justify-content-center">
+              <div class="col-md-12">
+                <p class="card-text"><input-number #eticaV controlName="etica" [control]="form!.controls.etica" [attr.min]="0" [minValue]="0" [maxValue]="20" (change)="valorSoftChange(this.form!.controls.etica)"></input-number></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</editable-form>

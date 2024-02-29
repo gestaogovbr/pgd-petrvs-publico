@@ -1,0 +1,17 @@
+<div class="accordion-item mb-3">
+    <h2 class="accordion-header" [attr.id]="generatedId('heading' + index)">
+        <button class="accordion-button" [class.collapsed]="!selected" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#' + generatedId('collapse' + index)" [attr.aria-expanded]="selected ? 'true' : 'false'" [attr.aria-controls]="generatedId('collapse' + index)" (click)="onClick()">
+            <ng-container *ngIf="titleTemplate" [ngTemplateOutlet]="titleTemplate" [ngTemplateOutletContext]="{item: item, data: data, accordion: accordion}"></ng-container>
+        </button>
+    </h2>
+    <div [attr.id]="generatedId('collapse' + index)" class="accordion-collapse collapse" [class.show]="selected" [attr.aria-labelledby]="generatedId('heading' + index)" [attr.data-bs-parent]="'#' + parentId">
+        <div *ngIf="loading" class="d-flex justify-content-center my-2">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden"></span>
+            </div>
+        </div>
+        <div *ngIf="selected && template && (!load || !loading)" class="accordion-body">
+            <ng-container [ngTemplateOutlet]="template" [ngTemplateOutletContext]="{item: item, data: data, accordion: accordion}"></ng-container>
+        </div>        
+    </div>
+</div>

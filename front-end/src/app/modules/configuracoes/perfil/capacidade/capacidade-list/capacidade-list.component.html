@@ -1,13 +1,13 @@
 <h3 *ngIf="!isModal" class="my-2">{{title}}</h3>
 <grid [dao]="dao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join">
     <toolbar></toolbar>
-     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
+     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
         <div class="row">
-            <input-text [size]="12" label="Capacidade" controlName="descricao" [control]="filter!.controls.descricao"></input-text>
+            <input-text [size]="12" [label]="lex.translate('Capacidade')" controlName="descricao" [control]="filter!.controls.descricao" [attr.maxlength]=250></input-text>
         </div>
     </filter> 
     <columns>
-        <column title="Perfil" [template]="columnPerfil">
+        <column [title]="lex.translate('Perfil')" [template]="columnPerfil">
             <ng-template let-row="row" #columnPerfil>
                 <span> {{row.perfil.nome}}</span>
             </ng-template>
@@ -17,7 +17,7 @@
                 <span> {{row.tipo_capacidade.codigo}}</span>
             </ng-template>
         </column>
-        <column title="Capacidade" [template]="columnTipoCapacidade">
+        <column [title]="lex.translate('Capacidade')" [template]="columnTipoCapacidade">
             <ng-template let-row="row" #columnTipoCapacidade>
                 <span> {{row.tipo_capacidade.descricao}}</span>
             </ng-template>

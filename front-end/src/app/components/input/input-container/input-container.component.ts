@@ -14,8 +14,8 @@ import { InputBase, LabelPosition } from '../input-base';
   ]
 })
 export class InputContainerComponent extends InputBase implements OnInit {
-  @HostBinding('class') class = 'form-group';
-  @Input() hostClass: string = ""; 
+  @HostBinding('class') class = '';
+  @Input() hostClass: string = "mt-2"; 
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;
@@ -23,13 +23,14 @@ export class InputContainerComponent extends InputBase implements OnInit {
   @Input() icon: string = "";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() required?: string;
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() loading: boolean = false;
   @Input() errorMessageIcon?: string;
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
-  @Input() classLabel?: string;
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
   }
@@ -43,11 +44,18 @@ export class InputContainerComponent extends InputBase implements OnInit {
     return this.getSize(); 
   }
 
+ 
+
   constructor(public injector: Injector) {
     super(injector);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
+  }
+
+  public ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+   
   }
 }

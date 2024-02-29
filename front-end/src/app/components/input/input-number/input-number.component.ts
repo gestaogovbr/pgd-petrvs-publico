@@ -24,6 +24,7 @@ export class InputNumberComponent extends InputBase implements OnInit {
   @Input() icon: string = "";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() value: any = "";
   @Input() loading: boolean = false;
@@ -36,6 +37,7 @@ export class InputNumberComponent extends InputBase implements OnInit {
   @Input() allowNegative?: string;
   @Input() source?: any;
   @Input() path?: string;
+  @Input() required?: string;
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
   }
@@ -58,7 +60,8 @@ export class InputNumberComponent extends InputBase implements OnInit {
     if(this._decimals != value) {
       this._decimals = value;
       //this.maskOptions.precision = value;
-      this.maskFormat = value ? "0*.00" : ""; //"separator." + value : "";
+      //this.maskFormat = value ? "0*.00" : ""; //"separator." + value : "";
+      this.maskFormat = value ? "separator." + value : undefined; //"separator." + value : "";
     }
   }
   @Input() set size(value: number) {
@@ -68,7 +71,7 @@ export class InputNumberComponent extends InputBase implements OnInit {
     return this.getSize(); 
   }
 
-  public maskFormat: string = "";
+  public maskFormat?: string;
   //public maskOptions: any = { prefix: '', thousands: '.', decimal: ',', precision: 0 };
   //public maskDropSpecialCharacters: boolean = false; 
   //public maskSpecialCharacters: string[] = ["-", "/", "(", ")", ".", ":", " ", "+", ",", "@", "[", "]", '"', "'"];
@@ -93,6 +96,11 @@ export class InputNumberComponent extends InputBase implements OnInit {
 
   public onChange(event: Event) {
     if(this.change) this.change.emit(event); 
+  }
+
+  public converteNumero(event: any) {
+    let value = event.target.value;
+    if(value && !isNaN(value * 1)) this.formControl.patchValue(value * 1);
   }
 
 }

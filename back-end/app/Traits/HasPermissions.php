@@ -4,14 +4,14 @@ namespace App\Traits;
 
 trait HasPermissions
 {
-    /* 
-    Checa se tem permissão
-    @param string|(string|string[])[] $permission Permissão que se deseja testar, deve seguir o seguinte padrão:
-      - string: será testado se o código existe nas capacidades do perfil do usuario
-      - (string|string[])[]: o primeiro nível será considerado como OR, e o segundo nível como AND, exemplo:
-        ["Codigo1", ["Codigo2", "codigo3"]] => Codigo1 ou [codigo2 e codigo3]
-    @return boolean
-    */    
+ 
+    /**
+     * Checa se o usuário possui a(s) permissão(ões) passada(s) como parâmetro. 
+     * Quando o parâmetro é um array, os seus elementos do tipo string serão tratados como OR e os seus elementos do tipo string[] serão tratados como AND. 
+     * Exemplo: ["Codigo1", ["Codigo2", "codigo3"], "Codigo4"] => Codigo1 ou [codigo2 e codigo3] ou Codigo4
+     * 
+     * @param (string|string[])[] $permission 
+     */
     public function hasPermissionTo($permission) {
         $permissions = is_array($permission) ? $permission : [$permission];
         $userPermissions = $this->perfil()->with("capacidades.tipoCapacidade")->get();

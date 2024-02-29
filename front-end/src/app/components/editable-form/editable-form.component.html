@@ -1,8 +1,17 @@
 <toolbar *ngIf="title.length || toolbarButtons.length" [title]="title" [buttons]="toolbarButtons"></toolbar>
-<div *ngIf="error?.length" [id]="generatedId(title) + '_error'" class="alert alert-danger mt-2 break-spaces" role="alert">{{error}}</div>
-<form [class]="isNoMargin ? 'm-0 p-0' : 'mx-2 mt-2'" [id]="generatedId(title) + '_form'" [formGroup]="form!">
-    <ng-content></ng-content>
-</form>
+<div *ngIf="error?.length" [id]="generatedId(title) + '_error'" class="alert alert-danger mt-2 break-spaces" role="alert">
+    <span><u><strong>{{ (error || '').split('&')[0] }}</strong></u></span><br>{{ (error || '').split('&')[1] }}
+</div>
+<div class="px-2">
+    <form [class]="isNoMargin ? 'm-0 p-0' : 'mx-2 mt-2'" [id]="generatedId(title) + '_form'" [formGroup]="form!" class="d-block">
+        <ng-content></ng-content>
+    </form>
+</div>
+<ng-container *ngIf="!isNoButtons && anyRequired">
+    <small>
+        (<span class="fs-6">＊</span>) Campos obrigatórios
+    </small>
+</ng-container>
 <div *ngIf="!isNoButtons" class="d-flex flex-row-reverse mt-3">
     <div class="btn-group float-right" role="group" aria-label="Opções">
         <button *ngFor="let btn of buttons" [id]="generatedId(title + btn.label + btn.icon) + '_button'" type="button" [class]="'btn ' + (btn.color || 'btn-outline-primary')" (click)="onButtonClick(btn)">

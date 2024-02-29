@@ -1,0 +1,13 @@
+:host ::ng-deep .transparent-black {
+    background-color: transparent;
+    color: black;
+}
+
+:host ::ng-deep .transparent-white {
+    background-color: transparent;
+    color: white;
+}
+
+.no-arrow::before, .no-arrow::after {
+    display: none !important;
+}

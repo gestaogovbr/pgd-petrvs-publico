@@ -10,7 +10,7 @@ if (environment.production) {
 
 document.addEventListener('bootstrapAppModule', () => {
   //@ts-ignore
-  const isEmbedded = typeof PETRVS_IS_SUPER_MODULE != "undefined" ? !!PETRVS_IS_SUPER_MODULE : typeof IS_PETRVS_EXTENSION !== "undefined" ? !!IS_PETRVS_EXTENSION : typeof PETRVS_IS_EXTENSION != "undefined" ? !!PETRVS_IS_EXTENSION : false;
+  const isEmbedded = typeof PETRVS_IS_SEI_MODULE != "undefined" ? !!PETRVS_IS_SEI_MODULE : typeof IS_PETRVS_EXTENSION !== "undefined" ? !!IS_PETRVS_EXTENSION : typeof PETRVS_IS_EXTENSION != "undefined" ? !!PETRVS_IS_EXTENSION : false;
   //@ts-ignore
   const baseUrl = typeof EXTENSION_BASE_URL !== "undefined" ? EXTENSION_BASE_URL : typeof PETRVS_BASE_URL != "undefined" ? PETRVS_BASE_URL : undefined;
   //@ts-ignore

@@ -14,30 +14,15 @@ class CadeiaValorController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':
-                if (!$usuario->hasPermissionTo('MOD_PGENTR_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
+                if (!$usuario->hasPermissionTo('MOD_CADV_INCL')) throw new ServerException("CapacidadeStore", "Inserção não realizada");
                 break;
-            case 'UPDATE':
-                if (!$usuario->hasPermissionTo('MOD_PGENTR_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
+            case 'EDIT':
+                if (!$usuario->hasPermissionTo('MOD_CADV_EDT')) throw new ServerException("CapacidadeStore", "Edição não realizada");
                 break;
             case 'DESTROY':
-                if (!$usuario->hasPermissionTo('MOD_PGENTR_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
-                break;
-            case 'QUERY':
-                if (!$usuario->hasPermissionTo('MOD_PGENTR_CONS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
+                if (!$usuario->hasPermissionTo('MOD_CADV_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não realizada");
                 break;
         }
     }
 
-
-    public function avaliar(Request $request){
-
-    }
-
-    public function cancelarAvaliacao(Request $request) {
-
-    }
-
-    public function arquivar(Request $request) {
-
-    }
 }

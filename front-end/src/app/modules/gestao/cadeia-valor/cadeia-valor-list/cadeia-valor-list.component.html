@@ -1,12 +1,12 @@
-<tabs right [title]="isModal ? '' : title" [select]="onSelectTab.bind(this)" [active]="activeTab">
+<tabs right [title]="isModal ? '' : title" [select]="onSelectTab.bind(this)">
     <tab key="TABELA" icon="bi bi-table" label="Lista" [template]="grid">
         <ng-template #grid>
-            <cadeia-valor-list-grid [snapshot]="snapshot || modalRoute || route.snapshot"></cadeia-valor-list-grid>
+            <cadeia-valor-list-grid [selectable]="selectable" [snapshot]="snapshot || modalRoute || route.snapshot"></cadeia-valor-list-grid>
         </ng-template>
     </tab>
-    <tab key="KANBAN" icon="bi bi-card-heading" label="Map" [template]="kanban">
-        <ng-template #kanban>
-            <!-- <cadeia-valor-list-map [snapshot]="snapshot || modalRoute || route.snapshot"></cadeia-valor-list-map> -->
+    <tab *ngIf="!selectable" key="MAPA" icon="bi bi-card-heading" label="Mapa" [template]="mapa">
+        <ng-template #mapa>
+            <cadeia-valor-mapa></cadeia-valor-mapa>
         </ng-template>
     </tab>
 </tabs>

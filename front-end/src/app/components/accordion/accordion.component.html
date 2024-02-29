@@ -1,0 +1,11 @@
+<div class="accordion" id="generatedId('accordion')">
+    <div *ngIf="loading; else sections" class="d-flex justify-content-center my-2">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden"></span>
+        </div>
+    </div>
+    <ng-template #sections>
+        <section *ngFor="let item of items; let i = index" [parentId]="generatedId('accordion')" [selected]="i == selectedIndex" [index]="i" [item]="item" [load]="load" [template]="template" [titleTemplate]="titleTemplate" [accordion]="this"></section>
+        <ng-content></ng-content>
+    </ng-template>
+</div>

@@ -4,16 +4,15 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\Projeto;
+use App\Models\Documento;
+use App\Models\Atividade;
 use App\Models\Usuario;
-use App\Models\Demanda;
 use App\Models\ProjetoAlocacao;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
+use App\Models\Comentario;
+use App\Casts\AsJson;
 
 class ProjetoTarefa extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'projetos_tarefas';
 
     protected $with = [];
@@ -23,12 +22,10 @@ class ProjetoTarefa extends ModelBase
         'path', /* text; NOT NULL; */// Path dos nós pais
         'nome', /* varchar(256); NOT NULL; */// Nome da tarefa
         'descricao', /* varchar(256); NOT NULL; */// Descricao da tarefa
-        'id_processo', /* int; */// ID do processo SEI
-        'numero_processo', /* varchar(50); */// Número do processo SEI
-        'id_documento', /* int; */// ID do documento SEI
-        'numero_documento', /* varchar(50); */// Numero do documento SEI
-        'inicio', /* datetime; */// Inicio da tarefa
-        'termino', /* datetime; */// Termino da tarefa
+        'data_inicio', /* datetime; */// Inicio da tarefa
+        'data_fim', /* datetime; */// Fim da tarefa
+        'data_inicio_baseline', /* datetime; */// Inicio do projeto (Baseline)
+        'data_fim_baseline', /* datetime; */// Fim do projeto (Baseline)
         'duracao', /* double(8,2); NOT NULL; */// Duração da atividade. Se a duração for 0 e sintéfico for falso então irá se comportar apenas como um grupo
         'progresso', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual de progresso da tarefa
         'inicio_marco', /* tinyint; NOT NULL; */// Se o inicio é um marco
@@ -45,13 +42,13 @@ class ProjetoTarefa extends ModelBase
         'custos_proprios', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos próprios (somente se tem_filhos), se não tem filhos sempre será true
         'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos custos filhos (somente se tem_filhos)
         'etiquetas', /* json; */// Etiquetas
+        'documento_id', /* char(36); */
+        'tarefa_projeto_id', /* char(36); */
         'projeto_id', /* char(36); NOT NULL; */
         'tarefa_pai_id', /* char(36); */
-        'demanda_id', /* char(36); */
         'usuario_id', /* char(36); */
-        //'tarefa_projeto_id', /* char(36); */
-        //'data_inicio', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data inicio da vigência
-        //'data_fim', /* datetime; */// Data fim da vigência
+        'atividade_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
     ];
 
     public $fillable_changes = ["alocacoes"];
@@ -60,19 +57,20 @@ class ProjetoTarefa extends ModelBase
 
     public $delete_cascade = ["alocacoes"];
 
+    // Casting
+    protected $casts = [
+        'etiquetas' => AsJson::class
+    ];
+
     // Has
     public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class, "tarefa_id"); }    
+    public function tarefas() { return $this->hasMany(ProjetoTarefa::class, "tarefa_pai_id"); }    
+    public function comentarios() { return $this->hasMany(Comentario::class); }    
     // Belongs
     public function projeto() { return $this->belongsTo(Projeto::class); }    
-    public function demanda() { return $this->belongsTo(Demanda::class); }    
-    public function usuario() { return $this->belongsTo(Usuario::class); }    
-    // Mutattors e Casts
-    public function getEtiquetasAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setEtiquetasAttribute($value)
-    {
-        $this->attributes['etiquetas'] = json_encode($value);
-    }
+    public function tarefaProjeto() { return $this->belongsTo(Projeto::class); }     //nullable
+    public function documento() { return $this->belongsTo(Documento::class); }        //nullable
+    public function atividade() { return $this->belongsTo(Atividade::class); }        //nullable
+    public function usuario() { return $this->belongsTo(Usuario::class); }        //nullable
+    public function tarefaPai() { return $this->belongsTo(ProjetoTarefa::class); }       //nullable
 }

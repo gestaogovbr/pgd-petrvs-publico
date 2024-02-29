@@ -1,7 +1,15 @@
-/front-end/src/environments/environment.ts
 /back-end/.vscode/launch.json
 /back-end/.vscode/tasks.json
-/back-end/*.bak
+
+*.bak
+
+back-end/vendor/*
+front-end/node_modules/*
+front-end/.angular/*
+
+*Zone.Identifier*
+
+package-lock.json
 
 /resources/mysql/*
 
@@ -30,3 +38,16 @@ back-end/servidores.xml
 back-end/unidades.xml
 back-end/tests/*
 back-end/local_files/*
+front-end/src/environments/environment.prod.ts
+front-end/src/proxy.conf.json
+front-end/tsconfig.json
+*.bak
+front-end/.vscode/settings.json
+
+# Dario
+back-end/storage/tenant*/*/
+back-end/database/seeders/ZUnidadesSeeder.php
+resources/documentacao/Gestão/plano_trabalho.pdf
+
+# Para Apple
+*.DS_Store

@@ -3,10 +3,11 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { IIndexable } from 'src/app/models/base.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
-import { Usuario, UsuarioConfig, UsuarioNotificacoes } from 'src/app/models/usuario.model';
+import { Usuario, UsuarioConfig } from 'src/app/models/usuario.model';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { NotificacoesConfigComponent } from 'src/app/modules/uteis/notificacoes/notificacoes-config/notificacoes-config.component';
 
 @Component({
   selector: 'preferencia-form-usuario',
@@ -15,6 +16,7 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 })
 export class PreferenciaFormUsuarioComponent extends PageFormBase<Usuario, UsuarioDaoService> implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild('notificacoes', { static: false }) public notificacoes?: NotificacoesConfigComponent;
   @Input() panel?: string;
   @Input() usuarioId?: string;
   
@@ -43,15 +45,9 @@ export class PreferenciaFormUsuarioComponent extends PageFormBase<Usuario, Usuar
       etiqueta_texto: {default: ""},
       etiqueta_icone: {default: null},
       etiqueta_cor: {default: null},
+      theme: {default: null},
       ocultar_menu_sei: {default: true},
       ocultar_container_petrvs: {default: false},
-      notifica_demanda_distribuicao: {default: true},
-      notifica_demanda_conclusao: {default: true},
-      notifica_demanda_avaliacao: {default: true},
-      notifica_demanda_modificacao: {default: true},
-      notifica_demanda_comentario: {default: true},
-      enviar_email: {default: true},
-      enviar_whatsapp: {default: true}
     }, this.cdRef, this.validate);
   }
 
@@ -91,16 +87,11 @@ export class PreferenciaFormUsuarioComponent extends PageFormBase<Usuario, Usuar
 
   public saveData(form: IIndexable): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      /*let config = this.util.fill(new UsuarioConfig(), this.entity!.config || {});
-      config = this.util.fillForm(config, this.form!.value);
-      this.usuario!.config = Object.assign(this.usuario!.config, value);
-      this.usuarioDaoService.updateJson(this.usuario!.id, 'config', value);*/
-      //this.dao!.update(this.usuarioId!, {config: config})
+      this.notificacoes?.saveData();
       let config = this.util.fill(new UsuarioConfig(), this.form!.value);
-      let notificacoes = this.util.fill(new UsuarioNotificacoes(), this.form!.value);
       Promise.all([
         this.auth.updateUsuarioConfig(this.usuarioId!, config),
-        this.auth.updateUsuarioNotificacoes(this.usuarioId!, notificacoes)
+        this.auth.updateUsuarioNotificacoes(this.usuarioId!, this.entity!.notificacoes)
       ]).then(results => {
         if(this.usuarioId == this.auth.usuario!.id) {
           this.auth.authSession().then(result => resolve(!this.isPanel)).catch(reject);
@@ -130,6 +121,6 @@ export class PreferenciaFormUsuarioComponent extends PageFormBase<Usuario, Usuar
   };
 
   public titleEdit = (entity: Usuario): string => {
-    return "Editando ";// + (entity?.unidade_id || "");
+    return "Editando " + this.lex.translate("Preferência")+ ' ' + this.lex.translate("do Usuário") + ': ' + (entity?.apelido || "");
   }
 }

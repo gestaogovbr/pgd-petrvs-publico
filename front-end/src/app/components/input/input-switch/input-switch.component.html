@@ -1,8 +1,16 @@
-<input-container [labelPosition]="['right', 'left'].includes(labelPosition) ? 'none' : labelPosition" [controlName]="controlName" [control]="control" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
+<input-container [labelPosition]="['right', 'left'].includes(labelPosition) ? 'none' : labelPosition" [labelClass]="labelClass" [controlName]="controlName" [required]="required" [control]="control" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold" [hostClass]="hostClass">
     <div *ngIf="!isButton" [class]="containerClass">
-        <label *ngIf="labelPosition == 'left'" class="form-check-label" [class.me-3]="scale == 'small'" [class.me-5]="scale == 'medium'" for="{{generatedId(controlName)}}">{{label}}</label>
+        <label *ngIf="labelPosition == 'left'" class="form-check-label" [class.me-3]="scale == 'small'" [class.me-5]="scale == 'medium'" for="{{generatedId(controlName)}}">
+            <i *ngIf="icon.length" [class]="icon"></i>
+            {{label}}
+            <i *ngIf="labelInfo.length" class="bi bi-info-circle label-info text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="{{labelInfo}}"></i>
+        </label>
         <input *ngIf="viewInit" [class]="'form-check-input ' + scaleClass" type="checkbox" #checkbox [id]="generatedId(controlName)" (change)="onChange($event)" [attr.disabled]="!isDisabled ? undefined : true">
-        <label *ngIf="labelPosition == 'right'" class="form-check-label ms-2" for="{{generatedId(controlName)}}">{{label}}</label>
+        <label *ngIf="labelPosition == 'right'" class="form-check-label ms-2" for="{{generatedId(controlName)}}">
+            <i *ngIf="icon.length" [class]="icon"></i>
+            {{label}}
+            <i *ngIf="labelInfo.length" class="bi bi-info-circle label-info text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="{{labelInfo}}"></i>
+        </label>
     </div>
     <ng-container *ngIf="isButton">
         <input *ngIf="viewInit" class="btn-check" type="checkbox" #checkbox [id]="generatedId(controlName)" (change)="onChange($event)" [attr.disabled]="!isDisabled ? undefined : true">

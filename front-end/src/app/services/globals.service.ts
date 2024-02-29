@@ -1,7 +1,11 @@
-import { Injectable, Injector } from '@angular/core';
+import { Inject, Injectable, Injector, SecurityContext } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';
 import { ToolbarButton } from '../components/toolbar/toolbar.component';
+import { AppComponent, MenuContexto } from '../app.component';
+import { DOCUMENT } from '@angular/common';
+import { AuthService } from './auth.service';
+import { NavigateService } from './navigate.service';
 
 export type EntidadePetrvs = "ANTAQ" | "PRF" | "";
 
@@ -10,11 +14,13 @@ export type EntidadePetrvs = "ANTAQ" | "PRF" | "";
 })
 export class GlobalsService {
   public VERSAO_DB: number = 1;
+  public VERSAO_SYS: number =  environment.versao;
   public URL_SEI: string = "https://sei.prf.gov.br/"; /* Buscar essa configuração da Entidade */
   public IMAGES = environment.images;
   public ENTIDADE = environment.entidade || "";
+  public ENV = environment.env || "";
   public SUPPORT_URL = environment.suporte || "";
-  public refresh?: () => void;
+  public app?: AppComponent;
   public set toolbarButtons(value: ToolbarButton[]) {
     this._toolbarButtons = value;
     if(this.refresh) this.refresh();
@@ -31,8 +37,41 @@ export class GlobalsService {
     local: new Date()
   };
 
+  public auth: AuthService;
+  public go: NavigateService;
+  public contexto?: MenuContexto;
+
+  constructor(@Inject(DOCUMENT) private document: any, public injector: Injector) {
+    this.auth = injector.get<AuthService>(AuthService);
+    this.go = injector.get<NavigateService>(NavigateService);    
+  }
+
+  public refresh() {
+    //this.document.getElementById("html-petrvs").setAttribute("data-bs-theme", this.theme)
+    document.getElementsByTagName("html")[0].setAttribute("data-bs-theme", this.theme);
+    const ngTheme = this.document.getElementById("primeng-thme") as HTMLLinkElement;
+    if (ngTheme) ngTheme.href = this.theme + ".css";
+    this.app!.cdRef.detectChanges();
+  }
+
+  public setContexto(context: string, goToContextoHome: boolean = true) {
+    if(this.contexto?.key != context) {
+      let novoContexto = this.app!.menuContexto.find(x => x.key == context);
+      if(!this.auth.usuario || !novoContexto?.permition || this.auth.capacidades.includes(novoContexto.permition)) this.contexto = novoContexto;
+      if(this.contexto && goToContextoHome) this.goHome();
+      this.app!.cdRef.detectChanges();
+    }
+    if(this.auth.usuario && this.auth.usuarioConfig.menu_contexto != this.contexto?.key) {
+      this.auth.usuarioConfig = { menu_contexto: this.contexto?.key || "" };
+    }
+  }
+
+  public goHome() {
+    this.go.navigate({ route: ["home", this.contexto!.key.toLowerCase()] });
+  }
+
   public get isEmbedded(): boolean {
-    return this.isExtension || this.isSuperModule;
+    return this.isExtension || this.isSeiModule;
   }
 
   public get isExtension(): boolean {
@@ -40,9 +79,9 @@ export class GlobalsService {
     return (typeof IS_PETRVS_EXTENSION != "undefined" && !!IS_PETRVS_EXTENSION) || (typeof PETRVS_IS_EXTENSION != "undefined" && !!PETRVS_IS_EXTENSION);
   };
 
-  public get isSuperModule(): boolean {
+  public get isSeiModule(): boolean {
     //@ts-ignore
-    return typeof PETRVS_IS_SUPER_MODULE != "undefined" && !!PETRVS_IS_SUPER_MODULE;
+    return typeof PETRVS_IS_SEI_MODULE != "undefined" && !!PETRVS_IS_SEI_MODULE;
   };
 
   public is(entidade: string): boolean {
@@ -71,7 +110,7 @@ export class GlobalsService {
   public get initialRoute(): string[] {
     //@ts-ignore
     const route = typeof PETRVS_EXTENSION_ROUTE != "undefined" ? PETRVS_EXTENSION_ROUTE : typeof PETRVS_ROUTE != "undefined" ? PETRVS_ROUTE : "/home";
-    const strRoute = this.isEmbedded ? route : "/home";
+    const strRoute = this.isEmbedded ? route : (this.contexto ? "/home/"+ this.contexto!.key.toLowerCase() : "/home");
     return strRoute.substring(strRoute.startsWith("/") ? 1 : 0).split("/");
   }
 
@@ -89,12 +128,13 @@ export class GlobalsService {
   private _sanitizer?: DomSanitizer;
   public get sanitizer(): DomSanitizer { this._sanitizer = this._sanitizer || this.injector.get<DomSanitizer>(DomSanitizer); return this._sanitizer };
 
-  constructor(public injector: Injector) { }
+
 
   public getResourcePath(resource: string) {
     const key = "URL_" + encodeURI(resource);
-    if(this.isEmbedded && !this.urlBuffer[key]) this.urlBuffer[key] = this.sanitizer.bypassSecurityTrustResourceUrl(this.baseURL + resource);
-    return this.isEmbedded ? this.urlBuffer[key] : resource;
+    const isAsset = !!resource.match(/\/?assets\//);
+    if(this.isEmbedded && !this.urlBuffer[key]) this.urlBuffer[key] = this.sanitizer.bypassSecurityTrustResourceUrl((isAsset ? this.baseURL : this.servidorURL + "/") + resource);
+    return this.isEmbedded ? this.urlBuffer[key] : (!isAsset && !resource.startsWith("http") ? this.servidorURL + "/" + resource : resource);
   }
 
   public get isFirefox(): boolean {
@@ -125,4 +165,12 @@ export class GlobalsService {
     return environment.login.institucional == true;
   }
 
+  public get hasLoginUnicoLogin(): boolean {
+    return environment.login.login_unico == true;
+  }
+
+  public get theme(): string {
+    const theme = this.auth.usuarioConfig.theme
+    return theme ? theme : 'light'
+  }
 }

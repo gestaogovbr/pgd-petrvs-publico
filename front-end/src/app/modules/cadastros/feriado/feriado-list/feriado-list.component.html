@@ -3,10 +3,10 @@
     [hasAdd]="auth.hasPermissionTo('MOD_FER_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_FER_EDT')">
     <toolbar></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
         <div class="row">
-            <input-text [size]="12" label="Nome do Feriado" controlName="nome"
-                [control]="filter!.controls.nome" placeholder="Nome do feriado"></input-text>
+            <input-text [size]="12" [label]="'Nome ' + lex.translate('Feriado')" controlName="nome"
+                [control]="filter!.controls.nome" [placeholder]="'Nome ' + lex.translate('feriado')" [attr.maxlength]=250></input-text>
         </div>
     </filter>
     <columns>

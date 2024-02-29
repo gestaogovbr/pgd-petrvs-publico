@@ -1,0 +1,21 @@
+<div class="json-viewer">
+  <div
+    *ngFor="let segment of segments"
+    [ngClass]="['segment', 'segment-type-' + segment.type]">
+    <div
+      (click)="toggle(segment)"
+      [ngClass]="{
+        'segment-main': true,
+        'expandable': isExpandable(segment),
+        'expanded': segment.expanded
+      }">
+      <div *ngIf="isExpandable(segment)" class="toggler"></div>
+      <span class="segment-key">{{ segment.key }}</span>
+      <span class="segment-separator">: </span>
+      <span *ngIf="!segment.expanded || !isExpandable(segment)" class="segment-value">{{ segment.description }}</span>
+    </div>
+    <div *ngIf="segment.expanded && isExpandable(segment)" class="children">
+      <json-viewer [json]="segment.value" [expanded]="expanded" [depth]="depth" [_currentDepth]="_currentDepth+1"></json-viewer>
+    </div>
+  </div>
+</div>

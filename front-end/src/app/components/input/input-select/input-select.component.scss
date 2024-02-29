@@ -1,6 +1,24 @@
-.select-config {
-    padding: 0px 10px 0px 0px;
+.input-select-no-dots {
+    list-style-type: none;
 }
-.input-select-dynamic-item {
-    display: none;
+
+.input-select-list {
+    overflow: overlay;
+}
+.bootstrap-select {
+    padding: 0px;
+}
+
+.input-select-label {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: left;
+    width: calc(100% - 15px);
+    display: inline-block;
+    line-height: 1;
+}
+
+.input-select-label-icon {
+    width: calc(100% - 30px) !important;
 }

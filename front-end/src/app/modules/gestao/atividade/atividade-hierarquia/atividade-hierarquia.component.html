@@ -1,0 +1,68 @@
+<ng-container *ngIf="atividade">
+  <div class="d-flex align-items-stretch">
+    <planejamento-show [planejamento]="atividade.planejamento" *ngIf="atividade.planejamento"></planejamento-show>
+
+    <div class="cadeiaValor arrow_box first-box w-100 ms-3" *ngIf="atividade.cadeiaValor">
+      <h6>Cadeia de valor:</h6>
+      <h4>{{atividade.cadeiaValor.nome}}</h4>    
+    </div>
+  </div>
+
+  <div class="d-flex align-items-stretch">
+
+    <div class="objetivos arrow_box w-100" *ngIf="atividade.objetivos">
+      <h6>Objetivos:</h6>
+      <div *ngFor="let objetivo of atividade.objetivos; index as i">
+        <div class="d-flex justify-content-start align-items-center">
+          <ng-container *ngFor="let j of [].constructor(i); let k = index">
+            <i class="bi bi-chevron-right"></i>
+          </ng-container>
+          <h5>{{objetivo.nome}}</h5>  
+        </div>
+      </div>
+    </div>
+
+    <div class="procesos arrow_box w-100 ms-3" *ngIf="atividade.processos?.length">
+      <h6>Processos:</h6>
+      <div *ngFor="let processo of atividade.processos">
+        <h5>{{processo.nome}}</h5>  
+      </div>
+    </div>
+
+  </div>
+
+  <div class="plano_entrega_entrega arrow_box" *ngIf="atividade.entregasPlanoEntrega">
+    <h6>Entrega do plano de entregas:</h6>
+
+    <div *ngFor="let entrega of atividade.entregasPlanoEntrega; index as i">
+      <div class="d-flex justify-content-start align-items-center">
+        <ng-container *ngFor="let j of [].constructor(i); let k = index">
+          <i class="bi bi-chevron-right"></i>
+        </ng-container>
+
+        <div class="ms-3 flex-grow-1 d-flex flex-column">
+          <h5 class="mb-2">          
+            {{entrega.descricao}}
+          </h5>       
+          <div class="d-flex justify-content-start align-items-center m-0">
+            <span class="text-center"><b  class="d-block">Meta:</b><badge icon="bi bi-graph-up-arrow" [label]="planoEntregaService.getValorMeta(entrega)" color="light"></badge></span>
+            <span class="text-center ms-3"><b class="d-block">Realizado:</b><badge icon="bi bi-check-lg" [label]="planoEntregaService.getValorRealizado(entrega)" color="light"></badge></span>
+            <span class="ms-3 flex-fill"><b class="">Progresso:</b><progress-bar [value]="entrega.progresso_realizado" [goal]="entrega.progresso_esperado" color="success"></progress-bar></span>
+          </div>
+        </div>  
+      </div>
+      <hr>
+    </div>
+  </div>
+
+  <div class="plano_trabalho_entrega arrow_box">
+    <h6>Alocação:</h6>
+    <h5 class="mb-2">{{atividade.entregaPlanoTrabalho.descricao}}</h5>    
+    <p>Força de trabalho: <b>{{atividade.entregaPlanoTrabalho.forca_trabalho}}%</b></p>
+  </div>
+  <div class="atividade arrow_box">
+    <h6>Atividade:</h6>
+    <h5 class="mb-2">{{atividade.atividade.descricao}}</h5>
+    <p>Data estipulada para entrega: <b>{{util.getDateTimeFormatted(atividade.atividade.data_estipulada_entrega)}}</b></p>
+  </div>
+</ng-container>

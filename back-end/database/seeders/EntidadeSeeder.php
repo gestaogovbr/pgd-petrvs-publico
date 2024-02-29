@@ -5,8 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Entidade;
 use App\Models\Cidade;
-use App\Models\TipoModalidade;
-use Carbon\Carbon;
 
 class EntidadeSeeder extends Seeder
 {
@@ -15,130 +13,45 @@ class EntidadeSeeder extends Seeder
      *
      * @return void
      */
+
+    public $timenow;
+    public $brasilia;
+
+    public function __construct(){
+        $this->timenow = now();
+        $this->brasilia = Cidade::where('codigo_ibge', '5300108')->sole();
+    }
+
     public function run()
     {
-        $brasilia = Cidade::where('codigo_ibge', '5300108')->sole();
-        $juiz_fora = Cidade::where('codigo_ibge', '3136702')->sole();
-        $cuiaba = Cidade::where('codigo_ibge', '5103403')->sole();
-
-        //cria a entidade PRF
-        $ent1 = new Entidade();
-        $ent1->fill([
-            'id' => "52d78c7d-e0c1-422b-b094-2ca5958d5ac1",
-            'sigla' => 'PRF',
-            'nome' => 'Polícia Rodoviária Federal',
-            'abrangencia' => 'NACIONAL',
-            'layout_formulario_demanda' => 'COMPLETO',
-            'campos_ocultos_demanda' => [],
-            'nomenclatura' => [],
-            'cidade_id' => $brasilia->id
-        ]);
-
-        $tipo1 = new TipoModalidade();
-        $tipo1->fill([
-            'nome' => 'Modalidade 1',
-            'config' => null,
-            'data_inicio' => Carbon::now()
-        ]);
-        $tipo1->save();
-        $tipo1->entidades()->save($ent1);
-
-        //cria a entidade ANTAQ
-        $ent2 = new Entidade();
-        $ent2->fill([
-            'sigla' => 'ANTAQ',
-            'nome' => 'Agência Nacional de Transportes Aquaviários',
-            'abrangencia' => 'NACIONAL',
-            'layout_formulario_demanda' => 'COMPLETO',
-            'campos_ocultos_demanda' => [],
-            'nomenclatura' => [],
-            'cidade_id' => $brasilia->id
-        ]);
-
-        $tipo2 = new TipoModalidade();
-        $tipo2->fill([
-            'nome' => 'Modalidade 2',
-            'config' => null,
-            'data_inicio' => Carbon::now()
-        ]);
-        $tipo2->save();
-        $tipo2->entidades()->save($ent2);
-
-        //cria a entidade UFJF
-        $ent3 = new Entidade();
-        $ent3->fill([
-            'sigla' => 'UFJF',
-            'nome' => 'Universidade Federal de Juiz de Fora',
-            'abrangencia' => 'ESTADUAL',
-            'layout_formulario_demanda' => 'COMPLETO',
-            'campos_ocultos_demanda' => [],
-            'nomenclatura' => [],
-            'cidade_id' => $juiz_fora->id
-        ]);
-
-        //cria a entidade MJSP/DEPEN
-        $ent4 = new Entidade();
-        $ent4->fill([
-            'id' => '821cbe85-6382-4eb0-b4ca-704957de6b07',
-            'sigla' => 'MJSP/DEPEN',
-            'nome' => 'Departamento Penitenciário Nacional',
-            'abrangencia' => 'NACIONAL',
-            'layout_formulario_demanda' => 'COMPLETO',
-            'campos_ocultos_demanda' => [],
-            'nomenclatura' => [],
-            'cidade_id' => $brasilia->id
-        ]);
-
-        $tipo4 = new TipoModalidade();
-        $tipo4->fill([
-            'nome' => 'Modalidade 1',
-            'config' => null,
-            'data_inicio' => Carbon::now()
-        ]);
-        $tipo4->save();
-        $tipo4->entidades()->save($ent4);
-
-
-        //cria a entidade UFMT
-        $ent5 = new Entidade();
-        $ent5->fill([
-            'sigla' => 'UFMT',
-            'nome' => 'Universidade Federal do Mato Grosso',
-            'abrangencia' => 'NACIONAL',
-            'layout_formulario_demanda' => 'COMPLETO',
-            'campos_ocultos_demanda' => [],
-            'nomenclatura' => [],
-            'cidade_id' => $cuiaba->id
-        ]);
-
-        $tipo5 = new TipoModalidade();
-        $tipo5->fill([
-            'nome' => 'Modalidade 2',
-            'config' => null,
-            'data_inicio' => Carbon::now()
-        ]);
-        $tipo5->save();
-        $tipo5->entidades()->save($ent5);
-
-        //cria a entidade ME
-        $ent6 = new Entidade();
-        $ent6->fill([
-            'sigla' => 'ME',
-            'nome' => 'Ministério da Economia',
-            'abrangencia' => 'NACIONAL',
-            'layout_formulario_demanda' => 'COMPLETO',
-            'campos_ocultos_demanda' => [],
-            'nomenclatura' => [],
-            'cidade_id' => $brasilia->id
-        ]);
-
-        $tipo6 = new TipoModalidade();
-        $tipo6->fill([
-            'nome' => 'Modalidade 2',
-            'config' => null,
-            'data_inicio' => Carbon::now()
-        ]);
-        $tipo6->save();
-        $tipo6->entidades()->save($ent6);
+        $entidade = array(
+          array(
+            "id" => "52d78c7d-e0c1-422b-b094-2ca5958d5ac1",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "sigla" => "MGI",
+            "nome" => "Ministério da Gestão e da Inovação em Serviços Públicos",
+            "abrangencia" => "NACIONAL",
+            "codigo_ibge" => $this->brasilia->codigo_ibge,
+            "uf" => $this->brasilia->uf,
+            "carga_horaria_padrao" => 8,
+            "gravar_historico_processo" => 0,
+            "layout_formulario_atividade" => "COMPLETO",
+            "campos_ocultos_atividade" => NULL,
+            "nomenclatura" => "[{\"id\":\"adesao\",\"nome\":\"adesao\",\"singular\":\"ades\\u00e3o\",\"plural\":\"ades\\u00f5es\",\"feminino\":true},{\"id\":\"afastamento\",\"nome\":\"afastamento\",\"singular\":\"afastamento\",\"plural\":\"afastamentos\",\"feminino\":false},{\"id\":\"\\u00e1rea de trabalho\",\"nome\":\"\\u00e1rea de trabalho\",\"singular\":\"\\u00e1rea de trabalho\",\"plural\":\"\\u00e1reas de trabalho\",\"feminino\":true},{\"id\":\"area do conhecimento\",\"nome\":\"area do conhecimento\",\"singular\":\"area do conhecimento\",\"plural\":\"areas dos conhecimentos\",\"feminino\":true},{\"id\":\"atividade\",\"nome\":\"atividade\",\"singular\":\"registro de execu\\u00e7\\u00e3o\",\"plural\":\"registros de execu\\u00e7\\u00e3o\",\"feminino\":false},{\"id\":\"atribui\\u00e7\\u00e3o\",\"nome\":\"atribui\\u00e7\\u00e3o\",\"singular\":\"atribui\\u00e7\\u00e3o\",\"plural\":\"atribui\\u00e7\\u00f5es\",\"feminino\":true},{\"id\":\"avalia\\u00e7\\u00e3o\",\"nome\":\"avalia\\u00e7\\u00e3o\",\"singular\":\"avalia\\u00e7\\u00e3o\",\"plural\":\"avalia\\u00e7\\u00f5es\",\"feminino\":true},{\"id\":\"cadeiaValor\",\"nome\":\"cadeiaValor\",\"singular\":\"cadeia de valor\",\"plural\":\"cadeias de valor\",\"feminino\":true},{\"id\":\"capacidade\",\"nome\":\"capacidade\",\"singular\":\"capacidade\",\"plural\":\"capacidades\",\"feminino\":true},{\"id\":\"cidade\",\"nome\":\"cidade\",\"singular\":\"cidade\",\"plural\":\"cidades\",\"feminino\":true},{\"id\":\"consolida\\u00e7\\u00e3o\",\"nome\":\"consolida\\u00e7\\u00e3o\",\"singular\":\"relat\\u00f3rio de execu\\u00e7\\u00e3o\",\"plural\":\"relat\\u00f3rios de execu\\u00e7\\u00e3o\",\"feminino\":false},{\"id\":\"data de distribui\\u00e7\\u00e3o\",\"nome\":\"data de distribui\\u00e7\\u00e3o\",\"singular\":\"data de in\\u00edcio\",\"plural\":\"datas de in\\u00edcio\",\"feminino\":true},{\"id\":\"data de homologa\\u00e7\\u00e3o\",\"nome\":\"data de homologa\\u00e7\\u00e3o\",\"singular\":\"data de homologa\\u00e7\\u00e3o\",\"plural\":\"datas de homologa\\u00e7\\u00e3o\",\"feminino\":true},{\"id\":\"demanda\",\"nome\":\"demanda\",\"singular\":\"demanda\",\"plural\":\"demandas\",\"feminino\":true},{\"id\":\"documento\",\"nome\":\"documento\",\"singular\":\"documento\",\"plural\":\"documentos\",\"feminino\":false},{\"id\":\"entidade\",\"nome\":\"entidade\",\"singular\":\"institui\\u00e7\\u00e3o\",\"plural\":\"institui\\u00e7\\u00f5es\",\"feminino\":true},{\"id\":\"entrega\",\"nome\":\"entrega\",\"singular\":\"entrega\",\"plural\":\"entregas\",\"feminino\":true},{\"id\":\"eixo tem\\u00e1tico\",\"nome\":\"eixo tem\\u00e1tico\",\"singular\":\"eixo tem\\u00e1tico\",\"plural\":\"eixos tem\\u00e1ticos\",\"feminino\":false},{\"id\":\"feriado\",\"nome\":\"feriado\",\"singular\":\"feriado\",\"plural\":\"feriados\",\"feminino\":false},{\"id\":\"justificativa\",\"nome\":\"justificativa\",\"singular\":\"justificativa\",\"plural\":\"justificativas\",\"feminino\":true},{\"id\":\"lota\\u00e7\\u00e3o\",\"nome\":\"lota\\u00e7\\u00e3o\",\"singular\":\"lota\\u00e7\\u00e3o\",\"plural\":\"lota\\u00e7\\u00f5es\",\"feminino\":true},{\"id\":\"material e servi\\u00e7o\",\"nome\":\"material e servi\\u00e7o\",\"singular\":\"material e servi\\u00e7o\",\"plural\":\"materiais e servi\\u00e7os\",\"feminino\":false},{\"id\":\"modalidade\",\"nome\":\"modalidade\",\"singular\":\"modalidade\",\"plural\":\"modalidades\",\"feminino\":true},{\"id\":\"modelo de entrega:\",\"nome\":\"modelo de entrega:\",\"singular\":\"tipo de meta\",\"plural\":\"tipos de meta\",\"feminino\":false},{\"id\":\"motivo de afastamento\",\"nome\":\"motivo de afastamento\",\"singular\":\"motivo de afastamento\",\"plural\":\"motivos de afastamento\",\"feminino\":false},{\"id\":\"notifica\\u00e7\\u00e3o\",\"nome\":\"notifica\\u00e7\\u00e3o\",\"singular\":\"notifica\\u00e7\\u00e3o\",\"plural\":\"notifica\\u00e7\\u00f5es\",\"feminino\":true},{\"id\":\"objetivo\",\"nome\":\"objetivo\",\"singular\":\"objetivo\",\"plural\":\"objetivos\",\"feminino\":false},{\"id\":\"pela unidade gestora\",\"nome\":\"pela unidade gestora\",\"singular\":\"pela Unidade Gestora\",\"plural\":\"pelas Unidades Gestoras\",\"feminino\":true},{\"id\":\"perfil\",\"nome\":\"perfil\",\"singular\":\"n\\u00edvel de acesso\",\"plural\":\"n\\u00edveis de acesso\",\"feminino\":false},{\"id\":\"planejamento institucional\",\"nome\":\"planejamento institucional\",\"singular\":\"planejamento institucional\",\"plural\":\"planejamentos institucionais\",\"feminino\":false},{\"id\":\"plano de trabalho\",\"nome\":\"plano de trabalho\",\"singular\":\"plano de trabalho\",\"plural\":\"planos de trabalho\",\"feminino\":false},{\"id\":\"plano de entrega\",\"nome\":\"plano de entrega\",\"singular\":\"plano de entrega\",\"plural\":\"planos de entrega\",\"feminino\":false},{\"id\":\"ponto de controle\",\"nome\":\"ponto de controle\",\"singular\":\"ponto de controle\",\"plural\":\"pontos de controle\",\"feminino\":false},{\"id\":\"prazo de distribui\\u00e7\\u00e3o\",\"nome\":\"prazo de distribui\\u00e7\\u00e3o\",\"singular\":\"prazo de distribui\\u00e7\\u00e3o\",\"plural\":\"prazos de distribui\\u00e7\\u00e3o\",\"feminino\":false},{\"id\":\"prazo de entrega\",\"nome\":\"prazo de entrega\",\"singular\":\"prazo de entrega\",\"plural\":\"prazos de entrega\",\"feminino\":false},{\"id\":\"prazo recalculado\",\"nome\":\"prazo recalculado\",\"singular\":\"prazo recalculado\",\"plural\":\"prazos recalculados\",\"feminino\":false},{\"id\":\"processo\",\"nome\":\"processo\",\"singular\":\"processo\",\"plural\":\"processos\",\"feminino\":false},{\"id\":\"produtividade\",\"nome\":\"produtividade\",\"singular\":\"produtividade\",\"plural\":\"produtividades\",\"feminino\":true},{\"id\":\"programa\",\"nome\":\"programa\",\"singular\":\"programa\",\"plural\":\"programas\",\"feminino\":false},{\"id\":\"programa de gest\\u00e3o\",\"nome\":\"programa de gest\\u00e3o\",\"singular\":\"regramento de institui\\u00e7\\u00e3o do pgd\",\"plural\":\"regramentos de institui\\u00e7\\u00e3o do pgd\",\"feminino\":false},{\"id\":\"projeto\",\"nome\":\"projeto\",\"singular\":\"projeto\",\"plural\":\"projetos\",\"feminino\":false},{\"id\":\"requisi\\u00e7\\u00e3o\",\"nome\":\"requisi\\u00e7\\u00e3o\",\"singular\":\"requisi\\u00e7\\u00e3o\",\"plural\":\"requisi\\u00e7\\u00f5es\",\"feminino\":true},{\"id\":\"respons\\u00e1vel\",\"nome\":\"respons\\u00e1vel\",\"singular\":\"agente p. respons\\u00e1vel\",\"plural\":\"agentes p. respons\\u00e1veis\",\"feminino\":false},{\"id\":\"resultado institucional\",\"nome\":\"resultado institucional\",\"singular\":\"resultado institucional\",\"plural\":\"resultados institucionais\",\"feminino\":false},{\"id\":\"rotina de integra\\u00e7\\u00e3o\",\"nome\":\"rotina de integra\\u00e7\\u00e3o\",\"singular\":\"rotina de integra\\u00e7\\u00e3o\",\"plural\":\"rotinas de integra\\u00e7\\u00e3o\",\"feminino\":true},{\"id\":\"servidor\",\"nome\":\"servidor\",\"singular\":\"agente p\\u00fablico\",\"plural\":\"agentes p\\u00fablicos\",\"feminino\":false},{\"id\":\"tarefa\",\"nome\":\"tarefa\",\"singular\":\"tarefa\",\"plural\":\"tarefas\",\"feminino\":true},{\"id\":\"tarefa da atividade\",\"nome\":\"tarefa da atividade\",\"singular\":\"tarefa do registro de execu\\u00e7\\u00e3o\",\"plural\":\"tarefas do registro de execu\\u00e7\\u00e3o\",\"feminino\":true},{\"id\":\"tcr\",\"nome\":\"tcr\",\"singular\":\"tcr\",\"plural\":\"tcrs\",\"feminino\":false},{\"id\":\"termo de ci\\u00eancia e responsabilidade\",\"nome\":\"termo de ci\\u00eancia e responsabilidade\",\"singular\":\"termo de ci\\u00eancia e responsabilidade\",\"plural\":\"termos de ci\\u00eancia e responsabilidade\",\"feminino\":false},{\"id\":\"tempo estimado\",\"nome\":\"tempo estimado\",\"singular\":\"tempo estimado\",\"plural\":\"tempos estimados\",\"feminino\":false},{\"id\":\"tempo pactuado\",\"nome\":\"tempo pactuado\",\"singular\":\"tempo pactuado\",\"plural\":\"tempos pactuados\",\"feminino\":false},{\"id\":\"tempo planejado\",\"nome\":\"tempo planejado\",\"singular\":\"tempo planejado\",\"plural\":\"tempos planejados\",\"feminino\":false},{\"id\":\"template\",\"nome\":\"template\",\"singular\":\"template\",\"plural\":\"templates\",\"feminino\":false},{\"id\":\"termo\",\"nome\":\"termo\",\"singular\":\"tcr compilado\",\"plural\":\"tcr compilados\",\"feminino\":false},{\"id\":\"texto complementar\",\"nome\":\"texto complementar\",\"singular\":\"particularidade da unidade e participante\",\"plural\":\"particularidades da unidade e participante\",\"feminino\":true},{\"id\":\"tipo de indicador\",\"nome\":\"tipo de indicador\",\"singular\":\"tipo de indicador\",\"plural\":\"tipos de indicadores\",\"feminino\":false},{\"id\":\"tipo de atividade\",\"nome\":\"tipo de atividade\",\"singular\":\"tipo de registro de execu\\u00e7\\u00e3o\",\"plural\":\"tipos de registro de execu\\u00e7\\u00e3o\",\"feminino\":false},{\"id\":\"tipo de capacidade\",\"nome\":\"tipo de capacidade\",\"singular\":\"tipo de capacidade\",\"plural\":\"tipos de capacidades\",\"feminino\":false},{\"id\":\"tipo de meta\",\"nome\":\"tipo de meta\",\"singular\":\"tipo de meta\",\"plural\":\"tipos de metas\",\"feminino\":false},{\"id\":\"unidade\",\"nome\":\"unidade\",\"singular\":\"unidade\",\"plural\":\"unidades\",\"feminino\":true},{\"id\":\"usuario\",\"nome\":\"usuario\",\"singular\":\"agente p\\u00fablico\",\"plural\":\"agentes p\\u00fablicos\",\"feminino\":false},{\"id\":\"valor institucional\",\"nome\":\"valor institucional\",\"singular\":\"valor institucional\",\"plural\":\"valores institucionais\",\"feminino\":false},{\"id\":\"administrador\",\"nome\":\"administrador\",\"singular\":\"administrador\",\"plural\":\"administradores\",\"feminino\":false},{\"id\":\"cadastro\",\"nome\":\"cadastro\",\"singular\":\"cadastro\",\"plural\":\"cadastros\",\"feminino\":false},{\"id\":\"chefe\",\"nome\":\"chefe\",\"singular\":\"chefe\",\"plural\":\"chefes\",\"feminino\":true},{\"id\":\"desenvolvedor\",\"nome\":\"desenvolvedor\",\"singular\":\"desenvolvedor\",\"plural\":\"desenvolvedores\",\"feminino\":false},{\"id\":\"execu\\u00e7\\u00e3o\",\"nome\":\"execu\\u00e7\\u00e3o\",\"singular\":\"execu\\u00e7\\u00e3o\",\"plural\":\"execu\\u00e7\\u00f5es\",\"feminino\":false},{\"id\":\"gerenciamento\",\"nome\":\"gerenciamento\",\"singular\":\"gerenciamento\",\"plural\":\"gerenciamentos\",\"feminino\":false},{\"id\":\"perfil do menu\",\"nome\":\"perfil do menu\",\"singular\":\"perfil do menu\",\"plural\":\"perfis do menu\",\"feminino\":false},{\"id\":\"planejamento\",\"nome\":\"planejamento\",\"singular\":\"planejamento\",\"plural\":\"planejamentos\",\"feminino\":false},{\"id\":\"ponto eletr\\u00f4nico\",\"nome\":\"ponto eletr\\u00f4nico\",\"singular\":\"ponto eletr\\u00f4nico\",\"plural\":\"pontos eletr\\u00f4nicos\",\"feminino\":false}]",
+            //"url_sei" => "https://sei.economia.gov.br/",
+            "notificacoes" => "{\"enviar_email\": true, \"enviar_petrvs\": true, \"nao_notificar\": [], \"enviar_whatsapp\": true}",
+            "forma_contagem_carga_horaria" => "DIA",
+            //"api_public_key" => NULL,
+            //"api_private_key" => NULL,
+            "expediente" => "{\"sexta\": [], \"terca\": [], \"quarta\": [], \"quinta\": [], \"sabado\": [], \"domingo\": [], \"segunda\": [], \"especial\": []}",
+            "tipo_modalidade_id" => NULL,
+            "cidade_id" => $this->brasilia->id,
+            "gestor_id" => NULL,
+            "gestor_substituto_id" => NULL,
+          ),
+        );
+        Entidade::upsert($entidade, "id");
     }
 }

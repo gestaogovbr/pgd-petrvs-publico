@@ -25,6 +25,7 @@ export class InputButtonComponent extends InputBase implements OnInit {
   @Input() icon: string = "";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() loading: boolean = false;
   @Input() numbers?: string; 
@@ -34,6 +35,7 @@ export class InputButtonComponent extends InputBase implements OnInit {
   @Input() source?: any;
   @Input() path?: string;
   @Input() maxLength?: number;
+  @Input() required?: string;
   @Input() set value(value: any) {
     this.formControl.setValue(value);
   }
@@ -60,6 +62,7 @@ export class InputButtonComponent extends InputBase implements OnInit {
   public get isNumbers(): boolean {
     return this.numbers !== undefined;
   }
+
 
   ngOnInit(): void {
     super.ngOnInit();

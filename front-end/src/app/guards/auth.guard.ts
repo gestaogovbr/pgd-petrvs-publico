@@ -1,5 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { IIndexable } from '../models/base.model';
 import { AuthService } from '../services/auth.service';
@@ -10,7 +10,7 @@ import { FullRoute } from '../services/navigate.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
+export class AuthGuard  {
 
   private _gb?: GlobalsService;
   public get gb(): GlobalsService { this._gb = this._gb || this.injector.get<GlobalsService>(GlobalsService); return this._gb }
@@ -54,6 +54,7 @@ export class AuthGuard implements CanActivate {
               }
             }
           };
+          if(route.queryParams?.context) this.gb.setContexto(route.queryParams?.context, false);
           this.auth.authSession().then(handle).catch(error => handle(false));
         }); 
       } else if(route.data.permission && !this.auth.hasPermissionTo(route.data.permission)) {

@@ -1,0 +1,5 @@
+<toolbar [title]="documento?.titulo || ''" [buttons]="buttons"></toolbar>
+<top-alert *ngIf="documentoSalvo" type="success" message="Documento foi salvo com sucesso!"></top-alert>
+<separator></separator>
+<document-preview *ngIf="documento?.tipo && ['HTML', 'REPORT'].includes(documento!.tipo)" [html]="documento?.conteudo || ''" emptysDocumentMensage="Vazio"></document-preview>
+<!--toolbar [buttons]="footerButtons"></toolbar/-->

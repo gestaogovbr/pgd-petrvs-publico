@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ContentChild, ContentChildren, EventEmitter, HostBinding, Injector, Input, OnInit, Output, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ContentChild, EventEmitter, HostBinding, Injector, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { DaoBaseService, QueryOrderBy } from 'src/app/dao/dao-base.service';
@@ -8,15 +8,17 @@ import { Base, IIndexable } from 'src/app/models/base.model';
 import { DialogService } from 'src/app/services/dialog.service';
 import { IFormGroupHelper } from 'src/app/services/form-helper.service';
 import { FullRoute, NavigateService, RouteMetadata } from 'src/app/services/navigate.service';
-import { UtilService } from 'src/app/services/util.service';
 import { ComponentBase } from '../component-base';
 import { ToolbarButton, ToolbarComponent } from '../toolbar/toolbar.component';
-import { ColumnComponent } from './column/column.component';
 import { ColumnsComponent } from './columns/columns.component';
 import { FilterComponent } from './filter/filter.component';
 import { GridColumn } from './grid-column';
 import { PaginationComponent } from './pagination/pagination.component';
 import { ReportComponent } from './report/report.component';
+import { SidePanelComponent } from './side-panel/side-panel.component';
+import { LookupItem } from 'src/app/services/lookup.service';
+import { TemplateDaoService } from 'src/app/dao/template-dao.service';
+import { DocumentoService } from 'src/app/modules/uteis/documentos/documento.service';
 
 export type GroupBy = {field: string, label: string, value?: any};
 
@@ -43,10 +45,11 @@ export class GridGroupSeparator {
   ]
 })
 export class GridComponent extends ComponentBase implements OnInit {
-  //@ContentChildren(ColumnComponent, { descendants: true }) columnsRef?: QueryList<ColumnComponent>;
+  @HostBinding('class') get class(): string { return this.isNoMargin ? "p-0 m-0" : "" };
   @ContentChild(ColumnsComponent) columnsRef?: ColumnsComponent;
   @ContentChild(ReportComponent) reportRef?: ReportComponent;
   @ContentChild(FilterComponent) filterRef?: FilterComponent;
+  @ContentChild(SidePanelComponent) sidePanel?: SidePanelComponent;
   @ContentChild(ToolbarComponent) toolbarRef?: ToolbarComponent;
   @ContentChild(PaginationComponent) paginationRef?: PaginationComponent;
   @ViewChild(FormGroupDirective) formDirective?: FormGroupDirective;
@@ -56,25 +59,31 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() selectable: boolean = false;
   @Input() loadList?: (rows?: Base[]) => Promise<void> | void;
   @Input() multiselectChange?: (multiselected: IIndexable) => void;
+  @Input() init?: (grid: GridComponent) => void;
   @Input() add?: () => Promise<IIndexable | undefined | void>;
   @Input() load?: (form: FormGroup, row: any) => Promise<void>;
   @Input() remove?: (row: any) => Promise<boolean | undefined | void>;
-  @Input() save?: (form: FormGroup, row: any) => Promise<IIndexable | Base | undefined | void>;
+  @Input() save?: (form: FormGroup, row: any) => Promise<IIndexable | Base | boolean | undefined | void>;
+  @Input() editEnd?: (id?: string) => void;
+  @Input() saveEnd?: (row: any) => void;
   @Input() addRoute?: FullRoute;
   @Input() addMetadata?: RouteMetadata;
   @Input() labelAdd: string = "Incluir";
   @Input() orderBy?: QueryOrderBy[];
   @Input() groupBy?: GroupBy[];
   @Input() join: string[] = [];
+  @Input() relatorios: LookupItem[] = [];
   @Input() form: FormGroup = new FormGroup({});
+  @Input() noHeader?: string;
+  @Input() noMargin?: string;
   @Input() editable?: string;
-  @Input() hasEdit: boolean = true;
-  @Input() hasDelete: boolean = false;
   @Input() hasReport: boolean = true;
   @Input() scrollable: boolean = false;
   @Input() controlName: string | null = null;
   @Input() control?: AbstractControl = undefined;
-  @Input() minHeight: number = 300;
+  @Input() expanded?: string;
+  @Input() noToggleable?: string;
+  @Input() minHeight: number = 350;
   @Input() multiselect?: string;
   @Input() multiselectEnabled?: string;
   @Input() multiselectAllFields: string[] = [];
@@ -99,6 +108,24 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
   get hasAdd(): boolean {
     return this._hasAdd;
+  }
+  @Input() set hasEdit(value: boolean) {
+    if(value !== this._hasEdit) {
+      this._hasEdit = value;
+      this.reset();
+    }
+  }
+  get hasEdit(): boolean {
+    return this._hasEdit;
+  }
+  @Input() set hasDelete(value: boolean) {
+    if(value !== this._hasDelete) {
+      this._hasDelete = value;
+      this.reset();
+    }
+  }
+  get hasDelete(): boolean {
+    return this._hasDelete;
   }
   @Input() set disabled(value: string | undefined) {
     if(value != this._disabled) {
@@ -136,6 +163,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
   @Input() set items(value: IIndexable[]) {
     this._items = value;
+    if(this.isExpanded) this.expandAll();
     this.group(value);
     this.control?.setValue(value);
     this.cdRef.detectChanges();
@@ -150,18 +178,27 @@ export class GridComponent extends ComponentBase implements OnInit {
   get visible(): boolean {
     return this._visible;
   }
+  @Input() set loading(value: boolean) {
+    this._loading = value;
+    this.cdRef.detectChanges();
+  }
+  get loading(): boolean {
+    return this._loading;
+  }
 
   /* Propriedades private e métodos get e set */
   private _query?: QueryContext<Base>;
   private _list?: Observable<any[]>;
   private _error?: string;
   private _disabled?: string;
+  private _loading: boolean = false;
   private _hasAdd: boolean = true;
+  private _hasEdit: boolean = true;
+  private _hasDelete: boolean = false;
   private _title: string = "";
   private _items?: IIndexable[];
   private _visible: boolean = true;
   private _exporting: boolean = false;
-  //private _multiselectDynamicMenu: ToolbarButton[] = [];
   private filterCollapsedOnMultiselect: boolean = false;
 
   /* Propriedades publicas */
@@ -182,8 +219,11 @@ export class GridComponent extends ComponentBase implements OnInit {
   public groupIds: IIndexable = { _qtdRows: -1 };
   public expandedIds: IIndexable = {};
   public metadatas: IIndexable = {};
+  public templateDao: TemplateDaoService;
+  public documentoService: DocumentoService;
   public set error(error: string | undefined) {
     this._error = error;
+    //this.detectChanges();
   }
   public get error(): string | undefined {
     return this._error;
@@ -202,7 +242,7 @@ export class GridComponent extends ComponentBase implements OnInit {
     label: "Filtros",
     onClick: () => this.filterRef?.toggle()
   };
-  public addToolbarButtonClick = (async () => await (this.add ? this.add() : this.go.navigate(this.addRoute!, this.addMetadata))).bind(this);
+  public addToolbarButtonClick = (async () => await (this.add ? (this.isEditable && this.hasToolbar ? this.onAddItem() : this.add()) : this.go.navigate(this.addRoute!, this.addMetadata))).bind(this);
   public BUTTON_ADD: ToolbarButton = {
     icon: "bi bi-plus-circle",
     color: "btn-outline-success",
@@ -216,9 +256,9 @@ export class GridComponent extends ComponentBase implements OnInit {
     onClick: () => this.report()
   };
   public BUTTON_EDIT: ToolbarButton = {
-    label: "Editar",
+    label: "Alterar",
     icon: "bi bi-pencil-square",
-    hint: "Editar",
+    hint: "Alterar",
     color: "btn-outline-info",
   };
   public BUTTON_DELETE: ToolbarButton = {
@@ -253,16 +293,75 @@ export class GridComponent extends ComponentBase implements OnInit {
       }
     ]
   };
+  public BUTTON_REPORTS: ToolbarButton = {
+    label: "Relatórios",
+    icon: "bi bi-file-earmark-ruled",
+    toggle: true,
+    pressed: false,
+    color: "btn-outline-info",
+    onClick: this.onMultiselectClick.bind(this),
+    items: [
+      {
+        label: "Exportar para Excel",
+        icon: "bi bi-file-spreadsheet",
+        hint: "Excel",
+        color: "btn-outline-danger",
+        onClick: this.report.bind(this)
+      }
+    ]
+  };
+  public panelButtons: ToolbarButton[] = [
+    {
+      id: "concluir_valid",
+      label: "Concluir",
+      icon: "bi-check-circle",
+      color: "btn-outline-success",
+      dynamicVisible: (() => this.form!.valid).bind(this),
+      onClick: (() => this.onSaveItem(this.editing!)).bind(this)
+    },
+    {
+      id: "concluir_invalid",
+      label: "Concluir",
+      icon: "bi-exclamation-circle",
+      color: "btn-outline-success",
+      dynamicVisible: (() => !this.form!.valid).bind(this),
+      onClick: (() => console.log(this.form.errors)).bind(this)
+    },
+    {
+      id: "cancelar",
+      label: "Cancelar",
+      icon: "bi-dash-circle",
+      color: "btn-outline-danger",
+      onClick: this.onCancelItem.bind(this)
+    }
+  ];
 
   constructor(public injector: Injector) {
     super(injector);
     this.go = this.injector.get<NavigateService>(NavigateService);
     this.dialog = this.injector.get<DialogService>(DialogService);
     this.dao = new DaoBaseService<Base>("", injector);
+    this.templateDao = this.injector.get<TemplateDaoService>(TemplateDaoService);
+    this.documentoService = this.injector.get<DocumentoService>(DocumentoService);
   }
 
   ngOnInit(): void {
     this.BUTTON_ADD.label = this.labelAdd;
+    if(this.relatorios) {
+      this.relatorios.forEach(relatorio => {
+        const existingItem = this.BUTTON_REPORTS.items?.find(item => item.id === relatorio.key);
+        if (!existingItem) {
+          this.BUTTON_REPORTS.items?.push({
+            label: relatorio.value,
+            icon: "bi bi-file-pdf",
+            hint: "Visualizar",
+            id: relatorio.key,
+            onClick: () => this.buildReport(relatorio.key)
+          })
+        }
+      });
+     
+    }
   }
 
   public getId(relativeId?: string) {
@@ -278,6 +377,10 @@ export class GridComponent extends ComponentBase implements OnInit {
     this.loadPagination();
     /* Habilita muiltiselect caso multiselectEnabled esteja presente */
     if(this.isMultiselectEnabled) this.enableMultiselect(true);
+  }
+
+  ngAfterViewInit(): void {
+    if(this.init) this.init(this);
   }
 
   public reset() {
@@ -298,6 +401,26 @@ export class GridComponent extends ComponentBase implements OnInit {
     return row instanceof GridGroupSeparator;
   }
 
+  public get isExpanded(): boolean {
+    return this.expanded != undefined;
+  }
+
+  public get isNoHeader(): boolean {
+    return this.noHeader != undefined;
+  }
+
+  public get isNoToggleable(): boolean {
+    return this.noToggleable != undefined;
+  }
+
+  public get isNoMargin(): boolean {
+    return this.noMargin != undefined;
+  }
+
+  public get isLoading(): boolean {
+    return this.query?.loading || this.loading;
+  }
+
   public getGroupSeparator(row: any): GridGroupSeparator | undefined {
     if(!!this.groupBy && this.groupIds._qtdRows != this.items?.length) this.group(this.items);
     return row instanceof GridGroupSeparator ? row : this.groupIds[row.id];
@@ -314,6 +437,10 @@ export class GridComponent extends ComponentBase implements OnInit {
   public get isEditable(): boolean {
     return this.editable != undefined; //|| (this.hasItems && !!this.add);
   }
+
+  public get isSelectable(): boolean { /* Considera o sidePanel */
+    return this.selectable || !!this.sidePanel;
+  } 
 
   /* Utilizado para caso esteja editando irá confirmar a gravação */
   public async confirm() {
@@ -346,22 +473,18 @@ export class GridComponent extends ComponentBase implements OnInit {
     if(this.groupBy && items?.length) {
       let buffer = "";
       this.groupIds = { _qtdRows: items.length };
-      items = items.filter(x => !(x instanceof GridGroupSeparator)).map(x => Object.assign(x, {_group: this.groupBy!.map(g => Object.assign({}, g, { value: this.util.getNested(x, g.field) }))}));
+      let mapItems = items.filter(x => !(x instanceof GridGroupSeparator)).map(x => Object.assign(x, {_group: this.groupBy!.map(g => Object.assign({}, g, { value: this.util.getNested(x, g.field) }))}));
+      //items = items.filter(x => !(x instanceof GridGroupSeparator)).map(x => Object.assign(x, {_group: this.groupBy!.map(g => Object.assign({}, g, { value: this.util.getNested(x, g.field) }))}));
+      items.splice(0, items.length, ...mapItems);
       if(!this.query) items.sort((a: IIndexable, b: IIndexable) => JSON.stringify(a._group) > JSON.stringify(b._group) ? 1 : JSON.stringify(a._group) < JSON.stringify(b._group) ? -1 : 0);
       for(let i = 0; i < items.length; i++) {
         if(buffer != JSON.stringify(items[i]._group)) {
           buffer = JSON.stringify(items[i]._group);
           this.groupIds[items[i].id] = new GridGroupSeparator(items[i]._group);
-          //items.splice(i, 0, new GridGroupSeparator(items[i]._group));
         }
       }
     }
-    //return items;
   }
-
-  /*public ungroup(items: IIndexable[]) {
-    return items.filter(x => !(x instanceof GridGroupSeparator));
-  }*/
 
   public report() {
     if(this.reportRef) {
@@ -370,16 +493,55 @@ export class GridComponent extends ComponentBase implements OnInit {
       })();
     }
   }
+  public buildReport(codigo: string, query: QueryOptions = this.queryOptions){
+    let params =  {
+      where: DaoBaseService.prepareWhere(query?.where || []),
+      orderBy: query?.orderBy || [],
+      with: query?.join || [],
+    };
+    this.showPreview(codigo, params)
+  }
 
-  /*public get multiselectDynamicMenu(): ToolbarButton[] {
-    if(this.dynamicMultiselectMenu) {
-      const menu = this.dynamicMultiselectMenu(this.multiselected);
-      if(JSON.stringify(menu) != JSON.stringify(this._multiselectDynamicMenu)) this._multiselectDynamicMenu = menu;
-      return this._multiselectDynamicMenu;
-    } else {
-      return [];
+  public buildRowReport(codigo: string, row: any){
+    let params =  {
+      id: row.id,
+      with: row?.join || [],
+    };   
+    this.showPreview(codigo, params)
+  }
+
+  showPreview(codigo: string, params: any){
+    if(this.go.gb.auth.entidade?.id){
+      this.templateDao.getReport(this.go.gb.auth.entidade?.id, codigo, params).then(documento => {        
+        this.documentoService.preview(documento)
+      }) 
     }
-  }*/
+  }
+
+  public expand(id: string) {
+    this.expandedIds[id] = true;
+    this.cdRef.detectChanges();
+  }
+
+  public expandAll() {
+    this.items.forEach(v => this.expandedIds[v.id] = true);
+  }
+
+  public refreshExpanded(id: string) {
+    let expanded = this.expandedIds[id];
+    this.expandedIds[id] = false;
+    this.cdRef.detectChanges();
+    this.expandedIds[id] = expanded;
+    this.cdRef.detectChanges();
+  }
+
+  public refreshRows() {
+    let items = this._items;
+    this._items = [];
+    this.cdRef.detectChanges();
+    this._items = items;
+    this.cdRef.detectChanges();
+  }
 
   public refreshMultiselectToolbar() {
     if(this.toolbarRef) this.toolbarRef!.buttons = this.multiselecting ? [this.BUTTON_MULTISELECT, ...(this.multiselectMenu || []), ...(this.dynamicMultiselectMenu ? this.dynamicMultiselectMenu(this.multiselected) : [])] : [...(this.initialButtons || []), ...this.toolbarButtons];
@@ -420,6 +582,7 @@ export class GridComponent extends ComponentBase implements OnInit {
         this.multiselected = {};
         this.items.forEach(x => this.multiselected[x.id] = x);
       } else if(this.query){
+        console.log(this.multiselectAllFields);
         const result = await this.query.getAllIds(this.multiselectAllFields);
         this.multiselectExtra = result.extra;
         for(let row of result.rows) this.multiselected[row.id] = row;
@@ -483,14 +646,14 @@ export class GridComponent extends ComponentBase implements OnInit {
   public loadReport() {
     if(this.reportRef) {
       this.reportRef.grid = this;
-      if(this.hasReport) this.toolbarButtons.push(this.BUTTON_REPORT);
+      if(this.hasReport) this.toolbarButtons.push(this.BUTTON_REPORTS);
     }
   }
 
   public loadToolbar() {
     if(this.toolbarRef && !this.isDisabled) {
       /* Grava os botoes informados diretamente no componente toolbar, pois a propriedade será sobrescrita */
-      if(!this.initialButtons) this.initialButtons = this.util.clone(this.toolbarRef.buttons || []);
+      if(!this.initialButtons) this.initialButtons = [...(this.toolbarRef.buttons || [])];  //this.util.clone(this.toolbarRef.buttons || []);
       /* Insere os botões necessários */
       if(this.isMultiselect) this.toolbarButtons.push(this.BUTTON_MULTISELECT);
       if(this.hasAdd && (this.addRoute || this.add)) this.toolbarButtons.push(this.BUTTON_ADD);
@@ -508,7 +671,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
 
   public isEditableGridOptions(column: GridColumn) {
-    return column.type == 'options' && (this.isEditable || this.selectable) && this.hasAdd && !this.hasToolbar;
+    return column.type == 'options' && (this.isEditable || this.isSelectable) && this.hasAdd && !this.hasToolbar;
   }
 
   public get expandedColumn(): GridColumn | undefined {
@@ -543,29 +706,9 @@ export class GridComponent extends ComponentBase implements OnInit {
     });
   }
 
-  /*public getColumnClass(column: GridColumn) {
-    return "grid-column" + (column.isType('expand') ? " align-bottom" : "");
-  }*/
-
-  public onEditItem(row: any) {
-    if(!this.editing) {
-      this.editing = row; /* Previne multiplas chamadas para inserir */
-      (async () => {
-        await this.edit(row);
-      })();
-    }
-  }
-
-  public onDeleteItem(row: any) {
-    (async () => {
-      const remove = this.remove ? !!(await this.remove(row)) : this.hasItems;
-      const index = remove ? this.items.findIndex(x => x["id"] == row["id"]) : -1;
-      if(index >= 0) this.items.splice(index, 1);
-      this.group(this.items);
-      this.cdRef.detectChanges();
-    })();
-  }
-
+  /**
+   * Método chamado para incluir um item no grid.
+   */
   public onAddItem() {
     if(!this.adding) {
       this.adding = true; /* Previne multiplas chamadas para inserir */
@@ -577,50 +720,133 @@ export class GridComponent extends ComponentBase implements OnInit {
             newItem["id"] = this.dao ? this.dao.generateUuid() : this.util.md5();
           }
           this.items.push(newItem);
-          //this.adding = true;
           await this.edit(newItem);
         } else {
           this.adding = false;
         }
-      })();
+      }).bind(this)();
+    }
+  }  
+
+  /**
+   * Método chamado durante a edição ou inclusão de um item no grid.
+   */
+  public onEditItem(row: any) {
+    if(!this.editing) {
+      this.editing = row; /* Previne multiplas chamadas para inserir */
+      (async () => {
+        await this.edit(row);
+      }).bind(this)();
     }
   }
 
+  /**
+   * Método chamado durante a exclusão de um item do grid.
+   * @param row 
+   */
+  public onDeleteItem(row: any) {
+    (async () => {
+      const remove = this.remove ? !!(await this.remove(row)) : this.hasItems;
+      const index = remove ? this.items.findIndex(x => x["id"] == row["id"]) : -1;
+      if(index >= 0) this.items.splice(index, 1);
+      this.group(this.items);
+      this.selected = undefined;
+      this.cdRef.detectChanges();
+    }).bind(this)();
+  }
+
+  public onCancelItem() {
+    (async () => {
+      if(this.adding) this.items.splice(this.items.findIndex(x => !(x instanceof GridGroupSeparator) && x["id"] == (this.editing || {id: undefined})["id"]), 1);
+      await this.endEdit();
+    }).bind(this)();
+  }
+
+  /**
+   * Método chamado no salvamento de um item em um grid editável.
+   * @param itemRow 
+   */
+  public onSaveItem(itemRow: Base | IIndexable) {
+    (async () => {
+      await this.saveItem(itemRow);
+    }).bind(this)();
+  }
+
+  /**
+   * Método chamado pelo onSaveItem para o salvamento de um item de um grid editável.
+   * @param itemRow 
+   */
   private async saveItem(itemRow: Base | IIndexable) {
     if(this.form!.valid){
       const entity = this.save ? (await this.save(this.form!, itemRow)) as IIndexable : this.form.value;
       if(entity) {
-        const index = this.items.findIndex(x => !(x["id"] || "").length || x["id"] == entity["id"]);
+        const index = ((this.items.indexOf(itemRow) + 1) || (this.items.findIndex(x => !(x["id"] || "").length || x["id"] == entity["id"]) + 1)) - 1;
+        let item: IIndexable | undefined = undefined;
         if(index >= 0) {
-          Object.assign(this.items[index], this.util.fillForm(this.items[index], entity));
-          this.editing = this.items[index];
+          item = this.items[index];
+          Object.assign(this.items[index], this.util.fillForm(item, entity));
+        } else if(entity["id"]?.length) {
+          item = entity;
+          this.items.push(entity);
         }
+        this.editing = item;
+        if(this.saveEnd) this.saveEnd(item);
       }
-      //this.control?.setValue(this.ungroup(this.items));
-      this.group(this.items);
-      this.control?.setValue(this.items);
-      this.cdRef.detectChanges();
-      await this.endEdit();
+      if(entity !== false) {
+        this.group(this.items);
+        this.control?.setValue(this.items);
+        this.cdRef.detectChanges();
+        await this.endEdit();
+      }
     } else {
       this.form!.markAllAsTouched();
     }
   }
 
-  public onSaveItem(itemRow: Base | IIndexable) {
-    (async () => {
-      await this.saveItem(itemRow);
-    })();
+  public async edit(itemRow: Base | IIndexable) {
+    if(this.isSelectable && itemRow) this.onRowClick(new Event("SelectByEdit"), itemRow);
+    this.editing = itemRow;
+    if(this.filterRef) this.filterRef.visible = false;
+    if(this.toolbarRef) this.toolbarRef.visible = false;
+    if(this.load) {
+      await this.load(this.form, itemRow);
+    } else {
+      this.form.patchValue(this.util.fillForm(this.form.value, itemRow));
+    }
+    this.cdRef.detectChanges();
+    (document.getElementById('row_' + itemRow.id) as HTMLTableRowElement)?.scrollIntoView({block: "end", inline: "nearest", behavior: "smooth"});
   }
 
-  public onCancelItem() {
-    (async () => {
-      if(this.adding) this.items.splice(this.items.findIndex(x => !(x instanceof GridGroupSeparator) && x["id"] == (this.editing || [])["id"]), 1);
-      await this.endEdit();
-    })();
+  public async endEdit() {
+    const editedId = this.editing?.id;
+    if(this.query && this.editing) await this.query.refreshId(this.editing.id);
+    this.editing = undefined;
+    this.adding = false;
+    this.items = this.items;
+    if(this.filterRef) this.filterRef.visible = true;
+    if(this.toolbarRef) this.toolbarRef.visible = true;
+    this.cdRef.detectChanges();
+    if(this.isSelectable) this.onRowClick(new Event("SelectByEdit"), this.items.find(x => x.id == editedId)!);
+    if(this.editEnd) this.editEnd(editedId);
+  }
+
+  public onRowClick(event: Event, row: Base | IIndexable) {
+    if(this.isSelectable) {
+      if(this.editing != row) this.onCancelItem();
+      this.selected = row;
+      this.cdRef.detectChanges();
+      if(this.select) this.select.emit(row);
+    }
+  }
+
+  public selectById(id: string): any {
+    let row = this.items.find(x => x.id == id);
+    if(this.isSelectable && row) this.onRowClick(new Event("SelectById"), row);
+    return row;
   }
 
   public getMetadata(row: any): IIndexable {
-    if(row.id) {
+    if(row?.id) {
       if(!this.metadatas[row.id]) this.metadatas[row.id] = {} as IIndexable;
       return this.metadatas[row.id];
     }
@@ -631,37 +857,20 @@ export class GridComponent extends ComponentBase implements OnInit {
     if(row.id) this.metadatas[row.id] = value;
   }
 
-  public async edit(itemRow: Base | IIndexable) {
-    this.editing = itemRow;
-    if(this.load) {
-      await this.load(this.form, itemRow);
-    } else {
-      this.form.patchValue(this.util.fillForm(this.form.value, itemRow));
-    }
+  public clearMetadata() {
+    this.metadatas = {};
     this.cdRef.detectChanges();
+  } 
+
+  /* Side panel ****************************************************************/
+  public get classColTable(): string {
+    return (this.sidePanel ? "col-md-" + (12 - this.sidePanel.size) + (this.sidePanel.isFullSizeOnEdit && this.editing ? " d-none" : "") : "col-md-12") + (this.isNoMargin ? " p-0 m-0" : "");
   }
 
-  public async endEdit() {
-    if(this.query && this.editing) await this.query.refreshId(this.editing.id);
-    this.editing = undefined;
-    this.adding = false;
-    this.items = this.items;
-    this.cdRef.detectChanges();
+  public get classColPanel(): string {
+    return "col-md-" + (this.sidePanel!.isFullSizeOnEdit && this.editing ? 12 : this.sidePanel!.size);
   }
-
-  public onRowClick(event: Event, row: Base | IIndexable) {
-    if(this.selectable) {
-      this.selected = row;
-      this.cdRef.detectChanges();
-      if(this.select) this.select.emit(row);
-    }
-  }
-
-  public selectById(id: string): any {
-    let row = this.items.find(x => x.id == id);
-    if(this.selectable && row) this.onRowClick(new Event("SelectById"), row);
-    return row;
-  }
+  /**************************************************************** Side panel */
 
   public isInvalid(): boolean {
     return !!this.control?.invalid && (this.control!.dirty || this.control!.touched);
@@ -675,3 +884,4 @@ export class GridComponent extends ComponentBase implements OnInit {
       return this.control!.errors?.errorMessage;
   }
 }
+

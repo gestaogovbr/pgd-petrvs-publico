@@ -1,104 +1,46 @@
-<editable-form [title]="isModal ? '' : title" [form]="form!" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
-    <tabs display right>
-        <tab key="PRINCIPAL" label="Principal">
-            <div class="row">
-                <input-text [size]="2" label="Código" controlName="codigo" [control]="form!.controls.codigo"></input-text>
-                <input-text [size]="2" label="Sigla" controlName="sigla" [control]="form!.controls.sigla"></input-text>
-                <input-text [size]="8" label="Nome" controlName="nome" [control]="form!.controls.nome"></input-text>
-            </div>
-            <div class="row">
-                <input-search #gestor label="Gestor" [size]="6" [emptyValue]="null" controlName="gestor_id" [control]="form!.controls.gestor_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}" labelInfo="Responsável pela unidade"></input-search>
-                <input-search #gestorSubstituto label="Gestor Substituto" [size]="6" [emptyValue]="null" controlName="gestor_substituto_id" [control]="form!.controls.gestor_substituto_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}" labelInfo="Responsável substituto pela unidade"></input-search>
-            </div>
-            <div class="row">
-                <input-search #cidade [size]="4" label="Cidade" controlName="cidade_id" [control]="form!.controls.cidade_id" [dao]="cidadeDao" [selectRoute]="{route: ['cadastros', 'cidade']}"></input-search>
-                <input-search #unidade_pai [size]="4" label="Unidade pai" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="dao!" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
-                <input-search #entidade [size]="4" label="Entidade" controlName="entidade_id" [control]="form!.controls.entidade_id" [dao]="entidadeDao" [selectRoute]="{route: ['configuracoes', 'entidade']}"></input-search>
-            </div>
-        </tab>
-        <tab key="CONFIGURACOES" label="Configurações">
-            <div class="row">
-                <input-radio [size]="4" label="Avaliação automática" controlName="atividades_avaliacao_automatico" [control]="form!.controls.atividades_avaliacao_automatico" [items]="lookup.SIMNAO" labelInfo="Se ao final do prazo de avaliação do gestor, avaliará como 10 a atividade."></input-radio>
-                <input-radio [size]="4" label="Arquivamento automático" controlName="atividades_arquivamento_automatico" [control]="form!.controls.atividades_arquivamento_automatico" [items]="lookup.SIMNAO" labelInfo="Se após a avaliação, arquivará automaticamente a atividade."></input-radio>
-                <input-radio [size]="4" label="Auto-edição (Subordinadas)" controlName="autoedicao_subordinadas" [control]="form!.controls.autoedicao_subordinadas" [items]="lookup.SIMNAO" labelInfo="Se as Unidades Subordinadas podem editar suas próprias Informações Gerais"></input-radio>
-            </div>
-            <separator></separator>
-            <div class="row">
-                <input-select [size]="4" label="Contagem Prazo Distribuição" controlName="distribuicao_forma_contagem_prazos" [control]="form!.controls.distribuicao_forma_contagem_prazos" [items]="lookup.DIA_HORA_CORRIDOS_OU_UTEIS" labelInfo="A forma da contagem dos prazos para a distribuição (lançamento da demanda)."></input-select>
-                <input-select [size]="4" label="Contagem Prazo Entrega" controlName="entrega_forma_contagem_prazos" [control]="form!.controls.entrega_forma_contagem_prazos" [items]="lookup.HORAS_CORRIDAS_OU_UTEIS" labelInfo="A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)"></input-select>
-                <input-select [size]="2" label="Comparecer" controlName="planos_tipo_prazo_comparecimento" [control]="form!.controls.planos_tipo_prazo_comparecimento" [items]="lookup.DIA_OU_HORA" labelInfo="Formato de Prazo de Comparecimento a Unidade"></input-select>
-                <input-text numbers [size]="2" label="Prazo" controlName="planos_prazo_comparecimento" [control]="form!.controls.planos_prazo_comparecimento" labelInfo="Prazo de Comparecimento a Unidade"></input-text>
-            </div>
-            <!--separator title="Expediente">
-                <div class="row">
-                    <input-switch [size]="2" label="24hs" controlName="expediente24" [control]="form!.controls.expediente24" (change)="onExpediente24Change($event)" labelInfo="Se o expediente é de 24hs ou é um perído, se for período será informado início e fim"></input-switch>
-                    <input-datetime time [size]="4" label="Início" [disabled]="is24hrs" controlName="horario_trabalho_inicio" [control]="form!.controls.horario_trabalho_inicio" labelInfo="Horário do início da Jornada de Trabalho"></input-datetime>
-                    <input-datetime time [size]="4" label="Final" [disabled]="is24hrs" controlName="horario_trabalho_fim" [control]="form!.controls.horario_trabalho_fim" labelInfo="Horário do Final da Jornada de Trabalho"></input-datetime>
-                    <input-datetime time noIcon [size]="2" label="Dur. Intervalo" controlName="horario_trabalho_intervalo" [control]="form!.controls.horario_trabalho_intervalo" labelInfo="Duração do intervalo realizado dentro da jornada de trabalho (quantidade de horas, ex.: horário de almoço de duas horas será 02:00). Para fins de computo de jornada de trabalho na ausência do plano de trabalho."></input-datetime>
-                </div>
-            </separator//-->
-            <separator></separator>
-            <div clss="row">
-                <input-multiselect label="Etiquetas" multiselectStyle="inline" [maxItemWidth]="250" controlName="etiquetas" [size]="12" [control]="form!.controls.etiquetas" [addItemHandle]="addItemHandle.bind(this)">
-                    <input-text [size]="6" label="Texto" controlName="etiqueta_texto" [control]="form!.controls.etiqueta_texto"></input-text>
-                    <input-select [size]="3" label="Ícone" controlName="etiqueta_icone" [control]="form!.controls.etiqueta_icone" [items]="lookup.ICONES"></input-select>
-                    <input-color [size]="3" label="Cor" controlName="etiqueta_cor" [control]="form!.controls.etiqueta_cor"></input-color>
-                </input-multiselect>
-            </div>
-        </tab>
-        <tab key="EXPEDIENTE" label="Expediente">
-            <div class="row">
-                <input-switch #usarExpedienteEntidade label="Usar o calendário da entidade" labelPosition="right" icon="bi bi-check2" [size]="12" (change)="onUsarExpedienteEntidadeChange()" controlName="usar_expediente_entidade" labelInfo="Se utiliza o expediente configurado na entidade ao invés de especificar na unidade"></input-switch>
-            </div>
-            <calendar-expediente #expediente [disabled]="form!.controls.usar_expediente_entidade.value ? 'true' : undefined" [expedienteDisabled]="entity?.entidade?.expediente" [control]="form!.controls.expediente"></calendar-expediente>
-        </tab>
-        <tab key="ATIVIDADES" label="Atividades">
-            <grid [control]="form!.controls.unidades_origem_atividades" [form]="formUnidadesOrigemAtividades" [add]="addUnidadesOrigemAtividades.bind(this)" [load]="loadUnidadesOrigemAtividades.bind(this)" [remove]="removeUnidadesOrigemAtividades.bind(this)" [save]="saveUnidadesOrigemAtividades.bind(this)" editable>
-                <columns>
-                    <column title="Unidades vinculadas" titleHint="Unidades auxiliares para origem de atividades" [template]="columnUnidade" [editTemplate]="editUnidade">
-                        <ng-template let-row="row" #columnUnidade>
-                            <span> {{row.unidade_origem_atividade?.nome || ""}}</span>
-                        </ng-template>
-                        <ng-template let-row="row" #editUnidade>
-                            <input-search #unidade_origem_atividade [size]="12" controlName="unidade_origem_atividade_id" [control]="formUnidadesOrigemAtividades!.controls.unidade_origem_atividade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
-                        </ng-template>
-                    </column>
-                    <column type="options"></column>
-                </columns>
-            </grid>
-        </tab>
-        <tab key="NOTIFICACOES" label="Notificações">
-            <div class="row">
-                <div class="col-md-6">
-                    <separator transparent title="Meios de notificação"></separator>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar por e-mail" controlName="enviar_email"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar por Whatsapp" controlName="enviar_whatsapp"></input-switch>
-                </div>
-                <div class="col-md-6">
-                    <separator transparent title="Tipos de notificação"></separator>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar distribuição da demanda" controlName="notifica_demanda_distribuicao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar conclusão da demanda" controlName="notifica_demanda_conclusao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar avaliação da demanda" controlName="notifica_demanda_avaliacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar modificação da demanda" controlName="notifica_demanda_modificacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar comentário da demanda" controlName="notifica_demanda_comentario"></input-switch>
-                </div>
-            </div>
-            <separator transparent title="Templates das mensagens"></separator>
-            <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na criação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaDistribuicao" controlName="template_demanda_distribuicao" placeholder="Caso em branco, será utilizado a configuração da Entidade..." [control]="form!.controls.template_demanda_distribuicao"></input-textarea>
-            </div>
-            <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na conclusão ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaConclusao" controlName="template_demanda_conclusao" placeholder="Caso em branco, será utilizado a configuração da Entidade..." [control]="form!.controls.template_demanda_conclusao"></input-textarea>
-            </div>
-            <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na avaliação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaAvaliacao" controlName="template_demanda_avaliacao" placeholder="Caso em branco, será utilizado a configuração da Entidade..." [control]="form!.controls.template_demanda_avaliacao"></input-textarea>
-            </div>
-            <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na modificação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaModificacao" controlName="template_demanda_modificacao" placeholder="Caso em branco, será utilizado a configuração da Entidade..." [control]="form!.controls.template_demanda_modificacao"></input-textarea>
-            </div>
-            <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na inclusão de comentário ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaComentario" controlName="template_demanda_comentario" placeholder="Caso em branco, será utilizado a configuração da Entidade..." [control]="form!.controls.template_demanda_comentario"></input-textarea>
-            </div>
-        </tab>
-    </tabs>
+<editable-form [title]="isModal ? '' : title" [form]="form!" [disabled]="formDisabled" initialFocus="sigla" (submit)="onSaveData()" (cancel)="onCancel()">
+  <tabs display right>
+    <tab key="PRINCIPAL" label="Principal">
+      <div class="row">
+        <input-switch [disabled]="informalIsDisabled" [size]="1" label="Informal" labelClass="text-nowrap" controlName="informal" (change)="onInformalChange($event)" [labelInfo]="'Definir se ' + lex.translate('a unidade') + ' é informal ou não.' + lex.translate(' Unidades') + ' informais são, por exemplo: times volantes, comissões, grupos de trabalho, etc.' + lex.translate(' Unidades') + ' informais não podem mudar para formais, ou vice-versa.'"></input-switch>
+        <input-switch [disabled]="instituidoraIsDisabled" [size]="1" label="Instit." labelClass="text-nowrap" controlName="instituidora" [labelInfo]="'Se a ' + lex.translate('unidade') + ' é instituidora de Programas. Unidade administrativa prevista no art. 4º do Decreto nº 11.072, de 2022.'"></input-switch>
+        <input-text [disabled]="codigoIsDisabled" [size]="2" label="Código" controlName="codigo"></input-text>
+        <input-text [disabled]="isDisabled" [size]="2" label="Sigla" controlName="sigla" required></input-text>
+        <input-text [disabled]="isDisabled" [size]="6" label="Nome" controlName="nome" required></input-text>
+      </div>
+      <div class="row">
+        <input-search [disabled]="isDisabled" #cidade [size]="4" controlName="cidade_id" [dao]="cidadeDao" required></input-search>
+        <input-search [disabled]="unidadePaiIsDisabled" #unidade_pai [size]="4" [label]="lex.translate('Unidade') + ' pai'" controlName="unidade_pai_id" [where]="[['entidade_id', '==', form!.controls.entidade_id.value]]" [dao]="dao!"></input-search>
+        <input-search #entidade [size]="4" disabled controlName="entidade_id" [dao]="entidadeDao" required></input-search>
+      </div>
+    </tab>
+    <tab key="CONFIGURACOES" label="Configurações">
+      <!--div class="row">
+        <input-select [size]="4" [label]="'Contagem ' + lex.translate('Prazo de Distribuição')" controlName="distribuicao_forma_contagem_prazos" [items]="lookup.DIA_HORA_CORRIDOS_OU_UTEIS" labelInfo="A forma da contagem dos prazos para a distribuição (lançamento da demanda)."></input-select>
+        <input-select [size]="4" [label]="'Contagem ' + lex.translate('Prazo de Entrega')" controlName="entrega_forma_contagem_prazos" [items]="lookup.HORAS_CORRIDAS_OU_UTEIS" labelInfo="A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)"></input-select>
+        <input-radio [size]="4" label="Arquivamento automático" controlName="atividades_arquivamento_automatico" [items]="lookup.SIMNAO" labelInfo="Se após a avaliação, arquivará automaticamente a atividade."></input-radio>
+      </div-->
+      <separator></separator>
+      <div clss="row">
+        <input-multiselect label="Etiquetas" multiselectStyle="inline" [maxItemWidth]="250" controlName="etiquetas" [size]="12" [addItemHandle]="addItemHandle.bind(this)">
+          <input-text [size]="6" label="Texto" controlName="etiqueta_texto" [attr.maxlength]=250></input-text>
+          <input-select [size]="3" label="Ícone" controlName="etiqueta_icone" [items]="lookup.ICONES"></input-select>
+          <input-color [size]="3" label="Cor" controlName="etiqueta_cor"></input-color>
+        </input-multiselect>
+      </div>
+      <separator></separator>
+      <div class="row">
+        <input-editor [label]="'Texto complementar ' + lex.translate('Plano de Trabalho')" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
+      </div>
+    </tab>
+    <tab key="EXPEDIENTE" label="Expediente">
+      <div class="row">
+        <input-switch #usarExpedienteEntidade label="Usar calendário próprio" labelPosition="right" icon="bi bi-check2" [size]="12" (change)="onUsarExpedienteEntidadeChange()" controlName="usar_expediente_unidade" labelInfo="Se o expediente da {{lex.translate('unidade')}} não for definido usaremos o da {{lex.translate('entidade')}}"></input-switch>
+      </div>
+      <calendar-expediente #expediente [disabled]="form!.controls.usar_expediente_unidade.value ? undefined : 'true'" [expedienteDisabled]="entity?.entidade?.expediente" [control]="form!.controls.expediente"></calendar-expediente>
+    </tab>
+    <tab *ngIf="entity" key="NOTIFICACOES" label="Notificações">
+      <notificacoes-config #notificacoes [unidadeId]="entity.id.length ? entity!.id : 'ADD'" [entity]="entity!" [disabled]="formDisabled"></notificacoes-config>
+    </tab>
+  </tabs>
 </editable-form>

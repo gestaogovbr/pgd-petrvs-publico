@@ -1,0 +1,52 @@
+<grid multiselect [dao]="dao" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy"
+    [join]="join" editable [selectable]="selectable" 
+    (select)="onSelect($event)" [hasAdd]="false" [hasEdit]="false" [hasDelete]="false" [multiselectMenu]="multiselectMenu">
+    <toolbar *ngIf="!selectable">
+        <input-switch [size]="3" labelPosition="left" [label]="lex.translate('Habilitados')" controlName="habilitados" [labelInfo]="'Se ON, retorna apenas ' + lex.translate('os usuários') + ' habilitados ' + lex.translate('no programa') + '. Se OFF, retorna apenas os desabilitados.'"
+            [control]="filter!.controls.habilitados" (change)="grid!.reloadFilter()"></input-switch>
+    </toolbar>
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [clear]="filterClear.bind(this)"
+        [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)"
+        [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-search #programaSearch [size]="12" [disabled]="isModal ? 'true' : undefined" controlName="programa_id" [control]="filter!.controls.programa_id" [dao]="programaDao" [where]="[['vigentesUnidadeExecutora', '==', auth.unidade!.id]]" [metadata]="{'vigentesUnidadeExecutora': true}" (change)="onProgramaChange()" required></input-search>
+        </div>
+        <div class="row">
+            <input-text [size]="6" [label]="'Nome do '+ lex.translate('usuário')" controlName="nome_usuario" [control]="filter!.controls.nome_usuario"
+                [placeholder]="'Nome do '+ lex.translate('usuario')+'...'" [attr.maxlength]=250></input-text>
+            <input-search #unidade [size]="6" [control]="filter!.controls.unidade_id" controlName="unidade_id" [label]="lex.translate('Unidade ') + lex.translate('de lotação')" [labelInfo]="'Se a opção TODOS estiver OFF, exibe apenas ' + lex.translate('os usuários') + ' habilitados lotados ' + lex.translate('nessa unidade') + '. Se a opção TODOS estiver ON, exibe todos ' + lex.translate('os usuários') + ' lotados ' + lex.translate('nessa unidade') + ', habilitados, desabilitados e inabilitados.'"
+                [dao]="unidadeDao"></input-search>
+        </div>
+    </filter>
+    <div *ngIf="grid?.filterRef?.collapsed" class="mt-2 mb-4"><span><strong>{{ 'Programa: ' + programa?.nome || '' }}</strong></span></div>
+    <columns>
+        <column icon="bi-person" class="text-center" [template]="columnFoto" >
+            <ng-template let-row="row" #columnFoto>
+                <profile-picture [url]="row.url_foto" [size]="40" [hint]="row.nome"></profile-picture>
+            </ng-template>
+        </column>
+        <column [title]="lex.translate('Usuário')" [template]="columnUsuario" >
+            <ng-template let-row="row" #columnUsuario>
+                <strong>{{row.nome }}</strong><br>
+                <small>{{row.apelido }}</small>
+            </ng-template>
+        </column>
+        <column [title]="lex.translate('Habilitado')" [align]="'center'" [template]="columnHabilitado" >
+            <ng-template let-row="row" #columnHabilitado>
+                <badge [icon]="isHabilitado(row) ? 'bi bi-person-check' : 'bi-person-fill-slash'" [label]="isHabilitado(row) ? lex.translate('Habilitado') : lex.translate('Desabilitado')" [color]="isHabilitado(row) ? 'success' : 'danger'"></badge>
+            </ng-template>
+        </column>
+        <column [title]="lex.translate('Lotação')" [template]="columnLotacao">
+            <ng-template let-row="row" #columnLotacao>
+                <span>{{row.lotacao.unidade.sigla }}</span>
+            </ng-template>
+        </column>
+        <column [title]="lex.translate('Plano de Trabalho') + ' ativo?'" [align]="'center'" [template]="columnPlanoTrabalho">
+            <ng-template let-row="row" #columnPlanoTrabalho>
+                <span>{{ hasPlanoTrabalhoAtivo(row) ? 'sim' : 'não' }}</span>
+            </ng-template>
+        </column>
+        <column type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

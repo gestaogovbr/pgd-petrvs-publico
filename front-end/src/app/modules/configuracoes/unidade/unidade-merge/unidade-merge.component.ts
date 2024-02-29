@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
@@ -57,11 +57,11 @@ export class UnidadeMergeComponent extends PageFrameBase {
     (this.dao as UnidadeDaoService).mesmaSigla().then(unidades => {
       let destinos: Unidade[] = [];
       destinos = unidades.reduce((acumulador, valor) => {
-        if(!valor.inativo && !acumulador.find(x => x.sigla == valor.sigla)) acumulador.push(valor);
+        if(!valor.data_inativacao && !acumulador.find(x => x.sigla == valor.sigla)) acumulador.push(valor);
         return acumulador; 
       }, destinos);
       let destinosIds = destinos.map(x => x.id);
-      let origens = unidades.filter(x => !destinosIds.includes(x.id) && !!x.inativo);
+      let origens = unidades.filter(x => !destinosIds.includes(x.id) && !!x.data_inativacao);
       let origensIds = origens.map(x => x.id);
       this.items = [];
       for(let origem of origens) {
@@ -110,9 +110,9 @@ export class UnidadeMergeComponent extends PageFrameBase {
     let result = undefined;
     if(this.form!.controls.unidade_origem_id.value?.length || this.form!.controls.unidade_destino_id.value?.length) {
       row.unidade_origem_id = form.controls.unidade_origem_id.value;
-      row.unidade_origem = this.unidadeOrigem?.selectedItem?.entity || await this.dao?.getById(row.unidade_origem_id);
+      row.unidade_origem = this.unidadeOrigem?.selectedEntity || await this.dao?.getById(row.unidade_origem_id);
       row.unidade_destino_id = form.controls.unidade_destino_id.value;
-      row.unidade_destino = this.unidadeDestino?.selectedItem?.entity || await this.dao?.getById(row.unidade_destino_id);
+      row.unidade_destino = this.unidadeDestino?.selectedEntity || await this.dao?.getById(row.unidade_destino_id);
       result = row;
     }
     return result;

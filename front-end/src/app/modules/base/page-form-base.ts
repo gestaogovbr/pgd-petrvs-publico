@@ -1,10 +1,12 @@
 import { OnInit, Injector, Injectable, Type } from '@angular/core';
-import { FormGroup, AbstractControl, FormControl } from '@angular/forms';
+import { FormGroup,  FormControl } from '@angular/forms';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { Base, IIndexable } from 'src/app/models/base.model';
 import { PageBase } from './page-base';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { NavigateResult } from 'src/app/services/navigate.service';
+
+export type PageFormAction = "edit" | "consult" | "new" | string;
 
 //@Component({ template: '' })
 @Injectable()
@@ -14,8 +16,9 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
   public form?: FormGroup;
   public entity?: M;
   public dao?: D;
-  public action: string = "";
-  public formValidation?: (form?: FormGroup) => string | undefined | null;
+  public id?: string;
+  public action: PageFormAction = "";
+  public formValidation?: (form?: FormGroup) => string | undefined | null | Promise<string | undefined | null>;
   public titleEdit?: (entity: M) => string;
 
   /* Configurações */
@@ -23,6 +26,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
   public mensagemSalvarSucesso = "Registro salvo com sucesso!";
   public mensagemCarregando = "Carregando dados do formulário...";
   public mensagemSalvando = "Salvando dados do formulário...";
+  
   constructor(public injector: Injector, mType: Type<M>, dType: Type<D>) {
     super(injector);
     this.dao = injector.get<D>(dType);
@@ -32,6 +36,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
     super.ngOnInit();
     const segment = (this.url ? this.url[this.url.length-1]?.path : "") || "";  
     this.action = ["edit", "consult"].includes(segment) ? segment : "new";
+    this.id = this.action != "new" ? this.urlParams!.get("id")! : undefined;
   }
 
   ngAfterViewInit() {
@@ -48,6 +53,10 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
     return this.action == "consult";
   }
 
+  public checkFilled(controls: string[]): boolean {
+    return !controls.find(x => !this.form!.controls[x].value?.length);
+  }
+
   public abstract loadData(entity: M, form: FormGroup): Promise<void> | void;
 
   public abstract initializeData(form: FormGroup): Promise<void> | void;
@@ -59,7 +68,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
       this.loading = true;
       try {
         if (["edit", "consult"].includes(this.action)) {
-          const entity = await this.dao!.getById(this.urlParams!.get("id")!, this.join);
+          const entity = await this.dao!.getById(this.id!, this.join);
           this.entity = entity!;
           await this.loadData(this.entity, this.form!);
         } else { /* if (this.action == "new") */
@@ -79,18 +88,17 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
     let error: any = undefined;
     if(this.formValidation) {
       try {
-        error = this.formValidation(this.form!);
+        error = await this.formValidation(this.form!);
       } catch (e: any) {
         error = e; 
       }
     }
-    //Object.keys(this.form!.controls).forEach(field => this.form!.get(field)?.updateValueAndValidity());
     if(this.form!.valid && !error){
       this.submitting = true;
       try {
         let entity = await this.saveData(this.form!.value);
         if(entity){
-          const modalResult = typeof entity == "boolean" ? this.entity?.id : entity instanceof NavigateResult ? entity.modalResult : (await this.dao!.save(entity as M)).id;
+          const modalResult = typeof entity == "boolean" ? this.entity?.id : entity instanceof NavigateResult ? entity.modalResult : (await this.dao!.save(entity as M, this.join)).id;
           if(self.modalRoute?.queryParams?.idroute?.length) self.go.setModalResult(self.modalRoute?.queryParams?.idroute, modalResult);
           //self.dialog.alert("Sucesso", this.mensagemSalvarSucesso).then(() => self.go.back());
           self.close();

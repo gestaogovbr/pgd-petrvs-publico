@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormGroup, FormGroupDirective } from '@angular/forms';
+import { FormControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { QueryContext } from 'src/app/dao/query-context';
 import { QueryOptions } from 'src/app/dao/query-options';
 import { Base } from 'src/app/models/base.model';
@@ -25,16 +25,21 @@ export class FilterComponent extends ComponentBase implements OnInit {
   @ViewChild(FormGroupDirective) formDirective?: FormGroupDirective;
   @Output() filterClear = new EventEmitter<void>();
   @Input() form?: FormGroup;
+  @Input() filter?: (filter: FormGroup) => void;
   @Input() submit?: (filter: FormGroup) => QueryOptions | undefined | void;
   @Input() clear?: (filter: FormGroup) => void;
   @Input() where?: (filter: FormGroup) => any[];
   @Input() collapseChange?: (filter: FormGroup) => void;
+  @Input() visible: boolean = true;
+  @Input() deleted: boolean = false;
   @Input() noButtons?: string;
   @Input() collapsed: boolean = true;
   @Input() grid?: GridComponent;
   @Input() query?: QueryContext<Base>;
   @Input() queryOptions?: QueryOptions;
   @Input() hidden?: string;
+
+  public deletedControl: FormControl = new FormControl(false);
 
   constructor(injector: Injector) {
     super(injector);
@@ -48,7 +53,7 @@ export class FilterComponent extends ComponentBase implements OnInit {
   }
 
   public get isHidden(): boolean {
-    return this.hidden != undefined;
+    return this.hidden != undefined; 
   }
 
   public get isNoButtons(): boolean {
@@ -58,6 +63,10 @@ export class FilterComponent extends ComponentBase implements OnInit {
   public toggle() {
     this.collapsed = !this.collapsed;
     if(this.collapseChange) this.collapseChange(this.form!);
+  }
+
+  public onDeletedChange(event: Event) {
+    this.onButtonFilterClick();
   }
 
   public onButtonClearClick() {
@@ -73,7 +82,14 @@ export class FilterComponent extends ComponentBase implements OnInit {
   }
 
   public onButtonFilterClick() {
-    let queryOptions = this.submit ? this.submit(this.form!) : undefined;
-    (this.grid?.query || this.query!).reload(queryOptions || this.grid?.queryOptions || this.queryOptions);
+    if(this.filter) {
+      this.filter(this.form!);
+    } else {
+      let queryOptions = this.submit ? this.submit(this.form!) : undefined;
+      queryOptions = queryOptions || this.grid?.queryOptions || this.queryOptions || {};
+      //if(this.deletedControl.value) queryOptions.deleted = true;
+      queryOptions.deleted = this.deletedControl.value ? true : false;
+      (this.grid?.query || this.query!).reload(queryOptions);
+    }
   }
 }

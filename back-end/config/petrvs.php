@@ -1,7 +1,11 @@
 <?php
 
 return [
-    'entidade' => env('PETRVS_ENTIDADE', ''),
+    'tenant' => [
+        'type' => env('PETRVS_TENANT_TYPE', 'request')
+    ],
+    'entidade' => env('PETRVS_ENTIDADE', 'PRF'),
+    'auto-login' => env('PETRVS_AUTO_LOGIN', ''),
     'suporte' => env('PETRVS_SUPORTE', ''),
     'logo' => env('PETRVS_LOGO', ''),
     'timezone' => env('PETRVS_SERVIDOR_TIMEZONE', -3),
@@ -11,17 +15,19 @@ return [
     ],
     'actions' => [
         'web' => [
-            'login-user-password' => env('PETRVS_ACTION_LOGIN_USER_PASSWORD', ''),
-            'login-firebase-token' => env('PETRVS_ACTION_LOGIN_FIREBASE_TOKEN', ''),
-            'login-google-token' => env('PETRVS_ACTION_LOGIN_GOOGLE_TOKEN', env('PETRVS_ACTION_LOGIN_GAPI_TOKEN', '')),
-            'login-institucional' => env('PETRVS_ACTION_LOGIN_INSTITUCIONAL', '')
+            'login-user-password' => env('PETRVS_ACTION_LOGIN_USER_PASSWORD', 'authenticateUserPassword'),
+            'login-firebase-token' => env('PETRVS_ACTION_LOGIN_FIREBASE_TOKEN', 'authenticateFirebaseToken'),
+            'login-google-token' => env('PETRVS_ACTION_LOGIN_GOOGLE_TOKEN', env('PETRVS_ACTION_LOGIN_GAPI_TOKEN', 'authenticateGoogleToken')),
+            'login-institucional' => env('PETRVS_ACTION_LOGIN_INSTITUCIONAL', 'authenticateDepenLdap'),
+            'login-unico' => env('PETRVS_ACTION_LOGIN_UNICO', 'authenticateApiLoginUnico')
         ],
         'api' => [
-            'login-user-password' => env('PETRVS_API_LOGIN_USER_PASSWORD', ''),
-            'login-firebase-token' => env('PETRVS_API_LOGIN_FIREBASE_TOKEN', ''),
-            'login-google-token' => env('PETRVS_API_LOGIN_GOOGLE_TOKEN', env('PETRVS_API_LOGIN_GAPI_TOKEN', '')),
-            'login-institucional' => env('PETRVS_API_LOGIN_INSTITUCIONAL', ''),
-            'generate-session-token' => env('PETRVS_API_SESSION_TOKEN', ''),
+            'login-user-password' => env('PETRVS_API_LOGIN_USER_PASSWORD', 'authenticateApiUserPassword'),
+            'login-firebase-token' => env('PETRVS_API_LOGIN_FIREBASE_TOKEN', 'authenticatApieFirebaseToken'),
+            'login-google-token' => env('PETRVS_API_LOGIN_GOOGLE_TOKEN', env('PETRVS_API_LOGIN_GAPI_TOKEN', 'authenticateApiGoogleToken')),
+            'login-institucional' => env('PETRVS_API_LOGIN_INSTITUCIONAL', 'authenticateApiDepenLdap'),
+            'login-unico' => env('PETRVS_API_LOGIN_UNICO', 'authenticateApiLoginUnico'),
+            'generate-session-token' => env('PETRVS_API_SESSION_TOKEN', 'generateApiPrfSessionToken'),
         ]
     ],
     'login' => [
@@ -29,9 +35,19 @@ return [
         "gsuit" => env('PETRVS_LOGIN_GSUIT', true),
         "azure" => env('PETRVS_LOGIN_AZURE', true),
         "institucional" => env('PETRVS_LOGIN_INSTITUCIONAL', false),
-        "firebase" => env('PETRVS_LOGIN_FIREBASE', false)
+        "firebase" => env('PETRVS_LOGIN_FIREBASE', false),
+        "login-unico" => env('PETRVS_LOGIN_UNICO', true)
     ],
     'ids-fixos' => [
         'developer-id' => env('PETRVS_PERFIS_DEV', null),
+    ],
+    'panel' => [
+        'username' => env('PETRVS_PANEL_USERNAME', 'petrvs'),
+        'password' => env('PETRVS_PANEL_PASSWORD', 'petrvs@123'),
+    ],
+    'schemas' => [
+        'base'=> env('DB_DATABASE', 'petrvs'),
+        'tenant_aplicacao'=> '',
+        'tenant_log'=> '',
     ]
 ];

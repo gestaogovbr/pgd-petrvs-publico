@@ -15,8 +15,8 @@ class LogCommunication {
 
 	public function terminate($request, $response)
 	{
-        $config = config('log');
-        if($config['log_traffic'] && $request->method() != "OPTIONS") {
+/*         $config = config('log');
+        if($config['traffic'] && $request->method() != "OPTIONS") {
             $usuario = Auth::user();
             $communication = new Traffic();
             $communication->fill([
@@ -33,6 +33,6 @@ class LogCommunication {
                 ]) 
             ]);
             $communication->save();
-        }
+        } */
 	}
 }

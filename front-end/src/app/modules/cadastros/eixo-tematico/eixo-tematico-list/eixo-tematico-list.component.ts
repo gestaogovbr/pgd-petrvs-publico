@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
@@ -16,13 +16,13 @@ export class EixoTematicoListComponent extends PageListBase<EixoTematico, EixoTe
   constructor(public injector: Injector) {
     super(injector, EixoTematico, EixoTematicoDaoService);
     /* Inicializações */
-    this.title = 'Eixos temáticos';
+    this.title = this.lex.translate('Eixos Temáticos');
     this.orderBy = [['nome', 'asc']];
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
      });
     // Testa se o usuário possui permissão para consultar eixos temáticos
-    if (this.auth.hasPermissionTo("MOD_PLAN_INST_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_EXTM")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
@@ -30,14 +30,16 @@ export class EixoTematicoListComponent extends PageListBase<EixoTematico, EixoTe
       });
     }
     // Testa se o usuário possui permissão para excluir eixos temáticos
-    if (this.auth.hasPermissionTo("MOD_PLAN_INST_EXCL")) {
+    if (this.auth.hasPermissionTo("MOD_EXTM_EXCL")) {
       this.options.push({
         icon: "bi bi-trash",
         label: "Excluir",
         onClick: this.delete.bind(this)
       });
     }
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
+  
 
   public filterClear(filter: FormGroup) {
     filter.controls.nome.setValue("");
@@ -49,7 +51,7 @@ export class EixoTematicoListComponent extends PageListBase<EixoTematico, EixoTe
     let form: any = filter.value;
 
     if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
 
     return result;

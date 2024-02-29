@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { FormHelperService } from 'src/app/services/form-helper.service';
 
 @Component({
@@ -13,6 +13,7 @@ export class OptionsComponent implements OnInit {
   private config: any;
 
   constructor(private fh: FormHelperService) {
+    //@ts-ignore
     this.webBrowser = (chrome || browser);
     this.form = this.fh.FormBuilder({
       desenvolvimento: {default: false},

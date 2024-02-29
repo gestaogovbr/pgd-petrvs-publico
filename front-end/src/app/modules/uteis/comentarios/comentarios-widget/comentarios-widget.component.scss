@@ -1,0 +1,51 @@
+:host {
+    max-width: 320px;
+    display: block;
+}
+
+.comentario-badge[data-expanded=true] {
+    .comentario-title {
+        display: initial;
+        white-space: normal;
+        font-size: 12px;
+    }
+    .comentario-text {
+        font-size: 12px;
+        height: auto;
+        display: block;
+        white-space: initial;
+    }
+}
+
+.comentario-badge {
+    white-space: nowrap;
+    display: block;
+    position: relative;
+    //width: 200px;
+    background-color: #ffe69c !important;
+    margin-bottom: 1px;
+    text-align: left;
+    padding:3px 5px;
+
+    .comentario-title {
+        display: none;
+    }
+    .comentario-text {
+        width: calc(100% - 15px);
+        display: inline-block;
+        font-size: 12px;
+    }
+}
+
+.comentario-badge:hover .comentario-responder {
+    display: block;
+}
+
+.comentario-responder {
+    display: none;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}
+
+

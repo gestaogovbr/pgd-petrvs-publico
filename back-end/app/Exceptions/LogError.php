@@ -11,16 +11,22 @@ class LogError extends Exception
 {
     public static function newError($message, $exception = null, $data = null, $throwWith = 200) {
         $config = config('log');
-        if(!empty($exception) && $config['log_errors']) {
-            $user = Auth::user();
-            $erro = new Error();
-            $erro->fill([
-                "user" => $user ? json_encode($user) : null,
-                "message" => $message . ":" . $exception->getMessage(),
-                "data" => substr(json_encode($data), 0, 65000),
-                "trace" => $exception->getTraceAsString()
-            ]);
-            $erro->save();
+        if(!empty($exception) && $config['errors']) {
+            try {
+                $user = Auth::user();
+                $erro = new Error();
+                $erro->fill([
+                    "user" => $user ? json_encode($user) : null,
+                    "message" => $message . ":" . $exception->getMessage(),
+                    "data" => substr(json_encode($data), 0, 65000),
+                    "trace" => $exception->getTraceAsString()
+                ]);
+                $erro->save();
+            } catch (\Throwable $e) {
+                return ValidationException::withMessages([
+                    'error' => $e->getMessage()
+                ])->status(401);
+            }
         }
         if($throwWith == 200) {
             return response()->json(['error' => $message]);
@@ -32,15 +38,21 @@ class LogError extends Exception
     }
 
     public static function newWarn($message, $data = null) {
-        $user = Auth::user();
-        $erro = new Error();
-        $erro->fill([
-            "user" => $user ? json_encode(["id" => $user->id, "nome" => $user->nome, "email" => $user->email]) : null,
-            "message" => $message,
-            "data" => substr(json_encode($data), 0, 65000),
-            "type" => "WARNING"
-        ]);
-        $erro->save();
+        try {
+            $user = Auth::user();
+            $erro = new Error();
+            $erro->fill([
+                "user" => $user ? json_encode(["id" => $user->id, "nome" => $user->nome, "email" => $user->email]) : null,
+                "message" => $message,
+                "data" => substr(json_encode($data), 0, 65000),
+                "type" => "WARNING"
+            ]);
+            $erro->save();
+        } catch (\Throwable $e) {
+            return ValidationException::withMessages([
+                'error' => $e->getMessage()
+            ])->status(401);
+        }
     }
 
 }

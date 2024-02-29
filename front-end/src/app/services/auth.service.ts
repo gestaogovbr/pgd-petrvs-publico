@@ -1,5 +1,4 @@
 import { ChangeDetectorRef, Injectable, Injector } from '@angular/core';
-import { DaoBaseService } from '../dao/dao-base.service';
 import { Unidade } from '../models/unidade.model';
 import { Usuario, UsuarioConfig } from '../models/usuario.model';
 import { DialogService } from './dialog.service';
@@ -10,28 +9,31 @@ import { ServerService } from './server.service';
 import * as moment from 'moment';
 import { ActivatedRoute } from '@angular/router';
 import { CalendarService } from './calendar.service';
-import { Subject } from 'rxjs';
 import { LexicalService } from './lexical.service';
 import { UtilService } from './util.service';
 import { UsuarioDaoService } from '../dao/usuario-dao.service';
-import { IIndexable } from '../models/base.model';
+import { IIndexable, IntegranteAtribuicao } from '../models/base.model';
+import { Entidade } from '../models/entidade.model';
+import { UnidadeDaoService } from '../dao/unidade-dao.service';
+import { NotificacaoService } from '../modules/uteis/notificacoes/notificacao.service';
+import { AppComponent } from '../app.component';
+import { UnidadeService } from './unidade.service';
 
-export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SUPER";
+export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SEI" | "LOGINUNICO";
 export type Permission = string | (string | string[])[];
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  public success?: (usuario: Usuario, redirectTo?: FullRoute) => void;
-  public fail?: (error: string) => void;
-  public leave?: () => void;
   public kind?: AuthKind;
   public logged: boolean = false;
   public usuario?: Usuario;
   public capacidades: string[] = [];
+  public entidade?: Entidade;
   public unidade?: Unidade;
   public unidades?: Unidade[];
+  public app?: AppComponent;
 
   private _apiToken: string | undefined = undefined;
   private _logging: boolean = false;
@@ -76,10 +78,36 @@ export class AuthService {
   public get route(): ActivatedRoute { this._route = this._route || this.injector.get<ActivatedRoute>(ActivatedRoute); return this._route };
   private _calendar?: CalendarService;
   public get calendar(): CalendarService { this._calendar = this._calendar || this.injector.get<CalendarService>(CalendarService); return this._calendar };
-  private _usuarioDaoService?: UsuarioDaoService;
-  public get usuarioDaoService(): UsuarioDaoService { this._usuarioDaoService = this._usuarioDaoService || this.injector.get<UsuarioDaoService>(UsuarioDaoService); return this._usuarioDaoService };
+  private _usuarioDao?: UsuarioDaoService;
+  public get usuarioDao(): UsuarioDaoService { this._usuarioDao = this._usuarioDao || this.injector.get<UsuarioDaoService>(UsuarioDaoService); return this._usuarioDao };
+  private _unidadeDao?: UnidadeDaoService;
+  public get unidadeDao(): UnidadeDaoService { this._unidadeDao = this._unidadeDao || this.injector.get<UnidadeDaoService>(UnidadeDaoService); return this._unidadeDao };
+  private _notificacao?: NotificacaoService;
+  public get notificacao(): NotificacaoService { this._notificacao = this._notificacao || this.injector.get<NotificacaoService>(NotificacaoService); return this._notificacao };
+  private _unidade?: UnidadeService;
+  public get unidadeService(): UnidadeService { this._unidade = this._unidade || this.injector.get<UnidadeService>(UnidadeService); return this._unidade };
+
+  public set usuarioConfig(value: IIndexable) {
+    this.updateUsuarioConfig(this.usuario!.id, value);
+  }
+  public get usuarioConfig(): IIndexable {
+    const defaults = new UsuarioConfig();
+    return this.util.assign(defaults, this.usuario?.config || {});
+  }
 
   constructor(public injector: Injector) { }
+
+  public success(usuario: Usuario, redirectTo?: FullRoute) {
+    this.app!.go.navigate(redirectTo || { route: this.app!.gb.initialRoute });
+  };
+
+  public fail(error: any) {
+    this.app!.go.navigate({ route: ['login'], params: { error: error?.error || error?.message || error } });
+  };
+
+  public leave() {
+    this.app!.go.navigate({ route: ['login'] });
+  };
 
   public get unidadeHora(): string {
     return moment(this.hora).format("HH:mm");
@@ -96,17 +124,8 @@ export class AuthService {
   }
 
   public registerPopupLoginResultListener() {
-    /*
-    this.bc = new BroadcastChannel('petrvs_login_popup');
-    this.bc.onmessage = (event) => {
-      this.dialog.closeSppinerOverlay();
-      this.auth.authSession().then(success => {
-        if(success) this.auth.success!(this.auth.usuario!, {route: ["home"]});
-      });
-    };*/
     window.addEventListener("message", (event) => {
-      //const fromUrl = event?.origin || "";
-      if (event?.data == "COMPLETAR_LOGIN") { //fromUrl.includes("login-azure-callback")
+      if (event?.data == "COMPLETAR_LOGIN") {
         this.dialogs.closeSppinerOverlay();
         this.authSession().then(success => {
           if (success) this.success!(this.usuario!, { route: ["home"] });
@@ -115,39 +134,44 @@ export class AuthService {
     }, false);
   }
 
-  public set usuarioConfig(value: IIndexable) {
-    this.updateUsuarioConfig(this.usuario!.id, value);
-  }
-
   public updateUsuarioConfig(usuarioId: string, value: IIndexable) {
     if (this.usuario?.id == usuarioId) this.usuario!.config = this.util.assign(this.usuario!.config, value);
-    return this.usuarioDaoService.updateJson(usuarioId, 'config', value);
+    return this.usuarioDao.updateJson(usuarioId, 'config', value);
   }
 
   public updateUsuarioNotificacoes(usuarioId: string, value: IIndexable) {
     if (this.usuario?.id == usuarioId) this.usuario!.notificacoes = this.util.assign(this.usuario!.notificacoes, value);
-    return this.usuarioDaoService.updateJson(usuarioId, 'notificacoes', value);
+    return this.usuarioDao.updateJson(usuarioId, 'notificacoes', value);
   }
 
-  public get usuarioConfig(): IIndexable {
-    const defaults = new UsuarioConfig();
-    return this.util.assign(defaults, this.usuario!.config);
+  public registerEntity(entity: any) {
+    if (entity) {
+      this.entidade = Object.assign(new Entidade(), entity) as Entidade;
+      this.lex.loadVocabulary(this.entidade.nomenclatura || []);
+    } else {
+      this.entidade = undefined;
+    }
   }
 
   public registerUser(user: any, token?: string) {
     if (user) {
+      let usuarioContextos = [];
       this.usuario = Object.assign(new Usuario(), user) as Usuario;
-      //this.usuario.config = Object.assign(new UsuarioConfig(), this.usuario.config || {});
-      this.capacidades = this.usuario?.perfil?.capacidades?.map(x => x.tipo_capacidade?.codigo || "") || [];
+      this.capacidades = this.usuario?.perfil?.capacidades?.filter(x => x.deleted_at == null).map(x => x.tipo_capacidade?.codigo || "") || [];
       this.kind = this.kind;
       this.logged = true;
-      this.unidades = this.usuario?.lotacoes?.map(x => x.unidade!) || [];
-      this.unidade = this.usuario?.lotacoes?.find(x => x.principal)?.unidade;
-      if (this.unidade) {
-        this.calendar.loadFeriadosCadastrados(this.unidade.id);
-        if (this.unidade.entidade) this.lex.loadVocabulary(this.unidade.entidade.nomenclatura || []);
-      }
+      this.unidades = this.usuario?.areas_trabalho?.map(x => x.unidade!) || [];
+      this.unidade = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
+      if (this.unidade) this.calendar.loadFeriadosCadastrados(this.unidade.id);
       if (token?.length) localStorage.setItem("petrvs_api_token", token);
+      if (this.hasPermissionTo("CTXT_GEST")) usuarioContextos.push("GESTAO");
+      if (this.hasPermissionTo("CTXT_EXEC")) usuarioContextos.push("EXECUCAO");
+      if (this.hasPermissionTo("CTXT_DEV")) usuarioContextos.push("DEV");
+      if (this.hasPermissionTo("CTXT_ADM")) usuarioContextos.push("ADMINISTRADOR");
+      if (this.hasPermissionTo("CTXT_RX")) usuarioContextos.push("RAIOX");
+      if (!usuarioContextos.includes(this.usuario?.config.menu_contexto)) this.gb.contexto = this.app?.menuContexto.find(c => c.key === this.usuario?.config.menu_contexto);
+      this.gb.setContexto(usuarioContextos[0]);
+      this.notificacao.updateNaoLidas();
     } else {
       this.usuario = undefined;
       this.kind = undefined;
@@ -176,14 +200,35 @@ export class AuthService {
     return false;
   }
 
+  public get routerTo(): any {
+    let routerTo = this.route.snapshot?.queryParams?.redirectTo ? JSON.parse(this.route.snapshot?.queryParams?.redirectTo) : { route: this.gb.initialRoute };
+    if (routerTo.route[0] == "login") routerTo = { route: this.gb.initialRoute };
+    return routerTo;
+  }
+
+  /********************************************************************************************
+  Rotinas para autenticar (cada entidade poderá criar a sua, caso as que estejam aqui não atendam).
+  Serve como proxy para a chamada do método logIn, que é quem realmente autentica o usuário. As
+  rotinas atuais estão consideram que a entidade utilizada pelo sistema será a configurada no .env
+  do back-end, mas caso haja a necessidade de criar um combobox no login para selecionar a entidade
+  isso poderá ser feito sem problema algum, somente sendo necessário criar um novo método para receber
+  tambem a informação da entidade selecionada ao invés de utilizar a do GlobalService.ENTIDADE;
+  *********************************************************************************************/
+
   public authAzure() {
     this.dialogs.showSppinerOverlay("Logando...", 300000);
-    this.go.openPopup(this.gb.servidorURL + "/web/login-azure-redirect");
+    this.go.openPopup(this.gb.servidorURL + "/web/login-azure-redirect?entidade=" + encodeURI(this.gb.ENTIDADE));
     //this.go.openPopup(this.gb.servidorURL + "/web/login-azure-simulate-callback");
+  }
+
+  public authLoginUnicoBackEnd() {
+    this.dialogs.showSppinerOverlay("Logando...", 300000);
+    this.go.openPopup(this.gb.servidorURL + "/web/login-govbr-redirect?entidade=" + encodeURI(this.gb.ENTIDADE));
   }
 
   public authUserPassword(user: string, password: string, redirectTo?: FullRoute) {
     return this.logIn("USERPASSWORD", "login-user-password", {
+      entidade: this.gb.ENTIDADE,
       email: user,
       password: password
     }, redirectTo);
@@ -191,6 +236,7 @@ export class AuthService {
 
   public authDprfSeguranca(cpf: string, password: string, token: string, redirectTo?: FullRoute) {
     return this.logIn("DPRFSEGURANCA", "login-institucional", {
+      entidade: this.gb.ENTIDADE,
       cpf: cpf,
       senha: password,
       token: token
@@ -200,7 +246,17 @@ export class AuthService {
   public authGoogle(tokenId: string, redirectTo?: FullRoute) {
     //this.googleApi.tokenId = tokenId;
     return this.logIn("GOOGLE", "login-google-token", {
+      entidade: this.gb.ENTIDADE,
       token: tokenId
+    }, redirectTo);
+  }
+
+  public authLoginUnico(code: string, state: string, redirectTo?: FullRoute) {
+    //this.googleApi.tokenId = tokenId;
+    return this.logIn("LOGINUNICO", "login-unico", {
+      entidade: this.gb.ENTIDADE,
+      code: code,
+      state: state,
     }, redirectTo);
   }
 
@@ -209,25 +265,17 @@ export class AuthService {
     return this.logIn("SESSION", "login-session", {});
   }
 
-  public get routerTo(): any {
-    let routerTo = this.route.snapshot?.queryParams?.redirectTo ? JSON.parse(this.route.snapshot?.queryParams?.redirectTo) : { route: this.gb.initialRoute };
-    if (routerTo.route[0] == "login") routerTo = { route: this.gb.initialRoute };
-    return routerTo;
-  }
-
-  // public loadGapi() {
-  //   this.googleApi.initialize(false).then()
-  // }
-
   private logIn(kind: AuthKind, route: string, params: any, redirectTo?: FullRoute): Promise<boolean> {
-    let deviceName = this.gb.isExtension ? "EXTENSION" : this.gb.isSuperModule ? "SUPER" : "BROWSER";
+    let deviceName = this.gb.isExtension ? "EXTENSION" : this.gb.isSeiModule ? "SEI" : "BROWSER";
     let login = (): Promise<boolean> => {
       return this.server.post((this.gb.isEmbedded ? "api/" : "web/") + route, { ...params, device_name: deviceName }).toPromise().then(response => {
         if (response?.error)
           throw new Error(response?.error);
         this.kind = response?.kind || kind;
         this.apiToken = response.token;
+        this.registerEntity(response.entidade);
         this.registerUser(response.usuario, this.apiToken);
+        this.app?.setMenuVars();
         if (response.horario_servidor?.length) {
           this.gb.horarioDelta.servidor = UtilService.iso8601ToDate(response.horario_servidor);
           this.gb.horarioDelta.local = new Date();
@@ -250,27 +298,35 @@ export class AuthService {
     }
   }
 
-  public logOut() {
-    this.logging = true;
-    this.server.get((this.gb.isEmbedded ? "api/" : "web/") + "logout").toPromise().then(response => {
+  public async logOut() {
+    try {
+      this.logging = true;
+
+      await this.server.get((this.gb.isEmbedded ? "api/" : "web/") + "logout").toPromise();
+
       const clearLogin = () => {
         localStorage.removeItem("petrvs_api_token");
         this.registerUser(undefined);
         if (this.leave) this.leave();
         if (this.gb.refresh) this.gb.refresh();
-      }
+      };
+
       /* Garante logout do Google */
-      if (this.gb.hasGoogleLogin && this.gb.loginGoogleClientId?.length) {
-        this.googleApi.initialize().then(googleAuth => {
-          if (this.kind == "GOOGLE") {
-            this.googleApi.signOut().then(clearLogin);
-          }
-        });
+      if (this.gb.hasGoogleLogin && this.gb.loginGoogleClientId?.length && this.kind == "GOOGLE") {
+        await this.googleApi.initialize();
+        await this.googleApi.signOut();
+        clearLogin();
       } else {
         clearLogin();
       }
-    }).finally(() => this.logging = false);
+      this.logging = false;
+    } catch (error) {
+      console.error("Ocorreu um erro durante o logout:", error);
+    } finally {
+      this.logging = false;
+    }
   }
+  
 
   public selecionaUnidade(id: string, cdRef?: ChangeDetectorRef) {
     if (this.unidades?.find(x => x.id == id)) {
@@ -295,7 +351,101 @@ export class AuthService {
   }
 
   public hasLotacao(unidadeId: string) {
-    return this.usuario!.lotacoes.find(x => x.unidade_id == unidadeId);
+    return this.usuario!.areas_trabalho?.find(x => x.unidade_id == unidadeId);
+  }
+
+  /**
+   * Informa se o usuário logado é gestor de alguma das suas áreas de trabalho.
+   * @returns
+   */
+  public isGestorAlgumaAreaTrabalho(incluiDelegado: boolean = true): boolean {
+    return !!this.unidades?.filter(x => this.unidadeService.isGestorUnidade(x, incluiDelegado)).length;
+  }
+
+  /**
+   * Retorna a unidade onde o usuário é gestor
+   * @returns
+   */
+  public unidadeGestor(): Unidade | undefined {
+    return this.unidades?.find(x => this.unidadeService.isGestorUnidade(x));
+  }
+
+  /**
+   * Retorna a unidade onde o usuário é gestor
+   * @returns
+   */
+  public get lotacao(): Unidade | undefined {
+    return this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
+  }
+
+  /**
+   * Retorna um array com os usuários que são gestores da unidade de lotação do usuário logado
+   * @returns
+   */
+  public get gestoresLotacao(): Usuario[] {
+    let lotacao = this.lotacao;
+    let result: Usuario[] = [];
+    if (lotacao?.gestor?.usuario) result.push(lotacao?.gestor?.usuario);
+    // if(lotacao?.gestor_substituto?.usuario) result.push(lotacao?.gestor_substituto?.usuario);
+    if (lotacao?.gestores_substitutos.length) (lotacao?.gestores_substitutos.map(x => x.usuario!)).forEach(x => result.push(x));
+    return result;
+  }
+
+  /**
+   * Informa se a unidade recebida como parâmetro é a lotação do usuário logado. Se nenhuma unidade for recebida,
+   * será adotada a unidade selecionada pelo servidor na homepage.
+   * @param pUnidade
+   * @returns
+   */
+  public isLotacaoUsuario(pUnidade: Unidade | null = null): boolean {
+    let unidade = pUnidade || this.unidade!;
+    let lotacao = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
+    return lotacao?.id == unidade.id;
+  }
+
+  /**
+   * Informa se o usuário logado possui determinada atribuição para uma unidade específica dentre as suas unidades-integrante.
+   * @param atribuicao
+   * @param unidade_id
+   */
+  public isIntegrante(atribuicao: IntegranteAtribuicao, unidade_id: string): boolean {
+    let $vinculo = this.usuario?.unidades_integrantes?.find(x => x.unidade_id == unidade_id);
+    return !!$vinculo && $vinculo.atribuicoes.map(a => a.atribuicao).includes(atribuicao);
+  }
+
+  /**
+   * Informa se o usuário logado tem como área de trabalho alguma das unidades pertencentes à linha hierárquica ascendente da unidade
+   * recebida como parâmetro.
+   * @param unidade
+   * @returns
+   */
+  public isLotadoNaLinhaAscendente(unidade: Unidade): boolean {
+    let result = false;
+    this.usuario!.areas_trabalho?.map(x => x.unidade_id).forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
+    return result;
+  }
+
+  /**
+   * Informa se o usuário logado é gestor (titular, substituto ou delegado) de alguma das unidades pertencentes à linha hierárquica ascendente da unidade
+   * recebida como parâmetro.
+   * @param unidade
+   * @returns
+   */
+  public isGestorLinhaAscendente(unidade: Unidade): boolean {
+    let result = false;
+    let $ids_gerencias_substitutas = this.usuario?.gerencias_substitutas?.map(x => x.unidade_id) || [];
+    let $ids_gerencias_delegadas = this.usuario?.gerencias_delegadas?.map(x => x.unidade_id) || [];
+    let $ids_gerencias = [...$ids_gerencias_delegadas, ...$ids_gerencias_substitutas];
+    if (this.usuario?.gerencia_titular?.unidade?.id) $ids_gerencias.push(this.usuario?.gerencia_titular!.unidade_id);
+    $ids_gerencias.forEach(x => { if (!!unidade.path && unidade.path.split('/').slice(1).includes(x)) result = true; });
+    return false;
+  }
+
+
+  public loginPanel(user: string, password: string) {
+    return this.server.post("api/panel-login", { user: user, password: password }).toPromise().then(response => {
+      return response;
+    });
   }
 
 }

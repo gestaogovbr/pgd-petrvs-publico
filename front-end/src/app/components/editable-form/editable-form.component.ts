@@ -1,6 +1,6 @@
 import { NavigateService } from 'src/app/services/navigate.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ContentChildren, Injector } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ContentChildren, Injector, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormGroupDirective } from '@angular/forms';
 import { GridComponent } from '../grid/grid.component';
 import { InputButtonComponent } from '../input/input-button/input-button.component';
@@ -20,6 +20,11 @@ import { InputTextareaComponent } from '../input/input-textarea/input-textarea.c
 import { InputTimerComponent } from '../input/input-timer/input-timer.component';
 import { ComponentBase } from '../component-base';
 import { InputEditorComponent } from '../input/input-editor/input-editor.component';
+import { InputNumberComponent } from '../input/input-number/input-number.component';
+import { DOCUMENT } from '@angular/common';
+import { InputBase } from '../input/input-base';
+import { FormHelperService } from 'src/app/services/form-helper.service';
+
 
 @Component({
   selector: 'editable-form',
@@ -40,12 +45,14 @@ import { InputEditorComponent } from '../input/input-editor/input-editor.compone
 export class EditableFormComponent extends ComponentBase implements OnInit {
   @ViewChild(FormGroupDirective) formDirective?: FormGroupDirective;
   @ContentChildren(GridComponent, { descendants: true }) grids!: QueryList<GridComponent>;
+  @ContentChildren(EditableFormComponent, { descendants: true }) forms!: QueryList<EditableFormComponent>;
   @ContentChildren(InputContainerComponent, { descendants: true }) inputContainers!: QueryList<InputContainerComponent>;
   @ContentChildren(InputSwitchComponent, { descendants: true }) inputSwitchs!: QueryList<InputSwitchComponent>;
   @ContentChildren(InputDisplayComponent, { descendants: true }) inputDisplays!: QueryList<InputDisplayComponent>;
   @ContentChildren(InputSearchComponent, { descendants: true }) inputSearchs!: QueryList<InputSearchComponent>;
   @ContentChildren(InputButtonComponent, { descendants: true }) inputButtons!: QueryList<InputButtonComponent>;
   @ContentChildren(InputTextComponent, { descendants: true }) inputTexts!: QueryList<InputTextComponent>;
+  @ContentChildren(InputNumberComponent, { descendants: true }) inputNumbers!: QueryList<InputNumberComponent>;
   @ContentChildren(InputTextareaComponent, { descendants: true }) inputTextareas!: QueryList<InputTextareaComponent>;
   @ContentChildren(InputDatetimeComponent, { descendants: true }) inputDatetimes!: QueryList<InputDatetimeComponent>;
   @ContentChildren(InputRadioComponent, { descendants: true }) inputRadios!: QueryList<InputRadioComponent>;
@@ -67,6 +74,8 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
   @Input() cancelLabel?: string;
   @Input() noButtons?: string;
   @Input() noMargin?: string;
+  @Input() initialFocus?: string;
+  @Input() withScroll: boolean = true;
   @Input() forceInvalid: boolean = false;
   @Input() set disabled(value: boolean) {
     if(this._disabled != value) {
@@ -85,6 +94,7 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
   /* Propriedades publicas */
   public fb: FormBuilder;
   public go: NavigateService;
+  public fh: FormHelperService;
   public submitting: boolean = false;
   public set error(error: string | undefined) {
     this._error = error;
@@ -102,10 +112,11 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
     return this.noMargin !== undefined;
   }
 
-  constructor(injector: Injector) {
+  constructor(injector: Injector, @Inject(DOCUMENT) private document: any) {
     super(injector);
     this.fb = injector.get<FormBuilder>(FormBuilder);
     this.go = injector.get<NavigateService>(NavigateService);
+    this.fh = injector.get<FormHelperService>(FormHelperService);
   }
 
   ngOnInit(): void {
@@ -121,6 +132,32 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
 
   ngAfterViewInit() {
     if(this.disabled) this.disableAll(true);
+    this.setInititalFocus()
+  }
+
+  public setInititalFocus() {
+    if(this.initialFocus){
+      for (const [key, value] of Object.entries(this.form!.controls)) {
+        if(key == this.initialFocus){
+          for (const element of this.components) {
+            if(element.control == value){
+              element.focus();              
+              break;
+            }
+          }
+        }        
+      }
+    } else {
+      const control = Object.entries(this.form!.controls)[0]
+      if(control){
+        for (const element of this.components) {
+          if(element.control == control[1]){
+            element.focus();              
+            break;
+          }
+        }
+      }
+    }
   }
 
   public get components() {
@@ -132,6 +169,7 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
       ...(this.inputSearchs?.toArray() || []),
       ...(this.inputButtons?.toArray() || []),
       ...(this.inputTexts?.toArray() || []),
+      ...(this.inputNumbers?.toArray() || []),
       ...(this.inputTextareas?.toArray() || []),
       ...(this.inputDatetimes?.toArray() || []),
       ...(this.inputRadios?.toArray() || []),
@@ -146,14 +184,13 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
   }
 
   public disableAll(disabled: boolean) {
-    for (const component of this.components) {
-      component.disabled = disabled ? "true" : undefined;
-    }
+    this.components?.forEach(component => component.disabled = disabled ? "true" : undefined);
+    this.forms?.toArray()?.forEach(form => form.disabled = disabled);
     if(this.disable) this.disable.emit(new Event("disabled"));
   }
 
   public revalidate() {
-    Object.values(this.form?.controls || {}).forEach(x => x.updateValueAndValidity({emitEvent: false}));
+    this.fh.revalidate(this.form!);
   }
 
   public onButtonClick(button: ToolbarButton) {
@@ -165,6 +202,7 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
   }
 
   public onSubmit() {
+    this.revalidate();
     if(this.form!.valid){
       this.submitting = true;
       this.submit.emit(this);
@@ -178,5 +216,14 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
 
   public onCancel() {
     this.cancel.emit();
+  }
+
+  public get anyRequired(): boolean {
+    for (const component of this.components) {
+      if(component instanceof InputBase && (component as InputBase).isRequired){
+        return true
+      }
+    }
+    return false
   }
 }

@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { BootstrapService } from 'src/app/services/bootstrap.service';
 import { GlobalsService } from 'src/app/services/globals.service';
 import { UtilService } from 'src/app/services/util.service';
-import { GanttAssignment, GanttProject, GanttResource, GanttRole, GanttTask } from './gantt-models';
+import { GanttProject, GanttTask } from './gantt-models';
 import * as moment from 'moment';
 import * as $ from 'jquery';
 import { ToolbarButton } from '../toolbar/toolbar.component';
@@ -121,7 +121,7 @@ export class GanttComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const baseGanttUrl = "assets/gantt/";
+    const baseGanttUrl = this.gb.baseURL + "assets/gantt/";
     let files = [
       "platform.css",
       "libs/jquery/dateField/jquery.dateField.css",
@@ -159,7 +159,7 @@ export class GanttComponent implements OnInit {
       //@ts-ignore
       this.ge = new GanttMaster(this);
       this.ge.ganttHeight = this.height;
-      this.ge.resourceUrl = "assets/gantt/res/";
+      this.ge.resourceUrl = this.gb.baseURL + "assets/gantt/res/";
       this.ge.set100OnClose = true;
       this.ge.shrinkParent = true;
       this.ge.permissions = {

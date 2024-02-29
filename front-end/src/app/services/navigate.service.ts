@@ -4,6 +4,7 @@ import { Md5 } from 'ts-md5/dist/md5';
 import { IIndexable } from '../models/base.model';
 import { DialogService } from './dialog.service';
 import { GlobalsService } from './globals.service';
+import { Contexto } from '../app.component';
 
 export type FullRoute = {
   label?: string,
@@ -13,6 +14,7 @@ export type FullRoute = {
 
 export type RouteMetadata = {
   id?: string, /* ID unico da rota */
+  context?: Contexto, /* Contexto */
   title?: string, /* Título da rota */
   modalClose?: (modalResult: any) => Promise<any> | void, /* Callback para o método back() caso seja modal (ao fechar a janela) */
   back?: FullRoute, /* Rota de maior prioridade, será utilizado caso esteja definido, mesmo que esteja no modal */
@@ -20,7 +22,7 @@ export type RouteMetadata = {
   default?: FullRoute, /* Roda de menor prioridade, caso não tenha nenhuma rota acima, voltará para a rota especificada aqui */
   destination?: FullRoute, /* Destino da rota (Rota atual) */
   path?: string, /* Path como definido nas rotas (Ex.: /cadastros/afastamento/:id/edit) */
-  modalResult?: any, /* Utilizado caso quei passar algum valor para o modalClose */
+  modalResult?: any, /* Utilizado caso queira passar algum valor para o modalClose */
   filterSnapshot?: any, /* Snapshot dos form de filter */
   querySnapshot?: any, /* Snapshot da query do grid */
   metadata?: any, /* Parametros que podem ser passados, como objetos por referência */
@@ -89,12 +91,13 @@ export class NavigateService {
   }
 
   public navigate(destination: FullRoute, metadata?: RouteMetadata) {
-    destination.params = Object.assign(destination.params || {}, { idroute: Md5.hashStr(this.currentOrDefault.route.join("") + destination.route.join("")) });
+    destination.params = Object.assign(destination.params || {}, { context: this.gb.contexto?.key, idroute: Md5.hashStr(this.currentOrDefault.route.join("") + destination.route.join("")) });
     destination.params.modal = metadata?.modal || destination.params.modal;
     if(metadata?.modalWidth) destination.params.modalWidth = metadata?.modalWidth;
     this.encodeParam(destination.params);
     let route = Object.assign(metadata || {} as RouteMetadata, {
       id: destination.params.idroute,
+      context: destination.params.context,
       source: this.current,
       destination: destination,
       //title: destination.params?.title,
@@ -167,11 +170,6 @@ export class NavigateService {
       if(config.path) route.path = config.path;
     }
   }
-
-  /*public setModal(idroute?: string, isModal: boolean = true) {
-    let route = this.routes.find(x => x.id == idroute);
-    if(route) route.modal = isModal;
-  }*/
 
   public setModalResult(idroute: string, modalResult: any) {
     let route = this.routes.find(x => x.id == idroute);

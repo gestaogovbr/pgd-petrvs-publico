@@ -6,6 +6,9 @@ import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { Planejamento } from 'src/app/models/planejamento.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
+import { EixoTematico } from 'src/app/models/eixo-tematico.model';
+import { LookupItem } from 'src/app/services/lookup.service';
+import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 
 @Component({
   selector: 'app-planejamento-list',
@@ -14,6 +17,7 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 })
 export class PlanejamentoListComponent extends PageListBase<Planejamento, PlanejamentoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @ViewChild(TabsComponent, { static: false }) public tabs?: TabsComponent;
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   
   public unidadeDao: UnidadeDaoService;
@@ -23,19 +27,26 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     super(injector, Planejamento, PlanejamentoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     /* Inicializações */
-    this.title = 'Planejamentos Institucionais';
+    this.code = "MOD_PLAN_INST";
+    this.title = this.lex.translate('Planejamentos Institucionais');
     this.filter = this.fh.FormBuilder({
-      inicio: {default: null},
-      fim: {default: null},
+      data_inicio: {default: null},
+      data_fim: {default: null},
       nome: {default: ""},
       unidade_id: {default: null},
       so_entidade: { default: false },
       agrupar: { default: true },
      });
-     this.join = ['unidade:nome,sigla'];
-     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
+    this.join = [
+      'unidade:id,nome,sigla',
+      'objetivos',
+      'objetivos.eixo_tematico:id,nome',
+      'objetivos.objetivo_superior:id,nome',
+      'planejamento_superior:id,nome',
+      'planejamento_superior.objetivos'
+    ];
     // Testa se o usuário possui permissão para exibir planejamentos institucionais
-    if (this.auth.hasPermissionTo("MOD_PLAN_INST_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_PLAN_INST")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
@@ -50,12 +61,40 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
         onClick: this.delete.bind(this)
       });
     }
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
+    this.addOption({ label: "Relatório", icon: "bi bi-file-pdf", onClick: (row: Planejamento) => this.report(row, 'PLAN_INSTITUCIONAL') });
+
+  }  
+
+  ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+    this.tabs!.active = ["TABELA", "MAPA", "OKR"].includes(this.usuarioConfig.active_tab) ? this.usuarioConfig.active_tab : "TABELA";
+  }
+
+  /* override */
+  public onLoad() {}
+
+
+  public report(planejamento: Planejamento, codigo: string){
+    const consulta: any = { 
+      id: planejamento.id, 
+      join: ["objetivos", "objetivos.objetivos_filhos"] }
+    this.grid?.buildRowReport(codigo, consulta)
+  }
+
+  public initGrid(grid: GridComponent) {
+    grid.queryInit();
+  }
+
+  public async onSelectTab(tab: LookupItem) {
+    //if(tab.key == "TABELA") this.onLoad();
+    if(this.viewInit) this.saveUsuarioConfig({active_tab: tab.key});
   }
 
   public filterClear(filter: FormGroup) {
     filter.controls.nome.setValue("");
-    filter.controls.inicio.setValue(null);
-    filter.controls.fim.setValue(null);
+    filter.controls.data_inicio.setValue(null);
+    filter.controls.data_fim.setValue(null);
     filter.controls.unidade_id.setValue(null);
     filter.controls.so_entidade.setValue(false);
     super.filterClear(filter);
@@ -72,23 +111,15 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
       if(form.unidade_id) result.push(["unidade_id", "==", form.unidade_id]);
     }
     if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
-    if(form.inicio) {
-      result.push(["inicio", ">=", form.inicio]);
+    if(form.data_inicio) {
+      result.push(["data_inicio", ">=", form.data_inicio]);
     }
-    if(form.fim) {
-      result.push(["fim", "<=", form.fim]);
+    if(form.data_fim) {
+      result.push(["data_fim", "<=", form.data_fim]);
     }
     return result;
-  }
-
-  public onAgruparChange(event: Event) {
-    const agrupar = this.filter!.controls.agrupar.value;
-    if ((agrupar && !this.groupBy?.length) || (!agrupar && this.groupBy?.length)) {
-      this.groupBy = agrupar ? [{ field: "unidade.sigla", label: "Unidade" }] : [];
-      this.grid!.reloadFilter();
-    }
   }
 
   public onSoEntidadeChange(event: Event) {

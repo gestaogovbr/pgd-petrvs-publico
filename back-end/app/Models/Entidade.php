@@ -2,24 +2,20 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
+use App\Models\Cidade;
 use App\Models\Feriado;
+use App\Models\Documento;
+use App\Models\Planejamento;
+use App\Models\CadeiaValor;
+use App\Models\Integracao;
 use App\Models\Usuario;
-
-class EntidadeNotificacoes {
-    public $enviar_email = true;
-    public $enviar_whatsapp = true;
-    public $notifica_demanda_distribuicao = true;
-    public $notifica_demanda_conclusao = true;
-    public $notifica_demanda_avaliacao = true;
-    public $notifica_demanda_modificacao = true;
-    public $notifica_demanda_comentario = true;
-    public $template_demanda_distribuicao = "Uma nova demanda foi atribuída a você, acesse o PETRVS para visualizá-la! (ID: #{{demanda_numero}})";
-    public $template_demanda_conclusao = "A demanda #{{demanda_numero}}, atribuída à\ao {{demanda_responsavel}}, foi concluída, acesse o PETRVS para visualizá-la!";
-    public $template_demanda_avaliacao = "Sua demanda #{{demanda_numero}} foi avaliada, acesse o PETRVS para avaliá-la!";
-    public $template_demanda_modificacao = "A demanda #{{demanda_numero}}, atribuída à {{demanda_responsavel}}, foi atualizada, acesse o PETRVS para visualizá-la!";
-    public $template_demanda_comentario = "Foi inserido um comentário na demanda #{{demanda_numero}}, atribuída a {{demanda_responsavel}}, acesse o PETRVS para visualizá-la!";
-}
+use App\Models\Unidade;
+use App\Models\TipoTarefa;
+use App\Models\Template;
+use App\Models\TipoModalidade;
+use App\Models\NotificacaoConfig;
 
 class Entidade extends ModelBase
 {
@@ -34,25 +30,22 @@ class Entidade extends ModelBase
         'abrangencia', /* enum('NACIONAL','ESTADUAL','MUNICIPAL'); NOT NULL; */// Abrangência da entidade
         'codigo_ibge', /* varchar(8); */// Código da UF ou do município (IBGE)
         'carga_horaria_padrao', /* int; NOT NULL; DEFAULT: '8'; */// Carga horária utilizada ao criar plano de trabalho
-        'gravar_historico_processo', /* tinyint; NOT NULL; */// Se grava andamento da demanda dentro do processo vinculado (Caso seja o Sei, será em Consultar Andamento)
-        'layout_formulario_demanda', /* enum('COMPLETO','SIMPLIFICADO'); NOT NULL; DEFAULT: 'COMPLETO'; */// Layout para a tela do formulário de demandas (cadastro simplificado ou completo)
-        'campos_ocultos_demanda', /* json; */// Campos que se deseja ocultar do formulário de daemanda, com seu respectivo valor padrão, em caso de null será utilizado o valor default do banco
-        'tipo_modalidade_id', /* char(36); */// Tipo de modalidade utilizada ao criar plano de trabalho
+        'gravar_historico_processo', /* tinyint; NOT NULL; */// Se grava andamento da atividade dentro do processo vinculado (Caso seja o SEI, será em Consultar Andamento)
+        'layout_formulario_atividade', /* enum('COMPLETO','SIMPLIFICADO'); NOT NULL; DEFAULT: 'COMPLETO'; */// Layout para a tela do formulário de atividades (cadastro simplificado ou completo)
+        'campos_ocultos_atividade', /* json; */// Campos que se deseja ocultar do formulário de atividade, com seu respectivo valor padrão, em caso de NULL será utilizado o valor default do banco
+        'tipo_modalidade_id', /* char(36); */
         'cidade_id', /* char(36); */
         'uf', /* varchar(2); */// UF para feriados estaduais
-        'url_sei', /* varchar(100); */// URL base do sei da entidade
+        //'url_sei', /* varchar(100); */// URL base do SEI da entidade
         'nomenclatura', /* json; */// Nomenclatura utilizada no sistema
         'gestor_id', /* char(36); */
         'gestor_substituto_id', /* char(36); */
-        'notificacoes', /* json; */// Configurações das notificações (Se envia email, whatsapp, tipos, templates)
+        'notificacoes', /* json; */// Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)
         'forma_contagem_carga_horaria', /* enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; */// Forma de contagem padrão da carga horária
-        'data_inicio', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data inicio da vigência
         'expediente', /* json; NOT NULL; DEFAULT: '_utf8mb4\'{"domingo":[],"segunda":[],"terca":[],"quarta":[],"quinta":[],"sexta":[],"sabado":[],"especial":[]}\''; */// Configuração de expediente
-        'template_adesao_id', /* char(36); */
-        //'data_fim', /* datetime; */// Data fim da vigência
+        //'deleted_at', /* timestamp; */
         //'api_public_key', /* text; */// Chave pública de API
         //'api_private_key', /* text; */// Chave privada de API
-        //'template_adesao_cancelamento_id', /* char(36); */
     ];
 
     public $delete_cascade = ['feriados'];
@@ -65,51 +58,45 @@ class Entidade extends ModelBase
     protected static function booted()
     {
         static::creating(function ($entidade) {
-            $entidade->campos_ocultos_demanda = json_decode("{'codigo': 'null'}");
+            $entidade->campos_ocultos_atividade = json_decode("{'codigo': 'null'}");
         });
     }
 
+    // Casting
+    protected $casts = [
+        'campos_ocultos_atividade' => AsJson::class,
+        'nomenclatura' => AsJson::class,
+        'expediente' => AsJson::class
+    ];
+
+    public $fillable_changes = [
+        "notificacoes_templates"
+    ];
+
     // Has
-    public function feriados() { return $this->hasMany(Feriado::class, 'entidade_id'); }        
+    public function feriados() { return $this->hasMany(Feriado::class); }        
+    public function documentos() { return $this->hasMany(Documento::class); }        
+    public function planejamentos() { return $this->hasMany(Planejamento::class); }        
+    public function cadeiasValores() { return $this->hasMany(CadeiaValor::class); }        
+    public function integracoes() { return $this->hasMany(Integracao::class); }        
+    public function notificacoesTemplates() { return $this->hasMany(Template::class)->where("especie", "NOTIFICACAO"); }
+    public function relatoriosTemplates() { return $this->hasMany(Template::class)->where("especie", "RELATORIO"); }
+    public function unidades() { return $this->hasMany(Unidade::class); }
+    public function tiposTarefas() { return $this->hasMany(TipoTarefa::class); }
     // Belongs
-    public function templateAdesao() { return $this->belongsTo(Template::class, 'template_adesao_id'); }   
-    public function cidade() { return $this->belongsTo(Cidade::class, 'cidade_id'); }   
-    public function gestor() { return $this->belongsTo(Usuario::class); }
-    public function gestorSubstituto() { return $this->belongsTo(Usuario::class); }
-    public function tipoModalidade() { return $this->belongsTo(TipoModalidade::class, 'tipo_modalidade_id'); }
+    public function cidade() { return $this->belongsTo(Cidade::class); }      //nullable
+    public function gestor() { return $this->belongsTo(Usuario::class); }     //nullable
+    public function gestorSubstituto() { return $this->belongsTo(Usuario::class); }   //nullable
+    public function tipoModalidade() { return $this->belongsTo(TipoModalidade::class); }  //nullable
     
     // Mutattors e Casts
-    public function getCamposOcultosDemandaAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setCamposOcultosDemandaAttribute($value)
-    {
-        $this->attributes['campos_ocultos_demanda'] = json_encode($value);
-    }
-    public function getNomenclaturaAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setNomenclaturaAttribute($value)
-    {
-        $this->attributes['nomenclatura'] = json_encode($value);
-    }
     public function getNotificacoesAttribute($value)
     {
-        $notificacoes = new EntidadeNotificacoes();
+        $notificacoes = new NotificacaoConfig();
         return array_replace_recursive((array) $notificacoes, (array) json_decode(empty($value) ? "[]" : $value));
     }   
     public function setNotificacoesAttribute($value)
     {
         $this->attributes['notificacoes'] = json_encode($value);
-    }
-    public function getExpedienteAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setExpedienteAttribute($value)
-    {
-        $this->attributes['expediente'] = json_encode($value);
     }
 }

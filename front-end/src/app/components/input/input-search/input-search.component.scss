@@ -8,3 +8,7 @@
 .search-group-text {
     margin-left: 5px;
 }
+
+.search-text-invalid, .search-text-invalid:focus {
+    color: red;
+}

@@ -38,8 +38,8 @@ export class ColumnRowComponent implements OnInit {
     return this.grid?.form.controls[this.column.field] || undefined;
   }
 
-  public get isRowEditing(): boolean {
-    return this.row["id"] == (this.grid?.editing || [])["id"] && this.column.editable;
+  public isRowEditing(row: any): boolean {
+    return (this.row["id"] == (this.grid?.editing || {"id": undefined})["id"]) && !this.column.isColumnEditable(row);
   }
 
   public get isEditing(): boolean {
@@ -61,7 +61,7 @@ export class ColumnRowComponent implements OnInit {
       result += " " + this.lookup.getColor(this.column.items, this.row[this.column.field]);
     }
 
-    return result.trim().length ? result.trim() : undefined;
+    return result.trim().replace(" ", "%").length ? result.trim().replace(" ", "%") : undefined;
   }
 
   public onChange(event: Event) {
@@ -103,12 +103,12 @@ export class ColumnRowComponent implements OnInit {
   public getColumnText(): string {
     let result = "";
 
-    if(this.column.inType(["text", "display"])) {
+    if(this.column.inType(["text", "textarea", "display"])) {
       result = this.row[this.column.field] || "";
     } else if(this.column.isType("date")) {
-      result = this.grid!.dao!.getDateFormatted(this.row[this.column.field]);
+      result = this.util.getDateFormatted(this.row[this.column.field]);
     } else if(this.column.isType("datetime")) {
-      result = this.grid!.dao!.getDateTimeFormatted(this.row[this.column.field]);
+      result = this.util!.getDateTimeFormatted(this.row[this.column.field]);
     } else if(this.column.isType("number")) {
       result = this.row[this.column.field] || "";
     } else if(this.column.isType("timer")) {

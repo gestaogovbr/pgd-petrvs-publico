@@ -1,0 +1,104 @@
+<editable-form [form]="form!" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
+    <separator *ngIf="recurso || form!.controls.recurso?.value?.length" title="Recurso">
+        <input-textarea label="Texto do recurso" [size]="12" [disabled]="recurso ? undefined : 'true'" [rows]="2" controlName="recurso" [control]="form!.controls.recurso"></input-textarea>
+    </separator>
+    <div class="row">
+        <avaliar-nota-input [size]="12" #notaInput [disabled]="recurso ? 'true' : undefined" [tipoAvaliacao]="tipoAvaliacao" [label]="labelNota" [change]="onNotaChange.bind(this)" [control]="form!.controls.nota"></avaliar-nota-input>
+    </div>
+    <div *ngIf="nota" class="d-flex justify-content-center">
+        <button type="button" class="pe-none btn" [style]="styleButtonNota">
+            <i [class]="nota.icone" [style.color]="nota.cor || 'black'"></i>
+            <strong class="ms-1">{{nota.nota}}</strong> - {{nota.descricao}}
+        </button>
+    </div>
+    <div *ngIf="nota" class="row">
+        <input-multitoggle #justificativas [disabled]="recurso ? 'true' : undefined" [control]="form!.controls.justificativas" [label]="nota!.pergunta" [items]="tiposJustificativas"></input-multitoggle>
+    </div>
+    <separator *ngIf="nota" title="Justificativa adicional?" icon="bi bi-chat-left-quote" collapse>
+        <input-textarea label="Justificativa" [disabled]="recurso ? 'true' : undefined" [size]="12" [rows]="2" controlName="justificativa" [control]="form!.controls.justificativa"></input-textarea>
+    </separator>
+    <separator *ngIf="entregas.length" [title]="lex.translate('Entregas')" collapse [collapsed]="!checklist.length">
+        <grid [items]="entregas" [minHeight]="0" #gridEntregas>
+            <columns>
+                <column title="Início" [template]="culumnDataInicio">
+                    <ng-template let-row="row" #culumnDataInicio>
+                        {{this.util!.getDateFormatted(isPlanoEntrega ? row.data_inicio : row.plano_entrega_entrega?.data_inicio)}}
+                    </ng-template>
+                </column>
+                <column title="Fim" [template]="columnDataFim">
+                    <ng-template let-row="row" #columnDataFim>
+                        {{this.util!.getDateFormatted(isPlanoEntrega ? row.data_fim : row.plano_entrega_entrega?.data_fim)}}
+                    </ng-template>
+                </column>
+                <column title="Entrega" [template]="columnEntrega">
+                    <ng-template let-row="row" #columnEntrega>
+                        <badge [icon]="entityService.getIcon('Entrega')" [label]="row.descricao"></badge>
+                    </ng-template>
+                </column>
+                <column *ngIf="isConsolidacao" title="% CHD Planejado" [template]="columnForcaTrabalho" [titleHint]="'% Carga Horária Disponível Planejada'">
+                    <ng-template let-row="row" #columnForcaTrabalho>
+                        <badge color="light" [label]="row.forca_trabalho + '%'"></badge>
+                    </ng-template>
+                </column>
+                <column *ngIf="isPlanoEntrega" [title]="'Meta\nRealizado'" [width]="200" [template]="columnMetaRealizado">
+                    <ng-template let-row="row" #columnMetaRealizado>
+                        <badge icon="bi bi-graph-up-arrow" [textValue]="planoEntregaService.getValorMeta(row)" color="light" hint="Meta"></badge><br>
+                        <badge icon="bi bi-check-lg" [textValue]="planoEntregaService.getValorRealizado(row)" color="light" hint="Realizado"></badge>
+                    </ng-template>
+                </column>
+                <column *ngIf="isPlanoEntrega" title="Progresso" [width]="200" [template]="columnProgresso">
+                    <ng-template let-row="row" #columnProgresso>
+                        <progress-bar [value]="row.progresso_realizado" [goal]="row.progresso_esperado" color="success"></progress-bar>
+                    </ng-template>
+                </column>
+                <column *ngFor="let check of checklist" [title]="check.value" [template]="columnCheck" [metadata]="check">
+                    <ng-template #columnCheck let-row="row" let-column="column">
+                        <input-switch [source]="row._metadata" [path]="column.metadata.key" [disabled]="recurso ? 'true' : undefined"></input-switch>
+                    </ng-template>
+                </column>
+            </columns>
+        </grid>
+    </separator>
+    <separator *ngIf="avaliacoes.length" title="Histórico de avaliações" collapse>
+        <grid [items]="avaliacoes" [minHeight]="0" #gridEntregas>
+            <columns>
+                <column title="Data" type="datetime" field="data_avaliacao"></column>
+                <column title="Avaliador" [template]="columnAvaliador">
+                    <ng-template let-row="row" #columnAvaliador>
+                        <div class="avaliador">
+                            <div class="avaliador-profile">
+                                <profile-picture [url]="row.avaliador.url_foto || ''" [size]="40" [hint]="row.avaliador.nome || ''"></profile-picture>
+                            </div>
+                            <div class="avaliador-nome">
+                                <strong>{{row.avaliador.nome || ""}}</strong><br>
+                                <small>{{row.avaliador.apelido || ""}}</small>
+                            </div>
+                        </div>
+                    </ng-template>
+                </column>
+                <column [title]="'Nota\nJustificativas'" [template]="columnNotaJustificativa">
+                    <ng-template let-row="row" #columnNotaJustificativa>
+                        <avaliar-nota-badge [align]="'left'" [tipoAvaliacao]="row.tipo_avaliacao" [nota]="row.nota"></avaliar-nota-badge>
+                        <small>{{row.justificativa || ''}}</small>
+                        <div class="one-per-line">
+                            <badge *ngFor="let justificativa of row.justificativas" [icon]="entityService.getIcon('TipoJustificativa')" [label]="justificativa.value"></badge>
+                        </div>
+                    </ng-template>
+                </column>
+                <column title="Recurso" [template]="columnRecurso">
+                    <ng-template let-row="row" #columnRecurso>
+                        <small>{{row.recurso || ''}}</small>
+                    </ng-template>
+                </column>
+                <column title="Status" [template]="columnStatus">
+                    <ng-template let-row="row" #columnStatus>
+                        <div class="one-per-line">
+                            <badge *ngIf="row.recurso?.length" icon="bi bi-journal-medical" color="warning" label="Recorrido"></badge>
+                            <badge *ngIf="row.id == entity?.id" icon="bi bi-check-circle" color="success" label="Vigente"></badge>
+                        </div>
+                    </ng-template>
+                </column>
+            </columns>
+        </grid>
+    </separator>
+</editable-form>

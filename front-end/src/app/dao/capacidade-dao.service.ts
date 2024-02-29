@@ -9,7 +9,6 @@ export class CapacidadeDaoService extends DaoBaseService<Capacidade> {
 
   constructor(protected injector: Injector) { 
     super("Capacidade", injector);
-    //this.searchFields = ["descricao"];
   }  
 }
 

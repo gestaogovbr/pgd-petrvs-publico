@@ -1,48 +1,37 @@
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="cpf" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs display right>
         <tab key="PRINCIPAL" label="Principal">
             <div class="row">
                 <div class="form-group col-md-3 text-center">
-                    <profile-picture [url]="form!.controls.url_foto?.value" class="mt-5" [size]="150"></profile-picture>
-                    <!--img [src]="form!.controls.url_foto?.value" onerror="this.src='./assets/images/profile.jpg'" width="150" height="150" class="rounded-circle mt-5"//-->
+                    <profile-picture [url]="form!.controls.url_foto.value" class="mt-5" [size]="150"></profile-picture>
                 </div>
                 <div class="form-group col-md-9">
                     <div class="row">
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_CPF') ? 'true' : undefined" [size]="4" label="CPF" controlName="cpf" [control]="form!.controls.cpf" [maskFormat]="'000.000.000-00'"></input-text>
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAT') ? 'true' : undefined" [size]="3" label="Matrícula" controlName="matricula" [control]="form!.controls.matricula"></input-text>
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAIL') ? 'true' : undefined" [size]="5" label="E-mail" controlName="email" [control]="form!.controls.email" textCase="lower"></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_CPF') ? 'true' : undefined" [size]="3" label="CPF" controlName="cpf" [maskFormat]="'000.000.000-00'" [attr.maxlength]=15 required></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAT') ? 'true' : undefined" [size]="2" label="Matrícula" controlName="matricula" [attr.maxlength]=250 required></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAIL') ? 'true' : undefined" [size]="4" label="E-mail" controlName="email" textCase="lower" [attr.maxlength]=250 required></input-text>
+                        <input-datetime date [size]="3" label="Nascimento" noIcon controlName="data_nascimento" [labelInfo]="'Data de nascimento'"></input-datetime>
                     </div>
                     <div class="row">
-                        <input-text [size]="12" label="Nome" controlName="nome" [control]="form!.controls.nome"></input-text>
+                        <input-text [size]="5" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
+                        <input-text [size]="3" label="Apelido" controlName="apelido" [attr.maxlength]=250 required></input-text>
+                        <input-radio [size]="3" label="Sexo" controlName="sexo" [items]="lookup.SEXO"></input-radio>
                     </div>
                     <div class="row">
-                        <input-text [size]="6" label="Apelido" controlName="apelido" [control]="form!.controls.apelido"></input-text>
-                        <input-select [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [size]="6" label="Perfil" controlName="perfil_id" [control]="form!.controls.perfil_id" [dao]="perfilDao"></input-select>
-                    </div>
-                    <div class="row">
-                        <input-select [size]="4" label="UF" controlName="uf" [control]="form!.controls.uf" [items]="lookup.UF"></input-select>
-                        <input-radio [size]="4" label="Sexo" controlName="sexo" [control]="form!.controls.sexo" [items]="lookup.SEXO"></input-radio>
-                        <input-text [size]="4" label="Telefone" controlName="telefone" [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'"></input-text>
+                        <input-select [size]="4" label="UF" icon="bi bi-flag" controlName="uf" [items]="lookup.UF"></input-select>
+                        <input-text [size]="4" label="Telefone" controlName="telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'" [attr.maxlength]=250></input-text>
                     </div>
                 </div>
             </div>
         </tab>
-        <tab key="LOTACOES" label="Lotações">
-            <grid [control]="form!.controls.lotacoes" [form]="formLotacoes" [add]="addLotacao.bind(this)" [load]="loadLotacao.bind(this)" [hasDelete]="true" [remove]="removeLotacao.bind(this)" [save]="saveLotacao.bind(this)" editable>
-                <columns>
-                    <column title="Unidade" [template]="columnUnidade" [editTemplate]="editUnidade">
-                        <ng-template let-row="row" #columnUnidade>
-                            <strong>{{row.unidade.sigla}}</strong><span> (IdServo: {{row.unidade.codigo}})</span><br>
-                            <span><i *ngIf="row.principal" class="bi bi-bookmark-star"></i> {{row.unidade.nome}} </span>
-                        </ng-template>
-                        <ng-template let-row="row" #editUnidade>
-                            <input-search #unidade [size]="12" controlName="unidade_id" [control]="formLotacoes!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
-                        </ng-template>
-                    </column>
-                    <column type="switch" title="Principal" field="principal"></column>
-                    <column type="options"></column>
-                </columns>
-            </grid>
+        <tab key="CONFIGURACOES" label="Configurações">
+            <div class="row">
+                <input-editor [label]="'Texto complementar ' + lex.translate('Plano de Trabalho')" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
+            </div>
+        </tab>
+        <tab key="ATRIBUICOES" [label]="lex.translate('Atribuições')">
+            <top-alert type="alert" [message]="'É impossível excluir ' + lex.translate('a lotação') + ' ' + lex.translate('do servidor') + '. Para alterá-la, lote-o em outra ' + lex.translate('unidade') + '!'"></top-alert>
+            <usuario-integrante #unidadesIntegrantes noPersist [entity]="entity"></usuario-integrante>
         </tab>
     </tabs>
 </editable-form>

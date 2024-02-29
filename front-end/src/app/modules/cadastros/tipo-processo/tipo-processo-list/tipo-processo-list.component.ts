@@ -22,7 +22,7 @@ export class TipoProcessoListComponent extends PageListBase<TipoProcesso, TipoPr
     super(injector, TipoProcesso, TipoProcessoDaoService);
     /* Inicializações */
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
-    this.title = "Tipos de " + this.lex.noun("Processo",true);
+    this.title = this.lex.translate("Tipos de Processo");
     this.code="MOD_TIPO_PROC";
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
@@ -35,22 +35,9 @@ export class TipoProcessoListComponent extends PageListBase<TipoProcesso, TipoPr
         onClick: this.atualizarPeloSei.bind(this)
       });
     }
-    // Testa se o usuário possui permissão para exibir dados do tipo de processo
-    if (this.auth.hasPermissionTo("MOD_TIPO_PROC_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir o tipo de processo
-    if (this.auth.hasPermissionTo("MOD_TIPO_PROC_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR, "MOD_TIPO_PROC_EXCL");
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public async atualizarPeloSei() {
@@ -61,17 +48,12 @@ export class TipoProcessoListComponent extends PageListBase<TipoProcesso, TipoPr
     }
   }
 
-  public filterClear(filter: FormGroup) {
-    filter.controls.nome.setValue("");
-    super.filterClear(filter);
-  }
-
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
 
     if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
 
     return result;

@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
@@ -13,11 +13,9 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 })
 export class CidadeFormComponent extends PageFormBase<Cidade, CidadeDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  
 
   constructor(public injector: Injector) {
     super(injector, Cidade, CidadeDaoService);
-
     this.form = this.fh.FormBuilder({
       codigo_ibge: {default: ""},
       nome: {default: ""},
@@ -29,7 +27,6 @@ export class CidadeFormComponent extends PageFormBase<Cidade, CidadeDaoService> 
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-
     if(['codigo_ibge', 'nome', 'uf'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }  else if(['timezone'].indexOf(controlName) >= 0 && !control.value) {
@@ -55,7 +52,7 @@ export class CidadeFormComponent extends PageFormBase<Cidade, CidadeDaoService> 
   }
 
   public titleEdit = (entity: Cidade): string => {
-    return "Editando "+ (entity?.nome || "");
+    return "Editando " + this.lex.translate("Cidade") + ': ' + (entity?.nome || "");
   }
 }
 

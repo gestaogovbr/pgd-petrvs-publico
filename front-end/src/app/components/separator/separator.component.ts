@@ -1,13 +1,16 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Injector, Input, OnInit, Output } from '@angular/core';
 import { ToolbarButton } from '../toolbar/toolbar.component';
+import { AbstractControl, FormControl } from '@angular/forms';
+import { ComponentBase } from '../component-base';
 
 @Component({
   selector: 'separator',
   templateUrl: './separator.component.html',
   styleUrls: ['./separator.component.scss']
 })
-export class SeparatorComponent implements OnInit {
+export class SeparatorComponent extends ComponentBase {
   @Output() buttonClick = new EventEmitter<any>();
+  @Output() change = new EventEmitter<Event>();
   @Input() title: string = "";
   @Input() bold: boolean = false;
   @Input() icon?: string = undefined;  
@@ -17,10 +20,16 @@ export class SeparatorComponent implements OnInit {
   @Input() bottom?: string = undefined;
   @Input() button?: ToolbarButton = undefined;
   @Input() collapsed: boolean = true;  
+  @Input() control?: AbstractControl;
+  @Input() labelInfo?: string;
+  @Input() margin: number = 0;
+ 
+  constructor(injector: Injector) {
+    super(injector);
+  }
 
-  constructor(public cdRef: ChangeDetectorRef) { }
-
-  ngOnInit(): void {
+  public get formControl(): FormControl {
+    return this.control as FormControl;
   }
 
   public get isCollapse(): boolean {
@@ -53,4 +62,9 @@ export class SeparatorComponent implements OnInit {
       this.cdRef.detectChanges();
     }
   }
+
+  public onChange(event: Event) {
+    if(this.change) this.change.emit(event);
+  }
+
 }

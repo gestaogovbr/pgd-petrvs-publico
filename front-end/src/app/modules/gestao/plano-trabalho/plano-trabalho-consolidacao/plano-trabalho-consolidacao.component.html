@@ -1,0 +1,45 @@
+<tabs right #tabs [title]="isModal ? '' : title">
+    <tab key="UNIDADE" *ngIf="unidade" [icon]="entityService.getIcon('Unidade')" [label]="lex.translate('Unidade')" [template]="tabUnidade">
+        <ng-template #tabUnidade>
+            <filter [form]="filter" [filter]="filterWhere" [collapsed]="false">
+                <div class="row">
+                    <input-search [size]="12" #unidadeSelecionada label="Selecione a unidade" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+                </div>
+            </filter>
+            <div class="p-3 mb-3 bg-body-secondary">
+                <h5>{{lex.translate("Unidade")}} selecionada: {{unidadeSelecionada?.selectedItem?.entity.sigla}} - {{unidadeSelecionada?.selectedItem?.entity.nome}}</h5>
+                <h4>{{lex.translate("Participantes")}} <i class="bi bi-arrow-down"></i></h4>
+            </div>
+            <div *ngIf="loading" class="d-flex justify-content-center my-2">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden"></span>
+                </div>
+            </div>
+            <collapse-card *ngFor="let usuario of usuarios" [data]="usuario" [titleTemplate]="usuarioCardTitle" [template]="usuarioCard">
+                <ng-template let-data="data" #usuarioCardTitle>
+                    <div class="d-flex">
+                        <div class="ms-3">
+                            <profile-picture [url]="data.url_foto" [size]="40" [hint]="data.nome"></profile-picture>
+                        </div>
+                        <div class="flex-fill ms-3">
+                            <strong>{{data.nome || ""}}</strong><br>
+                            <small>{{data.apelido || ""}}</small>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template let-data="data" #usuarioCard>
+                    <plano-trabalho-list-accordeon [usuarioId]="data.id"></plano-trabalho-list-accordeon>
+                </ng-template>
+            </collapse-card>
+        </ng-template>
+    </tab>
+    <tab key="USUARIO" [icon]="entityService.getIcon('Usuario')" [label]="lex.translate('Usuário')" [template]="tabUsuario">
+        <ng-template #tabUsuario>
+            <div class="d-flex justify-content-between">
+                <h5 class="mt-2">{{lex.translate("Planos de Trabalho")}} <i class="bi bi-arrow-down"></i></h5>
+                <separator [control]="form!.controls.arquivados" [title]="'Mostrar ' + lex.translate('Planos de trabalho') + ' arquivados?'"></separator>
+            </div>            
+            <plano-trabalho-list-accordeon [usuarioId]="auth.usuario!.id" [arquivados]="form!.controls.arquivados.value"></plano-trabalho-list-accordeon>
+        </ng-template>
+    </tab>
+</tabs>

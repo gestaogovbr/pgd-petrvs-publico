@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { FeriadoDaoService } from 'src/app/dao/feriado-dao.service';
@@ -6,7 +6,6 @@ import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Feriado } from 'src/app/models/feriado.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
-import { LookupItem, LookupService } from 'src/app/services/lookup.service';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { Cidade } from 'src/app/models/cidade.model';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
@@ -41,8 +40,8 @@ export class FeriadoFormComponent extends PageFormBase<Feriado, FeriadoDaoServic
       cidade_id: {default: null},
       uf: {default: null},
       entidade_id: {default: null},
-      data_inicio_vigencia: {default: new Date()},
-      data_fim_vigencia: {default: new Date()}
+      data_inicio: {default: new Date()},
+      data_fim: {default: new Date()}
     }, this.cdRef, this.validate);
     this.join = ["cidade", "entidade"];
   }
@@ -54,13 +53,6 @@ export class FeriadoFormComponent extends PageFormBase<Feriado, FeriadoDaoServic
     } else if(controlName == "ano" && this.form?.controls.recorrente.value == 0 && !this.util.between(parseInt(control.value || 0), {start: 2000, end: 2100})) {
       result = "Inválido";
     }
-    /*if(controlName == "ano") {
-      console.log(this.form?.controls.recorrente.value, !this.util.between(parseInt(control.value || 0), {start: 2000, end: 2100}));
-    }*/
-    /*else if(['dia','mes'].indexOf(controlName) >= 0 && this.form?.controls.dia.value==31 && (['4','6','9','11'].indexOf(this.form?.controls.mes.value) >=0)) {
-      result = "Mês de 30 dias";
-    }*/
-
     return result;
   }
 
@@ -91,8 +83,8 @@ export class FeriadoFormComponent extends PageFormBase<Feriado, FeriadoDaoServic
     return new Promise<Feriado>((resolve, reject) => {
       let feriado = this.util.fill(new Feriado(), this.entity!);
       feriado = this.util.fillForm(feriado, this.form!.value);
-      if(feriado.abrangencia == "MUNICIPAL" && this.cidade?.searchObj) {
-        feriado.codigo_ibge = (this.cidade?.searchObj as Cidade).codigo_ibge;
+      if(feriado.abrangencia == "MUNICIPAL" && this.cidade?.selectedEntity) {
+        feriado.codigo_ibge = (this.cidade?.selectedEntity as Cidade).codigo_ibge;
       } else if(feriado.abrangencia == "ESTADUAL") {
         feriado.codigo_ibge = this.lookup.UF.find(x => x.key == feriado.uf)?.code;
       } else {
@@ -103,7 +95,7 @@ export class FeriadoFormComponent extends PageFormBase<Feriado, FeriadoDaoServic
   }
 
   public titleEdit = (entity: Feriado): string => {
-    return "Editando " + (entity?.nome || "");
+    return "Editando " + this.lex.translate("Feriado") + ': ' + (entity?.nome || "");
   }
 }
 

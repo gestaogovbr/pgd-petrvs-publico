@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
-use App\Models\Unidade;
+use App\Models\Documento;
 
 class TipoProcesso extends ModelBase
 {
-    
     protected $table = 'tipos_processos';
 
     protected $with = [];
@@ -17,6 +17,7 @@ class TipoProcesso extends ModelBase
         'codigo', /* varchar(50); */// Código do tipo de Processo
         'etiquetas', /* json; NOT NULL; */// Nome das etiquetas predefinidas
         'checklist', /* json; NOT NULL; */// Nome dos checklist predefinidas
+        //'deleted_at', /* timestamp; */
     ];
 
     protected static function booted()
@@ -27,24 +28,13 @@ class TipoProcesso extends ModelBase
         });  
     }
 
+    // Casting
+    protected $casts = [
+        'etiquetas' => AsJson::class,
+        'checklist' => AsJson::class
+    ];
+
     // Has
-    public function unidade() { return $this->hasMany(Unidade::class, 'tipo_processo_id'); }        
-    // Mutattors e Casts
-    public function getEtiquetasAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setEtiquetasAttribute($value)
-    {
-        $this->attributes['etiquetas'] = json_encode($value);
-    }
-    public function getChecklistAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setChecklistAttribute($value)
-    {
-        $this->attributes['checklist'] = json_encode($value);
-    }
+    public function documentos() { return $this->hasMany(Documento::class); }             //nullable
 
 }

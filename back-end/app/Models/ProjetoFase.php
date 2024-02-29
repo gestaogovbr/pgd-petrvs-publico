@@ -12,14 +12,13 @@ class ProjetoFase extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'inicio', /* datetime; */// Inicio (opcional)
-        'termino', /* datetime; */// Termino (opcional)
+        'data_inicio', /* datetime; */// Inicio (opcional)
+        'data_fim', /* datetime; */// Termino (opcional)
         'cor', /* varchar(100); NOT NULL; */// Código da cor em formato hex
         'nome', /* varchar(100); NOT NULL; */// Nome
         'descricao', /* varchar(256); NOT NULL; */// Descrição
         'projeto_id', /* char(36); NOT NULL; */
-        //'data_inicio', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data inicio da vigência
-        //'data_fim', /* datetime; */// Data fim da vigência
+        //'deleted_at', /* timestamp; */
     ];
 
     /*public $fillable_changes = [
@@ -31,6 +30,7 @@ class ProjetoFase extends ModelBase
     public $delete_cascade = [];
 
     // Has
+    public function projetos() { return $this->hasMany(Projeto::class, 'fase_id'); }   
     // Belongs
     public function projeto() { return $this->belongsTo(Projeto::class); }
 }

@@ -2,57 +2,19 @@
     <tabs display right>
         <tab key="GERAL" label="Geral">
             <div class="row">
-                <input-search [size]="8" label="Modalidade" controlName="tipo_modalidade_id" [control]="form!.controls.tipo_modalidade_id" [dao]="tipoModalidadeDao" labelInfo="Tipo de modalidade padrão utilizada ao criar plano de trabalho." [selectRoute]="{route: ['cadastros', 'tipo-modalidade']}"></input-search>
-                <input-workload [size]="4" #cargaHoraria [unit]="formaContagemCargaHoraria" label="Carga Horária" icon="bi bi-hourglass-split" controlName="carga_horaria_padrao" [control]="form!.controls.carga_horaria_padrao" [unitChange]="onFormaContagemCargaHorariaChange.bind(this)" labelInfo="Carga horária e forma de contagem (horas por dia, semana ou mês) padrão utilizada ao criar plano de trabalho."></input-workload>
-            </div>
-            <div class="row">
-                <input-text [size]="6" label="Url do Sei/SUPER" icon="bi bi-lin" controlName="url_sei" [control]="form!.controls.url_sei" labelInfo="Url base do Sei/SUPER, deve ser semelhante a: https://sei.minha-entidade.gov.br/"></input-text>
-                <input-button [size]="6" label="Chave de API" icon="bi bi-lin" placeholder="Visível somente no momento em que foi gerado" iconButton="bi bi-arrow-clockwise" controlName="api_public_key" [control]="form!.controls.api_public_key" (buttonClick)="onApiKeyClick($event)" labelInfo="Chave publica para comunicação por API, o valor é visível somente no momento em que for gerado."></input-button>
+                <input-search [size]="8" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao" labelInfo="Tipo de modalidade padrão utilizada ao criar plano de trabalho."></input-search>
+                <input-workload [size]="4" #cargaHoraria [unit]="formaContagemCargaHoraria" label="Carga Horária" icon="bi bi-hourglass-split" controlName="carga_horaria_padrao" [unitChange]="onFormaContagemCargaHorariaChange.bind(this)" labelInfo="Carga horária e forma de contagem (horas por dia, semana ou mês) padrão utilizada ao criar plano de trabalho."></input-workload>
+   
             </div>
         </tab>
         <tab key="EXPEDIENTE" label="Expediente">
             <calendar-expediente #expediente [control]="form!.controls.expediente"></calendar-expediente>
         </tab>
-        <tab key="NOTIFICACOES" label="Notificações">
-            <div class="row">
-                <div class="col-md-6">
-                    <separator transparent title="Meios de notificação"></separator>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar por e-mail" controlName="enviar_email"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar por Whatsapp" controlName="enviar_whatsapp"></input-switch>
-                </div>
-                <div class="col-md-6">
-                    <separator transparent title="Tipos de notificação"></separator>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar distribuição da demanda" controlName="notifica_demanda_distribuicao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar conclusão da demanda" controlName="notifica_demanda_conclusao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar avaliação da demanda" controlName="notifica_demanda_avaliacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar modificação da demanda" controlName="notifica_demanda_modificacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar comentário da demanda" controlName="notifica_demanda_comentario"></input-switch>
-                </div>
-            </div>
-            <separator transparent title="Templates das mensagens"></separator>
-            <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na criação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaDistribuicao" controlName="template_demanda_distribuicao" [control]="form!.controls.template_demanda_distribuicao"></input-textarea>
-            </div>
-            <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na conclusão ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaConclusao" controlName="template_demanda_conclusao" [control]="form!.controls.template_demanda_conclusao"></input-textarea>
-            </div>
-            <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na avaliação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaAvaliacao" controlName="template_demanda_avaliacao" [control]="form!.controls.template_demanda_avaliacao"></input-textarea>
-            </div>
-            <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na modificação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaModificacao" controlName="template_demanda_modificacao" [control]="form!.controls.template_demanda_modificacao"></input-textarea>
-            </div>
-            <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na inclusão de comentário ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaComentario" controlName="template_demanda_comentario" [control]="form!.controls.template_demanda_comentario"></input-textarea>
-            </div>
+        <tab *ngIf="entity" key="NOTIFICACOES" label="Notificações">
+            <notificacoes-config #notificacoes [entity]="entity" [entidadeId]="entity.id" [disabled]="formDisabled"></notificacoes-config>
         </tab>
-        <tab key="TEMPLATES" label="Templates">
-            <div class="row">
-                <input-search [size]="12" detailsButton [label]="'Template padrão ' + lex.noun('adesão', true, true)" labelInfo="Template do termo utilizado na adesão a um programa" controlName="template_adesao_id" [control]="form!.controls.template_adesao_id" [dao]="templateDao" [where]="[['especie', '==', 'TCR']]" [selectRoute]="template.selectRoute('TCR')" (details)="template.details($event)"></input-search>
-            </div>
-            <div class="row">
-                <input-search [size]="12" detailsButton [label]="'Template padrão para o cancelamento dos servidores ' + lex.noun('adesão', false, true)" labelInfo="Template do termo utilizado na adesão a um programa" controlName="template_adesao_cancelamento_id" [control]="form!.controls.template_adesao_cancelamento_id" [dao]="templateDao" [where]="[['especie', '==', 'TCR_CANCELAMENTO']]" [selectRoute]="template.selectRoute('TCR_CANCELAMENTO')" (details)="template.details($event)"></input-search>
-            </div>
+        <tab *ngIf="entity" key="RELATORIOS" label="Relatórios">
+            <relatorios-template #relatorios [entity]="entity" [entidadeId]="entity.id"></relatorios-template>
         </tab>
         <tab key="NOMENCLATURA" label="Nomenclatura">
             <div clss="row">

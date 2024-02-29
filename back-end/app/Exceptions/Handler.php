@@ -38,15 +38,17 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             $config = config('log');
-            if($config['log_errors']) {
-                $user = Auth::user();
-                $erro = new Error();
-                $erro->fill([
-                    "user" => $user ? json_encode($user) : null,
-                    "message" => $e->getMessage(),
-                    "trace" => $e->getTraceAsString()
-                ]);
-                $erro->save();
+            if($config['errors']) {
+                try {
+                    $user = Auth::user();
+                    $erro = new Error();
+                    $erro->fill([
+                        "user" => $user ? json_encode($user) : null,
+                        "message" => $e->getMessage(),
+                        "trace" => $e->getTraceAsString()
+                    ]);
+                    $erro->save();
+                } catch (\Throwable $e) {}
             }
         });
     }

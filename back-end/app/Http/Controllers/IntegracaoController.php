@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\IntegracaoService;
+use App\Services\IntegracaoService;  
+use App\Exceptions\ServerException;
 use Throwable;
 
 class IntegracaoController extends ControllerBase {
@@ -11,19 +12,19 @@ class IntegracaoController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':
-                if (!$usuario->hasPermissionTo('DEV_MOD_LOGS')) throw new ServerException("CapacidadeStore", "Inserção não executada");
+                if (!$usuario->hasPermissionTo('MOD_DEV_TUDO')) throw new ServerException("CapacidadeStore", "Inserção não realizada");
                 break;
-            case 'UPDATE':
-                if (!$usuario->hasPermissionTo('DEV_MOD_LOGS')) throw new ServerException("CapacidadeStore", "Edição não executada");
+            case 'EDIT':
+                if (!$usuario->hasPermissionTo('MOD_DEV_TUDO')) throw new ServerException("CapacidadeStore", "Edição não realizada");
                 break;
             case 'DESTROY':
-                if (!$usuario->hasPermissionTo('DEV_MOD_LOGS')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
+                if (!$usuario->hasPermissionTo('MOD_DEV_TUDO')) throw new ServerException("CapacidadeStore", "Exclusão não realizada");
                 break;
             case 'QUERY':
-                if (!$usuario->hasPermissionTo('DEV_MOD_LOGS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
+                if (!$usuario->hasPermissionTo('MOD_DEV_TUDO')) throw new ServerException("CapacidadeStore", "Consulta não realizada");
                 break;   
             case 'GETBYID':
-                if (!$usuario->hasPermissionTo('DEV_MOD_LOGS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
+                if (!$usuario->hasPermissionTo('MOD_DEV_TUDO')) throw new ServerException("CapacidadeStore", "Consulta não realizada");
                 break;  
         }
     }
@@ -36,9 +37,18 @@ class IntegracaoController extends ControllerBase {
                 'unidades' => ['required'],
                 'entidade' => ['required']
             ]);
-            return response()->json([$this->service->sincronizar($data)]);
+            return response()->
+                json([$this->service->sincronizar($data)],
+                    $status = 200,
+                    $headers = ["Content-Type" => "application/json"], 
+                    $options = 256);
+
         } catch (Throwable $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->
+                json(['error' => $e->getMessage()],
+                    $status = 200,
+                    $headers = ["Content-Type" => "application/json"],
+                    $options = 256);
         }
     }
 
@@ -54,17 +64,22 @@ class IntegracaoController extends ControllerBase {
                 'entity.entidade_id' => ['required'],
                 'with' => ['array']
             ]);
-            $entity = $this->service->sincronizarPetrvs($data,self::loggedUser()->id);
+            $entity = $this->service->sincronizarPetrvs($data,self::loggedUser()->id,$request);
             $result = $this->service->getById([
                 'id' => $entity->id,
                 'with' => ['entidade','usuario']
             ]);
-            return response()->json([
-                'success' => true,
-                'rows' => [$result] 
-            ]);
+            return response()->
+                json(['success' => true, 'rows' => [$result]],
+                    $status = 200,
+                    $headers = ["Content-Type" => "application/json"],
+                    $options = 256);
         } catch (Throwable $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->
+                json(['error' => $e->getMessage()],
+                    $status = 200,
+                    $headers = ["Content-Type" => "application/json"],
+                    $options = 256);
         }
     }
 
@@ -77,3 +92,4 @@ class IntegracaoController extends ControllerBase {
         }
     }
 }
+ 

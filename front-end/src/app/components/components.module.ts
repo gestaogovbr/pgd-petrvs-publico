@@ -2,7 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
-import { NgxMaskModule, IConfig } from 'ngx-mask';
+import { NgxMaskDirective, NgxMaskPipe, IConfig, provideNgxMask, provideEnvironmentNgxMask } from 'ngx-mask';
+import { TreeModule } from 'primeng/tree';
+import { TreeSelectModule } from 'primeng/treeselect';
 import { GridComponent } from './grid/grid.component';
 import { ColumnComponent } from './grid/column/column.component';
 import { ColumnHeaderComponent } from './grid/column-header/column-header.component';
@@ -39,9 +41,8 @@ import { SwimlaneComponent } from './kanban/swimlane/swimlane.component';
 import { DockerComponent } from './kanban/docker/docker.component';
 import { CardComponent } from './kanban/card/card.component';
 import { DndModule } from 'ngx-drag-drop';
-import { AngularDoubleScrollbarsModule } from 'angular-double-scrollbars';
 import { OrderComponent } from './grid/order/order.component';
-import { ChartsModule }  from 'ng2-charts';
+import { NgChartsModule  }  from 'ng2-charts';
 import { BarChartComponent } from './charts/bar/bar-chart.component';
 import { InputWorkloadComponent } from './input/input-workload/input-workload.component';
 import { PieChartComponent } from './charts/pie/pie-chart.component';
@@ -59,10 +60,27 @@ import { MapForeachComponent } from './map/map-foreach/map-foreach.component';
 import { InputEditorComponent } from './input/input-editor/input-editor.component';
 import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 import { GlobalsService } from '../services/globals.service';
+import { SidePanelComponent } from './grid/side-panel/side-panel.component';
+import { DocumentPreviewComponent } from './document-preview/document-preview.component';
+import { InputLevelComponent } from './input/input-level/input-level.component';
+import { ActionButtonComponent } from './action-button/action-button.component';
+import { AccordionComponent } from './accordion/accordion.component';
+import { SectionComponent } from './accordion/section/section.component';
+import { CollapseCardComponent } from './collapse-card/collapse-card.component';
+import { DoubleScrollbarComponent } from './double-scrollbar/double-scrollbar.component';
+import { ButtonDashboardComponent } from './button-dashboard/button-dashboard.component';
+import { NgScrollbarModule } from 'ngx-scrollbar';
+import { JsonViewerComponent } from './json-viewer/json-viewer.component';
+import { InputChooseComponent } from './input/input-choose/input-choose.component';
+import { ReactionComponent } from './reaction/reaction.component';
+import { InputCheckComponent } from './input/input-check/input-check.component';
 
-const maskConfig: Partial<IConfig> = {
-  validation: false,
+const maskConfigFunction: () => Partial<IConfig> = () => {
+  return {
+    validation: false,
+  };
 };
+
 
 @NgModule({
   declarations: [
@@ -92,6 +110,7 @@ const maskConfig: Partial<IConfig> = {
     InputColorComponent,
     InputTimerComponent,
     InputRateComponent,
+    InputChooseComponent,
     InputMultitoggleComponent,
     TabsComponent,
     TabComponent,
@@ -115,19 +134,34 @@ const maskConfig: Partial<IConfig> = {
     MapComponent,
     MapItemComponent,
     MapForeachComponent,
-    InputEditorComponent
+    InputEditorComponent,
+    SidePanelComponent,
+    DocumentPreviewComponent,
+    InputLevelComponent,
+    ActionButtonComponent,
+    AccordionComponent,
+    SectionComponent,
+    CollapseCardComponent,
+    DoubleScrollbarComponent,
+    ButtonDashboardComponent,
+    JsonViewerComponent,
+    ReactionComponent,
+    InputCheckComponent
   ],
   imports: [
     CommonModule,
-    ChartsModule,
+    NgChartsModule,
     InfiniteScrollModule,
     ReactiveFormsModule,
     FormsModule,
     DndModule,
     //CurrencyMaskModule,
-    AngularDoubleScrollbarsModule,
-    NgxMaskModule.forRoot(maskConfig),
-    EditorModule
+    NgxMaskDirective, 
+    NgxMaskPipe,
+    EditorModule,
+    NgScrollbarModule,
+    TreeModule,
+    TreeSelectModule
   ],
   exports: [
     BarChartComponent,
@@ -153,6 +187,7 @@ const maskConfig: Partial<IConfig> = {
     InputMultiselectComponent,
     InputTimerComponent,
     InputRateComponent,
+    InputChooseComponent,
     InputMultitoggleComponent,
     TabsComponent,
     TabComponent,
@@ -174,14 +209,27 @@ const maskConfig: Partial<IConfig> = {
     MapComponent,
     MapItemComponent,
     MapForeachComponent,
-    InputEditorComponent
+    InputEditorComponent,
+    SidePanelComponent,
+    DocumentPreviewComponent,
+    InputLevelComponent,
+    ActionButtonComponent,
+    AccordionComponent,
+    SectionComponent,
+    CollapseCardComponent,
+    ButtonDashboardComponent,
+    DoubleScrollbarComponent,
+    JsonViewerComponent,
+    ReactionComponent,
+    InputCheckComponent
   ],
   providers: [
     { 
       provide: TINYMCE_SCRIPT_SRC, //useValue: 'tinymce/tinymce.min.js' 
       useFactory: (gb: GlobalsService) => gb.baseURL + '/tinymce/tinymce.min.js',
       deps: [GlobalsService]
-    }
+    },
+    provideEnvironmentNgxMask(maskConfigFunction),
   ]
 })
 export class ComponentsModule { }

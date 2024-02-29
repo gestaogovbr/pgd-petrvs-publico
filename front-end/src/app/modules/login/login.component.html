@@ -1,69 +1,106 @@
-<div *ngIf="error?.length" class="alert alert-danger mt-2" role="alert">
-    {{error}}
-</div>
-<div class="row">
-    <div *ngIf="!modalRoute" class="col-md-6 d-none d-md-block">
-        <img [src]="globals.getResourcePath('assets/images/' + globals.IMAGES.login)" class="card-img-top" alt="Petrvs">
+<div class="d-flex vh-100 g-0 bg-gray-100">
+    <div class="col-lg-6 position-relative d-none d-lg-block bg-primary-subtle">        
+        <div class="bg-holder" style="background-image: url(../../../assets/images/intro_login.jpg)"></div>
     </div>
-    <div [class]="modalRoute ? 'col-md-12' : 'col-md-6'">
-        <div class="row h-100 justify-content-center align-items-center">
-            <div class="card login-container">
-                <h5 class="card-title mt-2">Petrvs login</h5>
-                <div *ngIf="globals.is('PRF'); else naoPRF" class="card-body">
-                    <p class="card-text">Faça login com seu e-mail institucional ou pelo DPRF-Segurança</p>
-                    <div id="gbtn"></div>
-                    <!-- <div class="row mt-2">
-                        <div *ngIf="!!googleApi.gapiAuth2" class="col-md-12 d-flex justify-content-center">
-                            <a *ngIf="!auth.logging" class="btn btn-lg btn-google btn-block btn-full text-uppercase btn-outline" (click)="signInGoogle()"><img [src]="globals.getResourcePath('assets/images/google-logo.png')"> E-mail Institucional</a>
-                            <div *ngIf="auth.logging" class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden"></span></div>
+
+    <div [class]="modalRoute ? 'col-12 col-lg-6' : 'col-12 col-lg-6'">
+
+        <button class="btn btn-outline-primary botao-suporte rounded btn-sm" (click)="openModal({route: ['suporte']})"  [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" title="Suporte Petrvs">
+            <i class="bi bi-headset"></i>
+        </button>
+
+        <div class="d-flex align-items-center justify-content-center h-100 g-0 px-4 px-sm-0">
+            <div class=".col col-sm-6 col-lg-7 col-xl-6">
+                <div *ngIf="error?.length" class="alert alert-danger mt-2 mb-5" role="alert">
+                    <span><u><strong>{{ (error || '').split('&')[0] }}</strong></u></span><br>{{ (error || '').split('&')[1] }}
+                </div>
+
+                <div class="text-center mb-5 d-flex align-items-center justify-content-center">
+                    <img src="../assets/images/logo_pgd.png" class="logo-pgd">
+                    <img [src]="globals.getResourcePath('assets/images/' + globals.IMAGES.login)" class="logo-petrvs" alt="Petrvs"/>
+                </div>
+                <div class="text-center mb-5">
+                    <h3 class="fw-bold">Acesso</h3>
+                    <p class="fw-medium">Faça login com seu e-mail institucional</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="card-body">
+
+                      <div *ngIf="globals.hasGoogleLogin" class="card-body">
+                        <div id="gbtn"></div>
+                      </div>
+                        <div class="or-container" *ngIf="globals.hasGoogleLogin">
+                          <div class="line-separator"></div>
+                          <div class="or-label">ou</div>
+                          <div class="line-separator"></div>
                         </div>
-                    </div> -->
-                    <div class="or-container">
+                        <div class="govbr" *ngIf="globals.hasLoginUnicoLogin">
+                            <button class="br-button btn btn-primary rounded-pill mt-3" type="button" (click)="signInLoginUnicoBackEnd()">
+                                Entrar com <span>gov.br</span>
+                            </button>
+                        </div>
+                      <div class="or-container"  *ngIf="globals.hasLoginUnicoLogin">
                         <div class="line-separator"></div>
                         <div class="or-label">ou</div>
                         <div class="line-separator"></div>
-                    </div>
-                    <div class="row" *ngIf="buttonDprfSeguranca; else dprfSeguranca">
-                        <div class="col-md-12"><a class="btn btn-lg btn-google btn-block btn-full text-uppercase btn-outline" (click)="showDprfSeguranca()"><img [src]="globals.getResourcePath('assets/images/prf.ico')" width="20" height="20"> DPRF-Segurança</a></div>
-                    </div>
-                    <ng-template #dprfSeguranca>
-                        <form [formGroup]="login">
-                            <div class="form-group form-primary"><input-text controlName="usuario" maskFormat="000.000.000-00" placeholder="CPF"></input-text></div>
-                            <div class="form-group form-primary"><input-text password controlName="senha" placeholder="Senha"></input-text></div>
-                            <div class="form-group form-primary"><input-text controlName="token" maskFormat="000000" placeholder="Token"></input-text></div>
-                            <div class="row">
-                                <div class="col-md-12"><button class="btn btn-primary btn-md btn-block btn-full waves-effect text-center mb-2" (click)="signInDprfSeguranca()">Logar com DPRF</button></div>
-                            </div>
-                        </form>
-                    </ng-template>
-                </div>
-                <ng-template #naoPRF>
-                  <div *ngIf="globals.hasGoogleLogin" class="card-body">
-                    <p class="card-text">Faça login com seu e-mail institucional</p>
-                    <div class="row mt-2">
-                        <div id="gbtn"></div>
-                        <!-- <div *ngIf="!!googleApi.gapiAuth2" class="col-md-12 d-flex justify-content-center">
-                            <a *ngIf="!auth.logging" class="btn btn-lg btn-google btn-block btn-full text-uppercase btn-outline" (click)="signInGoogle()"><img [src]="globals.getResourcePath('assets/images/google-logo.png')"> E-mail Institucional</a>
-                            <div *ngIf="auth.logging" class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden"></span></div>
-                        </div> -->
-                    </div>
-                  </div>
-                  <div *ngIf="globals.hasAzureLogin && globals.hasGoogleLogin" class="or-container">
-                      <div class="line-separator"></div>
-                      <div class="or-label">ou</div>
-                      <div class="line-separator"></div>
-                  </div>
-                  <div *ngIf="globals.hasAzureLogin" class="card-body">
-                      <p *ngIf="!globals.hasGoogleLogin" class="card-text">Faça login com seu e-mail institucional</p>
-                      <div class="row mt-2">
-                          <div class="col-md-12 d-flex justify-content-center">
-                              <a *ngIf="!auth.logging" class="btn btn-lg btn-google btn-block btn-full text-uppercase btn-outline" (click)="signInAzure()"><img [src]="globals.getResourcePath('assets/images/microsoft-logo.png')"> E-mail Institucional</a>
-                              <div *ngIf="auth.logging" class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden"></span></div>
-                          </div>
                       </div>
-                  </div>
-                </ng-template>
+                        <div *ngIf="globals.hasAzureLogin" class="card-body">
+
+                          <div class="row mt-2">
+                            <div class="col-md-12 d-flex justify-content-center">
+                              <a *ngIf="!auth.logging" class="btn btn-lg btn-google btn-outline" (click)="signInAzure()">
+                                <img [src]="globals.getResourcePath('assets/images/microsoft_logo.png')"/>
+                                Microsoft (Login Institucional)
+                              </a>
+                              <div *ngIf="auth.logging" class="spinner-border spinner-border-sm" role="status">
+                                <span class="visually-hidden"></span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="or-container" *ngIf="globals.hasAzureLogin">
+                            <div class="line-separator"></div>
+                            <div class="or-label">ou</div>
+                            <div class="line-separator"></div>
+                        </div>
+
+                      <div class="d-flex flex-column" *ngIf="globals.hasInstitucionalLogin && buttonDprfSeguranca; else dprfSeguranca">
+                            <div class="">
+                                <a class="btn btn-lg btn-google btn-outline" (click)="showDprfSeguranca()">
+                                    <img [src]="globals.getResourcePath('assets/images/prf.ico')" width="20" height="20"/>
+                                    DPRF-Segurança
+                                </a>
+                            </div>
+                        </div>
+                        <ng-template #dprfSeguranca >
+                            <form [formGroup]="login" *ngIf="globals.hasInstitucionalLogin">
+                                <div class="form-group form-primary mb-2">
+                                    <input-text controlName="usuario" maskFormat="000.000.000-00" placeholder="CPF" [attr.maxlength]=15></input-text>
+                                </div>
+                                <div class="form-group form-primary mb-2">
+                                    <input-text password="password" controlName="senha" placeholder="Senha" [attr.maxlength]=250></input-text>
+                                </div>
+                                <div class="form-group form-primary mb-2">
+                                    <input-text controlName="token" maskFormat="000000" placeholder="Token"></input-text>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-petrvs-blue btn-md rounded-1 btn-full waves-effect text-center mb-2 " (click)="signInDprfSeguranca()">
+                                            Logar com DPRF
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </ng-template>
+                    </div>
+                </div>
             </div>
         </div>
+        <div class="logos">            
+            <img src="../assets/images/logo_gov.png">
+        </div>
     </div>
+    
+
 </div>

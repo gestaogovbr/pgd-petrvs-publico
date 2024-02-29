@@ -1,0 +1,103 @@
+<!-- Formuário de edição do processo -->
+<ng-template #editProcessoForm>
+    <editable-form [form]="form!" noButtons>
+        <div class="row">
+            <input-text [size]="12" [label]="'Nome do ' + lex.translate('processo')" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250></input-text>
+        </div>
+    </editable-form>
+</ng-template>
+<!-- Seleção do planejamento -->
+<editable-form [form]="form!" noButtons>
+    <div class="row my-2">
+        <input-select #cadeiaValorInstitucional [size]="12" controlName="cadeia_valor_id" [control]="form!.controls.cadeia_valor_id" [items]="cadeiasValor" (change)="onCadeiaValorChange()"></input-select>
+    </div>
+</editable-form>
+<div class="row my-2" [dndDropzone]="['processo']" (dndDrop)="onDrop($event, processos)">
+    <!-- Template Macropocesso (Nível 1) -->
+    <div dndPlaceholderRef class="row cadeia-valor">
+        <div class="nivel-1" [style]="'--border-color:gray;--bg:white;--color:black;'">
+            <div class="d-flex justify-content-between">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-2"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-6"></span>
+                </p>
+            </div>
+        </div>
+    </div>
+    <!-- Macroprocessos -->
+    <div *ngFor="let macro of processos" class="row cadeia-valor"
+        [dndDisableIf]="!canEdit"
+        [dndDraggable]="macro"
+        (dndEnd)="onDragEnd($event)"
+        (dndMoved)="onDragged(macro, processos, 'move')"
+        (dndStart)="onDragStart($event)"
+        dndType="processo"
+        dndEffectAllowed="move">
+        <div class="nivel-1" [style]="'--border-color:' + macro.cor +';--bg:white;--color:black;'">
+            <div class="d-flex justify-content-between">
+                <h3 class="texto text-break">{{macro.level}}. {{macro.nome}}</h3>
+                <div class="btn-group dropstart dropdown-menu-button ms-2">
+                    <action-button noArrow icon="bi bi-wrench-adjustable-circle" [data]="macro" [items]="options" color="transparent-black p-1 py-0"></action-button>
+                </div>
+            </div>
+            <div class="d-flex align-content-stretch flex-wrap" [dndDropzone]="['processo']" (dndDrop)="onDrop($event, macro.children)">
+                <!-- Template processo (Nível 2) -->
+                <div dndPlaceholderRef class="nivel-2" [style]="'--bg:gray;--color:black;'">
+                    <div class="d-flex justify-content-between mb-2">
+                        <p class="card-text placeholder-glow">
+                            <span class="placeholder col-5"></span>
+                            <span class="placeholder col-7"></span>
+                        </p>
+                    </div>
+                </div>
+                <!-- Processos -->
+                <div *ngFor="let processo of macro.children" class="nivel-2" [style]="'--bg:' + processo.cor + ';--color:black;'"
+                    [dndDisableIf]="!canEdit"
+                    [dndDraggable]="processo"
+                    (dndEnd)="onDragEnd($event)"
+                    (dndMoved)="onDragged(processo, macro.children, 'move')"
+                    (dndStart)="onDragStart($event)"
+                    dndType="processo"
+                    dndEffectAllowed="move">
+                    <div class="d-flex justify-content-between mb-2">
+                        <h4 class="texto text-break">{{processo.level}}. {{processo.nome}}</h4>
+                        <div class="btn-group dropstart dropdown-menu-button ms-2">
+                            <action-button noArrow icon="bi bi-wrench-adjustable-circle" [data]="processo" [items]="options" color="transparent-black p-1 py-0"></action-button>
+                        </div>
+                    </div>
+                    <ng-container [ngTemplateOutlet]="innerProcessos" [ngTemplateOutletContext]="{processo: processo}"></ng-container>
+                    <ng-template let-processo="processo" #innerProcessos>
+                        <div [dndDropzone]="['processo']" (dndDrop)="onDrop($event, processo.children)">
+                            <!-- Template subprocesso (Nível 3) -->
+                            <div dndPlaceholderRef class="nivel-3" [style]="'--bg:gray;--color:black;'">
+                                <p class="card-text placeholder-glow">
+                                    <span class="placeholder col-5"></span>
+                                    <span class="placeholder col-7"></span>
+                                </p>
+                            </div>    
+                            <!-- Subprocessos-->
+                            <div *ngFor="let subprocesso of processo.children" class="nivel-3" [style]="'--bg:' + subprocesso.cor + ';--color:black;'"
+                                [dndDisableIf]="!canEdit"
+                                [dndDraggable]="subprocesso"
+                                (dndEnd)="onDragEnd($event)"
+                                (dndMoved)="onDragged(subprocesso, processo.children, 'move')"
+                                (dndStart)="onDragStart($event)"
+                                dndType="processo"
+                                dndEffectAllowed="move">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <h5 class="texto text-break">{{subprocesso.level}}. {{subprocesso.nome}}</h5>
+                                    <div class="btn-group dropstart dropdown-menu-button ms-2 align-button">
+                                        <action-button noArrow icon="bi bi-wrench-adjustable-circle" [data]="subprocesso" [items]="options"  color="transparent-black p-1 py-0"></action-button>
+                                    </div>
+                                </div>
+                                <ng-container [ngTemplateOutlet]="innerProcessos" [ngTemplateOutletContext]="{processo: subprocesso}"></ng-container>
+                            </div>    
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

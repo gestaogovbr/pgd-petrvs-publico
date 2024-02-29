@@ -2,21 +2,98 @@
     {{ID_GENERATOR_BASE}}
 </div!-->
 
-<button type="button" class="btn btn-primary" (click)="openDocumentos()">Primary</button>
+<button type="button" class="btn btn-primary" (click)="renderTemplate()">Primary</button>
+
+<ng-template #objetivo let-objetivo="objetivo">
+
+</ng-template>
+<ng-template #unidade>
+
+</ng-template>
+<ng-template #entregas>
+
+</ng-template>
+<ng-template #metas>
+
+</ng-template>
+<ng-template #atividades>
+
+</ng-template>
+
+<table class="table okr">
+    <thead>
+        <tr>
+            <th scope="col">O - Objetivo</th>
+            <th scope="col">Unidades</th>
+            <th scope="col">K - Entregas</th>
+            <th scope="col">R - Metas</th>
+            <th scope="col">Atividades</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="azul" rowspan="4">Ser simples e ágil</td>
+            <td class="vermelho" rowspan="3">SETIC-PI</td>
+            <td class="verde">Utilizar o Petrvs</td>
+            <td class="vazio">Frequentemente</td>
+        </tr>
+        <tr>
+            <td class="rosa">Requisição de servidores</td>
+            <td class="vazio">6</td>
+        </tr>
+        <tr>
+            <td class="amarelo">Compra de equipamentos</td>
+            <td class="vazio">2000</td>
+        </tr>
+        <tr>
+            <td class="laranja">SUPEX</td>
+            <td class="vazio"></td>
+            <td class="vazio"></td>
+        </tr>
+        <tr>
+            <td class="roxo" rowspan="3">Otimizar esforços e recursos</td>
+            <td class="verde" rowspan="2">DGP</td>
+            <td class="vazio"></td>
+            <td class="vazio"></td>
+        </tr>
+        <tr>
+            <td class="vazio"></td>
+            <td class="vazio"></td>
+        </tr>
+        <tr>
+            <td class="vermelho">DIREX</td>
+            <td class="vazio"></td>
+            <td class="vazio"></td>
+        </tr>
+    </tbody>
+</table>
+
+<editable-form [form]="form">
+    <div class="d-flex">
+        <div class="flex-grow-1">
+            <input-select [size]="12" controlName="level" [items]="[]"></input-select>
+        </div>
+        <div class="btn-group">
+            <button *ngIf="true" type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Adicionar"><i class="bi bi-arrow-bar-up"></i></button>
+            <button *ngIf="false" type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Salvar"><i class="bi bi-check-circle"></i></button>
+            <button *ngIf="false" type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancelar"><i class="bi bi-dash-circle"></i></button>
+        </div>
+    </div>
 
 
-
-
-<!--editable-form [form]="form">
     <div class="row">
+        <input-level [size]="12" controlName="level" [validate]="validateLevel"></input-level>
+    </div>
+    <!--div class="row">
         <input-editor controlName="template" [dataset]="dataset"></input-editor>
     </div>
     <div class="row">
-        <input-editor controlName="editor" [template]="form.controls.template.value" [datasource]="datasource"></input-editor>
-    </div>
+        <input-editor controlName="editor" [canEditTemplate]="false" [template]="form.controls.template.value" [datasource]="datasource"></input-editor>
+    </div//-->
 </editable-form>
 <br><br>
-{{form?.controls?.editor?.value || ""}} //-->
+{{form.controls.editor.value || ""}}
+
 <!--map [items]="mapa">
     <strong></strong>
     <table>
@@ -52,7 +129,7 @@
 <div class="row">
     <input-select [size]="2" label="Forma" controlName="forma" [control]="form!.controls.forma" [items]="lookup.DIA_HORA_CORRIDOS_OU_UTEIS"></input-select>
     <input-number number label="Carga" [size]="1" [control]="form!.controls.carga_horaria"></input-number>
-    <input-datetime [date]="isHoras() ? undefined : 'true'" [size]="3" label="Início" controlName="inicio" [control]="form!.controls.inicio"></input-datetime>
+    <input-datetime [date]="isHoras() ? undefined : 'true'" [size]="3" label="Início" controlName="data_inicio" [control]="form!.controls.data_inicio"></input-datetime>
     <input-datetime [date]="isHoras() ? undefined : 'true'" [size]="3" label="Fim" controlName="fim" [control]="form!.controls.fim"></input-datetime>
     <input-timer onlyHours label="Tempo" [size]="3" icon="bi bi-clock" controlName="tempo" [control]="form!.controls.tempo"></input-timer>
 </div>
@@ -64,8 +141,8 @@
         <input-text [size]="5" label="Nome" controlName="nome" [control]="form!.controls.nome"></input-text>
     </input-multiselect>
     <input-multiselect controlName="multiselect" label="Afastamentos" [size]="6" [control]="form!.controls.afastamentos" [addItemHandle]="addAfastamentoHandle.bind(this)">
-        <input-datetime [size]="4" label="Início" [control]="form!.controls.inicio_afastamento"></input-datetime>
-        <input-datetime [size]="4" label="Fim" [control]="form!.controls.fim_afastamento"></input-datetime>
+        <input-datetime [size]="4" label="Início" [control]="form!.controls.data_inicio_afastamento"></input-datetime>
+        <input-datetime [size]="4" label="Fim" [control]="form!.controls.data_fim_afastamento"></input-datetime>
         <input-text [size]="4" label="Observacao" [control]="form!.controls.observacao"></input-text>
     </input-multiselect>
 </div>

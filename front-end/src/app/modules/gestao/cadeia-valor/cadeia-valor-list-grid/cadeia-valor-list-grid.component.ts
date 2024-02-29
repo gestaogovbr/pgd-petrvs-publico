@@ -5,10 +5,8 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
-import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { CadeiaValor } from 'src/app/models/cadeia-valor.model';
-import { Planejamento } from 'src/app/models/planejamento.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
@@ -19,64 +17,63 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, CadeiaValorDaoService>{
   // @Input() snapshot?: ActivatedRouteSnapshot;
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-  @ViewChild('entidade', { static: false }) public unidade?: InputSearchComponent;
+  @ViewChild('unidade', { static: true }) public unidade?: InputSearchComponent;
   @Input() snapshot?: ActivatedRouteSnapshot;
   @Input() fixedFilter?: any[];
+  @Input() selectable: boolean = false;
   
   public entidadeDao: EntidadeDaoService;
+  public unidadeDao: UnidadeDaoService;
 
   constructor(public injector: Injector) {
     super(injector, CadeiaValor, CadeiaValorDaoService);
     this.entidadeDao = injector.get<EntidadeDaoService>(EntidadeDaoService);
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.join = ['processos'];
+    this.code = "MOD_CADV"
     /* Inicializações */
     this.filter = this.fh.FormBuilder({
-      inicio: {default: null},
-      fim: {default: null},
-      nome: {default: ""},
+      data_inicio: {default: null},
+      data_fim: {default: null},
+      //nome: {default: ""},
+      unidade_id: { default: "" },
       entidade_id: {default: null}
      });
-     this.join = ['entidade'];
-    // Testa se o usuário possui permissão para exibir planos de gestão/entregas
-    if (this.auth.hasPermissionTo("MOD_PGENTR_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir planos de gestão/entregas
-    if (this.auth.hasPermissionTo("MOD_PGENTR_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
-  }
-
-  public filterClear(filter: FormGroup) {
-    filter.controls.nome.setValue("");
-    filter.controls.inicio.setValue(null);
-    filter.controls.fim.setValue(null);
-    filter.controls.entidade_id.setValue(null);
-    super.filterClear(filter);
+     this.addOption(this.OPTION_INFORMACOES);
+     this.addOption(this.OPTION_EXCLUIR, "MOD_CADV_EXCL");
+     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
 
-    if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+    /*if(form.nome?.length) {
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
+    }*/
+    if(form.unidade_id?.length) {
+      result.push(["unidade_id", "==", form.unidade_id]);
     }
-    if(form.inicio) {
-      result.push(["inicio", ">=", form.inicio]);
+    if(form.data_inicio) {
+      result.push(["data_fim", ">=", form.data_inicio]);
     }
-    if(form.fim) {
-      result.push(["fim", "<=", form.fim]);
+    if(form.data_fim) {
+      result.push(["data_inicio", "<=", form.data_fim]);
     }
 
     return result;
+  }
+
+  public onChangeData(){
+
+    const di = new Date(this.filter!.controls.data_inicio.value).getTime();
+    const df = new Date(this.filter!.controls.data_fim.value).getTime();
+
+    if(df < di){
+      let diaI = new Date(di);
+      diaI.setDate(diaI.getDate() + 1);
+      this.filter!.controls.data_fim.setValue(diaI)   
+    }
   }
 
 }

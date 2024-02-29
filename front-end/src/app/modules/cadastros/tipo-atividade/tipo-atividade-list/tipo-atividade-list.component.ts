@@ -16,15 +16,13 @@ export class TipoAtividadeListComponent extends PageListBase<TipoAtividade, Tipo
   constructor(public injector: Injector) {
     super(injector, TipoAtividade, TipoAtividadeDaoService);
     /* Inicializações */
-    this.title = "Tipos de " + this.lex.noun("Atividade",true);
-    this.code="MOD_TIPO_ATV";
+    this.title = this.lex.translate("Tipos de Atividades");
+    this.code = "MOD_TIPO_ATV";
     this.filter = this.fh.FormBuilder({
-      nome: {default: ""},
-      icone: {default: ""},
-      cor: {default: ""}
+      nome: { default: "" }
     });
     // Testa se o usuário possui permissão para exibir dados do tipo de atividade
-    if (this.auth.hasPermissionTo("MOD_TIPO_ATV_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_TIPO_ATV")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
@@ -32,13 +30,14 @@ export class TipoAtividadeListComponent extends PageListBase<TipoAtividade, Tipo
       });
     }
     // Testa se o usuário possui permissão para excluir o tipo de atividade
-    if (this.auth.hasPermissionTo("MOD_TIPO_ATV_EXCL")) {
+    if (this.auth.hasPermissionTo("MOD_ATV_EXCL")) {
       this.options.push({
         icon: "bi bi-trash",
         label: "Excluir",
         onClick: this.delete.bind(this)
       });
     }
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public filterClear(filter: FormGroup) {
@@ -47,15 +46,27 @@ export class TipoAtividadeListComponent extends PageListBase<TipoAtividade, Tipo
   }
 
   public filterWhere = (filter: FormGroup) => {
-    let result: any[] = [];
     let form: any = filter.value;
-
-    if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
-    }
-
+    let result: any[] = [];
+    if (form.nome?.length) result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     return result;
   }
-}
 
+  public getReportEtiquetas(row: TipoAtividade): string {
+    let result = "";
+    row.etiquetas.forEach(element => {
+      result += element.value + ";\n";
+    });
+    return result;
+  }
+
+  public getReportChecklist(row: TipoAtividade): string {
+    let result = "";
+    row.checklist.forEach(element => {
+      result += element.value + ";\n";
+    });
+    return result;
+  }
+
+}
 

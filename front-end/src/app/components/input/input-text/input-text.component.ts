@@ -24,9 +24,10 @@ export class InputTextComponent extends InputBase implements OnInit {
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;
-  @Input() icon: string = "";
+  @Input() icon: string = "bi bi-textarea-t";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() value: any = "";
   @Input() loading: boolean = false;
@@ -42,10 +43,11 @@ export class InputTextComponent extends InputBase implements OnInit {
   @Input() source?: any;
   @Input() path?: string;
   @Input() placeholder?: string;
-  @Input() maxLength?: number;
-  @Input() maskFormat: string = "";
+  @Input() maxLength?: number = 250;
+  @Input() maskFormat?: string;
   @Input() right?: string;
   @Input() maskDropSpecialCharacters: boolean = false; 
+  @Input() required?: string;
   @Input() maskSpecialCharacters: string[] = ["-", "/", "(", ")", ".", ":", " ", "+", ",", "@", "[", "]", '"', "'"];
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
@@ -59,6 +61,8 @@ export class InputTextComponent extends InputBase implements OnInit {
   get size(): number {
     return this.getSize(); 
   }
+
+  public buffer?: string;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -82,6 +86,14 @@ export class InputTextComponent extends InputBase implements OnInit {
 
   public onChange(event: Event) {
     if(this.change) this.change.emit(event); 
+  }
+
+  public onKeyUp(event: Event) {
+    let inputValue = this.inputElement!.nativeElement.value;
+    if(this.buffer != inputValue) {
+      this.buffer = inputValue;
+      if(this.change) this.change.emit(event); 
+    }
   }
 
 }

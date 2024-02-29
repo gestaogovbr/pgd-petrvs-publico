@@ -24,58 +24,34 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
     /* Inicializações */
-    this.title = this.lex.noun("Usuário",true);
+    this.title = this.lex.translate("Usuários");
     this.code = "MOD_CFG_USER";
     this.join = ["perfil:id,nome"];
     this.filter = this.fh.FormBuilder({
-      usuario: {default: ""},
-      unidade_id: {default: ""},
-      perfil_id: {default: null}
+      usuario: { default: "" },
+      unidade_id: { default: "" },
+      perfil_id: { default: null }
     });
-    // Testa se o usuário possui permissão para exibir dados do usuário
-    if (this.auth.hasPermissionTo("MOD_USER_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir dados do usuario
-    if (this.auth.hasPermissionTo("MOD_USER_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para consultar as lotações do usuario
-    if (this.auth.hasPermissionTo("MOD_LOT_CONS")) {
-      this.options.push({
-      icon: "bi bi-pin-map",
-      label: "Lotações",
-      onClick: (usuario: Usuario) => {
-        this.go.navigate({route: ['configuracoes', 'usuario', usuario.id, 'lotacao']}, {modal: true});
-        }
-      });
-    }
+    this.addOption(this.OPTION_INFORMACOES, "MOD_USER");
+    //this.addOption(this.OPTION_EXCLUIR, "MOD_USER_EXCL");       // Tratar de forma diferenciada a exclusão de usuário
   }
 
-  public filterClear(filter: FormGroup) {
-    this.filter?.controls.usuario.setValue("");
-    this.filter?.controls.unidade_id.setValue("");
-    this.filter?.controls.perfil_id.setValue(null);
-    super.filterClear(filter);
+  public dynamicOptions(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    // Testa se o usuário logado possui permissão para gerenciar as atribuições do usuário do grid
+    if (this.auth.hasPermissionTo("MOD_USER_ATRIB")) result.push({ label: "Atribuições", icon: "bi bi-list-task",  onClick: (usuario: Usuario) => { this.go.navigate({ route: ['configuracoes', 'usuario', usuario.id, 'integrante'] }, { metadata: { entity: row } }); }});
+    return result;
   }
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
-    if(filter?.controls.usuario?.value?.length) {
-      result.push(["nome", "like", "%" + filter?.controls.usuario?.value + "%"]);
+    if (filter?.controls.usuario?.value?.length) {
+      result.push(["nome", "like", "%" + filter?.controls.usuario?.value.trim().replace(" ", "%") + "%"]);
     }
-    if(filter?.controls.unidade_id?.value?.length) {
+    if (filter?.controls.unidade_id?.value?.length) {
       result.push(["lotacao", "==", filter?.controls.unidade_id.value]);
     }
-    if(filter?.controls.perfil_id?.value?.length) {
+    if (filter?.controls.perfil_id?.value?.length) {
       result.push(["perfil_id", "==", filter?.controls.perfil_id?.value]);
     }
     return result;

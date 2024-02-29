@@ -1,21 +1,20 @@
 {
-    "version": "1.0.27",
+    "version": "2.0.11",
     "externalLibs": [
         "https://apis.google.com/js/platform.js"
     ],
     "preloadFiles": [
         "environment-config",
         "functions.js",
-        "app-proxy.js"
+        "app_proxy.js"
     ],
     "extraFiles": [
-        "all-pages.js"
+        "all_pages.js"
     ],
     "angularFiles": [
         "scripts.js",
         "runtime.js",
         "polyfills.js",
-        "vendor.js",
         "main.js"
     ],
     "cssFiles": [

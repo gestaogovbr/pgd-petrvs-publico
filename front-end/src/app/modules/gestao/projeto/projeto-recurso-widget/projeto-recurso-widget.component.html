@@ -7,10 +7,10 @@
             <input-number [size]="4" [decimals]="2" controlName="valor" prefix="R$" hostClass="p-1" [control]="form!.controls.valor"></input-number>
         </div>
         <div class="row m-0 p-0">
-            <input-search *ngIf="projetoService.isHumanoDepartamento(tipoRecurso?.value, ['HUMANO'])" hostClass="p-1" [size]="12" #usuario controlName="usuario_id" [control]="form!.controls.usuario_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
-            <input-search *ngIf="projetoService.isHumanoDepartamento(tipoRecurso?.value, ['DEPARTAMENTO'])" hostClass="p-1" [size]="12" #unidade controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
-            <input-search *ngIf="projetoService.isMaterialServico(tipoRecurso?.value)" hostClass="p-1" [size]="6" #materialServico controlName="material_servico_id" [control]="form!.controls.material_servico_id" [dao]="materialServicoDao" [where]="[['tipo', '==', tipoRecurso?.value]]" [selectRoute]="{route: ['cadastros', 'material-servico']}"></input-search>
-            <input-text *ngIf="!projetoService.isHumanoDepartamento(tipoRecurso?.value)" hostClass="p-1" prefix="Descrição" [size]="projetoService.isMaterialServico(tipoRecurso?.value) ? 6 : 12" controlName="nome" [control]="form!.controls.nome"></input-text>
+            <input-search *ngIf="projetoService.isHumanoDepartamento(tipoRecurso?.value, ['HUMANO'])" hostClass="p-1" [size]="12" #usuario controlName="usuario_id" [dao]="usuarioDao" ></input-search>
+            <input-search *ngIf="projetoService.isHumanoDepartamento(tipoRecurso?.value, ['DEPARTAMENTO'])" hostClass="p-1" [size]="12" #unidade controlName="unidade_id" [dao]="unidadeDao"></input-search>
+            <input-search *ngIf="projetoService.isMaterialServico(tipoRecurso?.value)" hostClass="p-1" [size]="6" #materialServico controlName="material_servico_id" [dao]="materialServicoDao" [where]="[['tipo', '==', tipoRecurso?.value]]"></input-search>
+            <input-text *ngIf="!projetoService.isHumanoDepartamento(tipoRecurso?.value)" hostClass="p-1" prefix="Descrição" [size]="projetoService.isMaterialServico(tipoRecurso?.value) ? 6 : 12" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250></input-text>
         </div>
     </editable-form>
 </separator>

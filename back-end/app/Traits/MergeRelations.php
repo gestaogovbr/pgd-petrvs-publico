@@ -66,10 +66,16 @@ trait MergeRelations
         $relationsAttributes = [];
 
         foreach ($this->fillableRelations() as $relationName) {
-            $val = Arr::pull($attributes, $relationName);
+            foreach ($attributes as $key => $value) {
+                if(Str::camel($key) == Str::camel($relationName)) {
+                    $relationsAttributes[Str::camel($relationName)] = $value;
+                    unset($attributes[$key]);
+                }
+            }
+            /*$val = Arr::pull($attributes, $relationName);
             if ($val !== null) {
                 $relationsAttributes[$relationName] = $val;
-            }
+            }*/
         }
 
         return [$relationsAttributes, $attributes];
@@ -78,14 +84,15 @@ trait MergeRelations
     public function fillRelations(array $relations)
     {
         foreach ($this->fillableRelations() as $relationName) {
-            if(array_key_exists($relationName, $relations)) {
+            $relationsKey = array_key_exists($relationName, $relations) ? $relationName : (array_key_exists(Str::camel($relationName), $relations) ? Str::camel($relationName) : "");
+            if(!empty($relationsKey)) {
                 $relation = $this->{Str::camel($relationName)}();
                 $relationType = (new ReflectionObject($relation))->getShortName();
                 $method = "fill{$relationType}Relation";
                 if (!method_exists($this, $method)) {
                     throw new RuntimeException("Unknown or unfillable relation type {$relationType} ({$relationName})");
                 }
-                $this->{$method}($relation, $relations[$relationName], $relationName);
+                $this->{$method}($relation, $relations[$relationsKey], $relationName);
             }
         }
     }
@@ -150,8 +157,9 @@ trait MergeRelations
                     $save = false;
                 } else {
                     $related[$foreignKeyName] = $parentKey;
-                    $related = ($relatedModel::find($relatedId) ?? new $relatedModel())->fill($related);
+                    $related = ($relatedModel::withTrashed()->find($relatedId) ?? new $relatedModel())->fill($related);
                     $related->id = $relatedId;
+                    if($related->trashed()) $related->restore();
                 }
             }
             if($save) {
@@ -161,23 +169,13 @@ trait MergeRelations
         }
         $toDelete = empty($parentKey) ? [] : ($isChange ? $relatedModel->whereIn($relatedModel->getKeyName(), $deleteKeys)->get() : $relatedModel->where($foreignKeyName, $parentKey)->whereNotIn($relatedModel->getKeyName(), $keepKeys)->get());
         foreach($toDelete as $entity) if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade(); else $entity->delete();
-        /*if(!$isChange && !empty($parentKey)) {
-            //$relatedModel->where($foreignKeyName, $parentKey)->whereNotIn($relatedModel->getKeyName(), $keepKeys)->delete();
-            $entities = $relatedModel->where($foreignKeyName, $parentKey)->whereNotIn($relatedModel->getKeyName(), $keepKeys)->get();
-            foreach($entities as $entity) if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade(); else $entity->delete();
-        }
-        if($isChange && !empty($deleteKeys)) {
-            //$relatedModel->whereIn($relatedModel->getKeyName(), $deleteKeys)->delete();
-            $entities = $relatedModel->whereIn($relatedModel->getKeyName(), $deleteKeys)->get();
-            foreach($entities as $entity) if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade(); else $entity->delete();
-        }*/
     }
 
 
 /**********************************************************************************
- * 
+ *
  * Implementar os métodos abaixo para funcionar como merge
- * 
+ *
  *********************************************************************************/
 
 

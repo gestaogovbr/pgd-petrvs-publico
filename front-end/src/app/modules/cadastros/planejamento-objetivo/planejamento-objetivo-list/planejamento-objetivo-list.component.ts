@@ -1,10 +1,9 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetivo-dao.service';
-import { EixoTematico } from 'src/app/models/eixo-tematico.model';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
@@ -24,7 +23,7 @@ export class PlanejamentoObjetivoListComponent extends PageListBase<Planejamento
     /* Inicializações */
     this.eixoTematicoDao = injector.get<EixoTematicoDaoService>(EixoTematicoDaoService);
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-    this.title = 'Objetivos do Planejamento Institucional';
+    this.title = this.lex.translate('Objetivos') + this.lex.translate("do Planejamento Institucional");
     this.join = ['planejamento:nome'];
     this.orderBy = [['nome', 'asc']];
     this.filter = this.fh.FormBuilder({
@@ -33,7 +32,7 @@ export class PlanejamentoObjetivoListComponent extends PageListBase<Planejamento
       planejamento_id: {default: null}
      });
     // Testa se o usuário possui permissão para consultar planejamentos institucionais
-    if (this.auth.hasPermissionTo("MOD_PLAN_INST_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_PLAN_INST")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
@@ -54,7 +53,7 @@ export class PlanejamentoObjetivoListComponent extends PageListBase<Planejamento
     let form: any = filter.value;
 
     if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
     if(form.eixo_tematico_id?.length) {
       result.push(["eixo_tematico_id", "==", form.eixo_tematico_id]);

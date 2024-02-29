@@ -1,0 +1,120 @@
+<editable-form [form]="form!" noButtons>
+  <div class="row mt-2">
+    <input-select #planejamentoInstitucional [size]="12" controlName="planejamento_id"
+      [control]="form!.controls.planejamento_id" [items]="planejamentos"
+      (change)="onPlanejamentoChange()"></input-select>
+  </div>
+  <ng-scrollbar autoHeightDisabled="false" track="all">
+    <div class="d-flex justify-content-between mt-4">
+      <div class="okr_header">
+        <h1>O</h1>
+        <h6>Objetivos</h6>
+      </div>
+      <div class="header_unidades">
+        
+        <div class="d-flex">
+          <div class="okr_header header_unidade w-25">
+            <h6>{{lex.translate('Unidades')}}</h6>
+          </div>
+          <div class="flex-fill">
+            <div class="d-flex justify-content-between">
+              <div class="okr_header header_resultados w-100">
+                <h1>K.R</h1>
+                <h6>Resultados-chave</h6>
+              </div>
+
+              <div class="okr_header">
+                <h6>{{lex.translate('Atividades')}}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex flex-column justify-content-between mt-4">
+      <div class="mb-2" *ngFor="let objetivo of objetivos; let i = index">
+        <div class="d-flex justify-content-start">
+          <ng-container [ngTemplateOutlet]="objetivoTmpl"
+            [ngTemplateOutletContext]="{objetivo: objetivo, i: i}"></ng-container>
+          <div class="unidades">
+            <div *ngFor="let unidade_entrega of objetivo.unidadesComEntregas; let u = index">
+              <div class="d-flex mb-1 align-items-stretch">
+                <div class="unidade w-25" [style.border-color]="unidade_entrega.unidade._metadata.corBorda">
+                  {{unidade_entrega.unidade.nome}}
+                </div>
+                <div class="entregas flex-fill">
+                  <div class="d-flex flex-column">
+                    <ng-container *ngFor="let objetivo_entrega of unidade_entrega.entregas; let i = index">
+                      <ng-container [ngTemplateOutlet]="entregaTmpl"
+                        [ngTemplateOutletContext]="{objetivo_entrega: objetivo_entrega, i: i}"></ng-container>
+                    </ng-container>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-scrollbar>
+
+</editable-form>
+
+
+<ng-template #objetivoTmpl let-objetivo="objetivo" let-i="i">
+  <div class="objetivo" [style.border-color]="objetivo._metadata.corBorda">
+    <div class="d-flex justify-content-between align-items-center">
+      <span>{{objetivo.nome}}</span>
+      <button class="btn" (click)="carregaEntregas(objetivo.id)"><i class="bi bi-chevron-right"></i></button>
+    </div>
+  </div>
+</ng-template>
+
+
+<ng-template #entregaTmpl let-objetivo_entrega="objetivo_entrega" let-i="i">
+  <div>
+    <div class="d-flex justify-content-between align-items-stretch entrega-geral">
+      <div class="entrega flex-fill" [style.border-color]="objetivo_entrega._metadata.corBorda">
+        <span class="d-flex justify-content-between align-items-center">
+          {{objetivo_entrega.entrega.descricao}}
+          <button class="btn"
+            (click)="carregaAtividades(objetivo_entrega.entrega.entregas_plano_trabalho, objetivo_entrega.entrega.entrega, $event)"><i
+              class="bi bi-chevron-right"></i></button>
+        </span>
+        <div class="d-flex align-items-center">
+          <div class=" w-100">
+            <progress-bar [value]="objetivo_entrega.entrega.progresso_realizado"
+              [goal]="objetivo_entrega.entrega.progresso_esperado" color="success"></progress-bar>
+          </div>
+          <div class="ms-2">
+            <badge icon="bi bi-graph-up-arrow" [textValue]="planoEntregaService.getValorMeta(objetivo_entrega.entrega)"
+              color="light" hint="Planejada"></badge><br>
+            <badge icon="bi bi-check-lg" [textValue]="planoEntregaService.getValorRealizado(objetivo_entrega.entrega)"
+              color="light" hint="Realizada"></badge>
+          </div>
+        </div>
+      </div>
+      <div class="atividades">
+        <div class="d-flex flex-column">
+          <ng-container *ngFor="let atividade of objetivo_entrega.entrega.entrega.atividades">
+            <div class="atividade">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <p class="m-0">{{atividade.descricao}}</p>
+                  <small>{{atividade.usuario.nome}}</small>
+                </div>
+
+                <div>
+                  <badge *ngFor="let status of atividadeService.getStatus(atividade)" [data]="status"
+                    [color]="status.color" [icon]="status.icon" [label]="status.label"></badge>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</ng-template>

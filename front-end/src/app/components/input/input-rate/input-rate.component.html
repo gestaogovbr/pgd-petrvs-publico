@@ -1,5 +1,5 @@
-<input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
-    <div class="d-flex justify-content-center">
-        <i *ngFor="let item of stars; let idx = index" [id]="generatedId(controlName) + '_' + idx" role="button" [class]="startClass(idx)" (click)="onClick(idx)"></i>
+<input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" [required]="required" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
+    <div class="d-flex" [class.justify-content-center]="align == 'center'">
+        <i *ngFor="let item of stars; let idx = index"  [style.font-size.rem]="isSmall ? 0.8 : undefined" [id]="generatedId(controlName) + '_' + idx" [attr.role]="isDisabled ? undefined : 'button'" [class]="startClass(idx)" (click)="onClick(idx)"></i>
     </div>
 </input-container>
