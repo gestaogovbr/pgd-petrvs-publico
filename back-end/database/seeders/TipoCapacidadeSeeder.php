@@ -64,11 +64,13 @@ class TipoCapacidadeSeeder extends Seeder
             $capacidade->restore();
           }
         } else {
-          $capacidade = Capacidade::create([
-            'id' => $utilService->uuid(),
-            'perfil_id' => $developerId,
-            'tipo_capacidade_id' => $tipoCapacidadeFilha->id
+          $capacidade = new Capacidade();
+          $capacidade->fill([
+              'id' => $utilService->uuid(),
+              'perfil_id' => $developerId,
+              'tipo_capacidade_id' => $tipoCapacidadeFilha->id
           ]);
+          $capacidade->save();       
         }
 
       }

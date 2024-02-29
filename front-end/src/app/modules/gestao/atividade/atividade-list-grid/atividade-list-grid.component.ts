@@ -46,7 +46,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
       agrupar_entrega: { default: true },
-      atribuidas_para_mim: { default: false },
+      atribuidas_para_mim: { default: this.minhas },
       usuario_id: { default: null },
       numero: { default: "" },
       somente_unidade_atual: { default: false },
@@ -89,12 +89,15 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     }
   }
 
-  ngAfterViewInit() {
-    super.ngAfterViewInit();
-    if (this.metadata?.atribuidas_para_mim) {
+
+  ngAfterViewInit() {  
+    super.ngAfterViewInit();   
+    if (this.minhas) {
       this.filter?.controls.atribuidas_para_mim.setValue(true);
       this.filter?.controls.usuario_id.setValue(this.auth.usuario?.id);
-    }
+    } else {
+      this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
+    } 
     if (this.fixedFilter) {
       const status = this.fixedFilter.find(x => x[0] == "status");
       if (status) this.filter?.controls.status.setValue(status[2]);
@@ -158,7 +161,6 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     let result: any[] = this.fixedFilter || [];
     let form: any = filter.value;
 
-    /* Verifica se estiver marcado Atual e a Unidade for diferente da Lotacao da barra superior */
     if (form.somente_unidade_atual && form.unidade_id != this.auth.unidade?.id) {
       filter.controls.unidade_id.setValue(this.auth.unidade?.id);
       form.unidade_id = this.auth.unidade?.id;
@@ -166,10 +168,12 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     /* Verifica se Minhas está selecionado e o usuário está diferente do logado (vazio) */
     if (form.atribuidas_para_mim && form.usuario_id != this.auth.usuario?.id) {
       filter.controls.usuario_id.setValue(this.auth.usuario?.id);
-      form.usuario_id = this.auth.usuario?.id;
+      form.usuario_id = this.auth.usuario!.id;
     }
+
+
     /* Filtros */
-    if (form.usuario_id?.length) {
+    if (form.usuario_id && form.usuario_id.length) {
       result.push(["usuario_id", "==", form.usuario_id]);
     }
     if (form.plano_trabalho_id?.length) {
@@ -353,5 +357,8 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     }
   }
 
+  public canEditColumn(row: any): boolean {
+    return row.usuario_id == this.auth.usuario!.id;
+  }
 }
 

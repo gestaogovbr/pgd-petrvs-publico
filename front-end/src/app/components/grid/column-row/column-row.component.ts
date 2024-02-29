@@ -38,8 +38,8 @@ export class ColumnRowComponent implements OnInit {
     return this.grid?.form.controls[this.column.field] || undefined;
   }
 
-  public get isRowEditing(): boolean {
-    return (this.row["id"] == (this.grid?.editing || {"id": undefined})["id"]) && this.column.editable;
+  public isRowEditing(row: any): boolean {
+    return (this.row["id"] == (this.grid?.editing || {"id": undefined})["id"]) && !this.column.isColumnEditable(row);
   }
 
   public get isEditing(): boolean {

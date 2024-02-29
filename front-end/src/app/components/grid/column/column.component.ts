@@ -23,7 +23,7 @@ export class ColumnComponent implements OnInit {
   @Input() field: string = "";
   @Input() dao?: DaoBaseService<Base>;
   @Input() orderBy: string = "";
-  @Input() editable: boolean = true;
+  @Input() editable: boolean | ((row: any) => boolean) = false;
   @Input() template?: TemplateRef<unknown>;
   @Input() titleTemplate?: TemplateRef<unknown>;
   @Input() editTemplate?: TemplateRef<unknown>;
