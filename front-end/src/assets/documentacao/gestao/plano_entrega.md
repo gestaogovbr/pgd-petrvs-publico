@@ -44,6 +44,8 @@ Campos obrigatórios:
 ## RESPONSABILIDADES
 
 ```
+(PENT:TABELA_1) Atribuições do plano de entrega
+
 +  => Unidade superior
 CF => Chefe
 CS => Chefe Sub.
@@ -74,20 +76,19 @@ Consideremos também que o Plano de Entregas é da Unidade B.
 - (RN_PENT_B) O gestor (e delegado) de uma Unidade (B) e o gestor (e delegado) da sua Unidade-pai (A), podem iniciar a elaboração de Planos de Entrega para a Unidade B;
 - (RN_PENT_C) O gestor da Unidade-pai (A) pode homologar e, se possuir a capacidade "MOD_PENT_EDT_FLH", alterar o Plano de Entregas de uma unidade-filha (B ou E) antes/depois de homologá-lo;
 - (RN_PENT_D) Para ir para o status HOMOLOGANDO o Plano de Entregas deve ter ao menos uma entrega;
-- (RN_PENT_E) Para ir para o status 'ATIVO', um Plano de Entregas precisa da Homologação do gestor da sua Unidade-pai (Unidade A)
-********** ROMEVIDO: , ou de servidor com a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para ela (a Unidade A); **********
-- (RN_PENT_F) O gestor de uma Unidade deve poder visualizar os planos de entregas de todas as Unidades hierarquicamente a ele subordinadas (vide RN_PENT_V);
+- (RN_PENT_E) Para ir para o status 'ATIVO', um Plano de Entregas precisa da Homologação do gestor da sua Unidade-pai (Unidade A);
+- (RN_PENT_F) O gestor de uma Unidade deve poder visualizar os planos de entregas de todas as Unidades hierarquicamente a ele subordinadas [RN_PENT_V];
 - (RN_PENT_G) Uma vez homologado um Plano de Entregas, a Unidade do plano (Unidade B) está no Programa;
 - (RN_PENT_H) Os planos de entregas vão gerar dados que serão enviados ao órgão central (aguardando a definição do formato);
 - (RN_PENT_I) O participante poderá visualizar o Plano de Entregas de qualquer uma das suas áreas de trabalho. Área de Trabalho é qualquer unidade onde o participante esteja lotado ou tenha alguma atribuição a ela vinculada (ver [lista de atribuições possíveis](docs/geral/informacoes_complementares.md));
-- (RN_PENT_J) Uma Unidade de execução poderá ter mais de um Plano de Entregas com status 'HOMOLOGANDO' e 'ATIVO', desde que sejam para períodos diferentes; **** Avaliar com o Pojo ****
+- (~~RN_PENT_J~~) (REVOGADO) Uma Unidade de execução poderá ter mais de um Plano de Entregas com status 'HOMOLOGANDO' e 'ATIVO', desde que sejam para períodos diferentes;
 - (RN_PENT_K) Após criado um Plano de Entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id;
 - (RN_PENT_L) Vide Fluxo;
 - (RN_PENT_M) Qualquer alteração, depois de o Plano de Entregas ser homologado, precisa ser notificada ao gestor da Unidade-pai (Unidade A) ou à pessoa que homologou. Essa comunicação sobre eventuais ajustes, não se aplica à Unidade Instituidora, ou seja, alterações realizadas em planos de entregas de unidades instituidoras não precisam ser notificadas à sua Unidade-pai;
 - (RN_PENT_N) Vide Fluxo;
 - (RN_PENT_O) Vide Fluxo;
 - (RN_PENT_P) Vide Fluxo;
-- (RN_PENT_Q) Quando um Plano de Entregas é cancelado, todas as suas entregas são canceladas, vindo a afetar as entregas dos planos de trabalho a elas relacionadas, tendo os mesmo efeitos da regra [RN_PTR_E];
+- (RN_PENT_Q) Quando um Plano de Entregas é cancelado, todas as suas entregas **** MODIFICADO: que não fazem parte de outros planos de entregas *** são canceladas, vindo a afetar as entregas dos planos de trabalho a elas relacionadas, tendo os mesmo efeitos da regra [RN_PTR_E];
 - (RN_PENT_R) Vide Fluxo;
 - (RN_PENT_S) Vide Fluxo;
 - (RN_PENT_T) Vide Fluxo;
@@ -104,7 +105,7 @@ Consideremos também que o Plano de Entregas é da Unidade B.
 - (RN_PENT_AE) Se a alteração for feita com o Plano de Entregas no status ATIVO e o usuário logado possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL", o Plano de Entregas voltará ao status "HOMOLOGANDO";
 - (RN_PENT_AF) Se a alteração for feita com o Plano de Entregas no status ATIVO e o usuário logado possuir a capacidade "MOD_PENT_EDT_ATV_ATV", o Plano de Entregas permanecerá no status "ATIVO";
 - (RN_PENT_AG) A homologação do Plano de Entregas não se aplica à Unidade Instituidora, ou seja, os planos de entregas vinculados a unidades que sejam instituidoras não precisam ser homologados.
-- (RN_PENT_AH) O plano de entrega vai para o status de AGUARDANDO_CANCELAMENTO, e só após a confimação pela chefia superior é que será realmente cancelado. Mas caso seja realizado o cancelamento diretamente pela chefia superior ele já cancela diretamente;
+- (RN_PENT_AH) O plano de entrega vai para o status de AGUARDANDO_CANCELAMENTO, e só após a confimação pela chefia superior é que será realmente cancelado. Mas caso seja realizado o cancelamento diretamente pela chefia superior ele já cancela diretamente; *********** FALTA IMPLEMENTAR *******
 
 ## REGRAS VINCULADAS
 
@@ -123,11 +124,10 @@ Ação: ALTERAR -> geralmente não muda o status do plano ('INCLUIDO','HOMOLOGAN
 - (RN_PENT_L) Condições para que um Plano de Entregas possa ser alterado:
   - o Plano de Entregas precisa estar com o status INCLUIDO, HOMOLOGANDO ou ATIVO, e
   - o usuário logado precisa possuir a capacidade "MOD_PENT_EDT", o Plano de Entregas precisa ser válido (ou seja, nem deletado, nem arquivado e com status diferente de 'CANCELADO'), e:
-    - estar com o status INCLUIDO ou HOMOLOGANDO, e o usuário logado precisa ser gestor (ou delegado) da Unidade do plano, ****** REMOVIDO: ou esta ser sua Unidade de lotação*******; ou
-    - o usuário logado precisa ser gestor (ou delegado) da Unidade-pai (Unidade A) da Unidade do plano (Unidade B) e possuir a capacidade "MOD_PENT_EDT_FLH" (RN_PENT_C);  ou
-    - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B); ou
-    ***** EDITADO: - o Plano de Entregas precisa estar com o status ATIVO, o usuário logado precisa atender os critírios da TABELA_1, e ele possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL" (RN_PENT_AE) ou "MOD_PENT_EDT_ATV_ATV" (RN_PENT_AF); ou *****
-    - o usuário possuir a capacidade "MOD_PENT_QQR_UND".
+    - estar com o status INCLUIDO ou HOMOLOGANDO, e o usuário logado precisa ser gestor (ou delegado) da Unidade do plano; ou
+    - o usuário logado precisa ser gestor (ou delegado) da Unidade-pai (Unidade A) da Unidade do plano (Unidade B) e possuir a capacidade "MOD_PENT_EDT_FLH" [RN_PENT_C];  ou
+    - o Plano de Entregas precisa estar com o status ATIVO, o usuário logado precisa atender os critírios da TABELA_1, e ele possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL" [RN_PENT_AE] ou "MOD_PENT_EDT_ATV_ATV" [RN_PENT_AF]; ou
+    - o usuário possuir a capacidade "MOD_PENT_QQR_UND". (independente de qualquer outra condição);
 
 Ação: ARQUIVAR -> não muda o status do plano ('CONCLUIDO','AVALIADO');
 
@@ -149,10 +149,9 @@ Ação: AVALIAR -> o plano adquire o status de 'AVALIADO';
 Ação: CANCELAR PLANO -> o plano adquire o status de 'CANCELADO';
 
 - (RN_PENT_P) Condições para que um Plano de Entregas possa ser cancelado:
-  - ***** ALTERADO: o usuário logado precisa possuir a capacidade "MOD_PENT_CNC", o plano precisa estar em um dos seguintes status: INCLUIDO, HOMOLOGANDO, ATIVO; e ******
+  - o usuário logado precisa possuir a capacidade "MOD_PENT_CNC", o plano precisa estar em um dos seguintes status: INCLUIDO, HOMOLOGANDO e ATIVO;
     - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
-    - o usuário logado precisa ser gestor da Unidade-pai do plano (Unidade A), ou
-    ***** DESNECESSARIO: - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado; ****
+    - o usuário logado precisa ser gestor da Unidade-pai do plano (Unidade A);
 
 Ação: CANCELAR AVALIAÇÃO -> o plano retorna ao status de 'CONCLUIDO';
 
@@ -187,7 +186,8 @@ Ação: CONCLUIR -> o plano adquire o status de 'CONCLUIDO';
 Ação: CONSULTAR -> não muda o status do plano;
 
 - (RN_PENT_V) Condições para que um Plano de Entregas possa ser consultado:
-  - todos os participantes podem visualizar todos os planos de entregas, desde que possuam a capacidade "MOD_PENT" (RN_PENT_F, RN_PENT_I);
+  - Possuir a capacidade "MOD_PENT"
+  - Atender as regras [RN_PENT_F] e [RN_PENT_I];
 
 Ação: DESARQUIVAR -> o plano retorna ao status que estava quando foi arquivado ('CONCLUIDO','AVALIADO');
 
@@ -207,23 +207,21 @@ Ação: HOMOLOGAR -> o plano adquire o status de 'ATIVO';
 
 - (RN_PENT_Y) Condições para que um Plano de Entregas possa ser homologado:
   - o plano precisa estar com o status HOMOLOGANDO, e:
-    - o usuário logado precisa ser gestor da Unidade-pai (Unidade A) da Unidade do plano (Unidade B); (RN_PENT_C), ou
+    - o usuário logado precisa ser gestor da Unidade-pai (Unidade A) da Unidade do plano (Unidade B); [RN_PENT_C] [RN_PENT_E], ou
     - a Unidade-pai (Unidade A) for a Unidade de lotação do usuário logado e ele possuir a capacidade "MOD_PENT_HOMOL", ou
-    - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a Unidade-pai (Unidade A); (RN_PENT_E)
-**VER NO FRONT**********************A homologação do plano de entregas não se aplica à Unidade instituidora (RN_PENT_AG).**
+  - A homologação do plano de entregas não se aplica à Unidade instituidora, ou seja, os planos de entregas vinculados a unidades que sejam instituidoras não precisam ser homologados (RN_PENT_AG).
 
 Ação: INSERIR/INCLUIR -> o plano adquire o status de 'INCLUIDO';
 
 - (RN_PENT_Z) Condições para que um Plano de Entregas possa ser criado:
   - o usuário logado precisa possuir a capacidade "MOD_PENT_INCL", e:
-    - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou gestor da sua Unidade-pai (Unidade A)(RN_PENT_B); ou
-    - o usuário precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B) e possuir a capacidade "MOD_PENT_EDT_FLH"; ou
+    - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou gestor da sua Unidade-pai (Unidade A)[RN_PENT_B]; ou
     - o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND" (independente de qualquer outra condição);
 
 Ação: LIBERAR PARA HOMOLOGAÇÃO -> o plano adquire o status de 'HOMOLOGANDO';
 
 - (RN_PENT_AA) Condições para que um Plano de Entregas possa ser liberado para homologação:
-  - o plano precisa estar com o status INCLUIDO, conter ao menos uma entrega (RN_PENT_D), e
+  - o plano precisa estar com o status INCLUIDO, conter ao menos uma entrega [RN_PENT_D], e
     - o usuário logado precisa ser gestor da Unidade do plano (Unidade B); ou
     - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e este possuir a capacidade "MOD_PENT_LIB_HOMOL"
 
@@ -355,6 +353,7 @@ Ação: SUSPENDER -> o plano adquire o status de 'SUSPENSO';
   - se ele for gestor, os planos ativos das Unidades-pai de onde ele é gestor;
 - (RI_PENT_C) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados nem cancelados.
 - (RI_PENT_D) Na visualização de Avaliação, deverá trazer a unidade ao qual o usuário é gestor e todas as suas subordinadas imediatas.
+- (RI_PENT_E) As entregas vinculadas de planos de entregas cancelados devem aparecer em vermelho e avisando que foram canceladas em seu plano de entregas.
 
 ## QUESTÕES PENDENTES
 
@@ -401,26 +400,32 @@ XXXXXX  XX/XX/XXXX                                        (XXX)(XXXXX)          
 
 Adesão a Planos de Entregas
 
-- (RN_PENT_2_1) REVOGADO Ao se criar um Plano de Entregas através da adesão ao da Unidade-pai, aquele adquire de imediato o status "HOMOLOGANDO";
-- (RN_PENT_2_2) REVOGADO A adesão a um Plano de Entregas da Unidade-pai precisa da homologação do gestor desta Unidade para ser ativado (ir para o status ATIVO);
-- (RN_PENT_2_3) REVOGADO Só é possível aderir a um Plano de Entregas se este for da Unidade-pai e estiver ATIVO;
-- (RN_PENT_2_4) REVOGADO O gestor de uma Unidade, e o gestor da sua Unidade-pai, podem realizar a adesão a um Plano de Entrega, ou seja, realizar a adesão do filho compulsoriamente;
-- (RN_PENT_2_5) REVOGADO No caso de a adesão ser feita pelo gestor da Unidade-pai, o plano já adquire de imediato o status ATIVO;
-
-- (RN_PENT_2_6) Se um Plano de Entregas for concluído/cancelado, e possuir planos vinculados, estes também serão concluídos/cancelados automaticamente;
-   ******* As entregas vinculadas de planos de entregas cancelados devem aparecer em vermelho e avisando que foram canceladas *******
-
-- (RN_PENT_2_7) REVOGADO Em caso de adesão, os campos 'inicio', 'fim', 'planejamento_id', e 'cadeia_valor_id', deverão ser sempre iguais aos do plano-pai; portanto, quando um Plano de Entregas próprio sofrer alteração em um desses campos, todos os planos a ele vinculados deverão ser atualizados também;
-- (RN_PENT_3_3) REVOGADO Se a Unidade A tem um plano de entrega próprio e a Unidade B aderiu ao plano de A, a Unidade C pode aderir ao plano de B e só a ele; (Hierarquia considerada: A -> B -> C)
-- (RN_PENT_4_1) REVOGADO Ação: ADERIR (exclusivamente para planos vinculados)
+- (~~RN_PENT_2_1~~) (REVOGADO) Ao se criar um Plano de Entregas através da adesão ao da Unidade-pai, aquele adquire de imediato o status "HOMOLOGANDO";
+- (~~RN_PENT_2_2~~) (REVOGADO) A adesão a um Plano de Entregas da Unidade-pai precisa da homologação do gestor desta Unidade para ser ativado (ir para o status ATIVO);
+- (~~RN_PENT_2_3~~) (REVOGADO) Só é possível aderir a um Plano de Entregas se este for da Unidade-pai e estiver ATIVO;
+- (~~RN_PENT_2_4~~) (REVOGADO) O gestor de uma Unidade, e o gestor da sua Unidade-pai, podem realizar a adesão a um Plano de Entrega, ou seja, realizar a adesão do filho compulsoriamente;
+- (~~RN_PENT_2_5~~) (REVOGADO) No caso de a adesão ser feita pelo gestor da Unidade-pai, o plano já adquire de imediato o status ATIVO;
+- (~~RN_PENT_2_6~~) (REVOGADO) Se um Plano de Entregas for concluído/cancelado, e possuir planos vinculados, estes também serão concluídos/cancelados automaticamente;
+- (~~RN_PENT_2_7~~) (REVOGADO) Em caso de adesão, os campos 'inicio', 'fim', 'planejamento_id', e 'cadeia_valor_id', deverão ser sempre iguais aos do plano-pai; portanto, quando um Plano de Entregas próprio sofrer alteração em um desses campos, todos os planos a ele vinculados deverão ser atualizados também;
+- (~~RN_PENT_3_3~~) (REVOGADO) Se a Unidade A tem um plano de entrega próprio e a Unidade B aderiu ao plano de A, a Unidade C pode aderir ao plano de B e só a ele; (Hierarquia considerada: A -> B -> C)
+- (~~RN_PENT_4_1~~) (REVOGADO) Ação: ADERIR (exclusivamente para planos vinculados)
     . o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND"; ou
-    . o usuário logado precisa ser gestor da Unidade ou da sua Unidade-pai, ou uma destas ser sua Unidade de lotação e ele possuir a capacidade "MOD_PENT_ADR"; (RN_PENT_2_4) e
-    . a Unidade do plano-pai precisa ser a Unidade-pai da Unidade do plano vinculado, e o plano-pai precisa estar com o status ATIVO; (RN_PENT_2_3) (RN_PENT_3_3) e
+    . o usuário logado precisa ser gestor da Unidade ou da sua Unidade-pai, ou uma destas ser sua Unidade de lotação e ele possuir a capacidade "MOD_PENT_ADR"; [RN_PENT_2_4] e
+    . a Unidade do plano-pai precisa ser a Unidade-pai da Unidade do plano vinculado, e o plano-pai precisa estar com o status ATIVO; [RN_PENT_2_3] [RN_PENT_3_3] e
     . a Unidade não possua plano de entrega com o status ATIVO no mesmo período do plano ao qual está sendo feita a adesão;
-- (RN_PENT_3_1) REVOGADO Quando um Plano de Entregaqs voltar no status, e possuir outros Planos de Entrega a ele vinculados, no status ATIVO, estes deverão ir para o status SUSPENSO;
-- (RI_PENT_6) REVOGADO Na adesão a um Plano de Entregas:
+- (~~RN_PENT_3_1~~) (REVOGADO) Quando um Plano de Entregaqs voltar no status, e possuir outros Planos de Entrega a ele vinculados, no status ATIVO, estes deverão ir para o status SUSPENSO;
+- (~~RI_PENT_6~~) (REVOGADO) Na adesão a um Plano de Entregas:
     . o input-search dos planos de entregas exibirá apenas os ativos da Unidade-pai da Unidade selecionada;
     . a listagem dos planos de entregas não exibirá as opções de filtro.
+- (~~RI_PENT_1~~) (REVOGADO) O botão Aderir, na toolbar, deverá ser exibido sempre, mas para ficar habilitado:
+    - o usuário logado precisa ser gestor da Unidade selecionada ou da sua Unidade-pai, ou uma destas ser sua Unidade de lotação e ele
+      possuir a capacidade "MOD_PENT_ADR" [RN_PENT_2_4]; e
+    - a Unidade-pai da Unidade selecionada precisa possuir plano de entrega com o status ATIVO, que já não tenha sido vinculado pela Unidade selecionada;
+- (~~RI_PENT_2~~) (REVOGADO) O botão Aderir, nas linhas do grid, deverá aparecer num plano somente se:
+    - o plano estiver com o status Ativo; e
+    - a Unidade do plano for a Unidade-pai da Unidade selecionada pelo usuário; e
+    - se o usuário for Gestor da Unidade selecionada, ou ela for sua lotação e ele possuir a capacidade "MOD_PENT_ADR" ; e
+    - se a Unidade selecionada não possuir plano de entrega Ativo no mesmo período do plano em questão;
 
 Planos de Entrega sigilosos (Ainda não implementado)
 
@@ -428,14 +433,4 @@ Planos de Entrega sigilosos (Ainda não implementado)
 - Se o Plano de Entregas for parcialmente sigiloso, as entregas não sigilosas poderão ser visualizadas por quem puder visualizar o Plano de Entregas, mas as sigilosas só poderão ser visualizadas pelo gestor da sua Unidade e pelos servidores que as possuirem em seus respectivos Planos de Trabalho;
 - Somente o gestor da Unidade do Plano de Entregas deve ser capaz de adicionar uma entrega sigilosa a um plano de trabalho;
 - Um Plano de Entregas pode ser sigiloso, e nesse caso todas as suas entregas são automaticamente sigilosas, ou possuir apenas algumas de suas entregas como sigilosas (plano parcialmente sigiloso);
-- Adesão a planos sigilosos
 
-(RI_PENT_1) REVOGADO O botão Aderir, na toolbar, deverá ser exibido sempre, mas para ficar habilitado:
-    - o usuário logado precisa ser gestor da Unidade selecionada ou da sua Unidade-pai, ou uma destas ser sua Unidade de lotação e ele
-      possuir a capacidade "MOD_PENT_ADR" (RN_PENT_2_4); e
-    - a Unidade-pai da Unidade selecionada precisa possuir plano de entrega com o status ATIVO, que já não tenha sido vinculado pela Unidade selecionada;
-(RI_PENT_2) REVOGADO O botão Aderir, nas linhas do grid, deverá aparecer num plano somente se:
-    - o plano estiver com o status Ativo; e
-    - a Unidade do plano for a Unidade-pai da Unidade selecionada pelo usuário; e
-    - se o usuário for Gestor da Unidade selecionada, ou ela for sua lotação e ele possuir a capacidade "MOD_PENT_ADR" ; e
-    - se a Unidade selecionada não possuir plano de entrega Ativo no mesmo período do plano em questão;
