@@ -1,7 +1,8 @@
 <div id="contentToConvert">
   <grid [items]="items" [title]="isModal ? '' : title">
     <columns>
-      <column title="" [template]="columnDados">
+      <button class="btn btn-danger" (click)="convetToPDF()">Imprimir<i class="bi bi-filetype-pdf ms-2 iconPDF" ></i></button>
+      <column title="Currículum" [template]="columnDados">
         <ng-template let-row="row" #columnDados>
           <div class="row">
             <div class="col-2 text-center">
@@ -152,7 +153,7 @@
               </separator>
               <separator title="Hard skills">
                 <div class="row my-2">
-                  <div class="col-3">
+                  <div class="col-5">
                     <strong>Capacitações internas</strong><br>
                     <div *ngIf="row.historico_atividade_interna.length; else semCapacInterna" class="one-per-line">
                       <span *ngFor="let atividade of row.historico_atividade_interna">{{atividade.capacidade_tecnica.nome}}</span>
@@ -162,7 +163,7 @@
                       Sem capacitações internas
                     </ng-template>
                   </div>
-                  <div class="col-3">
+                  <div class="col-4">
                     <strong>Capacitações externas</strong><br>
                     <div *ngIf="row.historico_atividade_externa.length; else semCapacExterna">
                       <span *ngFor="let atividade of row.historico_atividade_externa">{{atividade.area_atividade_externa?.nome}}</span>
@@ -187,13 +188,15 @@
               </separator>
             </div>
           </div>
+         
         </ng-template>
       </column>
+      <!--column title="Detalhes" [template]="columnDetalhes">
+      <ng-template let-row="row" #columnDetalhes>
+        <button class="btn btn-sm btn-outline-info me-2" (click)="showCurriculumDetalhes2(row)"><i class="bi bi-eye"></i></button>
+      </ng-template>
+    </column-->
     </columns>
+
   </grid>
-</div>
-<div class="row mt-3">
-  <div class="col-lg-2">
-    <button type="button" class="btn btn-danger" (click)="convetToPDF()">PDF</button>
-  </div>
 </div>
