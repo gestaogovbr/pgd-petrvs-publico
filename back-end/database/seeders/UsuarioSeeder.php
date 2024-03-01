@@ -149,6 +149,14 @@ class UsuarioSeeder extends Seeder
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
                 'sexo' => 'MASCULINO',
             ],
+            [
+                'email' => 'jose.bogdan@prf.gov.br',
+                'nome' => 'Jose Marcelo Maizman Bogdan',
+                'cpf' => '23049551852',
+                'apelido' => 'Marcelo Maizman',
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+                'sexo' => 'MASCULINO',
+            ],
         ];
 
         // Operação de inserção de usuários desenvolvedores

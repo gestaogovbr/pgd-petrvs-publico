@@ -67,18 +67,18 @@ export class CurriculumPesquisaListComponent extends PageListBase<CurriculumProf
   }
 
   public filterWhere = (filter: FormGroup) => {
-    let form: any = filter.value;
+    let form: any = filter.value; 
     let result: any[] = [];
-    if (form.estado?.length) {
+    if (form.estado?.length && !form.cidade_id?.length) {
       result.push(["uf", "==", form.estado]);
     }
-    if (form.cidade?.length) {
+    if (form.cidade_id?.length) {
       result.push(["cidade_id", "==", form.cidade_id]);
     }
     if (form.estado_civil?.length) {
       result.push(["estado_civil", "==", form.estado_civil]);
     }
-    if (form.filhos?.length) {
+    if (form.filhos.length) {
       result.push(["filhos", "==", form.filhos]);
     }
     if (form.idioma?.length) {
