@@ -72,39 +72,39 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
   }
 
   public filterWhere = (filter: FormGroup) => {
-    let form: any = filter.value;
+    let form: any = filter.value; 
     let result: any[] = [];
-    if (form.estado?.length) {
+    if (form.estado?.length && !form.cidade_id?.length) {
       result.push(["uf", "==", form.estado]);
     }
-    if (form.cidade?.length) {
+    if (form.cidade_id?.length) {
       result.push(["cidade_id", "==", form.cidade_id]);
     }
     if (form.estado_civil?.length) {
       result.push(["estado_civil", "==", form.estado_civil]);
     }
-    if (form.filhos?.length) {
+    if (form.filhos.length) {
       result.push(["filhos", "==", form.filhos]);
     }
     if (form.idioma?.length) {
       result.push(["idioma", "==", form.idioma]);
     }
-    if (form.area_conhecimento_id?.length) {
+    if (form.area_conhecimento_id?.length && !form.curso_id?.length) {
       result.push(["area_conhecimento_id", "==", form.area_conhecimento_id]);
     }
     if (form.curso_id?.length) {
       result.push(["curso_id", "==", form.curso_id]);
     }
-    if (form.titulo_id?.length) {
+    /*if (form.titulo_id?.length) {
       result.push(["titulo_id", "==", form.titulo_id]);
-    }
+    }*/
     if (form.grupo_especializado_id?.length) {
       result.push(["grupo_especializado_id", "==", form.grupo_especializado_id]);
     }
     if (form.funcao_id?.length) {
       result.push(["funcao_id", "==", form.funcao_id]);
     }
-    if (form.area_tematica_id?.length) {
+    if (form.area_tematica_id?.length && !form.capacidade_tecnica_id?.length) {
       result.push(["area_tematica_id", "==", form.area_tematica_id]);
     }
     if (form.capacidade_tecnica_id?.length) {
@@ -143,11 +143,11 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
     this.cdRef.detectChanges();
   }
 
-  public onTituloChange() {
+  /*public onTituloChange() {
     let titulo = this.lookup.TITULOS_CURSOS.find(x => x.key == this.filter!.controls.titulo_id.value);
     this.cursoWhere = [['area_id', '==', this.filter!.controls.area_conhecimento_id.value], ['titulo', '==', titulo?.key]];
     this.cdRef.detectChanges();
-  }
+  }*/
 
   public dynamicButtons(row: any): ToolbarButton[] {
     const btns = [];

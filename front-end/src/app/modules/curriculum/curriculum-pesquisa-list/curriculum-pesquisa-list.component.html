@@ -34,9 +34,9 @@
         <div class="col-8">
           <separator title="Formação Acadêmica">
             <div class="row">
-              <input-select [size]="4" label="Área de conhecimento" icon="fas fa-user-graduate" controlName="area_conhecimento_id" [control]="filter!.controls.area_conhecimento_id" [dao]="areaDao" (change)="onAreaConhecimentoChange()"></input-select>
-              <input-select [size]="4" label="Titulo" icon="bi bi-mortarboard-fill" controlName="titulo_id" [control]="filter!.controls.titulo_id" [items]="lookup.TITULOS_CURSOS" (change)="onTituloChange()"></input-select>
-              <input-select [size]="4" label="Curso" icon="fas fa-graduation-cap" controlName="curso_id" [control]="filter!.controls.curso_id" [dao]="cursoDao" [where]="cursoWhere"></input-select>
+              <input-select [size]="6" label="Área de conhecimento" icon="fas fa-user-graduate" controlName="area_conhecimento_id" [control]="filter!.controls.area_conhecimento_id" [dao]="areaDao" (change)="onAreaConhecimentoChange()"></input-select>
+              <!--input-select [size]="4" label="Titulo" icon="bi bi-mortarboard-fill" controlName="titulo_id" [control]="filter!.controls.titulo_id" [items]="lookup.TITULOS_CURSOS" (change)="onTituloChange()"></input-select-->
+              <input-select [size]="6" label="Curso" icon="fas fa-graduation-cap" controlName="curso_id" [control]="filter!.controls.curso_id" [dao]="cursoDao" [where]="cursoWhere"></input-select>
             </div>
           </separator>
         </div>
