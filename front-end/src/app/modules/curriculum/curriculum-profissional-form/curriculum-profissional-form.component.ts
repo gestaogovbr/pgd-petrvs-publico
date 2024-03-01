@@ -40,7 +40,7 @@ import { HistoricoCursoInternoCurriculum } from 'src/app/models/historico-curso-
 import { HistoricoCursoExternoCurriculumDaoService } from 'src/app/dao/historico-curso-externo-curriculum-dao.service';
 import { HistoricoCursoExternoCurriculum } from 'src/app/models/historico-curso-externo-currriculum.model';
 import { CapacidadeTecnicaDaoService } from 'src/app/dao/capacidade-tecnica-dao.service';
-import { ConsoleLogger } from '@angular/compiler-cli';
+import { ConsoleLogger, constructorParametersDownlevelTransform } from '@angular/compiler-cli';
 import { HistoricoAtividadeInternaCurriculumDaoService } from 'src/app/dao/historico-atividade-interna-curriculum-dao.service';
 import { textChangeRangeIsUnchanged } from 'typescript';
 
@@ -127,6 +127,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public curriculumID: string = "";
   public curriculumProfissionalID: string = "";
   public curriculuns: Curriculum[] = [];
+ 
 
   constructor(public injector: Injector) {
     super(injector, CurriculumProfissional, CurriculumProfissionalDaoService);
@@ -222,20 +223,30 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   }
 
   async ngOnInit(): Promise<void> {
-    
-    this.curriculumDao?.query({ where: [['usuario_id', '==', this.auth.usuario?.id]] }).getAllIds().then((x) => {
-      if (x.rows?.length) {
-        this.curriculumID = x.rows[0].id;
-      } else {
-        this.dialog.confirm("Preencher dados pessoais", "É necessário preencher dados pessoais");
-      }
-    });
-    // console.log(this.curriculuns)  
+  //  super.ngOnInit();
     for (let i = 1980; i <= (new Date()).getFullYear(); i++) {
       this.anos.push(Object.assign({}, { key: i, value: (i.toString()) }));
     }
     this.lotacaoAtual?.setValue(this.auth.unidade?.id)
     const userUnidade = this.auth.unidade;
+    
+    await this.curriculumDao?.query({ where: [['usuario_id', '==', this.auth.usuario?.id]] }).getAll().then(async (curriculum) => {
+      if (curriculum.length) {
+        this.curriculumID = curriculum[0].id;
+        await this.dao?.query({ where: [['curriculum_id', '==', this.curriculumID]], join: this.join }).asPromise().then( resposta => {
+            this.entity = resposta ? resposta[0] : new CurriculumProfissional();
+            resposta ? this.curriculumProfissionalID = resposta[0].id : '';
+        });
+        this.initializeData(this.form!);
+      } else {
+        this.dialog.confirm("Preencher dados pessoais", "É necessário preencher dados pessoais");
+        return;
+      }
+    });
+    
+   
+    // console.log(this.curriculuns)  
+   
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -271,34 +282,40 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   }
 
   public async initializeData(form: FormGroup) {
-    const curriculunsProfissional = await this.dao?.query({ where: ['curriculum_id', '==', this.curriculumID], join: this.join }).asPromise();
-    curriculunsProfissional?.length ? this.curriculumProfissionalID = curriculunsProfissional[0].id : "";
-    let entity = curriculunsProfissional?.length ? curriculunsProfissional[0] : new CurriculumProfissional();//this.entity
+    //console.log('initializeData',this.curriculumID)
+   // const curriculunsProfissional = await this.dao?.query({ where: [['curriculum_id', '==', this.curriculumID]], join: this.join }).asPromise();
+    //const curriculunsProfissional = await this.dao?.query({ where: [['curriculum_id', '==', this.curriculumID]], join: this.join }).getAll();
+    //curriculunsProfissional?.length ? this.curriculumProfissionalID = curriculunsProfissional[0].id : "";
+    //let entity = curriculunsProfissional?.length ? curriculunsProfissional[0] : new CurriculumProfissional();//this.entity
     //curriculunsProfissional?.length ? (this.id = curriculunsProfissional[0].id) : (this.id = "");
-    entity.historico_atividade_interna.length > 0 ? this.form?.controls.radioAtividadeInterna.setValue(true) : this.form?.controls.radioAtividadeInterna.setValue(false);
-    entity.historico_atividade_externa.length > 0 ? this.form?.controls.radioAtividadeExterna.setValue(true) : this.form?.controls.radioAtividadeExterna.setValue(false);
-    entity.historico_docencia_interna.length > 0 ? this.form?.controls.radioDocenciaInterna.setValue(true) : this.form?.controls.radioDocenciaInterna.setValue(false);
-    entity.historico_docencia_externa.length > 0 ? this.form?.controls.radioDocenciaExterna.setValue(true) : this.form?.controls.radioDocenciaExterna.setValue(false);
-    if(entity.pgd_interesse != ''){
-      const interesse = this.lookup.getLookup(this.lookup.PG_PRF, entity.pgd_interesse);
-      this.form?.controls.radioInteresseProgramaGestao.setValue(true); 
-      this.escolhaInteresseProgramaGestao?.setValue(interesse?.key)
-    }else{
-      this.form?.controls.radioInteresseBNT.setValue(false);
+    if(this.entity){
+      this.entity.historico_atividade_interna.length > 0 ? this.form?.controls.radioAtividadeInterna.setValue(true) : this.form?.controls.radioAtividadeInterna.setValue(false);
+      this.entity.historico_atividade_externa.length > 0 ? this.form?.controls.radioAtividadeExterna.setValue(true) : this.form?.controls.radioAtividadeExterna.setValue(false);
+      this.entity.historico_docencia_interna.length > 0 ? this.form?.controls.radioDocenciaInterna.setValue(true) : this.form?.controls.radioDocenciaInterna.setValue(false);
+      this.entity.historico_docencia_externa.length > 0 ? this.form?.controls.radioDocenciaExterna.setValue(true) : this.form?.controls.radioDocenciaExterna.setValue(false);
+      if(this.entity.pgd_interesse != ''){
+        const interesse = this.lookup.getLookup(this.lookup.PG_PRF, this.entity.pgd_interesse);
+        this.form?.controls.radioInteresseProgramaGestao.setValue(true); 
+        this.escolhaInteresseProgramaGestao?.setValue(interesse?.key)
+      }else{
+        this.form?.controls.radioInteresseBNT.setValue(false);
+      }
+      if(this.entity.pgd_inserido != ''){
+        const inserido = this.lookup.getLookup(this.lookup.PG_PRF, this.entity.pgd_inserido);
+        this.form?.controls.radioProgramaGestao.setValue(true); 
+        this.escolhaRadioProgramaGestao?.setValue(inserido?.key)
+      }else{
+        this.form?.controls.radioProgramaGestao.setValue(false);
+      }
+      await this.loadData(this.entity, this.form!);
     }
-    if(entity.pgd_inserido != ''){
-      const inserido = this.lookup.getLookup(this.lookup.PG_PRF, entity.pgd_inserido);
-      this.form?.controls.radioProgramaGestao.setValue(true); 
-      this.escolhaRadioProgramaGestao?.setValue(inserido?.key)
-    }else{
-      this.form?.controls.radioProgramaGestao.setValue(false);
-    }
-   
-    await this.loadData(entity, this.form!);
+
+    
   }
 
   public async saveData(form: IIndexable): Promise<CurriculumProfissional> {
-    const curriculuns = await this.curriculumDao?.query({ where: [['usuario_id', '==', this.auth.usuario?.id]] }).asPromise();
+
+    //const curriculuns = await this.curriculumDao?.query({ where: [['usuario_id', '==', this.auth.usuario?.id]] }).asPromise();
 
     return new Promise<CurriculumProfissional>((resolve, reject) => {
       // this.entity!.usuario_id=this.auth.usuario!.id;
@@ -306,8 +323,8 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       //curriculum.usuario_id=this.auth.usuario?.id;
       curriculumProfissional = this.util.fillForm(curriculumProfissional, this.form!.value);
 
-      curriculumProfissional.curriculum_id = curriculuns[0].id;
-      this.curriculumProfissionalID != "" ? (curriculumProfissional.id = this.curriculumProfissionalID) : '';
+      curriculumProfissional.curriculum_id = this.curriculumID;
+      this.curriculumProfissionalID != "" ? (curriculumProfissional.id = this.curriculumProfissionalID) : "";
       curriculumProfissional.viagem_nacional = (this.form?.controls.viagem_nacional.value ? 1 : 0);
       curriculumProfissional.viagem_internacional = (this.form?.controls.viagem_internacional.value ? 1 : 0);
       curriculumProfissional.interesse_bnt = (this.form?.controls.interesse_bnt.value ? 1 : 0);

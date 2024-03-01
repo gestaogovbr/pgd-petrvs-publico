@@ -51,7 +51,7 @@
         <li class="nav-item">
           <a [class]="menuItemClass('nav-link', { route: ['home'] })" aria-current="page" role="button" (click)="gb.goHome()">Home</a>
         </li>
-        <ng-container *ngFor="let item of menu">
+        <ng-container *ngFor="let item of modulo">
           <li *ngIf="item && (!item.permition?.length || auth.hasPermissionTo(item.permition))" class="nav-item" [ngClass]="item.menu?.length ? 'dropdown' : '' ">
             <a [class]="menuItemClass('nav-link' + (!item.route ? ' dropdown-toggle' : ''), item)" role="button" [attr.id]="item.id" role="button" [attr.data-bs-target]="item.menu?.length ? '' : '.navbar-collapse.show'" [attr.data-bs-toggle]="item.menu?.length ? 'dropdown' : 'collapse'" aria-expanded="false" (click)="openModule(item)">
               {{ item.name }}
@@ -255,14 +255,47 @@
       </div>
       <div class="modal-body">
         <ng-scrollbar style="height: 500px;">
-
           <!-- Repliacar essa div para cada pessoa-->
-          <div class="d-flex membro mb-3">
-            <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
-            <div class="ms-3">
-              <b>Nome completo</b><br>
-              <small>Unidade</small><br>
-              <i>Cargo</i>
+          <div class="ms-3">
+            <div class="d-flex membro mb-3">
+              <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
+              <div class="ms-3">
+                <b>Genisson</b><br>
+                <small>SPRF </small><br>
+                <i>Desenvolvedor</i>
+              </div>
+            </div>
+            <div class="d-flex membro mb-3">
+              <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
+              <div class="ms-3">
+                <b>Farias</b><br>
+                <small>SPRF </small><br>
+                <i>Desenvolvedor</i>
+              </div>
+            </div>
+            <div class="d-flex membro mb-3">
+              <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
+              <div class="ms-3">
+                <b>Carlos Henrique Alves Lopes</b><br>
+                <small>SPRF/SC - 4a Del</small><br>
+                <i>Desenvolvedor</i>
+              </div>
+            </div>
+            <div class="d-flex membro mb-3">
+              <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
+              <div class="ms-3">
+                <b>Marcelo</b><br>
+                <small>SPRF </small><br>
+                <i>Desenvolvedor</i>
+              </div>
+            </div>
+            <div class="d-flex membro mb-3">
+              <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
+              <div class="ms-3">
+                <b>Marian</b><br>
+                <small>SPRF </small><br>
+                <i>Desenvolvedor</i>
+              </div>
             </div>
           </div>
 

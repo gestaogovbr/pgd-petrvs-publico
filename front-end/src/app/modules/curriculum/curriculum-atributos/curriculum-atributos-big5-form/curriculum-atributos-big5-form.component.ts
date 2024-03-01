@@ -16,11 +16,11 @@ import { InputRadioComponent } from 'src/app/components/input/input-radio/input-
 import { Chart,registerables } from 'chart.js';
 
 @Component({
-  selector: 'curriculum-atributosbig5-form',
-  templateUrl: './curriculum-atributosbig5-form.component.html',
-  styleUrls: ['./curriculum-atributosbig5-form.component.scss']
+  selector: 'curriculum-atributos-big5-form',
+  templateUrl: './curriculum-atributos-big5-form.component.html',
+  styleUrls: ['./curriculum-atributos-big5-form.component.scss']
 })
-export class CurriculumAtributosbig5FormComponent extends PageFormBase<QuestionarioResposta, QuestionarioRespostaDaoService>{
+export class CurriculumAtributosBig5FormComponent extends PageFormBase<QuestionarioResposta, QuestionarioRespostaDaoService>{
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('divb5', { static: false }) public divb5?: HTMLDivElement;
   @ViewChild('divextroversao', { static: false }) public divextroversao?: HTMLDivElement;

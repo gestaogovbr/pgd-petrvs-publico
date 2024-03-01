@@ -10,6 +10,7 @@ import autoTable from 'jspdf-autotable';
 import html2canvas from 'html2canvas';
 import { HttpClient } from '@angular/common/http'; 
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { QuestionarioPergunta } from 'src/app/models/questionario-pergunta.model';
 
 @Component({
   selector: 'curriculum-pesquisa-list-usuario',
@@ -26,9 +27,24 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
 
   public curriculum?: any;
   public imagem64 : string ='';
+  public questionarios : any[]=[];
 
   public get items(): CurriculumProfissional[] {
     return [this.curriculum]
+  }
+
+  public getPerguntas(){
+    this.curriculum = this.metadata?.curriculum;
+    if(this.curriculum.usuario.questionarios_respostas.length){
+      this.curriculum.usuario.questionarios_respostas.forEach((element: any) => {
+         element.questionario.perguntas = element.questionario.perguntas.sort((a : any, b:any) => a.sequencia! < b.sequencia! ? -1 : 1);
+         this.questionarios.push({'codigo' : element.questionario.codigo, 'perguntas': element.questionario.perguntas} );
+         }
+      );
+    }
+    console.log('questionarios',this.questionarios)
+    console.log('dados',this.curriculum)
+    //this.curriculum = this.metadata?.curriculum;
   }
 
   public getRow(row: any) {
@@ -47,9 +63,9 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
 
   public ngOnInit() {
     super.ngOnInit();
-    this.curriculum = this.metadata?.curriculum;
-    //this.imagemURL = this.auth.usuario?.url_foto || '';
-    this.imageToBase64()
+    this.getPerguntas();
+    this.imageToBase64();
+   
     
   }
 
@@ -70,15 +86,15 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
       const heightLeft = imgHeight;
 
       const contentDataURL = canvas.toDataURL('image/png')
-      const pdf = new jspdf('l', 'mm', 'a4'); // A4 size page of PDF
+      const pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF
       const position = 0;
       /*pdf.setProperties({
         title:'Dados do usuario',
         subject:'Curriculum - Petrvs',
         author:'Petrvs', 
       })*/
-      //pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight)
-      pdf.addImage(contentDataURL, 'PNG', 0, 0, 295, 208)
+      pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight)
+      //pdf.addImage(contentDataURL, 'PNG', 0, 0, 208, 295)
       const blob = pdf.output('blob');
       window.open(URL.createObjectURL(blob));
       //pdf.output('dataurlnewwindow')
