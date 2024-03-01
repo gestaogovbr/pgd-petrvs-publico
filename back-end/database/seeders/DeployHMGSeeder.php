@@ -15,27 +15,14 @@ class DeployHMGSeeder extends Seeder
     public function run()
     {
         $this->call([
-            //CidadeSeeder::class,
-            //FeriadoSeeder::class,
-           // PerfilSeeder::class,
+            CidadeSeeder::class,
+            FeriadoSeeder::class,
             TipoCapacidadeSeeder::class,
-//            PainelUsuarioSeeder::class,
-//            EntidadeSeeder::class,
-//            UnidadeSeeder::class,
-//            UsuarioSeeder::class,
-//            AreaConhecimentoSeeder::class,
-//            TipoCursoSeeder::class,
-//            CursoSeeder::class,
-//            MateriaSeeder::class,
-//            CargoSeeder::class,
-//            FuncaoSeeder::class,
-//            CentroTreinamentoSeeder::class,
-//            GrupoEspecializadoSeeder::class,
-//            AreaTematicaSeeder::class,
-//            AreaAtividadeExternaSeeder::class,
-//            CapacidadeTecnicaSeeder::class,
-//            IN24_2023Seeder::class,
-//            TemplateSeeder::class,
+            CapacidadeSeeder::class,
+            PainelUsuarioSeeder::class,
+            In24_2023Seeder::class,
+            TemplateSeeder::class,
+            NomenclaturaSeeder::class
 
             /*
             Após a execução das Seeds acima, executar a rotina de integração com o comando

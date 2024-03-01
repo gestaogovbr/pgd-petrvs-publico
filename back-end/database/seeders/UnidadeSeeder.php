@@ -25,17 +25,13 @@ class UnidadeSeeder extends Seeder
     public function run()
     {
         $unidade_raiz = array(
-          array(
             "id" => "4f705d83-5808-4240-8b92-39ca88139076",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => NULL,
             "codigo" => "1",
-            #"codigo" => "3037",
             "sigla" => "MGI",
-            #"sigla" => "SENAPPEN",
             "nome" => "Ministério da Gestão e da Inovação em Serviços Públicos",
-            #"nome" => "Secretaria Nacional de Políticas Penais",
             "instituidora" => 1,
             "path" => NULL,
             "texto_complementar_plano" => NULL,
@@ -54,12 +50,7 @@ class UnidadeSeeder extends Seeder
             "cidade_id" => $this->brasilia->id,
             "unidade_pai_id" => NULL,
             "entidade_id" => "52d78c7d-e0c1-422b-b094-2ca5958d5ac1",
-          ),
         );
-
-        foreach($unidade_raiz as $u){
-            Unidade::insert($u);
-        }
-
+        Unidade::upsert($unidade_raiz, "id");
     }
 }

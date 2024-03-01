@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Afastamento;
-use App\Services\AfastamentoService;
-use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 

@@ -11,10 +11,10 @@ class ErrorController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'QUERY':
-                if (!$usuario->hasPermissionTo('MOD_LOGS')) throw new ServerException("CapacidadeSearchText", "Consulta não realizada");
+                if (!$usuario->hasPermissionTo('MOD_DEV_TUDO')) throw new ServerException("CapacidadeSearchText", "Consulta não realizada");
                 break;
             case 'GETBYID':
-                if (!$usuario->hasPermissionTo('MOD_LOGS')) throw new ServerException("CapacidadeSearchText", "Consulta não realizada");
+                if (!$usuario->hasPermissionTo('MOD_DEV_TUDO')) throw new ServerException("CapacidadeSearchText", "Consulta não realizada");
                 break;
         }
     }

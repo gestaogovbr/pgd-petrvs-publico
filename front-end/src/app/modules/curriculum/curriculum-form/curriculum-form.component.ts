@@ -115,11 +115,11 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   }
 
   public async initializeData(form: FormGroup) {
-    const curriculuns = await this.dao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id], join: this.join }).asPromise();
+    const curriculuns = await this.dao?.query({ where: [['usuario_id', '==', this.auth.usuario?.id]], join: this.join }).asPromise();
     let entity = curriculuns?.length ? curriculuns[0] : new Curriculum();//this.entity
     curriculuns?.length ? (this.id = curriculuns[0].id) : (this.id = "");
     const cidade = entity.cidade_id != '' ? await this.cidadeDao?.getById(entity.cidade_id) : null;
-    //console.log('CIDADE',cidade)
+    console.log('USER ID',this.auth.usuario?.id)
     //this.form?.controls.estados.setValue(this.lookup.UF.find(x => x.key == 'AM'));//cidade.uf));
     let uf = this.lookup.getLookup(this.lookup.UF, cidade?.uf);
     this.form?.controls.estados.setValue(uf?.key);//cidade.uf));

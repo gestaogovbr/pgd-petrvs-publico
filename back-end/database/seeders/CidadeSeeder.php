@@ -14,6 +14,7 @@ class CidadeSeeder extends Seeder
      *
      * @return void
      */
+
     public function run()
     {
         $utilService = new UtilService();
@@ -36,32 +37,13 @@ class CidadeSeeder extends Seeder
                 $data[$key]['created_at'] = $timenow;
                 $data[$key]['updated_at'] = $timenow;
             }
-            Cidade::insert($data);
+            Cidade::upsert($data, "id");
+
+            // foreach ($data as $cidade) {
+            //     Cidade::firstOrCreate(['id' => $cidade['id']], $cidade);
+            // }
+
+
         }
-        // Explicação e fonte:
-        // https://medium.com/emanuelg-blog/programa%C3%A7%C3%A3o-orientada-
-        // a-objetos-em-php-o-m%C3%A9todo-construtor-597b83a7d3da
     }
 }
-
-// Modelo inicial
-    /*
-    Modelo inicial de seeder
-
-    // carrega o arquivo CIDADES.CSV para a tabela CIDADES no banco de dados
-    $csv = array_map('str_getcsv', file('database/seeders/arquivos_csv/cidades.csv'));
-    array_shift($csv); // exclui a primeira linha do arquivo (os cabeçalhos)
-    foreach($csv as $linha)
-    {
-        $registro = str_getcsv($linha[0], ';');
-        $cidade = new Cidade();
-        $cidade->fill([
-            'codigo_ibge' => $registro[0],
-            'uf' => $registro[1],
-            'nome' => mb_convert_encoding($registro[2], "UTF-8", "ISO-8859-1"),
-            'tipo' => $registro[3],
-            'timezone' => $registro[4]
-        ]);
-        $cidade->save();
-    }
-    */

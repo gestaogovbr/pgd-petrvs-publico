@@ -6983,7 +6983,6 @@ class Property {
   getDpi() {
     return 96.0; // TODO: compute?
   }
-
   getRem() {
     return this.document.rootEmSize;
   }
@@ -7816,13 +7815,11 @@ class Rotate {
     var rad = angle.getRadians();
     point.applyTransform([1, 0, 0, 1, cx || 0.0, cy || 0.0 // this.p.y
     ]);
-
     point.applyTransform([Math.cos(rad), Math.sin(rad), -Math.sin(rad), Math.cos(rad), 0, 0]);
     point.applyTransform([1, 0, 0, 1, -cx || 0.0, -cy || 0.0 // -this.p.y
     ]);
   }
 }
-
 class Scale {
   constructor(_, scale, transformOrigin) {
     this.type = 'scale';
@@ -8071,7 +8068,6 @@ class Element {
       }
     });
   }
-
   getAttribute(name) {
     var createIfNotExists = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
     var attr = this.attributes[name];
@@ -9436,7 +9432,6 @@ class TextElement extends RenderedElement {
       ctx.strokeText(renderText, x, y);
     } // }
   }
-
   applyAnchoring() {
     if (this.textChunkStart >= this.leafTexts.length) {
       return;
@@ -10307,7 +10302,6 @@ class AnimateElement extends Element {
     if (initialUnits === '%') {
       newValue *= 100.0; // numValue() returns 0-1 whereas properties are 0-100
     }
-
     return "".concat(newValue).concat(initialUnits);
   }
   update(delta) {
@@ -10704,7 +10698,6 @@ class TextPathElement extends TextElement {
       // ctx.stroke();
       // ctx.closePath();
     });
-
     if (textDecoration === 'underline') {
       ctx.lineWidth = fontSize / 20;
       ctx.strokeStyle = fill;
@@ -11399,7 +11392,6 @@ class StyleElement extends Element {
     .map(_ => _.textContent).join('').replace(/(\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/)|(^[\s]*\/\/.*)/gm, '') // remove comments
     .replace(/@import.*;/g, '') // remove imports
     );
-
     var cssDefs = css.split('}');
     cssDefs.forEach(_ => {
       var def = _.trim();
@@ -12727,6 +12719,84 @@ var O,
   }(l),
   N = ((O = {})[_.MOVE_TO] = 2, O[_.LINE_TO] = 2, O[_.HORIZ_LINE_TO] = 1, O[_.VERT_LINE_TO] = 1, O[_.CLOSE_PATH] = 0, O[_.QUAD_TO] = 4, O[_.SMOOTH_QUAD_TO] = 2, O[_.CURVE_TO] = 6, O[_.SMOOTH_CURVE_TO] = 4, O[_.ARC] = 7, O);
 
+
+/***/ }),
+
+/***/ 61861:
+/*!*******************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/esm/defineProperty.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ _defineProperty)
+/* harmony export */ });
+/* harmony import */ var _toPropertyKey_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./toPropertyKey.js */ 54342);
+
+function _defineProperty(obj, key, value) {
+  key = (0,_toPropertyKey_js__WEBPACK_IMPORTED_MODULE_0__["default"])(key);
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
+}
+
+/***/ }),
+
+/***/ 54031:
+/*!****************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/esm/toPrimitive.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ _toPrimitive)
+/* harmony export */ });
+/* harmony import */ var _typeof_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./typeof.js */ 62569);
+
+function _toPrimitive(input, hint) {
+  if ((0,_typeof_js__WEBPACK_IMPORTED_MODULE_0__["default"])(input) !== "object" || input === null) return input;
+  var prim = input[Symbol.toPrimitive];
+  if (prim !== undefined) {
+    var res = prim.call(input, hint || "default");
+    if ((0,_typeof_js__WEBPACK_IMPORTED_MODULE_0__["default"])(res) !== "object") return res;
+    throw new TypeError("@@toPrimitive must return a primitive value.");
+  }
+  return (hint === "string" ? String : Number)(input);
+}
+
+/***/ }),
+
+/***/ 54342:
+/*!******************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/esm/toPropertyKey.js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ _toPropertyKey)
+/* harmony export */ });
+/* harmony import */ var _typeof_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./typeof.js */ 62569);
+/* harmony import */ var _toPrimitive_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./toPrimitive.js */ 54031);
+
+
+function _toPropertyKey(arg) {
+  var key = (0,_toPrimitive_js__WEBPACK_IMPORTED_MODULE_1__["default"])(arg, "string");
+  return (0,_typeof_js__WEBPACK_IMPORTED_MODULE_0__["default"])(key) === "symbol" ? key : String(key);
+}
 
 /***/ })
 
