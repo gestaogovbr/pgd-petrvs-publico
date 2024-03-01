@@ -35,30 +35,30 @@ class CurriculumProfissionalService extends ServiceBase
         }
         array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'idioma') {
-        $curriculums_filtrados = Curriculum::select('id')->where('idiomas', $condition[2])->get()->toArray();
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        //$curriculums_filtrados = Curriculum::select('id')->whereRaw("JSON_CONTAINS(idiomas, ?, '$.idioma')", [$condition[2]])->get()->toArray();
+        //array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'area_conhecimento_id') {
         $cursos_filtrados = Curso::select('id')->where('area_id', $condition[2])->get()->toArray();
         $curriculums_filtrados = Curriculum::select('id')->whereRelation('graduacoes', fn($q) => $q->whereIn('curso_id', $cursos_filtrados))->get()->toArray();
         array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'curso_id') {
-        $curriculums_filtrados = Curriculum::select('id')->where('idiomas', $condition[2])->get()->toArray();
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        //$curriculums_filtrados = Curriculum::select('id')->where('idiomas', $condition[2])->get()->toArray();
+        //array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'titulo_id') {
-        $curriculums_filtrados = Curriculum::select('id')->where('idiomas', $condition[2])->get()->toArray();
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        //$curriculums_filtrados = Curriculum::select('id')->where('idiomas', $condition[2])->get()->toArray();
+        //array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'grupo_especializado_id') {
-        $curriculums_filtrados = Curriculum::select('id')->where('idiomas', $condition[2])->get()->toArray();
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        //$curriculums_filtrados = Curriculum::select('id')->where('idiomas', $condition[2])->get()->toArray();
+        //array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'funcao_id') {
-        $curriculums_filtrados = Curriculum::select('id')->where('idiomas', $condition[2])->get()->toArray();
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        //$curriculums_filtrados = Curriculum::select('id')->where('idiomas', $condition[2])->get()->toArray();
+        //array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'area_tematica_id') {
-        $curriculums_filtrados = Curriculum::select('id')->where('idiomas', $condition[2])->get()->toArray();
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        //$curriculums_filtrados = Curriculum::select('id')->where('idiomas', $condition[2])->get()->toArray();
+        //array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'capacidade_tecnica_id') {
-        $curriculums_filtrados = Curriculum::select('id')->where('idiomas', $condition[2])->get()->toArray();
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        //$curriculums_filtrados = Curriculum::select('id')->where('idiomas', $condition[2])->get()->toArray();
+        //array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
       } else {
         array_push($where, $condition);
       }
