@@ -12,13 +12,15 @@ import { FuncaoDaoService } from 'src/app/dao/funcao-dao.service';
 import { CapacidadeTecnicaDaoService } from 'src/app/dao/capacidade-tecnica-dao.service';
 import { AreaTematicaDaoService } from 'src/app/dao/area-tematica-dao.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
+import { Curriculum } from 'src/app/models/currriculum.model';
 
 @Component({
   selector: 'app-curriculum-pesquisa-list',
   templateUrl: './curriculum-pesquisa-list.component.html',
   styleUrls: ['./curriculum-pesquisa-list.component.scss']
 })
-export class CurriculumPesquisaListComponent extends PageListBase<CurriculumProfissional, CurriculumProfissionalDaoService>{
+export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, CurriculumDaoService>{
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public cidadeDao: CidadeDaoService;
@@ -33,7 +35,7 @@ export class CurriculumPesquisaListComponent extends PageListBase<CurriculumProf
   public cursoWhere: any[] = [["id", "==", null]];
 
   constructor(public injector: Injector) {
-    super(injector, CurriculumProfissional, CurriculumProfissionalDaoService);
+    super(injector, Curriculum, CurriculumDaoService);
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
     this.areaDao = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService);
     this.cursoDao = injector.get<CursoDaoService>(CursoDaoService);
@@ -55,12 +57,14 @@ export class CurriculumPesquisaListComponent extends PageListBase<CurriculumProf
       area_tematica_id: { default: "" },
       capacidade_tecnica_id: { default: "" },
     });
-    this.orderBy = [['curriculum.usuario.nome','asc']];
-    this.join = ['historico_atividade_interna.capacidade_tecnica.area_tematica', 'historico_atividade_externa.area_atividade_externa', 'historico_curso_interno.curso',
-      'historico_curso_externo.area_atividade_externa', 'historico_docencia_interna.curso', 'historico_docencia_externa.area_atividade_externa', 'historico_funcao.funcao',
-      'historico_funcao.unidade', 'historico_lotacao.unidade', 'curriculum', 'curriculum.usuario', 'curriculum.cidade', 'curriculum.graduacoes',
-      'curriculum.graduacoes.curso', 'curriculum.graduacoes.curso.area_conhecimento', 'grupo_especializado',
-      'curriculum.usuario.questionarios_respostas.questionario.perguntas.questionario_resposta_pergunta'];
+    this.orderBy = [['usuario.nome','asc']];
+    this.join = ['profissional.historico_atividade_interna.capacidade_tecnica.area_tematica',
+                'profissional.historico_atividade_externa.area_atividade_externa', 'profissional.historico_curso_interno.curso',
+                'profissional.historico_curso_externo.area_atividade_externa', 'profissional.historico_docencia_interna.curso',
+                'profissional.historico_docencia_externa.area_atividade_externa', 'profissional.historico_funcao.funcao',
+                'profissional.historico_funcao.unidade', 'profissional.historico_lotacao.unidade','usuario', 'cidade', 
+                'graduacoes','graduacoes.curso', 'graduacoes.curso.area_conhecimento', 'profissional.grupo_especializado',
+                'usuario.questionarios_respostas.questionario.perguntas.questionario_resposta_pergunta'];
   }
 
   ngAfterViewInit() {
@@ -152,6 +156,7 @@ export class CurriculumPesquisaListComponent extends PageListBase<CurriculumProf
   }
 
   public showDetalhesCurriculum(curriculum: CurriculumProfissional) {
+    //console.log(curriculum)
     this.go.navigate({ route: ['raiox', 'detalhe-pesquisa'] }, {
       metadata: {
         curriculum: curriculum

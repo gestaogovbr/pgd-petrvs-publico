@@ -98,10 +98,10 @@
       </ng-template>
       <ng-template let-row="row" #columnNome>
         <span class="text-nowrap d-block">
-          {{row.curriculum.usuario.nome}}
-          <badge color="gray">{{row.ano_ingresso}}</badge>
+          {{row.usuario.nome}}
+          <badge color="gray">{{row.profissional.ano_ingresso}}</badge>
         </span>
-        <span class="micro-text fw-ligh">{{row.curriculum.usuario.email}}</span>
+        <span class="micro-text fw-ligh">{{row.usuario.email}}</span>
       </ng-template>
     </column>
     <column [titleTemplate]="titleEstado" [template]="columnEstado">
@@ -109,12 +109,12 @@
         <strong>Cidade/Estado</strong>
       </ng-template>
       <ng-template let-row="row" #columnEstado>
-        <span class="d-block">{{row.curriculum.cidade.nome}}/{{row.curriculum.cidade.uf}}</span>
+        <span class="d-block">{{row.cidade.nome}}/{{row.cidade.uf}}</span>
       </ng-template>
     </column>
     <column title="Apresentação Pessoal" [template]="columnApresentacao">
       <ng-template let-row="row" #columnApresentacao>
-        <span class="micro-text fw-ligh">{{row.curriculum.apresentacao}}</span>
+        <span class="micro-text fw-ligh">{{row.apresentacao}}</span>
       </ng-template>
     </column>
     <!--column title="Detalhes" [template]="columnDetalhes">
