@@ -92,7 +92,7 @@
                 </column>               
                 <column title="Área do Conhecimento" titleHint="colha a Área de conhecimento." [template]="columnArea" [editTemplate]="editArea">
                     <ng-template let-row="row" #columnArea>
-                       {{row.curso.area_conhecimento.nome}}
+                       {{row.curso?.area_conhecimento?.nome || row.area_conhecimento?.nome}}
                     </ng-template>
                     <ng-template let-row="row" #editArea>
                         <input-search #area [size]="3" [dao]="areaDao" label="Área de conhecimento" [control]="formGraduacao!.controls.area_conhecimento_id" controlName="area_conhecimento_id"></input-search>
@@ -111,7 +111,7 @@
                         {{row.curso.nome}}
                     </ng-template>
                     <ng-template let-row="row" #editCurso>
-                        <input-select #curso [size]="3" label="Curso" icon="fas fa-graduation-cap" controlName="curso_id" fullEntity liveSearch [control]="formGraduacao!.controls.curso_id" [dao]="cursoDao"  [where]="cursoWhere" [addRoute]="{route: ['raiox','cadastros','curso','new']}"></input-select>
+                        <input-select #curso [size]="3" label="Curso" icon="fas fa-graduation-cap" controlName="curso_id"  [control]="formGraduacao!.controls.curso_id" [dao]="cursoDao"  [where]="cursoWhere"  fullEntity liveSearch [addRoute]="{route: ['raiox','cadastros','curso','new']}"></input-select>
                     </ng-template>
                 </column>
                 <column type="options"></column>

@@ -197,7 +197,7 @@ export class AppComponent {
       CURRICULUM_CADASTRO_ATRIBUTOS_SRQ20: { name: this.lex.translate("SRQ-20"), permition: 'MOD_RX_CURR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
       CURRICULUM_CADASTRO_ATRIBUTOS_QVT: { name: this.lex.translate("QVT"), permition: 'MOD_RX_CURR', route: ['raiox', 'qvt'], icon: "" },      
       /* RaioX - Oportunidades */
-      CURRICULUM_OPORTUNIDADES: { name: this.lex.translate("Oportunidades"), permition: 'MOD_RX_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
+      CURRICULUM_OPORTUNIDADES: { name: this.lex.translate("Oportunidades"), permition: 'MOD_RX_OPO', route: ['raiox'], icon: "bi bi-lightbulb-fill" },
       /* RaioX - Outros */
       CURRICULUM_CADASTRO_AREAS_ATIVIDADES_EXTERNAS: { name: this.lex.translate("Áreas de Atividade Externa"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'areaatividadeexterna'], icon: "bi bi-arrows-fullscreen" },
       CURRICULUM_CADASTRO_AREAS_CONHECIMENTO: { name: this.lex.translate("Áreas de Conhecimento"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'areaconhecimento'], icon: "bi bi-mortarboard" },
