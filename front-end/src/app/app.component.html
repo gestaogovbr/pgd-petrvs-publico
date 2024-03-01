@@ -51,7 +51,7 @@
         <li class="nav-item">
           <a [class]="menuItemClass('nav-link', { route: ['home'] })" aria-current="page" role="button" (click)="gb.goHome()">Home</a>
         </li>
-        <ng-container *ngFor="let item of menu">
+        <ng-container *ngFor="let item of modulo">
           <li *ngIf="item && (!item.permition?.length || auth.hasPermissionTo(item.permition))" class="nav-item" [ngClass]="item.menu?.length ? 'dropdown' : '' ">
             <a [class]="menuItemClass('nav-link' + (!item.route ? ' dropdown-toggle' : ''), item)" role="button" [attr.id]="item.id" role="button" [attr.data-bs-target]="item.menu?.length ? '' : '.navbar-collapse.show'" [attr.data-bs-toggle]="item.menu?.length ? 'dropdown' : 'collapse'" aria-expanded="false" (click)="openModule(item)">
               {{ item.name }}
