@@ -637,7 +637,7 @@ class IntegracaoService extends ServiceBase
                   'id' => Uuid::uuid4(),
                   'cpf_ativo' => $self->UtilService->valueOrDefault($servidor['cpf_ativo']),
                   'data_modificacao' => $data_modificacao,
-                  'cpf' => $self->UtilService->valueOrDefault($servidor['cpf'], null),
+                  'cpf' => $self->UtilService->valueOrDefault( $self->UtilService->onlyNumbers($servidor['cpf']), null),
                   'nome' => $nome,
                   'emailfuncional' => $email,
                   'sexo' => $self->UtilService->valueOrDefault($servidor['sexo'], null),
