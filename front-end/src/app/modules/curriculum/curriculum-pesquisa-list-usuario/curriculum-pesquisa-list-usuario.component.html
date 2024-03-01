@@ -1,4 +1,4 @@
-<button class="btn btn-danger" (click)="convetToPDF()">Imprimir<i class="bi bi-filetype-pdf ms-2 iconPDF" ></i></button>
+<button class="btn btn-danger" (click)="convetToPDF()">Imprimir<i class="bi bi-filetype-pdf ms-2 iconPDF"></i></button>
 <div id="contentToConvert">
   <grid [items]="items" [title]="isModal ? '' : title">
     <columns>
@@ -189,48 +189,130 @@
               <separator title="Soft skills">
                 <ng-container *ngFor="let questionario of this.questionarios">
                   <ng-container *ngIf="questionario.codigo == 'SOFTSKILL'">
-                      <div class="row my-2">
-                        <div class="col-lg-3">
-                          <strong>Comunicação</strong><br>
-                          <span>{{questionario.perguntas[0]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                    <div class="row my-2">
+                      <div class="col-lg-3">
+                        <strong>Comunicação</strong><br>
+                        <span>{{questionario.perguntas[0]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                      </div>
+                      <div class="col-lg-3">
+                        <strong>Liderança</strong><br>
+                        <span>{{questionario?.perguntas[1]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                      </div>
+                      <div class="col-lg-3">
+                        <strong>Resolução de Problemas</strong><br>
+                        <span>{{questionario?.perguntas[2]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                      </div>
+                      <div class="col-lg-3">
+                        <strong>Criatividade e Curiosidade</strong><br>
+                        <span>{{questionario?.perguntas[3]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                      </div>
+                    </div>
+                    <div class="row my-2">
+                      <div class="col-lg-3">
+                        <strong>Pensamento Crítico</strong><br>
+                        <span>{{questionario?.perguntas[4]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                      </div>
+                      <div class="col-lg-3">
+                        <strong>Habilidade com Pessoas e Equipes</strong><br>
+                        <span>{{questionario?.perguntas[5]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                      </div>
+                      <div class="col-lg-3">
+                        <strong>Adaptabilidade e resiliência</strong><br>
+                        <span>{{questionario?.perguntas[6]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                      </div>
+                      <div class="col-lg-3">
+                        <strong>Ética</strong><br>
+                        <span>{{questionario?.perguntas[7]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                      </div>
+                    </div>
+                  </ng-container>
+                </ng-container>
+              </separator>
+              <separator title="Big Five">
+                <ng-container *ngFor="let questionario of this.questionarios">
+                  <ng-container *ngIf="questionario.codigo == 'B5'">
+                    <div class="slider-container">
+                      <div class="row">
+                        <div class="col-lg-2 mt-3">
+                          <div class="slider-ui color1">
+                            <input type="range" min="0" max="40" step="1">
+                            <div class="bar">
+                              <span class="min">0</span>
+                              <span class="max">40</span>
+                              <span class="sp1">Introversão</span>
+                              <span class="sp2">Extroversao</span>
+                            </div>
+                            <div class="track">
+                              <div #divtrack1 class="value track1" id="track1" style='left:"+{{this.track1}}+";'>{{this.valueTrack1}}</div>
+                            </div>
+                          </div>
                         </div>
-                        <div class="col-lg-3">
-                          <strong>Liderança</strong><br>
-                          <span>{{questionario?.perguntas[1]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                        <div class="col-lg-2 mt-3">
+                          <div class="slider-ui color2">
+                            <input type="range" min="0" max="40" step="1">
+                            <div class="bar">
+                              <span class="min">0</span>
+                              <span class="max">40</span>
+                              <span class="sp1">Desconfiança</span>
+                              <span class="sp2">Agradabilidade</span>
+                            </div>
+                            <div class="track">
+                              <div class="value" id="track2">{{this.valueTrack2}}</div>
+                            </div>
+                          </div>
                         </div>
-                        <div class="col-lg-3">
-                          <strong>Resolução de Problemas</strong><br>
-                          <span>{{questionario?.perguntas[2]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                        <div class="col-lg-2 mt-3">
+                          <div class="slider-ui color3">
+                            <input type="range" min="0" max="40" step="1">
+                            <div class="bar">
+                              <span class="min">0</span>
+                              <span class="max">40</span>
+                              <span class="sp1">Espôntaneo</span>
+                              <span class="sp2">Planejado</span>
+                            </div>
+                            <div class="track">
+                              <div class="value" id="track3">{{this.valueTrack3}}</div>
+                            </div>
+                          </div>
                         </div>
-                        <div class="col-lg-3">
-                          <strong>Criatividade e Curiosidade</strong><br>
-                          <span>{{questionario?.perguntas[3]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                     
+                      
+                        <div class="col-lg-2 mt-3">
+                          <div class="slider-ui color4">
+                            <input type="range" min="0" max="40" step="1">
+                            <div class="bar">
+                              <span class="min">0</span>
+                              <span class="max">40</span>
+                              <span class="sp1">Calmos</span>
+                              <span class="sp2">Reativos</span>
+                            </div>
+                            <div class="track">
+                              <div class="value" id="track4">{{this.valueTrack4}}</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-2 mt-3">
+                          <div class="slider-ui color5">
+                            <input type="range" min="0" max="40" step="1">
+                            <div class="bar">
+                              <span class="min">0</span>
+                              <span class="max">40</span>
+                              <span class="sp1">Conservadorismo</span>
+                              <span class="sp2">Novidade</span>
+                            </div>
+                            <div class="track">
+                              <div class="value" id="track5">{{this.valueTrack5}}</div>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      <div class="row my-2">
-                        <div class="col-lg-3">
-                          <strong>Pensamento Crítico</strong><br>
-                          <span>{{questionario?.perguntas[4]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
-                        </div>
-                        <div class="col-lg-3">
-                          <strong>Habilidade com Pessoas e Equipes</strong><br>
-                          <span>{{questionario?.perguntas[5]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
-                        </div>
-                        <div class="col-lg-3">
-                          <strong>Adaptabilidade e resiliência</strong><br>
-                          <span>{{questionario?.perguntas[6]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
-                        </div>
-                        <div class="col-lg-3">
-                          <strong>Ética</strong><br>
-                          <span>{{questionario?.perguntas[7]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
-                        </div>
-                      </div>
+                    </div>
                   </ng-container>
                 </ng-container>
               </separator>
             </div>
           </div>
-         
+
         </ng-template>
       </column>
       <!--column title="Detalhes" [template]="columnDetalhes">
