@@ -51,6 +51,7 @@
     "jquery-mask-plugin": "^1.14.16",
     "jquery-ui": "^1.13.2",
     "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
     "marked": "^4.3.0",
     "material-design-icons": "^3.0.1",
     "moment": "^2.29.1",
