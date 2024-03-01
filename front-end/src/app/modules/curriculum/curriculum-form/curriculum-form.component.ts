@@ -37,7 +37,7 @@ import { InputNumberComponent } from 'src/app/components/input/input-number/inpu
 export class CurriculumFormComponent extends PageFormBase<Curriculum, CurriculumDaoService>{
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild("quantidade_filhos", { static: false }) public quantidade_filhos?: InputNumberComponent;
-  @ViewChild("area", { static: false }) public area?: InputSearchComponent;
+  @ViewChild("area", { static: false }) public area_conhecimento?: InputSearchComponent;
   @ViewChild("estados", { static: false }) public estadosV?: InputSelectComponent;
   //@ViewChild(InputSelectComponent, { static: false }) public titulo?: InputSelectComponent;
   @ViewChild("curso", { static: false }) public curso?: InputSelectComponent;
@@ -224,6 +224,7 @@ public saveGraduacao(form: FormGroup, row: any){
     row.pretensao = values.pretensao;
     row.curso_id = values.curso_id;
     row.curso = this.curso?.selectedItem?.data;
+    row.area_conhecimento = this.area_conhecimento?.selectedEntity
     row._status = row._status == "ADD" ? "ADD" : "EDIT";
     return row;
   }
@@ -233,7 +234,7 @@ public saveGraduacao(form: FormGroup, row: any){
 public async loadGraduacao(form: FormGroup, row: CurriculumGraduacao){
   
   //this.area?.loadSearch(row.curso?.area_conhecimento || row.curso?.area_id);
-  this.area?.setValue(row.curso?.area_id)
+  this.area_conhecimento?.setValue(row.curso?.area_id)
   this.formGraduacao!.controls.area_conhecimento_id.setValue(row.curso?.area_id);
   this.formGraduacao!.controls.pretensao.setValue(row.pretensao);
   this.formGraduacao!.controls.titulo.setValue(row.curso?.titulo);

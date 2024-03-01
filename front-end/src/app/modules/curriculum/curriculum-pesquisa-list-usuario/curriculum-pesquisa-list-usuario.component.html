@@ -1,66 +1,66 @@
+<button class="btn btn-danger" (click)="convetToPDF()">Imprimir<i class="bi bi-filetype-pdf ms-2 iconPDF" ></i></button>
 <div id="contentToConvert">
   <grid [items]="items" [title]="isModal ? '' : title">
     <columns>
-      <button class="btn btn-danger" (click)="convetToPDF()">Imprimir<i class="bi bi-filetype-pdf ms-2 iconPDF" ></i></button>
       <column title="Currículum" [template]="columnDados">
         <ng-template let-row="row" #columnDados>
           <div class="row">
-            <div class="col-2 text-center">
+            <div class="col-lg-2 text-center">
               <div class="p-4">
-                <profile-picture [url]="row.curriculum.usuario.url_foto" [size]="150"></profile-picture>
+                <profile-picture [url]="row.usuario.url_foto" [size]="150"></profile-picture>
                 <div class="p-2 mt-3">
-                  <strong>{{row.curriculum.usuario.nome.toUpperCase()}}</strong>
+                  <strong>{{row.usuario.nome.toUpperCase()}}</strong>
                 </div>
               </div>
               <div style="text-align: left;">
                 <separator title="Apresentação pessoal"></separator>
-                {{row.curriculum.apresentacao}}
+                {{row.apresentacao}}
               </div>
             </div>
-            <div class="col-10 my-2">
+            <div class="col-lg-10 my-2">
               <separator title="Dados pessoais">
                 <div class="row my-2">
-                  <div class="col-3">
+                  <div class="col-lg-3">
                     <strong>Email</strong><br>
-                    {{row.curriculum.usuario.email || "Sem email"}}
+                    {{row.usuario.email || "Sem email"}}
                   </div>
-                  <div class="col-3">
+                  <div class="col-lg-3">
                     <strong>Telefone</strong><br>
-                    {{row.curriculum?.telefone || "Sem telefone"}}
+                    {{row.telefone || "Sem telefone"}}
                   </div>
-                  <div class="col-3">
+                  <div class="col-lg-3">
                     <strong>Estado civil</strong><br>
-                    {{row.curriculum?.estado_civil || "Sem estado civil"}}
+                    {{row.estado_civil || "Sem estado civil"}}
                   </div>
-                  <div class="col-3">
+                  <div class="col-lg-3">
                     <strong>Filhos</strong><br>
-                    {{row.curriculum.quantidade_filhos > 0 ? lookup.getValue(lookup.SIMNAO, 1) : lookup.getValue(lookup.SIMNAO, 2)}}
-                    <div *ngIf="row.curriculum.quantidade_filhos > 0">Quantidade: {{row.curriculum.quantidade_filhos}}</div>
+                    {{row.quantidade_filhos > 0 ? lookup.getValue(lookup.SIMNAO, 1) : lookup.getValue(lookup.SIMNAO, 2)}}
+                    <div *ngIf="row.profissional.quantidade_filhos > 0">Quantidade: {{row.quantidade_filhos}}</div>
                   </div>
                 </div>
                 <div class="row my-2">
-                  <div class="col-3">
+                  <div class="col-lg-3">
                     <strong>Estado</strong><br>
-                    {{row.curriculum.cidade.uf || "Sem estado"}}
+                    {{row.cidade.uf || "Sem estado"}}
                   </div>
-                  <div class="col-3">
+                  <div class="col-lg-3">
                     <strong>Cidade</strong><br>
-                    {{row.curriculum.cidade.nome || "Sem cidade"}}
+                    {{row.cidade.nome || "Sem cidade"}}
                   </div>
-                  <div class="col-3">
+                  <div class="col-lg-3">
                     <strong>Ano de ingresso</strong><br>
                     {{row.ano_ingresso || "Sem ingresso"}}
                   </div>
-                  <div class="col-3">
+                  <div class="col-lg-3">
                   </div>
                 </div>
               </separator>
               <separator title="Dados acadêmicos">
                 <div class="row my-2">
-                  <div class="col-3">
+                  <div class="col-lg-3">
                     <strong>Idiomas</strong><br>
-                    <div *ngIf="row.curriculum.idiomas.length; else semIdiomas">
-                      <span *ngFor="let idioma of row.curriculum.idiomas">
+                    <div *ngIf="row.idiomas.length; else semIdiomas">
+                      <span *ngFor="let idioma of row.idiomas">
                         <strong>- {{lookup.getValue(lookup.IDIOMAS, idioma.idioma)}}</strong><br>
                         <small><strong> Fala: </strong> {{lookup.getValue(lookup.NIVEL_IDIOMA, idioma.idiomaFala)}}<br>
                           <strong>Escrita: </strong> {{lookup.getValue(lookup.NIVEL_IDIOMA, idioma.idiomaEscrita)}}<br>
@@ -71,10 +71,10 @@
                       Sem idiomas
                     </ng-template>
                   </div>
-                  <div class="col-3">
+                  <div class="col-lg-3">
                     <strong>Graduação</strong><br>
-                    <div *ngIf="row.curriculum.graduacoes.length; else semGraduacao">
-                      <span *ngFor="let graduacao of row.curriculum.graduacoes">
+                    <div *ngIf="row.graduacoes.length; else semGraduacao">
+                      <span *ngFor="let graduacao of row.graduacoes">
                         <strong>{{graduacao.pretensao == 0 ? 'Finalizado' : 'Pretendo Fazer' }}</strong><br>
                         <small><strong>Area: </strong> {{graduacao.curso.area_conhecimento.nome}}<br>
                           <strong>Titulo: </strong> {{lookup.getValue(lookup.TITULOS_CURSOS, graduacao.curso.titulo)}}<br>
@@ -85,10 +85,10 @@
                       Sem graduacao
                     </ng-template>
                   </div>
-                  <div class="col-3">
+                  <div class="col-lg-3">
                     <strong>Pós graduação</strong><br>
                     <div *ngIf="false; else semPos">
-                      <span *ngFor="let idioma of row.curriculum.pos">
+                      <span *ngFor="let idioma of row.pos">
 
                       </span>
                     </div>
@@ -96,10 +96,10 @@
                       Sem pós
                     </ng-template>
                   </div>
-                  <div class="col-3">
+                  <div class="col-lg-3">
                     <strong>Mestrado</strong><br>
                     <div *ngIf="false; else semMestrado">
-                      <span *ngFor="let idioma of row.curriculum.mestrado">
+                      <span *ngFor="let idioma of row.mestrado">
 
                       </span>
                     </div>
@@ -111,39 +111,39 @@
               </separator>
               <separator title="Dados profissionais">
                 <div class="row my-2">
-                  <div class="col-3">
+                  <div class="col-lg-3">
                     <strong>Funções exercidas</strong><br>
-                    <div *ngIf="row.historico_funcao.length; else semFuncao">
-                      <span *ngFor="let funcao of row.historico_funcao">{{funcao.nome}}</span>
+                    <div *ngIf="row.profissional.historico_funcao.length; else semFuncao">
+                      <span *ngFor="let funcao of row.profissional.historico_funcao">{{funcao.nome}}</span>
                     </div>
                     <ng-template #semFuncao>
                       Sem funcao
                     </ng-template>
                   </div>
-                  <div class="col-3">
+                  <div class="col-lg-3">
                     <strong>Grupos especializados</strong><br>
                     {{row.grupo_especializado?.nome || "Sem grupo"}}
                   </div>
-                  <div class="col-3">
+                  <div class="col-lg-3">
                     <strong>Histórico de lotação</strong><br>
-                    <div *ngIf="row.historico_lotacao.length; else semLotacao">
-                      <span *ngFor="let lotacao of row.historico_lotacao">{{lotacao.nome}}</span>
+                    <div *ngIf="row.profissional.historico_lotacao.length; else semLotacao">
+                      <span *ngFor="let lotacao of row.profissional.historico_lotacao">{{lotacao.nome}}</span>
                     </div>
                     <ng-template #semLotacao>
                       Sem histórico
                     </ng-template>
                   </div>
-                  <div class="col-3">
+                  <div class="col-lg-3">
                     <strong>Instrutor?</strong><br>
-                    <div *ngIf="row.historico_docencia_interna.length; else semInstrucaoInterna">
-                      <span *ngFor="let interno of row.historico_docencia_interna"><small>{{interno.curso.titulo}} : {{interno.curso.nome}}</small></span>
+                    <div *ngIf="row.profissional.historico_docencia_interna.length; else semInstrucaoInterna">
+                      <span *ngFor="let interno of row.profissional.historico_docencia_interna"><small>{{interno.curso.titulo}} : {{interno.curso.nome}}</small></span>
                     </div>
                     <ng-template #semInstrucaoInterna>
                       Não é docente na PRF
                     </ng-template>
                     <separator></separator>
-                    <div *ngIf="row.historico_docencia_externa.length; else semInstrucaoExterna">
-                      <span *ngFor="let externo of row.historico_docencia_externa">{{externo.area_atividade_externa.nome}}</span>
+                    <div *ngIf="row.profissional.historico_docencia_externa.length; else semInstrucaoExterna">
+                      <span *ngFor="let externo of row.profissional.historico_docencia_externa">{{externo.area_atividade_externa.nome}}</span>
                     </div>
                     <ng-template #semInstrucaoExterna>
                       Não é docente fora da PRF
@@ -153,38 +153,80 @@
               </separator>
               <separator title="Hard skills">
                 <div class="row my-2">
-                  <div class="col-5">
+                  <div class="col-lg-5">
                     <strong>Capacitações internas</strong><br>
-                    <div *ngIf="row.historico_atividade_interna.length; else semCapacInterna" class="one-per-line">
-                      <span *ngFor="let atividade of row.historico_atividade_interna">{{atividade.capacidade_tecnica.nome}}</span>
+                    <div *ngIf="row.profissional.historico_atividade_interna.length; else semCapacInterna" class="one-per-line">
+                      <span *ngFor="let atividade of row.profissional.historico_atividade_interna">{{atividade.capacidade_tecnica.nome}}</span>
 
                     </div>
                     <ng-template #semCapacInterna>
                       Sem capacitações internas
                     </ng-template>
                   </div>
-                  <div class="col-4">
+                  <div class="col-lg-4">
                     <strong>Capacitações externas</strong><br>
-                    <div *ngIf="row.historico_atividade_externa.length; else semCapacExterna">
-                      <span *ngFor="let atividade of row.historico_atividade_externa">{{atividade.area_atividade_externa?.nome}}</span>
+                    <div *ngIf="row.profissional.historico_atividade_externa.length; else semCapacExterna">
+                      <span *ngFor="let atividade of row.profissional.historico_atividade_externa">{{atividade.area_atividade_externa?.nome}}</span>
                     </div>
                     <ng-template #semCapacExterna>
                       Sem capacitações externas
                     </ng-template>
                   </div>
-                  <div class="col-3">
+                  <div class="col-lg-3">
                     <strong>Habilidades</strong><br>
-                    <div *ngIf="row.especifique_habilidades.length; else semHabilidades">
-                      <span *ngFor="let habilidade of row.especifique_habilidades">{{habilidade.value}}</span>
+                    <div *ngIf="row.profissional.especifique_habilidades.length; else semHabilidades">
+                      <span *ngFor="let habilidade of row.profissional.especifique_habilidades">{{habilidade.value}}</span>
                     </div>
                     <ng-template #semHabilidades>
                       Sem habilidades
                     </ng-template>
                   </div>
-                  <div class="col-3">
+                  <div class="col-lg-3">
 
                   </div>
                 </div>
+              </separator>
+              <separator title="Soft skills">
+                <ng-container *ngFor="let questionario of this.questionarios">
+                  <ng-container *ngIf="questionario.codigo == 'SOFTSKILL'">
+                      <div class="row my-2">
+                        <div class="col-lg-3">
+                          <strong>Comunicação</strong><br>
+                          <span>{{questionario.perguntas[0]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                        </div>
+                        <div class="col-lg-3">
+                          <strong>Liderança</strong><br>
+                          <span>{{questionario?.perguntas[1]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                        </div>
+                        <div class="col-lg-3">
+                          <strong>Resolução de Problemas</strong><br>
+                          <span>{{questionario?.perguntas[2]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                        </div>
+                        <div class="col-lg-3">
+                          <strong>Criatividade e Curiosidade</strong><br>
+                          <span>{{questionario?.perguntas[3]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                        </div>
+                      </div>
+                      <div class="row my-2">
+                        <div class="col-lg-3">
+                          <strong>Pensamento Crítico</strong><br>
+                          <span>{{questionario?.perguntas[4]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                        </div>
+                        <div class="col-lg-3">
+                          <strong>Habilidade com Pessoas e Equipes</strong><br>
+                          <span>{{questionario?.perguntas[5]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                        </div>
+                        <div class="col-lg-3">
+                          <strong>Adaptabilidade e resiliência</strong><br>
+                          <span>{{questionario?.perguntas[6]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                        </div>
+                        <div class="col-lg-3">
+                          <strong>Ética</strong><br>
+                          <span>{{questionario?.perguntas[7]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+                        </div>
+                      </div>
+                  </ng-container>
+                </ng-container>
               </separator>
             </div>
           </div>
@@ -193,7 +235,7 @@
       </column>
       <!--column title="Detalhes" [template]="columnDetalhes">
       <ng-template let-row="row" #columnDetalhes>
-        <button class="btn btn-sm btn-outline-info me-2" (click)="showCurriculumDetalhes2(row)"><i class="bi bi-eye"></i></button>
+        <button class="btn btn-sm btn-outline-info me-2" (click)="showetalhes2(row)"><i class="bi bi-eye"></i></button>
       </ng-template>
     </column-->
     </columns>
