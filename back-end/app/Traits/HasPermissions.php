@@ -18,14 +18,14 @@ trait HasPermissions
         $capabilities = count($userPermissions) > 0 ? $userPermissions[0]->capacidades->map(function ($item, $key) {
             return $item->tipoCapacidade->codigo;
         })->all() : [];
-        foreach($permissions as $permition) {
-            if(is_array($permition)) {
+        foreach($permissions as $item) {
+            if(is_array($item)) {
                 $result = true;
-                foreach($permition as $capabilitie) {
+                foreach($item as $capabilitie) {
                     if(!in_array($capabilitie, $capabilities)) $result = false;
                 }
                 if($result) return true; 
-            } else if(in_array($permission, $capabilities)) {
+            } else if(in_array($item, $capabilities)) {
                 return true;
             }
         }
