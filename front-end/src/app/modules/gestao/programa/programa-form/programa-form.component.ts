@@ -185,7 +185,7 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
   }
 
   public onClickIN() {
-    window.open(this.form?.controls.link_normativa.value);
+    if(this.form?.controls.link_normativa?.value?.length) window.open(this.form?.controls.link_normativa.value);
   }
 
 }
