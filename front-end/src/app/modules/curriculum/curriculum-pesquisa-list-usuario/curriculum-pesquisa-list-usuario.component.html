@@ -1,13 +1,427 @@
+<div class="row d-flex justify-content-end">
+  <div class="col-md-2">
+    <button class="btn btn-danger" (click)="convetToPDF()">Imprimir<i class="bi bi-filetype-pdf ms-2 iconPDF"></i></button>
+  </div>
+</div>
+
+<div class="row pesquisaContainer" id="pesquisaContainer">
+  <div class="col-lg-2 text-center">
+    <div class="p-4">
+      <profile-picture class="profilePicture" [url]="curriculum.usuario.url_foto" [size]="150"></profile-picture>
+      <div class="p-2 mt-3">
+        <strong>{{curriculum.usuario.nome.toUpperCase()}}</strong>
+      </div>
+    </div>
+    <div style="text-align: left;">
+      <separator title="Apresentação pessoal"></separator>
+      {{curriculum.apresentacao}}
+    </div>
+  </div>
+  <div class="col-md-10 my-2">
+    <div class="card">
+      <h5 class="card-header"><i class="bi bi-person-bounding-box me-2"></i>Dados Pessoais</h5>
+      <div class="card-body">
+        <div class="row my-2">
+          <div class="col-md-3">
+            <strong>Email</strong><br>
+            {{curriculum.usuario.email || "Sem email"}}
+          </div>
+          <div class="col-md-3">
+            <strong>Telefone</strong><br>
+            {{curriculum.telefone || "Sem telefone"}}
+          </div>
+          <div class="col-md-3">
+            <strong>Estado civil</strong><br>
+            {{curriculum.estado_civil || "Sem estado civil"}}
+          </div>
+          <div class="col-md-3">
+            <strong>Filhos</strong><br>
+            {{curriculum.quantidade_filhos > 0 ? lookup.getValue(lookup.SIMNAO, 1) : lookup.getValue(lookup.SIMNAO, 2)}}<br>
+            <span *ngIf="curriculum.quantidade_filhos > 0">{{curriculum.quantidade_filhos}}</span>
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-md-3">
+            <strong>Estado</strong><br>
+            {{curriculum.cidade.uf || "Sem estado"}}
+          </div>
+          <div class="col-md-3">
+            <strong>Cidade</strong><br>
+            {{curriculum.cidade.nome || "Sem cidade"}}
+          </div>
+          <div class="col-md-3">
+            <strong>Ano de ingresso</strong><br>
+            {{curriculum.ano_ingresso || "Sem ingresso"}}
+          </div>
+          <div class="col-md-3">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card mt-3">
+      <h5 class="card-header"><i class="bi bi-mortarboard me-2"></i>Dados Acadêmicos</h5>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-12">
+            <separator title="Graduação e Pós-Graduação - Especialização, Mestrado, Doutorado e Pós Doutorado"></separator>
+            <div *ngIf="curriculum.graduacoes.length; else semGraduacao">
+              <table class="table table-sm table-responsive">
+                <thead>
+                  <tr>
+                    <th scope="col">Pretensão ou Finalizado</th>
+                    <th scope="col">Área do Conhecimento</th>
+                    <th scope="col">Titulo</th>
+                    <th scope="col">Curso</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="let graduacao of curriculum.graduacoes">
+                    <tr>
+                      <td>{{graduacao.pretensao == 0 ? 'Finalizado' : 'Pretendo Fazer' }}</td>
+                      <td>{{graduacao.curso.area_conhecimento.nome}}</td>
+                      <td>{{lookup.getValue(lookup.TITULOS_CURSOS, graduacao.curso.titulo)}}</td>
+                      <td>{{graduacao.curso.nome}}</td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+            <ng-template #semGraduacao>
+              Sem Graduação
+            </ng-template>
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-md-12">
+            <div *ngIf="curriculum.idiomas.length; else semIdiomas">
+              <table class="table table-sm table-responsive">
+                <thead>
+                  <tr>
+                    <th scope="col">Idioma</th>
+                    <th scope="col">Fala</th>
+                    <th scope="col">Escrita</th>
+                    <th scope="col">Entendimento</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="let idioma of curriculum.idiomas">
+                    <tr>
+                      <td>{{lookup.getValue(lookup.IDIOMAS, idioma.idioma)}}</td>
+                      <td>{{lookup.getValue(lookup.NIVEL_IDIOMA, idioma.idiomaFala)}}</td>
+                      <td>{{lookup.getValue(lookup.NIVEL_IDIOMA, idioma.idiomaEscrita)}}</td>
+                      <td>{{lookup.getValue(lookup.NIVEL_IDIOMA, idioma.idiomaEntendimento)}}</td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+            <ng-template #semIdiomas>
+              Sem idiomas
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card mt-3">
+      <h5 class="card-header"><i class="bi bi-person-workspace me-2"></i>Dados Profissionais</h5>
+      <div class="card-body">
+        <div class="row my-2">
+          <div class="col-md-4">
+            <strong>Funções exercidas</strong>
+            <div *ngIf="curriculum.profissional.historico_funcao.length; else semFuncao">
+              <ng-container *ngFor="let funcao of curriculum.profissional.historico_funcao">
+                <span>{{funcao.funcao.nome}}</span><br>
+              </ng-container>
+            </div>
+            <ng-template #semFuncao>
+              Sem histórico de funcao
+            </ng-template>
+          </div>
+          <div class="col-md-4">
+            <strong>Grupo Especializado</strong>
+            <div *ngIf="curriculum.profissional.grupo_especializado_id; else semGrupo">
+              <span *ngFor="let funcao of curriculum.profissional.historico_funcao">{{curriculum.profissional.grupo_especializado?.nome || ""}}</span>
+            </div>
+            <ng-template #semGrupo>
+              Sem Grupo
+            </ng-template>
+          </div>
+          <div class="col-md-4">
+            <strong>Histórico de lotação</strong><br>
+            <div *ngIf="curriculum.profissional.historico_lotacao.length; else semLotacao">
+              <ng-container *ngFor="let lotacao of curriculum.profissional.historico_lotacao">
+                <span>{{lotacao.unidade.nome}}</span><br>
+              </ng-container>
+            </div>
+            <ng-template #semLotacao>
+              Sem históricode lotação.
+            </ng-template>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <strong>Atividades Internas</strong>
+            <div *ngIf="curriculum.profissional.historico_atividade_interna.length; else semCapacInterna">
+              <ng-container *ngFor="let atividade of curriculum.profissional.historico_atividade_interna;index as i">
+                <span>{{i+1}}. {{atividade.capacidade_tecnica.nome}}</span><br>
+              </ng-container>
+            </div>
+            <ng-template #semCapacInterna>
+              Sem atividades internas
+            </ng-template>
+          </div>
+
+          <div class="col-md-6">
+            <strong>Atividades Externas</strong>
+            <div *ngIf="curriculum.profissional.historico_atividade_externa.length; else semCapacExterna">
+              <ng-container *ngFor="let atividade of curriculum.profissional.historico_atividade_externa">
+                <span>- {{atividade.area_atividade_externa?.nome}}</span><br>
+              </ng-container>
+            </div>
+            <ng-template #semCapacExterna>
+              Sem atividades externas.
+            </ng-template>
+          </div>
+        </div>
+        <div class="row my-3">
+          <div class="col-md-6">
+            <strong>Docente ou Instrutor na instituição</strong>
+            <div *ngIf="curriculum.profissional.historico_docencia_interna.length; else semInstrucaoInterna">
+              <ng-container *ngFor="let interno of curriculum.profissional.historico_docencia_interna">
+                <span>{{interno.curso.titulo}} :<small> {{interno.curso.nome}}</small></span><br>
+              </ng-container>
+            </div>
+            <ng-template #semInstrucaoInterna>
+              Não é docente na instituição.
+            </ng-template>
+          </div>
+
+          <div class="col-md-6">
+            <strong>Trabalho fora da instituição</strong>
+            <div *ngIf="curriculum.profissional.historico_docencia_externa.length; else semInstrucaoExterna">
+              <ng-container *ngFor="let externo of curriculum.profissional.historico_docencia_externa">
+                <span>{{externo.area_atividade_externa.nome}}</span><br>
+              </ng-container>
+            </div>
+            <ng-template #semInstrucaoExterna>
+              Não tem trabalho fora da instituição.
+            </ng-template>
+          </div>
+        </div>
+        <div class="row my-3">
+          <div class="col-md-6">
+            <strong>Docência na Intituição</strong><br>
+            <div *ngIf="curriculum.profissional.historico_docencia_interna.length; else semDocenciaInterna">
+              <ng-container *ngFor="let docenciaI of curriculum.profissional.historico_docencia_interna">
+                <span>{{docenciaI.curso?.nome || "Sem informação"}}</span><br>
+              </ng-container>
+            </div>
+            <ng-template #semDocenciaInterna>
+              Não existe informação de trabalho de docência na intituição.
+            </ng-template>
+          </div>
+          <div class="col-md-6">
+            <strong>Docência fora da Instituição</strong><br>
+            <div *ngIf="curriculum.profissional.historico_docencia_externa.length; else semDocenciaExterna">
+              <ng-container *ngFor="let docenciaE of curriculum.profissional.historico_docencia_externa">
+                <span>{{docenciaE.area_atividade_externa?.nome || "Sem informação"}}</span><br>
+              </ng-container>
+            </div>
+            <ng-template #semDocenciaExterna>
+              Não existe informação de trabalho de docência fora da intituição.
+            </ng-template>
+          </div>
+        </div>
+        <div class="row my-3">
+          <div class="col-md-6">
+            <strong>Cursos na Intituição</strong><br>
+            <div *ngIf="curriculum.profissional.historico_curso_interno.length; else semCursoInterno">
+              <ng-container *ngFor="let cursoI of curriculum.profissional.historico_curso_interno">
+                <span>{{cursoI.curso?.nome || "Sem informação"}}</span><br>
+              </ng-container>
+            </div>
+            <ng-template #semCursoInterno>
+              Não existe informação de trabalho de docência na intituição.
+            </ng-template>
+          </div>
+          <div class="col-md-6">
+            <strong>Cursos fora da Instituição</strong><br>
+            <div *ngIf="curriculum.profissional.historico_curso_externo.length; else semCursoExterno">
+              <ng-container *ngFor="let cursoE of curriculum.profissional.historico_curso_externo">
+                <span>{{cursoE.area_atividade_externa?.nome || "Sem informação"}}</span><br>
+              </ng-container>
+            </div>
+            <ng-template #semCursoExterno>
+              Não existe informação de trabalho de docência fora da intituição.
+            </ng-template>
+          </div>
+        </div>
+        <div class="row my-3">
+          <div class="col-md-6">
+            <strong>Habilidades</strong><br>
+            <div *ngIf="curriculum.profissional.especifique_habilidades.length; else semHabilidades">
+              <ng-container *ngFor="let habilidade of curriculum.profissional.especifique_habilidades">
+                <span>{{habilidade.value}}</span><br>
+              </ng-container>
+            </div>
+            <ng-template #semHabilidades>
+              Sem habilidades
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card mt-3">
+      <h5 class="card-header"><i class="bi bi-list-ul me-2"></i> Soft Skills</h5>
+      <div class="card-body">
+        <ng-container *ngFor="let questionario of this.questionarios">
+          <ng-container *ngIf="questionario.codigo == 'SOFTSKILL'">
+            <div class="row my-2">
+              <div class="col-md-3">
+                <strong>Comunicação</strong><br>
+                <span>{{questionario.perguntas[0]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+              </div>
+              <div class="col-md-3">
+                <strong>Liderança</strong><br>
+                <span>{{questionario?.perguntas[1]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+              </div>
+              <div class="col-md-3">
+                <strong>Resolução de Problemas</strong><br>
+                <span>{{questionario?.perguntas[2]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+              </div>
+              <div class="col-md-3">
+                <strong>Criatividade e Curiosidade</strong><br>
+                <span>{{questionario?.perguntas[3]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+              </div>
+            </div>
+            <div class="row my-2">
+              <div class="col-md-3">
+                <strong>Pensamento Crítico</strong><br>
+                <span>{{questionario?.perguntas[4]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+              </div>
+              <div class="col-md-3">
+                <strong>Habilidade com Pessoas e Equipes</strong><br>
+                <span>{{questionario?.perguntas[5]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+              </div>
+              <div class="col-md-3">
+                <strong>Adaptabilidade e Resiliência</strong><br>
+                <span>{{questionario?.perguntas[6]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+              </div>
+              <div class="col-md-3">
+                <strong>Ética</strong><br>
+                <span>{{questionario?.perguntas[7]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+    <div class="card mt-3">
+      <h5 class="card-header"><img src="assets/icons/icon_big.png" class="iconBig me-2">Big Five</h5>
+      <div class="card-body mb-4">
+        <ng-container *ngFor="let questionario of this.questionarios">
+          <ng-container *ngIf="questionario.codigo == 'B5'">
+            <div class="slider-container">
+              <div class="row">
+                <div class="col-xl-2 mt-3">
+                  <div class="slider-ui color1">
+                    <input type="range" min="0" max="40" step="1">
+                    <div class="bar">
+                      <span class="min">0</span>
+                      <span class="max">40</span>
+                      <span class="sp1">Introversão</span>
+                      <span class="sp2">Extroversão</span>
+                    </div>
+                    <div #divtrack1 class="track" id="divtrack1" name="divtrack1">
+                      <div class="value" id="track1">{{this.valueTrack1}}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-2 mt-3">
+                  <div class="slider-ui color2">
+                    <input type="range" min="0" max="40" step="1">
+                    <div class="bar">
+                      <span class="min">0</span>
+                      <span class="max">40</span>
+                      <span class="sp1">Desconfiança</span>
+                      <span class="sp2">Agradabilidade</span>
+                    </div>
+                    <div class="track">
+                      <div class="value" id="track2">{{this.valueTrack2}}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-2 mt-3">
+                  <div class="slider-ui color3">
+                    <input type="range" min="0" max="40" step="1">
+                    <div class="bar">
+                      <span class="min">0</span>
+                      <span class="max">40</span>
+                      <span class="sp1">Espontâneo</span>
+                      <span class="sp2">Planejado</span>
+                    </div>
+                    <div class="track">
+                      <div class="value" id="track3">{{this.valueTrack3}}</div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="col-xl-2 mt-3">
+                  <div class="slider-ui color4">
+                    <input type="range" min="0" max="40" step="1">
+                    <div class="bar">
+                      <span class="min">0</span>
+                      <span class="max">40</span>
+                      <span class="sp1">Calmos</span>
+                      <span class="sp2">Reativos</span>
+                    </div>
+                    <div class="track">
+                      <div class="value" id="track4">{{this.valueTrack4}}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-2 mt-3">
+                  <div class="slider-ui color5">
+                    <input type="range" min="0" max="40" step="1">
+                    <div class="bar">
+                      <span class="min">0</span>
+                      <span class="max">40</span>
+                      <span class="sp1">Conservadorismo</span>
+                      <span class="sp2">Novidade</span>
+                    </div>
+                    <div class="track">
+                      <div class="value" id="track5">{{this.valueTrack5}}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+       
+      </div>
+    </div>
+     
+    </div>
+
+    <!--
+   <div class="card mt-3">
+      <h5 class="card-header"><i class="bi bi-mortarboard me-2"></i>Dados acadêmicos</h5>
+      <div class="card-body">
+       
+      </div>
+    </div>
 <button class="btn btn-danger" (click)="convetToPDF()">Imprimir<i class="bi bi-filetype-pdf ms-2 iconPDF"></i></button>
 <div id="contentToConvert">
   <grid [items]="items" [title]="isModal ? '' : title">
     <columns>
       <column title="Currículum" [template]="columnDados">
         <ng-template let-row="row" #columnDados>
-          <div class="row">
-            <div class="col-lg-2 text-center">
+          <div class="row pesquisaContainer">
+            <div class="col-md-2 text-center">
               <div class="p-4">
-                <profile-picture [url]="row.usuario.url_foto" [size]="150"></profile-picture>
+                <profile-picture class="profilePicture" [url]="row.usuario.url_foto" [size]="150"></profile-picture>
                 <div class="p-2 mt-3">
                   <strong>{{row.usuario.nome.toUpperCase()}}</strong>
                 </div>
@@ -17,14 +431,14 @@
                 {{row.apresentacao}}
               </div>
             </div>
-            <div class="col-lg-10 my-2">
+            <div class="col-md-10 my-2">
               <separator title="Dados pessoais">
                 <div class="row my-2">
-                  <div class="col-lg-3">
+                  <div class="col-md-3">
                     <strong>Email</strong><br>
                     {{row.usuario.email || "Sem email"}}
                   </div>
-                  <div class="col-lg-3">
+                  <div class="col-md-3">
                     <strong>Telefone</strong><br>
                     {{row.telefone || "Sem telefone"}}
                   </div>
@@ -242,8 +656,8 @@
                               <span class="sp1">Introversão</span>
                               <span class="sp2">Extroversao</span>
                             </div>
-                            <div class="track">
-                              <div #divtrack1 class="value track1" id="track1" style='left:"+{{this.track1}}+";'>{{this.valueTrack1}}</div>
+                            <div #divtrack1 class="track" id="divtrack1" name="divtrack1">
+                              <div class="value" id="track1">{{this.valueTrack1}}</div>
                             </div>
                           </div>
                         </div>
@@ -315,12 +729,7 @@
 
         </ng-template>
       </column>
-      <!--column title="Detalhes" [template]="columnDetalhes">
-      <ng-template let-row="row" #columnDetalhes>
-        <button class="btn btn-sm btn-outline-info me-2" (click)="showetalhes2(row)"><i class="bi bi-eye"></i></button>
-      </ng-template>
-    </column-->
     </columns>
 
   </grid>
-</div>
+</div>-->
