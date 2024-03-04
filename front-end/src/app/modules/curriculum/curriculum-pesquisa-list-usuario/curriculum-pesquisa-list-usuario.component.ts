@@ -47,11 +47,13 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
   public track1 : string = ''
 
   public get items(): CurriculumProfissional[] {
-    return [this.curriculum]
+  
+    return [this.curriculum];
   }
 
   public getPerguntas(){
     this.curriculum = this.metadata?.curriculum;
+    console.log(this.curriculum)
     let respostas : number[]=[];
             
     if(this.curriculum.usuario.questionarios_respostas.length){
@@ -62,7 +64,7 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
           element.questionario.perguntas.forEach((pergunta:any) =>{
             respostas.push(pergunta.questionario_resposta_pergunta[0].resposta) 
           })
-          console.log('respostas',respostas)
+          //console.log('respostas',respostas)
          }
         }
       );
@@ -103,7 +105,7 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
 
   public convetToPDF()
   {
-      const data = document.getElementById('contentToConvert');
+      const data = document.getElementById('pesquisaContainer');
       html2canvas(data!).then(canvas => {
       // Few necessary setting options
       const imgWidth = 208;
@@ -226,27 +228,13 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
         this.valueTrack1 = this.extroversao.toString();
         //this.track1 = ((dados[1] / 40) * 100) +'%';
         this.track1 = "style=left:"+((dados[1] / 40) * 100) +'%;';
-        
-        //onst element = $('#divtrack1','.contentToConvert')
-        //element.css('style','left:50%')
-        //let element1 = element(by.xpath('..//div[@class="divtrack1"]'));
-        //let element1 = element(by.name('divtrack1'));
-        
+        //const sliders = document.querySelectorAll(".slider-ui");
         this.valueTrack2 = this.agradabilidade.toString();
-      
         this.valueTrack3 = this.conscienciosidade.toString();
-       
-
         this.valueTrack4 = this.estabilidade.toString();
-       
-
         this.valueTrack5 = this.abertura.toString(); 
-      
-
        //console.log('e ',this.extroversao,' - a ',this.agradabilidade, ' - c ',this.conscienciosidade, ' - n ',this.estabilidade ,' - o ', this.abertura )
-
   }
-
 }
 
 
