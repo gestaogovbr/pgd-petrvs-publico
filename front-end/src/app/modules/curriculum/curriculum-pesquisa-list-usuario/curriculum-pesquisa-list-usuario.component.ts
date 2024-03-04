@@ -231,7 +231,6 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
         //element.css('style','left:50%')
         //let element1 = element(by.xpath('..//div[@class="divtrack1"]'));
         //let element1 = element(by.name('divtrack1'));
-       
         
         this.valueTrack2 = this.agradabilidade.toString();
       
@@ -241,7 +240,7 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
         this.valueTrack4 = this.estabilidade.toString();
        
 
-        this.valueTrack5 = this.abertura.toString();
+        this.valueTrack5 = this.abertura.toString(); 
       
 
        //console.log('e ',this.extroversao,' - a ',this.agradabilidade, ' - c ',this.conscienciosidade, ' - n ',this.estabilidade ,' - o ', this.abertura )
