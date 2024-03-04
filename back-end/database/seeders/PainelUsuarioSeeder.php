@@ -156,5 +156,16 @@ class PainelUsuarioSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        PainelUsuario::firstOrCreate([
+            'email' => 'jose.bogdan@prf.gov.br',
+        ], [
+            'nome' => 'Jose Marcelo Maizman Bogdan',
+            'password' => md5('petrvs@123'),
+            'cpf' => '23049551852',
+            'email_verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }

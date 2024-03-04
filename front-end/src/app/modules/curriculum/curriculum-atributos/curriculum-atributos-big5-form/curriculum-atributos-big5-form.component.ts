@@ -16,11 +16,11 @@ import { InputRadioComponent } from 'src/app/components/input/input-radio/input-
 import { Chart,registerables } from 'chart.js';
 
 @Component({
-  selector: 'curriculum-atributosbig5-form',
-  templateUrl: './curriculum-atributosbig5-form.component.html',
-  styleUrls: ['./curriculum-atributosbig5-form.component.scss']
+  selector: 'curriculum-atributos-big5-form',
+  templateUrl: './curriculum-atributos-big5-form.component.html',
+  styleUrls: ['./curriculum-atributos-big5-form.component.scss']
 })
-export class CurriculumAtributosbig5FormComponent extends PageFormBase<QuestionarioResposta, QuestionarioRespostaDaoService>{
+export class CurriculumAtributosBig5FormComponent extends PageFormBase<QuestionarioResposta, QuestionarioRespostaDaoService>{
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('divb5', { static: false }) public divb5?: HTMLDivElement;
   @ViewChild('divextroversao', { static: false }) public divextroversao?: HTMLDivElement;
@@ -145,35 +145,7 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
     return questionarioResposta;
   }
 
-  public valorSoftChange(control: any) {
-
-    control.value == '' ? control.setValue(0) : '';
-
-    const comunica = this.form?.controls.comunica.value;
-    const lideranca = this.form?.controls.lideranca.value;
-    const resolucao = this.form?.controls.resolucao.value;
-    const criatividade = this.form?.controls.criatividade.value;
-    const pensamento = this.form?.controls.pensamento.value;
-    const habilidade = this.form?.controls.habilidade.value;
-    const adaptabilidade = this.form?.controls.adaptabilidade.value;
-    const etica = this.form?.controls.etica.value;
-
-    const array = [comunica, lideranca, resolucao, criatividade, pensamento, habilidade, adaptabilidade, etica]
-
-    let soma: number = 0;
-
-    for (const val of array) {
-      //console.log('SUM SEQUENCIA', sum)
-      soma = soma + parseInt(val);
-
-      if (soma > 20) {
-        this.dialog.alert("Valor excedido", "O valor máximo são 20 pontos.");
-        control.setValue(control.value - (soma - 20));
-        break;
-      }
-    }
-  }
-
+ 
   public onRadioChange(event : any){//console.log(event.srcElement.value)
     this.valorEscolhido = event.srcElement.value;
     this.proximo(event)
