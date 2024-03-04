@@ -67,7 +67,7 @@ export class GridColumn {
   public isColumnEditable(row: any): boolean {
     return !!this.save && 
       ((!!row && typeof this.editable != "boolean" && !!this.editable && (this.editable as (row: any) => boolean)(row)) || 
-      (typeof this.editable == "boolean" && this.editable));
+      (typeof this.editable == "boolean" && (this.editable || !!this.columnEditTemplate)));
   }
 
   public get isAlways(): boolean {
