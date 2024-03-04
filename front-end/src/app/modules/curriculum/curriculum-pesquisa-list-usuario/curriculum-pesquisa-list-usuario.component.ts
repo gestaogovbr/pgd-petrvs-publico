@@ -11,6 +11,7 @@ import html2canvas from 'html2canvas';
 import { HttpClient } from '@angular/common/http'; 
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { QuestionarioPergunta } from 'src/app/models/questionario-pergunta.model';
+import { Ptor, by, element, protractor } from 'protractor';
 
 @Component({
   selector: 'curriculum-pesquisa-list-usuario',
@@ -224,7 +225,14 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
         //console.log('dados',dados)
         this.valueTrack1 = this.extroversao.toString();
         //this.track1 = ((dados[1] / 40) * 100) +'%';
-      
+        this.track1 = "style=left:"+((dados[1] / 40) * 100) +'%;';
+        
+        //onst element = $('#divtrack1','.contentToConvert')
+        //element.css('style','left:50%')
+        //let element1 = element(by.xpath('..//div[@class="divtrack1"]'));
+        //let element1 = element(by.name('divtrack1'));
+       
+        
         this.valueTrack2 = this.agradabilidade.toString();
       
         this.valueTrack3 = this.conscienciosidade.toString();

@@ -7,6 +7,10 @@
     color: red;
   }
 
+  .profilePicture{
+    max-width: 100px;
+  }
+
   .slider-ui {
     position: relative;
     width: 130px;
@@ -55,8 +59,8 @@
     position: absolute;
     z-index: 2;
     top: 120%;
-    font-size: 8px;
-    font-weight: 500;
+    font-size: 9px;
+    font-weight: 800;
     color: #000000;
   }
   .slider-ui .sp1 {

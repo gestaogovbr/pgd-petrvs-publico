@@ -4,10 +4,10 @@
     <columns>
       <column title="Currículum" [template]="columnDados">
         <ng-template let-row="row" #columnDados>
-          <div class="row">
+          <div class="row pesquisaContainer">
             <div class="col-lg-2 text-center">
               <div class="p-4">
-                <profile-picture [url]="row.usuario.url_foto" [size]="150"></profile-picture>
+                <profile-picture class="profilePicture" [url]="row.usuario.url_foto" [size]="150"></profile-picture>
                 <div class="p-2 mt-3">
                   <strong>{{row.usuario.nome.toUpperCase()}}</strong>
                 </div>
@@ -242,8 +242,8 @@
                               <span class="sp1">Introversão</span>
                               <span class="sp2">Extroversao</span>
                             </div>
-                            <div class="track">
-                              <div #divtrack1 class="value track1" id="track1" style='left:"+{{this.track1}}+";'>{{this.valueTrack1}}</div>
+                            <div #divtrack1 class="track" id="divtrack1" name="divtrack1">
+                              <div class="value" id="track1">{{this.valueTrack1}}</div>
                             </div>
                           </div>
                         </div>
