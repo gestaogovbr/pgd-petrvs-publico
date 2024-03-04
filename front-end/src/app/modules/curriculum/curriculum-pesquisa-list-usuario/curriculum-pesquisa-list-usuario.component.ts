@@ -140,7 +140,7 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
       autoTable(doc,{ 
         html: '#my-table',
         bodyStyles: {minCellHeight: 15},
-        didDrawCell: (data) => {
+        didDrawCell: (data:any) => {
           if (data.section === 'body' && data.column.index === 2) {
               doc.addImage(image, 'PNG', data.cell.x + 2, data.cell.y + 2, 10, 10)
           }
