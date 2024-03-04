@@ -228,7 +228,7 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
         this.valueTrack1 = this.extroversao.toString();
         //this.track1 = ((dados[1] / 40) * 100) +'%';
         this.track1 = "style=left:"+((dados[1] / 40) * 100) +'%;';
-        //const sliders = document.querySelectorAll(".slider-ui");
+        const sliders = document.querySelectorAll(".slider-ui");
         this.valueTrack2 = this.agradabilidade.toString();
         this.valueTrack3 = this.conscienciosidade.toString();
         this.valueTrack4 = this.estabilidade.toString();
