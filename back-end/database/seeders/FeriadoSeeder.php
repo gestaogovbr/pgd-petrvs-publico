@@ -178,6 +178,8 @@ class FeriadoSeeder extends Seeder
         "cidade_id" => NULL,
       ),
     );
-    Feriado::upsert($feriados, "id");
+    foreach ($feriados as $feriado) {
+      Feriado::firstOrCreate(['id' => $feriado['id']], $feriado);
+    }
   }
 }

@@ -11,6 +11,7 @@ import html2canvas from 'html2canvas';
 import { HttpClient } from '@angular/common/http'; 
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { QuestionarioPergunta } from 'src/app/models/questionario-pergunta.model';
+import { Ptor, by, element, protractor } from 'protractor';
 
 @Component({
   selector: 'curriculum-pesquisa-list-usuario',
@@ -44,13 +45,16 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
   public valueTrack4 : string = '';
   public valueTrack5 : string = '';
   public track1 : string = ''
+  public style1 : string = ''
 
   public get items(): CurriculumProfissional[] {
-    return [this.curriculum]
+  
+    return [this.curriculum];
   }
 
   public getPerguntas(){
     this.curriculum = this.metadata?.curriculum;
+    console.log(this.curriculum)
     let respostas : number[]=[];
             
     if(this.curriculum.usuario.questionarios_respostas.length){
@@ -61,7 +65,7 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
           element.questionario.perguntas.forEach((pergunta:any) =>{
             respostas.push(pergunta.questionario_resposta_pergunta[0].resposta) 
           })
-          console.log('respostas',respostas)
+          //console.log('respostas',respostas)
          }
         }
       );
@@ -102,7 +106,7 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
 
   public convetToPDF()
   {
-      const data = document.getElementById('contentToConvert');
+      const data = document.getElementById('pesquisaContainer');
       html2canvas(data!).then(canvas => {
       // Few necessary setting options
       const imgWidth = 208;
@@ -214,7 +218,7 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
       //console.log(oD)
       
         let e,a,c,n,o=0;
-          
+      
         this.extroversao = eM-extroversao;
         this.agradabilidade = aM-agradabilidade;
         this.conscienciosidade = cM - concienciosidade;
@@ -224,22 +228,15 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
         //console.log('dados',dados)
         this.valueTrack1 = this.extroversao.toString();
         //this.track1 = ((dados[1] / 40) * 100) +'%';
-      
+        this.track1 = "style=left:"+((dados[1] / 40) * 100) +'%;';
+        this.style1 = '60%';
+        //const sliders = document.querySelectorAll(".slider-ui");
         this.valueTrack2 = this.agradabilidade.toString();
-      
         this.valueTrack3 = this.conscienciosidade.toString();
-       
-
         this.valueTrack4 = this.estabilidade.toString();
-       
-
-        this.valueTrack5 = this.abertura.toString();
-      
-
+        this.valueTrack5 = this.abertura.toString(); 
        //console.log('e ',this.extroversao,' - a ',this.agradabilidade, ' - c ',this.conscienciosidade, ' - n ',this.estabilidade ,' - o ', this.abertura )
-
   }
-
 }
 
 
