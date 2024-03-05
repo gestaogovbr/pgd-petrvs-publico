@@ -575,7 +575,11 @@ class CapacidadeTecnicaSeeder extends Seeder
                 "area_tematica_id" => "85079dfc-eb1a-4547-b5bb-0c2e94e36d01",
             ),
         );
-        CapacidadeTecnica::upsert($capacidades_tecnicas, "id");
+
+        foreach ($capacidades_tecnicas as $capacidade) {
+            CapacidadeTecnica::firstOrCreate(['id' => $capacidade['id']], $capacidade);
+        }
+
     }
 }
 
