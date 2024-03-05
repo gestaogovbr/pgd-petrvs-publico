@@ -96,7 +96,10 @@ class AreaTematicaSeeder extends Seeder
                 "ativo" => 1,
             ),
         );
-        AreaTematica::upsert($areas_tematicas, "id");
+
+        foreach ($areas_tematicas as $area) {
+            AreaTematica::firstOrCreate(['id' => $area['id']], $area);
+        }
     }
 }
 
