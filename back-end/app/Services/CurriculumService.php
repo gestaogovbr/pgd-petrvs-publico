@@ -59,8 +59,8 @@ class CurriculumService extends ServiceBase
         }
         array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'idioma') {
-        //$curriculums_filtrados = Curriculum::select('id')->whereRaw("JSON_CONTAINS(idiomas, ?, '$.idioma')", [$condition[2]])->get()->toArray();
-        //array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        $curriculums_filtrados = Curriculum::select('id')->whereRaw("JSON_SEARCH(idiomas, 'one', '".$condition[2]."', null, '$[*].idioma')")->get()->toArray();
+        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'area_conhecimento_id') {
         $cursos_filtrados = Curso::select('id')->where('area_id', $condition[2])->get()->toArray();
         $curriculums_filtrados = Curriculum::select('id')->whereRelation('graduacoes', fn ($q) => $q->whereIn('curso_id', $cursos_filtrados))->get()->toArray();
