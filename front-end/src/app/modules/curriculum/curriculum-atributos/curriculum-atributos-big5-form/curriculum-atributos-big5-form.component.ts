@@ -257,18 +257,12 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
         let concienciosidade=(resp[7])+(resp[17])+(resp[27])+(resp[37]);
         let estabilidade=(resp[3])+(resp[13])+(resp[23])+(resp[28])+(resp[33])+(resp[38])+(resp[43])+(resp[48]);
         let abertura=(resp[9])+(resp[19])+(resp[29]);
-        
-        //console.log(nD)
-      //console.log(oD)
-      
-        let e,a,c,n,o=0;
-          
+     
         this.extroversao = eM-extroversao;
         this.agradabilidade = aM-agradabilidade;
         this.conscienciosidade = cM - concienciosidade;
         this.estabilidade = nM - estabilidade;
         this.abertura = oM - abertura;
-
         //console.log('e ',this.extroversao,' - a ',this.agradabilidade, ' - c ',this.conscienciosidade, ' - n ',this.estabilidade ,' - o ', this.abertura )
         this.chartb5([this.extroversao,this.agradabilidade,this.conscienciosidade,this.estabilidade, this.abertura])
 
