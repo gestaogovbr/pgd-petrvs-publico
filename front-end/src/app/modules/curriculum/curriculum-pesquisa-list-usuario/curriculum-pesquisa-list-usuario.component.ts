@@ -45,6 +45,7 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
   public valueTrack4 : string = '';
   public valueTrack5 : string = '';
   public track1 : string = ''
+  public style1 : string = ''
 
   public get items(): CurriculumProfissional[] {
   
@@ -217,7 +218,7 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
       //console.log(oD)
       
         let e,a,c,n,o=0;
-          
+      
         this.extroversao = eM-extroversao;
         this.agradabilidade = aM-agradabilidade;
         this.conscienciosidade = cM - concienciosidade;
@@ -228,7 +229,8 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
         this.valueTrack1 = this.extroversao.toString();
         //this.track1 = ((dados[1] / 40) * 100) +'%';
         this.track1 = "style=left:"+((dados[1] / 40) * 100) +'%;';
-        const sliders = document.querySelectorAll(".slider-ui");
+        this.style1 = '60%';
+        //const sliders = document.querySelectorAll(".slider-ui");
         this.valueTrack2 = this.agradabilidade.toString();
         this.valueTrack3 = this.conscienciosidade.toString();
         this.valueTrack4 = this.estabilidade.toString();

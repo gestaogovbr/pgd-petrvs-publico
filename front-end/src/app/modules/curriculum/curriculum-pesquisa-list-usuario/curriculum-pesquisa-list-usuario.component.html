@@ -7,13 +7,13 @@
 <div class="row pesquisaContainer" id="pesquisaContainer">
   <div class="col-lg-2 text-center">
     <div class="p-4">
-      <profile-picture class="profilePicture" [url]="curriculum.usuario.url_foto" [size]="150"></profile-picture>
+      <profile-picture class="profilePicture" [url]="curriculum.usuario.url_foto" [size]="80"></profile-picture>
       <div class="p-2 mt-3">
         <strong>{{curriculum.usuario.nome.toUpperCase()}}</strong>
       </div>
     </div>
     <div style="text-align: left;">
-      <separator title="Apresentação pessoal"></separator>
+      <separator title="Apresentação Pessoal"></separator>
       {{curriculum.apresentacao}}
     </div>
   </div>
@@ -68,10 +68,10 @@
               <table class="table table-sm table-responsive">
                 <thead>
                   <tr>
-                    <th scope="col">Pretensão ou Finalizado</th>
-                    <th scope="col">Área do Conhecimento</th>
-                    <th scope="col">Titulo</th>
-                    <th scope="col">Curso</th>
+                    <th scope="col" class="col-md-3">Pretensão ou Finalizado</th>
+                    <th scope="col" class="col-md-3">Área do Conhecimento</th>
+                    <th scope="col" class="col-md-3">Titulo</th>
+                    <th scope="col" class="col-md-3">Curso</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -97,10 +97,10 @@
               <table class="table table-sm table-responsive">
                 <thead>
                   <tr>
-                    <th scope="col">Idioma</th>
-                    <th scope="col">Fala</th>
-                    <th scope="col">Escrita</th>
-                    <th scope="col">Entendimento</th>
+                    <th scope="col" class="col-md-3">Idioma</th>
+                    <th scope="col" class="col-md-3">Fala</th>
+                    <th scope="col" class="col-md-3">Escrita</th>
+                    <th scope="col" class="col-md-3">Entendimento</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -126,7 +126,7 @@
       <h5 class="card-header"><i class="bi bi-person-workspace me-2"></i>Dados Profissionais</h5>
       <div class="card-body">
         <div class="row my-2">
-          <div class="col-md-4">
+          <div class="col-md-6">
             <strong>Funções exercidas</strong>
             <div *ngIf="curriculum.profissional.historico_funcao.length; else semFuncao">
               <ng-container *ngFor="let funcao of curriculum.profissional.historico_funcao">
@@ -137,7 +137,7 @@
               Sem histórico de funcao
             </ng-template>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <strong>Grupo Especializado</strong>
             <div *ngIf="curriculum.profissional.grupo_especializado_id; else semGrupo">
               <span *ngFor="let funcao of curriculum.profissional.historico_funcao">{{curriculum.profissional.grupo_especializado?.nome || ""}}</span>
@@ -146,7 +146,9 @@
               Sem Grupo
             </ng-template>
           </div>
-          <div class="col-md-4">
+        </div>
+        <div class="row my-2">
+          <div class="col-md-6">
             <strong>Histórico de lotação</strong><br>
             <div *ngIf="curriculum.profissional.historico_lotacao.length; else semLotacao">
               <ng-container *ngFor="let lotacao of curriculum.profissional.historico_lotacao">
@@ -155,6 +157,15 @@
             </div>
             <ng-template #semLotacao>
               Sem históricode lotação.
+            </ng-template>
+          </div>
+          <div class="col-md-6">
+            <strong>Lotação Atual</strong><br>
+            <div *ngIf="curriculum.profissional.lotacao_atual; else semLotacaoAtual">
+              {{this.auth.unidade?.nome || "Sem informação"}}
+            </div>
+            <ng-template #semLotacaoAtual>
+              Sem informação de lotação atual.
             </ng-template>
           </div>
         </div>
@@ -399,13 +410,13 @@
             </div>
           </ng-container>
         </ng-container>
-       
+
       </div>
     </div>
-     
-    </div>
+  </div>
+</div>
 
-    <!--
+<!--
    <div class="card mt-3">
       <h5 class="card-header"><i class="bi bi-mortarboard me-2"></i>Dados acadêmicos</h5>
       <div class="card-body">
