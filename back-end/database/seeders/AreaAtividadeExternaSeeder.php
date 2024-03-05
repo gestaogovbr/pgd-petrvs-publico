@@ -104,7 +104,12 @@ class AreaAtividadeExternaSeeder extends Seeder
                 "ativo" => 1,
             ),
         );
-        AreaAtividadeExterna::upsert($areas_atividades_externas, "id");
+
+        foreach ($areas_atividades_externas as $area) {
+            AreaAtividadeExterna::firstOrCreate(['id' => $area['id']], $area);
+        }
+
+
     }
 }
 

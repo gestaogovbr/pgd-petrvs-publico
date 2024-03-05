@@ -173,6 +173,9 @@ class FuncaoSeeder extends Seeder
                 "ativo" => 1,
             ),*/
         );
-        Funcao::upsert($funcoes, "id");
+
+        foreach ($funcoes as $funcao) {
+            Funcao::firstOrCreate(['id' => $funcao['id']], $funcao);
+        }
     }
 }
