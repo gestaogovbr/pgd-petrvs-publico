@@ -13,7 +13,7 @@
             <div class="p-4">
               <profile-picture class="profilePicture" [url]="curriculum.usuario.url_foto" [size]="120"></profile-picture>
               <div class="p-2 mt-3">
-                <strong>{{curriculum.usuario.nome.toUpperCase()}}</strong>
+                <strong>{{curriculum.usuario?.nome.toUpperCase()}}</strong>
               </div>
             </div>
           </div>
@@ -21,19 +21,19 @@
             <div class="row my-2">
               <div class="col-md-3">
                 <strong>Email</strong><br>
-                {{curriculum.usuario.email || "Sem email"}}
+                {{curriculum.usuario?.email || "Sem email"}}
               </div>
               <div class="col-md-3">
                 <strong>Telefone</strong><br>
-                {{curriculum.telefone || "Sem telefone"}}
+                {{curriculum?.telefone || "Sem telefone"}}
               </div>
               <div class="col-md-3">
                 <strong>Estado civil</strong><br>
-                {{curriculum.estado_civil || "Sem estado civil"}}
+                {{curriculum?.estado_civil || "Sem estado civil"}}
               </div>
               <div class="col-md-3">
                 <strong>Filhos</strong><br>
-                {{curriculum.quantidade_filhos > 0 ? lookup.getValue(lookup.SIMNAO, 1) : lookup.getValue(lookup.SIMNAO, 2)}}<br>
+                {{curriculum?.quantidade_filhos > 0 ? lookup.getValue(lookup.SIMNAO, 1) : lookup.getValue(lookup.SIMNAO, 2)}}<br>
                 <span *ngIf="curriculum.quantidade_filhos > 0">{{curriculum.quantidade_filhos}}</span>
               </div>
             </div>
@@ -133,7 +133,7 @@
       <div class="card-body">
         <div class="row my-2">
           <div class="col-md-6">
-            <strong>Funções exercidas</strong><br>
+            <strong>Funções exercidas e unidades</strong><br>
             <div *ngIf="curriculum.profissional.historico_funcao.length; else semFuncao">
               <ng-container *ngFor="let funcao of curriculum.profissional.historico_funcao">
                 <span>{{funcao.funcao.nome}}</span><br>
