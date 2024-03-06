@@ -14,6 +14,8 @@ import { AreaTematicaDaoService } from 'src/app/dao/area-tematica-dao.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
 import { Curriculum } from 'src/app/models/currriculum.model';
+import { LookupItem } from 'src/app/services/lookup.service';
+import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
 
 @Component({
   selector: 'app-curriculum-pesquisa-list',
@@ -22,6 +24,8 @@ import { Curriculum } from 'src/app/models/currriculum.model';
 })
 export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, CurriculumDaoService>{
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @ViewChild('radioInteresseRemocao', { static: false }) public radioInteresseRemocao?: InputSwitchComponent;
+  @ViewChild('radioInteresseBNT', { static: false }) public radioInteresseBNT?: InputSwitchComponent;
 
   public cidadeDao: CidadeDaoService;
   public areaDao: AreaConhecimentoDaoService;
@@ -31,8 +35,8 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
   public areaTematicaDao: AreaTematicaDaoService;
   public capacidadeTecnicaDao: CapacidadeTecnicaDaoService;
   public filter: FormGroup;
-  public areaTematicaWhere: any[] = [["id", "==", null]];
-  public cursoWhere: any[] = [["id", "==", null]];
+  public areaTematicaWhere: any[] = [['id', '==', null]];
+  public cursoWhere: any[] = [['id', '==', null]];
 
   constructor(public injector: Injector) {
     super(injector, Curriculum, CurriculumDaoService);
@@ -56,15 +60,20 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
       funcao_id: { default: "" },
       area_tematica_id: { default: "" },
       capacidade_tecnica_id: { default: "" },
+      soft_id: { default: "" },
+      score: { default: 0 },
+      interesse_bnt: { default: false },
+      interesse_pgd: { default: "" },
+      remocao: { default: false },
     });
-    this.orderBy = [['usuario.nome','asc']];
+    this.orderBy = [['usuario.nome', 'asc']];
     this.join = ['profissional.historico_atividade_interna.capacidade_tecnica.area_tematica',
-                'profissional.historico_atividade_externa.area_atividade_externa', 'profissional.historico_curso_interno.curso',
-                'profissional.historico_curso_externo.area_atividade_externa', 'profissional.historico_docencia_interna.curso',
-                'profissional.historico_docencia_externa.area_atividade_externa', 'profissional.historico_funcao.funcao',
-                'profissional.historico_funcao.unidade', 'profissional.historico_lotacao.unidade','usuario', 'cidade', 
-                'graduacoes','graduacoes.curso', 'graduacoes.curso.area_conhecimento', 'profissional.grupo_especializado',
-                'usuario.questionarios_respostas.questionario.perguntas.questionario_resposta_pergunta'];
+      'profissional.historico_atividade_externa.area_atividade_externa', 'profissional.historico_curso_interno.curso',
+      'profissional.historico_curso_externo.area_atividade_externa', 'profissional.historico_docencia_interna.curso',
+      'profissional.historico_docencia_externa.area_atividade_externa', 'profissional.historico_funcao.funcao',
+      'profissional.historico_funcao.unidade', 'profissional.historico_lotacao.unidade', 'usuario', 'cidade',
+      'graduacoes', 'graduacoes.curso', 'graduacoes.curso.area_conhecimento', 'profissional.grupo_especializado',
+      'usuario.questionarios_respostas.questionario.perguntas.questionario_resposta_pergunta'];
   }
 
   ngAfterViewInit() {
@@ -72,7 +81,7 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
   }
 
   public filterWhere = (filter: FormGroup) => {
-    let form: any = filter.value; 
+    let form: any = filter.value;
     let result: any[] = [];
     if (form.estado?.length && !form.cidade_id?.length) {
       result.push(["uf", "==", form.estado]);
@@ -109,6 +118,9 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
     }
     if (form.capacidade_tecnica_id?.length) {
       result.push(["capacidade_tecnica_id", "==", form.capacidade_tecnica_id]);
+    }
+    if (form.soft_id?.length && form.score > 0) {
+      result.push(["soft_id", "==", form.soft_id, form.score]);
     }
     return result;
   }
@@ -164,12 +176,12 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
     });
   }
 
- /* public async showCurriculumDetalhes2(row: any) {
-    console.log(row)
-    this.go.navigate({ route: ['raiox', 'detalhe-pesquisa'] }, { modal: true, metadata: { curriculum: row } });
-  }*/
+  /* public async showCurriculumDetalhes2(row: any) {
+     console.log(row)
+     this.go.navigate({ route: ['raiox', 'detalhe-pesquisa'] }, { modal: true, metadata: { curriculum: row } });
+   }*/
 
- 
+
 
 }
 

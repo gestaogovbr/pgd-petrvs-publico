@@ -13,6 +13,9 @@ use App\Services\ServiceBase;
 use App\Models\Curso;
 use App\Models\HistoricoFuncaoCurriculum;
 use App\Models\HistoricoAtividadeInternaCurriculum;
+use App\Models\QuestionarioPergunta;
+use App\Models\QuestionarioRespostaPergunta;
+use App\Models\QuestionarioResposta;
 
 class CurriculumService extends ServiceBase
 {
@@ -42,13 +45,13 @@ class CurriculumService extends ServiceBase
     foreach ($data['where'] as $condition) {
       if (is_array($condition) && $condition[0] == 'uf') {
         $curriculums_filtrados = Curriculum::select('id')->whereRelation('cidade', 'uf', $condition[2])->get()->toArray();
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'cidade_id') {
         $curriculums_filtrados = Curriculum::select('id')->where('cidade_id', $condition[2])->get()->toArray();
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'estado_civil') {
         $curriculums_filtrados = Curriculum::select('id')->where('estado_civil', $condition[2])->get()->toArray();
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'filhos') {
         $tem_filhos = $condition[2];
         $curriculums_filtrados = [];
@@ -57,33 +60,39 @@ class CurriculumService extends ServiceBase
         } else {
           $curriculums_filtrados = Curriculum::select('id')->where('quantidade_filhos', 0)->get()->toArray();
         }
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'idioma') {
         $curriculums_filtrados = Curriculum::select('id')->whereRaw("JSON_SEARCH(idiomas, 'one', '".$condition[2]."', null, '$[*].idioma')")->get()->toArray();
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'area_conhecimento_id') {
         $cursos_filtrados = Curso::select('id')->where('area_id', $condition[2])->get()->toArray();
         $curriculums_filtrados = Curriculum::select('id')->whereRelation('graduacoes', fn ($q) => $q->whereIn('curso_id', $cursos_filtrados))->get()->toArray();
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'curso_id') {
         $curriculums_filtrados = Curriculum::select('id')->whereRelation('graduacoes', 'curso_id', $condition[2])->get()->toArray();
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'grupo_especializado_id') {
         $grupos_filtrados = GrupoEspecializado::select('id')->where('id', $condition[2])->get()->toArray();
         $curriculums_filtrados = Curriculum::select('id')->whereRelation('profissional', fn ($q) => $q->whereIn('grupo_especializado_id', $grupos_filtrados))->get()->toArray();
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'funcao_id') {
         $funcoes_cv_filtrados = HistoricoFuncaoCurriculum::select('curriculum_profissional_id')->where('funcao_id', $condition[2])->get()->toArray();
         $curriculums_filtrados = Curriculum::select('id')->whereRelation('profissional', fn ($q) => $q->whereIn('id', $funcoes_cv_filtrados))->get()->toArray();
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'area_tematica_id') {
         $historicos_filtrados = HistoricoAtividadeInternaCurriculum::select('id')->whereRelation('capacidadeTecnica', 'area_tematica_id', $condition[2])->get()->toArray();
         $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->whereRelation('historicoAtividadeInterna', fn ($q) => $q->whereIn('id', $historicos_filtrados))->get()->toArray();
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'capacidade_tecnica_id') {
         $historicos_filtrados = HistoricoAtividadeInternaCurriculum::select('id')->where('capacidade_tecnica_id', $condition[2])->get()->toArray();
         $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->whereRelation('historicoAtividadeInterna', fn ($q) => $q->whereIn('id', $historicos_filtrados))->get()->toArray();
-        array_push($where, ['curriculum_id', 'in', $curriculums_filtrados]);
+        array_push($where, ['id', 'in', $curriculums_filtrados]);
+      } else if (is_array($condition) && $condition[0] == 'soft_id') {
+        $pergunta_filtrada = QuestionarioPergunta::select('id')->where('pergunta', $condition[2])->get()->toArray();
+        $resposta_filtrada = QuestionarioRespostaPergunta::select('questionario_resposta_id')->whereIn('questionario_pergunta_id', $pergunta_filtrada)->where('resposta', '>=', $condition[3])->get()->toArray();
+        $usuario_filtrado = QuestionarioResposta::select('usuario_id')->whereIn('id', $resposta_filtrada)->get()->toArray();
+        $curriculums_filtrados = Curriculum::select('id')->whereIn('usuario_id', $usuario_filtrado)->get()->toArray();
+        array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else {
         array_push($where, $condition);
       }
