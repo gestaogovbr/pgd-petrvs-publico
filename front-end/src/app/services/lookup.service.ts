@@ -794,6 +794,17 @@ export class LookupService implements IIndexable {
     { key: 'RADIO', value: 'Única Escolha' },
     { key: 'NUMBER', value: 'Numérica' }
   ];
+
+  public SOFT_SKILLS: LookupItem[] = [
+    { key: "COMUNICACAO", value: 'Comunicação' },
+    { key: "LIDERANCA", value: 'Liderança' },
+    { key: "RESOLUCAO", value: 'Resolução de problemas' },
+    { key: "CRIATIVIDADE", value: 'Criatividade e curiosidade' },
+    { key: "PENSAMENTO", value: 'Pensamento crítico' },
+    { key: "HABILIDADES", value: 'Habilidades com pessoas e equipes' },
+    { key: "ADAPTABILIDADE", value: 'Adaptabilidade e resiliência' },
+    { key: "ETICA", value: 'Ética' }
+  ];
  // "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWITCH" | "NUMBER" | "RATE" | "RADIO" | "CHECK";
 
   public THEMES: LookupItem[] = [
