@@ -69,10 +69,11 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
          }
         }
       );
+      this.resposta(respostas)
     }
     //console.log('questionarios',this.questionarios)
     //console.log('respostas',respostas)
-    this.resposta(respostas)
+   
     //this.curriculum = this.metadata?.curriculum;
   }
 
