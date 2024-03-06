@@ -24,7 +24,7 @@ export class MateriaListComponent extends PageListBase<Materia, MateriaDaoServic
     this.area = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService)
    
        /* Inicializações */
-    this.title = this.lex.translate("Matérias");
+    this.title = this.lex.translate("Disciplinas");
     this.code = "MOD_RX";
     this.join = ["curso","curso.area_conhecimento"];
     this.orderBy = [['nome','asc']];

@@ -15,7 +15,32 @@ class FuncaoSeeder extends Seeder
     public function run()
     {
         $funcoes = array(
+
             array(
+                "id" => "09d3f00f-f35b-4c23-b398-8661a8e06247",
+                "created_at" => "2024-02-23 14:55:55",
+                "updated_at" => "2024-02-23 14:55:55",
+                "deleted_at" => NULL,
+                "nome" => "Chefe",
+                "nivel" => "",
+                "descricao" => "",
+                "siape" => "",
+                "cbo" => "",
+                "ativo" => 1,
+            ),
+            array(
+                "id" => "0a805a78-ea9c-45df-b146-ba54c1346b28",
+                "created_at" => "2024-02-23 14:55:55",
+                "updated_at" => "2024-02-23 14:55:55",
+                "deleted_at" => NULL,
+                "nome" => "Chefe Substituto",
+                "nivel" => "",
+                "descricao" => "",
+                "siape" => "",
+                "cbo" => "",
+                "ativo" => 1,
+            ),
+          /*  array(
                 "id" => "09d3f00f-f35b-4c23-b398-8661a8e06247",
                 "created_at" => "2024-02-23 14:55:55",
                 "updated_at" => "2024-02-23 14:55:55",
@@ -146,7 +171,7 @@ class FuncaoSeeder extends Seeder
                 "siape" => "",
                 "cbo" => "",
                 "ativo" => 1,
-            ),
+            ),*/
         );
 
         foreach ($funcoes as $funcao) {

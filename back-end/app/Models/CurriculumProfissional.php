@@ -7,6 +7,7 @@ use App\Models\Curriculum;
 use App\Models\CentroTreinamento;
 use App\Models\Cargo;
 use App\Models\GrupoEspecializado;
+use App\Models\Unidade;
 use App\Casts\AsJson;
 
 class CurriculumProfissional extends ModelBase
@@ -55,7 +56,7 @@ class CurriculumProfissional extends ModelBase
    public function historicoDocenciaExterna() { return $this->hasMany(HistoricoDocenciaExternaCurriculum::class); }
    public function historicoFuncao() { return $this->hasMany(HistoricoFuncaoCurriculum::class); }
    public function historicoLotacao() { return $this->hasMany(HistoricoLotacaoCurriculum::class); }
-   public function unidade() { return $this->hasOne(Unidade::class); }
+   public function unidadeAtual() { return $this->hasOne(Unidade::class); }
 
 }
 
