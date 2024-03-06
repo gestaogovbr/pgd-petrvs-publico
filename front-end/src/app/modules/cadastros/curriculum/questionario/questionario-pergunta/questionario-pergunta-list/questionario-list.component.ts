@@ -1,6 +1,7 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { QuestionarioDaoService } from 'src/app/dao/questionario-dao.service';
 import { Base } from 'src/app/models/base.model';
 import { Questionario } from 'src/app/models/questionario.model';
@@ -81,6 +82,13 @@ export class QuestionarioListComponent extends PageListBase<Questionario, Questi
     rows?.forEach((questionario: Questionario) => {
       questionario.perguntas = questionario.perguntas.sort((a, b) => a.sequencia! < b.sequencia! ? -1 : 1);
     });
+  }
+
+  public dynamicButtons(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    const BOTAO_EXCLUIR = { label: "Excluir o Questionário?", icon: "bi bi-trash", onClick: this.delete.bind(this) };
+    result.unshift(BOTAO_EXCLUIR);
+    return result;
   }
    
 }

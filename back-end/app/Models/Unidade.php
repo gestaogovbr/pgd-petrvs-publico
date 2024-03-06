@@ -19,6 +19,7 @@ use App\Models\Template;
 use App\Models\NotificacaoConfig;
 use App\Models\HistoricoLotacaoCurriculum;
 use App\Models\HistoricoFuncaoCurriculum;
+use App\Models\CurriculumProfissional;
 use App\Traits\AutoUuid;
 
 class Unidade extends ModelBase
@@ -92,6 +93,7 @@ class Unidade extends ModelBase
     public function integrantes() { return $this->hasMany(UnidadeIntegrante::class); }
     public function historicoLotacao() { return $this->hasMany(HistoricoLotacaoCurriculum::class); }
     public function historicoFuncao() { return $this->hasMany(HistoricoFuncaoCurriculum::class); }
+    public function curriculumsProfissionais() { return $this->hasMany(CurriculumProfissional::class, 'lotacao_atual'); }
     // Belongs
     public function entidade() { return $this->belongsTo(Entidade::class); }
     public function cidade() { return $this->belongsTo(Cidade::class); }  //nullable

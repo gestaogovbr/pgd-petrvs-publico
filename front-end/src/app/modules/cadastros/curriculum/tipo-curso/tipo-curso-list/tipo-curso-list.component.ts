@@ -1,6 +1,7 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { TipoCursoDaoService } from 'src/app/dao/tipo-curso-dao.service';
 import { TipoCurso } from 'src/app/models/tipo-curso.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
@@ -63,6 +64,16 @@ export class TipoCursoListComponent extends PageListBase<TipoCurso, TipoCursoDao
    
     return result;
   }
+
+  public dynamicButtons(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    const BOTAO_EXCLUIR = { label: "Excluir Registro", icon: "bi bi-trash", onClick: this.delete.bind(this) };
+    result.unshift(BOTAO_EXCLUIR);
+    return result;
+  }
+
+ // public dynamicOptions(row: any): ToolbarButton[] {}
+ 
 
  
 }

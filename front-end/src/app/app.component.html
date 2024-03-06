@@ -9,6 +9,7 @@
         <div class="d-flex align-items-center">
           <img [src]="gb.getResourcePath('assets/images/icon_' + gb.theme + '.png')" alt="Logo Petrvs" width="30" class="d-inline-block align-text-top" />
           <span class="logo-text ms-2 d-none d-sm-block">PETRVS</span>
+          <img [src]="gb.getResourcePath('assets/images/logo_prf_' + gb.theme + '.png')" alt="Logo PRF" width="30" class="d-inline-block align-text-top ms-3" *ngIf="gb.edicao == 'PRF'"/>
         </div>
       </a>
     </div>
@@ -284,8 +285,8 @@
             <div class="d-flex membro mb-3">
               <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
               <div class="ms-3">
-                <b>Marcelo</b><br>
-                <small>SPRF </small><br>
+                <b>Marcelo Maizman</b><br>
+                <small>SPRF/SP - 4a Del</small><br>
                 <i>Desenvolvedor</i>
               </div>
             </div>
@@ -295,6 +296,14 @@
                 <b>Marian</b><br>
                 <small>SPRF </small><br>
                 <i>Desenvolvedor</i>
+              </div>
+            </div>
+            <div class="d-flex membro mb-3">
+              <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
+              <div class="ms-3">
+                <b>D. Paiva</b><br>
+                <small>SPRF </small><br>
+                <i>Negocial</i>
               </div>
             </div>
           </div>

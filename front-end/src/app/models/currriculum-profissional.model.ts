@@ -14,6 +14,7 @@ import { HistoricoDocenciaExternaCurriculum } from './historico-docencia-externa
 import { HistoricoDocenciaInternaCurriculum } from './historico-docencia-interna-currriculum.model';
 import { HistoricoFuncaoCurriculum } from './historico-funcao-currriculum.model';
 import { HistoricoLotacaoCurriculum } from './historico-lotacao-currriculum.model';
+import { Unidade } from './unidade.model';
 
 export class CurriculumProfissional extends Base {
 
@@ -22,6 +23,7 @@ export class CurriculumProfissional extends Base {
     public cargo?:Cargo;
     public grupo_especializado?:GrupoEspecializado;
     public area_conhecimento?: AreaConhecimento;
+    public unidade?:Unidade;//lotacao atual
    
     public historico_funcao: HistoricoFuncaoCurriculum[] = [];
     public historico_lotacao: HistoricoLotacaoCurriculum[] = [];// Unidades de lotação em toda carreira
