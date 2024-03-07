@@ -468,9 +468,9 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     form?.markAllAsTouched();
     if (form?.valid) {
       let values = form.value;
-      console.log('ROW->',row)
+      //console.log('ROW->',row)
       row.area_tematica = this.area_tematica?.selectedEntity;
-      console.log('Area->',row.area_tematica)
+     // console.log('Area->',row.area_tematica)
       row.area_tematica_id = values.area_tematica_id;
       row.capacidade_tecnica = this.capacidade_tecnica!.selectedItem?.data;
       row.capacidade_tecnica_id = values.capacidade_tecnica_id;
@@ -508,7 +508,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     if (form?.valid) {
       let values = form.value;
       row.area_atividade_externa = this.areaAtividadeExternaDocencia!.selectedEntity;
-      console.log('area_atividade_externa', row.area_atividade_externa)
+      //console.log('area_atividade_externa', row.area_atividade_externa)
       row.area_atividade_externa_id = values.area_atividade_externa_id;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
       return row;
@@ -540,7 +540,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     if (form?.valid) {
       let values = form.value;
       row.curso = this.cursoDocenciaInterna?.selectedItem?.data;
-      console.log(row.curso)
+      //console.log(row.curso)
       row.curso_id = values.curso_id;
       row.pretensao = values.pretensao;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
@@ -593,8 +593,8 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     form?.markAllAsTouched();
     if (form?.valid) {
       let values = form.value;
-      row.curso = this.cursoInterno?.selectedItem?.data;
-      console.log('CursoInterno',row.curso)
+      row.curso = this.cursoInterno?.selectedItem
+      //console.log('CursoInterno',row.curso)
       row.curso_id = values.curso_id;
       row.pretensao = values.pretensao;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";

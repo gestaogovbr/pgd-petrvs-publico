@@ -119,7 +119,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     let entity = curriculuns?.length ? curriculuns[0] : new Curriculum();//this.entity
     curriculuns?.length ? (this.id = curriculuns[0].id) : (this.id = "");
     const cidade = entity.cidade_id != '' ? await this.cidadeDao?.getById(entity.cidade_id) : null;
-    console.log('USER ID',this.auth.usuario?.id)
+    //console.log('USER ID',this.auth.usuario?.id)
     //this.form?.controls.estados.setValue(this.lookup.UF.find(x => x.key == 'AM'));//cidade.uf));
     let uf = this.lookup.getLookup(this.lookup.UF, cidade?.uf);
     this.form?.controls.estados.setValue(uf?.key);//cidade.uf));
@@ -158,7 +158,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
 
   public selecionaMunicipios(uf: string) {
     //console.log(uf)
-    this.cidadeDao?.query({ where: [['uf', '==', uf]], orderBy: [['nome', 'asc']] }).getAll().then((municipios) => {
+    this.cidadeDao?.query({ where: [['uf', '==', uf]], orderBy: [['nome', 'asc']] }).asPromise().then((municipios) => {
       this.municipios = municipios.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
     });
     this.show = true;
@@ -295,146 +295,4 @@ public togglePopOver() {}
     this.show = !this.show;
   }
     */
-  
-/*
-
-  public addItemIdioma(): LookupItem | undefined {
-    let result = undefined;
-    let res = this.form!.value
-    //console.log('addItemIdioma', res)
-    const idioma = this.lookup.IDIOMAS.find(x => x.key == this.form!.controls.idioma.value)
-    const escrita = this.lookup.NIVEL_IDIOMA.find(x => x.key == this.form!.controls.idiomaEscrita.value);
-    const fala = this.lookup.NIVEL_IDIOMA.find(x => x.key == this.form!.controls.idiomaFala.value);
-    const entende = this.lookup.NIVEL_IDIOMA.find(x => x.key == this.form!.controls.idiomaEntendimento.value);
-    const key = idioma?.key != "" ? this.util.textHash(idioma?.key) : null;
-   // console.log('addItemIdioma', ' - ', idioma, ' - ', escrita, ' - ', fala, ' - ', entende, ' - ', key)
-    if (idioma && escrita && fala && entende && this.util.validateLookupItem(this.form!.controls.idiomas.value, key)) {
-      result = {
-        key: key,
-        value: idioma.value + ' - ' + escrita.value + ' - ' + fala.value + ' - ' + entende.value,
-        data: {
-          idioma: idioma.key,
-          escrita: escrita.key,
-          fala: fala.key,
-          entende: entende.key
-        }
-      };
-      this.form!.controls.idioma.setValue("");
-      this.form!.controls.idiomaFala.setValue("");
-      this.form!.controls.idiomaEscrita.setValue("");
-      this.form!.controls.idiomaEntendimento.setValue("");
-    }
-    
-    return result;
-  };
-
-  public addItemGraduacaoPos(): LookupItem | undefined {
-    let result = undefined;
-    const area = { 'key': this.formGraduacao!.controls.areaPos.value, 'value': this.area?.selectedItem?.text };
-    const curso = this.curso!.selectedItem;//this.cursosGradPos.find(value => value.key == this.formGraduacao!.controls.cursoPos.value)
-    const titulo = this.lookup.TITULOS_CURSOS.find(x => x.key == this.formGraduacao!.controls.titulo.value);
-    const pretensao = this.opcoesEscolha.find(value => value.key == (this.formGraduacao!.controls.pretensao.value ? 1 : 0));//converte o value do switch
-    const key = this.util.textHash((area.key || "") + (curso?.key || "") + (titulo?.key || ""));// + (pretensao?.key || ""));
-    //console.log('AREA', area, 'AREA', curso, 'AREA', titulo, 'AREA', pretensao)
-    if (curso && area && titulo && pretensao && this.util.validateLookupItem(this.formGraduacao!.controls.graduacaopos.value, key)) {
-      result = {
-        key: key,
-        value: area.value + ' - ' + curso.value + ' - ' + titulo?.value + ' - ' + pretensao?.value,
-        data: {
-          id: this.dao?.generateUuid(),
-          area: area.key,
-          curso: curso.key,
-          titulo: titulo?.key,
-          pretensao: pretensao?.key,
-          _status: "ADD"
-        }
-      };
-      //console.log('FORMULARIOGRAD', this.formGraduacao!.value)
-      this.formGraduacao!.controls.areaPos.setValue("");
-      this.formGraduacao!.controls.cursoPos.setValue("");
-      this.formGraduacao!.controls.titulo.setValue("");
-      this.formGraduacao!.controls.pretensao.setValue(false);
-    }
-    
-    return result;
-  };
-
-  public onAreaGraducaoPosChange() {
-    this.cursoDao?.query({ where: [['area_curso_id', '==', this.formGraduacao!.controls.area_conhecimento.value], ['titulo', 'like', 'GRAD%']] }).getAll().then((cursos2) => {
-      this.cursos = cursos2.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
-      this.cdRef.detectChanges();
-    });
-  }*/
-  
-
-  /*public montaGraduacaoPos(cursoId : CurriculumGraduacao []){
-    let result = undefined;
-    let gard: any[] = [];
-    cursoId.forEach(async curso1 => {
-      const graduacao = await this.cursoDao?.getById(curso1.id, ['areaConhecimento','tipoCurso']);
-      const area = { 'key': graduacao?.area_id, 'value': graduacao?.area_conhecimento?.nome };
-      const curso = { 'key': graduacao?.id, 'value': graduacao?.nome } as LookupItem;
-      const titulo = this.lookup.TITULOS_CURSOS.find(x => x.key == graduacao?.titulo);
-      const pretensao = this.opcoesEscolha.find(value => value.key == curso1.pretensao);
-      const key = this.util.textHash((area.key || "") + (curso?.key || "") + (titulo?.key || ""));
-      result = {
-        key: key,
-        value: area.value + ' - ' + curso!.value + ' - ' + titulo?.value + ' - ' + pretensao?.value,
-        data: {
-          id: this.dao?.generateUuid(),
-          area: area.key,
-          curso: curso!.key,
-          titulo: titulo?.key,
-          pretensao: pretensao?.key,
-          _status: "EDIT"
-        }
-      };
-     gard.push(result)
-    });
-    console.log('Gard', gard)
-    //this.formGraduacao?.controls.graduacaopos.setValue(gard)
-    return gard; 
-  };*/
-
-     
-    /*this.form = this.fh.FormBuilder({
-      id: { default: "" },
-      usuario_id: { default: "" },
-      cidade_id: { default: "" },
-      apresentacao: { default: "" },
-      estados: { default: "" },
-      telefone: { default: "" },
-      estado_civil: { default: "" },
-      filhos: { default: false },
-      quantidade_filhos: { default: 0 },
-      radioFalaIdioma: { default: false },
-      idioma: { default: "" },
-      idiomaFala: { default: "" },
-      idiomaEscrita: { default: "" },
-      idiomaEntendimento: { default: "" },
-      idiomas: { default: [] },
-      ativo: { default: true },
-      graduacoes: { default: [] },
-    }, this.cdRef, this.validate);
-    this.formGraduacao = this.fh.FormBuilder({
-      curriculum_id: { default: "" },
-      curso_id: { default: "" },
-      area_conhecimento_id: { default: "" },
-      curso: { default: "" },
-      graduacao: { default: [] },
-      pretensao: { default: 0 },
-      areaPos: { default: "" },
-      cursoPos: { default: "" },
-      titulo: { default: "" },
-      graduacaopos: { default: [] },
-    }, this.cdRef, this.validate);
-    this.formIdiomaGrid = this.fh.FormBuilder({
-      idioma: { default: "" },
-      idiomaFala: { default: "" },
-      idiomaEscrita: { default: "" },
-      idiomaEntendimento: { default: "" },
-      idiomas: { default: [] },
-    }, this.cdRef, this.validate);
-  }*/
-
 }

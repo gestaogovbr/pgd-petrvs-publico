@@ -69,10 +69,11 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
          }
         }
       );
+      this.resposta(respostas)
     }
     //console.log('questionarios',this.questionarios)
     //console.log('respostas',respostas)
-    this.resposta(respostas)
+   
     //this.curriculum = this.metadata?.curriculum;
   }
 
@@ -200,6 +201,9 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
 
   public resposta(resp: number[]){
 
+    if(!(resp.length)){
+      return;
+    }
     //resp=[5,5,5,5,5,4,3,2,4,5,2,1,2,3,4,3,4,4,4,4,3,3,3,3,4,4,4,4,5,5,5,4,3,2,3,3,4,4,4,4,4,5,5,5,5,4,4,4,4,4]
     
         let eM=20+(resp[0])+(resp[10])+(resp[20])+(resp[30])+(resp[40]);
