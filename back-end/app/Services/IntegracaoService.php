@@ -313,7 +313,7 @@ class IntegracaoService extends ServiceBase
 
             $uorg_siape_data_modificacao = null;
             if ($this->integracao_config["tipo"] == "SIAPE") {
-               $uorg_siape_data_modificacao =  $self->UtilService->valueOrDefault($uo["data_modificacao"]);
+              $uorg_siape_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["data_modificacao"]));
             }
             else if ($this->integracao_config["tipo"] == "WSO2") {
                 $uorg_siape_data_modificacao = $self->UtilService->valueOrDefault($uo["datamodificacao"]);
