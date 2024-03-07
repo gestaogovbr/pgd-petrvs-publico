@@ -36,6 +36,7 @@ class QuestionarioResposta extends ModelBase
 
      //has Many
      public function questionarioRespostaPergunta() { return $this->hasMany(QuestionarioRespostaPergunta::class); }
+     //public function questionariosRespostasPerguntas() { return $this->hasMany(QuestionarioRespostaPergunta::class); }
  
     
 }

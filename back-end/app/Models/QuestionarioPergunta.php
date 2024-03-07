@@ -28,7 +28,10 @@ class QuestionarioPergunta extends ModelBase
     protected $casts = [
         'respostas' => AsJson::class
     ];
-      
+    
+    public $fillable_changes = ['questionario_resposta_pergunta'];
+    public $delete_cascade = ["questionario_resposta_pergunta"];
+
     //public $fillable_changes = ['graduacoes'];
 
     //public $fillable_relation = [];
@@ -38,7 +41,7 @@ class QuestionarioPergunta extends ModelBase
      //public function curriculum() { return $this->belongsTo(Curriculum::class); }
      //hasMany
      public function questionarioRespostaPergunta() { return $this->hasMany(QuestionarioRespostaPergunta::class); }
+     //public function questionarioRespostaPergunta() { return $this->hasOne(QuestionarioRespostaPergunta::class); }
  
     
 }
-
