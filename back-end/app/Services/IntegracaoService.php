@@ -386,7 +386,7 @@ class IntegracaoService extends ServiceBase
                 'municipio_uf' => $self->UtilService->valueOrDefault($uo["municipio_uf"], null),
                 'ativa' => $self->UtilService->valueOrDefault($uo["ativa"]),
                 'regimental' => $self->UtilService->valueOrDefault($uo["regimental"], null),
-                'data_modificacao' => $uorg_siape_data_modificacao,
+                'data_modificacao' => date("Y-m-d H:i:s", $uorg_siape_data_modificacao),
                 'und_nu_adicional' => $self->UtilService->valueOrDefault($uo["und_nu_adicional"], null),
                 'cnpjupag' => $self->UtilService->valueOrDefault($uo["cnpjupag"], null),
                 'deleted_at' => null,
