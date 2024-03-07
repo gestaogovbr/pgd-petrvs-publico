@@ -145,35 +145,7 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
     return questionarioResposta;
   }
 
-  public valorSoftChange(control: any) {
-
-    control.value == '' ? control.setValue(0) : '';
-
-    const comunica = this.form?.controls.comunica.value;
-    const lideranca = this.form?.controls.lideranca.value;
-    const resolucao = this.form?.controls.resolucao.value;
-    const criatividade = this.form?.controls.criatividade.value;
-    const pensamento = this.form?.controls.pensamento.value;
-    const habilidade = this.form?.controls.habilidade.value;
-    const adaptabilidade = this.form?.controls.adaptabilidade.value;
-    const etica = this.form?.controls.etica.value;
-
-    const array = [comunica, lideranca, resolucao, criatividade, pensamento, habilidade, adaptabilidade, etica]
-
-    let soma: number = 0;
-
-    for (const val of array) {
-      //console.log('SUM SEQUENCIA', sum)
-      soma = soma + parseInt(val);
-
-      if (soma > 20) {
-        this.dialog.alert("Valor excedido", "O valor máximo são 20 pontos.");
-        control.setValue(control.value - (soma - 20));
-        break;
-      }
-    }
-  }
-
+ 
   public onRadioChange(event : any){//console.log(event.srcElement.value)
     this.valorEscolhido = event.srcElement.value;
     this.proximo(event)
@@ -285,18 +257,12 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
         let concienciosidade=(resp[7])+(resp[17])+(resp[27])+(resp[37]);
         let estabilidade=(resp[3])+(resp[13])+(resp[23])+(resp[28])+(resp[33])+(resp[38])+(resp[43])+(resp[48]);
         let abertura=(resp[9])+(resp[19])+(resp[29]);
-        
-        //console.log(nD)
-      //console.log(oD)
-      
-        let e,a,c,n,o=0;
-          
+     
         this.extroversao = eM-extroversao;
         this.agradabilidade = aM-agradabilidade;
         this.conscienciosidade = cM - concienciosidade;
         this.estabilidade = nM - estabilidade;
         this.abertura = oM - abertura;
-
         //console.log('e ',this.extroversao,' - a ',this.agradabilidade, ' - c ',this.conscienciosidade, ' - n ',this.estabilidade ,' - o ', this.abertura )
         this.chartb5([this.extroversao,this.agradabilidade,this.conscienciosidade,this.estabilidade, this.abertura])
 

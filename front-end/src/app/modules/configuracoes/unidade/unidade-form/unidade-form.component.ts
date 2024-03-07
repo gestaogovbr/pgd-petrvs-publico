@@ -102,13 +102,13 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     this.informal = !!entity.informal;
     this.cdRef.detectChanges();
     let formValue = Object.assign({}, form.value);
+    entity.etiquetas = entity.etiquetas || [];
     this.form!.patchValue(this.util.fillForm(formValue, entity));
     await Promise.all([
       this.unidadePai!.loadSearch(entity.unidade_pai || entity.unidade_pai_id),
       this.cidade!.loadSearch(entity.cidade || entity.cidade_id),
       this.entidade!.loadSearch(entity.entidade || entity.entidade_id)
     ]);
-    entity.etiquetas = entity.etiquetas || [];
     this.form!.controls.informal.setValue(entity.informal);
     this.unidadeRaiz = this.action == 'edit' && !entity.unidade_pai_id;
     this.form!.controls.usar_expediente_unidade.setValue(entity.expediente ? true : false);

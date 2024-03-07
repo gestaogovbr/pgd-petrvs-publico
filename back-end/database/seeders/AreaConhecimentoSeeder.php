@@ -88,7 +88,11 @@ class AreaConhecimentoSeeder extends Seeder
                 "ativo" => 1,
             ),
         );
-        AreaConhecimento::upsert($areas_conhecimentos, "id");
+
+        foreach ($areas_conhecimentos as $area) {
+            AreaConhecimento::firstOrCreate(['id' => $area['id']], $area);
+        }
+
     }
 }
 

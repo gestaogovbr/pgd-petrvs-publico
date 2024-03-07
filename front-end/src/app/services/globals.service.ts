@@ -173,4 +173,8 @@ export class GlobalsService {
     const theme = this.auth.usuarioConfig.theme
     return theme ? theme : 'light'
   }
+
+  public get edicao(): string {
+    return environment.edicao
+  }
 }

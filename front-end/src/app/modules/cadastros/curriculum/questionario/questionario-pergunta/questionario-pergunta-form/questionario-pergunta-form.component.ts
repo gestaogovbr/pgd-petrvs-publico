@@ -190,9 +190,5 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
     }
     this.cdRef.detectChanges();
   }
-
-  public addItemHandle() { return { 'key': 'key', 'value': 'value' } }
-
-  public deleteItemHandle() { }
 }
 
