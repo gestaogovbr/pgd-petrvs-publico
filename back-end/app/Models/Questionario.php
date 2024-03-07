@@ -21,14 +21,26 @@ class Questionario extends ModelBase
 
     public $fillable_changes = ['perguntas'];
 
+    public $delete_cascade = ["questionario_resposta", "perguntas"];
+
     //public $fillable_relation = [];
 
     //Has
     public function perguntas() { return $this->hasMany(QuestionarioPergunta::class); }
-    public function questionarioResposta() { return $this->hasMany(QuestionarioResposta::class); }
+    public function questionarioPergunta() { return $this->hasMany(QuestionarioPergunta::class); }
+    //public function questionariosPerguntas() { return $this->hasMany(QuestionarioPergunta::class); }
+    //public function questionarioResposta() { return $this->hasOne(QuestionarioResposta::class); }
 
     // Belongs
 
   
 }
+/*
 
+Questionario
+  questionarioResposta - QUESTIONARIO_ID (hasOne)
+    questionarioRespostaPergunta - QUESTIONARIO_RESPOSTA_ID (hasMany)
+  questionariosPerguntas - QUESTIONARIO_ID (hasMany)
+    questionariosRespostasPerguntas - QUESTIONARIO_PERGUNTA_ID (hasMany)
+
+*/

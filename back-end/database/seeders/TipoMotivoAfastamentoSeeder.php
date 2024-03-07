@@ -18,7 +18,7 @@ class TipoMotivoAfastamentoSeeder extends Seeder
     {
         // Inserção em massa partindo do CSV
         $file = database_path('seeders/arquivos_csv/afastamentos.csv');
-        $csv_reader = new BulkSeeeder($file, ';');
+        $csv_reader = new BulkSeeder($file, ';');
 
         $timenow = now();
 

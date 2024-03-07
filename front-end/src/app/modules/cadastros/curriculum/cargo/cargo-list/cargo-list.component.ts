@@ -35,24 +35,7 @@ export class CargoListComponent extends PageListBase<Cargo, CargoDaoService> {
       efetivo: {default: 1},
       ativo: {default: 1},
      });
-    // Testa se o usuário possui permissão para exibir dados de cursos
-    if (this.auth.hasPermissionTo("MOD_RX_VIS_DPE")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir o curso
-    if (this.auth.hasPermissionTo("MOD_RX_VIS_DPE")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
-
-   
+     this.addOption(this.OPTION_EXCLUIR, "MOD_RX_OUT_EXCL");
 
   }
 

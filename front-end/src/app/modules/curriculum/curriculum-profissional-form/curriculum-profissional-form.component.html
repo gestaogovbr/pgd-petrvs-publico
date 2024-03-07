@@ -228,7 +228,7 @@
                         </column>
                         <column title="Curso Institucional" titleHint="Escolha o curso." [template]="columnCurso" [editTemplate]="editCurso">
                             <ng-template let-row="row" #columnCurso>
-                                {{row.curso?.nome || "Desconhecido"}}
+                                {{row.curso?.nome || row.curso?.value || "Desconhecido"}}
                             </ng-template>
                             <ng-template let-row="row" #editCurso>
                                 <input-select #cursoInterno [size]="3" label="Curso" icon controlName="curso_id" [dao]="cursoDao" [where]="[['titulo', '==', 'INSTITUCIONAL']]" orderBy="[['nome', 'asc']]" [addRoute]="{route: ['raiox','cadastros','curso','new']}"></input-select>

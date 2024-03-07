@@ -17,7 +17,7 @@ class JobAgendamentoSeeder  extends Seeder
     public function run()
     {
 
-        DB::table('job_agendamentos')->insert([
+        DB::table('jobs_schedules')->insert([
             [
                 'nome_do_job' => 'PGDCarregarDadosFila',
                 'diario' => true,

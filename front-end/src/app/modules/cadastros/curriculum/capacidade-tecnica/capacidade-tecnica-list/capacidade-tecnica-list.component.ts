@@ -28,24 +28,8 @@ export class CapacidadeTecnicaListComponent extends PageListBase<CapacidadeTecni
       area_tematica_id:{default: ""},
       ativo: {default: ""},
      });
-    // Testa se o usuário possui permissão para exibir dados de CapacidadeTecnicas
-    if (this.auth.hasPermissionTo("MOD_RX_VIS_DPE")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir o CapacidadeTecnica
-    if (this.auth.hasPermissionTo("MOD_RX_VIS_DPE")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
-
-   
+    
+    this.addOption(this.OPTION_EXCLUIR, "MOD_RX_OUT_EXCL");
 
   }
 
