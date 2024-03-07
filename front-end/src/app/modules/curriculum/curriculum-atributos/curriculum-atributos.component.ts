@@ -7,7 +7,9 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
   styleUrls: ['./curriculum-atributos.component.scss']
 })
 export class CurriculumAtributosComponent {
-  @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild(EditableFormComponent, { static: false })
+  
+  public editableForm?: EditableFormComponent;
 
   constructor(public injector: Injector) {}
 
