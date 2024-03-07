@@ -26,9 +26,9 @@ class Curso extends ModelBase
       // Has
      public function materia() { return $this->hasMany(Materia::class); }
      public function curriculumGraduacao() { return $this->hasMany(CurriculumGraduacao::class); }
-     public function historicoCursoInterno() { return $this->hasMany(HistoricoCursoInternoCurriculum::class); }
-     public function historicoDocenciaInterna() { return $this->hasMany(HistoricoDocenciaInternaCurriculum::class); }
-     public function historicoDocenciaExterna() { return $this->hasMany(HistoricoDocenciaExternaCurriculum::class); }
+     public function historicosCursosInternos() { return $this->hasMany(HistoricoCursoInternoCurriculum::class); }
+     public function historicosDocenciasInternas() { return $this->hasMany(HistoricoDocenciaInternaCurriculum::class); }
+     public function historicosDocenciasExternas() { return $this->hasMany(HistoricoDocenciaExternaCurriculum::class); }
  
     
 }

@@ -67,11 +67,11 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
       remocao: { default: false },
     });
     this.orderBy = [['usuario.nome', 'asc']];
-    this.join = ['profissional.historico_atividade_interna.capacidade_tecnica.area_tematica',
-      'profissional.historico_atividade_externa.area_atividade_externa', 'profissional.historico_curso_interno.curso',
-      'profissional.historico_curso_externo.area_atividade_externa', 'profissional.historico_docencia_interna.curso',
-      'profissional.historico_docencia_externa.area_atividade_externa', 'profissional.historico_funcao.funcao',
-      'profissional.historico_funcao.unidade', 'profissional.historico_lotacao.unidade', 'usuario', 'cidade',
+    this.join = ['profissional.historicos_atividades_internas.capacidade_tecnica.area_tematica',
+      'profissional.historicos_atividades_externas.area_atividade_externa', 'profissional.historicos_cursos_internos.curso',
+      'profissional.historicos_cursos_externos.area_atividade_externa', 'profissional.historicos_docencias_internas.curso',
+      'profissional.historicos_docencias_externas.area_atividade_externa', 'profissional.historicos_funcoes.funcao',
+      'profissional.historicos_funcoes.unidade', 'profissional.historicos_lotacoes.unidade', 'usuario', 'cidade',
       'graduacoes', 'graduacoes.curso', 'graduacoes.curso.area_conhecimento', 'profissional.grupo_especializado',
       'usuario.questionarios_respostas.questionario.perguntas.questionario_resposta_pergunta'];
   }

@@ -91,8 +91,8 @@ class Unidade extends ModelBase
     public function planejamentos() { return $this->hasMany(Planejamento::class); }
     public function cadeiasValor() { return $this->hasMany(CadeiaValor::class); }
     public function integrantes() { return $this->hasMany(UnidadeIntegrante::class); }
-    public function historicoLotacao() { return $this->hasMany(HistoricoLotacaoCurriculum::class); }
-    public function historicoFuncao() { return $this->hasMany(HistoricoFuncaoCurriculum::class); }
+    public function historicosLotacoes() { return $this->hasMany(HistoricoLotacaoCurriculum::class); }
+    public function historicosFuncoes() { return $this->hasMany(HistoricoFuncaoCurriculum::class); }
     public function curriculumsProfissionais() { return $this->hasMany(CurriculumProfissional::class, 'lotacao_atual'); }
     // Belongs
     public function entidade() { return $this->belongsTo(Entidade::class); }

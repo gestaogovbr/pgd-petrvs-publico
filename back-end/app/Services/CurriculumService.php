@@ -81,11 +81,11 @@ class CurriculumService extends ServiceBase
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'area_tematica_id') {
         $historicos_filtrados = HistoricoAtividadeInternaCurriculum::select('id')->whereRelation('capacidadeTecnica', 'area_tematica_id', $condition[2])->get()->toArray();
-        $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->whereRelation('historicoAtividadeInterna', fn ($q) => $q->whereIn('id', $historicos_filtrados))->get()->toArray();
+        $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->whereRelation('historicosAtividadesInternas', fn ($q) => $q->whereIn('id', $historicos_filtrados))->get()->toArray();
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'capacidade_tecnica_id') {
         $historicos_filtrados = HistoricoAtividadeInternaCurriculum::select('id')->where('capacidade_tecnica_id', $condition[2])->get()->toArray();
-        $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->whereRelation('historicoAtividadeInterna', fn ($q) => $q->whereIn('id', $historicos_filtrados))->get()->toArray();
+        $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->whereRelation('historicosAtividadesInternas', fn ($q) => $q->whereIn('id', $historicos_filtrados))->get()->toArray();
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'soft_id') {
         $pergunta_filtrada = QuestionarioPergunta::select('id')->where('pergunta', $condition[2])->get()->toArray();
