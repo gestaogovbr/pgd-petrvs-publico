@@ -68,6 +68,9 @@ abstract class ControllerBase extends Controller
         return $result;
     }
 
+/*     $tenant = Tenant::find('SENAPPEN');
+tenancy()->initialize($tenant); */
+
     public function getUsuario(Request $request) {
         return !empty(self::loggedUser()) ? Usuario::where("id", self::loggedUser()?->id)->with("areasTrabalho.unidade")->first() : null;
     }

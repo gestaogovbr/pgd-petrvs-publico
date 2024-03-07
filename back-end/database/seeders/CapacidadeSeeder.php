@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
-use Database\Seeders\BulkSeeeder;
+use Database\Seeders\BulkSeeder;
 
 use App\Models\Capacidade;
 use App\Models\Perfil;
@@ -335,22 +335,13 @@ class CapacidadeSeeder extends Seeder
         "codigo" => "MOD_PTR_USERS_INCL",
       ),
       array(
-        "codigo" => "MOD_RX",
+        "codigo" => "MOD_RX_CURR",
       ),
       array(
-        "codigo" => "MOD_RX_EDT_OPO",
+        "codigo" => "MOD_RX_OPO",
       ),
       array(
-        "codigo" => "MOD_RX_VIS_ATR",
-      ),
-      array(
-        "codigo" => "MOD_RX_VIS_DPE",
-      ),
-      array(
-        "codigo" => "MOD_RX_VIS_DPR",
-      ),
-      array(
-        "codigo" => "MOD_RX_VIS_OPO",
+        "codigo" => "MOD_RX_OUT",
       ),
       array(
         "codigo" => "MOD_TIPO_ATV",

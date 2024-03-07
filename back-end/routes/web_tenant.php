@@ -2,10 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\PetrvsController;
-use App\Http\Controllers\AngularController;
-use App\Http\Controllers\DownloadController;
-use Laravel\Socialite\Facades\Socialite;
 use Stancl\Tenancy\Middleware\InitializeTenancyByPath;
 
 
