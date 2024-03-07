@@ -29,7 +29,9 @@ class QuestionarioPergunta extends ModelBase
         'respostas' => AsJson::class
     ];
       
-    //public $fillable_changes = ['graduacoes'];
+    public $fillable_changes = ['questionario_resposta_pergunta'];
+
+    public $delete_cascade = ['questionario_resposta_pergunta'];
 
     //public $fillable_relation = [];
 

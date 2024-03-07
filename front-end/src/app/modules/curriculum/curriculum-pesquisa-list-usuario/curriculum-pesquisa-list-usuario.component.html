@@ -59,7 +59,7 @@
               <div class="col-md-3">
               </div>
             </div>
-            
+
           </div>
         </div>
       </div>
@@ -287,12 +287,13 @@
         </div>
       </div>
     </div>
-    <div class="card mt-3">
-      <h5 class="card-header"><i class="bi bi-list-ul me-2"></i> Soft Skills</h5>
-      <div class="card-body">
-        <ng-container *ngIf="this.questionarios.length">
-          <ng-container *ngFor="let questionario of this.questionarios">
-            <ng-container *ngIf="questionario.codigo == 'SOFTSKILL'">
+    <ng-container *ngIf="this.questionarios.length">
+      <ng-container *ngFor="let questionario of this.questionarios">
+        <ng-container *ngIf="questionario.codigo == 'SOFTSKILL'">
+          <div class="card mt-3">
+            <h5 class="card-header"><i class="bi bi-list-ul me-2"></i> Soft Skills</h5>
+            <div class="card-body">
+
               <div class="row my-2">
                 <div class="col-md-3">
                   <strong>Comunicação</strong><br>
@@ -329,17 +330,17 @@
                   <span>{{questionario?.perguntas[7]?.questionario_resposta_pergunta[0]?.resposta || '0'}}</span>
                 </div>
               </div>
-            </ng-container>
-          </ng-container>
+            </div>
+          </div>
         </ng-container>
-      </div>
-    </div>
-    <div class="card mt-3">
-      <h5 class="card-header"><img src="assets/icons/icon_big.png" class="iconBig me-2">Big Five</h5>
-      <div class="card-body mb-4">
-        <ng-container *ngIf="this.questionarios.length">
-          <ng-container *ngFor="let questionario of this.questionarios">
-            <ng-container *ngIf="questionario.codigo == 'B5'">
+      </ng-container>
+    </ng-container>
+    <ng-container *ngIf="this.questionarios.length">
+      <ng-container *ngFor="let questionario of this.questionarios">
+        <ng-container *ngIf="questionario.codigo == 'B5'">
+          <div class="card mt-3">
+            <h5 class="card-header"><img src="assets/icons/icon_big.png" class="iconBig me-2">Big Five</h5>
+            <div class="card-body mb-4">
               <div class="slider-container">
                 <div class="row d-flex justify-content-center">
                   <div class="col-xl-2 mt-3">
@@ -414,10 +415,11 @@
                   </div>
                 </div>
               </div>
-            </ng-container>
-          </ng-container>
+            </div>
+          </div>
         </ng-container>
-      </div>
-    </div>
+      </ng-container>
+    </ng-container>
+
   </div>
 </div>

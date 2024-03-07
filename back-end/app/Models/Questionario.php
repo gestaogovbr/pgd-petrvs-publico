@@ -21,6 +21,8 @@ class Questionario extends ModelBase
 
     public $fillable_changes = ['perguntas'];
 
+    public $delete_cascade = ['questionario_resposta','perguntas'];
+
     //public $fillable_relation = [];
 
     //Has

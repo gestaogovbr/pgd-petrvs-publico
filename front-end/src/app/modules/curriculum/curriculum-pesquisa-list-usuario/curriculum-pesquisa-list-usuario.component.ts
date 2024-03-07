@@ -60,16 +60,16 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
             
     if((this.curriculum.usuario.questionarios_respostas).length){
       this.curriculum.usuario.questionarios_respostas.forEach((element: any) => {
-         element.questionario.perguntas = element.questionario.perguntas.sort((a : any, b:any) => a.sequencia! < b.sequencia! ? -1 : 1);
-         this.questionarios.push({'codigo' : element.questionario.codigo, 'perguntas': element.questionario.perguntas} );
-         if(element.questionario.codigo == 'B5'){
-          element.questionario.perguntas.forEach((pergunta:any) =>{
-            respostas.push(pergunta.questionario_resposta_pergunta[0].resposta) 
-          })
-          //console.log('respostas',respostas)
-         }
+        if( element.questionario.perguntas.length){
+          element.questionario.perguntas = element.questionario.perguntas.sort((a : any, b:any) => a.sequencia! < b.sequencia! ? -1 : 1);
+          this.questionarios.push({'codigo' : element.questionario.codigo, 'perguntas': element.questionario.perguntas} );
+          if(element.questionario.codigo == 'B5'){
+            element.questionario.perguntas.forEach((pergunta:any) =>{
+              respostas.push(pergunta.questionario_resposta_pergunta[0].resposta) 
+            })
+          }
         }
-      );
+      });
       this.resposta(respostas)
     }
     //console.log('questionarios',this.questionarios)

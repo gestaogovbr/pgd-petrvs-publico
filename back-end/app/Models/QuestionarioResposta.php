@@ -22,11 +22,13 @@ class QuestionarioResposta extends ModelBase
         //'deleted_at', /* timestamp; */
     ];
 
+   //public $delete_cascade = ['questionario_resposta_pergunta']
+
     /*protected $casts = [
         'respostas' => AsJson::class
     ];**/
   
-    public $fillable_changes = ['questionario_resposta_pergunta'];
+    //public $fillable_changes = ['questionario_resposta_pergunta'];
 
     //public $fillable_relation = [];
 
