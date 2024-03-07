@@ -27,10 +27,12 @@ class QuestionarioRespostaPergunta extends ModelBase
 
     //public $fillable_relation = [];
 
-     // Belongs
+     // Has
      public function questionarioPergunta() { return $this->hasMany(QuestionarioPergunta::class); }
+     //public function questionarioPergunta() { return $this->belongsTo(QuestionarioPergunta::class); }
      //public function curriculum() { return $this->belongsTo(Curriculum::class); }
      public function questionarioResposta() { return $this->hasMany(QuestionarioResposta::class); }
+     //public function questionarioResposta() { return $this->belongsTo(QuestionarioResposta::class); }
  
     
 }

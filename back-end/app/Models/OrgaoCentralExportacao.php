@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Casts\AsJson;
 
 class OrgaoCentralExportacao extends Model
 {
@@ -14,9 +15,9 @@ class OrgaoCentralExportacao extends Model
     protected $fillable = ['data_exportacao', 'tipo', 'parametros', 'versao', 'corpo', 'retorno', 'hashs'];
 
     protected $casts = [
-        'parametros' => 'array',
-        'corpo' => 'array',
-        'retorno' => 'array',
-        'hashs' => 'array'
+        'parametros' => AsJson::class,
+        'corpo' => AsJson::class,
+        'retorno' => AsJson::class,
+        'hashs' => AsJson::class
     ];
 }
