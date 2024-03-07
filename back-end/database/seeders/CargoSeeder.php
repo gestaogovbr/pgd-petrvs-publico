@@ -21,7 +21,7 @@ class CargoSeeder extends Seeder
 
         $timenow = now();
 
-        foreach($csv_reader->csvToArray($bulk = 1000) as $data){
+        foreach($csv_reader->csvToArray($bulk = 5000) as $data){
           // Preprocessamento do array
             foreach($data as $key => $entry){
                 $data[$key]['nome'] = mb_convert_encoding($data[$key]['nome'],
