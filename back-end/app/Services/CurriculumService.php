@@ -62,7 +62,7 @@ class CurriculumService extends ServiceBase
         }
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'idioma') {
-        $curriculums_filtrados = Curriculum::select('id')->whereRaw("JSON_SEARCH(idiomas, 'one', '".$condition[2]."', null, '$[*].idioma')")->get()->toArray();
+        $curriculums_filtrados = Curriculum::select('id')->whereRaw("JSON_SEARCH(idiomas, 'one', '" . $condition[2] . "', null, '$[*].idioma')")->get()->toArray();
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'area_conhecimento_id') {
         $cursos_filtrados = Curso::select('id')->where('area_id', $condition[2])->get()->toArray();
@@ -92,6 +92,27 @@ class CurriculumService extends ServiceBase
         $resposta_filtrada = QuestionarioRespostaPergunta::select('questionario_resposta_id')->whereIn('questionario_pergunta_id', $pergunta_filtrada)->where('resposta', '>=', $condition[3])->get()->toArray();
         $usuario_filtrado = QuestionarioResposta::select('usuario_id')->whereIn('id', $resposta_filtrada)->get()->toArray();
         $curriculums_filtrados = Curriculum::select('id')->whereIn('usuario_id', $usuario_filtrado)->get()->toArray();
+        array_push($where, ['id', 'in', $curriculums_filtrados]);
+      } else if (is_array($condition) && $condition[0] == 'interesse_pgd') {
+        $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->where('pgd_interesse', $condition[2])->get()->toArray();
+        array_push($where, ['id', 'in', $curriculums_filtrados]);
+      } else if (is_array($condition) && $condition[0] == 'interesse_bnt') {
+        $tem_interesse = $condition[2];
+        $curriculums_filtrados = [];
+        if ($tem_interesse) {
+          $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->where('interesse_bnt', 1)->get()->toArray();
+        } else {
+          $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->where('interesse_bnt', 0)->get()->toArray();
+        }
+        array_push($where, ['id', 'in', $curriculums_filtrados]);
+      } else if (is_array($condition) && $condition[0] == 'remocao') {
+        $tem_interesse = $condition[2];
+        $curriculums_filtrados = [];
+        if ($tem_interesse) {
+          $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->where('remocao', 1)->get()->toArray();
+        } else {
+          $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->where('remocao', 0)->get()->toArray();
+        }
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else {
         array_push($where, $condition);

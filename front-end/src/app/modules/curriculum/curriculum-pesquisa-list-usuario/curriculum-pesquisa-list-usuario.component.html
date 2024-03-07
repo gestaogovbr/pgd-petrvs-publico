@@ -39,7 +39,7 @@
               </div>
               <div class="col-md-3">
                 <strong>Filhos</strong><br>
-                {{curriculum?.quantidade_filhos > 0 ? lookup.getValue(lookup.SIMNAO, 1) : lookup.getValue(lookup.SIMNAO, 2)}}<br>
+                {{curriculum?.quantidade_filhos > 0 ? lookup.getValue(lookup.SIMNAO, 1) : lookup.getValue(lookup.SIMNAO, 2)}}, 
                 <span *ngIf="curriculum.quantidade_filhos > 0">{{curriculum.quantidade_filhos}}</span>
               </div>
             </div>
