@@ -1,4 +1,4 @@
-<grid [items]="items" [title]="isModal ? '' : title" [hasAdd]="auth.hasPermissionTo('MOD_RX_OUT_INCL')" [hasEdit]="auth.hasPermissionTo('MOD_RX_OUT_EDT')" >
+<grid [items]="items" [title]="isModal ? '' : title" [hasAdd]="auth.hasPermissionTo('MOD_RX_OUT_INCL')" [hasEdit]="auth.hasPermissionTo('MOD_RX_OUT_EDT')" [hasDelete]="auth.hasPermissionTo('MOD_RX_OUT_EXCL')" >
     <columns>
         <column title="Sequencia" [template]="columnSequencia">
             <ng-template let-row="row" #columnSequencia>

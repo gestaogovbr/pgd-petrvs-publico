@@ -27,24 +27,7 @@ export class TipoCursoListComponent extends PageListBase<TipoCurso, TipoCursoDao
       nome: {default: ""},
       
      });
-    // Testa se o usuário possui permissão para exibir dados de cursos
-    if (this.auth.hasPermissionTo("MOD_RX_VIS_DPE")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir o curso
-    if (this.auth.hasPermissionTo("MOD_RX_VIS_DPE")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
-
-   
+    this.addOption(this.OPTION_EXCLUIR, "MOD_RX_OUT_EXCL");
 
   }
 
@@ -65,12 +48,12 @@ export class TipoCursoListComponent extends PageListBase<TipoCurso, TipoCursoDao
     return result;
   }
 
-  public dynamicButtons(row: any): ToolbarButton[] {
+  /*public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     const BOTAO_EXCLUIR = { label: "Excluir Registro", icon: "bi bi-trash", onClick: this.delete.bind(this) };
     result.unshift(BOTAO_EXCLUIR);
     return result;
-  }
+  }*/
 
  // public dynamicOptions(row: any): ToolbarButton[] {}
  
