@@ -351,7 +351,7 @@ class IntegracaoService extends ServiceBase
               if (!is_null($cod_municipio_ibge)) {
                 $query = "SELECT nome FROM cidades where codigo_ibge = :cod_municipio_ibge";
                 $db_result = DB::select($query, ["cod_municipio_ibge" => $cod_municipio_ibge]);
-                if (is_array($db_result) && empty($db_result)) $municipio_nome = $db_result[0]->nome;
+                if (is_array($db_result) && !empty($db_result)) $municipio_nome = $db_result[0]->nome;
               }
 
               $nomeuorg = $self->UtilService->valueOrDefault($uo["nomeuorg"], null);
