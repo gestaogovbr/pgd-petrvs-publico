@@ -33,7 +33,7 @@
               </div>
               <div class="col-md-3">
                 <strong>Filhos</strong><br>
-                {{curriculum?.quantidade_filhos > 0 ? lookup.getValue(lookup.SIMNAO, 1) : lookup.getValue(lookup.SIMNAO, 2)}}<br>
+                {{curriculum?.quantidade_filhos > 0 ? lookup.getValue(lookup.SIMNAO, 1) : lookup.getValue(lookup.SIMNAO, 2)}}, 
                 <span *ngIf="curriculum.quantidade_filhos > 0">{{curriculum.quantidade_filhos}}</span>
               </div>
             </div>
@@ -136,7 +136,7 @@
             <strong>Funções exercidas e unidades</strong><br>
             <div *ngIf="curriculum.profissional.historico_funcao.length; else semFuncao">
               <ng-container *ngFor="let funcao of curriculum.profissional.historico_funcao">
-                <span>{{funcao.funcao.nome}}</span><br>
+                <span>{{funcao.funcao.nome}} - {{funcao.unidade.nome}}</span><br>
               </ng-container>
             </div>
             <ng-template #semFuncao>
