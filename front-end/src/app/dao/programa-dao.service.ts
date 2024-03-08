@@ -6,6 +6,7 @@ import { TemplateDataset } from '../modules/uteis/templates/template.service';
 @Injectable({
   providedIn: 'root'
 })
+
 export class ProgramaDaoService extends DaoBaseService<Programa> {
 
   constructor(protected injector: Injector) { 
@@ -24,3 +25,8 @@ export class ProgramaDaoService extends DaoBaseService<Programa> {
 
 }
 
+
+export type ProgramaMetadata = {
+  vigentesUnidadeExecutora: boolean;
+  todosUnidadeExecutora: boolean;
+}
