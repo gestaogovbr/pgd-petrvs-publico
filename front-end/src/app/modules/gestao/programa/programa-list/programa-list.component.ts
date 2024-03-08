@@ -3,6 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
+import { Base } from 'src/app/models/base.model';
 import { Programa } from 'src/app/models/programa.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
@@ -15,6 +16,7 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public vigentesUnidadeExecutora: boolean = false;
+  public todosUnidadeExecutora: boolean = false;
 
   constructor(public injector: Injector, dao: ProgramaDaoService) {
     super(injector, Programa, ProgramaDaoService);
@@ -50,12 +52,14 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
   public ngOnInit(): void {
     super.ngOnInit();
     this.vigentesUnidadeExecutora = this.metadata?.vigentesUnidadeExecutora; 
+    this.todosUnidadeExecutora = this.metadata?.todosUnidadeExecutora; 
   }
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
     if(this.vigentesUnidadeExecutora) result.push(['vigentesUnidadeExecutora',"==",this.auth.unidade!.id]);
+    if(this.todosUnidadeExecutora) result.push(['todosUnidadeExecutora',"==",this.auth.unidade!.id]);
     if(form.nome?.length) {
       result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
