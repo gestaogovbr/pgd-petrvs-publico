@@ -55,7 +55,6 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
   public getPerguntas(){
     this.curriculum = this.metadata?.curriculum;
     console.log(this.curriculum)
-    console.log((this.curriculum.usuario.questionarios_respostas).length)
     let respostas : number[]=[];
             
     if((this.curriculum.usuario.questionarios_respostas).length){
