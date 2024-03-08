@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
+use App\Models\HistoricoAtividadeExterna;
+use App\Models\HistoricoCursoExterno;
+use App\Models\HistoricoDocenciaExterna;
 
 class AreaAtividadeExterna extends ModelBase
 {
@@ -16,8 +19,8 @@ class AreaAtividadeExterna extends ModelBase
     ];
 
     // Has
-    public function historicosAtividadesExternas() { return $this->hasMany(HistoricoAtividadeExternaCurriculum::class); }
-    public function historicosCursosExternos() { return $this->hasMany(HistoricoCursoExternoCurriculum::class); }
-    public function historicosDocenciasExternas() { return $this->hasMany(HistoricoDocenciaExternaCurriculum::class); }
+    public function historicosAtividadesExternas() { return $this->hasMany(HistoricoAtividadeExterna::class); }
+    public function historicosCursosExternos() { return $this->hasMany(HistoricoCursoExterno::class); }
+    public function historicosDocenciasExternas() { return $this->hasMany(HistoricoDocenciaExterna::class); }
 
 }
