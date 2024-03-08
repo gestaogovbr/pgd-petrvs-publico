@@ -6,12 +6,11 @@ use App\Models\ModelBase;
 use App\Models\CurriculumProfissional;
 use App\Models\Curso;
 
-class HistoricoCursoInternoCurriculum extends ModelBase
+class HistoricoDocenciaInterna extends ModelBase
 {
-    protected $table = 'historicos_cursos_internos_curriculum';
+    protected $table = 'historicos_docencias_internas';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'pretensao', /* tinyint; NOT NULL; */// Pretende ou não fazer o curso
         'curriculum_profissional_id', /* char(36); NOT NULL; */
         'curso_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */

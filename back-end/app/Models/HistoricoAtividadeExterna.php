@@ -6,9 +6,9 @@ use App\Models\ModelBase;
 use App\Models\CurriculumProfissional;
 use App\Models\AreaAtividadeExterna;
 
-class HistoricoAtividadeExternaCurriculum extends ModelBase
+class HistoricoAtividadeExterna extends ModelBase
 {
-    protected $table = 'atividades_externas_curriculum';
+    protected $table = 'historicos_atividades_externas';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'curriculum_profissional_id',

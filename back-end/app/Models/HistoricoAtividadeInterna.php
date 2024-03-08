@@ -4,21 +4,20 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\CurriculumProfissional;
-use App\Models\Curso;
+use App\Models\CapacidadeTecnica;
 
-class HistoricoDocenciaInternaCurriculum extends ModelBase
+class HistoricoAtividadeInterna extends ModelBase
 {
-    protected $table = 'historicos_docencias_internas_curriculum';
+    protected $table = 'historicos_atividades_internas';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'curriculum_profissional_id', /* char(36); NOT NULL; */
-        'curso_id', /* char(36); NOT NULL; */
+        'capacidade_tecnica_id',
+        'atividade_desempenhada', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
     ];
 
      // Belongs
     public function curriculumProfissional() { return $this->belongsTo(CurriculumProfissional::class); }
-    public function curso() { return $this->belongsTo(Curso::class); }
-  
-    
+    public function capacidadeTecnica() { return $this->belongsTo(CapacidadeTecnica::class); }
 }

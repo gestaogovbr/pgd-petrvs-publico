@@ -7,7 +7,7 @@ use App\Models\CurriculumProfissional;
 use App\Models\AreaAtividadeExterna;
 use App\Models\Curso;
 
-class HistoricoDocenciaExternaCurriculum extends ModelBase
+class HistoricoDocenciaExterna extends ModelBase
 {
     protected $table = 'historicos_docencias_externas_curriculum';
 
