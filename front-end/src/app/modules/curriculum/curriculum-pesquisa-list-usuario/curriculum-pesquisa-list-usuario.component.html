@@ -39,7 +39,7 @@
               </div>
               <div class="col-md-3">
                 <strong>Filhos</strong><br>
-                {{curriculum?.quantidade_filhos > 0 ? lookup.getValue(lookup.SIMNAO, 1) : lookup.getValue(lookup.SIMNAO, 2)}}<br>
+                {{curriculum?.quantidade_filhos > 0 ? lookup.getValue(lookup.SIMNAO, 1) : lookup.getValue(lookup.SIMNAO, 2)}}, 
                 <span *ngIf="curriculum.quantidade_filhos > 0">{{curriculum.quantidade_filhos}}</span>
               </div>
             </div>
@@ -135,8 +135,8 @@
         <div class="row my-2">
           <div class="col-md-6">
             <strong>Funções exercidas e unidades</strong><br>
-            <div *ngIf="curriculum.profissional.historico_funcao.length; else semFuncao">
-              <ng-container *ngFor="let funcao of curriculum.profissional.historico_funcao">
+            <div *ngIf="curriculum.profissional.historicos_funcoes.length; else semFuncao">
+              <ng-container *ngFor="let funcao of curriculum.profissional.historicos_funcoes">
                 <span>{{funcao.funcao.nome}} - {{funcao.unidade.nome}}</span><br>
               </ng-container>
             </div>
@@ -147,7 +147,7 @@
           <div class="col-md-6">
             <strong>Grupo Especializado</strong><br>
             <div *ngIf="curriculum.profissional.grupo_especializado_id; else semGrupo">
-              <span *ngFor="let funcao of curriculum.profissional.historico_funcao">{{curriculum.profissional.grupo_especializado?.nome || ""}}</span>
+              <span *ngFor="let funcao of curriculum.profissional.historicos_funcoes">{{curriculum.profissional.grupo_especializado?.nome || ""}}</span>
             </div>
             <ng-template #semGrupo>
               Sem Grupo
@@ -157,8 +157,8 @@
         <div class="row my-2">
           <div class="col-md-6">
             <strong>Histórico de lotação</strong><br>
-            <div *ngIf="curriculum.profissional.historico_lotacao.length; else semLotacao">
-              <ng-container *ngFor="let lotacao of curriculum.profissional.historico_lotacao">
+            <div *ngIf="curriculum.profissional.historicos_lotacoes.length; else semLotacao">
+              <ng-container *ngFor="let lotacao of curriculum.profissional.historicos_lotacoes">
                 <span>{{lotacao.unidade.nome}}</span><br>
               </ng-container>
             </div>
@@ -179,8 +179,8 @@
         <div class="row">
           <div class="col-md-6">
             <strong>Atividades Internas</strong><br>
-            <div *ngIf="curriculum.profissional.historico_atividade_interna.length; else semCapacInterna">
-              <ng-container *ngFor="let atividade of curriculum.profissional.historico_atividade_interna;index as i">
+            <div *ngIf="curriculum.profissional.historicos_atividades_internas.length; else semCapacInterna">
+              <ng-container *ngFor="let atividade of curriculum.profissional.historicos_atividades_internas;index as i">
                 <span>{{i+1}}. {{atividade.capacidade_tecnica.nome}}</span><br>
               </ng-container>
             </div>
@@ -190,8 +190,8 @@
           </div>
           <div class="col-md-6">
             <strong>Atividades Externas</strong><br>
-            <div *ngIf="curriculum.profissional.historico_atividade_externa.length; else semCapacExterna">
-              <ng-container *ngFor="let atividade of curriculum.profissional.historico_atividade_externa">
+            <div *ngIf="curriculum.profissional.historicos_atividades_externas.length; else semCapacExterna">
+              <ng-container *ngFor="let atividade of curriculum.profissional.historicos_atividades_externas">
                 <span>- {{atividade.area_atividade_externa?.nome}}</span><br>
               </ng-container>
             </div>
@@ -203,8 +203,8 @@
         <div class="row my-2">
           <div class="col-md-6">
             <strong>Docente ou Instrutor na instituição</strong><br>
-            <div *ngIf="curriculum.profissional.historico_docencia_interna.length; else semInstrucaoInterna">
-              <ng-container *ngFor="let interno of curriculum.profissional.historico_docencia_interna">
+            <div *ngIf="curriculum.profissional.historicos_docencias_internas.length; else semInstrucaoInterna">
+              <ng-container *ngFor="let interno of curriculum.profissional.historicos_docencias_internas">
                 <span>{{interno.curso.titulo}} :<small> {{interno.curso.nome}}</small></span><br>
               </ng-container>
             </div>
@@ -214,8 +214,8 @@
           </div>
           <div class="col-md-6">
             <strong>Trabalho fora da instituição</strong><br>
-            <div *ngIf="curriculum.profissional.historico_docencia_externa.length; else semInstrucaoExterna">
-              <ng-container *ngFor="let externo of curriculum.profissional.historico_docencia_externa">
+            <div *ngIf="curriculum.profissional.historicos_docencias_externas.length; else semInstrucaoExterna">
+              <ng-container *ngFor="let externo of curriculum.profissional.historicos_docencias_externas">
                 <span>{{externo.area_atividade_externa.nome}}</span><br>
               </ng-container>
             </div>
@@ -227,8 +227,8 @@
         <div class="row my-2">
           <div class="col-md-6">
             <strong>Docência na Intituição</strong><br>
-            <div *ngIf="curriculum.profissional.historico_docencia_interna.length; else semDocenciaInterna">
-              <ng-container *ngFor="let docenciaI of curriculum.profissional.historico_docencia_interna">
+            <div *ngIf="curriculum.profissional.historicos_docencias_internas.length; else semDocenciaInterna">
+              <ng-container *ngFor="let docenciaI of curriculum.profissional.historicos_docencias_internas">
                 <span>{{docenciaI.curso?.nome || "Sem informação"}}</span><br>
               </ng-container>
             </div>
@@ -238,8 +238,8 @@
           </div>
           <div class="col-md-6">
             <strong>Docência fora da Instituição</strong><br>
-            <div *ngIf="curriculum.profissional.historico_docencia_externa.length; else semDocenciaExterna">
-              <ng-container *ngFor="let docenciaE of curriculum.profissional.historico_docencia_externa">
+            <div *ngIf="curriculum.profissional.historicos_docencias_externas.length; else semDocenciaExterna">
+              <ng-container *ngFor="let docenciaE of curriculum.profissional.historicos_docencias_externas">
                 <span>{{docenciaE.area_atividade_externa?.nome || "Sem informação"}}</span><br>
               </ng-container>
             </div>
@@ -251,8 +251,8 @@
         <div class="row my-2">
           <div class="col-md-6">
             <strong>Cursos na Intituição</strong><br>
-            <div *ngIf="curriculum.profissional.historico_curso_interno.length; else semCursoInterno">
-              <ng-container *ngFor="let cursoI of curriculum.profissional.historico_curso_interno">
+            <div *ngIf="curriculum.profissional.historicos_cursos_internos.length; else semCursoInterno">
+              <ng-container *ngFor="let cursoI of curriculum.profissional.historicos_cursos_internos">
                 <span>{{cursoI.curso?.nome || "Sem informação"}}</span><br>
               </ng-container>
             </div>
@@ -262,8 +262,8 @@
           </div>
           <div class="col-md-6">
             <strong>Cursos fora da Instituição</strong><br>
-            <div *ngIf="curriculum.profissional.historico_curso_externo.length; else semCursoExterno">
-              <ng-container *ngFor="let cursoE of curriculum.profissional.historico_curso_externo">
+            <div *ngIf="curriculum.profissional.historicos_cursos_externos.length; else semCursoExterno">
+              <ng-container *ngFor="let cursoE of curriculum.profissional.historicos_cursos_externos">
                 <span>{{cursoE.area_atividade_externa?.nome || "Sem informação"}}</span><br>
               </ng-container>
             </div>

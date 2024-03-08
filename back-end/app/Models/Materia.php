@@ -18,7 +18,6 @@ class Materia extends ModelBase
     ];
 
     // Belongs
-    //public function area() { return $this->belongsTo(AreaConhecimento::class,'area_materia_id'); }
     public function curso() { return $this->belongsTo(Curso::class,'curso_id'); }
     
 }
