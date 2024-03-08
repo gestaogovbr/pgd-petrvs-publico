@@ -15,8 +15,6 @@ import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.ser
 import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 import { UnidadeService } from './services/unidade.service';
-import { MenuSuporteComponent } from './modules/suporte/menu-suporte/menu-suporte.component';
-import { Planejamento } from './models/planejamento.model';
 
 export type Contexto = "EXECUCAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
 export type Schema = {
@@ -85,14 +83,14 @@ export class AppComponent {
   public menuSchema: MenuSchema = {};
   public menuToolbar: any[] = [];
   public menuContexto: MenuContexto[] = [];
-  public menuProjeto: any;
-  public menuGestao: any;
+  public moduloProjeto: any;
+  public moduloGestao: any;
   public menuOperacional: any;
-  public menuPonto: any;
-  public menuRaioX: any;
-  public menuExecucao: any;
-  public menuAdministrador: any;
-  public menuDev: any;
+  public moduloPonto: any;
+  public moduloRaioX: any;
+  public moduloExecucao: any;
+  public moduloAdministrador: any;
+  public moduloDev: any;
   public unidadeService: UnidadeService;
   private _menu: any;
   private _menuDetectChanges: any;
@@ -197,7 +195,7 @@ export class AppComponent {
       CURRICULUM_CADASTRO_ATRIBUTOS_SRQ20: { name: this.lex.translate("SRQ-20"), permition: 'MOD_RX_CURR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
       CURRICULUM_CADASTRO_ATRIBUTOS_QVT: { name: this.lex.translate("QVT"), permition: 'MOD_RX_CURR', route: ['raiox', 'qvt'], icon: "" },      
       /* RaioX - Oportunidades */
-      CURRICULUM_OPORTUNIDADES: { name: this.lex.translate("Oportunidades"), permition: 'MOD_RX_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
+      CURRICULUM_OPORTUNIDADES: { name: this.lex.translate("Oportunidades"), permition: 'MOD_RX_OPO', route: ['raiox'], icon: "bi bi-lightbulb-fill" },
       /* RaioX - Outros */
       CURRICULUM_CADASTRO_AREAS_ATIVIDADES_EXTERNAS: { name: this.lex.translate("Áreas de Atividade Externa"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'areaatividadeexterna'], icon: "bi bi-arrows-fullscreen" },
       CURRICULUM_CADASTRO_AREAS_CONHECIMENTO: { name: this.lex.translate("Áreas de Conhecimento"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'areaconhecimento'], icon: "bi bi-mortarboard" },
@@ -208,20 +206,19 @@ export class AppComponent {
       CURRICULUM_CADASTRO_CURSOS: { name: this.lex.translate("Cursos"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'curso'], icon: "bi bi-mortarboard-fill" },
       CURRICULUM_CADASTRO_FUNCAO: { name: this.lex.translate("Funções"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'funcao'], icon: "bi bi-check-circle-fill" },
       CURRICULUM_CADASTRO_GRUPOS_ESPECIALIZADOS: { name: this.lex.translate("Grupos Especializados"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'grupoespecializado'], icon: "bi bi-check-circle" },
-      CURRICULUM_CADASTRO_MATERIAS: { name: this.lex.translate("Matérias"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'materia'], icon: "bi bi-list-check" },
+      CURRICULUM_CADASTRO_MATERIAS: { name: this.lex.translate("Disciplina"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'materia'], icon: "bi bi-list-check" },
       CURRICULUM_CADASTRO_QUESTIONARIOS_PERGUNTAS: { name: this.lex.translate("Questionários"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'questionario'], icon: "bi bi-patch-question" },
       CURRICULUM_CADASTRO_QUESTIONARIOS_RESPOSTAS: { name: this.lex.translate("Respostas"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'questionario', 'reposta'], icon: "bi bi-list-task" },
       CURRICULUM_CADASTRO_QUESTIONARIOS_TESTE: { name: this.lex.translate("Testes"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'questionario', 'teste'], icon: "bi bi-list-task" },
       CURRICULUM_CADASTRO_TIPOS_CURSOS: { name: this.lex.translate("Tipos de Curso"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'tipocurso'], icon: "bi bi-box-seam" },
-      CURRICULUM_PESQUISA_ADM: { name: this.lex.translate("Administrador"), permition: 'MOD_RX_OUT', route: ['raiox', 'pesqadm'], icon: "bi bi-binoculars" },      
-      CURRICULUM_PESQUISA_USR: { name: this.lex.translate("Usuário"), permition: 'MOD_RX_OUT', route: ['raiox', 'pesqadm'], icon: "bi bi-search" },
-
+      CURRICULUM_PESQUISA_ADM: { name: this.lex.translate("Administrador"), permition: 'MOD_RX_OUT', route: ['raiox', 'pesquisa-adm'], icon: "bi bi-binoculars" },      
+      CURRICULUM_PESQUISA_USR: { name: this.lex.translate("Usuário"), permition: 'MOD_RX_OUT', route: ['raiox', 'pesquisa-usuario'], icon: "bi bi-search" },
       /* Projetos */
       PAINEL: { name: "Painel", permition: '', route: ['panel'], icon: "" },
       AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
     };
 
-    this.menuGestao = [{
+    this.moduloGestao = [{
       name: this.lex.translate("Planejamento"),
       permition: "MENU_GESTAO_ACESSO",
       id: "navbarDropdownGestaoPlanejamento",
@@ -278,7 +275,7 @@ export class AppComponent {
       ].sort(this.orderMenu)
     }];
 
-    this.menuExecucao = [
+    this.moduloExecucao = [
       Object.assign({}, this.menuSchema.PLANOS_TRABALHOS, { metadata: { minha_unidade: true } }),
       this.menuSchema.ATIVIDADES,
       Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "UNIDADE" } }),
@@ -286,7 +283,7 @@ export class AppComponent {
       this.menuSchema.OCORRENCIAS
     ];
 
-    this.menuAdministrador = [{
+    this.moduloAdministrador = [{
       name: this.lex.translate("Cadastros"),
       permition: "MENU_CAD_ACESSO",
       id: "navbarDropdownCadastrosAdm",
@@ -320,7 +317,7 @@ export class AppComponent {
       ].sort(this.orderMenu)
     }];
 
-    this.menuDev = [{
+    this.moduloDev = [{
       name: this.lex.translate("Manutenção"),
       permition: "MENU_DEV_ACESSO",
       id: "navbarDropdownDevManutencao",
@@ -347,9 +344,9 @@ export class AppComponent {
       ]
     }];
 
-    this.menuPonto = [];
+    this.moduloPonto = [];
 
-    this.menuProjeto = [{
+    this.moduloProjeto = [{
       name: this.lex.translate("Cadastros"),
       permition: "MENU_CAD_ACESSO",
       id: "navbarDropdownProjetoCadastros",
@@ -369,7 +366,7 @@ export class AppComponent {
     this.menuSchema.PROJETOS
     ];
 
-    this.menuRaioX = [{
+    this.moduloRaioX = [{
       name: this.lex.translate("Curriculum"),
       permition: "MENU_RX_CURRICULUM_ACESSO",
       id: "navbarDropdownRXCadastros",
@@ -426,13 +423,13 @@ export class AppComponent {
     }];
 
     this.menuContexto = [
-      { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuGestao },
-      { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuExecucao },
-      { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: this.lex.translate("Administrador"), menu: this.menuAdministrador },
-      { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.menuDev },
-      { key: "PONTO", permition: "CTXT_PNT", icon: "bi bi-stopwatch", name: this.lex.translate("Ponto Eletrônico"), menu: this.menuPonto },
-      { key: "PROJETO", permition: "CTXT_PROJ", icon: "bi bi-graph-up-arrow", name: this.lex.translate("Projetos"), menu: this.menuProjeto },
-      { key: "RAIOX", permition: "CTXT_RX", icon: "bi bi-camera", name: this.lex.translate("Raio X"), menu: this.menuRaioX }
+      { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.moduloGestao },
+      { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.moduloExecucao },
+      { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: this.lex.translate("Administrador"), menu: this.moduloAdministrador },
+      { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.moduloDev },
+      { key: "PONTO", permition: "CTXT_PNT", icon: "bi bi-stopwatch", name: this.lex.translate("Ponto Eletrônico"), menu: this.moduloPonto },
+      { key: "PROJETO", permition: "CTXT_PROJ", icon: "bi bi-graph-up-arrow", name: this.lex.translate("Projetos"), menu: this.moduloProjeto },
+      { key: "RAIOX", permition: "CTXT_RX", icon: "bi bi-camera", name: this.lex.translate("Raio X"), menu: this.moduloRaioX }
     ]
 
   }
@@ -445,17 +442,30 @@ export class AppComponent {
     if (!item.menu?.length) this.go.navigate({ route: item.route }, item.metadata || { root: true });
   }
 
-  public get menu(): any {
+  public get modulo(): any {
     switch (this.gb.contexto?.key) {
-      case "GESTAO": return this.menuGestao;
-      case "EXECUCAO": return this.menuExecucao;
-      case "ADMINISTRADOR": return this.menuAdministrador;
-      case "DEV": return this.menuDev;
-      case "PONTO": return this.menuPonto;
-      case "PROJETO": return this.menuProjeto;
-      case "RAIOX": return this.menuRaioX;
+      case "GESTAO": return this.moduloGestao;
+      case "EXECUCAO": return this.moduloExecucao;
+      case "ADMINISTRADOR": return this.moduloAdministrador;
+      case "DEV": return this.moduloDev;
+      case "PONTO": return this.moduloPonto;
+      case "PROJETO": return this.moduloProjeto;
+      case "RAIOX": return this.moduloRaioX;
       default: return [];
     }
+  }
+
+  public get equipe(): any {
+    return [
+      { time: 'PRF', nome: 'Edson Dario Silva de França', cargo: 'Policial Penal Federal', papel: 'Developer' },
+      { time: 'PRF', nome: 'Carlos Henrique Alves Lopes', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
+      { time: 'PRF', nome: 'Diogo Leandro Paiva Ramos', cargo: 'Policial Rodoviário Federal', papel: 'Scrum Master' },
+      { time: 'PRF', nome: 'Edson dos Santos Marian', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
+      { time: 'PRF', nome: 'Genisson Rodrigues Albuquerque', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
+      { time: 'PRF', nome: 'Ricardo de Sousa Farias', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
+      { time: 'PRF', nome: 'Jose Marcelo Maizman Bogdan', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
+      { time: 'MGI', nome: '', cargo: '', papel: 'Developer' },
+    ]
   }
 
   public ngAfterViewInit() {

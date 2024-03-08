@@ -7,6 +7,7 @@ use App\Models\Curriculum;
 use App\Models\CentroTreinamento;
 use App\Models\Cargo;
 use App\Models\GrupoEspecializado;
+use App\Models\Unidade;
 use App\Casts\AsJson;
 
 class CurriculumProfissional extends ModelBase
@@ -36,25 +37,26 @@ class CurriculumProfissional extends ModelBase
         'especifique_habilidades' => AsJson::class,
     ];
 
-    public $fillable_changes = ['historicoAtividadeInterna','historicoAtividadeExterna','historicoCursoInterno','historicoCursoExterno','historicoDocenciaInterna',
-                                'historicoDocenciaExterna','historicoFuncao','historicoLotacao'];
+    public $fillable_changes = ['historicosAtividadesInternas','historicosAtividadesExternas','historicosCursosInternos','historicosCursosExternos','historicosDocenciasInternas',
+                                'historicosDocenciasExternas','historicosFuncoes','historicosLotacoes'];
 
     //public $fillable_relation = [];
 
-   // Belongs
-   public function curriculum() { return $this->belongsTo(Curriculum::class); }
-   public function centroTreinamento() { return $this->belongsTo(CentroTreinamento::class); }
-   public function cargo() { return $this->belongsTo(Cargo::class); }
-   public function grupoEspecializado() { return $this->belongsTo(GrupoEspecializado::class); }
-   //Has
-   public function historicoAtividadeInterna() { return $this->hasMany(HistoricoAtividadeInternaCurriculum::class); }
-   public function historicoAtividadeExterna() { return $this->hasMany(HistoricoAtividadeExternaCurriculum::class); }
-   public function historicoCursoInterno() { return $this->hasMany(HistoricoCursoInternoCurriculum::class); }
-   public function historicoCursoExterno() { return $this->hasMany(HistoricoCursoExternoCurriculum::class); }
-   public function historicoDocenciaInterna() { return $this->hasMany(HistoricoDocenciaInternaCurriculum::class); }
-   public function historicoDocenciaExterna() { return $this->hasMany(HistoricoDocenciaExternaCurriculum::class); }
-   public function historicoFuncao() { return $this->hasMany(HistoricoFuncaoCurriculum::class); }
-   public function historicoLotacao() { return $this->hasMany(HistoricoLotacaoCurriculum::class); }
-
+    // Belongs
+    public function curriculum() { return $this->belongsTo(Curriculum::class); }
+    public function centroTreinamento() { return $this->belongsTo(CentroTreinamento::class); }
+    public function cargo() { return $this->belongsTo(Cargo::class); }
+    public function grupoEspecializado() { return $this->belongsTo(GrupoEspecializado::class); }
+    // HasOne
+    public function unidadeAtual() { return $this->hasOne(Unidade::class); }
+    // HasMany
+    public function historicosAtividadesInternas() { return $this->hasMany(HistoricoAtividadeInterna::class); }
+    public function historicosAtividadesExternas() { return $this->hasMany(HistoricoAtividadeExterna::class); }
+    public function historicosCursosInternos() { return $this->hasMany(HistoricoCursoInterno::class); }
+    public function historicosCursosExternos() { return $this->hasMany(HistoricoCursoExterno::class); }
+    public function historicosDocenciasInternas() { return $this->hasMany(HistoricoDocenciaInterna::class); }
+    public function historicosDocenciasExternas() { return $this->hasMany(HistoricoDocenciaExterna::class); }
+    public function historicosFuncoes() { return $this->hasMany(HistoricoFuncao::class); }
+    public function historicosLotacoes() { return $this->hasMany(HistoricoLotacao::class); }
 }
 

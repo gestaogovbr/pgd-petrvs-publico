@@ -1,16 +1,16 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [selectable]="selectable" (select)="onSelect($event)"  [hasAdd]="auth.hasPermissionTo('MOD_RX_VIS_DPE')" [hasEdit]="auth.hasPermissionTo('MOD_RX_VIS_DPE')">
+    [selectable]="selectable" (select)="onSelect($event)"  [hasAdd]="auth.hasPermissionTo('MOD_RX_OUT_INCL')" [hasEdit]="auth.hasPermissionTo('MOD_RX_OUT_EDT')" [hasDelete]="auth.hasPermissionTo('MOD_RX_OUT_EXCL')">
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="5" label="Nome da Matéria" controlName="nome"
-                [control]="filter!.controls.nome" placeholder="Nome da Matéria" [attr.maxlength]=250></input-text>
+            <input-text [size]="5" label="Nome da Disciplina" controlName="nome"
+                [control]="filter!.controls.nome" placeholder="Nome da Disciplina" [attr.maxlength]=250></input-text>
             <input-text [size]="5" label="Área" controlName="area_id"
                 [control]="filter!.controls.area_id" placeholder="Nome da Área" [attr.maxlength]=250></input-text>
         </div>
     </filter>
     <columns>
-        <column title="Nome da Matéria" field="nome"></column>
+        <column title="Nome da Disciplina" field="nome"></column>
         <column title="Área do Conhecimento" [template]="columnNomeArea">
             <ng-template let-row="row" #columnNomeArea>
                 <span>{{ row.curso.area_conhecimento.nome }}</span>
@@ -22,7 +22,7 @@
             </ng-template>
         </column>
         <column title="Horas Aula" field="horas_aula"></column>
-        <column type="options" [onEdit]="edit" [options]="options"></column>
+        <column type="options" [onEdit]="edit"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

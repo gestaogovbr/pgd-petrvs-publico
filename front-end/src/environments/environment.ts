@@ -7,6 +7,7 @@ const defaultExtensionOptionsConfig = { /* Configuração utilizada para acessas
     entidade: "PRF",
     logo_url: "logo_vertical.png",
     versao: "1.0.0",
+    edicao: "MGI",
     login: {
         google_client_id: "",
         gsuit: true,
@@ -35,6 +36,7 @@ export const environment = {
     entidade: global?.entidade || "PRF",
     images: { login: global?.logo_url || "logo.png" },
     versao: global?.versao || "1.0.0",
+    edicao: global?.edicao || "MGI",
     login: global?.login || {
         google_client_id: global?.google_client_id || "",
         gsuit: true,

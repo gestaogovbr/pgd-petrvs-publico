@@ -22,14 +22,13 @@ export type UnidadeDashboard = {
 };
 
 export type TodasUnidades = {
-  unidades : LookupItem[];
+  unidades: LookupItem[];
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class UnidadeDaoService extends DaoBaseService<Unidade> {
-
   public usuarioDao: UsuarioDaoService;
   public entidadeDao: EntidadeDaoService;
   public cidadeDao: CidadeDaoService;
@@ -49,8 +48,8 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
       { field: "codigo", label: "Código" },
       { field: "sigla", label: "Sigla" },
       { field: "nome", label: "Nome" },
-      { field: "gestor", label: "Gestor", fields: this.usuarioDao.dataset([]), type: "OBJECT"},
-      { field: "gestores_substitutos", label: "Gestor substituto", fields: this.usuarioDao.dataset([]), type: "ARRAY"},
+      { field: "gestor", label: "Gestor", fields: this.usuarioDao.dataset([]), type: "OBJECT" },
+      { field: "gestores_substitutos", label: "Gestor substituto", fields: this.usuarioDao.dataset([]), type: "ARRAY" },
       { field: "entidade", label: "Entidade", dao: this.entidadeDao },
       { field: "cidade", label: "Cidade", dao: this.cidadeDao },
       { field: "texto_complementar_plano", label: "Mensagem do Plano de trabalho", type: "TEMPLATE" }
@@ -110,23 +109,23 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
     });
   }
 
-  public hierarquiaUnidades(unidade_id: string | null | undefined): Promise<Unidade[]>{
+  public hierarquiaUnidades(unidade_id: string | null | undefined): Promise<Unidade[]> {
     return new Promise<Unidade[]>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/hierarquia', {unidade_id}).subscribe(response => {
+      this.server.post('api/' + this.collection + '/hierarquia', { unidade_id }).subscribe(response => {
         resolve(response?.unidades || []);
       }, error => reject(error));
     });
   }
 
-  public unidadesFilhas(unidade_id: string): Promise<Unidade[]>{
+  public unidadesFilhas(unidade_id: string): Promise<Unidade[]> {
     return new Promise<Unidade[]>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/filhas', {unidade_id}).subscribe(response => {
+      this.server.post('api/' + this.collection + '/filhas', { unidade_id }).subscribe(response => {
         resolve(response?.unidades || []);
       }, error => reject(error));
     });
   }
 
-  public lotados(unidade_id: string): Promise<Usuario[]>{
+  public lotados(unidade_id: string): Promise<Usuario[]> {
     return new Promise<Usuario[]>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/lotados', { unidade_id }).subscribe(response => {
         resolve(response?.usuarios || []);
@@ -134,25 +133,25 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
     });
   }
 
-  public lookupTodasUnidades(): Promise<LookupItem[]>{
+  public lookupTodasUnidades(): Promise<LookupItem[]> {
     return new Promise<LookupItem[]>((resolve, reject) => {
-      this.server.post('api/Unidade/lookup-todas-unidades',{}).subscribe(response => {
+      this.server.post('api/Unidade/lookup-todas-unidades', {}).subscribe(response => {
         resolve(response?.unidades || []);
       }, error => reject(error));
     });
   }
 
-/*   public planejamentosSuperiores(unidade_id: string): Promise<Planejamento[]>{
-    return new Promise<Planejamento[]>((resolve, reject) => {
-      this.server.post('api/Unidade/planejamentos-superiores',{ unidade_id }).subscribe(response => {
-        resolve(response?.planejamentos || []);
-      }, error => reject(error));
-    });
-  }
-
-  public query(options: QueryOptions = {}, events: queryEvents = {}): QueryContext<T> {
-    return this.contextQuery(new QueryContext<T>(this, this.collection, new Subject<T[]>(), options, events));
-  } */
+  /*   public planejamentosSuperiores(unidade_id: string): Promise<Planejamento[]>{
+      return new Promise<Planejamento[]>((resolve, reject) => {
+        this.server.post('api/Unidade/planejamentos-superiores',{ unidade_id }).subscribe(response => {
+          resolve(response?.planejamentos || []);
+        }, error => reject(error));
+      });
+    }
+  
+    public query(options: QueryOptions = {}, events: queryEvents = {}): QueryContext<T> {
+      return this.contextQuery(new QueryContext<T>(this, this.collection, new Subject<T[]>(), options, events));
+    } */
 
 
 }

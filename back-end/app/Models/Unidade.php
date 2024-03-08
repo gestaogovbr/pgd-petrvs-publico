@@ -17,8 +17,9 @@ use App\Models\UnidadeIntegrante;
 use App\Models\Cidade;
 use App\Models\Template;
 use App\Models\NotificacaoConfig;
-use App\Models\HistoricoLotacaoCurriculum;
-use App\Models\HistoricoFuncaoCurriculum;
+use App\Models\HistoricoLotacao;
+use App\Models\HistoricoFuncao;
+use App\Models\CurriculumProfissional;
 use App\Traits\AutoUuid;
 
 class Unidade extends ModelBase
@@ -90,8 +91,9 @@ class Unidade extends ModelBase
     public function planejamentos() { return $this->hasMany(Planejamento::class); }
     public function cadeiasValor() { return $this->hasMany(CadeiaValor::class); }
     public function integrantes() { return $this->hasMany(UnidadeIntegrante::class); }
-    public function historicoLotacao() { return $this->hasMany(HistoricoLotacaoCurriculum::class); }
-    public function historicoFuncao() { return $this->hasMany(HistoricoFuncaoCurriculum::class); }
+    public function historicosLotacoes() { return $this->hasMany(HistoricoLotacao::class); }
+    public function historicosFuncoes() { return $this->hasMany(HistoricoFuncao::class); }
+    public function curriculumsProfissionais() { return $this->hasMany(CurriculumProfissional::class, 'lotacao_atual'); }
     // Belongs
     public function entidade() { return $this->belongsTo(Entidade::class); }
     public function cidade() { return $this->belongsTo(Cidade::class); }  //nullable

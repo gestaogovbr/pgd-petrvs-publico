@@ -1,32 +1,28 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ReactiveFormsModule } from '@angular/forms';
-
 import { CurriculumRoutingModule } from './curriculum-routing.module';
-
 import { CurriculumFormComponent } from  './curriculum-form/curriculum-form.component'
 import { CurriculumProfissionalFormComponent } from  '../curriculum/curriculum-profissional-form/curriculum-profissional-form.component'
-import { CurriculumAtributosbig5FormComponent } from './currriculum-atributos/curriculum-atributosbig5-form/curriculum-atributosbig5-form.component';
-import { CurrriculumAtributosComponent } from './currriculum-atributos/currriculum-atributos.component';
-import { CurriculumAtributossoftFormComponent } from './currriculum-atributos/curriculum-atributossoft-form/curriculum-atributossoft-form.component';
-import { CurriculumAtributosdiscFormComponent } from './currriculum-atributos/curriculum-atributosdisc-form/curriculum-atributosdisc-form.component';
-import { CurriculumAtributosDassFormComponent } from './currriculum-atributos/curriculum-atributos-dass-form/curriculum-atributos-dass-form.component';
-import { CurriculumAtributosQvtFormComponent } from './currriculum-atributos/curriculum-atributos-qvt-form/curriculum-atributos-qvt-form.component';
+import { CurriculumAtributosComponent } from './curriculum-atributos/curriculum-atributos.component';
 import { CurriculumPesquisaListComponent } from './curriculum-pesquisa-list/curriculum-pesquisa-list.component';
-import { CurriculumPerguntaCardComponent } from './currriculum-atributos/curriculum-pergunta-card/curriculum-pergunta-card.component';
+import { CurriculumPerguntaCardComponent } from './curriculum-atributos/curriculum-pergunta-card/curriculum-pergunta-card.component';
 import { CurriculumPesquisaListUsuarioComponent } from './curriculum-pesquisa-list-usuario/curriculum-pesquisa-list-usuario.component';
+import { CurriculumAtributosSoftFormComponent } from './curriculum-atributos/curriculum-atributos-soft-form/curriculum-atributos-soft-form.component';
+import { CurriculumAtributosBig5FormComponent } from './curriculum-atributos/curriculum-atributos-big5-form/curriculum-atributos-big5-form.component';
+import { CurriculumAtributosDiscFormComponent } from './curriculum-atributos/curriculum-atributos-disc-form/curriculum-atributos-disc-form.component';
+import { CurriculumAtributosDassFormComponent } from './curriculum-atributos/curriculum-atributos-dass-form/curriculum-atributos-dass-form.component';
+import { CurriculumAtributosQvtFormComponent } from './curriculum-atributos/curriculum-atributos-qvt-form/curriculum-atributos-qvt-form.component';
 
 @NgModule({
   declarations: [
-    //CurriculumListComponent,
-    CurrriculumAtributosComponent,
+    CurriculumAtributosComponent,
     CurriculumFormComponent,
     CurriculumProfissionalFormComponent,
-    CurriculumAtributosbig5FormComponent,
-    CurriculumAtributossoftFormComponent,
-    CurriculumAtributosdiscFormComponent,
+    CurriculumAtributosBig5FormComponent,
+    CurriculumAtributosSoftFormComponent,
+    CurriculumAtributosDiscFormComponent,
     CurriculumAtributosDassFormComponent,
     CurriculumAtributosQvtFormComponent,
     CurriculumPesquisaListComponent,

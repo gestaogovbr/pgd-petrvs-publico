@@ -1,8 +1,7 @@
-import { Component, ElementRef, Injector, Input, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { GridComponent, GroupBy } from 'src/app/components/grid/grid.component';
+import { GridComponent} from 'src/app/components/grid/grid.component';
 import { PageListBase } from '../../base/page-list-base';
-import { CurriculumProfissionalDaoService } from 'src/app/dao/curriculum-profissional-dao.service';
 import { CurriculumProfissional } from 'src/app/models/currriculum-profissional.model';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.service';
@@ -12,14 +11,19 @@ import { FuncaoDaoService } from 'src/app/dao/funcao-dao.service';
 import { CapacidadeTecnicaDaoService } from 'src/app/dao/capacidade-tecnica-dao.service';
 import { AreaTematicaDaoService } from 'src/app/dao/area-tematica-dao.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
+import { Curriculum } from 'src/app/models/currriculum.model';
+import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
 
 @Component({
   selector: 'app-curriculum-pesquisa-list',
   templateUrl: './curriculum-pesquisa-list.component.html',
   styleUrls: ['./curriculum-pesquisa-list.component.scss']
 })
-export class CurriculumPesquisaListComponent extends PageListBase<CurriculumProfissional, CurriculumProfissionalDaoService>{
+export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, CurriculumDaoService>{
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @ViewChild('radioInteresseRemocao', { static: false }) public radioInteresseRemocao?: InputSwitchComponent;
+  @ViewChild('radioInteresseBNT', { static: false }) public radioInteresseBNT?: InputSwitchComponent;
 
   public cidadeDao: CidadeDaoService;
   public areaDao: AreaConhecimentoDaoService;
@@ -29,11 +33,11 @@ export class CurriculumPesquisaListComponent extends PageListBase<CurriculumProf
   public areaTematicaDao: AreaTematicaDaoService;
   public capacidadeTecnicaDao: CapacidadeTecnicaDaoService;
   public filter: FormGroup;
-  public areaTematicaWhere: any[] = [["id", "==", null]];
-  public cursoWhere: any[] = [["id", "==", null]];
+  public areaTematicaWhere: any[] = [['id', '==', null]];
+  public cursoWhere: any[] = [['id', '==', null]];
 
   constructor(public injector: Injector) {
-    super(injector, CurriculumProfissional, CurriculumProfissionalDaoService);
+    super(injector, Curriculum, CurriculumDaoService);
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
     this.areaDao = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService);
     this.cursoDao = injector.get<CursoDaoService>(CursoDaoService);
@@ -49,18 +53,24 @@ export class CurriculumPesquisaListComponent extends PageListBase<CurriculumProf
       idioma: { default: "" },
       area_conhecimento_id: { default: "" },
       curso_id: { default: "" },
-      titulo_id: { default: "" },
       grupo_especializado_id: { default: "" },
       funcao_id: { default: "" },
       area_tematica_id: { default: "" },
       capacidade_tecnica_id: { default: "" },
+      interesse_bnt: { default: false },
+      interesse_pgd: { default: "" },
+      remocao: { default: false },
+      soft_id: { default: "" },
+      score: { default: 0 },      
     });
-    this.orderBy = [['curriculum.usuario.nome','asc']];
-    this.join = ['historico_atividade_interna.capacidade_tecnica.area_tematica', 'historico_atividade_externa.area_atividade_externa', 'historico_curso_interno.curso',
-      'historico_curso_externo.area_atividade_externa', 'historico_docencia_interna.curso', 'historico_docencia_externa.area_atividade_externa', 'historico_funcao.funcao',
-      'historico_funcao.unidade', 'historico_lotacao.unidade', 'curriculum', 'curriculum.usuario', 'curriculum.cidade', 'curriculum.graduacoes',
-      'curriculum.graduacoes.curso', 'curriculum.graduacoes.curso.area_conhecimento', 'grupo_especializado',
-      'curriculum.usuario.questionarios_respostas.questionario.perguntas.questionario_resposta_pergunta'];
+    this.orderBy = [['usuario.nome', 'asc']];
+    this.join = ['profissional.historicos_atividades_internas.capacidade_tecnica.area_tematica',
+      'profissional.historicos_atividades_externas.area_atividade_externa', 'profissional.historicos_cursos_internos.curso',
+      'profissional.historicos_cursos_externos.area_atividade_externa', 'profissional.historicos_docencias_internas.curso',
+      'profissional.historicos_docencias_externas.area_atividade_externa', 'profissional.historicos_funcoes.funcao',
+      'profissional.historicos_funcoes.unidade', 'profissional.historicos_lotacoes.unidade', 'usuario', 'cidade',
+      'graduacoes', 'graduacoes.curso', 'graduacoes.curso.area_conhecimento', 'profissional.grupo_especializado',
+      'usuario.questionarios_respostas.questionario.perguntas.questionario_resposta_pergunta'];
   }
 
   ngAfterViewInit() {
@@ -70,29 +80,26 @@ export class CurriculumPesquisaListComponent extends PageListBase<CurriculumProf
   public filterWhere = (filter: FormGroup) => {
     let form: any = filter.value;
     let result: any[] = [];
-    if (form.estado?.length) {
+    if (form.estado?.length && !form.cidade_id?.length) {
       result.push(["uf", "==", form.estado]);
     }
-    if (form.cidade?.length) {
+    if (form.cidade_id?.length) {
       result.push(["cidade_id", "==", form.cidade_id]);
     }
     if (form.estado_civil?.length) {
       result.push(["estado_civil", "==", form.estado_civil]);
     }
-    if (form.filhos?.length) {
+    if (form.filhos) {
       result.push(["filhos", "==", form.filhos]);
     }
     if (form.idioma?.length) {
       result.push(["idioma", "==", form.idioma]);
     }
-    if (form.area_conhecimento_id?.length) {
+    if (form.area_conhecimento_id?.length && !form.curso_id?.length) {
       result.push(["area_conhecimento_id", "==", form.area_conhecimento_id]);
     }
     if (form.curso_id?.length) {
       result.push(["curso_id", "==", form.curso_id]);
-    }
-    if (form.titulo_id?.length) {
-      result.push(["titulo_id", "==", form.titulo_id]);
     }
     if (form.grupo_especializado_id?.length) {
       result.push(["grupo_especializado_id", "==", form.grupo_especializado_id]);
@@ -100,28 +107,44 @@ export class CurriculumPesquisaListComponent extends PageListBase<CurriculumProf
     if (form.funcao_id?.length) {
       result.push(["funcao_id", "==", form.funcao_id]);
     }
-    if (form.area_tematica_id?.length) {
+    if (form.area_tematica_id?.length && !form.capacidade_tecnica_id?.length) {
       result.push(["area_tematica_id", "==", form.area_tematica_id]);
     }
     if (form.capacidade_tecnica_id?.length) {
       result.push(["capacidade_tecnica_id", "==", form.capacidade_tecnica_id]);
     }
+    if (form.interesse_pgd?.length) {
+      result.push(["interesse_pgd", "==", form.interesse_pgd]);
+    }
+    if (form.interesse_bnt) {
+      result.push(["interesse_bnt", "==", form.interesse_bnt]);
+    }
+    if (form.remocao) {
+      result.push(["remocao", "==", form.remocao]);
+    }
+    if (form.soft_id?.length && form.score > 0) {
+      result.push(["soft_id", "==", form.soft_id, form.score]);
+    }
     return result;
   }
 
   public filterClear(filter: FormGroup) {
-    filter.controls.estado.setValue("");
-    filter.controls.cidade.setValue("");
-    filter.controls.estado_civil.setValue("");
+    filter.controls.estado.setValue(null);
+    filter.controls.cidade_id.setValue(null);
+    filter.controls.estado_civil.setValue(null);
     filter.controls.filhos.setValue(false);
-    filter.controls.idioma.setValue("");
-    filter.controls.area_conhecimento_id.setValue("");
-    filter.controls.curso_id.setValue("");
-    filter.controls.titulo_id.setValue("");
-    filter.controls.grupo_especializado_id.setValue("");
-    filter.controls.funcao_id.setValue("");
-    filter.controls.area_tematica_id.setValue("");
-    filter.controls.capacidade_tecnica_id.setValue("");
+    filter.controls.idioma.setValue(null);
+    filter.controls.area_conhecimento_id.setValue(null);
+    filter.controls.curso_id.setValue(null);
+    filter.controls.grupo_especializado_id.setValue(null);
+    filter.controls.funcao_id.setValue(null);
+    filter.controls.area_tematica_id.setValue(null);
+    filter.controls.capacidade_tecnica_id.setValue(null);
+    filter.controls.interesse_pgd.setValue(null);
+    filter.controls.interesse_bnt.setValue(false);
+    filter.controls.remocao.setValue(false);
+    filter.controls.soft_id.setValue(null);
+    filter.controls.score.setValue(0);
     super.filterClear(filter);
   }
 
@@ -139,12 +162,6 @@ export class CurriculumPesquisaListComponent extends PageListBase<CurriculumProf
     this.cdRef.detectChanges();
   }
 
-  public onTituloChange() {
-    let titulo = this.lookup.TITULOS_CURSOS.find(x => x.key == this.filter!.controls.titulo_id.value);
-    this.cursoWhere = [['area_id', '==', this.filter!.controls.area_conhecimento_id.value], ['titulo', '==', titulo?.key]];
-    this.cdRef.detectChanges();
-  }
-
   public dynamicButtons(row: any): ToolbarButton[] {
     const btns = [];
     btns.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhesCurriculum.bind(this) });
@@ -158,13 +175,5 @@ export class CurriculumPesquisaListComponent extends PageListBase<CurriculumProf
       }
     });
   }
-
- /* public async showCurriculumDetalhes2(row: any) {
-    console.log(row)
-    this.go.navigate({ route: ['raiox', 'detalhe-pesquisa'] }, { modal: true, metadata: { curriculum: row } });
-  }*/
-
- 
-
 }
 

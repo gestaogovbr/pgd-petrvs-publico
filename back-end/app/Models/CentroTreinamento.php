@@ -14,8 +14,7 @@ class CentroTreinamento extends ModelBase
         //'deleted_at', /* timestamp; */
     ];
 
-    // Belongs
-    public function centroTreinamento() { return $this->hasMany(CurriculumProfissional::class); }
-
+    // Has
+    public function curriculumProfissional() { return $this->hasMany(CurriculumProfissional::class); }
     
 }

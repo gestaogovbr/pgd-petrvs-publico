@@ -1,4 +1,3 @@
-
 <grid title="Caça Talentos - Raio X" [dao]="dao" [orderBy]="orderBy" [hasEdit]="false" [hasDelete]="false" [join]="join" [loadList]="onGridLoad.bind(this)" [selectable]="selectable" (select)="onSelect($event)">
   <toolbar></toolbar>
   <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapsed]="false">
@@ -7,15 +6,15 @@
         <div class="col-6">
           <separator title="Residência">
             <div class="row">
-              <input-select [size]="6" label="Estado" icon="fas fa-flag" controlName="estado" [control]="filter!.controls.estado" [items]="lookup.UF"></input-select>
-              <input-select [size]="6" label="Cidade" icon="far fa-flag" controlName="cidade_id" [control]="filter!.controls.cidade_id" [dao]="cidadeDao" [where]="['uf', '==', filter!.controls.estado.value]"></input-select>
+              <input-select [size]="6" label="Estado" icon="fas fa-flag" controlName="estado" [control]="filter!.controls.estado" [items]="lookup.UF" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+              <input-select [size]="6" label="Cidade" icon="far fa-flag" controlName="cidade_id" [control]="filter!.controls.cidade_id" [dao]="cidadeDao" [where]="['uf', '==', filter!.controls.estado.value]" itemTodos="- Todos -" [valueTodos]="null" liveSearch></input-select>
             </div>
           </separator>
         </div>
         <div class="col-6">
           <separator title="Estado Civil">
             <div class="row">
-              <input-select [size]="9" label="Estado Civil" icon="fas fa-ring" controlName="estado_civil" [control]="filter!.controls.estado_civil" [items]="lookup.ESTADO_CIVIL"></input-select>
+              <input-select [size]="9" label="Estado Civil" icon="fas fa-ring" controlName="estado_civil" [control]="filter!.controls.estado_civil" [items]="lookup.ESTADO_CIVIL" itemTodos="- Todos -" [valueTodos]="null"></input-select>
               <input-switch [size]="3" label="Possui Filhos?" icon="fas fa-child" controlName="filhos" [control]="filter!.controls.filhos"></input-switch>
             </div>
           </separator>
@@ -27,16 +26,15 @@
         <div class="col-4">
           <separator title="Idiomas">
             <div class="row">
-              <input-select [size]="12" label="Idioma" icon="fas fa-language" controlName="idioma" [control]="filter!.controls.idioma" [items]="lookup.IDIOMAS"></input-select>
+              <input-select [size]="12" label="Idioma" icon="fas fa-language" controlName="idioma" [control]="filter!.controls.idioma" [items]="lookup.IDIOMAS" itemTodos="- Todos -" [valueTodos]="null"></input-select>
             </div>
           </separator>
         </div>
         <div class="col-8">
           <separator title="Formação Acadêmica">
             <div class="row">
-              <input-select [size]="4" label="Área de conhecimento" icon="fas fa-user-graduate" controlName="area_conhecimento_id" [control]="filter!.controls.area_conhecimento_id" [dao]="areaDao" (change)="onAreaConhecimentoChange()"></input-select>
-              <input-select [size]="4" label="Titulo" icon="bi bi-mortarboard-fill" controlName="titulo_id" [control]="filter!.controls.titulo_id" [items]="lookup.TITULOS_CURSOS" (change)="onTituloChange()"></input-select>
-              <input-select [size]="4" label="Curso" icon="fas fa-graduation-cap" controlName="curso_id" [control]="filter!.controls.curso_id" [dao]="cursoDao" [where]="cursoWhere"></input-select>
+              <input-select [size]="6" label="Área de conhecimento" icon="fas fa-user-graduate" controlName="area_conhecimento_id" [control]="filter!.controls.area_conhecimento_id" [dao]="areaDao" (change)="onAreaConhecimentoChange()" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+              <input-select [size]="6" label="Curso" icon="fas fa-graduation-cap" controlName="curso_id" [control]="filter!.controls.curso_id" [dao]="cursoDao" [where]="cursoWhere" itemTodos="- Todos -" [valueTodos]="null"></input-select>
             </div>
           </separator>
         </div>
@@ -47,16 +45,27 @@
         <div class="col-6">
           <separator title="Experiência">
             <div class="row">
-              <input-select [size]="6" label="Grupo especializado" icon="bi bi-award" controlName="grupo_especializado_id" [control]="filter!.controls.grupo_especializado_id" [dao]="grupoDao"></input-select>
-              <input-select [size]="6" label="Função já exercida" icon="bi bi-hammer" controlName="funcao_id" [control]="filter!.controls.funcao_id" [dao]="funcaoDao"></input-select>
+              <input-select [size]="6" label="Grupo especializado" icon="bi bi-award" controlName="grupo_especializado_id" [control]="filter!.controls.grupo_especializado_id" [dao]="grupoDao" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+              <input-select [size]="6" label="Função já exercida" icon="bi bi-hammer" controlName="funcao_id" [control]="filter!.controls.funcao_id" [dao]="funcaoDao" itemTodos="- Todos -" [valueTodos]="null"></input-select>
             </div>
           </separator>
         </div>
         <div class="col-6">
           <separator title="Hard Skills">
             <div class="row">
-              <input-select [size]="6" label="Área técnica das capacidades" icon="fas fa-graduation-cap" controlName="area_tematica_id" [control]="filter!.controls.area_tematica_id" [dao]="areaTematicaDao" (change)="onAreaTematicaChange()"></input-select>
-              <input-select [size]="6" label="Capacidades" icon="fas fa-graduation-cap" controlName="capacidade_tecnica_id" [control]="filter!.controls.capacidade_tecnica_id" [dao]="capacidadeTecnicaDao" [where]="areaTematicaWhere"></input-select>
+              <input-select [size]="6" label="Área técnica das capacidades" icon="fas fa-graduation-cap" controlName="area_tematica_id" [control]="filter!.controls.area_tematica_id" [dao]="areaTematicaDao" (change)="onAreaTematicaChange()" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+              <input-select [size]="6" label="Capacidades" icon="fas fa-graduation-cap" controlName="capacidade_tecnica_id" [control]="filter!.controls.capacidade_tecnica_id" [dao]="capacidadeTecnicaDao" [where]="areaTematicaWhere" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+            </div>
+          </separator>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <separator title="Convocação">
+            <div class="row">
+              <input-select [size]="4" label="Interesse no PGD" icon="bi bi-bookmark-check" controlName="interesse_pgd" [control]="filter!.controls.interesse_pgd" [items]="lookup.PG_PRF" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+              <input-switch [size]="4" [label]="radioInteresseBNT.value ? 'Tem interesse no BNT' : 'Não tem interesse no BNT'" icon="bi bi-universal-access" controlName="interesse_bnt" [control]="filter!.controls.interesse_bnt" #radioInteresseBNT></input-switch>
+              <input-switch [size]="4" [label]="radioInteresseRemocao.value ? 'Tem interesse em remoção' : 'Não tem interesse em remoção'" icon="bi bi-house-door-fill" controlName="remocao" [control]="filter!.controls.remocao" #radioInteresseRemocao></input-switch>
             </div>
           </separator>
         </div>
@@ -67,14 +76,15 @@
         <div class="col-6">
           <separator title="Soft Skills">
             <div class="row">
-              
+              <input-select [size]="9" label="Selecione a soft skill" icon="fas fa-graduation-cap" controlName="soft_id" [control]="filter!.controls.soft_id" [items]="lookup.SOFT_SKILLS" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+              <input-number [size]="3" label="Score mínimo" icon="fas fa-graduation-cap" controlName="score" [control]="filter!.controls.score" [attr.min]="0" [minValue]="0" [maxValue]="20"></input-number>
             </div>
           </separator>
         </div>
         <div class="col-6">
           <separator title="Mente">
             <div class="row">
-              
+
             </div>
           </separator>
         </div>
@@ -82,15 +92,6 @@
     </separator>
   </filter>
   <columns>
-    <!--<column type="expand" icon="bi bi-person-bounding-box" [align]="'center'" [hint]="'Detalhamento'" [template]="columnDetalhamento" [expandTemplate]="columnExpandedDetalhamento">
-    <column icon="bi bi-person-bounding-box" [align]="'center'" [hint]="'Detalhamento'" [template]="columnDetalhamento">
-      <ng-template let-row="row" #columnDetalhamento>
-        <span class="badge rounded-pill bg-light text-dark"></span>
-      </ng-template>
-      <<ng-template let-row="row" #columnExpandedDetalhamento>
-       <curriculum-pesquisa-list-usuario [entity]="row"></curriculum-pesquisa-list-usuario>
-      </ng-template>>
-    </column-->
     <column [titleTemplate]="titleNome" [template]="columnNome">
       <ng-template let-header="header" #titleNome>
         <strong>Nome</strong>/<order by="" [header]="header">Ingresso</order><br>
@@ -98,10 +99,10 @@
       </ng-template>
       <ng-template let-row="row" #columnNome>
         <span class="text-nowrap d-block">
-          {{row.curriculum.usuario.nome}}
-          <badge color="gray">{{row.ano_ingresso}}</badge>
+          {{row.usuario.nome}}
+          <badge color="gray">{{row.profissional.ano_ingresso}}</badge>
         </span>
-        <span class="micro-text fw-ligh">{{row.curriculum.usuario.email}}</span>
+        <span class="micro-text fw-ligh">{{row.usuario.email}}</span>
       </ng-template>
     </column>
     <column [titleTemplate]="titleEstado" [template]="columnEstado">
@@ -109,19 +110,14 @@
         <strong>Cidade/Estado</strong>
       </ng-template>
       <ng-template let-row="row" #columnEstado>
-        <span class="d-block">{{row.curriculum.cidade.nome}}/{{row.curriculum.cidade.uf}}</span>
+        <span class="d-block">{{row.cidade.nome}}/{{row.cidade.uf}}</span>
       </ng-template>
     </column>
     <column title="Apresentação Pessoal" [template]="columnApresentacao">
       <ng-template let-row="row" #columnApresentacao>
-        <span class="micro-text fw-ligh">{{row.curriculum.apresentacao}}</span>
+        <span class="micro-text fw-ligh">{{row.apresentacao}}</span>
       </ng-template>
     </column>
-    <!--column title="Detalhes" [template]="columnDetalhes">
-      <ng-template let-row="row" #columnDetalhes>
-        <button class="btn btn-sm btn-outline-info me-2" (click)="showCurriculumDetalhes2(row)"><i class="bi bi-eye"></i></button>
-      </ng-template>
-    </column-->
     <column icon="bi bi-person-bounding-box" [align]="'center'" [hint]="'Detalhamento'" type="options" [onEdit]="edit.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
   </columns>
 </grid>
