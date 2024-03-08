@@ -1,12 +1,12 @@
 import { Injectable,Injector } from '@angular/core';
 import { DaoBaseService } from './dao-base.service';
-import { HistoricoCursoInternoCurriculum } from '../models/historico-curso-interno-currriculum.model';
-import { HistoricoCursoExternoCurriculum } from '../models/historico-curso-externo-currriculum.model';
+import { HistoricoCursoInterno } from '../models/historico-curso-interno-currriculum.model';
+import { HistoricoCursoExterno } from '../models/historico-curso-externo-currriculum.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class HistoricoCursoExternoCurriculumDaoService extends DaoBaseService<HistoricoCursoExternoCurriculum>{
+export class HistoricoCursoExternoCurriculumDaoService extends DaoBaseService<HistoricoCursoExterno>{
  
   constructor(protected injector: Injector) { 
     super("HistoricoCursoExterno", injector);

@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\HistoricoAtividadeExternaCurriculum;
-use App\Services\HistoricoAtividadeExternaCurriculumService;
-use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 
-class HistoricoAtividadeExternaCurriculumController extends ControllerBase {
+class HistoricoCursoExternoController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':

@@ -15,7 +15,7 @@ class HistoricoAtividadeExterna extends ModelBase
         'area_atividade_externa_id',
     ];
 
-     // Belongs
+    // Belongs
     public function curriculumProfissional() { return $this->belongsTo(CurriculumProfissional::class); }
     public function areaAtividadeExterna() { return $this->belongsTo(AreaAtividadeExterna::class); }
   
