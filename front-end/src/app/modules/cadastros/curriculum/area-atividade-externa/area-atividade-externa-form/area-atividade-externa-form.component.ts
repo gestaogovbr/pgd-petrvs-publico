@@ -23,6 +23,7 @@ export class AreaAtividadeExternaFormComponent extends PageFormBase<AreaAtividad
       ativo:{default: true},
       
     }, this.cdRef, this.validate);
+    this.addOption(this.OPTION_EXCLUIR, "MOD_RX_OUT_EXCL");
   }
 
   public validate = (control: AbstractControl, controlName: string) => {

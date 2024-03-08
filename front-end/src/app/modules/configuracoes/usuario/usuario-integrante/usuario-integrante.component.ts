@@ -235,9 +235,8 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
         if (!this.isNoPersist) { // se persistente
           await this.integranteDao.salvarIntegrantes([this.integranteService.completarIntegrante(row, form!.controls.unidade_id.value, this.entity!.id, novasAtribuicoes.map(x => x.key))]).then(resposta => {
             let msg: string | undefined;
-            if (msg = resposta?.find(v => v._metadata.msg?.length)?._metadata.msg) { if (this.grid) this.grid!.error = msg; };
+            if (msg = resposta?.find(v => v._metadata.msg?.length)?._metadata.msg) this.dialog.alert('ATENÇÃO: ERRO!', msg);
           });
-          //TODO: se retornar uma mensagem de erro, ela será exibida?
           await this.loadData({ id: this.entity!.id }, this.form);
           if (this.grid) this.grid!.error = "";
         } else {                // se não persistente

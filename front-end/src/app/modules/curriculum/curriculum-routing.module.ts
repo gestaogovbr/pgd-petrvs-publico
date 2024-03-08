@@ -2,8 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 import { ConfigResolver } from 'src/app/resolvies/config.resolver';
-
-import { RaioxhomeComponent } from 'src/app/modules/curriculum/curriculum-home/raioxhome.component';
 import { CurriculumFormComponent } from 'src/app/modules/curriculum/curriculum-form/curriculum-form.component';
 import { CurriculumProfissionalFormComponent } from 'src/app/modules/curriculum/curriculum-profissional-form/curriculum-profissional-form.component'
 import { CurriculumAtributosBig5FormComponent } from './curriculum-atributos/curriculum-atributos-big5-form/curriculum-atributos-big5-form.component';
@@ -19,18 +17,18 @@ import { CurriculumPesquisaListUsuarioComponent } from './curriculum-pesquisa-li
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Home Raio-X" } },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Home Raio-X" } },
-  { path: 'pessoal', component: CurriculumFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "" } },
-  { path: 'profissional', component: CurriculumProfissionalFormComponent, canActivate: [AuthGuard], data: { title: "Dados Profissionais" } },
-  { path: 'big5', component: CurriculumAtributosBig5FormComponent, canActivate: [AuthGuard], data: { title: "Big5" } },
-  { path: 'soft', component: CurriculumAtributosSoftFormComponent, canActivate: [AuthGuard], data: { title: "Soft" } },
-  { path: 'atributos', component: CurriculumAtributosComponent, canActivate: [AuthGuard], data: { title: "Atributos Comportamentais" } },
+  { path: 'pessoal', component: CurriculumFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Dados Pessoais", modal: true } },
+  { path: 'profissional', component: CurriculumProfissionalFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Dados Profissionais", modal: true  } },
+  { path: 'big5', component: CurriculumAtributosBig5FormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Big5" } },
+  { path: 'soft', component: CurriculumAtributosSoftFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Soft" } },
+  { path: 'atributos', component: CurriculumAtributosComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Atributos Comportamentais2", modal: false, modalWidth: 1300 } },
   { path: 'disc', component: CurriculumAtributosDiscFormComponent, canActivate: [AuthGuard], data: { title: "Disc" } },
   { path: 'dass', component: CurriculumAtributosDassFormComponent, canActivate: [AuthGuard], data: { title: "Dass" } },
   { path: 'qvt', component: CurriculumAtributosQvtFormComponent, canActivate: [AuthGuard], data: { title: "QVT" } },
   //{ path: 'pesquisa-usuario', component: CurriculumPesquisaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Pesquisa Usuário" } },
   { path: 'pesquisa-adm', component: CurriculumPesquisaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Pesquisa Administrativa" } },
-  { path: 'detalhe-pesquisa', component: CurriculumPesquisaListUsuarioComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Currículo", modal: true}},
-  { path: 'cadastros',loadChildren: () => import('../cadastros/curriculum/curriculum-cadastros.module').then(m => m.CurriculumCadastrosModule), canActivate: [AuthGuard] },
+  { path: 'detalhe-pesquisa', component: CurriculumPesquisaListUsuarioComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Currículo", modal: true } },
+  { path: 'cadastros', loadChildren: () => import('../cadastros/curriculum/curriculum-cadastros.module').then(m => m.CurriculumCadastrosModule), canActivate: [AuthGuard] },
 ];
 
 @NgModule({

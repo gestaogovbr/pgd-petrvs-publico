@@ -223,9 +223,8 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
         if (!this.isNoPersist) { // se persistente
           await this.integranteDao.salvarIntegrantes([Object.assign({ _metadata: { perfil_id: form!.controls.perfil_id.value } }, this.integranteService.completarIntegrante(row, this.entity!.id, form!.controls.usuario_id.value, novasAtribuicoes.map(x => x.key)))]).then(resposta => {
             let msg: string | undefined;
-            if (msg = resposta?.find(v => v._metadata.msg?.length)?._metadata.msg) { if (this.grid) this.grid!.error = msg; };
+            if (msg = resposta?.find(v => v._metadata.msg?.length)?._metadata.msg) this.dialog.alert('ATENÇÃO: ERRO!', msg);
           });
-          // TODO: se retornar uma mensagem de erro, ela será exibida?
           await this.loadData({ id: this.entity!.id }, this.form);
           if (this.grid) this.grid!.error = "";
         } else {                // se não persistente

@@ -15,8 +15,6 @@ import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.ser
 import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 import { UnidadeService } from './services/unidade.service';
-import { MenuSuporteComponent } from './modules/suporte/menu-suporte/menu-suporte.component';
-import { Planejamento } from './models/planejamento.model';
 
 export type Contexto = "EXECUCAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
 export type Schema = {
@@ -208,7 +206,7 @@ export class AppComponent {
       CURRICULUM_CADASTRO_CURSOS: { name: this.lex.translate("Cursos"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'curso'], icon: "bi bi-mortarboard-fill" },
       CURRICULUM_CADASTRO_FUNCAO: { name: this.lex.translate("Funções"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'funcao'], icon: "bi bi-check-circle-fill" },
       CURRICULUM_CADASTRO_GRUPOS_ESPECIALIZADOS: { name: this.lex.translate("Grupos Especializados"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'grupoespecializado'], icon: "bi bi-check-circle" },
-      CURRICULUM_CADASTRO_MATERIAS: { name: this.lex.translate("Matérias"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'materia'], icon: "bi bi-list-check" },
+      CURRICULUM_CADASTRO_MATERIAS: { name: this.lex.translate("Disciplina"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'materia'], icon: "bi bi-list-check" },
       CURRICULUM_CADASTRO_QUESTIONARIOS_PERGUNTAS: { name: this.lex.translate("Questionários"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'questionario'], icon: "bi bi-patch-question" },
       CURRICULUM_CADASTRO_QUESTIONARIOS_RESPOSTAS: { name: this.lex.translate("Respostas"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'questionario', 'reposta'], icon: "bi bi-list-task" },
       CURRICULUM_CADASTRO_QUESTIONARIOS_TESTE: { name: this.lex.translate("Testes"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'questionario', 'teste'], icon: "bi bi-list-task" },
@@ -455,6 +453,19 @@ export class AppComponent {
       case "RAIOX": return this.moduloRaioX;
       default: return [];
     }
+  }
+
+  public get equipe(): any {
+    return [
+      { time: 'PRF', nome: 'Edson Dario Silva de França', cargo: 'Policial Penal Federal', papel: 'Developer' },
+      { time: 'PRF', nome: 'Carlos Henrique Alves Lopes', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
+      { time: 'PRF', nome: 'Diogo Leandro Paiva Ramos', cargo: 'Policial Rodoviário Federal', papel: 'Scrum Master' },
+      { time: 'PRF', nome: 'Edson dos Santos Marian', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
+      { time: 'PRF', nome: 'Genisson Rodrigues Albuquerque', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
+      { time: 'PRF', nome: 'Ricardo de Sousa Farias', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
+      { time: 'PRF', nome: 'Jose Marcelo Maizman Bogdan', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
+      { time: 'MGI', nome: '', cargo: '', papel: 'Developer' },
+    ]
   }
 
   public ngAfterViewInit() {

@@ -3,7 +3,7 @@ import { Base } from './base.model';
 import { CapacidadeTecnica } from './capacidade-tecnica.model';
 import { CurriculumProfissional } from './currriculum-profissional.model';
 
-export class HistoricoAtividadeInternaCurriculum extends Base {
+export class HistoricoAtividadeInterna extends Base {
 
     public profissional?: CurriculumProfissional;
     public capacidade_tecnica?: CapacidadeTecnica;

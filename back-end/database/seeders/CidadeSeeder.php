@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Database\Seeders\BulkSeeeder;
+use Database\Seeders\BulkSeeder;
 use App\Models\Cidade;
 use App\Services\UtilService;
 
@@ -20,7 +20,7 @@ class CidadeSeeder extends Seeder
         $utilService = new UtilService();
 
         $file = database_path('seeders/arquivos_csv/cidades.csv');
-        $csv_reader = new BulkSeeeder($file, ";");
+        $csv_reader = new BulkSeeder($file, ";");
 
         $timenow = now();
 

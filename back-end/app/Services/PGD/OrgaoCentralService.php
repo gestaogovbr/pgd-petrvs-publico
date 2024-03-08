@@ -20,13 +20,12 @@ class OrgaoCentralService
     {
  
         $token = $this->authService->getToken();
-         
         switch ($dados['tipo']) {
             case 'PLANO_TRABALHO':
-                $this->exportarPlanoTrabalhoService->enviar($token, $dados);
+                return $this->exportarPlanoTrabalhoService->enviar($token, $dados);
                 break;
             case 'PLANO_ENTREGA':
-                $this->exportarPlanoEntregasService->enviar($token, $dados);
+                return $this->exportarPlanoEntregasService->enviar($token, $dados);
                 break;
         }
     }

@@ -19,7 +19,7 @@ class Funcao extends ModelBase
 
     // Belongs
     //public function centro() { return $this->belongsTo(AreaConhecimento::class,'area_curso_id'); }
-    public function historicoFuncao() { return $this->hasMany(HistoricoFuncaoCurriculum::class); }
+    public function historicosFuncoes() { return $this->hasMany(HistoricoFuncao::class); }
 
     
 }

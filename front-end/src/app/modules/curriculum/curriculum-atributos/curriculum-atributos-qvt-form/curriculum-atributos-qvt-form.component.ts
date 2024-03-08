@@ -6,9 +6,9 @@ import { QuestionarioDaoService } from 'src/app/dao/questionario-dao.service';
 import { AbstractControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { IIndexable } from 'src/app/models/base.model';
 import { QuestionarioPerguntaDaoService } from 'src/app/dao/questionario-pergunta-dao.service';
-import { QuestionarioResposta } from 'src/app/models/questionario-resposta.model';
-import { QuestionarioRespostaPergunta } from 'src/app/models/questionario-resposta-pergunta.model';
-import { QuestionarioRespostaDaoService } from 'src/app/dao/questionario-resposta-dao.service';
+import { QuestionarioPreenchimento } from 'src/app/models/questionario-preenchimento.model';
+import { QuestionarioPerguntaResposta } from 'src/app/models/questionario-pergunta-resposta.model';
+import { QuestionarioPreenchimentoDaoService } from 'src/app/dao/questionario-preenchimento-dao.service';
 import { v4 as uuid } from 'uuid';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { QuestionarioPergunta } from 'src/app/models/questionario-pergunta.model';
@@ -24,7 +24,7 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
   templateUrl: './curriculum-atributos-qvt-form.component.html',
   styleUrls: ['./curriculum-atributos-qvt-form.component.scss']
 })
-export class CurriculumAtributosQvtFormComponent extends PageFormBase<QuestionarioResposta, QuestionarioRespostaDaoService>{
+export class CurriculumAtributosQvtFormComponent extends PageFormBase<QuestionarioPreenchimento, QuestionarioPreenchimentoDaoService>{
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   /*@ViewChild('chaveConcordancia', { static: false }) public chaveConcordancia?: InputSwitchComponent;
   @ViewChild('chaveSexo', { static: false }) public chaveSexo?: InputSwitchComponent;
@@ -45,7 +45,7 @@ export class CurriculumAtributosQvtFormComponent extends PageFormBase<Questionar
   public indice0a9: number[] = Array.from(new Array(10), (x, i) => i + 0);
 
   /*public questionario?: Questionario;
-  public respostas: QuestionarioRespostaPergunta[] = [];
+  public respostas: QuestionarioPerguntaResposta[] = [];
   public opcoesRichard: LookupItem[] = [{ 'key': 'Concordo Totalmente', 'value': 'Concordo Totalmente' }, { 'key': "Concordo", 'value': 'Concordo' }, { 'key': 'Neutro', 'value': 'Neutro' }, { 'key': 'Discordo', 'value': 'Discordo' }, { 'key': 'Discordo Totalmente', 'value': 'Discordo Totalmente' }];
   public opcoesDass: LookupItem[] = [{ 'key': 0, 'value': 'Não se aplicou de maneira alguma' }, { 'key': 1, 'value': 'Aplicou-se em algum grau, ou por pouco tempo' }, { 'key': 2, 'value': 'Aplicou-se em um grau considerável, ou por uma boa parte do tempo' }, { 'key': 3, 'value': 'Aplicou-se muito, ou na maioria do tempo.' }];
   public opcoesDiscriminacao: LookupItem[] = [{ 'key': 0, 'value': 'Das diferenças entre os salários percebidos pelos indivíduos. Quem ganha mais, vale mais.' }, { 'key': 1, 'value': 'Do fato de que algumas carreiras possuem mais prestígio do que outras diante da alta direção da instituição.' }, { 'key': 2, 'value': 'Da existência de uma estrutura hierárquica muito rígida, que pode permitir a existência   de um sentimento de superioridade intelectual entre os membros de algumas carreiras, ou entre os que exercem funções de liderança, em relação àqueles que não pertencem a esses grupos.' }, { 'key': 3, 'value': 'Do fato de que algumas atividades são vistas como sendo compostas por tarefas de   baixa complexidade, que não exigem esforço do ponto de vista intelectual, nem exigem conhecimentos específicos – escolaridade – para serem executadas..' }];
@@ -57,7 +57,7 @@ export class CurriculumAtributosQvtFormComponent extends PageFormBase<Questionar
   public valueTrack: string = '';*/
 
   constructor(public injector: Injector) {
-    super(injector, QuestionarioResposta, QuestionarioRespostaDaoService);
+    super(injector, QuestionarioPreenchimento, QuestionarioPreenchimentoDaoService);
     this.join = ['questionario_resposta_pergunta'];
     this.questionarioDao = injector.get<QuestionarioDaoService>(QuestionarioDaoService);
     this.questionarioPerguntasDao = injector.get<QuestionarioPerguntaDaoService>(QuestionarioPerguntaDaoService);
@@ -147,7 +147,7 @@ export class CurriculumAtributosQvtFormComponent extends PageFormBase<Questionar
     return result;
   }
 
-  public async loadData(entity: QuestionarioResposta, form: FormGroup) {
+  public async loadData(entity: QuestionarioPreenchimento, form: FormGroup) {
     const questionario = await this.questionarioDao?.query({ where: [['codigo', '==', 'QVT']], join: ['perguntas.questionario_resposta_pergunta'] }).asPromise();
     this.questionario = questionario?.length ? questionario[0] : undefined;
     if (this.questionario) {
@@ -167,17 +167,17 @@ export class CurriculumAtributosQvtFormComponent extends PageFormBase<Questionar
     await this.loadData(this.entity!, form);
   }
 
-  public async saveData(form: IIndexable): Promise<QuestionarioResposta | boolean> {
+  public async saveData(form: IIndexable): Promise<QuestionarioPreenchimento | boolean> {
     if (!this.questionario) return false;
     /* if(this.respondido){
        this.dialog.alert("Gravação não efetuada", "Teste já respondido");
        return false;
      }*/
-    let questionarioResposta = this.util.fill(new QuestionarioResposta(), this.entity || {});
+    let questionarioResposta = this.util.fill(new QuestionarioPreenchimento(), this.entity || {});
     questionarioResposta.usuario_id = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeee";
     questionarioResposta.editavel = 0;
     questionarioResposta.questionario_id = this.questionario!.id;
-    /*let respostas = this.entity?.questionario_resposta_pergunta || this.respostasB5.map((x, i) => new QuestionarioRespostaPergunta({
+    /*let respostas = this.entity?.questionario_resposta_pergunta || this.respostasB5.map((x, i) => new QuestionarioPerguntaResposta({
       questionario_pergunta_id: this.questionario!.perguntas[i].id,
       resposta: x,
       _status: "ADD"

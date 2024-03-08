@@ -21349,11 +21349,11 @@ class Curriculum extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   HistoricoAtividadeExternaCurriculum: () => (/* binding */ HistoricoAtividadeExternaCurriculum)
+/* harmony export */   HistoricoAtividadeExterna: () => (/* binding */ HistoricoAtividadeExterna)
 /* harmony export */ });
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
 
-class HistoricoAtividadeExternaCurriculum extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+class HistoricoAtividadeExterna extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
     this.curriculum_profissional_id = '';
@@ -21373,11 +21373,11 @@ class HistoricoAtividadeExternaCurriculum extends _base_model__WEBPACK_IMPORTED_
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   HistoricoAtividadeInternaCurriculum: () => (/* binding */ HistoricoAtividadeInternaCurriculum)
+/* harmony export */   HistoricoAtividadeInterna: () => (/* binding */ HistoricoAtividadeInterna)
 /* harmony export */ });
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
 
-class HistoricoAtividadeInternaCurriculum extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+class HistoricoAtividadeInterna extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
     this.curriculum_profissional_id = "";
@@ -21399,11 +21399,11 @@ class HistoricoAtividadeInternaCurriculum extends _base_model__WEBPACK_IMPORTED_
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   HistoricoCursoExternoCurriculum: () => (/* binding */ HistoricoCursoExternoCurriculum)
+/* harmony export */   HistoricoCursoExterno: () => (/* binding */ HistoricoCursoExterno)
 /* harmony export */ });
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
 
-class HistoricoCursoExternoCurriculum extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+class HistoricoCursoExterno extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
     this.nome = '';
@@ -21425,11 +21425,11 @@ class HistoricoCursoExternoCurriculum extends _base_model__WEBPACK_IMPORTED_MODU
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   HistoricoCursoInternoCurriculum: () => (/* binding */ HistoricoCursoInternoCurriculum)
+/* harmony export */   HistoricoCursoInterno: () => (/* binding */ HistoricoCursoInterno)
 /* harmony export */ });
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
 
-class HistoricoCursoInternoCurriculum extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+class HistoricoCursoInterno extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
     this.pretensao = 0;
@@ -21450,11 +21450,11 @@ class HistoricoCursoInternoCurriculum extends _base_model__WEBPACK_IMPORTED_MODU
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   HistoricoDocenciaExternaCurriculum: () => (/* binding */ HistoricoDocenciaExternaCurriculum)
+/* harmony export */   HistoricoDocenciaExterna: () => (/* binding */ HistoricoDocenciaExterna)
 /* harmony export */ });
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
 
-class HistoricoDocenciaExternaCurriculum extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+class HistoricoDocenciaExterna extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
     // public curso?: Curso;
@@ -21476,11 +21476,11 @@ class HistoricoDocenciaExternaCurriculum extends _base_model__WEBPACK_IMPORTED_M
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   HistoricoDocenciaInternaCurriculum: () => (/* binding */ HistoricoDocenciaInternaCurriculum)
+/* harmony export */   HistoricoDocenciaInterna: () => (/* binding */ HistoricoDocenciaInterna)
 /* harmony export */ });
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
 
-class HistoricoDocenciaInternaCurriculum extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+class HistoricoDocenciaInterna extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
     this.curriculum_profissional_id = "";
@@ -21500,11 +21500,11 @@ class HistoricoDocenciaInternaCurriculum extends _base_model__WEBPACK_IMPORTED_M
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   HistoricoFuncaoCurriculum: () => (/* binding */ HistoricoFuncaoCurriculum)
+/* harmony export */   HistoricoFuncao: () => (/* binding */ HistoricoFuncao)
 /* harmony export */ });
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
 
-class HistoricoFuncaoCurriculum extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+class HistoricoFuncao extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
     this.curriculum_profissional_id = "";
@@ -21525,11 +21525,11 @@ class HistoricoFuncaoCurriculum extends _base_model__WEBPACK_IMPORTED_MODULE_0__
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   HistoricoLotacaoCurriculum: () => (/* binding */ HistoricoLotacaoCurriculum)
+/* harmony export */   HistoricoLotacao: () => (/* binding */ HistoricoLotacao)
 /* harmony export */ });
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
 
-class HistoricoLotacaoCurriculum extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+class HistoricoLotacao extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
     this.curriculum_profissional_id = "";
@@ -24354,7 +24354,7 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
   //GRID FUNCAO
   addHistoricoFuncao() {
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      return new src_app_models_historico_funcao_currriculum_model__WEBPACK_IMPORTED_MODULE_21__.HistoricoFuncaoCurriculum({
+      return new src_app_models_historico_funcao_currriculum_model__WEBPACK_IMPORTED_MODULE_21__.HistoricoFuncao({
         _status: "ADD"
       });
     })();
@@ -24393,7 +24393,7 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
   //GRID LOTACAO
   addHistoricoLotacao() {
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      return new src_app_models_historico_lotacao_currriculum_model__WEBPACK_IMPORTED_MODULE_20__.HistoricoLotacaoCurriculum({
+      return new src_app_models_historico_lotacao_currriculum_model__WEBPACK_IMPORTED_MODULE_20__.HistoricoLotacao({
         _status: "ADD"
       });
     })();
@@ -24427,7 +24427,7 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
   // GRID ATIVIDADE EXTERNA
   addHistoricoAtividadeExterna() {
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      return new src_app_models_historico_atividade_externa_currriculum_model__WEBPACK_IMPORTED_MODULE_22__.HistoricoAtividadeExternaCurriculum({
+      return new src_app_models_historico_atividade_externa_currriculum_model__WEBPACK_IMPORTED_MODULE_22__.HistoricoAtividadeExterna({
         _status: "ADD"
       });
     })();
@@ -24463,7 +24463,7 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
   // GRID ATIVIDADE Interna
   addHistoricoAtividadeInterna() {
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      return new src_app_models_historico_atividade_interna_currriculum_model__WEBPACK_IMPORTED_MODULE_19__.HistoricoAtividadeInternaCurriculum({
+      return new src_app_models_historico_atividade_interna_currriculum_model__WEBPACK_IMPORTED_MODULE_19__.HistoricoAtividadeInterna({
         _status: "ADD"
       });
     })();
@@ -24504,7 +24504,7 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
   // GRID Docencia Externa
   addHistoricoDocenciaExterna() {
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      return new src_app_models_historico_docencia_externa_currriculum_model__WEBPACK_IMPORTED_MODULE_23__.HistoricoDocenciaExternaCurriculum({
+      return new src_app_models_historico_docencia_externa_currriculum_model__WEBPACK_IMPORTED_MODULE_23__.HistoricoDocenciaExterna({
         _status: "ADD"
       });
     })();
@@ -24539,7 +24539,7 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
   // GRID Docencia Interna
   addHistoricoDocenciaInterna() {
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      return new src_app_models_historico_docencia_interna_currriculum_model__WEBPACK_IMPORTED_MODULE_24__.HistoricoDocenciaInternaCurriculum({
+      return new src_app_models_historico_docencia_interna_currriculum_model__WEBPACK_IMPORTED_MODULE_24__.HistoricoDocenciaInterna({
         _status: "ADD"
       });
     })();
@@ -24597,7 +24597,7 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
   // GRID Curso Interno
   addHistoricoCursoInterno() {
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      return new src_app_models_historico_curso_interno_currriculum_model__WEBPACK_IMPORTED_MODULE_25__.HistoricoCursoInternoCurriculum({
+      return new src_app_models_historico_curso_interno_currriculum_model__WEBPACK_IMPORTED_MODULE_25__.HistoricoCursoInterno({
         _status: "ADD"
       });
     })();
@@ -24636,7 +24636,7 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
   // GRID Curso Externo
   addHistoricoCursoExterno() {
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      return new src_app_models_historico_curso_externo_currriculum_model__WEBPACK_IMPORTED_MODULE_26__.HistoricoCursoExternoCurriculum({
+      return new src_app_models_historico_curso_externo_currriculum_model__WEBPACK_IMPORTED_MODULE_26__.HistoricoCursoExterno({
         _status: "ADD"
       });
     })();
