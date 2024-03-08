@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\CapacidadeTecnica;
-use App\Models\AreaTematica;
 
 class CapacidadeTecnicaSeeder extends Seeder
 {
