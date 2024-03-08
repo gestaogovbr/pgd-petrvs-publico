@@ -16,14 +16,11 @@ class HistoricoCursoExternoCurriculum extends ModelBase
         'area_atividade_externa_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
     ];
-    /*
-    protected $casts = [
-        'nome' => AsJson::class,
-    ];*/
+    
+    protected $casts = [];
 
      // Belongs
     public function curriculumProfissional() { return $this->belongsTo(CurriculumProfissional::class); }
     public function areaAtividadeExterna() { return $this->belongsTo(AreaAtividadeExterna::class); }
   
-    
 }
