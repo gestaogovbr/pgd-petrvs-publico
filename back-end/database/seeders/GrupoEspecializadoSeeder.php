@@ -16,6 +16,14 @@ class GrupoEspecializadoSeeder extends Seeder
     {
         $grupos_especializados = array(
             array(
+                "id" => "16657be9-6e49-4ef2-9e6d-15ccc33965b1e",
+                "created_at" => "2024-02-23 16:19:11",
+                "updated_at" => "2024-02-23 16:19:11",
+                "deleted_at" => NULL,
+                "nome" => "Nenhum",
+                "ativo" => 1,
+            ),
+            array(
                 "id" => "16657be9-6e49-4ef2-9e6d-9c3333965b1e",
                 "created_at" => "2024-02-23 16:19:11",
                 "updated_at" => "2024-02-23 16:19:11",

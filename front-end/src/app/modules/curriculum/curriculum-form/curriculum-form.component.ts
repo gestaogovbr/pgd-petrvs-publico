@@ -4,7 +4,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { IIndexable } from 'src/app/models/base.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
-import { LookupItem } from 'src/app/services/lookup.service';
+import { LookupItem, LookupService } from 'src/app/services/lookup.service';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.service';
 import { CursoDaoService } from 'src/app/dao/curso-dao.service';
@@ -56,6 +56,8 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   public formIdiomaGrid?: FormGroup;
   public cursoWhere: any[] = [["id", "==", null]];
   public show: boolean = true;
+  public lookupService: LookupService;
+  
 
   constructor(public injector: Injector) {
     super(injector, Curriculum, CurriculumDaoService);
@@ -64,6 +66,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     this.areaDao = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService)
     this.cursoDao = injector.get<CursoDaoService>(CursoDaoService)
     this.curriculumGraduacaoDAO = injector.get<CurriculumGraduacaoDaoService>(CurriculumGraduacaoDaoService)
+    this.lookupService = injector.get<LookupService>(LookupService)
     this.form = this.fh.FormBuilder({
       id: { default: "" },
       cidade_id: { default: "" },
@@ -138,6 +141,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   public selecionaMunicipios(uf: string) {
     this.cidadeDao?.query({ where: [['uf', '==', uf]], orderBy: [['nome', 'asc']] }).asPromise().then((municipios) => {
       this.municipios = municipios.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
+      this.municipios = this.lookupService.ordenarLookupItem(this.municipios);
     });
     this.show = true;
   }

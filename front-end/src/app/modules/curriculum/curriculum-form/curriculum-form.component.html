@@ -8,7 +8,7 @@
     </div>
 
     <div class="row mt-2">
-        <input-select [size]="4" #estados label="Estado" icon="fas fa-flag" controlName="estados" [control]="form!.controls.estados" [items]="lookup.UF" ></input-select>
+        <input-select [size]="4" #estados label="Estado" icon="fas fa-flag" controlName="estados" [control]="form!.controls.estados" [items]="lookup.UF" liveSearch></input-select>
         <input-select #municipio [size]="4" label="Município" icon="far fa-flag" controlName="cidade_id" [control]="form!.controls.cidade_id" [dao]="cidadeDao" [where]="['uf', '==', form!.controls.estados.value]" liveSearch></input-select>
         <input-text [size]="4" label="Telefone de contato WhatsAPP" icon="fas fa-phone" controlName="telefone" [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'" [attr.maxlength]=250></input-text>
     </div>
