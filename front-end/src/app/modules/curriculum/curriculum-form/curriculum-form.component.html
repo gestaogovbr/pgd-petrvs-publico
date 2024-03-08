@@ -34,7 +34,7 @@
 
         <input-switch [size]="3" label="Fala outros idiomas?" icon="fas fa-language" controlName="radioFalaIdioma" [control]="form!.controls.radioFalaIdioma"></input-switch>
        
-        <grid *ngIf="form!.controls.radioFalaIdioma.value" [control]="form!.controls.idiomas" [minHeight]="100" 
+        <grid *ngIf="form!.controls.radioFalaIdioma.value" [control]="form!.controls.idiomas" [minHeight]="150" 
             [form]="formIdiomaGrid!" [hasDelete]="true" [add]="addIdiomas.bind(this)" [load]="loadIdiomas.bind(this)" [remove]="removeIdiomas.bind(this)" 
             [save]="saveIdiomas.bind(this)" editable>
             <columns>
@@ -79,8 +79,8 @@
         <separator title="Graduação e Pós-Graduação - Especialização, Mestrado, Doutorado e Pós Doutorado" (click)="togglePopOver()"></separator>
     </div>
     <div class="row my-3">
-        <grid [minHeight]="150" [form]="formGraduacao!" [control]="form!.controls.graduacoes" [hasDelete]="true" [add]="addGraduacao.bind(this)" [load]="loadGraduacao.bind(this)" 
-             [remove]="removeGraduacao.bind(this)" [save]="saveGraduacao.bind(this)" editable>
+        <grid [form]="formGraduacao!" [control]="form!.controls.graduacoes" [hasDelete]="true" [add]="addGraduacao.bind(this)" [load]="loadGraduacao.bind(this)" 
+             [remove]="removeGraduacao.bind(this)" [save]="saveGraduacao.bind(this)"  [minHeight]="200" editable>
             <columns>
                 <column title="Pretende Cursar?" titleHint="Pretende cursar ou já esta concluido." [template]="columnPretende" [editTemplate]="editPretende">
                     <ng-template let-row="row" #columnPretende>
