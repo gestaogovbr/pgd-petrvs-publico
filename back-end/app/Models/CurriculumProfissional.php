@@ -50,13 +50,13 @@ class CurriculumProfissional extends ModelBase
     // HasOne
     public function unidadeAtual() { return $this->hasOne(Unidade::class); }
     // HasMany
-    public function historicosAtividadesInternas() { return $this->hasMany(HistoricoAtividadeInternaCurriculum::class); }
-    public function historicosAtividadesExternas() { return $this->hasMany(HistoricoAtividadeExternaCurriculum::class); }
-    public function historicosCursosInternos() { return $this->hasMany(HistoricoCursoInternoCurriculum::class); }
-    public function historicosCursosExternos() { return $this->hasMany(HistoricoCursoExternoCurriculum::class); }
-    public function historicosDocenciasInternas() { return $this->hasMany(HistoricoDocenciaInternaCurriculum::class); }
-    public function historicosDocenciasExternas() { return $this->hasMany(HistoricoDocenciaExternaCurriculum::class); }
-    public function historicosFuncoes() { return $this->hasMany(HistoricoFuncaoCurriculum::class); }
-    public function historicosLotacoes() { return $this->hasMany(HistoricoLotacaoCurriculum::class); }
+    public function historicosAtividadesInternas() { return $this->hasMany(HistoricoAtividadeInterna::class); }
+    public function historicosAtividadesExternas() { return $this->hasMany(HistoricoAtividadeExterna::class); }
+    public function historicosCursosInternos() { return $this->hasMany(HistoricoCursoInterno::class); }
+    public function historicosCursosExternos() { return $this->hasMany(HistoricoCursoExterno::class); }
+    public function historicosDocenciasInternas() { return $this->hasMany(HistoricoDocenciaInterna::class); }
+    public function historicosDocenciasExternas() { return $this->hasMany(HistoricoDocenciaExterna::class); }
+    public function historicosFuncoes() { return $this->hasMany(HistoricoFuncao::class); }
+    public function historicosLotacoes() { return $this->hasMany(HistoricoLotacao::class); }
 }
 
