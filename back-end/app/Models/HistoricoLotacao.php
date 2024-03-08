@@ -8,16 +8,20 @@ use App\Models\Unidade;
 
 class HistoricoLotacao extends ModelBase
 {
-    protected $table = 'historicos_lotacoes';
+  protected $table = 'historicos_lotacoes';
 
-    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'curriculum_profissional_id',
-        'unidade_id',
-    ];
+  public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
+    'curriculum_profissional_id',
+    'unidade_id',
+  ];
 
-     // Belongs
-    public function curriculumProfissional() { return $this->belongsTo(CurriculumProfissional::class); }
-    public function unidade() { return $this->belongsTo(Unidade::class); }
-  
-    
+  // Belongs
+  public function curriculumProfissional()
+  {
+    return $this->belongsTo(CurriculumProfissional::class);
+  }
+  public function unidade()
+  {
+    return $this->belongsTo(Unidade::class);
+  }
 }

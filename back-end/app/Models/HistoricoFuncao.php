@@ -9,18 +9,25 @@ use App\Models\Unidade;
 
 class HistoricoFuncao extends ModelBase
 {
-    protected $table = 'historicos_funcoes';
+  protected $table = 'historicos_funcoes';
 
-    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'curriculum_profissional_id',
-        'funcao_id',
-        'unidade_id',
-    ];
+  public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
+    'curriculum_profissional_id',
+    'funcao_id',
+    'unidade_id',
+  ];
 
-     // Belongs
-    public function curriculumProfissional() { return $this->belongsTo(CurriculumProfissional::class); }
-    public function funcao() { return $this->belongsTo(Funcao::class); }
-    public function unidade() { return $this->belongsTo(Unidade::class); }
-  
-    
+  // Belongs
+  public function curriculumProfissional()
+  {
+    return $this->belongsTo(CurriculumProfissional::class);
+  }
+  public function funcao()
+  {
+    return $this->belongsTo(Funcao::class);
+  }
+  public function unidade()
+  {
+    return $this->belongsTo(Unidade::class);
+  }
 }
