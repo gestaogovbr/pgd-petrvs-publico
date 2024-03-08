@@ -20,6 +20,4 @@ class HistoricoAtividadeInternaCurriculum extends ModelBase
      // Belongs
     public function curriculumProfissional() { return $this->belongsTo(CurriculumProfissional::class); }
     public function capacidadeTecnica() { return $this->belongsTo(CapacidadeTecnica::class); }
-  
-    
 }

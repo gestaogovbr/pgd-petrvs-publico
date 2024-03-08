@@ -1,4 +1,4 @@
-import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { PageFormBase } from '../../../base/page-form-base';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { Questionario } from 'src/app/models/questionario.model';
@@ -6,17 +6,16 @@ import { QuestionarioDaoService } from 'src/app/dao/questionario-dao.service';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { IIndexable } from 'src/app/models/base.model';
 import { QuestionarioPerguntaDaoService } from 'src/app/dao/questionario-pergunta-dao.service';
-import { QuestionarioResposta } from 'src/app/models/questionario-resposta.model';
-import { QuestionarioRespostaPergunta } from 'src/app/models/questionario-resposta-pergunta.model';
-import { QuestionarioRespostaDaoService } from 'src/app/dao/questionario-resposta-dao.service';
-import { v4 as uuid } from 'uuid';
+import { QuestionarioPreenchimento } from 'src/app/models/questionario-preenchimento.model';
+import { QuestionarioPerguntaResposta } from 'src/app/models/questionario-pergunta-resposta.model';
+import { QuestionarioPreenchimentoDaoService } from 'src/app/dao/questionario-preenchimento-dao.service';
 
 @Component({
   selector: 'curriculum-atributos-disc-form',
   templateUrl: './curriculum-atributos-disc-form.component.html',
   styleUrls: ['./curriculum-atributos-disc-form.component.scss']
 })
-export class CurriculumAtributosDiscFormComponent extends PageFormBase<QuestionarioResposta, QuestionarioRespostaDaoService>{
+export class CurriculumAtributosDiscFormComponent extends PageFormBase<QuestionarioPreenchimento, QuestionarioPreenchimentoDaoService>{
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
 
   bigicoIMG: string;
@@ -25,10 +24,10 @@ export class CurriculumAtributosDiscFormComponent extends PageFormBase<Questiona
   public questionarioDao: QuestionarioDaoService;
   public questionarioPerguntasDao: QuestionarioPerguntaDaoService;
   public questionario?: Questionario;
-  public respostas: QuestionarioRespostaPergunta[] = [];
+  public respostas: QuestionarioPerguntaResposta[] = [];
 
   constructor(public injector: Injector) {
-    super(injector, QuestionarioResposta, QuestionarioRespostaDaoService);
+    super(injector, QuestionarioPreenchimento, QuestionarioPreenchimentoDaoService);
     this.join = ['questionario_resposta_pergunta'];
     this.questionarioDao = injector.get<QuestionarioDaoService>(QuestionarioDaoService);
     this.questionarioPerguntasDao = injector.get<QuestionarioPerguntaDaoService>(QuestionarioPerguntaDaoService);
@@ -53,7 +52,7 @@ export class CurriculumAtributosDiscFormComponent extends PageFormBase<Questiona
     return result;
   }
 
-  public async loadData(entity: QuestionarioResposta, form: FormGroup) {}
+  public async loadData(entity: QuestionarioPreenchimento, form: FormGroup) {}
 
   public async initializeData(form: FormGroup) {
     const questionario = await this.questionarioDao?.query({ where: [['codigo', '==', 'SOFTSKILLS']], join: ['perguntas'] }).asPromise();
@@ -65,7 +64,7 @@ export class CurriculumAtributosDiscFormComponent extends PageFormBase<Questiona
       let respostas: any = [];
       if (this.entity) {
         this.questionario.perguntas.forEach((pergunta, index) => {
-          this.entity!.questionario_resposta_pergunta.forEach((resposta, index) => {
+          this.entity!.respostas?.forEach((resposta, index) => {
             if (pergunta.id == resposta.questionario_pergunta_id) respostas.push(resposta.resposta);
           });
         });
@@ -84,15 +83,13 @@ export class CurriculumAtributosDiscFormComponent extends PageFormBase<Questiona
     await this.loadData(this.entity!, form);
   }
 
-  public async saveData(form: IIndexable): Promise<QuestionarioResposta | boolean> {
+  public async saveData(form: IIndexable): Promise<QuestionarioPreenchimento | boolean> {
       console.log('curriculum-atributosdisc-form')
     return false;
   }
 
   public valorSoftChange(control: any) {
-
     control.value == '' ? control.setValue(0) : '';
-
     const comunica = this.form?.controls.comunica.value;
     const lideranca = this.form?.controls.lideranca.value;
     const resolucao = this.form?.controls.resolucao.value;
@@ -101,15 +98,10 @@ export class CurriculumAtributosDiscFormComponent extends PageFormBase<Questiona
     const habilidade = this.form?.controls.habilidade.value;
     const adaptabilidade = this.form?.controls.adaptabilidade.value;
     const etica = this.form?.controls.etica.value;
-
     const array = [comunica, lideranca, resolucao, criatividade, pensamento, habilidade, adaptabilidade, etica]
-
     let soma: number = 0;
-
     for (const val of array) {
-      //console.log('SUM SEQUENCIA', sum)
       soma = soma + parseInt(val);
-
       if (soma > 20) {
         this.dialog.alert("Valor excedido", "O valor máximo são 20 pontos.");
         control.setValue(control.value - (soma - 20));
@@ -117,18 +109,4 @@ export class CurriculumAtributosDiscFormComponent extends PageFormBase<Questiona
       }
     }
   }
-
-
 }
-
-
-
-
-/*export class CurriculumAtributosDiscFormComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
-}*/

@@ -455,6 +455,19 @@ export class AppComponent {
     }
   }
 
+  public get equipe(): any {
+    return [
+      { time: 'PRF', nome: 'Edson Dario Silva de França', cargo: 'Policial Penal Federal', papel: 'Developer' },
+      { time: 'PRF', nome: 'Carlos Henrique Alves Lopes', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
+      { time: 'PRF', nome: 'Diogo Leandro Paiva Ramos', cargo: 'Policial Rodoviário Federal', papel: 'Scrum Master' },
+      { time: 'PRF', nome: 'Edson dos Santos Marian', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
+      { time: 'PRF', nome: 'Genisson Rodrigues Albuquerque', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
+      { time: 'PRF', nome: 'Ricardo de Sousa Farias', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
+      { time: 'PRF', nome: 'Jose Marcelo Maizman Bogdan', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
+      { time: 'MGI', nome: '', cargo: '', papel: 'Developer' },
+    ]
+  }
+
   public ngAfterViewInit() {
     /* Container para a criação de dialogs */
     this.dialog.container = this.dialogs;

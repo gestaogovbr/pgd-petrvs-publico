@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 import { ConfigResolver } from 'src/app/resolvies/config.resolver';
-import { RaioxhomeComponent } from 'src/app/modules/curriculum/curriculum-home/raioxhome.component';
 import { CurriculumFormComponent } from 'src/app/modules/curriculum/curriculum-form/curriculum-form.component';
 import { CurriculumProfissionalFormComponent } from 'src/app/modules/curriculum/curriculum-profissional-form/curriculum-profissional-form.component'
 import { CurriculumAtributosBig5FormComponent } from './curriculum-atributos/curriculum-atributos-big5-form/curriculum-atributos-big5-form.component';

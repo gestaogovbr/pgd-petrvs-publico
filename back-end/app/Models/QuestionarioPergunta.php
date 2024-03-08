@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\Questionario;
-use App\Models\QuestionarioRespostaPergunta;
+use App\Models\QuestionarioPerguntaResposta;
 use App\Casts\AsJson;
 
 
@@ -29,19 +29,12 @@ class QuestionarioPergunta extends ModelBase
         'respostas' => AsJson::class
     ];
     
-    public $fillable_changes = ['questionario_resposta_pergunta'];
-    public $delete_cascade = ["questionario_resposta_pergunta"];
-
-    //public $fillable_changes = ['graduacoes'];
-
-    //public $fillable_relation = [];
+    public $fillable_changes = ['respostas'];
+    public $delete_cascade = ["respostas"];
 
      // Belongs
      public function questionario() { return $this->belongsTo(Questionario::class); }
-     //public function curriculum() { return $this->belongsTo(Curriculum::class); }
+     public function perguntaOrigem() { return $this->belongsTo(QuestionarioPergunta::class, 'origem_id'); }
      //hasMany
-     public function questionarioRespostaPergunta() { return $this->hasMany(QuestionarioRespostaPergunta::class); }
-     //public function questionarioRespostaPergunta() { return $this->hasOne(QuestionarioRespostaPergunta::class); }
- 
-    
+     public function respostas() { return $this->hasMany(QuestionarioPerguntaResposta::class); }    
 }

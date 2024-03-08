@@ -3,7 +3,6 @@ import { RouterModule,  Routes } from '@angular/router';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 
 const routes: Routes = [
-  
   { path: 'areaatividadeexterna',loadChildren: () => import('./area-atividade-externa/area-atividade-externa.module').then(m => m.AreaAtividadeExternaModule), canActivate: [AuthGuard] },
   { path: 'areaconhecimento',loadChildren: () => import('./area-conhecimento/area-conhecimento.module').then(m => m.AreaConhecimentoModule), canActivate: [AuthGuard] },
   { path: 'curso',loadChildren: () => import('./curso/curso.module').then(m => m.CursoModule), canActivate: [AuthGuard] },
