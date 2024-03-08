@@ -66,7 +66,7 @@ class UnidadeIntegranteService extends ServiceBase
                       $unidadeLotacao = $unidade;
                       array_push($atribuicoesFinais, "LOTADO");
                     };
-                    $definirLotacao = function () use (&$unidadeLotacao, $unidade, $lotarServidor, $usuario, &$atribuicoesFinais, &$msgExclusaoLotacao, &$msgLotacaoInformal) {
+                    $definirLotacao = function () use (&$unidadeLotacao, $unidade, $lotarServidor, $usuario, &$atribuicoesFinais, $unidadeGerenciaTitular, &$msgExclusaoLotacao, &$msgLotacaoInformal) {
                         if (empty($unidadeLotacao->id)){    // Não tem lotação ainda.
                             if (empty($unidade->informal)) $lotarServidor();    // A unidade em questão é formal.
                             else $msgLotacaoInformal = "A atribuição de LOTADO não pode ser vinculada a uma Unidade Informal.";
@@ -75,7 +75,7 @@ class UnidadeIntegranteService extends ServiceBase
                               if(empty($unidadeGerenciaTitular)){    // O servidor não é Chefe da sua atual unidade de lotação
                                 $usuario->lotacao->lotado->delete();
                                 $lotarServidor();
-                              } else $msgExclusaoLotacao = "Não é possível lotar o(a) servidor(a) na unidade " . strtoupper($unidade->sigla) . "por ser Chefe da sua atual lotação - " . strtoupper($unidadeLotacao->sigla) . "!";
+                              } else $msgExclusaoLotacao = "Não é possível lotar o(a) servidor(a) na unidade " . strtoupper($unidade->sigla) . " por ser Chefe da sua atual lotação - " . strtoupper($unidadeLotacao->sigla) . "!";
                             } else array_push($atribuicoesFinais, "LOTADO");
                         }
                     };
