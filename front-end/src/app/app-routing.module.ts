@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 import { ConfigComponent } from './modules/config/config.component';
-import { HomeComponent } from './modules/home/home.component';
 import { LoginRetornoComponent } from './modules/login/login-retorno/login-retorno.component';
 import { LoginComponent } from './modules/login/login.component';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';

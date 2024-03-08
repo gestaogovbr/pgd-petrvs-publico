@@ -32,7 +32,7 @@ use App\Models\Projeto;
 use App\Models\ProjetoHistorico;
 use App\Models\ProjetoRecurso;
 use App\Models\ProjetoTarefa;
-use App\Models\QuestionarioResposta;
+use App\Models\QuestionarioPreenchimento;
 use App\Models\NotificacaoConfig;
 use App\Models\StatusJustificativa;
 use App\Traits\MergeRelations;
@@ -154,7 +154,7 @@ class Usuario extends Authenticatable
     public function unidadesIntegranteAtribuicoes() { return $this->hasManyThrough(UnidadeIntegranteAtribuicao::class, UnidadeIntegrante::class); }
     public function statusHistorico() { return $this->hasMany(StatusJustificativa::class, "usuario_id"); }
     public function documentos() { return $this->hasMany(Documento::class); }
-    public function questionariosRespostas() { return $this->hasMany(QuestionarioResposta::class, "usuario_id"); }
+    public function preenchimentos() { return $this->hasMany(QuestionarioPreenchimento::class, "usuario_id"); }
     // belongsTo
     public function perfil() { return $this->belongsTo(Perfil::class); }     //nullable
     // belongsToMany

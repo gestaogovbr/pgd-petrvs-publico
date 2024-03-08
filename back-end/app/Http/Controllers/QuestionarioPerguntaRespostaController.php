@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\QuestionarioResposta;
-use App\Services\QuestionarioRespostaService;
-use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 
-class QuestionarioRespostaController extends ControllerBase {
+class QuestionarioPerguntaRespostaController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':

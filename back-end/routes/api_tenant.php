@@ -65,7 +65,6 @@ use App\Http\Controllers\AreaTematicaController;
 use App\Http\Controllers\AtividadeTarefaController;
 use App\Http\Controllers\CapacidadeTecnicaController;
 use App\Http\Controllers\QuestionarioController;
-use App\Http\Controllers\RespostaQuestionarioController;
 use App\Http\Controllers\AvaliacaoController;
 use App\Http\Controllers\HistoricoAtividadeExternaCurriculumController;
 use App\Http\Controllers\HistoricoAtividadeInternaCurriculumController;
@@ -75,18 +74,16 @@ use App\Http\Controllers\HistoricoDocenciaExternaCurriculumController;
 use App\Http\Controllers\HistoricoDocenciaInternaCurriculumController;
 use App\Http\Controllers\HistoricoFuncaoCurriculumController;
 use App\Http\Controllers\HistoricoLotacaoCurriculumController;
-use App\Http\Controllers\PlanoTrabalhoConsolidacaoOcorrenciaController;
 use App\Http\Controllers\ComparecimentoController;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\OcorrenciaController;
 use App\Http\Controllers\ReacaoController;
 use App\Http\Controllers\PlanoEntregaEntregaProgressoController;
+use App\Http\Controllers\QuestionarioPreenchimentoController;
 use App\Http\Controllers\QuestionarioPerguntaController;
-use App\Http\Controllers\QuestionarioRespostaController;
-use App\Http\Controllers\QuestionarioRespostaPerguntaController;
+use App\Http\Controllers\QuestionarioPerguntaRespostaController;
 use App\Http\Controllers\PgdController;
 use App\Http\Controllers\JobAgendadoController;
-use App\Http\Controllers\SeederController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -358,9 +355,9 @@ Route::middleware(['auth:sanctum'])->prefix('CentroTreinamento')->group(function
 Route::middleware(['auth:sanctum'])->prefix('GrupoEspecializado')->group(function () { defaultRoutes(GrupoEspecializadoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Cargo')->group(function () { defaultRoutes(CargoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Questionario')->group(function () { defaultRoutes(QuestionarioController::class); });
-Route::middleware(['auth:sanctum'])->prefix('QuestionarioResposta')->group(function () { defaultRoutes(QuestionarioRespostaController::class); });
+Route::middleware(['auth:sanctum'])->prefix('QuestionarioPreenchimento')->group(function () { defaultRoutes(QuestionarioPreenchimentoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('QuestionarioPergunta')->group(function () { defaultRoutes(QuestionarioPerguntaController::class); });
-Route::middleware(['auth:sanctum'])->prefix('QuestionarioRespostaPergunta')->group(function () { defaultRoutes(QuestionarioRespostaPerguntaController::class); });
+Route::middleware(['auth:sanctum'])->prefix('QuestionarioPerguntaResposta')->group(function () { defaultRoutes(QuestionarioPerguntaRespostaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('HistoricoAtividadeExternaCurriculumProfissional')->group(function () { defaultRoutes(HistoricoAtividadeExternaCurriculumController::class); });
 Route::middleware(['auth:sanctum'])->prefix('HistoricoAtividadeInternaCurriculumProfissional')->group(function () { defaultRoutes(HistoricoAtividadeInternaCurriculumController::class); });
 Route::middleware(['auth:sanctum'])->prefix('HistoricoCursoExternoCurriculumProfissional')->group(function () { defaultRoutes(HistoricoCursoExternoCurriculumController::class); });

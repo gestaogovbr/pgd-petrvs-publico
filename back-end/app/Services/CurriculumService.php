@@ -14,8 +14,8 @@ use App\Models\Curso;
 use App\Models\HistoricoFuncaoCurriculum;
 use App\Models\HistoricoAtividadeInternaCurriculum;
 use App\Models\QuestionarioPergunta;
-use App\Models\QuestionarioRespostaPergunta;
-use App\Models\QuestionarioResposta;
+use App\Models\QuestionarioPerguntaResposta;
+use App\Models\QuestionarioPreenchimento;
 
 class CurriculumService extends ServiceBase
 {
@@ -81,16 +81,16 @@ class CurriculumService extends ServiceBase
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'area_tematica_id') {
         $historicos_filtrados = HistoricoAtividadeInternaCurriculum::select('id')->whereRelation('capacidadeTecnica', 'area_tematica_id', $condition[2])->get()->toArray();
-        $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->whereRelation('historicoAtividadeInterna', fn ($q) => $q->whereIn('id', $historicos_filtrados))->get()->toArray();
+        $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->whereRelation('historicosAtividadesInternas', fn ($q) => $q->whereIn('id', $historicos_filtrados))->get()->toArray();
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'capacidade_tecnica_id') {
         $historicos_filtrados = HistoricoAtividadeInternaCurriculum::select('id')->where('capacidade_tecnica_id', $condition[2])->get()->toArray();
-        $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->whereRelation('historicoAtividadeInterna', fn ($q) => $q->whereIn('id', $historicos_filtrados))->get()->toArray();
+        $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->whereRelation('historicosAtividadesInternas', fn ($q) => $q->whereIn('id', $historicos_filtrados))->get()->toArray();
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'soft_id') {
         $pergunta_filtrada = QuestionarioPergunta::select('id')->where('pergunta', $condition[2])->get()->toArray();
-        $resposta_filtrada = QuestionarioRespostaPergunta::select('questionario_resposta_id')->whereIn('questionario_pergunta_id', $pergunta_filtrada)->where('resposta', '>=', $condition[3])->get()->toArray();
-        $usuario_filtrado = QuestionarioResposta::select('usuario_id')->whereIn('id', $resposta_filtrada)->get()->toArray();
+        $resposta_filtrada = QuestionarioPerguntaResposta::select('questionario_preenchimento_id')->whereIn('questionario_pergunta_id', $pergunta_filtrada)->where('resposta', '>=', $condition[3])->get()->toArray();
+        $usuario_filtrado = QuestionarioPreenchimento::select('usuario_id')->whereIn('id', $resposta_filtrada)->get()->toArray();
         $curriculums_filtrados = Curriculum::select('id')->whereIn('usuario_id', $usuario_filtrado)->get()->toArray();
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'interesse_pgd') {

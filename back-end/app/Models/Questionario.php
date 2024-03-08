@@ -3,9 +3,8 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Casts\AsJson;
 use App\Models\QuestionarioPergunta;
-use App\Models\QuestionarioResposta;
+use App\Models\QuestionarioPreenchimento;
 
 class Questionario extends ModelBase
 {
@@ -21,26 +20,20 @@ class Questionario extends ModelBase
 
     public $fillable_changes = ['perguntas'];
 
-    public $delete_cascade = ["questionario_resposta", "perguntas"];
+    public $delete_cascade = ["preenchimentos", "perguntas"];
 
-    //public $fillable_relation = [];
-
-    //Has
+    // hasMany
     public function perguntas() { return $this->hasMany(QuestionarioPergunta::class); }
-    public function questionarioPergunta() { return $this->hasMany(QuestionarioPergunta::class); }
-    //public function questionariosPerguntas() { return $this->hasMany(QuestionarioPergunta::class); }
-    //public function questionarioResposta() { return $this->hasOne(QuestionarioResposta::class); }
-
-    // Belongs
-
-  
+    public function preenchimentos() { return $this->hasMany(QuestionarioPreenchimento::class); }
 }
+
 /*
+    Relacionamentos
 
-Questionario
-  questionarioResposta - QUESTIONARIO_ID (hasOne)
-    questionarioRespostaPergunta - QUESTIONARIO_RESPOSTA_ID (hasMany)
-  questionariosPerguntas - QUESTIONARIO_ID (hasMany)
-    questionariosRespostasPerguntas - QUESTIONARIO_PERGUNTA_ID (hasMany)
-
+    CLASSE                      ->HASMANY               BELONGSTO<-       CLASSE
+    Questionario                  preenchimentos        questionario      QuestionarioPreenchimento
+    Questionario                  perguntas             questionario      QuestionarioPergunta
+    QuestionarioPergunta          respostas             pergunta          QuestionarioPerguntaResposta
+    QuestionarioPreenchimento     respostas             preenchimento     QuestionarioPerguntaResposta
+    Usuario                       preenchimentos        usuario           QuestionarioPreenchimento
 */
