@@ -3,7 +3,7 @@ import { Base } from './base.model';
 import { CurriculumProfissional } from './currriculum-profissional.model';
 import { Curso } from './curso.model';
 
-export class HistoricoDocenciaExternaCurriculum extends Base {
+export class HistoricoDocenciaExterna extends Base {
 
     public profissional?: CurriculumProfissional;
     public areaAtividadeExterna?: AreaAtividadeExterna;

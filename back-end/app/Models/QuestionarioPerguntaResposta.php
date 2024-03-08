@@ -10,21 +10,26 @@ use App\Casts\AsJson;
 
 class QuestionarioPerguntaResposta extends ModelBase
 {
-    protected $table = 'questionarios_perguntas_respostas';
+  protected $table = 'questionarios_perguntas_respostas';
 
-    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'resposta', /* json resposta do questionario**/
-        'questionario_pergunta_id', /* char(36); */
-        'questionario_preenchimento_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
-    ];
+  public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
+    'resposta', /* json resposta do questionario**/
+    'questionario_pergunta_id', /* char(36); */
+    'questionario_preenchimento_id', /* char(36); NOT NULL; */
+    //'deleted_at', /* timestamp; */
+  ];
 
-    protected $casts = [
-        'resposta' => AsJson::class
-    ];
+  protected $casts = [
+    'resposta' => AsJson::class
+  ];
 
-    // Belongs
-    public function pergunta() { return $this->belongsTo(QuestionarioPergunta::class); }
-    public function preenchimento() { return $this->belongsTo(QuestionarioPreenchimento::class); }
+  // Belongs
+  public function pergunta()
+  {
+    return $this->belongsTo(QuestionarioPergunta::class);
+  }
+  public function preenchimento()
+  {
+    return $this->belongsTo(QuestionarioPreenchimento::class);
+  }
 }
-

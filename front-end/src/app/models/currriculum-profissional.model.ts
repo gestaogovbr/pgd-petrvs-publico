@@ -6,14 +6,14 @@ import { Cargo } from './cargo.model';
 import { CentroTreinamento } from './centro-treinamento.model';
 import { Curriculum } from './currriculum.model';
 import { GrupoEspecializado } from './grupo-especializado.model';
-import { HistoricoAtividadeExternaCurriculum } from './historico-atividade-externa-currriculum.model';
-import { HistoricoAtividadeInternaCurriculum } from './historico-atividade-interna-currriculum.model';
-import { HistoricoCursoExternoCurriculum } from './historico-curso-externo-currriculum.model';
-import { HistoricoCursoInternoCurriculum } from './historico-curso-interno-currriculum.model';
-import { HistoricoDocenciaExternaCurriculum } from './historico-docencia-externa-currriculum.model';
-import { HistoricoDocenciaInternaCurriculum } from './historico-docencia-interna-currriculum.model';
-import { HistoricoFuncaoCurriculum } from './historico-funcao-currriculum.model';
-import { HistoricoLotacaoCurriculum } from './historico-lotacao-currriculum.model';
+import { HistoricoAtividadeExterna } from './historico-atividade-externa-currriculum.model';
+import { HistoricoAtividadeInterna } from './historico-atividade-interna-currriculum.model';
+import { HistoricoCursoExterno } from './historico-curso-externo-currriculum.model';
+import { HistoricoCursoInterno } from './historico-curso-interno-currriculum.model';
+import { HistoricoDocenciaExterna } from './historico-docencia-externa-currriculum.model';
+import { HistoricoDocenciaInterna } from './historico-docencia-interna-currriculum.model';
+import { HistoricoFuncao } from './historico-funcao-currriculum.model';
+import { HistoricoLotacao } from './historico-lotacao-currriculum.model';
 import { Unidade } from './unidade.model';
 
 export class CurriculumProfissional extends Base {
@@ -25,14 +25,14 @@ export class CurriculumProfissional extends Base {
     public area_conhecimento?: AreaConhecimento;
     public unidade?:Unidade;//lotacao atual
    
-    public historicos_funcoes: HistoricoFuncaoCurriculum[] = [];
-    public historicos_lotacoes: HistoricoLotacaoCurriculum[] = [];// Unidades de lotação em toda carreira
-    public historicos_atividades_externas: HistoricoAtividadeExternaCurriculum[] = [];//Atividades desempenhadas externamente que podem contribuir para intituição
-    public historicos_atividades_internas: HistoricoAtividadeInternaCurriculum[] = [];//Atividades desempenhadas internamente que podem contribuir para intituição
-    public historicos_docencias_externas: HistoricoDocenciaExternaCurriculum[] = [];// Já foi docente fora da instituição
-    public historicos_docencias_internas: HistoricoDocenciaInternaCurriculum[] = [];// Já foi docente fora da instituição
-    public historicos_cursos_externos: HistoricoCursoExternoCurriculum[] = [];//Quais cursos você já fez e quais pretende fazer fora da Instituição
-    public historicos_cursos_internos: HistoricoCursoInternoCurriculum[] = [];//Quais os principais cursos que você já fez e pretende fazer na Instituição
+    public historicos_funcoes: HistoricoFuncao[] = [];
+    public historicos_lotacoes: HistoricoLotacao[] = [];// Unidades de lotação em toda carreira
+    public historicos_atividades_externas: HistoricoAtividadeExterna[] = [];//Atividades desempenhadas externamente que podem contribuir para intituição
+    public historicos_atividades_internas: HistoricoAtividadeInterna[] = [];//Atividades desempenhadas internamente que podem contribuir para intituição
+    public historicos_docencias_externas: HistoricoDocenciaExterna[] = [];// Já foi docente fora da instituição
+    public historicos_docencias_internas: HistoricoDocenciaInterna[] = [];// Já foi docente fora da instituição
+    public historicos_cursos_externos: HistoricoCursoExterno[] = [];//Quais cursos você já fez e quais pretende fazer fora da Instituição
+    public historicos_cursos_internos: HistoricoCursoInterno[] = [];//Quais os principais cursos que você já fez e pretende fazer na Instituição
    
     public ano_ingresso: number = 0; //Ano de ingresso na instituição
     public lotacao_atual: string = "";//Lotação atual do servidor
