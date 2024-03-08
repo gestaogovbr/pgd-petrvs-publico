@@ -58,7 +58,5 @@ class CurriculumProfissional extends ModelBase
     public function historicosDocenciasExternas() { return $this->hasMany(HistoricoDocenciaExternaCurriculum::class); }
     public function historicosFuncoes() { return $this->hasMany(HistoricoFuncaoCurriculum::class); }
     public function historicosLotacoes() { return $this->hasMany(HistoricoLotacaoCurriculum::class); }
-
-
 }
 
