@@ -17,7 +17,6 @@ class AlterIntegracaoServidoresTableRenameCargoToCodigoCargo extends Migration
         Schema::table('integracao_servidores', function (Blueprint $table) {
             $table->renameColumn('cargo', 'codigo_cargo');
         });
-        //
     }
 
     /**
@@ -30,6 +29,5 @@ class AlterIntegracaoServidoresTableRenameCargoToCodigoCargo extends Migration
         Schema::table('integracao_servidores', function (Blueprint $table) {
             $table->renameColumn('codigo_cargo', 'cargo');
         });
-        //
     }
 }

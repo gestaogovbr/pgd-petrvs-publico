@@ -56,3 +56,10 @@ class ExportarPlanoTrabalhoService
     }
 }
 
+/*
+Valores permitidos para a tipo_contribuicao:
+1: Contribuição para entrega da própria unidade de execução do participante;
+2: Contribuição não vinculada diretamente a entrega, mas necessária ao adequado funcionamento administrativo (por exemplo, Atividades de apoio, assessoramento e desenvolvimento, e Atividades de gestão de equipes e entregas);
+3: Contribuição vinculada a entrega de outra unidade de execução, inclusive de outros órgãos e entidades.
+
+*/

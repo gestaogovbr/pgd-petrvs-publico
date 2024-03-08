@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-class BulkSeeeder{
+class BulkSeeder{
 
     private $file, $delimiter, $iterator, $header;
 
