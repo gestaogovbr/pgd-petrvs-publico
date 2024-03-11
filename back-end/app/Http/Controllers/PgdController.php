@@ -16,12 +16,12 @@ class PgdController extends Controller
         $this->orgaoCentralService = $orgaoCentralService;
     }
 
-    public function user()
+/*     public function user()
     {
         $user =  $this->orgaoCentralService->getUser();
 
         return response()->json(['resultado' => $user]);
-    }
+    } */
 
     public function exportarDados(Request $request)
     {
@@ -30,12 +30,12 @@ class PgdController extends Controller
         $dados['tipo'] = 'PLANO_ENTREGA';
         $dados['cod_SIAPE_instituidora'] = 17500;
         $dados['id_plano_entrega_unidade'] = 10;
-        $api_pgd =  $this->orgaoCentralService->exportarDados($dados);
+        $api_pgd = $this->orgaoCentralService->exportarDados($dados);
         
         return response()->json($api_pgd);
     }
 
-    public function exportarDadosJob()
+    public function exportarDadosJob(Request $request)
     {
         dd("exportarDadosJob 252525");
         $request->validate(['dados'=>'required']);

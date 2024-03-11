@@ -4,7 +4,7 @@ import { Curso } from './curso.model';
 import { Funcao } from './funcao.model';
 import { Unidade } from './unidade.model';
 
-export class HistoricoFuncaoCurriculum extends Base {
+export class HistoricoFuncao extends Base {
 
     public profissional?: CurriculumProfissional;
     public funcao?: Funcao;

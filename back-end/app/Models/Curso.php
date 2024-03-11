@@ -24,11 +24,11 @@ class Curso extends ModelBase
      public function areaConhecimento() { return $this->belongsTo(AreaConhecimento::class,'area_id'); }
      public function tipoCurso() { return $this->belongsTo(TipoCurso::class,'tipo_curso_id'); }
       // Has
-     public function materia() { return $this->hasMany(Materia::class); }
-     public function curriculumGraduacao() { return $this->hasMany(CurriculumGraduacao::class); }
-     public function historicoCursoInterno() { return $this->hasMany(HistoricoCursoInternoCurriculum::class); }
-     public function historicoDocenciaInterna() { return $this->hasMany(HistoricoDocenciaInternaCurriculum::class); }
-     public function historicoDocenciaExterna() { return $this->hasMany(HistoricoDocenciaExternaCurriculum::class); }
+     public function materias() { return $this->hasMany(Materia::class); }
+     public function curriculunsGraduacoes() { return $this->hasMany(CurriculumGraduacao::class); }
+     public function historicosCursosInternos() { return $this->hasMany(HistoricoCursoInterno::class); }
+     public function historicosDocenciasInternas() { return $this->hasMany(HistoricoDocenciaInterna::class); }
+     public function historicosDocenciasExternas() { return $this->hasMany(HistoricoDocenciaExterna::class); }
  
     
 }

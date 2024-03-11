@@ -313,7 +313,7 @@ class IntegracaoService extends ServiceBase
 
             $uorg_siape_data_modificacao = null;
             if ($this->integracao_config["tipo"] == "SIAPE") {
-                $uorg_siape_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["data_modificacao"]));
+              $uorg_siape_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["data_modificacao"]));
             }
             else if ($this->integracao_config["tipo"] == "WSO2") {
                 $uorg_siape_data_modificacao = $self->UtilService->valueOrDefault($uo["datamodificacao"]);
@@ -351,12 +351,11 @@ class IntegracaoService extends ServiceBase
               if (!is_null($cod_municipio_ibge)) {
                 $query = "SELECT nome FROM cidades where codigo_ibge = :cod_municipio_ibge";
                 $db_result = DB::select($query, ["cod_municipio_ibge" => $cod_municipio_ibge]);
-                if (is_array($db_result)) $municipio_nome = $db_result[0]->nome;
+                if (is_array($db_result) && !empty($db_result)) $municipio_nome = $db_result[0]->nome;
               }
 
               $nomeuorg = $self->UtilService->valueOrDefault($uo["nomeuorg"], null);
               if (!is_null($nomeuorg)) $nomeuorg = $self->UtilService->getNomeFormatado($nomeuorg);
-
               $unidade = [
                 'id_servo' => $self->UtilService->valueOrDefault($uo["id_servo"], null, $option = "uorg"),
                 'pai_servo' => $self->UtilService->valueOrDefault($uo["pai_servo"], null, $option = "uorg"),
@@ -386,7 +385,7 @@ class IntegracaoService extends ServiceBase
                 'municipio_uf' => $self->UtilService->valueOrDefault($uo["municipio_uf"], null),
                 'ativa' => $self->UtilService->valueOrDefault($uo["ativa"]),
                 'regimental' => $self->UtilService->valueOrDefault($uo["regimental"], null),
-                'data_modificacao' => $uorg_siape_data_modificacao,
+                'data_modificacao' => date("Y-m-d H:i:s", $uorg_siape_data_modificacao),
                 'und_nu_adicional' => $self->UtilService->valueOrDefault($uo["und_nu_adicional"], null),
                 'cnpjupag' => $self->UtilService->valueOrDefault($uo["cnpjupag"], null),
                 'deleted_at' => null,
@@ -1230,6 +1229,13 @@ class IntegracaoService extends ServiceBase
       'allow_redirects' => false,
       'verify' => $this->validaCertificado
     ])->get($url);
+
+    LogError::newError("IntegracaoService: Consulta à API do SIAPE", [
+      'url' => $url,
+      'status' => $response->status(),
+      'response' => $response->body()
+    ]);
+
     if ($response->failed()) $response->throw();
     if ($response->status() >= 300 && $response->status() < 400) $response = $this->consultarApiSigepe($token, $response->header('Location'));
     return $response;

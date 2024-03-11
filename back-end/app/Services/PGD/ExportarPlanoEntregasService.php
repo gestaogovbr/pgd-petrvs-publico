@@ -14,7 +14,6 @@ class ExportarPlanoEntregasService
         $this->httpSender = new HttpSenderService();
     }
 
-
     public function enviar($token, $dados)
     {
         if(isset($dados['mock']) && $dados['mock']){
@@ -23,13 +22,13 @@ class ExportarPlanoEntregasService
             $body = $this->getBody($dados);
         }
         
-        $dados['url'] = config('pgd.host')."/organizacao/{$dados['cod_SIAPE_instituidora']}/plano_trabalho/{$dados['id_plano_entrega_unidade']}";
-        return $this->httpSender->enviarDados('PLANO_ENTREGA', $dados, $token, $body);
+        $dados['url'] = config('pgd.host')."/organizacao/{$dados['cod_SIAPE_instituidora']}/plano_entregas/{$dados['id_plano_entrega_unidade']}";
+        return $this->httpSender->enviarDados($dados, $token, $body);
     }
 
     public function getBody($dados)
     {
-        $plano_entrega= PlanoEntrega::find($dados['plano_entrega_id']);
+        $plano_entrega = PlanoEntrega::find($dados['plano_entrega_id']);
         return [
             "cod_SIAPE_instituidora"=> null,
             "id_plano_entrega_unidade"=> $plano_entrega->unidade_id,
@@ -44,7 +43,7 @@ class ExportarPlanoEntregasService
                 "id_entrega"=> $plano_entrega->planoEntregaEntrega()->entrega_id,
                 "nome_entrega"=> $plano_entrega->planoEntregaEntrega()->descricao,
                 "meta_entrega"=> $plano_entrega->planoEntregaEntrega()->meta,
-                "tipo_meta"=> null,
+                "tipo_meta"=> null, // 1: absoluto, 2: percentual
                 "nome_vinculacao_cadeia_valor"=> $plano_entrega->planoEntregaEntrega()->cadeiaValor,
                 "nome_vinculacao_planejamento"=> $plano_entrega->planoEntregaEntrega()->planejamento,
                 "percentual_progresso_esperado"=> $plano_entrega->planoEntregaEntrega()->progresso_esperado,

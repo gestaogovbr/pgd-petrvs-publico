@@ -56,7 +56,7 @@
                                     {{row.unidade?.nome || "Desconhecido"}}
                                 </ng-template>
                                 <ng-template let-row="row" #editLotacao>
-                                    <input-search #unidade [size]="12" controlName="unidade_id" [dao]="unidadeDao" [join]="['historico_lotacao']" fullEntity liveSearch></input-search>
+                                    <input-search #unidade [size]="12" controlName="unidade_id" [dao]="unidadeDao" [join]="['historicos_lotacoes']" fullEntity liveSearch></input-search>
                                 </ng-template>
                             </column>
                             <column type="options"></column>
@@ -80,7 +80,7 @@
             <div class="row mt-3">
                 <separator class="mb-3 mt-3" title="Desempenhou atividades externamente e que podem contribuir para a instituição?" [bold]="true"></separator>
                 <input-switch #radioAtividadeExterna [size]="2" [label]="radioAtividadeExterna.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioAtividadeExterna" [control]="form!.controls.radioAtividadeExterna"></input-switch>
-                <grid *ngIf="form!.controls.radioAtividadeExterna.value" [control]="form!.controls.historico_atividade_externa" [minHeight]="150" [form]="formHistoricoAtividadeExternaGrid!" [hasDelete]="true" [add]="addHistoricoAtividadeExterna.bind(this)" [load]="loadHistoricoAtividadeExterna.bind(this)" [remove]="removeHistoricoAtividadeExterna.bind(this)" [save]="saveHistoricoAtividadeExterna.bind(this)" editable>
+                <grid *ngIf="form!.controls.radioAtividadeExterna.value" [control]="form!.controls.historicos_atividades_externas" [minHeight]="150" [form]="formHistoricoAtividadeExternaGrid!" [hasDelete]="true" [add]="addHistoricoAtividadeExterna.bind(this)" [load]="loadHistoricoAtividadeExterna.bind(this)" [remove]="removeHistoricoAtividadeExterna.bind(this)" [save]="saveHistoricoAtividadeExterna.bind(this)" editable>
                     <columns>
                         <column title="Histórico de Atividades Externas" titleHint="Escolha a atividade." [template]="columnAtividadeExterna" [editTemplate]="editAtividadeExterna">
                             <ng-template let-row="row" #columnAtividadeExterna>
@@ -88,7 +88,7 @@
                             </ng-template>
                             <ng-template let-row="row" #editAtividadeExterna>
                                 <!--<input-search #unidade [size]="12" controlName="unidade_id" [dao]="unidadeDao" [join]="['historico_AtividadeExterna']" fullEntity liveSearch></input-search>-->
-                                <input-search #areaAtividadeExterna [size]="12" label controlName="area_atividade_externa_id" [dao]="areaAtividadeExternaDao" [join]="['historico_atividade_externa','historico_curso_externo','historico_docencia_externa']" [addRoute]="{route: ['raiox','cadastros','areaatividadeexterna','new']}" fullEntity></input-search>
+                                <input-search #areaAtividadeExterna [size]="12" label controlName="area_atividade_externa_id" [dao]="areaAtividadeExternaDao" [join]="['historicos_atividades_externas','historicos_cursos_externos','historicos_docencias_externas']" [addRoute]="{route: ['raiox','cadastros','areaatividadeexterna','new']}" fullEntity></input-search>
                             </ng-template>
                         </column>
                         <column type="options"></column>
@@ -109,7 +109,7 @@
             <div class="row mt-3">
                 <separator class="mb-3 mt-3" title="Desempenhou atividades internamente que podem contribuir ou contribuiram para a instituição?" [bold]="true"></separator>
                 <input-switch #radioAtividadeInterna [size]="2" [label]="radioAtividadeInterna.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioAtividadeInterna" [control]="form!.controls.radioAtividadeInterna"></input-switch>
-                <grid *ngIf="form!.controls.radioAtividadeInterna.value" [control]="form!.controls.historico_atividade_interna" [minHeight]="150" [form]="formHistoricoAtividadeInternaGrid!" [hasDelete]="true" [add]="addHistoricoAtividadeInterna.bind(this)" [load]="loadHistoricoAtividadeInterna.bind(this)" [remove]="removeHistoricoAtividadeInterna.bind(this)" [save]="saveHistoricoAtividadeInterna.bind(this)" editable>
+                <grid *ngIf="form!.controls.radioAtividadeInterna.value" [control]="form!.controls.historicos_atividades_internas" [minHeight]="150" [form]="formHistoricoAtividadeInternaGrid!" [hasDelete]="true" [add]="addHistoricoAtividadeInterna.bind(this)" [load]="loadHistoricoAtividadeInterna.bind(this)" [remove]="removeHistoricoAtividadeInterna.bind(this)" [save]="saveHistoricoAtividadeInterna.bind(this)" editable>
                     <columns>
                         <column title="Área temática" titleHint="Escolha a área." [template]="columnAtividadeInterna" [editTemplate]="editAtividadeInterna">
                             <ng-template let-row="row" #columnAtividadeInterna>
