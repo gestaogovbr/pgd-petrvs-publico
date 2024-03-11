@@ -6,9 +6,9 @@ import { QuestionarioDaoService } from 'src/app/dao/questionario-dao.service';
 import { AbstractControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { IIndexable } from 'src/app/models/base.model';
 import { QuestionarioPerguntaDaoService } from 'src/app/dao/questionario-pergunta-dao.service';
-import { QuestionarioResposta } from 'src/app/models/questionario-resposta.model';
-import { QuestionarioRespostaPergunta } from 'src/app/models/questionario-resposta-pergunta.model';
-import { QuestionarioRespostaDaoService } from 'src/app/dao/questionario-resposta-dao.service';
+import { QuestionarioPreenchimento } from 'src/app/models/questionario-preenchimento.model';
+import { QuestionarioPerguntaResposta } from 'src/app/models/questionario-pergunta-resposta.model';
+import { QuestionarioPreenchimentoDaoService } from 'src/app/dao/questionario-preenchimento-dao.service';
 import { v4 as uuid } from 'uuid';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { QuestionarioPergunta } from 'src/app/models/questionario-pergunta.model';
@@ -20,7 +20,7 @@ import { Chart,registerables } from 'chart.js';
   templateUrl: './curriculum-atributos-big5-form.component.html',
   styleUrls: ['./curriculum-atributos-big5-form.component.scss']
 })
-export class CurriculumAtributosBig5FormComponent extends PageFormBase<QuestionarioResposta, QuestionarioRespostaDaoService>{
+export class CurriculumAtributosBig5FormComponent extends PageFormBase<QuestionarioPreenchimento, QuestionarioPreenchimentoDaoService>{
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('divb5', { static: false }) public divb5?: HTMLDivElement;
   @ViewChild('divextroversao', { static: false }) public divextroversao?: HTMLDivElement;
@@ -37,7 +37,7 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
   public questionarioPerguntasDao: QuestionarioPerguntaDaoService;
   public questionario?: Questionario;
   public perguntas: QuestionarioPergunta[]=[];
-  public respostas: QuestionarioRespostaPergunta[] = [];
+  public respostas: QuestionarioPerguntaResposta[] = [];
   public opcoesEscolha: LookupItem[] = [{ 'key': 1, 'value': 'Muito Inadequado.' }, { 'key': 2, 'value': 'Relativamente Inadequado' }, { 'key': 3, 'value': 'Nem Adequado, Nem Inadequado' }, { 'key': 4, 'value': 'Relativamente Adequado' }, { 'key': 5, 'value': 'Muito Adequado' }];
   public controleP : number = 0;
   public controleV : number = 0;
@@ -60,8 +60,8 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
   public valueTrack : string = '';
 
   constructor(public injector: Injector) {
-    super(injector, QuestionarioResposta, QuestionarioRespostaDaoService);
-    this.join = ['questionario_resposta_pergunta'];
+    super(injector, QuestionarioPreenchimento, QuestionarioPreenchimentoDaoService);
+    this.join = ['respostas'];
     this.questionarioDao = injector.get<QuestionarioDaoService>(QuestionarioDaoService);
     this.questionarioPerguntasDao = injector.get<QuestionarioPerguntaDaoService>(QuestionarioPerguntaDaoService);
 
@@ -86,7 +86,7 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
     return result;
   }
 
-  public async loadData(entity: QuestionarioResposta, form: FormGroup) {}
+  public async loadData(entity: QuestionarioPreenchimento, form: FormGroup) {}
 
   public async initializeData(form: FormGroup) {
     const questionario = await this.questionarioDao?.query({ where: [['codigo', '==', 'B5']], join: ['perguntas'] }).asPromise();
@@ -95,12 +95,12 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
       this.perguntas = questionario[0].perguntas;
       this.showPergunta = this.perguntas[this.controle].pergunta;
       this.questionario = questionario[0];
-      const questionarioResposta = await this.dao?.query({ where: [['questionario_id', '==', this.questionario.id], ['usuario_id', '==', this.auth.usuario?.id]], join: ['questionario_resposta_pergunta'] }).asPromise();
-      this.entity = questionarioResposta?.length ? questionarioResposta[0] : undefined;
+      const questionarioPreenchimento = await this.dao?.query({ where: [['questionario_id', '==', this.questionario.id], ['usuario_id', '==', this.auth.usuario?.id]], join: ['questionario_resposta_pergunta'] }).asPromise();
+      this.entity = questionarioPreenchimento?.length ? questionarioPreenchimento[0] : undefined;
       let respostas: number[] = [];
       if (this.entity) {
         this.questionario.perguntas.forEach((pergunta, index) => {
-          this.entity!.questionario_resposta_pergunta.forEach((resposta, index) => {
+          this.entity!.respostas?.forEach((resposta, index) => {
             if (pergunta.id == resposta.questionario_pergunta_id) respostas.push(resposta.resposta);
           });
         });
@@ -114,7 +114,7 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
     await this.loadData(this.entity!, form);
   }
 
-  public async saveData(form: IIndexable): Promise<QuestionarioResposta | boolean> {
+  public async saveData(form: IIndexable): Promise<QuestionarioPreenchimento | boolean> {
     if (!this.questionario) return false;
     if(this.respondido){
       this.dialog.alert("Gravação não efetuada", "Teste já respondido");
@@ -125,12 +125,12 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
         return false;
     }
    
-    let questionarioResposta = this.util.fill(new QuestionarioResposta(), this.entity || {});
-    questionarioResposta.usuario_id = this.auth.usuario?.id;
-    questionarioResposta.editavel = 0;
-    questionarioResposta.questionario_id = this.questionario!.id;
+    let questionarioPreenchimento = this.util.fill(new QuestionarioPreenchimento(), this.entity || {});
+    questionarioPreenchimento.usuario_id = this.auth.usuario?.id;
+    questionarioPreenchimento.editavel = 0;
+    questionarioPreenchimento.questionario_id = this.questionario!.id;
   
-    let respostas = this.entity?.questionario_resposta_pergunta || this.respostasB5.map((x, i) => new QuestionarioRespostaPergunta({
+    let respostas = this.entity?.respostas || this.respostasB5.map((x, i) => new QuestionarioPerguntaResposta({
       questionario_pergunta_id: this.questionario!.perguntas[i].id,
       resposta: x,
       _status: "ADD"
@@ -141,8 +141,8 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
         x._status = "EDIT";
       }
     });
-    questionarioResposta.questionario_resposta_pergunta = respostas;
-    return questionarioResposta;
+    questionarioPreenchimento.questionario_resposta_pergunta = respostas;
+    return questionarioPreenchimento;
   }
 
  
