@@ -956,7 +956,6 @@ class CapacidadeSeeder extends Seeder
     }
 
     $perfilDesenvolvedorId = Perfil::where([['nome', 'Desenvolvedor']])->first()->id;
-
     $qtdCapacidadesRemovidas = Capacidade::whereNotIn('id', $capacidadesInseridas)->whereNotIn('perfil_id', [$perfilDesenvolvedorId])->delete();
     $qtdCapacidades = Capacidade::count();
     $qtdCapacidadesRestauradas = count($capacidadesRestauradas);
@@ -968,18 +967,18 @@ class CapacidadeSeeder extends Seeder
     echo ("Quantidade de capacidades removidas: " . $qtdCapacidadesRemovidas . ".\n");
     echo ("Quantidade de capacidades restauradas: " . $qtdCapacidadesRestauradas . ".\n");
 
-    if ($qtdTiposCapacidadesInexistentes > 0){
-        echo ("\nQuantidade de capacidades usadas que não existem na tabela tipos_capacidades:\n");
-        foreach($tipoCapacidadesInexistentes as $msg){
-            echo(implode(" - ", $msg) . "\n");
-        }
+    if ($qtdTiposCapacidadesInexistentes > 0) {
+      echo ("\nQuantidade de capacidades usadas que não existem na tabela tipos_capacidades:\n");
+      foreach ($tipoCapacidadesInexistentes as $msg) {
+        echo (implode(" - ", $msg) . "\n");
+      }
     }
 
     if ($qtdCapacidadesRepetidas > 0) {
-        echo ("\nCapacidades repetidas no mesmo perfil e não registradas na tabela capacidades:\n");
-        foreach($capacidadesRepetidas as $msg){
-            echo(implode(" - ", $msg) . "\n");
-        }
+      echo ("\nCapacidades repetidas no mesmo perfil e não registradas na tabela capacidades:\n");
+      foreach ($capacidadesRepetidas as $msg) {
+        echo (implode(" - ", $msg) . "\n");
+      }
     };
 
     echo ("*********************************" . ".\n");

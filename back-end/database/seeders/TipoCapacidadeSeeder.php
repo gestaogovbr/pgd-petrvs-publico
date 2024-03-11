@@ -49,15 +49,15 @@ class TipoCapacidadeSeeder extends Seeder
       // Garante que o perfil de Desenvolvedor tenha todos as capacidades pai
       $capacidadePai = Capacidade::withTrashed()->where('perfil_id', $developerId)->where('tipo_capacidade_id', $tipoCapacidadePai->id)->first();
       if ($capacidadePai) {
-          if ($capacidadePai->trashed()) {
+        if ($capacidadePai->trashed()) {
           $capacidadePai->restore();
-          }
+        }
       } else {
-          $capacidadePai = Capacidade::create([
+        $capacidadePai = Capacidade::create([
           'id' => $utilService->uuid($modulo['codigo']),
           'perfil_id' => $developerId,
           'tipo_capacidade_id' => $tipoCapacidadePai->id
-          ])->save();
+        ])->save();
       }
       // Garante que o perfil de Desenvolvedor tenha todos os tipos de capacidades filhas
       foreach ($modulo['capacidades'] as $capacidadeFilha) {
@@ -78,9 +78,9 @@ class TipoCapacidadeSeeder extends Seeder
         } else {
           $capacidade = new Capacidade();
           $capacidade->fill([
-              'id' => $utilService->uuid($capacidadeFilha[0]),
-              'perfil_id' => $developerId,
-              'tipo_capacidade_id' => $tipoCapacidadeFilha->id
+            'id' => $utilService->uuid($capacidadeFilha[0]),
+            'perfil_id' => $developerId,
+            'tipo_capacidade_id' => $tipoCapacidadeFilha->id
           ]);
           $capacidade->save();
         }
@@ -90,7 +90,7 @@ class TipoCapacidadeSeeder extends Seeder
     }
     // exclui os tipos de capacidades filhas que não existem mais no vetor declarado no serviço TipoCapacidadeService
     foreach ($dadosModulosCapacidades as $modulo) {
-      $capacidades = array_map(fn($z) => $z[0], $modulo['capacidades']);
+      $capacidades = array_map(fn ($z) => $z[0], $modulo['capacidades']);
       // representa todos os tipos de capacidade existentes na tabela, filhas do módulo, que não existem mais
       $filhosNulos = TipoCapacidade::where('grupo_id', $utilService->uuid($modulo['codigo']))->whereNotIn('codigo', $capacidades)->get();
       foreach ($filhosNulos as $filhoNulo)
