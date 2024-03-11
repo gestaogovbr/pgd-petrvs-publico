@@ -11,8 +11,8 @@ use App\Models\CurriculumProfissional;
 use App\Models\GrupoEspecializado;
 use App\Services\ServiceBase;
 use App\Models\Curso;
-use App\Models\HistoricoFuncaoCurriculum;
-use App\Models\HistoricoAtividadeInternaCurriculum;
+use App\Models\HistoricoFuncao;
+use App\Models\HistoricoAtividadeInterna;
 use App\Models\QuestionarioPergunta;
 use App\Models\QuestionarioPerguntaResposta;
 use App\Models\QuestionarioPreenchimento;
@@ -76,15 +76,15 @@ class CurriculumService extends ServiceBase
         $curriculums_filtrados = Curriculum::select('id')->whereRelation('profissional', fn ($q) => $q->whereIn('grupo_especializado_id', $grupos_filtrados))->get()->toArray();
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'funcao_id') {
-        $funcoes_cv_filtrados = HistoricoFuncaoCurriculum::select('curriculum_profissional_id')->where('funcao_id', $condition[2])->get()->toArray();
+        $funcoes_cv_filtrados = HistoricoFuncao::select('curriculum_profissional_id')->where('funcao_id', $condition[2])->get()->toArray();
         $curriculums_filtrados = Curriculum::select('id')->whereRelation('profissional', fn ($q) => $q->whereIn('id', $funcoes_cv_filtrados))->get()->toArray();
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'area_tematica_id') {
-        $historicos_filtrados = HistoricoAtividadeInternaCurriculum::select('id')->whereRelation('capacidadeTecnica', 'area_tematica_id', $condition[2])->get()->toArray();
+        $historicos_filtrados = HistoricoAtividadeInterna::select('id')->whereRelation('capacidadeTecnica', 'area_tematica_id', $condition[2])->get()->toArray();
         $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->whereRelation('historicosAtividadesInternas', fn ($q) => $q->whereIn('id', $historicos_filtrados))->get()->toArray();
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'capacidade_tecnica_id') {
-        $historicos_filtrados = HistoricoAtividadeInternaCurriculum::select('id')->where('capacidade_tecnica_id', $condition[2])->get()->toArray();
+        $historicos_filtrados = HistoricoAtividadeInterna::select('id')->where('capacidade_tecnica_id', $condition[2])->get()->toArray();
         $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->whereRelation('historicosAtividadesInternas', fn ($q) => $q->whereIn('id', $historicos_filtrados))->get()->toArray();
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'soft_id') {
