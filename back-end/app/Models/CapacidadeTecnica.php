@@ -20,6 +20,6 @@ class CapacidadeTecnica extends ModelBase
     // Belongs
     public function areaTematica() { return $this->belongsTo(AreaTematica::class,'area_tematica_id'); }
     //Has
-    public function historicoAtividadeInterna() { return $this->hasMany(HistoricoAtividadeInternaCurriculum::class); }
+    public function historicosAtividadesInternas() { return $this->hasMany(HistoricoAtividadeInterna::class); }
 
 }

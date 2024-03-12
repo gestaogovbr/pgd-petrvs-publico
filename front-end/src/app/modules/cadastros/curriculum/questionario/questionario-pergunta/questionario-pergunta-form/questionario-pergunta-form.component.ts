@@ -1,11 +1,10 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { QuestionarioDaoService } from 'src/app/dao/questionario-dao.service';
 import { QuestionarioPerguntaDaoService } from 'src/app/dao/questionario-pergunta-dao.service';
-import { QuestionarioRespostaDaoService } from 'src/app/dao/questionario-resposta-dao.service';
-import { QuestionarioRespostaPerguntaDaoService } from 'src/app/dao/questionario-resposta-pergunta-dao.service';
+import { QuestionarioPerguntaRespostaDaoService } from 'src/app/dao/questionario-pergunta-resposta-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { QuestionarioPergunta, QuestionarioPerguntaRespostaRange, QuestionarioPerguntaTipo } from 'src/app/models/questionario-pergunta.model';
 import { Questionario } from 'src/app/models/questionario.model';
@@ -26,13 +25,13 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
   public exemploLista: LookupItem[] = [{ 'key': '1', 'value': 'Exemplo 1' }, { 'key': '2', 'value': 'Exemplo 2' }, { 'key': '3', 'value': 'Exemplo 3' }];
   public exemploRadio: LookupItem[] = [{ 'key': '1', 'value': 'Exemplo 1' }, { 'key': '2', 'value': 'Exemplo 2' }, { 'key': '3', 'value': 'Exemplo 3' }];
   public questionarioPerguntaDao?: QuestionarioPerguntaDaoService;
-  public questionarioRespostaPerguntaDao?: QuestionarioRespostaPerguntaDaoService;
+  public questionarioRespostaPerguntaDao?: QuestionarioPerguntaRespostaDaoService;
   public formPergunta: FormGroup;
 
   constructor(public injector: Injector) {
     super(injector, Questionario, QuestionarioDaoService);
     this.questionarioPerguntaDao = injector.get<QuestionarioPerguntaDaoService>(QuestionarioPerguntaDaoService);
-    this.questionarioRespostaPerguntaDao = injector.get<QuestionarioRespostaPerguntaDaoService>(QuestionarioRespostaPerguntaDaoService);
+    this.questionarioRespostaPerguntaDao = injector.get<QuestionarioPerguntaRespostaDaoService>(QuestionarioPerguntaRespostaDaoService);
     this.join = ["perguntas"];
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
@@ -50,8 +49,6 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
       inputValorResposta: { default: "" },
       inputMinimo: { default: 0 },
       inputMaximo: { default: 10 }
-      //criado_versao: number | undefined;
-      //deletado_versao: number | undefined;
     }, this.cdRef, this.perguntaValidate);
   }
 
@@ -110,15 +107,6 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
     }
     return result;
   }
-
-  /**
-   * Método chamado para a exclusão de um integrante do grid, seja este componente persistente ou não. 
-   * @param row 
-   * @returns 
-   */
- /* public async remove(row: any) {
-    return await this.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições do servidor?");
-  }*/
 
   /**
    * Método chamado no salvamento de um integrante da unidade, seja este componente persistente ou não.

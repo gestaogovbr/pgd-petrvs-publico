@@ -16,7 +16,7 @@ class PainelUsuario extends Authenticatable
         // Define a conexão do modelo com base na configuração 'database.default'
         $this->connection = env('DB_CONNECTION','mysql');
     }
-    protected $table = 'painel_usuarios';
+    protected $table = 'users_panel';
     protected $fillable = [
         'nome',
         'email',

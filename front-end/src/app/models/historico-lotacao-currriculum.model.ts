@@ -3,7 +3,7 @@ import { CurriculumProfissional } from './currriculum-profissional.model';
 import { Curso } from './curso.model';
 import { Unidade } from './unidade.model';
 
-export class HistoricoLotacaoCurriculum extends Base {
+export class HistoricoLotacao extends Base {
 
     public profissional?: CurriculumProfissional;
     public unidade?: Unidade;

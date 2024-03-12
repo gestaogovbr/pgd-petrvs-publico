@@ -4,13 +4,12 @@ namespace App\Services\PGD;
 use Illuminate\Support\Facades\Http;
 use App\Models\OrgaoCentralExportacao;
 
-
 class ExportacaoService
 {
 
     public function registrarExportacao($tipo, $dados, $corpo)
     {
-        $exportacao = new OrgaoCentralExportacao([
+/*         $exportacao = new OrgaoCentralExportacao([
             'data_exportacao' => now(),
             'tipo' => $tipo,
             'parametros' => $dados,
@@ -18,14 +17,23 @@ class ExportacaoService
             'corpo' => $corpo
         ]);
 
-        $exportacao->save();
-        return $exportacao;
+        $exportacao->save(); */
+        return OrgaoCentralExportacao::create([
+            'data_exportacao' => now(),
+            'tipo' => $tipo,
+            'parametros' => $dados,
+            'versao' => '1.0.0',
+            'corpo' => $corpo
+        ])->save();
+        //return $exportacao;
     }
 
     public function atualizarRetorno(OrgaoCentralExportacao $exportacao, $retorno)
     {
-        $exportacao->retorno = $retorno;
-        $exportacao->save();
+/*         $exportacao->retorno = $retorno;
+        $exportacao->save(); */
+        $exportacao->update(['retorno' => $retorno]);
+        //$exportacao->save();
     }
 }
 

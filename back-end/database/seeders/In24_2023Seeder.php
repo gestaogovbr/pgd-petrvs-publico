@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
-use Database\Seeders\BulkSeeeder;
 
 use App\Models\Cidade;
 use App\Models\TipoAtividade;
