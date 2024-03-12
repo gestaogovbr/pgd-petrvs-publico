@@ -3,7 +3,7 @@
         <tab key="FUNCIONAIS" class="fw-bold" label="Funcionais">
             <div class="row my-4">
                 <input-select [size]="4" label="Ingresso na Instituição" icon="bi bi-calendar-check-fill" controlName="ano_ingresso" [control]="form!.controls.ano_ingresso" [items]="anos" required></input-select>
-                <input-select #centroTreinamento [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento_id" [control]="form!.controls.centro_treinamento_id" fullEntity liveSearch [dao]="centroTreinamentoDao" [addRoute]="{route: ['raiox','cadastros','centrotreinamento','new']}" required></input-select>
+                <input-select #centroTreinamento [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento_id" [control]="form!.controls.centro_treinamento_id" fullEntity liveSearch [dao]="centroTreinamentoDao" [addRoute]="{route: ['raiox','cadastros','centro-treinamento','new']}" required></input-select>
                 <input-search #cargos [size]="4" label="Cargo" controlName="cargo_id" [control]="form!.controls.cargo_id" [dao]="cargoDao" required></input-search>
             </div>
             <!--<div class="row">
@@ -41,7 +41,7 @@
             </div>
             <div class="row mt-3">
                 <div class="col-md-6">
-                    <input-select #gruposEspecializados [size]="6" label="Você faz parte de algum grupo especializado?" icon="bi bi-check-circle" controlName="grupo_especializado_id" [control]="form!.controls.grupo_especializado_id" fullEntity liveSearch [dao]="grupoDao" [addRoute]="{route: ['raiox','cadastros','grupoespecializado','new']}" required></input-select>
+                    <input-select #gruposEspecializados [size]="6" label="Você faz parte de algum grupo especializado?" icon="bi bi-check-circle" controlName="grupo_especializado_id" [control]="form!.controls.grupo_especializado_id" fullEntity liveSearch [dao]="grupoDao" [addRoute]="{route: ['raiox','cadastros','grupo-especializado','new']}" required></input-select>
                 </div>
                 <div class="col-md-6">
                     <input-search #lotacaoAtual [size]="6" label="Lotação atual" controlName="lotacao_atual" [control]="form!.controls.lotacao_atual" [dao]="unidadeDao"></input-search>
@@ -88,7 +88,7 @@
                             </ng-template>
                             <ng-template let-row="row" #editAtividadeExterna>
                                 <!--<input-search #unidade [size]="12" controlName="unidade_id" [dao]="unidadeDao" [join]="['historico_AtividadeExterna']" fullEntity liveSearch></input-search>-->
-                                <input-search #areaAtividadeExterna [size]="12" label controlName="area_atividade_externa_id" [dao]="areaAtividadeExternaDao" [join]="['historicos_atividades_externas','historicos_cursos_externos','historicos_docencias_externas']" [addRoute]="{route: ['raiox','cadastros','areaatividadeexterna','new']}" fullEntity></input-search>
+                                <input-search #areaAtividadeExterna [size]="12" label controlName="area_atividade_externa_id" [dao]="areaAtividadeExternaDao" [join]="['historicos_atividades_externas','historicos_cursos_externos','historicos_docencias_externas']" [addRoute]="{route: ['raiox','cadastros','area-atividade-externa','new']}" fullEntity></input-search>
                             </ng-template>
                         </column>
                         <column type="options"></column>
@@ -116,7 +116,7 @@
                                 {{row.capacidade_tecnica?.area_tematica?.nome || row.area_tematica?.nome || "Desconhecido" }}
                             </ng-template>
                             <ng-template let-row="row" #editAtividadeInterna>
-                                <input-search #area_tematica [size]="4" label="Escolha a área temática" controlName="area_tematica_id" [dao]="areaTematicaDao" fullEntity [addRoute]="{route: ['raiox','cadastros','areatematica','new']}" (change)="onAreaAtividadeInternaChange()"></input-search>
+                                <input-search #area_tematica [size]="4" label="Escolha a área temática" controlName="area_tematica_id" [dao]="areaTematicaDao" fullEntity [addRoute]="{route: ['raiox','cadastros','area-tematica','new']}" (change)="onAreaAtividadeInternaChange()"></input-search>
                             </ng-template>
                         </column>
                         <column title="Capacidade" titleHint="Escolha a capacidade." [template]="columnCapacidade" [editTemplate]="editCapacidade">
@@ -124,7 +124,7 @@
                                 {{row.capacidade_tecnica?.nome || "Desconhecido"}}
                             </ng-template>
                             <ng-template let-row="row" #editCapacidade>
-                                <input-select #capacidade_tecnica [size]="4" label="Capacidade" icon="fas fa-graduation-cap" controlName="capacidade_tecnica_id" fullEntity liveSearch [dao]="capacidadeTecnicaDao" [where]="areaTematicaWhere" [addRoute]="{route: ['raiox','cadastros','capacidadetecnica','new']}"></input-select>
+                                <input-select #capacidade_tecnica [size]="4" label="Capacidade" icon="fas fa-graduation-cap" controlName="capacidade_tecnica_id" fullEntity liveSearch [dao]="capacidadeTecnicaDao" [where]="areaTematicaWhere" [addRoute]="{route: ['raiox','cadastros','capacidade-tecnica','new']}"></input-select>
                             </ng-template>
                         </column>
                         <column title="Atividade desempenhada" titleHint="Informe a atividade." [template]="columnAtividadeDesempenhada" [editTemplate]="editAtividadeDesempenhada">
@@ -168,7 +168,7 @@
                                 {{row.area_atividade_externa?.nome || "Desconhecido"}}
                             </ng-template>
                             <ng-template let-row="row" #editDocenciaExterna>
-                                <input-search #areaAtividadeExternaDocencia [size]="4" label="Escolha a área externa" controlName="area_atividade_externa_id" [dao]="areaAtividadeExternaDao" [addRoute]="{route: ['raiox','cadastros','areaatividadeexterna','new']}" fullEntity></input-search>
+                                <input-search #areaAtividadeExternaDocencia [size]="4" label="Escolha a área externa" controlName="area_atividade_externa_id" [dao]="areaAtividadeExternaDao" [addRoute]="{route: ['raiox','cadastros','area-atividade-externa','new']}" fullEntity></input-search>
                             </ng-template>
                         </column>
                         <column type="options"></column>
@@ -268,7 +268,7 @@
                                 {{row.area_atividade_externa?.nome || "Desconhecido"}}
                             </ng-template>
                             <ng-template let-row="row" #editArea>
-                                <input-search #areaHistoricoCursoExterno [size]="4" label="Área/Instituição/Coorporação" controlName="area_atividade_externa_id" [dao]="areaAtividadeExternaDao" [addRoute]="{route: ['raiox','cadastros','areaatividadeexterna','new']}" fullEntity></input-search>
+                                <input-search #areaHistoricoCursoExterno [size]="4" label="Área/Instituição/Coorporação" controlName="area_atividade_externa_id" [dao]="areaAtividadeExternaDao" [addRoute]="{route: ['raiox','cadastros','area-atividade-externa','new']}" fullEntity></input-search>
                             </ng-template>
                         </column>
                         <column title="Nome do Curso" titleHint="Informe o nome do curso." [template]="columnNome" [editTemplate]="editNome">

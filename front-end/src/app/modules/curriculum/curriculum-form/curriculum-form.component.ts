@@ -1,4 +1,4 @@
-import { Component, Injector, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
@@ -10,13 +10,13 @@ import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.se
 import { CursoDaoService } from 'src/app/dao/curso-dao.service';
 import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
-import { Curriculum } from 'src/app/models/currriculum.model';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { InputMultiselectComponent } from 'src/app/components/input/input-multiselect/input-multiselect.component';
 import { CurriculumGraduacaoDaoService } from 'src/app/dao/curriculum-graduacao.service';
-import { CurriculumGraduacao } from 'src/app/models/currriculum-graduacao.model';
 import { CurriculumIdioma } from 'src/app/models/curriculum-idioma.model';
 import { InputNumberComponent } from 'src/app/components/input/input-number/input-number.component';
+import { Curriculum } from 'src/app/models/curriculum.model';
+import { CurriculumGraduacao } from 'src/app/models/curriculum-graduacao.model';
 
 @Component({
   selector: 'curriculum-pessoal-form',
@@ -33,7 +33,6 @@ import { InputNumberComponent } from 'src/app/components/input/input-number/inpu
     ])
   ]
 })
-
 export class CurriculumFormComponent extends PageFormBase<Curriculum, CurriculumDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild("quantidade_filhos", { static: false }) public quantidade_filhos?: InputNumberComponent;
@@ -222,23 +221,4 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   }
 
   public togglePopOver() { }
-
-  /*get stateName() {
-    return this.show ? 'show' : 'hide'
-  }
-
-
-  public togglePopOver() {
-    
-    const pop = document.getElementById('divPop');
-    //console.log(pop?.hidden)
-    if (pop?.hidden){
-      pop!.hidden=false;
-
-    }else{
-      pop!.hidden=true;
-    }
-    this.show = !this.show;
-  }
-    */
 }

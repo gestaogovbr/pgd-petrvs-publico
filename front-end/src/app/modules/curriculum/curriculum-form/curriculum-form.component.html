@@ -2,18 +2,14 @@
     <div class="row mt-3">
         <input-textarea label="Apresente-se" [size]="12" [bold]="true" icon="bi-card-list" controlName="apresentacao" [control]="form!.controls.apresentacao"></input-textarea><!-- [control]="form!.controls.apresentese">-->
     </div>
-
     <div class="row mt-3">
         <separator title="Dados Residenciais"></separator>
     </div>
-
     <div class="row mt-2">
         <input-select [size]="4" #estados label="Estado" icon="fas fa-flag" controlName="estados" [control]="form!.controls.estados" [items]="lookup.UF" ></input-select>
         <input-select #municipio [size]="4" label="Município" icon="far fa-flag" controlName="cidade_id" [control]="form!.controls.cidade_id" [dao]="cidadeDao" [where]="['uf', '==', form!.controls.estados.value]" liveSearch></input-select>
         <input-text [size]="4" label="Telefone de contato WhatsAPP" icon="fas fa-phone" controlName="telefone" [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'" [attr.maxlength]=250></input-text>
     </div>
-
-
     <div class="row mt-3">
         <separator title="Estado Civil"></separator>
     </div>
@@ -26,14 +22,8 @@
     <div class="row mt-3">
         <separator title="Idiomas" (click)="togglePopOver()"></separator>
     </div>
-    <!--<div id="divPop" [@popOverState]="stateName" hidden >
-        <i class="bi bi-exclamation-triangle-fill"></i>
-        <p>Hello! I'm a helpful message.</p>
-    </div>-->
     <div class="row mt-3">
-
         <input-switch [size]="3" label="Fala outros idiomas?" icon="fas fa-language" controlName="radioFalaIdioma" [control]="form!.controls.radioFalaIdioma"></input-switch>
-       
         <grid *ngIf="form!.controls.radioFalaIdioma.value" [control]="form!.controls.idiomas" [minHeight]="100" 
             [form]="formIdiomaGrid!" [hasDelete]="true" [add]="addIdiomas.bind(this)" [load]="loadIdiomas.bind(this)" [remove]="removeIdiomas.bind(this)" 
             [save]="saveIdiomas.bind(this)" editable>
@@ -82,7 +72,7 @@
         <grid [minHeight]="150" [form]="formGraduacao!" [control]="form!.controls.graduacoes" [hasDelete]="true" [add]="addGraduacao.bind(this)" [load]="loadGraduacao.bind(this)" 
              [remove]="removeGraduacao.bind(this)" [save]="saveGraduacao.bind(this)" editable>
             <columns>
-                <column title="Pretende Cursar?" titleHint="Pretende cursar ou já esta concluido." [template]="columnPretende" [editTemplate]="editPretende">
+                <column title="Pretende Cursar?" titleHint="Pretende cursar ou já está concluído." [template]="columnPretende" [editTemplate]="editPretende">
                     <ng-template let-row="row" #columnPretende>
                        {{row.pretensao == 0 ? 'Finalizado' : 'Pretendo Fazer' }}
                     </ng-template>
@@ -90,7 +80,7 @@
                         <input-switch [size]="2" [label]="formGraduacao!.controls.pretensao.value ? 'Sim' : 'Concluído'" icon="fas fa-user-graduate" controlName="pretensao" [control]="formGraduacao!.controls.pretensao"></input-switch>
                     </ng-template>
                 </column>               
-                <column title="Área do Conhecimento" titleHint="colha a Área de conhecimento." [template]="columnArea" [editTemplate]="editArea">
+                <column title="Área do Conhecimento" titleHint="Escolha a Área de conhecimento." [template]="columnArea" [editTemplate]="editArea">
                     <ng-template let-row="row" #columnArea>
                        {{row.curso?.area_conhecimento?.nome || row.area_conhecimento?.nome}}
                     </ng-template>
@@ -118,20 +108,4 @@
             </columns>
         </grid>
     </div>
-
 </editable-form>
-
-    
-    <!--<div class="row mt-3 mb-5">
-        <input-multiselect label="Graduação e Pós-Graduação - Especialização, Mestrado, Doutorado e Pós Doutorado" [size]="12" controlName="graduacaopos" [control]="formGraduacao!.controls.graduacaopos" [addItemHandle]="addItemGraduacaoPos.bind(this)" [bold]="true" noBox>
-            <input-switch [size]="2" label="Pretende Cursar?" icon="fas fa-user-graduate" controlName="pretensao" [control]="formGraduacao!.controls.pretensao" labelInfo="Pretendo Cursar">
-            </input-switch>
-            <input-search #areaPos [size]="4" [dao]="areaDao" label="Área de conhecimento" [control]="formGraduacao!.controls.areaPos" controlName="areaPos"></input-search>
-            <input-select [size]="2" label="Titulo" icon="bi bi-mortarboard-fill" controlName="titulo" liveSearch [control]="formGraduacao!.controls.titulo" [items]="this.lookup.TITULOS_CURSOS" (change)="onAreaPosGraduacaoChange()"></input-select>
-
-            <input-select [size]="4" #curso label="Curso" icon="fas fa-graduation-cap" controlName="cursoPos" liveSearch [control]="formGraduacao!.controls.cursoPos" [dao]="cursoDao" [where]="cursoWhere" [addRoute]="{route: ['raiox','cadastros','curso','new']}">
-            </input-select>
-
-        </input-multiselect>
-    </div>
-    <separator class="mb-1"></separator>-->

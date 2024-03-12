@@ -26,7 +26,7 @@ export class QuestionarioListComponent extends PageListBase<Questionario, Questi
     /* Inicializações */
   
     this.title = this.lex.translate("Questionários");
-    this.code = "MOD_RX";
+    this.code = "MOD_RX_CURR";
     //this.orderBy = [['sequencia','asc']];
 
     this.filter = this.fh.FormBuilder({

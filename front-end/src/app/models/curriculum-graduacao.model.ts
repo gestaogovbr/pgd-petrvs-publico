@@ -1,5 +1,5 @@
 import { Base } from './base.model';
-import { Curriculum } from './currriculum.model';
+import { Curriculum } from './curriculum.model';
 import { Curso } from './curso.model'
 
 export class CurriculumGraduacao extends Base {

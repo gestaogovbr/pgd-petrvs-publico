@@ -18,7 +18,7 @@ const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Home Raio-X" } },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Home Raio-X" } },
   { path: 'pessoal', component: CurriculumFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Dados Pessoais", modal: true } },
-  { path: 'profissional', component: CurriculumProfissionalFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Dados Profissionais", modal: true  } },
+  { path: 'profissional', component: CurriculumProfissionalFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Dados Profissionais", modal: true } },
   { path: 'big5', component: CurriculumAtributosBig5FormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Big5" } },
   { path: 'soft', component: CurriculumAtributosSoftFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Soft" } },
   { path: 'atributos', component: CurriculumAtributosComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Atributos Comportamentais2", modal: false, modalWidth: 1300 } },
@@ -35,5 +35,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-
 export class CurriculumRoutingModule { }

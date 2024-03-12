@@ -1,5 +1,5 @@
-import { Component, Injector, TemplateRef, ViewChild } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { Component, Injector, ViewChild } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { AreaAtividadeExterna } from 'src/app/models/area-atividade-externa.model';
@@ -13,20 +13,17 @@ import { AreaAtividadeExternaDaoService } from 'src/app/dao/area-atividade-exter
 export class AreaAtividadeExternaListComponent extends PageListBase<AreaAtividadeExterna, AreaAtividadeExternaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
-
   constructor(public injector: Injector) {
     super(injector, AreaAtividadeExterna, AreaAtividadeExternaDaoService);
     /* Inicializações */
-  
     this.title = this.lex.translate("Áreas da Atividade Externa");
-    this.code = "MOD_RX";
-    this.orderBy = [['nome','asc']];
-
+    this.code = "MOD_RX_CURR";
+    this.orderBy = [['nome', 'asc']];
     this.filter = this.fh.FormBuilder({
-      nome: {default: ""}
-     });
-     
-     this.addOption(this.OPTION_EXCLUIR, "MOD_RX_OUT_EXCL");
+      nome: { default: "" }
+    });
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR, "MOD_RX_OUT_EXCL");
   }
 
   public filterClear(filter: FormGroup) {
@@ -37,13 +34,9 @@ export class AreaAtividadeExternaListComponent extends PageListBase<AreaAtividad
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
-
-    if(form.nome_area?.length) {
+    if (form.nome_area?.length) {
       result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
-
     return result;
   }
 }
-
-

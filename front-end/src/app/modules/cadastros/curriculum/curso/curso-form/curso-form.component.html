@@ -1,10 +1,9 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="area_curso_id" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
-    <div class="row">
-        <input-search [size]="5" controlName="area_curso_id" [dao]="areaDao"></input-search>
-        <input-text [size]="5" label="Nome do Curso" controlName="nome" [attr.maxlength]=250 required></input-text>
-        <input-select [size]="5" label="Titulo" [items]="this.lookup.TITULOS_CURSOS_INST" controlName="titulo"></input-select>
-        <input-select [size]="5" #curso label="Tipo de Curso" icon="fas fa-layer-group" controlName="tipo_curso_id" liveSearch
-        [control]="form!.controls.tipo_curso_id" [dao]="tipoCursoDao"  [addRoute]="{route: ['raiox','cadastros','gerais','tipocurso','new']}"></input-select>
-        <input-switch [size]="2" labelPosition="left" label="Ativo" controlName="ativo"></input-switch>
-    </div>    
+  <div class="row">
+    <input-search [size]="5" controlName="area_id" [dao]="areaDao"></input-search>
+    <input-text [size]="5" label="Nome do Curso" controlName="nome" [attr.maxlength]=250 required></input-text>
+    <input-select [size]="5" label="Titulo" [items]="this.lookup.TITULOS_CURSOS_INST" controlName="titulo"></input-select>
+    <input-select [size]="5" label="Tipo de Curso" icon="fas fa-layer-group" controlName="tipo_curso_id" liveSearch [control]="form!.controls.tipo_curso_id" [dao]="tipoCursoDao" [addRoute]="{route: ['raiox','cadastros','gerais','tipo-curso','new']}"></input-select>
+    <input-switch [size]="2" labelPosition="left" label="Ativo" controlName="ativo"></input-switch>
+  </div>
 </editable-form>

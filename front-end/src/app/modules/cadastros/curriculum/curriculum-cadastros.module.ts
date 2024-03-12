@@ -7,8 +7,6 @@ import { CurriculumCadastrosRoutingModule } from './curriculum-cadastros-routing
 
 @NgModule({
   declarations: [
-   // MateriaFormComponent,
-   // MateriaListComponent
   ],
   imports: [
     CommonModule,

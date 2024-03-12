@@ -9,26 +9,45 @@ use App\Models\Materia;
 
 class Curso extends ModelBase
 {
-    protected $table = 'cursos';
+  protected $table = 'cursos';
 
-    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nome', /* varchar(256); NOT NULL; */// Nome do curso
-        'titulo', /* varchar(64); NOT NULL; */// Titulação do curso->Graduação, Pos, etc
-        'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Curso ativo ou inativo
-        'area_id', /* char(36); NOT NULL; */
-        'tipo_curso_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
-    ];
+  public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
+    'nome', /* varchar(256); NOT NULL; */ // Nome do curso
+    'titulo', /* varchar(64); NOT NULL; */ // Titulação do curso->Graduação, Pos, etc
+    'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */ // Curso ativo ou inativo
+    'area_id', /* char(36); NOT NULL; */
+    'tipo_curso_id', /* char(36); NOT NULL; */
+    //'deleted_at', /* timestamp; */
+  ];
 
-     // Belongs
-     public function areaConhecimento() { return $this->belongsTo(AreaConhecimento::class,'area_id'); }
-     public function tipoCurso() { return $this->belongsTo(TipoCurso::class,'tipo_curso_id'); }
-      // Has
-     public function materias() { return $this->hasMany(Materia::class); }
-     public function curriculunsGraduacoes() { return $this->hasMany(CurriculumGraduacao::class); }
-     public function historicosCursosInternos() { return $this->hasMany(HistoricoCursoInterno::class); }
-     public function historicosDocenciasInternas() { return $this->hasMany(HistoricoDocenciaInterna::class); }
-     public function historicosDocenciasExternas() { return $this->hasMany(HistoricoDocenciaExterna::class); }
- 
-    
+  // Belongs
+  public function areaConhecimento()
+  {
+    return $this->belongsTo(AreaConhecimento::class, 'area_id');
+  }
+  public function tipoCurso()
+  {
+    return $this->belongsTo(TipoCurso::class);
+  }
+  // Has
+  public function materias()
+  {
+    return $this->hasMany(Materia::class);
+  }
+  public function curriculunsGraduacoes()
+  {
+    return $this->hasMany(CurriculumGraduacao::class);
+  }
+  public function historicosCursosInternos()
+  {
+    return $this->hasMany(HistoricoCursoInterno::class);
+  }
+  public function historicosDocenciasInternas()
+  {
+    return $this->hasMany(HistoricoDocenciaInterna::class);
+  }
+  public function historicosDocenciasExternas()
+  {
+    return $this->hasMany(HistoricoDocenciaExterna::class);
+  }
 }

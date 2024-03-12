@@ -1,33 +1,31 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [selectable]="selectable" (select)="onSelect($event)"  [hasAdd]="auth.hasPermissionTo('MOD_RX_OUT_INCL')" [hasEdit]="auth.hasPermissionTo('MOD_RX_OUT_EDT')" [hasDelete]="auth.hasPermissionTo('MOD_RX_OUT_EXCL')">
-    <toolbar *ngIf="!selectable"></toolbar>
-    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
-        <div class="row">
-            <input-text [size]="5" label="Nome da área de conhecimento" controlName="nome_area" [attr.maxlength]=250
-                [control]="filter!.controls.nome_area" placeholder="Nome da área de conhecimento" [attr.maxlength]=250></input-text>
-            <input-text [size]="3" label="Nome do curso" controlName="nome_curso" [control]="filter!.controls.nome_curso" placeholder="Nome do curso" [attr.maxlength]=250></input-text>
-            <input-text [size]="2" label="Titulo" controlName="titulo" [control]="filter!.controls.titulo" placeholder="" [attr.maxlength]=250></input-text>
-            <input-text [size]="2" label="Tipo do Curso" controlName="nome_tipo" [control]="filter!.controls.nome_tipo" placeholder="" [attr.maxlength]=250></input-text>
-        </div>
-    </filter>
-    <columns>
-        <column title="Curso" field="nome" orderBy="nome"></column>
-        <column title="Área do Conhecimento" [template]="columnNomeArea">
-            <ng-template let-row="row" #columnNomeArea>
-                <span>{{ row.area_conhecimento.nome }}</span>
-            </ng-template>
-        </column>
-        <column title="Título" [template]="columnTitulo">
-            <ng-template let-row="row" #columnTitulo>
-                <span>{{ lookup.getValue(lookup.TITULOS_CURSOS_INST,row.titulo) }}</span>
-            </ng-template>
-        </column>
-        <column title="Tipo" [template]="columnTipo">
-            <ng-template let-row="row" #columnTipo>
-                <span>{{ row.tipo_curso.nome }}</span>
-            </ng-template>
-        </column>
-        <column type="options" [onEdit]="edit"></column>
-    </columns>
-    <pagination [rows]="rowsLimit"></pagination>
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_RX_OUT_INCL')" [hasEdit]="auth.hasPermissionTo('MOD_RX_OUT_EDT')">
+  <toolbar *ngIf="!selectable"></toolbar>
+  <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <div class="row">
+      <input-text [size]="5" label="Nome da área de conhecimento" controlName="nome_area" [attr.maxlength]=250 [control]="filter!.controls.nome_area" placeholder="Nome da área de conhecimento" [attr.maxlength]=250></input-text>
+      <input-text [size]="3" label="Nome do curso" controlName="nome_curso" [control]="filter!.controls.nome_curso" placeholder="Nome do curso" [attr.maxlength]=250></input-text>
+      <input-text [size]="2" label="Titulo" controlName="titulo" [control]="filter!.controls.titulo" placeholder="" [attr.maxlength]=250></input-text>
+      <input-text [size]="2" label="Tipo do Curso" controlName="nome_tipo" [control]="filter!.controls.nome_tipo" placeholder="" [attr.maxlength]=250></input-text>
+    </div>
+  </filter>
+  <columns>
+    <column title="Curso" field="nome" orderBy="nome"></column>
+    <column title="Área do Conhecimento" [template]="columnNomeArea">
+      <ng-template let-row="row" #columnNomeArea>
+        <span>{{ row.area_conhecimento.nome }}</span>
+      </ng-template>
+    </column>
+    <column title="Título" [template]="columnTitulo">
+      <ng-template let-row="row" #columnTitulo>
+        <span>{{ lookup.getValue(lookup.TITULOS_CURSOS_INST,row.titulo) }}</span>
+      </ng-template>
+    </column>
+    <column title="Tipo" [template]="columnTipo">
+      <ng-template let-row="row" #columnTipo>
+        <span>{{ row.tipo_curso.nome }}</span>
+      </ng-template>
+    </column>
+    <column type="options" [onEdit]="edit" [options]="options"></column>
+  </columns>
+  <pagination [rows]="rowsLimit"></pagination>
 </grid>

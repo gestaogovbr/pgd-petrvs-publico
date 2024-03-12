@@ -1,8 +1,7 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { IIndexable } from 'src/app/models/base.model';
-import { LookupItem } from 'src/app/services/lookup.service';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { CapacidadeTecnica } from 'src/app/models/capacidade-tecnica.model';
 import { CapacidadeTecnicaDaoService } from 'src/app/dao/capacidade-tecnica-dao.service';
@@ -16,29 +15,23 @@ import { AreaTematicaDaoService } from 'src/app/dao/area-tematica-dao.service';
 export class CapacidadeTecnicaFormComponent extends PageFormBase<CapacidadeTecnica, CapacidadeTecnicaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
 
-  public areaTematicaDao ?: AreaTematicaDaoService;
- // public areaTematicaWhere: any[] = [["id", "==", null]];
-  
+  public areaTematicaDao?: AreaTematicaDaoService;
 
   constructor(public injector: Injector) {
     super(injector, CapacidadeTecnica, CapacidadeTecnicaDaoService);
     this.areaTematicaDao = injector.get<AreaTematicaDaoService>(AreaTematicaDaoService);
     this.form = this.fh.FormBuilder({
-      area_tematica_id: {default: ""},
-      nome: {default: ""},
-      ativo: {default: true},
-           
+      area_tematica_id: { default: "" },
+      nome: { default: "" },
+      ativo: { default: true },
     }, this.cdRef, this.validate);
   }
 
-  
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-
-    if(['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['nome', 'area_tematica_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
-
     return result;
   }
 
@@ -51,14 +44,12 @@ export class CapacidadeTecnicaFormComponent extends PageFormBase<CapacidadeTecni
     form.patchValue(new CapacidadeTecnica());
   }
 
-
   public saveData(form: IIndexable): Promise<CapacidadeTecnica> {
     return new Promise<CapacidadeTecnica>((resolve, reject) => {
       const capacidadeTecnica = this.util.fill(new CapacidadeTecnica(), this.entity!);
       resolve(this.util.fillForm(capacidadeTecnica, this.form!.value));
     });
   }
-
 
   public titleEdit = (entity: CapacidadeTecnica): string => {
     return "Editando " + (entity?.nome || "");

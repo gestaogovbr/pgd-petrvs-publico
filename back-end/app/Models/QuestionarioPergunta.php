@@ -19,7 +19,7 @@ class QuestionarioPergunta extends ModelBase
     'tipo', /* enum */ // tipo da opção da resposta
     'criado_versao', /* integer */
     'deletado_versao', /* integer */
-    'respostas',
+    'respostas_possiveis',
     /**JSON respostas */
     'questionario_id',
     'origem_id'
@@ -28,7 +28,7 @@ class QuestionarioPergunta extends ModelBase
   ];
 
   protected $casts = [
-    'respostas' => AsJson::class
+    'respostas_possiveis' => AsJson::class
   ];
 
   public $fillable_changes = ['respostas'];

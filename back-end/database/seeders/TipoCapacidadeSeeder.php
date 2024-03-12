@@ -30,6 +30,7 @@ class TipoCapacidadeSeeder extends Seeder
         'descricao' => 'Perfil de Desenvolvedor - Todas as permissões',
       ]
     );
+    $perfilDesenvolvedor->save();
     $developerId = $perfilDesenvolvedor->id;
 
     // carrega os tipos de capacidades do vetor declarado no serviço TipoCapacidadeService
@@ -45,6 +46,7 @@ class TipoCapacidadeSeeder extends Seeder
           'deleted_at' => NULL
         ]
       );
+      $tipoCapacidadePai->save();
 
       // Garante que o perfil de Desenvolvedor tenha todos os tipos de capacidades filhas
       foreach ($modulo['capacidades'] as $capacidadeFilha) {
@@ -57,6 +59,7 @@ class TipoCapacidadeSeeder extends Seeder
             'deleted_at' => NULL
           ]
         );
+        $tipoCapacidadeFilha->save();
 
         $capacidade = Capacidade::withTrashed()->where('perfil_id', $developerId)->where('tipo_capacidade_id', $tipoCapacidadeFilha->id)->first();
         if ($capacidade) {
@@ -88,6 +91,7 @@ class TipoCapacidadeSeeder extends Seeder
           'perfil_id' => $developerId,
           'tipo_capacidade_id' => $tipoCapacidadePai->id
         ]);
+        $capacidadePai->save();
       }
     }
 
