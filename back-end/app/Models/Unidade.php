@@ -32,8 +32,6 @@ class Unidade extends ModelBase
 
     protected $keyType = 'string';
 
-    protected $dates = ['deleted_at'];
-
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'codigo', /* varchar(12); NOT NULL; */// Código da unidade
         'sigla', /* varchar(100); NOT NULL; */// Sigla da unidade
@@ -77,7 +75,8 @@ class Unidade extends ModelBase
     protected $casts = [
         'etiquetas' => AsJson::class,
         'checklist' => AsJson::class,
-        'expediente' => AsJson::class
+        'expediente' => AsJson::class,
+        'deployed_at' => 'datetime',
     ];
     // Has
     public function atividades() { return $this->hasMany(Atividade::class); }

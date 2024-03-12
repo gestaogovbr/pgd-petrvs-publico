@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Questionario;
-//
-class TipoCursoSeeder extends Seeder
+
+class QuestionarioSeeder extends Seeder
 {
   /**
    * Run the database seeds.
