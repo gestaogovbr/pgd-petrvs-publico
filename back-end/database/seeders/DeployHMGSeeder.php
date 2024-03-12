@@ -24,11 +24,11 @@ class DeployHMGSeeder extends Seeder
             //TemplateSeeder::class,
             //NomenclaturaSeeder::class
 
-            /*
+      /*
             Após a execução das Seeds acima, executar a rotina de integração com o comando
             http://localhost[:porta]/api/integracao?servidores=true&unidades=true&entidade=[ID da entidade]
             ou sudo curl -G 'http://localhost/api/integracao' -d servidores=true -d unidades=true -d entidade=[ID da entidade]
             */
-        ]);
-    }
+    ]);
+  }
 }

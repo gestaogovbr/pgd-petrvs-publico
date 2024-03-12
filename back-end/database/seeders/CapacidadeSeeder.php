@@ -2,10 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
-use Database\Seeders\BulkSeeder;
-
 use App\Models\Capacidade;
 use App\Models\Perfil;
 use App\Models\TipoCapacidade;
