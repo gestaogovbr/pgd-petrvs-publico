@@ -9,7 +9,7 @@ use App\Models\Curso;
 
 class HistoricoDocenciaExterna extends ModelBase
 {
-  protected $table = 'historicos_docencias_externas_curriculum';
+  protected $table = 'historicos_docencias_externas';
 
   public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
     'curriculum_profissional_id', /* char(36); NOT NULL; */
