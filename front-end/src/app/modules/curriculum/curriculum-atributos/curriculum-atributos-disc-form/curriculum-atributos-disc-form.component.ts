@@ -52,7 +52,7 @@ export class CurriculumAtributosDiscFormComponent extends PageFormBase<Questiona
     return result;
   }
 
-  public async loadData(entity: QuestionarioPreenchimento, form: FormGroup) {}
+  public async loadData(entity: QuestionarioPreenchimento, form: FormGroup) { }
 
   public async initializeData(form: FormGroup) {
     const questionario = await this.questionarioDao?.query({ where: [['codigo', '==', 'SOFTSKILLS']], join: ['perguntas'] }).asPromise();
@@ -84,7 +84,7 @@ export class CurriculumAtributosDiscFormComponent extends PageFormBase<Questiona
   }
 
   public async saveData(form: IIndexable): Promise<QuestionarioPreenchimento | boolean> {
-      console.log('curriculum-atributosdisc-form')
+    console.log('curriculum-atributosdisc-form')
     return false;
   }
 

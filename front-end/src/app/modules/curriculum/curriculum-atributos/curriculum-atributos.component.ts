@@ -8,9 +8,8 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 })
 export class CurriculumAtributosComponent {
   @ViewChild(EditableFormComponent, { static: false })
-  
+
   public editableForm?: EditableFormComponent;
 
-  constructor(public injector: Injector) {}
-
+  constructor(public injector: Injector) { }
 }
