@@ -257,6 +257,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
 
   public async initializeData(form: FormGroup) {
     if (this.entity) {
+      console.log(this.entity)
       this.entity.historicos_atividades_internas.length > 0 ? this.form?.controls.radioAtividadeInterna.setValue(true) : this.form?.controls.radioAtividadeInterna.setValue(false);
       this.entity.historicos_atividades_externas.length > 0 ? this.form?.controls.radioAtividadeExterna.setValue(true) : this.form?.controls.radioAtividadeExterna.setValue(false);
       this.entity.historicos_docencias_internas.length > 0 ? this.form?.controls.radioDocenciaInterna.setValue(true) : this.form?.controls.radioDocenciaInterna.setValue(false);
@@ -323,9 +324,12 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public saveHistoricoFuncao(form: FormGroup, row: any) {
     form?.markAllAsTouched();
     if (form?.valid) {
+      console.log('row',row)
       let values = form.value;
       row.funcao = this.funcao?.selectedItem?.data;
+      console.log(row.funcao)
       row.unidade = this.unidadeChefia?.selectedEntity;
+      console.log(row.unidade)
       row.unidade_id = values.unidade_id;
       row.funcao_id = values.funcao_id;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
@@ -335,6 +339,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   }
 
   public async loadHistoricoFuncao(form: FormGroup, row: HistoricoFuncao) {
+    console.log('row',row)
     this.formHistoricoFuncaoGrid!.controls.funcao_id.setValue(row.funcao_id);
     this.formHistoricoFuncaoGrid!.controls.unidade_id.setValue(row.unidade_id);
   }
