@@ -512,7 +512,7 @@ class ServiceBase extends DynamicMethods
       array_push($likes, [$field, 'like', $text]);
     }
     $condicaoDeletados = array_filter($data['where'], fn ($w) => is_array($w) && $w[0] == "deleted_at");
-    if (empty($condicaoDeletados)) array_push($data['where'], [['deleted_at', '==', null]]);
+    if (empty($condicaoDeletados)) array_push($data['where'], ['deleted_at', '==', null]);
     //$where = count($data['where']) > 0 ? [$likes, $data['where']] : $likes;
     $where = [$likes, $data['where']];
     $this->applyWhere($query, $where, $data);

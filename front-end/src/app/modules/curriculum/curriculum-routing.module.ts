@@ -28,7 +28,19 @@ const routes: Routes = [
   //{ path: 'pesquisa-usuario', component: CurriculumPesquisaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Pesquisa Usuário" } },
   { path: 'pesquisa-adm', component: CurriculumPesquisaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Pesquisa Administrativa" } },
   { path: 'detalhe-pesquisa', component: CurriculumPesquisaListUsuarioComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Currículo", modal: true } },
-  { path: 'cadastros', loadChildren: () => import('../cadastros/curriculum/curriculum-cadastros.module').then(m => m.CurriculumCadastrosModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/area-atividade-externa', loadChildren: () => import('./cadastros/area-atividade-externa/area-atividade-externa.module').then(m => m.AreaAtividadeExternaModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/area-conhecimento', loadChildren: () => import('./cadastros/area-conhecimento/area-conhecimento.module').then(m => m.AreaConhecimentoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/curso', loadChildren: () => import('./cadastros/curso/curso.module').then(m => m.CursoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/tipo-curso', loadChildren: () => import('./cadastros/tipo-curso/tipo-curso.module').then(m => m.TipoCursoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/centro-treinamento', loadChildren: () => import('./cadastros/centro-treinamento/centro-treinamento.module').then(m => m.CentroTreinamentoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/funcao', loadChildren: () => import('./cadastros/funcao/funcao.module').then(m => m.FuncaoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/grupo-especializado', loadChildren: () => import('./cadastros/grupo-especializado/grupo-especializado.module').then(m => m.GrupoEspecializadoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/materia', loadChildren: () => import('./cadastros/materia/materia.module').then(m => m.MateriaModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/cargo', loadChildren: () => import('./cadastros/cargo/cargo.module').then(m => m.CargoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/funcao', loadChildren: () => import('./cadastros/funcao/funcao.module').then(m => m.FuncaoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/area-tematica', loadChildren: () => import('./cadastros/area-tematica/area-tematica.module').then(m => m.AreaTematicaModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/capacidade-tecnica', loadChildren: () => import('./cadastros/capacidade-tecnica/capacidade-tecnica.module').then(m => m.CapacidadeTecnicaModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/questionario', loadChildren: () => import('./cadastros/questionario/questionario.module').then(m => m.QuestionarioModule), canActivate: [AuthGuard] },
 ];
 
 @NgModule({

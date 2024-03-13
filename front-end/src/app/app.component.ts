@@ -193,7 +193,7 @@ export class AppComponent {
       CURRICULUM_CADASTRO_ATRIBUTOS_B5: { name: this.lex.translate("Big Five - B5"), permition: 'MOD_RX_CURR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
       CURRICULUM_CADASTRO_ATRIBUTOS_DASS: { name: this.lex.translate("DASS"), permition: 'MOD_RX_CURR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
       CURRICULUM_CADASTRO_ATRIBUTOS_SRQ20: { name: this.lex.translate("SRQ-20"), permition: 'MOD_RX_CURR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
-      CURRICULUM_CADASTRO_ATRIBUTOS_QVT: { name: this.lex.translate("QVT"), permition: 'MOD_RX_CURR', route: ['raiox', 'qvt'], icon: "" },      
+      CURRICULUM_CADASTRO_ATRIBUTOS_QVT: { name: this.lex.translate("QVT"), permition: 'MOD_RX_CURR', route: ['raiox', 'qvt'], icon: "" },
       /* RaioX - Oportunidades */
       CURRICULUM_OPORTUNIDADES: { name: this.lex.translate("Oportunidades"), permition: 'MOD_RX_OPO', route: ['raiox'], icon: "bi bi-lightbulb-fill" },
       /* RaioX - Outros */
@@ -211,7 +211,7 @@ export class AppComponent {
       CURRICULUM_CADASTRO_QUESTIONARIOS_RESPOSTAS: { name: this.lex.translate("Respostas"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'questionario', 'reposta'], icon: "bi bi-list-task" },
       CURRICULUM_CADASTRO_QUESTIONARIOS_TESTE: { name: this.lex.translate("Testes"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'questionario', 'teste'], icon: "bi bi-list-task" },
       CURRICULUM_CADASTRO_TIPOS_CURSOS: { name: this.lex.translate("Tipos de Curso"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'tipo-curso'], icon: "bi bi-box-seam" },
-      CURRICULUM_PESQUISA_ADM: { name: this.lex.translate("Administrador"), permition: 'MOD_RX_OUT', route: ['raiox', 'pesquisa-adm'], icon: "bi bi-binoculars" },      
+      CURRICULUM_PESQUISA_ADM: { name: this.lex.translate("Administrador"), permition: 'MOD_RX_OUT', route: ['raiox', 'pesquisa-adm'], icon: "bi bi-binoculars" },
       CURRICULUM_PESQUISA_USR: { name: this.lex.translate("Usuário"), permition: 'MOD_RX_OUT', route: ['raiox', 'pesquisa-usuario'], icon: "bi bi-search" },
       /* Projetos */
       PAINEL: { name: "Painel", permition: '', route: ['panel'], icon: "" },
@@ -375,7 +375,7 @@ export class AppComponent {
         this.menuSchema.CURRICULUM_CADASTRO_PROFISSIONAL,
         this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS
       ].sort(this.orderMenu)
-    },{
+    }, {
       name: this.lex.translate("Oportunidades"),
       permition: "MENU_RX_OPORTUNIDADES_ACESSO",
       id: "navbarDropdownRXOportunidades",
@@ -418,7 +418,7 @@ export class AppComponent {
         this.menuSchema.CURRICULUM_CADASTRO_CAPACIDADES_TECNICAS,
         this.menuSchema.CURRICULUM_CADASTRO_GRUPOS_ESPECIALIZADOS,
         "-",
-        this.menuSchema.CURRICULUM_OPORTUNIDADES,        
+        this.menuSchema.CURRICULUM_OPORTUNIDADES,
       ].sort(this.orderMenu)
     }];
 

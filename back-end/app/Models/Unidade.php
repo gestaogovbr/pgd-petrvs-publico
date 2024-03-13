@@ -32,30 +32,28 @@ class Unidade extends ModelBase
 
   protected $keyType = 'string';
 
-  protected $dates = ['deleted_at'];
-
-  public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
-    'codigo', /* varchar(12); NOT NULL; */ // Código da unidade
-    'sigla', /* varchar(100); NOT NULL; */ // Sigla da unidade
-    'nome', /* varchar(256); NOT NULL; */ // Nome da unidade
-    'path', /* text; */ // Path dos nós pais separados por /, ou NULL caso sejam nós raiz
-    'atividades_arquivamento_automatico', /* tinyint; NOT NULL; */ // Se arquiva automaticamente após conclusão
-    'distribuicao_forma_contagem_prazos', /* set('HORAS_CORRIDAS','DIAS_CORRIDOS','HORAS_UTEIS','DIAS_UTEIS'); NOT NULL; DEFAULT: 'DIAS_UTEIS'; */ // Forma da contagem de prazo
-    'entrega_forma_contagem_prazos', /* set('HORAS_CORRIDAS','HORAS_UTEIS'); NOT NULL; DEFAULT: 'HORAS_UTEIS'; */ // Forma da contagem de horas para entrega
-    'etiquetas', /* json; */ // Configuração das etiquetas que serão utilizadas nas atividades (contém nome, icone e cor)
-    'notificacoes', /* json; */ // Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)
-    'expediente', /* json; */ // Configuração de expediente da unidade
-    'texto_complementar_plano', /* longtext; */ // Campo de mensagem adicional do plano de trabalho
-    'data_inativacao', /* datetime; */ // Se a unidade está ou não inativa
-    'instituidora', /* tinyint; NOT NULL; */ // Se a unidade é instituidora (Programas)
-    'informal', /* tinyint; NOT NULL; */ // Se a unidade é informal (Time volante, por ex.)
-    'checklist', /* json; */ // Nome dos checklist
-    'unidade_pai_id', /* char(36); */
-    'entidade_id', /* char(36); NOT NULL; */
-    'cidade_id', /* char(36); */
-    //'deleted_at', /* timestamp; */
-    'data_modificacao',
-  ];
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'codigo', /* varchar(12); NOT NULL; */// Código da unidade
+        'sigla', /* varchar(100); NOT NULL; */// Sigla da unidade
+        'nome', /* varchar(256); NOT NULL; */// Nome da unidade
+        'path', /* text; */// Path dos nós pais separados por /, ou NULL caso sejam nós raiz
+        'atividades_arquivamento_automatico', /* tinyint; NOT NULL; */// Se arquiva automaticamente após conclusão
+        'distribuicao_forma_contagem_prazos', /* set('HORAS_CORRIDAS','DIAS_CORRIDOS','HORAS_UTEIS','DIAS_UTEIS'); NOT NULL; DEFAULT: 'DIAS_UTEIS'; */// Forma da contagem de prazo
+        'entrega_forma_contagem_prazos', /* set('HORAS_CORRIDAS','HORAS_UTEIS'); NOT NULL; DEFAULT: 'HORAS_UTEIS'; */// Forma da contagem de horas para entrega
+        'etiquetas', /* json; */// Configuração das etiquetas que serão utilizadas nas atividades (contém nome, icone e cor)
+        'notificacoes', /* json; */// Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)
+        'expediente', /* json; */// Configuração de expediente da unidade
+        'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
+        'data_inativacao', /* datetime; */// Se a unidade está ou não inativa
+        'instituidora', /* tinyint; NOT NULL; */// Se a unidade é instituidora (Programas)
+        'informal', /* tinyint; NOT NULL; */// Se a unidade é informal (Time volante, por ex.)
+        'checklist', /* json; */// Nome dos checklist
+        'unidade_pai_id', /* char(36); */
+        'entidade_id', /* char(36); NOT NULL; */
+        'cidade_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
+        'data_modificacao',
+    ];
 
   public $fillable_relations = [];
 
@@ -77,7 +75,8 @@ class Unidade extends ModelBase
   protected $casts = [
     'etiquetas' => AsJson::class,
     'checklist' => AsJson::class,
-    'expediente' => AsJson::class
+    'expediente' => AsJson::class,
+    'deployed_at' => 'datetime',
   ];
   // Has
   public function atividades()
@@ -132,7 +131,7 @@ class Unidade extends ModelBase
   {
     return $this->hasMany(HistoricoFuncao::class);
   }
-  public function curriculumsProfissionais()
+  public function curriculunsProfissionais()
   {
     return $this->hasMany(CurriculumProfissional::class, 'lotacao_atual');
   }

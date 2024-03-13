@@ -11,8 +11,6 @@ import { CursoDaoService } from 'src/app/dao/curso-dao.service';
 import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { trigger, state, style, animate, transition } from '@angular/animations';
-import { InputMultiselectComponent } from 'src/app/components/input/input-multiselect/input-multiselect.component';
-import { CurriculumGraduacaoDaoService } from 'src/app/dao/curriculum-graduacao.service';
 import { CurriculumIdioma } from 'src/app/models/curriculum-idioma.model';
 import { InputNumberComponent } from 'src/app/components/input/input-number/input-number.component';
 import { Curriculum } from 'src/app/models/curriculum.model';
@@ -35,34 +33,26 @@ import { CurriculumGraduacao } from 'src/app/models/curriculum-graduacao.model';
 })
 export class CurriculumFormComponent extends PageFormBase<Curriculum, CurriculumDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild("quantidade_filhos", { static: false }) public quantidade_filhos?: InputNumberComponent;
+  @ViewChild("qtdefilhos", { static: false }) public quantidade_filhos?: InputNumberComponent;
   @ViewChild("area", { static: false }) public area_conhecimento?: InputSearchComponent;
   @ViewChild("estados", { static: false }) public estadosV?: InputSelectComponent;
   @ViewChild("curso", { static: false }) public curso?: InputSelectComponent;
-  @ViewChild("idiomas", { static: false }) public idiomasM?: InputMultiselectComponent;
-  @ViewChild('municipio', { static: false }) public municipioV?: InputSelectComponent;
+  @ViewChild('municipioV', { static: false }) public municipioV?: InputSelectComponent;
 
   public municipios: LookupItem[] = [];
-  public cursos: LookupItem[] = [];
-  public cursosPos: LookupItem[] = [];
-  public cursosGradPos: LookupItem[] = [];
-  public opcoesEscolha: LookupItem[] = [{ 'key': 1, 'value': 'Pretendo Fazer' }, { 'key': 0, 'value': 'Finalizado' }];
   public cidadeDao: CidadeDaoService;
   public cursoDao?: CursoDaoService;
   public areaDao?: AreaConhecimentoDaoService;
-  public curriculumGraduacaoDAO?: CurriculumGraduacaoDaoService;
   public formGraduacao?: FormGroup;
   public formIdiomaGrid?: FormGroup;
   public cursoWhere: any[] = [["id", "==", null]];
-  public show: boolean = true;
 
   constructor(public injector: Injector) {
     super(injector, Curriculum, CurriculumDaoService);
-    this.join = ['graduacoes.curso.area_conhecimento'];
+    this.join = ['cidade:id,uf', 'graduacoes.curso.area_conhecimento'];
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
     this.areaDao = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService)
     this.cursoDao = injector.get<CursoDaoService>(CursoDaoService)
-    this.curriculumGraduacaoDAO = injector.get<CurriculumGraduacaoDaoService>(CurriculumGraduacaoDaoService)
     this.form = this.fh.FormBuilder({
       id: { default: "" },
       cidade_id: { default: "" },
@@ -99,28 +89,29 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     return result;
   }
 
-  public async loadData(entity: Curriculum, form: FormGroup) {
+  public loadData(entity: Curriculum, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
   }
 
   public async initializeData(form: FormGroup) {
-    const curriculuns = await this.dao?.query({ where: [['usuario_id', '==', this.auth.usuario?.id]], join: this.join }).asPromise();
-    let entity = curriculuns?.length ? curriculuns[0] : new Curriculum();//this.entity
-    curriculuns?.length ? (this.id = curriculuns[0].id) : (this.id = "");
-    const cidade = entity.cidade_id != '' ? await this.cidadeDao?.getById(entity.cidade_id) : null;
-    let uf = this.lookup.getLookup(this.lookup.UF, cidade?.uf);
-    this.form?.controls.estados.setValue(uf?.key);//cidade.uf));
-    entity.quantidade_filhos > 0 ? this.form?.controls.filhos.setValue(true) : this.form?.controls.filhos.setValue(false);
-    const municipio = this.lookup.UF.find(x => x.key == cidade?.uf);
-    entity.idiomas.length > 0 ? this.form?.controls.radioFalaIdioma.setValue(true) : this.form?.controls.radioFalaIdioma.setValue(false);
-    await this.loadData(entity, this.form!);
+    await this.dao?.query({ where: [['usuario_id', '==', this.auth.usuario?.id]], join: this.join }).asPromise().then(resposta => {
+      if (resposta.length) {
+        this.entity = resposta[0];
+        this.form?.controls.estados.setValue(this.lookup.getLookup(this.lookup.UF, this.entity.cidade?.uf)?.key);
+      } else {
+        this.entity = new Curriculum();
+        this.form?.controls.estados.setValue(null);
+      }
+      this.form?.controls.filhos.setValue(!!this.entity.quantidade_filhos);
+      this.form?.controls.radioFalaIdioma.setValue(!!this.entity.idiomas.length);
+    });
+    this.loadData(this.entity!, this.form!);
   }
 
   public saveData(form: IIndexable): Promise<Curriculum> {
     return new Promise<Curriculum>((resolve, reject) => {
       let curriculum = this.util.fill(new Curriculum(), this.entity!) as Curriculum;
-      curriculum.id = this.id!;
       curriculum = this.util.fillForm(curriculum, this.form!.value);
       curriculum.usuario_id = this.auth.usuario!.id;
       curriculum.graduacoes = this.form!.controls.graduacoes.value.filter((x: CurriculumGraduacao) => x._status?.length);
@@ -128,17 +119,13 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     });
   }
 
-  public onEstadosChange() {
-    this.show = false;
-    const estados = this.form!.controls.estados.value;
-    this.selecionaMunicipios(estados);
-  }
-
-  public selecionaMunicipios(uf: string) {
-    this.cidadeDao?.query({ where: [['uf', '==', uf]], orderBy: [['nome', 'asc']] }).asPromise().then((municipios) => {
-      this.municipios = municipios.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
-    });
-    this.show = true;
+  public async onEstadosChange() {
+    if (this.form!.controls.estados.value) {
+      await this.cidadeDao?.query({ where: [['uf', '==', this.form!.controls.estados.value]], orderBy: [['nome', 'asc']] }).asPromise().then((resposta) => {
+        this.municipios = resposta.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
+        this.municipioV!.disabled = resposta.length ? undefined : 'true';
+      });
+    }
   }
 
   public onAreaConhecimentoChange() {
@@ -191,7 +178,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
       row.pretensao = values.pretensao;
       row.curso_id = values.curso_id;
       row.curso = this.curso?.selectedItem?.data;
-      row.area_conhecimento = this.area_conhecimento?.selectedEntity
+      row.area_conhecimento = this.area_conhecimento?.selectedEntity;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
       return row;
     }
@@ -218,6 +205,10 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
       this.form!.controls.quantidade_filhos.setValue(0);
       this.form?.controls.filhos.setValue(false);
     }
+  }
+
+  public get municipiosWhere() {
+    return this.form?.controls.estados.value?.length ? [['uf', '==', this.form?.controls.estados.value]] : undefined;
   }
 
   public togglePopOver() { }
