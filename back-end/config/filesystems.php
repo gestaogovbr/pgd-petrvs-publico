@@ -25,6 +25,13 @@ return [
     | been setup for each driver as an example of the required options.
     |
     | Supported Drivers: "local", "ftp", "sftp", "s3"
+
+      'sftp' => [
+       // Replace this
+       'password' => env('SFTP_PASSPHRASE'),
+       // By this
+       'passphrase' => env('SFTP_PASSPHRASE'),
+       ]
     |
     */
 
@@ -33,6 +40,7 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
+            'throw' => true,
         ],
 
         'public' => [
@@ -40,6 +48,7 @@ return [
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
+            'throw' => true,
         ],
 
         's3' => [
@@ -51,6 +60,7 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => true,
         ],
 
     ],

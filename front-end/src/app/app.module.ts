@@ -19,7 +19,6 @@ import { TesteFormComponent } from './modules/teste/teste-form/teste-form.compon
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 
-
 @NgModule({
   declarations: [
     AppComponent,
