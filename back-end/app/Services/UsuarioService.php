@@ -261,11 +261,13 @@ class UsuarioService extends ServiceBase
 
   public function proxyStore(&$data, $unidade, $action)
   {
+    $data["with"] = [];
     $data['cpf'] = $this->UtilService->onlyNumbers($data['cpf']);
     if (!empty($data['telefone']))
       $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
     /* Armazena as informações que serão necessárias no extraStore */
     $this->buffer = ["integrantes" => $this->UtilService->getNested($data, "integrantes")];
+    $this->validarPerfil($data);
     return $data;
   }
 
@@ -332,9 +334,15 @@ class UsuarioService extends ServiceBase
   {
     $perfilAutenticado = $this::loggedUser()->perfil;
     $perfilNovo = Perfil::find($data['perfil_id']);
-    if ($perfilNovo->nivel < $perfilAutenticado->nivel)
-      throw new ServerException("ValidateUsuario", "Não é possível atribuir perfil superior ao do usuário logado.");
-    if ($data["perfil_id"] == $this->developerId && !$this->isLoggedUserADeveloper())
-      throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de/para um Desenvolvedor");
+    $perfilAtual = $this->getById($data)["perfil_id"];
+
+    if ($data['perfil_id'] != $perfilAtual) {
+      if ($perfilNovo->nivel < $perfilAutenticado->nivel)
+        throw new ServerException("ValidateUsuario", "Não é possível atribuir perfil superior ao do usuário logado.");
+      if ($data["perfil_id"] == $this->developerId && !$this->isLoggedUserADeveloper())
+        throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de/para um Desenvolvedor");
+      if ($perfilAtual == $this->developerId && !$this->isLoggedUserADeveloper())
+        throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de um Desenvolvedor");
+    }
   }
 }

@@ -240,7 +240,6 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_PENT_ENTR_EXCL", "Permite excluir entregas de um plano de entregas"],
         ["MOD_PENT_ENTR_INCL", "Permite incluir entregas de um plano de entregas"],
         ["MOD_PENT_ENTR_EXTRPL", "Permite incluir entregas que extrapolem o plano de entregas"],
-
         /* Capacidades do módulo PLANO DE ENTREGAS - ENTREGAS - PROGRESSOS*/
         ["MOD_PENT_ENTR_PRO_INCL", "Permite incluir o progresso da entrega de um plano de entregas"],
         ["MOD_PENT_ENTR_PRO_EDT", "Permite editar o progresso da entrega de um plano de entregas"],
@@ -263,6 +262,7 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_PART_HAB", "Permite habilitar participantes do programa"],
         ["MOD_PART_INCL", "Permite incluir participantes do programa"],
         ["MOD_PART_DESAB", "Permite desabilitar participantes do programa"],
+        ["MOD_PRGT_EXT", "Permite visualizar todos os programas, independente da hierarquia de unidades"],
       ]
     ], [
       "codigo" => "MOD_PROJ", //ok
