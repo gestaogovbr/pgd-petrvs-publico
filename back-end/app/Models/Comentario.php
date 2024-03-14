@@ -19,8 +19,8 @@ class Comentario extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'texto', /* text; NOT NULL; */// Texto do comentário
         'path', /* text; */// Path dos ids dos comentários
-        'data_comentario', /* datetime; NOT NULL; */// Data e horário que foi feito o comentário
-        'tipo', /* enum('COMENTARIO','TECNICO','GERENCIAL','AVALIACAO','TAREFA','ATIVIDADE'); NOT NULL; DEFAULT: 'COMENTARIO'; */// Tipo do comentário
+        'data_comentario', /* datetime; NOT NULL; */// Data e horário em que foi feito o comentário
+        'tipo', /* enum('COMENTARIO','TECNICO','GERENCIAL','AVALIACAO','TAREFA','ATIVIDADE','TIPO_ATIVIDADE'); NOT NULL; DEFAULT: 'COMENTARIO'; */// Tipo do comentário
         'privacidade', /* enum('PUBLICO','PRIVADO'); NOT NULL; DEFAULT: 'PUBLICO'; */// Nível de acesso ao comentário
         'usuario_id', /* char(36); NOT NULL; */
         'projeto_id', /* char(36); */
@@ -29,6 +29,7 @@ class Comentario extends ModelBase
         'atividade_tarefa_id', /* char(36); */
         'comentario_pai_id', /* char(36); */
         //'deleted_at', /* timestamp; */
+        //'plano_entrega_entrega_id', /* char(36); */
     ];
 
     public $delete_cascade = ['comentarios'];

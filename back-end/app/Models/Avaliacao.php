@@ -16,19 +16,16 @@ class Avaliacao extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nota', /* json; NOT NULL; */// Nota da avaliação
-        'justificativa', /* text; NOT NULL; DEFAULT: ; */// Justificativa
+        'justificativa', /* text; */// Comentário referente à avaliação, pelo avaliador
         'tipo_avaliacao_id', /* char(36); NOT NULL; */
-        'data_avaliacao',
-        'justificativas', /* json; NOT NULL; DEFAULT: 'json_array()'; */// Justificativa
-        //'recurso',
-        //'deleted_at', /* timestamp; */
-        //'comentarios', /* text; */// Comentário referente à avaliação, pelo avaliador
-        //'recurso', /* text; */// Recurso contra a nota atribuída, pelo avaliado
+        'data_avaliacao', /* datetime; NOT NULL; */// Data e hora da avaliação
+        'justificativas', /* json; NOT NULL; DEFAULT: 'json_array()'; */// Justificativas
         'avaliador_id', /* char(36); NOT NULL; */
-        'plano_trabalho_consolidacao_id', /* char(36); NOT NULL; */
-        'plano_entrega_id',
-        'tipo_avaliacao_id',
-        /*'usuario_id',*/// REMOVED
+        'plano_trabalho_consolidacao_id', /* char(36); */
+        'plano_entrega_id', /* char(36); */
+        'tipo_avaliacao_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
+        //'recurso', /* text; */// Recurso contra a nota atribuída, pelo avaliado
     ];
 
     public $delete_cascade = [

@@ -11,13 +11,12 @@ class Comparecimento extends ModelBase
 
     protected $with = [];
 
-    public $fillable = [ 
-        'data_comparecimento', 
-        'detalhamento',
-        'plano_trabalho_consolidacao_id', 
-        'unidade_id',
-        //'usuario_id',
-        //'deleted_at',
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'data_comparecimento', /* date; NOT NULL; */// Data do comparecimento
+        'detalhamento', /* varchar(255); NOT NULL; */// Detalhamento do comparecimento
+        'plano_trabalho_consolidacao_id', /* char(36); NOT NULL; */
+        'unidade_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
     // Casting

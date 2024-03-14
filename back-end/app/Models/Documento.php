@@ -25,13 +25,13 @@ class Documento extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'titulo', /* varchar(256); NOT NULL; */// Titulo do documento
-        'tipo', /* enum('HTML','PDF','LINK'); NOT NULL; */// Tipo do documento
-        'especie', /* enum('SEI','TCR','OUTRO','NOTIFICACAO'); NOT NULL; */// Especificação da espécie do documento (interno do sistema)
+        'tipo', /* enum('HTML','PDF','LINK','REPORT'); */
+        'especie', /* enum('SEI','TCR','OUTRO','NOTIFICACAO','RELATORIO'); */
         'conteudo', /* longtext; */// Conteúdo do arquivo
         'metadados', /* json; */// Metadados
         'link', /* json; */// Informações sobre o link, caso o tipo seja LINK
         'status', /* enum('GERADO','AGUARDANDO_SEI'); NOT NULL; DEFAULT: 'GERADO'; */// Status do documento: GERADO (documento gerado); AGUARDANDO_SEI (Aguardando abrir o documento no sei para colar o conteúdo dentro)
-        'template', /* text; */// Campo de Template
+        'template', /* longtext; */// Campo de Template
         'datasource', /* json; */// Conjunto de dados do template
         'dataset', /* json; */// Definição das variáveis disponíveis para o template
         'entidade_id', /* char(36); */

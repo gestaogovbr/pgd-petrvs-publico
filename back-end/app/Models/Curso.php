@@ -11,14 +11,14 @@ class Curso extends ModelBase
 {
   protected $table = 'cursos';
 
-  public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
-    'nome', /* varchar(256); NOT NULL; */ // Nome do curso
-    'titulo', /* varchar(64); NOT NULL; */ // Titulação do curso->Graduação, Pos, etc
-    'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */ // Curso ativo ou inativo
-    'area_id', /* char(36); NOT NULL; */
-    'tipo_curso_id', /* char(36); NOT NULL; */
-    //'deleted_at', /* timestamp; */
-  ];
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'nome', /* varchar(256); NOT NULL; */// Nome do curso
+        'titulo', /* varchar(64); NOT NULL; */// Titulação do curso->Graduação, Pos, etc
+        'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Curso ativo ou inativo
+        'area_id', /* char(36); NOT NULL; */
+        'tipo_curso_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
+    ];
 
   // Belongs
   public function areaConhecimento()
@@ -45,9 +45,5 @@ class Curso extends ModelBase
   public function historicosDocenciasInternas()
   {
     return $this->hasMany(HistoricoDocenciaInterna::class);
-  }
-  public function historicosDocenciasExternas()
-  {
-    return $this->hasMany(HistoricoDocenciaExterna::class);
   }
 }

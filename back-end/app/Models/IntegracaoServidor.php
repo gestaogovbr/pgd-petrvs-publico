@@ -15,7 +15,7 @@ class IntegracaoServidor extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'cpf_ativo', /* varchar(50); */
-        'data_modificacao', /* varchar(50); */
+        'data_modificacao', /* datetime; */
         'cpf', /* varchar(50); */
         'nome', /* varchar(100); */
         'emailfuncional', /* varchar(100); */
@@ -26,18 +26,19 @@ class IntegracaoServidor extends ModelBase
         'telefone', /* varchar(50); */
         'vinculo_ativo', /* varchar(50); */
         'matriculasiape', /* varchar(50); */
-        'codigo_cargo', /* varchar(50); */
+        'codigo_cargo', /* varchar(100); */
         'coduorgexercicio', /* varchar(50); */
         'coduorglotacao', /* varchar(50); */
         'codigo_servo_exercicio', /* varchar(50); */
         'nomeguerra', /* varchar(100); */
-        'codigo_situacao_funcional',
+        'codigo_situacao_funcional', /* varchar(50); */// Registra Código da Situação Funcional informado pelo Siape.
         'situacao_funcional', /* varchar(50); */
         'codupag', /* varchar(50); */
         'dataexercicionoorgao', /* varchar(50); */
         'funcoes', /* json; */
-        'cpf_chefia_imediata',
-        'email_chefia_imediata',
+        'cpf_chefia_imediata', /* varchar(50); */// Registra CPF da chefia imediata informado pelo Siape.
+        'email_chefia_imediata', /* varchar(50); */// Registra e-mail da chefia imediata informado pelo Siape.
+        //'deleted_at', /* timestamp; */
     ];
 
     protected $keyType = 'string';

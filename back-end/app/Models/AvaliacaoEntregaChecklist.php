@@ -14,11 +14,11 @@ class AvaliacaoEntregaChecklist extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'checklist', /* json; NOT NULL; */// Nota da avaliação
+        'checklist', /* json; NOT NULL; */// Checklist
         'avaliacao_id', /* char(36); NOT NULL; */
-        'plano_trabalho_entrega_id',
-        'plano_entrega_entrega_id'
-        /*'usuario_id',*/// REMOVED
+        'plano_trabalho_entrega_id', /* char(36); */
+        'plano_entrega_entrega_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
     ];
 
     public $delete_cascade = [];

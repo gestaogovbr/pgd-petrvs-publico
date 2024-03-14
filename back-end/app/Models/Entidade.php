@@ -36,7 +36,6 @@ class Entidade extends ModelBase
         'tipo_modalidade_id', /* char(36); */
         'cidade_id', /* char(36); */
         'uf', /* varchar(2); */// UF para feriados estaduais
-        //'url_sei', /* varchar(100); */// URL base do SEI da entidade
         'nomenclatura', /* json; */// Nomenclatura utilizada no sistema
         'gestor_id', /* char(36); */
         'gestor_substituto_id', /* char(36); */
@@ -44,8 +43,6 @@ class Entidade extends ModelBase
         'forma_contagem_carga_horaria', /* enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; */// Forma de contagem padrão da carga horária
         'expediente', /* json; NOT NULL; DEFAULT: '_utf8mb4\'{"domingo":[],"segunda":[],"terca":[],"quarta":[],"quinta":[],"sexta":[],"sabado":[],"especial":[]}\''; */// Configuração de expediente
         //'deleted_at', /* timestamp; */
-        //'api_public_key', /* text; */// Chave pública de API
-        //'api_private_key', /* text; */// Chave privada de API
     ];
 
     public $delete_cascade = ['feriados'];

@@ -14,24 +14,23 @@ class CurriculumProfissional extends ModelBase
 {
   protected $table = 'curriculuns_profissionais';
 
-  public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
-    'ano_ingresso',
-    'lotacao_atual', /* varchar(255); */ // Lotação atual
-    'especifique_habilidades', /* json; */ // Especifique suas habilidades: (Ex: Desenvolvo em JavaScript)
-    'viagem_nacional', /* tinyint; NOT NULL; */ // Já fez viagem nacional a trabalho
-    'viagem_internacional', /* tinyint; NOT NULL; */ // Já fez viagem internacional a trabalho
-    'interesse_bnt', /* tinyint; NOT NULL; */ // Você tem interesse na participação do Banco Nacional de Talentos
-    'pgd_inserido', /* varchar(255); */ // Você está inserido no programa de gestão da Instituição
-    'pgd_interesse', /* varchar(255); */ // Você tem interesse em participar do programa de gestão da Instituição
-    'telefone', /* varchar(64); */ // Telefone do chefe imediato
-    'remocao', /* tinyint; NOT NULL; */ // Você tem interesse em remoção
-    'curriculum_id', /* char(36); NOT NULL; */
-    'centro_treinamento_id', /* char(36); NOT NULL; */
-    'cargo_id', /* char(36); NOT NULL; */
-    'grupo_especializado_id', /* char(36); NULL; */
-    //'deleted_at', /* timestamp; */
-    //'ano_ingresso', /* tinyint; NOT NULL; */// Ano de ingresso
-  ];
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'ano_ingresso', /* int; NOT NULL; */// Ano de ingresso
+        'lotacao_atual', /* varchar(255); */// Lotação atual
+        'especifique_habilidades', /* json; */// Especifique suas habilidades: (Ex: Desenvolvo em JavaScript)
+        'viagem_nacional', /* tinyint; NOT NULL; */// Já fez viagem nacional a trabalho
+        'viagem_internacional', /* tinyint; NOT NULL; */// Já fez viagem internacional a trabalho
+        'interesse_bnt', /* tinyint; NOT NULL; */// Você tem interesse na participação do Banco Nacional de Talentos
+        'pgd_inserido', /* varchar(255); */// Você está inserido no programa de gestão da Instituição
+        'pgd_interesse', /* varchar(255); */// Você tem interesse em participar do programa de gestão da Instituição
+        'telefone', /* varchar(64); */// Telefone do chefe imediato
+        'remocao', /* tinyint; NOT NULL; */// Você tem interesse em remoção
+        'curriculum_id', /* char(36); NOT NULL; */
+        'centro_treinamento_id', /* char(36); */
+        'cargo_id', /* char(36); NOT NULL; */
+        'grupo_especializado_id', /* char(36); */// (DC2Type:guid)
+        //'deleted_at', /* timestamp; */
+    ];
 
   protected $casts = [
     'especifique_habilidades' => AsJson::class,

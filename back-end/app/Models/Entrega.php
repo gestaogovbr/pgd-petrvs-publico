@@ -14,13 +14,13 @@ class Entrega extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nome', /* varchar(256); NOT NULL; */// Nome da entrega
-        'descricao', /* varchar(255); NOT NULL; */// Descrição da entrega
+        'nome', /* text; NOT NULL; */
+        'descricao', /* text; NOT NULL; */
         'tipo_indicador', /* enum('QUANTIDADE','VALOR','PORCENTAGEM','QUALITATIVO'); NOT NULL; */// Tipo do indicador da entrega
         'lista_qualitativos', /* json; */// Lista de valores para entrega do tipo qualitativo
         'unidade_id', /* char(36); */
-        'etiquetas', /* json; */// Nome das etiquetas para o modelo de entrega
-        'checklist', /* json; */// Nome dos checklist para o modelo de entrega
+        'etiquetas', /* json; */// Etiquetas
+        'checklist', /* json; */// Checklist
         //'deleted_at', /* timestamp; */
     ];
 
