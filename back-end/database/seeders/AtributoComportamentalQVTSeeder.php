@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Questionario;
 use App\Models\QuestionarioPergunta;
-use Ramsey\Uuid\Uuid;
 
 class AtributoComportamentalQVTSeeder extends Seeder
 {
@@ -257,7 +256,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
         'tipo' => $pergunta['tipo'],
         'criado_versao' => $pergunta['criado_versao'],
         'deletado_versao' => $pergunta['deletado_versao'],
-        'respostas' => $pergunta['respostas'],
+        'respostas_possiveis' => $pergunta['respostas'],
         'questionario_id' => $uuid,
       ]);
       $perguntaNovo->save();

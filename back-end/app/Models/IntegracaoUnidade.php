@@ -47,9 +47,11 @@ class IntegracaoUnidade extends ModelBase
         'cnpjupag', /* varchar(60); */
     ];
 
-    protected $casts = [];
+    protected $casts = [
+        'deployed_at' => 'datetime',
+    ];
 
     protected $keyType = 'string';
 
-    protected $dates = ['deleted_at'];
+
 }

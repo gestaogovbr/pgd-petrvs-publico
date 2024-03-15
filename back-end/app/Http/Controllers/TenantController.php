@@ -161,4 +161,16 @@ class TenantController extends ControllerBase {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
+
+    public function deleteTenant(Request $request) {
+        try {
+            $data= $this->service->deleteTenant($request->tenant_id);
+            return response()->json([
+                'success' => true,
+                'data' =>$data
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
 }

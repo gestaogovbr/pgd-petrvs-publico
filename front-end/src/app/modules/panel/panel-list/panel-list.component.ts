@@ -31,12 +31,12 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
       icon: "bi bi-database-fill-up",
       label: "Executar Seeders"
     },
-    {
-      icon: "bi bi-database-x",
-      label: "Resetar DB",
-      disabled: this.gb.ENV==='production',
-      onClick: this.resetDB.bind(this)
-    }
+    // {
+    //   icon: "bi bi-database-x",
+    //   label: "Resetar DB",
+    //   disabled: this.gb.ENV==='production',
+    //   onClick: this.resetDB.bind(this)
+    // }
   ];
 
   constructor(public injector: Injector, dao: TenantDaoService,private authService: AuthPanelService) {
@@ -59,7 +59,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
     this.options.push({
       icon: "bi bi-trash",
       label: "Excluir",
-      onClick: this.delete.bind(this)
+      onClick: this.deleteTenant.bind(this)
     });
     this.options.push({
       icon: "bi bi-trash",
@@ -196,6 +196,19 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
         .then((user) => {
           this.title = "Bem vindo "+user.nome+" - Voce está em Ambiente "+this.gb.ENV;
         })
+  }
+
+  public deleteTenant(row: any) {
+    const self = this;
+    this.dialog.confirm("Excluir Tenant?", "Deseja realmente excluir esse tenant ("+row.id+")? ").then(confirm => {
+      if (confirm) {
+        this.dao!.deleteTenant(row).then(function () {
+          self.dialog.alert("Sucesso", "Migration executada com sucesso!");
+        }).catch(function (error) {
+          self.dialog.alert("Erro", "Erro ao executar a migration: " + error?.message ? error?.message : error);
+        });
+      }
+    });
   }
 }
 

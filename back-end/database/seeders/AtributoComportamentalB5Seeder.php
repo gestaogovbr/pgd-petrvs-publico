@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Questionario;
 use App\Models\QuestionarioPergunta;
-use Ramsey\Uuid\Uuid;
 
 class AtributoComportamentalB5Seeder extends Seeder
 {
@@ -16,7 +15,6 @@ class AtributoComportamentalB5Seeder extends Seeder
    */
   public function run()
   {
-    //$uuid = Uuid::uuid4();
     $questionario = new Questionario();
     $questionario->fill([
       'nome' => 'Big Five',
@@ -27,7 +25,6 @@ class AtributoComportamentalB5Seeder extends Seeder
     $questionario->save();
 
     $uuidB5 = Questionario::where('codigo', 'B5')->first()?->id;
-    //[{"key": "muito Inadequado", "data": {"_status": "ADD", "opcaoResposta": "muito Inadequado", "valorResposta": "1"}, "value": "muito Inadequado - 1"}, {"key": "Relativamente Inadequado", "data": {"_status": "ADD", "opcaoResposta": "Relativamente Inadequado", "valorResposta": "2"}, "value": "Relativamente Inadequado - 2"}, {"key": "Nem Adequado, Nem inadequado", "data": {"_status": "ADD", "opcaoResposta": "Nem Adequado, Nem inadequado", "valorResposta": "3"}, "value": "Nem Adequado, Nem inadequado - 3"}, {"key": "Relativamente Adequado", "data": {"_status": "ADD", "opcaoResposta": "Relativamente Adequado", "valorResposta": "4"}, "value": "Relativamente Adequado - 4"}, {"key": "Muito Adequado", "data": {"_status": "ADD", "opcaoResposta": "Muito Adequado", "valorResposta": "5"}, "value": "Muito Adequado - 5"}]
     $sequencia = 1;
     $perguntasB5 =
       [
@@ -81,8 +78,6 @@ class AtributoComportamentalB5Seeder extends Seeder
         ['sequencia' => $sequencia, 'pergunta' => 'Eu sou preciso no meu trabalho.', 'tipo' => 'SELECT', 'criado_versao' => 1, 'deletado_versao' => 0, 'questionario_id' => $uuidB5],
         ['sequencia' => $sequencia, 'pergunta' => 'Frequentemente eu me sinto triste.', 'tipo' => 'SELECT', 'criado_versao' => 1, 'deletado_versao' => 0, 'questionario_id' => $uuidB5],
         ['sequencia' => $sequencia, 'pergunta' => 'Eu sou cheio(a) de idéias.', 'tipo' => 'SELECT', 'criado_versao' => 1, 'deletado_versao' => 0, 'questionario_id' => $uuidB5],
-        //['sequencia' => $sequencia,'pergunta' => 'rico.','tipo' => 'SELECT','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuidB5],
-
       ];
 
     $respostas = [
@@ -101,7 +96,7 @@ class AtributoComportamentalB5Seeder extends Seeder
         'tipo' => $perguntaB5['tipo'],
         'criado_versao' => $perguntaB5['criado_versao'],
         'deletado_versao' => $perguntaB5['deletado_versao'],
-        'respostas' => $respostas,
+        'respostas_possiveis' => $respostas,
         'questionario_id' => $uuidB5
       ]);
       $perguntaNovo->save();

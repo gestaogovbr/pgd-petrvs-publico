@@ -5,7 +5,6 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 import { IIndexable } from 'src/app/models/base.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem, LookupService } from 'src/app/services/lookup.service';
-import { Curriculum } from 'src/app/models/currriculum.model';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
 import { FuncaoDaoService } from 'src/app/dao/funcao-dao.service';
@@ -13,7 +12,6 @@ import { CentroTreinamentoDaoService } from 'src/app/dao/centro-treinamento-dao.
 import { GrupoEspecializadoDaoService } from 'src/app/dao/grupo-especializado-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { InputRadioComponent } from 'src/app/components/input/input-radio/input-radio.component';
-import { CurriculumProfissional } from 'src/app/models/currriculum-profissional.model';
 import { CurriculumProfissionalDaoService } from 'src/app/dao/curriculum-profissional-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
@@ -24,15 +22,17 @@ import { AreaAtividadeExternaDaoService } from 'src/app/dao/area-atividade-exter
 import { MateriaDaoService } from 'src/app/dao/materia-dao.service';
 import { CursoDaoService } from 'src/app/dao/curso-dao.service';
 import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.service';
-import { HistoricoAtividadeInterna } from 'src/app/models/historico-atividade-interna-currriculum.model';
-import { HistoricoLotacao } from 'src/app/models/historico-lotacao-currriculum.model';
-import { HistoricoFuncao } from 'src/app/models/historico-funcao-currriculum.model';
-import { HistoricoAtividadeExterna } from 'src/app/models/historico-atividade-externa-currriculum.model';
-import { HistoricoDocenciaExterna } from 'src/app/models/historico-docencia-externa-currriculum.model';
-import { HistoricoDocenciaInterna } from 'src/app/models/historico-docencia-interna-currriculum.model';
-import { HistoricoCursoInterno } from 'src/app/models/historico-curso-interno-currriculum.model';
-import { HistoricoCursoExterno } from 'src/app/models/historico-curso-externo-currriculum.model';
+import { HistoricoAtividadeInterna } from 'src/app/models/historico-atividade-interna.model';
+import { HistoricoAtividadeExterna } from 'src/app/models/historico-atividade-externa.model';
 import { CapacidadeTecnicaDaoService } from 'src/app/dao/capacidade-tecnica-dao.service';
+import { CurriculumProfissional } from 'src/app/models/curriculum-profissional.model';
+import { Curriculum } from 'src/app/models/curriculum.model';
+import { HistoricoFuncao } from 'src/app/models/historico-funcao.model';
+import { HistoricoLotacao } from 'src/app/models/historico-lotacao.model';
+import { HistoricoDocenciaExterna } from 'src/app/models/historico-docencia-externa.model';
+import { HistoricoDocenciaInterna } from 'src/app/models/historico-docencia-interna.model';
+import { HistoricoCursoInterno } from 'src/app/models/historico-curso-interno.model';
+import { HistoricoCursoExterno } from 'src/app/models/historico-curso-externo.model';
 
 @Component({
   selector: 'curriculum-profissional-form',
@@ -121,7 +121,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   constructor(public injector: Injector) {
     super(injector, CurriculumProfissional, CurriculumProfissionalDaoService);
     this.join = ['historicos_atividades_internas.capacidade_tecnica.area_tematica', 'historicos_atividades_externas.area_atividade_externa', 'historicos_cursos_internos.curso', 'historicos_cursos_externos.area_atividade_externa', 'historicos_docencias_internas.curso',
-      'historicos_docencias_externas.area_atividade_externa', 'historicos_funcoes.funcao', 'historicos_funcoes.unidade', 'historicos_lotacoes.unidade','curriculum'];
+      'historicos_docencias_externas.area_atividade_externa', 'historicos_funcoes.funcao', 'historicos_funcoes.unidade', 'historicos_lotacoes.unidade', 'curriculum'];
     this.curriculumDao = injector.get<CurriculumDaoService>(CurriculumDaoService);
     this.userDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.lotacaoDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
@@ -210,7 +210,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   }
 
   async ngOnInit(): Promise<void> {
-  //  super.ngOnInit();
+    //  super.ngOnInit();
     for (let i = 1980; i <= (new Date()).getFullYear(); i++) {
       this.anos.push(Object.assign({}, { key: i, value: (i.toString()) }));
     }
@@ -219,9 +219,9 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     await this.curriculumDao?.query({ where: [['usuario_id', '==', this.auth.usuario?.id]] }).getAll().then(async (curriculum) => {
       if (curriculum.length) {
         this.curriculumID = curriculum[0].id;
-        await this.dao?.query({ where: [['curriculum_id', '==', this.curriculumID]], join: this.join }).asPromise().then( resposta => {
-            this.entity = resposta ? resposta[0] : new CurriculumProfissional();
-            resposta ? this.curriculumProfissionalID = resposta[0].id : '';
+        await this.dao?.query({ where: [['curriculum_id', '==', this.curriculumID]], join: this.join }).asPromise().then(resposta => {
+          this.entity = resposta ? resposta[0] : new CurriculumProfissional();
+          resposta ? this.curriculumProfissionalID = resposta[0].id : '';
         });
         this.initializeData(this.form!);
       } else {
@@ -256,29 +256,27 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   }
 
   public async initializeData(form: FormGroup) {
-    if(this.entity){
+    if (this.entity) {
       this.entity.historicos_atividades_internas.length > 0 ? this.form?.controls.radioAtividadeInterna.setValue(true) : this.form?.controls.radioAtividadeInterna.setValue(false);
       this.entity.historicos_atividades_externas.length > 0 ? this.form?.controls.radioAtividadeExterna.setValue(true) : this.form?.controls.radioAtividadeExterna.setValue(false);
       this.entity.historicos_docencias_internas.length > 0 ? this.form?.controls.radioDocenciaInterna.setValue(true) : this.form?.controls.radioDocenciaInterna.setValue(false);
       this.entity.historicos_docencias_externas.length > 0 ? this.form?.controls.radioDocenciaExterna.setValue(true) : this.form?.controls.radioDocenciaExterna.setValue(false);
-      if(this.entity.pgd_interesse != ''){
+      if (this.entity.pgd_interesse != '') {
         const interesse = this.lookup.getLookup(this.lookup.PG_PRF, this.entity.pgd_interesse);
-        this.form?.controls.radioInteresseProgramaGestao.setValue(true); 
+        this.form?.controls.radioInteresseProgramaGestao.setValue(true);
         this.escolhaInteresseProgramaGestao?.setValue(interesse?.key)
-      }else{
+      } else {
         this.form?.controls.radioInteresseBNT.setValue(false);
       }
-      if(this.entity.pgd_inserido != ''){
+      if (this.entity.pgd_inserido != '') {
         const inserido = this.lookup.getLookup(this.lookup.PG_PRF, this.entity.pgd_inserido);
-        this.form?.controls.radioProgramaGestao.setValue(true); 
+        this.form?.controls.radioProgramaGestao.setValue(true);
         this.escolhaRadioProgramaGestao?.setValue(inserido?.key)
-      }else{
+      } else {
         this.form?.controls.radioProgramaGestao.setValue(false);
       }
       await this.loadData(this.entity, this.form!);
     }
-
-    
   }
 
   public async saveData(form: IIndexable): Promise<CurriculumProfissional> {
@@ -347,7 +345,6 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     }
     return undefined;
   }
-
 
   //GRID LOTACAO
   public async addHistoricoLotacao() {

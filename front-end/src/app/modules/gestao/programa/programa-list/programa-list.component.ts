@@ -59,7 +59,7 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
     let result: any[] = [];
     let form: any = filter.value;
     if(this.vigentesUnidadeExecutora) result.push(['vigentesUnidadeExecutora',"==",this.auth.unidade!.id]);
-    if(this.todosUnidadeExecutora) result.push(['todosUnidadeExecutora',"==",this.auth.unidade!.id]);
+    if(this.todosUnidadeExecutora || !this.util.isDeveloper()) result.push(['todosUnidadeExecutora',"==",this.auth.unidade!.id]);
     if(form.nome?.length) {
       result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
