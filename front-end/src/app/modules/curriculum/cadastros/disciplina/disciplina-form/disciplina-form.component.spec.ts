@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MateriaFormComponent } from './materia-form.component';
+import { MateriaFormComponent } from './disciplina-form.component';
 
 describe('MateriaFormComponent', () => {
   let component: MateriaFormComponent;
@@ -8,9 +8,9 @@ describe('MateriaFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MateriaFormComponent ]
+      declarations: [MateriaFormComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

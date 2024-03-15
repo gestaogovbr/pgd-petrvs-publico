@@ -129,7 +129,7 @@
         <input-switch [size]="2" #radioDocenciaInterna [label]="labelRadio(radioDocenciaInterna)" icon="fas fa-chalkboard" controlName="radioDocenciaInterna" [control]="form!.controls.radioDocenciaInterna"></input-switch>
         <grid #gridHistoricoDocenciaInterna *ngIf="form!.controls.radioDocenciaInterna.value" [control]="form!.controls.historicos_docencias_internas" [minHeight]="150" [form]="formHistoricoDocenciaInternaGrid!" [hasDelete]="true" [add]="addHistoricoDocenciaInterna.bind(this)" [load]="loadHistoricoDocenciaInterna.bind(this)" [remove]="removeHistoricoDocenciaInterna.bind(this)" [save]="saveHistoricoDocenciaInterna.bind(this)" editable>
           <columns>
-            <column title="Curso" titleHint="Escolha a área." [template]="columnDocenciaInterna" [editTemplate]="editDocenciaInterna">
+            <column title="Disciplina" titleHint="Escolha a disciplina." [template]="columnDocenciaInterna" [editTemplate]="editDocenciaInterna">
               <ng-template let-row="row" #columnDocenciaInterna>{{row.curso?.nome || "Desconhecido"}}</ng-template>
               <ng-template let-row="row" #editDocenciaInterna>
                 <input-select #cursoDocenciaInterna [size]="3" label="Curso" icon controlName="curso_id" fullEntity [control]="form!.controls.curso_id" [dao]="cursoDao" [where]="[['titulo', '==', 'INSTITUCIONAL']]" [orderBy]="[['nome', 'asc']]" [addRoute]="{route: ['raiox','cadastros','curso','new']}"></input-select>

@@ -29,7 +29,6 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
   public bigicoIMG: string;
   public bigicoAmareloIMG: string;
   public questionarioDao: QuestionarioDaoService;
-  public respostasConcluidas?: boolean;
   public questionario?: Questionario;
   public perguntas: QuestionarioPergunta[] = [];
   public respostas: QuestionarioPerguntaResposta[] = [];
@@ -49,7 +48,6 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
   public estabilidade: number = 0;
   public abertura: number = 0;
   public chart: any;
-  public respondido: boolean = false;
   public min: string = '';
   public max: string = '';
   public valueTrack: string = '';
@@ -63,18 +61,6 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
     this.form = this.fh.FormBuilder({
     }, this.cdRef);
   }
-
-  /*   public formValidation = (form?: FormGroup) => {
-      let result = undefined;
-      if (!this.respondido && this.valoresAcumuladosB5.length < 50) {
-        this.dialog.topAlert('Para gravação o teste deve ser respondido por completo', 5000);
-        this.editableForm!.submitting = false;
-        this.respostasConcluidas = false;
-      } else {
-        this.respostasConcluidas = true;
-      }
-      return result;
-    } */
 
   public async loadData(entity: QuestionarioPreenchimento, form: FormGroup) { }
 
@@ -95,7 +81,6 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
               if (pergunta.id == resposta.questionario_pergunta_id) respostasUsuario.push(resposta.resposta);
             });
           });
-          this.respondido = true;
           this.calculoTeste(respostasUsuario);
         }
       }
@@ -104,15 +89,11 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
 
   public async onSaveData() {
     const self = this;
-    //this.formValidation(this.form!);
-    //if(this.respostasConcluidas){
     this.submitting = true;
-    //await this.saveData(this.form!.value);
     if (await this.saveData(this.form!.value)) {
       self.close();
     }
     self.submitting = false;
-    //}
   }
 
   public async saveData(form: IIndexable): Promise<QuestionarioPreenchimento | boolean> {
@@ -131,28 +112,6 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
     })
     return true;
   }
-
-  /*   public async saveData(form: IIndexable): Promise<QuestionarioPreenchimento | boolean> {
-      if (this.respondido || !this.respostasConcluidas) {
-        this.editableForm!.submitting = false;
-        return false;
-      }
-      let questionarioPreenchimento = this.util.fill(new QuestionarioPreenchimento({
-        usuario_id: this.auth.usuario?.id,
-        questionario_id: this.questionario!.id
-      }), this.entity || {});
-      let objRespostas = this.valoresAcumuladosB5.map((valor, i) => new QuestionarioPerguntaResposta({
-        questionario_pergunta_id: this.questionario!.perguntas[i].id,
-        resposta: valor,
-        _status: "ADD"
-      }));
-      questionarioPreenchimento.respostas = objRespostas;
-      await this.dao!.save(questionarioPreenchimento, this.join).then(questionario => {
-        this.entity = questionario;
-      })
-      return questionarioPreenchimento;
-    } */
-
 
   public onRadioChange(event: any) {
     this.valorEscolhido = event.srcElement.value;
@@ -202,7 +161,7 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
       if (this.controle <= 49) {
         this.numeroPergunta++;
         this.showPergunta = this.perguntas[this.controle].pergunta;
-        (document.querySelector('.cardb5')?.hasAttribute('hidden')) ? document.querySelector('.cardb5')?.removeAttribute('hidden') : '';
+        //(document.querySelector('.cardb5')?.hasAttribute('hidden')) ? document.querySelector('.cardb5')?.removeAttribute('hidden') : '';
       }
     }
     if (this.controle >= 50) {
@@ -215,9 +174,7 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
   }
 
   public async enviar() {
-    //this.respostasConcluidas = true;
     await this.onSaveData();
-    //this.calculoTeste(this.valoresAcumuladosB5)
     this.go.navigate({ route: ['raiox', 'atributos'] });
   }
 

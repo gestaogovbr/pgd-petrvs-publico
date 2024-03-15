@@ -26,7 +26,7 @@ class CurriculumProfissional extends ModelBase
         'telefone', /* varchar(64); */// Telefone do chefe imediato
         'remocao', /* tinyint; NOT NULL; */// Você tem interesse em remoção
         'curriculum_id', /* char(36); NOT NULL; */
-        'centro_treinamento_id', /* char(36); */
+        'centro_treinamento_id', /* char(36); */// (DC2Type:guid)
         'cargo_id', /* char(36); NOT NULL; */
         'grupo_especializado_id', /* char(36); */// (DC2Type:guid)
         //'deleted_at', /* timestamp; */

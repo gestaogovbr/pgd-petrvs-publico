@@ -38,7 +38,7 @@ class DatabaseSeeder extends Seeder
         AreaConhecimentoSeeder::class,
         TipoCursoSeeder::class,
         CursoSeeder::class,
-        MateriaSeeder::class,
+        DisciplinaSeeder::class,
         CargoSeeder::class,
         FuncaoSeeder::class,
         CentroTreinamentoSeeder::class,
