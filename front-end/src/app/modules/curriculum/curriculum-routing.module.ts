@@ -21,7 +21,7 @@ const routes: Routes = [
   { path: 'profissional', component: CurriculumProfissionalFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Dados Profissionais", modal: true } },
   { path: 'big5', component: CurriculumAtributosBig5FormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Big5" } },
   { path: 'soft', component: CurriculumAtributosSoftFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Soft" } },
-  { path: 'atributos', component: CurriculumAtributosComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Atributos Comportamentais2", modal: false, modalWidth: 1300 } },
+  { path: 'atributos', component: CurriculumAtributosComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Atributos Comportamentais", modal: false, modalWidth: 1300 } },
   { path: 'disc', component: CurriculumAtributosDiscFormComponent, canActivate: [AuthGuard], data: { title: "Disc" } },
   { path: 'dass', component: CurriculumAtributosDassFormComponent, canActivate: [AuthGuard], data: { title: "Dass" } },
   { path: 'qvt', component: CurriculumAtributosQvtFormComponent, canActivate: [AuthGuard], data: { title: "QVT" } },

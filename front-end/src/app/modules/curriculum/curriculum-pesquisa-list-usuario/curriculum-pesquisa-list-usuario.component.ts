@@ -59,7 +59,7 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
         this.questionarios.push({ 'codigo': element.questionario.codigo, 'perguntas': element.questionario.perguntas });
         if (element.questionario.codigo == 'B5') {
           element.questionario.perguntas.forEach((pergunta: any) => {
-            respostas.push(pergunta.questionario_resposta_pergunta[0].resposta)
+            respostas.push(pergunta.respostas[0].resposta)
           })
         }
       }
