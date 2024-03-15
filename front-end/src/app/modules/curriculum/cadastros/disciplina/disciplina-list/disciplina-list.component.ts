@@ -2,32 +2,31 @@ import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
-import { Materia } from 'src/app/models/materia.model';
-import { MateriaDaoService } from 'src/app/dao/materia-dao.service';
 import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.service';
+import { Disciplina } from 'src/app/models/disciplina.model';
+import { DisciplinaDaoService } from 'src/app/dao/disciplina-dao.service';
 
 @Component({
-  selector: 'materia-list',
-  templateUrl: './materia-list.component.html',
-  styleUrls: ['./materia-list.component.scss']
+  selector: 'disciplina-list',
+  templateUrl: './disciplina-list.component.html',
+  styleUrls: ['./disciplina-list.component.scss']
 })
-export class MateriaListComponent extends PageListBase<Materia, MateriaDaoService> {
+export class DisciplinaListComponent extends PageListBase<Disciplina, DisciplinaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public area?: AreaConhecimentoDaoService;
   constructor(public injector: Injector) {
-    super(injector, Materia, MateriaDaoService);
+    super(injector, Disciplina, DisciplinaDaoService);
     this.area = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService)
     /* Inicializações */
     this.title = this.lex.translate("Disciplinas");
     this.code = "MOD_RX_CURR";
-    this.join = ["curso", "curso.area_conhecimento"];
+    this.join = [];
     this.orderBy = [['nome', 'asc']];
     this.filter = this.fh.FormBuilder({
-      area_id: { default: "" },
       nome: { default: "" },
-      horas_aula: { default: 0 },
-      ativo: { default: true },
+      sigla: { default: "" },
+      inativas: { default: false },
     });
     this.addOption(this.OPTION_INFORMACOES);
     this.addOption(this.OPTION_EXCLUIR, "MOD_RX_OUT_EXCL");
@@ -35,7 +34,8 @@ export class MateriaListComponent extends PageListBase<Materia, MateriaDaoServic
 
   public filterClear(filter: FormGroup) {
     filter.controls.nome.setValue("");
-    filter.controls.horas_aula.setValue("");
+    filter.controls.sigla.setValue("");
+    filter.controls.inativas.setValue(false);
     super.filterClear(filter);
   }
 
@@ -45,9 +45,10 @@ export class MateriaListComponent extends PageListBase<Materia, MateriaDaoServic
     if (form.nome?.length) {
       result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
-    if (form.horas_aula?.length) {
-      result.push(["horas_aula", "like", "%" + form.horas_aula.trim().replace(" ", "%") + "%"]);
+    if (form.sigla?.length) {
+      result.push(["sigla", "like", "%" + form.sigla.trim().replace(" ", "%") + "%"]);
     }
+    result.push(["ativo", "==", form.inativas ? 0 : 1]);
     return result;
   }
 }

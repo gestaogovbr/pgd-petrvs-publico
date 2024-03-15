@@ -17,7 +17,7 @@ import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
 import { CargoDaoService } from 'src/app/dao/cargo-dao.service';
 import { AreaTematicaDaoService } from 'src/app/dao/area-tematica-dao.service';
 import { AreaAtividadeExternaDaoService } from 'src/app/dao/area-atividade-externa-dao.service';
-import { MateriaDaoService } from 'src/app/dao/materia-dao.service';
+import { DisciplinaDaoService } from 'src/app/dao/disciplina-dao.service';
 import { CursoDaoService } from 'src/app/dao/curso-dao.service';
 import { HistoricoAtividadeInterna } from 'src/app/models/historico-atividade-interna.model';
 import { HistoricoAtividadeExterna } from 'src/app/models/historico-atividade-externa.model';
@@ -61,7 +61,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public cargoDao: CargoDaoService;
   public areaTematicaDao: AreaTematicaDaoService;
   public areaAtividadeExternaDao: AreaAtividadeExternaDaoService;
-  public materiaDao: MateriaDaoService;
+  public disciplinaDao: DisciplinaDaoService;
   public cursoDao: CursoDaoService;
   public capacidadeTecnicaDao: CapacidadeTecnicaDaoService;
   public formHistoricoFuncaoGrid: FormGroup;
@@ -86,24 +86,24 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     this.cargoDao = injector.get<CargoDaoService>(CargoDaoService);
     this.areaTematicaDao = injector.get<AreaTematicaDaoService>(AreaTematicaDaoService);
     this.areaAtividadeExternaDao = injector.get<AreaAtividadeExternaDaoService>(AreaAtividadeExternaDaoService);
-    this.materiaDao = injector.get<MateriaDaoService>(MateriaDaoService);
+    this.disciplinaDao = injector.get<DisciplinaDaoService>(DisciplinaDaoService);
     this.cursoDao = injector.get<CursoDaoService>(CursoDaoService);
     this.capacidadeTecnicaDao = injector.get<CapacidadeTecnicaDaoService>(CapacidadeTecnicaDaoService);
     this.form = this.fh.FormBuilder({
-            radioProgramaGestao: { default: false },
-            radioInteresseProgramaGestao: { default: false },
-            radioInteresseBNT: { default: false },
-            radioInteresseRemocao: { default: false },
-            radioViajemNacional: { default: false },
-            radioViajemInternacional: { default: false },
-            radioAtividadeExterna: { default: false },
-            radioAtividadeInterna: { default: false },
-            radioDocenciaExterna: { default: false },
-            radioDocenciaInterna: { default: false },
-            radioCursoExterno: { default: false },
-            escolhaInteresseProgramaGestao: { default: "" },
-            escolhaRadioProgramaGestao: { default: "" },
-            inputEspecifiqueHabilidade: { default: "" },
+      radioProgramaGestao: { default: false },
+      radioInteresseProgramaGestao: { default: false },
+      radioInteresseBNT: { default: false },
+      radioInteresseRemocao: { default: false },
+      radioViajemNacional: { default: false },
+      radioViajemInternacional: { default: false },
+      radioAtividadeExterna: { default: false },
+      radioAtividadeInterna: { default: false },
+      radioDocenciaExterna: { default: false },
+      radioDocenciaInterna: { default: false },
+      radioCursoExterno: { default: false },
+      escolhaInteresseProgramaGestao: { default: "" },
+      escolhaRadioProgramaGestao: { default: "" },
+      inputEspecifiqueHabilidade: { default: "" },
       especifique_habilidades: { default: [] },
       historicos_funcoes: { default: [] },
       historicos_lotacoes: { default: [] },
@@ -116,7 +116,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       ano_ingresso: { default: [] },
       telefone: { default: "" },
       lotacao_atual: { default: "" },
-            selecionaLotacao: { default: "" },
+      selecionaLotacao: { default: "" },
       viagem_nacional: { default: 0 },
       viagem_internacional: { default: 0 },
       interesse_bnt: { default: 0 },
@@ -275,8 +275,8 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, row));
     console.log('loadHistoricoFuncao: ', row);
-/*     this.formHistoricoFuncaoGrid!.controls.funcao_id.setValue(row.funcao_id);
-    this.formHistoricoFuncaoGrid!.controls.unidade_id.setValue(row.unidade_id); */
+    /*     this.formHistoricoFuncaoGrid!.controls.funcao_id.setValue(row.funcao_id);
+        this.formHistoricoFuncaoGrid!.controls.unidade_id.setValue(row.unidade_id); */
   }
 
   public async removeHistoricoFuncao(row: any) {

@@ -35,7 +35,7 @@ const routes: Routes = [
   { path: 'cadastros/centro-treinamento', loadChildren: () => import('./cadastros/centro-treinamento/centro-treinamento.module').then(m => m.CentroTreinamentoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/funcao', loadChildren: () => import('./cadastros/funcao/funcao.module').then(m => m.FuncaoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/grupo-especializado', loadChildren: () => import('./cadastros/grupo-especializado/grupo-especializado.module').then(m => m.GrupoEspecializadoModule), canActivate: [AuthGuard] },
-  { path: 'cadastros/materia', loadChildren: () => import('./cadastros/materia/materia.module').then(m => m.MateriaModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/disciplina', loadChildren: () => import('./cadastros/disciplina/disciplina.module').then(m => m.DisciplinaModule), canActivate: [AuthGuard] },
   { path: 'cadastros/cargo', loadChildren: () => import('./cadastros/cargo/cargo.module').then(m => m.CargoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/funcao', loadChildren: () => import('./cadastros/funcao/funcao.module').then(m => m.FuncaoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/area-tematica', loadChildren: () => import('./cadastros/area-tematica/area-tematica.module').then(m => m.AreaTematicaModule), canActivate: [AuthGuard] },

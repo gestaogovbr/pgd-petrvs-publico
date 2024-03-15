@@ -4,40 +4,10 @@
   </div>
   <ng-template #bigfive>
 
-    <separator class="my-5" title="Você quer se conhecer melhor? Este teste de personalidade irá ajudá-lo a compreender as formas de seu comportamento e os motivos de suas ações." [bold]="false"></separator>
+    <separator class="my-5" [title]="questionario ? 'Conheça e analise os resultados do seu questionário Big-Five.' : 'Você quer se conhecer melhor? Este teste de personalidade irá ajudá-lo(a) a compreender as formas de seu comportamento e os motivos de suas ações.'" [bold]="false"></separator>
 
-    <!--<div class="card cardb5 my-3" id="cardpergb5">
-            <div class="card-header">
-                Para prosseguir é necessário responder a pergunta
-            </div>
-            <div class="card-body text-wrap">
-                <div #divb5 class="row tex-center divb5">
-                    <label class="text-center fw-bold">{{numeroPergunta}}. {{this.showPergunta}}</label>
-                </div>
-                <div class="row my-2">
-                    <div class="col-md-12" id="divradiob5" (change)="onRadioChange($event)">
-
-                        <input-radio #radio controlName="radiob5" [control]="form!.controls.radiob5" class="radio" id="radio" [items]="opcoesEscolha" name="radiob5"></input-radio>
-
-                    </div>
-                </div>
-
-            </div>
-            <div class="card-footer">
-                <div class="row d-flex justify-content-between">
-                    <div class="col-md-3">
-                        <button #btnv type="button" class="btn btn-primary btnvoltar" id="btnv" name="btnv" (click)="voltar($event)" disabled>Voltar</button>
-
-                    </div>
-                    <div class="col-md-3">
-                        <button type="button" class="btn btn-primary btnenviar" id="btne" name="btne" (click)="enviar()" disabled>Enviar</button>
-                    </div>
-                </div>
-            </div>
-        </div>-->
-
-    <div class="card cardb52 my-3" id="cardpergb5">
-      <div class="card-header">
+    <div class="card cardb52 my-3" id="cardpergb5"> <!-- Perguntas + Respostas possíveis -->
+      <div class="card-header"> <!-- Pergunta -->
         <div #divb5 class="row tex-center divb5">
           <label class="text-center fw-bold">
             <h5>{{numeroPergunta}}. {{this.showPergunta}}</h5>
@@ -45,8 +15,7 @@
         </div>
         <!--Para prosseguir é necessário responder a pergunta-->
       </div>
-      <div class="card-body text-wrap">
-
+      <div class="card-body text-wrap"> <!-- Opções de Resposta -->
         <div class="row my-2">
           <div class="col-md-12" id="divradiob5" (change)="onRadioChange($event)">
             <div class="form-check">
@@ -71,9 +40,8 @@
             </div>
           </div>
         </div>
-
       </div>
-      <div class="card-footer">
+      <div class="card-footer"> <!-- Botões: Voltar e Enviar -->
         <div class="row d-flex justify-content-between">
           <div class="col-md-3">
             <button #btnv type="button" class="btn btn-primary btnvoltar" id="btnv" name="btnv2" (click)="voltar($event)" disabled>Voltar</button>
@@ -86,12 +54,8 @@
       </div>
     </div>
 
-    <!--<label class="text-center fw-bold my-5">{{this.total}}</label><br>
-        <label class="text-center fw-bold">{{this.respostasB5.toString()}}</label>-->
-
-    <div class="resultado" hidden>
-
-      <div class="row mb-4">
+    <div class="resultado" hidden> <!-- Exibido quando o questionário já foi respondido -->
+      <div class="row mb-4"> <!-- Explicação sobre a pontuação -->
         <div class="col-md-12">
           <separator>
             <h4>Pontuação</h4>
@@ -99,9 +63,7 @@
           <label id="lblexppt">A pontuação calculada deverá ficar entre <b>0 e 40</b> pontos.</label>
         </div>
       </div>
-
-
-      <div class="row mb-1">
+      <div class="row mb-1"> <!-- Título: Resultados -->
         <div class="col-md-12">
           <separator (click)="onClickDivB5('divgraficob5', 'lblgrafico','igrafico')">
             <h4>Resultados<i class="fa-solid fa-square-plus" id="icodivgraf5"></i></h4>
@@ -110,28 +72,15 @@
         </div>
       </div>
 
-
-      <div class="divgraficob5 mb-5" hidden>
+      <div class="divgraficob5 mb-5" hidden> <!-- Gráfico resumido -->
         <div class="chart-container">
           <canvas id="MyChart">{{ chart }}</canvas>
         </div>
       </div>
 
+      <div class="slider-container"> <!-- Resultado Geral: Todos os Gráficos + Explicações + Pontos -->
 
-      <div class="slider-container">
-        <div class="slider-ui color1">
-          <input type="range" min="0" max="40" step="1">
-          <div class="bar">
-            <span class="min">{{this.min}}</span>
-            <span class="max">{{this.max}}</span>
-            <span class="sp1">Introversão</span>
-            <span class="sp2">Extroversao</span>
-          </div>
-          <div class="track">
-            <div class="value" id="track1">{{this.valueTrack}}</div>
-          </div>
-        </div>
-        <separator class="mt-5" icon="fas fa-arrow-down" (click)="onClickDivB5('divextroversao', 'lblextroversao','iextroversao')">
+        <separator class="mt-5" icon="fas fa-arrow-down" (click)="onClickDivB5('divextroversao', 'lblextroversao','iextroversao')"><!-- Título: Extroversão -->
           <div class="row d-flex justify-content-between">
             <div class="col">
               <h5><i class="fas fa-arrow-down" id="iextroversao"></i> Extroversão</h5>
@@ -140,9 +89,8 @@
               <h4><label #lblextroversao class="lblextroversao fw-bolder" id="lbl_extroversao" controlName="lbl_extroversao"></label></h4>
             </div>
           </div>
-
         </separator>
-        <div #divextroversao class="divextroversao" controlName="divextroversao" hidden>
+        <div #divextroversao class="divextroversao" controlName="divextroversao" hidden><!-- Texto explicativo + pontos: Extroversão -->
           <div class="row">
             <p class="text-justify" id="p_extroversao">
               É o traço pessoal caracterizado por emoções positivas e pela tendência para procurar estímulos. Além disso, é marcado pela busca da companhia das
@@ -161,20 +109,22 @@
             </div>
           </div>
         </div>
-        <separator></separator>
-        <div class="slider-ui color2">
+        <div class="slider-ui color1"><!-- Gráfico/Legenda: Extroversão -->
           <input type="range" min="0" max="40" step="1">
           <div class="bar">
             <span class="min">{{this.min}}</span>
             <span class="max">{{this.max}}</span>
-            <span class="sp1">Desconfiança</span>
-            <span class="sp2">Agradabilidade</span>
+            <span class="sp1">Introvertido</span>
+            <span class="sp2">Extrovertido</span>
           </div>
           <div class="track">
-            <div class="value" id="track2">{{this.valueTrack}}</div>
+            <div class="value" id="track1">{{this.valueTrack}}</div>
           </div>
         </div>
-        <separator (click)="onClickDivB5('divagradabilidade', 'lblagradabilidade','iagradabilidade')">
+        <separator></separator>
+
+
+        <separator (click)="onClickDivB5('divagradabilidade', 'lblagradabilidade','iagradabilidade')"><!-- Título: Agradabilidade -->
           <div class="row d-flex justify-content-between">
             <div class="col">
               <h5><i class="fas fa-arrow-down" id="iagradabilidade"></i> Agradabilidade<i class="fa-solid fa-square-plus" id="icon_agradabilidade"></i></h5>
@@ -183,9 +133,8 @@
               <h4><label #lblagradabilidade class="lblagradabilidade fw-bolder" id="lbl_agradabilidade"></label></h4>
             </div>
           </div>
-
         </separator>
-        <div #divagradabilidade class="divagradabilidade" hidden>
+        <div #divagradabilidade class="divagradabilidade" hidden><!-- Texto explicativo + pontos: Agradabilidade -->
           <div class="row">
             <p class="text-justify" id="p_agradabilidade">
               A agradabilidade é um traço de personalidade que se manifesta em características comportamentais individuais que são percebidas como amáveis,
@@ -210,32 +159,32 @@
             </div>
           </div>
         </div>
-        <separator></separator>
-
-        <div class="slider-ui color3">
+        <div class="slider-ui color2"><!-- Gráfico/Legenda: Agradabilidade -->
           <input type="range" min="0" max="40" step="1">
           <div class="bar">
             <span class="min">{{this.min}}</span>
             <span class="max">{{this.max}}</span>
-            <span class="sp1">Comportamento Espôntaneo</span>
-            <span class="sp2">Comportamento Planejado</span>
+            <span class="sp1">Focado em Objetivos</span>
+            <span class="sp2">Focado em Pessoas</span>
           </div>
           <div class="track">
-            <div class="value" id="track3">{{this.valueTrack}}</div>
+            <div class="value" id="track2">{{this.valueTrack}}</div>
           </div>
         </div>
-        <separator (click)="onClickDivB5('divconscienciosidade', 'lblconscienciosidade','iconscienciosidade')">
+        <separator></separator>
+
+
+        <separator (click)="onClickDivB5('divconscienciosidade', 'lblconscienciosidade','iconscienciosidade')"><!-- Título: Disciplina -->
           <div class="row d-flex justify-content-between">
             <div class="col">
-              <h5><i class="fas fa-arrow-down" id="iconscienciosidade"></i> Conscienciosidade<i class="fa-solid fa-square-plus" id="icon_conscienciosidade"></i></h5>
+              <h5><i class="fas fa-arrow-down" id="iconscienciosidade"></i> Disciplina <i class="fa-solid fa-square-plus" id="icon_conscienciosidade"></i></h5>
             </div>
             <div class="col">
               <h4><label #lblconscienciosidade class="lblconscienciosidade fw-bolder" id="lbl_conscienciosidade"></label></h4>
             </div>
           </div>
-
         </separator>
-        <div #divconscienciosidade class="divconscienciosidade" hidden>
+        <div #divconscienciosidade class="divconscienciosidade" hidden><!-- Texto explicativo + pontos: Disciplina -->
           <div class="row">
 
             <p class="text-justify" id="p_conscienciosidade">
@@ -258,23 +207,23 @@
               <label class="valor" id="lblconscienciosidade">{{this.conscienciosidade}}</label>
             </div>
           </div>
-
         </div>
-        <separator></separator>
-
-        <div class="slider-ui color4">
+        <div class="slider-ui color3"> <!-- Gráfico/Legenda: Disciplina -->
           <input type="range" min="0" max="40" step="1">
           <div class="bar">
             <span class="min">{{this.min}}</span>
             <span class="max">{{this.max}}</span>
-            <span class="sp1">Calmos</span>
-            <span class="sp2">Reativos</span>
+            <span class="sp1">Espôntaneo</span>
+            <span class="sp2">Sistemático</span>
           </div>
           <div class="track">
-            <div class="value" id="track4">{{this.valueTrack}}</div>
+            <div class="value" id="track3">{{this.valueTrack}}</div>
           </div>
         </div>
-        <separator class="mb-1" (click)="onClickDivB5('divestabilidade', 'lblestabilidade','iestabilidade')">
+        <separator></separator>
+
+
+        <separator class="mb-1" (click)="onClickDivB5('divestabilidade', 'lblestabilidade','iestabilidade')"> <!-- Título: Estabilidade Emocional -->
           <div class="row d-flex justify-content-between">
             <div class="col">
               <h5><i class="fas fa-arrow-down" id="iestabilidade"></i> Estabilidade Emocional<i class="fa-solid fa-square-plus" id="icon_estabilidade"></i></h5>
@@ -283,10 +232,8 @@
               <h4><label #lblestabilidade class="lblestabilidade fw-bolder" id="lbl_estabilidade"></label></h4>
             </div>
           </div>
-
         </separator>
-        <div #divestabilidade class="divestabilidade" hidden>
-
+        <div #divestabilidade class="divestabilidade" hidden> <!-- Texto explicativo + pontos: Estabilidade Emocional -->
           <div class="row" id="div_estabilidade">
             <p class="text-justify" id="p_estabilidade">
               É a tendência para experienciar emoções negativas, como raiva, ansiedade ou depressão, as quais tendem a persistir por períodos longos.
@@ -310,56 +257,69 @@
             </div>
           </div>
         </div>
-        <separator></separator>
-        <div class="slider-ui color5">
+        <div class="slider-ui color4"> <!-- Gráfico/Legenda: Estabilidade Emocional -->
           <input type="range" min="0" max="40" step="1">
           <div class="bar">
             <span class="min">{{this.min}}</span>
             <span class="max">{{this.max}}</span>
-            <span class="sp1">Conservadorismo</span>
-            <span class="sp2">Novas Experiências</span>
+            <span class="sp1">Racional</span>
+            <span class="sp2">Emocional</span>
+          </div>
+          <div class="track">
+            <div class="value" id="track4">{{this.valueTrack}}</div>
+          </div>
+        </div>
+        <separator></separator>
+
+
+        <separator class="mb-1" (click)="onClickDivB5('divabertura', 'lblabertura','iabertura')"><!-- Título: Abertura ao Novo -->
+          <div class="row d-flex justify-content-between">
+            <div class="col">
+              <h5><i class="fas fa-arrow-down" id="iabertura"></i> Abertura ao Novo<i class="fa-solid fa-square-plus" id="icon_abertura"></i></h5>
+            </div>
+            <div class="col">
+              <h4><label #lblabertura class="lblabertura fw-bolder" id="lbl_abertura"></label></h4>
+            </div>
+          </div>
+        </separator>
+        <div #divabertura class="divabertura" hidden> <!-- Texto explicativo + pontos: Abertura ao Novo -->
+          <div class="row" id="div_abertura"> <!-- Texto explicativo -->
+            <p class="text-justify" id="p_abertura">
+              É o traço da personalidade marcado pelo interesse por novas experiências emocionais, pela aventura, por ideias incomuns, pela arte, pelo amplo uso da imaginação
+              e alto grau de curiosidade.<br>
+              Pessoas com pontuações altas são imaginativas, criativas, curiosas, apreciadoras da arte e sensíveis à beleza. Essas pessoas tendem a levar em
+              conta os seus sentimentos e a terem opiniões não convencionais.<br>
+              Pessoas com pontuação baixa têm uma menor abertura para experiências costumam ter interesses mais convencionais e tradicionais.
+              Eles preferem o simples, claro e óbvio ao complexo, ambíguo e sutil. Além disso, podem ver as artes e as ciências com suspeitas,
+              achá-las “desinteressantes” e não gostarem de correr riscos
+            </p>
+          </div>
+          <div class="row my-1" id="div_pontos_abertura"> <!-- Pontos da Abertura -->
+            <div class="col-md-6 d-flex justify-content-start">
+              <label class="">
+                <h4>Seus pontos</h4>
+              </label>
+            </div>
+            <div class="col-md-4 d-flex justify-content-start">
+              <h4><label class="" id="lblabertura">{{this.abertura}}</label></h4>
+            </div>
+          </div>
+        </div>
+        <div class="slider-ui color5"> <!-- Gráfico: Abertura ao Novo -->
+          <input type="range" min="0" max="40" step="1">
+          <div class="bar">
+            <span class="min">{{this.min}}</span>
+            <span class="max">{{this.max}}</span>
+            <span class="sp1">Tradicional</span>
+            <span class="sp2">Aberto a Mudanças</span>
           </div>
           <div class="track">
             <div class="value" id="track5">{{this.valueTrack}}</div>
           </div>
         </div>
-      </div>
-      <separator class="mb-1" (click)="onClickDivB5('divabertura', 'lblabertura','iabertura')">
-        <div class="row d-flex justify-content-between">
-          <div class="col">
-            <h5><i class="fas fa-arrow-down" id="iabertura"></i> Abertura<i class="fa-solid fa-square-plus" id="icon_abertura"></i></h5>
-          </div>
-          <div class="col">
-            <h4><label #lblabertura class="lblabertura fw-bolder" id="lbl_abertura"></label></h4>
-          </div>
-        </div>
+        <separator></separator>
 
-      </separator>
-      <div #divabertura class="divabertura" hidden>
-        <div class="row" id="div_abertura">
-          <p class="text-justify" id="p_abertura">
-            É o traço da personalidade marcado pelo interesse por novas experiências emocionais, pela aventura, por ideias incomuns, pela arte, pelo amplo uso da imaginação
-            e alto grau de curiosidade.<br>
-            Pessoas com pontuações altas são imaginativas, criativas, curiosas, apreciadoras da arte e sensíveis à beleza. Essas pessoas tendem a levar em
-            conta os seus sentimentos e a terem opiniões não convencionais.<br>
-            Pessoas com pontuação baixa têm uma menor abertura para experiências costumam ter interesses mais convencionais e tradicionais.
-            Eles preferem o simples, claro e óbvio ao complexo, ambíguo e sutil. Além disso, podem ver as artes e as ciências com suspeitas,
-            achá-las “desinteressantes” e não gostarem de correr riscos
-          </p>
-        </div>
-
-        <div class="row my-1" id="div_pontos_abertura">
-          <div class="col-md-6 d-flex justify-content-start">
-            <label class="">
-              <h4>Seus pontos</h4>
-            </label>
-          </div>
-          <div class="col-md-4 d-flex justify-content-start">
-            <h4><label class="" id="lblabertura">{{this.abertura}}</label></h4>
-          </div>
-        </div>
       </div>
-      <separator></separator>
     </div>
 
   </ng-template>

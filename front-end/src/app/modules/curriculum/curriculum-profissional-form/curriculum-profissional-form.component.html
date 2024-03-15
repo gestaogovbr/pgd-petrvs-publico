@@ -142,19 +142,19 @@
     </tab>
     <tab key="CURSOS" class="fw-bold mb-3" label="Cursos">
       <div class="row mt-3">
-        <separator class="my-3" title="Quais os principais cursos que você já fez e pretende fazer na Instituição?" [bold]="true"></separator>
+        <separator class="my-3" title="Quais os cursos da Instituição que você como aluno já concluíu ou pretende concluir?" [bold]="true"></separator>
         <grid #gridHistoricoCursoInterno [control]="form!.controls.historicos_cursos_internos" [minHeight]="150" [form]="formHistoricoCursoInternoGrid!" [hasDelete]="true" [add]="addHistoricoCursoInterno.bind(this)" [load]="loadHistoricoCursoInterno.bind(this)" [remove]="removeHistoricoCursoInterno.bind(this)" [save]="saveHistoricoCursoInterno.bind(this)" editable>
           <columns>
-            <column title="Pretende Cursar?" titleHint="Pretende cursar ou já esta concluido." [template]="columnPretende" [editTemplate]="editPretende">
-              <ng-template let-row="row" #columnPretende>{{row.pretensao == 0 ? 'Finalizado' : 'Pretendo Fazer'}}</ng-template>
+            <column title="Status" titleHint="Pretende cursar ou já cursou." [template]="columnPretende" [editTemplate]="editPretende">
+              <ng-template let-row="row" #columnPretende>{{row.pretensao == 0 ? 'Cursado' : 'Pretendo Cursar'}}</ng-template>
               <ng-template let-row="row" #editPretende>
-                <input-switch [size]="2" [label]="formHistoricoCursoInternoGrid!.controls.pretensao.value ? 'Sim' : 'Concluído'" icon="fas fa-user-graduate" controlName="pretensao" [control]="form!.controls.pretensao"></input-switch>
+                <input-switch [size]="2" [label]="formHistoricoCursoInternoGrid!.controls.pretensao.value ? 'Pretendo Cursar' : 'Cursado'" icon="fas fa-user-graduate" controlName="pretensao" [control]="form!.controls.pretensao"></input-switch>
               </ng-template>
             </column>
-            <column title="Curso Institucional" titleHint="Escolha o curso." [template]="columnCurso" [editTemplate]="editCurso">
+            <column title="Curso" titleHint="Escolha o curso." [template]="columnCurso" [editTemplate]="editCurso">
               <ng-template let-row="row" #columnCurso>{{row.curso?.nome || row.curso?.value || "Desconhecido"}}</ng-template>
               <ng-template let-row="row" #editCurso>
-                <input-select #cursoInterno [size]="3" label="Curso" icon [control]="form!.controls.curso_id" controlName="curso_id" [dao]="cursoDao" [where]="[['titulo', '==', 'INSTITUCIONAL']]" [orderBy]="[['nome', 'asc']]" [addRoute]="{route: ['raiox','cadastros','curso','new']}"></input-select>
+                <input-select #cursoInterno [size]="3" label="Curso" icon [control]="form!.controls.curso_id" controlName="curso_id" [dao]="cursoDao" [where]="[['titulo', '==', 'INSTITUCIONAL']]" [orderBy]="[['nome', 'asc']]"></input-select>
               </ng-template>
             </column>
             <column type="options"></column>
@@ -162,22 +162,22 @@
         </grid>
       </div>
       <div class="row mt-3">
-        <separator class="my-3" title="Quais os principais cursos que você já fez e pretende fazer fora da Instituição?" [bold]="true"></separator>
+        <separator class="my-3" title="Quais os cursos de outras instituições que você como aluno já concluíu ou pretende concluir?" [bold]="true"></separator>
         <grid #gridHistoricoCursoExterno [control]="form!.controls.historicos_cursos_externos" [minHeight]="150" [form]="formHistoricoCursoExternoGrid!" [hasDelete]="true" [add]="addHistoricoCursoExterno.bind(this)" [load]="loadHistoricoCursoExterno.bind(this)" [remove]="removeHistoricoCursoExterno.bind(this)" [save]="saveHistoricoCursoExterno.bind(this)" editable>
           <columns>
-            <column title="Pretende Cursar?" titleHint="Pretende cursar ou já esta concluido." [template]="columnPretende" [editTemplate]="editPretende">
-              <ng-template let-row="row" #columnPretende>{{row.pretensao == 0 ? 'Finalizado' : 'Pretendo Fazer'}}</ng-template>
+            <column title="Status" titleHint="Pretende cursar ou já cursou." [template]="columnPretende" [editTemplate]="editPretende">
+              <ng-template let-row="row" #columnPretende>{{row.pretensao == 0 ? 'Cursado' : 'Pretendo Cursar'}}</ng-template>
               <ng-template let-row="row" #editPretende>
-                <input-switch [size]="2" [label]="formHistoricoCursoExternoGrid!.controls.pretensao.value ? 'Sim' : 'Concluído'" icon="fas fa-user-graduate" controlName="pretensao" [control]="formHistoricoCursoExternoGrid!.controls.pretensao"></input-switch>
+                <input-switch [size]="2" [label]="formHistoricoCursoExternoGrid!.controls.pretensao.value ? 'Pretendo Cursar' : 'Cursado'" icon="fas fa-user-graduate" controlName="pretensao" [control]="formHistoricoCursoExternoGrid!.controls.pretensao"></input-switch>
               </ng-template>
             </column>
-            <column title="Área Externa" titleHint="Escolha a área externa." [template]="columnArea" [editTemplate]="editArea">
+            <column title="Temática" titleHint="Escolha a temática do curso ou a instituição que o promove." [template]="columnArea" [editTemplate]="editArea">
               <ng-template let-row="row" #columnArea>{{row.area_atividade_externa?.nome || "Desconhecido"}}</ng-template>
               <ng-template let-row="row" #editArea>
-                <input-search #areaHistoricoCursoExterno [size]="4" label="Área/Instituição/Coorporação" controlName="area_atividade_externa_id" [dao]="areaAtividadeExternaDao" [addRoute]="{route: ['raiox','cadastros','area-atividade-externa','new']}" fullEntity></input-search>
+                <input-search #areaHistoricoCursoExterno [size]="4" label="Tema/Instituição/Coorporação" controlName="area_atividade_externa_id" [dao]="areaAtividadeExternaDao" fullEntity></input-search>
               </ng-template>
             </column>
-            <column title="Nome do Curso" titleHint="Informe o nome do curso." [template]="columnNome" [editTemplate]="editNome">
+            <column title="Curso" titleHint="Informe o nome do curso." [template]="columnNome" [editTemplate]="editNome">
               <ng-template let-row="row" #columnNome>{{row.nome}}</ng-template>
               <ng-template let-row="row" #editNome>
                 <input-text [size]="8" label="Nome do Curso" icon controlName="nome" liveSearch [control]="formHistoricoCursoExternoGrid!.controls.nome"></input-text>
@@ -190,33 +190,33 @@
     </tab>
     <tab key="DISPONIBILIDADE" class="fw-bold mb-3" label="Disponibilidade">
       <div class="row">
-        <separator class="mb-3 mt-3" title="Viagens" [bold]="true"></separator>
+        <separator class="mb-3 mt-3" title="Você já foi convocado para trabalhar fora da sua unidade de lotação?" [bold]="true"></separator>
         <div class="col-lg-6">
-          <label><i class="bi bi-flag-fill"></i> Já fez viagem nacional a trabalho?</label>
+          <label><i class="bi bi-flag-fill"></i> Para outra unidade federativa</label>
           <input-switch #radioViajemNacional [size]="2" [label]="labelRadio(radioViajemNacional)" labelPosition="right" controlName="viagem_nacional" [control]="form!.controls.viagem_nacional"></input-switch>
         </div>
         <div class="col-lg-6">
-          <label><i class="bi bi-globe-americas"></i> Já fez viagem internacional a trabalho?</label>
+          <label><i class="bi bi-globe-americas"></i> Para fora do país</label>
           <input-switch #radioViajemInternacional [size]="2" [label]="labelRadio(radioViajemInternacional)" labelPosition="right" controlName=" viagem_internacional" [control]="form!.controls. viagem_internacional"></input-switch>
         </div>
       </div>
       <div class="row">
-        <separator class="my-3" title="Você tem interesse na participação do Banco Nacional de Talentos (BNT IN PRF Nº 58 de 27 de agosto de 2021) SEI 35010079?" [bold]="true"></separator>
+        <separator class="my-3" title="Você tem interesse em participar do Banco Nacional de Talentos - BNT?" [bold]="true"></separator>
         <input-switch #radioInteresseBNT [size]="1" [label]="labelRadio(radioInteresseBNT)" icon="bi bi-universal-access" controlName="interesse_bnt" [control]="form!.controls.interesse_bnt"></input-switch>
       </div>
       <div class="row">
-        <separator class="my-3" title="Você está inserido no programa de gestão da Instituição?" [bold]="true"></separator>
+        <separator class="my-3" title="Você está inserido no Programa de Gestão e Desempenho (PGD) da Instituição?" [bold]="true"></separator>
         <input-switch #radioProgramaGestao [size]="1" [label]="labelRadio(radioProgramaGestao)" icon="bi bi-calendar2-check" controlName="radioProgramaGestao" [control]="form!.controls.radioProgramaGestao" (change)="onChangeEscolhePG()"></input-switch>
-        <input-radio #escolhaProgramaGestao *ngIf="form!.controls.radioProgramaGestao.value" [size]="4" label="Opções" [items]="lookup.PG_PRF" controlName="pgd_inserido" [control]="form!.controls.pgd_inserido"></input-radio>
+        <input-radio #escolhaProgramaGestao *ngIf="form!.controls.radioProgramaGestao.value" [size]="6" label="Modalidade" [items]="lookup.PG_PRF" controlName="pgd_inserido" [control]="form!.controls.pgd_inserido"></input-radio>
       </div>
       <div class="row" *ngIf="!form!.controls.radioProgramaGestao.value">
-        <separator class="my-3" title="Você tem interesse em participar do programa de gestão da Instituição?" [bold]="true"></separator>
+        <separator class="my-3" title="Você tem interesse em participar do PGD?" [bold]="true"></separator>
         <input-switch #radioInteresseProgramaGestao [size]="1" [label]="labelRadio(radioInteresseProgramaGestao)" icon="bi bi-bookmark-check" controlName="radioInteresseProgramaGestao" [control]="form!.controls.radioInteresseProgramaGestao" (change)="onChangeEscolheInteressePG()"></input-switch>
         <input-radio #escolhaInteresseProgramaGestao *ngIf="form!.controls.radioInteresseProgramaGestao.value" [size]="4" label="Opções" [items]="lookup.PG_PRF" controlName="pgd_interesse" [control]="form!.controls.pgd_interesse"></input-radio>
         <input-text *ngIf="form!.controls.radioInteresseProgramaGestao.value" [size]="4" label="Telefone de contato do Chefe Imediato" icon="fas fa-phone" controlName="telefone" [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000 || (00) 0 0000-0000'" [attr.maxlength]=250></input-text>
       </div>
       <div class="row">
-        <separator class="my-3" title="Você tem interesse em remoção?" [bold]="true"></separator>
+        <separator class="my-3" title="Você tem a intenção de ser removido da sua atual unidade de lotação?" [bold]="true"></separator>
         <input-switch #radioInteresseRemocao [size]="1" [label]="labelRadio(radioInteresseRemocao)" icon="bi bi-house-door-fill" controlName="remocao" [control]="form!.controls.remocao"></input-switch>
       </div>
     </tab>
