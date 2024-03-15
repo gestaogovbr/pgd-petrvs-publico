@@ -47,6 +47,20 @@ export class TenantDaoService extends DaoBaseService<Tenant> {
     });
   }
 
+  public deleteTenant(item: TipoCapacidade) {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('config/' + this.collection + '/deletetenant', {
+        tenant_id: item.id,
+      }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
   public generateCertificateKeys() {
     return new Promise<CertificateKeys>((resolve, reject) => {
       this.server.post('config/' + this.collection + '/generate-certificate-keys', {}).subscribe(response => {
