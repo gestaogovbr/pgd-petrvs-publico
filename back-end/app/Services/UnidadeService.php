@@ -403,12 +403,18 @@ class UnidadeService extends ServiceBase
 
   /**
    * Retorna um array com os ids das unidades que compõem a linha hierárquica ascendente da unidade recebida como parâmetro.
+   * Caso a unidade não tenha um path de hierarquia, retorna um array com a própria unidade consultada.
    * @param string $unidade_id
    * @return array
    */
   public function linhaAscendente($unidade_id): array
   {
-    return array_filter(explode('/', Unidade::find($unidade_id)->path), fn ($x) => $x != "");
+    $path = Unidade::find($unidade_id)->path;
+    if (!empty($path)) {
+        return array_filter(explode('/', $path), fn ($x) => $x != "");
+    } else {
+        return [$unidade_id];
+    }
   }
 
   public function lookupTodasUnidades(): array
