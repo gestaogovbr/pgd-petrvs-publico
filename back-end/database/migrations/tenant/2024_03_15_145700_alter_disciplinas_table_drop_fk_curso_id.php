@@ -19,7 +19,6 @@ class AlterDisciplinasTableDropFkCursoId extends Migration
       $table->dropColumn('curso_id');
     });
   }
-
   /**
    * Reverse the migrations.
    *
