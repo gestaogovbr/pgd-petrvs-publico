@@ -49,7 +49,7 @@ export class TenantDaoService extends DaoBaseService<Tenant> {
 
   public deleteTenant(item: TipoCapacidade) {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('config/' + this.collection + '/deletetenant', {
+      this.server.post('config/' + this.collection + '/delete-tenant', {
         tenant_id: item.id,
       }).subscribe(response => {
         if (response.error) {
