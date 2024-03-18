@@ -6,12 +6,12 @@
     <tab key="FUNCIONAIS" class="fw-bold" label="Funcionais">
       <div class="row my-4">
         <input-select #anos [size]="2" label="Ano de ingresso" icon="bi bi-calendar-check-fill" controlName="ano_ingresso" [control]="form!.controls.ano_ingresso" required></input-select>
-        <input-select #centroTreinamento [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento_id" [control]="form!.controls.centro_treinamento_id" nullable itemNull="- Selecione -" fullEntity liveSearch [dao]="centroTreinamentoDao" [addRoute]="{route: ['raiox','cadastros','centro-treinamento','new']}"></input-select>
+        <input-select #centroTreinamento [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento_id" [control]="form!.controls.centro_treinamento_id" nullable itemNull="- Selecione -" fullEntity liveSearch [dao]="centroTreinamentoDao" ></input-select><!--[addRoute]="{route: ['raiox','cadastros','centro-treinamento','new']}"-->
         <input-search #cargos [size]="6" label="Cargo" controlName="cargo_id" [control]="form!.controls.cargo_id" [dao]="cargoDao" required></input-search>
       </div>
       <div class="row">
         <div class="col-md-12">
-          <input-select #gruposEspecializados label="Selecione caso você faça parte de algum grupo especializado" icon="bi bi-check-circle" controlName="grupo_especializado_id" [control]="form!.controls.grupo_especializado_id" fullEntity liveSearch nullable itemNull="- Selecione -" [dao]="grupoDao" [addRoute]="{route: ['raiox','cadastros','grupo-especializado','new']}"></input-select>
+          <input-select #gruposEspecializados label="Selecione caso você faça parte de algum grupo especializado" icon="bi bi-check-circle" controlName="grupo_especializado_id" [control]="form!.controls.grupo_especializado_id" fullEntity liveSearch nullable itemNull="- Selecione -" [dao]="grupoDao" ></input-select><!--[addRoute]="{route: ['raiox','cadastros','grupo-especializado','new']}"-->
         </div>
       </div>
       <div class="row mt-3">
