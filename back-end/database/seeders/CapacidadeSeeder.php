@@ -2,10 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
-use Database\Seeders\BulkSeeder;
-
 use App\Models\Capacidade;
 use App\Models\Perfil;
 use App\Models\TipoCapacidade;
@@ -30,14 +27,12 @@ class CapacidadeSeeder extends Seeder
 
   public function run()
   {
-    // Lista com capacidades por perfil
-    # 37
     $capacidades_participante = array(
       array(
         "codigo" => "CTXT_EXEC",
       ),
       array(
-        "codigo" => "MOD_ACESSO",
+        "codigo" => "ACESSO",
       ),
       array(
         "codigo" => "MOD_AFT",
@@ -146,7 +141,6 @@ class CapacidadeSeeder extends Seeder
       ),
     );
 
-    # 86
     $capacidades_chefia_de_unidade_executora = array(
       array(
         "codigo" => "CTXT_GEST",
@@ -155,10 +149,7 @@ class CapacidadeSeeder extends Seeder
         "codigo" => "MENU_GESTAO_ACESSO",
       ),
       array(
-        "codigo" => "MENU_REL_ACESSO",
-      ),
-      array(
-        "codigo" => "MOD_ACESSO",
+        "codigo" => "ACESSO",
       ),
       array(
         "codigo" => "MOD_AFT",
@@ -326,9 +317,6 @@ class CapacidadeSeeder extends Seeder
         "codigo" => "MOD_PTR_ENTR_INCL",
       ),
       array(
-        "codigo" => "MOD_PTR_ENTR_INCL",
-      ),
-      array(
         "codigo" => "MOD_PTR_INCL",
       ),
       array(
@@ -399,7 +387,6 @@ class CapacidadeSeeder extends Seeder
       ),
     );
 
-    #160
     $capacidades_administrador_negocial = array(
       array(
         "codigo" => "CTXT_EXEC",
@@ -408,7 +395,7 @@ class CapacidadeSeeder extends Seeder
         "codigo" => "CTXT_GEST",
       ),
       array(
-        "codigo" => "DASH_PRG",
+        "codigo" => "MOD_ATV_DASH",
       ),
       array(
         "codigo" => "MENU_CAD_ACESSO",
@@ -420,10 +407,7 @@ class CapacidadeSeeder extends Seeder
         "codigo" => "MENU_GESTAO_ACESSO",
       ),
       array(
-        "codigo" => "MENU_REL_ACESSO",
-      ),
-      array(
-        "codigo" => "MOD_ACESSO",
+        "codigo" => "ACESSO",
       ),
       array(
         "codigo" => "MOD_AFT",
@@ -913,10 +897,10 @@ class CapacidadeSeeder extends Seeder
           $result = Capacidade::insertOrIgnore($capacidade);
           //if (!$result) echo("Capacidade já existe: (" . $c['codigo'] . ") Participante.\n");
         }
-        !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, [$c['codigo'], $capacidade['id']]);
+        !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, ["Participante", $c['codigo']]);
       } else {
         // echo("Erro: TipoCapacidade inexistente(" . "código: " . $c['codigo'] . " - ID: " . $capacidade['tipo_capacidade_id']. ")");
-        array_push($tipoCapacidadesInexistentes, [$c['codigo'], $capacidade['tipo_capacidade_id']]);
+        array_push($tipoCapacidadesInexistentes, ["Participante", $c['codigo']]);
       }
     }
 
@@ -939,9 +923,9 @@ class CapacidadeSeeder extends Seeder
         } else {
           $result = Capacidade::insertOrIgnore($capacidade);
         }
-        !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, [$c['codigo'], $capacidade['id']]);
+        !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, ["Chefia de Unidade Executora", $c['codigo']]);
       } else {
-        array_push($tipoCapacidadesInexistentes, [$c['codigo'], $capacidade['tipo_capacidade_id']]);
+        array_push($tipoCapacidadesInexistentes, ["Chefia de Unidade Executora", $c['codigo']]);
       }
     }
 
@@ -965,14 +949,13 @@ class CapacidadeSeeder extends Seeder
         } else {
           $result = Capacidade::insertOrIgnore($capacidade);
         }
-        !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, [$c['codigo'], $capacidade['id']]);
+        !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, ["Administrador Negocial", $c['codigo']]);
       } else {
-        array_push($tipoCapacidadesInexistentes, [$c['codigo'], $capacidade['tipo_capacidade_id']]);
+        array_push($tipoCapacidadesInexistentes, ["Administrador Negocial", $c['codigo']]);
       }
     }
 
     $perfilDesenvolvedorId = Perfil::where([['nome', 'Desenvolvedor']])->first()->id;
-
     $qtdCapacidadesRemovidas = Capacidade::whereNotIn('id', $capacidadesInseridas)->whereNotIn('perfil_id', [$perfilDesenvolvedorId])->delete();
     $qtdCapacidades = Capacidade::count();
     $qtdCapacidadesRestauradas = count($capacidadesRestauradas);
@@ -983,8 +966,21 @@ class CapacidadeSeeder extends Seeder
     echo ("Quantidade total de capacidades: " . $qtdCapacidades . ".\n");
     echo ("Quantidade de capacidades removidas: " . $qtdCapacidadesRemovidas . ".\n");
     echo ("Quantidade de capacidades restauradas: " . $qtdCapacidadesRestauradas . ".\n");
-    echo ("Quantidade de capacidades usadas que não existem na tabela tipos_capacidades: " . $qtdTiposCapacidadesInexistentes . ".\n");
-    echo ("Quantidade de capacidades repetidas no mesmo perfil e não registradas na tabela capacidades: " . $qtdCapacidadesRepetidas . ".\n");
+
+    if ($qtdTiposCapacidadesInexistentes > 0) {
+      echo ("\nQuantidade de capacidades usadas que não existem na tabela tipos_capacidades:\n");
+      foreach ($tipoCapacidadesInexistentes as $msg) {
+        echo (implode(" - ", $msg) . "\n");
+      }
+    }
+
+    if ($qtdCapacidadesRepetidas > 0) {
+      echo ("\nCapacidades repetidas no mesmo perfil e não registradas na tabela capacidades:\n");
+      foreach ($capacidadesRepetidas as $msg) {
+        echo (implode(" - ", $msg) . "\n");
+      }
+    };
+
     echo ("*********************************" . ".\n");
   }
 }

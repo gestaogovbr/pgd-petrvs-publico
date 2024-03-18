@@ -1,0 +1,89 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+    <div class="row mt-3">
+        <input-text [size]="2" label="Código" icon="bi bi-pen" controlName="codigo" [control]="form!.controls.codigo" [attr.maxlength]=250></input-text>
+        <input-text [size]="5" label="Nome" icon="bi bi-pen" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250></input-text>
+        <input-select [size]="3" label="Tipo" icon="bi bi-pen" controlName="tipoQuestionario" [control]="form!.controls.tipoQuestionario" [items]="lookup.QUESTIONARIO_TIPO"></input-select>
+        <input-switch #switchAnonimo [size]="2" label="Anônimo" icon="fas fa-chalkboard" controllName="switchAnonimo" [control]="form!.controls.switchAnonimo"></input-switch>
+    </div>
+    <separator title="Exemplo dos tipos de respostas para as perguntas">
+        <div class="row">
+            <div class="col-md-3">
+                <separator title="Lista">
+                    <input-select [size]="4" label="Opções" icon="bi bi-pen" controlName="listaExemplo" [items]="exemploLista"></input-select>
+                </separator>
+            </div>
+            <div class="col-md-3">
+                <separator title="Única escolha">
+                    <!-- TODO: Implementar o radio nativo do browser (Permitir horizontal e vertical) -->
+                </separator>
+            </div>
+            <div class="col-md-3">
+                <separator title="Múltipla escolha">
+                    <!-- TODO: Implementar o check-radio nativo do browser (Permitir horizontal e vertical) -->
+                </separator>
+            </div>
+            <div class="col-md-3">
+                <separator title="Sim ou Não">
+                    <input-switch #switchExemplo [size]="2" [label]="switchExemplo.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controllName="switchExemplo" [control]="form!.controls.switchExemplo"></input-switch>
+                </separator>
+            </div>
+        </div>
+    </separator>
+    <separator title="Perguntas">
+        <grid [control]="form!.controls.perguntas" [minHeight]="500" [form]="formPergunta!" [hasDelete]="true" [add]="addPergunta.bind(this)" [load]="loadPergunta.bind(this)" [remove]="removePergunta.bind(this)" [save]="savePergunta.bind(this)" editable>
+            <columns>
+                <column [title]="lex.translate('Pergunta')" [template]="columnPergunta" [editTemplate]="editPergunta">
+                    <ng-template let-row="row" #columnPergunta>
+                        {{row.pergunta}}
+                    </ng-template>
+                    <ng-template let-row="row" #editPergunta>
+                        <input-text #pergunta [size]="12" label icon controlName="pergunta"></input-text>
+                    </ng-template>
+                </column>
+                <column title="Tipo de Resposta" titleHint="Escolha o tipo de opção de resposta" [template]="columnTipoResposta" [editTemplate]="editTipoResposta">
+                    <ng-template let-row="row" #columnTipoResposta>
+                        {{lookup.getValue(lookup.QUESTIONARIO_PERGUNTA_TIPO, row.tipo)}}
+                    </ng-template>
+                    <ng-template let-row="row" #editTipoResposta>
+                        <input-select [size]="12" label icon controlName="tipo" [items]="lookup.QUESTIONARIO_PERGUNTA_TIPO" (change)="onTipoPerguntaChange()"></input-select>
+                    </ng-template>
+                </column>
+                <column title="Opções para a Resposta" titleHint="Informe as escolhas de respostas da pergunta" [template]="columnResposta" [editTemplate]="editResposta">
+                    <ng-template let-row="row" #columnResposta>
+                        <div *ngIf="isList(formPergunta.controls.tipo.value)" class="text-wrap width-min-content">
+                            <badge *ngFor="let resposta of row.respostas" [label]="resposta.value"></badge>
+                        </div>
+                        <div *ngIf="isRange(formPergunta.controls.tipo.value)">
+                            de {{row.respostas.min}} até {{row.respostas.max}}
+                        </div>
+                    </ng-template>
+                    <ng-template let-row="row" #editResposta>
+                        <div *ngIf="isList(formPergunta.controls.tipo.value)" class="row">
+                            <input-multiselect [size]="12" label="" controlName="respostas" [addItemHandle]="addMultiRespostas.bind(this)" noBox>
+                                <input-text #opcoesResposta [size]="6" label="Opções da resposta" icon="bi bi-pencil-fill" controlName="inputOpcoesResposta" [attr.maxlength]=250></input-text>
+                                <input-text #valorResposta [size]="6" label="Valor da resposta" icon="bi bi-pencil-fill" controlName="inputValorResposta" [attr.maxlength]=250></input-text>
+                            </input-multiselect>
+                        </div>
+                        <div *ngIf="isRange(formPergunta.controls.tipo.value)" class="row">
+                            <input-number [size]="6" label="Mínimo" controlName="inputMinimo"></input-number>
+                            <input-number [size]="6" label="Máximo" controlName="inputMaximo"></input-number>
+                        </div>
+                    </ng-template>
+                </column>
+                <column type="options"></column>
+            </columns>
+        </grid>
+
+
+        <!--div class="row">
+            <input-multiselect [size]="12" label="" [control]="form!.controls.perguntas" controlName="perguntas" [addItemHandle]="addMultiPerguntas.bind(this)" noBox>
+                <input-text #inputPergunta [size]="4" label="Pergunta" icon="bi bi-pencil-fill" controlName="inputPergunta" [control]="form!.controls.inputPergunta" [attr.maxlength]=250></input-text>
+                <input-select #listaTipoResposta [size]="2" label="Tipo de resposta" icon="bi bi-pen" controlName="listaTipoResposta" [control]="form!.controls.listaTipoResposta" [items]="tipoPergunta"></input-select>
+                <input-multiselect [hidden]="this.listaTipoResposta?.selectedItem?.key == ('SWITCH' || '' || null)" [size]="6" label="" [control]="form!.controls.multiOpcaoResposta" controlName="multiOpcaoResposta" [addItemHandle]="addMultiRespostas.bind(this)" noBox>
+                    <input-text #opcoesResposta [size]="6" label="Opções da resposta" icon="bi bi-pencil-fill" controlName="inputOpcoesResposta" [control]="form!.controls.inputOpcoesResposta" [attr.maxlength]=250></input-text>
+                    <input-text #valorResposta [size]="6" label="Valor da resposta" icon="bi bi-pencil-fill" controlName="inputValorResposta" [control]="form!.controls.inputValorResposta" [attr.maxlength]=250></input-text>
+                </input-multiselect>
+            </input-multiselect>
+        </div//-->
+    </separator>
+</editable-form>

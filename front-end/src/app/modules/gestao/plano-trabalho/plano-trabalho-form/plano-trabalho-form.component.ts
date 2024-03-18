@@ -10,7 +10,7 @@ import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
-import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
+import { ProgramaDaoService, ProgramaMetadata } from 'src/app/dao/programa-dao.service';
 import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
@@ -73,6 +73,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public template?: Template;
   public editingId?: string;
   public gestoresUnidadeExecutora: string[] = [];
+  public programaMetadata: ProgramaMetadata;
+
 
   constructor(public injector: Injector) {
     super(injector, PlanoTrabalho, PlanoTrabalhoDaoService);
@@ -125,6 +127,10 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       criterios_avaliacao: { default: [] },
       criterio_avaliacao: { default: "" }
     }, this.cdRef, this.validate);
+    this.programaMetadata = {
+      todosUnidadeExecutora: true,      
+      vigentesUnidadeExecutora: false
+    }
   }
 
   public ngOnInit() {
@@ -217,7 +223,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
             let preenchido = 0;
             let indice = 0;
             while (preenchido == 0) {
-              await this.programaDao.query({where : [["unidade_id","==",niveis[indice],],["data_inicio","<", hoje],["data_fim",">", hoje]]}).asPromise().then( programa => {
+              await this.programaDao.query({where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]]}).asPromise().then( programa => {
                 if (programa.length > 0 && preenchido == 0) {
                   preenchido = 1;
                   this.preencheUnidade(unidade);
@@ -308,6 +314,11 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.entity.carga_horaria = this.auth.entidade?.carga_horaria_padrao || 8;
       this.entity.forma_contagem_carga_horaria = this.auth.entidade?.forma_contagem_carga_horaria || "DIA";
       this.entity.unidade_id = this.auth.unidade!.id;
+
+      let programas = await this.programaDao.query({where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]]}).asPromise();
+      let ultimo = programas[programas.length -1];
+      this.preenchePrograma(ultimo)
+
       this.buscaGestoresUnidadeExecutora(this.auth.unidade!);
       if(!this.gestoresUnidadeExecutora.includes(this.auth.unidade!.id)) {
         this.entity.usuario_id = this.auth.usuario!.id;

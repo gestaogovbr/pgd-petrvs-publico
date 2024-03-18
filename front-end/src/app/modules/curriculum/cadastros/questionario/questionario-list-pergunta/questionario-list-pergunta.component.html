@@ -1,0 +1,37 @@
+<grid [items]="items" [title]="isModal ? '' : title" [hasAdd]="auth.hasPermissionTo('MOD_RX_OUT_INCL')" [hasEdit]="auth.hasPermissionTo('MOD_RX_OUT_EDT')" [hasDelete]="auth.hasPermissionTo('MOD_RX_OUT_EXCL')">
+  <columns>
+    <column title="Sequencia" [template]="columnSequencia">
+      <ng-template let-row="row" #columnSequencia>
+        <strong>{{row.sequencia}}</strong>
+      </ng-template>
+    </column>
+    <column title="Perguntas" [template]="columnPerguntas">
+      <ng-template let-row="row" #columnPerguntas>
+        <strong>{{row.pergunta}}</strong>
+      </ng-template>
+    </column>
+    <column title="Tipo" [template]="columnTipo">
+      <ng-template let-row="row" #columnTipo>
+        {{lookup.getValue(lookup.QUESTIONARIO_PERGUNTA_TIPO, row.tipo)}}
+      </ng-template>
+    </column>
+    <column title="Opções" [template]="columnOpcoes">
+      <ng-template let-row="row" #columnOpcoes>
+        <ng-container *ngIf="['EMOJI', 'SELECT', 'MULTI_SELECT', 'RADIO', 'CHECK'].includes(row.tipo)">
+          <div class="one-per-line">
+            <badge *ngFor="let resposta of row.respostas; index as i" [label]="resposta.key" [textValue]="resposta.data?.valorResposta || '' ? resposta.data?.valorResposta || '' : (i + 1).toString()" [icon]="resposta.icon" class="ml"></badge>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="row.tipo == 'NUMBER'">
+          <badge *ngIf="row.respostas?.min == 0 || ''" label="Mínimo" textValue="0"></badge>
+          <badge *ngIf="row.respostas?.min > 0 || ''" label="Mínimo" [textValue]="row.respostas?.min || '' "></badge>
+          <badge label="Máximo" [textValue]="row.respostas?.max || ''" class="ml"></badge>
+        </ng-container>
+        <ng-container *ngIf="row.tipo == 'TIMER'">
+        </ng-container>
+        <ng-container *ngIf="row.tipo == 'DATE_TIME'">
+        </ng-container>
+      </ng-template>
+    </column>
+  </columns>
+</grid>

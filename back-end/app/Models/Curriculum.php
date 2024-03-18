@@ -11,7 +11,7 @@ use App\Casts\AsJson;
 
 class Curriculum extends ModelBase
 {
-    protected $table = 'curriculums';
+    protected $table = 'curriculuns';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'apresentacao', /* longtext; NOT NULL; */// Apresentação
@@ -31,15 +31,11 @@ class Curriculum extends ModelBase
 
     public $fillable_changes = ['graduacoes'];
 
-    //public $fillable_relation = ['graduacoes'];
-
     //Has Many
     public function graduacoes() { return $this->hasMany(CurriculumGraduacao::class); }
     //Has One
-    public function profissional() { return $this->hasOne(CurriculumProfissional::class); }
+    public function curriculum_profissional() { return $this->hasOne(CurriculumProfissional::class); }
     // Belongs
     public function usuario() { return $this->belongsTo(Usuario::class); }
     public function cidade() { return $this->belongsTo(Cidade::class); }
-
-        
 }

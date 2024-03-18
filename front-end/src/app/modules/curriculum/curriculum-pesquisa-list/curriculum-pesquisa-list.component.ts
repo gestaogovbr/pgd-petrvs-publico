@@ -2,7 +2,6 @@ import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent} from 'src/app/components/grid/grid.component';
 import { PageListBase } from '../../base/page-list-base';
-import { CurriculumProfissional } from 'src/app/models/currriculum-profissional.model';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.service';
 import { CursoDaoService } from 'src/app/dao/curso-dao.service';
@@ -12,8 +11,9 @@ import { CapacidadeTecnicaDaoService } from 'src/app/dao/capacidade-tecnica-dao.
 import { AreaTematicaDaoService } from 'src/app/dao/area-tematica-dao.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
-import { Curriculum } from 'src/app/models/currriculum.model';
 import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
+import { Curriculum } from 'src/app/models/curriculum.model';
+import { CurriculumProfissional } from 'src/app/models/curriculum-profissional.model';
 
 @Component({
   selector: 'app-curriculum-pesquisa-list',
@@ -66,12 +66,12 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
       score_atributo: { default: 0 },      
     });
     this.orderBy = [['usuario.nome', 'asc']];
-    this.join = ['profissional.historico_atividade_interna.capacidade_tecnica.area_tematica',
-      'profissional.historico_atividade_externa.area_atividade_externa', 'profissional.historico_curso_interno.curso',
-      'profissional.historico_curso_externo.area_atividade_externa', 'profissional.historico_docencia_interna.curso',
-      'profissional.historico_docencia_externa.area_atividade_externa', 'profissional.historico_funcao.funcao',
-      'profissional.historico_funcao.unidade', 'profissional.historico_lotacao.unidade', 'usuario', 'cidade',
-      'graduacoes', 'graduacoes.curso', 'graduacoes.curso.area_conhecimento', 'profissional.grupo_especializado',
+    this.join = ['curriculum_profissional.historicos_atividades_internas.capacidade_tecnica.area_tematica',
+      'curriculum_profissional.historicos_atividades_externas.area_atividade_externa', 'curriculum_profissional.historicos_cursos_internos.curso',
+      'curriculum_profissional.historicos_cursos_externos.area_atividade_externa', 'curriculum_profissional.historicos_docencias_internas.curso',
+      'curriculum_profissional.historicos_docencias_externas.area_atividade_externa', 'curriculum_profissional.historicos_funcoes.funcao',
+      'curriculum_profissional.historicos_funcoes.unidade', 'curriculum_profissional.historicos_lotacoes.unidade', 'usuario', 'cidade',
+      'graduacoes', 'graduacoes.curso', 'graduacoes.curso.area_conhecimento', 'curriculum_profissional.grupo_especializado',
       'usuario.questionarios_respostas.questionario.perguntas.questionario_resposta_pergunta'];
   }
 

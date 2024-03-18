@@ -52,6 +52,5 @@ class TemplateSeeder extends Seeder
         'entidade_id' => $entidade_id
       ]);
     }
-
   }
 }

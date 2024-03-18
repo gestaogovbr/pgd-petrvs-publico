@@ -9,7 +9,7 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
-import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
+import { ProgramaDaoService, ProgramaMetadata } from 'src/app/dao/programa-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
@@ -39,6 +39,8 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   public planejamentoInstitucionalDao: PlanejamentoDaoService;
   public form: FormGroup;
   public maxPE: Number | undefined;
+  public programaMetadata: ProgramaMetadata;
+
 
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
@@ -60,6 +62,12 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       programa_id: { default: null },
       entregas: { default: [] },
     }, this.cdRef, this.validate);
+
+    this.programaMetadata = {
+      todosUnidadeExecutora: true,      
+      vigentesUnidadeExecutora: false
+    }
+  
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -108,6 +116,12 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.entity = new PlanoEntrega();
     this.entity.unidade_id = this.auth.unidade?.id || "";
     this.entity.unidade = this.auth.unidade;
+
+    let programas = await this.programaDao.query({where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]]}).asPromise();
+    let ultimo = programas[programas.length -1];
+    this.entity.programa = ultimo;
+    this.entity.programa_id = ultimo.id;
+
     const di = new Date(this.entity.data_inicio).toLocaleDateString();
     const df= this.entity.data_fim ? new Date(this.entity.data_fim).toLocaleDateString() : new Date().toLocaleDateString();
     this.entity.nome = this.auth.unidade!.sigla + " - " + di + " - " + df;

@@ -1,4 +1,4 @@
-import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { PageFormBase } from '../../../base/page-form-base';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { Questionario } from 'src/app/models/questionario.model';
@@ -6,10 +6,9 @@ import { QuestionarioDaoService } from 'src/app/dao/questionario-dao.service';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { IIndexable } from 'src/app/models/base.model';
 import { QuestionarioPerguntaDaoService } from 'src/app/dao/questionario-pergunta-dao.service';
-import { QuestionarioResposta } from 'src/app/models/questionario-resposta.model';
-import { QuestionarioRespostaPergunta } from 'src/app/models/questionario-resposta-pergunta.model';
-import { QuestionarioRespostaDaoService } from 'src/app/dao/questionario-resposta-dao.service';
-import { v4 as uuid } from 'uuid';
+import { QuestionarioPreenchimento } from 'src/app/models/questionario-preenchimento.model';
+import { QuestionarioPerguntaResposta } from 'src/app/models/questionario-pergunta-resposta.model';
+import { QuestionarioPreenchimentoDaoService } from 'src/app/dao/questionario-preenchimento-dao.service';
 
 @Component({
   selector: 'curriculum-atributos-soft-form',
@@ -17,7 +16,7 @@ import { v4 as uuid } from 'uuid';
   styleUrls: ['./curriculum-atributos-soft-form.component.scss']
 })
 
-export class CurriculumAtributosSoftFormComponent extends PageFormBase<QuestionarioResposta, QuestionarioRespostaDaoService>{
+export class CurriculumAtributosSoftFormComponent extends PageFormBase<QuestionarioPreenchimento, QuestionarioPreenchimentoDaoService>{
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
 
   bigicoIMG: string;
@@ -26,12 +25,11 @@ export class CurriculumAtributosSoftFormComponent extends PageFormBase<Questiona
   public questionarioDao: QuestionarioDaoService;
   public questionarioPerguntasDao: QuestionarioPerguntaDaoService;
   public questionario?: Questionario;
-  public respostas: QuestionarioRespostaPergunta[] = [];
+  public respostas: QuestionarioPerguntaResposta[] = [];
   public restante: number;
-  //public formSoftSkills: FormGroup;
 
   constructor(public injector: Injector) {
-    super(injector, QuestionarioResposta, QuestionarioRespostaDaoService);
+    super(injector, QuestionarioPreenchimento, QuestionarioPreenchimentoDaoService);
     this.join = ['questionario_resposta_pergunta'];
     this.questionarioDao = injector.get<QuestionarioDaoService>(QuestionarioDaoService);
     this.questionarioPerguntasDao = injector.get<QuestionarioPerguntaDaoService>(QuestionarioPerguntaDaoService);
@@ -55,29 +53,29 @@ export class CurriculumAtributosSoftFormComponent extends PageFormBase<Questiona
     return result;
   }
 
-  public async loadData(entity: QuestionarioResposta, form: FormGroup) { }
+  public async loadData(entity: QuestionarioPreenchimento, form: FormGroup) { }
 
   public async initializeData(form: FormGroup) {
     const questionario = await this.questionarioDao?.query({ where: [['codigo', '==', 'SOFTSKILL']], join: ['perguntas'] }).asPromise();
     if (questionario?.length) {
       questionario[0].perguntas = questionario[0].perguntas.sort((a, b) => a.sequencia! < b.sequencia! ? -1 : 1);
       this.questionario = questionario[0];
-      const questionarioResposta = await this.dao?.query({ where: [['questionario_id', '==', this.questionario.id], ['usuario_id', '==', this.auth.usuario?.id]], join: ['questionario_resposta_pergunta'] }).asPromise();
-      if (questionarioResposta?.length) {
-        let questionarioRespostaOrdenado: QuestionarioRespostaPergunta[] = [];
+      const questionarioPreenchimento = await this.dao?.query({ where: [['questionario_id', '==', this.questionario.id], ['usuario_id', '==', this.auth.usuario?.id]], join: ['questionario_resposta_pergunta'] }).asPromise();
+      if (questionarioPreenchimento?.length) {
+        let questionarioRespostaOrdenado: QuestionarioPerguntaResposta[] = [];
         let respostas: any = [];
         let indice = 0;
         this.questionario!.perguntas.forEach(pergunta => {
-          questionarioResposta![0].questionario_resposta_pergunta.forEach((resposta, i) => {
+          questionarioPreenchimento![0].respostas?.forEach((resposta, i) => {
             if (pergunta.id == resposta.questionario_pergunta_id) {
               respostas.push(resposta.resposta);
               indice = i;
             }
           });
-          questionarioRespostaOrdenado.push(questionarioResposta![0].questionario_resposta_pergunta[indice]);
+          questionarioRespostaOrdenado.push(questionarioPreenchimento![0].respostas![indice]);
         });
-        questionarioResposta![0].questionario_resposta_pergunta = questionarioRespostaOrdenado;
-        this.entity = questionarioResposta[0];
+        questionarioPreenchimento![0].respostas = questionarioRespostaOrdenado;
+        this.entity = questionarioPreenchimento[0];
         this.form!.controls.comunica.setValue(respostas[0]);
         this.form!.controls.lideranca.setValue(respostas[1]);
         this.form!.controls.resolucao.setValue(respostas[2]);
@@ -90,19 +88,16 @@ export class CurriculumAtributosSoftFormComponent extends PageFormBase<Questiona
       } else {
         this.entity = undefined;
       }
-    }// else {
-      //this.dialog.alert("Teste Soft-Skills deste usuário não localizado", "Teste não localizado");
-    //}
+    }
     await this.loadData(this.entity!, form);
   }
 
-  public async saveData(form: IIndexable): Promise<QuestionarioResposta | boolean> {
+  public async saveData(form: IIndexable): Promise<QuestionarioPreenchimento | boolean> {
     if (!this.questionario) return false;
-    let questionarioResposta = this.util.fill(new QuestionarioResposta(), this.entity || {});
-    questionarioResposta.usuario_id = this.auth.usuario?.id;
-    questionarioResposta.editavel = 1;
-    questionarioResposta.questionario_id = this.questionario!.id;
-    //questionarioResposta.data_resposta = new Date();;
+    let questionarioPreenchimento = this.util.fill(new QuestionarioPreenchimento(), this.entity || {});
+    questionarioPreenchimento.usuario_id = this.auth.usuario?.id;
+    questionarioPreenchimento.editavel = 1;
+    questionarioPreenchimento.questionario_id = this.questionario!.id;
     const valores = [
       this.form!.controls.comunica.value,
       this.form!.controls.lideranca.value,
@@ -113,22 +108,7 @@ export class CurriculumAtributosSoftFormComponent extends PageFormBase<Questiona
       this.form!.controls.adaptabilidade.value,
       this.form!.controls.etica.value
     ];
-    /*let array : any=[];
-    let respostas = this.entity?.questionario_resposta_pergunta;
-    respostas?.forEach((x,i)=>{
-      let arrayQRP = new QuestionarioRespostaPergunta();
-      arrayQRP.questionario_pergunta_id = x.questionario_pergunta_id;
-      arrayQRP.resposta = x.resposta;
-      arrayQRP._status = "ADD";
-      array.push(arrayQRP)
-    })
-    array?.forEach((x : any,i: number)=>{
-      if ((x._status != "ADD") && (parseInt(x.resposta) != parseInt(valores[i]))){
-        x.resposta = parseInt(valores[i]);
-        x._status = "EDIT";
-      }
-    })*/
-    let respostas = this.entity?.questionario_resposta_pergunta || valores.map((x, i) => new QuestionarioRespostaPergunta({
+    let respostas = this.entity?.respostas || valores.map((x, i) => new QuestionarioPerguntaResposta({
       questionario_pergunta_id: this.questionario!.perguntas[i].id,
       resposta: parseInt(x),
       _status: "ADD"
@@ -139,9 +119,8 @@ export class CurriculumAtributosSoftFormComponent extends PageFormBase<Questiona
         x._status = "EDIT";
       }
     });
-    questionarioResposta.questionario_resposta_pergunta = respostas;
-    return questionarioResposta;
-
+    questionarioPreenchimento.questionario_resposta_pergunta = respostas;
+    return questionarioPreenchimento;
   }
 
   public valorSoftChange(control: any) {
@@ -157,7 +136,6 @@ export class CurriculumAtributosSoftFormComponent extends PageFormBase<Questiona
     const array = [comunica, lideranca, resolucao, criatividade, pensamento, habilidade, adaptabilidade, etica]
     let soma: number = 0;
     for (const val of array) {
-      //console.log('SUM SEQUENCIA', sum)
       soma = soma + parseInt(val);
       this.restante = 20 - soma;
       if (soma > 20) {
@@ -167,30 +145,4 @@ export class CurriculumAtributosSoftFormComponent extends PageFormBase<Questiona
       }
     }
   }
-}
-
- /*
-    let respostas = this.entity?.questionario_resposta_pergunta;
-   
-    if(respostas?.length){
-      respostas!.forEach((x, i) => {
-        if ((x._status != "ADD") && (parseInt(x.resposta) != parseInt(valores[i]))){
-          x.resposta = parseInt(valores[i]);
-          x._status = "EDIT";
-        }
-      });
-      questionarioResposta.questionario_resposta_pergunta = respostas;
-
-    }else{
-    
-       this.questionario!.perguntas.forEach((z,j)=>{
-          this.respostas.push( new QuestionarioRespostaPergunta({
-                  questionario_pergunta_id: z.id,
-                  resposta: z.respostas,//valores[i],
-                  _status : "ADD"
-                }));
-          })
-     questionarioResposta.questionario_resposta_pergunta = this.respostas;
-    }*/
-    
-   
+}   
