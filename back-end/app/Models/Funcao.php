@@ -15,6 +15,7 @@ class Funcao extends ModelBase
     'siape', /* varchar(256); */ // código SIAPE da Função
     'cbo', /* varchar(256); */ // código CBO da Função
     'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */ // Função ativo ou inativo
+    //'deleted_at', /* timestamp; */
   ];
 
   // Belongs

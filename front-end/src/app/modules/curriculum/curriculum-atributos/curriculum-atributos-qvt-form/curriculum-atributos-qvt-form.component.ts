@@ -28,7 +28,7 @@ export class CurriculumAtributosQvtFormComponent extends PageFormBase<Questionar
 
   constructor(public injector: Injector) {
     super(injector, QuestionarioPreenchimento, QuestionarioPreenchimentoDaoService);
-    this.join = ['questionario_resposta_pergunta'];
+    this.join = ['respostas'];
     this.questionarioDao = injector.get<QuestionarioDaoService>(QuestionarioDaoService);
     this.questionarioPerguntasDao = injector.get<QuestionarioPerguntaDaoService>(QuestionarioPerguntaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
@@ -117,7 +117,7 @@ export class CurriculumAtributosQvtFormComponent extends PageFormBase<Questionar
   }
 
   public async loadData(entity: QuestionarioPreenchimento, form: FormGroup) {
-    const questionario = await this.questionarioDao?.query({ where: [['codigo', '==', 'QVT']], join: ['perguntas.questionario_resposta_pergunta'] }).asPromise();
+    const questionario = await this.questionarioDao?.query({ where: [['codigo', '==', 'QVT']], join: ['perguntas.respostas'] }).asPromise();
     this.questionario = questionario?.length ? questionario[0] : undefined;
     if (this.questionario) {
       /* Ordena as perguntas */

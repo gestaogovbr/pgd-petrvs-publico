@@ -9,28 +9,32 @@ use App\Casts\AsJson;
 
 class NotificacaoDestinatario extends ModelBase
 {
-    protected $table = 'notificacoes_destinatarios';
+  protected $table = 'notificacoes_destinatarios';
 
-    protected $with = [];
+  protected $with = [];
 
-    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'tipo', /* enum('PETRVS','EMAIL','WHATSAPP'); NOT NULL; DEFAULT: 'PETRVS'; */// Tipo do envio
-        'notificacao_id', /* char(36); NOT NULL; */
-        'usuario_id', /* char(36); NOT NULL; */
-        'data_leitura', /* datetime; */// Data e hora da leitura
-        'data_envio', /* datetime; */// Data e hora do envio, utilizado quando realmente a mensagem foi despachada
-        'opcoes', /* json; */// Opções
-        //'deleted_at', /* timestamp; */
-    ];
+  public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
+    'tipo', /* enum('PETRVS','EMAIL','WHATSAPP'); NOT NULL; DEFAULT: 'PETRVS'; */ // Tipo do envio
+    'notificacao_id', /* char(36); NOT NULL; */
+    'usuario_id', /* char(36); NOT NULL; */
+    'data_leitura', /* datetime; */ // Data e hora da leitura
+    'data_envio', /* datetime; */ // Data e hora do envio, utilizado quando realmente a mensagem foi despachada
+    'opcoes', /* json; */ // Opções
+    //'deleted_at', /* timestamp; */
+  ];
 
-    protected $casts = [
-        'opcoes' => AsJson::class,
-    ];
+  protected $casts = [
+    'opcoes' => AsJson::class,
+  ];
 
-    // Has
-    // Belongs
-    public function notificacao() { return $this->belongsTo(Notificacao::class); }
-    public function usuario() { return $this->belongsTo(Usuario::class); }
-    
+  // Has
+  // Belongs
+  public function notificacao()
+  {
+    return $this->belongsTo(Notificacao::class);
+  }
+  public function usuario()
+  {
+    return $this->belongsTo(Usuario::class);
+  }
 }
-   

@@ -1,6 +1,6 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { GridComponent} from 'src/app/components/grid/grid.component';
+import { GridComponent } from 'src/app/components/grid/grid.component';
 import { PageListBase } from '../../base/page-list-base';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.service';
@@ -62,8 +62,6 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
       remocao: { default: false },
       soft_id: { default: "" },
       score: { default: 0 },
-      comportamental: { default: "" },
-      score_atributo: { default: 0 },      
     });
     this.orderBy = [['usuario.nome', 'asc']];
     this.join = ['curriculum_profissional.historicos_atividades_internas.capacidade_tecnica.area_tematica',
@@ -72,7 +70,7 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
       'curriculum_profissional.historicos_docencias_externas.area_atividade_externa', 'curriculum_profissional.historicos_funcoes.funcao',
       'curriculum_profissional.historicos_funcoes.unidade', 'curriculum_profissional.historicos_lotacoes.unidade', 'usuario', 'cidade',
       'graduacoes', 'graduacoes.curso', 'graduacoes.curso.area_conhecimento', 'curriculum_profissional.grupo_especializado',
-      'usuario.questionarios_respostas.questionario.perguntas.questionario_resposta_pergunta'];
+      'usuario.preenchimentos.questionario.perguntas.respostas'];
   }
 
   ngAfterViewInit() {
