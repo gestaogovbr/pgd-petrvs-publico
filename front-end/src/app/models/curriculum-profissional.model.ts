@@ -37,15 +37,15 @@ export class CurriculumProfissional extends Base {
   public viagem_nacional: number = 0;//Já fez viagem nacional a trabalho
   public viagem_internacional: number = 0; //Já fez viagem internacional a trabalho
   public interesse_bnt: number = 0; //Você tem interesse na participação do Banco Nacional de Talentos -PRF
-  public pgd_inserido: string = ""; // Esta ou não inserido no PGD da instituição e qual modalidade
+  public pgd_inserido: string = ""; // Está ou não inserido no PGD da instituição e qual modalidade
   public pgd_interesse: string = "";//Tem interesse ou não no PGD da instituição e qual modalidade
   public telefone: string = "";// Telefone do chefe imediato caso tenha interesse no PGD
   public remocao: number = 0; // Tem interesse em remoção
 
   public curriculum_id?: string = ""; //ID Curriculum
-  public centro_treinamento_id: string = ""; //ID do CT 
+  public centro_treinamento_id: string | null = null; //ID do CT 
   public cargo_id: string = ""; //ID do Cargo
-  public grupo_especializado_id: string = ""; //ID do Grupo Especializado
+  public grupo_especializado_id: string | null = null; //ID do Grupo Especializado
 
   public constructor(data?: any) { super(); this.initialization(data); }
 }

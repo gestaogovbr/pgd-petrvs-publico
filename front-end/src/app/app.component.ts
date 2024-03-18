@@ -206,12 +206,12 @@ export class AppComponent {
       CURRICULUM_CADASTRO_CURSOS: { name: this.lex.translate("Cursos"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'curso'], icon: "bi bi-mortarboard-fill" },
       CURRICULUM_CADASTRO_FUNCAO: { name: this.lex.translate("Funções"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'funcao'], icon: "bi bi-check-circle-fill" },
       CURRICULUM_CADASTRO_GRUPOS_ESPECIALIZADOS: { name: this.lex.translate("Grupos Especializados"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'grupo-especializado'], icon: "bi bi-check-circle" },
-      CURRICULUM_CADASTRO_MATERIAS: { name: this.lex.translate("Disciplina"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'materia'], icon: "bi bi-list-check" },
+      CURRICULUM_CADASTRO_DISCIPLINAS: { name: this.lex.translate("Disciplina"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'disciplina'], icon: "bi bi-list-check" },
       CURRICULUM_CADASTRO_QUESTIONARIOS_PERGUNTAS: { name: this.lex.translate("Questionários"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'questionario'], icon: "bi bi-patch-question" },
       CURRICULUM_CADASTRO_QUESTIONARIOS_RESPOSTAS: { name: this.lex.translate("Respostas"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'questionario', 'reposta'], icon: "bi bi-list-task" },
       CURRICULUM_CADASTRO_QUESTIONARIOS_TESTE: { name: this.lex.translate("Testes"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'questionario', 'teste'], icon: "bi bi-list-task" },
       CURRICULUM_CADASTRO_TIPOS_CURSOS: { name: this.lex.translate("Tipos de Curso"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'tipo-curso'], icon: "bi bi-box-seam" },
-      CURRICULUM_PESQUISA_ADM: { name: this.lex.translate("Administrador"), permition: 'MOD_RX_OUT', route: ['raiox', 'pesquisa-adm'], icon: "bi bi-binoculars" },
+      CURRICULUM_PESQUISA_ADM: { name: this.lex.translate("Caça-talentos"), permition: 'MOD_RX_OUT', route: ['raiox', 'pesquisa-adm'], icon: "bi bi-binoculars" },
       CURRICULUM_PESQUISA_USR: { name: this.lex.translate("Usuário"), permition: 'MOD_RX_OUT', route: ['raiox', 'pesquisa-usuario'], icon: "bi bi-search" },
       /* Projetos */
       PAINEL: { name: "Painel", permition: '', route: ['panel'], icon: "" },
@@ -367,7 +367,7 @@ export class AppComponent {
     ];
 
     this.moduloRaioX = [{
-      name: this.lex.translate("Curriculum"),
+      name: this.lex.translate("Currículo"),
       permition: "MENU_RX_CURRICULUM_ACESSO",
       id: "navbarDropdownRXCadastros",
       menu: [
@@ -407,7 +407,7 @@ export class AppComponent {
         this.menuSchema.CURRICULUM_CADASTRO_AREAS_CONHECIMENTO,
         this.menuSchema.CURRICULUM_CADASTRO_TIPOS_CURSOS,
         this.menuSchema.CURRICULUM_CADASTRO_CURSOS,
-        this.menuSchema.CURRICULUM_CADASTRO_MATERIAS,
+        this.menuSchema.CURRICULUM_CADASTRO_DISCIPLINAS,
         "-",
         this.menuSchema.CURRICULUM_CADASTRO_CENTROS_TREINAMENTO,
         this.menuSchema.CURRICULUM_CADASTRO_CARGOS,
@@ -582,7 +582,7 @@ navPonto
 navProjeto        Cadastros                           MENU_CAD_ACESSO
                   Gerencial                           MENU_CAD_ACESSO
 
-navRaioX          Curriculum                          MENU_RX_CURRICULUM_ACESSO
+navRaioX          Currículo                           MENU_RX_CURRICULUM_ACESSO
                       Dados Pessoais                      MOD_RX_CURR
                       Dados Profissionais                 MOD_RX_CURR
                       Atributos Comportamentais           MOD_RX_CURR

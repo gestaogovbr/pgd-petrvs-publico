@@ -1,4 +1,4 @@
-<grid title="Caça Talentos - Raio X" [dao]="dao" [orderBy]="orderBy" [hasEdit]="false" [hasDelete]="false" [join]="join" [loadList]="onGridLoad.bind(this)" [selectable]="selectable" (select)="onSelect($event)">
+<grid title="Caça-talentos" [dao]="dao" [orderBy]="orderBy" [hasEdit]="false" [hasDelete]="false" [join]="join" [loadList]="onGridLoad.bind(this)" [selectable]="selectable" (select)="onSelect($event)">
   <toolbar></toolbar>
   <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapsed]="false">
     <separator title="Dados Pessoais" collapse [collapsed]="true">
