@@ -60,7 +60,7 @@
     </tab>
     <tab key="HABILIDADES" class="fw-bold" label="Habilidades técnicas">
       <div class="row mt-3">
-        <separator class="mb-3 mt-3" title="Você considera ter alguma habilidade técnica (Hard Skill)? Quais?" [bold]="true"></separator>
+        <separator class="mb-3 mt-3" title="Você considera ter alguma habilidade técnica (Hard Skill)? Relacione." [bold]="true"></separator>
         <input-switch #radioAtividadeInterna [size]="2" [label]="labelRadio(radioAtividadeInterna)" icon="fas fa-chalkboard" controlName="radioAtividadeInterna" [control]="form!.controls.radioAtividadeInterna"></input-switch>
         <grid #gridHistoricoAtividadeInterna *ngIf="form!.controls.radioAtividadeInterna.value" [control]="form!.controls.historicos_atividades_internas" [minHeight]="150" [form]="formHistoricoAtividadeInternaGrid!" [hasDelete]="true" [add]="addHistoricoAtividadeInterna.bind(this)" [load]="loadHistoricoAtividadeInterna.bind(this)" [remove]="removeHistoricoAtividadeInterna.bind(this)" [save]="saveHistoricoAtividadeInterna.bind(this)" editable>
           <columns>
@@ -110,7 +110,7 @@
     </tab>
     <tab key="DOCENCIA" class="fw-bold mb-3" label="Docência">
       <div class="row mt-3">
-        <separator class="my-3" title="Você já realizou alguma atividade de docência fora da Instituição? Quais?" [bold]="true"></separator>
+        <separator class="my-3" title="Você já realizou alguma atividade de docência fora da Instituição? Relacione." [bold]="true"></separator>
         <input-switch [size]="2" #radioDocenciaExterna [label]="labelRadio(radioDocenciaExterna)" icon="fas fa-chalkboard" controlName="radioDocenciaExterna" [control]="form!.controls.radioDocenciaExterna"></input-switch>
         <grid #gridHistoricoDocenciaExterna *ngIf="form!.controls.radioDocenciaExterna.value" [control]="form!.controls.historicos_docencias_externas" [minHeight]="150" [form]="formHistoricoDocenciaExternaGrid!" [hasDelete]="true" [add]="addHistoricoDocenciaExterna.bind(this)" [load]="loadHistoricoDocenciaExterna.bind(this)" [remove]="removeHistoricoDocenciaExterna.bind(this)" [save]="saveHistoricoDocenciaExterna.bind(this)" editable>
           <columns>
