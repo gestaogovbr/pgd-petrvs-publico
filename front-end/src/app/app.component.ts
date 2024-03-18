@@ -367,7 +367,7 @@ export class AppComponent {
     ];
 
     this.moduloRaioX = [{
-      name: this.lex.translate("Curriculum"),
+      name: this.lex.translate("Currículo"),
       permition: "MENU_RX_CURRICULUM_ACESSO",
       id: "navbarDropdownRXCadastros",
       menu: [

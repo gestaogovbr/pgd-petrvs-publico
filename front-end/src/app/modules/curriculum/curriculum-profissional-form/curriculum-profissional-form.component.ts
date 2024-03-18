@@ -324,12 +324,9 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public saveHistoricoFuncao(form: FormGroup, row: any) {
     form?.markAllAsTouched();
     if (form?.valid) {
-      console.log('row',row)
       let values = form.value;
       row.funcao = this.funcao?.selectedItem?.data;
-      console.log(row.funcao)
       row.unidade = this.unidadeChefia?.selectedEntity;
-      console.log(row.unidade)
       row.unidade_id = values.unidade_id;
       row.funcao_id = values.funcao_id;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
