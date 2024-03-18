@@ -38,8 +38,4 @@ class Curso extends ModelBase
   {
     return $this->hasMany(HistoricoCursoInterno::class);
   }
-  public function historicosDocenciasInternas()
-  {
-    return $this->hasMany(HistoricoDocenciaInterna::class);
-  }
 }

@@ -15,4 +15,10 @@ class Disciplina extends ModelBase
     'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */ // Curso ativo ou inativo
     //'deleted_at', /* timestamp; */
   ];
+
+  // hasMany
+  public function historicosDocenciasInternas()
+  {
+    return $this->hasMany(HistoricoDocenciaInterna::class);
+  }
 }
