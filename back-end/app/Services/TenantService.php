@@ -159,10 +159,10 @@ class TenantService extends ServiceBase {
 
     public function resetBD() {
         try {
-            Artisan::call('db:delete-all');
-            logInfo();
-            Artisan::call('db:truncate-all');
-            logInfo();
+//            Artisan::call('db:delete-all');
+//            logInfo();
+//            Artisan::call('db:truncate-all');
+//            logInfo();
             return true;
         } catch (\Exception $e) {
             // Handle any exceptions that may occur during command execution
@@ -196,6 +196,21 @@ class TenantService extends ServiceBase {
             Log::error('Error executing commands: ' . $e->getMessage());
             Log::channel('daily')->error('Error executing commands: ' . $e->getMessage());
             // Optionally, rethrow the exception to let it be handled elsewhere
+            throw $e;
+        }
+    }
+
+    public function deleteTenant($id)
+    {
+        try {
+            $tenant = Tenant::find($id);
+            if($tenant) {
+                $tenant->delete();
+                Log::info('Tenant deletado com sucesso: ' . $id);
+            }
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Error executing commands: ' . $e->getMessage());
             throw $e;
         }
     }
