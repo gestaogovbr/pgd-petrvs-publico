@@ -11,7 +11,8 @@ class Disciplina extends ModelBase
 
   public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
     'nome', /* varchar(256); NOT NULL; */ // Nome do curso
-    'sigla', /* varchar(20); */
+    'sigla', /* varchar(20); */ // Sigla da disciplina.
     'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */ // Curso ativo ou inativo
+    //'deleted_at', /* timestamp; */
   ];
 }
