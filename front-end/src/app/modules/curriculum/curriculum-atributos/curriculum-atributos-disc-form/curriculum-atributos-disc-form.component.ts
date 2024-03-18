@@ -28,7 +28,7 @@ export class CurriculumAtributosDiscFormComponent extends PageFormBase<Questiona
 
   constructor(public injector: Injector) {
     super(injector, QuestionarioPreenchimento, QuestionarioPreenchimentoDaoService);
-    this.join = ['questionario_resposta_pergunta'];
+    this.join = ['respostas'];
     this.questionarioDao = injector.get<QuestionarioDaoService>(QuestionarioDaoService);
     this.questionarioPerguntasDao = injector.get<QuestionarioPerguntaDaoService>(QuestionarioPerguntaDaoService);
 
@@ -59,7 +59,7 @@ export class CurriculumAtributosDiscFormComponent extends PageFormBase<Questiona
     if (questionario?.length) {
       questionario[0].perguntas = questionario[0].perguntas.sort((a, b) => a.sequencia! < b.sequencia! ? -1 : 1);
       this.questionario = questionario[0];
-      const questionarioResposta = await this.dao?.query({ where: [['questionario_id', '==', this.questionario.id], ['usuario_id', '==', this.auth.usuario?.id]], join: ['questionario_resposta_pergunta'] }).asPromise();
+      const questionarioResposta = await this.dao?.query({ where: [['questionario_id', '==', this.questionario.id], ['usuario_id', '==', this.auth.usuario?.id]], join: ['respostas'] }).asPromise();
       this.entity = questionarioResposta?.length ? questionarioResposta[0] : undefined;
       let respostas: any = [];
       if (this.entity) {

@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\AreaConhecimento;
 use App\Models\TipoCurso;
-use App\Models\Materia;
+use App\Models\Disciplina;
 
 class Curso extends ModelBase
 {
@@ -30,10 +30,6 @@ class Curso extends ModelBase
     return $this->belongsTo(TipoCurso::class);
   }
   // Has
-  public function materias()
-  {
-    return $this->hasMany(Materia::class);
-  }
   public function curriculunsGraduacoes()
   {
     return $this->hasMany(CurriculumGraduacao::class);
@@ -45,9 +41,5 @@ class Curso extends ModelBase
   public function historicosDocenciasInternas()
   {
     return $this->hasMany(HistoricoDocenciaInterna::class);
-  }
-  public function historicosDocenciasExternas()
-  {
-    return $this->hasMany(HistoricoDocenciaExterna::class);
   }
 }

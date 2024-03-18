@@ -317,8 +317,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
       let programas = await this.programaDao.query({where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]]}).asPromise();
       let ultimo = programas[programas.length -1];
-      this.entity.programa = ultimo;
-      this.entity.programa_id = ultimo.id;
+      this.preenchePrograma(ultimo)
 
       this.buscaGestoresUnidadeExecutora(this.auth.unidade!);
       if(!this.gestoresUnidadeExecutora.includes(this.auth.unidade!.id)) {

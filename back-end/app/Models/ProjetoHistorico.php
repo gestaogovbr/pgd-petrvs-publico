@@ -8,27 +8,33 @@ use App\Models\Usuario;
 
 class ProjetoHistorico extends ModelBase
 {
-    protected $table = 'projetos_historicos';
+  protected $table = 'projetos_historicos';
 
-    protected $with = [];
+  protected $with = [];
 
-    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'data_modificacao', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data e hora da modificação
-        'completo', /* tinyint; NOT NULL; */// Se o delta corresponde ao objeto completo
-        'delta', /* json; NOT NULL; */// Delta do objeto (ou objeto completo)
-        'projeto_id', /* char(36); NOT NULL; */
-        'usuario_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
-    ];
+  public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
+    'data_modificacao', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */ // Data e hora da modificação
+    'completo', /* tinyint; NOT NULL; */ // Se o delta corresponde ao objeto completo
+    'delta', /* json; NOT NULL; */ // Delta do objeto (ou objeto completo)
+    'projeto_id', /* char(36); NOT NULL; */
+    'usuario_id', /* char(36); NOT NULL; */
+    //'deleted_at', /* timestamp; */
+  ];
 
-    public $fillable_changes = [];
+  public $fillable_changes = [];
 
-    public $fillable_relations = [];
+  public $fillable_relations = [];
 
-    public $delete_cascade = [];
+  public $delete_cascade = [];
 
-    // Has
-    // Belongs
-    public function projeto() { return $this->belongsTo(Projeto::class); }    
-    public function usuario() { return $this->belongsTo(Usuario::class); }    
+  // Has
+  // Belongs
+  public function projeto()
+  {
+    return $this->belongsTo(Projeto::class);
+  }
+  public function usuario()
+  {
+    return $this->belongsTo(Usuario::class);
+  }
 }

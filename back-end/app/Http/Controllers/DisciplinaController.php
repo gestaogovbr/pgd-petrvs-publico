@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 
-class MateriaController extends ControllerBase
+class DisciplinaController extends ControllerBase
 {
   public function checkPermissions($action, $request, $service, $unidade, $usuario)
   {

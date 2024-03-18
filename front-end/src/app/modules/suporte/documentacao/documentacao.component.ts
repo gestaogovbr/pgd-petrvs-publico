@@ -47,6 +47,11 @@ export class DocumentacaoComponent implements OnInit {
             target: 'docs/gestao/avaliacao.md'   
           },
           {
+            label: 'Regramentos De Instituição do Pgd (Programas de gestão)',
+            icon: 'bi bi-graph-up-arrow',
+            target: 'docs/gestao/programa.md'   
+          },
+          {
             label: 'Planejamento Institucional',
             icon: 'bi bi-journals',
             target: 'docs/gestao/planejamento_institucional.md'   

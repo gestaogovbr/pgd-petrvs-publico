@@ -5,21 +5,14 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Curso;
 
-class Materia extends ModelBase
+class Disciplina extends ModelBase
 {
-  protected $table = 'materias';
+  protected $table = 'disciplinas';
 
   public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
     'nome', /* varchar(256); NOT NULL; */ // Nome do curso
-    'horas_aula', /* tinyint; */ // Horas aula da matéria
+    'sigla', /* varchar(20); */ // Sigla da disciplina.
     'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */ // Curso ativo ou inativo
-    'curso_id', /* char(36); NOT NULL; */
     //'deleted_at', /* timestamp; */
   ];
-
-  // Belongs
-  public function curso()
-  {
-    return $this->belongsTo(Curso::class);
-  }
 }
