@@ -34,8 +34,6 @@ class CleanUpAtribuicoesSeeder extends Seeder
                     $this->limparDuplicatasPorAtribuicao($atribuicaoTipo);
                 }
                 
-                echo(' CleanUpAtribuicoesSeeder NA MESMA UNIDADE  processado!');
-                
                 $processados = [];
                 $atribuicoes = DB::table('unidades_integrantes_atribuicoes as uia')
                     ->select('uia.id', 'ui.usuario_id', 'uia.unidade_integrante_id')
@@ -46,7 +44,6 @@ class CleanUpAtribuicoesSeeder extends Seeder
     
                 foreach ($atribuicoes as $atribuicao) {
                     if (!in_array($atribuicao->usuario_id, $processados)) {
-                        // Adiciona o usuário ao array de processados, mantendo a primeira ocorrência de LOTADO
                         $processados[] = $atribuicao->usuario_id;
                     } else {
                         // Antes de excluir a unidade_integrante, precisa excluir todas as atribuições relacionadas a ela
@@ -60,8 +57,7 @@ class CleanUpAtribuicoesSeeder extends Seeder
                             ->delete();
                     }
                 }
-                echo(' CleanUpAtribuicoesSeeder UNIDADE DIFERENTES  processado!  '  . count($atribuicoes) .'/  processados: '  . count($processados). ' ');
-                
+
                 
             });
         } 
