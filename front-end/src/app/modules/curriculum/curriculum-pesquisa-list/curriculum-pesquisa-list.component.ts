@@ -61,7 +61,9 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
       interesse_pgd: { default: "" },
       remocao: { default: false },
       soft_id: { default: "" },
-      score: { default: 0 },      
+      score: { default: 0 },
+      comportamental: { default: "" },
+      score_atributo: { default: 0 },      
     });
     this.orderBy = [['usuario.nome', 'asc']];
     this.join = ['profissional.historico_atividade_interna.capacidade_tecnica.area_tematica',
@@ -124,6 +126,9 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
     }
     if (form.soft_id?.length && form.score > 0) {
       result.push(["soft_id", "==", form.soft_id, form.score]);
+    }
+    if (form.comportamental?.length && form.score_atributo > 0) {
+      result.push(["comportamental", "==", form.comportamental, form.score_atributo]);
     }
     return result;
   }

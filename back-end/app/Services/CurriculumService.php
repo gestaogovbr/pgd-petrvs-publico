@@ -121,4 +121,8 @@ class CurriculumService extends ServiceBase
     $data['where'] = $where;
     return $data;
   }
+
+  public function filtroBigFive () {
+  
+  }
 }

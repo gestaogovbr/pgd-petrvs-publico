@@ -84,7 +84,8 @@
         <div class="col-6">
           <separator title="Mente">
             <div class="row">
-
+              <input-select [size]="9" label="Selecione a atributo comportamental" icon="fas fa-graduation-cap" controlName="comportamental" [control]="filter!.controls.comportamental" [items]="lookup.ATRIBUTOS_COMPORTAMENTAIS" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+              <input-number [size]="3" label="Pontuação" icon="fas fa-graduation-cap" controlName="score_atributo" [control]="filter!.controls.score_atributo" [attr.min]="0" [minValue]="0" [maxValue]="40"></input-number>
             </div>
           </separator>
         </div>
