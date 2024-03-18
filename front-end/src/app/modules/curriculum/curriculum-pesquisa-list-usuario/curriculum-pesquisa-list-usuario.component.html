@@ -83,7 +83,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <ng-container *ngFor="let graduacao of curriculum?.graduacoes">
+                  <ng-container *ngFor="let graduacao of curriculum.graduacoes">
                     <tr>
                       <td>{{graduacao?.pretensao == 0 ? 'Finalizado' : 'Pretendo Fazer' || "" }}</td>
                       <td>{{graduacao?.curso?.area_conhecimento.nome || "Sem area"}}</td>
@@ -136,7 +136,7 @@
         <div class="row my-2">
           <div class="col-md-6">
             <strong>Funções exercidas e unidades</strong><br>
-            <div *ngIf="curriculum.curriculum_profissional.historicos_funcoes.length; else semFuncao">
+            <div *ngIf="curriculum?.curriculum_profissional?.historicos_funcoes.length; else semFuncao">
               <ng-container *ngFor="let funcao of curriculum.curriculum_profissional.historicos_funcoes">
                 <span>{{funcao?.funcao?.nome || "Sem nome da funcao"}} - {{funcao?.unidade?.nome || "Sem nome da unidade"}}</span><br>
               </ng-container>
