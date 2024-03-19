@@ -169,14 +169,30 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
   
 
   public dynamicButtons(row: any): ToolbarButton[] {
+    /*
+    (PTR:TABELA_1)
+    Ação \ Ator   | PT do Chefe    | PT do Chefe Sub.     | PT do Delegado   | PT do Lotado/Colaborador   
+    --------------+----------------+----------------------+------------------+-------------------------
+    Avaliar       | CF+,CS+        | CF,CF+,CS+           | CF,CS            | CF,CS
+    */
     let result: ToolbarButton[] = [];
     let consolidacao: PlanoTrabalhoConsolidacao = row as PlanoTrabalhoConsolidacao;
     const usuarioId = consolidacao!.plano_trabalho?.usuario_id;
     const unidadeId = this.entity!.unidade_id;
     const anterior = this.anterior(row as PlanoTrabalhoConsolidacao);
     const proximo = this.proximo(row as PlanoTrabalhoConsolidacao);
-    const isAvaliador = this.auth.hasPermissionTo("MOD_PTR_CSLD_AVAL") && (this.unidadeService.isGestorUnidade(unidadeId) || this.auth.isIntegrante('AVALIADOR_PLANO_TRABALHO', unidadeId));
     const isUsuarioDoPlano = this.auth.usuario!.id == usuarioId;
+    const nenhumGestor = { gestor: false, gestorSubstituto: false, gestorDelegado: false };
+    const gestorLogado = this.entity?._metadata["atribuicoesGestorUsuarioLogado"] || nenhumGestor;
+    const gestorParticipante = this.entity?._metadata["atribuicoesGestorUsuario"] || nenhumGestor;
+    const gestorUnidadeSuperior = this.entity?._metadata["gestorUnidadeSuperior"] || nenhumGestor;
+    const isAvaliador = !isUsuarioDoPlano && this.auth.hasPermissionTo("MOD_PTR_CSLD_AVAL") && 
+      (
+        this.auth.isIntegrante('AVALIADOR_PLANO_TRABALHO', unidadeId) || 
+        (gestorParticipante.gestor && (gestorUnidadeSuperior.gestor || gestorUnidadeSuperior.gestorSubstituto)) ||
+        (gestorParticipante.gestorSubstituto && (gestorLogado.gestor || gestorUnidadeSuperior.gestor || gestorUnidadeSuperior.gestorSubstituto)) ||
+        (!gestorParticipante.gestor && !gestorParticipante.gestorSubstituto && (gestorLogado.gestor || gestorLogado.gestorSubstituto))
+      );
     const BOTAO_CONCLUIR = { hint: "Concluir", icon: "bi bi-check-circle", color: "btn-outline-success", onClick: this.concluir.bind(this) };
     const BOTAO_CANCELAR_CONCLUSAO = { hint: "Cancelar conclusão", icon: "bi bi-backspace", color: "btn-outline-danger", onClick: this.cancelarConclusao.bind(this) };
     const BOTAO_AVALIAR = { hint: "Avaliar", icon: "bi bi-star", color: "btn-outline-warning", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.avaliar(row, this.entity!.programa!, this.refreshConsolidacao.bind(this)) };
@@ -196,6 +212,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
         result.push(BOTAO_CANCELAR_CONCLUSAO);
       }
       if(consolidacao.status == "CONCLUIDO" && canAvaliar && isAvaliador) {
+        /* (RN_CSLD_16) A avaliação somente poderá ser realizado caso não exista período anterior ou o período anterior esteja AVALIADO, e respeitando os critérios da tabela [PTR:TABELA_1] */
         result.push(BOTAO_AVALIAR);
       }
       if(consolidacao.status == "AVALIADO" && consolidacao!.avaliacao) {
