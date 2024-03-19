@@ -8,22 +8,24 @@ use App\Models\Usuario;
 
 class Favorito extends ModelBase
 {
-    protected $table = 'favoritos';
+  protected $table = 'favoritos';
 
-    protected $with = [];
+  protected $with = [];
 
-    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'config', /* json; */// Configurações do favoritos
-        'usuario_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
-    ];
+  public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
+    'config', /* json; */ // Configurações do favoritos
+    'usuario_id', /* char(36); NOT NULL; */
+    //'deleted_at', /* timestamp; */
+  ];
 
-    // Casting
-    protected $casts = [
-        'config' => AsJson::class
-    ];
-    
-    // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class); }    
+  // Casting
+  protected $casts = [
+    'config' => AsJson::class
+  ];
 
+  // Belongs
+  public function usuario()
+  {
+    return $this->belongsTo(Usuario::class);
+  }
 }

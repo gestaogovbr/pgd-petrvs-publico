@@ -13,6 +13,7 @@ export class ColumnHeaderComponent implements OnInit {
   @Input() column: GridColumn = new GridColumn();
   @Input() grid?: GridComponent = undefined;
   @Input() index: number = 0; 
+  @Input() bold: boolean = true; 
 
   constructor() { }
 

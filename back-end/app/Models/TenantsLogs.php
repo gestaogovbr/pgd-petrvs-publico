@@ -8,15 +8,14 @@ use Stancl\Tenancy\Database\Concerns\HasDomains;
 
 class TenantsLogs extends Model
 {
-    use HasDatabase, HasDomains;
+  use HasDatabase, HasDomains;
 
-    protected $table = "tenants_logs";
+  protected $table = "tenants_logs";
 
-    public $fillable = [ 
-        'id',
-        'tenant_id',
-        'log_type', 
-        'output', 
-    ];
-
-}   
+  public $fillable = [
+    'id',
+    'tenant_id',
+    'log_type',
+    'output',
+  ];
+}

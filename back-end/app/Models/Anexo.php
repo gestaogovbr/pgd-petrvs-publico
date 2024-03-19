@@ -8,22 +8,28 @@ use App\Models\Comentario;
 
 class Anexo extends ModelBase
 {
-    protected $table = 'anexos';
+  protected $table = 'anexos';
 
-    protected $with = [];
+  protected $with = [];
 
-    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nome', /* varchar(256); NOT NULL; */// Nome do arquivo com extensão
-        'descricao', /* varchar(256); NOT NULL; */// Descrição do anexo
-        'data_comentario', /* datetime; NOT NULL; */// Data e horário que foi feito o comentário
-        'path', /* varchar(256); */// Path relativo do arquivo
-        'base64', /* text; */// Arquivo em formato base64
-        'usuario_id', /* char(36); */
-        'comentario_id', /* char(36); */
-        //'deleted_at', /* timestamp; */
-    ];
-   
-    // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class); }  //nullable   
-    public function comentario() { return $this->belongsTo(Comentario::class); }      //nullable
+  public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
+    'nome', /* varchar(256); NOT NULL; */ // Nome do arquivo com extensão
+    'descricao', /* varchar(256); NOT NULL; */ // Descrição do anexo
+    'data_comentario', /* datetime; NOT NULL; */ // Data e horário que foi feito o comentário
+    'path', /* varchar(256); */ // Path relativo do arquivo
+    'base64', /* text; */ // Arquivo em formato base64
+    'usuario_id', /* char(36); */
+    'comentario_id', /* char(36); */
+    //'deleted_at', /* timestamp; */
+  ];
+
+  // Belongs
+  public function usuario()
+  {
+    return $this->belongsTo(Usuario::class);
+  }  //nullable   
+  public function comentario()
+  {
+    return $this->belongsTo(Comentario::class);
+  }      //nullable
 }

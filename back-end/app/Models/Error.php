@@ -8,26 +8,26 @@ use App\Casts\AsJson;
 
 class Error extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    protected $connection = 'log';
+  protected $connection = 'log';
 
-    protected $table = 'errors';
+  protected $table = 'errors';
 
-    protected $with = [];
+  protected $with = [];
 
-    public $fillable = [
-        'date_time',
-        'user',
-        'message',
-        'data',
-        'trace',
-        'type'
-    ];
+  public $fillable = [
+    'date_time',
+    'user',
+    'message',
+    'data',
+    'trace',
+    'type'
+  ];
 
-    public $timestamps = false;
+  public $timestamps = false;
 
-    protected $casts = [
-        'user' => AsJson::class
-    ];
+  protected $casts = [
+    'user' => AsJson::class
+  ];
 }

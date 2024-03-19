@@ -22,7 +22,7 @@ Route::middleware(['api', 'panel'])->prefix('Tenant')->group(function () {
     Route::post('migrations', [TenantController::class, 'migrations']);
     Route::post('seeders', [TenantController::class, 'seeders']);
     Route::get('resetdb', [TenantController::class, 'resetdb']);
-    Route::post('deletetenant', [TenantController::class, 'deleteTenant']);
+    Route::post('delete-tenant', [TenantController::class, 'deleteTenant']);
 });
 Route::middleware(['api', 'panel'])->prefix('TenantLogs')->group(function () {
     Route::post('store', [TenantsLogsController::class, 'store']);
