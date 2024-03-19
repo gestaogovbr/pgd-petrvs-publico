@@ -805,7 +805,15 @@ export class LookupService implements IIndexable {
     { key: "ADAPTABILIDADE", value: 'Adaptabilidade e resiliência' },
     { key: "ETICA", value: 'Ética' }
   ];
-  // "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWITCH" | "NUMBER" | "RATE" | "RADIO" | "CHECK";
+
+  public ATRIBUTOS_COMPORTAMENTAIS: LookupItem[] = [
+    { key: "EXTROVERSAO", value: 'Extroversão' },
+    { key: "AGRADABILIDADE", value: 'Agradabilidade' },
+    { key: "CONSCIENCIOSIDADE", value: 'Conscienciosidade' },
+    { key: "EMOCIONAL", value: 'Estabilidade Emocional' },
+    { key: "ABERTURA", value: 'Abertura' }
+  ];
+ // "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWITCH" | "NUMBER" | "RATE" | "RADIO" | "CHECK";
 
   public THEMES: LookupItem[] = [
     { key: 'light', value: "Branco (light)" },
