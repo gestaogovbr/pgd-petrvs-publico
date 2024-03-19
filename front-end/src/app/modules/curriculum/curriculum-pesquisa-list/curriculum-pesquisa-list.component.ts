@@ -14,6 +14,8 @@ import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
 import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
 import { Curriculum } from 'src/app/models/curriculum.model';
 import { CurriculumProfissional } from 'src/app/models/curriculum-profissional.model';
+import { InputRadioComponent } from 'src/app/components/input/input-radio/input-radio.component';
+import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'app-curriculum-pesquisa-list',
@@ -24,6 +26,11 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild('radioInteresseRemocao', { static: false }) public radioInteresseRemocao?: InputSwitchComponent;
   @ViewChild('radioInteresseBNT', { static: false }) public radioInteresseBNT?: InputSwitchComponent;
+  @ViewChild('nivelExtroversao', { static: false }) public nivelExtroversao?: InputRadioComponent;
+  @ViewChild('nivelAgradabilidade', { static: false }) public nivelAgradabilidade?: InputRadioComponent;
+  @ViewChild('nivelDisciplina', { static: false }) public nivelDisciplina?: InputRadioComponent;
+  @ViewChild('nivelEstabilidade', { static: false }) public nivelEstabilidade?: InputRadioComponent;
+  @ViewChild('nivelAbertura', { static: false }) public nivelAbertura?: InputRadioComponent;
 
   public cidadeDao: CidadeDaoService;
   public areaDao: AreaConhecimentoDaoService;
@@ -35,6 +42,11 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
   public filter: FormGroup;
   public areaTematicaWhere: any[] = [['id', '==', null]];
   public cursoWhere: any[] = [['id', '==', null]];
+  public itemsExtroversao: LookupItem[] = [];
+  public itemsAgradabilidade: LookupItem[] = [];
+  public itemsDisciplina: LookupItem[] = [];
+  public itemsEstabilidade: LookupItem[] = [];
+  public itemsAbertura: LookupItem[] = [];
 
   constructor(public injector: Injector) {
     super(injector, Curriculum, CurriculumDaoService);
@@ -59,9 +71,19 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
       capacidade_tecnica_id: { default: "" },
       interesse_bnt: { default: false },
       interesse_pgd: { default: "" },
+      modalidade_pgd: { default: "" },
       remocao: { default: false },
       soft_id: { default: "" },
-      score: { default: 0 },
+      extroversao: { default: false },
+      nivelExtroversao: { default: "" },
+      agradabilidade: { default: false },
+      nivelAgradabilidade: { default: "" },
+      disciplina: { default: false },
+      nivelDisciplina: { default: "" },
+      estabilidade: { default: false },
+      nivelEstabilidade: { default: "" },
+      abertura: { default: false },
+      nivelAbertura: { default: "" },
     });
     this.orderBy = [['usuario.nome', 'asc']];
     this.join = ['curriculum_profissional.historicos_atividades_internas.capacidade_tecnica.area_tematica',
@@ -71,6 +93,31 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
       'curriculum_profissional.historicos_funcoes.unidade', 'curriculum_profissional.historicos_lotacoes.unidade', 'usuario', 'cidade',
       'graduacoes', 'graduacoes.curso', 'graduacoes.curso.area_conhecimento', 'curriculum_profissional.grupo_especializado',
       'usuario.preenchimentos.questionario.perguntas.respostas'];
+    this.itemsExtroversao = [
+      { key: "1", value: "Introvertido" },
+      { key: "2", value: "Neutro" },
+      { key: "3", value: "Extrovertido" }
+    ];
+    this.itemsAgradabilidade = [
+      { key: "1", value: "Objetivo" },
+      { key: "2", value: "Neutro" },
+      { key: "3", value: "Pessoas" }
+    ];
+    this.itemsDisciplina = [
+      { key: "1", value: "Espontâneo" },
+      { key: "2", value: "Neutro" },
+      { key: "3", value: "Disciplinado" }
+    ];
+    this.itemsEstabilidade = [
+      { key: "1", value: "Racional" },
+      { key: "2", value: "Neutro" },
+      { key: "3", value: "Emocional" }
+    ];
+    this.itemsAbertura = [
+      { key: "1", value: "Presente" },
+      { key: "2", value: "Neutro" },
+      { key: "3", value: "Futuro" }
+    ];
   }
 
   ngAfterViewInit() {
@@ -113,20 +160,20 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
     if (form.capacidade_tecnica_id?.length) {
       result.push(["capacidade_tecnica_id", "==", form.capacidade_tecnica_id]);
     }
-    if (form.interesse_pgd?.length) {
+    if (form.interesse_pgd) {
       result.push(["interesse_pgd", "==", form.interesse_pgd]);
-    }
+    } 
+    /*if (!form.interesse_pgd) {
+      result.push(["interesse_pgd", "==", form.interesse_pgd]);
+    }*/
     if (form.interesse_bnt) {
       result.push(["interesse_bnt", "==", form.interesse_bnt]);
     }
     if (form.remocao) {
       result.push(["remocao", "==", form.remocao]);
     }
-    if (form.soft_id?.length && form.score > 0) {
-      result.push(["soft_id", "==", form.soft_id, form.score]);
-    }
-    if (form.comportamental?.length && form.score_atributo > 0) {
-      result.push(["comportamental", "==", form.comportamental, form.score_atributo]);
+    if (form.soft_id?.length) {
+      result.push(["soft_id", "==", form.soft_id]);
     }
     return result;
   }
@@ -147,7 +194,11 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
     filter.controls.interesse_bnt.setValue(false);
     filter.controls.remocao.setValue(false);
     filter.controls.soft_id.setValue(null);
-    filter.controls.score.setValue(0);
+    filter.controls.extroversao.setValue(false);
+    filter.controls.agradabilidade.setValue(false);
+    filter.controls.disciplina.setValue(false);
+    filter.controls.estabilidade.setValue(false);
+    filter.controls.abertura.setValue(false);
     super.filterClear(filter);
   }
 
@@ -177,6 +228,26 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
         curriculum: curriculum
       }
     });
+  }
+
+  public onChangeRadioBigFive(caracteristica: string) {
+    switch (caracteristica) {
+      case 'extroversao':
+        this.nivelExtroversao?.setValue("");
+        break;
+      case 'agradabilidade':
+        this.nivelAgradabilidade?.setValue("");
+        break;
+      case 'disciplina':
+        this.nivelDisciplina?.setValue("");
+        break;
+      case 'estabilidade':
+        this.nivelEstabilidade?.setValue("");
+        break;
+      case 'abertura':
+        this.nivelAbertura?.setValue("");
+        break;
+    }
   }
 }
 
