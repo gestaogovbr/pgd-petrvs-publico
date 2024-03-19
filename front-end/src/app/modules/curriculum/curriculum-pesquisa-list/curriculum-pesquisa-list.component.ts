@@ -66,7 +66,7 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
     this.orderBy = [['usuario.nome', 'asc']];
     this.join = ['curriculum_profissional.historicos_atividades_internas.capacidade_tecnica.area_tematica',
       'curriculum_profissional.historicos_atividades_externas.area_atividade_externa', 'curriculum_profissional.historicos_cursos_internos.curso',
-      'curriculum_profissional.historicos_cursos_externos.area_atividade_externa', 'curriculum_profissional.historicos_docencias_internas.curso',
+      'curriculum_profissional.historicos_cursos_externos.area_atividade_externa', 'curriculum_profissional.historicos_docencias_internas.disciplina',
       'curriculum_profissional.historicos_docencias_externas.area_atividade_externa', 'curriculum_profissional.historicos_funcoes.funcao',
       'curriculum_profissional.historicos_funcoes.unidade', 'curriculum_profissional.historicos_lotacoes.unidade', 'usuario', 'cidade',
       'graduacoes', 'graduacoes.curso', 'graduacoes.curso.area_conhecimento', 'curriculum_profissional.grupo_especializado',

@@ -12,7 +12,6 @@ export class Curso extends Base {
   public tipo_curso?: TipoCurso;
   public curriculuns_graduacoes?: CurriculumGraduacao[];
   public historicos_cursos_internos?: HistoricoCursoInterno[];
-  public historicos_docencias_internas?: HistoricoDocenciaInterna[];
   public historicos_docencias_externas?: HistoricoDocenciaExterna[];
 
   public nome: string = ""; //Nome do curso
