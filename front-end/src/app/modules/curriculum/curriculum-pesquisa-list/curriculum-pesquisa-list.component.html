@@ -127,10 +127,10 @@
       </ng-template>
       <ng-template let-row="row" #columnNome>
         <span class="text-nowrap d-block">
-          {{row.usuario?.nome}}
-          <badge color="gray">{{row.curriculum_profissional?.ano_ingresso}}</badge>
+          {{row?.usuario?.nome || "Sem Nome"}}
+          <badge color="gray">{{row?.curriculum_profissional?.ano_ingresso || "Sem informação"}}</badge>
         </span>
-        <span class="micro-text fw-ligh">{{row.usuario?.email}}</span>
+        <span class="micro-text fw-ligh">{{row?.usuario?.email || "Sem email"}}</span>
       </ng-template>
     </column>
     <column [titleTemplate]="titleEstado" [template]="columnEstado">
@@ -138,12 +138,12 @@
         <strong>Cidade/Estado</strong>
       </ng-template>
       <ng-template let-row="row" #columnEstado>
-        <span class="d-block">{{row.cidade?.nome}}/{{row.cidade?.uf}}</span>
+        <span class="d-block">{{row?.cidade?.nome || "Sem cidade"}}/{{row.cidade?.uf || "Sem UF"}}</span>
       </ng-template>
     </column>
     <column title="Apresentação Pessoal" [template]="columnApresentacao">
       <ng-template let-row="row" #columnApresentacao>
-        <span class="micro-text fw-ligh">{{row.apresentacao}}</span>
+        <span class="micro-text fw-ligh">{{row?.apresentacao || "Sem apresentação"}}</span>
       </ng-template>
     </column>
     <column icon="bi bi-person-bounding-box" [align]="'center'" [hint]="'Detalhamento'" type="options" [onEdit]="edit.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>

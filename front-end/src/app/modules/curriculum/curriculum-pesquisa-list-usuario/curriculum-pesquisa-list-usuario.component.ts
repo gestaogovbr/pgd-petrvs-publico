@@ -53,8 +53,8 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
     console.log(this.curriculum)
     let respostas: number[] = [];
 
-    if ((this.curriculum.usuario.questionarios_respostas).length) {
-      this.curriculum.usuario.questionarios_respostas.forEach((element: any) => {
+    if ((this.curriculum.usuario.preenchimentos).length) {
+      this.curriculum.usuario.preenchimentos.forEach((element: any) => {
         element.questionario.perguntas = element.questionario.perguntas.sort((a: any, b: any) => a.sequencia! < b.sequencia! ? -1 : 1);
         this.questionarios.push({ 'codigo': element.questionario.codigo, 'perguntas': element.questionario.perguntas });
         if (element.questionario.codigo == 'B5') {
