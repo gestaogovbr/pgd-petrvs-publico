@@ -121,6 +121,9 @@ export class DialogComponent implements OnInit {
     if(index >= 0) this.dialogs!.dialogs.splice(index, 1);
     if(this.route) this.go.back(this.route.queryParams?.idroute);
     if(this.onClose) this.onClose.emit();
+    console.log(this.componentRef);
+    const modal = this.componentRef?.instance.modalBodyRef?.instance as any;
+    modal.form.reset();
     this.componentRef?.destroy();
   }
 
@@ -164,6 +167,8 @@ export class DialogComponent implements OnInit {
 
   public close(triggerBack: boolean = true) {
     if(!triggerBack) this.route = undefined;
+    console.log(this.modalBodyRef?.instance);
+    
     this.bootstapModal.hide();
   }
 

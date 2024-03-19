@@ -1,5 +1,5 @@
 import { OnInit, Injector, Injectable, Type } from '@angular/core';
-import { FormGroup,  FormControl } from '@angular/forms';
+import { FormGroup,  FormControl, FormArray } from '@angular/forms';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { Base, IIndexable } from 'src/app/models/base.model';
 import { PageBase } from './page-base';
@@ -133,5 +133,26 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
 
   public clearErros = () => {
     if(this.editableForm) this.editableForm.error = "";
+  }
+
+  resetForm(form: FormGroup){
+    if(form){
+      Object.keys(form.controls).forEach(key => {
+          
+        
+        const control = this.form?.get(key);        
+        console.log(typeof control);
+
+        if (control instanceof FormGroup) {
+          this.resetForm(control);
+        } else if (control instanceof FormArray) {
+          while (control.length !== 0) {
+            control.removeAt(0);
+          }
+        } else {
+          control?.reset();
+        }
+      });
+    }
   }
 }
