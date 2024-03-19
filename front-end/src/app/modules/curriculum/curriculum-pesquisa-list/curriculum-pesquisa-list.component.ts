@@ -14,8 +14,9 @@ import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
 import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
 import { Curriculum } from 'src/app/models/curriculum.model';
 import { CurriculumProfissional } from 'src/app/models/curriculum-profissional.model';
-import { InputRadioComponent } from 'src/app/components/input/input-radio/input-radio.component';
 import { LookupItem } from 'src/app/services/lookup.service';
+import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
+import { InputRadioComponent } from 'src/app/components/input/input-radio/input-radio.component';
 
 @Component({
   selector: 'app-curriculum-pesquisa-list',
@@ -26,6 +27,8 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild('radioInteresseRemocao', { static: false }) public radioInteresseRemocao?: InputSwitchComponent;
   @ViewChild('radioInteresseBNT', { static: false }) public radioInteresseBNT?: InputSwitchComponent;
+  @ViewChild('cidadeFiltro', { static: false }) public cidadeFiltro?: InputSelectComponent;
+  @ViewChild('estadoFiltro', { static: false }) public estadoFiltro?: InputSelectComponent;
   @ViewChild('nivelExtroversao', { static: false }) public nivelExtroversao?: InputRadioComponent;
   @ViewChild('nivelAgradabilidade', { static: false }) public nivelAgradabilidade?: InputRadioComponent;
   @ViewChild('nivelDisciplina', { static: false }) public nivelDisciplina?: InputRadioComponent;
@@ -39,6 +42,7 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
   public funcaoDao: FuncaoDaoService;
   public areaTematicaDao: AreaTematicaDaoService;
   public capacidadeTecnicaDao: CapacidadeTecnicaDaoService;
+  public cidades: LookupItem[] = [];
   public filter: FormGroup;
   public areaTematicaWhere: any[] = [['id', '==', null]];
   public cursoWhere: any[] = [['id', '==', null]];
@@ -162,7 +166,7 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
     }
     if (form.interesse_pgd) {
       result.push(["interesse_pgd", "==", form.interesse_pgd]);
-    } 
+    }
     /*if (!form.interesse_pgd) {
       result.push(["interesse_pgd", "==", form.interesse_pgd]);
     }*/
@@ -228,6 +232,19 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
         curriculum: curriculum
       }
     });
+  }
+
+  public async onEstadosChange() {
+    if (this.filter!.controls.estado.value) {
+      await this.cidadeDao?.query({ where: [['uf', '==', this.filter!.controls.estado.value]], orderBy: [['nome', 'asc']] }).asPromise().then((resposta) => {
+        this.cidades = resposta.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
+        this.cidadeFiltro!.disabled = resposta.length ? undefined : 'true';
+      });
+    }
+  }
+
+  public get municipiosWhere() {
+    return this.filter?.controls.estado.value?.length ? [['uf', '==', this.filter?.controls.estado.value]] : undefined;
   }
 
   public onChangeRadioBigFive(caracteristica: string) {
