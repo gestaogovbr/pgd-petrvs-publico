@@ -15,7 +15,7 @@ class CurriculumProfissional extends ModelBase
   protected $table = 'curriculuns_profissionais';
 
   public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
-    'ano_ingresso',
+    'ano_ingresso', /* int; NOT NULL; */ // Ano de ingresso
     'lotacao_atual', /* varchar(255); */ // Lotação atual
     'especifique_habilidades', /* json; */ // Especifique suas habilidades: (Ex: Desenvolvo em JavaScript)
     'viagem_nacional', /* tinyint; NOT NULL; */ // Já fez viagem nacional a trabalho
@@ -26,11 +26,10 @@ class CurriculumProfissional extends ModelBase
     'telefone', /* varchar(64); */ // Telefone do chefe imediato
     'remocao', /* tinyint; NOT NULL; */ // Você tem interesse em remoção
     'curriculum_id', /* char(36); NOT NULL; */
-    'centro_treinamento_id', /* char(36); NOT NULL; */
+    'centro_treinamento_id', /* char(36); */ // (DC2Type:guid)
     'cargo_id', /* char(36); NOT NULL; */
-    'grupo_especializado_id', /* char(36); NULL; */
+    'grupo_especializado_id', /* char(36); */ // (DC2Type:guid)
     //'deleted_at', /* timestamp; */
-    //'ano_ingresso', /* tinyint; NOT NULL; */// Ano de ingresso
   ];
 
   protected $casts = [

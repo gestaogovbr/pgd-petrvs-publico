@@ -1,7 +1,6 @@
 import { Base } from './base.model';
 import { AreaConhecimento } from './area-conhecimento.model';
 import { TipoCurso } from './tipo-curso.model';
-import { Materia } from './materia.model';
 import { CurriculumGraduacao } from './curriculum-graduacao.model';
 import { HistoricoCursoInterno } from './historico-curso-interno.model';
 import { HistoricoDocenciaInterna } from './historico-docencia-interna.model';
@@ -11,10 +10,8 @@ export class Curso extends Base {
 
   public area_conhecimento?: AreaConhecimento;
   public tipo_curso?: TipoCurso;
-  public materias?: Materia[];
   public curriculuns_graduacoes?: CurriculumGraduacao[];
   public historicos_cursos_internos?: HistoricoCursoInterno[];
-  public historicos_docencias_internas?: HistoricoDocenciaInterna[];
   public historicos_docencias_externas?: HistoricoDocenciaExterna[];
 
   public nome: string = ""; //Nome do curso

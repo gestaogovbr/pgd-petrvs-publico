@@ -30,7 +30,7 @@ export class CurriculumAtributosSoftFormComponent extends PageFormBase<Questiona
 
   constructor(public injector: Injector) {
     super(injector, QuestionarioPreenchimento, QuestionarioPreenchimentoDaoService);
-    this.join = ['questionario_resposta_pergunta'];
+    this.join = ['respostas'];
     this.questionarioDao = injector.get<QuestionarioDaoService>(QuestionarioDaoService);
     this.questionarioPerguntasDao = injector.get<QuestionarioPerguntaDaoService>(QuestionarioPerguntaDaoService);
     this.bigicoAmareloIMG = "/assets/images/icon_big_amarelo.png";
@@ -60,7 +60,7 @@ export class CurriculumAtributosSoftFormComponent extends PageFormBase<Questiona
     if (questionario?.length) {
       questionario[0].perguntas = questionario[0].perguntas.sort((a, b) => a.sequencia! < b.sequencia! ? -1 : 1);
       this.questionario = questionario[0];
-      const questionarioPreenchimento = await this.dao?.query({ where: [['questionario_id', '==', this.questionario.id], ['usuario_id', '==', this.auth.usuario?.id]], join: ['questionario_resposta_pergunta'] }).asPromise();
+      const questionarioPreenchimento = await this.dao?.query({ where: [['questionario_id', '==', this.questionario.id], ['usuario_id', '==', this.auth.usuario?.id]], join: ['respostas'] }).asPromise();
       if (questionarioPreenchimento?.length) {
         let questionarioRespostaOrdenado: QuestionarioPerguntaResposta[] = [];
         let respostas: any = [];
@@ -119,7 +119,7 @@ export class CurriculumAtributosSoftFormComponent extends PageFormBase<Questiona
         x._status = "EDIT";
       }
     });
-    questionarioPreenchimento.questionario_resposta_pergunta = respostas;
+    questionarioPreenchimento.respostas = respostas;
     return questionarioPreenchimento;
   }
 

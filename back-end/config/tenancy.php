@@ -12,15 +12,7 @@ $app_url = config("app.url");
 $patterns = ["/http:\/\//","/https:\/\//"];
 $app_url = preg_replace($patterns, "", $app_url);
 
-if($app_url != 'localhost') {
-    $central_domains_fix = [$app_url];
-} else {
-    $central_domains_fix = [
-        '127.0.0.1',
-        'localhost',
-        'petrvs_php',
-    ];
-};
+$central_domains_fix = explode(",", env('CENTRAL_DOMAINS',$app_url));
 
 return [
     'tenant_model' => \App\Models\Tenant::class,
