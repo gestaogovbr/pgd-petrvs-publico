@@ -7,8 +7,8 @@
   </div>
   <div class="row mt-2">
     <input-select [size]="4" #estados label="Estado" icon="fas fa-flag" controlName="estados" [control]="form!.controls.estados" [items]="lookup.UF" (change)="onEstadosChange()"></input-select>
-    <input-select #municipioV [size]="4" label="Município" icon="far fa-flag" labelInfo="Selecione o estado para habilitar a lista de municípios!" controlName="cidade_id" [control]="form!.controls.cidade_id" [dao]="cidadeDao" [where]="municipiosWhere" [orderBy]="[['nome','asc']]" liveSearch></input-select>
-    <input-text [size]="4" label="Telefone de contato WhatsAPP" icon="fas fa-phone" controlName="telefone" [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'" [attr.maxlength]=250></input-text>
+    <input-select #municipioV [size]="4" label="Município" disabled icon="far fa-flag" labelInfo="Selecione o estado para habilitar a lista de municípios!" controlName="cidade_id" [control]="form!.controls.cidade_id" [dao]="cidadeDao" [where]="municipiosWhere" [orderBy]="[['nome','asc']]" liveSearch></input-select>
+    <input-text [size]="4" label="Telefone de contato WhatsAPP" icon="fas fa-phone" controlName="telefone" [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'" [attr.maxlength]=250 required></input-text>
   </div>
   <div class="row mt-3">
     <separator title="Estado Civil"></separator>
