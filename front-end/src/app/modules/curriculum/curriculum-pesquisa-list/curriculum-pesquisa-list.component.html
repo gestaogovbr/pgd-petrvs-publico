@@ -6,8 +6,8 @@
         <div class="col-6">
           <separator title="Local de Residência">
             <div class="row">
-              <input-select [size]="6" label="Estado" icon="fas fa-flag" controlName="estado" [control]="filter!.controls.estado" [items]="lookup.UF" itemTodos="- Todos -" [valueTodos]="null"></input-select>
-              <input-select [size]="6" label="Cidade" icon="far fa-flag" controlName="cidade_id" [control]="filter!.controls.cidade_id" [dao]="cidadeDao" [where]="['uf', '==', filter!.controls.estado.value]" itemTodos="- Todos -" [valueTodos]="null" liveSearch></input-select>
+              <input-select #estadoFiltro [size]="6" label="Estado" icon="fas fa-flag" controlName="estado" [control]="filter!.controls.estado" [items]="lookup.UF" itemTodos="- Todos -" [valueTodos]="null" (change)="onEstadosChange()"></input-select>
+              <input-select #cidadeFiltro [size]="6" label="Cidade" icon="far fa-flag" disabled controlName="cidade_id" labelInfo="Selecione o estado para habilitar a lista de cidades!" [control]="filter!.controls.cidade_id" [dao]="cidadeDao" [where]="municipiosWhere" [orderBy]="[['nome','asc']]" liveSearch></input-select>
             </div>
           </separator>
         </div>
@@ -21,7 +21,7 @@
         </div>
       </div>
     </separator>
-    <separator title="Conhecimento" collapse [collapsed]="true">
+    <separator title="Idiomas" collapse [collapsed]="true">
       <div class="row">
         <div class="col-4">
           <separator title="Idiomas">
@@ -30,27 +30,32 @@
             </div>
           </separator>
         </div>
+      </div>
+    </separator>
+    <separator title="Formação acadêmica" collapse [collapsed]="true">
+      <div class="row">
         <div class="col-8">
-          <separator title="Formação Acadêmica">
-            <div class="row">
-              <input-select [size]="6" label="Área de conhecimento" icon="fas fa-user-graduate" controlName="area_conhecimento_id" [control]="filter!.controls.area_conhecimento_id" [dao]="areaDao" (change)="onAreaConhecimentoChange()" itemTodos="- Todos -" [valueTodos]="null"></input-select>
-              <input-select [size]="6" label="Curso" icon="fas fa-graduation-cap" controlName="curso_id" [control]="filter!.controls.curso_id" [dao]="cursoDao" [where]="cursoWhere" itemTodos="- Todos -" [valueTodos]="null"></input-select>
-            </div>
-          </separator>
+          <div class="row">
+            <input-select #tipoFormacao [size]="4" label="Nível da Formação" icon="fas fa-flag" controlName="nivelFormacao" [control]="filter!.controls.nivelFormacao" [items]="lookup.TITULOS_CURSOS" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+            <input-select [size]="4" label="Área de conhecimento" icon="fas fa-user-graduate" controlName="area_conhecimento_id" [control]="filter!.controls.area_conhecimento_id" [dao]="areaDao" (change)="onAreaConhecimentoChange()" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+            <input-select [size]="4" label="Curso" icon="fas fa-graduation-cap" controlName="curso_id" [control]="filter!.controls.curso_id" [dao]="cursoDao" [where]="cursoWhere" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+          </div>
         </div>
       </div>
     </separator>
     <separator title="Dados Profissionais" collapse [collapsed]="true">
       <div class="row">
-        <div class="col-6">
+        <div class="col-6"><!-- Experiência -->
           <separator title="Experiência">
             <div class="row">
-              <input-select [size]="6" label="Faz parte do grupo especializado:" icon="bi bi-award" controlName="grupo_especializado_id" [control]="filter!.controls.grupo_especializado_id" [dao]="grupoDao" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+              <input-select [size]="6" label="Faz parte de grupo especializado:" icon="bi bi-award" controlName="grupo_especializado_id" [control]="filter!.controls.grupo_especializado_id" [dao]="grupoDao" itemTodos="- Todos -"></input-select>
               <input-select [size]="6" label="Função já exercida" icon="bi bi-hammer" controlName="funcao_id" [control]="filter!.controls.funcao_id" [dao]="funcaoDao" itemTodos="- Todos -" [valueTodos]="null"></input-select>
             </div>
           </separator>
         </div>
-        <div class="col-6">
+      </div>
+      <div class="row">
+        <div class="col-6"><!-- Habilidades Técnicas -->
           <separator title="Habilidades Técnicas">
             <div class="row">
               <input-select [size]="6" label="Área temática" icon="fas fa-graduation-cap" controlName="area_tematica_id" [control]="filter!.controls.area_tematica_id" [dao]="areaTematicaDao" (change)="onAreaTematicaChange()" itemTodos="- Todos -" [valueTodos]="null"></input-select>
