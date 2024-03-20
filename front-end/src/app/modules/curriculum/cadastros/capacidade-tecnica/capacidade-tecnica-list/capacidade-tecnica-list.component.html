@@ -1,0 +1,25 @@
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_RX_OUT_INCL')" [hasEdit]="auth.hasPermissionTo('MOD_RX_OUT_EDT')">
+  <toolbar *ngIf="!selectable"></toolbar>
+  <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <div class="row">
+      <input-text [size]="5" label="Nome da Capacidade Técnica" controlName="nome" [attr.maxlength]=250 [control]="filter!.controls.nome" placeholder="Nome da Capacidade Técnica"></input-text>
+      <input-text [size]="3" label="Nome da Área Temática" controlName="area_tematica_id" [control]="filter!.controls.area_tematica_id" [attr.maxlength]=250 placeholder="Nome da Área Temática"></input-text>
+      <input-text [size]="2" label="Ativo" controlName="ativo" [control]="filter!.controls.ativo" [attr.maxlength]=250 placeholder=""></input-text>
+    </div>
+  </filter>
+  <columns>
+    <column title="Capacidade Técnica" field="nome" orderBy="nome"></column>
+    <column title="Área Temática" [template]="columnAreaTematica">
+      <ng-template let-row="row" #columnAreaTematica>
+        <span>{{ row.area_tematica.nome }}</span>
+      </ng-template>
+    </column>
+    <column title="Ativo" [template]="columnAtivo">
+      <ng-template let-row="row" #columnAtivo>
+        {{lookup.getValue(lookup.SIMNAO, row.ativo)}}
+      </ng-template>
+    </column>
+    <column type="options" [onEdit]="edit" [options]="options"></column>
+  </columns>
+  <pagination [rows]="rowsLimit"></pagination>
+</grid>

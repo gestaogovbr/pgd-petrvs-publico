@@ -8,16 +8,16 @@ use App\Casts\AsJson;
 
 class OrgaoCentralExportacao extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    protected $table = 'orgao_central_exportacoes';
+  protected $table = 'orgao_central_exportacoes';
 
-    protected $fillable = ['data_exportacao', 'tipo', 'parametros', 'versao', 'corpo', 'retorno', 'hashs'];
+  protected $fillable = ['data_exportacao', 'tipo', 'parametros', 'versao', 'corpo', 'retorno', 'hashs'];
 
-    protected $casts = [
-        'parametros' => AsJson::class,
-        'corpo' => AsJson::class,
-        'retorno' => AsJson::class,
-        'hashs' => AsJson::class
-    ];
+  protected $casts = [
+    'parametros' => AsJson::class,
+    'corpo' => AsJson::class,
+    'retorno' => AsJson::class,
+    'hashs' => AsJson::class
+  ];
 }

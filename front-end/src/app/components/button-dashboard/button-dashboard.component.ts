@@ -20,6 +20,7 @@ export class ButtonDashboardComponent  extends ComponentBase implements OnInit {
   @Input() borderColor: string = "#000";
   @Input() route?: FullRoute;
   @Input() metadata?: RouteMetadata;
+  @Input() externalLink: boolean = false;
 
   @Input() set imgIcon(value: any) {
     if(this._imgIcon != value) {
@@ -49,6 +50,8 @@ export class ButtonDashboardComponent  extends ComponentBase implements OnInit {
   }
 
   onClick(){
-    if(this.route) this.go.navigate(this.route, this.metadata);
+    if(this.route) {
+      this.externalLink ? window.open(this.route.route.toString(), '_blank') : this.go.navigate(this.route, this.metadata);
+    }
   }
 }

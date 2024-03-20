@@ -7,25 +7,25 @@ use Illuminate\Notifications\Notifiable;
 
 class PainelUsuario extends Authenticatable
 {
-    use Notifiable;
+  use Notifiable;
 
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
+  public function __construct(array $attributes = [])
+  {
+    parent::__construct($attributes);
 
-        // Define a conexão do modelo com base na configuração 'database.default'
-        $this->connection = env('DB_CONNECTION','mysql');
-    }
-    protected $table = 'users_panel';
-    protected $fillable = [
-        'nome',
-        'email',
-        'cpf',
-        'password'
-    ];
+    // Define a conexão do modelo com base na configuração 'database.default'
+    $this->connection = env('DB_CONNECTION', 'mysql');
+  }
+  protected $table = 'users_panel';
+  protected $fillable = [
+    'nome',
+    'email',
+    'cpf',
+    'password'
+  ];
 
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+  protected $hidden = [
+    'password',
+    'remember_token',
+  ];
 }

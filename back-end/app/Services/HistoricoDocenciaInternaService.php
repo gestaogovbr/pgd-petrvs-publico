@@ -4,4 +4,6 @@ namespace App\Services;
 
 use App\Services\ServiceBase;
 
-class HistoricoDocenciaInternaService extends ServiceBase {}
+class HistoricoDocenciaInternaService extends ServiceBase
+{
+}
