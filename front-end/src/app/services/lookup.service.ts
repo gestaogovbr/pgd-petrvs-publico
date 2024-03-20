@@ -784,15 +784,23 @@ export class LookupService implements IIndexable {
     { key: 'PERSONALIZADO', value: 'Personalizado' },
     { key: 'ANONIMO', value: 'Anônimo' }
   ];
-
+  
   public QUESTIONARIO_PERGUNTA_TIPO: LookupItem[] = [
     { key: 'SELECT', value: 'Única Escolha' },
     { key: 'MULTI_SELECT', value: 'Multipla Escolha' },
-    { key: 'TEXT', value: 'Livre' },
+    { key: 'TEXT', value: 'Texto Livre' },
     { key: 'RATE', value: 'Classificação' },
     { key: 'SWITCH', value: 'Sim/Não' },
     { key: 'RADIO', value: 'Única Escolha' },
-    { key: 'NUMBER', value: 'Numérica' }
+    { key: 'NUMBER', value: 'Numérica' },
+    { key: 'SEARCH', value: 'Pesquisa' },
+    { key: 'EMOJI', value: 'Emojis' },
+    { key: 'TEXT_AREA', value: 'Caixa de Texto' },
+    { key: 'TIMER', value: 'Tempo' },
+    { key: 'DATE_TIME', value: 'Data/Hora' },
+    { key: 'RADIO_BUTTON', value: 'Botões' },
+    { key: 'RADIO_INLINE', value: 'Única Escolha' },
+    { key: 'CHECK', value: 'Múltipla Escolha' },
   ];
 
   public SOFT_SKILLS: LookupItem[] = [
