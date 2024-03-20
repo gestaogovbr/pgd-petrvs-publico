@@ -54,7 +54,7 @@ class AtributoComportamentalDISCSeeder extends Seeder
                 'tipo'=> $pergunta['tipo'],
                 'criado_versao'=> $pergunta['criado_versao'],
                 'deletado_versao'=> $pergunta['deletado_versao'],
-                'respostas' => $respostas,
+                'respostas_possiveis' => $respostas,
                 'questionario_id'=> $uuid
             ]);
             $perguntaNovo->save();

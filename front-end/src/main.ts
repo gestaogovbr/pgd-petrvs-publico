@@ -14,7 +14,7 @@ document.addEventListener('bootstrapAppModule', () => {
   //@ts-ignore
   const baseUrl = typeof EXTENSION_BASE_URL !== "undefined" ? EXTENSION_BASE_URL : typeof PETRVS_BASE_URL != "undefined" ? PETRVS_BASE_URL : undefined;
   //@ts-ignore
-  if(isEmbedded && baseUrl) __webpack_public_path__ = baseUrl;
+  if (isEmbedded && baseUrl) __webpack_public_path__ = baseUrl;
   platformBrowserDynamic().bootstrapModule(AppModule)
     .catch(err => console.error(err));
 });

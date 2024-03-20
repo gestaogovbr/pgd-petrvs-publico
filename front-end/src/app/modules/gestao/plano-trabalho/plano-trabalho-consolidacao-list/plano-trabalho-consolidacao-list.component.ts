@@ -233,4 +233,8 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     return result;
   }
 
+  mostrarAvaliacao(row: PlanoTrabalhoConsolidacao){
+    this.planoTrabalhoService.fazerRecurso(row, this.entity!.programa!, this.refreshConsolidacao.bind(this))
+  }
+
 }

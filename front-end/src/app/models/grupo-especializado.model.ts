@@ -1,5 +1,5 @@
 import { Base } from './base.model';
-import { CurriculumProfissional } from './currriculum-profissional.model';
+import { CurriculumProfissional } from './curriculum-profissional.model';
 
 export class GrupoEspecializado extends Base {
 

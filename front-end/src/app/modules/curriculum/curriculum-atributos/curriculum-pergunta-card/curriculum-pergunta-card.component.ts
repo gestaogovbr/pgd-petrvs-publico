@@ -16,7 +16,7 @@ export class CurriculumPerguntaCardComponent implements OnInit {
   @Input() control?: FormControl;
   @Input() titulo?: string;
   @Input() size?: number = undefined;
-  
+
   public JSON = JSON;
 
   constructor(public lookup: LookupService, public entityService: EntityService) { }

@@ -51,7 +51,7 @@ class AtributoComportamentalSoftSkillSeeder extends Seeder
         'tipo' => $pergunta['tipo'],
         'criado_versao' => $pergunta['criado_versao'],
         'deletado_versao' => $pergunta['deletado_versao'],
-        'respostas' => $resposta,
+        'respostas_possiveis' => $resposta,
         'questionario_id' => $uuid
       ]);
       $perguntaNovo->save();

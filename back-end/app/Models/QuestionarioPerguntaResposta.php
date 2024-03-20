@@ -26,10 +26,10 @@ class QuestionarioPerguntaResposta extends ModelBase
   // Belongs
   public function pergunta()
   {
-    return $this->belongsTo(QuestionarioPergunta::class);
+    return $this->belongsTo(QuestionarioPergunta::class, 'questionario_pergunta_id');
   }
   public function preenchimento()
   {
-    return $this->belongsTo(QuestionarioPreenchimento::class);
+    return $this->belongsTo(QuestionarioPreenchimento::class, 'questionario_preenchimento_id');
   }
 }

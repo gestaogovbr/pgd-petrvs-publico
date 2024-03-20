@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\CurriculumProfissional;
-use App\Models\Curso;
 
 class HistoricoDocenciaInterna extends ModelBase
 {
@@ -12,7 +11,7 @@ class HistoricoDocenciaInterna extends ModelBase
 
   public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
     'curriculum_profissional_id', /* char(36); NOT NULL; */
-    'curso_id', /* char(36); NOT NULL; */
+    'disciplina_id', /* char(36); NOT NULL; */
     //'deleted_at', /* timestamp; */
   ];
 
@@ -21,8 +20,8 @@ class HistoricoDocenciaInterna extends ModelBase
   {
     return $this->belongsTo(CurriculumProfissional::class);
   }
-  public function curso()
+  public function disciplina()
   {
-    return $this->belongsTo(Curso::class);
+    return $this->belongsTo(Disciplina::class);
   }
 }

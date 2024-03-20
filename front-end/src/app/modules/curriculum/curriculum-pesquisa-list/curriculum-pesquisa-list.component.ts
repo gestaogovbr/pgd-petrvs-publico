@@ -1,8 +1,7 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { GridComponent} from 'src/app/components/grid/grid.component';
+import { GridComponent } from 'src/app/components/grid/grid.component';
 import { PageListBase } from '../../base/page-list-base';
-import { CurriculumProfissional } from 'src/app/models/currriculum-profissional.model';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.service';
 import { CursoDaoService } from 'src/app/dao/curso-dao.service';
@@ -12,8 +11,12 @@ import { CapacidadeTecnicaDaoService } from 'src/app/dao/capacidade-tecnica-dao.
 import { AreaTematicaDaoService } from 'src/app/dao/area-tematica-dao.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
-import { Curriculum } from 'src/app/models/currriculum.model';
 import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
+import { Curriculum } from 'src/app/models/curriculum.model';
+import { CurriculumProfissional } from 'src/app/models/curriculum-profissional.model';
+import { LookupItem } from 'src/app/services/lookup.service';
+import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
+import { InputRadioComponent } from 'src/app/components/input/input-radio/input-radio.component';
 
 @Component({
   selector: 'app-curriculum-pesquisa-list',
@@ -24,6 +27,13 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild('radioInteresseRemocao', { static: false }) public radioInteresseRemocao?: InputSwitchComponent;
   @ViewChild('radioInteresseBNT', { static: false }) public radioInteresseBNT?: InputSwitchComponent;
+  @ViewChild('cidadeFiltro', { static: false }) public cidadeFiltro?: InputSelectComponent;
+  @ViewChild('estadoFiltro', { static: false }) public estadoFiltro?: InputSelectComponent;
+  @ViewChild('nivelExtroversao', { static: false }) public nivelExtroversao?: InputRadioComponent;
+  @ViewChild('nivelAgradabilidade', { static: false }) public nivelAgradabilidade?: InputRadioComponent;
+  @ViewChild('nivelDisciplina', { static: false }) public nivelDisciplina?: InputRadioComponent;
+  @ViewChild('nivelEstabilidade', { static: false }) public nivelEstabilidade?: InputRadioComponent;
+  @ViewChild('nivelAbertura', { static: false }) public nivelAbertura?: InputRadioComponent;
 
   public cidadeDao: CidadeDaoService;
   public areaDao: AreaConhecimentoDaoService;
@@ -32,9 +42,15 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
   public funcaoDao: FuncaoDaoService;
   public areaTematicaDao: AreaTematicaDaoService;
   public capacidadeTecnicaDao: CapacidadeTecnicaDaoService;
+  public cidades: LookupItem[] = [];
   public filter: FormGroup;
   public areaTematicaWhere: any[] = [['id', '==', null]];
   public cursoWhere: any[] = [['id', '==', null]];
+  public itemsExtroversao: LookupItem[] = [];
+  public itemsAgradabilidade: LookupItem[] = [];
+  public itemsDisciplina: LookupItem[] = [];
+  public itemsEstabilidade: LookupItem[] = [];
+  public itemsAbertura: LookupItem[] = [];
 
   constructor(public injector: Injector) {
     super(injector, Curriculum, CurriculumDaoService);
@@ -59,18 +75,53 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
       capacidade_tecnica_id: { default: "" },
       interesse_bnt: { default: false },
       interesse_pgd: { default: "" },
+      modalidade_pgd: { default: "" },
       remocao: { default: false },
       soft_id: { default: "" },
-      score: { default: 0 },      
+      extroversao: { default: false },
+      nivelExtroversao: { default: "" },
+      agradabilidade: { default: false },
+      nivelAgradabilidade: { default: "" },
+      disciplina: { default: false },
+      nivelDisciplina: { default: "" },
+      estabilidade: { default: false },
+      nivelEstabilidade: { default: "" },
+      abertura: { default: false },
+      nivelAbertura: { default: "" },
     });
     this.orderBy = [['usuario.nome', 'asc']];
-    this.join = ['profissional.historicos_atividades_internas.capacidade_tecnica.area_tematica',
-      'profissional.historicos_atividades_externas.area_atividade_externa', 'profissional.historicos_cursos_internos.curso',
-      'profissional.historicos_cursos_externos.area_atividade_externa', 'profissional.historicos_docencias_internas.curso',
-      'profissional.historicos_docencias_externas.area_atividade_externa', 'profissional.historicos_funcoes.funcao',
-      'profissional.historicos_funcoes.unidade', 'profissional.historicos_lotacoes.unidade', 'usuario', 'cidade',
-      'graduacoes', 'graduacoes.curso', 'graduacoes.curso.area_conhecimento', 'profissional.grupo_especializado',
-      'usuario.questionarios_respostas.questionario.perguntas.questionario_resposta_pergunta'];
+    this.join = ['curriculum_profissional.historicos_atividades_internas.capacidade_tecnica.area_tematica',
+      'curriculum_profissional.historicos_atividades_externas.area_atividade_externa', 'curriculum_profissional.historicos_cursos_internos.curso',
+      'curriculum_profissional.historicos_cursos_externos.area_atividade_externa', 'curriculum_profissional.historicos_docencias_internas.disciplina',
+      'curriculum_profissional.historicos_docencias_externas.area_atividade_externa', 'curriculum_profissional.historicos_funcoes.funcao',
+      'curriculum_profissional.historicos_funcoes.unidade', 'curriculum_profissional.historicos_lotacoes.unidade', 'usuario', 'cidade',
+      'graduacoes', 'graduacoes.curso', 'graduacoes.curso.area_conhecimento', 'curriculum_profissional.grupo_especializado',
+      'usuario.preenchimentos.questionario.perguntas.respostas'];
+    this.itemsExtroversao = [
+      { key: "1", value: "Introvertido" },
+      { key: "2", value: "Neutro" },
+      { key: "3", value: "Extrovertido" }
+    ];
+    this.itemsAgradabilidade = [
+      { key: "1", value: "Objetivo" },
+      { key: "2", value: "Neutro" },
+      { key: "3", value: "Pessoas" }
+    ];
+    this.itemsDisciplina = [
+      { key: "1", value: "Espontâneo" },
+      { key: "2", value: "Neutro" },
+      { key: "3", value: "Disciplinado" }
+    ];
+    this.itemsEstabilidade = [
+      { key: "1", value: "Racional" },
+      { key: "2", value: "Neutro" },
+      { key: "3", value: "Emocional" }
+    ];
+    this.itemsAbertura = [
+      { key: "1", value: "Presente" },
+      { key: "2", value: "Neutro" },
+      { key: "3", value: "Futuro" }
+    ];
   }
 
   ngAfterViewInit() {
@@ -113,17 +164,20 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
     if (form.capacidade_tecnica_id?.length) {
       result.push(["capacidade_tecnica_id", "==", form.capacidade_tecnica_id]);
     }
-    if (form.interesse_pgd?.length) {
+    if (form.interesse_pgd) {
       result.push(["interesse_pgd", "==", form.interesse_pgd]);
     }
+    /*if (!form.interesse_pgd) {
+      result.push(["interesse_pgd", "==", form.interesse_pgd]);
+    }*/
     if (form.interesse_bnt) {
       result.push(["interesse_bnt", "==", form.interesse_bnt]);
     }
     if (form.remocao) {
       result.push(["remocao", "==", form.remocao]);
     }
-    if (form.soft_id?.length && form.score > 0) {
-      result.push(["soft_id", "==", form.soft_id, form.score]);
+    if (form.soft_id?.length) {
+      result.push(["soft_id", "==", form.soft_id]);
     }
     return result;
   }
@@ -144,7 +198,11 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
     filter.controls.interesse_bnt.setValue(false);
     filter.controls.remocao.setValue(false);
     filter.controls.soft_id.setValue(null);
-    filter.controls.score.setValue(0);
+    filter.controls.extroversao.setValue(false);
+    filter.controls.agradabilidade.setValue(false);
+    filter.controls.disciplina.setValue(false);
+    filter.controls.estabilidade.setValue(false);
+    filter.controls.abertura.setValue(false);
     super.filterClear(filter);
   }
 
@@ -174,6 +232,39 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
         curriculum: curriculum
       }
     });
+  }
+
+  public async onEstadosChange() {
+    if (this.filter!.controls.estado.value) {
+      await this.cidadeDao?.query({ where: [['uf', '==', this.filter!.controls.estado.value]], orderBy: [['nome', 'asc']] }).asPromise().then((resposta) => {
+        this.cidades = resposta.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
+        this.cidadeFiltro!.disabled = resposta.length ? undefined : 'true';
+      });
+    }
+  }
+
+  public get municipiosWhere() {
+    return this.filter?.controls.estado.value?.length ? [['uf', '==', this.filter?.controls.estado.value]] : undefined;
+  }
+
+  public onChangeRadioBigFive(caracteristica: string) {
+    switch (caracteristica) {
+      case 'extroversao':
+        this.nivelExtroversao?.setValue("");
+        break;
+      case 'agradabilidade':
+        this.nivelAgradabilidade?.setValue("");
+        break;
+      case 'disciplina':
+        this.nivelDisciplina?.setValue("");
+        break;
+      case 'estabilidade':
+        this.nivelEstabilidade?.setValue("");
+        break;
+      case 'abertura':
+        this.nivelAbertura?.setValue("");
+        break;
+    }
   }
 }
 

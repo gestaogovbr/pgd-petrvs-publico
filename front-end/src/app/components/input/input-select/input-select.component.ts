@@ -1,6 +1,6 @@
 import { Component, EventEmitter, HostBinding, Injector, Input, OnInit, Output, ViewChild, ElementRef } from '@angular/core';
 import { AbstractControl, ControlContainer, FormControl, FormGroup, FormGroupDirective } from '@angular/forms';
-import { DaoBaseService } from 'src/app/dao/dao-base.service';
+import { DaoBaseService, QueryOrderBy } from 'src/app/dao/dao-base.service';
 import { Base, IIndexable } from 'src/app/models/base.model';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { FullRoute, NavigateService } from 'src/app/services/navigate.service';
@@ -19,8 +19,8 @@ import { InputBase, LabelPosition, SelectItem } from '../input-base';
 })
 export class InputSelectComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
-  @ViewChild('inputElement', {static: false}) inputElement?: ElementRef;
-  @ViewChild('dropdownButton', {static: false}) dropdownButton?: ElementRef;
+  @ViewChild('inputElement', { static: false }) inputElement?: ElementRef;
+  @ViewChild('dropdownButton', { static: false }) dropdownButton?: ElementRef;
   @Output() change = new EventEmitter<Event>();
   @Output() details = new EventEmitter<SelectItem>();
   @Input() hostClass: string = "";
@@ -55,8 +55,9 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() sufix?: string;
   @Input() required?: string;
   @Input() filter?: string[];
+  @Input() orderBy?: QueryOrderBy[];
   @Input() set where(value: any[] | undefined) {
-    if(JSON.stringify(this._where) != JSON.stringify(value)) {
+    if (JSON.stringify(this._where) != JSON.stringify(value)) {
       this._where = value;
       this.loadItems();
     }
@@ -65,25 +66,25 @@ export class InputSelectComponent extends InputBase implements OnInit {
     return this._where;
   }
   @Input() set itemTodos(value: string) {
-    if(this.itemTodosButton.value != value) this.itemTodosButton.value = value;
+    if (this.itemTodosButton.value != value) this.itemTodosButton.value = value;
   }
   get itemTodos(): string {
     return this.itemTodosButton.value;
   }
   @Input() set itemNull(value: string) {
-    if(this.itemNullButton.value != value) this.itemNullButton.value = value;
+    if (this.itemNullButton.value != value) this.itemNullButton.value = value;
   }
-  get itemNull(): string  {
+  get itemNull(): string {
     return this.itemNullButton.value;
   }
   @Input() set valueTodos(value: any) {
-    if(this.itemTodosButton.key != value) this.itemTodosButton.key = value;
+    if (this.itemTodosButton.key != value) this.itemTodosButton.key = value;
   }
   get valueTodos(): any {
     return this.itemTodosButton.key;
   }
   @Input() set items(value: LookupItem[]) {
-    if(JSON.stringify(this._items) != JSON.stringify(value)) {
+    if (JSON.stringify(this._items) != JSON.stringify(value)) {
       this._items = value;
       this.setValue(this.currentValue);
       this.detectChanges();
@@ -145,8 +146,8 @@ export class InputSelectComponent extends InputBase implements OnInit {
   ngAfterViewInit() {
     super.ngAfterViewInit();
     $(() => {
-      if(this.dao) this.loadItems();
-      if(this.control) {
+      if (this.dao) this.loadItems();
+      if (this.control) {
         this.control.valueChanges.subscribe(newValue => this.setValue(newValue));
         this.setValue(this.control.value);
       }
@@ -160,7 +161,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
   public get isNullable(): boolean {
     return this.nullable != undefined;
   }
-  
+
   public get isTodos(): boolean {
     return !!this.itemTodos?.length;
   }
@@ -178,7 +179,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
   }
 
   public get dropdownWidth(): number {
-    return this.dropdownButton?.nativeElement.offsetWidth || 10; 
+    return this.dropdownButton?.nativeElement.offsetWidth || 10;
   }
 
   public isActive(item: LookupItem): boolean {
@@ -194,11 +195,11 @@ export class InputSelectComponent extends InputBase implements OnInit {
   }
 
   public get current(): LookupItem {
-    if(this.isNullable && this.currentValue == null) {
+    if (this.isNullable && this.currentValue == null) {
       return this.itemNullButton;
-    } else if(this.isTodos && this.currentValue == this.valueTodos) {
+    } else if (this.isTodos && this.currentValue == this.valueTodos) {
       return this.itemTodosButton;
-    } else if(!this.selectedItem) {
+    } else if (!this.selectedItem) {
       return this.itemDesconhecidoButton;
     } else {
       return this.selectedItem!;
@@ -225,8 +226,8 @@ export class InputSelectComponent extends InputBase implements OnInit {
   private loadItems() {
     this.loading = true;
     this.detectChanges();
-    if(this.isFullEntity) {
-      this.dao?.query({where: this.where}).asPromise().then(result => {
+    if (this.isFullEntity) {
+      this.dao?.query({ where: this.where }).asPromise().then(result => {
         this.loading = false;
         this.items = result.map(x => {
           return {
@@ -237,7 +238,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
         }) || [];
       });
     } else {
-      this.dao?.searchText("", this.fields.length ? this.fields : undefined, this.where).then(result => {
+      this.dao?.searchText("", this.fields.length ? this.fields : undefined, this.where, this.orderBy).then(result => {
         this.loading = false;
         this.items = result.map(x => {
           return {
@@ -258,15 +259,15 @@ export class InputSelectComponent extends InputBase implements OnInit {
   }
 
   public setValue(value: any) {
-    if((this.control && this.control.value != value) || (this.value != value)) {
+    if ((this.control && this.control.value != value) || (this.value != value)) {
       this.value = value;
-      if(this.control) this.control.setValue(value);
-      if(this.change) this.change.emit(new Event("change"));
+      if (this.control) this.control.setValue(value);
+      if (this.change) this.change.emit(new Event("change"));
     }
   }
 
-  public onDetailsClick(event: Event){
-    if(this.details && (this.isNullable || typeof this.currentValue != "undefined")) {
+  public onDetailsClick(event: Event) {
+    if (this.details && (this.isNullable || typeof this.currentValue != "undefined")) {
       const item = this.items.find(x => x.key == this.currentValue);
       this.details.emit({
         value: item?.key,
@@ -276,7 +277,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
     }
   }
 
-  public onItemClick(item: LookupItem){
+  public onItemClick(item: LookupItem) {
     this.setValue(item.key);
   }
 
@@ -297,9 +298,9 @@ export class InputSelectComponent extends InputBase implements OnInit {
     const modalRoute = searchRoute!;
     modalRoute.params = Object.assign(modalRoute?.params || {}, { modal: true });
     this.go.navigate(searchRoute!, {
-      metadata: {selectable: true},
+      metadata: { selectable: true },
       modalClose: (result: any) => {
-        if (result && this.afterSearch) this.afterSearch(result);    
+        if (result && this.afterSearch) this.afterSearch(result);
       }
     });
   }

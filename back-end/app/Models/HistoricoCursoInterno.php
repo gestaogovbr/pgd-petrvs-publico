@@ -22,6 +22,10 @@ class HistoricoCursoInterno extends ModelBase
   {
     return $this->belongsTo(CurriculumProfissional::class);
   }
+  /*   public function curso()
+  {
+    return $this->belongsTo(Curso::class);
+  } */
   public function curso()
   {
     return $this->belongsTo(Curso::class);

@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Questionario;
 use App\Models\QuestionarioPergunta;
-use Ramsey\Uuid\Uuid;
 
 class AtributoComportamentalSRQ20Seeder extends Seeder
 {
@@ -27,7 +26,6 @@ class AtributoComportamentalSRQ20Seeder extends Seeder
     $questionario->save();
 
     $uuid = Questionario::where('codigo', 'SRQ20')->first()?->id;
-    //[{"key": "muito Inadequado", "data": {"_status": "ADD", "opcaoResposta": "muito Inadequado", "valorResposta": "1"}, "value": "muito Inadequado - 1"}, {"key": "Relativamente Inadequado", "data": {"_status": "ADD", "opcaoResposta": "Relativamente Inadequado", "valorResposta": "2"}, "value": "Relativamente Inadequado - 2"}, {"key": "Nem Adequado, Nem inadequado", "data": {"_status": "ADD", "opcaoResposta": "Nem Adequado, Nem inadequado", "valorResposta": "3"}, "value": "Nem Adequado, Nem inadequado - 3"}, {"key": "Relativamente Adequado", "data": {"_status": "ADD", "opcaoResposta": "Relativamente Adequado", "valorResposta": "4"}, "value": "Relativamente Adequado - 4"}, {"key": "Muito Adequado", "data": {"_status": "ADD", "opcaoResposta": "Muito Adequado", "valorResposta": "5"}, "value": "Muito Adequado - 5"}]
     $sequencia = 1;
     $perguntas =
       [
@@ -63,7 +61,7 @@ class AtributoComportamentalSRQ20Seeder extends Seeder
         'tipo' => $pergunta['tipo'],
         'criado_versao' => $pergunta['criado_versao'],
         'deletado_versao' => $pergunta['deletado_versao'],
-        'respostas' => null,
+        'respostas_possiveis' => null,
         'questionario_id' => $uuid
       ]);
       $perguntaNovo->save();

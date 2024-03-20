@@ -969,7 +969,7 @@ class IntegracaoService extends ServiceBase
           Usuario::count() . ' servidores!');
       } catch (Throwable $e) {
         LogError::newError("Erro ao importar servidores", $e);
-        $this->result["servidores"]['Resultado'] = 'ERRO: ' . $e->getMessage() . ' - Linha: ' . $e->getLine() . ' - Trace: ' . $e->getTrace();
+        $this->result["servidores"]['Resultado'] = 'ERRO: ' . $e->getMessage() . ' - Linha: ' . $e->getLine();
       }
     }
 
