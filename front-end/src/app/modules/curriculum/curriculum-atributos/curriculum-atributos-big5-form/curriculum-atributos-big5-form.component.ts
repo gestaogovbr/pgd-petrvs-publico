@@ -51,6 +51,8 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
   public min: string = '';
   public max: string = '';
   public valueTrack: string = '';
+  public resumo_resposta: any[] = [];//LookupItem[] = [];
+  public respostasUsuario: number[] = [];
 
   constructor(public injector: Injector) {
     super(injector, QuestionarioPreenchimento, QuestionarioPreenchimentoDaoService);
@@ -74,14 +76,14 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
         await this.dao?.query({ where: [['questionario_id', '==', this.questionario.id], ['usuario_id', '==', this.auth.usuario?.id]], join: ['respostas'] }).asPromise().then(preenchimentos => {
           this.entity = preenchimentos?.length ? preenchimentos[0] : undefined;
         });
-        let respostasUsuario: number[] = [];
+        this.respostasUsuario = [];
         if (this.entity) {
           this.questionario.perguntas.forEach((pergunta) => {
             this.entity!.respostas?.forEach((resposta) => {
-              if (pergunta.id == resposta.questionario_pergunta_id) respostasUsuario.push(resposta.resposta);
+              if (pergunta.id == resposta.questionario_pergunta_id) this.respostasUsuario.push(resposta.resposta);
             });
           });
-          this.calculoTeste(respostasUsuario);
+          this.calculoTeste(this.respostasUsuario);
         }
       }
     });
@@ -99,7 +101,8 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
   public async saveData(form: IIndexable): Promise<QuestionarioPreenchimento | boolean> {
     let questionarioPreenchimento = this.util.fill(new QuestionarioPreenchimento({
       usuario_id: this.auth.usuario?.id,
-      questionario_id: this.questionario!.id
+      questionario_id: this.questionario!.id,
+      resumo_resposta: this.resumo_resposta,
     }), this.entity || {});
     let objRespostas = this.valoresAcumuladosB5.map((valor, i) => new QuestionarioPerguntaResposta({
       questionario_pergunta_id: this.questionario!.perguntas[i].id,
@@ -174,6 +177,7 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
   }
 
   public async enviar() {
+    this.calculoTeste(this.valoresAcumuladosB5);
     await this.onSaveData();
     this.go.navigate({ route: ['raiox', 'atributos'] });
   }
@@ -195,6 +199,13 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
     this.conscienciosidade = cM - concienciosidade;
     this.estabilidade = nM - estabilidade;
     this.abertura = oM - abertura;
+    this.resumo_resposta = [
+      { 'extroversao': this.extroversao.toString() },
+      { 'agradabilidade': this.agradabilidade.toString() },
+      { 'disciplina': this.conscienciosidade.toString() },
+      { 'estabilidade': this.estabilidade.toString() },
+      { 'abertura': this.abertura.toString() }
+    ]
     this.chartb5([this.extroversao, this.agradabilidade, this.conscienciosidade, this.estabilidade, this.abertura])
   }
 
@@ -209,7 +220,7 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
       const trackId = slider.querySelector(".value")!.id;
       let track = document.getElementById(trackId);
       track!.style.left = ((dados[index] / 40) * 100) + '%';
-      track!.textContent = ((dados[index] / 40) * 100).toString() + '%'; //dados[index].toString();
+      track!.textContent = ((dados[index] / 40) * 100).toFixed().toString() + '%'; //dados[index].toString();
     });
 
   }
@@ -225,5 +236,4 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
       document.getElementById(icon)?.classList.add('fa-arrow-down');
     }
   }
-
 }
