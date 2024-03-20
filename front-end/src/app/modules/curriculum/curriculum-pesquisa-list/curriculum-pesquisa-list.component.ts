@@ -161,11 +161,11 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
       result.push(["capacidade_tecnica_id", "==", form.capacidade_tecnica_id]);
     }
     if (form.interesse_pgd) {
-      result.push(["interesse_pgd", "==", form.interesse_pgd]);
-    } 
-    /*if (!form.interesse_pgd) {
-      result.push(["interesse_pgd", "==", form.interesse_pgd]);
-    }*/
+      result.push(["interesse_pgd", "==", form.interesse_pgd, form.modalidade_pgd]);
+    }
+    if (!form.interesse_pgd) {
+      result.push(["interesse_pgd", "==", false]);
+    }
     if (form.interesse_bnt) {
       result.push(["interesse_bnt", "==", form.interesse_bnt]);
     }
@@ -174,6 +174,21 @@ export class CurriculumPesquisaListComponent extends PageListBase<Curriculum, Cu
     }
     if (form.soft_id?.length) {
       result.push(["soft_id", "==", form.soft_id]);
+    }
+    if (form.nivelExtroversao?.length) {
+      result.push(["bigfive", "extroversao", "==", form.nivelExtroversao]);
+    }
+    if (form.nivelAgradabilidade?.length) {
+      result.push(["bigfive", "agradabilidade", "==", form.nivelAgradabilidade]);
+    }
+    if (form.nivelDisciplina?.length) {
+      result.push(["bigfive", "disciplina", "==", form.nivelDisciplina]);
+    }
+    if (form.nivelEstabilidade?.length) {
+      result.push(["bigfive", "estabilidade", "==", form.nivelEstabilidade]);
+    }
+    if (form.nivelAbertura?.length) {
+      result.push(["bigfive", "abertura", "==", form.nivelAbertura]);
     }
     return result;
   }
