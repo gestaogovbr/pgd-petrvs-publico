@@ -13,23 +13,23 @@ use App\Services\PGD\OrgaoCentralService;
 
 class ProgramaAtualizar implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+  use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $dados;
+  protected $dados;
 
-    public function __construct($dados)
-    {
-        $this->dados = $dados;
+  public function __construct($dados)
+  {
+    $this->dados = $dados;
+  }
+
+  public function handle(OrgaoCentralService $orgaoCentralService)
+  {
+    foreach (Tenant::all() as $tenant) {
+      $tenant->run(function () {
+
+        //dias_tolerancia_consolidacao
+        //dias_tolerancia_avaliacao
+      });
     }
-
-    public function handle(OrgaoCentralService $orgaoCentralService)
-    {
-        foreach(Tenant::all() as $tenant) {
-            $tenant->run(function () {
-                
-                //dias_tolerancia_consolidacao
-                //dias_tolerancia_avaliacao
-            });
-        }
-    }
+  }
 }

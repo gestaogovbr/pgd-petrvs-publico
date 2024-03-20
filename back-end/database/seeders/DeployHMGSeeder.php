@@ -6,23 +6,23 @@ use Illuminate\Database\Seeder;
 
 class DeployHMGSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     *
-     *
-     * @return void
-     */
-    public function run()
-    {
-        $this->call([
-            CidadeSeeder::class,
-            FeriadoSeeder::class,
-            TipoCapacidadeSeeder::class,
-            //CapacidadeSeeder::class,
-            //PainelUsuarioSeeder::class,
-            //In24_2023Seeder::class,
-            //TemplateSeeder::class,
-            //NomenclaturaSeeder::class
+  /**
+   * Seed the application's database.
+   *
+   *
+   * @return void
+   */
+  public function run()
+  {
+    $this->call([
+      CidadeSeeder::class,
+      FeriadoSeeder::class,
+      TipoCapacidadeSeeder::class,
+      //CapacidadeSeeder::class,
+      //PainelUsuarioSeeder::class,
+      //In24_2023Seeder::class,
+      //TemplateSeeder::class,
+      //NomenclaturaSeeder::class
 
       /*
             Após a execução das Seeds acima, executar a rotina de integração com o comando
