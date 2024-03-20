@@ -9,7 +9,7 @@ export class Curriculum extends Base {
   public usuario?: Usuario;
   public cidade?: Cidade;
   public graduacoes: CurriculumGraduacao[] = [];
-  public profissional?: CurriculumProfissional;
+  public curriculum_profissional?: CurriculumProfissional;
 
   public apresentacao: string = ""; //Apresentação do servidor
   public telefone: string = ""; // Telefone do servidor

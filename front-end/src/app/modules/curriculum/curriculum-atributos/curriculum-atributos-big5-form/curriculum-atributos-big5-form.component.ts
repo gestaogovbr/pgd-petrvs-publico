@@ -209,7 +209,7 @@ export class CurriculumAtributosBig5FormComponent extends PageFormBase<Questiona
       const trackId = slider.querySelector(".value")!.id;
       let track = document.getElementById(trackId);
       track!.style.left = ((dados[index] / 40) * 100) + '%';
-      track!.textContent = dados[index].toString();
+      track!.textContent = ((dados[index] / 40) * 100).toString() + '%'; //dados[index].toString();
     });
 
   }

@@ -183,15 +183,15 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
     this.estabilidade = nM - estabilidade;
     this.abertura = oM - abertura;
     const dados = [this.extroversao, this.agradabilidade, this.conscienciosidade, this.estabilidade, this.abertura];
-    this.valueTrack1 = this.extroversao.toString();
     //this.track1 = ((dados[1] / 40) * 100) +'%';
     this.track1 = "style=left:" + ((dados[1] / 40) * 100) + '%;';
     this.style1 = '60%';
     //const sliders = document.querySelectorAll(".slider-ui");
-    this.valueTrack2 = this.agradabilidade.toString();
-    this.valueTrack3 = this.conscienciosidade.toString();
-    this.valueTrack4 = this.estabilidade.toString();
-    this.valueTrack5 = this.abertura.toString();
+    this.valueTrack1 = ((this.extroversao / 40) * 100).toString() + '%;';
+    this.valueTrack2 = ((this.agradabilidade / 40) * 100).toString() + '%;';
+    this.valueTrack3 = ((this.conscienciosidade / 40) * 100).toString() + '%;';
+    this.valueTrack4 = ((this.estabilidade / 40) * 100).toString() + '%;';
+    this.valueTrack5 = ((this.abertura / 40) * 100).toString() + '%;';
     //console.log('e ',this.extroversao,' - a ',this.agradabilidade, ' - c ',this.conscienciosidade, ' - n ',this.estabilidade ,' - o ', this.abertura )
   }
 }
