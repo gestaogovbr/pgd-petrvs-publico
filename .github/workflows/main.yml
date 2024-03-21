@@ -1,0 +1,19 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - dataprev_dsv
+      - dataprev_hmg
+  pull_request:
+    branches:
+      - main
+      - dataprev_dsv
+      - dataprev_hmg
+
+jobs:
+  include:
+    - name: "Build and Deploy on Dataprev DSV"
+      if: github.ref == 'refs/heads/dataprev_dsv'
+      uses: ./.github/workflows/build_deploy_dsv.yml

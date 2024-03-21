@@ -1,0 +1,38 @@
+name: BuildDeploy Dataprev DSV
+
+env:
+  DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
+  DOCKER_HUB_TAG: dsv
+  SSH_USER: root
+  SSH_HOST: 200.152.38.137
+  SSH_PORT: 7223
+  SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_DSV }}
+  DEPLOY_PATH: ./
+  DOCKER_HUB_USERNAME: segescginf
+  DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+jobs:
+  build_dsv:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f resources/dataprev/dev/Dockerfile .
+          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
+
+  deploy_dsv:
+    runs-on: ubuntu-latest
+    needs: build_dsv
+    steps:
+      - name: Install sshpass
+        run: sudo apt-get update -y && sudo apt-get install -y sshpass
+
+      - name: Deploy to server
+        run: |
+          sshpass -p $SSH_PASSWORD ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "sh install-pgd.sh < /dev/null"
