@@ -6,6 +6,5 @@ use App\Models\ModelBase;
 
 class JobAgendado extends ModelBase
 {
-    protected $table = 'job_agendamentos';
-    
+  protected $table = 'jobs_schedules';
 }

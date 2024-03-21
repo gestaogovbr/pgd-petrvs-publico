@@ -49,7 +49,7 @@ export class LookupService implements IIndexable {
     // Carregar os lookups diretamente na instancia do LookupService (IIndexable)
   }
 
-  
+
   public EDICOES: LookupItem[] = [
     { key: "PRF", value: "PRF" },
     { key: "MGI", value: "MGI" }
@@ -729,7 +729,7 @@ export class LookupService implements IIndexable {
     { key: "SEXUAL", value: "Sexual" },
     { key: "POLITICA", value: "Politica" },
   ];
-  
+
   public ESCOLARIDADE: LookupItem[] = [
     { key: 'ESCOLARIDADE_FUNDAMENTAL', value: 'Ensino Fundamental' },
     { key: 'ESCOLARIDADE_MEDIO', value: 'Ensino Médio' },
@@ -775,8 +775,8 @@ export class LookupService implements IIndexable {
 
   public PG_PRF: LookupItem[] = [
     { key: 'PRESENCIAL', value: 'Presencial' },
-    { key: 'REMOTO', value: 'Remoto' },
-    { key: 'HIBRIDO', value: 'Híbrido' }
+    { key: 'TELETRABALHO_PARCIAL', value: 'Teletrabalho parcial' },
+    { key: 'TELETRABALHO_INTEGRAL', value: 'Teletrabalho integral' }
   ];
 
   public QUESTIONARIO_TIPO: LookupItem[] = [
@@ -793,6 +793,25 @@ export class LookupService implements IIndexable {
     { key: 'SWITCH', value: 'Sim/Não' },
     { key: 'RADIO', value: 'Única Escolha' },
     { key: 'NUMBER', value: 'Numérica' }
+  ];
+
+  public SOFT_SKILLS: LookupItem[] = [
+    { key: "COMUNICACAO", value: 'Comunicação' },
+    { key: "LIDERANCA", value: 'Liderança' },
+    { key: "RESOLUCAO", value: 'Resolução de problemas' },
+    { key: "CRIATIVIDADE", value: 'Criatividade e curiosidade' },
+    { key: "PENSAMENTO", value: 'Pensamento crítico' },
+    { key: "HABILIDADES", value: 'Habilidades com pessoas e equipes' },
+    { key: "ADAPTABILIDADE", value: 'Adaptabilidade e resiliência' },
+    { key: "ETICA", value: 'Ética' }
+  ];
+
+  public ATRIBUTOS_COMPORTAMENTAIS: LookupItem[] = [
+    { key: "EXTROVERSAO", value: 'Extroversão' },
+    { key: "AGRADABILIDADE", value: 'Agradabilidade' },
+    { key: "CONSCIENCIOSIDADE", value: 'Conscienciosidade' },
+    { key: "EMOCIONAL", value: 'Estabilidade Emocional' },
+    { key: "ABERTURA", value: 'Abertura' }
   ];
  // "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWITCH" | "NUMBER" | "RATE" | "RADIO" | "CHECK";
 
@@ -825,25 +844,25 @@ export class LookupService implements IIndexable {
   ];
 
   public TIPO_OPERADOR: LookupItem[] = [
-    { 'key': 'number', 'value': 'Número'},
-    { 'key': 'string', 'value': 'Texto'},
-    { 'key': 'boolean', 'value': 'Lógico'},
-    { 'key': 'variable', 'value': 'Variável'},
-    { 'key': 'list', 'value': 'Lista'}
+    { 'key': 'number', 'value': 'Número' },
+    { 'key': 'string', 'value': 'Texto' },
+    { 'key': 'boolean', 'value': 'Lógico' },
+    { 'key': 'variable', 'value': 'Variável' },
+    { 'key': 'list', 'value': 'Lista' }
   ]
 
   public OPERADOR: LookupItem[] = [
-    { 'key': '==', 'value': 'É igual'},
-    { 'key': '<', 'value': 'É menor'},
-    { 'key': '<=', 'value': 'É menor ou igual'},
-    { 'key': '>', 'value': 'É maior'},
-    { 'key': '>=', 'value': 'É maior ou igual'},
-    { 'key': '<>', 'value': 'É diferente'}
+    { 'key': '==', 'value': 'É igual' },
+    { 'key': '<', 'value': 'É menor' },
+    { 'key': '<=', 'value': 'É menor ou igual' },
+    { 'key': '>', 'value': 'É maior' },
+    { 'key': '>=', 'value': 'É maior ou igual' },
+    { 'key': '<>', 'value': 'É diferente' }
   ];
 
   public LISTA_TIPO: LookupItem[] = [
-    { 'key': 'indice', 'value': 'Lista utilizando índice'},
-    { 'key': 'variavel', 'value': 'Lista utilizando variável'}
+    { 'key': 'indice', 'value': 'Lista utilizando índice' },
+    { 'key': 'variavel', 'value': 'Lista utilizando variável' }
   ];
 
 
@@ -879,7 +898,7 @@ export class LookupService implements IIndexable {
    */
   public uniqueLookupItem(array: LookupItem[]): LookupItem[] {
     let novoArray: LookupItem[] = [];
-    array.forEach(elem => { if(!novoArray.find(x => x.key == elem.key)) novoArray.push(elem); });
+    array.forEach(elem => { if (!novoArray.find(x => x.key == elem.key)) novoArray.push(elem); });
     return novoArray;
   }
 

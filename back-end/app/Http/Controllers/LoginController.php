@@ -19,9 +19,7 @@ use App\Services\UnidadeService;
 use App\Services\CalendarioService;
 use App\Services\UsuarioService;
 use Laravel\Socialite\Facades\Socialite;
-use \SocialiteProviders\Manager\Config;
 use Illuminate\Support\Facades\Http;
-use DateTime;
 use Exception;
 
 class LoginController extends Controller

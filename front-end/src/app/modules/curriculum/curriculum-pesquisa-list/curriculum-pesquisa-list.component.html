@@ -1,62 +1,86 @@
-
-<grid title="Caça Talentos - Raio X" [dao]="dao" [orderBy]="orderBy" [hasEdit]="false" [hasDelete]="false" [join]="join" [loadList]="onGridLoad.bind(this)" [selectable]="selectable" (select)="onSelect($event)">
+<grid title="Caça-talentos" [dao]="dao" [orderBy]="orderBy" [hasEdit]="false" [hasDelete]="false" [join]="join" [loadList]="onGridLoad.bind(this)" [selectable]="selectable" (select)="onSelect($event)">
   <toolbar></toolbar>
   <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapsed]="false">
     <separator title="Dados Pessoais" collapse [collapsed]="true">
       <div class="row">
         <div class="col-6">
-          <separator title="Residência">
+          <separator title="Local de Residência">
             <div class="row">
-              <input-select [size]="6" label="Estado" icon="fas fa-flag" controlName="estado" [control]="filter!.controls.estado" [items]="lookup.UF"></input-select>
-              <input-select [size]="6" label="Cidade" icon="far fa-flag" controlName="cidade_id" [control]="filter!.controls.cidade_id" [dao]="cidadeDao" [where]="['uf', '==', filter!.controls.estado.value]"></input-select>
+              <input-select #estadoFiltro [size]="6" label="Estado" icon="fas fa-flag" controlName="estado" [control]="filter!.controls.estado" [items]="lookup.UF" itemTodos="- Todos -" [valueTodos]="null" (change)="onEstadosChange()"></input-select>
+              <input-select #cidadeFiltro [size]="6" label="Cidade" icon="far fa-flag" disabled controlName="cidade_id" labelInfo="Selecione o estado para habilitar a lista de cidades!" [control]="filter!.controls.cidade_id" [dao]="cidadeDao" [where]="municipiosWhere" [orderBy]="[['nome','asc']]" liveSearch></input-select>
             </div>
           </separator>
         </div>
         <div class="col-6">
-          <separator title="Estado Civil">
+          <separator title="Dados Familiares">
             <div class="row">
-              <input-select [size]="9" label="Estado Civil" icon="fas fa-ring" controlName="estado_civil" [control]="filter!.controls.estado_civil" [items]="lookup.ESTADO_CIVIL"></input-select>
+              <input-select [size]="9" label="Estado Civil" icon="fas fa-ring" controlName="estado_civil" [control]="filter!.controls.estado_civil" [items]="lookup.ESTADO_CIVIL" itemTodos="- Todos -" [valueTodos]="null"></input-select>
               <input-switch [size]="3" label="Possui Filhos?" icon="fas fa-child" controlName="filhos" [control]="filter!.controls.filhos"></input-switch>
             </div>
           </separator>
         </div>
       </div>
     </separator>
-    <separator title="Conhecimento" collapse [collapsed]="true">
+    <separator title="Idiomas" collapse [collapsed]="true">
       <div class="row">
         <div class="col-4">
           <separator title="Idiomas">
             <div class="row">
-              <input-select [size]="12" label="Idioma" icon="fas fa-language" controlName="idioma" [control]="filter!.controls.idioma" [items]="lookup.IDIOMAS"></input-select>
-            </div>
-          </separator>
-        </div>
-        <div class="col-8">
-          <separator title="Formação Acadêmica">
-            <div class="row">
-              <input-select [size]="6" label="Área de conhecimento" icon="fas fa-user-graduate" controlName="area_conhecimento_id" [control]="filter!.controls.area_conhecimento_id" [dao]="areaDao" (change)="onAreaConhecimentoChange()"></input-select>
-              <!--input-select [size]="4" label="Titulo" icon="bi bi-mortarboard-fill" controlName="titulo_id" [control]="filter!.controls.titulo_id" [items]="lookup.TITULOS_CURSOS" (change)="onTituloChange()"></input-select-->
-              <input-select [size]="6" label="Curso" icon="fas fa-graduation-cap" controlName="curso_id" [control]="filter!.controls.curso_id" [dao]="cursoDao" [where]="cursoWhere"></input-select>
+              <input-select [size]="12" label="Conhecimento no Idioma:" icon="fas fa-language" controlName="idioma" [control]="filter!.controls.idioma" [items]="lookup.IDIOMAS" itemTodos="- Todos -" [valueTodos]="null"></input-select>
             </div>
           </separator>
         </div>
       </div>
     </separator>
+    <separator title="Formação acadêmica" collapse [collapsed]="true">
+      <div class="row">
+        <div class="col-8">
+          <div class="row">
+            <input-select #tipoFormacao [size]="4" label="Nível da Formação" icon="fas fa-flag" controlName="nivelFormacao" [control]="filter!.controls.nivelFormacao" [items]="lookup.TITULOS_CURSOS" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+            <input-select [size]="4" label="Área de conhecimento" icon="fas fa-user-graduate" controlName="area_conhecimento_id" [control]="filter!.controls.area_conhecimento_id" [dao]="areaDao" (change)="onAreaConhecimentoChange()" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+            <input-select [size]="4" label="Curso" icon="fas fa-graduation-cap" controlName="curso_id" [control]="filter!.controls.curso_id" [dao]="cursoDao" [where]="cursoWhere" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+          </div>
+        </div>
+      </div>
+    </separator>
     <separator title="Dados Profissionais" collapse [collapsed]="true">
       <div class="row">
-        <div class="col-6">
+        <div class="col-6"><!-- Experiência -->
           <separator title="Experiência">
             <div class="row">
-              <input-select [size]="6" label="Grupo especializado" icon="bi bi-award" controlName="grupo_especializado_id" [control]="filter!.controls.grupo_especializado_id" [dao]="grupoDao"></input-select>
-              <input-select [size]="6" label="Função já exercida" icon="bi bi-hammer" controlName="funcao_id" [control]="filter!.controls.funcao_id" [dao]="funcaoDao"></input-select>
+              <input-select [size]="6" label="Faz parte de grupo especializado:" icon="bi bi-award" controlName="grupo_especializado_id" [control]="filter!.controls.grupo_especializado_id" [dao]="grupoDao" itemTodos="- Todos -"></input-select>
+              <input-select [size]="6" label="Função já exercida" icon="bi bi-hammer" controlName="funcao_id" [control]="filter!.controls.funcao_id" [dao]="funcaoDao" itemTodos="- Todos -" [valueTodos]="null"></input-select>
             </div>
           </separator>
         </div>
-        <div class="col-6">
-          <separator title="Hard Skills">
+      </div>
+      <div class="row">
+        <div class="col-6"><!-- Habilidades Técnicas -->
+          <separator title="Habilidades Técnicas">
             <div class="row">
-              <input-select [size]="6" label="Área técnica das capacidades" icon="fas fa-graduation-cap" controlName="area_tematica_id" [control]="filter!.controls.area_tematica_id" [dao]="areaTematicaDao" (change)="onAreaTematicaChange()"></input-select>
-              <input-select [size]="6" label="Capacidades" icon="fas fa-graduation-cap" controlName="capacidade_tecnica_id" [control]="filter!.controls.capacidade_tecnica_id" [dao]="capacidadeTecnicaDao" [where]="areaTematicaWhere"></input-select>
+              <input-select [size]="6" label="Área temática" icon="fas fa-graduation-cap" controlName="area_tematica_id" [control]="filter!.controls.area_tematica_id" [dao]="areaTematicaDao" (change)="onAreaTematicaChange()" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+              <input-select [size]="6" label="Habilidades" icon="fas fa-graduation-cap" controlName="capacidade_tecnica_id" [control]="filter!.controls.capacidade_tecnica_id" [dao]="capacidadeTecnicaDao" [where]="areaTematicaWhere" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+            </div>
+          </separator>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <separator title="Convocação">
+            <div class="row">
+              <div class="col-6">
+                <div class="row">
+                  <input-switch [size]="3" label="Interesse no PGD" icon="bi bi-bookmark-check" controlName="interesse_pgd" [control]="filter!.controls.interesse_pgd"></input-switch>
+                  <input-radio *ngIf="filter!.controls.interesse_pgd.value" [size]="9" label="Selecione a modalidade" [items]="lookup.PG_PRF" controlName="modalidade_pgd" [control]="filter!.controls.modalidade_pgd"></input-radio>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="row">
+                  <!--input-select [size]="4" label="Interesse no PGD" icon="bi bi-bookmark-check" controlName="interesse_pgd" [control]="filter!.controls.interesse_pgd" [items]="lookup.PG_PRF" itemTodos="- Todos -" [valueTodos]="null"></input-select-->
+                  <input-switch [size]="6" [label]="radioInteresseBNT.value ? 'Tem interesse no BNT' : 'Não tem interesse no BNT'" icon="bi bi-universal-access" controlName="interesse_bnt" [control]="filter!.controls.interesse_bnt" #radioInteresseBNT></input-switch>
+                  <input-switch [size]="6" [label]="radioInteresseRemocao.value ? 'Tem interesse em remoção' : 'Não tem interesse em remoção'" icon="bi bi-house-door-fill" controlName="remocao" [control]="filter!.controls.remocao" #radioInteresseRemocao></input-switch>
+                </div>
+              </div>
             </div>
           </separator>
         </div>
@@ -64,17 +88,36 @@
     </separator>
     <separator title="Atributos Comportamentais" collapse [collapsed]="true">
       <div class="row">
-        <div class="col-6">
+        <div class="col-4">
           <separator title="Soft Skills">
             <div class="row">
-              
+              <input-select [size]="12" label="Selecione a soft skill" icon="fas fa-graduation-cap" controlName="soft_id" [control]="filter!.controls.soft_id" [items]="lookup.SOFT_SKILLS" itemTodos="- Todos -" [valueTodos]="null"></input-select>
             </div>
           </separator>
         </div>
-        <div class="col-6">
-          <separator title="Mente">
+        <div class="col-8">
+          <separator title="Comportamental">
             <div class="row">
-              
+              <div class="row"><!--Extroversão-->
+                <input-switch [size]="5" [label]="radioExtroversao.value ? 'Filtrar por Extroversão' : 'Não filtrar por Extroversão'" icon="bi bi-card-checklist" controlName="extroversao" [control]="filter!.controls.extroversao" (change)="onChangeRadioBigFive('extroversao')" #radioExtroversao></input-switch>
+                <input-radio *ngIf="filter!.controls.extroversao.value" [size]="7" label="Selecione o perfil" [items]="itemsExtroversao" controlName="nivelExtroversao" [control]="filter!.controls.nivelExtroversao" #nivelExtroversao></input-radio>
+              </div>
+              <div class="row"><!--Agradabilidade-->
+                <input-switch [size]="5" [label]="radioAgradabilidade.value ? 'Filtrar por Agradabilidade' : 'Não filtrar por Agradabilidade'" icon="bi bi-card-checklist" controlName="agradabilidade" [control]="filter!.controls.agradabilidade" (change)="onChangeRadioBigFive('agradabilidade')" #radioAgradabilidade></input-switch>
+                <input-radio *ngIf="filter!.controls.agradabilidade.value" [size]="7" label="Selecione o perfil" [items]="itemsAgradabilidade" controlName="nivelAgradabilidade" [control]="filter!.controls.nivelAgradabilidade" #nivelAgradabilidade></input-radio>
+              </div>
+              <div class="row"><!--Disciplina-->
+                <input-switch [size]="5" [label]="radioDisciplina.value ? 'Filtrar por Disciplina' : 'Não filtrar por Disciplina'" icon="bi bi-card-checklist" controlName="disciplina" [control]="filter!.controls.disciplina" (change)="onChangeRadioBigFive('disciplina')" #radioDisciplina></input-switch>
+                <input-radio *ngIf="filter!.controls.disciplina.value" [size]="7" label="Selecione o perfil" [items]="itemsDisciplina" controlName="nivelDisciplina" [control]="filter!.controls.nivelDisciplina" #nivelDisciplina></input-radio>
+              </div>
+              <div class="row"><!--Estabilidade Emocional-->
+                <input-switch [size]="5" [label]="radioEstabilidade.value ? 'Filtrar por Estabilidade Emocional' : 'Não filtrar por Estabilidade Emocional'" icon="bi bi-card-checklist" controlName="estabilidade" [control]="filter!.controls.estabilidade" (change)="onChangeRadioBigFive('estabilidade')" #radioEstabilidade></input-switch>
+                <input-radio *ngIf="filter!.controls.estabilidade.value" [size]="7" label="Selecione o perfil" [items]="itemsEstabilidade" controlName="nivelEstabilidade" [control]="filter!.controls.nivelEstabilidade" #nivelEstabilidade></input-radio>
+              </div>
+              <div class="row"><!--Abertura ao Novo-->
+                <input-switch [size]="5" [label]="radioAbertura.value ? 'Filtrar por Abertura ao Novo' : 'Não filtrar por Abertura ao Novo'" icon="bi bi-card-checklist" controlName="abertura" [control]="filter!.controls.abertura" (change)="onChangeRadioBigFive('abertura')" #radioAbertura></input-switch>
+                <input-radio *ngIf="filter!.controls.abertura.value" [size]="7" label="Selecione o perfil" [items]="itemsAbertura" controlName="nivelAbertura" [control]="filter!.controls.nivelAbertura" #nivelAbertura></input-radio>
+              </div>
             </div>
           </separator>
         </div>
@@ -82,15 +125,6 @@
     </separator>
   </filter>
   <columns>
-    <!--<column type="expand" icon="bi bi-person-bounding-box" [align]="'center'" [hint]="'Detalhamento'" [template]="columnDetalhamento" [expandTemplate]="columnExpandedDetalhamento">
-    <column icon="bi bi-person-bounding-box" [align]="'center'" [hint]="'Detalhamento'" [template]="columnDetalhamento">
-      <ng-template let-row="row" #columnDetalhamento>
-        <span class="badge rounded-pill bg-light text-dark"></span>
-      </ng-template>
-      <<ng-template let-row="row" #columnExpandedDetalhamento>
-       <curriculum-pesquisa-list-usuario [entity]="row"></curriculum-pesquisa-list-usuario>
-      </ng-template>>
-    </column-->
     <column [titleTemplate]="titleNome" [template]="columnNome">
       <ng-template let-header="header" #titleNome>
         <strong>Nome</strong>/<order by="" [header]="header">Ingresso</order><br>
@@ -98,10 +132,10 @@
       </ng-template>
       <ng-template let-row="row" #columnNome>
         <span class="text-nowrap d-block">
-          {{row.usuario.nome}}
-          <badge color="gray">{{row.profissional.ano_ingresso}}</badge>
+          {{row?.usuario?.nome || "Sem Nome"}}
+          <badge color="gray">{{row?.curriculum_profissional?.ano_ingresso || "Sem informação"}}</badge>
         </span>
-        <span class="micro-text fw-ligh">{{row.usuario.email}}</span>
+        <span class="micro-text fw-ligh">{{row?.usuario?.email || "Sem email"}}</span>
       </ng-template>
     </column>
     <column [titleTemplate]="titleEstado" [template]="columnEstado">
@@ -109,19 +143,14 @@
         <strong>Cidade/Estado</strong>
       </ng-template>
       <ng-template let-row="row" #columnEstado>
-        <span class="d-block">{{row.cidade.nome}}/{{row.cidade.uf}}</span>
+        <span class="d-block">{{row?.cidade?.nome || "Sem cidade"}}/{{row.cidade?.uf || "Sem UF"}}</span>
       </ng-template>
     </column>
     <column title="Apresentação Pessoal" [template]="columnApresentacao">
       <ng-template let-row="row" #columnApresentacao>
-        <span class="micro-text fw-ligh">{{row.apresentacao}}</span>
+        <span class="micro-text fw-ligh">{{row?.apresentacao || "Sem apresentação"}}</span>
       </ng-template>
     </column>
-    <!--column title="Detalhes" [template]="columnDetalhes">
-      <ng-template let-row="row" #columnDetalhes>
-        <button class="btn btn-sm btn-outline-info me-2" (click)="showCurriculumDetalhes2(row)"><i class="bi bi-eye"></i></button>
-      </ng-template>
-    </column-->
     <column icon="bi bi-person-bounding-box" [align]="'center'" [hint]="'Detalhamento'" type="options" [onEdit]="edit.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
   </columns>
 </grid>

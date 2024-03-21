@@ -9,17 +9,17 @@ use Ramsey\Uuid\Uuid;
 
 class AtributoComportamentalDISCSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        //Analise as opções e enumere-as de 1 a 4. A opção com a qual você MAIS se identifica, insira o NÚMERO 4 na respectiva caixinha, e aquela com a qual você MENOS tem afinidade, assinale com um NÚMERO 1. Lembre-se que não podem ocorrer empates, logo um mesmo número não pode ser usado duas vezes na mesma questão. Seu resultado poderá estar entre 26 e 104.
-        //$uuid = Uuid::uuid4();
+  /**
+   * Run the database seeds.
+   *
+   * @return void
+   */
+  public function run()
+  {
+    //Analise as opções e enumere-as de 1 a 4. A opção com a qual você MAIS se identifica, insira o NÚMERO 4 na respectiva caixinha, e aquela com a qual você MENOS tem afinidade, assinale com um NÚMERO 1. Lembre-se que não podem ocorrer empates, logo um mesmo número não pode ser usado duas vezes na mesma questão. Seu resultado poderá estar entre 26 e 104.
+    //$uuid = Uuid::uuid4();
 
-        /*
+    /*
         $questionario = new Questionario();
         $questionario->fill([
             'nome'=> 'Disc',
@@ -54,12 +54,11 @@ class AtributoComportamentalDISCSeeder extends Seeder
                 'tipo'=> $pergunta['tipo'],
                 'criado_versao'=> $pergunta['criado_versao'],
                 'deletado_versao'=> $pergunta['deletado_versao'],
-                'respostas' => $respostas,
+                'respostas_possiveis' => $respostas,
                 'questionario_id'=> $uuid
             ]);
             $perguntaNovo->save();
             $sequencia++;
         }*/
-    }
+  }
 }
-

@@ -140,6 +140,7 @@ class PlanoTrabalhoService extends ServiceBase
       where("unidade_id", $data["unidade_id"])->
       where("data_inicio", "<=", $data["data_fim"])->
       where("data_fim", ">=", $data["data_inicio"])->
+      where("status", "!=", "CANCELADO")->
       where("id", "!=", UtilService::valueOrNull($data, "id"))->
       first();
     if(!empty($conflito) && !parent::loggedUser()->hasPermissionTo('MOD_PTR_INTSC_DATA')) {

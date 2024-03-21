@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Http;
 class HttpSenderService
 {
 
-    public function enviarDados($tipo,  $dados, $token, $body)
+    public function enviarDados($dados, $token, $body)
     {
         $header = ['Content-Type' => 'application/json-patch+json'];
 
@@ -18,12 +18,13 @@ class HttpSenderService
         ->withToken($token, 'Bearer')->put($dados['url'], $body);
 
         //$exportacaoService->atualizarRetorno($exportacao, $response->json());
-        if($response->successful()){
+/*         if($response->successful()){
             return $response->json();
             //return "succesful";
         }else{
             return "error";
-        }
+        } */
+        return $response->successful() ? $response->json() : "error";
 
     }
         

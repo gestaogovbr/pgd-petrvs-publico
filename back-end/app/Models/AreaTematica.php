@@ -6,16 +6,18 @@ use App\Models\ModelBase;
 
 class AreaTematica extends ModelBase
 {
-   
-    protected $table = 'areas_tematicas';
 
-    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nome', /* varchar(256); NOT NULL; */// Nome da área temática
-        'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Área ativa ou inativa
-        //'deleted_at', /* timestamp; */
-    ];
+  protected $table = 'areas_tematicas';
 
-    //Has
-    public function capacidadeTecnica() { return $this->hasMany(CapacidadeTecnica::class, 'area_tematica_id'); }
-    
+  public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
+    'nome', /* varchar(256); NOT NULL; */ // Nome da área temática
+    'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */ // Área ativa ou inativa
+    //'deleted_at', /* timestamp; */
+  ];
+
+  //Has
+  public function capacidadesTecnicas()
+  {
+    return $this->hasMany(CapacidadeTecnica::class, 'area_tematica_id');
+  }
 }
