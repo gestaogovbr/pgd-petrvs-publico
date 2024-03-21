@@ -130,172 +130,174 @@
         </div>
       </div>
     </div>
-    <div class="card mt-3">
-      <h5 class="card-header"><i class="bi bi-person-workspace me-2"></i>Dados Profissionais</h5>
-      <div class="card-body">
-        <div class="row my-2">
-          <div class="col-md-6">
-            <strong>Funções exercidas e unidades</strong><br>
-            <div *ngIf="curriculum?.curriculum_profissional?.historicos_funcoes.length; else semFuncao">
-              <ng-container *ngFor="let funcao of curriculum.curriculum_profissional.historicos_funcoes">
-                <span>{{funcao?.funcao?.nome || "Sem nome da funcao"}} - {{funcao?.unidade?.nome || "Sem nome da unidade"}}</span><br>
-              </ng-container>
+    <ng-container *ngIf="curriculum?.curriculum_profissional">
+      <div class="card mt-3">
+        <h5 class="card-header"><i class="bi bi-person-workspace me-2"></i>Dados Profissionais</h5>
+        <div class="card-body">
+          <div class="row my-2">
+            <div class="col-md-6">
+              <strong>Funções exercidas e unidades</strong><br>
+              <div *ngIf="curriculum?.curriculum_profissional?.historicos_funcoes.length; else semFuncao">
+                <ng-container *ngFor="let funcao of curriculum.curriculum_profissional.historicos_funcoes">
+                  <span>{{funcao?.funcao?.nome || "Sem nome da funcao"}} - {{funcao?.unidade?.nome || "Sem nome da unidade"}}</span><br>
+                </ng-container>
+              </div>
+              <ng-template #semFuncao>
+                Sem histórico de funcao
+              </ng-template>
             </div>
-            <ng-template #semFuncao>
-              Sem histórico de funcao
-            </ng-template>
+            <div class="col-md-6">
+              <strong>Grupo Especializado</strong><br>
+              <div *ngIf="curriculum?.curriculum_profissional?.grupo_especializado_id; else semGrupo">
+                <span *ngFor="let funcao of curriculum.curriculum_profissional.historicos_funcoes">{{curriculum.curriculum_profissional?.grupo_especializado?.nome
+                  || "Sem Grupo"}}</span>
+              </div>
+              <ng-template #semGrupo>
+                Sem Grupo
+              </ng-template>
+            </div>
           </div>
-          <div class="col-md-6">
-            <strong>Grupo Especializado</strong><br>
-            <div *ngIf="curriculum?.curriculum_profissional?.grupo_especializado_id; else semGrupo">
-              <span *ngFor="let funcao of curriculum.curriculum_profissional.historicos_funcoes">{{curriculum.curriculum_profissional?.grupo_especializado?.nome
-                || "Sem Grupo"}}</span>
+          <div class="row my-2">
+            <div class="col-md-6">
+              <strong>Histórico de lotação</strong><br>
+              <div *ngIf="curriculum?.curriculum_profissional?.historicos_lotacoes.length; else semLotacao">
+                <ng-container *ngFor="let lotacao of curriculum.curriculum_profissional.historicos_lotacoes">
+                  <span>{{lotacao.unidade.nome}}</span><br>
+                </ng-container>
+              </div>
+              <ng-template #semLotacao>
+                Sem históricode lotação.
+              </ng-template>
             </div>
-            <ng-template #semGrupo>
-              Sem Grupo
-            </ng-template>
+            <div class="col-md-6">
+              <strong>Lotação Atual</strong><br>
+              <div *ngIf="curriculum?.curriculum_profissional?.lotacao_atual; else semLotacaoAtual">
+                {{this.auth.unidade?.nome || "Sem informação"}}
+              </div>
+              <ng-template #semLotacaoAtual>
+                Sem informação de lotação atual.
+              </ng-template>
+            </div>
           </div>
-        </div>
-        <div class="row my-2">
-          <div class="col-md-6">
-            <strong>Histórico de lotação</strong><br>
-            <div *ngIf="curriculum?.curriculum_profissional?.historicos_lotacoes.length; else semLotacao">
-              <ng-container *ngFor="let lotacao of curriculum.curriculum_profissional.historicos_lotacoes">
-                <span>{{lotacao.unidade.nome}}</span><br>
-              </ng-container>
+          <div class="row">
+            <div class="col-md-6">
+              <strong>Atividades Internas</strong><br>
+              <div *ngIf="curriculum?.curriculum_profissional?.historicos_atividades_internas.length; else semCapacInterna">
+                <ng-container *ngFor="let atividade of curriculum.curriculum_profissional.historicos_atividades_internas;index as i">
+                  <span>{{i+1}}. {{atividade.capacidade_tecnica.nome}}</span><br>
+                </ng-container>
+              </div>
+              <ng-template #semCapacInterna>
+                Sem atividades internas
+              </ng-template>
             </div>
-            <ng-template #semLotacao>
-              Sem históricode lotação.
-            </ng-template>
+            <div class="col-md-6">
+              <strong>Atividades Externas</strong><br>
+              <div *ngIf="curriculum?.curriculum_profissional?.historicos_atividades_externas.length; else semCapacExterna">
+                <ng-container *ngFor="let atividade of curriculum.curriculum_profissional.historicos_atividades_externas">
+                  <span>- {{atividade.area_atividade_externa?.nome}}</span><br>
+                </ng-container>
+              </div>
+              <ng-template #semCapacExterna>
+                Sem atividades externas.
+              </ng-template>
+            </div>
           </div>
-          <div class="col-md-6">
-            <strong>Lotação Atual</strong><br>
-            <div *ngIf="curriculum?.curriculum_profissional?.lotacao_atual; else semLotacaoAtual">
-              {{this.auth.unidade?.nome || "Sem informação"}}
+          <div class="row my-2">
+            <div class="col-md-6">
+              <strong>Docente ou Instrutor na instituição</strong><br>
+              <div *ngIf="curriculum?.curriculum_profissional?.historicos_docencias_internas.length; else semInstrucaoInterna">
+                <ng-container *ngFor="let interno of curriculum.curriculum_profissional.historicos_docencias_internas">
+                  <span>{{interno.curso.titulo}} :<small> {{interno.curso.nome}}</small></span><br>
+                </ng-container>
+              </div>
+              <ng-template #semInstrucaoInterna>
+                Não é docente na instituição.
+              </ng-template>
             </div>
-            <ng-template #semLotacaoAtual>
-              Sem informação de lotação atual.
-            </ng-template>
+            <div class="col-md-6">
+              <strong>Trabalho fora da instituição</strong><br>
+              <div *ngIf="curriculum?.curriculum_profissional?.historicos_docencias_externas.length; else semInstrucaoExterna">
+                <ng-container *ngFor="let externo of curriculum.curriculum_profissional.historicos_docencias_externas">
+                  <span>{{externo.area_atividade_externa.nome}}</span><br>
+                </ng-container>
+              </div>
+              <ng-template #semInstrucaoExterna>
+                Não tem trabalho fora da instituição.
+              </ng-template>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6">
-            <strong>Atividades Internas</strong><br>
-            <div *ngIf="curriculum?.curriculum_profissional?.historicos_atividades_internas.length; else semCapacInterna">
-              <ng-container *ngFor="let atividade of curriculum.curriculum_profissional.historicos_atividades_internas;index as i">
-                <span>{{i+1}}. {{atividade.capacidade_tecnica.nome}}</span><br>
-              </ng-container>
+          <div class="row my-2">
+            <div class="col-md-6">
+              <strong>Docência na Intituição</strong><br>
+              <div *ngIf="curriculum?.curriculum_profissional?.historicos_docencias_internas.length; else semDocenciaInterna">
+                <ng-container *ngFor="let docenciaI of curriculum.curriculum_profissional.historicos_docencias_internas">
+                  <span>{{docenciaI.curso?.nome || "Sem informação"}}</span><br>
+                </ng-container>
+              </div>
+              <ng-template #semDocenciaInterna>
+                Não existe informação de trabalho de docência na intituição.
+              </ng-template>
             </div>
-            <ng-template #semCapacInterna>
-              Sem atividades internas
-            </ng-template>
+            <div class="col-md-6">
+              <strong>Docência fora da Instituição</strong><br>
+              <div *ngIf="curriculum?.curriculum_profissional?.historicos_docencias_externas.length; else semDocenciaExterna">
+                <ng-container *ngFor="let docenciaE of curriculum.curriculum_profissional.historicos_docencias_externas">
+                  <span>{{docenciaE.area_atividade_externa?.nome || "Sem informação"}}</span><br>
+                </ng-container>
+              </div>
+              <ng-template #semDocenciaExterna>
+                Não existe informação de trabalho de docência fora da intituição.
+              </ng-template>
+            </div>
           </div>
-          <div class="col-md-6">
-            <strong>Atividades Externas</strong><br>
-            <div *ngIf="curriculum?.curriculum_profissional?.historicos_atividades_externas.length; else semCapacExterna">
-              <ng-container *ngFor="let atividade of curriculum.curriculum_profissional.historicos_atividades_externas">
-                <span>- {{atividade.area_atividade_externa?.nome}}</span><br>
-              </ng-container>
+          <div class="row my-2">
+            <div class="col-md-6">
+              <strong>Cursos na Intituição</strong><br>
+              <div *ngIf="curriculum?.curriculum_profissional?.historicos_cursos_internos.length; else semCursoInterno">
+                <ng-container *ngFor="let cursoI of curriculum.curriculum_profissional.historicos_cursos_internos">
+                  <span>{{cursoI.curso?.nome || "Sem informação"}}</span><br>
+                </ng-container>
+              </div>
+              <ng-template #semCursoInterno>
+                Não existe informação de trabalho de docência na intituição.
+              </ng-template>
             </div>
-            <ng-template #semCapacExterna>
-              Sem atividades externas.
-            </ng-template>
+            <div class="col-md-6">
+              <strong>Cursos fora da Instituição</strong><br>
+              <div *ngIf="curriculum?.curriculum_profissional?.historicos_cursos_externos.length; else semCursoExterno">
+                <ng-container *ngFor="let cursoE of curriculum.curriculum_profissional.historicos_cursos_externos">
+                  <span>{{cursoE.area_atividade_externa?.nome || "Sem informação"}}</span><br>
+                </ng-container>
+              </div>
+              <ng-template #semCursoExterno>
+                Não existe informação de trabalho de docência fora da intituição.
+              </ng-template>
+            </div>
           </div>
-        </div>
-        <div class="row my-2">
-          <div class="col-md-6">
-            <strong>Docente ou Instrutor na instituição</strong><br>
-            <div *ngIf="curriculum?.curriculum_profissional?.historicos_docencias_internas.length; else semInstrucaoInterna">
-              <ng-container *ngFor="let interno of curriculum.curriculum_profissional.historicos_docencias_internas">
-                <span>{{interno.curso.titulo}} :<small> {{interno.curso.nome}}</small></span><br>
-              </ng-container>
+          <div class="row my-2">
+            <div class="col-md-6">
+              <strong>Habilidades</strong><br>
+              <div *ngIf="curriculum?.curriculum_profissional?.especifique_habilidades.length; else semHabilidades">
+                <ng-container *ngFor="let habilidade of curriculum.curriculum_profissional.especifique_habilidades">
+                  <span>{{habilidade.value}}</span><br>
+                </ng-container>
+              </div>
+              <ng-template #semHabilidades>
+                Sem habilidades
+              </ng-template>
             </div>
-            <ng-template #semInstrucaoInterna>
-              Não é docente na instituição.
-            </ng-template>
-          </div>
-          <div class="col-md-6">
-            <strong>Trabalho fora da instituição</strong><br>
-            <div *ngIf="curriculum?.curriculum_profissional?.historicos_docencias_externas.length; else semInstrucaoExterna">
-              <ng-container *ngFor="let externo of curriculum.curriculum_profissional.historicos_docencias_externas">
-                <span>{{externo.area_atividade_externa.nome}}</span><br>
-              </ng-container>
-            </div>
-            <ng-template #semInstrucaoExterna>
-              Não tem trabalho fora da instituição.
-            </ng-template>
-          </div>
-        </div>
-        <div class="row my-2">
-          <div class="col-md-6">
-            <strong>Docência na Intituição</strong><br>
-            <div *ngIf="curriculum?.curriculum_profissional?.historicos_docencias_internas.length; else semDocenciaInterna">
-              <ng-container *ngFor="let docenciaI of curriculum.curriculum_profissional.historicos_docencias_internas">
-                <span>{{docenciaI.curso?.nome || "Sem informação"}}</span><br>
-              </ng-container>
-            </div>
-            <ng-template #semDocenciaInterna>
-              Não existe informação de trabalho de docência na intituição.
-            </ng-template>
-          </div>
-          <div class="col-md-6">
-            <strong>Docência fora da Instituição</strong><br>
-            <div *ngIf="curriculum?.curriculum_profissional?.historicos_docencias_externas.length; else semDocenciaExterna">
-              <ng-container *ngFor="let docenciaE of curriculum.curriculum_profissional.historicos_docencias_externas">
-                <span>{{docenciaE.area_atividade_externa?.nome || "Sem informação"}}</span><br>
-              </ng-container>
-            </div>
-            <ng-template #semDocenciaExterna>
-              Não existe informação de trabalho de docência fora da intituição.
-            </ng-template>
-          </div>
-        </div>
-        <div class="row my-2">
-          <div class="col-md-6">
-            <strong>Cursos na Intituição</strong><br>
-            <div *ngIf="curriculum?.curriculum_profissional?.historicos_cursos_internos.length; else semCursoInterno">
-              <ng-container *ngFor="let cursoI of curriculum.curriculum_profissional.historicos_cursos_internos">
-                <span>{{cursoI.curso?.nome || "Sem informação"}}</span><br>
-              </ng-container>
-            </div>
-            <ng-template #semCursoInterno>
-              Não existe informação de trabalho de docência na intituição.
-            </ng-template>
-          </div>
-          <div class="col-md-6">
-            <strong>Cursos fora da Instituição</strong><br>
-            <div *ngIf="curriculum?.curriculum_profissional?.historicos_cursos_externos.length; else semCursoExterno">
-              <ng-container *ngFor="let cursoE of curriculum.curriculum_profissional.historicos_cursos_externos">
-                <span>{{cursoE.area_atividade_externa?.nome || "Sem informação"}}</span><br>
-              </ng-container>
-            </div>
-            <ng-template #semCursoExterno>
-              Não existe informação de trabalho de docência fora da intituição.
-            </ng-template>
-          </div>
-        </div>
-        <div class="row my-2">
-          <div class="col-md-6">
-            <strong>Habilidades</strong><br>
-            <div *ngIf="curriculum?.curriculum_profissional?.especifique_habilidades.length; else semHabilidades">
-              <ng-container *ngFor="let habilidade of curriculum.curriculum_profissional.especifique_habilidades">
-                <span>{{habilidade.value}}</span><br>
-              </ng-container>
-            </div>
-            <ng-template #semHabilidades>
-              Sem habilidades
-            </ng-template>
           </div>
         </div>
       </div>
-    </div>
+    </ng-container>
     <ng-container *ngIf="this.questionarios.length">
       <ng-container *ngFor="let questionario of this.questionarios">
         <ng-container *ngIf="questionario.codigo == 'SOFTSKILL'">
           <div class="card mt-3">
             <h5 class="card-header"><i class="bi bi-list-ul me-2"></i> Soft Skills</h5>
             <div class="card-body">
-    
+
               <div class="row my-2">
                 <div class="col-md-3">
                   <strong>Comunicação</strong><br>

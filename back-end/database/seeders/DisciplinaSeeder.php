@@ -20,8 +20,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "APS - ATENDIMENTO EM PRIMEIROS SOCORROS",
-        "sigla" => "",
+        "nome" => "ATENDIMENTO EM PRIMEIROS SOCORROS",
+        "sigla" => "APS",
         "ativo" => 1
       ),
       array(
@@ -29,8 +29,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "OAE - OPERAÇÕES AÉREAS",
-        "sigla" => "",
+        "nome" => "OPERAÇÕES AÉREAS",
+        "sigla" => "OAE",
         "ativo" => 1
       ),
       array(
@@ -38,8 +38,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "MZC - MANEJO DE ZOONOSES CANINAS",
-        "sigla" => "",
+        "nome" => "MANEJO DE ZOONOSES CANINAS",
+        "sigla" => "MZC",
         "ativo" => 1
       ),
       array(
@@ -47,8 +47,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "PRC - PROCEDIMENTOS CINOTÉCNICOS DO DPRF",
-        "sigla" => "",
+        "nome" => "PROCEDIMENTOS CINOTÉCNICOS DO DPRF",
+        "sigla" => "PRC",
         "ativo" => 1
       ),
       array(
@@ -56,8 +56,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "DHI - DIREITOS HUMANOS, INTEGRIDADE E RELAÇÕES HUMANAS",
-        "sigla" => "",
+        "nome" => "DIREITOS HUMANOS, INTEGRIDADE E RELAÇÕES HUMANAS",
+        "sigla" => "DHI",
         "ativo" => 1
       ),
       array(
@@ -65,8 +65,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "LGP - LEGISLAÇÃO DE PESSOAL",
-        "sigla" => "",
+        "nome" => "LEGISLAÇÃO DE PESSOAL",
+        "sigla" => "LGP",
         "ativo" => 1
       ),
       array(
@@ -74,8 +74,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "DOC - DOCÊNCIA",
-        "sigla" => "",
+        "nome" => "DOCÊNCIA",
+        "sigla" => "DOC",
         "ativo" => 1
       ),
       array(
@@ -83,8 +83,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "PRU - PATRULHA RURAL E URBANA",
-        "sigla" => "",
+        "nome" => "PATRULHA RURAL E URBANA",
+        "sigla" => "PRU",
         "ativo" => 1
       ),
       array(
@@ -92,8 +92,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "CIP - CONTROLE INTERNO DA PRF",
-        "sigla" => "",
+        "nome" => "CONTROLE INTERNO DA PRF",
+        "sigla" => "CIP",
         "ativo" => 1
       ),
       array(
@@ -101,8 +101,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "PLF - POLICIAMENTO E FISCALIZAÇÃO",
-        "sigla" => "",
+        "nome" => "POLICIAMENTO E FISCALIZAÇÃO",
+        "sigla" => "PLF",
         "ativo" => 1
       ),
       array(
@@ -110,8 +110,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "FPP - FISCALIZAÇÃO DE PRODUTOS PERIGOSOS",
-        "sigla" => "",
+        "nome" => "FISCALIZAÇÃO DE PRODUTOS PERIGOSOS",
+        "sigla" => "FPP",
         "ativo" => 1
       ),
       array(
@@ -119,8 +119,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "UDF - USO DIFERENCIADO DA FORÇA",
-        "sigla" => "",
+        "nome" => "USO DIFERENCIADO DA FORÇA",
+        "sigla" => "UDF",
         "ativo" => 1
       ),
       array(
@@ -128,8 +128,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "SAT - SEGURANÇA DE AUTORIDADES",
-        "sigla" => "",
+        "nome" => "SEGURANÇA DE AUTORIDADES",
+        "sigla" => "SAT",
         "ativo" => 1
       ),
       array(
@@ -137,8 +137,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "AAP - ASPECTOS DA ADMINISTRAÇÃO PÚBLICA",
-        "sigla" => "",
+        "nome" => "ASPECTOS DA ADMINISTRAÇÃO PÚBLICA",
+        "sigla" => "AAP",
         "ativo" => 1
       ),
       array(
@@ -146,8 +146,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "NOC - NOÇÕES DE ORGANIZAÇÃO E CONTROLE",
-        "sigla" => "",
+        "nome" => "NOÇÕES DE ORGANIZAÇÃO E CONTROLE",
+        "sigla" => "NOC",
         "ativo" => 1
       ),
       array(
@@ -155,8 +155,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "EIG - ESTRATÉGIA INSTITUCIONAL E GOVERNANÇA",
-        "sigla" => "",
+        "nome" => "ESTRATÉGIA INSTITUCIONAL E GOVERNANÇA",
+        "sigla" => "EIG",
         "ativo" => 1
       ),
       array(
@@ -164,8 +164,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "MOT - MOTOCICLISMO",
-        "sigla" => "",
+        "nome" => "MOTOCICLISMO",
+        "sigla" => "MOT",
         "ativo" => 1
       ),
       array(
@@ -173,8 +173,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "EFV - ENFRENTAMENTO ÀS FRAUDES VEICULARES",
-        "sigla" => "",
+        "nome" => "ENFRENTAMENTO ÀS FRAUDES VEICULARES",
+        "sigla" => "EFV",
         "ativo" => 1
       ),
       array(
@@ -182,8 +182,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "TIC - TECNOLOGIA DA INFORMAÇÃO E COMUNICAÇÃO POLICIAL",
-        "sigla" => "",
+        "nome" => "TECNOLOGIA DA INFORMAÇÃO E COMUNICAÇÃO POLICIAL",
+        "sigla" => "TIC",
         "ativo" => 1
       ),
       array(
@@ -191,8 +191,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "SEP - SOCIEDADE, ESTADO, POLÍCIA E HISTÓRIA DA PRF",
-        "sigla" => "",
+        "nome" => "SOCIEDADE, ESTADO, POLÍCIA E HISTÓRIA DA PRF",
+        "sigla" => "SEP",
         "ativo" => 1
       ),
       array(
@@ -200,8 +200,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "FTR - FISCALIZAÇÃO DE TRÂNSITO",
-        "sigla" => "",
+        "nome" => "FISCALIZAÇÃO DE TRÂNSITO",
+        "sigla" => "FTR",
         "ativo" => 1
       ),
       array(
@@ -209,8 +209,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "GEP - GESTÃO ESTRATÉGICA DA PRF",
-        "sigla" => "",
+        "nome" => "GESTÃO ESTRATÉGICA DA PRF",
+        "sigla" => "GEP",
         "ativo" => 1
       ),
       array(
@@ -218,8 +218,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "FD - TÉCNICAS PARA FISCALIZAÇÃO DO USO DO ÁLCOOL E OUTRAS DROGAS",
-        "sigla" => "",
+        "nome" => "TÉCNICAS PARA FISCALIZAÇÃO DO USO DO ÁLCOOL E OUTRAS DROGAS",
+        "sigla" => "FD",
         "ativo" => 1
       ),
       array(
@@ -227,8 +227,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "PBS - PRINCÍPIOS BÁSICOS PARA A SAÚDE",
-        "sigla" => "",
+        "nome" => "PRINCÍPIOS BÁSICOS PARA A SAÚDE",
+        "sigla" => "PBS",
         "ativo" => 1
       ),
       array(
@@ -236,8 +236,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "ALP - ASPECTOS LEGAIS DOS PROCEDIMENTOS POLICIAIS",
-        "sigla" => "",
+        "nome" => "ASPECTOS LEGAIS DOS PROCEDIMENTOS POLICIAIS",
+        "sigla" => "ALP",
         "ativo" => 1
       ),
       array(
@@ -245,8 +245,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "FPD - FISCALIZAÇÃO DE PESOS E DIMENSÕES",
-        "sigla" => "",
+        "nome" => "FISCALIZAÇÃO DE PESOS E DIMENSÕES",
+        "sigla" => "FPD",
         "ativo" => 1
       ),
       array(
@@ -254,8 +254,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "GER - NOÇÕES DE GERENCIAMENTO DE CRISE",
-        "sigla" => "",
+        "nome" => "NOÇÕES DE GERENCIAMENTO DE CRISE",
+        "sigla" => "GER",
         "ativo" => 1
       ),
       array(
@@ -263,8 +263,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "EDA - ENFRENTAMENTO AO TRÁFICO DE DROGAS, ARMAS E MUNIÇÕES",
-        "sigla" => "",
+        "nome" => "ENFRENTAMENTO AO TRÁFICO DE DROGAS, ARMAS E MUNIÇÕES",
+        "sigla" => "EDA",
         "ativo" => 1
       ),
       array(
@@ -272,8 +272,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "AMT - ARMAMENTO MUNIÇÃO E TIRO",
-        "sigla" => "",
+        "nome" => "ARMAMENTO MUNIÇÃO E TIRO",
+        "sigla" => "AMT",
         "ativo" => 1
       ),
       array(
@@ -281,8 +281,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "GPJ - ELABORAÇÃO E GESTÃO DE PROJETOS",
-        "sigla" => "",
+        "nome" => "ELABORAÇÃO E GESTÃO DE PROJETOS",
+        "sigla" => "GPJ",
         "ativo" => 1
       ),
       array(
@@ -290,8 +290,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "POP - PLANEJAMENTO OPERACIONAL",
-        "sigla" => "",
+        "nome" => "PLANEJAMENTO OPERACIONAL",
+        "sigla" => "POP",
         "ativo" => 1
       ),
       array(
@@ -299,8 +299,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "TAB - TÉCNICAS DE ABORDAGEM",
-        "sigla" => "",
+        "nome" => "TÉCNICAS DE ABORDAGEM",
+        "sigla" => "TAB",
         "ativo" => 1
       ),
       array(
@@ -308,8 +308,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "FAM - FISCALIZAÇÃO AMBIENTAL",
-        "sigla" => "",
+        "nome" => "FISCALIZAÇÃO AMBIENTAL",
+        "sigla" => "FAM",
         "ativo" => 1
       ),
       array(
@@ -317,8 +317,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "CMA - CUMPRIMENTO DE MANDADO DE ALTO RISCO",
-        "sigla" => "",
+        "nome" => "CUMPRIMENTO DE MANDADO DE ALTO RISCO",
+        "sigla" => "CMA",
         "ativo" => 1
       ),
       array(
@@ -326,8 +326,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "NTS - NOÇÕES E TÉCNICAS DE SOBREVIVÊNCIA",
-        "sigla" => "",
+        "nome" => "NOÇÕES E TÉCNICAS DE SOBREVIVÊNCIA",
+        "sigla" => "NTS",
         "ativo" => 1
       ),
       array(
@@ -335,8 +335,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "CVP - CONDUÇÃO VEICULAR POLICIAL",
-        "sigla" => "",
+        "nome" => "CONDUÇÃO VEICULAR POLICIAL",
+        "sigla" => "CVP",
         "ativo" => 1
       ),
       array(
@@ -344,8 +344,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "OCD - OPERAÇÕES DE CONTROLE DE DISTÚRBIOS",
-        "sigla" => "",
+        "nome" => "OPERAÇÕES DE CONTROLE DE DISTÚRBIOS",
+        "sigla" => "OCD",
         "ativo" => 1
       ),
       array(
@@ -353,8 +353,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "RTP - REDAÇÃO TÉCNICA PARA A ATIVIDADE POLICIAL",
-        "sigla" => "",
+        "nome" => "REDAÇÃO TÉCNICA PARA A ATIVIDADE POLICIAL",
+        "sigla" => "RTP",
         "ativo" => 1
       ),
       array(
@@ -362,8 +362,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "EDT - EDUCAÇÃO E SEGURANÇA PARA O TRANSITO",
-        "sigla" => "",
+        "nome" => "EDUCAÇÃO E SEGURANÇA PARA O TRANSITO",
+        "sigla" => "EDT",
         "ativo" => 1
       ),
       array(
@@ -371,8 +371,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "TDP - TÉCNICAS DE DEFESA POLICIAL",
-        "sigla" => "",
+        "nome" => "TÉCNICAS DE DEFESA POLICIAL",
+        "sigla" => "TDP",
         "ativo" => 1
       ),
       array(
@@ -380,8 +380,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "FST - FISCALIZAÇÃO DO SERVIÇO DE TRANSPORTE",
-        "sigla" => "",
+        "nome" => "FISCALIZAÇÃO DO SERVIÇO DE TRANSPORTE",
+        "sigla" => "FST",
         "ativo" => 1
       ),
       array(
@@ -389,8 +389,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "INT - INTELIGÊNCIA POLICIAL E SEGURANÇA ORGÂNICA",
-        "sigla" => "",
+        "nome" => "INTELIGÊNCIA POLICIAL E SEGURANÇA ORGÂNICA",
+        "sigla" => "INT",
         "ativo" => 1
       ),
       array(
@@ -398,8 +398,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "ACD - ACIDENTE E LEVANTAMENTO DO LOCAL",
-        "sigla" => "",
+        "nome" => "ACIDENTE E LEVANTAMENTO DO LOCAL",
+        "sigla" => "ACD",
         "ativo" => 1
       ),
       array(
@@ -407,8 +407,8 @@ class DisciplinaSeeder extends Seeder
         "created_at" => "2024-02-23 16:19:10",
         "updated_at" => "2024-02-23 16:19:10",
         "deleted_at" => NULL,
-        "nome" => "CDD - CORREGEDORIA E DIREITO DISCIPLINAR",
-        "sigla" => "",
+        "nome" => "CORREGEDORIA E DIREITO DISCIPLINAR",
+        "sigla" => "CDD",
         "ativo" => 1
       ),
     );
