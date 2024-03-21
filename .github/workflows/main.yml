@@ -13,11 +13,22 @@ on:
       - dataprev_hmg
 
 jobs:
-  include:
-    - name: "Build and Deploy on Dataprev DSV"
-      if: github.ref == 'refs/heads/dataprev_dsv'
-      uses: ./.github/workflows/build_deploy_dsv.yml
+  build_and_deploy_dsv:
+    name: Build and Deploy on Dataprev DSV
+    if: github.ref == 'refs/heads/dataprev_dsv'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build and Deploy DSV
+        uses: ./.github/workflows/build_deploy_dsv.yml
 
-    - name: "Build and Deploy on Dataprev HMG"
-      if: github.ref == 'refs/heads/dataprev_hmg'
-      uses: ./.github/workflows/build_deploy_hmg.yml
+  build_and_deploy_hmg:
+    name: Build and Deploy on Dataprev HMG
+    if: github.ref == 'refs/heads/dataprev_hmg'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build and Deploy HMG
+        uses: ./.github/workflows/build_deploy_hmg.yml
