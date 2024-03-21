@@ -23,7 +23,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f resources/dataprev/dev/Dockerfile .
+          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ../../resources/dataprev/dev/Dockerfile .
           docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
 
   deploy_dsv:
