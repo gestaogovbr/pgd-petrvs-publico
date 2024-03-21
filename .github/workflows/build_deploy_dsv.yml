@@ -21,6 +21,7 @@ jobs:
           push: true
           build-args: TAG_NAME=$DOCKER_HUB_TAG
           tags: $DOCKER_HUB_IMAGE:latest
+          file: ./resources/dataprev/dev/Dockerfile
 
   deploy_dsv:
     runs-on: ubuntu-latest
