@@ -14,6 +14,10 @@ on:
 
 jobs:
   include:
-    - name: "Build and Deploy on Dataprev DSV"
+    - name: "Build Deploy on Dataprev DSV"
       if: github.ref == 'refs/heads/dataprev_dsv'
       uses: ./.github/workflows/build_deploy_dsv.yml
+
+    - name: "Build Deploy on Dataprev HMG"
+      if: github.ref == 'refs/heads/dataprev_hmg'
+      uses: ./.github/workflows/build_deploy_hmg.yml
