@@ -334,7 +334,7 @@ class UsuarioService extends ServiceBase
   {
     $perfilAutenticado = $this::loggedUser()->perfil;
     $perfilNovo = Perfil::find($data['perfil_id']);
-    $perfilAtual = $this->getById($data)["perfil_id"];
+    $perfilAtual = !empty($data['id']) ? $this->getById($data)["perfil_id"] : null;
 
     if ($data['perfil_id'] != $perfilAtual) {
       if ($perfilNovo->nivel < $perfilAutenticado->nivel)

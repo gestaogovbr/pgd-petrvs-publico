@@ -432,5 +432,5 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       }
     }
     return result;
-  };
+  }
 }
