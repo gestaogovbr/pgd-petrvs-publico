@@ -1,17 +1,17 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
   <div class="row mt-3">
-    <input-textarea label="Apresente-se" [size]="12" [bold]="true" icon="bi-card-list" controlName="apresentacao" [control]="form!.controls.apresentacao"></input-textarea><!-- [control]="form!.controls.apresentese">-->
+    <input-textarea label="Apresente-se" [size]="12" [bold]="true" icon="bi-card-list" controlName="apresentacao" [control]="form!.controls.apresentacao" labelInfo="Conte um pouco sobre você, suas conquistas pessoais e profissionais."></input-textarea><!-- [control]="form!.controls.apresentese">-->
   </div>
   <div class="row mt-3">
-    <separator title="Dados Residenciais"></separator>
+    <separator title="Dados Básicos"></separator>
   </div>
   <div class="row mt-2">
-    <input-select [size]="4" #estados label="Estado" icon="fas fa-flag" controlName="estados" [control]="form!.controls.estados" [items]="lookup.UF" (change)="onEstadosChange()"></input-select>
-    <input-select #municipioV [size]="4" label="Município" icon="far fa-flag" labelInfo="Selecione o estado para habilitar a lista de municípios!" controlName="cidade_id" [control]="form!.controls.cidade_id" [dao]="cidadeDao" [where]="municipiosWhere" [orderBy]="[['nome','asc']]" liveSearch></input-select>
-    <input-text [size]="4" label="Telefone de contato WhatsAPP" icon="fas fa-phone" controlName="telefone" [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'" [attr.maxlength]=250></input-text>
+    <input-select [size]="4" #estados label="Estado que Reside" icon="fas fa-flag" controlName="estados" [control]="form!.controls.estados" [items]="lookup.UF" (change)="onEstadosChange()"></input-select>
+    <input-select #municipioV [size]="4" label="Município que Reside" icon="far fa-flag" labelInfo="Selecione o estado para habilitar a lista de municípios!" controlName="cidade_id" [control]="form!.controls.cidade_id" [dao]="cidadeDao" [where]="municipiosWhere" [orderBy]="[['nome','asc']]" liveSearch></input-select>
+    <input-text [size]="4" label="Contato (WhatsApp)" icon="fas fa-phone" controlName="telefone" [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'" [attr.maxlength]=250></input-text>
   </div>
   <div class="row mt-3">
-    <separator title="Estado Civil"></separator>
+    <separator title="Dados Familiares"></separator>
   </div>
   <div class="row mt-2">
     <input-select [size]="5" label="Estado Civil" icon="fas fa-ring" controlName="estado_civil" [control]="form!.controls.estado_civil" [items]="this.lookup.ESTADO_CIVIL"></input-select>
@@ -22,7 +22,7 @@
     <separator title="Idiomas" (click)="togglePopOver()"></separator>
   </div>
   <div class="row mt-3">
-    <input-switch [size]="3" label="Fala outros idiomas?" icon="fas fa-language" controlName="radioFalaIdioma" [control]="form!.controls.radioFalaIdioma"></input-switch>
+    <input-switch [size]="4" label="Tem conhecimento em outros idiomas?" icon="fas fa-language" controlName="radioFalaIdioma" [control]="form!.controls.radioFalaIdioma"></input-switch>
     <grid *ngIf="form!.controls.radioFalaIdioma.value" [control]="form!.controls.idiomas" [minHeight]="100" [form]="formIdiomaGrid!" [hasDelete]="true" [add]="addIdiomas.bind(this)" [load]="loadIdiomas.bind(this)" [remove]="removeIdiomas.bind(this)" [save]="saveIdiomas.bind(this)" editable>
       <columns>
         <column title="Idioma" titleHint="Escolha o idioma." [template]="columnIdioma" [editTemplate]="editIdioma">
@@ -54,7 +54,7 @@
     </grid>
   </div>
   <div class="row mt-3">
-    <separator title="Graduação e Pós-Graduação - Especialização, Mestrado, Doutorado e Pós Doutorado" (click)="togglePopOver()"></separator>
+    <separator title="Graduações e Pós-Graduações (Especialização, Mestrado, Doutorado e Pós Doutorado)" (click)="togglePopOver()"></separator>
   </div>
   <div class="row my-3">
     <grid [minHeight]="150" [form]="formGraduacao!" [control]="form!.controls.graduacoes" [hasDelete]="true" [add]="addGraduacao.bind(this)" [load]="loadGraduacao.bind(this)" [remove]="removeGraduacao.bind(this)" [save]="saveGraduacao.bind(this)" editable>

@@ -73,11 +73,11 @@ class CurriculumService extends ServiceBase
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'grupo_especializado_id') {
         $grupos_filtrados = GrupoEspecializado::select('id')->where('id', $condition[2])->get()->toArray();
-        $curriculums_filtrados = Curriculum::select('id')->whereRelation('curriculum_profissional', fn ($q) => $q->whereIn('grupo_especializado_id', $grupos_filtrados))->get()->toArray();
+        $curriculums_filtrados = Curriculum::select('id')->whereRelation('curriculumProfissional', fn ($q) => $q->whereIn('grupo_especializado_id', $grupos_filtrados))->get()->toArray();
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'funcao_id') {
         $funcoes_cv_filtrados = HistoricoFuncao::select('curriculum_profissional_id')->where('funcao_id', $condition[2])->get()->toArray();
-        $curriculums_filtrados = Curriculum::select('id')->whereRelation('curriculum_profissional', fn ($q) => $q->whereIn('id', $funcoes_cv_filtrados))->get()->toArray();
+        $curriculums_filtrados = Curriculum::select('id')->whereRelation('curriculumProfissional', fn ($q) => $q->whereIn('id', $funcoes_cv_filtrados))->get()->toArray();
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'area_tematica_id') {
         $historicos_filtrados = HistoricoAtividadeInterna::select('id')->whereRelation('capacidadeTecnica', 'area_tematica_id', $condition[2])->get()->toArray();
@@ -120,5 +120,9 @@ class CurriculumService extends ServiceBase
     }
     $data['where'] = $where;
     return $data;
+  }
+
+  public function filtroBigFive () {
+  
   }
 }

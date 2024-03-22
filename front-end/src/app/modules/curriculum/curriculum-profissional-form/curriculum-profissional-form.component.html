@@ -6,12 +6,12 @@
     <tab key="FUNCIONAIS" class="fw-bold" label="Funcionais">
       <div class="row my-4">
         <input-select #anos [size]="2" label="Ano de ingresso" icon="bi bi-calendar-check-fill" controlName="ano_ingresso" [control]="form!.controls.ano_ingresso" required></input-select>
-        <input-select #centroTreinamento [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento_id" [control]="form!.controls.centro_treinamento_id" nullable itemNull="- Selecione -" fullEntity liveSearch [dao]="centroTreinamentoDao" [addRoute]="{route: ['raiox','cadastros','centro-treinamento','new']}"></input-select>
+        <input-select #centroTreinamento [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento_id" [control]="form!.controls.centro_treinamento_id" nullable itemNull="- Selecione -" fullEntity liveSearch [dao]="centroTreinamentoDao"></input-select>
         <input-search #cargos [size]="6" label="Cargo" controlName="cargo_id" [control]="form!.controls.cargo_id" [dao]="cargoDao" required></input-search>
       </div>
       <div class="row">
         <div class="col-md-12">
-          <input-select #gruposEspecializados label="Selecione caso você faça parte de algum grupo especializado" icon="bi bi-check-circle" controlName="grupo_especializado_id" [control]="form!.controls.grupo_especializado_id" fullEntity liveSearch nullable itemNull="- Selecione -" [dao]="grupoDao" [addRoute]="{route: ['raiox','cadastros','grupo-especializado','new']}"></input-select>
+          <input-select #gruposEspecializados label="Selecione caso você faça parte de algum grupo especializado" icon="bi bi-check-circle" controlName="grupo_especializado_id" [control]="form!.controls.grupo_especializado_id" fullEntity liveSearch nullable itemNull="- Selecione -" [dao]="grupoDao"></input-select>
         </div>
       </div>
       <div class="row mt-3">
@@ -43,7 +43,7 @@
               <column title="Funções" titleHint="Funções ocupadas como titular ou substituto." [template]="columnFuncao" [editTemplate]="editFuncao">
                 <ng-template let-row="row" #columnFuncao>{{row.funcao?.nome || "Desconhecido"}}</ng-template>
                 <ng-template let-row="row" #editFuncao>
-                  <input-select #funcao [size]="6" label icon controlName="funcao_id" fullEntity liveSearch [dao]="funcaoDao" [addRoute]="{route: ['raiox','cadastros','funcao','new']}"></input-select>
+                  <input-select #funcao [size]="6" label icon controlName="funcao_id" fullEntity liveSearch [dao]="funcaoDao"></input-select>
                 </ng-template>
               </column>
               <column title="Unidade" titleHint="Unidade" [template]="columnUnidadeChefe" [editTemplate]="editColumnUnidadeChefe">
@@ -67,13 +67,13 @@
             <column title="Área temática" titleHint="Escolha a área." [template]="columnAtividadeInterna" [editTemplate]="editAtividadeInterna">
               <ng-template let-row="row" #columnAtividadeInterna>{{row.capacidade_tecnica?.area_tematica?.nome || row.area_tematica?.nome || "Desconhecido" }}</ng-template>
               <ng-template let-row="row" #editAtividadeInterna>
-                <input-search #areaTematica [size]="4" label="Escolha a área temática" controlName="area_tematica_id" [dao]="areaTematicaDao" fullEntity (change)="onAreaAtividadeInternaChange()"></input-search><!-- [addRoute]="{route: ['raiox','cadastros','area-tematica','new']}" -->
+                <input-search #areaTematica [size]="4" label="Escolha a área temática" controlName="area_tematica_id" [dao]="areaTematicaDao" fullEntity (change)="onAreaAtividadeInternaChange()"></input-search>
               </ng-template>
             </column>
             <column title="Habilidade" titleHint="Escolha a habilidade." [template]="columnCapacidade" [editTemplate]="editCapacidade">
               <ng-template let-row="row" #columnCapacidade>{{row.capacidade_tecnica?.nome || "Desconhecido"}}</ng-template>
               <ng-template let-row="row" #editCapacidade>
-                <input-select #capacidadeTecnica [size]="4" label="Capacidade" icon="fas fa-graduation-cap" controlName="capacidade_tecnica_id" fullEntity liveSearch [dao]="capacidadeTecnicaDao" [where]="areaTematicaWhere"></input-select><!-- [addRoute]="{route: ['raiox','cadastros','capacidade-tecnica','new']}" -->
+                <input-select #capacidadeTecnica [size]="4" label="Capacidade" icon="fas fa-graduation-cap" controlName="capacidade_tecnica_id" fullEntity liveSearch [dao]="capacidadeTecnicaDao" [where]="areaTematicaWhere"></input-select>
               </ng-template>
             </column>
             <column title="Especifique sua habilidade" titleHint="Detalhe sua habilidade: explique detalhadamente tudo o que você sabe fazer relacionado a cada habilidade." [template]="columnAtividadeDesempenhada" [editTemplate]="editAtividadeDesempenhada">
