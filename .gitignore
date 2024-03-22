@@ -12,6 +12,7 @@ front-end/.angular/*
 package-lock.json
 
 /resources/mysql/*
+/resources/docker/mariadb/*
 
 back-end/database/seeders/LogSeeder.php
 resources/docker/dev/docker-compose.yml
