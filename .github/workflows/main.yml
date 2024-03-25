@@ -21,7 +21,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Build and Deploy DSV
-        uses: ./.github/workflows/build_deploy_dsv.yml
+        uses: ./.github/workflows/build_deploy_dsv
 
   build_and_deploy_hmg:
     name: Build and Deploy on Dataprev HMG
