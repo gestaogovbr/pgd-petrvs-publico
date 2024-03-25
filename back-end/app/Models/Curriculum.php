@@ -37,7 +37,7 @@ class Curriculum extends ModelBase
     return $this->hasMany(CurriculumGraduacao::class);
   }
   //Has One
-  public function curriculum_profissional()
+  public function curriculumProfissional()
   {
     return $this->hasOne(CurriculumProfissional::class);
   }

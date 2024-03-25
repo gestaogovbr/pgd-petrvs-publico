@@ -35,6 +35,7 @@ import { HistoricoCursoExterno } from 'src/app/models/historico-curso-externo.mo
   templateUrl: './curriculum-profissional-form.component.html',
   styleUrls: ['./curriculum-profissional-form.component.scss']
 })
+
 export class CurriculumProfissionalFormComponent extends PageFormBase<CurriculumProfissional, CurriculumProfissionalDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('escolhaProgramaGestao', { static: false }) public escolhaProgramaGestao?: InputRadioComponent;
@@ -288,6 +289,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   }
 
   //GRID LOTACAO
+
   public async addHistoricoLotacao() {
     return new HistoricoLotacao({
       _status: "ADD"
@@ -464,7 +466,6 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     }
     return result;
   };
-
 
   // GRID Curso Interno
 

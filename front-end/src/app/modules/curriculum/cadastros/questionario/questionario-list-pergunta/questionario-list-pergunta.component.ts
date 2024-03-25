@@ -43,6 +43,7 @@ export class QuestionarioListPerguntaComponent extends PageFrameBase {
   public get items(): QuestionarioPergunta[] {
     if (!this.gridControl.value) this.gridControl.setValue(new Questionario());
     if (!this.gridControl.value.perguntas) this.gridControl.value.perguntas = [];
+   // console.log(this.gridControl.value.perguntas)
     return this.gridControl.value.perguntas;
   }
 
@@ -57,7 +58,9 @@ export class QuestionarioListPerguntaComponent extends PageFrameBase {
     this.loading=true;
     await this.dao!.query({where: [["questionario_id", "==", this.questionarioId]], orderBy: [["sequencia", "asc"]]}).asPromise().then(rows => {
       this.items = (rows as QuestionarioPergunta[]) || [];
+      
     });
+    //console.log(this.items)
     this.loading=false;
 
   }  

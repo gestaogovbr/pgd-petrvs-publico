@@ -622,7 +622,8 @@ class ServiceBase extends DynamicMethods
   {
     $model = $this->getModel();
     $query = $model::query();
-    $data["with"] = isset($this->joinable) ? $this->getJoinable($data["with"] ?? []) : $data["with"];
+     $data["with"] = isset($data["with"]) ? $data["with"] : [];
+     $data["with"] = isset($this->joinable) ? $this->getJoinable($data["with"]) : $data["with"];
     if (count($data['with']) > 0) {
       $this->applyWith($query, $data);
     }
