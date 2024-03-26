@@ -18,11 +18,11 @@ class DeployHMGSeeder extends Seeder
       CidadeSeeder::class,
       FeriadoSeeder::class,
       TipoCapacidadeSeeder::class,
-/*       CapacidadeSeeder::class,
-      PainelUsuarioSeeder::class,
-      In24_2023Seeder::class,
-      TemplateSeeder::class,
-      NomenclaturaSeeder::class */
+      //CapacidadeSeeder::class,
+      //PainelUsuarioSeeder::class,
+      //In24_2023Seeder::class,
+      //TemplateSeeder::class,
+      //NomenclaturaSeeder::class
 
       /*
             Após a execução das Seeds acima, executar a rotina de integração com o comando

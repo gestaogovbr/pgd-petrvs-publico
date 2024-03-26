@@ -365,7 +365,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
 
   public get isDisabled(): boolean {
     //tinyMCE.activeEditor.controlManager.get('disable_save').setDisabled(true) ;
-    return this.disabled != undefined || (this.template != undefined && !this.isEditingTemplate);
+    return this.disabled != undefined || (this.canEditTemplate && this.template != undefined && !this.isEditingTemplate);
   }
 
   public updateEditor(text?: string) {
@@ -398,15 +398,12 @@ export class InputEditorComponent extends InputBase implements OnInit {
       if(tipoUm == 'string') valorUm = `"${o.comparadorUmValor}"`;
       if(tipoUm == 'number' || tipoUm == 'boolean') valorUm = `${o.comparadorUmValor}`;
       if(tipoUm == 'variable') valorUm = `${o.comparadorUmValor.data?.path}`;
-
       if(tipoDois == 'list') valorDois = `${o.comparadorDoisValor}[+]`;
       if(tipoDois == 'string') valorDois = `"${o.comparadorDoisValor}"`;
       if(tipoDois == 'number' || tipoDois == 'boolean') valorDois = `${o.comparadorDoisValor}`;
       if(tipoDois == 'variable') valorDois = `${o.comparadorDoisValor.data?.path}`;
-
       this.expressaoIf = `{{if:${valorUm}${o.operador}${valorDois}}}{{end-if}}`;
     });
-
     this.blockForForm.valueChanges.subscribe(b => {        
       if(b.tipo == 'indice'){
         this.expressaoFor = `{{for:${b.lista}[0..${b.variavelIndice}..t]}} {{end-for}}`;

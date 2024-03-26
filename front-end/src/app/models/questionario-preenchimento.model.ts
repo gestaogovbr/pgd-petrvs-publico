@@ -14,6 +14,7 @@ export class QuestionarioPreenchimento extends Base {
   public versao: number = 0; //versão do questionario respondido
   public usuario_id: string = "";
   public questionario_id: string = "";
+  public resumo_resposta: any = {};
 
   public constructor(data?: any) { super(); this.initialization(data); }
 }

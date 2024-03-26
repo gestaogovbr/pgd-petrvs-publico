@@ -30,6 +30,7 @@
 9. (RN_CSLD_13) Tarefas de atividades em consolidação CONCLUIDO ou AVALIADO não poderão mais ser alteradas/excluidas, somente a opção de Concluir ficará disponível;
 10. (RN_CSLD_14) Não será possível lançar novas atividades em períodos já CONCLUIDO ou AVALIADO.
 11. (RN_CSLD_15) Será considerado apenas as ocorrências (que tenha intersecção do período da consolidação) cujo plano de trabalho seja o mesmo da consolidação ou caso o plano de trabalho esteja em branco. (ocorrência não vinculada a plano de trabalho)
+12. (RN_CSLD_16) A avaliação somente poderá ser realizado caso não exista período anterior ou o período anterior esteja AVALIADO, e respeitando os critérios da tabela [PTR:TABELA_1]
 
 ## REGRAS DE INTERFACE
 
