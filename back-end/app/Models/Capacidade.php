@@ -8,18 +8,24 @@ use App\Models\TipoCapacidade;
 
 class Capacidade extends ModelBase
 {
-    protected $table = 'capacidades';
+  protected $table = 'capacidades';
 
-    protected $with = [];
+  protected $with = [];
 
-    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'id', /* char(36); NOT NULL; */
-        'perfil_id', /* char(36); */
-        'tipo_capacidade_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
-    ];
+  public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
+    'id', /* char(36); NOT NULL; */
+    'perfil_id', /* char(36); */
+    'tipo_capacidade_id', /* char(36); NOT NULL; */
+    //'deleted_at', /* timestamp; */
+  ];
 
-    // Belongs
-    public function perfil() { return $this->belongsTo(Perfil::class); }      //nullable
-    public function tipoCapacidade() { return $this->belongsTo(TipoCapacidade::class); }
+  // Belongs
+  public function perfil()
+  {
+    return $this->belongsTo(Perfil::class);
+  }      //nullable
+  public function tipoCapacidade()
+  {
+    return $this->belongsTo(TipoCapacidade::class);
+  }
 }

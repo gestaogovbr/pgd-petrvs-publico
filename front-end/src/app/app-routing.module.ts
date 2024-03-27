@@ -2,19 +2,18 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 import { ConfigComponent } from './modules/config/config.component';
-import { HomeComponent } from './modules/home/home.component';
 import { LoginRetornoComponent } from './modules/login/login-retorno/login-retorno.component';
 import { LoginComponent } from './modules/login/login.component';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 import { TesteComponent } from './modules/teste/teste.component';
 import { ConfigResolver } from './resolvies/config.resolver';
 import { LoginUnicoComponent } from "./modules/login/login-unico/login-unico.component";
-import {PanelGuard} from "./guards/panel.guard";
-import {PanelLoginComponent} from "./modules/panel/panel-login/panel-login.component";
+import { PanelGuard } from "./guards/panel.guard";
+import { PanelLoginComponent } from "./modules/panel/panel-login/panel-login.component";
 
 const routes: Routes = [
-  { path: 'panel-login', component: PanelLoginComponent},
-  { path: 'panel', loadChildren: () => import('./modules/panel/panel.module').then(m => m.PanelModule),canActivate: [PanelGuard] },
+  { path: 'panel-login', component: PanelLoginComponent },
+  { path: 'panel', loadChildren: () => import('./modules/panel/panel.module').then(m => m.PanelModule), canActivate: [PanelGuard] },
   { path: 'teste', component: TesteComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste" } },
   { path: 'teste/calcula-tempo', component: TesteFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste - CalculaTempo" } },
   { path: 'home', loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule), canActivate: [AuthGuard] },
@@ -61,7 +60,6 @@ const routes: Routes = [
   { path: 'logs', loadChildren: () => import('./modules/logs/log.module').then(m => m.LogModule), canActivate: [AuthGuard] },
   { path: 'rotinas', loadChildren: () => import('./modules/rotinas/rotina.module').then(m => m.RotinaModule), canActivate: [AuthGuard] },
   { path: 'raiox', loadChildren: () => import('./modules/curriculum/curriculum.module').then(m => m.CurriculumModule), canActivate: [AuthGuard] },
-  //{ path: 'raiox/cadastros',loadChildren: () => import('./modules/cadastros/curriculum/curriculum-cadastros.module').then(m => m.CurriculumCadastrosModule), canActivate: [AuthGuard] },
 
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];

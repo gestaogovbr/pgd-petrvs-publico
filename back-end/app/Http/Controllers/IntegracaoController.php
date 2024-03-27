@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\LogError;
 use Illuminate\Http\Request;
 use App\Services\IntegracaoService;  
 use App\Exceptions\ServerException;
@@ -10,21 +11,22 @@ use Throwable;
 class IntegracaoController extends ControllerBase {
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
+
         switch ($action) {
             case 'STORE':
-                if (!$usuario->hasPermissionTo('MOD_LOGS')) throw new ServerException("CapacidadeStore", "Inserção não realizada");
+                if (!$usuario->hasPermissionTo('MOD_DEV_TUDO')) throw new ServerException("CapacidadeStore", "Inserção não realizada");
                 break;
             case 'EDIT':
-                if (!$usuario->hasPermissionTo('MOD_LOGS')) throw new ServerException("CapacidadeStore", "Edição não realizada");
+                if (!$usuario->hasPermissionTo('MOD_DEV_TUDO')) throw new ServerException("CapacidadeStore", "Edição não realizada");
                 break;
             case 'DESTROY':
-                if (!$usuario->hasPermissionTo('MOD_LOGS')) throw new ServerException("CapacidadeStore", "Exclusão não realizada");
+                if (!$usuario->hasPermissionTo('MOD_DEV_TUDO')) throw new ServerException("CapacidadeStore", "Exclusão não realizada");
                 break;
             case 'QUERY':
-                if (!$usuario->hasPermissionTo('MOD_LOGS')) throw new ServerException("CapacidadeStore", "Consulta não realizada");
+                if (!$usuario->hasPermissionTo('MOD_DEV_TUDO')) throw new ServerException("CapacidadeStore", "Consulta não realizada");
                 break;   
             case 'GETBYID':
-                if (!$usuario->hasPermissionTo('MOD_LOGS')) throw new ServerException("CapacidadeStore", "Consulta não realizada");
+                if (!$usuario->hasPermissionTo('MOD_DEV_TUDO')) throw new ServerException("CapacidadeStore", "Consulta não realizada");
                 break;  
         }
     }
@@ -75,6 +77,7 @@ class IntegracaoController extends ControllerBase {
                     $headers = ["Content-Type" => "application/json"],
                     $options = 256);
         } catch (Throwable $e) {
+            LogError::newError("Erro ao sincronizar com o SIAPE:", $e);
             return response()->
                 json(['error' => $e->getMessage()],
                     $status = 200,

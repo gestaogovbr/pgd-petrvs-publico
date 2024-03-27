@@ -9,6 +9,7 @@
         <div class="d-flex align-items-center">
           <img [src]="gb.getResourcePath('assets/images/icon_' + gb.theme + '.png')" alt="Logo Petrvs" width="30" class="d-inline-block align-text-top" />
           <span class="logo-text ms-2 d-none d-sm-block">PETRVS</span>
+          <img [src]="gb.getResourcePath('assets/images/logo_prf_' + gb.theme + '.png')" alt="Logo PRF" width="30" class="d-inline-block align-text-top ms-3" *ngIf="gb.edicao == 'PRF'" />
         </div>
       </a>
     </div>
@@ -51,7 +52,7 @@
         <li class="nav-item">
           <a [class]="menuItemClass('nav-link', { route: ['home'] })" aria-current="page" role="button" (click)="gb.goHome()">Home</a>
         </li>
-        <ng-container *ngFor="let item of menu">
+        <ng-container *ngFor="let item of modulo">
           <li *ngIf="item && (!item.permition?.length || auth.hasPermissionTo(item.permition))" class="nav-item" [ngClass]="item.menu?.length ? 'dropdown' : '' ">
             <a [class]="menuItemClass('nav-link' + (!item.route ? ' dropdown-toggle' : ''), item)" role="button" [attr.id]="item.id" role="button" [attr.data-bs-target]="item.menu?.length ? '' : '.navbar-collapse.show'" [attr.data-bs-toggle]="item.menu?.length ? 'dropdown' : 'collapse'" aria-expanded="false" (click)="openModule(item)">
               {{ item.name }}
@@ -81,7 +82,7 @@
       </div>
     </div>
     <ul class="navbar-nav navbar-nav-icons flex-row align-items-center justify-content-end ">
-      <li class="nav-item dropdown" *ngIf="gb.auth.hasPermissionTo('CTXT_ADM') ||  gb.auth.hasPermissionTo('CTXT_DEV')">
+      <li class="nav-item dropdown" *ngIf="utils.isDeveloper()">
         <a class="nav-link" id="petrvs-context" href="#" role="button" [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside" title="Módulo">
           <span class="d-none d-md-block">
             {{ gb.contexto?.name || "Selecione..." }}
@@ -111,7 +112,7 @@
       </li>
       <li class="nav-item ms-3 ms-lg-2">
         <a class="nav-link" role="button" (click)="openModule({route: ['suporte']})" [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" title="Suporte Petrvs">
-          <i class="bi bi-headset"></i>
+          <i class="bi bi-question-lg"></i>
         </a>
       </li>
       <li class="nav-item ms-3 ms-lg-2">
@@ -227,7 +228,12 @@
 <footer class="footer mt-auto" *ngIf="auth.usuario && !gb.isEmbedded">
   <div class="d-flex justify-content-between">
     <div>
-      <p><small class="text-primary">Versão: {{gb.VERSAO_SYS}}  <!--badge [color]="'gray'" [label]="gb.ENV"></badge--></small></p>
+      <div class="d-flex justify-content-between align-items-center">
+        <p class="m-0"><small class="text-primary">Versão: {{gb.VERSAO_SYS}} <!--badge [color]="'gray'" [label]="gb.ENV"></badge--></small></p>
+        <button type="button" class="btn btn-link ms-3" data-bs-toggle="modal" data-bs-target="#modalTeam">
+          <i class="bi bi-people"></i>
+        </button>
+      </div>
     </div>
     <div class="logos">
       <img [src]="gb.getResourcePath('assets/images/logo_pgd_' + (gb.theme != 'light' ? 'light' : 'normal') + '.png')">
@@ -235,4 +241,93 @@
     </div>
   </div>
 </footer>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalTeam" tabindex="-1" aria-labelledby="modalTeam" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">PETRVS Scrum Team</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ng-scrollbar style="height: 400px;">
+          <!-- Replicar essa div -->
+          <div class="row">
+            <div class="d-flex membro mb-3 col">
+              <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
+              <div class="ms-3">
+                <b>Carlos</b> Henrique Alves Lopes<br>
+                <i>Pol. Rodov. Federal</i><br>
+                <small>Developer</small>
+              </div>
+            </div>
+            <div class="d-flex membro mb-3 col">
+              <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
+              <div class="ms-3">
+                <b>D</b>iogo Leandro <b>Paiva</b> Ramos<br>
+                <i>Pol. Rodov. Federal</i><br>
+                <small>Scrum Master</small>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="d-flex membro mb-3 col">
+              <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
+              <div class="ms-3">
+                <b>Edson</b> Dario Silva de <b>França</b><br>
+                <i>Pol. Penal Federal</i><br>
+                <small>Developer</small>
+              </div>
+            </div>
+            <div class="d-flex membro mb-3 col">
+              <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
+              <div class="ms-3">
+                Edson dos Santos <b>Marian</b><br>
+                <i>Pol. Rodov. Federal</i><br>
+                <small>Developer</small>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="d-flex membro mb-3 col">
+              <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
+              <div class="ms-3">
+                <b>G</b>enisson Rodrigues <b>Albuquerque</b><br>
+                <i>Pol. Rodov. Federal</i><br>
+                <small>Developer</small>
+              </div>
+            </div>
+            <div class="d-flex membro mb-3 col">
+              <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
+              <div class="ms-3">
+                Jose <b>Marcelo Maizman</b> Bogdan<br>
+                <i>Pol. Rodov. Federal</i><br>
+                <small>Developer</small>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="d-flex membro mb-3 col">
+              <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
+              <div class="ms-3">
+                <b>Ricardo</b> de Sousa <b>Farias</b><br>
+                <i>Pol. Rodov. Federal</i><br>
+                <small>Developer</small>
+              </div>
+            </div>
+            <div *ngIf="false" class="d-flex membro mb-3 col">
+              <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
+              <div class="ms-3">
+                <br>
+                <i></i><br>
+                <small></small>
+              </div>
+            </div>
+          </div>
+        </ng-scrollbar>
+      </div>
+    </div>
+  </div>
 </div>

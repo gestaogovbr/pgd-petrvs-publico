@@ -1,4 +1,5 @@
 import { Component, Injector, OnInit } from '@angular/core';
+import { Unidade } from 'src/app/models/unidade.model';
 import { PageBase } from 'src/app/modules/base/page-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
@@ -9,6 +10,7 @@ import { LookupItem } from 'src/app/services/lookup.service';
 })
 export class AtividadeListComponent extends PageBase implements OnInit {
   public activeTab: string = "TABELA";
+  public eGestor: Unidade | undefined = this.auth.unidadeGestor()
 
   constructor(public injector: Injector) {
     super(injector);

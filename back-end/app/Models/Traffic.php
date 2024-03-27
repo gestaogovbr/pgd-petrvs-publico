@@ -1,29 +1,29 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\ModelBase;
 
 class Traffic extends ModelBase
 {
-    use HasFactory;
+  use HasFactory;
 
-    protected $connection = 'log';
+  protected $connection = 'log';
 
-    protected $table = "traffic";
+  protected $table = "traffic";
 
-    protected $with = [];
+  protected $with = [];
 
-    public $fillable = [
-        'user_id',
-        'date_time',
-        'url',
-        'request',
-        'response'
-    ];
+  public $fillable = [
+    'user_id',
+    'date_time',
+    'url',
+    'request',
+    'response'
+  ];
 
-    public $timestamps = false;
+  public $timestamps = false;
 
-    protected $casts = [
-    ];
+  protected $casts = [];
 }

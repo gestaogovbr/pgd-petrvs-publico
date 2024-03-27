@@ -3,6 +3,8 @@ import { ActivatedRouteSnapshot } from '@angular/router';
 import { DialogButton, DialogComponent } from './dialog/dialog.component';
 import { SpinnerOverlayComponent } from './spinner-overlay/spinner-overlay.component';
 import { UtilService } from './util.service';
+import { Subject } from 'rxjs';
+import { FormGroup } from '@angular/forms';
 
 export type DialogTemplateResult = {
   button: DialogButton,
@@ -46,6 +48,9 @@ export class DialogService {
   private _utils?: UtilService;
   public get utils(): UtilService { this._utils = this._utils || this.injector.get<UtilService>(UtilService); return this._utils };
 
+
+  modalClosed = new Subject<void>();
+  
   constructor(public injector: Injector) { }
 
   private createDialogView() {
@@ -216,5 +221,9 @@ export class DialogService {
       this.spinnerRef!.instance.show = false;
       this.cdRef?.detectChanges();
     }
+  }
+
+  public get sppinerShowing(): boolean {
+    return !!this.spinnerRef?.instance.show;
   }
 }

@@ -313,7 +313,7 @@ class IntegracaoService extends ServiceBase
 
             $uorg_siape_data_modificacao = null;
             if ($this->integracao_config["tipo"] == "SIAPE") {
-                $uorg_siape_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["data_modificacao"]));
+              $uorg_siape_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["data_modificacao"]));
             }
             else if ($this->integracao_config["tipo"] == "WSO2") {
                 $uorg_siape_data_modificacao = $self->UtilService->valueOrDefault($uo["datamodificacao"]);
@@ -351,12 +351,11 @@ class IntegracaoService extends ServiceBase
               if (!is_null($cod_municipio_ibge)) {
                 $query = "SELECT nome FROM cidades where codigo_ibge = :cod_municipio_ibge";
                 $db_result = DB::select($query, ["cod_municipio_ibge" => $cod_municipio_ibge]);
-                if (is_array($db_result)) $municipio_nome = $db_result[0]->nome;
+                if (is_array($db_result) && !empty($db_result)) $municipio_nome = $db_result[0]->nome;
               }
 
               $nomeuorg = $self->UtilService->valueOrDefault($uo["nomeuorg"], null);
               if (!is_null($nomeuorg)) $nomeuorg = $self->UtilService->getNomeFormatado($nomeuorg);
-
               $unidade = [
                 'id_servo' => $self->UtilService->valueOrDefault($uo["id_servo"], null, $option = "uorg"),
                 'pai_servo' => $self->UtilService->valueOrDefault($uo["pai_servo"], null, $option = "uorg"),
@@ -386,7 +385,7 @@ class IntegracaoService extends ServiceBase
                 'municipio_uf' => $self->UtilService->valueOrDefault($uo["municipio_uf"], null),
                 'ativa' => $self->UtilService->valueOrDefault($uo["ativa"]),
                 'regimental' => $self->UtilService->valueOrDefault($uo["regimental"], null),
-                'data_modificacao' => $uorg_siape_data_modificacao,
+                'data_modificacao' => date("Y-m-d H:i:s", $uorg_siape_data_modificacao),
                 'und_nu_adicional' => $self->UtilService->valueOrDefault($uo["und_nu_adicional"], null),
                 'cnpjupag' => $self->UtilService->valueOrDefault($uo["cnpjupag"], null),
                 'deleted_at' => null,
@@ -637,7 +636,7 @@ class IntegracaoService extends ServiceBase
                   'id' => Uuid::uuid4(),
                   'cpf_ativo' => $self->UtilService->valueOrDefault($servidor['cpf_ativo']),
                   'data_modificacao' => $data_modificacao,
-                  'cpf' => $self->UtilService->valueOrDefault($servidor['cpf'], null),
+                  'cpf' => $self->UtilService->valueOrDefault( $self->UtilService->onlyNumbers($servidor['cpf']), null),
                   'nome' => $nome,
                   'emailfuncional' => $email,
                   'sexo' => $self->UtilService->valueOrDefault($servidor['sexo'], null),
@@ -903,9 +902,11 @@ class IntegracaoService extends ServiceBase
           $vinculos_isr = DB::select($query);
 
           $usuarioComum = $this->integracao_config["perfilComum"];
-          $perfilParticipanteId = Perfil::where('nome', $usuarioComum)->first()->id;
+          $perfilParticipante = Perfil::where('nome', $usuarioComum)->first();
+          $perfilParticipanteId = null;
+          if(!empty($perfilParticipante)) $perfilParticipanteId = $perfilParticipante->id;
 
-          if (empty($perfilParticipanteId)) throw new ServerException("IntegracaoService", "Perfil usuário comum (" . $usuarioComum . ") não encontrado no banco de dados. Verificar configuração no painel SaaS.\n[ver XXX_XXX]");
+          if (empty($perfilParticipanteId)) throw new ServerException("ValidateUsuario", "Perfil usuário comum (" . $usuarioComum . ") não encontrado no banco de dados. Verificar configuração no painel SaaS.\n[ver XXX_XXX]");
 
           foreach ($vinculos_isr as $v_isr) {
             $v_isr = $this->UtilService->object2array($v_isr);
@@ -925,6 +926,19 @@ class IntegracaoService extends ServiceBase
               'uf' => $this->UtilService->valueOrDefault($v_isr['uf'], null),
               'data_modificacao' => $this->UtilService->asDateTime($v_isr['data_modificacao']),
             ]);
+
+            $jaExisteEmail = $registro->where('email', $registro->email)->first();
+
+            //TODO - sugestão de o SIAPE é a referencia adicionar o e-mail fake na tabela de usuarios, dando prioridade para o siape.
+            if(!empty($jaExisteEmail)) {
+              //FIXME ATUALIZA PARA O E-MAIL FAKE.
+              LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. CPF: %s, Email: %s", $registro->cpf, $registro->email));
+              $email = $registro->cpf . "@petrvs.gov.br";
+              $jaExisteEmail->update(['email' => $email]);
+
+              // throw new ServerException("ValidateUsuario", sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. CPF: %s, Email: %s", $registro->cpf, $registro->email));
+            }
+
             $registro->save();
 
             $usuarioId = $registro->id;
@@ -970,7 +984,7 @@ class IntegracaoService extends ServiceBase
           Usuario::count() . ' servidores!');
       } catch (Throwable $e) {
         LogError::newError("Erro ao importar servidores", $e);
-        $this->result["servidores"]['Resultado'] = 'ERRO: ' . $e->getMessage() . ' - Linha: ' . $e->getLine() . ' - Trace: ' . $e->getTrace();
+        $this->result["servidores"]['Resultado'] = 'ERRO: ' . $e->getMessage() . ' - Linha: ' . $e->getLine();
       }
     }
 
@@ -1036,8 +1050,17 @@ class IntegracaoService extends ServiceBase
         if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de montagem do array de chefias!.....");
 
         $usuarioChefe = $this->integracao_config["perfilChefe"];
-        $perfilChefeId = Perfil::where('nome', $usuarioChefe)->first()->id;
-        $perfilDesenvolvedorId = Perfil::where('nome', 'Desenvolvedor')->first()->id;
+        $perfilChefe = Perfil::where('nome', $usuarioChefe)->first();
+        if (empty($perfilChefe)) {
+          throw new ServerException("ValidateUsuario", "Perfil de gestor (" . $usuarioChefe . ") não encontrado no banco de dados. Verificar configuração no painel SaaS.");
+        }
+        $perfilChefeId = $perfilChefe->id;
+
+        $perfilDesenvolvedor = Perfil::where('nome', 'Desenvolvedor')->first();
+        if (empty($perfilDesenvolvedor)) {
+          throw new ServerException("ValidateUsuario", "Perfil de desenvolvedor não encontrado no banco de dados. Verificar configuração no painel SaaS.");
+        }
+        $perfilDesenvolvedorId = $perfilDesenvolvedor->id;
         foreach ($chefias as $chefia) {
           $querySelecionarUnidade = "SELECT u.id " .
             "FROM integracao_unidades as iu " .
@@ -1230,6 +1253,13 @@ class IntegracaoService extends ServiceBase
       'allow_redirects' => false,
       'verify' => $this->validaCertificado
     ])->get($url);
+
+    LogError::newError("IntegracaoService: Consulta à API do SIAPE", [
+      'url' => $url,
+      'status' => $response->status(),
+      'response' => $response->body()
+    ]);
+
     if ($response->failed()) $response->throw();
     if ($response->status() >= 300 && $response->status() < 400) $response = $this->consultarApiSigepe($token, $response->header('Location'));
     return $response;

@@ -13,6 +13,7 @@ import { Subject } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { EntityService } from 'src/app/services/entity.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+declare var bootstrap: any;
 
 @Injectable()
 export abstract class PageBase implements OnInit, ModalPage {
@@ -45,7 +46,7 @@ export abstract class PageBase implements OnInit, ModalPage {
   public set submitting(value: boolean) {
     if(!value) {
       this.dialog.closeSppinerOverlay();
-    } else if(!this._submitting) {
+    } else if(!this._submitting || !this.dialog.sppinerShowing) {
       this.dialog.showSppinerOverlay(this.mensagemSalvando);
     }
     this._submitting = value;
@@ -152,6 +153,16 @@ export abstract class PageBase implements OnInit, ModalPage {
       this.shown = true;
       if(this.onShow) this.onShow();
     };
+
+    
+    let elements = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    elements.forEach(function(element) {
+      let tooltip  = new bootstrap.Tooltip(element, {trigger: 'hover'});
+      element.addEventListener('click', () => {
+        tooltip.hide()
+      })
+    });
+
     this.cdRef.detectChanges();
     this.viewInit = true;
   }

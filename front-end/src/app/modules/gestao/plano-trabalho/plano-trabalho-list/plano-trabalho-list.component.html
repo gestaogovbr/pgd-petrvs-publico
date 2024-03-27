@@ -9,15 +9,15 @@
     [hasAdd]="auth.hasPermissionTo('MOD_PTR_INCL')" [hasEdit]="false" [dynamicMultiselectMenu]="dynamicMultiselectMenu.bind(this)" [multiselectAllFields]="multiselectAllFields">
     <toolbar *ngIf="!selectable">
         <!-- (RN_PTR_I) Quando a Unidade Executora não for a unidade de lotação do servidor, seu gestor imediato e seus substitutos devem ter acesso ao seu Plano de Trabalho (e à sua execução); -->
-        <input-switch *ngIf="temAtribuicaoChefia" [size]="4" labelPosition="left" label="Lotados em minha Un." controlName="lotados_minha_unidade" [control]="filter!.controls.lotados_minha_unidade" (change)="onLotadosMinhaUnidadeChange($event)"></input-switch>
-        <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+        <input-switch *ngIf="temAtribuicaoChefia" [size]="4" labelPosition="left" label="Lotados em minha unidade" controlName="lotados_minha_unidade" [control]="filter!.controls.lotados_minha_unidade" (change)="onLotadosMinhaUnidadeChange($event)"></input-switch>
+        <input-switch [size]="4" labelPosition="left" label="Agrupar por unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
     </toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text [size]="4" [label]="lex.translate('Usuário')" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Usuário" [attr.maxlength]=250></input-text>
             <input-search [size]="4" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
-            <input-select [size]="3" label="Status" controlName="status" [items]="lookup.PLANO_TRABALHO_STATUS" [control]="filter!.controls.status" itemTodos="- Todos -" [valueTodos]="null"></input-select>
-            <input-switch [size]="1" label="Arq." controlName="arquivados" [control]="filter!.controls.arquivados" labelInfo="Listar também os planos de trabalho arquivados"></input-switch>
+            <input-select [size]="2" label="Status" controlName="status" [items]="lookup.PLANO_TRABALHO_STATUS" [control]="filter!.controls.status" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+            <input-switch [size]="2" label="Arquivados" controlName="arquivados" [control]="filter!.controls.arquivados" labelInfo="Listar também os planos de trabalho arquivados"></input-switch>
         </div>
         <div class="row">
           <input-search [size]="6" [control]="filter!.controls.tipo_modalidade_id" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao"></input-search>

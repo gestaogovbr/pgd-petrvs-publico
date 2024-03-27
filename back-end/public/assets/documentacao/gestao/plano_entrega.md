@@ -88,7 +88,7 @@ Consideremos também que o Plano de Entregas é da Unidade B.
 - (RN_PENT_N) Vide Fluxo;
 - (RN_PENT_O) Vide Fluxo;
 - (RN_PENT_P) Vide Fluxo;
-- (RN_PENT_Q) Quando um Plano de Entregas é cancelado, todas as suas entregas são canceladas, vindo a afetar as entregas dos planos de trabalho a elas relacionadas, tendo os mesmo efeitos da regra [RN_PTR_E];
+- (RN_PENT_Q) Quando um Plano de Entregas é cancelado, todas as suas entregas **** MODIFICADO: que não fazem parte de outros planos de entregas *** são canceladas, vindo a afetar as entregas dos planos de trabalho a elas relacionadas, tendo os mesmo efeitos da regra [RN_PTR_E];
 - (RN_PENT_R) Vide Fluxo;
 - (RN_PENT_S) Vide Fluxo;
 - (RN_PENT_T) Vide Fluxo;
@@ -105,7 +105,7 @@ Consideremos também que o Plano de Entregas é da Unidade B.
 - (RN_PENT_AE) Se a alteração for feita com o Plano de Entregas no status ATIVO e o usuário logado possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL", o Plano de Entregas voltará ao status "HOMOLOGANDO";
 - (RN_PENT_AF) Se a alteração for feita com o Plano de Entregas no status ATIVO e o usuário logado possuir a capacidade "MOD_PENT_EDT_ATV_ATV", o Plano de Entregas permanecerá no status "ATIVO";
 - (RN_PENT_AG) A homologação do Plano de Entregas não se aplica à Unidade Instituidora, ou seja, os planos de entregas vinculados a unidades que sejam instituidoras não precisam ser homologados.
-- (RN_PENT_AH) O plano de entrega vai para o status de AGUARDANDO_CANCELAMENTO, e só após a confimação pela chefia superior é que será realmente cancelado. Mas caso seja realizado o cancelamento diretamente pela chefia superior ele já cancela diretamente;
+- (RN_PENT_AH) O plano de entrega vai para o status de AGUARDANDO_CANCELAMENTO, e só após a confimação pela chefia superior é que será realmente cancelado. Mas caso seja realizado o cancelamento diretamente pela chefia superior ele já cancela diretamente; *********** FALTA IMPLEMENTAR *******
 
 ## REGRAS VINCULADAS
 
@@ -149,10 +149,9 @@ Ação: AVALIAR -> o plano adquire o status de 'AVALIADO';
 Ação: CANCELAR PLANO -> o plano adquire o status de 'CANCELADO';
 
 - (RN_PENT_P) Condições para que um Plano de Entregas possa ser cancelado:
-  - ***** ALTERADO: o usuário logado precisa possuir a capacidade "MOD_PENT_CNC", o plano precisa estar em um dos seguintes status: INCLUIDO, HOMOLOGANDO, ATIVO; e ******
+  - o usuário logado precisa possuir a capacidade "MOD_PENT_CNC", o plano precisa estar em um dos seguintes status: INCLUIDO, HOMOLOGANDO e ATIVO;
     - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
-    - o usuário logado precisa ser gestor da Unidade-pai do plano (Unidade A), ou
-    ***** DESNECESSARIO: - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado; ****
+    - o usuário logado precisa ser gestor da Unidade-pai do plano (Unidade A);
 
 Ação: CANCELAR AVALIAÇÃO -> o plano retorna ao status de 'CONCLUIDO';
 

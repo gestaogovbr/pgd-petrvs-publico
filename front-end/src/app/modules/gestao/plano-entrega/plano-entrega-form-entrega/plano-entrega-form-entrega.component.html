@@ -10,7 +10,7 @@
             <input-textarea [size]="12" [label]="'Descrição da ' + lex.translate('entrega')" controlName="descricao_entrega" [placeholder]="'Descreva a ' + lex.translate('entrega')"></input-textarea>
           </div>
           <div class="row">
-            <input-search [size]="12" [label]="'Vínculo com ' + lex.translate('entrega') + ' de ' + lex.translate('plano de entrega') + ' superior'" controlName="entrega_pai_id" [dao]="planoEntregaEntregaDao" [where]="['plano_entrega.unidade_id', 'in', idsUnidadesAscendentes]" [selectRoute]="{route: ['gestao', 'plano-entrega', 'entregaList']}" [metadata]="{'idsUnidadesAscendentes': idsUnidadesAscendentes}"></input-search>
+            <input-search [size]="12" [label]="'Vínculo com ' + lex.translate('entrega') + ' de ' + lex.translate('plano de entrega') + ' superior'" controlName="entrega_pai_id" [dao]="planoEntregaEntregaDao" [where]="['plano_entrega.unidade_id', 'in', idsUnidadesAscendentes]" [selectRoute]="{route: ['gestao', 'plano-entrega', 'entrega-list']}" [metadata]="{'idsUnidadesAscendentes': idsUnidadesAscendentes}"></input-search>
           </div>
           <separator [title]="'Etapas da ' + lex.translate('entrega')" collapse [collapsed]="true">
             <div class="row mt-4">

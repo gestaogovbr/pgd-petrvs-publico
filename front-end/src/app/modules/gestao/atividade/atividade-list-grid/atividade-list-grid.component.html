@@ -50,7 +50,7 @@
         <atividade-list-tarefa persist [selectable]="selectable" [editable]="!row.metadados.concluido" [atividade]="row"></atividade-list-tarefa>
       </ng-template>
     </column>
-    <column [titleTemplate]="titleIdAtividadeDescricao" [maxWidth]="250" [template]="columnAtividadeDescricao" [editTemplate]="columnAtividadeDescricao" [columnEditTemplate]="selectable ? undefined : columnAtividadeDescricaoEdit" [edit]="selectable ? undefined : onColumnAtividadeDescricaoEdit.bind(this)" [save]="selectable ? undefined : onColumnAtividadeDescricaoSave.bind(this)">
+    <column [titleTemplate]="titleIdAtividadeDescricao" [editable]="canEditColumn.bind(this)" [maxWidth]="250" [template]="columnAtividadeDescricao" [editTemplate]="columnAtividadeDescricao" [columnEditTemplate]="selectable ? undefined : columnAtividadeDescricaoEdit" [edit]="selectable ? undefined : onColumnAtividadeDescricaoEdit.bind(this)" [save]="selectable ? undefined : onColumnAtividadeDescricaoSave.bind(this)">
       <ng-template let-header="header" #titleIdAtividadeDescricao>
         <order by="numero" [header]="header">#ID</order>/Tipo de {{lex.translate('Atividade')}}/
         <order by="plano_trabalho_entrega.descricao" [header]="header">{{lex.translate('Entrega')}}</order><br>
@@ -70,7 +70,7 @@
         <input-search [label]="'Tipo de ' + lex.translate('atividade')" relativeId="columnTipoAtividade" #tipoAtividade [size]="12" [emptyValue]="null" controlName="tipo_atividade_id" [control]="formEdit!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" [labelInfo]="'Tipo de ' + lex.translate('atividade') + ' utilizado para classificar a ' + lex.translate('atividade')" [required]="!auth.hasPermissionTo('MOD_ATV_TIPO_ATV_VAZIO') ? 'true' : undefined"></input-search>
       </ng-template>
     </column>
-    <column [title]="'Etiquetas'" [maxWidth]="300" [width]="100" [template]="columnEtiquetas" [editTemplate]="columnEtiquetas" [columnEditTemplate]="selectable ? undefined : columnEtiquetasEdit" [edit]="selectable ? undefined : onColumnEtiquetasEdit.bind(this)" [save]="selectable ? undefined : onColumnEtiquetasSave.bind(this)">
+    <column [title]="'Etiquetas'" [editable]="canEditColumn.bind(this)" [maxWidth]="300" [width]="100" [template]="columnEtiquetas" [editTemplate]="columnEtiquetas" [columnEditTemplate]="selectable ? undefined : columnEtiquetasEdit" [edit]="selectable ? undefined : onColumnEtiquetasEdit.bind(this)" [save]="selectable ? undefined : onColumnEtiquetasSave.bind(this)">
       <ng-template let-row="row" #columnEtiquetas>
         <badge *ngFor="let etiqueta of row.etiquetas" [lookup]="etiqueta" [click]="onEtiquetaClick.bind(this)"></badge>
       </ng-template>
@@ -88,7 +88,7 @@
         <span class="d-block" *ngIf="row.planoTrabalho">{{dao!.getDateFormatted(row.planoTrabalho.data_inicio)}} <br>{{ " até "+dao!.getDateFormatted(row.planoTrabalho.data_fim)}}</span>
       </ng-template>
     </column>
-    <column [titleTemplate]="titleUnResponsavelDemandante" [template]="columnPessoas" [maxWidth]="150">
+    <column [titleTemplate]="titleUnResponsavelDemandante" [template]="columnPessoas" [maxWidth]="150" [editable]="canEditColumn.bind(this)">
       <ng-template let-header="header" #titleUnResponsavelDemandante>
         Un./<order by="usuario.nome" [header]="header">{{lex.translate('Responsável')}}</order><br>
         <order by="demandante.nome" [header]="header">Demandante</order>
@@ -114,7 +114,7 @@
         </div>
       </ng-template>
     </column>
-    <column [title]="'Progresso\nChecklist'" [maxWidth]="250" [columnEditTemplate]="selectable ? undefined : columnProgressoEtiquetasChecklistEdit" [template]="columnProgressoEtiquetasChecklist" [edit]="selectable ? undefined : onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnProgressoEtiquetasChecklistSave.bind(this)">
+    <column [title]="'Progresso\nChecklist'" [maxWidth]="250" [editable]="canEditColumn.bind(this)" [columnEditTemplate]="selectable ? undefined : columnProgressoEtiquetasChecklistEdit" [template]="columnProgressoEtiquetasChecklist" [edit]="selectable ? undefined : onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnProgressoEtiquetasChecklistSave.bind(this)">
       <ng-template let-row="row" #columnProgressoEtiquetasChecklist>
         <progress-bar [value]="row.progresso" color="success"></progress-bar>
         <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>

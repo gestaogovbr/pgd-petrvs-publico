@@ -13,12 +13,7 @@
       <div class="row">
         <input-text [size]="4" label="Título" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250 required></input-text>
         <input-text [size]="4" label="Normativa" icon="bi bi-blockquote-left" controlName="normativa" [control]="form!.controls.normativa" labelInfo="Normativa que regula o Programa" [attr.maxlength]=250></input-text>
-        <input-text [size]="4" label="Link Normativa" icon="bi bi-link-45deg" controlName="link_normativa" [control]="form!.controls.link_normativa" labelInfo="Link web da instrução normativa"></input-text>
-      </div>
-      <div *ngIf="form!.controls.link_normativa.value" class="row justify-content-end my-2">
-        <div class="col-4">
-          <action-button label="Acessar Instr. Normativa" icon="bi bi-box-arrow-up-right" (click)="onClickIN()"></action-button>
-        </div>
+        <input-button [size]="4" iconButton="bi bi-box-arrow-up-right" label="Link Normativa" icon="bi bi-link-45deg" controlName="link_normativa" [control]="form!.controls.link_normativa" labelInfo="Link web da instrução normativa" (buttonClick)="onClickIN()"></input-button>
       </div>
     </tab>
     <tab key="PLANO_ENTREGA" [label]="lex.translate('Plano de entrega')">

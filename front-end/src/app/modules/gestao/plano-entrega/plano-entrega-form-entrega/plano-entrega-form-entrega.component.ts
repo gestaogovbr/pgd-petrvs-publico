@@ -205,12 +205,14 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     await this.cadeiaValor?.loadSearch(this.cadeiaValorId);
     let unidade = this.unidadeId?.length ? (await this.unidadeDao.getById(this.unidadeId!) as Unidade) : null;
     this.idsUnidadesAscendentes = unidade?.path?.split('/').slice(1) || [];
+    if(unidade) this.idsUnidadesAscendentes.push(unidade.id);
     form.patchValue(this.util.fillForm(formValue, entityWithout));
     form.controls.meta.setValue(this.planoEntregaService.getValor(entity.meta));
     form.controls.realizado.setValue(this.planoEntregaService.getValor(entity.realizado));
     form.controls.objetivos.setValue(entity.objetivos);
     form.controls.processos.setValue(entity.processos);
     if (this.dataFim) form.controls.data_fim.setValue(this.dataFim);
+    await this.loadEtiquetas();
   }
 
   public async initializeData(form: FormGroup) {
@@ -374,26 +376,26 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
           break;
       }
       //if (entregaItem.etiquetas) this.loadEtiquetas();
-      this.loadEtiquetas();
+      await this.loadEtiquetas();
       if (entregaItem.checklist) this.loadChecklist();
       this.calculaRealizado();
     }
   }
 
   public async loadEtiquetas() {
-    if (!this.etiquetasAscendentes.filter(e => e.data == this.unidade?.selectedEntity.id).length) {
+    if (!this.etiquetasAscendentes.filter(e => e.data == this.unidade?.selectedEntity?.id).length) {
       let ascendentes =  await this.carregaEtiquetasUnidadesAscendentes(this.unidade?.selectedEntity);
       this.etiquetasAscendentes.push(...ascendentes);
     }
-    this.etiquetas = this.util.merge(this.entrega?.selectedEntity.etiquetas, this.unidade?.selectedEntity.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.entrega?.selectedEntity?.etiquetas, this.unidade?.selectedEntity?.etiquetas, (a, b) => a.key == b.key);
     this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
-    this.etiquetas = this.util.merge(this.etiquetas, this.etiquetasAscendentes.filter(x => x.data == this.unidade?.selectedEntity.id), (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, this.etiquetasAscendentes.filter(x => x.data == this.unidade?.selectedEntity?.id), (a, b) => a.key == b.key);
   }
 
   public async carregaEtiquetasUnidadesAscendentes(unidadeAtual: Unidade) {
     let etiquetasUnidades: LookupItem[] = [];
     let path = unidadeAtual.path.split("/");
-    let unidades = await this.unidadeDao.query({ where: ["id", "in", path] }).asPromise();
+    let unidades = await this.unidadeDao.query({ where: [["id", "in", path]] }).asPromise();
     unidades.forEach(un => {
       etiquetasUnidades = this.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
     });
@@ -430,5 +432,5 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       }
     }
     return result;
-  };
+  }
 }

@@ -19,9 +19,8 @@ use App\Services\UnidadeService;
 use App\Services\CalendarioService;
 use App\Services\UsuarioService;
 use Laravel\Socialite\Facades\Socialite;
-use \SocialiteProviders\Manager\Config;
 use Illuminate\Support\Facades\Http;
-use DateTime;
+use Exception;
 
 class LoginController extends Controller
 {
@@ -104,10 +103,10 @@ class LoginController extends Controller
                     "unidade" => Unidade::find($data["unidade_id"])
                 ]);
             } else {
-                return LogError::newError('Unidade não encontrada no usuário');
+                return LogError::newError('Unidade não encontrada no usuário', new Exception("selecionaUnidade"));
             }
         } else {
-            return LogError::newError('Usuário não logado');
+            return LogError::newError('Usuário não logado', new Exception("selecionaUnidade"));
         }
     }
 
@@ -128,10 +127,10 @@ class LoginController extends Controller
                     "hora" => $unidadeService->hora($unidade_id)
                 ]);
             } else {
-                return LogError::newError('Usuário sem unidade selecionada');
+                return LogError::newError('Usuário sem unidade selecionada', new Exception("horarioUnidade"));
             }
         } else {
-            return LogError::newError('Usuário não logado');
+            return LogError::newError('Usuário não logado', new Exception("horarioUnidade"));
         }
     }
 
@@ -184,10 +183,10 @@ class LoginController extends Controller
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
             } else {
-                return LogError::newError('Usuário não encontrado');
+                return LogError::newError('Usuário não encontrado', new Exception("authenticateSession"));
             }
         } else {
-            return LogError::newError('Sessão não encontrada');
+            return LogError::newError('Sessão não encontrada', new Exception("authenticateSession"));
         }
     }
 
@@ -216,7 +215,7 @@ class LoginController extends Controller
                 "horario_servidor" => CalendarioService::horarioServidor()
             ]);
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.');
+        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateUserPassword"), ["email" => $credentials["email"]]);
     }
 
     /**
@@ -248,7 +247,7 @@ class LoginController extends Controller
                 ]);
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.', null, $tokenData);
+        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateFirebaseToken"), $tokenData);
     }
 
     /**
@@ -280,7 +279,7 @@ class LoginController extends Controller
                 ]);
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.', null, $tokenData);
+        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateGoogleToken"), $tokenData);
     }
 
     /**
@@ -319,7 +318,7 @@ class LoginController extends Controller
                 ]);
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.', null, $tokenData);
+        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticatePrfGoogleToken"), $tokenData);
     }
 
     /**
@@ -360,7 +359,7 @@ class LoginController extends Controller
                 ]);
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.', null, $profile);
+        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateDprfSeguranca"), $profile);
     }
 
     /**
@@ -383,7 +382,7 @@ class LoginController extends Controller
                 "horario_servidor" => CalendarioService::horarioServidor()
             ]);
         }
-        return LogError::newError('Sessão não encontrada');
+        return LogError::newError('Sessão não encontrada', new Exception("authenticateApiSession"));
     }
 
     /**
@@ -413,7 +412,7 @@ class LoginController extends Controller
                 "horario_servidor" => CalendarioService::horarioServidor()
             ]);
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.');
+        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateApiSession"), ["email" => $credentials["email"]]);
     }
 
     /**
@@ -446,7 +445,7 @@ class LoginController extends Controller
                 ]);
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.', null, $tokenData);
+        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateApiFirebaseToken"), $tokenData);
     }
 
     /**
@@ -480,7 +479,7 @@ class LoginController extends Controller
                 ]);
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.', null, $tokenData);
+        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateApiGoogleToken"), $tokenData);
     }
 
     /**
@@ -521,7 +520,7 @@ class LoginController extends Controller
                 ]);
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.', null, $tokenData);
+        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateApiPrfGoogleToken"), $tokenData);
     }
 
     /**
@@ -565,10 +564,10 @@ class LoginController extends Controller
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
             } else {
-                return LogError::newError('USER_NOT_FOUND');
+                return LogError::newError('USER_NOT_FOUND', new Exception("generateApiPrfSessionToken"), $tokenData);
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.' . $tokenData['error'], null, $tokenData);
+        return LogError::newError('As credenciais fornecidas são inválidas.' . $tokenData['error'], new Exception("generateApiPrfSessionToken"), $tokenData);
     }
 
     /**
@@ -610,7 +609,7 @@ class LoginController extends Controller
                 ]);
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.', null, $profile);
+        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateApiDprfSeguranca"), $profile);
     }
 
     /**
@@ -667,11 +666,8 @@ class LoginController extends Controller
     public function signInAzureRedirect(Request $request)
     {
         $entidade = $this->registrarEntidade($request);
-        $url_dinamica_callback = config("app.url") .
-            "/api/login-azure-callback/" . $entidade->sigla;
-
+        $url_dinamica_callback = config("app.url") . "/api/login-azure-callback/" . $entidade->sigla;
         $azure_select_tenancy = $this->getConfigAzure($url_dinamica_callback);
-
         return $this->azureProvider($config = $azure_select_tenancy)
             ->scopes(['openid', 'email', 'profile'])
             ->redirect();
@@ -680,16 +676,9 @@ class LoginController extends Controller
     public function signInAzureCallback(Request $request)
     {
         $entidade = $this->registrarEntidade($request);
-
-        $url_dinamica_callback = config("app.url") .
-            "/api/login-azure-callback/" .
-            $entidade->sigla;
-
+        $url_dinamica_callback = config("app.url") . "/api/login-azure-callback/" . $entidade->sigla;
         $azure_select_tenancy = $this->getConfigAzure($url_dinamica_callback);
-
-        // $user = $this->azureProvider($config = $azure_select_tenancy)->stateless()->user();
         $user = $this->azureProvider($config = $azure_select_tenancy)->user();
-
         if (!empty($user)) {
             $token = $user->token;
             $email = $user->email;
@@ -703,7 +692,7 @@ class LoginController extends Controller
                 $request->session()->put("kind", "AZURE");
                 return view("azure");
             } else {
-                return LogError::newError('As credenciais fornecidas são inválidas. Email: ' . $email);
+                return LogError::newError('As credenciais fornecidas são inválidas. Email: ' . $email, new Exception("signInAzureCallback"));
             }
         } else {
             return $this->azureProvider($config = $azure_select_tenancy)
@@ -753,13 +742,11 @@ class LoginController extends Controller
     {
         $entidade = $this->registrarEntidade($request);
         $url_dinamica_callback = config("services.govbr.redirect") . $entidade->sigla;
-
         $dados = [
             "code_challenge" => config("services.govbr.code_challenge"),
             "code_challenge_method" => config("services.govbr.code_challenge_method"),
         ];
         $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback, $dados);
-
         return $this->govBrProvider($config = $login_govbr_select_tenancy)
             ->scopes(['openid', 'email', 'profile'])
             ->redirect();
@@ -768,20 +755,15 @@ class LoginController extends Controller
     public function signInGovBrCallback(Request $request)
     {
         $entidade = $this->registrarEntidade($request);
-
-        $url_dinamica_callback = config("services.govbr.redirect") .
-            $entidade->sigla;
-
+        $url_dinamica_callback = config("services.govbr.redirect") . $entidade->sigla;
         $dados = [
             "code" => $request->code,
             "state" => $request->state,
             "code_verifier" => config("services.govbr.code_verifier")
         ];
         $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback, $dados);
-
         $this->stimulusRouteGovBr();
         $user = $this->govBrProvider($config = $login_govbr_select_tenancy)->stateless()->user();
-
         if (!empty($user)) {
             $token = $user->token;
             $cpf = $user->cpf;
@@ -796,7 +778,7 @@ class LoginController extends Controller
                 $request->session()->put("kind", "GOVBR");
                 return view("govbr");
             } else {
-                return LogError::newError('As credenciais fornecidas são inválidas. CPF: ' . $cpf);
+                return LogError::newError('As credenciais fornecidas são inválidas. CPF: ' . $cpf, new Exception("signInGovBrCallback"));
             }
         } else {
             return $this->govBrProvider($config = $login_govbr_select_tenancy)

@@ -7,7 +7,7 @@
             <!-- (RI_PTR_1) No formulário de inclusão/edição de um plano de trabalho, o input-search de unidade, programa e usuario devem ficar desabilitados nas edições e habilitado apenas nas inclusões; -->
             <input-search #usuario [size]="4" required [disabled]="action == 'new' ? undefined : 'true'" controlName="usuario_id" [dao]="usuarioDao" [join]="['afastamentos','lotacao','unidades','participacoes_programas']" (select)="onUsuarioSelect($event)"></input-search>
             <input-search #unidade [size]="4" required [disabled]="action == 'new' ? undefined : 'true'" controlName="unidade_id" [dao]="unidadeDao" (select)="onUnidadeSelect($event)"></input-search>
-            <input-search #programa [size]="4" [label]="lex.translate('Programa de gestão')" icon="bi bi-file-bar-graph" required [disabled]="action == 'new' ? undefined : 'true'" controlName="programa_id" [join]="joinPrograma" [dao]="programaDao" (select)="onProgramaSelect($event)"></input-search>
+            <input-search #programa [size]="4" [label]="lex.translate('Programa de gestão')" icon="bi bi-file-bar-graph" required [disabled]="action == 'new' ? undefined : 'true'" controlName="programa_id" [join]="joinPrograma" [dao]="programaDao" (select)="onProgramaSelect($event)" [metadata]="programaMetadata"></input-search>
           </div>
           <div class="row">
             <input-datetime [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="form!.controls.data_inicio" (change)="onDataInicioChange($event)" [labelInfo]="'Início da Vigência do '+ lex.translate('Plano de trabalho')" required></input-datetime>
@@ -43,11 +43,11 @@
     </tab>
     <tab *ngIf="checkFilled(['usuario_id'])" key="MENSAGENS" [label]="lex.translate('Texto Complementar')">
       <separator [title]="'Texto complementar da '+ lex.translate('unidade')">
-        <input-switch controlName="editar_texto_complementar_unidade" [size]="12" scale="small" labelPosition="right" [label]="'Editar texto complementar '+ lex.translate('na unidade')"></input-switch>
+        <input-switch controlName="editar_texto_complementar_unidade" [disabled]="podeEditarTextoComplementar(form!.controls.unidade_id.value)" [size]="12" scale="small" labelPosition="right" [label]="'Editar texto complementar '+ lex.translate('na unidade')"></input-switch>
         <input-editor controlName="unidade_texto_complementar" [disabled]="form!.controls.editar_texto_complementar_unidade.value ? undefined : 'true'" [dataset]="planoDataset"></input-editor>
       </separator>
       <separator title="Texto complementar do usuario">
-        <input-switch controlName="editar_texto_complementar_usuario" [size]="12" scale="small" labelPosition="right" [label]="'Editar texto complementar '+ lex.translate('do usuário')"></input-switch>
+        <input-switch controlName="editar_texto_complementar_usuario"  [disabled]="podeEditarTextoComplementar(form!.controls.unidade_id.value)"  [size]="12" scale="small" labelPosition="right" [label]="'Editar texto complementar '+ lex.translate('do usuário')"></input-switch>
         <input-editor controlName="usuario_texto_complementar" [disabled]="form!.controls.editar_texto_complementar_usuario.value ? undefined : 'true'" [dataset]="planoDataset"></input-editor>
       </separator>
     </tab>

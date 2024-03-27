@@ -97,7 +97,7 @@ class PlanoTrabalhoService extends ServiceBase
       $unidadesComChefia = array_filter(array_merge([$this->loggedUser()->gerenciaTitular?->unidade_id], $this->loggedUser()->gerenciasSubstitutas?->map(fn($x) => $x->unidade_id)->toArray()));
       $usuariosLotados = [];
       foreach ($unidadesComChefia as $unidadeId) {
-        array_merge($usuariosLotados, $this->unidadeService->lotados($unidadeId)->map(fn($x) => $x->id));
+        $usuariosLotados = array_merge($usuariosLotados, array_map(fn($x) => $x->id, $this->unidadeService->lotados($unidadeId)));
       }
       $where = ["or", ["usuario_id", "in", $usuariosLotados], $where];
     }
@@ -138,9 +138,9 @@ class PlanoTrabalhoService extends ServiceBase
     $conflito = PlanoTrabalho::
       where("usuario_id", $data["usuario_id"])->
       where("unidade_id", $data["unidade_id"])->
-      where("status", "ATIVO")->
       where("data_inicio", "<=", $data["data_fim"])->
       where("data_fim", ">=", $data["data_inicio"])->
+      where("status", "!=", "CANCELADO")->
       where("id", "!=", UtilService::valueOrNull($data, "id"))->
       first();
     if(!empty($conflito) && !parent::loggedUser()->hasPermissionTo('MOD_PTR_INTSC_DATA')) {
@@ -447,7 +447,22 @@ class PlanoTrabalhoService extends ServiceBase
     ])->where("usuario_id", $usuarioId);
     if (!$arquivados) $query->whereNull("data_arquivamento");
     if (!empty($planoTrabalhoId)) $query->where("id", $planoTrabalhoId);
-    $planos = $query->get()->all();
+    $planos = $query->get()->all(); 
+    /* Adiciona metadados dos planos */ 
+    foreach ($planos as $planoTrabalho) {
+      $gestoresUnidadeSuperior = $this->unidadeService->gestoresUnidadeSuperior($planoTrabalho->unidade_id);
+      $logado = parent::loggedUser();
+      $planoTrabalho->_metadata = [
+        'gestorLogado' => $this->usuarioService->atribuicoesGestor($planoTrabalho->unidade_id),
+        'gestorUnidadeSuperior' => [
+          'gestor' => $gestoresUnidadeSuperior["gestor"]?->id == $logado->id, 
+          'gestorSubstituto' => count(array_filter($gestoresUnidadeSuperior["gestoresSubstitutos"], fn ($value) => $value["id"] == $logado->id)) > 0,
+          'gestorDelegado' => count(array_filter($gestoresUnidadeSuperior["gestoresDelegados"], fn ($value) => $value["id"] == $logado->id)) > 0
+        ],
+        'gestorParticipante' => $this->usuarioService->atribuicoesGestor($planoTrabalho->unidade_id, $planoTrabalho->usuario_id)
+      ];
+    }
+    /* Programas dos planos */
     $programasIds = array_unique(array_map(fn ($v) => $v["programa_id"], $planos));
     $programas = Programa::with(["tipoAvaliacaoPlanoTrabalho.notas.justificativas"])->whereIn("id", $programasIds)->get()->all();
     return [

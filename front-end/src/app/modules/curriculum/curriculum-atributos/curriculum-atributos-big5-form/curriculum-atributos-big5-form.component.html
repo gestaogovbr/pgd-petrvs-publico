@@ -1,0 +1,316 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (cancel)="onCancel()">
+  <div *ngIf="!questionario; else bigfive">
+    Formulário de Big Five não encontrado no banco de dados. Contate o suporte!
+  </div>
+  <ng-template #bigfive>
+
+    <separator class="my-5" [title]="questionario ? 'Conheça e analise os resultados do seu questionário Big-Five.' : 'Você quer se conhecer melhor? Este teste de personalidade irá ajudá-lo(a) a compreender as formas de seu comportamento e os motivos de suas ações.'" [bold]="false"></separator>
+
+    <div class="card cardb52 my-3" id="cardpergb5"> <!-- Perguntas + Respostas possíveis -->
+      <div class="card-header"> <!-- Pergunta -->
+        <div #divb5 class="row tex-center divb5">
+          <label class="text-center fw-bold">
+            <h5>{{numeroPergunta}}. {{this.showPergunta}}</h5>
+          </label>
+        </div>
+        <!--Para prosseguir é necessário responder a pergunta-->
+      </div>
+      <div class="card-body text-wrap"> <!-- Opções de Resposta -->
+        <div class="row my-2">
+          <div class="col-md-12" id="divradiob5" (change)="onRadioChange($event)">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="radiob5" id="radiob51" value=1>
+              <label class="form-check-label" for="radiob51">Muito Inadequado</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="radiob5" id="radiob52" value=2>
+              <label class="form-check-label" for="radiob52">Relativamente Inadequado</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="radiob5" id="radiob53" value=3>
+              <label class="form-check-label" for="radiob53">Nem Adequado, Nem Inadequado</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="radiob5" id="radiob54" value=4>
+              <label class="form-check-label" for="radiob54">Relativamente Adequado</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="radiob5" id="radiob55" value=5>
+              <label class="form-check-label" for="radiob55">Muito Adequado</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer"> <!-- Botões: Voltar e Enviar -->
+        <div class="row d-flex justify-content-between">
+          <div class="col-md-3">
+            <button #btnv type="button" class="btn btn-primary btnvoltar" id="btnv" name="btnv2" (click)="voltar($event)" disabled>Voltar</button>
+          </div>
+          <div class="col-md-3">
+            <button type="button" class="btn btn-primary btnenviar" id="btne" name="btne2" (click)="enviar()" disabled>Enviar</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="resultado" hidden> <!-- Exibido quando o questionário já foi respondido -->
+      <div class="row mb-4"> <!-- Explicação sobre a pontuação -->
+        <div class="col-md-12">
+          <separator>
+            <h4>Pontuação</h4>
+          </separator>
+          <label id="lblexppt">A pontuação calculada deverá ficar entre <b>0 e 40</b> pontos.</label>
+        </div>
+      </div>
+      <div class="row mb-1"> <!-- Título: Resultados -->
+        <div class="col-md-12">
+          <separator (click)="onClickDivB5('divgraficob5', 'lblgrafico','igrafico')">
+            <h4>Resultados<i class="fa-solid fa-square-plus" id="icodivgraf5"></i></h4>
+            <label class="lblgrafico"></label><i id="igrafico"></i>
+          </separator>
+        </div>
+      </div>
+
+      <div class="divgraficob5 mb-5" hidden> <!-- Gráfico resumido -->
+        <div class="chart-container">
+          <canvas id="MyChart">{{ chart }}</canvas>
+        </div>
+      </div>
+
+      <div class="slider-container"> <!-- Resultado Geral: Todos os Gráficos + Explicações + Pontos -->
+
+        <separator class="mt-5" icon="fas fa-arrow-down" (click)="onClickDivB5('divextroversao', 'lblextroversao','iextroversao')"><!-- Título: Extroversão -->
+          <div class="row d-flex justify-content-between">
+            <div class="col">
+              <h5><i class="fas fa-arrow-down" id="iextroversao"></i> Extroversão</h5>
+            </div>
+            <div class="col">
+              <h4><label #lblextroversao class="lblextroversao fw-bolder" id="lbl_extroversao" controlName="lbl_extroversao"></label></h4>
+            </div>
+          </div>
+        </separator>
+        <div #divextroversao class="divextroversao" controlName="divextroversao" hidden><!-- Texto explicativo + pontos: Extroversão -->
+          <div class="row">
+            <p class="text-justify" id="p_extroversao">
+              É o traço pessoal caracterizado por emoções positivas e pela tendência para procurar estímulos. Além disso, é marcado pela busca da companhia das
+              outras pessoas e pelo profundo envolvimento com o mundo exterior. Individuos com pontuação alta tendem a ser muito
+              sociais, enquanto com pontuações mais baixas tendem a trabalhar sozinhas em seus projetos.
+            </p>
+          </div>
+          <div class="row my-1" id="div_pontos_extroversao">
+            <div class="col-md-6 d-flex justify-content-start">
+              <label class="">
+                <h4>Seus pontos</h4>
+              </label>
+            </div>
+            <div class="col-md-4 d-flex justify-content-start">
+              <h4><label class="" id="lblextroversao ">{{this.extroversao}}</label></h4>
+            </div>
+          </div>
+        </div>
+        <div class="slider-ui color1"><!-- Gráfico/Legenda: Extroversão -->
+          <input type="range" min="0" max="40" step="1">
+          <div class="bar">
+            <span class="sp1">Introvertido</span>
+            <span class="sp2">Extrovertido</span>
+          </div>
+          <div class="track">
+            <div class="value" id="track1">{{this.valueTrack}}</div>
+          </div>
+        </div>
+        <separator></separator>
+
+
+        <separator (click)="onClickDivB5('divagradabilidade', 'lblagradabilidade','iagradabilidade')"><!-- Título: Agradabilidade -->
+          <div class="row d-flex justify-content-between">
+            <div class="col">
+              <h5><i class="fas fa-arrow-down" id="iagradabilidade"></i> Agradabilidade<i class="fa-solid fa-square-plus" id="icon_agradabilidade"></i></h5>
+            </div>
+            <div class="col">
+              <h4><label #lblagradabilidade class="lblagradabilidade fw-bolder" id="lbl_agradabilidade"></label></h4>
+            </div>
+          </div>
+        </separator>
+        <div #divagradabilidade class="divagradabilidade" hidden><!-- Texto explicativo + pontos: Agradabilidade -->
+          <div class="row">
+            <p class="text-justify" id="p_agradabilidade">
+              A agradabilidade é um traço de personalidade que se manifesta em características comportamentais individuais que são percebidas como amáveis,
+              simpáticas, cooperativas, calorosas e atenciosas.<br>
+              Pessoas com pontuação alta nesta dimensão são empáticas e altruístas, enquanto uma pontuação baixa de afabilidade está relacionada a comportamento
+              egoísta e falta de empatia.Aqueles com pontuação muito baixa em agradabilidade mostram sinais de comportamento da tríade obscura, como manipulação
+              e competição com os outros em vez de cooperação.
+              A agradabilidade é considerada um traço superordenado, o que significa que é um agrupamento de sub-traços de personalidade que se agrupam estatisticamente.
+              Os traços ou facetas de nível inferior agrupados sob a agradabilidade são: confiança, franqueza, altruísmo, submissão, modéstia e ternura.
+            </p>
+
+
+          </div>
+          <div class="row my-1" id="div_pontos_agradabilidade">
+            <div class="col-md-6 d-flex justify-content-start">
+              <label class="">
+                <h4>Seus pontos</h4>
+              </label>
+            </div>
+            <div class="col-md-4 d-flex justify-content-start">
+              <h4><label class="" id="lblagradabilidade">{{this.agradabilidade}}</label></h4>
+            </div>
+          </div>
+        </div>
+        <div class="slider-ui color2"><!-- Gráfico/Legenda: Agradabilidade -->
+          <input type="range" min="0" max="40" step="1">
+          <div class="bar">
+            <span class="sp1">Focado em Objetivos</span>
+            <span class="sp2">Focado em Pessoas</span>
+          </div>
+          <div class="track">
+            <div class="value" id="track2">{{this.valueTrack}}</div>
+          </div>
+        </div>
+        <separator></separator>
+
+
+        <separator (click)="onClickDivB5('divconscienciosidade', 'lblconscienciosidade','iconscienciosidade')"><!-- Título: Disciplina -->
+          <div class="row d-flex justify-content-between">
+            <div class="col">
+              <h5><i class="fas fa-arrow-down" id="iconscienciosidade"></i> Disciplina <i class="fa-solid fa-square-plus" id="icon_conscienciosidade"></i></h5>
+            </div>
+            <div class="col">
+              <h4><label #lblconscienciosidade class="lblconscienciosidade fw-bolder" id="lbl_conscienciosidade"></label></h4>
+            </div>
+          </div>
+        </separator>
+        <div #divconscienciosidade class="divconscienciosidade" hidden><!-- Texto explicativo + pontos: Disciplina -->
+          <div class="row">
+
+            <p class="text-justify" id="p_conscienciosidade">
+              Conscienciosidade é o traço de personalidade de ser cuidadoso ou diligente. A conscienciosidade implica o desejo de executar bem uma tarefa e levar a
+              sério as obrigações para com os outros. Pessoas com pontuação alta tendem a ser eficientes e organizadas, pontuações baixas tendem a ser descontraídas e desordenadas.
+              Eles exibem uma tendência a mostrar autodisciplina, agir obedientemente e almejar a conquista; eles exibem comportamento planejado, e não espontâneo;
+              e eles geralmente são confiáveis. Ela se manifesta em comportamentos característicos, como ser elegante e sistemático; incluindo também
+              elementos como cuidado, rigor e deliberação (a tendência de pensar cuidadosamente antes de agir)
+            </p>
+
+          </div>
+
+          <div class="row my-1" id="div_conscienciosidade">
+            <div class="col-md-6 d-flex justify-content-start">
+              <label class="">
+                <h4>Seus pontos</h4>
+              </label>
+            </div>
+            <div class="col-md-4 d-flex justify-content-start">
+              <label class="valor" id="lblconscienciosidade">{{this.conscienciosidade}}</label>
+            </div>
+          </div>
+        </div>
+        <div class="slider-ui color3"> <!-- Gráfico/Legenda: Disciplina -->
+          <input type="range" min="0" max="40" step="1">
+          <div class="bar">
+            <span class="sp1">Espôntaneo</span>
+            <span class="sp2">Sistemático</span>
+          </div>
+          <div class="track">
+            <div class="value" id="track3">{{this.valueTrack}}</div>
+          </div>
+        </div>
+        <separator></separator>
+
+
+        <separator class="mb-1" (click)="onClickDivB5('divestabilidade', 'lblestabilidade','iestabilidade')"> <!-- Título: Estabilidade Emocional -->
+          <div class="row d-flex justify-content-between">
+            <div class="col">
+              <h5><i class="fas fa-arrow-down" id="iestabilidade"></i> Estabilidade Emocional<i class="fa-solid fa-square-plus" id="icon_estabilidade"></i></h5>
+            </div>
+            <div class="col">
+              <h4><label #lblestabilidade class="lblestabilidade fw-bolder" id="lbl_estabilidade"></label></h4>
+            </div>
+          </div>
+        </separator>
+        <div #divestabilidade class="divestabilidade" hidden> <!-- Texto explicativo + pontos: Estabilidade Emocional -->
+          <div class="row" id="div_estabilidade">
+            <p class="text-justify" id="p_estabilidade">
+              É a tendência para experienciar emoções negativas, como raiva, ansiedade ou depressão, as quais tendem a persistir por períodos longos.
+              Por vezes, a Estabilidade Emocional também é chamada de neuroticismo.<br>
+              Pessoas com pontuações altas são mais difíceis de serem perturbados e são menos reativos emocionalmente. Eles tendem a ser
+              calmos, emocionalmente estáveis e livres de sentimentos negativos persistentes.<br>
+
+              Pessoas com pontuação baixa são emocionalmente reativos e vulneráveis ao estresse. São predispostos a interpretar situações
+              normais como sendo ameaçadoras e pequenas frustrações como dificuldades sem esperança.<br>
+              Por esses motivos, essas pessoas podem apresentar uma capacidade reduzida para pensar claramente, tomar decisões ou lidar de forma apropriada com o estresse.
+            </p>
+          </div>
+          <div class="row my-1" id="div_pontos_estabilidade">
+            <div class="col-md-6 d-flex justify-content-start">
+              <label class="">
+                <h4>Seus pontos</h4>
+              </label>
+            </div>
+            <div class="col-md-4 d-flex justify-content-start">
+              <label class="" id="lblestabilidade">{{this.estabilidade}}</label>
+            </div>
+          </div>
+        </div>
+        <div class="slider-ui color4"> <!-- Gráfico/Legenda: Estabilidade Emocional -->
+          <input type="range" min="0" max="40" step="1">
+          <div class="bar">
+            <span class="sp1">Racional</span>
+            <span class="sp2">Emocional</span>
+          </div>
+          <div class="track">
+            <div class="value" id="track4">{{this.valueTrack}}</div>
+          </div>
+        </div>
+        <separator></separator>
+
+
+        <separator class="mb-1" (click)="onClickDivB5('divabertura', 'lblabertura','iabertura')"><!-- Título: Abertura ao Novo -->
+          <div class="row d-flex justify-content-between">
+            <div class="col">
+              <h5><i class="fas fa-arrow-down" id="iabertura"></i> Abertura ao Novo<i class="fa-solid fa-square-plus" id="icon_abertura"></i></h5>
+            </div>
+            <div class="col">
+              <h4><label #lblabertura class="lblabertura fw-bolder" id="lbl_abertura"></label></h4>
+            </div>
+          </div>
+        </separator>
+        <div #divabertura class="divabertura" hidden> <!-- Texto explicativo + pontos: Abertura ao Novo -->
+          <div class="row" id="div_abertura"> <!-- Texto explicativo -->
+            <p class="text-justify" id="p_abertura">
+              É o traço da personalidade marcado pelo interesse por novas experiências emocionais, pela aventura, por ideias incomuns, pela arte, pelo amplo uso da imaginação
+              e alto grau de curiosidade.<br>
+              Pessoas com pontuações altas são imaginativas, criativas, curiosas, apreciadoras da arte e sensíveis à beleza. Essas pessoas tendem a levar em
+              conta os seus sentimentos e a terem opiniões não convencionais.<br>
+              Pessoas com pontuação baixa têm uma menor abertura para experiências costumam ter interesses mais convencionais e tradicionais.
+              Eles preferem o simples, claro e óbvio ao complexo, ambíguo e sutil. Além disso, podem ver as artes e as ciências com suspeitas,
+              achá-las “desinteressantes” e não gostarem de correr riscos
+            </p>
+          </div>
+          <div class="row my-1" id="div_pontos_abertura"> <!-- Pontos da Abertura -->
+            <div class="col-md-6 d-flex justify-content-start">
+              <label class="">
+                <h4>Seus pontos</h4>
+              </label>
+            </div>
+            <div class="col-md-4 d-flex justify-content-start">
+              <h4><label class="" id="lblabertura">{{this.abertura}}</label></h4>
+            </div>
+          </div>
+        </div>
+        <div class="slider-ui color5"> <!-- Gráfico: Abertura ao Novo -->
+          <input type="range" min="0" max="40" step="1">
+          <div class="bar">
+            <span class="sp1">Tradicional</span>
+            <span class="sp2">Aberto a Mudanças</span>
+          </div>
+          <div class="track">
+            <div class="value" id="track5">{{this.valueTrack}}</div>
+          </div>
+        </div>
+        <separator></separator>
+
+      </div>
+    </div>
+
+  </ng-template>
+</editable-form>
