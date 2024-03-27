@@ -42,7 +42,7 @@ class CleanUpAtribuicoesSeeder extends Seeder
     {
         // Identifica duplicatas para o tipo de atribuição especificado
         $duplicatas = DB::table('unidades_integrantes_atribuicoes as uia')
-            ->select('uia.id as id', 'ui.usuario_id', 'uia.unidade_integrante_id')
+            ->select('uia.id', 'ui.usuario_id', 'uia.unidade_integrante_id')
             ->join('unidades_integrantes as ui', 'ui.id', '=', 'uia.unidade_integrante_id')
             ->where('uia.atribuicao', '=', $tipoAtribuicao)
             ->whereNull('uia.deleted_at')
@@ -53,10 +53,10 @@ class CleanUpAtribuicoesSeeder extends Seeder
         // Deleta as duplicatas, mantendo apenas a primeira ocorrência
         foreach ($duplicatas as $duplicada) {
 
-            DB::table('unidades_integrantes_atribuicoes as uia')
-                ->where('uia.unidade_integrante_id', '=', $duplicada->unidade_integrante_id)
-                ->where('uia.atribuicao', '=', $tipoAtribuicao)
-                ->where('uia.id', '!=', $duplicada->id)
+            DB::table('unidades_integrantes_atribuicoes')
+                ->where('unidade_integrante_id', '=', $duplicada->unidade_integrante_id)
+                ->where('atribuicao', '=', $tipoAtribuicao)
+                ->where('id', '!=', $duplicada->id)
                 ->delete();  
         }
     }
