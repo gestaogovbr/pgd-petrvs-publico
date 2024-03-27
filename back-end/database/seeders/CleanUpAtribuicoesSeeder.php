@@ -26,14 +26,12 @@ class CleanUpAtribuicoesSeeder extends Seeder
             DB::statement("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''));");
 
             DB::transaction(function () {              
-
                 $atribuicoesParaVerificar = ['LOTADO', 'COLABORADOR'];
 
                 foreach ($atribuicoesParaVerificar as $atribuicaoTipo) {
                     $this->limparDuplicatasPorAtribuicao($atribuicaoTipo);
                 }
-                $this->limparLotadosEmUnidadesDiferentes();
-              
+                $this->limparLotadosEmUnidadesDiferentes();             
             });
         } 
 
