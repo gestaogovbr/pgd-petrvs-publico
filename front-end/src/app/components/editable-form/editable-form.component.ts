@@ -239,9 +239,7 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
   }
 
   clearGridNoSaved(form: FormGroup = this.form!) {
-    this.removeAddStatusRecursively(form.value);
-    console.log(form);
-    
+    this.removeAddStatusRecursively(form.value);   
 	}
 
   removeAddStatusRecursively(obj: any) { 
@@ -255,7 +253,8 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
     } else if (obj !== null && typeof obj === 'object') {
         Object.keys(obj).forEach((key) => {
             if (key === '_status' && obj[key] === 'ADD') {
-              obj[key] = "DELETE"
+              const keys = Object.keys(obj);
+              if(keys.length <= 2) obj[key] = "DELETE"
             } else {
                 this.removeAddStatusRecursively(obj[key]);
             }

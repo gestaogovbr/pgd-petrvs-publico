@@ -78,6 +78,8 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
   public util: UtilService;
   private _date?: string;
   private _time?: string;
+  public minDate!: string;
+  public maxDate!: string;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -106,6 +108,8 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
   
   ngOnInit(): void {
     super.ngOnInit();
+    this.minDate = (moment().subtract(100, 'years').format("YYYY-MM-DD")).toString();
+    this.maxDate = (moment().add(10, 'years').format("YYYY-MM-DD")).toString();
   }
 
   public updateInputs() {

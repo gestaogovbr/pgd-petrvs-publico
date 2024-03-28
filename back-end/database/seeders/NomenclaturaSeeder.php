@@ -91,7 +91,7 @@ class NomenclaturaSeeder extends Seeder
       "ocorrência" => ['single' => "ocorrência", 'plural' => "ocorrências", 'female' => true],
     ];
 
-    $entidade = Entidade::where('sigla', env("PETRVS_ENTIDADE"))->first() ?? new Entidade();
+    $entidade = Entidade::first() ?? new Entidade();
 
     foreach ($nomenclaturas as $id => $nomenclatura) {
       if (!in_array($id, array_column($entidade->nomenclatura ?? [], 'id'))) {
