@@ -98,6 +98,11 @@ class LoginController extends Controller
             }])->first();
             if (isset($usuario->areasTrabalho[0]) && !empty($usuario->areasTrabalho[0]->id)) {
                 $request->session()->put("unidade_id", $usuario->areasTrabalho[0]->id);
+                $config = $usuario->config ?? []; 
+                $config['unidade_id'] = $data["unidade_id"];
+                $usuario->config = $config;
+                $usuario->save();
+
                 return response()->json([
                     "status" => "OK",
                     "unidade" => Unidade::find($data["unidade_id"])

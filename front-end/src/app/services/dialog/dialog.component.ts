@@ -158,7 +158,7 @@ export class DialogComponent implements OnInit {
 		if (this.onClose) this.onClose.emit();
 		this.componentRef?.destroy();
     const modal = this.componentRef?.instance.modalBodyRef?.instance as any;
-    if (modal.form) {
+    if (modal && modal.form) {
 		  this.dialogs?.modalClosed.next();
     }
 	}
