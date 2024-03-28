@@ -161,7 +161,11 @@ export class AuthService {
       this.kind = this.kind;
       this.logged = true;
       this.unidades = this.usuario?.areas_trabalho?.map(x => x.unidade!) || [];
-      this.unidade = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
+      if(this.usuario?.config.unidade_id && this.unidades.find(u => u.id === this.usuario?.config.unidade_id)){
+        this.unidade = this.unidades.find(u => u.id === this.usuario?.config.unidade_id);  
+      }else{
+        this.unidade = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
+      }
       if (this.unidade) this.calendar.loadFeriadosCadastrados(this.unidade.id);
       if (token?.length) localStorage.setItem("petrvs_api_token", token);
       if (this.hasPermissionTo("CTXT_GEST")) usuarioContextos.push("GESTAO");

@@ -394,6 +394,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
 
   public async carregaEtiquetasUnidadesAscendentes(unidadeAtual: Unidade) {
     let etiquetasUnidades: LookupItem[] = [];
+    unidadeAtual = unidadeAtual ? unidadeAtual : this.auth.unidade!;
     let path = unidadeAtual.path.split("/");
     let unidades = await this.unidadeDao.query({ where: [["id", "in", path]] }).asPromise();
     unidades.forEach(un => {

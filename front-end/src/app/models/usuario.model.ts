@@ -87,6 +87,7 @@ export class UsuarioConfig {
     ocultar_menu_sei: boolean = true;
     ocultar_container_petrvs: boolean = false;
     theme: string = 'light';
+    unidade_id: string | undefined;
 }
 
 export class Usuario extends Base implements HasNotificacao {
