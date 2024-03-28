@@ -89,12 +89,18 @@ class CurriculumService extends ServiceBase
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'soft_id') {
         $pergunta_filtrada = QuestionarioPergunta::select('id')->where('pergunta', $condition[2])->get()->toArray();
-        $resposta_filtrada = QuestionarioPerguntaResposta::select('questionario_preenchimento_id')->whereIn('questionario_pergunta_id', $pergunta_filtrada)->where('resposta', '>=', $condition[3])->get()->toArray();
+        $resposta_filtrada = QuestionarioPerguntaResposta::select('questionario_preenchimento_id')->whereIn('questionario_pergunta_id', $pergunta_filtrada)->where('resposta', '>=', 4)->get()->toArray();
         $usuario_filtrado = QuestionarioPreenchimento::select('usuario_id')->whereIn('id', $resposta_filtrada)->get()->toArray();
         $curriculums_filtrados = Curriculum::select('id')->whereIn('usuario_id', $usuario_filtrado)->get()->toArray();
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'interesse_pgd') {
-        $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->where('pgd_interesse', $condition[2])->get()->toArray();
+        $tem_interesse = $condition[2];
+        $curriculums_filtrados = [];
+        if ($tem_interesse) {
+          $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->where('pgd_interesse', $condition[3])->get()->toArray();
+        } else {
+          $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->where('pgd_interesse', $condition[2])->get()->toArray();
+        }
         array_push($where, ['id', 'in', $curriculums_filtrados]);
       } else if (is_array($condition) && $condition[0] == 'interesse_bnt') {
         $tem_interesse = $condition[2];
@@ -114,15 +120,23 @@ class CurriculumService extends ServiceBase
           $curriculums_filtrados = CurriculumProfissional::select('curriculum_id')->where('remocao', 0)->get()->toArray();
         }
         array_push($where, ['id', 'in', $curriculums_filtrados]);
+      } else if (is_array($condition) && $condition[0] == 'bigfive') {
+        $caracteristica = $condition[1];
+        $curriculums_filtrados = [];
+        $inicio_intervalo = $condition[3] == 1 ? 1 : ($condition[3] == 2 ? 15 : 28);
+        $final_intervalo = $condition[3] == 1 ? 14 : ($condition[3] == 2 ? 27 : 40);
+        for ($inicio_intervalo; $inicio_intervalo <= $final_intervalo; $inicio_intervalo++) {
+          $usuarios_filtrados = QuestionarioPreenchimento::select('usuario_id')->whereRaw("JSON_SEARCH(resumo_resposta, 'all', '" . $inicio_intervalo . "', null, '$[*]." . $caracteristica . "')")->get()->toArray();
+          if ($usuarios_filtrados) {
+            $curriculums_filtrados = Curriculum::select('id')->whereIn('usuario_id', $usuarios_filtrados)->get()->toArray();
+            array_push($where, ['id', 'in', $curriculums_filtrados]);
+          }
+        }
       } else {
         array_push($where, $condition);
       }
     }
     $data['where'] = $where;
     return $data;
-  }
-
-  public function filtroBigFive () {
-  
   }
 }
