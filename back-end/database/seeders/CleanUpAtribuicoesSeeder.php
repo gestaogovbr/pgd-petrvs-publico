@@ -93,7 +93,22 @@ class CleanUpAtribuicoesSeeder extends Seeder
                     foreach ($atribuicoesLotado as $atribuicao) {
                         DB::table('unidades_integrantes_atribuicoes')
                             ->where('id', '=', $atribuicao->id)
-                            ->delete();
+                            ->delete();                     
+
+                             // Verifica se existem outras atribuições vinculadas ao usuário na unidade antes de remover o registro em unidades_integrantes.
+                            $atribuicoesRestantes = DB::table('unidades_integrantes_atribuicoes')
+                            ->where('unidade_integrante_id', '=', $atribuicao->unidade_integrante_id)
+                            ->where('usuario_id', '=', $usuarioId) 
+                            ->count();
+
+                            // Se não existirem mais atribuições, remove o registro correspondente em unidades_integrantes.
+                            if ($atribuicoesRestantes == 0) {
+                                DB::table('unidades_integrantes')
+                                    ->where('id', '=', $atribuicao->unidade_integrante_id)
+                                    ->where('usuario_id', '=', $usuarioId) // Certifique-se de que este é o nome correto do campo para o ID do usuário.
+                                    ->delete();
+                            }
+  
                     }
                 }
             }
