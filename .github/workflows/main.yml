@@ -5,11 +5,13 @@ on:
     branches:
       - dataprev_dsv
       - dataprev_hmg
+      - dataprev_treina
   pull_request:
     branches:
       - main
       - dataprev_dsv
       - dataprev_hmg
+      - dataprev_treina
 
 jobs:
   build_and_deploy_dsv:
