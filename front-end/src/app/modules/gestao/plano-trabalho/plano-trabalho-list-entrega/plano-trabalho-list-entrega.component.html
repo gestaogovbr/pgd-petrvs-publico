@@ -21,7 +21,7 @@
         <input-text *ngIf="origem?.value == 'OUTRO_ORGAO'" #orgao controlName="orgao" placeholder="Órgão" [attr.maxlength]=250></input-text>
       </ng-template>
     </column>
-    <column [width]="350" [titleTemplate]="titleEntrega" [template]="columnEntrega" [editTemplate]="editEntrega" [verticalAlign]="'middle'" [align]="'center'">
+    <column [width]="350" [titleTemplate]="titleEntrega" [template]="columnEntrega" [editTemplate]="editEntrega" [verticalAlign]="'middle'" >
       <ng-template let-header="header" class="text-center" #titleEntrega><span><strong>Entrega</strong></span></ng-template>
       <ng-template let-row="row" #columnEntrega>
         <small>{{ planoTrabalhoService.tipoEntrega(row, entity).descricao }}</small>
@@ -61,7 +61,7 @@
       <ng-template let-row="row" #columnForcaTrabalho><small>{{ row.forca_trabalho + '%' }}</small></ng-template>
       <ng-template let-row="row" #editForcaTrabalho><input-text number sufix="%" controlName="forca_trabalho" [control]="form!.controls.forca_trabalho" (change)="onForcaTrabalhoChange(row)" [attr.maxlength]=250></input-text></ng-template>
     </column>
-    <column [maxWidth]="250" [titleTemplate]="titleDescricao" [template]="columnDescricao" [editTemplate]="editDescricao" [verticalAlign]="'middle'" [align]="'center'">
+    <column [minWidth]="150" [maxWidth]="250" [titleTemplate]="titleDescricao" [template]="columnDescricao" [editTemplate]="editDescricao" [verticalAlign]="'middle'" [align]="'center'">
       <ng-template let-header="header" #titleDescricao>
         <div class="text-center"><span><strong>Descrição dos Trabalhos</strong></span></div>
       </ng-template>
