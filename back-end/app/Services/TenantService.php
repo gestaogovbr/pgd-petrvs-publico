@@ -157,6 +157,16 @@ class TenantService extends ServiceBase {
         }
     }
 
+    public function cleanDB($id){
+        try {
+            Artisan::call('db:truncate-all ' . $id);
+        } catch (\Exception $e) {
+            Log::error('Error executing commands: ' . $e->getMessage());
+            Log::channel('daily')->error('Error executing commands: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function resetBD() {
         try {
 //            Artisan::call('db:delete-all');
