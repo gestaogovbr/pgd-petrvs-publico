@@ -106,6 +106,18 @@ class TenantController extends ControllerBase {
         }
     }
 
+    public function cleandb(Request $request) {
+        try {
+            $data = $request->tenant_id??null;
+            return response()->json([
+                'success' => true,
+                'data' => $this->service->cleanDB($data)
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
     public function seeders(Request $request) {
         try {
             $data = $request->validate([

@@ -38,6 +38,7 @@ class UnidadeIntegranteController extends ControllerBase
         'integrantesConsolidados.*.unidade_id' => ['string', 'required'],
         'integrantesConsolidados.*.usuario_id' => ['string', 'required'],
         'integrantesConsolidados.*.atribuicoes' => ['array', 'nullable'],
+        'integrantesConsolidados.*._metadata' => ['array', 'nullable'],
       ]);
 
       return response()->json([

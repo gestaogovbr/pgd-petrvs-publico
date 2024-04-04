@@ -1,0 +1,24 @@
+<div class="row">
+  <div class="col-md-8">
+      <input-container label="Seeders">
+          <select (change)="onSeederChange($event)" class="form-control" controlName="selectedSeeder">
+              <option *ngFor="let s of seeders" [value]="s">{{s}}</option>
+          </select>
+      </input-container>
+  </div>
+  <div class="col-md-4">
+      <input-container label="Opções">
+          <action-button fullWidth label="Executar" [onClick]="executeSeeder.bind(this)"></action-button>
+      </input-container>
+
+  </div>
+
+  <div class="col-md-12" *ngIf="output.length">
+    <div class="card text-bg-dark mb-3 mt-4">
+      <div class="card-header">Output</div>
+      <div class="card-body">        
+        <p class="card-text" *ngFor="let item of output">{{item}}</p>
+      </div>
+    </div>
+  </div>
+</div>

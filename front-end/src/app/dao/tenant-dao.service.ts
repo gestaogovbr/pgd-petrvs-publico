@@ -101,6 +101,20 @@ export class TenantDaoService extends DaoBaseService<Tenant> {
     });
   }
 
+  public cleanDB(row: any) {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('config/' + this.collection + '/cleandb', {
+        tenant_id: row.id,
+      }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
   public resetDB() {
     return new Promise<boolean>((resolve, reject) => {
       this.server.get('config/' + this.collection + '/resetdb').subscribe(response => {
