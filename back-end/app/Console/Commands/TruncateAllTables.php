@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class TruncateAllTables extends Command
 {
-    protected $signature = 'db:truncate-all';
+    protected $signature = 'db:truncate-all {tenant}';
 
     protected $description = 'Truncate all tables in the database';
 
@@ -18,9 +18,13 @@ class TruncateAllTables extends Command
 
     public function handle()
     {
+        $tenant = $this->argument('tenant');
+        $tenant = tenancy()->find($tenant);
+        tenancy()->initialize($tenant);
+
         // Desative as verificações de chave estrangeira
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
-
+        
         // Obtenha uma lista de todas as tabelas no banco de dados
         $tables = DB::select('SHOW TABLES');
 
@@ -37,5 +41,6 @@ class TruncateAllTables extends Command
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
         $this->info('All tables truncated.');
+        
     }
 }

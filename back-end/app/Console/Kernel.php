@@ -24,7 +24,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        /*
+        
         $agendamentos = JobAgendado::where('ativo', true)->get();
         foreach ($agendamentos as $agendamento) {
             $jobClass = 'App\Jobs\\' . $agendamento->nome_do_job;
@@ -36,7 +36,7 @@ class Kernel extends ConsoleKernel
                 }
             }
         }
-        */
+        
     }
 
     /**

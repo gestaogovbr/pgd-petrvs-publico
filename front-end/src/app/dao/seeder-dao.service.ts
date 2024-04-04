@@ -29,10 +29,11 @@ export class SeederDaoService extends DaoBaseService<Seeder> {
   }
 
 
-  public executeSeeder(seederName: string): Promise<string[]> {
+  public executeSeeder(seederName: string, tenant?: string | null): Promise<string[]> {
     return new Promise<string[]>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/execute', {
-        seeder: seederName
+        seeder: seederName,
+        id: tenant
       }).subscribe(response => {
         resolve(response || []);
       }, error => reject(error));
