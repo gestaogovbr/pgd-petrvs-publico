@@ -117,4 +117,3 @@ class CleanUpAtribuicoesSeeder extends Seeder
     }
 
 }
-25
