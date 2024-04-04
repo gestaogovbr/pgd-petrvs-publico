@@ -121,7 +121,8 @@ Route::get('/exportar/dados/job', [PgdController::class, 'exportarDadosJob']);
 /* Jobs Agendados */
 Route::get('/jobs-agendados', [JobAgendadoController::class, 'listar']);
 Route::post('/job-agendado/{id}', [JobAgendadoController::class, 'update']);
-
+Route::get('/jobs-agendados/sincronizar/petrvs', [JobAgendadoController::class, 'sincronizarPetrvs']);
+Route::get('/jobs-agendados/log', [JobAgendadoController::class, 'logJob']);
 
 /* Rotinas diárias */
 Route::get('/rotinas-diarias', [RotinaDiariaController::class, 'run']);
