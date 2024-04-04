@@ -18,7 +18,7 @@ class GoogleService
 
     /**
      * Obtem a credencial pelo Token id do gapi
-     * 
+     *
      * @param string $token  Token de login do gapi
      * @return mixed  Credencial ou ["error" => string]
      */
@@ -26,9 +26,17 @@ class GoogleService
     {
         $return = array();
         try {
-            JWT::$leeway = 86400; /* Previnir o Firebase\JWT\BeforeValidException */
-            $client = new Client(["client_id" => $this->client_id]);
-            $payload = $client->verifyIdToken($token);
+            $url = 'https://oauth2.googleapis.com/tokeninfo?id_token=' . $token;
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, 0);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            $response = curl_exec($ch);
+            $err = curl_error($ch);  //if you need
+            curl_close($ch);
+
+            $payload = json_decode($response,true);
             if($payload){
                 $return = $payload;
             } else {
@@ -42,7 +50,7 @@ class GoogleService
 
     /**
      * Obtem o IP da requisição
-     * 
+     *
      * @param Usuario $usuario Usuário model
      * @param mixed $credencial  Dados retornados do login
      */
