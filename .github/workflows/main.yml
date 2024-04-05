@@ -3,9 +3,11 @@ name: CI/CD
 on:
   push:
     branches:
+      - main
       - dataprev_dsv
       - dataprev_hmg
       - dataprev_treina
+      - dataprev_producao
   pull_request:
     branches:
       - dataprev_dsv
