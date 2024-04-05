@@ -30,7 +30,7 @@
                 <badge *ngIf="row.log_errors" color="light" label="Erros (Errors)"></badge>
             </ng-template>
         </column>
-        <column type="options" [onEdit]="edit" [options]="options"></column>
+        <column type="options" [onEdit]="edit" [options]="options"  [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>
