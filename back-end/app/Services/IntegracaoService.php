@@ -792,7 +792,7 @@ class IntegracaoService extends ServiceBase
           "JOIN unidades AS u ON ui.unidade_id = u.id ".
           "JOIN usuarios AS usuario ON ui.usuario_id = usuario.id ".
           "JOIN integracao_servidores AS isr ON isr.cpf = usuario.cpf ".
-          "WHERE uia.atribuicao = 'LOTADO' AND u.codigo <> isr.codigo_servo_exercicio ".
+          "WHERE uia.atribuicao = 'LOTADO' AND u.codigo <> isr.codigo_servo_exercicio and ui.deleted_at IS NULL ".
           "ORDER BY exercicio_antigo ASC");
         $atualizacoesLotacoesResult = [];
 
@@ -1103,8 +1103,13 @@ class IntegracaoService extends ServiceBase
               ]);
               $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
 
+              $perfilAdministradorNegocial = Perfil::where('nome', 'Administrador Negocial')->first();
+              if (empty($perfilAdministradorNegocial)) {
+                throw new ServerException("ValidateUsuario", "Perfil de administrador negocial não encontrado no banco de dados. Verificar configuração no painel SaaS.");
+              }
+
               // Atualiza nível nível de acesso para chefe caso servidor não seja Desenvolvedor.
-              if ($perfilDesenvolvedorId != $queryChefe->perfil->id) {
+              if (!in_array($queryChefe->perfil->id, [$perfilAdministradorNegocial->id, $perfilDesenvolvedorId])) {
                 $values = [
                   ':perfil_id' => $perfilChefeId,
                   ':id' => $chefia['id_usuario']
@@ -1115,6 +1120,7 @@ class IntegracaoService extends ServiceBase
                 LogError::newWarn("IntegracaoService: durante atualização de gestores, o usuário não teve seu perfil atualizado para " . $usuarioChefe .
                   " uma vez que é Desenvolvedor.", [$queryChefe->nome, $queryChefe->email]);
               }
+
               // Verificar se existe mais atribuições.
               // Após consultar todas as atribuições já existentes e montar o array para gravar, verificar se
               // é substituto e/ou delegado ao mesmo tempo. Se sim, remover do array (substituto e delegado).
@@ -1143,8 +1149,13 @@ class IntegracaoService extends ServiceBase
               ]);
               $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
 
-              // Atualiza nível nível de acesso para chefe caso servidor não seja Desenvolvedor.
-              if ($perfilDesenvolvedorId != $queryChefe->perfil->id) {
+              $perfilAdministradorNegocial = Perfil::where('nome', 'Administrador Negocial')->first();
+              if (empty($perfilAdministradorNegocial)) {
+                throw new ServerException("ValidateUsuario", "Perfil de administrador negocial não encontrado no banco de dados. Verificar configuração no painel SaaS.");
+              }
+              
+              // Atualiza nível nível de acesso para chefe caso servidor não seja Desenvolvedor ou Administrador Negocial.
+              if ($perfilDesenvolvedorId != $queryChefe->perfil->id || $perfilAdministradorNegocial->id != $queryChefe->perfil->id) {
                 $values = [
                   ':perfil_id' => $perfilChefeId,
                   ':id' => $chefia['id_usuario']
@@ -1153,7 +1164,7 @@ class IntegracaoService extends ServiceBase
                 DB::update($sqlPerfilUpdate, $values);
               } else {
                 LogError::newWarn("IntegracaoService: durante atualização de gestores, o usuário não teve seu perfil atualizado para " . $usuarioChefe .
-                  " uma vez que é Desenvolvedor.", [$queryChefe->nome, $queryChefe->email]);
+                  " uma vez que é {$perfilDesenvolvedor->nome} {$perfilAdministradorNegocial->nome}.", [$queryChefe->nome, $queryChefe->email]);
               }
             } else {
               throw new Exception("Falha no array de funções do servidor");
