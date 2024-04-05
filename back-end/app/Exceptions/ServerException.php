@@ -35,7 +35,16 @@ class ServerException extends Exception
         "ValidateUsuario" => "Erro ao validar o usuário"
     ];
 
-    function __construct($code, $extra = "") {
-        parent::__construct($this->exceptions[$code] . "&" . (empty($extra) ? "" : $extra));
+    function __construct(string $code, string $extra = "") {
+        $message  = [$this->getMessageException($code)];
+        if(!empty($extra)) {
+            $message[] = $extra;
+        }
+        parent::__construct(implode(" : ", $message));
+    }
+
+    private function getMessageException(string $code) : string
+    {
+        return array_key_exists($code, $this->exceptions) ? $this->exceptions[$code] : "Erro desconhecido";
     }
 }

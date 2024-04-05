@@ -12,8 +12,8 @@ class HistoricoAtividadeInterna extends ModelBase
 
   public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
     'curriculum_profissional_id', /* char(36); NOT NULL; */
-    'capacidade_tecnica_id',
-    'atividade_desempenhada', /* char(36); NOT NULL; */
+    'capacidade_tecnica_id', /* char(36); NOT NULL; */
+    'atividade_desempenhada', /* varchar(256); */ // Atividade desempenhada na instituição
     //'deleted_at', /* timestamp; */
   ];
 

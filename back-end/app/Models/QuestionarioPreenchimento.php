@@ -6,6 +6,7 @@ use App\Models\ModelBase;
 use App\Models\Questionario;
 use App\Models\Usuario;
 use App\Models\QuestionarioPerguntaResposta;
+use App\Casts\AsJson;
 
 class QuestionarioPreenchimento extends ModelBase
 {
@@ -17,10 +18,15 @@ class QuestionarioPreenchimento extends ModelBase
     'versao', /* integer */ // Versão do questionario
     'usuario_id', /* char(36); */
     'questionario_id', /* char(36); NOT NULL; */
+    'resumo_resposta', /* json; ; */
     //'deleted_at', /* timestamp; */
   ];
 
   public $fillable_changes = ['respostas'];
+
+  protected $casts = [
+    'resumo_resposta' => AsJson::class
+  ];
 
   // Belongs
   public function questionario()

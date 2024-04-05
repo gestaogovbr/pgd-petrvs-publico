@@ -792,7 +792,7 @@ class IntegracaoService extends ServiceBase
           "JOIN unidades AS u ON ui.unidade_id = u.id ".
           "JOIN usuarios AS usuario ON ui.usuario_id = usuario.id ".
           "JOIN integracao_servidores AS isr ON isr.cpf = usuario.cpf ".
-          "WHERE uia.atribuicao = 'LOTADO' AND u.codigo <> isr.codigo_servo_exercicio ".
+          "WHERE uia.atribuicao = 'LOTADO' AND u.codigo <> isr.codigo_servo_exercicio and ui.deleted_at IS NULL ".
           "ORDER BY exercicio_antigo ASC");
         $atualizacoesLotacoesResult = [];
 
@@ -902,9 +902,11 @@ class IntegracaoService extends ServiceBase
           $vinculos_isr = DB::select($query);
 
           $usuarioComum = $this->integracao_config["perfilComum"];
-          $perfilParticipanteId = Perfil::where('nome', $usuarioComum)->first()->id;
+          $perfilParticipante = Perfil::where('nome', $usuarioComum)->first();
+          $perfilParticipanteId = null;
+          if(!empty($perfilParticipante)) $perfilParticipanteId = $perfilParticipante->id;
 
-          if (empty($perfilParticipanteId)) throw new ServerException("IntegracaoService", "Perfil usuário comum (" . $usuarioComum . ") não encontrado no banco de dados. Verificar configuração no painel SaaS.\n[ver XXX_XXX]");
+          if (empty($perfilParticipanteId)) throw new ServerException("ValidateUsuario", "Perfil usuário comum (" . $usuarioComum . ") não encontrado no banco de dados. Verificar configuração no painel SaaS.\n[ver XXX_XXX]");
 
           foreach ($vinculos_isr as $v_isr) {
             $v_isr = $this->UtilService->object2array($v_isr);
@@ -924,6 +926,19 @@ class IntegracaoService extends ServiceBase
               'uf' => $this->UtilService->valueOrDefault($v_isr['uf'], null),
               'data_modificacao' => $this->UtilService->asDateTime($v_isr['data_modificacao']),
             ]);
+
+            $jaExisteEmail = $registro->where('email', $registro->email)->first();
+
+            //TODO - sugestão de o SIAPE é a referencia adicionar o e-mail fake na tabela de usuarios, dando prioridade para o siape.
+            if(!empty($jaExisteEmail)) {
+              //FIXME ATUALIZA PARA O E-MAIL FAKE.
+              LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. CPF: %s, Email: %s", $registro->cpf, $registro->email));
+              $email = $registro->cpf . "@petrvs.gov.br";
+              $jaExisteEmail->update(['email' => $email]);
+
+              // throw new ServerException("ValidateUsuario", sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. CPF: %s, Email: %s", $registro->cpf, $registro->email));
+            }
+
             $registro->save();
 
             $usuarioId = $registro->id;
@@ -969,7 +984,7 @@ class IntegracaoService extends ServiceBase
           Usuario::count() . ' servidores!');
       } catch (Throwable $e) {
         LogError::newError("Erro ao importar servidores", $e);
-        $this->result["servidores"]['Resultado'] = 'ERRO: ' . $e->getMessage() . ' - Linha: ' . $e->getLine() . ' - Trace: ' . $e->getTrace();
+        $this->result["servidores"]['Resultado'] = 'ERRO: ' . $e->getMessage() . ' - Linha: ' . $e->getLine();
       }
     }
 
@@ -1035,8 +1050,17 @@ class IntegracaoService extends ServiceBase
         if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de montagem do array de chefias!.....");
 
         $usuarioChefe = $this->integracao_config["perfilChefe"];
-        $perfilChefeId = Perfil::where('nome', $usuarioChefe)->first()->id;
-        $perfilDesenvolvedorId = Perfil::where('nome', 'Desenvolvedor')->first()->id;
+        $perfilChefe = Perfil::where('nome', $usuarioChefe)->first();
+        if (empty($perfilChefe)) {
+          throw new ServerException("ValidateUsuario", "Perfil de gestor (" . $usuarioChefe . ") não encontrado no banco de dados. Verificar configuração no painel SaaS.");
+        }
+        $perfilChefeId = $perfilChefe->id;
+
+        $perfilDesenvolvedor = Perfil::where('nome', 'Desenvolvedor')->first();
+        if (empty($perfilDesenvolvedor)) {
+          throw new ServerException("ValidateUsuario", "Perfil de desenvolvedor não encontrado no banco de dados. Verificar configuração no painel SaaS.");
+        }
+        $perfilDesenvolvedorId = $perfilDesenvolvedor->id;
         foreach ($chefias as $chefia) {
           $querySelecionarUnidade = "SELECT u.id " .
             "FROM integracao_unidades as iu " .
@@ -1079,8 +1103,13 @@ class IntegracaoService extends ServiceBase
               ]);
               $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
 
+              $perfilAdministradorNegocial = Perfil::where('nome', 'Administrador Negocial')->first();
+              if (empty($perfilAdministradorNegocial)) {
+                throw new ServerException("ValidateUsuario", "Perfil de administrador negocial não encontrado no banco de dados. Verificar configuração no painel SaaS.");
+              }
+
               // Atualiza nível nível de acesso para chefe caso servidor não seja Desenvolvedor.
-              if ($perfilDesenvolvedorId != $queryChefe->perfil->id) {
+              if (!in_array($queryChefe->perfil->id, [$perfilAdministradorNegocial->id, $perfilDesenvolvedorId])) {
                 $values = [
                   ':perfil_id' => $perfilChefeId,
                   ':id' => $chefia['id_usuario']
@@ -1091,6 +1120,7 @@ class IntegracaoService extends ServiceBase
                 LogError::newWarn("IntegracaoService: durante atualização de gestores, o usuário não teve seu perfil atualizado para " . $usuarioChefe .
                   " uma vez que é Desenvolvedor.", [$queryChefe->nome, $queryChefe->email]);
               }
+
               // Verificar se existe mais atribuições.
               // Após consultar todas as atribuições já existentes e montar o array para gravar, verificar se
               // é substituto e/ou delegado ao mesmo tempo. Se sim, remover do array (substituto e delegado).
@@ -1119,8 +1149,13 @@ class IntegracaoService extends ServiceBase
               ]);
               $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
 
-              // Atualiza nível nível de acesso para chefe caso servidor não seja Desenvolvedor.
-              if ($perfilDesenvolvedorId != $queryChefe->perfil->id) {
+              $perfilAdministradorNegocial = Perfil::where('nome', 'Administrador Negocial')->first();
+              if (empty($perfilAdministradorNegocial)) {
+                throw new ServerException("ValidateUsuario", "Perfil de administrador negocial não encontrado no banco de dados. Verificar configuração no painel SaaS.");
+              }
+              
+              // Atualiza nível nível de acesso para chefe caso servidor não seja Desenvolvedor ou Administrador Negocial.
+              if ($perfilDesenvolvedorId != $queryChefe->perfil->id || $perfilAdministradorNegocial->id != $queryChefe->perfil->id) {
                 $values = [
                   ':perfil_id' => $perfilChefeId,
                   ':id' => $chefia['id_usuario']
@@ -1129,7 +1164,7 @@ class IntegracaoService extends ServiceBase
                 DB::update($sqlPerfilUpdate, $values);
               } else {
                 LogError::newWarn("IntegracaoService: durante atualização de gestores, o usuário não teve seu perfil atualizado para " . $usuarioChefe .
-                  " uma vez que é Desenvolvedor.", [$queryChefe->nome, $queryChefe->email]);
+                  " uma vez que é {$perfilDesenvolvedor->nome} {$perfilAdministradorNegocial->nome}.", [$queryChefe->nome, $queryChefe->email]);
               }
             } else {
               throw new Exception("Falha no array de funções do servidor");

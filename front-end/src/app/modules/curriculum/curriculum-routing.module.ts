@@ -18,22 +18,33 @@ const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Home Raio-X" } },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Home Raio-X" } },
   { path: 'pessoal', component: CurriculumFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Dados Pessoais", modal: true } },
-  { path: 'profissional', component: CurriculumProfissionalFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Dados Profissionais", modal: true  } },
+  { path: 'profissional', component: CurriculumProfissionalFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Dados Profissionais", modal: true } },
   { path: 'big5', component: CurriculumAtributosBig5FormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Big5" } },
   { path: 'soft', component: CurriculumAtributosSoftFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Soft" } },
-  { path: 'atributos', component: CurriculumAtributosComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Atributos Comportamentais2", modal: false, modalWidth: 1300 } },
+  { path: 'atributos', component: CurriculumAtributosComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Atributos Comportamentais", modal: false, modalWidth: 1300 } },
   { path: 'disc', component: CurriculumAtributosDiscFormComponent, canActivate: [AuthGuard], data: { title: "Disc" } },
   { path: 'dass', component: CurriculumAtributosDassFormComponent, canActivate: [AuthGuard], data: { title: "Dass" } },
   { path: 'qvt', component: CurriculumAtributosQvtFormComponent, canActivate: [AuthGuard], data: { title: "QVT" } },
   //{ path: 'pesquisa-usuario', component: CurriculumPesquisaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Pesquisa Usuário" } },
   { path: 'pesquisa-adm', component: CurriculumPesquisaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Pesquisa Administrativa" } },
   { path: 'detalhe-pesquisa', component: CurriculumPesquisaListUsuarioComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Currículo", modal: true } },
-  { path: 'cadastros', loadChildren: () => import('../cadastros/curriculum/curriculum-cadastros.module').then(m => m.CurriculumCadastrosModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/area-atividade-externa', loadChildren: () => import('./cadastros/area-atividade-externa/area-atividade-externa.module').then(m => m.AreaAtividadeExternaModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/area-conhecimento', loadChildren: () => import('./cadastros/area-conhecimento/area-conhecimento.module').then(m => m.AreaConhecimentoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/curso', loadChildren: () => import('./cadastros/curso/curso.module').then(m => m.CursoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/tipo-curso', loadChildren: () => import('./cadastros/tipo-curso/tipo-curso.module').then(m => m.TipoCursoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/centro-treinamento', loadChildren: () => import('./cadastros/centro-treinamento/centro-treinamento.module').then(m => m.CentroTreinamentoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/funcao', loadChildren: () => import('./cadastros/funcao/funcao.module').then(m => m.FuncaoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/grupo-especializado', loadChildren: () => import('./cadastros/grupo-especializado/grupo-especializado.module').then(m => m.GrupoEspecializadoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/disciplina', loadChildren: () => import('./cadastros/disciplina/disciplina.module').then(m => m.DisciplinaModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/cargo', loadChildren: () => import('./cadastros/cargo/cargo.module').then(m => m.CargoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/funcao', loadChildren: () => import('./cadastros/funcao/funcao.module').then(m => m.FuncaoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/area-tematica', loadChildren: () => import('./cadastros/area-tematica/area-tematica.module').then(m => m.AreaTematicaModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/capacidade-tecnica', loadChildren: () => import('./cadastros/capacidade-tecnica/capacidade-tecnica.module').then(m => m.CapacidadeTecnicaModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/questionario', loadChildren: () => import('./cadastros/questionario/questionario.module').then(m => m.QuestionarioModule), canActivate: [AuthGuard] },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-
 export class CurriculumRoutingModule { }

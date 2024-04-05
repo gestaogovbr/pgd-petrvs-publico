@@ -9,7 +9,7 @@
         <div class="d-flex align-items-center">
           <img [src]="gb.getResourcePath('assets/images/icon_' + gb.theme + '.png')" alt="Logo Petrvs" width="30" class="d-inline-block align-text-top" />
           <span class="logo-text ms-2 d-none d-sm-block">PETRVS</span>
-          <img [src]="gb.getResourcePath('assets/images/logo_prf_' + gb.theme + '.png')" alt="Logo PRF" width="30" class="d-inline-block align-text-top ms-3" *ngIf="gb.edicao == 'PRF'"/>
+          <img [src]="gb.getResourcePath('assets/images/logo_prf_' + gb.theme + '.png')" alt="Logo PRF" width="30" class="d-inline-block align-text-top ms-3" *ngIf="gb.edicao == 'PRF'" />
         </div>
       </a>
     </div>
@@ -82,7 +82,7 @@
       </div>
     </div>
     <ul class="navbar-nav navbar-nav-icons flex-row align-items-center justify-content-end ">
-      <li class="nav-item dropdown" *ngIf="gb.auth.hasPermissionTo('MOD_CTXT') || gb.auth.hasPermissionTo('CTXT_DEV')">
+      <li class="nav-item dropdown" *ngIf="utils.isDeveloper()">
         <a class="nav-link" id="petrvs-context" href="#" role="button" [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside" title="Módulo">
           <span class="d-none d-md-block">
             {{ gb.contexto?.name || "Selecione..." }}
@@ -112,7 +112,7 @@
       </li>
       <li class="nav-item ms-3 ms-lg-2">
         <a class="nav-link" role="button" (click)="openModule({route: ['suporte']})" [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" title="Suporte Petrvs">
-          <i class="bi bi-headset"></i>
+          <i class="bi bi-question-lg"></i>
         </a>
       </li>
       <li class="nav-item ms-3 ms-lg-2">
@@ -276,7 +276,7 @@
             <div class="d-flex membro mb-3 col">
               <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
               <div class="ms-3">
-                Edson Dario Silva de França<br>
+                <b>Edson</b> Dario Silva de <b>França</b><br>
                 <i>Pol. Penal Federal</i><br>
                 <small>Developer</small>
               </div>

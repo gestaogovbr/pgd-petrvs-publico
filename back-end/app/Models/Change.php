@@ -8,29 +8,31 @@ use App\Casts\AsJson;
 
 class Change extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    protected $connection = 'log';
+  protected $connection = 'log';
 
-    protected $table = 'changes';
+  protected $table = 'changes';
 
-    protected $with = [];
+  protected $with = [];
 
-    public $fillable = [
-        'user_id',
-        'date_time',
-        'table_name',
-        'row_id',
-        'type',
-        'delta'
-    ];
+  public $fillable = [
+    'user_id',
+    'date_time',
+    'table_name',
+    'row_id',
+    'type',
+    'delta'
+  ];
 
-    public $timestamps = false;
+  public $timestamps = false;
 
-    protected $casts = [
-        'delta' => AsJson::class
-    ];
+  protected $casts = [
+    'delta' => AsJson::class
+  ];
 
-    public function usuario() { return $this->belongsTo(Usuario::class); }
-
+  public function usuario()
+  {
+    return $this->belongsTo(Usuario::class);
+  }
 }

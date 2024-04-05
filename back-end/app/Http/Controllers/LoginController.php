@@ -19,9 +19,7 @@ use App\Services\UnidadeService;
 use App\Services\CalendarioService;
 use App\Services\UsuarioService;
 use Laravel\Socialite\Facades\Socialite;
-use \SocialiteProviders\Manager\Config;
 use Illuminate\Support\Facades\Http;
-use DateTime;
 use Exception;
 
 class LoginController extends Controller
@@ -100,6 +98,11 @@ class LoginController extends Controller
             }])->first();
             if (isset($usuario->areasTrabalho[0]) && !empty($usuario->areasTrabalho[0]->id)) {
                 $request->session()->put("unidade_id", $usuario->areasTrabalho[0]->id);
+                $config = $usuario->config ?? []; 
+                $config['unidade_id'] = $data["unidade_id"];
+                $usuario->config = $config;
+                $usuario->save();
+
                 return response()->json([
                     "status" => "OK",
                     "unidade" => Unidade::find($data["unidade_id"])

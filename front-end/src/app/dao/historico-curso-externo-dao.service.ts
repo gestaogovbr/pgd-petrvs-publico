@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { DaoBaseService } from './dao-base.service';
-import { HistoricoCursoExterno } from '../models/historico-curso-externo-currriculum.model';
+import { HistoricoCursoExterno } from '../models/historico-curso-externo.model';
 
 @Injectable({
   providedIn: 'root'

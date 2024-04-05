@@ -5,12 +5,14 @@ namespace App\Services;
 use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\Programa;
+use App\Models\Perfil;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Services\ServiceBase;
 use App\Services\RawWhere;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
+use App\Exceptions\ServerException;
 use Exception;
 use Throwable;
 
@@ -54,7 +56,8 @@ class UsuarioService extends ServiceBase
     }
     if (!empty($contents)) {
       $name = $path . "/profile_" . md5($contents) . ".jpg";
-      if (!Storage::exists($name)) Storage::put($name, $contents);
+      if (!Storage::exists($name))
+        Storage::put($name, $contents);
       return $name;
     } else {
       return "";
@@ -67,7 +70,8 @@ class UsuarioService extends ServiceBase
       $integrante["usuario_id"] = $entity->id;
     }
     $this->UnidadeIntegranteService->salvarIntegrantes($this->buffer["integrantes"]);
-    if ($action != ServiceBase::ACTION_INSERT) $this->unidadeIntegranteAtribuicaoService->checkLotacoes($entity->id);
+    if ($action != ServiceBase::ACTION_INSERT)
+      $this->unidadeIntegranteAtribuicaoService->checkLotacoes($entity->id);
   }
 
   public function hasLotacao($id, $usuario = null, $subordinadas = true)
@@ -124,7 +128,7 @@ class UsuarioService extends ServiceBase
    * @param string $pgd_id 
    * @return bool
    */
-  public function isParticipanteHabilitado(string | null $usuarioId = null, string $programaId): bool
+  public function isParticipanteHabilitado(string|null $usuarioId = null, string $programaId): bool
   {
     $key = [$usuarioId, $programaId];
     if ($this->hasBuffer("isParticipanteHabilitado", $key)) {
@@ -144,14 +148,14 @@ class UsuarioService extends ServiceBase
    * @param string $unidade_id 
    * @param string $usuario_id
    */
-  public function isIntegrante(string $atribuicao, string $unidadeId, string | null $usuarioId = null): bool
+  public function isIntegrante(string $atribuicao, string $unidadeId, string|null $usuarioId = null): bool
   {
     $result = false;
     $key = [$atribuicao, $unidadeId, $usuarioId];
     if ($this->hasBuffer("isIntegrante", $key)) {
       $result = $this->getBuffer("isIntegrante", $key);
     } else {
-      $unidadesIntegrantesIds = UnidadeIntegrante::select('id')->where("unidade_id", $unidadeId)->where("usuario_id", isset($usuarioId) ? $usuarioId : parent::loggedUser()->id)->get()->map(fn ($x) => $x->id);
+      $unidadesIntegrantesIds = UnidadeIntegrante::select('id')->where("unidade_id", $unidadeId)->where("usuario_id", isset($usuarioId) ? $usuarioId : parent::loggedUser()->id)->get()->map(fn($x) => $x->id);
       $result = $this->setBuffer("isIntegrante", $key, count($unidadesIntegrantesIds) > 0 && UnidadeIntegranteAtribuicao::where("atribuicao", $atribuicao)->whereIn("unidade_integrante_id", $unidadesIntegrantesIds)->exists());
     }
     return $result;
@@ -162,10 +166,13 @@ class UsuarioService extends ServiceBase
    * Se o usuário não for informado, será utilizado o usuário logado.
    * @param string $unidade_id 
    */
-  public function isLotacao(string | null $usuario_id = null, string $unidade_id): bool
+  public function isLotacao(string|null $usuario_id = null, string $unidade_id): bool
   {
     $usuario = isset($usuario_id) ? Usuario::find($usuario_id) : parent::loggedUser();
-    return $usuario->lotacao->unidade_id == $unidade_id;
+    if ($usuario->lotacao !== null) {
+      return $usuario->lotacao->unidade_id == $unidade_id;
+    }
+    return false;
   }
 
   /**
@@ -174,17 +181,20 @@ class UsuarioService extends ServiceBase
    * @param string $unidade_id 
    * @returns 
    */
-  public function isLotadoNaLinhaAscendente(string | null $unidadeId): bool
+  public function isLotadoNaLinhaAscendente(string|null $unidadeId): bool
   {
     $result = false;
-    if ($unidadeId == null) return $result;
+    if ($unidadeId == null)
+      return $result;
     if ($this->hasBuffer("isLotadoNaLinhaAscendente", $unidadeId)) {
       $result = $this->getBuffer("isLotadoNaLinhaAscendente", $unidadeId);
     } else {
       $linhaAscendente = $this->unidadeService->linhaAscendente($unidadeId);
       foreach ($linhaAscendente as $unidadeId) {
-        if ($this->isIntegrante('LOTADO', $unidadeId)) $result = true;
-      };
+        if ($this->isIntegrante('LOTADO', $unidadeId))
+          $result = true;
+      }
+      ;
       $this->setBuffer("isLotadoNaLinhaAscendente", $unidadeId, $result);
     }
     return $result;
@@ -197,7 +207,8 @@ class UsuarioService extends ServiceBase
     $usuario = $usuario ?? parent::loggedUser();
     foreach ($usuario->areasTrabalho as $lotacao) {
       $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
-      if ($subordinadas) $where[] = $prefix . "path like '%" . $lotacao->unidade_id . "%'";
+      if ($subordinadas)
+        $where[] = $prefix . "path like '%" . $lotacao->unidade_id . "%'";
     }
     $result = implode(" OR ", $where);
     return empty($result) ? "false" : "(" . $result . ")";
@@ -253,10 +264,13 @@ class UsuarioService extends ServiceBase
 
   public function proxyStore(&$data, $unidade, $action)
   {
+    $data["with"] = [];
     $data['cpf'] = $this->UtilService->onlyNumbers($data['cpf']);
-    if (!empty($data['telefone'])) $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
+    if (!empty($data['telefone']))
+      $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
     /* Armazena as informações que serão necessárias no extraStore */
     $this->buffer = ["integrantes" => $this->UtilService->getNested($data, "integrantes")];
+    $this->validarPerfil($data);
     return $data;
   }
 
@@ -266,8 +280,7 @@ class UsuarioService extends ServiceBase
   public function proxyUpdate($data, $unidade)
   {
     $data["with"] = [];
-    $perfilAtual = $this->getById($data)["perfil_id"];
-    if ((($perfilAtual == $this->developerId) || ($data["perfil_id"] != $this->developerId)) && (!$this->isLoggedUserADeveloper())) throw new Exception("Tentativa de alterar o perfil de/para um Desenvolvedor");
+    $this->validarPerfil($data);
     return $data;
   }
 
@@ -279,8 +292,10 @@ class UsuarioService extends ServiceBase
   public function validateStore(&$data, $unidade, $action)
   {
     if ($action == ServiceBase::ACTION_INSERT) {
-      if (empty($data["email"])) throw new Exception("O campo de e-mail é obrigatório");
-      if (empty($data["cpf"])) throw new Exception("O campo de CPF é obrigatório");
+      if (empty($data["email"]))
+        throw new Exception("O campo de e-mail é obrigatório");
+      if (empty($data["cpf"]))
+        throw new Exception("O campo de CPF é obrigatório");
       $query1 = Usuario::where("id", "!=", $data["id"])->where(function ($query) use ($data) {
         return $query->where("cpf", UtilService::onlyNumbers($data["cpf"]))->orWhere("email", $data["email"]);
       });
@@ -304,7 +319,7 @@ class UsuarioService extends ServiceBase
           throw new Exception("Já existe um usuário com mesmo e-mail ou CPF no sistema");
         }
       }
-      if ($data["perfil_id"] == $this->developerId && !$this->isLoggedUserADeveloper()) throw new Exception("Tentativa de inserir um usuário com o perfil de Desenvolvedor");
+      $this->validarPerfil($data);
     }
   }
 
@@ -315,6 +330,22 @@ class UsuarioService extends ServiceBase
         $vinculo->deleteCascade();
       }
       $usuario->fresh();
+    }
+  }
+
+  public function validarPerfil($data)
+  {
+    $perfilAutenticado = $this::loggedUser()->perfil;
+    $perfilNovo = Perfil::find($data['perfil_id']);
+    $perfilAtual = !empty($data['id']) ? $this->getById($data)["perfil_id"] : null;
+
+    if ($data['perfil_id'] != $perfilAtual) {
+      if ($perfilNovo->nivel < $perfilAutenticado->nivel)
+        throw new ServerException("ValidateUsuario", "Não é possível atribuir perfil superior ao do usuário logado.");
+      if ($data["perfil_id"] == $this->developerId && !$this->isLoggedUserADeveloper())
+        throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de/para um Desenvolvedor");
+      if ($perfilAtual == $this->developerId && !$this->isLoggedUserADeveloper())
+        throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de um Desenvolvedor");
     }
   }
 }

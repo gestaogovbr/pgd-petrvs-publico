@@ -505,13 +505,16 @@ class ServiceBase extends DynamicMethods
     $model = App($this->collection);
     $table = $model->getTable();
     $data["select"] = array_map(fn ($field) => str_contains($field, ".") ? $field : $table . "." . $field, array_merge(['id'], $data['fields']));
-    $query = DB::table($table); //->select(array_merge(['id'], $data['fields']));
+    $query = DB::table($table);
     if (method_exists($this, 'proxySearch')) $this->proxySearch($query, $data, $text);
     $likes = ["or"];
     foreach ($data['fields'] as $field) {
       array_push($likes, [$field, 'like', $text]);
     }
-    $where = count($data['where']) > 0 ? [$likes, $data['where']] : $likes;
+    $condicaoDeletados = array_filter($data['where'], fn ($w) => is_array($w) && $w[0] == "deleted_at");
+    if (empty($condicaoDeletados)) array_push($data['where'], ['deleted_at', '==', null]);
+    //$where = count($data['where']) > 0 ? [$likes, $data['where']] : $likes;
+    $where = [$likes, $data['where']];
     $this->applyWhere($query, $where, $data);
     $this->applyOrderBy($query, $data);
     $query->select($data["select"]);
@@ -519,7 +522,6 @@ class ServiceBase extends DynamicMethods
     $values = [];
     foreach ($rows as $row) {
       $row = (array) $row;
-      //$text = join(" - ", array_map(fn($field) => $row[$field], $data['fields']));
       $orderFilds = array_map(fn ($order) => "_" . str_replace(".", "_", $order[0]), $data['orderBy'] ?? []);
       $orderValues = array_map(fn ($field) => $row[$field], $orderFilds);
       array_push($values, [$row['id'], array_map(fn ($field) => $row[$field], $data['fields']), $orderValues]);
@@ -620,7 +622,8 @@ class ServiceBase extends DynamicMethods
   {
     $model = $this->getModel();
     $query = $model::query();
-    $data["with"] = isset($this->joinable) ? $this->getJoinable($data["with"] ?? []) : $data["with"];
+     $data["with"] = isset($data["with"]) ? $data["with"] : [];
+     $data["with"] = isset($this->joinable) ? $this->getJoinable($data["with"]) : $data["with"];
     if (count($data['with']) > 0) {
       $this->applyWith($query, $data);
     }

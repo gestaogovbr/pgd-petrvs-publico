@@ -6,10 +6,10 @@ export type NivelIdioma = "BASICO" | "INTERMEDIARIO" | "AVANCADO" | "FLUENTE";
 
 export class CurriculumIdioma extends Base {
 
-    public idioma: Idioma = 'INGLES';
-    public idiomaFala: NivelIdioma = 'BASICO';
-    public idiomaEscrita: NivelIdioma = 'BASICO';
-    public idiomaEntendimento: NivelIdioma = 'BASICO';  
+  public idioma: Idioma = 'INGLES';
+  public idiomaFala: NivelIdioma = 'BASICO';
+  public idiomaEscrita: NivelIdioma = 'BASICO';
+  public idiomaEntendimento: NivelIdioma = 'BASICO';
 
-    public constructor(data?: any) { super(); this.initialization(data); }
+  public constructor(data?: any) { super(); this.initialization(data); }
 }

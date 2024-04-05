@@ -8,13 +8,15 @@ import { ComponentsModule } from 'src/app/components/components.module';
 import { UteisModule } from '../uteis/uteis.module';
 import { PanelListLogsComponent } from './panel-list-logs/panel-list-logs.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import { PanelSeederComponent } from './panel-seeder/panel-seeder.component';
 
 @NgModule({
   declarations: [
     PanelListComponent,
     PanelLoginComponent,
     PanelFormComponent,
-    PanelListLogsComponent
+    PanelListLogsComponent,
+    PanelSeederComponent
   ],
     imports: [
         CommonModule,

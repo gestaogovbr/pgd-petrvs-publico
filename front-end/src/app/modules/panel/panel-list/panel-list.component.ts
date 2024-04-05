@@ -27,16 +27,13 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
  
       onClick: this.executaMigrations.bind(this)
     },
-    {
-      icon: "bi bi-database-fill-up",
-      label: "Executar Seeders"
-    },
-    {
-      icon: "bi bi-database-x",
-      label: "Resetar DB",
-      disabled: this.gb.ENV==='production',
-      onClick: this.resetDB.bind(this)
-    }
+    
+    // {
+    //   icon: "bi bi-database-x",
+    //   label: "Resetar DB",
+    //   disabled: this.gb.ENV==='production',
+    //   onClick: this.resetDB.bind(this)
+    // }
   ];
 
   constructor(public injector: Injector, dao: TenantDaoService,private authService: AuthPanelService) {
@@ -59,7 +56,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
     this.options.push({
       icon: "bi bi-trash",
       label: "Excluir",
-      onClick: this.delete.bind(this)
+      onClick: this.deleteTenant.bind(this)
     });
     this.options.push({
       icon: "bi bi-trash",
@@ -67,12 +64,44 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
       onClick: (tenant: Tenant) => this.go.navigate({route: ["panel", tenant.id, "logs"]})
     });
 
+    this.options.push({
+      icon: "bi bi-database-fill-gear",
+      label: "Executar Seeder",
+      onClick: (tenant: Tenant) => this.go.navigate({route: ["panel", tenant.id, "seeder"]})
+    });
+
+  }
+
+  public dynamicButtons(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    result.push(
+      { label: "Apagar dados", icon: 'bi bi-database-dash', color: 'danger', onClick: this.cleanDB.bind(this) }
+    )
+    return result;
   }
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     return result;
   }
+
+  public cleanDB(row: any){
+    const self = this;
+    this.dialog.confirm("Deseja apagar os dados?", "Essa ação é irreversível").then(confirm => {
+      if (confirm) {
+        self.loading = true;
+        this.dao!.cleanDB(row).then(function () {
+          self.loading = false;
+          self.dialog.alert("Sucesso", "Executado com sucesso!");
+          window.location.reload();
+        }).catch(function (error) {
+          self.loading = false;
+          self.dialog.alert("Erro", "Erro ao executar: " + error?.message ? error?.message : error);
+        });
+      }
+    });
+  }
+
   public resetDB(row: any) {
     const self = this;
     this.dialog.confirm("Deseja Resetar o DB?", "Deseja realmente executar o reset?").then(confirm => {
@@ -196,6 +225,19 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
         .then((user) => {
           this.title = "Bem vindo "+user.nome+" - Voce está em Ambiente "+this.gb.ENV;
         })
+  }
+
+  public deleteTenant(row: any) {
+    const self = this;
+    this.dialog.confirm("Excluir Tenant?", "Deseja realmente excluir esse tenant ("+row.id+")? ").then(confirm => {
+      if (confirm) {
+        this.dao!.deleteTenant(row).then(function () {
+          self.dialog.alert("Sucesso", "Migration executada com sucesso!");
+        }).catch(function (error) {
+          self.dialog.alert("Erro", "Erro ao executar a migration: " + error?.message ? error?.message : error);
+        });
+      }
+    });
   }
 }
 

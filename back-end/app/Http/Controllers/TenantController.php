@@ -106,6 +106,18 @@ class TenantController extends ControllerBase {
         }
     }
 
+    public function cleandb(Request $request) {
+        try {
+            $data = $request->tenant_id??null;
+            return response()->json([
+                'success' => true,
+                'data' => $this->service->cleanDB($data)
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
     public function seeders(Request $request) {
         try {
             $data = $request->validate([
@@ -156,6 +168,18 @@ class TenantController extends ControllerBase {
             return response()->json([
                 'success' => true,
                 'data' => $this->service->databaseSeeder($data['tenant_id'])
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function deleteTenant(Request $request) {
+        try {
+            $data= $this->service->deleteTenant($request->tenant_id);
+            return response()->json([
+                'success' => true,
+                'data' =>$data
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);

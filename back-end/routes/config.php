@@ -20,9 +20,15 @@ Route::middleware(['api', 'panel'])->prefix('Tenant')->group(function () {
     Route::post('database', [TenantController::class, 'database']);
     Route::post('tipo-capacidade', [TenantController::class, 'tiposCapacidades']);
     Route::post('migrations', [TenantController::class, 'migrations']);
-    Route::post('seeders', [TenantController::class, 'seeders']);
-    Route::get('resetdb', [TenantController::class, 'resetdb']);
+    Route::post('seeders', [TenantController::class, 'seeders']);    
 });
+
+Route::middleware(['api', 'panel'])->prefix('Tenant')->group(function () {
+    Route::get('resetdb', [TenantController::class, 'resetdb']);
+    Route::post('cleandb', [TenantController::class, 'cleandb']);
+    Route::post('delete-tenant', [TenantController::class, 'deleteTenant']);
+});
+
 Route::middleware(['api', 'panel'])->prefix('TenantLogs')->group(function () {
     Route::post('store', [TenantsLogsController::class, 'store']);
     Route::post('destroy', [TenantsLogsController::class, 'destroy']);
