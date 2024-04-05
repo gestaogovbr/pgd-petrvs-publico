@@ -24,6 +24,8 @@ import { InputNumberComponent } from '../input/input-number/input-number.compone
 import { DOCUMENT } from '@angular/common';
 import { InputBase } from '../input/input-base';
 import { FormHelperService } from 'src/app/services/form-helper.service';
+import { Subject, takeUntil } from 'rxjs';
+import { DialogService } from 'src/app/services/dialog.service';
 
 
 @Component({
@@ -112,11 +114,20 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
     return this.noMargin !== undefined;
   }
 
-  constructor(injector: Injector, @Inject(DOCUMENT) private document: any) {
+  private unsubscribe$ = new Subject<void>();
+
+  constructor(injector: Injector, @Inject(DOCUMENT) private document: any, private dialog: DialogService) {
     super(injector);
     this.fb = injector.get<FormBuilder>(FormBuilder);
     this.go = injector.get<NavigateService>(NavigateService);
     this.fh = injector.get<FormHelperService>(FormHelperService);
+
+    this.dialog.modalClosed
+    .pipe(takeUntil(this.unsubscribe$))
+    .subscribe(() => {
+      // Execute a lógica para remover os itens do formulário
+      this.clearGridNoSaved();
+    });
   }
 
   ngOnInit(): void {
@@ -226,4 +237,34 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
     }
     return false
   }
+
+  clearGridNoSaved(form: FormGroup = this.form!) {
+    this.removeAddStatusRecursively(form.value);   
+	}
+
+  removeAddStatusRecursively(obj: any) { 
+    
+    if (Array.isArray(obj)) {
+        obj.forEach((item: any) => {
+            if (item && typeof item === 'object') {
+                this.removeAddStatusRecursively(item);
+            }
+        });
+    } else if (obj !== null && typeof obj === 'object') {
+        Object.keys(obj).forEach((key) => {
+            if (key === '_status' && obj[key] === 'ADD') {
+              const keys = Object.keys(obj);
+              if(keys.length <= 2) obj[key] = "DELETE"
+            } else {
+                this.removeAddStatusRecursively(obj[key]);
+            }
+        });
+    }
+}
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
 }

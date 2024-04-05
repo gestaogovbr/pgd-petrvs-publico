@@ -169,7 +169,10 @@ class UsuarioService extends ServiceBase
   public function isLotacao(string|null $usuario_id = null, string $unidade_id): bool
   {
     $usuario = isset($usuario_id) ? Usuario::find($usuario_id) : parent::loggedUser();
-    return $usuario->lotacao->unidade_id == $unidade_id;
+    if ($usuario->lotacao !== null) {
+      return $usuario->lotacao->unidade_id == $unidade_id;
+    }
+    return false;
   }
 
   /**
@@ -334,7 +337,7 @@ class UsuarioService extends ServiceBase
   {
     $perfilAutenticado = $this::loggedUser()->perfil;
     $perfilNovo = Perfil::find($data['perfil_id']);
-    $perfilAtual = $this->getById($data)["perfil_id"];
+    $perfilAtual = !empty($data['id']) ? $this->getById($data)["perfil_id"] : null;
 
     if ($data['perfil_id'] != $perfilAtual) {
       if ($perfilNovo->nivel < $perfilAutenticado->nivel)

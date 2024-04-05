@@ -17,19 +17,22 @@
     </column>
     <column title="Opções" [template]="columnOpcoes">
       <ng-template let-row="row" #columnOpcoes>
-        <ng-container *ngIf="['EMOJI', 'SELECT', 'MULTI_SELECT', 'RADIO', 'CHECK'].includes(row.tipo)">
+        <ng-container *ngIf="['EMOJI', 'SELECT', 'MULTI_SELECT', 'RADIO', 'CHECK','RADIO_INLINE','SEARCH'].includes(row.tipo)">
           <div class="one-per-line">
-            <badge *ngFor="let resposta of row.respostas; index as i" [label]="resposta.key" [textValue]="resposta.data?.valorResposta || '' ? resposta.data?.valorResposta || '' : (i + 1).toString()" [icon]="resposta.icon" class="ml"></badge>
+            <badge *ngFor="let resposta of row.respostas_possiveis; index as i" [label]="resposta?.value ? resposta.value : resposta.key" [textValue]="resposta.data?.valorResposta || '' ? resposta.data?.valorResposta || '' : (i + 1).toString()" [icon]="resposta.icon" class="ml"></badge>
           </div>
         </ng-container>
         <ng-container *ngIf="row.tipo == 'NUMBER'">
-          <badge *ngIf="row.respostas?.min == 0 || ''" label="Mínimo" textValue="0"></badge>
-          <badge *ngIf="row.respostas?.min > 0 || ''" label="Mínimo" [textValue]="row.respostas?.min || '' "></badge>
-          <badge label="Máximo" [textValue]="row.respostas?.max || ''" class="ml"></badge>
+          <badge *ngIf="row?.respostas_possiveis?.min == 0 || ''" label="Mínimo" textValue="0"></badge>
+          <badge *ngIf="row?.respostas_possiveis?.min > 0 || ''" label="Mínimo" [textValue]="row?.respostas_possiveis?.min || '' "></badge>
+          <badge label="Máximo" [textValue]="row?.respostas_possiveis?.max || ''" class="ml"></badge>
         </ng-container>
         <ng-container *ngIf="row.tipo == 'TIMER'">
         </ng-container>
         <ng-container *ngIf="row.tipo == 'DATE_TIME'">
+        </ng-container>
+        <ng-container *ngIf="row.tipo == 'SEARCH'">
+          <badge label="Pesquisa em lista"></badge>
         </ng-container>
       </ng-template>
     </column>

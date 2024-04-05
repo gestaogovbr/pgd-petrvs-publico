@@ -19,7 +19,13 @@ class Template extends ModelBase
   protected static function booted()
   {
     static::creating(function ($template) {
-      $template->numero = DB::select("CALL sequence_template_numero()")[0]->number;
+      $number = 1;
+      $results = DB::select("CALL sequence_template_numero()");
+      if (!empty($results)) {
+        $number = $results[0]->number;
+      }
+
+      $template->numero = $number;
     });
   }
 
