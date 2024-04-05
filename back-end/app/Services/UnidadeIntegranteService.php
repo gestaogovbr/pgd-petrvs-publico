@@ -57,7 +57,7 @@ class UnidadeIntegranteService extends ServiceBase
             array_push($atribuicoesFinais, "LOTADO");
           } else $integranteNovoOuExistente->deleteCascade();  // dentre as atribuições do vínculo não está a de LOTADO... neste caso, apaga o vínculo e suas atribuições
         } else {
-          $this->validarAtribuicoes($vinculo["atribuicoes"]);   // Verifica se é 'GESTOR', 'GESTOR_SUBSTITUTO' e 'GESTOR_DELEGADO' ao mesmo tempo
+          $this->validarAtribuicoes($vinculo["atribuicoes"], $usuario->nome);   // Verifica se é 'GESTOR', 'GESTOR_SUBSTITUTO' e 'GESTOR_DELEGADO' ao mesmo tempo
           $unidadeLotacao = $usuario->lotacao ? $usuario->lotacao->unidade : null;                                    // unidade de lotação do usuário
           $unidadeGerenciaTitular = $usuario->gerenciaTitular ? $usuario->gerenciaTitular->unidade : null;            // unidade onde eventualmente o usuário já é gestor titular
           $atualGestorUnidade = $unidade->gestor ? $unidade->gestor->usuario : null;                                  // usuário que é o atual gestor titular da unidade
@@ -140,8 +140,8 @@ class UnidadeIntegranteService extends ServiceBase
     return $result;
   }
 
-  public function validarAtribuicoes($atribuicoes)
+  public function validarAtribuicoes($atribuicoes, string $nome = null)
   {
-    if (count(array_intersect(['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO'], $atribuicoes)) > 1) throw new ServerException("ValidateIntegrante", "A um mesmo servidor só pode ser atribuída uma função de gestor, para uma mesma Unidade!");
+    if (count(array_intersect(['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO'], $atribuicoes)) > 1) throw new ServerException("ValidateIntegrante", "A um mesmo servidor $nome só pode ser atribuída uma função de gestor, para uma mesma Unidade!");
   }
 }
