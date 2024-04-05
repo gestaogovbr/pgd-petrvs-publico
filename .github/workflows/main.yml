@@ -8,10 +8,10 @@ on:
       - dataprev_treina
   pull_request:
     branches:
-      - main
       - dataprev_dsv
       - dataprev_hmg
       - dataprev_treina
+      - dataprev_producao
 
 jobs:
   build_and_deploy_dsv:
@@ -106,13 +106,13 @@ jobs:
           sshpass -p $SSH_PASSWORD ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "sh install-pgd.sh < /dev/null"
           echo "Implantação concluída com sucesso em TREINA."
   build_and_deploy_producao:
-    name: Build and Deploy on Dataprev Producao
-    if: github.ref == 'refs/heads/main'
+    name: Build on Producao
+    if: github.ref == 'refs/heads/dataprev_producao'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Build and Deploy Producao
+      - name: Build Producao
         env:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
           DOCKER_HUB_TAG: latest
