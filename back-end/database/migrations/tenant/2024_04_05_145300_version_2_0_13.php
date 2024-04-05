@@ -14,7 +14,7 @@ class Version2013 extends Migration
      */
     public function up()
     {
-        $this->version("2.0.13"); 
+        $this->version("2.0.13");
     }
 
     /**
