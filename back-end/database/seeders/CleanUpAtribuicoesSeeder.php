@@ -105,8 +105,7 @@ class CleanUpAtribuicoesSeeder extends Seeder
                             if ($atribuicoesRestantes == 0) {
                                 DB::table('unidades_integrantes')
                                     ->where('id', '=', $atribuicao->unidade_integrante_id)
-                                    ->where('usuario_id',
-                                    ,'=', $usuarioId) // Certifique-se de que este é o nome correto do campo para o ID do usuário.
+                                    ->where('usuario_id','=', $usuarioId) // Certifique-se de que este é o nome correto do campo para o ID do usuário.
                                     ->delete();
                             }
   
