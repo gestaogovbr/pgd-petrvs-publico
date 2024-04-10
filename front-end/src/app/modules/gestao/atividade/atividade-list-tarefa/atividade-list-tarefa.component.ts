@@ -36,6 +36,7 @@ export class AtividadeListTarefaComponent extends PageBase {
     return this._atividade;
   }
 
+  public canAdd: boolean = false;
   public formEdit: FormGroup;
   public dao: AtividadeTarefaDaoService;
   public atividadeService: AtividadeService;
@@ -47,6 +48,7 @@ export class AtividadeListTarefaComponent extends PageBase {
   }
 
   private _atividade?: Atividade;
+  
 
   constructor(public injector: Injector) {
     super(injector);
@@ -61,6 +63,8 @@ export class AtividadeListTarefaComponent extends PageBase {
 
   ngOnInit(): void {
     super.ngOnInit();
+    if(this.atividade?.descricao != '') this.canAdd = true;
+    
     if (this.queryParams?.id_processo) {
       this.id_processo = this.queryParams?.id_processo;
     }
