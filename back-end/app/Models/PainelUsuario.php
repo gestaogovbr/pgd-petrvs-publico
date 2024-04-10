@@ -21,11 +21,18 @@ class PainelUsuario extends Authenticatable
     'nome',
     'email',
     'cpf',
-    'password'
+    'password',
+    'nivel'
   ];
 
   protected $hidden = [
     'password',
     'remember_token',
   ];
+
+   // Has
+   public function tenants()
+   {
+     return $this->hasMany(Tenant::class);
+   }
 }

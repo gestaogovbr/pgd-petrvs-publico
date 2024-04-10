@@ -2,12 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\CalendarioService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use App\Services\PainelUsuarioService;
+use App\Exceptions\LogError;
+use Throwable;
 class PainelUsuarioController extends Controller
 {
+
+    protected $service;
+
+    public function __construct(PainelUsuarioService $service)
+    {
+        $this->service = $service;
+    }
+
     public function login(Request $request)
     {
 
@@ -56,6 +65,29 @@ class PainelUsuarioController extends Controller
         } else {
             // Usuário não autenticado
             return response()->json(['authenticated' => false]);
+        }
+    }
+
+    public function query(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'page' => ['required'],
+                'with' => ['array'],
+                'limit' => ['required'],
+                'orderBy' => ['array'],
+                'deleted' => ['nullable'],
+                'where' => ['array']
+            ]);
+            $result = $this->service->query($data);
+            return response()->json([
+                'success' => true,
+                'count' => $result['count'],
+                'rows' => $result['rows'],
+                'extra' => $result['extra']
+            ]);
+        } catch (Throwable $e) {
+            return LogError::newError("QUERY: exception", $e); //response()->json(['error' => $e->getMessage()]);
         }
     }
 }
