@@ -167,5 +167,16 @@ class PainelUsuarioSeeder extends Seeder
       'created_at' => now(),
       'updated_at' => now(),
     ]);
+
+    PainelUsuario::firstOrCreate([
+      'email' => 'programadegestaomgi@gmail.com',
+    ], [
+      'nome' => 'PGD',
+      'password' => md5('40587302003'),
+      'cpf' => '40587302003',
+      'email_verified_at' => now(),
+      'created_at' => now(),
+      'updated_at' => now(),
+    ]);
   }
 }
