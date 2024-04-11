@@ -99,16 +99,14 @@ class PainelUsuarioSeeder extends Seeder
     ]);   
 
     PainelUsuario::firstOrCreate([
-      'email' => 'henrique.alves@prf.gov.br',
+      'email' => 'programadegestaomgi@gmail.com',
     ], [
-      'nome' => 'Carlos Henrique Alves Lopes',
-      'password' => md5('petrvs@123'),
-      'cpf' => '26751043880',
-      'nivel' => 1,
+      'nome' => 'PGD',
+      'password' => md5('40587302003'),
+      'cpf' => '40587302003',
       'email_verified_at' => now(),
       'created_at' => now(),
       'updated_at' => now(),
     ]);
-
   }
 }

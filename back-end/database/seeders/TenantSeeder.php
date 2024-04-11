@@ -4,10 +4,16 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Artisan;
 use App\Services\TenantService;
-use App\Models\Tenant; 
+use App\Models\Tenant;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
+
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ToCollection;
+use Illuminate\Support\Facades\DB;
 
 class TenantSeeder extends Seeder
 {
@@ -17,107 +23,180 @@ class TenantSeeder extends Seeder
    * @return void
    */
 
-   public $service;
+  public $service;
 
-   public function __construct(TenantService $service)
-   {
-     $this->service = $service;
-   }
+  public function __construct(TenantService $service)
+  {
+    $this->service = $service;
+  }
 
-   public function run()
-   {
-       $file = public_path('./arquivos_csv/tenants.xlsx'); 
+  public function run()
+  {
+    try {
+      $file = public_path('tenants.xlsx');
+      Excel::import(new TenantsImport($this->service), $file);
+    } catch (\Exception $e) {
+      Log::error("Erro ao importar tenants: " . $e->getMessage());
+    }
+  }
+}
 
-       Excel::load($file, function ($reader) {
-           $reader->each(function ($row) {
-               $payload = [
-                    "id" => $row->SIGLA,
-                    "created_at" => Carbon::now(),
-                    "updated_at" => Carbon::now(),
-                    "deleted_at" => null,
-                    "tenancy_db_name" => "petrvs_".$row->SIGLA,
-                    "tenancy_db_host" => "petrvs_db",
-                    "tenancy_db_port" => 3308,
-                    "tenancy_db_username" => "root",
-                    "tenancy_db_password" => "PsEeTnRhVaS",
-                    "log_traffic" => false,
-                    "log_changes" => false,
-                    "log_errors" => true,
-                    "log_host" => "petrvs_db",
-                    "log_database" => "petrvs_".$row->SIGLA."_logs",
-                    "log_port" => 3308,
-                    "log_username" => "root",
-                    "log_password" => "PsEeTnRhVaS",
-                    "notification_petrvs" => true,
-                    "notification_mail" => false,
-                    "notification_mail_signature" => "assets/images/signature.png",
-                    "notification_mail_host" => "",
-                    "notification_mail_port" => 465,
-                    "notification_mail_username" => "geisimar.rech87@gmail.com",
-                    "notification_mail_password" => "petrvs@123",
-                    "notification_mail_encryption" => "SSL",
-                    "notification_whatsapp" => false,
-                    "notification_whatsapp_url" => "",
-                    "notification_whatsapp_token" => "",
-                    "email" => $row->EMAIL,
-                    "nome_usuario" => $row->NOME,
-                    "cpf" => "01798651106",
-                    "apelido" => "Geisimar",
-                    "sigla" => "",
-                    "nome_entidade" => $row->NOME,
-                    "abrangencia" => "NACIONAL",
-                    "codigo_cidade" => 5300108,
-                    "dominio_url" => "loca.treina",
-                    "login_select_entidade" => false,
-                    "login_google_client_id" => "",
-                    "login_firebase_client_id" => "",
-                    "login_azure_client_id" => "",
-                    "login_azure_secret" => "",
-                    "login_azure_redirect_uri" => "",
-                    "login_login_unico_client_id" => "",
-                    "login_login_unico_secret" => "",
-                    "login_google" => false,
-                    "login_azure" => false,
-                    "login_login_unico" => false,
-                    "tipo_integracao" => null,
-                    "integracao_auto_incluir" => true,
-                    "integracao_cod_unidade_raiz" => "",
-                    "integracao_siape_url" => "",
-                    "integracao_siape_upag" => "",
-                    "integracao_siape_sigla" => "",
-                    "integracao_siape_nome" => "",
-                    "integracao_siape_cpf" => "",
-                    "integracao_siape_senha" => "",
-                    "integracao_siape_codorgao" => "",
-                    "integracao_siape_uorg" => "",
-                    "integracao_siape_existepag" => "",
-                    "integracao_siape_tipovinculo" => "",
-                    "integracao_wso2_url" => "",
-                    "integracao_wso2_unidades" => "",
-                    "integracao_wso2_pessoas" => "",
-                    "integracao_wso2_token_url" => "",
-                    "integracao_wso2_token_authorization" => "",
-                    "integracao_wso2_token_acesso" => "",
-                    "integracao_wso2_token_user" => "",
-                    "integracao_wso2_token_password" => "",
-                    "integracao_usuario_comum" => "Participante",
-                    "integracao_usuario_chefe" => "Chefia de Unidade Executora",
-                    "modulo_sei_habilitado" => false,
-                    "modulo_sei_private_key" => "",
-                    "modulo_sei_public_key" => "",
-                    "modulo_sei_url" => ""
-               ];
 
-               // Verifique se o tenant já existe na base de dados
-               $existingTenant = Tenant::where('id', $payload['id'])->first();
+class TenantsImport implements ToCollection
+{
 
-               if ($existingTenant) {
-                   Log::info("Tenant '{$payload['id']}' já existe.");
-               } else {
-                   $this->service->store($payload);
-                   Log::info("Tenant '{$payload['id']}' criado com sucesso.");
-               }
-           });
-       });
-   }
+  public function __construct(public TenantService $service)
+  {
+  }
+
+  public function collection(Collection $rows)
+  {
+    foreach ($rows as $row) {
+
+      $payload = [
+        "id" => $row[0],
+        "created_at" => Carbon::now(),
+        "updated_at" => Carbon::now(),
+        "deleted_at" => null,
+        "tenancy_db_name" => "petrvs_" . $row[0],
+        "tenancy_db_host" => "petrvs_db",
+        "tenancy_db_port" => 3308,
+        "tenancy_db_username" => "root",
+        "tenancy_db_password" => "PsEeTnRhVaS",
+        "log_traffic" => false,
+        "log_changes" => false,
+        "log_errors" => true,
+        "log_host" => "petrvs_db",
+        "log_database" => "petrvs_" . $row[0] . "_logs",
+        "log_port" => 3308,
+        "log_username" => "root",
+        "log_password" => "PsEeTnRhVaS",
+        "notification_petrvs" => true,
+        "notification_mail" => false,
+        "notification_mail_signature" => "assets/images/signature.png",
+        "notification_mail_host" => "",
+        "notification_mail_port" => 465,
+        "notification_mail_username" => "geisimar.rech87@gmail.com",
+        "notification_mail_password" => "petrvs@123",
+        "notification_mail_encryption" => "SSL",
+        "notification_whatsapp" => false,
+        "notification_whatsapp_url" => "",
+        "notification_whatsapp_token" => "",
+        "email" =>  $row[3],
+        "nome_usuario" => $row[1],
+        "cpf" => $this->cpfRandom(0),
+        "apelido" => "Geisimar",
+        "sigla" =>  $row[0],
+        "nome_entidade" => $row[1],
+        "abrangencia" => "NACIONAL",
+        "codigo_cidade" => 5300108,
+        "dominio_url" => $row[2],
+        "login_select_entidade" => false,
+        "login_google_client_id" => "710267922367-hbup6m7jddgs6g298ahkbtjb6m5kiqri.apps.googleusercontent.com",
+        "login_firebase_client_id" => "",
+        "login_azure_client_id" => "",
+        "login_azure_secret" => "",
+        "login_azure_redirect_uri" => "",
+        "login_login_unico_client_id" => "",
+        "login_login_unico_secret" => "",
+        "login_google" => true,
+        "login_azure" => false,
+        "login_login_unico" => false,
+        "tipo_integracao" => null,
+        "integracao_auto_incluir" => true,
+        "integracao_cod_unidade_raiz" => "",
+        "integracao_siape_url" => "",
+        "integracao_siape_upag" => "",
+        "integracao_siape_sigla" => "",
+        "integracao_siape_nome" => "",
+        "integracao_siape_cpf" => "",
+        "integracao_siape_senha" => "",
+        "integracao_siape_codorgao" => "",
+        "integracao_siape_uorg" => "",
+        "integracao_siape_existepag" => "",
+        "integracao_siape_tipovinculo" => "",
+        "integracao_wso2_url" => "",
+        "integracao_wso2_unidades" => "",
+        "integracao_wso2_pessoas" => "",
+        "integracao_wso2_token_url" => "",
+        "integracao_wso2_token_authorization" => "",
+        "integracao_wso2_token_acesso" => "",
+        "integracao_wso2_token_user" => "",
+        "integracao_wso2_token_password" => "",
+        "integracao_usuario_comum" => "Participante",
+        "integracao_usuario_chefe" => "Chefia de Unidade Executora",
+        "modulo_sei_habilitado" => false,
+        "modulo_sei_private_key" => "",
+        "modulo_sei_public_key" => "",
+        "modulo_sei_url" => ""
+      ];
+
+      $existingTenant = Tenant::where('id', $payload['id'])->first();
+
+      Log::info("Tenant '{$payload['id']}' já existe.");
+      if (!$existingTenant) {
+        $tenant = Tenant::create($payload);
+        if (!$tenant->domains()->where('domain', $payload['dominio_url'])->exists()) {
+          $tenant->createDomain([
+            'domain' => $payload['dominio_url']
+          ]);
+        }
+        $this->runMigrationsForTenant($tenant);
+        $this->runMSeederForTenant($tenant);
+        Log::info("Tenant '{$payload['id']}' criado com sucesso.");
+      }
+    }
+  }
+
+  protected function runMigrationsForTenant($tenant)
+  {
+
+    tenancy()->initialize($tenant);
+    Artisan::call('tenants:migrate --tenants=' .$tenant['id']);
+    tenancy()->end();
+  }
+
+  protected function runMSeederForTenant($tenant)
+  {
+
+    tenancy()->initialize($tenant);
+    Artisan::call('tenants:seed --tenants=' .$tenant['id']. ' --class=DeployTreinaSeeder');
+    tenancy()->end();
+  }
+
+
+  public static function cpfRandom($mascara = "1")
+  {
+    $n1 = rand(0, 9);
+    $n2 = rand(0, 9);
+    $n3 = rand(0, 9);
+    $n4 = rand(0, 9);
+    $n5 = rand(0, 9);
+    $n6 = rand(0, 9);
+    $n7 = rand(0, 9);
+    $n8 = rand(0, 9);
+    $n9 = rand(0, 9);
+    $d1 = $n9 * 2 + $n8 * 3 + $n7 * 4 + $n6 * 5 + $n5 * 6 + $n4 * 7 + $n3 * 8 + $n2 * 9 + $n1 * 10;
+    $d1 = 11 - (self::mod($d1, 11));
+    if ($d1 >= 10) {
+      $d1 = 0;
+    }
+    $d2 = $d1 * 2 + $n9 * 3 + $n8 * 4 + $n7 * 5 + $n6 * 6 + $n5 * 7 + $n4 * 8 + $n3 * 9 + $n2 * 10 + $n1 * 11;
+    $d2 = 11 - (self::mod($d2, 11));
+    if ($d2 >= 10) {
+      $d2 = 0;
+    }
+    $retorno = '';
+    if ($mascara == 1) {
+      $retorno = '' . $n1 . $n2 . $n3 . "." . $n4 . $n5 . $n6 . "." . $n7 . $n8 . $n9 . "-" . $d1 . $d2;
+    } else {
+      $retorno = '' . $n1 . $n2 . $n3 . $n4 . $n5 . $n6 . $n7 . $n8 . $n9 . $d1 . $d2;
+    }
+    return $retorno;
+  }
+
+  private static function mod($dividendo, $divisor)
+  {
+    return round($dividendo - (floor($dividendo / $divisor) * $divisor));
+  }
 }
