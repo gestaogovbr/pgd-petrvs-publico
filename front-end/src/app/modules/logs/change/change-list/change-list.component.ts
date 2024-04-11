@@ -77,7 +77,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
       let user_ids = this.changes.map((change: Change) => {return change.user_id})     
       user_ids = Array.from(new Set(user_ids))
       this.carregaResposaveis(user_ids)
-      this.montaRelacoes(this.changes)
+      if(this.changes.length > 1) this.montaRelacoes(this.changes)
     }
   }
 

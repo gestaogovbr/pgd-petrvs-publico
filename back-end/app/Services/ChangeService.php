@@ -25,6 +25,7 @@ class ChangeService extends ServiceBase
 
             $model = Str::singular($rows[0]['table_name']);
             $modelClass = "App\\Models\\" . Str::studly($model);
+            $relacoes = [];
 
             if (class_exists($modelClass)) {
                 $relacoes = $this->getModelRelations($modelClass);
