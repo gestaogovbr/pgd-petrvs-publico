@@ -47,6 +47,12 @@ class JobAgendadoSeeder extends Seeder
           'ativo' => true
       ],
       [
+        'nome_do_job' => 'LogJob',
+        'diario' => true,
+        'horario' => '10:31:00',
+        'ativo' => true
+      ],
+      [
           'nome_do_job' => 'LogJob',
           'diario' => true,
           'horario' => '16:31:00',

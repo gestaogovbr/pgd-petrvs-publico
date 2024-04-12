@@ -662,8 +662,8 @@ class IntegracaoService extends ServiceBase
                   'deleted_at' => null,
                 ];
 
-                $query_usuario = DB::table('usuarios')->where('email', $servidor['emailfuncional']);
-                $query_is = DB::table('integracao_servidores')->where('emailfuncional', $servidor['emailfuncional']);
+                $query_usuario = DB::table('usuarios')->where('cpf', $servidor['cpf']);
+                $query_is = DB::table('integracao_servidores')->where('cpf', $servidor['cpf']);
 
                 // Se não já não foi informado pela integracao (registro na memória), não está na tabela usuários
                 // nem na tabela integracao_servidores, registrar na tabela integracao_servidores

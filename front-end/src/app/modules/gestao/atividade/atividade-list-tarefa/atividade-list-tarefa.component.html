@@ -1,4 +1,4 @@
-<grid [control]="control" [add]="addTarefa.bind(this)" [disabled]="disabled ? 'true' : undefined" [minHeight]="50" [hasEdit]="false" [hasDelete]="false" [editable]="editable ? 'true' : undefined">
+<grid [control]="control" [add]="addTarefa.bind(this)" [disabled]="disabled ? 'true' : undefined" [minHeight]="50" [hasEdit]="false" [hasDelete]="false" [editable]="editable ? 'true' : undefined" [hasAdd]="canAdd">
     <columns>
         <column [title]="lex.translate('Tipo de Tarefa') + ' e Descrição'" [template]="tipoTarefaDescricao">
             <ng-template let-row="row" #tipoTarefaDescricao>
