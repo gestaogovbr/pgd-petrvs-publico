@@ -105,6 +105,7 @@ class TenantService extends ServiceBase
         }
       });
     }
+    tenancy()->end();
   }
 
   public function generateCertificateKeys()
