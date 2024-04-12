@@ -52,12 +52,14 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     if(in_array("planoTrabalho:id", $data["with"])) {
       $planosTrabalhosIds = array_unique(array_map(fn ($v) => $v["plano_trabalho_id"], $rows->toArray()));
       $planosTrabalhos = PlanoTrabalho::with([
-        "unidade:id,sigla,nome",
+        "unidade:id,sigla,nome,unidade_pai_id",
         "unidade.gestor:id,unidade_id,usuario_id",
         "unidade.gestoresSubstitutos:id,unidade_id,usuario_id",
+        "unidade.unidadePai.gestor:id,unidade_id,usuario_id",
+        "unidade.unidadePai.gestoresSubstitutos:id,unidade_id,usuario_id",
         "tipoModalidade:id,nome",
         "usuario:id,nome,apelido,url_foto,foto_perfil"
-      ])->whereIn("id", $planosTrabalhosIds)->get()->all();
+      ])->whereIn("id", $planosTrabalhosIds)->get()->all();      
       $programasIds = array_unique(array_map(fn ($v) => $v["programa_id"], $planosTrabalhos));
       $programas = Programa::with(["tipoAvaliacaoPlanoTrabalho.notas.justificativas"])->whereIn("id", $programasIds)->get()->all();
       $result["planos_trabalhos"] = $planosTrabalhos;
