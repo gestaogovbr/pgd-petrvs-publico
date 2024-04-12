@@ -14,7 +14,6 @@ on:
       - dataprev_hmg
       - dataprev_treina
       - dataprev_producao
-
 jobs:
   build_producao:
     name: Build on Producao

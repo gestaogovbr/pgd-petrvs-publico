@@ -281,8 +281,9 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     const tempoPlanejado = this.calendar.horasUteis(this.entity!.data_inicio, this.entity!.data_fim, planoTrabalho!.carga_horaria, this.unidade!, "DISTRIBUICAO");
     const dataInicio = this.util.maxDate(this.util.setTime(this.entity!.data_inicio, 0, 0, 0), planoTrabalho!.data_inicio);
     const dataFim = this.util.minDate(this.util.setTime(this.entity!.data_fim, 23, 59, 59), planoTrabalho!.data_fim);
-    return new Atividade({
-      id: this.dao!.generateUuid(),
+    let id = this.dao!.generateUuid();
+    let atividade = new Atividade({
+      id: id,
       plano_trabalho: planoTrabalho,
       plano_trabalho_entrega: entrega,
       plano_trabalho_consolidacao: this.entity,
@@ -317,7 +318,8 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
         extra: undefined,
         _status: []
       }
-    });
+    });    
+    return atividade
   }
 
   public async loadAtividade(form: FormGroup, row: any) {
