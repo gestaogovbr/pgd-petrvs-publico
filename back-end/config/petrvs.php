@@ -4,9 +4,10 @@ return [
     'tenant' => [
         'type' => env('PETRVS_TENANT_TYPE', 'request')
     ],
-    'entidade' => env('PETRVS_ENTIDADE', 'PRF'),
+    'entidade' => env('PETRVS_ENTIDADE', 'MGI'),
     'auto-login' => env('PETRVS_AUTO_LOGIN', ''),
     'suporte' => env('PETRVS_SUPORTE', ''),
+    'edition' => env('PETRVS_ENTIDADE', 'MGI'),
     'logo' => env('PETRVS_LOGO', ''),
     'timezone' => env('PETRVS_SERVIDOR_TIMEZONE', -3),
     'api-max-expiration-time-token' => env('PETRVS_API_MAX_EXPIRATION_TIME_TOKEN', 60000),
