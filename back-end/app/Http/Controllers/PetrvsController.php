@@ -37,7 +37,7 @@ class PetrvsController extends ControllerBase
       $config = json_encode([
         "api_url" => $app_config["url"],
         "app_env" => $app_config["env"],
-        "edicao" => "PRF",
+        "edicao" => "MGI",
         "entidade" => $petrvs_config["entidade"],
         "suporte_url" => $petrvs_config["suporte"],
         "logo_url" => $petrvs_config["logo"],
@@ -63,11 +63,12 @@ class PetrvsController extends ControllerBase
 
     // Obtém o esquema (HTTP ou HTTPS) da URL
     $protocol = parse_url($appUrl, PHP_URL_SCHEME);
+    $petrvs_config = config("petrvs");
 
     $config = json_encode([
       "api_url" => $protocol . "://" . $tenant["dominio_url"],
       "app_env" => config("app.env"),
-      "edicao" => $tenant["edition"] ?? 'PRF',
+      "edicao" => $tenant["edition"]?? $petrvs_config["edition"],
       "entidade" => $tenant["id"],
       "suporte_url" => $tenant["dominio_url"],
       "logo_url" => null,
