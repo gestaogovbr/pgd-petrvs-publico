@@ -1,5 +1,5 @@
 <grid [dao]="usersPanelDao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="true" [hasEdit]="true">
-
+  <toolbar *ngIf="!selectable"></toolbar>
   <columns>
     <column title="Nome" [template]="columnNome">
       <ng-template let-row="row" #columnNome>

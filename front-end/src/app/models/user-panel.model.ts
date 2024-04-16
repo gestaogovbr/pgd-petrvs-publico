@@ -5,5 +5,6 @@ export class UserPanel extends Base {
   public nome: string = "";
   public cpf: string = "";
   public nivel: number = 1;
+  public password: string = "";
   public email_verified_at?: Date;
 }

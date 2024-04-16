@@ -27,6 +27,7 @@ class ProgramaParticipanteService extends ServiceBase {
                     $plano_trabalho_ativo->save();
                 }
                 $registro->habilitado = $data['habilitar'];
+                if($data['habilitar'] == 0) $registro->deleted_at = now();
                 $registro->save();
             }
             DB::commit();

@@ -53,4 +53,6 @@ Route::middleware(['panel'])->prefix('Logs')->group(function () {
 
 Route::middleware(['panel'])->prefix('UserPanel')->group(function () {
   Route::post('query', [PainelUsuarioController::class, 'query']);
+  Route::post('get-by-id', [PainelUsuarioController::class, 'getById']);
+  Route::post('store', [PainelUsuarioController::class, 'store']);
 });

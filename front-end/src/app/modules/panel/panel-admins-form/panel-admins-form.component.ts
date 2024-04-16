@@ -23,7 +23,8 @@ export class PanelAdminsFormComponent extends PageFormBase<UserPanel, UsersPanel
 
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
-      email: {default: ''}
+      email: {default: ''},
+      password: {default: ''}
     }, this.cdRef, this.validate);
 
   }

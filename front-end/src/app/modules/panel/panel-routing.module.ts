@@ -22,6 +22,7 @@ const routes: Routes = [
       { path: 'logs2', component: PanelListLogsComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Logs", modal: true } },
       { path: 'admins', component: PanelAdminsListComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta admins do painel" } },
       { path: 'admins/new', component: PanelAdminsFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de usuários do painel", modal: true } },
+      { path: 'admins/:id/edit', component: PanelAdminsFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de usuários do painel", modal: true } },
       { path: '',   redirectTo: 'tenants', pathMatch: 'full' }
     ]
   }
