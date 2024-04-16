@@ -233,9 +233,16 @@ class UsuarioService extends ServiceBase
             $query->where('habilitado', 1)->where('programa_id', $programa[2]);
           });
         } else {
-          $query->whereHas('participacoesProgramas', function (Builder $query) use ($programa) {
-            $query->where('habilitado', 0)->where('programa_id', $programa[2]);
-          });
+          if ($condition[2] != null) {
+            $query->whereHas('participacoesProgramas', function (Builder $query) use ($programa) {
+              $query->where('habilitado', 0)->where('programa_id', $programa[2]);
+            });
+          } else {
+            $query->whereHas('participacoesProgramas', function (Builder $query) use ($programa) {
+              $query->where('programa_id', $programa[2]);
+            });
+          }
+          
           if (!empty($lotacao)) {
             $query->orWhereRelation('lotacao', 'unidade_id', $lotacao[2])->has('participacoesProgramas', '==', 0);
           } else {
