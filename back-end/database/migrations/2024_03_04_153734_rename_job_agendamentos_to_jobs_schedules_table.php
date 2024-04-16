@@ -13,7 +13,9 @@ class RenameJobAgendamentosToJobsSchedulesTable extends Migration
      */
     public function up()
     {
-      Schema::rename('job_agendamentos','jobs_schedules');
+      if (Schema::hasTable('job_agendamentos')) {
+        Schema::rename('job_agendamentos','jobs_schedules');
+      }
     }
 
     /**
@@ -23,6 +25,8 @@ class RenameJobAgendamentosToJobsSchedulesTable extends Migration
      */
     public function down()
     {
-      Schema::rename('jobs_schedules','job_agendamentos');
+      if (Schema::hasTable('jobs_schedules')) {
+        Schema::rename('jobs_schedules','job_agendamentos');
+      }
     }
 }

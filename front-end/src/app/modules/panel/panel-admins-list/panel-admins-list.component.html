@@ -1,0 +1,20 @@
+<grid [dao]="usersPanelDao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="true" [hasEdit]="true">
+  <toolbar *ngIf="!selectable"></toolbar>
+  <columns>
+    <column title="Nome" [template]="columnNome">
+      <ng-template let-row="row" #columnNome>
+        <strong>{{row.nome}}</strong>
+      </ng-template>
+    </column>
+
+    <column title="E-mail" [template]="columnEmail">
+      <ng-template let-row="row" #columnEmail>
+        <strong>{{row.email}}</strong>
+      </ng-template>
+    </column>
+    <column type="options" [onEdit]="edit" [onDelete]="delete" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+
+  </columns>
+  <pagination [rows]="rowsLimit"></pagination>
+
+</grid>

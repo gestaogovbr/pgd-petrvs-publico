@@ -15,6 +15,8 @@
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.5",
         "lawondyss/moment-php": "dev-master",
+        "maatwebsite/excel": "^3.1",
+        "phpoffice/common": "^1.0",
         "phpseclib/phpseclib": "~2.0",
         "ricorocks-digital-agency/soap": "^1.6",
         "socialiteproviders/govbr": "^5.0",

@@ -9,6 +9,10 @@ import { UteisModule } from '../uteis/uteis.module';
 import { PanelListLogsComponent } from './panel-list-logs/panel-list-logs.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { PanelSeederComponent } from './panel-seeder/panel-seeder.component';
+import { PanelLayoutComponent } from './panel-layout/panel-layout.component';
+import { MenubarModule } from 'primeng/menubar';
+import { PanelAdminsListComponent } from './panel-admins-list/panel-admins-list.component';
+import { PanelAdminsFormComponent } from './panel-admins-form/panel-admins-form.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +20,10 @@ import { PanelSeederComponent } from './panel-seeder/panel-seeder.component';
     PanelLoginComponent,
     PanelFormComponent,
     PanelListLogsComponent,
-    PanelSeederComponent
+    PanelSeederComponent,
+    PanelLayoutComponent,
+    PanelAdminsListComponent,
+    PanelAdminsFormComponent
   ],
     imports: [
         CommonModule,
@@ -24,6 +31,7 @@ import { PanelSeederComponent } from './panel-seeder/panel-seeder.component';
         ComponentsModule,
         UteisModule,
         FormsModule,
+        MenubarModule,
         ReactiveFormsModule
     ]
 })

@@ -36,7 +36,13 @@ class ProgramaService extends ServiceBase
 
   public function programaUnidadeSuperior($unidadeId)
   {
-    return Unidade::whereIn('id', $this->unidadeService->linhaAscendente($unidadeId))->whereHas('programas')->orderByDesc("path")->first();
+    $unidades = $this->unidadeService->linhaAscendente($unidadeId);
+    $unidades[] = $unidadeId; 
+
+    return Unidade::whereIn('id', $unidades)
+                  ->whereHas('programas')
+                  ->orderByDesc("path")
+                  ->first();
   }
 
   public function proxySearch(&$query, &$data, &$text)
