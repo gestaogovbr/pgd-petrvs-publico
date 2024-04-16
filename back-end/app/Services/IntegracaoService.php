@@ -269,6 +269,9 @@ class IntegracaoService extends ServiceBase
     ini_set('memory_limit', '-1');
     ini_set('default_socket_timeout', 300); // 5 minutos.
     set_time_limit(1800);
+    /** 
+      * @var IntegracaoService $self
+      */
     $self = $this;
     $this->result = [
       'unidades' => ['Resultado' => 'Não foi executado!', 'Observações' => [], 'Falhas' => []],
@@ -662,15 +665,15 @@ class IntegracaoService extends ServiceBase
                   'deleted_at' => null,
                 ];
 
-                $query_usuario = DB::table('usuarios')->where('email', $servidor['emailfuncional']);
-                $query_is = DB::table('integracao_servidores')->where('emailfuncional', $servidor['emailfuncional']);
+                $query_usuario = DB::table('usuarios')->where('cpf', $servidor['cpf']);
+                $query_integracao_servidores = DB::table('integracao_servidores')->where('cpf', $servidor['cpf']);
 
                 // Se não já não foi informado pela integracao (registro na memória), não está na tabela usuários
                 // nem na tabela integracao_servidores, registrar na tabela integracao_servidores
                 // para posterior registro na tabela usuarios.
                 if ((!in_array($servidor['emailfuncional'], $emails_integracao_na_memoria) &&
                   is_null($query_usuario->value('email')) &&
-                  is_null($query_is->value('emailfuncional')))) {
+                  is_null($query_integracao_servidores->value('emailfuncional')))) {
 
                   $registro = new IntegracaoServidor($servidor);
                   $registro->save();
@@ -687,12 +690,12 @@ class IntegracaoService extends ServiceBase
                   // para posterior registro, dentro dos critérios necessários, na tabela usuários.
                 } elseif (
                   !in_array($servidor['emailfuncional'], $emails_integracao_na_memoria) &&
-                  !is_null($query_is->value('emailfuncional'))
+                  !is_null($query_integracao_servidores->value('emailfuncional'))
                 ) {
 
                   $servidor_update = $servidor;
                   unset($servidor_update['matricula']);
-                  $registro = $query_is->update($servidor_update);
+                  $registro = $query_integracao_servidores->update($servidor_update);
 
                   array_push($emails_integracao_na_memoria, $email);
 
@@ -704,7 +707,7 @@ class IntegracaoService extends ServiceBase
                   // Se não estiver na memória e não estiver no integracao_servidores, efetuar registro.
                 } elseif (
                   !in_array($servidor['emailfuncional'], $emails_integracao_na_memoria) &&
-                  is_null($query_is->value('emailfuncional'))
+                  is_null($query_integracao_servidores->value('emailfuncional'))
                 ) {
 
                   $registro = new IntegracaoServidor($servidor);
