@@ -21,7 +21,7 @@ export class PanelSeederComponent extends PageListBase<Tenant, TenantDaoService>
     super(injector, Tenant, TenantDaoService);
     this.seederDao = injector.get<SeederDaoService>(SeederDaoService);
     /* Inicializações */
-    this.title = "Executar Seeder no Tenant";
+    this.title = "Executar Seeder em todos os Tenants";
     
   }
   ngOnInit() {
@@ -30,7 +30,8 @@ export class PanelSeederComponent extends PageListBase<Tenant, TenantDaoService>
   }
 
   private async loadSeeders() {
-    this.tenant_id = this.urlParams!.get("id");
+    this.tenant_id = this.metadata?.tenant_id || null;    
+    if(this.tenant_id)  this.title = "Executar Seeder no Tenant " + this.tenant_id ;
     const result = await this.seederDao.getAllSeeder()
     if(result){
       this.seeders = result

@@ -2,14 +2,13 @@
     [join]="join" editable [selectable]="selectable" 
     (select)="onSelect($event)" [hasAdd]="false" [hasEdit]="false" [hasDelete]="false" [multiselectMenu]="multiselectMenu">
     <toolbar *ngIf="!selectable">
-        <input-switch [size]="3" labelPosition="left" [label]="lex.translate('Habilitados')" controlName="habilitados" [labelInfo]="'Se ON, retorna apenas ' + lex.translate('os usuários') + ' habilitados ' + lex.translate('no programa') + '. Se OFF, retorna apenas os desabilitados.'"
-            [control]="filter!.controls.habilitados" (change)="grid!.reloadFilter()"></input-switch>
     </toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [clear]="filterClear.bind(this)"
         [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)"
         [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-search #programaSearch [size]="12" [disabled]="isModal ? 'true' : undefined" controlName="programa_id" [control]="filter!.controls.programa_id" [dao]="programaDao" [where]="[['vigentesUnidadeExecutora', '==', auth.unidade!.id]]" [metadata]="{'vigentesUnidadeExecutora': true}" (change)="onProgramaChange()" required></input-search>
+            <input-search #programaSearch [size]="8" [disabled]="isModal ? 'true' : undefined" controlName="programa_id" [control]="filter!.controls.programa_id" [dao]="programaDao" [where]="[['vigentesUnidadeExecutora', '==', auth.unidade!.id]]" [metadata]="{'vigentesUnidadeExecutora': true}" (change)="onProgramaChange()" required [value]="programa?.nome"></input-search>
+            <input-select controlName="habilitados" [size]="4" [items]="condicoes" [label]="'Situação ' + lex.translate('no programa')" [control]="filter!.controls.habilitados" itemTodos="- Todos -" [valueTodos]="null"></input-select>
         </div>
         <div class="row">
             <input-text [size]="6" [label]="'Nome do '+ lex.translate('usuário')" controlName="nome_usuario" [control]="filter!.controls.nome_usuario"
