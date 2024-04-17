@@ -59,18 +59,18 @@ class TenantsImport implements ToCollection
         "updated_at" => Carbon::now(),
         "deleted_at" => null,
         "tenancy_db_name" => "petrvs_" . $row[0],
-        "tenancy_db_host" => "petrvs_db_dsv",
+        "tenancy_db_host" => "172.31.251.2",
         "tenancy_db_port" => 3306,
-        "tenancy_db_username" => "root",
-        "tenancy_db_password" => "PsEeTnRhVaS",
+        "tenancy_db_username" => "petrvs",
+        "tenancy_db_password" => "P3g3D3#20@DB",
         "log_traffic" => false,
         "log_changes" => false,
         "log_errors" => true,
-        "log_host" => "petrvs_db_dsv",
+        "log_host" => "172.31.251.2",
         "log_database" => "petrvs_" . $row[0] . "_logs",
         "log_port" => 3306,
-        "log_username" => "root",
-        "log_password" => "PsEeTnRhVaS",
+        "log_username" => "petrvs",
+        "log_password" => "P3g3D3#20@DB",
         "notification_petrvs" => true,
         "notification_mail" => false,
         "notification_mail_signature" => "assets/images/signature.png",
@@ -142,7 +142,7 @@ class TenantsImport implements ToCollection
           ]);
         }
         $this->runMigrationsForTenant($tenant);
-        $this->runMSeederForTenant($tenant);
+        $this->runSeederForTenant($tenant);
         Log::info("Tenant '{$payload['id']}' criado com sucesso.");
       }
     }
@@ -156,7 +156,7 @@ class TenantsImport implements ToCollection
     tenancy()->end();
   }
 
-  protected function runMSeederForTenant($tenant)
+  protected function runSeederForTenant($tenant)
   {
 
     tenancy()->initialize($tenant);
