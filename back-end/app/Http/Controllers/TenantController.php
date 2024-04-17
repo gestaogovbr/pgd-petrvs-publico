@@ -24,7 +24,7 @@ class TenantController extends ControllerBase {
                 ]);
                 $data['entity']['created_at']=  Carbon::now()->toDateTimeString();
                 $data['entity']['updated_at']=  Carbon::now()->toDateTimeString();
-                $unidade = $this->getUnidade($request);
+                $unidade = $this->getUnidade($request);                
                 $entity = $this->service->store($data['entity'], $unidade);
                 $entity = $entity ?? (object) $data['entity'];
                 $result = $this->service->getById([
