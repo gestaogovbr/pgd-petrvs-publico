@@ -135,16 +135,13 @@ class TenantsImport implements ToCollection
 
       if (!$existingTenant) {
           try {
-            DB::beginTransaction();
             $tenant =  Tenant::create($payload);
             $tenant->domains()->create(['domain' => $payload['dominio_url']]);
             $this->runMigrationsForTenant($tenant);
             $this->runSeederForTenant($tenant);
             Log::info("Tenant '{$payload['id']}' criado com sucesso.");
-            DB::commit();
           } catch (\Exception $e) {
-              DB::rollback();
-              Log::error( $e);
+              Log::error( $e->getMessage());
               throw $e;
           }
       }else{
