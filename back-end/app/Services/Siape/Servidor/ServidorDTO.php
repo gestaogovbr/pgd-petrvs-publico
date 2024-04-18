@@ -1,9 +1,9 @@
 <?php
-namespace App\Services\Siape\DTO;
 
-namespace App\Services\Siape\DTO;
+namespace App\Services\Siape\Servidor;
 
-class ServidorDTO {
+class ServidorDTO
+{
     public string $id;
     public ?string $cpf_ativo;
     public ?string $data_modificacao;
@@ -26,21 +26,17 @@ class ServidorDTO {
     public string $situacao_funcional;
     public ?string $codupag;
     public ?string $dataexercicionoorgao;
-    public array $funcoes;
+    public ?string $funcoes;
     public ?string $cpf_chefia_imediata;
     public ?string $email_chefia_imediata;
     public ?string $deleted_at;
 
-    public function __construct(array $data) {
-        $utilService = app()->make('UtilService');
-        $directSetFields = [
-            $this->data_modificacao, $this->nome, $this->emailfuncional, $this->data_nascimento, $this->nomeguerra, $this->dataexercicionoorgao, $this->deleted_at,
-            $this->email_chefia_imediata, $this->cpf_chefia_imediata, $this->funcoes
-        ];
+    public function __construct(array $data)
+    {
 
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
-                $this->$key = in_array($key, $directSetFields) ? $value : $utilService->valueOrDefault($value);
+                $this->$key = $value;
             }
         }
     }

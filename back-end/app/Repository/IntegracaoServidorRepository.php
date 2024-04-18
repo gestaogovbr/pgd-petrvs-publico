@@ -1,21 +1,26 @@
 <?php
 namespace App\Repository;
 
-use App\Services\Siape\DTO\ServidorDTO;
+use App\Models\IntegracaoServidor;
 
 class IntegracaoServidorRepository{
 
+    public function __construct(private IntegracaoServidor $integracaoServidor){
+    }
 
-    // public function save(ServidorDTO $dto): IntegracaoServidor{
-    //     $model = new IntegracaoServidor((array) $dto);
-    //     $model->save();
-    //     return $model;
-    // }
+    public function getUmPeloCPF(string $cpf){
+        return $this->integracaoServidor->where('cpf', $cpf)
+        ->orderBy('created_at', 'desc')
+        ->first();
+    }
 
-
-    // public static function createFromDTO(ServidorDTO $dto): self {
-    //     $model = new self((array) $dto);
-    //     // $model->save();
-    //     return $model;
-    // }
+    /**
+     *
+     * @param IntegracaoServidor $entidade
+     * @return bool
+     */
+    public function save(IntegracaoServidor $entidade): bool{
+        return $entidade->save();
+    }
+   
 }

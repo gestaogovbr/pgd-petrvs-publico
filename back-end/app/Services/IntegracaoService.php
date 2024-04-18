@@ -18,6 +18,8 @@ use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Models\UnidadeIntegranteAtribuicao;
+use App\Repository\IntegracaoServidorRepository;
+use App\Services\Siape\Servidor\Integracao;
 
 class IntegracaoService extends ServiceBase
 {
@@ -282,7 +284,6 @@ class IntegracaoService extends ServiceBase
     $entidade_id = $inputs["entidade"] ?: "";
     $xmlStream = "";
     LogError::newWarn("Sincronizar Entidade: " . $entidade_id);
-
     // Atualização das unidades.
     if (!empty($inputs['unidades']) && $inputs['unidades'] && !empty($entidade_id)) {
       try {
@@ -524,234 +525,30 @@ class IntegracaoService extends ServiceBase
         }
         if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de obtenção dos dados dos servidores informados pelo SIAPE.....");
 
-        $emails_integracao_na_memoria = [];
-        $cpfs_emails_funcionais_vazios = [];
-        $emails_funcionais_duplicados = [];
-
         DB::transaction(function () use (
           &$servidores,
-          &$self,
-          &$emails_integracao_na_memoria,
-          &$cpfs_emails_funcionais_vazios,
-          &$emails_funcionais_duplicados
         ) {
 
-          foreach ($servidores as $servidor) {
-            if (
-              isset($servidor['matriculas']) && isset($servidor['matriculas']['dados']) &&
-              isset($servidor['cpf_ativo']) && $servidor['cpf_ativo'] == 'true'
-            ) {
-              $ativo = false;
-
-              $dados = isset($servidor['matriculas']['dados']['vinculo_ativo']) ? [$servidor['matriculas']['dados']] : $servidor['matriculas']['dados'];
-              foreach ($dados as $matricula) {
-                if (isset($matricula['vinculo_ativo']) && $matricula['vinculo_ativo'] == 'true') {
-                  $ativo = $matricula;
-                }
-              }
-
-              $email = $self->UtilService->valueOrDefault($servidor['emailfuncional'], $servidor['cpf'] . "@petrvs.gov.br");
-
-              if ($ativo && !empty($email)) {
-                $email = str_contains($email, "@") ? $email : $email . "@prf.gov.br";
-                $email = mb_strtolower($email, 'UTF-8');
-
-                // WSO2
-                $email_chefia_imediata = null;
-                if (isset($servidor['email_chefia_imediata'])){
-                    $email_chefia_imediata = $self->UtilService->valueOrDefault($servidor['email_chefia_imediata'], null);
-                    if (!empty($email_chefia_imediata)) $email_chefia_imediata = mb_strtolower($email_chefia_imediata, 'UTF-8');
-                }
-
-                if (!empty($ativo['nomeguerra'])) {
-                  $nomeguerra = $ativo['nomeguerra'];
-                } else {
-                  $nomeguerra = $self->UtilService->getApelido($servidor['nome']);
-                }
-
-                if (!empty($ativo['funcoes'] && is_array($ativo['funcoes']))) {
-                  foreach ($ativo['funcoes'] as &$at) {
-                    if (array_key_exists('uorg_funcao', $at)) {
-                      $at['uorg_funcao'] = strval(intval($at['uorg_funcao']));
-                    }
-                  }
-                  $ativo['funcoes'] = json_encode(($ativo['funcoes']));
-                } else {
-                  $ativo['funcoes'] = null;
-                }
-
-                $situacao_funcional = $self->UtilService
-                  ->valueOrDefault(
-                    $ativo['codsitfuncional'],
-                    "DESCONHECIDO",
-                    $option = "situacao_funcional"
-                  );
-
-                $nome = $self->UtilService->valueOrDefault($servidor['nome'], null);
-                if (!is_null($nome)) $nome = $self->UtilService->getNomeFormatado($nome);
-
-                if ($servidor['sexo'] == 'M' || $servidor['sexo'] == 'm') {
-                  $servidor['sexo'] = 'MASCULINO';
-                };
-                if ($servidor['sexo'] == 'F' || $servidor['sexo'] == 'f') {
-                  $servidor['sexo'] = 'FEMININO';
-                };
-                if (empty($servidor['sexo']) || is_null($servidor['sexo'])) {
-                  $servidor['sexo'] = 'MASCULINO';
-                }
-
-                $data_nascimento = null;
-                if ($this->integracao_config["tipo"] == "SIAPE") {
-                    $data_nascimento = $self->UtilService->valueOrDefault($servidor['data_nascimento'], null);
-                }
-                else if ($this->integracao_config["tipo"] == "WSO2") {
-                    $data_nascimento = $self->UtilService->valueOrDefault($servidor['datanascimento'], null);
-                    $data_nascimento = date_create($data_nascimento);
-                    $data_nascimento = date_format($data_nascimento, "Y-m-d H:i:s");
-                };
-
-                $data_exercicio = null;
-                if ($this->integracao_config["tipo"] == "SIAPE") {
-                    $data_exercicio = $self->UtilService->valueOrDefault($ativo['dataexercicionoorgao'], null);
-                }
-                else if ($this->integracao_config["tipo"] == "WSO2") {
-                    $data_exercicio = $self->UtilService->valueOrDefault($ativo['dataexercicionoorgao'], null);
-                    $data_exercicio = date_create($data_exercicio);
-                    $data_exercicio = date_format($data_exercicio, "Y-m-d H:i:s");
-                };
-
-                $cpf_chefia_imediata = null;
-                if ($this->integracao_config["tipo"] == "SIAPE") {
-                    $cpf_chefia_imediata = $self->UtilService->valueOrDefault($servidor['cpf_chefia_imediata'], null);
-                }
-
-                $data_modificacao = null;
-                if ($this->integracao_config["tipo"] == "SIAPE") {
-                    $data_modificacao = $self->UtilService->valueOrDefault($servidor['data_modificacao'], null);
-                }
-                else if ($this->integracao_config["tipo"] == "WSO2") {
-                    $data_modificacao = $self->UtilService->valueOrDefault($servidor['data_modificacao'], null);
-                    $data_modificacao = date_create($data_modificacao);
-                    $data_modificacao = date_format($data_modificacao, "Y-m-d H:i:s");
-                };
-
-                $servidor = [
-                  'id' => Uuid::uuid4(),
-                  'cpf_ativo' => $self->UtilService->valueOrDefault($servidor['cpf_ativo']),
-                  'data_modificacao' => $data_modificacao,
-                  'cpf' => $self->UtilService->valueOrDefault( $self->UtilService->onlyNumbers($servidor['cpf']), null),
-                  'nome' => $nome,
-                  'emailfuncional' => $email,
-                  'sexo' => $self->UtilService->valueOrDefault($servidor['sexo'], null),
-                  'municipio' => $self->UtilService->valueOrDefault($servidor['municipio'], null),
-                  'uf' => $self->UtilService->valueOrDefault($servidor['uf'], null),
-                  'data_nascimento' => $data_nascimento,
-                  'telefone' => $self->UtilService->valueOrDefault($servidor['telefone'], null),
-                  'vinculo_ativo' => $self->UtilService->valueOrDefault($ativo['vinculo_ativo'], null),
-                  'matriculasiape' => $self->UtilService->valueOrDefault($ativo['matriculasiape'], null),
-                  'codigo_cargo' => $self->UtilService->valueOrDefault($ativo['tipo'], null),
-                  'coduorgexercicio' => $self->UtilService->valueOrDefault($ativo['coduorgexercicio'], null, $option = "uorg"),
-                  'coduorglotacao' => $self->UtilService->valueOrDefault($ativo['coduorglotacao'], null, $option = "uorg"),
-                  'codigo_servo_exercicio' => $self->UtilService->valueOrDefault($ativo['codigo_servo_exercicio'], null, $option = "uorg"),
-                  'nomeguerra' => $nomeguerra,
-                  'codigo_situacao_funcional' => $self->UtilService->valueOrDefault($ativo['codsitfuncional'], null),
-                  'situacao_funcional' => !is_null($situacao_funcional) ? $situacao_funcional : "DESCONHECIDO",
-                  'codupag' => $self->UtilService->valueOrDefault($ativo['codupag'], null),
-                  'dataexercicionoorgao' => $data_exercicio,
-                  'funcoes' => $ativo['funcoes'],
-                  'matricula' => $self->UtilService->valueOrDefault($ativo['matriculasiape'], null),
-                  'cpf_chefia_imediata' => $cpf_chefia_imediata,
-                  'email_chefia_imediata' => $email_chefia_imediata,
-                  'deleted_at' => null,
-                ];
-
-                $query_usuario = DB::table('usuarios')->where('cpf', $servidor['cpf']);
-                $query_integracao_servidores = DB::table('integracao_servidores')->where('cpf', $servidor['cpf']);
-
-                // Se não já não foi informado pela integracao (registro na memória), não está na tabela usuários
-                // nem na tabela integracao_servidores, registrar na tabela integracao_servidores
-                // para posterior registro na tabela usuarios.
-                if ((!in_array($servidor['emailfuncional'], $emails_integracao_na_memoria) &&
-                  is_null($query_usuario->value('email')) &&
-                  is_null($query_integracao_servidores->value('emailfuncional')))) {
-
-                  $registro = new IntegracaoServidor($servidor);
-                  $registro->save();
-
-                  array_push($emails_integracao_na_memoria, $email);
-
-                  str_contains($servidor['emailfuncional'], '@petrvs.gov.br') ?
-                    array_push($cpfs_emails_funcionais_vazios, "CPF: " . $servidor['cpf'] . " (" . $servidor['situacao_funcional'] . ") - " . $servidor['emailfuncional']) : true;
-
-                  if ($registro) array_push($this->servidores_registrados_is, $servidor['cpf']);
-
-                  // Se não já não foi informado pelo processo atual de integração (registro na memória) e
-                  // pertence a tabela integracao_servidores, atualiza registro na integracao_servidores
-                  // para posterior registro, dentro dos critérios necessários, na tabela usuários.
-                } elseif (
-                  !in_array($servidor['emailfuncional'], $emails_integracao_na_memoria) &&
-                  !is_null($query_integracao_servidores->value('emailfuncional'))
-                ) {
-
-                  $servidor_update = $servidor;
-                  unset($servidor_update['matricula']);
-                  $registro = $query_integracao_servidores->update($servidor_update);
-
-                  array_push($emails_integracao_na_memoria, $email);
-
-                  str_contains($servidor_update['emailfuncional'], '@petrvs.gov.br') ?
-                    array_push($cpfs_emails_funcionais_vazios, "CPF: " . $servidor_update['cpf'] . " (" . $servidor_update['situacao_funcional'] . ") - " . $servidor_update['emailfuncional']) : true;
-
-                  if ($registro) array_push($this->servidores_registrados_is, $servidor_update['cpf']);
-
-                  // Se não estiver na memória e não estiver no integracao_servidores, efetuar registro.
-                } elseif (
-                  !in_array($servidor['emailfuncional'], $emails_integracao_na_memoria) &&
-                  is_null($query_integracao_servidores->value('emailfuncional'))
-                ) {
-
-                  $registro = new IntegracaoServidor($servidor);
-                  $registro->save();
-
-                  array_push($emails_integracao_na_memoria, $email);
-
-                  str_contains($servidor['emailfuncional'], '@petrvs.gov.br') ?
-                    array_push($cpfs_emails_funcionais_vazios, "CPF: " . $servidor['cpf'] . " (" . $servidor['situacao_funcional'] . ") - " . $servidor['emailfuncional']) : true;
-
-                  if ($registro) array_push($this->servidores_registrados_is, $servidor['cpf']);
-                } else { // Caso e-mail esteja duplicado, segue registro para rotina de avisos no final.
-                  array_push($emails_funcionais_duplicados, "CPF: " . $servidor['cpf'] . " - " . $servidor['emailfuncional']);
-                }
-              }
-            }
+          $integracaoServidoresRepository = new IntegracaoServidorRepository(new IntegracaoServidor);
+          try {
+            $integracaoServidorProcessar =  new Integracao(
+              $integracaoServidoresRepository, $this->UtilService
+            );
+          } catch (Throwable $e) {
+            LogError::newError("Erro ao truncar a tabela integracao_servidores", $e);
           }
+          $integracaoServidorProcessar->setServidores($servidores)->setEcho($this->echo)->setIntegracaoConfig($this->integracao_config)
+          ->setResult($this->result);
+          $integracaoServidorProcessar->processar();
+          
+          $this->result = $integracaoServidorProcessar->getResult();
+
         });
 
         /**
          * Posteriormente, será decidido o que fazer com as diferenças entre tabela usuários e integração_servidores.
          */
 
-        if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de reconstrução da tabela integração_servidores.....");
-        $n = IntegracaoServidor::count();
-        $n_emails_funcionais_vazios = count($cpfs_emails_funcionais_vazios);
-        $n_emails_funcionais_duplicados = count($emails_funcionais_duplicados);
-
-        $this->atualizaLogs($this->logged_user_id, 'integracao_servidores', 'todos os registros', 'ADD', ['Observação' => 'Total de servidores importados do SIAPE: ' . $n . ' (apenas ATIVOS).']);
-        array_push($this->result['servidores']['Observações'], 'Os dados dos Servidores foram obtidos ' . ($this->useLocalFiles ? 'através de arquivo XML armazenado localmente!' : 'através de consulta à API do SIAPE!'));
-
-        if ($n_emails_funcionais_vazios) {
-          $cpfs_emails_funcionais_vazios = $cpfs_emails_funcionais_vazios;
-          array_push($this->result['servidores']['Observações'], 'Total de servidores com email funcional vazio no SIAPE: ' . $n_emails_funcionais_vazios . ' (apenas ATIVOS).');
-          array_push($this->result['servidores']['Observações'], 'Lista de servidores com email funcional vazio no SIAPE: ' . implode(', ', $cpfs_emails_funcionais_vazios) . '.');
-        }
-
-        if ($n_emails_funcionais_duplicados) {
-          $emails_funcionais_duplicados =  $emails_funcionais_duplicados;
-          array_push($this->result['servidores']['Observações'], 'Total de emails funcionais duplicados no SIAPE: ' . $n_emails_funcionais_duplicados . ' (apenas ATIVOS).');
-          array_push($this->result['servidores']['Observações'], 'Lista de servidores com email funcional duplicado no SIAPE: ' . implode(', ', $emails_funcionais_duplicados) . '.');
-        }
-
-        array_push($this->result['servidores']['Observações'], 'Total de servidores importados do SIAPE: ' . $n . ' (apenas ATIVOS).');
 
         // Seleciona todos os servidores que sofreram alteração nos seus dados pessoais ou atingiu critério quanto data_modificação.
         $atualizacoesDados = DB::select(
