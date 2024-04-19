@@ -13,6 +13,8 @@ import { PanelLayoutComponent } from './panel-layout/panel-layout.component';
 import { MenubarModule } from 'primeng/menubar';
 import { PanelAdminsListComponent } from './panel-admins-list/panel-admins-list.component';
 import { PanelAdminsFormComponent } from './panel-admins-form/panel-admins-form.component';
+import { MultiSelectModule } from 'primeng/multiselect';
+
 
 @NgModule({
   declarations: [
@@ -32,7 +34,8 @@ import { PanelAdminsFormComponent } from './panel-admins-form/panel-admins-form.
         UteisModule,
         FormsModule,
         MenubarModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        MultiSelectModule
     ]
 })
 export class PanelModule { }

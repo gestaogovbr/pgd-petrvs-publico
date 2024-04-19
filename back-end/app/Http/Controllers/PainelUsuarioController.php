@@ -120,7 +120,9 @@ class PainelUsuarioController extends Controller
       if (isset($entityData['password'])) {
         $entityData['password'] = md5($entityData['password']);
       }
-      $entity = $this->service->store($entityData, null, false);
+      $entity = $this->service->store($entityData, null, true);
+      $tenantIds = array_column($entityData['tenants'], 'id');
+      $entity->assignTenants($tenantIds);
       $result = $this->service->getById([
         'id' => $entity->id,
         'with' => $data['with']
