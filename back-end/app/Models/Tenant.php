@@ -18,4 +18,9 @@ class Tenant extends BaseTenant implements TenantWithDatabase
   {
     return $this->hasMany(TenantsLogs::class);
   }
+
+  public function userPanels()
+  {
+      return $this->belongsToMany(PainelUsuario::class, 'users_panel_tenants');
+  }
 }
