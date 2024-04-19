@@ -59,14 +59,14 @@ class TenantsImport implements ToCollection
         "updated_at" => Carbon::now(),
         "deleted_at" => null,
         "tenancy_db_name" => "petrvs_" . $row[0],
-        "tenancy_db_host" => "172.31.251.2",
+        "tenancy_db_host" => "172.31.251.5",
         "tenancy_db_port" => 3306,
         "tenancy_db_username" => "petrvs",
         "tenancy_db_password" => "P3g3D3#20@DB",
         "log_traffic" => false,
         "log_changes" => false,
         "log_errors" => true,
-        "log_host" => "172.31.251.2",
+        "log_host" => "172.31.251.5",
         "log_database" => "petrvs_" . $row[0] . "_logs",
         "log_port" => 3306,
         "log_username" => "petrvs",
@@ -133,17 +133,19 @@ class TenantsImport implements ToCollection
 
       $existingTenant = Tenant::where('id', $payload['id'])->first();
 
-      Log::info("Tenant '{$payload['id']}' já existe.");
       if (!$existingTenant) {
-        $tenant = Tenant::create($payload);
-        if (!$tenant->domains()->where('domain', $payload['dominio_url'])->exists()) {
-          $tenant->createDomain([
-            'domain' => $payload['dominio_url']
-          ]);
-        }
-        $this->runMigrationsForTenant($tenant);
-        $this->runSeederForTenant($tenant);
-        Log::info("Tenant '{$payload['id']}' criado com sucesso.");
+          try {
+            $tenant =  Tenant::create($payload);
+            $tenant->domains()->create(['domain' => $payload['dominio_url']]);
+            $this->runMigrationsForTenant($tenant);
+            $this->runSeederForTenant($tenant);
+            Log::info("Tenant '{$payload['id']}' criado com sucesso.");
+          } catch (\Exception $e) {
+              Log::error( $e->getMessage());
+              throw $e;
+          }
+      }else{
+          Log::info("Tenant '{$payload['id']}' já existe.");
       }
     }
   }

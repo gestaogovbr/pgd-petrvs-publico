@@ -135,7 +135,7 @@ jobs:
           DOCKER_HUB_TAG: treina
           SSH_USER: root
           SSH_HOST: 200.152.38.137
-          SSH_PORT: 7227
+          SSH_PORT: 7228
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_TREINA }}
           DEPLOY_PATH: ./
           DOCKER_HUB_USERNAME: segescginf
