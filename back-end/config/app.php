@@ -183,6 +183,7 @@ return [
         App\Providers\TenancyServiceProvider::class,
         App\Providers\TenancySessionServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
+        App\Providers\UtilServiceProvider::class
     ],
 
     /*
