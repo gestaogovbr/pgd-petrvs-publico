@@ -3,17 +3,64 @@ name: CI/CD
 on:
   push:
     branches:
-      - dataprev_dsv
-      - dataprev_hmg
-      - dataprev_treina
-  pull_request:
-    branches:
       - main
       - dataprev_dsv
       - dataprev_hmg
       - dataprev_treina
-
+      - dataprev_producao
+  pull_request:
+    branches:
+      - dataprev_dsv
+      - dataprev_hmg
+      - dataprev_treina
+      - dataprev_producao
 jobs:
+  build_producao:
+    name: Build on Producao
+    if: github.ref == 'refs/heads/dataprev_producao'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build Producao
+        env:
+          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
+          DOCKER_HUB_TAG: latest
+          DEPLOY_PATH: ./
+          DOCKER_HUB_USERNAME: segescginf
+          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        run: |
+          echo "Iniciando a construção e implantação do Produção..."
+          echo "Construindo a imagem Docker..."
+          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/dataprev/dev/Dockerfile .
+          echo "Construção da imagem concluída. Enviando para o Docker Hub..."
+          docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
+          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
+          echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
+          echo "Build de produção concluída com sucesso."
+  build_and_deploy_main:
+    name: Build on Producao - Main
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build Producao - Main
+        env:
+          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
+          DOCKER_HUB_TAG: latest
+          DEPLOY_PATH: ./
+          DOCKER_HUB_USERNAME: segescginf
+          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        run: |
+          echo "Iniciando a construção e implantação do Produção..."
+          echo "Construindo a imagem Docker..."
+          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/dataprev/dev/Dockerfile .
+          echo "Construção da imagem concluída. Enviando para o Docker Hub..."
+          docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
+          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
+          echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
+          echo "Build de produção concluída com sucesso."
   build_and_deploy_dsv:
     name: Build and Deploy on Dataprev DSV
     if: github.ref == 'refs/heads/dataprev_dsv'
@@ -88,7 +135,7 @@ jobs:
           DOCKER_HUB_TAG: treina
           SSH_USER: root
           SSH_HOST: 200.152.38.137
-          SSH_PORT: 7227
+          SSH_PORT: 7228
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_TREINA }}
           DEPLOY_PATH: ./
           DOCKER_HUB_USERNAME: segescginf
@@ -105,26 +152,3 @@ jobs:
           # Executando o script install-pgd.sh
           sshpass -p $SSH_PASSWORD ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "sh install-pgd.sh < /dev/null"
           echo "Implantação concluída com sucesso em TREINA."
-  build_and_deploy_producao:
-    name: Build and Deploy on Dataprev Producao
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Build and Deploy Producao
-        env:
-          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
-          DOCKER_HUB_TAG: latest
-          DEPLOY_PATH: ./
-          DOCKER_HUB_USERNAME: segescginf
-          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
-        run: |
-          echo "Iniciando a construção e implantação do Produção..."
-          echo "Construindo a imagem Docker..."
-          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/dataprev/dev/Dockerfile .
-          echo "Construção da imagem concluída. Enviando para o Docker Hub..."
-          docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
-          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
-          echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
-          echo "Build de produção concluída com sucesso."

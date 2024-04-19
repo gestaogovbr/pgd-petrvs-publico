@@ -105,6 +105,7 @@ class TenantService extends ServiceBase
         }
       });
     }
+    //tenancy()->end();
   }
 
   public function generateCertificateKeys()
@@ -204,20 +205,8 @@ class TenantService extends ServiceBase
   private function acoesDeploy($id = null)
   {
     try {
-      Artisan::call('tenants:migrate');
+      Artisan::call('tenants:migrate --tenants='.$id);
       logInfo();
-
-      $diretorioAtual = getcwd();
-      // Mudar para o diretório do projeto Laravel
-      chdir(base_path());
-      // Executar comandos ou operações no novo diretório
-      $seedCommand = 'echo yes | php artisan tenants:run db:seed --option="class=DatabaseSeeder"' . (empty($id) ? '' : ' --tenants=' . $id);
-      exec($seedCommand, $output);
-      // Voltar para o diretório original
-      chdir($diretorioAtual);
-
-      logInfo($output);
-      return true;
     } catch (\Exception $e) {
       // Handle any exceptions that may occur during command execution
       Log::error('Error executing commands: ' . $e->getMessage());

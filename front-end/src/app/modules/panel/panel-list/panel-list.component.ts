@@ -27,6 +27,12 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
  
       onClick: this.executaMigrations.bind(this)
     },
+
+    {
+      icon: "bi-database-fill-gear",
+      label: "Executar Seeder", 
+      onClick: (tenant: Tenant) => this.go.navigate({route: ["panel", "seeder"]})
+    },
     
     // {
     //   icon: "bi bi-database-x",
@@ -61,13 +67,14 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
     this.options.push({
       icon: "bi bi-trash",
       label: "Ver Logs",
-      onClick: (tenant: Tenant) => this.go.navigate({route: ["panel", tenant.id, "logs"]})
+      onClick: (tenant: Tenant) => this.go.navigate({route: ["panel", tenant.id, "logs"]} )
     });
 
     this.options.push({
       icon: "bi bi-database-fill-gear",
       label: "Executar Seeder",
-      onClick: (tenant: Tenant) => this.go.navigate({route: ["panel", tenant.id, "seeder"]})
+      onClick: (tenant: Tenant) => this.go.navigate({ route: ["panel", "seeder"] }, { metadata: { tenant_id: tenant.id }})
+
     });
 
   }
