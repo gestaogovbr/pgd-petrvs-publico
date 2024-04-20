@@ -24,6 +24,7 @@ class TipoMotivoAfastamento extends ModelBase
     'horas', /* tinyint; NOT NULL; */ // Se o afastamento é medido em horas
     'integracao', /* tinyint; NOT NULL; */ // Se o tipo de motivo de afastamento é integrado a outro sistema
     //'deleted_at', /* timestamp; */
+    'situacao'
   ];
 
   // Has

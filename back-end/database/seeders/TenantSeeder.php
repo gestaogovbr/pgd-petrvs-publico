@@ -14,6 +14,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Illuminate\Support\Facades\DB;
+use App\Models\Entidade;
+use App\Models\Cidade;
 
 class TenantSeeder extends Seeder
 {
@@ -136,8 +138,9 @@ class TenantsImport implements ToCollection
       if (!$existingTenant) {
           try {
             $tenant =  Tenant::create($payload);
-            $tenant->domains()->create(['domain' => $payload['dominio_url']]);
+            $tenant->domains()->create(['domain' => $payload['dominio_url']]);        
             $this->runMigrationsForTenant($tenant);
+            $this->createEntity($tenant);
             $this->runSeederForTenant($tenant);
             Log::info("Tenant '{$payload['id']}' criado com sucesso.");
           } catch (\Exception $e) {
@@ -163,6 +166,20 @@ class TenantsImport implements ToCollection
 
     tenancy()->initialize($tenant);
     Artisan::call('tenants:seed --tenants=' .$tenant['id']. ' --class=DeployTreinaSeeder');
+    tenancy()->end();
+  }
+
+  protected function createEntity($tenant) {
+    tenancy()->initialize($tenant);
+    $entidade = new Entidade([
+      'sigla' => $tenant['id'],
+      'nome' => $tenant['nome_entidade'],
+      "abrangencia" => "NACIONAL",
+      'layout_formulario_atividade' => 'COMPLETO',
+      'campos_ocultos_atividade' => [],
+      'nomenclatura' => [],
+    ]);
+    $entidade->save();
     tenancy()->end();
   }
 
