@@ -57,6 +57,9 @@ class In24_TreinaSeeder extends Seeder
 
     if (!$this->entidade->exists) {
       $this->entidade->save();
+    } else {
+      $this->entidade->cidade_id = $this->brasilia->id;
+      $this->entidade->save();
     }
 
     $this->unidades = array(
