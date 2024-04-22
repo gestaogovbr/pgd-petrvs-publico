@@ -1199,10 +1199,10 @@ class In24_TreinaSeeder extends Seeder
 
     $usuarios = array(
       array(
-        'id' => '0f726255-f041-11ee-9d0d-0242ac120002',
-        'email' => 'programadegestaomgi@gmail.com',
+        'id' => 'ada3cdbc-ffc4-11ee-b754-0242ac120002',
+        'email' => 'mgipgdbrasil@gmail.com',
         'nome' => 'Adm Negocial',
-        'cpf' => '40587302003',
+        'cpf' => '03589623071',
         'apelido' => 'Adm',
         'perfil_id' => Perfil::where('nome', 'Administrador Negocial')->first()->id,
       ),
@@ -1212,6 +1212,22 @@ class In24_TreinaSeeder extends Seeder
         'nome' => 'Desenvolvedor',
         'cpf' => '56262885030',
         'apelido' => 'Dev',
+        'perfil_id' => Perfil::where('nome', 'Desenvolvedor')->first()->id,
+      ),
+      array(
+        'id' => '67c27867-ffc2-11ee-b754-0242ac120002',
+        'email' => 'geisimar.rech87@gmail.com',
+        'nome' => 'Geisimar Rech',
+        'cpf' => '01798651106',
+        'apelido' => 'Geisimar',
+        'perfil_id' => Perfil::where('nome', 'Desenvolvedor')->first()->id,
+      ),
+      array(
+        'id' => '8b521ae1-ffc2-11ee-b754-0242ac120002',
+        'email' => 'marco.coelho@firstbps.com.br',
+        'nome' => 'Marco Coelho',
+        'cpf' => '03400125954',
+        'apelido' => 'Marco',
         'perfil_id' => Perfil::where('nome', 'Desenvolvedor')->first()->id,
       )
     );
