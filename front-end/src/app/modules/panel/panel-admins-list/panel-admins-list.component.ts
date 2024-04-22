@@ -21,6 +21,7 @@ export class PanelAdminsListComponent extends PageListBase<UserPanel, UsersPanel
   constructor(public injector: Injector){
     super(injector, UserPanel, UsersPanelDaoService);
     this.usersPanelDao = injector.get<UsersPanelDaoService>(UsersPanelDaoService);
+    this.join = ['tenants']
   }
 
   ngOnInit(): void {

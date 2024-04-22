@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Traits\MergeRelations;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PainelUsuario extends Authenticatable
 {
@@ -25,14 +27,22 @@ class PainelUsuario extends Authenticatable
     'nivel'
   ];
 
+  public $fillable_relations = ["tenants"];
+
   protected $hidden = [
     'password',
     'remember_token',
   ];
 
-   // Has
-   public function tenants()
-   {
-     return $this->hasMany(Tenant::class);
-   }
+
+  public function assignTenants($tenantIds)
+  {
+    $this->tenants()->sync($tenantIds);
+  }
+
+  // Has
+  public function tenants()
+  {
+    return $this->belongsToMany(Tenant::class, 'users_panel_tenants', 'users_panel_id');
+  }
 }

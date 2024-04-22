@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use Stancl\Tenancy\Middleware\InitializeTenancyByPath;
 use App\Http\Controllers\SeederController;
+use App\Http\Controllers\TenantController;
 
 /* Testes *
 Route::get('/teste', function (Request $request) { return ["CENTRAL"]; }); */
@@ -49,7 +50,6 @@ Route::middleware(['panel'])->prefix('Seeder')->group(function () {
 Route::middleware(['panel'])->prefix('Logs')->group(function () {
   Route::post('list', [\App\Http\Controllers\LogsController::class, 'index']);
 });
-
 
 Route::middleware(['panel'])->prefix('UserPanel')->group(function () {
   Route::post('query', [PainelUsuarioController::class, 'query']);
