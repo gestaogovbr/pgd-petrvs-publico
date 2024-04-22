@@ -78,9 +78,19 @@ export class PanelAdminsFormComponent extends PageFormBase<UserPanel, UsersPanel
     return new Promise<UserPanel>((resolve, reject) => {
       let userPanel: UserPanel = this.util.fill(new UserPanel(), this.entity!);
       userPanel = this.util.fillForm(userPanel, this.form!.value);
-      userPanel.tenants = this.tenants.filter(t => this.form.controls.tenants.value?.map((i: LookupItem) => i.key).includes(t.id))
+      userPanel.tenants = this.tenants.filter(t => this.itemsSelecionados.map((i: LookupItem) => i.key).includes(t.id))
+      console.log("this.itemsSelecionados", this.itemsSelecionados);
+      console.log("userPanel.tenants", userPanel.tenants);
+      console.log("this.tenants", this.tenants);
+      
       resolve(userPanel);
     });
+  }
+
+  public onChange(event: any){
+    console.log(event);
+    console.log(this.itemsSelecionados);
+    
   }
 
 
