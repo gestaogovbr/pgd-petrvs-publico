@@ -28,7 +28,7 @@ Route::post('/web/login-firebase-token', [LoginController::class, $actions['logi
 Route::post('/web/login-google-token', [LoginController::class, $actions['login-google-token']])->withoutMiddleware(['csrf']);
 Route::post('/web/login-institucional', [LoginController::class, $actions['login-institucional']]);
 // Route::post('/web/login-unico', [LoginController::class, $actions['login-unico']]);
-Route::post('/web/login-session', [LoginController::class, 'authenticateSession']);
+Route::post('/web/login-session', [LoginController::class, 'authenticateSession'])->withoutMiddleware(['csrf']);
 Route::get('/web/logout', [LoginController::class, 'logout']);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
