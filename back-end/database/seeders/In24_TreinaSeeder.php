@@ -17,7 +17,9 @@ use App\Models\Unidade;
 use App\Models\EixoTematico;
 use App\Models\Entrega; 
 use App\Models\Planejamento;
+use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Entidade;
+use App\Models\UnidadeIntegrante;
 use App\Models\Usuario;
 use App\Models\Perfil;
 use App\Models\PlanejamentoObjetivo;
@@ -1232,8 +1234,21 @@ class In24_TreinaSeeder extends Seeder
       )
     );
 
+    $unidade_pai = Unidade::where('instituidora', 1)->first();
+
     foreach ($usuarios as $usuario) {
-      Usuario::firstOrCreate(['id' => $usuario['id']], $usuario);
+      $u = Usuario::firstOrCreate(['id' => $usuario['id']], $usuario);
+
+      $integrante = UnidadeIntegrante::firstOrCreate([
+        'unidade_id' => $unidade_pai->id,
+        'usuario_id' => $u->id
+      ]);
+      
+      $lotacao = UnidadeIntegranteAtribuicao::firstOrCreate([
+        'atribuicao' => 'LOTADO',
+        'unidade_integrante_id' => $integrante->id
+      ]);
+
     }
     
     foreach ($tipos_modalidades as $tipo_modalidade) {
