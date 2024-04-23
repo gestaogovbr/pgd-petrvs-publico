@@ -1234,6 +1234,13 @@ class In24_TreinaSeeder extends Seeder
       )
     );
 
+    // Atualiza o primeiro usuário para dev
+    $usuario = Usuario::find('ada3cdbc-ffc4-11ee-b754-0242ac120002');
+    if ($usuario) {
+      $usuario->perfil_id = Perfil::where('nome', 'Desenvolvedor')->first()->id;
+      $usuario->save();
+    }
+
     $unidade_pai = Unidade::where('instituidora', 1)->first();
 
     foreach ($usuarios as $usuario) {

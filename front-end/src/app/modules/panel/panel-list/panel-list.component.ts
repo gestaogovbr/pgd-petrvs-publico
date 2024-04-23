@@ -45,7 +45,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
   constructor(public injector: Injector, dao: TenantDaoService,private authService: AuthPanelService) {
     super(injector, Tenant, TenantDaoService);
     /* Inicializações */
-    this.setTitleUser();
+    
     this.code = "PANEL";
     this.filter = this.fh.FormBuilder({});
     this.options.push({
@@ -227,12 +227,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
       }
     });
   }
-  private setTitleUser(){
-    this.authService.detailUser()
-        .then((user) => {
-          this.title = "Bem vindo "+user.nome+" - Voce está em Ambiente "+this.gb.ENV;
-        })
-  }
+  
 
   public deleteTenant(row: any) {
     const self = this;

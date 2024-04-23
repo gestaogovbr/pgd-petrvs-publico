@@ -21,7 +21,7 @@ export class PanelAdminsFormComponent extends PageFormBase<UserPanel, UsersPanel
 
 
   public items: LookupItem[] = [];
-  public itemsSelecionados: LookupItem[] = [];
+  public itemsSelecionados: any[] = [];
   public tenants: Tenant[] = [];
   public tenantsDao: TenantDaoService;
 
@@ -58,7 +58,7 @@ export class PanelAdminsFormComponent extends PageFormBase<UserPanel, UsersPanel
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
     if (entity.tenants) {
-      this.itemsSelecionados = entity.tenants.map((t: any) => ({ key: t.id, value: t.nome_entidade }));
+      this.itemsSelecionados = entity.tenants.map((t: any) => ( t.id ));      
     }
     this.loading = true;
     try {
@@ -78,39 +78,8 @@ export class PanelAdminsFormComponent extends PageFormBase<UserPanel, UsersPanel
     return new Promise<UserPanel>((resolve, reject) => {
       let userPanel: UserPanel = this.util.fill(new UserPanel(), this.entity!);
       userPanel = this.util.fillForm(userPanel, this.form!.value);
-      userPanel.tenants = this.tenants.filter(t => this.itemsSelecionados.map((i: LookupItem) => i.key).includes(t.id))
-      console.log("this.itemsSelecionados", this.itemsSelecionados);
-      console.log("userPanel.tenants", userPanel.tenants);
-      console.log("this.tenants", this.tenants);
-      
+      userPanel.tenants = this.tenants.filter(t => this.itemsSelecionados.map((i) => i).includes(t.id));      
       resolve(userPanel);
     });
   }
-
-  public onChange(event: any){
-    console.log(event);
-    console.log(this.itemsSelecionados);
-    
-  }
-
-
-  public addItemHandleTenant(): LookupItem | undefined {
-    let result = undefined;
-    if(this.tenant && this.tenant.selectedItem) {
-      const item = this.tenant.selectedItem;
-      const key = item.key?.length ? item.key : this.util.textHash(item.value);
-      if(this.util.validateLookupItem(this.form.controls.tenants.value, key)) {
-        result = {
-          key: key,
-          value: item.value,
-          color: item.color,
-          icon: item.icon
-        };
-        this.form.controls.tenant.setValue("");
-      }
-    }
-    return result;
-  };
-
-  
 }
