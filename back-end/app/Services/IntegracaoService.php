@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\IntegracaoServidorRepository;
 use App\Services\Siape\Servidor\Integracao;
+use Illuminate\Support\Facades\Log;
 
 class IntegracaoService extends ServiceBase
 {
@@ -605,6 +606,10 @@ class IntegracaoService extends ServiceBase
 
           if (!empty($atualizacoesDados)) {
             foreach ($atualizacoesDados as $linha) {
+              // Log::channel('siape')->info("Atualizando dados do servidor: ", [json_encode($linha)]);
+
+              $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->cpf_servidor);
+              
               DB::update($sqlUpdateDados, [
                 'nome'          => $linha->nome_servidor,
                 'nomeguerra'    => $linha->nome_guerra,
@@ -727,17 +732,8 @@ class IntegracaoService extends ServiceBase
               'data_modificacao' => $this->UtilService->asDateTime($v_isr['data_modificacao']),
             ]);
 
-            $jaExisteEmail = $registro->where('email', $registro->email)->first();
+            $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($registro->email, $registro->cpf);
 
-            //TODO - sugestão de o SIAPE é a referencia adicionar o e-mail fake na tabela de usuarios, dando prioridade para o siape.
-            if(!empty($jaExisteEmail)) {
-              //FIXME ATUALIZA PARA O E-MAIL FAKE.
-              LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. CPF: %s, Email: %s", $registro->cpf, $registro->email));
-              $email = $registro->cpf . "@petrvs.gov.br";
-              $jaExisteEmail->update(['email' => $email]);
-
-              // throw new ServerException("ValidateUsuario", sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. CPF: %s, Email: %s", $registro->cpf, $registro->email));
-            }
 
             $registro->save();
 
@@ -1015,6 +1011,21 @@ class IntegracaoService extends ServiceBase
       $this->result["gestores"]['Resultado'] = 'Os gestores não foram atualizados porque as Unidades e/ou Servidores não o foram, ' .
         'ou ainda porque houve alguma falha em suas atualizações! Os gestores só são atualizados quando as Unidades ' .
         'e os Servidores são atualizados e AMBOS com sucesso.';
+    }
+  }
+
+  private function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(string $email,string $cpf) : void
+  {
+    $usuario = Usuario::where('email', $email)->where('cpf', '!=',$cpf)->first();
+    if (!empty($usuario)) {
+      LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. CPF: %s, Email: %s", $cpf, $email));
+      $novoemail = $usuario->cpf . "@petrvs.gov.br";
+      $outroUsuarioComesseEmail = Usuario::where('email', $novoemail)->where('cpf', '!=',$usuario->cpf)->first();
+      if(!empty($outroUsuarioComesseEmail)){
+        $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($novoemail, $usuario->cpf);
+      }
+      // Log::channel('siape')->info("IntegracaoService: Alterando email duplicado para email fake", ['cpf' => $cpf, 'email' => $email, 'usuario' => json_encode($usuario)]);
+      $usuario->update(['email' => $novoemail]);
     }
   }
 
