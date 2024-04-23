@@ -60,8 +60,8 @@ export class InputNumberComponent extends InputBase implements OnInit {
     if(this._decimals != value) {
       this._decimals = value;
       //this.maskOptions.precision = value;
-      //this.maskFormat = value ? "0*.00" : ""; //"separator." + value : "";
-      this.maskFormat = value ? "separator." + value : undefined; //"separator." + value : "";
+      this.maskFormat = value ? "0*."+ '0'.repeat(value) : ""; //"separator." + value : "";
+      //this.maskFormat = value ? "separator." + value : undefined; //"separator." + value : "";     
     }
   }
   @Input() set size(value: number) {
@@ -100,7 +100,7 @@ export class InputNumberComponent extends InputBase implements OnInit {
 
   public converteNumero(event: any) {
     let value = event.target.value;
-    if(value && !isNaN(value * 1)) this.formControl.patchValue(value * 1);
+    if(value && !isNaN(value * 1)) this.formControl.patchValue((this.isInteger ? parseInt(value) : parseFloat(value)) * 1);
   }
 
 }

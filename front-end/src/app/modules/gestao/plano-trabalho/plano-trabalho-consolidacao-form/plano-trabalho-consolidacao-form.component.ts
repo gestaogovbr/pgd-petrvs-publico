@@ -345,7 +345,6 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
 
   public async saveAtividade(form: FormGroup, row: any) {
     let result = undefined;
-    console.log("AQIO");
     this.gridAtividades!.error = "";
     this.formAtividade.markAllAsTouched();
     if (this.formAtividade!.valid) {
@@ -397,7 +396,6 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public async carregaEtiquetasUnidadesAscendentes(unidadeAtual: Unidade) {
     let etiquetasUnidades: LookupItem[] = [];
     unidadeAtual = unidadeAtual ? unidadeAtual : this.auth.unidade!;
-    console.log(unidadeAtual);
     if(unidadeAtual.path){
       let path = unidadeAtual.path.split("/");
       let unidades = await this.unidadeDao.query({ where: [["id", "in", path]] }).asPromise();
