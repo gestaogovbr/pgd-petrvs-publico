@@ -1,2 +1,22 @@
-<p-menubar [model]="items"></p-menubar>
+<nav class="navbar navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Painel SasS - Petrvs</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir navegação">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/panel/tenants']" data-bs-toggle="collapse" data-bs-target="#navbarNav">Tenants</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/panel/admins']" data-bs-toggle="collapse" data-bs-target="#navbarNav">Usuários do painel</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<h4 class="my-2">{{title}}</h4>
+<hr>
 <router-outlet></router-outlet>
