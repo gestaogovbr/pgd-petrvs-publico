@@ -7,6 +7,7 @@ use App\Repository\IntegracaoServidorRepository;
 use App\Services\Siape\Contrato\InterfaceIntegracao;
 use App\Services\Siape\Imprimir;
 use App\Services\UtilService;
+use Illuminate\Support\Facades\Log;
 use Ramsey\Uuid\Uuid;
 
 class Integracao implements InterfaceIntegracao
@@ -67,6 +68,7 @@ class Integracao implements InterfaceIntegracao
         $registroDobanco = $this->repository->getUmPeloCPF($entidade->cpf);
 
         if (!in_array($entidade->cpf, $this->cpfsIntegracaoAlterados) && $registroDobanco == null) {
+            // Log::channel('siape')->info('Salvando Novo Servidor na tabela integracao_servidores: ' , ['integracao_servidores'=>$entidade->toJson()]);
             $registro = $this->repository->save($entidade);
             array_push($this->cpfsIntegracaoAlterados, $entidade->cpf);
 
@@ -78,6 +80,7 @@ class Integracao implements InterfaceIntegracao
 
         if ($registroDobanco && !in_array($entidade->cpf, $this->cpfsIntegracaoAlterados)) {
             unset($entidade->matricula);
+            // Log::channel('siape')->info('Atualizando Servidor na tabela integracao_servidores: ' , ['integracao_servidores_antigo'=>$registroDobanco->toJson(),'integracao_servidores_novo'=>$entidade->toJson()]);
             $registro = $registroDobanco->update((array) $entidade);
             array_push($this->cpfsIntegracaoAlterados, $entidade->cpf);
             $this->verificaEmailsFuncionaisVazios($entidade);
