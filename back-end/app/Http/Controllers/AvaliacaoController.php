@@ -66,10 +66,10 @@ class AvaliacaoController extends ControllerBase {
             plano de entrega o superior será o gestor, substituto ou delegado da unidade imediatamente superior). Deverá possuir tambem a 
             capacidade MOD_PTR_CSLD_AVAL (consolidação do plano de trabalho), ou MOD_PENT_AVAL/MOD_PENT_AVAL_SUBORD (plano de entrega); */
         $atribuicao = !empty($consolidacao) ? "AVALIADOR_PLANO_TRABALHO" : "AVALIADOR_PLANO_ENTREGA";
-        $avaliador = fn($unidadeId) => $usuarioService->isGestorUnidade($unidadeId) || $usuarioService->isIntegrante($atribuicao, $unidadeId);
+        $avaliador = fn($unidade) => $usuarioService->isGestorUnidade($unidade->id) || $usuarioService->isGestorUnidade($unidade->unidadePai?->id) || $usuarioService->isIntegrante($atribuicao, $unidade->id) ;
         $unidade = !empty($consolidacao) ? $consolidacao->planoTrabalho->unidade : $planoEntrega?->unidade?->unidadePai;
         if(empty($unidade)) throw new ServerException("ValidateAvaliacao", "Unidade do gestor não encontrada no sistema");
-        $condicao1 = !empty($consolidacao) && $usuario->hasPermissionTo("MOD_PTR_CSLD_AVAL") && $avaliador($unidade->id);
+        $condicao1 = !empty($consolidacao) && $usuario->hasPermissionTo("MOD_PTR_CSLD_AVAL") && $avaliador($unidade);
         $condicao2 = !empty($planoEntrega) && $usuario->hasPermissionTo("MOD_PENT_AVAL") && $avaliador($unidade->id);
         $condicao3 = !empty($planoEntrega) && $usuario->hasPermissionTo("MOD_PENT_AVAL_SUBORD") && !!array_filter($unidadeService->linhaAscendente($unidade->id), fn($u) => $avaliador($u));
         if(!empty($consolidacao) && !$condicao1) throw new ServerException("ValidateAvaliacao", "Usuário não possui a capacidade MOD_PTR_CSLD_AVAL.\n[ver RN_AVL_1]");
