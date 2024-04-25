@@ -19,6 +19,8 @@ use App\Models\Entrega;
 use App\Models\Planejamento;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Entidade;
+use App\Models\TipoCapacidade;
+use App\Models\Capacidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\Usuario;
 use App\Models\Perfil;
@@ -1233,6 +1235,11 @@ class In24_TreinaSeeder extends Seeder
         'perfil_id' => Perfil::where('nome', 'Desenvolvedor')->first()->id,
       )
     );
+
+    $perfilAdmNegocialId = Perfil::where('nome', 'Administrador Negocial')->first()->id;
+    $tipoCapacidadeId = TipoCapacidade::where('codigo', 'MOD_CFG_USER_MAIL')->first()->id;
+    Capacidade::firstOrCreate(['perfil_id' => $perfilAdmNegocialId], ['tipo_capacidade_id' => $tipoCapacidadeId]);
+    
 
     // Atualiza o primeiro usuário para dev
     $usuario = Usuario::find('ada3cdbc-ffc4-11ee-b754-0242ac120002');
