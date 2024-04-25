@@ -20,39 +20,7 @@ class PainelUsuarioSeeder extends Seeder
       'nome' => 'Marco Coelho',
       'password' => md5('petrvs@123'),
       'cpf' => '03400125954',
-      'email_verified_at' => now(),
-      'created_at' => now(),
-      'updated_at' => now(),
-    ]);
-
-    PainelUsuario::firstOrCreate([
-      'email' => 'genisson.albuquerque@prf.gov.br',
-    ], [
-      'nome' => 'Genisson',
-      'password' => md5('petrvs@123'),
-      'cpf' => '07408707425',
-      'email_verified_at' => now(),
-      'created_at' => now(),
-      'updated_at' => now(),
-    ]);
-
-    PainelUsuario::firstOrCreate([
-      'email' => 'diogo.paiva@prf.gov.br',
-    ], [
-      'nome' => 'Diogo Paiva',
-      'password' => md5('petrvs@123'),
-      'cpf' => '01710713526',
-      'email_verified_at' => now(),
-      'created_at' => now(),
-      'updated_at' => now(),
-    ]);
-
-    PainelUsuario::firstOrCreate([
-      'email' => 'ricardo.farias@prf.gov.br',
-    ], [
-      'nome' => 'Ricardo',
-      'password' => md5('petrvs@123'),
-      'cpf' => '25941933304',
+      'nivel' => 1,
       'email_verified_at' => now(),
       'created_at' => now(),
       'updated_at' => now(),
@@ -64,6 +32,7 @@ class PainelUsuarioSeeder extends Seeder
       'nome' => 'Geisimar Rech',
       'password' => md5('petrvs@123'),
       'cpf' => '01798651106',
+      'nivel' => 1,
       'email_verified_at' => now(),
       'created_at' => now(),
       'updated_at' => now(),
@@ -75,6 +44,7 @@ class PainelUsuarioSeeder extends Seeder
       'nome' => 'Henrique Felipe Alves',
       'password' => md5('petrvs@123'),
       'cpf' => '40921185898',
+      'nivel' => 1,
       'email_verified_at' => now(),
       'created_at' => now(),
       'updated_at' => now(),
@@ -86,6 +56,7 @@ class PainelUsuarioSeeder extends Seeder
       'nome' => 'Guilherme Bitar',
       'password' => md5('petrvs@123'),
       'cpf' => '01914276167',
+      'nivel' => 1,
       'email_verified_at' => now(),
       'created_at' => now(),
       'updated_at' => now(),
@@ -97,6 +68,7 @@ class PainelUsuarioSeeder extends Seeder
       'nome' => 'Marco Coelho',
       'password' => md5('petrvs@123'),
       'cpf' => '03400125954',
+      'nivel' => 1,
       'email_verified_at' => now(),
       'created_at' => now(),
       'updated_at' => now(),
@@ -108,6 +80,7 @@ class PainelUsuarioSeeder extends Seeder
       'nome' => 'thiago crispim',
       'password' => md5('petrvs@123'),
       'cpf' => '00623555685',
+      'nivel' => 1,
       'email_verified_at' => now(),
       'created_at' => now(),
       'updated_at' => now(),
@@ -119,50 +92,18 @@ class PainelUsuarioSeeder extends Seeder
       'nome' => 'Diego Braga',
       'password' => md5('petrvs@123'),
       'cpf' => '00623555685',
+      'nivel' => 1,
       'email_verified_at' => now(),
       'created_at' => now(),
       'updated_at' => now(),
-    ]);
+    ]);   
 
     PainelUsuario::firstOrCreate([
-      'email' => 'edson.dario@gmail.com',
+      'email' => 'programadegestaomgi@gmail.com',
     ], [
-      'nome' => 'Edson França',
-      'password' => md5('Natal&*@'),
-      'cpf' => '01380127416',
-      'email_verified_at' => now(),
-      'created_at' => now(),
-      'updated_at' => now(),
-    ]);
-
-    PainelUsuario::firstOrCreate([
-      'email' => 'edson.franca@mj.gov.br',
-    ], [
-      'nome' => 'Edson França',
-      'password' => md5('Natal&*@'),
-      'cpf' => '01380127416',
-      'email_verified_at' => now(),
-      'created_at' => now(),
-      'updated_at' => now(),
-    ]);
-
-    PainelUsuario::firstOrCreate([
-      'email' => 'henrique.alves@prf.gov.br',
-    ], [
-      'nome' => 'Carlos Henrique Alves Lopes',
-      'password' => md5('petrvs@123'),
-      'cpf' => '26751043880',
-      'email_verified_at' => now(),
-      'created_at' => now(),
-      'updated_at' => now(),
-    ]);
-
-    PainelUsuario::firstOrCreate([
-      'email' => 'jose.bogdan@prf.gov.br',
-    ], [
-      'nome' => 'Jose Marcelo Maizman Bogdan',
-      'password' => md5('petrvs@123'),
-      'cpf' => '23049551852',
+      'nome' => 'PGD',
+      'password' => md5('40587302003'),
+      'cpf' => '40587302003',
       'email_verified_at' => now(),
       'created_at' => now(),
       'updated_at' => now(),

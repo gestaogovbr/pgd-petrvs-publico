@@ -38,4 +38,29 @@ export class UnidadeService {
     if (incluiDelegado) gestores.push(...(areaTrabalho?.gestores_delegados?.map(x => x.usuario_id) || []));
     return !!id_unidade && !!areaTrabalho && gestores.includes(this.auth.usuario!.id);
   }
+
+  /**
+   * Informa se o usuário logado é gestor de uma unidade superior(titular ou substituto) da unidade recebida como parâmetro. 
+   * @param unidade
+   * @returns
+  */
+  public isGestorUnidadeSuperior(unidade: Unidade): boolean {
+    let gestoresIds = [];
+    gestoresIds.push(unidade.unidade_pai?.gestor?.usuario_id);
+    gestoresIds.push(...(unidade.unidade_pai?.gestores_substitutos?.map(x => x.usuario_id) ?? []));
+    return gestoresIds.includes(this.auth.usuario!.id);
+  }
+
+  /**
+   * Informa se o usuário informado é gestor da unidade do Plano de Trabalho(titular ou substituto) da unidade recebida como parâmetro. 
+   * @param unidade
+   * @param usuario_id
+   * @returns
+  */
+  public isGestorUnidadePlano(unidade: Unidade, usuario_id: string): boolean {
+    let gestoresIds = [];
+    gestoresIds.push(unidade.gestor?.usuario_id);
+    gestoresIds.push(...(unidade.gestores_substitutos?.map(x => x.usuario_id) ?? []));
+    return gestoresIds.includes(usuario_id);
+  }
 }

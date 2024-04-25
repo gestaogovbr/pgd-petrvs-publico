@@ -50,6 +50,8 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
       "avaliacao.tipoAvaliacao.notas",
       "planoTrabalho.unidade:id,sigla,nome", 
       "planoTrabalho.unidade.gestor:id,unidade_id,usuario_id", 
+      "planoTrabalho.unidade.unidadePai.gestoresSubstitutos:id,unidade_id,usuario_id", 
+      "planoTrabalho.unidade.unidadePai.gestor:id,unidade_id,usuario_id", 
       "planoTrabalho.unidade.gestoresSubstitutos:id,unidade_id,usuario_id", 
       "planoTrabalho.tipoModalidade:id,nome", 
       "planoTrabalho.usuario:id,nome,apelido,foto_perfil,url_foto"//id,nome,apelido,url_foto,foto_perfil
@@ -151,8 +153,8 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
     const usuarioId = consolidacao.plano_trabalho!.usuario_id;
     const unidadeId = consolidacao.plano_trabalho!.unidade_id;
     const anterior = this.anterior(row as PlanoTrabalhoConsolidacao);
-    const proximo = this.proximo(row as PlanoTrabalhoConsolidacao);
-    const isAvaliador = this.auth.hasPermissionTo("MOD_PTR_CSLD_AVAL") && (this.unidadeService.isGestorUnidade(unidadeId) || this.auth.isIntegrante('AVALIADOR_PLANO_TRABALHO', unidadeId));
+    const proximo = this.proximo(row as PlanoTrabalhoConsolidacao);   
+    const isAvaliador = this.auth.hasPermissionTo("MOD_PTR_CSLD_AVAL") && (this.unidadeService.isGestorUnidade(unidadeId) || (this.unidadeService.isGestorUnidadeSuperior(consolidacao.plano_trabalho?.unidade!) && this.unidadeService.isGestorUnidadePlano(consolidacao.plano_trabalho?.unidade!, usuarioId) ));
     const isUsuarioDoPlano = this.auth.usuario!.id == usuarioId;
     const BOTAO_AVALIAR = { hint: "Avaliar", icon: "bi bi-star", color: "btn-outline-warning", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.avaliar(row, programa, this.refreshConsolidacao.bind(this)) };
     const BOTAO_REAVALIAR = { hint: "Reavaliar", icon: "bi bi-star-half", color: "btn-outline-warning", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.avaliar(row, programa, this.refreshConsolidacao.bind(this)) };

@@ -20,9 +20,13 @@ export class TipoMotivoAfastamentoFormComponent extends PageFormBase<TipoMotivoA
     this.form = this.fh.FormBuilder({
       codigo: {default: null},
       nome: {default: ""}, 
+      sigla: {default: ""}, 
       icone: {default: ""},
+      situacao: {default: "teste"},
       cor: {default: ""}, 
       horas: {default: 1}, 
+      data_inicio: {default: Date.now()}, 
+      data_fim: {default: Date.now()}, 
       integracao: {default: 0}
     }, this.cdRef, this.validate);
   }

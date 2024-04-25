@@ -11,6 +11,7 @@ import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { Programa } from 'src/app/models/programa.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
+import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'app-programa-participantes',
@@ -29,6 +30,17 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
   public BOTAO_HABILITAR: ToolbarButton = { label: this.lex.translate("Habilitar"), hint: this.lex.translate("Habilitar"), icon: "bi bi-person-check-fill", color: "btn-outline-success", onClick: this.habilitarParticipante.bind(this) };
   public BOTAO_DESABILITAR: ToolbarButton = { label: this.lex.translate("Desabilitar"), hint: this.lex.translate("Desabilitar"), icon: "bi bi-person-x-fill", color: "btn-outline-danger", onClick: this.desabilitarParticipante.bind(this) };
 
+  public condicoes: LookupItem[] = [
+    {
+      key: '1',
+      value: this.lex.translate('Habilitados')
+    },
+    {
+      key: '0',
+      value: this.lex.translate('Desabilitados')
+    }
+  ]
+
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
@@ -40,7 +52,7 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
       programa_id: { default: this.programa?.id },
       unidade_id: { default: this.auth.unidade?.id },
       nome_usuario: { default: "" },
-      habilitados: { default: false },
+      habilitados: { default: '0' },
     }, this.cdRef, this.validate);
     if (this.auth.hasPermissionTo('MOD_PART_HAB')) this.multiselectMenu.push({
       icon: "bi bi-person-check-fill",
@@ -56,7 +68,7 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
     });
     this.join = ["lotacao.unidade:id,sigla", "planos_trabalho:id,status", "participacoes_programas:id"];
     this.title = this.lex.translate("Habilitações");
-    this.orderBy = [['nome', 'asc']];
+    this.orderBy = [['nome', 'asc']];    
   }
 
   public dynamicButtons(row: any): ToolbarButton[] {
@@ -82,12 +94,12 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
     (async () => {
       this.loading = true;
       try {
-        this.programa = this.metadata?.programa;
+        this.programa = this.metadata?.programa;        
         if (!this.programa) await this.programaDao.query({ where: [['vigentesUnidadeExecutora', "==", this.auth.unidade!.id]] }).asPromise().then(programas => {
-          this.programa = programas[0];
-          this.programaSearch?.loadSearch(this.programa);
+          this.programa = programas[0];         
         });
       } finally {
+        this.programaSearch?.loadSearch(this.programa);
         this.loading = false;
       }
     })();
@@ -96,16 +108,16 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
   public filterClear(filter: FormGroup<any>): void {
     filter.controls.unidade_id.setValue(undefined);
     filter.controls.nome_usuario.setValue('');
-    filter.controls.habilitados.setValue(true);
+    filter.controls.habilitados.setValue('1');
   }
 
-  public filterWhere = (filter: FormGroup) => {
+  public filterWhere = (filter: FormGroup) => {    
     let result: any[] = [];
     let form: any = filter.value;
     if (form.unidade_id?.length) result.push(["lotacao", "==", form.unidade_id]);
     if (form.nome_usuario?.length) result.push(["nome", "like", "%" + form.nome_usuario.trim().replace(" ", "%") + "%"]);
     result.push(["habilitado", '==', this.filter?.controls.habilitados.value]);
-    result.push(["programa_id", "==", this.programa?.id]);
+    result.push(["programa_id", "==", this.programa?.id || this.metadata?.programa.id ]);
     return result;
   }
 

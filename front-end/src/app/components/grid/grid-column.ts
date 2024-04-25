@@ -64,7 +64,7 @@ export class GridColumn {
     return !!types.find(x => (":" + this.type).endsWith(":" + x));
   }
 
-  public isColumnEditable(row: any): boolean {
+  public isColumnEditable(row: any): boolean {    
     return !!this.save && 
       ((!!row && typeof this.editable != "boolean" && !!this.editable && (this.editable as (row: any) => boolean)(row)) || 
       (typeof this.editable == "boolean" && (this.editable || !!this.columnEditTemplate)));

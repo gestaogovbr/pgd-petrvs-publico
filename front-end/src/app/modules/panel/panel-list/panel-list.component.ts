@@ -27,6 +27,12 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
  
       onClick: this.executaMigrations.bind(this)
     },
+
+    {
+      icon: "bi-database-fill-gear",
+      label: "Executar Seeder", 
+      onClick: (tenant: Tenant) => this.go.navigate({route: ["panel", "seeder"]})
+    },
     
     // {
     //   icon: "bi bi-database-x",
@@ -39,7 +45,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
   constructor(public injector: Injector, dao: TenantDaoService,private authService: AuthPanelService) {
     super(injector, Tenant, TenantDaoService);
     /* Inicializações */
-    this.setTitleUser();
+    
     this.code = "PANEL";
     this.filter = this.fh.FormBuilder({});
     this.options.push({
@@ -61,13 +67,14 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
     this.options.push({
       icon: "bi bi-trash",
       label: "Ver Logs",
-      onClick: (tenant: Tenant) => this.go.navigate({route: ["panel", tenant.id, "logs"]})
+      onClick: (tenant: Tenant) => this.go.navigate({route: ["panel", tenant.id, "logs"]} )
     });
 
     this.options.push({
       icon: "bi bi-database-fill-gear",
       label: "Executar Seeder",
-      onClick: (tenant: Tenant) => this.go.navigate({route: ["panel", tenant.id, "seeder"]})
+      onClick: (tenant: Tenant) => this.go.navigate({ route: ["panel", "seeder"] }, { metadata: { tenant_id: tenant.id }})
+
     });
 
   }
@@ -220,12 +227,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
       }
     });
   }
-  private setTitleUser(){
-    this.authService.detailUser()
-        .then((user) => {
-          this.title = "Bem vindo "+user.nome+" - Voce está em Ambiente "+this.gb.ENV;
-        })
-  }
+  
 
   public deleteTenant(row: any) {
     const self = this;
