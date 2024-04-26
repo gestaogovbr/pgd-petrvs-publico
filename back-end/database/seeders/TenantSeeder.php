@@ -38,6 +38,7 @@ class TenantSeeder extends Seeder
       $file = public_path('tenants.xlsx');
       Excel::import(new TenantsImport($this->service), $file);
     } catch (\Exception $e) {
+      echo ("Erro ao importar tenants: " . $e->getMessage(). "\n");
       Log::error("Erro ao importar tenants: " . $e->getMessage());
     }
   }
@@ -61,18 +62,18 @@ class TenantsImport implements ToCollection
         "updated_at" => Carbon::now(),
         "deleted_at" => null,
         "tenancy_db_name" => "petrvs_" . $row[0],
-        "tenancy_db_host" => "172.31.251.5",
-        "tenancy_db_port" => 3306,
-        "tenancy_db_username" => "petrvs",
-        "tenancy_db_password" => "P3g3D3#20@DB",
+        "tenancy_db_host" => env('DB_HOST', '172.31.251.5'),
+        "tenancy_db_port" => env('DB_PORT', '3306'),
+        "tenancy_db_username" => env('DB_USERNAME', 'petrvs'),
+        "tenancy_db_password" => env('DB_PASSWORD', "P3g3D3#20@DB"),
         "log_traffic" => false,
         "log_changes" => false,
         "log_errors" => true,
-        "log_host" => "172.31.251.5",
+        "log_host" => env('DB_HOST', '172.31.251.5'),
         "log_database" => "petrvs_" . $row[0] . "_logs",
-        "log_port" => 3306,
-        "log_username" => "petrvs",
-        "log_password" => "P3g3D3#20@DB",
+        "log_port" => env('DB_PORT', '3306'),
+        "log_username" => env('DB_USERNAME', 'petrvs'),
+        "log_password" => env('DB_PASSWORD', "P3g3D3#20@DB"),
         "notification_petrvs" => true,
         "notification_mail" => false,
         "notification_mail_signature" => "assets/images/signature.png",
