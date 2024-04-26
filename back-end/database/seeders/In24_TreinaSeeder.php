@@ -1238,8 +1238,11 @@ class In24_TreinaSeeder extends Seeder
 
     $perfilAdmNegocialId = Perfil::where('nome', 'Administrador Negocial')->first()->id;
     $tipoCapacidadeId = TipoCapacidade::where('codigo', 'MOD_CFG_USER_MAIL')->first()->id;
-    Capacidade::firstOrCreate(['perfil_id' => $perfilAdmNegocialId], ['tipo_capacidade_id' => $tipoCapacidadeId]);
-    
+    $capacidade = Capacidade::firstOrNew([
+      'perfil_id' => $perfilAdmNegocialId,
+      'tipo_capacidade_id' => $tipoCapacidadeId
+    ]);
+    $capacidade->save();
 
     // Atualiza o primeiro usuário para dev
     $usuario = Usuario::find('ada3cdbc-ffc4-11ee-b754-0242ac120002');
