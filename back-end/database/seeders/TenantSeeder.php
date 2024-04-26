@@ -143,7 +143,7 @@ class TenantsImport implements ToCollection
             $this->createEntity($tenant);
             $this->runSeederForTenant($tenant);
             Log::info("Tenant '{$payload['id']}' criado com sucesso.");
-            echo ("Tenant '{$payload['id']}' criado com sucesso.\n");
+            echo ("Tenant '{$tenant->id}' criado com sucesso.\n");
           } catch (\Exception $e) {
               echo ($e->getMessage());
               Log::error( $e->getMessage());
