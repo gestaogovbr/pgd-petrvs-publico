@@ -51,6 +51,19 @@ export class UnidadeService {
     return gestoresIds.includes(this.auth.usuario!.id);
   }
 
+
+  /**
+   * Informa se o usuário logado é gestor titular da unidade recebida como parâmetro. 
+   * @param unidade
+   * @returns
+  */
+  public isGestorTitularUnidade(pUnidade: Unidade | string | null = null): boolean {
+    let id_unidade = pUnidade == null ? this.auth.unidade?.id || null : (typeof pUnidade == "string" ? pUnidade : pUnidade.id);
+    let areaTrabalho = this.auth.unidades?.find(x => x.id == id_unidade);
+    let gestores = [areaTrabalho?.gestor?.usuario_id];
+    return !!id_unidade && !!areaTrabalho && gestores.includes(this.auth.usuario!.id);
+  }
+
   /**
    * Informa se o usuário informado é gestor da unidade do Plano de Trabalho(titular ou substituto) da unidade recebida como parâmetro. 
    * @param unidade
