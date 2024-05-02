@@ -20,8 +20,8 @@
     </column>
     <column [title]="'Meta'" [width]="100" [template]="columnMetaRealizado">
       <ng-template let-row="row" #columnMetaRealizado>
-        <badge icon="bi bi-graph-up-arrow" [textValue]="planoEntregaService.getValorMeta(row)" color="light" hint="Planejada"></badge><br>
-        <badge icon="bi bi-check-lg" [textValue]="planoEntregaService.getValorRealizado(row)" color="light" hint="Realizada"></badge>
+        <badge icon="bi bi-graph-up-arrow" [textValue]="planoEntregaService.getValorMeta(row.plano_entrega_entrega)" color="light" hint="Planejada"></badge><br>
+        <badge icon="bi bi-check-lg" [textValue]="planoEntregaService.getValorRealizado(row.plano_entrega_entrega)" color="light" hint="Realizada"></badge>
       </ng-template>
     </column>
     <column [title]="'Progresso'" [width]="200" [template]="columnProgresso" [editTemplate]="columnProgresso" [columnEditTemplate]="selectable ? undefined : columnProgresso">
