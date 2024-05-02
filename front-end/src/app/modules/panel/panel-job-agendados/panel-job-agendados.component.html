@@ -1,0 +1,45 @@
+<div class="container">
+  <div class="row">
+    <div class="col-4">
+      <label for="jobType">Tipo de Job:</label>
+      <br>
+      <select id="jobType" [(ngModel)]="newJob.nome_do_job">
+        <option *ngFor="let job of jobTypes" [value]="job">{{job}}</option>
+      </select>
+    </div>
+    <div class="col-2">
+      <label for="diario">Recorrente:</label>
+      <br>
+      <input type="checkbox" id="diario" [(ngModel)]="newJob.diario">
+    </div>
+    <div class="col-2">
+      <div *ngIf="newJob.diario">
+        <label for="horario">Horário (HH:mm):</label>
+        <br>
+        <input type="time" id="horario" [(ngModel)]="newJob.horario">
+      </div> 
+    </div>
+    <div class="col-2">
+      <div *ngIf="!newJob.diario">
+        <label for="cron">Expressão Cron:</label>
+        <br>
+        <input type="datetime-local" id="expressao_cron" [(ngModel)]="newJob.expressao_cron">
+      </div>
+    </div>
+    <div class="col-2">
+      <br>
+      <button (click)="createJob()">Adicionar Job</button>
+    </div>
+
+  </div>
+
+  <div *ngIf="jobs.length > 0">
+    <h3>Jobs Agendados</h3>
+    <ul>
+      <li *ngFor="let job of jobs">
+        {{ job.nome_do_job }} - {{ job.horario || job.expressao_cron }}
+        <button (click)="deleteJob(job.id)">Remover</button>
+      </li>
+    </ul>
+  </div>
+</div>

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PetrvsController;
 use App\Http\Controllers\AngularController;
 use App\Http\Controllers\DownloadController;
-
+use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
