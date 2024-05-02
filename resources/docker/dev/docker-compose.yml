@@ -63,3 +63,14 @@ services:
       - ../../../front-end:/usr/src/app
       - ../../../back-end:/usr/src/back-end
       - ../../../resources:/usr/src/resources
+
+petrvs_scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile-php
+    container_name: petrvs_scheduler
+    depends_on:
+      - petrvs_php
+    volumes:
+      - ../../../back-end:/var/www
+    entrypoint: /bin/sh -c "while :; do php /var/www/artisan schedule:run; sleep 60; done"

@@ -25,6 +25,7 @@ export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService>
     super(injector, Tenant, TenantDaoService);
     this.jobAgendadoDao = injector.get<JobAgendadoDaoService>(JobAgendadoDaoService);    
     this.title = "Gerenciar Jobs agendados";
+    this.newJob.diario = true;
   }
   ngOnInit() {
     super.ngOnInit();
@@ -54,7 +55,7 @@ export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService>
 
     this.jobAgendadoDao.createJob(this.newJob,this.tenant_id).then((job: any) => {
       console.log('Job created:', job);
-      this.jobs.push(job);
+      this.loadJobs();
       this.newJob = new JobAgendado();
     }).catch((error: any) => {
       console.error('Error creating job:', error);
