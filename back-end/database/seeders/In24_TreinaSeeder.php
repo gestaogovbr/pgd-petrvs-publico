@@ -19,6 +19,8 @@ use App\Models\Entrega;
 use App\Models\Planejamento;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Entidade;
+use App\Models\TipoCapacidade;
+use App\Models\Capacidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\Usuario;
 use App\Models\Perfil;
@@ -1234,6 +1236,14 @@ class In24_TreinaSeeder extends Seeder
       )
     );
 
+    $perfilAdmNegocialId = Perfil::where('nome', 'Administrador Negocial')->first()->id;
+    $tipoCapacidadeId = TipoCapacidade::where('codigo', 'MOD_CFG_USER_MAIL')->first()->id;
+    $capacidade = Capacidade::firstOrNew([
+      'perfil_id' => $perfilAdmNegocialId,
+      'tipo_capacidade_id' => $tipoCapacidadeId
+    ]);
+    $capacidade->save();
+
     // Atualiza o primeiro usuário para dev
     $usuario = Usuario::find('ada3cdbc-ffc4-11ee-b754-0242ac120002');
     if ($usuario) {
@@ -1259,47 +1269,47 @@ class In24_TreinaSeeder extends Seeder
     }
     
     foreach ($tipos_modalidades as $tipo_modalidade) {
-      TipoModalidade::firstOrCreate(['id' => $tipo_modalidade['id']], $tipo_modalidade);
+      TipoModalidade::withTrashed()->firstOrCreate(['id' => $tipo_modalidade['id']], $tipo_modalidade);
     }
 
     foreach ($tipos_atividades as $tipo_atividade) {
-      TipoAtividade::firstOrCreate(['id' => $tipo_atividade['id']], $tipo_atividade);
+      TipoAtividade::withTrashed()->firstOrCreate(['id' => $tipo_atividade['id']], $tipo_atividade);
     }
 
     foreach ($tipos_avaliacoes as $tipo_avaliacao) {
-      TipoAvaliacao::firstOrCreate(['id' => $tipo_avaliacao['id']], $tipo_avaliacao);
+      TipoAvaliacao::withTrashed()->firstOrCreate(['id' => $tipo_avaliacao['id']], $tipo_avaliacao);
     }
 
     foreach ($tipos_avaliacoes_notas as $tipo_avaliacao_nota) {
-      TipoAvaliacaoNota::firstOrCreate(['id' => $tipo_avaliacao_nota['id']], $tipo_avaliacao_nota);
+      TipoAvaliacaoNota::withTrashed()->firstOrCreate(['id' => $tipo_avaliacao_nota['id']], $tipo_avaliacao_nota);
     }
 
     foreach ($tipos_documentos as $tipo_documento) {
-      TipoDocumento::firstOrCreate(['id' => $tipo_documento['id']], $tipo_documento);
+      TipoDocumento::withTrashed()->firstOrCreate(['id' => $tipo_documento['id']], $tipo_documento);
     }
 
     foreach ($templates as $template) {
-      Template::firstOrCreate(['id' => $template['id']], $template);
+      Template::withTrashed()->firstOrCreate(['id' => $template['id']], $template);
     }
 
     foreach ($programas as $programa) {
-      Programa::firstOrCreate(['id' => $programa['id']], $programa);
+      Programa::withTrashed()->firstOrCreate(['id' => $programa['id']], $programa);
     }
 
     foreach ($eixos_tematicos as $eixo_tematico) {
-      EixoTematico::firstOrCreate(['id' => $eixo_tematico['id']], $eixo_tematico);
+      EixoTematico::withTrashed()->firstOrCreate(['id' => $eixo_tematico['id']], $eixo_tematico);
     }
 
     foreach ($modelos_afericao_entregas as $modelo_afericao_entrega) {
-      Entrega::firstOrCreate(['id' => $modelo_afericao_entrega['id']], $modelo_afericao_entrega);
+      Entrega::withTrashed()->firstOrCreate(['id' => $modelo_afericao_entrega['id']], $modelo_afericao_entrega);
     }
 
     foreach ($planejamentos as $planejamento) {
-      Planejamento::firstOrCreate(['id' => $planejamento['id']], $planejamento);
+      Planejamento::withTrashed()->firstOrCreate(['id' => $planejamento['id']], $planejamento);
     }
 
     foreach ($planejamentos_objetivos as $planejamento_objetivo) {
-      PlanejamentoObjetivo::firstOrCreate(['id' => $planejamento_objetivo['id']], $planejamento_objetivo);
+      PlanejamentoObjetivo::withTrashed()->firstOrCreate(['id' => $planejamento_objetivo['id']], $planejamento_objetivo);
     }
 
   }
