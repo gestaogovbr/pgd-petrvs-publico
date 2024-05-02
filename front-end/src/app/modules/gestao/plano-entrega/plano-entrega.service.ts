@@ -11,7 +11,7 @@ export class PlanoEntregaService {
 
   constructor(public lookup: LookupService) { }
 
-  public getValorMeta(entrega: HasMetaRealizado): string {
+  public getValorMeta(entrega: HasMetaRealizado): string {   
     let result = "";
     switch (entrega.entrega?.tipo_indicador) {
       case "PORCENTAGEM": result = entrega.meta.porcentagem + " %"; break;
