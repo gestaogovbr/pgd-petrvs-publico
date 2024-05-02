@@ -64,7 +64,7 @@ services:
       - ../../../back-end:/usr/src/back-end
       - ../../../resources:/usr/src/resources
 
-petrvs_scheduler:
+  petrvs_scheduler:
     build:
       context: .
       dockerfile: Dockerfile-php
