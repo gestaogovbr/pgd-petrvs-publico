@@ -85,17 +85,29 @@ class PlanoEntregaEntregaService extends ServiceBase
             'meta',
             'realizado',
         ];
-    
-        $dadosProgresso = collect($entrega->getAttributes())
-        ->only($atributosParaCopiar)
-        ->merge([
-            'usuario_id' => $usuario->id,
-            'plano_entrega_entrega_id' => $entrega->id,
-            'data_progresso' => Carbon::now(),
-        ])->toArray();
-    
-        $progresso = new PlanoEntregaEntregaProgresso($dadosProgresso);
-        $progresso->save();    
+
+        $atributosParaMonitorar = [
+            'progresso_esperado',
+            'progresso_realizado',
+            'meta',
+            'realizado',
+        ];
+
+        $dadosAlterados = array_intersect_key($data, array_flip($atributosParaMonitorar)) !== $entrega->getAttributes();
+
+        
+        if ($dadosAlterados) {
+            $dadosProgresso = collect($entrega->getAttributes())
+            ->only($atributosParaCopiar)
+            ->merge([
+                'usuario_id' => $usuario->id,
+                'plano_entrega_entrega_id' => $entrega->id,
+                'data_progresso' => Carbon::now(),
+            ])->toArray();
+        
+            $progresso = new PlanoEntregaEntregaProgresso($dadosProgresso);
+            $progresso->save();
+        }    
         return $entrega;
     }
 
