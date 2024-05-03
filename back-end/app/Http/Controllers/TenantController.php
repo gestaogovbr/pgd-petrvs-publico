@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 use Throwable;
+use App\Exceptions\LogError;
 
 class TenantController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
@@ -42,6 +43,7 @@ class TenantController extends ControllerBase {
             throw $e;
         }
     }
+
 
     public function generateCertificateKeys() {
         try {

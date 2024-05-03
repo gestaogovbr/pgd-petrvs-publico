@@ -69,11 +69,6 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
       label: "Excluir",
       onClick: this.deleteTenant.bind(this)
     });
-    this.options.push({
-      icon: "bi bi-trash",
-      label: "Ver Logs",
-      onClick: (tenant: Tenant) => this.go.navigate({route: ["panel", tenant.id, "logs"]} )
-    });
 
     this.options.push({
       icon: "bi bi-database-fill-gear",
