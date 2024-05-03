@@ -33,6 +33,11 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
       label: "Executar Seeder", 
       onClick: (tenant: Tenant) => this.go.navigate({route: ["panel", "seeder"]})
     },
+    {
+      icon: "bi-database-fill-gear",
+      label: "Job Agendados", 
+      onClick: (tenant: Tenant) => this.go.navigate({route: ["panel", "job-agendados"]})
+    },
     
     // {
     //   icon: "bi bi-database-x",
@@ -74,7 +79,12 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
       icon: "bi bi-database-fill-gear",
       label: "Executar Seeder",
       onClick: (tenant: Tenant) => this.go.navigate({ route: ["panel", "seeder"] }, { metadata: { tenant_id: tenant.id }})
+    });
 
+    this.options.push({
+      icon: "bi bi-database-fill-gear",
+      label: "Job agendados",
+      onClick: (tenant: Tenant) => this.go.navigate({ route: ["panel", "job-agendados"] }, { metadata: { tenant_id: tenant.id }})
     });
 
   }
@@ -153,7 +163,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 
   public executaMigrationTenant(row: any) {
     const self = this;
-    this.dialog.confirm("Executar Seeder?", "Deseja realmente executar as migrations?").then(confirm => {
+    this.dialog.confirm("Executar Migration?", "Deseja realmente executar as migrations?").then(confirm => {
       if (confirm) {
         this.dao!.tiposCapacidadesSeeder(row).then(function () {
           self.dialog.alert("Sucesso", "Migration executada com sucesso!");

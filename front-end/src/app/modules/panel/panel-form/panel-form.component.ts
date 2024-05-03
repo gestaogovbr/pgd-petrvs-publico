@@ -10,7 +10,7 @@ import { Tenant } from 'src/app/models/tenant.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { SeederDaoService } from 'src/app/dao/seeder-dao.service';
-
+import { JobAgendadoDaoService } from 'src/app/dao/job-agendado-dao.service';
 
 @Component({
   selector: 'app-panel-form',
@@ -27,6 +27,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
   public selectedSeeder: string = '';
 
   public seederDao: SeederDaoService;
+  public jobAgendadoDao: JobAgendadoDaoService;
 
   public encryption: LookupItem[] = [
     { key: "SSL", value: "SSL" },
@@ -45,6 +46,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
   constructor(public injector: Injector) {
     super(injector, Tenant, TenantDaoService);
     this.seederDao = injector.get<SeederDaoService>(SeederDaoService);
+    this.jobAgendadoDao = injector.get<JobAgendadoDaoService>(JobAgendadoDaoService);
     this.form = this.fh.FormBuilder({
       id: { default: "" },
       edition: { default: "MGI" },
