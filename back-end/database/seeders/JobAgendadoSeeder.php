@@ -11,42 +11,6 @@ class JobAgendadoSeeder extends Seeder
   {
     $jobs = [
       [
-          'nome_do_job' => 'SincronizarPetrvsJob',
-          'diario' => true,
-          'horario' => '10:00:00',
-          'ativo' => true
-      ],
-      [
-          'nome_do_job' => 'SincronizarPetrvsJob',
-          'diario' => true,
-          'horario' => '11:00:00',
-          'ativo' => true
-      ],
-      [
-          'nome_do_job' => 'SincronizarPetrvsJob',
-          'diario' => true,
-          'horario' => '12:00:00',
-          'ativo' => true
-      ],
-      [
-          'nome_do_job' => 'SincronizarPetrvsJob',
-          'diario' => true,
-          'horario' => '14:00:00',
-          'ativo' => true
-      ],
-      [
-          'nome_do_job' => 'SincronizarPetrvsJob',
-          'diario' => true,
-          'horario' => '15:00:00',
-          'ativo' => true
-      ],
-      [
-          'nome_do_job' => 'SincronizarPetrvsJob',
-          'diario' => true,
-          'horario' => '17:00:00',
-          'ativo' => true
-      ],
-      [
         'nome_do_job' => 'LogJob',
         'diario' => true,
         'horario' => '10:31:00',
@@ -55,13 +19,13 @@ class JobAgendadoSeeder extends Seeder
       [
           'nome_do_job' => 'LogJob',
           'diario' => true,
-          'horario' => '16:31:00',
+          'horario' => '11:31:00',
           'ativo' => true
       ],
       [
         'nome_do_job' => 'LogJob',
         'diario' => true,
-        'horario' => '17:01:00',
+        'horario' => '13:01:00',
         'ativo' => true
       ]
     ];
@@ -72,6 +36,6 @@ class JobAgendadoSeeder extends Seeder
             'horario' => $jobData['horario']
         ], $jobData);
     }
-    
+
   }
 }

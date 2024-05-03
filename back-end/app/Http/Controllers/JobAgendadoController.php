@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Services\JobAgendadoService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Jobs\SincronizarPetrvsJob;
+use App\Jobs\SincronizarSiapeJob;
 use App\Jobs\LogJob;
+use Throwable;
 
 class JobAgendadoController extends Controller {
 
@@ -17,42 +18,50 @@ class JobAgendadoController extends Controller {
         $this->jobAgendadoService = $jobAgendadoService;
     }
 
-    public function listar(Request $request) {
-
+    public function listar(Request $request)
+    {
         try {
-            return response()->json([
-                'success' => true,
-                'data' => $this->jobAgendadoService->listar()
-            ]);
+            $tenantId = $request->get('tenant_id');
+            $jobs = $this->jobAgendadoService->listar($tenantId);
+            return response()->json(['success' => true, 'data' => $jobs]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
 
-    public function update(Request $request, $id)
+    public function createJob(Request $request)
     {
-        $dados = $request->only(['diario', 'horario', 'expressao_cron', 'ativo']);
-        $resultado = $this->service->updateJob($id, $dados);
-
         try {
-            return response()->json($resultado);
+            $tenantId = $request->get('tenant_id');
+            $dados = $request->only(['nome_do_job', 'diario', 'horario', 'expressao_cron', 'ativo']);
+            $result = $this->jobAgendadoService->createJob($dados, $tenantId);
+            return response()->json($result);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
 
-    public function sincronizarPetrvs(Request $request)
+    public function removerJob(Request $request, $id)
     {
-     
-        $usuario_id = $request->input('usuario_id', '08246b0c-e5ff-11ee-a54a-0242ac130002'); // Exemplo de como pegar o usuario_id    
-        SincronizarPetrvsJob::dispatch($usuario_id);
+        try {
+            $tenantId = $request->get('tenant_id');
+            $result = $this->jobAgendadoService->removerJob($id, $tenantId);
+            return response()->json($result);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
 
-        return response()->json(['message' => 'SincronizarPetrvsJob iniciado com sucesso!']);
+    public function sincronizarSiape(Request $request)
+    {
+        $usuario_id = $request->input('usuario_id', '08246b0c-e5ff-11ee-a54a-0242ac130002');
+        SincronizarSiapeJob::dispatch($usuario_id);
+        return response()->json(['message' => 'sincronizarSiape iniciado com sucesso!']);
     }
 
     public function logJob()
-    { 
-        LogJob::dispatch();
+    {
+        LogJob::dispatch(true);
         return response()->json(['message' => 'LogJob iniciado com sucesso!']);
     }
 }
