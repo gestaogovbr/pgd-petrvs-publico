@@ -57,6 +57,7 @@ export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService>
       console.log('Job created:', job);
       this.loadJobs();
       this.newJob = new JobAgendado();
+      this.newJob.diario = true;
     }).catch((error: any) => {
       console.error('Error creating job:', error);
     });
