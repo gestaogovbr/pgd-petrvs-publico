@@ -6,6 +6,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Models\JobAgendado;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 class Kernel extends ConsoleKernel
 {
 
@@ -41,7 +42,10 @@ class Kernel extends ConsoleKernel
                 if ($agendamento->diario) {
                     $schedule->job(new $jobClass)->dailyAt($agendamento->horario);
                 } else {
-                    $schedule->job(new $jobClass)->cron($agendamento->expressao_cron);
+                    $targetDate = Carbon::parse($agendamento->expressao_cron);
+                    if ($targetDate->isFuture()) {
+                        $schedule->job(new $jobClass)->at($targetDate->format('H:i'));
+                    }
                 }
             }
         }

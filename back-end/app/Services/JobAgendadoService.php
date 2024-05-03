@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\JobAgendado;
 use App\Services\ServiceBase;
-use Illuminate\Support\Facades\DB;
 use App\Traits\TenantConnection;
 class JobAgendadoService extends ServiceBase {
 

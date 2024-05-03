@@ -11,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
 
 use App\Services\PGD\OrgaoCentralService;
 
-class PGDCarregarDadosFila implements ShouldQueue
+class SincronizarPGDJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -32,7 +32,7 @@ class PGDCarregarDadosFila implements ShouldQueue
                 $dados['tipo'] = 'PLANO_TRABALHO';
                 $dados['cod_SIAPE_instituidora'] = 17500;
                 $dados['id_plano_trabalho_participante'] = 10;
-                PGDExportarDados::dispath($dados);
+                PGDExportarDadosJob::dispath($dados);
        }
 
        $planos_entregas = [];
@@ -42,7 +42,7 @@ class PGDCarregarDadosFila implements ShouldQueue
                 $dados['tipo'] = 'PLANO_ENTREGA';
                 $dados['cod_SIAPE_instituidora'] = 17500;
                 $dados['id_plano_trabalho_participante'] = 10;
-                PGDExportarDados::dispath($dados);
+                PGDExportarDadosJob::dispath($dados);
        }
 
     }
