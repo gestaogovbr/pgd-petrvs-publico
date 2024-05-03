@@ -7,6 +7,8 @@ use App\Tenant;
 use Illuminate\Support\Facades\Request;
 use Monolog\Logger;
 use Monolog\Handler\AbstractProcessingHandler;
+use Monolog\LogRecord;
+
 
 class DatabaseLogger
 {
@@ -14,7 +16,7 @@ class DatabaseLogger
     {
         $logger = new Logger('db');
         $handler = new class extends AbstractProcessingHandler {
-            protected function write(array $record): void
+            protected function write(LogRecord $record): void
             {
                 $tenantId = Request::Header('X-ENTIDADE') ?? null;
 

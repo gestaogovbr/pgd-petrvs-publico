@@ -9,7 +9,7 @@ use App\Models\Usuario;
 use Illuminate\Support\Facades\Artisan;
 use Carbon\Carbon;
 use App\Models\Tenant;
-
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Log;
 
@@ -230,4 +230,34 @@ class TenantService extends ServiceBase
       throw $e;
     }
   }
+
+  public function searchText($data)
+  {
+    $text = "%" . str_replace(" ", "%", $data['query']) . "%";
+    $model = App($this->collection);
+    $table = $model->getTable();
+    $data["select"] = array_map(fn ($field) => str_contains($field, ".") ? $field : $table . "." . $field, array_merge(['id'], $data['fields']));
+    $query = DB::table($table);
+    if (method_exists($this, 'proxySearch')) $this->proxySearch($query, $data, $text);
+    $likes = ["or"];
+    foreach ($data['fields'] as $field) {
+      array_push($likes, [$field, 'like', $text]);
+    }
+   
+    //$where = count($data['where']) > 0 ? [$likes, $data['where']] : $likes;
+    $where = [$likes, $data['where']];
+    $this->applyWhere($query, $where, $data);
+    $this->applyOrderBy($query, $data);
+    $query->select($data["select"]);
+    $rows = $query->get();
+    $values = [];
+    foreach ($rows as $row) {
+      $row = (array) $row;
+      $orderFilds = array_map(fn ($order) => "_" . str_replace(".", "_", $order[0]), $data['orderBy'] ?? []);
+      $orderValues = array_map(fn ($field) => $row[$field], $orderFilds);
+      array_push($values, [$row['id'], array_map(fn ($field) => $row[$field], $data['fields']), $orderValues]);
+    }
+    return $values;
+  }
+
 }

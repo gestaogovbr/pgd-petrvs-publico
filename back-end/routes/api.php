@@ -64,9 +64,6 @@ Route::get('/jobs-agendados/sincronizar/siape', [JobAgendadoController::class, '
 Route::get('/jobs-agendados/log', [JobAgendadoController::class, 'logJob']);
 
 
-Route::middleware(['panel'])->prefix('Logs')->group(function () {
-  Route::post('list', [\App\Http\Controllers\LogsController::class, 'index']);
-});
 
 Route::middleware(['panel'])->prefix('UserPanel')->group(function () {
   Route::post('query', [PainelUsuarioController::class, 'query']);
