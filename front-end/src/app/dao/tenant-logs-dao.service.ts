@@ -1,7 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { DaoBaseService } from './dao-base.service';
 import { TenantLogs } from '../models/tenant-logs.model';
-import { TipoCapacidade } from '../models/tipo-capacidade.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +9,7 @@ export class TenantLogsDaoService extends DaoBaseService<TenantLogs> {
   public PREFIX_URL: string = "config";
 
   constructor(protected injector: Injector) { 
-    super("TenantLogs", injector);
+    super("Logs", injector);
   }
   
 
