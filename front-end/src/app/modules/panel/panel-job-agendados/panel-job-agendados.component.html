@@ -33,13 +33,31 @@
 
   </div>
 
-  <div *ngIf="jobs.length > 0">
-    <h3>Jobs Agendados</h3>
-    <ul>
-      <li *ngFor="let job of jobs">
-        {{ job.nome_do_job }} - {{ job.horario || job.expressao_cron }}
-        <button (click)="deleteJob(job.id)">Remover</button>
-      </li>
-    </ul>
-  </div>
+  <grid [items]="jobs">
+    <columns>
+        <column title="Job" [template]="columnNome">
+            <ng-template let-row="row" #columnNome>
+              <span>{{row.nome_do_job}}</span>
+            </ng-template>
+        </column>
+        <column title="Diario/Hora" [template]="columnMensagem">
+            <ng-template let-row="row" #columnMensagem>
+                <span>{{row.horario}}</span>
+            </ng-template>
+        </column>
+        <column title="Data" [template]="columnTipo">
+            <ng-template let-row="row" #columnTipo>
+              <span>{{dao!.getDateTimeFormatted(row.expressao_cron)}}</span>
+            </ng-template>
+        </column>
+        <column title="Ação" [template]="columnAction">
+          <ng-template let-row="row" #columnAction>
+            <button (click)="deleteJob(row.id)">Remover</button>
+          </ng-template>
+      </column>
+
+    </columns>
+</grid>
+    
+  
 </div>

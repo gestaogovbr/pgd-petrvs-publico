@@ -16,7 +16,7 @@ export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService>
   showCronInput: boolean = false;
   public tenant_id!: string | null;
   public jobAgendadoDao: JobAgendadoDaoService;
-  public jobTypes: string[] = ['LogJob', 'SincronizarSiapeJob'];
+  public jobTypes: string[] = ['LogJob', 'SincronizarSiapeJob', 'SincronizarPGDJob'];
   public isRecurring: boolean = false;
   public scheduleTime: string = '';
   public expressionCron: string = '';
@@ -57,6 +57,7 @@ export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService>
       console.log('Job created:', job);
       this.loadJobs();
       this.newJob = new JobAgendado();
+      this.newJob.diario = true;
     }).catch((error: any) => {
       console.error('Error creating job:', error);
     });
