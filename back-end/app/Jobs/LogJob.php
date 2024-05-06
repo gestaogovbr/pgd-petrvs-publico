@@ -39,6 +39,7 @@ class LogJob implements ShouldQueue
             } else {
                 Log::info('Este é um log de exemplo gerado pelo LogJob em execução agendada.');
             }
+
         } catch (\Exception $e) {
             Log::error("Erro ao processar LogJob: " . $e->getMessage());
             return false; // Para marcar o job como falhado

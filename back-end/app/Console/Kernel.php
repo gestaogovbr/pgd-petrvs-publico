@@ -44,7 +44,7 @@ class Kernel extends ConsoleKernel
                 } else {
                     $targetDate = Carbon::parse($agendamento->expressao_cron);
                     if ($targetDate->isFuture()) {
-                        $schedule->job(new $jobClass)->at($targetDate->format('H:i'));
+                        $schedule->job(new $jobClass)->at($targetDate->format('Y-m-d H:i'));
                     }
                 }
             }
