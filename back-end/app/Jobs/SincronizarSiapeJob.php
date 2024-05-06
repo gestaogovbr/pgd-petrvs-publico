@@ -48,7 +48,15 @@ class SincronizarSiapeJob implements ShouldQueue
 
     public function handle(IntegracaoService $integracaoService)
     {
-        $integracaoService->sincronizarPetrvs($this->data,$this->usuario_id, null);
-        Log::info('Este é um log de exemplo gerado pelo LogJob.');
+        try {
+            $integracaoService->sincronizarPetrvs($this->data,$this->usuario_id, null);
+            Log::info('Este é um log de exemplo gerado pelo LogJob.');
+        } catch (\Exception $e) {
+            Log::error("Erro ao processar LogJob: " . $e->getMessage());
+            return false; // Para marcar o job como falhado
+        }
+
+
+
     }
 }
