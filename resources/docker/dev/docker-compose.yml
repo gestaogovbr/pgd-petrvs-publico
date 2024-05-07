@@ -63,7 +63,20 @@ services:
       - ../../../front-end:/usr/src/app
       - ../../../back-end:/usr/src/back-end
       - ../../../resources:/usr/src/resources
-
+  
+  petrvs_queue_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile-php
+    container_name: petrvs_queue_worker
+    depends_on:
+      - petrvs_php
+    volumes:
+      - ../../../back-end:/var/www
+    environment:
+      - TZ=America/Bahia
+    entrypoint: /bin/sh -c "while true; do php /var/www/artisan queue:work --sleep=3 --tries=3; done"
+    
   petrvs_scheduler:
     build:
       context: .
