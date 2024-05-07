@@ -344,6 +344,7 @@ class PlanoEntregaService extends ServiceBase
     if (empty($arquivados) || !$arquivados[2]) $data["where"][] = ["data_arquivamento", "==", null];
     // (RI_PENT_D) Na visualização de Avaliação, deverá trazer a unidade ao qual o usuário é gestor e todas as suas subordinadas imediatas.
     $filhas = $this->extractWhere($data, "unidades_filhas");
+    $superiores = $this->extractWhere($data, "unidades_superiores");
     $unidadeId = $this->extractWhere($data, "unidade_id");
     if (!empty($unidadeId)) {
       $unidade = Unidade::find($unidadeId[2]);
@@ -352,6 +353,12 @@ class PlanoEntregaService extends ServiceBase
       } else {
         $data["where"][] = $unidadeId;
       }
+    }
+    if(!empty($superiores)){
+      $unidadeService = new UnidadeService();
+      $ids = $unidadeService->linhaAscendente($superiores[2]);
+      $ids[] = $superiores[2];
+      $data["where"][] = ["unidade_id", "in", $ids];
     }
     foreach ($data["where"] as $condition) {
       if (is_array($condition) && $condition[0] == "data_filtro") {
