@@ -3,10 +3,10 @@ namespace App\Services\Siape\Unidade;
 
 class VinculoDTO {
     public function __construct(
-        public readonly ?int $usuarioId,
-        public readonly ?int $unidadeId,
+        public readonly ?string $usuarioId,
+        public readonly ?string $unidadeId,
         public readonly array $atribuicoes,
-        public readonly ?int $perfilId,
+        public readonly ?string $perfilId,
         public readonly array $metadata
     ) {}
 
