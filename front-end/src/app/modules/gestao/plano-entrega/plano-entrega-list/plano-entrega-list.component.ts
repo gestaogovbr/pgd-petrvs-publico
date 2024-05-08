@@ -146,8 +146,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     }
   }
 
-  ngOnInit(): void {
-    super.ngOnInit();
+  ngOnInit() {
+    super.ngOnInit();    
     this.execucao = !!this.queryParams?.execucao;
     this.avaliacao = !!this.queryParams?.avaliacao;
     this.showFilter = typeof this.queryParams?.showFilter != "undefined" ? (this.queryParams.showFilter == "true") : true;
@@ -236,7 +236,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
-    let form: any = filter.value;
+    let form: any = filter.value;    
+
     /*
     (RI_PENT_B) A consulta do grid retornará inicialmente os principais Planos de Entrega do usuário logado (a opção "principais" já vem marcada), que são:
     - os válidos das unidades onde ele possui algum vínculo (áreas de trabalho) (w1), e
@@ -267,6 +268,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       result.push(["data_filtro_fim", "==", form.data_filtro_fim]);
     }
     if (form.unidade_id) result.push(["unidade_id", "==", form.unidade_id]);
+    if(!form.unidade_id){
+      result.push(["unidades_superiores", "==", this.auth.unidade?.id]);
+    }
     if (form.planejamento_id) result.push(["planejamento_id", "==", form.planejamento_id]);
     if (form.cadeia_valor_id) result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
     if (this.isModal) {

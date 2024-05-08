@@ -12,13 +12,13 @@ use Illuminate\Support\Facades\Log;
 use App\Services\IntegracaoService;
 
 
-class SincronizarPetrvsJob implements ShouldQueue
+class SincronizarSiapeJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $data;
     protected $usuario_id;
-    protected $request; 
+    protected $request;
 
     public function __construct($usuario_id = null)
     {
@@ -48,7 +48,15 @@ class SincronizarPetrvsJob implements ShouldQueue
 
     public function handle(IntegracaoService $integracaoService)
     {
-        $integracaoService->sincronizarPetrvs($this->data,$this->usuario_id, null);
-        Log::info('Este é um log de exemplo gerado pelo LogJob.');
+        try {
+            $integracaoService->sincronizarPetrvs($this->data,$this->usuario_id, null);
+            Log::info('Este é um log de exemplo gerado pelo LogJob.');
+        } catch (\Exception $e) {
+            Log::error("Erro ao processar LogJob: " . $e->getMessage());
+            return false; // Para marcar o job como falhado
+        }
+
+
+
     }
 }

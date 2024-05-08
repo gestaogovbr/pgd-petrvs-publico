@@ -9,6 +9,7 @@ import { UteisModule } from '../uteis/uteis.module';
 import { PanelListLogsComponent } from './panel-list-logs/panel-list-logs.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { PanelSeederComponent } from './panel-seeder/panel-seeder.component';
+import { JobAgendadoComponent } from './panel-job-agendados/panel-job-agendados.component';
 import { PanelLayoutComponent } from './panel-layout/panel-layout.component';
 import { PanelAdminsListComponent } from './panel-admins-list/panel-admins-list.component';
 import { PanelAdminsFormComponent } from './panel-admins-form/panel-admins-form.component';
@@ -24,7 +25,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
     PanelSeederComponent,
     PanelLayoutComponent,
     PanelAdminsListComponent,
-    PanelAdminsFormComponent
+    PanelAdminsFormComponent,
+    JobAgendadoComponent
   ],
     imports: [
         CommonModule,

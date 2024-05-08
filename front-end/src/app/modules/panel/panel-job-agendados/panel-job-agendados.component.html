@@ -1,0 +1,63 @@
+<div class="container">
+  <div class="row">
+    <div class="col-4">
+      <label for="jobType">Tipo de Job:</label>
+      <br>
+      <select id="jobType" [(ngModel)]="newJob.nome_do_job">
+        <option *ngFor="let job of jobTypes" [value]="job">{{job}}</option>
+      </select>
+    </div>
+    <div class="col-2">
+      <label for="diario">Diario:</label>
+      <br>
+      <input type="checkbox" id="diario" [(ngModel)]="newJob.diario">
+    </div>
+    <div class="col-2">
+      <div *ngIf="newJob.diario">
+        <label for="horario">Horário (HH:mm):</label>
+        <br>
+        <input type="time" id="horario" [(ngModel)]="newJob.horario">
+      </div> 
+    </div>
+    <div class="col-2">
+      <div *ngIf="!newJob.diario">
+        <label for="cron">Expressão Cron:</label>
+        <br>
+        <input type="datetime-local" id="expressao_cron" [(ngModel)]="newJob.expressao_cron">
+      </div>
+    </div>
+    <div class="col-2">
+      <br>
+      <button (click)="createJob()">Adicionar Job</button>
+    </div>
+
+  </div>
+
+  <grid [items]="jobs">
+    <columns>
+        <column title="Job" [template]="columnNome">
+            <ng-template let-row="row" #columnNome>
+              <span>{{row.nome_do_job}}</span>
+            </ng-template>
+        </column>
+        <column title="Diario/Hora" [template]="columnMensagem">
+            <ng-template let-row="row" #columnMensagem>
+                <span>{{row.horario}}</span>
+            </ng-template>
+        </column>
+        <column title="Data" [template]="columnTipo">
+            <ng-template let-row="row" #columnTipo>
+              <span>{{dao!.getDateTimeFormatted(row.expressao_cron)}}</span>
+            </ng-template>
+        </column>
+        <column title="Ação" [template]="columnAction">
+          <ng-template let-row="row" #columnAction>
+            <button (click)="deleteJob(row.id)">Remover</button>
+          </ng-template>
+      </column>
+
+    </columns>
+</grid>
+    
+  
+</div>
