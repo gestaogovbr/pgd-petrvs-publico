@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM php:8.1-apache
+FROM php:8.2-apache
 # instala recursos adicionais
 RUN apt-get update
 RUN apt-get install -y sed
@@ -17,6 +17,7 @@ RUN apt-get install -y sudo
 RUN apt-get install -y chrony
 RUN apt-get install -y libpng-dev
 RUN apt-get install -y libjpeg-dev
+RUN apt-get install -y cron
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install mysqli
@@ -67,6 +68,9 @@ RUN chmod -R 1777 /tmp
 RUN chmod -R 755 ./
 RUN composer install --optimize-autoloader --no-dev
 COPY ../resources/dataprev/dev/entrypoint.sh ./entrypoint.sh
+
+# Adiciona a entrada do cron
+RUN echo "* * * * * cd /var/www/ && /usr/local/bin/php artisan schedule:run >> /var/www/schedule.log 2>&1" | crontab -
 
 # Alterando permissoes
 RUN chmod +x /var/www/entrypoint.sh
