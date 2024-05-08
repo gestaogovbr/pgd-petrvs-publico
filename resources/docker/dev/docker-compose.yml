@@ -18,7 +18,9 @@ services:
       resources:
         limits:
           memory: 2048M
-      
+    networks:
+      - appnet
+
   petrvs_php:
     build:
       context: .
@@ -42,6 +44,8 @@ services:
       resources:
         limits:
           memory: 1024M
+    networks:
+      - appnet
 
   petrvs_node:
     build:
@@ -63,3 +67,39 @@ services:
       - ../../../front-end:/usr/src/app
       - ../../../back-end:/usr/src/back-end
       - ../../../resources:/usr/src/resources
+    networks:
+      - appnet
+
+  petrvs_queue:
+    build:
+      context: .
+      dockerfile: Dockerfile-php
+    container_name: petrvs_queue
+    environment:
+      - TZ=America/Bahia
+    volumes:
+      - ../../../back-end:/var/www
+    command: /bin/sh -c "while true; do php /var/www/artisan queue:work --sleep=3 --tries=3 >> /var/www/storage/logs/queue.log && 2>&1; done"
+    depends_on:
+      - petrvs_php
+    networks:
+      - appnet
+
+  petrvs_scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile-php
+    container_name: petrvs_scheduler
+    environment:
+      - TZ=America/Bahia
+    volumes:
+      - ../../../back-end:/var/www
+    command: > 
+      /bin/sh -c "while :; do php /var/www/artisan schedule:run >> /var/www/storage/logs/scheduler.log 2>&1; sleep 60; done"
+    depends_on:
+      - petrvs_php
+    networks:
+      - appnet
+
+networks:
+  appnet:

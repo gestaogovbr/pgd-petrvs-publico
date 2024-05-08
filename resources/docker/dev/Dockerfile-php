@@ -41,7 +41,7 @@ COPY ./xdebug-disable.sh /usr/local/etc/php/conf.d/xdebug-disable.sh
 COPY ./cacert.pem /usr/local/etc/php/cacert.pem
 
 # Adiciona a entrada do cron
-RUN echo "* * * * * cd /var/www/ && /usr/local/bin/php artisan schedule:run >> /var/www/schedule.log 2>&1" | crontab -
+#RUN echo "* * * * * cd /var/www/ && /usr/local/bin/php artisan schedule:run >> /var/www/schedule.log 2>&1" | crontab -
 
 # instala o composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
