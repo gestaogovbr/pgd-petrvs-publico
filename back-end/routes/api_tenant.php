@@ -118,11 +118,6 @@ Route::get('/teste', function (Request $request) {
 Route::get('/exportar/dados', [PgdController::class, 'exportarDados']);
 Route::get('/exportar/dados/job', [PgdController::class, 'exportarDadosJob']);
 
-/* Jobs Agendados */
-Route::get('/jobs-agendados', [JobAgendadoController::class, 'listar']);
-Route::post('/job-agendado/{id}', [JobAgendadoController::class, 'update']);
-Route::get('/jobs-agendados/sincronizar/petrvs', [JobAgendadoController::class, 'sincronizarPetrvs']);
-Route::get('/jobs-agendados/log', [JobAgendadoController::class, 'logJob']);
 
 /* Rotinas diárias */
 Route::get('/rotinas-diarias', [RotinaDiariaController::class, 'run']);
@@ -364,6 +359,7 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
   Route::post('lotados', [UnidadeController::class, 'lotados']);
   Route::post('hierarquia', [UnidadeController::class, 'hierarquia']);
   Route::post('filhas', [UnidadeController::class, 'filhas']);
+  Route::post('linhaAscendente', [UnidadeController::class, 'linhaAscendente']);
   Route::post('lookup-todas-unidades', [UnidadeController::class, 'lookupTodasUnidades']);
 });
 Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegrante')->group(function () {

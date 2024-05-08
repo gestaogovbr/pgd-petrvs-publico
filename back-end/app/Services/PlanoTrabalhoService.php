@@ -132,7 +132,7 @@ class PlanoTrabalhoService extends ServiceBase
     } else if ($condicoes["atribuicoesGestorUsuario"]["gestorDelegado"]) { /* Plano para o gestor delegado da unidade */
       $validoTabela1 = $condicoes["atribuicoesGestorUsuarioLogado"]["gestor"] || $condicoes["atribuicoesGestorUsuarioLogado"]["gestorSubstituto"];
     } else {
-      $validoTabela1 = $condicoes["gestorUnidadeExecutora"];
+      $validoTabela1 = $condicoes["gestorUnidadeExecutora"] || $condicoes['logadoEhChefe'];
     }
     /* (RN_PTR_AA) Um Plano de Trabalho não pode ser incluído/alterado se apresentar período conflitante com outro Plano de Trabalho já existente para a mesma unidade/servidor, a menos que o usuário logado possua a capacidade MOD_PTR_INTSC_DATA; */
     $conflito = PlanoTrabalho::
@@ -696,6 +696,7 @@ class PlanoTrabalhoService extends ServiceBase
       $planoTrabalho['unidade'] = !empty($planoTrabalho['unidade_id']) ? Unidade::find($planoTrabalho['unidade_id'])->toArray() : null;
       $logado = parent::loggedUser();
       $result = [];
+      $result["logadoEhChefe"] = $logado->gerenciaTitular()->exists() || $logado->gerenciasSubstitutas()->exists() || $logado->gerenciasDelegadas()->exists();
       $result["assinaturasExigidas"] = $this->assinaturasExigidas($planoTrabalho);
       $result["haAssinaturasExigidas"] = $this->haAssinaturasExigidas($planoTrabalho);
       $result["assinaturasFaltantes"] = $this->assinaturasFaltantes($planoTrabalho);
@@ -705,6 +706,7 @@ class PlanoTrabalhoService extends ServiceBase
       $result["atribuicoesGestorUsuarioLogado"] = $this->usuarioService->atribuicoesGestor($planoTrabalho['unidade_id']);
       $result["atribuicoesGestorUsuario"] = $this->usuarioService->atribuicoesGestor($planoTrabalho['unidade_id'], $planoTrabalho['usuario_id']);
       $result["gestorUnidadeExecutora"] = $this->usuarioService->isGestorUnidade($planoTrabalho['unidade_id']);
+      $result["criadorEhGestor"] = true; //$this->usuarioService->isGestorUnidade($planoTrabalho['unidade_id']);
       $result["gestoresUnidadeSuperior"] = $this->unidadeService->gestoresUnidadeSuperior($planoTrabalho['unidade_id']);
       $result["gestorUnidadeSuperior"] = $result["gestoresUnidadeSuperior"]["gestor"]?->id == $logado->id || count(array_filter($result["gestoresUnidadeSuperior"]["gestoresSubstitutos"], fn ($value) => $value["id"] == $logado->id)) > 0;
       $result["nrEntregas"] = empty($planoTrabalho['entregas']) ? 0 : count($planoTrabalho['entregas']);
