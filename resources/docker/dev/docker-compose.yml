@@ -86,4 +86,4 @@ services:
       - petrvs_php
     volumes:
       - ../../../back-end:/var/www
-    entrypoint: /bin/sh -c "while :; do php /var/www/artisan schedule:run; sleep 60; done"
+    entrypoint: /bin/sh -c "while true; do php /var/www/artisan schedule:run; sleep 60; done"
