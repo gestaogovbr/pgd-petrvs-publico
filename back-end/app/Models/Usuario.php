@@ -42,6 +42,7 @@ use App\Traits\HasPermissions;
 use App\Services\UsuarioService;
 use Throwable;
 use App\Exceptions\ServerException;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class UsuarioConfig
 {
@@ -266,6 +267,10 @@ class Usuario extends Authenticatable
   {
     return $this->hasOne(UnidadeIntegrante::class)->has('gestor');
   }
+  public function gerencias()
+  {
+    return $this->hasMany(UnidadeIntegrante::class)->has('gestor');
+  }
   public function gerenciasSubstitutas()
   {
     return $this->hasMany(UnidadeIntegrante::class)->has('gestorSubstituto');
@@ -277,6 +282,10 @@ class Usuario extends Authenticatable
   public function lotacao()
   {
     return $this->hasOne(UnidadeIntegrante::class)->has('lotado');
+  }
+  public function lotacoes()
+  {
+    return $this->hasMany(UnidadeIntegrante::class)->has('lotado');
   }
   //public function areasTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado')->orHas('colaborador'); }
   public function areasTrabalho()
