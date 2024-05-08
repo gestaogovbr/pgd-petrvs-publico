@@ -2,11 +2,13 @@
 
 namespace App\Console;
 
+use App\Jobs\JobBase;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Models\JobAgendado;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 use Carbon\Carbon;
+
 class Kernel extends ConsoleKernel
 {
 
@@ -19,41 +21,20 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
+        // Agendamento de JOBS
         $agendamentosPrincipal = JobAgendado::where('ativo', true)->get();
-        $this->scheduleJobs($schedule, $agendamentosPrincipal);
-
-        $tenants = $this->getTenants();
-        foreach ($tenants as $tenant) {
-            DB::purge('tenant');
-            config(['database.connections.tenant.database' => 'petrvs_' . strtolower($tenant->id)]);
-            DB::reconnect('tenant');
-            $agendamentos = JobAgendado::on('tenant')->where('ativo', true)->get();
-            if (!empty($agendamentos)) {
-                $this->scheduleJobs($schedule, $agendamentos);
-            }
-        }
-    }
-
-    private function scheduleJobs(Schedule $schedule, $agendamentos)
-    {
-        foreach ($agendamentos as $agendamento) {
-            $jobClass = 'App\Jobs\\' . $agendamento->nome_do_job;
-            if (class_exists($jobClass)) {
-                if ($agendamento->diario) {
-                    $schedule->job(new $jobClass)->dailyAt($agendamento->horario);
-                } else {
-                    $targetDate = Carbon::parse($agendamento->expressao_cron);
-                    if ($targetDate->isFuture()) {
-                        $schedule->job(new $jobClass)->at($targetDate->format('Y-m-d H:i'));
-                    }
+        foreach ($agendamentosPrincipal as $job) {
+            $jobClass = new JobBase($job);
+            if ($job->diario) {
+                $schedule->job($jobClass)->dailyAt($job->horario);
+            } else {
+                $targetDate = Carbon::parse($job->expressao_cron);
+                if ($targetDate->isFuture()) {
+                    $schedule->job($jobClass)->at($targetDate->format('Y-m-d H:i'));
                 }
             }
         }
-    }
 
-    private function getTenants()
-    {
-        return DB::table('tenants')->get();
+        //Aqui virão outros agendamentos
     }
-
 }
