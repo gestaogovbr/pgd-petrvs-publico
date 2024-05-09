@@ -271,6 +271,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       $consolidacao = PlanoTrabalhoConsolidacao::find($id);
       if(empty($consolidacao)) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Consolidação não encontrada");
       if(!empty($consolidacao->data_conclusao)) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Consolidação já concluída");
+      if (!is_array($dados)) {
+        throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Dados de consolidação inválidos");
+      }
       $dataConclusao = new DateTime();
       $consolidacao->data_conclusao = $dataConclusao;
       $consolidacao->save();
