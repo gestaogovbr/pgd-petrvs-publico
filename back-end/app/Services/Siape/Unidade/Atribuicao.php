@@ -9,6 +9,7 @@ use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
 use App\Services\Siape\Unidade\Enum\Atribuicao as EnumAtribuicao;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 trait Atribuicao
@@ -29,16 +30,16 @@ trait Atribuicao
                 //@deprecated função não utilizada
                 break;
             case EnumAtribuicao::COLABORADOR->value:
-                $this->lotaServidor(EnumAtribuicao::COLABORADOR, $integranteNovoOuExistente);
+                $this->processaColaborador($unidadeDestino, $usuario, $integranteNovoOuExistente);
                 break;
             case EnumAtribuicao::GESTOR->value:
                 $this->processaGestor($unidadeDestino, $usuario, $integranteNovoOuExistente);
                 break;
             case EnumAtribuicao::GESTOR_SUBSTITUTO->value:
-                $this->processaGestorSubstituto($integranteNovoOuExistente);
+                $this->processaGestorSubstituto($unidadeDestino, $usuario, $integranteNovoOuExistente);
                 break;
             case EnumAtribuicao::GESTOR_DELEGADO->value:
-                $this->processaGestorDelegado($integranteNovoOuExistente);
+                $this->processaGestorDelegado($unidadeDestino, $usuario, $integranteNovoOuExistente);
                 break;
             case EnumAtribuicao::LOTADO->value:
                 $this->processaLotado($unidadeDestino, $usuario, $integranteNovoOuExistente);
@@ -49,14 +50,61 @@ trait Atribuicao
         return $this->alteracoes;
     }
 
-    private function processaGestorSubstituto(UnidadeIntegrante $integranteNovoOuExistente)
+    private function processaColaborador(Unidade $unidadeDestino, Usuario $usuario, UnidadeIntegrante $integranteNovoOuExistente)
+    {   
+        /**
+         * @var UnidadeIntegrante|null $colaboracao
+         */
+        $colaboracao = $usuario->colaboracao;
+        
+        if($colaboracao && $colaboracao->usuario_id == $usuario->id){
+            $this->alteracoes = ['info' => sprintf('O servidor já é colaborador da unidade!', $usuario->id, $unidadeDestino->id)];
+            // Log::channel('siape')->info('O servidor já é colaborador da unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
+            return;
+        }
+
+        
+        $this->alteracoes = ['lotacao' => sprintf('Atribuindo Colaborador ao servidor %s na Unidade %s', $usuario->id, $unidadeDestino->id)];
+        //FIXME não foram visto regras para gestor subsitituto.
+        $this->lotaServidor(EnumAtribuicao::COLABORADOR, $integranteNovoOuExistente);
+    }
+
+    private function processaGestorSubstituto(Unidade $unidadeDestino, Usuario $usuario, UnidadeIntegrante $integranteNovoOuExistente)
     {
+        /**
+         * @var UnidadeIntegrante|null $lotacoes
+         */
+        $lotacoes = $usuario->gerenciasSubstitutas;
+
+        foreach ($lotacoes as $lotacao) {
+            if($lotacao->unidade_id != $unidadeDestino->id)continue;
+
+            if($lotacao->gestorSubstituto->id == $integranteNovoOuExistente->gestorSubstituto->id){
+                $this->alteracoes = ['info' => sprintf('O servidor já é gestor substituto da unidade!', $usuario->id, $unidadeDestino->id)];
+                // Log::channel('siape')->info('O servidor já é gestor substituto da unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
+                return;
+            }
+        }
         //FIXME não foram visto regras para gestor subsitituto.
         $this->lotaServidor(EnumAtribuicao::GESTOR_SUBSTITUTO, $integranteNovoOuExistente);
     }
 
-    private function processaGestorDelegado(UnidadeIntegrante $integranteNovoOuExistente)
+    private function processaGestorDelegado(Unidade $unidadeDestino, Usuario $usuario, UnidadeIntegrante $integranteNovoOuExistente)
     {
+        /**
+         * @var UnidadeIntegrante|null $lotacoes
+         */
+        $lotacoes = $usuario->gerenciasDelegadas;
+
+        foreach ($lotacoes as $lotacao) {
+            if($lotacao->unidade_id != $unidadeDestino->id)continue;
+
+            if($lotacao->gestorSubstituto->id == $integranteNovoOuExistente->gestorSubstituto->id){
+                $this->alteracoes = ['info' => sprintf('O servidor já é gestor delegado da unidade!', $usuario->id, $unidadeDestino->id)];
+                Log::channel('siape')->info('O servidor já é gestor delegado da unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
+                return;
+            }
+        }
         //FIXME não foram visto regras para gestor delegado.
         $this->lotaServidor(EnumAtribuicao::GESTOR_DELEGADO, $integranteNovoOuExistente);
     }
@@ -221,5 +269,12 @@ trait Atribuicao
     private function validarAtribuicoes(array $atribuicoes): bool
     {
         return count(array_intersect([EnumAtribuicao::GESTOR->value, EnumAtribuicao::GESTOR_SUBSTITUTO->value, EnumAtribuicao::GESTOR_DELEGADO->value], $atribuicoes)) > 1;
+    }
+
+    private function removeDeterminadasAtribuicoes(array $atribuicoesRemover, UnidadeIntegrante $integranteNovoOuExistente) : void
+    {
+        foreach ($integranteNovoOuExistente->atribuicoes as $atribuicao) {
+            if (in_array($atribuicao->atribuicao, $atribuicoesRemover)) $atribuicao->delete();
+        }
     }
 }
