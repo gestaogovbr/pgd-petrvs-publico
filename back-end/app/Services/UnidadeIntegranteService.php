@@ -41,7 +41,6 @@ class UnidadeIntegranteService extends ServiceBase
   {
     $result = [];
     foreach ($vinculos as $vinculo) {
-      if ($transaction) DB::beginTransaction();
       try {
         $usuario = Usuario::find($vinculo["usuario_id"]);
         $unidade = Unidade::find($vinculo["unidade_id"]);
@@ -56,7 +55,6 @@ class UnidadeIntegranteService extends ServiceBase
         array_merge($result, $alteracoesFinais);
         
       } catch (Throwable $e) {
-        if ($transaction) DB::rollback();
         throw $e;
       }
     }
