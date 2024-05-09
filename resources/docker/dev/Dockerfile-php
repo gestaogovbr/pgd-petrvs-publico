@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM php:8.1-apache
+FROM php:8.2-apache
 # instala recursos adicionais
 RUN apt-get update
 RUN apt-get install -y sed 
@@ -18,6 +18,7 @@ RUN apt-get install -y dnsutils
 RUN apt-get install -y telnet
 RUN apt-get install -y libpng-dev
 RUN apt-get install -y libjpeg-dev
+RUN apt-get install -y cron
 # Bibliotecas php
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install pdo_mysql
@@ -38,13 +39,17 @@ COPY ./000-default.conf /etc/apache2/sites-available/000-default.conf
 COPY ./xdebug-enable.sh /usr/local/etc/php/conf.d/xdebug-enable.sh
 COPY ./xdebug-disable.sh /usr/local/etc/php/conf.d/xdebug-disable.sh
 COPY ./cacert.pem /usr/local/etc/php/cacert.pem
+
+# Adiciona a entrada do cron
+#RUN echo "* * * * * cd /var/www/ && /usr/local/bin/php artisan schedule:run >> /var/www/schedule.log 2>&1" | crontab -
+
 # instala o composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 RUN php composer-setup.php --install-dir=/usr/local/bin --filename=composer
 # habilita o modulo rewrite
 RUN a2enmod rewrite
 RUN a2enmod headers
-RUN pecl install xdebug-3.1.5 && docker-php-ext-enable xdebug
+RUN pecl install xdebug-3.3.2 && docker-php-ext-enable xdebug
 RUN echo "xdebug.mode=off" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
     echo "xdebug.start_with_request=yes" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
     echo "xdebug.client_host=host.docker.internal" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
