@@ -444,7 +444,7 @@ class PlanoTrabalhoService extends ServiceBase
       "tipoModalidade:id,nome",
       "consolidacoes.avaliacao.tipoAvaliacao.notas",
       "usuario:id,nome,apelido,url_foto"
-    ])->where("usuario_id", $usuarioId);
+    ])->where("usuario_id", $usuarioId)->orderBy('numero', 'desc');
     if (!$arquivados) $query->whereNull("data_arquivamento");
     if (!empty($planoTrabalhoId)) $query->where("id", $planoTrabalhoId);
     $planos = $query->get()->all(); 

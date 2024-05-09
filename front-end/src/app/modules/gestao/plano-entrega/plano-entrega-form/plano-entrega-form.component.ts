@@ -119,8 +119,10 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
 
     let programas = await this.programaDao.query({where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]]}).asPromise();
     let ultimo = programas[programas.length -1];
-    this.entity.programa = ultimo;
-    this.entity.programa_id = ultimo.id;
+    if(ultimo){
+      this.entity.programa = ultimo;
+      this.entity.programa_id = ultimo.id;
+    }
 
     const di = new Date(this.entity.data_inicio).toLocaleDateString();
     const df= this.entity.data_fim ? new Date(this.entity.data_fim).toLocaleDateString() : new Date().toLocaleDateString();

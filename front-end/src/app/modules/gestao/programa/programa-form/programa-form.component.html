@@ -50,11 +50,12 @@
           <input-number [size]="6" label="Tolerância p/ avaliação" controlName="dias_tolerancia_avaliacao" [control]="form!.controls.dias_tolerancia_avaliacao" labelInfo="Dias de tolerância para realizar a avaliação, considerando a tolerância da consolidação. Caso seja zero não fará nada, caso contrário após esse prazo a consolidação será automaticamente avaliada com a nota padrão"></input-number>
           <input-number [size]="6" label="Tolerância p/ recurso" controlName="dias_tolerancia_recurso_avaliacao" [control]="form!.controls.dias_tolerancia_recurso_avaliacao" labelInfo="Dias de tolerância para recorrer da avaliação"></input-number>
         </div>
+        <!--
         <div class="row">
           <input-number [size]="4" label="Nota" *ngIf="isTipoAvaliacao('QUANTITATIVO')" [control]="form!.controls.nota_padrao_avaliacao" labelInfo="Nota que será atribuído automaticamente caso a tolerância seja alcançada"></input-number>
           <input-select [size]="4" label="Conceito" *ngIf="isTipoAvaliacao('QUALITATIVO')" [control]="form!.controls.nota_padrao_avaliacao" [items]="tipoAvaliacaoQualitativo" labelInfo="Nota que será atribuído automaticamente caso a tolerância seja alcançada"></input-select>
           <input-search [label]="lex.translate('Tipo de justificativa')" [size]="8" [emptyValue]="null" #tipoJustificativa controlName="tipo_justificativa_id" [dao]="tipoJustificativaDao" labelInfo="Tipo de justificativa, para quando o gestor não realizar a avaliação dentro do prazo"></input-search>
-        </div>
+        </div> -->
         <!--div class="row">
           <input-multiselect label="Checklists das entregas" controlName="checklist_avaliacao_entregas_plano_trabalho" [size]="6" [addItemHandle]="addItemHandlePlanoTrabalhoChecklist.bind(this)">
             <input-text [size]="12" controlName="checklist_plano_trabalho_texto" [attr.maxlength]=250></input-text>
