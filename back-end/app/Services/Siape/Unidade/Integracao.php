@@ -77,7 +77,7 @@ class Integracao implements InterfaceIntegracao
             return ;
         }
 
-        $this->validarAtribuicoes($vinculoDTO->atribuicoes, $usuario->nome);
+        $this->decideALotacaoDeGestorInvalida($vinculoDTO->atribuicoes, $integranteNovoOuExistente);
 
         collect($vinculoDTO->atribuicoes)->map(function ($atribuicao) use ($usuario, $unidadeDestino, $integranteNovoOuExistente) {
            $alteracao = $this->executarAcao($atribuicao, $usuario, $unidadeDestino, $integranteNovoOuExistente);

@@ -5,7 +5,7 @@ class VinculoDTO {
     public function __construct(
         public readonly ?string $usuarioId,
         public readonly ?string $unidadeId,
-        public readonly array $atribuicoes,
+        public array $atribuicoes,
         public readonly ?string $perfilId,
         public readonly array $metadata
     ) {}

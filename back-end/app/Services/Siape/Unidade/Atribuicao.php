@@ -180,19 +180,46 @@ trait Atribuicao
             return;
         }
         // Log::channel('siape')->info(' Limpando as atribuições menos a lotado: ', ['usuario' => $integranteNovoOuExistente->toJson()]);
-        $integranteNovoOuExistente->atribuicoes()->each(function ($atribuicao) {
-            $atribuicao->delete();
+        $integranteNovoOuExistente->atribuicoes()->each(function ($unidadeIntegrantesAtribuicoes) {
+           if($unidadeIntegrantesAtribuicoes->atribuicao != EnumAtribuicao::LOTADO->value)  $unidadeIntegrantesAtribuicoes->delete();
         });
         return;
     }
 
-    //todo modificar isso aqui para um função de limpar as atribuições indevidas.
-    private function validarAtribuicoes(array $atribuicoes, string $nome = null): void
-    {
-        if (count(array_intersect([EnumAtribuicao::GESTOR->value, EnumAtribuicao::GESTOR_SUBSTITUTO->value, EnumAtribuicao::GESTOR_DELEGADO->value], $atribuicoes)) > 1)
-        {
-            throw new ServerException("ValidateIntegrante", "A um mesmo servidor $nome só pode ser atribuída uma função de gestor, para uma mesma Unidade!");
+    private function decideALotacaoDeGestorInvalida(array &$atribuicoes, UnidadeIntegrante $integranteNovoOuExistente) : void{
 
-        } 
+        if(!$this->validarAtribuicoes($atribuicoes)){
+            return;
+        }
+        // Log::channel('siape')->info('Decidindo a lotação de gestor inválida: ', ['usuario' => $integranteNovoOuExistente->toJson()]);
+        $this->LimparAtribuicoes($integranteNovoOuExistente);
+        $novasAtribuicoes = [];
+        if(in_array(EnumAtribuicao::LOTADO->value, $atribuicoes)){
+            array_push($novasAtribuicoes, EnumAtribuicao::LOTADO->value);
+        }
+        if(in_array(EnumAtribuicao::COLABORADOR->value, $atribuicoes)){
+            array_push($novasAtribuicoes, EnumAtribuicao::COLABORADOR->value);
+        }
+        if(in_array(EnumAtribuicao::GESTOR->value, $atribuicoes)){
+            array_push($novasAtribuicoes, EnumAtribuicao::GESTOR->value);
+            $atribuicoes = $novasAtribuicoes;
+            return;
+        }
+        if(in_array(EnumAtribuicao::GESTOR_DELEGADO->value, $atribuicoes)){
+            array_push($novasAtribuicoes, EnumAtribuicao::GESTOR_DELEGADO->value);
+            $atribuicoes = $novasAtribuicoes;
+            return;
+        }
+        if(in_array(EnumAtribuicao::GESTOR_SUBSTITUTO->value, $atribuicoes)){
+            array_push($novasAtribuicoes, EnumAtribuicao::GESTOR_SUBSTITUTO->value);
+            $atribuicoes = $novasAtribuicoes;
+            return;
+        }
+
+    }
+
+    private function validarAtribuicoes(array $atribuicoes): bool
+    {
+        return count(array_intersect([EnumAtribuicao::GESTOR->value, EnumAtribuicao::GESTOR_SUBSTITUTO->value, EnumAtribuicao::GESTOR_DELEGADO->value], $atribuicoes)) > 1;
     }
 }

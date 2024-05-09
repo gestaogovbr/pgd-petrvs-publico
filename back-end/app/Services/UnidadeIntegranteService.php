@@ -63,6 +63,13 @@ class UnidadeIntegranteService extends ServiceBase
     return $result;
   }
 
+  /**
+   * @deprecated não utilizar essa função, será descontinuada.
+   *
+   * @param [array] $atribuicoes
+   * @param string|null $nome
+   * @return void
+   */
   public function validarAtribuicoes($atribuicoes, string $nome = null)
   {
     if (count(array_intersect(['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO'], $atribuicoes)) > 1) throw new ServerException("ValidateIntegrante", "A um mesmo servidor $nome só pode ser atribuída uma função de gestor, para uma mesma Unidade!");
