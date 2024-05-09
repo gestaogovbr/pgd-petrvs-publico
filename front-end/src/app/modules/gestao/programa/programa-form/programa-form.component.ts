@@ -65,7 +65,7 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
       plano_trabalho_assinatura_participante: { default: true },
       plano_trabalho_assinatura_gestor_lotacao: { default: true },
       plano_trabalho_assinatura_gestor_unidade: { default: true },
-      plano_trabalho_assinatura_gestor_entidade: { default: true },
+      plano_trabalho_assinatura_gestor_entidade: { default: false },
       checklist_avaliacao_entregas_plano_trabalho: { default: [] },
       checklist_plano_trabalho_texto: { default: "" },
       checklist_avaliacao_entregas_plano_entrega: { default: [] },
@@ -73,7 +73,7 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
       plano_trabalho_criterios_avaliacao: { default: [] },
       plano_trabalho_criterio_avaliacao: { default: "" },
       dias_tolerancia_avaliacao: { default: 20 },
-      dias_tolerancia_recurso_avaliacao: { default: 20 },
+      dias_tolerancia_recurso_avaliacao: { default: 10 },
       nota_padrao_avaliacao: { default: 0 },
       tipo_justificativa_id: { default: null }
     }, this.cdRef, this.validate);
