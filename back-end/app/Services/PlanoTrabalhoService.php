@@ -125,12 +125,6 @@ class PlanoTrabalhoService extends ServiceBase
     $validoTabela1 = false;
     if ($condicoes['usuarioEhParticipantePlano']) { /* Plano do próprio usuário logado */
       $validoTabela1 = $condicoes['usuarioEhParticipanteHabilitado'];
-    } else if ($condicoes["atribuicoesGestorUsuario"]["gestor"]) { /* Plano para o gestor da unidade */
-      $validoTabela1 = $condicoes["gestorUnidadeSuperior"];
-    } else if ($condicoes["atribuicoesGestorUsuario"]["gestorSubstituto"]) { /* Plano para o gestor substituto da unidade */
-      $validoTabela1 = $condicoes["gestorUnidadeSuperior"] || $condicoes["atribuicoesGestorUsuarioLogado"]["gestor"];
-    } else if ($condicoes["atribuicoesGestorUsuario"]["gestorDelegado"]) { /* Plano para o gestor delegado da unidade */
-      $validoTabela1 = $condicoes["atribuicoesGestorUsuarioLogado"]["gestor"] || $condicoes["atribuicoesGestorUsuarioLogado"]["gestorSubstituto"];
     } else {
       $validoTabela1 = $condicoes["gestorUnidadeExecutora"] || $condicoes['logadoEhChefe'];
     }
@@ -706,7 +700,6 @@ class PlanoTrabalhoService extends ServiceBase
       $result["atribuicoesGestorUsuarioLogado"] = $this->usuarioService->atribuicoesGestor($planoTrabalho['unidade_id']);
       $result["atribuicoesGestorUsuario"] = $this->usuarioService->atribuicoesGestor($planoTrabalho['unidade_id'], $planoTrabalho['usuario_id']);
       $result["gestorUnidadeExecutora"] = $this->usuarioService->isGestorUnidade($planoTrabalho['unidade_id']);
-      $result["criadorEhGestor"] = true; //$this->usuarioService->isGestorUnidade($planoTrabalho['unidade_id']);
       $result["gestoresUnidadeSuperior"] = $this->unidadeService->gestoresUnidadeSuperior($planoTrabalho['unidade_id']);
       $result["gestorUnidadeSuperior"] = $result["gestoresUnidadeSuperior"]["gestor"]?->id == $logado->id || count(array_filter($result["gestoresUnidadeSuperior"]["gestoresSubstitutos"], fn ($value) => $value["id"] == $logado->id)) > 0;
       $result["nrEntregas"] = empty($planoTrabalho['entregas']) ? 0 : count($planoTrabalho['entregas']);
