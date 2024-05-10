@@ -33,7 +33,7 @@ class JobAgendadoController extends Controller {
     {
         try {
             $tenantId = $request->get('tenant_id');
-            $dados = $request->only(['nome_do_job', 'diario', 'horario', 'expressao_cron', 'ativo']);
+            $dados = $request->only(['nome_do_job', 'diario', 'horario', 'expressao_cron', 'ativo','tenant_id','parameters']);
             $result = $this->jobAgendadoService->createJob($dados, $tenantId);
             return response()->json($result);
         } catch (Throwable $e) {
