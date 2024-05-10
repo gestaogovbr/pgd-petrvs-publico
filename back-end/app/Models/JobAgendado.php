@@ -10,5 +10,8 @@ class JobAgendado extends ModelBase
     use AutoUuid;
 
     protected $table = 'jobs_schedules';
-    protected $fillable = ['nome_do_job', 'diario', 'horario', 'expressao_cron', 'ativo', 'tenant_id'];
+    protected $fillable = ['nome_do_job', 'diario', 'horario', 'expressao_cron', 'ativo', 'tenant_id','parameters'];
+    protected $casts = [
+        'parameters' => 'array'
+    ];
 }

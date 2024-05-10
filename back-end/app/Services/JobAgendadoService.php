@@ -10,36 +10,44 @@ class JobAgendadoService extends ServiceBase {
     use TenantConnection;
 
     public function listar($tenantId = null) {
-        $this->setTenantConnection($tenantId);
-        $jobs = JobAgendado::where('ativo', true)->get();
-        $this->setTenantConnection(null);
-        return $jobs;
+        $query = JobAgendado::where('ativo', true);
+        if ($tenantId) {
+            $query->where('tenant_id', $tenantId);
+        }
+
+        return $query->get();
     }
 
     public function createJob($dados, $tenantId = null) {
-        $this->setTenantConnection($tenantId);
         try {
             $job = new JobAgendado($dados);
+            if (isset($dados['parameters']) && is_array($dados['parameters'])) {
+                $dados['parameters'] = json_encode($dados['parameters']);
+            }
+
+            if ($tenantId) {
+                $job->tenant_id = $tenantId;
+            }
             $job->save();
-            $this->setTenantConnection(null);
             return ['success' => true, 'message' => 'Job criado com sucesso.', 'data' => $job];
         } catch (\Exception $e) {
-            $this->setTenantConnection(null);
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
     public function removerJob($id, $tenantId = null) {
-        $this->setTenantConnection($tenantId);
-        $job = JobAgendado::find($id);
+        $query = JobAgendado::where('id', $id);
+        if ($tenantId) {
+            $query->where('tenant_id', $tenantId);
+        }
+
+        $job = $query->first();
 
         if (!$job) {
-            $this->setTenantConnection(null);
             return ['success' => false, 'message' => 'Job não encontrado.'];
         }
 
         $job->delete();
-        $this->setTenantConnection(null);
         return ['success' => true, 'message' => 'Job removido com sucesso.'];
     }
 }

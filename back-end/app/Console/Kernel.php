@@ -11,7 +11,6 @@ use Carbon\Carbon;
 
 class Kernel extends ConsoleKernel
 {
-
     protected $commands = [];
     protected function commands()
     {
@@ -21,7 +20,6 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
-        // Agendamento de JOBS
         $agendamentosPrincipal = JobAgendado::where('ativo', true)->get();
         foreach ($agendamentosPrincipal as $job) {
             $jobClass = new JobBase($job);
@@ -34,7 +32,5 @@ class Kernel extends ConsoleKernel
                 }
             }
         }
-
-        //Aqui virão outros agendamentos
     }
 }
