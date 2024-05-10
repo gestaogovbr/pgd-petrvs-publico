@@ -11,12 +11,12 @@
             <strong class="ms-1">{{nota.nota}}</strong> - {{nota.descricao}}
         </button>
     </div>
-    <div *ngIf="nota" class="row">
+    <div *ngIf="false" class="row"> 
         <input-multitoggle #justificativas [disabled]="recurso ? 'true' : undefined" [control]="form!.controls.justificativas" [label]="nota!.pergunta" [items]="tiposJustificativas"></input-multitoggle>
     </div>
-    <separator *ngIf="nota" title="Justificativa adicional?" icon="bi bi-chat-left-quote" collapse>
-        <input-textarea label="Justificativa" [disabled]="recurso ? 'true' : undefined" [size]="12" [rows]="2" controlName="justificativa" [control]="form!.controls.justificativa"></input-textarea>
-    </separator>
+    <input-textarea label="Justificativa" [disabled]="recurso ? 'true' : undefined" [size]="12" [rows]="2" controlName="justificativa" [control]="form!.controls.justificativa"></input-textarea>
+    <!-- <separator *ngIf="nota" title="Justificativa adicional?" icon="bi bi-chat-left-quote" collapse>
+    </separator> -->
     <separator *ngIf="entregas.length" [title]="lex.translate('Entregas')" collapse [collapsed]="!checklist.length">
         <grid [items]="entregas" [minHeight]="0" #gridEntregas>
             <columns>

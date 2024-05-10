@@ -10,6 +10,7 @@ use App\Models\Usuario;
 use App\Services\Siape\Contrato\InterfaceIntegracao;
 use Illuminate\Support\Facades\DB;
 use App\Services\Siape\Unidade\Enum\Atribuicao as EnumAtribuicao;
+use Illuminate\Support\Facades\Log;
 
 class Integracao implements InterfaceIntegracao
 {
@@ -76,13 +77,28 @@ class Integracao implements InterfaceIntegracao
             $this->limpaTodasAtribuicoesMenosLotado($usuario, $integranteNovoOuExistente);
             return ;
         }
+        
+        $todasLotacoesAntigas = $usuario->getUnidadesAtribuicoesAttribute();
+        $lotacoesAntigas = [];
 
-        $this->validarAtribuicoes($vinculoDTO->atribuicoes, $usuario->nome);
+        if(!empty($todasLotacoesAntigas) && array_key_exists($vinculoDTO->unidadeId, $todasLotacoesAntigas)) {
+            $lotacoesAntigas = $todasLotacoesAntigas[$vinculoDTO->unidadeId];
+        }
 
-        collect($vinculoDTO->atribuicoes)->map(function ($atribuicao) use ($usuario, $unidadeDestino, $integranteNovoOuExistente) {
+        $atribuicoesRemover = array_diff($lotacoesAntigas, $vinculoDTO->atribuicoes);
+
+        $this->decideALotacaoDeGestorInvalida($vinculoDTO->atribuicoes, $integranteNovoOuExistente);
+
+        collect($vinculoDTO->atribuicoes)->map(function ($atribuicao) use ($usuario, $unidadeDestino, $integranteNovoOuExistente, $vinculoDTO) {
            $alteracao = $this->executarAcao($atribuicao, $usuario, $unidadeDestino, $integranteNovoOuExistente);
            array_push($this->atribuicoesFinais, $alteracao);
+           unset($vinculoDTO->atribuicoes[$atribuicao]);
         });
+
+        if(!empty($atribuicoesRemover)){
+            $this->removeDeterminadasAtribuicoes($atribuicoesRemover, $integranteNovoOuExistente);
+        }
+        
     }
 
 

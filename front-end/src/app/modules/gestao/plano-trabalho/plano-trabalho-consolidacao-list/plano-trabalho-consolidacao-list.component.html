@@ -1,5 +1,5 @@
 <grid [items]="items" #grid [form]="form!" [hasDelete]="true" [minHeight]="0"
-    [add]="addConsolidacao.bind(this)" [hasAdd]="podeInserir()" [hasEdit]="false" [hasDelete]="false" editable>
+    [add]="addConsolidacao.bind(this)" [hasAdd]="false" [hasEdit]="false" [hasDelete]="false" editable>
     <h5 class="my-2">{{lex.translate("Consolidações")}} <i class="bi bi-arrow-down"></i></h5>
     <columns>
         <column type="expand" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')" [align]="'center'" [hint]="lex.translate('Consolidação')" [template]="columnConsolidacao" [expandTemplate]="columnExpandedConsolidacao">

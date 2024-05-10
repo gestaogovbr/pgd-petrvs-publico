@@ -41,7 +41,6 @@ class UnidadeIntegranteService extends ServiceBase
   {
     $result = [];
     foreach ($vinculos as $vinculo) {
-      if ($transaction) DB::beginTransaction();
       try {
         $usuario = Usuario::find($vinculo["usuario_id"]);
         $unidade = Unidade::find($vinculo["unidade_id"]);
@@ -56,13 +55,19 @@ class UnidadeIntegranteService extends ServiceBase
         array_merge($result, $alteracoesFinais);
         
       } catch (Throwable $e) {
-        if ($transaction) DB::rollback();
         throw $e;
       }
     }
     return $result;
   }
 
+  /**
+   * @deprecated não utilizar essa função, será descontinuada.
+   *
+   * @param [array] $atribuicoes
+   * @param string|null $nome
+   * @return void
+   */
   public function validarAtribuicoes($atribuicoes, string $nome = null)
   {
     if (count(array_intersect(['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO'], $atribuicoes)) > 1) throw new ServerException("ValidateIntegrante", "A um mesmo servidor $nome só pode ser atribuída uma função de gestor, para uma mesma Unidade!");
