@@ -5,7 +5,7 @@
             "name": "Listen for XDebug",
             "type": "php",
             "request": "launch",
-            "port": 80,
+            "port": 9004,
             "pathMappings": {
                 "/var/www": "${workspaceRoot}"
             },
