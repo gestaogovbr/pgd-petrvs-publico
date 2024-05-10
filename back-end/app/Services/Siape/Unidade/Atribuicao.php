@@ -53,14 +53,17 @@ trait Atribuicao
     private function processaColaborador(Unidade $unidadeDestino, Usuario $usuario, UnidadeIntegrante $integranteNovoOuExistente)
     {   
         /**
-         * @var UnidadeIntegrante|null $colaboracao
+         * @var UnidadeIntegrante|null[] $colaboracoes
          */
-        $colaboracao = $usuario->colaboracao;
-        
-        if($colaboracao && $colaboracao->usuario_id == $usuario->id){
-            $this->alteracoes = ['info' => sprintf('O servidor já é colaborador da unidade!', $usuario->id, $unidadeDestino->id)];
-            // Log::channel('siape')->info('O servidor já é colaborador da unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
-            return;
+        $colaboracoes = $usuario->colaboracoes;
+
+        foreach ($colaboracoes as $colaboracao) {
+            if($colaboracao->unidade_id != $unidadeDestino->id)continue;
+            if($colaboracao->usuario_id == $usuario->id){
+                $this->alteracoes = ['info' => sprintf('O servidor já é colaborador da unidade!', $usuario->id, $unidadeDestino->id)];
+                // Log::channel('siape')->info('O servidor já é colaborador da unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
+                return;
+            }
         }
 
         
@@ -101,7 +104,7 @@ trait Atribuicao
 
             if(!empty($integranteNovoOuExistente->gestorDelegado) && $lotacao->gestorDelegado->id == $integranteNovoOuExistente->gestorDelegado->id){
                 $this->alteracoes = ['info' => sprintf('O servidor já é gestor delegado da unidade!', $usuario->id, $unidadeDestino->id)];
-                Log::channel('siape')->info('O servidor já é gestor delegado da unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
+                // Log::channel('siape')->info('O servidor já é gestor delegado da unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
                 return;
             }
         }
