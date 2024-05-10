@@ -79,7 +79,7 @@ trait Atribuicao
         foreach ($lotacoes as $lotacao) {
             if($lotacao->unidade_id != $unidadeDestino->id)continue;
 
-            if($lotacao->gestorSubstituto->id == $integranteNovoOuExistente->gestorSubstituto->id){
+            if(!empty($integranteNovoOuExistente->gestorSubstituto) && $lotacao->gestorSubstituto->id == $integranteNovoOuExistente->gestorSubstituto->id){
                 $this->alteracoes = ['info' => sprintf('O servidor já é gestor substituto da unidade!', $usuario->id, $unidadeDestino->id)];
                 // Log::channel('siape')->info('O servidor já é gestor substituto da unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
                 return;
@@ -99,7 +99,7 @@ trait Atribuicao
         foreach ($lotacoes as $lotacao) {
             if($lotacao->unidade_id != $unidadeDestino->id)continue;
 
-            if($lotacao->gestorSubstituto->id == $integranteNovoOuExistente->gestorSubstituto->id){
+            if(!empty($integranteNovoOuExistente->gestorDelegado) && $lotacao->gestorDelegado->id == $integranteNovoOuExistente->gestorDelegado->id){
                 $this->alteracoes = ['info' => sprintf('O servidor já é gestor delegado da unidade!', $usuario->id, $unidadeDestino->id)];
                 Log::channel('siape')->info('O servidor já é gestor delegado da unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
                 return;
