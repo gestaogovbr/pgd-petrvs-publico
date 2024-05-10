@@ -13,37 +13,29 @@ class LogJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-
+    protected $message;
     protected $calledDirectly;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param bool $calledDirectly Indica se o job foi chamado diretamente pela aplicação.
-     */
-    public function __construct($calledDirectly = false)
+
+    public function __construct(array $parameters)
     {
-        $this->calledDirectly = $calledDirectly;
+        $this->message = $parameters['message'] ?? 'Log padrão';
+        $this->calledDirectly = $parameters['calledDirectly'] ?? false;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
+
     public function handle()
     {
         try {
+            $logMessage = $this->message;
             if ($this->calledDirectly) {
-                Log::info('Este é um log de exemplo gerado pelo LogJob, chamado diretamente pela aplicação.');
+                Log::info("Diretamente: " . $logMessage);
             } else {
-                Log::info('Este é um log de exemplo gerado pelo LogJob em execução agendada.');
+                Log::info("Agendado: " . $logMessage);
             }
-
         } catch (\Exception $e) {
             Log::error("Erro ao processar LogJob: " . $e->getMessage());
-            return false; // Para marcar o job como falhado
+            return false;
         }
-
     }
 }

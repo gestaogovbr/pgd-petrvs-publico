@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Jobs;
-
+use Exception;
+use App\Exceptions\LogError;
 use Illuminate\Support\Facades\Log;
 
 class JobBase
@@ -16,23 +17,32 @@ class JobBase
     public function handle()
     {
         try {
-            // Verificar se o parâmetro corresponde ao nome do job
-            if ($this->job->nome_do_job === 'LogJob') {
-                //Verificar qual tenant é e inicializar ele, caso seja nulo nao iniciar o tenant
-                //$tenant = tenancy()->find($tenant);
-                //tenancy()->initialize($tenant);
-                LogJob::dispatch(true);
-            } else {
-                Log::info("O job atual não corresponde ao parâmetro. Job: {$this->job->nome_do_job }");
+            if (!class_exists($this->job->nome_do_job)) {
+                LogError::newWarn("A classe do job '{$this->job->nome_do_job}' não existe.");
             }
-        } catch (\Exception $e) {
-            Log::error("Erro ao processar JobBase: " . $e->getMessage());
+
+            if (!is_null($this->job->tenant_id)) {
+                $tenant = tenancy()->find($this->job->tenant_id);
+                if ($tenant) {
+                    tenancy()->initialize($tenant);
+                } else {
+                    LogError::newWarn("Tenant não encontrado.");
+                }
+            }
+
+            $jobClass = app($this->job->nome_do_job);
+            $parameters = $this->job->parameters ? json_decode($this->job->parameters, true) : [];
+
+            dispatch(new $jobClass(...$parameters));
+
+        } catch (Exception $e) {
+            LogError::newWarn("Erro ao processar Job: '{$this->job->nome_do_job}' - Erro: " . $e->getMessage());
             return false; // Para marcar o job como falhado
         }
     }
-
     public function getJob()
     {
         return $this->job;
     }
 }
+

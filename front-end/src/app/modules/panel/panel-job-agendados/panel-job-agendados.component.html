@@ -12,26 +12,33 @@
       <br>
       <input type="checkbox" id="diario" [(ngModel)]="newJob.diario">
     </div>
-    <div class="col-2">
+    <div class="col-3">
       <div *ngIf="newJob.diario">
         <label for="horario">Horário (HH:mm):</label>
         <br>
         <input type="time" id="horario" [(ngModel)]="newJob.horario">
       </div> 
     </div>
-    <div class="col-2">
+    <div class="col-3">
       <div *ngIf="!newJob.diario">
         <label for="cron">Expressão Cron:</label>
         <br>
         <input type="datetime-local" id="expressao_cron" [(ngModel)]="newJob.expressao_cron">
       </div>
     </div>
-    <div class="col-2">
+  </div>
+  <div class="row">
+    <div class="col-9">
+      <label for="parameters">Parâmetros (JSON):</label>
+      <br>
+      <input type="text" id="parameters" class="form-control" [(ngModel)]="newJob.parameters">
+    </div>
+      <div class="col-3">
       <br>
       <button (click)="createJob()">Adicionar Job</button>
     </div>
-
   </div>
+ 
 
   <grid [items]="jobs">
     <columns>
