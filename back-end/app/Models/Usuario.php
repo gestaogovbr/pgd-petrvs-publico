@@ -292,6 +292,10 @@ class Usuario extends Authenticatable
   {
     return $this->hasMany(UnidadeIntegrante::class)->has('atribuicoes');
   }
+  public function colaboracoes()
+  {
+    return $this->hasMany(UnidadeIntegrante::class)->has('colaborador');
+  } 
   public function colaboracao()
   {
     return $this->hasOne(UnidadeIntegrante::class)->has('colaborador');
