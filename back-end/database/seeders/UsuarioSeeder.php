@@ -28,71 +28,6 @@ class UsuarioSeeder extends Seeder
     $perfis = Perfil::all();
     $usuarios_desenvolvedores = [
       [
-        'email' => 'genisson.albuquerque@prf.gov.br',
-        'nome' => 'Genisson',
-        'cpf' => '07408707425',
-        'apelido' => 'Genisson',
-        'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-        'sexo' => 'MASCULINO',
-      ],
-      [
-        'email' => 'diogo.paiva@prf.gov.br',
-        'nome' => 'Diogo Paiva',
-        'cpf' => '01710713526',
-        'apelido' => 'Paiva',
-        'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-        'sexo' => 'MASCULINO',
-      ],
-      [
-        'email' => 'henrique.alves@prf.gov.br',
-        'nome' => 'Carlos Henrique Alves Lopes',
-        'cpf' => '26751043880',
-        'apelido' => 'Carlos III',
-        'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-        'sexo' => 'MASCULINO',
-      ],
-      [
-        'email' => 'edson.marian@prf.gov.br',
-        'nome' => 'Edson dos Santos Marian',
-        'cpf' => '67703011053',
-        'apelido' => 'Marian',
-        'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-        'sexo' => 'MASCULINO',
-      ],
-
-      [
-        'email' => 'ricardo.farias@prf.gov.br',
-        'nome' => 'Ricardo de Sousa',
-        'cpf' => '25941933304',
-        'apelido' => 'Ricardo',
-        'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-        'sexo' => 'MASCULINO',
-      ],
-      [
-        'email' => 'caroline.ribeiro@prf.gov.br',
-        'nome' => 'Caroline da Costa Freire Ribeiro',
-        'cpf' => '01492368164',
-        'apelido' => 'Caroline',
-        'perfil_id' => $perfis->where('nome', 'Administrador Negocial')->first()->id,
-        'sexo' => 'FEMININO',
-      ],
-      [
-        'email' => 'jonatas.ferreira@prf.gov.br',
-        'nome' => 'Jonata Cunha',
-        'cpf' => '09741166702',
-        'apelido' => 'Jonata',
-        'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-        'sexo' => 'MASCULINO',
-      ],
-      [
-        'email' => 'pauloflausino@gmail.com',
-        'nome' => 'Paulo Flausino',
-        'cpf' => '22374479854',
-        'apelido' => 'Paulo',
-        'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-        'sexo' => 'MASCULINO',
-      ],
-      [
         'email' => 'geisimar.rech87@gmail.com',
         'nome' => 'Geisimar Rech',
         'cpf' => '01798651106',
@@ -139,23 +74,7 @@ class UsuarioSeeder extends Seeder
         'apelido' => 'Marco',
         'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
         'sexo' => 'MASCULINO',
-      ],
-      [
-        'email' => 'edson.dario@gmail.com',
-        'nome' => 'Edson Dario Silva de França',
-        'cpf' => '01380127416',
-        'apelido' => 'Dario',
-        'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-        'sexo' => 'MASCULINO',
-      ],
-      [
-        'email' => 'jose.bogdan@prf.gov.br',
-        'nome' => 'Jose Marcelo Maizman Bogdan',
-        'cpf' => '23049551852',
-        'apelido' => 'Marcelo Maizman',
-        'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-        'sexo' => 'MASCULINO',
-      ],
+      ]
     ];
 
     // Operação de inserção de usuários desenvolvedores
