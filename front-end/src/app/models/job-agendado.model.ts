@@ -6,7 +6,7 @@ export class JobAgendado extends Base {
     public horario: string = "";
     public expressao_cron: string = "";
     public ativo: boolean = true;
-    public parameters: string = "";
+    public parameters: any;
     public constructor(data?: any) { super(); this.initialization(data); }
 
     [key: string]: any;

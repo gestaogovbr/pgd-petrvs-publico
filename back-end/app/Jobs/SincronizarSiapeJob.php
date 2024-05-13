@@ -22,7 +22,7 @@ class SincronizarSiapeJob implements ShouldQueue
 
     public function __construct($usuario_id = null)
     {
-        // Dados predefinidos
+        Log::info("Job SincronizarPetrvs __construct ");
         $this->data = [
             "entity" => [
                 "id" => "",
@@ -35,7 +35,7 @@ class SincronizarSiapeJob implements ShouldQueue
                 "atualizar_gestores" => true,
                 "usar_arquivos_locais" => false,
                 "gravar_arquivos_locais" => false,
-                "usuario_id" => $usuario_id ?: "08246b0c-e5ff-11ee-a54a-0242ac130002", // Valor padrão, se não for fornecido
+                "usuario_id" => $usuario_id ?: "08246b0c-e5ff-11ee-a54a-0242ac130002",
                 "entidade_id" => "52d78c7d-e0c1-422b-b094-2ca5958d5ac1"
             ],
             "with" => [
@@ -49,14 +49,13 @@ class SincronizarSiapeJob implements ShouldQueue
     public function handle(IntegracaoService $integracaoService)
     {
         try {
+            Log::info("Job SincronizarPetrvs START ");
             $integracaoService->sincronizarPetrvs($this->data,$this->usuario_id, null);
-            Log::info('Este é um log de exemplo gerado pelo LogJob.');
+            Log::info("Job SincronizarPetrvs END ");
         } catch (\Exception $e) {
-            Log::error("Erro ao processar LogJob: " . $e->getMessage());
-            return false; // Para marcar o job como falhado
+            Log::info("Erro ao processar Job SincronizarPetrvs " . $e->getMessage());
+            return false;
         }
-
-
 
     }
 }
