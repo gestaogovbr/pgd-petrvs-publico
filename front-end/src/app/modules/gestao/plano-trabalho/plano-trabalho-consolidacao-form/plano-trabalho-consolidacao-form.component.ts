@@ -317,7 +317,8 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
         produtividade: 0,
         extra: undefined,
         _status: []
-      }
+      },
+      _status: 'temporario'
     });   
     return atividade
   }
@@ -408,6 +409,8 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   }
 
   public async onColumnProgressoEtiquetasChecklistSave(row: any) {
+    console.log(row);
+    
     try {
       const saved = await this.atividadeDao!.update(row.id, {
         progresso: this.formEdit.controls.progresso.value,
@@ -448,6 +451,10 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     }
     return result;
   };
+
+  public podeEditar(row: any): boolean{
+    return !row._status;
+  }
 
   public loadTipoAtividade(tipoAtividade: TipoAtividade | undefined) {
     if (tipoAtividade) {
