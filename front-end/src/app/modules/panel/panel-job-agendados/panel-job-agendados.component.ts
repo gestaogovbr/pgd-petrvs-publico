@@ -20,7 +20,7 @@ export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService>
   public isRecurring: boolean = false;
   public scheduleTime: string = "";
   public expressionCron: string = "";
-  public parameters: string = "";
+  public parameters = {};
 
   constructor(public injector: Injector) {
     super(injector, Tenant, TenantDaoService);
@@ -54,8 +54,19 @@ export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService>
       this.newJob.horario = '';
     }
 
-    if (typeof this.newJob.parameters === 'string') {
-      this.newJob.parameters = JSON.parse(this.newJob.parameters);
+  
+    if (typeof this.newJob.parameters === 'string' && this.newJob.parameters.trim() === '') {
+      this.newJob.parameters = {}; 
+    } else if (typeof this.newJob.parameters === 'string') {
+      try {
+        this.newJob.parameters = JSON.parse(this.newJob.parameters);
+      } catch (e) {
+        console.error('Erro ao converter JSON:', e);
+        alert('JSON inválido. Por favor, corrija os dados.');
+        return;  
+      }
+    } else if (!this.newJob.parameters || Object.keys(this.newJob.parameters).length === 0) {
+      this.newJob.parameters = {};
     }
 
     this.jobAgendadoDao.createJob(this.newJob,this.tenant_id).then((job: any) => {
@@ -63,7 +74,7 @@ export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService>
       this.loadJobs();
       this.newJob = new JobAgendado();
       this.newJob.diario = true;
-      this.newJob.parameters = "";
+      this.newJob.parameters = {};
       
     }).catch((error: any) => {
       console.error('Error creating job:', error);

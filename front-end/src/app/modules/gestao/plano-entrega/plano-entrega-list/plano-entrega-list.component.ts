@@ -246,6 +246,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       - os ativos das unidades imediatamente subordinadas (w3);
     */
     if (this.filter?.controls.principais.value) {
+      console.log("princi");
+      
       let w1: [string, string, string[]] = ["unidade_id", "in", (this.auth.unidades || []).map(u => u.id)];
       if (this.auth.isGestorAlgumaAreaTrabalho()) {
         let unidadesUsuarioEhGestor = this.auth.unidades?.filter(x => this.unidadeService.isGestorUnidade(x));
@@ -258,6 +260,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       }
     }
     if (this.filter?.controls.meus_planos.value) {
+      console.log("meus_planos");
       let w1: [string, string, string[]] = ["unidade_id", "in", (this.auth.unidades || []).map(u => u.id)];
       result.push(w1);
     }
@@ -269,7 +272,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     }
     if (form.unidade_id) result.push(["unidade_id", "==", form.unidade_id]);
     if(!form.unidade_id){
-      result.push(["unidades_superiores", "==", this.auth.unidade?.id]);
+      result.push(["unidades_vinculadas", "==", this.auth.unidade?.id]);
     }
     if (form.planejamento_id) result.push(["planejamento_id", "==", form.planejamento_id]);
     if (form.cadeia_valor_id) result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
@@ -278,7 +281,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     } else if (form.status || this.avaliacao) {
       result.push(["status", "in", form.status ? [form.status] : ['CONCLUIDO', 'AVALIADO']]);
     }
-    if (form.unidades_filhas) result.push(["unidades_filhas", "==", true]);
+    
     //  (RI_PENT_C) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados.
     result.push(["incluir_arquivados", "==", this.filter!.controls.arquivadas.value]);
     return result;

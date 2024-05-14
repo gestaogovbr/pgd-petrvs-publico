@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Services\CalendarioService;
 use Carbon\Carbon;
-use \MomentPHP\MomentPHP;
 use DateTime;
 
 class UtilService
@@ -452,8 +451,13 @@ class UtilService
                 }
             } else if( strtotime($valorAtual) && strtotime($valorAnterior) ) {      // SE OS VALORES ATUAL E ANTERIOR FOREM STRING DO TIPO DATA E/OU HORA
                 if( strtotime($valorAtual) != strtotime($valorAnterior) ) $incluirDiferenca($atributo,$valorAtual,$valorAnterior);
-            } else if( strtotime($valorAtual) && is_a(new MomentPHP($valorAtual),'DateTime') && is_a(new MomentPHP($valorAnterior),'DateTime') ){
-                $incluirDiferenca($atributo,$valorAtual,$valorAnterior);          // SE O VALOR ATUAL FOR UMA STRING DO TIPO DATA E/OU HORA E O VALOR ANTERIOR FOR UM OBJETO DO TIPO DATETIME
+            } else if (strtotime($valorAtual) && strtotime($valorAnterior)) {
+                $dataAtual = DateTime::createFromFormat('Y-m-d H:i:s', $valorAtual);
+                $dataAnterior = DateTime::createFromFormat('Y-m-d H:i:s', $valorAnterior);
+            
+                if ($dataAtual && $dataAnterior) {
+                    $incluirDiferenca($atributo, $valorAtual, $valorAnterior);
+                }
             } else if( $valorAnterior != $valorAtual ) {
                 $incluirDiferenca($atributo,$valorAtual,$valorAnterior);          // SE NÃO FOR NENHUM DOS CASOS ANTERIORES
             }

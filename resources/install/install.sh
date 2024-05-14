@@ -21,9 +21,8 @@ check_os() {
     if [ -f /etc/os-release ]; then
         source /etc/os-release
         OS=$ID
-    elif [ -f /etc/lsb-release ]; then
-        source /etc/lsb-release
-        OS=$DISTRIB_ID
+    elif [ -f /etc/redhat-release ]; then
+        OS="redhat"
     else
         echo "Sistema operacional não suportado."
         exit 1
@@ -32,7 +31,7 @@ check_os() {
 
 # Função para verificar se o Docker está instalado
 check_docker_installed() {
-    if ! dpkg -l | grep -q docker-ce; then
+    if ! command -v docker &>/dev/null; then
         echo "Docker não está instalado."
         return 1
     fi
@@ -40,15 +39,25 @@ check_docker_installed() {
     return 0
 }
 
-# Função para instalar o Docker no Ubuntu
-install_docker_ubuntu() {
-    sudo apt-get update
-    sudo apt-get install -y docker.io
+# Função para instalar o Docker
+install_docker() {
+    if [ "$OS" = "ubuntu" ] || [ "$OS" = "debian" ]; then
+        sudo apt-get update
+        sudo apt-get install -y docker.io
+    elif [ "$OS" = "centos" ] || [ "$OS" = "fedora" ] || [ "$OS" = "redhat" ]; then
+        sudo yum install -y docker-ce
+    elif [ "$OS" = "alpine" ]; then
+        sudo apk update
+        sudo apk add docker
+    else
+        echo "Instalação do Docker não suportada neste sistema."
+        return 1
+    fi
 }
 
 # Função para verificar se o Docker Compose está instalado
 check_docker_compose_installed() {
-    if ! dpkg -l | grep -q docker-compose; then
+    if ! command -v docker-compose &>/dev/null; then
         echo "Docker Compose não está instalado."
         return 1
     fi
@@ -56,19 +65,35 @@ check_docker_compose_installed() {
     return 0
 }
 
-# Função para instalar o Docker Compose no Ubuntu
-install_docker_compose_ubuntu() {
-    sudo apt-get update
-    sudo apt-get install -y docker-compose
+# Função para instalar o Docker Compose
+install_docker_compose() {
+    if ! check_docker_compose_installed; then
+        if [ "$OS" = "ubuntu" ] || [ "$OS" = "debian" ]; then
+            sudo apt-get update
+            sudo apt-get install -y docker-compose
+        elif [ "$OS" = "centos" ] || [ "$OS" = "fedora" ] || [ "$OS" = "redhat" ]; then
+            sudo yum install -y epel-release
+            sudo yum install -y python3-pip
+            sudo pip3 install docker-compose
+        elif [ "$OS" = "alpine" ]; then
+            sudo apk update
+            sudo apk add docker-compose
+        else
+            echo "Instalação do Docker Compose não suportada neste sistema."
+            return 1
+        fi
+    else
+        echo "Docker Compose já está instalado."
+    fi
 }
 
 # Função para perguntar ao usuário se deseja instalar o Docker e o Docker Compose
-ask_install_docker() {
+ask_install_docker_and_compose() {
     if ! check_docker_installed; then
         read -p "Deseja instalar o Docker? (s/n): " install_docker
         if [ "$install_docker" = "s" ]; then
             echo "Instalando Docker..."
-            install_docker_"$OS"
+            install_docker
             echo "Docker instalado com sucesso."
         else
             echo "Ok, continuando sem instalar o Docker."
@@ -79,7 +104,7 @@ ask_install_docker() {
         read -p "Deseja instalar o Docker Compose? (s/n): " install_docker_compose
         if [ "$install_docker_compose" = "s" ]; then
             echo "Instalando Docker Compose..."
-            install_docker_compose_"$OS"
+            install_docker_compose
             echo "Docker Compose instalado com sucesso."
         else
             echo "Ok, continuando sem instalar o Docker Compose."
@@ -91,8 +116,7 @@ ask_install_docker() {
 check_os
 
 # Chama a função para perguntar ao usuário
-ask_install_docker
-
+ask_install_docker_and_compose
 
 
 # Função para ler a entrada do usuário e atualizar o arquivo .env
@@ -152,7 +176,7 @@ DOCKER_COMPOSE_CONTENT='
 version: "3.9"
 services:
   petrvs_php:
-    image: segescginf/pgdpetrvs:latest 
+    image: segescginf/pgdpetrvs:latest
     container_name: petrvs_php
     ports:
       - "80:80"
@@ -200,7 +224,7 @@ docker exec -it petrvs_php bash -c 'sudo chown -R www-data:root ./storage'
 echo "Limpando storage/logs"
 docker exec -it petrvs_php bash -c 'sudo rm -f /var/www/storage/logs/*.log'
 
-#Limpar Cache 
+#Limpar Cache
 echo "Limpar Cache"
 docker exec -it petrvs_php bash -c 'php artisan cache:clear'
 docker exec -it petrvs_php bash -c 'php artisan config:clear'
@@ -210,5 +234,8 @@ echo "Executando php artisan migrate..."
 docker exec -it petrvs_php bash -c "php artisan migrate"
 docker exec -it petrvs_php bash -c "php artisan tenants:migrate"
 docker exec -it petrvs_php bash -c 'php artisan tenants:run db:seed --option="class=DeployPRODSeeder"'
+
+#Iniciar o cronjob
+docker exec -it petrvs_php bash -c 'service cron start'
 echo "--- SISTEMA INICIADO ---"
 echo "Configuração concluída."

@@ -34,6 +34,11 @@ class ProgramaService extends ServiceBase
     $data["where"] = $where;
   }
 
+  public function validateStore($data, $unidade, $action) {
+    $unidade  = Unidade::find($data['unidade_id']);    
+    if(!empty($unidade) && !$unidade->instituidora) throw new ServerException("ValidatePrograma", "Não é possível criar um regramento para uma unidade que não seja instituidora.");
+  }
+
   public function programaUnidadeSuperior($unidadeId)
   {
     $unidades = $this->unidadeService->linhaAscendente($unidadeId);
