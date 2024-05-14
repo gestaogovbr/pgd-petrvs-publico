@@ -344,7 +344,7 @@ class PlanoEntregaService extends ServiceBase
     if (empty($arquivados) || !$arquivados[2]) $data["where"][] = ["data_arquivamento", "==", null];
     // (RI_PENT_D) Na visualização de Avaliação, deverá trazer a unidade ao qual o usuário é gestor e todas as suas subordinadas imediatas.
     $filhas = $this->extractWhere($data, "unidades_filhas");
-    $superiores = $this->extractWhere($data, "unidades_superiores");
+    $unidades_vinculadas = $this->extractWhere($data, "unidades_vinculadas");
     $unidadeId = $this->extractWhere($data, "unidade_id");
     if (!empty($unidadeId)) {
       $unidade = Unidade::find($unidadeId[2]);
@@ -354,11 +354,16 @@ class PlanoEntregaService extends ServiceBase
         $data["where"][] = $unidadeId;
       }
     }
-    if(!empty($superiores)){
+    if(!empty($unidades_vinculadas)){
       $unidadeService = new UnidadeService();
-      $ids = $unidadeService->linhaAscendente($superiores[2]);
-      $ids[] = $superiores[2];
-      $data["where"][] = ["unidade_id", "in", $ids];
+      $ids = $unidadeService->linhaAscendente($unidades_vinculadas[2]);
+      $unidadesFilhas = $unidadeService->filhas($unidades_vinculadas[2]);
+      $filhasIds = array_map(function($unidade) {
+        return $unidade['id'];
+    }, $unidadesFilhas);
+      $ids = array_merge($ids, $filhasIds);
+      $ids[] = $unidades_vinculadas[2];
+      $data["where"][] = ["unidade_id", "in", $ids];     
     }
     foreach ($data["where"] as $condition) {
       if (is_array($condition) && $condition[0] == "data_filtro") {
