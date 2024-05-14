@@ -53,7 +53,7 @@ class Programa extends ModelBase
     /*'periodo_avaliacao',*/ // REMOVED
   ];
 
-  public $delete_cascade = ['documento'];
+  public $delete_cascade = ['documento', 'participantes'];
 
   public $fillable_changes = ['participantes'];
 

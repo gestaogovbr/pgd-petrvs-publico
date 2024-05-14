@@ -6,7 +6,6 @@ use App\Models\Unidade;
 use App\Models\Feriado;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\Auth;
-use \MomentPHP\MomentPHP;
 use DateTime;
 use DateTimeZone;
 use Exception;
@@ -517,10 +516,20 @@ class CalendarioService
         'intervalos' => [new Interval(['start' => 0, 'end' => 0])]
       ]);
       if ($expediente) {
-        $diaIso = (new MomentPHP($dDiaAtual))->format("Y-m-d");
+        $diaIso = $dDiaAtual->format('Y-m-d');        
         $especial = array_filter($expediente->especial, function (Turno $x) use (&$diaIso) {
-          if ((new MomentPHP($x->data))->format("Y-m-d") == $diaIso)
-            return $x; });
+          if (is_string($x->data)) {
+              $data = DateTime::createFromFormat('Y-m-d H:i:s', $x->data);
+              if (!$data) {
+                  $data = DateTime::createFromFormat('Y-m-d', $x->data);
+              }
+          } else if ($x->data instanceof DateTime) {
+              $data = $x->data;
+          } else {
+              return false; 
+          }      
+          return $data->format('Y-m-d') == $diaIso;
+        });
         $turnos = [...$expediente->$diaSemana, ...array_filter($especial, function ($x) {
           !$x->sem; })];
         usort($turnos, function ($a, $b) {
@@ -577,7 +586,7 @@ class CalendarioService
     while ($useTempo ? (UtilService::round($hTempo, 2) > 0) : (UtilService::daystamp($dDiaAtual) <= $uDiasFim)) {
       $firstDay = UtilService::daystamp($dDiaAtual) == $uDiasInicio;
       $lastDay = UtilService::daystamp($dDiaAtual) == $uDiasFim;
-      $strDiaAtual = (new MomentPHP($dDiaAtual))->format('Y-m-d'); /* Usado somente para indexar os vetores com a data do feriado/fds */
+      $strDiaAtual = $dDiaAtual->format('Y-m-d'); /* Usado somente para indexar os vetores com a data do feriado/fds */
       $sInicio = $useDias || !$firstDay ? null : UtilService::getTimeFormatted($inicio);
       $sFim = $useDias || !$lastDay || $useTempo ? null : UtilService::getTimeFormatted($fimOuTempo);
       $diaAtual = $expedienteDia($sInicio, $sFim); /* Em caso de useTempo, sFim ainda não corresponde ao fim do expediente, será encontrado depois */
@@ -692,7 +701,7 @@ class CalendarioService
         array_push($result->diasDetalhes, $diaAtual);
         $result->diasDetalhes[count($result->diasDetalhes) - 1]->intervalos = (array) $naoUteis;
       }
-      $dDiaAtual = new DateTime((new MomentPHP($dDiaAtual))->add(1, 'day')->isoDate());
+      $dDiaAtual->modify('+1 day');;
       $result->dias_corridos++;
     }
     $result->inicio = INICIO_PERIODO;

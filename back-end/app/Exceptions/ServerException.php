@@ -31,6 +31,7 @@ class ServerException extends Exception
         "ValidatePlanoTrabalhoConsolidacao" => "Erro ao validar Consolidação do Plano de Trabalho",
         "ValidatePlanoTrabalhoEntrega" => "Erro ao validar Entrega do Plano de Trabalho",
         "ValidateProgramaParticipante" => "Erro ao validar o Participante",
+        "ValidatePrograma" => "Erro ao validar o Regramento",
         "ValidateUnidade" => "Erro ao validar Unidade",
         "ValidateUsuario" => "Erro ao validar o usuário"
     ];
