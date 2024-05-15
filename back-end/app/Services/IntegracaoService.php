@@ -43,6 +43,7 @@ class IntegracaoService extends ServiceBase
   public $localUnidades = "";         // eventual alteração deve ser feita no arquivo .env
   public $localServidores = "";       // eventual alteração deve ser feita no arquivo .env
   private $servidores_registrados_is = [];
+  public $nivelAcessoService;
 
   function __construct($config = null)
   {
@@ -55,6 +56,7 @@ class IntegracaoService extends ServiceBase
     $this->localUnidades = $this->integracao_config['localUnidades']; // "unidades.xml";
     $this->localServidores = $this->integracao_config['localServidores']; // "servidores.xml";
     $this->unidadeRaiz = $this->integracao_config['codigoUnidadeRaiz'] ?: "1";
+    $this->nivelAcessoService = new NivelAcessoService();
   }
 
   // Preenche os campos de uma lotação para o novo Usuário, se sua lotação já vier definida pelo SIAPE.
@@ -707,7 +709,7 @@ class IntegracaoService extends ServiceBase
           $vinculos_isr = DB::select($query);
 
           $usuarioComum = $this->integracao_config["perfilComum"];
-          $perfilParticipante = Perfil::where('nome', $usuarioComum)->first();
+          $perfilParticipante = $this->nivelAcessoService->getPerfilParticipante();
           $perfilParticipanteId = null;
           if(!empty($perfilParticipante)) $perfilParticipanteId = $perfilParticipante->id;
 
@@ -846,13 +848,13 @@ class IntegracaoService extends ServiceBase
         if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de montagem do array de chefias!.....");
 
         $usuarioChefe = $this->integracao_config["perfilChefe"];
-        $perfilChefe = Perfil::where('nome', $usuarioChefe)->first();
+        $perfilChefe = $this->nivelAcessoService->getPerfilChefia();
         if (empty($perfilChefe)) {
           throw new ServerException("ValidateUsuario", "Perfil de gestor (" . $usuarioChefe . ") não encontrado no banco de dados. Verificar configuração no painel SaaS.");
         }
         $perfilChefeId = $perfilChefe->id;
 
-        $perfilDesenvolvedor = Perfil::where('nome', 'Desenvolvedor')->first();
+        $perfilDesenvolvedor = $this->nivelAcessoService->getPerfilDesenvolvedor();
         if (empty($perfilDesenvolvedor)) {
           throw new ServerException("ValidateUsuario", "Perfil de desenvolvedor não encontrado no banco de dados. Verificar configuração no painel SaaS.");
         }
@@ -899,7 +901,7 @@ class IntegracaoService extends ServiceBase
               ]);
               $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
 
-              $perfilAdministradorNegocial = Perfil::where('nome', 'Administrador Negocial')->first();
+              $perfilAdministradorNegocial = $this->nivelAcessoService->getPerfilAdministrador();
               if (empty($perfilAdministradorNegocial)) {
                 throw new ServerException("ValidateUsuario", "Perfil de administrador negocial não encontrado no banco de dados. Verificar configuração no painel SaaS.");
               }
@@ -945,7 +947,7 @@ class IntegracaoService extends ServiceBase
               ]);
               $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
 
-              $perfilAdministradorNegocial = Perfil::where('nome', 'Administrador Negocial')->first();
+              $perfilAdministradorNegocial = $this->nivelAcessoService->getPerfilAdministrador();
               if (empty($perfilAdministradorNegocial)) {
                 throw new ServerException("ValidateUsuario", "Perfil de administrador negocial não encontrado no banco de dados. Verificar configuração no painel SaaS.");
               }
@@ -1054,7 +1056,7 @@ class IntegracaoService extends ServiceBase
   public function salvarUsuarioLotacao(&$usuario, &$lotacao)
   {
     if ($this->fillUsuarioWithSiape($usuario, $lotacao)) { //se quem está logado existe na tabela integracao_servidores
-      $perfil_nivel_5_id = Perfil::where('nivel', '5')->first()->id;
+      $perfil_nivel_5_id = $this->nivelAcessoService->getPerfilParticipante()->id;
       $usuario->perfil_id = $perfil_nivel_5_id;
       $usuario->save();
       $usuario->fresh();

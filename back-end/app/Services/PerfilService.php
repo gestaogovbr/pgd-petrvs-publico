@@ -43,12 +43,7 @@ class PerfilService extends ServiceBase {
     /**
      * Estes usuários terão seus perfis automaticamente definidos como Desenvolvedor, se já estiverem cadastrados na tabela Usuários
      */
-    public $developers = [
-        ["25941933304", "Ricardo Farias"],
-        ["67703011053", "Edson Marian"],
-        ["07408707425", "Genisson Albuquerque"],
-        ["01380127416", "Edson França"],
-    ];
+    public $developers = [];
 
     public function proxySearch($query, &$data, &$text) {
         $data["where"][] = RawWhere::raw("(deleted_at is null or deleted_at > NOW()) and nivel >= " . parent::loggedUser()->Perfil->nivel);
@@ -60,8 +55,8 @@ class PerfilService extends ServiceBase {
             foreach($data['capacidades'] as &$c){
                 if (empty($c['id'])){
                     $capacidadeCodigo = TipoCapacidade::find($c['tipo_capacidade_id'])->codigo;
-                    $perfilNome = Perfil::find($c['perfil_id'])->nome;
-                    $c['id'] = $this->utilService->uuid($perfilNome . $capacidadeCodigo);
+                    $perfilNivel = Perfil::find($c['perfil_id'])->nivel;
+                    $c['id'] = $this->utilService->uuid($perfilNivel . $capacidadeCodigo);
                 }
             }
         };
@@ -72,12 +67,12 @@ class PerfilService extends ServiceBase {
         if(!$this->isLoggedUserADeveloper()){
             if(isset($data['where']) && count($data['where']) > 0) {
                 if(gettype($data['where'][0]) == "string") {
-                    $data['where'] = [["nome", "!=", "Desenvolvedor"], $data['where']];
+                    $data['where'] = [["nivel", "!=", 0], $data['where']];
                 } else {
-                    $data['where'][] = ["nome", "!=", "Desenvolvedor"];
+                    $data['where'][] = ["nivel", "!=", 0];
                 }
             } else {
-                $data['where'] = [["nome", "!=", "Desenvolvedor"]];
+                $data['where'] = [["nivel", "!=", 0]];
             }
         }
     }

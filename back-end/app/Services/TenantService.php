@@ -63,6 +63,7 @@ class TenantService extends ServiceBase
       $tenant->run(function () use ($dataOrEntity) {
         $entidade = Entidade::where('sigla', $dataOrEntity->id)->first();
         $usuario = Usuario::where('email', $dataOrEntity->email)->first();
+        $NivelAcessoService = new NivelAcessoService();
 
         if (!$entidade) {
           try {
@@ -98,7 +99,7 @@ class TenantService extends ServiceBase
             'nome' => $dataOrEntity->nome_usuario,
             'cpf' => $dataOrEntity->cpf,
             'apelido' => $dataOrEntity->apelido,
-            'perfil_id' => Perfil::where('nome', 'Desenvolvedor')->first()->id,
+            'perfil_id' => $NivelAcessoService->getPerfilDesenvolvedor()->id,
             'data_inicio' => Carbon::now()
           ]);
           $usuario->save();
