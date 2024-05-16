@@ -78,7 +78,7 @@
                 </column>
                 <column [title]="'Nota\nJustificativas'" [template]="columnNotaJustificativa">
                     <ng-template let-row="row" #columnNotaJustificativa>
-                        <avaliar-nota-badge [align]="'left'" [tipoAvaliacao]="row.tipo_avaliacao" [nota]="row.nota"></avaliar-nota-badge>
+                        <avaliar-nota-badge [align]="'left'" [tipoAvaliacao]="row.tipo_avaliacao" [nota]="row.nota"></avaliar-nota-badge><br>
                         <small>{{row.justificativa || ''}}</small>
                         <div class="one-per-line">
                             <badge *ngFor="let justificativa of row.justificativas" [icon]="entityService.getIcon('TipoJustificativa')" [label]="justificativa.value"></badge>

@@ -159,7 +159,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     return this.entity!.consolidacoes.reduce((a: PlanoTrabalhoConsolidacao | undefined, v: PlanoTrabalhoConsolidacao) => this.util.asTimestamp(v.data_fim) > this.util.asTimestamp(consolidacao.data_fim) && (!a || this.util.asTimestamp(a.data_fim) > this.util.asTimestamp(v.data_fim)) ? v : a, undefined);
   }
 
-  public isDisabled(row?: PlanoTrabalhoConsolidacao): boolean {
+  public isDisabled(row?: PlanoTrabalhoConsolidacao): boolean {    
     return (row && row.status != "INCLUIDO") || this.entity?.status != "ATIVO";
   }
 
@@ -179,8 +179,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     let consolidacao: PlanoTrabalhoConsolidacao = row as PlanoTrabalhoConsolidacao;
     const usuarioId = consolidacao!.plano_trabalho?.usuario_id;
     const unidadeId = this.entity!.unidade_id;
-    const anterior = this.anterior(row as PlanoTrabalhoConsolidacao);
-    const proximo = this.proximo(row as PlanoTrabalhoConsolidacao);
+    const temRecurso = consolidacao?.avaliacoes.filter((a: Avaliacao) => a.recurso != null).length > 0;
     const isUsuarioDoPlano = this.auth.usuario!.id == usuarioId;
     const nenhumGestor = { gestor: false, gestorSubstituto: false, gestorDelegado: false };
     const gestorLogado = this.entity?._metadata["atribuicoesGestorUsuarioLogado"] || nenhumGestor;
@@ -197,36 +196,33 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     const BOTAO_CANCELAR_CONCLUSAO = { hint: "Cancelar conclusão", icon: "bi bi-backspace", color: "btn-outline-danger", onClick: this.cancelarConclusao.bind(this) };
     const BOTAO_AVALIAR = { hint: "Avaliar", icon: "bi bi-star", color: "btn-outline-warning", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.avaliar(row, this.entity!.programa!, this.refreshConsolidacao.bind(this)) };
     const BOTAO_REAVALIAR = { hint: "Reavaliar", icon: "bi bi-star-half", color: "btn-outline-warning", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.avaliar(row, this.entity!.programa!, this.refreshConsolidacao.bind(this)) };
-    const BOTAO_FAZER_RECURSO = { hint: "Fazer recurso", id: "RECORRIDO", icon: "bi bi-journal-medical", color: "btn-outline-warning", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.fazerRecurso(row, this.entity!.programa!, this.refreshConsolidacao.bind(this)) };
+    const BOTAO_FAZER_RECURSO = { label: 'Recurso',  id: "RECORRIDO", icon: "bi bi-journal-medical", color: "btn-outline-warning", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.fazerRecurso(row, this.entity!.programa!, this.refreshConsolidacao.bind(this)) };
     const BOTAO_CANCELAR_AVALIACAO = { hint: "Cancelar avaliação", id: "INCLUIDO", icon: "bi bi-backspace", color: "btn-outline-danger", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.cancelarAvaliacao(row, this, this.refreshConsolidacao.bind(this)) };
-    /* (RN_CSLD_11) Não pode concluir a consolidação antes que a anterior não esteja concluida, e não pode retornar status da consolidação se a posterior estiver a frente (em status); */
-    const canConcluir = !anterior || ["CONCLUIDO", "AVALIADO"].includes(anterior!.status);
-    const canCancelarConclusao = !proximo || ["INCLUIDO"].includes(proximo!.status);
-    const canAvaliar = !anterior || ["AVALIADO"].includes(anterior!.status);
-    const canCancelarAvaliacao = !proximo || ["INCLUIDO", "CONCLUIDO"].includes(proximo!.status);
-    if(!this.isDisabled()) {
-      if(consolidacao.status == "INCLUIDO" && canConcluir && (isUsuarioDoPlano || this.auth.hasPermissionTo("MOD_PTR_CSLD_CONCL"))) {
+
+    //!this.isDisabled()
+    if(true) {
+      if(consolidacao.status == "INCLUIDO" && (isUsuarioDoPlano || this.auth.hasPermissionTo("MOD_PTR_CSLD_CONCL"))) {
         result.push(BOTAO_CONCLUIR);
       }
-      if(consolidacao.status == "CONCLUIDO" && canCancelarConclusao && this.planoTrabalhoService.diasParaConcluirConsolidacao(row, this.entity!.programa) >= 0 && (isUsuarioDoPlano || this.auth.hasPermissionTo("MOD_PTR_CSLD_DES_CONCL"))) {
+      // this.planoTrabalhoService.diasParaConcluirConsolidacao(row, this.entity!.programa) >= 0 &&
+      if(consolidacao.status == "CONCLUIDO" && (isUsuarioDoPlano || this.auth.hasPermissionTo("MOD_PTR_CSLD_DES_CONCL"))) {
         result.push(BOTAO_CANCELAR_CONCLUSAO);
       }
-      if(consolidacao.status == "CONCLUIDO" && canAvaliar && isAvaliador) {
+      if(consolidacao.status == "CONCLUIDO" && isAvaliador) {
         /* (RN_CSLD_16) A avaliação somente poderá ser realizado caso não exista período anterior ou o período anterior esteja AVALIADO, e respeitando os critérios da tabela [PTR:TABELA_1] */
         result.push(BOTAO_AVALIAR);
       }
+      
       if(consolidacao.status == "AVALIADO" && consolidacao!.avaliacao) {
         /* (RN_AVL_2) [PT] O usuário do plano de trabalho que possuir o acesso MOD_PTR_CSLD_REC_AVAL poderá recorrer da nota atribuida dentro do limites estabelecido pelo programa; */
-        if(isUsuarioDoPlano && this.auth.hasPermissionTo('MOD_PTR_CSLD_REC_AVAL') && consolidacao!.avaliacao?.data_avaliacao && 
-          (!this.entity!.programa!.dias_tolerancia_recurso_avaliacao || 
-          (this.util.daystamp(consolidacao!.avaliacao!.data_avaliacao) + this.entity!.programa!.dias_tolerancia_recurso_avaliacao > this.util.daystamp(this.auth.hora)))) {
+        if(isUsuarioDoPlano && !temRecurso && this.auth.hasPermissionTo('MOD_PTR_CSLD_REC_AVAL') && consolidacao!.avaliacao?.data_avaliacao) {
           result.push(BOTAO_FAZER_RECURSO);
         }
         /* (RN_AVL_3) [PT] Após o recurso será realizado nova avaliação, podendo essa ser novamente recorrida dentro do mesmo prazo estabelecido no programa; */
         /* (RN_AVL_6) [PT] Qualquer usuário capaz de avaliar tambem terá a capacidade de cancelar a avaliação; */
-        if(canAvaliar && isAvaliador) {
+        if(isAvaliador) {
           result.push(BOTAO_REAVALIAR);
-          if(canCancelarAvaliacao) result.push(BOTAO_CANCELAR_AVALIACAO);
+          result.push(BOTAO_CANCELAR_AVALIACAO);
         }
       }
     }
