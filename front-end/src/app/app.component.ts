@@ -344,92 +344,11 @@ export class AppComponent {
       ]
     }];
 
-    this.moduloPonto = [];
-
-    this.moduloProjeto = [{
-      name: this.lex.translate("Cadastros"),
-      permition: "MENU_CAD_ACESSO",
-      id: "navbarDropdownProjetoCadastros",
-      menu: [
-        this.menuSchema.MATERIAIS_SERVICOS
-      ]
-    }, {
-      name: this.lex.translate("Gerencial"),
-      permition: "MENU_CAD_ACESSO",
-      id: "navbarDropdownProjetoGerencial",
-      menu: [
-        this.menuSchema.UNIDADES,
-        this.menuSchema.USUARIOS
-      ]
-    },
-    this.menuSchema.PORTIFOLIO,
-    this.menuSchema.PROJETOS
-    ];
-
-    this.moduloRaioX = [{
-      name: this.lex.translate("Currículo"),
-      permition: "MENU_RX_CURRICULUM_ACESSO",
-      id: "navbarDropdownRXCadastros",
-      menu: [
-        this.menuSchema.CURRICULUM_CADASTRO_PESSOAL,
-        this.menuSchema.CURRICULUM_CADASTRO_PROFISSIONAL,
-        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS
-      ].sort(this.orderMenu)
-    }, {
-      name: this.lex.translate("Oportunidades"),
-      permition: "MENU_RX_OPORTUNIDADES_ACESSO",
-      id: "navbarDropdownRXOportunidades",
-      menu: [
-        this.menuSchema.CURRICULUM_OPORTUNIDADES
-      ].sort(this.orderMenu)
-    }, {
-      name: this.lex.translate("Pesquisas"),
-      permition: "MENU_RX_PESQUISAS_ACESSO",
-      id: "navbarDropdownRXPesquisas",
-      menu: [
-        this.menuSchema.CURRICULUM_PESQUISA_ADM,
-        this.menuSchema.CURRICULUM_PESQUISA_USR
-      ].sort(this.orderMenu)
-    }, {
-      name: this.lex.translate("Questionários Dinâmicos"),
-      permition: "MENU_RX_QUEST_DINAMICOS_ACESSO",
-      id: "navbarDropdownRXQD",
-      menu: [
-        this.menuSchema.CURRICULUM_CADASTRO_QUESTIONARIOS_PERGUNTAS,
-        //this.menuSchema.CURRICULUM_CADASTRO_QUESTIONARIOS_RESPOSTAS,
-        //this.menuSchema.CURRICULUM_CADASTRO_QUESTIONARIOS_TESTE
-      ].sort(this.orderMenu)
-    }, {
-      name: this.lex.translate("Cadastros"),
-      permition: "MENU_RX_CADASTROS_ACESSO",
-      id: "navbarDropdownRXCadastrosGerais",
-      menu: [
-        this.menuSchema.CURRICULUM_CADASTRO_AREAS_CONHECIMENTO,
-        this.menuSchema.CURRICULUM_CADASTRO_TIPOS_CURSOS,
-        this.menuSchema.CURRICULUM_CADASTRO_CURSOS,
-        this.menuSchema.CURRICULUM_CADASTRO_DISCIPLINAS,
-        "-",
-        this.menuSchema.CURRICULUM_CADASTRO_CENTROS_TREINAMENTO,
-        this.menuSchema.CURRICULUM_CADASTRO_CARGOS,
-        this.menuSchema.CURRICULUM_CADASTRO_FUNCAO,
-        "-",
-        this.menuSchema.CURRICULUM_CADASTRO_AREAS_ATIVIDADES_EXTERNAS,
-        this.menuSchema.CURRICULUM_CADASTRO_AREAS_TEMATICAS,
-        this.menuSchema.CURRICULUM_CADASTRO_CAPACIDADES_TECNICAS,
-        this.menuSchema.CURRICULUM_CADASTRO_GRUPOS_ESPECIALIZADOS,
-        "-",
-        this.menuSchema.CURRICULUM_OPORTUNIDADES,
-      ].sort(this.orderMenu)
-    }];
-
     this.menuContexto = [
       { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.moduloGestao },
       { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.moduloExecucao },
       { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: this.lex.translate("Administrador"), menu: this.moduloAdministrador },
-      { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.moduloDev },
-      { key: "PONTO", permition: "CTXT_PNT", icon: "bi bi-stopwatch", name: this.lex.translate("Ponto Eletrônico"), menu: this.moduloPonto },
-      { key: "PROJETO", permition: "CTXT_PROJ", icon: "bi bi-graph-up-arrow", name: this.lex.translate("Projetos"), menu: this.moduloProjeto },
-      { key: "RAIOX", permition: "CTXT_RX", icon: "bi bi-camera", name: this.lex.translate("Raio X"), menu: this.moduloRaioX }
+      { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.moduloDev }
     ]
 
   }
