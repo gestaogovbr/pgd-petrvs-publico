@@ -50,7 +50,7 @@
     "ng2-charts": "^5.0.3",
     "ngx-drag-drop": "^16.0.0",
     "ngx-infinite-scroll": "^16.0.0",
-    "ngx-markdown": "^16.0.0",
+    "ngx-markdown": "^17.2.1",
     "ngx-mask": "^16.4.2",
     "ngx-scrollbar": "^13.0.3",
     "primeng": "^16.3.1",
