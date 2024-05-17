@@ -177,17 +177,14 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if (['id', 'tenancy_db_name', 'nome_entidade', 'abrangencia', 'email', 'cpf', 'nome_usuario', 'apelido'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['id',  'nome_entidade', 'abrangencia', 'email', 'cpf', 'nome_usuario', 'apelido'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     } else if (controlName == "codigo_cidade" && !control.value) {
       result = "Obrigatório";
     } else if (controlName == "cpf" && !this.util.validarCPF(control.value)) {
       result = "Inválido";
     }
-    if ((this.form?.controls.log_traffic.value || this.form?.controls.log_changes.value || this.form?.controls.log_errors.value) &&
-      ['log_host', 'log_database'].indexOf(controlName) >= 0 && !control.value?.length) {
-      result = "Obrigatório";
-    }
+
     return result;
   }
 
