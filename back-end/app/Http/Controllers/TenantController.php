@@ -17,6 +17,7 @@ class TenantController extends ControllerBase {
     }
 
     public function store(Request $request) {
+        ob_start();
         try{
             try {
                 $this->checkPermissions("STORE", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
@@ -51,14 +52,17 @@ class TenantController extends ControllerBase {
                     'id' => $entity->id,
                     'with' => $data['with']
                 ]);
+                ob_end_clean();
                 return response()->json([
                     'success' => true,
                     'rows' => [$result]
                 ]);
             } catch (Throwable $e) {
+                ob_end_clean();
                 return response()->json(['error' => $e->getMessage()]);
             }
         } catch (\Exception $e) {
+            ob_end_clean();
             throw $e;
         }
     }
