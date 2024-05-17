@@ -416,27 +416,27 @@ class CapacidadeSeeder extends Seeder
     $qtdCapacidadesRestauradas = count($capacidadesRestauradas);
     $qtdTiposCapacidadesInexistentes = count($tipoCapacidadesInexistentes);
     $qtdCapacidadesRepetidas = count($capacidadesRepetidas);
-//
-//    echo ("*** CapacidadeSeeder ***" . ".\n");
-//    echo ("Quantidade total de capacidades: " . $qtdCapacidades . ".\n");
-//    echo ("Quantidade de capacidades removidas: " . $qtdCapacidadesRemovidas . ".\n");
-//    echo ("Quantidade de capacidades restauradas: " . $qtdCapacidadesRestauradas . ".\n");
-//
-//    if ($qtdTiposCapacidadesInexistentes > 0) {
-//      echo ("\nQuantidade de capacidades usadas que não existem na tabela tipos_capacidades:\n");
-//      foreach ($tipoCapacidadesInexistentes as $msg) {
-//        echo (implode(" - ", $msg) . "\n");
-//      }
-//    }
-//
-//    if ($qtdCapacidadesRepetidas > 0) {
-//      echo ("\nCapacidades repetidas no mesmo perfil e não registradas na tabela capacidades:\n");
-//      foreach ($capacidadesRepetidas as $msg) {
-//        echo (implode(" - ", $msg) . "\n");
-//      }
-//    }
-//    ;
-//
-//    echo ("*********************************" . ".\n");
+
+    echo ("*** CapacidadeSeeder ***" . ".\n");
+    echo ("Quantidade total de capacidades: " . $qtdCapacidades . ".\n");
+    echo ("Quantidade de capacidades removidas: " . $qtdCapacidadesRemovidas . ".\n");
+    echo ("Quantidade de capacidades restauradas: " . $qtdCapacidadesRestauradas . ".\n");
+
+    if ($qtdTiposCapacidadesInexistentes > 0) {
+      echo ("\nQuantidade de capacidades usadas que não existem na tabela tipos_capacidades:\n");
+      foreach ($tipoCapacidadesInexistentes as $msg) {
+        echo (implode(" - ", $msg) . "\n");
+      }
+    }
+
+    if ($qtdCapacidadesRepetidas > 0) {
+      echo ("\nCapacidades repetidas no mesmo perfil e não registradas na tabela capacidades:\n");
+      foreach ($capacidadesRepetidas as $msg) {
+        echo (implode(" - ", $msg) . "\n");
+      }
+    }
+    ;
+
+    echo ("*********************************" . ".\n");
   }
 }
