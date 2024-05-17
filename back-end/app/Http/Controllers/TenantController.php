@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
@@ -25,8 +26,10 @@ class TenantController extends ControllerBase {
                     'entity' => ['required'],
                     'with' => ['array']
                 ]);
-                if (Domain::where('domain', $data['entity']['dominio_url'])->exists()) {
-                    throw new ServerException("TenantStore", "URL já cadastrada");
+                if(!Tenant::find($data['entity']['id'])) {
+                    if (Domain::where('domain', $data['entity']['dominio_url'])->exists()) {
+                        throw new ServerException("TenantStore", "URL já cadastrada");
+                    }
                 }
                 $data['entity']['tenancy_db_name']= "petrvs_".strtolower($data['entity']['id']);
                 $data['entity']['tenancy_db_host']= env("DB_HOST");
