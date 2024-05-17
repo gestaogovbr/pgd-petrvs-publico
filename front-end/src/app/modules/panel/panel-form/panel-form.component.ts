@@ -95,6 +95,10 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       login_azure_redirect_uri: { default: "" },
       login_login_unico_client_id: { default: "" },
       login_login_unico_secret: { default: "" },
+      login_login_unico_redirect: { default: "https://"+window.location.hostname+"/login-unico/" },
+      login_login_unico_code_verifier: { default: "" },
+      login_login_unico_code_challenge_method: { default: "" },
+      login_login_unico_environment: { default: "staging" },
       // INTEGRACAO
       tipo_integracao: { default: null },
       integracao_auto_incluir: { default: true },
