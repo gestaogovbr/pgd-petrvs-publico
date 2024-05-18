@@ -69,6 +69,7 @@ class IntegracaoSiapeService extends ServiceBase
         $dadosFuncionais = $this->UtilService->object2array($dadosFuncionais)['dadosFuncionais']['DadosFuncionais'];
 
         $funcao = null;
+       
         if (!empty($dadosFuncionais['codAtivFun']) && $dadosFuncionais['codAtivFun']) {
           $funcao = array('funcao' => ['tipo_funcao' => '1', 'uorg_funcao' => $dadosFuncionais['codUorgExercicio']]);
         }
@@ -98,6 +99,8 @@ class IntegracaoSiapeService extends ServiceBase
           'telefone' =>  '',
           'cpf_chefia_imediata' => $this->UtilService->valueOrDefault($dadosFuncionais['cpfChefiaImediata'], null),
           'email_chefia_imediata' => $this->UtilService->valueOrDefault($dadosFuncionais['emailChefiaImediata'], null),
+          'nome_jornada' => $this->UtilService->valueOrDefault($dadosFuncionais['nomeJornada'], null),
+          'cod_jornada' => $this->UtilService->valueOrDefault((int) $dadosFuncionais['codJornada'], null),
           'matriculas' => [
             'dados' => [
               'vinculo_ativo' => true,
@@ -327,6 +330,8 @@ class IntegracaoSiapeService extends ServiceBase
             'telefone' =>  null,
             'cpf_chefia_imediata' => $pessoa_is['cpf_chefia_imediata'],
             'email_chefia_imediata' => $pessoa_is['email_chefia_imediata'],
+            'nome_jornada' => $pessoa_is['nome_jornada'],
+            'cod_jornada' => $pessoa_is['cod_jornada'],
             'matriculas' => [
               'dados' => [
                 'vinculo_ativo' => true,
