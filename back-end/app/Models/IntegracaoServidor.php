@@ -38,6 +38,8 @@ class IntegracaoServidor extends ModelBase
     'funcoes', /* json; */
     'cpf_chefia_imediata', /* varchar(50); */ // Registra CPF da chefia imediata informado pelo Siape.
     'email_chefia_imediata', /* varchar(50); */ // Registra e-mail da chefia imediata informado pelo Siape.
+    'nome_jornada', 
+    'cod_jornada', 
     //'deleted_at', /* timestamp; */
   ];
 

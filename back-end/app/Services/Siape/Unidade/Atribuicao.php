@@ -203,8 +203,10 @@ trait Atribuicao
         return $usuario->lotacao ? $usuario->lotacao->unidade : null;;
     }
 
-    private function usuarioTemPlanodeTrabalhoAtivo(Usuario $usuario, Unidade $unidade): bool
+    private function usuarioTemPlanodeTrabalhoAtivo(Usuario $usuario, ?Unidade $unidade): bool
     {
+        if($unidade == null) return false;
+        
         return $usuario->planosTrabalho()
             ->where('unidade_id', $unidade->id)
             ->where('status', 'ATIVO')->exists();
