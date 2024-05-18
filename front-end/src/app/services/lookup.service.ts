@@ -835,6 +835,11 @@ export class LookupService implements IIndexable {
     { key: 'SIAPE', value: 'Siape-WS' },
   ];
 
+  public GOV_BR_ENV: LookupItem[] = [
+    { key: 'staging', value: 'Teste' },
+    { key: 'production', value: 'Produção' },
+  ];
+
   public EXISTE_PAGADOR: LookupItem[] = [
     { key: 'A', value: 'Vínculos ativos sem ocorrência de exclusão' },
     { key: 'B', value: 'Todos os vínculos' },

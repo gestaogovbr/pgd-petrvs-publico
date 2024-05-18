@@ -291,7 +291,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_TIPO_DOC"],
       ["codigo" => "MOD_TIPO_DOC_EDT"],
       ["codigo" => "MOD_TIPO_DOC_EXCL"],
-      ["codigo" => "MOD_TIPO_DOC_INCL"],     
+      ["codigo" => "MOD_TIPO_DOC_INCL"],
       ["codigo" => "MOD_TIPO_MTV_AFT"],
       ["codigo" => "MOD_TIPO_MTV_AFT_EDT"],
       ["codigo" => "MOD_TIPO_MTV_AFT_EXCL"],
