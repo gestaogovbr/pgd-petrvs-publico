@@ -5,7 +5,7 @@ import { IIndexable } from 'src/app/models/base.model';
 import { FormHelperService } from 'src/app/services/form-helper.service';
 import { LookupItem, LookupService } from 'src/app/services/lookup.service';
 import { UtilService } from 'src/app/services/util.service';
-import * as moment from 'moment';
+import moment from 'moment';
 import { CardItem } from 'src/app/components/kanban/docker/docker.component';
 import { CalendarOptions } from '@fullcalendar/core';
 import { Expediente } from 'src/app/models/expediente.model';

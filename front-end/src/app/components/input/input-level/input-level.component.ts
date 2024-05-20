@@ -129,14 +129,19 @@ export class InputLevelComponent extends InputBase implements OnInit {
 
   public onNewLevelChange(event: Event) {
     this.newLevel.value = this.newInputLevel!.nativeElement.value;
-    if(!this.isEmpty(this.newLevel.value)) {
-      this.levels.push({ value: this.newLevel.value, valid: true });
-      this.newLevel.value = "";
-      this.newInputLevel!.nativeElement.value = "";
-      this.updateControl();
-      this.cdRef.detectChanges();
-      $("#" + this.generatedId(this.controlName) + '_' + (this.levels.length-1)).focus();
+    if (!this.isEmpty(this.newLevel.value)) {
+        this.levels.push({ value: this.newLevel.value, valid: true });
+        this.newLevel.value = "";
+        this.newInputLevel!.nativeElement.value = "";
+        this.updateControl();
+        this.cdRef.detectChanges();
+        
+        const elementId = this.generatedId(this.controlName) + '_' + (this.levels.length - 1);
+        const element = document.getElementById(elementId) as HTMLInputElement;
+        if (element) {
+            element.focus();
+        }
     }
-  }
+}
 
 }

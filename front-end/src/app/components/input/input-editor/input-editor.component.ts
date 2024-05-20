@@ -332,33 +332,6 @@ export class InputEditorComponent extends InputBase implements OnInit {
     }
   }
 
-  /*public updateToolbars() {
-    const enable = (element: JQuery<HTMLElement>) => {
-      element.removeClass('tox-tbtn--disabled');
-      element.find(".tox-tbtn--disabled").removeClass('tox-tbtn--disabled');
-      element.find("[aria-disabled=true]").attr("aria-disabled", "false");
-    };
-    let toolbarEdit = $(this.editor!.editorContainer).find(".tox-toolbar-overlord [role=group]:eq(0)").toggle();
-    let toolbarEditing = $(this.editor!.editorContainer).find(".tox-toolbar-overlord [role=group]:eq(1)").toggle();
-    let toolbarDataset = $(this.editor!.editorContainer).find(".tox-toolbar-overlord [role=group]:eq(2)").toggle();
-    let toolbarDefault = $(this.editor!.editorContainer).find(".tox-toolbar-overlord [role=group]:eq(3)").toggle();
-    toolbarEdit.hide();
-    toolbarEditing.hide();
-    toolbarDataset.hide();
-    toolbarDefault.hide();
-    if(this.isEditingTemplate) {
-      toolbarEditing.show();
-      enable(toolbarEditing);
-    } else if(this.hasTemplate && this.canEditTemplate) {
-      toolbarEdit.show();
-      enable(toolbarEdit);
-    } else if(this.hasDataset) {
-      toolbarDataset.show();
-    } else if(!this.hasTemplate && !this.disabled) {
-      toolbarDefault.show();
-    } 
-  }*/
-
   public get isEditingTemplate(): boolean {
     return this._editingTemplate != undefined;
   }

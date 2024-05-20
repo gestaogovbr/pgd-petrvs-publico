@@ -1,5 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import * as moment from 'moment';
+import moment from 'moment';
 import { Afastamento } from '../models/afastamento.model';
 import { AtividadePausa } from '../models/atividade-pausa.model';
 import { Expediente, Turno } from '../models/expediente.model';

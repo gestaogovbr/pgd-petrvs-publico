@@ -121,13 +121,7 @@ export class AppComponent {
     if (this.gb.isEmbedded && this.gb.initialRoute?.length) {
       this.go.navigate({ route: this.gb.initialRoute });
     }
-    setInterval(() => {
-      let hora = this.auth.unidade ? this.auth.unidadeHora : "--:--";
-      if (this.unidadeHora != hora) {
-        this.unidadeHora = hora;
-        this.cdRef.detectChanges();
-      }
-    }, 1000);
+
     this.lex.cdRef = this.cdRef;
     /* Definição do menu do sistema */
     this.setMenuVars();
@@ -473,78 +467,4 @@ export class AppComponent {
     this.auth.logOut();
   }
 
-  public get isConfig(): boolean {
-    return this.router.url.indexOf("/extension/options") >= 0;
-  }
 }
-
-
-
-
-/*
-Navegação         Menus                               Capacidade
---------------------------------------------------------------------------------------
-navGestao         Planejamento                        MENU_GESTAO_ACESSO
-                  Execução                            MENU_GESTAO_ACESSO
-                  Avaliação                           MENU_GESTAO_ACESSO
-                  Gerenciamento                       MENU_CONFIG_ACESSO
-                  Cadastros                           MENU_CAD_ACESSO
-
-navAdministrador  Cadastros                           MENU_CAD_ACESSO
-                  Gerenciamento                       MENU_CONFIG_ACESSO
-
-navDev            Manutenção                          MENU_DEV_ACESSO
-                  Logs e Auditorias                   MENU_DEV_ACESSO
-                  Testes                              MENU_DEV_ACESSO
-
-navPonto                                                                    
-navProjeto        Cadastros                           MENU_CAD_ACESSO
-                  Gerencial                           MENU_CAD_ACESSO
-
-navRaioX          Currículo                           MENU_RX_CURRICULUM_ACESSO
-                      Dados Pessoais                      MOD_RX_CURR
-                      Dados Profissionais                 MOD_RX_CURR
-                      Atributos Comportamentais           MOD_RX_CURR
-                          QVT                                 MOD_RX_CURR
-                          Big5                                MOD_RX_CURR
-                          SoftSkills                          MOD_RX_CURR
-                          DASS                                MOD_RX_CURR
-                          SRQ20                               MOD_RX_CURR
-                  Oportunidades                       MENU_RX_OPORTUNIDADES_ACESSO
-                      Oportunidades                       MOD_RX_OPO
-                  Pesquisas                           MENU_RX_PESQUISAS_ACESSO
-                      Pesquisa Usuário                    MOD_RX_OUT
-                      Pesquisa Adm                        MOD_RX_OUT
-                  Questionários Dinâmicos             MENU_RX_QUEST_DINAMICOS_ACESSO
-                      Questionário                        MOD_RX_OUT
-                  Cadastros                           MENU_RX_CADASTROS_ACESSO
-                      Áreas de Atividades Externas        MOD_RX_OUT
-                      Áreas de Conhecimento               MOD_RX_OUT
-                      Áreas Temáticas                     MOD_RX_OUT
-                      Capacidades Técnicas                MOD_RX_OUT
-                      Cargos                              MOD_RX_OUT
-                      Centros de Treinamento              MOD_RX_OUT
-                      Cursos                              MOD_RX_OUT
-                      Funções                             MOD_RX_OUT
-                      Grupos Especializados               MOD_RX_OUT
-                      Matérias                            MOD_RX_OUT
-                      Oportunidades                       MOD_RX_OPO
-                      Questionários Perguntas             MOD_RX_OUT
-                      Questionários Respostas             MOD_RX_OUT
-                      Questionários Testes                MOD_RX_OUT  
-                      Tipos de Curso                      MOD_RX_OUT  
-
-PerfiS
-------
-Usuário
-        MENU_RX_CURRICULUM_ACESSO, MENU_RX_OPORTUNIDADES_ACESSO
-        MOD_RX_CURR, MOD_RX_CURR_INCL, MOD_RX_CURR_EDT, MOD_RX_CURR_EXCL, MOD_RX_OPO
-Gerente
-
-Administrador
-        MENU_RX_CURRICULUM_ACESSO, MENU_RX_OPORTUNIDADES_ACESSO,
-        MENU_RX_PESQUISAS_ACESSO, MENU_RX_QUEST_DINAMICOS_ACESSO, MENU_RX_CADASTROS_ACESSO
-        MOD_RX_CURR, MOD_RX_CURR_INCL, MOD_RX_CURR_EDT, MOD_RX_CURR_EXCL 
-        MOD_RX_OPO, MOD_RX_OPO_INCL, MOD_RX_OPO_EDT, MOD_RX_OPO_EXCL
-        MOD_RX_OUT, MOD_RX_OUT_INCL, MOD_RX_OUT_EDT, MOD_RX_OUT_EXCL
-*/
