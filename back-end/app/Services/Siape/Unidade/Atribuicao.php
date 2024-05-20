@@ -51,22 +51,22 @@ trait Atribuicao
     }
 
     private function processaColaborador(Unidade $unidadeDestino, Usuario $usuario, UnidadeIntegrante $integranteNovoOuExistente)
-    {   
+    {
         /**
          * @var UnidadeIntegrante|null[] $colaboracoes
          */
         $colaboracoes = $usuario->colaboracoes;
 
         foreach ($colaboracoes as $colaboracao) {
-            if($colaboracao->unidade_id != $unidadeDestino->id)continue;
-            if($colaboracao->usuario_id == $usuario->id){
+            if ($colaboracao->unidade_id != $unidadeDestino->id) continue;
+            if ($colaboracao->usuario_id == $usuario->id) {
                 $this->alteracoes = ['info' => sprintf('O servidor já é colaborador da unidade!', $usuario->id, $unidadeDestino->id)];
                 // Log::channel('siape')->info('O servidor já é colaborador da unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
                 return;
             }
         }
 
-        
+
         $this->alteracoes = ['lotacao' => sprintf('Atribuindo Colaborador ao servidor %s na Unidade %s', $usuario->id, $unidadeDestino->id)];
         //FIXME não foram visto regras para gestor subsitituto.
         $this->lotaServidor(EnumAtribuicao::COLABORADOR, $integranteNovoOuExistente);
@@ -80,9 +80,9 @@ trait Atribuicao
         $lotacoes = $usuario->gerenciasSubstitutas;
 
         foreach ($lotacoes as $lotacao) {
-            if($lotacao->unidade_id != $unidadeDestino->id)continue;
+            if ($lotacao->unidade_id != $unidadeDestino->id) continue;
 
-            if(!empty($integranteNovoOuExistente->gestorSubstituto) && $lotacao->gestorSubstituto->id == $integranteNovoOuExistente->gestorSubstituto->id){
+            if (!empty($integranteNovoOuExistente->gestorSubstituto) && $lotacao->gestorSubstituto->id == $integranteNovoOuExistente->gestorSubstituto->id) {
                 $this->alteracoes = ['info' => sprintf('O servidor já é gestor substituto da unidade!', $usuario->id, $unidadeDestino->id)];
                 // Log::channel('siape')->info('O servidor já é gestor substituto da unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
                 return;
@@ -100,9 +100,9 @@ trait Atribuicao
         $lotacoes = $usuario->gerenciasDelegadas;
 
         foreach ($lotacoes as $lotacao) {
-            if($lotacao->unidade_id != $unidadeDestino->id)continue;
+            if ($lotacao->unidade_id != $unidadeDestino->id) continue;
 
-            if(!empty($integranteNovoOuExistente->gestorDelegado) && $lotacao->gestorDelegado->id == $integranteNovoOuExistente->gestorDelegado->id){
+            if (!empty($integranteNovoOuExistente->gestorDelegado) && $lotacao->gestorDelegado->id == $integranteNovoOuExistente->gestorDelegado->id) {
                 $this->alteracoes = ['info' => sprintf('O servidor já é gestor delegado da unidade!', $usuario->id, $unidadeDestino->id)];
                 // Log::channel('siape')->info('O servidor já é gestor delegado da unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
                 return;
@@ -119,14 +119,13 @@ trait Atribuicao
             // Log::channel('siape')->info('O servidor já está lotado nessa unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
             return;
         }
-
-        $this->removeLotacao($usuario);
-        if ($this->usuarioTemPlanodeTrabalhoAtivo($usuario)) {
+        
+        if ($this->usuarioTemPlanodeTrabalhoAtivo($usuario, $this->getUnidadeAtualDoUsuario($usuario))) {
             $this->alteracoes = ['lotacao' => sprintf('O servidor %s já possui um plano de trabalho ativo nessa unidade %s, alterando a lotação para COLABORADOR:', $usuario->id, $unidadeDestino->id)];
             // Log::channel('siape')->info('O servidor já possui um plano de trabalho ativo nessa unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
-            $colaborador = EnumAtribuicao::COLABORADOR;
-            $this->lotaServidor($colaborador, $integranteNovoOuExistente);
+            $this->processaColaborador($unidadeDestino, $usuario,  $usuario->lotacao);
         }
+        $this->removeLotacao($usuario);
         // Log::channel('siape')->info('Lotando servidor na unidade: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
         $this->alteracoes = ['lotacao' => sprintf('Lotando o servidor %s na Unidade %s', $usuario->id, $unidadeDestino->id)];
         $this->lotaServidor(EnumAtribuicao::LOTADO, $integranteNovoOuExistente);
@@ -135,13 +134,13 @@ trait Atribuicao
     private function processaGestor(Unidade $unidadeDestino, Usuario $usuario, UnidadeIntegrante $integranteNovoOuExistente): void
     {
         if (!empty($this->getGestorAtualDaUnidade($unidadeDestino)) && $this->getGestorAtualDaUnidade($unidadeDestino)->id != $usuario->id) {
-            $this->alteracoes = ['removido' => sprintf('Removendo o Gestor %s da Unidade %s',$usuario->id, $unidadeDestino->id)];
+            $this->alteracoes = ['removido' => sprintf('Removendo o Gestor %s da Unidade %s', $usuario->id, $unidadeDestino->id)];
             // Log::channel('siape')->info('Removendo o Gestor da Unidade : ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
             $this->removeAtualGestorDaUnidade($unidadeDestino);
         }
 
         if (!empty($this->getGestorAtualDaUnidade($unidadeDestino)) && $this->getGestorAtualDaUnidade($unidadeDestino)->id == $usuario->id) {
-            $this->alteracoes = ['info' => sprintf('Já é gestor %s da unidade %s',$usuario->id, $unidadeDestino->id)];
+            $this->alteracoes = ['info' => sprintf('Já é gestor %s da unidade %s', $usuario->id, $unidadeDestino->id)];
             // Log::channel('siape')->info('Já é gestor da unidade: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
             return;
         }
@@ -204,9 +203,13 @@ trait Atribuicao
         return $usuario->lotacao ? $usuario->lotacao->unidade : null;;
     }
 
-    private function usuarioTemPlanodeTrabalhoAtivo(Usuario $usuario): bool
+    private function usuarioTemPlanodeTrabalhoAtivo(Usuario $usuario, ?Unidade $unidade): bool
     {
-        return $usuario->planosTrabalho()->where('status', 'ATIVO')->exists();
+        if($unidade == null) return false;
+        
+        return $usuario->planosTrabalho()
+            ->where('unidade_id', $unidade->id)
+            ->where('status', 'ATIVO')->exists();
     }
 
     private function lotaServidor(EnumAtribuicao $atribuicao, UnidadeIntegrante $unidadeIntegrante)
@@ -232,41 +235,41 @@ trait Atribuicao
         }
         // Log::channel('siape')->info(' Limpando as atribuições menos a lotado: ', ['usuario' => $integranteNovoOuExistente->toJson()]);
         $integranteNovoOuExistente->atribuicoes()->each(function ($unidadeIntegrantesAtribuicoes) {
-           if($unidadeIntegrantesAtribuicoes->atribuicao != EnumAtribuicao::LOTADO->value)  $unidadeIntegrantesAtribuicoes->delete();
+            if ($unidadeIntegrantesAtribuicoes->atribuicao != EnumAtribuicao::LOTADO->value)  $unidadeIntegrantesAtribuicoes->delete();
         });
         return;
     }
 
-    private function decideALotacaoDeGestorInvalida(array &$atribuicoes, UnidadeIntegrante $integranteNovoOuExistente) : void{
+    private function decideALotacaoDeGestorInvalida(array &$atribuicoes, UnidadeIntegrante $integranteNovoOuExistente): void
+    {
 
-        if(!$this->validarAtribuicoes($atribuicoes)){
+        if (!$this->validarAtribuicoes($atribuicoes)) {
             return;
         }
         // Log::channel('siape')->info('Decidindo a lotação de gestor inválida: ', ['usuario' => $integranteNovoOuExistente->toJson()]);
         $this->LimparAtribuicoes($integranteNovoOuExistente);
         $novasAtribuicoes = [];
-        if(in_array(EnumAtribuicao::LOTADO->value, $atribuicoes)){
+        if (in_array(EnumAtribuicao::LOTADO->value, $atribuicoes)) {
             array_push($novasAtribuicoes, EnumAtribuicao::LOTADO->value);
         }
-        if(in_array(EnumAtribuicao::COLABORADOR->value, $atribuicoes)){
+        if (in_array(EnumAtribuicao::COLABORADOR->value, $atribuicoes)) {
             array_push($novasAtribuicoes, EnumAtribuicao::COLABORADOR->value);
         }
-        if(in_array(EnumAtribuicao::GESTOR->value, $atribuicoes)){
+        if (in_array(EnumAtribuicao::GESTOR->value, $atribuicoes)) {
             array_push($novasAtribuicoes, EnumAtribuicao::GESTOR->value);
             $atribuicoes = $novasAtribuicoes;
             return;
         }
-        if(in_array(EnumAtribuicao::GESTOR_DELEGADO->value, $atribuicoes)){
+        if (in_array(EnumAtribuicao::GESTOR_DELEGADO->value, $atribuicoes)) {
             array_push($novasAtribuicoes, EnumAtribuicao::GESTOR_DELEGADO->value);
             $atribuicoes = $novasAtribuicoes;
             return;
         }
-        if(in_array(EnumAtribuicao::GESTOR_SUBSTITUTO->value, $atribuicoes)){
+        if (in_array(EnumAtribuicao::GESTOR_SUBSTITUTO->value, $atribuicoes)) {
             array_push($novasAtribuicoes, EnumAtribuicao::GESTOR_SUBSTITUTO->value);
             $atribuicoes = $novasAtribuicoes;
             return;
         }
-
     }
 
     private function validarAtribuicoes(array $atribuicoes): bool
@@ -274,7 +277,7 @@ trait Atribuicao
         return count(array_intersect([EnumAtribuicao::GESTOR->value, EnumAtribuicao::GESTOR_SUBSTITUTO->value, EnumAtribuicao::GESTOR_DELEGADO->value], $atribuicoes)) > 1;
     }
 
-    private function removeDeterminadasAtribuicoes(array $atribuicoesRemover, UnidadeIntegrante $integranteNovoOuExistente) : void
+    private function removeDeterminadasAtribuicoes(array $atribuicoesRemover, UnidadeIntegrante $integranteNovoOuExistente): void
     {
         foreach ($integranteNovoOuExistente->atribuicoes as $atribuicao) {
             if (in_array($atribuicao->atribuicao, $atribuicoesRemover)) $atribuicao->delete();

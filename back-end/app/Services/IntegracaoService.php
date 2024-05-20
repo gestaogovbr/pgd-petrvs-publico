@@ -527,7 +527,7 @@ class IntegracaoService extends ServiceBase
           $servidores = $this->UtilService->object2array($xml)["Pessoa"];
         }
         if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de obtenção dos dados dos servidores informados pelo SIAPE.....");
-
+        
         DB::transaction(function () use (
           &$servidores,
         ) {
@@ -561,17 +561,24 @@ class IntegracaoService extends ServiceBase
             "isr.emailfuncional, u.matricula AS matricula_anterior, " .
             "isr.matriculasiape, u.telefone AS telefone_anterior, isr.telefone, " .
             "isr.data_modificacao as data_modificacao, u.data_modificacao as data_modificacao_anterior, " .
-            "isr.data_nascimento as data_nascimento " .
+            "isr.data_nascimento as data_nascimento, " .
+            "u.nome_jornada AS nome_jornada_antigo,
+            isr.nome_jornada AS nome_jornada,
+            u.cod_jornada AS cod_jornada_antigo,
+            isr.cod_jornada AS cod_jornada ".
             "FROM integracao_servidores isr LEFT JOIN usuarios u ON (isr.cpf = u.cpf) " .
             "WHERE isr.nome != u.nome OR isr.emailfuncional != u.email OR " .
             "isr.matriculasiape != u.matricula OR isr.nomeguerra != u.apelido OR " .
             "isr.telefone != u.telefone OR " .
+            "isr.nome_jornada != u.nome_jornada OR isr.cod_jornada != u.cod_jornada OR ".
             "isr.data_modificacao > u.data_modificacao"
         );
         $sqlUpdateDados = "UPDATE usuarios SET " .
           "nome = :nome, apelido = :nomeguerra, " .
           "email = :email, matricula = :matricula, " .
           "telefone = :telefone, " .
+          "cod_jornada = :cod_jornada, " .
+          "nome_jornada = :nome_jornada, " .
           "data_nascimento = :data_nascimento, " .
           "data_modificacao = :data_modificacao WHERE id = :id";
 
@@ -618,6 +625,8 @@ class IntegracaoService extends ServiceBase
                 'email'         => $linha->emailfuncional,
                 'matricula'     => $linha->matriculasiape,
                 'telefone'      => $linha->telefone,
+                'cod_jornada'      => $linha->cod_jornada,
+                'nome_jornada'      => $linha->nome_jornada,
                 'id'            => $linha->id,
                 'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
                 'data_nascimento' => $linha->data_nascimento,
@@ -636,6 +645,8 @@ class IntegracaoService extends ServiceBase
                   'id'            => $linha->id,
                   'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao_anterior),
                   'data_nascimento' => $linha->data_nascimento,
+                  'nome_jornada' => $linha->nome_jornada_antigo,
+                  'cod_jornada' => $linha->cod_jornada_antigo,
                 ],
                 'Valores atuais' => [
                   'nome'          => $linha->nome_servidor,
@@ -646,6 +657,8 @@ class IntegracaoService extends ServiceBase
                   'id'            => $linha->id,
                   'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
                   'data_nascimento' => $linha->data_nascimento,
+                  'nome_jornada' => $linha->nome_jornada,
+                  'cod_jornada' => $linha->cod_jornada,
                 ]
               ]);
             }
@@ -701,7 +714,9 @@ class IntegracaoService extends ServiceBase
             "isr.codigo_servo_exercicio as exercicio, " .
             "isr.situacao_funcional as situacao_funcional, " .
             "isr.data_modificacao as data_modificacao, " .
-            "isr.funcoes as gestor " .
+            "isr.funcoes as gestor, " .
+            "isr.nome_jornada as nome_jornada, " .
+            "isr.cod_jornada as cod_jornada " .
             "FROM integracao_servidores as isr LEFT JOIN usuarios as u " .
             "ON isr.cpf = u.cpf " .
             "WHERE u.cpf is NULL";
@@ -732,6 +747,8 @@ class IntegracaoService extends ServiceBase
               'exercicio' => $this->UtilService->valueOrDefault($v_isr['exercicio']),
               'uf' => $this->UtilService->valueOrDefault($v_isr['uf'], null),
               'data_modificacao' => $this->UtilService->asDateTime($v_isr['data_modificacao']),
+              'cod_jornada' => $this->UtilService->valueOrDefault($v_isr['cod_jornada'], null),
+              'nome_jornada' => $this->UtilService->valueOrDefault($v_isr['nome_jornada'], null),
             ]);
 
             $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($registro->email, $registro->cpf);

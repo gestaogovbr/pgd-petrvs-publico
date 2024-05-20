@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use Stancl\Tenancy\Database\Models\Domain;
 use Throwable;
 use App\Exceptions\LogError;
 
@@ -16,6 +18,7 @@ class TenantController extends ControllerBase {
     }
 
     public function store(Request $request) {
+        ob_start();
         try{
             try {
                 $this->checkPermissions("STORE", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
@@ -23,23 +26,46 @@ class TenantController extends ControllerBase {
                     'entity' => ['required'],
                     'with' => ['array']
                 ]);
+                if(!Tenant::find($data['entity']['id'])) {
+                    if (Domain::where('domain', $data['entity']['dominio_url'])->exists()) {
+                        throw new ServerException("TenantStore", "URL já cadastrada");
+                    }
+                }
+                $data['entity']['tenancy_db_name']= "petrvs_".strtolower($data['entity']['id']);
+                $data['entity']['tenancy_db_host']= env("DB_HOST");
+                $data['entity']['tenancy_db_port']= env("DB_PORT");
+                $data['entity']['tenancy_db_username']= env("DB_USERNAME");
+                $data['entity']['tenancy_db_password']= env("DB_PASSWORD");
+                $data['entity']['log_traffic']= env("LOG_TRAFFIC");
+                $data['entity']['log_changes']= env("LOG_CHANGES");
+                $data['entity']['log_errors']= env("LOG_ERRORS");
+                $data['entity']['log_host']=env("DB_HOST");
+                $data['entity']['log_database']=  "petrvs_logs_".strtolower($data['entity']['id']);
+                $data['entity']['log_port']= env("DB_PORT");
+                $data['entity']['log_username']= env("DB_USERNAME");
+                $data['entity']['log_password']= env("DB_PASSWORD");
+
+
                 $data['entity']['created_at']=  Carbon::now()->toDateTimeString();
                 $data['entity']['updated_at']=  Carbon::now()->toDateTimeString();
-                $unidade = $this->getUnidade($request);                
+                $unidade = $this->getUnidade($request);
                 $entity = $this->service->store($data['entity'], $unidade);
                 $entity = $entity ?? (object) $data['entity'];
                 $result = $this->service->getById([
                     'id' => $entity->id,
                     'with' => $data['with']
                 ]);
+                ob_end_clean();
                 return response()->json([
                     'success' => true,
                     'rows' => [$result]
                 ]);
             } catch (Throwable $e) {
+                ob_end_clean();
                 return response()->json(['error' => $e->getMessage()]);
             }
         } catch (\Exception $e) {
+            ob_end_clean();
             throw $e;
         }
     }

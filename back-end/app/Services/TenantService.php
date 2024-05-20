@@ -106,7 +106,7 @@ class TenantService extends ServiceBase
         }
       });
     }
-    //tenancy()->end();
+    tenancy()->end();
   }
 
   public function generateCertificateKeys()
@@ -207,12 +207,11 @@ class TenantService extends ServiceBase
   {
     try {
       Artisan::call('tenants:migrate --tenants='.$id);
+      Artisan::call('tenants:run db:seed --option="class=DeployPRODSeeder" --tenants='.$id);
       logInfo();
     } catch (\Exception $e) {
       // Handle any exceptions that may occur during command execution
       Log::error('Error executing commands: ' . $e->getMessage());
-      Log::channel('daily')->error('Error executing commands: ' . $e->getMessage());
-      // Optionally, rethrow the exception to let it be handled elsewhere
       throw $e;
     }
   }
@@ -244,7 +243,7 @@ class TenantService extends ServiceBase
     foreach ($data['fields'] as $field) {
       array_push($likes, [$field, 'like', $text]);
     }
-   
+
     //$where = count($data['where']) > 0 ? [$likes, $data['where']] : $likes;
     $where = [$likes, $data['where']];
     $this->applyWhere($query, $where, $data);
