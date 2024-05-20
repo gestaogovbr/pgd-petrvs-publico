@@ -72,6 +72,7 @@ class ServiceBase extends DynamicMethods
 
   public string $collection = "";
   public string $developerId = "";
+  public $nivelAcessoService;
 
   public $buffer = []; /* Utilizado para passar informações entre os Proxys */
 
@@ -86,8 +87,8 @@ class ServiceBase extends DynamicMethods
 
   public function __construct($collection = null)
   {
-    //$this->developerId = ((config('petrvs') ?: [])['ids-fixos'] ?: [])['developer-id'] ?: $this->UtilService->uuid("Desenvolvedor");
-    $this->developerId = $this->UtilService->uuid("Desenvolvedor");
+    $this->nivelAcessoService = new NivelAcessoService();
+    $this->developerId = $this->nivelAcessoService->getPerfilDesenvolvedor()->id;
     $this->collection = $collection ?? $this->collection;
     if (empty($this->collection)) {
       $this->collection = str_replace("Service", "", str_replace("App\\Services", "App\\Models", get_class($this)));
