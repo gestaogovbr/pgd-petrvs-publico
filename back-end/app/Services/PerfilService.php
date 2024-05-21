@@ -12,10 +12,10 @@ class PerfilService extends ServiceBase {
     public $perfis = [ /* Nivel, Nome, Descrição */
 
         //["c2129e55-bef9-510a-1b49-6d94e874d071",
-        [0, "Desenvolvedor", "Perfil de Desenvolvedor - todas as permissões"],
+        [0, "Perfil Desenvolvedor", "Perfil de Desenvolvedor - todas as permissões"],
 
         //["2a2e9a58-1027-84ca-18e2-605a4e727b5f",
-        [1, "Administrador Negocial", "Perfil destinado ao(s) administrador(es) do sistema"],
+        [1, "Perfil Administrador Negocial", "Perfil destinado ao(s) administrador(es) do sistema"],
 
         //["e24195d1-3c9c-9a76-b1c1-56b6b690b81b",
         // [2, "Usuário Nível 5", "Nível 5 - Todas as permissões de todas unidades, sem restrições"],
@@ -34,10 +34,10 @@ class PerfilService extends ServiceBase {
 
         // Seeder IN24_2023 //
         //["4bb1a4b5-b0f1-4a39-9ff1-0ce7e853d84d", b684857b-48f3-8e0a-d496-66b0fbcee684 (gerado automaticamente)
-        [3, "Chefia de Unidade Executora", "Nível de acesso ao sistema destinado à(s) equipe(s) de chefia das unidades executoras"],
+        [3, "Perfil Unidade", "Nível de acesso ao sistema destinado à(s) equipe(s) de chefia das unidades executoras"],
 
         //["1dc7c3ac-4888-4f5a-b181-ac14c07cc152", 0d8771a5-7210-b879-0779-55d46948a2b3 (gerado automaticamente)
-        [5, "Participante", "Participante do PGD"],
+        [5, "Perfil Participante", "Participante do PGD"],
     ];
 
     /**

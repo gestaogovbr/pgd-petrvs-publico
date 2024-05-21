@@ -29,7 +29,7 @@ class TipoCapacidadeSeeder extends Seeder
       [
         'id' => $utilService->uuid("Desenvolvedor"),
         'nivel' => 0,
-        'nome' => "Desenvolvedor",
+        'nome' => "Perfil Desenvolvedor",
         'descricao' => 'Perfil de Desenvolvedor - Todas as permissões',
       ]
     );
