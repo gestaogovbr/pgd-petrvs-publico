@@ -46,8 +46,6 @@ import { NgChartsModule  }  from 'ng2-charts';
 import { BarChartComponent } from './charts/bar/bar-chart.component';
 import { InputWorkloadComponent } from './input/input-workload/input-workload.component';
 import { PieChartComponent } from './charts/pie/pie-chart.component';
-import { GanttComponent } from './gantt/gantt.component';
-import { GanttTemplatesComponent } from './gantt/gantt-templates/gantt-templates.component';
 import { CommentComponent } from './comment/comment.component';
 import { BadgeComponent } from './badge/badge.component';
 import { ProfilePictureComponent } from './profile-picture/profile-picture.component';
@@ -124,8 +122,6 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
     CardComponent,
     OrderComponent,
     InputWorkloadComponent,
-    GanttComponent,
-    GanttTemplatesComponent,
     CommentComponent,
     BadgeComponent,
     ProfilePictureComponent,
@@ -200,7 +196,6 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
     CardComponent,
     OrderComponent,
     InputWorkloadComponent,
-    GanttComponent,
     CommentComponent,
     BadgeComponent,
     ProfilePictureComponent,

@@ -21,15 +21,14 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "./dist/petrvs",
             "deleteOutputPath": false,
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "browser": "src/main.ts",
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
-            "aot": true,
             "assets": [
               "src/favicon.ico",
               "src/assets",
@@ -49,25 +48,10 @@
                 "output": "/assets/css"
               },
               {
-                "glob": "*.*",
-                "input": "src/extension",
-                "output": "/"
-              },
-              {
                 "glob": "app.json",
                 "input": "src",
                 "output": "/"
-              },
-              {
-                "glob": "*.*",
-                "input": "src/extension/pages",
-                "output": "/pages"
-              },
-              {
-                "glob": "jquery.min.js",
-                "input": "node_modules/jquery/dist",
-                "output": "lib"
-              },
+              },                   
               {
                 "glob": "*.*",
                 "input": "node_modules/@fortawesome/fontawesome-free/webfonts",
@@ -100,7 +84,7 @@
                 "bundleName": "dark",
                 "inject": false
               },
-              "./node_modules/bootstrap/dist/css/bootstrap.css",
+              "./node_modules/bootstrap/dist/css/bootstrap.min.css",
               "./node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss",
               "./node_modules/@fortawesome/fontawesome-free/scss/regular.scss",
               "./node_modules/@fortawesome/fontawesome-free/scss/solid.scss",
@@ -112,12 +96,8 @@
               
             ],
             "scripts": [
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/jquery-ui/dist/jquery-ui.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
-              "node_modules/jquery-mask-plugin/dist/jquery.mask.min.js",
-              "node_modules/@fortawesome/fontawesome-free/js/all.min.js",
-              "node_modules/marked/marked.min.js"
+              "./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+              "./node_modules/@fortawesome/fontawesome-free/js/all.min.js"
             ]
           },
           "configurations": {
@@ -126,7 +106,6 @@
               "outputHashing": "none",
               "sourceMap": false,
               "extractLicenses": true,
-              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",

@@ -1,8 +1,8 @@
 <div class="d-flex flex-column h-100 petrvs">
   <ng-template #dialogs></ng-template>
-  <nav *ngIf="auth.logged || gb.isEmbedded || isConfig" [class.fixed-top]="!gb.isEmbedded" class="navbar navbar-expand-lg px-3 hidden-print">
+  <nav *ngIf="auth.logged" [class.fixed-top]="!gb.isEmbedded" class="navbar navbar-expand-lg px-3 hidden-print">
     <div class="navbar-logo">
-      <button *ngIf="!isConfig && !gb.isToolbar" class="navbar-toggler" type="button" [attr.data-bs-toggle]="'collapse'" [attr.data-bs-target]="'#navbarSupportedContent'" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Abri menu">
+      <button *ngIf="!gb.isToolbar" class="navbar-toggler" type="button" [attr.data-bs-toggle]="'collapse'" [attr.data-bs-target]="'#navbarSupportedContent'" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Abri menu">
         <span class="navbar-toggler-icon"></span>
       </button>
       <a class="navbar-brand" role="button">
@@ -25,7 +25,7 @@
         </div>
       </div>
     </div>
-    <div *ngIf="!isConfig && !isMinimized" class="collapse navbar-collapse order-1 order-lg-0" id="navbarSupportedContent">
+    <div *ngIf="!isMinimized" class="collapse navbar-collapse order-1 order-lg-0" id="navbarSupportedContent">
       <div *ngIf="gb.isToolbar || !auth.logged" class="d-flex"></div>
       <div *ngIf="gb.toolbarButtons?.length" class="btn-group" role="group" aria-label="Opções">
         <div *ngFor="let btn of gb.toolbarButtons" class="btn-group" role="group">
@@ -124,16 +124,7 @@
         </a>
       </li>
       <ng-container *ngIf="!auth.logging && auth.logged">
-        <li class="nav-item ms-3 ms-lg-2">
-          <span class="nav-link">
-            <!-- Hora da Unidade -->
-            <i *ngIf="auth.unidade" class="bi bi-clock me-2"></i>
-            <div *ngIf="unidades?.length && !auth.unidade" class="spinner-border spinner-border-sm me-2" role="status">
-              <span class="visually-hidden"></span>
-            </div>
-            {{ unidadeHora }}
-          </span>
-        </li>
+        
         <li class="nav-item dropdown ms-3 ms-lg-2">
           <a class="nav-link" id="navbarDropdownBranch" href="#" role="button" [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true" data-bs-auto-close="outside" aria-expanded="false">
             {{ auth.unidade?.sigla }}
