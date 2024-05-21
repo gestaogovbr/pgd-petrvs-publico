@@ -1,0 +1,54 @@
+{
+    "version": "2.0.14",
+    "externalLibs": [
+        "https://apis.google.com/js/platform.js"
+    ],
+    "preloadFiles": [
+        "environment-config"
+    ],
+    "extraFiles": [
+    ],
+    "angularFiles": [
+        "scripts.js",
+        "runtime.js",
+        "polyfills.js",
+        "main.js"
+    ],
+    "cssFiles": [
+        "styles.css"
+    ],
+    "match": [
+        {
+            "regex": ".*/sip/.*",
+            "load": false
+        },
+        {
+            "regex": ".*login\\.php.*",
+            "load": false
+        },
+        {
+            "regex": ".*/sei/publicacoes/.*",
+            "load": false
+        },
+        {
+            "regex": ".*controlador\\.php\\?acao\\=arvore_visualizar.*",
+            "load": false
+        },
+        {
+            "regex": ".*controlador\\.php\\?acao\\=grupo_email_selecionar.*",
+            "load": false
+        },
+        {
+            "regex": ".*controlador\\.php\\?acao\\=documento_enviar_email.*",
+            "load": false
+        },
+        {
+            "regex": ".*controlador\\.php\\?acao\\=protocolo_pesquisar.*",
+            "load": false
+        },
+        {
+            "regex": ".*controlador\\.php\\?acao\\=documento_assinar.*",
+            "load": false
+        }        
+    ]
+}

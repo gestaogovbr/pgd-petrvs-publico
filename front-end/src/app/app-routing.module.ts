@@ -45,7 +45,6 @@ const routes: Routes = [
   { path: 'gestao/planejamento', loadChildren: () => import('./modules/gestao/planejamento-institucional/planejamento.module').then(m => m.PlanejamentoModule), canActivate: [AuthGuard] },
   { path: 'gestao/plano-trabalho', loadChildren: () => import('./modules/gestao/plano-trabalho/plano-trabalho.module').then(m => m.PlanoTrabalhoModule), canActivate: [AuthGuard] },
   { path: 'gestao/plano-entrega', loadChildren: () => import('./modules/gestao/plano-entrega/plano-entrega.module').then(m => m.PlanoEntregaModule), canActivate: [AuthGuard] },
-  { path: 'gestao/projeto', loadChildren: () => import('./modules/gestao/projeto/projeto.module').then(m => m.ProjetoModule), canActivate: [AuthGuard] },
   { path: 'gestao/desdobramento', loadChildren: () => import('./modules/gestao/desdobramento/desdobramento.module').then(m => m.DesdobramentoModule), canActivate: [AuthGuard] },
   { path: 'execucao/plano-entrega', loadChildren: () => import('./modules/gestao/plano-entrega/plano-entrega.module').then(m => m.PlanoEntregaModule), canActivate: [AuthGuard] },
   { path: 'avaliacao/plano-entrega', loadChildren: () => import('./modules/gestao/plano-entrega/plano-entrega.module').then(m => m.PlanoEntregaModule), canActivate: [AuthGuard] },
@@ -59,8 +58,6 @@ const routes: Routes = [
   { path: 'extension', loadChildren: () => import('./modules/extension/extension.module').then(m => m.ExtensionModule) },
   { path: 'logs', loadChildren: () => import('./modules/logs/log.module').then(m => m.LogModule), canActivate: [AuthGuard] },
   { path: 'rotinas', loadChildren: () => import('./modules/rotinas/rotina.module').then(m => m.RotinaModule), canActivate: [AuthGuard] },
-  { path: 'raiox', loadChildren: () => import('./modules/curriculum/curriculum.module').then(m => m.CurriculumModule), canActivate: [AuthGuard] },
-
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
 

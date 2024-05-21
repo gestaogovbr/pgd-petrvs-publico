@@ -26,6 +26,7 @@ use App\Models\Usuario;
 use App\Models\Perfil;
 use App\Models\PlanejamentoObjetivo;
 use App\Services\UtilService;
+use App\Services\NivelAcessoService; 
 
 class In24_TreinaSeeder extends Seeder
 {
@@ -40,6 +41,7 @@ class In24_TreinaSeeder extends Seeder
   public $unidades;
   public $entidade;
   public $utilService;
+  public $nivelAcessoService;
 
   public function __construct()
   {
@@ -47,6 +49,7 @@ class In24_TreinaSeeder extends Seeder
     $this->brasilia = Cidade::where('codigo_ibge', '5300108')->first();
 
     $this->utilService = new UtilService();
+    $this->nivelAcessoService = new NivelAcessoService();
 
     // Pega a primeira entidade criada no tenant ou cria uma nova
     $this->entidade = Entidade::first() ?? new Entidade([
@@ -1208,7 +1211,7 @@ class In24_TreinaSeeder extends Seeder
         'nome' => 'Adm Negocial',
         'cpf' => '03589623071',
         'apelido' => 'Adm',
-        'perfil_id' => Perfil::where('nome', 'Administrador Negocial')->first()->id,
+        'perfil_id' => $this->nivelAcessoService->getPerfilAdministrador()->id,
       ),
       array(
         'id' => '92e4c600-f041-11ee-9d0d-0242ac120002',
@@ -1216,7 +1219,7 @@ class In24_TreinaSeeder extends Seeder
         'nome' => 'Desenvolvedor',
         'cpf' => '56262885030',
         'apelido' => 'Dev',
-        'perfil_id' => Perfil::where('nome', 'Desenvolvedor')->first()->id,
+        'perfil_id' => $this->nivelAcessoService->getPerfilDesenvolvedor()->id,
       ),
       array(
         'id' => '67c27867-ffc2-11ee-b754-0242ac120002',
@@ -1224,7 +1227,7 @@ class In24_TreinaSeeder extends Seeder
         'nome' => 'Geisimar Rech',
         'cpf' => '01798651106',
         'apelido' => 'Geisimar',
-        'perfil_id' => Perfil::where('nome', 'Desenvolvedor')->first()->id,
+        'perfil_id' => $this->nivelAcessoService->getPerfilDesenvolvedor()->id,
       ),
       array(
         'id' => '8b521ae1-ffc2-11ee-b754-0242ac120002',
@@ -1232,11 +1235,11 @@ class In24_TreinaSeeder extends Seeder
         'nome' => 'Marco Coelho',
         'cpf' => '03400125954',
         'apelido' => 'Marco',
-        'perfil_id' => Perfil::where('nome', 'Desenvolvedor')->first()->id,
+        'perfil_id' => $this->nivelAcessoService->getPerfilDesenvolvedor()->id,
       )
     );
 
-    $perfilAdmNegocialId = Perfil::where('nome', 'Administrador Negocial')->first()->id;
+    $perfilAdmNegocialId = $this->nivelAcessoService->getPerfilAdministrador()->id;
     $tipoCapacidadeId = TipoCapacidade::where('codigo', 'MOD_CFG_USER_MAIL')->first()->id;
     $capacidade = Capacidade::firstOrNew([
       'perfil_id' => $perfilAdmNegocialId,
@@ -1247,7 +1250,7 @@ class In24_TreinaSeeder extends Seeder
     // Atualiza o primeiro usuário para dev
     $usuario = Usuario::find('ada3cdbc-ffc4-11ee-b754-0242ac120002');
     if ($usuario) {
-      $usuario->perfil_id = Perfil::where('nome', 'Desenvolvedor')->first()->id;
+      $usuario->perfil_id = $this->nivelAcessoService->getPerfilDesenvolvedor()->id;
       $usuario->save();
     }
 

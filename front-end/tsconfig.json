@@ -14,10 +14,11 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "ES2022",
-    "module": "es2020",
+    "module": "ES2022",
     "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,    
     "lib": [
-      "es2018",
+      "ES2022",
       "dom"
     ],
     "types": [
@@ -27,10 +28,11 @@
     "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
+    "disableTypeScriptVersionCheck": true,
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true,
-    "skipLibCheck": true
+    "strictOutputEventTypes": true
   }
 }

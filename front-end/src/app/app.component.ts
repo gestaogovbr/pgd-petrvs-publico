@@ -121,13 +121,7 @@ export class AppComponent {
     if (this.gb.isEmbedded && this.gb.initialRoute?.length) {
       this.go.navigate({ route: this.gb.initialRoute });
     }
-    setInterval(() => {
-      let hora = this.auth.unidade ? this.auth.unidadeHora : "--:--";
-      if (this.unidadeHora != hora) {
-        this.unidadeHora = hora;
-        this.cdRef.detectChanges();
-      }
-    }, 1000);
+
     this.lex.cdRef = this.cdRef;
     /* Definição do menu do sistema */
     this.setMenuVars();
@@ -344,92 +338,11 @@ export class AppComponent {
       ]
     }];
 
-    this.moduloPonto = [];
-
-    this.moduloProjeto = [{
-      name: this.lex.translate("Cadastros"),
-      permition: "MENU_CAD_ACESSO",
-      id: "navbarDropdownProjetoCadastros",
-      menu: [
-        this.menuSchema.MATERIAIS_SERVICOS
-      ]
-    }, {
-      name: this.lex.translate("Gerencial"),
-      permition: "MENU_CAD_ACESSO",
-      id: "navbarDropdownProjetoGerencial",
-      menu: [
-        this.menuSchema.UNIDADES,
-        this.menuSchema.USUARIOS
-      ]
-    },
-    this.menuSchema.PORTIFOLIO,
-    this.menuSchema.PROJETOS
-    ];
-
-    this.moduloRaioX = [{
-      name: this.lex.translate("Currículo"),
-      permition: "MENU_RX_CURRICULUM_ACESSO",
-      id: "navbarDropdownRXCadastros",
-      menu: [
-        this.menuSchema.CURRICULUM_CADASTRO_PESSOAL,
-        this.menuSchema.CURRICULUM_CADASTRO_PROFISSIONAL,
-        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS
-      ].sort(this.orderMenu)
-    }, {
-      name: this.lex.translate("Oportunidades"),
-      permition: "MENU_RX_OPORTUNIDADES_ACESSO",
-      id: "navbarDropdownRXOportunidades",
-      menu: [
-        this.menuSchema.CURRICULUM_OPORTUNIDADES
-      ].sort(this.orderMenu)
-    }, {
-      name: this.lex.translate("Pesquisas"),
-      permition: "MENU_RX_PESQUISAS_ACESSO",
-      id: "navbarDropdownRXPesquisas",
-      menu: [
-        this.menuSchema.CURRICULUM_PESQUISA_ADM,
-        this.menuSchema.CURRICULUM_PESQUISA_USR
-      ].sort(this.orderMenu)
-    }, {
-      name: this.lex.translate("Questionários Dinâmicos"),
-      permition: "MENU_RX_QUEST_DINAMICOS_ACESSO",
-      id: "navbarDropdownRXQD",
-      menu: [
-        this.menuSchema.CURRICULUM_CADASTRO_QUESTIONARIOS_PERGUNTAS,
-        //this.menuSchema.CURRICULUM_CADASTRO_QUESTIONARIOS_RESPOSTAS,
-        //this.menuSchema.CURRICULUM_CADASTRO_QUESTIONARIOS_TESTE
-      ].sort(this.orderMenu)
-    }, {
-      name: this.lex.translate("Cadastros"),
-      permition: "MENU_RX_CADASTROS_ACESSO",
-      id: "navbarDropdownRXCadastrosGerais",
-      menu: [
-        this.menuSchema.CURRICULUM_CADASTRO_AREAS_CONHECIMENTO,
-        this.menuSchema.CURRICULUM_CADASTRO_TIPOS_CURSOS,
-        this.menuSchema.CURRICULUM_CADASTRO_CURSOS,
-        this.menuSchema.CURRICULUM_CADASTRO_DISCIPLINAS,
-        "-",
-        this.menuSchema.CURRICULUM_CADASTRO_CENTROS_TREINAMENTO,
-        this.menuSchema.CURRICULUM_CADASTRO_CARGOS,
-        this.menuSchema.CURRICULUM_CADASTRO_FUNCAO,
-        "-",
-        this.menuSchema.CURRICULUM_CADASTRO_AREAS_ATIVIDADES_EXTERNAS,
-        this.menuSchema.CURRICULUM_CADASTRO_AREAS_TEMATICAS,
-        this.menuSchema.CURRICULUM_CADASTRO_CAPACIDADES_TECNICAS,
-        this.menuSchema.CURRICULUM_CADASTRO_GRUPOS_ESPECIALIZADOS,
-        "-",
-        this.menuSchema.CURRICULUM_OPORTUNIDADES,
-      ].sort(this.orderMenu)
-    }];
-
     this.menuContexto = [
       { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.moduloGestao },
       { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.moduloExecucao },
       { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: this.lex.translate("Administrador"), menu: this.moduloAdministrador },
-      { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.moduloDev },
-      { key: "PONTO", permition: "CTXT_PNT", icon: "bi bi-stopwatch", name: this.lex.translate("Ponto Eletrônico"), menu: this.moduloPonto },
-      { key: "PROJETO", permition: "CTXT_PROJ", icon: "bi bi-graph-up-arrow", name: this.lex.translate("Projetos"), menu: this.moduloProjeto },
-      { key: "RAIOX", permition: "CTXT_RX", icon: "bi bi-camera", name: this.lex.translate("Raio X"), menu: this.moduloRaioX }
+      { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.moduloDev }
     ]
 
   }
@@ -554,78 +467,4 @@ export class AppComponent {
     this.auth.logOut();
   }
 
-  public get isConfig(): boolean {
-    return this.router.url.indexOf("/extension/options") >= 0;
-  }
 }
-
-
-
-
-/*
-Navegação         Menus                               Capacidade
---------------------------------------------------------------------------------------
-navGestao         Planejamento                        MENU_GESTAO_ACESSO
-                  Execução                            MENU_GESTAO_ACESSO
-                  Avaliação                           MENU_GESTAO_ACESSO
-                  Gerenciamento                       MENU_CONFIG_ACESSO
-                  Cadastros                           MENU_CAD_ACESSO
-
-navAdministrador  Cadastros                           MENU_CAD_ACESSO
-                  Gerenciamento                       MENU_CONFIG_ACESSO
-
-navDev            Manutenção                          MENU_DEV_ACESSO
-                  Logs e Auditorias                   MENU_DEV_ACESSO
-                  Testes                              MENU_DEV_ACESSO
-
-navPonto                                                                    
-navProjeto        Cadastros                           MENU_CAD_ACESSO
-                  Gerencial                           MENU_CAD_ACESSO
-
-navRaioX          Currículo                           MENU_RX_CURRICULUM_ACESSO
-                      Dados Pessoais                      MOD_RX_CURR
-                      Dados Profissionais                 MOD_RX_CURR
-                      Atributos Comportamentais           MOD_RX_CURR
-                          QVT                                 MOD_RX_CURR
-                          Big5                                MOD_RX_CURR
-                          SoftSkills                          MOD_RX_CURR
-                          DASS                                MOD_RX_CURR
-                          SRQ20                               MOD_RX_CURR
-                  Oportunidades                       MENU_RX_OPORTUNIDADES_ACESSO
-                      Oportunidades                       MOD_RX_OPO
-                  Pesquisas                           MENU_RX_PESQUISAS_ACESSO
-                      Pesquisa Usuário                    MOD_RX_OUT
-                      Pesquisa Adm                        MOD_RX_OUT
-                  Questionários Dinâmicos             MENU_RX_QUEST_DINAMICOS_ACESSO
-                      Questionário                        MOD_RX_OUT
-                  Cadastros                           MENU_RX_CADASTROS_ACESSO
-                      Áreas de Atividades Externas        MOD_RX_OUT
-                      Áreas de Conhecimento               MOD_RX_OUT
-                      Áreas Temáticas                     MOD_RX_OUT
-                      Capacidades Técnicas                MOD_RX_OUT
-                      Cargos                              MOD_RX_OUT
-                      Centros de Treinamento              MOD_RX_OUT
-                      Cursos                              MOD_RX_OUT
-                      Funções                             MOD_RX_OUT
-                      Grupos Especializados               MOD_RX_OUT
-                      Matérias                            MOD_RX_OUT
-                      Oportunidades                       MOD_RX_OPO
-                      Questionários Perguntas             MOD_RX_OUT
-                      Questionários Respostas             MOD_RX_OUT
-                      Questionários Testes                MOD_RX_OUT  
-                      Tipos de Curso                      MOD_RX_OUT  
-
-PerfiS
-------
-Usuário
-        MENU_RX_CURRICULUM_ACESSO, MENU_RX_OPORTUNIDADES_ACESSO
-        MOD_RX_CURR, MOD_RX_CURR_INCL, MOD_RX_CURR_EDT, MOD_RX_CURR_EXCL, MOD_RX_OPO
-Gerente
-
-Administrador
-        MENU_RX_CURRICULUM_ACESSO, MENU_RX_OPORTUNIDADES_ACESSO,
-        MENU_RX_PESQUISAS_ACESSO, MENU_RX_QUEST_DINAMICOS_ACESSO, MENU_RX_CADASTROS_ACESSO
-        MOD_RX_CURR, MOD_RX_CURR_INCL, MOD_RX_CURR_EDT, MOD_RX_CURR_EXCL 
-        MOD_RX_OPO, MOD_RX_OPO_INCL, MOD_RX_OPO_EDT, MOD_RX_OPO_EXCL
-        MOD_RX_OUT, MOD_RX_OUT_INCL, MOD_RX_OUT_EDT, MOD_RX_OUT_EXCL
-*/

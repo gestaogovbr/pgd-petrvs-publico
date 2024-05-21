@@ -260,7 +260,6 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       }
     }
     if (this.filter?.controls.meus_planos.value) {
-      console.log("meus_planos");
       let w1: [string, string, string[]] = ["unidade_id", "in", (this.auth.unidades || []).map(u => u.id)];
       result.push(w1);
     }

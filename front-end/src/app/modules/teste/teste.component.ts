@@ -5,9 +5,8 @@ import { IIndexable } from 'src/app/models/base.model';
 import { FormHelperService } from 'src/app/services/form-helper.service';
 import { LookupItem, LookupService } from 'src/app/services/lookup.service';
 import { UtilService } from 'src/app/services/util.service';
-import * as moment from 'moment';
+import moment from 'moment';
 import { CardItem } from 'src/app/components/kanban/docker/docker.component';
-import { GanttAssignment, GanttProject, GanttResource, GanttTask } from 'src/app/components/gantt/gantt-models';
 import { CalendarOptions } from '@fullcalendar/core';
 import { Expediente } from 'src/app/models/expediente.model';
 import { Feriado } from 'src/app/models/feriado.model';
@@ -168,9 +167,7 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
     }
   ];
 
-  public project: GanttProject;
   public efemerides?: Efemerides;
-  public resources: GanttResource[] = [];
 
   public mapa: MapItem[] = [];/*
     {
@@ -270,82 +267,7 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
       icon: {default: null},
       color: {default: null}*/
     });
-    this.project = new GanttProject();
-    this.project.tasks = [new GanttTask({
-      id: "a80b71cf-e112-11ec-a5bb-0050569c64a0",
-      name: "Projeto 1",
-      description: "Projeto de testes 1",
-      progress: 50,
-      start: this.incDate(-2),
-      end: this.incDate(5),
-      duration: 7,
-      hasChild: true,
-      tasks: [
-        new GanttTask({
-          id: "a80b71cf-e112-11ec-a5bb-0050569c64a1",
-          name: "Tarefa de teste 1",
-          description: "Tarefa de testes 1",
-          progress: 50,
-          start: this.incDate(-1),
-          end: this.incDate(1),
-          duration: 2,
-          assignments: [new GanttAssignment({ resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1" })]
-        }),
-        new GanttTask({
-          id: "a80b71cf-e112-11ec-a5bb-0050569c64a2",
-          name: "Tarefa de teste 2",
-          description: "Tarefa de testes 2",
-          progress: 50,
-          start: this.incDate(1),
-          end: this.incDate(3),
-          duration: 2,
-          assignments: [new GanttAssignment({ resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a2" })]
-        })
-      ],
-      assignments: [
-        new GanttAssignment({ resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1" }),
-        new GanttAssignment({ resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a2" })
-      ]
-    }),
-    new GanttTask({
-      id: "a80b71cf-e112-11ec-a5bb-0050579c64a0",
-      name: "Projeto 2",
-      description: "Projeto de testes 2",
-      progress: 50,
-      start: this.incDate(3),
-      end: this.incDate(9),
-      duration: 7,
-      hasChild: true,
-      tasks: [
-        {
-          id: "a80b71cf-e112-11ec-a5bb-1050569c64a1",
-          name: "Tarefa de teste 2-1",
-          description: "Tarefa de testes 2-1",
-          progress: 50,
-          start: this.incDate(3),
-          end: this.incDate(9),
-          duration: 2,
-          assignments: [new GanttAssignment({ resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1" })]
-        }
-      ],
-      assignments: [
-        new GanttAssignment({ resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1" }),
-      ]
-    })];
-    this.project.resources = [
-      new GanttResource({
-        id: "a80b71ff-e112-11ec-a5bb-0050569c64a1",
-        name: "Genisson",
-        picture: "assets/images/profile.png",
-        type: "HUMAN"
-      }),
-      new GanttResource({
-        id: "a80b71ff-e112-11ec-a5bb-0050569c64a2",
-        name: "Carlos",
-        picture: "assets/images/profile.png",
-        type: "HUMAN"
-      })
-    ];
+    
   }
 
   public incDate(inc: number, date?: Date) {

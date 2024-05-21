@@ -8,7 +8,7 @@ use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use Illuminate\Database\Seeder;
-
+use App\Services\NivelAcessoService; 
 class UsuarioSeeder extends Seeder
 {
   /**
@@ -17,22 +17,25 @@ class UsuarioSeeder extends Seeder
    * @return void
    */
   public $timenow;
+  public $nivelAcessoService;
+
 
   public function __construct()
   {
     $this->timenow = now();
+    $this->nivelAcessoService = new NivelAcessoService();
   }
 
   public function run()
   {
-    $perfis = Perfil::all();
+    $perfilDesenvolvedorId =$this->nivelAcessoService->getPerfilDesenvolvedor()->id;
     $usuarios_desenvolvedores = [
       [
         'email' => 'geisimar.rech87@gmail.com',
         'nome' => 'Geisimar Rech',
         'cpf' => '01798651106',
         'apelido' => 'Geisimar',
-        'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+        'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
       ],
       [
@@ -40,7 +43,7 @@ class UsuarioSeeder extends Seeder
         'nome' => 'Henrique Felipe Alves',
         'cpf' => '40921185898',
         'apelido' => 'Henrique',
-        'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+        'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
       ],
       [
@@ -48,7 +51,7 @@ class UsuarioSeeder extends Seeder
         'nome' => 'Guilherme Bitar',
         'cpf' => '01914276167',
         'apelido' => 'Guilherme',
-        'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+        'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
       ],
       [
@@ -56,7 +59,7 @@ class UsuarioSeeder extends Seeder
         'nome' => 'Karina Silva',
         'cpf' => '05182319177',
         'apelido' => 'Karina',
-        'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+        'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'FEMININO',
       ],
       [
@@ -64,7 +67,7 @@ class UsuarioSeeder extends Seeder
         'nome' => 'Cimei Teixeira',
         'cpf' => '48321770100',
         'apelido' => 'Cimei',
-        'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+        'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
       ],
       [
@@ -72,7 +75,7 @@ class UsuarioSeeder extends Seeder
         'nome' => 'Marco Coelho',
         'cpf' => '03400125954',
         'apelido' => 'Marco',
-        'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+        'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
       ]
     ];
