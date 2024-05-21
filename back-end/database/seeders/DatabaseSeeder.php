@@ -25,7 +25,6 @@ class DatabaseSeeder extends Seeder
       ]);
     } else {
       $this->call([
-        PainelUsuarioSeeder::class,
         CidadeSeeder::class,
         FeriadoSeeder::class,
         PerfilSeeder::class,
