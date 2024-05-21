@@ -163,36 +163,35 @@ export class DialogComponent implements OnInit {
     }
 	}
 
-
-
-	ngAfterViewInit() {
-    if (this.route && this.route.component) {
-      const componentType = this.route.component as Type<any>;
-			if(this.body){
-				const componentRef = this.body.createComponent(componentType);
-
-				if (this.route.data.title?.length) this.title = this.route.data.title;
-
-				this.modalBodyRef = componentRef;
-				if ("modalInterface" in this.modalBodyRef.instance) {
-					const modalInstance = this.modalBodyRef.instance as any;
-					modalInstance.modalRoute = this.route;
-					this.modalWidth = parseInt(this.route.queryParams?.modalWidth || modalInstance.modalWidth, 10);
-
-					(modalInstance.titleSubscriber as Subject<string>).subscribe((title) => {
-						this.title = title;
-						this.cdRef.detectChanges();
-					});
-
-					if (modalInstance.title?.length) this.title = modalInstance.title;
+	public ngAfterViewInit() {
+		if (this.route && this.route.component) {
+			const componentType = this.route.component as Type<any>;
+			const componentFactory =
+				this.factory.resolveComponentFactory(componentType);
+			if (this.route.data.title?.length) this.title = this.route.data.title;
+			this.modalBodyRef =
+				this.body!.createComponent<typeof componentType>(componentFactory);
+			if ("modalInterface" in this.modalBodyRef.instance) {
+				const modal = this.modalBodyRef.instance as any;
+				modal.modalRoute = this.route;
+				this.modalWidth = parseInt(
+					this.route.queryParams?.modalWidth || modal.modalWidth
+				);
+				(modal.titleSubscriber as Subject<string>).subscribe((title) => {
+					this.title = title;
 					this.cdRef.detectChanges();
-				} else if (this.template) {
-					this.modalWidth = 600;
-					this.cdRef.detectChanges();
-				}
+				});
+				if (modal.title?.length) this.title = modal.title;
+				this.cdRef.detectChanges();
+			} else if (this.template) {
+				this.modalWidth = 600;
+				this.cdRef.detectChanges();
 			}
-    }
+		}
+		this.bootstapModal.show();
+		this.zIndexRefresh();
 	}
+
 	public zIndexRefresh() {
 		// $(".modal").each((index, element) => {
 		// 	$(element).css("z-index", (index + 1) * 1055);
