@@ -7,6 +7,7 @@ use App\Models\Capacidade;
 use App\Models\Perfil;
 use App\Models\TipoCapacidade;
 use App\Services\UtilService;
+use App\Services\NivelAcessoService; 
 
 class CapacidadeSeeder extends Seeder
 {
@@ -18,11 +19,13 @@ class CapacidadeSeeder extends Seeder
 
   public $timenow;
   public $utilService;
+  public $nivelAcessoService;
 
   public function __construct()
   {
     $this->timenow = now();
     $this->utilService = new UtilService();
+    $this->nivelAcessoService = new NivelAcessoService();
   }
 
   public function run()
@@ -291,7 +294,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_TIPO_DOC"],
       ["codigo" => "MOD_TIPO_DOC_EDT"],
       ["codigo" => "MOD_TIPO_DOC_EXCL"],
-      ["codigo" => "MOD_TIPO_DOC_INCL"],     
+      ["codigo" => "MOD_TIPO_DOC_INCL"],
       ["codigo" => "MOD_TIPO_MTV_AFT"],
       ["codigo" => "MOD_TIPO_MTV_AFT_EDT"],
       ["codigo" => "MOD_TIPO_MTV_AFT_EXCL"],
@@ -410,7 +413,7 @@ class CapacidadeSeeder extends Seeder
       }
     }
 
-    $perfilDesenvolvedorId = Perfil::where([['nome', 'Desenvolvedor']])->first()->id;
+    $perfilDesenvolvedorId = $this->nivelAcessoService->getPerfilDesenvolvedor()->id;
     $qtdCapacidadesRemovidas = Capacidade::whereNotIn('id', $capacidadesInseridas)->whereNotIn('perfil_id', [$perfilDesenvolvedorId])->delete();
     $qtdCapacidades = Capacidade::count();
     $qtdCapacidadesRestauradas = count($capacidadesRestauradas);

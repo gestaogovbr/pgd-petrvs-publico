@@ -55,7 +55,7 @@
                 </div>
             </div>
         </tab>
-        <tab key="BANCO" label="Banco de dados">
+        <!--<tab key="BANCO" label="Banco de dados">
             <separator title="Banco de dados da aplicação"></separator>
             <div class="row">
                 <input-text [size]="4" label="Host" controlName="tenancy_db_host" [attr.maxlength]=250></input-text>
@@ -88,7 +88,7 @@
                     </div>
                 </div>
             </div>
-        </tab>
+        </tab>-->
         <tab key="LOGIN" label="Login">
 
             <separator title="Google"></separator>
@@ -106,9 +106,13 @@
             </div>
             <separator title="Login GOVBr"></separator>
             <div class="row">
+                <input-select [size]="4" label="Ambiente" controlName="login_login_unico_environment" [items]="lookup.GOV_BR_ENV"></input-select>
+                <input-text [size]="3" label="Code Verifier" controlName="login_login_unico_code_verifier" [attr.maxlength]=250></input-text>
+                <input-text [size]="3" label="Challenge Method" controlName="login_login_unico_code_challenge_method" [attr.maxlength]=250></input-text>
+                <input-switch [size]="2" scale="large" labelPosition="right" label="" controlName="login_login_unico"></input-switch>
                 <input-text [size]="5" label="Client ID" controlName="login_login_unico_client_id" [attr.maxlength]=250></input-text>
                 <input-text [size]="5" label="Secret" controlName="login_login_unico_secret" [attr.maxlength]=250></input-text>
-              <input-switch [size]="2" scale="large" labelPosition="right" label="" controlName="login_login_unico"></input-switch>
+                <input-text [size]="10" label="Redirect" disabled="true" controlName="login_login_unico_redirect" [attr.maxlength]=250></input-text>
             </div>
         </tab>
         <tab key="INTEGRACAO" label="Integração">
@@ -158,7 +162,7 @@
                 </div>
             </div>
         </tab>
-        <tab key="SEI" label="Módulo SEI">
+        <!--<tab key="SEI" label="Módulo SEI">
             <div class="row">
                 <input-switch [size]="1" labelPosition="top" label="Habilitado" controlName="modulo_sei_habilitado"></input-switch>
                 <input-text [size]="11" label="Url do sei" controlName="modulo_sei_url" labelInfo="Url completa do SEI incluindo o https://, sem a barra no final"></input-text>
@@ -175,7 +179,7 @@
                     </div>  
                 </div>
             </separator>
-        </tab>        
+        </tab>       -->
     </tabs>
 </editable-form>
 

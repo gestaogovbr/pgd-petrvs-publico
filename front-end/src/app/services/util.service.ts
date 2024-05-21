@@ -390,7 +390,7 @@ export class UtilService {
   }
 
   public isDeveloper(): boolean {
-    return this.auth.usuario?.perfil?.nome == 'Desenvolvedor';
+    return this.auth.usuario?.perfil?.nivel == 0;
   }
 
   public decimalToTimer(value: number, onlyHours: boolean = false, hoursPerDay: number = 24) {
