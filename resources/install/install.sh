@@ -203,6 +203,9 @@ else
     create_docker_compose_file
 fi
 
+echo "--- PARANDO DOCKER ---"
+docker-compose down
+
 echo "--- INICIANDO DOCKER ---"
 
 echo "Puxando novas imagens..."
