@@ -106,7 +106,6 @@
               "outputHashing": "none",
               "sourceMap": false,
               "extractLicenses": true,
-              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
