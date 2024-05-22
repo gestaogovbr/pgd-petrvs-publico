@@ -66,6 +66,7 @@ class UsuarioService extends ServiceBase
 
   public function extraStore($entity, $unidade, $action)
   {
+
     foreach ($this->buffer["integrantes"] as &$integrante) {
       $integrante["usuario_id"] = $entity->id;
     }
@@ -347,8 +348,11 @@ class UsuarioService extends ServiceBase
     $perfilAtual = !empty($data['id']) ? $this->getById($data)["perfil_id"] : null;
 
     $this->nivelAcessoService = new NivelAcessoService();
-    $developerId = $this->nivelAcessoService->getPerfilDesenvolvedor()->id;
+    $developer = $this->nivelAcessoService->getPerfilDesenvolvedor();
+    if (empty($developer))
+      throw new ServerException("ValidateUsuario", "Perfil de Desenvolvedor não encontrado no banco de dados");
 
+      $developerId = $developer->id;
     if ($data['perfil_id'] != $perfilAtual) {
       if ($perfilNovo->nivel < $perfilAutenticado->nivel)
         throw new ServerException("ValidateUsuario", "Não é possível atribuir perfil superior ao do usuário logado.");
