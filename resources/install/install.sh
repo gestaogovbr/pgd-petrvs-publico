@@ -118,34 +118,109 @@ check_os
 # Chama a função para perguntar ao usuário
 ask_install_docker_and_compose
 
-
 # Função para ler a entrada do usuário e atualizar o arquivo .env
 update_env() {
     # Verifica se o arquivo .env existe
     if [ -f .env ]; then
-	# Pergunta ao usuário com base na descrição fornecida
+        # Pergunta ao usuário com base na descrição fornecida
         printf "%s\n" "$1"
         # Pula uma linha após a pergunta e exibe a resposta do usuário
         read -p "=> " value
-        #echo "$value"
-		if [ "$2" = "CENTRAL_DOMAINS" ]; then
-			# Atualiza a variável CENTRAL_DOMAINS no .env
-			sed -i "s/^CENTRAL_DOMAINS=.*/CENTRAL_DOMAINS=$value/" .env
-			sed -i "s/^SESSION_DOMAIN=.*/SESSION_DOMAIN=$value/" .env
-			# Atualiza a variável APP_URL com base em CENTRAL_DOMAINS
-			sed -i "s|^APP_URL=.*|APP_URL=$APP_URL$value/|" .env
-			sed -i "s|^SANCTUM_STATEFUL_DOMAINS=.*|SANCTUM_STATEFUL_DOMAINS=$value:80,$value:443|;" .env
+        if [ "$2" = "CENTRAL_DOMAINS" ]; then
+            # Atualiza a variável CENTRAL_DOMAINS no .env
+            sed -i "s/^CENTRAL_DOMAINS=.*/CENTRAL_DOMAINS=$value/" .env
+            sed -i "s/^SESSION_DOMAIN=.*/SESSION_DOMAIN=$value/" .env
+            # Atualiza a variável APP_URL com base em CENTRAL_DOMAINS
+            sed -i "s|^APP_URL=.*|APP_URL=$APP_URL$value/|" .env
+            sed -i "s|^SANCTUM_STATEFUL_DOMAINS=.*|SANCTUM_STATEFUL_DOMAINS=$value:80,$value:443|;" .env
         else
-			# Atualiza a variável no .env
-			sed -i "s/^$2=.*/$2=$value/" .env
-			# Se a variável de cópia for especificada, atualize-a também
-			if [ ! -z "$3" ]; then
-				sed -i "s/^$3=.*/$3=$value/" .env
-			fi
+            # Atualiza a variável no .env
+            sed -i "s/^$2=.*/$2=$value/" .env
+            # Se a variável de cópia for especificada, atualize-a também
+            if [ ! -z "$3" ]; then
+                sed -i "s/^$3=.*/$3=$value/" .env
+            fi
         fi
     else
         echo "Arquivo .env não encontrado."
-	exit 1
+        exit 1
+    fi
+}
+
+# Função para configurar variáveis padrão no arquivo .env
+configure_default_env() {
+    if [ -f .env ]; then
+        mariadb_root_password=$1
+        sed -i "s/^DB_CONNECTION=.*/DB_CONNECTION=mysql/" .env
+        sed -i "s/^DB_HOST=.*/DB_HOST=mariadb/" .env
+        sed -i "s/^DB_PORT=.*/DB_PORT=3306/" .env
+        sed -i "s/^DB_DATABASE=.*/DB_DATABASE=petrvs_db/" .env
+        sed -i "s/^LOG_DATABASE=.*/LOG_DATABASE=petrvs_log_db/" .env
+        sed -i "s/^DB_USERNAME=.*/DB_USERNAME=root/" .env
+        sed -i "s/^LOG_USERNAME=.*/LOG_USERNAME=root/" .env
+        sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=$mariadb_root_password/" .env
+        sed -i "s/^LOG_PASSWORD=.*/LOG_PASSWORD=$mariadb_root_password/" .env
+    else
+        echo "Arquivo .env não encontrado."
+        exit 1
+    fi
+}
+
+# Função para perguntar ao usuário se deseja levantar o MariaDB
+ask_mariadb() {
+    read -p "Deseja levantar o MariaDB? (s/n): " use_mariadb
+    if [ "$use_mariadb" = "s" ]; then
+        read -p "Digite a senha do root do MariaDB: " mariadb_root_password
+        configure_default_env "$mariadb_root_password"
+        ask_execute_configurations2
+        DOCKER_COMPOSE_CONTENT='
+version: "3.9"
+services:
+  petrvs_php:
+    image: segescginf/pgdpetrvs:latest
+    container_name: petrvs_php
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - mariadb
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 2496M
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: '"$mariadb_root_password"'
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+volumes:
+  mariadb_data:
+'
+    else
+        ask_execute_configurations
+
+        DOCKER_COMPOSE_CONTENT='
+version: "3.9"
+services:
+  petrvs_php:
+    image: segescginf/pgdpetrvs:latest
+    container_name: petrvs_php
+    ports:
+      - "80:80"
+      - "443:443"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 2496M
+'
     fi
 }
 
@@ -168,26 +243,24 @@ ask_execute_configurations() {
     fi
 }
 
-# Chama a função para perguntar ao usuário
-ask_execute_configurations
+# Função para perguntar ao usuário se deseja executar as configurações
+ask_execute_configurations2() {
+    read -p "Deseja configurar o arquivo .env? (s/n): " execute_configurations
+    if [ "$execute_configurations" = "s" ]; then
+        echo "Configurando o arquivo .env..."
+        # Pergunta e atualiza cada variável do .env
+        update_env "Digite a URL do sistema" "CENTRAL_DOMAINS"
+        echo "Dados configurados com sucesso!"
+    else
+        echo "Ok, as configurações não serão executadas."
+    fi
+}
 
-# Conteúdo do docker-compose.yml
-DOCKER_COMPOSE_CONTENT='
-version: "3.9"
-services:
-  petrvs_php:
-    image: segescginf/pgdpetrvs:latest
-    container_name: petrvs_php
-    ports:
-      - "80:80"
-      - "443:443"
-    # Remova esta seção se não estiver usando Docker Swarm
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 2496M
-'
+# Verifica o sistema operacional
+check_os
+
+# Chama a função para perguntar ao usuário
+ask_mariadb
 
 # Função para criar o arquivo docker-compose.yml
 create_docker_compose_file() {
@@ -213,21 +286,21 @@ echo "Puxando novas imagens..."
 docker-compose pull
 
 echo "Iniciando containers em modo detached..."
-#Iniciar containers em modo detached
+# Iniciar containers em modo detached
 docker-compose up -d
 
 echo "Copiando o .env para o container..."
 # Copia o .env para container
 docker cp .env petrvs_php:/var/www/.env
 
-#Storage
-echo "Permissao storage/logs..."
+# Storage
+echo "Permissão storage/logs..."
 docker exec -it petrvs_php bash -c 'sudo chmod -R 775 /var/www/storage/logs/'
 docker exec -it petrvs_php bash -c 'sudo chown -R www-data:root ./storage'
 echo "Limpando storage/logs"
 docker exec -it petrvs_php bash -c 'sudo rm -f /var/www/storage/logs/*.log'
 
-#Limpar Cache
+# Limpar Cache
 echo "Limpar Cache"
 docker exec -it petrvs_php bash -c 'php artisan cache:clear'
 docker exec -it petrvs_php bash -c 'php artisan config:clear'
@@ -238,7 +311,7 @@ docker exec -it petrvs_php bash -c "php artisan migrate"
 docker exec -it petrvs_php bash -c "php artisan tenants:migrate"
 docker exec -it petrvs_php bash -c 'php artisan tenants:run db:seed --option="class=DeployPRODSeeder"'
 
-#Iniciar o cronjob
+# Iniciar o cronjob
 docker exec -it petrvs_php bash -c 'service cron start'
 echo "--- SISTEMA INICIADO ---"
 echo " "
@@ -278,5 +351,5 @@ docker exec -it petrvs_php php artisan tinker --execute="App\\Models\\PainelUsua
 )"
 
 echo "Configuração completa. O administrador pode acessar o sistema com o email '$ADMIN_EMAIL'."
-echo -n "URL do sistema: "
+echo -n "URL do panel: "
 echo -e "\e[34m$(grep -oP '^APP_URL=\K.*' .env)/#/panel\e[0m"
