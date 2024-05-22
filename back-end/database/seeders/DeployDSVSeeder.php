@@ -21,7 +21,6 @@ class DeployDSVSeeder extends Seeder
       CapacidadeSeeder::class,
       NomenclaturaSeeder::class
       /* 
-      PainelUsuarioSeeder::class,
       In24_2023Seeder::class,
       TemplateSeeder::class,
        */

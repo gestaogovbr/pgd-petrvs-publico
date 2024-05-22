@@ -203,6 +203,9 @@ else
     create_docker_compose_file
 fi
 
+echo "--- PARANDO DOCKER ---"
+docker-compose down
+
 echo "--- INICIANDO DOCKER ---"
 
 echo "Puxando novas imagens..."
@@ -238,4 +241,42 @@ docker exec -it petrvs_php bash -c 'php artisan tenants:run db:seed --option="cl
 #Iniciar o cronjob
 docker exec -it petrvs_php bash -c 'service cron start'
 echo "--- SISTEMA INICIADO ---"
-echo "Configuração concluída."
+echo " "
+
+# Função para obter entrada do usuário do Panel SaaS
+get_input() {
+    local prompt=$1
+    local input
+    while true; do
+        read -p "$prompt: " input
+        if [ ! -z "$input" ]; then
+            echo $input
+            break
+        else
+            echo "Entrada inválida. Por favor, tente novamente."
+        fi
+    done
+}
+
+echo "Vamos configurar o login e senha do administrador do Painel SaaS."
+echo " "
+
+ADMIN_NAME=$(get_input "Digite o nome do administrador")
+ADMIN_CPF=$(get_input "Digite o CPF do administrador")
+ADMIN_EMAIL=$(get_input "Digite o email do administrador")
+ADMIN_PASSWORD=$(get_input "Digite a senha do administrador")
+
+# Criar ou atualizar o usuário administrador no Laravel usando MD5 para o hash da senha
+docker exec -it petrvs_php php artisan tinker --execute="App\\Models\\PainelUsuario::updateOrCreate(
+    ['email' => '$ADMIN_EMAIL'],
+    [
+        'nome' => '$ADMIN_NAME',
+        'cpf' => '$ADMIN_CPF',
+        'password' => md5('$ADMIN_PASSWORD'),
+        'email_verified_at' => now()
+    ]
+)"
+
+echo "Configuração completa. O administrador pode acessar o sistema com o email '$ADMIN_EMAIL'."
+echo -n "URL do sistema: "
+echo -e "\e[34m$(grep -oP '^APP_URL=\K.*' .env)/#/panel\e[0m"

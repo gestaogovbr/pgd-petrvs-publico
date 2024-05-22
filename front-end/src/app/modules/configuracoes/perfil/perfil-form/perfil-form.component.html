@@ -4,7 +4,7 @@
         <tab key="PRINCIPAL" label="Principal">
             <div class="row">
                 <input-text [size]="10" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
-                <input-text numbers [size]="2" label="Nível" controlName="nivel" [attr.maxlength]=250></input-text>
+                <input-text numbers [size]="2" label="Nível" controlName="nivel" [attr.maxlength]=250 [disabled]="entity ? 'disabled': undefined"></input-text>
             </div>
             <div class="row">
                 <input-text [size]="12" label="Descrição" controlName="descricao" [attr.maxlength]=250 required></input-text>

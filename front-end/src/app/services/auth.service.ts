@@ -6,7 +6,7 @@ import { GlobalsService } from './globals.service';
 import { GoogleApiService } from './google-api.service';
 import { FullRoute, NavigateService } from './navigate.service';
 import { ServerService } from './server.service';
-import * as moment from 'moment';
+import moment from 'moment';
 import { ActivatedRoute } from '@angular/router';
 import { CalendarService } from './calendar.service';
 import { LexicalService } from './lexical.service';

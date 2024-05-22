@@ -7,6 +7,7 @@ use App\Models\Capacidade;
 use App\Models\Perfil;
 use App\Models\TipoCapacidade;
 use App\Services\UtilService;
+use App\Services\NivelAcessoService; 
 
 class CapacidadeSeeder extends Seeder
 {
@@ -18,11 +19,13 @@ class CapacidadeSeeder extends Seeder
 
   public $timenow;
   public $utilService;
+  public $nivelAcessoService;
 
   public function __construct()
   {
     $this->timenow = now();
     $this->utilService = new UtilService();
+    $this->nivelAcessoService = new NivelAcessoService();
   }
 
   public function run()
@@ -331,13 +334,18 @@ class CapacidadeSeeder extends Seeder
     $tipoCapacidadesInexistentes = [];
     $capacidadesRepetidas = [];
 
+    $devId = $this->nivelAcessoService->getPerfilDesenvolvedor()->id;
+    $participanteId = $this->nivelAcessoService->getPerfilParticipante()->id;
+    $admId = $this->nivelAcessoService->getPerfilAdministrador()->id;
+    $chefeId = $this->nivelAcessoService->getPerfilChefia()->id;
+
     foreach ($capacidades_participante as $c) {
       $capacidade = [
         "id" => $this->utilService->uuid("Participante" . $c['codigo']),
         "created_at" => $this->timenow,
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
-        "perfil_id" => $this->utilService->uuid("Participante"),
+        "perfil_id" => $participanteId,
         "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
       ];
 
@@ -365,7 +373,7 @@ class CapacidadeSeeder extends Seeder
         "created_at" => $this->timenow,
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
-        "perfil_id" => $this->utilService->uuid("Chefia de Unidade Executora"),
+        "perfil_id" => $chefeId,
         "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
       ];
       $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
@@ -390,7 +398,7 @@ class CapacidadeSeeder extends Seeder
         "created_at" => $this->timenow,
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
-        "perfil_id" => $this->utilService->uuid("Administrador Negocial"),
+        "perfil_id" => $admId,
         "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
       ];
 
@@ -410,8 +418,7 @@ class CapacidadeSeeder extends Seeder
       }
     }
 
-    $perfilDesenvolvedorId = Perfil::where([['nome', 'Desenvolvedor']])->first()->id;
-    $qtdCapacidadesRemovidas = Capacidade::whereNotIn('id', $capacidadesInseridas)->whereNotIn('perfil_id', [$perfilDesenvolvedorId])->delete();
+    $qtdCapacidadesRemovidas = Capacidade::whereNotIn('id', $capacidadesInseridas)->whereNotIn('perfil_id', [$devId])->delete();
     $qtdCapacidades = Capacidade::count();
     $qtdCapacidadesRestauradas = count($capacidadesRestauradas);
     $qtdTiposCapacidadesInexistentes = count($tipoCapacidadesInexistentes);
