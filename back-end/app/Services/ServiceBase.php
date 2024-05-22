@@ -71,7 +71,6 @@ class ServiceBase extends DynamicMethods
   const ACTION_EDIT = "EDIT";
 
   public string $collection = "";
-  public string $developerId = "";
   public $nivelAcessoService;
 
   public $buffer = []; /* Utilizado para passar informações entre os Proxys */
@@ -85,10 +84,9 @@ class ServiceBase extends DynamicMethods
     return class_exists($fullName) ? $this->_services[$name] : null;
   }
 
+ 
   public function __construct($collection = null)
   {
-    $this->nivelAcessoService = new NivelAcessoService();
-    $this->developerId = $this->nivelAcessoService->getPerfilDesenvolvedor()->id;
     $this->collection = $collection ?? $this->collection;
     if (empty($this->collection)) {
       $this->collection = str_replace("Service", "", str_replace("App\\Services", "App\\Models", get_class($this)));
@@ -128,7 +126,7 @@ class ServiceBase extends DynamicMethods
       });
     });
   }
-
+ 
   public function hasStoredProcedure($procedure)
   {
     try {
