@@ -270,7 +270,7 @@ ADMIN_PASSWORD=$(get_input "Digite a senha do administrador")
 docker exec -it petrvs_php php artisan tinker --execute="App\\Models\\PainelUsuario::updateOrCreate(
     ['email' => '$ADMIN_EMAIL'],
     [
-        'name' => '$ADMIN_NAME',
+        'nome' => '$ADMIN_NAME',
         'cpf' => '$ADMIN_CPF',
         'password' => md5('$ADMIN_PASSWORD'),
         'email_verified_at' => now()
