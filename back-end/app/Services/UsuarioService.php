@@ -346,12 +346,15 @@ class UsuarioService extends ServiceBase
     $perfilNovo = Perfil::find($data['perfil_id']);
     $perfilAtual = !empty($data['id']) ? $this->getById($data)["perfil_id"] : null;
 
+    $this->nivelAcessoService = new NivelAcessoService();
+    $developerId = $this->nivelAcessoService->getPerfilDesenvolvedor()->id;
+
     if ($data['perfil_id'] != $perfilAtual) {
       if ($perfilNovo->nivel < $perfilAutenticado->nivel)
         throw new ServerException("ValidateUsuario", "Não é possível atribuir perfil superior ao do usuário logado.");
-      if ($data["perfil_id"] == $this->developerId && !$this->isLoggedUserADeveloper())
+      if ($data["perfil_id"] == $developerId && !$this->isLoggedUserADeveloper())
         throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de/para um Desenvolvedor");
-      if ($perfilAtual == $this->developerId && !$this->isLoggedUserADeveloper())
+      if ($perfilAtual == $developerId && !$this->isLoggedUserADeveloper())
         throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de um Desenvolvedor");
     }
   }
