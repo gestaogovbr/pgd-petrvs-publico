@@ -178,7 +178,7 @@ ask_mariadb() {
 version: "3.9"
 services:
   petrvs_php:
-    image: segescginf/pgdpetrvs:latest
+    image: segescginf/pgdpetrvs:dsv
     container_name: petrvs_php
     ports:
       - "80:80"
@@ -303,10 +303,13 @@ docker cp .env petrvs_php:/var/www/.env
 
 # Storage
 echo "Permissão storage/logs..."
-docker exec -it petrvs_php bash -c 'sudo chmod -R 775 /var/www/storage/logs/'
-docker exec -it petrvs_php bash -c 'sudo chown -R www-data:root ./storage'
+docker exec -it petrvs_php bash -c 'sudo chmod -R 777 /var/www/storage/logs/'
+docker exec -it petrvs_php bash -c 'sudo chmod -R 777 /var/www/storage/'
+docker exec -it petrvs_php bash -c 'sudo chown -R www-data:root ./storage/logs/'
 echo "Limpando storage/logs"
 docker exec -it petrvs_php bash -c 'sudo rm -f /var/www/storage/logs/*.log'
+docker exec -it petrvs_php touch /var/www/storage/logs/laravel.log
+docker exec -it petrvs_php chmod 777 /var/www/storage/logs/laravel.log
 
 echo "Conectando banco de dados..."
 sleep 10
