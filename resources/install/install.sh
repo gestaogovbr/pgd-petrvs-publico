@@ -150,12 +150,14 @@ update_env() {
 # Função para configurar variáveis padrão no arquivo .env
 configure_default_env() {
     if [ -f .env ]; then
-        mariadb_root_password=$1
+        mariadb_root_password="rootpgd"
         sed -i "s/^DB_CONNECTION=.*/DB_CONNECTION=mysql/" .env
         sed -i "s/^DB_HOST=.*/DB_HOST=mariadb/" .env
+        sed -i "s/^LOG_HOST=.*/LOG_HOST=mariadb/" .env
         sed -i "s/^DB_PORT=.*/DB_PORT=3306/" .env
+        sed -i "s/^LOG_PORT=.*/LOG_PORT=3306/" .env
         sed -i "s/^DB_DATABASE=.*/DB_DATABASE=petrvs_db/" .env
-        sed -i "s/^LOG_DATABASE=.*/LOG_DATABASE=petrvs_log_db/" .env
+        sed -i "s/^LOG_DATABASE=.*/LOG_DATABASE=petrvs_logs_db/" .env
         sed -i "s/^DB_USERNAME=.*/DB_USERNAME=root/" .env
         sed -i "s/^LOG_USERNAME=.*/LOG_USERNAME=root/" .env
         sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=$mariadb_root_password/" .env
@@ -170,8 +172,7 @@ configure_default_env() {
 ask_mariadb() {
     read -p "Deseja levantar o MariaDB? (s/n): " use_mariadb
     if [ "$use_mariadb" = "s" ]; then
-        read -p "Digite a senha do root do MariaDB: " mariadb_root_password
-        configure_default_env "$mariadb_root_password"
+        configure_default_env
         ask_execute_configurations2
         DOCKER_COMPOSE_CONTENT='
 version: "3.9"
@@ -194,7 +195,7 @@ services:
     image: mariadb:latest
     container_name: mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: '"$mariadb_root_password"'
+      MYSQL_ROOT_PASSWORD: '"rootpgd"'
     ports:
       - "3306:3306"
     volumes:
@@ -230,7 +231,7 @@ ask_execute_configurations() {
     if [ "$execute_configurations" = "s" ]; then
         echo "Configurando o arquivo .env..."
         # Pergunta e atualiza cada variável do .env
-        update_env "Digite o endereço do host do banco de dados" "DB_HOST" "LOG_HOST"
+        update_env "Digite o host do banco de dados" "DB_HOST" "LOG_HOST"
         update_env "Digite a porta do banco de dados" "DB_PORT" "LOG_PORT"
         update_env "Digite o nome do banco de dados" "DB_DATABASE"
         update_env "Digite o nome do banco de dados de logs" "LOG_DATABASE"
@@ -268,16 +269,23 @@ create_docker_compose_file() {
     echo "Arquivo docker-compose.yml criado com sucesso."
 }
 
-# Verifica se o arquivo docker-compose.yml existe
-if [ -f "docker-compose.yml" ]; then
-    echo "Arquivo docker-compose.yml já existe."
-else
-    echo "Arquivo docker-compose.yml não encontrado. Criando..."
+reset_docker_compose_file() {
+    if [ -f "docker-compose.yml" ]; then
+        echo "Apagando arquivo docker-compose.yml existente..."
+        rm docker-compose.yml
+    fi
+    echo "Criando novo arquivo docker-compose.yml..."
     create_docker_compose_file
-fi
+}
+reset_docker_compose_file
 
 echo "--- PARANDO DOCKER ---"
 docker-compose down
+
+if docker volume inspect install_mariadb_data &>/dev/null; then
+    echo "Removendo o volume do MariaDB..."
+    docker volume rm install_mariadb_data
+fi
 
 echo "--- INICIANDO DOCKER ---"
 
@@ -300,16 +308,19 @@ docker exec -it petrvs_php bash -c 'sudo chown -R www-data:root ./storage'
 echo "Limpando storage/logs"
 docker exec -it petrvs_php bash -c 'sudo rm -f /var/www/storage/logs/*.log'
 
+echo "Conectando banco de dados..."
+sleep 10
+
+# Cria o schema se ele não existir
+echo "Migrando e semeando o banco de dados..."
+docker exec -it petrvs_php sh -c "php artisan migrate"
+docker exec -it petrvs_php sh -c "php artisan tenants:migrate"
+docker exec -it petrvs_php sh -c 'php artisan tenants:run db:seed --option="class=DeployPRODSeeder"'
+
 # Limpar Cache
 echo "Limpar Cache"
 docker exec -it petrvs_php bash -c 'php artisan cache:clear'
 docker exec -it petrvs_php bash -c 'php artisan config:clear'
-
-echo "Executando php artisan migrate..."
-# Execute o shell do container e o comando php artisan migrate
-docker exec -it petrvs_php bash -c "php artisan migrate"
-docker exec -it petrvs_php bash -c "php artisan tenants:migrate"
-docker exec -it petrvs_php bash -c 'php artisan tenants:run db:seed --option="class=DeployPRODSeeder"'
 
 # Iniciar o cronjob
 docker exec -it petrvs_php bash -c 'service cron start'
