@@ -1,16 +1,104 @@
 #!/bin/bash
 
+# Verificar se o arquivo .env já existe
+if [ ! -f .env ]; then
+    # Criar o conteúdo do arquivo .env
+    cat <<EOF > .env
+APP_NAME=Petrvs
+APP_ENV=local
+APP_KEY=base64:U3I8G1vro0qdHqYIlHfQYPSTr8dqZIOrLt5Xrd8zE0U=
+APP_DEBUG=true
+APP_URL=http://localhost/
+
+CENTRAL_DOMAINS=localhost
+
+LOG_CHANNEL=stack
+LOG_LEVEL=debug
+
+DB_CONNECTION=mysql
+DB_HOST=mariadb
+DB_PORT=3306
+DB_DATABASE=petrvs_db
+DB_USERNAME=root
+DB_PASSWORD=rootpgd
+
+LOG_CONNECTION=log
+LOG_HOST=mariadb
+LOG_PORT=3306
+LOG_DATABASE=petrvs_logs_db
+LOG_USERNAME=root
+LOG_PASSWORD=rootpgd
+LOG_TRAFFIC=false
+LOG_CHANGES=false
+LOG_ERRORS=false
+
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+FILESYSTEM_DRIVER=local
+QUEUE_CONNECTION=database
+SESSION_LIFETIME=1200
+SESSION_DRIVER=custom-database
+SESSION_CONNECTION=mysql
+SESSION_DOMAIN=localhost
+SESSION_SAME_SITE=none
+SESSION_SECURE_COOKIE=true
+SESSION_HTTP_ONLY=true
+SESSION_SECURE_COOKIE=true
+SANCTUM_STATEFUL_DOMAINS=localhost:80,localhost:443
+
+MEMCACHED_HOST=127.0.0.1
+
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+MAIL_MAILER=smtp
+MAIL_HOST=
+MAIL_PORT=465
+MAIL_USERNAME=
+MAIL_PASSWORD=
+MAIL_ENCRYPTION=ssl
+MAIL_FROM_ADDRESS=
+MAIL_FROM_NAME="\${APP_NAME}"
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
+
+PUSHER_APP_ID=
+PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+PUSHER_APP_CLUSTER=mt1
+
+MIX_PUSHER_APP_KEY="\${PUSHER_APP_KEY}"
+MIX_PUSHER_APP_CLUSTER="\${PUSHER_APP_CLUSTER}"
+EOF
+fi
+
+
 # Saudação
 echo "Instalação do sistema PetrvsPGD 2.0 - MGI"
 
 # Função para determinar o ambiente (local ou produção)
 get_environment() {
-    read -p "Você está instalando em um ambiente local ou de produção? (L/P): " environment
-    if [ "$environment" = "P" ]; then
-        APP_URL="https://"
-    else
-        APP_URL="http://"
-    fi
+    echo "Você está instalando em um ambiente local ou de produção?"
+    select environment in "Local" "Produção"; do
+        case $environment in
+            "Produção")
+                APP_URL="https://"
+                break
+                ;;
+            "Local")
+                APP_URL="http://"
+                break
+                ;;
+            *)
+                echo "Opção inválida. Por favor, selecione 1 para Local ou 2 para Produção."
+                ;;
+        esac
+    done
 }
 
 # Chama a função para determinar o ambiente
@@ -90,28 +178,47 @@ install_docker_compose() {
 # Função para perguntar ao usuário se deseja instalar o Docker e o Docker Compose
 ask_install_docker_and_compose() {
     if ! check_docker_installed; then
-        read -p "Deseja instalar o Docker? (s/n): " install_docker
-        if [ "$install_docker" = "s" ]; then
-            echo "Instalando Docker..."
-            install_docker
-            echo "Docker instalado com sucesso."
-        else
-            echo "Ok, continuando sem instalar o Docker."
-        fi
+        echo "Deseja instalar o Docker?"
+        select install_docker in "Sim" "Não"; do
+            case $install_docker in
+                Sim)
+                    echo "Instalando Docker..."
+                    install_docker
+                    echo "Docker instalado com sucesso."
+                    break
+                    ;;
+                Não)
+                    echo "Ok, continuando sem instalar o Docker."
+                    break
+                    ;;
+                *)
+                    echo "Opção inválida. Por favor, selecione 1 para Sim ou 2 para Não."
+                    ;;
+            esac
+        done
     fi
 
     if ! check_docker_compose_installed; then
-        read -p "Deseja instalar o Docker Compose? (s/n): " install_docker_compose
-        if [ "$install_docker_compose" = "s" ]; then
-            echo "Instalando Docker Compose..."
-            install_docker_compose
-            echo "Docker Compose instalado com sucesso."
-        else
-            echo "Ok, continuando sem instalar o Docker Compose."
-        fi
+        echo "Deseja instalar o Docker Compose?"
+        select install_docker_compose in "Sim" "Não"; do
+            case $install_docker_compose in
+                Sim)
+                    echo "Instalando Docker Compose..."
+                    install_docker_compose
+                    echo "Docker Compose instalado com sucesso."
+                    break
+                    ;;
+                Não)
+                    echo "Ok, continuando sem instalar o Docker Compose."
+                    break
+                    ;;
+                *)
+                    echo "Opção inválida. Por favor, selecione 1 para Sim ou 2 para Não."
+                    ;;
+            esac
+        done
     fi
 }
-
 # Verifica o sistema operacional
 check_os
 
@@ -168,97 +275,145 @@ configure_default_env() {
     fi
 }
 
+select_image_tag() {
+    echo "Selecione a tag da imagem:"
+    select image_tag in "Produção" "Desenvolvimento"; do
+        case $image_tag in
+            Produção)
+                IMAGE_TAG="latest"
+                break
+                ;;
+            Desenvolvimento)
+                IMAGE_TAG="dsv"
+                break
+                ;;
+            *)
+                echo "Opção inválida. Por favor, selecione 1 para Produção ou 2 para Desenvolvimento."
+                ;;
+        esac
+    done
+}
+
+select_image_tag
 # Função para perguntar ao usuário se deseja levantar o MariaDB
 ask_mariadb() {
-    read -p "Deseja levantar o MariaDB? (s/n): " use_mariadb
-    if [ "$use_mariadb" = "s" ]; then
-        configure_default_env
-        ask_execute_configurations2
-        DOCKER_COMPOSE_CONTENT='
-version: "3.9"
+    echo "Deseja levantar o MariaDB?"
+    select use_mariadb in "Sim" "Não"; do
+        case $use_mariadb in
+            Sim)
+                configure_default_env
+                ask_execute_configurations2
+                DOCKER_COMPOSE_CONTENT="
+version: '3.9'
 services:
   petrvs_php:
-    image: segescginf/pgdpetrvs:dsv
+    image: segescginf/pgdpetrvs:$IMAGE_TAG
     container_name: petrvs_php
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     depends_on:
       - mariadb
     deploy:
       resources:
         limits:
-          cpus: "0.5"
+          cpus: '0.5'
           memory: 2496M
 
   mariadb:
     image: mariadb:latest
     container_name: mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: '"rootpgd"'
+      MYSQL_ROOT_PASSWORD: rootpgd
     ports:
-      - "3306:3306"
+      - '3306:3306'
     volumes:
       - mariadb_data:/var/lib/mysql
 
 volumes:
   mariadb_data:
-'
-    else
-        ask_execute_configurations
-
-        DOCKER_COMPOSE_CONTENT='
-version: "3.9"
+"
+                break
+                ;;
+            Não)
+                ask_execute_configurations
+                DOCKER_COMPOSE_CONTENT="
+version: '3.9'
 services:
   petrvs_php:
-    image: segescginf/pgdpetrvs:dsv
+    image: segescginf/pgdpetrvs:$IMAGE_TAG
     container_name: petrvs_php
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     deploy:
       resources:
         limits:
-          cpus: "0.5"
+          cpus: '0.5'
           memory: 2496M
-'
-    fi
+"
+                break
+                ;;
+            *)
+                echo "Opção inválida. Por favor, selecione 1 para Sim ou 2 para Não."
+                ;;
+        esac
+    done
 }
+
+
 
 # Função para perguntar ao usuário se deseja executar as configurações
 ask_execute_configurations() {
-    read -p "Deseja configurar o arquivo .env? (s/n): " execute_configurations
-    if [ "$execute_configurations" = "s" ]; then
-        echo "Configurando o arquivo .env..."
-        # Pergunta e atualiza cada variável do .env
-        update_env "Digite o host do banco de dados" "DB_HOST" "LOG_HOST"
-        update_env "Digite a porta do banco de dados" "DB_PORT" "LOG_PORT"
-        update_env "Digite o nome do banco de dados" "DB_DATABASE"
-        update_env "Digite o nome do banco de dados de logs" "LOG_DATABASE"
-        update_env "Digite o nome de usuário do banco de dados" "DB_USERNAME" "LOG_USERNAME"
-        update_env "Digite a senha do banco de dados" "DB_PASSWORD" "LOG_PASSWORD"
-        update_env "Digite a URL do sistema" "CENTRAL_DOMAINS"
-        echo "Dados configurados com sucesso!"
-    else
-        echo "Ok, as configurações não serão executadas."
-    fi
+    echo "Deseja configurar o arquivo .env?"
+    select execute_configurations in "Sim" "Não"; do
+        case $execute_configurations in
+            Sim)
+                echo "Configurando o arquivo .env..."
+                # Pergunta e atualiza cada variável do .env
+                update_env "Digite o host do banco de dados" "DB_HOST" "LOG_HOST"
+                update_env "Digite a porta do banco de dados" "DB_PORT" "LOG_PORT"
+                update_env "Digite o nome do banco de dados" "DB_DATABASE"
+                update_env "Digite o nome do banco de dados de logs" "LOG_DATABASE"
+                update_env "Digite o nome de usuário do banco de dados" "DB_USERNAME" "LOG_USERNAME"
+                update_env "Digite a senha do banco de dados" "DB_PASSWORD" "LOG_PASSWORD"
+                update_env "Digite a URL do sistema" "CENTRAL_DOMAINS"
+                echo "Dados configurados com sucesso!"
+                break
+                ;;
+            Não)
+                echo "Ok, as configurações não serão executadas."
+                break
+                ;;
+            *)
+                echo "Opção inválida. Por favor, selecione 1 para Sim ou 2 para Não."
+                ;;
+        esac
+    done
 }
 
-# Função para perguntar ao usuário se deseja executar as configurações
+# Função para perguntar ao usuário se deseja executar as configurações adicionais
 ask_execute_configurations2() {
-    read -p "Deseja configurar o arquivo .env? (s/n): " execute_configurations
-    if [ "$execute_configurations" = "s" ]; then
-        echo "Configurando o arquivo .env..."
-        # Pergunta e atualiza cada variável do .env
-        update_env "Digite a URL do sistema" "CENTRAL_DOMAINS"
-        echo "Dados configurados com sucesso!"
-    else
-        echo "Ok, as configurações não serão executadas."
-    fi
+    echo "Deseja configurar o arquivo .env?"
+    select execute_configurations in "Sim" "Não"; do
+        case $execute_configurations in
+            Sim)
+                echo "Configurando o arquivo .env..."
+                # Pergunta e atualiza cada variável do .env
+                update_env "Digite a URL do sistema" "CENTRAL_DOMAINS"
+                echo "Dados configurados com sucesso!"
+                break
+                ;;
+            Não)
+                echo "Ok, as configurações não serão executadas."
+                break
+                ;;
+            *)
+                echo "Opção inválida. Por favor, selecione 1 para Sim ou 2 para Não."
+                ;;
+        esac
+    done
 }
-
-# Verifica o sistema operacional
-check_os
 
 # Chama a função para perguntar ao usuário
 ask_mariadb
@@ -282,10 +437,10 @@ reset_docker_compose_file
 echo "--- PARANDO DOCKER ---"
 docker-compose down
 
-if docker volume inspect install_mariadb_data &>/dev/null; then
-    echo "Removendo o volume do MariaDB..."
-    docker volume rm install_mariadb_data
-fi
+#if docker volume inspect install_mariadb_data &>/dev/null; then
+#    echo "Removendo o volume do MariaDB..."
+#    docker volume rm install_mariadb_data
+#fi
 
 echo "--- INICIANDO DOCKER ---"
 
@@ -315,8 +470,11 @@ echo "Conectando banco de dados..."
 sleep 10
 
 # Cria o schema se ele não existir
+if ! docker exec -it petrvs_php sh -c "php artisan migrate"; then
+     echo "Falha ao conectar ao banco de dados"
+    exit 1
+fi
 echo "Migrando e semeando o banco de dados..."
-docker exec -it petrvs_php sh -c "php artisan migrate"
 docker exec -it petrvs_php sh -c "php artisan tenants:migrate"
 docker exec -it petrvs_php sh -c 'php artisan tenants:run db:seed --option="class=DeployPRODSeeder"'
 
@@ -363,7 +521,9 @@ docker exec -it petrvs_php php artisan tinker --execute="App\\Models\\PainelUsua
         'email_verified_at' => now()
     ]
 )"
-
+echo " "
 echo "Configuração completa. O administrador pode acessar o sistema com o email '$ADMIN_EMAIL'."
-echo -n "URL do panel: "
-echo -e "\e[34m$(grep -oP '^APP_URL=\K.*' .env)/#/panel\e[0m"
+echo " "
+echo -e "URL do panel: \e[34m$(grep -oP '^APP_URL=\K.*' .env)/#/panel\e[0m"
+echo -e "URL do sistema: \e[34m$(grep -oP '^APP_URL=\K.*' .env)/#/login\e[0m"
+
