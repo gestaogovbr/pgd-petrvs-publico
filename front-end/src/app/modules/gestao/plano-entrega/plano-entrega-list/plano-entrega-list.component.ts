@@ -397,6 +397,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - sugerir arquivamento automático (vide RI_PENT_A); 
         */
         let condic1 = this.unidadeService.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id);
+        console.log(condic1);
+        console.log(planoEntrega.unidade?.unidade_pai_id);
+        
         let condic2 = this.auth.isIntegrante('AVALIADOR_PLANO_ENTREGA', planoEntrega.unidade!.id!);
         let condic3 = this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_AVAL");
         let condic4 = this.auth.isGestorLinhaAscendente(planoEntrega.unidade!) && this.auth.hasPermissionTo("MOD_PENT_AVAL_SUBORD");
