@@ -211,7 +211,7 @@ volumes:
 version: "3.9"
 services:
   petrvs_php:
-    image: segescginf/pgdpetrvs:latest
+    image: segescginf/pgdpetrvs:dsv
     container_name: petrvs_php
     ports:
       - "80:80"
