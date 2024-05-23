@@ -120,7 +120,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
       this.programa = this.metadata?.programa || await this.programaDao.query({where: [["id", "==", this.consolidacao?.plano_trabalho?.programa_id || this.planoEntrega?.programa_id]], join: this.joinPrograma}).firstOrDefault(this.consolidacao?.plano_trabalho?.programa || this.planoEntrega?.programa);
       this.origem = !!this.consolidacao ? "CONSOLIDACAO" : "PLANO_ENTREGA";
       this.tipoAvaliacao = this.isConsolidacao ? this.programa?.tipo_avaliacao_plano_trabalho : this.programa?.tipo_avaliacao_plano_entrega;
-      this.checklist = (this.isConsolidacao ? this.programa!.checklist_avaliacao_entregas_plano_trabalho : this.programa!.checklist_avaliacao_entregas_plano_entrega) || [];
+      this.checklist = (this.isConsolidacao ? this.programa?.checklist_avaliacao_entregas_plano_trabalho : this.programa?.checklist_avaliacao_entregas_plano_entrega) || [];
       this.recurso = !!this.metadata?.recurso;
       this.entregas = this.metadata?.entregas || (this.isConsolidacao ? 
         await this.planoTrabalhoEntregaDao.query({where: [["plano_trabalho_id", "==", this.consolidacao!.plano_trabalho_id]], join: this.joinPlanoTrabalhoEntrega}).asPromise() : 
