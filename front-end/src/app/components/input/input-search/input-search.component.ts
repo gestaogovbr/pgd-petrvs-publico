@@ -360,7 +360,6 @@ export class InputSearchComponent extends InputBase implements OnInit {
 	}
 
 	public search(text: string) {
-		console.log("Pesquisar", text);
 		this.searching = true;
 		if (this.control)
 			this.control!.setValue(this.emptyValue, {emitEvent: false});
