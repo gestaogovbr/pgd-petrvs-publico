@@ -929,7 +929,9 @@ class ServiceBase extends DynamicMethods
    */
   public function isLoggedUserADeveloper()
   {
-    return Auth::user()->perfil_id == $this->developerId;
+    $nivelAcesso = NivelAcessoService::getPerfilDesenvolvedor();
+    $developerId = $nivelAcesso ? $nivelAcesso->id : null;
+    return Auth::user()->perfil_id == $developerId;
   }
 
   /**
