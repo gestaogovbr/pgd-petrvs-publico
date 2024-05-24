@@ -102,7 +102,8 @@ export class LexicalService {
     "tipo de meta": {single: "tipo de meta", plural: "tipos de metas", female: false},
     "unidade": {single: "unidade", plural: "unidades", female: true},
     "usuario": {single: "usuário", plural: "usuários", female: false},
-    "valor institucional": {single: "valor institucional", plural: "valores institucionais", female: false}
+    "valor institucional": {single: "valor institucional", plural: "valores institucionais", female: false},
+    "tipo de avaliação do registro de execução do plano de trabalho": {single: "Tipo de avaliação do registro de execução do plano de trabalho", plural: "Tipos de avaliações do registro de execução do plano de trabalho", female: false}
   };
 
   public plurals: IIndexable = {}; // Vetor reverso, contendo os plurais para permitir encontrar a key do vetor defaults pelo plural (melhorar performance)
