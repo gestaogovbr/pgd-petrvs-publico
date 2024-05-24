@@ -89,7 +89,7 @@ class NomenclaturaSeeder extends Seeder
       "habilitar" => ['single' => "selecionar", 'plural' => "selecionar", 'female' => false],
       "modelo de entrega" => ['single' => "tipo de meta", 'plural' => "tipos de meta", 'female' => false],
       "ocorrência" => ['single' => "ocorrência", 'plural' => "ocorrências", 'female' => true],
-      "Tipo de avaliação do Plano de trabalho" => ['single' => "Tipo de avaliação do registro de execução do plano de trabalho", 'plural' => "Tipos de avaliações do registro de execução do plano de trabalho", 'female' => false],
+      "tipo de avaliação do registro de execução do plano de trabalho" => ['single' => "Tipo de avaliação do registro de execução do plano de trabalho", 'plural' => "Tipos de avaliações do registro de execução do plano de trabalho", 'female' => false]
     ];
 
     $entidade = Entidade::first() ?? new Entidade();
@@ -107,6 +107,11 @@ class NomenclaturaSeeder extends Seeder
         ]);
       }
     }
+
+    $entidade->nomenclatura = array_filter($entidade->nomenclatura ?? [], function ($item) use ($nomenclaturas) {
+      $item = (array) $item;
+      return in_array($item['id'], array_keys($nomenclaturas));
+    });
 
     $entidade->save();
   }
