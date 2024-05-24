@@ -397,10 +397,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - sugerir arquivamento automático (vide RI_PENT_A); 
         */
         let condic1 = this.unidadeService.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id);
-        let condic2 = this.auth.isIntegrante('AVALIADOR_PLANO_ENTREGA', planoEntrega.unidade!.id!);
         let condic3 = this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_AVAL");
         let condic4 = this.auth.isGestorLinhaAscendente(planoEntrega.unidade!) && this.auth.hasPermissionTo("MOD_PENT_AVAL_SUBORD");
-        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'CONCLUIDO' && (condic1 || condic2 || condic3 || condic4);
+        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'CONCLUIDO' && (condic1 || condic3 || condic4);
       case this.BOTAO_CANCELAR_AVALIACAO:
         /*
           (RN_PENT_R) Para CANCELAR a AVALIAÇÃO de um plano de entregas:
