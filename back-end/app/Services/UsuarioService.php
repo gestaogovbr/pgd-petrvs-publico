@@ -22,6 +22,8 @@ class UsuarioService extends ServiceBase
   const LOGIN_MICROSOFT = "AZURE";
   const LOGIN_FIREBASE = "FIREBASE";
 
+  
+
   public function atualizarFotoPerfil($tipo, &$usuario, $url)
   {
     $mudou = ($tipo == UsuarioService::LOGIN_GOOGLE ? $usuario->foto_google != $url : ($tipo == UsuarioService::LOGIN_MICROSOFT ? $usuario->foto_microsoft != $url : ($tipo == UsuarioService::LOGIN_FIREBASE ? $usuario->foto_firebase != $url : false)));
@@ -136,7 +138,7 @@ class UsuarioService extends ServiceBase
       return $this->getBuffer("isParticipanteHabilitado", $key);
     } else {
       $usuarioId = $usuarioId ?? parent::loggedUser()->id;
-      $programa = Programa::find($programaId);
+      $programa = Programa::withTrashed()->find($programaId);
       $participante = $programa->participantes->where("usuario_id", $usuarioId)->first();
       return $this->setBuffer("isParticipanteHabilitado", $key, $participante ? $participante->habilitado : false);
     }
