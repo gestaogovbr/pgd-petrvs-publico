@@ -22,9 +22,10 @@ export class TipoMotivoAfastamentoFormComponent extends PageFormBase<TipoMotivoA
       nome: {default: ""}, 
       sigla: {default: ""}, 
       icone: {default: ""},
-      situacao: {default: "teste"},
+      situacao: {default: "S"},
+      calculo: {default: this.lookup.CALCULO[0].value},
       cor: {default: ""}, 
-      horas: {default: 1}, 
+      horas: {default: 0}, 
       data_inicio: {default: Date.now()}, 
       data_fim: {default: Date.now()}, 
       integracao: {default: 0}

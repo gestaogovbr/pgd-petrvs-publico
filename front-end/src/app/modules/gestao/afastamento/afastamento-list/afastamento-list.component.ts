@@ -35,6 +35,8 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
       usuario_id: {default: ""},
       tipo_motivo_afastamento_id: {default: ""}
     });
+    this.OPTION_INFORMACOES.onClick = (afastamento: Afastamento) => this.go.navigate({ route: ['gestao', 'afastamento', afastamento.id, 'consult'] }, { modal: true });
+
     this.addOption(this.OPTION_INFORMACOES);
     this.addOption(this.OPTION_EXCLUIR, "MOD_AFT_EXCL");
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
