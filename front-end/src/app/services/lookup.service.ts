@@ -878,6 +878,11 @@ export class LookupService implements IIndexable {
     { 'key': 'variavel', 'value': 'Lista utilizando variável' }
   ];
 
+  public CALCULO: LookupItem[] = [
+    { 'key': 'ACRESCIMO', 'value': 'Adiciona' },
+    { 'key': 'DECRESCIMO', 'value': 'Subtrai' }
+  ];
+
 
 
   public getLookup(itens: LookupItem[], key: any) {
