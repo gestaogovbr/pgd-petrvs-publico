@@ -162,6 +162,11 @@ export class ServerService {
     }
     return result;
   }
+  public delete(url: string, params?: any): Observable<any> {
+    let options = this.requestOptions();
+    options.params = params;
+    return this.http.delete(this.gb.servidorURL + '/' + url, options);
+  }
 
   public getSvg(svg: string | SafeUrl): Observable<any> {
     let request = this.http.get(svg as string, { responseType: 'text' })
