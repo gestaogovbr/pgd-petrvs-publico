@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\JobAgendado;
+use App\Models\JobSchedule;
 use App\Services\ServiceBase;
 use App\Traits\TenantConnection;
 class JobAgendadoService extends ServiceBase {
@@ -10,7 +10,7 @@ class JobAgendadoService extends ServiceBase {
     use TenantConnection;
 
     public function listar($tenantId = null) {
-        $query = JobAgendado::where('ativo', true);
+        $query = JobSchedule::where('ativo', true);
         if ($tenantId) {
             $query->where('tenant_id', $tenantId);
         }
@@ -20,7 +20,7 @@ class JobAgendadoService extends ServiceBase {
 
     public function createJob($dados, $tenantId = null) {
         try {
-            $job = new JobAgendado($dados);
+            $job = new JobSchedule($dados);
             if (isset($dados['parameters']) && is_array($dados['parameters'])) {
                 $dados['parameters'] = json_encode($dados['parameters']);
             }
@@ -36,7 +36,7 @@ class JobAgendadoService extends ServiceBase {
     }
 
     public function removerJob($id, $tenantId = null) {
-        $query = JobAgendado::where('id', $id);
+        $query = JobSchedule::where('id', $id);
         if ($tenantId) {
             $query->where('tenant_id', $tenantId);
         }
@@ -50,4 +50,29 @@ class JobAgendadoService extends ServiceBase {
         $job->delete();
         return ['success' => true, 'message' => 'Job removido com sucesso.'];
     }
+
+    public function getAllClassJobs() {
+        $jobs = [];
+        $files = scandir(app_path('Jobs'));
+        foreach ($files as $file) {
+            if (strpos($file, '.php') !== false) {
+                $job = str_replace('.php', '', $file);
+                $namespace = 'App\\Jobs\\';
+    
+                $fullClassName = $namespace . $job;
+    
+                if (class_exists($fullClassName)) {
+                    $interfaces = class_implements($fullClassName);
+    
+                    if ($interfaces && in_array('App\\Jobs\\Contratos\\ContratoJobSchedule', $interfaces)) {
+                        $jobs[$job] = $fullClassName::getDescricao();
+                        continue;
+                    }
+                }
+            }
+        }
+    
+        return $jobs;
+    }
+    
 }

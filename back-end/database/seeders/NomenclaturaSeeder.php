@@ -93,26 +93,24 @@ class NomenclaturaSeeder extends Seeder
     ];
 
     $entidade = Entidade::first() ?? new Entidade();
-
+    $entidadeNomenclaturas = collect($entidade->nomenclatura);
+    $nomenclaturaIds = array_keys($nomenclaturas);
+    $entidadeNomenclaturas = $entidadeNomenclaturas->filter(function ($nomenclatura) use ($nomenclaturaIds) {
+      return in_array($nomenclatura->id, $nomenclaturaIds);
+    });
+    $existingNomenclaturaIds = $entidadeNomenclaturas->pluck('id')->all();
     foreach ($nomenclaturas as $id => $nomenclatura) {
-      if (!in_array($id, array_column($entidade->nomenclatura ?? [], 'id'))) {
-        $entidade->nomenclatura = array_merge($entidade->nomenclatura ?? [], [
-          [
-            "id" => $id,
-            "nome" => $id,
-            "plural" => $nomenclatura["plural"],
-            "feminino" => $nomenclatura["female"],
-            "singular" => $nomenclatura["single"]
-          ]
+      if (!in_array($id, $existingNomenclaturaIds)) {
+        $entidadeNomenclaturas->push((object) [
+          'id' => $id,
+          'nome' => $id,
+          'plural' => $nomenclatura['plural'],
+          'feminino' => $nomenclatura['female'],
+          'singular' => $nomenclatura['single']
         ]);
       }
     }
-
-    $entidade->nomenclatura = array_filter($entidade->nomenclatura ?? [], function ($item) use ($nomenclaturas) {
-      $item = (array) $item;
-      return in_array($item['id'], array_keys($nomenclaturas));
-    });
-
+    $entidade->nomenclatura = $entidadeNomenclaturas->values()->all();
     $entidade->save();
   }
 }

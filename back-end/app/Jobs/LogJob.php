@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Jobs\Contratos\ContratoJobSchedule;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -9,7 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class LogJob implements ShouldQueue
+class LogJob implements ShouldQueue, ContratoJobSchedule
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -17,13 +18,21 @@ class LogJob implements ShouldQueue
     protected $calledDirectly;
 
 
-    public function __construct(array $parameters)
+    public function __construct(?array $parameters = null)
     {
-        $this->message = $parameters['message'] ?? 'Log padrão';
-        $this->calledDirectly = $parameters['calledDirectly'] ?? false;
+        $this->message = 'Log padrão';
+        $this->calledDirectly = false;
+        if($parameters) {
+            $this->message = $parameters['message'] ?? 'Log padrão';
+            $this->calledDirectly = $parameters['calledDirectly'] ?? false;
+        }
+
     }
-
-
+    
+    public static function getDescricao(): string
+    {
+        return "Log Job";
+    }
     public function handle()
     {
         try {
