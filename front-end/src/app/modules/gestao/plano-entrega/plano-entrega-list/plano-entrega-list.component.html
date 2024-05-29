@@ -8,7 +8,9 @@
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed" [visible]="showFilter">
         <div *ngIf="isModal else naoEModal">
             <div class="row">
-                <input-search #unidade [size]="6" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+                <input-switch [size]="1" label="Meus" controlName="meus_planos" [control]="filter!.controls.meus_planos" labelInfo="Planos de entrega das unidade da qual sou integrante (Áreas de trabalho)"></input-switch>
+
+                <input-search #unidade [size]="5" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
                 <input-select [size]="2" label="Data" itemTodos="- Nenhum -" [valueTodos]="null" controlName="data_filtro" [control]="filter!.controls.data_filtro" [items]="DATAS_FILTRO"></input-select>
                 <input-datetime [size]="2" date [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Início" controlName="data_filtro_inicio" [control]="filter!.controls.data_filtro_inicio" labelInfo="Data início do período"></input-datetime>
                 <input-datetime [size]="2" date [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Fim" controlName="data_filtro_fim" [control]="filter!.controls.data_filtro_fim" labelInfo="Data fim do período"></input-datetime>

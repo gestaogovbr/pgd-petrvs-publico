@@ -71,7 +71,7 @@ class ServiceBase extends DynamicMethods
   const ACTION_EDIT = "EDIT";
 
   public string $collection = "";
-  public string $developerId = "";
+  public $nivelAcessoService;
 
   public $buffer = []; /* Utilizado para passar informações entre os Proxys */
 
@@ -84,10 +84,9 @@ class ServiceBase extends DynamicMethods
     return class_exists($fullName) ? $this->_services[$name] : null;
   }
 
+ 
   public function __construct($collection = null)
   {
-    //$this->developerId = ((config('petrvs') ?: [])['ids-fixos'] ?: [])['developer-id'] ?: $this->UtilService->uuid("Desenvolvedor");
-    $this->developerId = $this->UtilService->uuid("Desenvolvedor");
     $this->collection = $collection ?? $this->collection;
     if (empty($this->collection)) {
       $this->collection = str_replace("Service", "", str_replace("App\\Services", "App\\Models", get_class($this)));
@@ -127,7 +126,7 @@ class ServiceBase extends DynamicMethods
       });
     });
   }
-
+ 
   public function hasStoredProcedure($procedure)
   {
     try {
@@ -930,7 +929,9 @@ class ServiceBase extends DynamicMethods
    */
   public function isLoggedUserADeveloper()
   {
-    return Auth::user()->perfil_id == $this->developerId;
+    $nivelAcesso = NivelAcessoService::getPerfilDesenvolvedor();
+    $developerId = $nivelAcesso ? $nivelAcesso->id : null;
+    return Auth::user()->perfil_id == $developerId;
   }
 
   /**

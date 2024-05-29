@@ -193,11 +193,11 @@ export class DialogComponent implements OnInit {
 	}
 
 	public zIndexRefresh() {
-		$(".modal").each((index, element) => {
-			$(element).css("z-index", (index + 1) * 1055);
+		document.querySelectorAll(".modal").forEach((element, index) => {
+			(element as HTMLElement).style.zIndex = `${(index + 1) * 1055}`;
 		});
-		$(".modal-backdrop").each((index, element) => {
-			$(element).css("z-index", (index + 1) * 1050);
+		document.querySelectorAll(".modal-backdrop").forEach((element, index) => {
+			(element as HTMLElement).style.zIndex = `${(index + 1) * 1050}`;
 		});
 	}
 

@@ -693,6 +693,8 @@ export class GridComponent extends ComponentBase implements OnInit {
 	}
 
 	public isMultiselectChecked(row: any) {
+		console.log(row);
+		
 		return this.multiselected.hasOwnProperty(row.id) ? "" : undefined;
 	}
 

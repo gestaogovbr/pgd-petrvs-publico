@@ -201,16 +201,8 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_PTR_CSLD_AVAL", "Permite avaliar"],
         ["MOD_PTR_CSLD_REC_AVAL", "Permite recorrer da avaliação"]
       ]
-    ], [
-      "codigo" => "MOD_OCOR",
-      "descricao" => "Módulo de Ocorrências",
-      "capacidades" => [
-        /* Capacidades do módulo PLANO DE TRABALHO */
-        ["MOD_OCOR_EDT", "Permite editar ocorrência"],
-        ["MOD_OCOR_EXCL", "Permite excluir ocorrência"],
-        ["MOD_OCOR_INCL", "Permite incluir ocorrência"]
-      ]
-    ], [
+    ],
+    [
       "codigo" => "MOD_PENT",
       "descricao" => "Permite acesso ao menu e consultas do módulo Plano de Entregas.",
       "capacidades" => [

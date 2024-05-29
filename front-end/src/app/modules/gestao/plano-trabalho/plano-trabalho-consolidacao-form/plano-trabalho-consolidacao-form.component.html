@@ -45,7 +45,7 @@
                   </separator>
                 </ng-template>
               </column>
-              <column [title]="'Progresso\nEtiquetas/Checklist'" [width]="200" [template]="columnProgressoEtiquetasChecklist" [editTemplate]="columnProgressoEtiquetasChecklist" [columnEditTemplate]="columnProgressoEtiquetasChecklistEdit" [edit]="onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="onColumnProgressoEtiquetasChecklistSave.bind(this)">
+              <column [title]="'Progresso\nEtiquetas/Checklist'" [width]="200" [template]="columnProgressoEtiquetasChecklist" [editTemplate]="columnProgressoEtiquetasChecklist" [columnEditTemplate]="columnProgressoEtiquetasChecklistEdit" [edit]="onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="onColumnProgressoEtiquetasChecklistSave.bind(this)" [canEdit]="podeEditar.bind(this)">
                 <ng-template let-row="row" #columnProgressoEtiquetasChecklist>
                   <progress-bar [value]="row.progresso" color="success"></progress-bar>
                   <badge *ngFor="let etiqueta of row.etiquetas" [lookup]="etiqueta"></badge>
@@ -58,6 +58,7 @@
                   </table>
                 </ng-template>
                 <ng-template let-row="row" #columnProgressoEtiquetasChecklistEdit>
+                  {{row._status}}
                   <input-number [size]="12" [decimals]="2" label="Progresso" sufix="%" icon="bi bi-clock" controlName="progresso" [control]="formEdit.controls.progresso" labelInfo="Progresso de execução (% Concluído)"></input-number>
                   <input-multiselect controlName="etiquetas" [size]="12" [control]="formEdit.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
                     <input-select [size]="12" label="Etiqueta" #etiqueta controlName="etiqueta" nullable itemNull="- Selecione -" detailsButton detailsButtonIcon="bi bi-tools" (details)="onEtiquetaConfigClick()" [control]="formEdit.controls.etiqueta" [items]="etiquetas"></input-select>
@@ -130,17 +131,6 @@
         </ng-template>
       </column-->
       <column type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
-    </columns>
-  </grid>
-</separator>
-<separator collapse [collapsed]="false" [title]="lex.translate('Ocorrências')" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')">
-  <grid [items]="itemsOcorrencias" [minHeight]="0" #gridOcorrencia [hasDelete]="false" [hasEdit]="false" [hasAdd]="!disabled" [add]="addOcorrencia.bind(this)" editable>
-    <!-- [load]="loadOcorrencia.bind(this)" [remove]="removeOcorrencia.bind(this)" [save]="saveOcorrencia.bind(this)" -->
-    <columns>
-      <column title="Início" [width]="300" type="datetime" field="data_inicio"></column>
-      <column title="Fim" [width]="300" type="datetime" field="data_fim"></column>
-      <column title="Descrição" type="textarea" field="descricao"></column>
-      <column type="options" [dynamicButtons]="ocorrenciaDynamicButtons.bind(this)"></column>
     </columns>
   </grid>
 </separator>

@@ -13,7 +13,6 @@ module.exports = function (config) {
       require('@angular/cli/plugins/karma')
     ],
     files: [
-      'node_modules/jquery/dist/jquery.min.js'
     ],
     client: {
       jasmine: {

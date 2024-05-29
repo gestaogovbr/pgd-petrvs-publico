@@ -146,8 +146,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     }
   }
 
-  ngOnInit(): void {
-    super.ngOnInit();
+  ngOnInit() {
+    super.ngOnInit();    
     this.execucao = !!this.queryParams?.execucao;
     this.avaliacao = !!this.queryParams?.avaliacao;
     this.showFilter = typeof this.queryParams?.showFilter != "undefined" ? (this.queryParams.showFilter == "true") : true;
@@ -236,7 +236,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
-    let form: any = filter.value;
+    let form: any = filter.value;    
+
     /*
     (RI_PENT_B) A consulta do grid retornará inicialmente os principais Planos de Entrega do usuário logado (a opção "principais" já vem marcada), que são:
     - os válidos das unidades onde ele possui algum vínculo (áreas de trabalho) (w1), e
@@ -245,6 +246,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       - os ativos das unidades imediatamente subordinadas (w3);
     */
     if (this.filter?.controls.principais.value) {
+      console.log("princi");
+      
       let w1: [string, string, string[]] = ["unidade_id", "in", (this.auth.unidades || []).map(u => u.id)];
       if (this.auth.isGestorAlgumaAreaTrabalho()) {
         let unidadesUsuarioEhGestor = this.auth.unidades?.filter(x => this.unidadeService.isGestorUnidade(x));
@@ -267,6 +270,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       result.push(["data_filtro_fim", "==", form.data_filtro_fim]);
     }
     if (form.unidade_id) result.push(["unidade_id", "==", form.unidade_id]);
+    if(!form.unidade_id){
+      result.push(["unidades_vinculadas", "==", this.auth.unidade?.id]);
+    }
     if (form.planejamento_id) result.push(["planejamento_id", "==", form.planejamento_id]);
     if (form.cadeia_valor_id) result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
     if (this.isModal) {
@@ -274,7 +280,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     } else if (form.status || this.avaliacao) {
       result.push(["status", "in", form.status ? [form.status] : ['CONCLUIDO', 'AVALIADO']]);
     }
-    if (form.unidades_filhas) result.push(["unidades_filhas", "==", true]);
+    
     //  (RI_PENT_C) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados.
     result.push(["incluir_arquivados", "==", this.filter!.controls.arquivadas.value]);
     return result;
@@ -391,10 +397,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - sugerir arquivamento automático (vide RI_PENT_A); 
         */
         let condic1 = this.unidadeService.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id);
-        let condic2 = this.auth.isIntegrante('AVALIADOR_PLANO_ENTREGA', planoEntrega.unidade!.id!);
         let condic3 = this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_AVAL");
         let condic4 = this.auth.isGestorLinhaAscendente(planoEntrega.unidade!) && this.auth.hasPermissionTo("MOD_PENT_AVAL_SUBORD");
-        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'CONCLUIDO' && (condic1 || condic2 || condic3 || condic4);
+        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'CONCLUIDO' && (condic1 || condic3 || condic4);
       case this.BOTAO_CANCELAR_AVALIACAO:
         /*
           (RN_PENT_R) Para CANCELAR a AVALIAÇÃO de um plano de entregas:

@@ -317,23 +317,7 @@ class In24_2023Seeder extends Seeder
         "deleted_at" => null,
         "nome" => "Execução do Plano de Entrega",
         "tipo" => "QUALITATIVO"
-      ],
-      [
-        "id" => "c8d213ac-9600-48f5-806e-c86ead94c17e",
-        "created_at" => $this->timenow,
-        "updated_at" => $this->timenow,
-        "deleted_at" => NULL,
-        "nome" => "MGI - Execução de Planos de Entrega",
-        "tipo" => "QUALITATIVO",
-      ],
-      [
-        "id" => "74675c0e-b86f-47f9-82bb-9b9cdc73bcc6",
-        "created_at" => $this->timenow,
-        "updated_at" => $this->timenow,
-        "deleted_at" => NULL,
-        "nome" => "MGI - Execução de Planos de Trabalho",
-        "tipo" => "QUALITATIVO",
-      ],
+      ]
     );
 
     $tipos_avaliacoes_notas = array(
@@ -345,11 +329,11 @@ class In24_2023Seeder extends Seeder
         "sequencia" => 1,
         "nota" => "\"Excepcional\"",
         "descricao" => "Plano de entregas executado com desempenho muito acima do esperado",
-        "pergunta" => "Do que você gostou?",
+        "pergunta" => " ",
         "aprova" => 0,
         "justifica" => 0,
         "icone" => "bi bi-emoji-smile",
-        "cor" => "#198754",
+        "cor" => "#0620E5",
         "codigo" => "5",
         "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390",
       ],
@@ -361,11 +345,11 @@ class In24_2023Seeder extends Seeder
         "sequencia" => 1,
         "nota" => "\"Excepcional\"",
         "descricao" => "Plano de trabalho executado muito acima do esperado",
-        "pergunta" => "O que pode melhorar?",
+        "pergunta" => " ",
         "aprova" => 0,
         "justifica" => 1,
         "icone" => "bi bi-emoji-smile",
-        "cor" => "#198754",
+        "cor" => "#0620E5",
         "codigo" => "5",
         "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
       ],
@@ -377,11 +361,11 @@ class In24_2023Seeder extends Seeder
         "sequencia" => 2,
         "nota" => "\"Alto desempenho\"",
         "descricao" => "Plano de trabalho executado acima do esperado",
-        "pergunta" => "O que pode melhorar?",
+        "pergunta" => " ",
         "aprova" => 0,
         "justifica" => 0,
         "icone" => "bi bi-emoji-smile",
-        "cor" => "#42f09f",
+        "cor" => "#00B3FF",
         "codigo" => "4",
         "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
       ],
@@ -393,11 +377,11 @@ class In24_2023Seeder extends Seeder
         "sequencia" => 2,
         "nota" => "\"Alto desempenho\"",
         "descricao" => "Plano de entregas executado com desempenho acima do esperado",
-        "pergunta" => "Do que você gostou?",
+        "pergunta" => " ",
         "aprova" => 0,
         "justifica" => 0,
         "icone" => "bi bi-emoji-smile",
-        "cor" => "#1de286",
+        "cor" => "#00B3FF",
         "codigo" => "4",
         "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390",
       ],
@@ -409,11 +393,11 @@ class In24_2023Seeder extends Seeder
         "sequencia" => 3,
         "nota" => "\"Adequado\"",
         "descricao" => "Plano de trabalho executado dentro do esperado",
-        "pergunta" => "O que pode melhorar?",
+        "pergunta" => " ",
         "aprova" => 0,
         "justifica" => 0,
-        "icone" => "bi bi-emoji-neutral",
-        "cor" => "#ffc107",
+        "icone" => "bi bi-emoji-smile",
+        "cor" => "#049521",
         "codigo" => "3",
         "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
       ],
@@ -425,11 +409,11 @@ class In24_2023Seeder extends Seeder
         "sequencia" => 3,
         "nota" => "\"Adequado\"",
         "descricao" => "Plano de entregas executado dentro do esperado",
-        "pergunta" => "Do que você gostou?",
+        "pergunta" => " ",
         "aprova" => 0,
         "justifica" => 0,
-        "icone" => "bi bi-emoji-neutral",
-        "cor" => "#ffc107",
+        "icone" => "bi bi-emoji-smile",
+        "cor" => "#049521",
         "codigo" => "3",
         "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390",
       ],
@@ -441,11 +425,11 @@ class In24_2023Seeder extends Seeder
         "sequencia" => 4,
         "nota" => "\"Inadequado\"",
         "descricao" => "Plano de trabalho executado abaixo do esperado ou parcialmente executado",
-        "pergunta" => "Por quê não aceitar a atividade?",
+        "pergunta" => " ",
         "aprova" => 0,
         "justifica" => 1,
         "icone" => "bi bi-emoji-frown",
-        "cor" => "#fd7e14",
+        "cor" => "#ff7300",
         "codigo" => "2",
         "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
       ],
@@ -457,11 +441,11 @@ class In24_2023Seeder extends Seeder
         "sequencia" => 4,
         "nota" => "\"Inadequado\"",
         "descricao" => "Plano de entregas executado abaixo do esperado",
-        "pergunta" => "O que pode melhorar?",
+        "pergunta" => " ",
         "aprova" => 0,
         "justifica" => 0,
         "icone" => "bi bi-emoji-frown",
-        "cor" => "#fd7e14",
+        "cor" => "#ff7300",
         "codigo" => "2",
         "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390",
       ],
@@ -473,11 +457,11 @@ class In24_2023Seeder extends Seeder
         "sequencia" => 5,
         "nota" => "\"Não executado\"",
         "descricao" => "Plano de entregas não executado",
-        "pergunta" => "Por quê não aceitar a atividade?",
+        "pergunta" => " ",
         "aprova" => 0,
         "justifica" => 0,
         "icone" => "bi bi-emoji-frown",
-        "cor" => "#dc3545",
+        "cor" => "#ff0000",
         "codigo" => "1",
         "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390",
       ],
@@ -489,142 +473,14 @@ class In24_2023Seeder extends Seeder
         "sequencia" => 5,
         "nota" => "\"Não executado\"",
         "descricao" => "Plano de trabalho integralmente não executado.",
-        "pergunta" => "Por quê não aceitar a atividade?",
+        "pergunta" => " ",
         "aprova" => 0,
         "justifica" => 1,
         "icone" => "bi bi-emoji-frown",
-        "cor" => "#dc3545",
+        "cor" => "#ff0000",
         "codigo" => "1",
         "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
-      ],
-      [
-        "id" => "ebb8b156-ea16-42ce-b35e-ebf601cf6f92",
-        "created_at" => $this->timenow,
-        "updated_at" => $this->timenow,
-        "deleted_at" => NULL,
-        "sequencia" => 1,
-        "nota" => "\"Superou o acordado\"",
-        "descricao" => "Superou",
-        "pergunta" => "O que foi tão bom?",
-        "aprova" => 1,
-        "justifica" => 0,
-        "icone" => "bi bi-emoji-smile",
-        "cor" => "#1750a6",
-        "codigo" => "",
-        "tipo_avaliacao_id" => "c8d213ac-9600-48f5-806e-c86ead94c17e",
-      ],
-      [
-        "id" => "c31f949a-716f-4f56-8f30-2e1961ebd0d0",
-        "created_at" => $this->timenow,
-        "updated_at" => $this->timenow,
-        "deleted_at" => NULL,
-        "sequencia" => 3,
-        "nota" => "\"Atendeu parcialmente ao adequado\"",
-        "descricao" => "Parcial",
-        "pergunta" => "O que pode melhorar?",
-        "aprova" => 0,
-        "justifica" => 0,
-        "icone" => "bi bi-emoji-neutral",
-        "cor" => "#ffc107",
-        "codigo" => "2",
-        "tipo_avaliacao_id" => "c8d213ac-9600-48f5-806e-c86ead94c17e",
-      ],
-      [
-        "id" => "7f644767-4609-4f34-93b9-57fbe93a9b4f",
-        "created_at" => $this->timenow,
-        "updated_at" => $this->timenow,
-        "deleted_at" => NULL,
-        "sequencia" => 4,
-        "nota" => "\"N\\u00e2o atendeu ao acordado\"",
-        "descricao" => "Nâo atendeu",
-        "pergunta" => "O que pode melhorar?",
-        "aprova" => 0,
-        "justifica" => 0,
-        "icone" => "bi bi-emoji-frown",
-        "cor" => "#dc3545",
-        "codigo" => "1",
-        "tipo_avaliacao_id" => "c8d213ac-9600-48f5-806e-c86ead94c17e",
-      ],
-      [
-        "id" => "0b598895-5898-4260-aaf3-961ebb128a56",
-        "created_at" => $this->timenow,
-        "updated_at" => $this->timenow,
-        "deleted_at" => NULL,
-        "sequencia" => 2,
-        "nota" => "\"Atendeu ao acordado\"",
-        "descricao" => "Atendeu",
-        "pergunta" => "O que pode melhorar?",
-        "aprova" => 1,
-        "justifica" => 0,
-        "icone" => "bi bi-emoji-smile",
-        "cor" => "#198754",
-        "codigo" => "4",
-        "tipo_avaliacao_id" => "c8d213ac-9600-48f5-806e-c86ead94c17e",
-      ],
-      [
-        "id" => "ec16c004-0b31-4766-9036-c8298b99c314",
-        "created_at" => $this->timenow,
-        "updated_at" => $this->timenow,
-        "deleted_at" => NULL,
-        "sequencia" => 4,
-        "nota" => "\"Atendeu parcialmente ao adequado\"",
-        "descricao" => "Parcial",
-        "pergunta" => "O que pode melhorar?",
-        "aprova" => 0,
-        "justifica" => 1,
-        "icone" => "bi bi-emoji-neutral",
-        "cor" => "#ffc107",
-        "codigo" => "2",
-        "tipo_avaliacao_id" => "74675c0e-b86f-47f9-82bb-9b9cdc73bcc6",
-      ],
-      [
-        "id" => "e928b1b2-2afb-4f8f-8b40-b12d5974b379",
-        "created_at" => $this->timenow,
-        "updated_at" => $this->timenow,
-        "deleted_at" => NULL,
-        "sequencia" => 2,
-        "nota" => "\"Atendeu ao acordado\"",
-        "descricao" => "Atendeu",
-        "pergunta" => "O que pode melhorar?",
-        "aprova" => 1,
-        "justifica" => 0,
-        "icone" => "bi bi-emoji-smile",
-        "cor" => "#3a7425",
-        "codigo" => "",
-        "tipo_avaliacao_id" => "74675c0e-b86f-47f9-82bb-9b9cdc73bcc6",
-      ],
-      [
-        "id" => "d01ce890-2eb6-4f5d-8599-ae99ce0be0e6",
-        "created_at" => $this->timenow,
-        "updated_at" => $this->timenow,
-        "deleted_at" => NULL,
-        "sequencia" => 1,
-        "nota" => "\"Superou o acordado\"",
-        "descricao" => "Superou",
-        "pergunta" => "O que foi tão bom?",
-        "aprova" => 1,
-        "justifica" => 1,
-        "icone" => "bi bi-emoji-smile",
-        "cor" => "#39329a",
-        "codigo" => "5",
-        "tipo_avaliacao_id" => "74675c0e-b86f-47f9-82bb-9b9cdc73bcc6",
-      ],
-      [
-        "id" => "03552cc9-1f63-4bb7-bb23-332df23f01ca",
-        "created_at" => $this->timenow,
-        "updated_at" => $this->timenow,
-        "deleted_at" => NULL,
-        "sequencia" => 5,
-        "nota" => "\"N\\u00e2o atendeu ao acordado\"",
-        "descricao" => "Nâo atendeu",
-        "pergunta" => "O que pode melhorar?",
-        "aprova" => 0,
-        "justifica" => 1,
-        "icone" => "bi bi-emoji-frown",
-        "cor" => "#dc3545",
-        "codigo" => "1",
-        "tipo_avaliacao_id" => "74675c0e-b86f-47f9-82bb-9b9cdc73bcc6",
-      ],
+      ]
     );
 
     $tipos_avaliacoes_justificativas = array(
@@ -1929,9 +1785,9 @@ class In24_2023Seeder extends Seeder
       TipoAtividade::firstOrCreate(['id' => $tipo_atividade['id']], $tipo_atividade);
     }
 
-    foreach ($tipos_justificativas as $tipo_justificativa) {
-      TipoJustificativa::firstOrCreate(['id' => $tipo_justificativa['id']], $tipo_justificativa);
-    }
+    // foreach ($tipos_justificativas as $tipo_justificativa) {
+    //   TipoJustificativa::firstOrCreate(['id' => $tipo_justificativa['id']], $tipo_justificativa);
+    // }
 
     foreach ($tipos_avaliacoes as $tipo_avaliacao) {
       TipoAvaliacao::firstOrCreate(['id' => $tipo_avaliacao['id']], $tipo_avaliacao);
@@ -1941,9 +1797,9 @@ class In24_2023Seeder extends Seeder
       TipoAvaliacaoNota::firstOrCreate(['id' => $tipo_avaliacao_nota['id']], $tipo_avaliacao_nota);
     }
 
-    foreach ($tipos_avaliacoes_justificativas as $tipo_avaliacao_justificativa) {
-      TipoAvaliacaoJustificativa::firstOrCreate(['id' => $tipo_avaliacao_justificativa['id']], $tipo_avaliacao_justificativa);
-    }
+    // foreach ($tipos_avaliacoes_justificativas as $tipo_avaliacao_justificativa) {
+    //   TipoAvaliacaoJustificativa::firstOrCreate(['id' => $tipo_avaliacao_justificativa['id']], $tipo_avaliacao_justificativa);
+    // }
 
     foreach ($tipos_documentos as $tipo_documento) {
       TipoDocumento::firstOrCreate(['id' => $tipo_documento['id']], $tipo_documento);
@@ -1953,25 +1809,25 @@ class In24_2023Seeder extends Seeder
       Template::firstOrCreate(['id' => $template['id']], $template);
     }
 
-    foreach ($programas as $programa) {
-      Programa::firstOrCreate(['id' => $programa['id']], $programa);
-    }
+    // foreach ($programas as $programa) {
+    //   Programa::firstOrCreate(['id' => $programa['id']], $programa);
+    // }
 
-    foreach ($eixos_tematicos as $eixo_tematico) {
-      EixoTematico::firstOrCreate(['id' => $eixo_tematico['id']], $eixo_tematico);
-    }
+    // foreach ($eixos_tematicos as $eixo_tematico) {
+    //   EixoTematico::firstOrCreate(['id' => $eixo_tematico['id']], $eixo_tematico);
+    // }
 
     foreach ($modelos_afericao_entregas as $modelo_afericao_entrega) {
       Entrega::firstOrCreate(['id' => $modelo_afericao_entrega['id']], $modelo_afericao_entrega);
     }
 
-    foreach ($planejamentos as $planejamento) {
-      Planejamento::firstOrCreate(['id' => $planejamento['id']], $planejamento);
-    }
+    // foreach ($planejamentos as $planejamento) {
+    //   Planejamento::firstOrCreate(['id' => $planejamento['id']], $planejamento);
+    // }
 
-    foreach ($planejamentos_objetivos as $planejamento_objetivo) {
-      PlanejamentoObjetivo::firstOrCreate(['id' => $planejamento_objetivo['id']], $planejamento_objetivo);
-    }
+    // foreach ($planejamentos_objetivos as $planejamento_objetivo) {
+    //   PlanejamentoObjetivo::firstOrCreate(['id' => $planejamento_objetivo['id']], $planejamento_objetivo);
+    // }
 
   }
 }

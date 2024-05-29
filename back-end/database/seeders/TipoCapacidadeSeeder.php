@@ -25,10 +25,11 @@ class TipoCapacidadeSeeder extends Seeder
 
     //garantir que existe o Perfil Desenvolvedor
     $perfilDesenvolvedor = Perfil::firstOrCreate(
-      ['nome' => 'Desenvolvedor'],
+      ['nivel' => 0],
       [
         'id' => $utilService->uuid("Desenvolvedor"),
         'nivel' => 0,
+        'nome' => "Perfil Desenvolvedor",
         'descricao' => 'Perfil de Desenvolvedor - Todas as permissões',
       ]
     );

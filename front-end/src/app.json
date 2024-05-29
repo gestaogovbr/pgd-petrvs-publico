@@ -1,15 +1,12 @@
 {
-    "version": "2.0.14",
+    "version": "2.0.15",
     "externalLibs": [
         "https://apis.google.com/js/platform.js"
     ],
     "preloadFiles": [
-        "environment-config",
-        "functions.js",
-        "app_proxy.js"
+        "environment-config"
     ],
     "extraFiles": [
-        "all_pages.js"
     ],
     "angularFiles": [
         "scripts.js",
@@ -52,62 +49,6 @@
         {
             "regex": ".*controlador\\.php\\?acao\\=documento_assinar.*",
             "load": false
-        },
-        {
-            "regex": ".*/sei/#/",
-            "toolbar": false,
-            "logged": true,
-            "prepend": "#divInfraAreaTelaD",
-            "files": [
-                "pages/procedimento_controlar.js"
-            ]
-        },
-        {
-            "regex": ".*controlador\\.php\\?acao\\=procedimento_controlar.*",
-            "toolbar": false,
-            "logged": true,
-            "prepend": "#divInfraAreaTelaD",
-            "files": [
-                "pages/procedimento_controlar.js"
-            ]
-        },
-        {
-            "regex": ".*controlador\\.php\\?acao\\=procedimento_trabalhar.*",
-            "route": "/listeners/procedimento-trabalhar",
-            "toolbar": true,
-            "logged": true,
-            "prepend": "#divInfraAreaTelaD",
-            "files": [
-                "pages/procedimento_trabalhar.js"
-            ]
-        },
-        {
-            "regex": ".*controlador\\.php\\?acao\\=editor_montar.*",
-            "route": "/listeners/editor-montar",
-            "toolbar": true,
-            "logged": true,
-            "before": "#divCarregando",
-            "files": [
-                "pages/editor_montar.js"
-            ]
-        },
-        {
-            "regex": ".*controlador\\.php\\?acao\\=procedimento_escolher_tipo.*",
-            "route": "/listeners/procedimento-escolher-tipo",
-            "toolbar": true,
-            "logged": true,
-            "prepend": "#divInfraAreaTelaD",
-            "files": [
-                "pages/procedimento_escolher_tipo.js"
-            ]
-        },
-        {
-            "regex": ".*",
-            "route": "/listeners/petrvs",
-            "toolbar": true,
-            "logged": false,
-            "prepend": "#divInfraAreaTelaD",
-            "files": []
-        }
+        }        
     ]
 }

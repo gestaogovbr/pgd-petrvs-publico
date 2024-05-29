@@ -139,9 +139,9 @@ export class DocumentacaoComponent implements OnInit {
     if(file){
       let markdownRaw = await this._httpClient.get(file, {
         responseType: 'text'
-    }).toPromise();
+      }).toPromise();
       if(markdownRaw){
-        this.content = this.markdownService.parse(markdownRaw)
+        this.content = await this.markdownService.parse(markdownRaw);
       }
     }
   }

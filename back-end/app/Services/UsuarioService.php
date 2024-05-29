@@ -22,6 +22,8 @@ class UsuarioService extends ServiceBase
   const LOGIN_MICROSOFT = "AZURE";
   const LOGIN_FIREBASE = "FIREBASE";
 
+  
+
   public function atualizarFotoPerfil($tipo, &$usuario, $url)
   {
     $mudou = ($tipo == UsuarioService::LOGIN_GOOGLE ? $usuario->foto_google != $url : ($tipo == UsuarioService::LOGIN_MICROSOFT ? $usuario->foto_microsoft != $url : ($tipo == UsuarioService::LOGIN_FIREBASE ? $usuario->foto_firebase != $url : false)));
@@ -66,6 +68,7 @@ class UsuarioService extends ServiceBase
 
   public function extraStore($entity, $unidade, $action)
   {
+
     foreach ($this->buffer["integrantes"] as &$integrante) {
       $integrante["usuario_id"] = $entity->id;
     }
@@ -135,7 +138,7 @@ class UsuarioService extends ServiceBase
       return $this->getBuffer("isParticipanteHabilitado", $key);
     } else {
       $usuarioId = $usuarioId ?? parent::loggedUser()->id;
-      $programa = Programa::find($programaId);
+      $programa = Programa::withTrashed()->find($programaId);
       $participante = $programa->participantes->where("usuario_id", $usuarioId)->first();
       return $this->setBuffer("isParticipanteHabilitado", $key, $participante ? $participante->habilitado : false);
     }
@@ -346,12 +349,18 @@ class UsuarioService extends ServiceBase
     $perfilNovo = Perfil::find($data['perfil_id']);
     $perfilAtual = !empty($data['id']) ? $this->getById($data)["perfil_id"] : null;
 
+    $this->nivelAcessoService = new NivelAcessoService();
+    $developer = $this->nivelAcessoService->getPerfilDesenvolvedor();
+    if (empty($developer))
+      throw new ServerException("ValidateUsuario", "Perfil de Desenvolvedor não encontrado no banco de dados");
+
+      $developerId = $developer->id;
     if ($data['perfil_id'] != $perfilAtual) {
       if ($perfilNovo->nivel < $perfilAutenticado->nivel)
         throw new ServerException("ValidateUsuario", "Não é possível atribuir perfil superior ao do usuário logado.");
-      if ($data["perfil_id"] == $this->developerId && !$this->isLoggedUserADeveloper())
+      if ($data["perfil_id"] == $developerId && !$this->isLoggedUserADeveloper())
         throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de/para um Desenvolvedor");
-      if ($perfilAtual == $this->developerId && !$this->isLoggedUserADeveloper())
+      if ($perfilAtual == $developerId && !$this->isLoggedUserADeveloper())
         throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de um Desenvolvedor");
     }
   }

@@ -18,6 +18,7 @@ class ServerException extends Exception
         "CapacidadeUpdate" => "Usuário não tem permissão para realizar esta alteração",
         "CapacidadeDestroy" => "Usuário não tem permissão para excluir registros desta tabela",
         "ValidateAvaliacao" => "Erro ao validar avaliacao",
+        "ValidateRecursoAvaliacao" => "Erro ao validar o recurso da avaliação",
         "ValidateAtividade" => "Erro ao validar atividade",
         "ValidateAtividadeTarefa" => "Erro ao validar tarefa da atividade",
         "ValidateDocumento" => "Erro ao validar Documento",
@@ -31,6 +32,7 @@ class ServerException extends Exception
         "ValidatePlanoTrabalhoConsolidacao" => "Erro ao validar Consolidação do Plano de Trabalho",
         "ValidatePlanoTrabalhoEntrega" => "Erro ao validar Entrega do Plano de Trabalho",
         "ValidateProgramaParticipante" => "Erro ao validar o Participante",
+        "ValidatePrograma" => "Erro ao validar o Regramento",
         "ValidateUnidade" => "Erro ao validar Unidade",
         "ValidateUsuario" => "Erro ao validar o usuário"
     ];

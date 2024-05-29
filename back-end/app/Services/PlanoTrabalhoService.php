@@ -125,14 +125,8 @@ class PlanoTrabalhoService extends ServiceBase
     $validoTabela1 = false;
     if ($condicoes['usuarioEhParticipantePlano']) { /* Plano do próprio usuário logado */
       $validoTabela1 = $condicoes['usuarioEhParticipanteHabilitado'];
-    } else if ($condicoes["atribuicoesGestorUsuario"]["gestor"]) { /* Plano para o gestor da unidade */
-      $validoTabela1 = $condicoes["gestorUnidadeSuperior"];
-    } else if ($condicoes["atribuicoesGestorUsuario"]["gestorSubstituto"]) { /* Plano para o gestor substituto da unidade */
-      $validoTabela1 = $condicoes["gestorUnidadeSuperior"] || $condicoes["atribuicoesGestorUsuarioLogado"]["gestor"];
-    } else if ($condicoes["atribuicoesGestorUsuario"]["gestorDelegado"]) { /* Plano para o gestor delegado da unidade */
-      $validoTabela1 = $condicoes["atribuicoesGestorUsuarioLogado"]["gestor"] || $condicoes["atribuicoesGestorUsuarioLogado"]["gestorSubstituto"];
     } else {
-      $validoTabela1 = $condicoes["gestorUnidadeExecutora"];
+      $validoTabela1 = $condicoes["gestorUnidadeExecutora"] || $condicoes['logadoEhChefe'];
     }
     /* (RN_PTR_AA) Um Plano de Trabalho não pode ser incluído/alterado se apresentar período conflitante com outro Plano de Trabalho já existente para a mesma unidade/servidor, a menos que o usuário logado possua a capacidade MOD_PTR_INTSC_DATA; */
     $conflito = PlanoTrabalho::
@@ -443,8 +437,9 @@ class PlanoTrabalhoService extends ServiceBase
       "unidade.gestoresSubstitutos:id,unidade_id,usuario_id",
       "tipoModalidade:id,nome",
       "consolidacoes.avaliacao.tipoAvaliacao.notas",
+      "consolidacoes.avaliacoes", 
       "usuario:id,nome,apelido,url_foto"
-    ])->where("usuario_id", $usuarioId);
+    ])->where("usuario_id", $usuarioId)->orderBy('numero', 'desc');
     if (!$arquivados) $query->whereNull("data_arquivamento");
     if (!empty($planoTrabalhoId)) $query->where("id", $planoTrabalhoId);
     $planos = $query->get()->all(); 
@@ -696,6 +691,7 @@ class PlanoTrabalhoService extends ServiceBase
       $planoTrabalho['unidade'] = !empty($planoTrabalho['unidade_id']) ? Unidade::find($planoTrabalho['unidade_id'])->toArray() : null;
       $logado = parent::loggedUser();
       $result = [];
+      $result["logadoEhChefe"] = $logado->gerenciaTitular()->exists() || $logado->gerenciasSubstitutas()->exists() || $logado->gerenciasDelegadas()->exists();
       $result["assinaturasExigidas"] = $this->assinaturasExigidas($planoTrabalho);
       $result["haAssinaturasExigidas"] = $this->haAssinaturasExigidas($planoTrabalho);
       $result["assinaturasFaltantes"] = $this->assinaturasFaltantes($planoTrabalho);

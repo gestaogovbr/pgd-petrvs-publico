@@ -196,6 +196,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   }
 
   public async loadData(entity: PlanoEntregaEntrega, form: FormGroup) {
+    if(entity.unidade_id == "") entity.unidade_id = this.unidadeId ?? "";    
     let formValue = Object.assign({}, form.value);
     this.onEntregaChange(form.value);
     let { meta, realizado, ...entityWithout } = entity;
@@ -212,12 +213,11 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     form.controls.objetivos.setValue(entity.objetivos);
     form.controls.processos.setValue(entity.processos);
     if (this.dataFim) form.controls.data_fim.setValue(this.dataFim);
+    
     await this.loadEtiquetas();
   }
 
   public async initializeData(form: FormGroup) {
-    this.entity!.unidade_id = this.auth.unidade!.id;
-    this.entity!.unidade = this.auth.unidade;
     await this.loadData(this.entity!, form);
   }
 

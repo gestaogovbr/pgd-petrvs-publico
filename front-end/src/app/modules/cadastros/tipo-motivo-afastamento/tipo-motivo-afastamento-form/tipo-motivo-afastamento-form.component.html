@@ -8,7 +8,8 @@
     </div>
     <div class="row">
         <input-radio [size]="3" label="Formato" controlName="horas" [items]="lookup.FORMATO_HORA" labelInfo="Se o afastamento será contado em Dias ou em Horas. "></input-radio>
-        <input-select [size]="5" label="Ícone" controlName="icone" [items]="lookup.ICONES"></input-select>
+        <input-radio [size]="3" label="Cálculo" controlName="calculo" [items]="lookup.CALCULO" labelInfo="Tipo de cálculo que será usado para contabilizar as horas. "></input-radio>
+        <input-select [size]="2" label="Ícone" controlName="icone" [items]="lookup.ICONES"></input-select>
         <input-color [size]="4" label="Cor" controlName="cor"></input-color>
     </div>
 </editable-form>
