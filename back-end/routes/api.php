@@ -37,9 +37,6 @@ Route::middleware([InitializeTenancyByPath::class])
     '/login-unico/{tenant}',
     [LoginController::class, 'signInGovBrCallback']
   );
-  Route::get('/teste2', function (Request $request) {
-    return ["teste2"];
-  });
 
 
 /* Login Panel */
@@ -55,15 +52,10 @@ Route::middleware(['panel'])->prefix('Seeder')->group(function () {
 Route::middleware(['panel'])->prefix('JobAgendado')->group(function () {
     Route::get('/getAll', [JobAgendadoController::class, 'listar']);
     Route::post('/create', [JobAgendadoController::class, 'createJob']);
-    //Route::post('/job-agendado/{id}', [JobAgendadoController::class, 'update']);
+    Route::get('/getClassJobs', [JobAgendadoController::class, 'getClassJobs']);
     Route::delete('/delete/{id}', [JobAgendadoController::class, 'removerJob']);
 
 });
-Route::get('/jobs-agendados/getAll', [JobAgendadoController::class, 'listar']);
-Route::get('/jobs-agendados/sincronizar/siape', [JobAgendadoController::class, 'sincronizarSiape']);
-Route::get('/jobs-agendados/log', [JobAgendadoController::class, 'logJob']);
-
-
 
 Route::middleware(['panel'])->prefix('UserPanel')->group(function () {
   Route::post('query', [PainelUsuarioController::class, 'query']);
