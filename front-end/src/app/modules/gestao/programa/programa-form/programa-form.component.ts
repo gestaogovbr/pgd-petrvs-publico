@@ -87,6 +87,8 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
       result = "Obrigatório";
     } else if (controlName == "prazo_max_plano_entrega" && parseInt(control.value || 0) > 99999) {
       result = "Inválido";
+    } else if (controlName == "dias_tolerancia_consolidacao" && parseInt(control.value || 0) > 10) {
+      result = "Inválido. Máximo 10 dias";
     } else if (['data_inicio', 'data_fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     } else if (controlName == "periodicidade_valor") {
