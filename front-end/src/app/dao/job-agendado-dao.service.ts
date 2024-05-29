@@ -18,8 +18,21 @@ export class JobAgendadoDaoService extends DaoBaseService<JobAgendado> {
         const params = tenantId ? { params: { tenant_id: tenantId } } : {};
     
         return new Promise<any>((resolve, reject) => {
-            this.http.get(url, params).subscribe(response => {
+            this.server.get(url).subscribe(response => {
                 resolve(this.loadJobAgendadoDados(response));
+            }, error => {
+                console.log("Erro ao obter os jobs!", error);
+                reject(error);
+            });
+        });
+    }
+
+    public getClassJobs(): Promise<any> {
+        const url = `api/${this.collection}/getClassJobs`;
+    
+        return new Promise<any>((resolve, reject) => {
+            this.server.get(url).subscribe(response => {
+                resolve(response);
             }, error => {
                 console.log("Erro ao obter os jobs!", error);
                 reject(error);
@@ -33,10 +46,8 @@ export class JobAgendadoDaoService extends DaoBaseService<JobAgendado> {
 
     public createJob(jobData: any, tenantId: string | null): Promise<any> {
         const url = `api/${this.collection}/create`;
-        const options = tenantId ? { params: { tenant_id: tenantId } } : {};
-    
         return new Promise<any>((resolve, reject) => {
-            this.http.post(url, jobData, options).subscribe(response => {
+            this.server.post(url, jobData).subscribe(response => {
                 resolve(response);
             }, error => {
                 console.error("Erro ao criar o job!", error);
@@ -45,12 +56,11 @@ export class JobAgendadoDaoService extends DaoBaseService<JobAgendado> {
         });
     }
     
-    public deleteJob(jobId: string, tenantId: string | null): Promise<any> {
+    public deleteJob(jobId: string): Promise<any> {
         const url = `api/${this.collection}/delete/${jobId}`;
-        const options = tenantId ? { params: { tenant_id: tenantId } } : {};
     
         return new Promise<any>((resolve, reject) => {
-            this.http.delete(url, options).subscribe(response => {
+            this.server.delete(url).subscribe(response => {
                 resolve(response);
             }, error => {
                 console.error("Erro ao deletar o job!", error);
