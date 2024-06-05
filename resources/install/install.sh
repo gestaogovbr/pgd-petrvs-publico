@@ -294,7 +294,8 @@ select_image_tag() {
     done
 }
 
-select_image_tag
+#select_image_tag
+IMAGE_TAG="latest"
 # Função para perguntar ao usuário se deseja levantar o MariaDB
 ask_mariadb() {
     echo "Deseja levantar o MariaDB?"
@@ -321,7 +322,7 @@ services:
           memory: 2496M
 
   mariadb:
-    image: mariadb:latest
+    image: mariadb:11.3.2
     container_name: mariadb
     environment:
       MYSQL_ROOT_PASSWORD: rootpgd
