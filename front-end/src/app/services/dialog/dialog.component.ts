@@ -32,7 +32,19 @@ export type DialogButton = {
 	selector: "app-dialog",
 	templateUrl: "./dialog.component.html",
 	styleUrls: ["./dialog.component.scss"],
-	
+	providers: [
+		{
+			provide: "ID_GENERATOR_BASE",
+			useFactory: (
+				self: DialogComponent,
+				go: NavigateService,
+				util: UtilService
+			) => {
+				return util.onlyAlphanumeric(go.getStackRouteUrl());
+			},
+			deps: [DialogComponent, NavigateService, UtilService],
+		},
+	],
 })
 export class DialogComponent implements OnInit {
 	@ViewChild("body", {read: ViewContainerRef}) body?: ViewContainerRef;
@@ -158,7 +170,7 @@ export class DialogComponent implements OnInit {
 				this.factory.resolveComponentFactory(componentType);
 			if (this.route.data.title?.length) this.title = this.route.data.title;
 			this.modalBodyRef =
-				this.body!.createComponent<typeof componentType>(componentType);
+				this.body!.createComponent<typeof componentType>(componentFactory);
 			if ("modalInterface" in this.modalBodyRef.instance) {
 				const modal = this.modalBodyRef.instance as any;
 				modal.modalRoute = this.route;
@@ -181,12 +193,12 @@ export class DialogComponent implements OnInit {
 	}
 
 	public zIndexRefresh() {
-		// $(".modal").each((index, element) => {
-		// 	$(element).css("z-index", (index + 1) * 1055);
-		// });
-		// $(".modal-backdrop").each((index, element) => {
-		// 	$(element).css("z-index", (index + 1) * 1050);
-		// });
+		document.querySelectorAll(".modal").forEach((element, index) => {
+			(element as HTMLElement).style.zIndex = `${(index + 1) * 1055}`;
+		});
+		document.querySelectorAll(".modal-backdrop").forEach((element, index) => {
+			(element as HTMLElement).style.zIndex = `${(index + 1) * 1050}`;
+		});
 	}
 
 	public show() {

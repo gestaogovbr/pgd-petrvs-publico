@@ -38,7 +38,6 @@ const routes: Routes = [
   { path: 'cadastros/tipo-motivo-afastamento', loadChildren: () => import('./modules/cadastros/tipo-motivo-afastamento/tipo-motivo-afastamento.module').then(m => m.TipoMotivoAfastamentoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-processo', loadChildren: () => import('./modules/cadastros/tipo-processo/tipo-processo.module').then(m => m.TipoProcessoModule), canActivate: [AuthGuard] },
   { path: 'gestao/afastamento', loadChildren: () => import('./modules/gestao/afastamento/afastamento.module').then(m => m.AfastamentoModule), canActivate: [AuthGuard] },
-  { path: 'gestao/ocorrencia', loadChildren: () => import('./modules/gestao/ocorrencia/ocorrencia.module').then(m => m.OcorrenciaModule), canActivate: [AuthGuard] },
   { path: 'gestao/programa', loadChildren: () => import('./modules/gestao/programa/programa.module').then(m => m.ProgramaModule), canActivate: [AuthGuard] },
   { path: 'gestao/cadeia-valor', loadChildren: () => import('./modules/gestao/cadeia-valor/cadeia-valor.module').then(m => m.CadeiaValorModule), canActivate: [AuthGuard] },
   { path: 'gestao/atividade', loadChildren: () => import('./modules/gestao/atividade/atividade.module').then(m => m.AtividadeModule), canActivate: [AuthGuard] },

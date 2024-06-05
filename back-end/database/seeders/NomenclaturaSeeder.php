@@ -89,25 +89,28 @@ class NomenclaturaSeeder extends Seeder
       "habilitar" => ['single' => "selecionar", 'plural' => "selecionar", 'female' => false],
       "modelo de entrega" => ['single' => "tipo de meta", 'plural' => "tipos de meta", 'female' => false],
       "ocorrência" => ['single' => "ocorrência", 'plural' => "ocorrências", 'female' => true],
-      "tipo avaliação plano trabalho" => ['single' => "Tipo de avaliação do registro de execução do plano de trabalho", 'plural' => "Tipos de avaliações do registro de execução do plano de trabalho", 'female' => false]
+      "tipo de avaliação do registro de execução do plano de trabalho" => ['single' => "Tipo de avaliação do registro de execução do plano de trabalho", 'plural' => "Tipos de avaliações do registro de execução do plano de trabalho", 'female' => false]
     ];
 
     $entidade = Entidade::first() ?? new Entidade();
-
+    $entidadeNomenclaturas = collect($entidade->nomenclatura);
+    $nomenclaturaIds = array_keys($nomenclaturas);
+    $entidadeNomenclaturas = $entidadeNomenclaturas->filter(function ($nomenclatura) use ($nomenclaturaIds) {
+      return in_array($nomenclatura->id, $nomenclaturaIds);
+    });
+    $existingNomenclaturaIds = $entidadeNomenclaturas->pluck('id')->all();
     foreach ($nomenclaturas as $id => $nomenclatura) {
-      if (!in_array($id, array_column($entidade->nomenclatura ?? [], 'id'))) {
-        $entidade->nomenclatura = array_merge($entidade->nomenclatura ?? [], [
-          [
-            "id" => $id,
-            "nome" => $id,
-            "plural" => $nomenclatura["plural"],
-            "feminino" => $nomenclatura["female"],
-            "singular" => $nomenclatura["single"]
-          ]
+      if (!in_array($id, $existingNomenclaturaIds)) {
+        $entidadeNomenclaturas->push((object) [
+          'id' => $id,
+          'nome' => $id,
+          'plural' => $nomenclatura['plural'],
+          'feminino' => $nomenclatura['female'],
+          'singular' => $nomenclatura['single']
         ]);
       }
     }
-
+    $entidade->nomenclatura = $entidadeNomenclaturas->values()->all();
     $entidade->save();
   }
 }

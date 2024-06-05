@@ -7,15 +7,14 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Jobs\SincronizarSiapeJob;
 use App\Jobs\LogJob;
+use App\Models\JobSchedule;
 use Throwable;
 
 class JobAgendadoController extends Controller {
 
-    protected $jobAgendadoService;
 
-    public function __construct(JobAgendadoService $jobAgendadoService)
+    public function __construct(protected JobAgendadoService $jobAgendadoService)
     {
-        $this->jobAgendadoService = $jobAgendadoService;
     }
 
     public function listar(Request $request)
@@ -33,7 +32,7 @@ class JobAgendadoController extends Controller {
     {
         try {
             $tenantId = $request->get('tenant_id');
-            $dados = $request->only(['nome_do_job', 'diario', 'horario', 'expressao_cron', 'ativo','tenant_id','parameters']);
+            $dados = $request->only((new JobSchedule)->getFillable());
             $result = $this->jobAgendadoService->createJob($dados, $tenantId);
             return response()->json($result);
         } catch (Throwable $e) {
@@ -63,5 +62,11 @@ class JobAgendadoController extends Controller {
     {
         LogJob::dispatch(true);
         return response()->json(['message' => 'LogJob iniciado com sucesso!']);
+    }
+
+    public function getClassJobs()
+    {
+        $jobs = $this->jobAgendadoService->getAllClassJobs();
+        return response()->json(['success' => true, 'data' => $jobs]);
     }
 }
