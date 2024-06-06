@@ -9,6 +9,8 @@ import { PlanoTrabalhoListEntregaComponent } from './plano-trabalho-list-entrega
 import { PlanoTrabalhoConsolidacaoComponent } from './plano-trabalho-consolidacao/plano-trabalho-consolidacao.component';
 import { PlanoTrabalhoConsolidacaoListComponent } from './plano-trabalho-consolidacao-list/plano-trabalho-consolidacao-list.component';
 import { AvaliarComponent } from '../../uteis/avaliar/avaliar.component';
+import { VisualizarAvaliacaoComponent } from '../../uteis/visualizar-avaliacao/visualizar-avaliacao.component';
+
 import { PlanoTrabalhoConsolidacaoAvaliacaoComponent } from './plano-trabalho-consolidacao-avaliacao/plano-trabalho-consolidacao-avaliacao.component';
 
 const routes: Routes = [
@@ -18,6 +20,7 @@ const routes: Routes = [
   { path: 'consolidacao/avaliacao', component: PlanoTrabalhoConsolidacaoAvaliacaoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Avaliação das Consolidações do Plano de Trabalho" } },
   { path: 'consolidacao/:consolidacaoId/avaliar', component: AvaliarComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Avaliar Consolidação do Plano de Trabalho" } },
   { path: 'consolidacao/:consolidacaoId/recurso', component: AvaliarComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Recurso da Avaliação da Consolidação do Plano de Trabalho" } },
+  { path: 'consolidacao/:consolidacaoId/verAvaliacoes', component: VisualizarAvaliacaoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Visualizar avaliações da Consolidação do Plano de Trabalho" } },
   { path: 'consolidacao/:usuarioId/:planoTrabalhoId', component: PlanoTrabalhoConsolidacaoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consolidações do Plano de Trabalho" } },
   { path: 'consolidacao', component: PlanoTrabalhoConsolidacaoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consolidações" } },
   { path: ':id/edit', component: PlanoTrabalhoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Plano de Trabalho", modal: true } },

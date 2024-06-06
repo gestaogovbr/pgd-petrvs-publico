@@ -52,7 +52,7 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
       programa_id: { default: this.programa?.id },
       unidade_id: { default: this.auth.unidade?.id },
       nome_usuario: { default: "" },
-      habilitados: { default: '0' },
+      habilitados: { default: null },
     }, this.cdRef, this.validate);
     if (this.auth.hasPermissionTo('MOD_PART_HAB')) this.multiselectMenu.push({
       icon: "bi bi-person-check-fill",
@@ -66,7 +66,7 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
       color: "btn-outline-danger",
       onClick: this.desabilitarParticipantes.bind(this)
     });
-    this.join = ["lotacao.unidade:id,sigla", "planos_trabalho:id,status", "participacoes_programas:id"];
+    this.join = ["areasTrabalho.unidade:id,sigla", "planos_trabalho:id,status", "participacoes_programas.programa:id"];
     this.title = this.lex.translate("Habilitações");
     this.orderBy = [['nome', 'asc']];    
   }
@@ -125,6 +125,8 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
     await this.programaParticipanteDao!.habilitar([row.id], this.programa!.id, 1, false).then(resposta => {
       (this.grid?.query || this.query!).refreshId(row.id);
       this.cdRef.detectChanges();
+    }).catch((error) => {
+      this.dialog.alert("Erro", error);
     });
     return false;
   }

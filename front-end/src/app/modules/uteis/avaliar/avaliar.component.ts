@@ -192,6 +192,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
       this.entity!.plano_entrega_id = this.planoEntrega?.id || null;
       this.entity!.plano_trabalho_consolidacao_id = this.consolidacao?.id || null;
       this.entity!.tipo_avaliacao_id = this.tipoAvaliacao!.id;
+      this.entity!.tipo_avaliacao_nota_id = this.nota!.id;
       /* Atualiza os checklist das entregas */
       if(this.checklist.length) {
         this.entity!.entregas_checklist = this.entregas.map(x => {

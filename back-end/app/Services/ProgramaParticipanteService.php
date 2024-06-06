@@ -19,8 +19,21 @@ class ProgramaParticipanteService extends ServiceBase {
         try {
             DB::beginTransaction();
             foreach($data['participantes_ids'] as $idp){
+                if($data['habilitar'] == 1) {
+                    $programasHabilitados = ProgramaParticipante::where('usuario_id',$idp)->where('habilitado',1)->get();
+                    if (!$programasHabilitados->isEmpty()) {
+                        throw new ServerException(
+                            "ValidateProgramaParticipante",
+                            "O usuário - " . Usuario::find($idp)->nome . " - já possui regramento habilitado. Portanto, a operação de habilitação foi abortada " . (count($data['participantes_ids']) > 1 ? "para todos os usuários " : "") . "!"
+                        );
+                    }
+                }
+                
                 $registro = ProgramaParticipante::firstOrCreate(['programa_id' => $data['programa_id'], 'usuario_id' => $idp]);
                 $plano_trabalho_ativo = PlanoTrabalho::where('usuario_id',$idp)->where('programa_id',$data['programa_id'])->where('status','ATIVO')->where('data_inicio','<=',now())->where('data_fim','>=',now())->first();
+                
+                
+                
                 if(empty($data['habilitar']) && !empty($plano_trabalho_ativo)) {
                     if(!$data['suspender_plano_trabalho']) throw new ServerException("ValidatePlanoTrabalho","Foi identificado que o usuário - " . Usuario::find($idp)->nome . " - possui Plano de Trabalho ATIVO e não foi repassada autorização para suspendê-lo. Portanto, a operação de desabilitação foi abortada " . (count($data['participantes_ids']) > 1 ? "para todos os usuários " : "" . "!"));
                     $plano_trabalho_ativo->status = 'SUSPENSO';
