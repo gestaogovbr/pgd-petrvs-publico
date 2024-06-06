@@ -50,7 +50,16 @@ export class DialogComponent implements OnInit {
 	@ViewChild("body", {read: ViewContainerRef}) body?: ViewContainerRef;
 	@Output() onClose = new EventEmitter<void>();
 	@Output() onButtonClick = new EventEmitter<DialogButton>();
-	@Input() message: any = "";
+	@Input() set message(value: string) {		
+		if (this._message != value) {
+			this._message = value;
+			this.cdRef.detectChanges();
+		}
+	}
+	get message(): string {
+		return this._message;
+	}
+
 	@Input() set title(value: string) {
 		if (this._title != value) {
 			this._title = value;
@@ -101,6 +110,7 @@ export class DialogComponent implements OnInit {
 	}
 
 	private _title: string = "";
+	private _message: string = "";
 
 	constructor(public injector: Injector) {
 		this.id = "dialog" + new Date().getTime();

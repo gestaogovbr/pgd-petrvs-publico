@@ -7,6 +7,8 @@ use App\Models\AtividadeTarefa;
 use App\Models\Avaliacao;
 use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\TipoAvaliacao;
+use App\Models\TipoAvaliacaoNota;
 use App\Services\ServiceBase;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +17,20 @@ use Throwable;
 
 class AvaliacaoService extends ServiceBase
 {
+
+
+  public function validateStore($data, $unidade, $action) {
+    if($action == ServiceBase::ACTION_INSERT) {
+      $avaliacao = Avaliacao::where('plano_trabalho_consolidacao_id', $data['plano_trabalho_consolidacao_id'])
+                            ->whereNotNull('recurso')
+                            ->first();
+      if(!empty($avaliacao)){                
+        $tipoAvaliacaoNota = TipoAvaliacaoNota::find($avaliacao->tipo_avaliacao_nota_id);                      
+        $tipoAvaliacaoNotaNova = TipoAvaliacaoNota::find($data['tipo_avaliacao_nota_id']);             
+        if($tipoAvaliacaoNotaNova->sequencia > $tipoAvaliacaoNota->sequencia) throw new ServerException("ValidateAvaliacao", "Você não pode atribuir uma nota inferior a que já foi atribuída.");
+      }
+    }
+}
 
   public function proxyStore(&$avaliacao, $unidade, $action)
   {

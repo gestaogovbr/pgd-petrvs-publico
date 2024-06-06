@@ -1,0 +1,39 @@
+<ng-container *ngIf="consolidacao">
+  <grid [items]="consolidacao!.avaliacoes" [minHeight]="0" #gridEntregas>
+    <columns>
+        <column title="Data" type="datetime" field="data_avaliacao"></column>
+        <column title="Avaliador" [template]="columnAvaliador">
+          <ng-template let-row="row" #columnAvaliador>
+              <div class="avaliador">
+                 
+                  <div class="avaliador-nome">
+                      <strong>{{row.avaliador.nome || ""}}</strong><br>
+                      <small>{{row.avaliador.apelido || ""}}</small>
+                  </div>
+              </div>
+          </ng-template>
+      </column>
+        <column [title]="'Nota\nJustificativas'" [template]="columnNotaJustificativa">
+            <ng-template let-row="row" #columnNotaJustificativa>
+                <avaliar-nota-badge [align]="'left'" [tipoAvaliacao]="row.tipo_avaliacao" [nota]="row.nota"></avaliar-nota-badge><br>
+                <small>{{row.justificativa || ''}}</small>
+                <div class="one-per-line">
+                    <badge *ngFor="let justificativa of row.justificativas" [icon]="entityService.getIcon('TipoJustificativa')" [label]="justificativa.value"></badge>
+                </div>
+            </ng-template>
+        </column>
+        <column title="Recurso" [template]="columnRecurso">
+            <ng-template let-row="row" #columnRecurso>
+                <small>{{row.recurso || ''}}</small>
+            </ng-template>
+        </column>
+        <column title="Status" [template]="columnStatus">
+            <ng-template let-row="row" #columnStatus>
+                <div class="one-per-line">
+                    <badge *ngIf="row.recurso?.length" icon="bi bi-journal-medical" color="warning" label="Recorrido"></badge>
+                </div>
+            </ng-template>
+        </column>
+    </columns>
+  </grid>
+</ng-container>

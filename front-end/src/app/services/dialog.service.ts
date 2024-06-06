@@ -94,7 +94,7 @@ export class DialogService {
     });
   }
   
-  public alert(title: string, message: string): Promise<void> {
+  public alert(title: string, message: string): Promise<void> {   
     const dialogView = this.createDialogView();
     const dialog = dialogView.instance;
     dialog.title = title;

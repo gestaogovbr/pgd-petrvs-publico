@@ -223,6 +223,19 @@ export class PlanoTrabalhoService {
   }
 
   /**
+   * Visualiza avaliações da consolidação
+   * @param consolidacao 
+   */
+  public visualizarAvaliacao(consolidacao: PlanoTrabalhoConsolidacao) {
+    this.go.navigate({route: ['gestao', 'plano-trabalho', 'consolidacao', consolidacao.id, 'verAvaliacoes']}, {
+      modal: true, 
+      metadata: {
+        consolidacao: consolidacao,
+      }
+    });
+  }
+
+  /**
    * Fas recurso contra avaliação
    * @param consolidacao 
    * @param programa
