@@ -240,15 +240,8 @@ class UsuarioService extends ServiceBase
             $query->whereHas('participacoesProgramas', function (Builder $query) use ($programa) {
               $query->where('habilitado', 0);
             });
-          } else {
-          
           }
-          
-          if (!empty($lotacao)) {
-            $query->orWhereRelation('areasTrabalho', 'unidade_id', $lotacao[2])->has('participacoesProgramas', '==', 0);
-          } else {
-            $query->orHas('participacoesProgramas', '==', 0);
-          }
+         
         }
       } else if (is_array($condition) && $condition[0] == "subordinadas") {
         $subordinadas = $condition[2];
