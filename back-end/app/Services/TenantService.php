@@ -129,7 +129,7 @@ class TenantService extends ServiceBase
             "checklist" => NULL,
             "notificacoes" => NULL,
             "expediente" => NULL,
-            "cidade_id" => $this->brasilia->id,
+            "cidade_id" => $cidade_id,
             "unidade_pai_id" => NULL,
             "entidade_id" => $entidade->id
             );
