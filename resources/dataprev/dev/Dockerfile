@@ -62,10 +62,14 @@ RUN /root/setup_production.sh
 #Instalacao
 # Copia do projeto back
 COPY ../../../back-end/ ./
-# Configurar permissões
-RUN chmod -R 1777 /tmp \
-    && chmod -R 755 ./ \
-    && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/public \
+# Configurar permissões do diretório temporário
+RUN chmod -R 1777 /tmp
+
+# Configurar permissões do diretório do projeto
+RUN chmod -R 755 ./
+
+# Ajustar permissões dos diretórios necessários
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/public
 
 RUN composer install --optimize-autoloader --no-dev
 COPY ../resources/dataprev/dev/entrypoint.sh ./entrypoint.sh
