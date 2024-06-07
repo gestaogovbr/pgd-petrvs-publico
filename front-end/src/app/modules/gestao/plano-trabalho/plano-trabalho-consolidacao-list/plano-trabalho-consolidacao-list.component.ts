@@ -215,14 +215,18 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
       
       if(consolidacao.status == "AVALIADO" && consolidacao!.avaliacao) {
         /* (RN_AVL_2) [PT] O usuário do plano de trabalho que possuir o acesso MOD_PTR_CSLD_REC_AVAL poderá recorrer da nota atribuida dentro do limites estabelecido pelo programa; */
-        if(isUsuarioDoPlano && !temRecurso && this.auth.hasPermissionTo('MOD_PTR_CSLD_REC_AVAL') && consolidacao!.avaliacao?.data_avaliacao) {
+        if(isUsuarioDoPlano && !temRecurso && this.auth.hasPermissionTo('MOD_PTR_CSLD_REC_AVAL') && consolidacao!.avaliacao?.data_avaliacao && ['Inadequado', 'Não executado'].includes(consolidacao!.avaliacao?.nota)) {
           result.push(BOTAO_FAZER_RECURSO);
         }
-        /* (RN_AVL_3) [PT] Após o recurso será realizado nova avaliação, podendo essa ser novamente recorrida dentro do mesmo prazo estabelecido no programa; */
-        /* (RN_AVL_6) [PT] Qualquer usuário capaz de avaliar tambem terá a capacidade de cancelar a avaliação; */
         if(isAvaliador) {
-          result.push(BOTAO_REAVALIAR);
-          result.push(BOTAO_CANCELAR_AVALIACAO);
+          const ultimaAvaliacao = consolidacao!.avaliacoes.reduce((latest, current) => current.data_avaliacao > latest.data_avaliacao ? current : latest, consolidacao!.avaliacoes[0]);
+          const recente = ultimaAvaliacao.data_avaliacao > new Date(Date.now() - 24 * 60 * 60 * 1000);
+          // Só permite reavaliar se a última avaliação for recente
+          if (recente) {
+            result.push(BOTAO_REAVALIAR);
+          }
+          // Só permite cancelar a avaliacao se não houver recurso na lista de avaliações
+          if(!(consolidacao!.avaliacoes.filter(a => a.recurso).length > 0)) result.push(BOTAO_CANCELAR_AVALIACAO);
         }
       }
     }

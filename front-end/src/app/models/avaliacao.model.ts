@@ -31,6 +31,7 @@ export class Avaliacao extends Base {
     public plano_trabalho_consolidacao_id: string | null = null; /* ID do Usuario */
     public plano_entrega_id: string | null = null; /* ID do Plano de Entrega */
     public tipo_avaliacao_id: string = ""; /* ID do Tipo de Avaliacao */
+    public tipo_avaliacao_nota_id: string = ""; /* ID do Tipo de Avaliacao Nota*/
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

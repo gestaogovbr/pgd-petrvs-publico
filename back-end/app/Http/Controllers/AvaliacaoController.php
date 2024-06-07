@@ -68,7 +68,7 @@ class AvaliacaoController extends ControllerBase {
         $avaliador = fn($unidade) => $usuarioService->isGestorUnidade($unidade);
         $unidade = !empty($consolidacao) ? $consolidacao->planoTrabalho->unidade : $planoEntrega?->unidade?->unidadePai;
         if(empty($unidade)) throw new ServerException("ValidateAvaliacao", "Unidade do gestor não encontrada no sistema");
-        $condicao1 = !empty($consolidacao) && $usuario->hasPermissionTo("MOD_PTR_CSLD_AVAL") && $avaliador($unidade->id);
+        $condicao1 = !empty($consolidacao) && $usuario->hasPermissionTo("MOD_PTR_CSLD_AVAL") && ($avaliador($unidade->id) || $avaliador($unidade->unidade_pai_id));
         $condicao2 = !empty($planoEntrega) && $usuario->hasPermissionTo("MOD_PENT_AVAL") && $avaliador($unidade->id);
         $condicao3 = !empty($planoEntrega) && $usuario->hasPermissionTo("MOD_PENT_AVAL_SUBORD") && array_filter($unidadeService->linhaAscendente($unidade->id), fn($u) => $avaliador($u));
         if(!empty($consolidacao) && !$condicao1) throw new ServerException("ValidateAvaliacao", "Usuário não possui a capacidade MOD_PTR_CSLD_AVAL.\n[ver RN_AVL_1]");
