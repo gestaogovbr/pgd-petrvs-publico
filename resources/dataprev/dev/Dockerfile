@@ -62,21 +62,21 @@ RUN /root/setup_production.sh
 #Instalacao
 # Copia do projeto back
 COPY ../../../back-end/ ./
-# Configure as permissões do diretório temporário
+# Configurar permissões do diretório temporário
 RUN chmod -R 1777 /tmp
-# Configure as permissões do diretório do seu projeto
+
+# Configurar permissões do diretório do projeto
 RUN chmod -R 755 ./
+
+# Ajustar permissões dos diretórios necessários
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/public
+
 RUN composer install --optimize-autoloader --no-dev
 COPY ../resources/dataprev/dev/entrypoint.sh ./entrypoint.sh
 
 # Adiciona a entrada do cron
 RUN echo "* * * * * cd /var/www/ && /usr/local/bin/php artisan schedule:run >> /var/www/storage/logs/schedule.log 2>&1" | crontab -
 
-# Alterando permissoes
-RUN chmod +x /var/www/entrypoint.sh
-RUN chown -R www-data:www-data /var/www
-RUN sudo chmod 775 /var/www/storage -R
-RUN sudo chmod 775 /var/www/public
 
 # Exponha a porta 80 para o servidor Apache
 EXPOSE 80
