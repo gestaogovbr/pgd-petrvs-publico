@@ -4,8 +4,10 @@ namespace App\Jobs;
 
 use Exception;
 use App\Exceptions\LogError;
+use App\Http\Middleware\TenantConfigurations;
 use App\Models\JobSchedule;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 class JobBase
 {
@@ -27,6 +29,7 @@ class JobBase
             }
 
             $this->inicializeTenant();
+            $this->loadingTenantConfigurationMiddleware($this->job->tenant_id);
 
             $jobClass = app($fullClassName);
             $parameters = $this->job->parameters ? json_decode($this->job->parameters, true) : [];
@@ -45,6 +48,22 @@ class JobBase
         }
         $tenant = tenancy()->find($this->job->tenant_id);
         ($tenant) ? tenancy()->initialize($tenant) : LogError::newWarn("Tenant não encontrado.");
+    }
+
+    private function loadingTenantConfigurationMiddleware(string $tenantId): void
+    {
+               $request = Request::create('/', 'GET', []);
+
+               $request->headers->set('X-ENTIDADE', 'MGI');
+       
+               $middleware = app(TenantConfigurations::class);
+       
+               $next = function ($request) {
+                   return $request;
+               };
+       
+               $processedRequest = $middleware->handle($request, $next);
+
     }
 
     public function getJob(): JobSchedule
