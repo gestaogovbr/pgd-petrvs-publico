@@ -32,6 +32,7 @@ class TipoMotivoAfastamentoSeeder extends Seeder
   public function run()
   {
     try {
+      #TipoMotivoAfastamento::whereNotNull('id')->delete();
       $file = public_path('tipos_motivos_afastamentos.xlsx');
       Excel::import(new ImportarMotivos($this->utilService), $file);
     } catch (\Exception $e) {
@@ -55,20 +56,23 @@ class ImportarMotivos implements ToCollection
     $rows = $rows->skip(1);
 
     foreach ($rows as $row) {      
-      $data_inicio = Carbon::createFromFormat('Y-m-d', '1899-12-30')->addDays($row[1])->format(ServiceBase::ISO8601_FORMAT);
-      $data_fim = Carbon::createFromFormat('Y-m-d', '1899-12-30')->addDays($row[2])->format(ServiceBase::ISO8601_FORMAT);
+      $data = Carbon::now()->format(ServiceBase::ISO8601_FORMAT);
+      $cod = TipoMotivoAfastamento::count() + 1;
+      $sigla = preg_replace('/[^a-zA-Z0-9]/', '', $row[2]);
+      $sigla = substr($sigla, 0, 3) . $cod;
 
-      TipoMotivoAfastamento::firstOrCreate(['codigo' => $row[5]], [
-        "id" => $this->utilService->uuid($row[0]),
-        "data_inicio" => $data_inicio,
-        "data_fim" =>  $data_fim,
-        "situacao" => $row[3],
-        "codigo" => $row[5],
-        "sigla" => $row[6],
-        "nome" => $row[7],
+      TipoMotivoAfastamento::firstOrCreate(['nome' => $row[2]], [
+        "id" => $this->utilService->uuid($row[2]),
+        "data_inicio" => $data,
+        "data_fim" =>  $data,
+        "situacao" => "S",
+        "codigo" => $cod,
+        "sigla" => $sigla,
+        "nome" => $row[2],
         "icone" => "bi bi-folder",
         "cor" => "#198754",
-        "horas" => false,
+        "horas" => $row[1] == "Horas" ? true : false,
+        "calculo" => $row[0] == "Desconto" ? 'DECRESCIMO' : 'ACRESCIMO',
         "integracao" => true,
       ]);
     }

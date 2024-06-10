@@ -43,6 +43,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
     this.unidadeService = injector.get<UnidadeService>(UnidadeService);
     /* Inicializações */
     this.join = [
+      "avaliacoes:id,recurso",
       "avaliacao", // "avaliacao.tipoAvaliacao.notas"
       "plano_trabalho:id", // "planoTrabalho.unidade:id,sigla,nome", "planoTrabalho.unidade.gestor:id,unidade_id,usuario_id", "planoTrabalho.unidade.gestorSubstituto:id,unidade_id,usuario_id", "planoTrabalho.tipoModalidade:id,nome", "planoTrabalho.usuario:id,nome,apelido,url_foto"
     ];
@@ -162,6 +163,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
     } else if (usuarioPlanoEhLotado){
       isAvaliador = usuarioLogadoEhGestorSuperior || this.unidadeService.isGestorUnidade(unidadeId)
     }
+    const BOTAO_VER_AVALIACAO = { hint: "Visualizar", icon: "bi bi-eye", color: "btn-outline-primary", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.visualizarAvaliacao(row) };
     const BOTAO_AVALIAR = { hint: "Avaliar", icon: "bi bi-star", color: "btn-outline-info", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.avaliar(row, programa, this.refreshConsolidacao.bind(this)) };
     const BOTAO_REAVALIAR = { hint: "Reavaliar", icon: "bi bi-star-half", color: "btn-outline-warning", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.avaliar(row, programa, this.refreshConsolidacao.bind(this)) };
     const BOTAO_FAZER_RECURSO = { label: 'Recurso',  id: "RECORRIDO", icon: "bi bi-journal-medical", color: "btn-outline-warning", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.fazerRecurso(row, programa, this.refreshConsolidacao.bind(this)) };
@@ -171,15 +173,21 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
       result.push(BOTAO_AVALIAR);
     }
     if(consolidacao.status == "AVALIADO" && consolidacao!.avaliacao) {
+      result.push(BOTAO_VER_AVALIACAO);
       /* (RN_AVL_2) [PT] O usuário do plano de trabalho que possuir o acesso MOD_PTR_CSLD_REC_AVAL poderá recorrer da nota atribuida dentro do limites estabelecido pelo programa; */
-      if(usuarioEhDonoDoPlano && this.auth.hasPermissionTo('MOD_PTR_CSLD_REC_AVAL') && consolidacao!.avaliacao?.data_avaliacao) {
+      if(usuarioEhDonoDoPlano && this.auth.hasPermissionTo('MOD_PTR_CSLD_REC_AVAL') && consolidacao!.avaliacao?.data_avaliacao && ['Inadequado', 'Não executado'].includes(consolidacao!.avaliacao?.nota)) {       
         result.push(BOTAO_FAZER_RECURSO);
       }
-      /* (RN_AVL_3) [PT] Após o recurso será realizado nova avaliação, podendo essa ser novamente recorrida dentro do mesmo prazo estabelecido no programa; */
-      /* (RN_AVL_6) [PT] Qualquer usuário capaz de avaliar tambem terá a capacidade de cancelar a avaliação; */
+
       if(isAvaliador) {
-        result.push(BOTAO_REAVALIAR);
-        result.push(BOTAO_CANCELAR_AVALIACAO);
+        const ultimaAvaliacao = consolidacao!.avaliacoes.reduce((latest, current) => current.data_avaliacao > latest.data_avaliacao ? current : latest, consolidacao!.avaliacoes[0]);
+        const recente = ultimaAvaliacao.data_avaliacao > new Date(Date.now() - 24 * 60 * 60 * 1000);
+        // Só permite reavaliar se a última avaliação for recente
+        if (recente) {
+          result.push(BOTAO_REAVALIAR);
+        }
+        // Só permite cancelar a avaliacao se não houver recurso na lista de avaliações
+        if(!(consolidacao!.avaliacoes.filter(a => a.recurso).length > 0)) result.push(BOTAO_CANCELAR_AVALIACAO);
       }
     }
     return result;

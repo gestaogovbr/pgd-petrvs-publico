@@ -227,30 +227,21 @@ class UsuarioService extends ServiceBase
     foreach ($data["where"] as $condition) {
       if (is_array($condition) && $condition[0] == "lotacao") {
         $lotacao = $condition;
-        $query->whereHas('lotacao', function (Builder $query) use ($condition) {
+        $query->whereHas('areasTrabalho', function (Builder $query) use ($condition) {
           $query->where('unidade_id', $condition[2]);
         });
       } else if (is_array($condition) && $condition[0] == "habilitado") {
         if ($condition[2] == true) {
           $query->whereHas('participacoesProgramas', function (Builder $query) use ($programa) {
-            $query->where('habilitado', 1)->where('programa_id', $programa[2]);
+            $query->where('habilitado', 1);
           });
         } else {
           if ($condition[2] != null) {
             $query->whereHas('participacoesProgramas', function (Builder $query) use ($programa) {
-              $query->where('habilitado', 0)->where('programa_id', $programa[2]);
-            });
-          } else {
-            $query->whereHas('participacoesProgramas', function (Builder $query) use ($programa) {
-              $query->where('programa_id', $programa[2]);
+              $query->where('habilitado', 0);
             });
           }
-          
-          if (!empty($lotacao)) {
-            $query->orWhereRelation('lotacao', 'unidade_id', $lotacao[2])->has('participacoesProgramas', '==', 0);
-          } else {
-            $query->orHas('participacoesProgramas', '==', 0);
-          }
+         
         }
       } else if (is_array($condition) && $condition[0] == "subordinadas") {
         $subordinadas = $condition[2];
