@@ -408,9 +408,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     return etiquetasUnidades;
   }
 
-  public async onColumnProgressoEtiquetasChecklistSave(row: any) {
-    console.log(row);
-    
+  public async onColumnProgressoEtiquetasChecklistSave(row: any) {   
     try {
       const saved = await this.atividadeDao!.update(row.id, {
         progresso: this.formEdit.controls.progresso.value,

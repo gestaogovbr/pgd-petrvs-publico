@@ -155,11 +155,11 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
       this.dialog.confirm("Habilitar Participantes ?", "Confirma a habilitação de todos esses participantes?").then(habilitar_todos => {
         if (habilitar_todos) {
           const idsUsuarios = Object.values(this.grid!.multiselected).map(x => x.id);
-          this.programaParticipanteDao!.habilitar(idsUsuarios, this.programa!.id, 1, false).then(function () {
+          this.programaParticipanteDao!.habilitar(idsUsuarios, this.programa!.id, 1, false).then(()=> {
             self.dialog.topAlert("Participantes habilitados com sucesso!", 5000);
             (self.grid?.query || self.query!).refresh();
-          }).catch(function (error) {
-            self.dialog.alert("Erro", "Erro ao habilitar os participantes: " + error?.message ? error?.message : error);
+          }).catch(error => {
+            self.dialog.alert("Erro", error);
           });
           this.grid?.enableMultiselect(false);
           self.cdRef.detectChanges();
