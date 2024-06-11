@@ -22,9 +22,10 @@ class ProgramaParticipanteService extends ServiceBase {
                 if($data['habilitar'] == 1) {
                     $programasHabilitados = ProgramaParticipante::where('usuario_id',$idp)->where('habilitado',1)->get();
                     if (!$programasHabilitados->isEmpty()) {
+                        $mensagem = (count($data['participantes_ids']) > 1) ? "Agente(s) público(s) já selecionado(s) como participante(s) em outra unidade instituidora. Portanto, a operação de habilitação foi cancelada!" : "Agente público já selecionado como participante em outra unidade instituidora. Portanto, a operação de habilitação foi cancelada!";
                         throw new ServerException(
                             "ValidateProgramaParticipante",
-                            "Agente público já selecionado como participante em outra unidade instituidora. Portanto, a operação de habilitação foi abortada " . (count($data['participantes_ids']) > 1 ? "para todos os participantes " : "") . "!"
+                            $mensagem
                         );
                     }
                 }

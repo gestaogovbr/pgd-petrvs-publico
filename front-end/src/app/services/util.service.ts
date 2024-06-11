@@ -655,4 +655,11 @@ export class UtilService {
     return array.filter((elem, i) => array.indexOf(elem) === i);
   }
 
+  public decodeUnicode(str: string): string {
+    return str.replace(/\\u[\dA-F]{4}/gi, 
+      function (match) {
+        return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
+      });
+  }
+
 }
