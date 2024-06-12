@@ -66,7 +66,7 @@ class AvaliacaoController extends ControllerBase {
             plano de entrega o superior será o gestor, substituto ou delegado da unidade imediatamente superior). Deverá possuir tambem a 
             capacidade MOD_PTR_CSLD_AVAL (consolidação do plano de trabalho), ou MOD_PENT_AVAL/MOD_PENT_AVAL_SUBORD (plano de entrega); */
         $avaliador = fn($unidade) => $usuarioService->isGestorUnidade($unidade);
-        $unidade = !empty($consolidacao) ? $consolidacao->planoTrabalho->unidade : $planoEntrega?->unidade?->unidadePai;
+        $unidade = !empty($consolidacao) ? $consolidacao->planoTrabalho->unidade : ($planoEntrega?->unidade?->instituidora == 1 ? $planoEntrega?->unidade : $planoEntrega?->unidade?->unidadePai);
         if(empty($unidade)) throw new ServerException("ValidateAvaliacao", "Unidade do gestor não encontrada no sistema");
         $condicao1 = !empty($consolidacao) && $usuario->hasPermissionTo("MOD_PTR_CSLD_AVAL") && ($avaliador($unidade->id) || $avaliador($unidade->unidade_pai_id));
         $condicao2 = !empty($planoEntrega) && $usuario->hasPermissionTo("MOD_PENT_AVAL") && $avaliador($unidade->id);
