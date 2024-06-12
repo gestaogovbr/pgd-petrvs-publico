@@ -22,9 +22,10 @@ class ProgramaParticipanteService extends ServiceBase {
                 if($data['habilitar'] == 1) {
                     $programasHabilitados = ProgramaParticipante::where('usuario_id',$idp)->where('habilitado',1)->get();
                     if (!$programasHabilitados->isEmpty()) {
+                        $mensagem = (count($data['participantes_ids']) > 1) ? "Agente(s) público(s) já selecionado(s) como participante(s) em outra unidade instituidora. Portanto, a operação de habilitação foi cancelada!" : "Agente público já selecionado como participante em outra unidade instituidora. Portanto, a operação de habilitação foi cancelada!";
                         throw new ServerException(
                             "ValidateProgramaParticipante",
-                            "O usuário - " . Usuario::find($idp)->nome . " - já possui regramento habilitado. Portanto, a operação de habilitação foi abortada " . (count($data['participantes_ids']) > 1 ? "para todos os usuários " : "") . "!"
+                            $mensagem
                         );
                     }
                 }
@@ -35,7 +36,7 @@ class ProgramaParticipanteService extends ServiceBase {
                 
                 
                 if(empty($data['habilitar']) && !empty($plano_trabalho_ativo)) {
-                    if(!$data['suspender_plano_trabalho']) throw new ServerException("ValidatePlanoTrabalho","Foi identificado que o usuário - " . Usuario::find($idp)->nome . " - possui Plano de Trabalho ATIVO e não foi repassada autorização para suspendê-lo. Portanto, a operação de desabilitação foi abortada " . (count($data['participantes_ids']) > 1 ? "para todos os usuários " : "" . "!"));
+                    if(!$data['suspender_plano_trabalho']) throw new ServerException("ValidatePlanoTrabalho","Foi identificado que o agente público - " . Usuario::find($idp)->nome . " - possui Plano de Trabalho ATIVO e não foi repassada autorização para suspendê-lo. Portanto, a operação de desabilitação foi abortada " . (count($data['participantes_ids']) > 1 ? "para todos os participantes " : "" . "!"));
                     $plano_trabalho_ativo->status = 'SUSPENSO';
                     $plano_trabalho_ativo->save();
                 }

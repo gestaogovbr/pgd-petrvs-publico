@@ -373,7 +373,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
         */
         let condicao0 = ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO'].includes(this.planoEntregaService.situacaoPlano(planoEntrega));
         let condicao1 = ['INCLUIDO', 'HOMOLOGANDO'].includes(this.planoEntregaService.situacaoPlano(planoEntrega)) && (this.unidadeService.isGestorUnidade(planoEntrega.unidade) || this.auth.isLotacaoUsuario(planoEntrega.unidade));
-        let condicao2 = this.unidadeService.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) && this.auth.hasPermissionTo("MOD_PENT_EDT_FLH");
+        let condicao2 = (planoEntrega.unidade?.instituidora == 1 ? this.unidadeService.isGestorUnidade(planoEntrega.unidade?.id) : this.unidadeService.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id)) && this.auth.hasPermissionTo("MOD_PENT_EDT_FLH");
         let condicao3 = this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!);
         let condicao4 = this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo(["MOD_PENT_EDT_ATV_HOMOL", "MOD_PENT_EDT_ATV_ATV"]);
         let condicao5 = this.auth.hasPermissionTo("MOD_PENT_QQR_UND");
@@ -396,7 +396,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - o usuário logado precisa ser gestor de alguma Unidade da linha hierárquica ascendente da Unidade do plano (Unidade A e superiores), e possuir a capacidade "MOD_PENT_AVAL_SUBORD";
               - sugerir arquivamento automático (vide RI_PENT_A); 
         */
-        let condic1 = this.unidadeService.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id);
+        let condic1 = planoEntrega.unidade?.instituidora == 1 ? this.unidadeService.isGestorUnidade(planoEntrega.unidade?.id) : this.unidadeService.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id);
         let condic3 = this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_AVAL");
         let condic4 = this.auth.isGestorLinhaAscendente(planoEntrega.unidade!) && this.auth.hasPermissionTo("MOD_PENT_AVAL_SUBORD");
         return this.planoEntregaService.situacaoPlano(planoEntrega) == 'CONCLUIDO' && (condic1 || condic3 || condic4);
@@ -408,7 +408,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
           - a Unidade-pai (Unidade A) precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_CANC_AVAL"; ou
           - possuir a atribuição de AVALIADOR DE PLANOS DE ENTREGAS para a Unidade do plano (Unidade B);
         */
-        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'AVALIADO' && (this.unidadeService.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || this.auth.isIntegrante('AVALIADOR_PLANO_ENTREGA', planoEntrega.unidade!.id!));
+        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'AVALIADO' && (planoEntrega.unidade?.instituidora == 1 ? this.unidadeService.isGestorUnidade(planoEntrega.unidade?.id) : this.unidadeService.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || this.auth.isIntegrante('AVALIADOR_PLANO_ENTREGA', planoEntrega.unidade!.id!));
       case this.BOTAO_CANCELAR_CONCLUSAO:
         /*
           (RN_PENT_S) Para CANCELAR a CONCLUSÃO de um plano de entregas:
@@ -423,7 +423,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
             - a Unidade-pai (Unidade A) precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_CANC_HOMOL"; ou
             - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B);
         */
-        return !this.execucao && this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (this.unidadeService.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || (this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_CANC_HOMOL")) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!));
+        return !this.execucao && this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (planoEntrega.unidade?.instituidora == 1 ? this.unidadeService.isGestorUnidade(planoEntrega.unidade?.id) : this.unidadeService.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || (this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_CANC_HOMOL")) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!));
       case this.BOTAO_CANCELAR_PLANO:
         /*
           (RN_PENT_P) Para CANCELAR UM PLANO DE ENTREGAS:
@@ -472,7 +472,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
           - A homologação do plano de entregas não se aplica à Unidade instituidora.
         */
         let condition1 = this.planoEntregaService.situacaoPlano(planoEntrega) == 'HOMOLOGANDO';
-        let condition2 = this.unidadeService.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id);
+        let condition2 = planoEntrega.unidade?.instituidora == 1 ? this.unidadeService.isGestorUnidade(planoEntrega.unidade?.id): this.unidadeService.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id);
         let condition3 = this.auth.isLotacaoUsuario(planoEntrega.unidade!.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_HOMOL");
         let condition4 = this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!);
         return !this.execucao && condition1 && (condition2 || condition3 || condition4);

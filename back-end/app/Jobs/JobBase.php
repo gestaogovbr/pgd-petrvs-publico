@@ -5,6 +5,7 @@ namespace App\Jobs;
 use Exception;
 use App\Exceptions\LogError;
 use App\Models\JobSchedule;
+use App\Services\TenantConfigurationsService;
 use Illuminate\Support\Facades\Log;
 
 class JobBase
@@ -27,12 +28,11 @@ class JobBase
             }
 
             $this->inicializeTenant();
-
+            $this->loadingTenantConfigurationMiddleware($this->job->tenant_id);
             $jobClass = app($fullClassName);
-            $parameters = $this->job->parameters ? json_decode($this->job->parameters, true) : [];
-
-            dispatch(new $jobClass(...$parameters));
+            dispatch(new $jobClass($this->job->tenant_id));
         } catch (Exception $e) {
+            Log::error("Erro ao processar Job: '{$this->job->nome}' - Erro: " . $e->getMessage());
             LogError::newWarn("Erro ao processar Job: '{$this->job->nome}' - Erro: " . $e->getMessage());
             return false; 
         }
@@ -45,6 +45,12 @@ class JobBase
         }
         $tenant = tenancy()->find($this->job->tenant_id);
         ($tenant) ? tenancy()->initialize($tenant) : LogError::newWarn("Tenant não encontrado.");
+    }
+
+    private function loadingTenantConfigurationMiddleware(string $tenantId): void
+    {
+        $tenantConfigurations = new TenantConfigurationsService();
+        $tenantConfigurations->handle($tenantId);
     }
 
     public function getJob(): JobSchedule
