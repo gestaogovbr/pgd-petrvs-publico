@@ -15,11 +15,13 @@ use App\Models\IntegracaoUnidade;
 use App\Models\IntegracaoServidor;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\ServerException;
+use App\Http\Middleware\TenantConfigurations;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\IntegracaoServidorRepository;
 use App\Services\Siape\Servidor\Integracao;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class IntegracaoService extends ServiceBase
@@ -45,10 +47,11 @@ class IntegracaoService extends ServiceBase
   private $servidores_registrados_is = [];
   public $nivelAcessoService;
 
-  function __construct($config = null)
+  function __construct($config = null, string $tenantId = null)
   {
     parent::__construct();
     ini_set('max_execution_time', 1800); /* 30 minutos */
+    $this->loadingTenantConfigurationMiddleware($tenantId);
     $this->integracao_config = $config ?: config('integracao');
     $this->validaCertificado = $this->integracao_config['validaCertificado'];
     $this->useLocalFiles = $this->integracao_config['useLocalFiles'];
@@ -58,6 +61,14 @@ class IntegracaoService extends ServiceBase
     $this->unidadeRaiz = $this->integracao_config['codigoUnidadeRaiz'] ?: "1";
     $this->nivelAcessoService = new NivelAcessoService();
   }
+
+  private function loadingTenantConfigurationMiddleware($tenantId): void
+  {
+    if(is_null($tenantId)) return;
+    $tenantConfigurations = new TenantConfigurationsService();
+    $tenantConfigurations->handle($tenantId);
+  }
+
 
   // Preenche os campos de uma lotação para o novo Usuário, se sua lotação já vier definida pelo SIAPE.
   public function fillUsuarioWithSiape(&$usuario, &$lotacao)
@@ -500,6 +511,7 @@ class IntegracaoService extends ServiceBase
         ], fn ($o) => intval(substr($o, 0, strpos($o, 'unidade') - 1)) > 0)];
         // Unidades que foram removidas em integracao_unidades vão permanecer no sistema por questões de integridade.
       } catch (Throwable $e) {
+        dd($e);
         LogError::newError("Erro ao importar unidades", $e);
         $this->result['unidades']['Resultado'] = 'ERRO: ' . $e->getMessage();
       }
@@ -611,8 +623,11 @@ class IntegracaoService extends ServiceBase
            * Atualiza os dados pessoais de todos os servidores ATIVOS presentes na tabela USUARIOS.
            * ESTA ROTINA NÃO DEVE INSERIR NOVOS SERVIDORES.
            */
-          $unidadeExercicioRaizId = Unidade::where("codigo", $this->unidadeRaiz)->first()->id;
-
+          $unidadeExercicioRaiz = Unidade::where("codigo", $this->unidadeRaiz)->first();
+          if(!$unidadeExercicioRaiz){
+            throw new Exception("IntegracaoService: Durante atualização de lotações, unidade de exercício raiz $this->unidadeRaiz não encontrada.");
+          } 
+          $unidadeExercicioRaizId = $unidadeExercicioRaiz->id;
           if (!empty($atualizacoesDados)) {
             foreach ($atualizacoesDados as $linha) {
               // Log::channel('siape')->info("Atualizando dados do servidor: ", [json_encode($linha)]);
@@ -798,6 +813,7 @@ class IntegracaoService extends ServiceBase
         array_push($this->result['servidores']["Observações"], 'Na tabela Usuários constam agora ' .
           Usuario::count() . ' servidores!');
       } catch (Throwable $e) {
+        Log::channel('siape')->error("foi aqui", [$e]);
         LogError::newError("Erro ao importar servidores", $e);
         $this->result["servidores"]['Resultado'] = 'ERRO: ' . $e->getMessage() . ' - Linha: ' . $e->getLine();
       }
