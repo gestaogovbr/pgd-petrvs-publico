@@ -47,11 +47,11 @@ class IntegracaoService extends ServiceBase
   private $servidores_registrados_is = [];
   public $nivelAcessoService;
 
-  function __construct($config = null)
+  function __construct($config = null, string $tenantId = null)
   {
     parent::__construct();
     ini_set('max_execution_time', 1800); /* 30 minutos */
-    $this->loadingTenantConfigurationMiddleware($this->tenant_id);
+    $this->loadingTenantConfigurationMiddleware($tenantId);
     $this->integracao_config = $config ?: config('integracao');
     $this->validaCertificado = $this->integracao_config['validaCertificado'];
     $this->useLocalFiles = $this->integracao_config['useLocalFiles'];
@@ -62,19 +62,11 @@ class IntegracaoService extends ServiceBase
     $this->nivelAcessoService = new NivelAcessoService();
   }
 
-  private function loadingTenantConfigurationMiddleware(string $tenantId): void
+  private function loadingTenantConfigurationMiddleware($tenantId): void
   {
-             $request = Request::create('/', 'GET', []);
-
-             $request->headers->set('X-ENTIDADE', 'MGI');
-     
-             $middleware = app(TenantConfigurations::class);
-     
-             $next = function ($request) {
-                 return $request;
-             };
-     
-              $middleware->handle($request, $next);
+    if(is_null($tenantId)) return;
+    $tenantConfigurations = new TenantConfigurationsService();
+    $tenantConfigurations->handle($tenantId);
   }
 
 

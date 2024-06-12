@@ -21,11 +21,9 @@ class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule
     protected $usuario_id;
     protected $request;
 
-    public function __construct($usuario_id = null)
+    public function __construct(private readonly ?string $tenantId = null)
     {
-        Log::info("Job SincronizarPetrvs __construct ");
-        $this->data = [];
-        $this->usuario_id = $usuario_id ?: '08246b0c-e5ff-11ee-a54a-0242ac130002'; // Usuário padrão, se não for fornecido
+        Log::info("Job SincronizarPetrvs __construct :". $tenantId);
     }
 
     public static function getDescricao(): string
@@ -36,6 +34,7 @@ class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule
     public function handle(IntegracaoService $integracaoService)
     {
         try {
+            $integracaoService = new IntegracaoService([], $this->tenantId);
             Log::info("Job SincronizarPetrvs START ");
             $entidades = Entidade::all();
             $inputs = [

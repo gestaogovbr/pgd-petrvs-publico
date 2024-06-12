@@ -4,10 +4,9 @@ namespace App\Jobs;
 
 use Exception;
 use App\Exceptions\LogError;
-use App\Http\Middleware\TenantConfigurations;
 use App\Models\JobSchedule;
+use App\Services\TenantConfigurationsService;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Request;
 
 class JobBase
 {
@@ -30,12 +29,10 @@ class JobBase
 
             $this->inicializeTenant();
             $this->loadingTenantConfigurationMiddleware($this->job->tenant_id);
-
             $jobClass = app($fullClassName);
-            $parameters = $this->job->parameters ? json_decode($this->job->parameters, true) : [];
-
-            dispatch(new $jobClass(...$parameters));
+            dispatch(new $jobClass($this->job->tenant_id));
         } catch (Exception $e) {
+            Log::error("Erro ao processar Job: '{$this->job->nome}' - Erro: " . $e->getMessage());
             LogError::newWarn("Erro ao processar Job: '{$this->job->nome}' - Erro: " . $e->getMessage());
             return false; 
         }
@@ -52,18 +49,8 @@ class JobBase
 
     private function loadingTenantConfigurationMiddleware(string $tenantId): void
     {
-               $request = Request::create('/', 'GET', []);
-
-               $request->headers->set('X-ENTIDADE', 'MGI');
-       
-               $middleware = app(TenantConfigurations::class);
-       
-               $next = function ($request) {
-                   return $request;
-               };
-       
-               $processedRequest = $middleware->handle($request, $next);
-
+        $tenantConfigurations = new TenantConfigurationsService();
+        $tenantConfigurations->handle($tenantId);
     }
 
     public function getJob(): JobSchedule
