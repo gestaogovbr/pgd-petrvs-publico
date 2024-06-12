@@ -99,6 +99,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_CTXT"],      
       ["codigo" => "MOD_PART"],
       ["codigo" => "MOD_PART_HAB"],
+      ["codigo" => "MOD_PART_DESAB"],
       ["codigo" => "MOD_PENT"],
       ["codigo" => "MOD_PENT_ARQ"],
       ["codigo" => "MOD_PENT_AVAL"],
