@@ -287,9 +287,9 @@ class IntegracaoService extends ServiceBase
     ob_start(); // Inicia o buffer de saída.
     ob_implicit_flush(true); // Libera a chamada explícita para o output buffer.
     ini_set('memory_limit', '-1');
-    ini_set('default_socket_timeout', 300); // 5 minutos.
+    ini_set('default_socket_timeout', 3000); // 5 minutos.
     set_time_limit(1800);
-    /** 
+    /**
       * @var IntegracaoService $self
       */
     $self = $this;
@@ -552,7 +552,7 @@ class IntegracaoService extends ServiceBase
         }
         $this->logSiape("Concluída a fase de obtenção dos dados dos servidores informados pelo SIAPE", [], Tipo::INFO);
         if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de obtenção dos dados dos servidores informados pelo SIAPE.....");
-        
+
         DB::transaction(function () use (
           &$servidores,
         ) {
@@ -569,7 +569,7 @@ class IntegracaoService extends ServiceBase
           $integracaoServidorProcessar->setServidores($servidores)->setEcho($this->echo)->setIntegracaoConfig($this->integracao_config)
           ->setResult($this->result);
           $integracaoServidorProcessar->processar();
-          
+
           $this->result = $integracaoServidorProcessar->getResult();
 
         });
@@ -581,37 +581,37 @@ class IntegracaoService extends ServiceBase
 
         // Seleciona todos os servidores que sofreram alteração nos seus dados pessoais ou atingiu critério quanto data_modificação.
         $atualizacoesDados = DB::select(
-          "SELECT 
-        u.id, 
-        isr.cpf AS cpf_servidor, 
-        u.nome AS nome_anterior, 
-        isr.nome AS nome_servidor, 
-        u.apelido AS apelido_anterior, 
-        isr.nomeguerra AS nome_guerra, 
-        u.email AS email_anterior, 
-        isr.emailfuncional, 
-        u.matricula AS matricula_anterior, 
-        isr.matriculasiape, 
-        u.telefone AS telefone_anterior, 
-        isr.telefone, 
-        isr.data_modificacao AS data_modificacao, 
-        u.data_modificacao AS data_modificacao_anterior, 
-        isr.data_nascimento, 
-        u.nome_jornada AS nome_jornada_antigo, 
-        isr.nome_jornada AS nome_jornada, 
-        u.cod_jornada AS cod_jornada_antigo, 
+          "SELECT
+        u.id,
+        isr.cpf AS cpf_servidor,
+        u.nome AS nome_anterior,
+        isr.nome AS nome_servidor,
+        u.apelido AS apelido_anterior,
+        isr.nomeguerra AS nome_guerra,
+        u.email AS email_anterior,
+        isr.emailfuncional,
+        u.matricula AS matricula_anterior,
+        isr.matriculasiape,
+        u.telefone AS telefone_anterior,
+        isr.telefone,
+        isr.data_modificacao AS data_modificacao,
+        u.data_modificacao AS data_modificacao_anterior,
+        isr.data_nascimento,
+        u.nome_jornada AS nome_jornada_antigo,
+        isr.nome_jornada AS nome_jornada,
+        u.cod_jornada AS cod_jornada_antigo,
         isr.cod_jornada AS cod_jornada
-    FROM 
-        integracao_servidores isr 
+    FROM
+        integracao_servidores isr
         LEFT JOIN usuarios u ON (isr.cpf = u.cpf)
-    WHERE 
-        isr.nome != u.nome OR 
-        isr.emailfuncional != u.email OR 
-        isr.matriculasiape != u.matricula OR 
-        isr.nomeguerra != u.apelido OR 
-        isr.telefone != u.telefone OR 
-        (isr.nome_jornada != u.nome_jornada OR isr.nome_jornada IS NOT NULL AND u.nome_jornada IS NULL) OR 
-        (isr.cod_jornada != u.cod_jornada OR isr.cod_jornada IS NOT NULL AND u.cod_jornada IS NULL) OR 
+    WHERE
+        isr.nome != u.nome OR
+        isr.emailfuncional != u.email OR
+        isr.matriculasiape != u.matricula OR
+        isr.nomeguerra != u.apelido OR
+        isr.telefone != u.telefone OR
+        (isr.nome_jornada != u.nome_jornada OR isr.nome_jornada IS NOT NULL AND u.nome_jornada IS NULL) OR
+        (isr.cod_jornada != u.cod_jornada OR isr.cod_jornada IS NOT NULL AND u.cod_jornada IS NULL) OR
         (isr.data_modificacao > u.data_modificacao OR isr.data_modificacao IS NOT NULL AND u.data_nascimento IS NULL )
         "
         );
@@ -656,14 +656,14 @@ class IntegracaoService extends ServiceBase
           $unidadeExercicioRaiz = Unidade::where("codigo", $this->unidadeRaiz)->first();
           if(!$unidadeExercicioRaiz){
             throw new Exception("IntegracaoService: Durante atualização de lotações, unidade de exercício raiz $this->unidadeRaiz não encontrada.");
-          } 
+          }
           $unidadeExercicioRaizId = $unidadeExercicioRaiz->id;
           if (!empty($atualizacoesDados)) {
             foreach ($atualizacoesDados as $linha) {
               Log::channel('siape')->info("Atualizando dados do servidor: ", [json_encode($linha)]);
 
               $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->cpf_servidor);
-              
+
               DB::update($sqlUpdateDados, [
                 'nome'          => $linha->nome_servidor,
                 'nomeguerra'    => $linha->nome_guerra,
@@ -1019,7 +1019,7 @@ class IntegracaoService extends ServiceBase
               if (empty($perfilAdministradorNegocial)) {
                 throw new ServerException("ValidateUsuario", "Perfil de administrador negocial não encontrado no banco de dados. Verificar configuração no painel SaaS.");
               }
-              
+
               // Atualiza nível nível de acesso para chefe caso servidor não seja Desenvolvedor ou Administrador Negocial.
               if ($perfilDesenvolvedorId != $queryChefe->perfil->id || $perfilAdministradorNegocial->id != $queryChefe->perfil->id) {
                 $values = [
@@ -1079,7 +1079,7 @@ class IntegracaoService extends ServiceBase
         ], fn ($o) => intval(substr($o, 0, strpos($o, 'gestor') - 1)) > 0)];
       } catch (Throwable $e) {
         DB::rollback();
-        $this->logSiape("Erro ao atualizar os gestores (titulares/substitutos)", throwableToArray($e), Tipo::ERROR);  
+        $this->logSiape("Erro ao atualizar os gestores (titulares/substitutos)", throwableToArray($e), Tipo::ERROR);
         LogError::newError("Erro ao atualizar os gestores (titulares/substitutos)", $e);
         $this->result["gestores"]['Resultado'] = 'ERRO: ' . $e->getMessage();
       }
