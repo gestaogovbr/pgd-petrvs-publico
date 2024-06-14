@@ -13,7 +13,7 @@ class RunSincronizarSiapeJob extends Command
 
     public function handle()
     {
-        $tenantId = null;
+        $tenantId = "MGI";
         $job = new SincronizarSiapeJob($tenantId);
 
         Bus::dispatch($job);
