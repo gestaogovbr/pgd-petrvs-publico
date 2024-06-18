@@ -13,17 +13,17 @@ class CreateOrgaoCentralExportacoesTable extends Migration
      */
     public function up()
     {
-        Schema::create('orgao_central_exportacoes', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-            $table->dateTime('data_exportacao')->comment("Data da exportação para o Órgão Central");
-            $table->enum('tipo', ['PLANO_TRABALHO', 'PLANO_ENTREGA'])->comment("Tipo de exportação realizada");
-            $table->json('parametros')->comment("Parâmetro utilizados na exportação");
-            $table->string('versao');
-            $table->json('corpo');
-            $table->json('retorno')->nullable();
-            $table->json('hashs')->nullable();
-        });
+        // Schema::create('orgao_central_exportacoes', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->timestamps();
+        //     $table->dateTime('data_exportacao')->comment("Data da exportação para o Órgão Central");
+        //     $table->enum('tipo', ['PLANO_TRABALHO', 'PLANO_ENTREGA'])->comment("Tipo de exportação realizada");
+        //     $table->json('parametros')->comment("Parâmetro utilizados na exportação");
+        //     $table->string('versao');
+        //     $table->json('corpo');
+        //     $table->json('retorno')->nullable();
+        //     $table->json('hashs')->nullable();
+        // });
     }
 
     /**
@@ -33,6 +33,6 @@ class CreateOrgaoCentralExportacoesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('orgao_central_exportacoes');
+        // Schema::dropIfExists('orgao_central_exportacoes');
     }
 }
