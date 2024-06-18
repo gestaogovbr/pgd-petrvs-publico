@@ -292,6 +292,10 @@ class UsuarioService extends ServiceBase
    */
   public function validateStore(&$data, $unidade, $action)
   {
+    if($action == ServiceBase::ACTION_EDIT){
+      if(!empty($data['matricula']) && strlen($data['matricula']) > 50)
+        throw new ServerException("ValidateUsuario","O campo de matrícula deve ter no máximo 50 caracteres");
+    }
     if ($action == ServiceBase::ACTION_INSERT) {
       if (empty($data["email"]))
         throw new Exception("O campo de e-mail é obrigatório");
