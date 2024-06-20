@@ -19,20 +19,15 @@ class PerfilSeeder extends Seeder
   {
     $perfilService = new PerfilService();
     $utilService = new UtilService();
-    // carrega os vetores perfis e developers, existentes em PerfilService
-    $dadosPerfis = array_map(fn ($perfil) => array_merge([$utilService->uuid($perfil[1])], $perfil), $perfilService->perfis);
-    $developers = $perfilService->developers;
-    foreach ($dadosPerfis as $registro) {
-      $perfil = Perfil::where('id', $registro[0])->first() ?? new Perfil();
-      $perfil->fill([
-        'id' => $registro[0],
-        'nivel' => $registro[1],
-        'nome' => $registro[2],
-        'descricao' => $registro[3]
-      ]);
-      $perfil->save();
+    
+    foreach ($perfilService->perfis as $registro) {
+      $novoPerfil = [
+        'id' => $utilService->uuid($registro[0]),
+        'nivel' => $registro[0],
+        'nome' => $registro[1],
+        'descricao' => $registro[2]
+      ];
+      Perfil::firstOrCreate(['nivel' => $registro[0]], $novoPerfil);
     }
-    // atribui o perfil de DESENVOLVEDOR a todos os Devs
-    Usuario::whereIn('cpf', array_map(fn ($d) => $d[0], $developers))->update(['perfil_id' => $utilService->uuid('Desenvolvedor')]);
   }
 }

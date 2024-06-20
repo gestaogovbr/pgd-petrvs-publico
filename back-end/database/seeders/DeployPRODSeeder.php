@@ -18,9 +18,11 @@ class DeployPRODSeeder extends Seeder
         CidadeSeeder::class,
         FeriadoSeeder::class,
         PerfilSeeder::class,
-        #TipoCapacidadeSeeder::class,
-        #CapacidadeSeeder::class,
-        FuncaoSeeder::class
+        TipoCapacidadeSeeder::class,
+        CapacidadeSeeder::class,
+        NomenclaturaSeeder::class,
+        TipoMotivoAfastamentoSeeder::class
+
     ]);
   }
 }
