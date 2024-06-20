@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Usuario;
 use App\Exceptions\LogError;
+use App\Exceptions\ServerException;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 abstract class ControllerBase extends Controller
@@ -329,8 +331,16 @@ tenancy()->initialize($tenant); */
                 'success' => true,
                 'rows' => [$result]
             ]);
-        } catch (Throwable $e) {
+        } 
+        catch (ServerException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArray($e);
+            unset($dataError['trace']);
+            unset($dataError['previous']);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 

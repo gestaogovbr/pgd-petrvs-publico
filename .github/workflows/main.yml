@@ -70,7 +70,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Build and Deploy DSV
         env:
-          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
+          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs-develop
           DOCKER_HUB_TAG: dsv
           SSH_USER: root
           SSH_HOST: 200.152.38.137
@@ -101,7 +101,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Build and Deploy HMG
         env:
-          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
+          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs-develop
           DOCKER_HUB_TAG: hmg
           SSH_USER: root
           SSH_HOST: 200.152.38.137
@@ -131,7 +131,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Build and Deploy TREINA
         env:
-          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
+          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs-develop
           DOCKER_HUB_TAG: treina
           SSH_USER: root
           SSH_HOST: 200.152.38.137

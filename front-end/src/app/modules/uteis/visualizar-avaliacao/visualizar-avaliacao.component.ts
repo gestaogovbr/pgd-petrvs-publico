@@ -33,9 +33,7 @@ export class VisualizarAvaliacaoComponent extends PageBase implements OnInit {
   }
 
   public async buscaConsolidacao(){
-    this.consolidacao = await this.consolidacaoDao.getById(this.urlParams!.get("consolidacaoId")!, this.joinConsolidacao);
-    console.log(this.consolidacao);
-    
+    this.consolidacao = await this.consolidacaoDao.getById(this.urlParams!.get("consolidacaoId")!, this.joinConsolidacao);   
   }
 
 }

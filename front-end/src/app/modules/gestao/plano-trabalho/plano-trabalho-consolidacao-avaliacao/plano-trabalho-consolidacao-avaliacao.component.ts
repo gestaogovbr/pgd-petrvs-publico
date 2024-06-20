@@ -34,6 +34,8 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public extra: any;
 
   public avaliacoes: Avaliacao[] = [];
+  public planos_trabalhos: PlanoTrabalho[] = [];
+  public programas: Programa[] = [];
   public avaliacao: Avaliacao = new Avaliacao();
   public consolidacaoId?: string[] = [];//public consolidacaoId?: PlanoTrabalhoConsolidacao[] = [];
   public joinAvaliacao: string[] = ["avaliador", "entregas_checklist", "tipo_avaliacao.notas"];
@@ -55,8 +57,9 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
       "planoTrabalho.unidade.unidadePai.gestor:id,unidade_id,usuario_id", 
       "planoTrabalho.unidade.gestoresSubstitutos:id,unidade_id,usuario_id", 
       "planoTrabalho.tipoModalidade:id,nome", 
-      "planoTrabalho.usuario:id,nome,apelido,foto_perfil,url_foto"//id,nome,apelido,url_foto,foto_perfil
+      "planoTrabalho.usuario:id,nome,apelido,foto_perfil,url_foto"
     ];
+
     this.groupBy = [
       { field: "plano_trabalho.unidade.sigla", label: this.lex.translate("Unidade") }, 
       { field: "plano_trabalho.unidade.id", label: "Unidade Id" }, 
@@ -103,14 +106,14 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public usuarioSeparator(separator: GridGroupSeparator) {
     let usuarioId = separator.group[3].value;
     separator.metadata = separator.metadata || {};
-    separator.metadata.usuario = separator.metadata.usuario || this.extra?.planos_trabalhos?.find((x: PlanoTrabalho) => x.usuario_id == usuarioId)?.usuario;
+    separator.metadata.usuario = separator.metadata.usuario || this.planos_trabalhos?.find((x: PlanoTrabalho) => x.usuario_id == usuarioId)?.usuario;
     return separator.metadata.usuario;
   }
 
   public unidadeSeparator(separator: GridGroupSeparator) {
     let unidadeId = separator.group[1].value;
     separator.metadata = separator.metadata || {};
-    separator.metadata.unidade = separator.metadata.unidade || this.extra?.planos_trabalhos?.find((x: PlanoTrabalho) => x.unidade_id == unidadeId)?.unidade;
+    separator.metadata.unidade = separator.metadata.unidade || this.planos_trabalhos?.find((x: PlanoTrabalho) => x.unidade_id == unidadeId)?.unidade;
     return separator.metadata.unidade;
   }
 
@@ -120,19 +123,22 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
 
   public onGridLoad(rows?: Base[]) {
     this.extra = (this.grid?.query || this.query!).extra;
-    let planosTrabalhos = (this.extra?.planos_trabalhos || []) as PlanoTrabalho[];
-    planosTrabalhos.forEach(p => {
-      let plano = p as PlanoTrabalho;
-      plano.programa = this.extra?.programas?.find((x: Programa) => x.id == plano.programa_id);
-    });
-    rows?.forEach(v => {
-      let consolidacao = v as PlanoTrabalhoConsolidacao;
-      consolidacao.plano_trabalho = this.extra?.planos_trabalhos?.find((x: PlanoTrabalho) => x.id == consolidacao.plano_trabalho_id);
-      if(consolidacao.avaliacao) consolidacao.avaliacao.tipo_avaliacao = this.extra?.tipos_avaliacoes?.find((x: TipoAvaliacao) => x.id == consolidacao.avaliacao!.tipo_avaliacao_id);
-    });
+    if(this.extra) {
+      this.planos_trabalhos = ((this.planos_trabalhos || []) as PlanoTrabalho[]).concat(this.extra?.planos_trabalhos || []);
+      this.programas = ((this.programas || []) as Programa[]).concat(this.extra?.programas || []);      
+      this.planos_trabalhos.forEach(p => {
+        let plano = p as PlanoTrabalho;
+        plano.programa = this.programas?.find((x: Programa) => x.id == plano.programa_id);
+      });
+      rows?.forEach(v => {
+        let consolidacao = v as PlanoTrabalhoConsolidacao;
+        consolidacao.plano_trabalho = this.planos_trabalhos?.find((x: PlanoTrabalho) => x.id == consolidacao.plano_trabalho_id);
+        if(consolidacao.avaliacao) consolidacao.avaliacao.tipo_avaliacao = this.extra?.tipos_avaliacoes?.find((x: TipoAvaliacao) => x.id == consolidacao.avaliacao!.tipo_avaliacao_id);
+      });
+    }
   }
 
-  public refreshConsolidacao(consolidacao: PlanoTrabalhoConsolidacao) {
+  public refreshConsolidacao(consolidacao: PlanoTrabalhoConsolidacao) {    
     (async () => {
       await this.grid!.query!.refreshId(consolidacao.id, this.extraJoin);
       this.grid!.refreshRows();
@@ -142,6 +148,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let consolidacao: PlanoTrabalhoConsolidacao = row as PlanoTrabalhoConsolidacao;
+    
     let programa: Programa = consolidacao.plano_trabalho!.programa!;
     let isAvaliador: boolean = false;
     const usuarioId = consolidacao.plano_trabalho!.usuario_id;
@@ -153,7 +160,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
     const usuarioPlanoEhGestorDelegado = unidade?.gestores_delegados.map((g: { usuario_id: any; }) => g.usuario_id).includes(usuarioId);
     const usuarioPlanoEhLotado = !usuarioPlanoEhGestor && !usuarioPlanoEhGestorSubstituto && !usuarioPlanoEhGestorDelegado;
     const temPermissaoAvaliar = this.auth.hasPermissionTo("MOD_PTR_CSLD_AVAL");
-    const usuarioLogadoEhGestorSuperior = this.unidadeService.isGestorUnidadeSuperior(consolidacao.plano_trabalho?.unidade!);
+    const usuarioLogadoEhGestorSuperior = consolidacao.plano_trabalho!.unidade ? this.unidadeService.isGestorUnidadeSuperior(consolidacao.plano_trabalho!.unidade) : false;
     if(usuarioPlanoEhGestor){
       isAvaliador = usuarioLogadoEhGestorSuperior
     } else if (usuarioPlanoEhGestorSubstituto){
@@ -229,6 +236,9 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public onGridLoadHistorico(rows?: Base[]) {
     this.extra = (this.grid?.query || this.query!).extra;
     let planosTrabalhos = (this.extra?.planos_trabalhos || []) as PlanoTrabalho[];
+
+
+
     planosTrabalhos.forEach(p => {
       let plano = p as PlanoTrabalho;
       plano.programa = this.extra?.programas?.find((x: Programa) => x.id == plano.programa_id);

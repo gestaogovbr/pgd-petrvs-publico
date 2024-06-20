@@ -10,7 +10,10 @@ use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
-    protected $commands = [];
+    protected $commands = [
+        \App\Console\Commands\ExecutaSiape::class,
+    ];
+    
     protected function commands()
     {
         $this->load(__DIR__.'/Commands');
