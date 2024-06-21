@@ -115,6 +115,7 @@ class PlanoTrabalhoService extends ServiceBase
   public function validateStore($data, $unidade, $action)
   {
     $usuario = Usuario::with("areasTrabalho")->find($data["usuario_id"]);
+    $programa = Programa::find($data["programa_id"]);
     $condicoes = $this->buscaCondicoes($data);
     /* Resumo da PTR:TABELA_1 para Inclusão e Alteração:
     Usuario do Plano          Usuario Logado
@@ -188,7 +189,9 @@ class PlanoTrabalhoService extends ServiceBase
       if (strtotime($dataFimVigencia) < strtotime($minFim)) {
         throw new ServerException("ValidatePlanoTrabalho", "Data final do plano é menor que a da última consolidação avaliada; ou com atividades.\n[ver RN_CSLD_2]");
       }
+      
     }
+    if(!$this->programaService->programaVigente($programa)) throw new ServerException("ValidatePlanoTrabalho", "O regramento não está vigente.");
   }
 
   public function repactuar($planoId, $forcarGeracaoTcr = false) {
