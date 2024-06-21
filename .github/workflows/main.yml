@@ -154,7 +154,7 @@ jobs:
         run: npm install
 
       - name: Run postbuild script
-        run: node /var/www/frontend/postbuild.js
+        run: node ./frontend/postbuild.js
 
       - name: Build and Deploy Teste
         env:
