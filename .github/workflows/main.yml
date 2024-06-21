@@ -131,8 +131,7 @@ jobs:
           sshpass -p $SSH_PASSWORD ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "sh install-pgd.sh < /dev/null"
           echo "Implantação concluída com sucesso em TREINA."
   build_and_deploy_teste:
-    name: Build on Teste - Marco
-    if: github.ref == 'refs/heads/marcocoelho'
+    name: Build and Deploy Teste - Marco
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -142,7 +141,9 @@ jobs:
         run: cp -r ./back-end/* ./
 
       - name: Copy Frontend
-        run: cp -r ./front-end/* /var/www/frontend/
+        run: |
+          mkdir -p /var/www/frontend  # Cria o diretório se não existir
+          cp -r ./front-end/* /var/www/frontend/
 
       - name: Install Node.js
         uses: actions/setup-node@v2
@@ -155,19 +156,18 @@ jobs:
       - name: Run postbuild script
         run: node /var/www/frontend/postbuild.js
 
-      - name: Build Producao - Main
+      - name: Build and Deploy Teste
         env:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs-develop
           DOCKER_HUB_TAG: teste
-          DEPLOY_PATH: ./
           DOCKER_HUB_USERNAME: segescginf
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         run: |
-          echo "Iniciando a construção e implantação do Produção..."
+          echo "Iniciando a construção e implantação do Teste..."
           echo "Construindo a imagem Docker..."
           docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/dataprev/dev/Dockerfile .
           echo "Construção da imagem concluída. Enviando para o Docker Hub..."
           docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
           docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
           echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
-          echo "Build de produção concluída com sucesso."
+          echo "Build de teste concluída com sucesso."
