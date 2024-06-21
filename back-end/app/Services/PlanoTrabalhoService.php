@@ -191,8 +191,7 @@ class PlanoTrabalhoService extends ServiceBase
       }
       
     }
-    $teas = $this->programaService->programaVigente($programa);
-      if(!$this->programaService->programaVigente($programa)) throw new ServerException("ValidatePlanoTrabalho", "O programa não está vigente.");
+    if(!$this->programaService->programaVigente($programa)) throw new ServerException("ValidatePlanoTrabalho", "O regramento não está vigente.");
   }
 
   public function repactuar($planoId, $forcarGeracaoTcr = false) {

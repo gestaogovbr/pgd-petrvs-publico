@@ -39,7 +39,7 @@ class ProgramaService extends ServiceBase
   }
 
   public function programaVigente($programa){
-    return $programa->data_inicio <= now() && $programa->data_fim >= now();
+    return $programa->data_fim >= now();
   }
 
   public function programaUnidadeSuperior($unidadeId)

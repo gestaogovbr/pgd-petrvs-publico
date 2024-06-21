@@ -12,7 +12,7 @@ import { ModalPage } from '../base/modal-page';
 import { DialogService } from 'src/app/services/dialog.service';
 import { DOCUMENT } from '@angular/common';
 import { environment } from 'src/environments/environment';
-
+import { BuildInfoService } from 'src/app/services/build.service';
 
 @Component({
   selector: 'app-login',
@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
   public login: FormGroup;
   public redirectTo?: FullRoute;
   public bc?: BroadcastChannel;
-
+  buildInfo: any;
   /* ModalPage interface */
   public modalRoute?: ActivatedRouteSnapshot;
   public modalInterface: boolean = true;
@@ -47,6 +47,7 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
     public googleApi: GoogleApiService,
     public dialog: DialogService,
     private ngZone: NgZone,
+    private buildInfoService: BuildInfoService,
     @Inject(DOCUMENT) private document: any
   ) {
     this.document.body.classList.add('login');
@@ -71,6 +72,9 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.buildInfoService.getBuildInfo().subscribe(data => {
+      this.buildInfo = data;
+    });
     this.titleSubscriber.next("Login Petrvs");
     this.route.queryParams.subscribe(params => {
       this.error = params['error'] ? params['error'] : "";
