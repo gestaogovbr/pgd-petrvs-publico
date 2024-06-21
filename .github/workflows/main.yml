@@ -3,13 +3,14 @@ name: CI/CD
 on:
   push:
     branches:
-      - main
+      - marcocoelho
       - dataprev_dsv
       - dataprev_hmg
       - dataprev_treina
       - dataprev_producao
   pull_request:
     branches:
+      - marcocoelho
       - dataprev_dsv
       - dataprev_hmg
       - dataprev_treina
@@ -23,29 +24,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Build Producao
-        env:
-          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
-          DOCKER_HUB_TAG: latest
-          DEPLOY_PATH: ./
-          DOCKER_HUB_USERNAME: segescginf
-          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
-        run: |
-          echo "Iniciando a construção e implantação do Produção..."
-          echo "Construindo a imagem Docker..."
-          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/dataprev/dev/Dockerfile .
-          echo "Construção da imagem concluída. Enviando para o Docker Hub..."
-          docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
-          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
-          echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
-          echo "Build de produção concluída com sucesso."
-  build_and_deploy_main:
-    name: Build on Producao - Main
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Build Producao - Main
         env:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
           DOCKER_HUB_TAG: latest
@@ -152,3 +130,44 @@ jobs:
           # Executando o script install-pgd.sh
           sshpass -p $SSH_PASSWORD ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "sh install-pgd.sh < /dev/null"
           echo "Implantação concluída com sucesso em TREINA."
+  build_and_deploy_teste:
+    name: Build on Teste - Marco
+    if: github.ref == 'refs/heads/marcocoelho'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Copy Backend
+        run: cp -r ./back-end/* ./
+
+      - name: Copy Frontend
+        run: cp -r ./front-end/* /var/www/frontend/
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run postbuild script
+        run: node /var/www/frontend/postbuild.js
+
+      - name: Build Producao - Main
+        env:
+          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs-develop
+          DOCKER_HUB_TAG: teste
+          DEPLOY_PATH: ./
+          DOCKER_HUB_USERNAME: segescginf
+          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        run: |
+          echo "Iniciando a construção e implantação do Produção..."
+          echo "Construindo a imagem Docker..."
+          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/dataprev/dev/Dockerfile .
+          echo "Construção da imagem concluída. Enviando para o Docker Hub..."
+          docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
+          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
+          echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
+          echo "Build de produção concluída com sucesso."
