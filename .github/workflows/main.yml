@@ -142,8 +142,8 @@ jobs:
 
       - name: Copy Frontend
         run: |
-          mkdir -p /var/www/frontend  # Cria o diretório se não existir
-          cp -r ./front-end/* /var/www/frontend/
+          sudo mkdir -p ./frontend  # Cria o diretório se não existir
+          cp -r ./front-end/* ./frontend/
 
       - name: Install Node.js
         uses: actions/setup-node@v2
