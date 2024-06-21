@@ -97,10 +97,13 @@
                 </div>
             </div>
         </div>
-        <div class="logos">            
-            <img src="../assets/images/logo_gov.png">
-        </div>
-    </div>
-    
+        <div class="logos">     
+            <div class="text-left mt-3 small text-muted" *ngIf="buildInfo">
+                <p class="m-0">Build Data: {{ buildInfo.build_date }}</p>
+                <p class="m-0">Build Número: {{ buildInfo.build_number }}</p>
+            </div>
 
+            <img src="../assets/images/logo_gov.png">
+        </div>        
+    </div>
 </div>
