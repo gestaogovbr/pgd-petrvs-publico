@@ -58,7 +58,7 @@ class TipoCapacidadeSeeder extends Seeder
         }
       } else {
         $capacidadePai = Capacidade::create([
-          'id' => $utilService->uuid($modulo['codigo']),
+          'id' => $utilService->uuid($modulo['codigo'] .$developerId),
           'perfil_id' => $developerId,
           'tipo_capacidade_id' => $tipoCapacidadePai->id
         ]);
@@ -85,7 +85,7 @@ class TipoCapacidadeSeeder extends Seeder
         } else {
           $capacidade = new Capacidade();
           $capacidade->fill([
-            'id' => $utilService->uuid($capacidadeFilha[0]),
+            'id' => $utilService->uuid($capacidadeFilha[0] .$developerId),
             'perfil_id' => $developerId,
             'tipo_capacidade_id' => $tipoCapacidadeFilha->id
           ]);

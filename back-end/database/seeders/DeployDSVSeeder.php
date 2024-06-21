@@ -17,19 +17,11 @@ class DeployDSVSeeder extends Seeder
     $this->call([
       CidadeSeeder::class,
       FeriadoSeeder::class,
+      PerfilSeeder::class,
       TipoCapacidadeSeeder::class,
       CapacidadeSeeder::class,
-      NomenclaturaSeeder::class
-      /* 
-      In24_2023Seeder::class,
-      TemplateSeeder::class,
-       */
-
-      /*
-      Após a execução das Seeds acima, executar a rotina de integração com o comando
-      http://localhost[:porta]/api/integracao?servidores=true&unidades=true&entidade=[ID da entidade]
-      ou sudo curl -G 'http://localhost/api/integracao' -d servidores=true -d unidades=true -d entidade=[ID da entidade]
-      */
+      NomenclaturaSeeder::class,
+      TipoMotivoAfastamentoSeeder::class
     ]);
   }
 }
