@@ -23,6 +23,26 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Copy Backend
+        run: cp -r ./back-end/* ./
+
+      - name: Copy Frontend
+        run: |
+          sudo mkdir -p ./frontend  # Cria o diretório se não existir
+          sudo cp -r ./front-end/* ./frontend/
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run postbuild script
+        run: node ./frontend/postbuild.js
+
       - name: Build Producao
         env:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
@@ -46,6 +66,26 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Copy Backend
+        run: cp -r ./back-end/* ./
+
+      - name: Copy Frontend
+        run: |
+          sudo mkdir -p ./frontend  # Cria o diretório se não existir
+          sudo cp -r ./front-end/* ./frontend/
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run postbuild script
+        run: node ./frontend/postbuild.js
+
       - name: Build and Deploy DSV
         env:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs-develop
@@ -77,6 +117,26 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Copy Backend
+        run: cp -r ./back-end/* ./
+
+      - name: Copy Frontend
+        run: |
+          sudo mkdir -p ./frontend  # Cria o diretório se não existir
+          sudo cp -r ./front-end/* ./frontend/
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run postbuild script
+        run: node ./frontend/postbuild.js
+
       - name: Build and Deploy HMG
         env:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs-develop
@@ -107,6 +167,26 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Copy Backend
+        run: cp -r ./back-end/* ./
+
+      - name: Copy Frontend
+        run: |
+          sudo mkdir -p ./frontend  # Cria o diretório se não existir
+          sudo cp -r ./front-end/* ./frontend/
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run postbuild script
+        run: node ./frontend/postbuild.js
+
       - name: Build and Deploy TREINA
         env:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs-develop
