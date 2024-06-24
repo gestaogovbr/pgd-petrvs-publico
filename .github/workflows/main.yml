@@ -212,6 +212,7 @@ jobs:
           echo "Implantação concluída com sucesso em TREINA."
   build_and_deploy_teste:
     name: Build and Deploy Teste - Marco
+    if: github.ref == 'refs/heads/marcocoelho'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
