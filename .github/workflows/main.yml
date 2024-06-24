@@ -79,6 +79,9 @@ jobs:
         working-directory: ./front-end
         run: npm install
 
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
       - name: Build Angular and Run Postbuild
         working-directory: ./front-end
         run: |
