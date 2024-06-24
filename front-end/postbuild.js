@@ -4,13 +4,13 @@ const path = require('path');
 console.log("POST-BUILD:");
 
 // Cria o angular.blade.php e edita o app.json para colocar os arquivos com hash do build angular
-const indexHtmlPath = path.resolve(__dirname, '../back-end/public/index.html');
+const indexHtmlPath = path.resolve(__dirname, '../back-end/public/pages/index.html');
 const appJsonPath = path.resolve(__dirname, '../back-end/public/app.json');
 
 if (fs.existsSync(indexHtmlPath)) {
   try {
     // Copia o arquivo index.html para a pasta pages
-    fs.copyFileSync(indexHtmlPath, '../back-end/public/pages/index.html');
+    //fs.copyFileSync(indexHtmlPath, '../back-end/public/pages/index.html');
 
     // Obtem lista de arquivos gerados no deploy
     let indexContent = fs.readFileSync(indexHtmlPath, { encoding: "utf8" });
