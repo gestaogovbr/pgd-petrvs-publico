@@ -69,22 +69,21 @@ jobs:
 
       - name: Copy Backend
         run: cp -r ./back-end/* ./
-
-      - name: Copy Frontend
-        run: |
-          sudo mkdir -p ./frontend  # Cria o diretório se não existir
-          sudo cp -r ./front-end/* ./frontend/
-
-      - name: Install Node.js
+  
+      - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '14'
 
       - name: Install dependencies
+        working-directory: ./front-end
         run: npm install
 
-      - name: Run postbuild script
-        run: node ./frontend/postbuild.js
+      - name: Build Angular and Run Postbuild
+        working-directory: ./front-end
+        run: |
+          ng build --configuration=production --output-path=../back-end/public
+          node ./postbuild.js
 
       - name: Build and Deploy DSV
         env:
@@ -98,16 +97,14 @@ jobs:
           DOCKER_HUB_USERNAME: segescginf
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         run: |
-          # Conteúdo do build_deploy_dsv.yml
           echo "Iniciando a construção e implantação do DSV..."
           echo "Construindo a imagem Docker..."
           docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/dataprev/dev/Dockerfile .
           echo "Construção da imagem concluída. Enviando para o Docker Hub..."
-          docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
+          echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
           docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
           echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
           sudo apt-get update -y && sudo apt-get install -y sshpass
-          # Executando o script install-pgd.sh
           sshpass -p $SSH_PASSWORD ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "cd /home/marcocoelho/ && sh install-pgd.sh < /dev/null"
           echo "Implantação concluída com sucesso em DSV."
   build_and_deploy_hmg:
