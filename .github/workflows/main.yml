@@ -24,24 +24,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Copy Backend
-        run: cp -r ./back-end/* ./
-
-      - name: Copy Frontend
-        run: |
-          sudo mkdir -p ./frontend  # Cria o diretório se não existir
-          sudo cp -r ./front-end/* ./frontend/
-
-      - name: Install Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '18'
 
       - name: Install dependencies
-        run: npm install
+        working-directory: ./front-end
+        run: npm install --legacy-peer-deps
 
-      - name: Run postbuild script
-        run: node ./frontend/postbuild.js
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
+      - name: Build Angular and Run Postbuild
+        working-directory: ./front-end
+        run: |
+          ng build --configuration=production --output-path=../back-end/public
+          node ./postbuild.js
 
       - name: Build Producao
         env:
@@ -115,24 +114,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Copy Backend
-        run: cp -r ./back-end/* ./
-
-      - name: Copy Frontend
-        run: |
-          sudo mkdir -p ./frontend  # Cria o diretório se não existir
-          sudo cp -r ./front-end/* ./frontend/
-
-      - name: Install Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '18'
 
       - name: Install dependencies
-        run: npm install
+        working-directory: ./front-end
+        run: npm install --legacy-peer-deps
 
-      - name: Run postbuild script
-        run: node ./frontend/postbuild.js
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
+      - name: Build Angular and Run Postbuild
+        working-directory: ./front-end
+        run: |
+          ng build --configuration=production --output-path=../back-end/public
+          node ./postbuild.js
 
       - name: Build and Deploy HMG
         env:
@@ -165,24 +163,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Copy Backend
-        run: cp -r ./back-end/* ./
-
-      - name: Copy Frontend
-        run: |
-          sudo mkdir -p ./frontend  # Cria o diretório se não existir
-          sudo cp -r ./front-end/* ./frontend/
-
-      - name: Install Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '18'
 
       - name: Install dependencies
-        run: npm install
+        working-directory: ./front-end
+        run: npm install --legacy-peer-deps
 
-      - name: Run postbuild script
-        run: node ./frontend/postbuild.js
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
+      - name: Build Angular and Run Postbuild
+        working-directory: ./front-end
+        run: |
+          ng build --configuration=production --output-path=../back-end/public
+          node ./postbuild.js
 
       - name: Build and Deploy TREINA
         env:
@@ -215,24 +212,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Copy Backend
-        run: cp -r ./back-end/* ./
-
-      - name: Copy Frontend
-        run: |
-          sudo mkdir -p ./frontend  # Cria o diretório se não existir
-          sudo cp -r ./front-end/* ./frontend/
-
-      - name: Install Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '18'
 
       - name: Install dependencies
-        run: npm install
+        working-directory: ./front-end
+        run: npm install --legacy-peer-deps
 
-      - name: Run postbuild script
-        run: node ./frontend/postbuild.js
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
+      - name: Build Angular and Run Postbuild
+        working-directory: ./front-end
+        run: |
+          ng build --configuration=production --output-path=../back-end/public
+          node ./postbuild.js
 
       - name: Build and Deploy Teste
         env:
