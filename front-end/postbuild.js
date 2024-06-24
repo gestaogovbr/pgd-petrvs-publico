@@ -4,13 +4,15 @@ const path = require('path');
 console.log("POST-BUILD:");
 
 // Cria o angular.blade.php e edita o app.json para colocar os arquivos com hash do build angular
-const indexHtmlPath = path.resolve(__dirname, '../back-end/public/pages/index.html');
+const indexHtmlPath = path.resolve(__dirname, '../back-end/public/index.html');
 const appJsonPath = path.resolve(__dirname, '../back-end/public/app.json');
+const angularBladePath = path.resolve(__dirname, '../back-end/resources/views/angular.blade.php');
+const pagesIndexHtmlPath = path.resolve(__dirname, '../back-end/public/pages/index.html');
 
 if (fs.existsSync(indexHtmlPath)) {
   try {
     // Copia o arquivo index.html para a pasta pages
-    //fs.copyFileSync(indexHtmlPath, '../back-end/public/pages/index.html');
+    fs.copyFileSync(indexHtmlPath, pagesIndexHtmlPath);
 
     // Obtem lista de arquivos gerados no deploy
     let indexContent = fs.readFileSync(indexHtmlPath, { encoding: "utf8" });
@@ -18,7 +20,7 @@ if (fs.existsSync(indexHtmlPath)) {
     indexContent = indexContent.replace('<base href="/">', '<base href="{{ $host }}">');
 
     // Extrai os nomes dos arquivos JavaScript usando expressão regular
-    const regex = /src="(.*\.js)"/gi;
+    const regex = /src="([^"]+\.js)"/gi;
     let match;
     while ((match = regex.exec(indexContent)) !== null) {
       angularFiles.push(match[1]);
@@ -33,8 +35,14 @@ if (fs.existsSync(indexHtmlPath)) {
       console.log("Não foi possível encontrar lista de arquivos buildados do Angular");
     }
 
+    // Verifica se angular.blade.php já existe e o remove
+    if (fs.existsSync(angularBladePath)) {
+      fs.unlinkSync(angularBladePath);
+      console.log("Arquivo angular.blade.php existente removido.");
+    }
+
     // Move o template modificado para carregar a aplicação no Laravel
-    fs.renameSync(indexHtmlPath, '../back-end/resources/views/angular.blade.php');
+    fs.renameSync(indexHtmlPath, angularBladePath);
     console.log("Arquivo index.html movido para angular.blade.php com sucesso.");
 
   } catch (error) {
