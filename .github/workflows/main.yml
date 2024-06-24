@@ -67,9 +67,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Copy Backend
-        run: cp -r ./back-end/* ./
-  
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
