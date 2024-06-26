@@ -5,7 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\Log;
 use Stancl\Tenancy\Database\Models\Domain;
 
-class TenantConfigurationsService 
+class TenantConfigurationsService
 {
 
     public function handle(string $tenantId = null, $domain = null): ?Domain
@@ -60,6 +60,10 @@ class TenantConfigurationsService
         config(['services.govbr.code_challenge'         => $settings['login_login_unico_code_challenge']        ?? env('LOGIN_UNICO_CODE_CHALLENGE_HASH')]);
         config(['services.govbr.code_challenge_method'  => $settings['login_login_unico_code_challenge_method'] ?? env('LOGIN_UNICO_CODE_CHALLENGE_METHOD')]);
         config(['services.govbr.environment'            => $settings['login_login_unico_environment']           ?? env('LOGIN_UNICO_ENV', 'staging')]);
+
+        #AZURE - MICROSOFT
+        config(['services.azure.client_secret'          => $settings['login_azure_secret']                ?? env('AZURE_CLIENT_SECRET')]);
+        config(['services.azure.client_id'              => $settings['login_azure_client_id']             ?? env('AZURE_CLIENT_ID')]);
 
         # SIAPE
         config(['integracao.tipo'                       => $settings['tipo_integracao']                         ?? env('INTEGRACAO_TIPO')]);

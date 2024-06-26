@@ -118,9 +118,9 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
       }
     })();
     if (window.location.href.includes('pgd.gestao.gov.br')) {
-      this.ambiente = "Novo ambiente Dataprev";
+      this.ambiente = "Ambiente Novo DATAPREV";
     } else {
-      this.ambiente = "Antigo ambiente"
+      this.ambiente = "Ambiente antigo"
     }
   }
 
