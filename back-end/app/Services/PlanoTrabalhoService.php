@@ -32,7 +32,7 @@ class PlanoTrabalhoService extends ServiceBase
    * Retorna todos os Planos de Trabalho de um determinado usuário, que ainda se encontram dentro da vigência
    *
    * @param   string  $usuario_id
-   * @return  Illuminate\Database\Eloquent\Collection      
+   * @return  Illuminate\Database\Eloquent\Collection
    */
   public function planosAtivos($usuario_id): Collection
   {
@@ -42,7 +42,7 @@ class PlanoTrabalhoService extends ServiceBase
 
   /**
    * Retorna um array com todos os Planos de Trabalho de um determinado Usuário, cuja vigência encontra-se dentro do período estabelecido.
-   * 
+   *
    * @param   string $data_inicial  Data inicial do período.
    * @param   string $data_final    Data final do período.
    * @param   string $usuario_id    O ID do Usuário.
@@ -142,7 +142,7 @@ class PlanoTrabalhoService extends ServiceBase
       throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho #" . $conflito->numero . " (" . UtilService::getDateTimeFormatted($conflito->data_inicio) . " a " . UtilService::getDateTimeFormatted($conflito->data_fim) . ") possui período conflitante para a mesma unidade/servidor (MOD_PTR_INTSC_DATA).\n[ver RN_PTR_AA]");
     }
     if ($action == ServiceBase::ACTION_INSERT) {
-      /*  
+      /*
       (RN_PTR_V) Condições para que um Plano de Trabalho possa ser criado:
         - o usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
           - o usuário logado precisa ser um participante do PGD, habilitado, ou atender aos critérios da TABELA_1; [RN_PTR_B]; e
@@ -156,7 +156,7 @@ class PlanoTrabalhoService extends ServiceBase
         throw new ServerException("ValidatePlanoTrabalho", "Participante do plano não é LOTADO ou COLABORADOR na unidade executora. (MOD_PTR_USERS_INCL)\n[ver RN_PTR_Y]");
       }
     } else if ($action == ServiceBase::ACTION_EDIT) {
-      /*  
+      /*
       (RN_PTR_M) Condições para que um Plano de Trabalho possa ser alterado:
       O usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado, nem estar no status CANCELADO), e:
         - estando com o status 'INCLUIDO' ou 'AGUARDANDO_ASSINATURA', o usuário logado precisa atender os critérios da ação Alterar da TABELA_1;
@@ -168,15 +168,15 @@ class PlanoTrabalhoService extends ServiceBase
       if (($condicoes['planoIncluido'] || $condicoes['planoAguardandoAssinatura']) && !$validoTabela1) throw new ServerException("ValidateUsuario", "Para alterar um plano de trabalho no status INCLUIDO ou AGUARDANDO_ASSINATURA, o usuário logado precisa atender os critérios da ação Alterar da [PTR:TABELA_1].\n[ver RN_PTR_M]");
       if ($condicoes['planoAtivo'] && (!$validoTabela1 || !$usuario->hasPermissionTo('MOD_PTR_EDT_ATV'))) throw new ServerException("ValidateUsuario", "Para alterar um plano de trabalho no status ATIVO, o usuário logado precisa atender os critérios da ação Alterar da TABELA_1 e possuir a capacidade específica (MOD_PTR_EDT_ATV).\n[ver RN_PTR_M]");
       $plano = PlanoTrabalho::find($data["id"]);
-      /*  
-      (RN_PTR_AD) Após criado um plano de trabalho, a sua unidade e programa não podem mais ser alterados. 
+      /*
+      (RN_PTR_AD) Após criado um plano de trabalho, a sua unidade e programa não podem mais ser alterados.
       (RN_PTR_AE) Após criado um plano de trabalho, o usuário do plano não poderá mais ser alterado.
       */
       if ($data["unidade_id"] != $plano->unidade_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar a sua Unidade.\n[ver RN_PTR_AD]");
       if ($data["programa_id"] != $plano->programa_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar o seu Programa.\n[ver RN_PTR_AD]");
       if ($data["usuario_id"] != $plano->usuario_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar o Usuário.\n[ver RN_PTR_AE]");
-      /* (RN_CSLD_2) 
-          O plano de trabalho somente poderá ser alterado: se a nova data de início não for superior a algum período já CONCLUIDO ou AVALIADO, ou até o limite da primeira atividade já lançados; 
+      /* (RN_CSLD_2)
+          O plano de trabalho somente poderá ser alterado: se a nova data de início não for superior a algum período já CONCLUIDO ou AVALIADO, ou até o limite da primeira atividade já lançados;
           e se a nova data de final não for inferior a algum período já CONCLUIDO ou AVALIADO, ou até o limite da última atividade já lançados;
       */
       $maxInicio = $this->dataInicialMaximaConsolidacao($plano, $data["data_fim"]);
@@ -189,7 +189,7 @@ class PlanoTrabalhoService extends ServiceBase
       if (strtotime($dataFimVigencia) < strtotime($minFim)) {
         throw new ServerException("ValidatePlanoTrabalho", "Data final do plano é menor que a da última consolidação avaliada; ou com atividades.\n[ver RN_CSLD_2]");
       }
-      
+
     }
     if(!$this->programaService->programaVigente($programa)) throw new ServerException("ValidatePlanoTrabalho", "O regramento não está vigente.");
   }
@@ -275,11 +275,11 @@ class PlanoTrabalhoService extends ServiceBase
       - Enquanto faltar assinatura no TCR, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar o TCR, o plano vai para o status 'ATIVO';
     */
     $status = $this->haAssinaturasFaltantes($documento->planoTrabalho) ? 'AGUARDANDO_ASSINATURA' : 'ATIVO';
-    $this->statusService->atualizaStatus($documento->planoTrabalho, $status, 'Registrada a assinatura do servidor: ' . $usuario->nome . ' - CPF ' . $usuario->cpf . '.');                        
+    $this->statusService->atualizaStatus($documento->planoTrabalho, $status, 'Registrada a assinatura do servidor: ' . $usuario->nome . ' - CPF ' . $usuario->cpf . '.');
   }
 
   public function checkAssinarTcr($documentoId) {
-    /*                 
+    /*
     (RN_PTR_O) Condições para que um Plano de Trabalho possa ser assinado:
     - estar no status INCLUIDO ou AGUARDANDO_ASSINATURA, e
         - o plano precisa possuir ao menos uma entrega, e
@@ -288,7 +288,7 @@ class PlanoTrabalhoService extends ServiceBase
     - Enquanto faltar assinatura no TCR, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar o TCR, o plano vai para o status 'ATIVO';
     */
     $condicoes = $this->buscaCondicoes(['id' => Documento::find($documentoId)->plano_trabalho_id]);
-    $condition1 = $condicoes["planoIncluido"]; 
+    $condition1 = $condicoes["planoIncluido"];
     $condition2 = $condicoes["planoAguardandoAssinatura"];
     $condition3 = $condicoes["assinaturaUsuarioExigida"];
     $condition4 = $condicoes["usuarioFaltaAssinar"];
@@ -359,7 +359,7 @@ class PlanoTrabalhoService extends ServiceBase
   /**
    * (RN_CSLD_1) Após criado ou alterado um plano de trabalho, os períodos de consolidação são automaticamente gerados ou recriados com base na periodicidade configurada no programa;
    * @param   string  $usuario_id
-   * @return  Illuminate\Database\Eloquent\Collection      
+   * @return  Illuminate\Database\Eloquent\Collection
    */
   public function atualizaConsolidacoes($plano)
   {
@@ -424,9 +424,9 @@ class PlanoTrabalhoService extends ServiceBase
     }
   }
 
-  /** 
+  /**
    * Retorna os planos de trabalho de um usuário (validando se ele tem acesso a esse plano)
-   * 
+   *
    * @param   string  $usuario_id  O ID do Usuário
    * @param   string  $arquivadas  Se o resultado deve incluir os planos arquivados
    * @return  array
@@ -440,20 +440,20 @@ class PlanoTrabalhoService extends ServiceBase
       "unidade.gestoresSubstitutos:id,unidade_id,usuario_id",
       "tipoModalidade:id,nome",
       "consolidacoes.avaliacao.tipoAvaliacao.notas",
-      "consolidacoes.avaliacoes", 
+      "consolidacoes.avaliacoes",
       "usuario:id,nome,apelido,url_foto"
     ])->where("usuario_id", $usuarioId)->orderBy('numero', 'desc');
     if (!$arquivados) $query->whereNull("data_arquivamento");
     if (!empty($planoTrabalhoId)) $query->where("id", $planoTrabalhoId);
-    $planos = $query->get()->all(); 
-    /* Adiciona metadados dos planos */ 
+    $planos = $query->get()->all();
+    /* Adiciona metadados dos planos */
     foreach ($planos as $planoTrabalho) {
       $gestoresUnidadeSuperior = $this->unidadeService->gestoresUnidadeSuperior($planoTrabalho->unidade_id);
       $logado = parent::loggedUser();
       $planoTrabalho->_metadata = [
         'gestorLogado' => $this->usuarioService->atribuicoesGestor($planoTrabalho->unidade_id),
         'gestorUnidadeSuperior' => [
-          'gestor' => $gestoresUnidadeSuperior["gestor"]?->id == $logado->id, 
+          'gestor' => $gestoresUnidadeSuperior["gestor"]?->id == $logado->id,
           'gestorSubstituto' => count(array_filter($gestoresUnidadeSuperior["gestoresSubstitutos"], fn ($value) => $value["id"] == $logado->id)) > 0,
           'gestorDelegado' => count(array_filter($gestoresUnidadeSuperior["gestoresDelegados"], fn ($value) => $value["id"] == $logado->id)) > 0
         ],
@@ -469,10 +469,10 @@ class PlanoTrabalhoService extends ServiceBase
     ];
   }
 
-  /** 
+  /**
    * Retorna um array com os dados de um Plano de Trabalho. Método criado para atender ao Relatório de Força de Trabalho - Servidor.
    * Os cálculos das horas levam em consideração sempre os tempos pactuados - uma alteração conceitual introduzida nos Relatórios de Força de Trabalho.
-   * 
+   *
    * @param   string  $plano_id       O ID do Plano de Trabalho.
    * @param   string  $inicioPeriodo  Data inicial do período de pesquisa.
    * @param   string  $fimPeriodo     Data final do período de pesquisa.
@@ -550,10 +550,10 @@ class PlanoTrabalhoService extends ServiceBase
     return $result;
   }
 
-  /** 
+  /**
    * Retorna um array com todas as atividades de um determinado Plano de Trabalho, cujas datas de distribuição ou de data_estipulada_entrega estejam
-   * dentro do período estabelecido. 
-   * 
+   * dentro do período estabelecido.
+   *
    * @param   Plano   $plano          Plano de Trabalho a ser pesquisado.
    * @param   string  $inicioPeriodo  Data inicial do período.
    * @param   string  $fimPeriodo     Data final do período.
@@ -568,10 +568,10 @@ class PlanoTrabalhoService extends ServiceBase
     return $result;
   }
 
-  /** 
+  /**
    * Retorna um array com todas as atividades de um determinado Plano de Trabalho, ainda não iniciadas pelo servidor, cujas datas de início ou de entrega estejam
-   * dentro do período estabelecido. Uma atividade é considerada não iniciada se o seu campo data_inicio é nulo. 
-   * 
+   * dentro do período estabelecido. Uma atividade é considerada não iniciada se o seu campo data_inicio é nulo.
+   *
    * @param   Plano   $plano          Plano de Trabalho a ser pesquisado.
    * @param   string  $inicioPeriodo  Data inicial do período.
    * @param   string  $fimPeriodo     Data final do período.
@@ -586,10 +586,10 @@ class PlanoTrabalhoService extends ServiceBase
     return $result;
   }
 
-  /** 
+  /**
    * Retorna um array com todas as atividades em andamento de um determinado Plano de Trabalho, cujas data de início ou data de entrega estejam
-   * dentro do período estabelecido. Uma atividade é considerada em andamento se o seu campo data_inicio não é nulo e seu campo data_entrega é nulo. 
-   * 
+   * dentro do período estabelecido. Uma atividade é considerada em andamento se o seu campo data_inicio não é nulo e seu campo data_entrega é nulo.
+   *
    * @param   Plano   $plano          Plano de Trabalho a ser pesquisado.
    * @param   string  $inicioPeriodo  Data inicial do período.
    * @param   string  $fimPeriodo     Data final do período.
@@ -605,9 +605,9 @@ class PlanoTrabalhoService extends ServiceBase
   }
 
   /**
-   * Define se um Plano de Trabalho é considerado um Plano de Gestão ou não, ou seja, se existe ou não um normativo definindo como Programa de Gestão 
+   * Define se um Plano de Trabalho é considerado um Plano de Gestão ou não, ou seja, se existe ou não um normativo definindo como Programa de Gestão
    * o Programa ao qual ele está vinculado.
-   * 
+   *
    * @param   Plano   $plano  O ID do Plano de Trabalho.
    * @return  bool
    */
@@ -654,7 +654,7 @@ class PlanoTrabalhoService extends ServiceBase
     foreach ($planoTrabalho->entregas as $entrega) {
         $atividades = $entrega->atividades->map(fn($x) => "#" . $x->numero)->toArray();
         if (count($atividades) > 0) return "Somente é possível cancelar plano de trabalho que não tenha atividade lançada. Atividade(s): " . implode(", ", $atividades);
-    } 
+    }
     foreach ($planoTrabalho->consolidacoes as $consolidacao) {
         if ($consolidacao->status != "INCLUIDO") return "Somente é possível cancelar plano de trabalho que não tenha período de consolidação concluído.";
     }
@@ -664,16 +664,19 @@ class PlanoTrabalhoService extends ServiceBase
   public function proxyRows($rows)
   {
     foreach ($rows as $row) {
-      $unidade = Unidade::find($row->unidade_id);
-      $row->_metadata = [
-        'assinaturasExigidas' => $this->assinaturasExigidas($row),
-        'jaAssinaramTCR' => $this->jaAssinaramTCR($row->id),
-        'podeCancelar' => empty($this->validateCancelamento($row->id)),
-        'atribuicoesParticipante' => $this->usuarioService->atribuicoesGestor($row->unidade_id, $row->usuario_id),
-        'atribuicoesLogado' => $this->usuarioService->atribuicoesGestor($row->unidade_id),
-        'atribuicoesLogadoUnidadeSuperior' => empty($unidade->unidade_pai_id) ? ["gestor" => false, "gestorSubstituto" => false, "gestorDelegado" => false] : $this->usuarioService->atribuicoesGestor($unidade->unidade_pai_id),
-        'usuarioEhParticipanteHabilitado' => $this->usuario->isParticipanteHabilitado(null, $row->programa_id)
-      ];
+        if (!$row->unidade->unidade_pai_id) {
+            $unidade = Unidade::find($row->unidade_id);
+            $row->unidade->unidade_pai_id = $unidade->unidade_pai_id;
+        }
+        $row->_metadata = [
+            'assinaturasExigidas' => $this->assinaturasExigidas($row),
+            'jaAssinaramTCR' => $this->jaAssinaramTCR($row->id),
+            'podeCancelar' => empty($this->validateCancelamento($row->id)),
+            'atribuicoesParticipante' => $this->usuarioService->atribuicoesGestor($row->unidade_id, $row->usuario_id),
+            'atribuicoesLogado' => $this->usuarioService->atribuicoesGestor($row->unidade_id),
+            'atribuicoesLogadoUnidadeSuperior' => empty($row->unidade->unidade_pai_id) ? ["gestor" => false, "gestorSubstituto" => false, "gestorDelegado" => false] : $this->usuarioService->atribuicoesGestor($row->unidade->unidade_pai_id),
+            'usuarioEhParticipanteHabilitado' => $this->usuario->isParticipanteHabilitado(null, $row->programa_id)
+        ];
     }
     return $rows;
   }
@@ -681,7 +684,7 @@ class PlanoTrabalhoService extends ServiceBase
   /**
    * Retorna um array com várias informações sobre o plano recebido como parâmetro que serão auxiliares na definição das permissões para as diversas operações possíveis com um Plano de Trabalho.
    * Se o plano recebido como parâmetro possuir ID, as informações devolvidas serão baseadas nos dados armazenados no banco. Caso contrário, as informações devolvidas serão baseadas nos dados
-   * recebidos na chamada do método. 
+   * recebidos na chamada do método.
    * @param array $entity     Um array com os dados de um plano já existente ou que esteja sendo criado.
    * @return array
    */
@@ -736,7 +739,7 @@ class PlanoTrabalhoService extends ServiceBase
   /**
    * Informa se o plano de trabalho recebido como parâmetro é um plano válido.
    * Um Plano de Trabalho é válido se não foi deletado, nem arquivado e não está no status de cancelado.
-   * @param array $planoTrabalho  
+   * @param array $planoTrabalho
    */
   public function isPlanoTrabalhoValido($plano): bool
   {
@@ -748,7 +751,7 @@ class PlanoTrabalhoService extends ServiceBase
    * Informa o status do plano de trabalho recebido como parâmetro.
    * O Plano de Trabalho precisa ser VÁLIDO.
    * @param string $status
-   * @param array $planoTrabalho  
+   * @param array $planoTrabalho
    */
   public function isPlano($status, $plano): bool
   {
@@ -797,7 +800,7 @@ class PlanoTrabalhoService extends ServiceBase
       DB::beginTransaction();
       /*
       (RN_PTR_Q) ...
-      - Após o cancelamento da assinatura do usuário logado, se existir assinatura(s) de outro(s) usuário(s), o plano permanece no status 'AGUARDANDO_ASSINATURA'. 
+      - Após o cancelamento da assinatura do usuário logado, se existir assinatura(s) de outro(s) usuário(s), o plano permanece no status 'AGUARDANDO_ASSINATURA'.
         Caso contrário, retrocessará para o status 'INCLUIDO';
       */
       $planoTrabalho = PlanoTrabalho::find($data["id"]);
@@ -877,11 +880,11 @@ class PlanoTrabalhoService extends ServiceBase
     return true;
   }
 
-  /** 
+  /**
    *  Recebe um Plano de Trabalho (novo ou não) e retorna um array com as assinaturas exigidas no TCR pelo seu Programa de Gestão, no seguinte formato:
-   *  [ "participante" => [id], "gestores_unidade_executora" => [...ids], "gestores_unidade_lotacao" => [...ids], "gestores_entidade" => [...ids] ]. 
+   *  [ "participante" => [id], "gestores_unidade_executora" => [...ids], "gestores_unidade_lotacao" => [...ids], "gestores_entidade" => [...ids] ].
    *  Os gestores são calculados segundo a tabela [PTR:TABELA_3]
-   *  Os campos "programa_id", "usuario_id" e "unidade_id" são obrigatórios no Plano de Trabalho.  
+   *  Os campos "programa_id", "usuario_id" e "unidade_id" são obrigatórios no Plano de Trabalho.
    */
   public function assinaturasExigidas($planoTrabalho): array
   {
@@ -897,10 +900,10 @@ class PlanoTrabalhoService extends ServiceBase
     gestor imediato  |               |                  |                | CFº+,CSº+     | CFº+,CSº+,CFº,CSº- | CFº,CSº        | CFº,CSº
     */
     $ids = [
-      "participante" => [], 
-      "gestores_unidade_executora" => [], 
-      "gestores_unidade_lotacao" => [], 
-      "gestores_entidade" => [], 
+      "participante" => [],
+      "gestores_unidade_executora" => [],
+      "gestores_unidade_lotacao" => [],
+      "gestores_entidade" => [],
       "erros" => []
     ];
     $keys = [$planoTrabalho["programa_id"], $planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]];
@@ -943,8 +946,8 @@ class PlanoTrabalhoService extends ServiceBase
     return $ids;
   }
 
-  /** 
-   *  Recebe um Plano de Trabalho (novo ou não) e retorna um booleano informando se o seu Programa de Gestão exige alguma assinatura no TCR, 
+  /**
+   *  Recebe um Plano de Trabalho (novo ou não) e retorna um booleano informando se o seu Programa de Gestão exige alguma assinatura no TCR,
    *  seja ela do participante ou de algum gestor. Os campos "programa_id", "usuario_id" e "unidade_id" são obrigatórios no Plano de Trabalho.
    */
   public function haAssinaturasExigidas($planoTrabalho): bool
@@ -955,7 +958,7 @@ class PlanoTrabalhoService extends ServiceBase
 
   /** Recebe um Plano de Trabalho (novo ou não) e retorna um array com as assinaturas que ainda faltam no TCR, em comparação com as exigidas pelo seu Programa de Gestão, no seguinte formato:
    *  [ "participante" => [id], "gestores_unidade_executora" => [...ids], "gestores_unidade_lotacao" => [...ids], "gestores_entidade" => [...ids] ]. Quando um dos gestores de uma Unidade
-   *  (titular, substituto ou delegado) assina o TCR, a exigência de assinatura para essa Unidade é satisfeita. 
+   *  (titular, substituto ou delegado) assina o TCR, a exigência de assinatura para essa Unidade é satisfeita.
    *  Os campos "programa_id", "usuario_id" e "unidade_id" são obrigatórios no Plano de Trabalho.
    */
   public function assinaturasFaltantes($planoTrabalho): array
@@ -971,18 +974,18 @@ class PlanoTrabalhoService extends ServiceBase
     ];
   }
 
-  /** 
+  /**
    *  Recebe um Plano de Trabalho (novo ou não) e retorna um booleano informando se ainda falta alguma assinatura no TCR, em comparação com as assinaturas exigidas pelo seu Programa de Gestão,
    *  seja ela do participante ou de algum gestor. Quando um dos gestores de uma Unidade (titular, substituto ou delegado) assina o TCR, a exigência de assinatura para essa Unidade é satisfeita.
    *  Os campos "programa_id", "usuario_id" e "unidade_id" são obrigatórios no Plano de Trabalho.
-   */  
+   */
   public function haAssinaturasFaltantes($planoTrabalho): bool
   {
     $faltantes = $this->assinaturasFaltantes($planoTrabalho);
     return !empty($faltantes["participante"]) || !empty($faltantes["gestores_unidade_executora"]) || !empty($faltantes["gestores_unidade_lotacao"]) || !empty($faltantes["gestores_entidade"]);
   }
 
-  /** 
+  /**
    *  Recebe o ID de um usuário e um Plano de Trabalho (novo ou não), e retorna um booleano informando se esse usuário ainda falta assinar o TCR.
    *  Se o ID do usuário não for fornecido, o ID do usuário logado será utilizado. Se o usuário for um dos gestores da Unidade, será retornado FALSE
    *  se qualquer um dos demais gestores já tiver assinado o TCR. Os campos "programa_id", "usuario_id" e "unidade_id" são obrigatórios no Plano de Trabalho.
@@ -994,7 +997,7 @@ class PlanoTrabalhoService extends ServiceBase
     return in_array($idUsuario, [...$assinaturasFaltantes["participante"], ...$assinaturasFaltantes["gestores_unidade_executora"], ...$assinaturasFaltantes["gestores_unidade_lotacao"], ...$assinaturasFaltantes["gestores_entidade"]]);
   }
 
-  /** 
+  /**
    *  Recebe o ID de um usuário e um Plano de Trabalho (novo ou não), e retorna um booleano informando se a assinatura desse usuário no TCR é exigida pelo Programa de Gestão.
    *  Se o ID do usuário não for fornecido, o ID do usuário logado será utilizado. Os campos "programa_id", "usuario_id" e "unidade_id" são obrigatórios no Plano de Trabalho.
    */
@@ -1005,7 +1008,7 @@ class PlanoTrabalhoService extends ServiceBase
     return in_array($idUsuario, [...$exigidas["participante"], ...$exigidas["gestores_unidade_executora"], ...$exigidas["gestores_unidade_lotacao"], ...$exigidas["gestores_entidade"]]);
   }
 
-  /** 
+  /**
    *  Recebe um Plano de Trabalho (novo ou não) e retorna um booleano informando se alguém já assinou o TCR, dentre as assinaturas exigidas pelo seu Programa de Gestão.
    *  Os campos "programa_id", "usuario_id" e "unidade_id" são obrigatórios no Plano de Trabalho.
    */
