@@ -2,9 +2,10 @@
 
 namespace App\Exceptions;
 
+use App\Exceptions\Contracts\IBaseException;
 use Exception;
 
-class ServerException extends Exception
+class ServerException extends Exception implements IBaseException
 {
     private $exceptions = [
         "Api_Service_Invalid_Token" => "Token de autenticação inválido",

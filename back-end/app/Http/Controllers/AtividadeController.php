@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Contracts\IBaseException;
 use App\Services\AtividadeService;
 use App\Services\CalendarioService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class AtividadeController extends ControllerBase
@@ -40,8 +42,13 @@ class AtividadeController extends ControllerBase
                 'success' => true,
                 'date' => $calendario->prazo($data["inicio_data"], $data["horas"], $data["carga_horaria"], $data["unidade_id"])
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -54,8 +61,13 @@ class AtividadeController extends ControllerBase
                 'success' => true,
                 'iniciadas' => $this->service->iniciadas($data["usuario_id"])
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -90,8 +102,13 @@ class AtividadeController extends ControllerBase
             return response()->json([
                 'success' => $this->service->iniciar($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -104,8 +121,13 @@ class AtividadeController extends ControllerBase
             return response()->json([
                 'success' => $this->service->cancelarInicio($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -127,8 +149,13 @@ class AtividadeController extends ControllerBase
             return response()->json([
                 'success' => $this->service->concluir($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -141,8 +168,13 @@ class AtividadeController extends ControllerBase
             return response()->json([
                 'success' => $this->service->cancelarConclusao($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -194,8 +226,13 @@ class AtividadeController extends ControllerBase
             return response()->json([
                 'success' => $this->service->pausar($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -209,8 +246,13 @@ class AtividadeController extends ControllerBase
             return response()->json([
                 'success' => $this->service->reiniciar($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -224,8 +266,13 @@ class AtividadeController extends ControllerBase
             return response()->json([
                 'success' => $this->service->prorrogar($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -239,8 +286,13 @@ class AtividadeController extends ControllerBase
             return response()->json([
                 'success' => $this->service->arquivar($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -250,8 +302,13 @@ class AtividadeController extends ControllerBase
                 'atividade_id' => ['required']
             ]);
             return response()->json(['success' => true, 'hierarquia' => $this->service->hierarquia($atividade_id)]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 

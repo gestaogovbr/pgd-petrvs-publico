@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\LogError;
+use App\Exceptions\NotFoundException;
 use App\Models\ModelBase;
 use DateTime;
 use DateTimeZone;
@@ -64,7 +65,7 @@ class UnidadeService extends ServiceBase
     DB::beginTransaction();
     try {
       $unidade = Unidade::find($id);
-      if (empty($unidade)) throw new Exception("Unidade não encontrada");
+      if (empty($unidade)) throw new NotFoundException("Unidade não encontrada");
       $unidade->data_inativacao = $inativo ? date("Y-m-d H:i:s") : null;
       $unidade->save();
       DB::commit();

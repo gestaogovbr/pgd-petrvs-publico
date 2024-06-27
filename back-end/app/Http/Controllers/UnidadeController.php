@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Contracts\IBaseException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class UnidadeController extends ControllerBase
@@ -38,9 +40,14 @@ class UnidadeController extends ControllerBase
         'success' => true,
         'unidades' => $this->service->hierarquia($unidadeId)
       ]);
-    } catch (Throwable $e) {
+    }  catch (IBaseException $e) {
       return response()->json(['error' => $e->getMessage()]);
-    }
+  }
+  catch (Throwable $e) {
+      $dataError = throwableToArrayLog($e);
+      Log::error($dataError);
+      return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+  }
   }
 
   public function filhas(Request $request)
@@ -53,9 +60,14 @@ class UnidadeController extends ControllerBase
         'success' => true,
         'unidades' => $this->service->filhas($data["unidade_id"])
       ]);
-    } catch (Throwable $e) {
+    }  catch (IBaseException $e) {
       return response()->json(['error' => $e->getMessage()]);
-    }
+  }
+  catch (Throwable $e) {
+      $dataError = throwableToArrayLog($e);
+      Log::error($dataError);
+      return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+  }
   }
 
 
@@ -69,9 +81,14 @@ class UnidadeController extends ControllerBase
         'success' => true,
         'linhaAscendente' => $this->service->linhaAscendente($data["unidade_id"])
       ]);
-    } catch (Throwable $e) {
+    }  catch (IBaseException $e) {
       return response()->json(['error' => $e->getMessage()]);
-    }
+  }
+  catch (Throwable $e) {
+      $dataError = throwableToArrayLog($e);
+      Log::error($dataError);
+      return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+  }
   }
 
   public function metadadosUnidade(Request $request)
@@ -84,9 +101,14 @@ class UnidadeController extends ControllerBase
         'success' => true,
         'metadadosUnidade' => $this->service->metadadosUnidade($data["plano_id"])
       ]);
-    } catch (Throwable $e) {
+    }  catch (IBaseException $e) {
       return response()->json(['error' => $e->getMessage()]);
-    }
+  }
+  catch (Throwable $e) {
+      $dataError = throwableToArrayLog($e);
+      Log::error($dataError);
+      return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+  }
   }
 
   public function lotados(Request $request)
@@ -99,9 +121,14 @@ class UnidadeController extends ControllerBase
         'success' => true,
         'usuarios' => $this->service->lotados($data["unidade_id"])
       ]);
-    } catch (Throwable $e) {
+    }  catch (IBaseException $e) {
       return response()->json(['error' => $e->getMessage()]);
-    }
+  }
+  catch (Throwable $e) {
+      $dataError = throwableToArrayLog($e);
+      Log::error($dataError);
+      return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+  }
   }
 
   public function metadadosArea(Request $request)
@@ -115,9 +142,14 @@ class UnidadeController extends ControllerBase
         'success' => true,
         'metadadosArea' => $this->service->metadadosArea($data["unidade_id"], $data["programa_id"])
       ]);
-    } catch (Throwable $e) {
+    }  catch (IBaseException $e) {
       return response()->json(['error' => $e->getMessage()]);
-    }
+  }
+  catch (Throwable $e) {
+      $dataError = throwableToArrayLog($e);
+      Log::error($dataError);
+      return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+  }
   }
 
   public function mesmaSigla(Request $request)
@@ -129,9 +161,14 @@ class UnidadeController extends ControllerBase
         'success' => true,
         'rows' => $this->service->mesmaSigla($this->getUnidade($request)->entidade_id)
       ]);
-    } catch (Throwable $e) {
+    }  catch (IBaseException $e) {
       return response()->json(['error' => $e->getMessage()]);
-    }
+  }
+  catch (Throwable $e) {
+      $dataError = throwableToArrayLog($e);
+      Log::error($dataError);
+      return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+  }
   }
 
   public function unificar(Request $request)
@@ -145,9 +182,14 @@ class UnidadeController extends ControllerBase
       return response()->json([
         'success' => $this->service->unificar($data["correspondencias"], $data["exclui"])
       ]);
-    } catch (Throwable $e) {
+    }  catch (IBaseException $e) {
       return response()->json(['error' => $e->getMessage()]);
-    }
+  }
+  catch (Throwable $e) {
+      $dataError = throwableToArrayLog($e);
+      Log::error($dataError);
+      return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+  }
   }
 
   public function inativar(Request $request)
@@ -161,9 +203,14 @@ class UnidadeController extends ControllerBase
       return response()->json([
         'success' => $this->service->inativar($data["id"], $data["inativo"])
       ]);
-    } catch (Throwable $e) {
+    }  catch (IBaseException $e) {
       return response()->json(['error' => $e->getMessage()]);
-    }
+  }
+  catch (Throwable $e) {
+      $dataError = throwableToArrayLog($e);
+      Log::error($dataError);
+      return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+  }
   }
 
   public function dashboards(Request $request)
@@ -179,9 +226,14 @@ class UnidadeController extends ControllerBase
         'dashboards' => $this->service->dashboards($data["idsUnidades"], $data["programa_id"], $data["unidadesSubordinadas"])
       ]);
       return $result;
-    } catch (Throwable $e) {
+    }  catch (IBaseException $e) {
       return response()->json(['error' => $e->getMessage()]);
-    }
+  }
+  catch (Throwable $e) {
+      $dataError = throwableToArrayLog($e);
+      Log::error($dataError);
+      return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+  }
   }
 
   public function lookupTodasUnidades(Request $request)
@@ -193,8 +245,13 @@ class UnidadeController extends ControllerBase
         'unidades' => $this->service->lookupTodasUnidades()
       ]);
       return $result;
-    } catch (Throwable $e) {
+    }  catch (IBaseException $e) {
       return response()->json(['error' => $e->getMessage()]);
-    }
+  }
+  catch (Throwable $e) {
+      $dataError = throwableToArrayLog($e);
+      Log::error($dataError);
+      return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+  }
   }
 }
