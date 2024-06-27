@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\ValidateException;
 use App\Models\Unidade;
 use App\Models\Feriado;
 use App\Services\ServiceBase;
@@ -449,7 +450,7 @@ class CalendarioService
 
     /* Verifica se existe $expediente quando ele é obrigatório, e cria uma exceção se ele não foi informado. Quando não for obrigatório, $expediente será nulo  */
     if (!$expediente && !$useCorridos)
-      throw new Exception('Expediente não informado');
+      throw new ValidateException('Expediente não informado');
     $expediente = $useCorridos ? null : $expediente;
 
     $result = new Efemerides([

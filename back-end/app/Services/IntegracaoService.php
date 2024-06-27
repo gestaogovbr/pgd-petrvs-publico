@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\IntegrationException;
 use Exception;
 use Throwable;
 use Carbon\Carbon;
@@ -655,7 +656,7 @@ class IntegracaoService extends ServiceBase
            */
           $unidadeExercicioRaiz = Unidade::where("codigo", $this->unidadeRaiz)->first();
           if(!$unidadeExercicioRaiz){
-            throw new Exception("IntegracaoService: Durante atualização de lotações, unidade de exercício raiz $this->unidadeRaiz não encontrada.");
+            throw new IntegrationException("IntegracaoService: Durante atualização de lotações, unidade de exercício raiz $this->unidadeRaiz não encontrada.");
           }
           $unidadeExercicioRaizId = $unidadeExercicioRaiz->id;
           if (!empty($atualizacoesDados)) {
@@ -1038,7 +1039,7 @@ class IntegracaoService extends ServiceBase
               }
             } else {
               $this->logSiape("Falha ao atualizar chefia", $chefia, Tipo::ERROR);
-              throw new Exception("Falha no array de funções do servidor");
+              throw new IntegrationException("Falha no array de funções do servidor");
             }
           } else {
             $chefiaSiape = null;

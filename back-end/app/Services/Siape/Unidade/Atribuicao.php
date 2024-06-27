@@ -2,6 +2,7 @@
 
 namespace App\Services\Siape\Unidade;
 
+use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
@@ -45,7 +46,7 @@ trait Atribuicao
                 $this->processaLotado($unidadeDestino, $usuario, $integranteNovoOuExistente);
                 break;
             default:
-                throw new Exception("Atribuição não encontrada!");
+                throw new NotFoundException("Atribuição não encontrada!");
         }
         return $this->alteracoes;
     }

@@ -13,6 +13,7 @@ use App\Services\RawWhere;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
 use Exception;
 use Throwable;
 
@@ -294,13 +295,13 @@ class UsuarioService extends ServiceBase
   {
     if($action == ServiceBase::ACTION_EDIT){
       if(!empty($data['matricula']) && strlen($data['matricula']) > 50)
-        throw new ServerException("ValidateUsuario","O campo de matrícula deve ter no máximo 50 caracteres");
+        throw new ValidateException("O campo de matrícula deve ter no máximo 50 caracteres", 422);
     }
     if ($action == ServiceBase::ACTION_INSERT) {
       if (empty($data["email"]))
-        throw new Exception("O campo de e-mail é obrigatório");
+         throw new ValidateException("O campo de e-mail é obrigatório", 422);
       if (empty($data["cpf"]))
-        throw new Exception("O campo de CPF é obrigatório");
+         throw new ValidateException("O campo de CPF é obrigatório", 422);
       $query1 = Usuario::where("id", "!=", $data["id"])->where(function ($query) use ($data) {
         return $query->where("cpf", UtilService::onlyNumbers($data["cpf"]))->orWhere("email", $data["email"]);
       });
@@ -321,7 +322,7 @@ class UsuarioService extends ServiceBase
           $alreadyHas->deleted_at = null;
           return $alreadyHas;
         } else {
-          throw new Exception("Já existe um usuário com mesmo e-mail ou CPF no sistema");
+          throw new ValidateException("Já existe um usuário com mesmo e-mail ou CPF no sistema", 422);
         }
       }
       $this->validarPerfil($data);

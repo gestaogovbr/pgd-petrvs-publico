@@ -21,7 +21,8 @@ class DeployPRODSeeder extends Seeder
       TipoCapacidadeSeeder::class,
       CapacidadeSeeder::class,
       NomenclaturaSeeder::class,
-      TipoMotivoAfastamentoSeeder::class
+      TipoMotivoAfastamentoSeeder::class,
+      In24_2023Seeder::class
     ]);
   }
 }

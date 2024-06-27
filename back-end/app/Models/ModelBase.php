@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\DataInvalidException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -25,7 +26,7 @@ class ModelBase extends Model
   {
     foreach ($values as $value) {
       if (!in_array($value, $validsValues)) {
-        throw new Exception("'$value' is not a valid value");
+        throw new DataInvalidException("'$value' is not a valid value");
       }
     }
     return json_encode($values);
