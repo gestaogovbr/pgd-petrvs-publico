@@ -5,7 +5,6 @@ namespace App\Models;
 use Throwable;
 use App\Casts\AsJson;
 use App\Models\Anexo;
-use ReflectionObject;
 use App\Models\Change;
 use App\Models\Perfil;
 use App\Models\Projeto;
@@ -21,7 +20,6 @@ use App\Models\Integracao;
 use App\Traits\LogChanges;
 use App\Models\Afastamento;
 use App\Models\Notificacao;
-use Illuminate\Support\Str;
 use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalho;
 use App\Models\ProjetoTarefa;
@@ -377,28 +375,5 @@ class Usuario extends Authenticatable
       }
     }
     return $result;
-  }
-
-  public function deleteCascade()
-  {
-    foreach ($this->delete_cascade as $relationName)
-    {
-      $relation = $this->{Str::camel($relationName)}();
-      $relationType = (new ReflectionObject($relation))->getShortName();
-
-      if (in_array($relationType, ["HasMany", "HasOne"]))
-      {
-        $relatedModel = $relation->getRelated();
-        $children = $relatedModel::where($relation->getForeignKeyName(), $this->id)->get();
-        foreach ($children as $child)
-        {
-            if (method_exists($child, 'deleteCascade')) {
-                $retorno = $child->deleteCascade();
-            }
-        }
-      }
-    }
-
-    $this->delete();
   }
 }
