@@ -378,27 +378,4 @@ class Usuario extends Authenticatable
     }
     return $result;
   }
-
-  public function deleteCascade()
-  {
-    foreach ($this->delete_cascade as $relationName)
-    {
-      $relation = $this->{Str::camel($relationName)}();
-      $relationType = (new ReflectionObject($relation))->getShortName();
-
-      if (in_array($relationType, ["HasMany", "HasOne"]))
-      {
-        $relatedModel = $relation->getRelated();
-        $children = $relatedModel::where($relation->getForeignKeyName(), $this->id)->get();
-        foreach ($children as $child)
-        {
-            if (method_exists($child, 'deleteCascade')) {
-                $retorno = $child->deleteCascade();
-            }
-        }
-      }
-    }
-
-    $this->delete();
-  }
 }
