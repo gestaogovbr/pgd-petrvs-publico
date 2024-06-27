@@ -36,7 +36,9 @@ export class PanelAdminsListComponent extends PageListBase<UserPanel, UsersPanel
 
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
- 
+    result.push(
+      { label: "Apagar dados", icon: 'bi bi-database-dash', color: 'danger', onClick: this.delete }
+    );
     return result;
   }
 
