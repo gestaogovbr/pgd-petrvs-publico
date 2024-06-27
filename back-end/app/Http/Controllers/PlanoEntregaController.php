@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Contracts\IBaseException;
 use Illuminate\Http\Request;
 use App\Models\PlanoEntrega;
 use App\Services\UtilService;
@@ -9,6 +10,7 @@ use App\Services\UsuarioService;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 use App\Models\PlanoTrabalho;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class PlanoEntregaController extends ControllerBase
@@ -26,8 +28,13 @@ class PlanoEntregaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->arquivar($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -43,8 +50,13 @@ class PlanoEntregaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->avaliar($data, $unidade,$request)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -60,8 +72,13 @@ class PlanoEntregaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->cancelarAvaliacao($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -77,8 +94,13 @@ class PlanoEntregaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->cancelarConclusao($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -94,8 +116,13 @@ class PlanoEntregaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->cancelarHomologacao($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -112,8 +139,13 @@ class PlanoEntregaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->cancelarPlano($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
     
@@ -125,8 +157,13 @@ class PlanoEntregaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->validaPermissaoIncluir($data, $this->getUsuario($request))
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -431,8 +468,13 @@ class PlanoEntregaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->concluir($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -447,8 +489,13 @@ class PlanoEntregaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->homologar($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -464,8 +511,13 @@ class PlanoEntregaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->liberarHomologacao($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -481,8 +533,13 @@ class PlanoEntregaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->reativar($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -498,8 +555,13 @@ class PlanoEntregaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->retirarHomologacao($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -515,8 +577,13 @@ class PlanoEntregaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->suspender($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -530,8 +597,13 @@ class PlanoEntregaController extends ControllerBase
                 'success' => true,
                 'planos_trabalhos' => PlanoTrabalho::with(["usuario:id,nome", "unidade:id,sigla"])->whereIn('id', $this->service->planosImpactadosPorAlteracaoEntrega($data))
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 

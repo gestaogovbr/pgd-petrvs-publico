@@ -7,6 +7,7 @@ use DateTime;
 use App\Services\WhatsappService;
 use App\Mails\NotificacaoMail;
 use App\Exceptions\LogError;
+use App\Exceptions\NotFoundException;
 use App\Models\Notificacao;
 use App\Models\NotificacaoDestinatario;
 use App\Models\Usuario;
@@ -40,7 +41,7 @@ class NotificacaoService extends ServiceBase
             if(isset($usuario)) {
                 return $usuario;
             } else {
-                throw new Exception('Usuário não encontrado');
+                throw new NotFoundException('Usuário não encontrado');
             }
         } catch (\Throwable $e) {
             LogError::newError($e->getMessage(), $e, ["telefone" => $data["telefone"]]);

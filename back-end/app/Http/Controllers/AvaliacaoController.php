@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Contracts\IBaseException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
@@ -11,6 +12,7 @@ use App\Models\PlanoTrabalhoConsolidacao;
 use App\Services\UnidadeService;
 use App\Services\UsuarioService;
 use App\Services\UtilService;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class AvaliacaoController extends ControllerBase {
@@ -85,8 +87,13 @@ class AvaliacaoController extends ControllerBase {
             return response()->json([
                 'success' => $this->service->recorrer($data["id"], $data["recurso"])
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
@@ -99,8 +106,13 @@ class AvaliacaoController extends ControllerBase {
             return response()->json([
                 'success' => $this->service->cancelarAvaliacao($data["id"])
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
         }
     }
 
