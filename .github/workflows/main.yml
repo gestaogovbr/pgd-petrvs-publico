@@ -104,7 +104,7 @@ jobs:
           docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
           echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
           sudo apt-get update -y && sudo apt-get install -y sshpass
-          sshpass -p $SSH_PASSWORD ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "cd /home/marcocoelho/ && sh install-pgd.sh < /dev/null"
+          sshpass -p $SSH_PASSWORD ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "cd /home/marcocoelho/ && sh install-pgd.sh < /dev/null && docker exec -it petrvs_php_dsv bash -c 'chmod  777 -R /var/www/storage/logs/'"
           echo "Implantação concluída com sucesso em DSV."
   build_and_deploy_hmg:
     name: Build and Deploy on Dataprev HMG
@@ -230,18 +230,27 @@ jobs:
           ng build --configuration=production --output-path=../back-end/public
           node ./postbuild.js
 
-      - name: Build and Deploy Teste
+      - name: Build and Push Docker Images
         env:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs-develop
-          DOCKER_HUB_TAG: teste
+          DOCKER_HUB_TAG_LATEST: dsv
+          DOCKER_HUB_TAG_LATEST_NEW: 2.0.16
+          DOCKER_HUB_TAG_LATEST_OLD: 2.0.15
           DOCKER_HUB_USERNAME: segescginf
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         run: |
-          echo "Iniciando a construção e implantação do Teste..."
-          echo "Construindo a imagem Docker..."
-          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/dataprev/dev/Dockerfile .
-          echo "Construção da imagem concluída. Enviando para o Docker Hub..."
-          docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
-          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
-          echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
-          echo "Build de teste concluída com sucesso."
+          echo "Iniciando a construção e envio das imagens Docker..."
+          
+          # Constrói a nova imagem 'latest'
+          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST_NEW -f ./resources/dataprev/dev/Dockerfile .
+          
+          # Move a tag 'latest' anterior 
+          docker pull $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
+          docker tag $DOCKER_HUB_IMAGE:dsv $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST_OLD
+          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST_OLD
+          
+          # Atualiza a nova tag 'latest' 
+          docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST_NEW $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
+          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
+          
+          echo "Envio das imagens Docker concluído."
