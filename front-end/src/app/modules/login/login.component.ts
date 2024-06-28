@@ -117,10 +117,8 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
         this.auth.success(this.auth.usuario!, this.redirectTo);
       }
     })();
-    if (window.location.href.includes('pgd.gestao.gov.br')) {
-      this.ambiente = "Ambiente Novo DATAPREV";
-    } else {
-      this.ambiente = "Ambiente antigo"
+    if (window.location.href.includes('pgdpetrvs.gestao.gov.br')) {
+      this.ambiente = "Ambiente antigo";
     }
   }
 
