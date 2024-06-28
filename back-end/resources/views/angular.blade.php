@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Petrvs</title>
-  <base href="{{ $host }}">
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple_touch_icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_32x32.png">

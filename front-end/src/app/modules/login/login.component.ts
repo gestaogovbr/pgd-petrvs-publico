@@ -27,6 +27,7 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
   public redirectTo?: FullRoute;
   public bc?: BroadcastChannel;
   buildInfo: any;
+  ambiente: any;
   /* ModalPage interface */
   public modalRoute?: ActivatedRouteSnapshot;
   public modalInterface: boolean = true;
@@ -116,6 +117,9 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
         this.auth.success(this.auth.usuario!, this.redirectTo);
       }
     })();
+    if (window.location.href.includes('pgdpetrvs.gestao.gov.br')) {
+      this.ambiente = "Ambiente antigo";
+    }
   }
 
   public closeModalIfSuccess = (result: boolean) => {

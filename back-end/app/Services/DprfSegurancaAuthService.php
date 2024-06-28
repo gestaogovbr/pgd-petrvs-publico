@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use phpseclib\Crypt\RSA;
 use App\Exceptions\ServerException;
+use App\Exceptions\UnauthorizedException;
 use Exception;
 use Throwable;
 
@@ -133,7 +134,7 @@ class DprfSegurancaAuthService
             if($response->successful()) {
                 return $response->json();
             } else {
-                throw new Exception("Credenciais inválidas");
+                throw new UnauthorizedException("Credenciais inválidas");
             }
         } catch (Throwable $e) {
             return ['error' => $e->getMessage()];
@@ -153,10 +154,10 @@ class DprfSegurancaAuthService
             if(isset($result['chaveString'])) {
                 return $result['chaveString'];
             } else {
-                throw new Exception("Chave de certificado não encontrado");
+                throw new UnauthorizedException("Chave de certificado não encontrado");
             }
         } else {
-            throw new Exception("Credenciais inválidas");
+            throw new UnauthorizedException("Credenciais inválidas");
         }
     }
 
