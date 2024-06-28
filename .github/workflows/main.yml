@@ -46,8 +46,8 @@ jobs:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
           DOCKER_HUB_TAG_LATEST: latest
           DEPLOY_PATH: ./
-          DOCKER_HUB_TAG_LATEST_NEW: 2.0.16
-          DOCKER_HUB_TAG_LATEST_OLD: 2.0.15
+          $DOCKER_HUB_TAG_NEW: 2.0.16
+          $DOCKER_HUB_TAG_OLD: 2.0.15
           DOCKER_HUB_USERNAME: segescginf
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         run: |
@@ -259,8 +259,8 @@ jobs:
         env:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs-develop
           DOCKER_HUB_TAG_LATEST: dsv
-          DOCKER_HUB_TAG_LATEST_NEW: 2.0.16
-          DOCKER_HUB_TAG_LATEST_OLD: 2.0.15
+          $DOCKER_HUB_TAG_NEW: 2.0.16
+          $DOCKER_HUB_TAG_OLD: 2.0.15
           DOCKER_HUB_USERNAME: segescginf
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         run: |
