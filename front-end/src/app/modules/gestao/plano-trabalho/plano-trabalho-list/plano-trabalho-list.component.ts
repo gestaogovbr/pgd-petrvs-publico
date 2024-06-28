@@ -16,6 +16,7 @@ import {FullRoute} from "src/app/services/navigate.service";
 import {PlanoTrabalhoService} from "../plano-trabalho.service";
 import {DocumentoService} from "src/app/modules/uteis/documentos/documento.service";
 import {UtilService} from "src/app/services/util.service";
+import {QueryOptions} from "src/app/dao/query-options";
 import {UnidadeService} from "src/app/services/unidade.service";
 
 @Component({
@@ -106,19 +107,17 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			this.filterValidate
 		);
 		this.join = [
+			"unidade.entidade",
 			"unidade.gestor.usuario:id",
+			"usuario",
+			"programa.template_tcr",
 			"documento.assinaturas.usuario:id,nome,url_foto",
-            "documento.assinaturas:id,usuario_id,documento_id",
-            "documento:id,numero",
-			"tipo_modalidade:id,nome",
+			"tipo_modalidade",
 			"entregas.plano_entrega_entrega.entrega",
 			"entregas.plano_entrega_entrega.plano_entrega:id,unidade_id",
 			"entregas.plano_entrega_entrega.plano_entrega.unidade",
 			"entregas.entrega",
 			"entregas.reacoes.usuario:id,nome,apelido",
-            "unidade.entidade:id,sigla",
-            "unidade:id,sigla,entidade_id,unidade_pai_id",
-            "usuario:id,nome,matricula,url_foto",
 		];
 		this.temAtribuicaoChefia = this.auth.isGestorAlgumaAreaTrabalho(false);
 		this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
@@ -257,7 +256,6 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			this.BOTAO_REATIVAR,
 			this.BOTAO_SUSPENDER,
 		];
-		this.rowsLimit = 10;
 	}
 
 	ngOnInit(): void {
