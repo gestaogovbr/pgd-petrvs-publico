@@ -85,7 +85,7 @@ class TenantController extends ControllerBase {
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -105,7 +105,7 @@ class TenantController extends ControllerBase {
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -124,7 +124,7 @@ class TenantController extends ControllerBase {
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -141,7 +141,7 @@ class TenantController extends ControllerBase {
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -157,7 +157,7 @@ class TenantController extends ControllerBase {
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -174,7 +174,7 @@ class TenantController extends ControllerBase {
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -193,7 +193,7 @@ class TenantController extends ControllerBase {
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -212,7 +212,7 @@ class TenantController extends ControllerBase {
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -231,7 +231,7 @@ class TenantController extends ControllerBase {
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -250,7 +250,7 @@ class TenantController extends ControllerBase {
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -267,7 +267,7 @@ class TenantController extends ControllerBase {
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado ao tentar salvar o registro"]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 }
