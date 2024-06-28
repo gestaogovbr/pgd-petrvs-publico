@@ -129,7 +129,7 @@ jobs:
           docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
           echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
           sudo apt-get update -y && sudo apt-get install -y sshpass
-          sshpass -p $SSH_PASSWORD ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "cd /home/marcocoelho/ && sh install-pgd.sh < /dev/null && docker exec -it petrvs_php_dsv bash -c 'chmod  777 -R /var/www/storage/logs/'"
+          sshpass -p $SSH_PASSWORD ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "cd /home/marcocoelho/ && bash install-pgd.sh < /dev/null"
           echo "Implantação concluída com sucesso em DSV."
   build_and_deploy_hmg:
     name: Build and Deploy on Dataprev HMG
