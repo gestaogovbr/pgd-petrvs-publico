@@ -1034,7 +1034,7 @@ class PlanoTrabalhoService extends ServiceBase
     } else {
       $planoTrabalho = PlanoTrabalho::withTrashed()->find($plano_trabalho_id);
       $assinaturasExigidas = $this->assinaturasExigidas($planoTrabalho);
-      if ($planoTrabalho && $planoTrabalho->documento_id) {
+      if ($planoTrabalho && $planoTrabalho->documento_id && $planoTrabalho->documento) {
         $ids_assinaturas = $planoTrabalho->documento->assinaturas->map(fn ($a) => $a->usuario_id)->toArray();
         $result["participante"] = UtilService::intersecao($assinaturasExigidas["participante"], $ids_assinaturas);
         $result["gestores_unidade_executora"] = array_values(UtilService::intersecao($assinaturasExigidas["gestores_unidade_executora"], $ids_assinaturas));
