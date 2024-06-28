@@ -244,6 +244,9 @@ jobs:
           # Constrói a nova imagem 'latest'
           docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST_NEW -f ./resources/dataprev/dev/Dockerfile .
           
+          echo "Logando no Docker Hub..."
+          docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
+          
           # Move a tag 'latest' anterior 
           docker pull $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
           docker tag $DOCKER_HUB_IMAGE:dsv $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST_OLD
