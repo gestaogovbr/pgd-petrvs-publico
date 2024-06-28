@@ -45,11 +45,11 @@ jobs:
         env:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
           DOCKER_HUB_TAG_LATEST: latest
-          DEPLOY_PATH: ./
-          $DOCKER_HUB_TAG_NEW: 2.0.16
-          $DOCKER_HUB_TAG_OLD: 2.0.15
+          DOCKER_HUB_TAG_NEW: 2.0.16
+          DOCKER_HUB_TAG_OLD: 2.0.15
           DOCKER_HUB_USERNAME: segescginf
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          DEPLOY_PATH: ./
         run: |
           echo "Iniciando a construção e envio das imagens Docker..."
           
@@ -61,10 +61,10 @@ jobs:
             curl --silent -f -lSL "https://hub.docker.com/v2/repositories/$DOCKER_HUB_IMAGE/tags/$1/" > /dev/null
           }
           
-          # Puxa a imagem atual com a tag 'latest'
+          # Puxa a imagem atual com a tag DOCKER_HUB_TAG_LATEST
           docker pull $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
           
-          # Verifica se a tag DOCKER_HUB_TAG_LATEST_OLD já existe, e só reetiqueta se não existir
+          # Verifica se a tag $DOCKER_HUB_TAG_OLD já existe, e só reetiqueta se não existir
           if tag_exists $DOCKER_HUB_TAG_OLD; then
             echo "A tag $DOCKER_HUB_TAG_OLD já existe, não será reetiquetada."
           else
@@ -72,10 +72,10 @@ jobs:
             docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD
           fi
           
-          # Constrói a nova imagem com a tag '2.0.15'
+          # Constrói a nova imagem com a tag $DOCKER_HUB_TAG_NEW
           docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW -f ./resources/dataprev/dev/Dockerfile .
           
-          # Etiqueta a nova imagem como 'latest'
+          # Etiqueta a nova imagem como DOCKER_HUB_TAG_LATEST
           docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
           
           # Envia as novas tags para o Docker Hub
