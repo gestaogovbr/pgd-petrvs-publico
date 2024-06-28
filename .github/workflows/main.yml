@@ -41,23 +41,48 @@ jobs:
         run: |
           ng build --configuration=production --output-path=../back-end/public
           node ./postbuild.js
-
       - name: Build Producao
         env:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
-          DOCKER_HUB_TAG: latest
+          DOCKER_HUB_TAG_LATEST: latest
           DEPLOY_PATH: ./
+          DOCKER_HUB_TAG_LATEST_NEW: 2.0.16
+          DOCKER_HUB_TAG_LATEST_OLD: 2.0.15
           DOCKER_HUB_USERNAME: segescginf
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         run: |
-          echo "Iniciando a construção e implantação do Produção..."
-          echo "Construindo a imagem Docker..."
-          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/dataprev/dev/Dockerfile .
-          echo "Construção da imagem concluída. Enviando para o Docker Hub..."
-          docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
-          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
-          echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
-          echo "Build de produção concluída com sucesso."
+          echo "Iniciando a construção e envio das imagens Docker..."
+          
+          # Autentica no Docker Hub
+          echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+          
+          # Função para verificar se uma tag existe no Docker Hub
+          tag_exists() {
+            curl --silent -f -lSL "https://hub.docker.com/v2/repositories/$DOCKER_HUB_IMAGE/tags/$1/" > /dev/null
+          }
+          
+          # Puxa a imagem atual com a tag 'latest'
+          docker pull $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
+          
+          # Verifica se a tag DOCKER_HUB_TAG_LATEST_OLD já existe, e só reetiqueta se não existir
+          if tag_exists $DOCKER_HUB_TAG_OLD; then
+            echo "A tag $DOCKER_HUB_TAG_OLD já existe, não será reetiquetada."
+          else
+            docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD
+            docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD
+          fi
+          
+          # Constrói a nova imagem com a tag '2.0.15'
+          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW -f ./resources/dataprev/dev/Dockerfile .
+          
+          # Etiqueta a nova imagem como 'latest'
+          docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
+          
+          # Envia as novas tags para o Docker Hub
+          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW
+          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
+          
+          echo "Envio das imagens Docker concluído."
   build_and_deploy_dsv:
     name: Build and Deploy on Dataprev DSV
     if: github.ref == 'refs/heads/dataprev_dsv'
@@ -240,20 +265,34 @@ jobs:
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         run: |
           echo "Iniciando a construção e envio das imagens Docker..."
-          
-          # Constrói a nova imagem 'latest'
-          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST_NEW -f ./resources/dataprev/dev/Dockerfile .
-          
-          echo "Logando no Docker Hub..."
-          docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
-          
-          # Move a tag 'latest' anterior 
+  
+          # Autentica no Docker Hub
+          echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+  
+          # Função para verificar se uma tag existe no Docker Hub
+          tag_exists() {
+            curl --silent -f -lSL "https://hub.docker.com/v2/repositories/$DOCKER_HUB_IMAGE/tags/$1/" > /dev/null
+          }
+  
+          # Puxa a imagem atual com a tag 'latest'
           docker pull $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
-          docker tag $DOCKER_HUB_IMAGE:dsv $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST_OLD
-          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST_OLD
-          
-          # Atualiza a nova tag 'latest' 
-          docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST_NEW $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
+  
+          # Verifica se a tag DOCKER_HUB_TAG_LATEST_OLD já existe, e só reetiqueta se não existir
+          if tag_exists $DOCKER_HUB_TAG_OLD; then
+            echo "A tag $DOCKER_HUB_TAG_OLD já existe, não será reetiquetada."
+          else
+            docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD
+            docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD
+          fi
+  
+          # Constrói a nova imagem com a tag '2.0.15'
+          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW -f ./resources/dataprev/dev/Dockerfile .
+  
+          # Etiqueta a nova imagem como 'latest'
+          docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
+  
+          # Envia as novas tags para o Docker Hub
+          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW
           docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
-          
+  
           echo "Envio das imagens Docker concluído."
