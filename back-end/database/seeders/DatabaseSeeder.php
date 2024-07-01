@@ -22,10 +22,10 @@ class DatabaseSeeder extends Seeder
         TipoCapacidadeSeeder::class,
         CapacidadeSeeder::class,
         FuncaoSeeder::class,
+        TipoMotivoAfastamentoSeeder::class,
       ]);
     } else {
       $this->call([
-        PainelUsuarioSeeder::class,
         CidadeSeeder::class,
         FeriadoSeeder::class,
         PerfilSeeder::class,
@@ -37,6 +37,7 @@ class DatabaseSeeder extends Seeder
         FuncaoSeeder::class,
         In24_2023Seeder::class,
         TemplateSeeder::class,
+        TipoMotivoAfastamentoSeeder::class,
 
         /*
                Após a execução das Seeds acima, executar a rotina de integração com o comando

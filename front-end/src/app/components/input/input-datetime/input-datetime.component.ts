@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, HostBinding, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, ControlContainer, FormGroup, FormGroupDirective } from '@angular/forms';
 import { InputBase, LabelPosition } from '../input-base';
-import * as moment from 'moment';
+import moment from 'moment';
 import { UtilService } from 'src/app/services/util.service';
 
 @Component({

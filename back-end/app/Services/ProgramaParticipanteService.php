@@ -19,10 +19,24 @@ class ProgramaParticipanteService extends ServiceBase {
         try {
             DB::beginTransaction();
             foreach($data['participantes_ids'] as $idp){
+                if($data['habilitar'] == 1) {
+                    $programasHabilitados = ProgramaParticipante::where('usuario_id',$idp)->where('habilitado',1)->get();
+                    if (!$programasHabilitados->isEmpty()) {
+                        $mensagem = (count($data['participantes_ids']) > 1) ? "Agente(s) público(s) já selecionado(s) como participante(s) em outra unidade instituidora. Portanto, a operação de habilitação foi cancelada!" : "Agente público já selecionado como participante em outra unidade instituidora. Portanto, a operação de habilitação foi cancelada!";
+                        throw new ServerException(
+                            "ValidateProgramaParticipante",
+                            $mensagem
+                        );
+                    }
+                }
+                
                 $registro = ProgramaParticipante::firstOrCreate(['programa_id' => $data['programa_id'], 'usuario_id' => $idp]);
                 $plano_trabalho_ativo = PlanoTrabalho::where('usuario_id',$idp)->where('programa_id',$data['programa_id'])->where('status','ATIVO')->where('data_inicio','<=',now())->where('data_fim','>=',now())->first();
+                
+                
+                
                 if(empty($data['habilitar']) && !empty($plano_trabalho_ativo)) {
-                    if(!$data['suspender_plano_trabalho']) throw new ServerException("ValidatePlanoTrabalho","Foi identificado que o usuário - " . Usuario::find($idp)->nome . " - possui Plano de Trabalho ATIVO e não foi repassada autorização para suspendê-lo. Portanto, a operação de desabilitação foi abortada " . (count($data['participantes_ids']) > 1 ? "para todos os usuários " : "" . "!"));
+                    if(!$data['suspender_plano_trabalho']) throw new ServerException("ValidatePlanoTrabalho","Foi identificado que o agente público - " . Usuario::find($idp)->nome . " - possui Plano de Trabalho ATIVO e não foi repassada autorização para suspendê-lo. Portanto, a operação de desabilitação foi abortada " . (count($data['participantes_ids']) > 1 ? "para todos os participantes " : "" . "!"));
                     $plano_trabalho_ativo->status = 'SUSPENSO';
                     $plano_trabalho_ativo->save();
                 }

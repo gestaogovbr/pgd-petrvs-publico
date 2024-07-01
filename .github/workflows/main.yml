@@ -3,13 +3,14 @@ name: CI/CD
 on:
   push:
     branches:
-      - main
+      - marcocoelho
       - dataprev_dsv
       - dataprev_hmg
       - dataprev_treina
       - dataprev_producao
   pull_request:
     branches:
+      - marcocoelho
       - dataprev_dsv
       - dataprev_hmg
       - dataprev_treina
@@ -22,45 +23,66 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        working-directory: ./front-end
+        run: npm install --legacy-peer-deps
+
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
+      - name: Build Angular and Run Postbuild
+        working-directory: ./front-end
+        run: |
+          ng build --configuration=production --output-path=../back-end/public
+          node ./postbuild.js
       - name: Build Producao
         env:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
-          DOCKER_HUB_TAG: latest
-          DEPLOY_PATH: ./
+          DOCKER_HUB_TAG_LATEST: latest
+          DOCKER_HUB_TAG_NEW: 2.0.16
+          DOCKER_HUB_TAG_OLD: 2.0.15
           DOCKER_HUB_USERNAME: segescginf
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
-        run: |
-          echo "Iniciando a construção e implantação do Produção..."
-          echo "Construindo a imagem Docker..."
-          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/dataprev/dev/Dockerfile .
-          echo "Construção da imagem concluída. Enviando para o Docker Hub..."
-          docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
-          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
-          echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
-          echo "Build de produção concluída com sucesso."
-  build_and_deploy_main:
-    name: Build on Producao - Main
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Build Producao - Main
-        env:
-          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
-          DOCKER_HUB_TAG: latest
           DEPLOY_PATH: ./
-          DOCKER_HUB_USERNAME: segescginf
-          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         run: |
-          echo "Iniciando a construção e implantação do Produção..."
-          echo "Construindo a imagem Docker..."
-          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/dataprev/dev/Dockerfile .
-          echo "Construção da imagem concluída. Enviando para o Docker Hub..."
-          docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
-          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
-          echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
-          echo "Build de produção concluída com sucesso."
+          echo "Iniciando a construção e envio das imagens Docker..."
+          
+          # Autentica no Docker Hub
+          echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+          
+          # Função para verificar se uma tag existe no Docker Hub
+          tag_exists() {
+            curl --silent -f -lSL "https://hub.docker.com/v2/repositories/$DOCKER_HUB_IMAGE/tags/$1/" > /dev/null
+          }
+          
+          # Puxa a imagem atual com a tag DOCKER_HUB_TAG_LATEST
+          docker pull $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
+          
+          # Verifica se a tag $DOCKER_HUB_TAG_OLD já existe, e só reetiqueta se não existir
+          if tag_exists $DOCKER_HUB_TAG_OLD; then
+            echo "A tag $DOCKER_HUB_TAG_OLD já existe, não será reetiquetada."
+          else
+            docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD
+            docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD
+          fi
+          
+          # Constrói a nova imagem com a tag $DOCKER_HUB_TAG_NEW
+          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW -f ./resources/dataprev/dev/Dockerfile .
+          
+          # Etiqueta a nova imagem como DOCKER_HUB_TAG_LATEST
+          docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
+          
+          # Envia as novas tags para o Docker Hub
+          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW
+          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
+          
+          echo "Envio das imagens Docker concluído."
   build_and_deploy_dsv:
     name: Build and Deploy on Dataprev DSV
     if: github.ref == 'refs/heads/dataprev_dsv'
@@ -68,9 +90,28 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        working-directory: ./front-end
+        run: npm install --legacy-peer-deps
+
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
+      - name: Build Angular and Run Postbuild
+        working-directory: ./front-end
+        run: |
+          ng build --configuration=production --output-path=../back-end/public
+          node ./postbuild.js
+
       - name: Build and Deploy DSV
         env:
-          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
+          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs-develop
           DOCKER_HUB_TAG: dsv
           SSH_USER: root
           SSH_HOST: 200.152.38.137
@@ -80,17 +121,15 @@ jobs:
           DOCKER_HUB_USERNAME: segescginf
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         run: |
-          # Conteúdo do build_deploy_dsv.yml
           echo "Iniciando a construção e implantação do DSV..."
           echo "Construindo a imagem Docker..."
           docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/dataprev/dev/Dockerfile .
           echo "Construção da imagem concluída. Enviando para o Docker Hub..."
-          docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
+          echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
           docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
           echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
           sudo apt-get update -y && sudo apt-get install -y sshpass
-          # Executando o script install-pgd.sh
-          sshpass -p $SSH_PASSWORD ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "cd /home/marcocoelho/ && sh install-pgd.sh < /dev/null"
+          sshpass -p $SSH_PASSWORD ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "cd /home/marcocoelho/ && bash install-pgd.sh < /dev/null"
           echo "Implantação concluída com sucesso em DSV."
   build_and_deploy_hmg:
     name: Build and Deploy on Dataprev HMG
@@ -99,9 +138,28 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        working-directory: ./front-end
+        run: npm install --legacy-peer-deps
+
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
+      - name: Build Angular and Run Postbuild
+        working-directory: ./front-end
+        run: |
+          ng build --configuration=production --output-path=../back-end/public
+          node ./postbuild.js
+
       - name: Build and Deploy HMG
         env:
-          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
+          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs-develop
           DOCKER_HUB_TAG: hmg
           SSH_USER: root
           SSH_HOST: 200.152.38.137
@@ -129,9 +187,28 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        working-directory: ./front-end
+        run: npm install --legacy-peer-deps
+
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
+      - name: Build Angular and Run Postbuild
+        working-directory: ./front-end
+        run: |
+          ng build --configuration=production --output-path=../back-end/public
+          node ./postbuild.js
+
       - name: Build and Deploy TREINA
         env:
-          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
+          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs-develop
           DOCKER_HUB_TAG: treina
           SSH_USER: root
           SSH_HOST: 200.152.38.137
@@ -152,3 +229,70 @@ jobs:
           # Executando o script install-pgd.sh
           sshpass -p $SSH_PASSWORD ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "sh install-pgd.sh < /dev/null"
           echo "Implantação concluída com sucesso em TREINA."
+  build_and_deploy_teste:
+    name: Build and Deploy Teste - Marco
+    if: github.ref == 'refs/heads/marcocoelho'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        working-directory: ./front-end
+        run: npm install --legacy-peer-deps
+
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
+      - name: Build Angular and Run Postbuild
+        working-directory: ./front-end
+        run: |
+          ng build --configuration=production --output-path=../back-end/public
+          node ./postbuild.js
+
+      - name: Build and Push Docker Images
+        env:
+          DOCKER_HUB_IMAGE: segescginf/pgdpetrvs-develop
+          DOCKER_HUB_TAG_LATEST: dsv
+          DOCKER_HUB_TAG_NEW: 2.0.16
+          DOCKER_HUB_TAG_OLD: 2.0.15
+          DOCKER_HUB_USERNAME: segescginf
+          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        run: |
+          echo "Iniciando a construção e envio das imagens Docker..."
+          
+          # Autentica no Docker Hub
+          echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+          
+          # Função para verificar se uma tag existe no Docker Hub
+          tag_exists() {
+            curl --silent -f -lSL "https://hub.docker.com/v2/repositories/$DOCKER_HUB_IMAGE/tags/$1/" > /dev/null
+          }
+          
+          # Puxa a imagem atual com a tag DOCKER_HUB_TAG_LATEST
+          docker pull $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
+          
+          # Verifica se a tag $DOCKER_HUB_TAG_OLD já existe, e só reetiqueta se não existir
+          if tag_exists $DOCKER_HUB_TAG_OLD; then
+            echo "A tag $DOCKER_HUB_TAG_OLD já existe, não será reetiquetada."
+          else
+            docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD
+            docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD
+          fi
+          
+          # Constrói a nova imagem com a tag $DOCKER_HUB_TAG_NEW
+          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW -f ./resources/dataprev/dev/Dockerfile .
+          
+          # Etiqueta a nova imagem como DOCKER_HUB_TAG_LATEST
+          docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
+          
+          # Envia as novas tags para o Docker Hub
+          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW
+          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
+          
+          echo "Envio das imagens Docker concluído."

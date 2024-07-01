@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Exceptions\DataInvalidException;
+use App\Exceptions\DBException;
+use App\Exceptions\NotFoundException;
 use App\Models\Entidade;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\Storage;
@@ -71,7 +74,7 @@ class ServiceBase extends DynamicMethods
   const ACTION_EDIT = "EDIT";
 
   public string $collection = "";
-  public string $developerId = "";
+  public $nivelAcessoService;
 
   public $buffer = []; /* Utilizado para passar informações entre os Proxys */
 
@@ -84,10 +87,9 @@ class ServiceBase extends DynamicMethods
     return class_exists($fullName) ? $this->_services[$name] : null;
   }
 
+ 
   public function __construct($collection = null)
   {
-    //$this->developerId = ((config('petrvs') ?: [])['ids-fixos'] ?: [])['developer-id'] ?: $this->UtilService->uuid("Desenvolvedor");
-    $this->developerId = $this->UtilService->uuid("Desenvolvedor");
     $this->collection = $collection ?? $this->collection;
     if (empty($this->collection)) {
       $this->collection = str_replace("Service", "", str_replace("App\\Services", "App\\Models", get_class($this)));
@@ -127,7 +129,7 @@ class ServiceBase extends DynamicMethods
       });
     });
   }
-
+ 
   public function hasStoredProcedure($procedure)
   {
     try {
@@ -231,7 +233,7 @@ class ServiceBase extends DynamicMethods
       $result = (array) (clone (object) $now);
       $result["_status"] = "ADD";
     } else {
-      if (gettype($from) != gettype($to)) throw new Exception("ObjectDelta: Tipos diferentes");
+      if (gettype($from) != gettype($to)) throw new DataInvalidException("ObjectDelta: Tipos diferentes");
       foreach ($now as $key => $value) {
         if (gettype($value) == "array") {
           $delta = isset($before[$key]) ? $this->arrayDelta($before[$key], $value) : $value;
@@ -448,7 +450,7 @@ class ServiceBase extends DynamicMethods
       $relation = $context->{Str::camel($relationName)}();
       $kind = (new ReflectionObject($relation))->getShortName();
       if ($kind != "BelongsTo" && $kind != "HasOne") {
-        throw new Exception("Permitido apenas relacionamentos belongsTo ou hasOne");
+        throw new DBException("Permitido apenas relacionamentos belongsTo ou hasOne");
       }
       $fkName = $kind == "BelongsTo" ? $relation->getForeignKeyName() : $context->getKeyName();
       $idName = $kind == "BelongsTo" ? $relation->getOwnerKeyName() : $relation->getForeignKeyName();
@@ -633,7 +635,7 @@ class ServiceBase extends DynamicMethods
     if (count($rows) == 1) {
       return $rows[0];
     } else {
-      throw new Exception("Id não encontrado");
+      throw new NotFoundException("Id não encontrado");
     }
   }
 
@@ -705,7 +707,7 @@ class ServiceBase extends DynamicMethods
     $tenant = tenancy()->find($tenantId);
     return $tenant->run(function () use ($file) {
       if (!Storage::exists($file)) {
-        throw new Exception("Arquivo não encontrado");
+        throw new NotFoundException("Arquivo não encontrado");
       }
       return Storage::path($file);
     });
@@ -721,7 +723,7 @@ class ServiceBase extends DynamicMethods
   public function downloadUrl($file)
   {
     if (!Storage::exists($file)) {
-      throw new Exception("Arquivo não encontrado");
+      throw new NotFoundException("Arquivo não encontrado");
     }
     $url = URL::temporarySignedRoute('download', now()->addMinutes(30), ['tenant' => tenant('id'), 'file' => $file], false);
     $url = substr($url, strpos($url, "download/")); /* Convert to relative path from absolute */
@@ -738,7 +740,7 @@ class ServiceBase extends DynamicMethods
   public function deleteFile($file)
   {
     if (!Storage::exists($file)) {
-      throw new Exception("Arquivo não encontrado");
+      throw new NotFoundException("Arquivo não encontrado");
     }
     Storage::delete($file);
     return true;
@@ -764,7 +766,7 @@ class ServiceBase extends DynamicMethods
       $path = $file->storeAs($path, $name);
       return $path;
     } else {
-      throw new Exception("Arquivo vazio");
+      throw new NotFoundException("Arquivo vazio");
     }
   }
 
@@ -860,7 +862,7 @@ class ServiceBase extends DynamicMethods
       if (method_exists($this, "afterUpdate")) $this->afterUpdate($entity, $data);
       return $entity;
     } else {
-      throw new Exception("Id não encontrado");
+      throw new NotFoundException("Id não encontrado");
     }
   }
 
@@ -893,7 +895,7 @@ class ServiceBase extends DynamicMethods
         throw $e;
       }
     } else {
-      throw new Exception("Id não encontrado");
+      throw new NotFoundException("Id não encontrado");
     }
   }
 
@@ -921,7 +923,7 @@ class ServiceBase extends DynamicMethods
         throw $e;
       }
     } else {
-      throw new Exception("Id não encontrado");
+      throw new NotFoundException("Id não encontrado");
     }
   }
 
@@ -930,7 +932,9 @@ class ServiceBase extends DynamicMethods
    */
   public function isLoggedUserADeveloper()
   {
-    return Auth::user()->perfil_id == $this->developerId;
+    $nivelAcesso = NivelAcessoService::getPerfilDesenvolvedor();
+    $developerId = $nivelAcesso ? $nivelAcesso->id : null;
+    return Auth::user()->perfil_id == $developerId;
   }
 
   /**

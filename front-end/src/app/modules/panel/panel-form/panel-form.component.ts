@@ -10,7 +10,7 @@ import { Tenant } from 'src/app/models/tenant.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { SeederDaoService } from 'src/app/dao/seeder-dao.service';
-
+import { JobAgendadoDaoService } from 'src/app/dao/job-agendado-dao.service';
 
 @Component({
   selector: 'app-panel-form',
@@ -27,6 +27,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
   public selectedSeeder: string = '';
 
   public seederDao: SeederDaoService;
+  public jobAgendadoDao: JobAgendadoDaoService;
 
   public encryption: LookupItem[] = [
     { key: "SSL", value: "SSL" },
@@ -45,6 +46,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
   constructor(public injector: Injector) {
     super(injector, Tenant, TenantDaoService);
     this.seederDao = injector.get<SeederDaoService>(SeederDaoService);
+    this.jobAgendadoDao = injector.get<JobAgendadoDaoService>(JobAgendadoDaoService);
     this.form = this.fh.FormBuilder({
       id: { default: "" },
       edition: { default: "MGI" },
@@ -93,6 +95,10 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       login_azure_redirect_uri: { default: "" },
       login_login_unico_client_id: { default: "" },
       login_login_unico_secret: { default: "" },
+      login_login_unico_redirect: { default: "https://"+window.location.hostname+"/login-unico/" },
+      login_login_unico_code_verifier: { default: "" },
+      login_login_unico_code_challenge_method: { default: "" },
+      login_login_unico_environment: { default: "staging" },
       // INTEGRACAO
       tipo_integracao: { default: null },
       integracao_auto_incluir: { default: true },
@@ -171,17 +177,14 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if (['id', 'tenancy_db_name', 'nome_entidade', 'abrangencia', 'email', 'cpf', 'nome_usuario', 'apelido'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['id',  'nome_entidade', 'abrangencia', 'email', 'cpf', 'nome_usuario', 'apelido'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     } else if (controlName == "codigo_cidade" && !control.value) {
       result = "Obrigatório";
     } else if (controlName == "cpf" && !this.util.validarCPF(control.value)) {
       result = "Inválido";
     }
-    if ((this.form?.controls.log_traffic.value || this.form?.controls.log_changes.value || this.form?.controls.log_errors.value) &&
-      ['log_host', 'log_database'].indexOf(controlName) >= 0 && !control.value?.length) {
-      result = "Obrigatório";
-    }
+
     return result;
   }
 

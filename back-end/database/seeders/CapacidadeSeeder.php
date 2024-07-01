@@ -7,6 +7,7 @@ use App\Models\Capacidade;
 use App\Models\Perfil;
 use App\Models\TipoCapacidade;
 use App\Services\UtilService;
+use App\Services\NivelAcessoService; 
 
 class CapacidadeSeeder extends Seeder
 {
@@ -18,11 +19,13 @@ class CapacidadeSeeder extends Seeder
 
   public $timenow;
   public $utilService;
+  public $nivelAcessoService;
 
   public function __construct()
   {
     $this->timenow = now();
     $this->utilService = new UtilService();
+    $this->nivelAcessoService = new NivelAcessoService();
   }
 
   public function run()
@@ -44,11 +47,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_ATV_TRF_CONS"],
       ["codigo" => "MOD_ATV_TRF_EDT"],
       ["codigo" => "MOD_ATV_TRF_EXCL"],
-      ["codigo" => "MOD_ATV_TRF_INCL"],
-      ["codigo" => "MOD_OCOR"],
-      ["codigo" => "MOD_OCOR_EDT"],
-      ["codigo" => "MOD_OCOR_INCL"],
-      ["codigo" => "MOD_OCOR_EXCL"],
+      ["codigo" => "MOD_ATV_TRF_INCL"],      
       ["codigo" => "MOD_PTR"],
       ["codigo" => "MOD_PTR_CNC"],
       ["codigo" => "MOD_PTR_CSLD"],
@@ -89,12 +88,18 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_ATV_TRF_EXCL"],
       ["codigo" => "MOD_ATV_TRF_INCL"],
       ["codigo" => "MOD_ATV_USU_EXT"],
-      ["codigo" => "MOD_CTXT"],
-      ["codigo" => "MOD_OCOR"],
-      ["codigo" => "MOD_OCOR_EDT"],
-      ["codigo" => "MOD_OCOR_INCL"],
+      ["codigo" => "MOD_CADV"],
+      ["codigo" => "MOD_CADV_EDT"],
+      ["codigo" => "MOD_CADV_EXCL"],
+      ["codigo" => "MOD_CADV_INCL"],
+      ["codigo" => "MOD_EXTM"],
+      ["codigo" => "MOD_EXTM_EDT"],
+      ["codigo" => "MOD_EXTM_EXCL"],
+      ["codigo" => "MOD_EXTM_INCL"],
+      ["codigo" => "MOD_CTXT"],      
       ["codigo" => "MOD_PART"],
       ["codigo" => "MOD_PART_HAB"],
+      ["codigo" => "MOD_PART_DESAB"],
       ["codigo" => "MOD_PENT"],
       ["codigo" => "MOD_PENT_ARQ"],
       ["codigo" => "MOD_PENT_AVAL"],
@@ -204,10 +209,6 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_FER_EDT"],
       ["codigo" => "MOD_FER_EXCL"],
       ["codigo" => "MOD_FER_INCL"],
-      ["codigo" => "MOD_OCOR"],
-      ["codigo" => "MOD_OCOR_EDT"],
-      ["codigo" => "MOD_OCOR_INCL"],
-      ["codigo" => "MOD_OCOR_EXCL"],
       ["codigo" => "MOD_PART"],
       ["codigo" => "MOD_PART_DESAB"],
       ["codigo" => "MOD_PART_HAB"],
@@ -276,10 +277,6 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_TIPO_ATV"],
       ["codigo" => "MOD_TIPO_ATV_EDT_UND"],
       ["codigo" => "MOD_TIPO_ATV_INCL"],
-      ["codigo" => "MOD_TIPO_AVAL"],
-      ["codigo" => "MOD_TIPO_AVAL_EDT"],
-      ["codigo" => "MOD_TIPO_AVAL_EXCL"],
-      ["codigo" => "MOD_TIPO_AVAL_INCL"],
       ["codigo" => "MOD_TIPO_CAP"],
       ["codigo" => "MOD_TIPO_CAP_EDT"],
       ["codigo" => "MOD_TIPO_CAP_EXCL"],
@@ -288,18 +285,6 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_TIPO_DOC_EDT"],
       ["codigo" => "MOD_TIPO_DOC_EXCL"],
       ["codigo" => "MOD_TIPO_DOC_INCL"],
-      ["codigo" => "MOD_TIPO_JUST"],
-      ["codigo" => "MOD_TIPO_JUST_EDT"],
-      ["codigo" => "MOD_TIPO_JUST_EXCL"],
-      ["codigo" => "MOD_TIPO_JUST_INCL"],
-      ["codigo" => "MOD_TIPO_MDL"],
-      ["codigo" => "MOD_TIPO_MDL_EDT"],
-      ["codigo" => "MOD_TIPO_MDL_EXCL"],
-      ["codigo" => "MOD_TIPO_MDL_INCL"],
-      ["codigo" => "MOD_TIPO_MTV_AFT"],
-      ["codigo" => "MOD_TIPO_MTV_AFT_EDT"],
-      ["codigo" => "MOD_TIPO_MTV_AFT_EXCL"],
-      ["codigo" => "MOD_TIPO_MTV_AFT_INCL"],
       ["codigo" => "MOD_TPMAF_INCL"],
       ["codigo" => "MOD_TIPO_PROC"],
       ["codigo" => "MOD_TIPO_PROC_EDT"],
@@ -335,13 +320,18 @@ class CapacidadeSeeder extends Seeder
     $tipoCapacidadesInexistentes = [];
     $capacidadesRepetidas = [];
 
+    $devId = $this->nivelAcessoService->getPerfilDesenvolvedor()->id;
+    $participanteId = $this->nivelAcessoService->getPerfilParticipante()->id;
+    $admId = $this->nivelAcessoService->getPerfilAdministrador()->id;
+    $chefeId = $this->nivelAcessoService->getPerfilChefia()->id;
+
     foreach ($capacidades_participante as $c) {
       $capacidade = [
         "id" => $this->utilService->uuid("Participante" . $c['codigo']),
         "created_at" => $this->timenow,
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
-        "perfil_id" => $this->utilService->uuid("Participante"),
+        "perfil_id" => $participanteId,
         "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
       ];
 
@@ -369,7 +359,7 @@ class CapacidadeSeeder extends Seeder
         "created_at" => $this->timenow,
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
-        "perfil_id" => $this->utilService->uuid("Chefia de Unidade Executora"),
+        "perfil_id" => $chefeId,
         "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
       ];
       $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
@@ -394,7 +384,7 @@ class CapacidadeSeeder extends Seeder
         "created_at" => $this->timenow,
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
-        "perfil_id" => $this->utilService->uuid("Administrador Negocial"),
+        "perfil_id" => $admId,
         "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
       ];
 
@@ -414,8 +404,7 @@ class CapacidadeSeeder extends Seeder
       }
     }
 
-    $perfilDesenvolvedorId = Perfil::where([['nome', 'Desenvolvedor']])->first()->id;
-    $qtdCapacidadesRemovidas = Capacidade::whereNotIn('id', $capacidadesInseridas)->whereNotIn('perfil_id', [$perfilDesenvolvedorId])->delete();
+    $qtdCapacidadesRemovidas = Capacidade::whereNotIn('id', $capacidadesInseridas)->whereNotIn('perfil_id', [$devId])->delete();
     $qtdCapacidades = Capacidade::count();
     $qtdCapacidadesRestauradas = count($capacidadesRestauradas);
     $qtdTiposCapacidadesInexistentes = count($tipoCapacidadesInexistentes);

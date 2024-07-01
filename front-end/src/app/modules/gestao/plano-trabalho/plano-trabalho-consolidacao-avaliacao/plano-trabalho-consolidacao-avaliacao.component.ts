@@ -34,6 +34,8 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public extra: any;
 
   public avaliacoes: Avaliacao[] = [];
+  public planos_trabalhos: PlanoTrabalho[] = [];
+  public programas: Programa[] = [];
   public avaliacao: Avaliacao = new Avaliacao();
   public consolidacaoId?: string[] = [];//public consolidacaoId?: PlanoTrabalhoConsolidacao[] = [];
   public joinAvaliacao: string[] = ["avaliador", "entregas_checklist", "tipo_avaliacao.notas"];
@@ -43,6 +45,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
     this.unidadeService = injector.get<UnidadeService>(UnidadeService);
     /* Inicializações */
     this.join = [
+      "avaliacoes:id,recurso",
       "avaliacao", // "avaliacao.tipoAvaliacao.notas"
       "plano_trabalho:id", // "planoTrabalho.unidade:id,sigla,nome", "planoTrabalho.unidade.gestor:id,unidade_id,usuario_id", "planoTrabalho.unidade.gestorSubstituto:id,unidade_id,usuario_id", "planoTrabalho.tipoModalidade:id,nome", "planoTrabalho.usuario:id,nome,apelido,url_foto"
     ];
@@ -54,8 +57,9 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
       "planoTrabalho.unidade.unidadePai.gestor:id,unidade_id,usuario_id", 
       "planoTrabalho.unidade.gestoresSubstitutos:id,unidade_id,usuario_id", 
       "planoTrabalho.tipoModalidade:id,nome", 
-      "planoTrabalho.usuario:id,nome,apelido,foto_perfil,url_foto"//id,nome,apelido,url_foto,foto_perfil
+      "planoTrabalho.usuario:id,nome,apelido,foto_perfil,url_foto"
     ];
+
     this.groupBy = [
       { field: "plano_trabalho.unidade.sigla", label: this.lex.translate("Unidade") }, 
       { field: "plano_trabalho.unidade.id", label: "Unidade Id" }, 
@@ -102,14 +106,14 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public usuarioSeparator(separator: GridGroupSeparator) {
     let usuarioId = separator.group[3].value;
     separator.metadata = separator.metadata || {};
-    separator.metadata.usuario = separator.metadata.usuario || this.extra?.planos_trabalhos?.find((x: PlanoTrabalho) => x.usuario_id == usuarioId)?.usuario;
+    separator.metadata.usuario = separator.metadata.usuario || this.planos_trabalhos?.find((x: PlanoTrabalho) => x.usuario_id == usuarioId)?.usuario;
     return separator.metadata.usuario;
   }
 
   public unidadeSeparator(separator: GridGroupSeparator) {
     let unidadeId = separator.group[1].value;
     separator.metadata = separator.metadata || {};
-    separator.metadata.unidade = separator.metadata.unidade || this.extra?.planos_trabalhos?.find((x: PlanoTrabalho) => x.unidade_id == unidadeId)?.unidade;
+    separator.metadata.unidade = separator.metadata.unidade || this.planos_trabalhos?.find((x: PlanoTrabalho) => x.unidade_id == unidadeId)?.unidade;
     return separator.metadata.unidade;
   }
 
@@ -119,65 +123,78 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
 
   public onGridLoad(rows?: Base[]) {
     this.extra = (this.grid?.query || this.query!).extra;
-    let planosTrabalhos = (this.extra?.planos_trabalhos || []) as PlanoTrabalho[];
-    planosTrabalhos.forEach(p => {
-      let plano = p as PlanoTrabalho;
-      plano.programa = this.extra?.programas?.find((x: Programa) => x.id == plano.programa_id);
-    });
-    rows?.forEach(v => {
-      let consolidacao = v as PlanoTrabalhoConsolidacao;
-      consolidacao.plano_trabalho = this.extra?.planos_trabalhos?.find((x: PlanoTrabalho) => x.id == consolidacao.plano_trabalho_id);
-      if(consolidacao.avaliacao) consolidacao.avaliacao.tipo_avaliacao = this.extra?.tipos_avaliacoes?.find((x: TipoAvaliacao) => x.id == consolidacao.avaliacao!.tipo_avaliacao_id);
-    });
+    if(this.extra) {
+      this.planos_trabalhos = ((this.planos_trabalhos || []) as PlanoTrabalho[]).concat(this.extra?.planos_trabalhos || []);
+      this.programas = ((this.programas || []) as Programa[]).concat(this.extra?.programas || []);      
+      this.planos_trabalhos.forEach(p => {
+        let plano = p as PlanoTrabalho;
+        plano.programa = this.programas?.find((x: Programa) => x.id == plano.programa_id);
+      });
+      rows?.forEach(v => {
+        let consolidacao = v as PlanoTrabalhoConsolidacao;
+        consolidacao.plano_trabalho = this.planos_trabalhos?.find((x: PlanoTrabalho) => x.id == consolidacao.plano_trabalho_id);
+        if(consolidacao.avaliacao) consolidacao.avaliacao.tipo_avaliacao = this.extra?.tipos_avaliacoes?.find((x: TipoAvaliacao) => x.id == consolidacao.avaliacao!.tipo_avaliacao_id);
+      });
+    }
   }
 
-  public refreshConsolidacao(consolidacao: PlanoTrabalhoConsolidacao) {
+  public refreshConsolidacao(consolidacao: PlanoTrabalhoConsolidacao) {    
     (async () => {
       await this.grid!.query!.refreshId(consolidacao.id, this.extraJoin);
       this.grid!.refreshRows();
     })();
   }
 
-  public anterior(consolidacao: PlanoTrabalhoConsolidacao): PlanoTrabalhoConsolidacao | undefined {
-    return (this.grid!.items as PlanoTrabalhoConsolidacao[]).reduce((a: PlanoTrabalhoConsolidacao | undefined, v: PlanoTrabalhoConsolidacao) => this.util.asTimestamp(v.data_inicio) < this.util.asTimestamp(consolidacao.data_inicio) && (!a || this.util.asTimestamp(a.data_inicio) < this.util.asTimestamp(v.data_inicio)) ? v : a, undefined);
-  }
-
-  public proximo(consolidacao: PlanoTrabalhoConsolidacao): PlanoTrabalhoConsolidacao | undefined {
-    return (this.grid!.items as PlanoTrabalhoConsolidacao[]).reduce((a: PlanoTrabalhoConsolidacao | undefined, v: PlanoTrabalhoConsolidacao) => this.util.asTimestamp(v.data_fim) > this.util.asTimestamp(consolidacao.data_fim) && (!a || this.util.asTimestamp(a.data_fim) > this.util.asTimestamp(v.data_fim)) ? v : a, undefined);
-  }
-
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let consolidacao: PlanoTrabalhoConsolidacao = row as PlanoTrabalhoConsolidacao;
+    
     let programa: Programa = consolidacao.plano_trabalho!.programa!;
+    let isAvaliador: boolean = false;
     const usuarioId = consolidacao.plano_trabalho!.usuario_id;
     const unidadeId = consolidacao.plano_trabalho!.unidade_id;
-    const anterior = this.anterior(row as PlanoTrabalhoConsolidacao);
-    const proximo = this.proximo(row as PlanoTrabalhoConsolidacao);   
-    const isAvaliador = this.auth.hasPermissionTo("MOD_PTR_CSLD_AVAL") && (this.unidadeService.isGestorUnidade(unidadeId) || (this.unidadeService.isGestorUnidadeSuperior(consolidacao.plano_trabalho?.unidade!) && this.unidadeService.isGestorUnidadePlano(consolidacao.plano_trabalho?.unidade!, usuarioId) ));
-    const isUsuarioDoPlano = this.auth.usuario!.id == usuarioId;
-    const BOTAO_AVALIAR = { hint: "Avaliar", icon: "bi bi-star", color: "btn-outline-warning", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.avaliar(row, programa, this.refreshConsolidacao.bind(this)) };
+    const unidade = consolidacao.plano_trabalho!.unidade;
+    const usuarioEhDonoDoPlano = usuarioId == this.auth.usuario?.id;
+    const usuarioPlanoEhGestor = unidade?.gestor?.usuario_id == usuarioId;
+    const usuarioPlanoEhGestorSubstituto = unidade?.gestores_substitutos.map((g: { usuario_id: any; }) => g.usuario_id).includes(usuarioId);
+    const usuarioPlanoEhGestorDelegado = unidade?.gestores_delegados.map((g: { usuario_id: any; }) => g.usuario_id).includes(usuarioId);
+    const usuarioPlanoEhLotado = !usuarioPlanoEhGestor && !usuarioPlanoEhGestorSubstituto && !usuarioPlanoEhGestorDelegado;
+    const temPermissaoAvaliar = this.auth.hasPermissionTo("MOD_PTR_CSLD_AVAL");
+    const usuarioLogadoEhGestorSuperior = consolidacao.plano_trabalho!.unidade ? this.unidadeService.isGestorUnidadeSuperior(consolidacao.plano_trabalho!.unidade) : false;
+    if(usuarioPlanoEhGestor){
+      isAvaliador = usuarioLogadoEhGestorSuperior
+    } else if (usuarioPlanoEhGestorSubstituto){
+      isAvaliador = usuarioLogadoEhGestorSuperior || this.unidadeService.isGestorTitularUnidade(unidadeId)
+    } else if (usuarioPlanoEhGestorDelegado){
+      isAvaliador = usuarioLogadoEhGestorSuperior || this.unidadeService.isGestorUnidade(unidadeId, false)
+    } else if (usuarioPlanoEhLotado){
+      isAvaliador = usuarioLogadoEhGestorSuperior || this.unidadeService.isGestorUnidade(unidadeId)
+    }
+    const BOTAO_VER_AVALIACAO = { hint: "Visualizar", icon: "bi bi-eye", color: "btn-outline-primary", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.visualizarAvaliacao(row) };
+    const BOTAO_AVALIAR = { hint: "Avaliar", icon: "bi bi-star", color: "btn-outline-info", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.avaliar(row, programa, this.refreshConsolidacao.bind(this)) };
     const BOTAO_REAVALIAR = { hint: "Reavaliar", icon: "bi bi-star-half", color: "btn-outline-warning", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.avaliar(row, programa, this.refreshConsolidacao.bind(this)) };
-    const BOTAO_FAZER_RECURSO = { hint: "Fazer recurso", id: "RECORRIDO", icon: "bi bi-journal-medical", color: "btn-outline-warning", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.fazerRecurso(row, programa, this.refreshConsolidacao.bind(this)) };
+    const BOTAO_FAZER_RECURSO = { label: 'Recurso',  id: "RECORRIDO", icon: "bi bi-journal-medical", color: "btn-outline-warning", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.fazerRecurso(row, programa, this.refreshConsolidacao.bind(this)) };
     const BOTAO_CANCELAR_AVALIACAO = { hint: "Cancelar avaliação", id: "INCLUIDO", icon: "bi bi-backspace", color: "btn-outline-danger", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.cancelarAvaliacao(row, this, this.refreshConsolidacao.bind(this)) };
-    /* (RN_CSLD_11) Não pode concluir a consolidação antes que a anterior não esteja concluida, e não pode retornar status da consolidação se a posterior estiver a frente (em status); */
-    const canAvaliar = !anterior || ["AVALIADO"].includes(anterior!.status);
-    const canCancelarAvaliacao = !proximo || ["INCLUIDO", "CONCLUIDO"].includes(proximo!.status);
-    if(consolidacao.status == "CONCLUIDO" && canAvaliar && isAvaliador) {
+ 
+    if(consolidacao.status == "CONCLUIDO" && !usuarioEhDonoDoPlano && isAvaliador && temPermissaoAvaliar) {
       result.push(BOTAO_AVALIAR);
     }
     if(consolidacao.status == "AVALIADO" && consolidacao!.avaliacao) {
+      result.push(BOTAO_VER_AVALIACAO);
       /* (RN_AVL_2) [PT] O usuário do plano de trabalho que possuir o acesso MOD_PTR_CSLD_REC_AVAL poderá recorrer da nota atribuida dentro do limites estabelecido pelo programa; */
-      if(isUsuarioDoPlano && this.auth.hasPermissionTo('MOD_PTR_CSLD_REC_AVAL') && consolidacao!.avaliacao?.data_avaliacao && 
-        (!programa.dias_tolerancia_recurso_avaliacao || 
-        (this.util.daystamp(consolidacao!.avaliacao!.data_avaliacao) + programa.dias_tolerancia_recurso_avaliacao > this.util.daystamp(this.auth.hora)))) {
+      if(usuarioEhDonoDoPlano && this.auth.hasPermissionTo('MOD_PTR_CSLD_REC_AVAL') && consolidacao!.avaliacao?.data_avaliacao && ['Inadequado', 'Não executado'].includes(consolidacao!.avaliacao?.nota)) {       
         result.push(BOTAO_FAZER_RECURSO);
       }
-      /* (RN_AVL_3) [PT] Após o recurso será realizado nova avaliação, podendo essa ser novamente recorrida dentro do mesmo prazo estabelecido no programa; */
-      /* (RN_AVL_6) [PT] Qualquer usuário capaz de avaliar tambem terá a capacidade de cancelar a avaliação; */
-      if(canAvaliar && isAvaliador) {
-        result.push(BOTAO_REAVALIAR);
-        if(canCancelarAvaliacao) result.push(BOTAO_CANCELAR_AVALIACAO);
+
+      if(isAvaliador) {
+        const ultimaAvaliacao = consolidacao!.avaliacoes.reduce((latest, current) => current.data_avaliacao > latest.data_avaliacao ? current : latest, consolidacao!.avaliacoes[0]);
+        const recente = ultimaAvaliacao.data_avaliacao > new Date(Date.now() - 24 * 60 * 60 * 1000);
+        // Só permite reavaliar se a última avaliação for recente
+        if (recente) {
+          result.push(BOTAO_REAVALIAR);
+        }
+        // Só permite cancelar a avaliacao se não houver recurso na lista de avaliações
+        if(!(consolidacao!.avaliacoes.filter(a => a.recurso).length > 0)) result.push(BOTAO_CANCELAR_AVALIACAO);
       }
     }
     return result;
@@ -219,6 +236,9 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public onGridLoadHistorico(rows?: Base[]) {
     this.extra = (this.grid?.query || this.query!).extra;
     let planosTrabalhos = (this.extra?.planos_trabalhos || []) as PlanoTrabalho[];
+
+
+
     planosTrabalhos.forEach(p => {
       let plano = p as PlanoTrabalho;
       plano.programa = this.extra?.programas?.find((x: Programa) => x.id == plano.programa_id);

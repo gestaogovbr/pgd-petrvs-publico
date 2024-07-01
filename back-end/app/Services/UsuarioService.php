@@ -13,6 +13,7 @@ use App\Services\RawWhere;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
 use Exception;
 use Throwable;
 
@@ -21,6 +22,8 @@ class UsuarioService extends ServiceBase
   const LOGIN_GOOGLE = "GOOGLE";
   const LOGIN_MICROSOFT = "AZURE";
   const LOGIN_FIREBASE = "FIREBASE";
+
+  
 
   public function atualizarFotoPerfil($tipo, &$usuario, $url)
   {
@@ -66,6 +69,7 @@ class UsuarioService extends ServiceBase
 
   public function extraStore($entity, $unidade, $action)
   {
+
     foreach ($this->buffer["integrantes"] as &$integrante) {
       $integrante["usuario_id"] = $entity->id;
     }
@@ -135,7 +139,7 @@ class UsuarioService extends ServiceBase
       return $this->getBuffer("isParticipanteHabilitado", $key);
     } else {
       $usuarioId = $usuarioId ?? parent::loggedUser()->id;
-      $programa = Programa::find($programaId);
+      $programa = Programa::withTrashed()->find($programaId);
       $participante = $programa->participantes->where("usuario_id", $usuarioId)->first();
       return $this->setBuffer("isParticipanteHabilitado", $key, $participante ? $participante->habilitado : false);
     }
@@ -224,30 +228,21 @@ class UsuarioService extends ServiceBase
     foreach ($data["where"] as $condition) {
       if (is_array($condition) && $condition[0] == "lotacao") {
         $lotacao = $condition;
-        $query->whereHas('lotacao', function (Builder $query) use ($condition) {
+        $query->whereHas('areasTrabalho', function (Builder $query) use ($condition) {
           $query->where('unidade_id', $condition[2]);
         });
       } else if (is_array($condition) && $condition[0] == "habilitado") {
         if ($condition[2] == true) {
           $query->whereHas('participacoesProgramas', function (Builder $query) use ($programa) {
-            $query->where('habilitado', 1)->where('programa_id', $programa[2]);
+            $query->where('habilitado', 1);
           });
         } else {
           if ($condition[2] != null) {
             $query->whereHas('participacoesProgramas', function (Builder $query) use ($programa) {
-              $query->where('habilitado', 0)->where('programa_id', $programa[2]);
-            });
-          } else {
-            $query->whereHas('participacoesProgramas', function (Builder $query) use ($programa) {
-              $query->where('programa_id', $programa[2]);
+              $query->where('habilitado', 0);
             });
           }
-          
-          if (!empty($lotacao)) {
-            $query->orWhereRelation('lotacao', 'unidade_id', $lotacao[2])->has('participacoesProgramas', '==', 0);
-          } else {
-            $query->orHas('participacoesProgramas', '==', 0);
-          }
+         
         }
       } else if (is_array($condition) && $condition[0] == "subordinadas") {
         $subordinadas = $condition[2];
@@ -298,11 +293,15 @@ class UsuarioService extends ServiceBase
    */
   public function validateStore(&$data, $unidade, $action)
   {
+    if($action == ServiceBase::ACTION_EDIT){
+      if(!empty($data['matricula']) && strlen($data['matricula']) > 50)
+        throw new ValidateException("O campo de matrícula deve ter no máximo 50 caracteres", 422);
+    }
     if ($action == ServiceBase::ACTION_INSERT) {
       if (empty($data["email"]))
-        throw new Exception("O campo de e-mail é obrigatório");
+         throw new ValidateException("O campo de e-mail é obrigatório", 422);
       if (empty($data["cpf"]))
-        throw new Exception("O campo de CPF é obrigatório");
+         throw new ValidateException("O campo de CPF é obrigatório", 422);
       $query1 = Usuario::where("id", "!=", $data["id"])->where(function ($query) use ($data) {
         return $query->where("cpf", UtilService::onlyNumbers($data["cpf"]))->orWhere("email", $data["email"]);
       });
@@ -323,7 +322,7 @@ class UsuarioService extends ServiceBase
           $alreadyHas->deleted_at = null;
           return $alreadyHas;
         } else {
-          throw new Exception("Já existe um usuário com mesmo e-mail ou CPF no sistema");
+          throw new ValidateException("Já existe um usuário com mesmo e-mail ou CPF no sistema", 422);
         }
       }
       $this->validarPerfil($data);
@@ -346,12 +345,18 @@ class UsuarioService extends ServiceBase
     $perfilNovo = Perfil::find($data['perfil_id']);
     $perfilAtual = !empty($data['id']) ? $this->getById($data)["perfil_id"] : null;
 
+    $this->nivelAcessoService = new NivelAcessoService();
+    $developer = $this->nivelAcessoService->getPerfilDesenvolvedor();
+    if (empty($developer))
+      throw new ServerException("ValidateUsuario", "Perfil de Desenvolvedor não encontrado no banco de dados");
+
+      $developerId = $developer->id;
     if ($data['perfil_id'] != $perfilAtual) {
       if ($perfilNovo->nivel < $perfilAutenticado->nivel)
         throw new ServerException("ValidateUsuario", "Não é possível atribuir perfil superior ao do usuário logado.");
-      if ($data["perfil_id"] == $this->developerId && !$this->isLoggedUserADeveloper())
+      if ($data["perfil_id"] == $developerId && !$this->isLoggedUserADeveloper())
         throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de/para um Desenvolvedor");
-      if ($perfilAtual == $this->developerId && !$this->isLoggedUserADeveloper())
+      if ($perfilAtual == $developerId && !$this->isLoggedUserADeveloper())
         throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de um Desenvolvedor");
     }
   }

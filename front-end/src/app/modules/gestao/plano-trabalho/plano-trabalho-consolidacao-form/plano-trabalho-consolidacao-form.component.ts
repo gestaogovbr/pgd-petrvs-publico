@@ -317,7 +317,8 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
         produtividade: 0,
         extra: undefined,
         _status: []
-      }
+      },
+      _status: 'temporario'
     });   
     return atividade
   }
@@ -407,7 +408,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     return etiquetasUnidades;
   }
 
-  public async onColumnProgressoEtiquetasChecklistSave(row: any) {
+  public async onColumnProgressoEtiquetasChecklistSave(row: any) {   
     try {
       const saved = await this.atividadeDao!.update(row.id, {
         progresso: this.formEdit.controls.progresso.value,
@@ -448,6 +449,10 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     }
     return result;
   };
+
+  public podeEditar(row: any): boolean{
+    return !row._status;
+  }
 
   public loadTipoAtividade(tipoAtividade: TipoAtividade | undefined) {
     if (tipoAtividade) {
@@ -673,7 +678,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
 
   public afastamentoDynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    result.push(Object.assign({}, this.OPTION_INFORMACOES, { onClick: (doc: Afastamento) => this.go.navigate({ route: ["cadastros", "afastamento", doc.id, "consult"] }) }));
+    result.push(Object.assign({}, this.OPTION_INFORMACOES, { onClick: (doc: Afastamento) => this.go.navigate({ route: ["gestao", "afastamento", doc.id, "consult"] }) }));
     //result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
     return result;
   }

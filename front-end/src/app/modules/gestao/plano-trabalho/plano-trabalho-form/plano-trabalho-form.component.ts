@@ -253,12 +253,16 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public preenchePrograma(programa: Programa) {
-    this.form?.controls.programa_id.setValue(programa.id);
-    this.entity!.programa_id = programa.id;
-    this.entity!.programa = programa;
-    this.form?.controls.criterios_avaliacao.setValue(programa.plano_trabalho_criterios_avaliacao || []);
-    this.form?.controls.data_inicio.updateValueAndValidity();
-    this.form?.controls.data_fim.updateValueAndValidity();
+    if(programa){
+      this.form?.controls.programa_id.setValue(programa.id);
+      this.entity!.programa_id = programa.id;
+      this.entity!.programa = programa;
+      this.form?.controls.criterios_avaliacao.setValue(programa.plano_trabalho_criterios_avaliacao || []);
+      this.form?.controls.data_inicio.updateValueAndValidity();
+      this.form?.controls.data_fim.updateValueAndValidity();
+    } else {
+      this.form?.setErrors({programa: "Não há programa vigente para a unidade executora."});
+    }
   }
 
   public onDataInicioChange(event: Event) {

@@ -13,7 +13,7 @@ class DropOrgaoCentralExportacoesTable extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('orgao_central_exportacoes');
+        // Schema::dropIfExists('orgao_central_exportacoes');
     }
 
     /**
@@ -23,16 +23,16 @@ class DropOrgaoCentralExportacoesTable extends Migration
      */
     public function down()
     {
-        Schema::create('orgao_central_exportacoes', function (Blueprint $table) {
-            $table->id();
-            $table->timestamp('data_exportacao');
-            $table->enum('tipo', ['PLANO_TRABALHO', 'PLANO_ENTREGA']);
-            $table->json('parametros');
-            $table->string('versao');
-            $table->json('corpo');
-            $table->json('retorno')->nullable();
-            $table->json('hashs')->nullable();
-            $table->timestamps();
-        });
+        // Schema::create('orgao_central_exportacoes', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->timestamp('data_exportacao');
+        //     $table->enum('tipo', ['PLANO_TRABALHO', 'PLANO_ENTREGA']);
+        //     $table->json('parametros');
+        //     $table->string('versao');
+        //     $table->json('corpo');
+        //     $table->json('retorno')->nullable();
+        //     $table->json('hashs')->nullable();
+        //     $table->timestamps();
+        // });
     }
 }

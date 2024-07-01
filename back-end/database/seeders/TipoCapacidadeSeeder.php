@@ -25,10 +25,11 @@ class TipoCapacidadeSeeder extends Seeder
 
     //garantir que existe o Perfil Desenvolvedor
     $perfilDesenvolvedor = Perfil::firstOrCreate(
-      ['nome' => 'Desenvolvedor'],
+      ['nivel' => 0],
       [
         'id' => $utilService->uuid("Desenvolvedor"),
         'nivel' => 0,
+        'nome' => "Perfil Desenvolvedor",
         'descricao' => 'Perfil de Desenvolvedor - Todas as permissões',
       ]
     );
@@ -57,7 +58,7 @@ class TipoCapacidadeSeeder extends Seeder
         }
       } else {
         $capacidadePai = Capacidade::create([
-          'id' => $utilService->uuid($modulo['codigo']),
+          'id' => $utilService->uuid($modulo['codigo'] .$developerId),
           'perfil_id' => $developerId,
           'tipo_capacidade_id' => $tipoCapacidadePai->id
         ]);
@@ -84,7 +85,7 @@ class TipoCapacidadeSeeder extends Seeder
         } else {
           $capacidade = new Capacidade();
           $capacidade->fill([
-            'id' => $utilService->uuid($capacidadeFilha[0]),
+            'id' => $utilService->uuid($capacidadeFilha[0] .$developerId),
             'perfil_id' => $developerId,
             'tipo_capacidade_id' => $tipoCapacidadeFilha->id
           ]);

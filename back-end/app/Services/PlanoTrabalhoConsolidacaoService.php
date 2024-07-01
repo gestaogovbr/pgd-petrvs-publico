@@ -33,7 +33,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     if (!empty($unidadeId)) {
       $unidade = Unidade::find($unidadeId[2]);
       if (!empty($subordinadas) && $subordinadas[2] && !empty($unidade)) {
-        $data["where"][] = ["planoTrabalho.unidade.path", "like", $unidade->path . "%"];
+        $data["where"][] = ["planoTrabalho.unidade.path", "like", "%/". $unidade->id ];
       } else {
         $data["where"][] = $unidadeId;
       }
@@ -55,6 +55,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
         "unidade:id,sigla,nome,unidade_pai_id",
         "unidade.gestor:id,unidade_id,usuario_id",
         "unidade.gestoresSubstitutos:id,unidade_id,usuario_id",
+        "unidade.gestoresDelegados:id,unidade_id,usuario_id",
         "unidade.unidadePai.gestor:id,unidade_id,usuario_id",
         "unidade.unidadePai.gestoresSubstitutos:id,unidade_id,usuario_id",
         "tipoModalidade:id,nome",
@@ -264,12 +265,15 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     DB::beginTransaction();
     try {
       /* (RN_CSLD_11) Não pode concluir a consolidação antes que a anterior não esteja concluida, e não pode retornar status da consolidação se a posterior estiver a frente (em status); */
-      $anterior = $this->anterior($id);
-      if(!empty($anterior) && in_array($anterior->status, ["INCLUIDO"])) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Existe consolidação anterior ainda não concluída");
+      //$anterior = $this->anterior($id);
+      //if(!empty($anterior) && in_array($anterior->status, ["INCLUIDO"])) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Existe consolidação anterior ainda não concluída");
       $dados = $this->consolidacaoDados($id);
       $consolidacao = PlanoTrabalhoConsolidacao::find($id);
       if(empty($consolidacao)) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Consolidação não encontrada");
       if(!empty($consolidacao->data_conclusao)) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Consolidação já concluída");
+      if (!is_array($dados)) {
+        throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Dados de consolidação inválidos");
+      }
       $dataConclusao = new DateTime();
       $consolidacao->data_conclusao = $dataConclusao;
       $consolidacao->save();
@@ -327,8 +331,8 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     DB::beginTransaction();
     try {
       /* (RN_CSLD_11) Não pode concluir a consolidação antes que a anterior não esteja concluida, e não pode retornar status da consolidação se a posterior estiver a frente (em status); */
-      $proximo = $this->proximo($id);
-      if(!empty($proximo) && in_array($proximo->status, ["CONCLUIDO", "AVALIADO"])) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Existe consolidação posterior concluída");
+      //$proximo = $this->proximo($id);
+      //if(!empty($proximo) && in_array($proximo->status, ["CONCLUIDO", "AVALIADO"])) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Existe consolidação posterior concluída");
       $consolidacao = PlanoTrabalhoConsolidacao::find($id);
       if(empty($consolidacao)) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Consolidação não encontrada");
       if(empty($consolidacao->data_conclusao)) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Consolidação não concluída");

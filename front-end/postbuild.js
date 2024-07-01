@@ -2,47 +2,62 @@ const fs = require('fs');
 const path = require('path');
 
 console.log("POST-BUILD:");
-/* Cria o angular.blade.php e edita o app.json para colocar os arquivos com hash do build angular */
-if (fs.existsSync("../back-end/public/index.html")) {
-  /* Copia o arquivo index.html para a pasta pages (Para carregar o options da extensão) */
-  fs.copyFileSync("../back-end/public/index.html", "../back-end/public/pages/index.html");
-  /* Obtem lista de arquivos gerados no deploy */
-  $index = fs.readFileSync("../back-end/public/index.html", { encoding: "utf8" });
-  $files = [];
-  $changed = $index.replace('<base href="/">', '<base href="{{ $host }}">');
-  fs.writeFileSync("../back-end/public/index.html", $changed);
-  $files = preg_match_all(/src="(\w+\.\w+\.js)/i, $index);
-  if ($files.length) {
-    $appJson = JSON.parse(fs.readFileSync("../back-end/public/app.json", { encoding: "utf8" }));
-    $appJson.angularFiles = $files[1];
-    fs.writeFileSync("../back-end/public/app.json", JSON.stringify($appJson));
-  } else {
-    console.log("Não foi possível encontrar lista de arquivos buildados do angular");
+
+// Cria o angular.blade.php e edita o app.json para colocar os arquivos com hash do build angular
+const indexHtmlPath = path.resolve(__dirname, '../back-end/public/pages/index.html');
+const appJsonPath = path.resolve(__dirname, '../back-end/public/app.json');
+const angularBladePath = path.resolve(__dirname, '../back-end/resources/views/angular.blade.php');
+
+
+if (fs.existsSync(indexHtmlPath)) {
+  try {
+
+
+    // Obtem lista de arquivos gerados no deploy
+    let indexContent = fs.readFileSync(indexHtmlPath, { encoding: "utf8" });
+    let angularFiles = [];
+    indexContent = indexContent.replace('<base href="/">', '<base href="{{ $host }}">');
+
+    // Extrai os nomes dos arquivos JavaScript usando expressão regular
+    const regex = /src="([^"]+\.js)"/gi;
+    let match;
+    while ((match = regex.exec(indexContent)) !== null) {
+      angularFiles.push(match[1]);
+    }
+
+    if (angularFiles.length > 0) {
+      let appJson = JSON.parse(fs.readFileSync(appJsonPath, { encoding: "utf8" }));
+      appJson.angularFiles = angularFiles;
+      fs.writeFileSync(appJsonPath, JSON.stringify(appJson, null, 2));
+      console.log("Arquivos do Angular adicionados ao app.json:", angularFiles);
+    } else {
+      console.log("Não foi possível encontrar lista de arquivos buildados do Angular");
+    }
+
+    // Verifica se angular.blade.php já existe e o remove
+    if (fs.existsSync(angularBladePath)) {
+      fs.unlinkSync(angularBladePath);
+      console.log("Arquivo angular.blade.php existente removido.");
+    }
+
+    // Move o template modificado para carregar a aplicação no Laravel
+    fs.renameSync(indexHtmlPath, angularBladePath);
+    console.log("Arquivo index.html movido para angular.blade.php com sucesso.");
+
+  } catch (error) {
+    console.error("Erro ao processar index.html e app.json:", error);
   }
-  /* Move o template modificado para carregar a aplicação no Laravel baseado no HTML da aplicação angula e evitar que seja chamado pelo servidor web */
-  fs.renameSync("../back-end/public/index.html", "../back-end/resources/views/angular.blade.php");
-  console.log("FIM");
 } else {
-  console.log("Arquivo index.html não encontrado");
+  console.log("Arquivo index.html não encontrado em", indexHtmlPath);
 }
 
-// documentacao
-const origem = '../resources/documentacao/';
-const destinoFrontEnd = '../front-end/src/assets/documentacao/';
-const destinoBackEnd = '../back-end/public/assets/documentacao/';
+// Documentação
+const origem = path.resolve(__dirname, '../resources/documentacao/');
+const destinoFrontEnd = path.resolve(__dirname, '../front-end/src/assets/documentacao/');
+const destinoBackEnd = path.resolve(__dirname, '../back-end/public/assets/documentacao/');
 
 copiarDiretorio(origem, destinoFrontEnd);
 copiarDiretorio(origem, destinoBackEnd);
-
-function preg_match_all(regex, str) {
-  return [...str.matchAll(new RegExp(regex, 'g'))].reduce((acc, group) => {
-    group.filter((element) => typeof element === 'string').forEach((element, i) => {
-      if (!acc[i]) acc[i] = [];
-      acc[i].push(element);
-    });
-    return acc;
-  }, []);
-}
 
 function copiarDiretorio(origem, destino) {
   if (!fs.existsSync(origem)) {
@@ -70,3 +85,13 @@ function copiarDiretorio(origem, destino) {
     console.error(`Erro ao copiar '${origem}' para '${destino}': ${error.message}`);
   }
 }
+
+// Geração do build-info.json
+const buildInfo = {
+  build_date: new Date().toISOString(),
+  build_number: Date.now()
+};
+
+const buildInfoPath = path.resolve(__dirname, '../back-end/public/assets/build-info.json');
+fs.writeFileSync(buildInfoPath, JSON.stringify(buildInfo, null, 2));
+console.log('Build info gerado:', buildInfo);

@@ -17,27 +17,31 @@
                 [dao]="unidadeDao"></input-search>
         </div>
     </filter>
-    <div *ngIf="grid?.filterRef?.collapsed" class="mt-2 mb-4"><span><strong>{{ 'Programa: ' + programa?.nome || '' }}</strong></span></div>
+    <div *ngIf="grid?.filterRef?.collapsed" class="mt-2 mb-4"><span><strong>{{ lex.translate('Usuários') }}</strong></span></div>
     <columns>
-        <column icon="bi-person" class="text-center" [template]="columnFoto" >
-            <ng-template let-row="row" #columnFoto>
-                <profile-picture [url]="row.url_foto" [size]="40" [hint]="row.nome"></profile-picture>
-            </ng-template>
-        </column>
+       
         <column [title]="lex.translate('Usuário')" [template]="columnUsuario" >
             <ng-template let-row="row" #columnUsuario>
                 <strong>{{row.nome }}</strong><br>
                 <small>{{row.apelido }}</small>
             </ng-template>
         </column>
-        <column [title]="lex.translate('Habilitado')" [align]="'center'" [template]="columnHabilitado" >
-            <ng-template let-row="row" #columnHabilitado>
-                <badge [icon]="isHabilitado(row) ? 'bi bi-person-check' : 'bi-person-fill-slash'" [label]="isHabilitado(row) ? lex.translate('Habilitado') : lex.translate('Desabilitado')" [color]="isHabilitado(row) ? 'success' : 'danger'"></badge>
+
+        <column [title]="lex.translate('Programa de Gestão')" [template]="columnPrograma" >
+            <ng-template let-row="row" #columnPrograma>
+                <ng-container *ngFor="let pp of row.participacoes_programas">
+                    <small *ngIf="pp.habilitado == 1" class="text-success">{{pp.programa.nome}}</small>
+                </ng-container>
+                <badge *ngIf="row.participacoes_programas.length == 0" [color]="'danger'">{{lex.translate('Sem participação')}}</badge>
             </ng-template>
         </column>
-        <column [title]="lex.translate('Lotação')" [template]="columnLotacao">
+
+    
+        <column [title]="lex.translate('Vínculos')" [template]="columnLotacao">
             <ng-template let-row="row" #columnLotacao>
-                <span>{{row.lotacao.unidade.sigla }}</span>
+                <div *ngFor="let area of row.areas_trabalho">
+                    <small>{{area.unidade.sigla}}</small>
+                </div>
             </ng-template>
         </column>
         <column [title]="lex.translate('Plano de Trabalho') + ' ativo?'" [align]="'center'" [template]="columnPlanoTrabalho">

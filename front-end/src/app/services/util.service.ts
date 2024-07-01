@@ -3,7 +3,7 @@ import { IIndexable } from '../models/base.model';
 import { Md5 } from 'ts-md5/dist/md5';
 import { LookupItem } from './lookup.service';
 import { Usuario } from '../models/usuario.model';
-import * as moment from 'moment';
+import moment from 'moment';
 import { NgxMaskService } from 'ngx-mask';
 import { DOCUMENT } from '@angular/common';
 import { AbstractControl, FormControl } from '@angular/forms';
@@ -390,7 +390,7 @@ export class UtilService {
   }
 
   public isDeveloper(): boolean {
-    return this.auth.usuario?.perfil?.nome == 'Desenvolvedor';
+    return this.auth.usuario?.perfil?.nivel == 0;
   }
 
   public decimalToTimer(value: number, onlyHours: boolean = false, hoursPerDay: number = 24) {
@@ -653,6 +653,13 @@ export class UtilService {
    */
   public uniqueArray(array: any[]): any[] {
     return array.filter((elem, i) => array.indexOf(elem) === i);
+  }
+
+  public decodeUnicode(str: string): string {
+    return str.replace(/\\u[\dA-F]{4}/gi, 
+      function (match) {
+        return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
+      });
   }
 
 }

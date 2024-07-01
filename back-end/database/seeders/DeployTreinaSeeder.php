@@ -18,9 +18,9 @@ class DeployTreinaSeeder extends Seeder
       CidadeSeeder::class,
       FeriadoSeeder::class,
       PerfilSeeder::class,
-      In24_TreinaSeeder::class,
       TipoCapacidadeSeeder::class,
       CapacidadeSeeder::class,
+      In24_TreinaSeeder::class,
       FuncaoSeeder::class,      
       NomenclaturaSeeder::class,
     ]);

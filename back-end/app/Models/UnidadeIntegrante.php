@@ -20,6 +20,10 @@ class UnidadeIntegrante extends ModelBase //Pivot //ModelBase
     'usuario_id', /* char(36); NOT NULL; */
     //'deleted_at', /* timestamp; */
   ];
+  public function gestores()
+  {
+    return $this->hasMany(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'GESTOR');
+  }
   // hasOne
   public function lotado()
   {

@@ -24,6 +24,7 @@ class Avaliacao extends ModelBase
     'plano_trabalho_consolidacao_id', /* char(36); */
     'plano_entrega_id', /* char(36); */
     'tipo_avaliacao_id', /* char(36); NOT NULL; */
+    'tipo_avaliacao_nota_id', /* char(36); NOT NULL; */
     //'deleted_at', /* timestamp; */
     //'recurso', /* text; */// Recurso contra a nota atribuída, pelo avaliado
   ];
@@ -56,6 +57,12 @@ class Avaliacao extends ModelBase
   {
     return $this->belongsTo(TipoAvaliacao::class);
   }
+
+  public function tipoAvaliacaoNota()
+  {
+    return $this->belongsTo(TipoAvaliacaoNota::class);
+  }
+
   public function planoEntrega()
   {
     return $this->belongsTo(PlanoEntrega::class);

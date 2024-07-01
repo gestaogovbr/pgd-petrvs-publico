@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Contracts\IBaseException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
@@ -11,6 +12,7 @@ use App\Models\PlanoTrabalhoConsolidacao;
 use App\Services\UnidadeService;
 use App\Services\UsuarioService;
 use App\Services\UtilService;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class AvaliacaoController extends ControllerBase {
@@ -54,7 +56,7 @@ class AvaliacaoController extends ControllerBase {
         }
     }
 
-    public function canAvaliar($data, $usuario) {
+    public function canAvaliar($data, $usuario) {        
         $unidadeService = new UnidadeService();
         $usuarioService = new UsuarioService();
         $consolidacao = !empty($data["plano_trabalho_consolidacao_id"]) ? PlanoTrabalhoConsolidacao::find($data["plano_trabalho_consolidacao_id"]) : null;
@@ -65,13 +67,12 @@ class AvaliacaoController extends ControllerBase {
             atribuição de avaliador (no caso de consolidação o superior hierárquico é o gestor da unidade, substituto ou delegado, já para o 
             plano de entrega o superior será o gestor, substituto ou delegado da unidade imediatamente superior). Deverá possuir tambem a 
             capacidade MOD_PTR_CSLD_AVAL (consolidação do plano de trabalho), ou MOD_PENT_AVAL/MOD_PENT_AVAL_SUBORD (plano de entrega); */
-        $atribuicao = !empty($consolidacao) ? "AVALIADOR_PLANO_TRABALHO" : "AVALIADOR_PLANO_ENTREGA";
-        $avaliador = fn($unidade) => $usuarioService->isGestorUnidade($unidade->id) || $usuarioService->isGestorUnidade($unidade->unidadePai?->id) || $usuarioService->isIntegrante($atribuicao, $unidade->id) ;
-        $unidade = !empty($consolidacao) ? $consolidacao->planoTrabalho->unidade : $planoEntrega?->unidade?->unidadePai;
+        $avaliador = fn($unidade) => $usuarioService->isGestorUnidade($unidade);
+        $unidade = !empty($consolidacao) ? $consolidacao->planoTrabalho->unidade : ($planoEntrega?->unidade?->instituidora == 1 ? $planoEntrega?->unidade : $planoEntrega?->unidade?->unidadePai);
         if(empty($unidade)) throw new ServerException("ValidateAvaliacao", "Unidade do gestor não encontrada no sistema");
-        $condicao1 = !empty($consolidacao) && $usuario->hasPermissionTo("MOD_PTR_CSLD_AVAL") && $avaliador($unidade);
+        $condicao1 = !empty($consolidacao) && $usuario->hasPermissionTo("MOD_PTR_CSLD_AVAL") && ($avaliador($unidade->id) || $avaliador($unidade->unidade_pai_id));
         $condicao2 = !empty($planoEntrega) && $usuario->hasPermissionTo("MOD_PENT_AVAL") && $avaliador($unidade->id);
-        $condicao3 = !empty($planoEntrega) && $usuario->hasPermissionTo("MOD_PENT_AVAL_SUBORD") && !!array_filter($unidadeService->linhaAscendente($unidade->id), fn($u) => $avaliador($u));
+        $condicao3 = !empty($planoEntrega) && $usuario->hasPermissionTo("MOD_PENT_AVAL_SUBORD") && array_filter($unidadeService->linhaAscendente($unidade->id), fn($u) => $avaliador($u));
         if(!empty($consolidacao) && !$condicao1) throw new ServerException("ValidateAvaliacao", "Usuário não possui a capacidade MOD_PTR_CSLD_AVAL.\n[ver RN_AVL_1]");
         if(!empty($planoEntrega) && !$condicao2 && !$condicao3) throw new ServerException("ValidateAvaliacao", "Usuário não possui a capacidade MOD_PENT_AVAL ou MOD_PENT_AVAL_SUBORD.\n[ver RN_AVL_1]");
     }
@@ -86,8 +87,13 @@ class AvaliacaoController extends ControllerBase {
             return response()->json([
                 'success' => $this->service->recorrer($data["id"], $data["recurso"])
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -100,8 +106,13 @@ class AvaliacaoController extends ControllerBase {
             return response()->json([
                 'success' => $this->service->cancelarAvaliacao($data["id"])
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 

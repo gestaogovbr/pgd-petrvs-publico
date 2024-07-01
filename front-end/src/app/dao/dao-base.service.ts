@@ -333,7 +333,7 @@ export class DaoBaseService<T extends Base> {
       const relations = Object.keys(extra.merge);
       for (let row of rows) {
         for (let relation of relations) {
-          if (
+          if (            
             row.hasOwnProperty(relation + '_id') &&
             extra.merge[relation].hasOwnProperty(row[relation + '_id'])
           ) {

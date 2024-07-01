@@ -16,6 +16,7 @@ import { NotificacoesTemplateComponent } from './notificacoes/notificacoes-templ
 import { DocumentosBadgeComponent } from './documentos/documentos-badge/documentos-badge.component';
 import { StatusFormComponent } from './status/status-form/status-form.component';
 import { AvaliarComponent } from './avaliar/avaliar.component';
+import { VisualizarAvaliacaoComponent } from './visualizar-avaliacao/visualizar-avaliacao.component';
 import { AvaliarNotaInputComponent } from './avaliar/avaliar-nota-input/avaliar-nota-input.component';
 import { AvaliarNotaBadgeComponent } from './avaliar/avaliar-nota-badge/avaliar-nota-badge.component';
 import { PlanejamentoShowComponent } from './planejamento-show/planejamento-show.component';
@@ -39,6 +40,7 @@ import { DocumentosPreviewComponent } from './documentos/documentos-preview/docu
     NotificacoesTemplateComponent,
     StatusFormComponent,
     AvaliarComponent,
+    VisualizarAvaliacaoComponent,
     AvaliarNotaInputComponent,
     AvaliarNotaBadgeComponent,
     ColunasComponent,
@@ -64,6 +66,7 @@ import { DocumentosPreviewComponent } from './documentos/documentos-preview/docu
     NotificacoesConfigComponent,
     NotificacoesTemplateComponent,
     AvaliarComponent,
+    VisualizarAvaliacaoComponent,
     AvaliarNotaInputComponent,
     AvaliarNotaBadgeComponent,
     ColunasComponent,

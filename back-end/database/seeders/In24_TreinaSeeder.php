@@ -19,11 +19,14 @@ use App\Models\Entrega;
 use App\Models\Planejamento;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Entidade;
+use App\Models\TipoCapacidade;
+use App\Models\Capacidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\Usuario;
 use App\Models\Perfil;
 use App\Models\PlanejamentoObjetivo;
 use App\Services\UtilService;
+use App\Services\NivelAcessoService; 
 
 class In24_TreinaSeeder extends Seeder
 {
@@ -38,6 +41,7 @@ class In24_TreinaSeeder extends Seeder
   public $unidades;
   public $entidade;
   public $utilService;
+  public $nivelAcessoService;
 
   public function __construct()
   {
@@ -45,6 +49,7 @@ class In24_TreinaSeeder extends Seeder
     $this->brasilia = Cidade::where('codigo_ibge', '5300108')->first();
 
     $this->utilService = new UtilService();
+    $this->nivelAcessoService = new NivelAcessoService();
 
     // Pega a primeira entidade criada no tenant ou cria uma nova
     $this->entidade = Entidade::first() ?? new Entidade([
@@ -1206,7 +1211,7 @@ class In24_TreinaSeeder extends Seeder
         'nome' => 'Adm Negocial',
         'cpf' => '03589623071',
         'apelido' => 'Adm',
-        'perfil_id' => Perfil::where('nome', 'Administrador Negocial')->first()->id,
+        'perfil_id' => $this->nivelAcessoService->getPerfilAdministrador()->id,
       ),
       array(
         'id' => '92e4c600-f041-11ee-9d0d-0242ac120002',
@@ -1214,7 +1219,7 @@ class In24_TreinaSeeder extends Seeder
         'nome' => 'Desenvolvedor',
         'cpf' => '56262885030',
         'apelido' => 'Dev',
-        'perfil_id' => Perfil::where('nome', 'Desenvolvedor')->first()->id,
+        'perfil_id' => $this->nivelAcessoService->getPerfilDesenvolvedor()->id,
       ),
       array(
         'id' => '67c27867-ffc2-11ee-b754-0242ac120002',
@@ -1222,7 +1227,7 @@ class In24_TreinaSeeder extends Seeder
         'nome' => 'Geisimar Rech',
         'cpf' => '01798651106',
         'apelido' => 'Geisimar',
-        'perfil_id' => Perfil::where('nome', 'Desenvolvedor')->first()->id,
+        'perfil_id' => $this->nivelAcessoService->getPerfilDesenvolvedor()->id,
       ),
       array(
         'id' => '8b521ae1-ffc2-11ee-b754-0242ac120002',
@@ -1230,14 +1235,22 @@ class In24_TreinaSeeder extends Seeder
         'nome' => 'Marco Coelho',
         'cpf' => '03400125954',
         'apelido' => 'Marco',
-        'perfil_id' => Perfil::where('nome', 'Desenvolvedor')->first()->id,
+        'perfil_id' => $this->nivelAcessoService->getPerfilDesenvolvedor()->id,
       )
     );
+
+    $perfilAdmNegocialId = $this->nivelAcessoService->getPerfilAdministrador()->id;
+    $tipoCapacidadeId = TipoCapacidade::where('codigo', 'MOD_CFG_USER_MAIL')->first()->id;
+    $capacidade = Capacidade::firstOrNew([
+      'perfil_id' => $perfilAdmNegocialId,
+      'tipo_capacidade_id' => $tipoCapacidadeId
+    ]);
+    $capacidade->save();
 
     // Atualiza o primeiro usuário para dev
     $usuario = Usuario::find('ada3cdbc-ffc4-11ee-b754-0242ac120002');
     if ($usuario) {
-      $usuario->perfil_id = Perfil::where('nome', 'Desenvolvedor')->first()->id;
+      $usuario->perfil_id = $this->nivelAcessoService->getPerfilDesenvolvedor()->id;
       $usuario->save();
     }
 
@@ -1259,47 +1272,47 @@ class In24_TreinaSeeder extends Seeder
     }
     
     foreach ($tipos_modalidades as $tipo_modalidade) {
-      TipoModalidade::firstOrCreate(['id' => $tipo_modalidade['id']], $tipo_modalidade);
+      TipoModalidade::withTrashed()->firstOrCreate(['id' => $tipo_modalidade['id']], $tipo_modalidade);
     }
 
     foreach ($tipos_atividades as $tipo_atividade) {
-      TipoAtividade::firstOrCreate(['id' => $tipo_atividade['id']], $tipo_atividade);
+      TipoAtividade::withTrashed()->firstOrCreate(['id' => $tipo_atividade['id']], $tipo_atividade);
     }
 
     foreach ($tipos_avaliacoes as $tipo_avaliacao) {
-      TipoAvaliacao::firstOrCreate(['id' => $tipo_avaliacao['id']], $tipo_avaliacao);
+      TipoAvaliacao::withTrashed()->firstOrCreate(['id' => $tipo_avaliacao['id']], $tipo_avaliacao);
     }
 
     foreach ($tipos_avaliacoes_notas as $tipo_avaliacao_nota) {
-      TipoAvaliacaoNota::firstOrCreate(['id' => $tipo_avaliacao_nota['id']], $tipo_avaliacao_nota);
+      TipoAvaliacaoNota::withTrashed()->firstOrCreate(['id' => $tipo_avaliacao_nota['id']], $tipo_avaliacao_nota);
     }
 
     foreach ($tipos_documentos as $tipo_documento) {
-      TipoDocumento::firstOrCreate(['id' => $tipo_documento['id']], $tipo_documento);
+      TipoDocumento::withTrashed()->firstOrCreate(['id' => $tipo_documento['id']], $tipo_documento);
     }
 
     foreach ($templates as $template) {
-      Template::firstOrCreate(['id' => $template['id']], $template);
+      Template::withTrashed()->firstOrCreate(['id' => $template['id']], $template);
     }
 
     foreach ($programas as $programa) {
-      Programa::firstOrCreate(['id' => $programa['id']], $programa);
+      Programa::withTrashed()->firstOrCreate(['id' => $programa['id']], $programa);
     }
 
     foreach ($eixos_tematicos as $eixo_tematico) {
-      EixoTematico::firstOrCreate(['id' => $eixo_tematico['id']], $eixo_tematico);
+      EixoTematico::withTrashed()->firstOrCreate(['id' => $eixo_tematico['id']], $eixo_tematico);
     }
 
     foreach ($modelos_afericao_entregas as $modelo_afericao_entrega) {
-      Entrega::firstOrCreate(['id' => $modelo_afericao_entrega['id']], $modelo_afericao_entrega);
+      Entrega::withTrashed()->firstOrCreate(['id' => $modelo_afericao_entrega['id']], $modelo_afericao_entrega);
     }
 
     foreach ($planejamentos as $planejamento) {
-      Planejamento::firstOrCreate(['id' => $planejamento['id']], $planejamento);
+      Planejamento::withTrashed()->firstOrCreate(['id' => $planejamento['id']], $planejamento);
     }
 
     foreach ($planejamentos_objetivos as $planejamento_objetivo) {
-      PlanejamentoObjetivo::firstOrCreate(['id' => $planejamento_objetivo['id']], $planejamento_objetivo);
+      PlanejamentoObjetivo::withTrashed()->firstOrCreate(['id' => $planejamento_objetivo['id']], $planejamento_objetivo);
     }
 
   }

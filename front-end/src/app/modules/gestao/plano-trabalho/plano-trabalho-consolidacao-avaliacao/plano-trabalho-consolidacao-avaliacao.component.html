@@ -32,12 +32,10 @@
                             <plano-trabalho-consolidacao-form #consolidacao [disabled]="true" [entity]="row" [planoTrabalho]="row.plano_trabalho" [cdRef]="cdRef"></plano-trabalho-consolidacao-form>
                         </ng-template>
                     </column>
-                    <column [title]="'Plano de trabalho/Vigência\nUnidade/Programa/Modalidade'" [template]="columnPlanoTrabalho">
+                    <column [title]="'Plano de trabalho/Vigência/Modalidade'" [template]="columnPlanoTrabalho">
                         <ng-template let-row="row" #columnPlanoTrabalho>
-                            {{row.plano_trabalho.usuario.nome}} <badge label="Início" color="light" icon="bi bi-calendar2" [textValue]="util.getDateFormatted(row.plano_trabalho.data_inicio)"></badge><badge label="Término" color="light" icon="bi bi-calendar2-check" [textValue]="util.getDateFormatted(row.plano_trabalho.data_fim)"></badge><br>
-                            <badge [icon]="entityService.getIcon('Unidade')" [label]="row.plano_trabalho.unidade?.sigla" color="light" [hint]="lex.translate('Unidade') + ': ' + row.plano_trabalho.unidade?.nome"></badge>
-                            <badge [icon]="entityService.getIcon('Programa')" [label]="row.plano_trabalho.programa?.nome" color="light" [hint]="lex.translate('Programa')"></badge>
-                            <badge [icon]="entityService.getIcon('TipoModalidade')" [label]="row.plano_trabalho.tipo_modalidade?.nome" color="light" [hint]="lex.translate('Tipo de modalidade')"></badge>
+                            #{{row.plano_trabalho?.numero}} <badge label="Início" color="light" icon="bi bi-calendar2" [textValue]="util.getDateFormatted(row.plano_trabalho?.data_inicio)"></badge><badge label="Término" color="light" icon="bi bi-calendar2-check" [textValue]="util.getDateFormatted(row.plano_trabalho?.data_fim)"></badge>
+                            <badge [icon]="entityService.getIcon('TipoModalidade')" [label]="row.plano_trabalho?.tipo_modalidade?.nome" color="light" [hint]="lex.translate('Tipo de modalidade')"></badge>
                         </ng-template>
                     </column>
                     <column title="Data início" [template]="columnDataInicio">
@@ -73,7 +71,7 @@
         </ng-template>
     </tab>
     <!--Aba Histórico de Avaliações-------------------------------------------------------------->
-    <tab key="HISTORICO" icon="bi bi-clipboard-pulse" label="Histórico de Avaliações" [template]="historico">
+    <!-- <tab key="HISTORICO" icon="bi bi-clipboard-pulse" label="Histórico de Avaliações" [template]="historico">
         <ng-template #historico>
             <grid [dao]="dao" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [init]="initGrid.bind(this)"
                 [hasAdd]="false" [hasEdit]="false" [loadList]="onGridLoadHistorico.bind(this)" [groupTemplate]="groupHistorico">
@@ -152,10 +150,9 @@
 
                         </ng-template>
                     </column>
-                    <column [title]="'Plano de trabalho/Vigência\nPrograma/Modalidade'" [template]="columnPlanoTrabalho">
+                    <column [title]="'Plano de trabalho/Vigência/Modalidade'" [template]="columnPlanoTrabalho">
                         <ng-template let-row="row" #columnPlanoTrabalho>
-                            {{row.plano_trabalho.usuario.nome}} <badge label="Início" color="light" icon="bi bi-calendar2" [textValue]="util.getDateFormatted(row.plano_trabalho.data_inicio)"></badge><badge label="Término" color="light" icon="bi bi-calendar2-check" [textValue]="util.getDateFormatted(row.plano_trabalho.data_fim)"></badge><br>
-                            <badge [icon]="entityService.getIcon('Programa')" [label]="row.plano_trabalho.programa?.nome" color="light" [hint]="lex.translate('Programa')"></badge>
+                            # {{row.plano_trabalho?.numero}} <badge label="Início" color="light" icon="bi bi-calendar2" [textValue]="util.getDateFormatted(row.plano_trabalho.data_inicio)"></badge><badge label="Término" color="light" icon="bi bi-calendar2-check" [textValue]="util.getDateFormatted(row.plano_trabalho.data_fim)"></badge>
                             <badge [icon]="entityService.getIcon('TipoModalidade')" [label]="row.plano_trabalho.tipo_modalidade?.nome" color="light" [hint]="lex.translate('Tipo de modalidade')"></badge>
                         </ng-template>
                     </column>
@@ -173,5 +170,5 @@
                 <pagination [rows]="rowsLimit"></pagination>
             </grid>
         </ng-template>
-    </tab>
+    </tab> -->
 </tabs>

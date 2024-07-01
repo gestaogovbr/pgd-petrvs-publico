@@ -4,8 +4,10 @@ namespace App\Services\Siape\Servidor;
 
 use App\Models\IntegracaoServidor as entidade;
 use App\Repository\IntegracaoServidorRepository;
+use App\Services\LogTrait;
 use App\Services\Siape\Contrato\InterfaceIntegracao;
 use App\Services\Siape\Imprimir;
+use App\Services\Tipo;
 use App\Services\UtilService;
 use Illuminate\Support\Facades\Log;
 use Ramsey\Uuid\Uuid;
@@ -13,7 +15,7 @@ use Ramsey\Uuid\Uuid;
 class Integracao implements InterfaceIntegracao
 {
 
-    use PreparaServidor, Imprimir;
+    use PreparaServidor, Imprimir, LogTrait;
 
     private array $servidores = [];
     private array $cpfsIntegracaoAlterados = [];
@@ -68,7 +70,7 @@ class Integracao implements InterfaceIntegracao
         $registroDobanco = $this->repository->getUmPeloCPF($entidade->cpf);
 
         if (!in_array($entidade->cpf, $this->cpfsIntegracaoAlterados) && $registroDobanco == null) {
-            // Log::channel('siape')->info('Salvando Novo Servidor na tabela integracao_servidores: ' , ['integracao_servidores'=>$entidade->toJson()]);
+            $this->logSiape('Salvando Novo Servidor na tabela integracao_servidores: ' , ['integracao_servidores'=>$entidade->toJson()], Tipo::INFO);
             $registro = $this->repository->save($entidade);
             array_push($this->cpfsIntegracaoAlterados, $entidade->cpf);
 
@@ -80,7 +82,7 @@ class Integracao implements InterfaceIntegracao
 
         if ($registroDobanco && !in_array($entidade->cpf, $this->cpfsIntegracaoAlterados)) {
             unset($entidade->matricula);
-            // Log::channel('siape')->info('Atualizando Servidor na tabela integracao_servidores: ' , ['integracao_servidores_antigo'=>$registroDobanco->toJson(),'integracao_servidores_novo'=>$entidade->toJson()]);
+            $this->logSiape('Atualizando Servidor na tabela integracao_servidores: ' , ['integracao_servidores_antigo'=>$registroDobanco->toJson(),'integracao_servidores_novo'=>$entidade->toJson()], Tipo::INFO);
             $registro = $registroDobanco->update((array) $entidade);
             array_push($this->cpfsIntegracaoAlterados, $entidade->cpf);
             $this->verificaEmailsFuncionaisVazios($entidade);
@@ -137,6 +139,8 @@ class Integracao implements InterfaceIntegracao
             'dataexercicionoorgao' => $this->getDataExercicio($ativo, $this->utilService, $this->integracaoConfig['tipo']),
             'funcoes' => $ativo['funcoes'],
             'matricula' => $this->utilService->valueOrDefault($ativo['matriculasiape'], null),
+            'nome_jornada' => $this->utilService->valueOrDefault($servidor['nome_jornada'], null),
+            'cod_jornada' => $this->utilService->valueOrDefault($servidor['cod_jornada'], null),
             'cpf_chefia_imediata' => $this->getCPFChefiaImediata($servidor, $this->utilService),
             'email_chefia_imediata' => $this->getEmailChefiaImediata($servidor, $this->utilService),
             'deleted_at' => null,
