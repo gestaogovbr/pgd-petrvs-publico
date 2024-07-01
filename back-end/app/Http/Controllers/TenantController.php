@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Contracts\IBaseException;
 use App\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -10,6 +11,7 @@ use App\Exceptions\ServerException;
 use Stancl\Tenancy\Database\Models\Domain;
 use Throwable;
 use App\Exceptions\LogError;
+use Illuminate\Support\Facades\Log;
 
 class TenantController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
@@ -77,8 +79,13 @@ class TenantController extends ControllerBase {
                 'success' => true,
                 'data' => $this->service->generateCertificateKeys()
             ]);
-        } catch (Throwable $e) {
+        } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -92,8 +99,13 @@ class TenantController extends ControllerBase {
                 'success' => true,
                 'data' => $this->service->cidadeSeeder($data['tenant_id'])
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -106,8 +118,13 @@ class TenantController extends ControllerBase {
                 'success' => true,
                 'data' => $this->service->tipoCapacidadeSeeder($data['tenant_id'])
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -118,8 +135,13 @@ class TenantController extends ControllerBase {
                 'success' => true,
                 'data' => $this->service->migrate($data)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -129,8 +151,13 @@ class TenantController extends ControllerBase {
                 'success' => true,
                 'data' => $this->service->resetBD()
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -141,8 +168,13 @@ class TenantController extends ControllerBase {
                 'success' => true,
                 'data' => $this->service->cleanDB($data)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -155,8 +187,13 @@ class TenantController extends ControllerBase {
                 'success' => true,
                 'data' => $this->service->seeders($data['tenant_id'])
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -169,8 +206,13 @@ class TenantController extends ControllerBase {
                 'success' => true,
                 'data' => $this->service->usuarioSeeder($data['tenant_id'])
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -183,8 +225,13 @@ class TenantController extends ControllerBase {
                 'success' => true,
                 'data' => $this->service->entidadeSeeder($data['tenant_id'])
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -197,8 +244,13 @@ class TenantController extends ControllerBase {
                 'success' => true,
                 'data' => $this->service->databaseSeeder($data['tenant_id'])
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -209,8 +261,13 @@ class TenantController extends ControllerBase {
                 'success' => true,
                 'data' =>$data
             ]);
-        } catch (Throwable $e) {
+        } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 }

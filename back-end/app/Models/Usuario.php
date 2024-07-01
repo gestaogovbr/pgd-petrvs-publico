@@ -2,47 +2,48 @@
 
 namespace App\Models;
 
+use Throwable;
 use App\Casts\AsJson;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
-use App\Traits\AutoUuid;
-use App\Models\Afastamento;
 use App\Models\Anexo;
-use App\Models\Atividade;
-use App\Models\AtividadeTarefa;
-use App\Models\Avaliacao;
 use App\Models\Change;
-use App\Models\Comentario;
-use App\Models\Curriculum;
-use App\Models\Documento;
-use App\Models\DocumentoAssinatura;
+use App\Models\Perfil;
+use App\Models\Projeto;
 use App\Models\Entidade;
 use App\Models\Favorito;
+use App\Traits\AutoUuid;
+use App\Models\Atividade;
+use App\Models\Avaliacao;
+use App\Models\Documento;
+use App\Models\Comentario;
+use App\Models\Curriculum;
 use App\Models\Integracao;
+use App\Traits\LogChanges;
+use App\Models\Afastamento;
 use App\Models\Notificacao;
-use App\Models\NotificacaoDestinatario;
-use App\Models\NotificacaoWhatsapp;
 use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalho;
-use App\Models\PlanoTrabalhoConsolidacao;
-use App\Models\Perfil;
-use App\Models\ProgramaParticipante;
-use App\Models\Projeto;
-use App\Models\ProjetoHistorico;
-use App\Models\ProjetoRecurso;
 use App\Models\ProjetoTarefa;
-use App\Models\QuestionarioPreenchimento;
-use App\Models\NotificacaoConfig;
-use App\Models\StatusJustificativa;
-use App\Traits\MergeRelations;
-use App\Traits\LogChanges;
+use App\Models\ProjetoRecurso;
 use App\Traits\HasPermissions;
+use App\Traits\MergeRelations;
+use App\Models\AtividadeTarefa;
+use App\Models\ProjetoHistorico;
 use App\Services\UsuarioService;
-use Throwable;
+use App\Models\NotificacaoConfig;
+use Laravel\Sanctum\HasApiTokens;
 use App\Exceptions\ServerException;
+use App\Models\DocumentoAssinatura;
+use App\Models\NotificacaoWhatsapp;
+use App\Models\StatusJustificativa;
+use App\Models\ProgramaParticipante;
+use App\Models\NotificacaoDestinatario;
+use Illuminate\Notifications\Notifiable;
+use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\QuestionarioPreenchimento;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class UsuarioConfig
 {
@@ -50,7 +51,7 @@ class UsuarioConfig
 
 class Usuario extends Authenticatable
 {
-  use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, LogChanges;
+  use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, LogChanges, SoftDeletes;
 
   protected $table = "usuarios";
 
@@ -126,7 +127,33 @@ class Usuario extends Authenticatable
     'notificacoes' => AsJson::class
   ];
 
-  public $delete_cascade = ['favoritos', 'unidadesIntegrantes'];
+  public $delete_cascade = [
+    'afastamentos',
+    'anexos',
+    'assinaturas',
+    'atividades',
+    'atividadesDemandadas',
+    'comentarios',
+    'documentos',
+    'favoritos',  // Note que 'favoritos' aparece duas vezes na lista original
+    'favoritos',
+    'historicosProjeto',
+    'integracoes',
+    'notificacoesDestinatario',
+    'notificacoesEnviadas',
+    'notificacoesWhatsapp',
+    'participacoesProgramas',
+    'planosEntregaCriados',
+    'planosTrabalho',
+    'planosTrabalhoCriados',
+    'preenchimentos',
+    'projetos',
+    'recursosProjeto',
+    'statusHistorico',
+    'tarefasAtividade',
+    'tarefasProjeto',
+    'unidadesIntegrantes'
+  ];
 
   // hasOne
   public function gerenciaEntidade()
@@ -297,7 +324,7 @@ class Usuario extends Authenticatable
   public function colaboracoes()
   {
     return $this->hasMany(UnidadeIntegrante::class)->has('colaborador');
-  } 
+  }
   public function colaboracao()
   {
     return $this->hasOne(UnidadeIntegrante::class)->has('colaborador');

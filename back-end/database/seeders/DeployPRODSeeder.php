@@ -15,14 +15,14 @@ class DeployPRODSeeder extends Seeder
   public function run()
   {
     $this->call([
-        CidadeSeeder::class,
-        FeriadoSeeder::class,
-        PerfilSeeder::class,
-        TipoCapacidadeSeeder::class,
-        CapacidadeSeeder::class,
-        NomenclaturaSeeder::class,
-        TipoMotivoAfastamentoSeeder::class
-
+      CidadeSeeder::class,
+      FeriadoSeeder::class,
+      PerfilSeeder::class,
+      TipoCapacidadeSeeder::class,
+      CapacidadeSeeder::class,
+      NomenclaturaSeeder::class,
+      TipoMotivoAfastamentoSeeder::class,
+      In24_2023Seeder::class
     ]);
   }
 }

@@ -27,6 +27,7 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
   public redirectTo?: FullRoute;
   public bc?: BroadcastChannel;
   buildInfo: any;
+  ambiente: any;
   /* ModalPage interface */
   public modalRoute?: ActivatedRouteSnapshot;
   public modalInterface: boolean = true;
@@ -74,6 +75,7 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
   ngOnInit(): void {
     this.buildInfoService.getBuildInfo().subscribe(data => {
       this.buildInfo = data;
+      this.buildInfo.build_date = this.formatDate(this.buildInfo.build_date);
     });
     this.titleSubscriber.next("Login Petrvs");
     this.route.queryParams.subscribe(params => {
@@ -115,6 +117,9 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
         this.auth.success(this.auth.usuario!, this.redirectTo);
       }
     })();
+    if (window.location.href.includes('pgdpetrvs.gestao.gov.br')) {
+      this.ambiente = "Ambiente antigo";
+    }
   }
 
   public closeModalIfSuccess = (result: boolean) => {
@@ -195,4 +200,16 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
     this.document.body.classList.remove('login');
   }
 
+  private formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    const options: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    };
+    return new Intl.DateTimeFormat('pt-BR', options).format(date);
+  }
 }

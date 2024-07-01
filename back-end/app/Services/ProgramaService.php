@@ -18,12 +18,11 @@ class ProgramaService extends ServiceBase
     $todosUnidadeExecutora = $this->extractWhere($data, "todosUnidadeExecutora");
 
     $dadosEscolhidos = !empty($vigentesUnidadeExecutora) ? $vigentesUnidadeExecutora : (!empty($todosUnidadeExecutora) ? $todosUnidadeExecutora : null);
-    if ($dadosEscolhidos !== null && !parent::loggedUser()->hasPermissionTo('MOD_PRGT_EXT')) {
-      /* (RN_PRGT_1) 
-          Garantir que apenas os programas associados à **primeira unidade instituidora identificada** sejam exibidos na listagem padrão.
-      */
-      $unidadeComPrograma = $this->programaUnidadeSuperior($dadosEscolhidos[2]);
-      if(!empty($unidadeComPrograma)) $where[] = ['unidade_id', '=', $unidadeComPrograma->id];
+    if ($dadosEscolhidos !== null) {
+     if(!parent::loggedUser()->hasPermissionTo('MOD_PRGT_EXT')){
+        $unidadeComPrograma = $this->programaUnidadeSuperior($dadosEscolhidos[2]);
+        if(!empty($unidadeComPrograma)) $where[] = ['unidade_id', '=', $unidadeComPrograma->id];
+      }
       if ($dadosEscolhidos === $vigentesUnidadeExecutora) {
         $where[] = ['data_inicio', '<=', now()];
         $where[] = ['data_fim', '>=', now()];
@@ -37,6 +36,10 @@ class ProgramaService extends ServiceBase
   public function validateStore($data, $unidade, $action) {
     $unidade  = Unidade::find($data['unidade_id']);    
     if(!empty($unidade) && !$unidade->instituidora) throw new ServerException("ValidatePrograma", "Não é possível criar um regramento para uma unidade que não seja instituidora.");
+  }
+
+  public function programaVigente($programa){
+    return $programa->data_fim >= now();
   }
 
   public function programaUnidadeSuperior($unidadeId)
@@ -54,12 +57,11 @@ class ProgramaService extends ServiceBase
   {
     $where = [];
     $vigentesUnidadeExecutora = $this->extractWhere($data, "vigentesUnidadeExecutora");
-    if (!empty($vigentesUnidadeExecutora && !parent::loggedUser()->hasPermissionTo('MOD_PRGT_EXT'))) {
-      /* (RN_PRGT_1) 
-         Garantir que apenas os programas associados à **primeira unidade instituidora identificada** sejam exibidos na listagem padrão.
-     */
-      $unidadeComPrograma = $this->programaUnidadeSuperior($vigentesUnidadeExecutora[2]);
-      if(!empty($unidadeComPrograma)) array_push($where, ['unidade_id', '=', $unidadeComPrograma->id]);      
+    if (!empty($vigentesUnidadeExecutora)) {
+      if(!parent::loggedUser()->hasPermissionTo('MOD_PRGT_EXT')){
+        $unidadeComPrograma = $this->programaUnidadeSuperior($vigentesUnidadeExecutora[2]);
+        if(!empty($unidadeComPrograma)) array_push($where, ['unidade_id', '=', $unidadeComPrograma->id]);      
+      }
       array_push($where, ['data_inicio', '<=', now()]);
       array_push($where, ['data_fim', '>=', now()]);
     }

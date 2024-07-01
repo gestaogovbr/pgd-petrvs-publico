@@ -33,7 +33,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
       perfil_id: { default: null }
     });
     this.addOption(this.OPTION_INFORMACOES, "MOD_USER");
-    //this.addOption(this.OPTION_EXCLUIR, "MOD_USER_EXCL");       // Tratar de forma diferenciada a exclusão de usuário
+    // this.addOption(this.OPTION_EXCLUIR, "MOD_USER_EXCL");       // Tratar de forma diferenciada a exclusão de usuário
   }
 
   public dynamicOptions(row: any): ToolbarButton[] {
