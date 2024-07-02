@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Contracts\IBaseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\PainelUsuarioService;
 use App\Exceptions\LogError;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class PainelUsuarioController extends Controller
@@ -103,8 +105,13 @@ class PainelUsuarioController extends Controller
             'success' => true,
             'data' => $this->service->getById($data)
         ]);
-        } catch (Throwable $e) {
-        return response()->json(['error' => $e->getMessage()]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -131,8 +138,13 @@ class PainelUsuarioController extends Controller
             'success' => true,
             'rows' => [$result]
         ]);
-        } catch (Throwable $e) {
-        return response()->json(['error' => $e->getMessage()]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 

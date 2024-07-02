@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\DataInvalidException;
 use App\Exceptions\ServerException;
 use App\Models\Documento;
 use App\Models\ModelBase;
@@ -219,7 +220,7 @@ class TemplateService extends ServiceBase
                         $tag['content'] = $ifThen ? $this->renderTemplate($endIfTag['before'], $context) : "";
                         $tag['after'] = $endIfTag['after'];
                     } else {
-                        throw new Exception("o if não possui um respectivo end-if");
+                        throw new DataInvalidException("o if não possui um respectivo end-if");
                     }
                 } elseif (preg_match(TemplateService::EXPRESSION_FOR, $tag['content'])) {
                     preg_match(TemplateService::STATEMENT_FOR, $tag['content'], $statement); /* for:EXP[(t..)x..0|0..x(..t)|EACH];par=0;par=0... */
@@ -234,7 +235,7 @@ class TemplateService extends ServiceBase
                         $tag['content'] = "";
                         $tag['after'] = $endForTag['after'];
                         /* Verifica se a variável de iteração já existe no contexto */
-                        if (isset($context[$statement['EACH'] ?? $statement['INDEX'] ?? ""])) throw new Exception("Variável de contexto já existe no contexto atual");
+                        if (isset($context[$statement['EACH'] ?? $statement['INDEX'] ?? ""])) throw new DataInvalidException("Variável de contexto já existe no contexto atual");
                         /* Itera os elementos do for */
                         $elements = (array) $this->getExpressionValue($statement['EXP'] ?? "", $context);
                         $each = preg_match('/^[a-zA-Z]\w+$/', $statement['EACH'] ?? "");
@@ -255,7 +256,7 @@ class TemplateService extends ServiceBase
                             $tag['content'] .= $this->renderTemplate($endForTag['before'], $forContext);
                         }
                     } else {
-                        throw new Exception("o for não possui um respectivo end-for");
+                        throw new DataInvalidException("o for não possui um respectivo end-for");
                     }
                 }
             } catch (Exception $error) {

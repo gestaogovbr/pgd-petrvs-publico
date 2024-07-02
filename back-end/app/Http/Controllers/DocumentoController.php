@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Contracts\IBaseException;
 use App\Models\Documento;
 use App\Exceptions\ServerException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Services\PlanoTrabalhoService;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class DocumentoController extends ControllerBase 
@@ -42,8 +44,13 @@ class DocumentoController extends ControllerBase
                 'success' => true,
                 'data' => $this->service->pendenteSei($data["id_documento"])
             ]); 
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -57,8 +64,13 @@ class DocumentoController extends ControllerBase
                 'success' => true,
                 'rows' => $this->service->assinar($data,$request)
             ]); 
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -73,8 +85,13 @@ class DocumentoController extends ControllerBase
             return response($pdfContent)
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'inline; filename="document.pdf"');
-        } catch (Throwable $e) {
+        } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 

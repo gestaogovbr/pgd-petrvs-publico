@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Contracts\IBaseException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 use App\Models\PlanoTrabalho;
 use App\Services\UtilService;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class PlanoTrabalhoController extends ControllerBase {
@@ -22,8 +24,13 @@ class PlanoTrabalhoController extends ControllerBase {
                 'success' => true,
                 'dados' => $this->service->getByUsuario($data["usuario_id"], $data["arquivados"], $data["plano_trabalho_id"])
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -39,8 +46,13 @@ class PlanoTrabalhoController extends ControllerBase {
                 'success' => true,
                 'metadadosPlano' => $this->service->metadadosPlano($data["plano_trabalho_id"],$data["inicioPeriodo"],$data["fimPeriodo"])
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -59,8 +71,13 @@ class PlanoTrabalhoController extends ControllerBase {
             return response()->json([
                 'success' => $this->service->avaliar($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -75,8 +92,13 @@ class PlanoTrabalhoController extends ControllerBase {
             return response()->json([
                 'success' => $this->service->cancelarAvaliacao($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -91,8 +113,13 @@ class PlanoTrabalhoController extends ControllerBase {
             return response()->json([
                 'success' => $this->service->arquivar($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -107,8 +134,13 @@ class PlanoTrabalhoController extends ControllerBase {
             return response()->json([
                 'success' => $this->service->ativar($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -123,8 +155,13 @@ class PlanoTrabalhoController extends ControllerBase {
             return response()->json([
                 'success' => $this->service->cancelarAssinatura($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -140,8 +177,13 @@ class PlanoTrabalhoController extends ControllerBase {
             return response()->json([
                 'success' => $this->service->cancelarPlano($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -303,8 +345,13 @@ class PlanoTrabalhoController extends ControllerBase {
             return response()->json([
                 'success' => $this->service->enviarParaAssinatura($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -319,8 +366,13 @@ class PlanoTrabalhoController extends ControllerBase {
             return response()->json([
                 'success' => $this->service->reativar($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 
@@ -335,8 +387,13 @@ class PlanoTrabalhoController extends ControllerBase {
             return response()->json([
                 'success' => $this->service->suspender($data, $unidade)
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 }

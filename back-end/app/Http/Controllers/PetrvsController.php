@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Contracts\IBaseException;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\View;
 use App\Services\PetrvsService;
 use App\Http\Controllers\ControllerBase;
+use Illuminate\Support\Facades\Log;
 use Stancl\Tenancy\Database\Models\Domain;
 use Throwable;
 
@@ -94,8 +96,13 @@ class PetrvsController extends ControllerBase
         'success' => true,
         'tabelas' => $this->service->showTables()
       ]);
-    } catch (Throwable $e) {
+    }  catch (IBaseException $e) {
       return response()->json(['error' => $e->getMessage()]);
-    }
+  }
+  catch (Throwable $e) {
+      $dataError = throwableToArrayLog($e);
+      Log::error($dataError);
+      return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+  }
   }
 }
