@@ -109,6 +109,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			"unidade.gestor.usuario:id",
 			"documento.assinaturas.usuario:id,nome,url_foto",
             "documento.assinaturas:id,usuario_id,documento_id",
+			"programa:id,nome",
             "documento:id,numero",
 			"tipo_modalidade:id,nome",
 			"entregas.plano_entrega_entrega.entrega",
