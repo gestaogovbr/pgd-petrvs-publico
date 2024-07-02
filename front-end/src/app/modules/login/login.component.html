@@ -25,7 +25,7 @@
                 </div>
                 <div class="text-center mb-5">
 
-                    <h4 class="fw-bold">{{ ambiente }}</h4>
+                    <h4 class="fw-bold text-danger">{{ ambiente }}</h4>
                 </div>
                 <div class="text-center">
                     <div class="card-body">
@@ -104,6 +104,9 @@
             <div class="text-left mt-3 small text-muted" *ngIf="buildInfo">
                 <p class="m-0">Build Data: {{ buildInfo.build_date }}</p>
                 <p class="m-0">Build Número: {{ buildInfo.build_number }}</p>
+            </div>
+            <div class="text-left mt-3 small text-muted" >
+                <p class="m-0"><small class="text-primary">Versão: {{globals.VERSAO_SYS}}</small></p>
             </div>
 
             <img src="../assets/images/logo_gov.png">
