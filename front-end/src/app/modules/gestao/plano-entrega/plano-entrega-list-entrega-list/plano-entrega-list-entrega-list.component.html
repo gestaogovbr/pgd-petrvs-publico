@@ -1,15 +1,11 @@
 <h3 *ngIf="!isModal" class="my-2">{{title}}</h3>
-<grid [dao]="dao" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable"
-    (select)="onSelect($event)">
+<grid [dao]="dao" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable" (select)="onSelect($event)">
     <toolbar *ngIf="!selectable" [buttons]="buttons"></toolbar>
-    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)"
-        [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-search [size]="4" label="Unidade" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
-            <input-text [size]="4" label="Título da entrega" controlName="descricao" [control]="filter!.controls.descricao"
-                placeholder="Título" [attr.maxlength]=250></input-text>
-            <input-text [size]="4" label="Descrição da entrega" controlName="descricao_entrega" [control]="filter!.controls.descricao_entrega"
-                placeholder="Descrição" [attr.maxlength]=250></input-text>
+            <input-text [size]="4" label="Título da entrega" controlName="descricao" [control]="filter!.controls.descricao" placeholder="Título" [attr.maxlength]=250></input-text>
+            <input-text [size]="4" label="Descrição da entrega" controlName="descricao_entrega" [control]="filter!.controls.descricao_entrega" placeholder="Descrição" [attr.maxlength]=250></input-text>
         </div>
         <!--div class="row">
                 <input-search [size]="6" label="Unidade demandante" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search> 
@@ -20,12 +16,12 @@
     <columns>
         <column [title]="'Entrega\nDemandante\nDestinatário'" [template]="columnEntregaCliente">
             <ng-template let-row="row" #columnEntregaCliente>
-                <badge icon="bi bi-textarea-t" [label]="row.descricao || '(não informado)'" color="light"></badge><br>
+                {{row.descricao || '(não informado)'}}<br>
                 <badge [icon]="entityService.getIcon('Unidade')" [label]="row.unidade.sigla || '(não informado)'" color="success"></badge><br>
                 <badge icon="bi bi-mailbox" [label]="row.destinatario || '(não informado)'" color="light"></badge>
             </ng-template>
         </column>
-        <column [title]="'Data Início\nData Fim'" [template]="columnDatas" >
+        <column [title]="'Data Início\nData Fim'" [template]="columnDatas">
             <ng-template let-row="row" #columnDatas>
                 <span>{{dao!.getDateFormatted(row.data_inicio)}}<br>{{dao!.getDateFormatted(row.data_fim)}}</span>
             </ng-template>
@@ -50,6 +46,7 @@
             </ng-template>
         </column>
         <column type="options"></column>
+
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>
