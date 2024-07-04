@@ -22,5 +22,10 @@ class IntegracaoServidorRepository{
     public function save(IntegracaoServidor $entidade): bool{
         return $entidade->save();
     }
+
+    public function update(string $cpf, array $data)
+    {
+        return (bool) $this->integracaoServidor->where('cpf', $cpf)->update($data);
+    }
    
 }
