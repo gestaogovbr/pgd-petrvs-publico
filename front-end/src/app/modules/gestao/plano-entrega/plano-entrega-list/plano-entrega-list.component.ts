@@ -177,14 +177,12 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public onGridLoad(rows?: Base[]) {
     const extra = (this.grid?.query || this.query!).extra;
-    if (rows && this.execucao) {
-      rows.forEach(v => {
-        if (["ATIVO", "SUSPENSO"].includes((v as PlanoEntrega).status)) this.grid!.expand(v.id);
-      });
-    }
+    
     rows?.forEach(v => {
       let planoEntrega = v as PlanoEntrega;
-      if (planoEntrega.avaliacao) planoEntrega.avaliacao.tipo_avaliacao = extra?.tipos_avaliacoes?.find((x: TipoAvaliacao) => x.id == planoEntrega.avaliacao!.tipo_avaliacao_id);
+      if (planoEntrega.avaliacao) {
+        planoEntrega.avaliacao.tipo_avaliacao = extra?.tipos_avaliacoes?.find((x: TipoAvaliacao) => x.id == planoEntrega.avaliacao!.tipo_avaliacao_id);
+      }
     });
   }
 
