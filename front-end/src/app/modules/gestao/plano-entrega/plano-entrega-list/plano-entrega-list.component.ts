@@ -246,8 +246,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       - os ativos das unidades imediatamente subordinadas (w3);
     */
     if (this.filter?.controls.principais.value) {
-      console.log("princi");
-      
+     
       let w1: [string, string, string[]] = ["unidade_id", "in", (this.auth.unidades || []).map(u => u.id)];
       if (this.auth.isGestorAlgumaAreaTrabalho()) {
         let unidadesUsuarioEhGestor = this.auth.unidades?.filter(x => this.unidadeService.isGestorUnidade(x));
