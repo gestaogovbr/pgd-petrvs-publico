@@ -3,6 +3,7 @@
 namespace App\Services\Siape\Servidor;
 
 use App\Models\IntegracaoServidor as entidade;
+use App\Models\IntegracaoServidor;
 use App\Repository\IntegracaoServidorRepository;
 use App\Services\LogTrait;
 use App\Services\Siape\Contrato\InterfaceIntegracao;
@@ -81,9 +82,16 @@ class Integracao implements InterfaceIntegracao
         }
 
         if ($registroDobanco && !in_array($entidade->cpf, $this->cpfsIntegracaoAlterados)) {
-            unset($entidade->matricula);
             $this->logSiape('Atualizando Servidor na tabela integracao_servidores: ' , ['integracao_servidores_antigo'=>$registroDobanco->toJson(),'integracao_servidores_novo'=>$entidade->toJson()], Tipo::INFO);
-            $registro = $registroDobanco->update((array) $entidade);
+            $dadosAtualizados = $entidade->only([
+                'cpf_ativo', 'data_modificacao', 'nome', 'emailfuncional', 'sexo',
+                'municipio', 'uf', 'data_nascimento', 'telefone', 'vinculo_ativo', 
+                'codigo_cargo', 'coduorgexercicio', 'coduorglotacao',
+                'codigo_servo_exercicio', 'nomeguerra', 'codigo_situacao_funcional', 
+                'situacao_funcional', 'codupag', 'dataexercicionoorgao', 'funcoes', 
+                'cpf_chefia_imediata', 'email_chefia_imediata', 'nome_jornada', 'cod_jornada'
+            ]);
+            $registro =  $this->repository->update($entidade->cpf, $dadosAtualizados);
             array_push($this->cpfsIntegracaoAlterados, $entidade->cpf);
             $this->verificaEmailsFuncionaisVazios($entidade);
             if ($registro) $this->salvaNoArrayServidoresRegistradosNoBD($entidade);
