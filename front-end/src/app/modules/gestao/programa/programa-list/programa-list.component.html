@@ -33,7 +33,7 @@
                 <span> {{dao!.getDateFormatted(row.data_fim)}}</span>
             </ng-template>
         </column>
-        <column type="options" [onEdit]="edit" [options]="options"></column>
+        <column type="options" [onEdit]="edit" [options]="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

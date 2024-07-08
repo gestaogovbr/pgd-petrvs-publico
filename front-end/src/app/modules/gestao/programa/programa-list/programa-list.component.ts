@@ -18,6 +18,8 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
   public vigentesUnidadeExecutora: boolean = false;
   public todosUnidadeExecutora: boolean = false;
 
+  public BOTAO_CONCLUIR: ToolbarButton;
+
   constructor(public injector: Injector, dao: ProgramaDaoService) {
     super(injector, Programa, ProgramaDaoService);
     /* Inicializações */
@@ -40,6 +42,9 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
       });
     }
 
+    this.BOTAO_CONCLUIR = { label: "Concluir", icon: "bi bi-journal-check", onClick:this.concluir.bind(this) };
+
+
 /*     if (this.auth.hasPermissionTo("MOD_PART")) {
       this.options.push({
         icon: "bi bi-folder",
@@ -47,6 +52,20 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
         onClick: (programa: Programa) => this.go.navigate({route: ["gestao", "desdobramento", programa.id, "programa"]})
       });
     } */
+  }
+
+  public dynamicButtons(row: Programa): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    if (this.auth.hasPermissionTo("MOD_PRGT_CONCL") && this.vigente(row)) {
+      result.push(this.BOTAO_CONCLUIR);
+    }
+    return result;
+  }
+
+  public vigente = (programa: Programa):boolean => {
+    console.log(programa.data_fim, new Date())
+    
+    return programa.data_fim >= new Date();
   }
 
   public ngOnInit(): void {
@@ -65,6 +84,17 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
     }
 
     return result;
+  }
+
+  public concluir = (programa: Programa) => {
+    this.dialog.confirm("Concluir?", "Ao encerrar este regramento, todos os planos de entregas e planos de trabalho serão automaticamente concluídos. Além disso, todos os agentes públicos serão automaticamente desligados do PGD. Você confirma?").then(confirm => {
+      if(confirm) {
+        this.dao!.concluir(programa).then(() => {
+          (this.grid?.query || this.query!).refreshId(programa.id);
+          this.dialog.topAlert("Regramento concluído com sucesso!", 5000);
+        }).catch((error) => this.dialog.alert("Erro", "Erro ao concluir: " + (error?.message ? error?.message : error)));
+      }
+    });
   }
 }
 
