@@ -12,8 +12,9 @@ class Kernel extends ConsoleKernel
 {
     protected $commands = [
         \App\Console\Commands\ExecutaSiape::class,
+        \App\Console\Commands\InsertLog::class,
     ];
-    
+
     protected function commands()
     {
         $this->load(__DIR__.'/Commands');
