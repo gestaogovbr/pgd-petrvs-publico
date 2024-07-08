@@ -8,6 +8,8 @@ use App\Models\Usuario;
 use App\Models\PlanoTrabalho;
 use App\Services\ServiceBase;
 use App\Exceptions\ServerException;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class ProgramaService extends ServiceBase
 {
@@ -70,4 +72,44 @@ class ProgramaService extends ServiceBase
     $data["where"] = $where;
   }
 
+  public function concluir($programaId)
+  {
+    $programa = Programa::where('id', $programaId)->firstOrFail();
+    if (!$programa) {
+      throw new ServerException("ValidatePrograma", "Programa não encontrado.");
+    }
+    
+    $planosTrabalho = $programa->planosTrabalho()->get();
+    $planosEntrega = $programa->planosEntrega()->get();
+    $participantes = $programa->participantes()->get();
+
+    try {
+      DB::beginTransaction();
+      foreach ($planosEntrega as $planoEntrega) {
+        if (collect(['INCLUIDO', 'HOMOLOGANDO', 'ATIVO'])->contains($planoEntrega->status)) {
+          $this->statusService->atualizaStatus($planoEntrega, 'CONCLUIDO', "Conclusão do regramento");
+        }
+      }
+
+      foreach ($planosTrabalho as $planoTrabalho) {
+        if (collect(['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO'])->contains($planoTrabalho->status)) {
+          $this->statusService->atualizaStatus($planoEntrega, 'CONCLUIDO', "Conclusão do regramento");
+        }
+      }
+
+      
+      foreach ($participantes as $participante) {
+        $participante->delete();
+      }
+
+      $programa->data_fim = now()->subDay();
+      $programa->save();
+      
+      DB::commit();
+    } catch (Throwable $e) {
+      DB::rollback();
+      throw $e;
+    }  
+  }
+  
 }

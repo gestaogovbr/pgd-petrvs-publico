@@ -19,6 +19,7 @@ class ServerException extends Exception implements IBaseException
         "CapacidadeUpdate" => "Usuário não tem permissão para realizar esta alteração",
         "CapacidadeDestroy" => "Usuário não tem permissão para excluir registros desta tabela",
         "ProgramaStore" => "Usuário não tem permissão para inserir/alterar regramentos",
+        "ProgramaConcluir" => "Usuário não tem permissão para concluir regramentos",
         "ProgramaUpdate" => "Usuário não tem permissão para alterar regramentos",
         "ProgramaDestroy" => "Usuário não tem permissão para excluir regramentos",
         "ProgramaDestroyWithPT" => "Não é possível excluir Regramento com Plano de Trabalho cadastrado",
