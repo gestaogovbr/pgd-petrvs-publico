@@ -18,7 +18,7 @@ class LogJob implements ShouldQueue, ContratoJobSchedule
     protected $calledDirectly;
 
 
-    public function __construct(?array $parameters = null)
+    public function __construct($parameters = null)
     {
         $this->message = 'Log padrão';
         $this->calledDirectly = false;
@@ -28,7 +28,7 @@ class LogJob implements ShouldQueue, ContratoJobSchedule
         }
 
     }
-    
+
     public static function getDescricao(): string
     {
         return "Log Job";
