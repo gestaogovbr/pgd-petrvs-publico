@@ -6,6 +6,7 @@ import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { Base } from 'src/app/models/base.model';
 import { Programa } from 'src/app/models/programa.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
+import { ProgramaService } from 'src/app/services/programa.service';
 
 @Component({
   selector: 'app-programa-list',
@@ -14,6 +15,7 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 })
 export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  public programaService: ProgramaService;
 
   public vigentesUnidadeExecutora: boolean = false;
   public todosUnidadeExecutora: boolean = false;
@@ -22,6 +24,7 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
 
   constructor(public injector: Injector, dao: ProgramaDaoService) {
     super(injector, Programa, ProgramaDaoService);
+    this.programaService = injector.get<ProgramaService>(ProgramaService);
     /* Inicializações */
     this.title = this.lex.translate("Programas de Gestão");
     this.code = "MOD_PRGT";
@@ -56,17 +59,12 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
 
   public dynamicButtons(row: Programa): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    if (this.auth.hasPermissionTo("MOD_PRGT_CONCL") && this.vigente(row)) {
+    if (this.auth.hasPermissionTo("MOD_PRGT_CONCL") && this.programaService.programaVigente(row)) {
       result.push(this.BOTAO_CONCLUIR);
     }
     return result;
   }
 
-  public vigente = (programa: Programa):boolean => {
-    console.log(programa.data_fim, new Date())
-    
-    return programa.data_fim >= new Date();
-  }
 
   public ngOnInit(): void {
     super.ngOnInit();
