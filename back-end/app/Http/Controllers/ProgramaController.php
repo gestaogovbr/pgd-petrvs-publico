@@ -29,11 +29,11 @@ class ProgramaController extends ControllerBase {
                 $programa = $this->service->getById($data);
 
                 if (count($programa->planosTrabalho) > 0) {
-                    throw new ServerException("ValidateProgramaWithPTDestroy");
+                    throw new ServerException("ValidateProgramaDestroy");
                 }
 
                 if (count($programa->planosEntrega) > 0) {
-                    throw new ServerException("ValidateProgramaWithPEDestroy");
+                    throw new ServerException("ValidateProgramaDestroy");
                 }
 
                 break;
