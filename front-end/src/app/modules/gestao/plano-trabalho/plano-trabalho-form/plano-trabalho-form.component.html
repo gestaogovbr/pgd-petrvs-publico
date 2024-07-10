@@ -10,8 +10,8 @@
             <input-search #programa [size]="4" [label]="lex.translate('Programa de gestão')" icon="bi bi-file-bar-graph" required [disabled]="action == 'new' ? undefined : 'true'" controlName="programa_id" [join]="joinPrograma" [dao]="programaDao" (select)="onProgramaSelect($event)" [metadata]="programaMetadata"></input-search>
           </div>
           <div class="row">
-            <input-datetime [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="form!.controls.data_inicio" (change)="onDataInicioChange($event)" [labelInfo]="'Início da Vigência do '+ lex.translate('Plano de trabalho')" required></input-datetime>
-            <input-datetime [size]="3" label="Final" icon="bi bi-calendar-date" controlName="data_fim" [control]="form!.controls.data_fim" (change)="onDataFimChange($event)" [labelInfo]="'Final da Vigência do ' +lex.translate('Plano de trabalho')" required></input-datetime>
+            <input-datetime date [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="form!.controls.data_inicio" (change)="onDataInicioChange($event)" [labelInfo]="'Início da Vigência do '+ lex.translate('Plano de trabalho')" required></input-datetime>
+            <input-datetime date [size]="3" label="Final" icon="bi bi-calendar-date" controlName="data_fim" [control]="form!.controls.data_fim" (change)="onDataFimChange($event)" [labelInfo]="'Final da Vigência do ' +lex.translate('Plano de trabalho')" required></input-datetime>
             <input-search #tipoModalidade [size]="6" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao" required></input-search>
           </div>
           <ng-container *ngIf="tipoModalidade!.selectedEntity?.plano_trabalho_calcula_horas">

@@ -48,7 +48,7 @@ class ProgramaService extends ServiceBase
 
   public function programaVigente($programa)
   {
-    return $programa->data_fim >= now();
+    return $programa->data_fim >= now()->toDateTimeString();
   }
 
   public function programaUnidadeSuperior($unidadeId)
@@ -93,13 +93,17 @@ class ProgramaService extends ServiceBase
     try {
       DB::beginTransaction();
       foreach ($planosEntrega as $planoEntrega) {
-        if (collect(['INCLUIDO', 'HOMOLOGANDO', 'ATIVO'])->contains($planoEntrega->status)) {
+        if (collect(['INCLUIDO', 'HOMOLOGANDO'])->contains($planoEntrega->status)) {
+          $this->statusService->atualizaStatus($planoEntrega, 'CANCELADO', "Conclusão do regramento");
+        } else if ($planoEntrega->status == 'ATIVO'){
           $this->statusService->atualizaStatus($planoEntrega, 'CONCLUIDO', "Conclusão do regramento");
         }
       }
 
       foreach ($planosTrabalho as $planoTrabalho) {
-        if (collect(['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO'])->contains($planoTrabalho->status)) {
+        if (collect(['INCLUIDO', 'AGUARDANDO_ASSINATURA'])->contains($planoTrabalho->status)) {
+          $this->statusService->atualizaStatus($planoEntrega, 'CANCELADO', "Conclusão do regramento");
+        } else if ($planoTrabalho->status == 'ATIVO'){
           $this->statusService->atualizaStatus($planoEntrega, 'CONCLUIDO', "Conclusão do regramento");
         }
       }
@@ -109,7 +113,7 @@ class ProgramaService extends ServiceBase
         $participante->delete();
       }
 
-      $programa->data_fim = now()->subDay();
+      $programa->data_fim = now()->toDateTimeString();
       $programa->save();
 
       DB::commit();
