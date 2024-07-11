@@ -158,6 +158,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
+
     let result = null;
     if (['unidade_id', 'programa_id', 'usuario_id', 'tipo_modalidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
@@ -167,9 +168,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       result = "Inválido";
     } else if (controlName == 'data_fim' && this.util.isDataValid(this.form?.controls.data_inicio.value) && this.util.asTimestamp(control.value) <= this.util.asTimestamp(this.form!.controls.data_inicio.value)) {
       result = "Menor que o início";
-    } else if (this.programa && controlName == 'data_inicio' && (control.value as Date).getDate() < this.programa!.selectedEntity?.data_inicio.getDate()) {
+    } else if (this.programa && controlName == 'data_inicio' && (control.value as Date) < this.programa!.selectedEntity?.data_inicio) {
       result = "Menor que programa";
-    } else if (this.programa && controlName == 'data_fim' && (control.value as Date).getDate() > this.programa!.selectedEntity?.data_fim.getDate()) {
+    } else if (this.programa && controlName == 'data_fim' && (control.value as Date) > this.programa!.selectedEntity?.data_fim) {
       result = "Maior que programa";
     } /*else if (controlName == 'criterios_avaliacao' && control.value.length < 1) {
       result = "Insira ao menos um critério de avaliação";
