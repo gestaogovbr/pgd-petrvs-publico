@@ -18,9 +18,6 @@ export class ProgramaService {
   ) { }
 
   public programaVigente(programa: Programa | undefined): boolean {
-    console.log(programa?.data_fim);
-    console.log(new Date());
-    
     return programa ? (programa.data_fim >= new Date()) : true;
   }
 
