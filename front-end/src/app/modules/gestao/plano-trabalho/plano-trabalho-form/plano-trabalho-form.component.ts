@@ -167,9 +167,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       result = "Inválido";
     } else if (controlName == 'data_fim' && this.util.isDataValid(this.form?.controls.data_inicio.value) && this.util.asTimestamp(control.value) <= this.util.asTimestamp(this.form!.controls.data_inicio.value)) {
       result = "Menor que o início";
-    } else if (this.programa && controlName == 'data_inicio' && (control.value as Date).getTime() < this.programa!.selectedEntity?.data_inicio.getTime()) {
+    } else if (this.programa && controlName == 'data_inicio' && (control.value as Date).getDate() < this.programa!.selectedEntity?.data_inicio.getDate()) {
       result = "Menor que programa";
-    } else if (this.programa && controlName == 'data_fim' && (control.value as Date).getTime() > this.programa!.selectedEntity?.data_fim.getTime()) {
+    } else if (this.programa && controlName == 'data_fim' && (control.value as Date).getDate() > this.programa!.selectedEntity?.data_fim.getDate()) {
       result = "Maior que programa";
     } /*else if (controlName == 'criterios_avaliacao' && control.value.length < 1) {
       result = "Insira ao menos um critério de avaliação";
