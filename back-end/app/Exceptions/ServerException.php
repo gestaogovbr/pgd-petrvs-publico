@@ -18,6 +18,10 @@ class ServerException extends Exception implements IBaseException
         "CapacidadeStore" => "Usuário não tem permissão para inserir/alterar nessa tabela",
         "CapacidadeUpdate" => "Usuário não tem permissão para realizar esta alteração",
         "CapacidadeDestroy" => "Usuário não tem permissão para excluir registros desta tabela",
+        "ProgramaStore" => "Usuário não tem permissão para inserir/alterar regramentos",
+        "ProgramaConcluir" => "Usuário não tem permissão para concluir regramentos",
+        "ProgramaUpdate" => "Usuário não tem permissão para alterar regramentos",
+        "ProgramaDestroy" => "Usuário não tem permissão para excluir regramentos",
         "ValidateAvaliacao" => "Erro ao validar avaliacao",
         "ValidateRecursoAvaliacao" => "Erro ao validar o recurso da avaliação",
         "ValidateAtividade" => "Erro ao validar atividade",
@@ -34,6 +38,7 @@ class ServerException extends Exception implements IBaseException
         "ValidatePlanoTrabalhoEntrega" => "Erro ao validar Entrega do Plano de Trabalho",
         "ValidateProgramaParticipante" => "Erro ao validar o Participante",
         "ValidatePrograma" => "Erro ao validar o Regramento",
+        "ValidateProgramaDestroy" => "Este regramento possui planos de entrega ou planos de trabalho vinculados e não pode ser excluído, apenas encerrado",
         "ValidateUnidade" => "Erro ao validar Unidade",
         "ValidateUsuario" => "Erro ao validar o usuário"
     ];
