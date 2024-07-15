@@ -245,6 +245,7 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_PRGT_EDT", "Permite editar programas de gestão"],
         ["MOD_PRGT_EXCL", "Permite excluir programas de gestão"],
         ["MOD_PRGT_INCL", "Permite incluir programas de gestão"],
+        ["MOD_PRGT_CONCL", "Permite concluir programas de gestão"],
       ]
     ], [
       "codigo" => "MOD_PART",
