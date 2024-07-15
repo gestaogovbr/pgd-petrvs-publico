@@ -6,6 +6,7 @@ use App\Jobs\Contratos\ContratoJobSchedule;
 use App\Models\Entidade;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 use App\Services\IntegracaoService;
 
 
-class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule
+class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -40,7 +41,7 @@ class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule
             $inputs = [
                 'unidades' => true,
                 'servidores' => true,
-                'gestores' => true,  
+                'gestores' => true,
             ];
             foreach ($entidades as $entidade) {
                 $inputs['entidade'] = $entidade->id;

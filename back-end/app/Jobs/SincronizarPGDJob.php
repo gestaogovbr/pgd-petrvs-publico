@@ -11,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
 
 use App\Services\PGD\OrgaoCentralService;
 
-class SincronizarPGDJob implements ShouldQueue
+class SincronizarPGDJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

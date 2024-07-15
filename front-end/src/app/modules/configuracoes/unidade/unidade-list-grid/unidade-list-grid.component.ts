@@ -48,6 +48,7 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
         onClick: (unidade: Unidade) => this.go.navigate({ route: ['configuracoes', 'unidade', 'merge'] }, this.modalRefresh())
       });
     }
+    this.rowsLimit = 10;
     this.addOption(this.OPTION_INFORMACOES, "MOD_UND");
     this.addOption(this.OPTION_EXCLUIR, "MOD_UND_EXCL");
   }

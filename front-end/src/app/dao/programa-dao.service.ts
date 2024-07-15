@@ -23,6 +23,18 @@ export class ProgramaDaoService extends DaoBaseService<Programa> {
     ], deeps);
   }
 
+  public concluir(programa: Programa): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/concluir', { programa_id: programa.id }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
 }
 
 
