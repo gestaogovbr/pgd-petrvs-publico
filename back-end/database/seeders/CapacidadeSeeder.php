@@ -253,6 +253,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_PRGT_EDT"],
       ["codigo" => "MOD_PRGT_EXCL"],
       ["codigo" => "MOD_PRGT_INCL"],
+      ["codigo" => "MOD_PRGT_CONCL"],
       ["codigo" => "MOD_PTR"],
       ["codigo" => "MOD_PTR_CNC"],
       ["codigo" => "MOD_PTR_CSLD"],

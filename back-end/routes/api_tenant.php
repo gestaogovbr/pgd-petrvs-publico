@@ -207,6 +207,7 @@ Route::middleware(['auth:sanctum'])->prefix('PlanejamentoObjetivo')->group(funct
 });
 Route::middleware(['auth:sanctum'])->prefix('Programa')->group(function () {
   defaultRoutes(ProgramaController::class);
+  Route::post('concluir', [ProgramaController::class, 'concluir']);
 });
 Route::middleware(['auth:sanctum'])->prefix('ProgramaParticipante')->group(function () {
   defaultRoutes(ProgramaParticipanteController::class);

@@ -486,10 +486,12 @@ class PlanoEntregaService extends ServiceBase
   public function validateStore($dataOrEntity, $unidade, $action)
   {
     $usuario = Usuario::find(parent::loggedUser()->id);
+    $programa = Programa::find($dataOrEntity["programa_id"]);
     $this->validaPermissaoIncluir($dataOrEntity, $usuario);
     if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_EXTRPL')) {
       if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");
     }
+    if(!$this->programaService->programaVigente($programa)) throw new ServerException("ValidatePlanoEntrega", "O regramento não está vigente.");
     if ($action == ServiceBase::ACTION_EDIT) {
       /*
         (RN_PENT_L) Para ALTERAR um plano de entregas:
