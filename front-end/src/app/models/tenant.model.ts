@@ -80,6 +80,9 @@ export class Tenant extends Base {
     public modulo_sei_private_key: string = "";
     public modulo_sei_public_key: string = "";
     public modulo_sei_url: string = "";
+    // API
+    public api_username: string = "";
+    public api_password: string = "";
 
     // public petrvs_version //pega a versao do app.json
     // public petrvs_last_migration // nome da ultima migration executada
