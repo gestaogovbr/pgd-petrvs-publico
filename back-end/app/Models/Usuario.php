@@ -44,14 +44,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Auditable;
 class UsuarioConfig
 {
 }
 
-class Usuario extends Authenticatable
+class Usuario extends Authenticatable  implements AuditableContract
 {
-  use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, LogChanges, SoftDeletes;
+  use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, LogChanges, SoftDeletes, Auditable;
 
   protected $table = "usuarios";
 

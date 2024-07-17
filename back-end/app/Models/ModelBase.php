@@ -9,13 +9,15 @@ use Illuminate\Support\Str;
 use App\Traits\AutoUuid;
 use App\Traits\MergeRelations;
 use App\Traits\LogChanges;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Auditable;
 use ReflectionObject;
 use Exception;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ModelBase extends Model
+class ModelBase extends Model implements AuditableContract
 {
-  use HasFactory, AutoUuid, MergeRelations, LogChanges, SoftDeletes;
+  use HasFactory, AutoUuid, MergeRelations, LogChanges, SoftDeletes, Auditable;
 
   protected $keyType = 'string';
   public $incrementing = false;
