@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\Contracts\IBaseException;
+use App\Exceptions\LogError;
+use App\Exceptions\ServerException;
+use App\Http\Controllers\ControllerBase;
 use App\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Http\Controllers\ControllerBase;
-use App\Exceptions\ServerException;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Stancl\Tenancy\Database\Models\Domain;
 use Throwable;
-use App\Exceptions\LogError;
-use Illuminate\Support\Facades\Log;
 
 class TenantController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
@@ -47,9 +48,15 @@ class TenantController extends ControllerBase {
                 $data['entity']['log_username']= env("DB_USERNAME");
                 $data['entity']['log_password']= env("DB_PASSWORD");
 
-
                 $data['entity']['created_at']=  Carbon::now()->toDateTimeString();
                 $data['entity']['updated_at']=  Carbon::now()->toDateTimeString();
+
+                if (!strlen(trim($data['entity']['api_password']))) {
+                    unset($data['entity']['api_password']);
+                } else {
+                    $data['entity']['api_password'] = Hash::make($data['entity']['api_password']);
+                }
+
                 $unidade = $this->getUnidade($request);
                 $entity = $this->service->store($data['entity'], $unidade);
                 $entity = $entity ?? (object) $data['entity'];

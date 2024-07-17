@@ -833,6 +833,7 @@ export class LookupService implements IIndexable {
     { key: 'NENHUMA', value: 'Nenhuma' },
     //{ key: 'WSO2', value: 'Siape-PRF' },
     { key: 'SIAPE', value: 'Siape-WS' },
+    { key: 'API', value: 'API' },
   ];
 
   public GOV_BR_ENV: LookupItem[] = [
