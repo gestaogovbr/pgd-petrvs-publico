@@ -60,7 +60,7 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
   public dynamicButtons(row: Programa): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     if (this.auth.hasPermissionTo("MOD_PRGT_CONCL") && this.programaService.programaVigente(row)) {
-      result.push(this.BOTAO_CONCLUIR);
+      //result.push(this.BOTAO_CONCLUIR);
     }
     return result;
   }

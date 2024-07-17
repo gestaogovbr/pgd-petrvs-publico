@@ -127,7 +127,10 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       modulo_sei_habilitado: { default: false },
       modulo_sei_private_key: { default: "" },
       modulo_sei_public_key: { default: "" },
-      modulo_sei_url: { default: "" }
+      modulo_sei_url: { default: "" },
+      // API
+      api_username: { default: "" },
+      api_password: { default: "" }
     }, this.cdRef, this.validate);
     this.formLogin = this.fh.FormBuilder({
       Tipo: { default: "" },
@@ -197,6 +200,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
     let login = this.tiposLogin || [];
     formValue.login = login;
     form.patchValue(this.util.fillForm(formValue, entity));
+    form.get('api_password')?.setValue("");
   }
 
   public async initializeData(form: FormGroup) {
@@ -219,5 +223,11 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
 
   public copiarPublicKeyClipboard() {
     this.util.copyToClipboard(this.form!.controls.modulo_sei_public_key.value);
+  }
+
+  get apiPasswordPlaceholder(): string {
+    return this.form?.controls['api_username'].value === ''
+      ? 'Informe a senha da API'
+      : 'Informe para alterar a senha';
   }
 }
