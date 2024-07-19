@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\PGD;
+namespace App\Services\API_PGD;
 
 use Illuminate\Support\Facades\Http;
 
