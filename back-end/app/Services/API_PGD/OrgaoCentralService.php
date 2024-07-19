@@ -5,20 +5,17 @@ use Illuminate\Support\Facades\Http;
 
 class OrgaoCentralService
 {
-    protected $authService;
-    protected $exportarPlanoTrabalhoService;
-    protected $exportarPlanoEntregasService;
+    public function __construct(
+        private AuthenticationService $authService,
+        private ExportarPlanoTrabalhoService $exportarPlanoTrabalhoService,
+        private ExportarPlanoEntregasService $exportarPlanoEntregasService
+    )
+    {}
 
-    public function __construct()
+    public function exportarDados($tenantId, $dados)
     {
-        $this->authService = new AuthenticationService();
-        $this->exportarPlanoTrabalhoService = new ExportarPlanoTrabalhoService();
-        $this->exportarPlanoEntregasService = new ExportarPlanoEntregasService();
-    }
+        $token = $this->authService->authenticate($tenantId);
 
-    public function exportarDados($dados)
-    {
-        $token = $this->authService->getToken(); // trocar pelo authenticate, utilizar o tenantId
         switch ($dados['tipo']) {
             case 'PLANO_TRABALHO':
                 return $this->exportarPlanoTrabalhoService->enviar($token, $dados);
