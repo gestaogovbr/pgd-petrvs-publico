@@ -18,8 +18,7 @@ class OrgaoCentralService
 
     public function exportarDados($dados)
     {
- 
-        $token = $this->authService->getToken();
+        $token = $this->authService->getToken(); // trocar pelo authenticate, utilizar o tenantId
         switch ($dados['tipo']) {
             case 'PLANO_TRABALHO':
                 return $this->exportarPlanoTrabalhoService->enviar($token, $dados);
