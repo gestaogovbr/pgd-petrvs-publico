@@ -1,23 +1,27 @@
 <?php
-namespace App\Services\PGD;
+namespace App\Services\API_PGD;
 
 use Illuminate\Support\Facades\Http;
 
 class HttpSenderService
 {
-
-    public function enviarDados($dados, $token, $body)
+    public function getHttpClient($token) 
     {
-        $header = ['Content-Type' => 'application/json-patch+json'];
+        $headers = ['Content-Type' => 'application/json-patch+json'];
 
-        
-        $response = Http::withOptions(['verify'=> false, 'timeout'=> 35])
-        ->withHeaders($header)
-        ->withToken($token, 'Bearer')->put($dados['url'], $body);
+        return Http::withOptions(['verify'=> false, 'timeout'=> 35])
+            ->withHeaders($headers)
+            ->baseUrl(config('pgd.host'))
+            ->withToken($token);
+    }
+
+    public function enviarDados($token, $endpoint, $body)
+    {
+        $client = $this->getHttpClient($token);
+
+        $response = $client->put($endpoint, $body);
 
         return $response->successful() ? $response->json() : "error";
-
     }
-        
 }
 

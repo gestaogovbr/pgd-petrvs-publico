@@ -15,8 +15,10 @@ class ExportarPlanoTrabalhoService
     public function enviar($token, $dados)
     {
         $body = $this->getBody($dados);
-        $dados['url'] = config('pgd.host')."/organizacao/{$dados['cod_SIAPE_instituidora']}/plano_trabalho/{$dados['id_plano_trabalho_participante']}";
-        return $this->httpSender->enviarDados('PLANO_TRABALHO', $dados, $token, $body);
+        return $this->httpSender->enviarDados($token, 
+            "/organizacao/{$dados['cod_SIAPE_instituidora']}/plano_trabalho/{$dados['id_plano_trabalho_participante']}",
+            $body
+        );
     }
 
     public function getBody($dados)
