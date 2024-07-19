@@ -9,17 +9,17 @@ use App\Services\CalendarioService;
 
 class ExportarPlanoTrabalhoService
 {
-  public function __construct(private readonly CalendarioService $calendarioService, private readonly HttpSenderService $httpSender)
-  {
-  }
+  public function __construct(
+    private readonly CalendarioService $calendarioService, 
+    private readonly HttpSenderService $httpSender
+  )
+  {}
 
   public function enviar($token, $dados)
   {
-    $body = $this->getBody($dados);
-    return $this->httpSender->enviarDados(
-      $token,
+    return $this->httpSender->enviarDados($token,
       "/organizacao/SIAPE/{$dados['cod_SIAPE_instituidora']}/plano_trabalho/{$dados['plano_trabalho_id']}",
-      $body
+      $this->getBody($dados)
     );
   }
 
@@ -67,7 +67,6 @@ class ExportarPlanoTrabalhoService
       "consolidacoes" => $consolidacoes
     ];
   }
-
 
   /* 
         1 = excepcional: plano de trabalho executado muito acima do esperado;
