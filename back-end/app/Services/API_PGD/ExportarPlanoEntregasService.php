@@ -22,8 +22,10 @@ class ExportarPlanoEntregasService
             $body = $this->getBody($dados);
         }
         
-        $dados['url'] = config('pgd.host')."/organizacao/{$dados['cod_SIAPE_instituidora']}/plano_entregas/{$dados['id_plano_entrega_unidade']}";
-        return $this->httpSender->enviarDados($dados, $token, $body);
+        return $this->httpSender->enviarDados($token, 
+            "/organizacao/{$dados['cod_SIAPE_instituidora']}/plano_entregas/{$dados['id_plano_entrega_unidade']}", 
+            $body
+        );
     }
 
     public function getBody($dados)
