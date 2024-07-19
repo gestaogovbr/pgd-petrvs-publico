@@ -54,7 +54,7 @@ class TenantController extends ControllerBase {
                 if (!strlen(trim($data['entity']['api_password']))) {
                     unset($data['entity']['api_password']);
                 } else {
-                    $data['entity']['api_password'] = Hash::make($data['entity']['api_password']);
+                    // $data['entity']['api_password'] = Hash::make($data['entity']['api_password']);
                 }
 
                 $unidade = $this->getUnidade($request);
