@@ -30,6 +30,11 @@ class PGDExportarDadosJob implements ShouldQueue, ShouldBeUnique, ContratoJobSch
 
     public function handle(OrgaoCentralService $orgaoCentralService)
     {
-        $orgaoCentralService->exportarDados($this->dados);
+        $dados = $this->obterDados($this->job->tenant_id);
+        $orgaoCentralService->exportarDados($this->job->tenant_id, $this->dados);
+    }
+
+    public function obterDados($tenantId) {
+        return []; //TODO - Idealmente em algum outro serviço
     }
 }
