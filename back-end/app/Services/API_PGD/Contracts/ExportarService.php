@@ -14,10 +14,13 @@ abstract class ExportarService implements IExportarService
     {
         $body = $dados['mock'] ? $this->getBodyMock($dados) : $this->getBody($dados);
 
-         $this->httpSender->enviarDados($dados, $token, $body);
+         $this->httpSender->enviarDados($token, $this->getEndpoint($dados), $body);
     }
 
     public abstract function getBody($dados): array;
+
+
+    public abstract function getEndpoint(array $dados): string;
     
 
     public abstract function getBodyMock($dados): array;
