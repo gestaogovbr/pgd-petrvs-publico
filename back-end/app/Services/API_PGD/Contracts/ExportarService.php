@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Services\API_PGD;
+namespace App\Services\API_PGD\Contracts;
 
 use App\Services\API_PGD\Contracts\IExportarService;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Services\API_PGD\HttpSenderService;
 
 abstract class ExportarService
 {
@@ -15,8 +16,10 @@ abstract class ExportarService
 
     public function enviarDados($token, JsonResource $dados): bool
     {
-
-        return $this->httpSender->enviarDados($token, $this->getEndpoint($dados), $dados->toJson());
+        return $this->httpSender->enviarDados($token, 
+            $this->getEndpoint($dados), 
+            json_decode($dados->toJson(), true)
+        );
     }
 
 

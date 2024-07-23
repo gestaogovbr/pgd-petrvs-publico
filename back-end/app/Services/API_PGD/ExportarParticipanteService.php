@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\API_PGD;
 
+use App\Services\API_PGD\Contracts\ExportarService;
 use App\Models\Usuario;
 use App\Services\API_PGD\Resources\ParticipanteResource;
 use Illuminate\Http\Resources\Json\JsonResource;
