@@ -7,10 +7,9 @@ class HttpSenderService
 {
     public function getHttpClient($token) 
     {
-        $headers = ['Content-Type' => 'application/json-patch+json'];
+       // $headers = ['Content-Type' => 'application/json-patch+json'];
 
         return Http::withOptions(['verify'=> false, 'timeout'=> 35])
-            ->withHeaders($headers)
             ->baseUrl(config('pgd.host'))
             ->withToken($token);
     }
@@ -19,9 +18,7 @@ class HttpSenderService
     {
         $client = $this->getHttpClient($token);
 
-        $response = $client->put($endpoint, $body);
-
-        return $response->successful() ? $response->json() : "error";
+        return $client->put($endpoint, $body);
     }
 }
 

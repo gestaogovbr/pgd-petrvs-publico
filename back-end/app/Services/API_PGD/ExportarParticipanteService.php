@@ -1,12 +1,14 @@
 <?php
 namespace App\Services\API_PGD;
 
-
-
-class ExportarParticipanteService extends ExportarService
+class ExportarParticipanteService
 {
     public function __construct(private HttpSenderService $httpSender)
     {
+    }
+
+    public function enviar($token, $dados) {
+        
     }
 
     public function getBody($dados) : array

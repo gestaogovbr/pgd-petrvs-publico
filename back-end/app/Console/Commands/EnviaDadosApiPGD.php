@@ -13,7 +13,7 @@ class EnviaDadosApiPGD extends Command
      *
      * @var string
      */
-    protected $signature = 'job:envia-api-pgd';
+    protected $signature = 'job:envia-api-pgd {tenant}';
 
     /**
      * The console command description.
@@ -25,21 +25,18 @@ class EnviaDadosApiPGD extends Command
     public function __construct(
         private OrgaoCentralService $orgaoCentralService
     )
-    {}
+    {
+        parent::__construct();
+    }
     
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        foreach(Tenant::all() as $tenant) 
-        {
-            $dados = $this->obterDados($tenant->id);
-            $this->orgaoCentralService->exportarDados($tenant->id, $dados);
-        }
+        $tenant = $this->argument('tenant');
+
+        $this->orgaoCentralService->exportarDados($tenant);
     }
 
-    public function obterDados($tenantId) {
-        return []; //TODO
-    }
 }

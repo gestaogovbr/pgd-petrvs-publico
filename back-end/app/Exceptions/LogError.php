@@ -10,6 +10,7 @@ use Exception;
 class LogError extends Exception
 {
     public static function newError($message, $exception = null, $data = null, $throwWith = 200) {
+        \Illuminate\Support\Facades\Log::error($message);
         $config = config('log');
         if(!empty($exception) && $config['errors']) {
             try {
