@@ -26,8 +26,8 @@ class ExportarPlanoTrabalhoService extends ExportarService
       $resource = new PlanoTrabalhoResource($plano_trabalho);
       $success = $this->enviarDados($token, $resource);
 
-      if (!$success) {
-        var_dump($this->httpSender->getLogReponse());
+      if ($success) {
+        echo 'Sucesso';
       }
 
       $this->alterarStatus($plano_trabalho->id, $success);

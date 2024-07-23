@@ -16,10 +16,11 @@ class ParticipanteResource extends JsonResource
             "cod_unidade_autorizadora"  => 1, //$this->programa->unidade_id,
             "matricula_siape"           => $this->matricula,
             "cod_unidade_instituidora"  => 1, //$this->unidade_id,
+            "cod_unidade_lotacao"       => 1, //$this->unidade_id,
             "cpf"                       => $this->cpf,
             "situacao"                  => 1,
             "modalidade_execucao"       => 1,
-            "data_assinatura_tcr"       => '2024-07-23T04:34:55.094Z'
+            "data_assinatura_tcr"       => '2024-06-23T04:34:55.094Z'
           ];
     }
 
