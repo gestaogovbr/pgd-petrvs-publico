@@ -3,6 +3,7 @@
 namespace App\Services\API_PGD\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Carbon\Carbon;
 
 class PlanoTrabalhoAvaliacaoResource extends JsonResource
 {
@@ -13,7 +14,7 @@ class PlanoTrabalhoAvaliacaoResource extends JsonResource
             "data_inicio_periodo_avaliativo"  => $this->data_inicio,
             "data_fim_periodo_avaliativo"     => $this->data_fim,
             "avaliacao_registros_execucao"    => $this->converteAvaliacao($this->avaliacao->nota ?? 5),
-            "data_avaliacao_registros_execucao" => $this->avaliacao->data_avaliacao ?? null,
+            "data_avaliacao_registros_execucao" => Carbon::parse($this->avaliacao->data_avaliacao ?? '')->format('Y-m-d'),
         ];
     }
 
@@ -29,6 +30,8 @@ class PlanoTrabalhoAvaliacaoResource extends JsonResource
         case 'Inadequado':
           return 4;
         case 'Não executado':
+          return 5;
+        default:
           return 5;
       }
     }
