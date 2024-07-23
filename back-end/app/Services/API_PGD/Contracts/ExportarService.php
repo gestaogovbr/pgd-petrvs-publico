@@ -3,27 +3,28 @@
 namespace App\Services\API_PGD;
 
 use App\Services\API_PGD\Contracts\IExportarService;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-abstract class ExportarService implements IExportarService
+abstract class ExportarService
 {
     public function __construct(private HttpSenderService $httpSender)
     {
     }
 
-    public function enviar($token, $dados): void
-    {
-        $body = $dados['mock'] ? $this->getBodyMock($dados) : $this->getBody($dados);
+    public abstract function enviar($token, array $ids) : void;
 
-         $this->httpSender->enviarDados($token, $this->getEndpoint($dados), $body);
+    public function enviarDados($token, JsonResource $dados): bool
+    {
+
+        return $this->httpSender->enviarDados($token, $this->getEndpoint($dados), $dados->toJson());
     }
 
-    public abstract function getBody($dados): array;
+
+    public abstract function getEndpoint(JsonResource $dados): string;
 
 
-    public abstract function getEndpoint(array $dados): string;
-    
-
-    public abstract function getBodyMock($dados): array;
-    
+    protected function alterarStatus(mixed $id, bool $status){
+        //TODO alterar a tag no banco quando for sucesso ou não
+    }
 
 }

@@ -1,56 +1,31 @@
 <?php
 namespace App\Services\API_PGD;
 
-class ExportarParticipanteService
+use App\Models\Usuario;
+use App\Services\API_PGD\Resources\ParticipanteResource;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class ExportarParticipanteService extends ExportarService
 {
     public function __construct(private HttpSenderService $httpSender)
     {
     }
 
-    public function enviar($token, $dados) {
-        
-    }
-
-    public function getBody($dados) : array
+    public function enviar($token, array $ids): void
     {
+        $participantes = Usuario::whereIn('id', $ids)->get();
 
-        $arrayRetorno = [
-            "lista_status" => []
-        ];
-        
-        foreach ($dados as $dado) {
-            $jsonArray["lista_status"][] = [
-                "cod_SIAPE_instituidora" => $dado["cod_SIAPE_instituidora"],
-                "cpf_participante" => $dado["cpf_participante"],
-                "matricula_siape" => $dado["matricula_siape"],
-                "participante_ativo_inativo_pgd" => $dado["participante_ativo_inativo_pgd"],
-                "modalidade_execucao" => $dado["modalidade_execucao"],
-                "jornada_trabalho_semanal" => $dado["jornada_trabalho_semanal"],
-                "data_envio" => $dado["data_envio"]
-            ];
+        foreach ($participantes as $participante) {
+            $resource = new ParticipanteResource($participante);
+
+            $success = $this->enviarDados($token, $resource);
+
+            $this->alterarStatus($participante->id, $success);
         }
-       return $arrayRetorno;
+        
     }
 
-    public function getBodyMock($dados): array{
-
-        $dados = [
-            [
-                "cod_SIAPE_instituidora" => 123456,
-                "cpf_participante" => "123.456.789-00",
-                "matricula_siape" => "987654",
-                "participante_ativo_inativo_pgd" => 1,
-                "modalidade_execucao" => 2,
-                "jornada_trabalho_semanal" => 40,
-                "data_envio" => "2024-07-22"
-            ],
-        ];
-        return [
-            "lista_status" =>[ $dados]
-        ];
-    }
-
-    public function getEndpoint(array $dados): string
+    public function getEndpoint(JsonResource $dados): string
     {
         return "/organizacao/{$dados['cod_SIAPE_instituidora']}/participante/{$dados['cpf_participante']}";
     }

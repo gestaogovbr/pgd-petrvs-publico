@@ -3,9 +3,9 @@ namespace App\Services\API_PGD;
 
 use Illuminate\Support\Facades\Http;
 use App\Models\PlanoEntrega;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-
-class ExportarPlanoEntregasService
+class ExportarPlanoEntregasService extends ExportarService
 {
     protected $httpSender;
     
@@ -14,63 +14,22 @@ class ExportarPlanoEntregasService
         $this->httpSender = new HttpSenderService();
     }
 
-    public function enviar($token, $dados)
+    public function enviar($token, array $ids): void
     {
-        if(isset($dados['mock']) && $dados['mock']){
-            $body = $this->getBodyMock($dados);
-        } else{
-            $body = $this->getBody($dados);
+        $planos_entrega = PlanoEntrega::whereIn('id', $ids)->get();
+
+        foreach ($planos_entrega as $plano_entrega) {
+            $resource = new PlanoEntregaResource($plano_entrega);
+
+            $success = $this->enviarDados($token, $resource);
+
+            $this->alterarStatus($plano_entrega->id, $success);
         }
-        
-        return $this->httpSender->enviarDados($token, 
-            "/organizacao/{$dados['cod_SIAPE_instituidora']}/plano_entregas/{$dados['id_plano_entrega_unidade']}", 
-            $body
-        );
     }
 
-    public function getBody($dados)
+    public function getEndpoint(JsonResource $dados): string
     {
-        $plano_entrega = PlanoEntrega::find($dados['plano_entrega_id']);
-        return [
-            "cod_SIAPE_instituidora"=> null,
-            "id_plano_entrega_unidade"=> $plano_entrega->unidade_id,
-            "cancelado"=> $plano_entrega->status,
-            "data_inicio_plano_entregas"=> $plano_entrega->data_inicio,
-            "data_termino_plano_entregas"=> $plano_entrega->data_fim,
-            "avaliacao_plano_entregas"=> $plano_entrega->avaliacao_id,
-            "data_avaliacao_plano_entregas"=>$plano_entrega->avaliacao()->data_avaliacao,
-            "cod_SIAPE_unidade_plano"=> $plano_entrega->unidade_id,
-            "entregas"=> [
-              [
-                "id_entrega"=> $plano_entrega->planoEntregaEntrega()->entrega_id,
-                "nome_entrega"=> $plano_entrega->planoEntregaEntrega()->descricao,
-                "meta_entrega"=> $plano_entrega->planoEntregaEntrega()->meta,
-                "tipo_meta"=> null, // 1: absoluto, 2: percentual
-                "nome_vinculacao_cadeia_valor"=> $plano_entrega->planoEntregaEntrega()->cadeiaValor,
-                "nome_vinculacao_planejamento"=> $plano_entrega->planoEntregaEntrega()->planejamento,
-                "percentual_progresso_esperado"=> $plano_entrega->planoEntregaEntrega()->progresso_esperado,
-                "percentual_progresso_realizado"=> $plano_entrega->planoEntregaEntrega()->progresso_realizado,
-                "data_entrega"=> $plano_entrega->planoEntregaEntrega()->entrega()->data_fim,
-                "nome_demandante"=> $plano_entrega->criador()->nome,
-                "nome_destinatario"=> $plano_entrega->planoEntregaEntrega()->destinatario
-              ]
-            ]
-        ];
-
-    }
-
-    public function getBodyMock($dados){
-        return [
-            "cod_SIAPE_instituidora"=> $dados['cod_SIAPE_instituidora'],
-            "id_plano_entrega_unidade"=> $dados['id_plano_entrega_unidade'],
-            "cancelado"=> false,
-            "data_inicio_plano_entregas"=> "2023-12-01",
-            "data_termino_plano_entregas"=> "2023-12-10",
-            "avaliacao_plano_entregas"=> 1,
-            "data_avaliacao_plano_entregas"=> "2023-12-10",
-            "cod_SIAPE_unidade_plano"=> 1,
-            "entregas"=> []
-        ];
+        return "/organizacao/{$dados->cod_SIAPE_instituidora}/plano_entregas/{$dados->id_plano_entrega_unidade}";
     }
 }
 
