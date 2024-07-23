@@ -2,40 +2,34 @@
 
 namespace App\Services\API_PGD;
 
-use Illuminate\Support\Facades\Http;
 use App\Services\API_PGD\HttpSenderService;
 use App\Models\PlanoTrabalho;
 use App\Services\API_PGD\Resources\PlanoTrabalhoResource;
-use App\Services\CalendarioService;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class ExportarPlanoTrabalhoService
+class ExportarPlanoTrabalhoService extends ExportarService
 {
   public function __construct(
-    private readonly CalendarioService $calendarioService, 
     private readonly HttpSenderService $httpSender
-  )
-  {}
+  ) {
+    parent::__construct($httpSender);
+  }
 
-  public function enviar($token, $ids)
+  public function enviar($token, array $ids): void
   {
     $planos_trabalho = PlanoTrabalho::whereIn('id', $ids)->get();
 
-    foreach($planos_trabalho as $plano_trabalho) {
+    foreach ($planos_trabalho as $plano_trabalho) {
       $resource = new PlanoTrabalhoResource($plano_trabalho);
 
-      $response = $this->httpSender->enviarDados($token,
-        "/organizacao/SIAPE/1/plano_trabalho/{$plano_trabalho->id}",
-        $resource->toJson()
-      );
+      $success = $this->enviarDados($token, $resource);
 
-      if (!$response->successful()) {
-        if ($response->status() == 422) {
-          $data = $response->json();
-          var_dump($data['detail']);
-        } else {
-            $response->throw();
-        }
-      }
+      $this->alterarStatus($plano_trabalho->id, $success);
     }
+  }
+
+  public function getEndpoint(JsonResource $dados): string
+  {
+    return "/organizacao/SIAPE/1/plano_trabalho/{$dados->id_plano_trabalho}";
   }
 }
