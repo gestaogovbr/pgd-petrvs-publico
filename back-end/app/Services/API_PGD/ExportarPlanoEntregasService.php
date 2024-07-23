@@ -1,7 +1,7 @@
 <?php
 namespace App\Services\API_PGD;
 
-use Illuminate\Support\Facades\Http;
+use App\Services\API_PGD\Contracts\ExportarService;
 use App\Models\PlanoEntrega;
 use Illuminate\Http\Resources\Json\JsonResource;
 

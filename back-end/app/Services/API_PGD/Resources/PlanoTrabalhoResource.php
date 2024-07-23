@@ -9,7 +9,7 @@ use Carbon\Carbon;
 
 class PlanoTrabalhoResource extends JsonResource
 {
-    public function toArray(Request $request)
+    public function toArray($request)
     {
         $calendarioService = new CalendarioService;
         $diasUteis = $calendarioService->qtdDiasUteis(
