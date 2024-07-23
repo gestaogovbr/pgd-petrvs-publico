@@ -1,8 +1,7 @@
 <?php
 namespace App\Services\API_PGD;
 
-use App\Exceptions\NotFoundException;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
 
 class OrgaoCentralService
 {
@@ -14,18 +13,25 @@ class OrgaoCentralService
     )
     {}
 
-    public function exportarDados($tenantId, $dados)
+    public function exportarDados($tenantId)
     {
         $token = $this->authService->authenticate($tenantId);
-        if(!isset($dados['tipo'])) {
-            throw new NotFoundException("Tipo não informado");
-        }
-        
-        return match ($dados['tipo']) {
-            'PLANO_TRABALHO' => $this->exportarPlanoTrabalhoService->enviar($token, $dados),
-            'PLANO_ENTREGA' => $this->exportarPlanoEntregasService->enviar($token, $dados),
-            'PARTICIPANTE' => $this->exportarParticipanteService->enviar($token, $dados),
-            default => throw new NotFoundException("Tipo desconhecido: " . $dados['tipo']),
-        };
+
+        $tenant = tenancy()->find($tenantId);
+        tenancy()->initialize($tenant);
+
+        $planos_trabalho_ids = DB::table('view_api_pgd')
+            ->where('tipo', 'trabalho')
+            ->pluck('id')
+            ->toArray();
+
+        $this->exportarPlanoTrabalhoService->enviar($token, $planos_trabalho_ids);
+
+        /*
+        $this->exportarPlanoEntregasService->enviar($token, $planos_entrega_ids);
+
+        $participantes_ids = ViewApiPgd::where('tipo', 'entrega')->pluck('id');
+        $this->exportarParticipanteService->enviar($token, $participantes_ids);
+        */
     }
 }
