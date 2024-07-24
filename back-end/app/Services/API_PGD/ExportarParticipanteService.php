@@ -30,5 +30,10 @@ class ExportarParticipanteService extends ExportarService
     {
         return "/organizacao/{$dados['cod_SIAPE_instituidora']}/participante/{$dados['cpf_participante']}";
     }
+
+    public function obterDados($tenantId): array
+    {
+        return Usuario::where('id', $tenantId)->pluck('id')->toArray();
+    }
 }
 
