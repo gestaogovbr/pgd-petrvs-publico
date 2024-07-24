@@ -25,6 +25,8 @@ abstract class ExportarService
 
     public abstract function getEndpoint(JsonResource $dados): string;
 
+    public abstract function obterDados($tenantId) : array;
+
 
     protected function alterarStatus(mixed $id, bool $status){
         //TODO alterar a tag no banco quando for sucesso ou não

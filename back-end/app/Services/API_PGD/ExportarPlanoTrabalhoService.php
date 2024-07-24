@@ -8,6 +8,7 @@ use App\Services\API_PGD\HttpSenderService;
 use App\Services\API_PGD\Resources\PlanoTrabalhoResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 
 class ExportarPlanoTrabalhoService extends ExportarService
 {
@@ -37,5 +38,17 @@ class ExportarPlanoTrabalhoService extends ExportarService
   public function getEndpoint(JsonResource $dados): string
   {
     return "/organizacao/SIAPE/1/plano_trabalho/{$dados->id}";
+  }
+
+  public function obterDados($tenantId): array
+  {
+
+    $tenant = tenancy()->find($tenantId);
+    tenancy()->initialize($tenant);
+
+    return DB::table('view_api_pgd')
+      ->where('tipo', 'trabalho')
+      ->pluck('id')
+      ->toArray();
   }
 }

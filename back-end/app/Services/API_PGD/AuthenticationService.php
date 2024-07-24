@@ -2,12 +2,17 @@
 
 namespace App\Services\API_PGD;
 
+use App\Exceptions\BadRequestException as ExceptionsBadRequestException;
+use App\Exceptions\UnauthorizedException;
 use Illuminate\Support\Facades\Http;
 use App\Models\Tenant;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthenticationService
 {
-  public function getToken()
+  CONST TIMEOUT = 29;
+  
+  public function getToken() : string
   {
     $header = [
       'Accept' => 'application/json',
@@ -17,23 +22,22 @@ class AuthenticationService
       'username' => config('pgd')['username'],
       'password' => config('pgd')['password']
     ];
-    $response = Http::withOptions(['verify' => false, 'timeout' => 29])
+
+    $response = Http::withOptions(['verify' => false, 'timeout' => self::TIMEOUT])
       ->withHeaders($header)
       ->asForm()->post(config('pgd.host') . '/token', $formParams);
-    if ($response->successful()) {
-      $responseObj = $response->json();
-      if (isset($responseObj['access_token'])) {
-        return $responseObj['access_token'];
+
+      if(!$response->successful() || !isset($response->json()['access_token'])) {
+        throw new ExceptionsBadRequestException('Falha na autenticação');
       }
-    } else {
-      dd("Falha autenticação");
-    }
-    return false;
+
+      $responseObj = $response->json();
+      return  $responseObj['access_token'];
   }
 
   public static function authenticate($tenantId)
   {
-    $tenant = Tenant::find($tenantId) ?? abort(404, "Tenant inválido");
+    $tenant = Tenant::find($tenantId) ?? throw new UnauthorizedException('Tenant não encontrado');
 
     $response = Http::baseUrl(config('pgd.host'))
         ->asForm()
@@ -43,7 +47,7 @@ class AuthenticationService
         ]);
 
     if (!$response->successful()) {
-        if ($response->status() == 422) {
+        if ($response->status() == Response::HTTP_UNPROCESSABLE_ENTITY) {
             $data = $response->json();
             $detail = json_decode($data['detail'], true);
             echo "Erro no tenant $tenantId: ".$detail[0]['msg'];

@@ -31,5 +31,10 @@ class ExportarPlanoEntregasService extends ExportarService
     {
         return "/organizacao/{$dados->cod_SIAPE_instituidora}/plano_entregas/{$dados->id_plano_entrega_unidade}";
     }
+
+    public function obterDados($tenantId): array
+    {
+        return PlanoEntrega::where('id', $tenantId)->pluck('id')->toArray();
+    }
 }
 
