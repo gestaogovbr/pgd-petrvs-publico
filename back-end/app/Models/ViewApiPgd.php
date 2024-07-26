@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ViewApiPgd extends Model
+class ViewApiPgd extends ModelBase
 {
     public $timestamps = false;
 
