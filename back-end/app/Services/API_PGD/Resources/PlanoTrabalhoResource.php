@@ -21,7 +21,7 @@ class PlanoTrabalhoResource extends JsonResource
             "origem_unidade"            => "SIAPE",
             "cod_unidade_autorizadora"  => 1, //$this->programa->unidade_id,
             "id_plano_trabalho"         => $this->id,
-            "status"                    => $this->converteStatus($this->status),
+            "status"                    => $this->converteStatus($this->status) ?? '3',
             "cod_unidade_executora"     => 1, //$this->unidade_id,
             "cpf_participante"          => $this->usuario->cpf ?? '',
             "matricula_siape"           => $this->usuario->matricula ?? '',

@@ -8,32 +8,20 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ExportarParticipanteService extends ExportarService
 {
-    public function __construct(private HttpSenderService $httpSender)
-    {
+    const TIPO_AUDIT_PARTICIPANTE = 'participante';
+
+    public function getResource($model): ParticipanteResource {
+        return new ParticipanteResource($model);
     }
 
-    public function enviar($token, array $ids): void
-    {
-        $participantes = Usuario::whereIn('id', $ids)->get();
-
-        foreach ($participantes as $participante) {
-            $resource = new ParticipanteResource($participante);
-
-            $success = $this->enviarDados($token, $resource);
-
-            $this->alterarStatus($participante->id, $success);
-        }
-        
+    public function getData() {
+        return Usuario::whereIn('id', $this->getIds(self::TIPO_AUDIT_PARTICIPANTE))->get();
     }
 
-    public function getEndpoint(JsonResource $dados): string
+    public function getEndpoint(JsonResource $resource): string
     {
-        return "/organizacao/{$dados['cod_SIAPE_instituidora']}/participante/{$dados['cpf_participante']}";
+        return "/organizacao/{$resource->unidade->codigo}/participante/{$resource->cpf}";
     }
 
-    public function obterDados($tenantId): array
-    {
-        return Usuario::where('id', $tenantId)->pluck('id')->toArray();
-    }
 }
 

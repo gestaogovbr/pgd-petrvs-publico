@@ -2,10 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\PGDExportarDadosJob;
 use Illuminate\Console\Command;
 use App\Services\API_PGD\OrgaoCentralService;
-use App\Models\Tenant;
 
 class EnviaDadosApiPGD extends Command
 {
@@ -27,11 +25,11 @@ class EnviaDadosApiPGD extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(OrgaoCentralService $orgaoCentralService)
     {
         $tenant = $this->argument('tenant');
-        $job = new PGDExportarDadosJob($tenant);
-        $job->handle();
+    
+        $orgaoCentralService->exportar($tenant);
     }
 
 }

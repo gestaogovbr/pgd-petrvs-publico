@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Jobs\Contratos\ContratoJobSchedule;
-use App\Services\API_PGD\AuthenticationService;
 use App\Services\API_PGD\Contracts\ExportarService;
 use App\Services\API_PGD\OrgaoCentralService;
 use Illuminate\Bus\Queueable;
@@ -20,30 +19,20 @@ class PGDExportarDadosJob implements ShouldQueue, ShouldBeUnique, ContratoJobSch
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-
-    public function __construct(private readonly ?string $tenantId = null)
-    {
-    }
+    public function __construct(
+        private readonly OrgaoCentralService $orgaoCentralService
+    )
+    {}
 
     public static function getDescricao(): string
     {
         return "Envia Dados para API do PGD";
     }
 
-
     public function handle()
     {
-        $instances = $this->carregarClassesEstendidas('app/Services/API_PGD/', 'App\Services\API_PGD');
-        $authService = new AuthenticationService();
-        foreach ($instances as $instance) {
-            $orgaoCentralService = new OrgaoCentralService(
-                $authService,
-                $instance
-            );
-            $orgaoCentralService->exportarDados($this->tenantId);
-        }
+        $this->orgaoCentralService->exportar($this->job->tenant_id);
     }
-
 
     /**
      *
