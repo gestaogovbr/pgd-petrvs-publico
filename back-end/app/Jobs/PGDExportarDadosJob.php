@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Jobs\Contratos\ContratoJobSchedule;
 use App\Services\API_PGD\Contracts\ExportarService;
-use App\Services\API_PGD\OrgaoCentralService;
+use App\Services\API_PGD\ExportarTenantService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,7 +20,7 @@ class PGDExportarDadosJob implements ShouldQueue, ShouldBeUnique, ContratoJobSch
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
-        private readonly OrgaoCentralService $orgaoCentralService
+        private readonly ExportarTenantService $exportarTenantService
     )
     {}
 
@@ -31,7 +31,7 @@ class PGDExportarDadosJob implements ShouldQueue, ShouldBeUnique, ContratoJobSch
 
     public function handle()
     {
-        $this->orgaoCentralService->exportar($this->job->tenant_id);
+        $this->exportarTenantService->exportar($this->job->tenant_id);
     }
 
     /**

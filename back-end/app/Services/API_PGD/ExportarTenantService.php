@@ -5,9 +5,8 @@ namespace App\Services\API_PGD;
 use App\Services\API_PGD\Contracts\ExportarService;
 use App\Services\API_PGD\ExportarPlanoTrabalhoService;
 use App\Services\API_PGD\ExportarPlanoEntregasService;
-use Illuminate\Support\Facades\DB;
 
-class OrgaoCentralService
+class ExportarTenantService
 {
     public function __construct(
         private readonly AuthenticationService $authService,
