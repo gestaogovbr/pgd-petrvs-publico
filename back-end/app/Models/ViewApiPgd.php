@@ -5,11 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ViewApiPgd extends ModelBase
+class ViewApiPgd extends Model
 {
     public $timestamps = false;
 
     protected $table = 'view_api_pgd';
+
+//    protected static function boot()
+//    {
+//        parent::boot();
+//        static::addGlobalScope('schema', function ($builder) {
+//            $schema = 'petrvs_mgi';
+//            $builder->from("$schema.view_api_pgd");
+//        });
+//    }
 
     /**
      * Filtra os resultados por tipo 'entrega'.
