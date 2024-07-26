@@ -2,34 +2,59 @@
 
 namespace App\Services\API_PGD\Contracts;
 
-use App\Services\API_PGD\Contracts\IExportarService;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Services\API_PGD\HttpSenderService;
+use App\Models\ViewApiPgd;
 
 abstract class ExportarService
 {
+    public $token = null;
+
     public function __construct(private HttpSenderService $httpSender)
     {
     }
 
-    public abstract function enviar($token, array $ids) : void;
-
-    public function enviarDados($token, JsonResource $dados): bool
-    {
-        return $this->httpSender->enviarDados($token, 
-            $this->getEndpoint($dados), 
-            json_decode($dados->toJson(), true)
-        );
+    public function setToken(string $token) {
+        $this->token = $token;
+        return $this;
     }
-
 
     public abstract function getEndpoint(JsonResource $dados): string;
 
-    public abstract function obterDados($tenantId) : array;
-
+    public function getIds($tipoAudit): array
+    {
+        return ViewApiPgd::where('tipo', $tipoAudit)
+          ->pluck('id')
+          ->toArray();
+    }
 
     protected function alterarStatus(mixed $id, bool $status){
         //TODO alterar a tag no banco quando for sucesso ou não
+    }
+
+    abstract public function getResource($model): JsonResource;
+    
+    abstract public function getData();
+    
+    public function enviar(): void
+    {
+        $data = $this->getData();
+
+        foreach ($data as $model) 
+        {
+            $resource = $this->getResource($model);
+
+            $success = $this->httpSender->enviarDados($this->token, 
+                $this->getEndpoint($resource), 
+                json_decode($resource->toJson(), true)
+            );
+
+            if ($success) {
+                echo 'Sucesso';
+            }
+
+            $this->alterarStatus($model->id, $success);
+        }
     }
 
 }

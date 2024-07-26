@@ -4,37 +4,23 @@ namespace App\Services\API_PGD;
 use App\Services\API_PGD\Contracts\ExportarService;
 use App\Models\PlanoEntrega;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Services\API_PGD\Resources\PlanoTrabalhoResource;
 
 class ExportarPlanoEntregasService extends ExportarService
 {
-    protected $httpSender;
-    
-    public function __construct()
-    {
-        $this->httpSender = new HttpSenderService();
+    const TIPO_AUDIT_ENTREGA = 'entrega';
+
+    public function getResource($model): JsonResource {
+        return new PlanoEntregaResource($model);
     }
 
-    public function enviar($token, array $ids): void
-    {
-        $planos_entrega = PlanoEntrega::whereIn('id', $ids)->get();
-
-        foreach ($planos_entrega as $plano_entrega) {
-            $resource = new PlanoEntregaResource($plano_entrega);
-
-            $success = $this->enviarDados($token, $resource);
-
-            $this->alterarStatus($plano_entrega->id, $success);
-        }
+    public function getData() {
+        return PlanoEntrega::whereIn('id', $this->getIds(self::TIPO_AUDIT_ENTREGA))->get();
     }
 
-    public function getEndpoint(JsonResource $dados): string
+    public function getEndpoint(JsonResource $resource): string
     {
-        return "/organizacao/{$dados->cod_SIAPE_instituidora}/plano_entregas/{$dados->id_plano_entrega_unidade}";
-    }
-
-    public function obterDados($tenantId): array
-    {
-        return PlanoEntrega::where('id', $tenantId)->pluck('id')->toArray();
+        return "/organizacao/{$resource->unidade->codigo}/plano_entregas/{$resource->id}";
     }
 }
 

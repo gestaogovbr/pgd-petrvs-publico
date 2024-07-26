@@ -3,21 +3,35 @@
 namespace App\Services\API_PGD;
 
 use App\Services\API_PGD\Contracts\ExportarService;
+use App\Services\API_PGD\ExportarPlanoTrabalhoService;
+use App\Services\API_PGD\ExportarPlanoEntregasService;
 use Illuminate\Support\Facades\DB;
 
 class OrgaoCentralService
 {
     public function __construct(
         private readonly AuthenticationService $authService,
-        private readonly ExportarService $service,
+        private readonly ExportarPlanoTrabalhoService $exportarPlanoTrabalhoService,
+        private readonly ExportarPlanoEntregasService $exportarPlanoEntregasService,
+        private readonly ExportarParticipanteService $exportarParticipanteService
     ) {
     }
 
-    public function exportarDados($tenantId)
+    public function exportar(string $tenantId)
     {
         $token = $this->authService->authenticate($tenantId);
 
-        $dados = $this->service->obterDados($tenantId);
-        $this->service->enviar($token, $dados);
+        $tenant = tenancy()->find($tenantId);
+        tenancy()->initialize($tenant);
+
+        $this->exportarPlanoTrabalhoService->setToken($token)->enviar();
+        //$this->exportarPlanoTrabalhoService->setToken($token)->enviar();
+        //$this->exportarParticipanteService->setToken($token)->enviar();
+
+        $this->finalizar();
+    }
+
+    public function finalizar() {
+        echo "** FINALIZADO!\n";
     }
 }

@@ -4,51 +4,23 @@ namespace App\Services\API_PGD;
 
 use App\Models\PlanoTrabalho;
 use App\Services\API_PGD\Contracts\ExportarService;
-use App\Services\API_PGD\HttpSenderService;
 use App\Services\API_PGD\Resources\PlanoTrabalhoResource;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\DB;
 
 class ExportarPlanoTrabalhoService extends ExportarService
 {
-  public function __construct(
-    private readonly HttpSenderService $httpSender,
-    private readonly Request $request
-  ) {
-    parent::__construct($httpSender);
+  const TIPO_AUDIT_TRABALHO = 'trabalho';
+
+  public function getResource($model): PlanoTrabalhoResource {
+    return new PlanoTrabalhoResource($model);
   }
 
-  public function enviar($token, array $ids): void
-  {
-    $planos_trabalho = PlanoTrabalho::whereIn('id', $ids)->get();
-
-    foreach ($planos_trabalho as $plano_trabalho) {
-      $resource = new PlanoTrabalhoResource($plano_trabalho);
-      $success = $this->enviarDados($token, $resource);
-
-      if ($success) {
-        echo 'Sucesso';
-      }
-
-      $this->alterarStatus($plano_trabalho->id, $success);
-    }
+  public function getData() {
+    return PlanoTrabalho::whereIn('id', $this->getIds(self::TIPO_AUDIT_TRABALHO))->get();
   }
 
-  public function getEndpoint(JsonResource $dados): string
+  public function getEndpoint(JsonResource $resource): string
   {
-    return "/organizacao/SIAPE/1/plano_trabalho/{$dados->id}";
-  }
-
-  public function obterDados($tenantId): array
-  {
-
-    $tenant = tenancy()->find($tenantId);
-    tenancy()->initialize($tenant);
-
-    return DB::table('view_api_pgd')
-      ->where('tipo', 'trabalho')
-      ->pluck('id')
-      ->toArray();
+    return "/organizacao/SIAPE/1/plano_trabalho/{$resource->id}";
   }
 }
