@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\API_PGD\OrgaoCentralService;
+use App\Services\API_PGD\ExportarTenantService;
 
 class EnviaDadosApiPGD extends Command
 {
@@ -25,11 +25,11 @@ class EnviaDadosApiPGD extends Command
     /**
      * Execute the console command.
      */
-    public function handle(OrgaoCentralService $orgaoCentralService)
+    public function handle(ExportarTenantService $exportarTenantService)
     {
         $tenant = $this->argument('tenant');
     
-        $orgaoCentralService->exportar($tenant);
+        $exportarTenantService->exportar($tenant);
     }
 
 }

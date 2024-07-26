@@ -5,6 +5,7 @@ namespace App\Services\API_PGD\Contracts;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Services\API_PGD\HttpSenderService;
 use App\Models\ViewApiPgd;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 abstract class ExportarService
 {
@@ -24,6 +25,7 @@ abstract class ExportarService
     public function getIds($tipoAudit): array
     {
         return ViewApiPgd::where('tipo', $tipoAudit)
+          ->withoutGlobalScope(SoftDeletingScope::class)
           ->pluck('id')
           ->toArray();
     }
