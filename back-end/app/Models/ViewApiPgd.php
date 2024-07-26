@@ -44,6 +44,15 @@ class ViewApiPgd extends ModelBase
         return $query->where('tipo', 'participante');
     }
 
+    public function scopeByTipo($query, $tipo)
+    {
+        return $query->where('tipo', $tipo);
+    }
+
+    public static function getIdsByTipo($tipo)
+    {
+        return self::byTipo($tipo)->pluck('id')->toArray();
+    }
 
     /**Exemplo de Uso*/
     /*
