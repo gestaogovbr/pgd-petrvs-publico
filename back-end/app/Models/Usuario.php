@@ -242,9 +242,15 @@ class Usuario extends Authenticatable  implements AuditableContract
   {
     return $this->hasMany(PlanoTrabalho::class);
   }
+  public function ultimoPlanoTrabalho() {
+    return $this->hasOne(PlanoTrabalho::class)->latestOfMany();
+  }
   public function participacoesProgramas()
   {
     return $this->hasMany(ProgramaParticipante::class);
+  }
+  public function ultimaParticipacaoPrograma() {
+    return $this->hasOne(ProgramaParticipante::class)->latestOfMany();
   }
   public function integracoes()
   {

@@ -1,5 +1,5 @@
 <?php
-namespace App\Services\API_PGD;
+namespace App\Services\API_PGD\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 

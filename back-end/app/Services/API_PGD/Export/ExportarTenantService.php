@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Services\API_PGD;
+namespace App\Services\API_PGD\Export;
 
-use App\Services\API_PGD\Contracts\ExportarService;
-use App\Services\API_PGD\ExportarPlanoTrabalhoService;
-use App\Services\API_PGD\ExportarPlanoEntregasService;
+use App\Services\API_PGD\AuthenticationService;
 
 class ExportarTenantService
 {
@@ -23,9 +21,11 @@ class ExportarTenantService
         $tenant = tenancy()->find($tenantId);
         tenancy()->initialize($tenant);
 
-        $this->exportarPlanoTrabalhoService->setToken($token)->enviar();
+        $this->exportarParticipanteService->setToken($token)->enviar();
+
         //$this->exportarPlanoTrabalhoService->setToken($token)->enviar();
-        //$this->exportarParticipanteService->setToken($token)->enviar();
+        //$this->exportarPlanoTrabalhoService->setToken($token)->enviar();
+        
 
         $this->finalizar();
     }
