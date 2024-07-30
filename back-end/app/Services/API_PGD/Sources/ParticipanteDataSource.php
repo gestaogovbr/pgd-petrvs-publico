@@ -31,7 +31,7 @@ class ParticipanteDataSource extends DataSource
             ])
             ->find($auditModel->id);
 
-        if (!$participante){
+        if (!$participante || !$participante->ultimaParticipacaoPrograma){
             throw new ExportPgdException('Usuário sem Participação');
         }
 
@@ -49,16 +49,27 @@ class ParticipanteDataSource extends DataSource
             throw new ExportPgdException('Usuário sem Unidade Autorizadora');
         }
 
+        $unidadeIntegrante = $participante->unidadesIntegrantes->first();
+
+        if (!$unidadeIntegrante || !$unidadeIntegrante->unidade || !$unidadeIntegrante->unidade->codigo){
+            throw new ExportPgdException('Usuário não possui unidade de Lotação');
+        }
+
+        $dataAssinatura = $participante->ultimoPlanoTrabalho->ultimaAssinatura->data_assinatura ?? null;
+        if (!$dataAssinatura){
+            throw new ExportPgdException('Usuário não possui assinatura');
+        }
+
         $result = [
             'id' => $participante->id,
             'cod_unidade_autorizadora' => $participante->ultimaParticipacaoPrograma->programa->unidadeAutorizadora->codigo ?? null,
             'cod_unidade_instituidora' => $participante->ultimaParticipacaoPrograma->programa->unidade->codigo ?? null,
-            'cod_unidade_lotacao' => $participante->unidadesIntegrantes->first()->unidade->codigo ?? null,
+            'cod_unidade_lotacao' => $unidadeIntegrante->unidade->codigo ?? null,
             'matricula' => $participante->matricula,
             'cpf' => $participante->cpf,
             'situacao' => $participante->ultimaParticipacaoPrograma->habilitado ?? 0,
             'tipo_modalidade' => $participante->ultimoPlanoTrabalho->tipoModalidade->nome ?? null,
-            'data_assinatura' => $participante->ultimoPlanoTrabalho->ultimaAssinatura->data_assinatura ?? null
+            'data_assinatura' => $data_assinatura ?? null
         ];
 
         return (object) $result;
