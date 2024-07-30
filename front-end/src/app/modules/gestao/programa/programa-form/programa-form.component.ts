@@ -46,9 +46,11 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
     this.modalWidth = 700;
     this.form = this.fh.FormBuilder({
       unidade_id: { default: "" },
+      unidade_autorizadora_id: { default: "" },
       nome: { default: "" },
       normativa: { default: "" },
       link_normativa: { default: null },
+      link_autorizacao: { default: null },
       config: { default: null },
       data_inicio: { default: new Date() },
       data_fim: { default: new Date() },
@@ -83,7 +85,7 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if (['nome', 'unidade_id', 'tipo_avaliacao_plano_trabalho_id', 'tipo_avaliacao_plano_entrega_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['nome', 'unidade_autorizadora_id', 'unidade_id', 'tipo_avaliacao_plano_trabalho_id', 'tipo_avaliacao_plano_entrega_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     } else if (controlName == "prazo_max_plano_entrega" && parseInt(control.value || 0) > 99999) {
       result = "Inválido";
@@ -102,6 +104,8 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
     let result = null;
     if (this.form?.controls.data_fim.value && this.form?.controls.data_inicio.value > this.form?.controls.data_fim.value) {
       result = "A data do fim não pode ser anterior à data do inicio!";
+    } else if(this.form?.controls.data_fim.value == this.form?.controls.data_inicio.value){
+      result = "A data do fim não pode ser igual à data do inicio!";
     }
     return result;
   }
