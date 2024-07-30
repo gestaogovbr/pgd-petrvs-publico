@@ -1,0 +1,94 @@
+<?php
+
+namespace App\Services\API_PGD\Export;
+
+use App\Exceptions\ExportPgdException;
+use Illuminate\Http\Resources\Json\JsonResource;
+use App\Services\API_PGD\PgdService;
+use App\Services\API_PGD\Sources\DataSource;
+use Illuminate\Support\Facades\DB;
+
+abstract class ExportarService
+{
+    public $token = null;
+
+    public function __construct(private PgdService $pgdService) {}
+
+    public function setToken(string $token) {
+        $this->token = $token;
+        return $this;
+    }
+
+    public abstract function getEndpoint(JsonResource $dados): string;
+
+    abstract public function getTipoAudit(): string;
+
+    protected function alterarStatus(mixed $id, bool $status){
+        //TODO alterar a tag no banco quando for sucesso ou não
+    }
+
+    abstract public function getResource($model): JsonResource;
+    
+    abstract public function getDataSource(): DataSource;
+    
+    public function enviar(): void
+    {
+        $dataSource = $this->getDataSource();
+
+        $auditInfos = $dataSource->getAuditInfo();
+
+        foreach ($auditInfos as $auditInfo)
+        {
+            echo "\nParticipante Id {$auditInfo->id}...";
+            try {
+                $data = $dataSource->getData($auditInfo);
+
+                $resource = $this->getResource($data);
+
+            }catch(ExportPgdException $exception) {
+                $this->handleError($auditInfo, $exception->getmessage());
+                continue;
+            }
+
+            $success = $this->pgdService->enviarDados(
+                $this->token, 
+                $this->getEndpoint($resource), 
+                json_decode($resource->toJson(), true)
+            );
+
+            if ($success) {
+                $this->handleSucesso($auditInfo);
+            } else {
+                $this->handleError($auditInfo, 'erro no envio');
+            }
+        }
+    }
+
+    abstract public function getAudits($id);
+
+    public function handleError($auditInfo, $message) {
+        
+        echo "\033[31mERRO\033[0m ".$message."\n";
+
+        $auditIds = json_decode($auditInfo->json_audit);
+
+        DB::table('audits')
+            ->whereIn('id', $auditIds)
+            ->update(
+                ['tags' => json_encode(['ERRO'])]
+            );
+    }
+
+    public function handleSucesso($auditInfo) {
+        $auditIds = json_decode($auditInfo->json_audit);
+
+        DB::table('audits')
+            ->whereIn('id', $auditIds)
+            ->update([
+                'tags' => json_encode(['SUCESSO'])
+            ]);
+
+        echo "\033[32mSUCESSO\033[0m";
+    }
+
+}

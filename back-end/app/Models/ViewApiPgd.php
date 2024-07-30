@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class ViewApiPgd extends Model
 {
-    public $timestamps = false;
-
     protected $table = 'view_api_pgd';
+    public $timestamps = false;
+    protected $keyType = 'string';
+    public $incrementing = false;
 
 //    protected static function boot()
 //    {

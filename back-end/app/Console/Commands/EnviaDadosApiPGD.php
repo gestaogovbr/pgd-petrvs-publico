@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\API_PGD\ExportarTenantService;
+use App\Services\API_PGD\Export\ExportarTenantService;
 
 class EnviaDadosApiPGD extends Command
 {

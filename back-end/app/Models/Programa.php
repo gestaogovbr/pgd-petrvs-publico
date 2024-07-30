@@ -103,7 +103,7 @@ class Programa extends ModelBase
 
   public function unidadeAutorizadora()
   {
-    return $this->belongsTo(Unidade::class);
+    return $this->belongsTo(Unidade::class, 'unidade_autorizadora_id');
   }
   public function documento()
   {
