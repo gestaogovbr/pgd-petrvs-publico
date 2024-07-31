@@ -75,17 +75,23 @@ abstract class ExportarService
         DB::table('audits')
             ->whereIn('id', $auditIds)
             ->update(
-                ['tags' => json_encode(['ERRO'])]
+                [
+                    'tags' => json_encode(['ERRO']),
+                    'error_message' => $message
+                ]
             );
     }
 
     public function handleSucesso($auditInfo) {
         $auditIds = json_decode($auditInfo->json_audit);
 
+       
+
         DB::table('audits')
             ->whereIn('id', $auditIds)
             ->update([
-                'tags' => json_encode(['SUCESSO'])
+                'tags' => json_encode(['SUCESSO']),
+                'error_message' => null
             ]);
 
         echo "\033[32mSUCESSO\033[0m";
