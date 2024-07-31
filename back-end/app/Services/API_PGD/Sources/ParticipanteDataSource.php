@@ -16,6 +16,10 @@ class ParticipanteDataSource extends DataSource
 
     public function getData($auditModel) {
 
+        if (!$auditModel->id){
+            throw new ExportPgdException('ID de Usuário não definido');
+        }
+
         $participante = Usuario::with([
                 'ultimoPlanoTrabalho',
                 'ultimoPlanoTrabalho.tipoModalidade',
