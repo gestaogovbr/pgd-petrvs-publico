@@ -22,8 +22,8 @@ class ExportarTenantService
         tenancy()->initialize($tenant);
 
         //$this->exportarParticipanteService->setToken($token)->enviar();
-        $this->exportarPlanoTrabalhoService->setToken($token)->enviar();
         //$this->exportarPlanoTrabalhoService->setToken($token)->enviar();
+        $this->exportarPlanoEntregasService->setToken($token)->enviar();
         
 
         $this->finalizar();
