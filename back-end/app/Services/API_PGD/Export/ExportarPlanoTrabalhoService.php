@@ -6,7 +6,7 @@ use App\Models\PlanoTrabalho;
 use App\Services\API_PGD\Resources\PlanoTrabalhoResource;
 use App\Services\API_PGD\Sources\DataSource;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Services\API_PGD\Sources\ParticipanteDataSource;
+use App\Services\API_PGD\Sources\PlanoTrabalhoDataSource;
 
 class ExportarPlanoTrabalhoService extends ExportarService
 {
@@ -19,12 +19,12 @@ class ExportarPlanoTrabalhoService extends ExportarService
   }
 
   public function getDataSource(): DataSource {
-    return new ParticipanteDataSource();
+    return new PlanoTrabalhoDataSource();
   }
 
-  public function getEndpoint(JsonResource $resource): string
+  public function getEndpoint($resource): string
   {
-    return "/organizacao/SIAPE/1/plano_trabalho/{$resource->id}";
+    return "/organizacao/SIAPE/{$resource->cod_unidade_autorizadora}/plano_trabalho/{$resource->id}";
   }
 
   public function getAudits($id) {

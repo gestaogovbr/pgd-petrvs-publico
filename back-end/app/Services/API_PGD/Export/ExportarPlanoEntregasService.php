@@ -21,9 +21,9 @@ class ExportarPlanoEntregasService extends ExportarService
        return new ParticipanteDataSource();
     }
 
-    public function getEndpoint(JsonResource $resource): string
+    public function getEndpoint($resource): string
     {
-        return "/organizacao/{$resource->unidade->codigo}/plano_entregas/{$resource->id}";
+        return "/organizacao/SIAPE/{$resource->cod_unidade_autorizadora}/plano_entregas/{$resource->id}";
     }
 
     public function getAudits($id) {

@@ -2,6 +2,7 @@
 
 namespace App\Services\API_PGD\Resources;
 
+use App\Exceptions\ExportPgdException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
@@ -10,18 +11,64 @@ class ParticipanteResource extends JsonResource
 {
     public function toArray(Request $request)
     {
-        $modalidade = new ModalidadeResource($this);
+        if (!$this->ultimaParticipacaoPrograma){
+            throw new ExportPgdException('Usuário sem Participação');
+        }
 
-        return [
+        if (!$this->matricula){
+            throw new ExportPgdException('Usuário sem Matrícula');
+        }
+
+        if (!$this->ultimoPlanoTrabalho){
+            throw new ExportPgdException('Usuário sem Plano de Trabalho');
+        }
+
+        if (!$this->ultimoPlanoTrabalho){
+            throw new ExportPgdException('Usuário sem Plano de Trabalho');
+        }
+
+        $autorizadora = $this->ultimaParticipacaoPrograma->programa->unidadeAutorizadora ?? null;
+        
+        if (!$autorizadora || !$autorizadora->codigo){
+            throw new ExportPgdException('Usuário sem Unidade Autorizadora');
+        }
+
+        $instituidora = $this->ultimaParticipacaoPrograma->programa->unidade ?? null;
+        
+        if (!$instituidora || !$instituidora->codigo){
+            throw new ExportPgdException('Usuário sem Unidade Instituidora');
+        }
+
+        $unidadeIntegrante = $this->unidadesIntegrantes->first();
+
+        if (!$unidadeIntegrante || !$unidadeIntegrante->unidade || !$unidadeIntegrante->unidade->codigo){
+            throw new ExportPgdException('Usuário não possui unidade de Lotação');
+        }
+
+        $dataAssinatura = $this->ultimoPlanoTrabalho->ultimaAssinatura->data_assinatura ?? '';
+        if (!$dataAssinatura){
+            //throw new ExportPgdException('Usuário não possui assinatura');
+        }
+
+        if (!$this->ultimoPlanoTrabalho->tipoModalidade){
+            throw new ExportPgdException('Usuário não possui modalidade definida');
+        }
+        
+        $modalidade = new ModalidadeResource($this->ultimoPlanoTrabalho->tipoModalidade);
+
+        $result = [
+            "id"                        => $this->id,
             "origem_unidade"            => "SIAPE",
-            "cod_unidade_autorizadora"  => $this->cod_unidade_autorizadora,
-            "matricula_siape"           => $this->matricula,
-            "cod_unidade_instituidora"  => $this->cod_unidade_instituidora,
-            "cod_unidade_lotacao"       => $this->cod_unidade_lotacao,
-            "cpf"                       => $this->cpf,
-            "situacao"                  => $this->situacao,
+            'cod_unidade_autorizadora'  => $autorizadora->codigo ?? null,
+            'cod_unidade_instituidora'  => $instituidora->codigo ?? null,
+            'cod_unidade_lotacao'       => $unidadeIntegrante->unidade->codigo ?? null,
+            'matricula_siape'           => $this->matricula,
+            'cpf'                       => $this->cpf,
+            'situacao'                  => $this->ultimaParticipacaoPrograma->habilitado ?? 0,
             "modalidade_execucao"       => $modalidade->get(),
-            "data_assinatura_tcr"       => Carbon::parse($this->data_assinatura)->toDateTimeLocalString()
-          ];
+            "data_assinatura_tcr"       => Carbon::parse($dataAssinatura)->toDateTimeLocalString()
+        ];
+
+        return $result;
     }
 }

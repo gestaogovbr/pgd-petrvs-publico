@@ -19,7 +19,7 @@ abstract class ExportarService
         return $this;
     }
 
-    public abstract function getEndpoint(JsonResource $dados): string;
+    public abstract function getEndpoint($dados): string;
 
     abstract public function getTipoAudit(): string;
 
@@ -39,27 +39,29 @@ abstract class ExportarService
 
         foreach ($auditInfos as $auditInfo)
         {
-            echo "\nParticipante Id {$auditInfo->id}...";
+            echo "\n[{$auditInfo->tipo}] ID {$auditInfo->id}...";
             try {
                 $data = $dataSource->getData($auditInfo);
 
                 $resource = $this->getResource($data);
 
+                $body = (object) json_decode($resource->toJson(), true);
+
+                $success = $this->pgdService->enviarDados(
+                    $this->token, 
+                    $this->getEndpoint($body), 
+                    $body
+                );
+
+                if ($success) {
+                    $this->handleSucesso($auditInfo);
+                } else {
+                    $this->handleError($auditInfo, 'erro no envio');
+                }
+
             }catch(ExportPgdException $exception) {
                 $this->handleError($auditInfo, $exception->getmessage());
                 continue;
-            }
-
-            $success = $this->pgdService->enviarDados(
-                $this->token, 
-                $this->getEndpoint($resource), 
-                json_decode($resource->toJson(), true)
-            );
-
-            if ($success) {
-                $this->handleSucesso($auditInfo);
-            } else {
-                $this->handleError($auditInfo, 'erro no envio');
             }
         }
     }
@@ -84,8 +86,6 @@ abstract class ExportarService
 
     public function handleSucesso($auditInfo) {
         $auditIds = json_decode($auditInfo->json_audit);
-
-       
 
         DB::table('audits')
             ->whereIn('id', $auditIds)

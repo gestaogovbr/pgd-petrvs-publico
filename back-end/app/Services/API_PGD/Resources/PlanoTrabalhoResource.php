@@ -2,6 +2,7 @@
 
 namespace App\Services\API_PGD\Resources;
 
+use App\Exceptions\ExportPgdException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Services\CalendarioService;
@@ -17,12 +18,15 @@ class PlanoTrabalhoResource extends JsonResource
             $this->unidade_id
         );
 
+        $participante = new ParticipanteResource($this->usuario);
+
         return [
+            "id"                        => $this->id,
             "origem_unidade"            => "SIAPE",
-            "cod_unidade_autorizadora"  => 1, //$this->programa->unidade_id,
+            "cod_unidade_autorizadora"  => $this->programa->unidadeAutorizadora->codigo ?? null,
             "id_plano_trabalho"         => $this->id,
             "status"                    => $this->converteStatus($this->status) ?? '3',
-            "cod_unidade_executora"     => 1, //$this->unidade_id,
+            "cod_unidade_executora"     => $this->unidade->codigo ?? null,
             "cpf_participante"          => $this->usuario->cpf ?? '',
             "matricula_siape"           => $this->usuario->matricula ?? '',
             "data_inicio"               => Carbon::parse($this->data_inicio)->format('Y-m-d'),
@@ -34,19 +38,23 @@ class PlanoTrabalhoResource extends JsonResource
             "avaliacoes_registros_execucao" => $this->consolidacoes
                 ? PlanoTrabalhoAvaliacaoResource::collection($this->consolidacoes)
                 : [],
-            "participante" => new ParticipanteResource($this->usuario)
+            "participante"              => $participante->toArray($request)
           ];
     }
 
     function converteStatus($status)
     {
         switch ($status) {
-        case 'CANCELADO':
-            return 1;
-        case 'ATIVO':
-            return 3;
-        case 'CONCLUIDO':
-            return 4;
+            case 'CANCELADO':
+                return 1;
+            case 'ATIVO':
+                return 3;
+            case 'CONCLUIDO':
+            case 'AVALIADO':
+                return 4;
+            default:
+                return 4; // somente para testes
+               // throw new ExportPgdException('Status inválido para Envio');
         }
     }
 }

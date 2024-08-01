@@ -21,8 +21,8 @@ class ExportarParticipanteService extends ExportarService
         return new ParticipanteResource($model);
     }
 
-    public function getEndpoint(JsonResource $resource): string {
-        return "/organizacao/SIAPE/{$resource->cod_unidade_autorizadora}/{$resource->cod_unidade_lotacao}/participante/{$resource->matricula}";
+    public function getEndpoint($resource): string {
+        return "/organizacao/SIAPE/{$resource->cod_unidade_autorizadora}/{$resource->cod_unidade_lotacao}/participante/{$resource->matricula_siape}";
     }
 
     public function getAudits($id) {
