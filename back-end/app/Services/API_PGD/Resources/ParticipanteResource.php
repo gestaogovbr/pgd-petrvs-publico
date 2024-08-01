@@ -23,10 +23,6 @@ class ParticipanteResource extends JsonResource
             throw new ExportPgdException('Usuário sem Plano de Trabalho');
         }
 
-        if (!$this->ultimoPlanoTrabalho){
-            throw new ExportPgdException('Usuário sem Plano de Trabalho');
-        }
-
         $autorizadora = $this->ultimaParticipacaoPrograma->programa->unidadeAutorizadora ?? null;
         
         if (!$autorizadora || !$autorizadora->codigo){
