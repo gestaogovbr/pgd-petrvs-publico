@@ -5,7 +5,7 @@ use App\Models\PlanoEntrega;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Services\API_PGD\Resources\PlanoEntregaResource;
 use App\Services\API_PGD\Sources\DataSource;
-use App\Services\API_PGD\Sources\ParticipanteDataSource;
+use App\Services\API_PGD\Sources\PlanoEntregaDataSource;
 
 class ExportarPlanoEntregasService extends ExportarService
 {
@@ -18,7 +18,7 @@ class ExportarPlanoEntregasService extends ExportarService
     }
 
     public function getDataSource(): DataSource {
-       return new ParticipanteDataSource();
+       return new PlanoEntregaDataSource();
     }
 
     public function getEndpoint($resource): string
