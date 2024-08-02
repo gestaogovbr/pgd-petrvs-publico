@@ -56,7 +56,7 @@ abstract class ExportarService
                 if ($success) {
                     $this->handleSucesso($auditInfo);
                 } else {
-                    $this->handleError($auditInfo, 'erro no envio');
+                    $this->handleError($auditInfo, 'Erro no envio!');
                 }
 
             }catch(ExportPgdException $exception) {
@@ -72,6 +72,8 @@ abstract class ExportarService
         
         echo "\033[31mERRO\033[0m ".$message."\n";
 
+        if (!$auditInfo->json_audit) return false;
+
         $auditIds = json_decode($auditInfo->json_audit);
 
         DB::table('audits')
@@ -84,15 +86,23 @@ abstract class ExportarService
             );
     }
 
-    public function handleSucesso($auditInfo) {
-        $auditIds = json_decode($auditInfo->json_audit);
+    abstract public function atualizarEntidade($id);
 
-        DB::table('audits')
-            ->whereIn('id', $auditIds)
-            ->update([
-                'tags' => json_encode(['SUCESSO']),
-                'error_message' => null
-            ]);
+    public function handleSucesso($auditInfo) {
+
+        $this->atualizarEntidade($auditInfo->id);
+
+        if ($auditInfo->json_audit) 
+        {
+            $auditIds = json_decode($auditInfo->json_audit);
+
+            DB::table('audits')
+                ->whereIn('id', $auditIds)
+                ->update([
+                    'tags' => json_encode(['SUCESSO']),
+                    'error_message' => null
+                ]);
+        }
 
         echo "\033[32mSUCESSO\033[0m";
     }

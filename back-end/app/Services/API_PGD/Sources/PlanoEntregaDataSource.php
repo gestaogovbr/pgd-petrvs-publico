@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class PlanoEntregaDataSource extends DataSource
 {
     public function getAuditInfo() { 
-        return ViewApiPgd::where('tipo', 'trabalho')
+        return ViewApiPgd::where('tipo', 'entrega')
                 ->withoutGlobalScope(SoftDeletingScope::class)
                 ->get();
     }
@@ -26,8 +26,7 @@ class PlanoEntregaDataSource extends DataSource
             'programa.unidade',
             'unidade',
             'entregas',
-            'entregas.planoEntregaEntrega',
-            'entregas.planoTrabalho'
+            'entregas.unidade'
         ])
         ->find($auditModel->id);
         //->whereIn('status', ['CANCELADO', 'ATIVO', 'CONCLUIDO', 'AVALIADO', '']);

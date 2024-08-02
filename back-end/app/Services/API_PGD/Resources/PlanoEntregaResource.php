@@ -10,15 +10,16 @@ class PlanoEntregaResource extends JsonResource
     {
         return [
             "id_plano_entregas"           => $this->id,
-            "cod_unidade_autorizadora"    => $this->programa->unidadeAutorizadora->codigo ?? null,,
+            "origem_unidade"              => "SIAPE",  
+            "cod_unidade_autorizadora"    => $this->programa->unidadeAutorizadora->codigo ?? null,
             "cod_unidade_instituidora"    => $this->programa->unidade->codigo,
             "cod_unidade_executora"       => $this->unidade->codigo,
             "data_inicio"                 => Carbon::parse($this->data_inicio)->format('Y-m-d'),
             "data_termino"                => Carbon::parse($this->data_termino)->format('Y-m-d'),
             "status"                      => $this->getStatus(),
             "avaliacao"                   => $this->getAvaliacao(),
-            "data_avaliacao"              => $this->avaliacao->data_avaliacao ? 
-                Carbon::parse($this->avaliacao->data_avaliacao)->format('Y-m-d')
+            "data_avaliacao"              => $this->avaliacao?->data_avaliacao ? 
+                Carbon::parse($this->avaliacao?->data_avaliacao)->format('Y-m-d')
                 : null,
             "entregas"                    => $this->entregas 
               ? PlanoEntregaEntregaResource::collection($this->entregas) 
@@ -44,7 +45,7 @@ class PlanoEntregaResource extends JsonResource
     }
 
     public function getAvaliacao() {
-      switch($this->avaliacao->nota) {
+      switch($this->avaliacao->nota ?? null) {
         case "Adequado":
           return 3;
         case "Superou o acordado":

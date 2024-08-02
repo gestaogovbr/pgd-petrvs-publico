@@ -21,8 +21,8 @@ class ExportarTenantService
         $tenant = tenancy()->find($tenantId);
         tenancy()->initialize($tenant);
 
-        //$this->exportarParticipanteService->setToken($token)->enviar();
-        //$this->exportarPlanoTrabalhoService->setToken($token)->enviar();
+        $this->exportarParticipanteService->setToken($token)->enviar();
+        $this->exportarPlanoTrabalhoService->setToken($token)->enviar();
         $this->exportarPlanoEntregasService->setToken($token)->enviar();
         
 
