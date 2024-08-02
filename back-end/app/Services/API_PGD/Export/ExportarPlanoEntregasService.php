@@ -6,6 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use App\Services\API_PGD\Resources\PlanoEntregaResource;
 use App\Services\API_PGD\Sources\DataSource;
 use App\Services\API_PGD\Sources\PlanoEntregaDataSource;
+use Carbon\Carbon;
 
 class ExportarPlanoEntregasService extends ExportarService
 {
@@ -23,11 +24,15 @@ class ExportarPlanoEntregasService extends ExportarService
 
     public function getEndpoint($resource): string
     {
-        return "/organizacao/SIAPE/{$resource->cod_unidade_autorizadora}/plano_entregas/{$resource->id}";
+        return "/organizacao/SIAPE/{$resource->cod_unidade_autorizadora}/plano_entregas/{$resource->id_plano_entregas}";
     }
 
     public function getAudits($id) {
         return PlanoEntrega::find($id)->audits();
+    }
+
+    public function atualizarEntidade($id) {
+        PlanoEntrega::find($id)->update(array("data_envio_api_pgd"=> Carbon::now()));
       }
 }
 
