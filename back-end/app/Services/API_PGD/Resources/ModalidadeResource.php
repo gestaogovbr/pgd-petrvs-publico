@@ -14,7 +14,7 @@ class ModalidadeResource extends JsonResource
             return 1;
         }
 
-        if (str_contains($this->nome, 'parcial')) {
+        if (str_contains(strtolower($this->nome), 'parcial')) {
             return 2; //  Teletrabalho parcial
         }
 
@@ -27,6 +27,10 @@ class ModalidadeResource extends JsonResource
         }
 
         if (str_contains($this->nome, '11.072/2022')) {
+            return 5;  // Teletrabalho com residência no exterior (Dec.11.072/2022, art. 12, §7°
+        }
+
+        if (str_contains($this->nome, 'exterior')) {
             return 5;  // Teletrabalho com residência no exterior (Dec.11.072/2022, art. 12, §7°
         }
 

@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\API_PGD;
 
+use App\Exceptions\ExportPgdException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Client\RequestException;
@@ -35,10 +36,17 @@ class PgdService
         
         if ($response->status() == 422) {
           $data = $response->json();
-          echo "Erro na validação: ".print_r($data['detail'][0], true)."\n";
+
+          if (is_array($data['detail'])) {
+            $errorData = $data['detail'][0];
+            throw new ExportPgdException($errorData['msg'].' '.implode(', ', $errorData['loc']));
+          } else {
+            throw new ExportPgdException($data['detail']);
+          }
+          
         } else {
-          echo 'Erro cód.'.$response->status().
-            " ".$e->getMessage()."\n";
+          throw new ExportPgdException('Erro inesperado. Status: '.$response->status().
+            ". Msg: ".$e->getMessage());
         }
 
         return false;

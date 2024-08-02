@@ -5,8 +5,8 @@ namespace App\Services\API_PGD\Export;
 use App\Models\PlanoTrabalho;
 use App\Services\API_PGD\Resources\PlanoTrabalhoResource;
 use App\Services\API_PGD\Sources\DataSource;
-use Illuminate\Http\Resources\Json\JsonResource;
 use App\Services\API_PGD\Sources\PlanoTrabalhoDataSource;
+use Carbon\Carbon;
 
 class ExportarPlanoTrabalhoService extends ExportarService
 {
@@ -29,5 +29,9 @@ class ExportarPlanoTrabalhoService extends ExportarService
 
   public function getAudits($id) {
     return PlanoTrabalho::find($id)->audits();
+  }
+
+  public function atualizarEntidade($id) {
+    PlanoTrabalho::find($id)->update(array("data_envio_api_pgd"=> Carbon::now()));
   }
 }
