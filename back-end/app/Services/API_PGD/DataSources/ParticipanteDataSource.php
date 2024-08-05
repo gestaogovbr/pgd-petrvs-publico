@@ -1,22 +1,16 @@
 <?php
-namespace App\Services\API_PGD\Sources;
+namespace App\Services\API_PGD\DataSources;
 
 use App\Exceptions\ExportPgdException;
 use App\Models\Usuario;
 use App\Models\ViewApiPgd;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Services\API_PGD\ExportSource;
 
 class ParticipanteDataSource extends DataSource
 {
-    public function getAuditInfo() { 
-        return ViewApiPgd::where('tipo', 'participante')
-                ->withoutGlobalScope(SoftDeletingScope::class)
-                ->get();
-    }
+    public function getData(ExportSource $exportSource) {
 
-    public function getData($auditModel) {
-
-        if (!$auditModel->id){
+        if (!$exportSource->id){
             throw new ExportPgdException('ID de Usuário não definido');
         }
 
@@ -33,7 +27,7 @@ class ParticipanteDataSource extends DataSource
                         ->whereNull('deleted_at');
                 }
             ])
-            ->find($auditModel->id);
+            ->find($exportSource->id);
 
         if (!$participante){
             throw new ExportPgdException('Usuário sem Participação');

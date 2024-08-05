@@ -1,22 +1,15 @@
 <?php
-namespace App\Services\API_PGD\Sources;
+namespace App\Services\API_PGD\DataSources;
 
 use App\Exceptions\ExportPgdException;
 use App\Models\PlanoEntrega;
-use App\Models\ViewApiPgd;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Services\API_PGD\ExportSource;
 
 class PlanoEntregaDataSource extends DataSource
 {
-    public function getAuditInfo() { 
-        return ViewApiPgd::where('tipo', 'entrega')
-                ->withoutGlobalScope(SoftDeletingScope::class)
-                ->get();
-    }
+    public function getData(ExportSource $exportSource) {
 
-    public function getData($auditModel) {
-
-        if (!$auditModel->id){
+        if (!$exportSource->id){
             throw new ExportPgdException('ID do Plano de Trabalho não definido');
         }
 
@@ -28,7 +21,7 @@ class PlanoEntregaDataSource extends DataSource
             'entregas',
             'entregas.unidade'
         ])
-        ->find($auditModel->id);
+        ->find($exportSource->id);
         //->whereIn('status', ['CANCELADO', 'ATIVO', 'CONCLUIDO', 'AVALIADO', '']);
 
         if (!$planoEntrega){

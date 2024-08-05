@@ -9,6 +9,8 @@ class PlanoEntregaResource extends JsonResource
     public function toArray($request)
     {
         return [
+            "id"                          => $this->id,
+            "tipo"                        => 'entrega',
             "id_plano_entregas"           => $this->id,
             "origem_unidade"              => "SIAPE",  
             "cod_unidade_autorizadora"    => $this->programa->unidadeAutorizadora->codigo ?? null,
