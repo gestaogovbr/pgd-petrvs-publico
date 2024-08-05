@@ -22,6 +22,7 @@ class PlanoTrabalhoResource extends JsonResource
 
         return [
             "id"                        => $this->id,
+            "tipo"                      => 'trabalho',
             "origem_unidade"            => "SIAPE",
             "cod_unidade_autorizadora"  => $this->programa->unidadeAutorizadora->codigo ?? null,
             "id_plano_trabalho"         => $this->id,
@@ -38,7 +39,7 @@ class PlanoTrabalhoResource extends JsonResource
             "avaliacoes_registros_execucao" => $this->consolidacoes
                 ? PlanoTrabalhoAvaliacaoResource::collection($this->consolidacoes)
                 : [],
-            "participante"              => $participante->toArray($request)
+            // "participante"              => $participante->toArray($request)
           ];
     }
 

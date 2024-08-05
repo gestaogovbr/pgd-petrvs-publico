@@ -54,6 +54,7 @@ class ParticipanteResource extends JsonResource
 
         $result = [
             "id"                        => $this->id,
+            "tipo"                      => 'participante',
             "origem_unidade"            => "SIAPE",
             'cod_unidade_autorizadora'  => $autorizadora->codigo ?? null,
             'cod_unidade_instituidora'  => $instituidora->codigo ?? null,
