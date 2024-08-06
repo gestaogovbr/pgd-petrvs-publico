@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class ViewApiPgd extends Model
 {
@@ -64,6 +65,13 @@ class ViewApiPgd extends Model
         return self::byTipo($tipo)->pluck('id')->toArray();
     }
 
+    public static function getByInterval($daysInterval, $tipo = null)
+    {
+        return DB::select('CALL get_view_api_pgd_by_interval(?, ?)', [$daysInterval, $tipo]);
+    }
+
+
+
     /**Exemplo de Uso*/
     /*
     use App\Models\ViewApiPgd;
@@ -90,4 +98,7 @@ class ViewApiPgd extends Model
         }
         });
      */
+
+
+    //$results = ApiPgd::getByInterval($daysInterval, $tipo);
 }
