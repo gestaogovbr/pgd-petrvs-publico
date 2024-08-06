@@ -72,6 +72,7 @@ abstract class ExportarService
                     $this->handleSucesso($source);
                 } else {
                     $this->handleError('Erro no envio!', $source);
+                    var_dump($body);
                 }
 
             }catch(ExportPgdException $exception) {
@@ -85,9 +86,8 @@ abstract class ExportarService
         return true;
     }
 
-    public function handleError($message, ExportSource $source) {
-        
-        
+    public function handleError($message, ExportSource $source) 
+    {
         echo "\n[{$source->tipo}] ID {$source->id} [\033[31mERRO\033[0m]";
         echo "\nMensagem: ".$message."\n";
 

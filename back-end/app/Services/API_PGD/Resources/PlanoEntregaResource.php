@@ -3,6 +3,7 @@ namespace App\Services\API_PGD\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
+use App\Exceptions\ExportPgdException;
 
 class PlanoEntregaResource extends JsonResource
 {
@@ -41,8 +42,8 @@ class PlanoEntregaResource extends JsonResource
             case 'AVALIADO':
                 return 5;
             default:
-                return 4; // somente para testes
-               // throw new ExportPgdException('Status inválido para Envio');
+               // return 4; // somente para testes
+                throw new ExportPgdException('Status inválido para Envio');
         }
     }
 
