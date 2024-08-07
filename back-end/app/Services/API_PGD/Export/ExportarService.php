@@ -17,9 +17,15 @@ abstract class ExportarService
 
     public Collection $source;
 
+    public $sucessos = 0;
+    public $falhas = 0;
+
     public function __construct(
         private PgdService $pgdService
-    ) {}
+    ) {
+        $this->sucessos = 0;
+        $this->falhas = 0;
+    }
 
     public function setToken(string $token) {
         $this->token = $token;
@@ -80,6 +86,7 @@ abstract class ExportarService
                 continue;
             }
         }
+        
     }
 
     public function sendDependencia($data) {
@@ -90,6 +97,8 @@ abstract class ExportarService
     {
         echo "\n[{$source->tipo}] ID {$source->id} [\033[31mERRO\033[0m]";
         echo "\nMensagem: ".$message."\n";
+
+        $this->falhas++;
 
         if (!$source || !$source->auditIds) {
             LogError::newError(
@@ -120,6 +129,8 @@ abstract class ExportarService
 
         $this->atualizarEntidade($source->id);
 
+        $this->sucessos++;
+
         if ($source->auditIds) 
         {
             DB::table('audits')
@@ -133,4 +144,11 @@ abstract class ExportarService
         echo "\n[{$source->tipo}] ID {$source->id} [\033[32mSUCESSO\033[0m]";
     }
 
+    public function getSucessos() {
+        return $this->sucessos;
+    }
+
+    public function getFalhas() {
+        return $this->falhas;
+    }
 }

@@ -43,9 +43,9 @@ class PgdService
 
           if (is_array($data['detail'])) {
             $errorData = $data['detail'][0];
-            throw new ExportPgdException($errorData['msg'].' '.implode(', ', $errorData['loc']). ' Data: '.print_r($body, true));
+            throw new ExportPgdException($errorData['msg'].' '.implode(', ', $errorData['loc'])); //. ' Data: '.print_r($body, true));
           } else {
-            throw new ExportPgdException($data['detail']. ' Data: '.print_r($body, true));
+            throw new ExportPgdException($data['detail']); //. ' Data: '.print_r($body, true));
           }
           
         } else {
