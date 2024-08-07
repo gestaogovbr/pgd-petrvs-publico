@@ -24,7 +24,8 @@ class ExportarPlanoEntregasService extends ExportarService
     }
 
     public function atualizarEntidade($id) {
-        PlanoEntrega::find($id)->update(array("data_envio_api_pgd"=> Carbon::now()));
-      }
+        echo "\nAtualizando Entrega $id";
+        PlanoEntrega::where('id', $id)->update(array("data_envio_api_pgd"=> Carbon::now()));
+    }
 }
 
