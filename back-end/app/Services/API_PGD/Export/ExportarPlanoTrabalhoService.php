@@ -14,7 +14,8 @@ class ExportarPlanoTrabalhoService extends ExportarService
 {
   public function __construct(
     private PgdService $pgdService,
-    private readonly ExportarParticipanteService $exportarParticipanteService
+    private readonly ExportarParticipanteService $exportarParticipanteService,
+    private readonly ExportarPlanoEntregasService $exportarPlanoEntregaService
   ) {
     parent::__construct($pgdService);
   }
@@ -38,6 +39,7 @@ class ExportarPlanoTrabalhoService extends ExportarService
 
   public function setToken($token) {
     $this->exportarParticipanteService->setToken($token);
+    $this->exportarPlanoEntregaService->setToken($token);
     parent::setToken($token);
     return $this;
   }
@@ -45,8 +47,17 @@ class ExportarPlanoTrabalhoService extends ExportarService
   // envia participante juntamente com plano de trabalho
   public function sendDependencia($data) 
   {
-    $exportSource = new ExportSource('participante', $data->usuario->id);
-    $a = $this->exportarParticipanteService->load($exportSource);
-    $a->enviar();
+    echo "\nInserindo dependências do Plano de Trabalho [{$data->id}]\n";
+    $this->exportarParticipanteService
+      ->load(new ExportSource('participante', $data->usuario->id))
+      ->enviar();
+
+    foreach($data->entregas as $planoTrabalhoEntrega) {
+      if ($planoTrabalhoEntrega->planoEntregaEntrega && $planoTrabalhoEntrega->planoEntregaEntrega->plano_entrega_id) {
+        $this->exportarPlanoEntregaService
+          ->load(new ExportSource('entrega', $planoTrabalhoEntrega->planoEntregaEntrega->plano_entrega_id))
+          ->enviar();
+      }
+    }
   }
 }

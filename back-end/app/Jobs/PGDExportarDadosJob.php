@@ -3,8 +3,8 @@
 namespace App\Jobs;
 
 use App\Jobs\Contratos\ContratoJobSchedule;
-use App\Services\API_PGD\Contracts\ExportarService;
-use App\Services\API_PGD\ExportarTenantService;
+use App\Services\API_PGD\Export\ExportarService;
+use App\Services\API_PGD\Export\ExportarTenantService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -34,48 +34,4 @@ class PGDExportarDadosJob implements ShouldQueue, ShouldBeUnique, ContratoJobSch
         $this->exportarTenantService->exportar($this->job->tenant_id);
     }
 
-    /**
-     *
-     * @param string $diretorio
-     * @param string $namespaceAbstrato
-     * @return ExportarService[]
-     */
-    private function carregarClassesEstendidas(string $diretorio, string $namespaceAbstrato): array
-    {
-        $finder = new Finder();
-        $finder->files()->in($diretorio)->name('*.php');
-        $instances = [];
-        foreach ($finder as $file) {
-            $className = $this->getClassNameFromFile($file->getRealPath(), $namespaceAbstrato);
-            if ($className && is_subclass_of($className, ExportarService::class)) {
-                $reflectionClass = new ReflectionClass($className);
-                $constructor = $reflectionClass->getConstructor();
-                $dependencies = $constructor ? $constructor->getParameters() : [];
-                $resolvedDependencies = [];
-
-                foreach ($dependencies as $dependency) {
-                    $resolvedDependencies[] = App::make($dependency->getClass()->name);
-                }
-
-                array_push($instances, $reflectionClass->newInstanceArgs($resolvedDependencies));
-            }
-        }
-        return $instances;
-    }
-
-    private function getClassNameFromFile($filePath, $namespaceAbstrato)
-    {
-        $content = file_get_contents($filePath);
-        if (preg_match('/namespace\s+(.+);/', $content, $matches)) {
-            $namespace = $matches[1];
-        } else {
-            $namespace = $namespaceAbstrato;
-        }
-
-        if (preg_match('/class\s+(\w+)\s+extends\s+ExportarService/', $content, $matches)) {
-            return $namespace . '\\' . $matches[1];
-        }
-
-        return null;
-    }
 }

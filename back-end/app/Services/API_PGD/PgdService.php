@@ -13,9 +13,13 @@ class PgdService
     private ?\Exception $exception = null;
     public function getHttpClient($token) : \Illuminate\Http\Client\PendingRequest
     {
-        return Http::withOptions(['verify'=> false, 'timeout'=> self::TIMEOUT])
-            ->baseUrl(config('pgd.host'))
-            ->withToken($token);
+        return Http::withOptions([
+            'verify'=> false, 
+            'timeout'=> self::TIMEOUT,
+            //'debug' => true
+          ])
+          ->baseUrl(config('pgd.host'))
+          ->withToken($token);
     }
 
     public function enviarDados($token, $endpoint, $body) : bool
@@ -39,14 +43,17 @@ class PgdService
 
           if (is_array($data['detail'])) {
             $errorData = $data['detail'][0];
-            throw new ExportPgdException($errorData['msg'].' '.implode(', ', $errorData['loc']));
+            throw new ExportPgdException($errorData['msg'].' '.implode(', ', $errorData['loc']). ' Data: '.print_r($body, true));
           } else {
-            throw new ExportPgdException($data['detail']);
+            throw new ExportPgdException($data['detail']. ' Data: '.print_r($body, true));
           }
           
         } else {
           throw new ExportPgdException('Erro inesperado. Status: '.$response->status().
-            ". Msg: ".$e->getMessage());
+            ". Msg: ".$e->getMessage().
+            ". URL: ".$endpoint.
+            ". Data: ".print_r($body, true)
+          );  
         }
 
         return false;

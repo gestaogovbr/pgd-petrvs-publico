@@ -18,7 +18,7 @@ class PlanoTrabalhoResource extends JsonResource
             $this->unidade_id
         );
 
-        $participante = new ParticipanteResource($this->usuario);
+        //$participante = new ParticipanteResource($this->usuario);
 
         return [
             "id"                        => $this->id,
@@ -54,8 +54,8 @@ class PlanoTrabalhoResource extends JsonResource
             case 'AVALIADO':
                 return 4;
             default:
-                return 4; // somente para testes
-               // throw new ExportPgdException('Status inválido para Envio');
+                // return 4; // somente para testes
+                throw new ExportPgdException('Status inválido para Envio');
         }
     }
 }
