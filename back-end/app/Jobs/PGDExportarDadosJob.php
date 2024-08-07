@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Jobs\Contratos\ContratoJobSchedule;
-use App\Services\API_PGD\Export\ExportarService;
+use App\Models\Tenant;
 use App\Services\API_PGD\Export\ExportarTenantService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -11,9 +11,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use ReflectionClass;
-use Symfony\Component\Finder\Finder;
-use Illuminate\Support\Facades\App;
 
 class PGDExportarDadosJob implements ShouldQueue, ShouldBeUnique, ContratoJobSchedule
 {
@@ -31,7 +28,9 @@ class PGDExportarDadosJob implements ShouldQueue, ShouldBeUnique, ContratoJobSch
 
     public function handle()
     {
-        $this->exportarTenantService->exportar($this->job->tenant_id);
+        foreach(Tenant::all() as $tenant) {
+            $this->exportarTenantService->exportar($tenant->id);
+        }
     }
 
 }
