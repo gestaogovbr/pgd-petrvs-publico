@@ -1,3 +1,11 @@
+#!/bin/bash
+
+# Script para parar containers, puxar novas imagens e reiniciar containers
+
+echo "Parando containers..."
+# Parar containers
+docker-compose down
+
 #echo "Limpando o docker"
 #docker container prune -f && docker image prune -f && docker network prune -f && docker builder prune -f
 
