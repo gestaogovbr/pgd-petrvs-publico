@@ -34,7 +34,7 @@ class ExportarPlanoTrabalhoService extends ExportarService
   }
 
   public function atualizarEntidade($id) {
-    PlanoTrabalho::find($id)->update(array("data_envio_api_pgd"=> Carbon::now()));
+    PlanoTrabalho::where('id', $id)->update(array("data_envio_api_pgd"=> Carbon::now()));
   }
 
   public function setToken($token) {

@@ -27,27 +27,34 @@ class ExportarTenantService
         $tenant = tenancy()->find($tenantId);
         tenancy()->initialize($tenant);
 
-        /*$this->exportarParticipanteService
+        $this->exportarParticipanteService
             ->setToken($token)
             ->load($this->participanteAuditSource->getData())
-            ->enviar();*/
+            ->enviar();
 
-        
+        $this->exportarPlanoEntregasService
+            ->setToken($token)
+            ->load($this->planoEntregaAuditSource->getData())
+            ->enviar();
+
         $this->exportarPlanoTrabalhoService
             ->setToken($token)
             ->load($this->planoTrabalhoAuditSource->getData())
             ->enviar();
-            
-/*
-        $this->exportarPlanoEntregasService
-            ->setToken($token)
-            ->load($this->planoEntregaAuditSource->getData())
-            ->enviar();*/
         
         $this->finalizar();
     }
 
     public function finalizar() {
-        echo "** FINALIZADO!\n";
+        echo "\n\n** FINALIZADO!\n\n";
+
+        echo "Participantes: ".
+            "\nSucedidos:". $this->exportarParticipanteService->getSucessos().
+            "\nFalhas". $this->exportarParticipanteService->getFalhas();
+        
+        echo "\n\nPlanos de Entrega: ". 
+            "\nSucedidos: ". $this->exportarPlanoEntregasService->getSucessos().
+            "\nFalhas: ". $this->exportarPlanoEntregasService->getFalhas().
+            "\n\n";
     }
 }
