@@ -11,25 +11,24 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+
 
 class PGDExportarDadosJob implements ShouldQueue, ShouldBeUnique, ContratoJobSchedule
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    public function __construct(
-        private readonly ExportarTenantService $exportarTenantService
-    )
-    {}
 
     public static function getDescricao(): string
     {
         return "Envia Dados para API do PGD";
     }
 
-    public function handle()
+    public function handle(ExportarTenantService $exportarTenantService)
     {
+        Log::alert("PGDExportarDadosJob");
+
         foreach(Tenant::all() as $tenant) {
-            $this->exportarTenantService->exportar($tenant->id);
+            $exportarTenantService->exportar($tenant->id);
         }
     }
 
