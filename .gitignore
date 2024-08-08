@@ -50,5 +50,8 @@ back-end/storage/tenant*/*/
 back-end/database/seeders/ZUnidadesSeeder.php
 resources/documentacao/Gestão/plano_trabalho.pdf
 
+
 # Para Apple
 *.DS_Store
+
+microservice/api-pgd/storage/logs/schedule.log
