@@ -8,7 +8,7 @@ return new class extends Migration
     public function up()
     {
         DB::unprepared('
-        CREATE OR REPLACE  PROCEDURE `get_view_api_pgd_by_interval`(IN days_interval INT)
+        CREATE PROCEDURE `get_view_api_pgd_by_interval`(IN days_interval INT)
         BEGIN
                 SELECT
                     usuarios.id AS id,
