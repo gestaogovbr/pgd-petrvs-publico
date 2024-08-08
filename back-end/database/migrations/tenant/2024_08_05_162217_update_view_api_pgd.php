@@ -10,8 +10,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("CREATE OR REPLACE
-ALGORITHM = UNDEFINED VIEW `petrvs_mgi`.`view_api_pgd` AS
+        DB::statement("CREATE OR REPLACE ALGORITHM = UNDEFINED VIEW `petrvs_mgi`.`view_api_pgd` AS
 select
     `petrvs_mgi`.`usuarios`.`id` AS `id`,
     'participante' AS `tipo`,
@@ -61,7 +60,7 @@ from
         (`a`.`auditable_id` = `d`.`id`))
     where
         `a`.`auditable_type` like '%ProgramaParticipante'
-        and (`a`.`tags` = 'ERRO'
+        and (`a`.`tags` like '%ERRO%'
             or `a`.`tags` is null)
         and `d`.`deleted_at` is null
     group by
@@ -83,7 +82,7 @@ from
         (`a`.`auditable_id` = `d`.`id`))
     where
         `a`.`auditable_type` like '%DocumentoAssinatura'
-        and (`a`.`tags` = 'ERRO'
+        and (`a`.`tags` like '%ERRO%'
             or `a`.`tags` is null)
         and `d`.`deleted_at` is null
     group by
@@ -97,7 +96,7 @@ from
     (
     select
         `d`.`id` AS `id`,
-        'participante' AS `tipo`,
+        'participante' collate utf8mb4_unicode_ci AS `tipo`,
         json_arrayagg(`a`.`id`) AS `json_audit`
     from
         (`petrvs_mgi`.`audits` `a`
@@ -105,7 +104,7 @@ from
         (`a`.`auditable_id` = `d`.`id`))
     where
         `a`.`auditable_type` like '%Usuario'
-        and (`a`.`tags` = 'ERRO'
+        and (`a`.`tags` like '%ERRO%'
             or `a`.`tags` is null)
         and `d`.`deleted_at` is null
     group by
@@ -119,7 +118,7 @@ from
     (
     select
         `d`.`id` AS `id`,
-        'trabalho' AS `tipo`,
+        'trabalho' collate utf8mb4_unicode_ci AS `tipo`,
         json_arrayagg(`a`.`id`) AS `json_audit`
     from
         (`petrvs_mgi`.`audits` `a`
@@ -127,7 +126,7 @@ from
         (`a`.`auditable_id` = `d`.`id`))
     where
         `a`.`auditable_type` like '%PlanoTrabalho'
-        and (`a`.`tags` = 'ERRO'
+        and (`a`.`tags` like '%ERRO%'
             or `a`.`tags` is null)
         and `d`.`deleted_at` is null
         and `d`.`status` in ('ATIVO', 'CONCLUIDO', 'AVALIADO')
@@ -152,7 +151,7 @@ from
         (`pt`.`id` = `d`.`plano_trabalho_id`))
     where
         `a`.`auditable_type` like '%PlanoTrabalhoConsolidacao'
-        and (`a`.`tags` = 'ERRO'
+        and (`a`.`tags` like '%ERRO%'
             or `a`.`tags` is null)
         and `d`.`deleted_at` is null
         and `pt`.`status` in ('ATIVO', 'CONCLUIDO', 'AVALIADO')
@@ -178,7 +177,7 @@ from
         (`pt`.`id` = `d`.`plano_trabalho_id`))
     where
         `a`.`auditable_type` like '%PlanoTrabalhoEntrega'
-        and (`a`.`tags` = 'ERRO'
+        and (`a`.`tags` like '%ERRO%'
             or `a`.`tags` is null)
         and `d`.`deleted_at` is null
         and `pt`.`status` in ('ATIVO', 'CONCLUIDO', 'AVALIADO')
@@ -202,7 +201,7 @@ from
         (`a`.`auditable_id` = `d`.`id`))
     where
         `a`.`auditable_type` like '%PlanoEntrega'
-        and (`a`.`tags` = 'ERRO'
+        and (`a`.`tags` like '%ERRO%'
             or `a`.`tags` is null)
         and `d`.`deleted_at` is null
     group by
@@ -224,7 +223,7 @@ from
         (`a`.`auditable_id` = `d`.`id`))
     where
         `a`.`auditable_type` like '%PlanoEntregaEntrega'
-        and (`a`.`tags` = 'ERRO'
+        and (`a`.`tags` like '%ERRO%'
             or `a`.`tags` is null)
         and `d`.`deleted_at` is null
     group by
