@@ -21,8 +21,7 @@ class DeployDSVSeeder extends Seeder
       TipoCapacidadeSeeder::class,
       CapacidadeSeeder::class,
       NomenclaturaSeeder::class,
-      TipoMotivoAfastamentoSeeder::class,
-      JobScheduleSeeder::class,
+      TipoMotivoAfastamentoSeeder::class
     ]);
   }
 }
