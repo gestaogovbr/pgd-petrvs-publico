@@ -21,7 +21,7 @@ class JobScheduleSeeder extends Seeder
                 'dias'    => 0,
                 'semanas' => 0,
                 'meses'   => 0,
-                'expressao_cron' => '* * * * *',
+                'expressao_cron' => '0 0 * * *',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
                 'parameters' => '[]'
