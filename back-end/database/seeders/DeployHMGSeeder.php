@@ -21,7 +21,8 @@ class DeployHMGSeeder extends Seeder
       TipoCapacidadeSeeder::class,
       CapacidadeSeeder::class,
       NomenclaturaSeeder::class,
-      TipoMotivoAfastamentoSeeder::class
+      TipoMotivoAfastamentoSeeder::class,
+      JobScheduleSeeder::class,
     ]);
   }
 }
