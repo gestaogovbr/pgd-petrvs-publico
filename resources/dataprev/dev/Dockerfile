@@ -75,7 +75,7 @@ RUN composer install --optimize-autoloader --no-dev
 COPY ../resources/dataprev/dev/entrypoint.sh ./entrypoint.sh
 
 # Adiciona a entrada do cron
-# RUN echo "* * * * * cd /var/www/ && /usr/local/bin/php artisan schedule:run >> /var/www/storage/logs/schedule.log 2>&1" | crontab -
+RUN echo "* * * * * cd /var/www/ && /usr/local/bin/php artisan schedule:run >> /var/www/storage/logs/schedule.log 2>&1" | crontab -
 
 
 # Exponha a porta 80 para o servidor Apache
