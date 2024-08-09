@@ -3,6 +3,7 @@
 namespace App\Services\API_PGD;
 
 use App\Exceptions\BadRequestException as ExceptionsBadRequestException;
+use App\Exceptions\ExportPgdException;
 use App\Exceptions\LogError;
 use App\Exceptions\UnauthorizedException;
 use Illuminate\Support\Facades\Http;
@@ -40,6 +41,11 @@ class AuthenticationService
   {
     $tenant = Tenant::find($tenantId) ?? throw new UnauthorizedException('Tenant não encontrado');
 
+    if (!$tenant['api_username'] or !$tenant['api_password']) {
+      LogError::newError('Usuário ou senha da API PGD não definidos');
+      throw new ExportPgdException('Usuário ou senha da API PGD não definidos');
+    }
+
     try {
       $response = Http::baseUrl(config('pgd.host'))
           ->asForm()
@@ -51,7 +57,13 @@ class AuthenticationService
       if (!$response->successful()) {
           if ($response->status() == Response::HTTP_UNPROCESSABLE_ENTITY) {
               $data = $response->json();
-              $detail = json_decode($data['detail'], true);
+
+              if (is_array($data['detail'])) {
+                $detail = $data['detail'];
+              } else {
+                $detail = json_decode($data['detail'], true);
+              }
+              
               echo "Erro no tenant $tenantId: ".$detail[0]['msg'];
           } else {
               $response->throw();
