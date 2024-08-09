@@ -10,7 +10,11 @@ class JobScheduleSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('jobs_schedules')->upsert([
+        config(['database.connections.mysql.database' => 'petrvs']); 
+        DB::reconnect('mysql');
+        DB::purge('mysql');
+
+        DB::connection('mysql')->table('jobs_schedules')->upsert([
             [
                 'id'=> '7d255930-5549-11ef-bc8d-0242ac180002',
                 'nome' => 'Enviar dados ao PGD',
