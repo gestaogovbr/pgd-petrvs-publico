@@ -18,7 +18,7 @@ class PlanoEntregaResource extends JsonResource
             "cod_unidade_instituidora"    => $this->programa->unidade->codigo,
             "cod_unidade_executora"       => $this->unidade->codigo,
             "data_inicio"                 => Carbon::parse($this->data_inicio)->format('Y-m-d'),
-            "data_termino"                => Carbon::parse($this->data_termino)->format('Y-m-d'),
+            "data_termino"                => Carbon::parse($this->data_fim)->format('Y-m-d'),
             "status"                      => $this->getStatus(),
             "avaliacao"                   => $this->getAvaliacao(),
             "data_avaliacao"              => $this->avaliacao?->data_avaliacao ? 
