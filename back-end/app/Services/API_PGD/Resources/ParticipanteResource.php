@@ -41,10 +41,7 @@ class ParticipanteResource extends JsonResource
             throw new ExportPgdException('Usuário não possui unidade de Lotação');
         }
 
-        $dataAssinatura = $this->ultimoPlanoTrabalho->ultimaAssinatura->data_assinatura ?? '';
-        if (!$dataAssinatura){
-            //throw new ExportPgdException('Usuário não possui assinatura');
-        }
+        $dataAssinatura = $this->ultimaAssinatura->data_assinatura ?? null;
 
         if (!$this->ultimoPlanoTrabalho->tipoModalidade){
             throw new ExportPgdException('Usuário não possui modalidade definida');
@@ -59,11 +56,11 @@ class ParticipanteResource extends JsonResource
             'cod_unidade_autorizadora'  => $autorizadora->codigo ?? null,
             'cod_unidade_instituidora'  => $instituidora->codigo ?? null,
             'cod_unidade_lotacao'       => $unidadeIntegrante->unidade->codigo ?? null,
-            'matricula_siape'           => $this->matricula,
+            'matricula_siape'           => str_pad($this->matricula, 7, '0'),
             'cpf'                       => $this->cpf,
             'situacao'                  => $this->ultimaParticipacaoPrograma->habilitado ?? 0,
             "modalidade_execucao"       => $modalidade->get(),
-            "data_assinatura_tcr"       => Carbon::parse($dataAssinatura)->toDateTimeLocalString()
+            "data_assinatura_tcr"       => $dataAssinatura ? Carbon::parse($dataAssinatura)->toDateTimeLocalString() : null
         ];
 
         return $result;
