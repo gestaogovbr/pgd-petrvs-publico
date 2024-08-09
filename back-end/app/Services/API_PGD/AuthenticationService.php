@@ -37,21 +37,14 @@ class AuthenticationService
       return  $responseObj['access_token'];
   }
 
-  public static function authenticate($tenantId)
+  public static function authenticate($tenantId, $username, $password)
   {
-    $tenant = Tenant::find($tenantId) ?? throw new UnauthorizedException('Tenant não encontrado');
-
-    if (!$tenant['api_username'] or !$tenant['api_password']) {
-      LogError::newError('Usuário ou senha da API PGD não definidos');
-      throw new ExportPgdException('Usuário ou senha da API PGD não definidos');
-    }
-
     try {
       $response = Http::baseUrl(config('pgd.host'))
           ->asForm()
           ->post('/token', [
-              'username' => $tenant['api_username'],
-              'password' => $tenant['api_password']
+              'username' => $username,
+              'password' => $password
           ]);
 
       if (!$response->successful()) {
