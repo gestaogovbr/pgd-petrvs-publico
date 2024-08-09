@@ -42,8 +42,7 @@ class PlanoEntregaResource extends JsonResource
             case 'AVALIADO':
                 return 5;
             default:
-               // return 4; // somente para testes
-                throw new ExportPgdException('Status inválido para Envio');
+                throw new ExportPgdException('Plano de Entrega com status inválido para Envio: '.$this->status);
         }
     }
 

@@ -53,7 +53,11 @@ class ExportarPlanoTrabalhoService extends ExportarService
       ->enviar();
 
     foreach($data->entregas as $planoTrabalhoEntrega) {
-      if ($planoTrabalhoEntrega->planoEntregaEntrega && $planoTrabalhoEntrega->planoEntregaEntrega->plano_entrega_id) {
+      if ($planoTrabalhoEntrega->planoEntregaEntrega &&
+        $planoTrabalhoEntrega->planoEntregaEntrega->plano_entrega_id &&
+        $planoTrabalhoEntrega->planoEntregaEntrega->planoEntrega &&
+        in_array($planoTrabalhoEntrega->planoEntregaEntrega->planoEntrega->status, ['ATIVO', 'CONCLUIDO', 'AVALIADO', 'CANCELADO'])
+      ) {
         $this->exportarPlanoEntregaService
           ->load(new ExportSource('entrega', $planoTrabalhoEntrega->planoEntregaEntrega->plano_entrega_id))
           ->enviar();
