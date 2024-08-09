@@ -32,7 +32,9 @@ class Kernel extends ConsoleKernel
                 $job = new JobBase($jobEntity);
             }
             
-            $schedule->job($job)->cron($jobEntity->expressao_cron);
+            $schedule->job($job)
+                ->name($jobEntity->nome)
+                ->cron($jobEntity->expressao_cron);
         }
     }
 }
