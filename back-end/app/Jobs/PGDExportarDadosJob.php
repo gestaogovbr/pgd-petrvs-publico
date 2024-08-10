@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Log;
 
 class PGDExportarDadosJob extends JobWithoutTenant implements ContratoJobSchedule
 {
+    public function __construct()
+    {
+        Log::info("PGDExportarDadosJob:construct");
+    }
+
     public static function getDescricao(): string
     {
         return "Envia Dados para API do PGD";
@@ -23,9 +28,9 @@ class PGDExportarDadosJob extends JobWithoutTenant implements ContratoJobSchedul
 
     public function handle(ExportarTenantService $exportarTenantService)
     {
-        try{
-            Log::alert("PGDExportarDadosJob");
+        Log::info("PGDExportarDadosJob:START");
 
+        try{
             foreach(Tenant::all() as $tenant) {
                 $exportarTenantService->exportar($tenant->id);
             }
@@ -40,6 +45,8 @@ class PGDExportarDadosJob extends JobWithoutTenant implements ContratoJobSchedul
             tenancy()->end();
             return false; 
         }
+
+        Log::info("PGDExportarDadosJob:END");
     }
 
 }
