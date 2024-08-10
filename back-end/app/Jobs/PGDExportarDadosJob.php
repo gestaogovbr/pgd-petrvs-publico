@@ -8,6 +8,7 @@ use App\Jobs\Contratos\ContratoJobSchedule;
 use App\Models\Tenant;
 use App\Services\API_PGD\Export\ExportarTenantService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 
 class PGDExportarDadosJob extends JobWithoutTenant implements ContratoJobSchedule
 {
@@ -21,9 +22,9 @@ class PGDExportarDadosJob extends JobWithoutTenant implements ContratoJobSchedul
         return "Envia Dados para API do PGD";
     }
 
-    public function uniqueId()
+    public function middleware(): array
     {
-        return 'PGDExportarDadosJob';
+        return [(new WithoutOverlapping())->expireAfter(60*3)];
     }
 
     public function handle(ExportarTenantService $exportarTenantService)
