@@ -16,6 +16,11 @@ class PGDExportarDadosJob extends JobWithoutTenant implements ContratoJobSchedul
         return "Envia Dados para API do PGD";
     }
 
+    public function uniqueId()
+    {
+        return 'PGDExportarDadosJob';
+    }
+
     public function handle(ExportarTenantService $exportarTenantService)
     {
         try{
@@ -25,10 +30,11 @@ class PGDExportarDadosJob extends JobWithoutTenant implements ContratoJobSchedul
                 $exportarTenantService->exportar($tenant->id);
             }
         } catch (Exception $e) {
+            Log::error("Erro ao processar PGDExportarDadosJob: - Erro: " . $e->getMessage());
+
             $tenant = tenancy()->find($tenant->id);
             tenancy()->initialize($tenant);
 
-            Log::error("Erro ao processar PGDExportarDadosJob: - Erro: " . $e->getMessage());
             LogError::newWarn("Erro ao processar PGDExportarDadosJob - Erro: " . $e->getMessage());
 
             tenancy()->end();
