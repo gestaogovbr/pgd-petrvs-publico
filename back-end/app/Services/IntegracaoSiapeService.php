@@ -11,6 +11,7 @@ use Throwable;
 
 class IntegracaoSiapeService extends ServiceBase
 {
+  const SITUACAO_FUNCIONAL_ATIVO_EM_OUTRO_ORGAO = 8;
 
   public $siape = '';
   private $siapeUpag = '';
@@ -68,6 +69,8 @@ class IntegracaoSiapeService extends ServiceBase
         );
         $dadosFuncionais = $this->UtilService->object2array($dadosFuncionais)['dadosFuncionais']['DadosFuncionais'];
 
+        if($dadosFuncionais['codsitfuncional'] == self::SITUACAO_FUNCIONAL_ATIVO_EM_OUTRO_ORGAO) return null;
+        
         $funcao = null;
        
         if (!empty($dadosFuncionais['codAtivFun']) && $dadosFuncionais['codAtivFun']) {
