@@ -28,6 +28,7 @@ class JobScheduleSeeder extends Seeder
                 'expressao_cron' => '*/2 * * * *',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
+                'deleted_at' => null,
                 'parameters' => '[]'
             ]
           ], 'classe');
