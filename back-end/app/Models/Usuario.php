@@ -186,6 +186,10 @@ class Usuario extends Authenticatable  implements AuditableContract
   {
     return $this->hasMany(DocumentoAssinatura::class);
   }
+  public function ultimaAssinatura()
+  {
+    return $this->hasOne(DocumentoAssinatura::class)->ofMany('data_assinatura', 'max');
+  }
   public function avaliacoes()
   {
     return $this->hasMany(Avaliacao::class);
