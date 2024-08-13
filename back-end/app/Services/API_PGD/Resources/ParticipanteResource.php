@@ -43,6 +43,10 @@ class ParticipanteResource extends JsonResource
 
         $dataAssinatura = $this->ultimaAssinatura->data_assinatura ?? null;
 
+        if (!$dataAssinatura){
+            throw new ExportPgdException('Usuário não possui data de assinatura');
+        }
+
         if (!$this->ultimoPlanoTrabalho->tipoModalidade){
             throw new ExportPgdException('Usuário não possui modalidade definida');
         }
