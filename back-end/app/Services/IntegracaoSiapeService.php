@@ -5,16 +5,17 @@ namespace App\Services;
 use Illuminate\Support\Facades\DB;
 use App\Services\ServiceBase;
 use App\Exceptions\LogError;
+use App\Exceptions\RequestConectaGovException;
+use App\Services\Siape\Conexao;
 use DateTime;
-use SoapClient;
 use Throwable;
 
 class IntegracaoSiapeService extends ServiceBase
 {
   const SITUACAO_FUNCIONAL_ATIVO_EM_OUTRO_ORGAO = 8;
 
-  public $siape = '';
-  private $siapeUpag = '';
+  private Conexao|null $siape = null;
+  private string $siapeUpag = '';
   private $siapeUrl = '';
   private $siapeSiglaSistema = '';
   private $siapeNomeSistema = '';
@@ -38,7 +39,13 @@ class IntegracaoSiapeService extends ServiceBase
     $this->siapeCodUorg = strval(intval($config['codUorg']));
     $this->siapeParmExistPag = $config['parmExistPag'];
     $this->siapeParmTipoVinculo = $config['parmTipoVinculo'];
-    $this->siape = new SoapClient($this->siapeUrl);
+    $this->siape = new Conexao(
+      $this->siapeCpf,
+      $this->siapeUrl,
+      $config['conectagov_chave'],
+      $config['conectagov_senha'],
+    );
+
   }
 
   function retornarPessoa(array $pessoa): array | null
@@ -149,7 +156,12 @@ class IntegracaoSiapeService extends ServiceBase
         $uorgsWsdl = $this->UtilService->object2array($uorgsWsdl);
         $uorgsWsdl = $uorgsWsdl['Uorg'];
       }
-    } catch (Throwable $e) {
+    } 
+    catch (RequestConectaGovException $e) {
+      LogError::newError("ISiape: erro de conexão.", $e->getMessage());
+      throw $e;
+    }
+    catch (Throwable $e) {
       LogError::newError("ISiape: erro de conexão.", $e->getMessage());
     }
 
@@ -280,7 +292,12 @@ class IntegracaoSiapeService extends ServiceBase
               }
             }
           }
-        } catch (Throwable $e) {
+        } 
+        catch (RequestConectaGovException $e) {
+          LogError::newError("ISiape: erro de conexão.", $e->getMessage());
+          throw $e;
+        }
+        catch (Throwable $e) {
           LogError::newWarn('ISiape: não existe servidor ativo na UORG ' . $codUorg['codigo_siape'] . '.', $e->getMessage());
           continue;
         }
@@ -310,10 +327,8 @@ class IntegracaoSiapeService extends ServiceBase
               }
               $tentativa++;
             } catch (Throwable $e) {
-              $msg = $e->getMessage();
-              $this->siape = new SoapClient($this->siapeUrl);
+              LogError::newWarn("Falha ao tentar recuperar dados da pessoa com CPF " . $pessoa['cpf'], $e->getMessage());
               $tentativa++;
-              usleep(10000);
             }
           } while ($tentativa < $qtd_tentativas);
         } else {
