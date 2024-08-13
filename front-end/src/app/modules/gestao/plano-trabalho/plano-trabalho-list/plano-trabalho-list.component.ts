@@ -55,6 +55,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 	public BOTAO_ARQUIVAR: ToolbarButton;
 	public BOTAO_ASSINAR: ToolbarButton;
 	public BOTAO_ATIVAR: ToolbarButton;
+	public BOTAO_CLONAR: ToolbarButton;
 	public BOTAO_CANCELAR_ASSINATURA: ToolbarButton;
 	public BOTAO_CANCELAR_PLANO: ToolbarButton;
 	public BOTAO_DESARQUIVAR: ToolbarButton;
@@ -242,6 +243,8 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			),
 			onClick: this.suspender.bind(this),
 		};
+		this.BOTAO_CLONAR = { label: "Clonar", icon: "bi bi-copy", color: "btn-outline-primary", onClick: (planoTrabalho: PlanoTrabalho) => this.go.navigate({ route: ['gestao', 'plano-trabalho', planoTrabalho.id, 'clone'] }, this.modalRefreshId(planoTrabalho)) };
+
 		this.botoes = [
 			this.BOTAO_ALTERAR,
 			this.BOTAO_ARQUIVAR,
@@ -257,6 +260,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			this.BOTAO_CONSOLIDACOES,
 			this.BOTAO_REATIVAR,
 			this.BOTAO_SUSPENDER,
+			this.BOTAO_CLONAR
 		];
 		this.rowsLimit = 10;
 	}
@@ -689,6 +693,8 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 						return this.auth.hasPermissionTo("MOD_PTR");
 					case this.BOTAO_CONSOLIDACOES:
 						return true;
+					case this.BOTAO_CLONAR:
+						return this.auth.hasPermissionTo("MOD_PTR_INCL");
 				}
 			}
 		}
