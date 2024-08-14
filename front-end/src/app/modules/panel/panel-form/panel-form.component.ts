@@ -123,6 +123,8 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       integracao_wso2_token_password: { default: "" },
       integracao_usuario_comum: { default: "Participante" },
       integracao_usuario_chefe: { default: "Chefia de Unidade Executora" },
+      integracao_siape_conectagov_chave: { default: "" },
+      integracao_siape_conectagov_senha: { default: "" },
       // SEI
       modulo_sei_habilitado: { default: false },
       modulo_sei_private_key: { default: "" },

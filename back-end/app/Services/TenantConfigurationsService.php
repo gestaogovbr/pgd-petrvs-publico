@@ -80,6 +80,8 @@ class TenantConfigurationsService
         config(['integracao.siape.codUorg'              => $settings['integracao_siape_uorg']                   ?? env('INTEGRACAO_SIAPE_CODUORG')]);
         config(['integracao.siape.parmExistPag'         => $settings['integracao_siape_existepag']              ?? env('INTEGRACAO_SIAPE_PARMEXISTPAG')]);
         config(['integracao.siape.parmTipoVinculo'      => $settings['integracao_siape_tipovinculo']            ?? env('INTEGRACAO_SIAPE_PARMTIPOVINCULO')]);
+        config(['integracao.siape.conectagov_chave'     => $settings['integracao_siape_conectagov_chave']       ?? env('INTEGRACAO_SIAPE_CONECTAGOV_CHAVE')]);
+        config(['integracao.siape.conectagov_senha'     => $settings['integracao_siape_conectagov_senha']       ?? env('INTEGRACAO_SIAPE_CONECTAGOV_SENHA')]);
 
         config(['integracao.perfilComum'          => $settings['integracao_usuario_comum']            ?? env('INTEGRACAO_USUARIO_COMUM')]);
         config(['integracao.perfilChefe'          => $settings['integracao_usuario_chefe']            ?? env('INTEGRACAO_USUARIO_CHEFE')]);
