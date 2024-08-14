@@ -75,7 +75,7 @@ class Conexao
         $listaServidores->addChild('senha', $siapeSenha);
         $listaServidores->addChild('cpf', $siapeCpf);
         $listaServidores->addChild('codOrgao', $siapeCodOrgao);
-        $listaServidores->addChild('codigo', $codigo_siape);
+        $listaServidores->addChild('CodUorg', $codigo_siape);
 
         $xmlData = $xml->asXML();
 
@@ -151,7 +151,7 @@ class Conexao
         $listaUorgs->addChild('senha', $siapeSenha);
         $listaUorgs->addChild('cpf', $this->cpf);
         $listaUorgs->addChild('codOrgao', $siapeCodOrgao);
-        $listaUorgs->addChild('coduorg', $siapeCodUorg);
+        $listaUorgs->addChild('codUorg', $siapeCodUorg);
 
         $xmlData = $xml->asXML();
 
