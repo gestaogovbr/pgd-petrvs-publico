@@ -64,7 +64,7 @@ class Conexao
         $siapeSenha,
         $siapeCpf,
         $siapeCodOrgao,
-        $codigo_siape
+        $codigoSiape
     ): mixed {
         Log::info('listaServidores');
         $xml = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://servico.wssiapenet"/>');
@@ -75,7 +75,7 @@ class Conexao
         $listaServidores->addChild('senha', $siapeSenha);
         $listaServidores->addChild('cpf', $siapeCpf);
         $listaServidores->addChild('codOrgao', $siapeCodOrgao);
-        $listaServidores->addChild('CodUorg', $codigo_siape);
+        $listaServidores->addChild('CodUorg', $codigoSiape);
 
         $xmlData = $xml->asXML();
 
@@ -183,42 +183,49 @@ class Conexao
     }
 
 
-    private function enviar($xmlData){
+    private function enviar($xmlData) {
         try {
             $token = $this->getToken();
-
+    
             $curl = curl_init();
-
+    
+            $headers = [
+                'x-cpf-usuario: ' . $this->cpf,
+                'Authorization: Bearer ' . $token,
+                'Content-Type: application/xml',
+            ];
+    
             curl_setopt_array($curl, [
                 CURLOPT_URL => $this->url.'/api-consulta-siape/v1/consulta-siape',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_POST => true,
-                CURLOPT_HTTPHEADER => [
-                    'x-cpf-usuario: ' . $this->cpf,
-                    'Authorization: Bearer ' . $token,
-                    'Content-Type: application/xml',
-                ],
+                CURLOPT_HTTPHEADER => $headers,
                 CURLOPT_POSTFIELDS => $xmlData,
             ]);
-
+    
+            // Log the request details
+            Log::info('Request made to ' . $this->url . '/api-consulta-siape/v1/consulta-siape', [
+                'headers' => $headers,
+                'body' => $xmlData
+            ]);
+    
             $response = curl_exec($curl);
-
+    
             if (curl_errno($curl)) {
                 $error_msg = curl_error($curl);
                 curl_close($curl);
                 throw new Exception('cURL error: ' . $error_msg);
             }
-
+    
             curl_close($curl);
             Log::info('Response: ' . $response);
             return $response;
-        }
-        catch (RequestConectaGovException $e) {
+        } catch (RequestConectaGovException $e) {
             Log::error('Error: ' . $e->getMessage());
             throw new RequestConectaGovException();
-        } 
-        catch (Exception $e) {
+        } catch (Exception $e) {
             return 'Error: ' . $e->getMessage();
         }
     }
+    
 }
