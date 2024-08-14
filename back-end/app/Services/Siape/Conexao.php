@@ -66,7 +66,7 @@ class Conexao
         $siapeCodOrgao,
         $codigo_siape
     ): mixed {
-
+        Log::info('listaServidores');
         $xml = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://servico.wssiapenet"/>');
         $body = $xml->addChild('soapenv:Body');
         $listaServidores = $body->addChild('ser:listaServidores');
@@ -91,7 +91,7 @@ class Conexao
         $siapeParmExistPag,
         $siapeParmTipoVinculo
     ): mixed {
-
+        Log::info('consultaDadosPessoais');
         $xml = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://servico.wssiapenet"/>');
         $body = $xml->addChild('soapenv:Body');
         $consultaDadosPessoais = $body->addChild('ser:consultaDadosPessoais');
@@ -118,7 +118,7 @@ class Conexao
         $siapeParmExistPag,
         $siapeParmTipoVinculo
     ): mixed {
-
+        Log::info('consultaDadosFuncionais');
         $xml = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://servico.wssiapenet"/>');
         $body = $xml->addChild('soapenv:Body');
         $consultaDadosFuncionais = $body->addChild('ser:consultaDadosFuncionais');
@@ -142,6 +142,7 @@ class Conexao
         $siapeCodOrgao,
         $siapeCodUorg
     ): mixed {
+        Log::info('listaUorgs');
         $xml = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://servico.wssiapenet"/>');
         $body = $xml->addChild('soapenv:Body');
         $listaUorgs = $body->addChild('ser:listaUorgs');
@@ -165,6 +166,7 @@ class Conexao
         $siapeCodOrgao,
         $siapeCodUorg
     ): mixed {
+        Log::info('dadosUorg');
         $xml = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://servico.wssiapenet"/>');
         $body = $xml->addChild('soapenv:Body');
         $dadosUorg = $body->addChild('ser:dadosUorg');
@@ -208,7 +210,7 @@ class Conexao
             }
 
             curl_close($curl);
-
+            Log::info('Response: ' . $response);
             return $response;
         }
         catch (RequestConectaGovException $e) {
