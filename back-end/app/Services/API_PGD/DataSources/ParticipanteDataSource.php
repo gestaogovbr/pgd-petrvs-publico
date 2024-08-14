@@ -15,12 +15,12 @@ class ParticipanteDataSource extends DataSource
         }
 
         $participante = Usuario::with([
-                'ultimoPlanoTrabalho',
+                /*'ultimoPlanoTrabalho',
                 'ultimoPlanoTrabalho.tipoModalidade',
                 'ultimoPlanoTrabalho.ultimaAssinatura',
                 'ultimaParticipacaoPrograma',
                 'ultimaParticipacaoPrograma.programa.unidade',
-                'unidadesIntegrantes.unidade',
+                'unidadesIntegrantes.unidade',*/
                 'unidadesIntegrantes.atribuicoes' => function ($query) {
                     $query
                         ->where('atribuicao', 'lotado')

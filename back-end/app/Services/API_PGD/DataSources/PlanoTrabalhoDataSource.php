@@ -19,8 +19,13 @@ class PlanoTrabalhoDataSource extends DataSource
             'usuario',
             'entregas',
             'entregas.planoEntregaEntrega',
+            'entregas.planoEntregaEntrega.planoEntrega' => function ($query) {
+                $query->whereIn('status', ['CANCELADO', 'ATIVO', 'CONCLUIDO', 'AVALIADO']);
+            },
             'entregas.planoTrabalho',
-            'consolidacoes',
+            'consolidacoes' => function ($query) {
+                $query->whereIn('status', ['CANCELADO', 'AVALIADO']);
+            },
             'consolidacoes.avaliacao'
         ])
         ->find($exportSource->id);

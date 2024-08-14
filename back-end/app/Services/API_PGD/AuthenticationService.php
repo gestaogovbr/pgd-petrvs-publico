@@ -3,6 +3,8 @@
 namespace App\Services\API_PGD;
 
 use App\Exceptions\BadRequestException as ExceptionsBadRequestException;
+use App\Exceptions\ExportPgdException;
+use App\Exceptions\LogError;
 use App\Exceptions\UnauthorizedException;
 use Illuminate\Support\Facades\Http;
 use App\Models\Tenant;
@@ -35,30 +37,39 @@ class AuthenticationService
       return  $responseObj['access_token'];
   }
 
-  public static function authenticate($tenantId)
+  public static function authenticate($tenantId, $username, $password)
   {
-    $tenant = Tenant::find($tenantId) ?? throw new UnauthorizedException('Tenant não encontrado');
+    try {
+      $response = Http::baseUrl(config('pgd.host'))
+          ->asForm()
+          ->post('/token', [
+              'username' => $username,
+              'password' => $password
+          ]);
 
-    $response = Http::baseUrl(config('pgd.host'))
-        ->asForm()
-        ->post('/token', [
-            'username' => $tenant['api_username'],
-            'password' => $tenant['api_password']
-        ]);
+      if (!$response->successful()) {
+          if ($response->status() == Response::HTTP_UNPROCESSABLE_ENTITY) {
+              $data = $response->json();
 
-    if (!$response->successful()) {
-        if ($response->status() == Response::HTTP_UNPROCESSABLE_ENTITY) {
-            $data = $response->json();
-            $detail = json_decode($data['detail'], true);
-            echo "Erro no tenant $tenantId: ".$detail[0]['msg'];
-        } else {
-            $response->throw();
-        }
+              if (is_array($data['detail'])) {
+                $detail = $data['detail'];
+              } else {
+                $detail = json_decode($data['detail'], true);
+              }
+              
+              echo "Erro no tenant $tenantId: ".$detail[0]['msg'];
+          } else {
+              $response->throw();
+          }
+      }
+
+      $dados = $response->json();
+      $token = $dados['access_token'];
+
+      return $token;
+    } catch(\Exception $e) {
+      LogError::newError("Erro ao obter Token da API PGD", $e);
+      throw $e;
     }
-
-    $dados = $response->json();
-    $token = $dados['access_token'];
-
-    return $token;
   }
 }
