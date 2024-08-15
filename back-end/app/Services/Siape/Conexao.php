@@ -25,9 +25,8 @@ class Conexao
     {
         $curl = curl_init();
 
-
         curl_setopt_array($curl, [
-            CURLOPT_URL => $this->url.'/oauth2/jwt-token',
+            CURLOPT_URL => $this->url . '/oauth2/jwt-token',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST => true,
             CURLOPT_HTTPHEADER => [
@@ -79,7 +78,7 @@ class Conexao
 
         $xmlData = $xml->asXML();
 
-        return $this->enviar($xmlData); 
+        return $this->enviar($xmlData);
     }
 
     public function consultaDadosPessoais(
@@ -106,7 +105,6 @@ class Conexao
         $xmlData = $xml->asXML();
 
         return $this->enviar($xmlData);
-        
     }
 
     public function consultaDadosFuncionais(
@@ -139,6 +137,7 @@ class Conexao
         $siapeSiglaSistema,
         $siapeNomeSistema,
         $siapeSenha,
+        $cpf,
         $siapeCodOrgao,
         $siapeCodUorg
     ): mixed {
@@ -149,14 +148,12 @@ class Conexao
         $listaUorgs->addChild('siglaSistema', $siapeSiglaSistema);
         $listaUorgs->addChild('nomeSistema', $siapeNomeSistema);
         $listaUorgs->addChild('senha', $siapeSenha);
-        $listaUorgs->addChild('cpf', $this->cpf);
+        $listaUorgs->addChild('cpf', $cpf);
         $listaUorgs->addChild('codOrgao', $siapeCodOrgao);
         $listaUorgs->addChild('codUorg', $siapeCodUorg);
 
         $xmlData = $xml->asXML();
-
         return $this->enviar($xmlData);
-       
     }
 
     public function dadosUorg(
@@ -183,40 +180,40 @@ class Conexao
     }
 
 
-    private function enviar($xmlData) {
+    private function enviar($xmlData)
+    {
         try {
             $token = $this->getToken();
-    
+
             $curl = curl_init();
-    
+
             $headers = [
                 'x-cpf-usuario: ' . $this->cpf,
                 'Authorization: Bearer ' . $token,
                 'Content-Type: application/xml',
             ];
-    
+
             curl_setopt_array($curl, [
-                CURLOPT_URL => $this->url.'/api-consulta-siape/v1/consulta-siape',
+                CURLOPT_URL => $this->url . '/api-consulta-siape/v1/consulta-siape',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_POST => true,
                 CURLOPT_HTTPHEADER => $headers,
                 CURLOPT_POSTFIELDS => $xmlData,
             ]);
-    
-            // Log the request details
+
             Log::info('Request made to ' . $this->url . '/api-consulta-siape/v1/consulta-siape', [
                 'headers' => $headers,
                 'body' => $xmlData
             ]);
-    
+
             $response = curl_exec($curl);
-    
+
             if (curl_errno($curl)) {
                 $error_msg = curl_error($curl);
                 curl_close($curl);
                 throw new Exception('cURL error: ' . $error_msg);
             }
-    
+
             curl_close($curl);
             Log::info('Response: ' . $response);
             return $response;
@@ -227,5 +224,4 @@ class Conexao
             return 'Error: ' . $e->getMessage();
         }
     }
-    
 }
