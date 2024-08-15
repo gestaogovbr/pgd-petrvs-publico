@@ -58,6 +58,7 @@ class PlanoEntregaResource extends JsonResource
         case "Excepcional":
           return 1;
         case "Inadequado":
+        case "Não executado":
           return 5;
         case "Atendeu parcialmente ao adequado":
           return 4;

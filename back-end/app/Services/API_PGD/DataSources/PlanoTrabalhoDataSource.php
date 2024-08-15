@@ -48,6 +48,10 @@ class PlanoTrabalhoDataSource extends DataSource
             throw new ExportPgdException('Plano de Trabalho não possui Usuário');
         }
 
+        if (!$planoTrabalho->usuario->ultimaParticipacaoPrograma){
+            throw new ExportPgdException('Usuário do Plano de trabalho não possui Participação Ativa');
+        }
+
         return $planoTrabalho;
     }
 }
