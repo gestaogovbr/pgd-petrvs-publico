@@ -153,7 +153,9 @@ class Conexao
         $listaUorgs->addChild('codUorg', $siapeCodUorg);
 
         $xmlData = $xml->asXML();
-        return $this->enviar($xmlData);
+        $response =  $this->enviar($xmlData);
+        $uorgs = $response['Body']['listaUorgsResponse']['out']['Uorg'];
+        return $uorgs;
     }
 
     public function dadosUorg(
@@ -216,7 +218,7 @@ class Conexao
 
             curl_close($curl);
             Log::info('Response: ' . $response);
-            return $response;
+            return $this->convertResponseToArray($response);
         } catch (RequestConectaGovException $e) {
             Log::error('Error: ' . $e->getMessage());
             throw new RequestConectaGovException();
@@ -224,4 +226,19 @@ class Conexao
             return 'Error: ' . $e->getMessage();
         }
     }
+
+
+    private function xmlToArray($xmlObject, $out = array()) {
+        foreach ((array)$xmlObject as $index => $node) {
+            $out[$index] = (is_object($node)) ? $this->xmlToArray($node) : $node;
+        }
+        return $out;
+    }
+
+    private function convertResponseToArray($response)
+    {
+        $responseXml = simplexml_load_string($response);
+        return $this->xmlToArray($responseXml);
+    }
+    
 }

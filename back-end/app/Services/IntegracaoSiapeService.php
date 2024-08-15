@@ -8,6 +8,7 @@ use App\Exceptions\LogError;
 use App\Exceptions\RequestConectaGovException;
 use App\Services\Siape\Conexao;
 use DateTime;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class IntegracaoSiapeService extends ServiceBase
@@ -153,8 +154,9 @@ class IntegracaoSiapeService extends ServiceBase
           $this->siapeCodOrgao,
           $uorgInicial
         );
-        $uorgsWsdl = $this->UtilService->object2array($uorgsWsdl);
-        $uorgsWsdl = $uorgsWsdl['Uorg'];
+        Log::info('saida listaUorgs', [$uorgsWsdl]);
+        // $uorgsWsdl = $this->UtilService->object2array($uorgsWsdl);
+        // $uorgsWsdl = $uorgsWsdl['Uorg'];
       }
     } 
     catch (RequestConectaGovException $e) {
