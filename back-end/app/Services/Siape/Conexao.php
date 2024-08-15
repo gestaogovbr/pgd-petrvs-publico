@@ -78,7 +78,9 @@ class Conexao
 
         $xmlData = $xml->asXML();
 
-        return $this->enviar($xmlData);
+        $response =  $this->enviar($xmlData);
+        $servidores = $response['Body']['listaServidoresResponse']['out']['Servidor'];
+        return $servidores;
     }
 
     public function consultaDadosPessoais(

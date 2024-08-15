@@ -64,7 +64,7 @@ class IntegracaoSiapeService extends ServiceBase
           $this->siapeParmExistPag,
           $this->siapeParmTipoVinculo
         );
-        $dadosPessoais = $this->UtilService->object2array($dadosPessoais);
+        // $dadosPessoais = $this->UtilService->object2array($dadosPessoais);
 
         $dadosFuncionais = $this->siape->consultaDadosFuncionais(
           $this->siapeSiglaSistema,
@@ -75,7 +75,8 @@ class IntegracaoSiapeService extends ServiceBase
           $this->siapeParmExistPag,
           $this->siapeParmTipoVinculo
         );
-        $dadosFuncionais = $this->UtilService->object2array($dadosFuncionais)['dadosFuncionais']['DadosFuncionais'];
+        $dadosFuncionais = $dadosFuncionais['dadosFuncionais']['DadosFuncionais'];
+        // $dadosFuncionais = $this->UtilService->object2array($dadosFuncionais)['dadosFuncionais']['DadosFuncionais'];
 
         if($dadosFuncionais['codsitfuncional'] == self::SITUACAO_FUNCIONAL_ATIVO_EM_OUTRO_ORGAO) return null;
         
@@ -189,7 +190,7 @@ class IntegracaoSiapeService extends ServiceBase
                 $value['codigo']
               );
 
-              $uorgWsdl = $this->UtilService->object2array($uorgWsdl);
+              // $uorgWsdl = $this->UtilService->object2array($uorgWsdl);
               if (!empty($this->UtilService->valueOrNull($uorgWsdl, "nomeMunicipio"))) {
                 $consulta_sql = "SELECT * FROM cidades WHERE nome LIKE '" . $uorgWsdl['nomeMunicipio'] . "'";
                 $consulta_sql = DB::select($consulta_sql);
@@ -271,8 +272,8 @@ class IntegracaoSiapeService extends ServiceBase
           );
           Log::info('saida listaServidores', [$cpfsPorUorgWsdl]);
 
-          $cpfsPorUorgWsdl = $this->UtilService->object2array($cpfsPorUorgWsdl);
-          if (array_key_exists('Servidor', $cpfsPorUorgWsdl)) {
+          // $cpfsPorUorgWsdl = $this->UtilService->object2array($cpfsPorUorgWsdl);
+          // if (array_key_exists('Servidor', $cpfsPorUorgWsdl)) {
             if (array_key_exists('cpf', $cpfsPorUorgWsdl['Servidor'])) {
               $cpf = [
                 'cpf' => $cpfsPorUorgWsdl['Servidor']['cpf'],
@@ -294,7 +295,7 @@ class IntegracaoSiapeService extends ServiceBase
                 array_push($cpfsPorUorgsWsdl, $cpf);
               }
             }
-          }
+          // }
         } 
         catch (RequestConectaGovException $e) {
           LogError::newError("ISiape: erro de conexão.", $e->getMessage());
