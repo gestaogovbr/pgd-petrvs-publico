@@ -269,6 +269,7 @@ class IntegracaoSiapeService extends ServiceBase
             $this->siapeCodOrgao,
             $codUorg['codigo_siape']
           );
+          Log::info('saida listaServidores', [$cpfsPorUorgWsdl]);
 
           $cpfsPorUorgWsdl = $this->UtilService->object2array($cpfsPorUorgWsdl);
           if (array_key_exists('Servidor', $cpfsPorUorgWsdl)) {
