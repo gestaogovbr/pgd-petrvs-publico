@@ -64,7 +64,7 @@ class Conexao
         $siapeCpf,
         $siapeCodOrgao,
         $codigoSiape
-    ): mixed {
+    ): array {
         Log::info('listaServidores');
         $xml = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://servico.wssiapenet"/>');
         $body = $xml->addChild('soapenv:Body');
@@ -74,13 +74,23 @@ class Conexao
         $listaServidores->addChild('senha', $siapeSenha);
         $listaServidores->addChild('cpf', $siapeCpf);
         $listaServidores->addChild('codOrgao', $siapeCodOrgao);
-        $listaServidores->addChild('CodUorg', $codigoSiape);
+        $listaServidores->addChild('codUorg', $codigoSiape);
 
         $xmlData = $xml->asXML();
 
-        $response =  $this->enviar($xmlData);
-        $servidores = $response['Body']['listaServidoresResponse']['out']['Servidor'];
-        return $servidores;
+        $xmlResponse =  $this->enviar($xmlData);
+
+        $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+        $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
+        $xmlResponse->registerXPathNamespace('ns2', 'http://entidade.wssiapenet');
+
+        $servidores = $xmlResponse->xpath('//ns2:Servidor');
+
+        $servidoresArray = array_map([$this, 'simpleXmlElementToArray'], $servidores);
+
+        Log::info('Servidores: ', [$servidoresArray]);
+
+        return $servidoresArray;
     }
 
     public function consultaDadosPessoais(
@@ -91,7 +101,7 @@ class Conexao
         $siapeCodOrgao,
         $siapeParmExistPag,
         $siapeParmTipoVinculo
-    ): mixed {
+    ): array {
         Log::info('consultaDadosPessoais');
         $xml = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://servico.wssiapenet"/>');
         $body = $xml->addChild('soapenv:Body');
@@ -106,7 +116,16 @@ class Conexao
 
         $xmlData = $xml->asXML();
 
-        return $this->enviar($xmlData);
+        $xmlResponse = $this->enviar($xmlData);
+
+        $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+        $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
+        $xmlResponse->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
+
+        $dadosPessoais = $xmlResponse->xpath('//ns1:consultaDadosPessoaisResponse/out')[0];
+        $dadosPessoaisArray = $this->simpleXmlElementToArray($dadosPessoais);
+        
+        return $dadosPessoaisArray;
     }
 
     public function consultaDadosFuncionais(
@@ -117,8 +136,7 @@ class Conexao
         $siapeCodOrgao,
         $siapeParmExistPag,
         $siapeParmTipoVinculo
-    ): mixed {
-        Log::info('consultaDadosFuncionais');
+    ): array {
         $xml = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://servico.wssiapenet"/>');
         $body = $xml->addChild('soapenv:Body');
         $consultaDadosFuncionais = $body->addChild('ser:consultaDadosFuncionais');
@@ -132,7 +150,15 @@ class Conexao
 
         $xmlData = $xml->asXML();
 
-        return $this->enviar($xmlData);
+        $xmlResponse = $this->enviar($xmlData);
+        $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+        $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
+        $xmlResponse->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
+
+        $dadosFuncionais = $xmlResponse->xpath('//tipo:DadosFuncionais')[0];
+        $dadosFuncionaisArray = $this->simpleXmlElementToArray($dadosFuncionais);
+
+        return $dadosFuncionaisArray;
     }
 
     public function listaUorgs(
@@ -172,8 +198,6 @@ class Conexao
         return $array;
     }
     
-
-
     public function dadosUorg(
         $siapeSiglaSistema,
         $siapeNomeSistema,
@@ -182,7 +206,6 @@ class Conexao
         $siapeCodOrgao,
         $siapeCodUorg
     ): array {
-        Log::info('dadosUorg');
         $xml = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://servico.wssiapenet"/>');
         $body = $xml->addChild('soapenv:Body');
         $dadosUorg = $body->addChild('ser:dadosUorg');
@@ -203,7 +226,7 @@ class Conexao
 
         $dadosUorg = $responseXml->xpath('//ns1:dadosUorgResponse/out')[0];
         $dadosUorgArray = $this->simpleXmlElementToArray($dadosUorg);
-        Log::info('dadosUorgArray', [$dadosUorgArray]);
+
         return $dadosUorgArray;
         
     }
