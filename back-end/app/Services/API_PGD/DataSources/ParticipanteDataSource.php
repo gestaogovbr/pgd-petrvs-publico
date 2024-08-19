@@ -23,7 +23,7 @@ class ParticipanteDataSource extends DataSource
                 'unidadesIntegrantes.unidade',*/
                 'unidadesIntegrantes.atribuicoes' => function ($query) {
                     $query
-                        ->where('atribuicao', 'lotado')
+                        ->where('atribuicao', 'LOTADO')
                         ->whereNull('deleted_at');
                 }
             ])
