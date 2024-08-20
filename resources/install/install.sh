@@ -321,6 +321,17 @@ services:
           cpus: '0.5'
           memory: 2496M
 
+  petrvs_queue:
+      image: segescginf/pgdpetrvs:$IMAGE_TAG
+      container_name: petrvs_queue
+      environment:
+        - TZ=America/Bahia
+      command: /bin/sh -c 'php /var/www/artisan queue:work --sleep=3 --tries=3 >> /var/www/storage/logs/queue.log 2>&1'
+      depends_on:
+        - petrvs_php
+      volumes:
+        - './.env:/var/www/.env'
+
   mariadb:
     image: mariadb:11.3.2
     container_name: mariadb
@@ -352,6 +363,18 @@ services:
         limits:
           cpus: '0.5'
           memory: 2496M
+
+  petrvs_queue:
+      image: segescginf/pgdpetrvs:$IMAGE_TAG
+      container_name: petrvs_queue
+      environment:
+        - TZ=America/Bahia
+      command: /bin/sh -c 'php /var/www/artisan queue:work --sleep=3 --tries=3 >> /var/www/storage/logs/queue.log 2>&1'
+      depends_on:
+        - petrvs_php
+      volumes:
+        - './.env:/var/www/.env'
+
 "
                 break
                 ;;

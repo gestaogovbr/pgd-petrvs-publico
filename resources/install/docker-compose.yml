@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+  petrvs_php:
+    image: segescginf/pgdpetrvs:latest
+    container_name: petrvs_php
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - TZ=America/Bahia
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2048M
+    volumes:
+      - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
+
+  petrvs_db:
+    image: mariadb
+    container_name: petrvs_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - data:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/my.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
+      MYSQL_DATABASE: petrvs
+      MYSQL_USER: root
+      MYSQL_PASSWORD: PsEeTnRhVaS
+      MYSQL_CHARSET: utf8mb4
+
+  petrvs_queue:
+    image: segescginf/pgdpetrvs:latest
+    container_name: petrvs_queue
+    environment:
+      - TZ=America/Bahia
+    command: /bin/sh -c "php /var/www/artisan queue:work --sleep=3 --tries=3 >> /var/www/storage/logs/queue.log 2>&1"
+    depends_on:
+      - petrvs_php
+    volumes:
+      - "./.env:/var/www/.env"
+
+volumes:
+  data:
