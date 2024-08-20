@@ -138,8 +138,8 @@ class PlanoTrabalhoService extends ServiceBase
       where("status", "!=", "CANCELADO")->
       where("id", "!=", UtilService::valueOrNull($data, "id"))->
       first();
-    if(!empty($conflito) && !parent::loggedUser()->hasPermissionTo('MOD_PTR_INTSC_DATA')) {
-      throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho #" . $conflito->numero . " (" . UtilService::getDateTimeFormatted($conflito->data_inicio) . " a " . UtilService::getDateTimeFormatted($conflito->data_fim) . ") possui período conflitante para a mesma unidade/servidor (MOD_PTR_INTSC_DATA).\n[ver RN_PTR_AA]");
+    if(!empty($conflito)) {
+      throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho #" . $conflito->numero . " (" . UtilService::getDateFormatted($conflito->data_inicio) . " a " . UtilService::getDateFormatted($conflito->data_fim) . ") possui período conflitante para a mesma unidade/servidor (MOD_PTR_INTSC_DATA).\n[ver RN_PTR_AA]");
     }
     if ($action == ServiceBase::ACTION_INSERT) {
       /*  
