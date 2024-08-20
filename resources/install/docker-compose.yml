@@ -25,10 +25,10 @@ services:
       - data:/var/lib/mysql
       - ./my.cnf:/etc/mysql/my.cnf
     environment:
-      MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
+      MYSQL_ROOT_PASSWORD: rootpgd
       MYSQL_DATABASE: petrvs
       MYSQL_USER: root
-      MYSQL_PASSWORD: PsEeTnRhVaS
+      MYSQL_PASSWORD: rootpgd
       MYSQL_CHARSET: utf8mb4
 
   petrvs_queue:
