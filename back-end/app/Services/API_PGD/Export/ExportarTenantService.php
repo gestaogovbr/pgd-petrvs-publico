@@ -62,8 +62,8 @@ class ExportarTenantService
         echo "\n\n** FINALIZADO!\n\n";
 
         echo "\033[32mParticipantes\033[0m ".
-            "\nSucedidos:". $this->exportarParticipanteService->getSucessos().
-            "\nFalhas". $this->exportarParticipanteService->getFalhas().
+            "\nSucedidos: ". $this->exportarParticipanteService->getSucessos().
+            "\nFalhas: ". $this->exportarParticipanteService->getFalhas().
             "\n\n\033[32mPlanos de Entrega\033[0m ". 
             "\nSucedidos: ". $this->exportarPlanoEntregasService->getSucessos().
             "\nFalhas: ". $this->exportarPlanoEntregasService->getFalhas().
