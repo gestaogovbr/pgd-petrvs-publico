@@ -30,7 +30,7 @@ class Integracao implements InterfaceIntegracao
      * @param mixed $config
      */
     public function __construct(
-        private array $dados,
+        private mixed $dados,
         private Usuario $userModel,
         private UnidadeIntegranteService $unidadeIntegranteService,
         private NivelAcessoService $nivelAcessoService,
