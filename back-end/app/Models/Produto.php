@@ -57,11 +57,6 @@ class Produto  extends ModelBase
         return $this->hasMany(ProdutoProcessoCadeiaValor::class, 'produto_id');
     }
 
-    public function getTipoAttribute($value)
-    {
-        return ucfirst($value);
-    }
-
     public function setTipoAttribute($value)
     {
         $this->attributes['tipo'] = strtolower($value);
