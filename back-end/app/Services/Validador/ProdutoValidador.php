@@ -10,7 +10,12 @@ class ProdutoValidador implements IValidador
 {
     public function validar(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        if(!isset($request->all()['entity'])) {
+            throw new ValidationException('Entity não informado');
+        }
+        
+        $entity = $request->all()['entity'];
+        $validator = Validator::make($entity, [
             'nome' => 'required|string|max:100',
             'nome_fantasia' => 'nullable|string|max:255',
             'tipo' => 'required|string|in:produto,servico',
