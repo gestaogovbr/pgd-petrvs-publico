@@ -64,6 +64,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_USER_TUDO"],
       ["codigo" => "MOD_PENT"],
       ["codigo" => "MOD_PRGT"],
+      ["codigo" => "MOD_PROD"]
     ];
 
 
@@ -153,7 +154,8 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_UND_INCL"],
       ["codigo" => "MOD_UND_TUDO"],
       ["codigo" => "MOD_USER"],
-      ["codigo" => "MOD_USER_TUDO"]
+      ["codigo" => "MOD_USER_TUDO"],
+      ["codigo" => "MOD_PROD"]
     ];
 
     $capacidades_administrador_negocial = [
@@ -313,6 +315,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_USER_EDT"],
       ["codigo" => "MOD_USER_INCL"],
       ["codigo" => "MOD_USER_TUDO"],
+      ["codigo" => "MOD_PROD"]
     ];
 
     // Inserção de dados

@@ -275,6 +275,15 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_PROJ_REG_INCL", "Permite incluir projeto regra"], //só no back
       ]
     ], [
+      "codigo" => "MOD_PROD",
+      "descricao" => "Módulo de Produtos",
+      "capacidades" => [
+        /* Capacidades do módulo PRODUTO */
+        ["MOD_PROD_EDT", "Permite editar produtos"],
+        ["MOD_PROD_EXCL", "Permite excluir produtos"],
+        ["MOD_PROD_INCL", "Permite incluir produtos"]
+      ]
+    ], [
       "codigo" => "MOD_TEMP",
       "descricao" => "Módulo de Templates",
       "capacidades" => [
