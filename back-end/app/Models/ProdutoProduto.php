@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
-class ProdutoProduto extends Model
+use App\Models\ModelBase;
+class ProdutoProduto extends ModelBase
 {
     use HasFactory;
 
