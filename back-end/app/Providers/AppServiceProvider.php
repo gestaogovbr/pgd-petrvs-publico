@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Validador\IValidador;
+use App\Services\Validador\ProdutoValidador;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
@@ -15,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(IValidador::class, ProdutoValidador::class);
     }
 
     /**
