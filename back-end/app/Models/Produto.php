@@ -13,9 +13,9 @@ class Produto extends Model
 
     protected $table = 'produtos';
 
-    protected $keyType = 'string';
+    //protected $keyType = 'string';
 
-    public $incrementing = false;
+   // public $incrementing = false;
 
     public $cascadeDeletes = ['produtoProcessoCadeiaValor'];
 

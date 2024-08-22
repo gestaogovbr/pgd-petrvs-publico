@@ -884,6 +884,11 @@ export class LookupService implements IIndexable {
     { 'key': 'DECRESCIMO', 'value': 'Subtrai' }
   ];
 
+  public TIPO_PRODUTO: LookupItem[] = [
+    { key: 'produto', value: "Produto" },
+    { key: 'servico', value: "Serviço" }
+  ];
+
 
 
   public getLookup(itens: LookupItem[], key: any) {

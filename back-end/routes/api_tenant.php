@@ -454,12 +454,12 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntregaProgresso')->gro
 // Route::middleware(['auth:sanctum'])->prefix('produto')->group(function () {
 //   defaultRoutes(ProdutoController::class);
 // });
-Route::prefix('produto')->group(function () {
+Route::prefix('Produto')->group(function () {
   // Rotas sem autenticação
-  Route::post('store', [ProdutoController::class, 'store']);
+  //Route::post('store', [ProdutoController::class, 'store']);
 
   // Rotas com autenticação
-  // Route::middleware(['auth:sanctum'])->group(function () {
-  //     defaultRoutes(ProdutoController::class);
-  // });
+  Route::middleware(['auth:sanctum'])->group(function () {
+      defaultRoutes(ProdutoController::class);
+  });
 });

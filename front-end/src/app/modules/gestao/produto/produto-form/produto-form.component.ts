@@ -17,6 +17,13 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
 
   constructor(public injector: Injector) {
     super(injector, Produto, ProdutoDaoService);
+    this.form = this.fh.FormBuilder({
+      nome: { default: "" },
+      nome_fantasia: { default: "" },
+      descricao: { default: "" },
+      url: { default: "" },
+      tipo: { default: "produto" },
+    });
   }
 
   public async loadData(entity: Produto, form: FormGroup) {}

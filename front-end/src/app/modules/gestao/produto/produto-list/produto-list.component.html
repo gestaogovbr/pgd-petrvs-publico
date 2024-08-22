@@ -15,6 +15,12 @@
                 <span> {{row.nome}}</span><br>
             </ng-template>
         </column>
+
+        <column title="Sigla/Nome Fantasia" [template]="columnSigla">
+          <ng-template let-row="row" #columnSigla>
+              <span> {{row.nome_fantasia}}</span><br>
+          </ng-template>
+        </column>
         
         <column type="options" [onEdit]="edit" [options]="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
