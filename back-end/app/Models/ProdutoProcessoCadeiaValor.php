@@ -11,8 +11,6 @@ class ProdutoProcessoCadeiaValor extends ModelBase
 
     protected $table = 'produto_processo_cadeia_valor';
 
-    protected $keyType = 'string';
-    public $incrementing = false;
 
     protected $fillable = [
         'produto_id',

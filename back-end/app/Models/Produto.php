@@ -12,10 +12,8 @@ class Produto  extends ModelBase
     use HasFactory, SoftDeletes;
 
     protected $table = 'produtos';
-
-    //protected $keyType = 'string';
-
-   // public $incrementing = false;
+    
+    public $fillable_changes = ['produtoProcessoCadeiaValor'];
 
     public $cascadeDeletes = ['produtoProcessoCadeiaValor'];
 

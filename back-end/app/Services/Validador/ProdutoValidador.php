@@ -2,6 +2,7 @@
 
 namespace App\Services\Validador;
 
+use App\Exceptions\DataInvalidException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -11,7 +12,7 @@ class ProdutoValidador implements IValidador
     public function validar(Request $request) : array
     {
         if(!isset($request->all()['entity'])) {
-            throw new ValidationException('Entity não informado');
+            throw new DataInvalidException('Entity não informado');
         }
 
         $entity = $request->all()['entity'];
