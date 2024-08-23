@@ -24,7 +24,7 @@ class ProdutoProdutoValidation implements IValidador
         foreach ($produtoProdutos as $produtoProduto) {
             $validator = Validator::make($produtoProduto, [
                 'produto_id' => 'required|uuid|exists:produtos,id',
-                'produto_base_id' => 'required|uuid|exists:produtos,id',
+                // 'produto_base_id' => 'required|uuid|exists:produtos,id',
             ]);
 
             if ($validator->fails()) {
