@@ -11,4 +11,10 @@ return [
     ],
     'in' => 'O :attribute selecionado é inválido.',
     'url' => 'O formato de :attribute é inválido.',
+    'produto_id.required' => 'O campo produto_id é obrigatório.',
+    'produto_id.uuid' => 'O campo produto_id deve ser um UUID válido.',
+    'produto_id.exists' => 'O produto selecionado não existe.',
+    'cadeia_valor_processo_id.required' => 'O campo cadeia_valor_processo_id é obrigatório.',
+    'cadeia_valor_processo_id.uuid' => 'O campo cadeia_valor_processo_id deve ser um UUID válido.',
+    'cadeia_valor_processo_id.exists' => 'O processo da cadeia de valor selecionado não existe.',
 ];

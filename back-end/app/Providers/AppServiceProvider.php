@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Http\Controllers\ProdutoController;
 use App\Services\Validador\IValidador;
+use App\Services\Validador\ProdutoProcessoCadeiaValorValidation;
+use App\Services\Validador\ProdutoProdutoValidation;
 use App\Services\Validador\ProdutoValidador;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -19,8 +21,14 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->when(ProdutoController::class)
-                  ->needs(IValidador::class)
-                  ->give(ProdutoValidador::class);
+        ->needs(IValidador::class)
+        ->give(function () {
+            return [
+                $this->app->make(ProdutoValidador::class),
+                $this->app->make(ProdutoProdutoValidation::class),
+                $this->app->make(ProdutoProcessoCadeiaValorValidation::class),
+            ];
+        });
     }
 
     /**

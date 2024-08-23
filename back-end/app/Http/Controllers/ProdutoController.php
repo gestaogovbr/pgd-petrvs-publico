@@ -14,10 +14,11 @@ use Throwable;
 
 class ProdutoController extends ControllerBase
 {
-
-    public function __construct(private IValidador $validator)
+    private array $validators;
+    public function __construct(IValidador ...$validator)
     {
         parent::__construct();
+        $this->validators = $validator;
     }
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario)
@@ -29,7 +30,9 @@ class ProdutoController extends ControllerBase
     {
         try {
 
-            $this->validator->validar($request);
+            foreach ($this->validators as $validator) {
+                $validator->validar($request);
+            }
 
             return parent::store($request);
         } catch (ValidationException $e) {
@@ -45,7 +48,9 @@ class ProdutoController extends ControllerBase
     {
         try {
 
-            $this->validator->validar($request);
+            foreach ($this->validators as $validator) {
+                $validator->validar($request);
+            }
 
             return parent::update($request);
         } catch (ValidationException $e) {
