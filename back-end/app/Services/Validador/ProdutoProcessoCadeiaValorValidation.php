@@ -20,6 +20,9 @@ class ProdutoProcessoCadeiaValorValidation implements IValidador
             return [];
         }
         $produtoProcessoCadeiaValores = $entity['produto_processo_cadeia_valor'];
+        if(empty($produtoProcessoCadeiaValores)){
+            return [];
+        }
         foreach ($produtoProcessoCadeiaValores as $produtoProcessoCadeiaValore) {
             $validator = Validator::make($produtoProcessoCadeiaValore, [
                 // 'produto_id' => 'required|uuid|exists:produtos,id',

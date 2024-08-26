@@ -4,6 +4,7 @@ namespace App\Services\Validador;
 
 use App\Exceptions\DataInvalidException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -20,7 +21,10 @@ class ProdutoProdutoValidation implements IValidador
             return [];
         }
         $produtoProdutos = $entity['produto_produto'];
-
+        
+        if(empty($produtoProdutos)){
+            return [];
+        }
         foreach ($produtoProdutos as $produtoProduto) {
             $validator = Validator::make($produtoProduto, [
                 'produto_id' => 'required|uuid|exists:produtos,id',
