@@ -5,12 +5,16 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ProdutoFormComponent } from './produto-form/produto-form.component';
 import { ProdutoListComponent } from './produto-list/produto-list.component';
+import { ProdutoListProcessoComponent } from './produto-list-processo/produto-list-processo.component';
+import { ProdutoListProdutoComponent } from './produto-list-produto/produto-list-produto.component';
 
 
 @NgModule({
   declarations: [
     ProdutoFormComponent,
-    ProdutoListComponent
+    ProdutoListComponent,
+    ProdutoListProcessoComponent,
+    ProdutoListProdutoComponent
   ],
   imports: [
     CommonModule,

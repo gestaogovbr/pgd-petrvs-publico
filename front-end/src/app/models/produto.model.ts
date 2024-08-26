@@ -1,4 +1,6 @@
 import { Base } from "./base.model";
+import { ProdutoProcesso } from "./produto-processo.model";
+import { ProdutoProduto } from "./produto-produto.model";
 
 export type ProdutoTipos = "produto" | "servico";
 
@@ -8,6 +10,8 @@ export class Produto extends Base {
   public tipo: ProdutoTipos = "produto"; /* Tipo do produto (Produto ou Serviço) */
   public descricao: string = ""; /* Descrição do produto */
   public url: string = ""; /* URL do produto */
+  public produto_processo_cadeia_valor: ProdutoProcesso[] = []; /* Processos da cadeia de valor do produto */
+  public produtos_relacionados: ProdutoProduto[] = []; /* Produtos do produto */
   
   public constructor(data?: any) { super(); this.initialization(data); }
 }

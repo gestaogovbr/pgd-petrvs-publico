@@ -15,6 +15,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   public produtoService: ProdutoService;
 
+
   constructor(public injector: Injector, dao: ProdutoDaoService) {
     super(injector, Produto, ProdutoDaoService);
     this.produtoService = injector.get<ProdutoService>(ProdutoService);
@@ -22,6 +23,9 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     this.filter = this.fh.FormBuilder({
       nome: {default: ""},
     });
+    this.join = [
+      "produtoProcessoCadeiaValor"
+    ];
   }
 
   public ngOnInit(): void {

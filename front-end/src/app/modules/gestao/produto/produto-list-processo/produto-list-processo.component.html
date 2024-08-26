@@ -1,0 +1,32 @@
+<grid [items]="items" [form]="form!" noMargin #gridProcessos editable [selectable]="false" [minHeight]="items.length > 2 ? 0 : 300" [join]="join" [groupBy]="groupBy" [add]="addProcesso.bind(this)" [remove]="removeProcesso.bind(this)" [save]="saveProcesso.bind(this)" [load]="loadProcesso.bind(this)" [saveEnd]="saveEndProcesso.bind(this)" [hasDelete]="true" [hasEdit]="true" [hasAdd]="true">
+  <columns>
+    <column [titleTemplate]="titleCadeia" [template]="columnCadeia" [editTemplate]="editCadeia" [verticalAlign]="'middle'" [width]="300" [align]="'center'">
+      <ng-template let-header="header" #titleCadeia>
+        <div class="text-center"><span><strong>Cadeia de valor</strong></span></div>
+      </ng-template>
+      <ng-template let-row="row" #columnCadeia>
+        <div class="w-100 d-flex justify-content-center">
+          <p>{{row.cadeia_valor_processo?.cadeia_valor?.nome}}</p>
+        </div>
+      </ng-template>
+      <ng-template let-row="row" #editCadeia>
+        <input-search label #cadeiaValor [placeholder]="'Selecione a ' + lex.translate('cadeia de valor')" [join]="['unidade']" [where]="[['unidade_id', '==', auth.unidade?.id]]" [selectParams]="{filter: {unidade_id: auth.unidade?.id}}" controlName="cadeia_valor_id" [dao]="cadeiaValorDao" (change)="onCadeiaChange($event)" required></input-search>
+      </ng-template>
+    </column>
+
+    <column [titleTemplate]="titleProcesso" [template]="columnProcesso" [editTemplate]="editProcesso" [verticalAlign]="'middle'" [width]="300" [align]="'center'">
+      <ng-template let-header="header" #titleProcesso>
+        <div class="text-center"><span><strong>Processo</strong></span></div>
+      </ng-template>
+      <ng-template let-row="row" #columnProcesso>
+        <div class="w-100 d-flex justify-content-center">
+          <p>{{row.cadeia_valor_processo?.nome}}</p>
+        </div>
+      </ng-template>
+      <ng-template let-row="row" #editProcesso>
+        <input-select #cadeiaProcesso fullEntity controlName="cadeia_valor_processo_id" controlName="cadeia_valor_processo_id" [control]="form!.controls.cadeia_valor_processo_id" [items]="processos" required></input-select>
+      </ng-template>
+    </column>
+    <column type="options"></column>
+  </columns>
+</grid>

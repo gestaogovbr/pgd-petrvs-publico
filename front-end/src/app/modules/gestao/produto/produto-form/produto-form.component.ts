@@ -17,18 +17,31 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
 
   constructor(public injector: Injector) {
     super(injector, Produto, ProdutoDaoService);
+    this.join = [
+      "produtoProcessoCadeiaValor.cadeiaValorProcesso.cadeiaValor", "produtosRelacionados"
+    ];
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
       nome_fantasia: { default: "" },
       descricao: { default: "" },
       url: { default: "" },
-      tipo: { default: "produto" },
+      tipo: { default: "" },
+      produto_processo_cadeia_valor: { default: [] },
+      produtos_relacionados: { default: [] },
     });
   }
 
-  public async loadData(entity: Produto, form: FormGroup) {}
+  public async loadData(entity: Produto, form: FormGroup) {
+    let formValue = Object.assign({}, form.value);
+    form.patchValue(this.util.fillForm(formValue, entity));
+  }
 
-  public initializeData(form: FormGroup): void {}
+  public async initializeData(form: FormGroup) {
+    form.patchValue(new Produto());
+    this.entity = new Produto();
+
+    await this.loadData(this.entity, this.form!);
+  }
 
   public saveData(form: IIndexable): Promise<Produto> {
     return new Promise<Produto>((resolve, reject) => {

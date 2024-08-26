@@ -9,9 +9,23 @@
       <input-text [size]="8" label="URL" icon="bi bi-textarea-t" controlName="url" [control]="form!.controls.url" [attr.maxlength]=250 labelInfo="Página oficial do produto ou serviço"></input-text>
     </div>
     <div class="row">
-      <input-text [control]="form!.controls.descricao"  label="Descrição" [attr.maxlength]=250></input-text>
+      <input-text [control]="form!.controls.descricao"  label="Descrição" [attr.maxlength]=250 required></input-text>
     </div>
   </div>
+  <separator title="Processos da cadeia de valor">
+    <div>
+      <produto-list-processo #processos noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-processo>
+    </div>
+  </separator>
+
+
+  <separator title="Relação com outros produtos">
+    <div>
+      <produto-list-produto #produtos noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-produto>
+    </div>
+  </separator>
+
+
 </editable-form>
 
 

@@ -5,7 +5,7 @@ import { Produto } from "./produto.model";
 export type ProdutoTipos = "produto" | "servico";
 
 export class ProdutoProcesso extends Base {
-  public processo?: CadeiaValorProcesso; /* Processo da cadeia de valor */
+  public cadeia_valor_processo?: CadeiaValorProcesso; /* Processo da cadeia de valor */
   public produto?: Produto; /* Produto */
 
   public cadeia_valor_processo_id: string = ''; /* ID do processo da cadeia de valor */

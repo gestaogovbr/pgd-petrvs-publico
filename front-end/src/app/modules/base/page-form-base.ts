@@ -127,8 +127,20 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
     return this.form!.controls[controlName] as FormControl;
   }
 
-  public error = (error: string) => {
-    if(this.editableForm) this.editableForm.error = error;
+  public error = (error: any) => {
+    if (this.editableForm) {
+      if (error.validationErrors) {
+        this.editableForm.error = "";  
+        Object.entries(error.validationErrors).forEach(([field, messages]) => {
+          const control = this.form!.get(field);
+          if (control) {
+            control.setErrors({ errorMessage: messages });
+          }
+        });
+      } else {
+        this.editableForm.error = typeof error === 'string' ? error : 'Ocorreu um erro desconhecido';
+      }
+    }
   }
 
   public clearErros = () => {
