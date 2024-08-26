@@ -13,7 +13,7 @@ class Produto  extends ModelBase
 
     protected $table = 'produtos';
     
-    public $fillable_changes = ['produtoProcessoCadeiaValor'];
+    public $fillable_changes = ['produtoProcessoCadeiaValor', 'produtoProduto'];
 
     public $cascadeDeletes = ['produtoProcessoCadeiaValor'];
 
@@ -43,11 +43,10 @@ class Produto  extends ModelBase
         'deleted_at',
     ];
 
-    
 
-    public function produtosRelacionados()
+    public function produtoProduto()
     {
-        return $this->belongsToMany(Produto::class, 'produto_produto', 'produto_base_id', 'produto_id');
+        return $this->hasMany(ProdutoProduto::class, 'produto_base_id');
     }
 
     public function produtoProcessoCadeiaValor()
