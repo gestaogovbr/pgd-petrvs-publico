@@ -11,7 +11,7 @@ export class Produto extends Base {
   public descricao: string = ""; /* Descrição do produto */
   public url: string = ""; /* URL do produto */
   public produto_processo_cadeia_valor: ProdutoProcesso[] = []; /* Processos da cadeia de valor do produto */
-  public produtos_relacionados: ProdutoProduto[] = []; /* Produtos do produto */
+  public produto_produto: ProdutoProduto[] = []; /* Produtos do produto */
   
   public constructor(data?: any) { super(); this.initialization(data); }
 }

@@ -30,8 +30,8 @@ export class ProdutoListProdutoComponent extends PageFrameBase {
 
   public get items(): ProdutoProduto[] {
     if (!this.gridControl.value) this.gridControl.setValue(new ProdutoProduto());
-    if (!this.gridControl.value.produtos_relacionados) this.gridControl.value.produtos_relacionados = [];
-    return this.gridControl.value.produtos_relacionados;
+    if (!this.gridControl.value.produto_produto) this.gridControl.value.produto_produto = [];
+    return this.gridControl.value.produto_produto;
   }
 
   private _disabled: boolean = false;
@@ -46,7 +46,7 @@ export class ProdutoListProdutoComponent extends PageFrameBase {
     this.form = this.fh.FormBuilder({
       produto_id: { default: null }
     }, this.cdRef);
-    this.join = ["produtosRelacionados"];
+    this.join = ["produtoProduto"];
   }
 
   public async addProduto() {
@@ -72,7 +72,6 @@ export class ProdutoListProdutoComponent extends PageFrameBase {
         this.isNoPersist ? Object.assign(row, { _status: "DELETE" }) : await this.dao?.delete(row.id);
       } finally {
         this.loading = false;
-        //this.atualizaPlanoTrabalhoEvent.emit(this.entity!.id);
       }
       return this.isNoPersist ? false : true; // (*3)
     } else {
@@ -81,8 +80,6 @@ export class ProdutoListProdutoComponent extends PageFrameBase {
   }
 
   public async saveProduto(form: FormGroup, row: any) { 
-    console.log(this.produtoRelacionado);
-    
     let result = undefined;
     this.form!.markAllAsTouched();
     if(this.form!.valid) {
