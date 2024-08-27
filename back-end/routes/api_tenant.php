@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CadeiaValorController;
+use App\Http\Controllers\CatalogoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
@@ -462,4 +463,8 @@ Route::prefix('produto')->group(function () {
   // Route::middleware(['auth:sanctum'])->group(function () {
   //     defaultRoutes(ProdutoController::class);
   // });
+});
+
+Route::prefix('catalogo')->group(function () {
+    defaultRoutes(CatalogoController::class);
 });
