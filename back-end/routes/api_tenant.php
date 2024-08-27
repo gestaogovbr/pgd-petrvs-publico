@@ -450,19 +450,8 @@ Route::middleware(['auth:sanctum'])->prefix('Reacao')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntregaProgresso')->group(function () {
   defaultRoutes(PlanoEntregaEntregaProgressoController::class);
 });
-
-
-// Route::middleware(['auth:sanctum'])->prefix('produto')->group(function () {
-//   defaultRoutes(ProdutoController::class);
-// });
-Route::prefix('produto')->group(function () {
-  // Rotas sem autenticação
-  Route::post('store', [ProdutoController::class, 'store']);
-
-  // Rotas com autenticação
-  // Route::middleware(['auth:sanctum'])->group(function () {
-  //     defaultRoutes(ProdutoController::class);
-  // });
+Route::middleware(['auth:sanctum'])->prefix('Produto')->group(function () {
+  defaultRoutes(ProdutoController::class);
 });
 
 Route::prefix('catalogo')->group(function () {

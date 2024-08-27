@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 
@@ -8,40 +9,56 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 use App\Services\Validador\IValidador;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
-class ProdutoController extends ControllerBase {
-
-    public function __construct(private IValidador $validator) {
+class ProdutoController extends ControllerBase
+{
+    private array $validators;
+    public function __construct(IValidador ...$validator)
+    {
         parent::__construct();
+        $this->validators = $validator;
     }
 
-    public function checkPermissions($action, $request, $service, $unidade, $usuario) {
-        // switch ($action) {
-        //     case 'STORE':
-        //         if (!$usuario->hasPermissionTo('MOD_CADV_INCL')) throw new ServerException("CapacidadeStore", "Inserção não realizada");
-        //         break;
-        //     case 'EDIT':
-        //         if (!$usuario->hasPermissionTo('MOD_CADV_EDT')) throw new ServerException("CapacidadeStore", "Edição não realizada");
-        //         break;
-        //     case 'DESTROY':
-        //         if (!$usuario->hasPermissionTo('MOD_CADV_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não realizada");
-        //         break;
-        // }
+    public function checkPermissions($action, $request, $service, $unidade, $usuario)
+    {
+       
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         try {
 
-            // dd($request);
-            $this->validator->validar($request);
+            foreach ($this->validators as $validator) {
+                $validator->validar($request);
+            }
 
             return parent::store($request);
-        } catch (Throwable $e) {
-            return response()->json(['message' => $e->getMessage()], 500);
-
-            // return $this->error($e);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Erro de validação.',
+                'errors' => $e->errors(),
+            ], 422);
         }
     }
-   
+
+    public function update(Request $request)
+    {
+        try {
+
+            foreach ($this->validators as $validator) {
+                $validator->validar($request);
+            }
+
+            return parent::update($request);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Erro de validação.',
+                'errors' => $e->errors(),
+            ], 422);
+        }
+    }
 }

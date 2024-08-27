@@ -1,0 +1,28 @@
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [selectable]="selectable" (select)="onSelect($event)"
+    [hasAdd]="true"
+    [hasEdit]="true">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-text [size]="12" [label]="'Nome do '+ lex.translate('produto')" controlName="nome"
+                [control]="filter!.controls.nome" [placeholder]="'Nome do '+ lex.translate('produto')" [attr.maxlength]=250></input-text>
+        </div>
+    </filter>
+    <columns>
+        <column title="Nome" [template]="columnNome">
+            <ng-template let-row="row" #columnNome>
+                <span> {{row.nome}}</span><br>
+            </ng-template>
+        </column>
+
+        <column title="Sigla/Nome Fantasia" [template]="columnSigla">
+          <ng-template let-row="row" #columnSigla>
+              <span> {{row.nome_fantasia}}</span><br>
+          </ng-template>
+        </column>
+        
+        <column type="options" [onEdit]="edit" [options]="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

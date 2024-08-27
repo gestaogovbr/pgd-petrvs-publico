@@ -157,6 +157,7 @@ export class AppComponent {
       HABILITACOES_PROGRAMA: { name: this.lex.translate("Habilitações"), permition: 'MOD_PART', route: ['gestao', 'programa', 'participantes'], icon: this.entity.getIcon('Programa') },
       PORTIFOLIOS: { name: this.lex.translate("Portifólios"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
       PROJETOS: { name: this.lex.translate("Projetos"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
+      PRODUTOS: { name: this.lex.translate("Produtos"), permition: 'MOD_PENT', route: ['gestao', 'produto'], icon: this.entity.getIcon('Projeto') },
       /* Execucao */
       EXECUCAO_PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entregas"), permition: 'MOD_PENT', route: ['execucao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { execucao: true } },
       /* Relatórios */
@@ -222,7 +223,8 @@ export class AppComponent {
         this.menuSchema.PROGRAMAS_GESTAO,
         this.menuSchema.HABILITACOES_PROGRAMA,
         this.menuSchema.PLANOS_ENTREGAS,
-        this.menuSchema.PLANOS_TRABALHOS
+        this.menuSchema.PLANOS_TRABALHOS,
+        this.menuSchema.PRODUTOS,
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Execução"),

@@ -6,5 +6,5 @@ use Illuminate\Http\Request;
 
 interface IValidador
 {
-    public function validar(Request $request);
+    public function validar(Request $request) : array;
 }

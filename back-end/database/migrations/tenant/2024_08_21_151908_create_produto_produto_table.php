@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('produto_base_id');
             $table->uuid('produto_id');
+            $table->softDeletes();
             $table->timestamps();
 
 

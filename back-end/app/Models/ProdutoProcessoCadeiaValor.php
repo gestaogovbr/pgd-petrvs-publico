@@ -3,17 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
-class ProdutoProcessoCadeiaValor extends Model
+use App\Models\ModelBase;
+class ProdutoProcessoCadeiaValor extends ModelBase
 {
     use HasFactory, SoftDeletes;
 
     protected $table = 'produto_processo_cadeia_valor';
 
-    protected $keyType = 'string';
-    public $incrementing = false;
 
     protected $fillable = [
         'produto_id',

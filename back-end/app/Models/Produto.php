@@ -3,19 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Validation\Rules\Enum;
+use App\Models\ModelBase;
 
-class Produto extends Model
+class Produto  extends ModelBase
 {
     use HasFactory, SoftDeletes;
 
     protected $table = 'produtos';
-
-    protected $keyType = 'string';
-
-    public $incrementing = false;
+    
+    public $fillable_changes = ['produtoProcessoCadeiaValor', 'produtoProduto'];
 
     public $cascadeDeletes = ['produtoProcessoCadeiaValor'];
 
@@ -45,21 +43,15 @@ class Produto extends Model
         'deleted_at',
     ];
 
-    
 
-    public function produtosRelacionados()
+    public function produtoProduto()
     {
-        return $this->belongsToMany(Produto::class, 'produto_produto', 'produto_base_id', 'produto_id');
+        return $this->hasMany(ProdutoProduto::class, 'produto_base_id');
     }
 
     public function produtoProcessoCadeiaValor()
     {
         return $this->hasMany(ProdutoProcessoCadeiaValor::class, 'produto_id');
-    }
-
-    public function getTipoAttribute($value)
-    {
-        return ucfirst($value);
     }
 
     public function setTipoAttribute($value)

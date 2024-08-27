@@ -1,0 +1,32 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()">
+  <div class="row">
+    <div class="row">
+      <input-text [size]="6" label="Nome do produto" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250 required labelInfo="Nome formal do produto ou serviço. Ex: Programa de Gestão e Desempenho"></input-text>
+      <input-text [size]="6" label="Sigla/Nome fantasia" icon="bi bi-textarea-t" controlName="nome_fantasia" [control]="form!.controls.nome_fantasia" [attr.maxlength]=250 labelInfo="Nome informal do produto ou serviço. Ex: PGD"></input-text>
+    </div>
+    <div class="row">
+      <input-select [size]="4" label="Tipo" icon="bi bi-arrow-up-right-circle" controlName="tipo" [items]="lookup.TIPO_PRODUTO" required></input-select>
+      <input-text [size]="8" label="URL" icon="bi bi-textarea-t" controlName="url" [control]="form!.controls.url" [attr.maxlength]=250 labelInfo="Página oficial do produto ou serviço"></input-text>
+    </div>
+    <div class="row">
+      <input-text [control]="form!.controls.descricao"  label="Descrição" [attr.maxlength]=250 required></input-text>
+    </div>
+  </div>
+  <separator title="Processos da cadeia de valor">
+    <div>
+      <produto-list-processo #processos noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-processo>
+    </div>
+  </separator>
+
+
+  <separator title="Relação com outros produtos">
+    <div>
+      <produto-list-produto #produtos noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-produto>
+    </div>
+  </separator>
+
+
+</editable-form>
+
+
+
