@@ -82,7 +82,8 @@ use App\Http\Controllers\QuestionarioPreenchimentoController;
 use App\Http\Controllers\QuestionarioPerguntaController;
 use App\Http\Controllers\QuestionarioPerguntaRespostaController;
 use App\Http\Controllers\PgdController;
-use App\Http\Controllers\JobAgendadoController;
+use App\Http\Controllers\ProdutoController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -92,21 +93,6 @@ use App\Http\Controllers\JobAgendadoController;
 | com nome-composto separados por -
 */
 
-function defaultRoutes($controllerClass, $capacidades = [])
-{
-  Route::post('search-text', [$controllerClass, 'searchText']);
-  Route::post('search-key', [$controllerClass, 'searchKey']);
-  Route::post('store', [$controllerClass, 'store']);
-  Route::post('update', [$controllerClass, 'update']);
-  Route::post('update-json', [$controllerClass, 'updateJson']);
-  Route::post('destroy', [$controllerClass, 'destroy']);
-  Route::post('get-by-id', [$controllerClass, 'getById']);
-  Route::post('get-all-ids', [$controllerClass, 'getAllIds']);
-  Route::post('query', [$controllerClass, 'query']);
-  Route::post('upload', [$controllerClass, 'upload']);
-  Route::post('download-url', [$controllerClass, 'downloadUrl']);
-  Route::post('delete-file', [$controllerClass, 'deleteFile']);
-}
 $actions = config('petrvs')['actions']['api'];
 
 /* Testes */
@@ -462,4 +448,18 @@ Route::middleware(['auth:sanctum'])->prefix('Reacao')->group(function () {
 
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntregaProgresso')->group(function () {
   defaultRoutes(PlanoEntregaEntregaProgressoController::class);
+});
+
+
+// Route::middleware(['auth:sanctum'])->prefix('produto')->group(function () {
+//   defaultRoutes(ProdutoController::class);
+// });
+Route::prefix('produto')->group(function () {
+  // Rotas sem autenticação
+  Route::post('store', [ProdutoController::class, 'store']);
+
+  // Rotas com autenticação
+  // Route::middleware(['auth:sanctum'])->group(function () {
+  //     defaultRoutes(ProdutoController::class);
+  // });
 });

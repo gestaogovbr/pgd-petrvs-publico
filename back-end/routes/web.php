@@ -27,4 +27,4 @@ Route::get('environment-config', [PetrvsController::class, 'environmentConfig'])
         VerifyCsrfToken::class,
         SubstituteBindings::class
     ]);*/
-Route::middleware(['signed.relative'])->get('/download/{tenant}/{file}', [DownloadController::class, 'download'])->name('download')->where('file', '.*');
+// Route::middleware(['signed.relative'])->get('/download/{tenant}/{file}', [DownloadController::class, 'download'])->name('download')->where('file', '.*');
