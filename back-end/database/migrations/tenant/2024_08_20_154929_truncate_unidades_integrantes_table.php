@@ -12,7 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
+
         DB::table('unidades_integrantes')->truncate();
+        
+        Schema::enableForeignKeyConstraints();
     }
 
     /**

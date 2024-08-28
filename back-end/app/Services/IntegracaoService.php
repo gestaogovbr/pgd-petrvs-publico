@@ -864,7 +864,11 @@ class IntegracaoService extends ServiceBase
               'chefe.id as id_chefe',
               'substituto.id as id_substituto'
           )
-          ->get();
+          ->get()->map(function($item) {
+            return (array) $item; 
+        })
+        ->toArray();
+
 
         } 
         if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de montagem do array de chefias!.....");
