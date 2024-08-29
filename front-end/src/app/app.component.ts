@@ -158,6 +158,7 @@ export class AppComponent {
       PORTIFOLIOS: { name: this.lex.translate("Portifólios"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
       PROJETOS: { name: this.lex.translate("Projetos"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
       PRODUTOS: { name: this.lex.translate("Produtos"), permition: 'MOD_PENT', route: ['gestao', 'produto'], icon: this.entity.getIcon('Projeto') },
+      CATALOGOS: { name: this.lex.translate("Catalogos de Produtos e Serviços"), permition: 'MOD_PROD_CAT', route: ['gestao', 'catalogo'], icon: this.entity.getIcon('Catalogo') },
       /* Execucao */
       EXECUCAO_PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entregas"), permition: 'MOD_PENT', route: ['execucao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { execucao: true } },
       /* Relatórios */
@@ -225,6 +226,7 @@ export class AppComponent {
         this.menuSchema.PLANOS_ENTREGAS,
         this.menuSchema.PLANOS_TRABALHOS,
         this.menuSchema.PRODUTOS,
+        this.menuSchema.CATALOGOS,
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Execução"),

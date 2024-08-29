@@ -47,7 +47,7 @@ class Catalogo extends Model
 
     public function curadorResponsavel()
     {
-        return $this->belongsTo(User::class, 'curador_responsavel_id');
+        return $this->belongsTo(Usuario::class, 'curador_responsavel_id');
     }
 
 
