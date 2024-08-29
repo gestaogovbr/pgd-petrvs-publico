@@ -4,6 +4,8 @@
       <input-text [size]="4" label="E-mail" controlName="email" [attr.maxlength]=250 required></input-text>
       <input-text [size]="3" label="Senha" controlName="password" required password></input-text>
 
+      <input-select [size]="4" label="Nível" controlName="nivel" [items]="lookup.NIVEL_USUARIO_PAINEL" required></input-select>
+
       <div class="col-md-12 my-3">
         <p-multiSelect [options]="items" display="chip" [(ngModel)]="itemsSelecionados" [showClear]="true" optionValue="key" optionLabel="value" placeholder="Selecione os tenants"></p-multiSelect>
       </div>

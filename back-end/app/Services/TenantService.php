@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Log;
 class TenantService extends ServiceBase
 {
 
+
   /**
    * Store a newly created resource in storage.
    *
