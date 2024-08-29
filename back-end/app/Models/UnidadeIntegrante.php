@@ -41,6 +41,10 @@ class UnidadeIntegrante extends ModelBase //Pivot //ModelBase
   {
     return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'GESTOR_DELEGADO');
   }
+  public function curador()
+  {
+    return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'CURADOR');
+  }
   public function colaborador()
   {
     return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'COLABORADOR');

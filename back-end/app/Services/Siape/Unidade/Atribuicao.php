@@ -45,10 +45,31 @@ trait Atribuicao
             case EnumAtribuicao::LOTADO->value:
                 $this->processaLotado($unidadeDestino, $usuario, $integranteNovoOuExistente);
                 break;
+            case EnumAtribuicao::CURADOR->value:
+                $this->processaCurador($unidadeDestino, $usuario, $integranteNovoOuExistente);
+                break;
             default:
                 throw new NotFoundException("Atribuição não encontrada!");
         }
         return $this->alteracoes;
+    }
+
+    private function processaCurador(Unidade $unidadeDestino, Usuario $usuario, UnidadeIntegrante $integranteNovoOuExistente)
+    {
+         /**
+         * @var UnidadeIntegrante|null[] $curadores
+         */
+        $curadores = $usuario->curadores;
+        foreach ($curadores as $curador) {
+            if ($curador->unidade_id != $unidadeDestino->id) continue;
+            if ($curador->usuario_id == $usuario->id) {
+                $this->alteracoes = ['info' => sprintf('O servidor já é curador da unidade!', $usuario->id, $unidadeDestino->id)];
+                return;
+            }
+        }
+
+        //FIXME não foram visto regras para curador.
+        $this->lotaServidor(EnumAtribuicao::CURADOR, $integranteNovoOuExistente);
     }
 
     private function processaColaborador(Unidade $unidadeDestino, Usuario $usuario, UnidadeIntegrante $integranteNovoOuExistente)
@@ -62,14 +83,11 @@ trait Atribuicao
             if ($colaboracao->unidade_id != $unidadeDestino->id) continue;
             if ($colaboracao->usuario_id == $usuario->id) {
                 $this->alteracoes = ['info' => sprintf('O servidor já é colaborador da unidade!', $usuario->id, $unidadeDestino->id)];
-                // Log::channel('siape')->info('O servidor já é colaborador da unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
                 return;
             }
         }
 
-
         $this->alteracoes = ['lotacao' => sprintf('Atribuindo Colaborador ao servidor %s na Unidade %s', $usuario->id, $unidadeDestino->id)];
-        //FIXME não foram visto regras para gestor subsitituto.
         $this->lotaServidor(EnumAtribuicao::COLABORADOR, $integranteNovoOuExistente);
     }
 
@@ -85,11 +103,9 @@ trait Atribuicao
 
             if (!empty($integranteNovoOuExistente->gestorSubstituto) && $lotacao->gestorSubstituto->id == $integranteNovoOuExistente->gestorSubstituto->id) {
                 $this->alteracoes = ['info' => sprintf('O servidor já é gestor substituto da unidade!', $usuario->id, $unidadeDestino->id)];
-                // Log::channel('siape')->info('O servidor já é gestor substituto da unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
                 return;
             }
         }
-        //FIXME não foram visto regras para gestor subsitituto.
         $this->lotaServidor(EnumAtribuicao::GESTOR_SUBSTITUTO, $integranteNovoOuExistente);
     }
 
@@ -105,11 +121,9 @@ trait Atribuicao
 
             if (!empty($integranteNovoOuExistente->gestorDelegado) && $lotacao->gestorDelegado->id == $integranteNovoOuExistente->gestorDelegado->id) {
                 $this->alteracoes = ['info' => sprintf('O servidor já é gestor delegado da unidade!', $usuario->id, $unidadeDestino->id)];
-                // Log::channel('siape')->info('O servidor já é gestor delegado da unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
                 return;
             }
         }
-        //FIXME não foram visto regras para gestor delegado.
         $this->lotaServidor(EnumAtribuicao::GESTOR_DELEGADO, $integranteNovoOuExistente);
     }
 
@@ -117,17 +131,14 @@ trait Atribuicao
     {
         if (!empty($this->getUnidadeAtualDoUsuario($usuario)) && $this->getUnidadeAtualDoUsuario($usuario)->id == $unidadeDestino->id) {
             $this->alteracoes = ['info' => sprintf('O servidor  %s já está lotado nessa unidade %s:', $usuario->id, $unidadeDestino->id)];
-            // Log::channel('siape')->info('O servidor já está lotado nessa unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
             return;
         }
         
         if ($this->usuarioTemPlanodeTrabalhoAtivo($usuario, $this->getUnidadeAtualDoUsuario($usuario))) {
             $this->alteracoes = ['lotacao' => sprintf('O servidor %s já possui um plano de trabalho ativo nessa unidade %s, alterando a lotação para COLABORADOR:', $usuario->id, $unidadeDestino->id)];
-            // Log::channel('siape')->info('O servidor já possui um plano de trabalho ativo nessa unidade!: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
             $this->processaColaborador($unidadeDestino, $usuario,  $usuario->lotacao);
         }
         $this->removeLotacao($usuario);
-        // Log::channel('siape')->info('Lotando servidor na unidade: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
         $this->alteracoes = ['lotacao' => sprintf('Lotando o servidor %s na Unidade %s', $usuario->id, $unidadeDestino->id)];
         $this->lotaServidor(EnumAtribuicao::LOTADO, $integranteNovoOuExistente);
     }
@@ -136,19 +147,16 @@ trait Atribuicao
     {
         if (!empty($this->getGestorAtualDaUnidade($unidadeDestino)) && $this->getGestorAtualDaUnidade($unidadeDestino)->id != $usuario->id) {
             $this->alteracoes = ['removido' => sprintf('Removendo o Gestor %s da Unidade %s', $usuario->id, $unidadeDestino->id)];
-            // Log::channel('siape')->info('Removendo o Gestor da Unidade : ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
             $this->removeAtualGestorDaUnidade($unidadeDestino);
         }
 
         if (!empty($this->getGestorAtualDaUnidade($unidadeDestino)) && $this->getGestorAtualDaUnidade($unidadeDestino)->id == $usuario->id) {
             $this->alteracoes = ['info' => sprintf('Já é gestor %s da unidade %s', $usuario->id, $unidadeDestino->id)];
-            // Log::channel('siape')->info('Já é gestor da unidade: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
             return;
         }
 
         if ($this->usuarioEGestorEmOutraUnidade($usuario, $unidadeDestino)) {
             $this->alteracoes = ['removido' => sprintf('Removendo o Gestor %s de outra Unidade %s', $usuario->id, $unidadeDestino->id)];
-            // Log::channel('siape')->info(' Removendo Usuario da Gestão da Unidade : ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
             $this->removeUsuarioDaGestaoAtual($usuario);
         }
 
@@ -157,7 +165,6 @@ trait Atribuicao
         $usuario = Usuario::find($usuario->id);
         $this->processaLotado($unidadeDestino, $usuario, $integranteNovoOuExistente);
 
-        // Log::channel('siape')->info('Lotando gestor na unidade: ', ['usuario' => $usuario->id, 'unidade' => $unidadeDestino->id]);
         $this->removeTodasAsGestoesDoUsuario($usuario);
         $this->alteracoes = ['lotacao' => sprintf('Lotando o Gestor %s na Unidade %s', $usuario->id, $unidadeDestino->id)];
         $this->lotaServidor(EnumAtribuicao::GESTOR, $integranteNovoOuExistente);
@@ -230,11 +237,9 @@ trait Atribuicao
     private function LimparAtribuicoes(UnidadeIntegrante $integranteNovoOuExistente, bool $removerLotado = false): void
     {
         if ($removerLotado) {
-            // Log::channel('siape')->info(' Limpando todas as atribuições : ', ['usuario' => $integranteNovoOuExistente->toJson()]);
             $integranteNovoOuExistente->deleteCascade();
             return;
         }
-        // Log::channel('siape')->info(' Limpando as atribuições menos a lotado: ', ['usuario' => $integranteNovoOuExistente->toJson()]);
         $integranteNovoOuExistente->atribuicoes()->each(function ($unidadeIntegrantesAtribuicoes) {
             if ($unidadeIntegrantesAtribuicoes->atribuicao != EnumAtribuicao::LOTADO->value)  $unidadeIntegrantesAtribuicoes->delete();
         });
@@ -247,7 +252,6 @@ trait Atribuicao
         if (!$this->validarAtribuicoes($atribuicoes)) {
             return;
         }
-        // Log::channel('siape')->info('Decidindo a lotação de gestor inválida: ', ['usuario' => $integranteNovoOuExistente->toJson()]);
         $this->LimparAtribuicoes($integranteNovoOuExistente);
         $novasAtribuicoes = [];
         if (in_array(EnumAtribuicao::LOTADO->value, $atribuicoes)) {
