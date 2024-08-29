@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        DB::table('unidades_integrantes')->truncate();
+        DB::table('integracao_unidades')->truncate();
         
         Schema::enableForeignKeyConstraints();
     }

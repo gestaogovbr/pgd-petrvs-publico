@@ -883,6 +883,7 @@ class IntegracaoService extends ServiceBase
         );
         $integracaoChefia->processar();
         $messagensRetorno = $integracaoChefia->getMessage();
+        Log::info("Mensagens de retorno da atualização de chefias: ", $messagensRetorno);
 
         DB::commit();
         $this->result["gestores"]['Resultado'] = 'Sucesso';
