@@ -103,4 +103,26 @@ export class CatalogoListComponent extends PageListBase<Catalogo, CatalogoDaoSer
 		}
 	}
 
+  public filterWhere = (filter: FormGroup) => {
+		let result: any[] = [];
+		let form: any = filter.value;
+
+    if(form.nome?.length) {
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
+    }
+		if (form.data_inicio) {
+			result.push(["data_inicio", ">=", form.data_inicio]);
+    }
+    if (form.data_fim) {
+			result.push(["data_fim", "<=", form.data_fim]);
+		}
+		if (form.curador_responsavel_id) {
+      result.push(["curador_responsavel_id", "==", form.curador_responsavel_id]);
+    }
+		if (form.unidade_id?.length) {
+			result.push(["unidade_id", "==", form.unidade_id]);
+    }
+		return result;
+	};
+
 }
