@@ -10,8 +10,12 @@ use Throwable;
 
 class CatalogoController extends ControllerBase {
 
-    public function __construct(private IValidador $validator) {
+    private array $validators;
+
+    public function __construct(IValidador ...$validator)
+    {
         parent::__construct();
+        $this->validators = $validator;
     }
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
@@ -20,7 +24,9 @@ class CatalogoController extends ControllerBase {
 
     public function store(Request $request) {
         try {
-            $this->validator->validar($request);
+            foreach ($this->validators as $validator) {
+                $validator->validar($request);
+            }
             return parent::store($request);
         } catch (Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 500);
