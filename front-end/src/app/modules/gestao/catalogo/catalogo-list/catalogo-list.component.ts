@@ -33,6 +33,7 @@ export class CatalogoListComponent extends PageListBase<Catalogo, CatalogoDaoSer
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.title = this.lex.translate("Catalogos");
     this.filter = this.fh.FormBuilder({
+      agrupar: {default: true},
       nome: {default: ""},
       curador_responsavel_id: {default: ""},
       unidade_id: {default: ""},
@@ -43,6 +44,7 @@ export class CatalogoListComponent extends PageListBase<Catalogo, CatalogoDaoSer
       "unidade",
       "curadorResponsavel"
     ];
+    this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
     this.BOTAO_DETALHES = {
 			label: "Detalhes",
 			icon: "bi bi-eye",
@@ -87,5 +89,18 @@ export class CatalogoListComponent extends PageListBase<Catalogo, CatalogoDaoSer
     result.push(this.BOTAO_CANCELAR);
     return result;
   }
+
+  public onAgruparChange(event: Event) {
+		const agrupar = this.filter!.controls.agrupar.value;
+		if (
+			(agrupar && !this.groupBy?.length) ||
+			(!agrupar && this.groupBy?.length)
+		) {
+			this.groupBy = agrupar
+				? [{field: "unidade.sigla", label: "Unidade"}]
+				: [];
+			this.grid!.reloadFilter();
+		}
+	}
 
 }

@@ -2,7 +2,9 @@
     [selectable]="selectable" (select)="onSelect($event)"
     [hasAdd]="true"
     [hasEdit]="true">
-    <toolbar *ngIf="!selectable"></toolbar>
+    <toolbar *ngIf="!selectable">
+        <input-switch [size]="4" labelPosition="left" label="Agrupar por unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+    </toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_PROD_CAT_EXCL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <div class="col-md-4">
