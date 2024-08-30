@@ -453,7 +453,6 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntregaProgresso')->gro
 Route::middleware(['auth:sanctum'])->prefix('Produto')->group(function () {
   defaultRoutes(ProdutoController::class);
 });
-
-Route::prefix('catalogo')->group(function () {
+Route::middleware(['auth:sanctum'])->prefix('Catalogo')->group(function () {
     defaultRoutes(CatalogoController::class);
 });
