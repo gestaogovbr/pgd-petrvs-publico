@@ -33,7 +33,7 @@ class TenantConfigurationsService
     {
         # Pega os dados salvos no Panel
         $settings = json_decode($tenant['tenant'], true);
-        Log::info("Settings: " . json_encode($settings));
+        // Log::info("Settings: " . json_encode($settings));
 
         # Obtém a URL do aplicativo do arquivo de configuração
         $appUrl = config('app.url');

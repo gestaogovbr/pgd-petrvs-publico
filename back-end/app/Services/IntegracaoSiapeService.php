@@ -8,6 +8,7 @@ use App\Exceptions\LogError;
 use App\Exceptions\RequestConectaGovException;
 use App\Services\Siape\Conexao;
 use DateTime;
+use Exception;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -178,6 +179,7 @@ class IntegracaoSiapeService extends ServiceBase
               empty($uorg_iu->data_modificacao) ||
               $data_modificacao_siape > $this->UtilService->asTimestamp($uorg_iu->data_modificacao)
             ) {
+             try {
               $uorgWsdl = $this->siape->dadosUorg(
                 $this->siapeSiglaSistema,
                 $this->siapeNomeSistema,
@@ -186,6 +188,12 @@ class IntegracaoSiapeService extends ServiceBase
                 $this->siapeCodOrgao,
                 $value['codigo']
               );
+
+             } catch (Exception $e) {
+              Log::error('ISiape: erro ao tentar recuperar dados da UORG ' . $value['codigo'] . '.', $e->getMessage());
+              continue;
+             }
+
 
               if (!empty($this->UtilService->valueOrNull($uorgWsdl, "nomeMunicipio"))) {
                 $consulta_sql = "SELECT * FROM cidades WHERE nome LIKE '" . $uorgWsdl['nomeMunicipio'] . "'";
@@ -231,7 +239,7 @@ class IntegracaoSiapeService extends ServiceBase
                 'data_modificacao' => $this->UtilService->valueOrNull($value, "dataUltimaTransacao") ?: "",
                 'und_nu_adicional' => $this->UtilService->valueOrNull($uorgWsdl, "und_nu_adicional") ?: "",
                 'cnpjupag' => $this->UtilService->valueOrNull($uorgWsdl, "cnpjUpag") ?: "",
-                'cpf_titular_autoridade_uorg' => $this->UtilService->valueOrNull($uorgWsdl, "cpfSubstitutoAutoridadeUorg") ?: "",
+                'cpf_titular_autoridade_uorg' => $this->UtilService->valueOrNull($uorgWsdl, "cpfTitularAutoridadeUorg") ?: "",
                 'cpf_substituto_autoridade_uorg' => $this->UtilService->valueOrNull($uorgWsdl, "cpfSubstitutoAutoridadeUorg") ?: "",
               ];
               array_push($uorgsPetrvs['uorg'], $inserir_uorg);
