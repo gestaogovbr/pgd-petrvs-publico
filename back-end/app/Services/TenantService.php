@@ -60,7 +60,7 @@ class TenantService extends ServiceBase
 
     /* Executa migrations e seeds somente se for inclusão */
     if ($action == ServiceBase::ACTION_INSERT)
-      $this->acoesDeploy($dataOrEntity->id);
+      $this->acoesDeploy($dataOrEntity);
 
     if ($tenant) {
       $tenant->run(function () use ($dataOrEntity) {
@@ -245,12 +245,27 @@ class TenantService extends ServiceBase
   }
 
 
-  private function acoesDeploy($id = null)
+  private function acoesDeploy($dataOrEntity)
   {
     try {
-      Artisan::call('tenants:migrate --tenants='.$id);
-      Artisan::call('tenants:run db:seed --option="class=DeployPRODSeeder" --tenants='.$id);
-      logInfo();
+        Artisan::call('tenants:migrate --tenants='.$dataOrEntity->id);
+
+        $cidade_id = Cidade::where('codigo_ibge', $dataOrEntity->codigo_cidade)->first()->id;
+        $entidade = Entidade::first() ?? new Entidade([
+            'sigla' => $dataOrEntity->id,
+            'nome' => $dataOrEntity->nome_entidade,
+            'abrangencia' => $dataOrEntity->abrangencia,
+            'layout_formulario_demanda' => 'COMPLETO',
+            'campos_ocultos_demanda' => [],
+            'nomenclatura' => [],
+            'cidade_id' => $cidade_id,
+        ]);
+        if (!$entidade->exists) {
+            $entidade->save();
+        }
+
+        Artisan::call('tenants:run db:seed --option="class=DeployPRODSeeder" --tenants='.$dataOrEntity->id);
+        logInfo();
     } catch (\Exception $e) {
       // Handle any exceptions that may occur during command execution
       Log::error('Error executing commands: ' . $e->getMessage());
