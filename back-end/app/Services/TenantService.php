@@ -168,6 +168,23 @@ class TenantService extends ServiceBase
     return Artisan::output();
   }
 
+  public function perfil($id)
+  {
+    Artisan::call('tenants:run db:seed --option="class=PerfilSeeder"' . (empty($id) ? '' : ' --tenants=' . $id));
+    return Artisan::output();
+  }
+  public function tipocapacidade($id)
+  {
+    Artisan::call('tenants:run db:seed --option="class=TipoCapacidadeSeeder"' . (empty($id) ? '' : ' --tenants=' . $id));
+    return Artisan::output();
+  }
+
+  public function capacidade($id)
+  {
+    Artisan::call('tenants:run db:seed --option="class=CapacidadeSeeder"' . (empty($id) ? '' : ' --tenants=' . $id));
+    return Artisan::output();
+  }
+
   public function tipoCapacidadeSeeder($id)
   {
     Artisan::call('tenants:run db:seed --option="class=AtualizacaoSeeder"' . (empty($id) ? '' : ' --tenants=' . $id));
@@ -249,7 +266,10 @@ class TenantService extends ServiceBase
   {
     try {
         Artisan::call('tenants:migrate --tenants='.$dataOrEntity->id);
-
+        $this->cidade($dataOrEntity->id);
+        $this->perfil($dataOrEntity->id);
+        $this->tipocapacidade($dataOrEntity->id);
+        $this->capacidade($dataOrEntity->id);
         $cidade_id = Cidade::where('codigo_ibge', $dataOrEntity->codigo_cidade)->first()->id;
         $entidade = Entidade::first() ?? new Entidade([
             'sigla' => $dataOrEntity->id,
@@ -263,7 +283,55 @@ class TenantService extends ServiceBase
         if (!$entidade->exists) {
             $entidade->save();
         }
+        $NivelAcessoService = new NivelAcessoService();
+        $usuario = new Usuario([
+            'email' => $dataOrEntity->email,
+            'nome' => $dataOrEntity->nome_usuario,
+            'cpf' => $dataOrEntity->cpf,
+            'apelido' => $dataOrEntity->apelido,
+            'perfil_id' => $NivelAcessoService->getPerfilDesenvolvedor()->id,
+            'data_inicio' => Carbon::now()
+        ]);
+        $usuario->save();
 
+        $unidade = array(
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "codigo" => "1",
+            "sigla" => $dataOrEntity->id,
+            "nome" => $dataOrEntity->nome_entidade,
+            "instituidora" => 1,
+            "path" => NULL,
+            "texto_complementar_plano" => NULL,
+            "atividades_arquivamento_automatico" => 0,
+            "atividades_avaliacao_automatico" => 0,
+            "planos_prazo_comparecimento" => 10,
+            "planos_tipo_prazo_comparecimento" => "DIAS",
+            "data_inativacao" => NULL,
+            "distribuicao_forma_contagem_prazos" => "DIAS_UTEIS",
+            "entrega_forma_contagem_prazos" => "HORAS_UTEIS",
+            "autoedicao_subordinadas" => 1,
+            "etiquetas" => NULL,
+            "checklist" => NULL,
+            "notificacoes" => NULL,
+            "expediente" => NULL,
+            "cidade_id" => $cidade_id,
+            "unidade_pai_id" => NULL,
+            "entidade_id" => $entidade->id
+        );
+        $unidade= new Unidade($unidade);
+        $unidade->save();
+
+        $integrante = UnidadeIntegrante::firstOrCreate([
+            'unidade_id' => $unidade->id,
+            'usuario_id' => $usuario->id
+        ]);
+
+        UnidadeIntegranteAtribuicao::firstOrCreate([
+            'atribuicao' => 'LOTADO',
+            'unidade_integrante_id' => $integrante->id
+        ]);
         Artisan::call('tenants:run db:seed --option="class=DeployPRODSeeder" --tenants='.$dataOrEntity->id);
         logInfo();
     } catch (\Exception $e) {
