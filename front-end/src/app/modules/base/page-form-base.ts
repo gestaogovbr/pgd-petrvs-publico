@@ -35,7 +35,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
   ngOnInit() {
     super.ngOnInit();
     const segment = (this.url ? this.url[this.url.length-1]?.path : "") || "";  
-    this.action = ["edit", "consult"].includes(segment) ? segment : "new";
+    this.action = ["edit", "consult", "clone"].includes(segment) ? segment : "new";
     this.id = this.action != "new" ? this.urlParams!.get("id")! : undefined;
   }
 
@@ -57,7 +57,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
     return !controls.find(x => !this.form!.controls[x].value?.length);
   }
 
-  public abstract loadData(entity: M, form: FormGroup): Promise<void> | void;
+  public abstract loadData(entity: M, form: FormGroup, action?: string): Promise<void> | void;
 
   public abstract initializeData(form: FormGroup): Promise<void> | void;
 
@@ -67,10 +67,10 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
     (async () => {
       this.loading = true;
       try {
-        if (["edit", "consult"].includes(this.action)) {
+        if (["edit", "consult", "clone"].includes(this.action)) {
           const entity = await this.dao!.getById(this.id!, this.join);
           this.entity = entity!;
-          await this.loadData(this.entity, this.form!);
+          await this.loadData(this.entity, this.form!, this.action);
         } else { /* if (this.action == "new") */
           await this.initializeData(this.form!);
         }
