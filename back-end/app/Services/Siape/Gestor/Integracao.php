@@ -74,9 +74,8 @@ class Integracao implements InterfaceIntegracao
         $this->logSiape("Salvando integrantes", $vinculo, Tipo::INFO);
         $this->unidadeIntegranteService->salvarIntegrantes($vinculo, false);
 
-        $this->alteraPerfilAdministradorNegocial($dado['id_chefe'], $usuarioChefia, $this->config["perfilAdministradorNegocial"]);
+        $this->alteraPerfilAdministradorNegocial($dado['id_chefe'], $usuarioChefia);
         array_push($this->message['sucesso'], $dado['id_unidade']);
-
     }
 
     private function processaSubstituto(array $dado)
@@ -96,7 +95,7 @@ class Integracao implements InterfaceIntegracao
         $this->logSiape("Salvando integrantes", $vinculoSubstituto, Tipo::INFO);
         $this->unidadeIntegranteService->salvarIntegrantes($vinculoSubstituto, false);
 
-        $this->alteraPerfilAdministradorNegocial($dado['id_substituto'], $usuarioSubstituto, $this->config["perfilAdministradorNegocial"]);
+        $this->alteraPerfilAdministradorNegocial($dado['id_substituto'], $usuarioSubstituto);
         array_push($this->message['sucesso'], $dado['id_unidade']);
     }
 
@@ -134,7 +133,7 @@ class Integracao implements InterfaceIntegracao
         return $chefeAtribuicoes;
     }
 
-    private function alteraPerfilAdministradorNegocial(string $idUsuario, Usuario $queryChefe, array $perfilAdministradorNegocial): void
+    private function alteraPerfilAdministradorNegocial(string $idUsuario, Usuario $queryChefe): void
     {
         $usuarioChefe = $this->config["perfilChefe"];
         $perfilChefe = $this->nivelAcessoService->getPerfilChefia();
