@@ -280,7 +280,7 @@ class Conexao
     private function prepareResponseXml(string $response) : SimpleXMLElement
     {
         $response = trim($response); 
-        $response = str_replace(['&lt;', '&gt;', '&quot;', '&amp;', '&apos;'], ['<', '>', '"', '&', "'"], $response); // Converte entidades HTML de volta ao original
+        $response = str_replace(['&lt;', '&gt;', '&quot;', '&amp;', '&apos;'], ['<', '>', '"', '&', "'"], $response); 
         libxml_use_internal_errors(true); 
         $response = <<<XML
         $response

@@ -270,7 +270,7 @@ class IntegracaoService extends ServiceBase
 
     $this->sincronizacao($inputs);
     $this->logSiape("Sincronização de dados do SIAPE finalizada", [], Tipo::INFO);
-
+    
     return $this->store([
       'entidade_id' => $inputs['entidade'],
       'atualizar_unidades' => $inputs['unidades'] == "false" ? false : true,
@@ -888,9 +888,9 @@ class IntegracaoService extends ServiceBase
         DB::commit();
         $this->result["gestores"]['Resultado'] = 'Sucesso';
         $this->result["gestores"]['Observações'] = [
-          'Sucesso' => count($messagensRetorno['sucesso']) . ' chefias foram atualizadas com sucesso!',
-          'Erro' => count($messagensRetorno['erro']) . ' chefias não puderam ser atualizadas!',
-          'Aviso' => count($messagensRetorno['vazio']) . ' chefias vazias ou não encontradas!',
+           'Sucesso: '.count($messagensRetorno['sucesso']) . ' chefias foram atualizadas com sucesso!',
+          'Erro: '.count($messagensRetorno['erro']) . ' chefias não puderam ser atualizadas!',
+          'Aviso: '.count($messagensRetorno['vazio']) . ' chefias vazias ou não encontradas!',
         ];
         
       } catch (Throwable $e) {
