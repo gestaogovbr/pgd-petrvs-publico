@@ -9,7 +9,7 @@
         <li class="nav-item">
           <a class="nav-link" [routerLink]="['/panel/tenants']" data-bs-toggle="collapse" data-bs-target="#navbarNav">Tenants</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="currentUser && currentUser.nivel == 1">
           <a class="nav-link" [routerLink]="['/panel/admins']" data-bs-toggle="collapse" data-bs-target="#navbarNav">Usuários do painel</a>
         </li>
       </ul>

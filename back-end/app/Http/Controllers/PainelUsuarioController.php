@@ -44,7 +44,9 @@ class PainelUsuarioController extends Controller
         if ($user) {
         return response()->json([
             'nome' => $user->nome,
-            'email' => $user->email
+            'email' => $user->email,
+            'nivel' => $user->nivel,
+            'tenants' => $user->tenants->pluck('id')->toArray()
         ]);
         } else {
         // Usuário não autenticado, retorna uma resposta de erro

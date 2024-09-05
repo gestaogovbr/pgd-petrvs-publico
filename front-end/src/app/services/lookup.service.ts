@@ -884,6 +884,12 @@ export class LookupService implements IIndexable {
     { 'key': 'DECRESCIMO', 'value': 'Subtrai' }
   ];
 
+  public NIVEL_USUARIO_PAINEL: LookupItem[] = [
+    { 'key': 1, 'value': 'Administrador geral' },
+    { 'key': 2, 'value': 'Configurador' }
+  ];
+
+
 
 
   public getLookup(itens: LookupItem[], key: any) {
