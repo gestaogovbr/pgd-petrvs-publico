@@ -45,6 +45,7 @@ export class Entidade extends Base implements HasNotificacao, HasRelatorio {
     public gestor_substituto_id: string | null = null; // Usuário gestor substituto da unidade
     public cidade_id: string | null = null;
     public tipo_modalidade_id: string | null = null; //Tipo de modalidade utilizada ao criar plano de trabalho
+    public email_responsavel_siape: string = ""; // Email do responsável pelas alterações no SIAPE
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }
