@@ -132,7 +132,7 @@ export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService>
   private async LoadClassJobs() {
     try {
       const result = await this.jobAgendadoDao.getClassJobs();
-      console.log(result);
+
       if (result) {
         this.jobTypes = Object.keys(result.data).map(key => ({
           value: key,
