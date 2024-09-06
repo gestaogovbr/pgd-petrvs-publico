@@ -16,6 +16,7 @@ class PlanoTrabalhoDataSource extends DataSource
         $planoTrabalho = PlanoTrabalho::with([
             'programa',
             'programa.unidadeAutorizadora',
+            'unidade',
             'usuario',
             'entregas',
             'entregas.planoEntregaEntrega',
