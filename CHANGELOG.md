@@ -3,11 +3,17 @@
 - Campo para informar a unidade autorizadora no regramento.
 - Opção para clonar Planos de Trabalho e Planos de Entrega.
 - Adicionado nível de "Configurador" do tenant
+- Adiciona Auditoria do Sistema
+- Adição de campos para informar usuário e senha da API PGD nos Tenants
 ### Corrigido
 - Correção para refletir afastamentos nos registros de execução.
 - Correção para incluir Planos de Trabalho no mesmo dia de início do regramento.
+- Correção na regra para bloquear Planos de Trabalho com datas sobrepostas
 ### Removido
 - Arquivos de documentação. Documentação oficial será no site do PGD
-### Modificado 
+### Modificado
+- Remoção do caracter '#' dos endereços (URL) do sistema
 ### Segurança 
 ### Obsoleto 
+### Não Publicado
+- Exportação de dados para o Programa de Gestão - PGD
