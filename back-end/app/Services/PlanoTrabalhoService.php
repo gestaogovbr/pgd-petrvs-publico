@@ -139,7 +139,7 @@ class PlanoTrabalhoService extends ServiceBase
       where("id", "!=", UtilService::valueOrNull($data, "id"))->
       first();
     if(!empty($conflito)) {
-      throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho #" . $conflito->numero . " (" . UtilService::getDateFormatted($conflito->data_inicio) . " a " . UtilService::getDateFormatted($conflito->data_fim) . ") possui período conflitante para a mesma unidade/servidor (MOD_PTR_INTSC_DATA).\n[ver RN_PTR_AA]");
+      throw new ServerException("ValidatePlanoTrabalho", "Este participante já possui plano de trabalho cadastrado para o período");
     }
     if ($action == ServiceBase::ACTION_INSERT) {
       /*  
