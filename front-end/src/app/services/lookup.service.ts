@@ -833,6 +833,7 @@ export class LookupService implements IIndexable {
     { key: 'NENHUMA', value: 'Nenhuma' },
     //{ key: 'WSO2', value: 'Siape-PRF' },
     { key: 'SIAPE', value: 'Siape-WS' },
+    { key: 'API', value: 'API' },
   ];
 
   public GOV_BR_ENV: LookupItem[] = [
@@ -882,6 +883,12 @@ export class LookupService implements IIndexable {
     { 'key': 'ACRESCIMO', 'value': 'Adiciona' },
     { 'key': 'DECRESCIMO', 'value': 'Subtrai' }
   ];
+
+  public NIVEL_USUARIO_PAINEL: LookupItem[] = [
+    { 'key': 1, 'value': 'Administrador geral' },
+    { 'key': 2, 'value': 'Configurador' }
+  ];
+
 
 
 

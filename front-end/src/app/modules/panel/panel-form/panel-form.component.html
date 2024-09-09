@@ -90,7 +90,6 @@
             </div>
         </tab>-->
         <tab key="LOGIN" label="Login">
-
             <separator title="Google"></separator>
             <div class="row">
                 <input-text [size]="5" label="Google Client ID" controlName="login_google_client_id" [attr.maxlength]=250></input-text>
@@ -129,9 +128,13 @@
                     <input-text [size]="3" label="Sigla do Sistema" controlName="integracao_siape_sigla" [attr.maxlength]=250></input-text>
                 </div>
                 <div class="row">
+                    <input-text [size]="6" label="Chave ConectaGov" controlName="integracao_siape_conectagov_chave" [attr.maxlength]=250></input-text>
+                    <input-text [size]="6" label="Senha ConectaGov" controlName="integracao_siape_conectagov_senha" [attr.maxlength]=250></input-text>
+                </div>
+                <div class="row">
                     <input-text [size]="4" label="Nome do Sistema" controlName="integracao_siape_nome" [attr.maxlength]=250></input-text>
                     <input-text [size]="4" label="CPF" controlName="integracao_siape_cpf" [attr.maxlength]="15"></input-text>
-                    <input-text [size]="4" label="Senha" controlName="integracao_siape_senha" [attr.maxlength]=250></input-text>
+                    <input-text password [size]="4" label="Senha" controlName="integracao_siape_senha" [attr.maxlength]=250></input-text>
                 </div>
                 <div class="row">
                     <input-text [size]="3" label="Codigo do Órgão" controlName="integracao_siape_codorgao" [attr.maxlength]=250></input-text>
@@ -160,6 +163,10 @@
                     <input-text [size]="6" label="Token USER" controlName="integracao_wso2_token_user"></input-text>
                     <input-text [size]="6" label="Token Password" controlName="integracao_wso2_token_password"></input-text>
                 </div>
+            </div>
+            <div *ngIf="form?.controls!.tipo_integracao.value == 'API'" class="row">
+                <input-text [size]="6" label="Nome de Usuário" controlName="api_username" [attr.maxlength]=250></input-text>
+                <input-text password [size]="6" label="Senha" controlName="api_password" [placeholder]="apiPasswordPlaceholder"></input-text>
             </div>
         </tab>
         <!--<tab key="SEI" label="Módulo SEI">

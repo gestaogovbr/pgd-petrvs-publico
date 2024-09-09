@@ -27,10 +27,15 @@ class JobBase
                 return  false;
             }
 
-            $this->inicializeTenant();
-            $this->loadingTenantConfigurationMiddleware($this->job->tenant_id);
             $jobClass = app($fullClassName);
-            dispatch(new $jobClass($this->job->tenant_id));
+
+            if ($this->job->tenant_id) {
+                $this->inicializeTenant();
+                $this->loadingTenantConfigurationMiddleware($this->job->tenant_id);
+                dispatch(new $jobClass($this->job->tenant_id));
+            } else {
+                dispatch(new $jobClass());
+            }
         } catch (Exception $e) {
             Log::error("Erro ao processar Job: '{$this->job->nome}' - Erro: " . $e->getMessage());
             LogError::newWarn("Erro ao processar Job: '{$this->job->nome}' - Erro: " . $e->getMessage());

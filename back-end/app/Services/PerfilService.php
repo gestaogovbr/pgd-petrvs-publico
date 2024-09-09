@@ -6,6 +6,7 @@ use App\Services\RawWhere;
 use App\Services\ServiceBase;
 use App\Models\TipoCapacidade;
 use App\Models\Perfil;
+use Illuminate\Support\Facades\DB;
 
 class PerfilService extends ServiceBase {
 
@@ -85,6 +86,16 @@ class PerfilService extends ServiceBase {
     public function query($data) {
         $this->differentDev($data);
         return parent::query($data);
+    }
+
+    public function alteraPerfilUsuario(string $idUsuario, string $perfilId) : void
+    {
+        $values = [
+            ':perfil_id' => $perfilId,
+            ':id' => $idUsuario
+        ];
+        $sqlPerfilUpdate = "UPDATE usuarios SET perfil_id = :perfil_id WHERE id = :id";
+        DB::update($sqlPerfilUpdate, $values);
     }
 }
 

@@ -10,6 +10,7 @@ use App\Services\ServiceBase;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\DB;
 use Throwable;
+
 use Carbon\Carbon;
 
 class ProgramaService extends ServiceBase
@@ -43,6 +44,9 @@ class ProgramaService extends ServiceBase
 
     if (!$this->isUniquePeriod($data)) {
       throw new ServerException("ValidatePrograma", "Há outro regramento na mesma unidade instituidora com prazo vigente.");
+    }
+    if ($data['data_inicio'] == $data['data_fim']) {
+      throw new ServerException("ValidatePrograma", "As datas de início e fim do regramento não podem ser iguais.");
     }
   }
 
