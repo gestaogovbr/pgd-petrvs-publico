@@ -10,7 +10,7 @@
 - Correção para incluir Planos de Trabalho no mesmo dia de início do regramento.
 - Correção na regra para bloquear Planos de Trabalho com datas sobrepostas
 - Correção do cadastro do tenant
-- Correção no login da Azure
+- Correção no login da Azure(Microsoft)
 ### Removido
 - Arquivos de documentação. Documentação oficial será no site do PGD
 ### Modificado
