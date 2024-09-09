@@ -9,6 +9,7 @@ import { JobAgendadoComponent } from './panel-job-agendados/panel-job-agendados.
 import { PanelLayoutComponent } from './panel-layout/panel-layout.component';
 import { PanelAdminsListComponent } from './panel-admins-list/panel-admins-list.component';
 import { PanelAdminsFormComponent } from './panel-admins-form/panel-admins-form.component';
+import { PanelAdminGuard } from 'src/app/guards/panel_admin.guard';
 
 const routes: Routes = [
   { path: '', 
@@ -19,12 +20,12 @@ const routes: Routes = [
       { path: 'tenants/:id/edit', component: PanelFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Painel", modal: true } },
       { path: 'tenants/:id/consult', component: PanelFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Painel", modal: true } },
       { path: 'tenants/:id/logs', component: PanelListLogsComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Logs", modal: true } },
-      { path: 'seeder', component: PanelSeederComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Executa Seeder no Tenant", modal: true } },
-      { path: 'job-agendados', component: JobAgendadoComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Job agendados", modal: true } },
-      { path: 'logs2', component: PanelListLogsComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Logs", modal: true } },
-      { path: 'admins', component: PanelAdminsListComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta admins do painel" } },
-      { path: 'admins/new', component: PanelAdminsFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de usuários do painel", modal: true } },
-      { path: 'admins/:id/edit', component: PanelAdminsFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de usuários do painel", modal: true } },
+      { path: 'seeder', component: PanelSeederComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Executa Seeder no Tenant", modal: true }, canActivate: [PanelAdminGuard] },
+      { path: 'job-agendados', component: JobAgendadoComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Job agendados", modal: true }, canActivate: [PanelAdminGuard] },
+      { path: 'logs2', component: PanelListLogsComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Logs", modal: true }, canActivate: [PanelAdminGuard] },
+      { path: 'admins', component: PanelAdminsListComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta admins do painel" }, canActivate: [PanelAdminGuard] },
+      { path: 'admins/new', component: PanelAdminsFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de usuários do painel", modal: true }, canActivate: [PanelAdminGuard] },
+      { path: 'admins/:id/edit', component: PanelAdminsFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de usuários do painel", modal: true }, canActivate: [PanelAdminGuard] },
       { path: '',   redirectTo: 'tenants', pathMatch: 'full' }
     ]
   }

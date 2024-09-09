@@ -44,14 +44,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Auditable;
 class UsuarioConfig
 {
 }
 
-class Usuario extends Authenticatable
+class Usuario extends Authenticatable  implements AuditableContract
 {
-  use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, LogChanges, SoftDeletes;
+  use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, LogChanges, SoftDeletes, Auditable;
 
   protected $table = "usuarios";
 
@@ -185,6 +186,10 @@ class Usuario extends Authenticatable
   {
     return $this->hasMany(DocumentoAssinatura::class);
   }
+  public function ultimaAssinatura()
+  {
+    return $this->hasOne(DocumentoAssinatura::class)->ofMany('data_assinatura', 'max');
+  }
   public function avaliacoes()
   {
     return $this->hasMany(Avaliacao::class);
@@ -241,9 +246,15 @@ class Usuario extends Authenticatable
   {
     return $this->hasMany(PlanoTrabalho::class);
   }
+  public function ultimoPlanoTrabalho() {
+    return $this->hasOne(PlanoTrabalho::class)->latestOfMany();
+  }
   public function participacoesProgramas()
   {
     return $this->hasMany(ProgramaParticipante::class);
+  }
+  public function ultimaParticipacaoPrograma() {
+    return $this->hasOne(ProgramaParticipante::class)->latestOfMany();
   }
   public function integracoes()
   {

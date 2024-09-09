@@ -111,6 +111,7 @@ class NomenclaturaSeeder extends Seeder
       }
     }
     $entidade->nomenclatura = $entidadeNomenclaturas->values()->all();
+    $entidade->sigla = $entidade->sigla??'EO';
     $entidade->save();
   }
 }

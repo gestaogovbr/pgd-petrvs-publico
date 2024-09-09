@@ -32,6 +32,7 @@ import { TemplateDataset, TemplateService } from 'src/app/modules/uteis/template
 import { Template } from 'src/app/models/template.model';
 import { UtilService } from 'src/app/services/util.service';
 import moment from 'moment';
+import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
 
 @Component({
   selector: 'plano-trabalho-form',
@@ -294,7 +295,19 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     }
   }
 
-  public async loadData(entity: PlanoTrabalho, form: FormGroup) {
+  public async loadData(entity: PlanoTrabalho, form: FormGroup, action?: string) {
+
+    if(action == 'clone') {
+      entity.id = "";
+      entity.data_inicio = new Date();
+      entity.data_fim = new Date();
+      entity.entregas = entity.entregas.map((entrega: PlanoTrabalhoEntrega) => {
+        entrega.id = this.documentoDao.generateUuid();
+        entrega._status = "ADD";
+        return entrega as PlanoTrabalhoEntrega;
+      });
+    }
+
     this.planoTrabalho = new PlanoTrabalho(entity);
     await Promise.all([
       this.calendar.loadFeriadosCadastrados(entity.unidade_id),
@@ -305,6 +318,10 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     ]);
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
+    if (action == 'clone') {
+      form.controls.data_inicio.setValue("");
+      form.controls.data_fim.setValue("");
+    }
     /*let documento = entity.documentos.find(x => x.id == entity.documento_id);
     if(documento) this._datasource = documento.datasource;*/
     this.calculaTempos();

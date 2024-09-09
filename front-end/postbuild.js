@@ -52,39 +52,39 @@ if (fs.existsSync(indexHtmlPath)) {
 }
 
 // Documentação
-const origem = path.resolve(__dirname, '../resources/documentacao/');
-const destinoFrontEnd = path.resolve(__dirname, '../front-end/src/assets/documentacao/');
-const destinoBackEnd = path.resolve(__dirname, '../back-end/public/assets/documentacao/');
+// const origem = path.resolve(__dirname, '../resources/documentacao/');
+// const destinoFrontEnd = path.resolve(__dirname, '../front-end/src/assets/documentacao/');
+// const destinoBackEnd = path.resolve(__dirname, '../back-end/public/assets/documentacao/');
 
-copiarDiretorio(origem, destinoFrontEnd);
-copiarDiretorio(origem, destinoBackEnd);
+// copiarDiretorio(origem, destinoFrontEnd);
+// copiarDiretorio(origem, destinoBackEnd);
 
-function copiarDiretorio(origem, destino) {
-  if (!fs.existsSync(origem)) {
-    console.error(`O diretório de origem '${origem}' não existe.`);
-    return;
-  }
-  try {
-    if (!fs.existsSync(destino)) {
-      fs.mkdirSync(destino, { recursive: true });
-    }
-    const arquivosDiretorios = fs.readdirSync(origem);
-    for (const item of arquivosDiretorios) {
-      const origemItem = path.join(origem, item);
-      const destinoItem = path.join(destino, item);
-      const ehDiretorio = fs.statSync(origemItem).isDirectory();
-      if (ehDiretorio) {
-        copiarDiretorio(origemItem, destinoItem);
-      } else {
-        fs.copyFileSync(origemItem, destinoItem);
-        console.log(`Arquivo '${origemItem}' copiado para '${destinoItem}'.`);
-      }
-    }
-    console.log(`Diretório '${origem}' copiado para '${destino}' com sucesso!`);
-  } catch (error) {
-    console.error(`Erro ao copiar '${origem}' para '${destino}': ${error.message}`);
-  }
-}
+// function copiarDiretorio(origem, destino) {
+//   if (!fs.existsSync(origem)) {
+//     console.error(`O diretório de origem '${origem}' não existe.`);
+//     return;
+//   }
+//   try {
+//     if (!fs.existsSync(destino)) {
+//       fs.mkdirSync(destino, { recursive: true });
+//     }
+//     const arquivosDiretorios = fs.readdirSync(origem);
+//     for (const item of arquivosDiretorios) {
+//       const origemItem = path.join(origem, item);
+//       const destinoItem = path.join(destino, item);
+//       const ehDiretorio = fs.statSync(origemItem).isDirectory();
+//       if (ehDiretorio) {
+//         copiarDiretorio(origemItem, destinoItem);
+//       } else {
+//         fs.copyFileSync(origemItem, destinoItem);
+//         console.log(`Arquivo '${origemItem}' copiado para '${destinoItem}'.`);
+//       }
+//     }
+//     console.log(`Diretório '${origem}' copiado para '${destino}' com sucesso!`);
+//   } catch (error) {
+//     console.error(`Erro ao copiar '${origem}' para '${destino}': ${error.message}`);
+//   }
+// }
 
 // Geração do build-info.json
 const buildInfo = {

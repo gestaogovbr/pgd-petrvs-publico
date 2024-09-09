@@ -12,6 +12,7 @@ import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { ProgramaDaoService, ProgramaMetadata } from 'src/app/dao/programa-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
+import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { Programa } from 'src/app/models/programa.model';
 import { Unidade } from 'src/app/models/unidade.model';
@@ -66,8 +67,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.programaMetadata = {
       todosUnidadeExecutora: true,      
       vigentesUnidadeExecutora: false
-    }
-  
+    }  
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -84,7 +84,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     return result;
   }
 
-  public formValidation = (form?: FormGroup) => {
+  public formValidation = (form?: FormGroup) => {    
     const inicio = this.form?.controls.data_inicio.value;
     const fim = this.form?.controls.data_fim.value;
     const programa = this.programa?.selectedEntity as Programa;
@@ -106,13 +106,31 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     return undefined;
   }
 
-  public async loadData(entity: PlanoEntrega, form: FormGroup) {
+  public async loadData(entity: PlanoEntrega, form: FormGroup, action?: string) {
+    
+    if(action == 'clone') {
+      entity.id = "";
+      entity.data_inicio = new Date();
+      entity.data_fim = new Date();
+      entity.entregas = entity.entregas.map((entrega: PlanoEntregaEntrega) => {
+        entrega.id = this.planoEntregaDao.generateUuid();
+        entrega.plano_entrega_id = null;
+        entrega._status = "ADD";
+        entrega.progresso_realizado = 0;
+        return entrega as PlanoEntregaEntrega;
+      });
+    }
+
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
+    if (action == 'clone') {
+      form.controls.data_inicio.setValue("");
+      form.controls.data_fim.setValue("");
+    }
     this.cdRef.detectChanges();
   }
 
-  public async initializeData(form: FormGroup) {
+  public async initializeData(form: FormGroup) {   
     this.entity = new PlanoEntrega();
     this.entity.unidade_id = this.auth.unidade?.id || "";
     this.entity.unidade = this.auth.unidade;
@@ -123,7 +141,6 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       this.entity.programa = ultimo;
       this.entity.programa_id = ultimo.id;
     }
-
     const di = new Date(this.entity.data_inicio).toLocaleDateString();
     const df= this.entity.data_fim ? new Date(this.entity.data_fim).toLocaleDateString() : new Date().toLocaleDateString();
     this.entity.nome = this.auth.unidade!.sigla + " - " + di + " - " + df;
@@ -132,7 +149,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
 
   public async saveData(form: IIndexable): Promise<PlanoEntrega> {
     return new Promise<PlanoEntrega>((resolve, reject) => {
-      let planoEntrega: PlanoEntrega = this.util.fill(new PlanoEntrega(), this.entity!);
+      let planoEntrega: PlanoEntrega = this.util.fill(new PlanoEntrega(), this.entity!);      
       planoEntrega = this.util.fillForm(planoEntrega, this.form!.value);
       planoEntrega.entregas = planoEntrega.entregas?.filter(x => x._status) || [];
       resolve(planoEntrega);
