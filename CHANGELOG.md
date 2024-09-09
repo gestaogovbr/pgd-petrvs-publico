@@ -13,8 +13,11 @@
 - Correção no login da Azure(Microsoft)
 ### Removido
 - Arquivos de documentação. Documentação oficial será no site do PGD
+- Acesso direto ao SIAPE
 ### Modificado
 - Remoção do caracter '#' dos endereços (URL) do sistema
+- Modificação no acesso aos dados do SIAPE, alterando de conexão direta ao SIAPE para o conectaGov, no painel do administrador deverá ser alterado a rota e inserido a chave e senha.
+- Alterado a forma que é definição de chefia e chefia substituta no sistema, se baseando nos campos advindos do SIAPE
 ### Segurança 
 ### Obsoleto 
 ### Não Publicado
