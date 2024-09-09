@@ -300,12 +300,13 @@ class IntegracaoSiapeService extends ServiceBase
               }
             }
         } 
-        catch (RequestConectaGovException $e) {
-          LogError::newError("ISiape: erro de conexão.", $e->getMessage());
-          throw $e;
+        catch (RequestConectaGovException $e) {          
+          Log::error("Erro no conectaGov", [$e->getMessage()]);
+          LogError::newError("Erro no conectaGov", $e->getMessage());
+          continue;
         }
         catch (Throwable $e) {
-          Log::error('ISiape: não existe servidor ativo na UORG ' . $codUorg['codigo_siape'] . '.', $e->getMessage());
+          Log::error('ISiape: não existe servidor ativo na UORG ' . $codUorg['codigo_siape'] . '.', [$e->getMessage()]);
           LogError::newWarn('ISiape: não existe servidor ativo na UORG ' . $codUorg['codigo_siape'] . '.', $e->getMessage());
           continue;
         }

@@ -55,7 +55,7 @@ class PlanoTrabalhoResource extends JsonResource
                 return 4;
             default:
                 // return 4; // somente para testes
-                throw new ExportPgdException('Status inválido para Envio');
+                throw new ExportPgdException('Plano de Trabalho com status inválido para Envio: '.$status);
         }
     }
 }

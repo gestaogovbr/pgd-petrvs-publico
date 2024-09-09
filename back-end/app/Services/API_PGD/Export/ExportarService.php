@@ -17,8 +17,8 @@ abstract class ExportarService
 
     public Collection $source;
 
-    public $sucessos = 0;
-    public $falhas = 0;
+    public int $sucessos;
+    public int $falhas;
 
     public function __construct(
         private PgdService $pgdService
@@ -100,27 +100,26 @@ abstract class ExportarService
 
         $this->falhas++;
 
-        if (!$source || !$source->auditIds) {
-            LogError::newError(
-                "Erro ao sincronizar com o PGD:", 
-                new ExportPgdException($message),
-                $source
-            );
-            return false;
-        }
+        LogError::newError(
+            "Erro ao sincronizar com o PGD: ", 
+            new ExportPgdException($message),
+            $source
+        );
 
-        try{
-            DB::table('audits')
-                ->whereIn('id', $source->auditIds)
-                ->update(
-                    [
-                        'tags' => json_encode(['ERRO']),
-                        'error_message' => $message
-                    ]
-                );
+        if ($source->auditIds) {
+            try{
+                DB::table('audits')
+                    ->whereIn('id', $source->auditIds)
+                    ->update(
+                        [
+                            'tags' => json_encode(['ERRO']),
+                            'error_message' => $message
+                        ]
+                    );
             } catch(\Exception $exception) {
-                LogError::newError("Erro atualizar audit:", $exception, $source);
+                LogError::newError("Erro atualizar audit: ", $exception, $source);
             }
+        }
     }
 
     abstract public function atualizarEntidade($id);

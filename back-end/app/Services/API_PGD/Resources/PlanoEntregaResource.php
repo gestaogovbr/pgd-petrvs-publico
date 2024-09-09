@@ -18,7 +18,7 @@ class PlanoEntregaResource extends JsonResource
             "cod_unidade_instituidora"    => $this->programa->unidade->codigo,
             "cod_unidade_executora"       => $this->unidade->codigo,
             "data_inicio"                 => Carbon::parse($this->data_inicio)->format('Y-m-d'),
-            "data_termino"                => Carbon::parse($this->data_termino)->format('Y-m-d'),
+            "data_termino"                => Carbon::parse($this->data_fim)->format('Y-m-d'),
             "status"                      => $this->getStatus(),
             "avaliacao"                   => $this->getAvaliacao(),
             "data_avaliacao"              => $this->avaliacao?->data_avaliacao ? 
@@ -42,8 +42,7 @@ class PlanoEntregaResource extends JsonResource
             case 'AVALIADO':
                 return 5;
             default:
-               // return 4; // somente para testes
-                throw new ExportPgdException('Status inválido para Envio');
+                throw new ExportPgdException('Plano de Entrega com status inválido para Envio: '.$this->status);
         }
     }
 
@@ -59,6 +58,7 @@ class PlanoEntregaResource extends JsonResource
         case "Excepcional":
           return 1;
         case "Inadequado":
+        case "Não executado":
           return 5;
         case "Atendeu parcialmente ao adequado":
           return 4;

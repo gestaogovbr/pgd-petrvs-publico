@@ -22,7 +22,6 @@ class PlanoEntregaDataSource extends DataSource
             'entregas.unidade'
         ])
         ->find($exportSource->id);
-        //->whereIn('status', ['CANCELADO', 'ATIVO', 'CONCLUIDO', 'AVALIADO', '']);
 
         if (!$planoEntrega){
             throw new ExportPgdException('Plano de Entrega removido ou inválido');

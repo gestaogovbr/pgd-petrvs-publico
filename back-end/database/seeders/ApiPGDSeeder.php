@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class JobScheduleSeeder extends Seeder
+class ApiPgdSeeder extends Seeder
 {
     public function run(): void
     {
@@ -28,7 +28,6 @@ class JobScheduleSeeder extends Seeder
                 'expressao_cron' => '*/2 * * * *',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-                'deleted_at' => null,
                 'parameters' => '[]'
             ]
           ], 'classe');

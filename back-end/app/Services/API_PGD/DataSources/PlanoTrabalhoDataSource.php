@@ -16,11 +16,17 @@ class PlanoTrabalhoDataSource extends DataSource
         $planoTrabalho = PlanoTrabalho::with([
             'programa',
             'programa.unidadeAutorizadora',
+            'unidade',
             'usuario',
             'entregas',
             'entregas.planoEntregaEntrega',
+            'entregas.planoEntregaEntrega.planoEntrega' => function ($query) {
+                $query->whereIn('status', ['CANCELADO', 'ATIVO', 'CONCLUIDO', 'AVALIADO']);
+            },
             'entregas.planoTrabalho',
-            'consolidacoes',
+            'consolidacoes' => function ($query) {
+                $query->whereIn('status', ['CANCELADO', 'AVALIADO']);
+            },
             'consolidacoes.avaliacao'
         ])
         ->find($exportSource->id);
@@ -41,6 +47,10 @@ class PlanoTrabalhoDataSource extends DataSource
 
         if (!$planoTrabalho->usuario){
             throw new ExportPgdException('Plano de Trabalho não possui Usuário');
+        }
+
+        if (!$planoTrabalho->usuario->ultimaParticipacaoPrograma){
+            throw new ExportPgdException('Usuário do Plano de trabalho não possui Participação Ativa');
         }
 
         return $planoTrabalho;

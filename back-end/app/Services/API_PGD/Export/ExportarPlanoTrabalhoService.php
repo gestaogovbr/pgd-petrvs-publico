@@ -47,17 +47,21 @@ class ExportarPlanoTrabalhoService extends ExportarService
   // envia participante juntamente com plano de trabalho
   public function sendDependencia($data) 
   {
-    echo "\nInserindo dependências do Plano de Trabalho [{$data->id}]\n";
-    $this->exportarParticipanteService
-      ->load(new ExportSource('participante', $data->usuario->id))
+   // echo "\nInserindo dependências do Plano de Trabalho [{$data->id}]\n";
+    /*$this->exportarParticipanteService
+      ->load(new ExportSource('participante', $data->usuario->id, null, 'plano_trabalho: '.$data->id))
       ->enviar();
 
     foreach($data->entregas as $planoTrabalhoEntrega) {
-      if ($planoTrabalhoEntrega->planoEntregaEntrega && $planoTrabalhoEntrega->planoEntregaEntrega->plano_entrega_id) {
+      if ($planoTrabalhoEntrega->planoEntregaEntrega &&
+        $planoTrabalhoEntrega->planoEntregaEntrega->plano_entrega_id &&
+        $planoTrabalhoEntrega->planoEntregaEntrega->planoEntrega &&
+        in_array($planoTrabalhoEntrega->planoEntregaEntrega->planoEntrega->status, ['ATIVO', 'CONCLUIDO', 'AVALIADO', 'CANCELADO'])
+      ) {
         $this->exportarPlanoEntregaService
-          ->load(new ExportSource('entrega', $planoTrabalhoEntrega->planoEntregaEntrega->plano_entrega_id))
+          ->load(new ExportSource('entrega', $planoTrabalhoEntrega->planoEntregaEntrega->plano_entrega_id, null, 'plano_trabalho: '.$data->id))
           ->enviar();
       }
-    }
+    }*/
   }
 }
