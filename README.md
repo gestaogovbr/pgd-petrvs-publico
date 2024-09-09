@@ -16,3 +16,6 @@ https://www.gov.br/servidor/pt-br/assuntos/programa-de-gestao
 https://www.gov.br/servidor/pt-br/assuntos/programa-de-gestao/sistemas-e-api-de-dados/sistema-pgd-petrvs
 ```
 
+## Changelog
+
+Veja o [CHANGELOG.md](CHANGELOG.md) para detalhes sobre as alterações em cada versão.
