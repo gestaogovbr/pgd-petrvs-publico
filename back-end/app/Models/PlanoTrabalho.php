@@ -109,4 +109,9 @@ class PlanoTrabalho extends ModelBase
   {
     return $this->belongsTo(Documento::class);
   }    //nullable
+  public function ultimaAssinatura()
+  {
+    return $this->hasOneThrough(DocumentoAssinatura::class, Documento::class)
+                    ->orderBy('data_assinatura', 'desc');
+  }
 }

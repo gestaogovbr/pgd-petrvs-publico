@@ -191,7 +191,7 @@ class Integracao implements InterfaceIntegracao
         return $this;
     }
 
-    public function setIntegracaoConfig(array $integracaoConfig): self
+    public function setIntegracaoConfig($integracaoConfig): self
     {
         $this->integracaoConfig = $integracaoConfig;
         return $this;

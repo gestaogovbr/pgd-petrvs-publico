@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         CapacidadeSeeder::class,
         FuncaoSeeder::class,
         TipoMotivoAfastamentoSeeder::class,
+        JobScheduleSeeder::class,
       ]);
     } else {
       $this->call([
@@ -38,7 +39,7 @@ class DatabaseSeeder extends Seeder
         In24_2023Seeder::class,
         TemplateSeeder::class,
         TipoMotivoAfastamentoSeeder::class,
-
+        JobScheduleSeeder::class,
         /*
                Após a execução das Seeds acima, executar a rotina de integração com o comando
                http://localhost[:porta]/api/integracao?servidores=true&unidades=true&entidade=[ID da entidade]
