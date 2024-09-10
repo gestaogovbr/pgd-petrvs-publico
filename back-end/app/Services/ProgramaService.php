@@ -45,6 +45,9 @@ class ProgramaService extends ServiceBase
     if (!$this->isUniquePeriod($data)) {
       throw new ServerException("ValidatePrograma", "Há outro regramento na mesma unidade instituidora com prazo vigente.");
     }
+    if ($data['data_inicio'] == $data['data_fim']) {
+      throw new ServerException("ValidatePrograma", "As datas de início e fim do regramento não podem ser iguais.");
+    }
   }
 
   public function programaVigente($programa)

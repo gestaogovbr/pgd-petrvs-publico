@@ -1,5 +1,5 @@
 <grid [dao]="dao" [add]="add" title="Painel de entidades (SaaS)" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [hasAdd]="true" [hasEdit]="true">
-    <toolbar [buttons]="toolbarButtons">
+    <toolbar [buttons]="toolbarButtons" *ngIf="currentUser && currentUser.nivel == 1">
     </toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" hidden [form]="filter" [where]="filterWhere.bind(this)" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed"></filter>
     <columns>
@@ -28,7 +28,7 @@
                 <badge *ngIf="row.log_errors" color="light" label="Erros (Errors)"></badge>
             </ng-template>
         </column>
-        <column type="options" [onEdit]="edit" [options]="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+        <column type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

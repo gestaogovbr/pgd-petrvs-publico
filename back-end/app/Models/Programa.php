@@ -22,6 +22,7 @@ class Programa extends ModelBase
     'nome', /* varchar(255); NOT NULL; */ // Nome do programa
     'normativa', /* varchar(255); */ // Normativa que regula o programa de gestão
     'link_normativa', /* varchar(255); */ // Link da Normativa que regula o programa de gestão
+    'link_autorizacao', /* varchar(255); */ // Link da Normativa que autoriza o programa de gestão
     'config', /* json; */ // Configurações do programa
     'data_inicio', /* datetime; NOT NULL; */ // Inicio da vigência do programa
     'data_fim', /* datetime; NOT NULL; */ // Fim da vigência do programa
@@ -48,6 +49,7 @@ class Programa extends ModelBase
     'tipo_avaliacao_id', /* char(36); NOT NULL; */
     'documento_id', /* char(36); */
     'unidade_id', /* char(36); NOT NULL; */
+    'unidade_autorizadora_id', /* char(36); */
     'template_tcr_id', /* char(36); */
     //'deleted_at', /* timestamp; */
     /*'periodo_avaliacao',*/ // REMOVED
@@ -97,6 +99,11 @@ class Programa extends ModelBase
   public function unidade()
   {
     return $this->belongsTo(Unidade::class);
+  }
+
+  public function unidadeAutorizadora()
+  {
+    return $this->belongsTo(Unidade::class, 'unidade_autorizadora_id');
   }
   public function documento()
   {

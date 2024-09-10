@@ -81,7 +81,6 @@ use App\Http\Controllers\PlanoEntregaEntregaProgressoController;
 use App\Http\Controllers\QuestionarioPreenchimentoController;
 use App\Http\Controllers\QuestionarioPerguntaController;
 use App\Http\Controllers\QuestionarioPerguntaRespostaController;
-use App\Http\Controllers\PgdController;
 use App\Http\Controllers\ProdutoController;
 
 /*
@@ -100,9 +99,6 @@ Route::get('/teste', function (Request $request) {
   return ["OK"];
 });
 
-/* PGD */
-Route::get('/exportar/dados', [PgdController::class, 'exportarDados']);
-Route::get('/exportar/dados/job', [PgdController::class, 'exportarDadosJob']);
 
 
 /* Rotinas diárias */
