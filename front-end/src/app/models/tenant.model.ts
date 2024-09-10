@@ -75,11 +75,16 @@ export class Tenant extends Base {
     public integracao_wso2_token_password:string = "";
     public integracao_usuario_comum: string = "";
     public integracao_usuario_chefe: string = "";
+    public integracao_siape_conectagov_chave: string = "";
+    public integracao_siape_conectagov_senha: string = "";
     // SEI
     public modulo_sei_habilitado: boolean = false;
     public modulo_sei_private_key: string = "";
     public modulo_sei_public_key: string = "";
     public modulo_sei_url: string = "";
+    // API
+    public api_username: string = "";
+    public api_password: string = "";
 
     // public petrvs_version //pega a versao do app.json
     // public petrvs_last_migration // nome da ultima migration executada

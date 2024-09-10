@@ -75,6 +75,8 @@ services:
       context: .
       dockerfile: Dockerfile-php
     container_name: petrvs_queue
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - TZ=America/Bahia
     volumes:

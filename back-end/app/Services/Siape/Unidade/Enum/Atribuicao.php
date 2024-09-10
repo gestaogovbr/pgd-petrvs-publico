@@ -11,6 +11,7 @@ enum Atribuicao: string
     case GESTOR_SUBSTITUTO = 'GESTOR_SUBSTITUTO';
     case GESTOR_DELEGADO = 'GESTOR_DELEGADO';
     case LOTADO = 'LOTADO';
+    case CURADOR = 'CURADOR';
 }
 
 ?>
