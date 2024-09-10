@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('programa_participantes', function (Blueprint $table) {
+        Schema::table('programas_participantes', function (Blueprint $table) {
             $table->foreignUuid('documento_id')
             ->nullable()
             ->references('id')
@@ -26,7 +26,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('programa_participantes', function (Blueprint $table) {
+        Schema::table('programas_participantes', function (Blueprint $table) {
             $table->dropForeign(['documento_id']);
             $table->dropColumn('documento_id');
         });
