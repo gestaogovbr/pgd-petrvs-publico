@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Jobs\JobBase;
+use App\Jobs\JobWithoutTenant;
 use App\Models\JobSchedule;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -24,9 +25,16 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $agendamentosPrincipal = JobSchedule::where('ativo', true)->get();
-        foreach ($agendamentosPrincipal as $job) {
-            $jobClass = new JobBase($job);
-            $schedule->job($jobClass)->cron($job->expressao_cron);
+        foreach ($agendamentosPrincipal as $jobEntity) {
+            $job = JobWithoutTenant::getJob($jobEntity->classe);
+
+            if (!$job instanceof JobWithoutTenant) {
+                $job = new JobBase($jobEntity);
+            }
+            
+            $schedule->job($job)
+                ->name($jobEntity->nome)
+                ->cron($jobEntity->expressao_cron);
         }
     }
 }

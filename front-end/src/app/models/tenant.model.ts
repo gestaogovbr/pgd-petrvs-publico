@@ -75,6 +75,8 @@ export class Tenant extends Base {
     public integracao_wso2_token_password:string = "";
     public integracao_usuario_comum: string = "";
     public integracao_usuario_chefe: string = "";
+    public integracao_siape_conectagov_chave: string = "";
+    public integracao_siape_conectagov_senha: string = "";
     // SEI
     public modulo_sei_habilitado: boolean = false;
     public modulo_sei_private_key: string = "";

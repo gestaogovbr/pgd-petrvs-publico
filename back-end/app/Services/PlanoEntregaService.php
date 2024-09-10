@@ -486,11 +486,12 @@ class PlanoEntregaService extends ServiceBase
   public function validateStore($dataOrEntity, $unidade, $action)
   {
     $usuario = Usuario::find(parent::loggedUser()->id);
-    $programa = Programa::find($dataOrEntity["programa_id"]);
+    $programa = Programa::find($dataOrEntity["programa_id"]);    
     $this->validaPermissaoIncluir($dataOrEntity, $usuario);
     if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_EXTRPL')) {
       if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");
     }
+    if($this->temSobreposicaoDeDatas($dataOrEntity)) throw new ServerException("ValidatePlanoEntrega", "Esta unidade já possui plano de entregas cadastrado para o período.");  
     if(!$this->programaService->programaVigente($programa)) throw new ServerException("ValidatePlanoEntrega", "O regramento não está vigente.");
     if ($action == ServiceBase::ACTION_EDIT) {
       /*
@@ -537,6 +538,20 @@ class PlanoEntregaService extends ServiceBase
       }
     }
     return $result;
+  }
+
+  public function temSobreposicaoDeDatas($planoEntrega){
+    $dataInicio = new DateTime($planoEntrega["data_inicio"]);
+    $dataFim = new DateTime($planoEntrega["data_fim"]);
+
+    $planosDaUnidade = PlanoEntrega::where('unidade_id', $planoEntrega["unidade_id"])
+    ->where('status', '!=', 'CANCELADO')
+    ->where(function($query) use ($dataInicio, $dataFim) {
+        $query->whereBetween('data_inicio', [$dataInicio, $dataFim])
+              ->orWhereBetween('data_fim', [$dataInicio, $dataFim]);
+    })->get();
+
+    return $planosDaUnidade->count() > 0;
   }
 
   /**
