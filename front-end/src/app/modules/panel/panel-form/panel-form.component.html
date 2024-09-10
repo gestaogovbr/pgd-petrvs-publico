@@ -168,6 +168,24 @@
                 <input-text [size]="6" label="Nome de Usuário" controlName="api_username" [attr.maxlength]=250></input-text>
                 <input-text password [size]="6" label="Senha" controlName="api_password" [placeholder]="apiPasswordPlaceholder"></input-text>
             </div>
+            <div *ngIf="form?.controls!.tipo_integracao.value == 'SMTP'" class="row">
+                <div class="col-md-12">
+                    <separator title="E-mail"></separator>
+                    <div class="row">
+                        <input-text [size]="6" label="Host" controlName="smtp_host" [attr.maxlength]=50></input-text>
+                        <input-number [size]="2" label="Porta" controlName="smtp_port"></input-number>
+                        <input-select [size]="4" label="Protocolo" controlName="smtp_encryption" [items]="smtp_encryption"></input-select>
+                    </div>
+                    <div class="row">
+                        <input-text [size]="6" label="Usuário" controlName="smtp_user" [attr.maxlength]=50></input-text>
+                        <input-text password [size]="6" label="Senha" controlName="smtp_password" [attr.maxlength]=50></input-text>
+                    </div>
+                    <div class="row">
+                        <input-text [size]="6" label="Email Remetente" controlName="smtp_from_address" [attr.maxlength]=150></input-text>
+                        <input-text [size]="6" label="Remetente" controlName="smtp_from_name" [attr.maxlength]=150></input-text>
+                    </div>
+                </div>
+            </div>
         </tab>
         <!--<tab key="SEI" label="Módulo SEI">
             <div class="row">

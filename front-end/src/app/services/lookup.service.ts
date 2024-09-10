@@ -835,6 +835,7 @@ export class LookupService implements IIndexable {
     //{ key: 'WSO2', value: 'Siape-PRF' },
     { key: 'SIAPE', value: 'Siape-WS' },
     { key: 'API', value: 'API' },
+    { key: 'SMTP', value: 'SMTP' },
   ];
 
   public GOV_BR_ENV: LookupItem[] = [
