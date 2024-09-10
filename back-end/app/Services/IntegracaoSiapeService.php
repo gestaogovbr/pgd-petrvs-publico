@@ -300,8 +300,7 @@ class IntegracaoSiapeService extends ServiceBase
               }
             }
         } 
-        catch (RequestConectaGovException $e) {
-          
+        catch (RequestConectaGovException $e) {         
           Log::error("Erro no conectaGov", [$e->getMessage()]);
           LogError::newError("Erro no conectaGov", $e->getMessage());
           continue;
