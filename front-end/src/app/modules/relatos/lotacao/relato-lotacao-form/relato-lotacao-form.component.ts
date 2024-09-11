@@ -1,5 +1,5 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { RelatoDaoService } from 'src/app/dao/relato-dao.service';
@@ -38,7 +38,6 @@ export class RelatoLotacaoFormComponent extends PageBase implements OnInit {
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
 
-    
     this.form = this.fh.FormBuilder({
       opcao: { default: "" },
       usuario_id: { default: "" },
@@ -48,7 +47,37 @@ export class RelatoLotacaoFormComponent extends PageBase implements OnInit {
       matricula: { default: "" },
       descricao: { default: "" },
     });
+
+    this.updateValidators();
+    
   }
+
+  updateValidators(): void {
+    this.form.get('usuario_id')?.clearValidators();
+    this.form.get('unidade_id')?.clearValidators();
+    this.form.get('nome')?.clearValidators();
+    this.form.get('cpf')?.clearValidators();
+    this.form.get('matricula')?.clearValidators();
+    this.form.get('descricao')?.clearValidators();
+
+    if ((this.form.controls.opcao.value == 1) || (this.form.controls.opcao.value == 2)) {
+      this.form.get('usuario_id')?.setValidators(this.requiredValidator.bind(this));
+      if (this.form.controls.opcao.value == 1) {
+        this.form.get('unidade_id')?.setValidators(this.requiredValidator.bind(this));
+      }
+    } else {
+      this.form.get('nome')?.setValidators(this.requiredValidator.bind(this));
+      this.form.get('cpf')?.setValidators(this.requiredValidator.bind(this));
+      this.form.get('matricula')?.setValidators(this.requiredValidator.bind(this));
+    }
+
+    this.form.get('usuario_id')?.updateValueAndValidity();
+    this.form.get('unidade_id')?.updateValueAndValidity();
+  }
+
+  public requiredValidator(control: AbstractControl): ValidationErrors | null { 
+    return this.util.empty(control.value) ? { errorMessage: "Obrigatório" } : null;
+}
 
   public async onSaveData() {
     this.relatoDao.enviar(
