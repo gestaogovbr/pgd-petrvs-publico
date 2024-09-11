@@ -34,7 +34,17 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
 
   public dynamicButtons(row: Produto): ToolbarButton[] {
     let result: ToolbarButton[] = [];
+    if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });   
+
     return result;
+  }
+
+  public async showDetalhes(produto: Produto){
+    this.go.navigate({route: ['gestao', 'produto', produto.id, "show"]}, {
+      metadata: {
+        produto: produto
+      }
+    });    
   }
 
 }

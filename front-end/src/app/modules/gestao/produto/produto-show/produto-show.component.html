@@ -1,0 +1,68 @@
+<ng-container *ngIf="produto">
+  <div class="bg-dark-subtle d-flex p-2 px-4">
+    <div class="">
+      <h5>{{produto.nome}}</h5>
+    </div>
+  </div>
+  <div class="bg-body-secondary d-flex justify-content-between p-2 px-4 mb-4">
+    <div>
+      <small class="d-block">Descrição</small>
+      <b>{{produto.descricao}}</b>
+    </div>
+
+    <div>
+      <small class="d-block">Unidade</small>
+      <b>{{produto.descricao}}</b>
+    </div>
+
+
+    <div>
+      <small class="d-block">Ativado em</small>
+      <b>{{produto.descricao}}</b>
+    </div>
+
+    <div>
+      <small class="d-block">Desativado em</small>
+      <b>{{produto.descricao}}</b>
+    </div>
+
+  </div>
+
+  <tabs>
+    <tab key="CLIENTES" label="Clientes">
+
+    </tab>
+
+    <tab key="SOLUCAO" label="Solução">
+      
+    </tab>
+
+    <tab key="PROCESSOS" label="Processos">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Processo</th>
+            <th scope="col">Nível</th>
+            <th scope="col">Cadeia de valor</th>
+            <th scope="col">Unidade</th>
+            <th scope="col">Visualizar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let processo of produto.produto_processo_cadeia_valor">
+            <th>{{processo.cadeia_valor_processo?.nome}}</th>
+            <td>{{processo.cadeia_valor_processo?.sequencia}}</td>
+            <td>{{processo.cadeia_valor_processo?.cadeia_valor?.nome}}</td>
+            <td>{{processo.cadeia_valor_processo?.cadeia_valor?.unidade?.nome}}</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </tab>
+
+    <tab key="PRODUTOS" label="Produtos relacionados">
+      
+    </tab>
+
+  </tabs>
+</ng-container>
