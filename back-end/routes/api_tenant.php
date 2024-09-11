@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CadeiaValorController;
 use App\Http\Controllers\CatalogoController;
+use App\Http\Controllers\SolucaoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
@@ -451,4 +452,7 @@ Route::middleware(['auth:sanctum'])->prefix('Produto')->group(function () {
 });
 Route::middleware(['auth:sanctum'])->prefix('Catalogo')->group(function () {
     defaultRoutes(CatalogoController::class);
+});
+Route::middleware(['auth:sanctum'])->prefix('Solucao')->group(function () {
+    defaultRoutes(SolucaoController::class);
 });
