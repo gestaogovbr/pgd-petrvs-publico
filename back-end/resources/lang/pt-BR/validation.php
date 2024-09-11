@@ -17,4 +17,7 @@ return [
     'cadeia_valor_processo_id.required' => 'O campo cadeia_valor_processo_id é obrigatório.',
     'cadeia_valor_processo_id.uuid' => 'O campo cadeia_valor_processo_id deve ser um UUID válido.',
     'cadeia_valor_processo_id.exists' => 'O processo da cadeia de valor selecionado não existe.',
+    'unidade_id.required' => 'O campo unidade_id é obrigatório.',
+    'unidade_id.uuid' => 'O campo unidade_id deve ser um UUID válido.',
+    'unidade_id.exists' => 'A unidade selecionada não existe.',
 ];
