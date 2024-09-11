@@ -6,16 +6,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class CatalogoValidador implements IValidador
+class SolucaoValidador implements IValidador
 {
     public function validar(Request $request) : array
     {
         $validator = Validator::make($request->all(), [
-            'nome' => 'required|string|max:255',
+            'nome' => 'required|string|max:250',
+            'sigla' => 'required|string|max:20',
             'unidade_id' => 'required|string|exists:unidades,id',
-            'curador_responsavel_id' => 'required|string|exists:usuarios,id',
-            'data_inicio' => 'required|date',
-            'data_inicio' => 'required|date',
+            'responsavel_id' => 'required|string|exists:usuarios,id',
+            'descricao' => 'required|string',
+            'url' => 'string|max:250'
         ]);
 
         if ($validator->fails()) {
