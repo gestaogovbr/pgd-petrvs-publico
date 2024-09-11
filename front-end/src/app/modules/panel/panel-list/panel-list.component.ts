@@ -43,6 +43,12 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 			onClick: (tenant: Tenant) =>
 				this.go.navigate({route: ["panel", "job-agendados"]}),
 		},
+		{
+			icon: "bi bi-plus",
+			label: "Inserir Tenant",
+			color: "btn-success",
+			onClick: this.add.bind(this),
+		},
 
 		// {
 		//   icon: "bi bi-database-x",

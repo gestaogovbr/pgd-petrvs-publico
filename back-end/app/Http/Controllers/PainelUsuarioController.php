@@ -58,8 +58,8 @@ class PainelUsuarioController extends Controller
 
     public function logout()
     {
-        Auth::guard('painel_users')->logout();
-        return redirect('/login');
+        Auth::guard('painel')->logout();
+        return response()->json(['success' => true], 200);
     }
 
     public function checkAuthentication(Request $request)
