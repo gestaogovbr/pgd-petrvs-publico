@@ -2,6 +2,7 @@ import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import { RelatoDaoService } from 'src/app/dao/relato-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { PageBase } from 'src/app/modules/base/page-base';
@@ -18,6 +19,7 @@ export class RelatoLotacaoFormComponent extends PageBase implements OnInit {
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
 
   public form: FormGroup;
+  public relatoDao: RelatoDaoService;
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
   public mensagemCarregando = "Carregando dados do formulário...";
@@ -32,12 +34,13 @@ export class RelatoLotacaoFormComponent extends PageBase implements OnInit {
 
   constructor(public injector: Injector) {
     super(injector);
+    this.relatoDao = injector.get<RelatoDaoService>(RelatoDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
 
     
     this.form = this.fh.FormBuilder({
-      situacao: { default: "" },
+      opcao: { default: "" },
       usuario_id: { default: "" },
       unidade_id: { default: "" },
       nome: { default: "" },
@@ -48,7 +51,24 @@ export class RelatoLotacaoFormComponent extends PageBase implements OnInit {
   }
 
   public async onSaveData() {
-
+    this.relatoDao.enviar(
+      this.form.controls.opcao.value,
+      this.form.controls.usuario_id.value,
+      this.form.controls.unidade_id.value,
+      this.form.controls.nome.value,
+      this.form.controls.cpf.value,
+      this.form.controls.matricula.value,
+      this.form.controls.descricao.value
+    ).subscribe({
+      next: async(result) => {
+        await this.dialog.alert('Problema relatado com sucesso', 'Obrigado por relatar este problema')
+        this.close();
+      },
+      error: error => {
+        this.editableForm!.error = error.message ? error.message : error;
+        console.error('Erro:', error)
+      }
+    })
   }
 
   public onCancel() {
