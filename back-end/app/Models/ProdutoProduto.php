@@ -16,6 +16,7 @@ class ProdutoProduto extends ModelBase
     protected $fillable = [
         'produto_base_id',
         'produto_id',
+        'tipo'
     ];
 
 
@@ -23,6 +24,7 @@ class ProdutoProduto extends ModelBase
         'id' => 'string',
         'produto_id' => 'string',
         'produto_base_id' => 'string',
+        'tipo' => 'string'
     ];
 
     public function produtoBase()

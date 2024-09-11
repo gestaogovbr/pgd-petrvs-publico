@@ -22,6 +22,7 @@ class ProdutoValidador implements IValidador
             'tipo' => 'required|string|in:produto,servico',
             'descricao' => 'required|string|max:255',
             'url' => 'nullable|url',
+            'unidade_id' => 'required|uuid|exists:unidades,id',
         ]);
 
         if ($validator->fails()) {

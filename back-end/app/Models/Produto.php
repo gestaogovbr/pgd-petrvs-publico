@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Validation\Rules\Enum;
 use App\Models\ModelBase;
+use Illuminate\Support\Facades\DB;
 
 class Produto  extends ModelBase
 {
     use HasFactory, SoftDeletes;
 
     protected $table = 'produtos';
-    
+
     public $fillable_changes = ['produtoProcessoCadeiaValor', 'produtoProduto'];
 
     public $cascadeDeletes = ['produtoProcessoCadeiaValor'];
@@ -26,6 +27,10 @@ class Produto  extends ModelBase
         'tipo',
         'descricao',
         'url',
+        'unidade_id',
+        'data_ativado',
+        'data_desativado',
+        'identificador'
     ];
 
     protected $casts = [
@@ -35,6 +40,10 @@ class Produto  extends ModelBase
         'tipo' => 'string',
         'descricao' => 'string',
         'url' => 'string',
+        'unidade_id' => 'string',
+        'data_ativado' => 'datetime',
+        'data_desativado' => 'datetime',
+        'identificador' => 'integer'
     ];
 
     protected $dates = [
@@ -42,6 +51,13 @@ class Produto  extends ModelBase
         'updated_at',
         'deleted_at',
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($produto) {
+            $produto->identificador = DB::select("SELECT IFNULL(MAX(identificador), 0) + 1 AS proximo_numero FROM produtos;")[0]->proximo_numero;
+        });
+    }
 
 
     public function produtoProduto()
@@ -54,12 +70,17 @@ class Produto  extends ModelBase
         return $this->hasMany(ProdutoProcessoCadeiaValor::class, 'produto_id');
     }
 
+    public function unidade()
+    {
+        return $this->belongsTo(Unidade::class);
+    }
+
     public function setTipoAttribute($value)
     {
         $this->attributes['tipo'] = strtolower($value);
     }
 
-   
+
     public function isTipoValido($tipo)
     {
         return in_array($tipo, [self::TIPO_PRODUTO, self::TIPO_SERVICO]);
