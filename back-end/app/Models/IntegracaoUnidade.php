@@ -46,6 +46,8 @@ class IntegracaoUnidade extends ModelBase
     'und_nu_adicional', /* varchar(50); */
     'cnpjupag', /* varchar(60); */
     //'deleted_at', /* timestamp; */
+    'cpf_titular_autoridade_uorg', /* varchar(14) */
+    'cpf_substituto_autoridade_uorg', /* varchar(14) */
   ];
 
   protected $casts = [

@@ -39,6 +39,14 @@ class UsuarioSeeder extends Seeder
         'sexo' => 'MASCULINO',
       ],
       [
+        'email' => 'rickgrana@gmail.com',
+        'nome' => 'Ricardo Grana de Lima',
+        'cpf' => '74065505291',
+        'apelido' => 'Grana',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'MASCULINO',
+      ],
+      [
         'email' => 'henrique.felipe100@gmail.com',
         'nome' => 'Henrique Felipe Alves',
         'cpf' => '40921185898',
