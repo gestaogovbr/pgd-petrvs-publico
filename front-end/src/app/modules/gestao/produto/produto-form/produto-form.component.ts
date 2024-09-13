@@ -1,7 +1,9 @@
 import { Component, Injector, ViewChild } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { EditableFormComponent } from "src/app/components/editable-form/editable-form.component";
+import { InputSearchComponent } from "src/app/components/input/input-search/input-search.component";
 import { ProdutoDaoService } from "src/app/dao/produto-dao.service";
+import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { IIndexable } from "src/app/models/base.model";
 import { Produto } from "src/app/models/produto.model";
 import { PageFormBase } from "src/app/modules/base/page-form-base";
@@ -14,11 +16,15 @@ import { PageFormBase } from "src/app/modules/base/page-form-base";
 
 export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
 
+  public unidadeDao: UnidadeDaoService;
+  
   constructor(public injector: Injector) {
     super(injector, Produto, ProdutoDaoService);
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.join = [
-      "produtoProcessoCadeiaValor.cadeiaValorProcesso.cadeiaValor", "produtoProduto"
+      "produtoProcessoCadeiaValor.cadeiaValorProcesso.cadeiaValor", "produtoProduto.produtoRelacionado"
     ];
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
@@ -26,13 +32,16 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
       descricao: { default: "" },
       url: { default: "" },
       tipo: { default: "" },
+      unidade_id: { default: "" },
       produto_processo_cadeia_valor: { default: [] },
       produto_produto: { default: [] },
     });
   }
 
+
   public async loadData(entity: Produto, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
+    entity.unidade_id = entity.unidade?.id || this.auth.unidade!.id;
     form.patchValue(this.util.fillForm(formValue, entity));
   }
 

@@ -896,6 +896,13 @@ export class LookupService implements IIndexable {
     { key: 'servico', value: "Serviço" }
   ];
 
+  public TIPO_RELACAO_PRODUTO: LookupItem[] = [
+    { key: 'input', value: "Entrada" },
+    { key: 'output', value: "Saída" }
+  ];
+
+
+
 
 
   public getLookup(itens: LookupItem[], key: any) {

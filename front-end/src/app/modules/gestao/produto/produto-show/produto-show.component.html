@@ -1,3 +1,6 @@
+<div class="spinner-border" role="status" *ngIf="loading">
+  <span class="visually-hidden"></span>
+</div>
 <ng-container *ngIf="produto">
   <div class="bg-dark-subtle d-flex p-2 px-4">
     <div class="">
@@ -30,11 +33,57 @@
 
   <tabs>
     <tab key="CLIENTES" label="Clientes">
-
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Tipo de cliente</th>
+            <th scope="col">Cliente</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let processo of produto.produto_processo_cadeia_valor">
+            <th>{{processo.cadeia_valor_processo?.nome}}</th>
+            <td>{{processo.cadeia_valor_processo?.sequencia}}</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
     </tab>
 
     <tab key="SOLUCAO" label="Solução">
-      
+      <div class="row">
+        <div class="col-4">
+          <small class="d-block">Solução</small>
+          <b>{{produto.descricao}}</b>
+        </div>
+
+        <div class="col-4">
+          <small class="d-block">Unidade instituidora</small>
+          <b>{{produto.descricao}}</b>
+        </div>
+
+        <div class="col-4">
+          <small class="d-block">Status da solução</small>
+          <b>{{produto.descricao}}</b>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-4">
+          <small class="d-block">Descrição</small>
+          <b>{{produto.descricao}}</b>
+        </div>
+
+        <div class="col-4">
+          <small class="d-block">Responsável</small>
+          <b>{{produto.descricao}}</b>
+        </div>
+
+        <div class="col-4">
+          <small class="d-block">URL</small>
+          <b>{{produto.descricao}}</b>
+        </div>
+      </div>
     </tab>
 
     <tab key="PROCESSOS" label="Processos">
@@ -61,7 +110,24 @@
     </tab>
 
     <tab key="PRODUTOS" label="Produtos relacionados">
-      
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Produto/Serviço</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Unidade</th>
+            <th scope="col">Detalhes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let produto of produto.produto_produto">
+            <th>{{produto.produto_relacionado?.nome}}</th>
+            <th>{{lookup.getValue(lookup.TIPO_RELACAO_PRODUTO, produto.tipo)}}</th>
+            <th>{{produto.produto_relacionado?.unidade?.nome}}</th>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
     </tab>
 
   </tabs>

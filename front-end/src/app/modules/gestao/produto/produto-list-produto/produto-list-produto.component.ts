@@ -44,9 +44,10 @@ export class ProdutoListProdutoComponent extends PageFrameBase {
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
 
     this.form = this.fh.FormBuilder({
-      produto_id: { default: null }
+      produto_id: { default: null },
+      tipo: { default: "" },
     }, this.cdRef);
-    this.join = ["produtoProduto"];
+    this.join = ["produtoProduto.produtoRelacionado"];
   }
 
   public async addProduto() {
@@ -61,6 +62,7 @@ export class ProdutoListProdutoComponent extends PageFrameBase {
     let produto: ProdutoProduto = row;
     if (produto._status != "ADD") {
       form.controls.produto_id.setValue(row.produto_id);
+      form.controls.tipo.setValue(row.tipo);
     }
   }
 
@@ -85,7 +87,8 @@ export class ProdutoListProdutoComponent extends PageFrameBase {
     if(this.form!.valid) {
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
       row.produto_id = this.form!.controls.produto_id.value;
-      row.produto = this.produtoRelacionado!.selectedItem?.data;
+      row.tipo = this.form!.controls.tipo.value;
+      row.produto_relacionado = this.produtoRelacionado!.selectedItem?.data;
       result = row;
       this.cdRef.detectChanges();
     }
