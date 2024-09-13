@@ -64,11 +64,16 @@ export class RelatoLotacaoFormComponent extends PageBase implements OnInit {
       this.form.get('usuario_id')?.setValidators(this.requiredValidator.bind(this));
       if (this.form.controls.opcao.value == 1) {
         this.form.get('unidade_id')?.setValidators(this.requiredValidator.bind(this));
+        this.form.get('descricao')?.setValidators(this.requiredValidator.bind(this));
       }
     } else {
       this.form.get('nome')?.setValidators(this.requiredValidator.bind(this));
       this.form.get('cpf')?.setValidators(this.requiredValidator.bind(this));
       this.form.get('matricula')?.setValidators(this.requiredValidator.bind(this));
+
+      if(this.form.controls.opcao.value == 4) {
+        this.form.get('descricao')?.setValidators(this.requiredValidator.bind(this));
+      }
     }
 
     this.form.get('usuario_id')?.updateValueAndValidity();

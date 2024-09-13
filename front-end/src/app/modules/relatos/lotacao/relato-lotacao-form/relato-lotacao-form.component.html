@@ -59,7 +59,7 @@
             <input-text [size]="3" label="CPF" controlName="cpf" [maskFormat]="'000.000.000-00'" [attr.maxlength]=15></input-text>
         </div>
     </div>
-    <div class="row" [hidden]="!this.form!.controls.opcao.value || this.form!.controls.opcao.value != '1' || this.form!.controls.opcao.value != '4'">
+    <div class="row" *ngIf="this.form!.controls.opcao.value == '1' || this.form!.controls.opcao.value == '4'">
         <div class="col-md-12">
             <input-textarea 
                 [size]="12" 
