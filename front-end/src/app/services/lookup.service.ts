@@ -833,7 +833,7 @@ export class LookupService implements IIndexable {
   public TIPO_INTEGRACAO: LookupItem[] = [
     { key: 'NENHUMA', value: 'Nenhuma' },
     //{ key: 'WSO2', value: 'Siape-PRF' },
-    { key: 'SIAPE', value: 'Siape-WS' },
+    { key: 'SIAPE', value: 'API Consulta SIAPE' },
     { key: 'API', value: 'API' },
     { key: 'SMTP', value: 'SMTP' },
   ];

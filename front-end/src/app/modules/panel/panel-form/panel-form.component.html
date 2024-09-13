@@ -121,7 +121,7 @@
                 <input-text [size]="6" label="Codigo unidade raiz" controlName="integracao_cod_unidade_raiz" [attr.maxlength]=250></input-text>
             </div>
             <div *ngIf="form?.controls!.tipo_integracao.value == 'SIAPE'" class="row">
-                <separator title="Siape-WS" labeInfo="As informações dessa tela são referentes às inseridas no cadastro do SIAPE"></separator>
+                <separator title="API Consulta SIAPE" labeInfo="As informações dessa tela são referentes às inseridas no cadastro do SIAPE"></separator>
                 <div class="row">
                     <input-text [size]="6" label="URL" controlName="integracao_siape_url" [attr.maxlength]=250></input-text>
                     <input-text [size]="3" label="Upag" controlName="integracao_siape_upag" [attr.maxlength]=250></input-text>
@@ -129,7 +129,7 @@
                 </div>
                 <div class="row">
                     <input-text [size]="6" label="Chave ConectaGov" controlName="integracao_siape_conectagov_chave" [attr.maxlength]=250></input-text>
-                    <input-text [size]="6" label="Senha ConectaGov" controlName="integracao_siape_conectagov_senha" [attr.maxlength]=250></input-text>
+                    <input-text password [size]="6" label="Senha ConectaGov" controlName="integracao_siape_conectagov_senha" [attr.maxlength]=250></input-text>
                 </div>
                 <div class="row">
                     <input-text [size]="4" label="Nome do Sistema" controlName="integracao_siape_nome" [attr.maxlength]=250></input-text>
