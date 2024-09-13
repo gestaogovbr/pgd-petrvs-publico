@@ -3,7 +3,8 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\Contracts\IBaseException;
 use App\Http\Controllers\ControllerBase;
-use App\Mails\ErroLotacaoMail;
+use App\Mails\ErroLotacao\SolicitarAjusteLotacaoMail;
+use App\Mails\ErroLotacao\ConfirmarAjusteLotacaoMail;
 use App\DTOs\RelatoErroLotacaoDTO;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -11,12 +12,42 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Tenant;
 use App\Models\Unidade;
 use App\Models\Usuario;
+use App\Models\Entidade;
 use Brazanation\Documents\Cpf;
+use Illuminate\Support\Facades\Session;
 use Throwable;
 
 class RelatoController extends ControllerBase
 {
     public function checkPermissions($action, $request, $service, $unidade, $usuario){}
+
+    private function getTenant($request) {
+        $tenantId = $request->headers->get('X-ENTIDADE');
+        $tenant = Tenant::find($tenantId);
+
+        if (!$tenant->smtp_host) {
+            throw new \Error('SMTP não configurado');
+        }
+
+        return $tenant;
+    }
+
+    private function configSmtp($request) 
+    {   
+        $tenant = $this->getTenant($request);
+
+        config([
+            'mail.mailers.smtp.host' => $tenant->smtp_host,
+            'mail.mailers.smtp.port' => $tenant->smtp_port,
+            'mail.mailers.smtp.encryption' => $tenant->smtp_encryption,
+            'mail.mailers.smtp.username' => $tenant->smtp_user,
+            'mail.mailers.smtp.password' => $tenant->smtp_password,
+            'mail.from.address' => $tenant->smtp_from_address,
+            'mail.from.name' => $tenant->smtp_from_name,
+        ]);
+
+        return $tenant;
+    }
 
     public function store(Request $request) {
         try {
@@ -55,24 +86,42 @@ class RelatoController extends ControllerBase
             }
             $relatoDto->descricao     = $data['descricao'];
 
-            $tenantId = $request->headers->get('X-ENTIDADE');
-            $tenant = Tenant::find($tenantId);
+            $this->configSmtp($request);
 
-            if (!$tenant->smtp_host) {
-               throw new \Error('SMTP não configurado');
+            $entidade = Entidade::find(Session::get('entidade_id'));
+
+            if (!$entidade->email_responsavel_siape) {
+                throw new \Error('Email do Responsável pelo SIAPE não configurado');
             }
 
-            config([
-                'mail.mailers.smtp.host' => $tenant->smtp_host,
-                'mail.mailers.smtp.port' => $tenant->smtp_port,
-                'mail.mailers.smtp.encryption' => $tenant->smtp_encryption,
-                'mail.mailers.smtp.username' => $tenant->smtp_user,
-                'mail.mailers.smtp.password' => $tenant->smtp_password,
-                'mail.from.address' => $tenant->smtp_from_address,
-                'mail.from.name' => $tenant->smtp_from_name,
+            $relatoDto->email_responsavel = $entidade->email_responsavel_siape;
+
+            Mail::to($relatoDto->email_responsavel)->send(new SolicitarAjusteLotacaoMail($relatoDto));
+
+            return response()->json([
+                'success' => true
             ]);
 
-            Mail::to($request->user())->send(new ErroLotacaoMail($relatoDto));
+        }  catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage(), 400]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json([
+                'success' => false,
+                'error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado.".$e->getMessage()
+            ], 400);
+        }
+    }
+
+
+    public function confirmar(Request $request, $email, $nome) {
+        try {
+    
+            $this->configSmtp($request);
+
+            Mail::to($email)->send(new ConfirmarAjusteLotacaoMail(urldecode($nome)));
 
             return response()->json([
                 'success' => true
