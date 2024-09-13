@@ -222,6 +222,7 @@ export class LookupService implements IIndexable {
     { key: 'GESTOR_DELEGADO', value: "Servidor Delegado", icon: "bi bi-star-fill", color: "danger" },
     { key: 'GESTOR_SUBSTITUTO', value: "Chefe Substituto", icon: "bi bi-star-half", color: "primary" },
     //{ key: 'HOMOLOGADOR_PLANO_ENTREGA', value: "Homologador (Planos de Entrega)", icon: "bi bi-check2-square", color: "success" },
+    { key: 'CURADOR', value: "Curador", icon: "bi bi-person-badge-fill", color: "primary" },
     { key: 'LOTADO', value: "Lotado", icon: "bi bi-file-person", color: "dark" }
   ];
 
@@ -832,8 +833,8 @@ export class LookupService implements IIndexable {
   public TIPO_INTEGRACAO: LookupItem[] = [
     { key: 'NENHUMA', value: 'Nenhuma' },
     //{ key: 'WSO2', value: 'Siape-PRF' },
-    { key: 'SIAPE', value: 'Siape-WS' },
-    { key: 'API', value: 'API' },
+    { key: 'SIAPE', value: 'API Consulta SIAPE' },
+    { key: 'API', value: 'API de envio de dados' },
   ];
 
   public GOV_BR_ENV: LookupItem[] = [
@@ -883,6 +884,12 @@ export class LookupService implements IIndexable {
     { 'key': 'ACRESCIMO', 'value': 'Adiciona' },
     { 'key': 'DECRESCIMO', 'value': 'Subtrai' }
   ];
+
+  public NIVEL_USUARIO_PAINEL: LookupItem[] = [
+    { 'key': 1, 'value': 'Administrador geral' },
+    { 'key': 2, 'value': 'Configurador' }
+  ];
+
 
 
 

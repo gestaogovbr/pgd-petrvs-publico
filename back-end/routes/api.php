@@ -43,6 +43,7 @@ Route::middleware([InitializeTenancyByPath::class])
 Route::post('/panel-login', [PainelUsuarioController::class, 'login']);
 Route::get('/panel-login-check', [PainelUsuarioController::class, 'checkAuthentication']);
 Route::get('/panel-login-detail', [PainelUsuarioController::class, 'detail']);
+Route::get('/panel-logout', [PainelUsuarioController::class, 'logout']);
 
 Route::middleware(['panel'])->prefix('Seeder')->group(function () {
     Route::get('getAll', [SeederController::class, 'index']);

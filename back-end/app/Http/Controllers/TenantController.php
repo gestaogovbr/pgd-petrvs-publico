@@ -51,11 +51,12 @@ class TenantController extends ControllerBase {
                 $data['entity']['created_at']=  Carbon::now()->toDateTimeString();
                 $data['entity']['updated_at']=  Carbon::now()->toDateTimeString();
 
-                if (!strlen(trim($data['entity']['api_password']))) {
-                    unset($data['entity']['api_password']);
-                } else {
+                if (isset($data['entity']['api_password']) && strlen(trim($data['entity']['api_password']))) {
                     $data['entity']['api_password'] = Hash::make($data['entity']['api_password']);
+                } else {
+                    unset($data['entity']['api_password']);
                 }
+
 
                 $unidade = $this->getUnidade($request);
                 $entity = $this->service->store($data['entity'], $unidade);

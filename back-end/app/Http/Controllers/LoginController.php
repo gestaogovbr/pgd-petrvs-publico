@@ -98,7 +98,7 @@ class LoginController extends Controller
             }])->first();
             if (isset($usuario->areasTrabalho[0]) && !empty($usuario->areasTrabalho[0]->id)) {
                 $request->session()->put("unidade_id", $usuario->areasTrabalho[0]->id);
-                $config = $usuario->config ?? []; 
+                $config = $usuario->config ?? [];
                 $config['unidade_id'] = $data["unidade_id"];
                 $usuario->config = $config;
                 $usuario->save();
@@ -689,7 +689,7 @@ class LoginController extends Controller
             $email = $user->email;
             $email = explode("#", $email);
             $email = $email[0];
-            $email = str_replace("_", "@", $email);
+            //$email = str_replace("_", "@", $email);
             $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->first());
             if (($usuario)) {
                 Auth::loginUsingId($usuario->id);

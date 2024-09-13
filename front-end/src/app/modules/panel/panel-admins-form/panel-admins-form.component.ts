@@ -39,6 +39,7 @@ export class PanelAdminsFormComponent extends PageFormBase<UserPanel, UsersPanel
       nome: {default: ""},
       email: {default: ''},
       password: {default: ''},
+      nivel: {default: ''},
       tenants: {default: []},
     }, this.cdRef, this.validate);
 

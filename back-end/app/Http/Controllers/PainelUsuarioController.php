@@ -44,7 +44,9 @@ class PainelUsuarioController extends Controller
         if ($user) {
         return response()->json([
             'nome' => $user->nome,
-            'email' => $user->email
+            'email' => $user->email,
+            'nivel' => $user->nivel,
+            'tenants' => $user->tenants->pluck('id')->toArray()
         ]);
         } else {
         // Usuário não autenticado, retorna uma resposta de erro
@@ -56,8 +58,8 @@ class PainelUsuarioController extends Controller
 
     public function logout()
     {
-        Auth::guard('painel_users')->logout();
-        return redirect('/login');
+        Auth::guard('painel')->logout();
+        return response()->json(['success' => true], 200);
     }
 
     public function checkAuthentication(Request $request)

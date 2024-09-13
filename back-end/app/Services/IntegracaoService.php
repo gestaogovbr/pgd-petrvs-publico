@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\IntegracaoServidorRepository;
+use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
 use App\Services\Siape\Servidor\Integracao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -269,7 +270,7 @@ class IntegracaoService extends ServiceBase
 
     $this->sincronizacao($inputs);
     $this->logSiape("Sincronização de dados do SIAPE finalizada", [], Tipo::INFO);
-
+    
     return $this->store([
       'entidade_id' => $inputs['entidade'],
       'atualizar_unidades' => $inputs['unidades'] == "false" ? false : true,
@@ -380,6 +381,7 @@ class IntegracaoService extends ServiceBase
               }
 
               $nomeuorg = $self->UtilService->valueOrDefault($uo["nomeuorg"], null);
+
               if (!is_null($nomeuorg)) $nomeuorg = $self->UtilService->getNomeFormatado($nomeuorg);
               $unidade = [
                 'id_servo' => $self->UtilService->valueOrDefault($uo["id_servo"], null, $option = "uorg"),
@@ -413,6 +415,8 @@ class IntegracaoService extends ServiceBase
                 'data_modificacao' => date("Y-m-d H:i:s", $uorg_siape_data_modificacao),
                 'und_nu_adicional' => $self->UtilService->valueOrDefault($uo["und_nu_adicional"], null),
                 'cnpjupag' => $self->UtilService->valueOrDefault($uo["cnpjupag"], null),
+                'cpf_titular_autoridade_uorg' =>  $self->UtilService->valueOrDefault($uo["cpf_titular_autoridade_uorg"], null),
+                'cpf_substituto_autoridade_uorg' => $self->UtilService->valueOrDefault($uo["cpf_substituto_autoridade_uorg"], null),
                 'deleted_at' => null,
               ];
 
@@ -677,36 +681,6 @@ class IntegracaoService extends ServiceBase
                 'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
                 'data_nascimento' => $linha->data_nascimento,
               ]);
-
-              // $this->atualizaLogs($this->logged_user_id, 'usuarios', $linha->id, 'EDIT', [
-              //   'Rotina' => 'Integração',
-              //   'Observação' => 'Servidor ATIVO que foi atualizado porque apresentou ' .
-              //     'alteração em seus dados pessoais!',
-              //   'Valores anteriores' => [
-              //     'nome'          => $linha->nome_anterior,
-              //     'nomeguerra'    => $linha->apelido_anterior,
-              //     'email'         => $linha->email_anterior,
-              //     'matricula'     => $linha->matricula_anterior,
-              //     'telefone'      => $linha->telefone_anterior,
-              //     'id'            => $linha->id,
-              //     'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao_anterior),
-              //     'data_nascimento' => $linha->data_nascimento,
-              //     'nome_jornada' => $linha->nome_jornada_antigo,
-              //     'cod_jornada' => $linha->cod_jornada_antigo,
-              //   ],
-              //   'Valores atuais' => [
-              //     'nome'          => $linha->nome_servidor,
-              //     'nomeguerra'    => $linha->nome_guerra,
-              //     'email'         => $linha->emailfuncional,
-              //     'matricula'     => $linha->matriculasiape,
-              //     'telefone'      => $linha->telefone,
-              //     'id'            => $linha->id,
-              //     'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
-              //     'data_nascimento' => $linha->data_nascimento,
-              //     'nome_jornada' => $linha->nome_jornada,
-              //     'cod_jornada' => $linha->cod_jornada,
-              //   ]
-              // ]);
             }
           };
 
@@ -862,222 +836,63 @@ class IntegracaoService extends ServiceBase
       if ($this->echo) $this->imprimeNoTerminal("Iniciando a fase de reconstrução das funções de chefia!.....");
       try {
         DB::beginTransaction();
-        // Seleciona o ID do usuário e as funções de todos os servidores ativos trazidos do SIAPE e que já existem na tabela Usuários.
-        // Filtra apenas aqueles que são gestores ou gestores substitutos.
-        $query_selecionar_chefes = "";
 
+        $chefes = [];
         if ($this->integracao_config["tipo"] == "SIAPE") {
-          $query_selecionar_chefes = "" .
-            "SELECT u.id, isr.funcoes " .
-            "FROM integracao_servidores as isr " .
-            "INNER JOIN usuarios as u " .
-            "ON isr.cpf = u.cpf " .
-            "WHERE (isr.vinculo_ativo = 'true' OR isr.vinculo_ativo = '1') AND " .
-            "u.cpf IS NOT NULL AND " .
-            "u.deleted_at IS NULL AND " .
-            "isr.funcoes is NOT NULL AND " .
-            "u.cpf IN " .
-            "(SELECT distinct(cpf_chefia_imediata) " .
-            "FROM integracao_servidores " .
-            "WHERE cpf_chefia_imediata IS NOT NULL)";
-        } else {
-          $query_selecionar_chefes = "" .
-            "SELECT u.id, isr.funcoes " .
-            "FROM integracao_servidores as isr " .
-            "INNER JOIN usuarios as u " .
-            "ON isr.cpf = u.cpf " .
-            "WHERE (isr.vinculo_ativo = 'true' OR isr.vinculo_ativo = '1') AND " .
-            "u.cpf IS NOT NULL AND " .
-            "u.deleted_at IS NULL AND " .
-            "isr.funcoes is NOT NULL";
-        }
 
-        $chefes = DB::select($query_selecionar_chefes);
+      $chefes = DB::table('integracao_unidades as iu')
+          ->join('unidades as u', 'iu.codigo_siape', '=', 'u.codigo')
+          ->leftJoin('usuarios as chefe', function($join) {
+              $join->on('iu.cpf_titular_autoridade_uorg', '=', 'chefe.cpf')
+                  ->whereNull('chefe.deleted_at');
+          })
+          ->leftJoin('integracao_servidores as is_chef', function($join) {
+              $join->on('iu.cpf_titular_autoridade_uorg', '=', 'is_chef.cpf')
+                  ->where('is_chef.vinculo_ativo', '=', 1);
+          })
+          ->leftJoin('usuarios as substituto', function($join) {
+              $join->on('iu.cpf_substituto_autoridade_uorg', '=', 'substituto.cpf')
+                  ->whereNull('substituto.deleted_at');
+          })
+          ->leftJoin('integracao_servidores as is_sub', function($join) {
+              $join->on('iu.cpf_substituto_autoridade_uorg', '=', 'is_sub.cpf')
+                  ->where('is_sub.vinculo_ativo', '=', 1);
+          })
+          ->whereNull('u.deleted_at')
+          ->select(
+              'u.id as id_unidade',
+              'chefe.id as id_chefe',
+              'substituto.id as id_substituto'
+          )
+          ->get()->map(function($item) {
+            return (array) $item; 
+        })
+        ->toArray();
 
-        // Percorre todos os gestores, montando um array com os dados da chefia (matricula do chefe, código siape da unidade, tipo de função).
-        $chefias = [];
-        foreach ($chefes as $chefe) {
-          $this->logSiape("Montando array de chefias", (array) $chefe, Tipo::INFO);
-          $funcoes = json_decode($chefe->funcoes);
-          if (is_array($funcoes->funcao)) {
-            // Nesse caso o servidor é gestor de mais de uma unidade.
-            $chefias = array_merge(
-              $chefias,
-              array_map(fn ($f) => ['id_usuario' => $chefe->id, 'codigo_siape' => $f->uorg_funcao, 'tipo_funcao' => $f->tipo_funcao], $funcoes->funcao)
-            );
-          } else {
-            // Nesse caso o servidor é gestor de apenas uma unidade.
-            array_push($chefias, ['id_usuario' => $chefe->id, 'codigo_siape' => $funcoes->funcao->uorg_funcao, 'tipo_funcao' => $funcoes->funcao->tipo_funcao]);
-          }
-        }
 
+        } 
         if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de montagem do array de chefias!.....");
 
-        $usuarioChefe = $this->integracao_config["perfilChefe"];
-        $perfilChefe = $this->nivelAcessoService->getPerfilChefia();
-        if (empty($perfilChefe)) {
-          throw new ServerException("ValidateUsuario", "Perfil de gestor (" . $usuarioChefe . ") não encontrado no banco de dados. Verificar configuração no painel SaaS.");
-        }
-        $perfilChefeId = $perfilChefe->id;
+        $integracaoChefia = new GestorIntegracao(
+          $chefes,
+          (new Usuario),
+          $this->unidadeIntegrante,
+          $this->nivelAcessoService,
+          $this->perfilService,
+          $this->integracao_config
+        );
+        $integracaoChefia->processar();
+        $messagensRetorno = $integracaoChefia->getMessage();
+        Log::info("Mensagens de retorno da atualização de chefias: ", $messagensRetorno);
 
-        $perfilDesenvolvedor = $this->nivelAcessoService->getPerfilDesenvolvedor();
-        if (empty($perfilDesenvolvedor)) {
-          throw new ServerException("ValidateUsuario", "Perfil de desenvolvedor não encontrado no banco de dados. Verificar configuração no painel SaaS.");
-        }
-        $perfilDesenvolvedorId = $perfilDesenvolvedor->id;
-        foreach ($chefias as $chefia) {
-          $querySelecionarUnidade = "SELECT u.id " .
-            "FROM integracao_unidades as iu " .
-            "JOIN unidades as u " .
-            "ON iu.id_servo = u.codigo " .
-            "WHERE iu.codigo_siape = :codigo_siape";
-
-          $unidadeExercicio = DB::select(
-            $querySelecionarUnidade,
-            [':codigo_siape' => $chefia['codigo_siape']]
-          );
-
-          // Monta a consulta de acordo com o tipo de função e efetua o registro na tabela unidade_integrante_atribucoes.
-          if (isset($unidadeExercicio[0]) && !empty($unidadeExercicio[0]->id)) {
-            $unidadeExercicioId = $unidadeExercicio[0]->id;
-            if ($chefia['tipo_funcao'] == '1') {
-              // Verificar se existe mais atribuições //
-              // Após consultar todas as atribuições já existentes e montar o array para gravar, verificar se
-              // é substituto e/ou delegado ao mesmo tempo. Se sim, remover do array (GESTOR_SUBSTITUTO e DELEGADO).
-              $queryChefe = Usuario::find($chefia['id_usuario']);
-              $queryChefeAtribuicoes = $queryChefe->getUnidadesAtribuicoesAttribute();
-              $chefeAtribuicoes = [];
-              if (
-                !empty($queryChefeAtribuicoes) &&
-                is_array($queryChefeAtribuicoes) &&
-                array_key_exists($unidadeExercicioId, $queryChefeAtribuicoes) &&
-                $queryChefeAtribuicoes[$unidadeExercicioId]
-              ) {
-                $chefeAtribuicoes = array_diff($queryChefeAtribuicoes[$unidadeExercicioId], ["DELEGADO", "GESTOR_SUBSTITUTO"]);
-                if (!in_array("GESTOR", $chefeAtribuicoes)) array_push($chefeAtribuicoes, "GESTOR");
-                $chefeAtribuicoes = array_values(array_unique($chefeAtribuicoes));
-              } else {
-                $chefeAtribuicoes = ["LOTADO", "GESTOR"];
-              }
-
-              $vinculo = array([
-                'usuario_id' => $chefia['id_usuario'],
-                'unidade_id' => $unidadeExercicioId,
-                'atribuicoes' => $chefeAtribuicoes,
-              ]);
-              $this->logSiape("Salvando integrantes", $vinculo, Tipo::INFO);
-              $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
-
-              $perfilAdministradorNegocial = $this->nivelAcessoService->getPerfilAdministrador();
-              if (empty($perfilAdministradorNegocial)) {
-                throw new ServerException("ValidateUsuario", "Perfil de administrador negocial não encontrado no banco de dados. Verificar configuração no painel SaaS.");
-              }
-
-              // Atualiza nível nível de acesso para chefe caso servidor não seja Desenvolvedor.
-              if (!in_array($queryChefe->perfil->id, [$perfilAdministradorNegocial->id, $perfilDesenvolvedorId])) {
-                $values = [
-                  ':perfil_id' => $perfilChefeId,
-                  ':id' => $chefia['id_usuario']
-                ];
-                $sqlPerfilUpdate = "UPDATE usuarios SET perfil_id = :perfil_id WHERE id = :id";
-                $this->logSiape("Atualizando perfil do chefe", $values, Tipo::INFO);
-                DB::update($sqlPerfilUpdate, $values);
-              } else {
-                LogError::newWarn("IntegracaoService: durante atualização de gestores, o usuário não teve seu perfil atualizado para " . $usuarioChefe .
-                  " uma vez que é Desenvolvedor.", [$queryChefe->nome, $queryChefe->email]);
-              }
-
-              // Verificar se existe mais atribuições.
-              // Após consultar todas as atribuições já existentes e montar o array para gravar, verificar se
-              // é substituto e/ou delegado ao mesmo tempo. Se sim, remover do array (substituto e delegado).
-            } else if ($chefia['tipo_funcao'] == '2') {
-              $queryChefe = Usuario::find($chefia['id_usuario']);
-              $queryChefeAtribuicoes = $queryChefe->getUnidadesAtribuicoesAttribute();
-              $chefeAtribuicoes = [];
-
-              if (
-                !empty($queryChefeAtribuicoes) &&
-                is_array($queryChefeAtribuicoes) &&
-                array_key_exists($unidadeExercicioId, $queryChefeAtribuicoes) &&
-                $queryChefeAtribuicoes[$unidadeExercicioId]
-              ) {
-                $chefeAtribuicoes = array_diff($queryChefeAtribuicoes[$unidadeExercicioId], ["GESTOR"]);
-                if (!in_array("GESTOR_SUBSTITUTO", $chefeAtribuicoes)) array_push($chefeAtribuicoes, "GESTOR_SUBSTITUTO");
-                $chefeAtribuicoes = array_values(array_unique($chefeAtribuicoes));
-              } else {
-                $chefeAtribuicoes = ["GESTOR_SUBSTITUTO"];
-              }
-
-              $vinculo = array([
-                'usuario_id' => $chefia['id_usuario'],
-                'unidade_id' => $unidadeExercicioId,
-                'atribuicoes' => $chefeAtribuicoes,
-              ]);
-              $this->logSiape("Salvando integrantes", $vinculo, Tipo::INFO);
-              $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
-
-              $perfilAdministradorNegocial = $this->nivelAcessoService->getPerfilAdministrador();
-              if (empty($perfilAdministradorNegocial)) {
-                throw new ServerException("ValidateUsuario", "Perfil de administrador negocial não encontrado no banco de dados. Verificar configuração no painel SaaS.");
-              }
-
-              // Atualiza nível nível de acesso para chefe caso servidor não seja Desenvolvedor ou Administrador Negocial.
-              if ($perfilDesenvolvedorId != $queryChefe->perfil->id || $perfilAdministradorNegocial->id != $queryChefe->perfil->id) {
-                $values = [
-                  ':perfil_id' => $perfilChefeId,
-                  ':id' => $chefia['id_usuario']
-                ];
-                $this->logSiape("Atualizando perfil do chefe", $values, Tipo::INFO);
-                $sqlPerfilUpdate = "UPDATE usuarios SET perfil_id = :perfil_id WHERE id = :id";
-                DB::update($sqlPerfilUpdate, $values);
-              } else {
-                $this->logSiape("IntegracaoService: durante atualização de gestores, o usuário não teve seu perfil atualizado para " . $usuarioChefe .
-                  " uma vez que é {$perfilDesenvolvedor->nome} {$perfilAdministradorNegocial->nome}.", [$queryChefe->nome, $queryChefe->email], Tipo::WARNING);
-
-                LogError::newWarn("IntegracaoService: durante atualização de gestores, o usuário não teve seu perfil atualizado para " . $usuarioChefe .
-                  " uma vez que é {$perfilDesenvolvedor->nome} {$perfilAdministradorNegocial->nome}.", [$queryChefe->nome, $queryChefe->email]);
-              }
-            } else {
-              $this->logSiape("Falha ao atualizar chefia", $chefia, Tipo::ERROR);
-              throw new IntegrationException("Falha no array de funções do servidor");
-            }
-          } else {
-            $chefiaSiape = null;
-            if(is_array($chefia) && array_key_exists('codigo_siape', $chefia) && !empty($chefia['codigo_siape'])){
-                $chefiaSiape = $chefia['codigo_siape'];
-                if(is_array($chefiaSiape)){
-                    $chefiaSiape = implode($chefiaSiape);
-                }
-                if(!is_string($chefiaSiape)){
-                    $chefiaSiape = null;
-                }
-            }
-
-            $nomeUsuario = Usuario::where('id', $chefia['id_usuario'])->first()->nome;
-            if(!is_string($nomeUsuario)) {
-                $nomeUsuario = null;
-            }
-
-            $unidade = array_filter($uos, function ($o) use ($chefia) {
-                if ($o['id_servo'] == $chefia['codigo_siape']) {
-                    return $o['nomeuorg'];
-                }
-            });
-            if(!is_string($unidade)){
-                $unidade = "Desconhecida - ";
-            }
-
-            array_push($this->result['gestores']["Falhas"],
-                'Impossível lançar chefia (' . strtoupper($nomeUsuario) . ') porque a Unidade de código SIAPE ' .
-                $chefiaSiape . '(' . $unidade . 'nome não localizado!' . ')' . ' não está cadastrada/ativa!');
-
-          }
-        }
         DB::commit();
         $this->result["gestores"]['Resultado'] = 'Sucesso';
-        $this->result["gestores"]['Observações'] = [...$this->result["gestores"]['Observações'], ...array_filter([
-          count($chefes) . (count($chefes) == 1 ? ' gestor atualizado, ' : ' gestores atualizados, ') . count($chefias) . (count($chefias) == 1 ? ' chefia atualizada!' : ' chefias atualizadas!')
-        ], fn ($o) => intval(substr($o, 0, strpos($o, 'gestor') - 1)) > 0)];
+        $this->result["gestores"]['Observações'] = [
+           'Sucesso: '.count($messagensRetorno['sucesso']) . ' chefias foram atualizadas com sucesso!',
+          'Erro: '.count($messagensRetorno['erro']) . ' chefias não puderam ser atualizadas!',
+          'Aviso: '.count($messagensRetorno['vazio']) . ' chefias vazias ou não encontradas!',
+        ];
+        
       } catch (Throwable $e) {
         DB::rollback();
         $this->logSiape("Erro ao atualizar os gestores (titulares/substitutos)", throwableToArray($e), Tipo::ERROR);

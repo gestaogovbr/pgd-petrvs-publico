@@ -86,7 +86,7 @@ class TemplateDatasetService extends ServiceBase
 					["field" => "status", "label" => "Status do plano"],
 					["field" => "data_inicio", "label" => "Data inicial do plano", "type" => "DATETIME"],
 					["field" => "data_fim", "label" => "Data final do plano", "type" => "DATETIME"],
-					["field" => "tipo_modalidade", "label" => "Tipo de modalidade", "fields" => "TIPO_MODALIDADE", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->tipo_modalidade; }],
+					["field" => "tipo_modalidade", "label" => "Tipo de modalidade", "fields" => "TIPO_MODALIDADE", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->tipoModalidade; }],
 					["field" => "unidade", "label" => "Unidade", "fields" => "UNIDADE", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->unidade; }],
 					["field" => "usuario", "label" => "Usuário", "fields" => "USUARIO", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->usuario; }],
 					["field" => "programa", "label" => "Programa", "fields" => "PROGRAMA", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->programa; }],

@@ -5,15 +5,19 @@ namespace App\Services;
 use Illuminate\Support\Facades\DB;
 use App\Services\ServiceBase;
 use App\Exceptions\LogError;
+use App\Exceptions\RequestConectaGovException;
+use App\Services\Siape\Conexao;
 use DateTime;
-use SoapClient;
+use Exception;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class IntegracaoSiapeService extends ServiceBase
 {
+  const SITUACAO_FUNCIONAL_ATIVO_EM_OUTRO_ORGAO = 8;
 
-  public $siape = '';
-  private $siapeUpag = '';
+  private Conexao|null $siape = null;
+  private string $siapeUpag = '';
   private $siapeUrl = '';
   private $siapeSiglaSistema = '';
   private $siapeNomeSistema = '';
@@ -37,7 +41,13 @@ class IntegracaoSiapeService extends ServiceBase
     $this->siapeCodUorg = strval(intval($config['codUorg']));
     $this->siapeParmExistPag = $config['parmExistPag'];
     $this->siapeParmTipoVinculo = $config['parmTipoVinculo'];
-    $this->siape = new SoapClient($this->siapeUrl);
+    $this->siape = new Conexao(
+      $this->siapeCpf,
+      $this->siapeUrl,
+      $config['conectagov_chave'],
+      $config['conectagov_senha'],
+    );
+
   }
 
   function retornarPessoa(array $pessoa): array | null
@@ -55,7 +65,6 @@ class IntegracaoSiapeService extends ServiceBase
           $this->siapeParmExistPag,
           $this->siapeParmTipoVinculo
         );
-        $dadosPessoais = $this->UtilService->object2array($dadosPessoais);
 
         $dadosFuncionais = $this->siape->consultaDadosFuncionais(
           $this->siapeSiglaSistema,
@@ -66,8 +75,10 @@ class IntegracaoSiapeService extends ServiceBase
           $this->siapeParmExistPag,
           $this->siapeParmTipoVinculo
         );
-        $dadosFuncionais = $this->UtilService->object2array($dadosFuncionais)['dadosFuncionais']['DadosFuncionais'];
+        $dadosFuncionais = $dadosFuncionais['dadosFuncionais']['DadosFuncionais'];
 
+        if($dadosFuncionais['codsitfuncional'] == self::SITUACAO_FUNCIONAL_ATIVO_EM_OUTRO_ORGAO) return null;
+        
         $funcao = null;
        
         if (!empty($dadosFuncionais['codAtivFun']) && $dadosFuncionais['codAtivFun']) {
@@ -143,10 +154,15 @@ class IntegracaoSiapeService extends ServiceBase
           $this->siapeCodOrgao,
           $uorgInicial
         );
-        $uorgsWsdl = $this->UtilService->object2array($uorgsWsdl);
-        $uorgsWsdl = $uorgsWsdl['Uorg'];
+        Log::info('saida listaUorgs', [$uorgsWsdl]);
       }
-    } catch (Throwable $e) {
+    } 
+    catch (RequestConectaGovException $e) {
+      LogError::newError("ISiape: erro de conexão.", $e->getMessage());
+      throw $e;
+    }
+    catch (Throwable $e) {
+      Log::error('ISiape: erro de conexão.', [$e->getMessage(), $e->getLine()]);
       LogError::newError("ISiape: erro de conexão.", $e->getMessage());
     }
 
@@ -163,6 +179,7 @@ class IntegracaoSiapeService extends ServiceBase
               empty($uorg_iu->data_modificacao) ||
               $data_modificacao_siape > $this->UtilService->asTimestamp($uorg_iu->data_modificacao)
             ) {
+             try {
               $uorgWsdl = $this->siape->dadosUorg(
                 $this->siapeSiglaSistema,
                 $this->siapeNomeSistema,
@@ -172,7 +189,12 @@ class IntegracaoSiapeService extends ServiceBase
                 $value['codigo']
               );
 
-              $uorgWsdl = $this->UtilService->object2array($uorgWsdl);
+             } catch (Exception $e) {
+              Log::error('ISiape: erro ao tentar recuperar dados da UORG ' . $value['codigo'] . '.', $e->getMessage());
+              continue;
+             }
+
+
               if (!empty($this->UtilService->valueOrNull($uorgWsdl, "nomeMunicipio"))) {
                 $consulta_sql = "SELECT * FROM cidades WHERE nome LIKE '" . $uorgWsdl['nomeMunicipio'] . "'";
                 $consulta_sql = DB::select($consulta_sql);
@@ -216,7 +238,9 @@ class IntegracaoSiapeService extends ServiceBase
                 'regimental' => $this->UtilService->valueOrNull($uorgWsdl, "indicadorUorgRegimenta") ?: "",
                 'data_modificacao' => $this->UtilService->valueOrNull($value, "dataUltimaTransacao") ?: "",
                 'und_nu_adicional' => $this->UtilService->valueOrNull($uorgWsdl, "und_nu_adicional") ?: "",
-                'cnpjupag' => $this->UtilService->valueOrNull($uorgWsdl, "cnpjUpag") ?: ""
+                'cnpjupag' => $this->UtilService->valueOrNull($uorgWsdl, "cnpjUpag") ?: "",
+                'cpf_titular_autoridade_uorg' => $this->UtilService->valueOrNull($uorgWsdl, "cpfTitularAutoridadeUorg") ?: "",
+                'cpf_substituto_autoridade_uorg' => $this->UtilService->valueOrNull($uorgWsdl, "cpfSubstitutoAutoridadeUorg") ?: "",
               ];
               array_push($uorgsPetrvs['uorg'], $inserir_uorg);
             } else {
@@ -252,10 +276,9 @@ class IntegracaoSiapeService extends ServiceBase
             $this->siapeCodOrgao,
             $codUorg['codigo_siape']
           );
+          Log::info('saida listaServidores', [$cpfsPorUorgWsdl]);
 
-          $cpfsPorUorgWsdl = $this->UtilService->object2array($cpfsPorUorgWsdl);
-          if (array_key_exists('Servidor', $cpfsPorUorgWsdl)) {
-            if (array_key_exists('cpf', $cpfsPorUorgWsdl['Servidor'])) {
+            if (array_key_exists('cpf', $cpfsPorUorgWsdl)) {
               $cpf = [
                 'cpf' => $cpfsPorUorgWsdl['Servidor']['cpf'],
                 'dataUltimaTransacao' => DateTime::createFromFormat(
@@ -265,7 +288,7 @@ class IntegracaoSiapeService extends ServiceBase
               ];
               array_push($cpfsPorUorgsWsdl, $cpf);
             } else {
-              foreach ($cpfsPorUorgWsdl['Servidor'] as $cpf) {
+              foreach ($cpfsPorUorgWsdl as $cpf) {
                 $cpf = [
                   'cpf' => $cpf['cpf'],
                   'dataUltimaTransacao' => DateTime::createFromFormat(
@@ -276,8 +299,14 @@ class IntegracaoSiapeService extends ServiceBase
                 array_push($cpfsPorUorgsWsdl, $cpf);
               }
             }
-          }
-        } catch (Throwable $e) {
+        } 
+        catch (RequestConectaGovException $e) {         
+          Log::error("Erro no conectaGov", [$e->getMessage()]);
+          LogError::newError("Erro no conectaGov", $e->getMessage());
+          continue;
+        }
+        catch (Throwable $e) {
+          Log::error('ISiape: não existe servidor ativo na UORG ' . $codUorg['codigo_siape'] . '.', [$e->getMessage()]);
           LogError::newWarn('ISiape: não existe servidor ativo na UORG ' . $codUorg['codigo_siape'] . '.', $e->getMessage());
           continue;
         }
@@ -307,10 +336,9 @@ class IntegracaoSiapeService extends ServiceBase
               }
               $tentativa++;
             } catch (Throwable $e) {
-              $msg = $e->getMessage();
-              $this->siape = new SoapClient($this->siapeUrl);
+              Log::error("Falha ao tentar recuperar dados da pessoa com CPF " . $pessoa['cpf'], $e->getMessage());
+              LogError::newWarn("Falha ao tentar recuperar dados da pessoa com CPF " . $pessoa['cpf'], $e->getMessage());
               $tentativa++;
-              usleep(10000);
             }
           } while ($tentativa < $qtd_tentativas);
         } else {
