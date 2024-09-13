@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Tenant;
 use App\Models\Unidade;
 use App\Models\Usuario;
+use Brazanation\Documents\Cpf;
 use Throwable;
 
 class RelatoController extends ControllerBase
@@ -29,16 +30,30 @@ class RelatoController extends ControllerBase
                 'descricao' => 'required_if:opcao,1,4|string|max:500',
             ]);
 
+            $opcoes = [
+                "1" => "O agente público mudou de unidade dentro do próprio órgão/entidade e o Petrvs não atualizou sua lotação.",
+                "2" => "O agente público está cedido para outro órgão/entidade e o Petrvs o mantém na base de dados deste órgão/entidade.",
+                "3" => "O agente público está cedido para este órgão/entidade, mas no Petrvs ainda não consta na base de dados.",
+                "4" => "Outros"
+            ];
+
             $relatoDto                = new RelatoErroLotacaoDTO();
-            $relatoDto->opcao         = $data['opcao'];
+            $relatoDto->opcao         = $opcoes[$data['opcao']];
             $relatoDto->usuario_id    = $data['usuario_id'];
-            $relatoDto->unidade_id    = $data['unidade_id'];
-            $relatoDto->nome          = $data['nome'];
-            $relatoDto->cpf           = $data['cpf'];
-            $relatoDto->matricula     = $data['matricula'];
-            $relatoDto->descricao     = $data['descricao'];
             $relatoDto->usuario       = $data['usuario_id'] ? Usuario::find($data['usuario_id']) : null;
-            $relatoDto->unidade       = $data['unidade_id'] ? Unidade::find($data['unidade_id']) : null;
+            $relatoDto->unidade_id    = $data['unidade_id'] ? $data['unidade_id']: ($relatoDto->usuario? $relatoDto->usuario->lotacao->unidade_id: null);
+            $relatoDto->unidade       = $relatoDto->unidade_id ? Unidade::find($relatoDto->unidade_id) : null;
+
+            if ($relatoDto->usuario) {
+                $relatoDto->nome          = $relatoDto->usuario->nome;
+                $relatoDto->cpf           = Cpf::createFromString($relatoDto->usuario->cpf)->format();
+                $relatoDto->matricula     = $relatoDto->usuario->matricula;
+            } else {
+                $relatoDto->nome          = $data['nome'];
+                $relatoDto->cpf           = $data['cpf'];
+                $relatoDto->matricula     = $data['matricula'];
+            }
+            $relatoDto->descricao     = $data['descricao'];
 
             $tenantId = $request->headers->get('X-ENTIDADE');
             $tenant = Tenant::find($tenantId);
