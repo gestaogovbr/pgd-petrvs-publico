@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Cliente extends Model
+class Cliente extends ModelBase
 {
     use HasFactory, SoftDeletes;
 
@@ -15,6 +15,12 @@ class Cliente extends Model
     public $fillable = [
         'nome',
         'tipo_cliente_id'
+    ];
+
+    protected $casts = [
+        'id' => 'string',
+        'nome' => 'string',
+        'tipo_cliente_id' => 'string',
     ];
 
     public function tipoCliente()
