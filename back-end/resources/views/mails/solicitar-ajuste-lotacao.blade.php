@@ -22,7 +22,7 @@
         </i>
 
         <br/>    
-        <p>Após a realização dos ajustes no SIAPE, para confirmar, <a href='#'>clique aqui</a>.</p>
+        <p>Após a realização dos ajustes no SIAPE, para confirmar, <a href='{{ $urlConfirmacao }}'>clique aqui</a>.</p>
         <br/>
         <p><i>Atenciosamente,<br/>
             <b>Suporte PGD Petrvs</b><br/>

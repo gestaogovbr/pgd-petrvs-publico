@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Mails;
+namespace App\Mails\ErroLotacao;
 
 use App\Models\Unidade;
 use App\Models\Usuario;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
@@ -13,7 +13,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\DTOs\RelatoErroLotacaoDTO;
 
-class ErroLotacaoMail extends Mailable
+class SolicitarAjusteLotacaoMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -31,10 +31,14 @@ class ErroLotacaoMail extends Mailable
 
     public function content(): Content
     {
+        $user_email = urlencode(Auth::user()->email);
+        $nome = urlencode($this->relatoErroLotacaoDTO->nome);
+
         return new Content(
-            view: 'mails.erro-lotacao',
+            view: 'mails.solicitar-ajuste-lotacao',
             with: [
-                'relato' => $this->relatoErroLotacaoDTO
+                'relato' => $this->relatoErroLotacaoDTO,
+                'urlConfirmacao' => url("/api/Relato/confirmar/{$user_email}/{$nome}")
             ]
         );
     }

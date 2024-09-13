@@ -463,5 +463,6 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntregaProgresso')->gro
 });
 
 Route::middleware(['auth:sanctum'])->prefix('Relato')->group(function () {
-  defaultRoutes(RelatoController::class);
+  Route::post('store', [RelatoController::class, 'store']);
+  Route::get('confirmar/{email}/{nome}', [RelatoController::class, 'confirmar']);
 });
