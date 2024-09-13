@@ -17,28 +17,18 @@ class ErroLotacaoMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
     public function __construct(
         public RelatoErroLotacaoDTO $relatoErroLotacaoDTO
     )
     {}
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
         return new Envelope(
-            //from:  new Address('jeffrey@example.com', 'Jeffrey Way'),
-            subject: 'Erro de Lotação',
+            subject: 'Solicitação de ajuste de lotação no Siape',
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
