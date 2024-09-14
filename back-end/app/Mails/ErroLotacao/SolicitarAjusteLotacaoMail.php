@@ -31,14 +31,12 @@ class SolicitarAjusteLotacaoMail extends Mailable
 
     public function content(): Content
     {
-        $user_email = urlencode(Auth::user()->email);
-        $nome = urlencode($this->relatoErroLotacaoDTO->nome);
-
         return new Content(
             view: 'mails.solicitar-ajuste-lotacao',
             with: [
                 'relato' => $this->relatoErroLotacaoDTO,
-                'urlConfirmacao' => url("/api/Relato/confirmar/{$user_email}/{$nome}")
+                'email' =>  Auth::user()->email,
+                'nome' => $this->relatoErroLotacaoDTO->nome
             ]
         );
     }
