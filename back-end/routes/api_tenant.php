@@ -77,6 +77,7 @@ use App\Http\Controllers\HistoricoFuncaoController;
 use App\Http\Controllers\HistoricoLotacaoController;
 use App\Http\Controllers\ComparecimentoController;
 use App\Http\Controllers\BatchController;
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\OcorrenciaController;
 use App\Http\Controllers\ReacaoController;
 use App\Http\Controllers\PlanoEntregaEntregaProgressoController;
@@ -84,6 +85,8 @@ use App\Http\Controllers\QuestionarioPreenchimentoController;
 use App\Http\Controllers\QuestionarioPerguntaController;
 use App\Http\Controllers\QuestionarioPerguntaRespostaController;
 use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\TipoClienteController;
+use FontLib\Table\Type\post;
 
 /*
 |--------------------------------------------------------------------------
@@ -455,4 +458,10 @@ Route::middleware(['auth:sanctum'])->prefix('Catalogo')->group(function () {
 });
 Route::middleware(['auth:sanctum'])->prefix('Solucao')->group(function () {
     defaultRoutes(SolucaoController::class);
+});
+Route::middleware(['auth:sanctum'])->prefix('TipoCliente')->group(function () {
+  defaultRoutes(TipoClienteController::class);
+});
+Route::middleware(['auth:sanctum'])->prefix('Cliente')->group(function () {
+  defaultRoutes(ClienteController::class);
 });
