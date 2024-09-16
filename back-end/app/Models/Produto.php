@@ -65,6 +65,11 @@ class Produto  extends ModelBase
         return $this->hasMany(ProdutoProduto::class, 'produto_base_id');
     }
 
+    public function produtoCliente()
+    {
+        return $this->hasMany(ProdutoCliente::class, 'produto_id');
+    }
+
     public function produtoProcessoCadeiaValor()
     {
         return $this->hasMany(ProdutoProcessoCadeiaValor::class, 'produto_id');

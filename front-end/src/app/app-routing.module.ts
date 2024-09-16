@@ -24,6 +24,7 @@ const routes: Routes = [
   { path: 'suporte', loadChildren: () => import('./modules/suporte/suporte.module').then(m => m.SuporteModule), resolve: { config: ConfigResolver } },
   { path: 'uteis', loadChildren: () => import('./modules/uteis/uteis.module').then(m => m.UteisModule), canActivate: [AuthGuard] },
   { path: 'cadastros/cidade', loadChildren: () => import('./modules/cadastros/cidade/cidade.module').then(m => m.CidadeModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/cliente', loadChildren: () => import('./modules/cadastros/cliente/cliente.module').then(m => m.ClienteModule), canActivate: [AuthGuard] },
   { path: 'cadastros/entrega', loadChildren: () => import('./modules/cadastros/entrega/entrega.module').then(m => m.EntregaModule), canActivate: [AuthGuard] },
   { path: 'cadastros/eixo-tematico', loadChildren: () => import('./modules/cadastros/eixo-tematico/eixo-tematico.module').then(m => m.EixoTematicoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/feriado', loadChildren: () => import('./modules/cadastros/feriado/feriado.module').then(m => m.FeriadoModule), canActivate: [AuthGuard] },
