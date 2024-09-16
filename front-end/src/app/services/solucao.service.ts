@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { LookupItem } from './lookup.service';
 import { AuthService } from './auth.service';
-import { CatalogoDaoService } from '../dao/catalogo-dao.service';
+import { SolucaoDaoService } from '../dao/solucao-dao.service';
 
 @Injectable({
   providedIn: 'root'
 })
 
-export class CatalogoService {
+export class SolucaoService {
 
-  public catalogo: LookupItem[] = [];
-  public catalogoDao?: CatalogoDaoService;
+  public solucao: LookupItem[] = [];
+  public solucaoDao?: SolucaoDaoService;
 
   constructor(
     public auth: AuthService

@@ -1,15 +1,15 @@
 import { Injectable,Injector } from '@angular/core';
 import { DaoBaseService } from './dao-base.service';
-import { Catalogo } from '../models/catalogo.model';
+import { Solucao } from '../models/solucao.model';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class CatalogoDaoService extends DaoBaseService<Catalogo>{
+export class SolucaoDaoService extends DaoBaseService<Solucao>{
  
   constructor(protected injector: Injector) { 
-    super("Catalogo", injector);
+    super("Solucao", injector);
     this.inputSearchConfig.searchFields = ["nome"]
   }  
 }

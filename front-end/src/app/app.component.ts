@@ -158,8 +158,8 @@ export class AppComponent {
       HABILITACOES_PROGRAMA: { name: this.lex.translate("Habilitações"), permition: 'MOD_PART', route: ['gestao', 'programa', 'participantes'], icon: this.entity.getIcon('Programa') },
       PORTIFOLIOS: { name: this.lex.translate("Portifólios"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
       PROJETOS: { name: this.lex.translate("Projetos"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
-      PRODUTOS: { name: this.lex.translate("Produtos"), permition: 'MOD_PENT', route: ['gestao', 'produto'], icon: this.entity.getIcon('Projeto') },
-      CATALOGOS: { name: this.lex.translate("Catalogos de Produtos e Serviços"), permition: 'MOD_PROD_CAT', route: ['gestao', 'catalogo'], icon: this.entity.getIcon('Catalogo') },
+      PRODUTOS: { name: this.lex.translate("Produtos e Serviços"), permition: 'MOD_PENT', route: ['gestao', 'produto'], icon: this.entity.getIcon('Projeto') },
+      SOLUCOES: { name: this.lex.translate("Soluções"), permition: 'MOD_PROD_CAT', route: ['gestao', 'solucao'], icon: this.entity.getIcon('Solucao') },
       /* Execucao */
       EXECUCAO_PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entregas"), permition: 'MOD_PENT', route: ['execucao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { execucao: true } },
       /* Relatórios */
@@ -222,12 +222,13 @@ export class AppComponent {
       menu: [
         this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
         this.menuSchema.CADEIAS_VALORES,
+        this.menuSchema.SOLUCOES,
+        this.menuSchema.PRODUTOS,
         this.menuSchema.PROGRAMAS_GESTAO,
         this.menuSchema.HABILITACOES_PROGRAMA,
         this.menuSchema.PLANOS_ENTREGAS,
         this.menuSchema.PLANOS_TRABALHOS,
-        this.menuSchema.PRODUTOS,
-        this.menuSchema.CATALOGOS,
+        
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Execução"),

@@ -2,22 +2,22 @@ import { Component, Injector, ViewChild } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
-import { CatalogoDaoService } from "src/app/dao/catalogo-dao.service";
+import { SolucaoDaoService } from "src/app/dao/solucao-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
-import { Catalogo } from "src/app/models/catalogo.model";
+import { Solucao } from "src/app/models/solucao.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
-import { CatalogoService } from "src/app/services/catalogo.service";
+import { SolucaoService } from "src/app/services/solucao.service";
 
 @Component({
-  selector: 'app-catalogo-list',
-  templateUrl: './catalogo-list.component.html',
-  styleUrls: ['./catalogo-list.component.scss']
+  selector: 'app-solucao-list',
+  templateUrl: './solucao-list.component.html',
+  styleUrls: ['./solucao-list.component.scss']
 })
-export class CatalogoListComponent extends PageListBase<Catalogo, CatalogoDaoService> {
+export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
-  public catalogoService: CatalogoService;
+  public catalogoService: SolucaoService;
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
   public botoes: ToolbarButton[] = [];
@@ -26,12 +26,12 @@ export class CatalogoListComponent extends PageListBase<Catalogo, CatalogoDaoSer
   public BOTAO_CONCLUIR: ToolbarButton;
   public BOTAO_CANCELAR: ToolbarButton;
 
-  constructor(public injector: Injector, dao: CatalogoDaoService) {
-    super(injector, Catalogo, CatalogoDaoService);
-    this.catalogoService = injector.get<CatalogoService>(CatalogoService);
+  constructor(public injector: Injector, dao: SolucaoDaoService) {
+    super(injector, Solucao, SolucaoDaoService);
+    this.catalogoService = injector.get<SolucaoService>(SolucaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
-    this.title = this.lex.translate("Catalogos");
+    this.title = this.lex.translate("Soluções");
     this.filter = this.fh.FormBuilder({
       agrupar: {default: true},
       nome: {default: ""},
@@ -81,7 +81,7 @@ export class CatalogoListComponent extends PageListBase<Catalogo, CatalogoDaoSer
     super.ngOnInit();
   }
 
-  public dynamicButtons(row: Catalogo): ToolbarButton[] {
+  public dynamicButtons(row: Solucao): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     result.push(this.BOTAO_DETALHES);
     result.push(this.BOTAO_CLONAR);
