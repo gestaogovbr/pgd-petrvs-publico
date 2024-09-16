@@ -15,6 +15,9 @@
         <input-select *ngIf="form!.controls.abrangencia.value == 'ESTADUAL'" [size]="8" label="UF" icon="bi bi-flag" controlName="uf" [items]="lookup.UF"></input-select>
         <input-display *ngIf="form!.controls.abrangencia.value == 'NACIONAL'" [size]="8" label="Âmbito" icon="bi bi-shield-fill-check" value="Nacional"></input-display>
       </div>
+      <div class="row">
+        <input-text label="E-mail Responsável pelas alterações no SIAPE" controlName="email_responsavel_siape" [attr.maxlength]=100 required></input-text>
+      </div>
     </tab>
     <!--tab key="EXPEDIENTE" label="Expediente">
       <calendar-expediente #expediente [control]="form!.controls.expediente"></calendar-expediente>

@@ -82,6 +82,8 @@ use App\Http\Controllers\QuestionarioPreenchimentoController;
 use App\Http\Controllers\QuestionarioPerguntaController;
 use App\Http\Controllers\QuestionarioPerguntaRespostaController;
 use App\Http\Controllers\JobAgendadoController;
+use App\Http\Controllers\RelatoController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -458,4 +460,9 @@ Route::middleware(['auth:sanctum'])->prefix('Reacao')->group(function () {
 
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntregaProgresso')->group(function () {
   defaultRoutes(PlanoEntregaEntregaProgressoController::class);
+});
+
+Route::middleware(['auth:sanctum'])->prefix('Relato')->group(function () {
+  Route::post('store', [RelatoController::class, 'store']);
+  Route::get('confirmar/{email}/{nome}', [RelatoController::class, 'confirmar']);
 });

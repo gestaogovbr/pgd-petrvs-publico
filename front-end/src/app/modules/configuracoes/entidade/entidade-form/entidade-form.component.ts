@@ -47,7 +47,8 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
       gestor_id: {default: null},
       gestor_substituto_id: {default: null},
       expediente: {default: null},
-      uf: {default: null}
+      uf: {default: null},
+      email_responsavel_siape: {default: ""},
     }, this.cdRef, this.validate);
     this.join = ["cidade", "tipoModalidade", "gestor", "gestor_substituto"];
   }
@@ -56,7 +57,7 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if(['nome', 'sigla'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['nome', 'sigla', 'email_responsavel_siape'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
     return result;
