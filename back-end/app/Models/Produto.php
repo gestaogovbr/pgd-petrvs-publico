@@ -85,4 +85,9 @@ class Produto  extends ModelBase
     {
         return in_array($tipo, [self::TIPO_PRODUTO, self::TIPO_SERVICO]);
     }
+
+    public function produtoCliente()
+    {
+        return $this->hasMany(ProdutoCliente::class);
+    }
 }

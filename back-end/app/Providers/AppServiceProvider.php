@@ -8,6 +8,8 @@ use App\Http\Controllers\TipoClienteController;
 use App\Models\TipoCliente;
 use App\Services\Validador\ClienteValidador;
 use App\Services\Validador\IValidador;
+use App\Services\Validador\ProdutoClienteValidador;
+use App\Services\Validador\ProdutoClienteValidation;
 use App\Services\Validador\ProdutoProcessoCadeiaValorValidation;
 use App\Services\Validador\ProdutoProdutoValidation;
 use App\Services\Validador\ProdutoValidador;
@@ -32,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
                 $this->app->make(ProdutoValidador::class),
                 $this->app->make(ProdutoProdutoValidation::class),
                 $this->app->make(ProdutoProcessoCadeiaValorValidation::class),
+                $this->app->make(ProdutoClienteValidador::class),
             ];
         });
 
