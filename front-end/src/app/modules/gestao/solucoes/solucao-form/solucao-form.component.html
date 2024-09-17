@@ -1,18 +1,75 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()">
   <div class="row">
-    <div class="col-md-4">
-      <input-text [size]="6" label="Nome do catálogo" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250 required></input-text>
+    <div class="col-md-8">
+      <input-text 
+        [size]="8" 
+        label="Nome da Solução" 
+        icon="bi bi-textarea-t" 
+        controlName="nome" 
+        [control]="form!.controls.nome" 
+        [attr.maxlength]=250 
+        labelInfo="Nome formal do produto ou serviço. Ex: Programa de Destão do Desempenho"
+        required   
+      ></input-text>
     </div>
-    <div class="col-md-4">
-      <input-search #usuario label="Curador Responsável" [size]="6" required [disabled]="action == 'new' ? undefined : 'true'" controlName="curador_responsavel_id" [dao]="usuarioDao" required></input-search>
+    <div class="col-md-3">
+      <input-text 
+        [size]="3" 
+        label="Sigla/Nome Fantasia" 
+        icon="bi bi-textarea-t" 
+        controlName="nome" 
+        [control]="form!.controls.sigla" 
+        [attr.maxlength]=250 
+        labelInfo="Nome informal do produto ou serviço. Ex: PGD"
+        required>
+      </input-text>
     </div>
-    <div class="col-md-4">  
-      <input-search #unidade [size]="6" required [disabled]="action == 'new' ? undefined : 'true'" controlName="unidade_id" [dao]="unidadeDao" required></input-search>
+    <div class="col-md-8">  
+      <input-search #unidade 
+        [size]="8" 
+        label="Unidade Instituidora"
+        required 
+        [disabled]="action == 'new' ? undefined : 'true'" 
+        controlName="unidade_id" 
+        [dao]="unidadeDao"
+      ></input-search>
     </div>
   </div>
   <div class="row">
-    <input-datetime date [size]="3" label="Início" controlName="data_inicio"  required></input-datetime>
-    <input-datetime date [size]="3" #data_fim label="Final" controlName="data_fim" required></input-datetime>
+    <div class="col-md-6">
+      <input-text 
+      [size]="6" 
+      label="Descrição" 
+      icon="bi bi-textarea-t" 
+      controlName="descricao" 
+      [control]="form!.controls.descricao" 
+      [attr.maxlength]=250 
+      labelInfo="Objetivo e aplicabilidade da solução. Ex: Programa do indutor da melhoria de desempenho individual e institucional."
+      required   
+      ></input-text>
+    </div>
+    <div class="col-md-6">
+      <input-search #usuario 
+        label="Responsável" 
+        [size]="6" 
+        required 
+        [disabled]="action == 'new' ? undefined : 'true'" 
+        controlName="responsavel_id" 
+        [dao]="usuarioDao"
+        labelInfo="Agente público responsável pelo acompanhamento da Solução na Unidade Instituidora"
+      ></input-search>
+    </div>
+    <div class="col-md-12">
+      <input-text 
+      [size]="6" 
+      label="URL" 
+      icon="bi bi-textarea-t" 
+      controlName="url" 
+      [control]="form!.controls.url" 
+      [attr.maxlength]=250 
+      labelInfo="Página oficial do produto ou serviço. Ex: www.gov.br/lgpd"
+      ></input-text>
+    </div>
   </div>
 </editable-form>
 

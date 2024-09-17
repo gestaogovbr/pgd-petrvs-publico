@@ -32,10 +32,11 @@ export class SolucaoFormComponent extends PageFormBase<Solucao, SolucaoDaoServic
     ];
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
+      sigla: { default: "" },
       unidade_id: { default: "" },
-      curador_responsavel_id: { default: "" },
-      data_inicio: { default: new Date()},
-      data_fim: { default: new Date() },
+      responsavel_id: { default: "" },
+      descricao: { default: "" },
+      url: { default: "" },
     });
   }
 
