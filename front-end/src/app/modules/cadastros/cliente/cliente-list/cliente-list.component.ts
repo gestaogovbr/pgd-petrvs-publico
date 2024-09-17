@@ -28,6 +28,8 @@ export class ClienteListComponent extends PageListBase<Cliente, ClienteDaoServic
       label: "Excluir",
       onClick: this.delete.bind(this)
     });
+
+    this.join = ["TipoCliente"];
    
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }

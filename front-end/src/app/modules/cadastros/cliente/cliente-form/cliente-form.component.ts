@@ -3,6 +3,7 @@ import { FormGroup } from "@angular/forms";
 import { EditableFormComponent } from "src/app/components/editable-form/editable-form.component";
 import { InputSearchComponent } from "src/app/components/input/input-search/input-search.component";
 import { ClienteDaoService } from "src/app/dao/cliente-dao.service";
+import { TipoClienteDaoService } from "src/app/dao/tipo-cliente-dao.service";
 import { IIndexable } from "src/app/models/base.model";
 import { Cliente } from "src/app/models/cliente.model";
 import { PageFormBase } from "src/app/modules/base/page-form-base";
@@ -17,8 +18,11 @@ export class ClienteFormComponent extends PageFormBase<Cliente, ClienteDaoServic
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('tipoCliente', { static: false }) public tipoCliente?: InputSearchComponent;
 
+  public tipoClienteDao?: TipoClienteDaoService;
+
   constructor(public injector: Injector) {
     super(injector, Cliente, ClienteDaoService);
+    this.tipoClienteDao = injector.get<TipoClienteDaoService>(TipoClienteDaoService);
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
       tipo: { default: "" }
@@ -29,7 +33,7 @@ export class ClienteFormComponent extends PageFormBase<Cliente, ClienteDaoServic
     let formValue = Object.assign({}, form.value);
     let cliente = (this.util.fillForm(formValue, entity));
     await Promise.all ([
-      this.tipoCliente?.loadSearch(entity.tipoCliente || entity.tipo_cliente_id),
+      this.tipoCliente?.loadSearch(entity.tipo_cliente || entity.tipo_cliente_id),
     ]);
     form.patchValue(cliente);
   }

@@ -10,6 +10,11 @@
         </div>
     </filter>
     <columns>
+        <column title="ID" [template]="columnID">
+            <ng-template let-row="row" #columnID>
+                <span> {{row.identificador}}</span><br>
+            </ng-template>
+        </column>
         <column title="Nome" [template]="columnNome">
             <ng-template let-row="row" #columnNome>
                 <span> {{row.nome}}</span><br>
@@ -21,6 +26,12 @@
               <span> {{row.nome_fantasia}}</span><br>
           </ng-template>
         </column>
+
+        <column title="Ativar/Desativar" [template]="columnAtivar">
+            <ng-template let-row="row" #columnAtivar>
+                <input-switch [valueOn]="ativo(row) ? 'true' : undefined" (change)="ativarDesativar(row)"></input-switch>
+            </ng-template>
+          </column>
         
         <column type="options" [onEdit]="edit" [options]="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>

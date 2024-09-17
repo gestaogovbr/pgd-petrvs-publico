@@ -35,6 +35,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
   public dynamicButtons(row: Produto): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });   
+    if(!row._status) result.push({ label: "Excluir", icon: "bi bi-trash", color: 'btn-outline-danger', onClick: this.delete.bind(this) });   
 
     return result;
   }
@@ -45,6 +46,23 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
         produto: produto
       }
     });    
+  }
+
+  public async ativarDesativar(produto: Produto){   
+    if(this.ativo(produto)){
+      produto.data_desativado = new Date();
+    } else {
+      produto.data_ativado = new Date();
+    }
+    await this.dao?.update(produto.id, {
+      data_desativado: produto.data_desativado,
+      data_ativado: produto.data_ativado
+    });
+    //this.grid?.refreshRows();
+  }
+
+  public ativo(produto: Produto): boolean {
+    return !produto.data_desativado && produto.data_ativado;
   }
 
 }
