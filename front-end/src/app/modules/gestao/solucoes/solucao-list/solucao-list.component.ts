@@ -42,7 +42,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     });
     this.join = [
       "unidade",
-      "curadorResponsavel"
+      "responsavel"
     ];
     this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
     this.BOTAO_DETALHES = {
