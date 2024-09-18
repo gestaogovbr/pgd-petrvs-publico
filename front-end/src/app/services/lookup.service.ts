@@ -901,9 +901,10 @@ export class LookupService implements IIndexable {
     { key: 'output', value: "Saída" }
   ];
 
-
-
-
+  public TIPO_ATIVO_INATIVO: LookupItem[] = [
+    { key: 'ativo', value: "Ativo" },
+    { key: 'inativo', value: "Inativo" }
+  ];
 
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);

@@ -21,10 +21,6 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
   public botoes: ToolbarButton[] = [];
-	public BOTAO_DETALHES: ToolbarButton;
-  public BOTAO_CLONAR: ToolbarButton;
-  public BOTAO_CONCLUIR: ToolbarButton;
-  public BOTAO_CANCELAR: ToolbarButton;
   public isCurador: boolean;
 
   constructor(public injector: Injector, dao: SolucaoDaoService) {
@@ -32,50 +28,37 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     this.catalogoService = injector.get<SolucaoService>(SolucaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    console.log(this.metadata);
     this.title = this.lex.translate("Soluções");
     this.filter = this.fh.FormBuilder({
       agrupar: {default: true},
-      nome: {default: ""},
-      curador_responsavel_id: {default: ""},
+      nome: {default: this.metadata?.nome ?? ""},
+      usuario_id: {default: ""},
       unidade_id: {default: ""},
-      data_inicio: {default: ""},
-      data_fim: {default: ""}
+      id: {default: ""},
+      status: {default: ""}
     });
     this.join = [
       "unidade",
       "responsavel"
     ];
     this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
-    this.BOTAO_DETALHES = {
-			label: "Detalhes",
-			icon: "bi bi-eye",
-			color: "btn-outline-success",
-			onClick: this.edit.bind(this),
-		};
-    this.BOTAO_CLONAR = {
-			label: "Clonar",
-			icon: "bi bi-copy",
-			color: "btn-outline-primary",
-			onClick: this.edit.bind(this),
-		};
-    this.BOTAO_CONCLUIR = {
-			label: "Concluir",
-			icon: "bi bi-x-circle",
-			color: "btn-outline-danger",
-			onClick: this.edit.bind(this),
-		};
-    this.BOTAO_CANCELAR = {
-			label: "Cancelar conclusão",
-			icon: "bi bi-backspace",
-			color: "btn-outline-warning",
-			onClick: this.edit.bind(this),
-		};
     this.botoes = [
-			this.BOTAO_DETALHES,
-      this.BOTAO_CLONAR,
-      this.BOTAO_CONCLUIR,
-      this.BOTAO_CANCELAR
     ]
+    this.options.push({
+      icon: "bi bi-info-circle",
+      label: "Informações",
+      onClick: this.consult.bind(this)
+    });
+
+    // Testa se o usuário possui permissão para excluir o tipo de atividade
+    if (this.auth.hasPermissionTo("MOD_PROD_CAT_EXCL")) {
+      this.options.push({
+        icon: "bi bi-trash",
+        label: "Excluir",
+        onClick: this.delete.bind(this)
+      });
+    }
 
     this.isCurador = this.auth.isUsuarioCurador()
   }
@@ -86,10 +69,6 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
 
   public dynamicButtons(row: Solucao): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    result.push(this.BOTAO_DETALHES);
-    result.push(this.BOTAO_CLONAR);
-    result.push(this.BOTAO_CONCLUIR);
-    result.push(this.BOTAO_CANCELAR);
     return result;
   }
 
@@ -113,19 +92,43 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     if(form.nome?.length) {
       result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
-		if (form.data_inicio) {
-			result.push(["data_inicio", ">=", form.data_inicio]);
+    if(form.id?.length) {
+      result.push(["id", "like", "%" + form.id.trim().replace(" ", "%") + "%"]);
     }
-    if (form.data_fim) {
-			result.push(["data_fim", "<=", form.data_fim]);
-		}
-		if (form.curador_responsavel_id) {
-      result.push(["curador_responsavel_id", "==", form.curador_responsavel_id]);
+		if (form.usuario_id) {
+      result.push(["responsavel_id", "==", form.curador_responsavel_id]);
     }
 		if (form.unidade_id?.length) {
 			result.push(["unidade_id", "==", form.unidade_id]);
     }
+    if (form.status) {
+      result.push(["status", "==", form.status]);
+    }
 		return result;
 	};
 
+  public onBuscaAvancada() {
+    this.go.navigate({ route: ["gestao", "solucao", "filter"] }, {
+      metadata: {
+        nome: this.filter?.controls.nome.value,
+        id: this.filter?.controls.id.value,
+        usuario_id: this.filter?.controls.usuario_id.value,
+        status:this.filter?.controls.status.value
+      },
+      modalClose: async (result) => {
+        if (result && this.filter) {
+          this.filter?.controls.nome.setValue(result.nome);
+          this.filter?.controls.id.setValue(result.id);
+          this.filter?.controls.usuario_id.setValue(result.usuario_id);
+          this.filter?.controls.status.setValue(result.status);
+          this.grid!.reloadFilter();
+        }
+      },
+    });
+  }
+
+  public onFilterClear(){
+    this.filter?.reset()
+    this.grid!.reloadFilter();
+  }
 }

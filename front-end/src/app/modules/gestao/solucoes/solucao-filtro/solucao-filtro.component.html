@@ -1,0 +1,38 @@
+
+<editable-form [form]="form!" confirmLabel="Buscar" (submit)="onSubmitClick()" (cancel)="onCancel()">
+    <div class="row">
+        <div class="col-md-12">
+            <input-text 
+                [size]="12" 
+                label="Nome" 
+                icon="bi bi-textarea-t" 
+                [control]="form!.controls.nome" 
+                controlName="this.form.nome" 
+                [attr.maxlength]=250
+            ></input-text>
+            <input-text 
+                [size]="12" 
+                label="ID#" 
+                icon="bi bi-textarea-t" 
+                [control]="form!.controls.id" 
+                controlName="this.form.id" 
+                [attr.maxlength]=10
+            ></input-text>
+            <input-search 
+                #usuario 
+                label="Responsável" 
+                [size]="12" 
+                [control]="form!.controls.usuario_id" 
+                controlName="this.form.usuario_id" 
+                [dao]="usuarioDao"
+            ></input-search>
+            <input-select 
+                [size]="12" 
+                label="Status"
+                [items]="lookup.TIPO_ATIVO_INATIVO" 
+                [control]="form!.controls.status" 
+                controlName="this.form.status"
+            ></input-select> 
+        </div>   
+    </div>
+</editable-form>

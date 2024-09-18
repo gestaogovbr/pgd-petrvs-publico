@@ -1,20 +1,38 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [selectable]="selectable" (select)="onSelect($event)"
+    [selectable]="selectable" 
+    (select)="onSelect($event)"
     [hasAdd]="this.isCurador"
-    [hasEdit]="true">
+    [hasEdit]="this.auth.hasPermissionTo('MOD_PROD_CAT_EDT')">
     <toolbar *ngIf="!selectable">
         <input-switch [size]="4" labelPosition="left" label="Agrupar por unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
     </toolbar>
-    <filter [deleted]="this.auth.hasPermissionTo('MOD_PROD_CAT_EXCL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter 
+        [deleted]="this.auth.hasPermissionTo('MOD_PROD_CAT_EXCL')" 
+        [form]="filter" 
+        [where]="filterWhere" 
+        [submit]="filterSubmit.bind(this)" 
+        [collapseChange]="filterCollapseChange.bind(this)" 
+        [collapsed]="!selectable && filterCollapsed"
+    >
         <div class="row">
-            <div class="col-md-4" *ngIf="false">
-                <input-text [size]="6" label="Nome do catálogo" icon="bi bi-textarea-t" [control]="filter!.controls.nome" controlName="this.filter.nome" [attr.maxlength]=250></input-text>
-            </div>
-            <div class="col-md-4" *ngIf="false">
-                <input-search #usuario label="Curador Responsável" [size]="6" [control]="filter!.controls.curador_responsavel_id" controlName="this.filter.curador_responsavel_id" [dao]="usuarioDao"></input-search>
-            </div>
             <div class="col-md-4">  
-                <input-search #unidade [size]="6" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>  
+                <input-search 
+                    #unidade 
+                    [size]="6" 
+                    [control]="filter!.controls.unidade_id" 
+                    controlName="unidade_id" 
+                    [dao]="unidadeDao"
+                ></input-search>  
+            </div>
+            <div class="col-md-3 busca-avancada">
+               <div class="busca-avancada-link"><a (click)="onBuscaAvancada()">Busca Avançada</a></div>
+               <div class="busca-avancada-clear"><a (click)="this.onFilterClear()">Limpar filtros de busca</a></div>
+               <div class="busca-avancada-filtros-aplicados">Filtros aplicados:
+                    <span *ngIf="filter!.controls.nome.value.length > 0">Nome</span>
+                    <span *ngIf="filter!.controls.id.value.length > 0">#ID</span>
+                    <span *ngIf="filter!.controls.usuario_id.value.length > 0">Responsável</span>
+                    <span *ngIf="filter!.controls.status.value.length > 0">Status</span>
+               </div>
             </div>
         </div>
     </filter>
