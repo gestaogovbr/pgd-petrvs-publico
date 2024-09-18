@@ -1,3 +1,10 @@
+## 2.1.1 - 18/09/2024 (Hotfixes)
+### Corrigido
+- Validação de Planos de Entrega.
+- Seleção automática do regramento.
+- Não permitir o uso da atribuição "Lotado" (somente SIAPE).
+- Permissão para Administrador negocial editar o template do TCR.
+- Permissão para Administrador negocial não visualizar o menu cadastros.
 ## 2.1.0 - 06/09/2024
 ### Adicionado
 - Campo para informar a unidade autorizadora no regramento.
