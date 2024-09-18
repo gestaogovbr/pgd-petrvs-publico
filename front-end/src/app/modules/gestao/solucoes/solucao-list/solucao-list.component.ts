@@ -25,6 +25,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
   public BOTAO_CLONAR: ToolbarButton;
   public BOTAO_CONCLUIR: ToolbarButton;
   public BOTAO_CANCELAR: ToolbarButton;
+  public isCurador: boolean;
 
   constructor(public injector: Injector, dao: SolucaoDaoService) {
     super(injector, Solucao, SolucaoDaoService);
@@ -75,6 +76,8 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
       this.BOTAO_CONCLUIR,
       this.BOTAO_CANCELAR
     ]
+
+    this.isCurador = this.auth.isUsuarioCurador()
   }
 
   public ngOnInit(): void {
