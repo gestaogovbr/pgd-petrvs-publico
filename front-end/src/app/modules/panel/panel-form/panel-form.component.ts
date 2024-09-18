@@ -145,8 +145,6 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       smtp_user: { default: "" },
       smtp_password: { default: "" },
       smtp_encryption: { default: "" },
-      smtp_from_name: { default: "" },
-      smtp_from_address: { default: "" },
     }, this.cdRef, this.validate);
     this.formLogin = this.fh.FormBuilder({
       Tipo: { default: "" },
