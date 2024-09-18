@@ -35,6 +35,7 @@ class RelatoController extends ControllerBase
     private function configSmtp($request) 
     {   
         $tenant = $this->getTenant($request);
+        $usuario = self::loggedUser();
 
         config([
             'mail.mailers.smtp.host' => $tenant->smtp_host,
@@ -42,8 +43,8 @@ class RelatoController extends ControllerBase
             'mail.mailers.smtp.encryption' => $tenant->smtp_encryption,
             'mail.mailers.smtp.username' => $tenant->smtp_user,
             'mail.mailers.smtp.password' => $tenant->smtp_password,
-            'mail.from.address' => $tenant->smtp_from_address,
-            'mail.from.name' => $tenant->smtp_from_name,
+            'mail.from.address' => $usuario->email,
+            'mail.from.name' => $usuario->nome,
         ]);
 
         return $tenant;

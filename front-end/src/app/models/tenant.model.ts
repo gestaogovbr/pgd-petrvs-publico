@@ -91,8 +91,6 @@ export class Tenant extends Base {
     public smtp_user: string = "";
     public smtp_password: string = "";
     public smtp_encryption: string = "";
-    public smtp_from_address: string = "";
-    public smtp_from_name: string = "";
 
     // public petrvs_version //pega a versao do app.json
     // public petrvs_last_migration // nome da ultima migration executada
