@@ -223,7 +223,7 @@ export class LookupService implements IIndexable {
     { key: 'GESTOR_SUBSTITUTO', value: "Chefe Substituto", icon: "bi bi-star-half", color: "primary" },
     //{ key: 'HOMOLOGADOR_PLANO_ENTREGA', value: "Homologador (Planos de Entrega)", icon: "bi bi-check2-square", color: "success" },
     //{ key: 'CURADOR', value: "Curador", icon: "bi bi-person-badge-fill", color: "primary" },
-    { key: 'LOTADO', value: "Lotado", icon: "bi bi-file-person", color: "dark" }
+    { key: 'LOTADO', value: "Lotado", icon: "bi bi-file-person", color: "dark", data: {indisponivel: true} }
   ];
 
   public TEMPLATE_ESPECIE: LookupItem[] = this.DOCUMENTO_ESPECIE;
