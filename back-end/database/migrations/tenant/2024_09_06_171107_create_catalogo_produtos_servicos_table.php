@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignUuid('responsavel_id')->constrained('usuarios')->onDelete('cascade');
             $table->text('descricao');
             $table->string('url', 250);
+            $table->integer('status')->default(0);
             $table->timestamps();
         });
     }
