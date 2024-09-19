@@ -8,16 +8,12 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class ClienteValidador implements IValidador
+class ClienteValidador extends BaseValidador
 {
-    public function validar(Request $request) : array
+    public function validarRegra(array $data): array
     {
-        if(!isset($request->all()['entity'])) {
-            throw new DataInvalidException('Entity não informado');
-        }
+        $entity = $this->getTipo() === self::TIPO_STORE ? $data['entity'] : $data['data'];
         
-        $entity = $request->all()['entity'];
-
         $validator = Validator::make($entity, [
             'nome' => 'required|string|max:255',
             'tipo_cliente_id' => 'required|uuid|exists:tipos_clientes,id',

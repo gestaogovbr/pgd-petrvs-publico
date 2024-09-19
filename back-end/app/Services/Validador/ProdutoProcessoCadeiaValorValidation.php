@@ -7,15 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class ProdutoProcessoCadeiaValorValidation implements IValidador
+class ProdutoProcessoCadeiaValorValidation extends BaseValidador
 {
-    public function validar(Request $request): array
+    public function validarRegra(array $data): array
     {
-        if (!isset($request->all()['entity'])) {
-            throw new DataInvalidException('Entity não informado');
-        }
+        $entity = $this->getTipo() === self::TIPO_STORE ? $data['entity'] : $data['data'];
 
-        $entity = $request->all()['entity'];
         if (!isset($entity['produto_processo_cadeia_valor'])) {
             return [];
         }
@@ -25,7 +22,6 @@ class ProdutoProcessoCadeiaValorValidation implements IValidador
         }
         foreach ($produtoProcessoCadeiaValores as $produtoProcessoCadeiaValore) {
             $validator = Validator::make($produtoProcessoCadeiaValore, [
-                // 'produto_id' => 'required|uuid|exists:produtos,id',
                 'cadeia_valor_processo_id' => 'required|uuid|exists:cadeias_valores_processos,id',
             ]);
 
