@@ -9,7 +9,8 @@
       <input-text [size]="8" label="URL" icon="bi bi-textarea-t" controlName="url" [control]="form!.controls.url" [attr.maxlength]=250 labelInfo="Página oficial do produto ou serviço"></input-text>
     </div>
     <div class="row">
-      <input-text [control]="form!.controls.descricao"  label="Descrição" [attr.maxlength]=250 required></input-text>
+      <input-textarea [control]="form!.controls.descricao"  label="Descrição" [attr.maxlength]=250 required></input-textarea>
+      <input-search #unidade [size]="4" [control]="form!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao" required></input-search>
     </div>
   </div>
   <separator title="Processos da cadeia de valor">
@@ -22,6 +23,12 @@
   <separator title="Relação com outros produtos">
     <div>
       <produto-list-produto #produtos noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-produto>
+    </div>
+  </separator>
+
+  <separator title="Clientes do produto">
+    <div>
+      <produto-list-cliente #clientes noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-cliente>
     </div>
   </separator>
 

@@ -9,6 +9,9 @@ use Illuminate\Validation\ValidationException;
 class ClienteController extends ControllerBase
 {
     private array $validators;
+
+    public $updatable = ['nome', 'tipo_cliente_id'];
+
     public function __construct(IValidador ...$validator)
     {
         parent::__construct();
@@ -42,6 +45,7 @@ class ClienteController extends ControllerBase
         try {
 
             foreach ($this->validators as $validator) {
+                $validator->setTipo('update');
                 $validator->validar($request);
             }
 

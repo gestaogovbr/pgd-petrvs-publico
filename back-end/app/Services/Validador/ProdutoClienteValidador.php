@@ -7,15 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class ProdutoClienteValidador implements IValidador
+class ProdutoClienteValidador extends BaseValidador
 {
-    public function validar(Request $request) : array
+    public function validarRegra(array $data): array
     {
-        if(!isset($request->all()['entity'])) {
-            throw new DataInvalidException('Entity não informado');
-        }
+        $entity = $this->getTipo() === self::TIPO_STORE ? $data['entity'] : $data['data'];
         
-        $entity = $request->all()['entity'];
         if(!isset($entity['produto_cliente'])){
             return [];
         }

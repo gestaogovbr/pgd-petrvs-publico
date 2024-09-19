@@ -6,11 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class CatalogoValidador implements IValidador
+class CatalogoValidador extends BaseValidador
 {
-    public function validar(Request $request) : array
+    public function validarRegra(array $data): array
     {
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($data, [
             'nome' => 'required|string|max:255',
             'unidade_id' => 'required|string|exists:unidades,id',
             'curador_responsavel_id' => 'required|string|exists:usuarios,id',

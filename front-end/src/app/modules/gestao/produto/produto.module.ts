@@ -7,6 +7,8 @@ import { ProdutoFormComponent } from './produto-form/produto-form.component';
 import { ProdutoListComponent } from './produto-list/produto-list.component';
 import { ProdutoListProcessoComponent } from './produto-list-processo/produto-list-processo.component';
 import { ProdutoListProdutoComponent } from './produto-list-produto/produto-list-produto.component';
+import { ProdutoShowComponent } from './produto-show/produto-show.component';
+import { ProdutoListClienteComponent } from './produto-list-cliente/produto-list-cliente.component';
 
 
 @NgModule({
@@ -14,7 +16,9 @@ import { ProdutoListProdutoComponent } from './produto-list-produto/produto-list
     ProdutoFormComponent,
     ProdutoListComponent,
     ProdutoListProcessoComponent,
-    ProdutoListProdutoComponent
+    ProdutoListProdutoComponent,
+    ProdutoShowComponent,
+    ProdutoListClienteComponent
   ],
   imports: [
     CommonModule,

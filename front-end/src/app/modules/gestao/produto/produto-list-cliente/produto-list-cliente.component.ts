@@ -1,24 +1,26 @@
-import { Component, ViewChild, Input, ChangeDetectorRef, Injector } from "@angular/core";
+import { ChangeDetectorRef, Component, Injector, Input, ViewChild } from "@angular/core";
 import { AbstractControl, FormGroup } from "@angular/forms";
 import { EditableFormComponent } from "src/app/components/editable-form/editable-form.component";
 import { GridComponent } from "src/app/components/grid/grid.component";
-import { InputSelectComponent } from "src/app/components/input/input-select/input-select.component";
+import { InputSearchComponent } from "src/app/components/input/input-search/input-search.component";
+import { ClienteDaoService } from "src/app/dao/cliente-dao.service";
+import { ProdutoClienteDaoService } from "src/app/dao/produto-cliente-dao.service";
 import { ProdutoDaoService } from "src/app/dao/produto-dao.service";
-import { ProdutoProdutoDaoService } from "src/app/dao/produto-produto-dao.service";
 import { IIndexable } from "src/app/models/base.model";
-import { ProdutoProduto } from "src/app/models/produto-produto.model";
+import { ProdutoCliente } from "src/app/models/produto-cliente.model";
 import { Produto } from "src/app/models/produto.model";
 import { PageFrameBase } from "src/app/modules/base/page-frame-base";
 
 @Component({
-  selector: 'produto-list-produto',
-  templateUrl: './produto-list-produto.component.html',
-  styleUrls: ['./produto-list-produto.component.scss']
+  selector: 'produto-list-cliente',
+  templateUrl: './produto-list-cliente.component.html',
+  styleUrls: ['./produto-list-cliente.component.scss']
 })
-export class ProdutoListProdutoComponent extends PageFrameBase {
+export class ProdutoListClienteComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-  @ViewChild('produtoRelacionado', { static: false }) public produtoRelacionado?: InputSelectComponent;
+  @ViewChild('cliente', { static: false }) public cliente?: InputSearchComponent;
+
 
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Produto | undefined) { super.entity = value; } get entity(): Produto | undefined { return super.entity; }
@@ -27,46 +29,46 @@ export class ProdutoListProdutoComponent extends PageFrameBase {
   @Input() cdRef: ChangeDetectorRef;
 
   public produtoDao?: ProdutoDaoService;
+  public clienteDao?: ClienteDaoService;
 
-  public get items(): ProdutoProduto[] {
-    if (!this.gridControl.value) this.gridControl.setValue(new ProdutoProduto());
-    if (!this.gridControl.value.produto_produto) this.gridControl.value.produto_produto = [];
-    return this.gridControl.value.produto_produto;
+  public get items(): ProdutoCliente[] {
+    if (!this.gridControl.value) this.gridControl.setValue(new ProdutoCliente());
+    if (!this.gridControl.value.produto_cliente) this.gridControl.value.produto_cliente = [];
+    return this.gridControl.value.produto_cliente;
   }
 
   private _disabled: boolean = false;
 
-
   constructor(public injector: Injector) {
     super(injector);
-    this.dao = injector.get<ProdutoProdutoDaoService>(ProdutoProdutoDaoService);
+    this.dao = injector.get<ProdutoClienteDaoService>(ProdutoClienteDaoService);
     this.produtoDao = injector.get<ProdutoDaoService>(ProdutoDaoService);
+    this.clienteDao = injector.get<ClienteDaoService>(ClienteDaoService);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
 
     this.form = this.fh.FormBuilder({
-      produto_id: { default: null },
-      tipo: { default: "" },
+      cliente_id: { default: "" },
     }, this.cdRef);
-    this.join = ["produtoProduto.produtoRelacionado"];
+    this.join = ["produtoCliente.cliente"];
   }
 
-  public async addProduto() {
-    return Object.assign(new ProdutoProduto(), {
+
+  public async addCliente() {
+    return Object.assign(new ProdutoCliente(), {
       _status: "ADD",
       id: this.dao!.generateUuid(),
-      produto_id: '',
+      cliente_id: '',
     }) as IIndexable;
   }
 
-  public async loadProduto(form: FormGroup, row: any) {
-    let produto: ProdutoProduto = row;
-    if (produto._status != "ADD") {
-      form.controls.produto_id.setValue(row.produto_id);
-      form.controls.tipo.setValue(row.tipo);
+  public async loadCliente(form: FormGroup, row: any) {
+    let cliente: ProdutoCliente = row;
+    if (cliente._status != "ADD") {
+      form.controls.cliente_id.setValue(row.cliente_id);
     }
   }
 
-  public async removeProduto(row: any) {
+  public async removeCliente(row: any) {
     let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
     if (confirm) {
       this.loading = true;
@@ -81,14 +83,13 @@ export class ProdutoListProdutoComponent extends PageFrameBase {
     }
   }
 
-  public async saveProduto(form: FormGroup, row: any) { 
+  public async saveCliente(form: FormGroup, row: any) { 
     let result = undefined;
     this.form!.markAllAsTouched();
     if(this.form!.valid) {
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
-      row.produto_id = this.form!.controls.produto_id.value;
-      row.tipo = this.form!.controls.tipo.value;
-      row.produto_relacionado = this.produtoRelacionado!.selectedItem?.data;
+      row.cliente_id = this.form!.controls.cliente_id.value;
+      row.cliente = this.cliente!.selectedEntity;
       result = row;
       this.cdRef.detectChanges();
     }

@@ -8,15 +8,15 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class TipoClienteValidador implements IValidador
+class TipoClienteValidador extends BaseValidador
 {
-    public function validar(Request $request) : array
+    public function validarRegra(array $data): array
     {
-        if(!isset($request->all()['entity'])) {
+        if(!isset($data['entity'])) {
             throw new DataInvalidException('Entity não informado');
         }
         
-        $entity = $request->all()['entity'];
+        $entity = $data['entity'];
 
         $validator = Validator::make($entity, [
             'nome' => 'required|string|max:255',

@@ -15,6 +15,9 @@ use Throwable;
 class ProdutoController extends ControllerBase
 {
     private array $validators;
+
+    public $updatable = ['nome', 'nome_fantasia', 'tipo', 'descricao', 'url','data_desativado', 'data_ativado'];
+
     public function __construct(IValidador ...$validator)
     {
         parent::__construct();
@@ -31,7 +34,7 @@ class ProdutoController extends ControllerBase
         try {
 
             foreach ($this->validators as $validator) {
-                $validator->validar($request);
+                $validator->validar($request, 'store');
             }
 
             return parent::store($request);
@@ -49,6 +52,7 @@ class ProdutoController extends ControllerBase
         try {
 
             foreach ($this->validators as $validator) {
+                $validator->setTipo('update');
                 $validator->validar($request);
             }
 

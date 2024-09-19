@@ -131,6 +131,7 @@ export class AppComponent {
     this.menuSchema = {
       /* Cadastros */
       CIDADES: { name: this.lex.translate("Cidades"), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: this.entity.getIcon('Cidade') },
+      CLIENTES: { name: this.lex.translate("Clientes"), permition: 'MOD_CLI', route: ['cadastros', 'cliente'], icon: this.entity.getIcon('Cliente') },
       EIXOS_TEMATICOS: { name: this.lex.translate("Eixos Temáticos"), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: this.entity.getIcon('EixoTematico') },
       ENTREGAS: { name: this.lex.translate("Modelos de Entregas"), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: this.entity.getIcon('Entrega') },
       FERIADOS: { name: this.lex.translate("Feriados"), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: this.entity.getIcon('Feriado') },
@@ -262,6 +263,7 @@ export class AppComponent {
       permition: "MENU_CAD_ACESSO",
       id: "navbarDropdownGestaoCadastros",
       menu: [
+        this.menuSchema.CLIENTES,
         this.menuSchema.EIXOS_TEMATICOS,
         this.menuSchema.ENTREGAS,
         this.menuSchema.TIPOS_AVALIACOES,
@@ -288,6 +290,7 @@ export class AppComponent {
       menu: [
         this.menuSchema.AFASTAMENTOS,
         this.menuSchema.CIDADES,
+        this.menuSchema.CLIENTES,
         this.menuSchema.EIXOS_TEMATICOS,
         this.menuSchema.ENTREGAS,
         this.menuSchema.FERIADOS,

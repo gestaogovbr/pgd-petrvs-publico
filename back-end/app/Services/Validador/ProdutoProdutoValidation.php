@@ -8,15 +8,12 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class ProdutoProdutoValidation implements IValidador
+class ProdutoProdutoValidation extends BaseValidador
 {
-    public function validar(Request $request) : array
+    public function validarRegra(array $data): array
     {
-        if(!isset($request->all()['entity'])) {
-            throw new DataInvalidException('Entity não informado');
-        }
+        $entity = $this->getTipo() === self::TIPO_STORE ? $data['entity'] : $data['data'];
         
-        $entity = $request->all()['entity'];
         if(!isset($entity['produto_produto'])){
             return [];
         }
@@ -28,7 +25,6 @@ class ProdutoProdutoValidation implements IValidador
         foreach ($produtoProdutos as $produtoProduto) {
             $validator = Validator::make($produtoProduto, [
                 'produto_id' => 'required|uuid|exists:produtos,id',
-                // 'produto_base_id' => 'required|uuid|exists:produtos,id',
             ]);
 
             if ($validator->fails()) {
