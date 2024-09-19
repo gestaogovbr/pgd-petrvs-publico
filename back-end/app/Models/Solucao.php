@@ -22,6 +22,7 @@ class Solucao extends ModelBase
         'unidade_id',
         'responsavel_id',
         'descricao',
+        'status',
         'url'
     ];
 
@@ -32,6 +33,7 @@ class Solucao extends ModelBase
         'unidade_id' => 'string',
         'responsavel_id' => 'string',
         'descricao' => 'string',
+        'status' => 'integer',
         'url' => 'string'
     ];
 
@@ -51,5 +53,8 @@ class Solucao extends ModelBase
         return $this->belongsTo(Usuario::class, 'responsavel_id');
     }
 
-
+    public function scopeStatus($query, $status)
+    {
+        return $query->where('status', $status);
+    }
 }
