@@ -8,8 +8,8 @@ export type ProdutoTipos = "produto" | "servico";
 
 export class Produto extends Base {
   public nome: string = ""; /* Nome do produto */
-  public data_ativado: Date = new Date(); /* Data de ativação do produto */
-  public data_desativado: Date = new Date(); /* Data de desativação do produto */
+  public data_ativado: null|Date = new Date(); /* Data de ativação do produto */
+  public data_desativado: null|Date = new Date(); /* Data de desativação do produto */
   public nome_fantasia: string = ""; /* Nome fantasia/sigla do produto */
   public tipo: ProdutoTipos = "produto"; /* Tipo do produto (Produto ou Serviço) */
   public descricao: string = ""; /* Descrição do produto */

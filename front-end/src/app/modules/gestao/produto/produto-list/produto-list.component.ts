@@ -49,20 +49,19 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
   }
 
   public async ativarDesativar(produto: Produto){   
-    if(this.ativo(produto)){
-      produto.data_desativado = new Date();
-    } else {
-      produto.data_ativado = new Date();
-    }
+    produto.data_desativado = null;
+    produto.data_ativado = null;
+    this.ativo(produto) ? produto.data_desativado = new Date() : produto.data_ativado = new Date();
+    
     await this.dao?.update(produto.id, {
-      data_desativado: produto.data_desativado,
-      data_ativado: produto.data_ativado
+        id: produto.id,
+        data_desativado: produto.data_desativado,
+        data_ativado: produto.data_ativado
     });
-    //this.grid?.refreshRows();
   }
 
   public ativo(produto: Produto): boolean {
-    return !produto.data_desativado && produto.data_ativado;
+    return produto.data_ativado instanceof Date;
   }
 
 }
