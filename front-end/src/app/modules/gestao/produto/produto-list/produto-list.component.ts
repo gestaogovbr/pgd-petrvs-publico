@@ -14,7 +14,7 @@ import { ProdutoService } from "src/app/services/produto.service";
 export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   public produtoService: ProdutoService;
-
+  public isUpdating: boolean = false;
 
   constructor(public injector: Injector, dao: ProdutoDaoService) {
     super(injector, Produto, ProdutoDaoService);
@@ -47,21 +47,35 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
       }
     });    
   }
-
-  public async ativarDesativar(produto: Produto){   
+  
+  public async ativarDesativar(produto: Produto){  
+    if (this.isUpdating) {
+      console.log("Aguarde o término do processo anterior");
+      return; 
+    }
+    this.isUpdating = true;
+    let ativo = this.ativo(produto)  
     produto.data_desativado = null;
     produto.data_ativado = null;
-    this.ativo(produto) ? produto.data_desativado = new Date() : produto.data_ativado = new Date();
+    ativo ? produto.data_desativado = new Date() : produto.data_ativado = new Date();
+
+    console.log(produto.data_desativado);
     
-    await this.dao?.update(produto.id, {
+    try {
+      await this.dao?.update(produto.id, {
         id: produto.id,
         data_desativado: produto.data_desativado,
         data_ativado: produto.data_ativado
-    });
+      });
+      console.log("Produto atualizado com sucesso");
+    } catch (error) {
+      console.error("Erro ao atualizar o produto", error);
+    } finally {
+      this.isUpdating = false; // Finaliza o processo, permitindo novos cliques
+    }
   }
 
   public ativo(produto: Produto): boolean {
     return produto.data_ativado instanceof Date;
   }
-
 }
