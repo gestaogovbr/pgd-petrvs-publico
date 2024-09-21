@@ -22,12 +22,13 @@
         </i>
 
         <br/>    
-        <p>Após a realização dos ajustes no SIAPE, para confirmar, <a href='mailto:{{ $email }}?subject=Solicita%C3%A7%C3%A3o%20de%20ajuste%20de%20lota%C3%A7%C3%A3o%20no%20Siape%20atendida&body=Sua%20solicita%C3%A7%C3%A3o%20de%20ajuste%20de%20lota%C3%A7%C3%A3o%20de%20{{ $nome }}%20no%20Siape%20foi%20atendida%2C%20favor%20verificar.'>clique aqui</a>.</p>
+        <p>Após a realização dos ajustes no SIAPE, para confirmar, <a href='mailto:{{ $remetente->email }}?subject=Solicita%C3%A7%C3%A3o%20de%20ajuste%20de%20lota%C3%A7%C3%A3o%20no%20Siape%20atendida&body=Sua%20solicita%C3%A7%C3%A3o%20de%20ajuste%20de%20lota%C3%A7%C3%A3o%20de%20{{ $nome }}%20no%20Siape%20foi%20atendida%2C%20favor%20verificar.'>clique aqui</a>.</p>
         <br/>
         <p><i>Atenciosamente,<br/>
-            <b>Suporte PGD Petrvs</b><br/>
-            CGPGD/DINOV/SEGES/MGI<br/>
-            <a href="mailto:pgd@gestao.gov.br">pgd@gestao.gov.br</a>
+            <b>{{ $remetente->nome }}</b><br/>
+            Matrícula SIAPE {{ $remetente->matricula }}<br/>
+            {{ $remetente->lotacao->unidade->nome }}<br/>
+            {{ $remetente->ultimaParticipacaoPrograma->programa->unidade->nome }}
             </i>
         </p>
     </body>
