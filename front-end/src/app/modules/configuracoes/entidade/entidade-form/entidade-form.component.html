@@ -16,7 +16,8 @@
         <input-display *ngIf="form!.controls.abrangencia.value == 'NACIONAL'" [size]="8" label="Âmbito" icon="bi bi-shield-fill-check" value="Nacional"></input-display>
       </div>
       <div class="row">
-        <input-text label="E-mail Responsável pelas alterações no SIAPE" controlName="email_responsavel_siape" [attr.maxlength]=100 required></input-text>
+        <input-text [size]="6" label="E-mail do Remetente para envio das alterações no SIAPE (Remetente)" controlName="email_remetente_siape" [attr.maxlength]=100  placeholder="Utilizar um e-mail @gestao.gov.br"></input-text>
+        <input-text [size]="6" label="E-mail Responsável pelas alterações no SIAPE (Destinatário)" controlName="email_responsavel_siape" [attr.maxlength]=100 required></input-text>
       </div>
     </tab>
     <!--tab key="EXPEDIENTE" label="Expediente">

@@ -35,7 +35,7 @@ class SolicitarAjusteLotacaoMail extends Mailable
             view: 'mails.solicitar-ajuste-lotacao',
             with: [
                 'relato' => $this->relatoErroLotacaoDTO,
-                'email' =>  Auth::user()->email,
+                'remetente' => Auth::user(),
                 'nome' => $this->relatoErroLotacaoDTO->nome
             ]
         );
