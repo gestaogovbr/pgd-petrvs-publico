@@ -99,8 +99,8 @@ export class RelatoLotacaoFormComponent extends PageBase implements OnInit {
         this.close();
       },
       error: error => {
-        this.editableForm!.error = error.message ? error.message : error;
-        console.error('Erro:', error)
+        this.editableForm!.error = error.error.message ? error.error.message : error;
+        console.error('Erro:', error.error)
       }
     })
   }

@@ -49,6 +49,7 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
       expediente: {default: null},
       uf: {default: null},
       email_responsavel_siape: {default: ""},
+      email_remetente_siape: {default: ""},
     }, this.cdRef, this.validate);
     this.join = ["cidade", "tipoModalidade", "gestor", "gestor_substituto"];
   }
