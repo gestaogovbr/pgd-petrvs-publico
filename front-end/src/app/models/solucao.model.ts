@@ -9,6 +9,9 @@ export class Solucao extends Base {
   public descricao?: string = ""; 
   public url?: string = ""; 
   public unidade_id: string = "";
+  public status: number = 0;
+  public data_ativado: null|Date = new Date(); /* Data de ativação da solução */
+  public data_desativado: null|Date = new Date(); /* Data de desativação da solução */
 
   public constructor(data?: any) { super(); this.initialization(data); }
 }

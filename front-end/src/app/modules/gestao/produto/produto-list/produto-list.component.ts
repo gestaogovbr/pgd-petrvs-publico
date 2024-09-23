@@ -58,8 +58,6 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     produto.data_desativado = null;
     produto.data_ativado = null;
     ativo ? produto.data_desativado = new Date() : produto.data_ativado = new Date();
-
-    console.log(produto.data_desativado);
     
     try {
       await this.dao?.update(produto.id, {

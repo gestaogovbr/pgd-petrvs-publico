@@ -27,6 +27,7 @@ export class SolucaoFormComponent extends PageFormBase<Solucao, SolucaoDaoServic
     super(injector, Solucao, SolucaoDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.modalWidth = 1300;
     this.join = [
       "unidade"
     ];
@@ -47,7 +48,6 @@ export class SolucaoFormComponent extends PageFormBase<Solucao, SolucaoDaoServic
   public async initializeData(form: FormGroup) {
     form.patchValue(new Solucao());
     this.entity = new Solucao();
-
     await this.loadData(this.entity, this.form!);
   }
 

@@ -7,7 +7,6 @@ import { SolucaoFormComponent } from './solucao-form/solucao-form.component';
 import { SolucaoListComponent } from './solucao-list/solucao-list.component';
 import { SolucaoFiltroComponent } from './solucao-filtro/solucao-filtro.component';
 
-
 @NgModule({
   declarations: [
     SolucaoFormComponent,

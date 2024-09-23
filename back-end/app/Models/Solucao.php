@@ -22,7 +22,9 @@ class Solucao extends ModelBase
         'unidade_id',
         'descricao',
         'status',
-        'url'
+        'url',
+        'data_ativado',
+        'data_desativado',
     ];
 
     protected $casts = [
@@ -32,7 +34,9 @@ class Solucao extends ModelBase
         'unidade_id' => 'string',
         'descricao' => 'string',
         'status' => 'integer',
-        'url' => 'string'
+        'url' => 'string',
+        'data_ativado' => 'datetime',
+        'data_desativado' => 'datetime',
     ];
 
     protected $dates = [
