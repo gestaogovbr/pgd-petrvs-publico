@@ -21,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('catalogo_produtos_servicos', function (Blueprint $table) {
+            $table->dropColumn('deleted_at');
+        });
     }
 };
