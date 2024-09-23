@@ -33,14 +33,12 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     this.filter = this.fh.FormBuilder({
       agrupar: {default: true},
       nome: {default: this.metadata?.nome ?? ""},
-      usuario_id: {default: ""},
       unidade_id: {default: ""},
       id: {default: ""},
       status: {default: ""}
     });
     this.join = [
-      "unidade",
-      "responsavel"
+      "unidade"
     ];
     this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
     this.botoes = [
@@ -95,9 +93,6 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     if(form.id?.length) {
       result.push(["id", "like", "%" + form.id.trim().replace(" ", "%") + "%"]);
     }
-		if (form.usuario_id) {
-      result.push(["responsavel_id", "==", form.curador_responsavel_id]);
-    }
 		if (form.unidade_id?.length) {
 			result.push(["unidade_id", "==", form.unidade_id]);
     }
@@ -112,14 +107,12 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
       metadata: {
         nome: this.filter?.controls.nome.value,
         id: this.filter?.controls.id.value,
-        usuario_id: this.filter?.controls.usuario_id.value,
         status:this.filter?.controls.status.value
       },
       modalClose: async (result) => {
         if (result && this.filter) {
           this.filter?.controls.nome.setValue(result.nome);
           this.filter?.controls.id.setValue(result.id);
-          this.filter?.controls.usuario_id.setValue(result.usuario_id);
           this.filter?.controls.status.setValue(result.status);
           this.grid!.reloadFilter();
         }

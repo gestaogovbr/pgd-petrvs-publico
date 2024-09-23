@@ -14,7 +14,6 @@ class SolucaoValidador extends BaseValidador
             'nome' => 'required|string|max:250',
             'sigla' => 'required|string|max:20',
             'unidade_id' => 'required|string|exists:unidades,id',
-            'responsavel_id' => 'required|string|exists:usuarios,id',
             'descricao' => 'required|string',
             'status' => 'required|integer|in:0,1',
             'url' => 'string|max:250'

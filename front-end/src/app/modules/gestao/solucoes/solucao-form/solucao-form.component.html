@@ -48,17 +48,6 @@
       required   
       ></input-text>
     </div>
-    <div class="col-md-6">
-      <input-search #usuario 
-        label="Responsável" 
-        [size]="6" 
-        required 
-        [disabled]="action == 'new' ? undefined : 'true'" 
-        controlName="responsavel_id" 
-        [dao]="usuarioDao"
-        labelInfo="Agente público responsável pelo acompanhamento da Solução na Unidade Instituidora"
-      ></input-search>
-    </div>
     <div class="col-md-12">
       <input-text 
       [size]="6" 

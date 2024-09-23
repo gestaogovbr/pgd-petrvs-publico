@@ -34,7 +34,6 @@ export class SolucaoFormComponent extends PageFormBase<Solucao, SolucaoDaoServic
       nome: { default: "" },
       sigla: { default: "" },
       unidade_id: { default: "" },
-      responsavel_id: { default: "" },
       descricao: { default: "" },
       url: { default: "" },
     });

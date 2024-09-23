@@ -22,7 +22,6 @@ export class SolucaoFiltroComponent extends PageFrameBase {
     this.modalWidth = 500;
     this.form = this.fh.FormBuilder({
       id: { default: '' },
-      usuario_id: { default: null },
       nome: { default: '' },
       status: { default: '' }
     }, this.cdRef);
@@ -39,7 +38,6 @@ export class SolucaoFiltroComponent extends PageFrameBase {
     this.metadata = this.go.getMetadata(this.snapshot.queryParams.idroute);
     this.form?.controls.nome.setValue(this.metadata.nome)
     this.form?.controls.id.setValue(this.metadata.id)
-    this.form?.controls.usuario_id.setValue(this.metadata.usuario_id)
     this.form?.controls.status.setValue(this.metadata.status)
   }
 
@@ -50,7 +48,6 @@ export class SolucaoFiltroComponent extends PageFrameBase {
       let response = {
         nome: this.form?.controls.nome.value,
         id: this.form?.controls.id.value,
-        usuario_id: this.form?.controls.usuario_id.value,
         status: this.form?.controls.status.value
       };
 
