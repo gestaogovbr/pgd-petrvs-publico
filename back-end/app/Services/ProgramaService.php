@@ -24,8 +24,10 @@ class ProgramaService extends ServiceBase
     $dadosEscolhidos = !empty($vigentesUnidadeExecutora) ? $vigentesUnidadeExecutora : (!empty($todosUnidadeExecutora) ? $todosUnidadeExecutora : null);
     if ($dadosEscolhidos !== null) {
       if (!parent::loggedUser()->hasPermissionTo('MOD_PRGT_EXT')) {
-        $unidadeComPrograma = $this->programaUnidadeSuperior($dadosEscolhidos[2]);
-        if (!empty($unidadeComPrograma)) $where[] = ['unidade_id', '=', $unidadeComPrograma->id];
+        $unidadesComPrograma = $this->programaUnidadeSuperior($dadosEscolhidos[2]);
+        if (!empty($unidadesComPrograma)) {
+            $where[] = ['unidade_id', 'IN', $unidadesComPrograma->pluck('id')->toArray()];
+        }
       }
       if ($dadosEscolhidos === $vigentesUnidadeExecutora) {
         $where[] = ['data_inicio', '<=', now()];
@@ -63,7 +65,7 @@ class ProgramaService extends ServiceBase
     return Unidade::whereIn('id', $unidades)
       ->whereHas('programas')
       ->orderByDesc("path")
-      ->first();
+      ->get();
   }
 
   public function proxySearch(&$query, &$data, &$text)
@@ -72,8 +74,8 @@ class ProgramaService extends ServiceBase
     $vigentesUnidadeExecutora = $this->extractWhere($data, "vigentesUnidadeExecutora");
     if (!empty($vigentesUnidadeExecutora)) {
       if (!parent::loggedUser()->hasPermissionTo('MOD_PRGT_EXT')) {
-        $unidadeComPrograma = $this->programaUnidadeSuperior($vigentesUnidadeExecutora[2]);
-        if (!empty($unidadeComPrograma)) array_push($where, ['unidade_id', '=', $unidadeComPrograma->id]);
+        $unidadesComPrograma = $this->programaUnidadeSuperior($vigentesUnidadeExecutora[2]);
+        if (!empty($unidadesComPrograma)) array_push($where, ['unidade_id', 'IN', $unidadesComPrograma->pluck('id')->toArray()]);
       }
       array_push($where, ['data_inicio', '<=', now()]);
       array_push($where, ['data_fim', '>=', now()]);
