@@ -21,7 +21,7 @@ COPY ./000-default.conf /etc/apache2/sites-available/000-default.conf
 COPY ./xdebug-enable.sh /usr/local/etc/php/conf.d/xdebug-enable.sh
 COPY ./xdebug-disable.sh /usr/local/etc/php/conf.d/xdebug-disable.sh
 COPY ./cacert.pem /usr/local/etc/php/cacert.pem
-
+COPY horizon.conf /etc/supervisor/conf.d/horizon.conf
 # Adiciona a entrada do cron
 #RUN echo "* * * * * cd /var/www/ && /usr/local/bin/php artisan schedule:run >> /var/www/schedule.log 2>&1" | crontab -
 

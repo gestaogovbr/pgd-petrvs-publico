@@ -74,6 +74,7 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/ww
 
 RUN composer install --optimize-autoloader --no-dev
 COPY ../resources/dataprev/dev/entrypoint.sh ./entrypoint.sh
+COPY horizon.conf /etc/supervisor/conf.d/horizon.conf
 
 # Adiciona a entrada do cron
 RUN echo "* * * * * cd /var/www/ && /usr/local/bin/php artisan schedule:run >> /var/www/storage/logs/schedule.log 2>&1" | crontab -
