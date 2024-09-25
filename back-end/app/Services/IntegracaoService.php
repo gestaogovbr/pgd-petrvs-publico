@@ -290,7 +290,7 @@ class IntegracaoService extends ServiceBase
     ob_implicit_flush(true); // Libera a chamada explícita para o output buffer.
     ini_set('memory_limit', '-1');
     ini_set('default_socket_timeout', 3000); // 5 minutos.
-    set_time_limit(1800);
+    set_time_limit(0);
     /**
       * @var IntegracaoService $self
       */
