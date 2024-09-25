@@ -28,8 +28,7 @@ RUN docker-php-ext-install gd
 # Instalar openssl utilizando um workaround
 RUN docker-php-ext-install openssl || true
 RUN cp /usr/src/php/ext/openssl/config0.m4 /usr/src/php/ext/openssl/config.m4
-RUN docker-php-ext-install openssl
-RUN docker-php-ext-install openssl pcntl
+RUN docker-php-ext-install pcntl
 RUN docker-php-ext-enable redis
 # cria diretorio do document-root
 WORKDIR /var/www
