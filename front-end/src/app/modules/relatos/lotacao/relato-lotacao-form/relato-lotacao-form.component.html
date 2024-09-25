@@ -1,0 +1,74 @@
+<editable-form 
+    [form]="form!" 
+    [title]="isModal ? '' : title" 
+    (submit)="onSaveData()" 
+    (cancel)="onCancel()"
+    confirmLabel="Relatar problema"
+>
+   <p>Se você detectou alguma inconsistência na lotação de um agente público, reporte o
+    caso diretamente para a área responsável pelo correção no SIAPE.
+   </p>
+   <p><b>Selecione a opção mais adequada:</b></p>
+   <div class="row">
+        <div class="col-md-12 situacao">
+            <input-radio [size]="3"
+                label="Selecione a opção mais adequada" 
+                controlName="opcao" 
+                [items]="OPTIONS"
+                circle="true"
+                required
+                (change)="updateValidators()" 
+            ></input-radio>
+        </div>
+    </div>
+    <div class="row" [hidden]="!this.form!.controls.opcao.value || this.form!.controls.opcao.value == '3' || this.form!.controls.opcao.value == '4'">
+        <div class="col-md-6">
+            <input-search #usuario 
+                [size]="4"  
+                controlName="usuario_id" 
+                required
+                [dao]="usuarioDao"
+                placeholder="Selecione o agente público"
+            ></input-search>
+        </div>
+        <div class="col-md-6">
+            <input-search #unidade [hidden]="this.form!.controls.opcao.value == '2'"
+                [size]="4"
+                [emptyValue]="null"
+                controlName="unidade_id" 
+                [dao]="unidadeDao" 
+                label="Aonde o agente público DEVERIA ESTAR lotado"
+                placeholder="Selecione a unidade"
+            ></input-search>
+        </div>
+    </div>
+    <div class="row" [hidden]="!this.form!.controls.opcao.value || this.form!.controls.opcao.value == '1' || this.form!.controls.opcao.value == '2'">
+        <div class="col-md-6">
+            <input-text 
+                [size]="5" 
+                label="Nome" 
+                controlName="nome" 
+                [attr.maxlength]=250  
+                label="Nome completo do agente público"
+            ></input-text>
+        </div>
+        <div class="col-md-3">
+            <input-text [size]="2" label="Matrícula" controlName="matricula" [attr.maxlength]=250 label="Matrícula SIAPE"></input-text>
+        </div>
+        <div class="col-md-3">
+            <input-text [size]="3" label="CPF" controlName="cpf" [maskFormat]="'000.000.000-00'" [attr.maxlength]=15></input-text>
+        </div>
+    </div>
+    <div class="row" *ngIf="this.form!.controls.opcao.value == '1' || this.form!.controls.opcao.value == '4'">
+        <div class="col-md-12">
+            <input-textarea 
+                [size]="12" 
+                [rows]="3" 
+                label="Descrição" 
+                controlName="descricao" 
+                [attr.maxlength]=1000
+                placeholder="Inclua informações adicionais que ajudem a localização da portaria de movimentação ou do processo SEI correspondente"
+            ></input-textarea>
+        </div>
+    </div>
+</editable-form>

@@ -87,6 +87,9 @@ use App\Http\Controllers\QuestionarioPerguntaRespostaController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\TipoClienteController;
 use FontLib\Table\Type\post;
+use App\Http\Controllers\JobAgendadoController;
+use App\Http\Controllers\RelatoController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -465,3 +468,8 @@ Route::middleware(['auth:sanctum'])->prefix('TipoCliente')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('Cliente')->group(function () {
   defaultRoutes(ClienteController::class);
 });
+Route::middleware(['auth:sanctum'])->prefix('Relato')->group(function () {
+  Route::post('store', [RelatoController::class, 'store']);
+  Route::get('confirmar/{email}/{nome}', [RelatoController::class, 'confirmar']);
+});
+
