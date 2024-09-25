@@ -42,7 +42,8 @@
         },
         "files": [
             "app/Helpers/Helpers.php",
-            "app/Helpers/ExceptionHelper.php"
+            "app/Helpers/ExceptionHelper.php",
+             "app/Helpers/RouteHelpers.php"
         ]
     },
     "autoload-dev": {

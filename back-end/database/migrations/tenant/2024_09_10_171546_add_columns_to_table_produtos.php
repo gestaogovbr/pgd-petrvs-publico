@@ -28,10 +28,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('produtos', function (Blueprint $table) {
-            // Remove as chaves estrangeiras primeiro
             $table->dropForeign(['unidade_id']);
             
-            // Remover as colunas adicionadas
+
             $table->dropColumn(['unidade_id', 'data_ativado', 'data_desativado', 'identificador']);
         });
     }
