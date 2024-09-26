@@ -83,7 +83,7 @@ services:
       - TZ=America/Bahia
     volumes:
       - ../../../back-end:/var/www
-    command: php artisan horizon
+    command: ["supervisord", "-c", "/etc/supervisor/conf.d/horizon.conf"]
     depends_on:
       - petrvs_php
     networks:
