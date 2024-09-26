@@ -45,7 +45,7 @@ services:
     container_name: petrvs_queue
     environment:
       - TZ=America/Bahia
-    command: php artisan horizon
+    command: ["supervisord", "-c", "/etc/supervisor/conf.d/horizon.conf"]
     depends_on:
       - petrvs_php
     volumes:
