@@ -16,8 +16,8 @@ RUN apt-get install -y libxml2-dev
 RUN apt-get install -y sudo
 RUN apt-get install -y chrony
 RUN apt-get install -y libpng-dev
-RUN apt-get install -y libjpeg-dev
-RUN apt-get install -y cron
+RUN apt-get install -y libjpeg-dev cron supervisor \
+    && pecl install redis
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install mysqli
@@ -28,7 +28,8 @@ RUN docker-php-ext-install gd
 # Instalar openssl utilizando um workaround
 RUN docker-php-ext-install openssl || true
 RUN cp /usr/src/php/ext/openssl/config0.m4 /usr/src/php/ext/openssl/config.m4
-RUN docker-php-ext-install openssl
+RUN docker-php-ext-install pcntl
+RUN docker-php-ext-enable redis
 # cria diretorio do document-root
 WORKDIR /var/www
 RUN mkdir /etc/apache2/ssl
@@ -72,7 +73,9 @@ RUN chmod -R 755 ./
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/public
 
 RUN composer install --optimize-autoloader --no-dev
+
 COPY ../resources/dataprev/dev/entrypoint.sh ./entrypoint.sh
+COPY ../resources/dataprev/dev/horizon.conf /etc/supervisor/conf.d/horizon.conf
 
 # Adiciona a entrada do cron
 RUN echo "* * * * * cd /var/www/ && /usr/local/bin/php artisan schedule:run >> /var/www/storage/logs/schedule.log 2>&1" | crontab -
