@@ -13,37 +13,37 @@ return new class extends Migration
     {
         // Tabela listaUORG
         Schema::create('siape_listaUORG', function (Blueprint $table) {
-            $table->id(); // Chave primária
-            $table->longText('response'); // Coluna para armazenar a resposta com tipo LONGTEXT
-            $table->timestamps(); // Colunas created_at e updated_at
+            $table->uuid('id')->primary(); 
+            $table->longText('response'); 
+            $table->timestamps(); 
         });
 
         // Tabela dadosUORG
         Schema::create('siape_dadosUORG', function (Blueprint $table) {
-            $table->id(); // Chave primária
-            $table->longText('response'); // Coluna para armazenar a resposta com tipo LONGTEXT
-            $table->timestamps(); // Colunas created_at e updated_at
+            $table->uuid('id')->primary(); 
+            $table->longText('response'); 
+            $table->timestamps(); 
         });
 
         // Tabela listaServidores
         Schema::create('siape_listaServidores', function (Blueprint $table) {
-            $table->id(); // Chave primária
-            $table->longText('response'); // Coluna para armazenar a resposta com tipo LONGTEXT
-            $table->timestamps(); // Colunas created_at e updated_at
+            $table->uuid('id')->primary(); 
+            $table->longText('response');
+            $table->timestamps(); 
         });
 
         // Tabela consultaDadosPessoais
         Schema::create('siape_consultaDadosPessoais', function (Blueprint $table) {
-            $table->id(); // Chave primária
-            $table->longText('response'); // Coluna para armazenar a resposta com tipo LONGTEXT
-            $table->timestamps(); // Colunas created_at e updated_at
+            $table->uuid('id')->primary(); 
+            $table->longText('response'); 
+            $table->timestamps(); 
         });
 
         // Tabela consultaDadosFuncionais
         Schema::create('siape_consultaDadosFuncionais', function (Blueprint $table) {
-            $table->id(); // Chave primária
-            $table->longText('response'); // Coluna para armazenar a resposta com tipo LONGTEXT
-            $table->timestamps(); // Colunas created_at e updated_at
+            $table->uuid('id')->primary(); 
+            $table->longText('response'); 
+            $table->timestamps(); 
         });
     }
 

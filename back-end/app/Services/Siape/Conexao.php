@@ -6,7 +6,7 @@ use App\Exceptions\RequestConectaGovException;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
-
+use Illuminate\Support\Facades\Cache;
 class Conexao
 {
     private $contentType = 'application/x-www-form-urlencoded';
@@ -23,6 +23,12 @@ class Conexao
 
     public function getToken()
     {
+        $cachedToken = Cache::get('siape_token');
+        
+        if ($cachedToken) {
+            return $cachedToken;
+        }
+
         $curl = curl_init();
 
         curl_setopt_array($curl, [
@@ -49,11 +55,12 @@ class Conexao
 
         $data = json_decode($response, true);
 
-
         if (isset($data['access_token'])) {
+            Cache::put('siape_token', $data['access_token'], now()->addMinutes(25));
             return $data['access_token'];
         }
-        throw new RequestConectaGovException('Failed to retrieve JWT token. Response: ' . $response);
+
+        throw new RequestConectaGovException('Falha ao gerar o token. Response: ' . $response);
     }
 
 
