@@ -42,7 +42,7 @@ class BuscadoDadosSiapeAssincronoJob implements ShouldQueue, ContratoJobSchedule
     {
         Log::alert("Job BuscadoDadosSiapeAssincronoJob START ");
         $tenants = Tenant::all();
-        Log::info("AQUI",json_encode($tenants));
+        Log::info("AQUI");
         foreach ($tenants as $tenant) {
             tenancy()->initialize($tenant);
             $this->loadingTenantConfigurationMiddleware($tenant->getTenantKey());
