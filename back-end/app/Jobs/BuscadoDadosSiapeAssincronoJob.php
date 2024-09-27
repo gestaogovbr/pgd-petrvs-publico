@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Exceptions\LogError;
 use App\Jobs\Contratos\ContratoJobSchedule;
+use App\Models\Tenant;
 use App\Services\Siape\BuscarDadosSiapeUnidade;
 use App\Services\TenantConfigurationsService;
 use Illuminate\Bus\Queueable;
@@ -18,7 +19,7 @@ class BuscadoDadosSiapeAssincronoJob implements ShouldQueue, ContratoJobSchedule
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    
+
     public function __construct(private readonly ?string $tenantId = null)
     {
         Log::info("inicializando a bussca dos dado SIAPE :". $tenantId);
@@ -29,21 +30,21 @@ class BuscadoDadosSiapeAssincronoJob implements ShouldQueue, ContratoJobSchedule
         return 'Buscar Dados Siape Assincrono';
     }
 
-    
+
 
     public function middleware(): array
     {
         return [(new WithoutOverlapping())->expireAfter(60*3)];
     }
 
-    
+
     public function handle(): void
     {
         Log::alert("Job BuscadoDadosSiapeAssincronoJob START ");
-        $tenants = tenancy()->all();
+        $tenants = Tenant::all();
         Log::info("AQUI",json_encode($tenants));
         foreach ($tenants as $tenant) {
-            $this->inicializeTenant();
+            tenancy()->initialize($tenant);
             $this->loadingTenantConfigurationMiddleware($tenant->getTenantKey());
             $config =  config("integracao")["siape"];
             $buscarDadosSiape = new BuscarDadosSiapeUnidade($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
