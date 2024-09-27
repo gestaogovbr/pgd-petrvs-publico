@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Siape;
+namespace App\Services\Siape\BuscarDados;
 
 use App\Exceptions\RequestConectaGovException;
 use App\Models\SiapeListaUORGS;
@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Client\RequestException;
 
-class BuscarDadosSiapeUnidade extends BuscarDadosSiape
+class BuscarDadosSiapeUnidades extends BuscarDadosSiape
 {
 
     public function listaUorgs(
@@ -37,34 +37,46 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
         $xmlData = $xml->asXML();
 
         $xmlResponse =  $this->BuscarUorgs($xmlData);
-        SiapeListaUORGS::create(['response' => $xmlResponse]);
+        $entidade = SiapeListaUORGS::create(['response' => $xmlResponse]);
+        $entidade->save();
     }
 
-    public function BuscarUorgs($xmlData)
+    public function BuscarUorgs(string $xmlData)
     {
+        $token = $this->getToken();
 
-        $httpCliente =  Http::withOptions([
-            'verify' => false,
-            'timeout' => 0,
-        ])
-            ->baseUrl($this->getUrl())
-            ->withToken($this->getToken())
-            ->withHeaders([
-                'x-cpf-usuario' => $this->getCpf(),
-                'Content-Type' => 'application/xml',
-            ]);
+        $curl = curl_init();
 
-        $response =  $httpCliente->post('api-consulta-siape/v1/consulta-siape', $xmlData)
-            ->throw(function (Response $response, RequestException $e) {
-                Log::error('Erro ao buscar dados no SIAPE: ' . $e->getMessage());
-                throw new RequestConectaGovException('Erro ao buscar dados no SIAPE: ' . $e->getMessage());
-            });
+        $headers = [
+            'x-cpf-usuario: ' . $this->getCpf(),
+            'Authorization: Bearer ' . $token,
+            'Content-Type: application/xml',
+        ];
 
-        if (!$response->successful()) {
-            Log::error('Erro ao buscar dados no SIAPE: ' . $response->body());
-            throw new RequestConectaGovException('Erro ao buscar dados no SIAPE: ' . $response->body());
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $this->geturl() . '/api-consulta-siape/v1/consulta-siape',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_POSTFIELDS => $xmlData,
+        ]);
+
+        Log::info('Request made to ' . $this->geturl() . '/api-consulta-siape/v1/consulta-siape', [
+            'headers' => $headers,
+            'body' => $xmlData
+        ]);
+
+        $response = curl_exec($curl);
+
+        if (curl_errno($curl)) {
+            $error_msg = curl_error($curl);
+            curl_close($curl);
+            throw new Exception('cURL error: ' . $error_msg);
         }
-        return $response->body();
+
+        curl_close($curl);
+        Log::info('Response: ' . $response);
+        return $response;
     }
 
     public function enviar(): void
