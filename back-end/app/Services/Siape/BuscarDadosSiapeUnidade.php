@@ -34,49 +34,49 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
         $listaUorgs->addChild('codOrgao', $siapeCodOrgao);
         $listaUorgs->addChild('codUorg', $siapeCodUorg);
 
-        // $xmlData = $xml->asXML();
+        $xmlData = $xml->asXML();
 
-        $xmlResponse =  $this->BuscarUorgs($xml);
-        SiapeListaUORGS::create(['response' => $xmlResponse]);
+        $xmlResponse =  $this->BuscarUorgs($xmlData);
+       $entidade = SiapeListaUORGS::create(['response' => $xmlResponse]);
+       $entidade->save();
     }
 
-    public function BuscarUorgs(SimpleXMLElement $xmlData)
+    public function BuscarUorgs(string $xmlData)
     {
+        $token = $this->getToken();
 
-        $httpCliente =  Http::withOptions([
-            'verify' => false,
-            'timeout' => 0,
-            'debug' => true
-        ])
-            ->baseUrl($this->getUrl())
-            ->withToken($this->getToken())
-            ->withHeaders([
-                'x-cpf-usuario' => $this->getCpf(),
-                'Content-Type' => 'Content-Type: application/xml',
-            ])
-            ->withBody($xmlData->asXML(), 'application/xml');
+        $curl = curl_init();
 
-            Log::info('Request made to ' . $this->getUrl() . '/api-consulta-siape/v1/consulta-siape', [
-                'headers' => [
-                    'verify' => false,
-                    'timeout' => 0,
-                ],
-                'body' => $xmlData->asXML()
-            ]);
-            
+        $headers = [
+            'x-cpf-usuario: ' . $this->getCpf(),
+            'Authorization: Bearer ' . $token,
+            'Content-Type: application/xml',
+        ];
 
-        $response =  $httpCliente->post('api-consulta-siape/v1/consulta-siape')
-            ->throw(function (Response $response, RequestException $e) {
-                Log::error('Erro ao buscar dados no SIAPE: ' . $e->getMessage());
-                throw new RequestConectaGovException('Erro ao buscar dados no SIAPE: ' . $e->getMessage());
-            });
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $this->geturl() . '/api-consulta-siape/v1/consulta-siape',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_POSTFIELDS => $xmlData,
+        ]);
 
+        Log::info('Request made to ' . $this->geturl() . '/api-consulta-siape/v1/consulta-siape', [
+            'headers' => $headers,
+            'body' => $xmlData
+        ]);
 
-        if (!$response->successful()) {
-            Log::error('Erro ao buscar dados no SIAPE: ' . $response->body());
-            throw new RequestConectaGovException('Erro ao buscar dados no SIAPE: ' . $response->body());
+        $response = curl_exec($curl);
+
+        if (curl_errno($curl)) {
+            $error_msg = curl_error($curl);
+            curl_close($curl);
+            throw new Exception('cURL error: ' . $error_msg);
         }
-        return $response->body();
+
+        curl_close($curl);
+        Log::info('Response: ' . $response);
+        return $response;
     }
 
     public function enviar(): void
@@ -84,6 +84,8 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
 
         $codOrgao = strval(intval($this->getConfig()['codOrgao']));
         $codUorg = strval(intval($this->getConfig()['codUorg']));
+
+        
 
         $this->listaUorgs(
             $this->getConfig()['siglaSistema'],
