@@ -26,11 +26,11 @@ abstract class BuscarDadosSiape
 
     public function getToken()
     {
-        $cachedToken = Cache::get('siape_token');
+        // $cachedToken = Cache::get('siape_token');
         
-        if ($cachedToken) {
-            return $cachedToken;
-        }
+        // if ($cachedToken) {
+        //     return $cachedToken;
+        // }
 
         $curl = curl_init();
 
@@ -59,7 +59,7 @@ abstract class BuscarDadosSiape
         $data = json_decode($response, true);
 
         if (isset($data['access_token'])) {
-            Cache::put('siape_token', $data['access_token'], now()->addMinutes(25));
+        //     Cache::put('siape_token', $data['access_token'], now()->addMinutes(25));
             return $data['access_token'];
         }
 

@@ -22,15 +22,13 @@ class BuscadoDadosSiapeAssincronoJob implements ShouldQueue, ContratoJobSchedule
 
     public function __construct(private readonly ?string $tenantId = null)
     {
-        Log::info("inicializando a bussca dos dado SIAPE :". $tenantId);
+        Log::info("inicializando a busca dos dado SIAPE :". $tenantId);
     }
 
     public static function getDescricao(): string
     {
         return 'Buscar Dados Siape Assincrono';
     }
-
-
 
     public function middleware(): array
     {
@@ -40,24 +38,22 @@ class BuscadoDadosSiapeAssincronoJob implements ShouldQueue, ContratoJobSchedule
 
     public function handle(): void
     {
-        Log::alert("Job BuscadoDadosSiapeAssincronoJob START ");
-        $tenants = Tenant::all();
-        Log::info("AQUI",json_encode($tenants));
+        Log::info("Job BuscadoDadosSiapeAssincronoJob START ");
+            $tenants = Tenant::all();
+            $array = $tenants->toArray();
+            Log::info("AQUI");
         foreach ($tenants as $tenant) {
             tenancy()->initialize($tenant);
-            $this->loadingTenantConfigurationMiddleware($tenant->getTenantKey());
+            $this->loadingTenantConfigurationMiddleware($tenant->id);
             $config =  config("integracao")["siape"];
             $buscarDadosSiape = new BuscarDadosSiapeUnidade($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
             $buscarDadosSiape->enviar();
         }
     }
 
-    private function inicializeTenant(): void
+    private function inicializeTenant($tenant): void
     {
-        if (is_null($this->job->tenant_id)) {
-            return;
-        }
-        $tenant = tenancy()->find($this->job->tenant_id);
+        $tenant = tenancy()->find($tenant->id);
         ($tenant) ? tenancy()->initialize($tenant) : LogError::newWarn("Tenant não encontrado.");
     }
 

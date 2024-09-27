@@ -34,31 +34,43 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
         $listaUorgs->addChild('codOrgao', $siapeCodOrgao);
         $listaUorgs->addChild('codUorg', $siapeCodUorg);
 
-        $xmlData = $xml->asXML();
+        // $xmlData = $xml->asXML();
 
-        $xmlResponse =  $this->BuscarUorgs($xmlData);
+        $xmlResponse =  $this->BuscarUorgs($xml);
         SiapeListaUORGS::create(['response' => $xmlResponse]);
     }
 
-    public function BuscarUorgs($xmlData)
+    public function BuscarUorgs(SimpleXMLElement $xmlData)
     {
 
         $httpCliente =  Http::withOptions([
             'verify' => false,
             'timeout' => 0,
+            'debug' => true
         ])
             ->baseUrl($this->getUrl())
             ->withToken($this->getToken())
             ->withHeaders([
                 'x-cpf-usuario' => $this->getCpf(),
-                'Content-Type' => 'application/xml',
-            ]);
+                'Content-Type' => 'Content-Type: application/xml',
+            ])
+            ->withBody($xmlData->asXML(), 'application/xml');
 
-        $response =  $httpCliente->post('api-consulta-siape/v1/consulta-siape', $xmlData)
+            Log::info('Request made to ' . $this->getUrl() . '/api-consulta-siape/v1/consulta-siape', [
+                'headers' => [
+                    'verify' => false,
+                    'timeout' => 0,
+                ],
+                'body' => $xmlData->asXML()
+            ]);
+            
+
+        $response =  $httpCliente->post('api-consulta-siape/v1/consulta-siape')
             ->throw(function (Response $response, RequestException $e) {
                 Log::error('Erro ao buscar dados no SIAPE: ' . $e->getMessage());
                 throw new RequestConectaGovException('Erro ao buscar dados no SIAPE: ' . $e->getMessage());
             });
+
 
         if (!$response->successful()) {
             Log::error('Erro ao buscar dados no SIAPE: ' . $response->body());
