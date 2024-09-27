@@ -4,7 +4,10 @@ namespace App\Jobs;
 
 use App\Exceptions\LogError;
 use App\Jobs\Contratos\ContratoJobSchedule;
+use App\Models\SiapeListaUORGS;
 use App\Models\Tenant;
+use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade as BuscarDadosBuscarDadosSiapeUnidade;
+use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidades;
 use App\Services\Siape\BuscarDadosSiapeUnidade;
 use App\Services\TenantConfigurationsService;
 use Illuminate\Bus\Queueable;
@@ -22,7 +25,7 @@ class BuscadoDadosSiapeAssincronoJob implements ShouldQueue, ContratoJobSchedule
 
     public function __construct(private readonly ?string $tenantId = null)
     {
-        Log::info("inicializando a busca dos dado SIAPE :". $tenantId);
+        Log::info("inicializando a busca dos dado SIAPE :" . $tenantId);
     }
 
     public static function getDescricao(): string
@@ -32,22 +35,24 @@ class BuscadoDadosSiapeAssincronoJob implements ShouldQueue, ContratoJobSchedule
 
     public function middleware(): array
     {
-        return [(new WithoutOverlapping())->expireAfter(60*3)];
+        return [(new WithoutOverlapping())->expireAfter(60 * 3)];
     }
 
 
     public function handle(): void
     {
         Log::info("Job BuscadoDadosSiapeAssincronoJob START ");
-            $tenants = Tenant::all();
-            $array = $tenants->toArray();
-            Log::info("AQUI");
+        $tenants = Tenant::all();
+        $array = $tenants->toArray();
+        Log::info("AQUI");
         foreach ($tenants as $tenant) {
             tenancy()->initialize($tenant);
             $this->loadingTenantConfigurationMiddleware($tenant->id);
             $config =  config("integracao")["siape"];
-            $buscarDadosSiape = new BuscarDadosSiapeUnidade($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
-            $buscarDadosSiape->enviar();
+            $buscarDadosUnidadesSiape = new BuscarDadosSiapeUnidades($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
+            $buscarDadosUnidadesSiape->enviar();
+            $buscarDadosUnidadeSiape = new BuscarDadosBuscarDadosSiapeUnidade($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
+            $buscarDadosUnidadeSiape->enviar();
         }
     }
 
@@ -62,5 +67,4 @@ class BuscadoDadosSiapeAssincronoJob implements ShouldQueue, ContratoJobSchedule
         $tenantConfigurations = new TenantConfigurationsService();
         $tenantConfigurations->handle($tenantId);
     }
-
 }

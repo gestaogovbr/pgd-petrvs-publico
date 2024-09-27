@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Siape;
+namespace App\Services\Siape\BuscarDados;
 
 use App\Exceptions\RequestConectaGovException;
 use App\Models\SiapeListaUORGS;
@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Client\RequestException;
 
-class BuscarDadosSiapeUnidade extends BuscarDadosSiape
+class BuscarDadosSiapeUnidades extends BuscarDadosSiape
 {
 
     public function listaUorgs(
@@ -37,8 +37,8 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
         $xmlData = $xml->asXML();
 
         $xmlResponse =  $this->BuscarUorgs($xmlData);
-       $entidade = SiapeListaUORGS::create(['response' => $xmlResponse]);
-       $entidade->save();
+        $entidade = SiapeListaUORGS::create(['response' => $xmlResponse]);
+        $entidade->save();
     }
 
     public function BuscarUorgs(string $xmlData)
@@ -84,8 +84,6 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
 
         $codOrgao = strval(intval($this->getConfig()['codOrgao']));
         $codUorg = strval(intval($this->getConfig()['codUorg']));
-
-        
 
         $this->listaUorgs(
             $this->getConfig()['siglaSistema'],

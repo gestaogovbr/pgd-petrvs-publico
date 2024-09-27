@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Siape;
+namespace App\Services\Siape\BuscarDados;
 
 use App\Exceptions\RequestConectaGovException;
 use Exception;
