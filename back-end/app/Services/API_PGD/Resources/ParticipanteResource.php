@@ -59,7 +59,7 @@ class ParticipanteResource extends JsonResource
             "origem_unidade"            => "SIAPE",
             'cod_unidade_autorizadora'  => $autorizadora->codigo ?? null,
             'cod_unidade_instituidora'  => $instituidora->codigo ?? null,
-            'cod_unidade_lotacao'       => $unidadeIntegrante->unidade->codigo ?? null,
+            'cod_unidade_lotacao'       => $this->lotacao->unidade->codigo ?? null,
             'matricula_siape'           => str_pad($this->matricula, 7, '0'),
             'cpf'                       => $this->cpf,
             'situacao'                  => $this->ultimaParticipacaoPrograma->habilitado ?? 0,
