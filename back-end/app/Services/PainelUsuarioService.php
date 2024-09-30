@@ -1,7 +1,7 @@
 <?php
 namespace App\Services;
 use App\Services\ServiceBase;
-
+use Illuminate\Support\Facades\Auth;
 use App\Models\PainelUsuario;
 
 class PainelUsuarioService extends ServiceBase {
@@ -10,7 +10,10 @@ class PainelUsuarioService extends ServiceBase {
     return PainelUsuario::where('nivel', 1)->get();
   }
 
-  // public function extraStore($dataOrEntity, $unidade, $action){
-  //   $dataOrEntity->tenants()->attach($dataOrEntity);
-  // }
+  public function updatePassword($password){
+    $user = Auth::guard('painel')->user();
+    $u = PainelUsuario::find($user->id);
+    $u->password = md5($password);
+    $u->update();
+  }
 }

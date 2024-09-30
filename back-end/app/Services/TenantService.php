@@ -65,6 +65,19 @@ class TenantService extends ServiceBase
         if ($action == ServiceBase::ACTION_INSERT)
             $this->acoesDeploy($dataOrEntity);
 
+        if ($action == ServiceBase::ACTION_EDIT){
+            $NivelAcessoService = new NivelAcessoService();
+            $usuario = Usuario::orderBy('created_at', 'asc')->first();
+            if ($usuario) {
+                $usuario->email = $dataOrEntity->email;
+                $usuario->nome = $dataOrEntity->nome_usuario;
+                $usuario->cpf = $dataOrEntity->cpf;
+                $usuario->apelido = $dataOrEntity->apelido;
+                $usuario->perfil_id = $NivelAcessoService->getPerfilDesenvolvedor()->id;
+                $usuario->save();
+            }
+        }
+
         tenancy()->end();
         Log::info('Finalização do cadastro de tenant');
     }
