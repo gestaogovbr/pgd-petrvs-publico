@@ -43,6 +43,7 @@ class PainelUsuarioController extends Controller
         // Verifica se o usuário está autenticado
         if ($user) {
         return response()->json([
+            'id' => $user->id,
             'nome' => $user->nome,
             'email' => $user->email,
             'nivel' => $user->nivel,
@@ -165,6 +166,25 @@ class PainelUsuarioController extends Controller
             return response()->json(['success' => $this->service->destroy($data["id"], !ControllerBase::$sameTransaction)]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function updatePassword(Request $request){
+        try {
+            $data = $request->validate([
+                'password' => ['required']
+            ]);
+            $this->service->updatePassword($data['password']);
+            return response()->json([
+                'success' => true
+            ]);           
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 }
