@@ -2,6 +2,7 @@
 ### Corrigido
 - URL de redirecionamento do login único (GovBR).
 - CPF do Desenvolvedor, aceitar somente números (Tenant).
+- Atualizar usuário ao atualizar dados do tenant.
 ### Adicionado
 - Opção para o usuário do painel alterar a senha.
 ## 2.1.1 - 18/09/2024 (Hotfixes)
