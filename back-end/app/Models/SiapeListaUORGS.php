@@ -14,6 +14,7 @@ class SiapeListaUORGS extends ModelBase
 
     protected $fillable = [
         'response',
+         'processado'
     ];
-    
+
 }
