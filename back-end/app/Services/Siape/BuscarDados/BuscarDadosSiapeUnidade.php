@@ -69,10 +69,14 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
     public function BuscarUorgs(array $xmlsData) : array
     {
         $lotes = array_chunk($xmlsData, 15);
+        $tempoInicial = microtime(true);
         $respostas = [];
         foreach ($lotes as $lote) {
             $respostas = array_merge($respostas, $this->executaRequisicoes($lote));
         }
+        $tempoFinal = microtime(true);
+        $tempoTotal = $tempoFinal - $tempoInicial;
+        Log::info("Tempo total de execução: " . $tempoTotal. " segundos");
         return $respostas;
     }
 
