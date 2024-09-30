@@ -5,8 +5,11 @@ namespace App\Services\Siape\BuscarDados;
 use App\Models\IntegracaoUnidade;
 use App\Models\SiapeDadosUORG;
 use App\Models\SiapeListaUORGS;
+use Faker\Core\Uuid;
+use Google\Service\CloudControlsPartnerService\Console;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
+use Illuminate\Support\Str;
 
 class BuscarDadosSiapeUnidade extends BuscarDadosSiape
 {
@@ -32,9 +35,12 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
         }
 
         $xmlResponse =  $this->BuscarUorgs($xmlsUnidades);
-        $inserts =[];
+        $inserts = [];
         foreach ($xmlResponse as $xml) {
-            array_push($inserts, ['response' => $xml]);
+            array_push($inserts, [
+                'id' => Str::uuid(),
+                'response' => $xml
+            ]);
         }
         SiapeDadosUORG::insert($inserts);
     }
@@ -60,8 +66,17 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
         return $xml->asXML();
     }
 
-    public function BuscarUorgs(array $xmlData)
+    public function BuscarUorgs(array $xmlsData) : array
     {
+        $lotes = array_chunk($xmlsData, 15);
+        $respostas = [];
+        foreach ($lotes as $lote) {
+            $respostas = array_merge($respostas, $this->executaRequisicoes($lote));
+        }
+        return $respostas;
+    }
+
+    private function executaRequisicoes(array $xmlsData){
         $token = $this->getToken();
 
         $url = $this->getUrl() . '/api-consulta-siape/v1/consulta-siape';
@@ -75,7 +90,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
         $multiCurl = curl_multi_init();
         $curlHandles = [];
 
-        foreach ($xmlData as $key => $xmlData) {
+        foreach ($xmlsData as $key => $xmlData) {
             $curlHandles[$key] = curl_init();
 
             curl_setopt_array($curlHandles[$key], [
@@ -94,9 +109,13 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
             ]);
         }
 
+        Log::info("quantidade de requisições abertas" . count($xmlsData));
+        $esperar = 1;
+
         do {
             $status = curl_multi_exec($multiCurl, $active);
             curl_multi_select($multiCurl);
+            sleep($esperar);
         } while ($active && $status == CURLM_OK);
 
         $respostas = [];
@@ -106,9 +125,13 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
                 continue;
             }
 
-            $response = curl_multi_getcontent($ch);
-            array_push($respostas, $response);
-            Log::info('Response: ' . $response);
+            $responsesCurl = curl_multi_getcontent($ch);
+
+            if(empty($responsesCurl)){
+                Log::alert('Response vazio');
+                continue;
+            }
+            array_push($respostas, $responsesCurl);
 
             curl_multi_remove_handle($multiCurl, $ch);
 
@@ -121,7 +144,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
             Log::error('Erros na requisição: ' . json_encode($errorLog));
         }
 
-        return $response;
+        return $respostas;
     }
 
     public function enviar(): void
