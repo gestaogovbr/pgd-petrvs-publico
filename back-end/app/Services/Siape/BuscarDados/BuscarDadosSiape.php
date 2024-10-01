@@ -3,6 +3,7 @@
 namespace App\Services\Siape\BuscarDados;
 
 use App\Exceptions\RequestConectaGovException;
+use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
@@ -136,6 +137,42 @@ abstract class BuscarDadosSiape
         }
 
         return $respostas;
+    }
+
+    protected function prepareResponseXml(string $response) : SimpleXMLElement
+    {
+        $response = trim($response); 
+        $response = str_replace(['&lt;', '&gt;', '&quot;', '&amp;', '&apos;'], ['<', '>', '"', '&', "'"], $response); 
+        libxml_use_internal_errors(true); 
+        $response = <<<XML
+        $response
+        XML;
+        $responseXml = simplexml_load_string($response, "SimpleXMLElement", LIBXML_NOCDATA);
+        if ($responseXml === false) {
+            $errors = libxml_get_errors();
+            foreach ($errors as $error) {
+                Log::error('XML Error: ' . $error->message);
+            }
+            libxml_clear_errors();
+            throw new RequestConectaGovException('Invalid XML response'); 
+        }
+        Log::info('Response convertido: ' , [$responseXml]);
+        return $responseXml;
+    }
+
+     public function simpleXmlElementToArray(SimpleXMLElement $element) : array{
+        $array = [];
+        foreach ($element as $key => $value) {
+            $array[$key] = (string) $value; 
+        }
+        return $array;
+    }
+
+    public static function asTimestamp($date): int | null {
+        $result = gettype($date) == "integer" ? $date : 
+            ($date instanceof DateTime ? $date->getTimestamp() : 
+            (gettype($date) == "string" ? (strtotime($date) ? strtotime($date) : null) : null));
+        return $result;
     }
 
     public abstract function enviar() : void;
