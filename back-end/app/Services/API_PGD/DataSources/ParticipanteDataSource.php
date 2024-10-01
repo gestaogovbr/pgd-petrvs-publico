@@ -21,10 +21,12 @@ class ParticipanteDataSource extends DataSource
                 'ultimaParticipacaoPrograma',
                 'ultimaParticipacaoPrograma.programa.unidade',
                 'unidadesIntegrantes.unidade',*/
-                'unidadesIntegrantes.atribuicoes' => function ($query) {
-                    $query
-                        ->where('atribuicao', 'LOTADO')
-                        ->whereNull('deleted_at');
+                'unidadesIntegrantes' => function($query) {
+                    $query->whereHas('atribuicoes', function ($query) {
+                        $query
+                            ->where('atribuicao', 'LOTADO')
+                            ->whereNull('deleted_at');
+                    });
                 }
             ])
             ->find($exportSource->id);
