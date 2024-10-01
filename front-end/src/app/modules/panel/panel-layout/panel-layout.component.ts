@@ -38,6 +38,10 @@ export class PanelLayoutComponent extends PageBase implements OnInit {
 		});
 	}
 
+	public changePassword(){
+		this.go.navigate({route: ["/panel/change-password"]}, {modal: true });
+	}
+
   toggleNavbar() {
     const navbar = document.getElementById('navbarSupportedContent');
     if (navbar) {
