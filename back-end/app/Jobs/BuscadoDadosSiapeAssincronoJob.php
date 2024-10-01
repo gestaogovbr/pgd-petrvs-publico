@@ -6,6 +6,7 @@ use App\Exceptions\LogError;
 use App\Jobs\Contratos\ContratoJobSchedule;
 use App\Models\SiapeListaUORGS;
 use App\Models\Tenant;
+use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidores;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade as BuscarDadosBuscarDadosSiapeUnidade;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidades;
 use App\Services\Siape\BuscarDadosSiapeUnidade;
@@ -51,6 +52,8 @@ class BuscadoDadosSiapeAssincronoJob implements ShouldQueue, ContratoJobSchedule
             $buscarDadosUnidadesSiape->enviar();
             $buscarDadosUnidadeSiape = new BuscarDadosBuscarDadosSiapeUnidade($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
             $buscarDadosUnidadeSiape->enviar();
+            $buscarDadosServidoresSiape = new BuscarDadosSiapeServidores($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
+            $buscarDadosServidoresSiape->enviar();
         }
     }
 
