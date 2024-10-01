@@ -1,22 +1,17 @@
 <?php
-
 namespace App\Services\Siape\BuscarDados;
 
 use App\Models\IntegracaoUnidade;
-use App\Models\SiapeDadosUORG;
-use App\Models\SiapeListaUORGS;
-use Faker\Core\Uuid;
-use Google\Service\CloudControlsPartnerService\Console;
+use App\Models\SiapeListaServidores;
 use Illuminate\Support\Facades\Log;
-use SimpleXMLElement;
 use Illuminate\Support\Str;
+use SimpleXMLElement;
 
-class BuscarDadosSiapeUnidade extends BuscarDadosSiape
-{
+class BuscarDadosSiapeServidores extends BuscarDadosSiape{
 
-    public function listaUorg(): void
+
+    public function buscaServidores(): void
     {
-
         $unidades = IntegracaoUnidade::all();
 
         $xmlsUnidades = [];
@@ -24,7 +19,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
             $codigoSiape = $unidade->codigo_siape;
             $codOrgao = strval(intval($this->getConfig()['codOrgao']));
 
-            array_push($xmlsUnidades, $this->dadosUorg(
+            array_push($xmlsUnidades, $this->listaServidores(
                 $this->getConfig()['siglaSistema'],
                 $this->getConfig()['nomeSistema'],
                 $this->getConfig()['senha'],
@@ -34,7 +29,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
             ));
         }
 
-        $xmlResponse =  $this->BuscarUorgs($xmlsUnidades);
+        $xmlResponse =  $this->BuscaSiape($xmlsUnidades);
         $inserts = [];
         foreach ($xmlResponse as $xml) {
             array_push($inserts, [
@@ -42,31 +37,32 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
                 'response' => $xml
             ]);
         }
-        SiapeDadosUORG::insert($inserts);
+        SiapeListaServidores::insert($inserts);
     }
 
-    public function dadosUorg(
+    public function listaServidores(
         $siapeSiglaSistema,
         $siapeNomeSistema,
         $siapeSenha,
-        $cpf,
+        $siapeCpf,
         $siapeCodOrgao,
-        $siapeCodUorg
+        $codigoSiape
     ): string {
         $xml = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://servico.wssiapenet"/>');
         $body = $xml->addChild('soapenv:Body');
-        $dadosUorg = $body->addChild('ser:dadosUorg');
-        $dadosUorg->addChild('siglaSistema', $siapeSiglaSistema);
-        $dadosUorg->addChild('nomeSistema', $siapeNomeSistema);
-        $dadosUorg->addChild('senha', $siapeSenha);
-        $dadosUorg->addChild('cpf', $cpf);
-        $dadosUorg->addChild('codOrgao', $siapeCodOrgao);
-        $dadosUorg->addChild('codUorg', $siapeCodUorg);
+        $listaServidores = $body->addChild('ser:listaServidores');
+        $listaServidores->addChild('siglaSistema', $siapeSiglaSistema);
+        $listaServidores->addChild('nomeSistema', $siapeNomeSistema);
+        $listaServidores->addChild('senha', $siapeSenha);
+        $listaServidores->addChild('cpf', $siapeCpf);
+        $listaServidores->addChild('codOrgao', $siapeCodOrgao);
+        $listaServidores->addChild('codUorg', $codigoSiape);
 
-        return $xml->asXML();
+        $xmlData = $xml->asXML();
+        return $xmlData;
     }
 
-    public function BuscarUorgs(array $xmlsData) : array
+    private function buscaSiape($xmlsData): array
     {
         $lotes = array_chunk($xmlsData, 15);
         $tempoInicial = microtime(true);
@@ -80,10 +76,9 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
         return $respostas;
     }
 
-    
-
     public function enviar(): void
     {
-        $this->listaUorg();
+        $this->buscaServidores();
     }
+
 }
