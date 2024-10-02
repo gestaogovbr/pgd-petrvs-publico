@@ -6,10 +6,10 @@ use App\Exceptions\LogError;
 use App\Jobs\Contratos\ContratoJobSchedule;
 use App\Models\SiapeListaUORGS;
 use App\Models\Tenant;
+use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidores;
-use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade as BuscarDadosBuscarDadosSiapeUnidade;
+use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidades;
-use App\Services\Siape\BuscarDadosSiapeUnidade;
 use App\Services\TenantConfigurationsService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -50,10 +50,12 @@ class BuscadoDadosSiapeAssincronoJob implements ShouldQueue, ContratoJobSchedule
             $config =  config("integracao")["siape"];
             $buscarDadosUnidadesSiape = new BuscarDadosSiapeUnidades($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
             $buscarDadosUnidadesSiape->enviar();
-            $buscarDadosUnidadeSiape = new BuscarDadosBuscarDadosSiapeUnidade($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
+            $buscarDadosUnidadeSiape = new BuscarDadosSiapeUnidade($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
             $buscarDadosUnidadeSiape->enviar();
             $buscarDadosServidoresSiape = new BuscarDadosSiapeServidores($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
             $buscarDadosServidoresSiape->enviar();
+            $buscarDadosServidorSiape = new BuscarDadosSiapeServidor($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
+            $buscarDadosServidorSiape->enviar();
         }
     }
 

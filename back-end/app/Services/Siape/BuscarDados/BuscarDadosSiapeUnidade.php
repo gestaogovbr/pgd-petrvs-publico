@@ -5,6 +5,7 @@ namespace App\Services\Siape\BuscarDados;
 use App\Models\IntegracaoUnidade;
 use App\Models\SiapeDadosUORG;
 use App\Models\SiapeListaUORGS;
+use DateTime;
 use Faker\Core\Uuid;
 use Google\Service\CloudControlsPartnerService\Console;
 use Illuminate\Support\Facades\Log;
@@ -17,8 +18,52 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
     public function listaUorg(): void
     {
 
-        $unidades = IntegracaoUnidade::all();
+        $unidadesJaProcessadas = IntegracaoUnidade::all();
 
+        $response = SiapeListaUORGS::where('processado', 0)
+                ->orderBy('updated_at', 'desc')
+                ->first();
+
+        $unidades = $this->getUnidades($response);
+
+        $unidades = array_filter($unidades, function ($unidade) use ($unidadesJaProcessadas) {
+
+           $unidadeProcessada =  $unidadesJaProcessadas->firstWhere('codigo_siape', $unidade['codigo']);
+
+           if(!$unidadeProcessada){
+               return true;
+            }
+
+            $dataModificacaoBD = $this->asTimestamp($unidadeProcessada->data_modificacao);
+
+            $dataModificacaoSiape = DateTime::createFromFormat('dmY', $unidade['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
+            $dataModificacaoSiape  = $this->asTimestamp($dataModificacaoSiape);
+
+            if($dataModificacaoSiape > $dataModificacaoBD){
+                return true;
+            }
+            return false;
+
+        });
+         Log::info("Unidades a serem processadas: " . count($unidades));
+
+
+        $xmlResponse = $this->executarRequisicoes($unidades);
+       
+        $inserts = [];
+        foreach ($xmlResponse as $xml) {
+            array_push($inserts, [
+                'id' => Str::uuid(),
+                'response' => $xml
+            ]);
+        }
+        SiapeDadosUORG::insert($inserts);
+
+        $response->processado = 1;
+        $response->save();
+    }
+
+    private function executarRequisicoes($unidades){
         $xmlsUnidades = [];
         foreach ($unidades as $unidade) {
             $codigoSiape = $unidade->codigo_siape;
@@ -34,15 +79,17 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
             ));
         }
 
-        $xmlResponse =  $this->BuscarUorgs($xmlsUnidades);
-        $inserts = [];
-        foreach ($xmlResponse as $xml) {
-            array_push($inserts, [
-                'id' => Str::uuid(),
-                'response' => $xml
-            ]);
-        }
-        SiapeDadosUORG::insert($inserts);
+       return  $this->BuscarUorgs($xmlsUnidades);
+    }
+
+    private function getUnidades(SiapeListaUORGS $response) : array {
+        $xmlResponse = $this->prepareResponseXml($response->response);        
+
+        $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+        $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
+        $xmlResponse->registerXPathNamespace('ns2', 'http://entidade.wssiapenet');
+        $uorgs = $xmlResponse->xpath('//ns2:Uorg');
+        return array_map([$this, 'simpleXmlElementToArray'], $uorgs);
     }
 
     public function dadosUorg(
