@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 
 abstract class BuscarDadosSiape
 {
+    CONST QUANTIDADE_MAXIMA_REQUISICOES = 15;
     private $contentType = 'application/x-www-form-urlencoded';
     private string $authorizationHeader;
 
@@ -123,7 +124,8 @@ abstract class BuscarDadosSiape
                 Log::alert('Response vazio');
                 continue;
             }
-            array_push($respostas, $responsesCurl);
+            $respostas[$key] = $responsesCurl;
+            // array_push($respostas, $responsesCurl);
 
             curl_multi_remove_handle($multiCurl, $ch);
 
