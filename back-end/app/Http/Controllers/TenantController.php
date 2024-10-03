@@ -6,10 +6,12 @@ use App\Exceptions\Contracts\IBaseException;
 use App\Exceptions\LogError;
 use App\Exceptions\ServerException;
 use App\Http\Controllers\ControllerBase;
+use App\Models\PainelUsuario;
 use App\Models\PainelUsuarioTenant;
 use App\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Stancl\Tenancy\Database\Models\Domain;
@@ -28,7 +30,6 @@ class TenantController extends ControllerBase {
                 $this->checkPermissions("STORE", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
                 $data = $request->validate([
                     'entity' => ['required'],
-                    'user_id' => ['required'],
                     'with' => ['array']
                 ]);
                 if(!Tenant::find($data['entity']['id'])) {
@@ -36,11 +37,10 @@ class TenantController extends ControllerBase {
                         throw new ServerException("TenantStore", "URL já cadastrada");
                     }
                 }
-                // Verifica se o user_id existe no PainelUsuarioTenant
-                PainelUsuarioTenant::where("users_panel_id", $data['user_id'])
-                    ->where('tenant_id', $data['entity']['id'])
-                    ->firstOrFail();
-                
+
+                if(!$this->checkUserPermission($data['entity']['id']))
+                    return response()->json(['error' => 'Tenant não encontrado.'], 404);
+
                 $data['entity']['tenancy_db_name']= "petrvs_".strtolower($data['entity']['id']);
                 $data['entity']['tenancy_db_host']= env("DB_HOST");
                 $data['entity']['tenancy_db_port']= env("DB_PORT");
@@ -293,21 +293,15 @@ class TenantController extends ControllerBase {
             $this->checkPermissions("GETBYID", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'id' => ['required'],
-                'user_id' => ['required'],
                 'with' => ['array'],
             ]);
-
-            // Verifica se o user_id existe no PainelUsuarioTenant
-            PainelUsuarioTenant::where("users_panel_id", $data['user_id'])
-                ->where('tenant_id', $data['id'])
-                ->firstOrFail();
-
-            return response()->json([
-                'success' => true,
-                'data' => $this->service->getById($data)
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['error' => 'Tenant não encontrado.'], 404);
+            if($this->checkUserPermission($data['id']))
+                return response()->json([
+                    'success' => true,
+                    'data' => $this->service->getById($data)
+                ]);
+            else
+                return response()->json(['error' => 'Tenant não encontrado.'], 404);
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
@@ -317,4 +311,21 @@ class TenantController extends ControllerBase {
             return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
+
+    private function checkUserPermission($tenant_id) {
+        $user_id = Auth::guard('painel')->id();
+        $painel_user = PainelUsuario::findOrFail($user_id);
+        // Se o nível do usuário não for 1, verifica a relação com o tenant
+        if ($painel_user->nivel != 1) {
+            // Verifica se o usuário tem permissão no tenant específico
+            $exists = PainelUsuarioTenant::where("users_panel_id", $user_id)
+                ->where('tenant_id', $tenant_id)
+                ->exists();
+            return $exists;
+        } else {
+            // Usuário com nível 1 tem permissão total
+            return true;
+        }
+    }
+
 }
