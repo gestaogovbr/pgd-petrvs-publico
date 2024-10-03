@@ -1,3 +1,7 @@
+## 2.1.3 - 03/10/2024
+### Corrigido
+- Correção no SIAPE falha de processamento servidores dos dados para banco de dados
+
 ## 2.1.2 - 30/09/2024
 ### Corrigido
 - URL de redirecionamento do login único (GovBR).
