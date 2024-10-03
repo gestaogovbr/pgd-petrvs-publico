@@ -6,6 +6,7 @@ use App\Exceptions\Contracts\IBaseException;
 use App\Exceptions\LogError;
 use App\Exceptions\ServerException;
 use App\Http\Controllers\ControllerBase;
+use App\Models\PainelUsuarioTenant;
 use App\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -270,6 +271,38 @@ class TenantController extends ControllerBase {
                 'data' =>$data
             ]);
         } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+        }
+    }
+
+
+    public function getById(Request $request)
+    {
+        try {
+            $this->checkPermissions("GETBYID", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
+            $data = $request->validate([
+                'id' => ['required'],
+                'user_id' => ['required'],
+                'with' => ['array'],
+            ]);
+
+            // Verifica se o user_id existe no PainelUsuarioTenant
+            PainelUsuarioTenant::where("users_panel_id", $data['user_id'])
+                ->where('tenant_id', $data['id'])
+                ->firstOrFail();
+
+            return response()->json([
+                'success' => true,
+                'data' => $this->service->getById($data)
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['error' => 'Tenant não encontrado.'], 404);
+        }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
         catch (Throwable $e) {
