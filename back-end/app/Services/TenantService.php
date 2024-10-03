@@ -15,6 +15,8 @@ use App\Models\Tenant;
 use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use App\Exceptions\ServerException;
 
 class TenantService extends ServiceBase
 {
@@ -95,6 +97,7 @@ class TenantService extends ServiceBase
 
     public function executeSeeder($seed, $tenant = null)
     {
+        $this->validatePermission();
         Log::info('Execução '.$seed.'.');
         Artisan::call('tenants:run db:seed --option="class=' . $seed . '"' . (empty($tenant) ? '' : ' --tenants=' . $tenant));
         return Artisan::output();
@@ -103,6 +106,7 @@ class TenantService extends ServiceBase
 
     public function migrate($id)
     {
+        $this->validatePermission();
         try {
             if ($id) {
                 Artisan::call('tenant:migrate ' . $id);
@@ -123,6 +127,7 @@ class TenantService extends ServiceBase
 
     public function cleanDB($id)
     {
+        $this->validatePermission();
         try {
             Artisan::call('db:truncate-all ' . $id);
         } catch (\Exception $e) {
@@ -134,6 +139,8 @@ class TenantService extends ServiceBase
 
     public function resetBD()
     {
+        $this->validatePermission();
+        
         try {
             //            Artisan::call('db:delete-all');
             //            logInfo();
@@ -249,6 +256,7 @@ class TenantService extends ServiceBase
     public function deleteTenant($id)
     {
         try {
+            $this->validatePermission();
             $tenant = Tenant::find($id);
             if ($tenant) {
                 $tenant->delete();
@@ -288,6 +296,13 @@ class TenantService extends ServiceBase
             array_push($values, [$row['id'], array_map(fn($field) => $row[$field], $data['fields']), $orderValues]);
         }
         return $values;
+    }
+
+    public function validatePermission(){
+        $user = Auth::guard('painel')->user();
+        if ($user->nivel != 1) {
+            throw new ServerException("ValidateUsuario", "Usuário não tem permissão para executar essa ação");
+        }
     }
 
 }
