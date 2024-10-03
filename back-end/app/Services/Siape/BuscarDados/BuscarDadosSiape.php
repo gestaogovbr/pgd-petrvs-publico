@@ -96,10 +96,10 @@ abstract class BuscarDadosSiape
 
             curl_multi_add_handle($multiCurl, $curlHandles[$key]);
 
-            Log::info('Request made to ' . $this->geturl() . '/api-consulta-siape/v1/consulta-siape', [
-                'headers' => $headers,
-                'body' => $xmlData
-            ]);
+            // Log::info('Request made to ' . $this->geturl() . '/api-consulta-siape/v1/consulta-siape', [
+            //     'headers' => $headers,
+            //     'body' => $xmlData
+            // ]);
         }
 
         Log::info("quantidade de requisições abertas" . count($xmlsData));

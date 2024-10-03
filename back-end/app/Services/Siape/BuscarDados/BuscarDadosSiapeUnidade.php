@@ -25,6 +25,10 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
                 ->first();
 
         $unidades = $this->getUnidades($response);
+        
+        if(!$unidades){
+            return;
+        }
 
         $unidades = array_filter($unidades, function ($unidade) use ($unidadesJaProcessadas) {
 
@@ -82,9 +86,13 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
        return  $this->BuscarUorgs($xmlsUnidades);
     }
 
-    private function getUnidades(SiapeListaUORGS $response) : array {
-        $xmlResponse = $this->prepareResponseXml($response->response);        
-
+    private function getUnidades(SiapeListaUORGS $response) : ?array {
+        try {
+            $xmlResponse = $this->prepareResponseXml($response->response);
+        } catch (\Exception $e) {
+            Log::error('Erro ao processar XML', [$e->getMessage()]);
+            return null;
+        }
         $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
         $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
         $xmlResponse->registerXPathNamespace('ns2', 'http://entidade.wssiapenet');

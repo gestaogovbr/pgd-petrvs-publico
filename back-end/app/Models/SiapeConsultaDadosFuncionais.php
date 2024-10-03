@@ -16,7 +16,9 @@ class SiapeConsultaDadosFuncionais extends ModelBase
         'id',
         'cpf',
         'response',
-        'processado'
+        'processado',
+        'created_at',
+        'updated_at'
     ];
     
 }

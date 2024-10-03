@@ -3,6 +3,7 @@ namespace App\Services\Siape\BuscarDados;
 
 use App\Models\IntegracaoUnidade;
 use App\Models\SiapeListaServidores;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use SimpleXMLElement;
@@ -34,7 +35,9 @@ class BuscarDadosSiapeServidores extends BuscarDadosSiape{
         foreach ($xmlResponse as $xml) {
             array_push($inserts, [
                 'id' => Str::uuid(),
-                'response' => $xml
+                'response' => $xml,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
         SiapeListaServidores::insert($inserts);
