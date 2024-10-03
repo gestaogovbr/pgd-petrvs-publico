@@ -25,7 +25,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
                 ->first();
 
         $unidades = $this->getUnidades($response);
-        
+
         if(!$unidades){
             return;
         }
@@ -70,7 +70,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
     private function executarRequisicoes($unidades){
         $xmlsUnidades = [];
         foreach ($unidades as $unidade) {
-            $codigoSiape = $unidade->codigo_siape;
+            $codigoSiape = $unidade['codigo'];
             $codOrgao = strval(intval($this->getConfig()['codOrgao']));
 
             array_push($xmlsUnidades, $this->dadosUorg(
@@ -123,7 +123,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
 
     public function BuscarUorgs(array $xmlsData) : array
     {
-        $lotes = array_chunk($xmlsData, 15);
+        $lotes = array_chunk($xmlsData, self::QUANTIDADE_MAXIMA_REQUISICOES, true);
         $tempoInicial = microtime(true);
         $respostas = [];
         foreach ($lotes as $lote) {

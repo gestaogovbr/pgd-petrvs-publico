@@ -67,7 +67,7 @@ class BuscarDadosSiapeServidores extends BuscarDadosSiape{
 
     private function buscaSiape($xmlsData): array
     {
-        $lotes = array_chunk($xmlsData, 15);
+        $lotes = array_chunk($xmlsData, self::QUANTIDADE_MAXIMA_REQUISICOES, true);
         $tempoInicial = microtime(true);
         $respostas = [];
         foreach ($lotes as $lote) {
