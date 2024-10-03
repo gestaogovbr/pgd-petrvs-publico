@@ -12,6 +12,7 @@ use App\Http\Middleware\Panel;
 Route::middleware(['api', 'panel'])->prefix('Tenant')->group(function () {
     Route::post('store', [TenantController::class, 'store']);
     Route::post('destroy', [TenantController::class, 'destroy']);
+    
     Route::post('get-by-id', [TenantController::class, 'getById']);
     Route::post('query', [TenantController::class, 'query']);
     Route::post('search-text', [TenantController::class, 'searchText']);
@@ -23,7 +24,7 @@ Route::middleware(['api', 'panel'])->prefix('Tenant')->group(function () {
     Route::post('database', [TenantController::class, 'database']);
     Route::post('tipo-capacidade', [TenantController::class, 'tiposCapacidades']);
     Route::post('migrations', [TenantController::class, 'migrations']);
-    Route::post('seeders', [TenantController::class, 'seeders']);    
+    Route::post('seeders', [TenantController::class, 'seeders']);
 });
 
 Route::middleware(['api', 'panel'])->prefix('Tenant')->group(function () {
