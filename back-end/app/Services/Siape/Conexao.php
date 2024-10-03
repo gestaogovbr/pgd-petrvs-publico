@@ -131,7 +131,7 @@ class Conexao
 
         $dadosPessoais = $xmlResponse->xpath('//ns1:consultaDadosPessoaisResponse/out')[0];
         $dadosPessoaisArray = $this->simpleXmlElementToArray($dadosPessoais);
-        
+        Log::info('Dados Funcionais: ', [$dadosPessoaisArray]);
         return $dadosPessoaisArray;
     }
 
@@ -164,7 +164,7 @@ class Conexao
 
         $dadosFuncionais = $xmlResponse->xpath('//tipo:DadosFuncionais')[0];
         $dadosFuncionaisArray = $this->simpleXmlElementToArray($dadosFuncionais);
-
+        Log::info('Dados Funcionais: ', [$dadosFuncionaisArray]);
         return $dadosFuncionaisArray;
     }
 

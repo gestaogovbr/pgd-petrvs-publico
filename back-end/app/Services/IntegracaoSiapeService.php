@@ -75,7 +75,7 @@ class IntegracaoSiapeService extends ServiceBase
           $this->siapeParmExistPag,
           $this->siapeParmTipoVinculo
         );
-        $dadosFuncionais = $dadosFuncionais['dadosFuncionais']['DadosFuncionais'];
+        // $dadosFuncionais = $dadosFuncionais['dadosFuncionais']['DadosFuncionais'];
 
         if($dadosFuncionais['codsitfuncional'] == self::SITUACAO_FUNCIONAL_ATIVO_EM_OUTRO_ORGAO) return null;
         
