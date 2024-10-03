@@ -28,6 +28,7 @@ class TenantController extends ControllerBase {
                 $this->checkPermissions("STORE", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
                 $data = $request->validate([
                     'entity' => ['required'],
+                    'user_id' => ['required'],
                     'with' => ['array']
                 ]);
                 if(!Tenant::find($data['entity']['id'])) {
@@ -35,6 +36,11 @@ class TenantController extends ControllerBase {
                         throw new ServerException("TenantStore", "URL já cadastrada");
                     }
                 }
+                // Verifica se o user_id existe no PainelUsuarioTenant
+                PainelUsuarioTenant::where("users_panel_id", $data['user_id'])
+                    ->where('tenant_id', $data['entity']['id'])
+                    ->firstOrFail();
+                
                 $data['entity']['tenancy_db_name']= "petrvs_".strtolower($data['entity']['id']);
                 $data['entity']['tenancy_db_host']= env("DB_HOST");
                 $data['entity']['tenancy_db_port']= env("DB_PORT");
