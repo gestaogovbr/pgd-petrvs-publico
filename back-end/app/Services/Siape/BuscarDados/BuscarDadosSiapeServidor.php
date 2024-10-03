@@ -19,10 +19,22 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         $servidoresJaProcessadas = IntegracaoServidor::all();
 
         $response = SiapeListaServidores::where('processado', 0)
-            ->orderBy('updated_at', 'desc')
-            ->first();
+            ->orderBy('updated_at', 'desc')->get();
+        Log::alert("response", [$response]);    
 
-        $servidores = $this->getServidores($response);
+        if (!$response) {
+            Log::info("Nenhum servidor a ser processado");
+            return;
+        }
+
+        // Log::info("response", [$response]);
+        $servidores = [];
+        foreach ($response as $siapeListaServidores) {
+            Log::info("response", [$siapeListaServidores]);
+            $siapeListaServidoresArray = $this->getServidores($siapeListaServidores);
+            $servidores[$siapeListaServidoresArray['cpf']] = $siapeListaServidoresArray;
+            Log::info("response", [$servidores]);
+        }
 
         $servidores = array_filter($servidores, function ($servidor) use ($servidoresJaProcessadas) {
 
@@ -51,6 +63,8 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
     private function executarRequisicoes(array $servidores): void
     {
         $this->executarRequisicoesDadosFuncionais($servidores);
+
+        $this->executarRequisicoesDadosPessoais($servidores);
     }
 
     private function executarRequisicoesDadosFuncionais(array $servidores): void
@@ -70,6 +84,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             $xmlsServidores[$servidor['cpf']] = $xml;
             // array_push($xmlsServidores, $xml);
         }
+        Log::info("xmlsServidores", [$xmlsServidores]);
 
         $xmlResponse = $this->BuscaDados($xmlsServidores);
 
@@ -82,7 +97,6 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             ]);
         }
         SiapeConsultaDadosFuncionais::insert($inserts);
-
     }
 
     private function executarRequisicoesDadosPessoais(array $servidores): void
@@ -114,7 +128,6 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             ]);
         }
         SiapeConsultaDadosPessoais::insert($inserts);
-
     }
 
     public function consultaDadosFuncionais(
@@ -161,11 +174,10 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         $consultaDadosPessoais->addChild('parmTipoVinculo', $siapeParmTipoVinculo);
 
         return $xml->asXML();
-
-        
     }
 
-    private function BuscaDados(array $xmlsServidores){
+    private function BuscaDados(array $xmlsServidores)
+    {
         $lotes = array_chunk($xmlsServidores, self::QUANTIDADE_MAXIMA_REQUISICOES);
         $tempoInicial = microtime(true);
         $respostas = [];
@@ -174,11 +186,11 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         }
         $tempoFinal = microtime(true);
         $tempoTotal = $tempoFinal - $tempoInicial;
-        Log::info("Dados funcionais: Tempo total de execução: " . $tempoTotal. " segundos");
+        Log::info("Dados funcionais: Tempo total de execução: " . $tempoTotal . " segundos");
         return $respostas;
     }
 
-    
+
 
     private function getServidores(SiapeListaServidores $response)
     {
@@ -196,7 +208,8 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
     }
 
 
-    public function enviar(): void {
+    public function enviar(): void
+    {
         $this->processar();
     }
 }
