@@ -75,11 +75,11 @@ class IntegracaoSiapeService extends ServiceBase
           $this->siapeParmExistPag,
           $this->siapeParmTipoVinculo
         );
-        // $dadosFuncionais = $dadosFuncionais['dadosFuncionais']['DadosFuncionais'];
 
-        if($dadosFuncionais['codsitfuncional'] == self::SITUACAO_FUNCIONAL_ATIVO_EM_OUTRO_ORGAO) return null;
+        if($dadosFuncionais['codSitFuncional'] == self::SITUACAO_FUNCIONAL_ATIVO_EM_OUTRO_ORGAO) return null;
         
         $funcao = null;
+
        
         if (!empty($dadosFuncionais['codAtivFun']) && $dadosFuncionais['codAtivFun']) {
           $funcao = array('funcao' => ['tipo_funcao' => '1', 'uorg_funcao' => $dadosFuncionais['codUorgExercicio']]);
@@ -130,6 +130,7 @@ class IntegracaoSiapeService extends ServiceBase
         ];
         return $Pessoa;
       } catch (Throwable $e) {
+        Log::error('ISiape: Erro de conexão ou problemas com CPF ' . $pessoa['cpf'] . ' durante consulta aos dados pessoais.', [$e->getMessage()]);
         LogError::newWarn("ISiape: Erro de conexão ou problemas com CPF " . $pessoa['cpf'] . " durante consulta aos dados pessoais.", $e->getMessage());
       }
     } else {
@@ -252,8 +253,10 @@ class IntegracaoSiapeService extends ServiceBase
           }
         }
       }
+      
       return $uorgsPetrvs;
     } catch (Throwable $e) {
+      Log::error('ISiape: não foi possível recuperar dados da UORG.', [$e->getMessage()]);
       LogError::newWarn("ISiape: não foi possível recuperar dados da UORG.", $e->getMessage());
     }
   }
