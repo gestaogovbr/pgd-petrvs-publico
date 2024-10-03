@@ -62,12 +62,15 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
 
         Log::info("Unidades a serem processadas: " . count($servidores));
 
-        // $servidores = array_slice($servidores, 0, 10, true);//teste  
-
-        // Log::info("ret: " , [$servidores] );
-        // return;
 
         $this->executarRequisicoes($servidores);
+
+        foreach ($response as $siapeListaServidores) {
+            $siapeListaServidores->processado = 1;
+            $siapeListaServidores->save();
+        }
+
+        
     }
 
     private function executarRequisicoes(array $servidores): void
@@ -126,7 +129,6 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
                 $this->getConfig()['parmTipoVinculo']
             );
             $xmlsServidores[$servidor['cpf']] = $xml;
-            // array_push($xmlsServidores, $xml);
         }
 
         $xmlResponse = $this->BuscaDados($xmlsServidores);
