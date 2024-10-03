@@ -6,9 +6,12 @@ use App\Exceptions\Contracts\IBaseException;
 use App\Exceptions\LogError;
 use App\Exceptions\ServerException;
 use App\Http\Controllers\ControllerBase;
+use App\Models\PainelUsuario;
+use App\Models\PainelUsuarioTenant;
 use App\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Stancl\Tenancy\Database\Models\Domain;
@@ -34,6 +37,10 @@ class TenantController extends ControllerBase {
                         throw new ServerException("TenantStore", "URL já cadastrada");
                     }
                 }
+
+                if(!$this->checkUserPermission($data['entity']['id']))
+                    return response()->json(['error' => 'Tenant não encontrado.'], 404);
+
                 $data['entity']['tenancy_db_name']= "petrvs_".strtolower($data['entity']['id']);
                 $data['entity']['tenancy_db_host']= env("DB_HOST");
                 $data['entity']['tenancy_db_port']= env("DB_PORT");
@@ -278,4 +285,47 @@ class TenantController extends ControllerBase {
             return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
+
+
+    public function getById(Request $request)
+    {
+        try {
+            $this->checkPermissions("GETBYID", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
+            $data = $request->validate([
+                'id' => ['required'],
+                'with' => ['array'],
+            ]);
+            if($this->checkUserPermission($data['id']))
+                return response()->json([
+                    'success' => true,
+                    'data' => $this->service->getById($data)
+                ]);
+            else
+                return response()->json(['error' => 'Tenant não encontrado.'], 404);
+        }  catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+        }
+    }
+
+    private function checkUserPermission($tenant_id) {
+        $user_id = Auth::guard('painel')->id();
+        $painel_user = PainelUsuario::findOrFail($user_id);
+        // Se o nível do usuário não for 1, verifica a relação com o tenant
+        if ($painel_user->nivel != 1) {
+            // Verifica se o usuário tem permissão no tenant específico
+            $exists = PainelUsuarioTenant::where("users_panel_id", $user_id)
+                ->where('tenant_id', $tenant_id)
+                ->exists();
+            return $exists;
+        } else {
+            // Usuário com nível 1 tem permissão total
+            return true;
+        }
+    }
+
 }
