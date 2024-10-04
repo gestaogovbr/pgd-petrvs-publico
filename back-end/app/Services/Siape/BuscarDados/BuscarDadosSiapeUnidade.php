@@ -61,9 +61,10 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
         $xmlResponse = $this->executarRequisicoes($unidades);
        
         $inserts = [];
-        foreach ($xmlResponse as $xml) {
+        foreach ($xmlResponse as $dataultimaAtualizacao => $xml) {
             array_push($inserts, [
                 'id' => Str::uuid(),
+                'data_modificacao' => DateTime::createFromFormat('dmY', $dataultimaAtualizacao)->format('Y-m-d 00:00:00'),
                 'response' => $xml,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -88,14 +89,14 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
             $codigoSiape = $unidade['codigo'];
             $codOrgao = strval(intval($this->getConfig()['codOrgao']));
 
-            array_push($xmlsUnidades, $this->dadosUorg(
+            $xmlsUnidades[$unidade['dataUltimaTransacao']] =  $this->dadosUorg(
                 $this->getConfig()['siglaSistema'],
                 $this->getConfig()['nomeSistema'],
                 $this->getConfig()['senha'],
                 $this->getCpf(),
                 $codOrgao,
                 $codigoSiape
-            ));
+            );
         }
 
        return  $this->BuscarUorgs($xmlsUnidades);

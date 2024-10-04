@@ -16,6 +16,7 @@ class SiapeDadosUORG extends ModelBase
         'id',
         'response',
         'processado',
+        'data_modificacao',
         'created_at',
         'updated_at'
     ];
