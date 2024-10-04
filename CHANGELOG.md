@@ -1,3 +1,9 @@
+## 2.2.0 - 04/10/2024 (Hotfixes)
+### Segurança 
+- Adicionado validações para usuários do painel.
+- Adicionado validações para manipulação dos dados do tenant.
+### Removido
+- Remoção de arquivos não usados.
 ## 2.1.3 - 03/10/2024
 ### Corrigido
 - Correção no SIAPE falha de processamento servidores dos dados para banco de dados
