@@ -38,7 +38,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
                 continue;
             }
             foreach ($siapeListaServidoresArray as $servidor) {
-                $servidores[$servidor['cpf']] = $servidor;
+                $servidores[$servidor['cpf'].".".$servidor['dataUltimaTransacao']] = $servidor;
 
             }
         }
@@ -135,16 +135,20 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
                 $this->getConfig()['parmExistPag'],
                 $this->getConfig()['parmTipoVinculo']
             );
-            $xmlsServidores[$servidor['cpf']] = $xml;
+            $xmlsServidores[$servidor['cpf'].".".$servidor['dataUltimaTransacao']] = $xml;
         }
 
         $xmlResponse = $this->BuscaDados($xmlsServidores);
 
         $inserts = [];
-        foreach ($xmlResponse as $cpf => $xml) {
+        foreach ($xmlResponse as $dados => $xml) {
+            $dadosArray = explode(".", $dados);
+            $cpf = $dadosArray[0];
+            $dataUltimaTransacao = $dadosArray[1];
             array_push($inserts, [
                 'id' => Str::uuid(),
                 'cpf' => $cpf,
+                'data_modificacao' => DateTime::createFromFormat('dmY', $dataUltimaTransacao)->format('Y-m-d 00:00:00'),
                 'response' => $xml,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
