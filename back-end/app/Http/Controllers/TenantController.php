@@ -217,6 +217,9 @@ class TenantController extends ControllerBase {
             $data = $request->validate([
                 'tenant_id' => ['string'],
             ]);
+            if(!$this->checkUserPermission($data['tenant_id']))
+                return response()->json(['error' => 'Tenant não encontrado.'], 404);
+
             return response()->json([
                 'success' => true,
                 'data' => $this->service->usuarioSeeder($data['tenant_id'])
@@ -271,6 +274,9 @@ class TenantController extends ControllerBase {
 
     public function deleteTenant(Request $request) {
         try {
+            if(!$this->checkUserPermission($request->tenant_id))
+                return response()->json(['error' => 'Tenant não encontrado.'], 404);
+
             $data= $this->service->deleteTenant($request->tenant_id);
             return response()->json([
                 'success' => true,
@@ -312,7 +318,7 @@ class TenantController extends ControllerBase {
         }
     }
 
-    private function checkUserPermission($tenant_id) {
+    private function checkUserPermission($tenant_id=0) {
         $user_id = Auth::guard('painel')->id();
         $painel_user = PainelUsuario::findOrFail($user_id);
         // Se o nível do usuário não for 1, verifica a relação com o tenant
@@ -328,4 +334,48 @@ class TenantController extends ControllerBase {
         }
     }
 
+    public function query(Request $request)
+    {
+        try {
+            $this->checkPermissions("QUERY", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
+            $data = $request->validate([
+                'page' => ['required'],
+                'with' => ['array'],
+                'limit' => ['required'],
+                'orderBy' => ['array'],
+                'deleted' => ['nullable'],
+                'where' => ['array']
+            ]);
+
+            $id=isset($data['where'][0][2])?$data['where'][0][2]:0;
+            if(!$this->checkUserPermission($id))
+                return response()->json(['error' => 'Tenant não encontrado.'], 404);
+
+            $result = $this->service->query($data);
+
+
+            foreach ($result['rows'] as $linha){
+                unset(
+                    $linha['tenancy_db_username'],
+                    $linha['tenancy_db_password'],
+                    $linha['log_username'],
+                    $linha['log_password']
+                );
+            }
+
+            return response()->json([
+                'success' => true,
+                'count' => $result['count'],
+                'rows' => $result['rows'],
+                'extra' => $result['extra']
+            ]);
+        }  catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+        }
+    }
 }

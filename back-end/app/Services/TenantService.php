@@ -130,7 +130,8 @@ class TenantService extends ServiceBase
     {
         $this->validatePermission();
         try {
-            Artisan::call('db:truncate-all ' . $id);
+            //Artisan::call('db:truncate-all ' . $id);
+            return true;
         } catch (\Exception $e) {
             Log::error('Error executing commands: ' . $e->getMessage());
             Log::channel('daily')->error('Error executing commands: ' . $e->getMessage());
@@ -141,7 +142,7 @@ class TenantService extends ServiceBase
     public function resetBD()
     {
         $this->validatePermission();
-        
+
         try {
             //            Artisan::call('db:delete-all');
             //            logInfo();
