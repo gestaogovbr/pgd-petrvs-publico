@@ -8,6 +8,7 @@ use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeListaServidores;
 use Carbon\Carbon;
 use DateTime;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
 use Illuminate\Support\Str;
@@ -17,6 +18,9 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
 
     private function processar(): void
     {
+        Log::info("Iniciando processamento de servidor...");
+
+        $this->limpaTabela();
         $servidoresJaProcessadas = IntegracaoServidor::all();
 
         $response = SiapeListaServidores::where('processado', 0)
@@ -38,8 +42,6 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
 
             }
         }
-        reset($servidores);
-        Log::info("teste um servidor: ", [key($servidores)]);
 
         $servidores = array_filter($servidores, function ($servidor) use ($servidoresJaProcessadas) {
 
@@ -60,7 +62,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             return false;
         });
 
-        Log::info("Unidades a serem processadas: " . count($servidores));
+        Log::info("Servidores a serem processadas: " . count($servidores));
 
 
         $this->executarRequisicoes($servidores);
@@ -70,7 +72,14 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             $siapeListaServidores->save();
         }
 
+        Log::info("Finalizando processamento de servidor");
         
+    }
+
+    private function limpaTabela(): void
+    {
+        DB::table('siape_consultaDadosPessoais')->truncate();
+        DB::table('siape_consultaDadosFuncionais')->truncate();
     }
 
     private function executarRequisicoes(array $servidores): void
@@ -95,9 +104,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
                 $this->getConfig()['parmTipoVinculo']
             );
             $xmlsServidores[$servidor['cpf']] = $xml;
-            // array_push($xmlsServidores, $xml);
         }
-        // Log::info("xmlsServidores", [$xmlsServidores]);
 
         $xmlResponse = $this->BuscaDados($xmlsServidores);
 
@@ -200,7 +207,6 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         foreach ($lotes as $lote) {
             $resposta = $this->executaRequisicoes($lote);
             $respostas = $this->array_merge_recursive_distinct($respostas,  $resposta);
-            // $respostas = array_merge($respostas,  $resposta);
             Log::info("Reposta da requisição::", [$respostas]);
         }
         $tempoFinal = microtime(true);
@@ -241,10 +247,8 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
     private function array_merge_recursive_distinct($array1, $array2) {
         foreach ($array2 as $key => $value) {
             if (array_key_exists($key, $array1)) {
-                // Se a chave já existe no primeiro array, criamos uma nova chave
                 $array1[] = $value;
             } else {
-                // Caso contrário, apenas adicionamos a chave/valor do segundo array
                 $array1[$key] = $value;
             }
         }

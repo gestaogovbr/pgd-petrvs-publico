@@ -16,8 +16,7 @@ class SiapeListaServidores extends ModelBase
         'id',
         'response',
         'processado',
-         'created_at',
+        'created_at',
         'updated_at'
     ];
-    
 }

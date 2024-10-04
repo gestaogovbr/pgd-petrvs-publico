@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Facades\DB;
 
 class BuscarDadosSiapeUnidades extends BuscarDadosSiape
 {
@@ -23,6 +24,9 @@ class BuscarDadosSiapeUnidades extends BuscarDadosSiape
         $siapeCodOrgao,
         $siapeCodUorg
     ): void {
+        Log::info("Iniciando a busca das unidades...");
+        
+        $this->limpaTabela();
 
         $xml = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://servico.wssiapenet"/>');
         $body = $xml->addChild('soapenv:Body');
@@ -39,6 +43,13 @@ class BuscarDadosSiapeUnidades extends BuscarDadosSiape
         $xmlResponse =  $this->BuscarUorgs($xmlData);
         $entidade = SiapeListaUORGS::create(['response' => $xmlResponse]);
         $entidade->save();
+
+        Log::info("Finalizando a buscas das unidades.");
+    }
+
+    private function limpaTabela(): void
+    {
+        DB::table('siape_listaUORG')->truncate();
     }
 
     public function BuscarUorgs(string $xmlData)

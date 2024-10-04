@@ -26,7 +26,6 @@ class RunBuscaDadosAssincronosJob extends Command
      */
     public function handle()
     {
-        dispatch(new \App\Jobs\BuscadoDadosSiapeAssincronoJob());
         $classe = new \App\Jobs\BuscadoDadosSiapeAssincronoJob();
         $classe->handle();
         $this->info('Job executado com sucesso.');
