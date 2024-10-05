@@ -144,56 +144,21 @@ class IntegracaoSiapeService extends ServiceBase
     $uorgsWsdl = "";
     $uorgsPetrvs = ["uorg" => []];
 
-    try {
-      if (!empty($this->siape)) {
-        $uorgsWsdl = $this->siape->listaUorgs(
-          $this->siapeSiglaSistema,
-          $this->siapeNomeSistema,
-          $this->siapeSenha,
-          $this->siapeCpf,
-          $this->siapeCodOrgao,
-          $uorgInicial
-        );
-        Log::info('saida listaUorgs', [$uorgsWsdl]);
-      }
-    } 
-    catch (RequestConectaGovException $e) {
-      LogError::newError("ISiape: erro de conexão.", $e->getMessage());
-      throw $e;
-    }
-    catch (Throwable $e) {
-      Log::error('ISiape: erro de conexão.', [$e->getMessage(), $e->getLine()]);
-      LogError::newError("ISiape: erro de conexão.", $e->getMessage());
-    }
+    $uorgsWsdl = $this->siape->dadosUorg();
+
 
     try {
       if (!empty($uorgsWsdl)) {
-        foreach ($uorgsWsdl as $value) {
-          if (!empty($value['codigo'])) {
-            $data_modificacao_siape = DateTime::createFromFormat('dmY', $value['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
-            $data_modificacao_siape  = $this->UtilService->asTimestamp($data_modificacao_siape);
-            $uorg_iu = DB::table('integracao_unidades')->where('id_servo', $value['codigo'])->first();
+        foreach ($uorgsWsdl as $dados) {
+          $uorgWsdl = $dados['dados'];
+          $dataUltimaTransacao = $dados['data_modificacao'];
 
-            if (
-              empty($data_modificacao_siape) || empty($uorg_iu) ||
-              empty($uorg_iu->data_modificacao) ||
-              $data_modificacao_siape > $this->UtilService->asTimestamp($uorg_iu->data_modificacao)
-            ) {
-             try {
-              $uorgWsdl = $this->siape->dadosUorg(
-                $this->siapeSiglaSistema,
-                $this->siapeNomeSistema,
-                $this->siapeSenha,
-                $this->siapeCpf,
-                $this->siapeCodOrgao,
-                $value['codigo']
-              );
-
-             } catch (Exception $e) {
-              Log::error('ISiape: erro ao tentar recuperar dados da UORG ' . $value['codigo'] . '.', $e->getMessage());
+            if (!isset($uorgWsdl['codUorg']) && empty($uorgWsdl['codUorg'])) {
+              LogError::newWarn("ISiape: não foi possível recuperar dados da UORG.", "Código da UORG não encontrado.");
+              Log::error("ISiape: não foi possível recuperar dados da UORG.", "Código da UORG não encontrado.");
               continue;
-             }
-
+            }
+           
 
               if (!empty($this->UtilService->valueOrNull($uorgWsdl, "nomeMunicipio"))) {
                 $consulta_sql = "SELECT * FROM cidades WHERE nome LIKE '" . addslashes($uorgWsdl['nomeMunicipio']) . "'";
@@ -204,8 +169,6 @@ class IntegracaoSiapeService extends ServiceBase
                   $uorgWsdl['fuso_horario'] = $consulta_sql['timezone'];
                 }
               }
-
-              $value['dataUltimaTransacao'] = DateTime::createFromFormat('dmY', $value['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
 
               $inserir_uorg = [
                 'id_servo' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorg"))) ?: "",
@@ -236,20 +199,15 @@ class IntegracaoSiapeService extends ServiceBase
                 'municipio_uf' => $this->UtilService->valueOrNull($uorgWsdl, "siglaUfMunicipio") ?: "",
                 'ativa' => "true",
                 'regimental' => $this->UtilService->valueOrNull($uorgWsdl, "indicadorUorgRegimenta") ?: "",
-                'data_modificacao' => $this->UtilService->valueOrNull($value, "dataUltimaTransacao") ?: "",
+                'data_modificacao' => $dataUltimaTransacao,
                 'und_nu_adicional' => $this->UtilService->valueOrNull($uorgWsdl, "und_nu_adicional") ?: "",
                 'cnpjupag' => $this->UtilService->valueOrNull($uorgWsdl, "cnpjUpag") ?: "",
                 'cpf_titular_autoridade_uorg' => $this->UtilService->valueOrNull($uorgWsdl, "cpfTitularAutoridadeUorg") ?: "",
                 'cpf_substituto_autoridade_uorg' => $this->UtilService->valueOrNull($uorgWsdl, "cpfSubstitutoAutoridadeUorg") ?: "",
               ];
               array_push($uorgsPetrvs['uorg'], $inserir_uorg);
-            } else {
-              $uorg_iu = $this->UtilService->object2array($uorg_iu);
-              array_push($uorgsPetrvs['uorg'], $uorg_iu);
-            }
-          } else {
-            LogError::newWarn("ISiape: Ausência de código uorg.");
-          }
+           
+          
         }
       }
       return $uorgsPetrvs;

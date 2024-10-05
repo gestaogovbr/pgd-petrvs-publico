@@ -3,10 +3,12 @@
 namespace App\Services\Siape;
 
 use App\Exceptions\RequestConectaGovException;
+use App\Models\SiapeDadosUORG;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
 use Illuminate\Support\Facades\Cache;
+
 class Conexao
 {
     private $contentType = 'application/x-www-form-urlencoded';
@@ -24,7 +26,7 @@ class Conexao
     public function getToken()
     {
         $cachedToken = Cache::get('siape_token');
-        
+
         if ($cachedToken) {
             return $cachedToken;
         }
@@ -131,7 +133,7 @@ class Conexao
 
         $dadosPessoais = $xmlResponse->xpath('//ns1:consultaDadosPessoaisResponse/out')[0];
         $dadosPessoaisArray = $this->simpleXmlElementToArray($dadosPessoais);
-        
+
         return $dadosPessoaisArray;
     }
 
@@ -167,79 +169,49 @@ class Conexao
 
         return $dadosFuncionaisArray;
     }
-
-    public function listaUorgs(
-        $siapeSiglaSistema,
-        $siapeNomeSistema,
-        $siapeSenha,
-        $cpf,
-        $siapeCodOrgao,
-        $siapeCodUorg
-    ): array {
-        $xml = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://servico.wssiapenet"/>');
-        $body = $xml->addChild('soapenv:Body');
-        $listaUorgs = $body->addChild('ser:listaUorgs');
-        $listaUorgs->addChild('siglaSistema', $siapeSiglaSistema);
-        $listaUorgs->addChild('nomeSistema', $siapeNomeSistema);
-        $listaUorgs->addChild('senha', $siapeSenha);
-        $listaUorgs->addChild('cpf', $cpf);
-        $listaUorgs->addChild('codOrgao', $siapeCodOrgao);
-        $listaUorgs->addChild('codUorg', $siapeCodUorg);
-
-        $xmlData = $xml->asXML();
-        
-        $xmlResponse =  $this->enviar($xmlData);
-        $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
-        $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
-        $xmlResponse->registerXPathNamespace('ns2', 'http://entidade.wssiapenet');
-        $uorgs = $xmlResponse->xpath('//ns2:Uorg');
-        $uorgsArray = array_map([$this, 'simpleXmlElementToArray'], $uorgs);
-        return $uorgsArray;
-    }
-
-    function simpleXmlElementToArray(SimpleXMLElement $element) : array{
+    function simpleXmlElementToArray(SimpleXMLElement $element): array
+    {
         $array = [];
         foreach ($element as $key => $value) {
-            $array[$key] = (string) $value; 
+            $array[$key] = (string) $value;
         }
         return $array;
     }
-    
-    public function dadosUorg(
-        $siapeSiglaSistema,
-        $siapeNomeSistema,
-        $siapeSenha,
-        $cpf,
-        $siapeCodOrgao,
-        $siapeCodUorg
-    ): array {
-        $xml = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://servico.wssiapenet"/>');
-        $body = $xml->addChild('soapenv:Body');
-        $dadosUorg = $body->addChild('ser:dadosUorg');
-        $dadosUorg->addChild('siglaSistema', $siapeSiglaSistema);
-        $dadosUorg->addChild('nomeSistema', $siapeNomeSistema);
-        $dadosUorg->addChild('senha', $siapeSenha);
-        $dadosUorg->addChild('cpf', $cpf);
-        $dadosUorg->addChild('codOrgao', $siapeCodOrgao);
-        $dadosUorg->addChild('codUorg', $siapeCodUorg);
 
-        $xmlData = $xml->asXML();
+    public function dadosUorg(): array
+    {
 
-        $responseXml = $this->enviar($xmlData);
+        $response = SiapeDadosUORG::where('processado', 0)
+            ->orderBy('updated_at', 'desc')->get();
 
-        $responseXml->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
-        $responseXml->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
-        $responseXml->registerXPathNamespace('ent', 'http://entidade.wssiapenet');
+        if (!$response) {
+            return [];
+        }
+        $dadosUorgArray = [];
+        foreach ($response as $dadosUnidades) {
+            $responseXml = $this->prepareResponseXml($dadosUnidades->response);
 
-        $dadosUorg = $responseXml->xpath('//ns1:dadosUorgResponse/out')[0];
-        $dadosUorgArray = $this->simpleXmlElementToArray($dadosUorg);
+            $responseXml->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+            $responseXml->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
+            $responseXml->registerXPathNamespace('ent', 'http://entidade.wssiapenet');
+
+            $dadosUorg = $responseXml->xpath('//ns1:dadosUorgResponse/out')[0];
+            $dadosUorgArray[] = [
+                'data_modificacao' => $dadosUnidades->data_modificacao,
+                'dados' => $this->simpleXmlElementToArray($dadosUorg)
+            ];
+
+            $dadosUnidades->processado = 1;
+            $dadosUnidades->save();
+        }
 
         return $dadosUorgArray;
-        
     }
 
 
-    private function enviar($xmlData) : SimpleXMLElement
+
+
+    private function enviar($xmlData): SimpleXMLElement
     {
         try {
             $token = $this->getToken();
@@ -284,11 +256,11 @@ class Conexao
         }
     }
 
-    private function prepareResponseXml(string $response) : SimpleXMLElement
+    private function prepareResponseXml(string $response): SimpleXMLElement
     {
-        $response = trim($response); 
-        $response = str_replace(['&lt;', '&gt;', '&quot;', '&amp;', '&apos;'], ['<', '>', '"', '&', "'"], $response); 
-        libxml_use_internal_errors(true); 
+        $response = trim($response);
+        $response = str_replace(['&lt;', '&gt;', '&quot;', '&amp;', '&apos;'], ['<', '>', '"', '&', "'"], $response);
+        libxml_use_internal_errors(true);
         $response = <<<XML
         $response
         XML;
@@ -299,10 +271,9 @@ class Conexao
                 Log::error('XML Error: ' . $error->message);
             }
             libxml_clear_errors();
-            throw new RequestConectaGovException('Invalid XML response'); 
+            throw new RequestConectaGovException('Invalid XML response');
         }
-        Log::info('Response convertido: ' , [$responseXml]);
+        Log::info('Response convertido: ', [$responseXml]);
         return $responseXml;
     }
-    
 }
