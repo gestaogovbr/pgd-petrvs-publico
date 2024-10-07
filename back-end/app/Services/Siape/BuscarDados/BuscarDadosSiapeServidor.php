@@ -216,7 +216,6 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         foreach ($lotes as $lote) {
             $resposta = $this->executaRequisicoes($lote);
             $respostas = $this->array_merge_recursive_distinct($respostas,  $resposta);
-            Log::info("Reposta da requisição::", [$respostas]);
         }
         $tempoFinal = microtime(true);
         $tempoTotal = $tempoFinal - $tempoInicial;

@@ -128,7 +128,6 @@ abstract class BuscarDadosSiape
                 continue;
             }
             $respostas[$key] = $responsesCurl;
-            // array_push($respostas, $responsesCurl);
 
             curl_multi_remove_handle($multiCurl, $ch);
 
