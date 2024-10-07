@@ -11,9 +11,11 @@ use Illuminate\Support\Facades\Cache;
 
 abstract class BuscarDadosSiape
 {
-    CONST QUANTIDADE_MAXIMA_REQUISICOES = 15;
+    CONST QUANTIDADE_MAXIMA_REQUISICOES = 20;
     private $contentType = 'application/x-www-form-urlencoded';
     private string $authorizationHeader;
+    protected static $token = null;
+    protected static $tokenExpiresAt = null;
 
     public function __construct(
         private readonly string $cpf,
@@ -28,11 +30,9 @@ abstract class BuscarDadosSiape
 
     public function getToken()
     {
-        // $cachedToken = Cache::get('siape_token');
-        
-        // if ($cachedToken) {
-        //     return $cachedToken;
-        // }
+        if (self::$token && now()->lessThan(self::$tokenExpiresAt)) {
+        return self::$token;
+    }
 
         $curl = curl_init();
 
@@ -61,9 +61,12 @@ abstract class BuscarDadosSiape
         $data = json_decode($response, true);
 
         if (isset($data['access_token'])) {
-        //     Cache::put('siape_token', $data['access_token'], now()->addMinutes(25));
+            self::$token = $data['access_token'];
+            self::$tokenExpiresAt = now()->addMinutes(59);
+
             return $data['access_token'];
         }
+        
 
         throw new RequestConectaGovException('Falha ao gerar o token. Response: ' . $response);
     }
@@ -96,10 +99,10 @@ abstract class BuscarDadosSiape
 
             curl_multi_add_handle($multiCurl, $curlHandles[$key]);
 
-            Log::info('Request made to ' . $this->geturl() . '/api-consulta-siape/v1/consulta-siape', [
-                'headers' => $headers,
-                'body' => $xmlData
-            ]);
+            // Log::info('Request made to ' . $this->geturl() . '/api-consulta-siape/v1/consulta-siape', [
+            //     'headers' => $headers,
+            //     'body' => $xmlData
+            // ]);
         }
 
         Log::info("quantidade de requisições abertas" . count($xmlsData));

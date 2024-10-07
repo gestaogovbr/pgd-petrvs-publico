@@ -15,7 +15,8 @@ class SiapeListaServidores extends ModelBase
     protected $fillable = [
         'id',
         'response',
-        'processado'
+        'processado',
+        'created_at',
+        'updated_at'
     ];
-    
 }

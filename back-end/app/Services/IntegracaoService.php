@@ -569,6 +569,7 @@ class IntegracaoService extends ServiceBase
             );
           } catch (Throwable $e) {
             LogError::newError("Erro ao truncar a tabela integracao_servidores", $e);
+            Log::error("Erro ao truncar a tabela integracao_servidores", $e);
           }
           $this->logSiape("Iniciando processo de atualização de servidores", [], Tipo::INFO);
           $integracaoServidorProcessar->setServidores($servidores)->setEcho($this->echo)->setIntegracaoConfig($this->integracao_config)

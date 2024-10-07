@@ -8,6 +8,7 @@ services:
       - 3308:3308
     volumes:
       - ../mariadb:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/my.cnf
     environment:
       MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
       MYSQL_USER: petrvs

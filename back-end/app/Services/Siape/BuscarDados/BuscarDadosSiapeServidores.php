@@ -1,8 +1,10 @@
 <?php
 namespace App\Services\Siape\BuscarDados;
 
-use App\Models\IntegracaoUnidade;
 use App\Models\SiapeListaServidores;
+use App\Models\SiapeListaUORGS;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use SimpleXMLElement;
@@ -12,11 +14,30 @@ class BuscarDadosSiapeServidores extends BuscarDadosSiape{
 
     public function buscaServidores(): void
     {
-        $unidades = IntegracaoUnidade::all();
+        Log::info("Iniciando busca de servidores...");
+
+        $this->limpaTabela();
+
+        $response = SiapeListaUORGS::where('processado', 1)
+                ->orderBy('updated_at', 'desc')
+                ->first();
+                
+        if(!$response){
+            Log::info("Nenhuma unidade encontrada.");
+            return;
+        }
+
+        $unidades = $this->getUnidades($response);  
+        
+        if(!$unidades){
+            Log::info("Nenhuma unidade encontrada.");
+            return;
+        }
+
 
         $xmlsUnidades = [];
         foreach ($unidades as $unidade) {
-            $codigoSiape = $unidade->codigo_siape;
+            $codigoSiape = $unidade['codigo'];
             $codOrgao = strval(intval($this->getConfig()['codOrgao']));
 
             array_push($xmlsUnidades, $this->listaServidores(
@@ -34,10 +55,19 @@ class BuscarDadosSiapeServidores extends BuscarDadosSiape{
         foreach ($xmlResponse as $xml) {
             array_push($inserts, [
                 'id' => Str::uuid(),
-                'response' => $xml
+                'response' => $xml,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
         SiapeListaServidores::insert($inserts);
+
+        Log::info("Busca de servidores finalizada.");
+    }
+
+    private function limpaTabela(): void
+    {
+        DB::table('siape_listaServidores')->truncate();
     }
 
     public function listaServidores(
@@ -64,7 +94,7 @@ class BuscarDadosSiapeServidores extends BuscarDadosSiape{
 
     private function buscaSiape($xmlsData): array
     {
-        $lotes = array_chunk($xmlsData, 15);
+        $lotes = array_chunk($xmlsData, self::QUANTIDADE_MAXIMA_REQUISICOES, true);
         $tempoInicial = microtime(true);
         $respostas = [];
         foreach ($lotes as $lote) {
@@ -79,6 +109,20 @@ class BuscarDadosSiapeServidores extends BuscarDadosSiape{
     public function enviar(): void
     {
         $this->buscaServidores();
+    }
+
+    private function getUnidades(SiapeListaUORGS $response) : ?array {
+        try {
+            $xmlResponse = $this->prepareResponseXml($response->response);
+        } catch (\Exception $e) {
+            Log::error('Erro ao processar XML', [$e->getMessage()]);
+            return null;
+        }
+        $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+        $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
+        $xmlResponse->registerXPathNamespace('ns2', 'http://entidade.wssiapenet');
+        $uorgs = $xmlResponse->xpath('//ns2:Uorg');
+        return array_map([$this, 'simpleXmlElementToArray'], $uorgs);
     }
 
 }

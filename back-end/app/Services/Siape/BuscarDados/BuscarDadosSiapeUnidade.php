@@ -5,9 +5,11 @@ namespace App\Services\Siape\BuscarDados;
 use App\Models\IntegracaoUnidade;
 use App\Models\SiapeDadosUORG;
 use App\Models\SiapeListaUORGS;
+use Carbon\Carbon;
 use DateTime;
 use Faker\Core\Uuid;
 use Google\Service\CloudControlsPartnerService\Console;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
 use Illuminate\Support\Str;
@@ -17,7 +19,10 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
 
     public function listaUorg(): void
     {
+        Log::info("Iniciando processamento de unidade...");
 
+        $this->limpaTabela();
+        
         $unidadesJaProcessadas = IntegracaoUnidade::all();
 
         $response = SiapeListaUORGS::where('processado', 0)
@@ -25,6 +30,11 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
                 ->first();
 
         $unidades = $this->getUnidades($response);
+
+        if(!$unidades){
+            Log::info("Nenhuma unidade encontrada.");
+            return;
+        }
 
         $unidades = array_filter($unidades, function ($unidade) use ($unidadesJaProcessadas) {
 
@@ -51,40 +61,56 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
         $xmlResponse = $this->executarRequisicoes($unidades);
        
         $inserts = [];
-        foreach ($xmlResponse as $xml) {
+        foreach ($xmlResponse as $dados => $xml) {
+            $dados = explode(".", $dados);
+            $dataultimaAtualizacao = $dados[1];
             array_push($inserts, [
                 'id' => Str::uuid(),
-                'response' => $xml
+                'data_modificacao' => DateTime::createFromFormat('dmY', $dataultimaAtualizacao)->format('Y-m-d 00:00:00'),
+                'response' => $xml,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
         SiapeDadosUORG::insert($inserts);
 
         $response->processado = 1;
         $response->save();
+
+        Log::info("Processamento de unidade finalizado.");
+    }
+
+    private function limpaTabela(): void
+    {
+        DB::table('siape_dadosUORG')->truncate();
     }
 
     private function executarRequisicoes($unidades){
         $xmlsUnidades = [];
         foreach ($unidades as $unidade) {
-            $codigoSiape = $unidade->codigo_siape;
+            $codigoSiape = $unidade['codigo'];
             $codOrgao = strval(intval($this->getConfig()['codOrgao']));
 
-            array_push($xmlsUnidades, $this->dadosUorg(
+            $xmlsUnidades[$unidade['codigo'].".".$unidade['dataUltimaTransacao']] =  $this->dadosUorg(
                 $this->getConfig()['siglaSistema'],
                 $this->getConfig()['nomeSistema'],
                 $this->getConfig()['senha'],
                 $this->getCpf(),
                 $codOrgao,
                 $codigoSiape
-            ));
+            );
         }
 
        return  $this->BuscarUorgs($xmlsUnidades);
     }
 
-    private function getUnidades(SiapeListaUORGS $response) : array {
-        $xmlResponse = $this->prepareResponseXml($response->response);        
-
+    private function getUnidades(SiapeListaUORGS $response) : ?array {
+        try {
+            $xmlResponse = $this->prepareResponseXml($response->response);
+        } catch (\Exception $e) {
+            Log::error('Erro ao processar XML', [$e->getMessage()]);
+            return null;
+        }
         $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
         $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
         $xmlResponse->registerXPathNamespace('ns2', 'http://entidade.wssiapenet');
@@ -115,7 +141,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
 
     public function BuscarUorgs(array $xmlsData) : array
     {
-        $lotes = array_chunk($xmlsData, 15);
+        $lotes = array_chunk($xmlsData, self::QUANTIDADE_MAXIMA_REQUISICOES, true);
         $tempoInicial = microtime(true);
         $respostas = [];
         foreach ($lotes as $lote) {
