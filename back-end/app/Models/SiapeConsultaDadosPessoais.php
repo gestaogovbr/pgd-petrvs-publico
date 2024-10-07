@@ -16,6 +16,7 @@ class SiapeConsultaDadosPessoais extends ModelBase
         'id',
         'cpf',
         'response',
+        'data_modificacao',
         'processado',
         'created_at',
         'updated_at'

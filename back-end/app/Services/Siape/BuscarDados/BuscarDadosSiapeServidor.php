@@ -109,10 +109,15 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         $xmlResponse = $this->BuscaDados($xmlsServidores);
 
         $inserts = [];
-        foreach ($xmlResponse as $cpf => $xml) {
+        foreach ($xmlResponse as $dados => $xml) {
+            $dadosArray = explode(".", $dados);
+            $cpf = $dadosArray[0];
+            $dataUltimaTransacao = $dadosArray[1];
+
             array_push($inserts, [
                 'id' => Str::uuid(),
                 'cpf' => $cpf,
+                'data_modificacao' => DateTime::createFromFormat('dmY', $dataUltimaTransacao)->format('Y-m-d 00:00:00'),
                 'response' => $xml,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
