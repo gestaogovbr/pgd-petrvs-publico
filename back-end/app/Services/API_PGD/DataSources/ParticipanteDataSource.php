@@ -3,7 +3,6 @@ namespace App\Services\API_PGD\DataSources;
 
 use App\Exceptions\ExportPgdException;
 use App\Models\Usuario;
-use App\Models\ViewApiPgd;
 use App\Services\API_PGD\ExportSource;
 
 class ParticipanteDataSource extends DataSource
