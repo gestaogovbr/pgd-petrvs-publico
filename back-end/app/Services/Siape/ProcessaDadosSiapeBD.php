@@ -40,6 +40,7 @@ class ProcessaDadosSiapeBD
             }
             
         }
+        
         return $dadosServidorArray;
     }
 
@@ -132,7 +133,7 @@ class ProcessaDadosSiapeBD
             libxml_clear_errors();
             throw new RequestConectaGovException('Invalid XML response');
         }
-        
+
         return $responseXml;
     }
 }

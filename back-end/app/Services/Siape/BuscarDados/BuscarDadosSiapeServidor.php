@@ -103,7 +103,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
                 $this->getConfig()['parmExistPag'],
                 $this->getConfig()['parmTipoVinculo']
             );
-            $xmlsServidores[$servidor['cpf']] = $xml;
+            $xmlsServidores[$servidor['cpf'].".".$servidor['dataUltimaTransacao']] = $xml;
         }
 
         $xmlResponse = $this->BuscaDados($xmlsServidores);

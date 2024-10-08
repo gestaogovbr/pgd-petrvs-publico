@@ -538,7 +538,7 @@ class IntegracaoService extends ServiceBase
       try {
         $servidores = [];
         if ($this->integracao_config["tipo"] == "SIAPE") {
-          $servidores = $this->IntegracaoSiapeService->retornarPessoas()["Pessoas"];
+          $servidores = $this->IntegracaoSiapeService->retornarServidores()["Pessoas"];
         } else {
           if ($this->useLocalFiles) {
             $xmlStream = mb_convert_encoding(file_get_contents(base_path($this->localServidores)), 'UTF-8', 'ISO-8859-1');

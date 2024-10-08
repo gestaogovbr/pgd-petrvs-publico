@@ -35,7 +35,11 @@ class IntegracaoSiapeService extends ServiceBase
 
       $dadosFuncionais = $pessoa['dadosFuncionais'];
 
-      if ($dadosFuncionais['codsitfuncional'] == self::SITUACAO_FUNCIONAL_ATIVO_EM_OUTRO_ORGAO) return null;
+      if(empty($dadosFuncionais) || empty($dadosPessoais)){
+        return null;
+      }
+
+      if ($dadosFuncionais['codSitFuncional'] == self::SITUACAO_FUNCIONAL_ATIVO_EM_OUTRO_ORGAO) return null;
 
       $funcao = null;
 
