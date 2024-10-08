@@ -449,10 +449,12 @@ class IntegracaoService extends ServiceBase
             if(!empty($uorg->id_servo)) return $uorg->id_servo;
         }, $unidades_integracao);
 
-        $unidades_integracao_remover = array_diff($unidades_integracao, $unidades_siape);
-        $datahora_remocao = Carbon::now();
-        $unidades_integracao_remover ? DB::table('integracao_unidades')->wherein('id_servo', $unidades_integracao_remover)->update(['deleted_at' => $datahora_remocao]) : true;
-        $this->logSiape("Unidades removidas da tabela integracao_unidades", $unidades_integracao_remover, Tipo::INFO);
+        //TODO esse codigo será removido e passado para um job a parte.
+
+        // $unidades_integracao_remover = array_diff($unidades_integracao, $unidades_siape);
+        // $datahora_remocao = Carbon::now();
+        // $unidades_integracao_remover ? DB::table('integracao_unidades')->wherein('id_servo', $unidades_integracao_remover)->update(['deleted_at' => $datahora_remocao]) : true;
+        // $this->logSiape("Unidades removidas da tabela integracao_unidades", $unidades_integracao_remover, Tipo::INFO);
         $this->logSiape("Concluída a fase de sincronização de Unidades", [], Tipo::INFO);
         if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de reconstrução da tabela integracao_unidades!.....");
         $n = IntegracaoUnidade::count();
@@ -511,7 +513,8 @@ class IntegracaoService extends ServiceBase
         // Seta inativo nas unidades que não existem em integracao_unidades e garante que não esteja inativo as que existem em integracao_unidades.
         // Agora, essa desativação é baseada no soft delete. As unidades permanecem na tabela integracao_unidades, porém com parâmetro deleted_at configurado.
 
-        $DbResultDesativadas = $this->inativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NOW() WHERE data_inativacao IS NULL AND u.codigo IS NOT NULL and u.codigo != '' AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NOT NULL)");
+        //TODO esse codigo será removido e passado para um job a parte.
+        // $DbResultDesativadas = $this->inativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NOW() WHERE data_inativacao IS NULL AND u.codigo IS NOT NULL and u.codigo != '' AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NOT NULL)");
         $DbResultAtivadas = $this->ativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NULL WHERE data_inativacao IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NULL);");
 
         $this->result['unidades']['Resultado'] = 'Sucesso';

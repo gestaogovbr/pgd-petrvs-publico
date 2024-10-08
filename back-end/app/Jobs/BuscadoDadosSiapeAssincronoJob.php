@@ -48,6 +48,10 @@ class BuscadoDadosSiapeAssincronoJob implements ShouldQueue, ContratoJobSchedule
             tenancy()->initialize($tenant);
             $this->loadingTenantConfigurationMiddleware($tenant->id);
             $config =  config("integracao")["siape"];
+            
+            if(empty(trim($config["conectagov_chave"]))){
+                continue;
+            }
             $buscarDadosUnidadesSiape = new BuscarDadosSiapeUnidades($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
             $buscarDadosUnidadesSiape->enviar();
             $buscarDadosUnidadeSiape = new BuscarDadosSiapeUnidade($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
