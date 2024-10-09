@@ -85,6 +85,12 @@ export class Tenant extends Base {
     // API
     public api_username: string = "";
     public api_password: string = "";
+    //SMTP
+    public smtp_host: string = "";
+    public smtp_port: number = 25;
+    public smtp_user: string = "";
+    public smtp_password: string = "";
+    public smtp_encryption: string = "";
 
     // public petrvs_version //pega a versao do app.json
     // public petrvs_last_migration // nome da ultima migration executada
