@@ -23,6 +23,7 @@ class BuscadoDadosSiapeAssincronoJob implements ShouldQueue, ContratoJobSchedule
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $tries = 1;
 
     public function __construct(private readonly ?string $tenantId = null)
     {
@@ -36,7 +37,7 @@ class BuscadoDadosSiapeAssincronoJob implements ShouldQueue, ContratoJobSchedule
 
     public function middleware(): array
     {
-        return [(new WithoutOverlapping())->expireAfter(60 * 3)];
+        return [(new WithoutOverlapping())->expireAfter(60 * 300)];
     }
 
 
