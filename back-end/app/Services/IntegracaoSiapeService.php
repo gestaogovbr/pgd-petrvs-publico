@@ -172,6 +172,7 @@ class IntegracaoSiapeService extends ServiceBase
       }
       return $uorgsPetrvs;
     } catch (Throwable $e) {
+      Log::error('ISiape: não foi possível recuperar dados da UORG.', [$e->getMessage()]);
       LogError::newWarn("ISiape: não foi possível recuperar dados da UORG.", $e->getMessage());
     }
   }
