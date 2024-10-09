@@ -157,7 +157,7 @@ class Integracao implements InterfaceIntegracao
                 ':perfil_id' => $perfilChefeId,
                 ':id' => $idUsuario
             ];
-            $this->perfilService->atualizaPerfilUsuario($idUsuario, $perfilChefeId);
+            $this->perfilService->alteraPerfilUsuario($idUsuario, $perfilChefeId);
             $this->logSiape("Atualizando perfil do chefe", $values, Tipo::INFO);
             return;
         }
