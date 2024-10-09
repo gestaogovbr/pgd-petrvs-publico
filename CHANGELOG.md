@@ -1,4 +1,4 @@
-## 2.1.1 - 18/09/2024 (Hotfixes)
+## 2.1.1 - 18/09/2024 (Hotfixes).
 ### Corrigido
 - Validação de Planos de Entrega.
 - Seleção automática do regramento.
