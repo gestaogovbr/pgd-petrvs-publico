@@ -21,7 +21,6 @@ import { BuildInfoService } from 'src/app/services/build.service';
 })
 export class LoginComponent implements OnInit, ModalPage, OnDestroy {
 
-  public buttonDprfSeguranca: boolean = true;
   public error: string = "";
   public login: FormGroup;
   public redirectTo?: FullRoute;
@@ -132,43 +131,7 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
     if(item.route) this.go.navigate({route: item.route, params: item.params}, {title: "Suporte Petrvs"});
   }
 
-  // public autoSignGoogle() {
-  //   /* Faz login automaticamente caso esteja logado com o Google */
-  //   if(!this.auth.logging && !this.auth.logged && this.auth.googleAuth?.isSignedIn.get()) {
-  //     this.auth.authGapi(this.auth.googleAuth.currentUser.get().getAuthResponse().id_token, this.redirectTo);
-  //   }
-  // }
-
-  // public signInGoogle() {
-  //  this.googleApi.signIn().then(user => {
-  //    this.auth.authGapi(user.getAuthResponse().id_token, this.redirectTo).then(this.closeModalIfSuccess);
-  //  }).catch(reason => {
-  //    console.log(reason);
-  //  });
-  // }
-
-  public showDprfSeguranca() {
-    this.buttonDprfSeguranca = !this.buttonDprfSeguranca;
-  }
-
-  public signInDprfSeguranca() {
-    const form = this.login.controls;
-    this.login.markAllAsTouched();
-    if (this.login.valid) {
-      this.auth.authDprfSeguranca(this.util.onlyNumbers(form.usuario.value), form.senha.value, this.util.onlyNumbers(form.token.value), this.redirectTo).then(this.closeModalIfSuccess);
-    } else {
-      this.error = "Verifique se está correto:" + (form.cpf.invalid ? " CPF;" : "") + (form.password.invalid ? " Senha;" : "") + (form.password.invalid ? " Token;" : "");
-    }
-  }
-
-  public signInMicrosoft() {
-    const form = this.login.controls;
-    if (this.login.valid) {
-      this.auth.authDprfSeguranca(form.usuario.value, form.senha.value, form.token.value, this.redirectTo).then(this.closeModalIfSuccess);
-    } else {
-      this.error = "Verifique se está correto:" + (form.cpf.invalid ? " CPF;" : "") + (form.password.invalid ? " Senha;" : "") + (form.password.invalid ? " Token;" : "");
-    }
-  }
+  
 
   public signInLoginUnico() {
     const entidade = this.globals.ENTIDADE;

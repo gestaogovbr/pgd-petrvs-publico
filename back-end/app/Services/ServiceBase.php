@@ -23,6 +23,7 @@ use Throwable;
 use Exception;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Session;
+use App\Exceptions\UnauthorizedUserPanelException;
 
 class RawWhere
 {
@@ -814,7 +815,11 @@ class ServiceBase extends DynamicMethods
       $entity->save();
       if (method_exists($this, "extraStore")) $this->extraStore($entity, $unidade, $action);
       if ($transaction) DB::commit();
-    } catch (Throwable $e) {
+    } catch(UnauthorizedUserPanelException $e) {
+      if ($transaction) DB::rollback();
+      throw $e;
+    }     
+    catch (Throwable $e) {
       if ($transaction) DB::rollback();
       throw $e;
     }

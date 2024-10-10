@@ -149,6 +149,9 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let consolidacao: PlanoTrabalhoConsolidacao = row as PlanoTrabalhoConsolidacao;
+
+   
+    
     
     let programa: Programa = consolidacao.plano_trabalho!.programa!;
     let isAvaliador: boolean = false;
@@ -169,8 +172,11 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
     } else if (usuarioPlanoEhGestorDelegado){
       isAvaliador = usuarioLogadoEhGestorSuperior || this.unidadeService.isGestorUnidade(unidadeId, false)
     } else if (usuarioPlanoEhLotado){
-      isAvaliador = usuarioLogadoEhGestorSuperior || this.unidadeService.isGestorUnidade(unidadeId)
+      isAvaliador = usuarioLogadoEhGestorSuperior || this.unidadeService.isGestorUnidade(unidadeId, false)
     }
+
+   
+
     const BOTAO_VER_AVALIACAO = { hint: "Visualizar", icon: "bi bi-eye", color: "btn-outline-primary", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.visualizarAvaliacao(row) };
     const BOTAO_AVALIAR = { hint: "Avaliar", icon: "bi bi-star", color: "btn-outline-info", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.avaliar(row, programa, this.refreshConsolidacao.bind(this)) };
     const BOTAO_REAVALIAR = { hint: "Reavaliar", icon: "bi bi-star-half", color: "btn-outline-warning", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.avaliar(row, programa, this.refreshConsolidacao.bind(this)) };

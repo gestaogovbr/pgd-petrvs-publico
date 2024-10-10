@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Exceptions\LogError;
 use App\Services\FirebaseAuthService;
 use App\Services\GoogleService;
-use App\Services\DprfSegurancaAuthService;
 use App\Services\IntegracaoService;
 use App\Services\ApiService;
 use App\Models\Usuario;
@@ -326,47 +325,7 @@ class LoginController extends Controller
         return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticatePrfGoogleToken"), $tokenData);
     }
 
-    /**
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function authenticateDprfSeguranca(Request $request, DprfSegurancaAuthService $auth)
-    {
-        $credentials = $request->validate([
-            'entidade' => ['required'],
-            'cpf' => ['regex:/^\d{11}$/'],
-            'senha' => ['required'],
-            'token' => ['required']
-        ]);
-        /* Usando temporariamente o loginCpf(), mas o correto é login()  */
-        $profile = $auth->loginToken($credentials['cpf'], $credentials['senha'], $credentials['token']);
-        if (!isset($profile['error'])) {
-            $email = str_contains($profile['email'], "@") ? $profile['email'] : $profile["email"] . "@prf.gov.br";
-            $usuario = Usuario::where('email', $email)->first();
-            if (!isset($usuario) && $auth->autoIncluir) {
-                $usuario = new Usuario();
-                $lotacao = new UnidadeIntegrante();
-                $service = new IntegracaoService();
-                $service->salvaUsuarioLotacaoDprf($usuario, $lotacao, $profile, $auth);
-            }
-            if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
-                $request->session()->regenerate();
-                $request->session()->put("kind", "DPRFSEGURANCA");
-                $entidade = $this->registrarEntidade($request);
-                $usuario = $this->registrarUsuario($request, $usuario);
-                return response()->json([
-                    'success' => true,
-                    "entidade" => $entidade,
-                    "usuario" => $usuario,
-                    "horario_servidor" => CalendarioService::horarioServidor()
-                ]);
-            }
-        }
-        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateDprfSeguranca"), $profile);
-    }
-
+    
     /**
      * Handle an authentication attempt.
      *
@@ -575,48 +534,7 @@ class LoginController extends Controller
         return LogError::newError('As credenciais fornecidas são inválidas.' . $tokenData['error'], new Exception("generateApiPrfSessionToken"), $tokenData);
     }
 
-    /**
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function authenticateApiDprfSeguranca(Request $request, DprfSegurancaAuthService $auth)
-    {
-        $credentials = $request->validate([
-            'entidade' => ['required'],
-            'cpf' => ['regex:/^\d{11}$/'],
-            'senha' => ['required'],
-            'token' => ['required'],
-            'device_name' => ['required']
-        ]);
-        /* Usando temporariamente o loginCpf(), mas o correto é login()  */
-        $profile = $auth->loginToken($credentials['cpf'], $credentials['senha'], $credentials['token']);
-        if (!isset($profile['error'])) {
-            $email = str_contains($profile["email"], "@") ? $profile["email"] : $profile["email"] . "@prf.gov.br";
-            $usuario = Usuario::where('email', $email)->first();
-            if (!isset($usuario) && $auth->autoIncluir) {
-                $usuario = new Usuario();
-                $lotacao = new UnidadeIntegrante();
-                $service = new IntegracaoService();
-                $service->salvaUsuarioLotacaoDprf($usuario, $lotacao, $profile, $auth);
-            }
-            if (isset($usuario)) {
-                $request->session()->put("kind", "DPRFSEGURANCA");
-                $usuario->save();
-                $entidade = $this->registrarEntidade($request);
-                $usuario = $this->registrarUsuario($request, $usuario);
-                return response()->json([
-                    'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
-                    'entidade' => $entidade,
-                    'usuario' => $usuario,
-                    "horario_servidor" => CalendarioService::horarioServidor()
-                ]);
-            }
-        }
-        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateApiDprfSeguranca"), $profile);
-    }
-
+    
     /**
      * Verify an firebase token
      *

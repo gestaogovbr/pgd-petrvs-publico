@@ -1,3 +1,29 @@
+## 2.2.0 - 04/10/2024 (Hotfixes)
+### Segurança 
+- Adicionado validações para usuários do painel.
+- Adicionado validações para manipulação dos dados do tenant.
+### Corrigido
+- Correção para associar o perfil do usuário baseado na informação de chefia.
+### Removido
+- Remoção de arquivos não usados.
+## 2.1.3 - 03/10/2024
+### Corrigido
+- Correção no SIAPE falha de processamento servidores dos dados para banco de dados
+
+## 2.1.2 - 30/09/2024
+### Corrigido
+- URL de redirecionamento do login único (GovBR).
+- CPF do Desenvolvedor, aceitar somente números (Tenant).
+- Atualizar usuário ao atualizar dados do tenant.
+### Adicionado
+- Opção para o usuário do painel alterar a senha.
+## 2.1.1 - 18/09/2024 (Hotfixes)
+### Corrigido
+- Validação de Planos de Entrega.
+- Seleção automática do regramento.
+- Não permitir o uso da atribuição "Lotado" (somente SIAPE).
+- Permissão para Administrador negocial editar o template do TCR.
+- Permissão para Administrador negocial não visualizar o menu cadastros.
 ## 2.1.0 - 06/09/2024
 ### Adicionado
 - Campo para informar a unidade autorizadora no regramento.

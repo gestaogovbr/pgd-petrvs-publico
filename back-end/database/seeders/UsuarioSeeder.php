@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Usuario;
+use App\Models\Entidade;
 use App\Models\Perfil;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
@@ -88,8 +89,9 @@ class UsuarioSeeder extends Seeder
       ]
     ];
 
+    $entidade = Entidade::first();
     // Operação de inserção de usuários desenvolvedores
-    $unidade_pai = Unidade::where('SIGLA', 'MGI')->first();
+    $unidade_pai = Unidade::where('entidade_id', $entidade->id)->first();
 
     foreach ($usuarios_desenvolvedores as $usuario) {
       $user = Usuario::where('cpf', $usuario['cpf'])->first() ?? new Usuario();

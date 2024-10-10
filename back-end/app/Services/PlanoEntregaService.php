@@ -549,8 +549,8 @@ class PlanoEntregaService extends ServiceBase
     ->where(function($query) use ($dataInicio, $dataFim) {
         $query->whereBetween('data_inicio', [$dataInicio, $dataFim])
               ->orWhereBetween('data_fim', [$dataInicio, $dataFim]);
-    })->get();
-
+    })
+    ->where("id", "!=", UtilService::valueOrNull($planoEntrega, "id"))->get();
     return $planosDaUnidade->count() > 0;
   }
 

@@ -44,6 +44,7 @@ Route::post('/panel-login', [PainelUsuarioController::class, 'login']);
 Route::get('/panel-login-check', [PainelUsuarioController::class, 'checkAuthentication']);
 Route::get('/panel-login-detail', [PainelUsuarioController::class, 'detail']);
 Route::get('/panel-logout', [PainelUsuarioController::class, 'logout']);
+Route::post('/panel-update-password', [PainelUsuarioController::class, 'updatePassword']);
 
 Route::middleware(['panel'])->prefix('Seeder')->group(function () {
     Route::get('getAll', [SeederController::class, 'index']);
@@ -62,5 +63,5 @@ Route::middleware(['panel'])->prefix('UserPanel')->group(function () {
   Route::post('query', [PainelUsuarioController::class, 'query']);
   Route::post('get-by-id', [PainelUsuarioController::class, 'getById']);
   Route::post('store', [PainelUsuarioController::class, 'store']);
-  Route::post('destroy', [PainelUsuarioController::class, 'destroy']);
+  Route::post('destroy', [PainelUsuarioController::class, 'destroy']); 
 });

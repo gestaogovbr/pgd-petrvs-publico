@@ -243,6 +243,10 @@ export class InputSelectComponent extends InputBase implements OnInit {
 		);
 	}
 
+	public itemIndisponivel(item: LookupItem): boolean {
+		return item.data?.indisponivel || false;
+	}
+
 	public getSelectItemValue(row: IIndexable): string {
 		return (
 			this.fields.length

@@ -69,4 +69,18 @@ export class AuthPanelService {
 				return false;
 			});
 	}
+
+	public updatePassword(newPassword: string): Promise<any> {
+		return this.server.post("api/panel-update-password", { password: newPassword })
+			.toPromise() // Utiliza toPromise para converter Observable em Promise
+			.then((response) => {
+				if (response.error) {
+					return Promise.reject(response.error);
+				}
+				return response;
+			})
+			.catch((error) => {
+				return Promise.reject(error);
+			});
+	}
 }

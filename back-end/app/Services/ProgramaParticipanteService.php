@@ -31,9 +31,7 @@ class ProgramaParticipanteService extends ServiceBase {
                 }
                 
                 $registro = ProgramaParticipante::firstOrCreate(['programa_id' => $data['programa_id'], 'usuario_id' => $idp]);
-                $plano_trabalho_ativo = PlanoTrabalho::where('usuario_id',$idp)->where('programa_id',$data['programa_id'])->where('status','ATIVO')->where('data_inicio','<=',now())->where('data_fim','>=',now())->first();
-                
-                
+                $plano_trabalho_ativo = PlanoTrabalho::where('usuario_id',$idp)->where('programa_id',$data['programa_id'])->where('status','ATIVO')->first();
                 
                 if(empty($data['habilitar']) && !empty($plano_trabalho_ativo)) {
                     if(!$data['suspender_plano_trabalho']) throw new ServerException("ValidatePlanoTrabalho","Foi identificado que o agente público - " . Usuario::find($idp)->nome . " - possui Plano de Trabalho ATIVO e não foi repassada autorização para suspendê-lo. Portanto, a operação de desabilitação foi abortada " . (count($data['participantes_ids']) > 1 ? "para todos os participantes " : "" . "!"));
