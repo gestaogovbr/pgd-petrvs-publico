@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 use App\Services\IntegracaoService;
 
 
-class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule, ShouldBeUnique
+class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
