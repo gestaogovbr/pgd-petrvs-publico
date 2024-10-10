@@ -55,3 +55,5 @@ resources/documentacao/Gestão/plano_trabalho.pdf
 *.DS_Store
 
 microservice/api-pgd/storage/logs/schedule.log
+back-end/supervisord.pid
+back-end/supervisord.log
