@@ -279,6 +279,7 @@ class Conexao
 
     private function prepareResponseXml(string $response) : SimpleXMLElement
     {
+        $response = str_replace('&', '&amp;', $response);
         $response = trim($response); 
         $response = str_replace(['&lt;', '&gt;', '&quot;', '&amp;', '&apos;'], ['<', '>', '"', '&', "'"], $response); 
         libxml_use_internal_errors(true); 

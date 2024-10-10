@@ -61,41 +61,7 @@
                               </div>
                             </div>
                           </div>
-                        </div>
-                        <div class="or-container" *ngIf="globals.hasAzureLogin">
-                            <div class="line-separator"></div>
-                            <div class="or-label">ou</div>
-                            <div class="line-separator"></div>
-                        </div>
-
-                      <div class="d-flex flex-column" *ngIf="globals.hasInstitucionalLogin && buttonDprfSeguranca; else dprfSeguranca">
-                            <div class="">
-                                <a class="btn btn-lg btn-google btn-outline" (click)="showDprfSeguranca()">
-                                    <img [src]="globals.getResourcePath('assets/images/prf.ico')" width="20" height="20"/>
-                                    DPRF-Segurança
-                                </a>
-                            </div>
-                        </div>
-                        <ng-template #dprfSeguranca >
-                            <form [formGroup]="login" *ngIf="globals.hasInstitucionalLogin">
-                                <div class="form-group form-primary mb-2">
-                                    <input-text controlName="usuario" maskFormat="000.000.000-00" placeholder="CPF" [attr.maxlength]=15></input-text>
-                                </div>
-                                <div class="form-group form-primary mb-2">
-                                    <input-text password="password" controlName="senha" placeholder="Senha" [attr.maxlength]=250></input-text>
-                                </div>
-                                <div class="form-group form-primary mb-2">
-                                    <input-text controlName="token" maskFormat="000000" placeholder="Token"></input-text>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <button class="btn btn-petrvs-blue btn-md rounded-1 btn-full waves-effect text-center mb-2 " (click)="signInDprfSeguranca()">
-                                            Logar com DPRF
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </ng-template>
+                        </div>                        
                     </div>
                 </div>
             </div>
