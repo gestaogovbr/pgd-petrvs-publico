@@ -72,7 +72,7 @@ class BuscarDadosSiapeUnidades extends BuscarDadosSiape
             CURLOPT_POSTFIELDS => $xmlData,
         ]);
 
-        Log::info('Request made to ' . $this->geturl() . '/api-consulta-siape/v1/consulta-siape', [
+        Log::info('Busca por UORGS - Request para ' . $this->geturl() . '/api-consulta-siape/v1/consulta-siape', [
             'headers' => $headers,
             'body' => $xmlData
         ]);
@@ -82,17 +82,16 @@ class BuscarDadosSiapeUnidades extends BuscarDadosSiape
         if (curl_errno($curl)) {
             $error_msg = curl_error($curl);
             curl_close($curl);
-            throw new Exception('cURL error: ' . $error_msg);
+            throw new Exception('Busca por UORGS - cURL error: ' . $error_msg);
         }
 
         curl_close($curl);
-        Log::info('Response: ' . $response);
+        Log::info('Busca por UORGS - Response: ' . $response);
         return $response;
     }
 
     public function enviar(): void
     {
-
         $codOrgao = strval(intval($this->getConfig()['codOrgao']));
         $codUorg = strval(intval($this->getConfig()['codUorg']));
 

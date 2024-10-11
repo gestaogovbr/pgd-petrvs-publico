@@ -98,14 +98,9 @@ abstract class BuscarDadosSiape
             ]);
 
             curl_multi_add_handle($multiCurl, $curlHandles[$key]);
-
-            // Log::info('Request made to ' . $this->geturl() . '/api-consulta-siape/v1/consulta-siape', [
-            //     'headers' => $headers,
-            //     'body' => $xmlData
-            // ]);
         }
 
-        Log::info("quantidade de requisições abertas" . count($xmlsData));
+        Log::info("Quantidade de requisições abertas: " . count($xmlsData));
         $esperar = 1;
 
         do {
@@ -115,6 +110,7 @@ abstract class BuscarDadosSiape
         } while ($active && $status == CURLM_OK);
 
         $respostas = [];
+
         foreach ($curlHandles as $key => $ch) {
             if (curl_errno($ch)) {
                 $errorLog[] = "Erro na requisição $key: " . curl_error($ch);
