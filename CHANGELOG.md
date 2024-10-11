@@ -1,3 +1,6 @@
+## 2.3.0  - 11/10/2024
+### Modificado
+
 ## 2.2.0 - 04/10/2024 (Hotfixes)
 ### Segurança 
 - Adicionado validações para usuários do painel.
