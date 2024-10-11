@@ -166,7 +166,7 @@ return [
     |
     */
 
-    'memory_limit' => 64,
+    'memory_limit' => 128,
 
     /*
     |--------------------------------------------------------------------------
@@ -186,7 +186,7 @@ return [
             'balance' => 'auto',
             'maxProcesses' => 1,
             'minProcesses' => 1,
-            'tries' => 3
+            'tries' => 1
         ],
     ],
 
@@ -205,8 +205,8 @@ return [
                 'queue' => ['default'],
                 'balance' => 'simple',
                 'processes' => 1,
-                'tries' => 3,
-                'timeout' => 60 * 60
+                'tries' => 1,
+                'timeout' => 60 * 60 * 24
             ],
         ],
     ],
