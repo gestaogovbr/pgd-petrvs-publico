@@ -202,11 +202,12 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
     let login = this.tiposLogin || [];
     formValue.login = login;
     form.patchValue(this.util.fillForm(formValue, entity));
+    this.updateSubdomain();
     form.get('api_password')?.setValue("");
   }
 
   public async initializeData(form: FormGroup) {
-    this.entity = (await this.dao!.getById(this.urlParams!.get("id")!, this.join))!;
+    this.entity = (await this.dao!.getById(this.urlParams!.get("id")!, this.join))!;    
     await this.loadData(this.entity, form);
   }
 

@@ -6,28 +6,13 @@
         <column title="ID" [template]="columnId">
             <ng-template let-row="row" #columnId>
                 <strong>{{row.id}}</strong><br>
+            </ng-template>
+        </column>
+        <column title="URL" [template]="columnDb">
+            <ng-template let-row="row" #columnDb>                
                 <small>{{row.dominio_url}}</small>
             </ng-template>
-        </column>
-        <column title="Banco de dados" [template]="columnDb">
-            <ng-template let-row="row" #columnDb>
-                <strong>Dados:</strong> {{row.tenancy_db_host || "[ENV_HOST]"}}:{{row.tenancy_db_port || "[ENV_PORT]"}}/{{row.tenancy_db_name}}<br>
-                <strong>Logs:</strong> {{row.log_host || "[LOG_HOST]"}}:{{row.log_port || "[LOG_PORT]"}}/{{row.log_database?.length ? row.log_database : "log_" + row.tenancy_db_name}}
-            </ng-template>
-        </column>
-        <column title="Recursos" [template]="columnRecursos">
-            <ng-template let-row="row" #columnRecursos>
-                <badge *ngIf="row.modulo_sei_habilitado" color="primary" label="Módulo Sei"></badge>
-                <badge *ngIf="row.tipo_integracao != 'NENHUMA'" color="primary" label="Integração SIAPE"></badge>
-            </ng-template>
-        </column>
-        <column title="Logs" field="columnLogs">
-            <ng-template let-row="row" #columnLogs>
-                <badge *ngIf="row.log_changes" color="light" label="Auditoria (Changes)"></badge>
-                <badge *ngIf="row.log_traffic" color="light" label="Tráfego (Traffic)"></badge>
-                <badge *ngIf="row.log_errors" color="light" label="Erros (Errors)"></badge>
-            </ng-template>
-        </column>
+        </column>       
         <column type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
