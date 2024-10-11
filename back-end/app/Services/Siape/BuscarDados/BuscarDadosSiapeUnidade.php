@@ -7,8 +7,6 @@ use App\Models\SiapeDadosUORG;
 use App\Models\SiapeListaUORGS;
 use Carbon\Carbon;
 use DateTime;
-use Faker\Core\Uuid;
-use Google\Service\CloudControlsPartnerService\Console;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
@@ -16,7 +14,6 @@ use Illuminate\Support\Str;
 
 class BuscarDadosSiapeUnidade extends BuscarDadosSiape
 {
-
     public function listaUorg(): void
     {
         Log::info("Iniciando processamento de unidade...");
@@ -25,23 +22,23 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
         
         $unidadesJaProcessadas = IntegracaoUnidade::all();
 
-        $response = SiapeListaUORGS::where('processado', 0)
+        $uorgs = SiapeListaUORGS::where('processado', 0)
                 ->orderBy('updated_at', 'desc')
                 ->first();
 
-        $unidades = $this->getUnidades($response);
+        $unidades = $this->getUnidades($uorgs);
 
         if(!$unidades){
             Log::info("Nenhuma unidade encontrada.");
             return;
         }
 
-        $unidades = array_filter($unidades, function ($unidade) use ($unidadesJaProcessadas) {
-
+        $unidades = array_filter($unidades, function ($unidade) use ($unidadesJaProcessadas) 
+        {
            $unidadeProcessada =  $unidadesJaProcessadas->firstWhere('codigo_siape', $unidade['codigo']);
 
            if(!$unidadeProcessada){
-               return true;
+                return true;
             }
 
             $dataModificacaoBD = $this->asTimestamp($unidadeProcessada->data_modificacao);
@@ -74,8 +71,8 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
         }
         SiapeDadosUORG::insert($inserts);
 
-        $response->processado = 1;
-        $response->save();
+        $uorgs->processado = 1;
+        $uorgs->save();
 
         Log::info("Processamento de unidade finalizado.");
     }
@@ -101,14 +98,14 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
             );
         }
 
-       return  $this->BuscarUorgs($xmlsUnidades);
+       return $this->BuscarUorgs($xmlsUnidades);
     }
 
-    private function getUnidades(SiapeListaUORGS $response) : ?array {
+    private function getUnidades(SiapeListaUORGS $listaUorgs) : ?array {
         try {
-            $xmlResponse = $this->prepareResponseXml($response->response);
+            $xmlResponse = $this->prepareResponseXml($listaUorgs->response);
         } catch (\Exception $e) {
-            Log::error('Erro ao processar XML', [$e->getMessage()]);
+            Log::error('Erro ao processar XML na carga da Unidade', [$e->getMessage()]);
             return null;
         }
         $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');

@@ -115,7 +115,7 @@ class BuscarDadosSiapeServidores extends BuscarDadosSiape{
         try {
             $xmlResponse = $this->prepareResponseXml($response->response);
         } catch (\Exception $e) {
-            Log::error('Erro ao processar XML', [$e->getMessage()]);
+            Log::error('Erro ao processar XML das Unidades', [$e->getMessage()]);
             return null;
         }
         $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');

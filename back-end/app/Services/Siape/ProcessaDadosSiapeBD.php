@@ -95,7 +95,7 @@ class ProcessaDadosSiapeBD
             try {
                 $responseXml = $this->prepareResponseXml($dadosUnidades->response);
             } catch (Exception $e) {
-                Log::error('Erro ao processar XML', [$e->getMessage()]);
+                Log::error('Erro ao processar XML da Unidade', [$e->getMessage()]);
                 continue;
             }
 
