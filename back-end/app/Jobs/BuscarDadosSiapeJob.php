@@ -23,11 +23,11 @@ class BuscarDadosSiapeJob implements ShouldQueue, ContratoJobSchedule
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $queue = 'siape_queue';
-
     public function __construct(private readonly ?string $tenantId = null)
     {
         Log::info("inicializando a busca dos dados do SIAPE. Tenant: " . $tenantId);
+        
+        $this->queue = 'siape_queue';
     }
 
     public static function getDescricao(): string
