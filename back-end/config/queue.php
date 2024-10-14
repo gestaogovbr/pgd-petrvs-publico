@@ -67,10 +67,20 @@ return [
             'driver' => 'redis',
             'connection' => 'default',
             'queue' => env('REDIS_QUEUE', 'default'),
-            'retry_after' => 60 * 60 *24,
+            'retry_after' => 90,
             'block_for' => null,
             'after_commit' => false,
-            'timeout' => 60 * 60 * 24
+            'timeout' => 90
+        ],
+
+        'siape_queue' => [
+            'driver' => 'redis',
+            'connection' => 'default',
+            'queue' => 'siape_queue',
+            'retry_after' => 60 * 60 * 24 * 2,
+            'block_for' => null,
+            'after_commit' => false,
+            'timeout' => 60 * 60 * 24 * 2
         ]
     ],
 
