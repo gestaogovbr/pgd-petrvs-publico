@@ -395,4 +395,9 @@ class Usuario extends Authenticatable  implements AuditableContract
     }
     return $result;
   }
+
+  public function integracaoServidor()
+  {
+    return $this->hasOne(IntegracaoServidor::class, 'cpf', 'cpf');
+  }
 }

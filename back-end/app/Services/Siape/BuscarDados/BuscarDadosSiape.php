@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Cache;
 
 abstract class BuscarDadosSiape
 {
-    CONST QUANTIDADE_MAXIMA_REQUISICOES = 20;
+    CONST QUANTIDADE_MAXIMA_REQUISICOES = 10;
     private $contentType = 'application/x-www-form-urlencoded';
     private string $authorizationHeader;
     protected static $token = null;
