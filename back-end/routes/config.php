@@ -30,6 +30,7 @@ Route::middleware(['api', 'panel'])->prefix('Tenant')->group(function () {
 Route::middleware(['api', 'panel'])->prefix('Tenant')->group(function () {
     Route::get('resetdb', [TenantController::class, 'resetdb']);
     Route::post('cleandb', [TenantController::class, 'cleandb']);
+    Route::post('dumpdb', [TenantController::class, 'dumpDatabase']);
     Route::post('delete-tenant', [TenantController::class, 'deleteTenant']);
 });
 

@@ -13,7 +13,9 @@ use App\Models\Usuario;
 use Illuminate\Support\Facades\Artisan;
 use Carbon\Carbon;
 use App\Models\Tenant;
+
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -340,5 +342,32 @@ class TenantService extends ServiceBase
             throw new ServerException("ValidateUsuario", "Usuário não tem permissão para executar essa ação");
         }
     }
+
+
+    public function dumpDatabase($id)
+    {
+        $tenant = Tenant::findOrFail($id);
+
+        $database = $tenant->tenancy_db_name;
+        $username = $tenant->tenancy_db_username;
+        $password = $tenant->tenancy_db_password;
+        $host =$tenant->tenancy_db_host;
+        $port =$tenant->tenancy_db_port;
+
+        $dumpFile = storage_path("{$database}_dump.sql");
+
+        $command = "mysqldump --user={$username} --password={$password} --host={$host}  --port={$port} {$database} > {$dumpFile}";
+
+        $output = null;
+        $resultCode = null;
+        exec($command, $output, $resultCode);
+
+        if ($resultCode === 0) {
+            return response()->download($dumpFile)->deleteFileAfterSend(true);
+        } else {
+            return back()->withErrors(['error' => 'Erro ao gerar o dump do banco de dados']);
+        }
+    }
+
 
 }

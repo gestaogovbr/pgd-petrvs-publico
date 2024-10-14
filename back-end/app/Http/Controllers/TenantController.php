@@ -272,6 +272,22 @@ class TenantController extends ControllerBase {
         }
     }
 
+    public function dumpDatabase(Request $request) {
+        try {
+            $data = $request->validate([
+                'tenant_id' => ['string']
+            ]);
+            return $this->service->dumpDatabase($data['tenant_id']);
+        }  catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+        }
+    }
+
     public function deleteTenant(Request $request) {
         try {
             if(!$this->checkUserPermission($request->tenant_id))
