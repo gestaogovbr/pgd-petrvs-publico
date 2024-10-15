@@ -25,6 +25,13 @@
                 <input-search #unidade [disabled]="grid?.adding ? undefined : 'true'" [size]="12" label icon controlName="unidade_id" [dao]="unidadeDao"></input-search>
             </ng-template>
         </column>
+
+        <column [title]="lex.translate('Última data SIAPE')" [template]="columnDataSIAPE">
+            <ng-template let-row="row" #columnDataSIAPE>
+                <span>{{ row.ultima_atualizacao }} </span>
+            </ng-template>
+        </column>
+
         <column [title]="lex.translate('Atribuições')" [template]="columnAtribuicoes" [editTemplate]="editAtribuicoes">
             <ng-template let-row="row" #columnAtribuicoes>
                 <div *ngFor="let a of row.atribuicoes">

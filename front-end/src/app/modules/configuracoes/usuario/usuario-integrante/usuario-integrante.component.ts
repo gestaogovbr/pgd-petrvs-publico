@@ -51,6 +51,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     this.formPerfil = this.fh.FormBuilder({
       perfil_id: { default: "" }
     }, this.cdRef, this.validate);
+    this.join = ["integracaoServidor"]
   }
 
   ngOnInit() {
