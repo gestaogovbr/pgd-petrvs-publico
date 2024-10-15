@@ -525,7 +525,7 @@ docker exec -it petrvs_php php artisan tinker --execute="App\\Models\\PainelUsua
 echo " "
 echo "Configuração completa. O administrador pode acessar o sistema com o email '$ADMIN_EMAIL'."
 echo " "
-echo -e "URL do panel: \e[34m$(grep -oP '^APP_URL=\K.*' .env)/#/panel\e[0m"
-echo -e "URL do sistema: \e[34m$(grep -oP '^APP_URL=\K.*' .env)/#/login\e[0m"
+echo -e "URL do panel: \e[34m$(grep -oP '^APP_URL=\K.*' .env)/panel\e[0m"
+echo -e "URL do sistema: \e[34m$(grep -oP '^APP_URL=\K.*' .env)/login\e[0m"
 
 #710267922367-hbup6m7jddgs6g298ahkbtjb6m5kiqri.apps.googleusercontent.com
