@@ -106,7 +106,8 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             $xmlsServidores[$servidor['cpf'].".".$servidor['dataUltimaTransacao']] = $xml;
         }
 
-        $xmlResponse = $this->BuscaDados($xmlsServidores);
+        Log::info('Busca de Dados Funcionais');
+        $xmlResponse = $this->buscaDados($xmlsServidores);
 
         $inserts = [];
         foreach ($xmlResponse as $dados => $xml) {
@@ -143,6 +144,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             $xmlsServidores[$servidor['cpf'].".".$servidor['dataUltimaTransacao']] = $xml;
         }
 
+        Log::info('Busca de Dados Pessoais');
         $xmlResponse = $this->BuscaDados($xmlsServidores);
 
         $inserts = [];
@@ -208,13 +210,13 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         return $xml->asXML();
     }
 
-    private function BuscaDados(array $xmlsServidores)
+    private function buscaDados(array $xmlsServidores)
     {
         $lotes = array_chunk($xmlsServidores, self::QUANTIDADE_MAXIMA_REQUISICOES, true);
         $tempoInicial = microtime(true);
         $respostas = [];
         foreach ($lotes as $i => $lote) {
-            Log::info('Lote '.$i.' de '.count($lotes));
+            Log::info('Lote '.($i + 1).' de '.count($lotes));
             $resposta = $this->executaRequisicoes($lote);
             $respostas = $this->array_merge_recursive_distinct($respostas,  $resposta);
         }

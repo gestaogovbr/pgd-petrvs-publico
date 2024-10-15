@@ -56,7 +56,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
        return $xmlUnidades;
     }
 
-    /*private function getUnidades(SiapeListaUORGS $listaUorgs) : ?array {
+    private function getUnidades(SiapeListaUORGS $listaUorgs) : ?array {
         try {
             $xmlResponse = $this->prepareResponseXml($listaUorgs->response);
         } catch (\Exception $e) {
@@ -68,7 +68,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
         $xmlResponse->registerXPathNamespace('ns2', 'http://entidade.wssiapenet');
         $uorgs = $xmlResponse->xpath('//ns2:Uorg');
         return array_map([$this, 'simpleXmlElementToArray'], $uorgs);
-    }*/
+    }
 
     public function getUorgAsXml(
         $siapeSiglaSistema,
@@ -97,7 +97,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
         $tempoInicial = microtime(true);
 
         foreach ($lotes as $i => $lote) {
-            Log::info('Lote '.$i.' de '.count($lotes));
+            Log::info('Lote '.($i + 1).' de '.count($lotes));
 
             $response = $this->executaRequisicoes($lote);
 
