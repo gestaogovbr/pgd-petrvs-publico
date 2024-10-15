@@ -76,5 +76,6 @@ class Kernel extends HttpKernel
         'notification' => \App\Http\Middleware\Notification::class,
         'panel' => \App\Http\Middleware\Panel::class,
         'horizonBasicAuth' => \App\Http\Middleware\HorizonBasicAuthMiddleware::class,
+        'telescopeBasicAuth' => \App\Http\Middleware\TelescopeBasicAuthMiddleware::class,
     ];
 }
