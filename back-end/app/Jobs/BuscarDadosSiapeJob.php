@@ -35,11 +35,6 @@ class BuscarDadosSiapeJob implements ShouldQueue, ContratoJobSchedule
         return 'Buscar Dados SIAPE';
     }
 
-    public function middleware(): array
-    {
-        return [(new WithoutOverlapping($this->tenantId))->expireAfter(60 * 3)];
-    }
-
     public function handle(): void
     {
         ini_set('memory_limit', '-1');
