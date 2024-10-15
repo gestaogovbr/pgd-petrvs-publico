@@ -18,6 +18,10 @@ RUN apt-get install -y chrony
 RUN apt-get install -y libpng-dev
 RUN apt-get install -y libjpeg-dev
 RUN apt-get install -y cron
+
+# Instalar o cliente MySQL para utilizar o mysqldump
+RUN apt-get install -y default-mysql-client
+
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install mysqli

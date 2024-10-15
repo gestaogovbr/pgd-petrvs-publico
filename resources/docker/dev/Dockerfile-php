@@ -19,6 +19,10 @@ RUN apt-get install -y telnet
 RUN apt-get install -y libpng-dev
 RUN apt-get install -y libjpeg-dev
 RUN apt-get install -y cron
+
+# Instalar o cliente MySQL para utilizar o mysqldump
+RUN apt-get install -y default-mysql-client
+
 # Bibliotecas php
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install pdo_mysql

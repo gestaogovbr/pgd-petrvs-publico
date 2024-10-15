@@ -105,6 +105,11 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 					{metadata: {tenant_id: tenant.id}}
 				),
 		});
+		this.options.push({
+			icon: "bi bi-cloud-arrow-down-fill",
+			label: "Dump",
+            onClick: this.databaseDump.bind(this),
+		});
 	}
 
 	async onLoad() {
@@ -406,4 +411,35 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 				}
 			});
 	}
+
+    public databaseDump(row: any) {
+      const self = this;
+
+      this.dialog
+        .confirm("Executar Dump?", "Deseja realmente fazer o dump?")
+        .then((confirm) => {
+          if (confirm) {
+            this.dao!.databaseDump(row)  // Aqui retorna o Observable
+              .subscribe({
+                next: (response: Blob) => {
+                  const downloadUrl = window.URL.createObjectURL(response);
+                  const a = document.createElement('a');
+                  a.href = downloadUrl;
+                  a.download = `dump_${row.id}.sql`;  // Nome do arquivo de dump
+                  a.click();
+                  window.URL.revokeObjectURL(downloadUrl);  // Libera a URL temporária
+
+                  self.dialog.alert("Sucesso", "Dump executado com sucesso!");
+                },
+                error: (error) => {
+                  self.dialog.alert(
+                    "Erro",
+                    "Erro ao executar o dump: " + (error?.message ? error?.message : error)
+                  );
+                }
+              });
+          }
+        });
+    }
+
 }

@@ -3,7 +3,8 @@ import { DaoBaseService } from './dao-base.service';
 import { Tenant } from '../models/tenant.model';
 import { TipoCapacidade } from '../models/tipo-capacidade.model';
 import { Cidade } from '../models/cidade.model';
-
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 export type CertificateKeys = {
   public_key: string,
   private_key: string
@@ -15,7 +16,7 @@ export type CertificateKeys = {
 export class TenantDaoService extends DaoBaseService<Tenant> {
   public PREFIX_URL: string = "config";
 
-  constructor(protected injector: Injector) {
+  constructor(protected injector: Injector,private http: HttpClient) {
     super("Tenant", injector);
   }
 
@@ -167,5 +168,11 @@ export class TenantDaoService extends DaoBaseService<Tenant> {
       }, error => reject(error));
     });
   }
+
+  public databaseDump(item: Cidade){
+    const url = `config/${this.collection}/dumpdb`;
+    return  this.server.getBlob(url, { tenant_id: item.id }) ;
+  }
+
 }
 
