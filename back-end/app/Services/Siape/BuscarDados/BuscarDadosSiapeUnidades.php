@@ -2,20 +2,14 @@
 
 namespace App\Services\Siape\BuscarDados;
 
-use App\Exceptions\RequestConectaGovException;
 use App\Models\SiapeListaUORGS;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Client\Response;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\DB;
 
 class BuscarDadosSiapeUnidades extends BuscarDadosSiape
 {
-
     public function listaUorgs(
         $siapeSiglaSistema,
         $siapeNomeSistema,
@@ -24,7 +18,7 @@ class BuscarDadosSiapeUnidades extends BuscarDadosSiape
         $siapeCodOrgao,
         $siapeCodUorg
     ): void {
-        Log::info("Iniciando a busca das unidades...");
+        Log::info("Busca das Unidades iniciada");
         
         $this->limpaTabela();
 
@@ -44,7 +38,7 @@ class BuscarDadosSiapeUnidades extends BuscarDadosSiape
         $entidade = SiapeListaUORGS::create(['response' => $xmlResponse]);
         $entidade->save();
 
-        Log::info("Finalizando a buscas das unidades.");
+        Log::info("Busca das unidades finalizada");
     }
 
     private function limpaTabela(): void

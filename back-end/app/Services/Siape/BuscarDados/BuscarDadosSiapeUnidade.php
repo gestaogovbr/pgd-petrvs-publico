@@ -14,9 +14,107 @@ use Illuminate\Support\Str;
 
 class BuscarDadosSiapeUnidade extends BuscarDadosSiape
 {
-    public function listaUorg(): void
+    private function limpaTabela(): void
     {
-        Log::info("Iniciando processamento de unidade...");
+        DB::table('siape_dadosUORG')->truncate();
+    }
+
+    private function insertDados($xmlResponse) {
+
+        foreach ($xmlResponse as $dados => $xml) {
+            $dados = explode(".", $dados);
+            $dataultimaAtualizacao = $dados[1];
+
+            SiapeDadosUORG::insert([
+                'id' => Str::uuid(),
+                'data_modificacao' => DateTime::createFromFormat('dmY', $dataultimaAtualizacao)->format('Y-m-d 00:00:00'),
+                'response' => $xml,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
+        }
+    }
+
+    private function getUnidadesAsXML($unidades)
+    {
+        $xmlUnidades = [];
+        foreach ($unidades as $unidade) {
+            $codigoSiape = $unidade['codigo'];
+            $codOrgao = strval(intval($this->getConfig()['codOrgao']));
+
+            $xmlUnidades[$unidade['codigo'].".".$unidade['dataUltimaTransacao']] =  
+                $this->getUorgAsXml(
+                    $this->getConfig()['siglaSistema'],
+                    $this->getConfig()['nomeSistema'],
+                    $this->getConfig()['senha'],
+                    $this->getCpf(),
+                    $codOrgao,
+                    $codigoSiape
+                );
+        }
+
+       return $xmlUnidades;
+    }
+
+    /*private function getUnidades(SiapeListaUORGS $listaUorgs) : ?array {
+        try {
+            $xmlResponse = $this->prepareResponseXml($listaUorgs->response);
+        } catch (\Exception $e) {
+            Log::error('Erro ao processar XML na carga da Unidade', [$e->getMessage()]);
+            return null;
+        }
+        $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+        $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
+        $xmlResponse->registerXPathNamespace('ns2', 'http://entidade.wssiapenet');
+        $uorgs = $xmlResponse->xpath('//ns2:Uorg');
+        return array_map([$this, 'simpleXmlElementToArray'], $uorgs);
+    }*/
+
+    public function getUorgAsXml(
+        $siapeSiglaSistema,
+        $siapeNomeSistema,
+        $siapeSenha,
+        $cpf,
+        $siapeCodOrgao,
+        $siapeCodUorg
+    ): string {
+        $xml = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://servico.wssiapenet"/>');
+        $body = $xml->addChild('soapenv:Body');
+        $dadosUorg = $body->addChild('ser:dadosUorg');
+        $dadosUorg->addChild('siglaSistema', $siapeSiglaSistema);
+        $dadosUorg->addChild('nomeSistema', $siapeNomeSistema);
+        $dadosUorg->addChild('senha', $siapeSenha);
+        $dadosUorg->addChild('cpf', $cpf);
+        $dadosUorg->addChild('codOrgao', $siapeCodOrgao);
+        $dadosUorg->addChild('codUorg', $siapeCodUorg);
+
+        return $xml->asXML();
+    }
+
+    public function buscarUnidades(array $xmlUnidades) : bool
+    {
+        $lotes = array_chunk($xmlUnidades, self::QUANTIDADE_MAXIMA_REQUISICOES, true);
+        $tempoInicial = microtime(true);
+
+        foreach ($lotes as $i => $lote) {
+            Log::info('Lote '.$i.' de '.count($lotes));
+
+            $response = $this->executaRequisicoes($lote);
+
+            $this->insertDados($response);
+
+            unset($response);
+        }
+
+        $tempoFinal = microtime(true);
+        $tempoTotal = $tempoFinal - $tempoInicial;
+        Log::info("Tempo total de execução: " . $tempoTotal. " segundos");
+        return true;
+    }  
+
+    public function enviar(): void
+    {
+        Log::info("Processamento de Unidade iniciado");
 
         $this->limpaTabela();
         
@@ -42,7 +140,6 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
             }
 
             $dataModificacaoBD = $this->asTimestamp($unidadeProcessada->data_modificacao);
-
             $dataModificacaoSiape = DateTime::createFromFormat('dmY', $unidade['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
             $dataModificacaoSiape  = $this->asTimestamp($dataModificacaoSiape);
 
@@ -52,12 +149,14 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
             return false;
 
         });
-         Log::info("Unidades a serem processadas: " . count($unidades));
+        
+        Log::info("Unidades a serem processadas: " . count($unidades));
 
+        $unidadesXML = $this->getUnidadesAsXML($unidades);
 
-        $xmlResponse = $this->executarRequisicoes($unidades);
-       
-        $inserts = [];
+        $this->buscarUnidades($unidadesXML);
+
+        /*$inserts = [];
         foreach ($xmlResponse as $dados => $xml) {
             $dados = explode(".", $dados);
             $dataultimaAtualizacao = $dados[1];
@@ -70,90 +169,11 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
             ]);
         }
         SiapeDadosUORG::insert($inserts);
+        */
 
         $uorgs->processado = 1;
         $uorgs->save();
 
-        Log::info("Processamento de unidade finalizado.");
-    }
-
-    private function limpaTabela(): void
-    {
-        DB::table('siape_dadosUORG')->truncate();
-    }
-
-    private function executarRequisicoes($unidades){
-        $xmlsUnidades = [];
-        foreach ($unidades as $unidade) {
-            $codigoSiape = $unidade['codigo'];
-            $codOrgao = strval(intval($this->getConfig()['codOrgao']));
-
-            $xmlsUnidades[$unidade['codigo'].".".$unidade['dataUltimaTransacao']] =  $this->dadosUorg(
-                $this->getConfig()['siglaSistema'],
-                $this->getConfig()['nomeSistema'],
-                $this->getConfig()['senha'],
-                $this->getCpf(),
-                $codOrgao,
-                $codigoSiape
-            );
-        }
-
-       return $this->BuscarUorgs($xmlsUnidades);
-    }
-
-    private function getUnidades(SiapeListaUORGS $listaUorgs) : ?array {
-        try {
-            $xmlResponse = $this->prepareResponseXml($listaUorgs->response);
-        } catch (\Exception $e) {
-            Log::error('Erro ao processar XML na carga da Unidade', [$e->getMessage()]);
-            return null;
-        }
-        $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
-        $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
-        $xmlResponse->registerXPathNamespace('ns2', 'http://entidade.wssiapenet');
-        $uorgs = $xmlResponse->xpath('//ns2:Uorg');
-        return array_map([$this, 'simpleXmlElementToArray'], $uorgs);
-    }
-
-    public function dadosUorg(
-        $siapeSiglaSistema,
-        $siapeNomeSistema,
-        $siapeSenha,
-        $cpf,
-        $siapeCodOrgao,
-        $siapeCodUorg
-    ): string {
-        $xml = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://servico.wssiapenet"/>');
-        $body = $xml->addChild('soapenv:Body');
-        $dadosUorg = $body->addChild('ser:dadosUorg');
-        $dadosUorg->addChild('siglaSistema', $siapeSiglaSistema);
-        $dadosUorg->addChild('nomeSistema', $siapeNomeSistema);
-        $dadosUorg->addChild('senha', $siapeSenha);
-        $dadosUorg->addChild('cpf', $cpf);
-        $dadosUorg->addChild('codOrgao', $siapeCodOrgao);
-        $dadosUorg->addChild('codUorg', $siapeCodUorg);
-
-        return $xml->asXML();
-    }
-
-    public function BuscarUorgs(array $xmlsData) : array
-    {
-        $lotes = array_chunk($xmlsData, self::QUANTIDADE_MAXIMA_REQUISICOES, true);
-        $tempoInicial = microtime(true);
-        $respostas = [];
-        foreach ($lotes as $lote) {
-            $respostas = array_merge($respostas, $this->executaRequisicoes($lote));
-        }
-        $tempoFinal = microtime(true);
-        $tempoTotal = $tempoFinal - $tempoInicial;
-        Log::info("Tempo total de execução: " . $tempoTotal. " segundos");
-        return $respostas;
-    }
-
-    
-
-    public function enviar(): void
-    {
-        $this->listaUorg();
+        Log::info("Processamento de Unidade finalizado.");
     }
 }

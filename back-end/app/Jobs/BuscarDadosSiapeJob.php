@@ -51,10 +51,13 @@ class BuscarDadosSiapeJob implements ShouldQueue, ContratoJobSchedule
 
         $buscarDadosUnidadesSiape = new BuscarDadosSiapeUnidades($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
         $buscarDadosUnidadesSiape->enviar();
+
         $buscarDadosUnidadeSiape = new BuscarDadosSiapeUnidade($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
         $buscarDadosUnidadeSiape->enviar();
+
         $buscarDadosServidoresSiape = new BuscarDadosSiapeServidores($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
         $buscarDadosServidoresSiape->enviar();
+        
         $buscarDadosServidorSiape = new BuscarDadosSiapeServidor($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
         $buscarDadosServidorSiape->enviar();
 
