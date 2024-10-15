@@ -213,7 +213,8 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         $lotes = array_chunk($xmlsServidores, self::QUANTIDADE_MAXIMA_REQUISICOES, true);
         $tempoInicial = microtime(true);
         $respostas = [];
-        foreach ($lotes as $lote) {
+        foreach ($lotes as $i => $lote) {
+            Log::info('Lote '.$i.' de '.count($lotes));
             $resposta = $this->executaRequisicoes($lote);
             $respostas = $this->array_merge_recursive_distinct($respostas,  $resposta);
         }

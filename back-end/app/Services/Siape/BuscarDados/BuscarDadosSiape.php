@@ -157,7 +157,7 @@ abstract class BuscarDadosSiape
             libxml_clear_errors();
             throw new RequestConectaGovException('Invalid XML response'); 
         }
-        Log::info('Response convertido: ' , [$responseXml]);
+        //Log::info('Response convertido: ' , [$responseXml]);
         return $responseXml;
     }
 
