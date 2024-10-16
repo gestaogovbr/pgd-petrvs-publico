@@ -44,12 +44,6 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 				this.go.navigate({route: ["panel", "job-agendados"]}),
 		},
 		{
-			icon: "bi bi-exclamation-octagon-fill",
-			label: "Forçar SIAPE",
-			onClick: (tenant: Tenant) =>
-				this.go.navigate({route: ["panel", "forcar-siape"]}),
-		},
-		{
 			icon: "bi bi-plus",
 			label: "Inserir Tenant",
 			color: "btn-success",
@@ -248,7 +242,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 						})
 						.catch(function (error) {
 							let messageError = error?.message ? error?.message : error;
-							console.log("Erro ao executar a migration: ", error);
+							console.log("Erro: ", error);
 							self.dialog.alert(
 								"Erro",
 								messageError
