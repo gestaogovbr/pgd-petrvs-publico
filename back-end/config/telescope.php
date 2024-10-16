@@ -94,6 +94,12 @@ return [
     'middleware' => [
         'web',
         Authorize::class,
+        'telescopeBasicAuth'
+    ],
+
+    'basic_auth' => [
+        'username' => env('TELESCOPE_BASIC_AUTH_USERNAME'),
+        'password' => env('TELESCOPE_BASIC_AUTH_PASSWORD'),
     ],
 
     /*
