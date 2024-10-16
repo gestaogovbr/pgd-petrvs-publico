@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\BuscadoDadosSiapeAssincronoJob;
 use Illuminate\Console\Command;
 
 class RunBuscaDadosAssincronosJob extends Command
@@ -12,7 +11,7 @@ class RunBuscaDadosAssincronosJob extends Command
      *
      * @var string
      */
-    protected $signature = 'app:run-busca-dados-assincronos-job';
+    protected $signature = 'app:run-busca-dados-assincronos-job  {tenant}';
 
     /**
      * The console command description.
@@ -26,7 +25,13 @@ class RunBuscaDadosAssincronosJob extends Command
      */
     public function handle()
     {
-        $classe = new \App\Jobs\BuscadoDadosSiapeAssincronoJob();
+        $tenantId = $this->argument('tenant');
+        if(!$tenantId){
+            $this->error('Tenant não informado.');
+            return;
+        }
+
+        $classe = new \App\Jobs\BuscarDadosSiapeJob($tenantId);
         $classe->handle();
         $this->info('Job executado com sucesso.');
     }

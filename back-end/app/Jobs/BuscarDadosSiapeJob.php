@@ -49,16 +49,16 @@ class BuscarDadosSiapeJob implements ShouldQueue, ContratoJobSchedule
             return;
         }
 
-        $buscarDadosUnidadesSiape = new BuscarDadosSiapeUnidades($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
+        $buscarDadosUnidadesSiape = new BuscarDadosSiapeUnidades($config);
         $buscarDadosUnidadesSiape->enviar();
 
-        $buscarDadosUnidadeSiape = new BuscarDadosSiapeUnidade($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
+        $buscarDadosUnidadeSiape = new BuscarDadosSiapeUnidade($config);
         $buscarDadosUnidadeSiape->enviar();
 
-        $buscarDadosServidoresSiape = new BuscarDadosSiapeServidores($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
+        $buscarDadosServidoresSiape = new BuscarDadosSiapeServidores($config);
         $buscarDadosServidoresSiape->enviar();
         
-        $buscarDadosServidorSiape = new BuscarDadosSiapeServidor($config["cpf"], $config["url"], $config["conectagov_chave"], $config["conectagov_senha"], $config);
+        $buscarDadosServidorSiape = new BuscarDadosSiapeServidor($config);
         $buscarDadosServidorSiape->enviar();
 
         Log::info("Job BuscarDadosSiapeJob Tenant {$this->tenantId} - END");

@@ -16,14 +16,18 @@ abstract class BuscarDadosSiape
     private string $authorizationHeader;
     protected static $token = null;
     protected static $tokenExpiresAt = null;
+    private $url;
+    private $cpf;
+    private $client;
+    private $secret;
 
     public function __construct(
-        private readonly string $cpf,
-        private readonly string $url,
-        private readonly string $client,
-        private readonly string $secret,
         private readonly mixed $config
     ) {
+        $this->cpf = $config["cpf"];
+        $this->url = $config["url"];
+        $this->client = $config["conectagov_chave"];
+        $this->secret = $config["conectagov_senha"];
         $this->authorizationHeader = 'Basic ' . base64_encode($this->client . ':' . $this->secret);
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\BuscarDadosSiapeJob;
 use App\Models\Cidade;
 use App\Models\Entidade;
 use App\Models\Perfil;
@@ -82,6 +83,27 @@ class TenantService extends ServiceBase
         Log::info('Finalização do cadastro de tenant');
     }
 
+    public function forcarSiape(string $tenantId)
+    {
+        $this->inicializeTenant($tenantId);
+        $this->TenantConfigurationsService->handle($tenantId);
+        $this->limpaTabelas();
+        BuscarDadosSiapeJob::dispatch($tenantId);
+    }
+
+    private function inicializeTenant($tenantId): void
+    {
+       
+        $tenant = tenancy()->find($tenantId);
+        ($tenant) ? tenancy()->initialize($tenant) : Log::error("Tenant não encontrado.");
+    }
+
+    private function limpaTabelas()
+    {
+        DB::table('integracao_unidades')->truncate();
+        DB::table('integracao_servidores')->truncate();
+    }
+    
     public function generateCertificateKeys()
     {
         $certificate = openssl_pkey_new();
