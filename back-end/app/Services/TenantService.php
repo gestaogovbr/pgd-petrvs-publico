@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+
 use App\Jobs\BuscarDadosSiapeJob;
+use App\Exceptions\NotFoundException;
 use App\Models\Cidade;
 use App\Models\Entidade;
 use App\Models\Perfil;
@@ -16,6 +18,8 @@ use App\Models\Tenant;
 use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use App\Exceptions\ServerException;
 
 class TenantService extends ServiceBase
 {
@@ -117,6 +121,7 @@ class TenantService extends ServiceBase
 
     public function executeSeeder($seed, $tenant = null)
     {
+        $this->validatePermission();
         Log::info('Execução '.$seed.'.');
         Artisan::call('tenants:run db:seed --option="class=' . $seed . '"' . (empty($tenant) ? '' : ' --tenants=' . $tenant));
         return Artisan::output();
@@ -125,6 +130,7 @@ class TenantService extends ServiceBase
 
     public function migrate($id)
     {
+        $this->validatePermission();
         try {
             if ($id) {
                 Artisan::call('tenant:migrate ' . $id);
@@ -145,8 +151,10 @@ class TenantService extends ServiceBase
 
     public function cleanDB($id)
     {
+        $this->validatePermission();
         try {
-            Artisan::call('db:truncate-all ' . $id);
+            //Artisan::call('db:truncate-all ' . $id);
+            return true;
         } catch (\Exception $e) {
             Log::error('Error executing commands: ' . $e->getMessage());
             Log::channel('daily')->error('Error executing commands: ' . $e->getMessage());
@@ -156,6 +164,8 @@ class TenantService extends ServiceBase
 
     public function resetBD()
     {
+        $this->validatePermission();
+
         try {
             //            Artisan::call('db:delete-all');
             //            logInfo();
@@ -271,6 +281,7 @@ class TenantService extends ServiceBase
     public function deleteTenant($id)
     {
         try {
+            $this->validatePermission();
             $tenant = Tenant::find($id);
             if ($tenant) {
                 $tenant->delete();
@@ -310,6 +321,47 @@ class TenantService extends ServiceBase
             array_push($values, [$row['id'], array_map(fn($field) => $row[$field], $data['fields']), $orderValues]);
         }
         return $values;
+    }
+    public function getById($data)
+    {
+        $model = $this->getModel();
+        $query = $model::query();
+        $data["with"] = isset($data["with"]) ? $data["with"] : [];
+        $data["with"] = isset($this->joinable) ? $this->getJoinable($data["with"]) : $data["with"];
+        if (count($data['with']) > 0) {
+            $this->applyWith($query, $data);
+        }
+        $query->where('id', $data['id']);
+        $query = is_subclass_of(get_class($model), "App\Models\ModelBase") ? $query->withTrashed() : $query;
+        $rows = method_exists($this, 'proxyRows') ? $this->proxyRows($query->get()) : $query->get();
+
+
+        if (count($rows) == 1) {
+            $data =json_decode($rows[0],true);
+            unset(
+                $data['tenancy_db_name'],
+                $data['tenancy_db_host'],
+                $data['tenancy_db_port'],
+                $data['tenancy_db_username'],
+                $data['tenancy_db_password'],
+                $data['log_host'],
+                $data['log_database'],
+                $data['log_port'],
+                $data['log_username'],
+                $data['log_password']
+            );
+
+            return $data;
+        } else {
+            throw new NotFoundException("Id não encontrado");
+        }
+    }
+
+    public function validatePermission(){
+        $user = Auth::guard('painel')->user();
+        if ($user->nivel != 1) {
+            throw new ServerException("ValidateUsuario", "Usuário não tem permissão para executar essa ação");
+        }
     }
 
 }
