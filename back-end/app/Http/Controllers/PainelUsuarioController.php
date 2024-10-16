@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\Contracts\IBaseException;
+use App\Exceptions\UnauthorizedUserPanelException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\PainelUsuarioService;
@@ -121,27 +122,24 @@ class PainelUsuarioController extends Controller
     public function store(Request $request)
     {
         try {
-        $data = $request->validate([
-            'entity' => ['required'],
-            'with' => ['array']
-        ]);
+            $data = $request->validate([
+                'entity' => ['required'],
+                'with' => ['array']
+            ]);
 
-        $entityData = $data['entity'];
-        if (isset($entityData['password'])) {
-            $entityData['password'] = md5($entityData['password']);
+            $entityData = $data['entity'];
+            if (isset($entityData['password'])) {
+                $entityData['password'] = md5($entityData['password']);
+            }
+            $entity = $this->service->store($entityData, null, true);      
+            return response()->json([
+                'success' => true,
+                'rows' => [$entity]
+            ]);
+        } catch (UnauthorizedUserPanelException $e) {
+            return response()->json(['error' => $e->getMessage(), 'status' => $e->getCode()]); 
         }
-        $entity = $this->service->store($entityData, null, true);
-        $tenantIds = array_column($entityData['tenants'], 'id');
-        $entity->assignTenants($tenantIds);
-        $result = $this->service->getById([
-            'id' => $entity->id,
-            'with' => $data['with']
-        ]);
-        return response()->json([
-            'success' => true,
-            'rows' => [$result]
-        ]);
-        } catch (IBaseException $e) {
+         catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
         catch (Throwable $e) {
@@ -164,6 +162,8 @@ class PainelUsuarioController extends Controller
                 'id' => ['required']
             ]);
             return response()->json(['success' => $this->service->destroy($data["id"], !ControllerBase::$sameTransaction)]);
+        } catch (UnauthorizedUserPanelException $e) {
+            return response()->json(['error' => $e->getMessage(), 'status' => $e->getCode()]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
