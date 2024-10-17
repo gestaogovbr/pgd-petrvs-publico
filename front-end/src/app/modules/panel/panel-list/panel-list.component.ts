@@ -25,6 +25,11 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 			onClick: () => this.go.navigate({route: ["panel", "logs2"]}),
 		},
 		{
+			icon: "bi bi-file-earmark-code-fill",
+			label: "Dados ENV",
+			onClick: () => this.go.navigate({route: ["panel", "env"]}),
+		},
+		{
 			icon: "bi bi-database-add",
 			label: "Executar Migrations",
 
