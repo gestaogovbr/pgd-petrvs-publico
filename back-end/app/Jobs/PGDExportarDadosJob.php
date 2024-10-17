@@ -31,20 +31,20 @@ class PGDExportarDadosJob extends JobWithoutTenant implements ContratoJobSchedul
     {
         Log::info("PGDExportarDadosJob:START");
 
-        try{
-            foreach(Tenant::all() as $tenant) {
+        foreach(Tenant::all() as $tenant) {
+            try{
+                Log::info("PGDExportarDadosJob - START - Tenant {$tenant->id}");
                 $exportarTenantService->exportar($tenant->id);
+            } catch (Exception $e) {
+                Log::error("Erro ao processar PGDExportarDadosJob: - Erro: " . $e->getMessage());
+                
+                $tenant = tenancy()->find($tenant->id);
+                tenancy()->initialize($tenant);
+                
+                LogError::newWarn("Erro ao processar PGDExportarDadosJob - Erro: " . $e->getMessage());
+                
+                tenancy()->end();
             }
-        } catch (Exception $e) {
-            Log::error("Erro ao processar PGDExportarDadosJob: - Erro: " . $e->getMessage());
-
-            $tenant = tenancy()->find($tenant->id);
-            tenancy()->initialize($tenant);
-
-            LogError::newWarn("Erro ao processar PGDExportarDadosJob - Erro: " . $e->getMessage());
-
-            tenancy()->end();
-            return false; 
         }
 
         Log::info("PGDExportarDadosJob:END");

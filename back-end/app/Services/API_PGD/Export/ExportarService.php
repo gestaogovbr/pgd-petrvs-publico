@@ -12,6 +12,7 @@ use App\Services\API_PGD\PgdService;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 abstract class ExportarService
 {
@@ -66,7 +67,7 @@ abstract class ExportarService
 
         foreach ($this->source as $source)
         {
-            echo "\n[{$source->tipo}] ID {$source->id} [INICIADO]";
+            Log::info("[{$source->tipo}] ID {$source->id} [INICIADO]");
 
             $envioItem = new EnvioItem;
             $envioItem->envio_id    = $this->envio->id;
@@ -111,11 +112,8 @@ abstract class ExportarService
 
     public function handleError($message, EnvioItem $envioItem, ExportSource $source) 
     {
-        echo "\n[{$source->tipo}] ID {$source->id} [\033[31mERRO\033[0m]";
-        echo "\nMensagem: ".$message."\n";
-
-        //$envioItem->erros = $message;
-        //$envioItem->save();
+        Log::error("[{$source->tipo}] ID {$source->id} - ERRO!");
+        Log::error("Mensagem: ".$message);
 
         $this->falhas++;
 
@@ -136,6 +134,7 @@ abstract class ExportarService
                         ]
                     );
             } catch(\Exception $exception) {
+                Log::error("Erro atualizar audit: ".$exception->getMessage());
                 LogError::newError("Erro atualizar audit: ", $exception, $source);
             }
         }
@@ -162,7 +161,7 @@ abstract class ExportarService
                 ]);
         }
 
-        echo "\n[{$source->tipo}] ID {$source->id} [\033[32mSUCESSO\033[0m]";
+        Log::info("[{$source->tipo}] ID {$source->id} - SUCESSO");
     }
 
     public function getSucessos() {
