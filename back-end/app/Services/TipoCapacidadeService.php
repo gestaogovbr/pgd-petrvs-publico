@@ -389,7 +389,9 @@ class TipoCapacidadeService extends ServiceBase
         /* Capacidades do módulo UNIDADES*/
         ["MOD_UND_EDT", "Permite editar unidade"],
         ["MOD_UND_EDT_FRM", "Permite editar unidades formais (SIAPE ou não)"],  // a ser implementado
-        ["MOD_UND_EXCL", "Permite excluir unidade"],
+        ["MOD_UND_EXCL", "Permite excluir unidade"],        
+        ["MOD_UND_INCL", "Permite incluir unidade"],
+        ["MOD_UND_INCL_FRM", "Permite incluir unidades formais (SIAPE ou não)"],  
         ["MOD_UND_UNIR", "Permite unificar unidade"],
         ["MOD_UND_TUDO", "Permite consultar qualquer unidade independente de subordinação"],
         ["MOD_UND_INATV", "Permite inativar uma unidade"],

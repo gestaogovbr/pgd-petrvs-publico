@@ -28,7 +28,7 @@
 
         <column [title]="lex.translate('Última data SIAPE')" [template]="columnDataSIAPE">
             <ng-template let-row="row" #columnDataSIAPE>
-                <span>{{ dao!.getDateFormatted(row.ultima_atualizacao) }} </span>
+                <span>{{ util.getDateFormatted(row.ultima_atualizacao) }} </span>
             </ng-template>
         </column>
 
