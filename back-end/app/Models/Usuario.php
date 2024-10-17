@@ -40,6 +40,7 @@ use App\Models\NotificacaoDestinatario;
 use Illuminate\Notifications\Notifiable;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\QuestionarioPreenchimento;
+use App\Models\IntegracaoServidor;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -348,6 +349,13 @@ class Usuario extends Authenticatable  implements AuditableContract
   {
     return $this->hasOne(UnidadeIntegrante::class)->has('colaborador');
   } // unidade com a qual possui TCR
+  
+  
+  public function integracaoServidor()
+  {
+    return $this->hasOne(IntegracaoServidor::class, 'cpf', 'cpf');
+  }
+  
   // Mutattors e Casts
   public function getUrlFotoAttribute($value)
   {

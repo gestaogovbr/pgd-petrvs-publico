@@ -26,10 +26,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
 
-        if($this->app->environment('APP_ENV') == 'local') {
+        //if($this->app->environment('APP_ENV') == 'local') {
             DB::listen(function ($query) {
                 Log::info($query->sql, $query->bindings, $query->time);
             });
-        }
+        //}
     }
 }
