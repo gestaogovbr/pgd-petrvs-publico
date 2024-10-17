@@ -11,6 +11,7 @@ use App\Services\API_PGD\AuditSources\PlanoTrabalhoAuditSource;
 use App\Services\API_PGD\AuditSources\PlanoEntregaAuditSource;
 use App\Services\API_PGD\AuditSources\ParticipanteAuditSource;
 use App\Services\API_PGD\AuthenticationService;
+use Illuminate\Support\Facades\Log;
 
 class ExportarTenantService
 {
@@ -89,17 +90,14 @@ class ExportarTenantService
     }
 
     public function finalizar() {
-        echo "\n\n** FINALIZADO!\n\n";
 
-        echo "\033[32mParticipantes\033[0m ".
-            "\nSucedidos: ". $this->exportarParticipanteService->getSucessos().
-            "\nFalhas: ". $this->exportarParticipanteService->getFalhas().
-            "\n\n\033[32mPlanos de Entrega\033[0m ". 
-            "\nSucedidos: ". $this->exportarPlanoEntregasService->getSucessos().
-            "\nFalhas: ". $this->exportarPlanoEntregasService->getFalhas().
-            "\n\n\033[32mPlanos de Trabalho\033[0m ". 
-            "\nSucedidos: ". $this->exportarPlanoTrabalhoService->getSucessos().
-            "\nFalhas: ". $this->exportarPlanoTrabalhoService->getFalhas().
-            "\n\n";
+        Log::info("** RESULTADOS **");
+        Log::info("Participantes com sucesso: ".$this->exportarParticipanteService->getSucessos());
+        Log::info("Participantes com Falhas: ".$this->exportarParticipanteService->getFalhas());
+        Log::info("Planos de Entrega com sucesso: ".$this->exportarPlanoEntregasService->getSucessos());
+        Log::info("Planos de Entrega com falhas: ".$this->exportarPlanoEntregasService->getFalhas());
+        Log::info("Planos de Trabalho com sucesso: ".$this->exportarPlanoTrabalhoService->getSucessos());
+        Log::info("Planos de Trabalho com falhas: ".$this->exportarPlanoTrabalhoService->getFalhas());
+        Log::info("** FINALIZADO!");
     }
 }
