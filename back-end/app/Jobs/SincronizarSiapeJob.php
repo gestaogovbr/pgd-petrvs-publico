@@ -22,6 +22,8 @@ class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule, ShouldBeU
     protected $usuario_id;
     protected $request;
 
+    public $timeout = 0;
+
     public function __construct(private readonly ?string $tenantId = null)
     {
         Log::info("Job SincronizarPetrvs __construct :". $tenantId);
