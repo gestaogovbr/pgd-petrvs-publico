@@ -86,6 +86,6 @@ class TenantConfigurationsService
         config(['integracao.perfilComum'          => $settings['integracao_usuario_comum']            ?? env('INTEGRACAO_USUARIO_COMUM')]);
         config(['integracao.perfilChefe'          => $settings['integracao_usuario_chefe']            ?? env('INTEGRACAO_USUARIO_CHEFE')]);
 
-        Log::info("Configs carregadas: " . json_encode(config('integracao')));
+        // Log::info("Configs carregadas: " . json_encode(config('integracao')));
     }
 }

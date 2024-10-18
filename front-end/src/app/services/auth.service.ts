@@ -398,6 +398,21 @@ export class AuthService {
     return lotacao?.id == unidade.id;
   }
 
+  
+  /**
+   * Informa se o usuário logado possui função de curador
+   * @param pUnidade
+   * @returns
+   */
+  public isUsuarioCurador(pUnidade: Unidade | null = null): boolean {
+    const unidade = pUnidade || this.unidade!;
+    const unidadeFound = this.usuario?.areas_trabalho?.find(area => area.unidade_id == unidade.id)
+    
+    if (!unidadeFound) return false;
+
+    return unidadeFound.atribuicoes?.find(atribuicao => atribuicao.atribuicao as string == 'CURADOR') != null
+  }
+
   /**
    * Informa se o usuário logado possui determinada atribuição para uma unidade específica dentre as suas unidades-integrante.
    * @param atribuicao

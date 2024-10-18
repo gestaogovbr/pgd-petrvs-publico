@@ -3,7 +3,6 @@ namespace App\Services\API_PGD\DataSources;
 
 use App\Exceptions\ExportPgdException;
 use App\Models\Usuario;
-use App\Models\ViewApiPgd;
 use App\Services\API_PGD\ExportSource;
 
 class ParticipanteDataSource extends DataSource
@@ -21,10 +20,12 @@ class ParticipanteDataSource extends DataSource
                 'ultimaParticipacaoPrograma',
                 'ultimaParticipacaoPrograma.programa.unidade',
                 'unidadesIntegrantes.unidade',*/
-                'unidadesIntegrantes.atribuicoes' => function ($query) {
-                    $query
-                        ->where('atribuicao', 'LOTADO')
-                        ->whereNull('deleted_at');
+                'unidadesIntegrantes' => function($query) {
+                    $query->whereHas('atribuicoes', function ($query) {
+                        $query
+                            ->where('atribuicao', 'LOTADO')
+                            ->whereNull('deleted_at');
+                    });
                 }
             ])
             ->find($exportSource->id);

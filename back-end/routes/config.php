@@ -24,12 +24,14 @@ Route::middleware(['api', 'panel'])->prefix('Tenant')->group(function () {
     Route::post('database', [TenantController::class, 'database']);
     Route::post('tipo-capacidade', [TenantController::class, 'tiposCapacidades']);
     Route::post('migrations', [TenantController::class, 'migrations']);
-    Route::post('seeders', [TenantController::class, 'seeders']);
+    Route::post('seeders', [TenantController::class, 'seeders']);    
+    Route::post('forcar-siape', [TenantController::class, 'forcarSiape']);    
 });
 
 Route::middleware(['api', 'panel'])->prefix('Tenant')->group(function () {
     Route::get('resetdb', [TenantController::class, 'resetdb']);
     Route::post('cleandb', [TenantController::class, 'cleandb']);
+    Route::post('dumpdb', [TenantController::class, 'dumpDatabase']);
     Route::post('delete-tenant', [TenantController::class, 'deleteTenant']);
 });
 
