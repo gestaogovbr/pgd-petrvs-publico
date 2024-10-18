@@ -5,11 +5,13 @@ namespace App\Services\API_PGD\Export;
 use App\Exceptions\ExportPgdException;
 use App\Exceptions\LogError;
 use App\Exceptions\UnauthorizedException;
+use App\Models\Envio;
 use App\Models\Tenant;
 use App\Services\API_PGD\AuditSources\PlanoTrabalhoAuditSource;
 use App\Services\API_PGD\AuditSources\PlanoEntregaAuditSource;
 use App\Services\API_PGD\AuditSources\ParticipanteAuditSource;
 use App\Services\API_PGD\AuthenticationService;
+use Illuminate\Support\Facades\Log;
 
 class ExportarTenantService
 {
@@ -31,27 +33,56 @@ class ExportarTenantService
         $tenant = tenancy()->find($tenantId);
         tenancy()->initialize($tenant);
 
-        if (!$tenant['api_username'] or !$tenant['api_password']) {
-          LogError::newError('Usuário ou senha da API PGD não definidos no Tenant '.$tenantId);
-          throw new ExportPgdException('Usuário ou senha da API PGD não definidos no Tenant '.$tenantId);
-        }
+        $envio = new Envio;
+        $envio->save();
 
-        $token = $this->authService->authenticate($tenantId, $tenant['api_username'], $tenant['api_password']);
+        try {
 
-        $this->exportarParticipanteService
-            ->setToken($token)
-            ->load($this->participanteAuditSource->getData())
-            ->enviar();
+            if (!$tenant['api_username'] or !$tenant['api_password']) {
+                $errorMsg = 'Usuário ou senha da API PGD não definidos no Tenant '.$tenantId;
+                LogError::newError($errorMsg);
+                $envio->erros = 'Usuário ou senha da API PGD não definidos';
+                $envio->finished_at = now();
+                $envio->save();
+                throw new ExportPgdException($errorMsg);
+            }
 
-        $this->exportarPlanoEntregasService
-            ->setToken($token)
-            ->load($this->planoEntregaAuditSource->getData())
-            ->enviar();
+            $token = $this->authService->authenticate($tenantId, $tenant['api_username'], $tenant['api_password']);
+
+            $this->exportarParticipanteService
+                ->setToken($token)
+                ->setEnvio($envio)
+                ->load($this->participanteAuditSource->getData())
+                ->enviar();
+
+            $this->exportarPlanoEntregasService
+                ->setToken($token)
+                ->setEnvio($envio)
+                ->load($this->planoEntregaAuditSource->getData())
+                ->enviar();
+            
+            $this->exportarPlanoTrabalhoService
+                ->setToken($token)
+                ->setEnvio($envio)
+                ->load($this->planoTrabalhoAuditSource->getData())
+                ->enviar();
+
+            $envio->finished_at = now();
+            $envio->sucesso = true;
+            $envio->save();
         
-        $this->exportarPlanoTrabalhoService
-            ->setToken($token)
-            ->load($this->planoTrabalhoAuditSource->getData())
-            ->enviar();
+        } catch (\Exception $exception) {
+            $envio->erros = $exception->getMessage();
+            $envio->finished_at = now();
+            $envio->save();
+            
+            LogError::newError(
+                "Erro ao sincronizar com o PGD: ", 
+                new ExportPgdException($exception->getMessage())
+            );
+
+            throw $exception;
+        }
 
         tenancy()->end();
         
@@ -59,17 +90,14 @@ class ExportarTenantService
     }
 
     public function finalizar() {
-        echo "\n\n** FINALIZADO!\n\n";
 
-        echo "\033[32mParticipantes\033[0m ".
-            "\nSucedidos: ". $this->exportarParticipanteService->getSucessos().
-            "\nFalhas: ". $this->exportarParticipanteService->getFalhas().
-            "\n\n\033[32mPlanos de Entrega\033[0m ". 
-            "\nSucedidos: ". $this->exportarPlanoEntregasService->getSucessos().
-            "\nFalhas: ". $this->exportarPlanoEntregasService->getFalhas().
-            "\n\n\033[32mPlanos de Trabalho\033[0m ". 
-            "\nSucedidos: ". $this->exportarPlanoTrabalhoService->getSucessos().
-            "\nFalhas: ". $this->exportarPlanoTrabalhoService->getFalhas().
-            "\n\n";
+        Log::info("** RESULTADOS **");
+        Log::info("Participantes com sucesso: ".$this->exportarParticipanteService->getSucessos());
+        Log::info("Participantes com Falhas: ".$this->exportarParticipanteService->getFalhas());
+        Log::info("Planos de Entrega com sucesso: ".$this->exportarPlanoEntregasService->getSucessos());
+        Log::info("Planos de Entrega com falhas: ".$this->exportarPlanoEntregasService->getFalhas());
+        Log::info("Planos de Trabalho com sucesso: ".$this->exportarPlanoTrabalhoService->getSucessos());
+        Log::info("Planos de Trabalho com falhas: ".$this->exportarPlanoTrabalhoService->getFalhas());
+        Log::info("** FINALIZADO!");
     }
 }

@@ -15,7 +15,7 @@ abstract class AuditSource
                 ->withoutGlobalScope(SoftDeletingScope::class)
                 ->get()
                 ->map(function($data) use($tipo) {
-                    return new ExportSource($tipo, $data->id, $data->json_audit);
+                    return new ExportSource($tipo, $data->id, $data->fonte, $data->json_audit);
                 });
     }
 }

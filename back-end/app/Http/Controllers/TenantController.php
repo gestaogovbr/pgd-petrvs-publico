@@ -62,7 +62,7 @@ class TenantController extends ControllerBase {
                 $data['entity']['updated_at']=  Carbon::now()->toDateTimeString();
 
                 if (isset($data['entity']['api_password']) && strlen(trim($data['entity']['api_password']))) {
-                    $data['entity']['api_password'] = Hash::make($data['entity']['api_password']);
+                    $data['entity']['api_password'] = $data['entity']['api_password'];
                 } else {
                     unset($data['entity']['api_password']);
                 }
@@ -440,7 +440,9 @@ class TenantController extends ControllerBase {
                     $linha['tenancy_db_username'],
                     $linha['tenancy_db_password'],
                     $linha['log_username'],
-                    $linha['log_password']
+                    $linha['log_password'],
+                    $linha['api_username'],
+                    $linha['api_password']
                 );
             }
 
