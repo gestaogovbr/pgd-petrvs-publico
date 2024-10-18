@@ -189,9 +189,9 @@ export class ServerService {
 
     public getBlob(url: string, params: any): Observable<Blob> {
         let options = this.requestOptions();
-        options.responseType = 'blob'; // Adicione esta linha
+        options.responseType = 'blob';
         const result = this.http.post<Blob>(this.gb.servidorURL + '/' + url, params, options);
-        return result.pipe(catchError(this.errorHandle.bind(this)));
+        return result.pipe(catchError(this.errorHandle.bind(this))) as Observable<Blob>;
       }
 
   private addCustomHeaders(options: any): any {
