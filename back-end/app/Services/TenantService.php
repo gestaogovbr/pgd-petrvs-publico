@@ -325,7 +325,8 @@ class TenantService extends ServiceBase
                 $data['log_database'],
                 $data['log_port'],
                 $data['log_username'],
-                $data['log_password']
+                $data['log_password'],
+                $data['api_password']
             );
 
             return $data;
