@@ -1,3 +1,11 @@
+## 2.3.0 - 18/10/2024
+### Modificado
+ - modificação da busca dos dados do SIAPE, com tabelas auxiliares
+ - alteração no processamento dos dados do SIAPE, alterando das requisições e passando para os dados da tabelas auxiliares
+### Adicionado
+ - Adicionado botão no painel dos tenantes para forçar uma atualização completa de dados do SIAPE
+### Corrigido
+ - Consulta na busca das cidades no SIAPE 
 ## 2.2.0 - 04/10/2024 (Hotfixes)
 ### Segurança 
 - Adicionado validações para usuários do painel.
