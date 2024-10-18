@@ -107,6 +107,24 @@ class TenantController extends ControllerBase {
         }
     }
 
+    public function forcarSiape(Request $request) {
+        try {
+            $data = $request->validate([
+                'tenant_id' => ['string'],
+            ]);
+            $this->service->forcarSiape($data['tenant_id']);
+            return response()->json([
+                'success' => true,
+            ]);
+        }  catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+        }
+    }
 
     public function cidades(Request $request) {
         try {

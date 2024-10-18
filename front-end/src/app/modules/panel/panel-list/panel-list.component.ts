@@ -84,7 +84,11 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 			label: "Executar Migrations",
 			onClick: this.executaMigrations.bind(this),
 		});
-
+		this.options.push({
+			icon: "bi bi-exclamation-octagon-fill",
+			label: "Forçar SIAPE",
+			onClick: this.forcarSiape.bind(this),
+		});
 		this.options.push({
 			icon: "bi bi-trash",
 			label: "Excluir",
@@ -228,6 +232,30 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 								"Erro ao executar a migration: " + error?.message
 									? error?.message
 									: error
+							);
+						});
+				}
+			});
+	}
+	public forcarSiape(row: any) {
+		const self = this;
+		this.dialog
+			.confirm(
+				"Forçar Siape?",
+				"Deseja realmente limpar os dados do SIAPE e fazer uma nova carga completa?"
+			)
+			.then((confirm) => {
+				if (confirm) {
+					this.dao!.forcaSiape(row)
+						.then(function () {
+							self.dialog.alert("Sucesso", "Limpeza dos dados efetuadao com sucesso, aguarde a carga completa!");
+						})
+						.catch(function (error) {
+							let messageError = error?.message ? error?.message : error;
+							console.log("Erro: ", error);
+							self.dialog.alert(
+								"Erro",
+								messageError
 							);
 						});
 				}

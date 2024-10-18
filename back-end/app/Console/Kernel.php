@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\ExecutaSiape::class,
         \App\Console\Commands\InsertLog::class,
+        \App\Console\Commands\RunBuscaDadosAssincronosJob::class,
     ];
 
     protected function commands()
