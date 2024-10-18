@@ -123,8 +123,7 @@ class IntegracaoSiapeService extends ServiceBase
 
 
           if (!empty($this->UtilService->valueOrNull($uorgWsdl, "nomeMunicipio"))) {
-            $consulta_sql = "SELECT * FROM cidades WHERE nome LIKE '" . addslashes($uorgWsdl['nomeMunicipio']) . "'";
-            $consulta_sql = DB::select($consulta_sql);
+              $consulta_sql = DB::select("SELECT * FROM cidades WHERE nome LIKE :nomeMunicipio", ['nomeMunicipio' => $uorgWsdl['nomeMunicipio']]);
             if (!empty($consulta_sql)) {
               $consulta_sql = $this->UtilService->object2array($consulta_sql)[0];
               $uorgWsdl['codMunicipio'] = $consulta_sql['codigo_ibge'];

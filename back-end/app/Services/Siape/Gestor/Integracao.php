@@ -60,6 +60,7 @@ class Integracao implements InterfaceIntegracao
     {
 
         if (empty($dado['id_chefe'])) {
+            //TODO mesmo se houver uma chefia, não será removida, manterá, previnido inconsistências de dados
             array_push($this->message['vazio'],  $dado['id_unidade']);
             $this->logSiape("Chefe não informado para a unidade " . $dado['id_unidade'], $dado, Tipo::WARNING);
             return;
