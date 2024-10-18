@@ -8,6 +8,7 @@ use App\Exceptions\ServerException;
 use App\Http\Controllers\ControllerBase;
 use App\Models\PainelUsuario;
 use App\Models\PainelUsuarioTenant;
+use App\Models\EnvVariable;
 use App\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Stancl\Tenancy\Database\Models\Domain;
 use Throwable;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 
 class TenantController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
@@ -306,6 +309,50 @@ class TenantController extends ControllerBase {
             Log::error($dataError);
             return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
+    }
+
+    public function updateEnv(Request $request)
+    {
+        $request->validate([
+            'key' => 'required|string',
+            'value' => 'required|string',
+        ]);
+
+
+        $key = $request->input('key');
+        $newValue = $request->input('value');
+
+        EnvVariable::updateOrCreate(
+            ['name' => $key],
+            ['value' => $newValue]
+        );
+
+        $envPath = base_path('.env');
+
+        if (!File::exists($envPath)) {
+            return response()->json(['error' => 'Arquivo .env não encontrado.'], 404);
+        }
+
+        $envContent = File::get($envPath);
+        $pattern = "/^{$key}=.*/m";
+        if (preg_match($pattern, $envContent, $matches)) {
+            $currentValue = explode('=', $matches[0])[1];
+            $newValue = $currentValue . $newValue;
+            $envContent = preg_replace($pattern, "{$key}={$newValue}", $envContent);
+        } else {
+            $envContent .= "\n{$key}={$newValue}\n";
+        }
+
+        try {
+            File::put($envPath, $envContent);
+            Artisan::call('config:clear');
+            return response()->json(['success' => "Variável '{$key}' atualizada com sucesso. Novo valor: {$newValue}"]);
+        } catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+        }
+
     }
 
 

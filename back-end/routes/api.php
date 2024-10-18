@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EnvController;
 use App\Http\Controllers\PainelUsuarioController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -59,9 +60,14 @@ Route::middleware(['panel'])->prefix('JobAgendado')->group(function () {
 
 });
 
+Route::middleware(['panel'])->prefix('Env')->group(function () {
+    Route::get('/query', [EnvController::class, 'query']);
+    Route::post('/update', [EnvController::class, 'update']);
+});
+
 Route::middleware(['panel'])->prefix('UserPanel')->group(function () {
   Route::post('query', [PainelUsuarioController::class, 'query']);
   Route::post('get-by-id', [PainelUsuarioController::class, 'getById']);
   Route::post('store', [PainelUsuarioController::class, 'store']);
-  Route::post('destroy', [PainelUsuarioController::class, 'destroy']); 
+  Route::post('destroy', [PainelUsuarioController::class, 'destroy']);
 });
