@@ -4,12 +4,15 @@ namespace App\Services\API_PGD\Export;
 
 use App\Exceptions\ExportPgdException;
 use App\Exceptions\LogError;
+use App\Models\Envio;
+use App\Models\EnvioItem;
 use App\Services\API_PGD\DataSources\DataSource;
 use App\Services\API_PGD\ExportSource;
 use App\Services\API_PGD\PgdService;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 abstract class ExportarService
 {
@@ -20,6 +23,8 @@ abstract class ExportarService
     public int $sucessos;
     public int $falhas;
 
+    protected Envio $envio;
+
     public function __construct(
         private PgdService $pgdService
     ) {
@@ -29,6 +34,11 @@ abstract class ExportarService
 
     public function setToken(string $token) {
         $this->token = $token;
+        return $this;
+    }
+
+    public function setEnvio(Envio $envio) {
+        $this->envio = $envio;
         return $this;
     }
 
@@ -57,7 +67,14 @@ abstract class ExportarService
 
         foreach ($this->source as $source)
         {
-            echo "\n[{$source->tipo}] ID {$source->id} [INICIADO]";
+            Log::info("[{$source->tipo}] ID {$source->id} [INICIADO]");
+
+            $envioItem = new EnvioItem;
+            $envioItem->envio_id    = $this->envio->id;
+            $envioItem->tipo        = $source->tipo;
+            $envioItem->uid         = $source->id;
+            $envioItem->fonte       = $source->fonte;
+            $envioItem->save();
 
             try {
                 $data = $dataSource->getData($source);
@@ -75,14 +92,14 @@ abstract class ExportarService
                 ); 
 
                 if ($success) {
-                    $this->handleSucesso($source);
+                    $this->handleSucesso($envioItem, $source);
                 } else {
-                    $this->handleError('Erro no envio!', $source);
+                    $this->handleError('Erro no envio!', $envioItem, $source);
                     var_dump($body);
                 }
 
             }catch(ExportPgdException $exception) {
-                $this->handleError($exception->getmessage(), $source);
+                $this->handleError($exception->getmessage(), $envioItem, $source);
                 continue;
             }
         }
@@ -93,10 +110,10 @@ abstract class ExportarService
         return true;
     }
 
-    public function handleError($message, ExportSource $source) 
+    public function handleError($message, EnvioItem $envioItem, ExportSource $source) 
     {
-        echo "\n[{$source->tipo}] ID {$source->id} [\033[31mERRO\033[0m]";
-        echo "\nMensagem: ".$message."\n";
+        Log::error("[{$source->tipo}] ID {$source->id} - ERRO!");
+        Log::error("Mensagem: ".$message);
 
         $this->falhas++;
 
@@ -117,6 +134,7 @@ abstract class ExportarService
                         ]
                     );
             } catch(\Exception $exception) {
+                Log::error("Erro atualizar audit: ".$exception->getMessage());
                 LogError::newError("Erro atualizar audit: ", $exception, $source);
             }
         }
@@ -124,7 +142,10 @@ abstract class ExportarService
 
     abstract public function atualizarEntidade($id);
 
-    public function handleSucesso(ExportSource $source) {
+    public function handleSucesso(EnvioItem $envioItem, ExportSource $source) {
+
+        $envioItem->sucesso = true;
+        $envioItem->save();
 
         $this->atualizarEntidade($source->id);
 
@@ -140,7 +161,7 @@ abstract class ExportarService
                 ]);
         }
 
-        echo "\n[{$source->tipo}] ID {$source->id} [\033[32mSUCESSO\033[0m]";
+        Log::info("[{$source->tipo}] ID {$source->id} - SUCESSO");
     }
 
     public function getSucessos() {

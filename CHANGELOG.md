@@ -1,3 +1,20 @@
+## 2.3.0 - 18/10/2024
+### Modificado
+ - Modificação da busca dos dados do SIAPE, com tabelas auxiliares
+ - Alteração no processamento dos dados do SIAPE, alterando das requisições e passando para os dados da tabelas auxiliares
+ - Aumento no timeout do processamento SIAPE e processamento em fila diferente
+ - Envio para a API PGD em conformidade com a versão 3.2.1
+### Adicionado
+ - Adicionado botão no painel dos tenantes para forçar uma atualização completa de dados do SIAPE
+ - Adição do Telescope para monitoramento das consultas e logs
+ - Adição do Horizon para monitoramento dos Jobs
+ - Adicionado módulo dump do tenant no painel
+ - Adicionado módulo central_domains no painel
+### Corrigido
+ - Consulta na busca das cidades no SIAPE 
+ - Correção do tamanho do campo fundamentos/objetivo.
+ - Correção ao editar um tenant.
+ - Correção ao editar unidade.
 ## 2.2.0 - 04/10/2024 (Hotfixes)
 ### Segurança 
 - Adicionado validações para usuários do painel.

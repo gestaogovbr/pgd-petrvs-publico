@@ -11,11 +11,24 @@ use App\Models\Unidade;
 use App\Models\Programa;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\ServerException;
 use Exception;
 use Throwable;
 
 class UnidadeService extends ServiceBase
 {
+
+  public function validateStore($data, $unidade, $action)
+  {
+    #se action insert retornar uma mensagem de erro
+    if ($action == "INSERT") {
+      throw new ServerException(
+        "ValidateUnidade",
+        "Não é possível inserir uma unidade. Essa ação é feita somente pela integração com o SIAPE."
+    );
+    }
+  }
+
   /** 
    * Um array com os IDs de todas as Unidades pesquisadas, que possuem Planos de Trabalho ativos, e seus respectivos dashboards.
    * 

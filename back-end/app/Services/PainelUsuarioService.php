@@ -43,8 +43,8 @@ class PainelUsuarioService extends ServiceBase {
       throw new ServerException('ValidateUsuario', 'Usuário configurador deve ter pelo menos um tenant');
     }
 
-    if($data['nivel'] == 1 && $user->nivel != 1){
-      throw new UnauthorizedUserPanelException('Você não tem permissão para criar um administrador', 403);
+    if($user->nivel != 1){
+      throw new UnauthorizedUserPanelException('Você não tem permissão para criar um usuário', 403);
       
     }
   }

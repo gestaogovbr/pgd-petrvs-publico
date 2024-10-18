@@ -2,7 +2,6 @@
   <tabs display right>
     <tab key="PRINCIPAL" label="Principal">
       <div class="row">
-        <input-switch [disabled]="informalIsDisabled" [size]="1" label="Informal" labelClass="text-nowrap" controlName="informal" (change)="onInformalChange($event)" [labelInfo]="'Definir se ' + lex.translate('a unidade') + ' é informal ou não.' + lex.translate(' Unidades') + ' informais são, por exemplo: times volantes, comissões, grupos de trabalho, etc.' + lex.translate(' Unidades') + ' informais não podem mudar para formais, ou vice-versa.'"></input-switch>
         <input-switch [disabled]="instituidoraIsDisabled" [size]="1" label="Instit." labelClass="text-nowrap" controlName="instituidora" [labelInfo]="'Se a ' + lex.translate('unidade') + ' é instituidora de Programas. Unidade administrativa prevista no art. 4º do Decreto nº 11.072, de 2022.'"></input-switch>
         <input-text [disabled]="codigoIsDisabled" [size]="2" label="Código" controlName="codigo"></input-text>
         <input-text [disabled]="isDisabled" [size]="2" label="Sigla" controlName="sigla" required></input-text>
