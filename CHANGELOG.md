@@ -12,6 +12,7 @@
  - Consulta na busca das cidades no SIAPE 
  - Correção do tamanho do campo fundamentos/objetivo.
  - Correção ao editar um tenant.
+ - Correção ao editar unidade.
 ## 2.2.0 - 04/10/2024 (Hotfixes)
 ### Segurança 
 - Adicionado validações para usuários do painel.
