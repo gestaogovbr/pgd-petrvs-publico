@@ -20,7 +20,7 @@ class TelescopeBasicAuthMiddleware
             $username = $request->header('PHP_AUTH_USER');
             $password = $request->header('PHP_AUTH_PW');
 
-            if ($username === config('telescope.basic_auth.username') && $password === config('telescope.basic_auth.password')) {
+            if ($username === config('telescope.basic_auth.username') && md5($password) === config('telescope.basic_auth.password')) {
                 $authenticationHasPassed = true;
             }
         }
