@@ -23,7 +23,7 @@ class AuthenticationService
       'password' => config('pgd')['password']
     ];
 
-    $response = Http::withOptions(['verify' => false, 'timeout' => self::TIMEOUT])
+    $response = Http::withOptions(['timeout' => self::TIMEOUT])
       ->withHeaders($header)
       ->asForm()->post(config('pgd.host') . '/token', $formParams);
 
