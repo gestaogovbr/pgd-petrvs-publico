@@ -75,15 +75,21 @@ class TenantService extends ServiceBase
         if ($action == ServiceBase::ACTION_EDIT){
             $NivelAcessoService = new NivelAcessoService();
             $usuario = Usuario::orderBy('created_at', 'asc')->first();
+
             if ($usuario) {
-                $usuario->email = $dataOrEntity->email;
-                $usuario->nome = $dataOrEntity->nome_usuario;
-                $usuario->cpf = $dataOrEntity->cpf;
-                $usuario->apelido = $dataOrEntity->apelido;
-                $usuario->perfil_id = $NivelAcessoService->getPerfilDesenvolvedor()->id;
-                $usuario->save();
+                $usuarioExistente = Usuario::where('email', $dataOrEntity->email)
+                    ->first();
+                if (!$usuarioExistente) {
+                    $usuario->email = $dataOrEntity->email;
+                    $usuario->nome = $dataOrEntity->nome_usuario;
+                    $usuario->cpf = $dataOrEntity->cpf;
+                    $usuario->apelido = $dataOrEntity->apelido;
+                    $usuario->perfil_id = $NivelAcessoService->getPerfilDesenvolvedor()->id;
+                    $usuario->save();
+                }
             }
         }
+
 
         tenancy()->end();
         Log::info('Finalização do cadastro de tenant');
@@ -99,7 +105,7 @@ class TenantService extends ServiceBase
 
     private function inicializeTenant($tenantId): void
     {
-       
+
         $tenant = tenancy()->find($tenantId);
         ($tenant) ? tenancy()->initialize($tenant) : Log::error("Tenant não encontrado.");
     }
@@ -109,7 +115,7 @@ class TenantService extends ServiceBase
         DB::table('integracao_unidades')->truncate();
         DB::table('integracao_servidores')->truncate();
     }
-    
+
     public function generateCertificateKeys()
     {
         $certificate = openssl_pkey_new();
