@@ -30,10 +30,11 @@ class PlanoTrabalhoResource extends JsonResource
             "cod_unidade_executora"     => $this->unidade->codigo ?? null,
             "cpf_participante"          => $this->usuario->cpf ?? '',
             "matricula_siape"           => $this->usuario->matricula ?? '',
+            "cod_unidade_lotacao_participante" => $this->usuario->lotacao->unidade->codigo,
             "data_inicio"               => Carbon::parse($this->data_inicio)->format('Y-m-d'),
             "data_termino"              => Carbon::parse($this->data_fim)->format('Y-m-d'),
             "carga_horaria_disponivel"  => $diasUteis * $this->carga_horaria,
-            "contribuicoes"             => $this->entregas 
+            "contribuicoes"             => $this->entregas
                 ? PlanoTrabalhoContribuicaoResource::collection($this->entregas) 
                 : [],
             "avaliacoes_registros_execucao" => $this->consolidacoes

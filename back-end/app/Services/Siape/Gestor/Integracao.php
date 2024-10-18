@@ -60,6 +60,7 @@ class Integracao implements InterfaceIntegracao
     {
 
         if (empty($dado['id_chefe'])) {
+            //TODO mesmo se houver uma chefia, não será removida, manterá, previnido inconsistências de dados
             array_push($this->message['vazio'],  $dado['id_unidade']);
             $this->logSiape("Chefe não informado para a unidade " . $dado['id_unidade'], $dado, Tipo::WARNING);
             return;
@@ -78,25 +79,31 @@ class Integracao implements InterfaceIntegracao
         array_push($this->message['sucesso'], $dado['id_unidade']);
     }
 
+    /**
+     * @deprecated 2.31 this function will be removed
+     *
+     * @param array $dado
+     * @return void
+     */
     private function processaSubstituto(array $dado)
     {
-        if (empty($dado['id_substituto'])) {
-            array_push($this->message['vazio'],  $dado['id_unidade']);
-            $this->logSiape("Substituto não informado para a unidade " . $dado['id_unidade'], $dado, Tipo::WARNING);
-            return;
-        }
-        $unidadeExercicioId = $dado['id_unidade'];
-        $usuarioSubstituto = $this->userModel->find($dado['id_substituto']);
-        $atribuicoesAtuaisDoSubstituto = $usuarioSubstituto->getUnidadesAtribuicoesAttribute();
-        $substitutoAtribuicoes = $this->preparaSubstituto($atribuicoesAtuaisDoSubstituto, $unidadeExercicioId);
+        // if (empty($dado['id_substituto'])) {
+        //     array_push($this->message['vazio'],  $dado['id_unidade']);
+        //     $this->logSiape("Substituto não informado para a unidade " . $dado['id_unidade'], $dado, Tipo::WARNING);
+        //     return;
+        // }
+        // $unidadeExercicioId = $dado['id_unidade'];
+        // $usuarioSubstituto = $this->userModel->find($dado['id_substituto']);
+        // $atribuicoesAtuaisDoSubstituto = $usuarioSubstituto->getUnidadesAtribuicoesAttribute();
+        // $substitutoAtribuicoes = $this->preparaSubstituto($atribuicoesAtuaisDoSubstituto, $unidadeExercicioId);
 
-        $vinculoSubstituto = $this->preparaVinculo($dado['id_substituto'], $unidadeExercicioId, $substitutoAtribuicoes);
+        // $vinculoSubstituto = $this->preparaVinculo($dado['id_substituto'], $unidadeExercicioId, $substitutoAtribuicoes);
 
-        $this->logSiape("Salvando integrantes", $vinculoSubstituto, Tipo::INFO);
-        $this->unidadeIntegranteService->salvarIntegrantes($vinculoSubstituto, false);
+        // $this->logSiape("Salvando integrantes", $vinculoSubstituto, Tipo::INFO);
+        // $this->unidadeIntegranteService->salvarIntegrantes($vinculoSubstituto, false);
 
-        $this->alteraPerfilAdministradorNegocial($dado['id_substituto'], $usuarioSubstituto);
-        array_push($this->message['sucesso'], $dado['id_unidade']);
+        // $this->alteraPerfilAdministradorNegocial($dado['id_substituto'], $usuarioSubstituto);
+        // array_push($this->message['sucesso'], $dado['id_unidade']);
     }
 
 
