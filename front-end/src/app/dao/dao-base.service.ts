@@ -524,19 +524,19 @@ export class DaoBaseService<T extends Base> {
     return new Promise<T>((resolve, reject) => {
       try {
         this.server.post(this.PREFIX_URL + '/' + this.collection + '/store', {
-            entity: this.prepareToSave(entity, rellations),
-            with: join,
-          }).subscribe(
-            (response) => {
-              if (response.error) {
-                reject(response.error);
-              } else {
-                var rows: T[] = this.getRows(response);
-                resolve(rows[0]);
-              }
-            },
-            (error) => reject(error)
-          );
+          entity: this.prepareToSave(entity, rellations),
+          with: join,
+        }).subscribe({
+          next: (response) => {
+            if (response.error) {
+              reject(response.error);
+            } else {
+              const rows: T[] = this.getRows(response);
+              resolve(rows[0]);
+            }
+          },
+          error: (error) => reject(error)
+        });
       } catch (error) {
         reject(error);
       }
@@ -546,21 +546,22 @@ export class DaoBaseService<T extends Base> {
   public update(id: string, data: IIndexable, join: string[] = []): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       if (data.id) delete data.id;
+  
       this.server.post(this.PREFIX_URL + '/' + this.collection + '/update', {
-          id: id,
-          data: this.prepareToSave(data),
-          with: join,
-        }).subscribe(
-          (response) => {
-            if (response.error) {
-              reject(response.error);
-            } else {
-              var rows: T[] = this.getRows(response);
-              resolve(rows[0]);
-            }
-          },
-          (error) => reject(error)
-        );
+        id: id,
+        data: this.prepareToSave(data),
+        with: join,
+      }).subscribe({
+        next: (response) => {
+          if (response.error) {
+            reject(response.error);
+          } else {
+            const rows: T[] = this.getRows(response);
+            resolve(rows[0]);
+          }
+        },
+        error: (error) => reject(error)
+      });
     });
   }
 

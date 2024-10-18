@@ -33,6 +33,12 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
     { key: "SSL", value: "SSL" },
     { key: "TLS", value: "TLS" }
   ];
+
+  public smtp_encryption: LookupItem[] = [
+    { key: "", value: "Nenhum" },
+    { key: "SSL", value: "SSL" },
+    { key: "TLS", value: "TLS" }
+  ];
   
   tiposLogin = [
     { Tipo: 'Usuário/Senha', Web: '', API: '', Habilitado: true },
@@ -132,12 +138,19 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       modulo_sei_url: { default: "" },
       // API
       api_username: { default: "" },
-      api_password: { default: "" }
+      api_password: { default: "" },
+      //SMTP
+      smtp_host: { default: "" },
+      smtp_port: { default: 465 },
+      smtp_user: { default: "" },
+      smtp_password: { default: "" },
+      smtp_encryption: { default: "" },
     }, this.cdRef, this.validate);
     this.formLogin = this.fh.FormBuilder({
       Tipo: { default: "" },
       Web: { default: "" },
       API: { default: "" },
+      SMTP: { default: "" },
       Habilitado: { default: false }
     });
   }
@@ -202,11 +215,12 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
     let login = this.tiposLogin || [];
     formValue.login = login;
     form.patchValue(this.util.fillForm(formValue, entity));
+    this.updateSubdomain();
     form.get('api_password')?.setValue("");
   }
 
   public async initializeData(form: FormGroup) {
-    this.entity = (await this.dao!.getById(this.urlParams!.get("id")!, this.join))!;
+    this.entity = (await this.dao!.getById(this.urlParams!.get("id")!, this.join))!;    
     await this.loadData(this.entity, form);
   }
 

@@ -7,6 +7,7 @@ use App\Services\API_PGD\Resources\PlanoEntregaResource;
 use App\Services\API_PGD\DataSources\DataSource;
 use App\Services\API_PGD\DataSources\PlanoEntregaDataSource;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ExportarPlanoEntregasService extends ExportarService
 {
@@ -24,7 +25,7 @@ class ExportarPlanoEntregasService extends ExportarService
     }
 
     public function atualizarEntidade($id) {
-        echo "\nAtualizando Entrega $id";
+        Log::info("Atualizando Entrega $id");
         PlanoEntrega::where('id', $id)->update(array("data_envio_api_pgd"=> Carbon::now()));
     }
 }
