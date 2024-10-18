@@ -37,8 +37,9 @@ class ServerException extends Exception implements IBaseException
         "ValidateProgramaParticipante" => "Erro ao validar o Participante",
         "ValidatePrograma" => "Erro ao validar o Regramento",
         "ValidateProgramaDestroy" => "Este regramento possui planos de entrega ou planos de trabalho vinculados e não pode ser excluído, apenas encerrado",
+        "ValidateRelato" => "Erro ao enviar o relato",
         "ValidateUnidade" => "Erro ao validar Unidade",
-        "ValidateUsuario" => "Erro ao validar o usuário"
+        "ValidateUsuario" => "Erro ao validar o usuário",
     ];
 
     function __construct(string $code, string $extra = "") {

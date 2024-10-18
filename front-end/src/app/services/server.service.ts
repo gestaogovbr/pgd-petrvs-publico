@@ -90,12 +90,19 @@ export class ServerService {
     return request;
   }
 
-  public errorHandle(err: any, caught: Observable<Object>): ObservableInput<any> {
-    const httpError = err instanceof HttpErrorResponse;
-    if(httpError && [419, 401].includes(err.status)) {
-      this.auth.logOut();
+  public errorHandle(err: any, caught: Observable<Object>): Observable<never> {
+    if (err instanceof HttpErrorResponse) {
+      if ([419, 401].includes(err.status)) {
+        this.auth.logOut();
+      }
+  
+      if (err.status === 422) {
+        return throwError(() => ({ validationErrors: err.error.errors })) as Observable<never>;
+      }
     }
-    return throwError(err);
+  
+    // Retornar qualquer outro erro
+    return throwError(() => err) as Observable<never>;
   }
 
   private requestOptions(): any {
@@ -155,10 +162,10 @@ export class ServerService {
       this.batch.actions.push(action);
       result = action.response.asObservable();
     } else {
-      /* X-XSRF-TOKEN add from requestOptions because Angular do not add automatic */
-      result = this.http.post(this.gb.servidorURL + '/' + url, params, this.requestOptions());
-      /* Error handle */
-      result.pipe(catchError(this.errorHandle.bind(this)));
+      result = this.http.post(this.gb.servidorURL + '/' + url, params, this.requestOptions())
+      .pipe(
+        catchError(this.errorHandle.bind(this))
+      );
     }
     return result;
   }
