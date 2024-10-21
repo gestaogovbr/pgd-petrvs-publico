@@ -35,7 +35,7 @@ LOG_ERRORS=false
 BROADCAST_DRIVER=log
 CACHE_DRIVER=file
 FILESYSTEM_DRIVER=local
-QUEUE_CONNECTION=database
+QUEUE_CONNECTION=redis
 SESSION_LIFETIME=1200
 SESSION_DRIVER=custom-database
 SESSION_CONNECTION=mysql
@@ -48,7 +48,7 @@ SANCTUM_STATEFUL_DOMAINS=localhost:80,localhost:443
 
 MEMCACHED_HOST=127.0.0.1
 
-REDIS_HOST=127.0.0.1
+REDIS_HOST=petrvs_redis
 REDIS_PASSWORD=null
 REDIS_PORT=6379
 
@@ -74,6 +74,11 @@ PUSHER_APP_CLUSTER=mt1
 
 MIX_PUSHER_APP_KEY="\${PUSHER_APP_KEY}"
 MIX_PUSHER_APP_CLUSTER="\${PUSHER_APP_CLUSTER}"
+
+HORIZON_BASIC_AUTH_USERNAME=admin
+HORIZON_BASIC_AUTH_PASSWORD=6e4167ad9903aedd097b252ea0ec0629
+TELESCOPE_BASIC_AUTH_USERNAME=admin
+TELESCOPE_BASIC_AUTH_PASSWORD=6e4167ad9903aedd097b252ea0ec0629
 EOF
 fi
 
@@ -525,7 +530,7 @@ docker exec -it petrvs_php php artisan tinker --execute="App\\Models\\PainelUsua
 echo " "
 echo "Configuração completa. O administrador pode acessar o sistema com o email '$ADMIN_EMAIL'."
 echo " "
-echo -e "URL do panel: \e[34m$(grep -oP '^APP_URL=\K.*' .env)/#/panel\e[0m"
-echo -e "URL do sistema: \e[34m$(grep -oP '^APP_URL=\K.*' .env)/#/login\e[0m"
+echo -e "URL do panel: \e[34m$(grep -oP '^APP_URL=\K.*' .env)/panel\e[0m"
+echo -e "URL do sistema: \e[34m$(grep -oP '^APP_URL=\K.*' .env)/login\e[0m"
 
 #710267922367-hbup6m7jddgs6g298ahkbtjb6m5kiqri.apps.googleusercontent.com

@@ -14,6 +14,8 @@ import { PanelLayoutComponent } from './panel-layout/panel-layout.component';
 import { PanelAdminsListComponent } from './panel-admins-list/panel-admins-list.component';
 import { PanelAdminsFormComponent } from './panel-admins-form/panel-admins-form.component';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { PanelChangePasswordComponent } from './panel-change-password/panel-change-password.component';
+import {PanelEnvComponent} from "./panel-env/panel-env.component";
 
 
 @NgModule({
@@ -26,7 +28,9 @@ import { MultiSelectModule } from 'primeng/multiselect';
     PanelLayoutComponent,
     PanelAdminsListComponent,
     PanelAdminsFormComponent,
-    JobAgendadoComponent
+    PanelChangePasswordComponent,
+    JobAgendadoComponent,
+      PanelEnvComponent
   ],
     imports: [
         CommonModule,

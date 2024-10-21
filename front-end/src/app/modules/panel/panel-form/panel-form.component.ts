@@ -101,7 +101,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       login_azure_redirect_uri: { default: "" },
       login_login_unico_client_id: { default: "" },
       login_login_unico_secret: { default: "" },
-      login_login_unico_redirect: { default: "https://"+window.location.hostname+"/login-unico/" },
+      login_login_unico_redirect: { default: "" },
       login_login_unico_code_verifier: { default: "" },
       login_login_unico_code_challenge_method: { default: "" },
       login_login_unico_environment: { default: "staging" },
@@ -215,11 +215,12 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
     let login = this.tiposLogin || [];
     formValue.login = login;
     form.patchValue(this.util.fillForm(formValue, entity));
+    this.updateSubdomain();
     form.get('api_password')?.setValue("");
   }
 
   public async initializeData(form: FormGroup) {
-    this.entity = (await this.dao!.getById(this.urlParams!.get("id")!, this.join))!;
+    this.entity = (await this.dao!.getById(this.urlParams!.get("id")!, this.join))!;    
     await this.loadData(this.entity, form);
   }
 
@@ -238,6 +239,13 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
 
   public copiarPublicKeyClipboard() {
     this.util.copyToClipboard(this.form!.controls.modulo_sei_public_key.value);
+  }
+
+  public updateSubdomain(){
+    let domain = this.form?.controls.dominio_url?.value || '';
+    if (this.form && this.form.controls.login_login_unico_redirect) {
+      this.form.controls.login_login_unico_redirect.setValue("https://"+ domain +"/login-unico/");
+    }
   }
 
   get apiPasswordPlaceholder(): string {

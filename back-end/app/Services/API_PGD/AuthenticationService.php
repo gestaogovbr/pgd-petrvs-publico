@@ -3,12 +3,10 @@
 namespace App\Services\API_PGD;
 
 use App\Exceptions\BadRequestException as ExceptionsBadRequestException;
-use App\Exceptions\ExportPgdException;
 use App\Exceptions\LogError;
-use App\Exceptions\UnauthorizedException;
 use Illuminate\Support\Facades\Http;
-use App\Models\Tenant;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Log;
 
 class AuthenticationService
 {
@@ -25,7 +23,7 @@ class AuthenticationService
       'password' => config('pgd')['password']
     ];
 
-    $response = Http::withOptions(['verify' => false, 'timeout' => self::TIMEOUT])
+    $response = Http::withOptions(['timeout' => self::TIMEOUT])
       ->withHeaders($header)
       ->asForm()->post(config('pgd.host') . '/token', $formParams);
 
@@ -57,7 +55,7 @@ class AuthenticationService
                 $detail = json_decode($data['detail'], true);
               }
               
-              echo "Erro no tenant $tenantId: ".$detail[0]['msg'];
+              Log::error("Erro no tenant $tenantId: ".$detail[0]['msg']);
           } else {
               $response->throw();
           }
@@ -68,7 +66,8 @@ class AuthenticationService
 
       return $token;
     } catch(\Exception $e) {
-      LogError::newError("Erro ao obter Token da API PGD", $e);
+      Log::error("Erro ao obter Token da API PGD: ".$e->getMessage());
+      LogError::newError("Erro ao obter Token da API PGD: ");
       throw $e;
     }
   }

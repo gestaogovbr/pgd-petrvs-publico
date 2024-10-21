@@ -15,6 +15,9 @@ RUN apt-get install -y libssl-dev
 RUN apt-get install -y libxml2-dev
 RUN apt-get install -y sudo
 RUN apt-get install -y chrony
+RUN apt-get install -y libpng-dev
+RUN apt-get install -y libjpeg-dev cron supervisor \
+    && pecl install redis
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install mysqli
@@ -24,6 +27,8 @@ RUN docker-php-ext-install curl
 # Instalar openssl utilizando um workaround
 RUN docker-php-ext-install openssl || true
 RUN cp /usr/src/php/ext/openssl/config0.m4 /usr/src/php/ext/openssl/config.m4
+RUN docker-php-ext-install pcntl
+RUN docker-php-ext-enable redis
 RUN docker-php-ext-install openssl
 # cria diretorio do document-root
 WORKDIR /var/www
@@ -64,6 +69,7 @@ RUN chmod -R 1777 /tmp
 RUN chmod -R 755 ./
 RUN composer install --optimize-autoloader --no-dev
 COPY ../resources/dataprev/dev/entrypoint.sh ./entrypoint.sh
+COPY ../resources/dataprev/dev/horizon.conf /etc/supervisor/conf.d/horizon.conf
 
 # Alterando permissoes
 RUN chmod +x /var/www/entrypoint.sh

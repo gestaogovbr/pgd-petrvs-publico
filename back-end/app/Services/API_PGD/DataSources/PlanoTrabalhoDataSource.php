@@ -18,21 +18,19 @@ class PlanoTrabalhoDataSource extends DataSource
             'programa.unidadeAutorizadora',
             'unidade',
             'usuario',
-            'entregas',
-            'entregas.planoEntregaEntrega',
-            'entregas.planoEntregaEntrega.planoEntrega' => function ($query) {
-                $query->whereIn('status', ['CANCELADO', 'ATIVO', 'CONCLUIDO', 'AVALIADO']);
+            'entregas' => function ($query) {
+                $query->whereHas('planoEntregaEntrega.planoEntrega', function($query) {
+                    $query->whereIn('status', ['ATIVO', 'CONCLUIDO', 'AVALIADO']);
+                });
             },
             'entregas.planoTrabalho',
             'consolidacoes' => function ($query) {
-                $query->whereIn('status', ['CANCELADO', 'AVALIADO']);
+                $query->whereIn('status', ['AVALIADO']);
             },
             'consolidacoes.avaliacao'
         ])
         ->find($exportSource->id);
-        //->whereIn('status', ['CANCELADO', 'ATIVO', 'CONCLUIDO', 'AVALIADO', '']);
-
-
+      
         if (!$planoTrabalho->programa){
             throw new ExportPgdException('Plano de Trabalho não possui Programa');
         }
