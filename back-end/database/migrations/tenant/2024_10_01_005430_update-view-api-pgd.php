@@ -37,7 +37,7 @@ where
         and `pt`.`deleted_at` is null
     limit 1)
     and exists (
-        select * from petrvs_mgi.documentos_assinaturas da 
+        select * from documentos_assinaturas da 
         where da.usuario_id = `usuarios`.id
           and da.deleted_at is null
     )
