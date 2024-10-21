@@ -43,6 +43,8 @@ class Entidade extends ModelBase
     'forma_contagem_carga_horaria', /* enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; */ // Forma de contagem padrão da carga horária
     'expediente', /* json; NOT NULL; DEFAULT: '_utf8mb4\'{"domingo":[],"segunda":[],"terca":[],"quarta":[],"quinta":[],"sexta":[],"sabado":[],"especial":[]}\''; */ // Configuração de expediente
     //'deleted_at', /* timestamp; */
+    'email_responsavel_siape', /* varchar(100); NULL; */ // Email do Responsável pelas alterações no SIAPE (#818)
+    'email_remetente_siape', /* varchar(100); NULL; */ // Email do Remetente a enviar nos relatos de alterações no SIAPE (#818)
   ];
 
   public $delete_cascade = ['feriados'];

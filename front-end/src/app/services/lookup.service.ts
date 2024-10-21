@@ -222,8 +222,8 @@ export class LookupService implements IIndexable {
     { key: 'GESTOR_DELEGADO', value: "Servidor Delegado", icon: "bi bi-star-fill", color: "danger" },
     { key: 'GESTOR_SUBSTITUTO', value: "Chefe Substituto", icon: "bi bi-star-half", color: "primary" },
     //{ key: 'HOMOLOGADOR_PLANO_ENTREGA', value: "Homologador (Planos de Entrega)", icon: "bi bi-check2-square", color: "success" },
-    { key: 'CURADOR', value: "Curador", icon: "bi bi-person-badge-fill", color: "primary" },
-    { key: 'LOTADO', value: "Lotado", icon: "bi bi-file-person", color: "dark" }
+    //{ key: 'CURADOR', value: "Curador", icon: "bi bi-person-badge-fill", color: "primary" },
+    { key: 'LOTADO', value: "Lotado", icon: "bi bi-file-person", color: "dark", data: {indisponivel: true} }
   ];
 
   public TEMPLATE_ESPECIE: LookupItem[] = this.DOCUMENTO_ESPECIE;
@@ -835,6 +835,7 @@ export class LookupService implements IIndexable {
     //{ key: 'WSO2', value: 'Siape-PRF' },
     { key: 'SIAPE', value: 'API Consulta SIAPE' },
     { key: 'API', value: 'API de envio de dados' },
+    { key: 'SMTP', value: 'SMTP' },
   ];
 
   public GOV_BR_ENV: LookupItem[] = [

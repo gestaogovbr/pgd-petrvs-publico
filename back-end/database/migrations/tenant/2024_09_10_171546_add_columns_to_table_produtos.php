@@ -28,10 +28,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('produtos', function (Blueprint $table) {
-            $table->dropColumn('unidade_id');
-            $table->dropColumn('data_ativado');
-            $table->dropColumn('data_desativado');
-            $table->dropColumn('identificador');
+            $table->dropForeign(['unidade_id']);
+            
+
+            $table->dropColumn(['unidade_id', 'data_ativado', 'data_desativado', 'identificador']);
         });
     }
 };
