@@ -82,7 +82,7 @@ COPY ../resources/dataprev/dev/entrypoint.sh ./entrypoint.sh
 COPY ../resources/dataprev/dev/horizon.conf /etc/supervisor/conf.d/horizon.conf
 
 # Adiciona a entrada do cron
-# RUN echo "* * * * * cd /var/www/ && /usr/local/bin/php artisan schedule:run >> /var/www/storage/logs/schedule.log 2>&1" | crontab -
+RUN echo "* * * * * cd /var/www/ && /usr/local/bin/php artisan schedule:run >> /var/www/storage/logs/schedule.log 2>&1" | crontab -
 
 
 # Exponha a porta 80 para o servidor Apache
