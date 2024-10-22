@@ -171,7 +171,7 @@ return [
     |
     */
 
-    'memory_limit' => 64,
+    'memory_limit' => 128,
 
     /*
     |--------------------------------------------------------------------------
@@ -190,12 +190,21 @@ return [
             'queue' => ['default'],
             'balance' => 'auto',
             'maxProcesses' => 3,
-            'minProcesses' => 1,
-            'tries' => 3
+            'minProcesses' => 3,
+            'tries' => 3,
+            'timeout' => 90
+        ],
+        'supervisor-siape' => [
+            'connection' => 'siape_queue',
+            'queue' => ['siape_queue'],
+            'balance' => 'simple',
+            'processes' => 1,
+            'tries' => 1,
+            'timeout' => 60 * 60 * 24 * 2
         ],
     ],
 
-    'environments' => [
+    /*'environments' => [
         'production' => [
             'supervisor-1' => [
                 'maxProcesses' => 3,
@@ -209,9 +218,10 @@ return [
                 'connection' => 'redis',
                 'queue' => ['default'],
                 'balance' => 'simple',
-                'processes' => 3,
-                'tries' => 3
+                'processes' => 1,
+                'tries' => 1,
+                'timeout' => 60 * 60 * 24 * 2
             ],
         ],
-    ],
+    ],*/
 ];

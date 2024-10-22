@@ -5,6 +5,10 @@ RUN apt-get update
 RUN apt-get install -y sed vim git zlib1g-dev libzip-dev unzip curl openssl libssl-dev libxml2-dev nano iputils-ping dnsutils telnet libpng-dev
 RUN apt-get install -y libjpeg-dev cron supervisor \
     && pecl install redis
+
+# Instalar o cliente MySQL para utilizar o mysqldump
+RUN apt-get install -y default-mysql-client
+
 # Bibliotecas php
 RUN docker-php-ext-install zip pdo_mysql mysqli pdo_mysql soap gd
 # instala openssl utilizando um workaround

@@ -18,6 +18,10 @@ RUN apt-get install -y chrony
 RUN apt-get install -y libpng-dev
 RUN apt-get install -y libjpeg-dev cron supervisor \
     && pecl install redis
+
+# Instalar o cliente MySQL para utilizar o mysqldump
+RUN apt-get install -y default-mysql-client
+
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install mysqli
@@ -78,7 +82,7 @@ COPY ../resources/dataprev/dev/entrypoint.sh ./entrypoint.sh
 COPY ../resources/dataprev/dev/horizon.conf /etc/supervisor/conf.d/horizon.conf
 
 # Adiciona a entrada do cron
-RUN echo "* * * * * cd /var/www/ && /usr/local/bin/php artisan schedule:run >> /var/www/storage/logs/schedule.log 2>&1" | crontab -
+# RUN echo "* * * * * cd /var/www/ && /usr/local/bin/php artisan schedule:run >> /var/www/storage/logs/schedule.log 2>&1" | crontab -
 
 
 # Exponha a porta 80 para o servidor Apache

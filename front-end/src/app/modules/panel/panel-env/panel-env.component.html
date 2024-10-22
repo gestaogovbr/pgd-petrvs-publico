@@ -1,0 +1,13 @@
+<form [formGroup]="formGroup">
+    <separator title="CENTRAL_DOMAINS">
+        <div class="row">
+            <input-textarea [rows]="5" label="URLs" controlName="CENTRAL_DOMAINS"></input-textarea>
+        </div>
+    </separator>
+
+    <separator title="">
+        <button class="btn btn-outline-primary botao-suporte rounded btn-sm" (click)="updateEnv()">
+            Salvar
+        </button>
+    </separator>
+</form>
