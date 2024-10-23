@@ -91,9 +91,7 @@ services:
       - appnet
 
   petrvs_scheduler:
-    build:
-      context: .
-      dockerfile: Dockerfile-php
+    image: segescginf/pgdpetrvs:latest
     container_name: petrvs_scheduler
     environment:
       - TZ=America/Bahia

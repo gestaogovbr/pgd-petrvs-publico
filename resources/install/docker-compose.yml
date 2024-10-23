@@ -1,13 +1,13 @@
 version: "3.9"
 services:
   petrvs_php:
-    image: segescginf/pgdpetrvs-develop:dsv
+    image: segescginf/pgdpetrvs:latest
     container_name: petrvs_php
     ports:
       - "80:80"
       - "443:443"
     environment:
-      - TZ=America/Bahia
+      - TZ=America/Sao_Paulo
       - REDIS_HOST=petrvs_redis
     deploy:
       resources:
@@ -16,6 +16,7 @@ services:
           memory: 2048M
     depends_on:
       - petrvs_redis
+      - petrvs_db
     volumes:
       - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
 
@@ -41,15 +42,25 @@ services:
       - "6379:6379"
 
   petrvs_queue:
-    image: segescginf/pgdpetrvs-develop:dsv
+    image: segescginf/pgdpetrvs:latest
     container_name: petrvs_queue
     environment:
-      - TZ=America/Bahia
+      - TZ=America/Sao_Paulo
     command: ["supervisord", "-c", "/etc/supervisor/conf.d/horizon.conf"]
     depends_on:
       - petrvs_php
     volumes:
       - "./.env:/var/www/.env"
+
+  petrvs_scheduler:
+    image: segescginf/pgdpetrvs:latest
+    container_name: petrvs_scheduler
+    environment:
+      - TZ=America/Sao_Paulo
+    command: > 
+      /bin/sh -c "while :; do php /var/www/artisan schedule:run >> /var/www/storage/logs/scheduler.log 2>&1; sleep 60; done"
+    depends_on:
+      - petrvs_php
 
 volumes:
   data:
