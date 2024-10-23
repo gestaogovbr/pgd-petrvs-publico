@@ -103,7 +103,7 @@ class TenantService extends ServiceBase
         BuscarDadosSiapeJob::dispatch($tenantId);
     }
 
-    private function inicializeTenant($tenantId): void
+    public function inicializeTenant($tenantId): void
     {
 
         $tenant = tenancy()->find($tenantId);

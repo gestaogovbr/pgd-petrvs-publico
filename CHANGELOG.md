@@ -1,3 +1,5 @@
+## 2.3.1 23/10/2024 (Hotfixes)
+
 ## 2.3.0 - 18/10/2024
 ### Modificado
  - Modificação da busca dos dados do SIAPE, com tabelas auxiliares

@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Services\TenantService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class RunBuscaDadosAssincronosJob extends Command
 {
@@ -31,8 +33,16 @@ class RunBuscaDadosAssincronosJob extends Command
             return;
         }
 
+        try {
+            $tenantService = new TenantService();
+        $tenantService->inicializeTenant($tenantId);
+
         $classe = new \App\Jobs\BuscarDadosSiapeJob($tenantId);
         $classe->handle();
         $this->info('Job executado com sucesso.');
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage(), [$th]);
+            $this->error('erro ao buscar dados no tenant: '.$tenantId);
+        }
     }
 }
