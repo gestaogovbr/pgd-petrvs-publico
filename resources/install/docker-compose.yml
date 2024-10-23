@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  petrvs_db:
+  mariadb:
     image: mariadb:latest
     container_name: petrvs_db
     ports:
@@ -10,9 +10,6 @@ services:
       - ./my.cnf:/etc/mysql/my.cnf  # Certifique-se que este arquivo está corretamente configurado
     environment:
       MYSQL_ROOT_PASSWORD: rootpgd   # Define a senha para o root
-      MYSQL_DATABASE: petrvs       # Cria automaticamente o banco 'petrvs'
-      MYSQL_USER: root             # Usuário root
-      MYSQL_PASSWORD: rootpgd        # Senha para o usuário root
   petrvs_php:
     image: segescginf/pgdpetrvs:latest  # Substitua pela sua imagem real
     container_name: petrvs_php
