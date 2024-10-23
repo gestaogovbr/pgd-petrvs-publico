@@ -308,9 +308,9 @@ ask_mariadb() {
                 DOCKER_COMPOSE_CONTENT="
 version: '3.9'
 services:
-  petrvs_db:
+  mariadb:
     image: mariadb:latest
-    container_name: petrvs_db
+    container_name: mariadb
     ports:
       - '3306:3306'
     volumes:
