@@ -10,6 +10,9 @@ use Ramsey\Uuid\Uuid;
 use App\Models\Perfil;
 use App\Models\Unidade;
 use App\Models\Usuario;
+use App\Models\SiapeDadosUORG;
+use App\Models\SiapeConsultaDadosPessoais;
+use App\Models\SiapeConsultaDadosFuncionais;
 use App\Exceptions\LogError;
 use App\Services\ServiceBase;
 use App\Models\IntegracaoUnidade;
@@ -1021,4 +1024,18 @@ class IntegracaoService extends ServiceBase
     });
     return $b;
   }
+
+  public function buscaProcessamentosPendentes(): array    
+  {
+    $siapeDadosUORG = SiapeDadosUORG::where('processado', 0)->count() > 1;
+    $siapeDadosPessoais = SiapeConsultaDadosPessoais::where('processado', 0)->count() > 1;
+    $siapeDadosFuncionais = SiapeConsultaDadosFuncionais::where('processado', 0)->count() > 1;
+
+    return [
+      'siapeDadosUORG' => $siapeDadosUORG,
+      'siapeDadosPessoais' => $siapeDadosPessoais,
+      'siapeDadosFuncionais' => $siapeDadosFuncionais
+    ];
+  }
+
 }
