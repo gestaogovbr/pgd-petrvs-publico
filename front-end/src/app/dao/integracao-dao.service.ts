@@ -23,4 +23,15 @@ export class IntegracaoDaoService extends DaoBaseService<Integracao> {
       });
     });
   }
+
+  public buscaProcessamentosPendentes() {
+    return new Promise<any>((resolve, reject) => {
+      this.server.get('api/Integracao/busca-processamentos-pendentes').subscribe(response => {
+        resolve(response);
+      }, error => {
+        console.log("Erro ao buscar os processamentos pendentes!", error);
+        resolve([]);
+      });
+    });
+  }
 }
