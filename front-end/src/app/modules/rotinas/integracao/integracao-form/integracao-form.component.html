@@ -6,6 +6,12 @@
             <input-text #usuario [size]="5" label="Usuário" icon="bi bi-upc" controlName="usuario_id" [control]="form!.controls.usuario_id" [attr.maxlength]=250></input-text>
             <input-datetime datetime [size]="3" label="Execução" icon="bi bi-calendar-date" controlName="data_execucao" [control]="form!.controls.data_execucao"></input-datetime>
         </div>
+
+        <div class="alert alert-info">
+            <p>Esta rotina é responsável por integrar as informações de unidades, servidores e gestores do SIAPE com o sistema.</p>
+            <p><strong>A rotina somente fará o processamento dos dados já baixados. Caso queira atualizar os dados, faça isso pelo Agendador no Painel Saas.</strong></p>
+        </div>
+
         <div class="row" *ngIf="formDisabled">
             <separator title="UNIDADES" [collapse]="'collapse'" class="mt-2">
                 <div class="row">
@@ -58,13 +64,7 @@
                     <input-switch [disabled]="!this.util.isDeveloper() ? 'disabled' : undefined" labelPosition="right" [size]="4" label="Gestores" controlName="atualizar_gestores" [control]="form!.controls.atualizar_gestores" ></input-switch>
                 </separator>
             </div>
-            <div class="row mt-4" >
-                <separator title="Com relação aos dados atualizados...(*)">
-                    <span class="badge rounded-pill bg-info text-dark">(*) Não funciona em ambientes de Produção / Homologação</span>
-                    <input-switch [disabled]="production ? 'disabled' : undefined" labelPosition="right" [size]="4" label="Usar arquivos locais" controlName="usar_arquivos_locais" [control]="form!.controls.usar_arquivos_locais" labelInfo="Selecione se os dados para atualização devem ser lidos de um arquivo local"></input-switch>
-                    <input-switch [disabled]="production ? 'disabled' : undefined" labelPosition="right" [size]="4" label="Gravar em arquivos locais" controlName="gravar_arquivos_locais" [control]="form!.controls.gravar_arquivos_locais" labelInfo="Selecione se os dados atualizados devem ser salvos em um arquivo local"></input-switch>
-                </separator>
-            </div>
+            
         </separator>
     </div>
 </editable-form>

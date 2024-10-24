@@ -157,6 +157,7 @@ Route::middleware(['auth:sanctum'])->prefix('Integracao')->group(function () {
   Route::post('destroy', [IntegracaoController::class, 'destroy']);
   Route::post('showResponsaveis', [IntegracaoController::class, 'showResponsaveis']);
   Route::post('get-by-id', [IntegracaoController::class, 'getById']);
+  Route::get('busca-processamentos-pendentes', [IntegracaoController::class, 'buscaProcessamentosPendentes']);
 });
 
 /* Testes */
