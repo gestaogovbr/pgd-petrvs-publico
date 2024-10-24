@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM php:8.1-apache
+FROM php:8.2-apache
 # instala recursos adicionais
 RUN apt-get update
 RUN apt-get install -y sed
@@ -18,18 +18,22 @@ RUN apt-get install -y chrony
 RUN apt-get install -y libpng-dev
 RUN apt-get install -y libjpeg-dev cron supervisor \
     && pecl install redis
+
+# Instalar o cliente MySQL para utilizar o mysqldump
+RUN apt-get install -y default-mysql-client
+
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install mysqli
 RUN docker-php-ext-enable pdo_mysql
 RUN docker-php-ext-install soap
 RUN docker-php-ext-install curl
+RUN docker-php-ext-install gd
 # Instalar openssl utilizando um workaround
 RUN docker-php-ext-install openssl || true
 RUN cp /usr/src/php/ext/openssl/config0.m4 /usr/src/php/ext/openssl/config.m4
 RUN docker-php-ext-install pcntl
 RUN docker-php-ext-enable redis
-RUN docker-php-ext-install openssl
 # cria diretorio do document-root
 WORKDIR /var/www
 RUN mkdir /etc/apache2/ssl
@@ -43,9 +47,9 @@ COPY ../resources/docker/producao/configuracoes/certificados/certificate.crt /et
 COPY ../resources/docker/producao/configuracoes/certificados/private.key /etc/apache2/ssl/private.key
 COPY ../resources/docker/producao/configuracoes/chrony/chrony.conf /etc/chrony/chrony.conf
 # copia arquivos de configuracao
-COPY ../resources/dataprev/dev/apache2.conf /etc/apache2/apache2.conf
-COPY ../resources/dataprev/dev/000-default.conf /etc/apache2/sites-available/000-default.conf
-COPY ../resources/dataprev/dev/cacert.pem /usr/local/etc/php/cacert.pem
+COPY ../resources/deploy/apache2.conf /etc/apache2/apache2.conf
+COPY ../resources/deploy/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY ../resources/deploy/cacert.pem /usr/local/etc/php/cacert.pem
 # instala o composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 RUN php composer-setup.php --install-dir=/usr/local/bin --filename=composer
@@ -57,25 +61,29 @@ RUN a2enmod headers
 RUN a2ensite default-ssl
 # Rodar script com configurações do modo produção
 RUN service chrony restart
-COPY ../resources/dataprev/dev/setup_production.sh /root/setup_production.sh
+COPY ../resources/deploy/setup_production.sh /root/setup_production.sh
 RUN chmod a+x /root/setup_production.sh
 RUN /root/setup_production.sh
 #Instalacao
 # Copia do projeto back
 COPY ../../../back-end/ ./
-# Configure as permissões do diretório temporário
+# Configurar permissões do diretório temporário
 RUN chmod -R 1777 /tmp
-# Configure as permissões do diretório do seu projeto
-RUN chmod -R 755 ./
-RUN composer install --optimize-autoloader --no-dev
-COPY ../resources/dataprev/dev/entrypoint.sh ./entrypoint.sh
-COPY ../resources/dataprev/dev/horizon.conf /etc/supervisor/conf.d/horizon.conf
 
-# Alterando permissoes
-RUN chmod +x /var/www/entrypoint.sh
-RUN chown -R www-data:www-data /var/www
-RUN sudo chmod 775 /var/www/storage -R
-RUN sudo chmod 775 /var/www/public
+# Configurar permissões do diretório do projeto
+RUN chmod -R 755 ./
+
+# Ajustar permissões dos diretórios necessários
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/public
+
+RUN composer install --optimize-autoloader --no-dev
+
+COPY ../resources/deploy/entrypoint.sh ./entrypoint.sh
+COPY ../resources/deploy/horizon.conf /etc/supervisor/conf.d/horizon.conf
+
+# Adiciona a entrada do cron
+RUN echo "* * * * * cd /var/www/ && /usr/local/bin/php artisan schedule:run >> /var/www/storage/logs/schedule.log 2>&1" | crontab -
+
 
 # Exponha a porta 80 para o servidor Apache
 EXPOSE 80

@@ -70,7 +70,7 @@ return [
     |
     */
 
-    'middleware' => ['web', 'horizonBasicAuth'],
+    'middleware' => ['web', 'panel'],
 
     'basic_auth' => [
         'username' => env('HORIZON_BASIC_AUTH_USERNAME'),

@@ -10,6 +10,9 @@ use Ramsey\Uuid\Uuid;
 use App\Models\Perfil;
 use App\Models\Unidade;
 use App\Models\Usuario;
+use App\Models\SiapeDadosUORG;
+use App\Models\SiapeConsultaDadosPessoais;
+use App\Models\SiapeConsultaDadosFuncionais;
 use App\Exceptions\LogError;
 use App\Services\ServiceBase;
 use App\Models\IntegracaoUnidade;
@@ -308,25 +311,7 @@ class IntegracaoService extends ServiceBase
     if (!empty($inputs['unidades']) && $inputs['unidades'] && !empty($entidade_id)) {
       $this->logSiape("Iniciando sincronização de Unidades", [], Tipo::INFO);
       try {
-        $uos = [];
-        if ($this->integracao_config["tipo"] == "SIAPE") {
-          $uos = $this->IntegracaoSiapeService->retornarUorgs()["uorg"];
-        } else {
-          if ($this->useLocalFiles) { // Se for para usar os arquivos locais, a rotina lê os dados do arquivo salvo localmente.
-            $xmlStream = mb_convert_encoding(file_get_contents(base_path($this->localUnidades)), 'UTF-8', 'ISO-8859-1');
-          } else { // Caso contrário, a rotina vai buscar no servidor do SIGEPE.
-            $url = $this->integracao_config["baseUrlunidades"];
-            $response = $this->consultarApiSigepe($token, $url);
-            $xmlStream = $response->body();
-            if ($this->storeLocalFiles) { // Aqui decide se salva ou não em arquivo as informações trazidas do servidor do SIGEPE.
-              if (file_exists(base_path($this->localUnidades))) unlink(base_path($this->localUnidades));
-              file_put_contents(base_path($this->localUnidades), $xmlStream);
-            }
-          }
-          $xml = simplexml_load_string($xmlStream);
-          $uos = $this->UtilService->object2array($xml)["uorg"];
-          $this->logSiape("Após buscar unidades no SIAPE", $uos, Tipo::INFO);
-        }
+        $uos = $this->IntegracaoSiapeService->retornarUorgs()["uorg"];
         if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de obtenção dos dados das unidades informados pelo SIAPE!.....");
 
         DB::transaction(function () use (&$uos, &$self) {
@@ -341,11 +326,6 @@ class IntegracaoService extends ServiceBase
             if ($this->integracao_config["tipo"] == "SIAPE") {
               $uorg_siape_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["data_modificacao"]));
             }
-            else if ($this->integracao_config["tipo"] == "WSO2") {
-                $uorg_siape_data_modificacao = $self->UtilService->valueOrDefault($uo["datamodificacao"]);
-                $uorg_siape_data_modificacao = date_create($uorg_siape_data_modificacao);
-                $uorg_siape_data_modificacao = date_format($uorg_siape_data_modificacao, "Y-m-d H:i:s");
-            };
 
             // Não apagar o comentário, por favor. :)
             # $uorg_siape_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["data_modificacao"]));
@@ -540,24 +520,7 @@ class IntegracaoService extends ServiceBase
       $this->logSiape("Iniciando sincronização de Servidores", [], Tipo::INFO);
       try {
         $servidores = [];
-        if ($this->integracao_config["tipo"] == "SIAPE") {
           $servidores = $this->IntegracaoSiapeService->retornarServidores()["Pessoas"];
-        } else {
-          if ($this->useLocalFiles) {
-            $xmlStream = mb_convert_encoding(file_get_contents(base_path($this->localServidores)), 'UTF-8', 'ISO-8859-1');
-          } else {
-            $url = $this->integracao_config["baseUrlpessoas"];
-            $response = $this->consultarApiSigepe($token, $url);
-            $xmlStream = $response->body();
-            if ($this->storeLocalFiles) {
-              if (file_exists(base_path($this->localServidores))) unlink(base_path($this->localServidores));
-              file_put_contents(base_path($this->localServidores), $xmlStream);
-            }
-          }
-          $xml = simplexml_load_string($xmlStream);
-          $servidores = $this->UtilService->object2array($xml)["Pessoa"];
-          $this->logSiape("Após buscar servidores no SIAPE", $servidores, Tipo::INFO);
-        }
         $this->logSiape("Concluída a fase de obtenção dos dados dos servidores informados pelo SIAPE", [], Tipo::INFO);
         if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de obtenção dos dados dos servidores informados pelo SIAPE.....");
 
@@ -966,25 +929,7 @@ class IntegracaoService extends ServiceBase
     }
   }
 
-  public function consultarApiSigepe($token, $url)
-  {
-    $response = Http::withToken($token)->withOptions([
-      'allow_redirects' => false,
-      'verify' => $this->validaCertificado
-    ])->get($url);
-
-    LogError::newError("IntegracaoService: Consulta à API do SIAPE", [
-      'url' => $url,
-      'status' => $response->status(),
-      'response' => $response->body()
-    ]);
-
-    if ($response->failed()) $response->throw();
-    if ($response->status() >= 300 && $response->status() < 400) $response = $this->consultarApiSigepe($token, $response->header('Location'));
-    return $response;
-  }
-
-  public function atualizaLogs($user_id, string $table_name, string $row_id, string $type, array $delta)
+    public function atualizaLogs($user_id, string $table_name, string $row_id, string $type, array $delta)
   {
     /*
       $change = DB::connection('log');
@@ -1021,4 +966,18 @@ class IntegracaoService extends ServiceBase
     });
     return $b;
   }
+
+  public function buscaProcessamentosPendentes(): array    
+  {
+    $siapeDadosUORG = SiapeDadosUORG::where('processado', 0)->count() > 1;
+    $siapeDadosPessoais = SiapeConsultaDadosPessoais::where('processado', 0)->count() > 1;
+    $siapeDadosFuncionais = SiapeConsultaDadosFuncionais::where('processado', 0)->count() > 1;
+
+    return [
+      'siapeDadosUORG' => $siapeDadosUORG,
+      'siapeDadosPessoais' => $siapeDadosPessoais,
+      'siapeDadosFuncionais' => $siapeDadosFuncionais
+    ];
+  }
+
 }
