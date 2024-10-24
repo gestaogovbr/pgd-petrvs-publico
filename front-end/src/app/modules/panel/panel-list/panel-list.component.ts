@@ -114,11 +114,11 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 					{metadata: {tenant_id: tenant.id}}
 				),
 		});
-		this.options.push({
-			icon: "bi bi-cloud-arrow-down-fill",
-			label: "Dump",
-            onClick: this.databaseDump.bind(this),
-		});
+		// this.options.push({
+		// 	icon: "bi bi-cloud-arrow-down-fill",
+		// 	label: "Dump",
+        //     onClick: this.databaseDump.bind(this),
+		// });
 	}
 
 	async onLoad() {

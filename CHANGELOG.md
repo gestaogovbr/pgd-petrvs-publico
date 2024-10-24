@@ -1,3 +1,14 @@
+## 2.3.1 23/10/2024 (Hotfixes)
+### Adicionado
+ - Migrate para agendar os JOBS do SIAPE automaticamente
+### Corrigido
+ - Ajuste da fila de JOBS
+### Modificado
+ - Adicionado validação na tela de execução do SIAPE
+### Removido
+ - Módulo dump do tenant no painel
+ - Retirado código de integração da chefia substituta
+ - Arquivos obsoletos
 ## 2.3.0 - 18/10/2024
 ### Modificado
  - Modificação da busca dos dados do SIAPE, com tabelas auxiliares
