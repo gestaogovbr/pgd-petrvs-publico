@@ -9,6 +9,8 @@
  - Módulo dump do tenant no painel
  - Retirado código de integração da chefia substituta
  - Arquivos obsoletos
+### Obsoleto
+ - LogChanges 
 ## 2.3.0 - 18/10/2024
 ### Modificado
  - Modificação da busca dos dados do SIAPE, com tabelas auxiliares

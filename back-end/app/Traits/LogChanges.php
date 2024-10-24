@@ -10,6 +10,11 @@ use App\Services\UtilService;
 use App\Services\ServiceBase;
 use stdClass;
 
+/**
+ * @deprecated Não usar mais, pois o pacote de auditoria está sendo utilizado.
+ * Trait LogChanges
+ * @package App\Traits
+ */
 trait LogChanges
 {
     public static $x = 1;
