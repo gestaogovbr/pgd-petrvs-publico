@@ -17,6 +17,7 @@ yarn-error.log
 /composer.lock
 /package-lock.json
 /public/index.html
+/storage/logs
 
 # managed
 **.data.json
