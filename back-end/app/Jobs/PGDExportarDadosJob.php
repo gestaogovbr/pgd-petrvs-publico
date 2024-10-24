@@ -15,6 +15,8 @@ class PGDExportarDadosJob extends JobWithoutTenant implements ContratoJobSchedul
     public function __construct()
     {
         Log::info("PGDExportarDadosJob:construct");
+
+        $this->queue = 'pgd_queue';
     }
 
     public static function getDescricao(): string

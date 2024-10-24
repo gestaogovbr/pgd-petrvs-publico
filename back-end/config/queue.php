@@ -81,6 +81,16 @@ return [
             'block_for' => null,
             'after_commit' => false,
             'timeout' => 60 * 60 * 24 * 2
+        ],
+        
+        'pgd_queue' => [
+            'driver' => 'redis',
+            'connection' => 'default',
+            'queue' => 'pgd_queue',
+            'retry_after' => 60 * 60 * 3,
+            'block_for' => null,
+            'after_commit' => false,
+            'timeout' => 60 * 60 * 3
         ]
     ],
 

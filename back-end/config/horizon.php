@@ -202,6 +202,14 @@ return [
             'tries' => 1,
             'timeout' => 60 * 60 * 24 * 2
         ],
+        'supervisor-pgd' => [
+            'connection' => 'pgd_queue',
+            'queue' => ['pgd_queue'],
+            'balance' => 'simple',
+            'processes' => 3,
+            'tries' => 3,
+            'timeout' => 60 * 60 * 3
+        ],
     ],
 
     /*'environments' => [
