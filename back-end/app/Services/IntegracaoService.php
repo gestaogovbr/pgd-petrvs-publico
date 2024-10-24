@@ -322,10 +322,7 @@ class IntegracaoService extends ServiceBase
             $query_iu = DB::table('integracao_unidades')->where('id_servo', $uorg_codigo);
             $query_u = DB::table('unidades')->where('codigo', $uorg_codigo);
 
-            $uorg_siape_data_modificacao = null;
-            if ($this->integracao_config["tipo"] == "SIAPE") {
-              $uorg_siape_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["data_modificacao"]));
-            }
+            $uorg_siape_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["data_modificacao"]));
 
             // Não apagar o comentário, por favor. :)
             # $uorg_siape_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["data_modificacao"]));
@@ -805,7 +802,7 @@ class IntegracaoService extends ServiceBase
         DB::beginTransaction();
 
         $chefes = [];
-        if ($this->integracao_config["tipo"] == "SIAPE") {
+       
 
       $chefes = DB::table('integracao_unidades as iu')
           ->join('unidades as u', 'iu.codigo_siape', '=', 'u.codigo')
@@ -836,8 +833,6 @@ class IntegracaoService extends ServiceBase
         })
         ->toArray();
 
-
-        } 
         if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de montagem do array de chefias!.....");
 
         $integracaoChefia = new GestorIntegracao(
