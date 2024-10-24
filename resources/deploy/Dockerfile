@@ -17,10 +17,7 @@ RUN apt-get install -y sudo
 RUN apt-get install -y chrony
 RUN apt-get install -y libpng-dev
 RUN apt-get install -y libjpeg-dev cron supervisor \
-    && pecl install redis
-
-# Instalar o cliente MySQL para utilizar o mysqldump
-RUN apt-get install -y default-mysql-client
+    && pecl install redis && default-mysql-client
 
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install pdo_mysql
