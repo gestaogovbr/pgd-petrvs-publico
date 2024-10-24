@@ -71,7 +71,7 @@ class Integracao implements InterfaceIntegracao
         $unidadeExercicioId = $dado['id_unidade'];
         $chefeAtribuicoes = $this->preparaChefia($atribuicoesAtuaisDaChefia, $unidadeExercicioId);
 
-        $this->logSiape(sprintf("atribuições do usuário: %s na unidade %s", $dado['id_chefe'], $dado['id_unidade']). $chefeAtribuicoes);
+        $this->logSiape(sprintf("atribuições do usuário: %s na unidade %s", $dado['id_chefe'], $dado['id_unidade']), $chefeAtribuicoes);
 
         $vinculo = $this->preparaVinculo($dado['id_chefe'], $unidadeExercicioId, $chefeAtribuicoes);
 
