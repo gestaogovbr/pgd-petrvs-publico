@@ -115,6 +115,10 @@ abstract class ExportarService
         Log::error("[{$source->tipo}] ID {$source->id} - ERRO!");
         Log::error("Mensagem: ".$message);
 
+        $envioItem->sucesso = false;
+        $envioItem->erros = $message;
+        $envioItem->save();
+
         $this->falhas++;
 
         LogError::newError(
