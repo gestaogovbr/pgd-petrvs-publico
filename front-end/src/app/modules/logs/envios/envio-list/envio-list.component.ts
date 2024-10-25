@@ -1,7 +1,6 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { EnvioDaoService } from 'src/app/dao/envio-dao.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
@@ -15,7 +14,6 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 })
 export class EnvioListComponent extends PageListBase<Envio, EnvioDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-  @ViewChild(InputSelectComponent, { static: false }) public selectResponsaveis?: InputSelectComponent;
 
   public allPages: ListenerAllPagesService;
 
@@ -48,9 +46,11 @@ export class EnvioListComponent extends PageListBase<Envio, EnvioDaoService> {
     if(form.data_inicio){
       result.push(["created_at", ">=", form.data_inicio]);
     };
+
     if(form.data_fim){
       result.push(["created_at", "<=", form.data_fim]);
     };
+
     return result;
   }
 

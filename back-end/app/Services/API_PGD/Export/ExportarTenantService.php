@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Log;
 
 class ExportarTenantService
 {
+    private $envio;
+
     public function __construct(
         private readonly AuthenticationService $authService,
         private readonly PlanoTrabalhoAuditSource   $planoTrabalhoAuditSource,
@@ -33,17 +35,17 @@ class ExportarTenantService
         $tenant = tenancy()->find($tenantId);
         tenancy()->initialize($tenant);
 
-        $envio = new Envio;
-        $envio->save();
+        $this->envio = new Envio;
+        $this->envio->save();
 
         try {
 
             if (!$tenant['api_username'] or !$tenant['api_password']) {
                 $errorMsg = 'Usuário ou senha da API PGD não definidos no Tenant '.$tenantId;
                 LogError::newError($errorMsg);
-                $envio->erros = 'Usuário ou senha da API PGD não definidos';
-                $envio->finished_at = now();
-                $envio->save();
+                $this->envio->erros = 'Usuário ou senha da API PGD não definidos';
+                $this->envio->finished_at = now();
+                $this->envio->save();
                 throw new ExportPgdException($errorMsg);
             }
 
@@ -51,30 +53,30 @@ class ExportarTenantService
 
             $this->exportarParticipanteService
                 ->setToken($token)
-                ->setEnvio($envio)
+                ->setEnvio($this->envio)
                 ->load($this->participanteAuditSource->getData())
                 ->enviar();
 
             $this->exportarPlanoEntregasService
                 ->setToken($token)
-                ->setEnvio($envio)
+                ->setEnvio($this->envio)
                 ->load($this->planoEntregaAuditSource->getData())
                 ->enviar();
             
             $this->exportarPlanoTrabalhoService
                 ->setToken($token)
-                ->setEnvio($envio)
+                ->setEnvio($this->envio)
                 ->load($this->planoTrabalhoAuditSource->getData())
                 ->enviar();
 
-            $envio->finished_at = now();
-            $envio->sucesso = true;
-            $envio->save();
+            $this->envio->finished_at = now();
+            $this->envio->sucesso = true;
+            $this->envio->save();
         
         } catch (\Exception $exception) {
-            $envio->erros = $exception->getMessage();
-            $envio->finished_at = now();
-            $envio->save();
+            $this->envio->erros = $exception->getMessage();
+            $this->envio->finished_at = now();
+            $this->envio->save();
             
             LogError::newError(
                 "Erro ao sincronizar com o PGD: ", 
@@ -99,5 +101,9 @@ class ExportarTenantService
         Log::info("Planos de Trabalho com sucesso: ".$this->exportarPlanoTrabalhoService->getSucessos());
         Log::info("Planos de Trabalho com falhas: ".$this->exportarPlanoTrabalhoService->getFalhas());
         Log::info("** FINALIZADO!");
+
+        $this->envio->erros = 'Finalizado com sucesso';
+        $this->envio->finished_at = now();
+        $this->envio->save();
     }
 }

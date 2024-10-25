@@ -19,7 +19,7 @@
         </column>
         <column title="Sucesso" field="sucesso" [width]="20" [template]="columnDataSucesso">
             <ng-template let-row="row" #columnDataSucesso>
-                <span><small>{{ util.getBooleanFormatted(row.sucesso) }}</small></span>
+                <span><small>{{ util.getBooleanFormatted(row.sucesso).toUpperCase() }}</small></span>
             </ng-template>
         </column>
         <column *ngIf="!selectable" type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
