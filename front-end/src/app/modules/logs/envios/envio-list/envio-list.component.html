@@ -1,0 +1,28 @@
+<grid [dao]="dao" [hasEdit]="false" [title]="isModal ? '' : title" [orderBy]="orderBy">
+    <toolbar></toolbar>
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-datetime [size]="3" datetime label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Início da pesquisa"></input-datetime>
+            <input-datetime [size]="3" datetime label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Fim da pesquisa"></input-datetime>
+        </div>
+    </filter>
+    <columns>
+        <column title="Iniciado em" field="created_at" [width]="80" [template]="columnDataCriacao">
+            <ng-template let-row="row" #columnDataCriacao>
+                <span><small>{{ util.getDateTimeFormatted(row.created_at) }}</small></span>
+            </ng-template>
+        </column>
+        <column title="Finalizado em" field="finished_at" [width]="80" [template]="columnDataFim">
+            <ng-template let-row="row" #columnDataFim>
+                <span><small>{{ util.getDateTimeFormatted(row.finished_at) }}</small></span>
+            </ng-template>
+        </column>
+        <column title="Sucesso" field="sucesso" [width]="20" [template]="columnDataSucesso">
+            <ng-template let-row="row" #columnDataSucesso>
+                <span><small>{{ util.getBooleanFormatted(row.sucesso) }}</small></span>
+            </ng-template>
+        </column>
+        <column *ngIf="!selectable" type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
