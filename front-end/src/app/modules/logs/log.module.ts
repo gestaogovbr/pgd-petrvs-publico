@@ -8,8 +8,9 @@ import { ChangeFormComponent } from './change/change-form/change-form.component'
 import { ErrorFormComponent } from './error/error-form/error-form.component';
 import { ErrorListComponent } from './error/error-list/error-list.component';
 import { EnvioListComponent } from './envios/envio-list/envio-list.component';
-import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
+import { MarkdownModule } from 'ngx-markdown';
 import { EnvioConsultComponent } from './envios/envio-consult/envio-consult.component';
+import { EnvioItemListComponent } from './envios/envio-item-list/envio-item-list.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { EnvioConsultComponent } from './envios/envio-consult/envio-consult.comp
     ErrorListComponent,
     ErrorFormComponent,
     EnvioListComponent,
-    EnvioConsultComponent
+    EnvioConsultComponent,
+    EnvioItemListComponent
   ],
   imports: [
     CommonModule,

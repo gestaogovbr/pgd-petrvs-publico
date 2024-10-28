@@ -1,0 +1,32 @@
+<grid [dao]="dao" [hasEdit]="false" [title]="isModal ? '' : title" [orderBy]="orderBy">
+    <toolbar></toolbar>
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-select [size]="4" label="Tipo"  controlName="tipo" [control]="filter!.controls.tipo" [items]="tipos" itemTodos="Todos" valueTodos=""></input-select>
+        </div>
+    </filter>
+    <columns>
+        <column title="Tipo" field="tipo" [width]="80" [template]="columnTipo">
+            <ng-template let-row="row" #columnTipo>
+                <span><small>{{ row.tipo }}</small></span>
+            </ng-template>
+        </column>
+        <column title="ID" field="uid" [width]="80" [template]="columnUid">
+            <ng-template let-row="row" #columnUid>
+                <span><small>{{ row.uid }}</small></span>
+            </ng-template>
+        </column>
+        <column title="Iniciado em" field="created_at" [width]="80" [template]="columnDataCriacao">
+            <ng-template let-row="row" #columnDataCriacao>
+                <span><small>{{ util.getDateTimeFormatted(row.created_at) }}</small></span>
+            </ng-template>
+        </column>
+        <column title="Sucesso" field="sucesso" [width]="20" [template]="columnDataSucesso">
+            <ng-template let-row="row" #columnDataSucesso>
+                <span><small>{{ util.getBooleanFormatted(row.sucesso).toUpperCase() }}</small></span>
+            </ng-template>
+        </column>
+        <column *ngIf="!selectable" type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
