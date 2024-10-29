@@ -28,7 +28,7 @@
             <b>{{ $remetente->nome }}</b><br/>
             Matrícula SIAPE {{ $remetente->matricula }}<br/>
             {{ $remetente->lotacao->unidade->nome }}<br/>
-            {{ $remetente->ultimaParticipacaoPrograma->programa->unidade->nome }}
+            {{ $remetente->ultimaParticipacaoPrograma?->programa->unidade->nome }}
             </i>
         </p>
     </body>
