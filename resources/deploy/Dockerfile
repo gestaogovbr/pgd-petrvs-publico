@@ -1,26 +1,26 @@
 # syntax=docker/dockerfile:1
 FROM php:8.2-apache
 # instala recursos adicionais
-RUN apt-get update
-RUN apt-get install -y sed
-RUN apt-get install -y vim
-RUN apt-get install -y git
-RUN apt-get install -y zlib1g-dev
-RUN apt-get install -y libzip-dev
-RUN apt-get install -y unzip
-RUN apt-get install -y curl
-RUN apt-get install -y libcurl4-openssl-dev
-RUN apt-get install -y openssl
-RUN apt-get install -y libssl-dev
-RUN apt-get install -y libxml2-dev
-RUN apt-get install -y sudo
-RUN apt-get install -y chrony
-RUN apt-get install -y libpng-dev
-RUN apt-get install -y libjpeg-dev cron supervisor \
+RUN apt-get update && apt-get install -y \
+    sed \
+    vim \
+    git \
+    zlib1g-dev \
+    libzip-dev \
+    unzip \
+    curl \
+    libcurl4-openssl-dev \
+    openssl \
+    libssl-dev \
+    libxml2-dev \
+    sudo \
+    chrony \
+    libpng-dev \
+    libjpeg-dev \
+    cron \
+    supervisor \
+    default-mysql-client \
     && pecl install redis
-
-# Instalar o cliente MySQL para utilizar o mysqldump
-RUN apt-get install -y default-mysql-client
 
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install pdo_mysql

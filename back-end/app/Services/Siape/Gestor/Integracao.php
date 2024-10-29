@@ -12,6 +12,7 @@ use App\Services\PerfilService;
 use App\Services\Siape\Contrato\InterfaceIntegracao;
 use App\Services\Tipo;
 use App\Services\UnidadeIntegranteService;
+use Illuminate\Support\Facades\Log;
 
 class Integracao implements InterfaceIntegracao
 {
@@ -46,8 +47,8 @@ class Integracao implements InterfaceIntegracao
     {
         foreach ($this->dados as $dado) {
             try {
+                $this->logSiape("iniciando o processamento da chefia:", $dado);
                 $this->processaChefia($dado);
-                $this->processaSubstituto($dado);
             } catch (\Exception $e) {
                 array_push($this->message['erro'], $dado['id_unidade']);
                 $this->logSiape($e->getMessage(), $dado, Tipo::ERROR);
@@ -70,6 +71,8 @@ class Integracao implements InterfaceIntegracao
         $unidadeExercicioId = $dado['id_unidade'];
         $chefeAtribuicoes = $this->preparaChefia($atribuicoesAtuaisDaChefia, $unidadeExercicioId);
 
+        $this->logSiape(sprintf("atribuições do usuário: %s na unidade %s", $dado['id_chefe'], $dado['id_unidade']), $chefeAtribuicoes);
+
         $vinculo = $this->preparaVinculo($dado['id_chefe'], $unidadeExercicioId, $chefeAtribuicoes);
 
         $this->logSiape("Salvando integrantes", $vinculo, Tipo::INFO);
@@ -77,33 +80,6 @@ class Integracao implements InterfaceIntegracao
 
         $this->alteraPerfilAdministradorNegocial($dado['id_chefe'], $usuarioChefia);
         array_push($this->message['sucesso'], $dado['id_unidade']);
-    }
-
-    /**
-     * @deprecated 2.31 this function will be removed
-     *
-     * @param array $dado
-     * @return void
-     */
-    private function processaSubstituto(array $dado)
-    {
-        // if (empty($dado['id_substituto'])) {
-        //     array_push($this->message['vazio'],  $dado['id_unidade']);
-        //     $this->logSiape("Substituto não informado para a unidade " . $dado['id_unidade'], $dado, Tipo::WARNING);
-        //     return;
-        // }
-        // $unidadeExercicioId = $dado['id_unidade'];
-        // $usuarioSubstituto = $this->userModel->find($dado['id_substituto']);
-        // $atribuicoesAtuaisDoSubstituto = $usuarioSubstituto->getUnidadesAtribuicoesAttribute();
-        // $substitutoAtribuicoes = $this->preparaSubstituto($atribuicoesAtuaisDoSubstituto, $unidadeExercicioId);
-
-        // $vinculoSubstituto = $this->preparaVinculo($dado['id_substituto'], $unidadeExercicioId, $substitutoAtribuicoes);
-
-        // $this->logSiape("Salvando integrantes", $vinculoSubstituto, Tipo::INFO);
-        // $this->unidadeIntegranteService->salvarIntegrantes($vinculoSubstituto, false);
-
-        // $this->alteraPerfilAdministradorNegocial($dado['id_substituto'], $usuarioSubstituto);
-        // array_push($this->message['sucesso'], $dado['id_unidade']);
     }
 
 
@@ -142,10 +118,9 @@ class Integracao implements InterfaceIntegracao
 
     private function alteraPerfilAdministradorNegocial(string $idUsuario, Usuario $queryChefe): void
     {
-        $usuarioChefe = $this->config["perfilChefe"];
         $perfilChefe = $this->nivelAcessoService->getPerfilChefia();
         if (empty($perfilChefe)) {
-            throw new ServerException("ValidateUsuario", "Perfil de gestor (" . $usuarioChefe . ") não encontrado no banco de dados. Verificar configuração no painel SaaS.");
+            throw new ServerException("ValidateUsuario", "Perfil de gestor não encontrado no banco de dados. Verificar configuração no painel SaaS.");
         }
         $perfilChefeId = $perfilChefe->id;
         $perfilAdministradorNegocial = $this->nivelAcessoService->getPerfilAdministrador();
@@ -168,8 +143,7 @@ class Integracao implements InterfaceIntegracao
             $this->logSiape("Atualizando perfil do chefe", $values, Tipo::INFO);
             return;
         }
-        $this->logSiape("IntegracaoService: durante atualização de gestores, o usuário não teve seu perfil atualizado para " . $usuarioChefe .
-            " uma vez que é Desenvolvedor.", [$queryChefe->nome, $queryChefe->email]);
+        $this->logSiape("IntegracaoService: durante atualização de gestores, o usuário não teve seu perfil atualizado para um 'perfil de chefia' uma vez que é Desenvolvedor.", [$queryChefe->nome, $queryChefe->email]);
     }
 
     /**
