@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\JobSchedule;
 use App\Services\ServiceBase;
 use App\Traits\TenantConnection;
+use Carbon\Carbon;
+
 class JobAgendadoService extends ServiceBase {
 
     use TenantConnection;
@@ -74,5 +76,48 @@ class JobAgendadoService extends ServiceBase {
     
         return $jobs;
     }
-    
+
+    public function createJobsSiape(string $tenantId): void
+    {
+        $now = Carbon::now();
+        $now->addMinute(30);
+        $minute = $now->format('i');
+        $hour = $now->format('H');
+        $expressaoCron = "{$minute} {$hour} * * *";
+        $job = new JobSchedule([
+            'nome' => 'Busca Dados Siape ' . $tenantId,
+            'classe' => 'BuscarDadosSiapeJob',
+            'minutos' => $minute,
+            'horas' => $hour,
+            'dias' => 0,
+            'semanas' => 0,
+            'meses' => 0,
+            'expressao_cron' => $expressaoCron,
+            'ativo' => 1,
+            'tenant_id' => $tenantId,
+            'parameters' => '[]'
+        ]);
+
+        $job->save();
+
+        $now->addMinutes(5);
+        $minute = $now->format('i');
+        $hour = $now->format('H');
+        $expressaoCron = "{$minute} {$hour} * * *";
+
+        $job = new JobSchedule([
+            'nome' => 'Sincroniza Dados Siape ' . $tenantId,
+            'classe' => 'SincronizarSiapeJob',
+            'minutos' => $minute,
+            'horas' => $hour,
+            'dias' => 0,
+            'semanas' => 0,
+            'meses' => 0,
+            'expressao_cron' => $expressaoCron,
+            'ativo' => 1,
+            'tenant_id' => $tenantId,
+            'parameters' => '[]'
+        ]);
+        $job->save();
+    }
 }

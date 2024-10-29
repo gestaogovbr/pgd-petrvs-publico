@@ -6,6 +6,7 @@ use App\Exceptions\ServerException;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
+use App\Models\IntegracaoServidor;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
 use App\Services\Siape\Unidade\Integracao;
@@ -20,7 +21,7 @@ class UnidadeIntegranteService extends ServiceBase
     $unidade = empty($unidadeId) ? null : Unidade::find($unidadeId);
     $usuario = empty($usuarioId) ? null : Usuario::find($usuarioId);
 
-    $dataModificacao = $usuario ? $usuario->integracaoServidor->data_modificacao : '';
+    $dataModificacao = $usuario ? ($usuario->integracaoServidor instanceof IntegracaoServidor ? $usuario->integracaoServidor->data_modificacao : '') : '';
 
     if (!empty($unidadeId) && empty($unidade)) throw new ServerException("ValidateIntegrante", "Unidade não encontrada no banco");
     if (!empty($usuarioId) && empty($usuario)) throw new ServerException("ValidateIntegrante", "Usuário não encontrado no banco");

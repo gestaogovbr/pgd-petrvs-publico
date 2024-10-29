@@ -32,6 +32,7 @@ export class IntegracaoFormComponent extends PageFormBase<Integracao, Integracao
   public resultado_gestores: string = '';
   public obs_gestores: string[] = [];
   public falhas_gestores: string[] = [];
+  public processamentos: any = {};
     
   constructor(public injector: Injector, dao: IntegracaoDaoService) {
     super(injector, Integracao, IntegracaoDaoService);
@@ -71,7 +72,12 @@ export class IntegracaoFormComponent extends PageFormBase<Integracao, Integracao
     this.falhas_gestores = entity.id ? JSON.parse(entity.resultado!).gestores.Falhas : []; 
   }
 
-  public initializeData(form: FormGroup): void {
+  public initializeData(form: FormGroup): void {    
+    this.dao!.buscaProcessamentosPendentes().then((response) => {
+      if(response && response.processamentos){
+        this.processamentos = response.processamentos;
+      }      
+    });    
     this.loadData(new Integracao(), form);
   }
 
@@ -86,6 +92,12 @@ export class IntegracaoFormComponent extends PageFormBase<Integracao, Integracao
     let result = null;
     if(['entidade_id', 'usuario_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
+    }
+    if((controlName == 'atualizar_unidades' && control.value) && !this.processamentos.siapeDadosUORG) {
+      result = "Nada a ser processado!";
+    }
+    if((controlName == 'atualizar_servidores' && control.value) && (!this.processamentos.siapeDadosPessoais || !this.processamentos.siapeDadosFuncionais)) {
+      result = "Nada a ser processado!";
     }
     return result;
   }
