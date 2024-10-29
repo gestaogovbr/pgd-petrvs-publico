@@ -65,8 +65,9 @@ abstract class ExportarService
     {
         $dataSource = $this->getDataSource();
 
-        foreach ($this->source as $source)
+        foreach ($this->source as $i => $source)
         {
+            echo "\n$i de ".count($this->source);
             Log::info("[{$source->tipo}] ID {$source->id} [INICIADO]");
 
             $envioItem = new EnvioItem;
@@ -77,13 +78,20 @@ abstract class ExportarService
             $envioItem->save();
 
             try {
+                echo " -- obtendo...";
                 $data = $dataSource->getData($source);
 
                 $this->sendDependencia($data);
 
                 $resource = $this->getResource($data);
 
+                unset($data);
+
                 $body = (object) json_decode($resource->toJson(), true);
+
+                unset($resource);
+
+                echo " -- enviando...";
 
                 $success = $this->pgdService->enviarDados(
                     $this->token, 
@@ -98,6 +106,10 @@ abstract class ExportarService
                     var_dump($body);
                 }
 
+                unset($body);
+
+                echo " -- fim...";
+
             }catch(ExportPgdException $exception) {
                 $this->handleError($exception->getmessage(), $envioItem, $source);
                 continue;
@@ -110,6 +122,14 @@ abstract class ExportarService
         return true;
     }
 
+    public function addFalha() {
+        $this->falhas++;
+    }
+
+    public function addSucesso() {
+        $this->sucessos++;
+    }
+
     public function handleError($message, EnvioItem $envioItem, ExportSource $source) 
     {
         Log::error("[{$source->tipo}] ID {$source->id} - ERRO!");
@@ -118,8 +138,6 @@ abstract class ExportarService
         $envioItem->sucesso = false;
         $envioItem->erros = $message;
         $envioItem->save();
-
-        $this->falhas++;
 
         LogError::newError(
             "Erro ao sincronizar com o PGD: ", 
@@ -151,9 +169,9 @@ abstract class ExportarService
         $envioItem->sucesso = true;
         $envioItem->save();
 
-        $this->atualizarEntidade($source->id);
+        $this->addSucesso();
 
-        $this->sucessos++;
+        $this->atualizarEntidade($source->id);
 
         if ($source->auditIds) 
         {

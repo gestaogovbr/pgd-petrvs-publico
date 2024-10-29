@@ -25,5 +25,17 @@ class ExportarParticipanteService extends ExportarService
         Usuario::where('id', $id)->update(["data_envio_api_pgd"=> Carbon::now()]);
     }
 
+    public function addFalha() {
+        $this->envio->qtde_participantes_falhas++;
+        $this->envio->save();
+        parent::addFalha();
+    }
+
+    public function addSucesso() {
+        $this->envio->qtde_participantes_sucessos++;
+        $this->envio->save();
+        parent::addSucesso();
+    }
+
 }
 

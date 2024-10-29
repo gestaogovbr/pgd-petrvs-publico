@@ -78,10 +78,7 @@ class ExportarTenantService
             $this->envio->finished_at = now();
             $this->envio->save();
             
-            LogError::newError(
-                "Erro ao sincronizar com o PGD: ", 
-                new ExportPgdException($exception->getMessage())
-            );
+            Log::error("Erro ao sincronizar com o PGD: ".$exception->getMessage());
 
             throw $exception;
         }
@@ -92,6 +89,8 @@ class ExportarTenantService
     }
 
     public function finalizar() {
+
+        echo "\nFinalizado";
 
         Log::info("** RESULTADOS **");
         Log::info("Participantes com sucesso: ".$this->exportarParticipanteService->getSucessos());

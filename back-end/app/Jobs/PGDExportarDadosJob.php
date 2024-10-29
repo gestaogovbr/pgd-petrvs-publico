@@ -12,6 +12,9 @@ use Illuminate\Queue\Middleware\WithoutOverlapping;
 
 class PGDExportarDadosJob extends JobWithoutTenant implements ContratoJobSchedule
 {
+    public $failOnTimeout = false;
+    public $timeout = 120000;
+
     public function __construct()
     {
         Log::info("PGDExportarDadosJob:construct");
@@ -24,10 +27,10 @@ class PGDExportarDadosJob extends JobWithoutTenant implements ContratoJobSchedul
         return "Envia Dados para API do PGD";
     }
 
-    public function middleware(): array
+    /*public function middleware(): array
     {
         return [(new WithoutOverlapping())->expireAfter(60*3)];
-    }
+    }*/
 
     public function handle(ExportarTenantService $exportarTenantService)
     {
@@ -51,5 +54,7 @@ class PGDExportarDadosJob extends JobWithoutTenant implements ContratoJobSchedul
 
         Log::info("PGDExportarDadosJob:END");
     }
+
+    
 
 }

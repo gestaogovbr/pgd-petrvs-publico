@@ -19,7 +19,27 @@
         </column>
         <column title="Sucesso" field="sucesso" [width]="20" [template]="columnDataSucesso">
             <ng-template let-row="row" #columnDataSucesso>
-                <span><small>{{ util.getBooleanFormatted(row.sucesso).toUpperCase() }}</small></span>
+                <span [ngClass]="{'text-danger': !row.sucesso}">
+                    <small>{{ util.getBooleanFormatted(row.sucesso).toUpperCase() }}</small>
+                </span>
+            </ng-template>
+        </column>
+        <column title="Participantes" field="qtde_participantes_sucessos" [width]="20" [template]="columnParticipantes">
+            <ng-template let-row="row" #columnParticipantes>
+                <span><small>{{ row.qtde_participantes_sucessos }} com sucesso</small></span><br/>
+                <span><small>{{ row.qtde_participantes_falhas }} com falha</small></span>
+            </ng-template>
+        </column>
+        <column title="Planos de Entrega" field="qtde_entregas_sucessos" [width]="20" [template]="columnEntregas">
+            <ng-template let-row="row" #columnEntregas>
+                <span><small>{{ row.qtde_entregas_sucessos }} com sucesso</small></span><br/>
+                <span><small>{{ row.qtde_entregas_falhas }} com falha</small></span>
+            </ng-template>
+        </column>
+        <column title="Planos de Trabalho" field="qtde_trabalhos_sucessos" [width]="20" [template]="columnTrabalhos">
+            <ng-template let-row="row" #columnTrabalhos>
+                <span><small>{{ row.qtde_trabalhos_sucessos }} com sucesso</small></span><br/>
+                <span><small>{{ row.qtde_trabalhos_falhas }} com falha</small></span>
             </ng-template>
         </column>
         <column *ngIf="!selectable" type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>

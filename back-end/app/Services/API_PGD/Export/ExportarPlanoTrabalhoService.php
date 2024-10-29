@@ -64,4 +64,16 @@ class ExportarPlanoTrabalhoService extends ExportarService
       }
     }*/
   }
+
+  public function addFalha() {
+      $this->envio->qtde_trabalhos_falhas++;
+      $this->envio->save();
+      parent::addFalha();
+  }
+
+  public function addSucesso() {
+      $this->envio->qtde_trabalhos_sucessos++;
+      $this->envio->save();
+      parent::addSucesso();
+  }
 }

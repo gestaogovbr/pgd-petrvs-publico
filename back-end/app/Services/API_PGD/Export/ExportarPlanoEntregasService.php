@@ -28,5 +28,17 @@ class ExportarPlanoEntregasService extends ExportarService
         Log::info("Atualizando Entrega $id");
         PlanoEntrega::where('id', $id)->update(array("data_envio_api_pgd"=> Carbon::now()));
     }
+
+    public function addFalha() {
+        $this->envio->qtde_entregas_falhas++;
+        $this->envio->save();
+        parent::addFalha();
+    }
+
+    public function addSucesso() {
+        $this->envio->qtde_entregas_sucessos++;
+        $this->envio->save();
+        parent::addSucesso();
+    }
 }
 
