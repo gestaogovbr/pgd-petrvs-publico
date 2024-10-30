@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\ExecutaSiape::class,
         \App\Console\Commands\InsertLog::class,
+        \App\Console\Commands\RunBuscaDadosAssincronosJob::class,
     ];
 
     protected function commands()
@@ -24,6 +25,7 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('telescope:prune --hours=72')->daily();
         $agendamentosPrincipal = JobSchedule::where('ativo', true)->get();
         foreach ($agendamentosPrincipal as $jobEntity) {
             $job = JobWithoutTenant::getJob($jobEntity->classe);

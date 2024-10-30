@@ -1,3 +1,52 @@
+## 2.3.1 23/10/2024 (Hotfixes)
+### Adicionado
+ - Migrate para agendar os JOBS do SIAPE automaticamente
+### Corrigido
+ - Ajuste da fila de JOBS
+### Modificado
+ - Adicionado validação na tela de execução do SIAPE
+### Removido
+ - Módulo dump do tenant no painel
+ - Retirado código de integração da chefia substituta
+ - Arquivos obsoletos
+### Obsoleto
+ - LogChanges 
+## 2.3.0 - 18/10/2024
+### Modificado
+ - Modificação da busca dos dados do SIAPE, com tabelas auxiliares
+ - Alteração no processamento dos dados do SIAPE, alterando das requisições e passando para os dados da tabelas auxiliares
+ - Aumento no timeout do processamento SIAPE e processamento em fila diferente
+ - Envio para a API PGD em conformidade com a versão 3.2.1
+### Adicionado
+ - Adicionado botão no painel dos tenantes para forçar uma atualização completa de dados do SIAPE
+ - Adição do Telescope para monitoramento das consultas e logs
+ - Adição do Horizon para monitoramento dos Jobs
+ - Adicionado módulo dump do tenant no painel
+ - Adicionado módulo central_domains no painel
+### Corrigido
+ - Consulta na busca das cidades no SIAPE 
+ - Correção do tamanho do campo fundamentos/objetivo.
+ - Correção ao editar um tenant.
+ - Correção ao editar unidade.
+## 2.2.0 - 04/10/2024 (Hotfixes)
+### Segurança 
+- Adicionado validações para usuários do painel.
+- Adicionado validações para manipulação dos dados do tenant.
+### Corrigido
+- Correção para associar o perfil do usuário baseado na informação de chefia.
+### Removido
+- Remoção de arquivos não usados.
+## 2.1.3 - 03/10/2024
+### Corrigido
+- Correção no SIAPE falha de processamento servidores dos dados para banco de dados
+
+## 2.1.2 - 30/09/2024
+### Corrigido
+- URL de redirecionamento do login único (GovBR).
+- CPF do Desenvolvedor, aceitar somente números (Tenant).
+- Atualizar usuário ao atualizar dados do tenant.
+### Adicionado
+- Opção para o usuário do painel alterar a senha.
 ## 2.1.1 - 18/09/2024 (Hotfixes)
 ### Corrigido
 - Validação de Planos de Entrega.

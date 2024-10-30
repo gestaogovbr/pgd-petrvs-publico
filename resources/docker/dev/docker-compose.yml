@@ -8,6 +8,7 @@ services:
       - 3308:3308
     volumes:
       - ../mariadb:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/my.cnf
     environment:
       MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
       MYSQL_USER: petrvs
@@ -31,6 +32,7 @@ services:
     working_dir: /var/www
     environment:
       - TZ=America/Bahia
+      - REDIS_HOST=petrvs_redis
     ports:
       - "80:80"
     dns:
@@ -38,6 +40,7 @@ services:
       - 1.1.1.1
     depends_on:
       - petrvs_db
+      - petrvs_redis
     volumes:
       - ../../../back-end:/var/www
     deploy:
@@ -81,16 +84,14 @@ services:
       - TZ=America/Bahia
     volumes:
       - ../../../back-end:/var/www
-    command: /bin/sh -c "while true; do php /var/www/artisan queue:work --sleep=3 --tries=3 >> /var/www/storage/logs/queue.log && 2>&1; done"
+    command: ["supervisord", "-c", "/etc/supervisor/conf.d/horizon.conf"]
     depends_on:
       - petrvs_php
     networks:
       - appnet
 
   petrvs_scheduler:
-    build:
-      context: .
-      dockerfile: Dockerfile-php
+    image: segescginf/pgdpetrvs:latest
     container_name: petrvs_scheduler
     environment:
       - TZ=America/Bahia
@@ -100,6 +101,14 @@ services:
       /bin/sh -c "while :; do php /var/www/artisan schedule:run >> /var/www/storage/logs/scheduler.log 2>&1; sleep 60; done"
     depends_on:
       - petrvs_php
+    networks:
+      - appnet
+  
+  petrvs_redis:
+    image: redis:alpine
+    container_name: petrvs_redis
+    ports:
+      - "6379:6379"
     networks:
       - appnet
 

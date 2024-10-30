@@ -6,6 +6,7 @@ use App\Exceptions\ServerException;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
+use App\Models\IntegracaoServidor;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
 use App\Services\Siape\Unidade\Integracao;
@@ -19,6 +20,9 @@ class UnidadeIntegranteService extends ServiceBase
     $result = [];
     $unidade = empty($unidadeId) ? null : Unidade::find($unidadeId);
     $usuario = empty($usuarioId) ? null : Usuario::find($usuarioId);
+
+    $dataModificacao = $usuario ? ($usuario->integracaoServidor instanceof IntegracaoServidor ? $usuario->integracaoServidor->data_modificacao : '') : '';
+
     if (!empty($unidadeId) && empty($unidade)) throw new ServerException("ValidateIntegrante", "Unidade não encontrada no banco");
     if (!empty($usuarioId) && empty($usuario)) throw new ServerException("ValidateIntegrante", "Usuário não encontrado no banco");
     foreach (($unidade ? $unidade->integrantes ?? [] : $usuario->unidadesIntegrantes ?? []) as $vinculo) {
@@ -30,7 +34,8 @@ class UnidadeIntegranteService extends ServiceBase
         "unidade_nome" => $usuario ? $vinculo->unidade->nome : null,
         "unidade_sigla" => $usuario ? $vinculo->unidade->sigla : null,
         "unidade_codigo" => $usuario ? $vinculo->unidade->codigo : null,
-        "atribuicoes" => $vinculo->atribuicoes->map(fn ($a) => $a->atribuicao)
+        "atribuicoes" => $vinculo->atribuicoes->map(fn ($a) => $a->atribuicao),
+        'data_modificacao' => $dataModificacao
       ];
     }
     return ['rows' => array_values(array_filter($result, fn ($vinculo) => count($vinculo["atribuicoes"]) > 0))];

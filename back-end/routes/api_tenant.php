@@ -90,7 +90,6 @@ use FontLib\Table\Type\post;
 use App\Http\Controllers\JobAgendadoController;
 use App\Http\Controllers\RelatoController;
 
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -158,6 +157,7 @@ Route::middleware(['auth:sanctum'])->prefix('Integracao')->group(function () {
   Route::post('destroy', [IntegracaoController::class, 'destroy']);
   Route::post('showResponsaveis', [IntegracaoController::class, 'showResponsaveis']);
   Route::post('get-by-id', [IntegracaoController::class, 'getById']);
+  Route::get('busca-processamentos-pendentes', [IntegracaoController::class, 'buscaProcessamentosPendentes']);
 });
 
 /* Testes */
@@ -452,6 +452,11 @@ Route::middleware(['auth:sanctum'])->prefix('Reacao')->group(function () {
 
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntregaProgresso')->group(function () {
   defaultRoutes(PlanoEntregaEntregaProgressoController::class);
+});
+
+Route::middleware(['auth:sanctum'])->prefix('Relato')->group(function () {
+  Route::post('store', [RelatoController::class, 'store']);
+  Route::get('confirmar/{email}/{nome}', [RelatoController::class, 'confirmar']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Produto')->group(function () {
   defaultRoutes(ProdutoController::class);

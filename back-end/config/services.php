@@ -29,10 +29,9 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-    # Azure: token válido até 21/09/2024
     'azure' => [
-        'client_id' => '0b50b859-2615-403a-876e-05dbbd6aa240',
-        'client_secret' => 'QbD8Q~mMSFAmC~B-wYCL2BcHbb0TQO8xIf9redb3',
+        'client_id' => null,
+        'client_secret' => null,
         'redirect' => config('app.url') . '/web/login-azure-callback',
         'tenant' => 'common',
     ],

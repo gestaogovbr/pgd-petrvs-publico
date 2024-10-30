@@ -25,6 +25,11 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 			onClick: () => this.go.navigate({route: ["panel", "logs2"]}),
 		},
 		{
+			icon: "bi bi-file-earmark-code-fill",
+			label: "Dados ENV",
+			onClick: () => this.go.navigate({route: ["panel", "env"]}),
+		},
+		{
 			icon: "bi bi-database-add",
 			label: "Executar Migrations",
 
@@ -79,7 +84,11 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 			label: "Executar Migrations",
 			onClick: this.executaMigrations.bind(this),
 		});
-
+		this.options.push({
+			icon: "bi bi-exclamation-octagon-fill",
+			label: "Forçar SIAPE",
+			onClick: this.forcarSiape.bind(this),
+		});
 		this.options.push({
 			icon: "bi bi-trash",
 			label: "Excluir",
@@ -105,6 +114,11 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 					{metadata: {tenant_id: tenant.id}}
 				),
 		});
+		// this.options.push({
+		// 	icon: "bi bi-cloud-arrow-down-fill",
+		// 	label: "Dump",
+        //     onClick: this.databaseDump.bind(this),
+		// });
 	}
 
 	async onLoad() {
@@ -218,6 +232,30 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 								"Erro ao executar a migration: " + error?.message
 									? error?.message
 									: error
+							);
+						});
+				}
+			});
+	}
+	public forcarSiape(row: any) {
+		const self = this;
+		this.dialog
+			.confirm(
+				"Forçar Siape?",
+				"Deseja realmente limpar os dados do SIAPE e fazer uma nova carga completa?"
+			)
+			.then((confirm) => {
+				if (confirm) {
+					this.dao!.forcaSiape(row)
+						.then(function () {
+							self.dialog.alert("Sucesso", "Limpeza dos dados efetuadao com sucesso, aguarde a carga completa!");
+						})
+						.catch(function (error) {
+							let messageError = error?.message ? error?.message : error;
+							console.log("Erro: ", error);
+							self.dialog.alert(
+								"Erro",
+								messageError
 							);
 						});
 				}
@@ -406,4 +444,35 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 				}
 			});
 	}
+
+    public databaseDump(row: any) {
+      const self = this;
+
+      this.dialog
+        .confirm("Executar Dump?", "Deseja realmente fazer o dump?")
+        .then((confirm) => {
+          if (confirm) {
+            this.dao!.databaseDump(row)  // Aqui retorna o Observable
+              .subscribe({
+                next: (response: Blob) => {
+                  const downloadUrl = window.URL.createObjectURL(response);
+                  const a = document.createElement('a');
+                  a.href = downloadUrl;
+                  a.download = `dump_${row.id}.sql`;  // Nome do arquivo de dump
+                  a.click();
+                  window.URL.revokeObjectURL(downloadUrl);  // Libera a URL temporária
+
+                  self.dialog.alert("Sucesso", "Dump executado com sucesso!");
+                },
+                error: (error) => {
+                  self.dialog.alert(
+                    "Erro",
+                    "Erro ao executar o dump: " + (error?.message ? error?.message : error)
+                  );
+                }
+              });
+          }
+        });
+    }
+
 }

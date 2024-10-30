@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 use App\Services\IntegracaoService;
 
 
-class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule, ShouldBeUnique
+class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -22,9 +22,13 @@ class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule, ShouldBeU
     protected $usuario_id;
     protected $request;
 
+    public $timeout = 0;
+
     public function __construct(private readonly ?string $tenantId = null)
     {
         Log::info("Job SincronizarPetrvs __construct :". $tenantId);
+
+        $this->queue = 'siape_queue';
     }
 
     public static function getDescricao(): string
@@ -34,6 +38,8 @@ class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule, ShouldBeU
 
     public function handle(IntegracaoService $integracaoService)
     {
+        ini_set('memory_limit', '-1');
+        
         try {
             $integracaoService = new IntegracaoService([], $this->tenantId);
             Log::info("Job SincronizarPetrvs START ");

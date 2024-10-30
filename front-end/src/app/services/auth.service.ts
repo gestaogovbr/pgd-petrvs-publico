@@ -19,7 +19,7 @@ import { NotificacaoService } from '../modules/uteis/notificacoes/notificacao.se
 import { AppComponent } from '../app.component';
 import { UnidadeService } from './unidade.service';
 
-export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SEI" | "LOGINUNICO";
+export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "SESSION" | "SEI" | "LOGINUNICO";
 export type Permission = string | (string | string[])[];
 
 @Injectable({
@@ -235,15 +235,6 @@ export class AuthService {
       entidade: this.gb.ENTIDADE,
       email: user,
       password: password
-    }, redirectTo);
-  }
-
-  public authDprfSeguranca(cpf: string, password: string, token: string, redirectTo?: FullRoute) {
-    return this.logIn("DPRFSEGURANCA", "login-institucional", {
-      entidade: this.gb.ENTIDADE,
-      cpf: cpf,
-      senha: password,
-      token: token
     }, redirectTo);
   }
 

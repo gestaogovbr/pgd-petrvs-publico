@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EnvController;
 use App\Http\Controllers\PainelUsuarioController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,7 @@ Route::post('/panel-login', [PainelUsuarioController::class, 'login']);
 Route::get('/panel-login-check', [PainelUsuarioController::class, 'checkAuthentication']);
 Route::get('/panel-login-detail', [PainelUsuarioController::class, 'detail']);
 Route::get('/panel-logout', [PainelUsuarioController::class, 'logout']);
+Route::post('/panel-update-password', [PainelUsuarioController::class, 'updatePassword']);
 
 Route::middleware(['panel'])->prefix('Seeder')->group(function () {
     Route::get('getAll', [SeederController::class, 'index']);
@@ -56,6 +58,11 @@ Route::middleware(['panel'])->prefix('JobAgendado')->group(function () {
     Route::get('/getClassJobs', [JobAgendadoController::class, 'getClassJobs']);
     Route::delete('/delete/{id}', [JobAgendadoController::class, 'removerJob']);
 
+});
+
+Route::middleware(['panel'])->prefix('Env')->group(function () {
+    Route::get('/query', [EnvController::class, 'query']);
+    Route::post('/update', [EnvController::class, 'update']);
 });
 
 Route::middleware(['panel'])->prefix('UserPanel')->group(function () {

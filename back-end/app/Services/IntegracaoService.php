@@ -10,6 +10,9 @@ use Ramsey\Uuid\Uuid;
 use App\Models\Perfil;
 use App\Models\Unidade;
 use App\Models\Usuario;
+use App\Models\SiapeDadosUORG;
+use App\Models\SiapeConsultaDadosPessoais;
+use App\Models\SiapeConsultaDadosFuncionais;
 use App\Exceptions\LogError;
 use App\Services\ServiceBase;
 use App\Models\IntegracaoUnidade;
@@ -290,7 +293,7 @@ class IntegracaoService extends ServiceBase
     ob_implicit_flush(true); // Libera a chamada explícita para o output buffer.
     ini_set('memory_limit', '-1');
     ini_set('default_socket_timeout', 3000); // 5 minutos.
-    set_time_limit(1800);
+    set_time_limit(0);
     /**
       * @var IntegracaoService $self
       */
@@ -308,25 +311,7 @@ class IntegracaoService extends ServiceBase
     if (!empty($inputs['unidades']) && $inputs['unidades'] && !empty($entidade_id)) {
       $this->logSiape("Iniciando sincronização de Unidades", [], Tipo::INFO);
       try {
-        $uos = [];
-        if ($this->integracao_config["tipo"] == "SIAPE") {
-          $uos = $this->IntegracaoSiapeService->retornarUorgs()["uorg"];
-        } else {
-          if ($this->useLocalFiles) { // Se for para usar os arquivos locais, a rotina lê os dados do arquivo salvo localmente.
-            $xmlStream = mb_convert_encoding(file_get_contents(base_path($this->localUnidades)), 'UTF-8', 'ISO-8859-1');
-          } else { // Caso contrário, a rotina vai buscar no servidor do SIGEPE.
-            $url = $this->integracao_config["baseUrlunidades"];
-            $response = $this->consultarApiSigepe($token, $url);
-            $xmlStream = $response->body();
-            if ($this->storeLocalFiles) { // Aqui decide se salva ou não em arquivo as informações trazidas do servidor do SIGEPE.
-              if (file_exists(base_path($this->localUnidades))) unlink(base_path($this->localUnidades));
-              file_put_contents(base_path($this->localUnidades), $xmlStream);
-            }
-          }
-          $xml = simplexml_load_string($xmlStream);
-          $uos = $this->UtilService->object2array($xml)["uorg"];
-          $this->logSiape("Após buscar unidades no SIAPE", $uos, Tipo::INFO);
-        }
+        $uos = $this->IntegracaoSiapeService->retornarUorgs()["uorg"];
         if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de obtenção dos dados das unidades informados pelo SIAPE!.....");
 
         DB::transaction(function () use (&$uos, &$self) {
@@ -337,15 +322,7 @@ class IntegracaoService extends ServiceBase
             $query_iu = DB::table('integracao_unidades')->where('id_servo', $uorg_codigo);
             $query_u = DB::table('unidades')->where('codigo', $uorg_codigo);
 
-            $uorg_siape_data_modificacao = null;
-            if ($this->integracao_config["tipo"] == "SIAPE") {
-              $uorg_siape_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["data_modificacao"]));
-            }
-            else if ($this->integracao_config["tipo"] == "WSO2") {
-                $uorg_siape_data_modificacao = $self->UtilService->valueOrDefault($uo["datamodificacao"]);
-                $uorg_siape_data_modificacao = date_create($uorg_siape_data_modificacao);
-                $uorg_siape_data_modificacao = date_format($uorg_siape_data_modificacao, "Y-m-d H:i:s");
-            };
+            $uorg_siape_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["data_modificacao"]));
 
             // Não apagar o comentário, por favor. :)
             # $uorg_siape_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["data_modificacao"]));
@@ -449,10 +426,12 @@ class IntegracaoService extends ServiceBase
             if(!empty($uorg->id_servo)) return $uorg->id_servo;
         }, $unidades_integracao);
 
-        $unidades_integracao_remover = array_diff($unidades_integracao, $unidades_siape);
-        $datahora_remocao = Carbon::now();
-        $unidades_integracao_remover ? DB::table('integracao_unidades')->wherein('id_servo', $unidades_integracao_remover)->update(['deleted_at' => $datahora_remocao]) : true;
-        $this->logSiape("Unidades removidas da tabela integracao_unidades", $unidades_integracao_remover, Tipo::INFO);
+        //TODO esse codigo será removido e passado para um job a parte.
+
+        // $unidades_integracao_remover = array_diff($unidades_integracao, $unidades_siape);
+        // $datahora_remocao = Carbon::now();
+        // $unidades_integracao_remover ? DB::table('integracao_unidades')->wherein('id_servo', $unidades_integracao_remover)->update(['deleted_at' => $datahora_remocao]) : true;
+        // $this->logSiape("Unidades removidas da tabela integracao_unidades", $unidades_integracao_remover, Tipo::INFO);
         $this->logSiape("Concluída a fase de sincronização de Unidades", [], Tipo::INFO);
         if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de reconstrução da tabela integracao_unidades!.....");
         $n = IntegracaoUnidade::count();
@@ -511,7 +490,8 @@ class IntegracaoService extends ServiceBase
         // Seta inativo nas unidades que não existem em integracao_unidades e garante que não esteja inativo as que existem em integracao_unidades.
         // Agora, essa desativação é baseada no soft delete. As unidades permanecem na tabela integracao_unidades, porém com parâmetro deleted_at configurado.
 
-        $DbResultDesativadas = $this->inativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NOW() WHERE data_inativacao IS NULL AND u.codigo IS NOT NULL and u.codigo != '' AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NOT NULL)");
+        //TODO esse codigo será removido e passado para um job a parte.
+        // $DbResultDesativadas = $this->inativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NOW() WHERE data_inativacao IS NULL AND u.codigo IS NOT NULL and u.codigo != '' AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NOT NULL)");
         $DbResultAtivadas = $this->ativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NULL WHERE data_inativacao IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NULL);");
 
         $this->result['unidades']['Resultado'] = 'Sucesso';
@@ -537,24 +517,7 @@ class IntegracaoService extends ServiceBase
       $this->logSiape("Iniciando sincronização de Servidores", [], Tipo::INFO);
       try {
         $servidores = [];
-        if ($this->integracao_config["tipo"] == "SIAPE") {
-          $servidores = $this->IntegracaoSiapeService->retornarPessoas()["Pessoas"];
-        } else {
-          if ($this->useLocalFiles) {
-            $xmlStream = mb_convert_encoding(file_get_contents(base_path($this->localServidores)), 'UTF-8', 'ISO-8859-1');
-          } else {
-            $url = $this->integracao_config["baseUrlpessoas"];
-            $response = $this->consultarApiSigepe($token, $url);
-            $xmlStream = $response->body();
-            if ($this->storeLocalFiles) {
-              if (file_exists(base_path($this->localServidores))) unlink(base_path($this->localServidores));
-              file_put_contents(base_path($this->localServidores), $xmlStream);
-            }
-          }
-          $xml = simplexml_load_string($xmlStream);
-          $servidores = $this->UtilService->object2array($xml)["Pessoa"];
-          $this->logSiape("Após buscar servidores no SIAPE", $servidores, Tipo::INFO);
-        }
+          $servidores = $this->IntegracaoSiapeService->retornarServidores()["Pessoas"];
         $this->logSiape("Concluída a fase de obtenção dos dados dos servidores informados pelo SIAPE", [], Tipo::INFO);
         if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de obtenção dos dados dos servidores informados pelo SIAPE.....");
 
@@ -569,6 +532,7 @@ class IntegracaoService extends ServiceBase
             );
           } catch (Throwable $e) {
             LogError::newError("Erro ao truncar a tabela integracao_servidores", $e);
+            Log::error("Erro ao truncar a tabela integracao_servidores", $e);
           }
           $this->logSiape("Iniciando processo de atualização de servidores", [], Tipo::INFO);
           $integracaoServidorProcessar->setServidores($servidores)->setEcho($this->echo)->setIntegracaoConfig($this->integracao_config)
@@ -838,7 +802,7 @@ class IntegracaoService extends ServiceBase
         DB::beginTransaction();
 
         $chefes = [];
-        if ($this->integracao_config["tipo"] == "SIAPE") {
+       
 
       $chefes = DB::table('integracao_unidades as iu')
           ->join('unidades as u', 'iu.codigo_siape', '=', 'u.codigo')
@@ -869,8 +833,6 @@ class IntegracaoService extends ServiceBase
         })
         ->toArray();
 
-
-        } 
         if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de montagem do array de chefias!.....");
 
         $integracaoChefia = new GestorIntegracao(
@@ -962,25 +924,7 @@ class IntegracaoService extends ServiceBase
     }
   }
 
-  public function consultarApiSigepe($token, $url)
-  {
-    $response = Http::withToken($token)->withOptions([
-      'allow_redirects' => false,
-      'verify' => $this->validaCertificado
-    ])->get($url);
-
-    LogError::newError("IntegracaoService: Consulta à API do SIAPE", [
-      'url' => $url,
-      'status' => $response->status(),
-      'response' => $response->body()
-    ]);
-
-    if ($response->failed()) $response->throw();
-    if ($response->status() >= 300 && $response->status() < 400) $response = $this->consultarApiSigepe($token, $response->header('Location'));
-    return $response;
-  }
-
-  public function atualizaLogs($user_id, string $table_name, string $row_id, string $type, array $delta)
+    public function atualizaLogs($user_id, string $table_name, string $row_id, string $type, array $delta)
   {
     /*
       $change = DB::connection('log');
@@ -1017,4 +961,18 @@ class IntegracaoService extends ServiceBase
     });
     return $b;
   }
+
+  public function buscaProcessamentosPendentes(): array    
+  {
+    $siapeDadosUORG = SiapeDadosUORG::where('processado', 0)->count() > 1;
+    $siapeDadosPessoais = SiapeConsultaDadosPessoais::where('processado', 0)->count() > 1;
+    $siapeDadosFuncionais = SiapeConsultaDadosFuncionais::where('processado', 0)->count() > 1;
+
+    return [
+      'siapeDadosUORG' => $siapeDadosUORG,
+      'siapeDadosPessoais' => $siapeDadosPessoais,
+      'siapeDadosFuncionais' => $siapeDadosFuncionais
+    ];
+  }
+
 }
