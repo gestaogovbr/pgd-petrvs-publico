@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from "@angular/common/http";
 import { Component, Injector, ViewChild } from "@angular/core";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
@@ -58,18 +59,36 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     produto.data_desativado = null;
     produto.data_ativado = null;
     ativo ? produto.data_desativado = new Date() : produto.data_ativado = new Date();
-    
+    let messageError = "";
     try {
       await this.dao?.update(produto.id, {
         id: produto.id,
         data_desativado: produto.data_desativado,
         data_ativado: produto.data_ativado
       });
-      console.log("Produto atualizado com sucesso");
-    } catch (error) {
-      console.error("Erro ao atualizar o produto", error);
+    } catch (error: any) {
+      if (error instanceof HttpErrorResponse) {
+        messageError = error.error.message;
+        
+      }
+      if(error.validationErrors){
+        console.log(error.status);
+        let validationErrors  = error.validationErrors;
+        messageError = "";
+        Object.keys(validationErrors).forEach((key) => {
+          const messages = validationErrors[key];
+          messages.forEach((message: string) => {
+            messageError += `${key}: ${message}\n`;
+
+          });
+      });
+      
+    }
+    messageError = messageError ? messageError : "Erro inesperado";
+
+    this.dialog.alert("Erro ao ativar/inativar o produto", messageError, 'Fechar', 'fa fa-exclamation-triangle');
     } finally {
-      this.isUpdating = false; // Finaliza o processo, permitindo novos cliques
+      this.isUpdating = false; 
     }
   }
 
