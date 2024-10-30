@@ -1,26 +1,29 @@
 <?php
-namespace App\Services\API_PGD\Export;
+namespace App\Jobs\PGD\Tenant;
 
-use App\Models\PlanoEntrega;
-use Illuminate\Http\Resources\Json\JsonResource;
-use App\Services\API_PGD\Resources\PlanoEntregaResource;
 use App\Services\API_PGD\DataSources\DataSource;
+use App\Models\PlanoEntrega;
 use App\Services\API_PGD\DataSources\PlanoEntregaDataSource;
+use App\Services\API_PGD\Resources\PlanoEntregaResource;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
-class ExportarPlanoEntregasService extends ExportarService
+class ExportarEntregaJob extends ExportarItemJob
 {
-    public function getResource($model): JsonResource {
-        return new PlanoEntregaResource($model);
+    public static function getDescricao(): string
+    {
+        return 'Exportar Dados de Entrega para PGD';
     }
 
     public function getDataSource(): DataSource {
-       return new PlanoEntregaDataSource();
+        return new PlanoEntregaDataSource();
     }
 
-    public function getEndpoint($resource): string
-    {
+    public function getResource($model): PlanoEntregaResource {
+        return new PlanoEntregaResource($model);
+    }
+
+    public function getEndpoint($resource): string {
         return "/organizacao/SIAPE/{$resource->cod_unidade_autorizadora}/plano_entregas/{$resource->id_plano_entregas}";
     }
 
@@ -30,15 +33,14 @@ class ExportarPlanoEntregasService extends ExportarService
     }
 
     public function addFalha() {
-        $this->envio->qtde_entregas_falhas++;
-        $this->envio->save();
+        $this->envio->increment('qtde_entregas_falhas');
         parent::addFalha();
     }
 
     public function addSucesso() {
-        $this->envio->qtde_entregas_sucessos++;
-        $this->envio->save();
+        $this->envio->increment('qtde_entregas_sucessos');
         parent::addSucesso();
     }
+
 }
 
