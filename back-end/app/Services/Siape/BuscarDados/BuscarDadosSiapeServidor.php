@@ -50,7 +50,9 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             if (!$unidadeProcessada) {
                 return true;
             }
-
+            if(is_null($unidadeProcessada->data_modificacao)){
+                return true;
+            }
             $dataModificacaoBD = $this->asTimestamp($unidadeProcessada->data_modificacao);
 
             $dataModificacaoSiape = DateTime::createFromFormat('dmY', $servidor['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
