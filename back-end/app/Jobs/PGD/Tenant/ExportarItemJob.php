@@ -88,6 +88,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 
         }catch(ExportPgdException $exception) {
             $this->handleError($exception->getmessage(), $envioItem);
+            throw $exception;
         }
     }
 
@@ -129,8 +130,6 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
                 LogError::newError("Erro atualizar audit: ", $exception, $this->source);
             }
         }
-
-        $this->fail();
     }
 
     abstract public function atualizarEntidade($id);

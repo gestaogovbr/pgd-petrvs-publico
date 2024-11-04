@@ -80,7 +80,7 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
             
             LogError::newError("Erro ao processar Tenant {$this->tenantId} interrompida! Erro: " . $e->getMessage());  
 
-            $this->fail();
+            throw $e;
         }
     }
 
