@@ -13,4 +13,9 @@ class EnvioItem extends Model
     protected $table = 'envio_itens';
     protected $keyType = 'string';
     public $incrementing = false;
+
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'uid');
+    }
 }

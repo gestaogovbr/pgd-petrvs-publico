@@ -1,0 +1,13 @@
+<editable-form [form]="form!" [disabled]="true" [title]="isModal ? '' : title" (cancel)="onCancel()">
+  <div class="row">
+      <div class="row">
+        <input-select [size]="3" label="Tipo" icon="bi bi-flag" controlName="tipo" [items]="lookup.ENVIO_ITEM_TIPO"></input-select>
+        <input-text [size]="4" label="ID" icon="bi bi-upc" controlName="uid"></input-text>
+        <input-datetime [size]="4" datetime label="Enviado em" controlName="created_at" [control]="form!.controls.created_at"></input-datetime>
+        <input-switch [size]="1" label="Sucesso" controlName="sucesso" [control]="form!.controls.sucesso" labelInfo="Sucesso"></input-switch>
+      </div>
+      <div class="row">
+        <input-textarea [size]="12" [rows]="3" label="Mensagem" icon="bi bi-textarea-t" controlName="erros" [control]="form!.controls.erros"></input-textarea>
+      </div>
+  </div>
+</editable-form>

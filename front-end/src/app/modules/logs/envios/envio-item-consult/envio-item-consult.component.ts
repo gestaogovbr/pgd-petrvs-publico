@@ -1,25 +1,28 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { EnvioDaoService } from 'src/app/dao/envio-dao.service';
+import { EnvioItemDaoService } from 'src/app/dao/envio-item-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Envio } from 'src/app/models/envio.model';
+import { EnvioItem } from 'src/app/models/envio-item.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
-  selector: 'envio-consult',
-  templateUrl: './envio-consult.component.html',
-  styleUrls: ['./envio-consult.component.scss']
+  selector: 'envio-item-consult',
+  templateUrl: './envio-item-consult.component.html',
+  styleUrls: ['./envio-item-consult.component.scss']
 })
-export class EnvioConsultComponent extends PageFormBase<Envio, EnvioDaoService> {
+export class EnvioItemConsultComponent extends PageFormBase<EnvioItem, EnvioItemDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   
   constructor(public injector: Injector) {
-    super(injector, Envio, EnvioDaoService);
+    super(injector, EnvioItem, EnvioItemDaoService);
     this.form = this.fh.FormBuilder({
+      tipo: { default: ""},
+      uid: { default: ""},
+      sucesso: { default: false },
       erros: {default: ""},
       created_at: {default: null},
-      finished_at: {default: null}
     }, this.cdRef);
   }
 
@@ -27,18 +30,18 @@ export class EnvioConsultComponent extends PageFormBase<Envio, EnvioDaoService> 
     super.ngOnInit();
   }
 
-  public loadData(entity: Envio, form: FormGroup): void {
+  public loadData(entity: EnvioItem, form: FormGroup): void {
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
   }
 
   public initializeData(form: FormGroup): void {
-    form.patchValue(new Envio());
+    form.patchValue(new EnvioItem());
   }
 
-  public saveData(form: IIndexable): Promise<Envio> {
-    return new Promise<Envio>((resolve, reject) => {
-      const envio = this.util.fill(new Envio(), this.entity!);
+  public saveData(form: IIndexable): Promise<EnvioItem> {
+    return new Promise<EnvioItem>((resolve, reject) => {
+      const envio = this.util.fill(new EnvioItem(), this.entity!);
       resolve(this.util.fillForm(envio, this.form!.value));
     });
   }

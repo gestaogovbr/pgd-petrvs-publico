@@ -11,6 +11,8 @@ import { EnvioListComponent } from './envios/envio-list/envio-list.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { EnvioConsultComponent } from './envios/envio-consult/envio-consult.component';
 import { EnvioItemListComponent } from './envios/envio-item-list/envio-item-list.component';
+import { EnvioItemParticipanteListComponent } from './envios/envio-item-participante-list/envio-item-participante-list.component';
+import { EnvioItemConsultComponent } from './envios/envio-item-consult/envio-item-consult.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,9 @@ import { EnvioItemListComponent } from './envios/envio-item-list/envio-item-list
     ErrorFormComponent,
     EnvioListComponent,
     EnvioConsultComponent,
-    EnvioItemListComponent
+    EnvioItemListComponent,
+    EnvioItemConsultComponent,
+    EnvioItemParticipanteListComponent
   ],
   imports: [
     CommonModule,

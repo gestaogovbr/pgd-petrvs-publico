@@ -1,16 +1,12 @@
 <grid [dao]="dao" [hasEdit]="false" [title]="isModal ? '' : title" [orderBy]="orderBy">
     <toolbar></toolbar>
-    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [deleted]="false" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-select [size]="4" label="Tipo"  controlName="tipo" [control]="filter!.controls.tipo" [items]="tipos" itemTodos="Todos" valueTodos=""></input-select>
         </div>
     </filter>
     <columns>
-        <column title="Tipo" field="tipo" [width]="80" [template]="columnTipo">
-            <ng-template let-row="row" #columnTipo>
-                <span><small>{{ row.tipo }}</small></span>
-            </ng-template>
-        </column>
+        <column [title]="lex.translate('Tipo')" type="select" field="tipo" [items]="lookup.ENVIO_ITEM_TIPO" [width]="30"></column>
         <column title="ID" field="uid" [width]="80" [template]="columnUid">
             <ng-template let-row="row" #columnUid>
                 <span><small>{{ row.uid }}</small></span>

@@ -1,6 +1,6 @@
 <grid [dao]="dao" [hasEdit]="false" [title]="isModal ? '' : title" [orderBy]="orderBy">
     <toolbar></toolbar>
-    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [deleted]="false" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-datetime [size]="3" datetime label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Início da pesquisa"></input-datetime>
             <input-datetime [size]="3" datetime label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Fim da pesquisa"></input-datetime>
@@ -17,7 +17,7 @@
                 <span><small>{{ util.getDateTimeFormatted(row.finished_at) }}</small></span>
             </ng-template>
         </column>
-        <column title="Sucesso" field="sucesso" [width]="20" [template]="columnDataSucesso">
+        <column title="Finalizado" field="sucesso" [width]="20" [template]="columnDataSucesso">
             <ng-template let-row="row" #columnDataSucesso>
                 <span [ngClass]="{'text-danger': !row.sucesso}">
                     <small>{{ util.getBooleanFormatted(row.sucesso).toUpperCase() }}</small>
@@ -42,7 +42,7 @@
                 <span><small>{{ row.qtde_trabalhos_falhas }} com falha</small></span>
             </ng-template>
         </column>
-        <column *ngIf="!selectable" type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+        <column type="options" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

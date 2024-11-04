@@ -16,6 +16,7 @@ export class EnvioListComponent extends PageListBase<Envio, EnvioDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public allPages: ListenerAllPagesService;
+  public BOTAO_PARTICIPANTES: ToolbarButton;
 
   constructor(public injector: Injector, dao: EnvioDaoService) {
     super(injector, Envio, EnvioDaoService);
@@ -27,6 +28,13 @@ export class EnvioListComponent extends PageListBase<Envio, EnvioDaoService> {
       data_fim: {default: null}
     });
     this.orderBy = [['created_at', 'desc']];
+
+    this.BOTAO_PARTICIPANTES = {
+			label: "Participantes",
+			icon: "bi bi-users",
+			color: "btn-outline-info",
+			onClick: this.participantes.bind(this),
+		};
   }
 
   async ngAfterViewInit() {
@@ -58,5 +66,15 @@ export class EnvioListComponent extends PageListBase<Envio, EnvioDaoService> {
     let result: ToolbarButton[] = [];
     if (this.auth.hasPermissionTo("MOD_PENT")) result.push({icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this)});
     return result;
+  }
+
+  public dynamicOptions(row: any): ToolbarButton[] {
+		let result: ToolbarButton[] = [];
+		result.push(this.BOTAO_PARTICIPANTES);
+		return result;
+	}
+
+  public participantes = async (doc: Envio) => {
+    this.go.navigate({route: ['envios', doc.id, "participantes"]});
   }
 }
