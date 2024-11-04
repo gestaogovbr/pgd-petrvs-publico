@@ -17,6 +17,8 @@ export class EnvioListComponent extends PageListBase<Envio, EnvioDaoService> {
 
   public allPages: ListenerAllPagesService;
   public BOTAO_PARTICIPANTES: ToolbarButton;
+  public BOTAO_TRABALHOS: ToolbarButton;
+  public BOTAO_ENTREGAS: ToolbarButton;
 
   constructor(public injector: Injector, dao: EnvioDaoService) {
     super(injector, Envio, EnvioDaoService);
@@ -34,6 +36,20 @@ export class EnvioListComponent extends PageListBase<Envio, EnvioDaoService> {
 			icon: "bi bi-users",
 			color: "btn-outline-info",
 			onClick: this.participantes.bind(this),
+		};
+
+    this.BOTAO_TRABALHOS = {
+			label: "Planos de Trabalho",
+			icon: "bi bi-users",
+			color: "btn-outline-info",
+			onClick: this.trabalhos.bind(this),
+		};
+
+    this.BOTAO_ENTREGAS = {
+			label: "Planos de Entrega",
+			icon: "bi bi-users",
+			color: "btn-outline-info",
+			onClick: this.entregas.bind(this),
 		};
   }
 
@@ -71,10 +87,20 @@ export class EnvioListComponent extends PageListBase<Envio, EnvioDaoService> {
   public dynamicOptions(row: any): ToolbarButton[] {
 		let result: ToolbarButton[] = [];
 		result.push(this.BOTAO_PARTICIPANTES);
+    result.push(this.BOTAO_ENTREGAS);
+    result.push(this.BOTAO_TRABALHOS);
 		return result;
 	}
 
   public participantes = async (doc: Envio) => {
     this.go.navigate({route: ['envios', doc.id, "participantes"]});
+  }
+
+  public trabalhos = async (doc: Envio) => {
+    this.go.navigate({route: ['envios', doc.id, "trabalhos"]});
+  }
+
+  public entregas = async (doc: Envio) => {
+    this.go.navigate({route: ['envios', doc.id, "entregas"]});
   }
 }

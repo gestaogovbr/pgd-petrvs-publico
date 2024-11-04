@@ -3,7 +3,6 @@ import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { EnvioItemDaoService } from 'src/app/dao/envio-item-dao.service';
-import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { EnvioItem } from 'src/app/models/envio-item.model';
 import { Envio } from 'src/app/models/envio.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
@@ -17,16 +16,16 @@ export class EnvioItemParticipanteListComponent extends PageListBase<EnvioItem, 
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   public envio_id: string | null = null;
   public envioItemDaoService: EnvioItemDaoService;
-  public allPages: ListenerAllPagesService;
+  // public allPages: ListenerAllPagesService;
 
   constructor(public injector: Injector, dao: EnvioItemDaoService) {
     super(injector, EnvioItem, EnvioItemDaoService);
     /* Inicializações */
     this.envioItemDaoService = dao // injector.get<EnvioItemDaoService>(EnvioItemDaoService);
-    this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
+    // this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.title = this.lex.translate("Histórico de Participantes Enviados");
     this.filter = this.fh.FormBuilder({
-      envio_id: {default: this.envio_id}, 
+      envio_id: {default: null }, 
       tipo: {default: null},
       uid: {default: null}
     });
@@ -36,10 +35,10 @@ export class EnvioItemParticipanteListComponent extends PageListBase<EnvioItem, 
     this.orderBy = [['created_at', 'asc']];
   }
 
-  async ngAfterViewInit() {
+  /*async ngAfterViewInit() {
       super.ngAfterViewInit();
       this.cdRef.detectChanges();
-  };
+  };*/
 
   public filterClear(filter: FormGroup) {
     filter.controls.tipo.setValue("");

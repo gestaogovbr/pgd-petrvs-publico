@@ -18,4 +18,9 @@ class EnvioItem extends Model
     {
         return $this->belongsTo(Usuario::class, 'uid');
     }
+
+    public function planoTrabalho()
+    {
+        return $this->belongsTo(PlanoTrabalho::class, 'uid');
+    }
 }

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EnvioItemListComponent } from './envio-item-list.component';
+import { EnvioItemTrabalhoListComponent } from './envio-item-trabalho-list.component';
 
 describe('ErrorListComponent', () => {
-  let component: EnvioItemListComponent;
-  let fixture: ComponentFixture<EnvioItemListComponent>;
+  let component: EnvioItemTrabalhoListComponent;
+  let fixture: ComponentFixture<EnvioItemTrabalhoListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EnvioItemListComponent ]
+      declarations: [ EnvioItemTrabalhoListComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EnvioItemListComponent);
+    fixture = TestBed.createComponent(EnvioItemTrabalhoListComponent);
     component = fixture.componentInstance;
   });
 

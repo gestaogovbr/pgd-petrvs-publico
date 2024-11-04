@@ -10,9 +10,9 @@ import { ErrorListComponent } from './error/error-list/error-list.component';
 import { EnvioListComponent } from './envios/envio-list/envio-list.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { EnvioConsultComponent } from './envios/envio-consult/envio-consult.component';
-import { EnvioItemListComponent } from './envios/envio-item-list/envio-item-list.component';
 import { EnvioItemParticipanteListComponent } from './envios/envio-item-participante-list/envio-item-participante-list.component';
 import { EnvioItemConsultComponent } from './envios/envio-item-consult/envio-item-consult.component';
+import { EnvioItemTrabalhoListComponent } from './envios/envio-item-trabalho-list/envio-item-trabalho-list.component';
 
 @NgModule({
   declarations: [
@@ -22,9 +22,9 @@ import { EnvioItemConsultComponent } from './envios/envio-item-consult/envio-ite
     ErrorFormComponent,
     EnvioListComponent,
     EnvioConsultComponent,
-    EnvioItemListComponent,
     EnvioItemConsultComponent,
-    EnvioItemParticipanteListComponent
+    EnvioItemParticipanteListComponent,
+    EnvioItemTrabalhoListComponent
   ],
   imports: [
     CommonModule,

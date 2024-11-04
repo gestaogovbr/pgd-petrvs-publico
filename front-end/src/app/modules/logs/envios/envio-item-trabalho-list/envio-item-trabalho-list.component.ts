@@ -9,32 +9,33 @@ import { Envio } from 'src/app/models/envio.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'envio-item-list',
-  templateUrl: './envio-item-list.component.html',
-  styleUrls: ['./envio-item-list.component.scss']
+  selector: 'envio-item-trabalho-list',
+  templateUrl: './envio-item-trabalho-list.component.html',
+  styleUrls: ['./envio-item-trabalho-list.component.scss']
 })
-export class EnvioItemListComponent extends PageListBase<EnvioItem, EnvioItemDaoService> {
+export class EnvioItemTrabalhoListComponent extends PageListBase<EnvioItem, EnvioItemDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   public envio_id: string | null = null;
   public envioItemDaoService: EnvioItemDaoService;
   public allPages: ListenerAllPagesService;
-  public tipos = [
-    { key: 'participante', value: 'Participante' },
-    { key: 'entrega', value: 'Plano de Entrega' },
-    { key: 'trabalho', value: 'Plano de Trabalho'}
-  ];
 
   constructor(public injector: Injector, dao: EnvioItemDaoService) {
     super(injector, EnvioItem, EnvioItemDaoService);
     /* Inicializações */
     this.envioItemDaoService = dao // injector.get<EnvioItemDaoService>(EnvioItemDaoService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
-    this.title = this.lex.translate("Histórico de Envio à API PGD");
+    this.title = this.lex.translate("Histórico de Planos de Trabalho Enviados");
     this.filter = this.fh.FormBuilder({
       envio_id: {default: this.envio_id}, 
-      tipo: {default: null},
+      tipo: {default: 'trabalho'},
       uid: {default: null}
     });
+    this.join = [
+			"planoTrabalho:id,numero",
+      "planoTrabalho.programa:id,nome",
+      "planoTrabalho.tipo_modalidade:id,nome",
+      "planoTrabalho.unidade:id,sigla",
+    ];
     this.orderBy = [['created_at', 'asc']];
   }
 
@@ -52,15 +53,10 @@ export class EnvioItemListComponent extends PageListBase<EnvioItem, EnvioItemDao
     let result: any[] = [];
     let form: any = filter.value;
 
+    result.push(["tipo", '=', 'trabalho']);
     result.push(["envio_id", '=', form.envio_id]);
 
-    if(form.tipo){
-      result.push(["tipo", "=", form.tipo]);
-    };
-
-    if(form.uid){
-      result.push(["uid", "=", form.uid]);
-    };
+    console.log('filterWhere');
 
     return result;
   }
@@ -73,12 +69,11 @@ export class EnvioItemListComponent extends PageListBase<EnvioItem, EnvioItemDao
 
   public ngOnInit() {
     super.ngOnInit();
+    console.log(this.urlParams!.get("id") as string);
     this.filter?.controls.envio_id.setValue(this.urlParams!.get("id") as string);
   }
 
   public consult = async (doc: EnvioItem) => {
-    //console.log(doc);
-    //this.go.navigate({route: [...this.go.currentOrDefault.route, "items", doc.id]});
     this.go.navigate({route: ['logs', 'envio-items', doc.id, "consult"]});
   }
 }
