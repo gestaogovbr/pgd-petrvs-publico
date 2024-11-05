@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Traits\Version;
 
-class Version231 extends Migration
+class Version232 extends Migration
 {
     use Version;
     /**
