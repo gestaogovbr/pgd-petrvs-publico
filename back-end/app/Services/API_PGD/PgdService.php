@@ -19,6 +19,7 @@ class PgdService
             //'debug' => true
           ])
           ->baseUrl(config('pgd.host'))
+          ->withHeader('User-Agent', 'Petrvs/'.config('app.version'))
           ->withToken($token);
     }
 

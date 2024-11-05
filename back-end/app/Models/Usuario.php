@@ -17,7 +17,6 @@ use App\Models\Documento;
 use App\Models\Comentario;
 use App\Models\Curriculum;
 use App\Models\Integracao;
-use App\Traits\LogChanges;
 use App\Models\Afastamento;
 use App\Models\Notificacao;
 use App\Models\PlanoEntrega;
@@ -40,6 +39,7 @@ use App\Models\NotificacaoDestinatario;
 use Illuminate\Notifications\Notifiable;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\QuestionarioPreenchimento;
+use App\Models\IntegracaoServidor;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -52,7 +52,7 @@ class UsuarioConfig
 
 class Usuario extends Authenticatable  implements AuditableContract
 {
-  use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, LogChanges, SoftDeletes, Auditable;
+  use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable;
 
   protected $table = "usuarios";
 
@@ -348,6 +348,13 @@ class Usuario extends Authenticatable  implements AuditableContract
   {
     return $this->hasOne(UnidadeIntegrante::class)->has('colaborador');
   } // unidade com a qual possui TCR
+
+
+  public function integracaoServidor()
+  {
+    return $this->hasOne(IntegracaoServidor::class, 'cpf', 'cpf');
+  }
+
   // Mutattors e Casts
   public function getUrlFotoAttribute($value)
   {
@@ -395,4 +402,5 @@ class Usuario extends Authenticatable  implements AuditableContract
     }
     return $result;
   }
+
 }

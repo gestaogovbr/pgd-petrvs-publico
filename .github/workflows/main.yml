@@ -43,8 +43,8 @@ jobs:
         env:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
           DOCKER_HUB_TAG_LATEST: latest
-          DOCKER_HUB_TAG_NEW: 2.1.3
-          DOCKER_HUB_TAG_OLD: 2.1.2
+          DOCKER_HUB_TAG_NEW: 2.3.1
+          DOCKER_HUB_TAG_OLD: 2.3.0
           DOCKER_HUB_USERNAME: segescginf
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
           DEPLOY_PATH: ./
@@ -71,7 +71,7 @@ jobs:
           fi
           
           # Constrói a nova imagem com a tag $DOCKER_HUB_TAG_NEW
-          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW -f ./resources/dataprev/dev/Dockerfile .
+          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW -f ./resources/deploy/Dockerfile .
           
           # Etiqueta a nova imagem como DOCKER_HUB_TAG_LATEST
           docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
@@ -121,7 +121,7 @@ jobs:
         run: |
           echo "Iniciando a construção e implantação do DSV..."
           echo "Construindo a imagem Docker..."
-          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/dataprev/dev/Dockerfile .
+          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/deploy/Dockerfile .
           echo "Construção da imagem concluída. Enviando para o Docker Hub..."
           echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
           docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
@@ -169,7 +169,7 @@ jobs:
         run: |
           echo "Iniciando a construção e implantação do HMG..."
           echo "Construindo a imagem Docker..."
-          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/dataprev/dev/Dockerfile .
+          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/deploy/Dockerfile .
           echo "Construção da imagem concluída. Enviando para o Docker Hub..."
           docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
           docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
@@ -218,7 +218,7 @@ jobs:
         run: |
           echo "Iniciando a construção e implantação do TREINA..."
           echo "Construindo a imagem Docker..."
-          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/dataprev/dev/Dockerfile .
+          docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/deploy/Dockerfile .
           echo "Construção da imagem concluída. Enviando para o Docker Hub..."
           docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
           docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG

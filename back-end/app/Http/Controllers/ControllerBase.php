@@ -384,7 +384,7 @@ tenancy()->initialize($tenant); */
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado.".$e->getMessage()]);
         }
     }
 

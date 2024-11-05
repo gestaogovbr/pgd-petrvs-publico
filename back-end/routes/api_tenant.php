@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\CadeiaValorController;
+use App\Http\Controllers\CatalogoController;
+use App\Http\Controllers\SolucaoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
@@ -75,13 +77,19 @@ use App\Http\Controllers\HistoricoFuncaoController;
 use App\Http\Controllers\HistoricoLotacaoController;
 use App\Http\Controllers\ComparecimentoController;
 use App\Http\Controllers\BatchController;
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\OcorrenciaController;
 use App\Http\Controllers\ReacaoController;
 use App\Http\Controllers\PlanoEntregaEntregaProgressoController;
 use App\Http\Controllers\QuestionarioPreenchimentoController;
 use App\Http\Controllers\QuestionarioPerguntaController;
 use App\Http\Controllers\QuestionarioPerguntaRespostaController;
+use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\TipoClienteController;
+use FontLib\Table\Type\post;
 use App\Http\Controllers\JobAgendadoController;
+use App\Http\Controllers\RelatoController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -91,21 +99,6 @@ use App\Http\Controllers\JobAgendadoController;
 | com nome-composto separados por -
 */
 
-function defaultRoutes($controllerClass, $capacidades = [])
-{
-  Route::post('search-text', [$controllerClass, 'searchText']);
-  Route::post('search-key', [$controllerClass, 'searchKey']);
-  Route::post('store', [$controllerClass, 'store']);
-  Route::post('update', [$controllerClass, 'update']);
-  Route::post('update-json', [$controllerClass, 'updateJson']);
-  Route::post('destroy', [$controllerClass, 'destroy']);
-  Route::post('get-by-id', [$controllerClass, 'getById']);
-  Route::post('get-all-ids', [$controllerClass, 'getAllIds']);
-  Route::post('query', [$controllerClass, 'query']);
-  Route::post('upload', [$controllerClass, 'upload']);
-  Route::post('download-url', [$controllerClass, 'downloadUrl']);
-  Route::post('delete-file', [$controllerClass, 'deleteFile']);
-}
 $actions = config('petrvs')['actions']['api'];
 
 /* Testes */
@@ -164,6 +157,7 @@ Route::middleware(['auth:sanctum'])->prefix('Integracao')->group(function () {
   Route::post('destroy', [IntegracaoController::class, 'destroy']);
   Route::post('showResponsaveis', [IntegracaoController::class, 'showResponsaveis']);
   Route::post('get-by-id', [IntegracaoController::class, 'getById']);
+  Route::get('busca-processamentos-pendentes', [IntegracaoController::class, 'buscaProcessamentosPendentes']);
 });
 
 /* Testes */
@@ -459,3 +453,28 @@ Route::middleware(['auth:sanctum'])->prefix('Reacao')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntregaProgresso')->group(function () {
   defaultRoutes(PlanoEntregaEntregaProgressoController::class);
 });
+
+Route::middleware(['auth:sanctum'])->prefix('Relato')->group(function () {
+  Route::post('store', [RelatoController::class, 'store']);
+  Route::get('confirmar/{email}/{nome}', [RelatoController::class, 'confirmar']);
+});
+Route::middleware(['auth:sanctum'])->prefix('Produto')->group(function () {
+  defaultRoutes(ProdutoController::class);
+});
+Route::middleware(['auth:sanctum'])->prefix('Catalogo')->group(function () {
+    defaultRoutes(CatalogoController::class);
+});
+Route::middleware(['auth:sanctum'])->prefix('Solucao')->group(function () {
+    defaultRoutes(SolucaoController::class);
+});
+Route::middleware(['auth:sanctum'])->prefix('TipoCliente')->group(function () {
+  defaultRoutes(TipoClienteController::class);
+});
+Route::middleware(['auth:sanctum'])->prefix('Cliente')->group(function () {
+  defaultRoutes(ClienteController::class);
+});
+Route::middleware(['auth:sanctum'])->prefix('Relato')->group(function () {
+  Route::post('store', [RelatoController::class, 'store']);
+  Route::get('confirmar/{email}/{nome}', [RelatoController::class, 'confirmar']);
+});
+

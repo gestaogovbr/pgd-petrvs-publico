@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use App\Traits\AutoUuid;
 use App\Traits\MergeRelations;
-use App\Traits\LogChanges;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Auditable;
 use ReflectionObject;
@@ -17,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ModelBase extends Model implements AuditableContract
 {
-  use HasFactory, AutoUuid, MergeRelations, LogChanges, SoftDeletes, Auditable;
+  use HasFactory, AutoUuid, MergeRelations, SoftDeletes, Auditable;
 
   protected $keyType = 'string';
   public $incrementing = false;

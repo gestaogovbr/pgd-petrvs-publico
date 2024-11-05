@@ -19,7 +19,7 @@ import { NotificacaoService } from '../modules/uteis/notificacoes/notificacao.se
 import { AppComponent } from '../app.component';
 import { UnidadeService } from './unidade.service';
 
-export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SEI" | "LOGINUNICO";
+export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "SESSION" | "SEI" | "LOGINUNICO";
 export type Permission = string | (string | string[])[];
 
 @Injectable({
@@ -238,15 +238,6 @@ export class AuthService {
     }, redirectTo);
   }
 
-  public authDprfSeguranca(cpf: string, password: string, token: string, redirectTo?: FullRoute) {
-    return this.logIn("DPRFSEGURANCA", "login-institucional", {
-      entidade: this.gb.ENTIDADE,
-      cpf: cpf,
-      senha: password,
-      token: token
-    }, redirectTo);
-  }
-
   public authGoogle(tokenId: string, redirectTo?: FullRoute) {
     //this.googleApi.tokenId = tokenId;
     return this.logIn("GOOGLE", "login-google-token", {
@@ -405,6 +396,21 @@ export class AuthService {
     let unidade = pUnidade || this.unidade!;
     let lotacao = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
     return lotacao?.id == unidade.id;
+  }
+
+  
+  /**
+   * Informa se o usuário logado possui função de curador
+   * @param pUnidade
+   * @returns
+   */
+  public isUsuarioCurador(pUnidade: Unidade | null = null): boolean {
+    const unidade = pUnidade || this.unidade!;
+    const unidadeFound = this.usuario?.areas_trabalho?.find(area => area.unidade_id == unidade.id)
+    
+    if (!unidadeFound) return false;
+
+    return unidadeFound.atribuicoes?.find(atribuicao => atribuicao.atribuicao as string == 'CURADOR') != null
   }
 
   /**

@@ -275,6 +275,19 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_PROJ_REG_INCL", "Permite incluir projeto regra"], //só no back
       ]
     ], [
+      "codigo" => "MOD_PROD",
+      "descricao" => "Módulo de Produtos",
+      "capacidades" => [
+        /* Capacidades do módulo PRODUTO */
+        ["MOD_PROD_EDT", "Permite editar produtos"],
+        ["MOD_PROD_EXCL", "Permite excluir produtos"],
+        ["MOD_PROD_INCL", "Permite incluir produtos"],
+        ["MOD_PROD_CAT", "Permite acesso aos produtos e serviços"],
+        ["MOD_PROD_CAT_INCL", "Permite incluir catálogo de produtos e serviços"],
+        ["MOD_PROD_CAT_EDT", "Permite editar catálogo de produtos e serviços"],
+        ["MOD_PROD_CAT_EXCL", "Permite excluir catálogo de produtos e serviços"]
+      ]
+    ], [
       "codigo" => "MOD_TEMP",
       "descricao" => "Módulo de Templates",
       "capacidades" => [
@@ -389,7 +402,9 @@ class TipoCapacidadeService extends ServiceBase
         /* Capacidades do módulo UNIDADES*/
         ["MOD_UND_EDT", "Permite editar unidade"],
         ["MOD_UND_EDT_FRM", "Permite editar unidades formais (SIAPE ou não)"],  // a ser implementado
-        ["MOD_UND_EXCL", "Permite excluir unidade"],
+        ["MOD_UND_EXCL", "Permite excluir unidade"],        
+        ["MOD_UND_INCL", "Permite incluir unidade"],
+        ["MOD_UND_INCL_FRM", "Permite incluir unidades formais (SIAPE ou não)"],  
         ["MOD_UND_UNIR", "Permite unificar unidade"],
         ["MOD_UND_TUDO", "Permite consultar qualquer unidade independente de subordinação"],
         ["MOD_UND_INATV", "Permite inativar uma unidade"],
