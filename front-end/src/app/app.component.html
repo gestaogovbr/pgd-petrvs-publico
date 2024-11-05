@@ -80,12 +80,12 @@
         <span class="visually-hidden"></span>
       </div>
     </div>
-    <ul class="navbar-nav navbar-nav-icons flex-row align-items-center justify-content-end ">
+    <ul class="navbar-nav navbar-nav-icons flex-row align-items-center justify-content-end">
       <li class="nav-item ms-3 ms-lg-2">
         <a class="nav-link" role="button" 
           (click)="go.navigate({route: ['relatos','lotacao']},{ root: true, modal: true })" 
           [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" title="Suporte Petrvs">
-          Relatar problemas de lotação
+          Problemas de lotação
         </a>
       </li>
       <li class="nav-item dropdown" *ngIf="utils.isDeveloper()">
