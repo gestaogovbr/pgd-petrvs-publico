@@ -2,6 +2,7 @@
 
 namespace App\Services\Siape;
 
+use App\Exceptions\ErrorDataSiapeException;
 use App\Exceptions\RequestConectaGovException;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
@@ -20,7 +21,7 @@ class ProcessaDadosSiapeBD
             ->join('siape_consultaDadosFuncionais AS f', 'p.cpf', '=', 'f.cpf')
             ->select('p.cpf', 'p.response AS responseDadosPessoais', 'f.response AS responseDadosFuncionais', 'p.data_modificacao')
             ->get();
-        
+
         if (!$results) {
             return [];
         }
@@ -36,20 +37,23 @@ class ProcessaDadosSiapeBD
                     'dadosPessoais' => $this->processaDadosPessoais($servidor->responseDadosPessoais),
                     'dadosFuncionais' => $this->processaDadosFuncionais($servidor->responseDadosFuncionais),
                 ];
-            } catch (Exception $e) {
-                Log::error('Erro ao processar servidor #'.$servidor->cpf, [$e->getMessage()]);
+            }
+            catch(ErrorDataSiapeException $e){
+                continue;
+            } 
+            catch (Exception $e) {
+                Log::error('Erro ao processar servidor #' . $servidor->cpf, [$e]);
                 continue;
             }
-            
         }
 
 
-        SiapeConsultaDadosPessoais::query()->update(['processado'=>1]);
-        SiapeConsultaDadosFuncionais::query()->update(['processado'=>1]);
+        SiapeConsultaDadosPessoais::query()->update(['processado' => 1]);
+        SiapeConsultaDadosFuncionais::query()->update(['processado' => 1]);
         return $dadosServidorArray;
     }
 
-    private function previneDataNula($servidor) : string
+    private function previneDataNula($servidor): string
     {
         return $servidor->data_modificacao ?? '1970-01-01 00:00:00';
     }
@@ -57,30 +61,40 @@ class ProcessaDadosSiapeBD
     private function processaDadosPessoais(
         string $dadosPessoais
     ): array {
-        $xmlResponse = $this->prepareResponseXml($dadosPessoais);
+        try {
+            $xmlResponse = $this->prepareResponseXml($dadosPessoais);
 
-        $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
-        $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
-        $xmlResponse->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
+            $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+            $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
+            $xmlResponse->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
 
-        $dadosPessoais = $xmlResponse->xpath('//ns1:consultaDadosPessoaisResponse/out')[0];
-        $dadosPessoaisArray = $this->simpleXmlElementToArray($dadosPessoais);
+            $dadosPessoais = $xmlResponse->xpath('//ns1:consultaDadosPessoaisResponse/out')[0];
+            $dadosPessoaisArray = $this->simpleXmlElementToArray($dadosPessoais);
 
-        return $dadosPessoaisArray;
+            return $dadosPessoaisArray;
+        } catch (Exception $e) {
+            Log::error("Falha nos dados pessoais:", [$dadosPessoais]);
+            throw new ErrorDataSiapeException("Falha ao tratar dados do Siape");
+        }
     }
 
     private function processaDadosFuncionais(
         string $dadosFuncionais
     ): array {
-        $xmlResponse = $this->prepareResponseXml($dadosFuncionais);
-        $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
-        $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
-        $xmlResponse->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
+        try {
+            $xmlResponse = $this->prepareResponseXml($dadosFuncionais);
+            $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+            $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
+            $xmlResponse->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
 
-        $dadosFuncionais = $xmlResponse->xpath('//tipo:DadosFuncionais')[0];
-        $dadosFuncionaisArray = $this->simpleXmlElementToArray($dadosFuncionais);
+            $dadosFuncionais = $xmlResponse->xpath('//tipo:DadosFuncionais')[0];
+            $dadosFuncionaisArray = $this->simpleXmlElementToArray($dadosFuncionais);
 
-        return $dadosFuncionaisArray;
+            return $dadosFuncionaisArray;
+        } catch (Exception $e) {
+            Log::error("Falha nos dados funcionais:", [$dadosFuncionais]);
+            throw new ErrorDataSiapeException("Falha ao tratar dados do Siape");
+        }
     }
     function simpleXmlElementToArray(SimpleXMLElement $element): array
     {
