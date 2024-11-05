@@ -195,7 +195,7 @@ return [
             'timeout' => 90
         ],
         'supervisor-siape' => [
-            'connection' => 'siape_queue',
+            'connection' => 'redis',
             'queue' => ['siape_queue'],
             'balance' => 'simple',
             'processes' => 1,
