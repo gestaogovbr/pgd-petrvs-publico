@@ -337,7 +337,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.entity.forma_contagem_carga_horaria = this.auth.entidade?.forma_contagem_carga_horaria || "DIA";
       this.entity.unidade_id = this.auth.unidade!.id;
       let programas = await this.programaDao.query({where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]], join: this.joinPrograma}).asPromise();
-      let ultimo = programas[programas.length -1];
+      let ultimo = programas[0];
       this.preenchePrograma(ultimo)
       this.buscaGestoresUnidadeExecutora(this.auth.unidade!);
       if(!this.gestoresUnidadeExecutora.includes(this.auth.unidade!.id)) {
