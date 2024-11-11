@@ -130,8 +130,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       criterio_avaliacao: { default: "" }
     }, this.cdRef, this.validate);
     this.programaMetadata = {
-      todosUnidadeExecutora: true,      
-      vigentesUnidadeExecutora: false
+      todosUnidadeExecutora: false,      
+      vigentesUnidadeExecutora: true
     }
   }
 

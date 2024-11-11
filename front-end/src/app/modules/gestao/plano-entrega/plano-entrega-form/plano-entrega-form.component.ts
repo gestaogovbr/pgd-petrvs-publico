@@ -65,8 +65,8 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     }, this.cdRef, this.validate);
 
     this.programaMetadata = {
-      todosUnidadeExecutora: true,      
-      vigentesUnidadeExecutora: false
+      todosUnidadeExecutora: false,      
+      vigentesUnidadeExecutora: true
     }  
   }
 
