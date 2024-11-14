@@ -151,7 +151,7 @@ export class PlanoTrabalhoService {
           });
           planoNovo.documentos.push(documento);
         } else {
-          documento.conteudo = this.templateService.renderTemplate(programa?.template_tcr?.conteudo || "", dsNovo);
+          documento.conteudo = this.templateService.renderTemplate(documento.conteudo || "", dsNovo);
           documento.dataset = this.dao!.dataset();
           documento.datasource = dsNovo;
           documento._status = documento._status == "ADD" ? "ADD" : "EDIT";
