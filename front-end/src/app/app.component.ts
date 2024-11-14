@@ -222,8 +222,8 @@ export class AppComponent {
       menu: [
         this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
         this.menuSchema.CADEIAS_VALORES,
-        //this.menuSchema.SOLUCOES,
-        //this.menuSchema.PRODUTOS,
+        this.menuSchema.SOLUCOES,
+        this.menuSchema.PRODUTOS,
         this.menuSchema.PROGRAMAS_GESTAO,
         this.menuSchema.HABILITACOES_PROGRAMA,
         this.menuSchema.PLANOS_ENTREGAS,
