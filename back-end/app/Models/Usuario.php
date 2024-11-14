@@ -17,7 +17,6 @@ use App\Models\Documento;
 use App\Models\Comentario;
 use App\Models\Curriculum;
 use App\Models\Integracao;
-use App\Traits\LogChanges;
 use App\Models\Afastamento;
 use App\Models\Notificacao;
 use App\Models\PlanoEntrega;
@@ -53,7 +52,7 @@ class UsuarioConfig
 
 class Usuario extends Authenticatable  implements AuditableContract
 {
-  use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, LogChanges, SoftDeletes, Auditable;
+  use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable;
 
   protected $table = "usuarios";
 

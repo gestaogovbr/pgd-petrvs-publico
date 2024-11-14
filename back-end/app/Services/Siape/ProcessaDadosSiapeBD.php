@@ -3,6 +3,8 @@
 namespace App\Services\Siape;
 
 use App\Exceptions\RequestConectaGovException;
+use App\Models\SiapeConsultaDadosFuncionais;
+use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeDadosUORG;
 use Exception;
 use Illuminate\Support\Facades\Log;
@@ -40,7 +42,10 @@ class ProcessaDadosSiapeBD
             }
             
         }
-        
+
+
+        SiapeConsultaDadosPessoais::query()->update(['processado'=>1]);
+        SiapeConsultaDadosFuncionais::query()->update(['processado'=>1]);
         return $dadosServidorArray;
     }
 

@@ -94,7 +94,7 @@ return [
     'middleware' => [
         'web',
         Authorize::class,
-        'telescopeBasicAuth'
+        'panel'
     ],
 
     'basic_auth' => [

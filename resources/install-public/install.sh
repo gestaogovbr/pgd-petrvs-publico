@@ -75,10 +75,6 @@ PUSHER_APP_CLUSTER=mt1
 MIX_PUSHER_APP_KEY="\${PUSHER_APP_KEY}"
 MIX_PUSHER_APP_CLUSTER="\${PUSHER_APP_CLUSTER}"
 
-HORIZON_BASIC_AUTH_USERNAME=admin
-HORIZON_BASIC_AUTH_PASSWORD=6e4167ad9903aedd097b252ea0ec0629
-TELESCOPE_BASIC_AUTH_USERNAME=admin
-TELESCOPE_BASIC_AUTH_PASSWORD=6e4167ad9903aedd097b252ea0ec0629
 EOF
 fi
 
@@ -312,32 +308,50 @@ ask_mariadb() {
                 DOCKER_COMPOSE_CONTENT="
 version: '3.9'
 services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    ports:
+      - '3306:3306'
+    volumes:
+      - db_data:/var/lib/mysql      # Define um volume persistente para os dados do MariaDB
+      - ./my.cnf:/etc/mysql/my.cnf  # Certifique-se que este arquivo está corretamente configurado
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpgd   # Define a senha para o root
   petrvs_php:
-    image: segescginf/pgdpetrvs:$IMAGE_TAG
+    image: segescginf/pgdpetrvs:$IMAGE_TAG  # Substitua pela sua imagem real
     container_name: petrvs_php
     ports:
       - '80:80'
       - '443:443'
-    depends_on:
-      - mariadb
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: 2496M
-
-  mariadb:
-    image: mariadb:11.3.2
-    container_name: mariadb
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpgd
-    ports:
-      - '3306:3306'
+          cpus: '2.0'
+          memory: 4048M
     volumes:
-      - mariadb_data:/var/lib/mysql
-
+      - ./.env:/var/www/.env
+      - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
+  petrvs_queue:
+    image: segescginf/pgdpetrvs:$IMAGE_TAG
+    container_name: petrvs_queue
+    environment:
+      - TZ=America/Bahia
+    command: ['/bin/bash', '-c', 'mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf']
+    depends_on:
+      - petrvs_php
+    volumes:
+      - './.env:/var/www/.env'
+      - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
+    stdin_open: true
+    tty: true
+  petrvs_redis:
+    image: redis:alpine
+    container_name: petrvs_redis
+    ports:
+      - '6379:6379'
 volumes:
-  mariadb_data:
+  db_data:  # Declara o volume persistente
 "
                 break
                 ;;
@@ -347,7 +361,7 @@ volumes:
 version: '3.9'
 services:
   petrvs_php:
-    image: segescginf/pgdpetrvs:$IMAGE_TAG
+    image: segescginf/pgdpetrvs:$IMAGE_TAG  # Substitua pela sua imagem real
     container_name: petrvs_php
     ports:
       - '80:80'
@@ -355,8 +369,29 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: 2496M
+          cpus: '2.0'
+          memory: 4048M
+    volumes:
+      - ./.env:/var/www/.env
+      - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
+  petrvs_queue:
+    image: segescginf/pgdpetrvs:$IMAGE_TAG
+    container_name: petrvs_queue
+    environment:
+      - TZ=America/Bahia
+    command: ['/bin/bash', '-c', 'mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf']
+    depends_on:
+      - petrvs_php
+    volumes:
+      - './.env:/var/www/.env'
+      - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
+    stdin_open: true
+    tty: true
+  petrvs_redis:
+    image: redis:alpine
+    container_name: petrvs_redis
+    ports:
+      - '6379:6379'
 "
                 break
                 ;;
@@ -489,8 +524,16 @@ echo "Limpar Cache"
 docker exec -it petrvs_php bash -c 'php artisan cache:clear'
 docker exec -it petrvs_php bash -c 'php artisan config:clear'
 
+sleep 10
+
+# Reiniciando o container Queue
+echo "Restart do ambiente de JOBS"
+docker restart petrvs_queue
+
 # Iniciar o cronjob
+echo 'Iniciando CRON'
 docker exec -it petrvs_php bash -c 'service cron start'
+
 echo "--- SISTEMA INICIADO ---"
 echo " "
 
@@ -532,5 +575,3 @@ echo "Configuração completa. O administrador pode acessar o sistema com o emai
 echo " "
 echo -e "URL do panel: \e[34m$(grep -oP '^APP_URL=\K.*' .env)/panel\e[0m"
 echo -e "URL do sistema: \e[34m$(grep -oP '^APP_URL=\K.*' .env)/login\e[0m"
-
-#710267922367-hbup6m7jddgs6g298ahkbtjb6m5kiqri.apps.googleusercontent.com
