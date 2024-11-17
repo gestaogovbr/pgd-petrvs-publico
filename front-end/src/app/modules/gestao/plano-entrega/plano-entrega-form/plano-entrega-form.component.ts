@@ -135,7 +135,10 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.entity.unidade_id = this.auth.unidade?.id || "";
     this.entity.unidade = this.auth.unidade;
 
-    let programas = await this.programaDao.query({where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]]}).asPromise();
+    let programas = await this.programaDao.query({
+      where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]],
+      orderBy: [["unidade.path", "desc"]]
+    }).asPromise();
     let ultimo = programas[0];
     if(ultimo){
       this.entity.programa = ultimo;
