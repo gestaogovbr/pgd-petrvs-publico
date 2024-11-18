@@ -52,14 +52,15 @@
                 <span> {{row.sigla}}</span><br>
             </ng-template>
         </column>
-        <column title="Ativar/Desativar" [template]="columnAtivar">
-            <ng-template let-row="row" #columnAtivar>
-                <input-switch  [value]="ativo(row) ? 'true' : 'false'" [valueOn]="'true'"  [valueOff]="'false'" (change)="ativarDesativar(row)"></input-switch>
-            </ng-template>
-        </column>
         <column title="Status" [template]="columnStatus">
             <ng-template let-row="row" #columnStatus>
-                {{row.status}}
+                <badge *ngIf="row.status" color="success" label="Ativo"></badge>
+                <badge *ngIf="!row.status" color="danger" label="Inativo"></badge>
+            </ng-template>
+        </column>
+        <column title="Ativar/Desativar" [template]="columnAtivar">
+            <ng-template let-row="row" #columnAtivar>
+                <input-switch [size]="12" scale="small"  [value]="row.status ? 'true' : 'false'" [valueOn]="'true'"  [valueOff]="'false'" (change)="ativarDesativar(row)"></input-switch>
             </ng-template>
         </column>
         
