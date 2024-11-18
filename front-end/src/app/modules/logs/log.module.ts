@@ -7,15 +7,24 @@ import { ChangeListComponent } from './change/change-list/change-list.component'
 import { ChangeFormComponent } from './change/change-form/change-form.component';
 import { ErrorFormComponent } from './error/error-form/error-form.component';
 import { ErrorListComponent } from './error/error-list/error-list.component';
-import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
-
+import { EnvioListComponent } from './envios/envio-list/envio-list.component';
+import { MarkdownModule } from 'ngx-markdown';
+import { EnvioConsultComponent } from './envios/envio-consult/envio-consult.component';
+import { EnvioItemParticipanteListComponent } from './envios/envio-item-participante-list/envio-item-participante-list.component';
+import { EnvioItemConsultComponent } from './envios/envio-item-consult/envio-item-consult.component';
+import { EnvioItemTrabalhoListComponent } from './envios/envio-item-trabalho-list/envio-item-trabalho-list.component';
 
 @NgModule({
   declarations: [
     ChangeListComponent,
     ChangeFormComponent,
     ErrorListComponent,
-    ErrorFormComponent
+    ErrorFormComponent,
+    EnvioListComponent,
+    EnvioConsultComponent,
+    EnvioItemConsultComponent,
+    EnvioItemParticipanteListComponent,
+    EnvioItemTrabalhoListComponent
   ],
   imports: [
     CommonModule,
