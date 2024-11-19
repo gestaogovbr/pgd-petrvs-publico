@@ -65,8 +65,8 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     }, this.cdRef, this.validate);
 
     this.programaMetadata = {
-      todosUnidadeExecutora: true,      
-      vigentesUnidadeExecutora: false
+      todosUnidadeExecutora: false,      
+      vigentesUnidadeExecutora: true
     }  
   }
 
@@ -135,8 +135,11 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.entity.unidade_id = this.auth.unidade?.id || "";
     this.entity.unidade = this.auth.unidade;
 
-    let programas = await this.programaDao.query({where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]]}).asPromise();
-    let ultimo = programas[programas.length -1];
+    let programas = await this.programaDao.query({
+      where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]],
+      orderBy: [["unidade.path", "desc"]]
+    }).asPromise();
+    let ultimo = programas[0];
     if(ultimo){
       this.entity.programa = ultimo;
       this.entity.programa_id = ultimo.id;

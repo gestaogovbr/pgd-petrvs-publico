@@ -81,6 +81,13 @@
       </div>
     </div>
     <ul class="navbar-nav navbar-nav-icons flex-row align-items-center justify-content-end">
+      <li class="nav-item ms-3 ms-lg-2">
+        <a class="nav-link" role="button" 
+          (click)="go.navigate({route: ['relatos','lotacao']},{ root: true, modal: true })" 
+          [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" title="Suporte Petrvs">
+          Problemas de lotação
+        </a>
+      </li>
       <li class="nav-item dropdown" *ngIf="utils.isDeveloper()">
         <a class="nav-link" id="petrvs-context" href="#" role="button" [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside" title="Módulo">
           <span class="d-none d-md-block">

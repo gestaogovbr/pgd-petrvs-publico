@@ -182,6 +182,7 @@ export class AppComponent {
       LOGS_TRAFEGOS: { name: "Log do Tráfego", permition: '', route: ['logs', 'traffic'], icon: this.entity.getIcon('Traffic') },
       LOGS_TESTES_EXPEDIENTES: { name: "Teste Expediente", permition: '', route: ['teste'], icon: this.entity.getIcon('Teste') },
       TESTE_CALCULA_DATATEMPO: { name: "Teste calculaDataTempo", permition: '', route: ['teste', 'calcula-tempo'], icon: this.entity.getIcon('Teste') },
+      LOGS_ENVIOS: { name: "Log dos Envios à API PGD", permition: '', route: ['logs', 'envios'], icon: this.entity.getIcon('Envio') },
       /* RaioX - Curriculum */
       CURRICULUM_CADASTRO_PESSOAL: { name: this.lex.translate("Dados Pessoais"), permition: 'MOD_RX_CURR', route: ['raiox', 'pessoal'], icon: "bi bi-file-person" },
       CURRICULUM_CADASTRO_PROFISSIONAL: { name: this.lex.translate("Dados Profissionais"), permition: 'MOD_RX_CURR', route: ['raiox', 'profissional'], icon: "fa fa-briefcase" },
@@ -334,7 +335,8 @@ export class AppComponent {
       menu: [
         this.menuSchema.LOGS_ALTERACOES,
         this.menuSchema.LOGS_ERROS,
-        this.menuSchema.LOGS_TRAFEGOS
+        this.menuSchema.LOGS_TRAFEGOS,
+        this.menuSchema.LOGS_ENVIOS
       ]
     }, {
       name: this.lex.translate("Testes"),

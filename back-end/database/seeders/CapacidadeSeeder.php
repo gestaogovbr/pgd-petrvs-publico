@@ -319,7 +319,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_USER"],
       ["codigo" => "MOD_USER_ATRIB"],
       ["codigo" => "MOD_USER_EDT"],
-      ["codigo" => "MOD_USER_INCL"],
+      // ["codigo" => "MOD_USER_INCL"], // DEPRECATED: o modo de incluir usuários não está funcionado, desabilitado para removeção futura ou alteração.
       ["codigo" => "MOD_USER_TUDO"],
       ["codigo" => "MOD_PROD"],
       ["codigo" => "MOD_PROD_CAT_INCL"],
