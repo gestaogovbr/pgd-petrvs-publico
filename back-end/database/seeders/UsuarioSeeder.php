@@ -86,6 +86,22 @@ class UsuarioSeeder extends Seeder
         'apelido' => 'Marco',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
+      ],
+      [
+        'email' => 'thais.brito@economia.gov.br',
+        'nome' => 'Thaís Barral de Oliveira Brito',
+        'cpf' => '82162492504',
+        'apelido' => 'Thais',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'FEMININO',
+      ],
+      [
+        'email' => 'juliane.perini@mds.gov.br',
+        'nome' => 'Juliane Helriguel de Melo Perini',
+        'cpf' => '78232848120',
+        'apelido' => 'Juliane',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'FEMININO',
       ]
     ];
 
