@@ -147,7 +147,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     let textoUsuario = this.form!.controls.usuario_texto_complementar.value;
     let textoUnidade = this.form!.controls.unidade_texto_complementar.value;
     let documento = this.planoTrabalhoService.atualizarTcr(this.planoTrabalho!, this.entity!, textoUsuario, textoUnidade);
-    this.form?.controls.documento_id.setValue(documento?.id);
+    this.form?.controls.documento_id.setValue(null);
     this.form?.controls.documentos.setValue(this.entity!.documentos);
     this.datasource = documento?.datasource || {};
     this.template = this.entity.programa?.template_tcr;
@@ -365,7 +365,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     plano.usuario = (this.usuario!.selectedEntity || this.entity?.usuario) as Usuario;
     plano.unidade = (this.unidade?.selectedEntity || this.entity?.unidade) as Unidade;
     plano.programa = (this.programa?.selectedEntity || this.entity?.programa) as Programa;
-    plano.tipo_modalidade = (this.tipoModalidade!.selectedEntity || this.entity?.tipo_modalidade) as TipoModalidade;
+    plano.tipo_modalidade = (this.tipoModalidade!.selectedEntity || this.entity?.tipo_modalidade) as TipoModalidade;   
     return plano;
   }
 
