@@ -1,0 +1,25 @@
+<grid [dao]="dao" [join]="join" [hasEdit]="false" [title]="isModal ? '' : title" [orderBy]="orderBy">
+    <toolbar></toolbar>
+    <filter [deleted]="false" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    </filter>
+    <columns>
+        <column title="CPF" field="cpf" [width]="40" [template]="columnCpf">
+            <ng-template let-row="row" #columnCpf>{{ row.usuario?.cpf }}</ng-template>
+        </column>
+        <column title="Nome" field="npme" [width]="120" [template]="columnNome">
+            <ng-template let-row="row" #columnNome>{{ row.usuario?.nome }}</ng-template>
+        </column>
+        <column title="Iniciado em" field="created_at" [width]="80" [template]="columnDataCriacao">
+            <ng-template let-row="row" #columnDataCriacao>
+                <span><small>{{ util.getDateTimeFormatted(row.created_at) }}</small></span>
+            </ng-template>
+        </column>
+        <column title="Sucesso" field="sucesso" [width]="20" [template]="columnDataSucesso">
+            <ng-template let-row="row" #columnDataSucesso>
+                <span><small>{{ util.getBooleanFormatted(row.sucesso).toUpperCase() }}</small></span>
+            </ng-template>
+        </column>
+        <column *ngIf="!selectable" type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
