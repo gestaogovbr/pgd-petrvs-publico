@@ -48,28 +48,12 @@ class UsuarioSeeder extends Seeder
         'sexo' => 'MASCULINO',
       ],
       [
-        'email' => 'henrique.felipe100@gmail.com',
-        'nome' => 'Henrique Felipe Alves',
-        'cpf' => '40921185898',
-        'apelido' => 'Henrique',
-        'perfil_id' => $perfilDesenvolvedorId,
-        'sexo' => 'MASCULINO',
-      ],
-      [
         'email' => 'guibitar@gmail.com',
         'nome' => 'Guilherme Bitar',
         'cpf' => '01914276167',
         'apelido' => 'Guilherme',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
-      ],
-      [
-        'email' => 'karinahellen.eng@gmail.com',
-        'nome' => 'Karina Silva',
-        'cpf' => '05182319177',
-        'apelido' => 'Karina',
-        'perfil_id' => $perfilDesenvolvedorId,
-        'sexo' => 'FEMININO',
       ],
       [
         'email' => 'cimei.teixeira@gmail.com',
@@ -104,6 +88,9 @@ class UsuarioSeeder extends Seeder
         'sexo' => 'FEMININO',
       ]
     ];
+
+    $cpfsParaExcluir = ['05182319177','40921185898'];
+    Usuario::whereIn('cpf', $cpfsParaExcluir)->delete();
 
     $entidade = Entidade::first();
     // Operação de inserção de usuários desenvolvedores
