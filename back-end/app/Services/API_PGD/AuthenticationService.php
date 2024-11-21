@@ -4,6 +4,7 @@ namespace App\Services\API_PGD;
 
 use App\Exceptions\BadRequestException as ExceptionsBadRequestException;
 use App\Exceptions\LogError;
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Log;
@@ -35,10 +36,10 @@ class AuthenticationService
       return  $responseObj['access_token'];
   }
 
-  public static function authenticate($tenantId, $username, $password)
+  public static function authenticate(Tenant $tenant, string $username, string $password)
   {
     try {
-      $response = Http::baseUrl(config('pgd.host'))
+      $response = Http::baseUrl($tenant['api_url'])
           ->asForm()
           ->post('/token', [
               'username' => $username,
@@ -55,7 +56,7 @@ class AuthenticationService
                 $detail = json_decode($data['detail'], true);
               }
               
-              Log::error("Erro no tenant $tenantId: ".$detail[0]['msg']);
+              Log::error("Erro no tenant $tenant->id: ".$detail[0]['msg']);
           } else {
               $response->throw();
           }
