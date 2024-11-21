@@ -87,6 +87,7 @@ class UsuarioSeeder extends Seeder
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'FEMININO',
       ],
+      [
         'email' => 'bruno.santos@firstbps.com.br',
         'nome' => 'Bruno',
         'cpf' => '11555557759',
