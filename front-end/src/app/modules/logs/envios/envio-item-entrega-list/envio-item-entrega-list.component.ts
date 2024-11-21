@@ -26,7 +26,8 @@ export class EnvioItemEntregaListComponent extends PageListBase<EnvioItem, Envio
     this.filter = this.fh.FormBuilder({
       envio_id: {default: this.envio_id}, 
       tipo: {default: 'entrega'},
-      uid: {default: null}
+      uid: {default: null},
+      sucesso: {default: ""},
     });
     this.join = [
 			"planoTrabalho:id,numero",
