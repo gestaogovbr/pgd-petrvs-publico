@@ -13,7 +13,7 @@ class ExportarEntregasBatch
 {
     private $token;
     private Envio $envio;
-    private $tenantId;
+    private $tenant;
 
     public function __construct(
         private readonly PlanoEntregaAuditSource $planoEntregaAuditSource,
@@ -29,39 +29,39 @@ class ExportarEntregasBatch
         $this->envio = $envio;
     }
 
-    public function setTenantId($tenantId) {
-        $this->tenantId = $tenantId;
+    public function setTenant($tenant) {
+        $this->tenant = $tenant;
     }
 
     public function send() {
         $jobs = [];
 
         foreach($this->planoEntregaAuditSource->getData() as $source) {
-            $jobs[] = new ExportarEntregaJob($this->token, $this->envio, $source);
+            $jobs[] = new ExportarEntregaJob($this->tenant->api_url, $this->token, $this->envio, $source);
         }
 
-        $tenantId = $this->tenantId;
+        $tenantId = $this->tenant->id;
         $exportarTrabalhosBatch = $this->exportarTrabalhosBatch;
         $exportarTrabalhosBatch->setToken($this->token);
         $exportarTrabalhosBatch->setEnvio($this->envio);
-        $exportarTrabalhosBatch->setTenantId($this->tenantId);
+        $exportarTrabalhosBatch->setTenant($this->tenant);
 
         if (count($jobs) > 0) {
-            Log::info("Exportação de ".count($jobs)." plano(s) de Entrega ({$this->tenantId})...");
+            Log::info("Exportação de ".count($jobs)." plano(s) de Entrega ({$this->tenant->id})...");
 
             Bus::batch($jobs)
-                ->then(function (Batch $batch) use($tenantId, $exportarTrabalhosBatch) {
+                ->then(function (Batch $batch) use($tenantId) {
                     Log::info("Exportação dos planos de Entrega (Tenant {$tenantId}) finalizada com sucesso!");
-                    $exportarTrabalhosBatch->send();
                 })->catch(function (Batch $batch, Throwable $e) use($tenantId) {
                     Log::error("Exportação dos planos de Entrega (Tenant {$tenantId}) com erro!", ['error' => $e->getMessage()]);
-                })->finally(function (Batch $batch) use($tenantId) {
-                    Log::error("Exportação dos planos de Entrega (Tenant {$tenantId}) - Fim da execução");
+                })->finally(function (Batch $batch) use($tenantId, $exportarTrabalhosBatch) {
+                    Log::info("Exportação dos planos de Entrega (Tenant {$tenantId}) - Fim da execução");
+                    $exportarTrabalhosBatch->send();
                 })
                 ->allowFailures()
                 ->dispatch();
         } else {
-            Log::info("Sem planos de Entrega e enviar ({$this->tenantId}).");
+            Log::info("Sem planos de Entrega e enviar ({$this->tenant->id}).");
             $exportarTrabalhosBatch->send();
         }
     }

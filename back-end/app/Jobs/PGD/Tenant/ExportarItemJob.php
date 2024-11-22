@@ -24,16 +24,19 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     use Batchable, Dispatchable, InteractsWithQueue, Queueable; 
 
     public $tries = 1;
+    protected $url;
     protected $token;
     protected Envio $envio;
     protected ExportSource $source;
 
     public function __construct(
+        $url,
         $token,
         Envio $envio,
         ExportSource $source
     ) {
         $this->queue = 'pgd_queue';
+        $this->url = $url;
         $this->token = $token;
         $this->envio = $envio;
         $this->source = $source;
@@ -70,6 +73,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
             echo " -- enviando...";
 
             $success = $pgdService->enviarDados(
+                $this->url,
                 $this->token, 
                 $this->getEndpoint($body), 
                 $body

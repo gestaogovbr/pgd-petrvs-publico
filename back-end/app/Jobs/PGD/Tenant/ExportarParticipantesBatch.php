@@ -13,7 +13,7 @@ class ExportarParticipantesBatch
 {
     private $token;
     private Envio $envio;
-    private $tenantId;
+    private $tenant;
 
     public function __construct(
         private readonly ParticipanteAuditSource $participanteAuditSource,
@@ -29,39 +29,39 @@ class ExportarParticipantesBatch
         $this->envio = $envio;
     }
 
-    public function setTenantId($tenantId) {
-        $this->tenantId = $tenantId;
+    public function setTenant($tenant) {
+        $this->tenant = $tenant;
     }
 
     public function send() {
         $jobs = [];
 
         foreach($this->participanteAuditSource->getData() as $source) {
-            $jobs[] = new ExportarParticipanteJob($this->token, $this->envio, $source);
+            $jobs[] = new ExportarParticipanteJob($this->tenant->api_url, $this->token, $this->envio, $source);
         }
 
-        $tenantId = $this->tenantId;
+        $tenantId = $this->tenant->id;
         $exportarEntregasBatch = $this->exportarEntregasBatch;
         $exportarEntregasBatch->setToken($this->token);
         $exportarEntregasBatch->setEnvio($this->envio);
-        $exportarEntregasBatch->setTenantId($this->tenantId);
+        $exportarEntregasBatch->setTenant($this->tenant);
 
         if (count($jobs) > 0) {
-            Log::info("Exportação de ".count($jobs)." participantes ({$this->tenantId})...");
+            Log::info("Exportação de ".count($jobs)." participantes ({$this->tenant->id})...");
 
             Bus::batch($jobs)
-                ->then(function (Batch $batch) use($tenantId, $exportarEntregasBatch) {
+                ->then(function (Batch $batch) use($tenantId) {
                     Log::info("Exportação dos participantes (Tenant {$tenantId}) finalizada com sucesso!");    
-                    $exportarEntregasBatch->send();
                 })->catch(function (Batch $batch, Throwable $e) use($tenantId) {
                     Log::error("Exportação dos participantes (Tenant {$tenantId}) com erro!", ['error' => $e->getMessage()]);
-                })->finally(function (Batch $batch) use($tenantId) {
+                })->finally(function (Batch $batch) use($tenantId, $exportarEntregasBatch) {
                     Log::error("Exportação dos participantes (Tenant {$tenantId}) - Fim da execução");
+                    $exportarEntregasBatch->send();
                 })
                 ->allowFailures()
                 ->dispatch();
         } else {
-            Log::info("Sem participantes a exportar ({$this->tenantId}).");
+            Log::info("Sem participantes a exportar ({$this->tenant->id}).");
             $exportarEntregasBatch->send();
         }
     }

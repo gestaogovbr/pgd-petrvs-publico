@@ -25,7 +25,7 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable; 
 
-    private $tenantId;
+    private $tenant;
     private $token;
     private Envio $envio;
     private AuthenticationService $authService;
@@ -33,10 +33,10 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
     private PlanoEntregaAuditSource $planoEntregaAuditSource;
     private PlanoTrabalhoAuditSource $planoTrabalhoAuditSource;
 
-    public function __construct($tenantId)
+    public function __construct(Tenant $tenant)
     {
         $this->queue = 'pgd_queue';
-        $this->tenantId = $tenantId;
+        $this->tenant = $tenant;
     }
 
     public static function getDescricao(): string
@@ -51,7 +51,7 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
         PlanoEntregaAuditSource $planoEntregaAuditSource,
         ExportarParticipantesBatch $exportarParticipantesBatch
     ) {
-        Log::info("Exportação do Tenant ".$this->tenantId);
+        Log::info("Exportação do Tenant ".$this->tenant->id);
        
         $this->envio = new Envio;
         $this->authService = $authService;
@@ -64,36 +64,43 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
 
             $exportarParticipantesBatch->setToken($this->token);
             $exportarParticipantesBatch->setEnvio($this->envio);
-            $exportarParticipantesBatch->setTenantId($this->tenantId);
+            $exportarParticipantesBatch->setTenant($this->tenant);
             $exportarParticipantesBatch->send();
         } catch (Exception $e) {
             tenancy()->end();
 
-            Log::error("Erro ao processar Tenant {$this->tenantId} interrompida! Erro: " . $e->getMessage());
+            Log::error("Erro ao processar Tenant {$this->tenant->id} interrompida! Erro: " . $e->getMessage());
 
-            $tenant = tenancy()->find($this->tenantId);
+            $tenant = tenancy()->find($this->tenant->id);
             tenancy()->initialize($tenant);
 
             $this->envio->erros = $e->getMessage();
             $this->envio->finished_at = now();
             $this->envio->save();            
             
-            LogError::newError("Erro ao processar Tenant {$this->tenantId} interrompida! Erro: " . $e->getMessage());  
+            LogError::newError("Erro ao processar Tenant {$this->tenant->id} interrompida! Erro: " . $e->getMessage());  
 
             throw $e;
         }
     }
 
     public function autenticar() {
-        $tenantData = Tenant::find($this->tenantId);
-
-        $tenant = tenancy()->find($this->tenantId);
+        $tenant = tenancy()->find($this->tenant->id);
         tenancy()->initialize($tenant);
 
         $this->envio->save();
 
-        if (!$tenantData['api_username'] or !$tenantData['api_password']) {
-            $errorMsg = 'Usuário ou senha da API PGD não definidos no Tenant '.$this->tenantId;
+        if (!$this->tenant['api_url']) {
+            $errorMsg = 'Endereço URL da API PGD não definidos no Tenant '.$this->tenant->id;
+            LogError::newError($errorMsg);
+            $this->envio->erros = $errorMsg;
+            $this->envio->finished_at = now();
+            $this->envio->save();
+            throw new ExportPgdException($errorMsg);
+        } 
+
+        if (!$this->tenant['api_username'] or !$this->tenant['api_password']) {
+            $errorMsg = 'Usuário ou senha da API PGD não definidos no Tenant '.$this->tenant->id;
             LogError::newError($errorMsg);
             $this->envio->erros = 'Usuário ou senha da API PGD não definidos';
             $this->envio->finished_at = now();
@@ -101,13 +108,13 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
             throw new ExportPgdException($errorMsg);
         }
 
-        $this->token = $this->authService->authenticate($this->tenantId, $tenantData['api_username'], $tenantData['api_password']);
+        $this->token = $this->authService->authenticate($this->tenant, $this->tenant['api_username'], $this->tenant['api_password']);
     }
 
     public function tags()
     {
         return [
-            'tenant:' . tenant('id'),
+            'tenant:' . $this->tenant->id,
         ];
     }
 }
