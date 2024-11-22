@@ -30,10 +30,9 @@ export class EnvioItemEntregaListComponent extends PageListBase<EnvioItem, Envio
       sucesso: {default: ""},
     });
     this.join = [
-			"planoTrabalho:id,numero",
-      "planoTrabalho.programa:id,nome",
-      "planoTrabalho.tipo_modalidade:id,nome",
-      "planoTrabalho.unidade:id,sigla",
+			"planoEntrega:id,numero,data_inicio,data_fim,programa_id,unidade_id",
+      "planoEntrega.programa:id,nome",
+      "planoEntrega.unidade:id,sigla",
     ];
     this.orderBy = [['created_at', 'asc']];
   }
@@ -46,6 +45,7 @@ export class EnvioItemEntregaListComponent extends PageListBase<EnvioItem, Envio
   public filterClear(filter: FormGroup) {
     filter.controls.tipo.setValue("");
     filter.controls.uid.setValue("");
+    filter.controls.sucesso.setValue("");
   }
 
   public filterWhere = (filter: FormGroup) => {
@@ -54,6 +54,7 @@ export class EnvioItemEntregaListComponent extends PageListBase<EnvioItem, Envio
 
     result.push(["tipo", '=', 'entrega']);
     result.push(["envio_id", '=', form.envio_id]);
+    result.push(["sucesso", '=', form.sucesso]);
 
     return result;
   }

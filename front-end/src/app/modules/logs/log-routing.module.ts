@@ -11,6 +11,7 @@ import { EnvioConsultComponent } from './envios/envio-consult/envio-consult.comp
 import { EnvioItemConsultComponent } from './envios/envio-item-consult/envio-item-consult.component';
 import { EnvioItemParticipanteListComponent } from './envios/envio-item-participante-list/envio-item-participante-list.component';
 import { EnvioItemTrabalhoListComponent } from './envios/envio-item-trabalho-list/envio-item-trabalho-list.component';
+import { EnvioItemEntregaListComponent } from './envios/envio-item-entrega-list/envio-item-entrega-list.component';
 
 const routes: Routes = [
   { path: 'change', component: ChangeListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Logs das Alterações" } },
@@ -20,7 +21,7 @@ const routes: Routes = [
   { path: 'envios', component: EnvioListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Histórico de Envios à API PGD" } },
   { path: 'envios/:id/consult', component: EnvioConsultComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Dados do Envio à API PGD", modal: true } },
   { path: 'envios/:id/participantes', component: EnvioItemParticipanteListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Histórico de Participantes enviados", modal: true } },
-  { path: 'envios/:id/entregas', component: EnvioItemParticipanteListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Histórico de Planos de Entrega enviados", modal: true } },
+  { path: 'envios/:id/entregas', component: EnvioItemEntregaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Histórico de Planos de Entrega enviados", modal: true } },
   { path: 'envios/:id/trabalhos', component: EnvioItemTrabalhoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Histórico de Planos de Trabalho enviados", modal: true } },
   { path: 'envio-items/:id/consult', component: EnvioItemConsultComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Item enviado à API PGD", modal: true } },
 ];
