@@ -10,6 +10,7 @@ import { IIndexable } from 'src/app/models/base.model';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import { EntregaFormComponent } from 'src/app/modules/cadastros/entrega/entrega-form/entrega-form.component';
 import { EntregaDaoService } from 'src/app/dao/entrega-dao.service';
 import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetivo-dao.service';
 import { CadeiaValorProcessoDaoService } from 'src/app/dao/cadeia-valor-processo-dao.service';
@@ -40,6 +41,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('gridProcessos', { static: false }) public gridProcessos?: GridComponent;
   @ViewChild('gridObjetivos', { static: false }) public gridObjetivos?: GridComponent;
+  @ViewChild('entregas', { static: false }) public entregas?: EntregaFormComponent;
   @ViewChild('planejamento', { static: false }) public planejamento?: InputSearchComponent;
   @ViewChild('cadeiaValor', { static: false }) public cadeiaValor?: InputSearchComponent;
   @ViewChild('inputObjetivo', { static: false }) public inputObjetivo?: InputSearchComponent;
