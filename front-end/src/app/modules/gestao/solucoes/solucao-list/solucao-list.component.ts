@@ -51,7 +51,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     });
 
     // Testa se o usuário possui permissão para excluir o tipo de atividade
-    if (this.auth.hasPermissionTo("MOD_PROD_CAT_EXCL")) {
+    if (this.auth.hasPermissionTo("MOD_SOLUCOES_EXCL")) {
       this.options.push({
         icon: "bi bi-trash",
         label: "Excluir",
