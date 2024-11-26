@@ -17,6 +17,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 
 	public currentUser: any;
 	public tenants: Tenant[] = [];
+	public countUsersInPGD: number = 0;
 
 	public toolbarButtons: ToolbarButton[] = [
 		{
@@ -123,6 +124,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 
 	async onLoad() {
 		await this.loadTenants();
+		await this.UsersInPGD();
 		super.onLoad();
 	}
 
@@ -155,6 +157,12 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 				.catch((error) => {
 					reject(error);
 				});
+		});
+	}
+
+	private UsersInPGD(): Promise<void> {
+		return this.dao!.countUsersInPGD().then((count) => {
+			this.countUsersInPGD = count;
 		});
 	}
 
