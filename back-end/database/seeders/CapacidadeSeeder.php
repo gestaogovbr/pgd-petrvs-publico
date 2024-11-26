@@ -203,10 +203,10 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_CTXT"],
       ["codigo" => "MOD_ENTD"],
       ["codigo" => "MOD_ENTD_EDT"],
-      ["codigo" => "MOD_ENTRG"],
+      /*["codigo" => "MOD_ENTRG"],
       ["codigo" => "MOD_ENTRG_EDT"],
       ["codigo" => "MOD_ENTRG_EXCL"],
-      ["codigo" => "MOD_ENTRG_INCL"],
+      ["codigo" => "MOD_ENTRG_INCL"],*/
       ["codigo" => "MOD_EXTM"],
       ["codigo" => "MOD_EXTM_EDT"],
       ["codigo" => "MOD_EXTM_EXCL"],
@@ -319,7 +319,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_USER"],
       ["codigo" => "MOD_USER_ATRIB"],
       ["codigo" => "MOD_USER_EDT"],
-      ["codigo" => "MOD_USER_INCL"],
+      // ["codigo" => "MOD_USER_INCL"], // DEPRECATED: o modo de incluir usuários não está funcionado, desabilitado para removeção futura ou alteração.
       ["codigo" => "MOD_USER_TUDO"],
       ["codigo" => "MOD_PROD"],
       ["codigo" => "MOD_PROD_CAT_INCL"],

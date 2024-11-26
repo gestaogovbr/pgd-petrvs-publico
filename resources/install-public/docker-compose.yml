@@ -42,5 +42,8 @@ services:
     container_name: petrvs_redis
     ports:
       - "6379:6379"
+    volumes:
+      - redis-data:/data
 volumes:
   db_data:  # Declara o volume persistente
+  redis-data:

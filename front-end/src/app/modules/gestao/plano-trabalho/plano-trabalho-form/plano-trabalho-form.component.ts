@@ -130,8 +130,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       criterio_avaliacao: { default: "" }
     }, this.cdRef, this.validate);
     this.programaMetadata = {
-      todosUnidadeExecutora: true,      
-      vigentesUnidadeExecutora: false
+      todosUnidadeExecutora: false,      
+      vigentesUnidadeExecutora: true
     }
   }
 
@@ -147,7 +147,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     let textoUsuario = this.form!.controls.usuario_texto_complementar.value;
     let textoUnidade = this.form!.controls.unidade_texto_complementar.value;
     let documento = this.planoTrabalhoService.atualizarTcr(this.planoTrabalho!, this.entity!, textoUsuario, textoUnidade);
-    this.form?.controls.documento_id.setValue(documento?.id);
+    this.form?.controls.documento_id.setValue(null);
     this.form?.controls.documentos.setValue(this.entity!.documentos);
     this.datasource = documento?.datasource || {};
     this.template = this.entity.programa?.template_tcr;
@@ -225,7 +225,10 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
             let preenchido = 0;
             let indice = 0;
             while (preenchido == 0) {
-              await this.programaDao.query({where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]]}).asPromise().then( programa => {
+              await this.programaDao.query({
+                where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]],
+                orderBy: [["unidade.path", "desc"]]
+              }).asPromise().then( programa => {
                 if (programa.length > 0 && preenchido == 0) {
                   preenchido = 1;
                   this.preencheUnidade(unidade);
@@ -336,8 +339,12 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.entity.carga_horaria = this.auth.entidade?.carga_horaria_padrao || 8;
       this.entity.forma_contagem_carga_horaria = this.auth.entidade?.forma_contagem_carga_horaria || "DIA";
       this.entity.unidade_id = this.auth.unidade!.id;
-      let programas = await this.programaDao.query({where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]], join: this.joinPrograma}).asPromise();
-      let ultimo = programas[programas.length -1];
+      let programas = await this.programaDao.query({
+        where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]], 
+        join: this.joinPrograma,
+        orderBy: [["unidade.path", "desc"]]
+      }).asPromise();
+      let ultimo = programas[0];
       this.preenchePrograma(ultimo)
       this.buscaGestoresUnidadeExecutora(this.auth.unidade!);
       if(!this.gestoresUnidadeExecutora.includes(this.auth.unidade!.id)) {
@@ -358,7 +365,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     plano.usuario = (this.usuario!.selectedEntity || this.entity?.usuario) as Usuario;
     plano.unidade = (this.unidade?.selectedEntity || this.entity?.unidade) as Unidade;
     plano.programa = (this.programa?.selectedEntity || this.entity?.programa) as Programa;
-    plano.tipo_modalidade = (this.tipoModalidade!.selectedEntity || this.entity?.tipo_modalidade) as TipoModalidade;
+    plano.tipo_modalidade = (this.tipoModalidade!.selectedEntity || this.entity?.tipo_modalidade) as TipoModalidade;   
     return plano;
   }
 

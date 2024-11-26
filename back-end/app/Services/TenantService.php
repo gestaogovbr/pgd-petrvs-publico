@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Cache;
+use App\Models\JobSchedule;
+
 
 class TenantService extends ServiceBase
 {
@@ -324,6 +326,7 @@ class TenantService extends ServiceBase
             $this->validatePermission();
             $tenant = Tenant::find($id);
             if ($tenant) {
+                JobSchedule::where('tenant_id', $tenant->id)->delete();
                 $tenant->delete();
                 Log::info('Tenant deletado com sucesso: ' . $id);
             }

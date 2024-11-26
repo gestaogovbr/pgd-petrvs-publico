@@ -141,6 +141,10 @@ class PlanoTrabalhoService extends ServiceBase
     if(!empty($conflito)) {
       throw new ServerException("ValidatePlanoTrabalho", "Este participante já possui plano de trabalho cadastrado para o período");
     }
+    /* Validar documento_id */
+    if (empty($data["documento_id"])) {
+      throw new ServerException("ValidatePlanoTrabalho", "TCR não foi gerado.");
+    }
     if ($action == ServiceBase::ACTION_INSERT) {
       /*  
       (RN_PTR_V) Condições para que um Plano de Trabalho possa ser criado:
@@ -194,7 +198,7 @@ class PlanoTrabalhoService extends ServiceBase
     if(!$this->programaService->programaVigente($programa)) throw new ServerException("ValidatePlanoTrabalho", "O regramento não está vigente.");
   }
 
-  public function repactuar($planoId, $forcarGeracaoTcr = false) {
+  public function repactuar($planoId, $forcarGeracaoTcr = false, $alterarConteudo = true) {
     $plano = PlanoTrabalho::find($planoId);
     if($plano->programa->termo_obrigatorio) {
       $exigeAssinaturas = $plano->programa->plano_trabalho_assinatura_participante || $plano->programa->plano_trabalho_assinatura_gestor_unidade || $plano->programa->plano_trabalho_assinatura_gestor_lotacao || $plano->programa->plano_trabalho_assinatura_gestor_entidade;
@@ -205,7 +209,9 @@ class PlanoTrabalhoService extends ServiceBase
       if($exigeAssinaturas) $this->statusService->atualizaStatus($plano, 'AGUARDANDO_ASSINATURA', 'Plano de Trabalho repactuado');
       if(!empty($plano->documento_id) && !$haAssinaturas) {
         $documento = Documento::find($plano->documento_id);
-        $documento->conteudo = $this->templateService->renderTemplate($template, $datasource);
+        if($alterarConteudo){
+          $documento->conteudo = $this->templateService->renderTemplate($template, $datasource);
+        }
         $documento->template = $template;
         $documento->dataset = $dataset;
         $documento->datasource = $datasource;
@@ -247,7 +253,7 @@ class PlanoTrabalhoService extends ServiceBase
       (RN_PTR_M) ...
         - Após alterado, e no caso se exija assinaturas no TCR, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
       */
-      $this->repactuar($plano->id);
+      $this->repactuar($plano->id, false, false);
     }
     if ($action == ServiceBase::ACTION_INSERT) {
       /* (RN_PTR_AC) Quando um participante tiver um plano de trabalho criado, ele se tornará automaticamente um COLABORADOR da sua unidade executora; */
@@ -885,17 +891,7 @@ class PlanoTrabalhoService extends ServiceBase
    */
   public function assinaturasExigidas($planoTrabalho): array
   {
-    /*
-    Resumo [PTR:TABELA_3]
-                     +---------------------------------------------------+-----------------------------------------------------+---------------
-                                       Unidade Executora                 |                 Unidade de Lotação                  |  Participante
-                     +---------------+------------------+----------------+---------------+--------------------+----------------+      Sem
-                       Chefe titular | Chefe substituto | Chefe delagado | Chefe titular | Chefe substituto   | Chefe delagado |     Chefia
-    -----------------+---------------+------------------+----------------+---------------+--------------------+----------------+---------------
-    gestor executora | CF+,CS+       | CF+,CS+,CF,CS-   | CF,CS          |               |                    |                | CF,CS
-    -----------------+---------------+------------------+----------------+---------------+--------------------+----------------+---------------
-    gestor imediato  |               |                  |                | CFº+,CSº+     | CFº+,CSº+,CFº,CSº- | CFº,CSº        | CFº,CSº
-    */
+
     $ids = [
       "participante" => [], 
       "gestores_unidade_executora" => [], 
@@ -903,7 +899,7 @@ class PlanoTrabalhoService extends ServiceBase
       "gestores_entidade" => [], 
       "erros" => []
     ];
-    $keys = [$planoTrabalho["programa_id"], $planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]];
+    $keys = [$planoTrabalho["id"], $planoTrabalho["programa_id"], $planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]];
     if (!empty($planoTrabalho) && !empty($planoTrabalho["programa_id"]) && !empty($planoTrabalho["usuario_id"]) && !empty($planoTrabalho["unidade_id"])) {
       if($this->hasBuffer("assinaturasExigidas", $keys)) {
         $ids = $this->getBuffer("assinaturasExigidas", $keys);
