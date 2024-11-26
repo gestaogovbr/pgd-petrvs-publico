@@ -94,12 +94,13 @@ export class DialogService {
     });
   }
   
-  public alert(title: string, message: string): Promise<void> {   
+  public alert(title: string, message: string, labelfechar:string = "OK",iconTitle?: string): Promise<void> {   
     const dialogView = this.createDialogView();
     const dialog = dialogView.instance;
     dialog.title = title;
     dialog.message = message;
-    dialog.buttons = [{ label: "Ok" }];
+    dialog.buttons = [{ label: labelfechar }];
+    dialog.iconTitle = iconTitle;
     dialog.cdRef.detectChanges();
     this.cdRef?.detectChanges();
     return new Promise<void>((resolve, reject) => {

@@ -9,7 +9,7 @@ use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use Illuminate\Database\Seeder;
-use App\Services\NivelAcessoService; 
+use App\Services\NivelAcessoService;
 class UsuarioSeeder extends Seeder
 {
   /**
@@ -84,6 +84,14 @@ class UsuarioSeeder extends Seeder
         'nome' => 'Marco Coelho',
         'cpf' => '03400125954',
         'apelido' => 'Marco',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'MASCULINO',
+      ],
+      [
+        'email' => 'bruno.santos@firstbps.com.br',
+        'nome' => 'Bruno',
+        'cpf' => '11555557759',
+        'apelido' => 'Bruno',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
       ]
