@@ -421,7 +421,7 @@ class TipoCapacidadeService extends ServiceBase
         /* Capacidades do módulo USUÁRIOS */
         ["MOD_USER_EDT", "Permite alterar usuário"],
         ["MOD_USER_EXCL", "Permite excluir usuário"],
-        ["MOD_USER_INCL", "Permite incluir usuário"],
+        // ["MOD_USER_INCL", "Permite incluir usuário"],
         ["MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"],
         ["MOD_USER_ATRIB", "Permite gerenciar atribuições de usuário"],
       ]
