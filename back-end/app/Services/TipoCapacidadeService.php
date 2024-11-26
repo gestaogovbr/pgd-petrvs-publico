@@ -126,16 +126,15 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_EXTM_EDT", "Permite editar Eixos temáticos"],
         ["MOD_EXTM_EXCL", "Permite excluir Eixos temáticos"],
       ]
-    ], [
+    ], /*[
       "codigo" => "MOD_ENTRG", //ok
       "descricao" => "Módulo de Entregas",
       "capacidades" => [
-        /* Capacidades do módulo ENTREGAS*/
         ["MOD_ENTRG_INCL", "Permite incluir Entregas"],
         ["MOD_ENTRG_EDT", "Permite editar Entregas"],
         ["MOD_ENTRG_EXCL", "Permite excluir Entregas"],
       ]
-    ], [
+    ]*/, [
       "codigo" => "MOD_FER", //ok
       "descricao" => "Módulo feriados",
       "capacidades" => [
@@ -313,16 +312,15 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_TIPO_ATV_INCL_TP_MIN", "Permite incluir tempo máximo da atividade"],
         ["MOD_TIPO_ATV_PCPL", "Permite incluir atividades na guia principal"],
       ]
-    ], [
+    ], /*[
       "codigo" => "MOD_TIPO_AVAL",
       "descricao" => "Módulo de Tipos de Avaliação",
       "capacidades" => [
-        /* Capacidades do módulo TIPO AVALIACAO*/
         ["MOD_TIPO_AVAL_EDT", "Permite editar tipos de avaliações"],
         ["MOD_TIPO_AVAL_EXCL", "Permite excluir tipos de avaliações"],
         ["MOD_TIPO_AVAL_INCL", "Permite incluir tipos de avaliações"],
       ]
-    ], [
+    ]*/, [
       "codigo" => "MOD_TIPO_CAP",
       "descricao" => "Módulo de Tipos de Capacidade",
       "capacidades" => [
@@ -349,11 +347,10 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_TIPO_JUST_EXCL", "Permite excluir tipos de justificativas"],
         ["MOD_TIPO_JUST_INCL", "Permite incluir tipos de justificativas"],
       ]
-    ], [
+    ], /*[
       "codigo" => "MOD_TIPO_MDL",
       "descricao" => "Módulo de Tipos de Modalidade",
       "capacidades" => [
-        /* Capacidades do módulo TIPO MODALIDADE*/
         ["MOD_TIPO_MDL_EDT", "Permite editar tipos de modalidades"],
         ["MOD_TIPO_MDL_EXCL", "Permite excluir tipos de modalidades"],
         ["MOD_TIPO_MDL_INCL", "Permite incluir tipos de modalidades"],
@@ -362,13 +359,12 @@ class TipoCapacidadeService extends ServiceBase
       "codigo" => "MOD_TIPO_MTV_AFT", //ok
       "descricao" => "Módulo de Tipos de Motivos de Afastamento",
       "capacidades" => [
-        /* Capacidades do módulo TIPO MOTIVO AFASTAMENTO*/
         ["MOD_TIPO_MTV_AFT_EDT", "Permite editar tipos de motivos de afastamentos"],
         ["MOD_TIPO_MTV_AFT_EXCL", "Pemite excluir tipos de motivos de afastamentos"],
         ["MOD_TIPO_MTV_AFT_INCL", "Permite incluir tipos de motivos de afastamentos"],
         ["MOD_TPMAF_INCL", "Permite incluir tipos de motivos de afastamentos"], //só definição
       ]
-    ], [
+    ]*/, [
       "codigo" => "MOD_TIPO_PROC",
       "descricao" => "Módulo de Tipos de Processos",
       "capacidades" => [
