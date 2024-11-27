@@ -29,7 +29,7 @@ class ExportarPGDJob extends JobWithoutTenant implements ContratoJobSchedule
 
         $jobs = [];
         foreach(Tenant::all() as $tenant) {
-            $jobs[] = new ExportarTenantJob($tenant->id);
+            $jobs[] = new ExportarTenantJob($tenant);
         }
 
         Log::info("Exportação de Todos os Tenants -- batch");

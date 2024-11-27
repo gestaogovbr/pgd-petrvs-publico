@@ -28,7 +28,8 @@ export class EnvioItemTrabalhoListComponent extends PageListBase<EnvioItem, Envi
     this.filter = this.fh.FormBuilder({
       envio_id: {default: this.envio_id}, 
       tipo: {default: 'trabalho'},
-      uid: {default: null}
+      uid: {default: null},
+      sucesso: {default: ""},
     });
     this.join = [
 			"planoTrabalho:id,numero",
@@ -47,6 +48,7 @@ export class EnvioItemTrabalhoListComponent extends PageListBase<EnvioItem, Envi
   public filterClear(filter: FormGroup) {
     filter.controls.tipo.setValue("");
     filter.controls.uid.setValue("");
+    filter.controls.sucesso.setValue("");
   }
 
   public filterWhere = (filter: FormGroup) => {
@@ -55,8 +57,7 @@ export class EnvioItemTrabalhoListComponent extends PageListBase<EnvioItem, Envi
 
     result.push(["tipo", '=', 'trabalho']);
     result.push(["envio_id", '=', form.envio_id]);
-
-    console.log('filterWhere');
+    result.push(["sucesso", '=', form.sucesso]);
 
     return result;
   }
