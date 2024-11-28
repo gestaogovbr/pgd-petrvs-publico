@@ -143,15 +143,17 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public atualizarTcr() {
-    this.entity = this.loadEntity();
-    let textoUsuario = this.form!.controls.usuario_texto_complementar.value;
-    let textoUnidade = this.form!.controls.unidade_texto_complementar.value;
-    let documento = this.planoTrabalhoService.atualizarTcr(this.planoTrabalho!, this.entity!, textoUsuario, textoUnidade);
-    this.form?.controls.documento_id.setValue(documento?.id);
-    this.form?.controls.documentos.setValue(this.entity!.documentos);
-    this.datasource = documento?.datasource || {};
-    this.template = this.entity.programa?.template_tcr;
-    this.editingId = ["ADD", "EDIT"].includes(documento?._status || "") ? documento!.id : undefined;
+    this.entity = this.loadEntity();   
+    if (!this.formDisabled) {
+      let textoUsuario = this.form!.controls.usuario_texto_complementar.value;
+      let textoUnidade = this.form!.controls.unidade_texto_complementar.value;
+      let documento = this.planoTrabalhoService.atualizarTcr(this.planoTrabalho!, this.entity!, textoUsuario, textoUnidade);
+      this.form?.controls.documento_id.setValue(documento?.id);
+      this.form?.controls.documentos.setValue(this.entity!.documentos);
+      this.datasource = documento?.datasource || {};
+      this.template = this.entity.programa?.template_tcr;
+      this.editingId = ["ADD", "EDIT"].includes(documento?._status || "") ? documento!.id : undefined;
+    }
     this.cdRef.detectChanges();
   }
 
