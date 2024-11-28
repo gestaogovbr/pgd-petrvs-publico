@@ -707,7 +707,7 @@ class PlanoTrabalhoService extends ServiceBase
       $result["atribuicoesGestorUsuario"] = $this->usuarioService->atribuicoesGestor($planoTrabalho['unidade_id'], $planoTrabalho['usuario_id']);
       $result["gestorUnidadeExecutora"] = $this->usuarioService->isGestorUnidade($planoTrabalho['unidade_id']);
       $result["gestoresUnidadeSuperior"] = $this->unidadeService->gestoresUnidadeSuperior($planoTrabalho['unidade_id']);
-      $result["gestorUnidadeSuperior"] = $result["gestoresUnidadeSuperior"]["gestor"]?->id == $logado->id || count(array_filter($result["gestoresUnidadeSuperior"]["gestoresSubstitutos"], fn ($value) => $value["id"] == $logado->id)) > 0;
+      $result["gestorUnidadeSuperior"] = $result["gestoresUnidadeSuperior"]["gestor"]?->id == $logado->id || count(array_filter($result["gestoresUnidadeSuperior"]["gestoresSubstitutos"], fn ($value) => $value && $value["id"] == $logado->id)) > 0;
       $result["nrEntregas"] = empty($planoTrabalho['entregas']) ? 0 : count($planoTrabalho['entregas']);
       $result["participanteLotadoAreaTrabalho"] = parent::loggedUser()->areasTrabalho->find(fn ($at) => $this->usuarioService->isLotacao($planoTrabalho["usuario_id"], $at->unidade->id)) != null;
       $result["participanteColaboradorUnidadeExecutora"] = $this->usuarioService->isIntegrante("COLABORADOR", $planoTrabalho["unidade_id"], $planoTrabalho["usuario_id"]);
