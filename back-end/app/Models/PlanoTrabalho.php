@@ -70,7 +70,7 @@ class PlanoTrabalho extends ModelBase
   }
   public function documentos()
   {
-    return $this->hasMany(Documento::class);
+    return $this->hasMany(Documento::class)->orderBy('numero', 'desc');
   }
   public function atividades()
   {
