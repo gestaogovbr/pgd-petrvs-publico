@@ -5,11 +5,15 @@
             <document-preview [html]="row?.conteudo" emptyDocumentMensage="Nenhum documento selecionado"></document-preview>
         </ng-template>
         <ng-template let-row="row" #panelDocumentoEdit>
+            <div class="alert alert-primary" role="alert" *ngIf="blocked">
+                Esse texto é um compilado do texto definido no regramento (unidade instituidora), do texto definido na unidade executora e do texto definido para o participante.
+              </div>
+
             <div class="row">
-                <input-text [size]="12" label="Título" [control]="form!.controls.titulo" [attr.maxlength]=250></input-text>
+                <input-text [size]="12" label="Título" [control]="form!.controls.titulo" [attr.maxlength]=250 [disabled]="blocked ? 'true' : undefined"></input-text>
             </div>
             <div>
-                <input-editor [size]="12" label="Conteúdo" [control]="form!.controls.conteudo" [canEditTemplate]="canEdit" [template]="form!.controls.conteudo.value" [datasource]="form!.controls.datasource.value"></input-editor>
+                <input-editor [size]="12" label="Conteúdo" [control]="form!.controls.conteudo" [canEditTemplate]="canEdit" [template]="form!.controls.template.value" [datasource]="form!.controls.datasource.value" [disabled]="blocked ? 'true' : undefined"></input-editor>
             </div>
         </ng-template>
     </side-panel>

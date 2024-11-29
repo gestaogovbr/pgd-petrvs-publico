@@ -435,7 +435,6 @@ export class InputEditorComponent extends InputBase implements OnInit {
   changeTypeOperator(comparador: number){
     if(comparador == 1) this.tipoComparadorUm = this.operatorForm.controls.comparadorUmTipo.value;
     if(comparador == 2) this.tipoComparadorDois = this.operatorForm.controls.comparadorDoisTipo.value;
-    console.log(this.operatorForm.controls);
   }
 
   selectVariable(event: TreeNodeSelectEvent, input: number){

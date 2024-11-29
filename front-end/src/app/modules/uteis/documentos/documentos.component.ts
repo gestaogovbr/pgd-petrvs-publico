@@ -28,6 +28,7 @@ export class DocumentosComponent extends PageFrameBase {
   @Input() especie: DocumentoEspecie = 'OUTRO';
   @Input() dataset?: TemplateDataset[];
   @Input() disabled: boolean = false;
+  @Input() blocked: boolean = false;
   @Input() canEditTemplate: boolean = false;
   @Input() template?: Template;
   @Input() set datasource(value: any) {
@@ -273,7 +274,7 @@ export class DocumentosComponent extends PageFrameBase {
       }});*/
   }
 
-  public async loadDocumento(form: FormGroup, row: any) {
+  public async loadDocumento(form: FormGroup, row: any) {    
     const selected: Documento = row;
     this.form!.patchValue({
       id: selected?.id || "",
