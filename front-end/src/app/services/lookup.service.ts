@@ -907,6 +907,12 @@ export class LookupService implements IIndexable {
     { key: 'inativo', value: "Inativo" }
   ];
 
+  public ENVIO_ITEM_TIPO: LookupItem[] = [
+    { key: "participante", value: "Participante" },
+    { key: "entrega", value: "Plano de Entrega" },
+    { key: "trabalho", value: "Plano de Trabalho" }
+  ];
+
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);
   }

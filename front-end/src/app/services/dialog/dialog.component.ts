@@ -47,6 +47,7 @@ export type DialogButton = {
 	],
 })
 export class DialogComponent implements OnInit {
+	@Input() iconTitle?: string;
 	@ViewChild("body", {read: ViewContainerRef}) body?: ViewContainerRef;
 	@Output() onClose = new EventEmitter<void>();
 	@Output() onButtonClick = new EventEmitter<DialogButton>();

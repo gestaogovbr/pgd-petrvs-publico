@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 
 class BuscarDadosSiapeServidor extends BuscarDadosSiape
 {
-
+    const MAX_INSERT_DB = 1000;
     private function processar(): void
     {
         Log::info("Iniciando processamento de servidor...");
@@ -50,7 +50,9 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             if (!$unidadeProcessada) {
                 return true;
             }
-
+            if(is_null($unidadeProcessada->data_modificacao)){
+                return true;
+            }
             $dataModificacaoBD = $this->asTimestamp($unidadeProcessada->data_modificacao);
 
             $dataModificacaoSiape = DateTime::createFromFormat('dmY', $servidor['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
@@ -61,6 +63,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             }
             return false;
         });
+
 
         Log::info("Servidores a serem processadas: " . count($servidores));
 
@@ -124,7 +127,11 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
                 'updated_at' => Carbon::now(),
             ]);
         }
-        SiapeConsultaDadosFuncionais::insert($inserts);
+
+        $lotesInserts = array_chunk($inserts, self::MAX_INSERT_DB, true);
+        foreach($lotesInserts as $insert){
+            SiapeConsultaDadosFuncionais::insert($insert);
+        }
     }
 
     private function executarRequisicoesDadosPessoais(array $servidores): void
@@ -161,7 +168,10 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
                 'updated_at' => Carbon::now(),
             ]);
         }
-        SiapeConsultaDadosPessoais::insert($inserts);
+        $lotesInserts = array_chunk($inserts, self::MAX_INSERT_DB, true);
+        foreach($lotesInserts as $insert){
+            SiapeConsultaDadosPessoais::insert($insert);
+        }
     }
 
     public function consultaDadosFuncionais(
@@ -218,8 +228,10 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         foreach ($lotes as $i => $lote) {
             Log::info('Lote '.($i + 1).' de '.count($lotes));
             $resposta = $this->executaRequisicoes($lote);
+            Log::alert("resposta simples", $resposta);
             $respostas = $this->array_merge_recursive_distinct($respostas,  $resposta);
         }
+        Log::alert("Respostas mesclada::", $respostas);
         $tempoFinal = microtime(true);
         $tempoTotal = $tempoFinal - $tempoInicial;
         Log::info("Dados funcionais: Tempo total de execução: " . $tempoTotal . " segundos");
