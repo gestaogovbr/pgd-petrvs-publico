@@ -6,7 +6,9 @@ import { ClienteDaoService } from "src/app/dao/cliente-dao.service";
 import { TipoClienteDaoService } from "src/app/dao/tipo-cliente-dao.service";
 import { IIndexable } from "src/app/models/base.model";
 import { Cliente } from "src/app/models/cliente.model";
+import { TipoCliente } from "src/app/models/tipo-cliente.model";
 import { PageFormBase } from "src/app/modules/base/page-form-base";
+import { LookupItem } from "src/app/services/lookup.service";
 
 @Component({
   selector: 'app-cliente-form',
@@ -19,22 +21,23 @@ export class ClienteFormComponent extends PageFormBase<Cliente, ClienteDaoServic
   @ViewChild('tipoCliente', { static: false }) public tipoCliente?: InputSearchComponent;
 
   public tipoClienteDao?: TipoClienteDaoService;
+  public tiposCliente: LookupItem[] = [];
 
   constructor(public injector: Injector) {
     super(injector, Cliente, ClienteDaoService);
     this.tipoClienteDao = injector.get<TipoClienteDaoService>(TipoClienteDaoService);
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
-      tipo: { default: "" }
+      tipo_cliente_id: { default: "" }
     });
   }
 
   public async loadData(entity: Cliente, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     let cliente = (this.util.fillForm(formValue, entity));
-    await Promise.all ([
-      this.tipoCliente?.loadSearch(entity.tipo_cliente || entity.tipo_cliente_id),
-    ]);
+    const tiposCliente = await this.tipoClienteDao!.query().getAll();
+    this.tiposCliente = tiposCliente.map(tipo => ({ key: tipo.id, value: tipo.nome }));
+ 
     form.patchValue(cliente);
   }
 
