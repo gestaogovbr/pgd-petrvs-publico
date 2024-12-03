@@ -16,6 +16,7 @@
  - Desabilitado edição do TCR compilado em plano de trabalho
  - Retirado opção do texto complementar da unidade executora no formulário do plano de trabalho
  - Configurações do supervisor para envio da API PGD
+ - Removidos menus de Tipos de Meta, Tipos de Avaliação, Tipos de Modalidade, Tipos de Motivos de Afastamento
 ## 2.3.1 23/10/2024 (Hotfixes)
 ### Adicionado
  - Migrate para agendar os JOBS do SIAPE automaticamente
