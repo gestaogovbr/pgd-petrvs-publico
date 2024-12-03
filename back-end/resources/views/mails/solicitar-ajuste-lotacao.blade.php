@@ -27,7 +27,9 @@
         <p><i>Atenciosamente,<br/>
             <b>{{ $remetente->nome }}</b><br/>
             Matrícula SIAPE {{ $remetente->matricula }}<br/>
+            @if ($remetente->lotacao)
             {{ $remetente->lotacao->unidade->nome }}<br/>
+            @endif
             {{ $remetente->ultimaParticipacaoPrograma?->programa->unidade->nome }}
             </i>
         </p>
