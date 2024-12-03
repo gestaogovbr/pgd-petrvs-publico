@@ -83,6 +83,7 @@ export class Tenant extends Base {
     public modulo_sei_public_key: string = "";
     public modulo_sei_url: string = "";
     // API
+    public api_url: string = "";
     public api_username: string = "";
     public api_password: string = "";
     //SMTP

@@ -41,11 +41,8 @@
         </div>
       </separator>
     </tab>
-    <tab *ngIf="checkFilled(['usuario_id'])" key="MENSAGENS" [label]="lex.translate('Texto Complementar')">
-      <separator [title]="'Texto complementar da '+ lex.translate('unidade')">
-        <input-switch controlName="editar_texto_complementar_unidade" [disabled]="podeEditarTextoComplementar(form!.controls.unidade_id.value)" [size]="12" scale="small" labelPosition="right" [label]="'Editar texto complementar '+ lex.translate('na unidade')"></input-switch>
-        <input-editor controlName="unidade_texto_complementar" [disabled]="form!.controls.editar_texto_complementar_unidade.value ? undefined : 'true'" [dataset]="planoDataset"></input-editor>
-      </separator>
+    <tab *ngIf="checkFilled(['usuario_id'])" key="MENSAGENS" label="Particularidades do participante">
+
       <separator title="Texto complementar do usuario">
         <input-switch controlName="editar_texto_complementar_usuario"  [disabled]="podeEditarTextoComplementar(form!.controls.unidade_id.value)"  [size]="12" scale="small" labelPosition="right" [label]="'Editar texto complementar '+ lex.translate('do usuário')"></input-switch>
         <input-editor controlName="usuario_texto_complementar" [disabled]="form!.controls.editar_texto_complementar_usuario.value ? undefined : 'true'" [dataset]="planoDataset"></input-editor>
@@ -54,7 +51,7 @@
     <tab *ngIf="checkFilled(['usuario_id', 'programa_id', 'tipo_modalidade_id'])" key="TERMO" [label]="lex.translate('Termo')">
       <!--top-alert *ngIf="!isTermos" type="warning" message="Para [INSERIR] ou [ASSINAR] termos escolha opção Termos de adesão na tela de listagem, ou utilize o Sei"></top-alert/-->
       <div clss="row">
-        <documentos #documentos [entity]="entity" [disabled]="formDisabled" noPersist [cdRef]="cdRef" [needSign]="planoTrabalhoService.needSign" [extraTags]="planoTrabalhoService.extraTags" especie="TCR" [editingId]="formDisabled ? undefined : editingId" [datasource]="datasource" [template]="programa?.selectedEntity?.template_tcr"></documentos>
+        <documentos #documentos [entity]="entity" [disabled]="formDisabled" noPersist [cdRef]="cdRef" [needSign]="planoTrabalhoService.needSign" [extraTags]="planoTrabalhoService.extraTags" especie="TCR" [editingId]="formDisabled ? undefined : editingId" [datasource]="datasource" [template]="programa?.selectedEntity?.template_tcr" [blocked]="true"></documentos>
       </div>
     </tab>
   </tabs>

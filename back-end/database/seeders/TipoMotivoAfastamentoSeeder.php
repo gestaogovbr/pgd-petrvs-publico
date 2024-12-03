@@ -32,49 +32,51 @@ class TipoMotivoAfastamentoSeeder extends Seeder
   public function run()
   {
     try {
-      #TipoMotivoAfastamento::whereNotNull('id')->delete();
-      $file = public_path('tipos_motivos_afastamentos.xlsx');
-      Excel::import(new ImportarMotivos($this->utilService), $file);
+      $rows = [
+        ['tipo' => 'Desconto', 'horas' => 'Horas',  'nome' => 'Afastamento para ações de desenvolvimento'],
+        ['tipo' => 'Desconto', 'horas' => 'Horas',  'nome' => 'Comparecimento para fins de saúde (não se aplica para teletrabalho integral)'],
+        ['tipo' => 'Desconto', 'horas' => 'Dias',   'nome' => 'Doação de sangue'],
+        ['tipo' => 'Desconto', 'horas' => 'Dias',   'nome' => 'Feriado municipal/distrital/estadual'],
+        ['tipo' => 'Desconto', 'horas' => 'Dias',   'nome' => 'Férias'],
+        ['tipo' => 'Desconto', 'horas' => 'Dias',   'nome' => 'Greve (participação)'],
+        ['tipo' => 'Desconto', 'horas' => 'Dias',   'nome' => 'Licença capacitação'],
+        ['tipo' => 'Desconto', 'horas' => 'Dias',   'nome' => 'Licença gala (casamento) '],
+        ['tipo' => 'Desconto', 'horas' => 'Dias',   'nome' => 'Licença gestante/maternidade/paternidade/adotante '],
+        ['tipo' => 'Desconto', 'horas' => 'Dias',   'nome' => 'Licença nojo (falecimento de pessoa da família)'],
+        ['tipo' => 'Desconto', 'horas' => 'Dias',   'nome' => 'Recesso (usufruto)'],
+        ['tipo' => 'Desconto', 'horas' => 'Horas',   'nome' => 'Redução de jornada sem redução salarial'],
+        ['tipo' => 'Desconto', 'horas' => 'Dias',   'nome' => 'Tratamento de saúde (participante, dependente ou familiar)'],
+        ['tipo' => 'Desconto', 'horas' => 'Horas',   'nome' => 'Outras hipóteses (subtração de carga horária)'],
+        ['tipo' => 'Acréscimo', 'horas' => 'Dias',  'nome' => 'Greve (compensação)'],
+        ['tipo' => 'Acréscimo', 'horas' => 'Dias',  'nome' => 'Política de consequência do PGD (compensação)'],
+        ['tipo' => 'Acréscimo', 'horas' => 'Dias',   'nome' => 'Recesso (compensação)'],
+        ['tipo' => 'Acréscimo', 'horas' => 'Horas',  'nome' => 'Outras hipóteses (compensação)']
+      ];
+
+      foreach ($rows as $row) {      
+        $data = Carbon::now()->format(ServiceBase::ISO8601_FORMAT);
+        $cod = TipoMotivoAfastamento::count() + 1;
+        $sigla = preg_replace('/[^a-zA-Z0-9]/', '', $row['nome']);
+        $sigla = substr($sigla, 0, 3) . $cod;
+  
+        TipoMotivoAfastamento::firstOrCreate(['nome' => $row['nome']], [
+          "id" => $this->utilService->uuid($row['nome']),
+          "data_inicio" => $data,
+          "data_fim" =>  $data,
+          "situacao" => "S",
+          "codigo" => $cod,
+          "sigla" => $sigla,
+          "nome" => $row['nome'],
+          "icone" => "bi bi-folder",
+          "cor" => "#198754",
+          "horas" => $row['horas'] == "Horas" ? true : false,
+          "calculo" => $row['tipo'] == "Desconto" ? 'DECRESCIMO' : 'ACRESCIMO',
+          "integracao" => true,
+        ]);
+      }
     } catch (\Exception $e) {
       echo ("Erro ao importar tipos de motivos de afastamentos: " . $e->getMessage(). "\n");
       Log::error("Erro ao importar tipos de motivos de afastamentos: " . $e->getMessage());
-    }
-  }
-}
-
-class ImportarMotivos implements ToCollection
-{
-
-  public function __construct(public UtilService $utilService)
-   {
-   }
-
-  public function collection(Collection $rows)
-  {
-
-    // Pulando a primeira linha (cabeçalho)
-    $rows = $rows->skip(1);
-
-    foreach ($rows as $row) {      
-      $data = Carbon::now()->format(ServiceBase::ISO8601_FORMAT);
-      $cod = TipoMotivoAfastamento::count() + 1;
-      $sigla = preg_replace('/[^a-zA-Z0-9]/', '', $row[2]);
-      $sigla = substr($sigla, 0, 3) . $cod;
-
-      TipoMotivoAfastamento::firstOrCreate(['nome' => $row[2]], [
-        "id" => $this->utilService->uuid($row[2]),
-        "data_inicio" => $data,
-        "data_fim" =>  $data,
-        "situacao" => "S",
-        "codigo" => $cod,
-        "sigla" => $sigla,
-        "nome" => $row[2],
-        "icone" => "bi bi-folder",
-        "cor" => "#198754",
-        "horas" => $row[1] == "Horas" ? true : false,
-        "calculo" => $row[0] == "Desconto" ? 'DECRESCIMO' : 'ACRESCIMO',
-        "integracao" => true,
-      ]);
     }
   }
 }

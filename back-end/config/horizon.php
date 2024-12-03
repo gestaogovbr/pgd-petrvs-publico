@@ -185,43 +185,63 @@ return [
     */
 
     'default' => [
-        'supervisor' => [
-            'connection' => 'redis',
-            'queue' => ['default'],
-            'balance' => 'auto',
-            'maxProcesses' => 3,
-            'minProcesses' => 3,
-            'tries' => 3,
-            'timeout' => 90
-        ],
-        'supervisor-siape' => [
-            'connection' => 'siape_queue',
-            'queue' => ['siape_queue'],
-            'balance' => 'simple',
-            'processes' => 1,
-            'tries' => 1,
-            'timeout' => 60 * 60 * 24 * 2
-        ],
     ],
 
-    /*'environments' => [
+    'environments' => [
         'production' => [
-            'supervisor-1' => [
-                'maxProcesses' => 3,
-                'balanceMaxShift' => 1,
-                'balanceCooldown' => 3,
-            ],
-        ],
-
-        'local' => [
-            'supervisor-1' => [
+            'supervisor' => [
                 'connection' => 'redis',
                 'queue' => ['default'],
+                'balance' => 'auto',
+                'maxProcesses' => 3,
+                'minProcesses' => 3,
+                'tries' => 3,
+                'timeout' => 90
+            ],
+            'supervisor-siape' => [
+                'connection' => 'redis',
+                'queue' => ['siape_queue'],
                 'balance' => 'simple',
                 'processes' => 1,
                 'tries' => 1,
                 'timeout' => 60 * 60 * 24 * 2
             ],
+            'supervisor-pgd' => [
+                'connection' => 'redis',
+                'queue' => ['pgd_queue'],
+                'balance' => 'simple',
+                'processes' => 3,
+                'tries' => 3,
+                'timeout' => 60 * 60 * 3
+            ],
         ],
-    ],*/
+
+        'local' => [
+            'supervisor' => [
+                'connection' => 'redis',
+                'queue' => ['default'],
+                'balance' => 'auto',
+                'maxProcesses' => 3,
+                'minProcesses' => 3,
+                'tries' => 3,
+                'timeout' => 90
+            ],
+            'supervisor-siape' => [
+                'connection' => 'redis',
+                'queue' => ['siape_queue'],
+                'balance' => 'simple',
+                'processes' => 1,
+                'tries' => 1,
+                'timeout' => 60 * 60 * 24 * 2
+            ],
+            'supervisor-pgd' => [
+                'connection' => 'redis',
+                'queue' => ['pgd_queue'],
+                'balance' => 'simple',
+                'processes' => 3,
+                'tries' => 3,
+                'timeout' => 60 * 60 * 3
+            ],
+        ],
+    ],
 ];
