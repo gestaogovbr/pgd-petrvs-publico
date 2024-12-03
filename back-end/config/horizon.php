@@ -184,7 +184,7 @@ return [
     |
     */
 
-    'default' => [    
+    'default' => [
     ],
 
     'environments' => [
@@ -199,7 +199,7 @@ return [
                 'timeout' => 90
             ],
             'supervisor-siape' => [
-                'connection' => 'siape_queue',
+                'connection' => 'redis',
                 'queue' => ['siape_queue'],
                 'balance' => 'simple',
                 'processes' => 1,
@@ -207,7 +207,7 @@ return [
                 'timeout' => 60 * 60 * 24 * 2
             ],
             'supervisor-pgd' => [
-                'connection' => 'pgd_queue',
+                'connection' => 'redis',
                 'queue' => ['pgd_queue'],
                 'balance' => 'simple',
                 'processes' => 3,
@@ -227,7 +227,7 @@ return [
                 'timeout' => 90
             ],
             'supervisor-siape' => [
-                'connection' => 'siape_queue',
+                'connection' => 'redis',
                 'queue' => ['siape_queue'],
                 'balance' => 'simple',
                 'processes' => 1,
@@ -235,7 +235,7 @@ return [
                 'timeout' => 60 * 60 * 24 * 2
             ],
             'supervisor-pgd' => [
-                'connection' => 'pgd_queue',
+                'connection' => 'redis',
                 'queue' => ['pgd_queue'],
                 'balance' => 'simple',
                 'processes' => 3,
