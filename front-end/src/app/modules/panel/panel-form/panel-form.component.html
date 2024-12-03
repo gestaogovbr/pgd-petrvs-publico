@@ -165,6 +165,7 @@
                 </div>
             </div>
             <div *ngIf="form?.controls!.tipo_integracao.value == 'API'" class="row">
+                <input-text [size]="12" label="URL" controlName="api_url" [attr.maxlength]=250></input-text>
                 <input-text [size]="6" label="Nome de Usuário" controlName="api_username" [attr.maxlength]=250></input-text>
                 <input-text password [size]="6" label="Senha" controlName="api_password" [placeholder]="apiPasswordPlaceholder"></input-text>
             </div>

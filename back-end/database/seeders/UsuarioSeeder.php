@@ -9,7 +9,7 @@ use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use Illuminate\Database\Seeder;
-use App\Services\NivelAcessoService; 
+use App\Services\NivelAcessoService;
 class UsuarioSeeder extends Seeder
 {
   /**
@@ -48,28 +48,12 @@ class UsuarioSeeder extends Seeder
         'sexo' => 'MASCULINO',
       ],
       [
-        'email' => 'henrique.felipe100@gmail.com',
-        'nome' => 'Henrique Felipe Alves',
-        'cpf' => '40921185898',
-        'apelido' => 'Henrique',
-        'perfil_id' => $perfilDesenvolvedorId,
-        'sexo' => 'MASCULINO',
-      ],
-      [
         'email' => 'guibitar@gmail.com',
         'nome' => 'Guilherme Bitar',
         'cpf' => '01914276167',
         'apelido' => 'Guilherme',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
-      ],
-      [
-        'email' => 'karinahellen.eng@gmail.com',
-        'nome' => 'Karina Silva',
-        'cpf' => '05182319177',
-        'apelido' => 'Karina',
-        'perfil_id' => $perfilDesenvolvedorId,
-        'sexo' => 'FEMININO',
       ],
       [
         'email' => 'cimei.teixeira@gmail.com',
@@ -84,6 +68,30 @@ class UsuarioSeeder extends Seeder
         'nome' => 'Marco Coelho',
         'cpf' => '03400125954',
         'apelido' => 'Marco',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'MASCULINO',
+      ],
+      [
+        'email' => 'juliane.perini@mds.gov.br',
+        'nome' => 'Juliane Helriguel de Melo Perini',
+        'cpf' => '78232848120',
+        'apelido' => 'Juliane',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'FEMININO',
+      ],
+      [
+        'email' => 'thais.brito@economia.gov.br',
+        'nome' => 'Thaís Barral de Oliveira Brito',
+        'cpf' => '82162492504',
+        'apelido' => 'Thais',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'FEMININO',
+      ],
+      [
+        'email' => 'bruno.santos@firstbps.com.br',
+        'nome' => 'Bruno',
+        'cpf' => '11555557759',
+        'apelido' => 'Bruno',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
       ]
