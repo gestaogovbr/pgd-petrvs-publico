@@ -143,15 +143,17 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public atualizarTcr() {
-    this.entity = this.loadEntity();
-    let textoUsuario = this.form!.controls.usuario_texto_complementar.value;
-    let textoUnidade = this.form!.controls.unidade_texto_complementar.value;
-    let documento = this.planoTrabalhoService.atualizarTcr(this.planoTrabalho!, this.entity!, textoUsuario, textoUnidade);
-    this.form?.controls.documento_id.setValue(documento?.id);
-    this.form?.controls.documentos.setValue(this.entity!.documentos);
-    this.datasource = documento?.datasource || {};
-    this.template = this.entity.programa?.template_tcr;
-    this.editingId = ["ADD", "EDIT"].includes(documento?._status || "") ? documento!.id : undefined;
+    this.entity = this.loadEntity();   
+    if (!this.formDisabled) {
+      let textoUsuario = this.form!.controls.usuario_texto_complementar.value;
+      let textoUnidade = this.form!.controls.unidade_texto_complementar.value;
+      let documento = this.planoTrabalhoService.atualizarTcr(this.planoTrabalho!, this.entity!, textoUsuario, textoUnidade);
+      this.form?.controls.documento_id.setValue(documento?.id);
+      this.form?.controls.documentos.setValue(this.entity!.documentos);
+      this.datasource = documento?.datasource || {};
+      this.template = this.entity.programa?.template_tcr;
+      this.editingId = ["ADD", "EDIT"].includes(documento?._status || "") ? documento!.id : undefined;
+    }
     this.cdRef.detectChanges();
   }
 
@@ -188,10 +190,13 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   public onUnidadeSelect(selected: SelectItem) {
     let unidade = this.unidade?.selectedEntity as Unidade;
+    let usuario = this.usuario?.selectedEntity as Usuario;
     this.entity!.unidade = unidade;
     this.entity!.unidade_id = unidade.id;
     this.form!.controls.forma_contagem_carga_horaria.setValue(unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
     this.form!.controls.unidade_texto_complementar.setValue(unidade?.texto_complementar_plano || "");
+    this.form!.controls.usuario_texto_complementar.setValue(usuario?.texto_complementar_plano || "");
+
     this.unidadeDao.getById(unidade.id, ['gestor:id,usuario_id','gestores_substitutos:id,usuario_id','gestores_delegados:id,usuario_id']).then( unidade => {
       this.buscaGestoresUnidadeExecutora(unidade);
     });
@@ -214,8 +219,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.cdRef.detectChanges();
   }
 
-  public onUsuarioSelect(selected: SelectItem) {
-    this.form!.controls.usuario_texto_complementar.setValue((selected.entity as Usuario)?.texto_complementar_plano || "");
+  public onUsuarioSelect(selected: SelectItem) {    
+    this.form!.controls.usuario_texto_complementar.setValue(selected.entity.texto_complementar_plano || "");
     if(!this.form?.controls.unidade_id.value) {
       selected.entity.unidades?.every(async (unidade: any) => {
         if (selected.entity.lotacao.unidade_id == unidade.id) {
