@@ -1,0 +1,18 @@
+<grid [items]="audits">
+
+    <columns>
+        <column title="Criado em" [template]="columnData">
+            <ng-template let-row="row" #columnData>
+                <span>{{dao!.getDateFormatted(row.created_at)}}</span>
+            </ng-template>
+        </column>
+        <column title="event" [template]="columnEvent">
+            <ng-template let-row="row" #columnEvent>
+                <span>{{row.event}}</span>
+            </ng-template>
+        </column>
+
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
+    
