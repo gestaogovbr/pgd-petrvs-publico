@@ -190,6 +190,9 @@ export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService>
 
     this.jobAgendadoDao.createJob(this.newJob, this.tenant_id).then((job: any) => {
       console.log('Job created:', job);
+      if(job.success == false){
+        this.dialog.alert('alerta',job.message);
+      }
       this.loadJobs();
       this.newJob = new JobAgendado();
       this.newJob.diario = true;
@@ -197,6 +200,7 @@ export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService>
       this.updateCronExpression();
     }).catch((error: any) => {
       console.error('Error creating job:', error);
+      this.dialog.alert('erro','Falha ao salvar o Job');
     });
   }
 

@@ -17,6 +17,8 @@ use App\Http\Controllers\ChangeController;
 use App\Http\Controllers\EntregaController;
 use App\Http\Controllers\EixoTematicoController;
 use App\Http\Controllers\ErrorController;
+use App\Http\Controllers\EnvioController;
+use App\Http\Controllers\EnvioItemController;
 use App\Http\Controllers\ProgramaController;
 use App\Http\Controllers\ProgramaParticipanteController;
 use App\Http\Controllers\PlanejamentoController;
@@ -147,6 +149,14 @@ Route::middleware('auth:sanctum')->prefix('Error')->group(function () {
   Route::post('query', [ErrorController::class, 'query']);
   Route::post('get-by-id', [ErrorController::class, 'getById']);
   Route::post('showResponsaveis', [ErrorController::class, 'showResponsaveis']);
+});
+Route::middleware('auth:sanctum')->prefix('Envio')->group(function () {
+  Route::post('query', [EnvioController::class, 'query']);
+  Route::post('get-by-id', [EnvioController::class, 'getById']);
+});
+Route::middleware('auth:sanctum')->prefix('EnvioItem')->group(function () {
+  Route::post('query', [EnvioItemController::class, 'query']);
+  Route::post('get-by-id', [EnvioItemController::class, 'getById']);
 });
 Route::middleware('auth:sanctum')->prefix('Traffic')->group(function () {
 });

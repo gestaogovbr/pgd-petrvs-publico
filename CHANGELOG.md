@@ -1,3 +1,22 @@
+## 2.3.2 03/12/2024
+### Adicionado
+ - Fragmentado dados inseridos no banco pelo SIAPE
+ - Adição de Logs de processamento da API PGD
+ - URL da API PGD nos Tenants
+ - Consulta aos logs do Envio da API PGD
+ - Envio para a API PGD dividido em jobs menores
+### Corrigido
+ - Texto do participante no TCR
+ - Servidores temporários não conseguiam assinar planos de trabalho
+ - Alteração na busca da lotação de servidores temporários
+ - Removido duplicação de jobs ao editar o tenant
+ - Carga de Tipos de Motivo de Afastamento não carregavam corretamente no Seeder
+ - Regramento padrão nos planos de trabalho, entrega e seleção de participantes carregava unidade errada
+### Modificado
+ - Desabilitado edição do TCR compilado em plano de trabalho
+ - Retirado opção do texto complementar da unidade executora no formulário do plano de trabalho
+ - Configurações do supervisor para envio da API PGD
+ - Removidos menus de Tipos de Meta, Tipos de Avaliação, Tipos de Modalidade, Tipos de Motivos de Afastamento
 ## 2.3.1 23/10/2024 (Hotfixes)
 ### Adicionado
  - Migrate para agendar os JOBS do SIAPE automaticamente
