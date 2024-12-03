@@ -219,7 +219,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.cdRef.detectChanges();
   }
 
-  public onUsuarioSelect(selected: SelectItem) {
+  public onUsuarioSelect(selected: SelectItem) {    
+    this.form!.controls.usuario_texto_complementar.setValue(selected.entity.texto_complementar_plano || "");
     if(!this.form?.controls.unidade_id.value) {
       selected.entity.unidades?.every(async (unidade: any) => {
         if (selected.entity.lotacao.unidade_id == unidade.id) {
