@@ -92,7 +92,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
       result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
     if(form.id?.length) {
-      result.push(["id", "like", "%" + form.id.trim().replace(" ", "%") + "%"]);
+      result.push(["id", "=",form.id]);
     }
 		if (form.unidade_id?.length) {
 			result.push(["unidade_id", "==", form.unidade_id]);

@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component, Injector, ViewChild } from "@angular/core";
+import { FormGroup } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
 import { ProdutoDaoService } from "src/app/dao/produto-dao.service";
@@ -22,7 +23,10 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     this.produtoService = injector.get<ProdutoService>(ProdutoService);
     this.title = this.lex.translate("Produtos");
     this.filter = this.fh.FormBuilder({
-      nome: {default: ""},
+      nome: {default: this.metadata?.nome ?? ""},
+      unidade_id: {default: ""},
+      id: {default: ""},
+      status: {default: ""}
     });
     this.join = [
       "produtoProcessoCadeiaValor"
@@ -91,6 +95,61 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
       this.isUpdating = false; 
     }
   }
+
+  public onBuscaAvancada() {
+    this.go.navigate({ route: ["gestao", "produto", "filter"] }, {
+      metadata: {
+        nome: this.filter?.controls.nome.value,
+        id: this.filter?.controls.id.value,
+        status: this.filter?.controls.status.value,
+        unidade_id: this.filter?.controls.unidade_id.value
+      },
+      modalClose: async (result) => {
+        if (result && this.filter) {
+          this.filter?.controls.nome.setValue(result.nome);
+          this.filter?.controls.id.setValue(result.id);
+          this.filter?.controls.status.setValue(result.status);
+          this.filter?.controls.unidade_id.setValue(result.unidade_id);
+          this.grid!.reloadFilter();
+        }
+      },
+    });
+  }
+
+  public onFilterClear(){
+    this.filter?.reset()
+    this.grid!.reloadFilter();
+  }
+
+  public filtrosDefinidos() {
+    return this.filter?.controls.nome.value.length > 0 || 
+      this.filter?.controls.id.value.length > 0 ||
+      this.filter?.controls.unidade_id.value.length > 0 ||
+      this.filter?.controls.status.value.length > 0;
+  }
+
+  public filterWhere = (filter: FormGroup) => {
+		let result: any[] = [];
+		let form: any = filter.value;
+
+    if(form.nome?.length) {
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
+    }
+    if(form.id?.length) {
+      result.push(["id", "=",form.id]);
+    }
+		if (form.unidade_id?.length) {
+			result.push(["unidade_id", "==", form.unidade_id]);
+    }
+    if (form.status && form.status == 'ativo') {
+      result.push(["data_ativado", "!=", null]);
+    }
+    if (form.status && form.status == 'inativo') {
+      result.push(["data_ativado", "==", null]);
+    }
+		return result;
+	};
+
 
   public ativo(produto: Produto): boolean {
     return produto.data_ativado instanceof Date;
