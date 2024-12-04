@@ -126,7 +126,7 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_EXTM_EDT", "Permite editar Eixos temáticos"],
         ["MOD_EXTM_EXCL", "Permite excluir Eixos temáticos"],
       ]
-    ], /*[
+    ] /*[
       "codigo" => "MOD_ENTRG", //ok
       "descricao" => "Módulo de Entregas",
       "capacidades" => [
@@ -312,7 +312,7 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_TIPO_ATV_INCL_TP_MIN", "Permite incluir tempo máximo da atividade"],
         ["MOD_TIPO_ATV_PCPL", "Permite incluir atividades na guia principal"],
       ]
-    ], /*[
+    ] /*[
       "codigo" => "MOD_TIPO_AVAL",
       "descricao" => "Módulo de Tipos de Avaliação",
       "capacidades" => [
@@ -347,7 +347,7 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_TIPO_JUST_EXCL", "Permite excluir tipos de justificativas"],
         ["MOD_TIPO_JUST_INCL", "Permite incluir tipos de justificativas"],
       ]
-    ], /*[
+    ] /*[
       "codigo" => "MOD_TIPO_MDL",
       "descricao" => "Módulo de Tipos de Modalidade",
       "capacidades" => [
