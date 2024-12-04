@@ -5,8 +5,20 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="12" [label]="'Nome do '+ lex.translate('produto')" controlName="nome"
-                [control]="filter!.controls.nome" [placeholder]="'Nome do '+ lex.translate('produto')" [attr.maxlength]=250></input-text>
+            <div class="col-md-4"> 
+                <input-text [size]="12" [label]="'Nome do '+ lex.translate('produto')" controlName="nome"
+                    [control]="filter!.controls.nome" [placeholder]="'Nome do '+ lex.translate('produto')" [attr.maxlength]=250></input-text>
+            </div>
+            <div class="col-md-3 busca-avancada">
+                <div class="busca-avancada-link"><a (click)="onBuscaAvancada()">Busca Avançada</a></div>
+                <div class="busca-avancada-clear"><a (click)="this.onFilterClear()">Limpar filtros de busca</a></div>
+                <div class="busca-avancada-filtros-aplicados" *ngIf="this.filtrosDefinidos">
+                    Filtros aplicados:
+                     <span *ngIf="filter!.controls.nome.value.length > 0">Nome</span>
+                     <span *ngIf="filter!.controls.id.value.length > 0">#ID</span>
+                     <span *ngIf="filter!.controls.status.value.length > 0">Status</span>
+                </div>
+             </div>
         </div>
     </filter>
     <columns>

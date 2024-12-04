@@ -51,7 +51,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     });
 
     // Testa se o usuário possui permissão para excluir o tipo de atividade
-    if (this.auth.hasPermissionTo("MOD_PROD_CAT_EXCL")) {
+    if (this.auth.hasPermissionTo("MOD_SOLUCOES_EXCL")) {
       this.options.push({
         icon: "bi bi-trash",
         label: "Excluir",
@@ -92,7 +92,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
       result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
     if(form.id?.length) {
-      result.push(["id", "like", "%" + form.id.trim().replace(" ", "%") + "%"]);
+      result.push(["id", "=",form.id]);
     }
 		if (form.unidade_id?.length) {
 			result.push(["unidade_id", "==", form.unidade_id]);
