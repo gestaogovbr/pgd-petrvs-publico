@@ -126,7 +126,7 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_EXTM_EDT", "Permite editar Eixos temáticos"],
         ["MOD_EXTM_EXCL", "Permite excluir Eixos temáticos"],
       ]
-    ], /*[
+    ] /*[
       "codigo" => "MOD_ENTRG", //ok
       "descricao" => "Módulo de Entregas",
       "capacidades" => [
