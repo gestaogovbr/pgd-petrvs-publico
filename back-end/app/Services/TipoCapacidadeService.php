@@ -275,16 +275,24 @@ class TipoCapacidadeService extends ServiceBase
       ]
     ], [
       "codigo" => "MOD_PROD",
-      "descricao" => "Módulo de Produtos",
+      "descricao" => "Módulo de Produtos e Serviços",
       "capacidades" => [
         /* Capacidades do módulo PRODUTO */
-        ["MOD_PROD_EDT", "Permite editar produtos"],
-        ["MOD_PROD_EXCL", "Permite excluir produtos"],
-        ["MOD_PROD_INCL", "Permite incluir produtos"],
+        ["MOD_PROD_EDT", "Permite editar produtos e serviços"],
+        ["MOD_PROD_EXCL", "Permite excluir produtos e serviços"],
+        ["MOD_PROD_INCL", "Permite incluir produtos e serviços"],
         ["MOD_PROD_CAT", "Permite acesso aos produtos e serviços"],
         ["MOD_PROD_CAT_INCL", "Permite incluir catálogo de produtos e serviços"],
         ["MOD_PROD_CAT_EDT", "Permite editar catálogo de produtos e serviços"],
         ["MOD_PROD_CAT_EXCL", "Permite excluir catálogo de produtos e serviços"]
+      ]
+    ], [
+      "codigo" => "MOD_SOLUCOES",
+      "descricao" => "Módulo de Soluções",
+      "capacidades" => [
+        ["MOD_SOLUCOES_EDT", "Permite editar Soluções"],
+        ["MOD_SOLUCOES_EXCL", "Permite excluir Soluções"],
+        ["MOD_SOLUCOES_INCL", "Permite incluir Soluções"]
       ]
     ], [
       "codigo" => "MOD_TEMP",
