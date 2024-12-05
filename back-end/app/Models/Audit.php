@@ -35,6 +35,7 @@ class Audit extends Model implements AuditableContract
         'tags',          // Tags opcionais
     ];
 
+    protected $appends = ['details', 'performed_by', 'table_type'];
     /**
      * The attributes that should be cast to native types.
      *
@@ -60,4 +61,43 @@ class Audit extends Model implements AuditableContract
     {
         return $this->morphTo();
     }
+
+    public function getTableTypeAttribute()
+    {
+        return class_basename($this->auditable_type);
+    }
+
+
+    public function getPerformedByAttribute()
+    {
+        return optional($this->user)->nome ?? 'N/A';
+    }
+
+    public function getDetailsAttribute()
+    {
+        switch ($this->event) {
+            case 'created':
+                return ['created' => $this->new_values];
+
+            case 'updated':
+                $changes = [];
+                foreach ($this->new_values as $key => $newValue) {
+                    $oldValue = $this->old_values[$key] ?? null;
+                    if ($oldValue !== $newValue) {
+                        $changes[$key] = [
+                            'old' => $oldValue,
+                            'new' => $newValue,
+                        ];
+                    }
+                }
+                return ['changes' => $changes];
+
+            case 'deleted':
+                return ['deleted' => $this->old_values];
+
+            default:
+                return [];
+        }
+    }
+
 }

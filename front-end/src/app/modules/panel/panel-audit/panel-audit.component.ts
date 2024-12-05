@@ -14,26 +14,25 @@ export class PanelAuditComponent extends PageListBase<Tenant, TenantDaoService> 
   audits: Audit[] = [];
   public auditDaoService: AuditDaoService;
   public tenant_id!: string | null;
-  public metadata?: any;
+  public search: string = "";
+
   constructor(public injector: Injector) {
     super(injector, Tenant, TenantDaoService);
     this.auditDaoService = injector.get<AuditDaoService>(AuditDaoService);
-    /* Inicializações */
-    this.title = "Executar Seeder em todos os Tenants";
 
   }
 
-
-
   ngOnInit() {
-    console.log( this.metadata);
+    super.ngOnInit();
+    this.title = "Audit - Tenant "+ this.metadata?.tenant_id;
+    this.tenant_id = this.metadata?.tenant_id || null;
     this.loadAudits();
   }
 
-  private async loadAudits() {
-    this.tenant_id = this.metadata?.tenant_id || null;
+  public async loadAudits() {
+
     try {
-      const result = await this.auditDaoService.getAll(this.tenant_id);
+      const result = await this.auditDaoService.getAll(this.tenant_id,this.search);
       if (result) {
         this.audits = result.data;
       }

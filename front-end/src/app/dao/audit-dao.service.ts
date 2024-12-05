@@ -12,8 +12,8 @@ export class AuditDaoService extends DaoBaseService<Audit> {
         super("Audit", injector);
     }
 
-    public getAll(tenantId: string | null): Promise<any> {
-        const url = `api/${this.collection}/getAll?tenant_id=`+tenantId;
+    public getAll(tenantId: string | null, search: string | null): Promise<any> {
+        const url = `api/${this.collection}/getAll?search=`+search+'&tenant_id='+tenantId;
 
         return new Promise<any>((resolve, reject) => {
             this.server.get(url).subscribe(response => {
