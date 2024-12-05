@@ -626,11 +626,12 @@ class IntegracaoService extends ServiceBase
            * Atualiza os dados pessoais de todos os servidores ATIVOS presentes na tabela USUARIOS.
            * ESTA ROTINA NÃO DEVE INSERIR NOVOS SERVIDORES.
            */
-          $unidadeExercicioRaiz = Unidade::where("codigo", $this->unidadeRaiz)->first();
-          if(!$unidadeExercicioRaiz){
-            throw new IntegrationException("IntegracaoService: Durante atualização de lotações, unidade de exercício raiz $this->unidadeRaiz não encontrada.");
-          }
-          $unidadeExercicioRaizId = $unidadeExercicioRaiz->id;
+          //FIXME não terá mais lotacao pra usuarios sem unidades de exercicio ativa.
+          // $unidadeExercicioRaiz = Unidade::where("codigo", $this->unidadeRaiz)->first();
+          // if(!$unidadeExercicioRaiz){
+          //   throw new IntegrationException("IntegracaoService: Durante atualização de lotações, unidade de exercício raiz $this->unidadeRaiz não encontrada.");
+          // }
+          // $unidadeExercicioRaizId = $unidadeExercicioRaiz->id;
           if (!empty($atualizacoesDados)) {
             foreach ($atualizacoesDados as $linha) {
               Log::channel('siape')->info("Atualizando dados do servidor: ", [json_encode($linha)]);
@@ -659,8 +660,10 @@ class IntegracaoService extends ServiceBase
               if (isset($linha->exercicio_atual_id)) {
                     $unidadeExercicioId = $linha->exercicio_atual_id;
               } else {
-                    $unidadeExercicioId = $unidadeExercicioRaizId;
+                    //FIXME não sera mais alocado em nenhuma unidade se não existir.
+                    // $unidadeExercicioId = $unidadeExercicioRaizId;
                     LogError::newWarn("IntegracaoService: Durante atualização de lotações, agente público informou unidade de exercício não ativa ou inexistente.", [$linha]);
+                    continue;
               }
 
               $vinculo = array([
@@ -751,10 +754,12 @@ class IntegracaoService extends ServiceBase
             isset($unidadeExercicioId->id) ? $unidadeExercicioId = $unidadeExercicioId->id : $unidadeExercicioId = null;
 
             if (is_null($unidadeExercicioId)) {
-              $unidadeExercicioId = $unidadeExercicioRaizId;
-              LogError::newWarn("IntegracaoService: Durante integração, foi definido o exercício na unidadeRaiz(" .
-                $this->unidadeRaiz . ") para o CPF(" .
-                $registro['cpf'] . ") uma vez que informação não foi encontrada.", [$usuarioId, $registro['cpf']]);
+              Log::channel('siape')->info(sprintf("O servidor cpf #%s não tem unidade de  exercicio, não será alocado", $registro['cpf']));
+              continue;
+              // $unidadeExercicioId = $unidadeExercicioRaizId;
+              // LogError::newWarn("IntegracaoService: Durante integração, foi definido o exercício na unidadeRaiz(" .
+              //   $this->unidadeRaiz . ") para o CPF(" .
+              //   $registro['cpf'] . ") uma vez que informação não foi encontrada.", [$usuarioId, $registro['cpf']]);
             }
 
             $queryAtribuicoes = $registro->getUnidadesAtribuicoesAttribute();
