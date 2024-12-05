@@ -26,7 +26,7 @@ return new class extends Migration
         ");
 
         if(empty($resultado)){
-            return;
+            return; 
         }
         Schema::disableForeignKeyConstraints();
         $idInstituicao = $resultado[0]->id_instituicao; 
