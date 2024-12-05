@@ -14,6 +14,7 @@ use App\Models\SiapeDadosUORG;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Exceptions\LogError;
+use App\Exceptions\NotFoundException;
 use App\Services\ServiceBase;
 use App\Models\IntegracaoUnidade;
 use App\Models\IntegracaoServidor;
@@ -32,6 +33,8 @@ use Illuminate\Support\Facades\Log;
 class IntegracaoService extends ServiceBase
 {
   use LogTrait;
+
+  const CODIGO_SIAPE_UNIDADE_RAIZ_PELO_PAI = 999999;
 
   public $unidadesInseridas = [];
   public $unidadesSelecionadas = [];
@@ -439,6 +442,7 @@ class IntegracaoService extends ServiceBase
         array_push($this->result['unidades']["Observações"], 'Total de unidades importadas do SIAPE: ' . $n . ' (apenas ATIVAS)');
         array_push($this->result['unidades']['Observações'], 'Os dados das Unidades foram obtidos ' . ($this->useLocalFiles ? 'através de arquivo XML armazenado localmente!' : 'através de consulta à API do SIAPE!'));
 
+        $this->processaUnidadeRaiz();
         /**
          * Insere as unidades faltantes ou atualiza dados e seus respectivos pais.
          * OBS.: Não vejo a diferença de usar :entidade_id para restringir as Unidades.
@@ -973,6 +977,27 @@ class IntegracaoService extends ServiceBase
       'siapeDadosPessoais' => $siapeDadosPessoais,
       'siapeDadosFuncionais' => $siapeDadosFuncionais
     ];
+  }
+
+  private function processaUnidadeRaiz(): void
+  {
+    $siapeUnidadeRaiz = IntegracaoUnidade::where('pai_servo', self::CODIGO_SIAPE_UNIDADE_RAIZ_PELO_PAI)->first();
+    if (is_null($siapeUnidadeRaiz)) {
+      Log::channel('siape')->info("Unidade raiz nao encontrada na tabela de integracao_unidades.");
+      return;
+    }
+
+    $unidadeRaiz = Unidade::where('sigla', $siapeUnidadeRaiz->siglauorg)->first();
+    if (is_null($unidadeRaiz)) {
+      Log::channel('siape')->info(sprintf("Unidade raiz %s nao encontrada na tabela de unidades.", $siapeUnidadeRaiz->siglauorg));
+      return;
+    }
+
+    if ($unidadeRaiz->codigo != $siapeUnidadeRaiz->codigo_siape) {
+      $unidadeRaiz->codigo = $siapeUnidadeRaiz->codigo_siape;
+      Log::channel('siape')->info(sprintf("Corrigindo unidade raiz %s", $siapeUnidadeRaiz->siglauorg));
+      $unidadeRaiz->save();
+    }
   }
 
 }
