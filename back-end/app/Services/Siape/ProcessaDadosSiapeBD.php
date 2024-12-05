@@ -107,7 +107,6 @@ class ProcessaDadosSiapeBD
 
     public function dadosUorg(): array
     {
-
         $response = SiapeDadosUORG::where('processado', 0)
             ->orderBy('updated_at', 'desc')->get();
 

@@ -211,10 +211,10 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_CTXT"],
       ["codigo" => "MOD_ENTD"],
       ["codigo" => "MOD_ENTD_EDT"],
-      ["codigo" => "MOD_ENTRG"],
+      /*["codigo" => "MOD_ENTRG"],
       ["codigo" => "MOD_ENTRG_EDT"],
       ["codigo" => "MOD_ENTRG_EXCL"],
-      ["codigo" => "MOD_ENTRG_INCL"],
+      ["codigo" => "MOD_ENTRG_INCL"],*/
       ["codigo" => "MOD_EXTM"],
       ["codigo" => "MOD_EXTM_EDT"],
       ["codigo" => "MOD_EXTM_EXCL"],
