@@ -339,9 +339,12 @@ class UsuarioService extends ServiceBase
     }
   }
 
-  public function validarPerfil($data)
+  public function validarPerfil($data) : void
   {
     $perfilAutenticado = $this::loggedUser()->perfil;
+    if(!isset($data['perfil_id'])){
+      return;
+    }
     $perfilNovo = Perfil::find($data['perfil_id']);
     $perfilAtual = !empty($data['id']) ? $this->getById($data)["perfil_id"] : null;
 

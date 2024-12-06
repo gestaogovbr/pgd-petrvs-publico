@@ -95,7 +95,10 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
       this.loading = true;
       try {
         this.programa = this.metadata?.programa;        
-        if (!this.programa) await this.programaDao.query({ where: [['vigentesUnidadeExecutora', "==", this.auth.unidade!.id]] }).asPromise().then(programas => {
+        if (!this.programa) await this.programaDao.query({ 
+          where: [['vigentesUnidadeExecutora', "==", this.auth.unidade!.id]],
+          orderBy: [["unidade.path", "desc"]]
+        }).asPromise().then(programas => {
           this.programa = programas[0];         
         });
       } finally {
