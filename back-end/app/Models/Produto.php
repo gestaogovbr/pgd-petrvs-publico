@@ -90,4 +90,14 @@ class Produto  extends ModelBase
     {
         return $this->hasMany(ProdutoCliente::class);
     }
+
+    public function produtoSolucoes()
+    {
+        return $this->hasMany(ProdutoSolucao::class);
+    }
+
+    public function solucoes()
+    {
+        return $this->belongsToMany(Solucao::class, 'produto_solucao', 'produto_id', 'solucao_id');
+    }
 }
