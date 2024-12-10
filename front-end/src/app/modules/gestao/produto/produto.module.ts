@@ -10,6 +10,7 @@ import { ProdutoListProdutoComponent } from './produto-list-produto/produto-list
 import { ProdutoShowComponent } from './produto-show/produto-show.component';
 import { ProdutoListClienteComponent } from './produto-list-cliente/produto-list-cliente.component';
 import { ProdutoFilterComponent } from './produto-filter/produto-filter.component';
+import { ProdutoListSolucaoComponent } from './produto-list-solucao/produto-list-solucao.component';
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import { ProdutoFilterComponent } from './produto-filter/produto-filter.componen
     ProdutoListProdutoComponent,
     ProdutoShowComponent,
     ProdutoListClienteComponent,
+    ProdutoListSolucaoComponent,
     ProdutoFilterComponent
   ],
   imports: [
