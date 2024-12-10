@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\DB;
 use App\Services\ServiceBase;
 use App\Exceptions\LogError;
+use App\Models\Unidade;
 use App\Services\Siape\ProcessaDadosSiapeBD;
 use DateTime;
 use Illuminate\Support\Facades\Log;
@@ -13,6 +14,7 @@ use Throwable;
 class IntegracaoSiapeService extends ServiceBase
 {
   const SITUACAO_FUNCIONAL_ATIVO_EM_OUTRO_ORGAO = 8;
+  const SITUACAO_FUNCIONAL_CONTRATO_TEMPORARIO = 76;
 
   private ProcessaDadosSiapeBD|null $siape = null;
 
@@ -58,6 +60,13 @@ class IntegracaoSiapeService extends ServiceBase
 
       if (!empty($dadosFuncionais['codUorgExercicio'])) {
         $dadosFuncionais['codUorgExercicio'] = strval(intval($dadosFuncionais['codUorgExercicio']));
+      }
+
+      if($dadosFuncionais['codSitFuncional']== self::SITUACAO_FUNCIONAL_CONTRATO_TEMPORARIO){
+        $unidadeServidorTemporario = Unidade::where('sigla', trim($dadosFuncionais['siglaUorgLotacao']))->first();
+        if(!$unidadeServidorTemporario) return null;
+
+        $dadosFuncionais['codUorgExercicio'] = $unidadeServidorTemporario->codigo;
       }
 
       $Pessoa = [

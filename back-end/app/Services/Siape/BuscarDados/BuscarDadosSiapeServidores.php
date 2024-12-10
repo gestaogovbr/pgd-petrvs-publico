@@ -11,7 +11,7 @@ use SimpleXMLElement;
 
 class BuscarDadosSiapeServidores extends BuscarDadosSiape{
 
-
+    const MAX_INSERT_DB = 1000;
     public function buscaServidores(): void
     {
         Log::info("Iniciando busca de servidores...");
@@ -60,7 +60,11 @@ class BuscarDadosSiapeServidores extends BuscarDadosSiape{
                 'updated_at' => Carbon::now(),
             ]);
         }
-        SiapeListaServidores::insert($inserts);
+
+        $lotesInserts = array_chunk($inserts, self::MAX_INSERT_DB, true);
+        foreach($lotesInserts as $insert){
+            SiapeListaServidores::insert($insert);
+        }
 
         Log::info("Busca de servidores finalizada.");
     }

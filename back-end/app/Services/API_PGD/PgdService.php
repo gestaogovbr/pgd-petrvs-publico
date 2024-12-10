@@ -11,24 +11,24 @@ class PgdService
     CONST TIMEOUT = 35;
     private mixed $logReponse = null;
     private ?\Exception $exception = null;
-    public function getHttpClient($token) : \Illuminate\Http\Client\PendingRequest
+    public function getHttpClient($url, $token) : \Illuminate\Http\Client\PendingRequest
     {
         return Http::withOptions([
             'verify'=> false, 
             'timeout'=> self::TIMEOUT,
             //'debug' => true
           ])
-          ->baseUrl(config('pgd.host'))
+          ->baseUrl($url)
           ->withHeader('User-Agent', 'Petrvs/'.config('app.version'))
           ->withToken($token);
     }
 
-    public function enviarDados($token, $endpoint, $body) : bool
+    public function enviarDados($url, $token, $endpoint, $body) : bool
     {
       try {
         $this->exception = null;
 
-        $response = $this->getHttpClient($token)->put($endpoint, $body)
+        $response = $this->getHttpClient($url, $token)->put($endpoint, $body)
           ->throw(function (Response $response, RequestException $e) {
             $this->logReponse = $response;
           });
