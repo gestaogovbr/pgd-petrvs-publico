@@ -12,26 +12,24 @@
       <input-textarea [control]="form!.controls.descricao"  label="Descrição" [attr.maxlength]=250 required></input-textarea>
       <input-search #unidade [size]="4" [control]="form!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao" required></input-search>
     </div>
+    
+    <div class="row abas">
+      <tabs>
+        <tab key="CLIENTES" label="Clientes">
+          <produto-list-cliente #clientes noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-cliente>
+        </tab>
+        <tab key="SOLUCOES" label="Soluções">
+          <produto-list-solucao #solucoes noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-solucao>
+        </tab>
+        <tab key="PROCESSOS" label="Processos (cadeia de valor)">
+          <produto-list-processo #processos noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-processo>
+        </tab>
+        <tab key="INSUMOS" label="Insumos">
+          <produto-list-produto #produtos noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-produto>
+        </tab>
+      </tabs>
+    </div>
   </div>
-  <separator title="Processos da cadeia de valor">
-    <div>
-      <produto-list-processo #processos noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-processo>
-    </div>
-  </separator>
-
-
-  <separator title="Insumos">
-    <div>
-      <produto-list-produto #produtos noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-produto>
-    </div>
-  </separator>
-
-  <separator title="Clientes do produto">
-    <div>
-      <produto-list-cliente #clientes noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-cliente>
-    </div>
-  </separator>
-
 
 </editable-form>
 

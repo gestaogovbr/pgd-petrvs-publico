@@ -2,6 +2,7 @@ import { Base } from "./base.model";
 import { ProdutoCliente } from "./produto-cliente.model";
 import { ProdutoProcesso } from "./produto-processo.model";
 import { ProdutoProduto } from "./produto-produto.model";
+import { ProdutoSolucao } from "./produto-solucao.model";
 import { Unidade } from "./unidade.model";
 
 export type ProdutoTipos = "produto" | "servico";
@@ -17,6 +18,7 @@ export class Produto extends Base {
   public produto_processo_cadeia_valor: ProdutoProcesso[] = []; /* Processos da cadeia de valor do produto */
   public produto_produto: ProdutoProduto[] = []; /* Produtos do produto */
   public produto_cliente: ProdutoCliente[] = []; /* Clientes do produto */
+  public produto_solucoes: ProdutoSolucao[] = []; /* Soluções do produto */
   public unidade?: Unidade;
   public unidade_id: string = ""; /* ID da unidade executora do produto */
   public constructor(data?: any) { super(); this.initialization(data); }

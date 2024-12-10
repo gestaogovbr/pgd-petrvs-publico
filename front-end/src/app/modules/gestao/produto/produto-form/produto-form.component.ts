@@ -24,7 +24,7 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
     super(injector, Produto, ProdutoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.join = [
-      "produtoProcessoCadeiaValor.cadeiaValorProcesso.cadeiaValor", "produtoProduto.produtoRelacionado", "produtoCliente.cliente"
+      "produtoProcessoCadeiaValor.cadeiaValorProcesso.cadeiaValor", "produtoProduto.produtoRelacionado", "produtoCliente.cliente", "produtoSolucoes.solucao"
     ];
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
@@ -36,6 +36,7 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
       produto_processo_cadeia_valor: { default: [] },
       produto_produto: { default: [] },
       produto_cliente: { default: [] },
+      produto_solucoes: { default: [] },
     });
   }
 
