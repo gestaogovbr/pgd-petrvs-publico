@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\ModelBase;
+use Illuminate\Support\Facades\DB;
 
 class Solucao extends ModelBase
 {
@@ -16,27 +17,28 @@ class Solucao extends ModelBase
 
     public $incrementing = false;
 
+    protected static function booted()
+    {
+        static::creating(function ($produto) {
+            $produto->identificador = DB::select("SELECT IFNULL(MAX(identificador), 0) + 1 AS proximo_numero FROM produtos;")[0]->proximo_numero;
+        });
+    }
+
     protected $fillable = [
         'nome',
         'sigla',
-        'unidade_id',
         'descricao',
-        'status',
         'url',
-        'data_ativado',
-        'data_desativado',
+        'identificador'
     ];
 
     protected $casts = [
         'id' => 'string',
         'nome' => 'string',
         'sigla' => 'string',
-        'unidade_id' => 'string',
         'descricao' => 'string',
-        'status' => 'integer',
-        'url' => 'string',
-        'data_ativado' => 'datetime',
-        'data_desativado' => 'datetime',
+        'identificador' => 'integer',
+        'url' => 'string'
     ];
 
     protected $dates = [
