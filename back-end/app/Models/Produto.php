@@ -103,6 +103,13 @@ class Produto  extends ModelBase
         return $this->belongsToMany(Solucao::class, 'produto_solucao', 'produto_id', 'solucao_id');
     }
 
+    public function entregas()
+    {
+        return $this->belongsToMany(Entrega::class, 'entrega_produto')
+            ->withPivot('unidade_id')
+            ->withTimestamps();
+    }
+
     public function responsavel(){
         return $this->belongsTo(Usuario::class, 'responsavel_id', 'id');
     }

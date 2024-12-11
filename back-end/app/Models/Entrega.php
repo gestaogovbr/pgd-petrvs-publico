@@ -44,4 +44,11 @@ class Entrega extends ModelBase
   {
     return $this->belongsTo(Unidade::class);
   }
+
+    public function produtos()
+    {
+        return $this->belongsToMany(Produto::class, 'entrega_produto')
+            ->withPivot('unidade_id')
+            ->withTimestamps();
+    }
 }
