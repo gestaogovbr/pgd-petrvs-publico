@@ -1,7 +1,9 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [selectable]="selectable" (select)="onSelect($event)"
-    [hasAdd]="true"
-    [hasEdit]="true">
+    [hasAdd]="this.isChefe"
+    [hasEdit]="this.isChefe"
+    [hasDelete]="this.isChefe"
+>
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
@@ -39,7 +41,14 @@
           </ng-template>
         </column>
 
-        <column title="Ativar/Desativar" [template]="columnAtivar">
+        <column title="Status" [template]="columnStatus" *ngIf="!isCurador">
+            <ng-template let-row="row" #columnStatus>
+                <badge *ngIf="ativo(row)" color="success" label="Ativo"></badge>
+                <badge *ngIf="!ativo(row)" color="danger" label="Inativo"></badge>
+            </ng-template>
+        </column>
+
+        <column title="Ativar/Desativar" [template]="columnAtivar" *ngIf="isCurador">
             <ng-template let-row="row" #columnAtivar>
                 <input-switch  [value]="ativo(row) ? 'true' : 'false'" [valueOn]="'true'"  [valueOff]="'false'" (change)="ativarDesativar(row)"></input-switch>
             </ng-template>

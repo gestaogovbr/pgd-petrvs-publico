@@ -30,7 +30,6 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     this.catalogoService = injector.get<SolucaoService>(SolucaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
-    console.log(this.metadata);
     this.title = this.lex.translate("Soluções");
     this.filter = this.fh.FormBuilder({
       agrupar: {default: true},
