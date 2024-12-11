@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use App\Models\ModelBase;
 use Illuminate\Support\Facades\DB;
 
@@ -34,6 +35,7 @@ class Solucao extends ModelBase
 
     protected $casts = [
         'id' => 'string',
+        'identificador' => 'string',
         'nome' => 'string',
         'sigla' => 'string',
         'descricao' => 'string',
@@ -46,6 +48,13 @@ class Solucao extends ModelBase
         'updated_at',
         'deleted_at',
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($solucao) {
+            $solucao->identificador = DB::select("SELECT IFNULL(MAX(identificador), 0) + 1 AS proximo_numero FROM solucao_produtos_servicos;")[0]->proximo_numero;
+        });
+    }
 
     public function unidade()
     {

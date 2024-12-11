@@ -7,6 +7,7 @@
         <input-switch [size]="4" labelPosition="left" label="Agrupar por unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
     </toolbar>
     <filter 
+        [deleted]="this.auth.hasPermissionTo('MOD_SOLUCOES_EXCL')" 
         [form]="filter" 
         [where]="filterWhere" 
         [submit]="filterSubmit.bind(this)" 
@@ -37,7 +38,7 @@
     <columns>
         <column title="ID#" [template]="columnID">
             <ng-template let-row="row" #columnID>
-                <span> {{row.identificador}}</span><br>
+                <span> {{row.id}}</span><br>
             </ng-template>
         </column>
 
@@ -51,9 +52,15 @@
                 <span> {{row.sigla}}</span><br>
             </ng-template>
         </column>
-        <column title="Ativar/Desativar" [template]="columnAtivar" *ngIf="!isSearching">
+        <column title="Status" [template]="columnStatus">
+            <ng-template let-row="row" #columnStatus>
+                <badge *ngIf="row.status" color="success" label="Ativo"></badge>
+                <badge *ngIf="!row.status" color="danger" label="Inativo"></badge>
+            </ng-template>
+        </column>
+        <column title="Ativar/Desativar" [template]="columnAtivar">
             <ng-template let-row="row" #columnAtivar>
-                <input-switch [size]="12" scale="small"  [value]="ativo(row) ? 'true' : 'false'" [valueOn]="'true'"  [valueOff]="'false'" (change)="ativarDesativar(row)"></input-switch>
+                <input-switch [size]="12" scale="small"  [value]="row.status ? 'true' : 'false'" [valueOn]="'true'"  [valueOff]="'false'" (change)="ativarDesativar(row)"></input-switch>
             </ng-template>
         </column>
         

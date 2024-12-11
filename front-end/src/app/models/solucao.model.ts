@@ -3,6 +3,7 @@ import { Unidade } from './unidade.model';
 import { Usuario } from './usuario.model';
 
 export class Solucao extends Base {
+  public identificador: string = ""; 
   public nome: string = ""; 
   public sigla: string = ""; 
   public unidade?: Unidade;

@@ -23,7 +23,6 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
   public botoes: ToolbarButton[] = [];
   public isCurador: boolean;
   public isUpdating: boolean = false;
-  public isSearching: boolean = false;
 
   constructor(public injector: Injector, dao: SolucaoDaoService) {
     super(injector, Solucao, SolucaoDaoService);
@@ -65,8 +64,6 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
 
   public ngOnInit(): void {
     super.ngOnInit();
-    
-    this.isSearching = this.queryParams.mode == 'search';
   }
 
   public dynamicButtons(row: Solucao): ToolbarButton[] {
@@ -102,10 +99,6 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     }
     if (form.status) {
       result.push(["status", "==", form.status]);
-    }
-
-    if (this.isSearching) {
-      result.push(["data_ativado", "!=", null]);
     }
 		return result;
 	};
