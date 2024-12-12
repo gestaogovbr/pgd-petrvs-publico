@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\ModelBase;
 use Illuminate\Support\Facades\DB;
+use App\Models\ModelBase;
 
 class Solucao extends ModelBase
 {
@@ -34,6 +34,7 @@ class Solucao extends ModelBase
 
     protected $casts = [
         'id' => 'string',
+        'identificador' => 'string',
         'nome' => 'string',
         'sigla' => 'string',
         'descricao' => 'string',

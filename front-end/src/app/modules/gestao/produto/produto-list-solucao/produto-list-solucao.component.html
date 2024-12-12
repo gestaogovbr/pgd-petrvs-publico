@@ -35,6 +35,7 @@
           [placeholder]="'Selecione a solução'" 
           controlName="solucao_id" 
           [dao]="solucaoDao" 
+          [selectRoute]="{route: ['gestao', 'solucao'], params: {mode: 'search'}}"
         ></input-search>
       </ng-template>
     </column>

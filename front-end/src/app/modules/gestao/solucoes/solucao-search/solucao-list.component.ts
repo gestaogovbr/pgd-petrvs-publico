@@ -23,13 +23,13 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
   public botoes: ToolbarButton[] = [];
   public isCurador: boolean;
   public isUpdating: boolean = false;
-  public isSearching: boolean = false;
 
   constructor(public injector: Injector, dao: SolucaoDaoService) {
     super(injector, Solucao, SolucaoDaoService);
     this.catalogoService = injector.get<SolucaoService>(SolucaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    console.log(this.metadata);
     this.title = this.lex.translate("Soluções");
     this.filter = this.fh.FormBuilder({
       agrupar: {default: true},
@@ -38,20 +38,15 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
       id: {default: ""},
       status: {default: ""}
     });
-    // this.join = [
-    //   "unidade"
-    // ];
-    // this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
+    this.join = [
+      "unidade"
+    ];
+    this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
     this.botoes = [
     ]
     this.options.push({
       icon: "bi bi-info-circle",
       label: "Informações",
-      onClick: this.consult.bind(this)
-    });
-    this.options.push({
-      icon: "bi bi-clipboard-check",
-      label: "Unidades",
       onClick: this.consult.bind(this)
     });
 
@@ -69,8 +64,6 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
 
   public ngOnInit(): void {
     super.ngOnInit();
-    
-    this.isSearching = this.queryParams.mode == 'search';
   }
 
   public dynamicButtons(row: Solucao): ToolbarButton[] {
@@ -107,10 +100,6 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     if (form.status) {
       result.push(["status", "==", form.status]);
     }
-
-    if (this.isSearching) {
-      result.push(["data_ativado", "!=", null]);
-    }
 		return result;
 	};
 
@@ -137,32 +126,32 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     this.grid!.reloadFilter();
   }
 
-  // public async ativarDesativar(solucao: Solucao){  
-  //   if (this.isUpdating) {
-  //     console.log("Aguarde o término do processo anterior");
-  //     return; 
-  //   }
-  //   this.isUpdating = true;
-  //   let ativo = this.ativo(solucao)  
-  //   solucao.data_desativado = null;
-  //   solucao.data_ativado = null;
-  //   ativo ? solucao.data_desativado = new Date() : solucao.data_ativado = new Date();
+  public async ativarDesativar(solucao: Solucao){  
+    if (this.isUpdating) {
+      console.log("Aguarde o término do processo anterior");
+      return; 
+    }
+    this.isUpdating = true;
+    let ativo = this.ativo(solucao)  
+    solucao.data_desativado = null;
+    solucao.data_ativado = null;
+    ativo ? solucao.data_desativado = new Date() : solucao.data_ativado = new Date();
     
-  //   try {
-  //     await this.dao?.update(solucao.id, {
-  //       id: solucao.id,
-  //       data_desativado: solucao.data_desativado,
-  //       data_ativado: solucao.data_ativado
-  //     });
-  //     console.log("Solucao atualizado com sucesso");
-  //   } catch (error) {
-  //     console.error("Erro ao atualizar o produto", error);
-  //   } finally {
-  //     this.isUpdating = false; // Finaliza o processo, permitindo novos cliques
-  //   }
-  // }
+    try {
+      await this.dao?.update(solucao.id, {
+        id: solucao.id,
+        data_desativado: solucao.data_desativado,
+        data_ativado: solucao.data_ativado
+      });
+      console.log("Solucao atualizado com sucesso");
+    } catch (error) {
+      console.error("Erro ao atualizar o produto", error);
+    } finally {
+      this.isUpdating = false; // Finaliza o processo, permitindo novos cliques
+    }
+  }
 
-  // public ativo(solucao: Solucao): boolean {
-  //   return solucao.data_ativado instanceof Date;
-  // }
+  public ativo(solucao: Solucao): boolean {
+    return solucao.data_ativado instanceof Date;
+  }
 }
