@@ -38,15 +38,20 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
       id: {default: ""},
       status: {default: ""}
     });
-    this.join = [
-      "unidade"
-    ];
-    this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
+    // this.join = [
+    //   "unidade"
+    // ];
+    // this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
     this.botoes = [
     ]
     this.options.push({
       icon: "bi bi-info-circle",
       label: "Informações",
+      onClick: this.consult.bind(this)
+    });
+    this.options.push({
+      icon: "bi bi-clipboard-check",
+      label: "Unidades",
       onClick: this.consult.bind(this)
     });
 
@@ -126,32 +131,32 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     this.grid!.reloadFilter();
   }
 
-  public async ativarDesativar(solucao: Solucao){  
-    if (this.isUpdating) {
-      console.log("Aguarde o término do processo anterior");
-      return; 
-    }
-    this.isUpdating = true;
-    let ativo = this.ativo(solucao)  
-    solucao.data_desativado = null;
-    solucao.data_ativado = null;
-    ativo ? solucao.data_desativado = new Date() : solucao.data_ativado = new Date();
+  // public async ativarDesativar(solucao: Solucao){  
+  //   if (this.isUpdating) {
+  //     console.log("Aguarde o término do processo anterior");
+  //     return; 
+  //   }
+  //   this.isUpdating = true;
+  //   let ativo = this.ativo(solucao)  
+  //   solucao.data_desativado = null;
+  //   solucao.data_ativado = null;
+  //   ativo ? solucao.data_desativado = new Date() : solucao.data_ativado = new Date();
     
-    try {
-      await this.dao?.update(solucao.id, {
-        id: solucao.id,
-        data_desativado: solucao.data_desativado,
-        data_ativado: solucao.data_ativado
-      });
-      console.log("Solucao atualizado com sucesso");
-    } catch (error) {
-      console.error("Erro ao atualizar o produto", error);
-    } finally {
-      this.isUpdating = false; // Finaliza o processo, permitindo novos cliques
-    }
-  }
+  //   try {
+  //     await this.dao?.update(solucao.id, {
+  //       id: solucao.id,
+  //       data_desativado: solucao.data_desativado,
+  //       data_ativado: solucao.data_ativado
+  //     });
+  //     console.log("Solucao atualizado com sucesso");
+  //   } catch (error) {
+  //     console.error("Erro ao atualizar o produto", error);
+  //   } finally {
+  //     this.isUpdating = false; // Finaliza o processo, permitindo novos cliques
+  //   }
+  // }
 
-  public ativo(solucao: Solucao): boolean {
-    return solucao.data_ativado instanceof Date;
-  }
+  // public ativo(solucao: Solucao): boolean {
+  //   return solucao.data_ativado instanceof Date;
+  // }
 }
