@@ -47,11 +47,6 @@ class Solucao extends ModelBase
         'deleted_at',
     ];
 
-    public function unidade()
-    {
-        return $this->belongsTo(Unidade::class);
-    }
-
     public function scopeStatus($query, $status)
     {
         return $query->where('status', $status);
