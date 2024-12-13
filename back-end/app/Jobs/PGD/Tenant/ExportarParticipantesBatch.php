@@ -37,7 +37,7 @@ class ExportarParticipantesBatch
         $jobs = [];
 
         foreach($this->participanteAuditSource->getData() as $source) {
-            $jobs[] = new ExportarParticipanteJob($this->tenant->api_url, $this->token, $this->envio, $source);
+            $jobs[] = new ExportarParticipanteJob($this->tenant->id, $this->tenant->api_url, $this->token, $this->envio, $source);
         }
 
         $tenantId = $this->tenant->id;
