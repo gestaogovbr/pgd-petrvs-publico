@@ -24,18 +24,21 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     use Batchable, Dispatchable, InteractsWithQueue, Queueable; 
 
     public $tries = 1;
+    protected $tenantId;
     protected $url;
     protected $token;
     protected Envio $envio;
     protected ExportSource $source;
 
     public function __construct(
+        $tenantId,
         $url,
         $token,
         Envio $envio,
         ExportSource $source
     ) {
         $this->queue = 'pgd_queue';
+        $this->tenantId = $tenantId;
         $this->url = $url;
         $this->token = $token;
         $this->envio = $envio;
@@ -129,7 +132,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
                             'error_message' => $message
                         ]
                     );
-            } catch(\Exception $exception) {
+            } catch(\Throwable $exception) {
                 Log::error("Erro atualizar audit: ".$exception->getMessage());
                 LogError::newError("Erro atualizar audit: ", $exception, $this->source);
             }
@@ -158,5 +161,14 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
         }
 
         Log::info("[{$this->source->tipo}] ID {$this->source->id} - SUCESSO");
+    }
+    
+    public function tags()
+    {
+        return [
+            'tenant:'.$this->tenantId,
+            'tipo: '.$this->source->tipo,
+            'id: '.$this->source->id
+        ];
     }
 }

@@ -51,6 +51,8 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
         PlanoEntregaAuditSource $planoEntregaAuditSource,
         ExportarParticipantesBatch $exportarParticipantesBatch
     ) {
+        ini_set('memory_limit', '-1');
+        
         Log::info("Exportação do Tenant ".$this->tenant->id);
        
         $this->envio = new Envio;
@@ -66,7 +68,7 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
             $exportarParticipantesBatch->setEnvio($this->envio);
             $exportarParticipantesBatch->setTenant($this->tenant);
             $exportarParticipantesBatch->send();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             tenancy()->end();
 
             Log::error("Erro ao processar Tenant {$this->tenant->id} interrompida! Erro: " . $e->getMessage());

@@ -39,6 +39,5 @@ class ExportarParticipanteJob extends ExportarItemJob
         $this->envio->increment('qtde_participantes_sucessos');
         parent::addSucesso();
     }
-
 }
 

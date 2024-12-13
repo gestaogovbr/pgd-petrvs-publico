@@ -35,7 +35,7 @@ class ExportarTrabalhosBatch
         $jobs = [];
 
         foreach($this->planoTrabalhoAuditSource->getData() as $source) {
-            $jobs[] = new ExportarTrabalhoJob($this->tenant->api_url, $this->token, $this->envio, $source);
+            $jobs[] = new ExportarTrabalhoJob($this->tenant->id, $this->tenant->api_url, $this->token, $this->envio, $source);
         }
 
         $tenantId = $this->tenant->id;
