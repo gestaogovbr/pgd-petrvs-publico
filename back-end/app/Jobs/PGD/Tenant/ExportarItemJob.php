@@ -5,6 +5,7 @@ namespace App\Jobs\PGD\Tenant;
 use App\Exceptions\ExportPgdException;
 use App\Exceptions\LogError;
 use App\Models\Envio;
+use App\Models\Tenant;
 use App\Models\EnvioItem;
 use App\Services\API_PGD\DataSources\DataSource;
 use App\Services\API_PGD\ExportSource;
@@ -24,19 +25,19 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     use Batchable, Dispatchable, InteractsWithQueue, Queueable; 
 
     public $tries = 1;
-    protected $url;
+    protected Tenant $tenant;
     protected $token;
     protected Envio $envio;
     protected ExportSource $source;
 
     public function __construct(
-        $url,
+        $tenant,
         $token,
         Envio $envio,
         ExportSource $source
     ) {
         $this->queue = 'pgd_queue';
-        $this->url = $url;
+        $this->tenant = $tenant;
         $this->token = $token;
         $this->envio = $envio;
         $this->source = $source;
@@ -67,13 +68,14 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
             unset($data);
 
             $body = (object) json_decode($resource->toJson(), true);
+            $body->cod_unidade_autorizadora = $this->tenant->api_cod_unidade_autorizadora;
 
             unset($resource);
 
             echo " -- enviando...";
 
             $success = $pgdService->enviarDados(
-                $this->url,
+                $this->tenant->api_url,
                 $this->token, 
                 $this->getEndpoint($body), 
                 $body
@@ -92,7 +94,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 
         }catch(ExportPgdException $exception) {
             $this->handleError($exception->getmessage(), $envioItem);
-            throw $exception;
+            //throw $exception;
         }
     }
 
@@ -129,7 +131,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
                             'error_message' => $message
                         ]
                     );
-            } catch(\Exception $exception) {
+            } catch(\Throwable $exception) {
                 Log::error("Erro atualizar audit: ".$exception->getMessage());
                 LogError::newError("Erro atualizar audit: ", $exception, $this->source);
             }
@@ -158,5 +160,14 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
         }
 
         Log::info("[{$this->source->tipo}] ID {$this->source->id} - SUCESSO");
+    }
+    
+    public function tags()
+    {
+        return [
+            'tenant:'.$this->tenant->id,
+            'tipo: '.$this->source->tipo,
+            'id: '.$this->source->id
+        ];
     }
 }

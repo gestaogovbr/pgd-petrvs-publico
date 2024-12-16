@@ -15,7 +15,6 @@ class PlanoEntregaDataSource extends DataSource
 
         $planoEntrega = PlanoEntrega::with([
             'programa',
-            'programa.unidadeAutorizadora',
             'programa.unidade',
             'unidade',
             'entregas',
@@ -29,10 +28,6 @@ class PlanoEntregaDataSource extends DataSource
 
         if (!$planoEntrega->programa){
             throw new ExportPgdException('Plano de Entrega não possui Programa');
-        }
-
-        if (!$planoEntrega->programa->unidadeAutorizadora){
-            throw new ExportPgdException('Plano de Entrega não possui Unidade Autorizadora');
         }
 
         if (!$planoEntrega->unidade){
