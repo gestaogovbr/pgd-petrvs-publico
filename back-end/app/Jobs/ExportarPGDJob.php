@@ -5,7 +5,7 @@ namespace App\Jobs;
 use Throwable;
 use App\Jobs\JobWithoutTenant;
 use App\Jobs\Contratos\ContratoJobSchedule;
-use App\Jobs\PGD\ExportarTenantJob;
+use App\Jobs\ExportarTenantJob;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Bus\Batch;
@@ -29,7 +29,7 @@ class ExportarPGDJob extends JobWithoutTenant implements ContratoJobSchedule
 
         $jobs = [];
         foreach(Tenant::all() as $tenant) {
-            $jobs[] = new ExportarTenantJob($tenant);
+            $jobs[] = new ExportarTenantJob($tenant->id);
         }
 
         Log::info("Exportação de Todos os Tenants -- batch");

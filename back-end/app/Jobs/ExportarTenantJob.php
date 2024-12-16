@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs\PGD;
+namespace App\Jobs;
 
 use App\Exceptions\ExportPgdException;
 use Exception;
@@ -33,10 +33,10 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
     private PlanoEntregaAuditSource $planoEntregaAuditSource;
     private PlanoTrabalhoAuditSource $planoTrabalhoAuditSource;
 
-    public function __construct(Tenant $tenant)
+    public function __construct(private readonly ?string $tenantId = null)
     {
         $this->queue = 'pgd_queue';
-        $this->tenant = $tenant;
+        $this->tenant = Tenant::find($tenantId);
     }
 
     public static function getDescricao(): string
@@ -99,7 +99,16 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
             $this->envio->finished_at = now();
             $this->envio->save();
             throw new ExportPgdException($errorMsg);
-        } 
+        }
+
+        if (!$this->tenant['api_cod_unidade_autorizadora']) {
+            $errorMsg = 'Unidade Autorizadora não definida no Tenant '.$this->tenant->id;
+            LogError::newError($errorMsg);
+            $this->envio->erros = $errorMsg;
+            $this->envio->finished_at = now();
+            $this->envio->save();
+            throw new ExportPgdException($errorMsg);
+        }
 
         if (!$this->tenant['api_username'] or !$this->tenant['api_password']) {
             $errorMsg = 'Usuário ou senha da API PGD não definidos no Tenant '.$this->tenant->id;

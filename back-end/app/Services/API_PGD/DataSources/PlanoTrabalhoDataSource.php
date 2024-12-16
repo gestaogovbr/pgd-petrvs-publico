@@ -15,8 +15,6 @@ class PlanoTrabalhoDataSource extends DataSource
 
         $planoTrabalho = PlanoTrabalho::with([
             'programa',
-            'programa.unidadeAutorizadora',
-            'unidade',
             'usuario',
             'entregas' => function ($query) {
                 $query->whereHas('planoEntregaEntrega.planoEntrega', function($query) {
@@ -33,14 +31,6 @@ class PlanoTrabalhoDataSource extends DataSource
       
         if (!$planoTrabalho->programa){
             throw new ExportPgdException('Plano de Trabalho não possui Programa');
-        }
-
-        if (!$planoTrabalho->unidade){
-            throw new ExportPgdException('Plano de Trabalho não possui Unidade Autorizadora');
-        }
-
-        if (!$planoTrabalho->programa->unidadeAutorizadora){
-            throw new ExportPgdException('Plano de Trabalho não possui Unidade Autorizadora');
         }
 
         if (!$planoTrabalho->usuario){

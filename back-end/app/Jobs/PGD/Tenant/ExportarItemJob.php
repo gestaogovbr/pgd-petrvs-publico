@@ -5,6 +5,7 @@ namespace App\Jobs\PGD\Tenant;
 use App\Exceptions\ExportPgdException;
 use App\Exceptions\LogError;
 use App\Models\Envio;
+use App\Models\Tenant;
 use App\Models\EnvioItem;
 use App\Services\API_PGD\DataSources\DataSource;
 use App\Services\API_PGD\ExportSource;
@@ -24,22 +25,19 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     use Batchable, Dispatchable, InteractsWithQueue, Queueable; 
 
     public $tries = 1;
-    protected $tenantId;
-    protected $url;
+    protected Tenant $tenant;
     protected $token;
     protected Envio $envio;
     protected ExportSource $source;
 
     public function __construct(
-        $tenantId,
-        $url,
+        $tenant,
         $token,
         Envio $envio,
         ExportSource $source
     ) {
         $this->queue = 'pgd_queue';
-        $this->tenantId = $tenantId;
-        $this->url = $url;
+        $this->tenant = $tenant;
         $this->token = $token;
         $this->envio = $envio;
         $this->source = $source;
@@ -70,13 +68,14 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
             unset($data);
 
             $body = (object) json_decode($resource->toJson(), true);
+            $body->cod_unidade_autorizadora = $this->tenant->api_cod_unidade_autorizadora;
 
             unset($resource);
 
             echo " -- enviando...";
 
             $success = $pgdService->enviarDados(
-                $this->url,
+                $this->tenant->api_url,
                 $this->token, 
                 $this->getEndpoint($body), 
                 $body
@@ -166,7 +165,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     public function tags()
     {
         return [
-            'tenant:'.$this->tenantId,
+            'tenant:'.$this->tenant->id,
             'tipo: '.$this->source->tipo,
             'id: '.$this->source->id
         ];

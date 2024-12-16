@@ -23,12 +23,6 @@ class ParticipanteResource extends JsonResource
             throw new ExportPgdException('Usuário sem Plano de Trabalho');
         }
 
-        $autorizadora = $this->ultimaParticipacaoPrograma->programa->unidadeAutorizadora ?? null;
-        
-        if (!$autorizadora || !$autorizadora->codigo){
-            throw new ExportPgdException('Usuário sem Unidade Autorizadora');
-        }
-
         $instituidora = $this->ultimaParticipacaoPrograma->programa->unidade ?? null;
         
         if (!$instituidora || !$instituidora->codigo){
@@ -57,7 +51,6 @@ class ParticipanteResource extends JsonResource
             "id"                        => $this->id,
             "tipo"                      => 'participante',
             "origem_unidade"            => "SIAPE",
-            'cod_unidade_autorizadora'  => $autorizadora->codigo ?? null,
             'cod_unidade_instituidora'  => $instituidora->codigo ?? null,
             'cod_unidade_lotacao'       => $this->lotacao->unidade->codigo ?? null,
             'matricula_siape'           => str_pad($this->matricula, 7, '0'),
