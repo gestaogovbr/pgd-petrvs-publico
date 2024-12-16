@@ -63,10 +63,11 @@ class ExportarParticipantesBatch
                 })->finally(function () use($tenantId, $total, $exportarEntregasBatch) 
                 {    
                     $n = Cache::get("{$tenantId}_part");
+                    Log::info("[$tenantId] $n/$total");
 
                     if ($n >= $total) {
                         Cache::forget("{$tenantId}_part");
-                        Log::error("[$tenantId] Exportação dos participantes finalizada");
+                        Log::info("[$tenantId] Exportação dos participantes finalizada");
                         $exportarEntregasBatch->send();
                     }
                 })

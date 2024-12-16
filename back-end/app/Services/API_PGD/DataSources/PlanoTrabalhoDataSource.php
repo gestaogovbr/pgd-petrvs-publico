@@ -30,19 +30,19 @@ class PlanoTrabalhoDataSource extends DataSource
         ->find($exportSource->id);
 
         if (!$planoTrabalho) {
-            throw new ExportPgdException('Plano de Trabalho inválido para exportação');
+            throw new ExportPgdException("Plano de Trabalho {$exportSource->id} inválido para exportação");
         }
       
         if (!$planoTrabalho->programa){
-            throw new ExportPgdException('Plano de Trabalho não possui Programa');
+            throw new ExportPgdException("Plano de Trabalho {$exportSource->id} não possui Programa válido");
         }
 
         if (!$planoTrabalho->usuario){
-            throw new ExportPgdException('Plano de Trabalho não possui Usuário');
+            throw new ExportPgdException("Plano de Trabalho {$exportSource->id} não possui Usuário");
         }
 
         if (!$planoTrabalho->usuario->ultimaParticipacaoPrograma){
-            throw new ExportPgdException('Usuário do Plano de trabalho não possui Participação Ativa');
+            throw new ExportPgdException("Usuário do Plano de trabalho {$exportSource->id} não possui Participação Ativa");
         }
 
         return $planoTrabalho;
