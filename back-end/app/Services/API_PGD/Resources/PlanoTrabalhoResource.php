@@ -28,7 +28,7 @@ class PlanoTrabalhoResource extends JsonResource
             "status"                    => $this->converteStatus($this->status) ?? '3',
             "cod_unidade_executora"     => $this->unidade->codigo ?? null,
             "cpf_participante"          => $this->usuario->cpf ?? '',
-            "matricula_siape"           => $this->usuario->matricula ?? '',
+            "matricula_siape"           => $this->usuario->matricula ? str_pad($this->usuario->matricula, 7, '0', STR_PAD_LEFT): '',
             "cod_unidade_lotacao_participante" => $this->usuario->lotacao->unidade->codigo,
             "data_inicio"               => Carbon::parse($this->data_inicio)->format('Y-m-d'),
             "data_termino"              => Carbon::parse($this->data_fim)->format('Y-m-d'),
