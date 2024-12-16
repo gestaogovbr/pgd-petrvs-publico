@@ -94,7 +94,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 
         }catch(ExportPgdException $exception) {
             $this->handleError($exception->getmessage(), $envioItem);
-            throw $exception;
+            //throw $exception;
         }
     }
 

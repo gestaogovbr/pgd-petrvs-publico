@@ -46,9 +46,6 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
 
     public function handle(
         AuthenticationService $authService,
-        PlanoTrabalhoAuditSource $planoTrabalhoAuditSource,
-        ParticipanteAuditSource $participanteAuditSource,
-        PlanoEntregaAuditSource $planoEntregaAuditSource,
         ExportarParticipantesBatch $exportarParticipantesBatch
     ) {
         ini_set('memory_limit', '-1');
@@ -57,9 +54,6 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
        
         $this->envio = new Envio;
         $this->authService = $authService;
-        $this->planoTrabalhoAuditSource = $planoTrabalhoAuditSource;
-        $this->participanteAuditSource = $participanteAuditSource;
-        $this->planoEntregaAuditSource = $planoEntregaAuditSource;
 
         try{
             $this->autenticar();
@@ -81,8 +75,7 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
             $this->envio->save();            
             
             LogError::newError("Erro ao processar Tenant {$this->tenant->id} interrompida! Erro: " . $e->getMessage());  
-
-            throw $e;
+            // throw $e;
         }
     }
 

@@ -35,13 +35,11 @@ class ExportarPGDJob extends JobWithoutTenant implements ContratoJobSchedule
         Log::info("Exportação de Todos os Tenants -- batch");
 
         Bus::batch($jobs)->then(function (Batch $batch) {
-            Log::info("Exportação de Todos os Tenants - Finalizado!");
+            // Log::info("Exportação de Todos os Tenants - Finalizado!");
         })->catch(function (Batch $batch, Throwable $e) {
             Log::error('Erro ao processar job.', ['error' => $e->getMessage()]);
         })->finally(function (Batch $batch) {
             Log::info("Exportação de Todos os Tenants - Fim da execução");
         })->allowFailures()->dispatch();
-
-    }    
-
+    }
 }

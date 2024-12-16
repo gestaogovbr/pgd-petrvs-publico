@@ -6,9 +6,29 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Services\API_PGD\ExportSource;
 
 // Função da classe é obter os IDs a dados de audit a serem exportados a partir do Audit
-abstract class AuditSource 
+class AuditSource 
 {
-    abstract public function getData();
+    protected $tipo;
+
+    public function __construct(string $tipo) {
+        $this->tipo = $tipo;
+    }
+
+    public function getData() {
+        return ViewApiPgd::where('tipo', $this->tipo)
+                ->withoutGlobalScope(SoftDeletingScope::class)
+                ->cursor();
+    }
+
+    public function count() {
+        return ViewApiPgd::where('tipo', $this->tipo)
+                ->withoutGlobalScope(SoftDeletingScope::class)
+                ->count();
+    }
+
+    public function toExportSource($data) {
+        return new ExportSource($this->tipo, $data->id, $data->fonte, $data->json_audit);
+    }
 
     public function getDataFromView($tipo) { 
         return ViewApiPgd::where('tipo', $tipo)

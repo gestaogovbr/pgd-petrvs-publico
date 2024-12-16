@@ -28,6 +28,10 @@ class PlanoTrabalhoDataSource extends DataSource
             'consolidacoes.avaliacao'
         ])
         ->find($exportSource->id);
+
+        if (!$planoTrabalho) {
+            throw new ExportPgdException('Plano de Trabalho inválido para exportação');
+        }
       
         if (!$planoTrabalho->programa){
             throw new ExportPgdException('Plano de Trabalho não possui Programa');
