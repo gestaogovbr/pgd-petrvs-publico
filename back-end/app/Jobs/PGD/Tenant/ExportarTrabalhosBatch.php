@@ -40,7 +40,7 @@ class ExportarTrabalhosBatch
         $tenantId = $this->tenant->id;
         $envio = $this->envio;
 
-        $auditSource = new AuditSource('entrega');
+        $auditSource = new AuditSource('trabalho');
         $total = $auditSource->count();
 
         if ($total == 0) {
@@ -55,7 +55,7 @@ class ExportarTrabalhosBatch
             
 
             $batch = Bus::batch([])
-                ->then(function () use($tenantId) {
+                ->then(function () {
                     // Log::info("Exportação dos planos de Trabalho (Tenant {$tenantId}) finalizada com sucesso!");
                 })->catch(function (Throwable $e) use($tenantId) {
                     Log::error("[$tenantId] Exportação dos planos de Trabalho com erro!", ['error' => $e->getMessage()]);

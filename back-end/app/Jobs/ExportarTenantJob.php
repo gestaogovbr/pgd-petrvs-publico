@@ -65,7 +65,7 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
         } catch (Throwable $e) {
             tenancy()->end();
 
-            Log::error("Erro ao processar Tenant {$this->tenant->id} interrompida! Erro: " . $e->getMessage());
+            Log::error("Erro ao processar Tenant {$this->tenant->id}! Erro: " . $e->getMessage());
 
             $tenant = tenancy()->find($this->tenant->id);
             tenancy()->initialize($tenant);
@@ -74,7 +74,7 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
             $this->envio->finished_at = now();
             $this->envio->save();            
             
-            LogError::newError("Erro ao processar Tenant {$this->tenant->id} interrompida! Erro: " . $e->getMessage());  
+            LogError::newError("Erro ao processar Tenant {$this->tenant->id}! Erro: " . $e->getMessage());  
             // throw $e;
         }
     }

@@ -51,7 +51,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     
     public function handle(PgdService $pgdService)
     {
-        Log::info("[{$this->source->tipo}] ID {$this->source->id} [INICIADO]");
+        Log::info("[{$this->tenant->id}] {$this->source->tipo}: {$this->source->id} [INICIADO]");
 
         $envioItem = new EnvioItem;
         $envioItem->envio_id    = $this->envio->id;
@@ -106,8 +106,12 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 
     public function handleError($message, EnvioItem $envioItem) 
     {
-        Log::error("[{$this->source->tipo}] ID {$this->source->id} - ERRO!");
-        Log::error("Mensagem: ".$message);
+        Log::error("Erro: $message 
+            Tenant: {$this->tenant->id} 
+            Tipo: {$this->source->tipo}
+            ID: {$this->source->id}
+            Fonte:  {$this->source->fonte}
+            \n");
 
         $envioItem->sucesso = false;
         $envioItem->erros = $message;
@@ -116,7 +120,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
         $this->addFalha();
 
         LogError::newError(
-            "Erro ao sincronizar com o PGD: ", 
+            "[{$this->tenant->id}] Erro ao sincronizar com o PGD: ", 
             new ExportPgdException($message),
             $this->source
         );
@@ -132,8 +136,8 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
                         ]
                     );
             } catch(\Throwable $exception) {
-                Log::error("Erro atualizar audit: ".$exception->getMessage());
-                LogError::newError("Erro atualizar audit: ", $exception, $this->source);
+                Log::error("[{$this->tenant->id}] Erro atualizar audit: ".$exception->getMessage());
+                LogError::newError("[{$this->tenant->id}] Erro atualizar audit: ", $exception, $this->source);
             }
         }
     }
@@ -159,7 +163,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
                 ]);
         }
 
-        Log::info("[{$this->source->tipo}] ID {$this->source->id} - SUCESSO");
+        Log::info("[{$this->tenant->id}] {$this->source->tipo}: {$this->source->id} - SUCESSO");
     }
     
     public function tags()
