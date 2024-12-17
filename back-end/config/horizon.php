@@ -212,7 +212,7 @@ return [
                 'balance' => 'simple',
                 'processes' => 100,
                 'tries' => 10,
-                'backoff' => 60 * 60,
+                'backoff' => 60,
                 'timeout' => 60 * 60 * 23
             ],
         ],
