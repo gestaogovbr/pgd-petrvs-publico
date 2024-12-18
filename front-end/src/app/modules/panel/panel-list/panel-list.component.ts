@@ -114,6 +114,16 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 					{metadata: {tenant_id: tenant.id}}
 				),
 		});
+
+		this.options.push({
+			icon: "bi bi-info-circle",
+			label: "Audit",
+			onClick: (tenant: Tenant) =>
+				this.go.navigate(
+					{route: ["panel", "audit"]},
+					{metadata: {tenant_id: tenant.id}}
+				)
+		});
 		// this.options.push({
 		// 	icon: "bi bi-cloud-arrow-down-fill",
 		// 	label: "Dump",
