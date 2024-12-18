@@ -18,9 +18,8 @@ class IntegracaoSiapeService extends ServiceBase
 
   private ProcessaDadosSiapeBD|null $siape = null;
 
-  function __construct($config = null)
+  function __construct()
   {
-    $config = $config ?: config("integracao")["siape"];
     $this->siape = new ProcessaDadosSiapeBD();
   }
 

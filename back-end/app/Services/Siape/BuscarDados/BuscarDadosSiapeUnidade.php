@@ -93,7 +93,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
 
     public function buscarUnidades(array $xmlUnidades) : bool
     {
-        $lotes = array_chunk($xmlUnidades, self::QUANTIDADE_MAXIMA_REQUISICOES, true);
+        $lotes = array_chunk($xmlUnidades, $this->getQtdMaxRequisicoes(), true);
         $tempoInicial = microtime(true);
 
         foreach ($lotes as $i => $lote) {

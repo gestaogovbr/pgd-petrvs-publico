@@ -15,8 +15,7 @@ class BuscarDadosSiapeUnidades extends BuscarDadosSiape
         $siapeNomeSistema,
         $siapeSenha,
         $cpf,
-        $siapeCodOrgao,
-        $siapeCodUorg
+        $siapeCodOrgao
     ): void {
         Log::info("Busca das Unidades iniciada");
         
@@ -30,7 +29,7 @@ class BuscarDadosSiapeUnidades extends BuscarDadosSiape
         $listaUorgs->addChild('senha', $siapeSenha);
         $listaUorgs->addChild('cpf', $cpf);
         $listaUorgs->addChild('codOrgao', $siapeCodOrgao);
-        $listaUorgs->addChild('codUorg', $siapeCodUorg);
+        $listaUorgs->addChild('codUorg', null);
 
         $xmlData = $xml->asXML();
 
@@ -87,15 +86,13 @@ class BuscarDadosSiapeUnidades extends BuscarDadosSiape
     public function enviar(): void
     {
         $codOrgao = strval(intval($this->getConfig()['codOrgao']));
-        $codUorg = strval(intval($this->getConfig()['codUorg']));
 
         $this->listaUorgs(
             $this->getConfig()['siglaSistema'],
             $this->getConfig()['nomeSistema'],
             $this->getConfig()['senha'],
             $this->getCpf(),
-            $codOrgao,
-            $codUorg
+            $codOrgao
         );
     }
 }
