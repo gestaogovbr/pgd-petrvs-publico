@@ -13,10 +13,10 @@
                   <span *ngIf="row.tarefas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row.tarefas?.length}}</span>
                 </ng-template>
                 <ng-template let-row="row" #columnExpandedTarefas>
-                  <atividade-list-tarefa persist #listTarefas [atividade]="row" [consolidacao]="false"></atividade-list-tarefa>
+                  <atividade-list-tarefa persist #listTarefas [atividade]="row" [consolidacao]="false" [disabled]="this.disabled"></atividade-list-tarefa>
                 </ng-template>
               </column>
-              <column [title]="'#ID/Trabalho executado'" [width]="400" [template]="columnAtividadeDescricao" [editTemplate]="editAtividadeDescricao" [columnEditTemplate]="editAtividadeDescricao" [edit]="onColumnAtividadeDescricaoEdit.bind(this)" [save]="onColumnAtividadeDescricaoSave.bind(this)" [metadata]="{abrirEmEdicao: true}">
+              <column [title]="'#ID/Trabalho executado'" [width]="400" [template]="columnAtividadeDescricao" [editTemplate]="editAtividadeDescricao"  [columnEditTemplate]="this.disabled ? undefined : editAtividadeDescricao" [edit]="onColumnAtividadeDescricaoEdit.bind(this)" [save]="onColumnAtividadeDescricaoSave.bind(this)" [metadata]="{abrirEmEdicao: true}">
                 <ng-template let-row="row" #columnAtividadeDescricao>
                   <span class="text-nowrap d-block">
                     <badge icon="bi bi-hash" [label]="row.numero" color="light" [data]="row.numero" [click]="atividadeService.onIdClick.bind(this)"></badge>
@@ -26,7 +26,7 @@
                   <reaction [entity]="row" origem="ATIVIDADE"></reaction>
                 </ng-template>
                 <ng-template let-row="row" #editAtividadeDescricao>
-                  <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="formAtividade!.controls.descricao" required></input-textarea>
+                  <input-textarea *ngIf="!this.disabled" label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="formAtividade!.controls.descricao" required></input-textarea>
                   <!--input-search [label]="lex.translate('Tipo de atividade')" #tipoAtividade [size]="12" [emptyValue]="null" controlName="tipo_atividade_id" [control]="formAtividade!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" (select)="onTipoAtividadeSelect($event)" [labelInfo]="lex.translate('Tipo de atividade') + ' utilizado para classificar a atividade'" [required]="!auth.hasPermissionTo('MOD_ATV_TIPO_ATV_VAZIO') ? 'true' : undefined"></input-search-->
                 </ng-template>
               </column>
@@ -45,7 +45,7 @@
                   </separator>
                 </ng-template>
               </column>
-              <column [title]="'Progresso\nEtiquetas/Checklist'" [width]="200" [template]="columnProgressoEtiquetasChecklist" [editTemplate]="columnProgressoEtiquetasChecklist" [columnEditTemplate]="columnProgressoEtiquetasChecklistEdit" [edit]="onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="onColumnProgressoEtiquetasChecklistSave.bind(this)" [canEdit]="podeEditar.bind(this)">
+              <column [title]="'Progresso\nEtiquetas/Checklist'" [width]="200" [template]="columnProgressoEtiquetasChecklist" [editTemplate]="columnProgressoEtiquetasChecklist" [columnEditTemplate]="this.disabled ? undefined : columnProgressoEtiquetasChecklistEdit" [edit]="onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="onColumnProgressoEtiquetasChecklistSave.bind(this)" [canEdit]="podeEditar.bind(this)">
                 <ng-template let-row="row" #columnProgressoEtiquetasChecklist>
                   <progress-bar [value]="row.progresso" color="success"></progress-bar>
                   <badge *ngFor="let etiqueta of row.etiquetas" [lookup]="etiqueta"></badge>
@@ -78,10 +78,10 @@
                   <span class="d-block">
                     <badge *ngFor="let status of atividadeService.getStatus(row, entity)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label"></badge>
                   </span>
-                  <comentarios-widget *ngIf="!gridAtividades.editing" [entity]="row" [selectable]="false" origem="ATIVIDADE" [grid]="gridAtividades"></comentarios-widget>
+                  <comentarios-widget *ngIf="!gridAtividades.editing" [entity]="row" [selectable]="this.disabled" origem="ATIVIDADE" [grid]="gridAtividades"></comentarios-widget>
                 </ng-template>
               </column>
-              <column type="options" [metadata]="atividadeOptionsMetadata" [dynamicOptions]="atividadeService.dynamicOptions.bind(this)" [dynamicButtons]="atividadeService.dynamicButtons.bind(this)"></column>
+              <column type="options" [metadata]="atividadeOptionsMetadata" [dynamicOptions]="atividadeService.dynamicOptions.bind(this)" [dynamicButtons]="atividadeService.dynamicButtons.bind(this)" [editable]="!this.disabled"></column>
             </columns>
           </grid>
         </ng-template>
