@@ -160,7 +160,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
   }
 
   public isDisabled(row?: PlanoTrabalhoConsolidacao): boolean {    
-    return (row && row.status != "INCLUIDO") || this.entity?.status != "ATIVO";
+    return row?.status != "INCLUIDO";
   }
 
   podeInserir(){

@@ -77,6 +77,7 @@ export class Tenant extends Base {
     public integracao_usuario_chefe: string = "";
     public integracao_siape_conectagov_chave: string = "";
     public integracao_siape_conectagov_senha: string = "";
+    public integracao_siape_conectagov_qtd_max_requisicoes: number = 10;
     // SEI
     public modulo_sei_habilitado: boolean = false;
     public modulo_sei_private_key: string = "";
@@ -86,6 +87,7 @@ export class Tenant extends Base {
     public api_url: string = "";
     public api_username: string = "";
     public api_password: string = "";
+    public api_cod_unidade_autorizadora: string = "";
     //SMTP
     public smtp_host: string = "";
     public smtp_port: number = 25;

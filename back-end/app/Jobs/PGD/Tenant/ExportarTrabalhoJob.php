@@ -24,7 +24,7 @@ class ExportarTrabalhoJob extends ExportarItemJob
     }
 
     public function getEndpoint($resource): string {
-        return "/organizacao/SIAPE/{$resource->cod_unidade_autorizadora}/plano_trabalho/{$resource->id}";
+        return "/organizacao/SIAPE/{$this->tenant->api_cod_unidade_autorizadora}/plano_trabalho/{$resource->id}";
     }
 
     public function atualizarEntidade($id) {

@@ -34,7 +34,7 @@ class PgdService
           });
         return $response->successful();
 
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
         $this->exception = $e;
 
         $response = $this->getLogReponse();
