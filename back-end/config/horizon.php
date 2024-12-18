@@ -213,7 +213,8 @@ return [
                 'processes' => 100,
                 'tries' => 10,
                 'backoff' => 60,
-                'timeout' => 60 * 60 * 23
+                'timeout' => 60 * 60 * 23,
+                'memory' => 8192 // 8GB
             ],
         ],
 
