@@ -26,6 +26,7 @@ export class EnvioItemEntregaListComponent extends PageListBase<EnvioItem, Envio
     this.filter = this.fh.FormBuilder({
       envio_id: {default: this.envio_id}, 
       tipo: {default: 'entrega'},
+      id: {default: null},
       uid: {default: null},
       sucesso: {default: ""},
     });
@@ -55,6 +56,12 @@ export class EnvioItemEntregaListComponent extends PageListBase<EnvioItem, Envio
     result.push(["tipo", '=', 'entrega']);
     result.push(["envio_id", '=', form.envio_id]);
     result.push(["sucesso", '=', form.sucesso]);
+    if (form.uid) {
+      result.push(["uid", '=', form.uid]);
+    }
+    if (form.id) {
+      result.push(["planoEntrega.numero", '=', form.id]);
+    }
 
     return result;
   }
