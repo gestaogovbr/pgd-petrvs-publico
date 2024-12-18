@@ -124,7 +124,6 @@
                 <separator title="API Consulta SIAPE" labeInfo="As informações dessa tela são referentes às inseridas no cadastro do SIAPE"></separator>
                 <div class="row">
                     <input-text [size]="6" label="URL" controlName="integracao_siape_url" [attr.maxlength]=250></input-text>
-                    <!-- <input-text [size]="3" label="Upag" controlName="integracao_siape_upag" [attr.maxlength]=250></input-text> -->
                     <input-text [size]="6" label="Sigla do Sistema" controlName="integracao_siape_sigla" [attr.maxlength]=250></input-text>
                 </div>
                 <div class="row">
@@ -138,10 +137,9 @@
                     <input-text password [size]="4" label="Senha" controlName="integracao_siape_senha" [attr.maxlength]=250></input-text>
                 </div>
                 <div class="row">
-                    <input-text [size]="3" label="Codigo do Órgão" controlName="integracao_siape_codorgao" [attr.maxlength]=250></input-text>
-                    <input-text [size]="3" label="Codigo UORG" controlName="integracao_siape_uorg" [attr.maxlength]=250></input-text>
-                    <input-select [size]="3" label="Existe Pagador" controlName="integracao_siape_existepag" [items]="lookup.EXISTE_PAGADOR"></input-select>
-                    <input-select [size]="3" label="Tipo de Vínculo" controlName="integracao_siape_tipovinculo" [items]="lookup.TIPO_VINCULO"></input-select>
+                    <input-text [size]="4" label="Codigo do Órgão" controlName="integracao_siape_codorgao" [attr.maxlength]=250></input-text>
+                    <input-select [size]="4" label="Existe Pagador" controlName="integracao_siape_existepag" [items]="lookup.EXISTE_PAGADOR"></input-select>
+                    <input-select [size]="4" label="Tipo de Vínculo" controlName="integracao_siape_tipovinculo" [items]="lookup.TIPO_VINCULO"></input-select>
                 </div>
                 <div class="row">
                     <input-text [size]="6" label="Perfil Usuário Comum" controlName="integracao_usuario_comum" [attr.maxlength]=250></input-text>
