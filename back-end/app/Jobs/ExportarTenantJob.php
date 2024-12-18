@@ -23,7 +23,7 @@ use Throwable;
 
 class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
 {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable; 
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, InteractsWithQueue; 
 
     private $tenant;
     private $token;
@@ -65,7 +65,8 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
         } catch (Throwable $e) {
             tenancy()->end();
 
-            Log::error("Erro ao processar Tenant {$this->tenant->id}! Erro: " . $e->getMessage());
+            $message = "Erro ao processar Tenant {$this->tenant->id}! Erro: " . $e->getMessage();
+            Log::error($message);
 
             $tenant = tenancy()->find($this->tenant->id);
             tenancy()->initialize($tenant);
@@ -74,7 +75,9 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
             $this->envio->finished_at = now();
             $this->envio->save();            
             
-            LogError::newError("Erro ao processar Tenant {$this->tenant->id}! Erro: " . $e->getMessage());  
+            LogError::newError($message);  
+
+            $this->fail($message);
             // throw $e;
         }
     }

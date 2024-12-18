@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use Throwable;
+use Exception;
 use App\Jobs\JobWithoutTenant;
 use App\Jobs\Contratos\ContratoJobSchedule;
 use App\Jobs\ExportarTenantJob;
@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Bus;
 
 class ExportarPGDJob extends JobWithoutTenant implements ContratoJobSchedule
 {
+
     public function __construct()
     {
         $this->queue = 'pgd_queue';
@@ -36,8 +37,9 @@ class ExportarPGDJob extends JobWithoutTenant implements ContratoJobSchedule
 
         Bus::batch($jobs)->then(function (Batch $batch) {
             // Log::info("Exportação de Todos os Tenants - Finalizado!");
-        })->catch(function (Batch $batch, Throwable $e) {
+        })->catch(function (Batch $batch, Exception $e) {
             Log::error('Erro ao processar job.', ['error' => $e->getMessage()]);
+            // $this->fail($e);
         })->finally(function (Batch $batch) {
             Log::info("Exportação de Todos os Tenants - Fim da execução");
         })->allowFailures()->dispatch();

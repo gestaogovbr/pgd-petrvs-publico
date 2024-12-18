@@ -24,7 +24,6 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable; 
 
-    public $tries = 1;
     protected Tenant $tenant;
     protected $token;
     protected Envio $envio;
@@ -94,6 +93,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 
         }catch(ExportPgdException $exception) {
             $this->handleError($exception->getmessage(), $envioItem);
+            $this->fail($exception);
             //throw $exception;
         }
     }
