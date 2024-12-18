@@ -9,6 +9,13 @@
  - Remoção da Unidade Autorizadora dos Regimentos
  - Modificada Unidade Autorizadora no Envio para API PGD
  - Melhorias de uso de memória no Envio para a API PGD
+ - Busca do codigo UORG feito a partir da requisição do SIAPE
+### Removido
+ - Remoção das configurações do painel de integração:
+    Auto-incluir
+    Codigo unidade raiz
+    Upag
+    Codigo UORG
 ## 2.3.2 03/12/2024
 ### Adicionado
  - Fragmentado dados inseridos no banco pelo SIAPE
