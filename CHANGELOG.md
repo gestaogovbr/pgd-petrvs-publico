@@ -2,6 +2,7 @@
 ### Adicionado
  - Adição da Unidade Autorizadora no Painel
  - Adição de Job para envio individual de Tenant
+ - Consulta Audit no Painel
 ### Corrigido
 - Envio da Matrícula SIAPE para a API PGD
 - Comando para enviar manualmente para API PGD
