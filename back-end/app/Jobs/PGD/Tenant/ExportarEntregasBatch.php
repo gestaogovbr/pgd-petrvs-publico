@@ -3,11 +3,14 @@
 namespace App\Jobs\PGD\Tenant;
 
 use App\Models\Envio;
-use App\Services\API_PGD\AuditSources\PlanoEntregaAuditSource;
+use App\Services\API_PGD\AuditSources\AuditSource;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Throwable;
+use PDO;
 
 class ExportarEntregasBatch
 {
@@ -16,7 +19,6 @@ class ExportarEntregasBatch
     private $tenant;
 
     public function __construct(
-        private readonly PlanoEntregaAuditSource $planoEntregaAuditSource,
         private readonly ExportarTrabalhosBatch $exportarTrabalhosBatch
     )
     {}
@@ -34,35 +36,51 @@ class ExportarEntregasBatch
     }
 
     public function send() {
-        $jobs = [];
-
-        foreach($this->planoEntregaAuditSource->getData() as $source) {
-            $jobs[] = new ExportarEntregaJob($this->tenant->api_url, $this->token, $this->envio, $source);
-        }
+        DB::connection()->getPdo()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
 
         $tenantId = $this->tenant->id;
         $exportarTrabalhosBatch = $this->exportarTrabalhosBatch;
         $exportarTrabalhosBatch->setToken($this->token);
         $exportarTrabalhosBatch->setEnvio($this->envio);
         $exportarTrabalhosBatch->setTenant($this->tenant);
+        
+        $auditSource = new AuditSource('entrega');
+        $total = $auditSource->count();
 
-        if (count($jobs) > 0) {
-            Log::info("Exportação de ".count($jobs)." plano(s) de Entrega ({$this->tenant->id})...");
+        if ($total == 0) {
+            Log::info("[$tenantId] Sem planos de Entrega e enviar.");
+            $exportarTrabalhosBatch->send();
+        } else {
+            Log::info("[$tenantId] Exportação de ".$total." plano(s) de Entrega...");                
+            Cache::put("{$tenantId}_entregas", 0);
+            $n = 0;
 
-            Bus::batch($jobs)
-                ->then(function (Batch $batch) use($tenantId) {
-                    Log::info("Exportação dos planos de Entrega (Tenant {$tenantId}) finalizada com sucesso!");
-                })->catch(function (Batch $batch, Throwable $e) use($tenantId) {
-                    Log::error("Exportação dos planos de Entrega (Tenant {$tenantId}) com erro!", ['error' => $e->getMessage()]);
-                })->finally(function (Batch $batch) use($tenantId, $exportarTrabalhosBatch) {
-                    Log::info("Exportação dos planos de Entrega (Tenant {$tenantId}) - Fim da execução");
-                    $exportarTrabalhosBatch->send();
+            $batch = Bus::batch([])
+                ->then(function () {
+                    // Log::info("Exportação dos planos de Entrega (Tenant {$tenantId}) finalizada com sucesso!");
+                })->catch(function (Throwable $e) use($tenantId) {
+                    Log::error("[$tenantId] Exportação dos planos de Entrega com erro!", ['error' => $e->getMessage()]);
+                })->finally(function () use($tenantId, $total, $exportarTrabalhosBatch) 
+                {
+                    $n = Cache::get("{$tenantId}_entregas");
+
+                    if ($n >= $total) {
+                        Cache::forget("{$tenantId}_entregas");
+                        Log::info("[$tenantId] Exportação dos planos de Entrega finalizada");
+                        $exportarTrabalhosBatch->send();
+                    }
                 })
                 ->allowFailures()
+                ->onQueue('pgd_queue')
                 ->dispatch();
-        } else {
-            Log::info("Sem planos de Entrega e enviar ({$this->tenant->id}).");
-            $exportarTrabalhosBatch->send();
+
+            foreach($auditSource->getData() as $auditData) {
+                $source = $auditSource->toExportSource($auditData);
+                $job = new ExportarEntregaJob($this->tenant, $this->token, $this->envio, $source);
+                $n++;
+                Cache::put("{$tenantId}_entregas", $n);
+                $batch->add($job);
+            }
         }
     }
 }

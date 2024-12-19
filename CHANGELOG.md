@@ -1,3 +1,22 @@
+## 2.3.3 18/12/2024
+### Adicionado
+ - Adição da Unidade Autorizadora no Painel
+ - Adição de Job para envio individual de Tenant
+ - Consulta Audit no Painel
+### Corrigido
+- Envio da Matrícula SIAPE para a API PGD
+- Comando para enviar manualmente para API PGD
+### Modificado
+ - Remoção da Unidade Autorizadora dos Regimentos
+ - Modificada Unidade Autorizadora no Envio para API PGD
+ - Melhorias de uso de memória no Envio para a API PGD
+ - Busca do codigo UORG feito a partir da requisição do SIAPE
+### Removido
+ - Remoção das configurações do painel de integração:
+    Auto-incluir
+    Codigo unidade raiz
+    Upag
+    Codigo UORG
 ## 2.3.2 03/12/2024
 ### Adicionado
  - Fragmentado dados inseridos no banco pelo SIAPE

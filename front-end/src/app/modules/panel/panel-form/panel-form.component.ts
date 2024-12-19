@@ -131,6 +131,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       integracao_usuario_chefe: { default: "Chefia de Unidade Executora" },
       integracao_siape_conectagov_chave: { default: "" },
       integracao_siape_conectagov_senha: { default: "" },
+      integracao_siape_conectagov_qtd_max_requisicoes: { default: 10 },
       // SEI
       modulo_sei_habilitado: { default: false },
       modulo_sei_private_key: { default: "" },
@@ -140,6 +141,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       api_url: { default: "https://api.pgd.gestao.gov.br" },
       api_username: { default: "" },
       api_password: { default: "" },
+      api_cod_unidade_autorizadora: { default: "" },
       //SMTP
       smtp_host: { default: "" },
       smtp_port: { default: 465 },

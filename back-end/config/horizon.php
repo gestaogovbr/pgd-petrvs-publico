@@ -171,7 +171,7 @@ return [
     |
     */
 
-    'memory_limit' => 128,
+    'memory_limit' => 1024,
 
     /*
     |--------------------------------------------------------------------------
@@ -210,9 +210,11 @@ return [
                 'connection' => 'redis',
                 'queue' => ['pgd_queue'],
                 'balance' => 'simple',
-                'processes' => 3,
-                'tries' => 3,
-                'timeout' => 60 * 60 * 3
+                'processes' => 100,
+                'tries' => 10,
+                'backoff' => 60,
+                'timeout' => 60 * 60 * 23,
+                'memory' => 8192 // 8GB
             ],
         ],
 
@@ -240,7 +242,8 @@ return [
                 'balance' => 'simple',
                 'processes' => 3,
                 'tries' => 3,
-                'timeout' => 60 * 60 * 3
+                'timeout' => 60 * 60 * 3,
+                'memory' => 8192 // 8GB
             ],
         ],
     ],
