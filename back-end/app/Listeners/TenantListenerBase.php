@@ -120,6 +120,7 @@ class TenantListenerBase
             'integracao_wso2_token_password' => $tenant->integracao_wso2_token_password ?? "",
             'integracao_siape_conectagov_chave' => $tenant->integracao_siape_conectagov_chave ?? "",
             'integracao_siape_conectagov_senha' => $tenant->integracao_siape_conectagov_senha    ?? "",
+            'integracao_siape_conectagov_qtd_max_requisicoes' => $tenant->integracao_siape_conectagov_qtd_max_requisicoes    ?? "",
         ];
         if(json_encode($config) != json_encode($this->getLogConfig())) {
             $this->setLogConfig($config);
