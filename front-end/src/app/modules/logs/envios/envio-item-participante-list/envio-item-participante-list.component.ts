@@ -28,6 +28,7 @@ export class EnvioItemParticipanteListComponent extends PageListBase<EnvioItem, 
       envio_id: {default: null }, 
       tipo: {default: null},
       uid: {default: null},
+      cpf: {default: null},
       sucesso: {default: ""},
     });
     this.join = [
@@ -45,6 +46,7 @@ export class EnvioItemParticipanteListComponent extends PageListBase<EnvioItem, 
     filter.controls.tipo.setValue("");
     filter.controls.uid.setValue("");
     filter.controls.sucesso.setValue("");
+    filter.controls.cpf.setValue("");
   }
 
   public filterWhere = (filter: FormGroup) => {
@@ -54,6 +56,14 @@ export class EnvioItemParticipanteListComponent extends PageListBase<EnvioItem, 
     result.push(["tipo", '=', 'participante']);
     result.push(["envio_id", '=', form.envio_id]);
     result.push(["sucesso", '=', form.sucesso]);
+
+    if (form.uid) {
+      result.push(["uid", '=', form.uid]);
+    }
+
+    if (form.cpf) {
+      result.push(["usuario.cpf", '=', form.cpf]);
+    }
 
     return result;
   }

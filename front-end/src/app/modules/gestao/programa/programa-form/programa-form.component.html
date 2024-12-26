@@ -3,8 +3,7 @@
   <tabs display right>
     <tab key="GERAL" label="Geral">
       <div class="row">
-        <input-search #unidade [size]="6" label="Unidade Instituidora" controlName="unidade_id" [dao]="unidadeDao" [selectParams]="{filter: {instituidora: true}}" required></input-search>
-        <input-search #unidade_autorizadora [size]="6" label="Unidade Autorizadora" controlName="unidade_autorizadora_id" [dao]="unidadeDao" [selectParams]="{filter: {instituidora: true}}" required></input-search>
+        <input-search #unidade [size]="12" label="Unidade Instituidora" controlName="unidade_id" [dao]="unidadeDao" [selectParams]="{filter: {instituidora: true}}" required></input-search>
       </div>
       <div class="row">
         <input-datetime date [size]="4" label="Data de Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="form!.controls.data_inicio" labelInfo="Data de início da vigência do programa de gestão na unidade instituidora"></input-datetime>

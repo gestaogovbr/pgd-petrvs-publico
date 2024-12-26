@@ -14,6 +14,7 @@ use App\Models\SiapeDadosUORG;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Exceptions\LogError;
+use App\Exceptions\NotFoundException;
 use App\Services\ServiceBase;
 use App\Models\IntegracaoUnidade;
 use App\Models\IntegracaoServidor;
@@ -32,6 +33,8 @@ use Illuminate\Support\Facades\Log;
 class IntegracaoService extends ServiceBase
 {
   use LogTrait;
+
+  const CODIGO_SIAPE_UNIDADE_RAIZ_PELO_PAI = 999999;
 
   public $unidadesInseridas = [];
   public $unidadesSelecionadas = [];
@@ -439,6 +442,7 @@ class IntegracaoService extends ServiceBase
         array_push($this->result['unidades']["Observações"], 'Total de unidades importadas do SIAPE: ' . $n . ' (apenas ATIVAS)');
         array_push($this->result['unidades']['Observações'], 'Os dados das Unidades foram obtidos ' . ($this->useLocalFiles ? 'através de arquivo XML armazenado localmente!' : 'através de consulta à API do SIAPE!'));
 
+        $this->processaUnidadeRaiz();
         /**
          * Insere as unidades faltantes ou atualiza dados e seus respectivos pais.
          * OBS.: Não vejo a diferença de usar :entidade_id para restringir as Unidades.
@@ -622,11 +626,12 @@ class IntegracaoService extends ServiceBase
            * Atualiza os dados pessoais de todos os servidores ATIVOS presentes na tabela USUARIOS.
            * ESTA ROTINA NÃO DEVE INSERIR NOVOS SERVIDORES.
            */
-          $unidadeExercicioRaiz = Unidade::where("codigo", $this->unidadeRaiz)->first();
-          if(!$unidadeExercicioRaiz){
-            throw new IntegrationException("IntegracaoService: Durante atualização de lotações, unidade de exercício raiz $this->unidadeRaiz não encontrada.");
-          }
-          $unidadeExercicioRaizId = $unidadeExercicioRaiz->id;
+          //FIXME não terá mais lotacao pra usuarios sem unidades de exercicio ativa.
+          // $unidadeExercicioRaiz = Unidade::where("codigo", $this->unidadeRaiz)->first();
+          // if(!$unidadeExercicioRaiz){
+          //   throw new IntegrationException("IntegracaoService: Durante atualização de lotações, unidade de exercício raiz $this->unidadeRaiz não encontrada.");
+          // }
+          // $unidadeExercicioRaizId = $unidadeExercicioRaiz->id;
           if (!empty($atualizacoesDados)) {
             foreach ($atualizacoesDados as $linha) {
               Log::channel('siape')->info("Atualizando dados do servidor: ", [json_encode($linha)]);
@@ -655,8 +660,10 @@ class IntegracaoService extends ServiceBase
               if (isset($linha->exercicio_atual_id)) {
                     $unidadeExercicioId = $linha->exercicio_atual_id;
               } else {
-                    $unidadeExercicioId = $unidadeExercicioRaizId;
+                    //FIXME não sera mais alocado em nenhuma unidade se não existir.
+                    // $unidadeExercicioId = $unidadeExercicioRaizId;
                     LogError::newWarn("IntegracaoService: Durante atualização de lotações, agente público informou unidade de exercício não ativa ou inexistente.", [$linha]);
+                    continue;
               }
 
               $vinculo = array([
@@ -747,10 +754,12 @@ class IntegracaoService extends ServiceBase
             isset($unidadeExercicioId->id) ? $unidadeExercicioId = $unidadeExercicioId->id : $unidadeExercicioId = null;
 
             if (is_null($unidadeExercicioId)) {
-              $unidadeExercicioId = $unidadeExercicioRaizId;
-              LogError::newWarn("IntegracaoService: Durante integração, foi definido o exercício na unidadeRaiz(" .
-                $this->unidadeRaiz . ") para o CPF(" .
-                $registro['cpf'] . ") uma vez que informação não foi encontrada.", [$usuarioId, $registro['cpf']]);
+              Log::channel('siape')->info(sprintf("O servidor cpf #%s não tem unidade de  exercicio, não será alocado", $registro['cpf']));
+              continue;
+              // $unidadeExercicioId = $unidadeExercicioRaizId;
+              // LogError::newWarn("IntegracaoService: Durante integração, foi definido o exercício na unidadeRaiz(" .
+              //   $this->unidadeRaiz . ") para o CPF(" .
+              //   $registro['cpf'] . ") uma vez que informação não foi encontrada.", [$usuarioId, $registro['cpf']]);
             }
 
             $queryAtribuicoes = $registro->getUnidadesAtribuicoesAttribute();
@@ -973,6 +982,27 @@ class IntegracaoService extends ServiceBase
       'siapeDadosPessoais' => $siapeDadosPessoais,
       'siapeDadosFuncionais' => $siapeDadosFuncionais
     ];
+  }
+
+  private function processaUnidadeRaiz(): void
+  {
+    $siapeUnidadeRaiz = IntegracaoUnidade::where('pai_servo', self::CODIGO_SIAPE_UNIDADE_RAIZ_PELO_PAI)->first();
+    if (is_null($siapeUnidadeRaiz)) {
+      Log::channel('siape')->info("Unidade raiz nao encontrada na tabela de integracao_unidades.");
+      return;
+    }
+
+    $unidadeRaiz = Unidade::where('sigla', $siapeUnidadeRaiz->siglauorg)->first();
+    if (is_null($unidadeRaiz)) {
+      Log::channel('siape')->info(sprintf("Unidade raiz %s nao encontrada na tabela de unidades.", $siapeUnidadeRaiz->siglauorg));
+      return;
+    }
+
+    if ($unidadeRaiz->codigo != $siapeUnidadeRaiz->codigo_siape) {
+      $unidadeRaiz->codigo = $siapeUnidadeRaiz->codigo_siape;
+      Log::channel('siape')->info(sprintf("Corrigindo unidade raiz %s", $siapeUnidadeRaiz->siglauorg));
+      $unidadeRaiz->save();
+    }
   }
 
 }

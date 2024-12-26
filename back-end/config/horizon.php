@@ -171,7 +171,7 @@ return [
     |
     */
 
-    'memory_limit' => 128,
+    'memory_limit' => 1024,
 
     /*
     |--------------------------------------------------------------------------
@@ -210,9 +210,11 @@ return [
                 'connection' => 'redis',
                 'queue' => ['pgd_queue'],
                 'balance' => 'simple',
-                'processes' => 3,
-                'tries' => 3,
-                'timeout' => 60 * 60 * 3
+                'processes' => env('PGD_PROCESSES', 4),
+                'tries' => 0,
+                'backoff' => 60 * 60 * 2,
+                'timeout' => 60 * 60 * 3,
+                'memory' => env('PGD_MEMORY', 1024 * 2),
             ],
         ],
 
@@ -238,9 +240,11 @@ return [
                 'connection' => 'redis',
                 'queue' => ['pgd_queue'],
                 'balance' => 'simple',
-                'processes' => 3,
-                'tries' => 3,
-                'timeout' => 60 * 60 * 3
+                'processes' => env('PGD_PROCESSES', 4),
+                'tries' => 0,
+                'backoff' => 60 * 60 * 2,
+                'timeout' => 60 * 60 * 3,
+                'memory' => env('PGD_MEMORY', 1024 * 2),
             ],
         ],
     ],

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Cache;
 abstract class BuscarDadosSiape
 {
     CONST QUANTIDADE_MAXIMA_REQUISICOES = 10;
+    CONST LIMITE_MAXIMO_CONECTAGOV = 30;
     private $contentType = 'application/x-www-form-urlencoded';
     private string $authorizationHeader;
     protected static $token = null;
@@ -20,6 +21,7 @@ abstract class BuscarDadosSiape
     private $cpf;
     private $client;
     private $secret;
+    private ?int $quantidadeMaxRequisicoes;
 
     public function __construct(
         private readonly mixed $config
@@ -28,6 +30,11 @@ abstract class BuscarDadosSiape
         $this->url = $config["url"];
         $this->client = $config["conectagov_chave"];
         $this->secret = $config["conectagov_senha"];
+        $this->quantidadeMaxRequisicoes = $config["conectagov_qtd_max_requisicoes"] ?? self::QUANTIDADE_MAXIMA_REQUISICOES;
+        
+        if($this->quantidadeMaxRequisicoes > self::LIMITE_MAXIMO_CONECTAGOV){
+            $this->quantidadeMaxRequisicoes = self::QUANTIDADE_MAXIMA_REQUISICOES;
+        }
         $this->authorizationHeader = 'Basic ' . base64_encode($this->client . ':' . $this->secret);
     }
 
@@ -207,6 +214,11 @@ abstract class BuscarDadosSiape
     public function getConfig(): mixed
     {
         return $this->config;
+    }
+
+    public function getQtdMaxRequisicoes(): int
+    {
+        return $this->quantidadeMaxRequisicoes;
     }
 
 }
