@@ -52,36 +52,46 @@ class ExportarParticipantesBatch
             $exportarEntregasBatch->send();
         } else { 
             Log::info("[$tenantId] Exportação de ".$total." participantes ({$this->tenant->id})...");
-            $n = 0;
             Cache::put("{$tenantId}_part", 0);
-
+            
             $batch = Bus::batch([])
-                ->then(function () use($tenantId, $n, $total) {
-                    //Log::info("[$tenantId] Exportação dos participantes finalizada com sucesso!");    
-                })->catch(function (Throwable $e) use($tenantId) {
-                    Log::error("[$tenantId] Exportação dos participantes com erro!", ['error' => $e->getMessage()]);
-                })->finally(function () use($tenantId, $total, $exportarEntregasBatch) 
-                {    
-                    $n = Cache::get("{$tenantId}_part");
-                    Log::info("[$tenantId] $n/$total");
-
-                    if ($n >= $total) {
-                        Cache::forget("{$tenantId}_part");
-                        Log::info("[$tenantId] Exportação dos participantes finalizada");
-                        $exportarEntregasBatch->send();
-                    }
-                })
-                ->allowFailures()
-                ->onQueue('pgd_queue')
-                ->dispatch();
-
+            ->then(function () {
+                //Log::info("[$tenantId] Exportação dos participantes finalizada com sucesso!");    
+            })->catch(function (Throwable $e) use($tenantId) {
+                Log::error("[$tenantId] Exportação dos participantes com erro!", ['error' => $e->getMessage()]);
+            })->finally(function () use($tenantId, $total, $exportarEntregasBatch) 
+            {    
+                $n = Cache::get("{$tenantId}_part") ?? 0;
+                Log::info("[$tenantId] $n/$total");
+                
+                if ($n >= $total) {
+                    Cache::forget("{$tenantId}_part");
+                    Log::info("[$tenantId] Exportação dos participantes finalizada");
+                    $exportarEntregasBatch->send();
+                }
+            })
+            ->allowFailures()
+            ->onQueue('pgd_queue')
+            ->dispatch();
+            
+            $n = 0;
+            $jobs = [];
             foreach($auditSource->getData() as $auditData) {
                 $source = $auditSource->toExportSource($auditData);
                 $job = new ExportarParticipanteJob($this->tenant, $this->token, $this->envio, $source);
+                $jobs[] = $job;
+                if (count($jobs) >= 20) {
+                    $batch->add($jobs);  
+                    $jobs = [];  
+                }
                 $n++;
-                Cache::put("{$tenantId}_part", $n);
-                $batch->add($job);
             }
+
+            if (count($jobs) > 0) {
+                $batch->add($jobs);
+            }
+
+            Cache::put("{$tenantId}_part", $n);
         }
     }
 }
