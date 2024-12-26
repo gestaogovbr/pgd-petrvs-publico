@@ -5,6 +5,7 @@ namespace App\Jobs\PGD\Tenant;
 use App\Models\Envio;
 use App\Jobs\PGD\Tenant\ExportarTrabalhoJob;
 use App\Services\API_PGD\AuditSources\AuditSource;
+use App\Services\API_PGD\AuditSources\PlanoTrabalhoAuditSource;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
@@ -40,7 +41,9 @@ class ExportarTrabalhosBatch
         $tenantId = $this->tenant->id;
         $envio = $this->envio;
 
-        $auditSource = new AuditSource('trabalho');
+        Log::info("[$tenantId] Consultando planos de Trabalho a exportar...");
+
+        $auditSource = new PlanoTrabalhoAuditSource();
         $total = $auditSource->count();
 
         if ($total == 0) {

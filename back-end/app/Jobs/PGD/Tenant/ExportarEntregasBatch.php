@@ -4,6 +4,7 @@ namespace App\Jobs\PGD\Tenant;
 
 use App\Models\Envio;
 use App\Services\API_PGD\AuditSources\AuditSource;
+use App\Services\API_PGD\AuditSources\PlanoEntregaAuditSource;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
@@ -43,8 +44,10 @@ class ExportarEntregasBatch
         $exportarTrabalhosBatch->setToken($this->token);
         $exportarTrabalhosBatch->setEnvio($this->envio);
         $exportarTrabalhosBatch->setTenant($this->tenant);
+
+        Log::info("[$tenantId] Consultando planos de Entrega a exportar...");
         
-        $auditSource = new AuditSource('entrega');
+        $auditSource = new PlanoEntregaAuditSource();
         $total = $auditSource->count();
 
         if ($total == 0) {
