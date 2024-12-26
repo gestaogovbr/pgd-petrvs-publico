@@ -4,6 +4,7 @@ namespace App\Jobs\PGD\Tenant;
 
 use App\Models\Envio;
 use App\Services\API_PGD\AuditSources\AuditSource;
+use App\Services\API_PGD\AuditSources\ParticipanteAuditSource;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
@@ -44,7 +45,9 @@ class ExportarParticipantesBatch
         $exportarEntregasBatch->setEnvio($this->envio);
         $exportarEntregasBatch->setTenant($this->tenant);
 
-        $auditSource = new AuditSource('participante');
+        Log::info("[$tenantId] Consultando participantes a exportar...");
+
+        $auditSource = new ParticipanteAuditSource();
         $total = $auditSource->count();
 
         if ($total == 0) {

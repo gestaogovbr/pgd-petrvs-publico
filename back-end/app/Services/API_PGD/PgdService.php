@@ -39,7 +39,7 @@ class PgdService
 
         $response = $this->getLogReponse();
         
-        if ($response->status() == 422) {
+        if ($response && $response->status() == 422) {
           $data = $response->json();
 
           if (is_array($data['detail'])) {
