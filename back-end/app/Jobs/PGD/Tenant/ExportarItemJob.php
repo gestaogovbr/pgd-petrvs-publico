@@ -19,6 +19,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Jobs\Contratos\ContratoJobSchedule;
+use Throwable;
 
 abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 {
@@ -173,5 +174,10 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
             'tipo: '.$this->source->tipo,
             'id: '.$this->source->id
         ];
+    }
+
+    public function failed(?Throwable $exception): void
+    {
+        Log::error("Falha no ExportarItemJob: ".$exception->getMessage());
     }
 }
