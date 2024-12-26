@@ -58,10 +58,8 @@ class ExportarTrabalhosBatch
             
 
             $batch = Bus::batch([])
-                ->then(function () {
-                    // Log::info("Exportação dos planos de Trabalho (Tenant {$tenantId}) finalizada com sucesso!");
-                })->catch(function (Throwable $e) use($tenantId) {
-                    Log::error("[$tenantId] Exportação dos planos de Trabalho com erro!", ['error' => $e->getMessage()]);
+                ->then(function ($batch) use ($tenantId) {
+                    Log::info("[$tenantId] Exportação dos planos de Trabalho - restantes: ".$batch->pendingJobs.'/'.$batch->totalJobs);
                 })->finally(function () use($tenantId, $total, $envio) {
                     $jobs = Cache::get("{$tenantId}_trabalhos");
 
@@ -79,15 +77,24 @@ class ExportarTrabalhosBatch
                 ->onQueue('pgd_queue')
                 ->dispatch();
             
-            $jobs = 0;
+            $n = 0;
+            $jobs = [];
             foreach($auditSource->getData() as $auditData) {
                 $source = $auditSource->toExportSource($auditData);
                 $job = new ExportarTrabalhoJob($this->tenant, $this->token, $this->envio, $source);
-                $jobs++;
-                Cache::put("{$tenantId}_trabalhos", $jobs);
-                $batch->add($job);
+                $n++;
+                $jobs[] = $job;
+                if (count($jobs) >= 20) {
+                    $batch->add($jobs);  
+                    $jobs = [];  
+                }
             }
 
+            if (count($jobs) > 0) {
+                $batch->add($jobs);
+            }
+            
+            Cache::put("{$tenantId}_trabalhos", $n);
         }
     }
 

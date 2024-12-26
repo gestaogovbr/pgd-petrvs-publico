@@ -26,6 +26,8 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, InteractsWithQueue; 
 
+    public $tries = 0;
+
     private $tenant;
     private $token;
     private Envio $envio;
