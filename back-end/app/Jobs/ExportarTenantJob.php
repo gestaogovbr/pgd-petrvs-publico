@@ -19,11 +19,14 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Bus\Batchable;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Throwable;
 
 class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, InteractsWithQueue; 
+
+    public $tries = 0;
 
     private $tenant;
     private $token;
@@ -41,7 +44,12 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
 
     public static function getDescricao(): string
     {
-        return "Enviar Dados do Tenant para API do PGD";
+        return "Enviar Tenant Individual para API do PGD";
+    }
+
+    public function middleware()
+    {
+        return [new WithoutOverlapping()];
     }
 
     public function handle(
@@ -123,5 +131,10 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
         return [
             'tenant:' . $this->tenant->id,
         ];
+    }
+
+    public function failed(?Throwable $exception): void
+    {
+        Log::error("Falha ao executar ExportarTenantJob: ".$exception->getMessage().'. Job abortado');
     }
 }
