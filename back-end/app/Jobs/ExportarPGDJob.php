@@ -10,6 +10,7 @@ use App\Models\Tenant;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 
 class ExportarPGDJob extends JobWithoutTenant implements ContratoJobSchedule
 {
@@ -21,7 +22,12 @@ class ExportarPGDJob extends JobWithoutTenant implements ContratoJobSchedule
 
     public static function getDescricao(): string
     {
-        return "Enviar Dados para API do PGD";
+        return "Enviar Todos os Tenants para API do PGD";
+    }
+
+    public function middleware()
+    {
+        return [new WithoutOverlapping()];
     }
 
     public function handle()
