@@ -20,10 +20,16 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 
 	public toolbarButtons: ToolbarButton[] = [
 		{
+			icon: "bi bi-bootstrap-reboot",
+			label: "Reset Queues",
+			onClick: this.resetQueues.bind(this)
+		},
+		{
 			icon: "bi bi-eye-fill",
 			label: "Ver Logs",
 			onClick: () => this.go.navigate({route: ["panel", "logs2"]}),
 		},
+
 		{
 			icon: "bi bi-file-earmark-code-fill",
 			label: "Dados ENV",
@@ -54,6 +60,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 			color: "btn-success",
 			onClick: this.add.bind(this),
 		},
+
 
 		// {
 		//   icon: "bi bi-database-x",
@@ -208,6 +215,30 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 				if (confirm) {
 					self.loading = true;
 					this.dao!.resetDB()
+						.then(function () {
+							self.loading = false;
+							self.dialog.alert("Sucesso", "Executado com sucesso!");
+							window.location.reload();
+						})
+						.catch(function (error) {
+							self.loading = false;
+							self.dialog.alert(
+								"Erro",
+								"Erro ao executar: " + error?.message ? error?.message : error
+							);
+						});
+				}
+			});
+	}
+
+	public resetQueues(row: any) {
+		const self = this;
+		this.dialog
+			.confirm("Deseja Resetar as Queues?", "Deseja realmente executar o reset?")
+			.then((confirm) => {
+				if (confirm) {
+					self.loading = true;
+					this.dao!.resetQueues()
 						.then(function () {
 							self.loading = false;
 							self.dialog.alert("Sucesso", "Executado com sucesso!");
