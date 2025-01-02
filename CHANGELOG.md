@@ -1,3 +1,5 @@
+## 2.3.4 03/01/2024
+
 ## 2.3.3 18/12/2024
 ### Adicionado
  - Adição da Unidade Autorizadora no Painel
