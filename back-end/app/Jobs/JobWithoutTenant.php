@@ -31,6 +31,6 @@ class JobWithoutTenant implements ShouldQueue
 
     public function failed(?Throwable $exception): void
     {
-        Log::error("Falha ao executar Job: ".$exception->getMessage());
+        Log::error("Falha ao executar Job: ".$exception->getMessage().'. Job abortado');
     }
 }

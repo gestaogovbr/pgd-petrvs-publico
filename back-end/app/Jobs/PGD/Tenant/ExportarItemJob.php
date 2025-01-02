@@ -19,12 +19,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Jobs\Contratos\ContratoJobSchedule;
+use Throwable;
 
 abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable; 
 
-    public $tries = 1;
     protected Tenant $tenant;
     protected $token;
     protected Envio $envio;
@@ -94,6 +94,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 
         }catch(ExportPgdException $exception) {
             $this->handleError($exception->getmessage(), $envioItem);
+            $this->fail($exception);
             //throw $exception;
         }
     }
@@ -173,5 +174,10 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
             'tipo: '.$this->source->tipo,
             'id: '.$this->source->id
         ];
+    }
+
+    public function failed(?Throwable $exception): void
+    {
+        Log::error("Falha no ExportarItemJob: ".$exception->getMessage());
     }
 }

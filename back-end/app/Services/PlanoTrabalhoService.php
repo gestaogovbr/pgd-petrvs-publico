@@ -141,6 +141,10 @@ class PlanoTrabalhoService extends ServiceBase
     if(!empty($conflito)) {
       throw new ServerException("ValidatePlanoTrabalho", "Este participante já possui plano de trabalho cadastrado para o período");
     }
+    /* Validar documento_id */
+    if (empty($data["documento_id"])) {
+      throw new ServerException("ValidatePlanoTrabalho", "TCR não foi gerado.");
+    }
     if ($action == ServiceBase::ACTION_INSERT) {
       /*  
       (RN_PTR_V) Condições para que um Plano de Trabalho possa ser criado:
@@ -884,17 +888,7 @@ class PlanoTrabalhoService extends ServiceBase
    */
   public function assinaturasExigidas($planoTrabalho): array
   {
-    /*
-    Resumo [PTR:TABELA_3]
-                     +---------------------------------------------------+-----------------------------------------------------+---------------
-                                       Unidade Executora                 |                 Unidade de Lotação                  |  Participante
-                     +---------------+------------------+----------------+---------------+--------------------+----------------+      Sem
-                       Chefe titular | Chefe substituto | Chefe delagado | Chefe titular | Chefe substituto   | Chefe delagado |     Chefia
-    -----------------+---------------+------------------+----------------+---------------+--------------------+----------------+---------------
-    gestor executora | CF+,CS+       | CF+,CS+,CF,CS-   | CF,CS          |               |                    |                | CF,CS
-    -----------------+---------------+------------------+----------------+---------------+--------------------+----------------+---------------
-    gestor imediato  |               |                  |                | CFº+,CSº+     | CFº+,CSº+,CFº,CSº- | CFº,CSº        | CFº,CSº
-    */
+
     $ids = [
       "participante" => [], 
       "gestores_unidade_executora" => [], 
@@ -902,7 +896,7 @@ class PlanoTrabalhoService extends ServiceBase
       "gestores_entidade" => [], 
       "erros" => []
     ];
-    $keys = [$planoTrabalho["programa_id"], $planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]];
+    $keys = [$planoTrabalho["id"], $planoTrabalho["programa_id"], $planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]];
     if (!empty($planoTrabalho) && !empty($planoTrabalho["programa_id"]) && !empty($planoTrabalho["usuario_id"]) && !empty($planoTrabalho["unidade_id"])) {
       if($this->hasBuffer("assinaturasExigidas", $keys)) {
         $ids = $this->getBuffer("assinaturasExigidas", $keys);
