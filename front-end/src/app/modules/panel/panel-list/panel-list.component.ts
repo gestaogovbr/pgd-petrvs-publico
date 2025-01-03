@@ -90,6 +90,11 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 			onClick: this.forcarSiape.bind(this),
 		});
 		this.options.push({
+			icon: "bi bi-exclamation-octagon-fill",
+			label: "Forçar Envio",
+			onClick: this.forcarEnvio.bind(this),
+		});
+		this.options.push({
 			icon: "bi bi-trash",
 			label: "Excluir",
 			onClick: this.deleteTenant.bind(this),
@@ -259,6 +264,30 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 					this.dao!.forcaSiape(row)
 						.then(function () {
 							self.dialog.alert("Sucesso", "Limpeza dos dados efetuadao com sucesso, aguarde a carga completa!");
+						})
+						.catch(function (error) {
+							let messageError = error?.message ? error?.message : error;
+							console.log("Erro: ", error);
+							self.dialog.alert(
+								"Erro",
+								messageError
+							);
+						});
+				}
+			});
+	}
+	public forcarEnvio(row: any) {
+		const self = this;
+		this.dialog
+			.confirm(
+				"Forçar Envio ao PGD?",
+				"Deseja realmente enviar os dados ao PGD?"
+			)
+			.then((confirm) => {
+				if (confirm) {
+					this.dao!.forcaEnvio(row)
+						.then(function () {
+							self.dialog.alert("Sucesso", "Envio ao PGD iniciado!");
 						})
 						.catch(function (error) {
 							let messageError = error?.message ? error?.message : error;
