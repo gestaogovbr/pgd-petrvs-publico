@@ -210,7 +210,7 @@ return [
                 'connection' => 'redis',
                 'queue' => ['pgd_queue'],
                 'balance' => 'simple',
-                'processes' => env('PGD_PROCESSES', 7),
+                'processes' => env('PGD_PROCESSES', 4),
                 'tries' => 1,
                 'backoff' => 60 * 60 * 2,
                 'timeout' => 60 * 60 * 3,
