@@ -4,6 +4,7 @@ namespace App\Jobs\PGD\Tenant;
 
 use App\Models\Envio;
 use App\Jobs\PGD\Tenant\ExportarTrabalhoJob;
+use App\Models\ViewPgdPlanosTrabalho;
 use App\Services\API_PGD\AuditSources\AuditSource;
 use App\Services\API_PGD\AuditSources\PlanoTrabalhoAuditSource;
 use Illuminate\Support\Facades\Log;
@@ -11,6 +12,7 @@ use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use PDO;
 use Throwable;
 
@@ -19,6 +21,7 @@ class ExportarTrabalhosBatch
     private $token;
     private Envio $envio;
     private $tenant;
+    private $batch;
 
     public function __construct()
     {}
@@ -44,58 +47,109 @@ class ExportarTrabalhosBatch
         Log::info("[$tenantId] Consultando planos de Trabalho a exportar...");
 
         $auditSource = new PlanoTrabalhoAuditSource();
-        $total = $auditSource->count();
+       
+        Cache::forget("{$this->envio->id}_trabalhos");
+        
+        $trabalhos = ViewPgdPlanosTrabalho::withoutGlobalScope(SoftDeletingScope::class)->get();
+        $n = 0;
+        $jobs = [];
+        $data = [];
+        try{
+            foreach($trabalhos as $auditData) {
+                if (array_key_exists($auditData->id, $data)) {
+                    continue;
+                } 
 
-        if ($total == 0) {
-            Log::info("[$tenantId] Sem planos de Trabalho a enviar.");
+                $n++;
+                $source = $auditSource->toExportSource($auditData);
+                $data[$auditData->id] = $source;
+                Log::info("[$tenantId] Calculando job de plano de Trabalho nº$n");
+            }
+        }catch(Throwable $e) {
+            Log::error("Erro ao obter dados.".$e->getMessage());
+            Log::error($e);
+            throw $e;
+        }
+        unset($trabalhos);
+
+        Log::info(count($data).' planos a exportar');
+
+        try{
+            $collection = collect($data);
+            unset($data);
+
+            $n = 0;
+            $collection->chunk(50)->each(function ($chunk) use (&$n) {
+                $jobs = [];
+                foreach($chunk as $item) {
+                    $n++;
+                    $jobs[] = new ExportarTrabalhoJob(
+                        $this->tenant->id,
+                        $n,
+                        $this->token, 
+                        $this->tenant->api_url, 
+                        $this->tenant->api_cod_unidade_autorizadora, 
+                        $this->envio->id, 
+                        $this->envio->numero,
+                        $item
+                    );
+                }
+
+                Log::info("Total atual de jobs: $n");
+                $this->getBatch()->add($jobs);
+                unset($jobs);
+            });
+        } catch(Throwable $e) {
+            Log::error("Erro ao coletar dados.".$e->getMessage());
+            Log::error($e);
+            throw $e;
+        }
+
+        Log::info("[$tenantId] Adicionados $n jobs de plano de Trabalho");
+        gc_collect_cycles();
+
+        $this->getBatch()->dispatch();
+        
+        if ($n > 0) {
+            Cache::put("{$this->envio->id}_trabalhos", $n);
+            Log::info("[$tenantId] Exportação de ".$n." plano de trabalho(s) em andamento");
+        } else {
+            Log::info("[$tenantId] Exportação dos planos de Trabalho finalizada sem dados a exportar");
+            Log::info("[$tenantId] Exportação finalizada! Envio #".$this->envio->numero);
+
             $envio->finished_at = now();
             $envio->sucesso = true;
             $envio->save();
-            Log::info("[$tenantId] Exportação finalizada com sucesso!");
-        } else {
-            Log::info("[$tenantId] Exportação de $total plano(s) de Trabalho ...");
-            Cache::put("{$tenantId}_trabalhos", 0);
-            
-
-            $batch = Bus::batch([])
-                ->then(function ($batch) use ($tenantId) {
-                    Log::info("[$tenantId] Exportação dos planos de Trabalho - restantes: ".$batch->pendingJobs.'/'.$batch->totalJobs);
-                })->finally(function () use($tenantId, $total, $envio) {
-                    $jobs = Cache::get("{$tenantId}_trabalhos");
-
-                    if ($jobs >= $total) {
-                        Cache::forget("{$tenantId}_trabalhos");
-                        Log::info("[$tenantId] Exportação dos planos de Trabalho finalizada");
-                        Log::info("[$tenantId] Exportação finalizada!");
-
-                        $envio->finished_at = now();
-                        $envio->sucesso = true;
-                        $envio->save();
-                    }
-                })
-                ->allowFailures()
-                ->onQueue('pgd_queue')
-                ->dispatch();
-            
-            $n = 0;
-            $jobs = [];
-            foreach($auditSource->getData() as $auditData) {
-                $source = $auditSource->toExportSource($auditData);
-                $job = new ExportarTrabalhoJob($this->tenant, $this->token, $this->envio, $source);
-                $n++;
-                $jobs[] = $job;
-                if (count($jobs) >= 20) {
-                    $batch->add($jobs);  
-                    $jobs = [];  
-                }
-            }
-
-            if (count($jobs) > 0) {
-                $batch->add($jobs);
-            }
-            
-            Cache::put("{$tenantId}_trabalhos", $n);
         }
     }
 
+    public function getBatch() {
+        if ($this->batch) return $this->batch;
+
+        $tenantId = $this->tenant->id;
+        $envio = $this->envio;
+
+        $this->batch = Bus::batch([])
+            ->name("Envio #".$this->envio->numero. ' - Exportar Planos de Trabalho')
+            ->finally(function () use($tenantId, $envio) {
+                $flag = Cache::get("{$envio->id}_trabalhos", false);
+
+                Log::info("[$tenantId] Fila de planos de trabalho vazia.");
+                Log::info($flag);
+
+                if ($flag) {
+                    Cache::forget("{$envio->id}_trabalhos");
+                    Log::info("[$tenantId] Exportação dos planos de Trabalho finalizada");
+                    Log::info("[$tenantId] Exportação finalizada!");
+
+                    $envio->finished_at = now();
+                    $envio->sucesso = true;
+                    $envio->save();
+                }
+            })
+            ->allowFailures()
+            ->onQueue('pgd_queue');
+
+        return $this->batch;
+    }
 }
