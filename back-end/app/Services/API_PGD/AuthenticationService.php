@@ -66,7 +66,7 @@ class AuthenticationService
       $token = $dados['access_token'];
 
       return $token;
-    } catch(\Exception $e) {
+    } catch(\Throwable $e) {
       Log::error("Erro ao obter Token da API PGD: ".$e->getMessage());
       LogError::newError("Erro ao obter Token da API PGD: ");
       throw $e;

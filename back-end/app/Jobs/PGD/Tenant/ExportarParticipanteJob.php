@@ -23,7 +23,7 @@ class ExportarParticipanteJob extends ExportarItemJob
     }
 
     public function getEndpoint($resource): string {
-        return "/organizacao/SIAPE/{$resource->cod_unidade_autorizadora}/{$resource->cod_unidade_lotacao}/participante/{$resource->matricula_siape}";
+        return "/organizacao/SIAPE/{$this->tenant->api_cod_unidade_autorizadora}/{$resource->cod_unidade_lotacao}/participante/{$resource->matricula_siape}";
     }
 
     public function atualizarEntidade($id) {
@@ -39,6 +39,5 @@ class ExportarParticipanteJob extends ExportarItemJob
         $this->envio->increment('qtde_participantes_sucessos');
         parent::addSucesso();
     }
-
 }
 

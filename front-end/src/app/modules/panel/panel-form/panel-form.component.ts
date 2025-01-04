@@ -141,6 +141,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       api_url: { default: "https://api.pgd.gestao.gov.br" },
       api_username: { default: "" },
       api_password: { default: "" },
+      api_cod_unidade_autorizadora: { default: "" },
       //SMTP
       smtp_host: { default: "" },
       smtp_port: { default: 465 },

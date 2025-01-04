@@ -130,7 +130,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       criterio_avaliacao: { default: "" }
     }, this.cdRef, this.validate);
     this.programaMetadata = {
-      todosUnidadeExecutora: false,      
+      todosUnidadeExecutora: false,
       vigentesUnidadeExecutora: true
     }
   }
@@ -143,7 +143,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public atualizarTcr() {
-    this.entity = this.loadEntity();   
+    this.entity = this.loadEntity();
     if (!this.formDisabled) {
       let textoUsuario = this.form!.controls.usuario_texto_complementar.value;
       let textoUnidade = this.form!.controls.unidade_texto_complementar.value;
@@ -220,7 +220,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.cdRef.detectChanges();
   }
 
-  public onUsuarioSelect(selected: SelectItem) {    
+  public onUsuarioSelect(selected: SelectItem) {
     this.form!.controls.usuario_texto_complementar.setValue(selected.entity.texto_complementar_plano || "");
     if(!this.form?.controls.unidade_id.value) {
       selected.entity.unidades?.every(async (unidade: any) => {
@@ -346,7 +346,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.entity.forma_contagem_carga_horaria = this.auth.entidade?.forma_contagem_carga_horaria || "DIA";
       this.entity.unidade_id = this.auth.unidade!.id;
       let programas = await this.programaDao.query({
-        where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]], 
+        where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]],
         join: this.joinPrograma,
         orderBy: [["unidade.path", "desc"]]
       }).asPromise();

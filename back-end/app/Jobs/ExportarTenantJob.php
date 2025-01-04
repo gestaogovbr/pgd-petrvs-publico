@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs\PGD;
+namespace App\Jobs;
 
 use App\Exceptions\ExportPgdException;
 use Exception;
@@ -19,11 +19,14 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Bus\Batchable;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Throwable;
 
 class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
 {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable; 
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, InteractsWithQueue; 
+
+    public $tries = 0;
 
     private $tenant;
     private $token;
@@ -33,31 +36,32 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
     private PlanoEntregaAuditSource $planoEntregaAuditSource;
     private PlanoTrabalhoAuditSource $planoTrabalhoAuditSource;
 
-    public function __construct(Tenant $tenant)
+    public function __construct(private readonly ?string $tenantId = null)
     {
         $this->queue = 'pgd_queue';
-        $this->tenant = $tenant;
+        $this->tenant = Tenant::find($tenantId);
     }
 
     public static function getDescricao(): string
     {
-        return "Enviar Dados do Tenant para API do PGD";
+        return "Enviar Tenant Individual para API do PGD";
+    }
+
+    public function middleware()
+    {
+        return [new WithoutOverlapping()];
     }
 
     public function handle(
         AuthenticationService $authService,
-        PlanoTrabalhoAuditSource $planoTrabalhoAuditSource,
-        ParticipanteAuditSource $participanteAuditSource,
-        PlanoEntregaAuditSource $planoEntregaAuditSource,
         ExportarParticipantesBatch $exportarParticipantesBatch
     ) {
+        ini_set('memory_limit', '-1');
+        
         Log::info("Exportação do Tenant ".$this->tenant->id);
        
         $this->envio = new Envio;
         $this->authService = $authService;
-        $this->planoTrabalhoAuditSource = $planoTrabalhoAuditSource;
-        $this->participanteAuditSource = $participanteAuditSource;
-        $this->planoEntregaAuditSource = $planoEntregaAuditSource;
 
         try{
             $this->autenticar();
@@ -66,10 +70,11 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
             $exportarParticipantesBatch->setEnvio($this->envio);
             $exportarParticipantesBatch->setTenant($this->tenant);
             $exportarParticipantesBatch->send();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             tenancy()->end();
 
-            Log::error("Erro ao processar Tenant {$this->tenant->id} interrompida! Erro: " . $e->getMessage());
+            $message = "Erro ao processar Tenant {$this->tenant->id}! Erro: " . $e->getMessage();
+            Log::error($message);
 
             $tenant = tenancy()->find($this->tenant->id);
             tenancy()->initialize($tenant);
@@ -78,9 +83,10 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
             $this->envio->finished_at = now();
             $this->envio->save();            
             
-            LogError::newError("Erro ao processar Tenant {$this->tenant->id} interrompida! Erro: " . $e->getMessage());  
+            LogError::newError($message);  
 
-            throw $e;
+            $this->fail($message);
+            // throw $e;
         }
     }
 
@@ -97,7 +103,16 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
             $this->envio->finished_at = now();
             $this->envio->save();
             throw new ExportPgdException($errorMsg);
-        } 
+        }
+
+        if (!$this->tenant['api_cod_unidade_autorizadora']) {
+            $errorMsg = 'Unidade Autorizadora não definida no Tenant '.$this->tenant->id;
+            LogError::newError($errorMsg);
+            $this->envio->erros = $errorMsg;
+            $this->envio->finished_at = now();
+            $this->envio->save();
+            throw new ExportPgdException($errorMsg);
+        }
 
         if (!$this->tenant['api_username'] or !$this->tenant['api_password']) {
             $errorMsg = 'Usuário ou senha da API PGD não definidos no Tenant '.$this->tenant->id;
@@ -116,5 +131,10 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
         return [
             'tenant:' . $this->tenant->id,
         ];
+    }
+
+    public function failed(?Throwable $exception): void
+    {
+        Log::error("Falha ao executar ExportarTenantJob: ".$exception->getMessage().'. Job abortado');
     }
 }
