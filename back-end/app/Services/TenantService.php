@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\ServerException;
+use App\Jobs\ExportarTenantJob;
 use App\Models\JobSchedule;
 
 class TenantService extends ServiceBase
@@ -105,6 +106,14 @@ class TenantService extends ServiceBase
         $this->TenantConfigurationsService->handle($tenantId);
         $this->limpaTabelas();
         BuscarDadosSiapeJob::dispatch($tenantId);
+    }
+
+    public function forcarEnvio(string $tenantId)
+    {
+        $this->inicializeTenant($tenantId);
+        $this->TenantConfigurationsService->handle($tenantId);
+
+        ExportarTenantJob::dispatch($tenantId);
     }
 
     public function inicializeTenant($tenantId): void
