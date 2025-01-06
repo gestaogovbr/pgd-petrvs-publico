@@ -5,6 +5,8 @@
 ### Modificado
  - Otimizações no envio ao PGD
  - Melhoria na identificação dos Jobs de Envio
+### Corrigido
+ - Correção na atualização dos vínculos com unidade pai de uma unidade modificada via SIAPE
 ## 2.3.3 18/12/2024
 ### Adicionado
  - Adição da Unidade Autorizadora no Painel
