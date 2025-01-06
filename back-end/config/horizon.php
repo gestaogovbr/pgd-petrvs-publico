@@ -104,7 +104,7 @@ return [
     */
 
     'trim' => [
-        'recent' => 10080,
+        'recent' => 60,
         'pending' => 10080,
         'completed' => 10080,
         'recent_failed' => 10080,
@@ -211,10 +211,10 @@ return [
                 'queue' => ['pgd_queue'],
                 'balance' => 'simple',
                 'processes' => env('PGD_PROCESSES', 4),
-                'tries' => 0,
+                'tries' => 1,
                 'backoff' => 60 * 60 * 2,
                 'timeout' => 60 * 60 * 3,
-                'memory' => env('PGD_MEMORY', 1024 * 2),
+                'memory' => env('PGD_MEMORY', 1024 * 4),
             ],
         ],
 
@@ -241,10 +241,11 @@ return [
                 'queue' => ['pgd_queue'],
                 'balance' => 'simple',
                 'processes' => env('PGD_PROCESSES', 4),
-                'tries' => 0,
+                'tries' => 1,
                 'backoff' => 60 * 60 * 2,
                 'timeout' => 60 * 60 * 3,
-                'memory' => env('PGD_MEMORY', 1024 * 2),
+                'memory' => env('PGD_MEMORY', 1024 * 4),
+                'maxJobs' => 1000
             ],
         ],
     ],

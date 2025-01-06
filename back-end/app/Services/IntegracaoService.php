@@ -163,7 +163,7 @@ class IntegracaoService extends ServiceBase
         return $this->unidadesInseridas[$unidade->id_servo];
       }
     } // Só entra aqui se a Unidade já existir e ocorreu mudança no Pai. Nesse caso, muda o pai da Unidade e atualiza Nome e Sigla.
-    else if (($unidade->pai_servo != $unidade->codigoPai) && ($unidade->id != $unidade->id_pai_antigo)) {
+    else if (($unidade->pai_servo != $unidade->codigo_pai_antigo) && ($unidade->id != $unidade->id_pai_antigo)) {
       $values[':id'] = $unidade->id;
       // Prepara apenas os atributos que precisam ser atualizados.
       $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade_id);
@@ -455,9 +455,9 @@ class IntegracaoService extends ServiceBase
           "SELECT iu.id_servo, u.codigo as codigo_antigo, " .
           "iu.nomeuorg, u.nome as nome_antigo, iu.siglauorg, " .
           "u.sigla as sigla_antiga, iu.pai_servo, " .
-          "un.id as id_pai_antigo, u.id, u.path as path_antigo, " .
+          "un_atual_pai.id as id_pai_antigo, u.id, u.path as path_antigo, " .
           "c.id AS cidade_id, u.cidade_id as cidade_antiga, " .
-          "und.id AS unidade_pai_id, un.codigo AS codigoPai, " .
+          "und.id AS unidade_pai_id, un_atual_pai.codigo AS codigo_pai_antigo, " .
           "und.path AS path_pai, " .
           "iu.data_modificacao as data_modificacao_siape, " .
           "u.data_modificacao as data_modificacao_und " .
@@ -465,7 +465,7 @@ class IntegracaoService extends ServiceBase
           "FROM integracao_unidades iu " .
           "" .
           "LEFT JOIN unidades u ON (iu.id_servo = u.codigo) " .
-          "LEFT JOIN unidades un ON (un.id = u.id) " .
+          "LEFT JOIN unidades un_atual_pai ON (un_atual_pai.id = u.unidade_pai_id) " .
           "LEFT JOIN unidades und ON (iu.pai_servo = und.codigo) " .
           "LEFT JOIN cidades c ON (iu.municipio_ibge = c.codigo_ibge) " .
           "" .
