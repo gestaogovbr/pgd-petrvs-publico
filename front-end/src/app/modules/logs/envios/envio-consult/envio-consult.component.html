@@ -1,0 +1,11 @@
+<editable-form [form]="form!" [disabled]="true" [title]="isModal ? '' : title" (cancel)="onCancel()">
+  <div class="row">
+      <div class="row">
+        <input-datetime [size]="4" datetime label="Iniciado em" controlName="created_at" [control]="form!.controls.created_at"></input-datetime>
+        <input-datetime [size]="4" datetime label="Finalizado em" controlName="finished_at" [control]="form!.controls.finished_at"></input-datetime>
+      </div>
+      <div class="row">
+        <input-textarea [size]="12" [rows]="3" label="Mensagem" icon="bi bi-textarea-t" controlName="erros" [control]="form!.controls.erros"></input-textarea>
+      </div>
+  </div>
+</editable-form>

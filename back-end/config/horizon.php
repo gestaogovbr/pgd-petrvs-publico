@@ -104,7 +104,7 @@ return [
     */
 
     'trim' => [
-        'recent' => 10080,
+        'recent' => 60,
         'pending' => 10080,
         'completed' => 10080,
         'recent_failed' => 10080,
@@ -171,7 +171,7 @@ return [
     |
     */
 
-    'memory_limit' => 128,
+    'memory_limit' => 1024,
 
     /*
     |--------------------------------------------------------------------------
@@ -185,43 +185,68 @@ return [
     */
 
     'default' => [
-        'supervisor' => [
-            'connection' => 'redis',
-            'queue' => ['default'],
-            'balance' => 'auto',
-            'maxProcesses' => 3,
-            'minProcesses' => 3,
-            'tries' => 3,
-            'timeout' => 90
-        ],
-        'supervisor-siape' => [
-            'connection' => 'siape_queue',
-            'queue' => ['siape_queue'],
-            'balance' => 'simple',
-            'processes' => 1,
-            'tries' => 1,
-            'timeout' => 60 * 60 * 24 * 2
-        ],
     ],
 
-    /*'environments' => [
+    'environments' => [
         'production' => [
-            'supervisor-1' => [
-                'maxProcesses' => 3,
-                'balanceMaxShift' => 1,
-                'balanceCooldown' => 3,
-            ],
-        ],
-
-        'local' => [
-            'supervisor-1' => [
+            'supervisor' => [
                 'connection' => 'redis',
                 'queue' => ['default'],
+                'balance' => 'auto',
+                'maxProcesses' => 3,
+                'minProcesses' => 3,
+                'tries' => 3,
+                'timeout' => 90
+            ],
+            'supervisor-siape' => [
+                'connection' => 'redis',
+                'queue' => ['siape_queue'],
                 'balance' => 'simple',
                 'processes' => 1,
                 'tries' => 1,
                 'timeout' => 60 * 60 * 24 * 2
             ],
+            'supervisor-pgd' => [
+                'connection' => 'redis',
+                'queue' => ['pgd_queue'],
+                'balance' => 'simple',
+                'processes' => env('PGD_PROCESSES', 4),
+                'tries' => 1,
+                'backoff' => 60 * 60 * 2,
+                'timeout' => 60 * 60 * 3,
+                'memory' => env('PGD_MEMORY', 1024 * 4),
+            ],
         ],
-    ],*/
+
+        'local' => [
+            'supervisor' => [
+                'connection' => 'redis',
+                'queue' => ['default'],
+                'balance' => 'auto',
+                'maxProcesses' => 3,
+                'minProcesses' => 3,
+                'tries' => 3,
+                'timeout' => 90
+            ],
+            'supervisor-siape' => [
+                'connection' => 'redis',
+                'queue' => ['siape_queue'],
+                'balance' => 'simple',
+                'processes' => 1,
+                'tries' => 1,
+                'timeout' => 60 * 60 * 24 * 2
+            ],
+            'supervisor-pgd' => [
+                'connection' => 'redis',
+                'queue' => ['pgd_queue'],
+                'balance' => 'simple',
+                'processes' => env('PGD_PROCESSES', 4),
+                'tries' => 1,
+                'backoff' => 60 * 60 * 2,
+                'timeout' => 60 * 60 * 3,
+                'memory' => env('PGD_MEMORY', 1024 * 4),
+                'maxJobs' => 1000
+            ],
+        ],
+    ],
 ];
