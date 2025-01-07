@@ -17,6 +17,8 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   public produtoService: ProdutoService;
   public isUpdating: boolean = false;
+  public isChefe: boolean = false;
+  public isCurador: boolean = false;
 
   constructor(public injector: Injector, dao: ProdutoDaoService) {
     super(injector, Produto, ProdutoDaoService);
@@ -31,6 +33,8 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     this.join = [
       "produtoProcessoCadeiaValor"
     ];
+    this.isChefe = this.auth.isGestorAlgumaAreaTrabalho(false);
+    this.isCurador = this.auth.isUsuarioCurador();
   }
 
   public ngOnInit(): void {
@@ -40,8 +44,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
   public dynamicButtons(row: Produto): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });   
-    if(!row._status) result.push({ label: "Excluir", icon: "bi bi-trash", color: 'btn-outline-danger', onClick: this.delete.bind(this) });   
-
+    
     return result;
   }
 

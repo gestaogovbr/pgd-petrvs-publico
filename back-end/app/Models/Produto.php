@@ -14,7 +14,7 @@ class Produto  extends ModelBase
 
     protected $table = 'produtos';
 
-    public $fillable_changes = ['produtoProcessoCadeiaValor', 'produtoProduto', 'produtoCliente'];
+    public $fillable_changes = ['produtoProcessoCadeiaValor', 'produtoProduto', 'produtoCliente', 'produtoSolucoes'];
 
     public $cascadeDeletes = ['produtoProcessoCadeiaValor'];
 
@@ -89,5 +89,15 @@ class Produto  extends ModelBase
     public function produtoCliente()
     {
         return $this->hasMany(ProdutoCliente::class);
+    }
+
+    public function produtoSolucoes()
+    {
+        return $this->hasMany(ProdutoSolucao::class);
+    }
+
+    public function solucoes()
+    {
+        return $this->belongsToMany(Solucao::class, 'produto_solucao', 'produto_id', 'solucao_id');
     }
 }

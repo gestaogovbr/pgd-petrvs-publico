@@ -21,12 +21,12 @@ export class SolucaoFormComponent extends PageFormBase<Solucao, SolucaoDaoServic
   @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
 
   public usuarioDao: UsuarioDaoService;
-  public unidadeDao: UnidadeDaoService;
+  // public unidadeDao: UnidadeDaoService;
 
   constructor(public injector: Injector) {
     super(injector, Solucao, SolucaoDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
-    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    // this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.modalWidth = 1300;
     this.join = [
       "unidade"
