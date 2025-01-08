@@ -36,4 +36,5 @@ class SolucaoUnidade extends ModelBase
     {
         return $this->belongsTo(Unidade::class, 'id_unidade', 'id');
     }
+
 }
