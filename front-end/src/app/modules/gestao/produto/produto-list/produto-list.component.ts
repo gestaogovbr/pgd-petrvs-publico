@@ -33,7 +33,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     this.join = [
       "produtoProcessoCadeiaValor"
     ];
-    this.isChefe = this.auth.isGestorAlgumaAreaTrabalho(false);
+    this.isChefe = this.auth.isUsuarioDeveloper() || this.auth.isGestorAlgumaAreaTrabalho(false);
     this.isCurador = this.auth.isUsuarioCurador();
   }
 
@@ -139,7 +139,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
       result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
     if(form.id?.length) {
-      result.push(["id", "=",form.id]);
+      result.push(["identificador", "=",form.id]);
     }
 		if (form.unidade_id?.length) {
 			result.push(["unidade_id", "==", form.unidade_id]);
