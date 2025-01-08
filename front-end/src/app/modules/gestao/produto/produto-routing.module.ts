@@ -6,6 +6,7 @@ import { ConfigResolver } from "src/app/resolvies/config.resolver";
 import { ProdutoFormComponent } from "./produto-form/produto-form.component";
 import { ProdutoShowComponent } from "./produto-show/produto-show.component";
 import { ProdutoFilterComponent } from "./produto-filter/produto-filter.component";
+
 import { ChefiaGuard } from "src/app/guards/chefia.guard";
 
 const routes: Routes = [

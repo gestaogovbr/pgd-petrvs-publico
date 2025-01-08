@@ -120,7 +120,9 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
   }
 
   public onFilterClear(){
-    this.filter?.reset({ id: '', nome: '', status: '', unidade_id: ''})
+
+    this.filter?.reset()
+
     this.grid!.reloadFilter();
   }
 
@@ -139,7 +141,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
       result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
     if(form.id?.length) {
-      result.push(["identificador", "=",form.id]);
+      result.push(["id", "=",form.id]);
     }
 		if (form.unidade_id?.length) {
 			result.push(["unidade_id", "==", form.unidade_id]);

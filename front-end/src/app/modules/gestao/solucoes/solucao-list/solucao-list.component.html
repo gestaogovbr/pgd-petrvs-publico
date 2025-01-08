@@ -4,6 +4,7 @@
     [hasAdd]="this.isCurador"
     [hasEdit]="this.auth.hasPermissionTo('MOD_SOLUCOES_EDT')">
     <filter 
+        [deleted]="this.auth.hasPermissionTo('MOD_SOLUCOES_EXCL')" 
         [form]="filter" 
         [where]="filterWhere" 
         [submit]="filterSubmit.bind(this)" 
