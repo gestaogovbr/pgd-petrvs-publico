@@ -13,6 +13,6 @@ export class ChefiaGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean | Observable<boolean> | Promise<boolean> {
-    return this.auth.isGestorAlgumaAreaTrabalho(false);
+    return this.auth.isUsuarioDeveloper() || this.auth.isGestorAlgumaAreaTrabalho(false);
   }
 }
