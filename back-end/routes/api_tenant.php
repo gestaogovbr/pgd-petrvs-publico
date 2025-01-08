@@ -489,7 +489,7 @@ Route::middleware(['auth:sanctum'])->prefix('Relato')->group(function () {
   Route::get('confirmar/{email}/{nome}', [RelatoController::class, 'confirmar']);
 });
 
-Route::middleware(['auth:sanctum'])->prefix('solucaoUnidade')->group(function () {
+Route::middleware(['auth:sanctum'])->prefix('SolucaoUnidade')->group(function () {
   defaultRoutes(SolucaoUnidadeController::class);
 });
 
