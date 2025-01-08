@@ -10,5 +10,5 @@ export class SolucaoUnidadeDaoService extends DaoBaseService<SolucaoUnidade> {
 
   constructor(protected injector: Injector) { 
     super("SolucaoUnidade", injector);
-  }  
+  }
 }

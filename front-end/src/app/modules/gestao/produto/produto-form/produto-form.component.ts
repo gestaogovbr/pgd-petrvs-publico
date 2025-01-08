@@ -37,6 +37,7 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
       produto_produto: { default: [] },
       produto_cliente: { default: [] },
       produto_solucoes: { default: [] },
+      solucao: { default: [] },
     });
   }
 
