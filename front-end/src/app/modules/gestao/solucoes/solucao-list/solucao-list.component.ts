@@ -133,7 +133,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
   }
 
   public onFilterClear(){
-    this.filter?.reset()
+    this.filter?.reset({ id: '', status: '', nome: '' })
     this.grid!.reloadFilter();
   }
 

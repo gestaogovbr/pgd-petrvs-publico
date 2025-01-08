@@ -122,7 +122,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
   }
 
   public onFilterClear(){
-    this.filter?.reset()
+    this.filter?.reset({ id: '', nome: '', status: ''});
     this.grid!.reloadFilter();
   }
 
@@ -133,15 +133,15 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     }
     this.isUpdating = true;
     let ativo = this.ativo(solucao)  
-    solucao.data_desativado = null;
-    solucao.data_ativado = null;
-    ativo ? solucao.data_desativado = new Date() : solucao.data_ativado = new Date();
+    //solucao.data_desativado = null;
+    //solucao.data_ativado = null;
+    //ativo ? solucao.data_desativado = new Date() : solucao.data_ativado = new Date();
     
     try {
       await this.dao?.update(solucao.id, {
         id: solucao.id,
-        data_desativado: solucao.data_desativado,
-        data_ativado: solucao.data_ativado
+        //data_desativado: solucao.data_desativado,
+        //data_ativado: solucao.data_ativado
       });
       console.log("Solucao atualizado com sucesso");
     } catch (error) {
@@ -152,6 +152,6 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
   }
 
   public ativo(solucao: Solucao): boolean {
-    return solucao.data_ativado instanceof Date;
+    return true; //solucao.data_ativado instanceof Date;
   }
 }
