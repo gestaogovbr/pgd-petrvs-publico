@@ -120,7 +120,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
   }
 
   public onFilterClear(){
-    this.filter?.reset()
+    this.filter?.reset({ id: '', nome: '', status: '', unidade_id: ''})
     this.grid!.reloadFilter();
   }
 
