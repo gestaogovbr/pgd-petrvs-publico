@@ -14,7 +14,7 @@ class Produto  extends ModelBase
 
     protected $table = 'produtos';
 
-    public $fillable_changes = ['produtoProcessoCadeiaValor', 'produtoProduto', 'produtoCliente', 'produtoSolucoes'];
+    public $fillable_changes = ['produtoProcessoCadeiaValor', 'produtoProduto', 'produtoCliente', 'solucoes','produtoSolucoes'];
 
     public $cascadeDeletes = ['produtoProcessoCadeiaValor'];
 
