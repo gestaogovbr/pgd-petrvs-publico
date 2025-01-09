@@ -41,6 +41,7 @@ class ProdutoController extends ControllerBase
             'STORE'=> $this->permissionPostUpdate($unidade, $request),
             'UPDATE'=> $this->permissionPostUpdate($unidade, $request),
             'QUERY'=>true,
+            'GETBYID'=>true,
             'UPDATEJSON'=>$this->permissionPostUpdate($unidade, $request),
             'UPLOADBASE64'=>$this->permissionPostUpdate($unidade, $request),
             'DESTROY'=>$this->permissionPostUpdate($unidade, $request)
