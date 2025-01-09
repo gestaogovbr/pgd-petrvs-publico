@@ -4,12 +4,14 @@ import { ProdutoProcesso } from "./produto-processo.model";
 import { ProdutoProduto } from "./produto-produto.model";
 import { ProdutoSolucao } from "./produto-solucao.model";
 import { Unidade } from "./unidade.model";
+import { Usuario } from "./usuario.model";
 
 export type ProdutoTipos = "produto" | "servico";
 
 export class Produto extends Base {
   public nome: string = ""; /* Nome do produto */
   public responsavel_id: string = "";
+  public responsavel?: Usuario;
   public data_ativado: null|Date = new Date(); /* Data de ativação do produto */
   public data_desativado: null|Date = new Date(); /* Data de desativação do produto */
   public nome_fantasia: string = ""; /* Nome fantasia/sigla do produto */

@@ -18,7 +18,8 @@ import { PageFormBase } from "src/app/modules/base/page-form-base";
 export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
-
+  @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
+  
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
   
@@ -49,6 +50,8 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
   public async loadData(entity: Produto, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     entity.unidade_id = entity.unidade?.id || this.auth.unidade!.id;
+    entity.responsavel_id = entity.responsavel?.id || this.auth.usuario!.id;
+
     form.patchValue(this.util.fillForm(formValue, entity));
   }
 
