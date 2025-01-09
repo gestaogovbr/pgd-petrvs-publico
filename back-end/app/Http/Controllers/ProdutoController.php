@@ -11,6 +11,7 @@ use App\Exceptions\ServerException;
 use App\Services\Validador\IValidador;
 use Illuminate\Validation\ValidationException;
 use Throwable;
+use App\Models\Usuario;
 
 class ProdutoController extends ControllerBase
 {
@@ -24,9 +25,39 @@ class ProdutoController extends ControllerBase
         $this->validators = $validator;
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param [type] $action
+     * @param [type] $request
+     * @param [type] $service
+     * @param [type] $unidade
+     * @param Usuario $usuario
+     * @return void
+     */
     public function checkPermissions($action, $request, $service, $unidade, $usuario)
     {
-       
+         match($action){
+            'STORE'=> $this->permissionPostUpdate($unidade, $request),
+            'UPDATE'=> $this->permissionPostUpdate($unidade, $request),
+            'QUERY'=>true,
+            'UPDATEJSON'=>$this->permissionPostUpdate($unidade, $request),
+            'UPLOADBASE64'=>$this->permissionPostUpdate($unidade, $request),
+            'DESTROY'=>$this->permissionPostUpdate($unidade, $request)
+        };
+    }
+
+    private function permissionPostUpdate($unidade,Request $request)
+    {
+        $responsavelId = $request->input('entity')['responsavel_id'];
+        $usuario = Usuario::find($responsavelId);
+        $curadores = $usuario->curadores()->where('unidade_id', $unidade->id)->get();
+
+        if ($curadores->isEmpty()) {
+            throw new ServerException("CapacidadeStore", "Não tem permissão de criação/edição de produtos.");
+        }
+
+        return true;
     }
 
     public function store(Request $request)

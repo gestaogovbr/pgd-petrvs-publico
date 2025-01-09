@@ -26,6 +26,7 @@ class ProdutoValidador extends BaseValidador
     private function regrasValidacao(): array
     {
         $regrasComuns = [
+            'responsavel_id' => 'required|uuid|exists:usuarios,id',
             'nome_fantasia' => 'nullable|string|max:255',
             'url' => 'nullable|url',
             'unidade_id' => 'uuid|exists:unidades,id',

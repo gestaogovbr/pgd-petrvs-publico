@@ -22,6 +22,7 @@ class Produto  extends ModelBase
     const TIPO_SERVICO = 'servico';
 
     protected $fillable = [
+        'responsavel_id',
         'nome',
         'nome_fantasia',
         'tipo',
@@ -35,6 +36,7 @@ class Produto  extends ModelBase
 
     protected $casts = [
         'id' => 'string',
+        'responsavel_id' => 'string',
         'nome' => 'string',
         'nome_fantasia' => 'string',
         'tipo' => 'string',
