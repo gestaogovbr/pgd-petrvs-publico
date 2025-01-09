@@ -9,6 +9,7 @@ export type ProdutoTipos = "produto" | "servico";
 
 export class Produto extends Base {
   public nome: string = ""; /* Nome do produto */
+  public responsavel_id: string = "";
   public data_ativado: null|Date = new Date(); /* Data de ativação do produto */
   public data_desativado: null|Date = new Date(); /* Data de desativação do produto */
   public nome_fantasia: string = ""; /* Nome fantasia/sigla do produto */

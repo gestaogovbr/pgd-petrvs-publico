@@ -4,6 +4,7 @@ import { EditableFormComponent } from "src/app/components/editable-form/editable
 import { InputSearchComponent } from "src/app/components/input/input-search/input-search.component";
 import { ProdutoDaoService } from "src/app/dao/produto-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
+import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
 import { IIndexable } from "src/app/models/base.model";
 import { Produto } from "src/app/models/produto.model";
 import { PageFormBase } from "src/app/modules/base/page-form-base";
@@ -19,14 +20,17 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
 
   public unidadeDao: UnidadeDaoService;
+  public usuarioDao: UsuarioDaoService;
   
   constructor(public injector: Injector) {
     super(injector, Produto, ProdutoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.join = [
       "produtoProcessoCadeiaValor.cadeiaValorProcesso.cadeiaValor", "produtoProduto.produtoRelacionado", "produtoCliente.cliente", "produtoSolucoes.solucao"
     ];
     this.form = this.fh.FormBuilder({
+      responsavel_id: { default: "" },
       nome: { default: "" },
       nome_fantasia: { default: "" },
       descricao: { default: "" },
