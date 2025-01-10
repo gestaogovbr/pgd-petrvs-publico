@@ -27,6 +27,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     this.filter = this.fh.FormBuilder({
       nome: {default: this.metadata?.nome ?? ""},
       unidade_id: {default: ""},
+      cliente_id: {default: ""},
       id: {default: ""},
       status: {default: ""}
     });
@@ -105,7 +106,8 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
         nome: this.filter?.controls.nome.value,
         id: this.filter?.controls.id.value,
         status: this.filter?.controls.status.value,
-        unidade_id: this.filter?.controls.unidade_id.value
+        unidade_id: this.filter?.controls.unidade_id.value,
+        cliente_id: this.filter?.controls.cliente_id.value
       },
       modalClose: async (result) => {
         if (result && this.filter) {
@@ -113,6 +115,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
           this.filter?.controls.id.setValue(result.id);
           this.filter?.controls.status.setValue(result.status);
           this.filter?.controls.unidade_id.setValue(result.unidade_id);
+          this.filter?.controls.cliente_id.setValue(result.cliente_id);
           this.grid!.reloadFilter();
         }
       },
@@ -130,6 +133,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     return this.filter?.controls.nome.value.length > 0 || 
       this.filter?.controls.id.value.length > 0 ||
       this.filter?.controls.unidade_id.value.length > 0 ||
+      this.filter?.controls.cliente_id.value.length > 0 ||
       this.filter?.controls.status.value.length > 0;
   }
 
@@ -145,6 +149,9 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     }
 		if (form.unidade_id?.length) {
 			result.push(["unidade_id", "==", form.unidade_id]);
+    }
+    if (form.cliente_id?.length) {
+			result.push(["produtos_do_cliente", "==", form.cliente_id]);
     }
     if (form.status && form.status == 'ativo') {
       result.push(["data_ativado", "!=", null]);
