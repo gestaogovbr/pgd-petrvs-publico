@@ -477,6 +477,8 @@ Route::middleware(['auth:sanctum'])->prefix('Catalogo')->group(function () {
 });
 Route::middleware(['auth:sanctum'])->prefix('Solucao')->group(function () {
     defaultRoutes(SolucaoController::class);
+    Route::post('ativar-todos', [SolucaoController::class, 'atribuirTodos']);
+    Route::post('desativar-todos', [SolucaoController::class, 'desatribuirTodos']);
 });
 Route::middleware(['auth:sanctum'])->prefix('TipoCliente')->group(function () {
   defaultRoutes(TipoClienteController::class);

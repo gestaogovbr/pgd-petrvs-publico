@@ -22,6 +22,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
   public catalogoService: SolucaoService;
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
+  public solucaoDao: SolucaoDaoService;
   public solucaoUnidadeDao: SolucaoUnidadeDaoService;
   public botoes: ToolbarButton[] = [];
   public isCurador: boolean;
@@ -35,6 +36,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.solucaoUnidadeDao = injector.get<SolucaoUnidadeDaoService>(SolucaoUnidadeDaoService);
+    this.solucaoDao = injector.get<SolucaoDaoService>(SolucaoDaoService);
     this.title = this.lex.translate("Soluções");
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
@@ -168,15 +170,58 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
          return;
       }
       
-       solucaoUnidade = new SolucaoUnidade();
+      solucaoUnidade = new SolucaoUnidade();
       solucaoUnidade.id_solucao = solucao.id;
       solucaoUnidade.id_unidade = unidadeId;
       let solucaoUnidadeCarregada = await this.solucaoUnidadeDao?.save(solucaoUnidade);
       this.solucoesUnidades.push(solucaoUnidadeCarregada);
-      console.log(this.solucoesUnidades);
-      console.log("Solucao atualizado com sucesso");
     } catch (error) {
       console.error("Erro ao atualizar o produto", error);
+    } finally {
+      this.isUpdating = false; 
+    }
+  }
+
+
+  public async ativarTodas() {
+    if (this.isUpdating) {
+      console.log("Aguarde o término do processo anterior");
+      return;
+    }
+    this.isUpdating = true;
+
+    try {
+
+      let unidadeId: string | undefined = this.auth.unidade?.id;
+      if (unidadeId == undefined) {
+        return;
+      } 
+      await this.solucaoDao.ativarTodas(unidadeId);
+      this.loadingSolucoesUnidades();
+    }catch (error) {
+      console.error("Erro ao ativar as Soluções", error);
+    } finally {
+      this.isUpdating = false; 
+    }
+  }
+
+  public async desativarTodas() {
+    if (this.isUpdating) {
+      console.log("Aguarde o término do processo anterior");
+      return;
+    }
+    this.isUpdating = true;
+
+    try {
+
+      let unidadeId: string | undefined = this.auth.unidade?.id;
+      if (unidadeId == undefined) {
+        return;
+      } 
+      await this.solucaoDao.desativarTodas(unidadeId);
+      this.loadingSolucoesUnidades();
+    }catch (error) {
+      console.error("Erro ao desativar as Soluções", error);
     } finally {
       this.isUpdating = false; 
     }
@@ -185,10 +230,12 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
   public ativo(solucao: Solucao): boolean {
     let unidadeId = this.auth.unidade?.id;
     let solucaoUnidade = this.getSolucaoUnidade(solucao.id, unidadeId);
+    console.log(solucaoUnidade);
     if (!solucaoUnidade) {
       return false;
     }
-    console.log('status', solucaoUnidade.status);
+    console.log(solucaoUnidade.status);
+    
     return solucaoUnidade.status;
   }
 

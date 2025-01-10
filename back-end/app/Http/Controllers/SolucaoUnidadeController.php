@@ -11,7 +11,6 @@ class SolucaoUnidadeController extends ControllerBase
         parent::__construct();
     }
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
-
     }
 
 }

@@ -33,6 +33,18 @@
             </div>
         </div>
     </filter>
+    <div class="row">
+        <div class="col-md-12 ativar-desativar">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-success" (click)="this.ativarTodas()">
+                    Ativar todas as Soluções
+                </button>
+                <button type="button" class="btn btn-outline-danger" (click)="this.desativarTodas()">
+                    Desativar todas as Soluções
+                </button>
+            </div>
+        </div>
+    </div> 
     <columns>
         <column title="ID#" [template]="columnID">
             <ng-template let-row="row" #columnID>

@@ -3,9 +3,9 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Solucao;
-
-use Illuminate\Http\Request;
 use App\Services\Validador\IValidador;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use Throwable;
 
 class SolucaoController extends ControllerBase {
@@ -33,4 +33,43 @@ class SolucaoController extends ControllerBase {
         }
     }
 
+    public function atribuirTodos(Request $request) {
+        try {
+            $data = $request->validate([
+                'unidade_id' => ['required']
+            ]);
+
+            return response()->json([
+                'success' => $this->service->atribuirTodos($data['unidade_id'])
+            ]);
+        }  catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+        }
+
+        return true;
+    }
+
+    public function desatribuirTodos(Request $request) {
+        try {
+            $data = $request->validate([
+                'unidade_id' => ['required']
+            ]);
+
+            return response()->json([
+                'success' => $this->service->desatribuirTodos($data['unidade_id'])
+            ]);
+        }  catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+        }
+    }
 }
