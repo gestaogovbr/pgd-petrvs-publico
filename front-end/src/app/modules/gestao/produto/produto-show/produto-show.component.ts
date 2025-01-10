@@ -2,7 +2,6 @@ import { Component, Injector } from "@angular/core";
 import { ProdutoDaoService } from "src/app/dao/produto-dao.service";
 import { Produto } from "src/app/models/produto.model";
 import { PageBase } from "src/app/modules/base/page-base";
-import { PageFrameBase } from "src/app/modules/base/page-frame-base";
 
 @Component({
   selector: 'produto-show',

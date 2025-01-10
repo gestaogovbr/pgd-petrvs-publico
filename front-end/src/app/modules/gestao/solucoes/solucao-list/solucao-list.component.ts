@@ -48,11 +48,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     
     this.botoes = [
     ]
-    this.options.push({
-      icon: "bi bi-info-circle",
-      label: "Informações",
-      onClick: this.consult.bind(this)
-    });
+    
     this.options.push({
       icon: "bi bi-clipboard-check",
       label: "Unidades",
@@ -85,8 +81,17 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
 
   public dynamicButtons(row: Solucao): ToolbarButton[] {
     let result: ToolbarButton[] = [];
+    if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });   
+    
     return result;
   }
+    public async showDetalhes(solucao: Solucao){
+      this.go.navigate({route: ['gestao', 'solucao', solucao.id, "consult"]}, {
+        metadata: {
+          solucao: solucao
+        }
+      });    
+    }
 
   public onAgruparChange(event: Event) {
     const agrupar = this.filter!.controls.agrupar.value;
