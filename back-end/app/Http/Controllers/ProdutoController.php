@@ -44,12 +44,14 @@ class ProdutoController extends ControllerBase
             'GETBYID'=>true,
             'UPDATEJSON'=>$this->permissionPostUpdate($unidade, $request),
             'UPLOADBASE64'=>$this->permissionPostUpdate($unidade, $request),
-            'DESTROY'=>$this->permissionPostUpdate($unidade, $request)
+            'DESTROY'=>$this->permissionPostUpdate($unidade, $request),
+            default=>true
         };
     }
 
     private function permissionPostUpdate($unidade,Request $request)
     {
+        if(!isset($request->input('entity')['responsavel_id'])) return true;
         $responsavelId = $request->input('entity')['responsavel_id'];
         $usuario = Usuario::find($responsavelId);
         $curadores = $usuario->curadores()->where('unidade_id', $unidade->id)->get();

@@ -3,32 +3,34 @@
 </div>
 <ng-container *ngIf="produto">
   <div class="bg-dark-subtle d-flex p-2 px-4">
-    <div class="">
-      <h5>ID #{{produto.id}} - {{produto.nome}} - {{produto.nome}}</h5>
+    <div>
+      <h4>ID #{{produto.identificador}} - <b>{{produto.nome}}</b> - {{produto.nome_fantasia}}</h4>
     </div>
   </div>
-  <div class="bg-body-secondary d-flex justify-content-between p-2 px-4 mb-4">
-    <div>
-      <small class="d-block">Descrição</small>
-      <b>{{produto.descricao}}</b>
+
+  <div class="bg-body-secondary p-3 mb-4">
+    <div class="row">
+      <div class="col-md-3">
+        <small class="d-block text-muted">Descrição</small>
+        <b>{{produto.descricao}}</b>
+      </div>
+      <div class="col-md-3">
+        <small class="d-block text-muted">Unidade</small>
+        <b>{{produto.unidade?.nome}}</b>
+      </div>
+      <div class="col-md-3">
+        <small class="d-block text-muted">Ativado em</small>
+        <b>{{formatDate(produto.data_ativado)}}</b>
+      </div>
+      <div class="col-md-3">
+        <small class="d-block text-muted">Desativado em</small>
+        <b>{{formatDate(produto.data_desativado)}}</b>
+      </div>
     </div>
+  </div>
 
-    <div>
-      <small class="d-block">Unidade</small>
-      <b>{{produto.unidade?.nome}}</b>
-    </div>
-
-
-    <div>
-      <small class="d-block">Ativado em</small>
-      <b>{{produto.data_ativado}}</b>
-    </div>
-
-    <div>
-      <small class="d-block">Desativado em</small>
-      <b>{{produto.data_desativado}}</b>
-    </div>
-
+  <div class="mb-4">
+    <span class="fw-bold">Responsável:</span> <strong>{{produto.responsavel?.nome}}</strong>
   </div>
 
   <tabs>
@@ -44,7 +46,6 @@
           <tr *ngFor="let processo of produto.produto_processo_cadeia_valor">
             <th>{{processo.cadeia_valor_processo?.nome}}</th>
             <td>{{processo.cadeia_valor_processo?.sequencia}}</td>
-            <td></td>
           </tr>
         </tbody>
       </table>
@@ -52,35 +53,30 @@
 
     <tab key="SOLUCAO" label="Solução">
       <div class="row">
-        <div class="col-4">
-          <small class="d-block">Solução</small>
+        <div class="col-md-4">
+          <small class="d-block text-muted">Solução</small>
           <b>{{produto.descricao}}</b>
         </div>
-
-        <div class="col-4">
-          <small class="d-block">Unidade instituidora</small>
+        <div class="col-md-4">
+          <small class="d-block text-muted">Unidade instituidora</small>
           <b>{{produto.descricao}}</b>
         </div>
-
-        <div class="col-4">
-          <small class="d-block">Status da solução</small>
+        <div class="col-md-4">
+          <small class="d-block text-muted">Status da solução</small>
           <b>{{produto.descricao}}</b>
         </div>
       </div>
-
-      <div class="row">
-        <div class="col-4">
-          <small class="d-block">Descrição</small>
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <small class="d-block text-muted">Descrição</small>
           <b>{{produto.descricao}}</b>
         </div>
-
-        <div class="col-4">
-          <small class="d-block">Responsável</small>
+        <div class="col-md-4">
+          <small class="d-block text-muted">Responsável</small>
           <b>{{produto.descricao}}</b>
         </div>
-
-        <div class="col-4">
-          <small class="d-block">URL</small>
+        <div class="col-md-4">
+          <small class="d-block text-muted">URL</small>
           <b>{{produto.descricao}}</b>
         </div>
       </div>
@@ -109,7 +105,7 @@
       </table>
     </tab>
 
-    <tab key="PRODUTOS" label="Produtos relacionados">
+    <tab key="PRODUTOS" label="Insumos">
       <table class="table">
         <thead>
           <tr>
@@ -129,6 +125,5 @@
         </tbody>
       </table>
     </tab>
-
   </tabs>
 </ng-container>

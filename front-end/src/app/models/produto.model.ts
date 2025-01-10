@@ -9,6 +9,7 @@ import { Usuario } from "./usuario.model";
 export type ProdutoTipos = "produto" | "servico";
 
 export class Produto extends Base {
+  public identificador: number = 0;
   public nome: string = ""; /* Nome do produto */
   public responsavel_id: string = "";
   public responsavel?: Usuario;
