@@ -3,6 +3,7 @@
     (select)="onSelect($event)"
     [hasAdd]="this.isCurador"
     [hasEdit]="this.auth.hasPermissionTo('MOD_SOLUCOES_EDT')">
+    <toolbar *ngIf="!selectable"></toolbar>
     <filter 
         [deleted]="this.auth.hasPermissionTo('MOD_SOLUCOES_EXCL')" 
         [form]="filter" 
@@ -12,7 +13,17 @@
         [collapsed]="!selectable && filterCollapsed"
     >
         <div class="row">
-            <div class="col-md-12 busca-avancada">
+            <div class="col-md-4">  
+                <input-text 
+                    [size]="12" 
+                    label="Nome" 
+                    icon="bi bi-textarea-t" 
+                    [control]="filter!.controls.nome" 
+                    controlName="this.filter.nome" 
+                    [attr.maxlength]=250
+                ></input-text>
+            </div>
+            <div class="col-md-8 busca-avancada">
                <div class="busca-avancada-link"><a (click)="onBuscaAvancada()">Busca Avançada</a></div>
                <div class="busca-avancada-clear"><a (click)="this.onFilterClear()">Limpar filtros de busca</a></div>
                <div class="busca-avancada-filtros-aplicados">Filtros aplicados:
