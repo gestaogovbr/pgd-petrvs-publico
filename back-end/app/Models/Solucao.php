@@ -20,7 +20,7 @@ class Solucao extends ModelBase
     protected static function booted()
     {
         static::creating(function ($produto) {
-            $produto->identificador = DB::select("SELECT IFNULL(MAX(identificador), 0) + 1 AS proximo_numero FROM produtos;")[0]->proximo_numero;
+            $produto->identificador = DB::select("SELECT IFNULL(MAX(identificador), 0) + 1 AS proximo_numero FROM solucao_produtos_servicos;")[0]->proximo_numero;
         });
     }
 
