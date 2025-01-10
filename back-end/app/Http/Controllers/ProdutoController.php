@@ -44,7 +44,8 @@ class ProdutoController extends ControllerBase
             'GETBYID'=>true,
             'UPDATEJSON'=>$this->permissionPostUpdate($unidade, $request),
             'UPLOADBASE64'=>$this->permissionPostUpdate($unidade, $request),
-            'DESTROY'=>$this->permissionPostUpdate($unidade, $request)
+            'DESTROY'=>$this->permissionPostUpdate($unidade, $request),
+            default=>true
         };
     }
 
