@@ -52,4 +52,12 @@ class Solucao extends ModelBase
     {
         return $query->where('status', $status);
     }
+
+    public function solucoesUnidades(){
+        return $this->hasMany(SolucaoUnidade::class, 'id_solucao', 'id');
+    }
+
+    public function produtosSolucoes(){
+        return $this->hasMany(ProdutoSolucao::class, 'solucao_id', 'id');
+    }
 }
