@@ -25,7 +25,7 @@ export class ProdutoShowComponent extends PageBase {
   }
 
   public async carregaProdutoDetalhado(){
-    this.produto = await this.produtoDaoService.getById(this.metadata.produto.id, ["produtoProcessoCadeiaValor.cadeiaValorProcesso.cadeiaValor.unidade", "produtoProduto.produtoRelacionado.unidade"]);
+    this.produto = await this.produtoDaoService.getById(this.metadata.produto.id, ["produtoProcessoCadeiaValor.cadeiaValorProcesso.cadeiaValor.unidade", "produtoProduto.produtoRelacionado.unidade","responsavel", "unidade"]);
     this.loading = false;
   }
 }
