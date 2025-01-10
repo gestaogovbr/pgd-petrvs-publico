@@ -22,7 +22,7 @@ class Envio extends Model
     protected static function booted()
   {
     static::creating(function ($envio) {
-      $envio->numero = DB::selectOne('SELECT NEXTVAL(seq_envios) AS nextval')->nextval;
+      $envio->numero = DB::select("SELECT IFNULL(MAX(numero), 0) + 1 AS proximo_numero FROM envios;")[0]->proximo_numero;
     });
   }
 }
