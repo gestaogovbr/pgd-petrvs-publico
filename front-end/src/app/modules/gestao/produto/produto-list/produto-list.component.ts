@@ -41,7 +41,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
 
   public ngOnInit(): void {
     super.ngOnInit();
-    this.isSearching = this.queryParams.mode == 'search';
+    this.isSearching = (this.queryParams.mode == 'search') || (this.queryParams.mode == 'search-ativos');
     if (this.isSearching) {
       this.filter?.controls.status.setValue('ativo');
       this.saveUsuarioConfig();
@@ -165,7 +165,6 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     if (form.status && form.status == 'inativo') {
       result.push(["data_ativado", "==", null]);
     }
-    console.log(result);
 		return result;
 	};
 

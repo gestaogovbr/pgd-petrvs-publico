@@ -36,6 +36,7 @@
                     [dao]="clienteDao"
             ></input-search>  
             <input-select 
+                *ngIf="enableStatus"
                 [size]="12" 
                 label="Status"
                 [items]="lookup.TIPO_ATIVO_INATIVO" 

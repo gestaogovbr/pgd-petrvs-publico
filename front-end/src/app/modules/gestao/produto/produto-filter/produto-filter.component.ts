@@ -18,6 +18,7 @@ export class ProdutoFilterComponent extends PageFrameBase {
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
   public clienteDao: ClienteDaoService;
+  public enableStatus: boolean = true;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -47,6 +48,8 @@ export class ProdutoFilterComponent extends PageFrameBase {
     this.form?.controls.status.setValue(this.metadata.status)
     this.form?.controls.unidade_id.setValue(this.metadata.unidade)
     this.form?.controls.cliente_id.setValue(this.metadata.cliente)
+
+    this.enableStatus = (this.metadata.enableStatus == undefined) ? true : this.metadata.enableStatus;
   }
 
   public async onSubmitClick() {

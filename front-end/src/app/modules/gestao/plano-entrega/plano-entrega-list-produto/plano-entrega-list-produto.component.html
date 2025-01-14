@@ -27,15 +27,16 @@
       </ng-template>
       <ng-template let-row="row" #columnProduto>
         <div class="w-100 d-flex justify-content-center">
-          <p>{{row.produto.nome}}</p>
+          <p>{{row.produto?.nome}}</p>
         </div>
       </ng-template>
       <ng-template let-row="row" #editProduto>
-        <input-search #Produto label required  
+        <input-search 
+          #produto label required  
           [placeholder]="'Selecione o Produto'" 
           controlName="produto_id" 
           [dao]="produtoDao" 
-          [selectRoute]="{route: ['gestao', 'produto'], params: {mode: 'search'}}"
+          [selectRoute]="{route: ['gestao', 'produto'], params: {mode: 'search-ativos'}}"
         ></input-search>
       </ng-template>
     </column>

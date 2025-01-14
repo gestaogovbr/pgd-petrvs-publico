@@ -89,8 +89,8 @@ export class PlanoEntregaListProdutoComponent extends PageFrameBase {
     this.form!.markAllAsTouched();
     if(this.form!.valid) {
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
-      row.entrega_id = this.form!.controls.entrega_id.value;
-      row.produto_id = this.produto!.selectedEntity;
+      row.produto_id = this.form!.controls.produto_id.value;
+      row.produto = this.produto!.selectedEntity;
       result = row;
       this.cdRef.detectChanges();
     }
