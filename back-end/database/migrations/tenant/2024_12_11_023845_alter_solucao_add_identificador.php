@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
        Schema::table('solucao_produtos_servicos', function (Blueprint $table) {            
-            $table->bigInteger('identificador')->unsigned()->nullable(true)->change();
+            $table->bigInteger('identificador')->unsigned()->nullable(true);
             $table->unique(['identificador']);
         });
 

@@ -8,6 +8,7 @@ import { PlanoEntregaEntregaObjetivo } from './plano-entrega-entrega-objetivo.mo
 import { PlanoEntregaEntregaProcesso } from './plano-entrega-entrega-processo.model';
 import { PlanoEntrega } from './plano-entrega.model';
 import { PlanoTrabalhoEntrega } from './plano-trabalho-entrega.model';
+import { Produto } from './produto.model';
 import { HasReacoes, Reacao } from './reacao';
 import { Unidade } from './unidade.model';
 
@@ -25,6 +26,7 @@ export class PlanoEntregaEntrega extends Base implements HasAvaliacao, HasMetaRe
   public unidade?: Unidade;
   public objetivos: PlanoEntregaEntregaObjetivo[] = [];
   public processos: PlanoEntregaEntregaProcesso[] = [];
+  public produtos: Produto[] = [];
   public entregas_plano_trabalho?: PlanoTrabalhoEntrega[];
 
   public data_inicio: Date = new Date();

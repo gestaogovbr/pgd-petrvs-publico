@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('solucao_produtos_servicos', function (Blueprint $table) {
-            $table->bigInteger('identificador')->unsigned()->nullable(false);
+        Schema::table('entregas_produtos', function (Blueprint $table) {
+            $table->unique(['entrega_id', 'produto_id'], 'unique_entregas_produtos');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('solucao_produtos_servicos', function (Blueprint $table) {
-            $table->dropColumn(['identificador']);
+        Schema::table('entregas_produtos', function (Blueprint $table) {
+            $table->dropUnique('unique_entregas_produtos');
         });
     }
 };
