@@ -37,6 +37,8 @@ class ProdutoController extends ControllerBase
      */
     public function checkPermissions($action, $request, $service, $unidade, $usuario)
     {
+        if ($service->isLoggedUserADeveloper())  return true;
+        
          match($action){
             'STORE'=> $this->permissionPostUpdate($unidade, $request),
             'UPDATE'=> $this->permissionPostUpdate($unidade, $request),
@@ -51,7 +53,8 @@ class ProdutoController extends ControllerBase
 
     private function permissionPostUpdate($unidade,Request $request)
     {
-        if(!isset($request->input('entity')['responsavel_id'])) return true;
+        if (!isset($request->input('entity')['responsavel_id'])) return true;
+
         $responsavelId = $request->input('entity')['responsavel_id'];
         $usuario = Usuario::find($responsavelId);
         $curadores = $usuario->curadores()->where('unidade_id', $unidade->id)->get();

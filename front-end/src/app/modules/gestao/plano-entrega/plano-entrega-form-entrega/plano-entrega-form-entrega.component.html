@@ -106,38 +106,7 @@
       </grid>
     </tab>
     <tab key="PRODUTOS" label="Produtos">
-      <grid 
-        #gridProdutos 
-        editable 
-        [control]="form!.controls.produtos" 
-        [form]="formProdutos" 
-        [orderBy]="orderBy" 
-        [hasDelete]="true" 
-        [hasEdit]="true" 
-        [add]="addProduto.bind(this)" 
-        [remove]="removeProduto.bind(this)" 
-        [save]="saveProduto.bind(this)"
-      >
-        <columns>
-          <column [titleTemplate]="titleProdutos" [template]="produto" [editTemplate]="editProduto">
-            <ng-template let-header="header" #titleProdutos>
-              <order by="produto.nome" [header]="header">Produtos</order>
-            </ng-template>
-            <ng-template let-row="row" #produto>
-              <span>{{row.nome}}</span>
-            </ng-template>
-            <ng-template let-row="row" #editProduto>
-              <input-search [size]="12" 
-                #inputProduto
-                controlName="produto_id" 
-                [dao]="produtoDao" 
-                [selectRoute]="{route: ['gestao', 'produto']}"
-              ></input-search>
-            </ng-template>
-          </column>
-          <column type="options" [dynamicButtons]="dynamicButtonsProdutos.bind(this)"></column>
-        </columns>
-      </grid>
+      <plano-entrega-list-produto #produtos noPersist [entity]="entity"></plano-entrega-list-produto>
     </tab>
   </tabs>
 </editable-form>

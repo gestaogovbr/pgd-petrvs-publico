@@ -368,10 +368,11 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   }
 
   public async addProduto() {
-    return {
+    return Object.assign(new PlanoEntregaEntregaProduto(), {
+      _status: "ADD",
       id: this.dao!.generateUuid(),
-      _status: "ADD"
-    } as IIndexable;
+      entrega_id: '',
+    }) as IIndexable;
   }
 
   public async removeProduto(row: any) {

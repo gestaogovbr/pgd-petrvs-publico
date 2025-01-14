@@ -6,7 +6,7 @@ use App\Services\ServiceBase;
 class ProdutoService extends ServiceBase
 {
   public function proxyQuery($query, &$data){
-    $where = [];
+    $where = $data["where"];
     foreach ($data["where"] as $condition) {
       if (is_array($condition) && $condition[0] == "produtos_do_cliente") {
         // produtoCliente

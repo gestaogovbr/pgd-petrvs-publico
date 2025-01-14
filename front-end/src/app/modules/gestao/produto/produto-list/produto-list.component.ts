@@ -19,6 +19,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
   public isUpdating: boolean = false;
   public isChefe: boolean = false;
   public isCurador: boolean = false;
+  public isSearching: boolean = false;
 
   constructor(public injector: Injector, dao: ProdutoDaoService) {
     super(injector, Produto, ProdutoDaoService);
@@ -40,6 +41,11 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
 
   public ngOnInit(): void {
     super.ngOnInit();
+    this.isSearching = this.queryParams.mode == 'search';
+    if (this.isSearching) {
+      this.filter?.controls.status.setValue('ativo');
+      this.saveUsuarioConfig();
+    }
   }
 
   public dynamicButtons(row: Produto): ToolbarButton[] {
@@ -159,6 +165,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     if (form.status && form.status == 'inativo') {
       result.push(["data_ativado", "==", null]);
     }
+    console.log(result);
 		return result;
 	};
 
