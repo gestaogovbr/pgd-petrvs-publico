@@ -113,7 +113,8 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
         id: this.filter?.controls.id.value,
         status: this.filter?.controls.status.value,
         unidade_id: this.filter?.controls.unidade_id.value,
-        cliente_id: this.filter?.controls.cliente_id.value
+        cliente_id: this.filter?.controls.cliente_id.value,
+        enableStatus: (this.queryParams.mode != 'search-ativos')
       },
       modalClose: async (result) => {
         if (result && this.filter) {
