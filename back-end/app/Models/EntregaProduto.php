@@ -10,7 +10,7 @@ class EntregaProduto extends ModelBase
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'entrega_produto';
+    protected $table = 'entregas_produtos';
 
     protected $fillable = [
         'entrega_id', // FK para a entrega

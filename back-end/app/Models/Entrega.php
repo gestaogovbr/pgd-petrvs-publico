@@ -24,6 +24,8 @@ class Entrega extends ModelBase
     //'deleted_at', /* timestamp; */
   ];
 
+  public $fillable_changes = ['produtos'];
+
   protected $casts = [
     'lista_qualitativos' => AsJson::class,
     'checklist' => AsJson::class,
@@ -47,8 +49,6 @@ class Entrega extends ModelBase
 
     public function produtos()
     {
-        return $this->belongsToMany(Produto::class, 'entrega_produto')
-            ->withPivot('unidade_id')
-            ->withTimestamps();
+        return $this->belongsToMany(Produto::class, 'entregas_produtos', 'entrega_id', 'produto_id');
     }
 }
