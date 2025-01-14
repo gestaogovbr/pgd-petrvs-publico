@@ -103,7 +103,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
         ? [{ field: "unidade.sigla", label: "Unidade" }]
         : [];
       this.grid!.reloadFilter();
-    }
+    }    
   }
 
   public filterWhere = (filter: FormGroup) => {
@@ -189,47 +189,52 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
 
 
   public async ativarTodas() {
-    if (this.isUpdating) {
-      console.log("Aguarde o término do processo anterior");
-      return;
-    }
-    this.isUpdating = true;
+    this.confirm("Ativar todas as Soluções", "Deseja realmente ativar todas as Soluções?", async () => {
 
-    try {
-
-      let unidadeId: string | undefined = this.auth.unidade?.id;
-      if (unidadeId == undefined) {
+      if (this.isUpdating) {
+        console.log("Aguarde o término do processo anterior");
         return;
-      } 
-      await this.solucaoDao.ativarTodas(unidadeId);
-      this.loadingSolucoesUnidades();
-    }catch (error) {
-      console.error("Erro ao ativar as Soluções", error);
-    } finally {
-      this.isUpdating = false; 
-    }
+      }
+      this.isUpdating = true;
+
+      try {
+
+        let unidadeId: string | undefined = this.auth.unidade?.id;
+        if (unidadeId == undefined) {
+          return;
+        } 
+        await this.solucaoDao.ativarTodas(unidadeId);
+        this.loadingSolucoesUnidades();
+      }catch (error) {
+        console.error("Erro ao ativar as Soluções", error);
+      } finally {
+        this.isUpdating = false; 
+      }
+    })
   }
 
   public async desativarTodas() {
-    if (this.isUpdating) {
-      console.log("Aguarde o término do processo anterior");
-      return;
-    }
-    this.isUpdating = true;
-
-    try {
-
-      let unidadeId: string | undefined = this.auth.unidade?.id;
-      if (unidadeId == undefined) {
+    this.confirm("Desativar todas as Soluções", "Deseja realmente desativar todas as Soluções?", async () => {
+      if (this.isUpdating) {
+        console.log("Aguarde o término do processo anterior");
         return;
-      } 
-      await this.solucaoDao.desativarTodas(unidadeId);
-      this.loadingSolucoesUnidades();
-    }catch (error) {
-      console.error("Erro ao desativar as Soluções", error);
-    } finally {
-      this.isUpdating = false; 
-    }
+      }
+      this.isUpdating = true;
+
+      try {
+
+        let unidadeId: string | undefined = this.auth.unidade?.id;
+        if (unidadeId == undefined) {
+          return;
+        } 
+        await this.solucaoDao.desativarTodas(unidadeId);
+        this.loadingSolucoesUnidades();
+      }catch (error) {
+        console.error("Erro ao desativar as Soluções", error);
+      } finally {
+        this.isUpdating = false; 
+      }
+    });
   }
 
   public ativo(solucao: Solucao): boolean {
@@ -251,5 +256,11 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
       return null;
     }
     return this.solucoesUnidades[indice];
+  }
+
+  private confirm(title: string, message: string, onConfirm: () => void): void {
+    if (window.confirm(`${title}\n\n${message}`)) {
+      onConfirm();
+    }
   }
 }

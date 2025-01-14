@@ -34,12 +34,12 @@
         </div>
     </filter>
     <div class="row">
-        <div class="col-md-12 ativar-desativar">
+        <div class="col-md-12 ativar-desativar mt-3">
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-success" (click)="this.ativarTodas()">
+                <button type="button" class="btn btn-outline-success" (click)="this.ativarTodas()" [disabled]="isUpdating">
                     Ativar todas as Soluções
                 </button>
-                <button type="button" class="btn btn-outline-danger" (click)="this.desativarTodas()">
+                <button type="button" class="btn btn-outline-danger" (click)="this.desativarTodas()" [disabled]="isUpdating">
                     Desativar todas as Soluções
                 </button>
             </div>
