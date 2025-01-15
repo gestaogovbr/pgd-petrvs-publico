@@ -69,7 +69,7 @@
       <ul class="list-group list-group-flush">
         <li *ngFor="let pProduto of entrega?.produtos" class="list-group-item">
             <div class="d-flex justify-content-between align-items-center">
-              <small>{{pProduto.nome}}</small>
+              <small>{{pProduto.produto?.nome}}</small>
             </div>
           </li>
       </ul>

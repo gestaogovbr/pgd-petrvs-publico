@@ -31,9 +31,6 @@ import { Checklist } from 'src/app/models/atividade.model';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
-import { ProdutoDaoService } from 'src/app/dao/produto-dao.service';
-import { PlanoEntregaEntregaProduto } from 'src/app/models/plano-entrega-entrega-produto.model';
-import { Produto } from 'src/app/models/produto.model';
 
 @Component({
   selector: 'plano-entrega-form-entrega',
@@ -44,13 +41,11 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('gridProcessos', { static: false }) public gridProcessos?: GridComponent;
   @ViewChild('gridObjetivos', { static: false }) public gridObjetivos?: GridComponent;
-  @ViewChild('gridProdutos', { static: false }) public gridProdutos?: GridComponent;
   @ViewChild('entregas', { static: false }) public entregas?: EntregaFormComponent;
   @ViewChild('planejamento', { static: false }) public planejamento?: InputSearchComponent;
   @ViewChild('cadeiaValor', { static: false }) public cadeiaValor?: InputSearchComponent;
   @ViewChild('inputObjetivo', { static: false }) public inputObjetivo?: InputSearchComponent;
   @ViewChild('inputProcesso', { static: false }) public inputProcesso?: InputSearchComponent;
-  @ViewChild('inputProduto', { static: false }) public inputProduto?: InputSearchComponent;
   @ViewChild('entrega', { static: false }) public entrega?: InputSearchComponent;
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   @ViewChild('tabs', { static: false }) public tabs?: TabsComponent;
@@ -58,14 +53,12 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
 
   public planoEntrega?: PlanoEntrega;
   public planejamentoDao: PlanejamentoDaoService;
-  public produtoDao: ProdutoDaoService;
   public planejamentoId?: string;
   public cadeiaValorId?: string;
   public unidadeId?: string;
   public orderBy?: QueryOrderBy[];
   public formObjetivos: FormGroup;
   public formProcessos: FormGroup;
-  public formProdutos: FormGroup;
   public unidadeDao: UnidadeDaoService;
   public entregaDao: EntregaDaoService;
 
@@ -89,7 +82,6 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.entregaDao = injector.get<EntregaDaoService>(EntregaDaoService);
-    this.produtoDao = injector.get<ProdutoDaoService>(ProdutoDaoService);
     this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.planoEntregaEntregaDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
@@ -131,9 +123,6 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     }, this.cdRef, this.validate);
     this.formProcessos = this.fh.FormBuilder({
       cadeia_processo_id: { default: null },
-    }, this.cdRef, this.validate);
-    this.formProdutos = this.fh.FormBuilder({
-      produto_id: { default: null },
     }, this.cdRef, this.validate);
     this.formChecklist = this.fh.FormBuilder({
       id: { default: "" },
@@ -315,12 +304,6 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     return result;
   }
 
-  public dynamicButtonsProdutos(row: any): ToolbarButton[] {
-    let result: ToolbarButton[] = [];
-    let produto: Produto = row as Produto;
-    return result;
-  }
-
   public async addObjetivo() {
     return {
       id: this.dao!.generateUuid(),
@@ -363,29 +346,6 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       consolidado.cadeia_processo_id = form!.controls.cadeia_processo_id.value;
       consolidado.processo = this.inputProcesso!.selectedItem!.entity;
       return consolidado;
-    }
-    return undefined;
-  }
-
-  public async addProduto() {
-    return {
-      id: this.dao!.generateUuid(),
-      _status: "ADD"
-    } as IIndexable;
-  }
-
-  public async removeProduto(row: any) {
-    let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
-    if (confirm) row._status = "DELETE";
-    return false;
-  }
-
-  public async saveProduto(form: FormGroup, row: any) {
-    let item = row as PlanoEntregaEntregaProduto;
-    if (form!.controls.produto_id.value.length && this.inputProduto!.selectedItem) {
-      item.produto_id = form!.controls.produto_id.value;
-      item.produto = this.inputProduto!.selectedItem!.entity;
-      return item;
     }
     return undefined;
   }
