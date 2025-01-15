@@ -2,6 +2,7 @@ import { Component, ViewChild, Input, ChangeDetectorRef, Injector } from "@angul
 import { AbstractControl, FormGroup } from "@angular/forms";
 import { EditableFormComponent } from "src/app/components/editable-form/editable-form.component";
 import { GridComponent } from "src/app/components/grid/grid.component";
+import { InputSearchComponent } from "src/app/components/input/input-search/input-search.component";
 import { InputSelectComponent } from "src/app/components/input/input-select/input-select.component";
 import { ClienteDaoService } from "src/app/dao/cliente-dao.service";
 import { ProdutoDaoService } from "src/app/dao/produto-dao.service";
@@ -22,7 +23,7 @@ import { LookupItem } from "src/app/services/lookup.service";
 export class ProdutoListProdutoComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-  @ViewChild('produtoRelacionado', { static: false }) public produtoRelacionado?: InputSelectComponent;
+  @ViewChild('produtoRelacionado', { static: false }) public produtoRelacionado?: InputSearchComponent;
 
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Produto | undefined) { super.entity = value; } get entity(): Produto | undefined { return super.entity; }
@@ -98,7 +99,7 @@ export class ProdutoListProdutoComponent extends PageFrameBase {
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
       row.produto_id = this.form!.controls.produto_id.value;
       row.tipo = this.form!.controls.tipo.value;
-      row.produto_relacionado = this.produtoRelacionado!.selectedItem?.data;
+      row.produto_relacionado = this.produtoRelacionado?.selectedEntity;
       result = row;
       this.cdRef.detectChanges();
     }
