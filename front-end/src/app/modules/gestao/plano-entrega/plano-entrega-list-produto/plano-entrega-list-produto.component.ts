@@ -1,18 +1,13 @@
 import { ChangeDetectorRef, Component, Injector, Input, ViewChild } from "@angular/core";
-import { AbstractControl, FormGroup } from "@angular/forms";
+import { AbstractControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from "@angular/forms";
 import { EditableFormComponent } from "src/app/components/editable-form/editable-form.component";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { InputSearchComponent } from "src/app/components/input/input-search/input-search.component";
-import { PlanoEntregaEntregaDaoService } from "src/app/dao/plano-entrega-entrega-dao.service";
 import { PlanoEntregaEntregaProdutoDaoService } from "src/app/dao/plano-entrega-entrega-produto-dao.service";
 import { ProdutoDaoService } from "src/app/dao/produto-dao.service";
-import { ProdutoSolucaoDaoService } from "src/app/dao/produto-solucao-dao.service";
-import { SolucaoDaoService } from "src/app/dao/solucao-dao.service";
 import { IIndexable } from "src/app/models/base.model";
 import { PlanoEntregaEntregaProduto } from "src/app/models/plano-entrega-entrega-produto.model";
 import { PlanoEntregaEntrega } from "src/app/models/plano-entrega-entrega.model";
-import { ProdutoSolucao } from "src/app/models/produto-solucao.model";
-import { Produto } from "src/app/models/produto.model";
 import { PageFrameBase } from "src/app/modules/base/page-frame-base";
 
 @Component({
@@ -48,23 +43,41 @@ export class PlanoEntregaListProdutoComponent extends PageFrameBase {
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
 
     this.form = this.fh.FormBuilder({
-      produto_id: { default: "" },
-    }, this.cdRef);
+      produto_id: { 
+        default: ""
+      },
+    }, this.cdRef, this.validate);
     this.join = ["produto"];
   }
 
+  public validate = (control: AbstractControl, controlName: string): string | null => {
+    let result = null;
+
+    if(['produto_id'].indexOf(controlName) >= 0) { 
+      if (!control.value?.length) {
+        result = "Obrigatório";
+      } else {
+        const isDuplicate = this.items.some(item => item.produto_id === control.value);
+
+        if (isDuplicate) {
+          result = 'Já cadastrado';
+        }
+      } 
+    }
+
+    return result;
+  }
 
   public async addProduto() {
-    return Object.assign(new PlanoEntregaEntregaProduto(), {
-      _status: "ADD",
+    return {
       id: this.dao!.generateUuid(),
-      entrega_id: '',
-    }) as IIndexable;
+      _status: "ADD"
+    } as IIndexable;
   }
 
   public async loadProduto(form: FormGroup, row: any) {
-    let prodto: PlanoEntregaEntregaProduto = row;
-    if (prodto._status != "ADD") {
+    let produto: PlanoEntregaEntregaProduto = row;
+    if (produto._status != "ADD") {
       form.controls.entrega_id.setValue(row.entrega_id);
     }
   }
@@ -92,6 +105,7 @@ export class PlanoEntregaListProdutoComponent extends PageFrameBase {
       row.produto_id = this.form!.controls.produto_id.value;
       row.produto = this.produto!.selectedEntity;
       result = row;
+      console.log(row);
       this.cdRef.detectChanges();
     }
     return result;
