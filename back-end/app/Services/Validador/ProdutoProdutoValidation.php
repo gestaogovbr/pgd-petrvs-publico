@@ -24,7 +24,16 @@ class ProdutoProdutoValidation extends BaseValidador
         }
         foreach ($produtoProdutos as $produtoProduto) {
             $validator = Validator::make($produtoProduto, [
-                'produto_id' => 'required|uuid|exists:produtos,id',
+                'produto_id' => [
+                    'required',
+                    'uuid',
+                    'exists:produtos,id',
+                    function ($attribute, $value, $fail) use ($produtoProduto) {
+                        if ($value === $produtoProduto['produto_base_id']) {
+                            $fail('O campo :attribute deve ser diferente do produto_base_id.');
+                        }
+                    },
+                ],
             ]);
 
             if ($validator->fails()) {
