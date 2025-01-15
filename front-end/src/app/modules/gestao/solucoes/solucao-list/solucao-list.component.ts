@@ -1,4 +1,4 @@
-import { Component, Injector, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component, Injector, ViewChild } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
@@ -205,6 +205,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
         } 
         await this.solucaoDao.ativarTodas(unidadeId);
         this.loadingSolucoesUnidades();
+        this.grid?.reloadFilter();
       }catch (error) {
         console.error("Erro ao ativar as Soluções", error);
       } finally {
@@ -226,9 +227,10 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
         let unidadeId: string | undefined = this.auth.unidade?.id;
         if (unidadeId == undefined) {
           return;
-        } 
+        }
         await this.solucaoDao.desativarTodas(unidadeId);
         this.loadingSolucoesUnidades();
+        this.grid?.reloadFilter();
       }catch (error) {
         console.error("Erro ao desativar as Soluções", error);
       } finally {
@@ -240,12 +242,9 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
   public ativo(solucao: Solucao): boolean {
     let unidadeId = this.auth.unidade?.id;
     let solucaoUnidade = this.getSolucaoUnidade(solucao.id, unidadeId);
-    console.log(solucaoUnidade);
     if (!solucaoUnidade) {
       return false;
     }
-    console.log(solucaoUnidade.status);
-    
     return solucaoUnidade.status;
   }
 

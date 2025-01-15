@@ -3,7 +3,20 @@
     (select)="onSelect($event)"
     [hasAdd]="this.isCurador"
     [hasEdit]="this.auth.hasPermissionTo('MOD_SOLUCOES_EDT')">
-    <toolbar *ngIf="!selectable"></toolbar>
+    <toolbar *ngIf="!selectable">
+        <button type="button" class="btn btn-outline-success" 
+            (click)="this.ativarTodas()" 
+            [disabled]="isUpdating"
+            *ngIf="(this.grid?.items?.length ?? 0 == 0)"
+        >Ativar todas as Soluções
+        </button>
+        <button type="button" class="btn btn-outline-danger" 
+            (click)="this.desativarTodas()" 
+            [disabled]="isUpdating && this.grid?.items?.length"
+            *ngIf="(this.grid?.items?.length ?? 0 == 0)"
+        >Desativar todas as Soluções
+        </button>
+    </toolbar>
     <filter 
         [deleted]="this.auth.hasPermissionTo('MOD_SOLUCOES_EXCL')" 
         [form]="filter" 
@@ -33,18 +46,7 @@
             </div>
         </div>
     </filter>
-    <div class="row">
-        <div class="col-md-12 ativar-desativar mt-3">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-success" (click)="this.ativarTodas()" [disabled]="isUpdating">
-                    Ativar todas as Soluções
-                </button>
-                <button type="button" class="btn btn-outline-danger" (click)="this.desativarTodas()" [disabled]="isUpdating">
-                    Desativar todas as Soluções
-                </button>
-            </div>
-        </div>
-    </div> 
+    
     <columns>
         <column title="ID#" [template]="columnID">
             <ng-template let-row="row" #columnID>
@@ -70,7 +72,14 @@
         </column>
         <column title="Ativar/Desativar para a sua unidade" [template]="columnAtivar">
             <ng-template let-row="row" #columnAtivar>
-                <input-switch [size]="12" scale="small"  [value]="ativo(row) ? 'true' : 'false'" [valueOn]="'true'"  [valueOff]="'false'" (change)="ativarDesativar(row)"></input-switch>
+                <input-switch 
+                    [size]="12" 
+                    scale="small" 
+                    [value]="ativo(row) ? 'true' : 'false'" 
+                    [valueOn]="'true'"  
+                    [valueOff]="'false'" 
+                    (change)="ativarDesativar(row)"
+                ></input-switch>
             </ng-template>
         </column>
         
