@@ -17,7 +17,8 @@ class ProdutoProdutoValidation extends BaseValidador
         if(!isset($entity['produto_produto'])){
             return [];
         }
-        $produtoProdutos = $entity['produto_produto'];
+        $produtoProdutos =  $entity['produto_produto'];
+        $id = $this->getTipo() === self::TIPO_STORE ? $entity['id'] : 0;
         
         if(empty($produtoProdutos)){
             return [];
@@ -28,8 +29,8 @@ class ProdutoProdutoValidation extends BaseValidador
                     'required',
                     'uuid',
                     'exists:produtos,id',
-                    function ($attribute, $value, $fail) use ($produtoProduto) {
-                        if ($value === $produtoProduto['produto_base_id']) {
+                    function ($attribute, $value, $fail) use ($id) {
+                        if ($value === $id) {
                             $fail('O campo :attribute deve ser diferente do produto_base_id.');
                         }
                     },
