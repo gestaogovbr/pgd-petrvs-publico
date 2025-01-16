@@ -71,6 +71,11 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     super.ngOnInit();
 
     this.isSearching = this.queryParams.mode == 'search';
+    if (this.isSearching) {
+      this.filter?.controls.status.setValue('ativo');
+      this.saveUsuarioConfig();
+    }
+    
     this.loadingSolucoesUnidades();
   }
 
@@ -121,8 +126,12 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     if (form.unidade_id?.length) {
       result.push(["unidade_id", "==", form.unidade_id]);
     }
-    if (form.status) {
-      result.push(["status", "==", form.status]);
+    if (form.status == 'ativo') {
+      result.push(["unidade_ativa", "==", this.auth.unidade?.id]);
+    }
+
+    if (form.status == 'inativo') {
+      result.push(["unidade_inativa", "==", this.auth.unidade?.id]);
     }
     
     return result;
@@ -133,11 +142,13 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
       metadata: {
         nome: this.filter?.controls.nome.value,
         id: this.filter?.controls.id.value,
+        status: this.filter?.controls.status.value,
       },
       modalClose: async (result) => {
         if (result && this.filter) {
           this.filter?.controls.nome.setValue(result.nome);
           this.filter?.controls.id.setValue(result.id);
+          this.filter?.controls.status.setValue(result.status);
           this.grid!.reloadFilter();
         }
       },
