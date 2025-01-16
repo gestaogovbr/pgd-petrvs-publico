@@ -29,6 +29,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
   public isUpdating: boolean = false;
   public isSearching: boolean = false;
   public solucoesUnidades: SolucaoUnidade[] = [];
+  public isActive: { [key: string]: boolean } = {};
 
   constructor(public injector: Injector, dao: SolucaoDaoService) {
     super(injector, Solucao, SolucaoDaoService);
@@ -82,6 +83,12 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
   public async loadingSolucoesUnidades() {
     let unidadeId: string | undefined = this.auth.unidade?.id;
     this.solucoesUnidades = await this.solucaoUnidadeDao?.query({ where: [['id_unidade', '==', unidadeId]] }).asPromise();
+  
+    Object.keys(this.isActive).forEach(key => delete this.isActive[key]);
+
+    this.solucoesUnidades.forEach(row => {
+      this.isActive[row.id_solucao] = this.ativo(row.id_solucao);
+    });
   }
 
   public dynamicButtons(row: Solucao): ToolbarButton[] {
@@ -160,22 +167,18 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     this.grid!.reloadFilter();
   }
 
-  public async ativarDesativar(solucao: Solucao) {
-    if (this.isUpdating) {
-      console.log("Aguarde o término do processo anterior");
-      return;
-    }
-    this.isUpdating = true;
+  public async ativarDesativar(solucao: Solucao, event: any) {
+    
+    this.loading = true;
 
     try {
-
       let unidadeId: string | undefined = this.auth.unidade?.id;
       if (unidadeId == undefined) {
         return;
       }
       let solucaoUnidade = this.getSolucaoUnidade(solucao.id, unidadeId);
       if(solucaoUnidade !== null){
-         let ativo = this.ativo(solucao);
+         let ativo = this.ativo(solucao.id);
          let solucaoUnidadeCarregada = await this.solucaoUnidadeDao.update(solucaoUnidade.id, {
           id: solucaoUnidade.id,
           status: !ativo
@@ -183,31 +186,29 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
          let solucaoUnidadeId = solucaoUnidade.id;
          this.solucoesUnidades = this.solucoesUnidades.filter(solucaoU => solucaoU.id != solucaoUnidadeId);
          this.solucoesUnidades.push(solucaoUnidadeCarregada);
-         return;
+         this.isActive[solucao.id] = !ativo;
+      } else {
+        solucaoUnidade = new SolucaoUnidade();
+        solucaoUnidade.id_solucao = solucao.id;
+        solucaoUnidade.id_unidade = unidadeId;
+        let solucaoUnidadeCarregada = await this.solucaoUnidadeDao?.save(solucaoUnidade);
+        this.solucoesUnidades.push(solucaoUnidadeCarregada);
+        this.isActive[solucao.id] = true;
       }
-      
-      solucaoUnidade = new SolucaoUnidade();
-      solucaoUnidade.id_solucao = solucao.id;
-      solucaoUnidade.id_unidade = unidadeId;
-      let solucaoUnidadeCarregada = await this.solucaoUnidadeDao?.save(solucaoUnidade);
-      this.solucoesUnidades.push(solucaoUnidadeCarregada);
     } catch (error) {
       console.error("Erro ao atualizar o produto", error);
     } finally {
       this.isUpdating = false; 
+      this.loading = false;
     }
   }
 
 
   public async ativarTodas() {
+
     this.confirm("Ativar todas as Soluções", "Deseja realmente ativar todas as Soluções?", async () => {
 
-      if (this.isUpdating) {
-        console.log("Aguarde o término do processo anterior");
-        return;
-      }
-      this.isUpdating = true;
-
+      this.loading = true;
       try {
 
         let unidadeId: string | undefined = this.auth.unidade?.id;
@@ -216,22 +217,19 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
         } 
         await this.solucaoDao.ativarTodas(unidadeId);
         this.loadingSolucoesUnidades();
-        this.grid?.reloadFilter();
       }catch (error) {
         console.error("Erro ao ativar as Soluções", error);
       } finally {
         this.isUpdating = false; 
+        this.loading = false;
       }
     })
   }
 
   public async desativarTodas() {
     this.confirm("Desativar todas as Soluções", "Deseja realmente desativar todas as Soluções?", async () => {
-      if (this.isUpdating) {
-        console.log("Aguarde o término do processo anterior");
-        return;
-      }
-      this.isUpdating = true;
+      
+      this.loading = true;
 
       try {
 
@@ -241,22 +239,23 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
         }
         await this.solucaoDao.desativarTodas(unidadeId);
         this.loadingSolucoesUnidades();
-        this.grid?.reloadFilter();
       }catch (error) {
         console.error("Erro ao desativar as Soluções", error);
       } finally {
         this.isUpdating = false; 
+        this.loading = false;
       }
     });
   }
 
-  public ativo(solucao: Solucao): boolean {
+  public ativo(solucaoId: string): boolean {
     let unidadeId = this.auth.unidade?.id;
-    let solucaoUnidade = this.getSolucaoUnidade(solucao.id, unidadeId);
+    let solucaoUnidade = this.getSolucaoUnidade(solucaoId, unidadeId);
     if (!solucaoUnidade) {
       return false;
     }
-    return solucaoUnidade.status;
+    
+    return solucaoUnidade.status ? true : false;
   }
 
   private getSolucaoUnidade(solucaoId: string, unidadeId: string | undefined): SolucaoUnidade | null {

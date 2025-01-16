@@ -67,8 +67,10 @@
         </column>
         <column title="Status" [template]="columnStatus" *ngIf="!this.isSearching">
             <ng-template let-row="row" #columnStatus>
-                <badge *ngIf="ativo(row)" color="success" label="Ativo"></badge>
-                <badge *ngIf="!ativo(row)" color="danger" label="Inativo"></badge>
+                <badge 
+                    [color]="isActive[row.id] ? 'success' : 'danger'" 
+                    [label]="isActive[row.id] ? 'Ativo' : 'Inativo'">
+                </badge>
             </ng-template>
         </column>
         <column title="Ativar/Desativar para a sua unidade" [template]="columnAtivar" *ngIf="!this.isSearching">
@@ -76,10 +78,10 @@
                 <input-switch 
                     [size]="12" 
                     scale="small" 
-                    [value]="ativo(row) ? 'true' : 'false'" 
+                    [value]="isActive[row.id] ? 'true' : 'false'" 
                     [valueOn]="'true'"  
-                    [valueOff]="'false'" 
-                    (change)="ativarDesativar(row)"
+                    [valueOff]="'false'"
+                    (change)="ativarDesativar(row, $event)"
                 ></input-switch>
             </ng-template>
         </column>
