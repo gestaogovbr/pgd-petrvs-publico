@@ -22,6 +22,7 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
   
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
+  public campoDesabilitado: boolean = false;
   
   constructor(public injector: Injector) {
     super(injector, Produto, ProdutoDaoService);
@@ -51,6 +52,8 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
     let formValue = Object.assign({}, form.value);
     entity.unidade_id = entity.unidade?.id || this.auth.unidade!.id;
     entity.responsavel_id = entity.responsavel?.id || this.auth.usuario!.id;
+
+    this.campoDesabilitado = entity._metadata?.vinculoEntregas == 1;
 
     form.patchValue(this.util.fillForm(formValue, entity));
   }

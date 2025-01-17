@@ -18,4 +18,14 @@ class ProdutoService extends ServiceBase
     $data["where"] = $where;
     return $data;
   }
+
+  public function proxyRows($rows)
+  {
+    foreach ($rows as $row) {
+      $row->_metadata = [
+        "vinculoEntregas" => $row->entregas->count(),
+      ];
+    }
+    return $rows;  
+  }
 }

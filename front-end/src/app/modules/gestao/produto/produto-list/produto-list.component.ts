@@ -21,6 +21,8 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
   public isCurador: boolean = false;
   public isSearching: boolean = false;
 
+  public BOTAO_EXCLUIR: ToolbarButton;
+
   constructor(public injector: Injector, dao: ProdutoDaoService) {
     super(injector, Produto, ProdutoDaoService);
     this.produtoService = injector.get<ProdutoService>(ProdutoService);
@@ -37,6 +39,8 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     ];
     this.isChefe = this.auth.isUsuarioDeveloper() || this.auth.isGestorAlgumaAreaTrabalho(false);
     this.isCurador = this.auth.isUsuarioCurador();
+
+    this.BOTAO_EXCLUIR = { label: "Excluir", icon: "bi bi-trash", onClick: this.delete.bind(this), color: 'btn-outline-danger' };
   }
 
   public ngOnInit(): void {
@@ -51,9 +55,18 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
   public dynamicButtons(row: Produto): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });   
+
+    if (row._metadata?.vinculoEntregas != 1 && this.isChefe) {
+      result.push(this.BOTAO_EXCLUIR);
+    }
     
     return result;
   }
+
+  public dynamicOptions(row: Produto): ToolbarButton[] {
+      let result: ToolbarButton[] = [];
+      return result;
+    }
 
   public async showDetalhes(produto: Produto){
     this.go.navigate({route: ['gestao', 'produto', produto.id, "show"]}, {
@@ -86,7 +99,6 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
         
       }
       if(error.validationErrors){
-        console.log(error.status);
         let validationErrors  = error.validationErrors;
         messageError = "";
         Object.keys(validationErrors).forEach((key) => {

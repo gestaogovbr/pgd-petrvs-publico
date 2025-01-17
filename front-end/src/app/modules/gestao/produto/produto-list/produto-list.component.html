@@ -2,7 +2,6 @@
     [selectable]="selectable" (select)="onSelect($event)"
     [hasAdd]="this.isChefe"
     [hasEdit]="this.isChefe"
-    [hasDelete]="this.isChefe"
 >
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
@@ -51,10 +50,10 @@
         <column title="Ativar/Desativar" [template]="columnAtivar" *ngIf="isCurador && !this.isSearching">
             <ng-template let-row="row" #columnAtivar>
                 <input-switch  [value]="ativo(row) ? 'true' : 'false'" [valueOn]="'true'"  [valueOff]="'false'" (change)="ativarDesativar(row)"></input-switch>
-            </ng-template>
-          </column>
+            </ng-template>  
+        </column>
         
-        <column type="options" [onEdit]="edit" [options]="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+        <column type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>
