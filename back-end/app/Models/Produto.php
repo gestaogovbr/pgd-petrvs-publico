@@ -105,9 +105,7 @@ class Produto  extends ModelBase
 
     public function entregas()
     {
-        return $this->belongsToMany(Entrega::class, 'entrega_produto')
-            ->withPivot('unidade_id')
-            ->withTimestamps();
+        return $this->belongsToMany(PlanoEntregaEntrega::class, 'planos_entregas_entregas_produtos', 'produto_id', 'entrega_id');
     }
 
     public function responsavel(){

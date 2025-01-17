@@ -97,6 +97,6 @@ class PlanoEntregaEntrega extends ModelBase
   
   public function produtos()
   {
-    return $this->hasMany(PlanoEntregaEntregaProduto::class, 'produto_id');
+    return $this->hasMany(PlanoEntregaEntregaProduto::class, 'entrega_id');
   }
 }
