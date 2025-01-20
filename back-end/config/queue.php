@@ -89,6 +89,7 @@ return [
             'queue' => 'pgd_queue',
             'retry_after' => 60 * 60 * 4,
             'block_for' => null,
+            'tries' => 1,
             'after_commit' => false,
             'timeout' => 60 * 60 * 3
         ]

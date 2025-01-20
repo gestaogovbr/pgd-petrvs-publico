@@ -1,3 +1,12 @@
+## 2.3.4 03/01/2024
+### Adicionado
+ - Adicionada opção parta forçar Envio imediato
+ - Adicionado número do Envio ao PGD
+### Modificado
+ - Otimizações no envio ao PGD
+ - Melhoria na identificação dos Jobs de Envio
+### Corrigido
+ - Correção na atualização dos vínculos com unidade pai de uma unidade modificada via SIAPE
 ## 2.3.3 18/12/2024
 ### Adicionado
  - Adição da Unidade Autorizadora no Painel
