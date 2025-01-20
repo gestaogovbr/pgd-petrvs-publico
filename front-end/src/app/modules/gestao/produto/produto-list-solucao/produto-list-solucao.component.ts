@@ -6,6 +6,7 @@ import { InputSearchComponent } from "src/app/components/input/input-search/inpu
 import { ProdutoDaoService } from "src/app/dao/produto-dao.service";
 import { ProdutoSolucaoDaoService } from "src/app/dao/produto-solucao-dao.service";
 import { SolucaoDaoService } from "src/app/dao/solucao-dao.service";
+import { SolucaoUnidadeDaoService } from "src/app/dao/solucao-unidade-dao.service";
 import { IIndexable } from "src/app/models/base.model";
 import { ProdutoSolucao } from "src/app/models/produto-solucao.model";
 import { Produto } from "src/app/models/produto.model";
@@ -29,6 +30,7 @@ export class ProdutoListSolucaoComponent extends PageFrameBase {
 
   public produtoDao?: ProdutoDaoService;
   public solucaoDao?: SolucaoDaoService;
+  public solucaoUnidadeDao?: SolucaoUnidadeDaoService;
 
   public get items(): ProdutoSolucao[] {
     if (!this.gridControl.value) this.gridControl.setValue(new ProdutoSolucao());
@@ -46,11 +48,43 @@ export class ProdutoListSolucaoComponent extends PageFrameBase {
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
 
     this.form = this.fh.FormBuilder({
-      solucao_id: { default: "" },
-    }, this.cdRef);
+      solucao_id: { 
+        default: "",
+        async: true
+      },
+    }, this.cdRef, undefined, this.asyncValidate);
     this.join = ["produtoSolucao.solucao"];
   }
 
+  public asyncValidate = async (control: AbstractControl, controlName: string): Promise<string | null> => {
+    let result = null;
+
+    if (['solucao_id'].indexOf(controlName) >= 0) {
+        if (!control.value?.length) {
+            result = "Obrigatório";
+        } else {
+            const isDuplicate = this.items.some(item => item.solucao_id === control.value);
+
+            if (isDuplicate) {
+                result = 'Solução já inserida neste Produto';
+            } else {
+                try {
+                    const solucao = await this.solucaoDao?.getById(control.value);
+                    const solucaoUnidade = await this.solucaoUnidadeDao?.getOne(control.value, this.auth?.unidade?.id as string).asPromise();
+  
+                    console.log(solucaoUnidade);
+                    if (!solucaoUnidade || !solucaoUnidade[0] || !solucaoUnidade[0].status) {
+                      result = 'Solução inativa não pode ser usada';
+                    }
+                } catch (error) {
+                    result = 'Erro ao verificar a Solução';
+                }
+            }
+        }
+    }
+
+    return result;
+  }
 
   public async addSolucao() {
     return Object.assign(new ProdutoSolucao(), {

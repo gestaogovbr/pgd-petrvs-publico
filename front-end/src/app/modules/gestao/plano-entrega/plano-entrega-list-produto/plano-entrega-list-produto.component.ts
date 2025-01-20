@@ -44,25 +44,35 @@ export class PlanoEntregaListProdutoComponent extends PageFrameBase {
 
     this.form = this.fh.FormBuilder({
       produto_id: { 
-        default: ""
+        default: "",
+        async: true
       },
-    }, this.cdRef, this.validate);
+    }, this.cdRef, undefined, this.asyncValidate);
     this.join = ["produto"];
   }
 
-  public validate = (control: AbstractControl, controlName: string): string | null => {
+  public asyncValidate = async (control: AbstractControl, controlName: string): Promise<string | null> => {
     let result = null;
 
-    if(['produto_id'].indexOf(controlName) >= 0) { 
-      if (!control.value?.length) {
-        result = "Obrigatório";
-      } else {
-        const isDuplicate = this.items.some(item => item.produto_id === control.value);
+    if (['produto_id'].indexOf(controlName) >= 0) {
+        if (!control.value?.length) {
+            result = "Obrigatório";
+        } else {
+            const isDuplicate = this.items.some(item => item.produto_id === control.value);
 
-        if (isDuplicate) {
-          result = 'Já cadastrado';
+            if (isDuplicate) {
+                result = 'Produto já inserido nesta entrega';
+            } else {
+                try {
+                    const produto = await this.produtoDao?.getById(control.value);
+                    if (!produto?.data_ativado) {
+                      result = 'Produto inativo não pode ser usado';
+                    }
+                } catch (error) {
+                    result = 'Erro ao verificar o produto';
+                }
+            }
         }
-      } 
     }
 
     return result;
