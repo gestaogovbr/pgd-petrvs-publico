@@ -183,6 +183,6 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
 
 
   public ativo(produto: Produto): boolean {
-    return produto.data_ativado instanceof Date;
+    return !produto.data_desativado;
   }
 }

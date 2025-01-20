@@ -43,43 +43,31 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let processo of produto.produto_processo_cadeia_valor">
-            <th>{{processo.cadeia_valor_processo?.nome}}</th>
-            <td>{{processo.cadeia_valor_processo?.sequencia}}</td>
+          <tr *ngFor="let produto of produto.produto_cliente">
+            <th>{{produto.cliente?.tipo_cliente?.nome}}</th>
+            <td>{{produto.cliente?.nome}}</td>
           </tr>
         </tbody>
       </table>
     </tab>
 
-    <tab key="SOLUCAO" label="Solução">
-      <div class="row">
-        <div class="col-md-4">
-          <small class="d-block text-muted">Solução</small>
-          <b>{{produto.descricao}}</b>
-        </div>
-        <div class="col-md-4">
-          <small class="d-block text-muted">Unidade instituidora</small>
-          <b>{{produto.descricao}}</b>
-        </div>
-        <div class="col-md-4">
-          <small class="d-block text-muted">Status da solução</small>
-          <b>{{produto.descricao}}</b>
-        </div>
-      </div>
-      <div class="row mt-3">
-        <div class="col-md-4">
-          <small class="d-block text-muted">Descrição</small>
-          <b>{{produto.descricao}}</b>
-        </div>
-        <div class="col-md-4">
-          <small class="d-block text-muted">Responsável</small>
-          <b>{{produto.descricao}}</b>
-        </div>
-        <div class="col-md-4">
-          <small class="d-block text-muted">URL</small>
-          <b>{{produto.descricao}}</b>
-        </div>
-      </div>
+    <tab key="SOLUCAO" label="Soluções">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Sigla/Nome Fantasia</th>
+            <th scope="col">Descrição</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let solucao of produto.produto_solucoes">
+            <th>{{solucao.solucao?.nome}}</th>
+            <th>{{solucao.solucao?.sigla}}</th>
+            <td>{{solucao.solucao?.descricao}}</td>
+          </tr>
+        </tbody>
+      </table>
     </tab>
 
     <tab key="PROCESSOS" label="Processos">
@@ -105,14 +93,14 @@
       </table>
     </tab>
 
-    <tab key="PRODUTOS" label="Insumos">
+    <tab key="PRODUTOS" label="Produtos/Serviços relacionados">
       <table class="table">
         <thead>
           <tr>
-            <th scope="col">Produto/Serviço</th>
+            <th scope="col">Nome</th>
             <th scope="col">Tipo</th>
             <th scope="col">Unidade</th>
-            <th scope="col">Detalhes</th>
+            <th scope="col">Descrição</th>
           </tr>
         </thead>
         <tbody>

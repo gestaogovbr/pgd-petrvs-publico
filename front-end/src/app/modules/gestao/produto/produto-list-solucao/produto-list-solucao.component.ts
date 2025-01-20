@@ -70,7 +70,7 @@ export class ProdutoListSolucaoComponent extends PageFrameBase {
             } else {
                 try {
                     const solucao = await this.solucaoDao?.getById(control.value);
-                    const solucaoUnidade = await this.solucaoUnidadeDao?.getOne(control.value, this.auth?.unidade?.id as string).asPromise();
+                    const solucaoUnidade = await this.solucaoUnidadeDao?.getOne(control.value, this.entity?.unidade?.id as string).asPromise();
   
                     console.log(solucaoUnidade);
                     if (!solucaoUnidade || !solucaoUnidade[0] || !solucaoUnidade[0].status) {

@@ -100,7 +100,7 @@ class Produto  extends ModelBase
 
     public function solucoes()
     {
-        return $this->belongsToMany(Solucao::class, 'produto_solucao', 'produto_id', 'solucao_id');
+        return $this->belongsToMany(Solucao::class, 'produtos_solucoes', 'produto_id', 'solucao_id');
     }
 
     public function entregas()
