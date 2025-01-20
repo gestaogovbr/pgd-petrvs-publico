@@ -463,6 +463,14 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_AUDIT_DEL", "Permite visualizar registros deletados"],
         ["MOD_AUDIT_LOG", "Permite visualizar logs das tabelas"]
       ]
+    ], [
+      "codigo" => "MOD_CLI",
+      "descricao" => "Módulo de Clientes",
+      "capacidades" => [
+        ["MOD_CLI_EDT", "Permite editar clientes"],
+        ["MOD_CLI_EXCL", "Permite excluir clientes"],
+        ["MOD_CLI_INCL", "Permite incluir clientes"]
+      ]
     ]
   ];
 

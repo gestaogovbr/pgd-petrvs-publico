@@ -63,6 +63,7 @@ import { OcorrenciaDaoService } from '../dao/ocorrencia-dao.service';
 import { DisciplinaDaoService } from '../dao/disciplina-dao.service';
 import { SolucaoDaoService } from '../dao/solucao-dao.service';
 import { EnvioDaoService } from '../dao/envio-dao.service';
+import { ClienteDaoService } from '../dao/cliente-dao.service';
 
 export type EntityItem = {
   collection: string,
@@ -97,6 +98,7 @@ export class EntityService {
       { collection: 'Capacidade', table: 'capacidades', campo: 'tipo_capacidade_id', icon: '', dao: injector.get<CapacidadeDaoService>(CapacidadeDaoService), label: "Capacidade" },
       { collection: 'CapacidadeTecnica', codigo: 'MOD_RX_CURR', table: 'capacidades_tecnicas', campo: 'nome', icon: 'bi bi-arrows-angle-contract', dao: injector.get<CapacidadeTecnicaDaoService>(CapacidadeTecnicaDaoService), label: "Capacidade Técnica", selectRoute: { route: ['raiox', 'cadastros', 'capacidade-tecnica'] } },
       { collection: 'Cargo', codigo: 'MOD_RX_CURR', table: 'cargos', campo: 'nome', icon: 'bi bi-person-badge', dao: injector.get<CargoDaoService>(CargoDaoService), label: "Cargo", selectRoute: { route: ['raiox', 'cadastros', 'cargo'] } },
+      { collection: 'Cliente', table: 'clientes', campo: 'row_id', icon: 'bi bi-briefcase-fill', dao: injector.get<ClienteDaoService>(ClienteDaoService), label: "Clientes", selectRoute: { route: ['cadastros', 'cliente'] } },
       { collection: 'Change', table: 'changes', campo: 'row_id', icon: 'bi bi-filter-square', dao: injector.get<ChangeDaoService>(ChangeDaoService), label: "Log de Alteração", selectRoute: { route: ['logs', 'change'] } },
       { collection: 'CentroTreinamento', codigo: 'MOD_RX_CURR', table: 'centros_treinamentos', campo: 'nome', icon: 'bi bi-building-fill', dao: injector.get<CentroTreinamentoDaoService>(CentroTreinamentoDaoService), label: "Centro de Treinamento", selectRoute: { route: ['raiox', 'cadastros', 'centro-treinamento'] } },
       { collection: 'Cidade', codigo: 'MOD_CID', table: 'cidades', campo: 'nome', icon: 'bi bi-building', dao: injector.get<CidadeDaoService>(CidadeDaoService), label: "Cidade", selectRoute: { route: ['cadastros', 'cidade'] } },

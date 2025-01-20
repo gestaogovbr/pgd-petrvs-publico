@@ -1,36 +1,58 @@
 <div class="spinner-border" role="status" *ngIf="loading">
   <span class="visually-hidden"></span>
 </div>
-<ng-container>
-  <div class="solucao-show bg-body-secondary">
-    <div class="row">
-      <div class="col-md-4">
-        <small class="d-block">Solução</small>
-        <b>{{solucao?.nome}}</b>
-      </div>
-      <div class="col-md-4">
-        <small class="d-block">Unidade Instituidora</small>
-        <b>{{solucao?.unidade?.nome}}</b>
-      </div>
-      <div class="col-md-2">
-        <small class="d-block">Produtos e Serviços cadastrados</small>
-      </div>
-      <div class="col-md-2">
-        <small class="d-block">Status</small>
-        <span class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{ this.solucao?.status ? 'ATIVO' : 'INATIVO' }}</span>
-      </div>
+<ng-container *ngIf="solucao">
+  <div class="bg-dark-subtle d-flex p-2 px-4">
+    <div>
+      <h4>ID #{{solucao.identificador}} - <b>{{solucao.nome}}</b> - {{solucao.sigla}}</h4>
     </div>
-
+  </div>
+  <div class="solucao-show bg-body-secondary mb-3">
     <div class="row">
       <div class="col-md-6">
         <small class="d-block">Descrição</small>
-        <b>{{solucao?.descricao}}</b>
+        <b>{{solucao.descricao}}</b>
       </div>
       <div class="col-md-6">
         <small class="d-block">URL</small>
-        <b>{{solucao?.url}}</b>
+        <b>{{solucao.url}}</b>
       </div>
     </div>
     
   </div>
+  <tabs>
+    <tab key="UNIDADES" label="Unidades">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col"><strong>Unidade</strong></th>
+            <th scope="col"><strong>Status</strong></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let solucao of solucao?.solucoes_unidades">
+            <th>{{solucao.unidade?.sigla}}</th>
+            <td>
+              <badge *ngIf="ativo(solucao.status)" color="success" label="Ativo"></badge>
+              <badge *ngIf="!ativo(solucao.status)" color="danger" label="Inativo"></badge>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </tab>
+    <tab key="PRODUTOS" label="Produtos">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col"><strong>Produto</strong></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let produto_solucao of solucao?.produtos_solucoes">
+            <th>{{produto_solucao.produto?.nome}}</th>
+          </tr>
+        </tbody>
+      </table>
+    </tab>
+  </tabs>
 </ng-container>

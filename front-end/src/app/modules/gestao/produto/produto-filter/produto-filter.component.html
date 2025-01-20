@@ -26,7 +26,17 @@
                     controlName="unidade_id" 
                     [dao]="unidadeDao"
             ></input-search>  
+
+            <input-search 
+                    #cliente 
+                    [size]="6" 
+                    label="Cliente"
+                    [control]="form!.controls.cliente_id" 
+                    controlName="cliente_id" 
+                    [dao]="clienteDao"
+            ></input-search>  
             <input-select 
+                *ngIf="enableStatus"
                 [size]="12" 
                 label="Status"
                 [items]="lookup.TIPO_ATIVO_INATIVO" 

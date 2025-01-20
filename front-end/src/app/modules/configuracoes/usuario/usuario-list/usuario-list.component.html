@@ -9,6 +9,7 @@
             <input-text [size]="4" [label]="lex.translate('Usuário')" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Nome" [attr.maxlength]=250></input-text>
             <input-search [size]="4" [label]="lex.translate('Lotação')" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
             <input-select [size]="4" [label]="lex.translate('Perfil')" controlName="perfil_id" nullable [control]="filter!.controls.perfil_id" [dao]="perfilDao"></input-select>
+            <input-check [size]="12" [label]="lex.translate('Atribuições')" controlName="atribuicoes" [control]="filter!.controls.atribuicoes" [items]="lookup.UNIDADE_INTEGRANTE_TIPO" [inline]="true"></input-check>
         </div>
     </filter>
     <columns>

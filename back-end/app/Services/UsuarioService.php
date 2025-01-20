@@ -246,7 +246,12 @@ class UsuarioService extends ServiceBase
         }
       } else if (is_array($condition) && $condition[0] == "subordinadas") {
         $subordinadas = $condition[2];
-      } else {
+      } else if (is_array($condition) && $condition[0] == "atribuicoes") {
+        $query->whereHas('unidadesIntegranteAtribuicoes', function (Builder $query) use ($condition) {
+          $query->whereIn('atribuicao', $condition[2]);
+        });
+      } 
+      else {
         array_push($where, $condition);
       }
     }

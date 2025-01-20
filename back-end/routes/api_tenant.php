@@ -91,6 +91,7 @@ use App\Http\Controllers\TipoClienteController;
 use FontLib\Table\Type\post;
 use App\Http\Controllers\JobAgendadoController;
 use App\Http\Controllers\RelatoController;
+use App\Http\Controllers\SolucaoUnidadeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -476,6 +477,8 @@ Route::middleware(['auth:sanctum'])->prefix('Catalogo')->group(function () {
 });
 Route::middleware(['auth:sanctum'])->prefix('Solucao')->group(function () {
     defaultRoutes(SolucaoController::class);
+    Route::post('ativar-todos', [SolucaoController::class, 'atribuirTodos']);
+    Route::post('desativar-todos', [SolucaoController::class, 'desatribuirTodos']);
 });
 Route::middleware(['auth:sanctum'])->prefix('TipoCliente')->group(function () {
   defaultRoutes(TipoClienteController::class);
@@ -486,5 +489,9 @@ Route::middleware(['auth:sanctum'])->prefix('Cliente')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('Relato')->group(function () {
   Route::post('store', [RelatoController::class, 'store']);
   Route::get('confirmar/{email}/{nome}', [RelatoController::class, 'confirmar']);
+});
+
+Route::middleware(['auth:sanctum'])->prefix('SolucaoUnidade')->group(function () {
+  defaultRoutes(SolucaoUnidadeController::class);
 });
 
