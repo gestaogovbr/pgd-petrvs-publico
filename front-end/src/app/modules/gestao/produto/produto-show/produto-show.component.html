@@ -18,11 +18,11 @@
         <small class="d-block text-muted">Unidade</small>
         <b>{{produto.unidade?.nome}}</b>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-3" *ngIf="produto.data_ativado">
         <small class="d-block text-muted">Ativado em</small>
         <b>{{formatDate(produto.data_ativado)}}</b>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-3" *ngIf="!produto.data_ativado">
         <small class="d-block text-muted">Desativado em</small>
         <b>{{formatDate(produto.data_desativado)}}</b>
       </div>
@@ -44,7 +44,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let produto of produto.produto_cliente">
-            <th>{{produto.cliente?.tipo_cliente?.nome}}</th>
+            <td>{{produto.cliente?.tipo_cliente?.nome}}</td>
             <td>{{produto.cliente?.nome}}</td>
           </tr>
         </tbody>
@@ -62,38 +62,32 @@
         </thead>
         <tbody>
           <tr *ngFor="let solucao of produto.produto_solucoes">
-            <th>{{solucao.solucao?.nome}}</th>
-            <th>{{solucao.solucao?.sigla}}</th>
+            <td>{{solucao.solucao?.nome}}</td>
+            <td>{{solucao.solucao?.sigla}}</td>
             <td>{{solucao.solucao?.descricao}}</td>
           </tr>
         </tbody>
       </table>
     </tab>
 
-    <tab key="PROCESSOS" label="Processos">
+    <tab key="PROCESSOS" label="Processos (cadeias de valor)">
       <table class="table">
         <thead>
           <tr>
-            <th scope="col">Processo</th>
-            <th scope="col">Nível</th>
             <th scope="col">Cadeia de valor</th>
-            <th scope="col">Unidade</th>
-            <th scope="col">Visualizar</th>
+            <th scope="col">Processo</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let processo of produto.produto_processo_cadeia_valor">
-            <th>{{processo.cadeia_valor_processo?.nome}}</th>
-            <td>{{processo.cadeia_valor_processo?.sequencia}}</td>
             <td>{{processo.cadeia_valor_processo?.cadeia_valor?.nome}}</td>
-            <td>{{processo.cadeia_valor_processo?.cadeia_valor?.unidade?.nome}}</td>
-            <td></td>
+            <td>{{processo.cadeia_valor_processo?.nome}}</td>
           </tr>
         </tbody>
       </table>
     </tab>
 
-    <tab key="PRODUTOS" label="Produtos/Serviços relacionados">
+    <tab key="PRODUTOS" label="Produtos relacionados">
       <table class="table">
         <thead>
           <tr>
@@ -105,10 +99,10 @@
         </thead>
         <tbody>
           <tr *ngFor="let produto of produto.produto_produto">
-            <th>{{produto.produto_relacionado?.nome}}</th>
-            <th>{{lookup.getValue(lookup.TIPO_RELACAO_PRODUTO, produto.tipo)}}</th>
-            <th>{{produto.produto_relacionado?.unidade?.nome}}</th>
-            <td></td>
+            <td>{{produto.produto_relacionado?.nome}}</td>
+            <td>{{lookup.getValue(lookup.TIPO_PRODUTO, produto.produto_relacionado?.tipo)}}</td>
+            <td>{{produto.produto_relacionado?.unidade?.nome}}</td>
+            <td>{{produto.produto_relacionado?.descricao}}</td>
           </tr>
         </tbody>
       </table>

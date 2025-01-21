@@ -24,7 +24,14 @@ export class ProdutoShowComponent extends PageBase {
   }
 
   public async carregaProdutoDetalhado(){
-    this.produto = await this.produtoDaoService.getById(this.metadata.produto.id, ["produtoProcessoCadeiaValor.cadeiaValorProcesso.cadeiaValor.unidade", "produtoProduto.produtoRelacionado.unidade","responsavel", "unidade", "produtoCliente.cliente.tipoCliente", "produtoSolucoes.solucao"]);
+    this.produto = await this.produtoDaoService.getById(this.metadata.produto.id, [
+      "produtoProcessoCadeiaValor.cadeiaValorProcesso.cadeiaValor.unidade", 
+      "produtoProduto.produtoRelacionado.unidade",
+      "responsavel", 
+      "unidade", 
+      "produtoCliente.cliente.tipoCliente", 
+      "produtoSolucoes.solucao"
+    ]);
     this.loading = false;
   }
 
