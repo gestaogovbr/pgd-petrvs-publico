@@ -31,6 +31,7 @@ class TipoCapacidadeService extends ServiceBase
         ["MENU_CONFIG_ACESSO", "Permite acessar o menu Gerenciamento"],
         ["MENU_GESTAO_ACESSO", "Permite acessar os menus Planejamento, Execução e Avaliação"],
         ["MENU_DEV_ACESSO", "Permite acessar os menus Manutenção, Logs e Auditorias e Testes"],
+        ["MENU_DEV_CONSULTAS", "Permite acessar menus de consultas do Desenvolvedor"],
         ["MENU_RX_CURRICULUM_ACESSO", "Permite acessar o menu Curriculum"],
         ["MENU_RX_OPORTUNIDADES_ACESSO", "Permite acessar o menu Oportunidades"],
         ["MENU_RX_PESQUISAS_ACESSO", "Permite acessar o menu Pesquisas"],
@@ -501,6 +502,7 @@ navAdministrador  Cadastros                 MENU_CAD_ACESSO
 navDev            Manutenção                MENU_DEV_ACESSO
                   Logs e Auditorias         MENU_DEV_ACESSO
                   Testes                    MENU_DEV_ACESSO
+                  Consultas                 MENU_DEV_ACESSO
 
 navPonto
 navProjeto        Cadastros                 MENU_CAD_ACESSO
