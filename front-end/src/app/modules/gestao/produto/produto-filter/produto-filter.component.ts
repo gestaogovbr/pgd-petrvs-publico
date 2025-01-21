@@ -46,8 +46,8 @@ export class ProdutoFilterComponent extends PageFrameBase {
     this.form?.controls.nome.setValue(this.metadata.nome)
     this.form?.controls.id.setValue(this.metadata.id)
     this.form?.controls.status.setValue(this.metadata.status)
-    this.form?.controls.unidade_id.setValue(this.metadata.unidade)
-    this.form?.controls.cliente_id.setValue(this.metadata.cliente)
+    this.form?.controls.unidade_id.setValue(this.metadata.unidade_id)
+    this.form?.controls.cliente_id.setValue(this.metadata.cliente_id)
 
     this.enableStatus = (this.metadata.enableStatus == undefined) ? true : this.metadata.enableStatus;
   }

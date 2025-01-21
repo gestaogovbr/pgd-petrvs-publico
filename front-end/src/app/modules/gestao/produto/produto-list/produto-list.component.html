@@ -17,6 +17,8 @@
                     Filtros aplicados:
                      <span *ngIf="filter!.controls.nome.value.length > 0">Nome</span>
                      <span *ngIf="filter!.controls.id.value.length > 0">#ID</span>
+                     <span *ngIf="filter!.controls.cliente_id.value.length > 0">Cliente</span>
+                     <span *ngIf="filter!.controls.unidade_id.value.length > 0">Unidade</span>
                      <span *ngIf="!this.isSearching && filter!.controls.status.value.length > 0">Status</span>
                 </div>
              </div>
