@@ -25,6 +25,7 @@ export class PlanoEntregaListProdutoComponent extends PageFrameBase {
   @Input() set disabled(value: boolean) { if (this._disabled != value) this._disabled = value; } get disabled(): boolean { return this._disabled; }
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() cdRef: ChangeDetectorRef;
+  @Input() edit: boolean = false;
 
   public produtoDao?: ProdutoDaoService;
 

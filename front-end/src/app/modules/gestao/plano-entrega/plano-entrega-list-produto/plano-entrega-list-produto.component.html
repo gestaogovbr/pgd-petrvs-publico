@@ -9,9 +9,9 @@
   [remove]="removeProduto.bind(this)" 
   [save]="saveProduto.bind(this)" 
   [load]="loadProduto.bind(this)" 
-  [hasDelete]="true" 
-  [hasEdit]="true" 
-  [hasAdd]="true"
+  [hasDelete]="!disabled" 
+  [hasEdit]="!disabled" 
+  [hasAdd]="!disabled"
 >
   <columns>
     <column 
@@ -19,14 +19,13 @@
       [template]="columnProduto" 
       [editTemplate]="editProduto" 
       [verticalAlign]="'middle'" 
-      [width]="300" 
       [align]="'center'"
     >
       <ng-template let-header="header" #titleProduto>
-        <div class="text-center"><span><strong>Produto</strong></span></div>
+        <order by="produto.nome" [header]="header">Produtos</order>
       </ng-template>
       <ng-template let-row="row" #columnProduto>
-        <div class="w-100 d-flex justify-content-center">
+        <div class="w-100 d-flex">
           <p>{{row.produto?.nome}}</p>
         </div>
       </ng-template>
