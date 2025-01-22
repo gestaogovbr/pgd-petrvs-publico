@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\BadGatewayException;
 use App\Exceptions\IntegrationException;
 use Exception;
 use Throwable;
@@ -133,6 +134,10 @@ class IntegracaoService extends ServiceBase
         $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
         $values[':data_modificacao'] = $this->UtilService->asDateTime($unidade->data_modificacao_siape);
         $this->unidadesInseridas[$unidade->id_servo] = ["unidade_id" => $values[':id'], "path" => $values[':path']];
+        $unidadeJaExisteNoBanco = Unidade::where("codigo", $unidade->id_servo)->first();
+        if($unidadeJaExisteNoBanco){
+          throw new BadGatewayException(sprintf("Já existe uma unidade para o código %s", $unidade->id_servo));
+        }
         try {
           $id = Unidade::insertGetId([
             'id' => $values[':id'],
