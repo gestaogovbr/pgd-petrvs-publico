@@ -109,7 +109,6 @@ export class ProdutoListProdutoComponent extends PageFrameBase {
   async alteraTipoCliente(e: Event){
     
     let tipoCliente = this.form!.controls.tipo_cliente_id.value;
-    console.log(tipoCliente);
     const res: Cliente[] = await this.clienteDao?.query({where: [['tipo_cliente_id', '=', tipoCliente]]}).asPromise() || [];
     this.clientes = res.map((item: Cliente) => {
       return { value: item.id, key: item.nome };

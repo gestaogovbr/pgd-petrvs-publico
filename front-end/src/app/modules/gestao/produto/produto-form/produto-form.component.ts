@@ -29,7 +29,7 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.join = [
-      "produtoProcessoCadeiaValor.cadeiaValorProcesso.cadeiaValor", "produtoProduto.produtoRelacionado", "produtoCliente.cliente", "produtoSolucoes.solucao"
+      "produtoProcessoCadeiaValor.cadeiaValorProcesso.cadeiaValor", "produtoProduto.produtoRelacionado", "produtoCliente.cliente.tipoCliente:nome", "produtoSolucoes.solucao"
     ];
     this.form = this.fh.FormBuilder({
       responsavel_id: { default: "" },

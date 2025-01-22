@@ -164,7 +164,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
       result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
     if(form.id?.length) {
-      result.push(["id", "=",form.id]);
+      result.push(["identificador", "=",form.id]);
     }
 		if (form.unidade_id?.length) {
 			result.push(["unidade_id", "==", form.unidade_id]);
@@ -183,6 +183,6 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
 
 
   public ativo(produto: Produto): boolean {
-    return produto.data_ativado instanceof Date;
+    return !produto.data_desativado;
   }
 }

@@ -17,6 +17,8 @@
                     Filtros aplicados:
                      <span *ngIf="filter!.controls.nome.value.length > 0">Nome</span>
                      <span *ngIf="filter!.controls.id.value.length > 0">#ID</span>
+                     <span *ngIf="filter!.controls.cliente_id.value.length > 0">Cliente</span>
+                     <span *ngIf="filter!.controls.unidade_id.value.length > 0">Unidade</span>
                      <span *ngIf="!this.isSearching && filter!.controls.status.value.length > 0">Status</span>
                 </div>
              </div>
@@ -49,7 +51,15 @@
 
         <column title="Ativar/Desativar" [template]="columnAtivar" *ngIf="isCurador && !this.isSearching">
             <ng-template let-row="row" #columnAtivar>
-                <input-switch  [value]="ativo(row) ? 'true' : 'false'" [valueOn]="'true'"  [valueOff]="'false'" (change)="ativarDesativar(row)"></input-switch>
+                <input-switch 
+                    [size]="12" 
+                    scale="small" 
+                    [value]="!row.data_desativado ? 'true' : 'false'" 
+                    [valueOn]="'true'"  
+                    [valueOff]="'false'"
+                    (change)="ativarDesativar(row)"
+                ></input-switch>
+
             </ng-template>  
         </column>
         

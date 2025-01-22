@@ -90,7 +90,12 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.modalWidth = 700;
-    this.join = ["entrega", "objetivos.objetivo", "processos.processo", "produtos"];
+    this.join = [
+      "entrega", 
+      "objetivos.objetivo", 
+      "processos.processo", 
+      "produtos.produto"
+    ];
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
       descricao_entrega: { default: "" },

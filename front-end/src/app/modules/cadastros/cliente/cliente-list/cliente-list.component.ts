@@ -32,7 +32,7 @@ export class ClienteListComponent extends PageListBase<Cliente, ClienteDaoServic
       onClick: this.delete.bind(this)
     });
 
-    this.join = ["TipoCliente"];
+    this.join = ["tipoCliente"];
    
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
