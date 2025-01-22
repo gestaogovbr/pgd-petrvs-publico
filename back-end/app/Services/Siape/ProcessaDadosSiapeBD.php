@@ -31,9 +31,6 @@ class ProcessaDadosSiapeBD
 
         foreach ($results as $servidor) {
             try {
-                if($servidor->cpf == '02221585739'){
-                    Log::alert('ok');
-                }
                 $dadosServidorArray[] = [
                     'cpf' => $servidor->cpf,
                     'data_modificacao' => $this->previneDataNula($servidor),
