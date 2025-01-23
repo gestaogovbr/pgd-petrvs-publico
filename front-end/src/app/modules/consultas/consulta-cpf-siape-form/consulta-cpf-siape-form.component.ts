@@ -1,5 +1,5 @@
 import { Component, Injector, ViewChild } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
@@ -29,27 +29,15 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
       icon: "bi bi-search",
       onClick: () => {
         let error: any = undefined;
-        if(this.formValidation) {
           try {
-            error = this.formValidation(this.form!);
-          } catch (e: any) {
-            error = e; 
-          }
-        }
-        if(this.form!.valid && !error){
-          try {
+            const cpfControl = this.form.get('cpf') as FormControl;
+            const cpfValue: string = cpfControl.value as string;
+                    this.loading = false;
+                    this.dao!.consultaCPFSIAPE(cpfValue);
           } catch (error: any) {
             this.erros = error;
           }
-        } else {
-          this.form!.markAllAsTouched();
-          if(error) {
-            this.erros = error;
-          }
-          Object.entries(this.form!.controls).forEach(([key, value]) => {
-            if(value.invalid) console.log("Validate => " + key, value.value, value.errors);
-          });
-        }
+      
       }
     }
    ];
