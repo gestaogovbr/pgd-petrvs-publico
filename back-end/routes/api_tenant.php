@@ -172,9 +172,7 @@ Route::middleware(['auth:sanctum'])->prefix('Integracao')->group(function () {
 
 /* Testes */
 //Route::middleware(['auth:sanctum', 'can:ADMINISTRADOR'])->get('/teste', function (Request $request) { return ["OK"]; });
-Route::get('/teste', function (Request $request) {
-  return ["OK"];
-});
+
 Route::middleware('auth:sanctum')->post('/Teste/calculaDataTempoUnidade', [UsuarioController::class, 'calculaDataTempoUnidade']);
 
 /* Batch */
@@ -488,3 +486,4 @@ Route::middleware(['auth:sanctum'])->prefix('Relato')->group(function () {
   Route::get('confirmar/{email}/{nome}', [RelatoController::class, 'confirmar']);
 });
 
+Route::middleware('auth:sanctum')->post('/usuario/consulta-cpf-siape', [UsuarioController::class, 'consultaCPFSiape']);
