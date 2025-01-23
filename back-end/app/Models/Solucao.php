@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use App\Models\ModelBase;
 
 class Solucao extends ModelBase
@@ -16,27 +17,29 @@ class Solucao extends ModelBase
 
     public $incrementing = false;
 
+    protected static function booted()
+    {
+        static::creating(function ($produto) {
+            $produto->identificador = DB::select("SELECT IFNULL(MAX(identificador), 0) + 1 AS proximo_numero FROM solucao_produtos_servicos;")[0]->proximo_numero;
+        });
+    }
+
     protected $fillable = [
         'nome',
         'sigla',
-        'unidade_id',
         'descricao',
-        'status',
         'url',
-        'data_ativado',
-        'data_desativado',
+        'identificador'
     ];
 
     protected $casts = [
         'id' => 'string',
+        'identificador' => 'string',
         'nome' => 'string',
         'sigla' => 'string',
-        'unidade_id' => 'string',
         'descricao' => 'string',
-        'status' => 'integer',
-        'url' => 'string',
-        'data_ativado' => 'datetime',
-        'data_desativado' => 'datetime',
+        'identificador' => 'integer',
+        'url' => 'string'
     ];
 
     protected $dates = [
@@ -45,13 +48,16 @@ class Solucao extends ModelBase
         'deleted_at',
     ];
 
-    public function unidade()
-    {
-        return $this->belongsTo(Unidade::class);
-    }
-
     public function scopeStatus($query, $status)
     {
         return $query->where('status', $status);
+    }
+
+    public function solucoesUnidades(){
+        return $this->hasMany(SolucaoUnidade::class, 'id_solucao', 'id');
+    }
+
+    public function produtosSolucoes(){
+        return $this->hasMany(ProdutoSolucao::class, 'solucao_id', 'id');
     }
 }

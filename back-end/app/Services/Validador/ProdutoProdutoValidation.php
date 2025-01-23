@@ -17,14 +17,24 @@ class ProdutoProdutoValidation extends BaseValidador
         if(!isset($entity['produto_produto'])){
             return [];
         }
-        $produtoProdutos = $entity['produto_produto'];
+        $produtoProdutos =  $entity['produto_produto'];
+        $id = $this->getTipo() === self::TIPO_STORE ? $entity['id'] : 0;
         
         if(empty($produtoProdutos)){
             return [];
         }
         foreach ($produtoProdutos as $produtoProduto) {
             $validator = Validator::make($produtoProduto, [
-                'produto_id' => 'required|uuid|exists:produtos,id',
+                'produto_id' => [
+                    'required',
+                    'uuid',
+                    'exists:produtos,id',
+                    function ($attribute, $value, $fail) use ($id) {
+                        if ($value === $id) {
+                            $fail('O campo :attribute deve ser diferente do produto_base_id.');
+                        }
+                    },
+                ],
             ]);
 
             if ($validator->fails()) {

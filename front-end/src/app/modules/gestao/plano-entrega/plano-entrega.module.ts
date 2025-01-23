@@ -21,6 +21,7 @@ import { PlanoEntregaFormProgressoComponent } from './plano-entrega-form-progres
 import { PlanoEntregaEntregasVinculadasComponent } from './plano-entrega-entregas-vinculadas/plano-entrega-entregas-vinculadas.component';
 import { PlanoEntregaEntregaDetalhesComponent } from './plano-entrega-entrega-detalhes/plano-entrega-entrega-detalhes.component';
 import { OrganizationChartModule } from 'primeng/organizationchart';
+import { PlanoEntregaListProdutoComponent } from './plano-entrega-list-produto/plano-entrega-list-produto.component';
 
 
 @NgModule({
@@ -40,7 +41,8 @@ import { OrganizationChartModule } from 'primeng/organizationchart';
     PlanoEntregaListProgressoComponent,
     PlanoEntregaFormProgressoComponent,
     PlanoEntregaEntregasVinculadasComponent,
-    PlanoEntregaEntregaDetalhesComponent
+    PlanoEntregaEntregaDetalhesComponent,
+    PlanoEntregaListProdutoComponent
   ],
   imports: [
     CommonModule,

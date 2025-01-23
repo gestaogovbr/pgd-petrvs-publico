@@ -23,6 +23,7 @@ class DeployHMGSeeder extends Seeder
       NomenclaturaSeeder::class,
       TipoMotivoAfastamentoSeeder::class,
       JobScheduleSeeder::class,
+      TipoClientesSeeder::class
     ]);
   }
 }

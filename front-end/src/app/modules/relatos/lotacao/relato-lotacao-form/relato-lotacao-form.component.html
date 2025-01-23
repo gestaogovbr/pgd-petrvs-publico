@@ -28,6 +28,7 @@
                 controlName="usuario_id" 
                 required
                 [dao]="usuarioDao"
+                label="Agente público com problema na lotação"
                 placeholder="Selecione o agente público"
             ></input-search>
         </div>
@@ -35,9 +36,10 @@
             <input-search #unidade [hidden]="this.form!.controls.opcao.value == '2'"
                 [size]="4"
                 [emptyValue]="null"
+                required
                 controlName="unidade_id" 
                 [dao]="unidadeDao" 
-                label="Aonde o agente público DEVERIA ESTAR lotado"
+                label="Onde o agente público DEVERIA ESTAR lotado"
                 placeholder="Selecione a unidade"
             ></input-search>
         </div>
@@ -49,7 +51,7 @@
                 label="Nome" 
                 controlName="nome" 
                 [attr.maxlength]=250  
-                label="Nome completo do agente público"
+                label="Nome completo do agente público com problema na lotação"
             ></input-text>
         </div>
         <div class="col-md-3">

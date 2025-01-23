@@ -8,7 +8,7 @@
 
         <i>
         <ul>
-            <li>AGENTE PÚBLICO: <b>{{ $relato->nome }}</b></li>
+            <li>AGENTE PÚBLICO COM PROBLEMA NA LOTAÇÃO: <b>{{ $relato->nome }}</b></li>
             <li>Nº SIAPE: <b>{{ $relato->matricula }}</b></li>
             <li>Nº CPF: <b>{{ $relato->cpf }}</b></li>
             @if ($relato->unidade)
@@ -27,8 +27,10 @@
         <p><i>Atenciosamente,<br/>
             <b>{{ $remetente->nome }}</b><br/>
             Matrícula SIAPE {{ $remetente->matricula }}<br/>
+            @if ($remetente->lotacao)
             {{ $remetente->lotacao->unidade->nome }}<br/>
-            {{ $remetente->ultimaParticipacaoPrograma->programa->unidade->nome }}
+            @endif
+            {{ $remetente->ultimaParticipacaoPrograma?->programa->unidade->nome }}
             </i>
         </p>
     </body>

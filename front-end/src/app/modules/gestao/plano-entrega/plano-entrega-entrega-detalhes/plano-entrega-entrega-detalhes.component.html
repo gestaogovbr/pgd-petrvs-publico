@@ -4,8 +4,6 @@
   <tab key="PARTICIPANTES" icon="bi bi-people" label="Participantes"></tab>
 </tabs>
 
-
-
 <div *ngIf="detalhesEntrega.active == 'INFOS'" class="" style="min-height: 400px;">
   <div class="mb-2">
     <badge *ngFor="let etiqueta of entrega?.etiquetas" [lookup]="etiqueta"></badge>
@@ -65,7 +63,18 @@
     </div>
   </div>
 
-    
+  <div class="mt-3" *ngIf="entrega?.produtos?.length">
+    <h5 class="text-center mb-2">{{lex.translate('Produtos e Serviços')}}</h5>
+    <div class="card">
+      <ul class="list-group list-group-flush">
+        <li *ngFor="let pProduto of entrega?.produtos" class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center">
+              <small>{{pProduto.produto?.nome}}</small>
+            </div>
+          </li>
+      </ul>
+    </div>
+  </div>  
 
 </div>
 
