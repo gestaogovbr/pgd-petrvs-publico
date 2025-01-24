@@ -30,7 +30,8 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     this.filter = this.fh.FormBuilder({
       usuario: { default: "" },
       unidade_id: { default: "" },
-      perfil_id: { default: null }
+      perfil_id: { default: null },
+      atribuicoes: { default: null }
     });
     this.addOption(this.OPTION_INFORMACOES, "MOD_USER");
     // this.addOption(this.OPTION_EXCLUIR, "MOD_USER_EXCL");       // Tratar de forma diferenciada a exclusão de usuário
@@ -53,6 +54,9 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     }
     if (filter?.controls.perfil_id?.value?.length) {
       result.push(["perfil_id", "==", filter?.controls.perfil_id?.value]);
+    }
+    if (filter?.controls.atribuicoes?.value?.length) {
+      result.push(["atribuicoes", "==", filter?.controls.atribuicoes?.value]);
     }
     return result;
   }

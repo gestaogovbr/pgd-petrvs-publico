@@ -276,16 +276,24 @@ class TipoCapacidadeService extends ServiceBase
       ]
     ], [
       "codigo" => "MOD_PROD",
-      "descricao" => "Módulo de Produtos",
+      "descricao" => "Módulo de Produtos e Serviços",
       "capacidades" => [
         /* Capacidades do módulo PRODUTO */
-        ["MOD_PROD_EDT", "Permite editar produtos"],
-        ["MOD_PROD_EXCL", "Permite excluir produtos"],
-        ["MOD_PROD_INCL", "Permite incluir produtos"],
+        ["MOD_PROD_EDT", "Permite editar produtos e serviços"],
+        ["MOD_PROD_EXCL", "Permite excluir produtos e serviços"],
+        ["MOD_PROD_INCL", "Permite incluir produtos e serviços"],
         ["MOD_PROD_CAT", "Permite acesso aos produtos e serviços"],
         ["MOD_PROD_CAT_INCL", "Permite incluir catálogo de produtos e serviços"],
         ["MOD_PROD_CAT_EDT", "Permite editar catálogo de produtos e serviços"],
         ["MOD_PROD_CAT_EXCL", "Permite excluir catálogo de produtos e serviços"]
+      ]
+    ], [
+      "codigo" => "MOD_SOLUCOES",
+      "descricao" => "Módulo de Soluções",
+      "capacidades" => [
+        ["MOD_SOLUCOES_EDT", "Permite editar Soluções"],
+        ["MOD_SOLUCOES_EXCL", "Permite excluir Soluções"],
+        ["MOD_SOLUCOES_INCL", "Permite incluir Soluções"]
       ]
     ], [
       "codigo" => "MOD_TEMP",
@@ -418,7 +426,7 @@ class TipoCapacidadeService extends ServiceBase
         /* Capacidades do módulo USUÁRIOS */
         ["MOD_USER_EDT", "Permite alterar usuário"],
         ["MOD_USER_EXCL", "Permite excluir usuário"],
-        ["MOD_USER_INCL", "Permite incluir usuário"],
+        // ["MOD_USER_INCL", "Permite incluir usuário"], // DEPRECATED: o modo de incluir usuários não está funcionado, desabilitado para removeção futura ou alteração.
         ["MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"],
         ["MOD_USER_ATRIB", "Permite gerenciar atribuições de usuário"],
       ]
@@ -455,6 +463,14 @@ class TipoCapacidadeService extends ServiceBase
       "capacidades" => [
         ["MOD_AUDIT_DEL", "Permite visualizar registros deletados"],
         ["MOD_AUDIT_LOG", "Permite visualizar logs das tabelas"]
+      ]
+    ], [
+      "codigo" => "MOD_CLI",
+      "descricao" => "Módulo de Clientes",
+      "capacidades" => [
+        ["MOD_CLI_EDT", "Permite editar clientes"],
+        ["MOD_CLI_EXCL", "Permite excluir clientes"],
+        ["MOD_CLI_INCL", "Permite incluir clientes"]
       ]
     ]
   ];
