@@ -1,3 +1,6 @@
+## 2.3.45 24/01/2024
+### Adicionado
+
 ## 2.3.4 03/01/2024
 ### Adicionado
  - Adicionada opção parta forçar Envio imediato
