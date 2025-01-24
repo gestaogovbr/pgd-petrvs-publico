@@ -1,5 +1,7 @@
-## 2.3.45 24/01/2024
-### Adicionado
+## 2.3.5 24/01/2024
+### Corrigido
+ - Correção no envio ao PGD de planos de entrega Avaliados
+ - Adição no envio ao PGD de planos de entrega re-avaliados
 
 ## 2.3.4 03/01/2024
 ### Adicionado
