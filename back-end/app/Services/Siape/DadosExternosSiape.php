@@ -25,6 +25,7 @@ trait DadosExternosSiape
 
     public function buscaServidor(string $cpf): SimpleXMLElement
     {
+        $cpf = preg_replace('/[^0-9]/', '', $cpf);
         $this->inicializaSiape('buscaServidor');
         $codOrgao = strval(intval($this->configIntegracaoSiape['codOrgao']));
 
