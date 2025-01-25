@@ -28,6 +28,7 @@ class PlanoEntregaEntregaProcesso extends ModelBase
   {
     return $this->belongsTo(CadeiaValorProcesso::class, 'cadeia_processo_id');
   }   //ok
+  
   public function entrega()
   {
     return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_id');
