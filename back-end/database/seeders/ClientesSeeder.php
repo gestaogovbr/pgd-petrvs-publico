@@ -84,6 +84,14 @@ class ClientesSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
+                'id' => 'efec75dd-d619-11ef-a51b-0242ac120003',
+                'tipo_cliente_id' => 'd55be7dd-708d-11ef-8e76-0242ac1c0002',
+                'nome' => 'Instituição privadas com fins lucrativos',
+                'created_at' => $this->timenow,
+                'updated_at' => $this->timenow,
+                'deleted_at' => null
+            ],
+            [
                 'id' => 'b5209f31-7099-11ef-8e76-0242ac1c0002',
                 'tipo_cliente_id' => 'd55be7dd-708d-11ef-8e76-0242ac1c0002',
                 'nome' => 'Indivíduo',
