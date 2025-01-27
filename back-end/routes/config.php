@@ -26,6 +26,7 @@ Route::middleware(['api', 'panel'])->prefix('Tenant')->group(function () {
     Route::post('migrations', [TenantController::class, 'migrations']);
     Route::post('seeders', [TenantController::class, 'seeders']);    
     Route::post('forcar-siape', [TenantController::class, 'forcarSiape']);
+    Route::get('users-in-PGD',[TenantController::class, 'usersInPGD']);
     Route::post('forcar-envio', [TenantController::class, 'forcarEnvio']);    
 });
 

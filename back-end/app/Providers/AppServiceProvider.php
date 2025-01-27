@@ -12,6 +12,7 @@ use App\Services\Validador\ProdutoClienteValidador;
 use App\Services\Validador\ProdutoClienteValidation;
 use App\Services\Validador\ProdutoProcessoCadeiaValorValidation;
 use App\Services\Validador\ProdutoProdutoValidation;
+use App\Services\Validador\ProdutoSolucaoValidador;
 use App\Services\Validador\ProdutoValidador;
 use App\Services\Validador\TipoClienteValidador;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
                 $this->app->make(ProdutoProdutoValidation::class),
                 $this->app->make(ProdutoProcessoCadeiaValorValidation::class),
                 $this->app->make(ProdutoClienteValidador::class),
+                $this->app->make(ProdutoSolucaoValidador::class),
             ];
         });
 

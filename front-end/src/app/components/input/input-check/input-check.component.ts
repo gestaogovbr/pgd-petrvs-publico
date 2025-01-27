@@ -31,6 +31,7 @@ export class InputCheckComponent extends InputBase implements OnInit {
   @Input() source?: any;
   @Input() path?: string;
   @Input() required?: string;
+  @Input() inline?: boolean = false;
   @Input() change?: (value: any) => void;
   @Input() set value(value: any) {
     if(value != this._value) {

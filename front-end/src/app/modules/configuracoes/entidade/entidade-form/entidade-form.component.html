@@ -15,10 +15,37 @@
         <input-select *ngIf="form!.controls.abrangencia.value == 'ESTADUAL'" [size]="8" label="UF" icon="bi bi-flag" controlName="uf" [items]="lookup.UF"></input-select>
         <input-display *ngIf="form!.controls.abrangencia.value == 'NACIONAL'" [size]="8" label="Âmbito" icon="bi bi-shield-fill-check" value="Nacional"></input-display>
       </div>
-      <div class="row">
+    </tab>
+    <tab key="SIAPE" label="Alteraçõe no SIAPE">
+      <div class="row email-remetente">
         <input-text [size]="6" label="E-mail do Remetente para envio das alterações no SIAPE" controlName="email_remetente_siape" [attr.maxlength]=100  placeholder="Utilizar um e-mail @gestao.gov.br"></input-text>
-        <input-text [size]="6" label="E-mail Responsável pelas alterações no SIAPE na organização" controlName="email_responsavel_siape" [attr.maxlength]=100 required></input-text>
       </div>
+      <separator title="E-mails dos Responsáveis pelas alterações no SIAPE na organização">
+        <grid #grid 
+          [control]="form!.controls.emails" 
+          [form]="formEmail!" 
+          [hasDelete]="true" 
+          [add]="addEmail.bind(this)" 
+          [load]="loadEmail.bind(this)" 
+          [remove]="removeEmail.bind(this)" 
+          [save]="saveEmail.bind(this)" 
+          labelAdd="Adicionar e-mail"
+          title="Adicionar e-mail"
+          editable
+        >
+          <columns>
+            <column  [template]="columnEmail" [editTemplate]="editEmail">
+              <ng-template let-row="row" #columnEmail>
+                <strong>{{ row.email }}</strong>
+              </ng-template>
+              <ng-template let-row="row" #editEmail>
+                <input-text [control]="formEmail!.controls.email" [attr.maxlength]=250></input-text>
+              </ng-template>
+            </column>
+            <column type="options"></column>
+          </columns>
+        </grid>
+      </separator>
     </tab>
     <!--tab key="EXPEDIENTE" label="Expediente">
       <calendar-expediente #expediente [control]="form!.controls.expediente"></calendar-expediente>
