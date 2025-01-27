@@ -14,11 +14,17 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
+use App\Services\Siape\DadosExternosSiape;
 use Exception;
+use Illuminate\Support\Facades\Log;
+use SimpleXMLElement;
 use Throwable;
 
 class UsuarioService extends ServiceBase
 {
+
+  use DadosExternosSiape;
+
   const LOGIN_GOOGLE = "GOOGLE";
   const LOGIN_MICROSOFT = "AZURE";
   const LOGIN_FIREBASE = "FIREBASE";
@@ -367,5 +373,11 @@ class UsuarioService extends ServiceBase
       if ($perfilAtual == $developerId && !$this->isLoggedUserADeveloper())
         throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de um Desenvolvedor");
     }
+  }
+
+  public function consultaCPFSiape(string $cpf): SimpleXMLElement{
+     
+      return $this->buscaServidor($cpf);
+     
   }
 }

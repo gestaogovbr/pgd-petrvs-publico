@@ -183,6 +183,7 @@ export class AppComponent {
       LOGS_TESTES_EXPEDIENTES: { name: "Teste Expediente", permition: '', route: ['teste'], icon: this.entity.getIcon('Teste') },
       TESTE_CALCULA_DATATEMPO: { name: "Teste calculaDataTempo", permition: '', route: ['teste', 'calcula-tempo'], icon: this.entity.getIcon('Teste') },
       LOGS_ENVIOS: { name: "Log dos Envios à API PGD", permition: '', route: ['logs', 'envios'], icon: this.entity.getIcon('Envio') },
+      DEV_CONSULTA_SIAPE: { name: "Consulta Individual SIAPE", permition: '', route: ['consultas', 'cpf-siape'], icon: this.entity.getIcon('ConsultaIndividualSIAPE') },
       /* RaioX - Curriculum */
       CURRICULUM_CADASTRO_PESSOAL: { name: this.lex.translate("Dados Pessoais"), permition: 'MOD_RX_CURR', route: ['raiox', 'pessoal'], icon: "bi bi-file-person" },
       CURRICULUM_CADASTRO_PROFISSIONAL: { name: this.lex.translate("Dados Profissionais"), permition: 'MOD_RX_CURR', route: ['raiox', 'profissional'], icon: "fa fa-briefcase" },
@@ -345,6 +346,13 @@ export class AppComponent {
       menu: [
         this.menuSchema.LOGS_TESTES_EXPEDIENTES,
         this.menuSchema.TESTE_CALCULA_DATATEMPO
+      ]
+    }, {
+      name: this.lex.translate("Consultas"),
+      permition: "MENU_DEV_CONSULTAS",
+      id: "navbarDropdownDevConsultas",
+      menu: [
+        this.menuSchema.DEV_CONSULTA_SIAPE
       ]
     }];
 
