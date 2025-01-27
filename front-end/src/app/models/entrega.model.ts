@@ -1,9 +1,11 @@
 import { LookupItem } from '../services/lookup.service';
 import { Atividade, Checklist } from './atividade.model';
 import { Base } from './base.model';
+import { Produto } from './produto.model';
 import { Unidade } from './unidade.model';
 
 export type EntregaTipoIndicador = "QUANTIDADE" | "VALOR" | "PORCENTAGEM" | "QUALITATIVO";
+
 export type EntregaValor = {
     porcentagem?: number,
     quantitativo?: number,
@@ -23,6 +25,7 @@ export class Entrega extends Base {
 
     public unidade_id: string | null = null;
     public atividades?: Atividade[];
+    public produtos?: Produto[];
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

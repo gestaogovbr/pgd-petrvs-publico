@@ -45,10 +45,10 @@ class PlanoEntregaResource extends JsonResource
         }
     }
 
-    public function getAvaliacao() {
-      switch($this->avaliacao->nota ?? null) {
+    function getAvaliacao() {
+      switch(str_replace('"', "", $this->avaliacao?->nota)) {
         case "Adequado":
-          return 3;
+          return 3; 
         case "Superou o acordado":
         case "Alto desempenho":
           return 2;
@@ -62,7 +62,7 @@ class PlanoEntregaResource extends JsonResource
         case "Atendeu parcialmente ao adequado":
           return 4;
         default: 
-          return null;
+          throw new ExportPgdException('Avaliação do Plano de Entrega sem nota válida para Envio: '.$this->avaliacao?->nota);
       }
     }
 }

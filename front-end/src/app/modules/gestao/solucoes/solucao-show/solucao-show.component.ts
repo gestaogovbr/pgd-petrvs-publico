@@ -2,12 +2,11 @@ import { Component, Injector } from "@angular/core";
 import { SolucaoDaoService } from "src/app/dao/solucao-dao.service";
 import { Solucao } from "src/app/models/solucao.model";
 import { PageBase } from "src/app/modules/base/page-base";
-import { PageFrameBase } from "src/app/modules/base/page-frame-base";
 
 @Component({
   selector: 'solucao-show',
   templateUrl: './solucao-show.component.html',
-  styleUrls: ['./solucao-show.component.scss']
+  styleUrls: ['./solucao-show.component.scss'],
 })
 export class SolucaoShowComponent extends PageBase {
   public solucao?: Solucao | null;
@@ -16,7 +15,6 @@ export class SolucaoShowComponent extends PageBase {
   constructor(public injector: Injector) {
     super(injector);
     this.solucaoDaoService = injector.get<SolucaoDaoService>(SolucaoDaoService);
-    this.modalWidth = 1300;
     this.loading = true;
   } 
 
@@ -26,7 +24,11 @@ export class SolucaoShowComponent extends PageBase {
   }
 
   public async carregaSolucaoDetalhado(){
-    this.solucao = await this.solucaoDaoService.getById(this.urlParams!.get("id") as string, ["unidade"]);
+    this.solucao = await this.solucaoDaoService.getById(this.metadata.solucao.id, ["solucoesUnidades.unidade", "produtosSolucoes.produto"]);
     this.loading = false;
+  }
+
+  public ativo(status :any) : boolean{
+    return status == 1;
   }
 }
