@@ -1,0 +1,44 @@
+<grid #gridSolucoes noMargin editable
+  [items]="items" 
+  [form]="form!" 
+  [selectable]="false" 
+  [minHeight]="items.length > 2 ? 0 : 300" 
+  [join]="join" 
+  [groupBy]="groupBy" 
+  [add]="addSolucao.bind(this)" 
+  [remove]="removeSolucao.bind(this)" 
+  [save]="saveSolucao.bind(this)" 
+  [load]="loadSolucao.bind(this)" 
+  [hasDelete]="true" 
+  [hasEdit]="true" 
+  [hasAdd]="true"
+>
+  <columns>
+    <column 
+      [titleTemplate]="titleSolucao" 
+      [template]="columnSolucao" 
+      [editTemplate]="editSolucao" 
+      [verticalAlign]="'middle'" 
+      [width]="300" 
+      [align]="'center'"
+    >
+      <ng-template let-header="header" #titleSolucao>
+        <div class="text-center"><span><strong>Solução</strong></span></div>
+      </ng-template>
+      <ng-template let-row="row" #columnSolucao>
+        <div class="w-100 d-flex justify-content-center">
+          <p>{{row.solucao.nome}}</p>
+        </div>
+      </ng-template>
+      <ng-template let-row="row" #editSolucao>
+        <input-search #solucao label required  
+          [placeholder]="'Selecione a solução'" 
+          controlName="solucao_id" 
+          [dao]="solucaoDao" 
+          [selectRoute]="{route: ['gestao', 'solucao'], params: {mode: 'search'}}"
+        ></input-search>
+      </ng-template>
+    </column>
+    <column type="options"></column>
+  </columns>
+</grid>

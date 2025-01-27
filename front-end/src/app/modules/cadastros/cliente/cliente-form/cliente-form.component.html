@@ -1,7 +1,8 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()">
   <div class="row">
-    <input-search [size]="3" #tipoCliente [control]="form!.controls.tipo_cliente_id" controlName="tipo_cliente_id" [dao]="tipoClienteDao" label="Tipo"></input-search>
-    <input-text [size]="9" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
+    <input-select [size]="3" #tipoCliente label="Tipo" itemTodos="- Selecione -" [valueTodos]="null" controlName="tipo_cliente_id" [items]="tiposCliente" (change)="alteraTipo()"></input-select>
+    <input-search [size]="9" #unidade label="Unidade" controlName="unidade_id" [dao]="unidadeDao" [classList]="'d-none'" (select)="selecionaUnidade($event)"></input-search>
+    <input-text [size]="9" #nome label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
   </div>
 
 </editable-form>

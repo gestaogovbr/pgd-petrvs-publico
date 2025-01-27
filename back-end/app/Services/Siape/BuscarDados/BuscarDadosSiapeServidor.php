@@ -64,6 +64,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             return false;
         });
 
+
         Log::info("Servidores a serem processadas: " . count($servidores));
 
 
@@ -227,8 +228,10 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         foreach ($lotes as $i => $lote) {
             Log::info('Lote '.($i + 1).' de '.count($lotes));
             $resposta = $this->executaRequisicoes($lote);
+            Log::alert("resposta simples", $resposta);
             $respostas = $this->array_merge_recursive_distinct($respostas,  $resposta);
         }
+        Log::alert("Respostas mesclada::", $respostas);
         $tempoFinal = microtime(true);
         $tempoTotal = $tempoFinal - $tempoInicial;
         Log::info("Dados funcionais: Tempo total de execução: " . $tempoTotal . " segundos");

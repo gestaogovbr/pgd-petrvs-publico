@@ -47,7 +47,11 @@ class Entidade extends ModelBase
     'email_remetente_siape', /* varchar(100); NULL; */ // Email do Remetente a enviar nos relatos de alterações no SIAPE (#818)
   ];
 
-  public $delete_cascade = ['feriados'];
+  public $delete_cascade = ['feriados', 'emails'];
+
+  public $fillable_relations = [
+    'emails'
+  ];
 
   protected $hidden = [
     'api_public_key',
@@ -126,6 +130,10 @@ class Entidade extends ModelBase
   {
     return $this->belongsTo(TipoModalidade::class);
   }  //nullable
+  public function emails()
+  {
+    return $this->hasMany(EntidadeEmail::class);
+  }
 
   // Mutattors e Casts
   public function getNotificacoesAttribute($value)

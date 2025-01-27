@@ -49,7 +49,7 @@ export class ProdutoListClienteComponent extends PageFrameBase {
     this.form = this.fh.FormBuilder({
       cliente_id: { default: "" },
     }, this.cdRef);
-    this.join = ["produtoCliente.cliente"];
+    this.join = ["produtoCliente.cliente.tipoCliente"];
   }
 
 
@@ -86,7 +86,7 @@ export class ProdutoListClienteComponent extends PageFrameBase {
   public async saveCliente(form: FormGroup, row: any) { 
     let result = undefined;
     this.form!.markAllAsTouched();
-    if(this.form!.valid) {
+    if(this.form!.valid) {      
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
       row.cliente_id = this.form!.controls.cliente_id.value;
       row.cliente = this.cliente!.selectedEntity;
