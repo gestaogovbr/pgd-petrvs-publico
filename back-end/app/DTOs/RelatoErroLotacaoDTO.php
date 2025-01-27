@@ -17,5 +17,5 @@ class RelatoErroLotacaoDTO
     public ?Unidade $unidade;
     public ?Usuario $usuario;
 
-    public $email_responsavel;
+    public array $emails = [];
 }

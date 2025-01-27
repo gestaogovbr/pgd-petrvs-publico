@@ -14,13 +14,15 @@ class Cliente extends ModelBase
 
     public $fillable = [
         'nome',
-        'tipo_cliente_id'
+        'tipo_cliente_id',
+        'unidade_id'
     ];
 
     protected $casts = [
         'id' => 'string',
         'nome' => 'string',
         'tipo_cliente_id' => 'string',
+        'unidade_id' => 'string'
     ];
 
     public function tipoCliente()
@@ -31,5 +33,10 @@ class Cliente extends ModelBase
     public function clienteProduto()
     {
         return $this->hasMany(ProdutoCliente::class);
+    }
+
+    public function unidade()
+    {
+        return $this->belongsTo(Unidade::class);
     }
 }

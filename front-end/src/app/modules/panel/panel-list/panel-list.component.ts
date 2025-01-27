@@ -17,13 +17,20 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 
 	public currentUser: any;
 	public tenants: Tenant[] = [];
+	public countUsersInPGD: number = 0;
 
 	public toolbarButtons: ToolbarButton[] = [
+		{
+			icon: "bi bi-bootstrap-reboot",
+			label: "Reset Queues",
+			onClick: this.resetQueues.bind(this)
+		},
 		{
 			icon: "bi bi-eye-fill",
 			label: "Ver Logs",
 			onClick: () => this.go.navigate({route: ["panel", "logs2"]}),
 		},
+
 		{
 			icon: "bi bi-file-earmark-code-fill",
 			label: "Dados ENV",
@@ -54,6 +61,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 			color: "btn-success",
 			onClick: this.add.bind(this),
 		},
+
 
 		// {
 		//   icon: "bi bi-database-x",
@@ -88,6 +96,11 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 			icon: "bi bi-exclamation-octagon-fill",
 			label: "Forçar SIAPE",
 			onClick: this.forcarSiape.bind(this),
+		});
+		this.options.push({
+			icon: "bi bi-exclamation-octagon-fill",
+			label: "Forçar Envio",
+			onClick: this.forcarEnvio.bind(this),
 		});
 		this.options.push({
 			icon: "bi bi-trash",
@@ -133,6 +146,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 
 	async onLoad() {
 		await this.loadTenants();
+		await this.UsersInPGD();
 		super.onLoad();
 	}
 
@@ -165,6 +179,12 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 				.catch((error) => {
 					reject(error);
 				});
+		});
+	}
+
+	private UsersInPGD(): Promise<void> {
+		return this.dao!.countUsersInPGD().then((count) => {
+			this.countUsersInPGD = count;
 		});
 	}
 
@@ -223,6 +243,30 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 				}
 			});
 	}
+
+	public resetQueues(row: any) {
+		const self = this;
+		this.dialog
+			.confirm("Deseja Resetar as Queues?", "Deseja realmente executar o reset?")
+			.then((confirm) => {
+				if (confirm) {
+					self.loading = true;
+					this.dao!.resetQueues()
+						.then(function () {
+							self.loading = false;
+							self.dialog.alert("Sucesso", "Executado com sucesso!");
+							window.location.reload();
+						})
+						.catch(function (error) {
+							self.loading = false;
+							self.dialog.alert(
+								"Erro",
+								"Erro ao executar: " + error?.message ? error?.message : error
+							);
+						});
+				}
+			});
+	}
 	public executaMigrations(row: any) {
 		const self = this;
 		this.dialog
@@ -259,6 +303,30 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 					this.dao!.forcaSiape(row)
 						.then(function () {
 							self.dialog.alert("Sucesso", "Limpeza dos dados efetuadao com sucesso, aguarde a carga completa!");
+						})
+						.catch(function (error) {
+							let messageError = error?.message ? error?.message : error;
+							console.log("Erro: ", error);
+							self.dialog.alert(
+								"Erro",
+								messageError
+							);
+						});
+				}
+			});
+	}
+	public forcarEnvio(row: any) {
+		const self = this;
+		this.dialog
+			.confirm(
+				"Forçar Envio ao PGD?",
+				"Deseja realmente enviar os dados ao PGD?"
+			)
+			.then((confirm) => {
+				if (confirm) {
+					this.dao!.forcaEnvio(row)
+						.then(function () {
+							self.dialog.alert("Sucesso", "Envio ao PGD iniciado!");
 						})
 						.catch(function (error) {
 							let messageError = error?.message ? error?.message : error;

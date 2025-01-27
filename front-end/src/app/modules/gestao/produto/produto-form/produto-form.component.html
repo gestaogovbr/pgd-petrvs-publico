@@ -1,37 +1,36 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()">
   <div class="row">
     <div class="row">
-      <input-text [size]="6" label="Nome do produto" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250 required labelInfo="Nome formal do produto ou serviço. Ex: Programa de Gestão e Desempenho"></input-text>
-      <input-text [size]="6" label="Sigla/Nome fantasia" icon="bi bi-textarea-t" controlName="nome_fantasia" [control]="form!.controls.nome_fantasia" [attr.maxlength]=250 labelInfo="Nome informal do produto ou serviço. Ex: PGD"></input-text>
+      <input-text [size]="6" label="Nome do produto" [disabled]="campoDesabilitado ? 'true' : undefined" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250 required labelInfo="Nome formal do produto ou serviço. Ex: Programa de Gestão e Desempenho"></input-text>
+      <input-text [size]="3" label="Sigla/Nome fantasia" [disabled]="campoDesabilitado ? 'true' : undefined" icon="bi bi-textarea-t" controlName="nome_fantasia" [control]="form!.controls.nome_fantasia" [attr.maxlength]=250 labelInfo="Nome informal do produto ou serviço. Ex: PGD"></input-text>
+      <input-search #usuario [size]="3" required  [disabled]="campoDesabilitado ? 'true' : undefined" controlName="responsavel_id" [dao]="usuarioDao!" rou label="Curador" [selectRoute]="{route: ['configuracoes', 'usuario'], params: {filter: {atribuicoes: ['CURADOR']}}}"></input-search>
     </div>
     <div class="row">
-      <input-select [size]="4" label="Tipo" icon="bi bi-arrow-up-right-circle" controlName="tipo" [items]="lookup.TIPO_PRODUTO" required></input-select>
+      <input-select [size]="4" label="Tipo" icon="bi bi-arrow-up-right-circle" [disabled]="campoDesabilitado ? 'true' : undefined" controlName="tipo" [items]="lookup.TIPO_PRODUTO" required></input-select>
       <input-text [size]="8" label="URL" icon="bi bi-textarea-t" controlName="url" [control]="form!.controls.url" [attr.maxlength]=250 labelInfo="Página oficial do produto ou serviço"></input-text>
     </div>
     <div class="row">
       <input-textarea [control]="form!.controls.descricao"  label="Descrição" [attr.maxlength]=250 required></input-textarea>
-      <input-search #unidade [size]="4" [control]="form!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao" required></input-search>
+      <input-search #unidade [size]="4" [control]="form!.controls.unidade_id" [disabled]="campoDesabilitado ? 'true' : undefined" controlName="unidade_id" [dao]="unidadeDao" required></input-search>
+    </div>
+    
+    <div class="row abas">
+      <tabs>
+        <tab key="CLIENTES" label="Clientes">
+          <produto-list-cliente #clientes noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-cliente>
+        </tab>
+        <tab key="SOLUCOES" label="Soluções">
+          <produto-list-solucao #solucoes noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-solucao>
+        </tab>
+        <tab key="PROCESSOS" label="Processos (cadeia de valor)">
+          <produto-list-processo #processos noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-processo>
+        </tab>
+        <tab key="INSUMOS" label="Produtos relacionados">
+          <produto-list-produto #produtos noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-produto>
+        </tab>
+      </tabs>
     </div>
   </div>
-  <separator title="Processos da cadeia de valor">
-    <div>
-      <produto-list-processo #processos noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-processo>
-    </div>
-  </separator>
-
-
-  <separator title="Relação com outros produtos">
-    <div>
-      <produto-list-produto #produtos noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-produto>
-    </div>
-  </separator>
-
-  <separator title="Clientes do produto">
-    <div>
-      <produto-list-cliente #clientes noPersist [disabled]="formDisabled" [entity]="entity"></produto-list-cliente>
-    </div>
-  </separator>
-
 
 </editable-form>
 

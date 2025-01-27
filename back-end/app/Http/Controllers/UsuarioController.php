@@ -18,7 +18,7 @@ class UsuarioController extends ControllerBase
   {
     switch ($action) {
       case 'STORE':
-        if (!$usuario->hasPermissionTo('MOD_USER_INCL')) throw new ServerException("CapacidadeStore", "Inserção não realizada");
+        if (!$usuario->hasPermissionTo('MOD_USER_EDT')) throw new ServerException("CapacidadeStore", "Inserção não realizada");
         break;
       case 'EDIT':
         if (!$usuario->hasPermissionTo('MOD_USER_EDT')) throw new ServerException("CapacidadeStore", "Edição não realizada");
@@ -53,5 +53,27 @@ class UsuarioController extends ControllerBase
       Log::error($dataError);
       return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
   }
+  }
+
+  public function consultaCPFSiape(Request $request){
+    $data = $request->validate([
+      'cpf' => [],
+    ]);
+    $nomeArquivo = 'dados_cpf_' . $data['cpf'] . '.xml';
+    try{
+      $retorno = $this->service->consultaCPFSiape($data['cpf']);
+
+       $tempFile = tempnam(sys_get_temp_dir(), 'xml');
+       file_put_contents($tempFile, $retorno->asXML());
+
+       return response()->download($tempFile, $nomeArquivo)->deleteFileAfterSend(true);
+  } catch (\Throwable $th) {
+        $tempFile = tempnam(sys_get_temp_dir(), 'txt');
+        $mensagemErro = date('Y-m-d H:i:s') . " - " . $th->getMessage() . PHP_EOL;
+
+        file_put_contents($tempFile, $mensagemErro, FILE_APPEND);
+
+        return response()->download($tempFile, $nomeArquivo)->deleteFileAfterSend(true);
+   }
   }
 }

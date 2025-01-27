@@ -87,8 +87,8 @@ class ProcessaDadosSiapeBD
             $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
             $xmlResponse->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
 
-            $dadosFuncionais = $xmlResponse->xpath('//tipo:DadosFuncionais')[0];
-            $dadosFuncionaisArray = $this->simpleXmlElementToArray($dadosFuncionais);
+            $dadosFuncionais = $xmlResponse->xpath('//tipo:DadosFuncionais');
+            $dadosFuncionaisArray = $this->decideDadosFuncionais($dadosFuncionais);
 
             return $dadosFuncionaisArray;
         } catch (Exception $e) {
@@ -96,6 +96,20 @@ class ProcessaDadosSiapeBD
             throw new ErrorDataSiapeException("Falha ao tratar dados do Siape");
         }
     }
+    
+    private function decideDadosFuncionais(array $dadosfuncionaisArray){
+        if(count($dadosfuncionaisArray) == 1) return $this->simpleXmlElementToArray($dadosfuncionaisArray[0]);
+
+        $retorno = [];
+        foreach($dadosfuncionaisArray as $dadosFuncionais){
+            $dados = $this->simpleXmlElementToArray($dadosFuncionais);
+            if(!empty($dados['dataOcorrExclusao'])) continue;
+
+            $retorno = $dados;
+        }
+        return $retorno;
+    }
+
     function simpleXmlElementToArray(SimpleXMLElement $element): array
     {
         $array = [];

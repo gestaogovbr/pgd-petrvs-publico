@@ -38,5 +38,7 @@ class Kernel extends ConsoleKernel
                 ->name($jobEntity->nome)
                 ->cron($jobEntity->expressao_cron);
         }
+
+        $schedule->command('horizon:snapshot')->everyFiveMinutes();
     }
 }

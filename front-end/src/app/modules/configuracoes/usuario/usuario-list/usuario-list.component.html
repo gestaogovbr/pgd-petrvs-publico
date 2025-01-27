@@ -1,7 +1,7 @@
 <h3 *ngIf="!isModal" class="my-2">{{title}}</h3>
 <grid [dao]="dao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [selectable]="selectable" (select)="onSelect($event)"
-    [hasAdd]="auth.hasPermissionTo('MOD_USER_INCL')"
+    [hasAdd]="false" 
     [hasEdit]="auth.hasPermissionTo('MOD_USER_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
@@ -9,6 +9,7 @@
             <input-text [size]="4" [label]="lex.translate('Usuário')" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Nome" [attr.maxlength]=250></input-text>
             <input-search [size]="4" [label]="lex.translate('Lotação')" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
             <input-select [size]="4" [label]="lex.translate('Perfil')" controlName="perfil_id" nullable [control]="filter!.controls.perfil_id" [dao]="perfilDao"></input-select>
+            <input-check [size]="12" [label]="lex.translate('Atribuições')" controlName="atribuicoes" [control]="filter!.controls.atribuicoes" [items]="lookup.UNIDADE_INTEGRANTE_TIPO" [inline]="true"></input-check>
         </div>
     </filter>
     <columns>

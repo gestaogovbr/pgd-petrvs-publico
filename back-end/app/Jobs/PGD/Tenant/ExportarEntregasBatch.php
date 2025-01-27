@@ -37,7 +37,7 @@ class ExportarEntregasBatch
     }
 
     public function send() {
-        DB::connection()->getPdo()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+        // DB::connection()->getPdo()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
 
         $tenantId = $this->tenant->id;
         $exportarTrabalhosBatch = $this->exportarTrabalhosBatch;
@@ -48,42 +48,48 @@ class ExportarEntregasBatch
         Log::info("[$tenantId] Consultando planos de Entrega a exportar...");
         
         $auditSource = new PlanoEntregaAuditSource();
-        $total = $auditSource->count();
+                     
+        Cache::forget("{$this->envio->id}_entregas", 0);
+            
+        $batch = Bus::batch([])
+            ->name("Envio #".$this->envio->numero.' - Exportar Planos de Entrega')
+            ->finally(function () use($tenantId, $exportarTrabalhosBatch) 
+            {
+                $flag = Cache::get("{$this->envio->id}_entregas", false);
 
-        if ($total == 0) {
-            Log::info("[$tenantId] Sem planos de Entrega e enviar.");
-            $exportarTrabalhosBatch->send();
+                if ($flag) {
+                    Cache::forget("{$this->envio->id}_entregas");
+                    Log::info("[$tenantId] Exportação dos planos de Entrega finalizada. Envio #".$this->envio->numero);
+                    gc_collect_cycles();
+                    $exportarTrabalhosBatch->send();
+                }
+            })
+            ->allowFailures()
+            ->onQueue('pgd_queue')
+            ->dispatch();
+
+        $n = 0;
+        foreach($auditSource->getData() as $auditData) {
+            $n++;
+            $source = $auditSource->toExportSource($auditData);
+            $job = new ExportarEntregaJob($this->tenant->id, 
+                $n,
+                $this->token, 
+                $this->tenant->api_url, 
+                $this->tenant->api_cod_unidade_autorizadora, 
+                $this->envio->id, 
+                $this->envio->numero,
+                $source
+            );
+            $batch->add($job);
+        }
+
+        if ($n > 0) {
+            Cache::put("{$this->envio->id}_entregas", true);
+            Log::info("[$tenantId] Exportação de ".$n." planos de entrega(s) em andamento");
         } else {
-            Log::info("[$tenantId] Exportação de ".$total." plano(s) de Entrega...");                
-            Cache::put("{$tenantId}_entregas", 0);
-            $n = 0;
-
-            $batch = Bus::batch([])
-                ->then(function () {
-                    // Log::info("Exportação dos planos de Entrega (Tenant {$tenantId}) finalizada com sucesso!");
-                })->catch(function (Throwable $e) use($tenantId) {
-                    Log::error("[$tenantId] Exportação dos planos de Entrega com erro!", ['error' => $e->getMessage()]);
-                })->finally(function () use($tenantId, $total, $exportarTrabalhosBatch) 
-                {
-                    $n = Cache::get("{$tenantId}_entregas");
-
-                    if ($n >= $total) {
-                        Cache::forget("{$tenantId}_entregas");
-                        Log::info("[$tenantId] Exportação dos planos de Entrega finalizada");
-                        $exportarTrabalhosBatch->send();
-                    }
-                })
-                ->allowFailures()
-                ->onQueue('pgd_queue')
-                ->dispatch();
-
-            foreach($auditSource->getData() as $auditData) {
-                $source = $auditSource->toExportSource($auditData);
-                $job = new ExportarEntregaJob($this->tenant, $this->token, $this->envio, $source);
-                $n++;
-                Cache::put("{$tenantId}_entregas", $n);
-                $batch->add($job);
-            }
+            Log::info("[$tenantId] Exportação dos planos de Entrega finalizada sem dados para exportar");
+            $exportarTrabalhosBatch->send();
         }
     }
 }

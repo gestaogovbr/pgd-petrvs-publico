@@ -97,13 +97,13 @@ class RelatoController extends ControllerBase
             
             $entidade = Entidade::find(Session::get('entidade_id'));
             
-            if (!$entidade->email_responsavel_siape) {
-                abort(400, 'Email do Responsável pelo SIAPE não configurado');
+            if (!count($entidade->emails)) {
+                abort(400, 'Emails de Responsáveis pelo SIAPE não configurados');
             }
             
-            $relatoDto->email_responsavel = $entidade->email_responsavel_siape;
+            $relatoDto->emails = $entidade->emails->pluck('email')->all();
             
-            Mail::to($relatoDto->email_responsavel)->send(new SolicitarAjusteLotacaoMail($relatoDto));
+            Mail::to($relatoDto->emails)->send(new SolicitarAjusteLotacaoMail($relatoDto));
             
             return response()->json([
                 'success' => true

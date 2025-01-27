@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\BadGatewayException;
 use App\Exceptions\IntegrationException;
 use Exception;
 use Throwable;
@@ -133,6 +134,10 @@ class IntegracaoService extends ServiceBase
         $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
         $values[':data_modificacao'] = $this->UtilService->asDateTime($unidade->data_modificacao_siape);
         $this->unidadesInseridas[$unidade->id_servo] = ["unidade_id" => $values[':id'], "path" => $values[':path']];
+        $unidadeJaExisteNoBanco = Unidade::where("codigo", $unidade->id_servo)->first();
+        if($unidadeJaExisteNoBanco){
+          throw new BadGatewayException(sprintf("Já existe uma unidade para o código %s", $unidade->id_servo));
+        }
         try {
           $id = Unidade::insertGetId([
             'id' => $values[':id'],
@@ -158,17 +163,18 @@ class IntegracaoService extends ServiceBase
           ]);
           $this->atualizaLogs($this->logged_user_id, 'unidades', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Unidade nova inserida informada pelo SIAPE: ' . $values[':nome'], 'Valores inseridos' => DB::table('unidades')->where('id', $id)->first()]);
         } catch (Throwable $e) {
+          Log::error("Erro ao inserir Unidade", [$e->getMessage()]);
           LogError::newWarn("Erro ao inserir Unidade", $values);
         }
         return $this->unidadesInseridas[$unidade->id_servo];
       }
     } // Só entra aqui se a Unidade já existir e ocorreu mudança no Pai. Nesse caso, muda o pai da Unidade e atualiza Nome e Sigla.
-    else if (($unidade->pai_servo != $unidade->codigoPai) && ($unidade->id != $unidade->id_pai_antigo)) {
+    else if (($unidade->pai_servo != $unidade->codigo_pai_antigo) && ($unidade->id != $unidade->id_pai_antigo)) {
       $values[':id'] = $unidade->id;
       // Prepara apenas os atributos que precisam ser atualizados.
       $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade_id);
       $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
-      $values[':unidade_id'] = $dados_path_pai["unidade_id"];
+      $values[':unidade_id'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : null;
       $values[':data_modificacao'] = $this->UtilService->asDateTime($unidade->data_modificacao_siape);
 
       $sql = "UPDATE unidades SET path = :path, unidade_pai_id = :unidade_id, codigo = :codigo, " .
@@ -455,9 +461,9 @@ class IntegracaoService extends ServiceBase
           "SELECT iu.id_servo, u.codigo as codigo_antigo, " .
           "iu.nomeuorg, u.nome as nome_antigo, iu.siglauorg, " .
           "u.sigla as sigla_antiga, iu.pai_servo, " .
-          "un.id as id_pai_antigo, u.id, u.path as path_antigo, " .
+          "un_atual_pai.id as id_pai_antigo, u.id, u.path as path_antigo, " .
           "c.id AS cidade_id, u.cidade_id as cidade_antiga, " .
-          "und.id AS unidade_pai_id, un.codigo AS codigoPai, " .
+          "und.id AS unidade_pai_id, un_atual_pai.codigo AS codigo_pai_antigo, " .
           "und.path AS path_pai, " .
           "iu.data_modificacao as data_modificacao_siape, " .
           "u.data_modificacao as data_modificacao_und " .
@@ -465,7 +471,7 @@ class IntegracaoService extends ServiceBase
           "FROM integracao_unidades iu " .
           "" .
           "LEFT JOIN unidades u ON (iu.id_servo = u.codigo) " .
-          "LEFT JOIN unidades un ON (un.id = u.id) " .
+          "LEFT JOIN unidades un_atual_pai ON (un_atual_pai.id = u.unidade_pai_id) " .
           "LEFT JOIN unidades und ON (iu.pai_servo = und.codigo) " .
           "LEFT JOIN cidades c ON (iu.municipio_ibge = c.codigo_ibge) " .
           "" .
@@ -510,6 +516,7 @@ class IntegracaoService extends ServiceBase
         ], fn ($o) => intval(substr($o, 0, strpos($o, 'unidade') - 1)) > 0)];
         // Unidades que foram removidas em integracao_unidades vão permanecer no sistema por questões de integridade.
       } catch (Throwable $e) {
+        Log::error("Erro ao importar unidades", $e);
         LogError::newError("Erro ao importar unidades", $e);
         $this->result['unidades']['Resultado'] = 'ERRO: ' . $e->getMessage();
       }
