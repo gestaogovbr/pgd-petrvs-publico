@@ -142,18 +142,17 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
   }
 
   public onFilterClear(){
-
     this.filter?.reset()
-
     this.grid!.reloadFilter();
+    this.cdRef.markForCheck();
   }
 
   public filtrosDefinidos() {
-    return this.filter?.controls.nome.value.length > 0 || 
-      this.filter?.controls.id.value.length > 0 ||
-      this.filter?.controls.unidade_id.value.length > 0 ||
-      this.filter?.controls.cliente_id.value.length > 0 ||
-      this.filter?.controls.status.value.length > 0;
+    return this.filter?.controls.nome.value?.length > 0 || 
+      this.filter?.controls.id.value?.length > 0 ||
+      this.filter?.controls.unidade_id.value?.length > 0 ||
+      this.filter?.controls.cliente_id.value?.length > 0 ||
+      this.filter?.controls.status.value?.length > 0;
   }
 
   public filterWhere = (filter: FormGroup) => {
@@ -161,7 +160,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
 		let form: any = filter.value;
 
     if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
+      result.push(["nome_fantasia", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
     if(form.id?.length) {
       result.push(["identificador", "=",form.id]);

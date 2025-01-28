@@ -123,7 +123,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     let form: any = filter.value;
 
     if (form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
+      result.push(["sigla", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
 
     if (form.id?.length) {
@@ -165,6 +165,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
   public onFilterClear() {
     this.filter?.reset()
     this.grid!.reloadFilter();
+    this.cdRef.markForCheck();
   }
 
   public async ativarDesativar(solucao: Solucao, event: any) {
