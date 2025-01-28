@@ -13,22 +13,24 @@ return new class extends Migration
     {
         Schema::dropIfExists('entregas_produtos');
 
-        Schema::create('planos_entregas_entregas_produtos', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('entrega_id')->constrained('planos_entregas_entregas')->onDelete('cascade');
-            $table->foreignUuid('produto_id')->constrained('produtos')->onDelete('cascade');
-            $table->timestamps();
-            $table->softDeletes();
+        if (!Schema::hasTable('planos_entregas_entregas_produtos')) {
+            Schema::create('planos_entregas_entregas_produtos', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->foreignUuid('entrega_id')->constrained('planos_entregas_entregas')->onDelete('cascade');
+                $table->foreignUuid('produto_id')->constrained('produtos')->onDelete('cascade');
+                $table->timestamps();
+                $table->softDeletes();
 
-            $table->unique(['entrega_id', 'produto_id'], 'unique_entregas_produtos');
-        });
+                $table->unique(['entrega_id', 'produto_id'], 'unique_entregas_produtos');
+            });
+        }
     }
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
-    {    
+    {
         Schema::dropIfExists('planos_entregas_produtos');
 
         Schema::create('entregas_produtos', function (Blueprint $table) {
