@@ -1,4 +1,4 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [hasAdd]="true" [hasEdit]="true" [selectable]="selectable" (select)="onSelect($event)">
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [hasAdd]="this.auth.isUsuarioDeveloper()" [hasEdit]="this.auth.isUsuarioDeveloper()" [selectable]="selectable" (select)="onSelect($event)">
   <toolbar></toolbar>
   <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
     <div class="row">
