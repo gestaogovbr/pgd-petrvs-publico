@@ -10,7 +10,8 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
+{
+    if (!Schema::hasTable('entidade_emails')) {
         Schema::create('entidade_emails', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('entidade_id'); 
@@ -24,6 +25,8 @@ return new class extends Migration
                   ->onDelete('cascade');
         });
     }
+}
+
 
     /**
      * Reverse the migrations.

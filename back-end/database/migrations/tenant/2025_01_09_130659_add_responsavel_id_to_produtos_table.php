@@ -21,10 +21,12 @@ return new class extends Migration
         DB::table('produtos')->truncate();
         Schema::enableForeignKeyConstraints();
 
-        Schema::table('produtos', function (Blueprint $table) {
-            $table->uuid('responsavel_id')->after('id');
-            $table->foreign('responsavel_id')->references('id')->on('usuarios')->onDelete('cascade');
-        });
+        if (!Schema::hasColumn('produtos', 'responsavel_id')) {
+            Schema::table('produtos', function (Blueprint $table) {
+                $table->uuid('responsavel_id')->after('id');
+                $table->foreign('responsavel_id')->references('id')->on('usuarios')->onDelete('cascade');
+            });
+        }
     }
 
     /**
