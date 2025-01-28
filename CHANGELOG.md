@@ -1,3 +1,6 @@
+## 2.3.6 27/01/2024
+### Removido
+ - Menus não funcionais
 ## 2.3.5 24/01/2024
 ### Adicionado
  - Consulta de dados funcionais do SIAPE de um CPF na tela do Desenvolvedor
