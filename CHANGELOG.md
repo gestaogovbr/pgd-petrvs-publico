@@ -1,3 +1,15 @@
+## 2.3.6 27/01/2024
+### Removido
+ - Menus não funcionais
+## 2.3.5 24/01/2024
+### Adicionado
+ - Consulta de dados funcionais do SIAPE de um CPF na tela do Desenvolvedor
+### Corrigido
+ - Correção no envio ao PGD de planos de entrega Avaliados
+ - Adição no envio ao PGD de planos de entrega re-avaliados
+ - Remoção de unidadez raizes duplicadas
+ - Correção na falha ao inserir unidades sem vínculos acimas
+
 ## 2.3.4 03/01/2024
 ### Adicionado
  - Adicionada opção parta forçar Envio imediato

@@ -110,7 +110,6 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   }
 
   public get queryOptions() {
-    console.log('queryOptions')
     return {
       where: this.filterWhere && this.filter ? this.filterWhere(this.filter) : [],
       orderBy: [...(this.groupBy || []).map(x => [x.field, "asc"] as QueryOrderBy), ...(this.orderBy || [])],

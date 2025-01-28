@@ -1,0 +1,21 @@
+
+<grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true" editable [add]="adicionarIntegrante.bind(this)" [load]="carregarIntegrante.bind(this)" [remove]="removerIntegrante.bind(this)" [save]="salvarIntegrante.bind(this)">
+    <columns>
+        <column [title]="lex.translate('Unidades')" [template]="columnUnidade" [editTemplate]="editUnidade">
+            <ng-template let-row="row" #columnUnidade>
+                <strong>{{ row.unidade_sigla || '' }}</strong><span> {{ row.informal ? '(Unidade Informal)' : '(Código: ' + (row.unidade_codigo || '') + ')' }}</span><br>
+                <span>{{ row.unidade_nome || '' }} </span>
+            </ng-template>
+            <ng-template let-row="row" #editUnidade>
+                <input-search #unidade [disabled]="grid?.adding ? undefined : 'true'" [size]="12" label icon controlName="unidade_id" [dao]="unidadeDao"></input-search>
+            </ng-template>
+        </column>
+        <column title="Ativar/Desativar" [template]="columnAtivar">
+            <ng-template let-row="row" #columnAtivar>
+                <input-switch  [value]="'true'" [valueOn]="'true'"  [valueOff]="'false'" (change)="false"></input-switch>
+            </ng-template>
+          </column>
+
+        <column type="options"></column>
+    </columns>
+</grid>

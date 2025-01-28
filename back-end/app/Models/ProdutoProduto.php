@@ -15,16 +15,14 @@ class ProdutoProduto extends ModelBase
     
     protected $fillable = [
         'produto_base_id',
-        'produto_id',
-        'tipo'
+        'produto_id'
     ];
 
 
     protected $casts = [
         'id' => 'string',
         'produto_id' => 'string',
-        'produto_base_id' => 'string',
-        'tipo' => 'string'
+        'produto_base_id' => 'string'
     ];
 
     public function produtoBase()

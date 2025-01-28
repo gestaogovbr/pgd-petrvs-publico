@@ -7,7 +7,6 @@ import { Solucao } from "src/app/models/solucao.model";
 import { PageFormBase } from "src/app/modules/base/page-form-base";
 import { InputSearchComponent } from "src/app/components/input/input-search/input-search.component";
 import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
-import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 
 @Component({
   selector: 'app-solucao-form',
@@ -17,20 +16,14 @@ import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 
 export class SolucaoFormComponent extends PageFormBase<Solucao, SolucaoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
 
   public usuarioDao: UsuarioDaoService;
-  public unidadeDao: UnidadeDaoService;
 
   constructor(public injector: Injector) {
     super(injector, Solucao, SolucaoDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
-    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.modalWidth = 1300;
-    this.join = [
-      "unidade"
-    ];
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
       sigla: { default: "" },
