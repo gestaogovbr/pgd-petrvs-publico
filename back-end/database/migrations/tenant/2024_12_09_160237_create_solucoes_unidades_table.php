@@ -11,26 +11,28 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('solucoes_unidades', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('id_unidade');
-            $table->uuid('id_solucao');
-            $table->tinyInteger('status')->default(0);
-            $table->softDeletes();
-            $table->timestamps();
+        if (!Schema::hasTable('solucoes_unidades')) {
+            Schema::create('solucoes_unidades', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->uuid('id_unidade');
+                $table->uuid('id_solucao');
+                $table->tinyInteger('status')->default(0);
+                $table->softDeletes();
+                $table->timestamps();
 
-            $table->foreign('id_unidade')
-                ->references('id')
-                ->on('unidades')
-                ->onDelete('cascade');
+                $table->foreign('id_unidade')
+                    ->references('id')
+                    ->on('unidades')
+                    ->onDelete('cascade');
 
-            $table->foreign('id_solucao')
-                ->references('id')
-                ->on('solucao_produtos_servicos')
-                ->onDelete('cascade');
+                $table->foreign('id_solucao')
+                    ->references('id')
+                    ->on('solucao_produtos_servicos')
+                    ->onDelete('cascade');
 
-            $table->unique(['id_unidade', 'id_solucao'], 'unique_unidade_solucao');
-        });
+                $table->unique(['id_unidade', 'id_solucao'], 'unique_unidade_solucao');
+            });
+        }
     }
 
     /**
