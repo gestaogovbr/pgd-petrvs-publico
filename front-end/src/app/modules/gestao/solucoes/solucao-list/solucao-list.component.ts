@@ -123,7 +123,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     let form: any = filter.value;
 
     if (form.nome?.length) {
-      result.push(["sigla", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
+      result.push(["or", ["sigla", "like", "%" + form.nome.trim().replace(" ", "%") + "%"], ["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]]);
     }
 
     if (form.id?.length) {

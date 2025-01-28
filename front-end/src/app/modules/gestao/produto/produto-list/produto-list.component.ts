@@ -56,7 +56,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     let result: ToolbarButton[] = [];
     if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });   
 
-    if (row._metadata?.vinculoEntregas != 1 && this.isChefe) {
+    if (row._metadata?.vinculoEntregas == 0 && this.isChefe) {
       result.push(this.BOTAO_EXCLUIR);
     }
     
@@ -160,7 +160,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
 		let form: any = filter.value;
 
     if(form.nome?.length) {
-      result.push(["nome_fantasia", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
+      result.push(["or", ["nome_fantasia", "like", "%" + form.nome.trim().replace(" ", "%") + "%" ], ["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]]);
     }
     if(form.id?.length) {
       result.push(["identificador", "=",form.id]);

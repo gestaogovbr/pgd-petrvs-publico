@@ -53,7 +53,7 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
     entity.unidade_id = entity.unidade?.id || this.auth.unidade!.id;
     entity.responsavel_id = entity.responsavel?.id || this.auth.usuario!.id;
 
-    this.campoDesabilitado = entity._metadata?.vinculoEntregas == 1;
+    this.campoDesabilitado = entity._metadata?.vinculoEntregas >= 1;
 
     form.patchValue(this.util.fillForm(formValue, entity));
   }
