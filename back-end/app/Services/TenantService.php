@@ -12,6 +12,7 @@ use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
+use App\Models\PainelUsuario;
 use Illuminate\Support\Facades\Artisan;
 use Carbon\Carbon;
 use App\Models\Tenant;
@@ -22,6 +23,10 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\ServerException;
+use Illuminate\Support\Facades\Cache;
+use App\Jobs\ExportarTenantJob;
+use App\Models\JobSchedule;
+
 
 class TenantService extends ServiceBase
 {
@@ -104,6 +109,14 @@ class TenantService extends ServiceBase
         $this->TenantConfigurationsService->handle($tenantId);
         $this->limpaTabelas();
         BuscarDadosSiapeJob::dispatch($tenantId);
+    }
+
+    public function forcarEnvio(string $tenantId)
+    {
+        $this->inicializeTenant($tenantId);
+        $this->TenantConfigurationsService->handle($tenantId);
+
+        ExportarTenantJob::dispatch($tenantId);
     }
 
     public function inicializeTenant($tenantId): void
@@ -190,6 +203,33 @@ class TenantService extends ServiceBase
             // Optionally, rethrow the exception to let it be handled elsewhere
             throw $e;
         }
+    }
+
+    public function countUsersInPGD(){
+        $cacheKey = 'count_users_in_pgd';
+        $cacheTime = 60; // Cache time in minutes
+
+        if (Cache::store('redis')->has($cacheKey)) {
+            return Cache::store('redis')->get($cacheKey);
+        }
+
+        $user_id = Auth::guard('painel')->id();
+        $painel_user = PainelUsuario::findOrFail($user_id);
+
+        $tenants = $painel_user->nivel != 1 ? $painel_user->tenants : Tenant::all();
+        $users = 0;
+        foreach ($tenants as $tenant) {
+            $this->inicializeTenant($tenant->id);
+            $users += DB::table('programas_participantes')
+                ->select('usuario_id')
+                ->distinct()
+                ->where('habilitado', 1)
+                ->count();
+        }
+
+        Cache::store('redis')->put($cacheKey, $users, $cacheTime);
+
+        return $users;
     }
 
 
@@ -295,6 +335,7 @@ class TenantService extends ServiceBase
             $this->validatePermission();
             $tenant = Tenant::find($id);
             if ($tenant) {
+                JobSchedule::where('tenant_id', $tenant->id)->delete();
                 $tenant->delete();
                 Log::info('Tenant deletado com sucesso: ' . $id);
             }

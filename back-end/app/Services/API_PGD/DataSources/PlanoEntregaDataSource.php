@@ -10,12 +10,11 @@ class PlanoEntregaDataSource extends DataSource
     public function getData(ExportSource $exportSource) {
 
         if (!$exportSource->id){
-            throw new ExportPgdException('ID do Plano de Trabalho não definido');
+            throw new ExportPgdException('ID do Plano de Entrega não definido');
         }
 
         $planoEntrega = PlanoEntrega::with([
             'programa',
-            'programa.unidadeAutorizadora',
             'programa.unidade',
             'unidade',
             'entregas',
@@ -24,23 +23,19 @@ class PlanoEntregaDataSource extends DataSource
         ->find($exportSource->id);
 
         if (!$planoEntrega){
-            throw new ExportPgdException('Plano de Entrega removido ou inválido');
+            throw new ExportPgdException("Plano de Entrega {$exportSource->id} removido ou inválido");
         }
 
         if (!$planoEntrega->programa){
-            throw new ExportPgdException('Plano de Entrega não possui Programa');
-        }
-
-        if (!$planoEntrega->programa->unidadeAutorizadora){
-            throw new ExportPgdException('Plano de Entrega não possui Unidade Autorizadora');
+            throw new ExportPgdException("Plano de Entrega {$exportSource->id} não possui Programa");
         }
 
         if (!$planoEntrega->unidade){
-            throw new ExportPgdException('Plano de Trabalho não possui Unidade Executora');
+            throw new ExportPgdException("Plano de Entrega {$exportSource->id} não possui Unidade Executora");
         }
 
         if (!$planoEntrega->programa->unidade){
-            throw new ExportPgdException('Plano de Trabalho não possui Unidade Instituidora');
+            throw new ExportPgdException("Plano de Entrega {$exportSource->id} não possui Unidade Instituidora");
         }
 
         return $planoEntrega;

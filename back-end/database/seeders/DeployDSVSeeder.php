@@ -37,5 +37,8 @@ class DeployDSVSeeder extends Seeder
 
         $this->call(In24_2023Seeder::class);
         sleep(2);
+
+        $this->call(TipoClientesSeeder::class);
+        sleep(2);
     }
 }

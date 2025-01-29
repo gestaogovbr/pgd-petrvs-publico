@@ -1,0 +1,44 @@
+<grid [dao]="dao" [join]="join" [hasEdit]="false" [title]="isModal ? '' : title" [orderBy]="orderBy">
+    <toolbar></toolbar>
+    <filter [deleted]="false" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-text [size]="2" label="#ID" icon="bi bi-upc" controlName="id"></input-text>
+            <input-text [size]="5" label="UID" icon="bi bi-upc" controlName="uid"></input-text>
+            <input-radio [size]="2" label="Sucesso" controlName="sucesso" [items]="lookup.SIMNAO" labelInfo="Sucesso"></input-radio>
+        </div>
+    </filter>
+    <columns>
+        <column title="#ID" [template]="columnNumero" [minWidth]="50">
+            <ng-template let-row="row" #columnNumero>
+                <span> {{ '#' + row.plano_entrega.numero || ""}}</span>
+            </ng-template>
+        </column>
+        <column title="Programa" [template]="columnPrograma">
+            <ng-template let-row="row" #columnPrograma>
+                <span *ngIf="row.plano_entrega.programa">{{ row.plano_entrega.programa.nome }}</span>
+            </ng-template>
+        </column>
+        <column title="Unidade" [template]="columnUnidade">
+            <ng-template let-row="row" #columnUnidade>
+                <span *ngIf="row.plano_entrega.unidade"> {{ row.plano_entrega.unidade.sigla }} </span>
+            </ng-template>
+        </column>
+        <column title="Início" [template]="columnInicio" orderBy="data_inicio">
+            <ng-template let-row="row" #columnInicio>
+                <span> {{dao!.getDateFormatted(row.plano_entrega.data_inicio)}}</span>
+            </ng-template>
+        </column>
+        <column title="Fim" [template]="columnFim" orderBy="data_fim">
+            <ng-template let-row="row" #columnFim>
+                <span> {{dao!.getDateFormatted(row.plano_entrega.data_fim)}}</span>
+            </ng-template>
+        </column>
+        <column title="Sucesso" field="sucesso" [width]="20" [template]="columnDataSucesso">
+            <ng-template let-row="row" #columnDataSucesso>
+                <span><small>{{ util.getBooleanFormatted(row.sucesso).toUpperCase() }}</small></span>
+            </ng-template>
+        </column>
+        <column *ngIf="!selectable" type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

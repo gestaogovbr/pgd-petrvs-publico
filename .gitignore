@@ -57,6 +57,4 @@ resources/documentacao/Gestão/plano_trabalho.pdf
 microservice/api-pgd/storage/logs/schedule.log
 back-end/supervisord.log
 back-end/supervisord.pid
-back-end/storage/logs/horizon.log
-back-end/storage/logs/laravel.log
-back-end/storage/logs/scheduler.log
+back-end/storage/logs/*.log

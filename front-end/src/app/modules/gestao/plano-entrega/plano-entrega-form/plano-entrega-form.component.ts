@@ -50,7 +50,15 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-    this.join = ["entregas.entrega", "entregas.objetivos.objetivo", "entregas.processos.processo", "entregas.unidade", "unidade", 'entregas.reacoes.usuario:id,nome,apelido'];
+    this.join = [
+      "entregas.entrega", 
+      "entregas.objetivos.objetivo", 
+      "entregas.processos.processo", 
+      "entregas.produtos.produto", 
+      "entregas.unidade", 
+      "unidade", 
+      'entregas.reacoes.usuario:id,nome,apelido'
+    ];
     this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
@@ -65,8 +73,8 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     }, this.cdRef, this.validate);
 
     this.programaMetadata = {
-      todosUnidadeExecutora: true,      
-      vigentesUnidadeExecutora: false
+      todosUnidadeExecutora: false,      
+      vigentesUnidadeExecutora: true
     }  
   }
 
@@ -135,8 +143,11 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.entity.unidade_id = this.auth.unidade?.id || "";
     this.entity.unidade = this.auth.unidade;
 
-    let programas = await this.programaDao.query({where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]]}).asPromise();
-    let ultimo = programas[programas.length -1];
+    let programas = await this.programaDao.query({
+      where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]],
+      orderBy: [["unidade.path", "desc"]]
+    }).asPromise();
+    let ultimo = programas[0];
     if(ultimo){
       this.entity.programa = ultimo;
       this.entity.programa_id = ultimo.id;

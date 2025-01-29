@@ -1,3 +1,62 @@
+## 2.3.6 27/01/2024
+### Removido
+ - Menus não funcionais
+## 2.3.5 24/01/2024
+### Adicionado
+ - Consulta de dados funcionais do SIAPE de um CPF na tela do Desenvolvedor
+### Corrigido
+ - Correção no envio ao PGD de planos de entrega Avaliados
+ - Adição no envio ao PGD de planos de entrega re-avaliados
+ - Remoção de unidadez raizes duplicadas
+ - Correção na falha ao inserir unidades sem vínculos acimas
+
+## 2.3.4 03/01/2024
+### Adicionado
+ - Adicionada opção parta forçar Envio imediato
+ - Adicionado número do Envio ao PGD
+### Modificado
+ - Otimizações no envio ao PGD
+ - Melhoria na identificação dos Jobs de Envio
+### Corrigido
+ - Correção na atualização dos vínculos com unidade pai de uma unidade modificada via SIAPE
+## 2.3.3 18/12/2024
+### Adicionado
+ - Adição da Unidade Autorizadora no Painel
+ - Adição de Job para envio individual de Tenant
+ - Consulta Audit no Painel
+### Corrigido
+- Envio da Matrícula SIAPE para a API PGD
+- Comando para enviar manualmente para API PGD
+### Modificado
+ - Remoção da Unidade Autorizadora dos Regimentos
+ - Modificada Unidade Autorizadora no Envio para API PGD
+ - Melhorias de uso de memória no Envio para a API PGD
+ - Busca do codigo UORG feito a partir da requisição do SIAPE
+### Removido
+ - Remoção das configurações do painel de integração:
+    Auto-incluir
+    Codigo unidade raiz
+    Upag
+    Codigo UORG
+## 2.3.2 03/12/2024
+### Adicionado
+ - Fragmentado dados inseridos no banco pelo SIAPE
+ - Adição de Logs de processamento da API PGD
+ - URL da API PGD nos Tenants
+ - Consulta aos logs do Envio da API PGD
+ - Envio para a API PGD dividido em jobs menores
+### Corrigido
+ - Texto do participante no TCR
+ - Servidores temporários não conseguiam assinar planos de trabalho
+ - Alteração na busca da lotação de servidores temporários
+ - Removido duplicação de jobs ao editar o tenant
+ - Carga de Tipos de Motivo de Afastamento não carregavam corretamente no Seeder
+ - Regramento padrão nos planos de trabalho, entrega e seleção de participantes carregava unidade errada
+### Modificado
+ - Desabilitado edição do TCR compilado em plano de trabalho
+ - Retirado opção do texto complementar da unidade executora no formulário do plano de trabalho
+ - Configurações do supervisor para envio da API PGD
+ - Removidos menus de Tipos de Meta, Tipos de Avaliação, Tipos de Modalidade, Tipos de Motivos de Afastamento
 ## 2.3.1 23/10/2024 (Hotfixes)
 ### Adicionado
  - Migrate para agendar os JOBS do SIAPE automaticamente

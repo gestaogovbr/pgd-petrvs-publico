@@ -141,6 +141,10 @@ class PlanoTrabalhoService extends ServiceBase
     if(!empty($conflito)) {
       throw new ServerException("ValidatePlanoTrabalho", "Este participante já possui plano de trabalho cadastrado para o período");
     }
+    /* Validar documento_id */
+    if (empty($data["documento_id"])) {
+      throw new ServerException("ValidatePlanoTrabalho", "TCR não foi gerado.");
+    }
     if ($action == ServiceBase::ACTION_INSERT) {
       /*  
       (RN_PTR_V) Condições para que um Plano de Trabalho possa ser criado:
@@ -205,7 +209,6 @@ class PlanoTrabalhoService extends ServiceBase
       if($exigeAssinaturas) $this->statusService->atualizaStatus($plano, 'AGUARDANDO_ASSINATURA', 'Plano de Trabalho repactuado');
       if(!empty($plano->documento_id) && !$haAssinaturas) {
         $documento = Documento::find($plano->documento_id);
-        $documento->conteudo = $this->templateService->renderTemplate($template, $datasource);
         $documento->template = $template;
         $documento->dataset = $dataset;
         $documento->datasource = $datasource;
@@ -247,7 +250,7 @@ class PlanoTrabalhoService extends ServiceBase
       (RN_PTR_M) ...
         - Após alterado, e no caso se exija assinaturas no TCR, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
       */
-      $this->repactuar($plano->id);
+      $this->repactuar($plano->id, false);
     }
     if ($action == ServiceBase::ACTION_INSERT) {
       /* (RN_PTR_AC) Quando um participante tiver um plano de trabalho criado, ele se tornará automaticamente um COLABORADOR da sua unidade executora; */
@@ -705,7 +708,7 @@ class PlanoTrabalhoService extends ServiceBase
       $result["atribuicoesGestorUsuario"] = $this->usuarioService->atribuicoesGestor($planoTrabalho['unidade_id'], $planoTrabalho['usuario_id']);
       $result["gestorUnidadeExecutora"] = $this->usuarioService->isGestorUnidade($planoTrabalho['unidade_id']);
       $result["gestoresUnidadeSuperior"] = $this->unidadeService->gestoresUnidadeSuperior($planoTrabalho['unidade_id']);
-      $result["gestorUnidadeSuperior"] = $result["gestoresUnidadeSuperior"]["gestor"]?->id == $logado->id || count(array_filter($result["gestoresUnidadeSuperior"]["gestoresSubstitutos"], fn ($value) => $value["id"] == $logado->id)) > 0;
+      $result["gestorUnidadeSuperior"] = $result["gestoresUnidadeSuperior"]["gestor"]?->id == $logado->id || count(array_filter($result["gestoresUnidadeSuperior"]["gestoresSubstitutos"], fn ($value) => $value && $value["id"] == $logado->id)) > 0;
       $result["nrEntregas"] = empty($planoTrabalho['entregas']) ? 0 : count($planoTrabalho['entregas']);
       $result["participanteLotadoAreaTrabalho"] = parent::loggedUser()->areasTrabalho->find(fn ($at) => $this->usuarioService->isLotacao($planoTrabalho["usuario_id"], $at->unidade->id)) != null;
       $result["participanteColaboradorUnidadeExecutora"] = $this->usuarioService->isIntegrante("COLABORADOR", $planoTrabalho["unidade_id"], $planoTrabalho["usuario_id"]);
@@ -885,17 +888,7 @@ class PlanoTrabalhoService extends ServiceBase
    */
   public function assinaturasExigidas($planoTrabalho): array
   {
-    /*
-    Resumo [PTR:TABELA_3]
-                     +---------------------------------------------------+-----------------------------------------------------+---------------
-                                       Unidade Executora                 |                 Unidade de Lotação                  |  Participante
-                     +---------------+------------------+----------------+---------------+--------------------+----------------+      Sem
-                       Chefe titular | Chefe substituto | Chefe delagado | Chefe titular | Chefe substituto   | Chefe delagado |     Chefia
-    -----------------+---------------+------------------+----------------+---------------+--------------------+----------------+---------------
-    gestor executora | CF+,CS+       | CF+,CS+,CF,CS-   | CF,CS          |               |                    |                | CF,CS
-    -----------------+---------------+------------------+----------------+---------------+--------------------+----------------+---------------
-    gestor imediato  |               |                  |                | CFº+,CSº+     | CFº+,CSº+,CFº,CSº- | CFº,CSº        | CFº,CSº
-    */
+
     $ids = [
       "participante" => [], 
       "gestores_unidade_executora" => [], 
@@ -903,7 +896,7 @@ class PlanoTrabalhoService extends ServiceBase
       "gestores_entidade" => [], 
       "erros" => []
     ];
-    $keys = [$planoTrabalho["programa_id"], $planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]];
+    $keys = [$planoTrabalho["id"], $planoTrabalho["programa_id"], $planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]];
     if (!empty($planoTrabalho) && !empty($planoTrabalho["programa_id"]) && !empty($planoTrabalho["usuario_id"]) && !empty($planoTrabalho["unidade_id"])) {
       if($this->hasBuffer("assinaturasExigidas", $keys)) {
         $ids = $this->getBuffer("assinaturasExigidas", $keys);

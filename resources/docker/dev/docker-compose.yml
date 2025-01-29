@@ -85,6 +85,10 @@ services:
     volumes:
       - ../../../back-end:/var/www
     command: ["supervisord", "-c", "/etc/supervisor/conf.d/horizon.conf"]
+    deploy:
+      resources:
+        limits:
+          memory: 4048M
     depends_on:
       - petrvs_php
     networks:

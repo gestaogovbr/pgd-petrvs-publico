@@ -17,6 +17,8 @@ use App\Http\Controllers\ChangeController;
 use App\Http\Controllers\EntregaController;
 use App\Http\Controllers\EixoTematicoController;
 use App\Http\Controllers\ErrorController;
+use App\Http\Controllers\EnvioController;
+use App\Http\Controllers\EnvioItemController;
 use App\Http\Controllers\ProgramaController;
 use App\Http\Controllers\ProgramaParticipanteController;
 use App\Http\Controllers\PlanejamentoController;
@@ -89,6 +91,7 @@ use App\Http\Controllers\TipoClienteController;
 use FontLib\Table\Type\post;
 use App\Http\Controllers\JobAgendadoController;
 use App\Http\Controllers\RelatoController;
+use App\Http\Controllers\SolucaoUnidadeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -148,6 +151,14 @@ Route::middleware('auth:sanctum')->prefix('Error')->group(function () {
   Route::post('get-by-id', [ErrorController::class, 'getById']);
   Route::post('showResponsaveis', [ErrorController::class, 'showResponsaveis']);
 });
+Route::middleware('auth:sanctum')->prefix('Envio')->group(function () {
+  Route::post('query', [EnvioController::class, 'query']);
+  Route::post('get-by-id', [EnvioController::class, 'getById']);
+});
+Route::middleware('auth:sanctum')->prefix('EnvioItem')->group(function () {
+  Route::post('query', [EnvioItemController::class, 'query']);
+  Route::post('get-by-id', [EnvioItemController::class, 'getById']);
+});
 Route::middleware('auth:sanctum')->prefix('Traffic')->group(function () {
 });
 Route::middleware('auth:sanctum')->post('/Petrvs/showTables', [PetrvsController::class, 'showTables']);
@@ -162,9 +173,7 @@ Route::middleware(['auth:sanctum'])->prefix('Integracao')->group(function () {
 
 /* Testes */
 //Route::middleware(['auth:sanctum', 'can:ADMINISTRADOR'])->get('/teste', function (Request $request) { return ["OK"]; });
-Route::get('/teste', function (Request $request) {
-  return ["OK"];
-});
+
 Route::middleware('auth:sanctum')->post('/Teste/calculaDataTempoUnidade', [UsuarioController::class, 'calculaDataTempoUnidade']);
 
 /* Batch */
@@ -466,6 +475,8 @@ Route::middleware(['auth:sanctum'])->prefix('Catalogo')->group(function () {
 });
 Route::middleware(['auth:sanctum'])->prefix('Solucao')->group(function () {
     defaultRoutes(SolucaoController::class);
+    Route::post('ativar-todos', [SolucaoController::class, 'atribuirTodos']);
+    Route::post('desativar-todos', [SolucaoController::class, 'desatribuirTodos']);
 });
 Route::middleware(['auth:sanctum'])->prefix('TipoCliente')->group(function () {
   defaultRoutes(TipoClienteController::class);
@@ -476,5 +487,9 @@ Route::middleware(['auth:sanctum'])->prefix('Cliente')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('Relato')->group(function () {
   Route::post('store', [RelatoController::class, 'store']);
   Route::get('confirmar/{email}/{nome}', [RelatoController::class, 'confirmar']);
+});
+Route::middleware('auth:sanctum')->post('/usuario/consulta-cpf-siape', [UsuarioController::class, 'consultaCPFSiape']);
+Route::middleware(['auth:sanctum'])->prefix('SolucaoUnidade')->group(function () {
+  defaultRoutes(SolucaoUnidadeController::class);
 });
 

@@ -4,6 +4,7 @@ import { ConfigResolver } from 'src/app/resolvies/config.resolver';
 import { PanelListComponent } from './panel-list/panel-list.component';
 import { PanelFormComponent } from './panel-form/panel-form.component';
 import { PanelListLogsComponent } from './panel-list-logs/panel-list-logs.component';
+import { PanelAuditComponent } from './panel-audit/panel-audit.component';
 import { PanelSeederComponent } from './panel-seeder/panel-seeder.component';
 import { JobAgendadoComponent } from './panel-job-agendados/panel-job-agendados.component';
 import { PanelLayoutComponent } from './panel-layout/panel-layout.component';
@@ -25,6 +26,7 @@ const routes: Routes = [
       { path: 'seeder', component: PanelSeederComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Executa Seeder no Tenant", modal: true }, canActivate: [PanelAdminGuard] },
       { path: 'job-agendados', component: JobAgendadoComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Job agendados", modal: true }, canActivate: [PanelAdminGuard] },
       { path: 'logs2', component: PanelListLogsComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Logs", modal: true }, canActivate: [PanelAdminGuard] },
+      { path: 'audit', component: PanelAuditComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta Audit", modal: true }, canActivate: [PanelAdminGuard] },
       { path: 'env', component: PanelEnvComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Dados ENV", modal: true }, canActivate: [PanelAdminGuard] },
       { path: 'admins', component: PanelAdminsListComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta admins do painel" }, canActivate: [PanelAdminGuard] },
       { path: 'admins/new', component: PanelAdminsFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de usuários do painel", modal: true }, canActivate: [PanelAdminGuard] },

@@ -31,7 +31,7 @@ class ParticipanteDataSource extends DataSource
             ->find($exportSource->id);
 
         if (!$participante){
-            throw new ExportPgdException('Usuário sem Participação');
+            throw new ExportPgdException("Usuário {$exportSource->id} inválido ou sem lotação");
         }
 
         return $participante;

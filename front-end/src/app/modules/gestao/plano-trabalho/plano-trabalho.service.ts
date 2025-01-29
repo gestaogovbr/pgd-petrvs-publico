@@ -126,20 +126,20 @@ export class PlanoTrabalhoService {
     if (planoNovo.usuario && planoNovo.unidade) {
       let dsReferencia = this.dao!.datasource(planoReferencia);
       let dsNovo = this.dao!.datasource(planoNovo);
-      let programa = planoNovo.programa;
+      let programa = planoNovo.programa;      
       /* Atualiza os campos de texto complementar do usuário e da unidade */
       dsNovo.usuario.texto_complementar_plano = textUsuario || planoNovo.usuario?.texto_complementar_plano || "";
       dsNovo.unidade.texto_complementar_plano = textUnidade || planoNovo.unidade?.texto_complementar_plano || "";
       /* Se tiver modificações e o termo for obrigatório ou já exista um documento */
       if ((programa?.termo_obrigatorio || planoNovo.documento_id?.length) && JSON.stringify(dsNovo) != JSON.stringify(dsReferencia) && programa?.template_tcr) {
         let documento = planoNovo.documentos?.find((x: Documento) => x.id == planoNovo.documento_id);
-        if (!planoNovo.documento_id?.length || !documento || documento.assinaturas?.length || documento.tipo == "LINK") {
+        if (!planoNovo.documento_id?.length || !documento || documento.assinaturas?.length || documento.tipo == "LINK") {          
           documento = new Documento({
             id: this.dao?.generateUuid(),
             tipo: "HTML",
             especie: "TCR",
             titulo: "Termo de Ciência e Responsabilidade",
-            conteudo: this.templateService.renderTemplate(programa?.template_tcr?.conteudo || "", dsNovo),
+            conteudo: this.templateService.renderTemplate(planoReferencia.documento?.conteudo || programa?.template_tcr?.conteudo || "", dsNovo),
             status: "GERADO",
             _status: "ADD",
             template: programa?.template_tcr?.conteudo,
@@ -151,7 +151,7 @@ export class PlanoTrabalhoService {
           });
           planoNovo.documentos.push(documento);
         } else {
-          documento.conteudo = this.templateService.renderTemplate(programa?.template_tcr?.conteudo || "", dsNovo);
+          documento.conteudo = this.templateService.renderTemplate(planoReferencia.documento?.conteudo || "", dsNovo);
           documento.dataset = this.dao!.dataset();
           documento.datasource = dsNovo;
           documento._status = documento._status == "ADD" ? "ADD" : "EDIT";

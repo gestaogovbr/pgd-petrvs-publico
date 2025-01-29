@@ -67,7 +67,7 @@ return [
             'driver' => 'redis',
             'connection' => 'default',
             'queue' => env('REDIS_QUEUE', 'default'),
-            'retry_after' => 90,
+            'retry_after' => 180,
             'block_for' => null,
             'after_commit' => false,
             'timeout' => 90
@@ -77,10 +77,21 @@ return [
             'driver' => 'redis',
             'connection' => 'default',
             'queue' => 'siape_queue',
-            'retry_after' => 60 * 60 * 24 * 2,
+            'retry_after' => 180000,
             'block_for' => null,
             'after_commit' => false,
-            'timeout' => 60 * 60 * 24 * 2
+            'timeout' => 172800
+        ],
+        
+        'pgd_queue' => [
+            'driver' => 'redis',
+            'connection' => 'default',
+            'queue' => 'pgd_queue',
+            'retry_after' => 60 * 60 * 4,
+            'block_for' => null,
+            'tries' => 1,
+            'after_commit' => false,
+            'timeout' => 60 * 60 * 3
         ]
     ],
 
@@ -99,6 +110,11 @@ return [
         'driver' => env('QUEUE_FAILED_DRIVER', 'database-uuids'),
         'database' => env('DB_CONNECTION', 'mysql'),
         'table' => 'failed_jobs',
+    ],
+
+    'batching' => [
+        'database' => env('DB_CONNECTION', 'mysql'),
+        'table' => 'job_batches',
     ],
 
 ];
