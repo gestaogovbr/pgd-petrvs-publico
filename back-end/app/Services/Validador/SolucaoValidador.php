@@ -10,13 +10,12 @@ class SolucaoValidador extends BaseValidador
 {
     public function validarRegra(array $data): array
     {
-        $validator = Validator::make($data, [
+        $validator = Validator::make($data['entity'], [
             'nome' => 'required|string|max:250',
             'sigla' => 'required|string|max:20',
-            'unidade_id' => 'required|string|exists:unidades,id',
             'descricao' => 'required|string',
-            'status' => 'required|integer|in:0,1',
-            'url' => 'string|max:250'
+            'status' => 'integer|in:0,1',
+            'url' => 'required|url'
         ]);
 
         if ($validator->fails()) {

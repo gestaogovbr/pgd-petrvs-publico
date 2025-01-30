@@ -31,6 +31,7 @@ class ServerException extends Exception implements IBaseException
         "ValidatePainel" => "Erro ao validar Painel",
         "ValidatePlanejamentoInstitucional" => "Erro ao validar Planejamento Institucional",
         "ValidatePlanoEntrega" => "Erro ao validar Plano de Entregas",
+        "ValidateProduto" => "Erro ao validar Produto/Serviço",
         "ValidatePlanoTrabalho" => "Erro ao validar Plano de Trabalho",
         "ValidatePlanoTrabalhoConsolidacao" => "Erro ao validar Consolidação do Plano de Trabalho",
         "ValidatePlanoTrabalhoEntrega" => "Erro ao validar Entrega do Plano de Trabalho",

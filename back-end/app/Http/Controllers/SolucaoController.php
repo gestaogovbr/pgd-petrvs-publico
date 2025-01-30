@@ -7,6 +7,7 @@ use App\Services\Validador\IValidador;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Throwable;
+use Illuminate\Validation\ValidationException;
 
 class SolucaoController extends ControllerBase {
 
@@ -24,12 +25,16 @@ class SolucaoController extends ControllerBase {
 
     public function store(Request $request) {
         try {
-            foreach ($this->validators as $validator) {
-                $validator->validar($request);
+           foreach ($this->validators as $validator) {
+                $validator->validar($request, 'store');
             }
             return parent::store($request);
-        } catch (Throwable $e) {
-            return response()->json(['message' => $e->getMessage()], 500);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Erro de validação.',
+                'errors' => $e->errors(),
+            ], 422);
         }
     }
 
