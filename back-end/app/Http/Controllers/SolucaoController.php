@@ -3,6 +3,8 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Solucao;
+use App\Exceptions\Contracts\IBaseException;
+use App\Exceptions\ServerException;
 use App\Services\Validador\IValidador;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -20,7 +22,27 @@ class SolucaoController extends ControllerBase {
     }
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
+        switch ($action) {
+            case 'STORE':
+                if (!$usuario->hasPermissionTo('MOD_SOLUCOES_INCL')) throw new ServerException("SolucaoStore", "Inserção não realizada");
+                break;
+            case 'EDIT':
+                if (!$usuario->hasPermissionTo('MOD_SOLUCOES_EDT')) throw new ServerException("SolucaoStore", "Edição não realizada");
+                break;
+            case 'DESTROY':
+                if (!$usuario->hasPermissionTo('MOD_SOLUCOES_EXCL')) throw new ServerException("SolucaoDestroy", "Exclusão não realizada");
 
+                $data = $request->validate([
+                    'id' => ['required']
+                ]);
+                $solucao = $this->service->getById($data);
+
+                if (count($solucao->produtosSolucoes) > 0) {
+                    throw new ServerException("SolucaoComProdutosDestroy");
+                }
+
+                break;
+        }
     }
 
     public function store(Request $request) {
