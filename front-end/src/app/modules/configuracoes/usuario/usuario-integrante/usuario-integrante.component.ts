@@ -13,6 +13,7 @@ import { IntegranteService } from 'src/app/services/integrante.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import {InputSelectComponent} from "../../../../components/input/input-select/input-select.component";
 
 @Component({
   selector: 'usuario-integrante',
@@ -22,6 +23,7 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 export class UsuarioIntegranteComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
+  @ViewChild('perfil', { static: false }) public perfil?: InputSelectComponent;
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Usuario | undefined) { super.entity = value; } get entity(): Usuario | undefined { return super.entity; }
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
@@ -58,7 +60,16 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     super.ngOnInit();
     this.entity = this.entity ?? this.metadata?.entity;
   }
-
+  alteraPerfil() {
+    let current = this.perfil?.currentValue;
+    this.perfilDao.getById(current).then(perfil => {
+      if (perfil) {
+        if(perfil.nivel == 6){
+          this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(x => x.key == 'GESTOR' || x.key == 'GESTOR_SUBSTITUTO').forEach(x => x.data = {indisponivel: true});
+        }
+      }
+    });
+  }
   ngAfterViewInit() {
     (async () => {
       await this.loadData(this.entity || {}, this.form);

@@ -39,6 +39,8 @@ class PerfilService extends ServiceBase {
 
         //["1dc7c3ac-4888-4f5a-b181-ac14c07cc152", 0d8771a5-7210-b879-0779-55d46948a2b3 (gerado automaticamente)
         [5, "Perfil Participante", "Participante do PGD"],
+
+        [6, "Perfil Colaborador", "Colaborador do PGD"],
     ];
 
     /**
