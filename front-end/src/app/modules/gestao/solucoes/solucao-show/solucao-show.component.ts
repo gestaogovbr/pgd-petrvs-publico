@@ -24,7 +24,7 @@ export class SolucaoShowComponent extends PageBase {
   }
 
   public async carregaSolucaoDetalhado(){
-    this.solucao = await this.solucaoDaoService.getById(this.metadata.solucao.id, ["solucoesUnidades.unidade", "produtosSolucoes.produto"]);
+    this.solucao = await this.solucaoDaoService.getById(this.metadata.solucao?.id, ["solucoesUnidades.unidade", "produtosSolucoes.produto"]);
     this.loading = false;
   }
 

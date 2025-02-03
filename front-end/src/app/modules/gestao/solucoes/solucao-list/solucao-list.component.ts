@@ -53,7 +53,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     this.options.push({
       icon: "bi bi-clipboard-check",
       label: "Unidades",
-      onClick: this.consult.bind(this)
+      onClick: this.showDetalhes.bind(this)
     });
 
     // Testa se o usuário possui permissão para excluir o tipo de atividade
