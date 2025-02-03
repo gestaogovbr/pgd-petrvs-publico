@@ -20,6 +20,7 @@ class ServerException extends Exception implements IBaseException
         "SolucaoStore" => "Usuário não tem permissão para inserir/alterar Soluções",
         "SolucaoUpdate" => "Usuário não tem permissão para alterar Soluções",
         "SolucaoDestroy" => "Usuário não tem permissão para excluir Soluções",
+        "SolucaoComProdutosUpdate" => "Esta Solução possui produtos vinculados e não pode ser alterada",
         "SolucaoComProdutosDestroy" => "Esta Solução possui produtos vinculados e não pode ser excluída",
         "ProgramaConcluir" => "Usuário não tem permissão para concluir regramentos",
         "ProgramaUpdate" => "Usuário não tem permissão para alterar regramentos",

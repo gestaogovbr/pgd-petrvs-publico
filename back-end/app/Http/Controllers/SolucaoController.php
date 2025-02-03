@@ -2,7 +2,7 @@
 namespace App\Http\Controllers;
 
 
-use App\Models\Solucao;
+use App\Services\UtilService;
 use App\Exceptions\Contracts\IBaseException;
 use App\Exceptions\ServerException;
 use App\Services\Validador\IValidador;
@@ -22,13 +22,33 @@ class SolucaoController extends ControllerBase {
     }
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
+        
         switch ($action) {
             case 'STORE':
-                if (!$usuario->hasPermissionTo('MOD_SOLUCOES_INCL')) throw new ServerException("SolucaoStore", "Inserção não realizada");
-                break;
-            case 'EDIT':
-                if (!$usuario->hasPermissionTo('MOD_SOLUCOES_EDT')) throw new ServerException("SolucaoStore", "Edição não realizada");
-                break;
+                $data = $request->validate(['entity' => ['required']]);
+                $entity = $data['entity'];
+                $acao = UtilService::emptyEntry($entity, "id") ? 'INSERT' : 'EDIT';
+
+                switch($acao) {
+                    case 'INSERT':
+                        if (!$usuario->hasPermissionTo('MOD_SOLUCOES_INCL')) throw new ServerException("SolucaoStore", "Inserção não realizada");
+                        break;
+                    case 'EDIT':
+                        if (!$usuario->hasPermissionTo('MOD_SOLUCOES_EDT')) throw new ServerException("SolucaoStore", "Edição não realizada");
+                        
+                        $solucao = $this->service->getById([
+                            'id' => $entity['id']
+                        ]);
+
+                        if (count($solucao->produtosSolucoes) > 0) {
+                            throw new ServerException("SolucaoComProdutosUpdate");
+                        }
+
+                        break;
+                    }
+
+                    break;
+
             case 'DESTROY':
                 if (!$usuario->hasPermissionTo('MOD_SOLUCOES_EXCL')) throw new ServerException("SolucaoDestroy", "Exclusão não realizada");
 
