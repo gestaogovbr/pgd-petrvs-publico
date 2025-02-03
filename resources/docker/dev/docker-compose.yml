@@ -112,7 +112,7 @@ services:
     image: redis:alpine
     container_name: petrvs_redis
     ports:
-      - "6378:6378"
+      - "6379:6379"
     networks:
       - appnet
 
