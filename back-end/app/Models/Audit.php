@@ -5,7 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Auditable;
-
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Carbon;
 class Audit extends Model implements AuditableContract
 {
     use Auditable;
@@ -99,5 +100,8 @@ class Audit extends Model implements AuditableContract
                 return [];
         }
     }
-
+    protected function createdAt(): Attribute
+    {
+        return Attribute::get(fn ($value) => Carbon::parse($value)->timezone('America/Sao_Paulo')->format('d/m/Y - H:i:s'));
+    }
 }

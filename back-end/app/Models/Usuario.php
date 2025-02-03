@@ -47,7 +47,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Auditable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 class UsuarioConfig
 {
 }
@@ -465,5 +465,10 @@ class Usuario extends Authenticatable implements AuditableContract
     public function getNomeAttribute($value)
     {
         return $this->usuario_externo ? $value . ' (Externo)' : $value;
+    }
+
+    public function auditsExterno(): MorphMany
+    {
+        return $this->morphMany(Audit::class, 'auditable')->with('user')->where('auditable_type', 'App\Models\Usuario');
     }
 }

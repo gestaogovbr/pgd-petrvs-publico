@@ -73,6 +73,7 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
 
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
+    if(row.usuario_externo) return result;
     if (this.auth.hasPermissionTo('MOD_PART_HAB') && !this.isHabilitado(row)) result.push(this.BOTAO_HABILITAR);
     if (this.auth.hasPermissionTo('MOD_PART_DESAB') && this.isHabilitado(row)) result.push(this.BOTAO_DESABILITAR);
     return result;
