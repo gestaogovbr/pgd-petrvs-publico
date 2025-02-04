@@ -104,7 +104,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
           self.close();
         }
       } catch (error: any) {
-        self.error(error.message ? error.message : error);
+        self.error(error.error?.message || error.message || error);
       } finally {
         self.submitting = false;
       }
@@ -128,6 +128,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
   }
 
   public error = (error: any) => {
+    console.log(error);
     if (this.editableForm) {
       if (error.validationErrors) {
         this.editableForm.error = "";  
