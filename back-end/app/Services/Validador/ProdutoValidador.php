@@ -38,7 +38,7 @@ class ProdutoValidador extends BaseValidador
             'exists:usuarios,id',
                 function ($attribute, $value, $fail) {
                     $usuario = Usuario::find($value);
-                    if (!$usuario || !$usuario->curador) {
+                    if (!$usuario || !$usuario->isCurador()) {
                         $fail('O usuário selecionado não é um curador válido.');
                     }
                 },
