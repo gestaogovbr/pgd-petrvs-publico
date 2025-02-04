@@ -462,10 +462,6 @@ class Usuario extends Authenticatable implements AuditableContract
         }
         return $result;
     }
-    public function getNomeAttribute($value)
-    {
-        return $this->usuario_externo ? $value . ' (Externo)' : $value;
-    }
 
     public function auditsExterno(): MorphMany
     {

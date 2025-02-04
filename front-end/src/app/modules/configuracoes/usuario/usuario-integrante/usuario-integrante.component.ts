@@ -37,6 +37,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public usuarioDao: UsuarioDaoService;
   public perfilDao: PerfilDaoService;
   public perfilUsuario: string = "";
+  public editando: boolean = false;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -78,6 +79,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
 
   public async loadData(entity: IIndexable, form?: FormGroup | undefined) {
     if (entity.id) {
+      this.editando = true;
       let integrantes: IntegranteConsolidado[] = [];
       try {
         await this.integranteDao!.carregarIntegrantes("", entity.id).then(resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
@@ -90,6 +92,12 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
         this.cdRef.detectChanges();
         this.grid!.loading = false;
       }
+    } else {
+      setTimeout(() => {
+        const primeiroPerfil = this.perfil?.items[0];
+        this.perfil?.setValue(primeiroPerfil?.key);
+      }, 3000);
+      
     }
   }
 

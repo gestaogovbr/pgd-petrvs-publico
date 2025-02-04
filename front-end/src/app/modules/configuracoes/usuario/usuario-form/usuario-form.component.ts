@@ -40,7 +40,6 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       email: { default: "" },
       nome: { default: "" },
       cpf: { default: "" },
-      matricula: { default: "" },
       apelido: { default: "" },
       usuario_externo: { default: true },
       telefone: { default: "" },

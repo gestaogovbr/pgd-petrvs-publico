@@ -13,6 +13,8 @@ return new class extends Migration {
     {
         Schema::table('usuarios', function (Blueprint $table) {
             $table->boolean('usuario_externo')->default(false)->after('situacao_funcional')->comment('Indica se o usuário é externo');
+            // retira obrigatoriaedade do campo apelido
+            $table->string('apelido', 255)->nullable()->change();
         });
     }
 
@@ -25,6 +27,7 @@ return new class extends Migration {
     {
         Schema::table('usuarios', function (Blueprint $table) {
             $table->dropColumn('usuario_externo');
+            $table->string('apelido', 255)->nullable(false)->change();
         });
     }
 };
