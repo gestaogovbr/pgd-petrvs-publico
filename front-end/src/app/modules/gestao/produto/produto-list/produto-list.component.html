@@ -4,13 +4,7 @@
     [hasEdit]="this.isChefe"
 >
     <toolbar *ngIf="!selectable"></toolbar>
-    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL') && !this.isSearching" 
-        [form]="filter" 
-        [where]="filterWhere" 
-        [submit]="filterSubmit.bind(this)" 
-        [collapseChange]="filterCollapseChange.bind(this)" 
-        [collapsed]="!selectable && filterCollapsed"
-    >
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <div class="col-md-4"> 
                 <input-text [size]="12" [label]="'Nome do '+ lex.translate('produto')" controlName="nome"
@@ -62,7 +56,7 @@
                 <input-switch 
                     [size]="12" 
                     scale="small" 
-                    [value]="!row.data_desativado ? 'true' : 'false'" 
+                    [value]="!row.data_desativado && row.data_ativado? 'true' : 'false'" 
                     [valueOn]="'true'"  
                     [valueOff]="'false'"
                     (change)="ativarDesativar(row)"

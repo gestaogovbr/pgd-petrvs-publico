@@ -182,6 +182,6 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
 
 
   public ativo(produto: Produto): boolean {
-    return !produto.data_desativado;
+    return !produto.data_desativado && (produto.data_ativado != null);
   }
 }
