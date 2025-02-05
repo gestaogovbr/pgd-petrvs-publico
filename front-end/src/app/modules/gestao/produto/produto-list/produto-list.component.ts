@@ -173,6 +173,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     }
     if (form.status && form.status == 'ativo') {
       result.push(["data_ativado", "!=", null]);
+      result.push(["data_desativado", "==", null]);
     }
     if (form.status && form.status == 'inativo') {
       result.push(["data_ativado", "==", null]);
