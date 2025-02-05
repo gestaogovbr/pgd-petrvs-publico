@@ -23,6 +23,9 @@ class ProdutoController extends ControllerBase
     {
         parent::__construct();
         $this->validators = $validator;
+
+        $this->middleware('chefia')->only(['store', 'destroy']);
+        $this->middleware('curador')->only(['update']);
     }
 
     /**
@@ -39,28 +42,22 @@ class ProdutoController extends ControllerBase
     {
         if ($service->isLoggedUserADeveloper())  return true;
         
-         match($action){
-            'STORE'=> $this->permissionPostUpdate($unidade, $request),
-            'UPDATE'=> $this->permissionPostUpdate($unidade, $request),
-            'QUERY'=>true,
-            'GETBYID'=>true,
-            'UPDATEJSON'=>$this->permissionPostUpdate($unidade, $request),
-            'UPLOADBASE64'=>$this->permissionPostUpdate($unidade, $request),
-            'DESTROY'=>$this->permissionPostUpdate($unidade, $request),
-            default=>true
-        };
-    }
+        switch($action) {
+            case 'STORE':
+                if (!$usuario->hasPermissionTo('MOD_PROD_INCL')) throw new ServerException("ProdutoStore", "Inserção não realizada");
+                break;
 
-    private function permissionPostUpdate($unidade,Request $request)
-    {
-        if (!isset($request->input('entity')['responsavel_id'])) return true;
+            case 'UPDATE':
+                if (!$usuario->hasPermissionTo('MOD_PROD_CAT_EDT')) throw new ServerException("ProdutoUpdate", "Inserção não realizada");
+                break;
 
-        $responsavelId = $request->input('entity')['responsavel_id'];
-        $usuario = Usuario::find($responsavelId);
-        $curadores = $usuario->curadores()->where('unidade_id', $unidade->id)->get();
+            case 'UPDATE':
+                if (!$usuario->hasPermissionTo('MOD_PROD_CAT_EDT')) throw new ServerException("ProdutoUpdate", "Inserção não realizada");
+                break;
 
-        if ($curadores->isEmpty()) {
-            throw new ServerException("CapacidadeStore", "Não tem permissão de criação/edição de produtos.");
+            case 'DESTROY':
+                if (!$usuario->hasPermissionTo('MOD_PROD_CAT_EXCL')) throw new ServerException("ProdutoDestroy", "Exclusão não realizada");
+                break;
         }
 
         return true;
@@ -69,31 +66,11 @@ class ProdutoController extends ControllerBase
     public function store(Request $request)
     {
         try {
-
             foreach ($this->validators as $validator) {
                 $validator->validar($request, 'store');
             }
 
             return parent::store($request);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Erro de validação.',
-                'errors' => $e->errors(),
-            ], 422);
-        }
-    }
-
-    public function update(Request $request)
-    {
-        try {
-
-            foreach ($this->validators as $validator) {
-                $validator->setTipo('update');
-                $validator->validar($request);
-            }
-
-            return parent::update($request);
         } catch (ValidationException $e) {
             return response()->json([
                 'status' => 'error',
