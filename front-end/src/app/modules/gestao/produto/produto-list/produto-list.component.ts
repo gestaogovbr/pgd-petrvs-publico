@@ -197,16 +197,12 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
 
       this.loading = true;
       try {
-
-        let unidadeId: string | undefined = this.auth.unidade?.id;
-        if (unidadeId == undefined) {
-          return;
-        } 
         await this.dao?.ativarTodos();
         this.grid!.reloadFilter();
         this.cdRef.markForCheck();
-      }catch (error) {
+      }catch (error: any) {
         console.error("Erro ao ativar Produtos/Serviços", error);
+        this.error(error.error?.message || error.message || error);
       } finally {
         this.isUpdating = false; 
         this.loading = false;
