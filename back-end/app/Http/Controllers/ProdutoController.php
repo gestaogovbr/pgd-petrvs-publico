@@ -6,6 +6,8 @@ namespace App\Http\Controllers;
 use App\Models\Produto;
 
 use Illuminate\Http\Request;
+use App\Exceptions\Contracts\IBaseException;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 use App\Services\Validador\IValidador;
@@ -25,7 +27,7 @@ class ProdutoController extends ControllerBase
         $this->validators = $validator;
 
         $this->middleware('chefia')->only(['store', 'destroy']);
-        $this->middleware('curador')->only(['update']);
+        $this->middleware('curador')->only(['update', 'atribuirTodos', 'desatribuirTodos']);
     }
 
     /**
@@ -77,6 +79,34 @@ class ProdutoController extends ControllerBase
                 'message' => 'Erro de validação.',
                 'errors' => $e->errors(),
             ], 422);
+        }
+    }
+
+    public function atribuirTodos(Request $request) {
+        try {
+            $this->service->atribuirTodos();
+
+            return response()->json([
+                'success' => true
+            ]);
+
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            throw new ServerException("ProdutoEnableAll");  
+        }
+    }
+
+    public function desatribuirTodos(Request $request) {
+        try {
+            $this->service->desatribuirTodos();
+
+            return response()->json([
+                'success' => true
+            ]);
+
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            throw new ServerException("ProdutoDisableAll");  
         }
     }
 }

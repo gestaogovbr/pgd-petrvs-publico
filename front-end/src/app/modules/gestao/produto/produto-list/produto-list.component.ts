@@ -181,8 +181,51 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
 		return result;
 	};
 
-
   public ativo(produto: Produto): boolean {
     return !produto.data_desativado && (produto.data_ativado != null);
+  }
+
+  private confirm(title: string, message: string, onConfirm: () => void): void {
+    if (window.confirm(`${title}\n\n${message}`)) {
+      onConfirm();
+    }
+  }
+
+  public async ativarTodos() {
+
+    this.confirm("Ativar todos os Produtos e Serviços", "Deseja realmente ativar todos os Produtos e Serviços?", async () => {
+
+      this.loading = true;
+      try {
+        await this.dao?.ativarTodos();
+        this.grid!.reloadFilter();
+        this.cdRef.markForCheck();
+      }catch (error: any) {
+        console.error("Erro ao ativar Produtos/Serviços", error);
+        this.error(error.error?.message || error.message || error);
+      } finally {
+        this.isUpdating = false; 
+        this.loading = false;
+      }
+    })
+  }
+
+  public async desativarTodos() {
+    this.confirm("Desativar todos os Produtos e Serviços", "Deseja realmente desativar todos os Produtos e Serviços?", async () => {
+      
+      this.loading = true;
+
+      try {
+        await this.dao?.desativarTodos();
+        this.grid!.reloadFilter();
+        this.cdRef.markForCheck();
+      }catch (error: any) {
+        console.error("Erro ao desativar os Produtos/Serviços", error);
+        this.error(error.error?.message || error.message || error);
+      } finally {
+        this.isUpdating = false; 
+        this.loading = false;
+      }
+    });
   }
 }
