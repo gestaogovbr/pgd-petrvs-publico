@@ -3,7 +3,20 @@
     [hasAdd]="this.isChefe"
     [hasEdit]="this.isChefe"
 >
-    <toolbar *ngIf="!selectable"></toolbar>
+    <toolbar *ngIf="!selectable">
+        <button type="button" class="btn btn-outline-success" 
+            (click)="this.ativarTodos()" 
+            [disabled]="isUpdating"
+            *ngIf="this.isCurador && (this.grid?.items?.length ?? 0 == 0)"
+        >Ativar todos os produtos e serviços
+        </button>
+        <button type="button" class="btn btn-outline-danger" 
+            (click)="this.desativarTodos()" 
+            [disabled]="isUpdating && this.grid?.items?.length"
+            *ngIf="this.isCurador && (this.grid?.items?.length ?? 0 == 0)"
+        >Desativar todos os produtos e serviços
+        </button>
+    </toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <div class="col-md-4"> 

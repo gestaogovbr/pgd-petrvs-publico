@@ -19,6 +19,8 @@ class ServerException extends Exception implements IBaseException
         "ProdutoStore" => "Usuário não tem permissão para inserir/alterar Produtos",
         "ProdutoUpdate" => "Usuário não tem permissão para ativar/desativar Produtos",
         "ProdutoDestroy" => "Usuário não tem permissão para excluir Produtos",
+        "ProdutoEnableAll" => "Erro ao Ativar Todos os Produtos/Serviços",
+        "ProdutoDisableAll" => "Erro ao Desativar Todos os Produtos/Serviços",
         "ProgramaStore" => "Usuário não tem permissão para inserir/alterar regramentos",
         "SolucaoStore" => "Usuário não tem permissão para inserir/alterar Soluções",
         "SolucaoUpdate" => "Usuário não tem permissão para alterar Soluções",
