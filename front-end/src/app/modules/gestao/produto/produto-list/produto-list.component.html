@@ -55,7 +55,7 @@
           </ng-template>
         </column>
 
-        <column title="Status" [template]="columnStatus" *ngIf="!isCurador && !this.isSearching">
+        <column title="Status" [template]="columnStatus" *ngIf="this.isCurador && !this.isSearching">
             <ng-template let-row="row" #columnStatus>
                 <badge *ngIf="ativo(row)" color="success" label="Ativo"></badge>
                 <badge *ngIf="!ativo(row)" color="danger" label="Inativo"></badge>

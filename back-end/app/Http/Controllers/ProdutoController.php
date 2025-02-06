@@ -92,7 +92,7 @@ class ProdutoController extends ControllerBase
 
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
-            throw new ServerException("ProdutoDisableAll");  
+            throw new ServerException("ProdutoEnableAll");  
         }
     }
 
