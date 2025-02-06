@@ -19,6 +19,7 @@ class SolucaoController extends ControllerBase {
     {
         parent::__construct();
         $this->validators = $validator;
+        $this->middleware('curador')->only(['update', 'atribuirTodos', 'desatribuirTodos']);
     }
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
@@ -86,19 +87,16 @@ class SolucaoController extends ControllerBase {
                 'unidade_id' => ['required']
             ]);
 
-            return response()->json([
-                'success' => $this->service->atribuirTodos($data['unidade_id'])
-            ]);
-        }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
-        }
-        catch (Throwable $e) {
-            $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
-        }
+            $this->service->atribuirTodos($data['unidade_id']);
 
-        return true;
+            return response()->json([
+                'success' => true
+            ]);
+
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            throw new ServerException("SolucaoEnableAll");  
+        }
     }
 
     public function desatribuirTodos(Request $request) {
@@ -107,16 +105,15 @@ class SolucaoController extends ControllerBase {
                 'unidade_id' => ['required']
             ]);
 
+            $this->service->desatribuirTodos($data['unidade_id']);
+
             return response()->json([
-                'success' => $this->service->desatribuirTodos($data['unidade_id'])
+                'success' => true
             ]);
-        }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
-        }
-        catch (Throwable $e) {
-            $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            throw new ServerException("SolucaoDisableAll");  
         }
     }
 }

@@ -7,13 +7,13 @@
         <button type="button" class="btn btn-outline-success" 
             (click)="this.ativarTodas()" 
             [disabled]="isUpdating"
-            *ngIf="(this.grid?.items?.length ?? 0 == 0)"
+            *ngIf="this.isCurador && (this.grid?.items?.length ?? 0 == 0)"
         >Ativar todas as Soluções
         </button>
         <button type="button" class="btn btn-outline-danger" 
             (click)="this.desativarTodas()" 
             [disabled]="isUpdating && this.grid?.items?.length"
-            *ngIf="(this.grid?.items?.length ?? 0 == 0)"
+            *ngIf="this.isCurador && (this.grid?.items?.length ?? 0 == 0)"
         >Desativar todas as Soluções
         </button>
     </toolbar>
@@ -73,7 +73,11 @@
                 </badge>
             </ng-template>
         </column>
-        <column title="Ativar/Desativar para a sua unidade" [template]="columnAtivar" *ngIf="!this.isSearching">
+        <column 
+            [template]="columnAtivar" 
+            title="Ativar/Desativar para a sua unidade" 
+            *ngIf="this.isCurador && !this.isSearching"
+        >
             <ng-template let-row="row" #columnAtivar>
                 <input-switch 
                     [size]="12" 

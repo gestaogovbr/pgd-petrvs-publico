@@ -196,8 +196,9 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
         this.solucoesUnidades.push(solucaoUnidadeCarregada);
         this.isActive[solucao.id] = true;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao atualizar o produto", error);
+      this.error(error.error?.message || error.message || error);
     } finally {
       this.isUpdating = false; 
       this.loading = false;
@@ -218,8 +219,9 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
         } 
         await this.solucaoDao.ativarTodas(unidadeId);
         this.loadingSolucoesUnidades();
-      }catch (error) {
+      }catch (error: any) {
         console.error("Erro ao ativar as Soluções", error);
+        this.error(error.error?.message || error.message || error);
       } finally {
         this.isUpdating = false; 
         this.loading = false;
@@ -240,8 +242,9 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
         }
         await this.solucaoDao.desativarTodas(unidadeId);
         this.loadingSolucoesUnidades();
-      }catch (error) {
+      }catch (error: any) {
         console.error("Erro ao desativar as Soluções", error);
+        this.error(error.error?.message || error.message || error);
       } finally {
         this.isUpdating = false; 
         this.loading = false;
