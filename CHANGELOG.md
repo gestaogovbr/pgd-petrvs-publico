@@ -1,6 +1,7 @@
 ## 2.3.7 07/02/2025
 ### Corrigido
  - Correção no seeder In24_2023Seeder
+ - Correção no envio de Planos de Entrega não avaliados
 ## 2.3.6 27/01/2025
 ### Removido
  - Menus não funcionais
@@ -10,7 +11,7 @@
 ### Corrigido
  - Correção no envio ao PGD de planos de entrega Avaliados
  - Adição no envio ao PGD de planos de entrega re-avaliados
- - Remoção de unidadez raizes duplicadas
+ - Remoção de unidades raizes duplicadas
  - Correção na falha ao inserir unidades sem vínculos acimas
 
 ## 2.3.4 03/01/2025
