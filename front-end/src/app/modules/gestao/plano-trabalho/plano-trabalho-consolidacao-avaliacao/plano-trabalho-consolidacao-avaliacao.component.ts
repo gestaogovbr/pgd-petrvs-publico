@@ -38,7 +38,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public programas: Programa[] = [];
   public avaliacao: Avaliacao = new Avaliacao();
   public consolidacaoId?: string[] = [];//public consolidacaoId?: PlanoTrabalhoConsolidacao[] = [];
-  public joinAvaliacao: string[] = ["avaliador", "entregas_checklist", "tipo_avaliacao.notas"];
+  public joinAvaliacao: string[] = ["avaliador", "entregas_checklist", "tipo_avaliacao.notas", "avaliacoes:id,recurso", "avaliacao"];
 
   constructor(public injector: Injector) {
     super(injector, PlanoTrabalhoConsolidacao, PlanoTrabalhoConsolidacaoDaoService);
