@@ -4,6 +4,7 @@ use App\Http\Controllers\SeederController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TenantController;
+use App\Http\Controllers\QueueController;
 use App\Http\Controllers\TenantsLogsController;
 use App\Http\Controllers\LogsController;
 use App\Http\Middleware\Panel;
@@ -32,7 +33,6 @@ Route::middleware(['api', 'panel'])->prefix('Tenant')->group(function () {
 
 Route::middleware(['api', 'panel'])->prefix('Tenant')->group(function () {
     Route::get('resetdb', [TenantController::class, 'resetdb']);
-    Route::get('resetqueues', [TenantController::class, 'resetQueues']);
     Route::post('cleandb', [TenantController::class, 'cleandb']);
     Route::post('dumpdb', [TenantController::class, 'dumpDatabase']);
     Route::post('delete-tenant', [TenantController::class, 'deleteTenant']);
@@ -48,3 +48,5 @@ Route::middleware(['api', 'panel'])->prefix('TenantLogs')->group(function () {
 Route::middleware(['api', 'panel'])->prefix('Logs')->group(function () {
     Route::post('query', [LogsController::class, 'query']);
 });
+
+Route::get('resetqueues', [QueueController::class, 'resetQueues']);
