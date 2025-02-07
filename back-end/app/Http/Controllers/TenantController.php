@@ -497,7 +497,6 @@ class TenantController extends ControllerBase {
         }
     }
 
-
     public function resetQueues(Request $request) {
         try {
 

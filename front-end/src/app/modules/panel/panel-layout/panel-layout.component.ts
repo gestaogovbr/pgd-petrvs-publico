@@ -1,9 +1,8 @@
 import {Component, Injector, OnInit} from "@angular/core";
 import {PageBase} from "../../base/page-base";
 import {AuthPanelService} from "src/app/services/auth-panel.service";
-import {Tenant} from "src/app/models/tenant.model";
-import {NavigationExtras} from "@angular/router";
 import { Collapse } from 'bootstrap';
+import { QueueDaoService } from "src/app/dao/queue-dao.service";
 
 
 @Component({
@@ -16,7 +15,8 @@ export class PanelLayoutComponent extends PageBase implements OnInit {
 
 	constructor(
 		public injector: Injector,
-		private authService: AuthPanelService
+		private authService: AuthPanelService,
+		private dao: QueueDaoService
 	) {
 		super(injector);
 		this.setTitleUser();
@@ -42,13 +42,37 @@ export class PanelLayoutComponent extends PageBase implements OnInit {
 		this.go.navigate({route: ["/panel/change-password"]}, {modal: true });
 	}
 
-  toggleNavbar() {
-    const navbar = document.getElementById('navbarSupportedContent');
-    if (navbar) {
-      const bsCollapse = new Collapse(navbar, {
-        toggle: true
-      });
-      bsCollapse.toggle();
-    }
-  }
+	toggleNavbar() {
+		const navbar = document.getElementById('navbarSupportedContent');
+		if (navbar) {
+		const bsCollapse = new Collapse(navbar, {
+			toggle: true
+		});
+		bsCollapse.toggle();
+		}
+	}
+
+	public resetQueues() {
+		const self = this;
+		this.dialog
+			.confirm("Deseja Resetar as Queues?", "Deseja realmente executar o reset?")
+			.then((confirm) => {
+				if (confirm) {
+					self.loading = true;
+					this.dao!.resetQueues()
+						.then(function () {
+							self.loading = false;
+							self.dialog.alert("Sucesso", "Executado com sucesso!");
+							window.location.reload();
+						})
+						.catch(function (error) {
+							self.loading = false;
+							self.dialog.alert(
+								"Erro",
+								"Erro ao executar: " + error?.message ? error?.message : error
+							);
+						});
+				}
+			});
+	}
 }
