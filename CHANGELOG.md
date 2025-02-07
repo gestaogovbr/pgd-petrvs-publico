@@ -1,7 +1,10 @@
-## 2.3.6 27/01/2024
+## 2.3.7 07/02/2025
+### Corrigido
+ - Correção no seeder In24_2023Seeder
+## 2.3.6 27/01/2025
 ### Removido
  - Menus não funcionais
-## 2.3.5 24/01/2024
+## 2.3.5 24/01/2025
 ### Adicionado
  - Consulta de dados funcionais do SIAPE de um CPF na tela do Desenvolvedor
 ### Corrigido
@@ -10,7 +13,7 @@
  - Remoção de unidadez raizes duplicadas
  - Correção na falha ao inserir unidades sem vínculos acimas
 
-## 2.3.4 03/01/2024
+## 2.3.4 03/01/2025
 ### Adicionado
  - Adicionada opção parta forçar Envio imediato
  - Adicionado número do Envio ao PGD
