@@ -327,6 +327,9 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_PROD_CAT_EXCL"]
     ];
 
+    $capacidades_administrador_geral = $capacidades_administrador_negocial;
+    $capacidades_colaborador = $capacidades_participante;
+
     // Inserção de dados
     $capacidadesInseridas = [];
     $capacidadesRestauradas = [];
@@ -335,6 +338,8 @@ class CapacidadeSeeder extends Seeder
 
     $devId = $this->nivelAcessoService->getPerfilDesenvolvedor()->id;
     $participanteId = $this->nivelAcessoService->getPerfilParticipante()->id;
+    $colaboradorId = $this->nivelAcessoService->getPerfilColaborador()->id;
+    $admGeralId = $this->nivelAcessoService->getPerfilAdministradorGeral()->id;
     $admId = $this->nivelAcessoService->getPerfilAdministrador()->id;
     $chefeId = $this->nivelAcessoService->getPerfilChefia()->id;
 
@@ -414,6 +419,32 @@ class CapacidadeSeeder extends Seeder
         !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, ["Administrador Negocial", $c['codigo']]);
       } else {
         array_push($tipoCapacidadesInexistentes, ["Administrador Negocial", $c['codigo']]);
+      }
+    }
+
+    foreach ($capacidades_administrador_geral as $c) {
+      $capacidade = [
+        "id" => $this->utilService->uuid("Administrador Geral" . $c['codigo']),
+        "created_at" => $this->timenow,
+        "updated_at" => $this->timenow,
+        "deleted_at" => NULL,
+        "perfil_id" => $admGeralId,
+        "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
+      ];
+
+      $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
+      $queryTipoCapacidade = TipoCapacidade::find($capacidade['tipo_capacidade_id']);
+
+      if ($queryTipoCapacidade) {
+        if (!empty ($queryCapacidade)) {
+          $queryCapacidade->restore();
+          array_push($capacidadesRestauradas, $capacidade['id']);
+        } else {
+          $result = Capacidade::insertOrIgnore($capacidade);
+        }
+        !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, ["Administrador Geral", $c['codigo']]);
+      } else {
+        array_push($tipoCapacidadesInexistentes, ["Administrador Geral", $c['codigo']]);
       }
     }
 
