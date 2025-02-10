@@ -42,7 +42,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
       nome: { default: this.metadata?.nome ?? "" },
-      unidade_id: { default: "" },
+      unidade_id: { default: this.auth.unidade?.id },
       id: { default: "" },
       status: { default: "" }
     });
@@ -69,7 +69,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
       this.filter?.controls.status.setValue('ativo');
       this.saveUsuarioConfig();
     }
-    
+    this.filter?.controls?.unidade_id.setValue(this.auth.unidade?.id);
     this.loadingSolucoesUnidades();
   }
 
@@ -126,14 +126,14 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
 
     }
     if (form.unidade_id?.length) {
-      result.push(["unidade_id", "==", form.unidade_id]);
+      result.push(["unidade_ativa", "==", form.unidade_id]);
     }
     if (form.status == 'ativo') {
-      result.push(["unidade_ativa", "==", this.auth.unidade?.id]);
+      result.push(["unidade_ativa", "==", form.unidade_id ?? this.auth.unidade?.id]);
     }
 
     if (form.status == 'inativo') {
-      result.push(["unidade_inativa", "==", this.auth.unidade?.id]);
+      result.push(["unidade_inativa", "==", form.unidade_id ?? this.auth.unidade?.id]);
     }
     
     return result;

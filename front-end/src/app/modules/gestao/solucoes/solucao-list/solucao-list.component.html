@@ -28,19 +28,20 @@
     >
         <div class="row">
             <div class="col-md-4">  
-                <input-text 
-                    [size]="12" 
-                    label="Nome" 
-                    icon="bi bi-textarea-t" 
-                    [control]="filter!.controls.nome" 
-                    controlName="this.filter.nome" 
-                    [attr.maxlength]=250
-                ></input-text>
+                <input-search 
+                    #unidade 
+                    [size]="6" 
+                    label="Unidade"
+                    [control]="filter!.controls.unidade_id" 
+                    controlName="unidade_id" 
+                    [dao]="unidadeDao"
+                ></input-search>  
             </div>
             <div class="col-md-8 busca-avancada">
                <div class="busca-avancada-link"><a (click)="onBuscaAvancada()">Busca Avançada</a></div>
                <div class="busca-avancada-clear"><a (click)="this.onFilterClear()">Limpar filtros de busca</a></div>
                <div class="busca-avancada-filtros-aplicados">Filtros aplicados:
+                    <span *ngIf="filter!.controls.unidade_id.value?.length > 0">Unidade</span>
                     <span *ngIf="filter!.controls.nome.value?.length > 0">Nome</span>
                     <span *ngIf="filter!.controls.id.value?.length > 0">#ID</span>
                     <span *ngIf="filter!.controls.status.value?.length > 0">Status</span>
