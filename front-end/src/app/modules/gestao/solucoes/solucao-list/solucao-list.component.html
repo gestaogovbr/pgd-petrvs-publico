@@ -54,7 +54,6 @@
                 <span> {{row.identificador}}</span><br>
             </ng-template>
         </column>
-
         <column title="Nome" [template]="columnNome">
             <ng-template let-row="row" #columnNome>
                 <span> {{row.nome}}</span><br>
@@ -65,7 +64,12 @@
                 <span>  {{row.sigla}}</span><br>
             </ng-template>
         </column>
-        <column title="Status" [template]="columnStatus" *ngIf="!this.isSearching">
+        <column 
+            title="Status" 
+            [template]="columnStatus" 
+            *ngIf="!this.isSearching"
+            titleHint="Status na sua unidade instituidora"
+        >
             <ng-template let-row="row" #columnStatus>
                 <badge 
                     [color]="isActive[row.id] ? 'success' : 'danger'" 
@@ -75,7 +79,8 @@
         </column>
         <column 
             [template]="columnAtivar" 
-            title="Ativar/Desativar para a sua unidade" 
+            title="Ativar/Desativar" 
+            titleHint="Ativar para sua unidade instituidora, permitindo que a Solução esteja disponível para vinculação de Produtos e Serviços nas unidades executoras subordinadas"
             *ngIf="this.isCurador && !this.isSearching"
         >
             <ng-template let-row="row" #columnAtivar>
@@ -89,7 +94,6 @@
                 ></input-switch>
             </ng-template>
         </column>
-        
         <column 
             type="options"  
             [onEdit]="edit" 
