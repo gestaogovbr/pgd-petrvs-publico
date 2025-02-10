@@ -2,6 +2,7 @@
     [selectable]="selectable" 
     (select)="onSelect($event)"
     [hasAdd]="this.isCurador"
+    labelAdd="Incluir Nova Solução"
     [hasEdit]="this.auth.hasPermissionTo('MOD_SOLUCOES_EDT')">
     <toolbar *ngIf="!selectable">
         <button type="button" class="btn btn-outline-success" 
@@ -18,7 +19,7 @@
         </button>
     </toolbar>
     <filter 
-        [deleted]="false" 
+        [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')"
         [form]="filter" 
         [where]="filterWhere" 
         [submit]="filterSubmit.bind(this)" 
@@ -71,9 +72,9 @@
             titleHint="Status na sua unidade instituidora"
         >
             <ng-template let-row="row" #columnStatus>
-                <badge 
-                    [color]="isActive[row.id] ? 'success' : 'danger'" 
-                    [label]="isActive[row.id] ? 'Ativo' : 'Inativo'">
+                <badge
+                    [color]="row.deleted_at ? 'secondary': (isActive[row.id] ? 'success' : 'danger')" 
+                    [label]="row.deleted_at ? 'Excluído' : (isActive[row.id] ? 'Ativo' : 'Inativo')">
                 </badge>
             </ng-template>
         </column>
@@ -91,6 +92,7 @@
                     [valueOn]="'true'"  
                     [valueOff]="'false'"
                     (change)="ativarDesativar(row, $event)"
+                    [disabled]="row.deleted_at"
                 ></input-switch>
             </ng-template>
         </column>
