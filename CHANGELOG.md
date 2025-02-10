@@ -1,6 +1,7 @@
 ## 2.3.7 07/02/2025
 ### Corrigido
  - Correção no seeder In24_2023Seeder
+ - Correção na avaliação do plano de trabalho e permissão de recursos somente para notas "INADEQUADO" e "NÃO EXECUTADO"
 ## 2.3.6 27/01/2025
 ### Removido
  - Menus não funcionais
