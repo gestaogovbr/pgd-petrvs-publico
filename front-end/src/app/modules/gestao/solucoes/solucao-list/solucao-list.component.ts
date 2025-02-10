@@ -46,17 +46,8 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
       id: { default: "" },
       status: { default: "" }
     });
-    
-    this.botoes = [
-    ]
-
+  
     this.orderBy = [['identificador', 'desc']];
-    
-    this.options.push({
-      icon: "bi bi-clipboard-check",
-      label: "Unidades",
-      onClick: this.showDetalhes.bind(this)
-    });
 
     // Testa se o usuário possui permissão para excluir o tipo de atividade
     if (this.auth.hasPermissionTo("MOD_SOLUCOES_EXCL")) {
@@ -95,7 +86,9 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
 
   public dynamicButtons(row: Solucao): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });   
+    if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });  
+    
+    result.push({ label: "Excluir", icon: "bi bi-trash", color: 'btn-outline-danger', onClick: this.delete.bind(this) });   
     
     return result;
   }
