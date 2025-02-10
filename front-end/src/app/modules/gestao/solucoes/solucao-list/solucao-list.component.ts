@@ -49,6 +49,8 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     
     this.botoes = [
     ]
+
+    this.orderBy = [['identificador', 'desc']];
     
     this.options.push({
       icon: "bi bi-clipboard-check",
