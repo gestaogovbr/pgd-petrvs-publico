@@ -136,11 +136,6 @@ class JobAgendadoService extends ServiceBase {
             $job = new JobSchedule([
                 'nome' => 'Busca Dados Siape ' . $tenantId,
                 'classe' => 'BuscarDadosSiapeJob',
-                'minutos' => $minute,
-                'horas' => $hour,
-                'dias' => 0,
-                'semanas' => 0,
-                'meses' => 0,
                 'expressao_cron' => $expressaoCron,
                 'ativo' => 1,
                 'tenant_id' => $tenantId,
@@ -159,11 +154,6 @@ class JobAgendadoService extends ServiceBase {
             $job = new JobSchedule([
                 'nome' => 'Sincroniza Dados Siape ' . $tenantId,
                 'classe' => 'SincronizarSiapeJob',
-                'minutos' => $minute,
-                'horas' => $hour,
-                'dias' => 0,
-                'semanas' => 0,
-                'meses' => 0,
                 'expressao_cron' => $expressaoCron,
                 'ativo' => 1,
                 'tenant_id' => $tenantId,
