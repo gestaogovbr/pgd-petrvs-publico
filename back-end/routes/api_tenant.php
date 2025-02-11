@@ -469,6 +469,8 @@ Route::middleware(['auth:sanctum'])->prefix('Relato')->group(function () {
 });
 Route::middleware(['auth:sanctum'])->prefix('Produto')->group(function () {
   defaultRoutes(ProdutoController::class);
+  Route::post('ativar-todos', [ProdutoController::class, 'atribuirTodos']);
+  Route::post('desativar-todos', [ProdutoController::class, 'desatribuirTodos']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Catalogo')->group(function () {
     defaultRoutes(CatalogoController::class);

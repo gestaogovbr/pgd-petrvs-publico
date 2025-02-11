@@ -37,7 +37,7 @@ export class ClienteFormComponent extends PageFormBase<Cliente, ClienteDaoServic
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
       tipo_cliente_id: { default: "" },
-      unidade_id: { default: "" }
+      unidade_id: { default: null }
     });
   }
 
@@ -71,7 +71,7 @@ export class ClienteFormComponent extends PageFormBase<Cliente, ClienteDaoServic
       this.nome?.selfElement?.nativeElement.classList.add("d-none");
     } else {
       // exibir nome e esconder unidade
-      this.form?.controls.unidade_id.setValue("");
+      this.form?.controls.unidade_id.setValue(null);
       this.unidade?.selfElement?.nativeElement.classList.add("d-none");
       this.nome?.selfElement?.nativeElement.classList.remove("d-none");
     }

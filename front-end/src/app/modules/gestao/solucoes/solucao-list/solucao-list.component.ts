@@ -42,19 +42,12 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
       nome: { default: this.metadata?.nome ?? "" },
-      unidade_id: { default: "" },
+      unidade_id: { default: this.auth.unidade?.id },
       id: { default: "" },
       status: { default: "" }
     });
-    
-    this.botoes = [
-    ]
-    
-    this.options.push({
-      icon: "bi bi-clipboard-check",
-      label: "Unidades",
-      onClick: this.consult.bind(this)
-    });
+  
+    this.orderBy = [['identificador', 'desc']];
 
     // Testa se o usuário possui permissão para excluir o tipo de atividade
     if (this.auth.hasPermissionTo("MOD_SOLUCOES_EXCL")) {
@@ -76,7 +69,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
       this.filter?.controls.status.setValue('ativo');
       this.saveUsuarioConfig();
     }
-    
+    this.filter?.controls?.unidade_id.setValue(this.auth.unidade?.id);
     this.loadingSolucoesUnidades();
   }
 
@@ -93,7 +86,9 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
 
   public dynamicButtons(row: Solucao): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });   
+    if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });  
+    
+    result.push({ label: "Excluir", icon: "bi bi-trash", color: 'btn-outline-danger', onClick: this.delete.bind(this) });   
     
     return result;
   }
@@ -123,7 +118,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     let form: any = filter.value;
 
     if (form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
+      result.push(["or", ["sigla", "like", "%" + form.nome.trim().replace(" ", "%") + "%"], ["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]]);
     }
 
     if (form.id?.length) {
@@ -131,14 +126,14 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
 
     }
     if (form.unidade_id?.length) {
-      result.push(["unidade_id", "==", form.unidade_id]);
+      result.push(["unidade_ativa", "==", form.unidade_id]);
     }
     if (form.status == 'ativo') {
-      result.push(["unidade_ativa", "==", this.auth.unidade?.id]);
+      result.push(["unidade_ativa", "==", form.unidade_id ?? this.auth.unidade?.id]);
     }
 
     if (form.status == 'inativo') {
-      result.push(["unidade_inativa", "==", this.auth.unidade?.id]);
+      result.push(["unidade_inativa", "==", form.unidade_id ?? this.auth.unidade?.id]);
     }
     
     return result;
@@ -165,9 +160,12 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
   public onFilterClear() {
     this.filter?.reset()
     this.grid!.reloadFilter();
+    this.cdRef.markForCheck();
   }
 
   public async ativarDesativar(solucao: Solucao, event: any) {
+    
+    if (this.loading) return;
     
     this.loading = true;
 
@@ -195,8 +193,9 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
         this.solucoesUnidades.push(solucaoUnidadeCarregada);
         this.isActive[solucao.id] = true;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao atualizar o produto", error);
+      this.error(error.error?.message || error.message || error);
     } finally {
       this.isUpdating = false; 
       this.loading = false;
@@ -217,8 +216,9 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
         } 
         await this.solucaoDao.ativarTodas(unidadeId);
         this.loadingSolucoesUnidades();
-      }catch (error) {
+      }catch (error: any) {
         console.error("Erro ao ativar as Soluções", error);
+        this.error(error.error?.message || error.message || error);
       } finally {
         this.isUpdating = false; 
         this.loading = false;
@@ -239,8 +239,9 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
         }
         await this.solucaoDao.desativarTodas(unidadeId);
         this.loadingSolucoesUnidades();
-      }catch (error) {
+      }catch (error: any) {
         console.error("Erro ao desativar as Soluções", error);
+        this.error(error.error?.message || error.message || error);
       } finally {
         this.isUpdating = false; 
         this.loading = false;

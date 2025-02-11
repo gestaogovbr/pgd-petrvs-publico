@@ -10,8 +10,7 @@
       <ng-template let-row="row" #columnCliente>
         
         <div class="w-100">
-          <small>{{row.cliente.tipo_cliente?.nome}}</small><br>
-          <b class="">{{row.cliente.nome}}</b>
+          <small>{{row.cliente.tipo_cliente?.nome}} - {{row.cliente.nome}}</small>
         </div>
       </ng-template>
       <ng-template let-row="row" #editCliente>

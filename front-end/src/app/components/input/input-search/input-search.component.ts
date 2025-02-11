@@ -178,7 +178,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
 
 	public ngAfterViewInit(): void {
 		super.ngAfterViewInit();
-		this.control?.valueChanges.subscribe(async (newValue) => {
+		this.control?.valueChanges.subscribe(async (newValue) => {			
 			if (this.selectedValue != newValue) {
 				this.selectedValue = newValue;
 				await this.loadSearch();
@@ -199,8 +199,11 @@ export class InputSearchComponent extends InputBase implements OnInit {
 			if (selected) selected.entity = entity;
 			this.selectedEntity = entity;
 			this.selectedItem = selected;
-			if (this.select && emitEvent) this.select.emit(selected);
+			if (this.select && emitEvent) {
+				this.select.emit(selected);
+			}
 			if (this.change && emitEvent) this.change.emit(new Event("change"));
+			
 		};
 		if (selected) {
 			const element = document.getElementById(
@@ -247,6 +250,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
 	}
 
 	public onItemClick(item: SelectItem | SearchGroupSeparator) {
+		this.queryText = '';
 		this.selectItem((item as SelectItem).value);
 	}
 
@@ -263,7 +267,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
 		});
 	}
 
-	public async onSelectClick(event: Event) {
+	public async onSelectClick(event: Event) {		
 		return new Promise<string>((resolve, reject) => {
 			if (this.selectRoute) {
 				const modalRoute = this.selectRoute!;
@@ -290,7 +294,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
 		});
 	}
 
-	public onKeyDown(event: any) {
+	public onKeyDown(event: any) {		
 		if (["Enter", "ArrowDown", "ArrowUp"].indexOf(event.key) >= 0) {
 			if (event.key == "Enter") {
 				this.onEnterKeyDown(event);
@@ -307,11 +311,11 @@ export class InputSearchComponent extends InputBase implements OnInit {
 	}
 
 	public onKeyUp(event: any) {
-		this.typed(event.target.value);
+		this.typed(event.target.value, event);
 	}
 
-	public typed(newValue: string) {
-		if (this.queryText != newValue) {
+	public typed(newValue: string, event?: any) {
+		if (event.key != "Tab" && this.queryText != newValue) {
 			this.queryText = newValue;
 			if (this.timer) clearTimeout(this.timer);
 			this.timer = setTimeout(() => {
@@ -413,7 +417,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
 		clearControl: boolean = true,
 		emitEvent: boolean = true,
 		clearText = true
-	) {
+	) {		
 		this.items = [];
 		this.selectedItem = undefined;
 		this.selectedValue = undefined;
@@ -438,7 +442,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
 	public async loadSearch(
 		keyOrSelectItem?: string | SelectItem | any,
 		emitEvent: boolean = true
-	) {
+	) {		
 		this.clear(false, emitEvent);
 		let selectedItem: SelectItem | undefined = undefined;
 		if (keyOrSelectItem) {
