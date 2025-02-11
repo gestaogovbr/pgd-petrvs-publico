@@ -310,6 +310,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       entity.id = "";
       entity.data_inicio = new Date();
       entity.data_fim = new Date();
+      entity.documento_id = null;
       entity.entregas = entity.entregas.map((entrega: PlanoTrabalhoEntrega) => {
         entrega.id = this.documentoDao.generateUuid();
         entrega._status = "ADD";

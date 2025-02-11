@@ -206,7 +206,7 @@ class PlanoTrabalhoService extends ServiceBase
       $template = $plano->programa->templateTcr->conteudo ?? "";
       $dataset = $this->templateDatasetService->getDataset("PLANO_TRABALHO", true);
       $datasource = $this->templateService->getDatasource("PLANO_TRABALHO", $plano);
-      if($exigeAssinaturas) $this->statusService->atualizaStatus($plano, 'AGUARDANDO_ASSINATURA', 'Plano de Trabalho repactuado');
+      if($exigeAssinaturas) $this->statusService->atualizaStatus($plano, 'INCLUIDO', 'Plano de Trabalho repactuado');
       if(!empty($plano->documento_id) && !$haAssinaturas) {
         $documento = Documento::find($plano->documento_id);
         $documento->template = $template;
