@@ -18,41 +18,43 @@
         <b>{{solucao.url}}</b>
       </div>
     </div>
-    
+    <div class="row">
+      <div class="col-md-12">
+        <small class="d-block">Unidades ativas</small>
+        <div class="unidades">
+          <badge *ngFor="let unidade of unidadesAtivas" 
+            color="secondary" 
+            [label]="unidade.sigla"
+          ></badge>
+        </div>
+      </div>
+    </div>
   </div>
-  <tabs>
-    <tab key="UNIDADES" label="Unidades">
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col"><strong>Unidade</strong></th>
-            <th scope="col"><strong>Status</strong></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let solucao of solucao?.solucoes_unidades">
-            <th>{{solucao.unidade?.sigla}}</th>
-            <td>
-              <badge *ngIf="ativo(solucao.status)" color="success" label="Ativo"></badge>
-              <badge *ngIf="!ativo(solucao.status)" color="danger" label="Inativo"></badge>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </tab>
-    <tab key="PRODUTOS" label="Produtos e Serviços">
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col"><strong>Produto</strong></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let produto_solucao of solucao?.produtos_solucoes">
-            <th>{{produto_solucao.produto?.nome}}</th>
-          </tr>
-        </tbody>
-      </table>
-    </tab>
-  </tabs>
+  
+  <separator title="Produto e Serviços">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col"><strong>ID#</strong></th>
+          <th scope="col"><strong>Nome</strong></th>
+          <th scope="col"><strong>Unidade</strong></th>
+          <th scope="col"><strong>Tipo</strong></th>
+          <th scope="col"><strong>Status</strong></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let produto_solucao of solucao?.produtos_solucoes">
+          <th>{{produto_solucao.produto?.identificador}}</th>
+          <th>{{produto_solucao.produto?.nome}}</th>
+          <th>{{produto_solucao.produto?.unidade?.sigla}}</th>
+          <th>{{lookup.getValue(lookup.TIPO_PRODUTO, produto_solucao.produto?.tipo)}}</th>
+          <th><badge 
+              [color]="isProdutoAtivo(produto_solucao.produto) ? 'success' : 'danger'"  
+              [label]="isProdutoAtivo(produto_solucao.produto) ? 'Ativo': 'Inativo'">
+            </badge>
+          </th>
+        </tr>
+      </tbody>
+    </table>
+  </separator>
 </ng-container>
