@@ -62,7 +62,7 @@ class PlanoEntregaResource extends JsonResource
         case "Atendeu parcialmente ao adequado":
           return 4;
         default: 
-          throw new ExportPgdException('Avaliação do Plano de Entrega sem nota válida para Envio: '.$this->avaliacao?->nota);
+          return null;
       }
     }
 }
