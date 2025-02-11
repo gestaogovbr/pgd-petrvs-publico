@@ -165,6 +165,8 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
 
   public async ativarDesativar(solucao: Solucao, event: any) {
     
+    if (this.loading) return;
+    
     this.loading = true;
 
     try {
