@@ -62,7 +62,7 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
           extensao = 'txt';
         } else {
           console.warn('Tipo de conteúdo inesperado:', contentType);
-          extensao = 'bin'; 
+          extensao = 'xml'; 
         }
   
         const nomeArquivo = `dados_cpf_${cpf}_${dataCriacao}.${extensao}`;
