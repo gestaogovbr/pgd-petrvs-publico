@@ -5,6 +5,20 @@
   [hasEdit]="false" 
   [hasAdd]="false"
 >
+
+    <div class="row">
+        <div class="col-md-4">  
+          <input-select #unidade
+            [size]="12" 
+            [items]="unidades"
+            [control]="form?.controls?.unidade_id" 
+            controlName="unidade_id"
+            label="Unidade Instituidora"
+            (change)="onUnidadeChange($event)"
+          ></input-select>  
+        </div>
+    </div>
+
   <columns>
     <column title="ID#" [template]="columnID">
       <ng-template let-row="row" #columnID>
@@ -27,6 +41,15 @@
     <column title="Tipo" [template]="columnTipo">
       <ng-template let-row="row" #columnTipo>
         <span>{{lookup.getValue(lookup.TIPO_PRODUTO, row.produto?.tipo)}}</span>
+      </ng-template>
+    </column>
+
+    <column title="Status" [template]="columnStatus">
+      <ng-template let-row="row" #columnStatus>
+        <badge
+          [color]="getStatusColor(row.produto)" 
+          [label]="getStatusText(row.produto)">
+        </badge>
       </ng-template>
     </column>
 
