@@ -19,7 +19,7 @@
     <columns>
         <column title="Responsável" [template]="columnResponsavel">
             <ng-template let-row="row" #columnResponsavel>
-                <span> {{row.usuario ? row.usuario.nome : 'Usuário não logado'}} </span>
+                <span> {{row.usuario ? row.usuario.nome : 'Sistema'}} </span>
             </ng-template>
         </column>
         <column title="Executada em" orderBy="data_execucao" [template]="columnDataExecucao">
