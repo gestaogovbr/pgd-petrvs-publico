@@ -92,13 +92,14 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     
     return result;
   }
-    public async showDetalhes(solucao: Solucao){
-      this.go.navigate({route: ['gestao', 'solucao', solucao.id, "consult"]}, {
-        metadata: {
-          solucao: solucao
-        }
-      });    
-    }
+  
+  public async showDetalhes(solucao: Solucao){
+    this.go.navigate({route: ['gestao', 'solucao', solucao.id, "consult"]}, {
+      metadata: {
+        solucao: solucao
+      }
+    });    
+  }
 
   public onAgruparChange(event: Event) {
     const agrupar = this.filter!.controls.agrupar.value;
