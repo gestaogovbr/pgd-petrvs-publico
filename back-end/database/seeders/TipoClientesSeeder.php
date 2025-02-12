@@ -41,6 +41,13 @@ class TipoClientesSeeder extends Seeder
                     'created_at' => $this->timenow,
                     'updated_at' => $this->timenow,
                     'deleted_at' => null
+                ],
+                [
+                    'id' => '95608f72-e838-11ef-9d03-0242ac120004',
+                    'nome' => 'Outros',
+                    'created_at' => $this->timenow,
+                    'updated_at' => $this->timenow,
+                    'deleted_at' => null
                 ]
             ];
 
@@ -106,6 +113,15 @@ class TipoClientesSeeder extends Seeder
                     'id' => '2fd75791-d12f-11ef-a51b-0242ac120003',
                     'tipo_cliente_id' => 'd55be7dd-708d-11ef-8e76-0242ac1c0002',
                     'nome' => 'Instituições privadas sem fins lucrativos',
+                    'created_at' => $this->timenow,
+                    'updated_at' => $this->timenow,
+                    'deleted_at' => null
+                ],
+                
+                [
+                    'id' => '23acb9d3-e838-11ef-9d03-0242ac120004',
+                    'tipo_cliente_id' => 'd55be7dd-708d-11ef-8e76-0242ac1c0002',
+                    'nome' => 'Instituições privadas com fins lucrativos',
                     'created_at' => $this->timenow,
                     'updated_at' => $this->timenow,
                     'deleted_at' => null
