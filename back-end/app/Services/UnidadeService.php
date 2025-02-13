@@ -25,7 +25,16 @@ class UnidadeService extends ServiceBase
       throw new ServerException(
         "ValidateUnidade",
         "Não é possível inserir uma unidade. Essa ação é feita somente pela integração com o SIAPE."
-    );
+      );
+    }
+    // Validar se houve alteração no campo instituidora, somente usuário com a capacidade MOD_UND_INST pode alterar
+    if ($action == "EDIT" && $unidade->instituidora != $data["instituidora"]) {
+      if (!parent::loggedUser()->hasPermissionTo("MOD_UND_INST")) {
+        throw new ServerException(
+          "ValidateUnidade",
+          "Você não tem permissão para alterar o campo instituidora da unidade."
+        );
+      }
     }
   }
 
