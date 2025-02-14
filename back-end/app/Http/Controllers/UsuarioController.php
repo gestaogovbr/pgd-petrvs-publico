@@ -78,7 +78,7 @@ class UsuarioController extends ControllerBase
   
       return response()->download($zipFile, $nomeArquivo, [
           'Content-Type' => 'application/zip',
-          'Content-Disposition' => 'attachment; filename="arquivos.zip"',
+          'Content-Disposition' => sprintf('attachment; filename="%s"',$nomeArquivo),
       ])->deleteFileAfterSend(true);
   } catch (\Throwable $th) {
         $tempFile = tempnam(sys_get_temp_dir(), 'txt');
