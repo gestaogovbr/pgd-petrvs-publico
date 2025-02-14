@@ -489,6 +489,7 @@ Route::middleware(['auth:sanctum'])->prefix('Relato')->group(function () {
   Route::get('confirmar/{email}/{nome}', [RelatoController::class, 'confirmar']);
 });
 Route::middleware('auth:sanctum')->post('/usuario/consulta-cpf-siape', [UsuarioController::class, 'consultaCPFSiape']);
+Route::middleware('auth:sanctum')->post('/unidade/consulta-unidade-siape', [UnidadeController::class, 'consultaUnidadeSiape']);
 Route::middleware(['auth:sanctum'])->prefix('SolucaoUnidade')->group(function () {
   defaultRoutes(SolucaoUnidadeController::class);
 });
