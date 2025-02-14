@@ -21,7 +21,7 @@ export class DocumentosAssinarComponent extends PageFrameBase {
   public textoConfirmar: string = "confirmo";
   public documentos: Documento[] = [];
   public TIPO_ASSINATURA: LookupItem[] = [
-    {key: "ELETRONICA", value: "Assinatura Eletônica"},
+    {key: "ELETRONICA", value: "Assinatura Eletrônica"},
     {key: "DIGITAL", value: "Assinatura Digital"}
   ];
 
