@@ -1,3 +1,6 @@
+## 2.3.8 15/02/2025
+### Corrigido
+ - Correção da palavra "eletrônica" na tela de assinatura eletrônica
 ## 2.3.7 07/02/2025
 ### Corrigido
  - Correção no seeder In24_2023Seeder
