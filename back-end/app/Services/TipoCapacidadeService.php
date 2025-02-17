@@ -418,6 +418,7 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_UND_INTG_EDT", "Permite editar integrantes da unidade"],
         ["MOD_UND_INTG_EXCL", "Permite excluir integrantes da unidade"],
         ["MOD_UND_INTG_GST", "Permite alterar gestor e substituto"],
+        ["MOD_UND_INST", "Permite alterar o campo instituidora"],
       ]
     ], [
       "codigo" => "MOD_USER", //ok

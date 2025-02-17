@@ -245,7 +245,7 @@ export class PlanoTrabalhoService {
     this.go.navigate({route: ['gestao', 'plano-trabalho', 'consolidacao', consolidacao.id, 'recurso']}, {
       modal: true, 
       metadata: {
-        recurso: true,
+        recurso: ['Inadequado', 'Não executado'].includes(consolidacao!.avaliacao?.nota),
         consolidacao: consolidacao,
         programa: programa
       },

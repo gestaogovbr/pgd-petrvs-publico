@@ -163,7 +163,7 @@ class IntegracaoService extends ServiceBase
           ]);
           $this->atualizaLogs($this->logged_user_id, 'unidades', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Unidade nova inserida informada pelo SIAPE: ' . $values[':nome'], 'Valores inseridos' => DB::table('unidades')->where('id', $id)->first()]);
         } catch (Throwable $e) {
-          Log::error("Erro ao inserir Unidade", [$e->getMessage()]);
+          Log::error(sprintf("Erro ao inserir Unidade %s: %s", $values[':codigo'], $e->getMessage()), throwableToArray($e));
           LogError::newWarn("Erro ao inserir Unidade", $values);
         }
         return $this->unidadesInseridas[$unidade->id_servo];
@@ -174,7 +174,7 @@ class IntegracaoService extends ServiceBase
       // Prepara apenas os atributos que precisam ser atualizados.
       $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade_id);
       $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
-      $values[':unidade_id'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : null;
+      $values[':unidade_id'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["unidade_id"] : null;
       $values[':data_modificacao'] = $this->UtilService->asDateTime($unidade->data_modificacao_siape);
 
       $sql = "UPDATE unidades SET path = :path, unidade_pai_id = :unidade_id, codigo = :codigo, " .
@@ -283,11 +283,10 @@ class IntegracaoService extends ServiceBase
 
     $this->sincronizacao($inputs);
     $this->logSiape("Sincronização de dados do SIAPE finalizada", [], Tipo::INFO);
-    Log::alert("log 1");
     return $this->store([
       'entidade_id' => $inputs['entidade'],
-      'atualizar_unidades' => $inputs['unidades'] == "false" ? false : true,
-      'atualizar_servidores' => $inputs['servidores'] == "false" ? false : true,
+      'atualizar_unidades' => $this->validaInput($inputs['unidades']),
+      'atualizar_servidores' => $this->validaInput($inputs['servidores']),
       'atualizar_gestores' => true,
       'usar_arquivos_locais' => $this->useLocalFiles,
       'gravar_arquivos_locais' => $this->storeLocalFiles,
@@ -296,7 +295,12 @@ class IntegracaoService extends ServiceBase
       'resultado' => json_encode($this->result, JSON_UNESCAPED_UNICODE)
     ], null)->resultado;
   }
-
+  private function validaInput($input) : bool{
+      if(is_bool($input)){
+        return $input;
+      }
+      return $input == "false" ? false : true;
+  }
   public function sincronizacao($inputs)
   {
     ob_start(); // Inicia o buffer de saída.
@@ -517,7 +521,7 @@ class IntegracaoService extends ServiceBase
         ], fn ($o) => intval(substr($o, 0, strpos($o, 'unidade') - 1)) > 0)];
         // Unidades que foram removidas em integracao_unidades vão permanecer no sistema por questões de integridade.
       } catch (Throwable $e) {
-        Log::error("Erro ao importar unidades", $e);
+        Log::error(sprintf("Erro ao importar unidades: %s", $e->getMessage()), throwableToArray($e));
         LogError::newError("Erro ao importar unidades", $e);
         $this->result['unidades']['Resultado'] = 'ERRO: ' . $e->getMessage();
       }
@@ -544,7 +548,7 @@ class IntegracaoService extends ServiceBase
             );
           } catch (Throwable $e) {
             LogError::newError("Erro ao truncar a tabela integracao_servidores", $e);
-            Log::error("Erro ao truncar a tabela integracao_servidores", $e);
+            Log::error(sprintf("Erro ao truncar a tabela integracao_servidores: %s", $e->getMessage()), throwableToArray($e));
           }
           $this->logSiape("Iniciando processo de atualização de servidores", [], Tipo::INFO);
           $integracaoServidorProcessar->setServidores($servidores)->setEcho($this->echo)->setIntegracaoConfig($this->integracao_config)

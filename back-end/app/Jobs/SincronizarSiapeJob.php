@@ -26,8 +26,6 @@ class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule
 
     public function __construct(private readonly ?string $tenantId = null)
     {
-        Log::info("Job SincronizarPetrvs __construct :". $tenantId);
-
         $this->queue = 'siape_queue';
     }
 
@@ -46,8 +44,8 @@ class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule
             $entidades = Entidade::all();
             $inputs = [
                 'unidades' => true,
-                'servidores' => false,
-                'gestores' => false,
+                'servidores' => true,
+                'gestores' => true,
             ];
             foreach ($entidades as $entidade) {
                 $inputs['entidade'] = $entidade->id;
