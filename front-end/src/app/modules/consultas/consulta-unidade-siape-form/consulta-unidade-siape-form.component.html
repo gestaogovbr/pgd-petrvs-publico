@@ -1,0 +1,12 @@
+<editable-form [form]="form!" [disabled]="false" [title]="isModal ? '' : title">
+    <div *ngIf="erros?.length" class="alert alert-danger mt-2 break-spaces" role="alert">{{erros}}</div>
+    <div class="row">
+      
+        <div class="row">
+            <input-text [size]="3" label="Unidade" controlName="unidade"  [attr.minlength]=1 required></input-text>
+        </div>
+    </div>
+    <separator>
+        <toolbar [buttons]="toolbarButtons"></toolbar>
+    </separator>
+</editable-form>

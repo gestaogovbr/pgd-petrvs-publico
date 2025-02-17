@@ -375,7 +375,12 @@ class UsuarioService extends ServiceBase
     }
   }
 
-  public function consultaCPFSiape(string $cpf): SimpleXMLElement{
+  /**
+   *
+   * @param string $cpf
+   * @return SimpleXMLElement[]
+   */
+  public function consultaCPFSiape(string $cpf): array{
      
       return $this->buscaServidor($cpf);
      

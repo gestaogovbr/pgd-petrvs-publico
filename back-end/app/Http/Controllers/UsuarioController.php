@@ -9,6 +9,7 @@ use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Log;
 use Throwable;
+use ZipArchive;
 
 class UsuarioController extends ControllerBase
 {
@@ -59,14 +60,26 @@ class UsuarioController extends ControllerBase
     $data = $request->validate([
       'cpf' => [],
     ]);
-    $nomeArquivo = 'dados_cpf_' . $data['cpf'] . '.xml';
+    $nomeArquivo = 'dados_cpf_' . $data['cpf'] . '.zip';
     try{
-      $retorno = $this->service->consultaCPFSiape($data['cpf']);
+      $retornos = $this->service->consultaCPFSiape($request->cpf); 
 
-       $tempFile = tempnam(sys_get_temp_dir(), 'xml');
-       file_put_contents($tempFile, $retorno->asXML());
-
-       return response()->download($tempFile, $nomeArquivo)->deleteFileAfterSend(true);
+      $zipFile = tempnam(sys_get_temp_dir(), 'zip');
+      $zip = new ZipArchive();
+      $zip->open($zipFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+  
+      foreach ($retornos as $index => $retorno) {
+          $tempFile = tempnam(sys_get_temp_dir(), 'xml');
+          file_put_contents($tempFile, $retorno->asXML());
+          $zip->addFile($tempFile, "arquivo_{$index}.xml");
+      }
+  
+      $zip->close();
+  
+      return response()->download($zipFile, $nomeArquivo, [
+          'Content-Type' => 'application/zip',
+          'Content-Disposition' => sprintf('attachment; filename="%s"',$nomeArquivo),
+      ])->deleteFileAfterSend(true);
   } catch (\Throwable $th) {
         $tempFile = tempnam(sys_get_temp_dir(), 'txt');
         $mensagemErro = date('Y-m-d H:i:s') . " - " . $th->getMessage() . PHP_EOL;
