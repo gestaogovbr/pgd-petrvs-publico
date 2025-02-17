@@ -34,7 +34,7 @@ trait DadosExternosSiape
             $this->configIntegracaoSiape['siglaSistema'],
             $this->configIntegracaoSiape['nomeSistema'],
             $this->configIntegracaoSiape['senha'],
-            $this->getCpf(),
+            $this->configIntegracaoSiape['cpf'],
             $codOrgao,
             $codigoSiape
         );

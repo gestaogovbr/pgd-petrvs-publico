@@ -174,7 +174,7 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
               extensao = 'txt';
             } else {
               console.warn('Tipo de conteúdo inesperado:', contentType);
-              extensao = 'xml'; 
+              extensao = 'txt'; 
             }
       
             const nomeArquivo = `dados_unidade_${unidade}_${dataCriacao}.${extensao}`;
