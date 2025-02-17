@@ -19,7 +19,7 @@
         </button>
     </toolbar>
     <filter 
-        [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')"
+        [deleted]="!this.isSearching && this.auth.hasPermissionTo('MOD_AUDIT_DEL')"
         [form]="filter" 
         [where]="filterWhere" 
         [submit]="filterSubmit.bind(this)" 

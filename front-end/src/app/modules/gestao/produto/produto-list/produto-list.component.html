@@ -17,7 +17,14 @@
         >Desativar todos os produtos e serviços
         </button>
     </toolbar>
-    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter 
+        [deleted]="!this.isSearching && this.auth.hasPermissionTo('MOD_AUDIT_DEL')" 
+        [form]="filter" 
+        [where]="filterWhere" 
+        [submit]="filterSubmit.bind(this)" 
+        [collapseChange]="filterCollapseChange.bind(this)" 
+        [collapsed]="!selectable && filterCollapsed"
+    >
         <div class="row">
             <div class="col-md-4"> 
                 <input-text [size]="12" [label]="'Nome do '+ lex.translate('produto')" controlName="nome"
