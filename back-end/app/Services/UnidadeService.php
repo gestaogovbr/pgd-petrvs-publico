@@ -12,11 +12,15 @@ use App\Models\Programa;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\ServerException;
+use App\Services\Siape\DadosExternosSiape;
 use Exception;
+use SimpleXMLElement;
 use Throwable;
 
 class UnidadeService extends ServiceBase
 {
+
+  use DadosExternosSiape;
 
   public function validateStore($data, $unidade, $action)
   {
@@ -497,4 +501,10 @@ class UnidadeService extends ServiceBase
 			== true		......................	retornar unidades ativas e inativas
 			== false	......................	retornar somente as unidades ativas
     */
+
+    public function consultaUnidadeSiape(string $unidadecodigoSiape): SimpleXMLElement{
+     
+      return $this->buscaDadosUnidade($unidadecodigoSiape);
+     
+  }
 }

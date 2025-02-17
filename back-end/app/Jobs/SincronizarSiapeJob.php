@@ -46,8 +46,8 @@ class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule
             $entidades = Entidade::all();
             $inputs = [
                 'unidades' => true,
-                'servidores' => true,
-                'gestores' => true,
+                'servidores' => false,
+                'gestores' => false,
             ];
             foreach ($entidades as $entidade) {
                 $inputs['entidade'] = $entidade->id;

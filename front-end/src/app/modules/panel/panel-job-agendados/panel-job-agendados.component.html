@@ -17,33 +17,22 @@
       </select>
     </div>
   </div>
+
   <div class="row mb-3">
     <div class="col-12">
-      <label for="action">Parametros <span class="text-danger">*</span></label>
-      <input type="text" id="action" class="form-control" [(ngModel)]="newJob.parameters">
+      <label for="minutos">Expressão CRON <span class="text-danger">*</span></label>
+      <input 
+        type="text" 
+        id="expressao_cron" 
+        class="form-control" 
+        [(ngModel)]="newJob.expressao_cron"
+        [ngClass]="{'is-invalid': !isCronValid && newJob.expressao_cron.length > 0}"
+      />
+      <div *ngIf="!isCronValid && newJob.expressao_cron.length > 0" class="text-danger">
+        Expressão CRON inválida!
+      </div>
     </div>
-  </div>
-  <div class="row mb-3">
-    <div class="col-2">
-      <label for="minutos">Minutos <span class="text-danger">*</span></label>
-      <input type="number" id="minutos" class="form-control" (change)="onInputChange()" [(ngModel)]="newJob.minutos" min="0" max="59" placeholder="*">
-    </div>
-    <div class="col-2">
-      <label for="horas">Horas <span class="text-danger">*</span></label>
-      <input type="number" id="horas" class="form-control" (change)="onInputChange()" [(ngModel)]="newJob.horas" min="0" max="23" placeholder="*">
-    </div>
-    <div class="col-2">
-      <label for="dias">Dias <span class="text-danger">*</span></label>
-      <input type="number" id="dias" class="form-control" (change)="onInputChange()" [(ngModel)]="newJob.dias" min="1" max="31" placeholder="*">
-    </div>
-    <div class="col-2">
-      <label for="meses">Meses <span class="text-danger">*</span></label>
-      <input type="number" id="meses" class="form-control" (change)="onInputChange()" [(ngModel)]="newJob.meses" min="1" max="12" placeholder="*">
-    </div>
-    <div class="col-2">
-      <label for="semanas">Semanas <span class="text-danger">*</span></label>
-      <input type="number" id="semanas" class="form-control" (change)="onInputChange()" [(ngModel)]="newJob.semanas" min="0" max="7" placeholder="*">
-    </div>
+    
       <div class="col-2">
         <input-radio
           [items]="radioItems"
@@ -54,14 +43,8 @@
           >
         </input-radio>
       </div>
-      
   </div>
-  <div class="row mb-3">
-    <div class="col-12">
-      <label for="cron">Cron <span class="text-danger">*</span></label>
-      <input type="text" id="cron"  [disabled]="isDisabled" class="form-control" [(ngModel)]="newJob.expressao_cron" placeholder="* * * * * *">
-    </div>
-  </div>
+
   <div class="row mb-3">
     <div class="col-12 text-left">
       <button class="btn btn-info" (click)="createJob()">Adicionar</button>
@@ -80,31 +63,6 @@
             <span>{{row.classe}}</span>
           </ng-template>  
       </column>
-      <column title="Minutos" [template]="columnMinutos">
-          <ng-template let-row="row" #columnMinutos>
-              <span>{{row.minutos}}</span>
-          </ng-template>
-      </column>
-      <column title="Horas" [template]="columnHoras">
-          <ng-template let-row="row" #columnHoras>
-              <span>{{row.horas}}</span>
-          </ng-template>
-      </column>
-      <column title="Dias" [template]="columnDias">
-          <ng-template let-row="row" #columnDias>
-              <span>{{row.dias}}</span>
-          </ng-template>
-      </column>
-      <column title="Semanas" [template]="columnSemanas">
-        <ng-template let-row="row" #columnSemanas>
-            <span>{{row.semanas}}</span>
-        </ng-template>
-    </column>
-      <column title="Meses" [template]="columnMeses">
-        <ng-template let-row="row" #columnMeses>
-            <span>{{row.meses}}</span>
-        </ng-template>
-    </column>
       <column title="Expressão Cron" [template]="columnTipo">
           <ng-template let-row="row" #columnTipo>
             <span>{{row.expressao_cron.trim()}}</span>
