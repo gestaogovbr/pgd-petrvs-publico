@@ -14,7 +14,12 @@ class ProdutoValidador extends BaseValidador
     {
         $entity = $this->getTipo() === self::TIPO_STORE ? $data['entity'] : $data['data'];
 
-        $validator = Validator::make($entity, $this->regrasValidacao());
+        $validator = Validator::make($entity, 
+            $this->regrasValidacao(),
+            [
+                'url.regex' => 'O formato da URL é inválido.',
+            ]
+        );
 
         if ($validator->fails()) {
             throw new ValidationException($validator);
@@ -28,7 +33,7 @@ class ProdutoValidador extends BaseValidador
     {
         $regrasComuns = [
             'nome_fantasia' => 'nullable|string|max:255',
-            'url' => 'nullable|url',
+            'url' => ['required', 'regex:/^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}(\/[^\s]*)?$/'],
             'unidade_id' => 'uuid|exists:unidades,id',
             'data_ativado' => 'nullable|date',
             'data_desativado' => 'nullable|date',
