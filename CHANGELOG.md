@@ -1,3 +1,19 @@
+## 2.3.8 15/02/2025
+### Corrigido
+ - Correção da palavra "eletrônica" na tela de assinatura eletrônica
+ - Correção nas falhas ao salvar logs com parametro incorreto
+ - Correção no erro ao alterar a unidade pai de uma unidade
+ - Correção no clone de Plano de Trabalho
+### Adicionado
+ - Adicionado a busca de unidades no menu de consultas da tela do desenvolvedor
+ - Adicionado a busca de dados dos dados pessoais de um CPF na tela de consulta de um CPF
+ - Seeder para corrigir FUNARTE
+ - Capacidade para restringir mudança de unidade instituidora
+### Modificado
+ - reestruturado a tela de configuração de Job's
+ - Modificado tela de exibição de execução do SIAPE, exibindo Sistema quando job executar e exibindo corretamente o status de unidades e servidores.
+### Removido
+ - Seeder de correções passadas
 ## 2.3.7 07/02/2025
 ### Corrigido
  - Correção no seeder In24_2023Seeder
