@@ -15,7 +15,9 @@ class SolucaoValidador extends BaseValidador
             'sigla' => 'required|string|max:20',
             'descricao' => 'required|string',
             'status' => 'integer|in:0,1',
-            'url' => 'required|url'
+            'url' => ['required', 'regex:/^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}(\/[^\s]*)?$/'],
+        ], [
+            'url.regex' => 'O formato da URL é inválido.',
         ]);
 
         if ($validator->fails()) {
