@@ -252,6 +252,7 @@ class IntegracaoService extends ServiceBase
     $dados['gravar_arquivos_locais'] = $this->storeLocalFiles; // Atualiza esse parâmetro para que seja salvo no banco corretamente.
     $this->sincronizacao($inputs);
     $unidadeLogin = Auth::user()->areasTrabalho[0]->unidade;
+    Log::alert("log 2");
     return $this->store(array_merge($dados, ['usuario_id' => $usuario_id, 'data_execucao' => $this->unidadeService->hora($unidadeLogin->id), 'resultado' => json_encode($this->result)]), null);
   }
 
@@ -282,7 +283,7 @@ class IntegracaoService extends ServiceBase
 
     $this->sincronizacao($inputs);
     $this->logSiape("Sincronização de dados do SIAPE finalizada", [], Tipo::INFO);
-    
+    Log::alert("log 1");
     return $this->store([
       'entidade_id' => $inputs['entidade'],
       'atualizar_unidades' => $inputs['unidades'] == "false" ? false : true,
@@ -970,11 +971,13 @@ class IntegracaoService extends ServiceBase
    */
   public function showResponsaveis()
   {
+    Log::alert("ok");
     $a = array_map(fn ($u) => ['key' => $u['id'], 'value' => $u['nome']], Usuario::select(['id', 'nome'])->has('integracoes')->get()->toArray());
-    $b = array_merge([['key' => "null", 'value' => 'Usuário não logado']], $a);
+    $b = array_merge([['key' => "null", 'value' => 'Sistema']], $a);
     usort($b, function ($a, $b) {
       return strnatcmp($a['value'], $b['value']);
     });
+    Log::alert("okok", $b);
     return $b;
   }
 
