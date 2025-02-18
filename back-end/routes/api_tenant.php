@@ -92,7 +92,7 @@ use FontLib\Table\Type\post;
 use App\Http\Controllers\JobAgendadoController;
 use App\Http\Controllers\RelatoController;
 use App\Http\Controllers\SolucaoUnidadeController;
-
+use App\Http\Controllers\ImpersonationController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -494,3 +494,8 @@ Route::middleware(['auth:sanctum'])->prefix('SolucaoUnidade')->group(function ()
   defaultRoutes(SolucaoUnidadeController::class);
 });
 
+
+Route::middleware(['auth:sanctum'])->group(function () {
+  Route::get('/impersonate/{userId}', [ImpersonationController::class, 'impersonate'])->name('impersonate.start');
+  Route::get('/impersonate/stop', [ImpersonationController::class, 'stopImpersonating'])->name('impersonate.stop');
+});

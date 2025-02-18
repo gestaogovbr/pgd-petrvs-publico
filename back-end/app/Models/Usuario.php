@@ -46,17 +46,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Auditable;
+use Lab404\Impersonate\Models\Impersonate;
+
 class UsuarioConfig
 {
 }
 
-class Usuario extends Authenticatable  implements AuditableContract
+class Usuario extends Authenticatable implements AuditableContract
 {
-  use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable;
+    use HasPermissions, 
+        HasApiTokens, 
+        HasFactory, 
+        Notifiable, 
+        AutoUuid, 
+        MergeRelations, 
+        SoftDeletes, 
+        Auditable, 
+        Impersonate;
 
-  protected $table = "usuarios";
+    protected $table = "usuarios";
 
-  protected $with = ['perfil'];
+    protected $with = ['perfil'];
 
   public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
     'nome', /* varchar(256); NOT NULL; */ // Nome do usuário
@@ -89,6 +99,7 @@ class Usuario extends Authenticatable  implements AuditableContract
     //'vinculacao', /* enum('SERVIDOR_EFETIVO','SERVIDOR_COMISSIONADO','EMPREGADO','CONTRATADO_TEMPORARIO'); NOT NULL; DEFAULT: 'SERVIDOR_EFETIVO'; */// Vínculo do usuário com a administração
     //'metadados', /* json; */// Metadados do usuário
     'data_modificacao',
+    'is_admin'
   ];
 
   public function proxyFill($dataOrEntity, $unidade, $action)
@@ -402,5 +413,13 @@ class Usuario extends Authenticatable  implements AuditableContract
     }
     return $result;
   }
-
+  public function canImpersonate()
+  {
+      // For example
+      return $this->is_admin == 1;
+  }
+  public function impersonateGuard()
+  {
+      return 'sanctum';
+  }
 }
