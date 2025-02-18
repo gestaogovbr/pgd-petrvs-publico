@@ -60,7 +60,6 @@ const routes: Routes = [
   { path: 'configuracoes/unidade', loadChildren: () => import('./modules/configuracoes/unidade/unidade.module').then(m => m.UnidadeModule), canActivate: [AuthGuard] },
   { path: 'configuracoes/usuario', loadChildren: () => import('./modules/configuracoes/usuario/usuario.module').then(m => m.UsuarioModule), canActivate: [AuthGuard] },
   { path: 'consultas/cpf-siape', component: ConsultaCpfSiapeFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta SIAPE por CPF" } },
-  { path: 'consultas/cpf-siape', loadChildren: () => import('./modules/relatos/lotacao/relato-lotacao.module').then(m => m.RelatoLotacaoModule), canActivate: [AuthGuard] },
   { path: 'consultas/cpf-unidade', component: ConsultaUnidadeSiapeFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta SIAPE por Unidade" } },
   { path: 'consultas/cpf-unidade', loadChildren: () => import('./modules/consultas/consultas.module').then(m => m.ConsultasModule), canActivate: [AuthGuard] },
   { path: 'relatos/lotacao', loadChildren: () => import('./modules/relatos/lotacao/relato-lotacao.module').then(m => m.RelatoLotacaoModule), canActivate: [AuthGuard] },
