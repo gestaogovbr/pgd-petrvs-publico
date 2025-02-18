@@ -37,7 +37,14 @@
         <p>{{row.produto_relacionado?.nome}}</p>
       </ng-template>
       <ng-template let-row="row" #editProduto>
-          <input-search #produtoRelacionado fullEntity  controlName="produto_id" [control]="form!.controls.produto_id" [dao]="produtoDao" [where]="[['id', '!=', entity?.id]]" required></input-search>
+          <input-search #produtoRelacionado fullEntity  
+          required
+            controlName="produto_id" 
+            [control]="form!.controls.produto_id" 
+            [dao]="produtoDao" 
+            [where]="[['id', '!=', entity?.id]]"
+            [selectRoute]="{route: ['gestao', 'produto'], params: {mode: 'search-ativos', excludeId: entity?.id}}"
+          ></input-search>
       </ng-template>
     </column>
 

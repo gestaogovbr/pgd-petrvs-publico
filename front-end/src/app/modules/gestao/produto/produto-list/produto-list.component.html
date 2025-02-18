@@ -1,7 +1,14 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [selectable]="selectable" (select)="onSelect($event)"
-    [hasAdd]="this.isChefe"
-    [hasEdit]="this.isChefe"
+<grid 
+    [dao]="dao" 
+    [add]="add" 
+    [title]="isModal ? '' : title" 
+    [orderBy]="orderBy" 
+    [groupBy]="groupBy" 
+    [join]="join"
+    [selectable]="selectable" 
+    (select)="onSelect($event)"
+    [hasAdd]="this.isChefe && !this.isSearching"
+    [hasEdit]="this.isChefe && !this.isSearching"
 >
     <toolbar *ngIf="!selectable">
         <button type="button" class="btn btn-outline-success" 

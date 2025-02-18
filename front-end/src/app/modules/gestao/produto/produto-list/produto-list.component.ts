@@ -159,6 +159,10 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
 		let result: any[] = [];
 		let form: any = filter.value;
 
+    if (this.queryParams.excludeId) {
+      result.push(["id", "!=", this.queryParams.excludeId]);
+    }
+
     if(form.nome?.length) {
       result.push(["or", ["nome_fantasia", "like", "%" + form.nome.trim().replace(" ", "%") + "%" ], ["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]]);
     }
