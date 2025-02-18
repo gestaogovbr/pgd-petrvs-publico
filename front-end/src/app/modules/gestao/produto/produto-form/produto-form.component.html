@@ -1,7 +1,7 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()">
   <div class="row">
     <div class="row">
-      <input-text [size]="6" label="Nome do produto" [disabled]="campoDesabilitado ? 'true' : undefined" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250 required labelInfo="Nome formal do produto ou serviço. Ex: Programa de Gestão e Desempenho"></input-text>
+      <input-text [size]="6" label="Nome do produto ou serviço" [disabled]="campoDesabilitado ? 'true' : undefined" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250 required labelInfo="Nome formal do produto ou serviço. Ex: Programa de Gestão e Desempenho"></input-text>
       <input-text [size]="3" label="Sigla/Nome fantasia" [disabled]="campoDesabilitado ? 'true' : undefined" icon="bi bi-textarea-t" controlName="nome_fantasia" [control]="form!.controls.nome_fantasia" [attr.maxlength]=250 labelInfo="Nome informal do produto ou serviço. Ex: PGD"></input-text>
       <input-search #usuario [size]="3" required  [disabled]="campoDesabilitado ? 'true' : undefined" controlName="responsavel_id" [dao]="usuarioDao!" label="Curador" [join]="['unidades_integrantes.curador']" [where]="[['atribuicoes', '==', ['CURADOR']]]" [selectRoute]="{route: ['configuracoes', 'usuario'], params: {filter: {atribuicoes: ['CURADOR']}}}" (select)="onUsuarioSelect($event)"></input-search>
     </div>
