@@ -56,20 +56,7 @@
     </tab>
 
     <tab key="PROCESSOS" label="Processos (cadeias de valor)">
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Cadeia de valor</th>
-            <th scope="col">Processo</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let processo of produto.produto_processo_cadeia_valor">
-            <td>{{processo.cadeia_valor_processo?.cadeia_valor?.nome}}</td>
-            <td>{{processo.cadeia_valor_processo?.nome}}</td>
-          </tr>
-        </tbody>
-      </table>
+      <produto-list-processo #processos noPersist [disabled]="true" [entity]="produto"></produto-list-processo>
     </tab>
 
     <tab key="PRODUTOS" label="Produtos relacionados">

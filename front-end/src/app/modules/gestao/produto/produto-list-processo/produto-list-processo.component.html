@@ -1,4 +1,18 @@
-<grid [items]="items" [form]="form!" noMargin #gridProcessos editable [selectable]="false" [minHeight]="items.length > 2 ? 0 : 300" [join]="join" [groupBy]="groupBy" [add]="addProcesso.bind(this)" [remove]="removeProcesso.bind(this)" [save]="saveProcesso.bind(this)" [load]="loadProcesso.bind(this)" [saveEnd]="saveEndProcesso.bind(this)" [hasDelete]="true" [hasEdit]="true" [hasAdd]="true">
+<grid [items]="items" noMargin editable #gridProcessos 
+  [form]="form!" 
+  [selectable]="false" 
+  [minHeight]="items.length > 2 ? 0 : 300" 
+  [join]="join" 
+  [groupBy]="groupBy" 
+  [add]="addProcesso.bind(this)" 
+  [remove]="removeProcesso.bind(this)" 
+  [save]="saveProcesso.bind(this)" 
+  [load]="loadProcesso.bind(this)" 
+  [saveEnd]="saveEndProcesso.bind(this)" 
+  [hasDelete]="!this.disabled" 
+  [hasEdit]="!this.disabled" 
+  [hasAdd]="!this.disabled"
+>
   <columns>
     <column [titleTemplate]="titleCadeia" [template]="columnCadeia" [editTemplate]="editCadeia" [verticalAlign]="'middle'" [width]="300" [align]="'center'">
       <ng-template let-header="header" #titleCadeia>
@@ -14,7 +28,14 @@
       </ng-template>
     </column>
 
-    <column [titleTemplate]="titleProcesso" [template]="columnProcesso" [editTemplate]="editProcesso" [verticalAlign]="'middle'" [width]="300" [align]="'center'">
+    <column 
+      [titleTemplate]="titleProcesso" 
+      [template]="columnProcesso" 
+      [editTemplate]="editProcesso" 
+      [verticalAlign]="'middle'" 
+      [width]="300" 
+      [align]="'center'"
+    >
       <ng-template let-header="header" #titleProcesso>
         <div class="text-center"><span><strong>Processo</strong></span></div>
       </ng-template>
@@ -27,6 +48,11 @@
         <input-select #cadeiaProcesso fullEntity controlName="cadeia_valor_processo_id" controlName="cadeia_valor_processo_id" [control]="form!.controls.cadeia_valor_processo_id" [items]="processos" required></input-select>
       </ng-template>
     </column>
-    <column type="options"></column>
+    <column title="Nível" [template]="columnNivel">
+      <ng-template let-row="row" #columnNivel>
+          <span> {{row.cadeia_valor_processo?.sequencia}}</span>
+      </ng-template>
+    </column>
+    <column type="options" *ngIf="!this.disabled"></column>
   </columns>
 </grid>
