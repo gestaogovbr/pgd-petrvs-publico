@@ -59,25 +59,8 @@
       <produto-list-processo #processos noPersist [disabled]="true" [entity]="produto"></produto-list-processo>
     </tab>
 
-    <tab key="PRODUTOS" label="Produtos relacionados">
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Nome</th>
-            <th scope="col">Tipo</th>
-            <th scope="col">Unidade</th>
-            <th scope="col">Descrição</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let produto of produto.produto_produto">
-            <td>{{produto.produto_relacionado?.nome}}</td>
-            <td>{{lookup.getValue(lookup.TIPO_PRODUTO, produto.produto_relacionado?.tipo)}}</td>
-            <td>{{produto.produto_relacionado?.unidade?.nome}}</td>
-            <td>{{produto.produto_relacionado?.descricao}}</td>
-          </tr>
-        </tbody>
-      </table>
+    <tab key="PRODUTOS" label="Insumos">
+      <produto-list-produto #produtos noPersist [disabled]="true" [entity]="produto"></produto-list-produto>
     </tab>
   </tabs>
 </ng-container>
