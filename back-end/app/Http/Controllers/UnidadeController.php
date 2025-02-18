@@ -271,6 +271,7 @@ class UnidadeController extends ControllerBase
         'Content-Type' => 'application/xml',
         'Content-Disposition' => sprintf('attachment; filename="%s"',$nomeArquivo),
     ])->deleteFileAfterSend(true);
+
   } catch (\Throwable $th) {
         $tempFile = tempnam(sys_get_temp_dir(), 'txt');
         $mensagemErro = date('Y-m-d H:i:s') . " - " . $th->getMessage() . PHP_EOL;

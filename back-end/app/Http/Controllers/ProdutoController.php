@@ -6,6 +6,8 @@ namespace App\Http\Controllers;
 use App\Models\Produto;
 
 use Illuminate\Http\Request;
+use App\Exceptions\Contracts\IBaseException;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 use App\Services\Validador\IValidador;
@@ -23,6 +25,9 @@ class ProdutoController extends ControllerBase
     {
         parent::__construct();
         $this->validators = $validator;
+
+        $this->middleware('chefia')->only(['store', 'destroy']);
+        $this->middleware('curador')->only(['update', 'atribuirTodos', 'desatribuirTodos']);
     }
 
     /**
@@ -39,28 +44,22 @@ class ProdutoController extends ControllerBase
     {
         if ($service->isLoggedUserADeveloper())  return true;
         
-         match($action){
-            'STORE'=> $this->permissionPostUpdate($unidade, $request),
-            'UPDATE'=> $this->permissionPostUpdate($unidade, $request),
-            'QUERY'=>true,
-            'GETBYID'=>true,
-            'UPDATEJSON'=>$this->permissionPostUpdate($unidade, $request),
-            'UPLOADBASE64'=>$this->permissionPostUpdate($unidade, $request),
-            'DESTROY'=>$this->permissionPostUpdate($unidade, $request),
-            default=>true
-        };
-    }
+        switch($action) {
+            case 'STORE':
+                if (!$usuario->hasPermissionTo('MOD_PROD_INCL')) throw new ServerException("ProdutoStore", "Inserção não realizada");
+                break;
 
-    private function permissionPostUpdate($unidade,Request $request)
-    {
-        if (!isset($request->input('entity')['responsavel_id'])) return true;
+            case 'UPDATE':
+                if (!$usuario->hasPermissionTo('MOD_PROD_CAT_EDT')) throw new ServerException("ProdutoUpdate", "Inserção não realizada");
+                break;
 
-        $responsavelId = $request->input('entity')['responsavel_id'];
-        $usuario = Usuario::find($responsavelId);
-        $curadores = $usuario->curadores()->where('unidade_id', $unidade->id)->get();
+            case 'UPDATE':
+                if (!$usuario->hasPermissionTo('MOD_PROD_CAT_EDT')) throw new ServerException("ProdutoUpdate", "Inserção não realizada");
+                break;
 
-        if ($curadores->isEmpty()) {
-            throw new ServerException("CapacidadeStore", "Não tem permissão de criação/edição de produtos.");
+            case 'DESTROY':
+                if (!$usuario->hasPermissionTo('MOD_PROD_CAT_EXCL')) throw new ServerException("ProdutoDestroy", "Exclusão não realizada");
+                break;
         }
 
         return true;
@@ -69,7 +68,6 @@ class ProdutoController extends ControllerBase
     public function store(Request $request)
     {
         try {
-
             foreach ($this->validators as $validator) {
                 $validator->validar($request, 'store');
             }
@@ -84,22 +82,31 @@ class ProdutoController extends ControllerBase
         }
     }
 
-    public function update(Request $request)
-    {
+    public function atribuirTodos(Request $request) {
         try {
+            $this->service->atribuirTodos();
 
-            foreach ($this->validators as $validator) {
-                $validator->setTipo('update');
-                $validator->validar($request);
-            }
-
-            return parent::update($request);
-        } catch (ValidationException $e) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Erro de validação.',
-                'errors' => $e->errors(),
-            ], 422);
+                'success' => true
+            ]);
+
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            throw new ServerException("ProdutoEnableAll");  
+        }
+    }
+
+    public function desatribuirTodos(Request $request) {
+        try {
+            $this->service->desatribuirTodos();
+
+            return response()->json([
+                'success' => true
+            ]);
+
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            throw new ServerException("ProdutoDisableAll");  
         }
     }
 }

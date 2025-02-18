@@ -17,6 +17,7 @@ class ClienteValidador extends BaseValidador
         $validator = Validator::make($entity, [
             'nome' => 'required|string|max:255',
             'tipo_cliente_id' => 'required|uuid|exists:tipos_clientes,id',
+            'unidade_id' => 'nullable|uuid|exists:unidades,id',
         ]);
 
         if ($validator->fails()) {

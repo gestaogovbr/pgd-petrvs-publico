@@ -8,6 +8,7 @@ import { SolucaoListComponent } from './solucao-list/solucao-list.component';
 import { SolucaoFiltroComponent } from './solucao-filtro/solucao-filtro.component';
 import { SolucaoUnidadeComponent } from './solucao-unidade/solucao-unidade.component';
 import { SolucaoShowComponent } from './solucao-show/solucao-show.component';
+import { SolucaoListProdutoComponent } from './solucao-list-produto/solucao-list-produto.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { SolucaoShowComponent } from './solucao-show/solucao-show.component';
     SolucaoListComponent,
     SolucaoFiltroComponent,
     SolucaoUnidadeComponent,
-    SolucaoShowComponent
+    SolucaoShowComponent,
+    SolucaoListProdutoComponent
   ],
   imports: [
     CommonModule,

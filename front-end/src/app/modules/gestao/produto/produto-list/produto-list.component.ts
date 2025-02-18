@@ -56,7 +56,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     let result: ToolbarButton[] = [];
     if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });   
 
-    if (row._metadata?.vinculoEntregas != 1 && this.isChefe) {
+    if (row._metadata?.vinculoEntregas == 0 && this.isChefe) {
       result.push(this.BOTAO_EXCLUIR);
     }
     
@@ -142,18 +142,17 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
   }
 
   public onFilterClear(){
-
     this.filter?.reset()
-
     this.grid!.reloadFilter();
+    this.cdRef.markForCheck();
   }
 
   public filtrosDefinidos() {
-    return this.filter?.controls.nome.value.length > 0 || 
-      this.filter?.controls.id.value.length > 0 ||
-      this.filter?.controls.unidade_id.value.length > 0 ||
-      this.filter?.controls.cliente_id.value.length > 0 ||
-      this.filter?.controls.status.value.length > 0;
+    return this.filter?.controls.nome.value?.length > 0 || 
+      this.filter?.controls.id.value?.length > 0 ||
+      this.filter?.controls.unidade_id.value?.length > 0 ||
+      this.filter?.controls.cliente_id.value?.length > 0 ||
+      this.filter?.controls.status.value?.length > 0;
   }
 
   public filterWhere = (filter: FormGroup) => {
@@ -161,7 +160,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
 		let form: any = filter.value;
 
     if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
+      result.push(["or", ["nome_fantasia", "like", "%" + form.nome.trim().replace(" ", "%") + "%" ], ["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]]);
     }
     if(form.id?.length) {
       result.push(["identificador", "=",form.id]);
@@ -174,6 +173,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     }
     if (form.status && form.status == 'ativo') {
       result.push(["data_ativado", "!=", null]);
+      result.push(["data_desativado", "==", null]);
     }
     if (form.status && form.status == 'inativo') {
       result.push(["data_ativado", "==", null]);
@@ -181,8 +181,51 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
 		return result;
 	};
 
-
   public ativo(produto: Produto): boolean {
-    return !produto.data_desativado;
+    return !produto.data_desativado && (produto.data_ativado != null);
+  }
+
+  private confirm(title: string, message: string, onConfirm: () => void): void {
+    if (window.confirm(`${title}\n\n${message}`)) {
+      onConfirm();
+    }
+  }
+
+  public async ativarTodos() {
+
+    this.confirm("Ativar todos os Produtos e Serviços", "Deseja realmente ativar todos os Produtos e Serviços?", async () => {
+
+      this.loading = true;
+      try {
+        await this.dao?.ativarTodos();
+        this.grid!.reloadFilter();
+        this.cdRef.markForCheck();
+      }catch (error: any) {
+        console.error("Erro ao ativar Produtos/Serviços", error);
+        this.error(error.error?.message || error.message || error);
+      } finally {
+        this.isUpdating = false; 
+        this.loading = false;
+      }
+    })
+  }
+
+  public async desativarTodos() {
+    this.confirm("Desativar todos os Produtos e Serviços", "Deseja realmente desativar todos os Produtos e Serviços?", async () => {
+      
+      this.loading = true;
+
+      try {
+        await this.dao?.desativarTodos();
+        this.grid!.reloadFilter();
+        this.cdRef.markForCheck();
+      }catch (error: any) {
+        console.error("Erro ao desativar os Produtos/Serviços", error);
+        this.error(error.error?.message || error.message || error);
+      } finally {
+        this.isUpdating = false; 
+        this.loading = false;
+      }
+    });
   }
 }

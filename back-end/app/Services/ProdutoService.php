@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use App\Services\ServiceBase;
+use App\Models\Produto;
 
 class ProdutoService extends ServiceBase
 {
@@ -22,5 +23,19 @@ class ProdutoService extends ServiceBase
       ];
     }
     return $rows;  
+  }
+
+  public function atribuirTodos() {
+    return Produto::query()->update([
+      'data_ativado' => now(),
+      'data_desativado' => null
+    ]);
+  }
+
+  public function desatribuirTodos() {
+    return Produto::query()->update([
+      'data_desativado' => now(),
+      'data_ativado' => null
+    ]);
   }
 }
