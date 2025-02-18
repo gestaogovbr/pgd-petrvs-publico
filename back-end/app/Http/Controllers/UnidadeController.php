@@ -254,4 +254,30 @@ class UnidadeController extends ControllerBase
       return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
   }
   }
+
+  public function consultaUnidadeSiape(Request $request){
+    $data = $request->validate([
+      'unidade' => [],
+    ]);
+    $nomeArquivo = 'dados_unidade_' . $data['unidade'] . '.xml';
+    try{
+      $retorno = $this->service->consultaUnidadeSiape($data['unidade']);
+
+       $tempFile = tempnam(sys_get_temp_dir(), 'xml');
+       file_put_contents($tempFile, $retorno->asXML());
+
+       return response()->download($tempFile, $nomeArquivo,
+       [
+        'Content-Type' => 'application/xml',
+        'Content-Disposition' => sprintf('attachment; filename="%s"',$nomeArquivo),
+    ])->deleteFileAfterSend(true);
+  } catch (\Throwable $th) {
+        $tempFile = tempnam(sys_get_temp_dir(), 'txt');
+        $mensagemErro = date('Y-m-d H:i:s') . " - " . $th->getMessage() . PHP_EOL;
+
+        file_put_contents($tempFile, $mensagemErro, FILE_APPEND);
+
+        return response()->download($tempFile, $nomeArquivo)->deleteFileAfterSend(true);
+   }
+  }
 }

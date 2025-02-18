@@ -55,15 +55,14 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
         const contentType = response.type; 
         const dataCriacao = new Date().toISOString().slice(0, 10);
   
-        let extensao = '';
-        if (contentType === 'application/xml') {
-          extensao = 'xml';
-        } else if (contentType === 'text/plain') {
-          extensao = 'txt';
-        } else {
-          console.warn('Tipo de conteúdo inesperado:', contentType);
-          extensao = 'bin'; 
-        }
+        const extensoes: Record<string, string> = {
+          'application/xml': 'xml',
+          'text/plain': 'txt',
+          'application/zip': 'zip',
+        };
+        
+        const extensao = extensoes[contentType] ?? (console.warn('Tipo de conteúdo inesperado:', contentType), 'txt');
+        
   
         const nomeArquivo = `dados_cpf_${cpf}_${dataCriacao}.${extensao}`;
   

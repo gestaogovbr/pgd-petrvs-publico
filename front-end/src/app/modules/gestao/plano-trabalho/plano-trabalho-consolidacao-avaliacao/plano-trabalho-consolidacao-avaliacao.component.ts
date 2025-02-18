@@ -38,7 +38,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public programas: Programa[] = [];
   public avaliacao: Avaliacao = new Avaliacao();
   public consolidacaoId?: string[] = [];//public consolidacaoId?: PlanoTrabalhoConsolidacao[] = [];
-  public joinAvaliacao: string[] = ["avaliador", "entregas_checklist", "tipo_avaliacao.notas"];
+  public joinAvaliacao: string[] = ["avaliador", "entregas_checklist", "tipo_avaliacao.notas", "avaliacoes:id,recurso", "avaliacao"];
 
   constructor(public injector: Injector) {
     super(injector, PlanoTrabalhoConsolidacao, PlanoTrabalhoConsolidacaoDaoService);
@@ -194,12 +194,10 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
       }
 
       if(isAvaliador) {
-        const ultimaAvaliacao = consolidacao!.avaliacoes.reduce((latest, current) => current.data_avaliacao > latest.data_avaliacao ? current : latest, consolidacao!.avaliacoes[0]);
-        const recente = ultimaAvaliacao.data_avaliacao > new Date(Date.now() - 24 * 60 * 60 * 1000);
+        // const ultimaAvaliacao = consolidacao!.avaliacoes.reduce((latest, current) => current.data_avaliacao > latest.data_avaliacao ? current : latest, consolidacao!.avaliacoes[0]);
+        // const recente = ultimaAvaliacao.data_avaliacao > new Date(Date.now() - 24 * 60 * 60 * 1000);
         // Só permite reavaliar se a última avaliação for recente
-        if (recente) {
-          result.push(BOTAO_REAVALIAR);
-        }
+        result.push(BOTAO_REAVALIAR);
         // Só permite cancelar a avaliacao se não houver recurso na lista de avaliações
         if(!(consolidacao!.avaliacoes.filter(a => a.recurso).length > 0)) result.push(BOTAO_CANCELAR_AVALIACAO);
       }

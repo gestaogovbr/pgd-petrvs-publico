@@ -60,7 +60,7 @@ export class IntegracaoFormComponent extends PageFormBase<Integracao, Integracao
   public preparaFormulario(entity: Integracao) {
     this.production = environment.production;
     this.form.controls.entidade_id.setValue(entity.id ? entity.entidade!.nome : this.auth.unidade?.entidade_id);
-    this.form.controls.usuario_id.setValue(entity.id ? (entity.usuario_id ? entity.usuario!.nome : 'Usuário não logado') : this.auth.usuario!.id);
+    this.form.controls.usuario_id.setValue(entity.id ? (entity.usuario_id ? entity.usuario!.nome : 'Sistema') : this.auth.usuario!.id);
     this.resultado_unidades = entity.id ? JSON.parse(entity.resultado!).unidades.Resultado : ''; 
     this.obs_unidades = entity.id ? JSON.parse(entity.resultado!).unidades.Observações : []; 
     this.falhas_unidades = entity.id ? JSON.parse(entity.resultado!).unidades.Falhas : []; 

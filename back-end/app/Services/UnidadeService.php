@@ -12,11 +12,15 @@ use App\Models\Programa;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\ServerException;
+use App\Services\Siape\DadosExternosSiape;
 use Exception;
+use SimpleXMLElement;
 use Throwable;
 
 class UnidadeService extends ServiceBase
 {
+
+  use DadosExternosSiape;
 
   public function validateStore($data, $unidade, $action)
   {
@@ -25,7 +29,16 @@ class UnidadeService extends ServiceBase
       throw new ServerException(
         "ValidateUnidade",
         "Não é possível inserir uma unidade. Essa ação é feita somente pela integração com o SIAPE."
-    );
+      );
+    }
+    // Validar se houve alteração no campo instituidora, somente usuário com a capacidade MOD_UND_INST pode alterar
+    if ($action == "EDIT" && $unidade->instituidora != $data["instituidora"]) {
+      if (!parent::loggedUser()->hasPermissionTo("MOD_UND_INST")) {
+        throw new ServerException(
+          "ValidateUnidade",
+          "Você não tem permissão para alterar o campo instituidora da unidade."
+        );
+      }
     }
   }
 
@@ -497,4 +510,10 @@ class UnidadeService extends ServiceBase
 			== true		......................	retornar unidades ativas e inativas
 			== false	......................	retornar somente as unidades ativas
     */
+
+    public function consultaUnidadeSiape(string $unidadecodigoSiape): SimpleXMLElement{
+     
+      return $this->buscaDadosUnidade($unidadecodigoSiape);
+     
+  }
 }

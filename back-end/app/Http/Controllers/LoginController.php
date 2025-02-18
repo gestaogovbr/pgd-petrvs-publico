@@ -20,6 +20,7 @@ use App\Services\UsuarioService;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Http;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
