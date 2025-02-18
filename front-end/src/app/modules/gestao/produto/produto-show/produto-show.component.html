@@ -33,10 +33,6 @@
     </div>
   </div>
 
-  <div class="mb-4">
-    <span class="fw-bold">Responsável:</span> <strong>{{produto.responsavel?.nome}}</strong>
-  </div>
-
   <tabs>
     <tab key="CLIENTES" label="Clientes">
       <table class="table">
@@ -56,22 +52,7 @@
     </tab>
 
     <tab key="SOLUCAO" label="Soluções">
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Nome</th>
-            <th scope="col">Sigla/Nome Fantasia</th>
-            <th scope="col">Descrição</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let solucao of produto.produto_solucoes">
-            <td>{{solucao.solucao?.nome}}</td>
-            <td>{{solucao.solucao?.sigla}}</td>
-            <td>{{solucao.solucao?.descricao}}</td>
-          </tr>
-        </tbody>
-      </table>
+      <produto-list-solucao #solucoes noPersist [disabled]="true" [entity]="produto"></produto-list-solucao>
     </tab>
 
     <tab key="PROCESSOS" label="Processos (cadeias de valor)">
