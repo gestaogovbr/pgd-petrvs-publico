@@ -3,13 +3,11 @@ import { AbstractControl, FormGroup } from "@angular/forms";
 import { EditableFormComponent } from "src/app/components/editable-form/editable-form.component";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { InputSearchComponent } from "src/app/components/input/input-search/input-search.component";
-import { InputSelectComponent } from "src/app/components/input/input-select/input-select.component";
-import { ClienteDaoService } from "src/app/dao/cliente-dao.service";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
 import { ProdutoDaoService } from "src/app/dao/produto-dao.service";
 import { ProdutoProdutoDaoService } from "src/app/dao/produto-produto-dao.service";
-import { TipoClienteDaoService } from "src/app/dao/tipo-cliente-dao.service";
+import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { IIndexable } from "src/app/models/base.model";
-import { Cliente } from "src/app/models/cliente.model";
 import { ProdutoProduto } from "src/app/models/produto-produto.model";
 import { Produto } from "src/app/models/produto.model";
 import { PageFrameBase } from "src/app/modules/base/page-frame-base";
@@ -32,8 +30,7 @@ export class ProdutoListProdutoComponent extends PageFrameBase {
   @Input() cdRef: ChangeDetectorRef;
 
   public produtoDao?: ProdutoDaoService;
-  public tipoClienteDao?: TipoClienteDaoService;
-  public clienteDao?: ClienteDaoService;
+  public unidadeDao?: UnidadeDaoService;
 
   public get items(): ProdutoProduto[] {
     if (!this.gridControl.value) this.gridControl.setValue(new ProdutoProduto());
@@ -49,7 +46,7 @@ export class ProdutoListProdutoComponent extends PageFrameBase {
     super(injector);
     this.dao = injector.get<ProdutoProdutoDaoService>(ProdutoProdutoDaoService);
     this.produtoDao = injector.get<ProdutoDaoService>(ProdutoDaoService);
-    this.tipoClienteDao = injector.get<TipoClienteDaoService>(TipoClienteDaoService);
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
 
     this.form = this.fh.FormBuilder({
@@ -100,19 +97,24 @@ export class ProdutoListProdutoComponent extends PageFrameBase {
       row.produto_id = this.form!.controls.produto_id.value;
       row.tipo = this.form!.controls.tipo.value;
       row.produto_relacionado = this.produtoRelacionado?.selectedEntity;
+
+      row.produto_relacionado.unidade = await this.unidadeDao?.getById(row.produto_relacionado.unidade_id);
+
       result = row;
       this.cdRef.detectChanges();
     }
     return result;
   }
 
-  async alteraTipoCliente(e: Event){
-    
-    let tipoCliente = this.form!.controls.tipo_cliente_id.value;
-    const res: Cliente[] = await this.clienteDao?.query({where: [['tipo_cliente_id', '=', tipoCliente]]}).asPromise() || [];
-    this.clientes = res.map((item: Cliente) => {
-      return { value: item.id, key: item.nome };
-    });
+
+  public dynamicButtons(row: ProdutoProduto): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showProduto.bind(this) });  
+    return result;
+  }
+
+  public async showProduto(row: ProdutoProduto){
+    this.go.navigate({route: ['gestao', 'produto', row.produto_id, "show"]}, {});    
   }
 
 }
