@@ -4,6 +4,7 @@ import { FormGroup } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
 import { ProdutoDaoService } from "src/app/dao/produto-dao.service";
+import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { Produto } from "src/app/models/produto.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
 import { ProdutoService } from "src/app/services/produto.service";
@@ -20,13 +21,15 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
   public isChefe: boolean = false;
   public isCurador: boolean = false;
   public isSearching: boolean = false;
-
+  public unidadeDao: UnidadeDaoService;
   public BOTAO_EXCLUIR: ToolbarButton;
 
   constructor(public injector: Injector, dao: ProdutoDaoService) {
     super(injector, Produto, ProdutoDaoService);
     this.produtoService = injector.get<ProdutoService>(ProdutoService);
-    this.title = this.lex.translate("Produtos");
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    
+    this.title = this.lex.translate("Produtos e Serviços");
     this.filter = this.fh.FormBuilder({
       nome: {default: this.metadata?.nome ?? ""},
       unidade_id: {default: ""},
@@ -37,6 +40,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     this.join = [
       "produtoProcessoCadeiaValor"
     ];
+    this.orderBy = [['identificador', 'desc']];
     this.isChefe = this.auth.isUsuarioDeveloper() || this.auth.isGestorAlgumaAreaTrabalho(false);
     this.isCurador = this.auth.isUsuarioCurador();
 

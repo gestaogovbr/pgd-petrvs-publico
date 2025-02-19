@@ -7,6 +7,7 @@
     [join]="join"
     [selectable]="selectable" 
     (select)="onSelect($event)"
+    labelAdd="Incluir Novo Produto ou Serviço"
     [hasAdd]="this.isChefe && !this.isSearching"
     [hasEdit]="this.isChefe && !this.isSearching"
 >
@@ -33,15 +34,15 @@
         [collapsed]="!selectable && filterCollapsed"
     >
         <div class="row">
-            <div class="col-md-4"> 
-                <input-text 
-                    [size]="12" 
-                    label="Nome/Sigla/Nome Fantasia" 
-                    controlName="nome"
-                    [control]="filter!.controls.nome" 
-                    placeholder="Nome/Sigla/Nome Fantasia" 
-                    [attr.maxlength]=250
-                ></input-text>
+            <div class="col-md-4">
+                <input-search 
+                    #unidade 
+                    [size]="6" 
+                    label="Unidade"
+                    [control]="filter!.controls.unidade_id" 
+                    controlName="unidade_id" 
+                    [dao]="unidadeDao"
+                ></input-search>  
             </div>
             <div class="col-md-3 busca-avancada">
                 <div class="busca-avancada-link"><a (click)="onBuscaAvancada()">Busca Avançada</a></div>
@@ -77,13 +78,16 @@
 
         <column title="Status" [template]="columnStatus" *ngIf="this.isCurador && !this.isSearching">
             <ng-template let-row="row" #columnStatus>
-                <badge *ngIf="ativo(row)" color="success" label="Ativo"></badge>
-                <badge *ngIf="!ativo(row)" color="danger" label="Inativo"></badge>
+                <badge
+                    [color]="row.deleted_at ? 'secondary': (ativo(row) ? 'success' : 'danger')" 
+                    [label]="row.deleted_at ? 'Excluído' : (ativo(row) ? 'Ativo' : 'Inativo')">
+                </badge>
             </ng-template>
         </column>
 
         <column title="Ativar/Desativar" [template]="columnAtivar" 
             *ngIf="isCurador && !this.isSearching"
+            titleHint="Permitir que o Produto ou Serviço esteja disponível para vinculação de entregas."
         >
             <ng-template let-row="row" #columnAtivar>
                 <input-switch 
