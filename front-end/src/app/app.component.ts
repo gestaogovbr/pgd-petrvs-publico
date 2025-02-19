@@ -182,6 +182,7 @@ export class AppComponent {
       LOGS_TRAFEGOS: { name: "Log do Tráfego", permition: '', route: ['logs', 'traffic'], icon: this.entity.getIcon('Traffic') },
       LOGS_TESTES_EXPEDIENTES: { name: "Teste Expediente", permition: '', route: ['teste'], icon: this.entity.getIcon('Teste') },
       TESTE_CALCULA_DATATEMPO: { name: "Teste calculaDataTempo", permition: '', route: ['teste', 'calcula-tempo'], icon: this.entity.getIcon('Teste') },
+      TESTE_IMPERSONATE: { name: "Teste IMPERSONATE", permition: '', route: ['impersonate'], icon: this.entity.getIcon('Teste') },
       LOGS_ENVIOS: { name: "Log dos Envios à API PGD", permition: '', route: ['logs', 'envios'], icon: this.entity.getIcon('Envio') },
       DEV_CPF_CONSULTA_SIAPE: { name: "Consulta CPF SIAPE", permition: '', route: ['consultas', 'cpf-siape'], icon: this.entity.getIcon('ConsultaCPFSIAPE') },
       DEV_UNIDADE_CONSULTA_SIAPE: { name: "Consulta Unidade SIAPE", permition: '', route: ['consultas', 'cpf-unidade'], icon: this.entity.getIcon('ConsultaUnidadeSIAPE') },
@@ -346,6 +347,7 @@ export class AppComponent {
       id: "navbarDropdownDevTestes",
       menu: [
         this.menuSchema.LOGS_TESTES_EXPEDIENTES,
+        this.menuSchema.TESTE_IMPERSONATE,
         this.menuSchema.TESTE_CALCULA_DATATEMPO
       ]
     }, {

@@ -9,8 +9,6 @@
       <sourceFolder url="file://$MODULE_DIR$/back-end/tests/Feature" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/back-end/tests/Unit" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/back-end/spec" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/back-end/vendor/barryvdh/laravel-dompdf" />
       <excludeFolder url="file://$MODULE_DIR$/back-end/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/back-end/vendor/carbonphp/carbon-doctrine-types" />
