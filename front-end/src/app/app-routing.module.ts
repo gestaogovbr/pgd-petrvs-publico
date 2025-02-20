@@ -13,7 +13,7 @@ import { PanelGuard } from "./guards/panel.guard";
 import { PanelLoginComponent } from "./modules/panel/panel-login/panel-login.component";
 import { ConsultaCpfSiapeFormComponent } from './modules/consultas/consulta-cpf-siape-form/consulta-cpf-siape-form.component';
 import { ConsultaUnidadeSiapeFormComponent } from './modules/consultas/consulta-unidade-siape-form/consulta-unidade-siape-form.component';
-import {TesteImpersonateComponent} from "./modules/teste/teste-impersonate/teste-impersonate";
+import {TesteImpersonateComponent} from "./modules/teste/teste-impersonate/teste-impersonate.component";
 
 const routes: Routes = [
   { path: 'panel-login', component: PanelLoginComponent },

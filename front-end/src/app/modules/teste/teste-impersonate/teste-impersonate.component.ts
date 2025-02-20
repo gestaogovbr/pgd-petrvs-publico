@@ -7,6 +7,7 @@ import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
+import {AuthService} from "../../../services/auth.service";
 
 @Component({
   selector: 'app-teste-impersonate',
@@ -59,5 +60,9 @@ export class TesteImpersonateComponent extends PageListBase<Usuario, UsuarioDaoS
       result.push(["atribuicoes", "==", filter?.controls.atribuicoes?.value]);
     }
     return result;
+  }
+
+  public impersonate (user:string){
+    this.auth.impersonate(user);
   }
 }

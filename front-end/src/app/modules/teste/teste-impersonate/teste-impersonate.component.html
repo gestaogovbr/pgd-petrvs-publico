@@ -26,12 +26,11 @@
                 <strong>{{row.perfil?.nome || ""}}</strong>
             </ng-template>
         </column>
-        <
+        <column title="Personificar" [width]="80" [template]="columnMessage">
+            <ng-template let-row="row" #columnMessage>
+                <span><small><button class="navbar-toggler" type="button" (click)="this.impersonate(row.id)">Personificar</button></small></span>
+            </ng-template>
+        </column>
     </columns>
-<!--    <column  title="Personificar" >-->
-<!--        <ng-template let-row="row">-->
-<!--            <button></button>-->
-<!--        </ng-template>-->
-<!--    </column>-->
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

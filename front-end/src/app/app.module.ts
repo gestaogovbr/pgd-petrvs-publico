@@ -11,7 +11,7 @@ import { DialogComponent } from './services/dialog/dialog.component';
 import { SpinnerOverlayComponent } from './services/spinner-overlay/spinner-overlay.component';
 import { ComponentsModule } from './components/components.module';
 import { TesteComponent } from './modules/teste/teste.component';
-import { TesteImpersonateComponent } from './modules/teste/teste-impersonate/teste-impersonate';
+import { TesteImpersonateComponent } from './modules/teste/teste-impersonate/teste-impersonate.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LogModule } from './modules/logs/log.module';
 import { UteisModule } from './modules/uteis/uteis.module';

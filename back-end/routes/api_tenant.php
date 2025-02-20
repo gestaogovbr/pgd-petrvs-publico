@@ -496,6 +496,8 @@ Route::middleware(['auth:sanctum'])->prefix('SolucaoUnidade')->group(function ()
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
-  Route::get('/impersonate/{userId}', [ImpersonationController::class, 'impersonate'])->name('impersonate.start');
+    Route::post('/impersonate', [ImpersonationController::class, 'impersonate'])
+        ->middleware('auth:sanctum')
+        ->name('impersonate');
   Route::get('/impersonate/stop', [ImpersonationController::class, 'stopImpersonating'])->name('impersonate.stop');
 });

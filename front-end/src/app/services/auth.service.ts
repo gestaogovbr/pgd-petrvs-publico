@@ -472,7 +472,7 @@ export class AuthService {
 
   private impersonateUser(kind: AuthKind, route: string, user: string,redirectTo?: FullRoute): Promise<boolean> {
     let login = (): Promise<boolean> => {
-      return this.server.get((this.gb.isEmbedded ? "api/" : "web/") + route + "/" + user).toPromise().then(response => {
+      return this.server.post("api/impersonate", { user_id: user }).toPromise().then(response => {
         if (response?.error)
           throw new Error(response?.error);
         this.kind = response?.kind || kind;
