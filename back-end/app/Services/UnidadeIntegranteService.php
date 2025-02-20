@@ -49,7 +49,7 @@ class UnidadeIntegranteService extends ServiceBase
       try {
         $usuario = Usuario::find($vinculo["usuario_id"]);
         $unidade = Unidade::find($vinculo["unidade_id"]);
-        if (empty($unidade) || empty($usuario)) throw new ServerException("ValidateIntegrante", "Unidade/Usuário não existe no banco");
+        if (empty($unidade) || empty($usuario)) throw new ServerException("ValidateIntegrante", "Unidade/Usuário não existe no banco: ".json_encode($vinculo));
         //FIXME Isso aqui não deveria estar aqui.
         if (!empty($vinculo['_metadata']['perfil_id'])) $this->usuarioService->update(['id' => $usuario->id, 'perfil_id' => $vinculo['_metadata']['perfil_id']], $unidade);
 
@@ -60,6 +60,7 @@ class UnidadeIntegranteService extends ServiceBase
         array_merge($result, $alteracoesFinais);
         
       } catch (Throwable $e) {
+        report($e);
         throw $e;
       }
     }
