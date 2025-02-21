@@ -50,7 +50,9 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   ngOnInit() {
     super.ngOnInit();
     this.entity = this.metadata?.unidade;
-    this.tiposAtribuicao = this.lookup.UNIDADE_INTEGRANTE_TIPO;
+    this.tiposAtribuicao = this.lookup.ordenarLookupItem(
+      this.lookup.UNIDADE_INTEGRANTE_TIPO
+    );
   }
 
   ngAfterViewInit() {
