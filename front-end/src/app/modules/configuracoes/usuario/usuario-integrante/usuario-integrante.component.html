@@ -4,7 +4,13 @@
     <div class="col-4">
         <editable-form [form]="formPerfil!" [noButtons]="isNoButtons()" [disabled]="formDisabled" title="" (submit)="salvarPerfil()">
             <div class="row">
-                <input-select [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [label]="lex.translate('Perfil')" controlName="perfil_id" [dao]="perfilDao" required></input-select>
+                <input-select 
+                    [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" 
+                    [label]="lex.translate('Perfil')" 
+                    controlName="perfil_id" 
+                    [dao]="perfilDao" 
+                    required
+                ></input-select>
             </div>
         </editable-form>
     </div>
@@ -13,7 +19,17 @@
     </div>
 </div>
 
-<grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true" editable [add]="adicionarIntegrante.bind(this)" [load]="carregarIntegrante.bind(this)" [remove]="removerIntegrante.bind(this)" [save]="salvarIntegrante.bind(this)">
+<grid #grid 
+    editable 
+    [items]="items" 
+    [minHeight]="500" 
+    [form]="form!" 
+    [hasDelete]="true" 
+    [add]="adicionarIntegrante.bind(this)" 
+    [load]="carregarIntegrante.bind(this)" 
+    [remove]="removerIntegrante.bind(this)" 
+    [save]="salvarIntegrante.bind(this)"
+>
     <top-alert *ngIf="!isNoPersist" type="alert" [message]="'É impossível excluir ' + lex.translate('a lotação') + ' ' + lex.translate('do servidor') + '. Para alterá-la, lote-o em outra ' + lex.translate('unidade') + '!'"></top-alert>
     <columns>
         <column [title]="lex.translate('Unidades')" [template]="columnUnidade" [editTemplate]="editUnidade">
@@ -22,7 +38,14 @@
                 <span>{{ row.unidade_nome || '' }} </span>
             </ng-template>
             <ng-template let-row="row" #editUnidade>
-                <input-search #unidade [disabled]="grid?.adding ? undefined : 'true'" [size]="12" label icon controlName="unidade_id" [dao]="unidadeDao"></input-search>
+                <input-search #unidade 
+                    label icon 
+                    [disabled]="grid?.adding ? undefined : 'true'" 
+                    [size]="12" 
+                    controlName="unidade_id"
+                    (change)="onUnidadeChange($event)"
+                    [dao]="unidadeDao"
+                ></input-search>
             </ng-template>
         </column>
 
@@ -39,8 +62,19 @@
                 </div>
             </ng-template>
             <ng-template let-row="row" #editAtribuicoes>
-                <input-multiselect controlName="atribuicoes" [size]="8" [addItemHandle]="addItemHandle.bind(this)" [deleteItemHandle]="deleteItemHandle.bind(this)">
-                    <input-select [size]="12" label="" icon="fas fa-sign-out-alt" controlName="atribuicao" [items]="lookup.ordenarLookupItem(lookup.UNIDADE_INTEGRANTE_TIPO)"></input-select>
+                <input-multiselect
+                    controlName="atribuicoes"
+                    [size]="8"
+                    [addItemHandle]="addItemHandle.bind(this)"
+                    [deleteItemHandle]="deleteItemHandle.bind(this)"
+                >
+                    <input-select
+                        [size]="12"
+                        label=""
+                        icon="fas fa-sign-out-alt"
+                        controlName="atribuicao"
+                        [items]="this.atribuicoes"
+                    ></input-select>
                 </input-multiselect>
             </ng-template>
         </column>
