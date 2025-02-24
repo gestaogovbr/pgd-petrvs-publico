@@ -1,3 +1,8 @@
+## 2.3.9 24/02/2025
+### Corrigido
+ - Correção no SIAPE ao parar as lotações ao encontrar um usuário com unidade excluída.
+ - Correção ao exibir atribuições onde o servidor tem vinculo com unidades inativas/excluídas
+
 ## 2.3.8 15/02/2025
 ### Corrigido
  - Correção da palavra "eletrônica" na tela de assinatura eletrônica
