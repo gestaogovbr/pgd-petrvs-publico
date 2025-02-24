@@ -11,6 +11,7 @@ use App\Models\Usuario;
 use App\Services\ServiceBase;
 use App\Services\Siape\Unidade\Integracao;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class UnidadeIntegranteService extends ServiceBase
@@ -26,7 +27,15 @@ class UnidadeIntegranteService extends ServiceBase
     if (!empty($unidadeId) && empty($unidade)) throw new ServerException("ValidateIntegrante", "Unidade não encontrada no banco");
     if (!empty($usuarioId) && empty($usuario)) throw new ServerException("ValidateIntegrante", "Usuário não encontrado no banco");
     foreach (($unidade ? $unidade->integrantes ?? [] : $usuario->unidadesIntegrantes ?? []) as $vinculo) {
-      $result[$unidade ? $vinculo->usuario->id : $vinculo->unidade->id] = [
+
+      $unidadeOuUsuarioDoVinculo = $unidade ? $vinculo->usuario : $vinculo->unidade;
+
+      if(empty($unidadeOuUsuarioDoVinculo)){
+        Log::alert("Usuario ou unidade com vinculo inválido no banco de dados",[$vinculo]);
+        continue;
+      }
+
+      $result[$unidadeOuUsuarioDoVinculo->id] = [
         "id" => $unidade ? $vinculo->usuario->id : $vinculo->unidade->id,
         "usuario_nome" => $unidade ? $vinculo->usuario->nome : null,
         "usuario_apelido" => $unidade ? $vinculo->usuario->apelido : null,
