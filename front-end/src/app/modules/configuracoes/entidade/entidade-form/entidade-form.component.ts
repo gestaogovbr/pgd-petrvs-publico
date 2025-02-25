@@ -64,7 +64,7 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if(['nome', 'sigla', 'email_responsavel_siape'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['nome', 'sigla'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
     return result;
