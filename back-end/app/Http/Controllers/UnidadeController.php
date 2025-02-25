@@ -143,13 +143,13 @@ class UnidadeController extends ControllerBase
         'metadadosArea' => $this->service->metadadosArea($data["unidade_id"], $data["programa_id"])
       ]);
     }  catch (IBaseException $e) {
-      return response()->json(['error' => $e->getMessage()]);
-  }
-  catch (Throwable $e) {
-      $dataError = throwableToArrayLog($e);
-      Log::error($dataError);
-      return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
-  }
+        return response()->json(['error' => $e->getMessage()]);
+    }
+    catch (Throwable $e) {
+        $dataError = throwableToArrayLog($e);
+        Log::error($dataError);
+        return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+    }
   }
 
   public function mesmaSigla(Request $request)
@@ -279,5 +279,38 @@ class UnidadeController extends ControllerBase
 
         return response()->download($tempFile, $nomeArquivo)->deleteFileAfterSend(true);
    }
+  }
+
+  public function obterInstitudora(Request $request)
+  {
+    try {
+      $data = $request->validate([
+        'unidade_id' => ['required']
+      ]);
+
+      $unidadeId = $data['unidade_id'];
+
+      while ($unidadeId) {
+        $unidade = $this->service->getById(['id' => $unidadeId]);
+
+        if ($unidade->instituidora) {
+          return response()->json([
+            'success' => true,
+            'unidade' => $unidade
+          ]);
+        }
+
+        $unidadeId = $unidade->unidade_pai_id;
+      }
+  
+    } catch (IBaseException $e) {
+      return response()->json(['error' => $e->getMessage()]);
+    } catch (Throwable $e) {
+      $dataError = throwableToArrayLog($e);
+      Log::error($dataError);
+      return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+    }
+    
+    return response()->json(['error' => "Não foi possível identificar a instituidora da unidade."]);
   }
 }

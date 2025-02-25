@@ -6,6 +6,7 @@ import { SolucaoDaoService } from "src/app/dao/solucao-dao.service";
 import { SolucaoUnidadeDaoService } from "src/app/dao/solucao-unidade-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
+import { Base } from "src/app/models/base.model";
 import { SolucaoUnidade } from "src/app/models/solucao-unidade.model";
 import { Solucao } from "src/app/models/solucao.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
@@ -30,6 +31,8 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
   public isSearching: boolean = false;
   public solucoesUnidades: SolucaoUnidade[] = [];
   public isActive: { [key: string]: boolean } = {};
+  public unidadeId: string = '';
+  public instituidoraObtida: boolean = false;
 
   constructor(public injector: Injector, dao: SolucaoDaoService) {
     super(injector, Solucao, SolucaoDaoService);
@@ -61,7 +64,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     this.isCurador = this.auth.isUsuarioCurador()
   }
 
-  public ngOnInit(): void {
+  public async ngOnInit() {
     super.ngOnInit();
 
     this.isSearching = this.queryParams.mode == 'search';
@@ -69,8 +72,20 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
       this.filter?.controls.status.setValue('ativo');
       this.saveUsuarioConfig();
     }
-    this.filter?.controls?.unidade_id.setValue(this.auth.unidade?.id);
+
+    const instituidora = await this.getInstituidora();
+    this.unidadeId = instituidora?.id;
+    this.filter?.controls.unidade_id.setValue(instituidora?.id);
+    this.instituidoraObtida = true;
+    this.saveUsuarioConfig();
+    this.onLoad();
+    
     this.loadingSolucoesUnidades();
+
+  }
+
+  public async getInstituidora() {
+    return await this.unidadeDao.obterInstituidora(this.auth.unidade?.id as string);
   }
 
   public async loadingSolucoesUnidades() {
@@ -124,17 +139,18 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
 
     if (form.id?.length) {
       result.push(["identificador", "=", form.id]);
+    }
 
-    }
     if (form.unidade_id?.length) {
-      result.push(["unidade_ativa", "==", form.unidade_id]);
+      result.push(["unidade_ativa", "==", this.instituidoraObtida ? form.unidade_id : 'XX']);
     }
+
     if (form.status == 'ativo') {
-      result.push(["unidade_ativa", "==", form.unidade_id ?? this.auth.unidade?.id]);
+      result.push(["unidade_ativa", "==", form.unidade_id ?? this.unidadeId]);
     }
 
     if (form.status == 'inativo') {
-      result.push(["unidade_inativa", "==", form.unidade_id ?? this.auth.unidade?.id]);
+      result.push(["unidade_inativa", "==", form.unidade_id ?? this.unidadeId]);
     }
     
     return result;

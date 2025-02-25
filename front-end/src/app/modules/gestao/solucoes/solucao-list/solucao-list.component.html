@@ -1,9 +1,15 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+<grid [dao]="dao" 
+    [add]="add" 
+    [title]="isModal ? '' : title" 
+    [orderBy]="orderBy" 
+    [groupBy]="groupBy" 
+    [join]="join"
     [selectable]="selectable" 
     (select)="onSelect($event)"
     [hasAdd]="this.isCurador"
     labelAdd="Incluir Nova Solução"
-    [hasEdit]="this.auth.hasPermissionTo('MOD_SOLUCOES_EDT')">
+    [hasEdit]="this.auth.hasPermissionTo('MOD_SOLUCOES_EDT')"
+>
     <toolbar *ngIf="!selectable">
         <button type="button" class="btn btn-outline-success" 
             (click)="this.ativarTodas()" 
