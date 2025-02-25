@@ -342,7 +342,7 @@ class CapacidadeSeeder extends Seeder
     ];
 
     $capacidades_administrador_geral = $capacidades_administrador_negocial;
-    $capacidades_colaborador = $capacidades_participante;
+    $capacidades_colaborador = $capacidades_administrador_negocial;
 
     // Inserção de dados
     $capacidadesInseridas = [];
@@ -459,6 +459,32 @@ class CapacidadeSeeder extends Seeder
         !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, ["Administrador Geral", $c['codigo']]);
       } else {
         array_push($tipoCapacidadesInexistentes, ["Administrador Geral", $c['codigo']]);
+      }
+    }
+
+    foreach ($capacidades_colaborador as $c) {
+      $capacidade = [
+        "id" => $this->utilService->uuid("Colaborador" . $c['codigo']),
+        "created_at" => $this->timenow,
+        "updated_at" => $this->timenow,
+        "deleted_at" => NULL,
+        "perfil_id" => $colaboradorId,
+        "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
+      ];
+
+      $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
+      $queryTipoCapacidade = TipoCapacidade::find($capacidade['tipo_capacidade_id']);
+
+      if ($queryTipoCapacidade) {
+        if (!empty ($queryCapacidade)) {
+          $queryCapacidade->restore();
+          array_push($capacidadesRestauradas, $capacidade['id']);
+        } else {
+          $result = Capacidade::insertOrIgnore($capacidade);
+        }
+        !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, ["Colaborador", $c['codigo']]);
+      } else {
+        array_push($tipoCapacidadesInexistentes, ["Colaborador", $c['codigo']]);
       }
     }
 
