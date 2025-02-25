@@ -3,6 +3,7 @@
 namespace App\Services\Siape\BuscarDados;
 
 use App\Models\IntegracaoServidor;
+use App\Models\SiapeBlackListServidores;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeListaServidores;
@@ -22,6 +23,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
 
         $this->limpaTabela();
         $servidoresJaProcessadas = IntegracaoServidor::all();
+        $blacklistServidores = SiapeBlackListServidores::all();
 
         $response = SiapeListaServidores::where('processado', 0)
             ->orderBy('updated_at', 'desc')->get();
@@ -43,17 +45,22 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             }
         }
 
-        $servidores = array_filter($servidores, function ($servidor) use ($servidoresJaProcessadas) {
+        $servidores = array_filter($servidores, function ($servidor) use ($servidoresJaProcessadas, $blacklistServidores) {
 
-            $unidadeProcessada =  $servidoresJaProcessadas->firstWhere('cpf', $servidor['cpf']);
+            $servidorProcessado =  $servidoresJaProcessadas->firstWhere('cpf', $servidor['cpf']);
 
-            if (!$unidadeProcessada) {
+            if (!$servidorProcessado) {
                 return true;
             }
-            if(is_null($unidadeProcessada->data_modificacao)){
+            $estaNaBlackList =  $blacklistServidores->firstWhere('cpf', $servidor['cpf']);
+            if (!$estaNaBlackList) {
                 return true;
             }
-            $dataModificacaoBD = $this->asTimestamp($unidadeProcessada->data_modificacao);
+
+            if(is_null($servidorProcessado->data_modificacao)){
+                return true;
+            }
+            $dataModificacaoBD = $this->asTimestamp($servidorProcessado->data_modificacao);
 
             $dataModificacaoSiape = DateTime::createFromFormat('dmY', $servidor['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
             $dataModificacaoSiape  = $this->asTimestamp($dataModificacaoSiape);
