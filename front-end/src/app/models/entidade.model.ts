@@ -1,6 +1,7 @@
 import { LookupItem } from '../services/lookup.service';
 import { Base } from './base.model';
 import { Cidade } from './cidade.model';
+import { EntidadeEmail } from './entidade-email';
 import { Expediente } from './expediente.model';
 import { HasNotificacao, NotificacoesConfig } from './notificacao.model';
 import { HasRelatorio } from './relatorio.model';
@@ -47,6 +48,8 @@ export class Entidade extends Base implements HasNotificacao, HasRelatorio {
     public tipo_modalidade_id: string | null = null; //Tipo de modalidade utilizada ao criar plano de trabalho
     public email_responsavel_siape: string = ""; // Email do responsável pelas alterações no SIAPE
     public email_remetente_siape: string = ""; // Email do remetente a ser usado em relato de alterações no SIAPE
+
+    public emails: EntidadeEmail[] = []; /* Emails */
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

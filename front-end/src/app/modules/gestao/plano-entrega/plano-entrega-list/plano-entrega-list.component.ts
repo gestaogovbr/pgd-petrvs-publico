@@ -110,6 +110,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       'entregas.unidade',
       'entregas.comentarios.usuario:id,nome,apelido',
       'entregas.reacoes.usuario:id,nome,apelido',
+      'entregas.produtos.produto',
       'unidade.gestor:id',
       'unidade.gestores_substitutos:id',
       'unidade.unidade_pai',

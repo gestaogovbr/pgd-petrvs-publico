@@ -1,18 +1,15 @@
 import { Base } from './base.model';
-import { Unidade } from './unidade.model';
-import { Usuario } from './usuario.model';
+import { ProdutoSolucao } from './produto-solucao.model';
+import { SolucaoUnidade } from './solucao-unidade.model';
 
 export class Solucao extends Base {
+  public identificador: number = 0;
   public nome: string = ""; 
   public sigla: string = ""; 
-  public unidade?: Unidade;
   public descricao?: string = ""; 
   public url?: string = ""; 
-  public unidade_id: string = "";
-  public status: number = 0;
-  public data_ativado: null|Date = new Date(); /* Data de ativação da solução */
-  public data_desativado: null|Date = new Date(); /* Data de desativação da solução */
-
+  public solucoes_unidades?: SolucaoUnidade[] = [];
+  public produtos_solucoes?: ProdutoSolucao[] = [];
   public constructor(data?: any) { super(); this.initialization(data); }
 }
 

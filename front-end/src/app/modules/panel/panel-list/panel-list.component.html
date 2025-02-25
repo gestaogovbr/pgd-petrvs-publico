@@ -1,3 +1,13 @@
+<div class="row row-cols-1 row-cols-lg-5 g-2 g-lg-3">
+    <div class="col">
+        <div class="card card-block p-4">
+            <i class="bi bi-people fs-3"></i>
+            <h5 class="card-title m-0 text-primary">{{countUsersInPGD}}</h5>
+            <p class="card-text">Usuários em PGD</p>
+        </div>
+      </div>
+</div>
+
 <grid [dao]="dao" [add]="add" title="Painel de entidades (SaaS)" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [hasAdd]="true" [hasEdit]="true">
     <toolbar [buttons]="toolbarButtons" *ngIf="currentUser && currentUser.nivel == 1">
     </toolbar>

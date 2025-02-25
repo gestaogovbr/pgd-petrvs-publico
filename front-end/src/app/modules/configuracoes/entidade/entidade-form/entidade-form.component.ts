@@ -1,5 +1,5 @@
 import { Component, Injector, ViewChild } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
@@ -8,9 +8,11 @@ import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.servic
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Cidade } from 'src/app/models/cidade.model';
+import { EntidadeEmail } from 'src/app/models/entidade-email';
 import { Entidade } from 'src/app/models/entidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
+import { UtilService } from 'src/app/services/util.service';
 
 @Component({
   selector: 'app-entidade-form',
@@ -28,8 +30,9 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
   public cidadeDao: CidadeDaoService;
   public usuarioDao: UsuarioDaoService;
   public campos: LookupItem[] = [];
+  public formEmail: FormGroup;
 
-  constructor(public injector: Injector) {
+  constructor(public injector: Injector, public util: UtilService) {
     super(injector, Entidade, EntidadeDaoService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
@@ -50,18 +53,53 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
       uf: {default: null},
       email_responsavel_siape: {default: ""},
       email_remetente_siape: {default: ""},
+      emails: {default: []}
     }, this.cdRef, this.validate);
-    this.join = ["cidade", "tipoModalidade", "gestor", "gestor_substituto"];
+    this.join = ["cidade", "tipoModalidade", "gestor", "gestor_substituto", "emails"];
+    this.formEmail = this.fh.FormBuilder({
+      email: {default: ""},
+    }, this.cdRef, this.validateEmail);
   }
-
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if(['nome', 'sigla', 'email_responsavel_siape'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['nome', 'sigla'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
     return result;
+  }
+
+  public validateEmail = (control: AbstractControl, controlName: string) => {
+    let result = null;
+    if(!control.value?.length) {
+      result = "Obrigatório";
+    }
+
+    if(!this.util.validarEmail(control.value)) {
+      result = "Inválido";
+    }
+    
+    return result;
+  }
+
+  public async addEmail() {
+    return new EntidadeEmail({
+      entidade_id: this.entity!.id
+    }) as IIndexable;
+  }
+
+  public async removeEmail(row: any) {
+    return await this.dialog.confirm("Excluir?", "Deseja realmente excluir?");
+  }
+
+  public async loadEmail(form: FormGroup, row: any) {
+    form.patchValue(row);
+  }
+
+  public async saveEmail(form: FormGroup, row: any) {
+    this.util.fillForm(row, form!.value)
+    return row;
   }
 
   public async loadData(entity: Entidade, form: FormGroup) {

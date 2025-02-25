@@ -1,16 +1,21 @@
 <grid [items]="items" [form]="form!" noMargin #gridClientes editable [selectable]="false" [minHeight]="items.length > 2 ? 0 : 300" [join]="join" [groupBy]="groupBy" [add]="addCliente.bind(this)" [remove]="removeCliente.bind(this)" [save]="saveCliente.bind(this)" [load]="loadCliente.bind(this)" [hasDelete]="true" [hasEdit]="true" [hasAdd]="true">
   <columns>
-    <column [titleTemplate]="titleCliente" [template]="columnCliente" [editTemplate]="editCliente" [verticalAlign]="'middle'" [width]="300" [align]="'center'">
+
+
+    <column [titleTemplate]="titleCliente" [template]="columnCliente" [editTemplate]="editCliente" [verticalAlign]="'middle'" [width]="300" [align]="'left'">
       <ng-template let-header="header" #titleCliente>
-        <div class="text-center"><span><strong>Cliente</strong></span></div>
+        <div class="text-left"><span><strong>Cliente</strong></span></div>
       </ng-template>
+     
       <ng-template let-row="row" #columnCliente>
-        <div class="w-100 d-flex justify-content-center">
-          <p>{{row.cliente.nome}}</p>
+        
+        <div class="w-100">
+          <small>{{row.cliente.tipo_cliente?.nome}}</small><br>
+          <b class="">{{row.cliente.nome}}</b>
         </div>
       </ng-template>
       <ng-template let-row="row" #editCliente>
-        <input-search label #cliente [placeholder]="'Selecione o cliente'" controlName="cliente_id" [dao]="clienteDao" required  [selectRoute]="{route: ['cadastros', 'cliente']}"></input-search>
+        <input-search label #cliente [placeholder]="'Selecione o cliente'" controlName="cliente_id" [join]="['tipoCliente']" [dao]="clienteDao" required  [selectRoute]="{route: ['cadastros', 'cliente']}"></input-search>
       </ng-template>
     </column>
 

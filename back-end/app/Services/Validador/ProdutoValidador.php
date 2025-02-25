@@ -32,9 +32,10 @@ class ProdutoValidador extends BaseValidador
             'data_ativado' => 'nullable|date',
             'data_desativado' => 'nullable|date',
         ];
-
+        
         if ($this->getTipo() === self::TIPO_STORE) {
             return array_merge($regrasComuns, [
+                'responsavel_id' => 'required|uuid|exists:usuarios,id',
                 'nome' => 'required|string|max:100',
                 'tipo' => 'required|string|in:produto,servico',
                 'descricao' => 'required|string|max:255',
@@ -43,6 +44,7 @@ class ProdutoValidador extends BaseValidador
 
         if ($this->getTipo() === self::TIPO_UPDATE) {
             return array_merge($regrasComuns, [
+                'responsavel_id' => 'sometimes|uuid|exists:usuarios,id',
                 'nome' => 'sometimes|string|max:100',
                 'tipo' => 'sometimes|string|in:produto,servico',
                 'descricao' => 'sometimes|string|max:255',

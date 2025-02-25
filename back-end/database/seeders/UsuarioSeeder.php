@@ -97,6 +97,9 @@ class UsuarioSeeder extends Seeder
       ]
     ];
 
+    $cpfsParaExcluir = ['05182319177','40921185898'];
+    Usuario::whereIn('cpf', $cpfsParaExcluir)->delete();
+
     $entidade = Entidade::first();
     // Operação de inserção de usuários desenvolvedores
     $unidade_pai = Unidade::where('entidade_id', $entidade->id)->first();

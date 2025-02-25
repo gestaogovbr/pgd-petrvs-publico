@@ -31,6 +31,7 @@ class TipoCapacidadeService extends ServiceBase
         ["MENU_CONFIG_ACESSO", "Permite acessar o menu Gerenciamento"],
         ["MENU_GESTAO_ACESSO", "Permite acessar os menus Planejamento, Execução e Avaliação"],
         ["MENU_DEV_ACESSO", "Permite acessar os menus Manutenção, Logs e Auditorias e Testes"],
+        ["MENU_DEV_CONSULTAS", "Permite acessar menus de consultas do Desenvolvedor"],
         ["MENU_RX_CURRICULUM_ACESSO", "Permite acessar o menu Curriculum"],
         ["MENU_RX_OPORTUNIDADES_ACESSO", "Permite acessar o menu Oportunidades"],
         ["MENU_RX_PESQUISAS_ACESSO", "Permite acessar o menu Pesquisas"],
@@ -275,16 +276,24 @@ class TipoCapacidadeService extends ServiceBase
       ]
     ], [
       "codigo" => "MOD_PROD",
-      "descricao" => "Módulo de Produtos",
+      "descricao" => "Módulo de Produtos e Serviços",
       "capacidades" => [
         /* Capacidades do módulo PRODUTO */
-        ["MOD_PROD_EDT", "Permite editar produtos"],
-        ["MOD_PROD_EXCL", "Permite excluir produtos"],
-        ["MOD_PROD_INCL", "Permite incluir produtos"],
+        ["MOD_PROD_EDT", "Permite editar produtos e serviços"],
+        ["MOD_PROD_EXCL", "Permite excluir produtos e serviços"],
+        ["MOD_PROD_INCL", "Permite incluir produtos e serviços"],
         ["MOD_PROD_CAT", "Permite acesso aos produtos e serviços"],
         ["MOD_PROD_CAT_INCL", "Permite incluir catálogo de produtos e serviços"],
         ["MOD_PROD_CAT_EDT", "Permite editar catálogo de produtos e serviços"],
         ["MOD_PROD_CAT_EXCL", "Permite excluir catálogo de produtos e serviços"]
+      ]
+    ], [
+      "codigo" => "MOD_SOLUCOES",
+      "descricao" => "Módulo de Soluções",
+      "capacidades" => [
+        ["MOD_SOLUCOES_EDT", "Permite editar Soluções"],
+        ["MOD_SOLUCOES_EXCL", "Permite excluir Soluções"],
+        ["MOD_SOLUCOES_INCL", "Permite incluir Soluções"]
       ]
     ], [
       "codigo" => "MOD_TEMP",
@@ -409,6 +418,7 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_UND_INTG_EDT", "Permite editar integrantes da unidade"],
         ["MOD_UND_INTG_EXCL", "Permite excluir integrantes da unidade"],
         ["MOD_UND_INTG_GST", "Permite alterar gestor e substituto"],
+        ["MOD_UND_INST", "Permite alterar o campo instituidora"],
       ]
     ], [
       "codigo" => "MOD_USER", //ok
@@ -417,7 +427,7 @@ class TipoCapacidadeService extends ServiceBase
         /* Capacidades do módulo USUÁRIOS */
         ["MOD_USER_EDT", "Permite alterar usuário"],
         ["MOD_USER_EXCL", "Permite excluir usuário"],
-        ["MOD_USER_INCL", "Permite incluir usuário"],
+        // ["MOD_USER_INCL", "Permite incluir usuário"], // DEPRECATED: o modo de incluir usuários não está funcionado, desabilitado para removeção futura ou alteração.
         ["MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"],
         ["MOD_USER_ATRIB", "Permite gerenciar atribuições de usuário"],
       ]
@@ -454,6 +464,14 @@ class TipoCapacidadeService extends ServiceBase
       "capacidades" => [
         ["MOD_AUDIT_DEL", "Permite visualizar registros deletados"],
         ["MOD_AUDIT_LOG", "Permite visualizar logs das tabelas"]
+      ]
+    ], [
+      "codigo" => "MOD_CLI",
+      "descricao" => "Módulo de Clientes",
+      "capacidades" => [
+        ["MOD_CLI_EDT", "Permite editar clientes"],
+        ["MOD_CLI_EXCL", "Permite excluir clientes"],
+        ["MOD_CLI_INCL", "Permite incluir clientes"]
       ]
     ]
   ];
@@ -501,6 +519,7 @@ navAdministrador  Cadastros                 MENU_CAD_ACESSO
 navDev            Manutenção                MENU_DEV_ACESSO
                   Logs e Auditorias         MENU_DEV_ACESSO
                   Testes                    MENU_DEV_ACESSO
+                  Consultas                 MENU_DEV_ACESSO
 
 navPonto
 navProjeto        Cadastros                 MENU_CAD_ACESSO

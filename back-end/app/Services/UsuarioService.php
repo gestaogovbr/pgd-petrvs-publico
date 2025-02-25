@@ -14,11 +14,17 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
+use App\Services\Siape\DadosExternosSiape;
 use Exception;
+use Illuminate\Support\Facades\Log;
+use SimpleXMLElement;
 use Throwable;
 
 class UsuarioService extends ServiceBase
 {
+
+  use DadosExternosSiape;
+
   const LOGIN_GOOGLE = "GOOGLE";
   const LOGIN_MICROSOFT = "AZURE";
   const LOGIN_FIREBASE = "FIREBASE";
@@ -246,7 +252,12 @@ class UsuarioService extends ServiceBase
         }
       } else if (is_array($condition) && $condition[0] == "subordinadas") {
         $subordinadas = $condition[2];
-      } else {
+      } else if (is_array($condition) && $condition[0] == "atribuicoes") {
+        $query->whereHas('unidadesIntegranteAtribuicoes', function (Builder $query) use ($condition) {
+          $query->whereIn('atribuicao', $condition[2]);
+        });
+      } 
+      else {
         array_push($where, $condition);
       }
     }
@@ -362,5 +373,16 @@ class UsuarioService extends ServiceBase
       if ($perfilAtual == $developerId && !$this->isLoggedUserADeveloper())
         throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de um Desenvolvedor");
     }
+  }
+
+  /**
+   *
+   * @param string $cpf
+   * @return SimpleXMLElement[]
+   */
+  public function consultaCPFSiape(string $cpf): array{
+     
+      return $this->buscaServidor($cpf);
+     
   }
 }

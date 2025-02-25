@@ -150,6 +150,30 @@ export class ServerService {
     return result;
   }
 
+  public postDownload(url: string, params: any): Observable<Blob> {
+    let result;
+  
+    if (typeof this.batch !== "undefined") {
+      let action: BatchAction = {
+        route: this.gb.servidorURL + '/' + url,
+        method: "POST",
+        data: params,
+        response: new Subject<any>()
+      };
+      this.batch.actions.push(action);
+      result = action.response.asObservable();
+    } else {
+      const options = { ...this.requestOptions(), responseType: 'blob' as 'json' }; 
+      result = this.http.post(this.gb.servidorURL + '/' + url, params, options)
+        .pipe(
+          catchError(this.errorHandle.bind(this))
+        );
+    }
+  
+    return result;
+  }
+  
+
   public post(url: string, params: any): Observable<any> {
     let result;
     if(typeof this.batch != "undefined") {

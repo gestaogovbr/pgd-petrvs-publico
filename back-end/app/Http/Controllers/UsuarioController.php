@@ -9,6 +9,7 @@ use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Log;
 use Throwable;
+use ZipArchive;
 
 class UsuarioController extends ControllerBase
 {
@@ -18,7 +19,7 @@ class UsuarioController extends ControllerBase
   {
     switch ($action) {
       case 'STORE':
-        if (!$usuario->hasPermissionTo('MOD_USER_INCL')) throw new ServerException("CapacidadeStore", "Inserção não realizada");
+        if (!$usuario->hasPermissionTo('MOD_USER_EDT')) throw new ServerException("CapacidadeStore", "Inserção não realizada");
         break;
       case 'EDIT':
         if (!$usuario->hasPermissionTo('MOD_USER_EDT')) throw new ServerException("CapacidadeStore", "Edição não realizada");
@@ -53,5 +54,39 @@ class UsuarioController extends ControllerBase
       Log::error($dataError);
       return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
   }
+  }
+
+  public function consultaCPFSiape(Request $request){
+    $data = $request->validate([
+      'cpf' => [],
+    ]);
+    $nomeArquivo = 'dados_cpf_' . $data['cpf'] . '.zip';
+    try{
+      $retornos = $this->service->consultaCPFSiape($request->cpf); 
+
+      $zipFile = tempnam(sys_get_temp_dir(), 'zip');
+      $zip = new ZipArchive();
+      $zip->open($zipFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+  
+      foreach ($retornos as $index => $retorno) {
+          $tempFile = tempnam(sys_get_temp_dir(), 'xml');
+          file_put_contents($tempFile, $retorno->asXML());
+          $zip->addFile($tempFile, "arquivo_{$index}.xml");
+      }
+  
+      $zip->close();
+  
+      return response()->download($zipFile, $nomeArquivo, [
+          'Content-Type' => 'application/zip',
+          'Content-Disposition' => sprintf('attachment; filename="%s"',$nomeArquivo),
+      ])->deleteFileAfterSend(true);
+  } catch (\Throwable $th) {
+        $tempFile = tempnam(sys_get_temp_dir(), 'txt');
+        $mensagemErro = date('Y-m-d H:i:s') . " - " . $th->getMessage() . PHP_EOL;
+
+        file_put_contents($tempFile, $mensagemErro, FILE_APPEND);
+
+        return response()->download($tempFile, $nomeArquivo)->deleteFileAfterSend(true);
+   }
   }
 }

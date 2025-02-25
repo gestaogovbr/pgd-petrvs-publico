@@ -4,7 +4,7 @@
         <div class="modal-content">
             <div class="modal-header hidden-print">
                 <i *ngIf="route" class="bi bi-box-arrow-up-right me-2" role="button" (click)="openNewBrowserTab()"></i>
-                <h5 class="modal-title break-title" [id]="id + 'Label'" [style.max-width.px]="modalWidth - 100">{{title}}</h5>
+                <h5><i *ngIf="iconTitle" [class]="iconTitle"></i></h5> &nbsp; <h5 class="modal-title break-title" [id]="id + 'Label'" [style.max-width.px]="modalWidth - 100">{{title}}</h5>
                 <button *ngIf="gb.isToolbar" type="button" class="btn-close btn-minimize" data-bs-dismiss="modal" aria-label="Minimize" (click)="minimize()"></button>
                 <button type="button" class="btn-close" [class.btn-no-left-margin]="gb.isEmbedded" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>            

@@ -1,12 +1,27 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [selectable]="selectable" (select)="onSelect($event)"
-    [hasAdd]="true"
-    [hasEdit]="true">
+    [hasAdd]="this.isChefe"
+    [hasEdit]="this.isChefe"
+>
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="12" [label]="'Nome do '+ lex.translate('produto')" controlName="nome"
-                [control]="filter!.controls.nome" [placeholder]="'Nome do '+ lex.translate('produto')" [attr.maxlength]=250></input-text>
+            <div class="col-md-4"> 
+                <input-text [size]="12" [label]="'Nome do '+ lex.translate('produto')" controlName="nome"
+                    [control]="filter!.controls.nome" [placeholder]="'Nome do '+ lex.translate('produto')" [attr.maxlength]=250></input-text>
+            </div>
+            <div class="col-md-3 busca-avancada">
+                <div class="busca-avancada-link"><a (click)="onBuscaAvancada()">Busca Avançada</a></div>
+                <div class="busca-avancada-clear"><a (click)="this.onFilterClear()">Limpar filtros de busca</a></div>
+                <div class="busca-avancada-filtros-aplicados" *ngIf="this.filtrosDefinidos">
+                    Filtros aplicados:
+                     <span *ngIf="filter!.controls.nome.value.length > 0">Nome</span>
+                     <span *ngIf="filter!.controls.id.value.length > 0">#ID</span>
+                     <span *ngIf="filter!.controls.cliente_id.value.length > 0">Cliente</span>
+                     <span *ngIf="filter!.controls.unidade_id.value.length > 0">Unidade</span>
+                     <span *ngIf="!this.isSearching && filter!.controls.status.value.length > 0">Status</span>
+                </div>
+             </div>
         </div>
     </filter>
     <columns>
@@ -27,13 +42,28 @@
           </ng-template>
         </column>
 
-        <column title="Ativar/Desativar" [template]="columnAtivar">
-            <ng-template let-row="row" #columnAtivar>
-                <input-switch  [value]="ativo(row) ? 'true' : 'false'" [valueOn]="'true'"  [valueOff]="'false'" (change)="ativarDesativar(row)"></input-switch>
+        <column title="Status" [template]="columnStatus" *ngIf="!isCurador && !this.isSearching">
+            <ng-template let-row="row" #columnStatus>
+                <badge *ngIf="ativo(row)" color="success" label="Ativo"></badge>
+                <badge *ngIf="!ativo(row)" color="danger" label="Inativo"></badge>
             </ng-template>
-          </column>
+        </column>
+
+        <column title="Ativar/Desativar" [template]="columnAtivar" *ngIf="isCurador && !this.isSearching">
+            <ng-template let-row="row" #columnAtivar>
+                <input-switch 
+                    [size]="12" 
+                    scale="small" 
+                    [value]="!row.data_desativado ? 'true' : 'false'" 
+                    [valueOn]="'true'"  
+                    [valueOff]="'false'"
+                    (change)="ativarDesativar(row)"
+                ></input-switch>
+
+            </ng-template>  
+        </column>
         
-        <column type="options" [onEdit]="edit" [options]="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+        <column type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

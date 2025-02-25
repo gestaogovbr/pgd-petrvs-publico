@@ -398,6 +398,10 @@ export class AuthService {
     return lotacao?.id == unidade.id;
   }
 
+  public isUsuarioDeveloper(): boolean {
+    return this.usuario?.perfil?.nivel == 0;
+  }
+
   
   /**
    * Informa se o usuário logado possui função de curador
@@ -405,7 +409,11 @@ export class AuthService {
    * @returns
    */
   public isUsuarioCurador(pUnidade: Unidade | null = null): boolean {
+    
+    if (this.isUsuarioDeveloper()) return true;
+
     const unidade = pUnidade || this.unidade!;
+    console.log(this.usuario?.perfil);
     const unidadeFound = this.usuario?.areas_trabalho?.find(area => area.unidade_id == unidade.id)
     
     if (!unidadeFound) return false;

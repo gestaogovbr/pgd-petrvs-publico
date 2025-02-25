@@ -58,7 +58,12 @@ class PlanoEntregaService extends ServiceBase
     switch ($action) {
       case ServiceBase::ACTION_INSERT:
         // (RN_PENT_A) Quando um Plano de Entregas é criado adquire automaticamente o status INCLUIDO;
-        $this->statusService->atualizaStatus($planoEntrega, 'INCLUIDO', 'O Plano de Entrega foi criado nesta data.');
+        # Se a unidade é instituidora ou a unidade pai é raiz, o plano de entregas é homologado automaticamente
+        if($planoEntrega["unidade"]["instituidora"] || ($planoEntrega["unidade"]->unidadePai && empty($planoEntrega["unidade"]->unidadePai->path))) {
+          $this->statusService->atualizaStatus($planoEntrega, 'ATIVO', 'O Plano de Entrega foi criado nesta data.');
+        } else {
+          $this->statusService->atualizaStatus($planoEntrega, 'INCLUIDO', 'O Plano de Entrega foi criado nesta data.');
+        }
         break;
       case ServiceBase::ACTION_EDIT:
         /* (RN_PTR_E) O Plano de Trabalho precisará ser repactuado (retornar ao status de AGUARDANDO_ASSINATURA) quando houver quaisquer alterações no plano de entrega que impacte as entregas do plano de trabalho; (alterada a entrega ou cancelada); */

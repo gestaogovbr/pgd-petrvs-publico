@@ -1,24 +1,12 @@
+<div class="alert alert-info" role="alert">
+  Outros produtos ou serviços que complementam ou são necessários para a execução deste produto ou serviço.
+</div>
+
 <grid [items]="items" [form]="form!" noMargin #gridProdutos editable [selectable]="false" [minHeight]="items.length > 2 ? 0 : 300" [join]="join" [groupBy]="groupBy" [add]="addProduto.bind(this)" [remove]="removeProduto.bind(this)" [save]="saveProduto.bind(this)" [load]="loadProduto.bind(this)" [hasDelete]="true" [hasEdit]="true" [hasAdd]="true">
   <columns>
-
-    <column [titleTemplate]="tipoProduto" [template]="columnTipo" [editTemplate]="editTipo" [width]="150">
-      <ng-template let-header="header" #tipoProduto>
-        <div class="text-center"><span><strong>Tipo</strong></span></div>
-      </ng-template>
-      <ng-template let-row="row" #columnTipo>
-        <div class="w-100 d-flex justify-content-center">
-          <p>{{lookup.getValue(lookup.TIPO_RELACAO_PRODUTO, row.tipo)}}</p>
-        </div>
-      </ng-template>
-
-      <ng-template let-row="row" #editTipo>       
-          <input-select  controlName="tipo" [items]="lookup.TIPO_RELACAO_PRODUTO" required></input-select>
-      </ng-template>
-    </column>
-
     <column [titleTemplate]="titleProduto" [template]="columnProduto" [editTemplate]="editProduto" [verticalAlign]="'middle'" [width]="300" [align]="'center'">
       <ng-template let-header="header" #titleProduto>
-        <div class="text-center"><span><strong>Produto</strong></span></div>
+        <div class="text-center"><span><strong>Produto/Serviço</strong></span></div>
       </ng-template>
       <ng-template let-row="row" #columnProduto>
         <div class="w-100 d-flex justify-content-center">
@@ -26,13 +14,9 @@
         </div>
       </ng-template>
       <ng-template let-row="row" #editProduto>
-          <input-select #produtoRelacionado fullEntity  controlName="produto_id" [control]="form!.controls.produto_id" [dao]="produtoDao" [where]="[['id', '!=', entity?.id]]" required></input-select>
+          <input-search #produtoRelacionado fullEntity  controlName="produto_id" [control]="form!.controls.produto_id" [dao]="produtoDao" [where]="[['id', '!=', entity?.id]]" required></input-search>
       </ng-template>
     </column>
-
-    
-
-    
     <column type="options"></column>
   </columns>
 </grid>

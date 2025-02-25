@@ -1,5 +1,5 @@
 {
-    "version": "2.3.4",
+    "version": "2.3.9",
     "externalLibs": [
         "https://apis.google.com/js/platform.js"
     ],
@@ -49,6 +49,6 @@
         {
             "regex": ".*controlador\\.php\\?acao\\=documento_assinar.*",
             "load": false
-        }
+        }        
     ]
 }

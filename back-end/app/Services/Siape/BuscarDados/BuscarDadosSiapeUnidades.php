@@ -33,7 +33,7 @@ class BuscarDadosSiapeUnidades extends BuscarDadosSiape
 
         $xmlData = $xml->asXML();
 
-        $xmlResponse =  $this->BuscarUorgs($xmlData);
+        $xmlResponse =  $this->buscaSincrona($xmlData);
         $entidade = SiapeListaUORGS::create(['response' => $xmlResponse]);
         $entidade->save();
 
@@ -45,43 +45,7 @@ class BuscarDadosSiapeUnidades extends BuscarDadosSiape
         DB::table('siape_listaUORG')->truncate();
     }
 
-    public function BuscarUorgs(string $xmlData)
-    {
-        $token = $this->getToken();
-
-        $curl = curl_init();
-
-        $headers = [
-            'x-cpf-usuario: ' . $this->getCpf(),
-            'Authorization: Bearer ' . $token,
-            'Content-Type: application/xml',
-        ];
-
-        curl_setopt_array($curl, [
-            CURLOPT_URL => $this->geturl() . '/api-consulta-siape/v1/consulta-siape',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_POSTFIELDS => $xmlData,
-        ]);
-
-        Log::info('Busca por UORGS - Request para ' . $this->geturl() . '/api-consulta-siape/v1/consulta-siape', [
-            'headers' => $headers,
-            'body' => $xmlData
-        ]);
-
-        $response = curl_exec($curl);
-
-        if (curl_errno($curl)) {
-            $error_msg = curl_error($curl);
-            curl_close($curl);
-            throw new Exception('Busca por UORGS - cURL error: ' . $error_msg);
-        }
-
-        curl_close($curl);
-        Log::info('Busca por UORGS - Response: ' . $response);
-        return $response;
-    }
+    
 
     public function enviar(): void
     {

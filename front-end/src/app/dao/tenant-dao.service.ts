@@ -213,5 +213,17 @@ export class TenantDaoService extends DaoBaseService<Tenant> {
     return  this.server.getBlob(url, { tenant_id: item.id }) ;
   }
 
+  public countUsersInPGD(){
+    return new Promise<number>((resolve, reject) => {
+      this.server.get('config/' + this.collection + '/users-in-PGD').subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(response.data);
+        }
+      }, error => reject(error));
+    });
+  }
+
 }
 

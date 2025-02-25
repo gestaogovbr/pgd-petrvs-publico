@@ -2,12 +2,23 @@
     [selectable]="selectable" 
     (select)="onSelect($event)"
     [hasAdd]="this.isCurador"
-    [hasEdit]="this.auth.hasPermissionTo('MOD_PROD_CAT_EDT')">
+    [hasEdit]="this.auth.hasPermissionTo('MOD_SOLUCOES_EDT')">
     <toolbar *ngIf="!selectable">
-        <input-switch [size]="4" labelPosition="left" label="Agrupar por unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+        <button type="button" class="btn btn-outline-success" 
+            (click)="this.ativarTodas()" 
+            [disabled]="isUpdating"
+            *ngIf="(this.grid?.items?.length ?? 0 == 0)"
+        >Ativar todas as Soluções
+        </button>
+        <button type="button" class="btn btn-outline-danger" 
+            (click)="this.desativarTodas()" 
+            [disabled]="isUpdating && this.grid?.items?.length"
+            *ngIf="(this.grid?.items?.length ?? 0 == 0)"
+        >Desativar todas as Soluções
+        </button>
     </toolbar>
     <filter 
-        [deleted]="this.auth.hasPermissionTo('MOD_PROD_CAT_EXCL')" 
+        [deleted]="false" 
         [form]="filter" 
         [where]="filterWhere" 
         [submit]="filterSubmit.bind(this)" 
@@ -16,15 +27,16 @@
     >
         <div class="row">
             <div class="col-md-4">  
-                <input-search 
-                    #unidade 
-                    [size]="6" 
-                    [control]="filter!.controls.unidade_id" 
-                    controlName="unidade_id" 
-                    [dao]="unidadeDao"
-                ></input-search>  
+                <input-text 
+                    [size]="12" 
+                    label="Nome" 
+                    icon="bi bi-textarea-t" 
+                    [control]="filter!.controls.nome" 
+                    controlName="this.filter.nome" 
+                    [attr.maxlength]=250
+                ></input-text>
             </div>
-            <div class="col-md-3 busca-avancada">
+            <div class="col-md-8 busca-avancada">
                <div class="busca-avancada-link"><a (click)="onBuscaAvancada()">Busca Avançada</a></div>
                <div class="busca-avancada-clear"><a (click)="this.onFilterClear()">Limpar filtros de busca</a></div>
                <div class="busca-avancada-filtros-aplicados">Filtros aplicados:
@@ -35,10 +47,11 @@
             </div>
         </div>
     </filter>
+    
     <columns>
         <column title="ID#" [template]="columnID">
             <ng-template let-row="row" #columnID>
-                <span> {{row.id}}</span><br>
+                <span> {{row.identificador}}</span><br>
             </ng-template>
         </column>
 
@@ -49,17 +62,27 @@
         </column>
         <column title="Sigla/Nome Fantasia" [template]="columnSigla">
             <ng-template let-row="row" #columnSigla>
-                <span> {{row.sigla}}</span><br>
+                <span>  {{row.sigla}}</span><br>
             </ng-template>
         </column>
-        <column title="Ativar/Desativar" [template]="columnAtivar">
-            <ng-template let-row="row" #columnAtivar>
-                <input-switch  [value]="ativo(row) ? 'true' : 'false'" [valueOn]="'true'"  [valueOff]="'false'" (change)="ativarDesativar(row)"></input-switch>
-            </ng-template>
-        </column>
-        <column title="Status" [template]="columnStatus">
+        <column title="Status" [template]="columnStatus" *ngIf="!this.isSearching">
             <ng-template let-row="row" #columnStatus>
-                {{row.status}}
+                <badge 
+                    [color]="isActive[row.id] ? 'success' : 'danger'" 
+                    [label]="isActive[row.id] ? 'Ativo' : 'Inativo'">
+                </badge>
+            </ng-template>
+        </column>
+        <column title="Ativar/Desativar para a sua unidade" [template]="columnAtivar" *ngIf="!this.isSearching">
+            <ng-template let-row="row" #columnAtivar>
+                <input-switch 
+                    [size]="12" 
+                    scale="small" 
+                    [value]="isActive[row.id] ? 'true' : 'false'" 
+                    [valueOn]="'true'"  
+                    [valueOff]="'false'"
+                    (change)="ativarDesativar(row, $event)"
+                ></input-switch>
             </ng-template>
         </column>
         

@@ -150,7 +150,7 @@ abstract class BuscarDadosSiape
         return $respostas;
     }
 
-    protected function prepareResponseXml(string $response) : SimpleXMLElement
+    public function prepareResponseXml(string $response) : SimpleXMLElement
     {
         $response = str_replace('&', '&amp;', $response);
         $response = trim($response); 
@@ -185,6 +185,44 @@ abstract class BuscarDadosSiape
             ($date instanceof DateTime ? $date->getTimestamp() : 
             (gettype($date) == "string" ? (strtotime($date) ? strtotime($date) : null) : null));
         return $result;
+    }
+
+    public function buscaSincrona(string $xmlData)
+    {
+        $token = $this->getToken();
+
+        $curl = curl_init();
+
+        $headers = [
+            'x-cpf-usuario: ' . $this->getCpf(),
+            'Authorization: Bearer ' . $token,
+            'Content-Type: application/xml',
+        ];
+
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $this->geturl() . '/api-consulta-siape/v1/consulta-siape',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_POSTFIELDS => $xmlData,
+        ]);
+
+        Log::info('Busca - Request para ' . $this->geturl() . '/api-consulta-siape/v1/consulta-siape', [
+            'headers' => $headers,
+            'body' => $xmlData
+        ]);
+
+        $response = curl_exec($curl);
+
+        if (curl_errno($curl)) {
+            $error_msg = curl_error($curl);
+            curl_close($curl);
+            throw new Exception('cURL error: ' . $error_msg);
+        }
+
+        curl_close($curl);
+        Log::info(' Response: ' . $response);
+        return $response;
     }
 
     public abstract function enviar() : void;
