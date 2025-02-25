@@ -684,7 +684,11 @@ class IntegracaoService extends ServiceBase
                 'unidade_id' => $unidadeExercicioId,
                 'atribuicoes' => ["LOTADO"],
               ]);
-              $dbResult = $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
+              try {
+                $dbResult = $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
+              } catch (\Throwable $th) {
+                LogError::newWarn("IntegracaoService: Durante integração não foi possível alterar lotação!", [$dbResult, $vinculo]);
+              }
               if(!$dbResult){
                 LogError::newWarn("IntegracaoService: Durante integração não foi possível alterar lotação!", [$dbResult, $vinculo]);
               } else{
