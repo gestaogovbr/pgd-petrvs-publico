@@ -40,8 +40,8 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       email: { default: "" },
       nome: { default: "" },
       cpf: { default: "" },
-      matricula: { default: "" },
       apelido: { default: "" },
+      usuario_externo: { default: true },
       telefone: { default: "" },
       uf: { default: "" },
       sexo: { default: null },
@@ -53,6 +53,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       data_nascimento: { default: null },
     }, this.cdRef, this.validate);
     this.planoDataset = this.planoTrabalhoDao.dataset();
+    this.join = ["auditsExterno"]
   }
 
   public async loadData(entity: Usuario, form: FormGroup): Promise<void> {
@@ -82,9 +83,9 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
 
   public formValidation = (form?: FormGroup) => {
     if (!this.unidadesIntegrantes?.formPerfil.controls.perfil_id.value?.length) return "É obrigatório a definição de um " + this.lex.translate("perfil") + " para " + this.lex.translate("o servidor") + ". Utilize a aba 'Atribuições'.";
-    if (!this.unidadesIntegrantes?.grid?.items.find((item, index, array) => item.atribuicoes.includes('LOTADO'))) {
-      return "É obrigatória a definição " + this.lex.translate('da unidade') + " " + this.lex.translate('de lotação') + " " + this.lex.translate('do servidor') + "! Defina-a na aba 'Atribuições'.";
-    }
+    // if (!this.unidadesIntegrantes?.grid?.items.find((item, index, array) => item.atribuicoes.includes('LOTADO'))) {
+    //   return "É obrigatória a definição " + this.lex.translate('da unidade') + " " + this.lex.translate('de lotação') + " " + this.lex.translate('do servidor') + "! Defina-a na aba 'Atribuições'.";
+    // }
     if (this.action != 'new' && this.unidadesIntegrantes?.grid?.items.find((item, index, array) => !(item.unidade_id.length && item.usuario_id.length))) return "Na aba 'Atribuições' há " + this.lex.translate('unidade') + " com edição não concluída. Conclua-a antes de salvar " + this.lex.translate('o servidor') + "!"
     return undefined;
   }

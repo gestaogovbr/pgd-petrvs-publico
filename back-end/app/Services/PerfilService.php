@@ -10,12 +10,12 @@ use Illuminate\Support\Facades\DB;
 
 class PerfilService extends ServiceBase {
 
-    public $perfis = [ 
+    public $perfis = [
         [0, "Perfil Desenvolvedor", "Perfil de Desenvolvedor - todas as permissões"],
         [1, "Perfil Administrador Master", "Representantes da unidade autorizadora"],
-        [2, "Perfil Administrador Negocial", "Perfil destinado ao(s) administrador(es) do sistema"],
-        [3, "Perfil Unidade", "Nível de acesso ao sistema destinado à(s) equipe(s) de chefia das unidades executoras"],        
-        [5, "Perfil Participante", "Participante do PGD"],
+        [2, "Perfil Administrador Negocial", "Representantes de unidades instituidoras"],
+        [3, "Perfil Unidade", "Representantes de unidades executoras"],
+        [5, "Perfil Participante", "Agentes públicos selecionáveis para o PGD"],
         [6, "Perfil Colaborador", "Agente públicos não selecionáveis para o PGD (ex: estagiários, terceirizados, etc)"],
     ];
 
