@@ -1,3 +1,8 @@
+## 2.3.10 27/02/2025
+### Corrigido
+ - Correção na sanitização do xml de servidores do SIAPE
+### Adicionado
+ - Adicionado lista de servidores excluídos do SIAPE no sistema
 ## 2.3.9 24/02/2025
 ### Corrigido
  - Correção no SIAPE ao parar as lotações ao encontrar um usuário com unidade excluída.
