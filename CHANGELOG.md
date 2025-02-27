@@ -3,6 +3,10 @@
  - Correção na sanitização do xml de servidores do SIAPE
 ### Adicionado
  - Adicionado lista de servidores excluídos do SIAPE no sistema
+### Modificado
+ - Melhoria na mensagem de erro quando da inclusão de participantes no programa por não participantes ou que não sejam de chefia.
+ - Modificado texto de Unidade Executora para Executora no cadastro de Cadeia de Valor
+
 ## 2.3.9 24/02/2025
 ### Corrigido
  - Correção no SIAPE ao parar as lotações ao encontrar um usuário com unidade excluída.
