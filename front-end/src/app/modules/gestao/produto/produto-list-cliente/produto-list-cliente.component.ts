@@ -46,6 +46,7 @@ export class ProdutoListClienteComponent extends PageFrameBase {
   }
 
   private _disabled: boolean = false;
+  public form_cliente: FormGroup;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -56,10 +57,10 @@ export class ProdutoListClienteComponent extends PageFrameBase {
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
 
-    this.form = this.fh.FormBuilder({
+    this.form_cliente = this.fh.FormBuilder({
       cliente_id: { default: "" },
       tipo_cliente_id: { default: "" },
-      unidade_id: { default: "" },
+      unidade_relacionada_id: { default: "" },
       outro: { default: "" },
     }, this.cdRef);
     this.join = ["produtoCliente.cliente.tipoCliente"];
@@ -79,6 +80,7 @@ export class ProdutoListClienteComponent extends PageFrameBase {
     if (entity._status != "ADD") {
       form.controls.cliente_id.setValue(entity.cliente_id);
       form.controls.tipo_cliente_id.setValue(entity.cliente?.tipo_cliente_id);
+      form.controls.unidade_relacionada_id.setValue(entity.cliente?.unidade_id);
     }
   }
 
@@ -101,12 +103,12 @@ export class ProdutoListClienteComponent extends PageFrameBase {
   public async saveCliente(form: FormGroup, row: any) { 
     this.entity!._metadata = this.entity!._metadata || {};
     this.entity!._metadata.produtoCliente = row as ProdutoCliente;
-    if(this.form!.valid) {     
+    if(this.form_cliente!.valid) {     
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
 
       // se o tipo cliente for diferente de Administração Pública e Público externo
       if(this.tipoCliente?.selectedItem && ['Administração Pública', 'Público externo'].includes(this.tipoCliente.selectedItem.value)) {
-        row.cliente_id = this.form!.controls.cliente_id.value;
+        row.cliente_id = this.form_cliente!.controls.cliente_id.value;
         row.cliente = {
           ...this.cliente!.selectedItem,
           tipo_cliente_id: this.tipoCliente!.selectedItem!.key,
@@ -117,7 +119,7 @@ export class ProdutoListClienteComponent extends PageFrameBase {
         };
         
       } else if(this.tipoCliente?.selectedItem?.value == 'Outros') {
-        const queryResult = await this.clienteDao?.query({ where: [['nome', '==', this.form!.controls.outro.value]], join: ['tipoCliente'] }).asPromise();
+        const queryResult = await this.clienteDao?.query({ where: [['nome', '==', this.form_cliente!.controls.outro.value]], join: ['tipoCliente'] }).asPromise();
         const cliente: Cliente[] = queryResult ? queryResult as unknown as Cliente[] : [];
         if(cliente && cliente.length > 0) {
           row.cliente_id = cliente[0].id;
@@ -125,7 +127,7 @@ export class ProdutoListClienteComponent extends PageFrameBase {
         } else {
           const novoCliente = new Cliente();
           novoCliente.id = this.clienteDao!.generateUuid();
-          novoCliente.nome = this.form!.controls.outro.value;
+          novoCliente.nome = this.form_cliente!.controls.outro.value;
           novoCliente.tipo_cliente_id = this.tipoCliente?.selectedItem?.key;
           const cliente = await this.clienteDao?.save(novoCliente, ['tipoCliente']);
           if (cliente) {   
@@ -135,7 +137,7 @@ export class ProdutoListClienteComponent extends PageFrameBase {
           }
         } 
       } else if(this.tipoCliente?.selectedItem?.value == 'Unidade de órgão/entidade') {
-        const queryResult = await this.clienteDao?.query({ where: [['unidade_id', '==', this.form!.controls.unidade_id.value]], join: ['tipoCliente'] }).asPromise();
+        const queryResult = await this.clienteDao?.query({ where: [['unidade_id', '==', this.form_cliente!.controls.unidade_relacionada_id.value]], join: ['tipoCliente'] }).asPromise();
         const cliente: Cliente[] = queryResult ? queryResult as unknown as Cliente[] : [];
         if(cliente && cliente.length > 0) {
           row.cliente_id = cliente[0].id;
@@ -143,7 +145,7 @@ export class ProdutoListClienteComponent extends PageFrameBase {
         } else {
           const novoCliente = new Cliente();
           novoCliente.id = this.clienteDao!.generateUuid();
-          novoCliente.unidade_id = this.form!.controls.unidade_id.value;
+          novoCliente.unidade_id = this.form_cliente!.controls.unidade_relacionada_id.value;
           novoCliente.nome = this.unidade_relacionada?.selectedEntity?.nome;
           novoCliente.tipo_cliente_id = this.tipoCliente?.selectedItem?.key;
           const cliente = await this.clienteDao?.save(novoCliente, ['tipoCliente']);
