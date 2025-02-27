@@ -154,6 +154,9 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     let usuario = this.perfis.find(p => p.id == row.id);
     form.controls.usuario_id.setValue(this.grid?.adding ? row.usuario_id : row.id);
     form.controls.perfil_id.setValue(usuario?.perfil_id);
+    if (usuario?.usuario_externo) {
+      this.tiposAtribuicao = this.tiposAtribuicao.filter((x: LookupItem) => x.key != 'GESTOR_SUBSTITUTO');
+    }
     form.controls.atribuicoes.setValue(this.integranteService.converterAtribuicoes(row.atribuicoes));
     form.controls.atribuicao.setValue("");
   }
