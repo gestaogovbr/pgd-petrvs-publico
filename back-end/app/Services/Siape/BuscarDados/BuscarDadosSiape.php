@@ -150,11 +150,17 @@ abstract class BuscarDadosSiape
         return $respostas;
     }
 
+    private function sanitizeXml(string &$response): void
+    {
+        $response = trim($response);
+        $response = preg_replace('/&(?!amp;|lt;|gt;|quot;|apos;)/', '&amp;', $response);
+        $response = preg_replace('/[^\P{C}\t\n\r]/u', '', $response);
+        $response = preg_replace('/xmlns=""/', '', $response);
+    }
+
     public function prepareResponseXml(string $response) : SimpleXMLElement
     {
-        $response = str_replace('&', '&amp;', $response);
-        $response = trim($response); 
-        $response = str_replace(['&lt;', '&gt;', '&quot;', '&amp;', '&apos;'], ['<', '>', '"', '&', "'"], $response); 
+        $this->sanitizeXml($response);
         libxml_use_internal_errors(true); 
         $response = <<<XML
         $response
@@ -168,7 +174,7 @@ abstract class BuscarDadosSiape
             libxml_clear_errors();
             throw new RequestConectaGovException('Invalid XML response'); 
         }
-        //Log::info('Response convertido: ' , [$responseXml]);
+        
         return $responseXml;
     }
 
