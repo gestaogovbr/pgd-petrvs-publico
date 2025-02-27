@@ -6,7 +6,14 @@
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <!--input-text [size]="6" label="Nome" icon="bi bi-textarea-t" controlName="nome" [control]="filter!.controls.nome" [labelInfo]="'Nome ' + lex.translate('cadeia de valor')" [attr.maxlength]=250></input-text-->
-            <input-search #unidade [size]="6" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" required></input-search>
+            <input-search #unidade 
+                [size]="6" 
+                controlName="unidade_id" 
+                [control]="filter!.controls.unidade_id" 
+                [dao]="unidadeDao" 
+                label="Unidade"
+                required
+            ></input-search>
             <input-datetime [size]="3" date label="Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="filter!.controls.data_inicio" [labelInfo]="'Início ' + lex.translate('cadeia de valor')" (change)="onChangeData()"></input-datetime>
             <input-datetime [size]="3" date label="Fim" icon="bi bi-calendar-date" controlName="data_fim" [control]="filter!.controls.data_fim" [labelInfo]="'Fim ' + lex.translate('cadeia de valor')" (change)="onChangeData()"></input-datetime>
         </div>

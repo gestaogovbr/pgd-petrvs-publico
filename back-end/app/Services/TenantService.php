@@ -128,6 +128,7 @@ class TenantService extends ServiceBase
 
     private function limpaTabelas()
     {
+        DB::table('siape_blacklist_servidores')->truncate();
         DB::table('integracao_unidades')->truncate();
         DB::table('integracao_servidores')->truncate();
     }
