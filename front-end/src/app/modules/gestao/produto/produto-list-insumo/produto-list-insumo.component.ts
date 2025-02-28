@@ -142,7 +142,16 @@ export class ProdutoListInsumoComponent extends PageFrameBase {
 
   public dynamicButtons(row: ProdutoInsumo): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showInsumo.bind(this) });  
+
+    if (this.isInterno(row.origem)) {
+      result.push({ 
+        label: "Detalhes", 
+        icon: "bi bi-eye", 
+        color: 'btn-outline-success', 
+        onClick: this.showInsumo.bind(this)
+      });
+    }
+    
     return result;
   }
 
