@@ -86,6 +86,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.title = this.lex.translate('Planos de Entregas');
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
+      subordinadas: { default: true },
       principais: { default: false },
       arquivadas: { default: false },
       nome: { default: '' },
@@ -148,6 +149,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     return {
       meus_planos: form.meus_planos,
       arquivadas: form.arquivadas,
+      subordinadas: form.subordinadas,
       unidade_id: form.unidade_id,
     }
   }
@@ -286,6 +288,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     
     //  (RI_PENT_C) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados.
     result.push(["incluir_arquivados", "==", this.filter!.controls.arquivadas.value]);
+    result.push(["incluir_subordinadas", "==", this.filter!.controls.subordinadas.value]);
     return result;
   }
 
