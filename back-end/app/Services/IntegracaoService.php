@@ -283,6 +283,7 @@ class IntegracaoService extends ServiceBase
 
     $this->sincronizacao($inputs);
     $this->logSiape("Sincronização de dados do SIAPE finalizada", [], Tipo::INFO);
+    
     return $this->store([
       'entidade_id' => $inputs['entidade'],
       'atualizar_unidades' => $this->validaInput($inputs['unidades']),
