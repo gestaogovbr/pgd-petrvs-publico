@@ -29,6 +29,7 @@ export class ProdutoShowComponent extends PageBase {
       "produtoInsumos.produtoRelacionado.unidade",
       "produtoInsumos.unidade",
       "produtoInsumos.cliente",
+      "produtoInsumos.cliente.tipoCliente:nome",
       "responsavel", 
       "unidade", 
       "produtoCliente.cliente.tipoCliente", 
