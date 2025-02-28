@@ -1,4 +1,4 @@
-<grid [items]="items" [form]="form!" noMargin #gridClientes editable [selectable]="false" [minHeight]="items.length > 2 ? 0 : 300" [join]="join" [groupBy]="groupBy" [add]="addCliente.bind(this)" [remove]="removeCliente.bind(this)" [save]="saveCliente.bind(this)" [load]="loadCliente.bind(this)" [hasDelete]="true" [hasEdit]="true" [hasAdd]="true">
+<grid [items]="items" [form]="form_cliente!" noMargin #gridClientes editable [selectable]="false" [minHeight]="items.length > 2 ? 0 : 300" [join]="join" [groupBy]="groupBy" [add]="addCliente.bind(this)" [remove]="removeCliente.bind(this)" [save]="saveCliente.bind(this)" [load]="loadCliente.bind(this)" [hasDelete]="true" [hasEdit]="true" [hasAdd]="true">
   <columns>
 
 
@@ -19,9 +19,9 @@
             <input-select label="Tipo do cliente" #tipoCliente controlName="tipo_cliente_id" [dao]="tipoClienteDao" required (change)="changeTipoCliente()"></input-select>
           </div>  
           <div class="col-6">
-            <input-search label="Unidade" #unidade_relacionada controlName="unidade_id" [dao]="unidadeDao"  *ngIf="tipoCliente.selectedItem?.value == 'Unidade de órgão/entidade'"></input-search>
-            <input-select label="Cliente" #cliente controlName="cliente_id" [dao]="clienteDao" [where]="[['tipo_cliente_id', '==', form!.controls.tipo_cliente_id.value]]" *ngIf="tipoCliente.selectedItem  && ['Administração Pública', 'Público externo'].includes(tipoCliente.selectedItem.value) "></input-select>
-            <input-text label="Nome" controlName="outro" [control]="form!.controls.outro" *ngIf="tipoCliente.selectedItem?.value == 'Outros' "></input-text>
+            <input-search label="Unidade" #unidade_relacionada controlName="unidade_relacionada_id" [dao]="unidadeDao"  *ngIf="tipoCliente.selectedItem?.value == 'Unidade de órgão/entidade'"></input-search>
+            <input-select label="Cliente" #cliente controlName="cliente_id" [dao]="clienteDao" [where]="[['tipo_cliente_id', '==', form_cliente!.controls.tipo_cliente_id.value]]" *ngIf="tipoCliente.selectedItem?.value != 'Unidade de órgão/entidade'"></input-select>
+            <input-text label="Nome" controlName="outro" [control]="form_cliente!.controls.outro" *ngIf="tipoCliente.selectedItem?.value == 'Outros' "></input-text>
           </div>
         </div>
       </ng-template>

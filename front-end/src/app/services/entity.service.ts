@@ -64,6 +64,7 @@ import { DisciplinaDaoService } from '../dao/disciplina-dao.service';
 import { SolucaoDaoService } from '../dao/solucao-dao.service';
 import { EnvioDaoService } from '../dao/envio-dao.service';
 import { ClienteDaoService } from '../dao/cliente-dao.service';
+import { TipoClienteDaoService } from '../dao/tipo-cliente-dao.service';
 
 export type EntityItem = {
   collection: string,
@@ -144,6 +145,7 @@ export class EntityService {
       { collection: 'TipoAvaliacao', codigo: 'MOD_TIPO_AVAL', table: 'tipos_avaliacoes', campo: 'nome', icon: 'bi bi-question-square', dao: injector.get<TipoAvaliacaoDaoService>(TipoAvaliacaoDaoService), label: "Tipo de Avaliação", selectRoute: { route: ['cadastros', 'tipo-avaliacao'] } },
       { collection: 'TipoAvaliacaoJustificativa', table: 'tipos_avaliacoes_justificativas', campo: 'tipo_avaliacao_id', icon: '', dao: injector.get<TipoAvaliacaoJustificativaDaoService>(TipoAvaliacaoJustificativaDaoService), label: "Justificativa do Tipo de Avaliação" },
       { collection: 'TipoCapacidade', codigo: 'MOD_TIPO_CAP', table: 'tipos_capacidades', campo: 'descricao', icon: '', dao: injector.get<TipoCapacidadeDaoService>(TipoCapacidadeDaoService), label: "Tipo de Capacidade" },
+      { collection: 'TipoCliente', codigo: 'MOD_TIPO_CLI', table: 'tipos_clientes', campo: 'nome', icon: 'bi bi-people', dao: injector.get<TipoClienteDaoService>(TipoClienteDaoService), label: "Tipo de Cliente" },
       { collection: 'TipoCurso', codigo: 'MOD_RX_CURR', table: 'tipos_cursos', campo: 'nome', icon: 'bi bi-box2', dao: injector.get<TipoCursoDaoService>(TipoCursoDaoService), label: "Tipo de Curso", selectRoute: { route: ['raiox', 'cadastros', 'tipo-curso'] } },
       { collection: 'TipoDocumento', codigo: 'MOD_TIPO_DOC', table: 'tipos_documentos', campo: 'nome', icon: 'bi bi-files', dao: injector.get<TipoDocumentoDaoService>(TipoDocumentoDaoService), label: "Tipo de Documento", selectRoute: { route: ['cadastros', 'tipo-documento'] } },
       { collection: 'TipoJustificativa', codigo: 'MOD_TIPO_JUST', table: 'tipos_justificativas', campo: 'nome', icon: 'bi bi-window-stack', dao: injector.get<TipoJustificativaDaoService>(TipoJustificativaDaoService), label: "Tipo de Justificativa", selectRoute: { route: ['cadastros', 'tipo-justificativa'] } },

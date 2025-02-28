@@ -53,6 +53,7 @@ class ServerException extends Exception implements IBaseException
         "ValidateRelato" => "Erro ao enviar o relato",
         "ValidateUnidade" => "Erro ao validar Unidade",
         "ValidateUsuario" => "Erro ao validar o usuário",
+        "TipoClienteExcluir" => "Tipo de Cliente",
     ];
 
     function __construct(string $code, string $extra = "") {

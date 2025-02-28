@@ -41,13 +41,6 @@ class TipoClientesSeeder extends Seeder
                     'created_at' => $this->timenow,
                     'updated_at' => $this->timenow,
                     'deleted_at' => null
-                ],
-                [
-                    'id' => '95608f72-e838-11ef-9d03-0242ac120004',
-                    'nome' => 'Outros',
-                    'created_at' => $this->timenow,
-                    'updated_at' => $this->timenow,
-                    'deleted_at' => null
                 ]
             ];
 

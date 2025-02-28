@@ -139,6 +139,7 @@ export class AppComponent {
       TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'templates'], icon: this.entity.getIcon('Template'), params: { modo: "listagem" } },
       TIPOS_TAREFAS: { name: this.lex.translate("Tipos de Tarefas"), permition: 'MOD_TIPO_TRF', route: ['cadastros', 'tipo-tarefa'], icon: this.entity.getIcon('TipoTarefa') },
       TIPOS_ATIVIDADES: { name: this.lex.translate("Tipos de Atividades"), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: this.entity.getIcon('TipoAtividade') },
+      TIPOS_CLIENTES: { name: this.lex.translate("Tipos de Clientes"), permition: 'MOD_TIPO_CLI', route: ['cadastros', 'tipo-cliente'], icon: this.entity.getIcon('TipoCliente') },
       // TIPOS_AVALIACOES: { name: this.lex.translate("Tipos de Avaliação"), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: this.entity.getIcon('TipoAvaliacao') },
       TIPOS_DOCUMENTOS: { name: this.lex.translate("Tipos de Documento"), permition: 'MOD_TIPO_DOC', route: ['cadastros', 'tipo-documento'], icon: this.entity.getIcon('TipoDocumento') },
       TIPOS_JUSTIFICATIVAS: { name: this.lex.translate("Tipos de Justificativa"), permition: 'MOD_TIPO_JUST', route: ['cadastros', 'tipo-justificativa'], icon: this.entity.getIcon('TipoJustificativa') },
@@ -230,18 +231,19 @@ export class AppComponent {
         this.menuSchema.ENTIDADES,
         this.menuSchema.UNIDADES,
         this.menuSchema.USUARIOS,
-        this.menuSchema.PERFIS
+        this.menuSchema.PERFIS,
+        this.menuSchema.CLIENTES,
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Cadastros"),
       permition: "MENU_CAD_ACESSO",
       id: "navbarDropdownGestaoCadastros",
       menu: [
-        this.menuSchema.CLIENTES,
         this.menuSchema.EIXOS_TEMATICOS,
         // this.menuSchema.ENTREGAS,
         // this.menuSchema.TIPOS_AVALIACOES,
         this.menuSchema.TIPOS_ATIVIDADES,
+        this.menuSchema.TIPOS_CLIENTES,
         this.menuSchema.TIPOS_JUSTIFICATIVAS,
         // this.menuSchema.TIPOS_MODALIDADES,
         // this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,

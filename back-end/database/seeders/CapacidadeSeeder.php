@@ -300,14 +300,17 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_USER_EDT"],
       ["codigo" => "MOD_USER_TUDO"],
       ["codigo" => "MOD_PROD"],
-      ["codigo" => "MOD_PROD_CAT_INCL"],
-      ["codigo" => "MOD_PROD_CAT_EDT"],
-      ["codigo" => "MOD_PROD_CAT_EXCL"],
+      ["codigo" => "MOD_PROD_INCL"],
+      ["codigo" => "MOD_PROD_EDT"],
+      ["codigo" => "MOD_PROD_EXCL"],
       ["codigo" => "MOD_SOLUCOES"],
       ["codigo" => "MOD_SOLUCOES_INCL"],
       ["codigo" => "MOD_SOLUCOES_EDT"],
       ["codigo" => "MOD_SOLUCOES_EXCL"],
-
+      ["codigo" => "MOD_TIPO_CLI"],
+      ["codigo" => "MOD_TIPO_CLI_EDT"],
+      ["codigo" => "MOD_TIPO_CLI_EXCL"],
+      ["codigo" => "MOD_TIPO_CLI_INCL"]
     ];
 
     $capacidades_administrador_geral = array_merge($capacidades_administrador_negocial, [
