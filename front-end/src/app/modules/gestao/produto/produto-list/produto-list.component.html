@@ -27,7 +27,7 @@
     </toolbar>
     <filter 
         [deleted]="!this.isSearching && this.auth.hasPermissionTo('MOD_AUDIT_DEL')"
-        deletedLabel="Exibir os Excluídos"
+        deletedLabel="Mostrar Excluídos"
         [form]="filter" 
         [where]="filterWhere" 
         [submit]="filterSubmit.bind(this)" 
