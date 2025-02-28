@@ -184,7 +184,6 @@ class ProcessaDadosSiapeBD
             
             throw new ErrorDataSiapeFaultCodeException(sprintf('faultcode #%s: ',(string) $fault[0]->faultcode ). (string) $fault[0]->faultstring);
         }
-
         return $responseXml;
     }
 

@@ -32,8 +32,10 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.join = [
       "produtoProcessoCadeiaValor.cadeiaValorProcesso.cadeiaValor", 
-      "produtoProduto.produtoRelacionado", 
-      "produtoProduto.produtoRelacionado.unidade", 
+      "produtoInsumos.produtoRelacionado", 
+      "produtoInsumos.produtoRelacionado.unidade",
+      "produtoInsumos.unidade",
+      "produtoInsumos.cliente.tipoCliente:nome",
       "produtoCliente.cliente.tipoCliente:nome", 
       "produtoSolucoes.solucao"
     ];
@@ -46,7 +48,7 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
       tipo: { default: "" },
       unidade_id: { default: "" },
       produto_processo_cadeia_valor: { default: [] },
-      produto_produto: { default: [] },
+      produto_insumos: { default: [] },
       produto_cliente: { default: [] },
       produto_solucoes: { default: [] },
       solucao: { default: [] },

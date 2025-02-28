@@ -26,6 +26,7 @@
     </toolbar>
     <filter 
         [deleted]="!this.isSearching && this.auth.hasPermissionTo('MOD_AUDIT_DEL')"
+        deletedLabel="Mostrar Excluídos"
         [form]="filter" 
         [where]="filterWhere" 
         [submit]="filterSubmit.bind(this)" 
@@ -37,7 +38,7 @@
                 <input-search 
                     #unidade 
                     [size]="6" 
-                    label="Unidade"
+                    label="Unidade Instituidora"
                     [control]="filter!.controls.unidade_id" 
                     controlName="unidade_id" 
                     [dao]="unidadeDao"

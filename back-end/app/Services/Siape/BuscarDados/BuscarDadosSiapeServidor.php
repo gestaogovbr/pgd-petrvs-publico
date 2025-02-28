@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
 use Illuminate\Support\Str;
 
+
 class BuscarDadosSiapeServidor extends BuscarDadosSiape
 {
     const MAX_INSERT_DB = 1000;
@@ -47,13 +48,14 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
 
         $servidores = array_filter($servidores, function ($servidor) use ($servidoresJaProcessadas, $blacklistServidores) {
 
+            $estaNaBlackList =  $blacklistServidores->firstWhere('cpf', $servidor['cpf']);
+            if ($estaNaBlackList) {
+                Log::alert("está na black list deverá ser ignorado: ".$servidor['cpf']);
+                return false;
+            }
             $servidorProcessado =  $servidoresJaProcessadas->firstWhere('cpf', $servidor['cpf']);
 
             if (!$servidorProcessado) {
-                return true;
-            }
-            $estaNaBlackList =  $blacklistServidores->firstWhere('cpf', $servidor['cpf']);
-            if (!$estaNaBlackList) {
                 return true;
             }
 

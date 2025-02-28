@@ -1,7 +1,7 @@
 import { Base } from "./base.model";
 import { ProdutoCliente } from "./produto-cliente.model";
 import { ProdutoProcesso } from "./produto-processo.model";
-import { ProdutoProduto } from "./produto-produto.model";
+import { ProdutoInsumo } from "./produto-insumo.model";
 import { ProdutoSolucao } from "./produto-solucao.model";
 import { Unidade } from "./unidade.model";
 import { Usuario } from "./usuario.model";
@@ -20,7 +20,7 @@ export class Produto extends Base {
   public descricao: string = ""; /* Descrição do produto */
   public url: string = ""; /* URL do produto */
   public produto_processo_cadeia_valor: ProdutoProcesso[] = []; /* Processos da cadeia de valor do produto */
-  public produto_produto: ProdutoProduto[] = []; /* Produtos do produto */
+  public produto_insumos: ProdutoInsumo[] = []; /* Produtos do produto */
   public produto_cliente: ProdutoCliente[] = []; /* Clientes do produto */
   public produto_solucoes: ProdutoSolucao[] = []; /* Soluções do produto */
   public unidade?: Unidade;

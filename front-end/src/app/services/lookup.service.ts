@@ -907,6 +907,11 @@ export class LookupService implements IIndexable {
     { key: 'inativo', value: "Inativo" }
   ];
 
+  public TIPO_INTERNO_EXTERNO: LookupItem[] = [
+    { key: 'interno', value: "Interno" },
+    { key: 'externo', value: "Externo" }
+  ];
+
   public ENVIO_ITEM_TIPO: LookupItem[] = [
     { key: "participante", value: "Participante" },
     { key: "entrega", value: "Plano de Entrega" },
