@@ -14,7 +14,11 @@
   [hasAdd]="!this.disabled"
 >
   <columns>
-    <column title="Origem" [template]="columnOrigem" [editTemplate]="editOrigem">
+    <column title="Origem"
+      [template]="columnOrigem" 
+      [editTemplate]="editOrigem"
+      [minWidth]="100"
+    >
       <ng-template let-row="row" #columnOrigem>
         <span>{{lookup.getValue(lookup.TIPO_INTERNO_EXTERNO, row.origem)}}</span>
       </ng-template>
@@ -28,8 +32,11 @@
       </ng-template>
     </column>
 
-    <column title="Fornecedor" [template]="columnFornecedor"
-      [editTemplate]="editFornecedor">
+    <column title="Fornecedor"
+      [template]="columnFornecedor"
+      [editTemplate]="editFornecedor"
+      [minWidth]="300"
+    >
       <ng-template let-row="row" #columnFornecedor>
           <span *ngIf="isInterno(row.origem)">{{row.unidade?.sigla}}</span>
           <span *ngIf="isExterno(row.origem)">{{row.cliente?.tipo_cliente?.nome}} - {{row.cliente?.nome}}</span>
@@ -57,7 +64,8 @@
     <column 
       [titleTemplate]="titleInsumo" 
       [template]="columnInsumo" 
-      [editTemplate]="editInsumo" 
+      [editTemplate]="editInsumo"
+      [minWidth]="300"
     >
       <ng-template let-header="header" #titleInsumo>
         <span><strong>Insumo</strong></span>
@@ -75,7 +83,14 @@
             [control]="form!.controls.produto_insumo_id" 
             [dao]="produtoDao" 
             [where]="[['id', '!=', entity?.id]]"
-            [selectRoute]="{route: ['gestao', 'produto'], params: {mode: 'search-ativos', excludeId: entity?.id}}"
+            [selectRoute]="{
+              route: ['gestao', 'produto'], 
+              params: {
+                mode: 'search-ativos', 
+                excludeId: entity?.id,
+                unidade_id: this.form!.controls.unidade_insumo_id?.value
+              }
+            }"
           ></input-search>
           <input-text
             *ngIf="this.isExterno()"

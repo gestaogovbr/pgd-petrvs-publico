@@ -49,6 +49,12 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
 
   public ngOnInit(): void {
     super.ngOnInit();
+    
+    if (this.queryParams.unidade_id) {
+      this.filter?.controls.unidade_id.setValue(this.queryParams.unidade_id);
+      this.saveUsuarioConfig();
+    }
+    
     this.isSearching = (this.queryParams.mode == 'search') || (this.queryParams.mode == 'search-ativos');
     if (this.isSearching) {
       this.filter?.controls.status.setValue('ativo');
