@@ -29,3 +29,8 @@ filter {
         }
     }
 }
+
+.ativar-desativar {
+    display: flex;
+    flex-direction: row-reverse;
+}

@@ -40,7 +40,7 @@ class PlanoEntregaEntrega extends ModelBase
     //'deleted_at', /* timestamp; */
   ];
 
-  public $fillable_changes = ['objetivos', 'processos', 'comentarios', 'reacoes'];
+  public $fillable_changes = ['objetivos', 'processos', 'comentarios', 'reacoes', 'produtos'];
 
   // Casting
   protected $casts = [
@@ -50,7 +50,7 @@ class PlanoEntregaEntrega extends ModelBase
     'etiquetas' => AsJson::class,
   ];
 
-  public $delete_cascade = ['comentarios', 'reacoes', 'progressos'];
+  public $delete_cascade = ['comentarios', 'reacoes', 'progressos', 'produtos'];
 
   // HasMany
   public function progressos()
@@ -94,4 +94,9 @@ class PlanoEntregaEntrega extends ModelBase
   {
     return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_pai_id');
   }        //nullable
+  
+  public function produtos()
+  {
+    return $this->hasMany(PlanoEntregaEntregaProduto::class, 'entrega_id');
+  }
 }

@@ -1,13 +1,32 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+<grid [dao]="dao" 
+    [add]="add" 
+    [title]="isModal ? '' : title" 
+    [orderBy]="orderBy" 
+    [groupBy]="groupBy" 
+    [join]="join"
     [selectable]="selectable" 
     (select)="onSelect($event)"
     [hasAdd]="this.isCurador"
-    [hasEdit]="this.auth.hasPermissionTo('MOD_PROD_CAT_EDT')">
+    labelAdd="Incluir Nova Solução"
+    [hasEdit]="this.auth.hasPermissionTo('MOD_SOLUCOES_EDT')"
+>
     <toolbar *ngIf="!selectable">
-        <input-switch [size]="4" labelPosition="left" label="Agrupar por unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+        <button type="button" class="btn btn-outline-success" 
+            (click)="this.ativarTodas()" 
+            [disabled]="isUpdating"
+            *ngIf="this.isCurador && (this.grid?.items?.length ?? 0 == 0)"
+        >Ativar todas as Soluções
+        </button>
+        <button type="button" class="btn btn-outline-danger" 
+            (click)="this.desativarTodas()" 
+            [disabled]="isUpdating && this.grid?.items?.length"
+            *ngIf="this.isCurador && (this.grid?.items?.length ?? 0 == 0)"
+        >Desativar todas as Soluções
+        </button>
     </toolbar>
     <filter 
-        [deleted]="this.auth.hasPermissionTo('MOD_PROD_CAT_EXCL')" 
+        [deleted]="!this.isSearching && this.auth.hasPermissionTo('MOD_AUDIT_DEL')"
+        deletedLabel="Mostrar Excluídos"
         [form]="filter" 
         [where]="filterWhere" 
         [submit]="filterSubmit.bind(this)" 
@@ -19,29 +38,31 @@
                 <input-search 
                     #unidade 
                     [size]="6" 
+                    label="Unidade Instituidora"
                     [control]="filter!.controls.unidade_id" 
                     controlName="unidade_id" 
                     [dao]="unidadeDao"
                 ></input-search>  
             </div>
-            <div class="col-md-3 busca-avancada">
+            <div class="col-md-8 busca-avancada">
                <div class="busca-avancada-link"><a (click)="onBuscaAvancada()">Busca Avançada</a></div>
                <div class="busca-avancada-clear"><a (click)="this.onFilterClear()">Limpar filtros de busca</a></div>
                <div class="busca-avancada-filtros-aplicados">Filtros aplicados:
-                    <span *ngIf="filter!.controls.nome.value.length > 0">Nome</span>
-                    <span *ngIf="filter!.controls.id.value.length > 0">#ID</span>
-                    <span *ngIf="filter!.controls.status.value.length > 0">Status</span>
+                    <span *ngIf="filter!.controls.unidade_id.value?.length > 0">Unidade</span>
+                    <span *ngIf="filter!.controls.nome.value?.length > 0">Nome</span>
+                    <span *ngIf="filter!.controls.id.value?.length > 0">#ID</span>
+                    <span *ngIf="filter!.controls.status.value?.length > 0">Status</span>
                </div>
             </div>
         </div>
     </filter>
+    
     <columns>
         <column title="ID#" [template]="columnID">
             <ng-template let-row="row" #columnID>
-                <span> {{row.id}}</span><br>
+                <span> {{row.identificador}}</span><br>
             </ng-template>
         </column>
-
         <column title="Nome" [template]="columnNome">
             <ng-template let-row="row" #columnNome>
                 <span> {{row.nome}}</span><br>
@@ -49,21 +70,45 @@
         </column>
         <column title="Sigla/Nome Fantasia" [template]="columnSigla">
             <ng-template let-row="row" #columnSigla>
-                <span> {{row.sigla}}</span><br>
+                <span>  {{row.sigla}}</span><br>
             </ng-template>
         </column>
-        <column title="Ativar/Desativar" [template]="columnAtivar">
-            <ng-template let-row="row" #columnAtivar>
-                <input-switch  [value]="ativo(row) ? 'true' : 'false'" [valueOn]="'true'"  [valueOff]="'false'" (change)="ativarDesativar(row)"></input-switch>
-            </ng-template>
-        </column>
-        <column title="Status" [template]="columnStatus">
+        <column 
+            title="Status" 
+            [template]="columnStatus" 
+            *ngIf="!this.isSearching"
+            titleHint="Status na sua unidade instituidora"
+        >
             <ng-template let-row="row" #columnStatus>
-                {{row.status}}
+                <badge
+                    [color]="row.deleted_at ? 'secondary': (isActive[row.id] ? 'success' : 'danger')" 
+                    [label]="row.deleted_at ? 'Excluído' : (isActive[row.id] ? 'Ativo' : 'Inativo')">
+                </badge>
             </ng-template>
         </column>
-        
-        <column type="options" [onEdit]="edit" [options]="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+        <column 
+            [template]="columnAtivar" 
+            title="Ativar/Desativar" 
+            titleHint="Ativar para sua unidade instituidora, permitindo que a Solução esteja disponível para vinculação de Produtos e Serviços nas unidades executoras subordinadas"
+            *ngIf="this.isCurador && !this.isSearching"
+        >
+            <ng-template let-row="row" #columnAtivar>
+                <input-switch 
+                    [size]="12" 
+                    scale="small" 
+                    [value]="isActive[row.id] ? 'true' : 'false'" 
+                    [valueOn]="'true'"  
+                    [valueOff]="'false'"
+                    (change)="ativarDesativar(row, $event)"
+                    [disabled]="row.deleted_at"
+                ></input-switch>
+            </ng-template>
+        </column>
+        <column 
+            type="options"  
+            [onEdit]="edit" 
+            [dynamicButtons]="dynamicButtons.bind(this)">
+        </column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

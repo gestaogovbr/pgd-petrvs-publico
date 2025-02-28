@@ -5,6 +5,7 @@ namespace App\Jobs\PGD\Tenant;
 use App\Exceptions\ExportPgdException;
 use App\Exceptions\LogError;
 use App\Models\Envio;
+use App\Models\Tenant;
 use App\Models\EnvioItem;
 use App\Services\API_PGD\DataSources\DataSource;
 use App\Services\API_PGD\ExportSource;
@@ -18,28 +19,45 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Jobs\Contratos\ContratoJobSchedule;
+use Throwable;
 
 abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable; 
 
     public $tries = 1;
-    protected $url;
-    protected $token;
-    protected Envio $envio;
+    public $timeout = 120; //2m
+    //protected Tenant $tenant;
+    protected string $tenantId;
+    protected int $jobNumber;
+    protected string $url;
+    protected string $token;
+    protected string $api_cod_unidade_autorizadora;
+    //protected Envio|null $envio = null;
+    protected string $envioId = "";
+    protected string $envioNumero;
     protected ExportSource $source;
 
     public function __construct(
-        $url,
-        $token,
-        Envio $envio,
+        string $tenantId,
+        int $jobNumber,
+        string $token,
+        string $url,
+        string $api_cod_unidade_autorizadora,
+        string $envioId,
+        string $envioNumero,
         ExportSource $source
     ) {
         $this->queue = 'pgd_queue';
-        $this->url = $url;
+
+        $this->jobNumber = $jobNumber;
         $this->token = $token;
-        $this->envio = $envio;
+        $this->envioId = $envioId;
+        $this->envioNumero = $envioNumero;
         $this->source = $source;
+        $this->tenantId = $tenantId;
+        $this->url = $url;
+        $this->api_cod_unidade_autorizadora = $api_cod_unidade_autorizadora;
     }
 
     public abstract function getEndpoint($dados): string;
@@ -50,27 +68,30 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     
     public function handle(PgdService $pgdService)
     {
-        Log::info("[{$this->source->tipo}] ID {$this->source->id} [INICIADO]");
+        if ($this->batch()?->canceled()) {
+            return;
+        }
+        
+        Log::info("[{$this->tenantId}] ".$this->batch()->pendingJobs.'/'.$this->batch()->totalJobs);
+        Log::info("[{$this->tenantId}] {$this->source->tipo}: {$this->source->id} [INICIADO] ");
 
         $envioItem = new EnvioItem;
-        $envioItem->envio_id    = $this->envio->id;
+        $envioItem->envio_id    = $this->envioId;
         $envioItem->tipo        = $this->source->tipo;
         $envioItem->uid         = $this->source->id;
         $envioItem->fonte       = $this->source->fonte;
         $envioItem->save();
 
         try {
-            echo " -- obtendo...";
             $data = $this->getDataSource()->getData($this->source);
             $resource = $this->getResource($data);
 
             unset($data);
 
             $body = (object) json_decode($resource->toJson(), true);
+            $body->cod_unidade_autorizadora = $this->api_cod_unidade_autorizadora;
 
             unset($resource);
-
-            echo " -- enviando...";
 
             $success = $pgdService->enviarDados(
                 $this->url,
@@ -88,24 +109,25 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 
             unset($body);
 
-            echo " -- fim...";
-
         }catch(ExportPgdException $exception) {
             $this->handleError($exception->getmessage(), $envioItem);
-            throw $exception;
+            $this->fail($exception);
+            //throw $exception;
         }
     }
 
-    public function addFalha() {
-    }
+    public function addFalha() {}
 
-    public function addSucesso() {
-    }
+    public function addSucesso() {}
 
     public function handleError($message, EnvioItem $envioItem) 
     {
-        Log::error("[{$this->source->tipo}] ID {$this->source->id} - ERRO!");
-        Log::error("Mensagem: ".$message);
+        Log::error("Erro: $message 
+            Tenant: {$this->tenantId} 
+            Tipo: {$this->source->tipo}
+            ID: {$this->source->id}
+            Fonte:  {$this->source->fonte}
+            \n");
 
         $envioItem->sucesso = false;
         $envioItem->erros = $message;
@@ -114,7 +136,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
         $this->addFalha();
 
         LogError::newError(
-            "Erro ao sincronizar com o PGD: ", 
+            "[{$this->tenantId}] Erro ao sincronizar com o PGD: ", 
             new ExportPgdException($message),
             $this->source
         );
@@ -129,9 +151,9 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
                             'error_message' => $message
                         ]
                     );
-            } catch(\Exception $exception) {
-                Log::error("Erro atualizar audit: ".$exception->getMessage());
-                LogError::newError("Erro atualizar audit: ", $exception, $this->source);
+            } catch(\Throwable $exception) {
+                Log::error("[{$this->tenantId}] Erro atualizar audit: ".$exception->getMessage());
+                LogError::newError("[{$this->tenantId}] Erro atualizar audit: ", $exception, $this->source);
             }
         }
     }
@@ -149,14 +171,46 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 
         if ($this->source->auditIds) 
         {
-            DB::table('audits')
+            /*DB::table('audits')
                 ->whereIn('id', $this->source->auditIds)
                 ->update([
                     'tags' => json_encode(['SUCESSO']),
                     'error_message' => null
+                ]);*/
+
+            DB::table('audits')
+                ->where('auditable_type', $this->getAuditableType())
+                ->where('auditable_id', $this->source->id)
+                ->update([
+                    'enviado' => true,
+                    'error_message' => null
                 ]);
         }
 
-        Log::info("[{$this->source->tipo}] ID {$this->source->id} - SUCESSO");
+        Log::info("[{$this->tenantId}] {$this->source->tipo}: {$this->source->id} - SUCESSO");
+    }
+
+    abstract protected function getAuditableType();
+    
+    public function tags()
+    {
+        return [
+            'tenant '.$this->tenantId,
+            'envio #'.$this->envioNumero,
+            'id: '.$this->source->id
+        ];
+    }
+
+    public function failed(?Throwable $exception): void
+    {
+        Log::error("Falha no ExportarItemJob: ".$exception->getMessage());
+
+        $envio = Envio::find($this->envioId);
+
+        if ($envio) {
+            $envio->erros = $exception->getMessage();
+            $envio->finished_at = now();
+            $envio->save();
+        }
     }
 }

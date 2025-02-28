@@ -9,7 +9,7 @@ export type ProgramaPeriodicidadeConsolidacao = 'DIAS' | 'SEMANAL' | 'QUINZENAL'
 
 export class Programa extends Base {
     public unidade?: Unidade;
-    public unidade_autorizadora?: Unidade;
+    // public unidade_autorizadora?: Unidade;
     public template_tcr?: Template;
     public tipo_avaliacao_plano_trabalho?: TipoAvaliacao;
     public tipo_avaliacao_plano_entrega?: TipoAvaliacao;

@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Cache;
+use App\Jobs\ExportarTenantJob;
 use App\Models\JobSchedule;
 
 
@@ -110,6 +111,14 @@ class TenantService extends ServiceBase
         BuscarDadosSiapeJob::dispatch($tenantId);
     }
 
+    public function forcarEnvio(string $tenantId)
+    {
+        $this->inicializeTenant($tenantId);
+        $this->TenantConfigurationsService->handle($tenantId);
+
+        ExportarTenantJob::dispatch($tenantId);
+    }
+
     public function inicializeTenant($tenantId): void
     {
 
@@ -119,6 +128,7 @@ class TenantService extends ServiceBase
 
     private function limpaTabelas()
     {
+        DB::table('siape_blacklist_servidores')->truncate();
         DB::table('integracao_unidades')->truncate();
         DB::table('integracao_servidores')->truncate();
     }

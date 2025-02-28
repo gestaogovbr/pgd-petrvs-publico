@@ -1,36 +1,37 @@
 <div class="spinner-border" role="status" *ngIf="loading">
   <span class="visually-hidden"></span>
 </div>
-<ng-container>
-  <div class="solucao-show bg-body-secondary">
-    <div class="row">
-      <div class="col-md-4">
-        <small class="d-block">Solução</small>
-        <b>{{solucao?.nome}}</b>
-      </div>
-      <div class="col-md-4">
-        <small class="d-block">Unidade Instituidora</small>
-        <b>{{solucao?.unidade?.nome}}</b>
-      </div>
-      <div class="col-md-2">
-        <small class="d-block">Produtos e Serviços cadastrados</small>
-      </div>
-      <div class="col-md-2">
-        <small class="d-block">Status</small>
-        <span class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{ this.solucao?.status ? 'ATIVO' : 'INATIVO' }}</span>
-      </div>
+<ng-container *ngIf="solucao">
+  <div class="bg-dark-subtle d-flex p-2 px-4">
+    <div>
+      <h4>ID #{{solucao.identificador}} - <b>{{solucao.nome}}</b> - {{solucao.sigla}}</h4>
     </div>
-
+  </div>
+  <div class="solucao-show bg-body-secondary mb-3">
     <div class="row">
       <div class="col-md-6">
         <small class="d-block">Descrição</small>
-        <b>{{solucao?.descricao}}</b>
+        <b>{{solucao.descricao}}</b>
       </div>
       <div class="col-md-6">
         <small class="d-block">URL</small>
-        <b>{{solucao?.url}}</b>
+        <b>{{solucao.url}}</b>
       </div>
     </div>
-    
+    <div class="row">
+      <div class="col-md-12">
+        <small class="d-block">Unidades ativas</small>
+        <div class="unidades">
+          <badge *ngFor="let unidade of unidadesAtivas" 
+            color="secondary" 
+            [label]="unidade.sigla"
+          ></badge>
+        </div>
+      </div>
+    </div>
   </div>
+  
+  <separator title="Produtos e Serviços cadastrados">
+    <solucao-list-produto #produtos [entity]="solucao"></solucao-list-produto>
+  </separator>
 </ng-container>

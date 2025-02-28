@@ -16,6 +16,7 @@ import { PanelAdminsFormComponent } from './panel-admins-form/panel-admins-form.
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PanelChangePasswordComponent } from './panel-change-password/panel-change-password.component';
 import {PanelEnvComponent} from "./panel-env/panel-env.component";
+import {PanelAuditComponent} from "./panel-audit/panel-audit.component";
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import {PanelEnvComponent} from "./panel-env/panel-env.component";
     PanelLoginComponent,
     PanelFormComponent,
     PanelListLogsComponent,
+    PanelAuditComponent,
     PanelSeederComponent,
     PanelLayoutComponent,
     PanelAdminsListComponent,

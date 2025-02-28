@@ -2,6 +2,8 @@
     <toolbar></toolbar>
     <filter [deleted]="false" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
+            <input-text [size]="2" label="#ID" icon="bi bi-upc" controlName="id"></input-text>
+            <input-text [size]="5" label="UID" icon="bi bi-upc" controlName="uid" labelInfo="Código Hash"></input-text>
             <input-radio [size]="2" label="Sucesso" controlName="sucesso" [items]="lookup.SIMNAO" labelInfo="Sucesso"></input-radio>
         </div>
     </filter>

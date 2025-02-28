@@ -14,7 +14,7 @@ class Produto  extends ModelBase
 
     protected $table = 'produtos';
 
-    public $fillable_changes = ['produtoProcessoCadeiaValor', 'produtoProduto', 'produtoCliente'];
+    public $fillable_changes = ['produtoProcessoCadeiaValor', 'produtoInsumos', 'produtoCliente', 'solucoes','produtoSolucoes'];
 
     public $cascadeDeletes = ['produtoProcessoCadeiaValor'];
 
@@ -22,6 +22,7 @@ class Produto  extends ModelBase
     const TIPO_SERVICO = 'servico';
 
     protected $fillable = [
+        'responsavel_id',
         'nome',
         'nome_fantasia',
         'tipo',
@@ -35,6 +36,7 @@ class Produto  extends ModelBase
 
     protected $casts = [
         'id' => 'string',
+        'responsavel_id' => 'string',
         'nome' => 'string',
         'nome_fantasia' => 'string',
         'tipo' => 'string',
@@ -60,9 +62,9 @@ class Produto  extends ModelBase
     }
 
 
-    public function produtoProduto()
+    public function produtoInsumos()
     {
-        return $this->hasMany(ProdutoProduto::class, 'produto_base_id');
+        return $this->hasMany(ProdutoInsumo::class, 'produto_id');
     }
 
     public function produtoProcessoCadeiaValor()
@@ -90,4 +92,24 @@ class Produto  extends ModelBase
     {
         return $this->hasMany(ProdutoCliente::class);
     }
+
+    public function produtoSolucoes()
+    {
+        return $this->hasMany(ProdutoSolucao::class);
+    }
+
+    public function solucoes()
+    {
+        return $this->belongsToMany(Solucao::class, 'produtos_solucoes', 'produto_id', 'solucao_id');
+    }
+
+    public function entregas()
+    {
+        return $this->belongsToMany(PlanoEntregaEntrega::class, 'planos_entregas_entregas_produtos', 'produto_id', 'entrega_id');
+    }
+
+    public function responsavel(){
+        return $this->belongsTo(Usuario::class, 'responsavel_id', 'id');
+    }
+    
 }

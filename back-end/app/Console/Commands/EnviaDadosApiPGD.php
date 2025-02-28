@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\API_PGD\Export\ExportarTenantService;
+use App\Jobs\ExportarTenantJob;
 
 class EnviaDadosApiPGD extends Command
 {
@@ -25,11 +25,10 @@ class EnviaDadosApiPGD extends Command
     /**
      * Execute the console command.
      */
-    public function handle(ExportarTenantService $exportarTenantService)
+    public function handle()
     {
-        $tenant = $this->argument('tenant');
-    
-        $exportarTenantService->exportar($tenant);
+        $tenantId = $this->argument('tenant');
+        ExportarTenantJob::dispatch($tenantId)->onQueue('pgd_queue');
     }
 
 }

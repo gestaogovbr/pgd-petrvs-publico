@@ -154,7 +154,7 @@ class PlanoTrabalhoService extends ServiceBase
           - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA (RN_PTR_AA)
       */
       /* (RN_PTR_B) O Plano de Trabalho pode ser incluído pelo próprio servidor, se ele for "participante do programa" habilitado, ou pelas condições da TABELA_1 */
-      if (!$validoTabela1) throw new ServerException("ValidatePlanoTrabalho", "Apenas é permitido a inclusão por usuários participantes do programa ou em caso de chefias seguindo a TABELA_1 disponível na documentação.\n[ver RN_PTR_V][ver RN_PTR_B]");
+      if (!$validoTabela1) throw new ServerException("ValidatePlanoTrabalho", "Usuário não foi selecionado para participar do regramento. Solicite à chefia para fazer a seleção de participante na aba de planejamento");
       /* (RN_PTR_Y) Para incluir um Plano de Trabalho para um participante, é necessário que este esteja LOTADO/COLABORADOR na unidade executora, a menos que este possua a capacidade MOD_PTR_USERS_INCL; */
       if (!parent::loggedUser()->hasPermissionTo('MOD_PTR_USERS_INCL') && !$condicoes["participanteColaboradorUnidadeExecutora"] && !$condicoes["participanteLotadoUnidadeExecutora"]) {
         throw new ServerException("ValidatePlanoTrabalho", "Participante do plano não é LOTADO ou COLABORADOR na unidade executora. (MOD_PTR_USERS_INCL)\n[ver RN_PTR_Y]");
@@ -206,7 +206,7 @@ class PlanoTrabalhoService extends ServiceBase
       $template = $plano->programa->templateTcr->conteudo ?? "";
       $dataset = $this->templateDatasetService->getDataset("PLANO_TRABALHO", true);
       $datasource = $this->templateService->getDatasource("PLANO_TRABALHO", $plano);
-      if($exigeAssinaturas) $this->statusService->atualizaStatus($plano, 'AGUARDANDO_ASSINATURA', 'Plano de Trabalho repactuado');
+      if($exigeAssinaturas) $this->statusService->atualizaStatus($plano, 'INCLUIDO', 'Plano de Trabalho repactuado');
       if(!empty($plano->documento_id) && !$haAssinaturas) {
         $documento = Documento::find($plano->documento_id);
         $documento->template = $template;

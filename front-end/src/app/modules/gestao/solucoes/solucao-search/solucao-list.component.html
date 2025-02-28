@@ -1,0 +1,70 @@
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [selectable]="selectable" 
+    (select)="onSelect($event)"
+    [hasAdd]="this.isCurador"
+    [hasEdit]="this.auth.hasPermissionTo('MOD_SOLUCOES_EDT')">
+    <toolbar *ngIf="!selectable">
+        <input-switch [size]="4" labelPosition="left" label="Agrupar por unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+    </toolbar>
+    <filter 
+        [deleted]="this.auth.hasPermissionTo('MOD_SOLUCOES_EXCL')" 
+        [form]="filter" 
+        [where]="filterWhere" 
+        [submit]="filterSubmit.bind(this)" 
+        [collapseChange]="filterCollapseChange.bind(this)" 
+        [collapsed]="!selectable && filterCollapsed"
+    >
+        <div class="row">
+            <div class="col-md-4">  
+                <input-search 
+                    #unidade 
+                    [size]="6" 
+                    [control]="filter!.controls.unidade_id" 
+                    controlName="unidade_id" 
+                    [dao]="unidadeDao"
+                ></input-search>  
+            </div>
+            <div class="col-md-3 busca-avancada">
+               <div class="busca-avancada-link"><a (click)="onBuscaAvancada()">Busca Avançada</a></div>
+               <div class="busca-avancada-clear"><a (click)="this.onFilterClear()">Limpar filtros de busca</a></div>
+               <div class="busca-avancada-filtros-aplicados">Filtros aplicados:
+                    <span *ngIf="filter!.controls.nome.value.length > 0">Nome</span>
+                    <span *ngIf="filter!.controls.id.value.length > 0">#ID</span>
+                    <span *ngIf="filter!.controls.status.value.length > 0">Status</span>
+               </div>
+            </div>
+        </div>
+    </filter>
+    <columns>
+        <column title="ID#" [template]="columnID">
+            <ng-template let-row="row" #columnID>
+                <span> {{row.id}}</span><br>
+            </ng-template>
+        </column>
+
+        <column title="Nome" [template]="columnNome">
+            <ng-template let-row="row" #columnNome>
+                <span> {{row.nome}}</span><br>
+            </ng-template>
+        </column>
+        <column title="Sigla/Nome Fantasia" [template]="columnSigla">
+            <ng-template let-row="row" #columnSigla>
+                <span> {{row.sigla}}</span><br>
+            </ng-template>
+        </column>
+        <column title="Status" [template]="columnStatus">
+            <ng-template let-row="row" #columnStatus>
+                <badge *ngIf="row.status" color="success" label="Ativo"></badge>
+                <badge *ngIf="!row.status" color="danger" label="Inativo"></badge>
+            </ng-template>
+        </column>
+        <column title="Ativar/Desativar" [template]="columnAtivar">
+            <ng-template let-row="row" #columnAtivar>
+                <input-switch [size]="12" scale="small"  [value]="row.status ? 'true' : 'false'" [valueOn]="'true'"  [valueOff]="'false'" (change)="ativarDesativar(row)"></input-switch>
+            </ng-template>
+        </column>
+        
+        <column type="options" [onEdit]="edit" [options]="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

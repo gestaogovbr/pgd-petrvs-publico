@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuditController;
 use App\Http\Controllers\EnvController;
 use App\Http\Controllers\PainelUsuarioController;
 use Illuminate\Http\Request;
@@ -70,4 +71,9 @@ Route::middleware(['panel'])->prefix('UserPanel')->group(function () {
   Route::post('get-by-id', [PainelUsuarioController::class, 'getById']);
   Route::post('store', [PainelUsuarioController::class, 'store']);
   Route::post('destroy', [PainelUsuarioController::class, 'destroy']);
+});
+
+Route::middleware(['panel'])->prefix('Audit')->group(function () {
+    Route::get('getAll', [AuditController::class, 'listar']);
+    Route::post('query', [AuditController::class, 'query']);
 });

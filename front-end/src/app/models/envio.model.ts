@@ -1,6 +1,7 @@
 import { Base } from './base.model';
 
 export class Envio extends Base {
+    public numero: string = "";  
     public finished_at: string = ""; 
     public sucesso: boolean = false;   
     public erros: string = "";  

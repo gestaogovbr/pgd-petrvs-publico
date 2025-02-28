@@ -116,20 +116,20 @@
         </tab>
         <tab key="INTEGRACAO" label="Integração">
             <div class="row">
-                <input-select [size]="4" label="Tipo da Integração" controlName="tipo_integracao" [items]="lookup.TIPO_INTEGRACAO"></input-select>
-                <input-switch [size]="2" labelPosition="top" label="Auto-incluir" controlName="integracao_auto_incluir"></input-switch>
-                <input-text [size]="6" label="Codigo unidade raiz" controlName="integracao_cod_unidade_raiz" [attr.maxlength]=250></input-text>
+                <input-select [size]="12" label="Tipo da Integração" controlName="tipo_integracao" [items]="lookup.TIPO_INTEGRACAO"></input-select>
+                <!-- <input-switch [size]="2" labelPosition="top" label="Auto-incluir" controlName="integracao_auto_incluir"></input-switch> -->
+                <!-- <input-text [size]="6" label="Codigo unidade raiz" controlName="integracao_cod_unidade_raiz" [attr.maxlength]=250></input-text> -->
             </div>
             <div *ngIf="form?.controls!.tipo_integracao.value == 'SIAPE'" class="row">
                 <separator title="API Consulta SIAPE" labeInfo="As informações dessa tela são referentes às inseridas no cadastro do SIAPE"></separator>
                 <div class="row">
                     <input-text [size]="6" label="URL" controlName="integracao_siape_url" [attr.maxlength]=250></input-text>
-                    <input-text [size]="3" label="Upag" controlName="integracao_siape_upag" [attr.maxlength]=250></input-text>
-                    <input-text [size]="3" label="Sigla do Sistema" controlName="integracao_siape_sigla" [attr.maxlength]=250></input-text>
+                    <input-text [size]="6" label="Sigla do Sistema" controlName="integracao_siape_sigla" [attr.maxlength]=250></input-text>
                 </div>
                 <div class="row">
-                    <input-text [size]="6" label="Chave ConectaGov" controlName="integracao_siape_conectagov_chave" [attr.maxlength]=250></input-text>
-                    <input-text password [size]="6" label="Senha ConectaGov" controlName="integracao_siape_conectagov_senha" [attr.maxlength]=250></input-text>
+                    <input-text [size]="4" label="Chave ConectaGov" controlName="integracao_siape_conectagov_chave" [attr.maxlength]=250></input-text>
+                    <input-text password [size]="4" label="Senha ConectaGov" controlName="integracao_siape_conectagov_senha" [attr.maxlength]=250></input-text>
+                    <input-number [size]="4"  [maxValue]="30" [minValue]="10" label="Quantidade de requisições Simultaneas" controlName="integracao_siape_conectagov_qtd_max_requisicoes"></input-number>
                 </div>
                 <div class="row">
                     <input-text [size]="4" label="Nome do Sistema" controlName="integracao_siape_nome" [attr.maxlength]=250></input-text>
@@ -137,10 +137,9 @@
                     <input-text password [size]="4" label="Senha" controlName="integracao_siape_senha" [attr.maxlength]=250></input-text>
                 </div>
                 <div class="row">
-                    <input-text [size]="3" label="Codigo do Órgão" controlName="integracao_siape_codorgao" [attr.maxlength]=250></input-text>
-                    <input-text [size]="3" label="Codigo UORG" controlName="integracao_siape_uorg" [attr.maxlength]=250></input-text>
-                    <input-select [size]="3" label="Existe Pagador" controlName="integracao_siape_existepag" [items]="lookup.EXISTE_PAGADOR"></input-select>
-                    <input-select [size]="3" label="Tipo de Vínculo" controlName="integracao_siape_tipovinculo" [items]="lookup.TIPO_VINCULO"></input-select>
+                    <input-text [size]="4" label="Codigo do Órgão" controlName="integracao_siape_codorgao" [attr.maxlength]=250></input-text>
+                    <input-select [size]="4" label="Existe Pagador" controlName="integracao_siape_existepag" [items]="lookup.EXISTE_PAGADOR"></input-select>
+                    <input-select [size]="4" label="Tipo de Vínculo" controlName="integracao_siape_tipovinculo" [items]="lookup.TIPO_VINCULO"></input-select>
                 </div>
                 <div class="row">
                     <input-text [size]="6" label="Perfil Usuário Comum" controlName="integracao_usuario_comum" [attr.maxlength]=250></input-text>
@@ -166,8 +165,9 @@
             </div>
             <div *ngIf="form?.controls!.tipo_integracao.value == 'API'" class="row">
                 <input-text [size]="12" label="URL" controlName="api_url" [attr.maxlength]=250></input-text>
+                <input-text [size]="3" label="Código Unidade Autorizadora" controlName="api_cod_unidade_autorizadora" [attr.maxlength]=10></input-text>
                 <input-text [size]="6" label="Nome de Usuário" controlName="api_username" [attr.maxlength]=250></input-text>
-                <input-text password [size]="6" label="Senha" controlName="api_password" [placeholder]="apiPasswordPlaceholder"></input-text>
+                <input-text password [size]="3" label="Senha" controlName="api_password" [placeholder]="apiPasswordPlaceholder"></input-text>
             </div>
             <div *ngIf="form?.controls!.tipo_integracao.value == 'SMTP'" class="row">
                 <div class="col-md-12">

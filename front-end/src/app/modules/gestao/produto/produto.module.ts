@@ -6,9 +6,11 @@ import { ComponentsModule } from 'src/app/components/components.module';
 import { ProdutoFormComponent } from './produto-form/produto-form.component';
 import { ProdutoListComponent } from './produto-list/produto-list.component';
 import { ProdutoListProcessoComponent } from './produto-list-processo/produto-list-processo.component';
-import { ProdutoListProdutoComponent } from './produto-list-produto/produto-list-produto.component';
+import { ProdutoListInsumoComponent } from './produto-list-insumo/produto-list-insumo.component';
 import { ProdutoShowComponent } from './produto-show/produto-show.component';
 import { ProdutoListClienteComponent } from './produto-list-cliente/produto-list-cliente.component';
+import { ProdutoFilterComponent } from './produto-filter/produto-filter.component';
+import { ProdutoListSolucaoComponent } from './produto-list-solucao/produto-list-solucao.component';
 
 
 @NgModule({
@@ -16,9 +18,11 @@ import { ProdutoListClienteComponent } from './produto-list-cliente/produto-list
     ProdutoFormComponent,
     ProdutoListComponent,
     ProdutoListProcessoComponent,
-    ProdutoListProdutoComponent,
+    ProdutoListInsumoComponent,
     ProdutoShowComponent,
-    ProdutoListClienteComponent
+    ProdutoListClienteComponent,
+    ProdutoListSolucaoComponent,
+    ProdutoFilterComponent
   ],
   imports: [
     CommonModule,

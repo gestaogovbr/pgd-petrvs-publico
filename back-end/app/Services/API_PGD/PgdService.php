@@ -34,12 +34,12 @@ class PgdService
           });
         return $response->successful();
 
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
         $this->exception = $e;
 
         $response = $this->getLogReponse();
         
-        if ($response->status() == 422) {
+        if ($response && $response->status() == 422) {
           $data = $response->json();
 
           if (is_array($data['detail'])) {

@@ -8,63 +8,52 @@
         controlName="nome" 
         [control]="form!.controls.nome" 
         [attr.maxlength]=250 
-        labelInfo="Nome formal do produto ou serviço. Ex: Programa de Destão do Desempenho"
+        labelInfo="Nome formal da Solução. Ex: Programa de Gestão e Desempenho"
         required   
       ></input-text>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-8">
       <input-text 
-        [size]="4" 
+        [size]="8" 
         label="Sigla/Nome Fantasia" 
         icon="bi bi-textarea-t" 
         controlName="nome" 
         [control]="form!.controls.sigla" 
         [attr.maxlength]=250 
-        labelInfo="Nome informal do produto ou serviço. Ex: PGD"
+        labelInfo="Nome informal da Solução. Ex: PGD"
         required>
       </input-text>
     </div>
-    <div class="col-md-4" *ngIf="this.action == 'consult'">
-      Status
-      <badge [label]="this.entity?.status ? 'ATIVO' : 'INATIVO'" [color]="this.entity?.status ? 'success': 'danger'"></badge>
-    </div>
-    <div class="col-md-4">  
-      <input-search #unidade 
-        [size]="8" 
-        label="Unidade Instituidora"
-        required 
-        [disabled]="action == 'new' ? undefined : 'true'" 
-        controlName="unidade_id" 
-        [dao]="unidadeDao"
-      ></input-search>
-    </div>
+   
   </div>
   <div class="row">
     <div class="col-md-6">
       <input-text 
-      [size]="6" 
-      label="Descrição" 
-      icon="bi bi-textarea-t" 
-      controlName="descricao" 
-      [control]="form!.controls.descricao" 
-      [attr.maxlength]=250 
-      labelInfo="Objetivo e aplicabilidade da solução. Ex: Programa do indutor da melhoria de desempenho individual e institucional."
-      required   
+        [size]="6" 
+        label="Descrição" 
+        icon="bi bi-textarea-t" 
+        controlName="descricao" 
+        [control]="form!.controls.descricao" 
+        [attr.maxlength]=250 
+        labelInfo="Objetivo e aplicabilidade da solução. Ex: Programa indutor de melhoria de desempenho individual e institucional."
+        required   
       ></input-text>
     </div>
     <div class="col-md-6">
       <input-text 
-      [size]="6" 
-      label="URL" 
-      icon="bi bi-textarea-t" 
-      controlName="url" 
-      [control]="form!.controls.url" 
-      [attr.maxlength]=250 
-      labelInfo="Página oficial do produto ou serviço. Ex: www.gov.br/lgpd"
+        required
+        [size]="6" 
+        label="URL" 
+        icon="bi bi-textarea-t" 
+        controlName="url" 
+        [control]="form!.controls.url" 
+        [attr.maxlength]=250 
+        labelInfo="Página oficial da Solução. Ex: www.gov.br/pgd"
       ></input-text>
     </div>
   </div>
 </editable-form>
+
 
 
 

@@ -7,6 +7,7 @@ use App\Services\API_PGD\DataSources\PlanoTrabalhoDataSource;
 use App\Services\API_PGD\Resources\PlanoTrabalhoResource;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class ExportarTrabalhoJob extends ExportarItemJob
 {
@@ -24,7 +25,7 @@ class ExportarTrabalhoJob extends ExportarItemJob
     }
 
     public function getEndpoint($resource): string {
-        return "/organizacao/SIAPE/{$resource->cod_unidade_autorizadora}/plano_trabalho/{$resource->id}";
+        return "/organizacao/SIAPE/{$this->api_cod_unidade_autorizadora}/plano_trabalho/{$resource->id}";
     }
 
     public function atualizarEntidade($id) {
@@ -33,13 +34,22 @@ class ExportarTrabalhoJob extends ExportarItemJob
     }
 
     public function addFalha() {
-        $this->envio->increment('qtde_trabalhos_falhas');
+        DB::table('envios')->where('id', $this->envioId)->increment('qtde_trabalhos_falhas');
         parent::addFalha();
     }
 
     public function addSucesso() {
-        $this->envio->increment('qtde_trabalhos_sucessos');
+        DB::table('envios')->where('id', $this->envioId)->increment('qtde_trabalhos_sucessos');
         parent::addSucesso();
+    }
+
+    protected function getAuditableType() {
+        return 'App\Models\PlanoTrabalho';
+    }
+
+    public function displayName()
+    {
+        return "Exportar Plano de Trabalho #{$this->jobNumber}";
     }
 
 }

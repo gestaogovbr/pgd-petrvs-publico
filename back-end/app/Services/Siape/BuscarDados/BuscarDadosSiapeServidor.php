@@ -3,6 +3,7 @@
 namespace App\Services\Siape\BuscarDados;
 
 use App\Models\IntegracaoServidor;
+use App\Models\SiapeBlackListServidores;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeListaServidores;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
 use Illuminate\Support\Str;
 
+
 class BuscarDadosSiapeServidor extends BuscarDadosSiape
 {
     const MAX_INSERT_DB = 1000;
@@ -22,6 +24,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
 
         $this->limpaTabela();
         $servidoresJaProcessadas = IntegracaoServidor::all();
+        $blacklistServidores = SiapeBlackListServidores::all();
 
         $response = SiapeListaServidores::where('processado', 0)
             ->orderBy('updated_at', 'desc')->get();
@@ -43,17 +46,23 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             }
         }
 
-        $servidores = array_filter($servidores, function ($servidor) use ($servidoresJaProcessadas) {
+        $servidores = array_filter($servidores, function ($servidor) use ($servidoresJaProcessadas, $blacklistServidores) {
 
-            $unidadeProcessada =  $servidoresJaProcessadas->firstWhere('cpf', $servidor['cpf']);
+            $estaNaBlackList =  $blacklistServidores->firstWhere('cpf', $servidor['cpf']);
+            if ($estaNaBlackList) {
+                Log::alert("está na black list deverá ser ignorado: ".$servidor['cpf']);
+                return false;
+            }
+            $servidorProcessado =  $servidoresJaProcessadas->firstWhere('cpf', $servidor['cpf']);
 
-            if (!$unidadeProcessada) {
+            if (!$servidorProcessado) {
                 return true;
             }
-            if(is_null($unidadeProcessada->data_modificacao)){
+
+            if(is_null($servidorProcessado->data_modificacao)){
                 return true;
             }
-            $dataModificacaoBD = $this->asTimestamp($unidadeProcessada->data_modificacao);
+            $dataModificacaoBD = $this->asTimestamp($servidorProcessado->data_modificacao);
 
             $dataModificacaoSiape = DateTime::createFromFormat('dmY', $servidor['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
             $dataModificacaoSiape  = $this->asTimestamp($dataModificacaoSiape);
@@ -222,7 +231,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
 
     private function buscaDados(array $xmlsServidores)
     {
-        $lotes = array_chunk($xmlsServidores, self::QUANTIDADE_MAXIMA_REQUISICOES, true);
+        $lotes = array_chunk($xmlsServidores, $this->getQtdMaxRequisicoes(), true);
         $tempoInicial = microtime(true);
         $respostas = [];
         foreach ($lotes as $i => $lote) {

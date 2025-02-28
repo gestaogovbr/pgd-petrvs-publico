@@ -6,6 +6,7 @@ use App\Services\API_PGD\DataSources\ParticipanteDataSource;
 use App\Services\API_PGD\Resources\ParticipanteResource;
 use App\Models\Usuario;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ExportarParticipanteJob extends ExportarItemJob
 {
@@ -23,7 +24,7 @@ class ExportarParticipanteJob extends ExportarItemJob
     }
 
     public function getEndpoint($resource): string {
-        return "/organizacao/SIAPE/{$resource->cod_unidade_autorizadora}/{$resource->cod_unidade_lotacao}/participante/{$resource->matricula_siape}";
+        return "/organizacao/SIAPE/{$this->api_cod_unidade_autorizadora}/{$resource->cod_unidade_lotacao}/participante/{$resource->matricula_siape}";
     }
 
     public function atualizarEntidade($id) {
@@ -31,14 +32,22 @@ class ExportarParticipanteJob extends ExportarItemJob
     }
 
     public function addFalha() {
-        $this->envio->increment('qtde_participantes_falhas');
+        DB::table('envios')->where('id', $this->envioId)->increment('qtde_participantes_falhas');
         parent::addFalha();
     }
 
     public function addSucesso() {
-        $this->envio->increment('qtde_participantes_sucessos');
+        DB::table('envios')->where('id', $this->envioId)->increment('qtde_participantes_sucessos');
         parent::addSucesso();
     }
 
+    protected function getAuditableType() {
+        return 'App\Models\Participante';
+    }
+
+    public function displayName()
+    {
+        return "Exportar Participante #{$this->jobNumber}";
+    }
 }
 

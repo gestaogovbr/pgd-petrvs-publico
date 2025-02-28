@@ -14,7 +14,6 @@ class PlanoEntregaResource extends JsonResource
             "tipo"                        => 'entrega',
             "id_plano_entregas"           => $this->id,
             "origem_unidade"              => "SIAPE",  
-            "cod_unidade_autorizadora"    => $this->programa->unidadeAutorizadora->codigo ?? null,
             "cod_unidade_instituidora"    => $this->programa->unidade->codigo,
             "cod_unidade_executora"       => $this->unidade->codigo,
             "data_inicio"                 => Carbon::parse($this->data_inicio)->format('Y-m-d'),
@@ -46,10 +45,10 @@ class PlanoEntregaResource extends JsonResource
         }
     }
 
-    public function getAvaliacao() {
-      switch($this->avaliacao->nota ?? null) {
+    function getAvaliacao() {
+      switch(str_replace('"', "", $this->avaliacao?->nota)) {
         case "Adequado":
-          return 3;
+          return 3; 
         case "Superou o acordado":
         case "Alto desempenho":
           return 2;

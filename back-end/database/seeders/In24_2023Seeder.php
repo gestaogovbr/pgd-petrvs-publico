@@ -32,7 +32,6 @@ class In24_2023Seeder extends Seeder
 
   public $timenow;
   public $brasilia;
-  public $unidade_inicial;
   public $utilService;
 
   public function __construct()
@@ -41,8 +40,6 @@ class In24_2023Seeder extends Seeder
     $this->brasilia = Cidade::where('codigo_ibge', '5300108')->sole();
     $this->utilService = new UtilService();
 
-    // Encontra unidade inicial (instituidora) para registro de programa
-    $this->unidade_inicial = Unidade::where('codigo', '1')->first();
   }
 
   public function run()
@@ -1290,49 +1287,7 @@ class In24_2023Seeder extends Seeder
       ]
     );
 
-    $programas = array(
-      array(
-        "id" => "9ebed914-1b82-4df0-95da-b0c8fadbb6f2",
-        "created_at" => $this->timenow,
-        "updated_at" => $this->timenow,
-        "deleted_at" => NULL,
-        "nome" => "Programa de Gestão e Desempenho",
-        "normativa" => "IN Conjunta SEGES-SGPRT/MGI Nº 24, DE 28 DE JULHO DE 2023",
-        "prazo_max_plano_entrega" => 365,
-        "termo_obrigatorio" => 1,
-        "config" => NULL,
-
-        "data_inicio" => $this->timenow,
-        "data_fim" => date(
-          'Y-m-d H:i:s',
-          strtotime('+1 year', strtotime($this->timenow))
-        ),
-
-        "periodicidade_consolidacao" => "MENSAL",
-        "periodicidade_valor" => 1,
-        "dias_tolerancia_consolidacao" => 10,
-        "dias_tolerancia_avaliacao" => 20,
-        "dias_tolerancia_recurso_avaliacao" => 20,
-        "nota_padrao_avaliacao" => "\"Não executado\"",
-
-        "checklist_avaliacao_entregas_plano_entrega" => "[]",
-        "checklist_avaliacao_entregas_plano_trabalho" => "[]",
-        "plano_trabalho_criterios_avaliacao" => "[]",
-
-        "registra_comparecimento" => 1,
-        "plano_trabalho_assinatura_participante" => 1,
-        "plano_trabalho_assinatura_gestor_lotacao" => 0,
-        "plano_trabalho_assinatura_gestor_unidade" => 0,
-        "plano_trabalho_assinatura_gestor_entidade" => 0,
-        "tipo_avaliacao_plano_trabalho_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
-        "tipo_avaliacao_plano_entrega_id" => "b0db190d-823d-4222-bc92-abff634f5390",
-        "tipo_justificativa_id" => "f2aef225-a391-4667-9c41-6bb537b18778",
-        "unidade_id" => $this->unidade_inicial->id,
-        "template_tcr_id" => "ef1c106c-3534-46d2-9519-cc69d5cf9dad",
-        "tipo_documento_tcr_id" => "48bc6f30-a634-4a21-9717-6fe0dc0d4f2a",
-        "documento_id" => NULL,
-      ),
-    );
+    
 
     $templates = array(
       array(

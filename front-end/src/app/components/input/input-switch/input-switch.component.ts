@@ -44,6 +44,13 @@ export class InputSwitchComponent extends InputBase implements OnInit {
   get value(): any {
     return this.getValue();
   }
+
+  public setValue(value: any) {
+    super.setValue(value);
+
+    if(this.checkbox) this.checkbox.nativeElement.checked = this.valueOn ? this.valueOn == value : !!value;
+  }
+
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
   }
@@ -89,6 +96,7 @@ export class InputSwitchComponent extends InputBase implements OnInit {
   }
 
   public onChange(event: Event) {
+    console.log('onChange');
     const value = (event.target as HTMLInputElement).checked ? this.valueOn || true : this.valueOff || false;
     //console.log("CHANGED", this.controlName, value);
     this.control?.setValue(value);

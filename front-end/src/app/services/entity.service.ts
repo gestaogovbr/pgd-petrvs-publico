@@ -63,6 +63,7 @@ import { OcorrenciaDaoService } from '../dao/ocorrencia-dao.service';
 import { DisciplinaDaoService } from '../dao/disciplina-dao.service';
 import { SolucaoDaoService } from '../dao/solucao-dao.service';
 import { EnvioDaoService } from '../dao/envio-dao.service';
+import { ClienteDaoService } from '../dao/cliente-dao.service';
 
 export type EntityItem = {
   collection: string,
@@ -97,9 +98,12 @@ export class EntityService {
       { collection: 'Capacidade', table: 'capacidades', campo: 'tipo_capacidade_id', icon: '', dao: injector.get<CapacidadeDaoService>(CapacidadeDaoService), label: "Capacidade" },
       { collection: 'CapacidadeTecnica', codigo: 'MOD_RX_CURR', table: 'capacidades_tecnicas', campo: 'nome', icon: 'bi bi-arrows-angle-contract', dao: injector.get<CapacidadeTecnicaDaoService>(CapacidadeTecnicaDaoService), label: "Capacidade Técnica", selectRoute: { route: ['raiox', 'cadastros', 'capacidade-tecnica'] } },
       { collection: 'Cargo', codigo: 'MOD_RX_CURR', table: 'cargos', campo: 'nome', icon: 'bi bi-person-badge', dao: injector.get<CargoDaoService>(CargoDaoService), label: "Cargo", selectRoute: { route: ['raiox', 'cadastros', 'cargo'] } },
+      { collection: 'Cliente', table: 'clientes', campo: 'row_id', icon: 'bi bi-briefcase-fill', dao: injector.get<ClienteDaoService>(ClienteDaoService), label: "Clientes", selectRoute: { route: ['cadastros', 'cliente'] } },
       { collection: 'Change', table: 'changes', campo: 'row_id', icon: 'bi bi-filter-square', dao: injector.get<ChangeDaoService>(ChangeDaoService), label: "Log de Alteração", selectRoute: { route: ['logs', 'change'] } },
       { collection: 'CentroTreinamento', codigo: 'MOD_RX_CURR', table: 'centros_treinamentos', campo: 'nome', icon: 'bi bi-building-fill', dao: injector.get<CentroTreinamentoDaoService>(CentroTreinamentoDaoService), label: "Centro de Treinamento", selectRoute: { route: ['raiox', 'cadastros', 'centro-treinamento'] } },
       { collection: 'Cidade', codigo: 'MOD_CID', table: 'cidades', campo: 'nome', icon: 'bi bi-building', dao: injector.get<CidadeDaoService>(CidadeDaoService), label: "Cidade", selectRoute: { route: ['cadastros', 'cidade'] } },
+      { collection: 'ConsultaCPFSIAPE', icon: 'bi bi-clipboard-check', label: "Consulta CPF SIAPE" },
+      { collection: 'ConsultaUnidadeSIAPE', icon: 'bi bi-clipboard2-check-fill', label: "Consulta Unidade SIAPE" },
       { collection: 'Documento', table: 'documentos', campo: 'numero', icon: '', dao: injector.get<DocumentoDaoService>(DocumentoDaoService), label: "Documento" },
       { collection: 'EixoTematico', codigo: 'MOD_EXTM', table: 'eixos_tematicos', campo: 'nome', icon: 'bi bi-gear', dao: injector.get<EixoTematicoDaoService>(EixoTematicoDaoService), label: "Eixo Temático", selectRoute: { route: ['cadastros', 'eixo-tematico'] } },
       { collection: 'Entidade', codigo: 'MOD_ENTD', table: 'entidades', campo: 'nome', icon: 'bi bi-bookmark-heart', dao: injector.get<EntidadeDaoService>(EntidadeDaoService), label: "Entidade", selectRoute: { route: ['configuracoes', 'entidade'] } },
@@ -132,7 +136,7 @@ export class EntityService {
       { collection: 'ProjetoTarefa', table: 'projetos_tarefas', campo: 'nome', icon: '', dao: injector.get<ProjetoTarefaDaoService>(ProjetoTarefaDaoService), label: "Tarefa do Projeto" },
       { collection: 'RelatorioArea', icon: 'bi bi-diagram-3-fill', label: "Área" },
       { collection: 'RelatorioServidor', icon: 'bi bi-file-person', label: "Servidor" },
-      { collection: 'Solucao', codigo: 'MOD_PROD_CAT', table: 'solucao_produtos_servicos', campo: 'nome', icon: 'bi bi-cart', dao: injector.get<SolucaoDaoService>(SolucaoDaoService), label: "Soluções de Produtos e Serviços", selectRoute: { route: ['gestao', 'solucao'] } },
+      { collection: 'Solucao', codigo: 'MOD_SOLUCOES', table: 'solucao_produtos_servicos', campo: 'nome', icon: 'bi bi-cart', dao: injector.get<SolucaoDaoService>(SolucaoDaoService), label: "Soluções de Produtos e Serviços", selectRoute: { route: ['gestao', 'solucao'] } },
       { collection: 'TipoTarefa', table: 'tipos_tarefas', campo: 'nome', icon: 'bi bi-boxes', dao: injector.get<TipoTarefaDaoService>(TipoTarefaDaoService), label: "Tipo de Tarefa", selectRoute: { route: ['cadastros', 'tipo-tarefa'] } },
       { collection: 'Template', codigo: 'MOD_TEMP', table: 'templates', campo: 'titulo', icon: 'bi bi-archive', dao: injector.get<TemplateDaoService>(TemplateDaoService), label: "Template", selectRoute: { route: ['cadastros', 'template'] } },
       { collection: 'Teste', icon: 'bi bi-clipboard-check', label: "Teste" },

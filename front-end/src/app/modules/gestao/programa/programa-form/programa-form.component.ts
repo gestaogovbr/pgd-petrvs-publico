@@ -46,7 +46,6 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
     this.modalWidth = 700;
     this.form = this.fh.FormBuilder({
       unidade_id: { default: "" },
-      unidade_autorizadora_id: { default: "" },
       nome: { default: "" },
       normativa: { default: "" },
       link_normativa: { default: null },
@@ -85,7 +84,7 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if (['nome', 'unidade_autorizadora_id', 'unidade_id', 'tipo_avaliacao_plano_trabalho_id', 'tipo_avaliacao_plano_entrega_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['nome', 'unidade_id', 'tipo_avaliacao_plano_trabalho_id', 'tipo_avaliacao_plano_entrega_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     } else if (controlName == "prazo_max_plano_entrega" && parseInt(control.value || 0) > 99999) {
       result = "Inválido";

@@ -104,7 +104,7 @@ return [
     */
 
     'trim' => [
-        'recent' => 10080,
+        'recent' => 60,
         'pending' => 10080,
         'completed' => 10080,
         'recent_failed' => 10080,
@@ -171,7 +171,7 @@ return [
     |
     */
 
-    'memory_limit' => 128,
+    'memory_limit' => 1024,
 
     /*
     |--------------------------------------------------------------------------
@@ -184,7 +184,7 @@ return [
     |
     */
 
-    'default' => [    
+    'default' => [
     ],
 
     'environments' => [
@@ -199,7 +199,7 @@ return [
                 'timeout' => 90
             ],
             'supervisor-siape' => [
-                'connection' => 'siape_queue',
+                'connection' => 'redis',
                 'queue' => ['siape_queue'],
                 'balance' => 'simple',
                 'processes' => 1,
@@ -207,12 +207,14 @@ return [
                 'timeout' => 60 * 60 * 24 * 2
             ],
             'supervisor-pgd' => [
-                'connection' => 'pgd_queue',
+                'connection' => 'redis',
                 'queue' => ['pgd_queue'],
                 'balance' => 'simple',
-                'processes' => 3,
-                'tries' => 3,
-                'timeout' => 60 * 60 * 3
+                'processes' => env('PGD_PROCESSES', 4),
+                'tries' => 1,
+                'backoff' => 60 * 60 * 2,
+                'timeout' => 60 * 60 * 3,
+                'memory' => env('PGD_MEMORY', 1024 * 4),
             ],
         ],
 
@@ -227,7 +229,7 @@ return [
                 'timeout' => 90
             ],
             'supervisor-siape' => [
-                'connection' => 'siape_queue',
+                'connection' => 'redis',
                 'queue' => ['siape_queue'],
                 'balance' => 'simple',
                 'processes' => 1,
@@ -235,12 +237,15 @@ return [
                 'timeout' => 60 * 60 * 24 * 2
             ],
             'supervisor-pgd' => [
-                'connection' => 'pgd_queue',
+                'connection' => 'redis',
                 'queue' => ['pgd_queue'],
                 'balance' => 'simple',
-                'processes' => 3,
-                'tries' => 3,
-                'timeout' => 60 * 60 * 3
+                'processes' => env('PGD_PROCESSES', 1),
+                'tries' => 1,
+                'backoff' => 60 * 60 * 2,
+                'timeout' => 60 * 60 * 3,
+                'memory' => env('PGD_MEMORY', 1024 * 1),
+                'maxJobs' => 1000
             ],
         ],
     ],

@@ -14,7 +14,7 @@ class JobBase
 
     public function __construct(protected readonly JobSchedule $job)
     {
-        Log::alert("JobBase: " . $job->nome);
+        // Log::alert("JobBase: " . $job->nome);
     }
 
     public function handle()

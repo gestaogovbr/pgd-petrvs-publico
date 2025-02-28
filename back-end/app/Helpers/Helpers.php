@@ -10,3 +10,16 @@ if (!function_exists('logInfo')) {
         //Log::channel('daily')->info($output);
     }
 }
+
+if (!function_exists('getClassNameFromPath')) {
+    function getClassNameFromPath(string $filePath) :  ?string{
+        $namespace = str_replace(['app/', '/'], ['App\\', '\\'], $filePath);
+        $namespace = rtrim($namespace, '.php'); 
+
+        if (class_exists($namespace)) {
+            return class_basename($namespace); 
+        }
+
+        return null;
+    }
+}

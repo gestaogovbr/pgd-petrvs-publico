@@ -12,6 +12,7 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { IntegranteService } from 'src/app/services/integrante.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
+import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 
 @Component({
   selector: 'unidade-integrante',
@@ -30,6 +31,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   public integranteService: IntegranteService;
   public integranteDao: UnidadeIntegranteDaoService;
   public usuarioDao: UsuarioDaoService;
+  public unidadeDao: UnidadeDaoService;
   public tiposAtribuicao: LookupItem[] = [];
   public perfilDao: PerfilDaoService;
 
@@ -38,6 +40,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     this.integranteService = injector.get<IntegranteService>(IntegranteService);
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
     this.form = this.fh.FormBuilder({
       usuario_id: { default: "" },
@@ -50,7 +53,18 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   ngOnInit() {
     super.ngOnInit();
     this.entity = this.metadata?.unidade;
-    this.tiposAtribuicao = this.lookup.UNIDADE_INTEGRANTE_TIPO;
+  
+    if (this.entity) {
+      if (this.entity?.instituidora) {
+        this.tiposAtribuicao = this.lookup.UNIDADE_INTEGRANTE_TIPO;
+      } else {
+        this.tiposAtribuicao = this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(
+          atribuicao => atribuicao.key !== 'CURADOR'
+        );
+      }
+
+      this.tiposAtribuicao = this.lookup.ordenarLookupItem(this.tiposAtribuicao);
+    }
   }
 
   ngAfterViewInit() {
@@ -140,6 +154,9 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     let usuario = this.perfis.find(p => p.id == row.id);
     form.controls.usuario_id.setValue(this.grid?.adding ? row.usuario_id : row.id);
     form.controls.perfil_id.setValue(usuario?.perfil_id);
+    if (usuario?.usuario_externo) {
+      this.tiposAtribuicao = this.tiposAtribuicao.filter((x: LookupItem) => x.key != 'GESTOR_SUBSTITUTO');
+    }
     form.controls.atribuicoes.setValue(this.integranteService.converterAtribuicoes(row.atribuicoes));
     form.controls.atribuicao.setValue("");
   }

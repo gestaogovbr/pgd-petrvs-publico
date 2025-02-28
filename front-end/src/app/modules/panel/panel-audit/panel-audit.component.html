@@ -1,0 +1,43 @@
+<div class="row">
+    <div class="col-md-11">
+        <input-container label="">
+            <input type="text" id="search" class="form-control" placeholder="Digite o texto ..." [(ngModel)]="search">
+        </input-container>
+    </div>
+    <div class="col-md-1">
+        <input-container label="">
+            <button class="btn btn-info" (click)="loadAudits()">Filtrar</button>
+        </input-container>
+    </div>
+</div>
+<grid [items]="audits">
+    <columns>
+        <column title="Criado em" [template]="columnData">
+            <ng-template let-row="row" #columnData>
+                <span>{{dao!.getDateFormatted(row.created_at)}}</span>
+            </ng-template>
+        </column>
+        <column title="Evento" [template]="columnEvent">
+            <ng-template let-row="row" #columnEvent>
+                <span>{{row.event}}</span>
+            </ng-template>
+        </column>
+        <column title="Módulo" [template]="columnTable">
+            <ng-template let-row="row" #columnTable>
+                <span>{{row.table_type}}</span>
+            </ng-template>
+        </column>
+        <column title="Usuário" [template]="columnUser">
+            <ng-template let-row="row" #columnUser>
+                <span>{{row.performed_by}}</span>
+            </ng-template>
+        </column>
+        <column title="Detalhes" [template]="columnDetail">
+            <ng-template let-row="row" #columnDetail>
+                <span>{{JSON.stringify(row.details)}}</span>
+            </ng-template>
+        </column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
+    

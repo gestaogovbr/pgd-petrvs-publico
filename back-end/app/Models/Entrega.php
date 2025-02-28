@@ -35,10 +35,12 @@ class Entrega extends ModelBase
   {
     return $this->hasMany(PlanoEntregaEntrega::class);
   }
+
   public function entregasPlanoTrabalho()
   {
     return $this->hasMany(PlanoTrabalhoEntrega::class);
   }
+  
   // Belongs
   public function unidade()
   {

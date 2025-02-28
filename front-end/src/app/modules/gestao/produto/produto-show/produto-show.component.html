@@ -3,32 +3,34 @@
 </div>
 <ng-container *ngIf="produto">
   <div class="bg-dark-subtle d-flex p-2 px-4">
-    <div class="">
-      <h5>ID #{{produto.id}} - {{produto.nome}} - {{produto.nome}}</h5>
+    <div>
+      <h4>ID #{{produto.identificador}} - <b>{{produto.nome}}</b> - {{produto.nome_fantasia}}</h4>
     </div>
   </div>
-  <div class="bg-body-secondary d-flex justify-content-between p-2 px-4 mb-4">
-    <div>
-      <small class="d-block">Descrição</small>
-      <b>{{produto.descricao}}</b>
+
+  <div class="bg-body-secondary p-3 mb-4">
+    <div class="row">
+      <div class="col-md-3">
+        <small class="d-block text-muted">Descrição</small>
+        <b>{{produto.descricao}}</b>
+      </div>
+      <div class="col-md-3">
+        <small class="d-block text-muted">Unidade</small>
+        <b>{{produto.unidade?.sigla}}</b>
+      </div>
+      <div class="col-md-3" *ngIf="!produto.data_ativado && !produto.data_desativado">
+        <small class="d-block text-muted">Criado em</small>
+        <b>{{formatDate(produto.created_at)}}</b>
+      </div>
+      <div class="col-md-3" *ngIf="produto.data_ativado && !produto.data_desativado">
+        <small class="d-block text-muted">Ativado em</small>
+        <b>{{formatDate(produto.data_ativado)}}</b>
+      </div>
+      <div class="col-md-3" *ngIf="produto.data_desativado && !produto.data_ativado">
+        <small class="d-block text-muted">Desativado em</small>
+        <b>{{formatDate(produto.data_desativado)}}</b>
+      </div>
     </div>
-
-    <div>
-      <small class="d-block">Unidade</small>
-      <b>{{produto.unidade?.nome}}</b>
-    </div>
-
-
-    <div>
-      <small class="d-block">Ativado em</small>
-      <b>{{produto.data_ativado}}</b>
-    </div>
-
-    <div>
-      <small class="d-block">Desativado em</small>
-      <b>{{produto.data_desativado}}</b>
-    </div>
-
   </div>
 
   <tabs>
@@ -41,94 +43,24 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let processo of produto.produto_processo_cadeia_valor">
-            <th>{{processo.cadeia_valor_processo?.nome}}</th>
-            <td>{{processo.cadeia_valor_processo?.sequencia}}</td>
-            <td></td>
+          <tr *ngFor="let produto of produto.produto_cliente">
+            <td>{{produto.cliente?.tipo_cliente?.nome}}</td>
+            <td>{{produto.cliente?.nome}}</td>
           </tr>
         </tbody>
       </table>
     </tab>
 
-    <tab key="SOLUCAO" label="Solução">
-      <div class="row">
-        <div class="col-4">
-          <small class="d-block">Solução</small>
-          <b>{{produto.descricao}}</b>
-        </div>
-
-        <div class="col-4">
-          <small class="d-block">Unidade instituidora</small>
-          <b>{{produto.descricao}}</b>
-        </div>
-
-        <div class="col-4">
-          <small class="d-block">Status da solução</small>
-          <b>{{produto.descricao}}</b>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-4">
-          <small class="d-block">Descrição</small>
-          <b>{{produto.descricao}}</b>
-        </div>
-
-        <div class="col-4">
-          <small class="d-block">Responsável</small>
-          <b>{{produto.descricao}}</b>
-        </div>
-
-        <div class="col-4">
-          <small class="d-block">URL</small>
-          <b>{{produto.descricao}}</b>
-        </div>
-      </div>
+    <tab key="SOLUCAO" label="Soluções">
+      <produto-list-solucao #solucoes noPersist [disabled]="true" [entity]="produto"></produto-list-solucao>
     </tab>
 
-    <tab key="PROCESSOS" label="Processos">
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Processo</th>
-            <th scope="col">Nível</th>
-            <th scope="col">Cadeia de valor</th>
-            <th scope="col">Unidade</th>
-            <th scope="col">Visualizar</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let processo of produto.produto_processo_cadeia_valor">
-            <th>{{processo.cadeia_valor_processo?.nome}}</th>
-            <td>{{processo.cadeia_valor_processo?.sequencia}}</td>
-            <td>{{processo.cadeia_valor_processo?.cadeia_valor?.nome}}</td>
-            <td>{{processo.cadeia_valor_processo?.cadeia_valor?.unidade?.nome}}</td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
+    <tab key="PROCESSOS" label="Processos (cadeias de valor)">
+      <produto-list-processo #processos noPersist [disabled]="true" [entity]="produto"></produto-list-processo>
     </tab>
 
-    <tab key="PRODUTOS" label="Produtos relacionados">
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Produto/Serviço</th>
-            <th scope="col">Tipo</th>
-            <th scope="col">Unidade</th>
-            <th scope="col">Detalhes</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let produto of produto.produto_produto">
-            <th>{{produto.produto_relacionado?.nome}}</th>
-            <th>{{lookup.getValue(lookup.TIPO_RELACAO_PRODUTO, produto.tipo)}}</th>
-            <th>{{produto.produto_relacionado?.unidade?.nome}}</th>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
+    <tab key="PRODUTOS" label="Insumos">
+      <produto-list-insumo #insumos noPersist [disabled]="true" [entity]="produto"></produto-list-insumo>
     </tab>
-
   </tabs>
 </ng-container>

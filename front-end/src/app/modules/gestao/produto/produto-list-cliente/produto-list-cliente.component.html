@@ -1,16 +1,29 @@
 <grid [items]="items" [form]="form!" noMargin #gridClientes editable [selectable]="false" [minHeight]="items.length > 2 ? 0 : 300" [join]="join" [groupBy]="groupBy" [add]="addCliente.bind(this)" [remove]="removeCliente.bind(this)" [save]="saveCliente.bind(this)" [load]="loadCliente.bind(this)" [hasDelete]="true" [hasEdit]="true" [hasAdd]="true">
   <columns>
-    <column [titleTemplate]="titleCliente" [template]="columnCliente" [editTemplate]="editCliente" [verticalAlign]="'middle'" [width]="300" [align]="'center'">
+
+
+    <column [titleTemplate]="titleCliente" [template]="columnCliente" [editTemplate]="editCliente" [verticalAlign]="'middle'" [width]="300" [align]="'left'">
       <ng-template let-header="header" #titleCliente>
-        <div class="text-center"><span><strong>Cliente</strong></span></div>
+        <div class="text-left"><span><strong>Cliente</strong></span></div>
       </ng-template>
+     
       <ng-template let-row="row" #columnCliente>
-        <div class="w-100 d-flex justify-content-center">
-          <p>{{row.cliente.nome}}</p>
+        
+        <div class="w-100">
+          <small>{{row.cliente.tipo_cliente?.nome}} - {{row.cliente.nome}}</small>
         </div>
       </ng-template>
       <ng-template let-row="row" #editCliente>
-        <input-search label #cliente [placeholder]="'Selecione o cliente'" controlName="cliente_id" [dao]="clienteDao" required  [selectRoute]="{route: ['cadastros', 'cliente']}"></input-search>
+        <div class="row">
+          <div class="col-6">
+            <input-select label="Tipo do cliente" #tipoCliente controlName="tipo_cliente_id" [dao]="tipoClienteDao" required (change)="changeTipoCliente()"></input-select>
+          </div>  
+          <div class="col-6">
+            <input-search label="Unidade" #unidade_relacionada controlName="unidade_id" [dao]="unidadeDao"  *ngIf="tipoCliente.selectedItem?.value == 'Unidade de órgão/entidade'"></input-search>
+            <input-select label="Cliente" #cliente controlName="cliente_id" [dao]="clienteDao" [where]="[['tipo_cliente_id', '==', form!.controls.tipo_cliente_id.value]]" *ngIf="tipoCliente.selectedItem  && ['Administração Pública', 'Público externo'].includes(tipoCliente.selectedItem.value) "></input-select>
+            <input-text label="Nome" controlName="outro" [control]="form!.controls.outro" *ngIf="tipoCliente.selectedItem?.value == 'Outros' "></input-text>
+          </div>
+        </div>
       </ng-template>
     </column>
 

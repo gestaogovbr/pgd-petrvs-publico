@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Cache;
 abstract class BuscarDadosSiape
 {
     CONST QUANTIDADE_MAXIMA_REQUISICOES = 10;
+    CONST LIMITE_MAXIMO_CONECTAGOV = 30;
     private $contentType = 'application/x-www-form-urlencoded';
     private string $authorizationHeader;
     protected static $token = null;
@@ -20,6 +21,7 @@ abstract class BuscarDadosSiape
     private $cpf;
     private $client;
     private $secret;
+    private ?int $quantidadeMaxRequisicoes;
 
     public function __construct(
         private readonly mixed $config
@@ -28,6 +30,11 @@ abstract class BuscarDadosSiape
         $this->url = $config["url"];
         $this->client = $config["conectagov_chave"];
         $this->secret = $config["conectagov_senha"];
+        $this->quantidadeMaxRequisicoes = $config["conectagov_qtd_max_requisicoes"] ?? self::QUANTIDADE_MAXIMA_REQUISICOES;
+        
+        if($this->quantidadeMaxRequisicoes > self::LIMITE_MAXIMO_CONECTAGOV){
+            $this->quantidadeMaxRequisicoes = self::QUANTIDADE_MAXIMA_REQUISICOES;
+        }
         $this->authorizationHeader = 'Basic ' . base64_encode($this->client . ':' . $this->secret);
     }
 
@@ -143,11 +150,17 @@ abstract class BuscarDadosSiape
         return $respostas;
     }
 
-    protected function prepareResponseXml(string $response) : SimpleXMLElement
+    private function sanitizeXml(string &$response): void
     {
-        $response = str_replace('&', '&amp;', $response);
-        $response = trim($response); 
-        $response = str_replace(['&lt;', '&gt;', '&quot;', '&amp;', '&apos;'], ['<', '>', '"', '&', "'"], $response); 
+        $response = trim($response);
+        $response = preg_replace('/&(?!amp;|lt;|gt;|quot;|apos;)/', '&amp;', $response);
+        $response = preg_replace('/[^\P{C}\t\n\r]/u', '', $response);
+        $response = preg_replace('/xmlns=""/', '', $response);
+    }
+
+    public function prepareResponseXml(string $response) : SimpleXMLElement
+    {
+        $this->sanitizeXml($response);
         libxml_use_internal_errors(true); 
         $response = <<<XML
         $response
@@ -161,7 +174,7 @@ abstract class BuscarDadosSiape
             libxml_clear_errors();
             throw new RequestConectaGovException('Invalid XML response'); 
         }
-        //Log::info('Response convertido: ' , [$responseXml]);
+        
         return $responseXml;
     }
 
@@ -178,6 +191,44 @@ abstract class BuscarDadosSiape
             ($date instanceof DateTime ? $date->getTimestamp() : 
             (gettype($date) == "string" ? (strtotime($date) ? strtotime($date) : null) : null));
         return $result;
+    }
+
+    public function buscaSincrona(string $xmlData)
+    {
+        $token = $this->getToken();
+
+        $curl = curl_init();
+
+        $headers = [
+            'x-cpf-usuario: ' . $this->getCpf(),
+            'Authorization: Bearer ' . $token,
+            'Content-Type: application/xml',
+        ];
+
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $this->geturl() . '/api-consulta-siape/v1/consulta-siape',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_POSTFIELDS => $xmlData,
+        ]);
+
+        Log::info('Busca - Request para ' . $this->geturl() . '/api-consulta-siape/v1/consulta-siape', [
+            'headers' => $headers,
+            'body' => $xmlData
+        ]);
+
+        $response = curl_exec($curl);
+
+        if (curl_errno($curl)) {
+            $error_msg = curl_error($curl);
+            curl_close($curl);
+            throw new Exception('cURL error: ' . $error_msg);
+        }
+
+        curl_close($curl);
+        Log::info(' Response: ' . $response);
+        return $response;
     }
 
     public abstract function enviar() : void;
@@ -207,6 +258,11 @@ abstract class BuscarDadosSiape
     public function getConfig(): mixed
     {
         return $this->config;
+    }
+
+    public function getQtdMaxRequisicoes(): int
+    {
+        return $this->quantidadeMaxRequisicoes;
     }
 
 }

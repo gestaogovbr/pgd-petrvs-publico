@@ -6,6 +6,8 @@
       <sourceFolder url="file://$MODULE_DIR$/back-end/database/factories" isTestSource="false" packagePrefix="Database\Factories\" />
       <sourceFolder url="file://$MODULE_DIR$/back-end/database/seeders" isTestSource="false" packagePrefix="Database\Seeders\" />
       <sourceFolder url="file://$MODULE_DIR$/back-end/tests" isTestSource="true" packagePrefix="Tests\" />
+      <sourceFolder url="file://$MODULE_DIR$/back-end/tests/Feature" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/back-end/tests/Unit" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -7,6 +7,13 @@
         </div>
     </filter>
     <columns>
+        <column title="Número" field="numero" [width]="20" [template]="columnNumero">
+            <ng-template let-row="row" #columnNumero>
+                <span>
+                    <small>{{ row.numero }}</small>
+                </span>
+            </ng-template>
+        </column>
         <column title="Iniciado em" field="created_at" [width]="80" [template]="columnDataCriacao">
             <ng-template let-row="row" #columnDataCriacao>
                 <span><small>{{ util.getDateTimeFormatted(row.created_at) }}</small></span>
@@ -15,13 +22,6 @@
         <column title="Finalizado em" field="finished_at" [width]="80" [template]="columnDataFim">
             <ng-template let-row="row" #columnDataFim>
                 <span><small>{{ util.getDateTimeFormatted(row.finished_at) }}</small></span>
-            </ng-template>
-        </column>
-        <column title="Finalizado" field="sucesso" [width]="20" [template]="columnDataSucesso">
-            <ng-template let-row="row" #columnDataSucesso>
-                <span [ngClass]="{'text-danger': !row.sucesso}">
-                    <small>{{ util.getBooleanFormatted(row.sucesso).toUpperCase() }}</small>
-                </span>
             </ng-template>
         </column>
         <column title="Participantes" field="qtde_participantes_sucessos" [width]="20" [template]="columnParticipantes">

@@ -49,7 +49,7 @@ class Programa extends ModelBase
     'tipo_avaliacao_id', /* char(36); NOT NULL; */
     'documento_id', /* char(36); */
     'unidade_id', /* char(36); NOT NULL; */
-    'unidade_autorizadora_id', /* char(36); */
+    // 'unidade_autorizadora_id', /* char(36); */
     'template_tcr_id', /* char(36); */
     //'deleted_at', /* timestamp; */
     /*'periodo_avaliacao',*/ // REMOVED
@@ -101,10 +101,11 @@ class Programa extends ModelBase
     return $this->belongsTo(Unidade::class);
   }
 
-  public function unidadeAutorizadora()
+  /*public function unidadeAutorizadora()
   {
     return $this->belongsTo(Unidade::class, 'unidade_autorizadora_id');
-  }
+  }*/
+  
   public function documento()
   {
     return $this->belongsTo(Documento::class);

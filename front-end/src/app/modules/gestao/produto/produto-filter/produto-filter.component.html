@@ -1,0 +1,40 @@
+
+<editable-form [form]="form!" confirmLabel="Buscar" (submit)="onSubmitClick()" (cancel)="onCancel()">
+    <div class="row">
+        <div class="col-md-12">
+            <input-text 
+                [size]="12" 
+                label="ID#" 
+                icon="bi bi-textarea-t" 
+                [control]="form!.controls.id" 
+                controlName="this.form.id" 
+                [attr.maxlength]=10
+            ></input-text>
+            
+            <input-text 
+                    [size]="12" 
+                    label="Nome/Sigla/Nome Fantasia" 
+                    controlName="nome"
+                    [control]="form!.controls.nome" 
+                    placeholder="Nome/Sigla/Nome Fantasia" 
+                    [attr.maxlength]=250
+                ></input-text>
+            <input-search 
+                    #cliente 
+                    [size]="6" 
+                    label="Cliente"
+                    [control]="form!.controls.cliente_id" 
+                    controlName="cliente_id" 
+                    [dao]="clienteDao"
+            ></input-search>  
+            <input-select 
+                *ngIf="enableStatus"
+                [size]="12" 
+                label="Status"
+                [items]="lookup.TIPO_ATIVO_INATIVO" 
+                [control]="form!.controls.status" 
+                controlName="this.form.status"
+            ></input-select> 
+        </div>   
+    </div>
+</editable-form>

@@ -61,6 +61,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   public formProcessos: FormGroup;
   public unidadeDao: UnidadeDaoService;
   public entregaDao: EntregaDaoService;
+
   public itensQualitativo: LookupItem[] = [];
   public planejamentoInstitucionalDao: PlanejamentoDaoService;
   public planoEntregaEntregaDao: PlanoEntregaEntregaDaoService;
@@ -89,7 +90,12 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.modalWidth = 700;
-    this.join = ["entrega", "objetivos.objetivo", "processos.processo"];
+    this.join = [
+      "entrega", 
+      "objetivos.objetivo", 
+      "processos.processo", 
+      "produtos.produto"
+    ];
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
       descricao_entrega: { default: "" },
@@ -107,6 +113,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       destinatario: { default: null },
       objetivos: { default: [] },
       processos: { default: [] },
+      produtos: { default: [] },
       listaQualitativo: { default: [] },
       planejamento_id: { default: null },
       cadeia_valor_id: { default: null },
@@ -212,6 +219,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     form.controls.realizado.setValue(this.planoEntregaService.getValor(entity.realizado));
     form.controls.objetivos.setValue(entity.objetivos);
     form.controls.processos.setValue(entity.processos);
+    form.controls.produtos.setValue(entity.produtos);
     if (this.dataFim) form.controls.data_fim.setValue(this.dataFim);
     
     await this.loadEtiquetas();

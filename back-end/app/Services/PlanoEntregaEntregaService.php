@@ -135,6 +135,7 @@ class PlanoEntregaEntregaService extends ServiceBase
             'meta' => $entrega->meta,
             'objetivos' => $entrega->objetivos,
             'processos' => $entrega->processos,
+            'produtos' => $entrega->produtos,
             'data_inicio' => $entrega->data_inicio,
             'data_fim' => $entrega->data_fim,
             'unidade' => $entrega->unidade,
@@ -143,7 +144,6 @@ class PlanoEntregaEntregaService extends ServiceBase
     
         if ($incluirPai) {
             $result['pai'] = PlanoEntregaEntrega::with('unidade')->find($entrega->entrega_pai_id);
-
         }
     
         $filhos = PlanoEntregaEntrega::where('entrega_pai_id', $entrega->id)->get();

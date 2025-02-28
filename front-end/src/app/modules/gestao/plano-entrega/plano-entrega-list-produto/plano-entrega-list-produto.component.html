@@ -1,0 +1,44 @@
+<grid #gridSolucoes noMargin editable
+  [items]="items" 
+  [form]="form!" 
+  [selectable]="false" 
+  [minHeight]="items.length > 2 ? 0 : 300" 
+  [join]="join" 
+  [groupBy]="groupBy" 
+  [add]="addProduto.bind(this)" 
+  [remove]="removeProduto.bind(this)" 
+  [save]="saveProduto.bind(this)" 
+  [load]="loadProduto.bind(this)" 
+  [hasDelete]="!disabled" 
+  [hasEdit]="!disabled" 
+  [hasAdd]="!disabled"
+>
+  <columns>
+    <column 
+      [titleTemplate]="titleProduto" 
+      [template]="columnProduto" 
+      [editTemplate]="editProduto" 
+      [verticalAlign]="'middle'" 
+      [align]="'center'"
+    >
+      <ng-template let-header="header" #titleProduto>
+        <order by="produto.nome" [header]="header">Produtos</order>
+      </ng-template>
+      <ng-template let-row="row" #columnProduto>
+        <div class="w-100 d-flex">
+          <p>{{row.produto?.nome}}</p>
+        </div>
+      </ng-template>
+      <ng-template let-row="row" #editProduto>
+        <input-search 
+          #produto label required  
+          [placeholder]="'Selecione o Produto'" 
+          controlName="produto_id" 
+          [dao]="produtoDao" 
+          [selectRoute]="{route: ['gestao', 'produto'], params: {mode: 'search-ativos'}}"
+        ></input-search>
+      </ng-template>
+    </column>
+    <column type="options"></column>
+  </columns>
+</grid>
