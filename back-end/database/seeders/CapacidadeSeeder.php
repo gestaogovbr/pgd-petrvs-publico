@@ -7,7 +7,7 @@ use App\Models\Capacidade;
 use App\Models\Perfil;
 use App\Models\TipoCapacidade;
 use App\Services\UtilService;
-use App\Services\NivelAcessoService; 
+use App\Services\NivelAcessoService;
 
 class CapacidadeSeeder extends Seeder
 {
@@ -47,7 +47,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_ATV_TRF_CONS"],
       ["codigo" => "MOD_ATV_TRF_EDT"],
       ["codigo" => "MOD_ATV_TRF_EXCL"],
-      ["codigo" => "MOD_ATV_TRF_INCL"],      
+      ["codigo" => "MOD_ATV_TRF_INCL"],
       ["codigo" => "MOD_PTR"],
       ["codigo" => "MOD_PTR_CNC"],
       ["codigo" => "MOD_PTR_CSLD"],
@@ -65,9 +65,9 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_PENT"],
       ["codigo" => "MOD_PRGT"],
       ["codigo" => "MOD_PROD"],
-      ["codigo" => "MOD_PROD_CAT_INCL"],
-      ["codigo" => "MOD_PROD_CAT_EDT"],
-      ["codigo" => "MOD_PROD_CAT_EXCL"],
+      ["codigo" => "MOD_PROD_INCL"],
+      ["codigo" => "MOD_PROD_EDT"],
+      ["codigo" => "MOD_PROD_EXCL"],
       ["codigo" => "MOD_SOLUCOES"],
       ["codigo" => "MOD_SOLUCOES_INCL"],
       ["codigo" => "MOD_SOLUCOES_EDT"],
@@ -104,7 +104,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_EXTM_EDT"],
       ["codigo" => "MOD_EXTM_EXCL"],
       ["codigo" => "MOD_EXTM_INCL"],
-      ["codigo" => "MOD_CTXT"],      
+      ["codigo" => "MOD_CTXT"],
       ["codigo" => "MOD_PART"],
       ["codigo" => "MOD_PART_HAB"],
       ["codigo" => "MOD_PART_DESAB"],
@@ -158,14 +158,14 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_TRF_INCL"],
       ["codigo" => "MOD_UND"],
       ["codigo" => "MOD_UND_EDT"],
-      ["codigo" => "MOD_UND_INCL"],      
+      ["codigo" => "MOD_UND_INCL"],
       ["codigo" => "MOD_UND_TUDO"],
       ["codigo" => "MOD_USER"],
       ["codigo" => "MOD_USER_TUDO"],
       ["codigo" => "MOD_PROD"],
-      ["codigo" => "MOD_PROD_CAT_INCL"],
-      ["codigo" => "MOD_PROD_CAT_EDT"],
-      ["codigo" => "MOD_PROD_CAT_EXCL"],
+      ["codigo" => "MOD_PROD_INCL"],
+      ["codigo" => "MOD_PROD_EDT"],
+      ["codigo" => "MOD_PROD_EXCL"],
       ["codigo" => "MOD_SOLUCOES"],
       ["codigo" => "MOD_SOLUCOES_INCL"],
       ["codigo" => "MOD_SOLUCOES_EDT"],
@@ -344,6 +344,42 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_TIPO_CLI_EXCL"],
       ["codigo" => "MOD_TIPO_CLI_INCL"]
     ];
+
+    $capacidades_administrador_geral = array_merge($capacidades_administrador_negocial, [
+      ["codigo" => "CTXT_DEV"],
+      ["codigo" => "MENU_CONFIG_ACESSO"],
+      ["codigo" => "MENU_DEV_ACESSO"],
+      ["codigo" => "MENU_DEV_CONSULTAS"],
+      ["codigo" => "MOD_CFG_ENTD"],
+      ["codigo" => "MOD_CFG_PERFS"],
+      ["codigo" => "MOD_CFG_UND"],
+      ["codigo" => "MOD_CFG_USER_PERFIL"],
+      ["codigo" => "MOD_CLI"],
+      ["codigo" => "MOD_CLI_EDT"],
+      ["codigo" => "MOD_CLI_EXCL"],
+      ["codigo" => "MOD_CLI_INCL"],
+      ["codigo" => "MOD_ENTD"],
+      ["codigo" => "MOD_ENTD_EDT"],
+      ["codigo" => "MOD_FER"],
+      ["codigo" => "MOD_FER_EDT"],
+      ["codigo" => "MOD_FER_EXCL"],
+      ["codigo" => "MOD_FER_INCL"],
+      ["codigo" => "MOD_PRGT_EXT"],
+      ["codigo" => "MOD_TIPO_TRF"],
+      ["codigo" => "MOD_TIPO_TRF_EDT"],
+      ["codigo" => "MOD_TIPO_TRF_EXCL"],
+      ["codigo" => "MOD_TIPO_TRF_INCL"],
+      ["codigo" => "MOD_PROD"],
+      ["codigo" => "MOD_PROD_INCL"],
+      ["codigo" => "MOD_PROD_EDT"],
+      ["codigo" => "MOD_PROD_EXCL"],
+    ]);
+
+    $capacidades_colaborador = $capacidades_administrador_negocial;
+    // retirar algumas capacidades do colaborador
+    $capacidades_colaborador = array_filter($capacidades_colaborador, function ($c) {
+      return !in_array($c['codigo'], ["MOD_CADV_EDT", "MOD_CADV_EXCL", "MOD_CADV_INCL", "MOD_CFG_USER", "MOD_EXTM_EDT", "MOD_EXTM_EXCL", "MOD_EXTM_INCL", "MOD_PENT_QQR_UND", "MOD_PLAN_INST_EDT", "MOD_PLAN_INST_EXCL", "MOD_PLAN_INST_INCL", "MOD_PRGT_CONCL", "MOD_PRGT_EDT", "MOD_PRGT_EXCL", "MOD_UND_INATV", "MOD_UND_INTG", "MOD_UND_INTG_EDT", "MOD_UND_INTG_EXCL", "MOD_UND_INTG_GST", "MOD_UND_INTG_INCL", "MOD_USER_ATRIB"]);
+    });
 
     // Inserção de dados
     $capacidadesInseridas = [];
