@@ -2,11 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Models\Produto;
-
 use Illuminate\Http\Request;
-use App\Exceptions\Contracts\IBaseException;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
@@ -50,15 +46,11 @@ class ProdutoController extends ControllerBase
                 break;
 
             case 'UPDATE':
-                if (!$usuario->hasPermissionTo('MOD_PROD_CAT_EDT')) throw new ServerException("ProdutoUpdate", "Inserção não realizada");
-                break;
-
-            case 'UPDATE':
-                if (!$usuario->hasPermissionTo('MOD_PROD_CAT_EDT')) throw new ServerException("ProdutoUpdate", "Inserção não realizada");
+                if (!$usuario->hasPermissionTo('MOD_PROD_EDT')) throw new ServerException("ProdutoUpdate", "Alteração não realizada");
                 break;
 
             case 'DESTROY':
-                if (!$usuario->hasPermissionTo('MOD_PROD_CAT_EXCL')) throw new ServerException("ProdutoDestroy", "Exclusão não realizada");
+                if (!$usuario->hasPermissionTo('MOD_PROD_EXCL')) throw new ServerException("ProdutoDestroy", "Exclusão não realizada");
                 break;
         }
 
