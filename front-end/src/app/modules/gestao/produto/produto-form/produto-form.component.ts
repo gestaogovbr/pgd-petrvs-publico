@@ -40,13 +40,11 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
       "produtoSolucoes.solucao"
     ];
     this.form = this.fh.FormBuilder({
-      responsavel_id: { default: "" },
       nome: { default: "" },
       nome_fantasia: { default: "" },
       descricao: { default: "" },
       url: { default: "" },
       tipo: { default: "" },
-      unidade_id: { default: "" },
       produto_processo_cadeia_valor: { default: [] },
       produto_insumos: { default: [] },
       produto_cliente: { default: [] },
