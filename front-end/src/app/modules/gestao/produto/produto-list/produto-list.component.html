@@ -8,8 +8,8 @@
     [selectable]="selectable" 
     (select)="onSelect($event)"
     labelAdd="Incluir Novo Produto ou Serviço"
-    [hasAdd]="this.isChefe && !this.isSearching"
-    [hasEdit]="this.isChefe && !this.isSearching"
+    [hasAdd]="this.isChefe && !this.isSearching && this.auth.hasPermissionTo('MOD_PROD_INCL')"
+    [hasEdit]="this.isChefe && !this.isSearching && this.auth.hasPermissionTo('MOD_PROD_EDT')"
 >
     <toolbar *ngIf="!selectable">
         <button type="button" class="btn btn-outline-success" 

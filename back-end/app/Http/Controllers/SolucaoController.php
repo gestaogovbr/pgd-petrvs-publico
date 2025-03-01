@@ -19,7 +19,7 @@ class SolucaoController extends ControllerBase {
     {
         parent::__construct();
         $this->validators = $validator;
-        $this->middleware('curador')->only(['update', 'atribuirTodos', 'desatribuirTodos']);
+        $this->middleware('curador')->only(['update', 'destroy', 'atribuirTodos', 'desatribuirTodos']);
     }
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {

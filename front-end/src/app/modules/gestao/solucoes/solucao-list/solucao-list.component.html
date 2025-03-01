@@ -8,7 +8,8 @@
     (select)="onSelect($event)"
     [hasAdd]="this.isCurador"
     labelAdd="Incluir Nova Solução"
-    [hasEdit]="this.auth.hasPermissionTo('MOD_SOLUCOES_EDT')"
+    [hasEdit]="this.auth.hasPermissionTo('MOD_SOLUCOES_EDT') && isCurador"
+    [hasDelete]="this.auth.hasPermissionTo('MOD_SOLUCOES_DEL') && isCurador"
 >
     <toolbar *ngIf="!selectable">
         <button type="button" class="btn btn-outline-success" 

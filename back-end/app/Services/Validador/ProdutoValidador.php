@@ -34,20 +34,9 @@ class ProdutoValidador extends BaseValidador
         $regrasComuns = [
             'nome_fantasia' => 'nullable|string|max:255',
             'url' => ['required', 'regex:/^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}(\/[^\s]*)?$/'],
-            'unidade_id' => 'uuid|exists:unidades,id',
+            // 'unidade_id' => 'uuid|exists:unidades,id',
             'data_ativado' => 'nullable|date',
-            'data_desativado' => 'nullable|date',
-            'responsavel_id' => [
-            'required',
-            'uuid',
-            'exists:usuarios,id',
-                function ($attribute, $value, $fail) {
-                    $usuario = Usuario::find($value);
-                    if (!$usuario || !$usuario->isCurador()) {
-                        $fail('O usuário selecionado não é um curador válido.');
-                    }
-                },
-            ],
+            'data_desativado' => 'nullable|date'
         ];
         
         if ($this->getTipo() === self::TIPO_STORE) {
