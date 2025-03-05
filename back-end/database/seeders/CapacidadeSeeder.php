@@ -322,6 +322,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MENU_DEV_ACESSO"], 
       ["codigo" => "MENU_DEV_CONSULTAS"], 
       ["codigo" => "MOD_CFG_ENTD"],
+      ["codigo" => "MOD_CFG_PERFS"],
       ["codigo" => "MOD_CFG_UND"],
       ["codigo" => "MOD_CFG_USER_PERFIL"],
       ["codigo" => "MOD_CLI"],
