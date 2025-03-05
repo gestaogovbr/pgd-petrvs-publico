@@ -16,7 +16,7 @@ class PerfilService extends ServiceBase {
         [2, "Perfil Administrador Negocial", "Representantes de unidades instituidoras"],
         [3, "Perfil Unidade", "Representantes de unidades executoras"],
         [5, "Perfil Participante", "Agentes públicos selecionáveis para o PGD"],
-        [6, "Perfil Colaborador", "Agente públicos não selecionáveis para o PGD (ex: estagiários, terceirizados, etc)"],
+        [6, "Perfil Colaborador", "Agente públicos não selecionáveis para o PGD (ex: Terceirizados)"],
     ];
 
     /**
