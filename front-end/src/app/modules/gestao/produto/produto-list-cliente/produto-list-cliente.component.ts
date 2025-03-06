@@ -62,10 +62,14 @@ export class ProdutoListClienteComponent extends PageFrameBase {
       tipo_cliente_id: { default: "" },
       unidade_relacionada_id: { default: "" },
       outro: { default: "" },
-    }, this.cdRef);
+    }, this.cdRef, this.validate);
     this.join = ["produtoCliente.cliente.tipoCliente"];
   }
 
+  public validate = (control: AbstractControl, controlName: string) => {
+    let result = null;
+    return result;
+}
 
   public async addCliente() {
     return Object.assign(new ProdutoCliente(), {
