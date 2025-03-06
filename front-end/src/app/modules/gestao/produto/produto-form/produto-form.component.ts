@@ -50,7 +50,7 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
       produto_cliente: { default: [] },
       produto_solucoes: { default: [] },
       solucao: { default: [] },
-    });
+    }, this.cdRef, this.validate);
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
