@@ -18,7 +18,8 @@ import { PageFrameBase } from "src/app/modules/base/page-frame-base";
 @Component({
   selector: 'produto-list-cliente',
   templateUrl: './produto-list-cliente.component.html',
-  styleUrls: ['./produto-list-cliente.component.scss']
+  styleUrls: ['./produto-list-cliente.component.scss'],
+  standalone: false,
 })
 export class ProdutoListClienteComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
@@ -57,33 +58,29 @@ export class ProdutoListClienteComponent extends PageFrameBase {
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
 
     this.form = this.fh.FormBuilder({
-      cliente_id: { default: "" },
+      cliente_relacionado_id: { default: "" },
       tipo_cliente_id: { default: "" },
       unidade_relacionada_id: { default: "" },
-      outro: { default: "" },
-    }, this.cdRef, this.validate);
+    }, this.cdRef, undefined);
     this.join = ["produtoCliente.cliente.tipoCliente"];
   }
 
-  public validate = (control: AbstractControl, controlName: string) => {
-    let result = null;
-    return result;
-}
+
 
   public async addCliente() {
     return Object.assign(new ProdutoCliente(), {
       _status: "ADD",
       id: this.dao!.generateUuid(),
-      cliente_id: '',
+      cliente_relacionado_id: '',
     }) as IIndexable;
   }
 
-  public async loadCliente(form: FormGroup, entity: ProdutoCliente) {
-    form.patchValue(this.util.fillForm(form, entity));
-    if (entity._status != "ADD") {
-      form.controls.cliente_id.setValue(entity.cliente_id);
-      form.controls.tipo_cliente_id.setValue(entity.cliente?.tipo_cliente_id);
-      form.controls.unidade_relacionada_id.setValue(entity.cliente?.unidade_id);
+  public async loadCliente(form: FormGroup, row: ProdutoCliente) {
+    let produtoCliente: ProdutoCliente = row;
+    if (produtoCliente._status != "ADD") {
+      form.controls.cliente_relacionado_id.setValue(produtoCliente.cliente_id);
+      form.controls.tipo_cliente_id.setValue(produtoCliente.cliente?.tipo_cliente_id);
+      form.controls.unidade_relacionada_id.setValue(produtoCliente.cliente?.unidade_id);
     }
   }
 
@@ -111,7 +108,7 @@ export class ProdutoListClienteComponent extends PageFrameBase {
 
       // se o tipo cliente for diferente de Administração Pública e Público externo
       if(this.tipoCliente?.selectedItem && ['Administração Pública', 'Público externo'].includes(this.tipoCliente.selectedItem.value)) {
-        row.cliente_id = this.form!.controls.cliente_id.value;
+        row.cliente_id = this.form!.controls.cliente_relacionado_id.value;
         row.cliente = {
           ...this.cliente!.selectedItem,
           tipo_cliente_id: this.tipoCliente!.selectedItem!.key,
