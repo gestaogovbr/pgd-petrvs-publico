@@ -160,9 +160,7 @@ export class ProdutoListClienteComponent extends PageFrameBase {
         }
       }
     
-      this.entity!._metadata.produtoCliente.cliente = row.cliente;
-      console.log(row);
-      
+      this.entity!._metadata.produtoCliente.cliente = row.cliente;     
       this.cdRef.detectChanges();
     }
     return this.entity!._metadata.produtoCliente;
