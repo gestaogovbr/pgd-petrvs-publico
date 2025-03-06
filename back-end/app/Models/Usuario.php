@@ -168,6 +168,10 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasOne(Entidade::class, 'gestor_id');
     }
 
+  public function isDeveloper(): bool {
+    return $this->perfil?->nivel === 0;
+  }
+
     public function gerenciaSubstitutaEntidade()
     {
         return $this->hasOne(Entidade::class, 'gestor_substituto_id');

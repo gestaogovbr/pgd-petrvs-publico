@@ -222,7 +222,7 @@ export class LookupService implements IIndexable {
     { key: 'GESTOR_DELEGADO', value: "Servidor Delegado", icon: "bi bi-star-fill", color: "danger" },
     { key: 'GESTOR_SUBSTITUTO', value: "Chefe Substituto", icon: "bi bi-star-half", color: "primary" },
     //{ key: 'HOMOLOGADOR_PLANO_ENTREGA', value: "Homologador (Planos de Entrega)", icon: "bi bi-check2-square", color: "success" },
-    { key: 'CURADOR', value: "Curador", icon: "bi bi-person-badge-fill", color: "primary",  data: {indisponivel: true} },
+    { key: 'CURADOR', value: "Curador", icon: "bi bi-person-badge-fill", color: "primary" },
     { key: 'LOTADO', value: "Lotado", icon: "bi bi-file-person", color: "dark", data: {indisponivel: true} }
   ];
 
@@ -905,6 +905,11 @@ export class LookupService implements IIndexable {
   public TIPO_ATIVO_INATIVO: LookupItem[] = [
     { key: 'ativo', value: "Ativo" },
     { key: 'inativo', value: "Inativo" }
+  ];
+
+  public TIPO_INTERNO_EXTERNO: LookupItem[] = [
+    { key: 'interno', value: "Interno" },
+    { key: 'externo', value: "Externo" }
   ];
 
   public ENVIO_ITEM_TIPO: LookupItem[] = [

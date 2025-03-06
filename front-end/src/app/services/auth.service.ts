@@ -413,7 +413,6 @@ export class AuthService {
     if (this.isUsuarioDeveloper()) return true;
 
     const unidade = pUnidade || this.unidade!;
-    console.log(this.usuario?.perfil);
     const unidadeFound = this.usuario?.areas_trabalho?.find(area => area.unidade_id == unidade.id)
     
     if (!unidadeFound) return false;

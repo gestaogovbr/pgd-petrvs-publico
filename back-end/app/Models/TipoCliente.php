@@ -11,9 +11,13 @@ class TipoCliente extends ModelBase
     use HasFactory, SoftDeletes;
 
     protected $table = 'tipos_clientes';
-
     public $fillable = [
         'nome',
     ];
+
+    public function clientes()
+    {
+        return $this->hasMany(Cliente::class);
+    }
 
 }
