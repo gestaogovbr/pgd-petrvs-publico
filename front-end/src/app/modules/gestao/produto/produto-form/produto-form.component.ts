@@ -61,7 +61,6 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
 
   public async loadData(entity: Produto, form: FormGroup) {    
     let formValue = Object.assign({}, form.value);
-    entity.unidade_id = entity.unidade?.id || this.auth.unidade!.id;
     await Promise.all([
       this.usuario?.loadSearch(entity.responsavel || entity.responsavel_id || this.auth.usuario!.id)
     ]);
