@@ -1,5 +1,5 @@
 import { Component, Injector, ViewChild } from "@angular/core";
-import { FormGroup } from "@angular/forms";
+import { AbstractControl, FormGroup } from "@angular/forms";
 import { EditableFormComponent } from "src/app/components/editable-form/editable-form.component";
 import { SelectItem } from "src/app/components/input/input-base";
 import { InputSearchComponent } from "src/app/components/input/input-search/input-search.component";
@@ -51,6 +51,11 @@ export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoServic
       produto_solucoes: { default: [] },
       solucao: { default: [] },
     });
+  }
+
+  public validate = (control: AbstractControl, controlName: string) => {
+      let result = null;
+      return result;
   }
 
 
