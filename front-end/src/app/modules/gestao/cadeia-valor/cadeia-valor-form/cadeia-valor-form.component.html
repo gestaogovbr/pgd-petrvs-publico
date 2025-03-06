@@ -6,7 +6,7 @@
     <div class="row">
       <input-datetime date [size]="4" label="Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="form!.controls.data_inicio" [labelInfo]="'Início da ' + lex.translate('cadeia de valor')" required></input-datetime>
       <input-datetime date [size]="4" label="Fim" icon="bi bi-calendar-date" controlName="data_fim" [control]="form!.controls.data_fim" [labelInfo]="'Fim da ' + lex.translate('cadeia de valor')" required></input-datetime>
-      <input-search #unidade [size]="4" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+      <input-search #unidade [size]="4" controlName="unidade_id" [dao]="unidadeDao" label="Unidade"></input-search>
       <!-- <input-switch [size]="2" label="Mover filhos" controlName="moveFilhos" labelInfo="Os processos filhos serão movidos junto ao processo pai quando esta opção estiver selecionada." ></input-switch> -->
     </div>
   </div>
