@@ -87,7 +87,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     this.perfilDao.getById(current).then(perfil => {
       if (perfil) {
         if(perfil.nivel == 6){
-          this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(x => x.key == 'GESTOR' || x.key == 'GESTOR_SUBSTITUTO').forEach(x => x.data = {indisponivel: true});
+          this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(x => x.key == 'GESTOR' || x.key == 'GESTOR_SUBSTITUTO' || x.key == 'CURADOR').forEach(x => x.data = {indisponivel: true});
         }
       }
     });
