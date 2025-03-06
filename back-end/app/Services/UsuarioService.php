@@ -256,7 +256,7 @@ class UsuarioService extends ServiceBase
         $query->whereHas('unidadesIntegranteAtribuicoes', function (Builder $query) use ($condition) {
           $query->whereIn('atribuicao', $condition[2]);
         });
-      } 
+      }
       else {
         array_push($where, $condition);
       }
@@ -307,12 +307,16 @@ class UsuarioService extends ServiceBase
     if($action == ServiceBase::ACTION_EDIT){
       if(!empty($data['matricula']) && strlen($data['matricula']) > 50)
         throw new ValidateException("O campo de matrícula deve ter no máximo 50 caracteres", 422);
+    if (empty($data["integrantes"][0]))
+        throw new ValidateException("Selecione uma unidade!", 422);
     }
     if ($action == ServiceBase::ACTION_INSERT) {
       if (empty($data["email"]))
          throw new ValidateException("O campo de e-mail é obrigatório", 422);
       if (empty($data["cpf"]))
          throw new ValidateException("O campo de CPF é obrigatório", 422);
+      if (empty($data["integrantes"][0]))
+        throw new ValidateException("Selecione uma unidade!", 422);
       $query1 = Usuario::where("id", "!=", $data["id"])->where(function ($query) use ($data) {
         return $query->where("cpf", UtilService::onlyNumbers($data["cpf"]))->orWhere("email", $data["email"]);
       });
@@ -381,9 +385,9 @@ class UsuarioService extends ServiceBase
    * @return SimpleXMLElement[]
    */
   public function consultaCPFSiape(string $cpf): array{
-     
+
       return $this->buscaServidor($cpf);
-     
+
   }
     public function searchText($data)
     {

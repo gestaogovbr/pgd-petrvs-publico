@@ -36,6 +36,6 @@
         </tab>
     </tabs>
 </editable-form>
-<small *ngIf="entity?.usuario_externo">
+<small *ngIf="entity?.id && entity?.usuario_externo">
     <span class="fs-6 text-danger">** Cadastro realizado por  {{ entity?.audits_externo[0]?.performed_by || 'carregando...' }}  em {{ entity?.audits_externo[0]?.created_at || 'carregando...' }}  </span>
 </small>

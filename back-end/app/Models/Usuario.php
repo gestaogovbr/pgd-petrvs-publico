@@ -100,7 +100,7 @@ class Usuario extends Authenticatable implements AuditableContract
         if ($action == 'INSERT') {
             $lotacao_id = optional(array_values(array_filter(
                 $dataOrEntity["integrantes"],
-                fn($i) => !empty(array_intersect(["LOTADO", "COLABORADOR"], $i["atribuicoes"]))
+                fn($i) => !empty(array_intersect(["LOTADO", "COLABORADOR", "GESTOR_DELEGADO"], $i["atribuicoes"]))
             )))[0]["unidade_id"] ?? null;
             $this->save();
             $vinculoLotacao = $this->unidadesIntegrantes()->save(new UnidadeIntegrante(['unidade_id' => $lotacao_id]));
