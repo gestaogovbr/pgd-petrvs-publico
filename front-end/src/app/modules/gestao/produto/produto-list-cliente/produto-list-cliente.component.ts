@@ -107,7 +107,7 @@ export class ProdutoListClienteComponent extends PageFrameBase {
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
 
       // se o tipo cliente for diferente de Administração Pública e Público externo
-      if(this.tipoCliente?.selectedItem && ['Administração Pública', 'Público externo'].includes(this.tipoCliente.selectedItem.value)) {
+      if(this.tipoCliente?.selectedItem?.value != 'Unidade de órgão/entidade') {
         row.cliente_id = this.form!.controls.cliente_relacionado_id.value;
         row.cliente = {
           ...this.cliente!.selectedItem,
@@ -118,24 +118,6 @@ export class ProdutoListClienteComponent extends PageFrameBase {
           }
         };
         
-      } else if(this.tipoCliente?.selectedItem?.value == 'Outros') {
-        const queryResult = await this.clienteDao?.query({ where: [['nome', '==', this.form!.controls.outro.value]], join: ['tipoCliente'] }).asPromise();
-        const cliente: Cliente[] = queryResult ? queryResult as unknown as Cliente[] : [];
-        if(cliente && cliente.length > 0) {
-          row.cliente_id = cliente[0].id;
-          row.cliente = cliente[0];
-        } else {
-          const novoCliente = new Cliente();
-          novoCliente.id = this.clienteDao!.generateUuid();
-          novoCliente.nome = this.form!.controls.outro.value;
-          novoCliente.tipo_cliente_id = this.tipoCliente?.selectedItem?.key;
-          const cliente = await this.clienteDao?.save(novoCliente, ['tipoCliente']);
-          if (cliente) {   
-            row.cliente_id = cliente.id;
-            row.outro = cliente.nome;
-            row.cliente = cliente;
-          }
-        } 
       } else if(this.tipoCliente?.selectedItem?.value == 'Unidade de órgão/entidade') {
         const queryResult = await this.clienteDao?.query({ where: [['unidade_id', '==', this.form!.controls.unidade_relacionada_id.value]], join: ['tipoCliente'] }).asPromise();
         const cliente: Cliente[] = queryResult ? queryResult as unknown as Cliente[] : [];
