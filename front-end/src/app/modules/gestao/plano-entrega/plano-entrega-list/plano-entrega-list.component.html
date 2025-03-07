@@ -2,7 +2,8 @@
     [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="canAdd()"
     [hasEdit]="false" [loadList]="onGridLoad.bind(this)">
     <toolbar *ngIf="!selectable" [buttons]="toolbarButtons">
-        <input-switch [size]="3" labelPosition="left" label="Agrupar por unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+<!--        <input-switch [size]="3" labelPosition="left" label="Agrupar por unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>-->
+        <input-switch [size]="4" labelPosition="left" label="Unidades Subordinadas" controlName="subordinadas" [control]="filter!.controls.subordinadas" ></input-switch>
         <input-switch *ngIf="!avaliacao" [size]="2" labelPosition="left" label="Vinculados" controlName="principais" [control]="filter!.controls.principais" (change)="onPrincipaisChange($event)" [labelInfo]="lex.translate('Unidades') + ' onde o ' + lex.translate('usuario') + ' é integrante, incluindo unidades superiores sob sua gerência.'"></input-switch>
     </toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed" [visible]="showFilter">
