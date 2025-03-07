@@ -259,13 +259,10 @@ class TipoCapacidadeService extends ServiceBase
       "descricao" => "Módulo de Produtos e Serviços",
       "capacidades" => [
         /* Capacidades do módulo PRODUTO */
+        ["MOD_PROD", "Permite acesso aos produtos e serviços"],
+        ["MOD_PROD_INCL", "Permite incluir catálogo de produtos e serviços"],
         ["MOD_PROD_EDT", "Permite editar produtos e serviços"],
-        ["MOD_PROD_EXCL", "Permite excluir produtos e serviços"],
-        ["MOD_PROD_INCL", "Permite incluir produtos e serviços"],
-        ["MOD_PROD_CAT", "Permite acesso aos produtos e serviços"],
-        ["MOD_PROD_CAT_INCL", "Permite incluir catálogo de produtos e serviços"],
-        ["MOD_PROD_CAT_EDT", "Permite editar catálogo de produtos e serviços"],
-        ["MOD_PROD_CAT_EXCL", "Permite excluir catálogo de produtos e serviços"]
+        ["MOD_PROD_EXCL", "Permite excluir produtos e serviços"]
       ]
     ], [
       "codigo" => "MOD_SOLUCOES",
@@ -405,6 +402,14 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_CLI_EDT", "Permite editar clientes"],
         ["MOD_CLI_EXCL", "Permite excluir clientes"],
         ["MOD_CLI_INCL", "Permite incluir clientes"]
+      ]
+    ], [
+      "codigo" => "MOD_TIPO_CLI",
+      "descricao" => "Módulo de Tipos de Clientes",
+      "capacidades" => [
+        ["MOD_TIPO_CLI_EDT", "Permite editar tipos de clientes"],
+        ["MOD_TIPO_CLI_EXCL", "Permite excluir tipos de clientes"],
+        ["MOD_TIPO_CLI_INCL", "Permite incluir tipos de clientes"]
       ]
     ]
   ];

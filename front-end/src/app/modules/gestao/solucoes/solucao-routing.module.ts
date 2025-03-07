@@ -10,10 +10,10 @@ import { SolucaoShowComponent } from "./solucao-show/solucao-show.component";
 
 const routes: Routes = [
   { path: '', component: SolucaoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Soluções" } },
-  { path: 'new', component: SolucaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Solução", modal: true } },
-  { path: ':id/edit', component: SolucaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Solução", modal: true } },
-  { path: 'filter', component: SolucaoFiltroComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Busca Avançada", modal: true } },
-  { path: ':id/consult', component: SolucaoShowComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Solução - Detalhamento", modal: true } },
+  { path: 'new', component: SolucaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Soluções (Cadastro)", modal: true } },
+  { path: ':id/edit', component: SolucaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Soluções (Edição)", modal: true } },
+  { path: 'filter', component: SolucaoFiltroComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Soluções (Busca Avançada)", modal: true } },
+  { path: ':id/consult', component: SolucaoShowComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Soluções (Detalhamento)", modal: true } },
 ]
 
 @NgModule({

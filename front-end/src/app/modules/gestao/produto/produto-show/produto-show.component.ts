@@ -24,9 +24,12 @@ export class ProdutoShowComponent extends PageBase {
   }
 
   public async carregaProdutoDetalhado(){
-    this.produto = await this.produtoDaoService.getById(this.metadata.produto.id, [
+    this.produto = await this.produtoDaoService.getById(this.urlParams!.get("id") || '', [
       "produtoProcessoCadeiaValor.cadeiaValorProcesso.cadeiaValor.unidade", 
-      "produtoProduto.produtoRelacionado.unidade",
+      "produtoInsumos.produtoRelacionado.unidade",
+      "produtoInsumos.unidade",
+      "produtoInsumos.cliente",
+      "produtoInsumos.cliente.tipoCliente:nome",
       "responsavel", 
       "unidade", 
       "produtoCliente.cliente.tipoCliente", 

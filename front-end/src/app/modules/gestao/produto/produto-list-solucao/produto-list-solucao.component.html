@@ -9,9 +9,9 @@
   [remove]="removeSolucao.bind(this)" 
   [save]="saveSolucao.bind(this)" 
   [load]="loadSolucao.bind(this)" 
-  [hasDelete]="true" 
-  [hasEdit]="true" 
-  [hasAdd]="true"
+  [hasDelete]="!this.disabled" 
+  [hasEdit]="!this.disabled" 
+  [hasAdd]="!this.disabled"
 >
   <columns>
     <column 
@@ -39,6 +39,6 @@
         ></input-search>
       </ng-template>
     </column>
-    <column type="options"></column>
+    <column type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
   </columns>
 </grid>

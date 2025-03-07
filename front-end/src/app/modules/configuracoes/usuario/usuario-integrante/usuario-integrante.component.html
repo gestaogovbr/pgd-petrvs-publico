@@ -22,7 +22,14 @@
                 <span>{{ row.unidade_nome || '' }} </span>
             </ng-template>
             <ng-template let-row="row" #editUnidade>
-                <input-search #unidade [disabled]="grid?.adding ? undefined : 'true'" [size]="12" label icon controlName="unidade_id" [dao]="unidadeDao"></input-search>
+                <input-search #unidade 
+                    label icon 
+                    [disabled]="grid?.adding ? undefined : 'true'" 
+                    [size]="12" 
+                    controlName="unidade_id"
+                    (change)="onUnidadeChange($event)"
+                    [dao]="unidadeDao"
+                ></input-search>
             </ng-template>
         </column>
 
@@ -39,8 +46,19 @@
                 </div>
             </ng-template>
             <ng-template let-row="row" #editAtribuicoes>
-                <input-multiselect controlName="atribuicoes" [size]="8" [addItemHandle]="addItemHandle.bind(this)" [deleteItemHandle]="deleteItemHandle.bind(this)">
-                    <input-select [size]="12" label="" icon="fas fa-sign-out-alt" controlName="atribuicao" [items]="lookup.ordenarLookupItem(lookup.UNIDADE_INTEGRANTE_TIPO)"></input-select>
+                <input-multiselect
+                    controlName="atribuicoes"
+                    [size]="8"
+                    [addItemHandle]="addItemHandle.bind(this)"
+                    [deleteItemHandle]="deleteItemHandle.bind(this)"
+                >
+                    <input-select
+                        [size]="12"
+                        label=""
+                        icon="fas fa-sign-out-alt"
+                        controlName="atribuicao"
+                        [items]="this.atribuicoes"
+                    ></input-select>
                 </input-multiselect>
             </ng-template>
         </column>
