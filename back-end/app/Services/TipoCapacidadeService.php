@@ -366,7 +366,7 @@ class TipoCapacidadeService extends ServiceBase
       "capacidades" => [
         /* Capacidades do módulo UNIDADES*/
         ["MOD_UND_EDT", "Permite editar unidade"],
-        ["MOD_UND_EXCL", "Permite excluir unidade"],        
+        ["MOD_UND_EXCL", "Permite excluir unidade"],
         ["MOD_UND_INCL", "Permite incluir unidade"],
         ["MOD_UND_TUDO", "Permite consultar qualquer unidade independente de subordinação"],
         ["MOD_UND_INATV", "Permite inativar uma unidade"],
@@ -384,7 +384,7 @@ class TipoCapacidadeService extends ServiceBase
         /* Capacidades do módulo USUÁRIOS */
         ["MOD_USER_EDT", "Permite alterar usuário"],
         ["MOD_USER_EXCL", "Permite excluir usuário"],
-        // ["MOD_USER_INCL", "Permite incluir usuário"], // DEPRECATED: o modo de incluir usuários não está funcionado, desabilitado para removeção futura ou alteração.
+        ["MOD_USER_INCL", "Permite incluir usuário"],
         ["MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"],
         ["MOD_USER_ATRIB", "Permite gerenciar atribuições de usuário"],
       ]
