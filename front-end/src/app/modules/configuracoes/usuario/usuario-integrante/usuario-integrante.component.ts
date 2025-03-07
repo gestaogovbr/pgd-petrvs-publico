@@ -83,15 +83,18 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   }
 
   alteraPerfil() {
-    let current = this.perfil?.currentValue;
-    this.perfilDao.getById(current).then(perfil => {
-      if (perfil) {
-        if(perfil.nivel == 6){
-          this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(x => x.key == 'GESTOR' || x.key == 'GESTOR_SUBSTITUTO' || x.key == 'CURADOR').forEach(x => x.data = {indisponivel: true});
-        }
-      }
+    if (!this.perfil || !this.perfil.currentValue) return; 
+  
+    this.perfilDao.getById(this.perfil.currentValue).then(perfil => {
+      if (!perfil) return;
+  
+      const desativar = perfil.nivel === 6;  
+      this.lookup.UNIDADE_INTEGRANTE_TIPO
+        .filter(x => ['GESTOR_SUBSTITUTO', 'CURADOR'].includes(x.key))
+        .forEach(x => x.data = { indisponivel: desativar });
     });
   }
+
   ngAfterViewInit() {
     (async () => {
       await this.loadData(this.entity || {}, this.form);
@@ -327,6 +330,10 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     return this.isNoPersist ? 'true' : (this.formPerfil.controls.perfil_id.value == this.perfilUsuario ? 'true' : undefined)
   }
 
+  public autoGerenciar():boolean {
+    // se for o próprio usuário, precisa ter o nível < 3
+    return (this.entity?.id ?? '') == (this.auth?.usuario?.id ?? '') && (this.entity?.perfil?.nivel ?? 0) < 3;
+  }
   /* 
   
   TESTES MÍNIMOS RECOMENDADOS PARA A VALIDAÇÃO DO COMPONENTE - USUARIO-INTEGRANTE
