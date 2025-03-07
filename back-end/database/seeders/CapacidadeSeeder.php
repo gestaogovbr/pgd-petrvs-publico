@@ -72,7 +72,8 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_SOLUCOES"],
       ["codigo" => "MOD_SOLUCOES_INCL"],
       ["codigo" => "MOD_SOLUCOES_EDT"],
-      ["codigo" => "MOD_SOLUCOES_EXCL"]
+      ["codigo" => "MOD_SOLUCOES_EXCL"],
+      ["codigo" => "MOD_USER_EDT"],
     ];
 
 
@@ -163,6 +164,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_UND_TUDO"],
       ["codigo" => "MOD_USER"],
       ["codigo" => "MOD_USER_TUDO"],
+      ["codigo" => "MOD_USER_EDT"],
       ["codigo" => "MOD_PROD"],
       ["codigo" => "MOD_PROD_INCL"],
       ["codigo" => "MOD_PROD_EDT"],

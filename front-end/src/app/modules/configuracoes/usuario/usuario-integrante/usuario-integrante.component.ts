@@ -65,35 +65,35 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
 
   public async onUnidadeChange(event: Event) {
     const unidade_id = this.form?.controls.unidade_id.value;
+    let atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO
     if (unidade_id) {
       const unidade = await this.unidadeDao.getById(unidade_id);
 
-      if (unidade?.instituidora) {
-        this.atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO;
-      } else {
-        this.atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(
+      if (!unidade?.instituidora) {
+        atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(
           atribuicao => atribuicao.key !== 'CURADOR'
         );
       }
 
-      this.atribuicoes = this.lookup.ordenarLookupItem(this.atribuicoes);
+      if(this.perfil){
+        await this.perfilDao.getById(this.perfil.currentValue).then(perfil => {
+          if (!perfil) return;
+          if(perfil.nivel === 6){
+            // filtrar atribuições para não permitir CURADOR e GESTOR_SUBSTITUTO
+            atribuicoes = atribuicoes.filter(
+              atribuicao => atribuicao.key !== 'CURADOR' && atribuicao.key !== 'GESTOR_SUBSTITUTO'
+            );
+          }
+        })
+      }
+
+      this.atribuicoes = atribuicoes;
+      this.form?.controls.atribuicao.setValue("COLABORADOR");
     } else {
       this.atribuicoes = [];
     }
   }
 
-  alteraPerfil() {
-    if (!this.perfil || !this.perfil.currentValue) return; 
-  
-    this.perfilDao.getById(this.perfil.currentValue).then(perfil => {
-      if (!perfil) return;
-  
-      const desativar = perfil.nivel === 6;  
-      this.lookup.UNIDADE_INTEGRANTE_TIPO
-        .filter(x => ['GESTOR_SUBSTITUTO', 'CURADOR'].includes(x.key))
-        .forEach(x => x.data = { indisponivel: desativar });
-    });
-  }
 
   ngAfterViewInit() {
     (async () => {
