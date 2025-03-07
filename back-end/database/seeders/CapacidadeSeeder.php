@@ -31,6 +31,7 @@ class CapacidadeSeeder extends Seeder
   public function run()
   {
     $capacidades_participante = [
+      ["codigo" => "CTXT_EXEC"],
       ["codigo" => "MENU_GESTAO_ACESSO"],
       ["codigo" => "MOD_AFT"],
       ["codigo" => "MOD_AFT_EDT"],
