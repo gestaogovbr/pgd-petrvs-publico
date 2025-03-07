@@ -13,7 +13,7 @@
     </div>
 </div>
 
-<grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true" editable [add]="adicionarIntegrante.bind(this)" [load]="carregarIntegrante.bind(this)" [remove]="removerIntegrante.bind(this)" [save]="salvarIntegrante.bind(this)">
+<grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasEdit]="autoGerenciar()" [hasAdd]="autoGerenciar()" [hasDelete]="autoGerenciar()" editable [add]="adicionarIntegrante.bind(this)" [load]="carregarIntegrante.bind(this)" [remove]="removerIntegrante.bind(this)" [save]="salvarIntegrante.bind(this)">
     <top-alert *ngIf="!isNoPersist" type="alert" [message]="'Não é possível excluir ou alterar ' + lex.translate('a lotação') + ' ' + lex.translate('do servidor') + '. '"></top-alert>
     <columns>
         <column [title]="lex.translate('Unidades')" [template]="columnUnidade" [editTemplate]="editUnidade">
