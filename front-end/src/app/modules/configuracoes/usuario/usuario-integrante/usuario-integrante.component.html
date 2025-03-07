@@ -4,7 +4,7 @@
     <div class="col-4">
         <editable-form [form]="formPerfil!" [noButtons]="isNoButtons()" [disabled]="formDisabled" title="" (submit)="salvarPerfil()">
             <div class="row">
-                <input-select #perfil (change)="alteraPerfil()" [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [label]="lex.translate('Perfil')" controlName="perfil_id" [dao]="perfilDao" [where]="[['nivel', '>=', ( editando && !entity?.usuario_externo) ? 0 : 6]]" required></input-select>
+                <input-select #perfil (change)="onUnidadeChange($event)" [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [label]="lex.translate('Perfil')" controlName="perfil_id" [dao]="perfilDao" [where]="[['nivel', '>=', ( editando && !entity?.usuario_externo) ? 0 : 6]]" required></input-select>
             </div>
         </editable-form>
     </div>
