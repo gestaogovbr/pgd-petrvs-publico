@@ -37,6 +37,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public usuarioDao: UsuarioDaoService;
   public perfilDao: PerfilDaoService;
   public perfilUsuario: string = "";
+  public atribuicoes: LookupItem[] = [];
   public editando: boolean = false;
 
   constructor(public injector: Injector) {
@@ -61,7 +62,26 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     super.ngOnInit();
     this.entity = this.entity ?? this.metadata?.entity;
   }
-  
+
+  public async onUnidadeChange(event: Event) {
+    const unidade_id = this.form?.controls.unidade_id.value;
+    if (unidade_id) {
+      const unidade = await this.unidadeDao.getById(unidade_id);
+
+      if (unidade?.instituidora) {
+        this.atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO;
+      } else {
+        this.atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(
+          atribuicao => atribuicao.key !== 'CURADOR'
+        );
+      }
+
+      this.atribuicoes = this.lookup.ordenarLookupItem(this.atribuicoes);
+    } else {
+      this.atribuicoes = [];
+    }
+  }
+
   alteraPerfil() {
     if (!this.perfil || !this.perfil.currentValue) return; 
   
@@ -120,11 +140,27 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     return result;
   }
 
-  public formValidation = (form?: FormGroup) => {
+  public asyncFormValidation = async(form?: FormGroup) =>
+  {
     let atribuicoes: LookupItem[] = form!.controls.atribuicoes.value;
+    
     if (this.util.array_diff(['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO'], atribuicoes.map(na => na.key) || []).length < 2) {
       return "A um mesmo servidor só pode ser atribuída uma função de gestor (titular, substituto ou delegado), para uma mesma Unidade!";
     }
+
+    const attrCurador = form!.controls.atribuicoes.value.filter((attr: any) => attr.key == 'CURADOR');
+
+    if (attrCurador.length > 0) {
+      const unidade_id = this.form?.controls.unidade_id.value;
+      if (unidade_id) {
+        const unidade = await this.unidadeDao.getById(unidade_id);
+
+        if (!unidade?.instituidora) {
+          return 'Não é possível associar atribuição de Curador a Unidade não Instituidora';
+        }
+      }
+    }
+
     return undefined;
   }
 
@@ -212,12 +248,16 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    * @param row 
    * @returns 
    */
-  public async salvarIntegrante(form: FormGroup, row: IntegranteConsolidado) {
+  public async salvarIntegrante(form: FormGroup, row: IntegranteConsolidado) 
+  {
     let novasAtribuicoes = this.lookup.uniqueLookupItem(form!.controls.atribuicoes.value);
     form.controls.atribuicoes.setValue(novasAtribuicoes);
+    
     if (this.grid) this.grid.error = "";
+    
     this.cdRef.detectChanges();
-    let error = this.formValidation(form);
+    let error = await this.asyncFormValidation(form);
+    
     if (!error) {
       let itensGrid = this.grid?.items as IntegranteConsolidado[] || [];
       let confirm = true;

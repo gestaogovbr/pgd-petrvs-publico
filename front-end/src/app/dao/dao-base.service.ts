@@ -111,37 +111,30 @@ export class DaoBaseService<T extends Base> {
   public searchText(query: string, fieldsToSearch?: string[], where?: any[], orderBy?: QueryOrderBy[]): Promise<SelectItem[]> {
     return new Promise<SelectItem[]>((resolve, reject) => {
       try {
-        let fields = fieldsToSearch || this.inputSearchConfig.searchFields;
-        let first =
-          fields.length > 1 && query.indexOf(' - ') > 0
-            ? query.substr(0, query.indexOf(' - '))
-            : query;
-        let request = this.server
-          .post(this.PREFIX_URL + '/' + this.collection + '/search-text', {
-            collection: this.collection,
-            query: first,
-            fields: fields,
-            orderBy: orderBy || [],
-            where: where || [],
-          })
-          .subscribe(
-            (response) => {
-              if (response?.error) {
-                reject(response?.error);
-              } else {
-                resolve(
-                  response?.values?.map((item: any[]) => {
-                    return {
-                      value: item[0],
-                      text: this.getSelectItemText(this.iso8601ToDate(item[1])),
-                      order: item[2],
-                    };
-                  }) || []
-                );
-              }
-            },
-            (error) => reject(error)
-          );
+        const fields = fieldsToSearch || this.inputSearchConfig.searchFields;
+        const first = fields.length > 1 && query.includes(' - ') ? query.split(' - ')[0] : query;
+        this.server.post(this.PREFIX_URL + '/' + this.collection + '/search-text', {
+          collection: this.collection,
+          query: first,
+          fields: fields,
+          orderBy: orderBy || [],
+          where: where || [],
+        }).subscribe({
+          next: (response) => {
+            if (response?.error) {
+              reject(response?.error);
+            } else {
+              resolve(
+                response?.values?.map((item: any[]) => ({
+                  value: item[0],
+                  text: this.getSelectItemText(this.iso8601ToDate(item[1])),
+                  order: item[2],
+                })) || []
+              );
+            }
+          },
+          error: (error) => reject(error)
+        });
       } catch (error) {
         reject(error);
       }

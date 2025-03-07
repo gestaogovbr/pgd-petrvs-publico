@@ -32,6 +32,7 @@ export class FilterComponent extends ComponentBase implements OnInit {
   @Input() collapseChange?: (filter: FormGroup) => void;
   @Input() visible: boolean = true;
   @Input() deleted: boolean = false;
+  @Input() deletedLabel: string = 'Mostrar os deletados';
   @Input() noButtons?: string;
   @Input() collapsed: boolean = true;
   @Input() grid?: GridComponent;
