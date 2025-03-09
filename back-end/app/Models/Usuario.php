@@ -386,6 +386,11 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasOne(UnidadeIntegrante::class)->has('curador');
     }
 
+    public function isCurador(): bool
+    {
+        return $this->isDeveloper() || UnidadeIntegrante::where('usuario_id', $this->id)->whereHas('curador')->exists();
+    }
+
     public function lotacoes()
     {
         return $this->hasMany(UnidadeIntegrante::class)->has('lotado');
