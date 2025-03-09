@@ -16,7 +16,7 @@ class Produto  extends ModelBase
 
     public $fillable_changes = ['produtoProcessoCadeiaValor', 'produtoInsumos', 'produtoCliente', 'solucoes','produtoSolucoes'];
 
-    public $cascadeDeletes = ['produtoProcessoCadeiaValor'];
+    public $delete_cascade = ['produtoProcessoCadeiaValor', 'produtoInsumos', 'produtoCliente', 'solucoes','produtoSolucoes'];
 
     const TIPO_PRODUTO = 'produto';
     const TIPO_SERVICO = 'servico';
@@ -111,5 +111,5 @@ class Produto  extends ModelBase
     public function responsavel(){
         return $this->belongsTo(Usuario::class, 'responsavel_id', 'id');
     }
-    
+
 }
