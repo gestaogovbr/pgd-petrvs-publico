@@ -307,6 +307,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_USER"],
       ["codigo" => "MOD_USER_ATRIB"],
       ["codigo" => "MOD_USER_EDT"],
+      ["codigo" => "MOD_USER_INCL"],
       ["codigo" => "MOD_USER_TUDO"],
       ["codigo" => "MOD_PROD"],
       ["codigo" => "MOD_PROD_INCL"],

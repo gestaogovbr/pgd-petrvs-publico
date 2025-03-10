@@ -330,9 +330,12 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     return this.isNoPersist ? 'true' : (this.formPerfil.controls.perfil_id.value == this.perfilUsuario ? 'true' : undefined)
   }
 
-  public autoGerenciar():boolean {
+  public autoGerenciar(): boolean {
     // se for o próprio usuário, precisa ter o nível < 3
-    return (this.entity?.id ?? '') == (this.auth?.usuario?.id ?? '') && (this.entity?.perfil?.nivel ?? 0) < 3;
+    if ((this.entity?.id ?? '') == (this.auth?.usuario?.id ?? '') && this.entity?._status != 'ADD') {
+      return (this.entity?.perfil?.nivel ?? 0) < 3;
+    }
+    return true;
   }
   /* 
   
