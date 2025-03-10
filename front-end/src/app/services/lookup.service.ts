@@ -217,9 +217,9 @@ export class LookupService implements IIndexable {
   public UNIDADE_INTEGRANTE_TIPO: LookupItem[] = [
     //{ key: 'AVALIADOR_PLANO_ENTREGA', value: "Avaliador (Planos de Entrega)", icon: "bi bi-check-all", color: "warning" },
     //{ key: 'AVALIADOR_PLANO_TRABALHO', value: "Avaliador (Planos de Trabalho)", icon: "bi bi-check-circle", color: "info" },
-    { key: 'COLABORADOR', value: "Servidor Vinculado", icon: "bi bi-person-add", color: "secondary" },
+    { key: 'COLABORADOR', value: "Vinculado", icon: "bi bi-person-add", color: "secondary" },
     { key: 'GESTOR', value: "Chefe", icon: "bi bi-star-fill", color: "primary", data: {indisponivel: true} },
-    { key: 'GESTOR_DELEGADO', value: "Servidor Delegado", icon: "bi bi-star-fill", color: "danger" },
+    { key: 'GESTOR_DELEGADO', value: "Delegado", icon: "bi bi-star-fill", color: "danger" },
     { key: 'GESTOR_SUBSTITUTO', value: "Chefe Substituto", icon: "bi bi-star-half", color: "primary" },
     //{ key: 'HOMOLOGADOR_PLANO_ENTREGA', value: "Homologador (Planos de Entrega)", icon: "bi bi-check2-square", color: "success" },
     { key: 'CURADOR', value: "Curador", icon: "bi bi-person-badge-fill", color: "primary" },
