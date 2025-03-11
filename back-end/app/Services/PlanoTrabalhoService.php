@@ -72,6 +72,8 @@ class PlanoTrabalhoService extends ServiceBase
         $unidadeId = $this->extractWhere($data, "unidade_id");
         if (is_array($unidadeId) && isset($unidadeId[2])) {
             $ids[] = $unidadeId[2];
+            $data["where"][] = ['unidade_id', 'in', array_unique($ids)];
+
         }
         if ($subordinadas[2]) { // Verifica se o índice existe
             $unidadeService = new UnidadeService();
