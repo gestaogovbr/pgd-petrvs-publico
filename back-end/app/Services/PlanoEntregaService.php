@@ -14,6 +14,7 @@ use App\Models\TipoAvaliacao;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use DateTime;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class PlanoEntregaService extends ServiceBase
@@ -345,7 +346,8 @@ class PlanoEntregaService extends ServiceBase
 
     public function proxyQuery($query, &$data)
     {
-        $where = [];
+        $where = $ids = [];
+
         //  (RI_PENT_C) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de entrega não arquivados.
         $arquivados = $this->extractWhere($data, "incluir_arquivados");
         $subordinadas = $this->extractWhere($data, "incluir_subordinadas");
@@ -362,24 +364,52 @@ class PlanoEntregaService extends ServiceBase
                 $data["where"][] = $unidadeId;
             }
         }
-        if (!empty($unidades_vinculadas)) {
+
+        if ($subordinadas[2]) { // Verifica se o índice existe
             $unidadeService = new UnidadeService();
-            $ids = $unidadeService->linhaAscendente($unidades_vinculadas[2]);
-            $unidadesFilhas = $unidadeService->filhas($unidades_vinculadas[2]);
-            $filhasIds = array_map(function ($unidade) {
-                return $unidade['id'];
-            }, $unidadesFilhas);
-            $ids = array_merge($ids, $filhasIds);
-            $ids[] = $unidades_vinculadas[2];
-            $data["where"][] = ["unidade_id", "in", $ids];
+
+            // Define $uId corretamente, verificando a existência do índice
+            if (empty($unidadeId)) {
+                $uId = isset($unidades_vinculadas[2]) ? $unidades_vinculadas[2] : null;
+            } else {
+                $uId = isset($unidadeId[2]) ? $unidadeId[2] : null;
+            }
+
+            // Só continua se $uId não for nulo
+            if ($uId) {
+                $unidadesSubordinadas = $unidadeService->subordinadas($uId);
+                $subordinadasIds = $unidadesSubordinadas->pluck('id')->toArray();
+                $ids = array_merge($ids, $subordinadasIds);
+
+                if (!empty($ids)) {
+                    $data["where"][] = ["unidade_id", "in", $ids];
+                }
+            }
+
+            // **Processo para unificar os filtros de unidade_id**
+            $unidadeIds = [];
+
+            foreach ($data["where"] as $key => $where) {
+                if ($where[0] === 'unidade_id') {
+                    if ($where[1] === '==') {
+                        $unidadeIds[] = $where[2]; // Adiciona o valor único
+                        unset($data["where"][$key]); // Remove a condição original
+                    } elseif ($where[1] === 'in') {
+                        $unidadeIds = array_merge($unidadeIds, $where[2]); // Mescla os valores existentes
+                        unset($data["where"][$key]); // Remove a condição original
+                    }
+                }
+            }
+
+            // Se houver IDs, adiciona a condição unificada
+            if (!empty($unidadeIds)) {
+                $data["where"][] = ['unidade_id', 'in', array_unique($unidadeIds)];
+            }
         }
-        if ($subordinadas) {
-            $unidadeService = new UnidadeService();
-            $unidadesSubordinadas = $unidadeService->subordinadas($unidadeId[2]);
-            $subordinadasIds = $unidadesSubordinadas->pluck('id')->toArray();
-            $ids = array_merge($ids, $subordinadasIds);
-            $data["where"][] = ["unidade_id", "in", $ids];
-        }
+
+
+
+        Log::info($data['where']);
         foreach ($data["where"] as $condition) {
             if (is_array($condition) && $condition[0] == "data_filtro") {
                 $dataInicio = $this->getFilterValue($data["where"], "data_filtro_inicio");
