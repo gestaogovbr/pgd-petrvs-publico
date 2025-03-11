@@ -1,7 +1,22 @@
-<editable-form noButtons [form]="form!" [disabled]="formDisabled">
+<editable-form noButtons 
+    [form]="form!" 
+    [disabled]="formDisabled"
+>
     <div class="row">
-        <grid [items]="items" [form]="form!" [hasDelete]="true" 
-            [add]="addProcesso.bind(this)" [load]="loadProcesso.bind(this)" [remove]="removeProcesso.bind(this)" [save]="saveProcesso.bind(this)" [editEnd]="editEndProcesso.bind(this)" editable>
+        <grid [items]="items"
+            [form]="form!"
+            [add]="addProcesso.bind(this)"
+            [load]="loadProcesso.bind(this)"
+            [remove]="removeProcesso.bind(this)"
+            [save]="saveProcesso.bind(this)"
+            [editEnd]="editEndProcesso.bind(this)"
+            [selectable]="this.isSearching"
+            [hasAdd]="!isSearching"
+            [hasEdit]="!isSearching" 
+            [hasDelete]="!isSearching"
+            (select)="onSelect($event)"
+            editable
+        >
             <columns>
                 <column title="Nível" [template]="nivel" [editTemplate]="editNivel">
                     <ng-template let-row="row" let-metadata="metadata" #nivel>
