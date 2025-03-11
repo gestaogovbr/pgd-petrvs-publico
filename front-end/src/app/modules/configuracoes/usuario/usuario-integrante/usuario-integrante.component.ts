@@ -116,12 +116,6 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
         this.cdRef.detectChanges();
         this.grid!.loading = false;
       }
-    } else {
-      setTimeout(() => {
-        const primeiroPerfil = this.perfil?.items[0];
-        this.perfil?.setValue(primeiroPerfil?.key);
-      }, 3000);
-      
     }
   }
 
@@ -202,11 +196,13 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
  * @returns 
  */
   public async adicionarIntegrante() {
+    this.editando = true;
     if (this.grid) this.grid.error = '';
     let novo = {
       id: this.integranteDao!.generateUuid(),
       unidade_id: "",
-      atribuicoes: []
+      atribuicoes: [],
+      usuario_externo: true
     } as IIndexable;
     return novo;
   }
