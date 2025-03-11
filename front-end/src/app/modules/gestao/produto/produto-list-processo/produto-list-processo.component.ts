@@ -23,7 +23,7 @@ export class ProdutoListProcessoComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild('cadeiaValor', { static: false }) public cadeiaValor?: InputSearchComponent;
-  @ViewChild('cadeiaProcesso', { static: false }) public cadeiaProcesso?: InputSelectComponent;
+  @ViewChild('cadeiaProcesso', { static: false }) public cadeiaProcesso?: InputSearchComponent;
 
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Produto | undefined) { super.entity = value; } get entity(): Produto | undefined { return super.entity; }
@@ -100,9 +100,13 @@ export class ProdutoListProcessoComponent extends PageFrameBase {
     this.form!.markAllAsTouched();
     if(this.form!.valid) {
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
-      row.cadeia_valor_processo = this.cadeiaProcesso!.selectedItem?.data;
+      row.cadeia_valor_processo = this.cadeiaProcesso!.selectedEntity;
       row.cadeia_valor_processo.cadeia_valor = this.cadeiaValor!.selectedEntity;
       row.cadeia_valor_processo_id = this.form!.controls.cadeia_valor_processo_id.value;
+
+      const processo = await this.processosDao?.getById(row.cadeia_valor_processo_id);
+      row.cadeia_valor_processo.sequencia_completa = processo?.sequencia_completa;
+
       result = row;
       this.cdRef.detectChanges();
     }

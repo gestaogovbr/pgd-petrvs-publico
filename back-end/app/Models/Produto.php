@@ -111,5 +111,4 @@ class Produto  extends ModelBase
     public function responsavel(){
         return $this->belongsTo(Usuario::class, 'responsavel_id', 'id');
     }
-
 }

@@ -14,6 +14,7 @@ const routes: Routes = [
   { path: 'new', component: CadeiaValorFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Cadeia de Valor", modal: true } },
   { path: ':id/edit', component: CadeiaValorFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Cadeia de Valor", modal: true } },
   { path: ':id/consult', component: CadeiaValorFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Cadeia de Valor", modal: true } },
+  { path: 'processos', component: CadeiaValorListProcessosComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Lista de Processos da Cadeia de Valor", modal: true } },
   { path: 'processoList', component: CadeiaValorListProcessosEntregasComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Lista de Processos da Cadeia de Valor", modal: true } }
 ];
 
