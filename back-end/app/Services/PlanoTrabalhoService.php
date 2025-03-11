@@ -70,7 +70,9 @@ class PlanoTrabalhoService extends ServiceBase
         $lotadosMinhaUnidade = $this->extractWhere($data, "lotados_minha_unidade");
         if (empty($arquivados) || !$arquivados[2]) $data["where"][] = ["data_arquivamento", "==", null];
         $unidadeId = $this->extractWhere($data, "unidade_id");
-        $ids[] = $unidadeId[2];
+        if (is_array($unidadeId) && isset($unidadeId[2])) {
+            $ids[] = $unidadeId[2];
+        }
         if ($subordinadas[2]) { // Verifica se o índice existe
             $unidadeService = new UnidadeService();
 
@@ -144,7 +146,11 @@ class PlanoTrabalhoService extends ServiceBase
             $unidadesComChefia = array_filter(array_merge([$this->loggedUser()->gerenciaTitular?->unidade_id], $this->loggedUser()->gerenciasSubstitutas?->map(fn($x) => $x->unidade_id)->toArray()));
             $usuariosLotados = [];
             foreach ($unidadesComChefia as $unidadeId) {
-                $usuariosLotados = array_merge($usuariosLotados, array_map(fn($x) => $x->id, $this->unidadeService->lotados($unidadeId)));
+                //$usuariosLotados = array_merge($usuariosLotados, array_map(fn($x) => $x->id, $this->unidadeService->lotados($unidadeId)));
+                $usuariosLotados = array_merge(
+                    $usuariosLotados,
+                    array_map(fn($x) => $x?->id, $this->unidadeService->lotados($unidadeId)) // Usa `?->id` para evitar erro em null
+                );
             }
             $where = ["or", ["usuario_id", "in", $usuariosLotados], $where];
         }
