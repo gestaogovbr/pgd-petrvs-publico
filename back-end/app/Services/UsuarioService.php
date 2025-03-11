@@ -29,7 +29,7 @@ class UsuarioService extends ServiceBase
   const LOGIN_MICROSOFT = "AZURE";
   const LOGIN_FIREBASE = "FIREBASE";
 
-  
+
 
   public function atualizarFotoPerfil($tipo, &$usuario, $url)
   {
@@ -91,7 +91,7 @@ class UsuarioService extends ServiceBase
 
   /**
    * Informa quais atribuições de gestor o usuário logado possui na unidade recebida como parâmetro.
-   * @param string $unidade_id 
+   * @param string $unidade_id
    */
   public function atribuicoesGestor(string $unidadeId, ?string $usuarioId = null)
   {
@@ -111,7 +111,7 @@ class UsuarioService extends ServiceBase
 
   /**
    * Informa se o usuário logado é gestor(titular ou substituto) da unidade recebida como parâmetro.
-   * @param string $unidade_id 
+   * @param string $unidade_id
    */
   public function isGestorUnidade(string $unidadeId, $incluiDelegado = true): bool
   {
@@ -124,7 +124,7 @@ class UsuarioService extends ServiceBase
 
   /**
    * Informa se o usuário logado é participante do plano de trabalho recebido como parâmetro.
-   * @param string $unidade_id 
+   * @param string $unidade_id
    */
   public function isParticipante($planoTrabalho)
   {
@@ -134,8 +134,8 @@ class UsuarioService extends ServiceBase
   /**
    * Recebe os IDs de um usuário e de um programa, e informa se o usuário é participante habilitado do Programa.
    * Se o usuário não for informado, será utilizado o usuário logado.
-   * @param string $usuario_id 
-   * @param string $pgd_id 
+   * @param string $usuario_id
+   * @param string $pgd_id
    * @return bool
    */
   public function isParticipanteHabilitado(string|null $usuarioId = null, string $programaId): bool
@@ -154,8 +154,8 @@ class UsuarioService extends ServiceBase
   /**
    * Informa se existe determinada atribuição entre o usuário e a unidade informados. Caso não seja informado um usuário, a
    * verificação será feita com base no usuário logado.
-   * @param string $atribuicao 
-   * @param string $unidade_id 
+   * @param string $atribuicao
+   * @param string $unidade_id
    * @param string $usuario_id
    */
   public function isIntegrante(string $atribuicao, string $unidadeId, string|null $usuarioId = null): bool
@@ -174,22 +174,25 @@ class UsuarioService extends ServiceBase
   /**
    * Recebe os IDs de um usuário e de uma unidade, e informa se a unidade é a lotação do usuário.
    * Se o usuário não for informado, será utilizado o usuário logado.
-   * @param string $unidade_id 
+   * @param string $unidade_id
    */
-  public function isLotacao(string|null $usuario_id = null, string $unidade_id): bool
-  {
-    $usuario = isset($usuario_id) ? Usuario::find($usuario_id) : parent::loggedUser();
-    if ($usuario->lotacao !== null) {
-      return $usuario->lotacao->unidade_id == $unidade_id;
+    public function isLotacao(string|null $usuario_id = null, string $unidade_id): bool
+    {
+        $usuario = isset($usuario_id) ? Usuario::find($usuario_id) : parent::loggedUser();
+
+        if (!$usuario) {
+            return false; // Retorna falso se o usuário não for encontrado
+        }
+
+        return $usuario->lotacao !== null && $usuario->lotacao->unidade_id == $unidade_id;
     }
-    return false;
-  }
+
 
   /**
-   * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+   * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade
    * recebida como parâmetro.
-   * @param string $unidade_id 
-   * @returns 
+   * @param string $unidade_id
+   * @returns
    */
   public function isLotadoNaLinhaAscendente(string|null $unidadeId): bool
   {
@@ -248,7 +251,7 @@ class UsuarioService extends ServiceBase
               $query->where('habilitado', 0);
             });
           }
-         
+
         }
       } else if (is_array($condition) && $condition[0] == "subordinadas") {
         $subordinadas = $condition[2];
@@ -256,7 +259,7 @@ class UsuarioService extends ServiceBase
         $query->whereHas('unidadesIntegranteAtribuicoes', function (Builder $query) use ($condition) {
           $query->whereIn('atribuicao', $condition[2]);
         });
-      } 
+      }
       else {
         array_push($where, $condition);
       }
@@ -381,8 +384,8 @@ class UsuarioService extends ServiceBase
    * @return SimpleXMLElement[]
    */
   public function consultaCPFSiape(string $cpf): array{
-     
+
       return $this->buscaServidor($cpf);
-     
+
   }
 }

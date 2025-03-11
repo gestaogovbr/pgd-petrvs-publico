@@ -160,6 +160,18 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.avaliacao = !!this.queryParams?.avaliacao;
     this.showFilter = typeof this.queryParams?.showFilter != "undefined" ? (this.queryParams.showFilter == "true") : true;
     this.selectable = this.metadata?.selectable || this.selectable;
+
+    if (this.metadata?.minha_unidade) {
+      this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
+    }
+    this.route.queryParams.subscribe((p) => {
+      if (p["context"] == "EXECUCAO" && this.filter) {
+        this.filter?.controls.usuario.setValue(this.auth.usuario?.nome);
+      }
+      if (p["context"] == "GESTAO" && this.filter) {
+        this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
+      }
+    });
     if (this.execucao) {
       this.title = this.title + " (Execução)";
       this.filter!.controls.unidade_id.setValue(this.auth.unidadeGestor()?.id || null);

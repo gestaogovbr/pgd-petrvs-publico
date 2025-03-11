@@ -70,12 +70,47 @@ class PlanoTrabalhoService extends ServiceBase
         $lotadosMinhaUnidade = $this->extractWhere($data, "lotados_minha_unidade");
         if (empty($arquivados) || !$arquivados[2]) $data["where"][] = ["data_arquivamento", "==", null];
         $unidadeId = $this->extractWhere($data, "unidade_id");
-
-        if ($subordinadas) {
+        $ids[] = $unidadeId[2];
+        if ($subordinadas[2]) { // Verifica se o índice existe
             $unidadeService = new UnidadeService();
-            $unidadesSubordinadas = $unidadeService->subordinadas($unidadeId[2]);
-            $subordinadasIds = $unidadesSubordinadas->pluck('id')->toArray();
-            $data["where"][] = ["unidade_id", "in", $subordinadasIds];
+
+            // Define $uId corretamente, verificando a existência do índice
+            if (empty($unidadeId)) {
+                $uId = isset($unidades_vinculadas[2]) ? $unidades_vinculadas[2] : null;
+            } else {
+                $uId = isset($unidadeId[2]) ? $unidadeId[2] : null;
+            }
+
+            // Só continua se $uId não for nulo
+            if ($uId) {
+                $unidadesSubordinadas = $unidadeService->subordinadas($uId);
+                $subordinadasIds = $unidadesSubordinadas->pluck('id')->toArray();
+                $ids = array_merge($ids, $subordinadasIds);
+
+                if (!empty($ids)) {
+                    $data["where"][] = ["unidade_id", "in", $ids];
+                }
+            }
+
+            // **Processo para unificar os filtros de unidade_id**
+            $unidadeIds = [];
+
+            foreach ($data["where"] as $key => $where) {
+                if ($where[0] === 'unidade_id') {
+                    if ($where[1] === '==') {
+                        $unidadeIds[] = $where[2]; // Adiciona o valor único
+                        unset($data["where"][$key]); // Remove a condição original
+                    } elseif ($where[1] === 'in') {
+                        $unidadeIds = array_merge($unidadeIds, $where[2]); // Mescla os valores existentes
+                        unset($data["where"][$key]); // Remove a condição original
+                    }
+                }
+            }
+
+            // Se houver IDs, adiciona a condição unificada
+            if (!empty($unidadeIds)) {
+                $data["where"][] = ['unidade_id', 'in', array_unique($unidadeIds)];
+            }
         }
         foreach ($data["where"] as $condition) {
             if (is_array($condition) && $condition[0] == "data_filtro") {
