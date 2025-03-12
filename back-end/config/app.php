@@ -186,7 +186,7 @@ return [
         App\Providers\TenancySessionServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         App\Providers\UtilServiceProvider::class,
-
+        Lab404\Impersonate\ImpersonateServiceProvider::class,
         OwenIt\Auditing\AuditingServiceProvider::class,
     ],
 

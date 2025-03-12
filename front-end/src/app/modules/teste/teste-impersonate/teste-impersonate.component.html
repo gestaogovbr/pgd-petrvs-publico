@@ -1,0 +1,36 @@
+<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>
+<grid [dao]="dao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+      [selectable]="selectable" (select)="onSelect($event)"
+      [hasAdd]="false"
+      [hasEdit]="auth.hasPermissionTo('MOD_USER_EDT')">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-text [size]="4" [label]="lex.translate('Usuário')" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Nome" [attr.maxlength]=250></input-text>
+            <input-search [size]="4" [label]="lex.translate('Lotação')" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+            <input-select [size]="4" [label]="lex.translate('Perfil')" controlName="perfil_id" nullable [control]="filter!.controls.perfil_id" [dao]="perfilDao"></input-select>
+            <input-check [size]="12" [label]="lex.translate('Atribuições')" controlName="atribuicoes" [control]="filter!.controls.atribuicoes" [items]="lookup.UNIDADE_INTEGRANTE_TIPO" [inline]="true"></input-check>
+        </div>
+    </filter>
+    <columns>
+        <column icon="bi-person" [align]="'center'" [template]="columnFoto">
+            <ng-template let-row="row" #columnFoto>
+                <profile-picture [url]="row.url_foto" [size]="40" [hint]="row.nome"></profile-picture>
+            </ng-template>
+        </column>
+        <column title="CPF" field="cpf"></column>
+        <column title="Matrícula" field="matricula"></column>
+        <column title="Nome" field="nome" orderBy="nome"></column>
+        <column [title]="lex.translate('Perfil')" [template]="columnPerfil">
+            <ng-template let-row="row" #columnPerfil>
+                <strong>{{row.perfil?.nome || ""}}</strong>
+            </ng-template>
+        </column>
+        <column title="Personificar" [width]="80" [template]="columnMessage">
+            <ng-template let-row="row" #columnMessage>
+                <span><small><button class="navbar-toggler" type="button" (click)="this.impersonate(row.id)">Personificar</button></small></span>
+            </ng-template>
+        </column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
