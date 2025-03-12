@@ -20,12 +20,19 @@ class ImpersonationController extends Controller
         if (!$admin || !$admin->canImpersonate()) {
             return response()->json(['error' => 'Você não tem permissão para impersonar usuários.'], 403);
         }
+
         $usuario = Usuario::findOrFail($request->user_id);
-        session(['original_user_id' => $admin->id]);
-        $admin->impersonate($usuario, 'sanctum');
-        Auth::user()->tokens()->delete();
-        $request->session()->put("kind", "SESSION");
         $token = $usuario->createToken('Impersonation')->plainTextToken;
+        session(['original_user_id' => $admin->id]);
+
+        Auth::user()->tokens()->delete();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+
+        $admin->impersonate($usuario, 'web');
+        $request->session()->put("kind", "SESSION");
+
         $entidade = $this->registrarEntidade($request);
         $usuario = $this->registrarUsuario($request, $usuario);
         return response()->json([
