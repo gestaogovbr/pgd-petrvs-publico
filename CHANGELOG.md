@@ -1,3 +1,8 @@
+## 2.3.11 13/03/2025
+### Corrigido
+ - Correção dos vinculos com unidades pai e path inválidos
+### Removido
+ - Removido dados sensiveis do XML de dados pessoais do SIAPE 
 ## 2.3.10 27/02/2025
 ### Corrigido
  - Correção na sanitização do xml de servidores do SIAPE
