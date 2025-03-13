@@ -82,9 +82,10 @@
             [attr.required]="isInterno() ? '' : null" 
             label=""
             placeholder="Produto ou Serviço"
-            controlName="produto_insumo_id" 
+            controlName="produto_insumo_id"
             [control]="form!.controls.produto_insumo_id" 
-            [dao]="produtoDao" 
+            [dao]="produtoDao"
+            [disabled]="this.form!.controls!.unidade_insumo_id.value ? undefined : 'true'"
             [where]="[['id', '!=', entity?.id]]"
             [selectRoute]="{
               route: ['gestao', 'produto'], 
