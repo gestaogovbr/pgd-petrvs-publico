@@ -62,8 +62,8 @@ export class PanelLayoutComponent extends PageBase implements OnInit {
 					this.dao!.resetQueues()
 						.then(function () {
 							self.loading = false;
+							debugger;
 							self.dialog.alert("Sucesso", "Executado com sucesso!");
-							window.location.reload();
 						})
 						.catch(function (error) {
 							self.loading = false;
