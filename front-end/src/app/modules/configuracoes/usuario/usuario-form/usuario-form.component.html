@@ -30,6 +30,9 @@
                 <input-editor [label]="''" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
             </div>
         </tab>
+        <tab key="TCR" label="TCR compilado" *ngIf="entity?.id && !entity?.usuario_externo">
+            <document-preview *ngIf="entity?.ultimo_plano_trabalho_ativo" [html]="entity?.ultimo_plano_trabalho_ativo?.documentos?.[0]?.conteudo || ''" emptysDocumentMensage="Vazio"></document-preview>
+        </tab>
         <tab key="ATRIBUICOES" [label]="lex.translate('Atribuições')">
             <top-alert type="alert" [message]="' Não é possível excluir ou alterar ' + lex.translate('a lotação') + ' ' + lex.translate('do servidor') + '. '"></top-alert>
             <usuario-integrante #unidadesIntegrantes noPersist [entity]="entity"></usuario-integrante>

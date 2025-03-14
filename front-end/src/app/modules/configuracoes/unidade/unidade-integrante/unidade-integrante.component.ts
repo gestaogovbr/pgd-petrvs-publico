@@ -268,39 +268,4 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   }
 
 
-  /* 
-  
-  TESTES MÍNIMOS RECOMENDADOS PARA A VALIDAÇÃO DO COMPONENTE - UNIDADE-INTEGRANTE
-
-  CENÁRIO: CAMINHO FELIZ
-  Formulário das preferências da unidade - aba 'Integrantes'
-  1. Destituir o gestor
-  2. Atribuir a gerência da unidade a um servidor que já está lotado nela
-  3. Atribuir a gerência da unidade a um servidor que ainda não está lotado nela, mas já consta no grid
-  4. Atribuir a gerência da unidade a um servidor que ainda não está lotado nela, nem consta no grid
-  5. Trocar de gerente, assumindo um servidor que já existe no grid
-  6. Trocar de gerente, assumindo um servidor que ainda não existe no grid
-  7. Alterar atribuições (exceto gerência e lotação) de um servidor que já existe no grid
-  8. Alterar atribuições (exceto gerência e lotação) de um servidor que ainda não existe no grid
-  9. Lotar na unidade um usuário que já existe no grid
-  10. Lotar na unidade um usuário que ainda não existe no grid
-  11. Realizar várias das ações acima ao mesmo tempo (ações que sejam coerentes e não conflitantes), antes de salvar o formulário
-  12. Excluir o vínculo completo com um servidor que não seja lotado na unidade
-
-  CENÁRIO: CAMINHO FELIZ
-  Formulário de Integrantes da unidade - grupo de botões opcionais (...)
-  1. Destituir o gestor
-  2. Atribuir a gerência da unidade a um servidor que já está lotado nela
-  3. Atribuir a gerência da unidade a um servidor que ainda não está lotado nela, mas já consta no grid
-  4. Atribuir a gerência da unidade a um servidor que ainda não está lotado nela, nem consta no grid
-  5. Trocar de gerente, assumindo um servidor que já existe no grid e é lotado na unidade
-  6. Trocar de gerente, assumindo um servidor que já existe no grid mas não é lotado na unidade
-  7. Trocar de gerente, assumindo um servidor que ainda não existe no grid
-  8. Alterar atribuições (exceto gerência e lotação) de um servidor que já existe no grid
-  9. Alterar atribuições (exceto gerência e lotação) de um servidor que ainda não existe no grid
-  10. Lotar na unidade um usuário que já existe no grid
-  11. Lotar na unidade um usuário que ainda não existe no grid
-  12. Excluir o vínculo completo com um servidor que não seja lotado na unidade
-  
-  */
 }

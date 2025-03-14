@@ -53,7 +53,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       data_nascimento: { default: null },
     }, this.cdRef, this.validate);
     this.planoDataset = this.planoTrabalhoDao.dataset();
-    this.join = ["auditsExterno"]
+    this.join = ["auditsExterno", "ultimoPlanoTrabalhoAtivo.documentos"]
   }
 
   public async loadData(entity: Usuario, form: FormGroup): Promise<void> {
