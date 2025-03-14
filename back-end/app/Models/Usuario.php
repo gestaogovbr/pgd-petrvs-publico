@@ -283,6 +283,12 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasOne(PlanoTrabalho::class)->latestOfMany();
     }
 
+    // ultimo plano de trabalho ativo
+    public function ultimoPlanoTrabalhoAtivo()
+    {
+        return $this->hasOne(PlanoTrabalho::class)->where('status', 'ATIVO')->latestOfMany();
+    }
+
     public function participacoesProgramas()
     {
         return $this->hasMany(ProgramaParticipante::class);
@@ -470,5 +476,18 @@ class Usuario extends Authenticatable implements AuditableContract
     public function auditsExterno(): MorphMany
     {
         return $this->morphMany(Audit::class, 'auditable')->with('user')->where('auditable_type', 'App\Models\Usuario');
+    }
+
+    // Retornar o documento vinculado ao último plano de trabalho ativo do usuário
+    public function documentoPlanoTrabalho()
+    {
+       // Validar se o usuário possui um plano de trabalho ativo
+    $ultimoPlanoTrabalhoAtivo = $this->ultimoPlanoTrabalhoAtivo()->first(); // Sem parênteses
+
+    if (!$ultimoPlanoTrabalhoAtivo) {
+        return null;
+    }
+
+    return $ultimoPlanoTrabalhoAtivo->toArray();
     }
 }

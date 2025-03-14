@@ -284,6 +284,7 @@ class UsuarioService extends ServiceBase
     /* Armazena as informações que serão necessárias no extraStore */
     $this->buffer = ["integrantes" => $this->UtilService->getNested($data, "integrantes")];
     $this->validarPerfil($data);
+    $this->validarColaborador($data);
     return $data;
   }
 
@@ -294,6 +295,7 @@ class UsuarioService extends ServiceBase
   {
     $data["with"] = [];
     $this->validarPerfil($data);
+    $this->validarColaborador($data);
     return $data;
   }
 
@@ -341,6 +343,7 @@ class UsuarioService extends ServiceBase
         }
       }
       $this->validarPerfil($data);
+      $this->validarColaborador($data);
     }
   }
 
@@ -376,6 +379,17 @@ class UsuarioService extends ServiceBase
         throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de/para um Desenvolvedor");
       if ($perfilAtual == $developerId && !$this->isLoggedUserADeveloper())
         throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de um Desenvolvedor");
+    }
+  }
+
+  public function validarColaborador($data) : void
+  {
+    // se é um usuário externo não pode ter outro perfil com nível < 6
+    $perfil = Perfil::find($data['perfil_id']);
+    if ($perfil->nivel < 6 && $data['usuario_externo'] == 1) {
+      throw new ServerException("ValidateUsuario", "Usuário externo não pode ter o nível de acesso: " . $perfil->nome);
+    } else if ($perfil->nivel == 6 && $data['usuario_externo'] == 0) {
+      throw new ServerException("ValidateUsuario", "Usuário não pode ter o nível de acesso: " . $perfil->nome);
     }
   }
 

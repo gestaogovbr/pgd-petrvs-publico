@@ -120,6 +120,7 @@ export class Usuario extends Base implements HasNotificacao {
     public planos_entrega_criados?: PlanoEntrega[];
     public planos_trabalho?: PlanoTrabalho[];
     public planos_trabalho_criados?: PlanoEntrega[];
+    public ultimo_plano_trabalho_ativo?: PlanoTrabalho;
     public projetos?: Projeto[];
     public recursos_projeto?: ProjetoRecurso[];
     public tarefas_atividade?: AtividadeTarefa[];
