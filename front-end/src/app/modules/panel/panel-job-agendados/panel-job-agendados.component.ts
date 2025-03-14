@@ -5,6 +5,7 @@ import { PageListBase } from "../../base/page-list-base";
 import { JobAgendado } from '../../../models/job-agendado.model';
 import { JobAgendadoDaoService } from 'src/app/dao/job-agendado-dao.service';
 import { FormGroup } from "@angular/forms";
+import { isValidCron } from 'cron-validator';
 
 @Component({
   selector: 'app-panel-job-agendados',
@@ -30,12 +31,12 @@ export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService>
     super(injector, Tenant, TenantDaoService);
     this.jobAgendadoDao = injector.get<JobAgendadoDaoService>(JobAgendadoDaoService);
     this.tenantDaoService = injector.get<TenantDaoService>(TenantDaoService);
+    this.newJob.expressao_cron = "* * * * *"; 
     this.title = "Gerenciar Jobs agendados";
     this.formGroup = this.fb.group({
       ativo: [true]  
     });
 
-    this.updateCronExpression();
   }
   ngOnInit() {
     super.ngOnInit();
@@ -44,12 +45,6 @@ export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService>
     this.loadJobs();
   }
   onInputChange() {
-    this.validateMinutes();
-    this.validateHours();
-    this.validateDays();
-    this.validateMonths();
-    this.validateWeeks();
-    this.updateCronExpression();
 
   }
   
@@ -58,57 +53,6 @@ export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService>
     { key: true, value: 'Sim' },
     { key: false, value: 'Não' }
   ];
-
-
-  validateMinutes(){
-    if(this.newJob.minutos === null || this.newJob.minutos === undefined) this.newJob.minutos = 0;
-
-    if (this.newJob.minutos < 0) {
-      this.newJob.minutos = 0;
-    } else if (this.newJob.minutos > 59) {
-      this.newJob.minutos = 59;
-    }
-  }
-
-  validateHours(){
-    if(this.newJob.horas === null || this.newJob.horas === undefined) this.newJob.horas = 0;
-
-    if (this.newJob.horas < 0) {
-      this.newJob.horas = 0;
-    } else if (this.newJob.horas > 23) {
-      this.newJob.horas = 23;
-    }
-  }
-
-  validateDays(){
-    if(this.newJob.dias === null || this.newJob.dias === undefined) this.newJob.dias = 0;
-
-    if (this.newJob.dias < 0) {
-      this.newJob.dias = 0;
-    } else if (this.newJob.dias > 31) {
-      this.newJob.dias = 31;
-    }
-  }
-
-  validateMonths(){
-    if(this.newJob.meses === null || this.newJob.meses === undefined) this.newJob.meses = 0;
-
-    if (this.newJob.meses < 0) {
-      this.newJob.meses = 0;
-    } else if (this.newJob.meses > 12) {
-      this.newJob.meses = 12;
-    }
-  }
-
-  validateWeeks(){
-    if(this.newJob.semanas === null || this.newJob.semanas === undefined) this.newJob.semanas = 0;
-
-    if (this.newJob.semanas < 0) {
-      this.newJob.semanas = 0;
-    } else if (this.newJob.semanas > 7) {
-      this.newJob.semanas = 7;
-    }
-  }
 
   toggleDisabled() {
     this.isDisabled = !this.isDisabled;
@@ -174,18 +118,9 @@ export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService>
     }
     this.newJob.ativo = this.formGroup.get('ativo')?.value;
 
-    if (typeof this.newJob.parameters === 'string' && this.newJob.parameters.trim() === '') {
-      this.newJob.parameters = {};
-    } else if (typeof this.newJob.parameters === 'string') {
-      try {
-        this.newJob.parameters = JSON.parse(this.newJob.parameters);
-      } catch (e) {
-        console.error('Erro ao converter JSON:', e);
-        alert('JSON inválido. Por favor, corrija os dados.');
-        return;
-      }
-    } else if (!this.newJob.parameters || Object.keys(this.newJob.parameters).length === 0) {
-      this.newJob.parameters = {};
+    if (!this.isCronValid) {
+      this.dialog.alert('alerta','Expressão Cron inválida');
+      return;
     }
 
     this.jobAgendadoDao.createJob(this.newJob, this.tenant_id).then((job: any) => {
@@ -196,8 +131,8 @@ export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService>
       this.loadJobs();
       this.newJob = new JobAgendado();
       this.newJob.diario = true;
+      this.newJob.expressao_cron = "* * * * *"; 
       this.newJob.parameters = '';
-      this.updateCronExpression();
     }).catch((error: any) => {
       console.error('Error creating job:', error);
       this.dialog.alert('erro','Falha ao salvar o Job');
@@ -224,13 +159,8 @@ export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService>
     }
   }
 
-  updateCronExpression() {
-    const minutos = this.newJob.minutos === 0 || this.newJob.minutos === null ? '*' : this.newJob.minutos;
-    const horas = this.newJob.horas === 0 || this.newJob.horas === null ? '*' : this.newJob.horas;
-    const dias = this.newJob.dias === 0 || this.newJob.dias === null ? '*' : this.newJob.dias;
-    const meses = this.newJob.meses === 0 || this.newJob.meses === null ? '*' : this.newJob.meses;
-    const semanas = this.newJob.semanas === 0 || this.newJob.semanas === null? '*' : this.newJob.semanas;
-
-    this.newJob.expressao_cron = `${minutos} ${horas} ${dias} ${meses} ${semanas}`;
+  get isCronValid(): boolean {
+    return isValidCron(this.newJob.expressao_cron, { alias: true, seconds: true }); 
   }
+
 }

@@ -11,6 +11,7 @@ use App\Models\Usuario;
 use App\Services\ServiceBase;
 use App\Services\Siape\Unidade\Integracao;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class UnidadeIntegranteService extends ServiceBase
@@ -26,7 +27,15 @@ class UnidadeIntegranteService extends ServiceBase
     if (!empty($unidadeId) && empty($unidade)) throw new ServerException("ValidateIntegrante", "Unidade não encontrada no banco");
     if (!empty($usuarioId) && empty($usuario)) throw new ServerException("ValidateIntegrante", "Usuário não encontrado no banco");
     foreach (($unidade ? $unidade->integrantes ?? [] : $usuario->unidadesIntegrantes ?? []) as $vinculo) {
-      $result[$unidade ? $vinculo->usuario->id : $vinculo->unidade->id] = [
+
+      $unidadeOuUsuarioDoVinculo = $unidade ? $vinculo->usuario : $vinculo->unidade;
+
+      if(empty($unidadeOuUsuarioDoVinculo)){
+        Log::alert("Usuario ou unidade com vinculo inválido no banco de dados",[$vinculo]);
+        continue;
+      }
+
+      $result[$unidadeOuUsuarioDoVinculo->id] = [
         "id" => $unidade ? $vinculo->usuario->id : $vinculo->unidade->id,
         "usuario_nome" => $unidade ? $vinculo->usuario->nome : null,
         "usuario_apelido" => $unidade ? $vinculo->usuario->apelido : null,
@@ -49,7 +58,7 @@ class UnidadeIntegranteService extends ServiceBase
       try {
         $usuario = Usuario::find($vinculo["usuario_id"]);
         $unidade = Unidade::find($vinculo["unidade_id"]);
-        if (empty($unidade) || empty($usuario)) throw new ServerException("ValidateIntegrante", "Unidade/Usuário não existe no banco");
+        if (empty($unidade) || empty($usuario)) throw new ServerException("ValidateIntegrante", "Unidade/Usuário não existe no banco: ".json_encode($vinculo));
         //FIXME Isso aqui não deveria estar aqui.
         if (!empty($vinculo['_metadata']['perfil_id'])) $this->usuarioService->update(['id' => $usuario->id, 'perfil_id' => $vinculo['_metadata']['perfil_id']], $unidade);
 
@@ -60,6 +69,7 @@ class UnidadeIntegranteService extends ServiceBase
         array_merge($result, $alteracoesFinais);
         
       } catch (Throwable $e) {
+        report($e);
         throw $e;
       }
     }
