@@ -3,6 +3,7 @@
  - Correção dos vinculos com unidades pai e path inválidos
 ### Removido
  - Removido dados sensiveis do XML de dados pessoais do SIAPE 
+ - Opção para clonar planos de entrega e trabalho
 ### Adicionado
  - Dispensa de homologação de PE para unidades imediatamente inferiores
 ## 2.3.10 27/02/2025
