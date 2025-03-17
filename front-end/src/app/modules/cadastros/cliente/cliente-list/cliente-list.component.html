@@ -5,8 +5,9 @@
   [orderBy]="orderBy"
   [groupBy]="groupBy"
   [join]="join"
-  [hasAdd]="this.auth.isUsuarioDeveloper() && !isFornecedor"
-  [hasEdit]="this.auth.isUsuarioDeveloper()"
+  [hasAdd]="(this.auth.isUsuarioDeveloper() || auth.hasPermissionTo('MOD_CLI_INCL')) && !isFornecedor"
+  [hasEdit]="false"
+  [hasDelete]="false"
   [selectable]="selectable"
   (select)="onSelect($event)"
 >
@@ -42,7 +43,25 @@
     </column>
     <column title="Descrição" field="nome"></column>
 
-    <column type="options" [onEdit]="edit" [options]="options"></column>
+    <column title="Ativar/Desativar" [template]="columnAtivar" 
+           
+            titleHint="Permitir que o Cliente esteja disponível para vinculação de produtos."
+        >
+            <ng-template let-row="row" #columnAtivar>
+                <input-switch 
+                    [size]="12" 
+                    scale="small" 
+                    [value]="row.data_desativado ? 'false' : 'true'" 
+                    [valueOn]="'true'"  
+                    [valueOff]="'false'"
+                    (change)="ativarDesativar(row)"
+                    [disabled]="row.deleted_at"
+                ></input-switch>
+
+            </ng-template>  
+        </column>
+
+    <column type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
   </columns>
   <pagination [rows]="rowsLimit"></pagination>
 </grid>
