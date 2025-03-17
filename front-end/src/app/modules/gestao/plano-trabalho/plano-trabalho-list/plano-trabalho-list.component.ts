@@ -259,8 +259,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			this.BOTAO_TERMOS,
 			this.BOTAO_CONSOLIDACOES,
 			this.BOTAO_REATIVAR,
-			this.BOTAO_SUSPENDER,
-			this.BOTAO_CLONAR
+			this.BOTAO_SUSPENDER
 		];
 		this.rowsLimit = 10;
 	}
