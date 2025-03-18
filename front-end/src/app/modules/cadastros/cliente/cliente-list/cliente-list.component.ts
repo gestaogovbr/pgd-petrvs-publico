@@ -19,6 +19,7 @@ export class ClienteListComponent extends PageListBase<
 > {
 	@ViewChild(GridComponent, {static: false}) public grid?: GridComponent;
 	public tipoClienteDao: TipoClienteDaoService;
+  public isFornecedor: boolean = false;
   public isUpdating: boolean = false;
 
 	constructor(public injector: Injector, dao: ClienteDaoService) {
@@ -100,7 +101,7 @@ export class ClienteListComponent extends PageListBase<
 		return result;
 	}
 
-  public async ativarDesativar(cliente: Cliente){  
+  	public async ativarDesativar(cliente: Cliente){  
       if (this.isUpdating) {
         console.log("Aguarde o término do processo anterior");
         return; 
@@ -140,4 +141,14 @@ export class ClienteListComponent extends PageListBase<
         this.isUpdating = false; 
       }
     }
+
+	public async ngOnInit() {
+		super.ngOnInit();
+
+		this.isFornecedor = this.queryParams.mode == 'fornecedores';
+
+		if (this.isFornecedor) {
+			this.title = this.lex.translate("Fornecedores");
+		}
+	}
 }

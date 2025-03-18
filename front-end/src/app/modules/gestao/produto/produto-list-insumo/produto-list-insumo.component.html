@@ -59,6 +59,12 @@
           controlName="cliente_id" 
           [control]="form!.controls.cliente_id" 
           [dao]="clienteDao"
+          [selectRoute]="{
+            route: ['cadastros', 'cliente'], 
+            params: {
+              mode: 'fornecedores'
+            }
+          }"
         ></input-search>
       </ng-template>
     </column>
