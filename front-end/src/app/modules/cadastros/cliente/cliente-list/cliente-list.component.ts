@@ -14,6 +14,7 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 export class ClienteListComponent extends PageListBase<Cliente, ClienteDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   public tipoClienteDao: TipoClienteDaoService;
+  public isFornecedor: boolean = false;
 
   constructor(public injector: Injector, dao: ClienteDaoService) {
     super(injector, Cliente, ClienteDaoService);
@@ -55,6 +56,16 @@ export class ClienteListComponent extends PageListBase<Cliente, ClienteDaoServic
     }
 
     return result;
+  }
+
+  public async ngOnInit() {
+    super.ngOnInit();
+
+    this.isFornecedor = this.queryParams.mode == 'fornecedores';
+
+    if (this.isFornecedor) {
+      this.title = this.lex.translate("Fornecedores");
+    }
   }
 }
 

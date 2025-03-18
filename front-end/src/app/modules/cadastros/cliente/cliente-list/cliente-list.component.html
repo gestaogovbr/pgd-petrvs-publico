@@ -1,8 +1,34 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [hasAdd]="this.auth.isUsuarioDeveloper()" [hasEdit]="this.auth.isUsuarioDeveloper()" [selectable]="selectable" (select)="onSelect($event)">
+<grid
+  [dao]="dao"
+  [add]="add"
+  [title]="isModal ? '' : title"
+  [orderBy]="orderBy"
+  [groupBy]="groupBy"
+  [join]="join"
+  [hasAdd]="this.auth.isUsuarioDeveloper() && !isFornecedor"
+  [hasEdit]="this.auth.isUsuarioDeveloper()"
+  [selectable]="selectable"
+  (select)="onSelect($event)"
+>
   <toolbar></toolbar>
-  <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
+  <filter
+    [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL') && !isFornecedor"
+    [form]="filter"
+    [where]="filterWhere"
+    [submit]="filterSubmit.bind(this)"
+    [clear]="filterClear.bind(this)"
+    [collapseChange]="filterCollapseChange.bind(this)"
+    [collapsed]="filterCollapsed"
+  >
     <div class="row">
-      <input-select [size]="4" [label]="lex.translate('Tipo Cliente')" controlName="tipo_cliente_id" nullable [control]="filter!.controls.tipo_cliente_id" [dao]="tipoClienteDao"></input-select>
+      <input-select
+        nullable
+        controlName="tipo_cliente_id"
+        [size]="4"
+        [label]="lex.translate(isFornecedor ? 'Tipo Fornecedor' : 'Tipo Cliente')"
+        [control]="filter!.controls.tipo_cliente_id"
+        [dao]="tipoClienteDao"
+      ></input-select>
 
       <input-text [size]="8" [label]="'Nome'" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome'" [attr.maxlength]=250></input-text>
     </div>

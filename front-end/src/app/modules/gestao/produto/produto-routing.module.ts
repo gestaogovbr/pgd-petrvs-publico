@@ -14,7 +14,7 @@ const routes: Routes = [
   { path: 'new', component: ProdutoFormComponent, canActivate: [AuthGuard, ChefiaGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Produtos e Serviços (Cadastro)", modal: true } },
   { path: 'filter', component: ProdutoFilterComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Produtos e Serviços - Busca Avançada", modal: true } },
   { path: ':id/edit', component: ProdutoFormComponent, canActivate: [AuthGuard, ChefiaGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Produtos e Serviços - Alteração", modal: true } },
-  { path: ':id/show', component: ProdutoShowComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Produtos e Serviços - Detalhamento", modal: true } }
+  { path: ':id/show', component: ProdutoShowComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Produtos e Serviços (Detalhamento)", modal: true } }
 ]
 
 @NgModule({
