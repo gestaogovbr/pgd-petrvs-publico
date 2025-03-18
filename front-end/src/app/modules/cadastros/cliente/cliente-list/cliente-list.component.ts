@@ -101,7 +101,7 @@ export class ClienteListComponent extends PageListBase<
 		return result;
 	}
 
-  public async ativarDesativar(cliente: Cliente){  
+  	public async ativarDesativar(cliente: Cliente){  
       if (this.isUpdating) {
         console.log("Aguarde o término do processo anterior");
         return; 
@@ -141,4 +141,14 @@ export class ClienteListComponent extends PageListBase<
         this.isUpdating = false; 
       }
     }
+
+	public async ngOnInit() {
+		super.ngOnInit();
+
+		this.isFornecedor = this.queryParams.mode == 'fornecedores';
+
+		if (this.isFornecedor) {
+			this.title = this.lex.translate("Fornecedores");
+		}
+	}
 }
