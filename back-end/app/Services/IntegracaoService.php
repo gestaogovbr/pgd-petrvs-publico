@@ -631,9 +631,26 @@ class IntegracaoService extends ServiceBase
           "JOIN integracao_servidores AS isr ON isr.cpf = usuario.cpf ".
           "WHERE uia.atribuicao = 'LOTADO' AND u.codigo <> isr.codigo_servo_exercicio and ui.deleted_at IS NULL ".
           "ORDER BY exercicio_antigo ASC");
+
+
+        $sqlServidoresInseridosNaoLotados = DB::select(
+          "SELECT u.id AS usuario_id, un.id AS unidade_id , u.cpf
+          FROM usuarios AS u
+          INNER JOIN integracao_servidores AS ius ON u.cpf = ius.cpf
+          INNER JOIN unidades AS un ON un.codigo = ius.codigo_servo_exercicio
+          WHERE u.id NOT IN
+              (SELECT u.id
+              FROM usuarios AS u
+              INNER JOIN integracao_servidores AS ius ON u.cpf = ius.cpf
+              INNER JOIN unidades_integrantes AS ui ON u.id = ui.usuario_id
+              INNER  JOIN unidades_integrantes_atribuicoes AS uia ON ui.id = uia.unidade_integrante_id
+              WHERE uia.atribuicao = 'LOTADO'
+                AND uia.deleted_at IS NULL
+              GROUP BY u.id)"
+        );  
         $atualizacoesLotacoesResult = [];
 
-        DB::transaction(function () use (&$atualizacoesDados, &$sqlUpdateDados, &$atualizacoesLotacoes, &$atualizacoesLotacoesResult) {
+        DB::transaction(function () use (&$atualizacoesDados, &$sqlUpdateDados, &$atualizacoesLotacoes, &$sqlServidoresInseridosNaoLotados ,&$atualizacoesLotacoesResult) {
           /**
            * Atualiza os dados pessoais de todos os servidores ATIVOS presentes na tabela USUARIOS.
            * ESTA ROTINA NÃO DEVE INSERIR NOVOS SERVIDORES.
@@ -664,6 +681,34 @@ class IntegracaoService extends ServiceBase
               ]);
             }
           };
+
+          if(!empty($sqlServidoresInseridosNaoLotados)){
+            foreach($sqlServidoresInseridosNaoLotados as $inserirLotacao){
+
+              if(empty($inserirLotacao->unidade_id)){
+                Log::channel('siape')->info(sprintf("O servidor cpf #%s não tem unidade de  exercicio, não será alocado", $inserirLotacao['cpf']));
+                continue;
+              }
+
+              $vinculo = array([
+                'usuario_id' => $inserirLotacao->usuario_id,
+                'unidade_id' => $inserirLotacao->unidade_id,
+                'atribuicoes' => ["LOTADO"],
+              ]);
+              try {
+                $dbResult = $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
+              } catch (\Throwable $th) {
+                report($th);
+                LogError::newWarn("IntegracaoService: Durante integração não foi possível alterar lotação!", [$dbResult, $vinculo]);
+              }
+              if(!$dbResult){
+                LogError::newWarn("IntegracaoService: Durante integração não foi possível alterar lotação!", [$dbResult, $vinculo]);
+              } else{
+                  array_push($atualizacoesLotacoesResult, $dbResult);
+              }
+
+            }
+          }
 
           if (!empty($atualizacoesLotacoes)) {
             foreach ($atualizacoesLotacoes as $linha) {
