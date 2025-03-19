@@ -80,9 +80,22 @@ trait DadosExternosSiape
         $retornoPessoais = $this->siapeClassBuscaDados->buscaSincrona($xmlDataPessoais);
         $xmlPessoal = $this->siapeClassBuscaDados->prepareResponseXml($retornoPessoais);
 
+        $out = $xmlPessoal->xpath('//out')[0]; 
+
+        $newXmlPessoal = new SimpleXMLElement('<out/>');
+
+            $fieldsToKeep = ['nome', 'dataNascimento'];
+
+            foreach ($fieldsToKeep as $field) {
+                if (isset($out->$field)) {
+                    $newXmlPessoal->addChild($field, (string) $out->$field);
+                }
+            }
+
+
         return [
             $xmlFuncional,
-            $xmlPessoal
+            $newXmlPessoal
         ];
     }
 }
