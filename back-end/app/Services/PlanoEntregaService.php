@@ -405,6 +405,7 @@ class PlanoEntregaService extends ServiceBase
             if (!empty($unidadeIds)) {
                 $data["where"][] = ['unidade_id', 'in', array_unique($unidadeIds)];
             }
+            $data["orderBy"] = [['unidade.path', 'desc']];
         }
 
 
@@ -439,6 +440,7 @@ class PlanoEntregaService extends ServiceBase
             }
         }
         $data["where"] = $where;
+
     }
 
     public function proxyRows($rows)
