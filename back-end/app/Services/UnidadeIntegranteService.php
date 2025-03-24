@@ -44,7 +44,8 @@ class UnidadeIntegranteService extends ServiceBase
         "unidade_sigla" => $usuario ? $vinculo->unidade->sigla : null,
         "unidade_codigo" => $usuario ? $vinculo->unidade->codigo : null,
         "atribuicoes" => $vinculo->atribuicoes->map(fn ($a) => $a->atribuicao),
-        'data_modificacao' => $dataModificacao
+        'data_modificacao' => $dataModificacao,
+        'usuario_externo' => $unidade ? $vinculo->usuario->usuario_externo : false,
       ];
     }
     return ['rows' => array_values(array_filter($result, fn ($vinculo) => count($vinculo["atribuicoes"]) > 0))];
