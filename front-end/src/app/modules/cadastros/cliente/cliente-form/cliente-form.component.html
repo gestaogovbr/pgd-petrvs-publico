@@ -1,8 +1,8 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()">
   <div class="row">
-    <input-select [size]="3" #tipoCliente label="Tipo" itemTodos="- Selecione -" [valueTodos]="null" controlName="tipo_cliente_id" [items]="tiposCliente" (change)="alteraTipo()"></input-select>
-    <input-search [size]="9" #unidade label="Unidade" controlName="unidade_id" [dao]="unidadeDao" [classList]="'d-none'" (select)="selecionaUnidade($event)"></input-search>
-    <input-text [size]="9" #nome label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
+    <input-search [size]="4" #tipoCliente label="Tipo" [dao]="tipoClienteDao" controlName="tipo_cliente_id" (change)="alteraTipo()" [selectRoute]="{route: ['cadastros', 'tipo-cliente']}"></input-search>
+    <input-search [size]="8" #unidade label="Unidade" controlName="unidade_id" [dao]="unidadeDao" [classList]="'d-none'" (select)="selecionaUnidade($event)"></input-search>
+    <input-text [size]="8" #nome label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
   </div>
 
 </editable-form>

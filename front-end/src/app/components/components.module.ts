@@ -42,10 +42,7 @@ import { DockerComponent } from './kanban/docker/docker.component';
 import { CardComponent } from './kanban/card/card.component';
 import { DndModule } from 'ngx-drag-drop';
 import { OrderComponent } from './grid/order/order.component';
-import { NgChartsModule  }  from 'ng2-charts';
-import { BarChartComponent } from './charts/bar/bar-chart.component';
 import { InputWorkloadComponent } from './input/input-workload/input-workload.component';
-import { PieChartComponent } from './charts/pie/pie-chart.component';
 import { CommentComponent } from './comment/comment.component';
 import { BadgeComponent } from './badge/badge.component';
 import { ProfilePictureComponent } from './profile-picture/profile-picture.component';
@@ -82,8 +79,6 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
 
 @NgModule({
   declarations: [
-    BarChartComponent,
-    PieChartComponent,
     GridComponent,
     ColumnComponent,
     ColumnHeaderComponent,
@@ -146,7 +141,6 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
   ],
   imports: [
     CommonModule,
-    NgChartsModule,
     InfiniteScrollModule,
     ReactiveFormsModule,
     FormsModule,
@@ -160,8 +154,6 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
     TreeSelectModule
   ],
   exports: [
-    BarChartComponent,
-    PieChartComponent,
     GridComponent,
     ColumnsComponent,
     ColumnComponent,

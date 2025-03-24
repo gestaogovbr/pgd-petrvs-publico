@@ -1,3 +1,14 @@
+## 2.3.12 24/03/2025
+### Corrigido
+### Adicionado
+ - Adição dos perfis: Adm Master e Colaborador
+ - Permissão para incluir agentes públicos como Colaborador
+### Modificado
+ - Atualização de todos os perfis de desenvolvedores para Adm Master
+ - Ajustes nas capacidades para os novos perfis
+### Removido
+ - Alteração de lotação pelo caminho da chefia
+
 ## 2.3.11 13/03/2025
 ### Corrigido
  - Correção dos vinculos com unidades pai e path inválidos
