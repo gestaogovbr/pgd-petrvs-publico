@@ -16,8 +16,12 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     sudo \
     chrony \
-    && docker-php-ext-install zip pdo_mysql mysqli soap curl && \
-    docker-php-ext-enable pdo_mysql \
+    && docker-php-ext-install zip \
+    pdo_mysql \
+    mysqli \
+    soap \
+    curl \
+    && docker-php-ext-enable pdo_mysql \
     && rm -rf /var/lib/apt/lists/*
 
 # Instalar openssl utilizando um workaround
