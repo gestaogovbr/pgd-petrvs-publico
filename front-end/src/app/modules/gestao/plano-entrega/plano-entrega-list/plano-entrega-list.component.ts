@@ -86,7 +86,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.title = this.lex.translate('Planos de Entregas');
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
-      subordinadas: { default: true },
+      subordinadas: { default: false },
       principais: { default: false },
       arquivadas: { default: false },
       nome: { default: '' },
@@ -160,6 +160,18 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.avaliacao = !!this.queryParams?.avaliacao;
     this.showFilter = typeof this.queryParams?.showFilter != "undefined" ? (this.queryParams.showFilter == "true") : true;
     this.selectable = this.metadata?.selectable || this.selectable;
+
+    if (this.metadata?.minha_unidade) {
+      this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
+    }
+    this.route.queryParams.subscribe((p) => {
+      if (p["context"] == "EXECUCAO" && this.filter) {
+        this.filter?.controls.usuario.setValue(this.auth.usuario?.nome);
+      }
+      if (p["context"] == "GESTAO" && this.filter) {
+        this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
+      }
+    });
     if (this.execucao) {
       this.title = this.title + " (Execução)";
       this.filter!.controls.unidade_id.setValue(this.auth.unidadeGestor()?.id || null);
@@ -228,6 +240,17 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   }
 
   public filterClear(filter: FormGroup) {
+    if (!filter) {
+      console.error("O objeto filter está indefinido.");
+      return;
+    }
+
+    if (!filter.controls) {
+      console.error("Os controls do formulário não estão disponíveis.");
+      return;
+    }
+
+    // Definir valores nos filtros
     filter.controls.nome.setValue("");
     filter.controls.data_filtro.setValue(null);
     filter.controls.data_filtro_inicio.setValue(new Date());
@@ -236,9 +259,18 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     filter.controls.planejamento_id.setValue(null);
     filter.controls.cadeia_valor_id.setValue(null);
     filter.controls.status.setValue(null);
-    filter.controls.meus_planos.setValue(false);
+    filter.controls.meus_planos.setValue(true);
+
+    // 🔹 Verifique se o nome do campo está correto (subordinadas)
+    if (filter.controls.subordinadas) {
+      filter.controls.subordinadas.setValue(false);
+    } else {
+      console.warn("O controle 'subordinadas' não existe no formulário.");
+    }
+
     super.filterClear(filter);
   }
+
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
@@ -306,7 +338,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       this.filter!.controls.unidade_id.setValue(null);
       this.filter!.controls.meus_planos.setValue(false);
     } else {
-      this.filter!.controls.meus_planos.setValue(true);
+      if(this.filter!.controls.subordinadas){
+        this.filter!.controls.meus_planos.setValue(false);
+      } else {
+        this.filter!.controls.meus_planos.setValue(true);
+      }
     }
     this.grid!.reloadFilter();
   }
@@ -729,6 +765,41 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       }
     });
   }
+
+  public disableMeus() {
+    if (!this.filter || !this.filter.controls.subordinadas || !this.filter.controls.meus_planos) {
+      console.warn("Formulário ou controles não inicializados corretamente.");
+      return;
+    }
+
+    // Se "Unidades Subordinadas" está ativado, desativa "Meus Planos"
+    if (this.filter.controls.subordinadas.value) {
+      this.filter.controls.meus_planos.setValue(false);
+    } else {
+      this.filter.controls.meus_planos.setValue(true);
+    }
+
+    this.grid?.reloadFilter();
+  }
+
+  public disableSub() {
+    if (!this.filter || !this.filter.controls.subordinadas || !this.filter.controls.meus_planos) {
+      console.warn("Formulário ou controles não inicializados corretamente.");
+      return;
+    }
+
+    // Se "Meus Planos" está ativado, desativa "Unidades Subordinadas"
+    if (this.filter.controls.meus_planos.value) {
+      this.filter!.controls.subordinadas.setValue(false);
+      this.filter!.controls.principais.setValue(false);
+    } else {
+      this.filter!.controls.subordinadas.setValue(true);
+
+    }
+
+    this.grid?.reloadFilter();
+  }
+
 
   public canAdd() {
     return this.auth.hasPermissionTo('MOD_PENT_INCL');
