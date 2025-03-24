@@ -1,0 +1,17 @@
+<!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [hasAdd]="auth.hasPermissionTo('MOD_TIPO_CLI_INCL')"
+    [hasEdit]="auth.hasPermissionTo('MOD_TIPO_CLI_EDT')"  [selectable]="selectable" (select)="onSelect($event)">
+    <toolbar></toolbar>
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter"  [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
+        <div class="row">
+            <input-text [size]="12" [label]="'Nome ' + lex.translate('tipo de cliente')" controlName="nome"
+            [control]="filter!.controls.nome" placeholder="Nome..." [attr.maxlength]=250></input-text>
+        </div>
+    </filter>
+    <columns>
+        <column title="Descrição" field="nome"></column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

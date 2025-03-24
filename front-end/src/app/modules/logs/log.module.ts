@@ -8,7 +8,6 @@ import { ChangeFormComponent } from './change/change-form/change-form.component'
 import { ErrorFormComponent } from './error/error-form/error-form.component';
 import { ErrorListComponent } from './error/error-list/error-list.component';
 import { EnvioListComponent } from './envios/envio-list/envio-list.component';
-import { MarkdownModule } from 'ngx-markdown';
 import { EnvioConsultComponent } from './envios/envio-consult/envio-consult.component';
 import { EnvioItemParticipanteListComponent } from './envios/envio-item-participante-list/envio-item-participante-list.component';
 import { EnvioItemConsultComponent } from './envios/envio-item-consult/envio-item-consult.component';
@@ -33,7 +32,6 @@ import { EnvioItemEntregaListComponent } from './envios/envio-item-entrega-list/
     ComponentsModule,
     ReactiveFormsModule,
     LogRoutingModule,
-    MarkdownModule.forRoot()
   ]
 })
 export class LogModule { }

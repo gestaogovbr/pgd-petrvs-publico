@@ -17,6 +17,12 @@ class ProdutoCliente extends Model
         'cliente_id'
     ];
 
+    protected $casts = [
+        'id' => 'string',
+        'produto_id' => 'string',
+        'cliente_id' => 'string',
+    ];
+
     public function produto()
     {
         return $this->belongsTo(Produto::class);
