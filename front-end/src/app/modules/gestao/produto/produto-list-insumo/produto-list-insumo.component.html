@@ -1,0 +1,113 @@
+<grid noMargin #gridProdutos editable 
+  [items]="items" 
+  [form]="form!" 
+  [selectable]="false" 
+  [minHeight]="items.length > 2 ? 0 : 300" 
+  [join]="join" 
+  [groupBy]="groupBy" 
+  [add]="addInsumo.bind(this)" 
+  [remove]="removeInsumo.bind(this)" 
+  [save]="saveInsumo.bind(this)" 
+  [load]="loadInsumo.bind(this)" 
+  [hasDelete]="!this.disabled" 
+  [hasEdit]="!this.disabled" 
+  [hasAdd]="!this.disabled"
+>
+  <columns>
+    <column title="Origem"
+      [template]="columnOrigem" 
+      [editTemplate]="editOrigem"
+      [minWidth]="100"
+    >
+      <ng-template let-row="row" #columnOrigem>
+        <span>{{lookup.getValue(lookup.TIPO_INTERNO_EXTERNO, row.origem)}}</span>
+      </ng-template>
+      <ng-template let-row="row" #editOrigem>
+        <input-select #origem fullEntity
+          required
+          controlName="origem"
+          [control]="form!.controls.origem"
+          [items]="lookup.TIPO_INTERNO_EXTERNO"
+        ></input-select>
+      </ng-template>
+    </column>
+
+    <column title="Fornecedor"
+      [template]="columnFornecedor"
+      [editTemplate]="editFornecedor"
+      [minWidth]="300"
+    >
+      <ng-template let-row="row" #columnFornecedor>
+          <span *ngIf="isInterno(row.origem)">{{row.unidade?.sigla}}</span>
+          <span *ngIf="isExterno(row.origem)">{{row.cliente?.tipo_cliente?.nome}} - {{row.cliente?.nome}}</span>
+      </ng-template>
+      <ng-template let-row="row" #editFornecedor>
+        <input-search #unidadeInsumo fullEntity  
+          *ngIf="isInterno()"
+          [attr.required]="isInterno() ? '' : null"
+          label=""
+          placeholder="Unidade"
+          controlName="unidade_insumo_id" 
+          [control]="form!.controls.unidade_insumo_id" 
+          [dao]="unidadeDao"
+        ></input-search>
+        <input-search #cliente fullEntity  
+          *ngIf="isExterno()"
+          [attr.required]="isExterno() ? '' : null"
+          label=""
+          placeholder="Fornecedor"
+          controlName="cliente_id" 
+          [control]="form!.controls.cliente_id" 
+          [dao]="clienteDao"
+        ></input-search>
+      </ng-template>
+    </column>
+
+    <column 
+      [titleTemplate]="titleInsumo" 
+      [template]="columnInsumo" 
+      [editTemplate]="editInsumo"
+      [minWidth]="300"
+    >
+      <ng-template let-header="header" #titleInsumo>
+        <span><strong>Insumo</strong></span>
+      </ng-template>
+      <ng-template let-row="row" #columnInsumo>
+        <p *ngIf="isInterno(row.origem)">{{row.produto_relacionado?.nome}}</p>
+        <p *ngIf="isExterno(row.origem)">{{row.descricao}}</p>
+      </ng-template>
+      <ng-template let-row="row" #editInsumo>
+          <input-search #produtoRelacionado fullEntity  
+            *ngIf="this.isInterno()"
+            [attr.required]="isInterno() ? '' : null" 
+            label=""
+            placeholder="Produto ou Serviço"
+            controlName="produto_insumo_id" 
+            [control]="form!.controls.produto_insumo_id" 
+            [dao]="produtoDao" 
+            [where]="[['id', '!=', entity?.id]]"
+            [selectRoute]="{
+              route: ['gestao', 'produto'], 
+              params: {
+                mode: 'search-ativos', 
+                excludeId: entity?.id,
+                unidade_id: this.form!.controls.unidade_insumo_id.value
+              }
+            }"
+          ></input-search>
+          <input-text
+            *ngIf="this.isExterno()"
+            [size]="6" 
+            controlName="descricao"
+            placeholder="Descrição"
+            [control]="form!.controls.descricao"
+            [maxLength]=1000
+            [attr.required]="isExterno() ? '' : null" 
+          ></input-text>
+          
+      </ng-template>
+    </column>
+
+    <column type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+  </columns>
+</grid>

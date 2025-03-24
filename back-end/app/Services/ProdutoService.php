@@ -2,6 +2,8 @@
 
 namespace App\Services;
 use App\Services\ServiceBase;
+use App\Models\Produto;
+use Illuminate\Support\Facades\Auth;
 
 class ProdutoService extends ServiceBase
 {
@@ -23,4 +25,29 @@ class ProdutoService extends ServiceBase
     }
     return $rows;  
   }
+
+  public function atribuirTodos() {
+    return Produto::query()->update([
+      'data_ativado' => now(),
+      'data_desativado' => null
+    ]);
+  }
+
+  public function desatribuirTodos() {
+    return Produto::query()->update([
+      'data_desativado' => now(),
+      'data_ativado' => null
+    ]);
+  }
+
+  public function proxyStore($data, $unidade, $action)
+  {
+    if($action == ServiceBase::ACTION_INSERT) {
+      $data['unidade_id'] = $unidade->id;
+      $data['responsavel_id'] = Auth::user()->id;
+    }
+
+    return $data;
+  }
+
 }

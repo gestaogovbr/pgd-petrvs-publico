@@ -88,7 +88,7 @@
           Problemas de lotação
         </a>
       </li>
-      <li class="nav-item dropdown" *ngIf="utils.isDeveloper()">
+      <li class="nav-item dropdown" *ngIf="auth.hasPermissionTo('CTXT_DEV')">
         <a class="nav-link" id="petrvs-context" href="#" role="button" [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside" title="Módulo">
           <span class="d-none d-md-block">
             {{ gb.contexto?.name || "Selecione..." }}

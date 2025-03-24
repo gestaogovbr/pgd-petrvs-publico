@@ -4,29 +4,21 @@
         <div class="col-md-12">
             <input-text 
                 [size]="12" 
-                label="Nome" 
-                icon="bi bi-textarea-t" 
-                [control]="form!.controls.nome" 
-                controlName="this.form.nome" 
-                [attr.maxlength]=250
-            ></input-text>
-            <input-text 
-                [size]="12" 
                 label="ID#" 
                 icon="bi bi-textarea-t" 
                 [control]="form!.controls.id" 
                 controlName="this.form.id" 
                 [attr.maxlength]=10
             ></input-text>
-            <input-search 
-                    #unidade 
-                    [size]="6" 
-                    label="Unidade"
-                    [control]="form!.controls.unidade_id" 
-                    controlName="unidade_id" 
-                    [dao]="unidadeDao"
-            ></input-search>  
-
+            
+            <input-text 
+                    [size]="12" 
+                    label="Nome/Sigla/Nome Fantasia" 
+                    controlName="nome"
+                    [control]="form!.controls.nome" 
+                    placeholder="Nome/Sigla/Nome Fantasia" 
+                    [attr.maxlength]=250
+                ></input-text>
             <input-search 
                     #cliente 
                     [size]="6" 

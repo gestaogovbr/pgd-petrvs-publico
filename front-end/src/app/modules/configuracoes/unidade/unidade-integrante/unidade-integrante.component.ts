@@ -12,6 +12,7 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { IntegranteService } from 'src/app/services/integrante.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
+import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 
 @Component({
   selector: 'unidade-integrante',
@@ -30,6 +31,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   public integranteService: IntegranteService;
   public integranteDao: UnidadeIntegranteDaoService;
   public usuarioDao: UsuarioDaoService;
+  public unidadeDao: UnidadeDaoService;
   public tiposAtribuicao: LookupItem[] = [];
   public perfilDao: PerfilDaoService;
 
@@ -38,6 +40,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     this.integranteService = injector.get<IntegranteService>(IntegranteService);
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
     this.form = this.fh.FormBuilder({
       usuario_id: { default: "" },
@@ -50,7 +53,18 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   ngOnInit() {
     super.ngOnInit();
     this.entity = this.metadata?.unidade;
-    this.tiposAtribuicao = this.lookup.UNIDADE_INTEGRANTE_TIPO;
+  
+    if (this.entity) {
+      if (this.entity?.instituidora) {
+        this.tiposAtribuicao = this.lookup.UNIDADE_INTEGRANTE_TIPO;
+      } else {
+        this.tiposAtribuicao = this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(
+          atribuicao => atribuicao.key !== 'CURADOR'
+        );
+      }
+
+      this.tiposAtribuicao = this.lookup.ordenarLookupItem(this.tiposAtribuicao);
+    }
   }
 
   ngAfterViewInit() {
@@ -140,6 +154,9 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     let usuario = this.perfis.find(p => p.id == row.id);
     form.controls.usuario_id.setValue(this.grid?.adding ? row.usuario_id : row.id);
     form.controls.perfil_id.setValue(usuario?.perfil_id);
+    if (usuario?.usuario_externo) {
+      this.tiposAtribuicao = this.tiposAtribuicao.filter((x: LookupItem) => x.key != 'GESTOR_SUBSTITUTO');
+    }
     form.controls.atribuicoes.setValue(this.integranteService.converterAtribuicoes(row.atribuicoes));
     form.controls.atribuicao.setValue("");
   }
@@ -251,39 +268,4 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   }
 
 
-  /* 
-  
-  TESTES MÍNIMOS RECOMENDADOS PARA A VALIDAÇÃO DO COMPONENTE - UNIDADE-INTEGRANTE
-
-  CENÁRIO: CAMINHO FELIZ
-  Formulário das preferências da unidade - aba 'Integrantes'
-  1. Destituir o gestor
-  2. Atribuir a gerência da unidade a um servidor que já está lotado nela
-  3. Atribuir a gerência da unidade a um servidor que ainda não está lotado nela, mas já consta no grid
-  4. Atribuir a gerência da unidade a um servidor que ainda não está lotado nela, nem consta no grid
-  5. Trocar de gerente, assumindo um servidor que já existe no grid
-  6. Trocar de gerente, assumindo um servidor que ainda não existe no grid
-  7. Alterar atribuições (exceto gerência e lotação) de um servidor que já existe no grid
-  8. Alterar atribuições (exceto gerência e lotação) de um servidor que ainda não existe no grid
-  9. Lotar na unidade um usuário que já existe no grid
-  10. Lotar na unidade um usuário que ainda não existe no grid
-  11. Realizar várias das ações acima ao mesmo tempo (ações que sejam coerentes e não conflitantes), antes de salvar o formulário
-  12. Excluir o vínculo completo com um servidor que não seja lotado na unidade
-
-  CENÁRIO: CAMINHO FELIZ
-  Formulário de Integrantes da unidade - grupo de botões opcionais (...)
-  1. Destituir o gestor
-  2. Atribuir a gerência da unidade a um servidor que já está lotado nela
-  3. Atribuir a gerência da unidade a um servidor que ainda não está lotado nela, mas já consta no grid
-  4. Atribuir a gerência da unidade a um servidor que ainda não está lotado nela, nem consta no grid
-  5. Trocar de gerente, assumindo um servidor que já existe no grid e é lotado na unidade
-  6. Trocar de gerente, assumindo um servidor que já existe no grid mas não é lotado na unidade
-  7. Trocar de gerente, assumindo um servidor que ainda não existe no grid
-  8. Alterar atribuições (exceto gerência e lotação) de um servidor que já existe no grid
-  9. Alterar atribuições (exceto gerência e lotação) de um servidor que ainda não existe no grid
-  10. Lotar na unidade um usuário que já existe no grid
-  11. Lotar na unidade um usuário que ainda não existe no grid
-  12. Excluir o vínculo completo com um servidor que não seja lotado na unidade
-  
-  */
 }

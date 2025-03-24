@@ -86,6 +86,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.title = this.lex.translate('Planos de Entregas');
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
+      subordinadas: { default: true },
       principais: { default: false },
       arquivadas: { default: false },
       nome: { default: '' },
@@ -139,7 +140,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.BOTAO_SUSPENDER = { label: "Suspender", id: "PAUSADO", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), onClick: this.suspender.bind(this) };
     this.botoes = [this.BOTAO_ALTERAR, this.BOTAO_ARQUIVAR, this.BOTAO_AVALIAR, this.BOTAO_CANCELAR_PLANO, this.BOTAO_CANCELAR_AVALIACAO, this.BOTAO_CANCELAR_CONCLUSAO,
     this.BOTAO_CANCELAR_HOMOLOGACAO, this.BOTAO_CONCLUIR, this.BOTAO_CONSULTAR, this.BOTAO_DESARQUIVAR, this.BOTAO_EXCLUIR, this.BOTAO_HOMOLOGAR, this.BOTAO_LIBERAR_HOMOLOGACAO,
-    this.BOTAO_LOGS, this.BOTAO_REATIVAR, this.BOTAO_RETIRAR_HOMOLOGACAO, this.BOTAO_SUSPENDER, this.BOTAO_CLONAR];
+    this.BOTAO_LOGS, this.BOTAO_REATIVAR, this.BOTAO_RETIRAR_HOMOLOGACAO, this.BOTAO_SUSPENDER];
     //this.BOTAO_ADERIR_OPTION, this.BOTAO_ADERIR_TOOLBAR,
   }
 
@@ -148,6 +149,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     return {
       meus_planos: form.meus_planos,
       arquivadas: form.arquivadas,
+      subordinadas: form.subordinadas,
       unidade_id: form.unidade_id,
     }
   }
@@ -286,6 +288,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     
     //  (RI_PENT_C) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados.
     result.push(["incluir_arquivados", "==", this.filter!.controls.arquivadas.value]);
+    result.push(["incluir_subordinadas", "==", this.filter!.controls.subordinadas.value]);
     return result;
   }
 
