@@ -124,17 +124,20 @@ class UsuarioSeeder extends Seeder
       ]);
       $user->save();
 
-      $integrante = new UnidadeIntegrante([
-        'unidade_id' => $unidade_pai->id,
-        'usuario_id' => $user->id
-      ]);
-      $integrante->save();
+      if(empty($user->lotacoes())){
+        # criar se não existir
+        $integrante = UnidadeIntegrante::firstOrCreate(
+          [
+            'unidade_id' => $unidade_pai->id,
+            'usuario_id' => $user->id
+          ]
+        );
 
-      $lotacao = new UnidadeIntegranteAtribuicao([
-        'atribuicao' => "LOTADO",
-        'unidade_integrante_id' => $integrante->id
-      ]);
-      $lotacao->save();
+        UnidadeIntegranteAtribuicao::firstOrCreate([
+          'atribuicao' => "LOTADO",
+          'unidade_integrante_id' => $integrante->id
+        ]);
+      }
     }
   }
 }

@@ -6,6 +6,8 @@ use App\Exceptions\Contracts\IBaseException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use Illuminate\Support\Facades\Log;
+use App\Models\Unidade;
+use Exception;
 use Throwable;
 
 class UnidadeIntegranteController extends ControllerBase
@@ -48,17 +50,24 @@ class UnidadeIntegranteController extends ControllerBase
         'integrantesConsolidados.*._metadata' => ['array', 'nullable'],
       ]);
 
+      foreach($data['integrantesConsolidados'] as $integrante) {
+        $unidade = Unidade::findOrFail($integrante['unidade_id']);
+
+        if (!$unidade->instituidora && in_array("CURADOR", $integrante['atribuicoes'], true)) {
+          return response()->json(['error' => "Atribuição de CURADOR não pode ser designada a Unidade que não é Instituidora."]);
+        }
+      }
+
       return response()->json([
         'success' => true,
         'data' => $this->service->salvarIntegrantes($data["integrantesConsolidados"])
       ]);
     }  catch (IBaseException $e) {
       return response()->json(['error' => $e->getMessage()]);
-  }
-  catch (Throwable $e) {
+    } catch (Throwable $e) {
       $dataError = throwableToArrayLog($e);
       Log::error($dataError);
       return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
-  }
+    }
   }
 }

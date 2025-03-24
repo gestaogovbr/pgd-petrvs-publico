@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\SolucaoController;
 use App\Http\Controllers\TipoClienteController;
 use App\Models\TipoCliente;
 use App\Services\Validador\ClienteValidador;
@@ -11,9 +12,10 @@ use App\Services\Validador\IValidador;
 use App\Services\Validador\ProdutoClienteValidador;
 use App\Services\Validador\ProdutoClienteValidation;
 use App\Services\Validador\ProdutoProcessoCadeiaValorValidation;
-use App\Services\Validador\ProdutoProdutoValidation;
+use App\Services\Validador\ProdutoInsumoValidation;
 use App\Services\Validador\ProdutoSolucaoValidador;
 use App\Services\Validador\ProdutoValidador;
+use App\Services\Validador\SolucaoValidador;
 use App\Services\Validador\TipoClienteValidador;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -33,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
         ->give(function () {
             return [
                 $this->app->make(ProdutoValidador::class),
-                $this->app->make(ProdutoProdutoValidation::class),
+                $this->app->make(ProdutoInsumoValidation::class),
                 $this->app->make(ProdutoProcessoCadeiaValorValidation::class),
                 $this->app->make(ProdutoClienteValidador::class),
                 $this->app->make(ProdutoSolucaoValidador::class),
@@ -53,6 +55,12 @@ class AppServiceProvider extends ServiceProvider
         ->give(function () {
             return [
                 $this->app->make(TipoClienteValidador::class),
+            ];
+        });
+
+        $this->app->when(SolucaoController::class)->needs(IValidador::class)->give(function () {
+            return [
+                $this->app->make(SolucaoValidador::class),
             ];
         });
     }

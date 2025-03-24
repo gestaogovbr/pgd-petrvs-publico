@@ -361,6 +361,7 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
   Route::post('filhas', [UnidadeController::class, 'filhas']);
   Route::post('linhaAscendente', [UnidadeController::class, 'linhaAscendente']);
   Route::post('lookup-todas-unidades', [UnidadeController::class, 'lookupTodasUnidades']);
+  Route::post('obter-instituidora', [UnidadeController::class, 'obterInstitudora']);
 });
 Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegrante')->group(function () {
   Route::post('carregar-integrantes', [UnidadeIntegranteController::class, 'carregarIntegrantes']);
@@ -469,6 +470,8 @@ Route::middleware(['auth:sanctum'])->prefix('Relato')->group(function () {
 });
 Route::middleware(['auth:sanctum'])->prefix('Produto')->group(function () {
   defaultRoutes(ProdutoController::class);
+  Route::post('ativar-todos', [ProdutoController::class, 'atribuirTodos']);
+  Route::post('desativar-todos', [ProdutoController::class, 'desatribuirTodos']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Catalogo')->group(function () {
     defaultRoutes(CatalogoController::class);

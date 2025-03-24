@@ -1,7 +1,7 @@
 <h3 *ngIf="!isModal" class="my-2">{{title}}</h3>
 <grid [dao]="dao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [hasAdd]="auth.hasPermissionTo('MOD_PERF_INCL')"
-    [hasEdit]="auth.hasPermissionTo('MOD_PERF_EDT')">
+    [hasAdd]="false"
+    [hasEdit]="false">
     <toolbar></toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
         <div class="row">

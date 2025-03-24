@@ -5,7 +5,7 @@
     <div *ngIf="!isNoButtons" class="d-flex flex-row-reverse mt-2">
         <div class="flex-fill d-flex justify-content-end">
             <div *ngIf="deleted" class="me-2" >
-                <input-switch [size]="4" labelPosition="left" label="Mostrar os deletados" [hostClass]="'mt-0'" [control]="deletedControl" (change)="onDeletedChange($event)"></input-switch>
+                <input-switch [size]="4" labelPosition="left" [label]="deletedLabel" [hostClass]="'mt-0'" [control]="deletedControl" (change)="onDeletedChange($event)"></input-switch>
             </div>
             <div class="btn-group" role="group" aria-label="Grupo de botões para filtrar e limpar filtro">
                 <button type="button" [id]="getId('_filter_filtrar')" class="btn btn-outline-success" (click)="onButtonFilterClick()">

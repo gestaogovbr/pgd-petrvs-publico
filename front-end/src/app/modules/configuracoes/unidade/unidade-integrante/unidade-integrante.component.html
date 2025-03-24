@@ -17,24 +17,49 @@
         <input-search #usuario [disabled]="grid?.adding ? undefined : 'true'" [size]="12" label icon controlName="usuario_id" [dao]="usuarioDao"></input-search>
       </ng-template>
     </column>
-    <column [title]="lex.translate('Atribuições')" [template]="columnAtribuicoes" [editTemplate]="editAtribuicoes" [maxWidth]="200">
+    <column
+      [title]="lex.translate('Atribuições')"
+      [template]="columnAtribuicoes"
+      [editTemplate]="editAtribuicoes"
+      [maxWidth]="200"
+    >
       <ng-template let-row="row" #columnAtribuicoes>
         <div *ngFor="let atribuicao of row.atribuicoes">
-          <badge [color]="lookup.getColor(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')" [icon]="lookup.getIcon(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')" [label]="lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')"></badge><br>
+          <badge 
+            [color]="lookup.getColor(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')"
+            [icon]="lookup.getIcon(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')"
+            [label]="lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')"
+          ></badge><br>
         </div>
       </ng-template>
       <ng-template let-row="row" #editAtribuicoes>
-        <input-multiselect controlName="atribuicoes" [size]="8" [addItemHandle]="addItemHandle.bind(this)" [deleteItemHandle]="deleteItemHandle.bind(this)">
-          <input-select [size]="12" label="" icon="fas fa-sign-out-alt" controlName="atribuicao" [items]="tiposAtribuicao"></input-select>
+        <input-multiselect
+          controlName="atribuicoes"
+          [size]="8"
+          [addItemHandle]="addItemHandle.bind(this)"
+          [deleteItemHandle]="deleteItemHandle.bind(this)"
+        >
+          <input-select
+            [size]="12"
+            label=""
+            icon="fas fa-sign-out-alt"
+            controlName="atribuicao"
+            [items]="tiposAtribuicao"
+          ></input-select>
         </input-multiselect>
       </ng-template>
     </column>
-    <column [title]="lex.translate('Perfil')" [template]="columnPerfil" [editTemplate]="auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? editPerfil : columnPerfil" [maxWidth]="300">
+    <column
+      [title]="lex.translate('Perfil')"
+      [template]="columnPerfil"
+      [editTemplate]="auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? editPerfil : columnPerfil"
+      [maxWidth]="300"
+    >
       <ng-template let-row="row" #columnPerfil>
         <badge color="gray" [label]="getPerfil(row.id) || ''"></badge><br>
       </ng-template>
       <ng-template let-row="row" #editPerfil>
-        <input-select [size]="12" [label]="lex.translate('Perfil')" controlName="perfil_id" [dao]="perfilDao" required></input-select>
+        <input-select [size]="12" [label]="lex.translate('Perfil')" controlName="perfil_id" [dao]="perfilDao" [where]="[['nivel', '>=', !row?.usuario_externo ? 0 : 6]]" required></input-select>
       </ng-template>
     </column>
     <column type="options"></column>
