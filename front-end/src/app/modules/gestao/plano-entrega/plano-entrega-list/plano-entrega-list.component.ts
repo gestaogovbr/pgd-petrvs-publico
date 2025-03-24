@@ -338,7 +338,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       this.filter!.controls.unidade_id.setValue(null);
       this.filter!.controls.meus_planos.setValue(false);
     } else {
-      this.filter!.controls.meus_planos.setValue(true);
+      if(this.filter!.controls.subordinadas){
+        this.filter!.controls.meus_planos.setValue(false);
+      } else {
+        this.filter!.controls.meus_planos.setValue(true);
+      }
     }
     this.grid!.reloadFilter();
   }
@@ -786,9 +790,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
     // Se "Meus Planos" está ativado, desativa "Unidades Subordinadas"
     if (this.filter.controls.meus_planos.value) {
-      this.filter.controls.subordinadas.setValue(false);
+      this.filter!.controls.subordinadas.setValue(false);
+      this.filter!.controls.principais.setValue(false);
     } else {
-      this.filter.controls.subordinadas.setValue(true);
+      this.filter!.controls.subordinadas.setValue(true);
+
     }
 
     this.grid?.reloadFilter();
