@@ -34,7 +34,7 @@ class ProgramaParticipanteService extends ServiceBase {
                 $plano_trabalho_ativo = PlanoTrabalho::where('usuario_id',$idp)->where('programa_id',$data['programa_id'])->where('status','ATIVO')->first();
                 
                 if(empty($data['habilitar']) && !empty($plano_trabalho_ativo)) {
-                    if(!$data['suspender_plano_trabalho']) throw new ServerException("ValidatePrograma","O participante: " . Usuario::find($idp)->nome . " não pode ser desligado deste Regramento Institucional, pois há pendências em Plano(s) de Trabalho.");
+                    if(!$data['suspender_plano_trabalho']) throw new ServerException("ValidateProgramaPendencia","O participante: " . Usuario::find($idp)->nome . " não pode ser desligado deste Regramento Institucional, pois há pendências em Plano(s) de Trabalho.");
                     $plano_trabalho_ativo->status = 'SUSPENSO';
                     $plano_trabalho_ativo->save();
                 }
