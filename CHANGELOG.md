@@ -9,6 +9,7 @@
 ### Removido
  - Alteração de lotação pelo caminho da chefia
 
+
 ## 2.3.11 13/03/2025
 ### Corrigido
  - Correção dos vinculos com unidades pai e path inválidos
