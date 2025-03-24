@@ -1,7 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DocumentacaoComponent } from './documentacao/documentacao.component';
-import { MarkdownModule } from 'ngx-markdown';
 import { RouterModule, Routes } from '@angular/router';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { HomeSuporteComponent } from './home-suporte/home-suporte.component';
@@ -15,9 +13,6 @@ const routes: Routes = [
     children: [
       {
         path: '', component: MenuSuporteComponent
-      },
-      {
-        path: 'documentacao', component: DocumentacaoComponent
       }
     ]
   }
@@ -25,7 +20,6 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    DocumentacaoComponent,
     HomeSuporteComponent,
     MenuSuporteComponent,
   ],
@@ -34,7 +28,6 @@ const routes: Routes = [
     CommonModule,
     PanelMenuModule,
     ComponentsModule,
-    MarkdownModule.forRoot()
   ]
 })
 export class SuporteModule { }

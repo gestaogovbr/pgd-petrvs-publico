@@ -7,18 +7,15 @@
                 </div>
                 <div class="form-group col-md-9">
                     <div class="row">
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_CPF') ? 'true' : undefined" [size]="3" label="CPF" controlName="cpf" [maskFormat]="'000.000.000-00'" [attr.maxlength]=15 required></input-text>
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAT') ? 'true' : undefined" [size]="2" label="Matrícula" controlName="matricula" [attr.maxlength]=250 required></input-text>
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAIL') ? 'true' : undefined" [size]="4" label="E-mail" controlName="email" textCase="lower" [attr.maxlength]=250 required></input-text>
-                        <input-datetime date [size]="3" label="Nascimento" noIcon controlName="data_nascimento" [labelInfo]="'Data de nascimento'"></input-datetime>
+                        <input-text [disabled]="!entity?.usuario_externo ? 'true' : undefined" [size]="3" label="CPF" controlName="cpf" [maskFormat]="'000.000.000-00'" [attr.maxlength]=15 required></input-text>
+                        <input-text [disabled]="!entity?.usuario_externo ? 'true' : undefined" [size]="6" label="E-mail" controlName="email" textCase="lower" [attr.maxlength]=250 required></input-text>
+                        <input-datetime date [size]="3" label="Nascimento" noIcon controlName="data_nascimento" [labelInfo]="'Data de nascimento'" [disabled]="!entity?.usuario_externo ? 'true' : undefined"></input-datetime>
                     </div>
                     <div class="row">
-                        <input-text [size]="5" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
-                        <input-text [size]="3" label="Apelido" controlName="apelido" [attr.maxlength]=250 required></input-text>
-                        <input-radio [size]="4" label="Sexo" controlName="sexo" [items]="lookup.SEXO"></input-radio>
+                        <input-text [size]="12" label="Nome" controlName="nome" [disabled]="!entity?.usuario_externo ? 'true' : undefined" [attr.maxlength]=250 required></input-text>
                     </div>
                     <div class="row">
-                        <input-select [size]="6" label="UF" icon="bi bi-flag" controlName="uf" [items]="lookup.UF"></input-select>
+                        <input-select [size]="6" label="UF" icon="bi bi-flag" controlName="uf" [items]="lookup.UF" [disabled]="!entity?.usuario_externo ? 'true' : undefined"></input-select>
                         <input-text [size]="6" label="Telefone" controlName="telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'" [attr.maxlength]=250></input-text>
                     </div>
                     <div class="row">
@@ -28,14 +25,20 @@
                 </div>
             </div>
         </tab>
-        <tab key="CONFIGURACOES" label="Configurações">
+        <tab key="CONFIGURACOES" label="TCR- Particularidades do participante" *ngIf="entity?.id && !entity?.usuario_externo">
             <div class="row">
-                <input-editor [label]="'Texto complementar ' + lex.translate('Plano de Trabalho')" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
+                <input-editor [label]="''" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
             </div>
         </tab>
+        <tab key="TCR" label="TCR compilado" *ngIf="entity?.id && !entity?.usuario_externo">
+            <document-preview *ngIf="entity?.ultimo_plano_trabalho_ativo" [html]="entity?.ultimo_plano_trabalho_ativo?.documentos?.[0]?.conteudo || ''" emptysDocumentMensage="Vazio"></document-preview>
+        </tab>
         <tab key="ATRIBUICOES" [label]="lex.translate('Atribuições')">
-            <top-alert type="alert" [message]="'É impossível excluir ' + lex.translate('a lotação') + ' ' + lex.translate('do servidor') + '. Para alterá-la, lote-o em outra ' + lex.translate('unidade') + '!'"></top-alert>
+            <top-alert type="alert" [message]="' Não é possível excluir ou alterar ' + lex.translate('a lotação') + ' ' + lex.translate('do servidor') + '. '"></top-alert>
             <usuario-integrante #unidadesIntegrantes noPersist [entity]="entity"></usuario-integrante>
         </tab>
     </tabs>
 </editable-form>
+<small *ngIf="entity?.id && entity?.usuario_externo">
+    <span class="fs-6 text-danger">** Cadastro realizado por  {{ entity?.audits_externo[0]?.performed_by || 'carregando...' }}  em {{ entity?.audits_externo[0]?.created_at || 'carregando...' }}  </span>
+</small>
