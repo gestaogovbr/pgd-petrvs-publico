@@ -22,25 +22,16 @@ services:
     networks:
       - appnet
 
-  petrvs_php:
+  petrvs_base: &petrvs_base
     build:
       context: .
       dockerfile: Dockerfile-php
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    container_name: petrvs_php
     working_dir: /var/www
     environment:
       - TZ=America/Bahia
       - REDIS_HOST=petrvs_redis
-    ports:
-      - "80:80"
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
-    depends_on:
-      - petrvs_db
-      - petrvs_redis
     volumes:
       - ../../../back-end:/var/www
     deploy:
@@ -50,6 +41,44 @@ services:
     networks:
       - appnet
 
+  petrvs_php:
+    <<: *petrvs_base
+    container_name: petrvs_php
+    ports:
+      - "80:80"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    depends_on:
+      - petrvs_db
+      - petrvs_redis
+    networks:
+      - appnet
+
+  petrvs_queue:
+    <<: *petrvs_base
+    container_name: petrvs_queue
+    command: ["supervisord", "-c", "/etc/supervisor/conf.d/horizon.conf"]
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+    depends_on:
+      - petrvs_php
+      - petrvs_redis
+    networks:
+      - appnet
+
+  petrvs_scheduler:
+    <<: *petrvs_base
+    container_name: petrvs_scheduler
+    command: > 
+      /bin/sh -c "while :; do php /var/www/artisan schedule:run >> /var/www/storage/logs/scheduler.log 2>&1; sleep 60; done"
+    depends_on:
+      - petrvs_php
+    networks:
+      - appnet
+  
   petrvs_node:
     build:
       context: .
@@ -73,41 +102,6 @@ services:
     networks:
       - appnet
 
-  petrvs_queue:
-    build:
-      context: .
-      dockerfile: Dockerfile-php
-    container_name: petrvs_queue
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    environment:
-      - TZ=America/Bahia
-    volumes:
-      - ../../../back-end:/var/www
-    command: ["supervisord", "-c", "/etc/supervisor/conf.d/horizon.conf"]
-    deploy:
-      resources:
-        limits:
-          memory: 4048M
-    depends_on:
-      - petrvs_php
-    networks:
-      - appnet
-
-  petrvs_scheduler:
-    image: segescginf/pgdpetrvs:latest
-    container_name: petrvs_scheduler
-    environment:
-      - TZ=America/Bahia
-    volumes:
-      - ../../../back-end:/var/www
-    command: > 
-      /bin/sh -c "while :; do php /var/www/artisan schedule:run >> /var/www/storage/logs/scheduler.log 2>&1; sleep 60; done"
-    depends_on:
-      - petrvs_php
-    networks:
-      - appnet
-  
   petrvs_redis:
     image: redis:alpine
     container_name: petrvs_redis
