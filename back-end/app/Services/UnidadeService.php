@@ -385,6 +385,7 @@ class UnidadeService extends ServiceBase
 
     public function subordinadas($id)
     {
+
         $unidade = Unidade::findOrFail($id);
 
         if (!$unidade) {

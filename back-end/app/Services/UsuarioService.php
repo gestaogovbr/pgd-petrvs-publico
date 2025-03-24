@@ -176,14 +176,17 @@ class UsuarioService extends ServiceBase
    * Se o usuário não for informado, será utilizado o usuário logado.
    * @param string $unidade_id
    */
-  public function isLotacao(string|null $usuario_id = null, string $unidade_id): bool
-  {
-    $usuario = isset($usuario_id) ? Usuario::find($usuario_id) : parent::loggedUser();
-    if ($usuario->lotacao !== null) {
-      return $usuario->lotacao->unidade_id == $unidade_id;
+    public function isLotacao(string|null $usuario_id = null, string $unidade_id): bool
+    {
+        $usuario = isset($usuario_id) ? Usuario::find($usuario_id) : parent::loggedUser();
+
+        if (!$usuario) {
+            return false; // Retorna falso se o usuário não for encontrado
+        }
+
+        return $usuario->lotacao !== null && $usuario->lotacao->unidade_id == $unidade_id;
     }
-    return false;
-  }
+
 
   /**
    * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade
