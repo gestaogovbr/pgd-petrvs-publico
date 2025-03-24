@@ -508,7 +508,7 @@ class ServiceBase extends DynamicMethods
     $model = App($this->collection);
     $table = $model->getTable();
     $data["select"] = array_map(fn ($field) => str_contains($field, ".") ? $field : $table . "." . $field, array_merge(['id'], $data['fields']));
-    $query = DB::table($table);
+    $query = $model::query();
     if (method_exists($this, 'proxySearch')) $this->proxySearch($query, $data, $text);
     $likes = ["or"];
     foreach ($data['fields'] as $field) {
@@ -519,15 +519,24 @@ class ServiceBase extends DynamicMethods
     //$where = count($data['where']) > 0 ? [$likes, $data['where']] : $likes;
     $where = [$likes, $data['where']];
     $this->applyWhere($query, $where, $data);
+    $sql = $query->toSql();
     $this->applyOrderBy($query, $data);
     $query->select($data["select"]);
+    
     $rows = $query->get();
     $values = [];
     foreach ($rows as $row) {
-      $row = (array) $row;
+      // Certifique-se de que $row seja tratado como array
+      $rowArray = $row instanceof \Illuminate\Database\Eloquent\Model ? $row->toArray() : (array) $row;
+
       $orderFilds = array_map(fn ($order) => "_" . str_replace(".", "_", $order[0]), $data['orderBy'] ?? []);
-      $orderValues = array_map(fn ($field) => $row[$field], $orderFilds);
-      array_push($values, [$row['id'], array_map(fn ($field) => $row[$field], $data['fields']), $orderValues]);
+      $orderValues = array_map(fn ($field) => $rowArray[$field], $orderFilds);
+
+      array_push($values, [
+          $rowArray['id'],
+          array_map(fn ($field) => $rowArray[$field], $data['fields']),
+          $orderValues
+      ]);
     }
     return $values;
   }

@@ -120,15 +120,18 @@ export class Usuario extends Base implements HasNotificacao {
     public planos_entrega_criados?: PlanoEntrega[];
     public planos_trabalho?: PlanoTrabalho[];
     public planos_trabalho_criados?: PlanoEntrega[];
+    public ultimo_plano_trabalho_ativo?: PlanoTrabalho;
     public projetos?: Projeto[];
     public recursos_projeto?: ProjetoRecurso[];
     public tarefas_atividade?: AtividadeTarefa[];
     public tarefas_projeto?: ProjetoTarefa[];
     public unidades?: Unidade[];
     public unidades_integrantes?: UnidadeIntegrante[];
+    public audits_externo?: any= [];
 
     public nome: string = ""; /* Nome do Usuário */
     public email: string = ""; /* Email do Usuário */
+    public usuario_externo: boolean = true;
     public email_verified_at?: Date; /* Data de validação do email */
     public cpf: string = ""; /* CPF do usuário */
     public matricula: string | null = null; /* Matrícula do usuário */

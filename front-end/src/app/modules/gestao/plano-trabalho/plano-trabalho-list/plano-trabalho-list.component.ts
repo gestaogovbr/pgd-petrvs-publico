@@ -93,6 +93,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		this.filter = this.fh.FormBuilder(
 			{
 				agrupar: {default: true},
+				subordinadas: { default: true },
 				lotados_minha_unidade: {default: false},
 				usuario: {default: ""},
 				status: {default: ""},
@@ -378,6 +379,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		filter.controls.unidade_id.setValue(null);
 		filter.controls.status.setValue(null);
 		filter.controls.arquivados.setValue(false);
+		filter.controls.subordinadas.setValue(false);
 		filter.controls.tipo_modalidade_id.setValue(null);
 		filter.controls.data_filtro.setValue(null);
 		filter.controls.data_filtro_inicio.setValue(new Date());
@@ -413,6 +415,11 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			"==",
 			this.filter!.controls.arquivados.value,
 		]);
+		result.push([
+			"incluir_subordinadas",
+			"==",
+			this.filter!.controls.subordinadas.value,
+		]);
 		return result;
 	};
 
@@ -428,6 +435,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			this.grid!.reloadFilter();
 		}
 	}
+
 
 	public onLotadosMinhaUnidadeChange(event: Event) {
 		this.grid!.reloadFilter();
