@@ -35,6 +35,6 @@ class UnidadeIntegranteAtribuicaoService extends ServiceBase
   public function checkLotacoes($usuarioId)
   {
     $usuario = Usuario::find($usuarioId);
-    if (!isset($usuario->lotacao)) throw new ServerException("ValidateLotacao", "Usuário não pode ficar sem lotação");
+    if (!$usuario->usuario_externo && !isset($usuario->lotacao)) throw new ServerException("ValidateLotacao", "Usuário não pode ficar sem lotação");
   }
 }

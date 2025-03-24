@@ -3,8 +3,10 @@ import { AbstractControl, FormGroup } from "@angular/forms";
 import { EditableFormComponent } from "src/app/components/editable-form/editable-form.component";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { InputSearchComponent } from "src/app/components/input/input-search/input-search.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
 import { ProdutoDaoService } from "src/app/dao/produto-dao.service";
 import { ProdutoSolucaoDaoService } from "src/app/dao/produto-solucao-dao.service";
+import { QueryOptions } from "src/app/dao/query-options";
 import { SolucaoDaoService } from "src/app/dao/solucao-dao.service";
 import { SolucaoUnidadeDaoService } from "src/app/dao/solucao-unidade-dao.service";
 import { IIndexable } from "src/app/models/base.model";
@@ -45,6 +47,7 @@ export class ProdutoListSolucaoComponent extends PageFrameBase {
     this.dao = injector.get<ProdutoSolucaoDaoService>(ProdutoSolucaoDaoService);
     this.produtoDao = injector.get<ProdutoDaoService>(ProdutoDaoService);
     this.solucaoDao = injector.get<SolucaoDaoService>(SolucaoDaoService);
+    this.solucaoUnidadeDao = injector.get<SolucaoUnidadeDaoService>(SolucaoUnidadeDaoService);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
 
     this.form = this.fh.FormBuilder({
@@ -70,9 +73,16 @@ export class ProdutoListSolucaoComponent extends PageFrameBase {
             } else {
                 try {
                     const solucao = await this.solucaoDao?.getById(control.value);
-                    const solucaoUnidade = await this.solucaoUnidadeDao?.getOne(control.value, this.entity?.unidade?.id as string).asPromise();
-  
-                    console.log(solucaoUnidade);
+
+                    var queryOptions: QueryOptions = new QueryOptions({
+                      where: [
+                        ["id_solucao", "==", control.value],
+                        ["id_unidade", "==", this.auth?.unidade?.id]
+                      ]
+                    });
+                    
+                    const solucaoUnidade = await this.solucaoUnidadeDao?.query(queryOptions).asPromise();
+                 
                     if (!solucaoUnidade || !solucaoUnidade[0] || !solucaoUnidade[0].status) {
                       result = 'Solução inativa não pode ser usada';
                     }
@@ -127,6 +137,16 @@ export class ProdutoListSolucaoComponent extends PageFrameBase {
       this.cdRef.detectChanges();
     }
     return result;
+  }
+
+  public dynamicButtons(row: ProdutoSolucao): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showSolucao.bind(this) });  
+    return result;
+  }
+
+  public async showSolucao(row: ProdutoSolucao){
+    this.go.navigate({route: ['gestao', 'solucao', row.solucao_id, "consult"]}, {});    
   }
 
 }
