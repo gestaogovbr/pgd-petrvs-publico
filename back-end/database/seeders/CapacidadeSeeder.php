@@ -7,7 +7,7 @@ use App\Models\Capacidade;
 use App\Models\Perfil;
 use App\Models\TipoCapacidade;
 use App\Services\UtilService;
-use App\Services\NivelAcessoService; 
+use App\Services\NivelAcessoService;
 
 class CapacidadeSeeder extends Seeder
 {
@@ -70,6 +70,9 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_PROD_INCL"],
       ["codigo" => "MOD_PROD_EDT"],
       ["codigo" => "MOD_PROD_EXCL"],
+      ["codigo" => "MOD_PROD_INCL"],
+      ["codigo" => "MOD_PROD_EDT"],
+      ["codigo" => "MOD_PROD_EXCL"],
       ["codigo" => "MOD_SOLUCOES"],
       ["codigo" => "MOD_SOLUCOES_INCL"],
       ["codigo" => "MOD_SOLUCOES_EDT"],
@@ -113,7 +116,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_EXTM_EDT"],
       ["codigo" => "MOD_EXTM_EXCL"],
       ["codigo" => "MOD_EXTM_INCL"],
-      ["codigo" => "MOD_CTXT"],      
+      ["codigo" => "MOD_CTXT"],
       ["codigo" => "MOD_PART"],
       ["codigo" => "MOD_PART_HAB"],
       ["codigo" => "MOD_PART_DESAB"],
@@ -167,7 +170,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_TRF_INCL"],
       ["codigo" => "MOD_UND"],
       ["codigo" => "MOD_UND_EDT"],
-      ["codigo" => "MOD_UND_INCL"],      
+      ["codigo" => "MOD_UND_INCL"],
       ["codigo" => "MOD_UND_TUDO"],
       ["codigo" => "MOD_USER"],
       ["codigo" => "MOD_USER_TUDO"],
