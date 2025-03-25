@@ -1,3 +1,7 @@
+## 2.3.12-Hotfix 24/03/2025
+### Corrigido
+ - Correção nos filtros de Planos de Entrega
+
 ## 2.3.12 24/03/2025
 ### Corrigido
 ### Adicionado

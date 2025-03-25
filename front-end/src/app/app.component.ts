@@ -196,8 +196,8 @@ export class AppComponent {
       menu: [
         this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
         this.menuSchema.CADEIAS_VALORES,
-        this.menuSchema.SOLUCOES,
-        this.menuSchema.PRODUTOS,
+        // this.menuSchema.SOLUCOES,
+        // this.menuSchema.PRODUTOS,
         this.menuSchema.PROGRAMAS_GESTAO,
         this.menuSchema.HABILITACOES_PROGRAMA,
         this.menuSchema.PLANOS_ENTREGAS,
@@ -232,7 +232,7 @@ export class AppComponent {
         this.menuSchema.UNIDADES,
         this.menuSchema.USUARIOS,
         this.menuSchema.PERFIS,
-        this.menuSchema.CLIENTES,
+        // this.menuSchema.CLIENTES,
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Cadastros"),
@@ -243,7 +243,7 @@ export class AppComponent {
         // this.menuSchema.ENTREGAS,
         // this.menuSchema.TIPOS_AVALIACOES,
         this.menuSchema.TIPOS_ATIVIDADES,
-        this.menuSchema.TIPOS_CLIENTES,
+        //this.menuSchema.TIPOS_CLIENTES,
         this.menuSchema.TIPOS_JUSTIFICATIVAS,
         // this.menuSchema.TIPOS_MODALIDADES,
         // this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
