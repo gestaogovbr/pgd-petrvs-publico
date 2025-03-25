@@ -2,15 +2,26 @@
     [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="canAdd()"
     [hasEdit]="false" [loadList]="onGridLoad.bind(this)">
     <toolbar *ngIf="!selectable" [buttons]="toolbarButtons">
-<!--        <input-switch [size]="3" labelPosition="left" label="Agrupar por unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>-->
-        <input-switch [size]="4" labelPosition="left" label="Unidades Subordinadas" controlName="subordinadas" [control]="filter!.controls.subordinadas" ></input-switch>
+        <input-switch [size]="4"
+                      labelPosition="left"
+                      label="Unidades Subordinadas"
+                      (change)="disableMeus()"
+                      labelInfo="Planos de entrega das unidades subordinadas"
+                      [control]="filter!.controls.subordinadas"
+        >
+        </input-switch>
         <input-switch *ngIf="!avaliacao" [size]="2" labelPosition="left" label="Vinculados" controlName="principais" [control]="filter!.controls.principais" (change)="onPrincipaisChange($event)" [labelInfo]="lex.translate('Unidades') + ' onde o ' + lex.translate('usuario') + ' é integrante, incluindo unidades superiores sob sua gerência.'"></input-switch>
     </toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed" [visible]="showFilter">
         <div *ngIf="isModal else naoEModal">
             <div class="row">
-                <input-switch [size]="1" label="Meus" controlName="meus_planos" [control]="filter!.controls.meus_planos" labelInfo="Planos de entrega das unidade da qual sou integrante (Áreas de trabalho)"></input-switch>
-
+                <input-switch [size]="1"
+                              label="Meus"
+                              (change)="disableSub()"
+                              [control]="filter!.controls.meus_planos"
+                              labelInfo="Planos de entrega das unidades da qual sou integrante (Áreas de trabalho)"
+                >
+                </input-switch>
                 <input-search #unidade [size]="5" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
                 <input-select [size]="2" label="Data" itemTodos="- Nenhum -" [valueTodos]="null" controlName="data_filtro" [control]="filter!.controls.data_filtro" [items]="DATAS_FILTRO"></input-select>
                 <input-datetime [size]="2" date [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Início" controlName="data_filtro_inicio" [control]="filter!.controls.data_filtro_inicio" labelInfo="Data início do período"></input-datetime>
@@ -19,7 +30,13 @@
         </div>
         <ng-template #naoEModal>
             <div class="row">
-                <input-switch [size]="1" label="Meus" controlName="meus_planos" [control]="filter!.controls.meus_planos" labelInfo="Planos de entrega das unidade da qual sou integrante (Áreas de trabalho)"></input-switch>
+                <input-switch [size]="1" label="Meus"
+
+                              [control]="filter!.controls.meus_planos"
+                              (change)="disableSub()"
+                              labelInfo="Planos de entrega das unidade da qual sou integrante (Áreas de trabalho)">
+
+                </input-switch>
                 <input-text [size]="3" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+lex.translate('plano de entrega')" [attr.maxlength]=250></input-text>
                 <input-search #unidade [size]="4" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
                 <input-select [size]="3" label="Status" controlName="status" [control]="filter!.controls.status" [items]="lookup.PLANO_ENTREGA_STATUS" [filter]="avaliacao ? ['CONCLUIDO', 'AVALIADO'] : undefined" itemTodos="- Todos -" [valueTodos]="null"></input-select>
