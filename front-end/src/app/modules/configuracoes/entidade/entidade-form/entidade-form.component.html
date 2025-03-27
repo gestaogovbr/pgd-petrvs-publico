@@ -2,15 +2,15 @@
   <tabs display right>
     <tab key="PRINCIPAL" label="Principal">
       <div class="row">
-        <input-text [size]="2" label="Sigla" controlName="sigla" [attr.maxlength]=250 required></input-text>
-        <input-text [size]="10" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
+        <input-text [size]="2" label="Sigla" controlName="sigla" [attr.maxlength]=250 required disabled></input-text>
+        <input-text [size]="10" label="Nome" controlName="nome" [attr.maxlength]=250 required disabled></input-text>
       </div>
       <div class="row">
         <input-search #gestor label="Gestor" [size]="6" [emptyValue]="null" controlName="gestor_id" [dao]="usuarioDao" labelInfo="Responsável pela unidade"></input-search>
         <input-search #gestorSubstituto label="Gestor Substituto" [size]="6" [emptyValue]="null" controlName="gestor_substituto_id" [dao]="usuarioDao" labelInfo="Responsável substituto pela unidade"></input-search>
       </div>
       <div class="row">
-        <input-select [size]="4" label="Abrangência" controlName="abrangencia" [items]="lookup.ABRANGENCIA"></input-select>
+        <input-select [size]="4" label="Abrangência" controlName="abrangencia" [items]="lookup.ABRANGENCIA" disabled></input-select>
         <input-search *ngIf="form!.controls.abrangencia.value == 'MUNICIPAL'" #cidade [size]="8" controlName="cidade_id" [dao]="cidadeDao"></input-search>
         <input-select *ngIf="form!.controls.abrangencia.value == 'ESTADUAL'" [size]="8" label="UF" icon="bi bi-flag" controlName="uf" [items]="lookup.UF"></input-select>
         <input-display *ngIf="form!.controls.abrangencia.value == 'NACIONAL'" [size]="8" label="Âmbito" icon="bi bi-shield-fill-check" value="Nacional"></input-display>
