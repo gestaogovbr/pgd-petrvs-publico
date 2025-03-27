@@ -84,6 +84,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MENU_GESTAO_ACESSO"],
       ["codigo" => "MENU_CONFIG_ACESSO"],
       ["codigo" => "ACESSO"],
+      ["codigo" => "MOD_CFG_ENTD"],
       ["codigo" => "MOD_AFT"],
       ["codigo" => "MOD_AFT_EDT"],
       ["codigo" => "MOD_AFT_EXCL"],
@@ -203,6 +204,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_ATV_DASH"],
       ["codigo" => "MENU_GESTAO_ACESSO"],
       ["codigo" => "MENU_CONFIG_ACESSO"],
+      ["codigo" => "MOD_CFG_ENTD"],
       ["codigo" => "ACESSO"],
       ["codigo" => "MOD_AFT"],
       ["codigo" => "MOD_AFT_EDT"],
@@ -325,7 +327,6 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_UND_INTG_EXCL"],
       ["codigo" => "MOD_UND_INTG_GST"],
       ["codigo" => "MOD_UND_INTG_INCL"],
-      ["codigo" => "MOD_UND_INST"],
       ["codigo" => "MOD_UND_TUDO"],
       ["codigo" => "MOD_USER"],
       ["codigo" => "MOD_USER_ATRIB"],
@@ -375,13 +376,14 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_PROD_INCL"],
       ["codigo" => "MOD_PROD_EDT"],
       ["codigo" => "MOD_PROD_EXCL"],
+      ["codigo" => "MOD_UND_INST"],
+
     ]);
 
     $capacidades_colaborador = array_merge(
       $capacidades_administrador_negocial,
       [
         ['codigo' => 'MOD_CFG_USER_PERFIL'],
-        ['codigo' => 'MOD_CFG_ENTD'],
       ]
     );
     // retirar algumas capacidades do colaborador
