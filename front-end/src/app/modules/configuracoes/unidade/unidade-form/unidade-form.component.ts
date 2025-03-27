@@ -47,7 +47,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   }
 
   public get instituidoraIsDisabled() {
-    return this.informal ? 'true' : undefined;
+    return this.auth.hasPermissionTo('MOD_UND_INST') ? 'true' : undefined;
   }
 
   public get codigoIsDisabled() {
