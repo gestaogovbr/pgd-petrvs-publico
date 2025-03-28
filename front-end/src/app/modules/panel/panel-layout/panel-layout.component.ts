@@ -3,6 +3,7 @@ import {PageBase} from "../../base/page-base";
 import {AuthPanelService} from "src/app/services/auth-panel.service";
 import { Collapse } from 'bootstrap';
 import { QueueDaoService } from "src/app/dao/queue-dao.service";
+import { TenantDaoService } from "src/app/dao/tenant-dao.service";
 
 
 @Component({
@@ -16,7 +17,8 @@ export class PanelLayoutComponent extends PageBase implements OnInit {
 	constructor(
 		public injector: Injector,
 		private authService: AuthPanelService,
-		private dao: QueueDaoService
+		private dao: QueueDaoService,
+		private tenantDao: TenantDaoService,
 	) {
 		super(injector);
 		this.setTitleUser();
@@ -70,6 +72,31 @@ export class PanelLayoutComponent extends PageBase implements OnInit {
 							self.dialog.alert(
 								"Erro",
 								"Erro ao executar: " + error?.message ? error?.message : error
+							);
+						});
+				}
+			});
+	}
+
+	public executaMigrations(row: any) {
+		const self = this;
+		this.dialog
+			.confirm(
+				"Executar Migration?",
+				"Deseja realmente executar as migrations?"
+			)
+			.then((confirm) => {
+				if (confirm) {
+					this.tenantDao!.migrations(row)
+						.then(function () {
+							self.dialog.alert("Sucesso", "Migration executada com sucesso!");
+						})
+						.catch(function (error) {
+							self.dialog.alert(
+								"Erro",
+								"Erro ao executar a migration: " + error?.message
+									? error?.message
+									: error
 							);
 						});
 				}
