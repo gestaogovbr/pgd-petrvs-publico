@@ -1,3 +1,8 @@
+## 2.3.13 28/03/2025
+### Corrigido
+ - Ajustes nas capacidades dos perfis: Colaborador, Chefe de Unidade, Adm Negocial e Adm Master
+ - Correção para carregar o regramento atual em Planos de Trabalho
+
 ## 2.3.12-Hotfix 24/03/2025
 ### Corrigido
  - Correção nos filtros de Planos de Entrega
