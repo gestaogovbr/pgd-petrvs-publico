@@ -57,7 +57,8 @@ abstract class ControllerBase extends Controller
         $result = null;
         $headers = $this->getPetrvsHeader($request);
         $unidade_id = !empty($headers) && !empty($headers["unidade_id"]) ? $headers["unidade_id"] : ($request->hasSession() ? $request->session()->get("unidade_id") : "");
-        $lotacao = !empty(self::loggedUser()) ? Usuario::find(self::loggedUser()->id)?->lotacao?->unidade : null;
+        $usuario = self::loggedUser() ? Usuario::find(self::loggedUser()->id) : null;
+        $lotacao = $usuario?->lotacao?->unidade ?? $usuario?->colaboracao?->unidade ?? null;
         if(!empty($unidade_id)) {
             $usuario = Usuario::where("id", self::loggedUser()?->id)->with(["areasTrabalho" => function ($query) use ($unidade_id) {
                 $query->where("unidade_id", $unidade_id);
