@@ -401,7 +401,8 @@ class TipoCapacidadeService extends ServiceBase
       "capacidades" => [
         ["MOD_CLI_EDT", "Permite editar clientes"],
         ["MOD_CLI_EXCL", "Permite excluir clientes"],
-        ["MOD_CLI_INCL", "Permite incluir clientes"]
+        ["MOD_CLI_INCL", "Permite incluir clientes"],
+        ["MOD_CLI_ATI", "Permite ativar/inativar clientes"]
       ]
     ], [
       "codigo" => "MOD_TIPO_CLI",
@@ -409,7 +410,7 @@ class TipoCapacidadeService extends ServiceBase
       "capacidades" => [
         ["MOD_TIPO_CLI_EDT", "Permite editar tipos de clientes"],
         ["MOD_TIPO_CLI_EXCL", "Permite excluir tipos de clientes"],
-        ["MOD_TIPO_CLI_INCL", "Permite incluir tipos de clientes"]
+        ["MOD_TIPO_CLI_INCL", "Permite incluir tipos de clientes"]      
       ]
     ]
   ];

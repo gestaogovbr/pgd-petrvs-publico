@@ -232,7 +232,7 @@ export class AppComponent {
         this.menuSchema.UNIDADES,
         this.menuSchema.USUARIOS,
         this.menuSchema.PERFIS,
-        // this.menuSchema.CLIENTES,
+        this.menuSchema.CLIENTES,
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Cadastros"),
