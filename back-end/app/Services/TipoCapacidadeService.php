@@ -19,9 +19,6 @@ class TipoCapacidadeService extends ServiceBase
         ["CTXT_EXEC", "Permite acessar o contexto EXECUÇÃO"],
         ["CTXT_ADM", "Permite acessar o contexto ADMINISTRADOR"],
         ["CTXT_DEV", "Permite acessar o contexto DEV"],
-        ["CTXT_PNT", "Permite acessar o contexto PONTO"],
-        ["CTXT_PROJ", "Permite acessar o contexto PROJETO"],
-        ["CTXT_RX", "Permite acessar o contexto RAIOX"],
       ]
     ], [
       "codigo" => "ACESSO",    // Não é validado no front-end
@@ -258,23 +255,6 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_PRGT_EXT", "Permite visualizar todos os programas, independente da hierarquia de unidades"],
       ]
     ], [
-      "codigo" => "MOD_PROJ", //ok
-      "descricao" => "Módulo de Projetos",
-      "capacidades" => [
-        /* Capacidades do módulo PROJETO */
-        ["MOD_PROJ_EDT", "Permite editar projeto"], //só no back
-        ["MOD_PROJ_EXCL", "Permite excluir projeto"], //só no back
-        ["MOD_PROJ_INCL", "Permite incluir Projetos"],
-        /* Capacidades do módulo PROJETO RECURSO*/
-        ["MOD_PROJ_REC_EDT", "Permite editar projeto recurso"], //só no back
-        ["MOD_PROJ_REC_EXCL", "Permite excluir projeto recurso"], //só no back
-        ["MOD_PROJ_REC_INCL", "Permite incluir projeto recurso"], //só no back
-        /* Capacidades do módulo PROJETO REGRA*/
-        ["MOD_PROJ_REG_EDT", "Permite editar projeto regra"], //só no back
-        ["MOD_PROJ_REG_EXCL", "Permite excluir projeto regra"], //só no back
-        ["MOD_PROJ_REG_INCL", "Permite incluir projeto regra"], //só no back
-      ]
-    ], [
       "codigo" => "MOD_PROD",
       "descricao" => "Módulo de Produtos e Serviços",
       "capacidades" => [
@@ -317,23 +297,6 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_TIPO_ATV_INCL_PRE_DEF", "Permite acessar e editar guia pré-definidas"],
         ["MOD_TIPO_ATV_INCL_TP_MIN", "Permite incluir tempo máximo da atividade"],
         ["MOD_TIPO_ATV_PCPL", "Permite incluir atividades na guia principal"],
-      ]
-    ] /*[
-      "codigo" => "MOD_TIPO_AVAL",
-      "descricao" => "Módulo de Tipos de Avaliação",
-      "capacidades" => [
-        ["MOD_TIPO_AVAL_EDT", "Permite editar tipos de avaliações"],
-        ["MOD_TIPO_AVAL_EXCL", "Permite excluir tipos de avaliações"],
-        ["MOD_TIPO_AVAL_INCL", "Permite incluir tipos de avaliações"],
-      ]
-    ]*/, [
-      "codigo" => "MOD_TIPO_CAP",
-      "descricao" => "Módulo de Tipos de Capacidade",
-      "capacidades" => [
-        /* Capacidades do módulo TIPO CAPACIDADE*/
-        ["MOD_TIPO_CAP_EDT", "Permite editar tipo de capacidade"],
-        ["MOD_TIPO_CAP_EXCL", "Permite excluir tipo de capacidade"],
-        ["MOD_TIPO_CAP_INCL", "Permite incluir tipos de capacidades"],
       ]
     ], [
       "codigo" => "MOD_TIPO_DOC",
@@ -403,11 +366,8 @@ class TipoCapacidadeService extends ServiceBase
       "capacidades" => [
         /* Capacidades do módulo UNIDADES*/
         ["MOD_UND_EDT", "Permite editar unidade"],
-        ["MOD_UND_EDT_FRM", "Permite editar unidades formais (SIAPE ou não)"],  // a ser implementado
-        ["MOD_UND_EXCL", "Permite excluir unidade"],        
+        ["MOD_UND_EXCL", "Permite excluir unidade"],
         ["MOD_UND_INCL", "Permite incluir unidade"],
-        ["MOD_UND_INCL_FRM", "Permite incluir unidades formais (SIAPE ou não)"],  
-        ["MOD_UND_UNIR", "Permite unificar unidade"],
         ["MOD_UND_TUDO", "Permite consultar qualquer unidade independente de subordinação"],
         ["MOD_UND_INATV", "Permite inativar uma unidade"],
         ["MOD_UND_INTG", "Permite gerenciar integrantes da unidade"],
@@ -424,36 +384,9 @@ class TipoCapacidadeService extends ServiceBase
         /* Capacidades do módulo USUÁRIOS */
         ["MOD_USER_EDT", "Permite alterar usuário"],
         ["MOD_USER_EXCL", "Permite excluir usuário"],
-        // ["MOD_USER_INCL", "Permite incluir usuário"], // DEPRECATED: o modo de incluir usuários não está funcionado, desabilitado para removeção futura ou alteração.
+        ["MOD_USER_INCL", "Permite incluir usuário"],
         ["MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"],
         ["MOD_USER_ATRIB", "Permite gerenciar atribuições de usuário"],
-      ]
-    ], [
-      "codigo" => "MOD_RX_CURR",
-      "descricao" => "Módulo Raio-X Curriculum",
-      "capacidades" => [
-        /* Capacidades do módulo RAIO-X Curriculum */
-        ["MOD_RX_CURR_EDT", "Permite editar curricula"],
-        ["MOD_RX_CURR_INCL", "Permite inserir curricula"],
-        ["MOD_RX_CURR_EXCL", "Permite excluir curricula"],
-      ]
-    ], [
-      "codigo" => "MOD_RX_OPO",
-      "descricao" => "Módulo Raio-X Oportunidades",
-      "capacidades" => [
-        /* Capacidades do módulo RAIO-X Oportunidades*/
-        ["MOD_RX_OPO_EDT", "Permite editar oportunidades"],
-        ["MOD_RX_OPO_INCL", "Permite incluir oportunidades"],
-        ["MOD_RX_OPO_EXCL", "Permite excluir oportunidades"],
-      ]
-    ], [
-      "codigo" => "MOD_RX_OUT",
-      "descricao" => "Módulo Raio-X Outros",
-      "capacidades" => [
-        /* Capacidades do módulo RAIO-X Outros*/
-        ["MOD_RX_OUT_EDT", "Permite editar pesquisas e cadastros"],
-        ["MOD_RX_OUT_INCL", "Permite incluir pesquisas e cadastros"],
-        ["MOD_RX_OUT_EXCL", "Permite excluir pesquisas e cadastros"],
       ]
     ], [
       "codigo" => "MOD_AUDIT",

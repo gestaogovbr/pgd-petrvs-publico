@@ -32,6 +32,7 @@ class CapacidadeSeeder extends Seeder
   {
     $capacidades_participante = [
       ["codigo" => "CTXT_EXEC"],
+      ["codigo" => "MENU_GESTAO_ACESSO"],
       ["codigo" => "MOD_AFT"],
       ["codigo" => "MOD_AFT_EDT"],
       ["codigo" => "MOD_AFT_INCL"],
@@ -71,7 +72,8 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_SOLUCOES"],
       ["codigo" => "MOD_SOLUCOES_INCL"],
       ["codigo" => "MOD_SOLUCOES_EDT"],
-      ["codigo" => "MOD_SOLUCOES_EXCL"]
+      ["codigo" => "MOD_SOLUCOES_EXCL"],
+      ["codigo" => "MOD_USER_EDT"],
     ];
 
 
@@ -100,6 +102,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_CADV_EDT"],
       ["codigo" => "MOD_CADV_EXCL"],
       ["codigo" => "MOD_CADV_INCL"],
+      ["codigo" => "MOD_CLI"],
       ["codigo" => "MOD_EXTM"],
       ["codigo" => "MOD_EXTM_EDT"],
       ["codigo" => "MOD_EXTM_EXCL"],
@@ -162,6 +165,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_UND_TUDO"],
       ["codigo" => "MOD_USER"],
       ["codigo" => "MOD_USER_TUDO"],
+      ["codigo" => "MOD_USER_EDT"],
       ["codigo" => "MOD_PROD"],
       ["codigo" => "MOD_PROD_INCL"],
       ["codigo" => "MOD_PROD_EDT"],
@@ -176,7 +180,6 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "CTXT_EXEC"],
       ["codigo" => "CTXT_GEST"],
       ["codigo" => "MOD_ATV_DASH"],
-      ["codigo" => "MENU_CONFIG_ACESSO"],
       ["codigo" => "MENU_GESTAO_ACESSO"],
       ["codigo" => "ACESSO"],
       ["codigo" => "MOD_AFT"],
@@ -201,29 +204,14 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_CADV_EXCL"],
       ["codigo" => "MOD_CADV_INCL"],
       ["codigo" => "MOD_CFG"],
-      ["codigo" => "MOD_CFG_PERFS"],
-      ["codigo" => "MOD_CFG_UND"],
       ["codigo" => "MOD_CFG_USER"],
-      ["codigo" => "MOD_CFG_USER_CPF"],
-      ["codigo" => "MOD_CFG_USER_MAT"],
-      ["codigo" => "MOD_CFG_USER_PERFIL"],
       ["codigo" => "MOD_PERF_EDT"],
       ["codigo" => "MOD_CID"],
       ["codigo" => "MOD_CTXT"],
-      ["codigo" => "MOD_ENTD"],
-      ["codigo" => "MOD_ENTD_EDT"],
-      /*["codigo" => "MOD_ENTRG"],
-      ["codigo" => "MOD_ENTRG_EDT"],
-      ["codigo" => "MOD_ENTRG_EXCL"],
-      ["codigo" => "MOD_ENTRG_INCL"],*/
       ["codigo" => "MOD_EXTM"],
       ["codigo" => "MOD_EXTM_EDT"],
       ["codigo" => "MOD_EXTM_EXCL"],
       ["codigo" => "MOD_EXTM_INCL"],
-      ["codigo" => "MOD_FER"],
-      ["codigo" => "MOD_FER_EDT"],
-      ["codigo" => "MOD_FER_EXCL"],
-      ["codigo" => "MOD_FER_INCL"],
       ["codigo" => "MOD_PART"],
       ["codigo" => "MOD_PART_DESAB"],
       ["codigo" => "MOD_PART_HAB"],
@@ -295,23 +283,10 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_TIPO_ATV"],
       ["codigo" => "MOD_TIPO_ATV_EDT_UND"],
       ["codigo" => "MOD_TIPO_ATV_INCL"],
-      ["codigo" => "MOD_TIPO_CAP"],
-      ["codigo" => "MOD_TIPO_CAP_EDT"],
-      ["codigo" => "MOD_TIPO_CAP_EXCL"],
-      ["codigo" => "MOD_TIPO_CAP_INCL"],
       ["codigo" => "MOD_TIPO_DOC"],
       ["codigo" => "MOD_TIPO_DOC_EDT"],
       ["codigo" => "MOD_TIPO_DOC_EXCL"],
       ["codigo" => "MOD_TIPO_DOC_INCL"],
-      ["codigo" => "MOD_TPMAF_INCL"],
-      ["codigo" => "MOD_TIPO_PROC"],
-      ["codigo" => "MOD_TIPO_PROC_EDT"],
-      ["codigo" => "MOD_TIPO_PROC_EXCL"],
-      ["codigo" => "MOD_TIPO_PROC_INCL"],
-      ["codigo" => "MOD_TIPO_TRF"],
-      ["codigo" => "MOD_TIPO_TRF_EDT"],
-      ["codigo" => "MOD_TIPO_TRF_EXCL"],
-      ["codigo" => "MOD_TIPO_TRF_INCL"],
       ["codigo" => "MOD_TRF"],
       ["codigo" => "MOD_TRF_EDT"],
       ["codigo" => "MOD_TRF_EXCL"],
@@ -319,6 +294,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_UND"],
       ["codigo" => "MOD_UND_EDT"],
       ["codigo" => "MOD_UND_INCL"],
+      ["codigo" => "MOD_UND_INATV"],
       ["codigo" => "MOD_UND_INTG"],
       ["codigo" => "MOD_UND_INTG_EDT"],
       ["codigo" => "MOD_UND_INTG_EXCL"],
@@ -329,7 +305,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_USER"],
       ["codigo" => "MOD_USER_ATRIB"],
       ["codigo" => "MOD_USER_EDT"],
-      // ["codigo" => "MOD_USER_INCL"], // DEPRECATED: o modo de incluir usuários não está funcionado, desabilitado para removeção futura ou alteração.
+      ["codigo" => "MOD_USER_INCL"],
       ["codigo" => "MOD_USER_TUDO"],
       ["codigo" => "MOD_PROD"],
       ["codigo" => "MOD_PROD_INCL"],
@@ -339,6 +315,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_SOLUCOES_INCL"],
       ["codigo" => "MOD_SOLUCOES_EDT"],
       ["codigo" => "MOD_SOLUCOES_EXCL"],
+      ["codigo" => "MOD_CLI"],
       ["codigo" => "MOD_TIPO_CLI"],
       ["codigo" => "MOD_TIPO_CLI_EDT"],
       ["codigo" => "MOD_TIPO_CLI_EXCL"],
@@ -353,11 +330,11 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_CFG_ENTD"],
       ["codigo" => "MOD_CFG_PERFS"],
       ["codigo" => "MOD_CFG_UND"],
-      ["codigo" => "MOD_CFG_USER_PERFIL"],
-      ["codigo" => "MOD_CLI"],
+      ["codigo" => "MOD_CFG_USER_PERFIL"],    
+      ["codigo" => "MOD_CLI_INCL"], 
       ["codigo" => "MOD_CLI_EDT"],
       ["codigo" => "MOD_CLI_EXCL"],
-      ["codigo" => "MOD_CLI_INCL"],
+      ["codigo" => "MOD_CLI_ATI"],
       ["codigo" => "MOD_ENTD"],
       ["codigo" => "MOD_ENTD_EDT"],
       ["codigo" => "MOD_FER"],
@@ -378,7 +355,7 @@ class CapacidadeSeeder extends Seeder
     $capacidades_colaborador = $capacidades_administrador_negocial;
     // retirar algumas capacidades do colaborador
     $capacidades_colaborador = array_filter($capacidades_colaborador, function ($c) {
-      return !in_array($c['codigo'], ["MOD_CADV_EDT", "MOD_CADV_EXCL", "MOD_CADV_INCL", "MOD_CFG_USER", "MOD_EXTM_EDT", "MOD_EXTM_EXCL", "MOD_EXTM_INCL", "MOD_PENT_QQR_UND", "MOD_PLAN_INST_EDT", "MOD_PLAN_INST_EXCL", "MOD_PLAN_INST_INCL", "MOD_PRGT_CONCL", "MOD_PRGT_EDT", "MOD_PRGT_EXCL", "MOD_UND_INATV", "MOD_UND_INTG", "MOD_UND_INTG_EDT", "MOD_UND_INTG_EXCL", "MOD_UND_INTG_GST", "MOD_UND_INTG_INCL", "MOD_USER_ATRIB"]);
+      return !in_array($c['codigo'], ["MOD_CLI_INCL", "MOD_CADV_EDT", "MOD_CADV_EXCL", "MOD_CADV_INCL", "MOD_CFG_USER", "MOD_EXTM_EDT", "MOD_EXTM_EXCL", "MOD_EXTM_INCL", "MOD_PENT_QQR_UND", "MOD_PLAN_INST_EDT", "MOD_PLAN_INST_EXCL", "MOD_PLAN_INST_INCL", "MOD_PRGT_CONCL", "MOD_PRGT_EDT", "MOD_PRGT_EXCL", "MOD_UND_INATV", "MOD_UND_INTG", "MOD_UND_INTG_EDT", "MOD_UND_INTG_EXCL", "MOD_UND_INTG_GST", "MOD_UND_INTG_INCL", "MOD_USER_ATRIB"]);
     });
 
     // Inserção de dados
@@ -389,6 +366,8 @@ class CapacidadeSeeder extends Seeder
 
     $devId = $this->nivelAcessoService->getPerfilDesenvolvedor()->id;
     $participanteId = $this->nivelAcessoService->getPerfilParticipante()->id;
+    $colaboradorId = $this->nivelAcessoService->getPerfilColaborador()->id;
+    $admGeralId = $this->nivelAcessoService->getPerfilAdministradorGeral()->id;
     $admId = $this->nivelAcessoService->getPerfilAdministrador()->id;
     $chefeId = $this->nivelAcessoService->getPerfilChefia()->id;
 
@@ -447,7 +426,7 @@ class CapacidadeSeeder extends Seeder
 
     foreach ($capacidades_administrador_negocial as $c) {
       $capacidade = [
-        "id" => $this->utilService->uuid("Administrador Negocial" . $c['codigo']),
+        "id" => $this->utilService->uuid("Administrador Negocial Novo" . $c['codigo']),
         "created_at" => $this->timenow,
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
@@ -468,6 +447,58 @@ class CapacidadeSeeder extends Seeder
         !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, ["Administrador Negocial", $c['codigo']]);
       } else {
         array_push($tipoCapacidadesInexistentes, ["Administrador Negocial", $c['codigo']]);
+      }
+    }
+
+    foreach ($capacidades_administrador_geral as $c) {
+      $capacidade = [
+        "id" => $this->utilService->uuid("Administrador Geral" . $c['codigo']),
+        "created_at" => $this->timenow,
+        "updated_at" => $this->timenow,
+        "deleted_at" => NULL,
+        "perfil_id" => $admGeralId,
+        "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
+      ];
+
+      $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
+      $queryTipoCapacidade = TipoCapacidade::find($capacidade['tipo_capacidade_id']);
+
+      if ($queryTipoCapacidade) {
+        if (!empty ($queryCapacidade)) {
+          $queryCapacidade->restore();
+          array_push($capacidadesRestauradas, $capacidade['id']);
+        } else {
+          $result = Capacidade::insertOrIgnore($capacidade);
+        }
+        !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, ["Administrador Geral", $c['codigo']]);
+      } else {
+        array_push($tipoCapacidadesInexistentes, ["Administrador Geral", $c['codigo']]);
+      }
+    }
+
+    foreach ($capacidades_colaborador as $c) {
+      $capacidade = [
+        "id" => $this->utilService->uuid("Colaborador" . $c['codigo']),
+        "created_at" => $this->timenow,
+        "updated_at" => $this->timenow,
+        "deleted_at" => NULL,
+        "perfil_id" => $colaboradorId,
+        "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
+      ];
+
+      $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
+      $queryTipoCapacidade = TipoCapacidade::find($capacidade['tipo_capacidade_id']);
+
+      if ($queryTipoCapacidade) {
+        if (!empty ($queryCapacidade)) {
+          $queryCapacidade->restore();
+          array_push($capacidadesRestauradas, $capacidade['id']);
+        } else {
+          $result = Capacidade::insertOrIgnore($capacidade);
+        }
+        !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, ["Colaborador", $c['codigo']]);
+      } else {
+        array_push($tipoCapacidadesInexistentes, ["Colaborador", $c['codigo']]);
       }
     }
 

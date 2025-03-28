@@ -4,13 +4,7 @@
     <div class="col-4">
         <editable-form [form]="formPerfil!" [noButtons]="isNoButtons()" [disabled]="formDisabled" title="" (submit)="salvarPerfil()">
             <div class="row">
-                <input-select 
-                    [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" 
-                    [label]="lex.translate('Perfil')" 
-                    controlName="perfil_id" 
-                    [dao]="perfilDao" 
-                    required
-                ></input-select>
+                <input-select #perfil (change)="onUnidadeChange($event)" [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [label]="lex.translate('Perfil')" controlName="perfil_id" [dao]="perfilDao" [where]="[['nivel', '>=', ( editando && !entity?.usuario_externo) ? 0 : 6]]" required></input-select>
             </div>
         </editable-form>
     </div>
@@ -19,18 +13,8 @@
     </div>
 </div>
 
-<grid #grid 
-    editable 
-    [items]="items" 
-    [minHeight]="500" 
-    [form]="form!" 
-    [hasDelete]="true" 
-    [add]="adicionarIntegrante.bind(this)" 
-    [load]="carregarIntegrante.bind(this)" 
-    [remove]="removerIntegrante.bind(this)" 
-    [save]="salvarIntegrante.bind(this)"
->
-    <top-alert *ngIf="!isNoPersist" type="alert" [message]="'É impossível excluir ' + lex.translate('a lotação') + ' ' + lex.translate('do servidor') + '. Para alterá-la, lote-o em outra ' + lex.translate('unidade') + '!'"></top-alert>
+<grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasEdit]="autoGerenciar()" [hasAdd]="autoGerenciar()" [hasDelete]="autoGerenciar()" editable [add]="adicionarIntegrante.bind(this)" [load]="carregarIntegrante.bind(this)" [remove]="removerIntegrante.bind(this)" [save]="salvarIntegrante.bind(this)">
+    <top-alert *ngIf="!isNoPersist" type="alert" [message]="'Não é possível excluir ou alterar ' + lex.translate('a lotação') + ' ' + lex.translate('do servidor') + '. '"></top-alert>
     <columns>
         <column [title]="lex.translate('Unidades')" [template]="columnUnidade" [editTemplate]="editUnidade">
             <ng-template let-row="row" #columnUnidade>

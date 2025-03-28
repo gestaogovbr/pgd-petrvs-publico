@@ -13,6 +13,7 @@ import { IntegranteService } from 'src/app/services/integrante.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import {InputSelectComponent} from "../../../../components/input/input-select/input-select.component";
 
 @Component({
   selector: 'usuario-integrante',
@@ -22,6 +23,7 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 export class UsuarioIntegranteComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
+  @ViewChild('perfil', { static: false }) public perfil?: InputSelectComponent;
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Usuario | undefined) { super.entity = value; } get entity(): Usuario | undefined { return super.entity; }
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
@@ -36,6 +38,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public perfilDao: PerfilDaoService;
   public perfilUsuario: string = "";
   public atribuicoes: LookupItem[] = [];
+  public editando: boolean = false;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -62,22 +65,35 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
 
   public async onUnidadeChange(event: Event) {
     const unidade_id = this.form?.controls.unidade_id.value;
+    let atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO
     if (unidade_id) {
       const unidade = await this.unidadeDao.getById(unidade_id);
 
-      if (unidade?.instituidora) {
-        this.atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO;
-      } else {
-        this.atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(
+      if (!unidade?.instituidora) {
+        atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(
           atribuicao => atribuicao.key !== 'CURADOR'
         );
       }
 
-      this.atribuicoes = this.lookup.ordenarLookupItem(this.atribuicoes);
+      if(this.perfil){
+        await this.perfilDao.getById(this.perfil.currentValue).then(perfil => {
+          if (!perfil) return;
+          if(perfil.nivel === 6){
+            // filtrar atribuições para não permitir CURADOR e GESTOR_SUBSTITUTO
+            atribuicoes = atribuicoes.filter(
+              atribuicao => atribuicao.key !== 'CURADOR' && atribuicao.key !== 'GESTOR_SUBSTITUTO'
+            );
+          }
+        })
+      }
+
+      this.atribuicoes = atribuicoes;
+      this.form?.controls.atribuicao.setValue("COLABORADOR");
     } else {
       this.atribuicoes = [];
     }
   }
+
 
   ngAfterViewInit() {
     (async () => {
@@ -87,6 +103,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
 
   public async loadData(entity: IIndexable, form?: FormGroup | undefined) {
     if (entity.id) {
+      this.editando = true;
       let integrantes: IntegranteConsolidado[] = [];
       try {
         await this.integranteDao!.carregarIntegrantes("", entity.id).then(resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
@@ -179,11 +196,13 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
  * @returns 
  */
   public async adicionarIntegrante() {
+    this.editando = true;
     if (this.grid) this.grid.error = '';
     let novo = {
       id: this.integranteDao!.generateUuid(),
       unidade_id: "",
-      atribuicoes: []
+      atribuicoes: [],
+      usuario_externo: true
     } as IIndexable;
     return novo;
   }
@@ -307,6 +326,13 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     return this.isNoPersist ? 'true' : (this.formPerfil.controls.perfil_id.value == this.perfilUsuario ? 'true' : undefined)
   }
 
+  public autoGerenciar(): boolean {
+    // se for o próprio usuário, precisa ter o nível < 3
+    if ((this.entity?.id ?? '') == (this.auth?.usuario?.id ?? '') && this.entity?._status != 'ADD') {
+      return (this.entity?.perfil?.nivel ?? 0) < 3;
+    }
+    return true;
+  }
   /* 
   
   TESTES MÍNIMOS RECOMENDADOS PARA A VALIDAÇÃO DO COMPONENTE - USUARIO-INTEGRANTE
