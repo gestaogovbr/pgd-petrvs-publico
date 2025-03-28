@@ -14,11 +14,11 @@ class DeployPRODSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(CidadeSeeder::class);
-        sleep(2);
+        // $this->call(CidadeSeeder::class);
+        // sleep(2);
 
-        $this->call(FeriadoSeeder::class);
-        sleep(2);
+        // $this->call(FeriadoSeeder::class);
+        // sleep(2);
 
         $this->call(PerfilSeeder::class);
         sleep(2);

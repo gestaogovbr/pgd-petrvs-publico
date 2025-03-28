@@ -55,7 +55,7 @@ class NomenclaturaSeeder extends Seeder
       "termo" => ['single' => "tcr compilado", 'plural' => "tcr compilados", 'female' => false],
       "tipo de atividade" => ['single' => "tipo de registro de execução", 'plural' => "tipos de registro de execução", 'female' => false],
       "unidade" => ['single' => "unidade executora", 'plural' => "unidades executoras", 'female' => true],
-      "usuario" => ['single' => "agente público", 'plural' => "agentes públicos", 'female' => false],
+      "usuario" => ['single' => "usuário", 'plural' => "usuários", 'female' => false],
       // Faltantes com DB de Prod em 19/03/24
       "área de trabalho" => ['single' => "área de trabalho", 'plural' => "áreas de trabalho", 'female' => true],
       "area do conhecimento" => ['single' => "area do conhecimento", 'plural' => "areas dos conhecimentos", 'female' => true],

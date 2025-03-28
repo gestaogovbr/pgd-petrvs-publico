@@ -37,16 +37,14 @@ export class ClienteFormComponent extends PageFormBase<Cliente, ClienteDaoServic
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
       tipo_cliente_id: { default: "" },
-      unidade_id: { default: "" }
+      unidade_id: { default: null }
     });
   }
 
   public async loadData(entity: Cliente, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     let cliente = (this.util.fillForm(formValue, entity));
-    const tiposCliente = await this.tipoClienteDao!.query().getAll();
-    this.tiposCliente = tiposCliente.map(tipo => ({ key: tipo.id, value: tipo.nome }));
- 
+   
     form.patchValue(cliente);
   }
 
@@ -64,14 +62,14 @@ export class ClienteFormComponent extends PageFormBase<Cliente, ClienteDaoServic
 
   alteraTipo() {
     
-    let tipo = this.tipoCliente?.value;
+    let tipo = this.tipoCliente?.selectedItem?.value;
     if(tipo == "c28122f5-708d-11ef-8e76-0242ac1c0002"){
       // exibir unidade e esconder nome
       this.unidade?.selfElement?.nativeElement.classList.remove("d-none");
       this.nome?.selfElement?.nativeElement.classList.add("d-none");
     } else {
       // exibir nome e esconder unidade
-      this.form?.controls.unidade_id.setValue("");
+      this.form?.controls.unidade_id.setValue(null);
       this.unidade?.selfElement?.nativeElement.classList.add("d-none");
       this.nome?.selfElement?.nativeElement.classList.remove("d-none");
     }

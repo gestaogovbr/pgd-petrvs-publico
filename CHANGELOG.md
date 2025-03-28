@@ -1,3 +1,26 @@
+## 2.3.12-Hotfix 24/03/2025
+### Corrigido
+ - Correção nos filtros de Planos de Entrega
+
+## 2.3.12 24/03/2025
+### Corrigido
+### Adicionado
+ - Adição dos perfis: Adm Master e Colaborador
+ - Permissão para incluir agentes públicos como Colaborador
+### Modificado
+ - Atualização de todos os perfis de desenvolvedores para Adm Master
+ - Ajustes nas capacidades para os novos perfis
+### Removido
+ - Alteração de lotação pelo caminho da chefia
+
+## 2.3.11 13/03/2025
+### Corrigido
+ - Correção dos vinculos com unidades pai e path inválidos
+### Removido
+ - Removido dados sensiveis do XML de dados pessoais do SIAPE 
+ - Opção para clonar planos de entrega e trabalho
+### Adicionado
+ - Dispensa de homologação de PE para unidades imediatamente inferiores
 ## 2.3.10 27/02/2025
 ### Corrigido
  - Correção na sanitização do xml de servidores do SIAPE
