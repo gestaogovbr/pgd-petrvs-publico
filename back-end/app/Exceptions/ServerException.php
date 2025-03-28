@@ -58,12 +58,12 @@ class ServerException extends Exception implements IBaseException
         "TipoClienteExcluir" => "Tipo de Cliente",
     ];
 
-    function __construct(string $code, string $extra = "") {
+    function __construct(string $code, string $extra = "", string $separator = " : ") {
         $message  = [$this->getMessageException($code)];
         if(!empty($extra)) {
             $message[] = $extra;
         }
-        parent::__construct(implode(" : ", $message));
+        parent::__construct(implode($separator, $message));
     }
 
     private function getMessageException(string $code) : string
