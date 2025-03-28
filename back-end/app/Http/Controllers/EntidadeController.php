@@ -24,7 +24,7 @@ class EntidadeController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':
-                if (!$usuario->hasPermissionTo('MOD_ENTD_INCL')) throw new ServerException("CapacidadeStore", "Inserção não realizada");
+                if (!$usuario->hasPermissionTo('MOD_ENTD_INCL') || !$usuario->hasPermissionTo('MOD_ENTD_EDT')) throw new ServerException("CapacidadeStore", "Inserção não realizada");
                 break;
             case 'EDIT':
                 if (!$usuario->hasPermissionTo('MOD_ENTD_EDT')) throw new ServerException("CapacidadeStore", "Edição não realizada");
