@@ -85,7 +85,6 @@ class CapacidadeSeeder extends Seeder
     $capacidades_chefia_de_unidade_executora = [
       ["codigo" => "CTXT_GEST"],
       ["codigo" => "MENU_GESTAO_ACESSO"],
-      ["codigo" => "MENU_CONFIG_ACESSO"],
       ["codigo" => "ACESSO"],
       ["codigo" => "MOD_CFG_ENTD"],
       ["codigo" => "MOD_AFT"],
