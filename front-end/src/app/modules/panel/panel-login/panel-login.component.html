@@ -1,6 +1,6 @@
 <div class="d-flex vh-100 g-0 bg-gray-100">
     <div class="d-flex align-items-center justify-content-center h-100 g-0 px-4 px-sm-0">
-        <div class="col-md-12">
+        <div class="col-md-12 form-panel-login">
             <div class="text-center mb-5 d-flex align-items-center justify-content-center">
                 <img src="../assets/images/logo_pgd.png" class="logo-pgd">
                 <img [src]="globals.getResourcePath('assets/images/' + globals.IMAGES.login)"
@@ -19,7 +19,7 @@
                 [noButtons]="'true'"
             >
                 <div class="form-group">
-                    <input-text controlName="email"   placeholder="Email" [attr.maxlength]=250></input-text>
+                    <input-text controlName="email"   placeholder="E-mail" [attr.maxlength]=250></input-text>
                 </div>
                 <div class="form-group form-primary mb-2">
                     <input-text password="password" controlName="password" placeholder="Senha" [attr.maxlength]=250></input-text>
