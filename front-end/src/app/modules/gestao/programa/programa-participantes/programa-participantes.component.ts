@@ -146,6 +146,8 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
         await this.programaParticipanteDao!.habilitar([row.id], this.programa!.id, 0, suspender).then(resposta => {
           (this.grid?.query || this.query!).refreshId(row.id);
           this.cdRef.detectChanges();
+        }, error => {
+          this.dialog.alert("Erro", error);
         });
       }
     }

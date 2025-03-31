@@ -376,7 +376,7 @@ class UsuarioService extends ServiceBase
 
       $developerId = $developer->id;
     if ($data['perfil_id'] != $perfilAtual) {
-      if ($perfilNovo->nivel < $perfilAutenticado->nivel)
+      if (($perfilNovo->nivel < $perfilAutenticado->nivel) && $perfilAutenticado->nivel != 6)
         throw new ServerException("ValidateUsuario", "Não é possível atribuir perfil superior ao do usuário logado.");
       if ($data["perfil_id"] == $developerId && !$this->isLoggedUserADeveloper())
         throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de/para um Desenvolvedor");

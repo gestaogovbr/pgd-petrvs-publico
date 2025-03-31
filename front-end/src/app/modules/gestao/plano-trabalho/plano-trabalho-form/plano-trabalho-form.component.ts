@@ -220,34 +220,35 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.cdRef.detectChanges();
   }
 
-  public onUsuarioSelect(selected: SelectItem) {
+  public async onUsuarioSelect(selected: SelectItem) {
+    let programa_habilitado = selected.entity.participacoes_programas.find((x: { habilitado: number; }) => x.habilitado == 1);
+    
     this.form!.controls.usuario_texto_complementar.setValue(selected.entity.texto_complementar_plano || "");
     if(!this.form?.controls.unidade_id.value) {
       selected.entity.unidades?.every(async (unidade: any) => {
         if (selected.entity.lotacao.unidade_id == unidade.id) {
-          if(!this.form?.controls.programa_id.value) {
-            let niveis = unidade.path.split("/").reverse();
-            let hoje = new Date();
-            let preenchido = 0;
-            let indice = 0;
-            while (preenchido == 0) {
-              await this.programaDao.query({
-                where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]],
-                orderBy: [["unidade.path", "desc"]]
-              }).asPromise().then( programa => {
-                if (programa.length > 0 && preenchido == 0) {
-                  preenchido = 1;
-                  this.preencheUnidade(unidade);
-                  this.preenchePrograma(programa[0]!);
-                }
-              })
-              indice += 1;
-            }
-          }
-        return false;
+          this.preencheUnidade(unidade);
+          return false;
         } else return true;
       })
     }
+    let programas = await this.programaDao.query({
+      where: [['vigentesUnidadeExecutora', '==', selected.entity.lotacao.unidade_id]],
+      join: this.joinPrograma,
+      orderBy: [["unidade.path", "desc"]]
+    }).asPromise();
+    
+    if (programa_habilitado) {
+      const programaEncontrado = programas.find((x: Programa) => x.id == programa_habilitado.programa_id);
+      if (programaEncontrado) {
+        this.preenchePrograma(programaEncontrado);
+      } else {
+        this.regramentoNaoEncontrado();
+      }
+    } else {
+      this.regramentoNaoEncontrado();
+    }
+
     this.calculaTempos();
     this.cdRef.detectChanges();
   }
@@ -351,8 +352,18 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
         join: this.joinPrograma,
         orderBy: [["unidade.path", "desc"]]
       }).asPromise();
-      let ultimo = programas[0];
-      this.preenchePrograma(ultimo)
+
+      let programa_habilitado = this.auth.usuario?.participacoes_programas.find((x: { habilitado?: number; }) => x.habilitado === 1);      
+      if (programa_habilitado) {
+        const programaEncontrado = programas.find((x: Programa) => x.id == programa_habilitado.programa_id);
+        if (programaEncontrado) {
+          this.preenchePrograma(programaEncontrado);
+        } else {
+          this.regramentoNaoEncontrado();
+        }
+      } else {
+        this.regramentoNaoEncontrado();        
+      }
       this.buscaGestoresUnidadeExecutora(this.auth.unidade!);
       if(!this.gestoresUnidadeExecutora.includes(this.auth.unidade!.id)) {
         this.entity.usuario_id = this.auth.usuario!.id;
@@ -459,5 +470,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     return this.gestoresUnidadeExecutora;
   }
 
+  private regramentoNaoEncontrado() {
+    this.form?.controls.programa_id.setValue("");
+    this.dialog.alert("Regramento não encontrado.", "Não será possível criar o Plano de Trabalho");
+  } 
 }
 
