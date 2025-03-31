@@ -365,7 +365,7 @@ class PlanoEntregaService extends ServiceBase
             }
         }
 
-        if ($subordinadas[2]) { // Verifica se o índice existe
+        if (!empty($subordinadas[2])) {
             $unidadeService = new UnidadeService();
 
             // Define $uId corretamente, verificando a existência do índice
