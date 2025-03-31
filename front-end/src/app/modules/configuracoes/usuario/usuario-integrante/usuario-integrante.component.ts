@@ -331,7 +331,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     if ((this.entity?.id ?? '') == (this.auth?.usuario?.id ?? '') && this.entity?._status != 'ADD') {
       return (this.entity?.perfil?.nivel ?? 0) < 3;
     }
-    return true;
+    return this.auth?.hasPermissionTo('MOD_USER_ATRIB') ?? false;
   }
   /* 
   

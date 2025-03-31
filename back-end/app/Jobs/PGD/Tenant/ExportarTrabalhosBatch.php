@@ -2,68 +2,58 @@
 
 namespace App\Jobs\PGD\Tenant;
 
-use App\Models\Envio;
+use App\Jobs\PGD\Tenant\ExportarBatch;
 use App\Jobs\PGD\Tenant\ExportarTrabalhoJob;
+use App\Models\Envio;
 use App\Models\ViewPgdPlanosTrabalho;
-use App\Services\API_PGD\AuditSources\AuditSource;
 use App\Services\API_PGD\AuditSources\PlanoTrabalhoAuditSource;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Bus\Batch;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use PDO;
 use Throwable;
 
-class ExportarTrabalhosBatch
+class ExportarTrabalhosBatch extends ExportarBatch
 {
-    private $token;
-    private Envio $envio;
-    private $tenant;
-    private $batch;
-
     public function __construct()
-    {}
-
-    public function setToken($token) {
-        $this->token = $token;
+    {
+        $this->proximoBatch = null;
     }
 
-    public function setEnvio($envio) {
-        $this->envio = $envio;
+    public static function getBatchName() {
+        $numero = static::getEnvioNumero();
+        return "Envio #{$numero} - Exportar Planos de Trabalho";
     }
 
-    public function setTenant($tenant) {
-        $this->tenant = $tenant;
+    protected static function getCacheName() {
+        return "pdg_envio_trabalhos";
     }
 
     public function send() {
         DB::connection()->getPdo()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
 
-        $tenantId = $this->tenant->id;
-        $envio = $this->envio;
+        $tenantId = static::getTenantId();
 
-        Log::info("[$tenantId] Consultando planos de Trabalho a exportar...");
+        static::log("Consultando planos de Trabalho a exportar...");
 
         $auditSource = new PlanoTrabalhoAuditSource();
-       
-        Cache::forget("{$this->envio->id}_trabalhos");
-        
+
+        static::resetCache();
+
         $trabalhos = ViewPgdPlanosTrabalho::withoutGlobalScope(SoftDeletingScope::class)->get();
         $n = 0;
-        $jobs = [];
         $data = [];
         try{
             foreach($trabalhos as $auditData) {
                 if (array_key_exists($auditData->id, $data)) {
                     continue;
-                } 
+                }
 
                 $n++;
                 $source = $auditSource->toExportSource($auditData);
                 $data[$auditData->id] = $source;
-                Log::info("[$tenantId] Calculando job de plano de Trabalho nº$n");
+                static::log("Calculando job de plano de Trabalho nº$n");
             }
         }catch(Throwable $e) {
             Log::error("Erro ao obter dados.".$e->getMessage());
@@ -72,7 +62,7 @@ class ExportarTrabalhosBatch
         }
         unset($trabalhos);
 
-        Log::info(count($data).' planos a exportar');
+        static::log(count($data).' planos a exportar');
 
         try{
             $collection = collect($data);
@@ -84,18 +74,12 @@ class ExportarTrabalhosBatch
                 foreach($chunk as $item) {
                     $n++;
                     $jobs[] = new ExportarTrabalhoJob(
-                        $this->tenant->id,
                         $n,
-                        $this->token, 
-                        $this->tenant->api_url, 
-                        $this->tenant->api_cod_unidade_autorizadora, 
-                        $this->envio->id, 
-                        $this->envio->numero,
                         $item
                     );
                 }
 
-                Log::info("Total atual de jobs: $n");
+                static::log("Total atual de jobs: $n");
                 $this->getBatch()->add($jobs);
                 unset($jobs);
             });
@@ -105,51 +89,37 @@ class ExportarTrabalhosBatch
             throw $e;
         }
 
-        Log::info("[$tenantId] Adicionados $n jobs de plano de Trabalho");
-        gc_collect_cycles();
+        static::log("[$tenantId] Adicionados $n jobs de plano de Trabalho");
+        static::doneAddingJobs();
 
-        $this->getBatch()->dispatch();
-        
+        parent::send();
+
         if ($n > 0) {
-            Cache::put("{$this->envio->id}_trabalhos", $n);
-            Log::info("[$tenantId] Exportação de ".$n." plano de trabalho(s) em andamento");
+            static::log($n." plano de trabalho(s) em andamento");
         } else {
-            Log::info("[$tenantId] Exportação dos planos de Trabalho finalizada sem dados a exportar");
-            Log::info("[$tenantId] Exportação finalizada! Envio #".$this->envio->numero);
-
-            $envio->finished_at = now();
-            $envio->sucesso = true;
-            $envio->save();
+            static::log("Finalizada sem dados a exportar");
+            static::onAfterFinish();
         }
     }
 
-    public function getBatch() {
-        if ($this->batch) return $this->batch;
+    protected static function onAfterFinish() {
+        parent::onAfterFinish();
 
-        $tenantId = $this->tenant->id;
-        $envio = $this->envio;
+        $tenantId   = static::getTenantId();
+        $envioId    = static::getEnvioId();
+        $envioNumero = static::getEnvioNumero();
 
-        $this->batch = Bus::batch([])
-            ->name("Envio #".$this->envio->numero. ' - Exportar Planos de Trabalho')
-            ->finally(function () use($tenantId, $envio) {
-                $flag = Cache::get("{$envio->id}_trabalhos", false);
+        Log::info("[{$tenantId}] Exportação finalizada! Envio #".$envioNumero);
 
-                Log::info("[$tenantId] Fila de planos de trabalho vazia.");
-                Log::info($flag);
+        $envio = Envio::find($envioId);
 
-                if ($flag) {
-                    Cache::forget("{$envio->id}_trabalhos");
-                    Log::info("[$tenantId] Exportação dos planos de Trabalho finalizada");
-                    Log::info("[$tenantId] Exportação finalizada!");
+        $envio->finished_at = now();
+        $envio->sucesso = true;
+        $envio->save();
 
-                    $envio->finished_at = now();
-                    $envio->sucesso = true;
-                    $envio->save();
-                }
-            })
-            ->allowFailures()
-            ->onQueue('pgd_queue');
-
-        return $this->batch;
+        Cache::forget('pgd_tenantId');
+        Cache::forget('pgd_envioId');
+        Cache::forget('pgd_envioNumero');
+        Cache::forget('pgd_autorizadora');
     }
 }

@@ -25,7 +25,9 @@ class PerfilService extends ServiceBase {
     public $developers = [];
 
     public function proxySearch($query, &$data, &$text) {
-        $data["where"][] = RawWhere::raw("(deleted_at is null or deleted_at > NOW()) and nivel >= " . parent::loggedUser()->Perfil->nivel);
+        $nivelLogado = parent::loggedUser()->Perfil->nivel;
+        $nivelCondicao = $nivelLogado == 6 ? "nivel > 1" : "nivel >= ?";
+        $data["where"][] = RawWhere::raw("(deleted_at IS NULL OR deleted_at > NOW()) AND $nivelCondicao", $nivelLogado == 6 ? [] : [$nivelLogado]);
         $data["orderBy"][] = ["nivel", "asc"];
     }
 
