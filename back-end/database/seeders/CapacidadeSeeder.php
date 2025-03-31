@@ -48,7 +48,8 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_ATV_TRF_CONS"],
       ["codigo" => "MOD_ATV_TRF_EDT"],
       ["codigo" => "MOD_ATV_TRF_EXCL"],
-      ["codigo" => "MOD_ATV_TRF_INCL"],      
+      ["codigo" => "MOD_ATV_TRF_INCL"],  
+      ["codigo" => "MOD_ENTD"],    
       ["codigo" => "MOD_PTR"],
       ["codigo" => "MOD_PTR_CNC"],
       ["codigo" => "MOD_PTR_CSLD"],
@@ -74,6 +75,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_SOLUCOES_EDT"],
       ["codigo" => "MOD_SOLUCOES_EXCL"],
       ["codigo" => "MOD_USER_EDT"],
+      ["codigo" => "MOD_UND"],
     ];
 
 
@@ -81,6 +83,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "CTXT_GEST"],
       ["codigo" => "MENU_GESTAO_ACESSO"],
       ["codigo" => "ACESSO"],
+      ["codigo" => "MOD_CFG_ENTD"],
       ["codigo" => "MOD_AFT"],
       ["codigo" => "MOD_AFT_EDT"],
       ["codigo" => "MOD_AFT_EXCL"],
@@ -102,12 +105,17 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_CADV_EDT"],
       ["codigo" => "MOD_CADV_EXCL"],
       ["codigo" => "MOD_CADV_INCL"],
+      ["codigo" => "MOD_CFG_UND"],
+      ["codigo" => "MOD_CFG_USER"],
+      ["codigo" => "MOD_CLI"],
+      ["codigo" => "MOD_ENTD"],
       ["codigo" => "MOD_EXTM"],
       ["codigo" => "MOD_EXTM_EDT"],
       ["codigo" => "MOD_EXTM_EXCL"],
       ["codigo" => "MOD_EXTM_INCL"],
       ["codigo" => "MOD_CTXT"],      
       ["codigo" => "MOD_PART"],
+      ["codigo" => "MOD_PRGT_INCL"],
       ["codigo" => "MOD_PART_HAB"],
       ["codigo" => "MOD_PART_DESAB"],
       ["codigo" => "MOD_PENT"],
@@ -124,6 +132,14 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_PENT_ENTR_EDT"],
       ["codigo" => "MOD_PENT_ENTR_EXTRPL"],
       ["codigo" => "MOD_PENT_ENTR_INCL"],
+      ["codigo" => "MOD_PENT_ENTR_EXCL"],
+      ["codigo" => "MOD_PENT_ENTR_EXTRPL"],
+      ["codigo" => "MOD_PENT_ENTR_INCL"],
+      ["codigo" => "MOD_PENT_ENTR_PRO_EDT"],
+      ["codigo" => "MOD_PENT_ENTR_PRO_EXCL"],
+      ["codigo" => "MOD_PENT_ENTR_PRO_INCL"],
+      ["codigo" => "MOD_PENT_RTV"],
+      ["codigo" => "MOD_PENT_SUSP"],
       ["codigo" => "MOD_PENT_EXCL"],
       ["codigo" => "MOD_PENT_HOMOL"],
       ["codigo" => "MOD_PENT_INCL"],
@@ -148,6 +164,12 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_PTR_ENTR_INCL"],
       ["codigo" => "MOD_PTR_INCL"],
       ["codigo" => "MOD_PTR_USERS_INCL"],
+      ["codigo" => "MOD_PTR_CSLD_CANC_AVAL"],
+      ["codigo" => "MOD_PTR_CSLD_CONCL"],
+      ["codigo" => "MOD_PTR_CSLD_DES_CONCL"],
+      ["codigo" => "MOD_PTR_CSLD_EDT"],
+      ["codigo" => "MOD_PTR_CSLD_EXCL"],
+      ["codigo" => "MOD_PTR_CSLD_INCL"],
       ["codigo" => "MOD_TIPO_ATV"],
       ["codigo" => "MOD_TIPO_ATV_EDT_UND"],
       ["codigo" => "MOD_TIPO_ATV_INCL"],
@@ -180,6 +202,8 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "CTXT_GEST"],
       ["codigo" => "MOD_ATV_DASH"],
       ["codigo" => "MENU_GESTAO_ACESSO"],
+      ["codigo" => "MENU_CONFIG_ACESSO"],
+      ["codigo" => "MOD_CFG_ENTD"],
       ["codigo" => "ACESSO"],
       ["codigo" => "MOD_AFT"],
       ["codigo" => "MOD_AFT_EDT"],
@@ -204,9 +228,12 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_CADV_INCL"],
       ["codigo" => "MOD_CFG"],
       ["codigo" => "MOD_CFG_USER"],
+      ["codigo" => "MOD_CFG_UND"],
       ["codigo" => "MOD_PERF_EDT"],
       ["codigo" => "MOD_CID"],
+      ["codigo" => "MOD_CLI"],
       ["codigo" => "MOD_CTXT"],
+      ["codigo" => "MOD_ENTD"],
       ["codigo" => "MOD_EXTM"],
       ["codigo" => "MOD_EXTM_EDT"],
       ["codigo" => "MOD_EXTM_EXCL"],
@@ -299,7 +326,6 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_UND_INTG_EXCL"],
       ["codigo" => "MOD_UND_INTG_GST"],
       ["codigo" => "MOD_UND_INTG_INCL"],
-      ["codigo" => "MOD_UND_INST"],
       ["codigo" => "MOD_UND_TUDO"],
       ["codigo" => "MOD_USER"],
       ["codigo" => "MOD_USER_ATRIB"],
@@ -322,18 +348,14 @@ class CapacidadeSeeder extends Seeder
 
     $capacidades_administrador_geral = array_merge($capacidades_administrador_negocial, [
       ["codigo" => "CTXT_DEV"], 
-      ["codigo" => "MENU_CONFIG_ACESSO"], 
+      ["codigo" => "MOD_DEV_TUDO"], 
       ["codigo" => "MENU_DEV_ACESSO"], 
       ["codigo" => "MENU_DEV_CONSULTAS"], 
-      ["codigo" => "MOD_CFG_ENTD"],
       ["codigo" => "MOD_CFG_PERFS"],
-      ["codigo" => "MOD_CFG_UND"],
       ["codigo" => "MOD_CFG_USER_PERFIL"],
-      ["codigo" => "MOD_CLI"],
       ["codigo" => "MOD_CLI_EDT"],
       ["codigo" => "MOD_CLI_EXCL"],
       ["codigo" => "MOD_CLI_INCL"],
-      ["codigo" => "MOD_ENTD"],
       ["codigo" => "MOD_ENTD_EDT"],
       ["codigo" => "MOD_FER"],
       ["codigo" => "MOD_FER_EDT"],
@@ -348,12 +370,19 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_PROD_INCL"],
       ["codigo" => "MOD_PROD_EDT"],
       ["codigo" => "MOD_PROD_EXCL"],
+      ["codigo" => "MOD_UND_INST"],
+
     ]);
 
-    $capacidades_colaborador = $capacidades_administrador_negocial;
+    $capacidades_colaborador = array_merge(
+      $capacidades_administrador_negocial,
+      [
+        ['codigo' => 'MOD_CFG_USER_PERFIL'],
+      ]
+    );
     // retirar algumas capacidades do colaborador
     $capacidades_colaborador = array_filter($capacidades_colaborador, function ($c) {
-      return !in_array($c['codigo'], ["MOD_CADV_EDT", "MOD_CADV_EXCL", "MOD_CADV_INCL", "MOD_CFG_USER", "MOD_EXTM_EDT", "MOD_EXTM_EXCL", "MOD_EXTM_INCL", "MOD_PENT_QQR_UND", "MOD_PLAN_INST_EDT", "MOD_PLAN_INST_EXCL", "MOD_PLAN_INST_INCL", "MOD_PRGT_CONCL", "MOD_PRGT_EDT", "MOD_PRGT_EXCL", "MOD_UND_INATV", "MOD_UND_INTG", "MOD_UND_INTG_EDT", "MOD_UND_INTG_EXCL", "MOD_UND_INTG_GST", "MOD_UND_INTG_INCL", "MOD_USER_ATRIB"]);
+      return !in_array($c['codigo'], ["MOD_CADV_EDT", "MOD_CADV_EXCL", "MOD_CADV_INCL",  "MOD_EXTM_EDT", "MOD_EXTM_EXCL", "MOD_EXTM_INCL", "MOD_PENT_QQR_UND", "MOD_PLAN_INST_EDT", "MOD_PLAN_INST_EXCL", "MOD_PLAN_INST_INCL", "MOD_PRGT_CONCL", "MOD_PRGT_EDT", "MOD_PRGT_EXCL", "MOD_UND_INATV", "MOD_UND_INTG", "MOD_UND_INTG_EDT", "MOD_UND_INTG_EXCL", "MOD_UND_INTG_GST", "MOD_UND_INTG_INCL", "MOD_UND_INST"]);
     });
 
     // Inserção de dados
