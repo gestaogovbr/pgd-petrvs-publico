@@ -2,6 +2,9 @@
 ### Corrigido
  - Ajustes nas capacidades dos perfis: Colaborador, Chefe de Unidade, Adm Negocial e Adm Master
  - Correção para carregar o regramento atual em Planos de Trabalho
+### Adicionado
+ - Novo Filtro de Unidades Subordinadas - Plano Entrega
+ - Novo Filtro de Unidades Subordinadas - Plano Trabalho
 
 ## 2.3.12-Hotfix 24/03/2025
 ### Corrigido
