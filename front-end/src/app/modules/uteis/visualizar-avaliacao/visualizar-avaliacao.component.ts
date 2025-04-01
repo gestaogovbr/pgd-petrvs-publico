@@ -45,6 +45,8 @@ export class VisualizarAvaliacaoComponent extends PageBase implements OnInit {
   }
 
   public async fazerRecurso(avaliacao: Avaliacao) {
+    console.log(avaliacao.nota);
+    
     this.go.navigate({route: ['gestao', 'plano-trabalho', 'avaliacao', avaliacao.id, 'recurso']}, {
       modal: true, 
       metadata: {
@@ -56,6 +58,11 @@ export class VisualizarAvaliacaoComponent extends PageBase implements OnInit {
         }
       }
     });
+  }
+
+  public podeFazerRecurso(avaliacao: Avaliacao) {
+    const nota = avaliacao.nota.replace(/["]/g, '');
+    return ['Inadequado', 'Não executado'].includes(nota) && !avaliacao.recurso;
   }
 
 }
