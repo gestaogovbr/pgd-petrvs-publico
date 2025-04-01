@@ -25,7 +25,7 @@
         <column title="Recurso" [template]="columnRecurso">
             <ng-template let-row="row" #columnRecurso>
                 <small>{{row.recurso || ''}}</small>
-                <div class="d-flex align-items-center" *ngIf="['Inadequado', 'Não executado'].includes(row.nota)">
+                <div class="d-flex align-items-center" *ngIf="podeFazerRecurso(row)">
                     <button class="btn btn-warning btn-sm" (click)="fazerRecurso(row)" title="Fazer recurso"><i class="fa-solid fa-file-pen"></i></button>
                 </div>
             </ng-template>
