@@ -2,144 +2,92 @@
 
 namespace App\Jobs\PGD\Tenant;
 
-use App\Models\Envio;
 use App\Services\API_PGD\AuditSources\ParticipanteAuditSource;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Cache;
-use Throwable;
-use PDO;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\ViewPgdParticipantes;
 
-class ExportarParticipantesBatch
+class ExportarParticipantesBatch extends ExportarBatch
 {
-    private $token;
-    private Envio $envio;
-    private $tenant;
-    private $batch;
-
     public function __construct(
         private readonly ExportarEntregasBatch $exportarEntregasBatch
     )
-    {}
-
-    public function setToken($token) {
-        $this->token = $token;
+    {
+        $this->proximoBatch = $exportarEntregasBatch;
     }
 
-    public function setEnvio($envio) {
-        $this->envio = $envio;
+    public static function getBatchName() {
+        $numero = static::getEnvioNumero();
+        return "Envio #{$numero} - Exportar Participantes";
     }
 
-    public function setTenant($tenant) {
-        $this->tenant = $tenant;
+    protected static function getCacheName() {
+        return "pgd_envio_part";
     }
 
     public function send() {
-        
-        $tenantId = $this->tenant->id;
-        
-        Log::info("[$tenantId] Consultando participantes a exportar...");
-        
+
+        static::log("Consultando participantes a exportar...");
+
         $auditSource = new ParticipanteAuditSource();
-        
-        Cache::forget("{$this->envio->id}_part");
-        
+
+        static::resetCache();
+
         $n = 0;
         $data = [];
 
-        // DB::connection()->getPdo()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
         $participantes = ViewPgdParticipantes::withoutGlobalScope(SoftDeletingScope::class)->get();
 
-        Log::info($participantes->count().' participantes a exportar');
-        
+        static::log($participantes->count().' participantes a exportar');
+
         foreach($participantes as $auditData) {
             if (array_key_exists($auditData->id, $data)) {
                 continue;
-            } 
-            
+            }
+
             $n++;
             $source = $auditSource->toExportSource($auditData);
             $data[$auditData->id] = $source;
-            Log::info("[$tenantId] Calculando job de participante nº$n");
+            static::log("Calculando job de participante nº$n");
         }
         unset($participantes);
 
-        Log::info(count($data).' participantes a exportar');
+        static::log(count($data).' participantes a exportar');
 
         $collection = collect($data);
         unset($data);
 
         $n = 0;
-        $collection->chunk(50)->each(function ($chunk) use (&$n) {
-            $jobs = [];
-            foreach($chunk as $item) {
-                $n++;
-                $jobs[] = new ExportarParticipanteJob(
-                    $this->tenant->id,
-                    $n,
-                    $this->token, 
-                    $this->tenant->api_url, 
-                    $this->tenant->api_cod_unidade_autorizadora, 
-                    $this->envio->id, 
-                    $this->envio->numero,
-                    $item
-                );
+        $tenant = static::getTenant();
+        $envioId = static::getEnvioId();
+        $envioNumero = static::getEnvioNumero();
+
+        $collection->chunk(50)->each(
+            function ($chunk) use (&$n, $tenant, $envioId, $envioNumero) {
+                $jobs = [];
+                foreach($chunk as $item) {
+                    $n++;
+                    $jobs[] = new ExportarParticipanteJob(
+                        $n,
+                        $item
+                    );
+                }
+
+                static::log("Total atual de jobs: $n");
+                $this->getBatch()->add($jobs);
+                unset($jobs);
             }
-
-            Log::info("Total atual de jobs: $n");
-            $this->getBatch()->add($jobs);
-            unset($jobs);
-        });
+        );
         unset($collection);
-        gc_collect_cycles();
 
-        $this->getBatch()->dispatch();
+        static::doneAddingJobs();
+        parent::send();
 
         if ($n > 0) {
-            Log::info("[$tenantId] Exportação de ".$n." participante(s) em andamento");
-            Cache::put("{$this->envio->id}_part", true);
+            static::log($n." participante(s) em andamento");
         } else {
-            Log::info("[$tenantId] Exportação dos participantes finalizada sem dados a exportar");
-            gc_collect_cycles();
-            $this->getExportarEntregasBatch()->send();
+            static::log("finalizada sem dados a exportar");
+            $this->startNextBatch();
         }
-    }
-
-    private function getExportarEntregasBatch() {
-        $exportarEntregasBatch = $this->exportarEntregasBatch;
-        $exportarEntregasBatch->setToken($this->token);
-        $exportarEntregasBatch->setEnvio($this->envio);
-        $exportarEntregasBatch->setTenant($this->tenant);
-
-        return $exportarEntregasBatch;
-    }
-
-    public function getBatch() {
-        if ($this->batch) return $this->batch;
-
-        $tenantId = $this->tenant->id;
-        $envio = $this->envio;
-
-        $exportarEntregasBatch = $this->getExportarEntregasBatch();
-
-        $this->batch = Bus::batch([])
-            ->name("Envio #{$this->envio->numero} - Exportar Participantes")
-            ->finally(function () use($tenantId, $exportarEntregasBatch, $envio) 
-            {    
-                $flag = Cache::get("{$envio->id}_part", false);
-                
-                if ($flag) {
-                    Cache::forget("{$envio->id}_part");
-                    Log::info("[$tenantId] Exportação dos participantes finalizada. Envio #".$envio->numero);
-                    $exportarEntregasBatch->send();
-                }
-            })
-            ->allowFailures()
-            ->onQueue('pgd_queue');
-        
-        return $this->batch;
     }
 }
