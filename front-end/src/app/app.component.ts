@@ -243,7 +243,7 @@ export class AppComponent {
         // this.menuSchema.ENTREGAS,
         // this.menuSchema.TIPOS_AVALIACOES,
         this.menuSchema.TIPOS_ATIVIDADES,
-        //this.menuSchema.TIPOS_CLIENTES,
+        this.menuSchema.TIPOS_CLIENTES,
         this.menuSchema.TIPOS_JUSTIFICATIVAS,
         // this.menuSchema.TIPOS_MODALIDADES,
         // this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
