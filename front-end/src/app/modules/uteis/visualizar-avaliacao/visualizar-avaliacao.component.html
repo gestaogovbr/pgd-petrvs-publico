@@ -1,5 +1,5 @@
 <ng-container *ngIf="consolidacao">
-  <grid [items]="consolidacao!.avaliacoes" [minHeight]="0" #gridEntregas>
+  <grid [items]="consolidacao!.avaliacoes" [minHeight]="0" #gridEntregas [hasEdit]="false">
     <columns>
         <column title="Data" type="datetime" field="data_avaliacao"></column>
         <column title="Avaliador" [template]="columnAvaliador">
@@ -25,6 +25,9 @@
         <column title="Recurso" [template]="columnRecurso">
             <ng-template let-row="row" #columnRecurso>
                 <small>{{row.recurso || ''}}</small>
+                <div class="d-flex align-items-center" *ngIf="podeFazerRecurso(row)">
+                    <button class="btn btn-warning btn-sm" (click)="fazerRecurso(row)" title="Fazer recurso"><i class="fa-solid fa-file-pen"></i></button>
+                </div>
             </ng-template>
         </column>
         <column title="Status" [template]="columnStatus">

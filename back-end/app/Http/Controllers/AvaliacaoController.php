@@ -51,7 +51,8 @@ class AvaliacaoController extends ControllerBase {
                 if($planoTrabalho->usuario_id != $usuario->id) throw new ServerException("ValidateAvaliacao", "Apenas o usuário do plano de trabalho poderá recorrer.\n[ver RN_AVL_2]");
                 $programa = $planoTrabalho->programa;
                 if($programa->dias_tolerancia_recurso_avaliacao > 0 && (UtilService::daystamp($avaliacao->data_avaliacao) + $programa->dias_tolerancia_recurso_avaliacao < UtilService::daystamp($unidadeService->hora($planoTrabalho->unidade_id))))
-                   throw new ServerException("ValidateAvaliacao", "O prazo de " . $programa->dias_tolerancia_recurso_avaliacao . " dias para o recurso foi extrapolado.\n[ver RN_AVL_2]");
+                    # desabilitado validação enquanto não tiver as notificações
+                    #throw new ServerException("ValidateAvaliacao", "O prazo de " . $programa->dias_tolerancia_recurso_avaliacao . " dias para o recurso foi extrapolado.\n[ver RN_AVL_2]");
                 break;
         }
     }

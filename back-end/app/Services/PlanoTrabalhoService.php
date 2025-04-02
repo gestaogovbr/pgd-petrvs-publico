@@ -516,8 +516,14 @@ class PlanoTrabalhoService extends ServiceBase
                 'gestorLogado' => $this->usuarioService->atribuicoesGestor($planoTrabalho->unidade_id),
                 'gestorUnidadeSuperior' => [
                     'gestor' => $gestoresUnidadeSuperior["gestor"]?->id == $logado->id,
-                    'gestorSubstituto' => count(array_filter($gestoresUnidadeSuperior["gestoresSubstitutos"], fn($value) => $value["id"] == $logado->id)) > 0,
-                    'gestorDelegado' => count(array_filter($gestoresUnidadeSuperior["gestoresDelegados"], fn($value) => $value["id"] == $logado->id)) > 0
+                    'gestorSubstituto' => count(array_filter(
+                        $gestoresUnidadeSuperior["gestoresSubstitutos"], 
+                        fn($value) => $value !== null && isset($value["id"]) && $value["id"] == $logado->id
+                    )) > 0,                    
+                    'gestorDelegado' => count(array_filter(
+                        $gestoresUnidadeSuperior["gestoresDelegados"] ?? [], 
+                        fn($value) => $value !== null && isset($value["id"]) && $value["id"] == $logado->id
+                    )) > 0
                 ],
                 'gestorParticipante' => $this->usuarioService->atribuicoesGestor($planoTrabalho->unidade_id, $planoTrabalho->usuario_id)
             ];
