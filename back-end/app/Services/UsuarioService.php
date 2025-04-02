@@ -386,15 +386,30 @@ class UsuarioService extends ServiceBase
   }
 
   public function validarColaborador($data) : void
-  {
-    // se é um usuário externo não pode ter outro perfil com nível < 6
+{
+    // Se é um usuário externo não pode ter outro perfil com nível < 6
+    $usuarioExterno = $data['usuario_externo'] ?? null;
+    if ($usuarioExterno === null) {
+        return;
+    }
+
+    // Garantir que perfil_id está definido antes de buscar no banco
+    if (!isset($data['perfil_id'])) {
+        throw new ServerException("ValidateUsuario", "ID do perfil não foi informado.");
+    }
+
     $perfil = Perfil::find($data['perfil_id']);
-    if ($perfil->nivel < 6 && $data['usuario_externo'] == 1) {
-      throw new ServerException("ValidateUsuario", "Usuário externo não pode ter o nível de acesso: " . $perfil->nome);
-    } else if ($perfil->nivel == 6 && $data['usuario_externo'] == 0) {
-      throw new ServerException("ValidateUsuario", "Usuário não pode ter o nível de acesso: " . $perfil->nome);
+    if (!$perfil) {
+        throw new ServerException("ValidateUsuario", "Perfil não encontrado.");
+    }
+
+    if ($perfil->nivel < 6 && $usuarioExterno == 1) {
+        throw new ServerException("ValidateUsuario", "Usuário externo não pode ter o nível de acesso: " . $perfil->nome);
+    } elseif ($perfil->nivel == 6 && $usuarioExterno == 0) {
+        throw new ServerException("ValidateUsuario", "Usuário não pode ter o nível de acesso: " . $perfil->nome);
     }
   }
+
 
   /**
    *
