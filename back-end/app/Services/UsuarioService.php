@@ -376,7 +376,7 @@ class UsuarioService extends ServiceBase
 
       $developerId = $developer->id;
     if ($data['perfil_id'] != $perfilAtual) {
-      if ($perfilNovo->nivel < $perfilAutenticado->nivel)
+      if (($perfilNovo->nivel < $perfilAutenticado->nivel) && $perfilAutenticado->nivel != 6)
         throw new ServerException("ValidateUsuario", "Não é possível atribuir perfil superior ao do usuário logado.");
       if ($data["perfil_id"] == $developerId && !$this->isLoggedUserADeveloper())
         throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de/para um Desenvolvedor");
@@ -386,15 +386,30 @@ class UsuarioService extends ServiceBase
   }
 
   public function validarColaborador($data) : void
-  {
-    // se é um usuário externo não pode ter outro perfil com nível < 6
+{
+    // Se é um usuário externo não pode ter outro perfil com nível < 6
+    $usuarioExterno = $data['usuario_externo'] ?? null;
+    if ($usuarioExterno === null) {
+        return;
+    }
+
+    // Garantir que perfil_id está definido antes de buscar no banco
+    if (!isset($data['perfil_id'])) {
+        throw new ServerException("ValidateUsuario", "ID do perfil não foi informado.");
+    }
+
     $perfil = Perfil::find($data['perfil_id']);
-    if ($perfil->nivel < 6 && $data['usuario_externo'] == 1) {
-      throw new ServerException("ValidateUsuario", "Usuário externo não pode ter o nível de acesso: " . $perfil->nome);
-    } else if ($perfil->nivel == 6 && $data['usuario_externo'] == 0) {
-      throw new ServerException("ValidateUsuario", "Usuário não pode ter o nível de acesso: " . $perfil->nome);
+    if (!$perfil) {
+        throw new ServerException("ValidateUsuario", "Perfil não encontrado.");
+    }
+
+    if ($perfil->nivel < 6 && $usuarioExterno == 1) {
+        throw new ServerException("ValidateUsuario", "Usuário externo não pode ter o nível de acesso: " . $perfil->nome);
+    } elseif ($perfil->nivel == 6 && $usuarioExterno == 0) {
+        throw new ServerException("ValidateUsuario", "Usuário não pode ter o nível de acesso: " . $perfil->nome);
     }
   }
+
 
   /**
    *

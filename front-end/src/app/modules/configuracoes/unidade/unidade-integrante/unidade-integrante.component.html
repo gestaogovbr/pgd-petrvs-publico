@@ -1,4 +1,4 @@
-<grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true" editable [add]="adicionarIntegrante.bind(this)" [load]="carregarIntegrante.bind(this)" [remove]="removerIntegrante.bind(this)" [save]="salvarIntegrante.bind(this)">
+<grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasAdd]="this.auth.hasPermissionTo('MOD_USER_ATRIB')" [hasEdit]="this.auth.hasPermissionTo('MOD_USER_ATRIB')" [hasDelete]="this.auth.hasPermissionTo('MOD_USER_ATRIB')" editable [add]="adicionarIntegrante.bind(this)" [load]="carregarIntegrante.bind(this)" [remove]="removerIntegrante.bind(this)" [save]="salvarIntegrante.bind(this)">
   <span *ngIf="!isNoPersist"><strong>{{ 'Unidade: ' + (entity?.nome || "")}}</strong></span>
   <columns>
     <column [title]="lex.translate('Usuários')" [template]="columnUsuario" [editTemplate]="editUsuario" [maxWidth]="150">

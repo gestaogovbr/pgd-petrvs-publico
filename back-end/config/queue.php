@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('QUEUE_CONNECTION', 'sync'),
+    'default' => 'redis',
 
     /*
     |--------------------------------------------------------------------------
@@ -82,7 +82,7 @@ return [
             'after_commit' => false,
             'timeout' => 172800
         ],
-        
+
         'pgd_queue' => [
             'driver' => 'redis',
             'connection' => 'default',
