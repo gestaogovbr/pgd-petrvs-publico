@@ -55,7 +55,7 @@
                     [valueOn]="'true'"  
                     [valueOff]="'false'"
                     (change)="ativarDesativar(row)"
-                    [disabled]="row.deleted_at"
+                    [disabled]="row.deleted_at || !this.auth.hasPermissionTo('MOD_CLI_ATI')"
                 ></input-switch>
 
             </ng-template>  

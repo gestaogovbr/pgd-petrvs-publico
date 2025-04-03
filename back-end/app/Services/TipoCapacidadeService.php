@@ -405,7 +405,7 @@ class TipoCapacidadeService extends ServiceBase
       "capacidades" => [
         ["MOD_TIPO_CLI_EDT", "Permite editar tipos de clientes"],
         ["MOD_TIPO_CLI_EXCL", "Permite excluir tipos de clientes"],
-        ["MOD_TIPO_CLI_INCL", "Permite incluir tipos de clientes"]
+        ["MOD_TIPO_CLI_INCL", "Permite incluir tipos de clientes"]      
       ]
     ]
   ];
