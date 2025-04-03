@@ -355,7 +355,7 @@ class CapacidadeSeeder extends Seeder
     $capacidades_colaborador = $capacidades_administrador_negocial;
     // retirar algumas capacidades do colaborador
     $capacidades_colaborador = array_filter($capacidades_colaborador, function ($c) {
-      return !in_array($c['codigo'], ["MOD_CLI_INCL", "MOD_CADV_EDT", "MOD_CADV_EXCL", "MOD_CADV_INCL", "MOD_CFG_USER", "MOD_EXTM_EDT", "MOD_EXTM_EXCL", "MOD_EXTM_INCL", "MOD_PENT_QQR_UND", "MOD_PLAN_INST_EDT", "MOD_PLAN_INST_EXCL", "MOD_PLAN_INST_INCL", "MOD_PRGT_CONCL", "MOD_PRGT_EDT", "MOD_PRGT_EXCL", "MOD_UND_INATV", "MOD_UND_INTG", "MOD_UND_INTG_EDT", "MOD_UND_INTG_EXCL", "MOD_UND_INTG_GST", "MOD_UND_INTG_INCL", "MOD_USER_ATRIB"]);
+      return !in_array($c['codigo'], ["MOD_CLI_ATI", "MOD_CLI_EDT", "MOD_CLI_INCL", "MOD_CADV_EDT", "MOD_CADV_EXCL", "MOD_CADV_INCL", "MOD_CFG_USER", "MOD_EXTM_EDT", "MOD_EXTM_EXCL", "MOD_EXTM_INCL", "MOD_PENT_QQR_UND", "MOD_PLAN_INST_EDT", "MOD_PLAN_INST_EXCL", "MOD_PLAN_INST_INCL", "MOD_PRGT_CONCL", "MOD_PRGT_EDT", "MOD_PRGT_EXCL", "MOD_UND_INATV", "MOD_UND_INTG", "MOD_UND_INTG_EDT", "MOD_UND_INTG_EXCL", "MOD_UND_INTG_GST", "MOD_UND_INTG_INCL", "MOD_USER_ATRIB"]);
     });
 
     // Inserção de dados
