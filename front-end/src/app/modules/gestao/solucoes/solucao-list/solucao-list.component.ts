@@ -103,9 +103,10 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     let result: ToolbarButton[] = [];
     if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });  
   
-    if (this.isCurador)
-      result.push({ label: "Excluir", icon: "bi bi-trash", color: 'btn-outline-danger', onClick: this.delete.bind(this) });   
-    
+    if (this.isCurador && !row.possui_vinculos && this.ativo(row.id, false)) {
+      if (this.auth.hasPermissionTo('MOD_SOLUCOES_EXCL')) result.push({ label: "Excluir", icon: "bi bi-trash", color: 'btn-outline-danger', onClick: this.delete.bind(this) });
+      if (this.auth.hasPermissionTo('MOD_SOLUCOES_EDT')) result.push({ label: "Editar", icon: "bi bi-pencil", color: 'btn-outline-primary', onClick: this.edit.bind(this) });   
+    }
     return result;
   }
   
@@ -267,14 +268,14 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     });
   }
 
-  public ativo(solucaoId: string): boolean {
+  public ativo(solucaoId: string, porStatus: boolean = true): boolean {
     let unidadeId = this.auth.unidade?.id;
     let solucaoUnidade = this.getSolucaoUnidade(solucaoId, unidadeId);
     if (!solucaoUnidade) {
       return false;
     }
     
-    return solucaoUnidade.status ? true : false;
+    return porStatus ? (solucaoUnidade.status ? true : false) : true;
   }
 
   private getSolucaoUnidade(solucaoId: string, unidadeId: string | undefined): SolucaoUnidade | null {
