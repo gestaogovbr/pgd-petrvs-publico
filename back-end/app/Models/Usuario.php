@@ -392,11 +392,6 @@ class Usuario extends Authenticatable implements AuditableContract
 
     public function isCurador(): bool
     {
-      return $this->isDeveloper() || UnidadeIntegrante::where('usuario_id', $this->id)->whereHas('curador')->exists();
-    }
-
-    public function isCurador(): bool
-    {
         return $this->isDeveloper() || UnidadeIntegrante::where('usuario_id', $this->id)->whereHas('curador')->exists();
     }
 
