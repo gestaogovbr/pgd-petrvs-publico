@@ -189,8 +189,12 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
     return "Editando " + this.lex.translate("Programa") + ': ' + (entity?.nome || "");
   }
 
-  public onClickIN() {
+  public onClickAbreNormativa() {
     if(this.form?.controls.link_normativa?.value?.length) window.open(this.form?.controls.link_normativa.value);
+  }
+
+  public onClickAbreAutorizacao() {
+    if(this.form?.controls.link_autorizacao?.value?.length) window.open(this.form?.controls.link_autorizacao.value);
   }
 
 }
