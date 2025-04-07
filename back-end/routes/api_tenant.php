@@ -493,4 +493,5 @@ Route::middleware('auth:sanctum')->post('/unidade/consulta-unidade-siape', [Unid
 Route::middleware(['auth:sanctum'])->prefix('SolucaoUnidade')->group(function () {
   defaultRoutes(SolucaoUnidadeController::class);
 });
+Route::middleware('auth:sanctum')->post('/siape-individual/servidor', [UsuarioController::class, 'processaServidor']);
 

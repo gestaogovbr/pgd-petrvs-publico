@@ -1,0 +1,203 @@
+<?php
+
+namespace App\Services;
+
+use App\Exceptions\ErrorDataSiapeException;
+use App\Models\Entidade;
+use App\Models\IntegracaoUnidade;
+use App\Models\SiapeConsultaDadosFuncionais;
+use App\Models\SiapeConsultaDadosPessoais;
+use App\Models\SiapeDadosUORG;
+use App\Models\SiapeListaServidores;
+use App\Models\SiapeListaUORGS;
+use App\Models\Unidade;
+use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
+use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidores;
+use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
+use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidades;
+use App\Services\Siape\ProcessaDadosSiapeBD;
+use Exception;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
+use DateTime;
+
+class SiapeIndividualService extends ServiceBase
+{
+    private BuscarDadosSiapeServidor $buscarDadosSiapeServidor;
+    private BuscarDadosSiapeUnidade $buscarDadosSiapeUnidade;
+    private ProcessaDadosSiapeBD $processaDadosSiape;
+    private BuscarDadosSiapeServidores $buscarDadosSiapeServidores;
+    private BuscarDadosSiapeUnidades $buscarDadosSiapeUnidades;
+
+    private mixed $config;
+
+    public function __construct($collection = null)
+    {
+        parent::__construct($collection);
+        $this->inicializaClassesNecessarias();
+    }
+
+    public function processaServidor(string $cpf)
+    {
+        $this->limpaLogSiape($cpf);
+        return $this->fluxoSiape($cpf);
+    }
+
+    private function inicializaClassesNecessarias()
+    {
+        $this->config = config("integracao")["siape"];
+        $this->buscarDadosSiapeServidor = new BuscarDadosSiapeServidor($this->config);
+        $this->buscarDadosSiapeUnidade = new BuscarDadosSiapeUnidade($this->config);
+        $this->buscarDadosSiapeServidores = new BuscarDadosSiapeServidores($this->config);
+        $this->buscarDadosSiapeUnidades = new BuscarDadosSiapeUnidades($this->config);
+        $this->processaDadosSiape = new ProcessaDadosSiapeBD();
+    }
+
+    private function limpaLogSiape(string $cpf)
+    {
+        $logPath = storage_path('logs/siape.log');
+
+        if (File::exists($logPath)) {
+            File::put($logPath, '');
+        }
+
+        Log::channel('siape')->info('Iniciando o processo de sincronização cpf #:' . $cpf);
+    }
+
+    private function fluxoSiape(string $cpf)
+    {
+
+        SiapeConsultaDadosPessoais::withTrashed()->where('cpf', $cpf)->forceDelete();
+        SiapeConsultaDadosFuncionais::withTrashed()->where('cpf', $cpf)->forceDelete();
+        $cpf = preg_replace('/[^0-9]/', '', $cpf);
+        $codOrgao = strval(intval($this->config['codOrgao']));
+
+        $responseDadosFuncionais =  $this->buscarDadosSiapeServidor->consultaDadosFuncionais(
+            $this->config['siglaSistema'],
+            $this->config['nomeSistema'],
+            $this->config['senha'],
+            $cpf,
+            $codOrgao,
+            $this->config['parmExistPag'],
+            $this->config['parmTipoVinculo']
+        );
+
+        $responseDadosPessoais =  $this->buscarDadosSiapeServidor->consultaDadosPessoais(
+            $this->config['siglaSistema'],
+            $this->config['nomeSistema'],
+            $this->config['senha'],
+            $cpf,
+            $codOrgao,
+            $this->config['parmExistPag'],
+            $this->config['parmTipoVinculo']
+        );
+
+        $dadosFuncionais = $this->processaDadosSiape->processaDadosFuncionais($cpf, $responseDadosFuncionais);
+
+        $codigoDaUnidade = $dadosFuncionais['codUorgExercicio'];
+
+        $unidadeJaProcessada = Unidade::where('codigo', $codigoDaUnidade)->first();
+
+        if (!$unidadeJaProcessada) {
+            throw new Exception(sprintf("A unidade %s ainda não foi processada, o servidor #%s não pode ser processado", $codigoDaUnidade, $cpf));
+        }
+
+        $codOrgao = strval(intval($this->config['codOrgao']));
+
+        $responseListaServidores = $this->buscarDadosSiapeServidores->listaServidores(
+            $this->config['siglaSistema'],
+            $this->config['nomeSistema'],
+            $this->config['senha'],
+            $this->buscarDadosSiapeUnidade->getCpf(),
+            $codOrgao,
+            $codigoDaUnidade
+        );
+
+        $registro = new SiapeListaServidores([
+            'id' => Str::uuid(),
+            'response' => $responseListaServidores,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+        $servidores = $this->buscarDadosSiapeServidor->getServidores($registro);
+
+        $registro = collect($servidores)->firstWhere('cpf', $cpf);
+
+
+        $responseUnidade = $this->buscarDadosSiapeUnidade->getUorgAsXml(
+            $this->config['siglaSistema'],
+            $this->config['nomeSistema'],
+            $this->config['senha'],
+            $this->buscarDadosSiapeUnidade->getCpf(),
+            $codOrgao,
+            $codigoDaUnidade
+        );
+
+        $dadosUnidade = $this->processaDadosSiape->processaDadosUorg($responseUnidade);
+        $xmlDadosUnidade = $this->simpleXmlElementToArray($dadosUnidade);
+
+        $this->buscarDadosSiapeUnidades->listaUorgs(
+            $this->config['siglaSistema'],
+            $this->config['nomeSistema'],
+            $this->config['senha'],
+            $this->buscarDadosSiapeUnidade->getCpf(),
+            $codOrgao,
+            $this->config['parmExistPag'],
+            $this->config['parmTipoVinculo']
+        );
+
+        $uorgs = SiapeListaUORGS::where('processado', 0)
+                ->orderBy('updated_at', 'desc')
+                ->first();
+
+        $listaUorgs = $this->buscarDadosSiapeUnidade->getUnidades($uorgs);
+
+        $unidade = collect($listaUorgs)->firstWhere('codigo', $codigoDaUnidade);
+
+
+        SiapeDadosUORG::insert([
+            'id' => Str::uuid(),
+            'data_modificacao' => DateTime::createFromFormat('dmY', $unidade->dataUltimaTransacao)->format('Y-m-d 00:00:00'),
+            'response' => $xmlDadosUnidade,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+
+        SiapeConsultaDadosFuncionais::insert([
+            'id' => Str::uuid(),
+            'cpf' => $cpf,
+            'data_modificacao' => DateTime::createFromFormat('dmY', $registro->dataUltimaTransacao)->format('Y-m-d 00:00:00'),
+            'response' => $responseDadosFuncionais,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+        SiapeConsultaDadosPessoais::insert([
+            'id' => Str::uuid(),
+            'cpf' => $cpf,
+            'data_modificacao' => DateTime::createFromFormat('dmY', $registro->dataUltimaTransacao)->format('Y-m-d 00:00:00'),
+            'response' => $responseDadosPessoais,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+        $integracaoService = new IntegracaoService([]);
+        $entidades = Entidade::all();
+        $inputs = [
+            'unidades' => true,
+            'servidores' => true,
+            'gestores' => true,
+        ];
+        $retorno = [];
+        foreach ($entidades as $entidade) {
+            $inputs['entidade'] = $entidade->id;
+            $retorno = $integracaoService->sincronizar($inputs);
+        }
+        return $retorno;
+
+    }
+}

@@ -59,7 +59,7 @@ class ProcessaDadosSiapeBD
         return $servidor->data_modificacao ?? '1970-01-01 00:00:00';
     }
 
-    private function processaDadosPessoais(
+    public function processaDadosPessoais(
         string $cpf,
         string $dadosPessoais
     ): array {
@@ -83,7 +83,7 @@ class ProcessaDadosSiapeBD
         }
     }
 
-    private function processaDadosFuncionais(
+    public function processaDadosFuncionais(
         string $cpf,
         string $dadosFuncionais
     ): array {
@@ -138,17 +138,12 @@ class ProcessaDadosSiapeBD
         $dadosUorgArray = [];
         foreach ($response as $dadosUnidades) {
             try {
-                $responseXml = $this->prepareResponseXml($dadosUnidades->response);
+                $dadosUorg = $this->processaDadosUorg($dadosUnidades->response);
             } catch (Exception $e) {
                 Log::error('Erro ao processar XML da Unidade', [$e->getMessage()]);
                 continue;
             }
 
-            $responseXml->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
-            $responseXml->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
-            $responseXml->registerXPathNamespace('ent', 'http://entidade.wssiapenet');
-
-            $dadosUorg = $responseXml->xpath('//ns1:dadosUorgResponse/out')[0];
             $dadosUorgArray[] = [
                 'data_modificacao' => $dadosUnidades->data_modificacao,
                 'dados' => $this->simpleXmlElementToArray($dadosUorg)
@@ -159,6 +154,21 @@ class ProcessaDadosSiapeBD
         }
 
         return $dadosUorgArray;
+    }
+
+    public function processaDadosUorg($dados) : SimpleXMLElement{
+        try {
+            $responseXml = $this->prepareResponseXml($dados);
+        } catch (Exception $e) {
+            report($e);
+            throw new ErrorDataSiapeException("Erro ao processar XML da Unidade");
+        }
+
+        $responseXml->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+        $responseXml->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
+        $responseXml->registerXPathNamespace('ent', 'http://entidade.wssiapenet');
+
+        return $responseXml->xpath('//ns1:dadosUorgResponse/out')[0];
     }
 
     private function sanitizeXml(string &$response): void

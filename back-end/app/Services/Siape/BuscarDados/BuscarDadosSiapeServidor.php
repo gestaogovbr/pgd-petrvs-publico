@@ -249,7 +249,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
 
 
 
-    private function getServidores(SiapeListaServidores $response) : ?array
+    public function getServidores(SiapeListaServidores $response) : ?array
     {
         try {
             $xmlResponse = $this->prepareResponseXml($response->response);
