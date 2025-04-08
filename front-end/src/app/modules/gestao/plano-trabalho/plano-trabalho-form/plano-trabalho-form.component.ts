@@ -145,6 +145,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   public atualizarTcr() {
     this.entity = this.loadEntity();
+ 
     if (!this.formDisabled) {
       let textoUsuario = this.form!.controls.usuario_texto_complementar.value;
       let textoUnidade = this.form!.controls.unidade_texto_complementar.value;
@@ -155,6 +156,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.template = this.entity.programa?.template_tcr;
       this.editingId = ["ADD", "EDIT"].includes(documento?._status || "") ? documento!.id : undefined;
     }
+
+    
+    
 
     this.cdRef.detectChanges();
   }
@@ -307,7 +311,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public async loadData(entity: PlanoTrabalho, form: FormGroup, action?: string) {
-
     if(action == 'clone') {
       entity.id = "";
       entity.data_inicio = new Date();
@@ -379,12 +382,18 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   /* Cria um objeto Plano baseado nos dados do formulário */
   public loadEntity(): PlanoTrabalho {
+    console.log("loadEntity", this.entity);
+    
     let plano: PlanoTrabalho = this.util.fill(new PlanoTrabalho(), this.entity!);
     plano = this.util.fillForm(plano, this.form!.value);
     plano.usuario = (this.usuario!.selectedEntity || this.entity?.usuario) as Usuario;
     plano.unidade = (this.unidade?.selectedEntity || this.entity?.unidade) as Unidade;
     plano.programa = (this.programa?.selectedEntity || this.entity?.programa) as Programa;
     plano.tipo_modalidade = (this.tipoModalidade!.selectedEntity || this.entity?.tipo_modalidade) as TipoModalidade;   
+    plano.documento = this.entity?.documento;
+    plano.documento_id = this.form?.controls.documento_id.value;
+    console.log("plano", plano);
+    
     return plano;
   }
 
@@ -399,6 +408,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.entity!.documentos = this.entity!.documentos.filter((documento: Documento) => {
         return ["ADD", "EDIT", "DELETE"].includes(documento._status || "");
       });
+
+      console.log("entity save", this.entity);
+      
       /* Salva separadamente as informações do plano */
       let requests: Promise<any>[] = [this.dao!.save(this.entity!, this.join)];
       if (this.form!.controls.editar_texto_complementar_unidade.value) requests.push(this.unidadeDao.update(this.entity!.unidade_id, { texto_complementar_plano: this.form!.controls.unidade_texto_complementar.value }));
