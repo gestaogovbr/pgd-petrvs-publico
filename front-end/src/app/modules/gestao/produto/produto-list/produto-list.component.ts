@@ -6,6 +6,7 @@ import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
 import { ProdutoDaoService } from "src/app/dao/produto-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { Produto } from "src/app/models/produto.model";
+import { Unidade } from "src/app/models/unidade.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
 import { ProdutoService } from "src/app/services/produto.service";
 
@@ -23,6 +24,8 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
   public isSearching: boolean = false;
   public unidadeDao: UnidadeDaoService;
   public BOTAO_EXCLUIR: ToolbarButton;
+  public BOTAO_EDITAR: ToolbarButton;
+  public unidadesFilhas: Unidade[] = [];
 
   constructor(public injector: Injector, dao: ProdutoDaoService) {
     super(injector, Produto, ProdutoDaoService);
@@ -32,7 +35,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     this.title = this.lex.translate("Produtos e Serviços");
     this.filter = this.fh.FormBuilder({
       nome: {default: this.metadata?.nome ?? ""},
-      unidade_id: {default: ""},
+      unidade_id: {default: this.auth.unidade?.id},
       cliente_id: {default: ""},
       id: {default: ""},
       status: {default: ""}
@@ -45,6 +48,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     this.isCurador = this.auth.isUsuarioCurador();
 
     this.BOTAO_EXCLUIR = { label: "Excluir", icon: "bi bi-trash", onClick: this.delete.bind(this), color: 'btn-outline-danger' };
+    this.BOTAO_EDITAR = { label: "Editar", icon: "bi bi-pencil", onClick: this.edit.bind(this), color: 'btn-outline-primary' };
   }
 
   public ngOnInit(): void {
@@ -59,14 +63,26 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
     if (this.isSearching) {
       this.filter?.controls.status.setValue('ativo');
       this.saveUsuarioConfig();
-    }
+    }    
+    this.getUnidadesFilhas(this.auth.unidade?.id!);
+  }
+
+  async getUnidadesFilhas(unidadeId: string) {
+    this.unidadesFilhas = await this.unidadeDao.unidadesFilhas(unidadeId);
   }
 
   public dynamicButtons(row: Produto): ToolbarButton[] {
     let result: ToolbarButton[] = [];
+    const unidadeIds = this.unidadesFilhas.map(u => u.id);
+    unidadeIds.push(this.auth.unidade?.id!);
+
     if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });   
 
-    if (row._metadata?.vinculoEntregas == 0 && this.isChefe) {
+    if(this.isChefe && !this.isSearching && this.auth.hasPermissionTo('MOD_PROD_EDT') && unidadeIds.includes(row.unidade_id)) {
+      result.push(this.BOTAO_EDITAR);
+    }
+
+    if (row._metadata?.vinculoEntregas == 0 && this.isChefe && unidadeIds.includes(row.unidade_id)) {
       result.push(this.BOTAO_EXCLUIR);
     }
     

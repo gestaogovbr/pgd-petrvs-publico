@@ -148,7 +148,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     }
 
     if (form.status == 'ativo') {
-      result.push(["unidade_ativa", "==", form.unidade_id ?? this.unidadeId]);
+      result.push(["so_ativos_unidade", "==", form.unidade_id ?? this.unidadeId]);
     }
 
     if (form.status == 'inativo') {
