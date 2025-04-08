@@ -1,0 +1,3 @@
+<editable-form [form]="form!" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
+  <input-textarea label="Texto do recurso" [size]="12" [rows]="2" controlName="recurso" [control]="form!.controls.recurso"></input-textarea>
+</editable-form>
