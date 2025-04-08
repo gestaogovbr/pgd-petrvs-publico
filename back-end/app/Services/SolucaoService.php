@@ -50,7 +50,15 @@ class SolucaoService extends ServiceBase
     if ($unidade_ativa) {
       $query->whereHas('solucoesUnidades', function (Builder $query) use ($unidade_ativa) {
         $query
-          ->where('id_unidade', $unidade_ativa[2])
+          ->where('id_unidade', $unidade_ativa[2]);
+      });
+    }
+
+    $so_ativos_unidade = $this->extractWhere($data, "so_ativos_unidade");
+    if ($so_ativos_unidade) {
+      $query->whereHas('solucoesUnidades', function (Builder $query) use ($so_ativos_unidade) {
+        $query
+          ->where('id_unidade', $so_ativos_unidade[2])
           ->where('status', 1);
       });
     }
@@ -61,6 +69,7 @@ class SolucaoService extends ServiceBase
         $query
           ->where('id_unidade', $unidade_inativa[2])
           ->where('status', 1);
+
       });
     }
   }
