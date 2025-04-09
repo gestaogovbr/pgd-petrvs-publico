@@ -10,13 +10,13 @@ use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Services\ServiceBase;
 use App\Services\RawWhere;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
 use App\Services\Siape\DadosExternosSiape;
 use Exception;
-use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
 use Throwable;
 
@@ -29,7 +29,7 @@ class UsuarioService extends ServiceBase
   const LOGIN_MICROSOFT = "AZURE";
   const LOGIN_FIREBASE = "FIREBASE";
 
-  
+
 
   public function atualizarFotoPerfil($tipo, &$usuario, $url)
   {
@@ -91,7 +91,7 @@ class UsuarioService extends ServiceBase
 
   /**
    * Informa quais atribuições de gestor o usuário logado possui na unidade recebida como parâmetro.
-   * @param string $unidade_id 
+   * @param string $unidade_id
    */
   public function atribuicoesGestor(string $unidadeId, ?string $usuarioId = null)
   {
@@ -111,7 +111,7 @@ class UsuarioService extends ServiceBase
 
   /**
    * Informa se o usuário logado é gestor(titular ou substituto) da unidade recebida como parâmetro.
-   * @param string $unidade_id 
+   * @param string $unidade_id
    */
   public function isGestorUnidade(string $unidadeId, $incluiDelegado = true): bool
   {
@@ -124,7 +124,7 @@ class UsuarioService extends ServiceBase
 
   /**
    * Informa se o usuário logado é participante do plano de trabalho recebido como parâmetro.
-   * @param string $unidade_id 
+   * @param string $unidade_id
    */
   public function isParticipante($planoTrabalho)
   {
@@ -134,8 +134,8 @@ class UsuarioService extends ServiceBase
   /**
    * Recebe os IDs de um usuário e de um programa, e informa se o usuário é participante habilitado do Programa.
    * Se o usuário não for informado, será utilizado o usuário logado.
-   * @param string $usuario_id 
-   * @param string $pgd_id 
+   * @param string $usuario_id
+   * @param string $pgd_id
    * @return bool
    */
   public function isParticipanteHabilitado(string|null $usuarioId = null, string $programaId): bool
@@ -154,8 +154,8 @@ class UsuarioService extends ServiceBase
   /**
    * Informa se existe determinada atribuição entre o usuário e a unidade informados. Caso não seja informado um usuário, a
    * verificação será feita com base no usuário logado.
-   * @param string $atribuicao 
-   * @param string $unidade_id 
+   * @param string $atribuicao
+   * @param string $unidade_id
    * @param string $usuario_id
    */
   public function isIntegrante(string $atribuicao, string $unidadeId, string|null $usuarioId = null): bool
@@ -174,22 +174,25 @@ class UsuarioService extends ServiceBase
   /**
    * Recebe os IDs de um usuário e de uma unidade, e informa se a unidade é a lotação do usuário.
    * Se o usuário não for informado, será utilizado o usuário logado.
-   * @param string $unidade_id 
+   * @param string $unidade_id
    */
-  public function isLotacao(string|null $usuario_id = null, string $unidade_id): bool
-  {
-    $usuario = isset($usuario_id) ? Usuario::find($usuario_id) : parent::loggedUser();
-    if ($usuario->lotacao !== null) {
-      return $usuario->lotacao->unidade_id == $unidade_id;
+    public function isLotacao(string|null $usuario_id = null, string $unidade_id): bool
+    {
+        $usuario = isset($usuario_id) ? Usuario::find($usuario_id) : parent::loggedUser();
+
+        if (!$usuario) {
+            return false; // Retorna falso se o usuário não for encontrado
+        }
+
+        return $usuario->lotacao !== null && $usuario->lotacao->unidade_id == $unidade_id;
     }
-    return false;
-  }
+
 
   /**
-   * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+   * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade
    * recebida como parâmetro.
-   * @param string $unidade_id 
-   * @returns 
+   * @param string $unidade_id
+   * @returns
    */
   public function isLotadoNaLinhaAscendente(string|null $unidadeId): bool
   {
@@ -248,7 +251,7 @@ class UsuarioService extends ServiceBase
               $query->where('habilitado', 0);
             });
           }
-         
+
         }
       } else if (is_array($condition) && $condition[0] == "subordinadas") {
         $subordinadas = $condition[2];
@@ -256,7 +259,7 @@ class UsuarioService extends ServiceBase
         $query->whereHas('unidadesIntegranteAtribuicoes', function (Builder $query) use ($condition) {
           $query->whereIn('atribuicao', $condition[2]);
         });
-      } 
+      }
       else {
         array_push($where, $condition);
       }
@@ -284,6 +287,7 @@ class UsuarioService extends ServiceBase
     /* Armazena as informações que serão necessárias no extraStore */
     $this->buffer = ["integrantes" => $this->UtilService->getNested($data, "integrantes")];
     $this->validarPerfil($data);
+    $this->validarColaborador($data);
     return $data;
   }
 
@@ -294,6 +298,7 @@ class UsuarioService extends ServiceBase
   {
     $data["with"] = [];
     $this->validarPerfil($data);
+    $this->validarColaborador($data);
     return $data;
   }
 
@@ -307,12 +312,16 @@ class UsuarioService extends ServiceBase
     if($action == ServiceBase::ACTION_EDIT){
       if(!empty($data['matricula']) && strlen($data['matricula']) > 50)
         throw new ValidateException("O campo de matrícula deve ter no máximo 50 caracteres", 422);
+    if (empty($data["integrantes"][0]))
+        throw new ValidateException("Selecione uma unidade!", 422);
     }
     if ($action == ServiceBase::ACTION_INSERT) {
       if (empty($data["email"]))
          throw new ValidateException("O campo de e-mail é obrigatório", 422);
       if (empty($data["cpf"]))
          throw new ValidateException("O campo de CPF é obrigatório", 422);
+      if (empty($data["integrantes"][0]))
+        throw new ValidateException("Selecione uma unidade!", 422);
       $query1 = Usuario::where("id", "!=", $data["id"])->where(function ($query) use ($data) {
         return $query->where("cpf", UtilService::onlyNumbers($data["cpf"]))->orWhere("email", $data["email"]);
       });
@@ -337,6 +346,7 @@ class UsuarioService extends ServiceBase
         }
       }
       $this->validarPerfil($data);
+      $this->validarColaborador($data);
     }
   }
 
@@ -366,7 +376,7 @@ class UsuarioService extends ServiceBase
 
       $developerId = $developer->id;
     if ($data['perfil_id'] != $perfilAtual) {
-      if ($perfilNovo->nivel < $perfilAutenticado->nivel)
+      if (($perfilNovo->nivel < $perfilAutenticado->nivel) && $perfilAutenticado->nivel != 6)
         throw new ServerException("ValidateUsuario", "Não é possível atribuir perfil superior ao do usuário logado.");
       if ($data["perfil_id"] == $developerId && !$this->isLoggedUserADeveloper())
         throw new ServerException("ValidateUsuario", "Tentativa de alterar o perfil de/para um Desenvolvedor");
@@ -375,14 +385,102 @@ class UsuarioService extends ServiceBase
     }
   }
 
+  public function validarColaborador($data) : void
+{
+    // Se é um usuário externo não pode ter outro perfil com nível < 6
+    $usuarioExterno = $data['usuario_externo'] ?? null;
+    if ($usuarioExterno === null) {
+        return;
+    }
+
+    // Garantir que perfil_id está definido antes de buscar no banco
+    if (!isset($data['perfil_id'])) {
+        throw new ServerException("ValidateUsuario", "ID do perfil não foi informado.");
+    }
+
+    $perfil = Perfil::find($data['perfil_id']);
+    if (!$perfil) {
+        throw new ServerException("ValidateUsuario", "Perfil não encontrado.");
+    }
+
+    if ($perfil->nivel < 6 && $usuarioExterno == 1) {
+        throw new ServerException("ValidateUsuario", "Usuário externo não pode ter o nível de acesso: " . $perfil->nome);
+    } elseif ($perfil->nivel == 6 && $usuarioExterno == 0) {
+        throw new ServerException("ValidateUsuario", "Usuário não pode ter o nível de acesso: " . $perfil->nome);
+    }
+  }
+
+
   /**
    *
    * @param string $cpf
    * @return SimpleXMLElement[]
    */
   public function consultaCPFSiape(string $cpf): array{
-     
+
       return $this->buscaServidor($cpf);
-     
+
   }
+    public function searchText($data)
+    {
+        if (!in_array('usuario_externo', $data['fields'])) {
+            $data['fields'][] = 'usuario_externo';
+        }
+        $text = "%" . str_replace(" ", "%", $data['query']) . "%";
+        $model = App($this->collection);
+        $table = $model->getTable();
+
+
+        // Garante que os campos tenham o nome da tabela
+        $data["select"] = array_map(fn ($field) => str_contains($field, ".") ? $field : $table . "." . $field, array_merge(['id'], $data['fields']));
+
+
+        // Usa Eloquent query() em vez de DB::table()
+        $query = $model->query();
+
+        if (method_exists($this, 'proxySearch')) {
+            $this->proxySearch($query, $data, $text);
+        }
+
+        // Adiciona condição LIKE para busca nos campos informados
+        $likes = ["or"];
+        foreach ($data['fields'] as $field) {
+            array_push($likes, [$field, 'like', $text]);
+        }
+
+        // Garante que deleted_at seja tratado corretamente
+        $condicaoDeletados = array_filter($data['where'], fn ($w) => is_array($w) && $w[0] == "deleted_at");
+        if (empty($condicaoDeletados)) {
+            array_push($data['where'], ['deleted_at', '=', null]);
+        }
+
+        $where = [$likes, $data['where']];
+        $this->applyWhere($query, $where, $data);
+        $this->applyOrderBy($query, $data);
+
+        // Busca apenas os campos informados
+        $query->select($data["select"]);
+        // Obtém os resultados
+        $rows = $query->get();
+
+        $values = [];
+
+        $data['fields'] = array_filter($data['fields'], fn($field) => $field !== 'usuario_externo');
+
+        foreach ($rows as $row) {
+
+
+            // Ajusta os campos para ordenação
+            $orderFields = array_map(fn ($order) => str_replace(".", "_", $order[0]), $data['orderBy'] ?? []);
+            $orderValues = array_map(fn ($field) => $row->$field ?? null, $orderFields);
+
+            array_push($values, [
+                $row->id,
+                array_map(fn ($field) => $row->$field ?? null, $data['fields']),
+                $orderValues
+            ]);
+        }
+        return $values;
+    }
+
 }

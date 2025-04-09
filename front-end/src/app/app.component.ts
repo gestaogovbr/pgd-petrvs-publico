@@ -131,7 +131,7 @@ export class AppComponent {
     this.menuSchema = {
       /* Cadastros */
       CIDADES: { name: this.lex.translate("Cidades"), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: this.entity.getIcon('Cidade') },
-      // CLIENTES: { name: this.lex.translate("Clientes"), permition: 'MOD_CLI', route: ['cadastros', 'cliente'], icon: this.entity.getIcon('Cliente') }, // TODO : retornar esse menu ao subir produtos
+      CLIENTES: { name: this.lex.translate("Clientes"), permition: 'MOD_CLI', route: ['cadastros', 'cliente'], icon: this.entity.getIcon('Cliente') }, // TODO : retornar esse menu ao subir produtos
       EIXOS_TEMATICOS: { name: this.lex.translate("Eixos Temáticos"), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: this.entity.getIcon('EixoTematico') },
       // ENTREGAS: { name: this.lex.translate("Modelos de Entregas"), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: this.entity.getIcon('Entrega') },
       FERIADOS: { name: this.lex.translate("Feriados"), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: this.entity.getIcon('Feriado') },
@@ -139,6 +139,7 @@ export class AppComponent {
       TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'templates'], icon: this.entity.getIcon('Template'), params: { modo: "listagem" } },
       TIPOS_TAREFAS: { name: this.lex.translate("Tipos de Tarefas"), permition: 'MOD_TIPO_TRF', route: ['cadastros', 'tipo-tarefa'], icon: this.entity.getIcon('TipoTarefa') },
       TIPOS_ATIVIDADES: { name: this.lex.translate("Tipos de Atividades"), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: this.entity.getIcon('TipoAtividade') },
+      TIPOS_CLIENTES: { name: this.lex.translate("Tipos de Clientes"), permition: 'MOD_TIPO_CLI', route: ['cadastros', 'tipo-cliente'], icon: this.entity.getIcon('TipoCliente') },
       // TIPOS_AVALIACOES: { name: this.lex.translate("Tipos de Avaliação"), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: this.entity.getIcon('TipoAvaliacao') },
       TIPOS_DOCUMENTOS: { name: this.lex.translate("Tipos de Documento"), permition: 'MOD_TIPO_DOC', route: ['cadastros', 'tipo-documento'], icon: this.entity.getIcon('TipoDocumento') },
       TIPOS_JUSTIFICATIVAS: { name: this.lex.translate("Tipos de Justificativa"), permition: 'MOD_TIPO_JUST', route: ['cadastros', 'tipo-justificativa'], icon: this.entity.getIcon('TipoJustificativa') },
@@ -158,8 +159,8 @@ export class AppComponent {
       HABILITACOES_PROGRAMA: { name: this.lex.translate("Habilitações"), permition: 'MOD_PART', route: ['gestao', 'programa', 'participantes'], icon: this.entity.getIcon('Programa') },
       PORTIFOLIOS: { name: this.lex.translate("Portifólios"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
       PROJETOS: { name: this.lex.translate("Projetos"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
-      // PRODUTOS: { name: this.lex.translate("Produtos e Serviços"), permition: 'MOD_PROD', route: ['gestao', 'produto'], icon: this.entity.getIcon('Projeto') }, // TODO : retornar esse menu ao subir produtos
-      // SOLUCOES: { name: this.lex.translate("Soluções"), permition: 'MOD_SOLUCOES', route: ['gestao', 'solucao'], icon: this.entity.getIcon('Solucao') }, // TODO : retornar esse menu ao subir produtos
+      PRODUTOS: { name: this.lex.translate("Produtos e Serviços"), permition: 'MOD_PROD', route: ['gestao', 'produto'], icon: this.entity.getIcon('Projeto') }, // TODO : retornar esse menu ao subir produtos
+      SOLUCOES: { name: this.lex.translate("Soluções"), permition: 'MOD_SOLUCOES', route: ['gestao', 'solucao'], icon: this.entity.getIcon('Solucao') }, // TODO : retornar esse menu ao subir produtos
       /* Execucao */
       EXECUCAO_PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entregas"), permition: 'MOD_PENT', route: ['execucao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { execucao: true } },
       /* Relatórios */
@@ -180,8 +181,6 @@ export class AppComponent {
       LOGS_ALTERACOES: { name: "Log das Alterações", permition: '', route: ['logs', 'change'], icon: this.entity.getIcon('Change') },
       LOGS_ERROS: { name: "Log dos Erros", permition: '', route: ['logs', 'error'], icon: this.entity.getIcon('Error') },
       LOGS_TRAFEGOS: { name: "Log do Tráfego", permition: '', route: ['logs', 'traffic'], icon: this.entity.getIcon('Traffic') },
-      LOGS_TESTES_EXPEDIENTES: { name: "Teste Expediente", permition: '', route: ['teste'], icon: this.entity.getIcon('Teste') },
-      TESTE_CALCULA_DATATEMPO: { name: "Teste calculaDataTempo", permition: '', route: ['teste', 'calcula-tempo'], icon: this.entity.getIcon('Teste') },
       LOGS_ENVIOS: { name: "Log dos Envios à API PGD", permition: '', route: ['logs', 'envios'], icon: this.entity.getIcon('Envio') },
       DEV_CPF_CONSULTA_SIAPE: { name: "Consulta CPF SIAPE", permition: '', route: ['consultas', 'cpf-siape'], icon: this.entity.getIcon('ConsultaCPFSIAPE') },
       DEV_UNIDADE_CONSULTA_SIAPE: { name: "Consulta Unidade SIAPE", permition: '', route: ['consultas', 'unidade-siape'], icon: this.entity.getIcon('ConsultaUnidadeSIAPE') },
@@ -225,8 +224,8 @@ export class AppComponent {
       menu: [
         this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
         this.menuSchema.CADEIAS_VALORES,
-        this.menuSchema.SOLUCOES,
-        this.menuSchema.PRODUTOS,
+        // this.menuSchema.SOLUCOES,
+        // this.menuSchema.PRODUTOS,
         this.menuSchema.PROGRAMAS_GESTAO,
         this.menuSchema.HABILITACOES_PROGRAMA,
         this.menuSchema.PLANOS_ENTREGAS,
@@ -260,18 +259,19 @@ export class AppComponent {
         this.menuSchema.ENTIDADES,
         this.menuSchema.UNIDADES,
         this.menuSchema.USUARIOS,
-        this.menuSchema.PERFIS
+        this.menuSchema.PERFIS,
+        // this.menuSchema.CLIENTES,
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Cadastros"),
       permition: "MENU_CAD_ACESSO",
       id: "navbarDropdownGestaoCadastros",
       menu: [
-        this.menuSchema.CLIENTES,
         this.menuSchema.EIXOS_TEMATICOS,
         // this.menuSchema.ENTREGAS,
         // this.menuSchema.TIPOS_AVALIACOES,
         this.menuSchema.TIPOS_ATIVIDADES,
+        //this.menuSchema.TIPOS_CLIENTES,
         this.menuSchema.TIPOS_JUSTIFICATIVAS,
         // this.menuSchema.TIPOS_MODALIDADES,
         // this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
@@ -341,14 +341,6 @@ export class AppComponent {
         this.menuSchema.LOGS_ENVIOS
       ]
     }, {
-      name: this.lex.translate("Testes"),
-      permition: "MENU_DEV_ACESSO",
-      id: "navbarDropdownDevTestes",
-      menu: [
-        this.menuSchema.LOGS_TESTES_EXPEDIENTES,
-        this.menuSchema.TESTE_CALCULA_DATATEMPO
-      ]
-    }, {
       name: this.lex.translate("Consultas"),
       permition: "MENU_DEV_CONSULTAS",
       id: "navbarDropdownDevConsultas",
@@ -381,26 +373,10 @@ export class AppComponent {
       case "EXECUCAO": return this.moduloExecucao;
       case "ADMINISTRADOR": return this.moduloAdministrador;
       case "DEV": return this.moduloDev;
-      case "PONTO": return this.moduloPonto;
-      case "PROJETO": return this.moduloProjeto;
-      case "RAIOX": return this.moduloRaioX;
       default: return [];
     }
   }
-
-  public get equipe(): any {
-    return [
-      { time: 'PRF', nome: 'Edson Dario Silva de França', cargo: 'Policial Penal Federal', papel: 'Developer' },
-      { time: 'PRF', nome: 'Carlos Henrique Alves Lopes', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
-      { time: 'PRF', nome: 'Diogo Leandro Paiva Ramos', cargo: 'Policial Rodoviário Federal', papel: 'Scrum Master' },
-      { time: 'PRF', nome: 'Edson dos Santos Marian', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
-      { time: 'PRF', nome: 'Genisson Rodrigues Albuquerque', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
-      { time: 'PRF', nome: 'Ricardo de Sousa Farias', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
-      { time: 'PRF', nome: 'Jose Marcelo Maizman Bogdan', cargo: 'Policial Rodoviário Federal', papel: 'Developer' },
-      { time: 'MGI', nome: '', cargo: '', papel: 'Developer' },
-    ]
-  }
-
+ 
   public ngAfterViewInit() {
     /* Container para a criação de dialogs */
     this.dialog.container = this.dialogs;

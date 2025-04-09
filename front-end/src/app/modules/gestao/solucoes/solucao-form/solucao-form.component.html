@@ -8,7 +8,7 @@
         controlName="nome" 
         [control]="form!.controls.nome" 
         [attr.maxlength]=250 
-        labelInfo="Nome formal do produto ou serviço. Ex: Programa de Destão do Desempenho"
+        labelInfo="Nome formal da Solução. Ex: Programa de Gestão e Desempenho"
         required   
       ></input-text>
     </div>
@@ -20,7 +20,7 @@
         controlName="nome" 
         [control]="form!.controls.sigla" 
         [attr.maxlength]=250 
-        labelInfo="Nome informal do produto ou serviço. Ex: PGD"
+        labelInfo="Nome informal da Solução. Ex: PGD"
         required>
       </input-text>
     </div>
@@ -29,25 +29,26 @@
   <div class="row">
     <div class="col-md-6">
       <input-text 
-      [size]="6" 
-      label="Descrição" 
-      icon="bi bi-textarea-t" 
-      controlName="descricao" 
-      [control]="form!.controls.descricao" 
-      [attr.maxlength]=250 
-      labelInfo="Objetivo e aplicabilidade da solução. Ex: Programa do indutor da melhoria de desempenho individual e institucional."
-      required   
+        [size]="6" 
+        label="Descrição" 
+        icon="bi bi-textarea-t" 
+        controlName="descricao" 
+        [control]="form!.controls.descricao" 
+        [attr.maxlength]=250 
+        labelInfo="Objetivo e aplicabilidade da solução. Ex: Programa indutor de melhoria de desempenho individual e institucional."
+        required   
       ></input-text>
     </div>
     <div class="col-md-6">
       <input-text 
-      [size]="6" 
-      label="URL" 
-      icon="bi bi-textarea-t" 
-      controlName="url" 
-      [control]="form!.controls.url" 
-      [attr.maxlength]=250 
-      labelInfo="Página oficial do produto ou serviço. Ex: www.gov.br/lgpd"
+        required
+        [size]="6" 
+        label="URL" 
+        icon="bi bi-textarea-t" 
+        controlName="url" 
+        [control]="form!.controls.url" 
+        [attr.maxlength]=250 
+        labelInfo="Página oficial da Solução. Ex: www.gov.br/pgd"
       ></input-text>
     </div>
   </div>

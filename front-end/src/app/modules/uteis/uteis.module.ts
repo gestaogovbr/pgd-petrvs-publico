@@ -23,6 +23,7 @@ import { PlanejamentoShowComponent } from './planejamento-show/planejamento-show
 import { ColunasComponent } from './colunas/colunas.component';
 import { RelatoriosTemplateComponent } from './relatorios/relatorios-template/relatorios-template.component';
 import { DocumentosPreviewComponent } from './documentos/documentos-preview/documentos-preview.component';
+import { FazerRecursoComponent } from './avaliar/fazer-recurso/fazer-recurso.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { DocumentosPreviewComponent } from './documentos/documentos-preview/docu
     ColunasComponent,
     PlanejamentoShowComponent,
     RelatoriosTemplateComponent,
-    DocumentosPreviewComponent
+    DocumentosPreviewComponent,
+    FazerRecursoComponent
   ],
   imports: [
     CommonModule,
