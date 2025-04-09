@@ -30,14 +30,48 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
       onClick: () => {
         let error: any = undefined;
           try {
-            const cpfControl = this.form.get('cpf') as FormControl;
-            const cpfValue: string = cpfControl.value as string;
-                    this.loading = false;
-                    this.dao!.consultaCPFSIAPE(cpfValue);
+            if (this.form.valid) {
+              const cpfControl = this.form.get('cpf') as FormControl;
+              const cpfValue: string = cpfControl.value as string;
+              this.loading = true;
+              this.dao!.consultaCPFSIAPE(cpfValue);
+            }
           } catch (error: any) {
             this.erros = error;
+          } finally {
+            this.loading = false;
           }
       
+      }
+    },
+    {
+      label: "Processar",
+      icon: "bi bi-gear",
+      onClick: async() => {
+        let error: any = undefined;
+        if (this.form.valid) {
+          let confirm = await this.dialog.confirm("ATENÇÃO", "CONFIRMA A SINCRONIZAÇÃO DO REFERIDO CPF?");
+          if (confirm) {
+            this.loading = false;
+            try {
+              this.dao!.sincronizarSIAPE(this.form.get('cpf')?.value)
+                .subscribe(
+                  complete => {
+
+                  },
+                  error => {
+                    console.log(error);
+                    this.error("Erro ao sincronizar dados: " + error.error?.message);
+                  }
+              )
+            } catch (error: any) {
+              console.log(error);
+              this.erros = error;
+            } finally {
+              this.loading = false;
+            }
+          }
+        }
       }
     }
    ];
@@ -65,31 +99,11 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(['unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['cpf'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     };
-    if(['inicio'].indexOf(controlName) >= 0 && !this.util.isDataValid(control.value)) {
-      result = "Data inválida!";
-    };
-    if(['carga_horaria'].indexOf(controlName) >= 0 && !control.value) {
-      result = "Valor não pode ser zero!";
-    }
     return result;
   }
-
-  public formValidation = (form?: FormGroup) => {
-    if(!this.util.isDataValid(this.form.controls.datafim_fimoutempo.value) && this.form!.controls.tipo_calculo.value == 1) {
-      return "Para calcular o tempo, o campo DATA-FIM precisa ser válido!";
-    };
-    if(!this.form.controls.tempo_fimoutempo.value && this.form!.controls.tipo_calculo.value == 0) {
-      return "Para calcular a data-fim, o campo TEMPO não pode ser nulo!";
-    };
-    if((this.form.controls.incluir_afastamentos.value || this.form.controls.incluir_pausas.value) && !this.form.controls.usuario_id.value?.length){
-      return "É necessário escolher um Usuário!"
-    };
-    return undefined;
-  }
-
 
   ngOnInit() {
     super.ngOnInit();

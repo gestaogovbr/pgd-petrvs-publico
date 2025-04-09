@@ -80,5 +80,7 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
       });
   }
   
-  
+  public sincronizarSIAPE(cpf: string) {
+    return this.server.post('api/usuario/processar-siape', { cpf });
+  }
 }
