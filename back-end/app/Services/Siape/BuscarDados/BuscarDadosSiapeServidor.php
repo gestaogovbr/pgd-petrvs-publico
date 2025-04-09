@@ -85,7 +85,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         }
 
         Log::info("Finalizando processamento de servidor");
-        
+
     }
 
     private function limpaTabela(): void
@@ -284,7 +284,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
                 $array1[$key] = $value;
             }
         }
-    
+
         return $array1;
     }
 }

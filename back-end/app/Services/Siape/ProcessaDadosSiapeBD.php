@@ -40,7 +40,7 @@ class ProcessaDadosSiapeBD
                     'dadosPessoais' => $this->processaDadosPessoais( $servidor->cpf, $servidor->responseDadosPessoais),
                     'dadosFuncionais' => $this->processaDadosFuncionais( $servidor->cpf, $servidor->responseDadosFuncionais),
                 ];
-            } 
+            }
             catch (ErrorDataSiapeException $e) {
                 continue;
             } catch (Exception $e) {
@@ -74,8 +74,8 @@ class ProcessaDadosSiapeBD
             $dadosPessoaisArray = $this->simpleXmlElementToArray($dadosPessoais);
 
             return $dadosPessoaisArray;
-        } 
-       
+        }
+
         catch (Exception $e) {
             report($e);
             Log::error("Falha nos dados pessoais:", [$dadosPessoais]);
@@ -99,7 +99,7 @@ class ProcessaDadosSiapeBD
             return $dadosFuncionaisArray;
         } catch (Exception $e) {
             report($e);
-            Log::error("Falha nos dados funcionais:", [$dadosFuncionais]);
+            Log::error("Falha nos dados funcionais:", $dadosFuncionais);
             throw new ErrorDataSiapeException("Falha ao tratar dados do Siape");
         }
     }
@@ -182,7 +182,7 @@ class ProcessaDadosSiapeBD
 
     private function prepareResponseServidorXml(string $cpf, string $response): SimpleXMLElement
     {
-        
+
         $responseXml = $this->prepareResponseXml($response);
 
         $fault = $responseXml->xpath('//soap:Fault');
@@ -191,7 +191,7 @@ class ProcessaDadosSiapeBD
                 ['cpf' => $cpf],
                 ['id' => (string) Str::uuid(), 'response' => $response]
             );
-            
+
             throw new ErrorDataSiapeFaultCodeException(sprintf('faultcode #%s: ',(string) $fault[0]->faultcode ). (string) $fault[0]->faultstring);
         }
         return $responseXml;

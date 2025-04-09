@@ -88,10 +88,9 @@ use App\Http\Controllers\QuestionarioPerguntaController;
 use App\Http\Controllers\QuestionarioPerguntaRespostaController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\TipoClienteController;
-use FontLib\Table\Type\post;
-use App\Http\Controllers\JobAgendadoController;
 use App\Http\Controllers\RelatoController;
 use App\Http\Controllers\SolucaoUnidadeController;
+use App\Http\Controllers\SiapeIndividualController;
 
 /*
 |--------------------------------------------------------------------------
@@ -493,5 +492,7 @@ Route::middleware('auth:sanctum')->post('/unidade/consulta-unidade-siape', [Unid
 Route::middleware(['auth:sanctum'])->prefix('SolucaoUnidade')->group(function () {
   defaultRoutes(SolucaoUnidadeController::class);
 });
-Route::middleware('auth:sanctum')->post('/siape-individual/servidor', [UsuarioController::class, 'processaServidor']);
+Route::middleware('auth:sanctum')->post('/usuario/processar-siape', [
+    SiapeIndividualController::class, 'processaServidor'
+]);
 

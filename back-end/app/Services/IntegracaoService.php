@@ -283,6 +283,7 @@ class IntegracaoService extends ServiceBase
 
     $this->sincronizacao($inputs);
     $this->logSiape("Sincronização de dados do SIAPE finalizada", [], Tipo::INFO);
+
     return $this->store([
       'entidade_id' => $inputs['entidade'],
       'atualizar_unidades' => $this->validaInput($inputs['unidades']),
@@ -295,12 +296,14 @@ class IntegracaoService extends ServiceBase
       'resultado' => json_encode($this->result, JSON_UNESCAPED_UNICODE)
     ], null)->resultado;
   }
+
   private function validaInput($input) : bool{
       if(is_bool($input)){
         return $input;
       }
       return $input == "false" ? false : true;
   }
+
   public function sincronizacao($inputs)
   {
     ob_start(); // Inicia o buffer de saída.
@@ -827,7 +830,7 @@ class IntegracaoService extends ServiceBase
         DB::beginTransaction();
 
         $chefes = [];
-       
+
 
       $chefes = DB::table('integracao_unidades as iu')
           ->join('unidades as u', 'iu.codigo_siape', '=', 'u.codigo')
@@ -854,7 +857,7 @@ class IntegracaoService extends ServiceBase
               'substituto.id as id_substituto'
           )
           ->get()->map(function($item) {
-            return (array) $item; 
+            return (array) $item;
         })
         ->toArray();
 
@@ -879,7 +882,7 @@ class IntegracaoService extends ServiceBase
           'Erro: '.count($messagensRetorno['erro']) . ' chefias não puderam ser atualizadas!',
           'Aviso: '.count($messagensRetorno['vazio']) . ' chefias vazias ou não encontradas!',
         ];
-        
+
       } catch (Throwable $e) {
         DB::rollback();
         $this->logSiape("Erro ao atualizar os gestores (titulares/substitutos)", throwableToArray($e), Tipo::ERROR);
@@ -989,7 +992,7 @@ class IntegracaoService extends ServiceBase
     return $b;
   }
 
-  public function buscaProcessamentosPendentes(): array    
+  public function buscaProcessamentosPendentes(): array
   {
     $siapeDadosUORG = SiapeDadosUORG::where('processado', 0)->count() > 1;
     $siapeDadosPessoais = SiapeConsultaDadosPessoais::where('processado', 0)->count() > 1;

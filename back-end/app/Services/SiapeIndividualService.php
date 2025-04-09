@@ -2,9 +2,7 @@
 
 namespace App\Services;
 
-use App\Exceptions\ErrorDataSiapeException;
 use App\Models\Entidade;
-use App\Models\IntegracaoUnidade;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeDadosUORG;
@@ -16,12 +14,12 @@ use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidores;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidades;
 use App\Services\Siape\ProcessaDadosSiapeBD;
-use Exception;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
+use Exception;
 use DateTime;
+use Carbon\Carbon;
 
 class SiapeIndividualService extends ServiceBase
 {
@@ -68,13 +66,13 @@ class SiapeIndividualService extends ServiceBase
 
     private function fluxoSiape(string $cpf)
     {
-
         SiapeConsultaDadosPessoais::withTrashed()->where('cpf', $cpf)->forceDelete();
         SiapeConsultaDadosFuncionais::withTrashed()->where('cpf', $cpf)->forceDelete();
+
         $cpf = preg_replace('/[^0-9]/', '', $cpf);
         $codOrgao = strval(intval($this->config['codOrgao']));
 
-        $responseDadosFuncionais =  $this->buscarDadosSiapeServidor->consultaDadosFuncionais(
+        $xmlDadosFuncionais =  $this->buscarDadosSiapeServidor->consultaDadosFuncionais(
             $this->config['siglaSistema'],
             $this->config['nomeSistema'],
             $this->config['senha'],
@@ -84,7 +82,7 @@ class SiapeIndividualService extends ServiceBase
             $this->config['parmTipoVinculo']
         );
 
-        $responseDadosPessoais =  $this->buscarDadosSiapeServidor->consultaDadosPessoais(
+        $xmlDadosPessoais =  $this->buscarDadosSiapeServidor->consultaDadosPessoais(
             $this->config['siglaSistema'],
             $this->config['nomeSistema'],
             $this->config['senha'],
@@ -94,7 +92,15 @@ class SiapeIndividualService extends ServiceBase
             $this->config['parmTipoVinculo']
         );
 
-        $dadosFuncionais = $this->processaDadosSiape->processaDadosFuncionais($cpf, $responseDadosFuncionais);
+        try{
+            $dadosFuncionais = $this->processaDadosSiape->processaDadosFuncionais($cpf, $xmlDadosFuncionais);
+        } catch(Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+
+        if (!$dadosFuncionais) {
+            throw new Exception("Não há dados para este CPF");
+        }
 
         $codigoDaUnidade = $dadosFuncionais['codUorgExercicio'];
 
@@ -126,7 +132,6 @@ class SiapeIndividualService extends ServiceBase
 
         $registro = collect($servidores)->firstWhere('cpf', $cpf);
 
-
         $responseUnidade = $this->buscarDadosSiapeUnidade->getUorgAsXml(
             $this->config['siglaSistema'],
             $this->config['nomeSistema'],
@@ -157,7 +162,6 @@ class SiapeIndividualService extends ServiceBase
 
         $unidade = collect($listaUorgs)->firstWhere('codigo', $codigoDaUnidade);
 
-
         SiapeDadosUORG::insert([
             'id' => Str::uuid(),
             'data_modificacao' => DateTime::createFromFormat('dmY', $unidade->dataUltimaTransacao)->format('Y-m-d 00:00:00'),
@@ -166,12 +170,11 @@ class SiapeIndividualService extends ServiceBase
             'updated_at' => Carbon::now(),
         ]);
 
-
         SiapeConsultaDadosFuncionais::insert([
             'id' => Str::uuid(),
             'cpf' => $cpf,
             'data_modificacao' => DateTime::createFromFormat('dmY', $registro->dataUltimaTransacao)->format('Y-m-d 00:00:00'),
-            'response' => $responseDadosFuncionais,
+            'response' => $xmlDadosFuncionais,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
@@ -180,7 +183,7 @@ class SiapeIndividualService extends ServiceBase
             'id' => Str::uuid(),
             'cpf' => $cpf,
             'data_modificacao' => DateTime::createFromFormat('dmY', $registro->dataUltimaTransacao)->format('Y-m-d 00:00:00'),
-            'response' => $responseDadosPessoais,
+            'response' => $xmlDadosPessoais,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
@@ -198,6 +201,5 @@ class SiapeIndividualService extends ServiceBase
             $retorno = $integracaoService->sincronizar($inputs);
         }
         return $retorno;
-
     }
 }
