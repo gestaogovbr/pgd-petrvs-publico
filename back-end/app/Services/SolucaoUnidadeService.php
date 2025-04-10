@@ -9,25 +9,16 @@ use Illuminate\Support\Str;
 
 class SolucaoUnidadeService extends ServiceBase
 {
+
+    public function afterStore($entity, $action){
+      if($entity->status){
+        $this->ativarEmSubordinadas($entity->id_unidade, $entity->id_solucao, $entity->status);
+      }
+
+    }
     public function afterUpdate($entity, $data)
     {
-        // Carrega todas as unidades de uma vez só para evitar múltiplas queries
-        $todasUnidades = Unidade::all()->keyBy('id');
-        $subordinadas = $this->buscarSubordinadas($entity->id_unidade, $todasUnidades);
-
-        foreach ($subordinadas as $unidade) {
-            $solucaoUnidade = SolucaoUnidade::firstOrNew([
-                'id_solucao' => $entity->id_solucao,
-                'id_unidade' => $unidade->id
-            ]);
-
-            if (!$solucaoUnidade->exists) {
-                $solucaoUnidade->id = (string) Str::uuid();
-            }
-
-            $solucaoUnidade->status = $data['status'];
-            $solucaoUnidade->save();
-        }
+        $this->ativarEmSubordinadas($entity->id_unidade, $entity->id_solucao, $data['status']);
     }
 
     private function buscarSubordinadas($unidadeId, $todasUnidades)
@@ -44,5 +35,26 @@ class SolucaoUnidadeService extends ServiceBase
         }
 
         return $subordinadas;
+    }
+
+    private function ativarEmSubordinadas($unidadeId, $solucaoId, $status)
+    {
+        // Carrega todas as unidades de uma vez só para evitar múltiplas queries
+        $todasUnidades = Unidade::all()->keyBy('id');
+        $subordinadas = $this->buscarSubordinadas($unidadeId, $todasUnidades);
+
+        foreach ($subordinadas as $unidade) {
+            $solucaoUnidade = SolucaoUnidade::firstOrNew([
+                'id_solucao' => $solucaoId,
+                'id_unidade' => $unidade->id
+            ]);
+
+            if (!$solucaoUnidade->exists) {
+                $solucaoUnidade->id = (string) Str::uuid();
+            }
+
+            $solucaoUnidade->status = $status;
+            $solucaoUnidade->save();
+        }
     }
 }
