@@ -6,7 +6,7 @@ import { SolucaoDaoService } from "src/app/dao/solucao-dao.service";
 import { SolucaoUnidadeDaoService } from "src/app/dao/solucao-unidade-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
-import { Base } from "src/app/models/base.model";
+import { Base, IIndexable } from "src/app/models/base.model";
 import { SolucaoUnidade } from "src/app/models/solucao-unidade.model";
 import { Solucao } from "src/app/models/solucao.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
@@ -292,4 +292,9 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
       onConfirm();
     }
   }
+
+  public afterAdd = (modalResult: any) => {
+    this.grid?.reloadFilter();
+    this.loadingSolucoesUnidades();
+  };
 }

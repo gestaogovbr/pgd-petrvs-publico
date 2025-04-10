@@ -25,7 +25,7 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
   public unidadeDao: UnidadeDaoService;
   public BOTAO_EXCLUIR: ToolbarButton;
   public BOTAO_EDITAR: ToolbarButton;
-  public unidadesFilhas: Unidade[] = [];
+  public unidadesFilhas: string[] = [];
 
   constructor(public injector: Injector, dao: ProdutoDaoService) {
     super(injector, Produto, ProdutoDaoService);
@@ -68,21 +68,20 @@ export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoServic
   }
 
   async getUnidadesFilhas(unidadeId: string) {
-    this.unidadesFilhas = await this.unidadeDao.unidadesFilhas(unidadeId);
+    this.unidadesFilhas = await this.unidadeDao.unidadesInferiores(unidadeId);
   }
 
   public dynamicButtons(row: Produto): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    const unidadeIds = this.unidadesFilhas.map(u => u.id);
-    unidadeIds.push(this.auth.unidade?.id!);
+    this.unidadesFilhas.push(this.auth.unidade?.id!);
 
     if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });   
 
-    if(this.isChefe && !this.isSearching && this.auth.hasPermissionTo('MOD_PROD_EDT') && unidadeIds.includes(row.unidade_id)) {
+    if(this.isChefe && !this.isSearching && this.auth.hasPermissionTo('MOD_PROD_EDT') && this.unidadesFilhas.includes(row.unidade_id)) {
       result.push(this.BOTAO_EDITAR);
     }
 
-    if (row._metadata?.vinculoEntregas == 0 && this.isChefe && unidadeIds.includes(row.unidade_id)) {
+    if (row._metadata?.vinculoEntregas == 0 && this.isChefe && this.unidadesFilhas.includes(row.unidade_id)) {
       result.push(this.BOTAO_EXCLUIR);
     }
     
