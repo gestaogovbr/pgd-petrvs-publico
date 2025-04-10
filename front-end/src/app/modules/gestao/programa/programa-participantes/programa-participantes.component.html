@@ -23,7 +23,7 @@
         <column [title]="lex.translate('Usuário')" [template]="columnUsuario" >
             <ng-template let-row="row" #columnUsuario>
                 <strong>{{row.nome }}</strong><br>
-                <small>{{row.apelido }}</small>
+                <label class="badge text-bg-warning" *ngIf="row.usuario_externo">Usuário Externo</label>
             </ng-template>
         </column>
 

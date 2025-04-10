@@ -12,6 +12,7 @@ import { AvaliarComponent } from '../../uteis/avaliar/avaliar.component';
 import { VisualizarAvaliacaoComponent } from '../../uteis/visualizar-avaliacao/visualizar-avaliacao.component';
 
 import { PlanoTrabalhoConsolidacaoAvaliacaoComponent } from './plano-trabalho-consolidacao-avaliacao/plano-trabalho-consolidacao-avaliacao.component';
+import { FazerRecursoComponent } from '../../uteis/avaliar/fazer-recurso/fazer-recurso.component';
 
 const routes: Routes = [
   { path: '', component: PlanoTrabalhoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Planos de Trabalho" } },
@@ -19,7 +20,7 @@ const routes: Routes = [
   { path: 'termo', component: PlanoTrabalhoFormTermoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Termo de adesão", modal: true } },
   { path: 'consolidacao/avaliacao', component: PlanoTrabalhoConsolidacaoAvaliacaoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Avaliação das Consolidações do Plano de Trabalho" } },
   { path: 'consolidacao/:consolidacaoId/avaliar', component: AvaliarComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Avaliar Consolidação do Plano de Trabalho" } },
-  { path: 'consolidacao/:consolidacaoId/recurso', component: AvaliarComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Recurso da Avaliação da Consolidação do Plano de Trabalho" } },
+  { path: 'avaliacao/:avaliacaoId/recurso', component: FazerRecursoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Recurso da Avaliação da Consolidação do Plano de Trabalho" } },
   { path: 'consolidacao/:consolidacaoId/verAvaliacoes', component: VisualizarAvaliacaoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Visualizar avaliações da Consolidação do Plano de Trabalho" } },
   { path: 'consolidacao/:usuarioId/:planoTrabalhoId', component: PlanoTrabalhoConsolidacaoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consolidações do Plano de Trabalho" } },
   { path: 'consolidacao', component: PlanoTrabalhoConsolidacaoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consolidações" } },

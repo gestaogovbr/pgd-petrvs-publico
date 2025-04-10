@@ -28,6 +28,9 @@ class PerfilSeeder extends Seeder
         'descricao' => $registro[2]
       ];
       Perfil::firstOrCreate(['nivel' => $registro[0]], $novoPerfil);
+      // Atualiza somente a coluna nome e descrição
+      Perfil::where('nivel', $registro[0])->update(['nome' => $registro[1], 'descricao' => $registro[2]]);
+
     }
   }
 }

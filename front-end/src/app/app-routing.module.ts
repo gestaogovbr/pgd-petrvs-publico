@@ -5,8 +5,7 @@ import { ConfigComponent } from './modules/config/config.component';
 import { LoginRetornoComponent } from './modules/login/login-retorno/login-retorno.component';
 import { LoginComponent } from './modules/login/login.component';
 
-import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
-import { TesteComponent } from './modules/teste/teste.component';
+
 import { ConfigResolver } from './resolvies/config.resolver';
 import { LoginUnicoComponent } from "./modules/login/login-unico/login-unico.component";
 import { PanelGuard } from "./guards/panel.guard";
@@ -18,8 +17,6 @@ import {TesteImpersonateComponent} from "./modules/teste/teste-impersonate/teste
 const routes: Routes = [
   { path: 'panel-login', component: PanelLoginComponent },
   { path: 'panel', loadChildren: () => import('./modules/panel/panel.module').then(m => m.PanelModule), canActivate: [PanelGuard] },
-  { path: 'teste', component: TesteComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste" } },
-  { path: 'teste/calcula-tempo', component: TesteFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste - CalculaTempo" } },
   { path: 'impersonate', component: TesteImpersonateComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste - Impersonate" } },
   { path: 'home', loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule), canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Login Petrvs", login: true } },
@@ -38,6 +35,7 @@ const routes: Routes = [
   { path: 'cadastros/tipo-tarefa', loadChildren: () => import('./modules/cadastros/tipo-tarefa/tipo-tarefa.module').then(m => m.TipoTarefaModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-atividade', loadChildren: () => import('./modules/cadastros/tipo-atividade/tipo-atividade.module').then(m => m.TipoAtividadeModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-avaliacao', loadChildren: () => import('./modules/cadastros/tipo-avaliacao/tipo-avaliacao.module').then(m => m.TipoAvaliacaoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/tipo-cliente', loadChildren: () => import('./modules/cadastros/tipo-cliente/tipo-cliente.module').then(m => m.TipoClienteModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-documento', loadChildren: () => import('./modules/cadastros/tipo-documento/tipo-documento.module').then(m => m.TipoDocumentoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-justificativa', loadChildren: () => import('./modules/cadastros/tipo-justificativa/tipo-justificativa.module').then(m => m.TipoJustificativaModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-modalidade', loadChildren: () => import('./modules/cadastros/tipo-modalidade/tipo-modalidade.module').then(m => m.TipoModalidadeModule), canActivate: [AuthGuard] },
@@ -62,7 +60,6 @@ const routes: Routes = [
   { path: 'configuracoes/unidade', loadChildren: () => import('./modules/configuracoes/unidade/unidade.module').then(m => m.UnidadeModule), canActivate: [AuthGuard] },
   { path: 'configuracoes/usuario', loadChildren: () => import('./modules/configuracoes/usuario/usuario.module').then(m => m.UsuarioModule), canActivate: [AuthGuard] },
   { path: 'consultas/cpf-siape', component: ConsultaCpfSiapeFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta SIAPE por CPF" } },
-  { path: 'consultas/cpf-siape', loadChildren: () => import('./modules/relatos/lotacao/relato-lotacao.module').then(m => m.RelatoLotacaoModule), canActivate: [AuthGuard] },
   { path: 'consultas/cpf-unidade', component: ConsultaUnidadeSiapeFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta SIAPE por Unidade" } },
   { path: 'consultas/cpf-unidade', loadChildren: () => import('./modules/consultas/consultas.module').then(m => m.ConsultasModule), canActivate: [AuthGuard] },
   { path: 'relatos/lotacao', loadChildren: () => import('./modules/relatos/lotacao/relato-lotacao.module').then(m => m.RelatoLotacaoModule), canActivate: [AuthGuard] },
