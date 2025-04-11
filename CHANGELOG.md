@@ -1,3 +1,10 @@
+## 2.3.15 11/04/2025
+### Corrigido
+ - Correção de erro no TCR ao editar o plano de trabalho
+## 2.3.14 01/04/2025
+### Corrigido
+ - Ajustes em capacidades
+
 ## 2.3.13 28/03/2025
 ### Adicionado
  - Novo Filtro de Unidades Subordinadas - Plano Entrega.
