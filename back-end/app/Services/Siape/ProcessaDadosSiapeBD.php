@@ -106,7 +106,9 @@ class ProcessaDadosSiapeBD
 
     private function decideDadosFuncionais(array $dadosfuncionaisArray)
     {
-        if (count($dadosfuncionaisArray) == 1) return $this->simpleXmlElementToArray($dadosfuncionaisArray[0]);
+        if (count($dadosfuncionaisArray) == 1) {
+            return $this->simpleXmlElementToArray($dadosfuncionaisArray[0]);
+        }
 
         $retorno = [];
         foreach ($dadosfuncionaisArray as $dadosFuncionais) {
@@ -156,7 +158,7 @@ class ProcessaDadosSiapeBD
         return $dadosUorgArray;
     }
 
-    public function processaDadosUorg($dados) : SimpleXMLElement{
+    public function processaDadosUorg($dados) : SimpleXMLElement|null {
         try {
             $responseXml = $this->prepareResponseXml($dados);
         } catch (Exception $e) {
@@ -168,7 +170,13 @@ class ProcessaDadosSiapeBD
         $responseXml->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
         $responseXml->registerXPathNamespace('ent', 'http://entidade.wssiapenet');
 
-        return $responseXml->xpath('//ns1:dadosUorgResponse/out')[0];
+        $out = $responseXml->xpath('//ns1:dadosUorgResponse/out');
+
+        if (!$out) {
+            return null;
+        }
+
+        return $out[0];
     }
 
     private function sanitizeXml(string &$response): void
@@ -182,7 +190,6 @@ class ProcessaDadosSiapeBD
 
     private function prepareResponseServidorXml(string $cpf, string $response): SimpleXMLElement
     {
-
         $responseXml = $this->prepareResponseXml($response);
 
         $fault = $responseXml->xpath('//soap:Fault');
@@ -205,6 +212,7 @@ class ProcessaDadosSiapeBD
         $response
         XML;
         $responseXml = simplexml_load_string($response, "SimpleXMLElement", LIBXML_NOCDATA);
+
         if ($responseXml === false) {
             $errors = libxml_get_errors();
             foreach ($errors as $error) {

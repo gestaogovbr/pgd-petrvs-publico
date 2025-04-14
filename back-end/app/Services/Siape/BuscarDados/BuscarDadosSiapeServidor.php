@@ -161,7 +161,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         }
 
         Log::info('Busca de Dados Pessoais');
-        $xmlResponse = $this->BuscaDados($xmlsServidores);
+        $xmlResponse = $this->buscaDados($xmlsServidores);
 
         $inserts = [];
         foreach ($xmlResponse as $dados => $xml) {
@@ -229,6 +229,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         return $xml->asXML();
     }
 
+    // a partir de um array de servidores, divide em lote e busca os dados
     private function buscaDados(array $xmlsServidores)
     {
         $lotes = array_chunk($xmlsServidores, $this->getQtdMaxRequisicoes(), true);
@@ -246,8 +247,6 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         Log::info("Dados funcionais: Tempo total de execução: " . $tempoTotal . " segundos");
         return $respostas;
     }
-
-
 
     public function getServidores(SiapeListaServidores $response) : ?array
     {

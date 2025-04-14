@@ -82,8 +82,8 @@ abstract class BuscarDadosSiape
         throw new RequestConectaGovException('Falha ao gerar o token. Response: ' . $response);
     }
 
-
-    protected function executaRequisicoes(array $xmlsData){
+    // a partir de um lote de servidores, busca os dados da API
+    public function executaRequisicoes(array $xmlsData){
         $token = $this->getToken();
 
         $url = $this->getUrl() . '/api-consulta-siape/v1/consulta-siape';
@@ -150,6 +150,43 @@ abstract class BuscarDadosSiape
         return $respostas;
     }
 
+    // executa requisição simples
+    public function executaRequisicao(string $xmlData)
+    {
+        $token = $this->getToken();
+        $url = $this->getUrl() . '/api-consulta-siape/v1/consulta-siape';
+
+        $headers = [
+            'x-cpf-usuario: ' . $this->getCpf(),
+            'Authorization: Bearer ' . $token,
+            'Content-Type: application/xml',
+        ];
+
+        $ch = curl_init();
+
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_POSTFIELDS => $xmlData,
+        ]);
+
+        $response = curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            Log::error("Erro na requisição: " . curl_error($ch));
+            $response = null;
+        } elseif (empty($response)) {
+            Log::alert("Response vazio");
+            $response = null;
+        }
+
+        curl_close($ch);
+
+        return $response;
+    }
+
     private function sanitizeXml(string &$response): void
     {
         $response = trim($response);
@@ -165,7 +202,7 @@ abstract class BuscarDadosSiape
         $response = <<<XML
         $response
         XML;
-        $responseXml = simplexml_load_string($response, "SimpleXMLElement", LIBXML_NOCDATA);
+        $responseXml = simplexml_load_string($response, 'SimpleXMLElement', LIBXML_NOCDATA);
         if ($responseXml === false) {
             $errors = libxml_get_errors();
             foreach ($errors as $error) {
