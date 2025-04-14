@@ -1,6 +1,11 @@
 ## 2.3.15 11/04/2025
 ### Corrigido
  - Correção de erro no TCR ao editar o plano de trabalho
+ - Correção na abertura do link de autorização nos Regramntos
+### Modificado
+ - Aperfeiçoamento da interface de login do Painel SaaS
+ - Modificação dos menus no Painel SaaS
+
 ## 2.3.14 01/04/2025
 ### Corrigido
  - Ajustes em capacidades
