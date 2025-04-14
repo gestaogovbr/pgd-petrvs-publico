@@ -12,8 +12,26 @@
       </div>
       <div class="row">
         <input-text [size]="4" label="Título" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250 required></input-text>
-        <input-button [size]="4" iconButton="bi bi-box-arrow-up-right" label="Link autorização" icon="bi bi-link-45deg" controlName="link_autorizacao" [control]="form!.controls.link_autorizacao" labelInfo="Link web da autorização" (buttonClick)="onClickIN()"></input-button>
-        <input-button [size]="4" iconButton="bi bi-box-arrow-up-right" label="Link instituição" icon="bi bi-link-45deg" controlName="link_normativa" [control]="form!.controls.link_normativa" labelInfo="Link web da instrução normativa" (buttonClick)="onClickIN()"></input-button>
+        <input-button
+          controlName="link_autorizacao"
+          [control]="form!.controls.link_autorizacao"
+          label="Link autorização"
+          labelInfo="Link web da autorização"
+          [size]="4"
+          iconButton="bi bi-box-arrow-up-right"
+          icon="bi bi-link-45deg"
+          (buttonClick)="onClickAbreAutorizacao()"
+        ></input-button>
+        <input-button
+          controlName="link_normativa"
+          [control]="form!.controls.link_normativa"
+          label="Link instituição"
+          labelInfo="Link web da instrução normativa"
+          [size]="4"
+          iconButton="bi bi-box-arrow-up-right"
+          icon="bi bi-link-45deg"
+          (buttonClick)="onClickAbreNormativa()"
+        ></input-button>
       </div>
     </tab>
     <tab key="PLANO_ENTREGA" [label]="lex.translate('Plano de entrega')">
