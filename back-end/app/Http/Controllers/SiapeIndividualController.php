@@ -6,7 +6,9 @@ use Illuminate\Http\Response;
 
 class SiapeIndividualController extends ControllerBase
 {
-    public function checkPermissions($action, $request, $service, $unidade, $usuario) {}
+    public function checkPermissions($action, $request, $service, $unidade, $usuario) {
+        return true;
+    }
 
     public function processaServidor(Request $request){
         $data = $request->validate([
@@ -15,6 +17,19 @@ class SiapeIndividualController extends ControllerBase
 
         return response()->json(
             $this->service->processaServidor($data['cpf']),
+            Response::HTTP_OK
+        );
+    }
+
+    public function consultaServidor(Request $request){
+        $data = $request->validate([
+            'cpf' => [],
+        ]);
+
+        $cpf = preg_replace('/[^0-9]/', '', $data['cpf']);
+
+        return response()->json(
+            $this->service->processaServidor($cpf),
             Response::HTTP_OK
         );
     }
