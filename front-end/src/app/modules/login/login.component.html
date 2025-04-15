@@ -21,7 +21,6 @@
                 </div>
                 <div class="text-center mb-5">
                     <h3 class="fw-bold">Acesso</h3>
-                    <p class="fw-medium">Faça login com seu e-mail institucional</p>
                 </div>
                 <div class="text-center mb-5">
 
@@ -35,8 +34,8 @@
                       </div>
                         <div class="or-container" *ngIf="globals.hasGoogleLogin">
                           <div class="line-separator"></div>
-                          <div class="or-label">ou</div>
-                          <div class="line-separator"></div>
+                          <div *ngIf="globals.hasLoginUnicoLogin" class="or-label">ou</div>
+                          <div *ngIf="globals.hasLoginUnicoLogin" class="line-separator"></div>
                         </div>
                         <div class="govbr" *ngIf="globals.hasLoginUnicoLogin">
                             <button class="br-button btn btn-primary rounded-pill mt-3" type="button" (click)="signInLoginUnicoBackEnd()">
@@ -45,8 +44,8 @@
                         </div>
                       <div class="or-container"  *ngIf="globals.hasLoginUnicoLogin">
                         <div class="line-separator"></div>
-                        <div class="or-label">ou</div>
-                        <div class="line-separator"></div>
+                        <div *ngIf="globals.hasAzureLogin" class="or-label">ou</div>
+                        <div *ngIf="globals.hasAzureLogin" class="line-separator"></div>
                       </div>
                         <div *ngIf="globals.hasAzureLogin" class="card-body">
 
