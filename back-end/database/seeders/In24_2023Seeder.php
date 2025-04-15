@@ -1756,10 +1756,8 @@ class In24_2023Seeder extends Seeder
     //   TipoAvaliacaoJustificativa::firstOrCreate(['id' => $tipo_avaliacao_justificativa['id']], $tipo_avaliacao_justificativa);
     // }
 
-    foreach ($tipos_documentos as $tipo_documento) {
-      TipoDocumento::firstOrCreate(['id' => $tipo_documento['id']], $tipo_documento);
-    }
-
+    TipoDocumento::upsert($tipos_documentos, ['id']);
+   
     foreach ($templates as $template) {
       Template::firstOrCreate(['id' => $template['id']], $template);
     }

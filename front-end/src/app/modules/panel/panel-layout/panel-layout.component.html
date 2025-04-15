@@ -11,8 +11,26 @@
           <a class="nav-link" role="button" [routerLink]="['/panel/tenants']" (click)="toggleNavbar()">Tenants</a>
         </li>
         <li class="nav-item" *ngIf="currentUser && currentUser.nivel == 1">
-          <a class="nav-link" [routerLink]="['/panel/admins']" (click)="toggleNavbar()" >Usuários do painel</a>
+          <a class="nav-link" [routerLink]="['/panel/admins']" (click)="toggleNavbar()">Usuários do painel</a>
         </li> 
+        <li class="nav-item" *ngIf="currentUser && currentUser.nivel == 1">
+          <a class="nav-link" [routerLink]="['/panel/logs2']" (click)="toggleNavbar()">Logs</a>
+        </li> 
+        <li class="nav-item" *ngIf="currentUser && currentUser.nivel == 1">
+          <a class="nav-link" [routerLink]="['/panel/env']" (click)="toggleNavbar()">Dados de Ambiente</a>
+        </li>
+        <li class="nav-item" *ngIf="currentUser && currentUser.nivel == 1">
+          <a class="nav-link" [routerLink]="['/panel/admins']" (click)="executaMigrations({})">Migrations</a>
+        </li>
+        <li class="nav-item" *ngIf="currentUser && currentUser.nivel == 1">
+          <a class="nav-link" [routerLink]="['/panel/seeder']" (click)="toggleNavbar()">Seeders</a>
+        </li>
+        <li class="nav-item" *ngIf="currentUser && currentUser.nivel == 1">
+          <a class="nav-link" [routerLink]="['/panel/job-agendados']" (click)="toggleNavbar()">Agendamentos</a>
+        </li>
+        <li class="nav-item" *ngIf="currentUser && currentUser.nivel == 1">
+          <a class="nav-link" href="javascript:void(0);" (click)="resetQueues()">Limpar Filas</a>
+        </li>
       </ul>
       <a class="btn btn-outline-info me-2" (click)="changePassword()">Alterar minha senha</a>
       <a class="btn btn-outline-danger" (click)="logout()">Sair</a>

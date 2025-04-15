@@ -92,8 +92,11 @@ export class ServerService {
 
   public errorHandle(err: any, caught: Observable<Object>): Observable<never> {
     if (err instanceof HttpErrorResponse) {
+
       if ([419, 401].includes(err.status)) {
-        this.auth.logOut();
+        if (this.auth.logged) {
+          this.auth.logOut();
+        }
       }
   
       if (err.status === 422) {
