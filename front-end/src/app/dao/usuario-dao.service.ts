@@ -49,8 +49,8 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
     });
   }
 
-  public consultaCPFSIAPE(cpf: string) {
-    this.server.postDownload('api/usuario/consulta-cpf-siape', { cpf })
+  public exportarCPFSIAPE(cpf: string) {
+    this.server.postDownload('api/usuario/exportar-cpf-siape', { cpf })
       .subscribe((response: Blob) => {
         const contentType = response.type; 
         const dataCriacao = new Date().toISOString().slice(0, 10);
@@ -78,6 +78,10 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
       }, error => {
         console.error('Erro ao realizar o download:', error);
       });
+  }
+
+  public consultarSIAPE(cpf: string) {
+    return this.server.post('api/usuario/consultar-cpf-siape', { cpf });
   }
   
   public sincronizarSIAPE(cpf: string) {

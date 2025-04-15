@@ -25,7 +25,7 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
   public erros: string = '';
   public toolbarButtons: ToolbarButton[] = [
     {
-      label: "Pesquisar",
+      label: "Exportar",
       icon: "bi bi-search",
       onClick: () => {
         let error: any = undefined;
@@ -34,7 +34,7 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
               const cpfControl = this.form.get('cpf') as FormControl;
               const cpfValue: string = cpfControl.value as string;
               this.loading = true;
-              this.dao!.consultaCPFSIAPE(cpfValue);
+              this.dao!.exportarCPFSIAPE(cpfValue);
             }
           } catch (error: any) {
             this.erros = error;
@@ -103,6 +103,31 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
       result = "Obrigatório";
     };
     return result;
+  }
+
+  public async onClickCPF() {
+    let error: any = undefined;
+    if (this.form.valid) {
+        this.loading = false;
+        try {
+          this.dao!.consultarSIAPE(this.form.get('cpf')?.value)
+            .subscribe(
+              complete => {
+                console.log(complete);
+              },
+              error => {
+                console.log(error);
+                this.error("Erro ao sincronizar dados: " + error.error?.message);
+              }
+          )
+        } catch (error: any) {
+          console.log(error);
+          this.erros = error;
+        } finally {
+          this.loading = false;
+        }
+      }
+    }
   }
 
   ngOnInit() {

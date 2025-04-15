@@ -1,11 +1,22 @@
 <editable-form [form]="form!" [disabled]="false" [title]="isModal ? '' : title">
     <div *ngIf="erros?.length" class="alert alert-danger mt-2 break-spaces" role="alert">{{erros}}</div>
+
     <div class="row">
-      
-        <div class="row">
-            <input-text [size]="3" label="CPF" controlName="cpf" [maskFormat]="'000.000.000-00'" [attr.maxlength]=15 required></input-text>
+        <div class="col-md-3">
+            <input-button
+                controlName="cpf"
+                label="CPF"
+                labelInfo="Informe o CPF para busca no SIAPE"
+                [size]="4"
+                iconButton="bi bi-search"
+                icon="bi bi-search"
+                (buttonClick)="onClickCPF()"
+                [attr.maxlength]=15
+                [maskFormat]="'000.000.000-00'"
+            ></input-button>
         </div>
     </div>
+    
     <separator>
         <toolbar [buttons]="toolbarButtons"></toolbar>
     </separator>
