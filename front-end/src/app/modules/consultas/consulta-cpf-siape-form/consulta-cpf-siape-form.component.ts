@@ -108,24 +108,23 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
   public async onClickCPF() {
     let error: any = undefined;
     if (this.form.valid) {
+      this.loading = false;
+      try {
+        this.dao!.consultarSIAPE(this.form.get('cpf')?.value)
+          .subscribe(
+            complete => {
+              console.log(complete);
+            },
+            error => {
+              console.log(error);
+              this.error("Erro ao sincronizar dados: " + error.error?.message);
+            }
+        )
+      } catch (error: any) {
+        console.log(error);
+        this.erros = error;
+      } finally {
         this.loading = false;
-        try {
-          this.dao!.consultarSIAPE(this.form.get('cpf')?.value)
-            .subscribe(
-              complete => {
-                console.log(complete);
-              },
-              error => {
-                console.log(error);
-                this.error("Erro ao sincronizar dados: " + error.error?.message);
-              }
-          )
-        } catch (error: any) {
-          console.log(error);
-          this.erros = error;
-        } finally {
-          this.loading = false;
-        }
       }
     }
   }
