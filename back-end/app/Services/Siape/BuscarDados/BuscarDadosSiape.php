@@ -22,10 +22,12 @@ abstract class BuscarDadosSiape
     private $client;
     private $secret;
     private ?int $quantidadeMaxRequisicoes;
+    public $config;
 
     public function __construct(
-        private readonly mixed $config
+        mixed $config
     ) {
+        $this->config = $config;
         $this->cpf = $config["cpf"];
         $this->url = $config["url"];
         $this->client = $config["conectagov_chave"];
@@ -150,41 +152,9 @@ abstract class BuscarDadosSiape
         return $respostas;
     }
 
-    // executa requisição simples
     public function executaRequisicao(string $xmlData)
     {
-        $token = $this->getToken();
-        $url = $this->getUrl() . '/api-consulta-siape/v1/consulta-siape';
-
-        $headers = [
-            'x-cpf-usuario: ' . $this->getCpf(),
-            'Authorization: Bearer ' . $token,
-            'Content-Type: application/xml',
-        ];
-
-        $ch = curl_init();
-
-        curl_setopt_array($ch, [
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_POSTFIELDS => $xmlData,
-        ]);
-
-        $response = curl_exec($ch);
-
-        if (curl_errno($ch)) {
-            Log::error("Erro na requisição: " . curl_error($ch));
-            $response = null;
-        } elseif (empty($response)) {
-            Log::alert("Response vazio");
-            $response = null;
-        }
-
-        curl_close($ch);
-
-        return $response;
+       return $this->buscaSincrona($xmlData);
     }
 
     private function sanitizeXml(string &$response): void
@@ -193,6 +163,8 @@ abstract class BuscarDadosSiape
         $response = preg_replace('/&(?!amp;|lt;|gt;|quot;|apos;)/', '&amp;', $response);
         $response = preg_replace('/[^\P{C}\t\n\r]/u', '', $response);
         $response = preg_replace('/xmlns=""/', '', $response);
+        $response = str_replace('\"', '"', $response);
+        $response = str_replace("\n", '', $response);
     }
 
     public function prepareResponseXml(string $response) : SimpleXMLElement
@@ -206,6 +178,7 @@ abstract class BuscarDadosSiape
         if ($responseXml === false) {
             $errors = libxml_get_errors();
             foreach ($errors as $error) {
+                Log::alert("==========");
                 Log::error('XML Error: ' . $error->message);
             }
             libxml_clear_errors();

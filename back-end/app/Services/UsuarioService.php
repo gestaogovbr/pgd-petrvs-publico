@@ -410,7 +410,6 @@ class UsuarioService extends ServiceBase
     }
   }
 
-
   /**
    *
    * @param string $cpf
@@ -418,7 +417,23 @@ class UsuarioService extends ServiceBase
    */
   public function consultaCPFSiape(string $cpf): array{
 
-      return $this->buscaServidor($cpf);
+      $dados = $this->buscaServidor($cpf);
+
+      $dados[0]->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+      $dados[0]->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
+      $dados[0]->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
+      
+      $dadosFuncionaisQuery = $dados[0]->xpath('//tipo:DadosFuncionais');
+
+      if (count($dadosFuncionaisQuery) > 0) {
+        $dadosFuncionais = $dadosFuncionaisQuery[0];
+      } else {
+        $dadosFuncionais = null;
+      }
+
+      $dados[0] = $dadosFuncionais;
+
+      return $dados;
 
   }
     public function searchText($data)

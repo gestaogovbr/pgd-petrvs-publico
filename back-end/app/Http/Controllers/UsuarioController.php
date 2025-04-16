@@ -62,12 +62,13 @@ class UsuarioController extends ControllerBase
             'cpf' => [],
         ]);
 
+        //@var SimpleXMLElement
         $retorno = $this->service->consultaCPFSiape($request->cpf);
 
         return response()->json([
             'success' => true,
-            'funcionalXml' => $retorno[0],
-            'pessoalXml' => $retorno[1],
+            'funcionalXml' => $retorno[0]->asXml(),
+            'pessoalXml' => $retorno[1]->asXml(),
             'funcional' => json_decode(json_encode($retorno[0])),
             'pessoal' => json_decode(json_encode($retorno[1]))
         ]);
