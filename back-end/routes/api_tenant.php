@@ -92,7 +92,7 @@ use FontLib\Table\Type\post;
 use App\Http\Controllers\JobAgendadoController;
 use App\Http\Controllers\RelatoController;
 use App\Http\Controllers\SolucaoUnidadeController;
-
+use App\Http\Controllers\ImpersonationController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -360,6 +360,7 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
   Route::post('hierarquia', [UnidadeController::class, 'hierarquia']);
   Route::post('filhas', [UnidadeController::class, 'filhas']);
   Route::post('linhaAscendente', [UnidadeController::class, 'linhaAscendente']);
+  Route::post('linhaDescendente', [UnidadeController::class, 'linhaDescendente']);
   Route::post('lookup-todas-unidades', [UnidadeController::class, 'lookupTodasUnidades']);
   Route::post('obter-instituidora', [UnidadeController::class, 'obterInstitudora']);
 });
@@ -497,3 +498,10 @@ Route::middleware(['auth:sanctum'])->prefix('SolucaoUnidade')->group(function ()
   defaultRoutes(SolucaoUnidadeController::class);
 });
 
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/impersonate', [ImpersonationController::class, 'impersonate'])
+        ->middleware('auth:sanctum')
+        ->name('impersonate');
+  Route::get('/impersonate/stop', [ImpersonationController::class, 'stopImpersonating'])->name('impersonate.stop');
+});

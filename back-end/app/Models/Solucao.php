@@ -48,6 +48,8 @@ class Solucao extends ModelBase
         'deleted_at',
     ];
 
+    protected $appends = ['possui_vinculos'];
+
     public function scopeStatus($query, $status)
     {
         return $query->where('status', $status);
@@ -59,5 +61,10 @@ class Solucao extends ModelBase
 
     public function produtosSolucoes(){
         return $this->hasMany(ProdutoSolucao::class, 'solucao_id', 'id');
+    }
+
+    public function getPossuiVinculosAttribute()
+    {
+        return  $this->produtosSolucoes()->exists();
     }
 }

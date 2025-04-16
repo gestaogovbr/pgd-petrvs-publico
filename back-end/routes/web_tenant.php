@@ -63,3 +63,9 @@ Route::middleware([InitializeTenancyByPath::class])
     ->get('/login-unico/{tenant}',
           [LoginController::class, 'signInGovBrCallback']);
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/impersonate/{userId}', [ImpersonationController::class, 'impersonate'])->name('impersonate.start');
+    Route::get('/impersonate/stop', [ImpersonationController::class, 'stopImpersonating'])->name('impersonate.stop');
+});

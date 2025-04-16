@@ -1,0 +1,51 @@
+.eixo-tematico {
+    h3 {
+        transform: rotate(-90deg);
+        -webkit-transform: rotate(-90deg);
+        -moz-transform: rotate(-90deg);
+        -ms-transform: rotate(-90deg);
+        -o-transform: rotate(-90deg);
+        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+    }
+}
+
+.okr {
+    border-spacing: 2px;
+    td {
+        border: 0px;
+        border-right-width: 5px;
+        border-style: solid;
+        vertical-align: middle;
+    }
+    .vazio {
+        border-right-width: 0px;
+    }
+    .azul {
+        //background-color: var(--blue-200);        
+        border-color: var(--blue-600);        
+    }
+    .verde {
+        //background-color: var(--green-200);        
+        border-color: var(--green-600);        
+    }
+    .rosa {
+        //background-color: var(--pink-200);        
+        border-color: var(--pink-600);        
+    }
+    .vermelho {
+        //background-color: var(--red-200);
+        border-color: var(--red-600);
+    }
+    .roxo {
+        //background-color: var(--purple-200);
+        border-color: var(--purple-600);
+    }
+    .laranja {
+        //background-color: var(--orange-200);
+        border-color: var(--orange-600);
+    }
+    .amarelo {
+        //background-color: var(--yellow-200);
+        border-color: var(--yellow-600);
+    }
+}

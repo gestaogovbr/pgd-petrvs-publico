@@ -48,13 +48,15 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Auditable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Lab404\Impersonate\Models\Impersonate;
+
 class UsuarioConfig
 {
 }
 
 class Usuario extends Authenticatable implements AuditableContract
 {
-    use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable;
+    use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable, Impersonate;
 
     protected $table = "usuarios";
 
@@ -92,6 +94,7 @@ class Usuario extends Authenticatable implements AuditableContract
         //'metadados', /* json; */// Metadados do usuário
         'data_modificacao',
         'usuario_externo',
+        'is_admin'
     ];
 
     public function proxyFill($dataOrEntity, $unidade, $action)
@@ -387,9 +390,9 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasMany(UnidadeIntegrante::class)->has('curador');
     }
 
-    public function curador()
+    public function isCurador(): bool
     {
-        return $this->hasOne(UnidadeIntegrante::class)->has('curador');
+        return $this->isDeveloper() || UnidadeIntegrante::where('usuario_id', $this->id)->whereHas('curador')->exists();
     }
 
     public function lotacoes()
@@ -478,10 +481,20 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->morphMany(Audit::class, 'auditable')->with('user')->where('auditable_type', 'App\Models\Usuario');
     }
 
+
     public function setMatriculaAttribute($value)
     {
         if (!is_null($value)) {
             $this->attributes['matricula'] = $value;
         }
+    }
+    public function canImpersonate()
+    {
+        // For example
+        return $this->is_admin == 1;
+    }
+    public function impersonateGuard()
+    {
+        return 'sanctum';
     }
 }
