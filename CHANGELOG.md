@@ -1,3 +1,7 @@
+## 2.3.16 16/04/2025
+### Corrigido
+ - Path do plugin Tinymce 
+ 
 ## 2.3.15 11/04/2025
 ### Corrigido
  - Correção de erro no TCR ao editar o plano de trabalho
