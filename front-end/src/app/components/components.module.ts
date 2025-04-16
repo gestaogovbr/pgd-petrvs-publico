@@ -213,7 +213,7 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
   providers: [
     { 
       provide: TINYMCE_SCRIPT_SRC, //useValue: 'tinymce/tinymce.min.js' 
-      useFactory: (gb: GlobalsService) => gb.baseURL + '/tinymce/tinymce.min.js',
+      useFactory: (gb: GlobalsService) => gb.baseURL + 'tinymce/tinymce.min.js',
       deps: [GlobalsService]
     },
     provideEnvironmentNgxMask(maskConfigFunction),
