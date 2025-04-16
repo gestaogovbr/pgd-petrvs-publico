@@ -335,7 +335,11 @@ class UsuarioService extends ServiceBase
           $data["id"] = $alreadyHas->id;
           $data["cpf"] = $alreadyHas->cpf;
           $data["email"] = $alreadyHas->email;
-          $data["matricula"] = $alreadyHas->matricula;
+
+            if (is_null($data['matricula'] ?? null)) {
+                $data['matricula'] = $alreadyHas->matricula;
+            }
+
           $data["nome"] = $alreadyHas->nome;
           $data["apelido"] = $alreadyHas->apelido;
           $data["data_nascimento"] = $alreadyHas->data_nascimento;

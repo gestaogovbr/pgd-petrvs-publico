@@ -477,4 +477,11 @@ class Usuario extends Authenticatable implements AuditableContract
     {
         return $this->morphMany(Audit::class, 'auditable')->with('user')->where('auditable_type', 'App\Models\Usuario');
     }
+
+    public function setMatriculaAttribute($value)
+    {
+        if (!is_null($value)) {
+            $this->attributes['matricula'] = $value;
+        }
+    }
 }
