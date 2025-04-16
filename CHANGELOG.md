@@ -1,6 +1,7 @@
 ## 2.3.16 16/04/2025
 ### Corrigido
  - Path do plugin Tinymce 
+ - Corrigido regras da execução do job do SIAPE
  
 ## 2.3.15 11/04/2025
 ### Corrigido
