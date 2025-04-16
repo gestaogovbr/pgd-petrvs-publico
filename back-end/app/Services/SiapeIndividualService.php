@@ -60,41 +60,16 @@ class SiapeIndividualService extends ServiceBase
         if (File::exists($logPath)) {
             File::put($logPath, '');
         }
-
+        imprimeNoTerminal('Iniciando o processo de sincronização cpf #:' . $cpf);
         Log::channel('siape')->info('Iniciando o processo de sincronização cpf #:' . $cpf);
     }
 
-    private function getParamsDadosFuncionais(string $cpf)
-    {
-        return $this->buscarDadosSiapeServidor->consultaDadosFuncionais(
-            $this->config['siglaSistema'],
-            $this->config['nomeSistema'],
-            $this->config['senha'],
-            $cpf,
-            $this->getOrgao(),
-            $this->config['parmExistPag'],
-            $this->config['parmTipoVinculo']
-        );
-    }
-
-    private function getParamsDadosPessoais(string $cpf)
-    {
-        return $this->buscarDadosSiapeServidor->consultaDadosPessoais(
-            $this->config['siglaSistema'],
-            $this->config['nomeSistema'],
-            $this->config['senha'],
-            $cpf,
-            $this->getOrgao(),
-            $this->config['parmExistPag'],
-            $this->config['parmTipoVinculo']
-        );
-    }
 
     private function getOrgao() {
         return strval(intval($this->config['codOrgao']));
     }
 
-    private function getReponseUnidade($codigoDaUnidade) { 
+    private function montaXmlUnidade($codigoDaUnidade) { 
         return $this->buscarDadosSiapeUnidade->getUorgAsXml(
             $this->config['siglaSistema'],
             $this->config['nomeSistema'],
@@ -105,7 +80,7 @@ class SiapeIndividualService extends ServiceBase
         );
     }
 
-    private function getReponseServidores($codigoDaUnidade) {
+    private function montaXmlListaServidores($codigoDaUnidade) {
         return $this->buscarDadosSiapeServidores->listaServidores(
             $this->config['siglaSistema'],
             $this->config['nomeSistema'],
@@ -118,29 +93,37 @@ class SiapeIndividualService extends ServiceBase
 
     private function fluxoSiape(string $cpf)
     {
+        imprimeNoTerminal('Limpando tabelas de controle do SIAPE para o cpf');
         SiapeConsultaDadosPessoais::withTrashed()->where('cpf', $cpf)->forceDelete();
         SiapeConsultaDadosFuncionais::withTrashed()->where('cpf', $cpf)->forceDelete();
 
         $cpf = preg_replace('/[^0-9]/', '', $cpf);
         $codOrgao = strval(intval($this->config['codOrgao']));
 
-        $xmlDadosFuncionais = $this->getParamsDadosFuncionais($cpf);
-        $xmlDadosPessoais   = $this->getParamsDadosPessoais($cpf);
+        imprimeNoTerminal('Montando XML dos dados funcionais e pessoais');
+        $xmlDadosFuncionais = $this->montaXMLDadosFuncionais($cpf);
+        $xmlDadosPessoais   = $this->montaXmlDadosPessoais($cpf);
 
+        imprimeNoTerminal('Executando requisicoes no SIAPE');
         $dadosFuncionaisResponseXml = $this->buscarDadosSiapeServidor
             ->executaRequisicao($xmlDadosFuncionais);
 
         $dadosPessoaisResponseXml = $this->buscarDadosSiapeServidor
             ->executaRequisicao($xmlDadosPessoais);
 
+        imprimeNoTerminal('Processando retorno do SIAPE');
         $dadosFuncionais = $this->processaDadosSiape
             ->processaDadosFuncionais($cpf, $dadosFuncionaisResponseXml);
 
+        $dadosPessoais = $this->processaDadosSiape
+            ->processaDadosPessoais($cpf, $dadosFuncionaisResponseXml);
 
-        if (!$dadosFuncionais) {
+
+        if (!$dadosFuncionais || !$dadosPessoais) {
             throw new Exception("Não há dados para este CPF");
         }
 
+        imprimeNoTerminal('Iniciando o processo da unidade do servidor');
         $codigoDaUnidade = strval(intval($dadosFuncionais['codUorgExercicio']));
 
         $unidadeJaProcessada = Unidade::where('codigo', $codigoDaUnidade)->first();
@@ -153,29 +136,29 @@ class SiapeIndividualService extends ServiceBase
         }
 
         // obtem lista de servidores do SIAPE
-        $responseListaServidores = $this->getReponseServidores($codigoDaUnidade);
+        $responseListaServidores = $this->montaXmlListaServidores($codigoDaUnidade);
 
         $servidoresXml = $this->buscarDadosSiapeServidor->executaRequisicao($responseListaServidores);
 
-        $registro = new SiapeListaServidores([
+        $siapeListaServidores = new SiapeListaServidores([
             'id' => Str::uuid(),
             'response' => $servidoresXml,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
 
-        $servidores = $this->buscarDadosSiapeServidor->getServidores($registro);
+        $servidores = $this->buscarDadosSiapeServidor->getServidores($siapeListaServidores);
 
         // obtem se o servidor consta na lista
-        $registro = collect($servidores)->firstWhere('cpf', $cpf);
+        $servidor = collect($servidores)->firstWhere('cpf', $cpf);
 
         // obtem dados da unidade
-        $responseUnidade = $this->getReponseUnidade($codigoDaUnidade); //param
-        $unidadeResponseXml = $this->buscarDadosSiapeUnidade->executaRequisicao($responseUnidade); //xml
+        $xmlDadosDaUnidade = $this->montaXmlUnidade($codigoDaUnidade); //param
+        $dadosUnidadeResponseXml = $this->buscarDadosSiapeUnidade->executaRequisicao($xmlDadosDaUnidade); //xml
 
-        // processa dados
-        //$dadosUnidade = $this->processaDadosSiape->processaDadosUorg($responseUnidade); // simpleXml
-        //$xmlDadosUnidade = $this->simpleXmlElementToArray($dadosUnidade);
+        // // processa dados
+        // $xmldadosUnidade = $this->processaDadosSiape->processaDadosUorg($dadosUnidadeResponseXml); // simpleXml
+        // $dadosDaUnidade = $this->simpleXmlElementToArray($xmldadosUnidade);
 
         $this->buscarDadosSiapeUnidades->listaUorgs(
             $this->config['siglaSistema'],
@@ -199,7 +182,7 @@ class SiapeIndividualService extends ServiceBase
             'id' => Str::uuid(),
             'data_modificacao' => DateTime::createFromFormat('dmY', $unidade['dataUltimaTransacao'])
                 ->format('Y-m-d 00:00:00'),
-            'response' => $unidadeResponseXml,
+            'response' => $dadosUnidadeResponseXml,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
@@ -207,7 +190,7 @@ class SiapeIndividualService extends ServiceBase
         SiapeConsultaDadosFuncionais::insert([
             'id' => Str::uuid(),
             'cpf' => $cpf,
-            'data_modificacao' => DateTime::createFromFormat('dmY', $registro['dataUltimaTransacao'])->format('Y-m-d 00:00:00'),
+            'data_modificacao' => DateTime::createFromFormat('dmY', $servidor['dataUltimaTransacao'])->format('Y-m-d 00:00:00'),
             'response' => $dadosFuncionaisResponseXml,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
@@ -216,7 +199,7 @@ class SiapeIndividualService extends ServiceBase
         SiapeConsultaDadosPessoais::insert([
             'id' => Str::uuid(),
             'cpf' => $cpf,
-            'data_modificacao' => DateTime::createFromFormat('dmY', $registro['dataUltimaTransacao'])->format('Y-m-d 00:00:00'),
+            'data_modificacao' => DateTime::createFromFormat('dmY', $servidor['dataUltimaTransacao'])->format('Y-m-d 00:00:00'),
             'response' => $dadosPessoaisResponseXml,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
@@ -235,8 +218,34 @@ class SiapeIndividualService extends ServiceBase
             $retorno = $integracaoService->sincronizar($inputs);
         }
 
-        var_dump($retorno);
+        // var_dump($retorno);
         
         return $retorno;
+    }
+
+    private function montaXMLDadosFuncionais(string $cpf)
+    {
+        return $this->buscarDadosSiapeServidor->consultaDadosFuncionais(
+            $this->config['siglaSistema'],
+            $this->config['nomeSistema'],
+            $this->config['senha'],
+            $cpf,
+            $this->getOrgao(),
+            $this->config['parmExistPag'],
+            $this->config['parmTipoVinculo']
+        );
+    }
+
+    private function montaXmlDadosPessoais(string $cpf)
+    {
+        return $this->buscarDadosSiapeServidor->consultaDadosPessoais(
+            $this->config['siglaSistema'],
+            $this->config['nomeSistema'],
+            $this->config['senha'],
+            $cpf,
+            $this->getOrgao(),
+            $this->config['parmExistPag'],
+            $this->config['parmTipoVinculo']
+        );
     }
 }

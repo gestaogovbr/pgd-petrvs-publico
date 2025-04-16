@@ -42,9 +42,11 @@ class ProcessaDadosSiapeBD
                 ];
             }
             catch (ErrorDataSiapeException $e) {
+                report($e);
                 continue;
             } catch (Exception $e) {
-                Log::error('Erro ao processar servidor #' . $servidor->cpf, [$e]);
+                report($e);
+                Log::channel('siape')->error('Erro ao processar servidor #' . $servidor->cpf, [$e]);
                 continue;
             }
         }
@@ -69,6 +71,7 @@ class ProcessaDadosSiapeBD
             $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
             $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
             $xmlResponse->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
+            // Log::error('==>',$xmlResponse->xpath('//ns1:consultaDadosPessoaisResponse/out')); VERIFICAR ISSO AMANHA
 
             $dadosPessoais = $xmlResponse->xpath('//ns1:consultaDadosPessoaisResponse/out')[0];
             $dadosPessoaisArray = $this->simpleXmlElementToArray($dadosPessoais);
@@ -78,8 +81,9 @@ class ProcessaDadosSiapeBD
 
         catch (Exception $e) {
             report($e);
-            Log::error("Falha nos dados pessoais:", [$dadosPessoais]);
-            throw new ErrorDataSiapeException("Falha ao tratar dados do Siape");
+            Log::channel('siape')->error("Falha nos dados funcionais:", [$dadosPessoais]);
+            throw new ErrorDataSiapeException("Falha ao tratar dados pessoais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape.log");
+      
         }
     }
 
@@ -99,8 +103,8 @@ class ProcessaDadosSiapeBD
             return $dadosFuncionaisArray;
         } catch (Exception $e) {
             report($e);
-            Log::error("Falha nos dados funcionais:", $dadosFuncionais);
-            throw new ErrorDataSiapeException("Falha ao tratar dados do Siape");
+            Log::channel('siape')->error("Falha nos dados funcionais:", [$dadosFuncionais]);
+            throw new ErrorDataSiapeException("Falha ao tratar dados funcionais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape.log");
         }
     }
 

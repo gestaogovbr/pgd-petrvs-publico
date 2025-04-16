@@ -80,6 +80,8 @@ trait DadosExternosSiape
         $retornoPessoais = $this->siapeClassBuscaDados->buscaSincrona($xmlDataPessoais);
         $xmlPessoal = $this->siapeClassBuscaDados->prepareResponseXml($retornoPessoais);
 
+        // var_dump($retornoPessoais); die;
+
         $out = $xmlPessoal->xpath('//out')[0]; 
 
         $newXmlPessoal = new SimpleXMLElement('<out/>');

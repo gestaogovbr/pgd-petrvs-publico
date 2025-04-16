@@ -23,3 +23,10 @@ if (!function_exists('getClassNameFromPath')) {
         return null;
     }
 }
+
+if (!function_exists('imprimeNoTerminal')) {
+
+    function imprimeNoTerminal(string $str) :  void{
+        passthru("echo " . $str);
+        }
+    }

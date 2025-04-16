@@ -10,6 +10,7 @@ use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 use ZipArchive;
+use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
 
 class UsuarioController extends ControllerBase
 {
@@ -57,17 +58,18 @@ class UsuarioController extends ControllerBase
 
     public function consultarCPFSiape(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'cpf' => [],
         ]);
 
         $retorno = $this->service->consultaCPFSiape($request->cpf);
 
-        $retorno = $retorno[0]->asXML();
-
         return response()->json([
             'success' => true,
-            'data' => $retorno
+            'funcionalXml' => $retorno[0],
+            'pessoalXml' => $retorno[1],
+            'funcional' => json_decode(json_encode($retorno[0])),
+            'pessoal' => json_decode(json_encode($retorno[1]))
         ]);
     }
 

@@ -253,6 +253,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         try {
             $xmlResponse = $this->prepareResponseXml($response->response);
         } catch (\Exception $e) {
+            report($e);
             Log::error('Erro ao processar XML dos Servidores', [$e->getMessage()]);
             return null;
         }
@@ -286,6 +287,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
 
         return $array1;
     }
+
 }
 
 

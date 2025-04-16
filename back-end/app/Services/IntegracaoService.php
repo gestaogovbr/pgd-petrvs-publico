@@ -1027,13 +1027,11 @@ class IntegracaoService extends ServiceBase
    */
   public function showResponsaveis()
   {
-    Log::alert("ok");
     $a = array_map(fn ($u) => ['key' => $u['id'], 'value' => $u['nome']], Usuario::select(['id', 'nome'])->has('integracoes')->get()->toArray());
     $b = array_merge([['key' => "null", 'value' => 'Sistema']], $a);
     usort($b, function ($a, $b) {
       return strnatcmp($a['value'], $b['value']);
     });
-    Log::alert("okok", $b);
     return $b;
   }
 
