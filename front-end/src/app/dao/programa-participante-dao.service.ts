@@ -42,13 +42,16 @@ export class ProgramaParticipanteDaoService extends DaoBaseService<ProgramaParti
         programa_id: programaId,
         habilitar: habilitar,
         suspender_plano_trabalho: suspenderPlanoTrabalho
-      }).subscribe(response => {
-        if (response.error) {
-          reject(response.error);
-        } else {
-          resolve(!!response?.success);
-        }
-      }, error => reject(error));
+      }).subscribe({
+        next: response => {
+          if (response.error) {
+            reject(response.error);
+          } else {
+            resolve(!!response?.success);
+          }
+        },
+        error: error => reject(error)
+      });
     });
   }
 

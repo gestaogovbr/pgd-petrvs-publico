@@ -66,7 +66,7 @@ export class PlanoEntregaListProdutoComponent extends PageFrameBase {
             } else {
                 try {
                     const produto = await this.produtoDao?.getById(control.value);
-                    if (!produto?.data_ativado) {
+                    if (!produto?.data_ativado && produto?.data_desativado) {
                       result = 'Produto inativo não pode ser usado';
                     }
                 } catch (error) {

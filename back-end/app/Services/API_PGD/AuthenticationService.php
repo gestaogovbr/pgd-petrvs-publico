@@ -8,68 +8,72 @@ use App\Models\Tenant;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Log;
+use App\Exceptions\ExportPgdException;
+use Illuminate\Support\Facades\Cache;
 
 class AuthenticationService
 {
-  CONST TIMEOUT = 29;
-  
-  public function getToken() : string
-  {
-    $header = [
-      'Accept' => 'application/json',
-      'Content-Type' => 'application/x-www-form-urlencoded'
-    ];
-    $formParams = [
-      'username' => config('pgd')['username'],
-      'password' => config('pgd')['password']
-    ];
+    public function authenticate(string $tenantId)
+    {
+        $tenant = Tenant::find($tenantId);
 
-    $response = Http::withOptions(['timeout' => self::TIMEOUT])
-      ->withHeaders($header)
-      ->asForm()->post(config('pgd.host') . '/token', $formParams);
+        if (!$tenant['api_url']) {
+            $errorMsg = 'Endereço URL da API PGD não definidos no Tenant '.$tenantId;
+            throw new ExportPgdException($errorMsg);
+        }
 
-      if(!$response->successful() || !isset($response->json()['access_token'])) {
-        throw new ExceptionsBadRequestException('Falha na autenticação');
-      }
+        if (!$tenant['api_cod_unidade_autorizadora']) {
+            $errorMsg = 'Unidade Autorizadora não definida no Tenant '.$tenantId;
+            throw new ExportPgdException($errorMsg);
+        }
 
-      $responseObj = $response->json();
-      return  $responseObj['access_token'];
-  }
+        if (!$tenant['api_username'] or !$tenant['api_password']) {
+            $errorMsg = 'Usuário ou senha da API PGD não definidos no Tenant '.$tenantId;
+            throw new ExportPgdException($errorMsg);
+        }
 
-  public static function authenticate(Tenant $tenant, string $username, string $password)
-  {
-    try {
-      $response = Http::baseUrl($tenant['api_url'])
-          ->asForm()
-          ->post('/token', [
-              'username' => $username,
-              'password' => $password
-          ]);
+        try {
+            $response = Http::baseUrl($tenant['api_url'])
+                ->asForm()
+                ->post('/token', [
+                    'username' => $tenant['api_username'],
+                    'password' => $tenant['api_password']
+                ]);
 
-      if (!$response->successful()) {
-          if ($response->status() == Response::HTTP_UNPROCESSABLE_ENTITY) {
-              $data = $response->json();
+            if (!$response->successful()) {
+                if ($response->status() == Response::HTTP_UNPROCESSABLE_ENTITY) {
+                    $data = $response->json();
 
-              if (is_array($data['detail'])) {
-                $detail = $data['detail'];
-              } else {
-                $detail = json_decode($data['detail'], true);
-              }
-              
-              Log::error("Erro no tenant $tenant->id: ".$detail[0]['msg']);
-          } else {
-              $response->throw();
-          }
-      }
+                    if (is_array($data['detail'])) {
+                        $detail = $data['detail'];
+                    } else {
+                        $detail = json_decode($data['detail'], true);
+                    }
 
-      $dados = $response->json();
-      $token = $dados['access_token'];
+                    Log::error("Erro no tenant $tenant->id: ".$detail[0]['msg']);
+                } else {
+                    $response->throw();
+                }
+            }
 
-      return $token;
-    } catch(\Throwable $e) {
-      Log::error("Erro ao obter Token da API PGD: ".$e->getMessage());
-      LogError::newError("Erro ao obter Token da API PGD: ");
-      throw $e;
+            $dados = $response->json();
+            $token = $dados['access_token'];
+
+            $this->setToken($tenantId, $token);
+
+            return $token;
+        } catch(\Throwable $e) {
+            Log::error("Erro ao obter Token da API PGD: ".$e->getMessage());
+            LogError::newError("Erro ao obter Token da API PGD: ");
+            throw $e;
+        }
     }
-  }
+
+    public function setToken($tenantId, $token) {
+        Cache::put("pgd_token_$tenantId", $token);
+    }
+
+    public function getToken($tenantId) {
+        Cache::put("pgd_token_$tenantId", false);
+    }
 }

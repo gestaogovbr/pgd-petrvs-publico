@@ -1,3 +1,40 @@
+## 2.3.13 28/03/2025
+### Adicionado
+ - Novo Filtro de Unidades Subordinadas - Plano Entrega.
+ - Novo Filtro de Unidades Subordinadas - Plano Trabalho.
+### Modificado
+- Fixados os valores das variáveis de ambiente APP_ENV, CACHE_DRIVER e QUEUE_CONNECTION, para
+evitar erros comuns de má configuração, nos envios de dados e sincronização;
+### Corrigido
+ - Ajustes nas capacidades dos perfis: Colaborador, Chefe de Unidade, Adm Negocial e Adm Master.
+ - Correção para carregar o regramento atual em Planos de Trabalho.
+ - Adicionada renovação do token de envio, para evitar erro na expiração do token durante o envio.
+### Removido
+ - Removido job de exportação de Todos os Tenants, para evitar dubiedade.
+
+## 2.3.12-Hotfix 24/03/2025
+### Corrigido
+ - Correção nos filtros de Planos de Entrega
+
+## 2.3.12 24/03/2025
+### Corrigido
+### Adicionado
+ - Adição dos perfis: Adm Master e Colaborador
+ - Permissão para incluir agentes públicos como Colaborador
+### Modificado
+ - Atualização de todos os perfis de desenvolvedores para Adm Master
+ - Ajustes nas capacidades para os novos perfis
+### Removido
+ - Alteração de lotação pelo caminho da chefia
+
+## 2.3.11 13/03/2025
+### Corrigido
+ - Correção dos vinculos com unidades pai e path inválidos
+### Removido
+ - Removido dados sensiveis do XML de dados pessoais do SIAPE 
+ - Opção para clonar planos de entrega e trabalho
+### Adicionado
+ - Dispensa de homologação de PE para unidades imediatamente inferiores
 ## 2.3.10 27/02/2025
 ### Corrigido
  - Correção na sanitização do xml de servidores do SIAPE

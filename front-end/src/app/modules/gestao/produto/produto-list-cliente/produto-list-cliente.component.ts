@@ -3,23 +3,30 @@ import { AbstractControl, FormGroup } from "@angular/forms";
 import { EditableFormComponent } from "src/app/components/editable-form/editable-form.component";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { InputSearchComponent } from "src/app/components/input/input-search/input-search.component";
+import { InputSelectComponent } from "src/app/components/input/input-select/input-select.component";
 import { ClienteDaoService } from "src/app/dao/cliente-dao.service";
 import { ProdutoClienteDaoService } from "src/app/dao/produto-cliente-dao.service";
 import { ProdutoDaoService } from "src/app/dao/produto-dao.service";
+import { TipoClienteDaoService } from "src/app/dao/tipo-cliente-dao.service";
+import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { IIndexable } from "src/app/models/base.model";
 import { ProdutoCliente } from "src/app/models/produto-cliente.model";
+import { Cliente } from "src/app/models/cliente.model";
 import { Produto } from "src/app/models/produto.model";
 import { PageFrameBase } from "src/app/modules/base/page-frame-base";
 
 @Component({
   selector: 'produto-list-cliente',
   templateUrl: './produto-list-cliente.component.html',
-  styleUrls: ['./produto-list-cliente.component.scss']
+  styleUrls: ['./produto-list-cliente.component.scss'],
+  standalone: false,
 })
 export class ProdutoListClienteComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-  @ViewChild('cliente', { static: false }) public cliente?: InputSearchComponent;
+  @ViewChild('tipoCliente', { static: false }) public tipoCliente?: InputSelectComponent;
+  @ViewChild('cliente', { static: false }) public cliente?: InputSelectComponent;
+  @ViewChild('unidade_relacionada', { static: false }) public unidade_relacionada?: InputSearchComponent;
 
 
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
@@ -30,6 +37,8 @@ export class ProdutoListClienteComponent extends PageFrameBase {
 
   public produtoDao?: ProdutoDaoService;
   public clienteDao?: ClienteDaoService;
+  public tipoClienteDao?: TipoClienteDaoService;
+  public unidadeDao?: UnidadeDaoService;
 
   public get items(): ProdutoCliente[] {
     if (!this.gridControl.value) this.gridControl.setValue(new ProdutoCliente());
@@ -44,29 +53,37 @@ export class ProdutoListClienteComponent extends PageFrameBase {
     this.dao = injector.get<ProdutoClienteDaoService>(ProdutoClienteDaoService);
     this.produtoDao = injector.get<ProdutoDaoService>(ProdutoDaoService);
     this.clienteDao = injector.get<ClienteDaoService>(ClienteDaoService);
+    this.tipoClienteDao = injector.get<TipoClienteDaoService>(TipoClienteDaoService);
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
 
     this.form = this.fh.FormBuilder({
-      cliente_id: { default: "" },
-    }, this.cdRef);
+      cliente_relacionado_id: { default: "" },
+      tipo_cliente_id: { default: "" },
+      unidade_relacionada_id: { default: "" },
+    }, this.cdRef, undefined);
     this.join = ["produtoCliente.cliente.tipoCliente"];
   }
+
 
 
   public async addCliente() {
     return Object.assign(new ProdutoCliente(), {
       _status: "ADD",
       id: this.dao!.generateUuid(),
-      cliente_id: '',
+      cliente_relacionado_id: '',
     }) as IIndexable;
   }
 
-  public async loadCliente(form: FormGroup, row: any) {
-    let cliente: ProdutoCliente = row;
-    if (cliente._status != "ADD") {
-      form.controls.cliente_id.setValue(row.cliente_id);
+  public async loadCliente(form: FormGroup, row: ProdutoCliente) {
+    let produtoCliente: ProdutoCliente = row;
+    if (produtoCliente._status != "ADD") {
+      form.controls.cliente_relacionado_id.setValue(produtoCliente.cliente_id);
+      form.controls.tipo_cliente_id.setValue(produtoCliente.cliente?.tipo_cliente_id);
+      form.controls.unidade_relacionada_id.setValue(produtoCliente.cliente?.unidade_id);
     }
   }
+
 
   public async removeCliente(row: any) {
     let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
@@ -84,16 +101,50 @@ export class ProdutoListClienteComponent extends PageFrameBase {
   }
 
   public async saveCliente(form: FormGroup, row: any) { 
-    let result = undefined;
-    this.form!.markAllAsTouched();
-    if(this.form!.valid) {      
+    this.entity!._metadata = this.entity!._metadata || {};
+    this.entity!._metadata.produtoCliente = row as ProdutoCliente;
+    if(this.form!.valid) {     
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
-      row.cliente_id = this.form!.controls.cliente_id.value;
-      row.cliente = this.cliente!.selectedEntity;
-      result = row;
+
+      // se o tipo cliente for diferente de Administração Pública e Público externo
+      if(this.tipoCliente?.selectedItem?.value != 'Unidade de órgão/entidade') {
+        row.cliente_id = this.form!.controls.cliente_relacionado_id.value;
+        row.cliente = {
+          ...this.cliente!.selectedItem,
+          tipo_cliente_id: this.tipoCliente!.selectedItem!.key,
+          nome: this.cliente!.selectedItem!.value,
+          tipo_cliente: {
+            nome: this.tipoCliente!.selectedItem!.value
+          }
+        };
+        
+      } else if(this.tipoCliente?.selectedItem?.value == 'Unidade de órgão/entidade') {
+        const queryResult = await this.clienteDao?.query({ where: [['unidade_id', '==', this.form!.controls.unidade_relacionada_id.value]], join: ['tipoCliente'] }).asPromise();
+        const cliente: Cliente[] = queryResult ? queryResult as unknown as Cliente[] : [];
+        if(cliente && cliente.length > 0) {
+          row.cliente_id = cliente[0].id;
+          row.cliente = cliente[0];
+        } else {
+          const novoCliente = new Cliente();
+          novoCliente.id = this.clienteDao!.generateUuid();
+          novoCliente.unidade_id = this.form!.controls.unidade_relacionada_id.value;
+          novoCliente.nome = this.unidade_relacionada?.selectedEntity?.nome;
+          novoCliente.tipo_cliente_id = this.tipoCliente?.selectedItem?.key;
+          const cliente = await this.clienteDao?.save(novoCliente, ['tipoCliente']);
+          if (cliente) {            
+            row.cliente_id = cliente.id;
+            row.unidade_id = cliente.unidade_id;
+            row.cliente = cliente;
+          }
+        }
+      }
+    
+      this.entity!._metadata.produtoCliente.cliente = row.cliente;     
       this.cdRef.detectChanges();
     }
-    return result;
+    return this.entity!._metadata.produtoCliente;
   }
+
+ 
 
 }

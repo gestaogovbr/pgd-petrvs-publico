@@ -86,6 +86,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.title = this.lex.translate('Planos de Entregas');
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
+      subordinadas: { default: false },
       principais: { default: false },
       arquivadas: { default: false },
       nome: { default: '' },
@@ -139,7 +140,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.BOTAO_SUSPENDER = { label: "Suspender", id: "PAUSADO", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), onClick: this.suspender.bind(this) };
     this.botoes = [this.BOTAO_ALTERAR, this.BOTAO_ARQUIVAR, this.BOTAO_AVALIAR, this.BOTAO_CANCELAR_PLANO, this.BOTAO_CANCELAR_AVALIACAO, this.BOTAO_CANCELAR_CONCLUSAO,
     this.BOTAO_CANCELAR_HOMOLOGACAO, this.BOTAO_CONCLUIR, this.BOTAO_CONSULTAR, this.BOTAO_DESARQUIVAR, this.BOTAO_EXCLUIR, this.BOTAO_HOMOLOGAR, this.BOTAO_LIBERAR_HOMOLOGACAO,
-    this.BOTAO_LOGS, this.BOTAO_REATIVAR, this.BOTAO_RETIRAR_HOMOLOGACAO, this.BOTAO_SUSPENDER, this.BOTAO_CLONAR];
+    this.BOTAO_LOGS, this.BOTAO_REATIVAR, this.BOTAO_RETIRAR_HOMOLOGACAO, this.BOTAO_SUSPENDER];
     //this.BOTAO_ADERIR_OPTION, this.BOTAO_ADERIR_TOOLBAR,
   }
 
@@ -148,6 +149,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     return {
       meus_planos: form.meus_planos,
       arquivadas: form.arquivadas,
+      subordinadas: form.subordinadas,
       unidade_id: form.unidade_id,
     }
   }
@@ -158,6 +160,18 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.avaliacao = !!this.queryParams?.avaliacao;
     this.showFilter = typeof this.queryParams?.showFilter != "undefined" ? (this.queryParams.showFilter == "true") : true;
     this.selectable = this.metadata?.selectable || this.selectable;
+
+    if (this.metadata?.minha_unidade) {
+      this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
+    }
+    this.route.queryParams.subscribe((p) => {
+      if (p["context"] == "EXECUCAO" && this.filter) {
+        this.filter?.controls.usuario.setValue(this.auth.usuario?.nome);
+      }
+      if (p["context"] == "GESTAO" && this.filter) {
+        this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
+      }
+    });
     if (this.execucao) {
       this.title = this.title + " (Execução)";
       this.filter!.controls.unidade_id.setValue(this.auth.unidadeGestor()?.id || null);
@@ -226,6 +240,17 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   }
 
   public filterClear(filter: FormGroup) {
+    if (!filter) {
+      console.error("O objeto filter está indefinido.");
+      return;
+    }
+
+    if (!filter.controls) {
+      console.error("Os controls do formulário não estão disponíveis.");
+      return;
+    }
+
+    // Definir valores nos filtros
     filter.controls.nome.setValue("");
     filter.controls.data_filtro.setValue(null);
     filter.controls.data_filtro_inicio.setValue(new Date());
@@ -234,9 +259,18 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     filter.controls.planejamento_id.setValue(null);
     filter.controls.cadeia_valor_id.setValue(null);
     filter.controls.status.setValue(null);
-    filter.controls.meus_planos.setValue(false);
+    filter.controls.meus_planos.setValue(true);
+
+    // 🔹 Verifique se o nome do campo está correto (subordinadas)
+    if (filter.controls.subordinadas) {
+      filter.controls.subordinadas.setValue(false);
+    } else {
+      console.warn("O controle 'subordinadas' não existe no formulário.");
+    }
+
     super.filterClear(filter);
   }
+
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
@@ -286,6 +320,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     
     //  (RI_PENT_C) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados.
     result.push(["incluir_arquivados", "==", this.filter!.controls.arquivadas.value]);
+    result.push(["incluir_subordinadas", "==", this.filter!.controls.subordinadas.value]);
     return result;
   }
 
@@ -303,7 +338,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       this.filter!.controls.unidade_id.setValue(null);
       this.filter!.controls.meus_planos.setValue(false);
     } else {
-      this.filter!.controls.meus_planos.setValue(true);
+      if(this.filter!.controls.subordinadas){
+        this.filter!.controls.meus_planos.setValue(false);
+      } else {
+        this.filter!.controls.meus_planos.setValue(true);
+      }
     }
     this.grid!.reloadFilter();
   }
@@ -726,6 +765,41 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       }
     });
   }
+
+  public disableMeus() {
+    if (!this.filter || !this.filter.controls.subordinadas || !this.filter.controls.meus_planos) {
+      console.warn("Formulário ou controles não inicializados corretamente.");
+      return;
+    }
+
+    // Se "Unidades Subordinadas" está ativado, desativa "Meus Planos"
+    if (this.filter.controls.subordinadas.value) {
+      this.filter.controls.meus_planos.setValue(false);
+    } else {
+      this.filter.controls.meus_planos.setValue(true);
+    }
+
+    this.grid?.reloadFilter();
+  }
+
+  public disableSub() {
+    if (!this.filter || !this.filter.controls.subordinadas || !this.filter.controls.meus_planos) {
+      console.warn("Formulário ou controles não inicializados corretamente.");
+      return;
+    }
+
+    // Se "Meus Planos" está ativado, desativa "Unidades Subordinadas"
+    if (this.filter.controls.meus_planos.value) {
+      this.filter!.controls.subordinadas.setValue(false);
+      this.filter!.controls.principais.setValue(false);
+    } else {
+      this.filter!.controls.subordinadas.setValue(true);
+
+    }
+
+    this.grid?.reloadFilter();
+  }
+
 
   public canAdd() {
     return this.auth.hasPermissionTo('MOD_PENT_INCL');

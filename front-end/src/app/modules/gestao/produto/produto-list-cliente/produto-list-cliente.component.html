@@ -10,12 +10,19 @@
       <ng-template let-row="row" #columnCliente>
         
         <div class="w-100">
-          <small>{{row.cliente.tipo_cliente?.nome}}</small><br>
-          <b class="">{{row.cliente.nome}}</b>
+          <small>{{row.cliente.tipo_cliente?.nome}} - {{row.cliente.nome}}</small>
         </div>
       </ng-template>
       <ng-template let-row="row" #editCliente>
-        <input-search label #cliente [placeholder]="'Selecione o cliente'" controlName="cliente_id" [join]="['tipoCliente']" [dao]="clienteDao" required  [selectRoute]="{route: ['cadastros', 'cliente']}"></input-search>
+        <div class="row">
+          <div class="col-6">
+            <input-select label="Tipo do cliente" #tipoCliente controlName="tipo_cliente_id" [dao]="tipoClienteDao" required></input-select>
+          </div>  
+          <div class="col-6">
+            <input-search label="Unidade" #unidade_relacionada controlName="unidade_relacionada_id" [dao]="unidadeDao"  *ngIf="tipoCliente.selectedItem?.value == 'Unidade de órgão/entidade'"></input-search>
+            <input-select label="Cliente" #cliente controlName="cliente_relacionado_id" [dao]="clienteDao" [where]="[['tipo_cliente_id', '==', form!.controls.tipo_cliente_id.value]]" *ngIf="tipoCliente.selectedItem?.value != 'Unidade de órgão/entidade'"></input-select>
+          </div>
+        </div>
       </ng-template>
     </column>
 

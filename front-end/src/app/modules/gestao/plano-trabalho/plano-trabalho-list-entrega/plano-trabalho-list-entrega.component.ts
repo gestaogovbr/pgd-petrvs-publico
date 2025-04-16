@@ -155,7 +155,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     }
     if (entrega._status == "ADD" && !form.controls.plano_entrega_id.value) { // É uma nova entrega
       form.controls.origem.setValue('PROPRIA_UNIDADE');
-      let planosEntregas = await this.planoEntregaDao!.query({ where: [["unidade_id", "==", this.entity!.unidade_id], ["status", "==", "ATIVO"]] }).asPromise();//["data_inicio", "<=", this.entity!.data_fim], ["data_fim", ">=", this.entity!.data_inicio]
+      let planosEntregas = await this.planoEntregaDao!.query({ where: [["unidade_id", "==", this.entity!.unidade_id], ["status", "==", "ATIVO"]], orderBy: [['numero', 'desc']] }).asPromise();//["data_inicio", "<=", this.entity!.data_fim], ["data_fim", ">=", this.entity!.data_inicio]
       form.controls.plano_entrega_id.setValue(planosEntregas[0].id);
     } else if (entrega.plano_entrega_entrega?.plano_entrega?.unidade_id == this.entity!.unidade_id) {
       form.controls.origem.setValue('PROPRIA_UNIDADE');

@@ -6,6 +6,7 @@ import { SolucaoDaoService } from "src/app/dao/solucao-dao.service";
 import { SolucaoUnidadeDaoService } from "src/app/dao/solucao-unidade-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
+import { Base } from "src/app/models/base.model";
 import { SolucaoUnidade } from "src/app/models/solucao-unidade.model";
 import { Solucao } from "src/app/models/solucao.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
@@ -30,6 +31,8 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
   public isSearching: boolean = false;
   public solucoesUnidades: SolucaoUnidade[] = [];
   public isActive: { [key: string]: boolean } = {};
+  public unidadeId: string = '';
+  public instituidoraObtida: boolean = false;
 
   constructor(public injector: Injector, dao: SolucaoDaoService) {
     super(injector, Solucao, SolucaoDaoService);
@@ -42,19 +45,12 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
       nome: { default: this.metadata?.nome ?? "" },
-      unidade_id: { default: "" },
+      unidade_id: { default: this.auth.unidade?.id },
       id: { default: "" },
       status: { default: "" }
     });
-    
-    this.botoes = [
-    ]
-    
-    this.options.push({
-      icon: "bi bi-clipboard-check",
-      label: "Unidades",
-      onClick: this.consult.bind(this)
-    });
+  
+    this.orderBy = [['identificador', 'desc']];
 
     // Testa se o usuário possui permissão para excluir o tipo de atividade
     if (this.auth.hasPermissionTo("MOD_SOLUCOES_EXCL")) {
@@ -68,7 +64,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     this.isCurador = this.auth.isUsuarioCurador()
   }
 
-  public ngOnInit(): void {
+  public async ngOnInit() {
     super.ngOnInit();
 
     this.isSearching = this.queryParams.mode == 'search';
@@ -76,8 +72,20 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
       this.filter?.controls.status.setValue('ativo');
       this.saveUsuarioConfig();
     }
+
+    const instituidora = await this.getInstituidora();
+    this.unidadeId = instituidora?.id;
+    this.filter?.controls.unidade_id.setValue(instituidora?.id);
+    this.instituidoraObtida = true;
+    this.saveUsuarioConfig();
+    this.onLoad();
     
     this.loadingSolucoesUnidades();
+
+  }
+
+  public async getInstituidora() {
+    return await this.unidadeDao.obterInstituidora(this.auth.unidade?.id as string);
   }
 
   public async loadingSolucoesUnidades() {
@@ -93,17 +101,21 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
 
   public dynamicButtons(row: Solucao): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });   
+    if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });  
+  
+    if (this.isCurador)
+      result.push({ label: "Excluir", icon: "bi bi-trash", color: 'btn-outline-danger', onClick: this.delete.bind(this) });   
     
     return result;
   }
-    public async showDetalhes(solucao: Solucao){
-      this.go.navigate({route: ['gestao', 'solucao', solucao.id, "consult"]}, {
-        metadata: {
-          solucao: solucao
-        }
-      });    
-    }
+  
+  public async showDetalhes(solucao: Solucao){
+    this.go.navigate({route: ['gestao', 'solucao', solucao.id, "consult"]}, {
+      metadata: {
+        solucao: solucao
+      }
+    });    
+  }
 
   public onAgruparChange(event: Event) {
     const agrupar = this.filter!.controls.agrupar.value;
@@ -123,22 +135,23 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     let form: any = filter.value;
 
     if (form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
+      result.push(["or", ["sigla", "like", "%" + form.nome.trim().replace(" ", "%") + "%"], ["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]]);
     }
 
     if (form.id?.length) {
       result.push(["identificador", "=", form.id]);
+    }
 
-    }
     if (form.unidade_id?.length) {
-      result.push(["unidade_id", "==", form.unidade_id]);
+      result.push(["unidade_ativa", "==", this.instituidoraObtida ? form.unidade_id : 'XX']);
     }
+
     if (form.status == 'ativo') {
-      result.push(["unidade_ativa", "==", this.auth.unidade?.id]);
+      result.push(["unidade_ativa", "==", form.unidade_id ?? this.unidadeId]);
     }
 
     if (form.status == 'inativo') {
-      result.push(["unidade_inativa", "==", this.auth.unidade?.id]);
+      result.push(["unidade_inativa", "==", form.unidade_id ?? this.unidadeId]);
     }
     
     return result;
@@ -165,9 +178,12 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
   public onFilterClear() {
     this.filter?.reset()
     this.grid!.reloadFilter();
+    this.cdRef.markForCheck();
   }
 
   public async ativarDesativar(solucao: Solucao, event: any) {
+    
+    if (this.loading) return;
     
     this.loading = true;
 
@@ -195,8 +211,9 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
         this.solucoesUnidades.push(solucaoUnidadeCarregada);
         this.isActive[solucao.id] = true;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao atualizar o produto", error);
+      this.error(error.error?.message || error.message || error);
     } finally {
       this.isUpdating = false; 
       this.loading = false;
@@ -217,8 +234,9 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
         } 
         await this.solucaoDao.ativarTodas(unidadeId);
         this.loadingSolucoesUnidades();
-      }catch (error) {
+      }catch (error: any) {
         console.error("Erro ao ativar as Soluções", error);
+        this.error(error.error?.message || error.message || error);
       } finally {
         this.isUpdating = false; 
         this.loading = false;
@@ -239,8 +257,9 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
         }
         await this.solucaoDao.desativarTodas(unidadeId);
         this.loadingSolucoesUnidades();
-      }catch (error) {
+      }catch (error: any) {
         console.error("Erro ao desativar as Soluções", error);
+        this.error(error.error?.message || error.message || error);
       } finally {
         this.isUpdating = false; 
         this.loading = false;

@@ -1,0 +1,6 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="codigo" (submit)="onSaveData()" (cancel)="onCancel()">
+    <div class="row">
+        <input-text [size]="9" label="Descrição" controlName="nome" [attr.maxlength]=250  required></input-text>
+    </div>
+
+</editable-form>
