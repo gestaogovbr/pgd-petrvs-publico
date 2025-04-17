@@ -1,16 +1,41 @@
-<div class="login-container">
-    <div class="login-content">
-        <h2>Panel - Login</h2>
-        <form  [formGroup]="login">
-            <div class="form-group">
-                <input-text controlName="email"   placeholder="Email" [attr.maxlength]=250></input-text>
+<div class="d-flex vh-100 g-0 bg-gray-100">
+    <div class="d-flex align-items-center justify-content-center h-100 g-0 px-4 px-sm-0">
+        <div class="col-md-12 form-panel-login">
+            <div class="text-center mb-5 d-flex align-items-center justify-content-center">
+                <img src="../assets/images/logo_pgd.png" class="logo-pgd">
+                <img [src]="globals.getResourcePath('assets/images/' + globals.IMAGES.login)"
+                    class="logo-petrvs" alt="Petrvs"
+                />
             </div>
-            <div class="form-group form-primary mb-2">
-                <input-text password="password" controlName="password" placeholder="Senha" [attr.maxlength]=250></input-text>
+            <div class="text-center mb-5">
+                <h3 class="fw-bold">Acesso ao Painel</h3>
+                <p class="fw-medium">Faça login no Painel SAAS</p>
             </div>
-            <button class="btn-login" (click)="loginPanel()">
-                Logar
-            </button>
-        </form>
+
+            <editable-form 
+                #loginForm
+                [form]="login!" 
+                (submit)="loginPanel()"
+                [noButtons]="'true'"
+            >
+                <div class="form-group">
+                    <input-text controlName="email"   placeholder="E-mail" [attr.maxlength]=250></input-text>
+                </div>
+                <div class="form-group form-primary mb-2">
+                    <input-text password="password" controlName="password" placeholder="Senha" [attr.maxlength]=250></input-text>
+                </div>
+                <button class="btn-login" type="button" (click)="submitForm()">
+                    Entrar
+                </button>
+            </editable-form>
+        </div>
     </div>
+    <div class="logos">
+        <div class="text-left mt-3 small text-muted" >
+            <p class="m-0"><small class="text-primary">Versão: {{globals.VERSAO_SYS}}</small></p>
+        </div>
+
+        <img src="../../assets/images/logo_gov.png">
+    </div>   
 </div>
+
