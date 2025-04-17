@@ -1,5 +1,5 @@
 <?php
-namespace App\Services\Siape\Resources;
+namespace App\Services\Siape\Consulta\Resources;
 
 use App\Exceptions\SiapeRequestException;
 use SimpleXMLElement;

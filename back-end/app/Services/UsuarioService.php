@@ -19,10 +19,10 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use App\Services\Siape\DadosExternosSiape;
 use App\Models\UnidadeIntegranteAtribuicao;
-use App\Services\Siape\Resources\DadosPessoaisResource;
-use App\Services\Siape\Resources\DadosFuncionaisResource;
-use App\Services\Siape\SiapeDadosPessoaisService;
-use App\Services\Siape\SiapeDadosFuncionaisService;
+use App\Services\Siape\Consulta\Resources\DadosPessoaisResource;
+use App\Services\Siape\Consulta\Resources\DadosFuncionaisResource;
+use App\Services\Siape\Consulta\SiapeDadosPessoaisService;
+use App\Services\Siape\Consulta\SiapeDadosFuncionaisService;
 
 class UsuarioService extends ServiceBase
 {

@@ -1,7 +1,7 @@
 <?php
-namespace App\Services\Siape;
+namespace App\Services\Siape\Consulta;
 
-use App\Services\Siape\XML\Body\SiapeBodyDadosPessoais;
+use App\Services\Siape\Consulta\XML\Body\SiapeBodyDadosPessoais;
 
 class SiapeDadosPessoaisService extends SiapeService {
 

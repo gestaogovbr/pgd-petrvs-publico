@@ -1,11 +1,11 @@
 <?php
-namespace App\Services\Siape\XML\Body;
+namespace App\Services\Siape\Consulta\XML\Body;
 
-class SiapeBodyDadosPessoais extends SiapeBody
+class SiapeBodyDadosFuncionais extends SiapeBody
 {
     public function __construct($cpf)
     {
-        parent::__construct('ser:consultaDadosPessoais');
+        parent::__construct('ser:consultaDadosFuncionais');
         
         $cpf = preg_replace('/[^0-9]/', '', $cpf);
 

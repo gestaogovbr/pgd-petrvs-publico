@@ -1,5 +1,5 @@
 <?php
-namespace App\Services\Siape\XML;
+namespace App\Services\Siape\Consulta\XML;
 
 use SimpleXMLElement;
 

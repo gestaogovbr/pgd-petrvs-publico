@@ -1,5 +1,5 @@
 <?php
-namespace App\Services\Siape\Traits;
+namespace App\Services\Siape\Consulta\Traits;
 
 trait SiapeConfig
 {

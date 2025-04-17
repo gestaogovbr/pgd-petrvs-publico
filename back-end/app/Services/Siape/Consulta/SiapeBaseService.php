@@ -1,7 +1,7 @@
 <?php
-namespace App\Services\Siape;
+namespace App\Services\Siape\Consulta;
 
-use App\Services\Siape\XML\Body\SiapeBody;
+use App\Services\Siape\Consulta\XML\Body\SiapeBody;
 
 abstract class SiapeBaseService {
 

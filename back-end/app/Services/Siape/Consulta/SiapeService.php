@@ -1,9 +1,9 @@
 <?php
-namespace App\Services\Siape;
+namespace App\Services\Siape\Consulta;
 
 use Illuminate\Support\Facades\Log;
-use App\Services\Siape\Traits\SiapeConfig;
-use App\Services\Siape\Traits\SiapeGetToken;
+use App\Services\Siape\Consulta\Traits\SiapeConfig;
+use App\Services\Siape\Consulta\Traits\SiapeGetToken;
 
 abstract class SiapeService extends SiapeBaseService {
 

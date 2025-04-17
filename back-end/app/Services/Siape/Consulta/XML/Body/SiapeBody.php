@@ -1,8 +1,8 @@
 <?php
-namespace App\Services\Siape\XML\Body;
+namespace App\Services\Siape\Consulta\XML\Body;
 
 use SimpleXMLElement;
-use App\Services\Siape\XML\SiapeXMLElement;
+use App\Services\Siape\Consulta\XML\SiapeXMLElement;
 
 abstract class SiapeBody extends SiapeXMLElement
 {
