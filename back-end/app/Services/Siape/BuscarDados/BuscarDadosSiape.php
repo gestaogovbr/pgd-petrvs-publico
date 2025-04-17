@@ -44,8 +44,8 @@ abstract class BuscarDadosSiape
     public function getToken()
     {
         if (self::$token && now()->lessThan(self::$tokenExpiresAt)) {
-        return self::$token;
-    }
+            return self::$token;
+        }
 
         $curl = curl_init();
 

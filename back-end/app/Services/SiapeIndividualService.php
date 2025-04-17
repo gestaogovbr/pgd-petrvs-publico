@@ -217,8 +217,6 @@ class SiapeIndividualService extends ServiceBase
             $inputs['entidade'] = $entidade->id;
             $retorno = $integracaoService->sincronizar($inputs);
         }
-
-        // var_dump($retorno);
         
         return $retorno;
     }
