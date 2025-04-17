@@ -25,7 +25,7 @@ abstract class SiapeService extends SiapeBaseService {
         ];
     }
 
-    public function buscar($params) {
+    public function buscar($params): string|bool {
 
         $body = $this->getBody($params);
         $headers = $this->getHeaders();

@@ -12,8 +12,4 @@ class SiapeDadosPessoaisService extends SiapeService {
     public function buscarCPF($cpf) {
         return $this->buscar(['cpf' => $cpf]);
     }
-
-    public function getXMLElement() {
-    }
-
 }

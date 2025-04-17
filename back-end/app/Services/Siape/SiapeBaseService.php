@@ -11,7 +11,5 @@ abstract class SiapeBaseService {
 
     abstract public function getBody($params): SiapeBody;
 
-    abstract public function buscar($params);
-
-    abstract public function getXMLElement();
+    abstract public function buscar($params): string|bool;
 }
