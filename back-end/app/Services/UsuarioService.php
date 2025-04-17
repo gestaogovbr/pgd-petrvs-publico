@@ -2,23 +2,27 @@
 
 namespace App\Services;
 
-use App\Models\Usuario;
-use App\Models\Unidade;
-use App\Models\Programa;
+use Exception;
+use Throwable;
+use SimpleXMLElement;
 use App\Models\Perfil;
-use App\Models\UnidadeIntegrante;
-use App\Models\UnidadeIntegranteAtribuicao;
-use App\Services\ServiceBase;
+use App\Models\Unidade;
+use App\Models\Usuario;
+use App\Models\Programa;
 use App\Services\RawWhere;
+use App\Services\ServiceBase;
+use App\Models\UnidadeIntegrante;
+use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Log;
+use App\Exceptions\ValidateException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
-use App\Exceptions\ServerException;
-use App\Exceptions\ValidateException;
 use App\Services\Siape\DadosExternosSiape;
-use Exception;
-use SimpleXMLElement;
-use Throwable;
+use App\Models\UnidadeIntegranteAtribuicao;
+use App\Services\Siape\Resources\DadosPessoaisResource;
+use App\Services\Siape\Resources\DadosFuncionaisResource;
+use App\Services\Siape\SiapeDadosPessoaisService;
+use App\Services\Siape\SiapeDadosFuncionaisService;
 
 class UsuarioService extends ServiceBase
 {
@@ -386,28 +390,92 @@ class UsuarioService extends ServiceBase
   }
 
   public function validarColaborador($data) : void
-{
-    // Se é um usuário externo não pode ter outro perfil com nível < 6
-    $usuarioExterno = $data['usuario_externo'] ?? null;
-    if ($usuarioExterno === null) {
-        return;
+  {
+      // Se é um usuário externo não pode ter outro perfil com nível < 6
+      $usuarioExterno = $data['usuario_externo'] ?? null;
+      if ($usuarioExterno === null) {
+          return;
+      }
+
+      // Garantir que perfil_id está definido antes de buscar no banco
+      if (!isset($data['perfil_id'])) {
+          throw new ServerException("ValidateUsuario", "ID do perfil não foi informado.");
+      }
+
+      $perfil = Perfil::find($data['perfil_id']);
+      if (!$perfil) {
+          throw new ServerException("ValidateUsuario", "Perfil não encontrado.");
+      }
+
+      if ($perfil->nivel < 6 && $usuarioExterno == 1) {
+          throw new ServerException("ValidateUsuario", "Usuário externo não pode ter o nível de acesso: " . $perfil->nome);
+      } elseif ($perfil->nivel == 6 && $usuarioExterno == 0) {
+          throw new ServerException("ValidateUsuario", "Usuário não pode ter o nível de acesso: " . $perfil->nome);
+      }
     }
 
-    // Garantir que perfil_id está definido antes de buscar no banco
-    if (!isset($data['perfil_id'])) {
-        throw new ServerException("ValidateUsuario", "ID do perfil não foi informado.");
-    }
+    
 
-    $perfil = Perfil::find($data['perfil_id']);
-    if (!$perfil) {
-        throw new ServerException("ValidateUsuario", "Perfil não encontrado.");
-    }
+  public function searchText($data)
+  {
+      if (!in_array('usuario_externo', $data['fields'])) {
+          $data['fields'][] = 'usuario_externo';
+      }
+      $text = "%" . str_replace(" ", "%", $data['query']) . "%";
+      $model = App($this->collection);
+      $table = $model->getTable();
 
-    if ($perfil->nivel < 6 && $usuarioExterno == 1) {
-        throw new ServerException("ValidateUsuario", "Usuário externo não pode ter o nível de acesso: " . $perfil->nome);
-    } elseif ($perfil->nivel == 6 && $usuarioExterno == 0) {
-        throw new ServerException("ValidateUsuario", "Usuário não pode ter o nível de acesso: " . $perfil->nome);
-    }
+
+      // Garante que os campos tenham o nome da tabela
+      $data["select"] = array_map(fn ($field) => str_contains($field, ".") ? $field : $table . "." . $field, array_merge(['id'], $data['fields']));
+
+
+      // Usa Eloquent query() em vez de DB::table()
+      $query = $model->query();
+
+      if (method_exists($this, 'proxySearch')) {
+          $this->proxySearch($query, $data, $text);
+      }
+
+      // Adiciona condição LIKE para busca nos campos informados
+      $likes = ["or"];
+      foreach ($data['fields'] as $field) {
+          array_push($likes, [$field, 'like', $text]);
+      }
+
+      // Garante que deleted_at seja tratado corretamente
+      $condicaoDeletados = array_filter($data['where'], fn ($w) => is_array($w) && $w[0] == "deleted_at");
+      if (empty($condicaoDeletados)) {
+          array_push($data['where'], ['deleted_at', '=', null]);
+      }
+
+      $where = [$likes, $data['where']];
+      $this->applyWhere($query, $where, $data);
+      $this->applyOrderBy($query, $data);
+
+      // Busca apenas os campos informados
+      $query->select($data["select"]);
+      // Obtém os resultados
+      $rows = $query->get();
+
+      $values = [];
+
+      $data['fields'] = array_filter($data['fields'], fn($field) => $field !== 'usuario_externo');
+
+      foreach ($rows as $row) {
+
+
+          // Ajusta os campos para ordenação
+          $orderFields = array_map(fn ($order) => str_replace(".", "_", $order[0]), $data['orderBy'] ?? []);
+          $orderValues = array_map(fn ($field) => $row->$field ?? null, $orderFields);
+
+          array_push($values, [
+              $row->id,
+              array_map(fn ($field) => $row->$field ?? null, $data['fields']),
+              $orderValues
+          ]);
+      }
+      return $values;
   }
 
   /**
@@ -417,85 +485,18 @@ class UsuarioService extends ServiceBase
    */
   public function consultaCPFSiape(string $cpf): array{
 
-      $dados = $this->buscaServidor($cpf);
+    $dadosPessoaisService = new SiapeDadosPessoaisService();
+    $dadosPessoaisXml = $dadosPessoaisService->buscarCPF($cpf);
 
-      $dados[0]->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
-      $dados[0]->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
-      $dados[0]->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
-      
-      $dadosFuncionaisQuery = $dados[0]->xpath('//tipo:DadosFuncionais');
+    $dadosFuncionaisService = new SiapeDadosFuncionaisService();
+    $dadosFuncionaisXml = $dadosFuncionaisService->buscarCPF($cpf);
 
-      if (count($dadosFuncionaisQuery) > 0) {
-        $dadosFuncionais = $dadosFuncionaisQuery[0];
-      } else {
-        $dadosFuncionais = null;
-      }
+    $dadosPessoais = new DadosPessoaisResource($dadosPessoaisXml);
+    $dadosFuncionais = new DadosFuncionaisResource($dadosFuncionaisXml);
 
-      $dados[0] = $dadosFuncionais;
-
-      return $dados;
-
+    return [
+      'pessoais'    => $dadosPessoais->toArray(),
+      'funcionais'  => $dadosFuncionais->toArray()
+    ];
   }
-    public function searchText($data)
-    {
-        if (!in_array('usuario_externo', $data['fields'])) {
-            $data['fields'][] = 'usuario_externo';
-        }
-        $text = "%" . str_replace(" ", "%", $data['query']) . "%";
-        $model = App($this->collection);
-        $table = $model->getTable();
-
-
-        // Garante que os campos tenham o nome da tabela
-        $data["select"] = array_map(fn ($field) => str_contains($field, ".") ? $field : $table . "." . $field, array_merge(['id'], $data['fields']));
-
-
-        // Usa Eloquent query() em vez de DB::table()
-        $query = $model->query();
-
-        if (method_exists($this, 'proxySearch')) {
-            $this->proxySearch($query, $data, $text);
-        }
-
-        // Adiciona condição LIKE para busca nos campos informados
-        $likes = ["or"];
-        foreach ($data['fields'] as $field) {
-            array_push($likes, [$field, 'like', $text]);
-        }
-
-        // Garante que deleted_at seja tratado corretamente
-        $condicaoDeletados = array_filter($data['where'], fn ($w) => is_array($w) && $w[0] == "deleted_at");
-        if (empty($condicaoDeletados)) {
-            array_push($data['where'], ['deleted_at', '=', null]);
-        }
-
-        $where = [$likes, $data['where']];
-        $this->applyWhere($query, $where, $data);
-        $this->applyOrderBy($query, $data);
-
-        // Busca apenas os campos informados
-        $query->select($data["select"]);
-        // Obtém os resultados
-        $rows = $query->get();
-
-        $values = [];
-
-        $data['fields'] = array_filter($data['fields'], fn($field) => $field !== 'usuario_externo');
-
-        foreach ($rows as $row) {
-
-
-            // Ajusta os campos para ordenação
-            $orderFields = array_map(fn ($order) => str_replace(".", "_", $order[0]), $data['orderBy'] ?? []);
-            $orderValues = array_map(fn ($field) => $row->$field ?? null, $orderFields);
-
-            array_push($values, [
-                $row->id,
-                array_map(fn ($field) => $row->$field ?? null, $data['fields']),
-                $orderValues
-            ]);
-        }
-        return $values;
-    }
-
 }
