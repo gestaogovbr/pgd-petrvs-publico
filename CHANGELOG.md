@@ -1,3 +1,5 @@
+## 2.3.17 25/04/2025
+
 ## 2.3.16 16/04/2025
 ### Corrigido
  - Path do plugin Tinymce 
