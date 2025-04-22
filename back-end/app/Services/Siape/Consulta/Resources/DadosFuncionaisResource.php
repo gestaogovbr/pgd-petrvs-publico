@@ -18,6 +18,9 @@ class DadosFuncionaisResource extends SiapeResource
             return [
                 'emailServidor'     => (string) $item->emailServidor,
                 'matriculaSiape'    => (string) $item->matriculaSiape,
+                'codUorgExercicio' => $item->codUorgExercicio
+                    ? (string) intval($item->codUorgExercicio)
+                    : null,
             ];
         }, $this->data);
     }
