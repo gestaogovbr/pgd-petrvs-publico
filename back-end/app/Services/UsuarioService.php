@@ -494,9 +494,21 @@ class UsuarioService extends ServiceBase
     $dadosPessoais = new DadosPessoaisResource($dadosPessoaisXml);
     $dadosFuncionais = new DadosFuncionaisResource($dadosFuncionaisXml);
 
+    $dadosFuncionaisArray = $dadosFuncionais->toArray();
+
+    $dadosFuncionaisArray = array_map(function($item) {
+      $unidade = Unidade::where('codigo', $item['codUorgExercicio'])->first();
+      $item['unidadeNome'] = $unidade?->nome;
+      return $item;
+    }, $dadosFuncionaisArray);
+
     return [
       'pessoais'    => $dadosPessoais->toArray(),
-      'funcionais'  => $dadosFuncionais->toArray()
+      'funcionais'  => $dadosFuncionaisArray,
+      'xml' => [
+        'pessoais'    => $dadosPessoaisXml,
+        'funcionais'  => $dadosFuncionaisXml
+      ]
     ];
   }
 }

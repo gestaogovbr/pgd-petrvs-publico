@@ -1,4 +1,4 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, Inject, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
@@ -16,13 +16,14 @@ import { PageFormBase } from '../../base/page-form-base';
 })
 export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, UsuarioDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent
-
-  public usuarioDao: UsuarioDaoService;
-  public usuario?: Usuario;
+  public usuario?: Usuario|null;
   public unidadeDao: UnidadeDaoService;
   
   public form: FormGroup;
   public erros: string = '';
+  public dadosPessoais: any;
+  public dadosFuncionais: any;
+
   public toolbarButtons: ToolbarButton[] = [
     {
       label: "Exportar",
@@ -79,7 +80,6 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
-    this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
    this.form = this.fh.FormBuilder({
       cpf: {default: ""}, 
     }, this.cdRef, this.validate);
@@ -108,23 +108,53 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
   public async onClickCPF() {
     let error: any = undefined;
     if (this.form.valid) {
-      this.loading = false;
+      this.loading = true;
+      this.clearErros();
       try {
-        this.dao!.consultarSIAPE(this.form.get('cpf')?.value)
+        const cpf = this.form.get('cpf')?.value.replace(/\D/g, '');
+        const usuarios = await this.dao?.query({ where: [['cpf', '==', cpf]] })
+          .asPromise();
+
+        if (usuarios) {
+          this.usuario = usuarios[0];
+        }
+
+        this.dao!.consultarSIAPE(cpf)
           .subscribe(
-            complete => {
-              console.log(complete);
+            result => {
+              if (result.success) {
+                this.dadosPessoais = result.pessoais;
+                this.dadosFuncionais = result.funcionais;
+
+                this.loading = false;
+
+                this.go.navigate(
+                  {
+                    route: ['consultas', 'cpf-siape-result']
+                  },
+                  {
+                    metadata: {
+                      cpf: this.form.get('cpf')?.value,
+                      usuario: this.usuario,
+                      dadosPessoais: result.pessoais,
+                      dadosFuncionais: result.funcionais,
+                    }
+                  }
+                );
+              }
             },
             error => {
+              this.loading = false;
               console.log(error);
-              this.error("Erro ao sincronizar dados: " + error.error?.message);
+              this.error("Erro ao consultar CPF: " + error.error?.message);
             }
         )
       } catch (error: any) {
+        this.loading = false;
         console.log(error);
         this.erros = error;
       } finally {
-        this.loading = false;
+        
       }
     }
   }

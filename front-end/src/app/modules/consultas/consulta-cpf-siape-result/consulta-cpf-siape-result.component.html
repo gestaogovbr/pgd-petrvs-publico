@@ -1,0 +1,48 @@
+<div class="spinner-border" role="status" *ngIf="loading">
+    <span class="visually-hidden"></span>
+</div>
+
+<div class="consulta-cpf-siape-result">
+    <div class="row">
+        <div class="col-md-12" *ngIf="cpf">
+            <i class="bi bi-credit-card-2-front"></i> <b>Dados para o CPF {{ cpf }}</b>
+        </div>
+    </div>
+
+    <separator></separator>
+
+    <div class="row">
+        <div class="col-md-12" *ngIf="!usuario">
+            Nenhum usuário encontrado no Petrvs com o CPF informado.
+        </div>
+        <div class="col-md-12" *ngIf="usuario">
+            <b><i>Usuário encontrado no Petrvs</i></b>
+            <br/>
+            <b>{{usuario.nome}}</b> ({{usuario.matricula}})<br />
+            Lotações: 
+        </div>
+    </div>
+
+    <separator></separator>
+
+    <div class="row">
+        <div class="col-md-12" *ngIf="!dadosPessoais || !dadosFuncionais">
+            Dados não encontrados no SIAPE para o CPF informado.
+        </div>
+        <div class="col-md-12" *ngIf="dadosPessoais && dadosFuncionais">
+            <b><i>Dados localizados no SIAPE</i></b>
+            <br/>
+            <b>{{dadosPessoais.nome}}</b>
+        </div>
+    </div>
+    <div class="row" *ngFor="let dadoFuncional of dadosFuncionais">
+        <div class="col-md-12">
+            Matrícula: {{dadoFuncional.matriculaSiape}}<br />
+            Lotação: {{dadoFuncional.codUorgExercicio}} - {{dadoFuncional.unidadeNome}}
+        </div>
+    </div>
+
+    <separator>
+        <toolbar [buttons]="toolbarButtons"></toolbar>
+    </separator>
+</div>
