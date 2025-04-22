@@ -1,7 +1,4 @@
 <grid [dao]="dao" [hasEdit]="false" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [loadList]="loadChanges.bind(this)">
-  <toolbar>
-    <button class="btn btn-outline-info me-2" (click)="exportarCSV()" *ngIf="changes.length"><i class="bi bi-filetype-csv"> Exportar CSV</i></button>
-  </toolbar>
 
   <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
     <div class="row">
@@ -12,22 +9,7 @@
       <input-datetime [size]="4" datetime label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Fim dos registros"></input-datetime>
       <input-select [size]="4" label="Tipo" icon="bi bi-arrow-up-right-circle" controlName="tipo" [control]="filter!.controls.tipo" [items]="lookup.TIPO_LOG_CHANGE" itemTodos="Todos" valueTodos=""></input-select>
     </div>
-    <!-- TODO -->
-    <!-- <div class="row">
-      <div class="col-12">
-        <div class="card card-body mt-3">
-          <h6 class="mb-3">Relacionamentos</h6>
-          <div class="row">
-            <div *ngFor="let relacao of relacoes; let i=index" class="col-md-2">
-              <div class="form-check">
-                <input type="checkbox" [value]="relacao.key" (change)="onRelacaoChange($event)" class="form-check-input" [id]="relacao.key">
-                <label class="form-check-label" [for]="relacao.key">{{relacao.value}}</label>          
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
+
   </filter>
  
   <div class="accordion mt-3" id="accordionLogs">
@@ -36,16 +18,15 @@
       <h2 class="accordion-header">
         <button class="accordion-button collapsed" type="button" [attr.data-bs-toggle]="'collapse'" [attr.data-bs-target]="'#collapse_'+ change.id" aria-expanded="false" [attr.aria-controls]="'collapse_'+ change.id">
           <div class="d-flex justify-content-start align-items-center m-0">
-            <span class="nome me-2">{{change._metadata.responsavel}}</span>
-            <span class="acao me-2"> <badge [label]="change.type" [color]="change.type == 'DELETE' ? '#910404' : '#030521'"></badge></span>
-            <span class="tabela me-2">{{change.table_name}}</span>
-            <span class="data"><badge [label]="util.getDateTimeFormatted(change.date_time)" [color]="'#676789'"></badge></span>
+            <span class="acao me-2"> <badge [label]="change.event" [color]="change.event == 'DELETE' ? '#910404' : '#030521'"></badge></span>
+            <span class="tabela me-2">{{change.auditable_type}}</span>
+            <span class="data"><badge [label]="util.getDateTimeFormatted(change.created_at)" [color]="'#676789'"></badge></span>
           </div>
         </button>
       </h2>
       <div [attr.id]="'collapse_'+ change.id" class="accordion-collapse collapse" [attr.data-bs-target]="'#accordionLogs'">
         <div class="accordion-body">
-          <json-viewer [json]="change.delta"></json-viewer>
+          <json-viewer [json]="change.old_values"></json-viewer>
         </div>
       </div>
     </div>

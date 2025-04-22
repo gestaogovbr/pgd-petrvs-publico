@@ -60,39 +60,9 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     this.filter?.controls.row_id_text.setValue(this.urlParams?.get('id'));
   }
 
-  carregaResposaveis(user_ids: string[]){
-    this.selectResponsaveis!.loading = true;
-    this.dao?.showResponsaveis(user_ids).then(responsaveis => {
-      this.responsaveis = responsaveis.map((r: any) => ({ key: r.id, value: r.nome }));
-    }).finally(() => this.selectResponsaveis!.loading = false);
-  }
-
-  montaRelacoes(changes: Change[]){
-    this.relacoes = changes[0]._metadata.relacoes.map((r: any) => ({key: r, value: r}));    
-  }
 
   public async loadChanges(changes?: Base[]){
-    if(changes){
-      this.changes = changes as Change[];
-      let user_ids = this.changes.map((change: Change) => {return change.user_id})     
-      user_ids = Array.from(new Set(user_ids))
-      this.carregaResposaveis(user_ids)
-      if(this.changes.length > 1) this.montaRelacoes(this.changes)
-    }
-  }
-
-  public onRelacaoChange(event: any) {
-    const relacao = event.target.value;
-    const relacoes: any[] = this.filter?.controls.relacoes.value || [];
-
-    if (!relacoes.includes(relacao)) {
-      relacoes.push(relacao);
-    } else {
-      const index = relacoes.indexOf(relacao);
-      relacoes.splice(index, 1);
-    }
-    this.filter?.controls.relacoes.setValue(relacoes);
-   
+    this.changes = changes as Change[];
   }
 
   public filterClear(filter: FormGroup) {
@@ -133,15 +103,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     return result;
   }
 
-  exportarCSV(){
-    const registrosExportaveis = this.changes.map(change => {
-      return {
-          ...change,
-          delta: JSON.stringify(change.delta)
-      };
-    });
-    this.xlsx.exportJSON('logs', registrosExportaveis)
-  }
+
 
 
 
