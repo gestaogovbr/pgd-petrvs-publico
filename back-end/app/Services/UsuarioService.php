@@ -498,7 +498,7 @@ class UsuarioService extends ServiceBase
 
     $dadosFuncionaisArray = array_map(function($item) {
       $unidade = Unidade::where('codigo', $item['codUorgExercicio'])->first();
-      $item['unidadeNome'] = $unidade?->nome;
+      $item['unidadeSigla'] = $unidade?->sigla;
       return $item;
     }, $dadosFuncionaisArray);
 

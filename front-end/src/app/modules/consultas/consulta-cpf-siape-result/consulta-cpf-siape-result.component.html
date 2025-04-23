@@ -3,45 +3,62 @@
 </div>
 
 <div class="consulta-cpf-siape-result">
-    <div class="row">
-        <div class="col-md-12" *ngIf="cpf">
-            <i class="bi bi-credit-card-2-front"></i> <b>Dados para o CPF {{ cpf }}</b>
+    <div class="dados-petrvs">
+        <div class="row" *ngIf="!usuario">
+            <div class="col-md-12">
+                <p class="subtitle">Nenhum usuário encontrado no Petrvs com o CPF informado.</p>
+            </div>
+        </div>
+        <div class="row" *ngIf="usuario">
+            <div class="col-md-12">
+                <p class="subtitle">
+                    <i class="bi bi-person"></i> Usuário encontrado no Petrvs
+                </p>
+            </div>
+            <separator></separator>
+            <div class="col-md-12">
+                <p><b>{{usuario.nome}}</b></p>
+                <p>Matrícula #{{usuario.matricula}}</p>
+                <p>
+                    <badge *ngFor="let integrante of integrantes" 
+                        color="primary" 
+                        [label]="integrante.unidade_codigo + ' - ' + integrante.unidade_sigla + ' (' + integrante.atribuicoes.join('/') + ')'"
+                    ></badge>
+                </p> 
+            </div>
         </div>
     </div>
 
-    <separator></separator>
-
-    <div class="row">
-        <div class="col-md-12" *ngIf="!usuario">
-            Nenhum usuário encontrado no Petrvs com o CPF informado.
+    <div class="dados-siape">
+        <div class="row" *ngIf="!dadosPessoais || !dadosFuncionais">
+            <div class="col-md-12">
+                <p class="subtitle">Dados não encontrados no SIAPE para o CPF informado.</p>
+            </div>
         </div>
-        <div class="col-md-12" *ngIf="usuario">
-            <b><i>Usuário encontrado no Petrvs</i></b>
-            <br/>
-            <b>{{usuario.nome}}</b> ({{usuario.matricula}})<br />
-            Lotações: 
-        </div>
-    </div>
-
-    <separator></separator>
-
-    <div class="row">
-        <div class="col-md-12" *ngIf="!dadosPessoais || !dadosFuncionais">
-            Dados não encontrados no SIAPE para o CPF informado.
-        </div>
-        <div class="col-md-12" *ngIf="dadosPessoais && dadosFuncionais">
-            <b><i>Dados localizados no SIAPE</i></b>
-            <br/>
-            <b>{{dadosPessoais.nome}}</b>
-        </div>
-    </div>
-    <div class="row" *ngFor="let dadoFuncional of dadosFuncionais">
-        <div class="col-md-12">
-            Matrícula: {{dadoFuncional.matriculaSiape}}<br />
-            Lotação: {{dadoFuncional.codUorgExercicio}} - {{dadoFuncional.unidadeNome}}
+        <div class="row" *ngIf="dadosPessoais && dadosFuncionais">
+            <div class="col-md-12">
+                <p class="subtitle">
+                    <i class="bi bi-cloud-arrow-down-fill"></i>
+                    Dados localizados no SIAPE
+                </p>
+            </div>
+            <separator></separator>
+            <div class="col-md-12">
+                <p><b>{{dadosPessoais.nome}}</b></p>
+            </div>
+            <div class="row" *ngFor="let dadoFuncional of dadosFuncionais">
+                <div class="col-md-12">
+                    <p>Matrícula: {{dadoFuncional.matriculaSiape}}</p>
+                    <p>
+                        <badge 
+                            color="primary" 
+                            [label]="dadoFuncional.codUorgExercicio + ' - ' + dadoFuncional.unidadeSigla"
+                        ></badge>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
-
     <separator>
         <toolbar [buttons]="toolbarButtons"></toolbar>
     </separator>

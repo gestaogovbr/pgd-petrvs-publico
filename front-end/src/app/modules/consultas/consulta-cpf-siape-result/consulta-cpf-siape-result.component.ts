@@ -9,6 +9,7 @@ import { Usuario } from 'src/app/models/usuario.model';
 import { NavigateResult } from 'src/app/services/navigate.service';
 import { PageFormBase } from '../../base/page-form-base';
 import { firstValueFrom } from 'rxjs';
+import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 
 @Component({
   selector: 'consulta-cpf-siape-result',
@@ -24,6 +25,7 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
   public cpf: string|null = null;
   public dadosPessoais: any;
   public dadosFuncionais: any;
+  public integrantes: IntegranteConsolidado[] = [];
 
   public toolbarButtons: ToolbarButton[] = [
     {
@@ -105,17 +107,6 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
 
   public loadData(entity: Usuario, form: FormGroup): void | Promise<void>
   {
-    if(this.metadata?.usuario) {
-      this.usuario = this.metadata?.usuario;
-    }
-
-    if(this.metadata?.dadosPessoais) {
-      this.dadosPessoais = this.metadata?.dadosPessoais;
-    }
-
-    if(this.metadata?.dadosFuncionais) {
-      this.dadosFuncionais = this.metadata?.dadosFuncionais;
-    }
   }
 
   public initializeData(form: FormGroup): void | Promise<void> {
@@ -139,6 +130,7 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
 
     if(this.metadata?.cpf) {
       this.cpf = this.metadata?.cpf;
+      this.title = 'Dados do CPF: ' + this.cpf;
     }
 
     if(this.metadata?.usuario) {
@@ -151,7 +143,10 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
 
     if(this.metadata?.dadosFuncionais) {
       this.dadosFuncionais = this.metadata?.dadosFuncionais;
-      console.log(this.dadosFuncionais);
+    }
+
+    if(this.metadata?.integrantes) {
+      this.integrantes = this.metadata?.integrantes;
     }
   }
 

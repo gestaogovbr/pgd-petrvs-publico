@@ -8,6 +8,8 @@ import { IIndexable } from 'src/app/models/base.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { NavigateResult } from 'src/app/services/navigate.service';
 import { PageFormBase } from '../../base/page-form-base';
+import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
+import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 
 @Component({
   selector: 'consulta-cpf-siape-form',
@@ -18,11 +20,13 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent
   public usuario?: Usuario|null;
   public unidadeDao: UnidadeDaoService;
+  public integranteDao: UnidadeIntegranteDaoService;
   
   public form: FormGroup;
   public erros: string = '';
   public dadosPessoais: any;
   public dadosFuncionais: any;
+  public integrantes: IntegranteConsolidado[] = [];
 
   public toolbarButtons: ToolbarButton[] = [
     {
@@ -80,7 +84,8 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
-   this.form = this.fh.FormBuilder({
+    this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
+    this.form = this.fh.FormBuilder({
       cpf: {default: ""}, 
     }, this.cdRef, this.validate);
   }
@@ -119,6 +124,13 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
           this.usuario = usuarios[0];
         }
 
+        this.integrantes = [];
+
+        if (this.usuario) {
+          const integrantesList = await this.integranteDao!.carregarIntegrantes("", this.usuario.id);
+          this.integrantes = integrantesList.integrantes.filter(integrante => integrante.atribuicoes?.length > 0);
+        }
+
         this.dao!.consultarSIAPE(cpf)
           .subscribe(
             result => {
@@ -138,6 +150,7 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
                       usuario: this.usuario,
                       dadosPessoais: result.pessoais,
                       dadosFuncionais: result.funcionais,
+                      integrantes: this.integrantes
                     }
                   }
                 );
