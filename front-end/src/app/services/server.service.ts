@@ -102,6 +102,9 @@ export class ServerService {
       if (err.status === 422) {
         return throwError(() => ({ validationErrors: err.error.errors })) as Observable<never>;
       }
+      if (err.status === 503) {
+        return throwError(() => ("Serviço temporariamente indisponível")) as Observable<never>;
+      }
     }
   
     // Retornar qualquer outro erro
