@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Facades\SiapeLog;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\SolucaoController;
@@ -62,6 +63,10 @@ class AppServiceProvider extends ServiceProvider
             return [
                 $this->app->make(SolucaoValidador::class),
             ];
+        });
+
+        $this->app->singleton('siape-log', function () {
+            return new SiapeLog;
         });
     }
 

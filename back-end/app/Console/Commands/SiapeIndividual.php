@@ -7,6 +7,7 @@ use App\Services\TenantConfigurationsService;
 use App\Services\TenantService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use App\Facades\SiapeLog;
 
 class SiapeIndividual extends Command
 {
@@ -37,7 +38,7 @@ class SiapeIndividual extends Command
 
         $cpf = $this->option('cpf');
 
-
+        SiapeLog::setImprimirNoTerminal(true);
         try {
             $tenantService = new TenantService();
             $tenantService->inicializeTenant($tenantId);

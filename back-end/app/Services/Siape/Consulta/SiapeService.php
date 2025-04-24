@@ -74,9 +74,10 @@ abstract class SiapeService extends SiapeBaseService {
             $response = Http::withHeaders($headers)
                 ->withBody($body->getXml(), 'application/xml')
                 ->retry(2, 1000) // 10 tentativas, 10.000ms (10s) entre elas
-                ->post($url);
+                ->post($url)
+                ->throw(false);
 
-            $response->throw(); // Lança exceção se falhar
+            //$response->throw(); // Lança exceção se falhar
 
             Log::info('Response: ' . $response->body());
 

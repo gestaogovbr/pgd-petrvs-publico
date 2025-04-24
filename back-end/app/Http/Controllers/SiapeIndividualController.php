@@ -11,27 +11,52 @@ class SiapeIndividualController extends ControllerBase
     }
 
     public function processaServidor(Request $request){
-        $data = $request->validate([
-            'cpf' => [],
-        ]);
+        $retorno = [
+            'success' => true,
+            'message' => 'Processamento concluído.',
+            'log' => null,
+        ];
+        try {
+            $data = $request->validate([
+                'cpf' => [],
+            ]);
+            
+            $this->service->processaServidor($data['cpf']);
+            $retorno['log'] = $this->getLogSiape();
+            return response()->json(
+                $retorno,
+                Response::HTTP_OK
+            );
+        } catch (\Exception $e) {
+            $retorno['success'] = false;
+            $retorno['message'] = $e->getMessage();
+            $retorno['log'] = $this->getLogSiape();
+            return response()->json($retorno, Response::HTTP_BAD_REQUEST);
+        }
+    }
 
-        return response()->json(
-            $this->service->processaServidor($data['cpf']),
-            Response::HTTP_OK
-        );
+    private function getLogSiape(array &$retorno){
+        $logPath = storage_path('logs/siape.log');
+        if (File::exists($logPath)) {
+            $linhas = explode("\n", File::get($logPath));
+            $ultimasLinhas = array_slice($linhas, -2000); 
+            $retorno['log'] = implode("\n", $ultimasLinhas);
+        }
     }
 
     public function consultaServidor(Request $request){
-        $data = $request->validate([
-            'cpf' => [],
-        ]);
+        try {
+            $data = $request->validate([
+                'cpf' => [],
+            ]);
 
-        $cpf = preg_replace('/[^0-9]/', '', $data['cpf']);
-
-        return response()->json(
-            $this->service->processaServidor($cpf),
-            Response::HTTP_OK
-        );
+            return response()->json(
+                $this->service->consultaServidor($data['cpf']),
+                Response::HTTP_OK
+            );
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
     }
 
     public function processaUnidade(Request $request){
