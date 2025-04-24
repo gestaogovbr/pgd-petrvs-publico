@@ -5,7 +5,7 @@ use App\Services\Siape\Consulta\XML\Body\SiapeBodyDadosPessoais;
 
 class SiapeDadosPessoaisService extends SiapeService {
 
-    public function getBody($params): SiapeBodyDadosPessoais {
+    public function getBody($params = []): SiapeBodyDadosPessoais {
         return new SiapeBodyDadosPessoais($params['cpf']);
     }
 

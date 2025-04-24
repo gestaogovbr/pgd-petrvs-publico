@@ -67,8 +67,7 @@ class UsuarioController extends ControllerBase
         return response()->json([
             'success' => true,
             'funcionais' => $retorno['funcionais'],
-            'pessoais' => $retorno['pessoais'],
-            'xml' => $retorno['xml'],
+            'pessoais' => $retorno['pessoais']
         ]);
     }
 

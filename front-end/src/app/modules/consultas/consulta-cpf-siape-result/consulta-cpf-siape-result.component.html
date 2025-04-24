@@ -3,63 +3,68 @@
 </div>
 
 <div class="consulta-cpf-siape-result">
-    <div class="dados-petrvs">
-        <div class="row" *ngIf="!usuario">
-            <div class="col-md-12">
-                <p class="subtitle">Nenhum usuário encontrado no Petrvs com o CPF informado.</p>
-            </div>
-        </div>
-        <div class="row" *ngIf="usuario">
-            <div class="col-md-12">
-                <p class="subtitle">
-                    <i class="bi bi-person"></i> Usuário encontrado no Petrvs
-                </p>
-            </div>
-            <separator></separator>
-            <div class="col-md-12">
-                <p><b>{{usuario.nome}}</b></p>
-                <p>Matrícula #{{usuario.matricula}}</p>
-                <p>
-                    <badge *ngFor="let integrante of integrantes" 
-                        color="primary" 
-                        [label]="integrante.unidade_codigo + ' - ' + integrante.unidade_sigla + ' (' + integrante.atribuicoes.join('/') + ')'"
-                    ></badge>
-                </p> 
-            </div>
-        </div>
-    </div>
-
-    <div class="dados-siape">
-        <div class="row" *ngIf="!dadosPessoais || !dadosFuncionais">
-            <div class="col-md-12">
-                <p class="subtitle">Dados não encontrados no SIAPE para o CPF informado.</p>
-            </div>
-        </div>
-        <div class="row" *ngIf="dadosPessoais && dadosFuncionais">
-            <div class="col-md-12">
-                <p class="subtitle">
-                    <i class="bi bi-cloud-arrow-down-fill"></i>
-                    Dados localizados no SIAPE
-                </p>
-            </div>
-            <separator></separator>
-            <div class="col-md-12">
-                <p><b>{{dadosPessoais.nome}}</b></p>
-            </div>
-            <div class="row" *ngFor="let dadoFuncional of dadosFuncionais">
-                <div class="col-md-12">
-                    <p>Matrícula: {{dadoFuncional.matriculaSiape}}</p>
-                    <p>
-                        <badge 
-                            color="primary" 
-                            [label]="dadoFuncional.codUorgExercicio + ' - ' + dadoFuncional.unidadeSigla"
-                        ></badge>
-                    </p>
+    <tabs display right>
+        <tab key="PRINCIPAL" label="Principal">
+            <div class="dados-petrvs">
+                <div class="row" *ngIf="!usuario">
+                    <div class="col-md-12">
+                        <p class="subtitle">Nenhum usuário encontrado no Petrvs com o CPF informado.</p>
+                    </div>
+                </div>
+                <div class="row" *ngIf="usuario">
+                    <div class="col-md-12">
+                        <p class="subtitle">
+                            <i class="bi bi-person"></i> Usuário encontrado no Petrvs
+                        </p>
+                    </div>
+                    <separator></separator>
+                    <div class="col-md-12">
+                        <p><b>{{usuario.nome}}</b></p>
+                        <p>Matrícula #{{usuario.matricula}}</p>
+                        <p>
+                            <span class="unidade" *ngFor="let integrante of integrantes">
+                                {{integrante.unidade_codigo + ' - ' + integrante.unidade_sigla + ' (' + integrante.atribuicoes.join('/') + ')'}}
+                            </span>
+                        </p> 
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <separator>
-        <toolbar [buttons]="toolbarButtons"></toolbar>
-    </separator>
+
+            <div class="dados-siape">
+                <div class="row" *ngIf="!dadosPessoais || !dadosFuncionais">
+                    <div class="col-md-12">
+                        <p class="subtitle">Dados não encontrados no SIAPE para o CPF informado.</p>
+                    </div>
+                </div>
+                <div class="row" *ngIf="dadosPessoais && dadosFuncionais">
+                    <div class="col-md-12">
+                        <p class="subtitle">
+                            <i class="bi bi-cloud-arrow-down-fill"></i>
+                            Dados localizados no SIAPE
+                        </p>
+                    </div>
+                    <separator></separator>
+                    <div class="col-md-12">
+                        <p><b>{{dadosPessoais.nome}}</b></p>
+                    </div>
+                    <div class="row" *ngFor="let dadoFuncional of dadosFuncionais">
+                        <div class="col-md-12">
+                            <p>Matrícula: {{dadoFuncional.matriculaSiape}}</p>
+                            <p>
+                                <span class="unidade">
+                                    {{dadoFuncional.codUorgExercicio + ' - ' + dadoFuncional.unidadeSigla}}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <separator>
+                <toolbar [buttons]="toolbarButtons"></toolbar>
+            </separator>
+        </tab>
+        <tab key="LOG" label="Log do Processamento">
+            <p>{{ log }}</p>
+        </tab>
+    </tabs>
 </div>

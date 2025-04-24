@@ -19,14 +19,22 @@ abstract class SiapeBody extends SiapeXMLElement
         $this->addConfig('siglaSistema');
         $this->addConfig('nomeSistema');
         $this->addConfig('senha');
+        $this->addCpf();
+        $this->addCodOrgao();
     }
 
     public function addConfig($key){
         $config = config("integracao")["siape"];
         $this->root->addChild($key, $config[$key]);
     }
+
     public function addCodOrgao(){
         $config = config("integracao")["siape"];
         $this->root->addChild('codOrgao', strval(intval($config['codOrgao'])));
+    }
+
+    public function addCpf(){
+        $config = config("integracao")["siape"];
+        $this->root->addChild('cpf', $config['cpf']);
     }
 }

@@ -9,7 +9,7 @@ abstract class SiapeBaseService {
     
     abstract public function getToken();
 
-    abstract public function getBody($params): SiapeBody;
+    abstract public function getBody($params = []): SiapeBody;
 
     abstract public function buscar($params): string|bool;
 }

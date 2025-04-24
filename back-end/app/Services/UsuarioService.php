@@ -23,6 +23,11 @@ use App\Services\Siape\Consulta\Resources\DadosPessoaisResource;
 use App\Services\Siape\Consulta\Resources\DadosFuncionaisResource;
 use App\Services\Siape\Consulta\SiapeDadosPessoaisService;
 use App\Services\Siape\Consulta\SiapeDadosFuncionaisService;
+use App\Models\SiapeDadosUORG;
+use App\Services\Siape\Consulta\Resources\UnidadeResource;
+use App\Services\Siape\Consulta\Resources\UnidadesResource;
+use App\Services\Siape\Consulta\SiapeUnidadeService;
+use App\Services\Siape\Consulta\SiapeUnidadesService;
 
 class UsuarioService extends ServiceBase
 {
@@ -463,8 +468,6 @@ class UsuarioService extends ServiceBase
       $data['fields'] = array_filter($data['fields'], fn($field) => $field !== 'usuario_externo');
 
       foreach ($rows as $row) {
-
-
           // Ajusta os campos para ordenação
           $orderFields = array_map(fn ($order) => str_replace(".", "_", $order[0]), $data['orderBy'] ?? []);
           $orderValues = array_map(fn ($field) => $row->$field ?? null, $orderFields);
@@ -486,11 +489,16 @@ class UsuarioService extends ServiceBase
   public function consultaCPFSiape(string $cpf): array{
 
     $dadosPessoaisService = new SiapeDadosPessoaisService();
-    $dadosPessoaisXml = $dadosPessoaisService->buscarCPF($cpf);
-
     $dadosFuncionaisService = new SiapeDadosFuncionaisService();
-    $dadosFuncionaisXml = $dadosFuncionaisService->buscarCPF($cpf);
+    $unidadesService = new SiapeUnidadesService();
+    $unidadeService = new SiapeUnidadeService();
 
+    $dadosPessoaisXml = $dadosPessoaisService->buscarCPF($cpf);
+    $dadosFuncionaisXml = $dadosFuncionaisService->buscarCPF($cpf);
+    $unidadesXml = $unidadesService->buscar();
+    //$unidadeXml = $unidadeService->buscarUnidade(1);
+
+    $unidades = (new UnidadesResource($unidadesXml))->toArray();
     $dadosPessoais = new DadosPessoaisResource($dadosPessoaisXml);
     $dadosFuncionais = new DadosFuncionaisResource($dadosFuncionaisXml);
 
@@ -502,13 +510,11 @@ class UsuarioService extends ServiceBase
       return $item;
     }, $dadosFuncionaisArray);
 
+    //$unidade = new UnidadeResource($unidadeXml);
+    
     return [
       'pessoais'    => $dadosPessoais->toArray(),
       'funcionais'  => $dadosFuncionaisArray,
-      'xml' => [
-        'pessoais'    => $dadosPessoaisXml,
-        'funcionais'  => $dadosFuncionaisXml
-      ]
     ];
   }
 }

@@ -18,6 +18,8 @@ abstract class SiapeResource
         $this->xmlElement->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
         $this->xmlElement->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
         $this->xmlElement->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
+        $this->xmlElement->registerXPathNamespace('ns2', 'http://entidade.wssiapenet');
+
 
         $this->data = $this->xmlElement->xpath($this->path);
     }

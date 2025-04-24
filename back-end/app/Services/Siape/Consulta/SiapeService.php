@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Siape\Consulta;
 
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Services\Siape\Consulta\Traits\SiapeConfig;
 use App\Services\Siape\Consulta\Traits\SiapeGetToken;
@@ -19,13 +20,13 @@ abstract class SiapeService extends SiapeBaseService {
     public function getHeaders() {
         $token = $this->getToken();
         return [
-            'x-cpf-usuario: ' . $this->getCpf(),
-            'Authorization: Bearer ' . $token,
-            'Content-Type: application/xml'
+            'x-cpf-usuario' => $this->getCpf(),
+            'Authorization' => 'Bearer ' . $token,
+            'Content-Type' => 'application/xml'
         ];
     }
 
-    public function buscar($params): string|bool {
+    /*public function buscar($params = []): string|bool {
 
         $body = $this->getBody($params);
         $headers = $this->getHeaders();
@@ -55,6 +56,34 @@ abstract class SiapeService extends SiapeBaseService {
         curl_close($curl);
         Log::info(' Response: ' . $response);
         return $response;
-    }
+    }*/
 
+    public function buscar($params = []): string|bool
+    {
+        $body = $this->getBody($params);
+        $headers = $this->getHeaders();
+
+        $url = $this->getUrl() . '/api-consulta-siape/v1/consulta-siape';
+
+        Log::info('Busca - Request para ' . $url, [
+            'headers' => $headers,
+            'body' => $body->getXml(),
+        ]);
+
+        try {
+            $response = Http::withHeaders($headers)
+                ->withBody($body->getXml(), 'application/xml')
+                ->retry(2, 1000) // 10 tentativas, 10.000ms (10s) entre elas
+                ->post($url);
+
+            $response->throw(); // Lança exceção se falhar
+
+            Log::info('Response: ' . $response->body());
+
+            return $response->body();
+        } catch (\Exception $e) {
+            Log::error('Erro na requisição: ' . $e->getMessage());
+            throw $e;
+        }
+    }
 }

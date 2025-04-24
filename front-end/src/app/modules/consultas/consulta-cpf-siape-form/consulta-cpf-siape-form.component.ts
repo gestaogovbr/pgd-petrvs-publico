@@ -28,59 +28,6 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
   public dadosFuncionais: any;
   public integrantes: IntegranteConsolidado[] = [];
 
-  public toolbarButtons: ToolbarButton[] = [
-    {
-      label: "Exportar",
-      icon: "bi bi-search",
-      onClick: () => {
-        let error: any = undefined;
-          try {
-            if (this.form.valid) {
-              const cpfControl = this.form.get('cpf') as FormControl;
-              const cpfValue: string = cpfControl.value as string;
-              this.loading = true;
-              this.dao!.exportarCPFSIAPE(cpfValue);
-            }
-          } catch (error: any) {
-            this.erros = error;
-          } finally {
-            this.loading = false;
-          }
-      
-      }
-    },
-    {
-      label: "Processar",
-      icon: "bi bi-gear",
-      onClick: async() => {
-        let error: any = undefined;
-        if (this.form.valid) {
-          let confirm = await this.dialog.confirm("ATENÇÃO", "CONFIRMA A SINCRONIZAÇÃO DO REFERIDO CPF?");
-          if (confirm) {
-            this.loading = false;
-            try {
-              this.dao!.sincronizarSIAPE(this.form.get('cpf')?.value)
-                .subscribe(
-                  complete => {
-
-                  },
-                  error => {
-                    console.log(error);
-                    this.error("Erro ao sincronizar dados: " + error.error?.message);
-                  }
-              )
-            } catch (error: any) {
-              console.log(error);
-              this.erros = error;
-            } finally {
-              this.loading = false;
-            }
-          }
-        }
-      }
-    }
-   ];
-
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);

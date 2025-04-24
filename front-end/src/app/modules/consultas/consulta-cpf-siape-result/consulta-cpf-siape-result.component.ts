@@ -10,6 +10,7 @@ import { NavigateResult } from 'src/app/services/navigate.service';
 import { PageFormBase } from '../../base/page-form-base';
 import { firstValueFrom } from 'rxjs';
 import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
+import { DialogService } from 'src/app/services/dialog.service';
 
 @Component({
   selector: 'consulta-cpf-siape-result',
@@ -21,16 +22,18 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
   public usuario?: Usuario|null;
   public unidadeDao: UnidadeDaoService;
   public erros: string = '';
+  public log: string = '';
 
   public cpf: string|null = null;
   public dadosPessoais: any;
   public dadosFuncionais: any;
   public integrantes: IntegranteConsolidado[] = [];
+  public dialog: DialogService;
 
   public toolbarButtons: ToolbarButton[] = [
     {
-      label: "Exportar",
-      icon: "bi bi-search",
+      label: "Baixar Dados",
+      icon: "bi bi-download",
       onClick: async() => {
         let error: any = undefined;
         this.loading = true;
@@ -77,23 +80,26 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
         let confirm = await this.dialog.confirm("ATENÇÃO", "CONFIRMA A SINCRONIZAÇÃO DO REFERIDO CPF?");
         if (confirm) {
           this.loading = true;
+          this.log = 'Processando...';
           try {
             this.dao!.sincronizarSIAPE(this.cpf as string)
               .subscribe(
-                complete => {
+                result => {
                   this.loading = false;
+                  this.dialog.alert("Sucesso", "Processamento concluído! Verifique o log de processamento");
+                  this.log = result;
                 },
                 error => {
                   this.loading = false;
                   console.log(error);
-                  this.error("Erro ao sincronizar dados: " + error.error?.message);
+                  this.log = error.error?.message;
+                  this.error("Erro ao processar CPF: " + error.error?.message);
                 }
             )
           } catch (error: any) {
+            this.loading = false;
             console.log(error);
             this.erros = error;
-          } finally {
-            this.loading = false;
           }
         }
       }
@@ -102,6 +108,7 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
 
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
+    this.dialog = this.injector.get<DialogService>(DialogService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
   }
 
