@@ -426,6 +426,9 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			"==",
 			this.filter!.controls.subordinadas.value,
 		]);
+		if (this.filter!.controls.meus_planos.value)
+			result.push(["usuario.id", "==", this.auth.usuario?.id]);
+
 		return result;
 	};
 
@@ -444,6 +447,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 
 
 	public onLotadosMinhaUnidadeChange(event: Event) {
+		this.disableLotados();
 		this.grid!.reloadFilter();
 	}
 
@@ -897,11 +901,12 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		// Se "Unidades Subordinadas" está ativado, desativa "Meus Planos"
 		if (this.filter.controls.subordinadas.value) {
 			this.filter.controls.meus_planos.setValue(false);
+			this.filter.controls.lotados_minha_unidade.setValue(false);
 		} else {
 			this.filter.controls.meus_planos.setValue(true);
 		}
 
-		this.grid?.reloadFilter();
+		this.grid!.reloadFilter();
 	}
 
 	public disableSub() {
@@ -913,12 +918,28 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		// Se "Meus Planos" está ativado, desativa "Unidades Subordinadas"
 		if (this.filter.controls.meus_planos.value) {
 			this.filter!.controls.subordinadas.setValue(false);
-			this.filter!.controls.principais.setValue(false);
+			this.filter!.controls.lotados_minha_unidade.setValue(false);
 		} else {
 			this.filter!.controls.subordinadas.setValue(true);
 
 		}
 
-		this.grid?.reloadFilter();
+		this.grid!.reloadFilter();
+	}
+
+	public disableLotados() {
+		if (!this.filter || !this.filter.controls.subordinadas || !this.filter.controls.meus_planos || !this.filter.controls.lotados_minha_unidade) {
+			console.warn("Formulário ou controles não inicializados corretamente.");
+			return;
+		}
+
+		if (this.filter.controls.lotados_minha_unidade.value) {
+			this.filter.controls.meus_planos.setValue(false);
+			this.filter!.controls.subordinadas.setValue(false);
+		} else {
+			this.filter.controls.meus_planos.setValue(true);
+		}
+
+		this.grid!.reloadFilter();
 	}
 }
