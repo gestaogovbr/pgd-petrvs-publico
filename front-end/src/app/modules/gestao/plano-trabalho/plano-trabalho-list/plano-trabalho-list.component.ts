@@ -448,7 +448,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 
 	public onLotadosMinhaUnidadeChange(event: Event) {
 		this.disableLotados();
-		this.grid!.reloadFilter();
+		//this.grid!.reloadFilter();
 	}
 
 	public dynamicMultiselectMenu = (
@@ -906,7 +906,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			this.filter.controls.meus_planos.setValue(true);
 		}
 
-		this.grid!.reloadFilter();
+		//this.grid!.reloadFilter();
 	}
 
 	public disableSub() {
@@ -924,7 +924,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 
 		}
 
-		this.grid!.reloadFilter();
+		//this.grid!.reloadFilter();
 	}
 
 	public disableLotados() {
@@ -940,6 +940,6 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			this.filter.controls.meus_planos.setValue(true);
 		}
 
-		this.grid!.reloadFilter();
+		//this.grid!.reloadFilter();
 	}
 }

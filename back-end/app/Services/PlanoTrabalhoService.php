@@ -113,14 +113,25 @@ class PlanoTrabalhoService extends ServiceBase
 
             // Se houver IDs, adiciona a condição unificada
             if (!empty($unidadeIds)) {
-                // Se for array de arrays (ex: [[...], [...]])
-                if (isset($unidadeIds[0]) && is_array($unidadeIds[0])) {
-                    $unidadeIds = array_merge(...$unidadeIds); // achata
+                // Filtra somente os elementos que são arrays (evita strings perdidas)
+                $arraysSomente = array_filter($unidadeIds, 'is_array');
+
+                if (!empty($arraysSomente)) {
+                    // Achata apenas os arrays válidos
+                    $unidadeIds = array_merge(...$arraysSomente);
                 }
 
-                // Agora sim é seguro usar:
-                $data["where"][] = ['unidade_id', 'in', array_values(array_unique($unidadeIds))];
+                // Agora $unidadeIds pode conter valores de strings soltas + os mesclados
+                // Então garantimos que tudo seja um array plano e único
+                $unidadeIds = array_unique(
+                    array_merge(
+                        is_array($unidadeIds) ? $unidadeIds : [$unidadeIds]
+                    )
+                );
+
+                $data["where"][] = ['unidade_id', 'in', array_values($unidadeIds)];
             }
+
 
 
         }
