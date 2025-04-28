@@ -1,5 +1,6 @@
 ## 2.3.17 25/04/2025
-
+### Corrigido
+ - Horário de vigência do Plano de trabalho, não é mais considerado.
 ## 2.3.16 16/04/2025
 ### Corrigido
  - Path do plugin Tinymce 
