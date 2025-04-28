@@ -92,12 +92,18 @@ export class ServerService {
 
   public errorHandle(err: any, caught: Observable<Object>): Observable<never> {
     if (err instanceof HttpErrorResponse) {
+
       if ([419, 401].includes(err.status)) {
-        this.auth.logOut();
+        if (this.auth.logged) {
+          this.auth.logOut();
+        }
       }
   
       if (err.status === 422) {
         return throwError(() => ({ validationErrors: err.error.errors })) as Observable<never>;
+      }
+      if (err.status === 503) {
+        return throwError(() => ("Serviço temporariamente indisponível")) as Observable<never>;
       }
     }
   

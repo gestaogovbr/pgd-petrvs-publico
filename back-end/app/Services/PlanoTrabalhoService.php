@@ -75,7 +75,7 @@ class PlanoTrabalhoService extends ServiceBase
             $data["where"][] = ['unidade_id', 'in', array_unique($ids)];
 
         }
-        if ($subordinadas[2]) { // Verifica se o índice existe
+        if (isset($subordinadas[2])) { // Verifica se o índice existe
             $unidadeService = new UnidadeService();
 
             // Define $uId corretamente, verificando a existência do índice
@@ -517,11 +517,11 @@ class PlanoTrabalhoService extends ServiceBase
                 'gestorUnidadeSuperior' => [
                     'gestor' => $gestoresUnidadeSuperior["gestor"]?->id == $logado->id,
                     'gestorSubstituto' => count(array_filter(
-                        $gestoresUnidadeSuperior["gestoresSubstitutos"], 
+                        $gestoresUnidadeSuperior["gestoresSubstitutos"],
                         fn($value) => $value !== null && isset($value["id"]) && $value["id"] == $logado->id
-                    )) > 0,                    
+                    )) > 0,
                     'gestorDelegado' => count(array_filter(
-                        $gestoresUnidadeSuperior["gestoresDelegados"] ?? [], 
+                        $gestoresUnidadeSuperior["gestoresDelegados"] ?? [],
                         fn($value) => $value !== null && isset($value["id"]) && $value["id"] == $logado->id
                     )) > 0
                 ],
