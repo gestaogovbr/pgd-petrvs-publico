@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 class PerfilService extends ServiceBase {
 
     public $perfis = [
-        [0, "Perfil Desenvolvedor", "Perfil de Desenvolvedor - todas as permissões"],
+        [0, "Perfil Desenvolvedor", "Representantes do órgão Central do Siorg"],
         [1, "Perfil Administrador Master", "Representantes da unidade autorizadora"],
         [2, "Perfil Administrador Negocial", "Representantes de unidades instituidoras"],
         [3, "Perfil Unidade", "Representantes de unidades executoras"],
