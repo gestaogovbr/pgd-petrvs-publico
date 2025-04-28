@@ -1,5 +1,7 @@
 ## 2.3.17 25/04/2025
 ### Corrigido
+ - Horário de vigência do Plano de trabalho, não é mais considerado.
+### Corrigido
  - Listagem de Registros de Execução
  - Ajustado erro que removia a matrícula SIAPE ao alterar o usuário
 ### Modificado
