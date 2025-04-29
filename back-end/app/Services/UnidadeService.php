@@ -202,13 +202,25 @@ class UnidadeService extends ServiceBase
      */
     public function lotados($unidadeId): array
     {
-        // TODO: fazer validacao
         if ($this->hasBuffer("lotados", $unidadeId)) {
             return $this->getBuffer("lotados", $unidadeId);
-        } else {
-            return $this->setBuffer("lotados", $unidadeId, Unidade::with("lotados")->find($unidadeId)?->lotados->map(fn($integrante) => $integrante->usuario)->all() ?? []);
         }
+
+        $result = Unidade::with("lotados.usuario")
+            ->find($unidadeId)?->lotados
+            ->map(fn($integrante) => $integrante->usuario)
+            ->all() ?? [];
+
+        $usuarios = [];
+        foreach ($result as $usuario) {
+            if (!is_null($usuario)) {
+                $usuarios[] = $usuario;
+            }
+        }
+
+        return $this->setBuffer("lotados", $unidadeId, $usuarios);
     }
+
 
     /**
      * Retorna os dados acerca dos Planos de Trabalho de uma Unidade, associados a um determinado Programa,
