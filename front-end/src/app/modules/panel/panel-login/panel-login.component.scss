@@ -1,22 +1,24 @@
 /* Estilo base */
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.login-content {
-  max-width: 400px;
-  width: 100%;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box; /* Garante que a largura inclua padding e borda */
-}
 
 .form-group {
   margin-bottom: 20px;
+}
+
+.form-panel-login {
+  opacity: 0; /* Inicialmente invisível */
+  transform: translateY(-20px); /* Posição inicial */
+  animation: slideIn 0.6s ease-out forwards; /* Animação de deslizamento */
+}
+
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px); /* Começa de cima */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0); /* Termina na posição original */
+  }
 }
 
 label {
@@ -30,6 +32,7 @@ input[type="password"] {
   border: 1px solid #ccc;
   border-radius: 5px;
   box-sizing: border-box; /* Garante que a largura inclua padding e borda */
+  transition: all 0.3s ease-in-out;
 }
 
 .btn-login {
@@ -40,21 +43,42 @@ input[type="password"] {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
 }
 
 .btn-login:hover {
   background-color: #0056b3;
 }
 
-/* Mídia queries para tornar o formulário responsivo */
-@media (max-width: 768px) {
-  .login-content {
-    max-width: 90%;
+
+.btn-full {
+  width: 100%;
+}
+
+.login-logo {
+  height: 150px;
+}
+
+.logos {
+  position: absolute;
+  z-index: 2;
+  padding: 30px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: inherit;
+  width: 100%;
+  bottom: 0;
+  right: 0;
+  img {
+    max-height: 50px;
   }
 }
 
-@media (max-width: 576px) {
-  .login-content {
-    padding: 10px;
-  }
+.logo-pgd {
+  max-height: 50px;
+  margin-right: 10px;
+}
+
+.logo-petrvs {
+  max-height: 50px;
 }

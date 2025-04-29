@@ -1756,33 +1756,26 @@ class In24_2023Seeder extends Seeder
     //   TipoAvaliacaoJustificativa::firstOrCreate(['id' => $tipo_avaliacao_justificativa['id']], $tipo_avaliacao_justificativa);
     // }
 
-    foreach ($tipos_documentos as $tipo_documento) {
-      TipoDocumento::firstOrCreate(['id' => $tipo_documento['id']], $tipo_documento);
-    }
-
+    TipoDocumento::upsert($tipos_documentos, ['id']);
+   
     foreach ($templates as $template) {
-      Template::firstOrCreate(['id' => $template['id']], $template);
+      try {
+        Template::firstOrCreate(['id' => $template['id']], $template);
+      } catch (\Illuminate\Database\QueryException $e) {
+        // Handle exception
+      }
+      
     }
 
-    // foreach ($programas as $programa) {
-    //   Programa::firstOrCreate(['id' => $programa['id']], $programa);
-    // }
-
-    // foreach ($eixos_tematicos as $eixo_tematico) {
-    //   EixoTematico::firstOrCreate(['id' => $eixo_tematico['id']], $eixo_tematico);
-    // }
 
     foreach ($modelos_afericao_entregas as $modelo_afericao_entrega) {
-      Entrega::firstOrCreate(['id' => $modelo_afericao_entrega['id']], $modelo_afericao_entrega);
+      try {
+        Entrega::firstOrCreate(['id' => $modelo_afericao_entrega['id']], $modelo_afericao_entrega);
+      } catch (\Illuminate\Database\QueryException $e) {
+        // Handle exception
+      }
     }
 
-    // foreach ($planejamentos as $planejamento) {
-    //   Planejamento::firstOrCreate(['id' => $planejamento['id']], $planejamento);
-    // }
-
-    // foreach ($planejamentos_objetivos as $planejamento_objetivo) {
-    //   PlanejamentoObjetivo::firstOrCreate(['id' => $planejamento_objetivo['id']], $planejamento_objetivo);
-    // }
 
   }
 }

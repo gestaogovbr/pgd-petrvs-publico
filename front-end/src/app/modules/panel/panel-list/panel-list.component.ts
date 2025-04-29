@@ -21,41 +21,6 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 
 	public toolbarButtons: ToolbarButton[] = [
 		{
-			icon: "bi bi-bootstrap-reboot",
-			label: "Reset Queues",
-			onClick: this.resetQueues.bind(this)
-		},
-		{
-			icon: "bi bi-eye-fill",
-			label: "Ver Logs",
-			onClick: () => this.go.navigate({route: ["panel", "logs2"]}),
-		},
-
-		{
-			icon: "bi bi-file-earmark-code-fill",
-			label: "Dados ENV",
-			onClick: () => this.go.navigate({route: ["panel", "env"]}),
-		},
-		{
-			icon: "bi bi-database-add",
-			label: "Executar Migrations",
-
-			onClick: this.executaMigrations.bind(this),
-		},
-
-		{
-			icon: "bi-database-fill-gear",
-			label: "Executar Seeder",
-			onClick: (tenant: Tenant) =>
-				this.go.navigate({route: ["panel", "seeder"]}),
-		},
-		{
-			icon: "bi-database-fill-gear",
-			label: "Job Agendados",
-			onClick: (tenant: Tenant) =>
-				this.go.navigate({route: ["panel", "job-agendados"]}),
-		},
-		{
 			icon: "bi bi-plus",
 			label: "Inserir Tenant",
 			color: "btn-success",
@@ -267,7 +232,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 				}
 			});
 	}
-	public executaMigrations(row: any) {
+		public executaMigrations(row: any) {
 		const self = this;
 		this.dialog
 			.confirm(
@@ -346,31 +311,6 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 			.then((confirm) => {
 				if (confirm) {
 					this.dao!.seeders(row)
-						.then(function () {
-							self.dialog.alert("Sucesso", "Migration executada com sucesso!");
-						})
-						.catch(function (error) {
-							self.dialog.alert(
-								"Erro",
-								"Erro ao executar a migration: " + error?.message
-									? error?.message
-									: error
-							);
-						});
-				}
-			});
-	}
-
-	public executaMigrationTenant(row: any) {
-		const self = this;
-		this.dialog
-			.confirm(
-				"Executar Migration?",
-				"Deseja realmente executar as migrations?"
-			)
-			.then((confirm) => {
-				if (confirm) {
-					this.dao!.tiposCapacidadesSeeder(row)
 						.then(function () {
 							self.dialog.alert("Sucesso", "Migration executada com sucesso!");
 						})
@@ -509,12 +449,12 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 				if (confirm) {
 					this.dao!.deleteTenant(row)
 						.then(function () {
-							self.dialog.alert("Sucesso", "Migration executada com sucesso!");
+							self.dialog.alert("Sucesso", "Tenant removido com sucesso!");
 						})
 						.catch(function (error) {
 							self.dialog.alert(
 								"Erro",
-								"Erro ao executar a migration: " + error?.message
+								"Erro ao remover o Tenant: " + error?.message
 									? error?.message
 									: error
 							);
