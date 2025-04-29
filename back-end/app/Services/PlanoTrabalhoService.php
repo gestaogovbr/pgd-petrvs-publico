@@ -63,12 +63,14 @@ class PlanoTrabalhoService extends ServiceBase
     public function proxyQuery($query, &$data)
     {
         $where = [];
+        $ids = [];
         // (RI_PTR_C) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de trabalho não arquivados.
         $arquivados = $this->extractWhere($data, "incluir_arquivados");
         $subordinadas = $this->extractWhere($data, "incluir_subordinadas");
         // (RN_PTR_I) Quando a Unidade Executora não for a unidade de lotação do servidor, seu gestor imediato e seus substitutos devem ter acesso ao seu Plano de Trabalho (e à sua execução);
         $lotadosMinhaUnidade = $this->extractWhere($data, "lotados_minha_unidade");
-        if (empty($arquivados) || !$arquivados[2]) $data["where"][] = ["data_arquivamento", "==", null];
+        if (!isset($arquivados[2]) || !$arquivados[2])
+            $data["where"][] = ["data_arquivamento", "==", null];
         $unidadeId = $this->extractWhere($data, "unidade_id");
         if (is_array($unidadeId) && isset($unidadeId[2])) {
             $ids[] = $unidadeId[2];
@@ -100,7 +102,7 @@ class PlanoTrabalhoService extends ServiceBase
             $unidadeIds = [];
 
             foreach ($data["where"] as $key => $where) {
-                if ($where[0] === 'unidade_id') {
+                if (is_array($where) && isset($where[0], $where[1]) && $where[0] === 'unidade_id') {
                     if ($where[1] === '==') {
                         $unidadeIds[] = $where[2]; // Adiciona o valor único
                         unset($data["where"][$key]); // Remove a condição original
@@ -117,7 +119,8 @@ class PlanoTrabalhoService extends ServiceBase
             }
         }
         foreach ($data["where"] as $condition) {
-            if (is_array($condition) && $condition[0] == "data_filtro") {
+            if (is_array($condition) && isset($condition[0], $condition[2]) && $condition[0] == "data_filtro") {
+
                 $dataInicio = $this->getFilterValue($data["where"], "data_filtro_inicio");
                 $dataFim = $this->getFilterValue($data["where"], "data_filtro_fim");
                 switch ($condition[2]) {
@@ -140,7 +143,7 @@ class PlanoTrabalhoService extends ServiceBase
                         $where[] = ["data_fim", "<=", $dataFim];
                         break;
                 }
-            } else if (!(is_array($condition) && in_array($condition[0], ["data_filtro_inicio", "data_filtro_fim"]))) {
+            } else if (!(is_array($condition) && isset($condition[0]) && in_array($condition[0], ["data_filtro_inicio", "data_filtro_fim"]))){
                 array_push($where, $condition);
             }
         }
