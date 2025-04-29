@@ -38,6 +38,8 @@ class SiapeIndividual extends Command
 
         $cpf = $this->option('cpf');
 
+        $unidade = $this->option('unidade');
+
         SiapeLog::setImprimirNoTerminal(true);
         try {
             $tenantService = new TenantService();
@@ -47,7 +49,12 @@ class SiapeIndividual extends Command
             $tenantConfigurations->handle($tenantId);
 
             $service = new SiapeIndividualService();
-            $service->processaServidor($cpf);
+            if($cpf){
+                $service->processaServidor($cpf);
+            }
+            if($unidade){
+                $service->processaUnidade($unidade);
+            }
             $this->info('Job executado com sucesso.');
         } catch (\Throwable $th) {
             Log::error($th->getMessage(), [$th]);

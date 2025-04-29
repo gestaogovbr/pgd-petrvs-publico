@@ -30,6 +30,8 @@ class SiapeIndividualServidorService extends ServiceBase
 
     public function fluxoSiape(string $cpf, SiapeIndividualService $service)
     {
+        SiapeLog::info('Iniciando o processo de sincronização cpf #:' . $cpf);
+        
         $this->service = $service;
 
         SiapeLog::info('Limpando tabelas de controle do SIAPE para o cpf');

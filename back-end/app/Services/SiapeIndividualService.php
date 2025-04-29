@@ -48,6 +48,13 @@ class SiapeIndividualService extends ServiceBase
         return $this->SiapeIndividualServidorService->fluxoSiape($cpf, $this);
     }
 
+    public function processaUnidade(string $codUnidade)
+    {
+        $this->limpaLogSiape($codUnidade);
+
+        return $this->SiapeIndividualUnidadeService->fluxoSiape($codUnidade, $this);
+    }
+
     private function inicializaClassesNecessarias()
     {
         $this->config = config("integracao")["siape"];
@@ -66,7 +73,6 @@ class SiapeIndividualService extends ServiceBase
             File::put($logPath, '');
         }
 
-        SiapeLog::info('Iniciando o processo de sincronização cpf #:' . $cpf);
 
     }
 

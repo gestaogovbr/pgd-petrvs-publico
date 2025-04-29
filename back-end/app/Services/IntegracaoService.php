@@ -31,6 +31,7 @@ use App\Services\Siape\Servidor\Integracao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Facades\SiapeLog;
+use stdClass;
 
 class IntegracaoService extends ServiceBase
 {
@@ -529,7 +530,7 @@ class IntegracaoService extends ServiceBase
         ], fn ($o) => intval(substr($o, 0, strpos($o, 'unidade') - 1)) > 0)];
         // Unidades que foram removidas em integracao_unidades vão permanecer no sistema por questões de integridade.
       } catch (Throwable $e) {
-        SiapeLog::info(sprintf("Erro ao importar unidades: %s", $e->getMessage()), throwableToArray($e));
+        SiapeLog::info(sprintf("Erro ao importar unidades: %s", $e->getMessage()));
         LogError::newError("Erro ao importar unidades", $e);
         $this->result['unidades']['Resultado'] = 'ERRO: ' . $e->getMessage();
       }
@@ -669,7 +670,8 @@ class IntegracaoService extends ServiceBase
           // $unidadeExercicioRaizId = $unidadeExercicioRaiz->id;
           if (!empty($atualizacoesDados)) {
             foreach ($atualizacoesDados as $linha) {
-              SiapeLog::info("Atualizando dados do servidor: ", [json_encode($linha)]);
+              
+              SiapeLog::info("Atualizando dados do servidor CPF: ".$linha->cpf_servidor);
 
               $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->cpf_servidor);
 

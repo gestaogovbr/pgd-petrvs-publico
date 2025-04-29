@@ -5,6 +5,7 @@ namespace App\Services\Siape;
 use App\Exceptions\ErrorDataSiapeException;
 use App\Exceptions\ErrorDataSiapeFaultCodeException;
 use App\Exceptions\RequestConectaGovException;
+use App\Facades\SiapeLog;
 use App\Models\SiapeBlackListServidores;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
@@ -83,7 +84,6 @@ class ProcessaDadosSiapeBD
             report($e);
             Log::channel('siape')->error("Falha nos dados funcionais:", [$dadosPessoais]);
             throw new ErrorDataSiapeException("Falha ao tratar dados pessoais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape.log");
-      
         }
     }
 
@@ -146,7 +146,13 @@ class ProcessaDadosSiapeBD
             try {
                 $dadosUorg = $this->processaDadosUorg($dadosUnidades->response);
             } catch (Exception $e) {
-                Log::error('Erro ao processar XML da Unidade', [$e->getMessage()]);
+                report($e);
+                SiapeLog::error('Erro ao processar XML da Unidade: '.$e->getMessage(), [$dadosUnidades->response]);
+                continue;
+            }
+
+            if(is_null($dadosUorg)) {
+                SiapeLog::error('Retorno nulo do array: ', [$dadosUnidades->response]);
                 continue;
             }
 
