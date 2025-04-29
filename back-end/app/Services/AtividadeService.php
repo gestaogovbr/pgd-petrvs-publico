@@ -68,7 +68,7 @@ class AtividadeService extends ServiceBase
     (RN_ATV_5) A atividade deverá ter perído compatível com o do plano de trabalho (Data de distribuição e Prazo de entrega devem estar dentro do período do plano de trabalho)
     (RN_ATV_6) Somente será permitido iniciar a atividade dentro do período do plano de trabalho.
     */        
-    public function validatePeriodo($action, $id, $planoTrabalhoId, $planoTrabalhoEntregaId, $dataDistribuicao, $dataEstipuladaEntrega, $dataInicio) {
+    public function validatePeriodo($action, $id, $planoTrabalhoId, $planoTrabalhoEntregaId, $dataDistribuicao, $dataEstipuladaEntrega, $dataInicio, $dataEntrega) {
         $entrega = PlanoTrabalhoEntrega::find($planoTrabalhoEntregaId);
         if(empty($entrega)) throw new ServerException("ValidateAtividade", "Entrega não encontra");
         if($entrega->plano_trabalho_id != $planoTrabalhoId) throw new ServerException("ValidateAtividade", "Entrega não pertence ao plano de trabalho selecionado");
@@ -77,7 +77,31 @@ class AtividadeService extends ServiceBase
             $query->where('data_inicio', '<=', $dataEstipuladaEntrega);
             $query->where('data_fim', '>=', $dataDistribuicao);
         }])->find($planoTrabalhoId);
-        if(!empty($dataInicio) && (UtilService::asTimestamp($dataInicio) < UtilService::asTimestamp($plano->data_inicio) || UtilService::asTimestamp($dataInicio) > UtilService::asTimestamp($plano->data_fim))) throw new ServerException("ValidateAtividade", "A inicialização da atividade não pode ser anterior ou posterior ao plano de trabalho. (Plano de trabalho: " . UtilService::getDateTimeFormatted($plano->data_inicio) . " - " . UtilService::getDateTimeFormatted($plano->data_fim) . ")\n[RN_ATV_6]");
+        if (!empty($dataInicio)) {
+            $dataInicioFormatada = date('Y-m-d', strtotime($dataInicio));
+            $dataEntregaFormatada = date('Y-m-d', strtotime($dataEntrega));
+            $dataInicioPlano = date('Y-m-d', strtotime($plano->data_inicio));
+            $dataFimPlano = date('Y-m-d', strtotime($plano->data_fim));
+        
+            $periodoPlanoFormatado = "Plano de trabalho: " .
+            UtilService::getDateFormatted($plano->data_inicio) . " - " .
+            UtilService::getDateFormatted($plano->data_fim);
+        
+            if ($dataInicioFormatada < $dataInicioPlano || $dataInicioFormatada > $dataFimPlano) {
+                throw new ServerException(
+                    "ValidateAtividade",
+                    "A inicialização da atividade não pode ser anterior ou posterior ao plano de trabalho. ($periodoPlanoFormatado)"
+                );
+            }
+            
+            if ($dataEntregaFormatada < $dataInicioPlano || $dataEntregaFormatada > $dataFimPlano) {
+                throw new ServerException(
+                    "ValidateAtividade",
+                    "A entrega da atividade não pode ser anterior ou posterior ao plano de trabalho. ($periodoPlanoFormatado)"
+                );
+            }
+        }
+        
         if(UtilService::asTimestamp($plano->data_inicio) > UtilService::asTimestamp($dataDistribuicao) || UtilService::asTimestamp($plano->data_fim) < UtilService::asTimestamp($dataEstipuladaEntrega)) throw new ServerException("ValidateAtividade", "Data da atividade extrapola a do plano de trabalho. (Plano de trabalho: " . UtilService::getDateTimeFormatted($plano->data_inicio) . " - " . UtilService::getDateTimeFormatted($plano->data_fim) . ")\n[RN_ATV_5]");
         foreach($plano->consolidacoes as $concluida) {
             if($action == ServiceBase::ACTION_INSERT || !PlanoTrabalhoConsolidacaoAtividade::where("plano_trabalho_consolidacao_id", $concluida->id)->where("atividade_id", $id)->exists()) throw new ServerException("ValidateAtividade", "Não será possível lançar novas atividades em períodos já CONCLUIDO ou AVALIADO.\n[ver RN_CSLD_14]");
@@ -93,7 +117,7 @@ class AtividadeService extends ServiceBase
             throw new ServerException("ValidateAtividade", $unidade->sigla . " não é uma unidade do usuário logado nem subordinada a ele.");
         }
         if(!empty($data["plano_trabalho_id"])) {
-            $this->validatePeriodo($action, $data["id"] ?? "", $data["plano_trabalho_id"], $data["plano_trabalho_entrega_id"], $data["data_distribuicao"], $data["data_estipulada_entrega"], $data["data_inicio"]);
+            $this->validatePeriodo($action, $data["id"] ?? "", $data["plano_trabalho_id"], $data["plano_trabalho_entrega_id"], $data["data_distribuicao"], $data["data_estipulada_entrega"], $data["data_inicio"], $data["data_entrega"]);
             $planoTrabalho = PlanoTrabalho::find($data["plano_trabalho_id"]);
             if($planoTrabalho->unidade_id != $data["unidade_id"]) {
                 throw new ServerException("ValidateAtividade", "Unidade do plano diverge da unidade da atividade");
