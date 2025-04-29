@@ -9,6 +9,7 @@ import { ConfigComponent } from './modules/config/config.component';
 import { DialogComponent } from './services/dialog/dialog.component';
 import { SpinnerOverlayComponent } from './services/spinner-overlay/spinner-overlay.component';
 import { ComponentsModule } from './components/components.module';
+import { TesteImpersonateComponent } from './modules/teste/teste-impersonate/teste-impersonate.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LogModule } from './modules/logs/log.module';
 import { UteisModule } from './modules/uteis/uteis.module';
@@ -22,7 +23,8 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
     LoginComponent,
     ConfigComponent,
     DialogComponent,
-    SpinnerOverlayComponent
+    SpinnerOverlayComponent,
+    TesteImpersonateComponent,
   ],
   imports: [
     BrowserModule,
