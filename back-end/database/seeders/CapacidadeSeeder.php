@@ -355,6 +355,9 @@ class CapacidadeSeeder extends Seeder
     $capacidades_administrador_geral = array_merge($capacidades_administrador_negocial, [
       ["codigo" => "CTXT_DEV"],
       ["codigo" => "MOD_DEV_TUDO"],
+      ["codigo" => "MENU_DEV_ACESSO"],
+      ["codigo" => "MENU_DEV_CONSULTAS"],
+      ["codigo" => "MOD_CFG_PERFS"],
       ["codigo" => "MENU_CONFIG_ACESSO"],
       ["codigo" => "MENU_DEV_ACESSO"],
       ["codigo" => "MENU_DEV_CONSULTAS"],
