@@ -183,36 +183,8 @@ export class AppComponent {
       LOGS_TRAFEGOS: { name: "Log do Tráfego", permition: '', route: ['logs', 'traffic'], icon: this.entity.getIcon('Traffic') },
       LOGS_ENVIOS: { name: "Log dos Envios à API PGD", permition: '', route: ['logs', 'envios'], icon: this.entity.getIcon('Envio') },
       DEV_CPF_CONSULTA_SIAPE: { name: "Consulta CPF SIAPE", permition: '', route: ['consultas', 'cpf-siape'], icon: this.entity.getIcon('ConsultaCPFSIAPE') },
-      DEV_UNIDADE_CONSULTA_SIAPE: { name: "Consulta Unidade SIAPE", permition: '', route: ['consultas', 'unidade-siape'], icon: this.entity.getIcon('ConsultaUnidadeSIAPE') },
-      /* RaioX - Curriculum */
-      CURRICULUM_CADASTRO_PESSOAL: { name: this.lex.translate("Dados Pessoais"), permition: 'MOD_RX_CURR', route: ['raiox', 'pessoal'], icon: "bi bi-file-person" },
-      CURRICULUM_CADASTRO_PROFISSIONAL: { name: this.lex.translate("Dados Profissionais"), permition: 'MOD_RX_CURR', route: ['raiox', 'profissional'], icon: "fa fa-briefcase" },
-      CURRICULUM_CADASTRO_ATRIBUTOS: { name: this.lex.translate("Atributos Comportamentais"), permition: 'MOD_RX_CURR', route: ['raiox', 'atributos'], icon: "fa fa-brain" },
-      CURRICULUM_CADASTRO_ATRIBUTOS_SOFTSKILLS: { name: this.lex.translate("Soft Skills"), permition: 'MOD_RX_CURR', route: ['raiox', 'teste'], icon: "fa fa-brain" },
-      CURRICULUM_CADASTRO_ATRIBUTOS_B5: { name: this.lex.translate("Big Five - B5"), permition: 'MOD_RX_CURR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
-      CURRICULUM_CADASTRO_ATRIBUTOS_DASS: { name: this.lex.translate("DASS"), permition: 'MOD_RX_CURR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
-      CURRICULUM_CADASTRO_ATRIBUTOS_SRQ20: { name: this.lex.translate("SRQ-20"), permition: 'MOD_RX_CURR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
-      CURRICULUM_CADASTRO_ATRIBUTOS_QVT: { name: this.lex.translate("QVT"), permition: 'MOD_RX_CURR', route: ['raiox', 'qvt'], icon: "" },
-      /* RaioX - Oportunidades */
-      CURRICULUM_OPORTUNIDADES: { name: this.lex.translate("Oportunidades"), permition: 'MOD_RX_OPO', route: ['raiox'], icon: "bi bi-lightbulb-fill" },
-      /* RaioX - Outros */
-      CURRICULUM_CADASTRO_AREAS_ATIVIDADES_EXTERNAS: { name: this.lex.translate("Áreas de Atividade Externa"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'area-atividade-externa'], icon: "bi bi-arrows-fullscreen" },
-      CURRICULUM_CADASTRO_AREAS_CONHECIMENTO: { name: this.lex.translate("Áreas de Conhecimento"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'area-conhecimento'], icon: "bi bi-mortarboard" },
-      CURRICULUM_CADASTRO_AREAS_TEMATICAS: { name: this.lex.translate("Áreas Temáticas"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'area-tematica'], icon: "bi bi-box-arrow-in-down" },
-      CURRICULUM_CADASTRO_CAPACIDADES_TECNICAS: { name: this.lex.translate("Capacidades Técnicas"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'capacidade-tecnica'], icon: "bi bi-arrows-angle-contract" },
-      CURRICULUM_CADASTRO_CARGOS: { name: this.lex.translate("Cargos"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'cargo'], icon: "bi bi-person-badge" },
-      CURRICULUM_CADASTRO_CENTROS_TREINAMENTO: { name: this.lex.translate("Centros de Treinamento"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'centro-treinamento'], icon: "bi bi-building-fill" },
-      CURRICULUM_CADASTRO_CURSOS: { name: this.lex.translate("Cursos"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'curso'], icon: "bi bi-mortarboard-fill" },
-      CURRICULUM_CADASTRO_FUNCAO: { name: this.lex.translate("Funções"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'funcao'], icon: "bi bi-check-circle-fill" },
-      CURRICULUM_CADASTRO_GRUPOS_ESPECIALIZADOS: { name: this.lex.translate("Grupos Especializados"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'grupo-especializado'], icon: "bi bi-check-circle" },
-      CURRICULUM_CADASTRO_DISCIPLINAS: { name: this.lex.translate("Disciplina"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'disciplina'], icon: "bi bi-list-check" },
-      CURRICULUM_CADASTRO_QUESTIONARIOS_PERGUNTAS: { name: this.lex.translate("Questionários"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'questionario'], icon: "bi bi-patch-question" },
-      CURRICULUM_CADASTRO_QUESTIONARIOS_RESPOSTAS: { name: this.lex.translate("Respostas"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'questionario', 'reposta'], icon: "bi bi-list-task" },
-      CURRICULUM_CADASTRO_QUESTIONARIOS_TESTE: { name: this.lex.translate("Testes"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'questionario', 'teste'], icon: "bi bi-list-task" },
-      CURRICULUM_CADASTRO_TIPOS_CURSOS: { name: this.lex.translate("Tipos de Curso"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'tipo-curso'], icon: "bi bi-box-seam" },
-      CURRICULUM_PESQUISA_ADM: { name: this.lex.translate("Caça-talentos"), permition: 'MOD_RX_OUT', route: ['raiox', 'pesquisa-adm'], icon: "bi bi-binoculars" },
-      CURRICULUM_PESQUISA_USR: { name: this.lex.translate("Usuário"), permition: 'MOD_RX_OUT', route: ['raiox', 'pesquisa-usuario'], icon: "bi bi-search" },
-      /* Projetos */
+      DEV_UNIDADE_CONSULTA_SIAPE: { name: "Consulta Unidade SIAPE", permition: '', route: ['consultas', 'cpf-unidade'], icon: this.entity.getIcon('ConsultaUnidadeSIAPE') },
+      TESTE_IMPERSONATE: { name: "Teste IMPERSONATE", permition: '', route: ['impersonate'], icon: this.entity.getIcon('Teste') },
       PAINEL: { name: "Painel", permition: '', route: ['panel'], icon: "" },
       AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
     };
@@ -224,8 +196,8 @@ export class AppComponent {
       menu: [
         this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
         this.menuSchema.CADEIAS_VALORES,
-        // this.menuSchema.SOLUCOES,
-        // this.menuSchema.PRODUTOS,
+        this.menuSchema.SOLUCOES,
+        this.menuSchema.PRODUTOS,
         this.menuSchema.PROGRAMAS_GESTAO,
         this.menuSchema.HABILITACOES_PROGRAMA,
         this.menuSchema.PLANOS_ENTREGAS,
@@ -260,7 +232,7 @@ export class AppComponent {
         this.menuSchema.UNIDADES,
         this.menuSchema.USUARIOS,
         this.menuSchema.PERFIS,
-        // this.menuSchema.CLIENTES,
+        this.menuSchema.CLIENTES,
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Cadastros"),
@@ -271,7 +243,7 @@ export class AppComponent {
         // this.menuSchema.ENTREGAS,
         // this.menuSchema.TIPOS_AVALIACOES,
         this.menuSchema.TIPOS_ATIVIDADES,
-        //this.menuSchema.TIPOS_CLIENTES,
+        this.menuSchema.TIPOS_CLIENTES,
         this.menuSchema.TIPOS_JUSTIFICATIVAS,
         // this.menuSchema.TIPOS_MODALIDADES,
         // this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
@@ -341,6 +313,13 @@ export class AppComponent {
         this.menuSchema.LOGS_ENVIOS
       ]
     }, {
+      name: this.lex.translate("Testes"),
+      permition: "MENU_DEV_ACESSO",
+      id: "navbarDropdownDevTestes",
+      menu: [
+        this.menuSchema.TESTE_IMPERSONATE,
+      ]
+    }, {
       name: this.lex.translate("Consultas"),
       permition: "MENU_DEV_CONSULTAS",
       id: "navbarDropdownDevConsultas",
@@ -376,7 +355,7 @@ export class AppComponent {
       default: return [];
     }
   }
- 
+
   public ngAfterViewInit() {
     /* Container para a criação de dialogs */
     this.dialog.container = this.dialogs;

@@ -11,7 +11,7 @@ use Throwable;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
-abstract class RotinaDiariaController extends ControllerBase
+class RotinaDiariaController extends ControllerBase
 {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         /* Bloqueia qualquer tentativa de inserir, alterar ou excluir registros*/

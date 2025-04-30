@@ -70,6 +70,26 @@ class UnidadeController extends ControllerBase
   }
   }
 
+  public function linhaDescendente(Request $request){
+    try {
+      $data = $request->validate([
+        'unidade_id' => ['required']
+      ]);
+      return response()->json([
+        'success' => true,
+        'unidades' => $this->service->unidadesFilhas($data["unidade_id"])
+      ]);
+    }
+      catch (IBaseException $e) {
+        return response()->json(['error' => $e->getMessage()]);
+    }
+    catch (Throwable $e) {
+        $dataError = throwableToArrayLog($e);
+        Log::error($dataError);
+        return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+    }
+  }
+
 
   public function linhaAscendente(Request $request)
   {

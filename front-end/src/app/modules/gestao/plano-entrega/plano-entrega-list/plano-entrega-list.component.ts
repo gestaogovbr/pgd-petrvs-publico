@@ -149,8 +149,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     return {
       meus_planos: form.meus_planos,
       arquivadas: form.arquivadas,
-      subordinadas: form.subordinadas,
-      unidade_id: form.unidade_id,
+      subordinadas: form.subordinadas
     }
   }
 
