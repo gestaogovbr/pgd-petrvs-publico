@@ -5,31 +5,6 @@
 <div class="consulta-cpf-siape-result">
     <tabs display right>
         <tab key="PRINCIPAL" label="Principal">
-            <div class="dados-petrvs">
-                <div class="row" *ngIf="!usuario">
-                    <div class="col-md-12">
-                        <p class="subtitle">Nenhum usuário encontrado no Petrvs com o CPF informado.</p>
-                    </div>
-                </div>
-                <div class="row" *ngIf="usuario">
-                    <div class="col-md-12">
-                        <p class="subtitle">
-                            <i class="bi bi-person"></i> Usuário encontrado no Petrvs
-                        </p>
-                    </div>
-                    <separator></separator>
-                    <div class="col-md-12">
-                        <p><b>{{usuario.nome}}</b></p>
-                        <p>Matrícula #{{usuario.matricula}}</p>
-                        <p>
-                            <span class="unidade" *ngFor="let integrante of integrantes">
-                                {{integrante.unidade_codigo + ' - ' + integrante.unidade_sigla + ' (' + integrante.atribuicoes.join('/') + ')'}}
-                            </span>
-                        </p> 
-                    </div>
-                </div>
-            </div>
-
             <div class="dados-siape">
                 <div class="row" *ngIf="!dadosPessoais || !dadosFuncionais">
                     <div class="col-md-12">
@@ -43,7 +18,6 @@
                             Dados localizados no SIAPE
                         </p>
                     </div>
-                    <separator></separator>
                     <div class="col-md-12">
                         <p><b>{{dadosPessoais.nome}}</b></p>
                     </div>
@@ -56,6 +30,30 @@
                                 </span>
                             </p>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <separator></separator>
+            <div class="dados-petrvs">
+                <div class="row" *ngIf="!usuario">
+                    <div class="col-md-12">
+                        <p class="subtitle">Nenhum usuário encontrado no Petrvs com o CPF informado.</p>
+                    </div>
+                </div>
+                <div class="row" *ngIf="usuario">
+                    <div class="col-md-12">
+                        <p class="subtitle">
+                            <i class="bi bi-person"></i> Usuário encontrado no Petrvs
+                        </p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><b>{{usuario.nome}}</b></p>
+                        <p>Matrícula #{{usuario.matricula}}</p>
+                        <p>
+                            <span class="unidade" *ngFor="let integrante of integrantes">
+                                {{integrante.unidade_codigo + ' - ' + integrante.unidade_sigla + ' (' + integrante.atribuicoes.join('/') + ')'}}
+                            </span>
+                        </p> 
                     </div>
                 </div>
             </div>

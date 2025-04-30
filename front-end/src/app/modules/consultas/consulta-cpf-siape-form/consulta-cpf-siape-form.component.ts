@@ -1,8 +1,6 @@
 import { Component, Inject, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Usuario } from 'src/app/models/usuario.model';
@@ -19,7 +17,6 @@ import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, UsuarioDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent
   public usuario?: Usuario|null;
-  public unidadeDao: UnidadeDaoService;
   public integranteDao: UnidadeIntegranteDaoService;
   
   public form: FormGroup;
@@ -30,7 +27,6 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
 
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
-    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.form = this.fh.FormBuilder({
       cpf: {default: ""}, 
@@ -106,7 +102,7 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
             error => {
               this.loading = false;
               console.log(error);
-              this.error("Erro ao consultar CPF: " + error.error?.message);
+              this.error("Erro ao consultar CPF no SIAPE: " + error.error?.message);
             }
         )
       } catch (error: any) {

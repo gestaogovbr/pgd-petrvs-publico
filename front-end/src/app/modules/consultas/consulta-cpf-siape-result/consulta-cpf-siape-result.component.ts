@@ -11,6 +11,7 @@ import { PageFormBase } from '../../base/page-form-base';
 import { firstValueFrom } from 'rxjs';
 import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 import { DialogService } from 'src/app/services/dialog.service';
+import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
 
 @Component({
   selector: 'consulta-cpf-siape-result',
@@ -20,7 +21,7 @@ import { DialogService } from 'src/app/services/dialog.service';
 export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, UsuarioDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent
   public usuario?: Usuario|null;
-  public unidadeDao: UnidadeDaoService;
+  public integranteDao: UnidadeIntegranteDaoService;
   public erros: string = '';
   public log: string = '';
 
@@ -77,23 +78,29 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
       icon: "bi bi-gear",
       onClick: async() => {
         let error: any = undefined;
-        let confirm = await this.dialog.confirm("ATENÇÃO", "CONFIRMA A SINCRONIZAÇÃO DO REFERIDO CPF?");
+        let confirm = await this.dialog.confirm("ATENÇÃO", "CONFIRMA A SINCRONIZAÇÃO DO USUÁRIO?");
         if (confirm) {
           this.loading = true;
           this.log = 'Processando...';
           try {
             this.dao!.sincronizarSIAPE(this.cpf as string)
               .subscribe(
-                result => {
+                async result => {
                   this.loading = false;
-                  this.dialog.alert("Sucesso", "Processamento concluído! Verifique o log de processamento");
-                  this.log = result;
+                  if (result?.success) {
+                    await this.loadUsuario();
+                    this.dialog.alert("Sucesso", result.message);
+                    this.log = result.log;
+                  } else {
+                    this.dialog.alert("Erro", "Erro ao processar CPF: " + result?.message);
+                  }
                 },
                 error => {
                   this.loading = false;
                   console.log(error);
                   this.log = error.error?.message;
                   this.error("Erro ao processar CPF: " + error.error?.message);
+                  this.dialog.alert("Erro", "Erro ao processar CPF: " + (error.message ?? error.error?.message));
                 }
             )
           } catch (error: any) {
@@ -109,7 +116,7 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
     this.dialog = this.injector.get<DialogService>(DialogService);
-    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
   }
 
   public loadData(entity: Usuario, form: FormGroup): void | Promise<void>
@@ -154,6 +161,26 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
 
     if(this.metadata?.integrantes) {
       this.integrantes = this.metadata?.integrantes;
+    }
+  }
+
+  public async loadUsuario() {
+    this.loading = true;
+    try {
+      const cpf = this.cpf?.replace(/\D/g, '');
+      const usuarios = await this.dao?.query({ where: [['cpf', '==', cpf]] })
+        .asPromise();
+
+      if (usuarios) {
+        this.usuario = usuarios[0];
+      }
+
+      if (this.usuario) {
+        const integrantesList = await this.integranteDao!.carregarIntegrantes("", this.usuario.id);
+        this.integrantes = integrantesList.integrantes.filter(integrante => integrante.atribuicoes?.length > 0);
+      }
+    } finally {
+      this.loading = false;
     }
   }
 
