@@ -223,10 +223,10 @@ abstract class BuscarDadosSiape
             CURLOPT_POSTFIELDS => $xmlData,
         ]);
 
-        Log::info('Busca - Request para ' . $this->geturl() . '/api-consulta-siape/v1/consulta-siape', [
+        /*Log::info('Busca - Request para ' . $this->geturl() . '/api-consulta-siape/v1/consulta-siape', [
             'headers' => $headers,
             'body' => $xmlData
-        ]);
+        ]);*/
 
         $response = curl_exec($curl);
 
@@ -237,7 +237,7 @@ abstract class BuscarDadosSiape
         }
 
         curl_close($curl);
-        Log::info(' Response: ' . $response);
+        //Log::info(' Response: ' . $response);
         return $response;
     }
 

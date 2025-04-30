@@ -1,9 +1,11 @@
 <?php
 namespace App\Services\Siape\Consulta;
 
-use Illuminate\Support\Facades\Http;
+use SimpleXMLElement;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 use App\Services\Siape\Consulta\Traits\SiapeConfig;
+use App\Exceptions\ErrorDataSiapeFaultCodeException;
 use App\Services\Siape\Consulta\Traits\SiapeGetToken;
 
 abstract class SiapeService extends SiapeBaseService {
@@ -65,26 +67,24 @@ abstract class SiapeService extends SiapeBaseService {
 
         $url = $this->getUrl() . '/api-consulta-siape/v1/consulta-siape';
 
-        Log::info('Busca - Request para ' . $url, [
-            'headers' => $headers,
-            'body' => $body->getXml(),
-        ]);
-
         try {
             $response = Http::withHeaders($headers)
                 ->withBody($body->getXml(), 'application/xml')
-                ->retry(2, 1000) // 10 tentativas, 10.000ms (10s) entre elas
-                ->post($url)
-                ->throw(false);
-
-            //$response->throw(); // Lança exceção se falhar
-
-            Log::info('Response: ' . $response->body());
-
-            return $response->body();
+                ->retry(2, 1000, throw: false) // 2 tentativas, 10.000ms (10s) entre elas
+                ->post($url);
         } catch (\Exception $e) {
             Log::error('Erro na requisição: ' . $e->getMessage());
             throw $e;
         }
+
+        $xml = $response->body();
+
+        if ($response->failed()) {
+            $responseXml = new SimpleXMLElement($xml);
+            $fault = $responseXml->xpath('//soap:Fault');
+            throw new ErrorDataSiapeFaultCodeException($fault[0]->faultstring);
+        }
+
+        return $xml;
     }
 }

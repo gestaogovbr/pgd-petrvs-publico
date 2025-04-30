@@ -35,13 +35,15 @@ class SiapeIndividualController extends ControllerBase
         }
     }
 
-    private function getLogSiape(array &$retorno){
+    private function getLogSiape(){
         $logPath = storage_path('logs/siape.log');
-        if (File::exists($logPath)) {
-            $linhas = explode("\n", File::get($logPath));
-            $ultimasLinhas = array_slice($linhas, -2000); 
-            $retorno['log'] = implode("\n", $ultimasLinhas);
+      
+        if (!file_exists($logPath)) {
+            return null;
         }
+
+        $linhas = explode("\n", file_get_contents($logPath));
+        return implode("\n", $linhas);
     }
 
     public function consultaServidor(Request $request){
@@ -60,8 +62,27 @@ class SiapeIndividualController extends ControllerBase
     }
 
     public function processaUnidade(Request $request){
-        $request->validate([
-            'codigo_unidade' => [],
-        ]);
+        $retorno = [
+            'success' => true,
+            'message' => 'Processamento concluído.',
+            'log' => null,
+        ];
+        try {
+            $data = $request->validate([
+                'unidade_id' => [],
+            ]);
+            
+            $this->service->processaUnidade($data['unidade_id']);
+            $retorno['log'] = $this->getLogSiape();
+            return response()->json(
+                $retorno,
+                Response::HTTP_OK
+            );
+        } catch (\Exception $e) {
+            $retorno['success'] = false;
+            $retorno['message'] = $e->getMessage();
+            $retorno['log'] = $this->getLogSiape();
+            return response()->json($retorno, Response::HTTP_BAD_REQUEST);
+        }
     }
 }
