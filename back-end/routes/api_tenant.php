@@ -496,6 +496,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/usuario/exportar-cpf-siape', [UsuarioController::class, 'exportarCPFSiape']);
     Route::post('/unidade/consulta-unidade-siape', [UnidadeController::class, 'consultaUnidadeSiape']);
     Route::post('/usuario/processar-siape', [SiapeIndividualController::class, 'processaServidor']);
+    Route::post('/unidade/processar-siape', [SiapeIndividualController::class, 'processaUnidade']);
 
     Route::prefix('SolucaoUnidade')->group(function () {
         defaultRoutes(SolucaoUnidadeController::class);
