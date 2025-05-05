@@ -29,8 +29,6 @@ class ServidorDTO
     public ?string $funcoes;
     public ?string $cpf_chefia_imediata;
     public ?string $email_chefia_imediata;
-    public ?string $nome_jornada;
-    public ?int $cod_jornada;
     public ?string $deleted_at;
 
     public function __construct(array $data)
