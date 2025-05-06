@@ -134,7 +134,13 @@ class Integracao implements InterfaceIntegracao
         }
         $perfilDesenvolvedorId = $perfilDesenvolvedor->id;
 
-        if (!in_array($queryChefe->perfil->id, [$perfilAdministradorNegocial->id, $perfilDesenvolvedorId])) {
+        $perfilAdministradorGeral = $this->nivelAcessoService->getPerfilAdministradorGeral();
+        if (empty($perfilAdministradorGeral)) {
+            throw new ServerException("ValidateUsuario", "Perfil de Administrador Geral não encontrado no banco de dados. Verificar configuração no painel SaaS.");
+        }
+        $perfilAdministradorGeralId = $perfilAdministradorGeral->id;
+
+        if (!in_array($queryChefe->perfil->id, [$perfilAdministradorNegocial->id, $perfilDesenvolvedorId, $perfilAdministradorGeralId])) {
             $values = [
                 ':perfil_id' => $perfilChefeId,
                 ':id' => $idUsuario
