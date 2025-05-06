@@ -267,11 +267,15 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 
 	ngOnInit(): void {
 		super.ngOnInit();
-
-		this.route.queryParams.subscribe((p) => {
+		if (this.metadata?.minha_unidade) {
 			this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
+		}
+		this.route.queryParams.subscribe((p) => {
 			if (p["context"] == "EXECUCAO" && this.filter) {
 				this.filter?.controls.usuario.setValue(this.auth.usuario?.nome);
+			}
+			if (p["context"] == "GESTAO" && this.filter) {
+				this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
 			}
 		});
 	}
