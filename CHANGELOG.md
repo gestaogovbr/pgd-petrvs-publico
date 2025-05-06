@@ -1,3 +1,16 @@
+## 2.3.17 25/04/2025
+### Corrigido
+ - Horário de vigência do Plano de trabalho, não é mais considerado.
+ - Listagem de Registros de Execução
+ - Ajustado erro que removia a matrícula SIAPE ao alterar o usuário
+### Modificado
+ - Adicionado permissão para listar todas unidades
+
+## 2.3.16 16/04/2025
+### Corrigido
+ - Path do plugin Tinymce 
+ - Corrigido regras da execução do job do SIAPE
+ 
 ## 2.3.15 11/04/2025
 ### Corrigido
  - Correção de erro no TCR ao editar o plano de trabalho
