@@ -11,7 +11,9 @@ use App\Exceptions\ServerException;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Throwable;
-
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Access\AuthorizationException;
 abstract class ControllerBase extends Controller
 {
     public string $collection = "";
@@ -102,11 +104,31 @@ tenancy()->initialize($tenant); */
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
+        catch (AuthenticationException $e) {
+            return response()->json(['error' => 'Não autenticado.'], 401);
+        }
+        catch (AuthorizationException $e) {
+            return response()->json(['error' => 'Acesso negado.'], 403);
+        }
+        catch (HttpException $e) {
+            Log::warning('HttpException', [
+                'status' => $e->getStatusCode(),
+                'message' => $e->getMessage()
+            ]);
+            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
+        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            Log::error([
+                'user_id' => optional(self::loggedUser())->id,
+                'ip' => request()->ip(),
+                'url' => request()->fullUrl(),
+                'data' => request()->all(),
+                'error' => $dataError,
+            ]);
+            return response()->json(['error' => "Código ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
+
     }
 
     /**
@@ -131,11 +153,31 @@ tenancy()->initialize($tenant); */
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
+        catch (AuthenticationException $e) {
+            return response()->json(['error' => 'Não autenticado.'], 401);
+        }
+        catch (AuthorizationException $e) {
+            return response()->json(['error' => 'Acesso negado.'], 403);
+        }
+        catch (HttpException $e) {
+            Log::warning('HttpException', [
+                'status' => $e->getStatusCode(),
+                'message' => $e->getMessage()
+            ]);
+            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
+        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            Log::error([
+                'user_id' => optional(self::loggedUser())->id,
+                'ip' => request()->ip(),
+                'url' => request()->fullUrl(),
+                'data' => request()->all(),
+                'error' => $dataError,
+            ]);
+            return response()->json(['error' => "Código ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
+
     }
 
     /**
@@ -160,11 +202,31 @@ tenancy()->initialize($tenant); */
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
+        catch (AuthenticationException $e) {
+            return response()->json(['error' => 'Não autenticado.'], 401);
+        }
+        catch (AuthorizationException $e) {
+            return response()->json(['error' => 'Acesso negado.'], 403);
+        }
+        catch (HttpException $e) {
+            Log::warning('HttpException', [
+                'status' => $e->getStatusCode(),
+                'message' => $e->getMessage()
+            ]);
+            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
+        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            Log::error([
+                'user_id' => optional(self::loggedUser())->id,
+                'ip' => request()->ip(),
+                'url' => request()->fullUrl(),
+                'data' => request()->all(),
+                'error' => $dataError,
+            ]);
+            return response()->json(['error' => "Código ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
+
     }
 
     /**
@@ -192,11 +254,31 @@ tenancy()->initialize($tenant); */
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
+        catch (AuthenticationException $e) {
+            return response()->json(['error' => 'Não autenticado.'], 401);
+        }
+        catch (AuthorizationException $e) {
+            return response()->json(['error' => 'Acesso negado.'], 403);
+        }
+        catch (HttpException $e) {
+            Log::warning('HttpException', [
+                'status' => $e->getStatusCode(),
+                'message' => $e->getMessage()
+            ]);
+            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
+        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            Log::error([
+                'user_id' => optional(self::loggedUser())->id,
+                'ip' => request()->ip(),
+                'url' => request()->fullUrl(),
+                'data' => request()->all(),
+                'error' => $dataError,
+            ]);
+            return response()->json(['error' => "Código ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
+
     }
 
     /**
@@ -227,11 +309,31 @@ tenancy()->initialize($tenant); */
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
+        catch (AuthenticationException $e) {
+            return response()->json(['error' => 'Não autenticado.'], 401);
+        }
+        catch (AuthorizationException $e) {
+            return response()->json(['error' => 'Acesso negado.'], 403);
+        }
+        catch (HttpException $e) {
+            Log::warning('HttpException', [
+                'status' => $e->getStatusCode(),
+                'message' => $e->getMessage()
+            ]);
+            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
+        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            Log::error([
+                'user_id' => optional(self::loggedUser())->id,
+                'ip' => request()->ip(),
+                'url' => request()->fullUrl(),
+                'data' => request()->all(),
+                'error' => $dataError,
+            ]);
+            return response()->json(['error' => "Código ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
+
     }
 
     /**
@@ -265,11 +367,31 @@ tenancy()->initialize($tenant); */
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
+        catch (AuthenticationException $e) {
+            return response()->json(['error' => 'Não autenticado.'], 401);
+        }
+        catch (AuthorizationException $e) {
+            return response()->json(['error' => 'Acesso negado.'], 403);
+        }
+        catch (HttpException $e) {
+            Log::warning('HttpException', [
+                'status' => $e->getStatusCode(),
+                'message' => $e->getMessage()
+            ]);
+            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
+        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            Log::error([
+                'user_id' => optional(self::loggedUser())->id,
+                'ip' => request()->ip(),
+                'url' => request()->fullUrl(),
+                'data' => request()->all(),
+                'error' => $dataError,
+            ]);
+            return response()->json(['error' => "Código ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
+
     }
 
     /**
@@ -290,11 +412,31 @@ tenancy()->initialize($tenant); */
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
+        catch (AuthenticationException $e) {
+            return response()->json(['error' => 'Não autenticado.'], 401);
+        }
+        catch (AuthorizationException $e) {
+            return response()->json(['error' => 'Acesso negado.'], 403);
+        }
+        catch (HttpException $e) {
+            Log::warning('HttpException', [
+                'status' => $e->getStatusCode(),
+                'message' => $e->getMessage()
+            ]);
+            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
+        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            Log::error([
+                'user_id' => optional(self::loggedUser())->id,
+                'ip' => request()->ip(),
+                'url' => request()->fullUrl(),
+                'data' => request()->all(),
+                'error' => $dataError,
+            ]);
+            return response()->json(['error' => "Código ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
+
     }
 
     /**
@@ -318,11 +460,31 @@ tenancy()->initialize($tenant); */
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
+        catch (AuthenticationException $e) {
+            return response()->json(['error' => 'Não autenticado.'], 401);
+        }
+        catch (AuthorizationException $e) {
+            return response()->json(['error' => 'Acesso negado.'], 403);
+        }
+        catch (HttpException $e) {
+            Log::warning('HttpException', [
+                'status' => $e->getStatusCode(),
+                'message' => $e->getMessage()
+            ]);
+            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
+        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            Log::error([
+                'user_id' => optional(self::loggedUser())->id,
+                'ip' => request()->ip(),
+                'url' => request()->fullUrl(),
+                'data' => request()->all(),
+                'error' => $dataError,
+            ]);
+            return response()->json(['error' => "Código ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
+
     }
 
     /**
@@ -347,11 +509,31 @@ tenancy()->initialize($tenant); */
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
+        catch (AuthenticationException $e) {
+            return response()->json(['error' => 'Não autenticado.'], 401);
+        }
+        catch (AuthorizationException $e) {
+            return response()->json(['error' => 'Acesso negado.'], 403);
+        }
+        catch (HttpException $e) {
+            Log::warning('HttpException', [
+                'status' => $e->getStatusCode(),
+                'message' => $e->getMessage()
+            ]);
+            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
+        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            Log::error([
+                'user_id' => optional(self::loggedUser())->id,
+                'ip' => request()->ip(),
+                'url' => request()->fullUrl(),
+                'data' => request()->all(),
+                'error' => $dataError,
+            ]);
+            return response()->json(['error' => "Código ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
+
     }
 
     /**
@@ -378,15 +560,35 @@ tenancy()->initialize($tenant); */
                 'success' => true,
                 'rows' => [$result]
             ]);
-        } 
+        }
         catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
+        catch (AuthenticationException $e) {
+            return response()->json(['error' => 'Não autenticado.'], 401);
+        }
+        catch (AuthorizationException $e) {
+            return response()->json(['error' => 'Acesso negado.'], 403);
+        }
+        catch (HttpException $e) {
+            Log::warning('HttpException', [
+                'status' => $e->getStatusCode(),
+                'message' => $e->getMessage()
+            ]);
+            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
+        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado.".$e->getMessage()]);
+            Log::error([
+                'user_id' => optional(self::loggedUser())->id,
+                'ip' => request()->ip(),
+                'url' => request()->fullUrl(),
+                'data' => request()->all(),
+                'error' => $dataError,
+            ]);
+            return response()->json(['error' => "Código ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
+
     }
 
     /**
@@ -418,16 +620,36 @@ tenancy()->initialize($tenant); */
             ]);
             return response()->json([
                 'success' => true,
-                'rows' => [$result] 
+                'rows' => [$result]
             ]);
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
+        catch (AuthenticationException $e) {
+            return response()->json(['error' => 'Não autenticado.'], 401);
+        }
+        catch (AuthorizationException $e) {
+            return response()->json(['error' => 'Acesso negado.'], 403);
+        }
+        catch (HttpException $e) {
+            Log::warning('HttpException', [
+                'status' => $e->getStatusCode(),
+                'message' => $e->getMessage()
+            ]);
+            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
+        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            Log::error([
+                'user_id' => optional(self::loggedUser())->id,
+                'ip' => request()->ip(),
+                'url' => request()->fullUrl(),
+                'data' => request()->all(),
+                'error' => $dataError,
+            ]);
+            return response()->json(['error' => "Código ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
+
     }
 
     /**
@@ -462,11 +684,31 @@ tenancy()->initialize($tenant); */
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
+        catch (AuthenticationException $e) {
+            return response()->json(['error' => 'Não autenticado.'], 401);
+        }
+        catch (AuthorizationException $e) {
+            return response()->json(['error' => 'Acesso negado.'], 403);
+        }
+        catch (HttpException $e) {
+            Log::warning('HttpException', [
+                'status' => $e->getStatusCode(),
+                'message' => $e->getMessage()
+            ]);
+            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
+        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            Log::error([
+                'user_id' => optional(self::loggedUser())->id,
+                'ip' => request()->ip(),
+                'url' => request()->fullUrl(),
+                'data' => request()->all(),
+                'error' => $dataError,
+            ]);
+            return response()->json(['error' => "Código ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
+
     }
 
     /**
@@ -486,10 +728,30 @@ tenancy()->initialize($tenant); */
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
+        catch (AuthenticationException $e) {
+            return response()->json(['error' => 'Não autenticado.'], 401);
+        }
+        catch (AuthorizationException $e) {
+            return response()->json(['error' => 'Acesso negado.'], 403);
+        }
+        catch (HttpException $e) {
+            Log::warning('HttpException', [
+                'status' => $e->getStatusCode(),
+                'message' => $e->getMessage()
+            ]);
+            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
+        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            Log::error([
+                'user_id' => optional(self::loggedUser())->id,
+                'ip' => request()->ip(),
+                'url' => request()->fullUrl(),
+                'data' => request()->all(),
+                'error' => $dataError,
+            ]);
+            return response()->json(['error' => "Código ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
+
     }
 }
