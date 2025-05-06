@@ -245,7 +245,11 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			),
 			onClick: this.suspender.bind(this),
 		};
-		this.BOTAO_CLONAR = { label: "Clonar", icon: "bi bi-copy", color: "btn-outline-primary", onClick: (planoTrabalho: PlanoTrabalho) => this.go.navigate({ route: ['gestao', 'plano-trabalho', planoTrabalho.id, 'clone'] }, this.modalRefreshId(planoTrabalho)) };
+		this.BOTAO_CLONAR = { label: "Clonar", icon: "bi bi-copy", color: "btn-outline-primary", onClick: (planoTrabalho: PlanoTrabalho) => {
+			this.dialog.alert("Atenção!", "Não serão clonados os percentuais de contribuição e as contribuições para entregas que não estejam mais disponíveis").then(() => {	
+				this.go.navigate({ route: ['gestao', 'plano-trabalho', planoTrabalho.id, 'clone'] }, this.modalRefreshId(planoTrabalho)) 
+			});
+		}};
 
 		this.botoes = [
 			this.BOTAO_ALTERAR,
@@ -261,7 +265,8 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			this.BOTAO_TERMOS,
 			this.BOTAO_CONSOLIDACOES,
 			this.BOTAO_REATIVAR,
-			this.BOTAO_SUSPENDER
+			this.BOTAO_SUSPENDER,
+			this.BOTAO_CLONAR,
 		];
 		this.rowsLimit = 10;
 	}
@@ -508,6 +513,8 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			this.planoTrabalhoService.situacaoPlano(planoTrabalho) == "ATIVO";
 		let planoConcluido =
 			this.planoTrabalhoService.situacaoPlano(planoTrabalho) == "CONCLUIDO";
+		let planoAvaliado =
+			this.planoTrabalhoService.situacaoPlano(planoTrabalho) == "AVALIADO";
 		let planoCancelado =
 			this.planoTrabalhoService.situacaoPlano(planoTrabalho) == "CANCELADO";
 		let planoDeletado =
@@ -711,7 +718,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 					case this.BOTAO_CONSOLIDACOES:
 						return true;
 					case this.BOTAO_CLONAR:
-						return this.auth.hasPermissionTo("MOD_PTR_INCL");
+						return (planoConcluido || planoAvaliado) && this.auth.hasPermissionTo("MOD_PTR_INCL");
 				}
 			}
 		}

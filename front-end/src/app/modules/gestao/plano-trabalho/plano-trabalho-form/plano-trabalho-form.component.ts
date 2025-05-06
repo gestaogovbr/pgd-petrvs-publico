@@ -312,9 +312,10 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   public async loadData(entity: PlanoTrabalho, form: FormGroup, action?: string) {
     if(action == 'clone') {
+ 
       entity.id = "";
       entity.data_inicio = new Date();
-      entity.data_fim = new Date();
+      entity.data_fim = moment().add(1, 'day').toDate();
       entity.documento_id = null;
       entity.entregas = entity.entregas.map((entrega: PlanoTrabalhoEntrega) => {
         entrega.id = this.documentoDao.generateUuid();
@@ -333,10 +334,11 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     ]);
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
-    if (action == 'clone') {
-      form.controls.data_inicio.setValue("");
-      form.controls.data_fim.setValue("");
+
+    if(action == 'clone') {
+      this.form?.controls.usuario_texto_complementar.setValue(entity.usuario?.texto_complementar_plano || "");
     }
+
     /*let documento = entity.documentos.find(x => x.id == entity.documento_id);
     if(documento) this._datasource = documento.datasource;*/
     this.calculaTempos();
@@ -381,9 +383,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   /* Cria um objeto Plano baseado nos dados do formulário */
-  public loadEntity(): PlanoTrabalho {
-    console.log("loadEntity", this.entity);
-    
+  public loadEntity(): PlanoTrabalho {    
     let plano: PlanoTrabalho = this.util.fill(new PlanoTrabalho(), this.entity!);
     plano = this.util.fillForm(plano, this.form!.value);
     plano.usuario = (this.usuario!.selectedEntity || this.entity?.usuario) as Usuario;
@@ -392,7 +392,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     plano.tipo_modalidade = (this.tipoModalidade!.selectedEntity || this.entity?.tipo_modalidade) as TipoModalidade;   
     plano.documento = this.entity?.documento;
     plano.documento_id = this.form?.controls.documento_id.value;
-    console.log("plano", plano);
     
     return plano;
   }
@@ -408,8 +407,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.entity!.documentos = this.entity!.documentos.filter((documento: Documento) => {
         return ["ADD", "EDIT", "DELETE"].includes(documento._status || "");
       });
-
-      console.log("entity save", this.entity);
       
       /* Salva separadamente as informações do plano */
       let requests: Promise<any>[] = [this.dao!.save(this.entity!, this.join)];
