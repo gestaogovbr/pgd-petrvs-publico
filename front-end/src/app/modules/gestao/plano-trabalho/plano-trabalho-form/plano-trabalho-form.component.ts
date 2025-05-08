@@ -317,11 +317,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       entity.data_inicio = new Date();
       entity.data_fim = moment().add(1, 'day').toDate();
       entity.documento_id = null;
-      entity.entregas = entity.entregas.map((entrega: PlanoTrabalhoEntrega) => {
-        entrega.id = this.documentoDao.generateUuid();
-        entrega._status = "ADD";
-        return entrega as PlanoTrabalhoEntrega;
-      });
+      entity.entregas = this.entregasClonadas(entity.entregas)
     }
 
     this.planoTrabalho = new PlanoTrabalho(entity);
@@ -337,12 +333,32 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
     if(action == 'clone') {
       this.form?.controls.usuario_texto_complementar.setValue(entity.usuario?.texto_complementar_plano || "");
+    } else {
+      this.atualizarTcr();
     }
 
     /*let documento = entity.documentos.find(x => x.id == entity.documento_id);
     if(documento) this._datasource = documento.datasource;*/
     this.calculaTempos();
-    this.atualizarTcr();
+    
+  }
+
+  public entregasClonadas(entregas: PlanoTrabalhoEntrega[]) {
+
+    // Se a entrega for vinculada a um plano de entrega, o plano de entrega precisa estar vigente
+    // Se a entrega tiver sido excluida do plano de entrega, o plano de entrega precisa estar vigente
+
+    const entregasVigentes = entregas.filter((entrega: PlanoTrabalhoEntrega) => {
+      return entrega.plano_entrega_entrega !== null && entrega.plano_entrega_entrega_id !== null;
+    });
+
+    return entregasVigentes.map((entrega: PlanoTrabalhoEntrega) => {
+      entrega.id = this.documentoDao.generateUuid();
+      entrega._status = "ADD";
+      entrega.forca_trabalho = 0;
+      return entrega as PlanoTrabalhoEntrega;
+    }); 
+    
   }
 
   public async initializeData(form: FormGroup) {
