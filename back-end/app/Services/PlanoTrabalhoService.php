@@ -1119,7 +1119,8 @@ class PlanoTrabalhoService extends ServiceBase
                 if ($entrega['plano_entrega_entrega_id']) {
                     $planoEntregaEntrega = PlanoEntregaEntrega::find($entrega['plano_entrega_entrega_id']);
 
-                    if ($planoEntregaEntrega->planoEntrega->status != "ATIVO") {
+                    // verifica se o plano de entrega está ativo    
+                    if ($planoEntregaEntrega !== null && !in_array($planoEntregaEntrega->status, ["ATIVO", "AVALIADO", "CONCLUIDO"])) {
                         return "O plano de trabalho não pode ser clonado porque o plano de entrega da entrega:" . $entrega['descricao'] . " não está ativo.";
                     }
                 }
