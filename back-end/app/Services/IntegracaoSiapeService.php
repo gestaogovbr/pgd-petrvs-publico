@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use App\Services\ServiceBase;
 use App\Exceptions\LogError;
 use App\Models\Unidade;
+use App\Models\Usuario;
 use App\Services\Siape\ProcessaDadosSiapeBD;
 use DateTime;
 use Illuminate\Support\Facades\Log;
@@ -199,5 +200,31 @@ class IntegracaoSiapeService extends ServiceBase
       }
     }
     return $PessoasPetrvs;
+  }
+
+  public function processaServidoresRemovidosNoSiape() : array
+  {
+    $ids = $this->listIdsUsuariosRemovidosNaoExcluidos();
+    
+    if (empty($ids)) {
+      return [];
+    }
+
+    $usuarios = Usuario::whereIn('id', $ids)->get();
+
+    foreach ($usuarios as $usuario) {
+      Log::info("Removendo servidor " . $usuario->cpf . " - " . $usuario->nome);
+      $usuario->delete();
+    }
+
+    return $ids;
+  }
+
+  private function listIdsUsuariosRemovidosNaoExcluidos():array
+  {
+    $ids = Usuario::join('siape_blacklist_servidores as s', 'usuarios.cpf', '=', 's.cpf')
+              ->pluck('usuarios.id');
+
+    return $ids->toArray();
   }
 }
