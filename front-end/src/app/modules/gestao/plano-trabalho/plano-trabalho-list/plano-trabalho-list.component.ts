@@ -93,7 +93,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		this.filter = this.fh.FormBuilder(
 			{
 				agrupar: {default: true},
-				subordinadas: { default: true },
+				subordinadas: { default: false },
 				lotados_minha_unidade: {default: false},
 				usuario: {default: ""},
 				status: {default: ""},
@@ -103,6 +103,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 				data_filtro: {default: null},
 				data_filtro_inicio: {default: new Date()},
 				data_filtro_fim: {default: new Date()},
+				meus_planos: { default: true },
 			},
 			this.cdRef,
 			this.filterValidate
@@ -389,6 +390,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		filter.controls.data_filtro.setValue(null);
 		filter.controls.data_filtro_inicio.setValue(new Date());
 		filter.controls.data_filtro_fim.setValue(new Date());
+		filter.controls.meus_planos.setValue(true);
 		super.filterClear(filter);
 	}
 
@@ -409,6 +411,10 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 				"like",
 				"%" + form.usuario.trim().replace(" ", "%") + "%",
 			]);
+		if (this.filter?.controls.meus_planos.value) {
+			let w1: [string, string, string[]] = ["unidade_id", "in", (this.auth.unidades || []).map(u => u.id)];
+			result.push(w1);
+		}
 		if (form.unidade_id?.length)
 			result.push(["unidade_id", "==", form.unidade_id]);
 		if (form.status) result.push(["status", "==", form.status]);
@@ -425,6 +431,9 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			"==",
 			this.filter!.controls.subordinadas.value,
 		]);
+		if (this.filter!.controls.meus_planos.value)
+			result.push(["usuario.id", "==", this.auth.usuario?.id]);
+
 		return result;
 	};
 
@@ -443,7 +452,8 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 
 
 	public onLotadosMinhaUnidadeChange(event: Event) {
-		this.grid!.reloadFilter();
+		this.disableLotados();
+		//this.grid!.reloadFilter();
 	}
 
 	public dynamicMultiselectMenu = (
@@ -887,5 +897,56 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 				}
 			},
 		});
+	}
+
+	public disableMeus() {
+		if (!this.filter || !this.filter.controls.subordinadas || !this.filter.controls.meus_planos) {
+			console.warn("Formulário ou controles não inicializados corretamente.");
+			return;
+		}
+
+		// Se "Unidades Subordinadas" está ativado, desativa "Meus Planos"
+		if (this.filter.controls.subordinadas.value) {
+			this.filter.controls.meus_planos.setValue(false);
+			this.filter.controls.lotados_minha_unidade.setValue(false);
+		} else {
+			this.filter.controls.meus_planos.setValue(true);
+		}
+
+		//this.grid!.reloadFilter();
+	}
+
+	public disableSub() {
+		if (!this.filter || !this.filter.controls.subordinadas || !this.filter.controls.meus_planos) {
+			console.warn("Formulário ou controles não inicializados corretamente.");
+			return;
+		}
+
+		// Se "Meus Planos" está ativado, desativa "Unidades Subordinadas"
+		if (this.filter.controls.meus_planos.value) {
+			this.filter!.controls.subordinadas.setValue(false);
+			this.filter!.controls.lotados_minha_unidade.setValue(false);
+		} else {
+			this.filter!.controls.subordinadas.setValue(true);
+
+		}
+
+		//this.grid!.reloadFilter();
+	}
+
+	public disableLotados() {
+		if (!this.filter || !this.filter.controls.subordinadas || !this.filter.controls.meus_planos || !this.filter.controls.lotados_minha_unidade) {
+			console.warn("Formulário ou controles não inicializados corretamente.");
+			return;
+		}
+
+		if (this.filter.controls.lotados_minha_unidade.value) {
+			this.filter.controls.meus_planos.setValue(false);
+			this.filter!.controls.subordinadas.setValue(false);
+		} else {
+			this.filter.controls.meus_planos.setValue(true);
+		}
+
+		//this.grid!.reloadFilter();
 	}
 }
