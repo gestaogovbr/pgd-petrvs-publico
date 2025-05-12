@@ -1,6 +1,7 @@
 ## 2.3.18 12/05/2025
 ### Adicionado
  - Recurso para clonar plano de trabalho
+ - Filtro default para listagem de planos de trabalho - UMenidades subordinadas
 ### Corrigido
  - Correção em filtros do plano de entrega
  - Mensagem de erro 503
