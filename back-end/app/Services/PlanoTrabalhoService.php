@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Programa;
 use App\Models\ProgramaParticipante;
 use App\Models\DocumentoAssinatura;
+use App\Models\PlanoEntregaEntrega;
 use Carbon\Carbon;
 use DateTime;
 use Throwable;
@@ -215,6 +216,11 @@ class PlanoTrabalhoService extends ServiceBase
             /* (RN_PTR_Y) Para incluir um Plano de Trabalho para um participante, é necessário que este esteja LOTADO/COLABORADOR na unidade executora, a menos que este possua a capacidade MOD_PTR_USERS_INCL; */
             if (!parent::loggedUser()->hasPermissionTo('MOD_PTR_USERS_INCL') && !$condicoes["participanteColaboradorUnidadeExecutora"] && !$condicoes["participanteLotadoUnidadeExecutora"]) {
                 throw new ServerException("ValidatePlanoTrabalho", "Participante do plano não é LOTADO ou COLABORADOR na unidade executora. (MOD_PTR_USERS_INCL)\n[ver RN_PTR_Y]");
+            }
+
+            $entregasValidas = $this->validarClone($data);
+            if ($entregasValidas) {
+                throw new ServerException("ValidatePlanoTrabalho", $entregasValidas);
             }
         } else if ($action == ServiceBase::ACTION_EDIT) {
             /*
@@ -1100,5 +1106,27 @@ class PlanoTrabalhoService extends ServiceBase
             $this->setBuffer("jaAssinaramTCR", $plano_trabalho_id, $result);
         }
         return $result;
+    }
+
+    public function validarClone($planoTrabalho)
+    {
+        if ($this->hasBuffer("validarClone", $planoTrabalho["id"])) {
+            return $this->getBuffer("validarClone", $planoTrabalho["id"]);
+        } else {
+    
+            // percorrer entregas que tem plano_entrega_entrega_id e validar se o plano de entrega está ativo
+            foreach ($planoTrabalho['entregas'] as $entrega) {
+                if ($entrega['plano_entrega_entrega_id']) {
+                    $planoEntregaEntrega = PlanoEntregaEntrega::find($entrega['plano_entrega_entrega_id']);
+                    $status = $planoEntregaEntrega->planoEntrega->status;
+                    // verifica se o plano de entrega está ativo    
+                    if ($planoEntregaEntrega !== null && !in_array($planoEntregaEntrega->planoEntrega->status, ["ATIVO", "AVALIADO", "CONCLUIDO"])) {
+                        return "O plano de trabalho não pode ser clonado porque o plano de entrega da entrega:" . $entrega['descricao'] . " não está ativo.";
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }
