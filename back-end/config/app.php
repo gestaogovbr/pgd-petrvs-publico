@@ -186,7 +186,7 @@ return [
         App\Providers\TenancySessionServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         App\Providers\UtilServiceProvider::class,
-
+        Lab404\Impersonate\ImpersonateServiceProvider::class,
         OwenIt\Auditing\AuditingServiceProvider::class,
     ],
 
@@ -243,6 +243,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'SiapeLog' => App\Facades\SiapeLogFacade::class,
     ],
 
 ];

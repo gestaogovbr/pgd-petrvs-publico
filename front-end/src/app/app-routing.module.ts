@@ -12,10 +12,12 @@ import { PanelGuard } from "./guards/panel.guard";
 import { PanelLoginComponent } from "./modules/panel/panel-login/panel-login.component";
 import { ConsultaCpfSiapeFormComponent } from './modules/consultas/consulta-cpf-siape-form/consulta-cpf-siape-form.component';
 import { ConsultaUnidadeSiapeFormComponent } from './modules/consultas/consulta-unidade-siape-form/consulta-unidade-siape-form.component';
+import {TesteImpersonateComponent} from "./modules/teste/teste-impersonate/teste-impersonate.component";
 
 const routes: Routes = [
   { path: 'panel-login', component: PanelLoginComponent },
   { path: 'panel', loadChildren: () => import('./modules/panel/panel.module').then(m => m.PanelModule), canActivate: [PanelGuard] },
+  { path: 'impersonate', component: TesteImpersonateComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste - Impersonate" } },
   { path: 'home', loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule), canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Login Petrvs", login: true } },
   { path: 'login-retorno', component: LoginRetornoComponent, data: { title: "Retorno de login", login: true } },
@@ -57,9 +59,7 @@ const routes: Routes = [
   { path: 'configuracoes/perfil', loadChildren: () => import('./modules/configuracoes/perfil/perfil.module').then(m => m.PerfilModule), canActivate: [AuthGuard] },
   { path: 'configuracoes/unidade', loadChildren: () => import('./modules/configuracoes/unidade/unidade.module').then(m => m.UnidadeModule), canActivate: [AuthGuard] },
   { path: 'configuracoes/usuario', loadChildren: () => import('./modules/configuracoes/usuario/usuario.module').then(m => m.UsuarioModule), canActivate: [AuthGuard] },
-  { path: 'consultas/cpf-siape', component: ConsultaCpfSiapeFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta SIAPE por CPF" } },
-  { path: 'consultas/cpf-unidade', component: ConsultaUnidadeSiapeFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta SIAPE por Unidade" } },
-  { path: 'consultas/cpf-unidade', loadChildren: () => import('./modules/consultas/consultas.module').then(m => m.ConsultasModule), canActivate: [AuthGuard] },
+  { path: 'consultas', loadChildren: () => import('./modules/consultas/consultas.module').then(m => m.ConsultasModule), canActivate: [AuthGuard] },
   { path: 'relatos/lotacao', loadChildren: () => import('./modules/relatos/lotacao/relato-lotacao.module').then(m => m.RelatoLotacaoModule), canActivate: [AuthGuard] },
   { path: 'listeners', loadChildren: () => import('./listeners/listeners.module').then(m => m.ListenersModule), canActivate: [AuthGuard] },
   { path: 'extension', loadChildren: () => import('./modules/extension/extension.module').then(m => m.ExtensionModule) },

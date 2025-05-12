@@ -17,6 +17,8 @@ use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\Programa;
 use App\Models\ProgramaParticipante;
 use App\Models\DocumentoAssinatura;
+use App\Models\PlanoEntregaEntrega;
+use Carbon\Carbon;
 use DateTime;
 use Throwable;
 use Illuminate\Database\Eloquent\Collection;
@@ -64,12 +66,14 @@ class PlanoTrabalhoService extends ServiceBase
     public function proxyQuery($query, &$data)
     {
         $where = [];
+        $ids = [];
         // (RI_PTR_C) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de trabalho não arquivados.
         $arquivados = $this->extractWhere($data, "incluir_arquivados");
         $subordinadas = $this->extractWhere($data, "incluir_subordinadas");
         // (RN_PTR_I) Quando a Unidade Executora não for a unidade de lotação do servidor, seu gestor imediato e seus substitutos devem ter acesso ao seu Plano de Trabalho (e à sua execução);
         $lotadosMinhaUnidade = $this->extractWhere($data, "lotados_minha_unidade");
-        if (empty($arquivados) || !$arquivados[2]) $data["where"][] = ["data_arquivamento", "==", null];
+        if (!isset($arquivados[2]) || !$arquivados[2])
+            $data["where"][] = ["data_arquivamento", "==", null];
         $unidadeId = $this->extractWhere($data, "unidade_id");
         if (is_array($unidadeId) && isset($unidadeId[2])) {
             $ids[] = $unidadeId[2];
@@ -101,7 +105,7 @@ class PlanoTrabalhoService extends ServiceBase
             $unidadeIds = [];
 
             foreach ($data["where"] as $key => $where) {
-                if ($where[0] === 'unidade_id') {
+                if (is_array($where) && isset($where[0], $where[1]) && $where[0] === 'unidade_id') {
                     if ($where[1] === '==') {
                         $unidadeIds[] = $where[2]; // Adiciona o valor único
                         unset($data["where"][$key]); // Remove a condição original
@@ -114,11 +118,31 @@ class PlanoTrabalhoService extends ServiceBase
 
             // Se houver IDs, adiciona a condição unificada
             if (!empty($unidadeIds)) {
-                $data["where"][] = ['unidade_id', 'in', array_unique($unidadeIds)];
+                // Filtra somente os elementos que são arrays (evita strings perdidas)
+                $arraysSomente = array_filter($unidadeIds, 'is_array');
+
+                if (!empty($arraysSomente)) {
+                    // Achata apenas os arrays válidos
+                    $unidadeIds = array_merge(...$arraysSomente);
+                }
+
+                // Agora $unidadeIds pode conter valores de strings soltas + os mesclados
+                // Então garantimos que tudo seja um array plano e único
+                $unidadeIds = array_unique(
+                    array_merge(
+                        is_array($unidadeIds) ? $unidadeIds : [$unidadeIds]
+                    )
+                );
+
+                $data["where"][] = ['unidade_id', 'in', array_values($unidadeIds)];
             }
+
+
+
         }
         foreach ($data["where"] as $condition) {
-            if (is_array($condition) && $condition[0] == "data_filtro") {
+            if (is_array($condition) && isset($condition[0], $condition[2]) && $condition[0] == "data_filtro") {
+
                 $dataInicio = $this->getFilterValue($data["where"], "data_filtro_inicio");
                 $dataFim = $this->getFilterValue($data["where"], "data_filtro_fim");
                 switch ($condition[2]) {
@@ -141,7 +165,7 @@ class PlanoTrabalhoService extends ServiceBase
                         $where[] = ["data_fim", "<=", $dataFim];
                         break;
                 }
-            } else if (!(is_array($condition) && in_array($condition[0], ["data_filtro_inicio", "data_filtro_fim"]))) {
+            } else if (!(is_array($condition) && isset($condition[0]) && in_array($condition[0], ["data_filtro_inicio", "data_filtro_fim"]))){
                 array_push($where, $condition);
             }
         }
@@ -216,6 +240,11 @@ class PlanoTrabalhoService extends ServiceBase
             /* (RN_PTR_Y) Para incluir um Plano de Trabalho para um participante, é necessário que este esteja LOTADO/COLABORADOR na unidade executora, a menos que este possua a capacidade MOD_PTR_USERS_INCL; */
             if (!parent::loggedUser()->hasPermissionTo('MOD_PTR_USERS_INCL') && !$condicoes["participanteColaboradorUnidadeExecutora"] && !$condicoes["participanteLotadoUnidadeExecutora"]) {
                 throw new ServerException("ValidatePlanoTrabalho", "Participante do plano não é LOTADO ou COLABORADOR na unidade executora. (MOD_PTR_USERS_INCL)\n[ver RN_PTR_Y]");
+            }
+
+            $entregasValidas = $this->validarClone($data);
+            if ($entregasValidas) {
+                throw new ServerException("ValidatePlanoTrabalho", $entregasValidas);
             }
         } else if ($action == ServiceBase::ACTION_EDIT) {
             /*
@@ -1101,5 +1130,27 @@ class PlanoTrabalhoService extends ServiceBase
             $this->setBuffer("jaAssinaramTCR", $plano_trabalho_id, $result);
         }
         return $result;
+    }
+
+    public function validarClone($planoTrabalho)
+    {
+        if ($this->hasBuffer("validarClone", $planoTrabalho["id"])) {
+            return $this->getBuffer("validarClone", $planoTrabalho["id"]);
+        } else {
+    
+            // percorrer entregas que tem plano_entrega_entrega_id e validar se o plano de entrega está ativo
+            foreach ($planoTrabalho['entregas'] as $entrega) {
+                if ($entrega['plano_entrega_entrega_id']) {
+                    $planoEntregaEntrega = PlanoEntregaEntrega::find($entrega['plano_entrega_entrega_id']);
+                    $status = $planoEntregaEntrega->planoEntrega->status;
+                    // verifica se o plano de entrega está ativo    
+                    if ($planoEntregaEntrega !== null && !in_array($planoEntregaEntrega->planoEntrega->status, ["ATIVO", "AVALIADO", "CONCLUIDO"])) {
+                        return "O plano de trabalho não pode ser clonado porque o plano de entrega da entrega:" . $entrega['descricao'] . " não está ativo.";
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }

@@ -1,0 +1,62 @@
+<div class="spinner-border" role="status" *ngIf="loading">
+    <span class="visually-hidden"></span>
+</div>
+
+<div class="consulta-cpf-siape-result">
+    
+    <div class="dados-siape">
+        <div class="row" *ngIf="!dadosPessoais || !dadosFuncionais">
+            <div class="col-md-12">
+                <p class="subtitle">Dados não encontrados no SIAPE para o CPF informado.</p>
+            </div>
+        </div>
+        <div class="row" *ngIf="dadosPessoais && dadosFuncionais">
+            <div class="col-md-12">
+                <p class="subtitle">
+                    <i class="bi bi-cloud-arrow-down-fill"></i>
+                    Dados localizados no SIAPE
+                </p>
+            </div>
+            <div class="col-md-12">
+                <p><b>{{dadosPessoais.nome}}</b></p>
+            </div>
+            <div class="row" *ngFor="let dadoFuncional of dadosFuncionais">
+                <div class="col-md-12">
+                    <p>Matrícula: {{dadoFuncional.matriculaSiape}}</p>
+                    <p>
+                        <span class="unidade">
+                            {{dadoFuncional.codUorgExercicio + ' - ' + dadoFuncional.unidadeSigla}}
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <separator></separator>
+    <div class="dados-petrvs">
+        <div class="row" *ngIf="!usuario">
+            <div class="col-md-12">
+                <p class="subtitle">Nenhum usuário encontrado no Petrvs com o CPF informado.</p>
+            </div>
+        </div>
+        <div class="row" *ngIf="usuario">
+            <div class="col-md-12">
+                <p class="subtitle">
+                    <i class="bi bi-person"></i> Usuário encontrado no Petrvs
+                </p>
+            </div>
+            <div class="col-md-12">
+                <p><b>{{usuario.nome}}</b></p>
+                <p>Matrícula #{{usuario.matricula}}</p>
+                <p>
+                    <span class="unidade" *ngFor="let integrante of integrantes">
+                        {{integrante.unidade_codigo + ' - ' + integrante.unidade_sigla + ' (' + integrante.atribuicoes.join('/') + ')'}}
+                    </span>
+                </p> 
+            </div>
+        </div>
+    </div>
+    <separator>
+        <toolbar [buttons]="toolbarButtons"></toolbar>
+    </separator>
+</div>

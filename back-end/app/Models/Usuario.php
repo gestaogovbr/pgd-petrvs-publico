@@ -48,13 +48,15 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Auditable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Lab404\Impersonate\Models\Impersonate;
+
 class UsuarioConfig
 {
 }
 
 class Usuario extends Authenticatable implements AuditableContract
 {
-    use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable;
+    use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable, Impersonate;
 
     protected $table = "usuarios";
 
@@ -77,8 +79,6 @@ class Usuario extends Authenticatable implements AuditableContract
         'texto_complementar_plano', /* longtext; */ // Campo de mensagem adicional do plano de trabalho
         'situacao_funcional',
         'data_nascimento',
-        'nome_jornada', /* varchar(100); NULL */ // Nome da Jornada
-        'cod_jornada', /* int; NULL */ // Codigo da Jornada
         //'deleted_at', /* timestamp; */
         //'remember_token', /* varchar(100); */
         //'password', /* varchar(255); */// Senha do usuário
@@ -92,6 +92,7 @@ class Usuario extends Authenticatable implements AuditableContract
         //'metadados', /* json; */// Metadados do usuário
         'data_modificacao',
         'usuario_externo',
+        'is_admin'
     ];
 
     public function proxyFill($dataOrEntity, $unidade, $action)
@@ -387,9 +388,9 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasMany(UnidadeIntegrante::class)->has('curador');
     }
 
-    public function curador()
+    public function isCurador(): bool
     {
-        return $this->hasOne(UnidadeIntegrante::class)->has('curador');
+        return $this->isDeveloper() || UnidadeIntegrante::where('usuario_id', $this->id)->whereHas('curador')->exists();
     }
 
     public function lotacoes()
@@ -484,4 +485,15 @@ class Usuario extends Authenticatable implements AuditableContract
             $this->attributes['matricula'] = $value;
         }
     }
+
+    public function canImpersonate()
+    {
+        // For example
+        return $this->is_admin == 1;
+    }
+    public function impersonateGuard()
+    {
+        return 'sanctum';
+    }
+
 }

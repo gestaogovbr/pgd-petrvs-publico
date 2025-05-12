@@ -28,3 +28,6 @@ Route::get('environment-config', [PetrvsController::class, 'environmentConfig'])
         SubstituteBindings::class
     ]);*/
 // Route::middleware(['signed.relative'])->get('/download/{tenant}/{file}', [DownloadController::class, 'download'])->name('download')->where('file', '.*');
+
+
+

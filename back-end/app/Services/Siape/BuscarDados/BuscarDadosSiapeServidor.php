@@ -85,7 +85,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         }
 
         Log::info("Finalizando processamento de servidor");
-        
+
     }
 
     private function limpaTabela(): void
@@ -161,7 +161,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         }
 
         Log::info('Busca de Dados Pessoais');
-        $xmlResponse = $this->BuscaDados($xmlsServidores);
+        $xmlResponse = $this->buscaDados($xmlsServidores);
 
         $inserts = [];
         foreach ($xmlResponse as $dados => $xml) {
@@ -229,6 +229,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         return $xml->asXML();
     }
 
+    // a partir de um array de servidores, divide em lote e busca os dados
     private function buscaDados(array $xmlsServidores)
     {
         $lotes = array_chunk($xmlsServidores, $this->getQtdMaxRequisicoes(), true);
@@ -247,13 +248,12 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         return $respostas;
     }
 
-
-
-    private function getServidores(SiapeListaServidores $response) : ?array
+    public function getServidores(SiapeListaServidores $response) : ?array
     {
         try {
             $xmlResponse = $this->prepareResponseXml($response->response);
         } catch (\Exception $e) {
+            report($e);
             Log::error('Erro ao processar XML dos Servidores', [$e->getMessage()]);
             return null;
         }
@@ -284,9 +284,10 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
                 $array1[$key] = $value;
             }
         }
-    
+
         return $array1;
     }
+
 }
 
 

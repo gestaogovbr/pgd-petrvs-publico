@@ -33,6 +33,8 @@ export class ProdutoListSolucaoComponent extends PageFrameBase {
   public produtoDao?: ProdutoDaoService;
   public solucaoDao?: SolucaoDaoService;
   public solucaoUnidadeDao?: SolucaoUnidadeDaoService;
+    public isSearching: boolean = false;
+
 
   public get items(): ProdutoSolucao[] {
     if (!this.gridControl.value) this.gridControl.setValue(new ProdutoSolucao());
@@ -57,6 +59,14 @@ export class ProdutoListSolucaoComponent extends PageFrameBase {
       },
     }, this.cdRef, undefined, this.asyncValidate);
     this.join = ["produtoSolucao.solucao"];
+  }
+
+  public async ngOnInit() {
+    super.ngOnInit();
+
+    this.isSearching = this.queryParams.mode == 'search';
+    if (this.isSearching) {
+    }
   }
 
   public asyncValidate = async (control: AbstractControl, controlName: string): Promise<string | null> => {
