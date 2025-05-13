@@ -48,13 +48,15 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Auditable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Lab404\Impersonate\Models\Impersonate;
+
 class UsuarioConfig
 {
 }
 
 class Usuario extends Authenticatable implements AuditableContract
 {
-    use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable;
+    use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable,Impersonate;
 
     protected $table = "usuarios";
 
@@ -92,6 +94,7 @@ class Usuario extends Authenticatable implements AuditableContract
         //'metadados', /* json; */// Metadados do usuário
         'data_modificacao',
         'usuario_externo',
+        'is_admin',
     ];
 
     public function proxyFill($dataOrEntity, $unidade, $action)
@@ -483,5 +486,15 @@ class Usuario extends Authenticatable implements AuditableContract
         if (!is_null($value)) {
             $this->attributes['matricula'] = $value;
         }
+    }
+
+    public function canImpersonate()
+    {
+        // For example
+        return $this->is_admin == 1;
+    }
+    public function impersonateGuard()
+    {
+        return 'sanctum';
     }
 }
