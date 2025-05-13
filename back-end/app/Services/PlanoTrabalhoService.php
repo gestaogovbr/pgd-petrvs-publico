@@ -14,7 +14,6 @@ use App\Exceptions\ServerException;
 use App\Models\Documento;
 use Illuminate\Support\Facades\DB;
 use App\Models\PlanoTrabalhoConsolidacao;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Programa;
 use App\Models\ProgramaParticipante;
 use App\Models\DocumentoAssinatura;
@@ -23,7 +22,6 @@ use Carbon\Carbon;
 use DateTime;
 use Throwable;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Builder;
 
 class PlanoTrabalhoService extends ServiceBase
 {
@@ -37,7 +35,10 @@ class PlanoTrabalhoService extends ServiceBase
      */
     public function planosAtivos($usuario_id): Collection
     {
-        return PlanoTrabalho::where("usuario_id", $usuario_id)->where("data_inicio", "<=", now())->where("data_fim", ">=", now())->get();
+        return PlanoTrabalho::where("usuario_id", $usuario_id)
+            ->where("data_inicio", "<=", now())
+            ->where("data_fim", ">=", now())
+            ->get();
         // adicionar no gitlab para considerar o fuso horário
     }
 
@@ -53,7 +54,8 @@ class PlanoTrabalhoService extends ServiceBase
     {
         return PlanoTrabalho::where("usuario_id", $usuario_id)
             ->where("data_inicio", "<=", $data_final)
-            ->where("data_fim", ">=", $data_inicial)->get();
+            ->where("data_fim", ">=", $data_inicial)
+            ->get();
     }
 
     public function proxySearch($query, &$data, &$text)
