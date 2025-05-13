@@ -464,5 +464,40 @@ export class AuthService {
       return response;
     });
   }
+  public impersonate(user:string): Promise<boolean> {
+    this._apiToken = localStorage.getItem("petrvs_api_token") || undefined;
+    return this.impersonateUser("SESSION", "impersonate", user );
+  }
 
+  private impersonateUser(kind: AuthKind, route: string, user: string,redirectTo?: FullRoute): Promise<boolean> {
+    let login = (): Promise<boolean> => {
+      return this.server.post("api/impersonate", { user_id: user }).toPromise().then(response => {
+        if (response?.error)
+          throw new Error(response?.error);
+        this.kind = response?.kind || kind;
+        this.apiToken = response.token;
+        this.registerEntity(response.entidade);
+        this.registerUser(response.usuario, this.apiToken);
+        this.app?.setMenuVars();
+        if (response.horario_servidor?.length) {
+          this.gb.horarioDelta.servidor = UtilService.iso8601ToDate(response.horario_servidor);
+          this.gb.horarioDelta.local = new Date();
+        }
+        if (this.success && kind != "SESSION") this.success(this.usuario!, redirectTo);
+        if (this.gb.refresh) this.gb.refresh();
+        return true;
+      }).catch(error => {
+        this.registerUser(undefined);
+        if (this.fail && kind != "SESSION") this.fail(error?.message || error?.error || error.toString());
+        if (this.gb.refresh) this.gb.refresh();
+        return false;
+      });
+    };
+    this.logging = true;
+    if (this.gb.isEmbedded) {
+      return login();
+    } else {
+      return this.server.get('sanctum/csrf-cookie').toPromise().then(login);
+    }
+  }
 }

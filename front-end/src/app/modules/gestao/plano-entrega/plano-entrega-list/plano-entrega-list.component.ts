@@ -149,8 +149,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     return {
       meus_planos: form.meus_planos,
       arquivadas: form.arquivadas,
-      subordinadas: form.subordinadas,
-      unidade_id: form.unidade_id,
+      subordinadas: form.subordinadas
     }
   }
 
@@ -165,11 +164,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
     }
     this.route.queryParams.subscribe((p) => {
+      this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
       if (p["context"] == "EXECUCAO" && this.filter) {
         this.filter?.controls.usuario.setValue(this.auth.usuario?.nome);
-      }
-      if (p["context"] == "GESTAO" && this.filter) {
-        this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
       }
     });
     if (this.execucao) {
