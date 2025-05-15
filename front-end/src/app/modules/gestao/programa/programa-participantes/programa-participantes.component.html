@@ -40,7 +40,7 @@
         <column [title]="lex.translate('Vínculos')" [template]="columnLotacao">
             <ng-template let-row="row" #columnLotacao>
                 <div *ngFor="let area of row.areas_trabalho">
-                    <small>{{area.unidade.sigla}}</small>
+                    <small>{{area.unidade?.sigla}}</small>
                 </div>
             </ng-template>
         </column>

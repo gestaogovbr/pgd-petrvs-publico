@@ -30,6 +30,8 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
   public BOTAO_HABILITAR: ToolbarButton = { label: this.lex.translate("Habilitar"), hint: this.lex.translate("Habilitar"), icon: "bi bi-person-check-fill", color: "btn-outline-success", onClick: this.habilitarParticipante.bind(this) };
   public BOTAO_DESABILITAR: ToolbarButton = { label: this.lex.translate("Desabilitar"), hint: this.lex.translate("Desabilitar"), icon: "bi bi-person-x-fill", color: "btn-outline-danger", onClick: this.desabilitarParticipante.bind(this) };
 
+  public BOTAO_PEDAGIO: ToolbarButton;
+
   public condicoes: LookupItem[] = [
     {
       key: '1',
@@ -66,6 +68,13 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
       color: "btn-outline-danger",
       onClick: this.desabilitarParticipantes.bind(this)
     });
+
+
+    this.BOTAO_PEDAGIO = { label: "Bloquear modalidade teletrabalho", icon: "bi bi-ban", color: "btn-outline-danger", onClick: (usuario: Usuario) => {
+      this.go.navigate({ route: ['gestao', 'programa', 'pedagio', usuario.id] }, this.modalRefreshId(usuario)) 
+    }};
+
+
     this.join = ["areasTrabalho.unidade:id,sigla", "planos_trabalho:id,status", "participacoes_programas.programa:id"];
     this.title = this.lex.translate("Habilitações");
     this.orderBy = [['nome', 'asc']];    
@@ -76,6 +85,7 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
     if(row.usuario_externo) return result;
     if (this.auth.hasPermissionTo('MOD_PART_HAB') && !this.isHabilitado(row)) result.push(this.BOTAO_HABILITAR);
     if (this.auth.hasPermissionTo('MOD_PART_DESAB') && this.isHabilitado(row)) result.push(this.BOTAO_DESABILITAR);
+    result.push(this.BOTAO_PEDAGIO);
     return result;
   }
 

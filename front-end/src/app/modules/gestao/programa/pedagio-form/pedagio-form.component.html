@@ -9,14 +9,21 @@
 <div class="row">
   <div class="col-md-12 situacao">
       <input-radio [size]="3"
-          label="Selecione a opção mais adequada" 
+          label="Selecione a hipótese normativa aplicável ao impedimento para a modalidade Teletrabalho:" 
           controlName="opcao" 
           [items]="OPTIONS"
           circle="true"
           required
-          (change)="updateValidators()" 
+          (change)="updateDates($event)" 
       ></input-radio>
   </div>
+
+    <div class="col-md-6">
+        <input-datetime date [size]="3" label="Data Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="form!.controls.data_inicio" (change)="onDataInicioChange($event)" [labelInfo]="'Início do período de pedágio'" required></input-datetime>
+    </div>
+    <div class="col-md-6">
+        <input-datetime date [size]="3" label="Data fim" icon="bi bi-calendar-date" controlName="data_fim" [control]="form!.controls.data_fim" (change)="onDataFimChange($event)" [labelInfo]="'Fim do período de pedágio'" required></input-datetime>
+    </div>
 </div>
 
 </editable-form>
