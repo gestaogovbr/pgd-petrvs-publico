@@ -94,6 +94,30 @@ class UsuarioSeeder extends Seeder
         'apelido' => 'Bruno',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
+      ],
+      [
+        'email' => 'keilla.oliveira@gestao.gov.br',
+        'nome' => 'Keilla Terumi Nishi de Oliveira',
+        'cpf' => '01837409129',
+        'apelido' => 'Keilla',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'FEMININO',
+      ],
+      [
+        'email' => 'gabrieldnb7@gmail.com',
+        'nome' => ' Gabriel Marcos da Silva',
+        'cpf' => '44239586003',
+        'apelido' => 'Gabriel',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'MASCULINO',
+      ],
+      [
+        'email' => 'joaovictor.santiago2521@gmail.com',
+        'nome' => ' João Victor Santiago',
+        'cpf' => '42007045010',
+        'apelido' => 'João',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'MASCULINO',
       ]
     ];
 
