@@ -1,0 +1,22 @@
+<editable-form 
+    [form]="form!" 
+    [title]="isModal ? '' : title" 
+    (submit)="onSaveData()" 
+    (cancel)="onCancel()"
+    confirmLabel="Relatar problema"
+>
+
+<div class="row">
+  <div class="col-md-12 situacao">
+      <input-radio [size]="3"
+          label="Selecione a opção mais adequada" 
+          controlName="opcao" 
+          [items]="OPTIONS"
+          circle="true"
+          required
+          (change)="updateValidators()" 
+      ></input-radio>
+  </div>
+</div>
+
+</editable-form>
