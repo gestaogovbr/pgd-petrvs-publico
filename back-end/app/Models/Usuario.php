@@ -56,7 +56,8 @@ class UsuarioConfig
 
 class Usuario extends Authenticatable implements AuditableContract
 {
-    use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable, Impersonate;
+    use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable,Impersonate;
+
 
     protected $table = "usuarios";
 
@@ -92,7 +93,7 @@ class Usuario extends Authenticatable implements AuditableContract
         //'metadados', /* json; */// Metadados do usuário
         'data_modificacao',
         'usuario_externo',
-        'is_admin'
+        'is_admin',
     ];
 
     public function proxyFill($dataOrEntity, $unidade, $action)
@@ -495,5 +496,4 @@ class Usuario extends Authenticatable implements AuditableContract
     {
         return 'sanctum';
     }
-
 }

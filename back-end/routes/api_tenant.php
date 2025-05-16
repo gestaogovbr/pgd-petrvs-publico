@@ -90,7 +90,8 @@ use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\TipoClienteController;
 use App\Http\Controllers\RelatoController;
 use App\Http\Controllers\SolucaoUnidadeController;
-use App\Http\Controllers\ImpersonationController;use App\Http\Controllers\SiapeIndividualController;
+use App\Http\Controllers\ImpersonationController;
+use App\Http\Controllers\SiapeIndividualController;
 
 /*
 |--------------------------------------------------------------------------

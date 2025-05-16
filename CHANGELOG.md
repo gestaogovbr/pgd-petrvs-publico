@@ -1,3 +1,10 @@
+## 2.3.18 12/05/2025
+### Adicionado
+ - Recurso para clonar plano de trabalho
+ - Filtro default para listagem de planos de trabalho - UMenidades subordinadas
+### Corrigido
+ - Correção em filtros do plano de entrega
+ - Mensagem de erro 503
 ## 2.3.17 25/04/2025
 ### Corrigido
  - Horário de vigência do Plano de trabalho, não é mais considerado.
