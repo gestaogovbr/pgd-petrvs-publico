@@ -481,6 +481,10 @@ class UsuarioService extends ServiceBase
       return $values;
   }
 
+  public function consultaCpfSiapeXml(string $cpf): array
+  {
+    return $this->buscaServidor($cpf);
+  }
   /**
    *
    * @param string $cpf
@@ -490,15 +494,10 @@ class UsuarioService extends ServiceBase
 
     $dadosPessoaisService = new SiapeDadosPessoaisService();
     $dadosFuncionaisService = new SiapeDadosFuncionaisService();
-    $unidadesService = new SiapeUnidadesService();
-    $unidadeService = new SiapeUnidadeService();
 
     $dadosPessoaisXml = $dadosPessoaisService->buscarCPF($cpf);
     $dadosFuncionaisXml = $dadosFuncionaisService->buscarCPF($cpf);
-    $unidadesXml = $unidadesService->buscar();
-    //$unidadeXml = $unidadeService->buscarUnidade(1);
 
-    $unidades = (new UnidadesResource($unidadesXml))->toArray();
     $dadosPessoais = new DadosPessoaisResource($dadosPessoaisXml);
     $dadosFuncionais = new DadosFuncionaisResource($dadosFuncionaisXml);
 

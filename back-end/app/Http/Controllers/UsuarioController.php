@@ -80,7 +80,7 @@ class UsuarioController extends ControllerBase
         $nomeArquivo = 'dados_cpf_' . $data['cpf'] . '.zip';
 
         try{
-            $retornos = $this->service->consultaCPFSiape($request->cpf);
+            $retornos = $this->service->consultaCpfSiapeXml($request->cpf);
 
             $zipFile = tempnam(sys_get_temp_dir(), 'zip');
             $zip = new ZipArchive();
@@ -100,6 +100,7 @@ class UsuarioController extends ControllerBase
             ])->deleteFileAfterSend(true);
 
         } catch (\Throwable $th) {
+            report($th);
             $tempFile = tempnam(sys_get_temp_dir(), 'txt');
             $mensagemErro = date('Y-m-d H:i:s') . " - " . $th->getMessage() . PHP_EOL;
 
