@@ -72,11 +72,11 @@ export class SolucaoListProdutoComponent extends PageFrameBase {
   }
 
   public async showProduto(row: ProdutoSolucao){
-    this.go.navigate({route: ['gestao', 'produto', row.produto_id, "show"]}, {});    
+    this.go.navigate({route: ['gestao', 'produto', row?.produto_id, "show"]}, {});    
   }
 
   public isAtivo(row: Produto): boolean {
-    return (row.data_ativado && !row.data_desativado) || false;
+    return (row?.data_ativado && !row?.data_desativado) || false;
   }
 
   public getStatusColor(row: Produto): string {

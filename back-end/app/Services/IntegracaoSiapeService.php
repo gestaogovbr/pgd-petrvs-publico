@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use App\Services\ServiceBase;
 use App\Exceptions\LogError;
 use App\Models\Unidade;
+use App\Models\Usuario;
 use App\Services\Siape\ProcessaDadosSiapeBD;
 use DateTime;
 use Illuminate\Support\Facades\Log;
@@ -81,8 +82,6 @@ class IntegracaoSiapeService extends ServiceBase
         'telefone' =>  '',
         'cpf_chefia_imediata' => $this->UtilService->valueOrDefault($dadosFuncionais['cpfChefiaImediata'], null),
         'email_chefia_imediata' => $this->UtilService->valueOrDefault($dadosFuncionais['emailChefiaImediata'], null),
-        'nome_jornada' => $this->UtilService->valueOrDefault($dadosFuncionais['nomeJornada'], null),
-        'cod_jornada' => $this->UtilService->valueOrDefault((int) $dadosFuncionais['codJornada'], null),
         'matriculas' => [
           'dados' => [
             'vinculo_ativo' => true,
@@ -199,5 +198,28 @@ class IntegracaoSiapeService extends ServiceBase
       }
     }
     return $PessoasPetrvs;
+  }
+
+  public function processaServidoresRemovidosNoSiape() : array
+  {
+    $ids = $this->listIdsUsuariosRemovidosNaoExcluidos();
+    
+    if (empty($ids)) {
+      return [];
+    }
+
+     Usuario::whereIn('id', $ids)->delete();
+
+    Log::info("ISiape: Servidores removidos do SIAPE e excluídos do sistema.", ['ids' => $ids]);
+
+    return $ids;
+  }
+
+  private function listIdsUsuariosRemovidosNaoExcluidos():array
+  {
+    $ids = Usuario::join('siape_blacklist_servidores as s', 'usuarios.cpf', '=', 's.cpf')
+              ->pluck('usuarios.id');
+
+    return $ids->toArray();
   }
 }

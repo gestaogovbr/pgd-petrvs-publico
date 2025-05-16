@@ -8,6 +8,7 @@ use App\Models\Solucao;
 use App\Models\SolucaoUnidade;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use DB;
 
 class SolucaoService extends ServiceBase
@@ -16,6 +17,28 @@ class SolucaoService extends ServiceBase
   {
     if (empty($data['query']) && empty($data['where'])) return [];
     else return parent::searchText($data);
+  }
+
+
+  public function afterStore($entity, $action)
+  {
+    
+    $unidade_id = Auth::user()->areasTrabalho[0]->unidade->id;
+    // Criar um relacionamento entre a solução e a unidade
+    if ($entity) {
+      $solucaoUnidade = SolucaoUnidade::where('id_solucao', $entity->id)
+        ->where('id_unidade',  $unidade_id)
+        ->first();
+
+      if (!$solucaoUnidade) {
+        DB::table('solucoes_unidades')->insert([
+          'id' => Uuid::uuid4(),
+          'id_solucao' => $entity->id,
+          'id_unidade' => $unidade_id,
+          'status' => 0
+        ]);
+      } 
+    }
   }
 
   public function atribuirTodos(string $unidade_id) {
@@ -50,7 +73,15 @@ class SolucaoService extends ServiceBase
     if ($unidade_ativa) {
       $query->whereHas('solucoesUnidades', function (Builder $query) use ($unidade_ativa) {
         $query
-          ->where('id_unidade', $unidade_ativa[2])
+          ->where('id_unidade', $unidade_ativa[2]);
+      });
+    }
+
+    $so_ativos_unidade = $this->extractWhere($data, "so_ativos_unidade");
+    if ($so_ativos_unidade) {
+      $query->whereHas('solucoesUnidades', function (Builder $query) use ($so_ativos_unidade) {
+        $query
+          ->where('id_unidade', $so_ativos_unidade[2])
           ->where('status', 1);
       });
     }
@@ -61,6 +92,7 @@ class SolucaoService extends ServiceBase
         $query
           ->where('id_unidade', $unidade_inativa[2])
           ->where('status', 1);
+
       });
     }
   }

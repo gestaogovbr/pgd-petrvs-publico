@@ -88,11 +88,11 @@ use App\Http\Controllers\QuestionarioPerguntaController;
 use App\Http\Controllers\QuestionarioPerguntaRespostaController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\TipoClienteController;
-use FontLib\Table\Type\post;
-use App\Http\Controllers\JobAgendadoController;
 use App\Http\Controllers\RelatoController;
 use App\Http\Controllers\SolucaoUnidadeController;
 use App\Http\Controllers\ImpersonationController;
+use App\Http\Controllers\SiapeIndividualController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -360,6 +360,7 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
   Route::post('hierarquia', [UnidadeController::class, 'hierarquia']);
   Route::post('filhas', [UnidadeController::class, 'filhas']);
   Route::post('linhaAscendente', [UnidadeController::class, 'linhaAscendente']);
+  Route::post('linhaDescendente', [UnidadeController::class, 'linhaDescendente']);
   Route::post('lookup-todas-unidades', [UnidadeController::class, 'lookupTodasUnidades']);
   Route::post('obter-instituidora', [UnidadeController::class, 'obterInstitudora']);
 });
@@ -491,10 +492,17 @@ Route::middleware(['auth:sanctum'])->prefix('Relato')->group(function () {
   Route::post('store', [RelatoController::class, 'store']);
   Route::get('confirmar/{email}/{nome}', [RelatoController::class, 'confirmar']);
 });
-Route::middleware('auth:sanctum')->post('/usuario/consulta-cpf-siape', [UsuarioController::class, 'consultaCPFSiape']);
-Route::middleware('auth:sanctum')->post('/unidade/consulta-unidade-siape', [UnidadeController::class, 'consultaUnidadeSiape']);
-Route::middleware(['auth:sanctum'])->prefix('SolucaoUnidade')->group(function () {
-  defaultRoutes(SolucaoUnidadeController::class);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/usuario/consultar-cpf-siape', [UsuarioController::class, 'consultarCPFSiape']);
+    Route::post('/usuario/exportar-cpf-siape', [UsuarioController::class, 'exportarCPFSiape']);
+    Route::post('/unidade/consulta-unidade-siape', [UnidadeController::class, 'consultaUnidadeSiape']);
+    Route::post('/usuario/processar-siape', [SiapeIndividualController::class, 'processaServidor']);
+    Route::post('/unidade/processar-siape', [SiapeIndividualController::class, 'processaUnidade']);
+
+    Route::prefix('SolucaoUnidade')->group(function () {
+        defaultRoutes(SolucaoUnidadeController::class);
+    });
 });
 
 

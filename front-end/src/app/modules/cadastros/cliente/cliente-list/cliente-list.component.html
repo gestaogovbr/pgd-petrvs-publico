@@ -1,8 +1,35 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [hasAdd]="this.auth.isUsuarioDeveloper()" [hasEdit]="this.auth.isUsuarioDeveloper()" [selectable]="selectable" (select)="onSelect($event)">
+<grid
+  [dao]="dao"
+  [add]="add"
+  [title]="isModal ? '' : title"
+  [orderBy]="orderBy"
+  [groupBy]="groupBy"
+  [join]="join"
+  [hasAdd]="(this.auth.isUsuarioDeveloper() || auth.hasPermissionTo('MOD_CLI_INCL')) && !isFornecedor"
+  [hasEdit]="false"
+  [hasDelete]="false"
+  [selectable]="selectable"
+  (select)="onSelect($event)"
+>
   <toolbar></toolbar>
-  <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
+  <filter
+    [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL') && !isFornecedor"
+    [form]="filter"
+    [where]="filterWhere"
+    [submit]="filterSubmit.bind(this)"
+    [clear]="filterClear.bind(this)"
+    [collapseChange]="filterCollapseChange.bind(this)"
+    [collapsed]="filterCollapsed"
+  >
     <div class="row">
-      <input-select [size]="4" [label]="lex.translate('Tipo Cliente')" controlName="tipo_cliente_id" nullable [control]="filter!.controls.tipo_cliente_id" [dao]="tipoClienteDao"></input-select>
+      <input-select
+        nullable
+        controlName="tipo_cliente_id"
+        [size]="4"
+        [label]="lex.translate(isFornecedor ? 'Tipo Fornecedor' : 'Tipo Cliente')"
+        [control]="filter!.controls.tipo_cliente_id"
+        [dao]="tipoClienteDao"
+      ></input-select>
 
       <input-text [size]="8" [label]="'Nome'" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome'" [attr.maxlength]=250></input-text>
     </div>
@@ -16,7 +43,25 @@
     </column>
     <column title="Descrição" field="nome"></column>
 
-    <column type="options" [onEdit]="edit" [options]="options"></column>
+    <column title="Ativar/Desativar" [template]="columnAtivar" 
+           
+            titleHint="Permitir que o Cliente esteja disponível para vinculação de produtos."
+        >
+            <ng-template let-row="row" #columnAtivar>
+                <input-switch 
+                    [size]="12" 
+                    scale="small" 
+                    [value]="row.data_desativado ? 'false' : 'true'" 
+                    [valueOn]="'true'"  
+                    [valueOff]="'false'"
+                    (change)="ativarDesativar(row)"
+                    [disabled]="(row.deleted_at || !this.auth.hasPermissionTo('MOD_CLI_ATI')) ? 'true': undefined"
+                ></input-switch>
+
+            </ng-template>  
+        </column>
+
+    <column type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
   </columns>
   <pagination [rows]="rowsLimit"></pagination>
 </grid>
