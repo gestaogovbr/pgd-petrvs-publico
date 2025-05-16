@@ -210,12 +210,9 @@ class IntegracaoSiapeService extends ServiceBase
       return [];
     }
 
-    $usuarios = Usuario::whereIn('id', $ids)->get();
+     Usuario::whereIn('id', $ids)->delete();
 
-    foreach ($usuarios as $usuario) {
-      Log::info("Removendo servidor " . $usuario->cpf . " - " . $usuario->nome);
-      $usuario->delete();
-    }
+    Log::info("ISiape: Servidores removidos do SIAPE e excluídos do sistema.", ['ids' => $ids]);
 
     return $ids;
   }
