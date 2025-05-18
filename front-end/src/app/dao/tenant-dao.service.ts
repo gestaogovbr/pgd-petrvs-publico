@@ -74,7 +74,21 @@ export class TenantDaoService extends DaoBaseService<Tenant> {
         }
       }, error => reject(error));
     });
-}
+  }
+
+   public forcaRenvio(item: TipoCapacidade) {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('config/' + this.collection + '/forcar-reenvio', {
+        tenant_id: item.id,
+      }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
 
   public deleteTenant(item: TipoCapacidade) {
     return new Promise<boolean>((resolve, reject) => {
