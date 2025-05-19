@@ -47,8 +47,6 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       sexo: { default: null },
       url_foto: { default: "" },
       texto_complementar_plano: { default: "" },
-      nome_jornada: { default: "" },
-      cod_jornada: { default: "" },
       //perfil_id: { default: null },
       data_nascimento: { default: null },
     }, this.cdRef, this.validate);
