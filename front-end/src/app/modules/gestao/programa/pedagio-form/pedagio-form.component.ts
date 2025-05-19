@@ -117,6 +117,8 @@ export class PedagioFormComponent extends PageFormBase<
 	}
 
 	public async atualizaPedagio(): Promise<Usuario> {
+		console.log("atualizaPedagio");
+		
 		const data = {
 			usuario_id: this.entity?.id,
 			data_inicial_pedagio: this.form?.controls.data_inicial_pedagio.value,
@@ -128,8 +130,6 @@ export class PedagioFormComponent extends PageFormBase<
 			const response = await this.dao?.atualizaPedagio(data);
 			if (response) {
 				this.entity = response;
-				this.form?.patchValue(this.entity);
-				this.cdRef.detectChanges();
 			}
 			if (!this.entity) {
 				throw new Error("Entity is undefined.");
