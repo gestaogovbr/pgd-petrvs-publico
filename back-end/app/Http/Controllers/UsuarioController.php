@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 use ZipArchive;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
+use Illuminate\Support\Facades\File;
 
 class UsuarioController extends ControllerBase
 {
@@ -108,5 +109,23 @@ class UsuarioController extends ControllerBase
 
             return response()->download($tempFile, $nomeArquivo)->deleteFileAfterSend(true);
         }
+    }
+
+    public function downloadLogSiape(Request $request)
+    {
+        $logPath = storage_path('logs/siape.log');
+
+        if (!file_exists($logPath)) {
+            return response()->json(['error' => 'Arquivo de log não encontrado.'], 404);
+        }
+
+        return response()->download(
+            $logPath,
+            'siape.log',
+            [
+                'Content-Type' => File::mimeType($logPath),
+                'Content-Disposition' => 'attachment; filename="siape.log"',
+            ]
+        );
     }
 }
