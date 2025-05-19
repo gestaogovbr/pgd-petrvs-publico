@@ -18,10 +18,6 @@
                         <input-select [size]="6" label="UF" icon="bi bi-flag" controlName="uf" [items]="lookup.UF" [disabled]="!entity?.usuario_externo ? 'true' : undefined"></input-select>
                         <input-text [size]="6" label="Telefone" controlName="telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'" [attr.maxlength]=250></input-text>
                     </div>
-                    <div class="row">
-                        <input-text [size]="6" label="Jornada" icon="bi bi-clock-history" controlName="nome_jornada" [attr.maxlength]=100></input-text>
-                        <input-text [size]="6" label="Código da Jornada" icon="bi bi-clock" controlName="cod_jornada" ></input-text>
-                    </div>
                 </div>
             </div>
         </tab>
