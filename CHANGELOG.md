@@ -1,4 +1,6 @@
 ## 2.3.19 19/05/2025
+### Modificado
+ - Adicionado as regras de perfis do SIAPE o perfil Administrador Geral
 
 ## 2.3.18 12/05/2025
 ### Adicionado
