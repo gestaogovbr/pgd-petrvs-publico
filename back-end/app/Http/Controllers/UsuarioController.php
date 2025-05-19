@@ -89,4 +89,28 @@ class UsuarioController extends ControllerBase
         return response()->download($tempFile, $nomeArquivo)->deleteFileAfterSend(true);
    }
   }
+
+  public function atualizaPedagio(Request $request)
+  {
+    try {
+      $data = $request->validate([
+        'usuario_id' => ['required'],
+        'data_inicial_pedagio' => ['required'],
+        'data_final_pedagio' => ['required'],
+        'tipo_pedagio' => ['required']
+      ]);
+      return response()->json([
+        'success' => true,
+        'data' => $this->service->atualizaPedagio($data)
+      ]);
+    } catch (IBaseException $e) {
+      return response()->json(['error' => $e->getMessage()]);
+      
+    }
+  catch (Throwable $e) {
+      $dataError = throwableToArrayLog($e);
+      Log::error($dataError);
+      return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+  }
+  }
 }

@@ -342,6 +342,7 @@ Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () {
 /* Modulos: Configurações */
 Route::middleware(['auth:sanctum'])->prefix('Usuario')->group(function () {
   defaultRoutes(UsuarioController::class);
+  Route::post('atualiza-pedagio', [UsuarioController::class, 'atualizaPedagio']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Perfil')->group(function () {
   defaultRoutes(PerfilController::class);

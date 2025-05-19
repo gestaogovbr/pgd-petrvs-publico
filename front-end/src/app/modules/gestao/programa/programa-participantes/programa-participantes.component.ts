@@ -71,7 +71,7 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
 
 
     this.BOTAO_PEDAGIO = { label: "Bloquear modalidade teletrabalho", icon: "bi bi-ban", color: "btn-outline-danger", onClick: (usuario: Usuario) => {
-      this.go.navigate({ route: ['gestao', 'programa', 'pedagio', usuario.id] }, this.modalRefreshId(usuario)) 
+      this.go.navigate({ route: ['gestao', 'programa', 'pedagio', usuario.id] }, {metadata: {'usuario': usuario}}); 
     }};
 
 

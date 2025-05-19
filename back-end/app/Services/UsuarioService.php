@@ -487,4 +487,17 @@ class UsuarioService extends ServiceBase
         return $values;
     }
 
+    public function atualizaPedagio($data)
+    {
+        $usuario = Usuario::find($data['usuario_id']);
+        if (empty($usuario)) {
+            throw new ValidateException("Usuário não encontrado", 422);
+        }
+        $usuario->data_inicial_pedagio = $data['data_inicial_pedagio'];
+        $usuario->data_final_pedagio = $data['data_final_pedagio'];
+        $usuario->tipo_pedagio = $data['tipo_pedagio'];
+        $usuario->save();
+        return $usuario;
+    }
+
 }

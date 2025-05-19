@@ -9,6 +9,7 @@ import { AtividadePausa } from '../models/atividade-pausa.model';
 import { PlanoTrabalho } from '../models/plano-trabalho.model';
 import { TemplateDataset } from '../modules/uteis/templates/template.service';
 import { PlanoTrabalhoEntrega } from '../models/plano-trabalho-entrega.model';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -78,6 +79,18 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
       }, error => {
         console.error('Erro ao realizar o download:', error);
       });
+  }
+
+  public async atualizaPedagio(data: any): Promise<Usuario> {
+    try {
+      const response = await firstValueFrom(
+        this.server.post('api/Usuario/atualiza-pedagio', { data })
+      );
+      return response.data as Usuario;
+    } catch (error) {
+      console.error("Erro ao atualizar pedagio!", error);
+      throw error;
+    }
   }
   
   
