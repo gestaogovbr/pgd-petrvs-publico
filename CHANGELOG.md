@@ -1,3 +1,5 @@
+## 2.3.19 19/05/2025
+
 ## 2.3.18 12/05/2025
 ### Adicionado
  - Recurso para clonar plano de trabalho
