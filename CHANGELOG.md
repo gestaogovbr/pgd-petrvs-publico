@@ -1,6 +1,8 @@
 ## 2.3.19 19/05/2025
 ### Modificado
  - Adicionado as regras de perfis do SIAPE o perfil Administrador Geral
+ ### Removido
+ - Removido os campos de jornada advindos do SIAPE e do sistema
 
 ## 2.3.18 12/05/2025
 ### Adicionado
