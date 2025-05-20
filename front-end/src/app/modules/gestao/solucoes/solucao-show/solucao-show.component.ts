@@ -3,7 +3,6 @@ import { SolucaoDaoService } from "src/app/dao/solucao-dao.service";
 import { Solucao } from "src/app/models/solucao.model";
 import { Unidade } from "src/app/models/unidade.model";
 import { PageBase } from "src/app/modules/base/page-base";
-import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'solucao-show',
