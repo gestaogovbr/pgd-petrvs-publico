@@ -91,7 +91,7 @@ use App\Http\Controllers\TipoClienteController;
 use App\Http\Controllers\RelatoController;
 use App\Http\Controllers\SolucaoUnidadeController;
 use App\Http\Controllers\SiapeIndividualController;
-
+use App\Http\Controllers\ImpersonationController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -504,3 +504,10 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/impersonate', [ImpersonationController::class, 'impersonate'])
+        ->middleware('auth:sanctum')
+        ->name('impersonate');
+  Route::get('/impersonate/stop', [ImpersonationController::class, 'stopImpersonating'])->name('impersonate.stop');
+});
