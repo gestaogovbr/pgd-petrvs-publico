@@ -12,6 +12,7 @@ use Throwable;
 use ZipArchive;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
 use Illuminate\Support\Facades\File;
+use Illuminate\Http\Response;
 
 class UsuarioController extends ControllerBase
 {
@@ -63,13 +64,21 @@ class UsuarioController extends ControllerBase
             'cpf' => [],
         ]);
 
-        $retorno = $this->service->consultaCPFSiape($request->cpf);
+      try {
+             $retorno = $this->service->consultaCPFSiape($request->cpf);
 
         return response()->json([
             'success' => true,
             'funcionais' => $retorno['funcionais'],
             'pessoais' => $retorno['pessoais']
         ]);
+        }  catch (Throwable $e) {
+            report($e);
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], Response::HTTP_BAD_REQUEST);
+        }
     }
 
     public function exportarCPFSiape(Request $request)
