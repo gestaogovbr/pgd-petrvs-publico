@@ -860,7 +860,8 @@ class IntegracaoService extends ServiceBase
         array_push($this->result['servidores']["Observações"], 'Na tabela Usuários constam agora ' .
           Usuario::count() . ' servidores!');
       } catch (Throwable $e) {
-        $this->logSiape("Erro ao importar servidores", throwableToArray($e), Tipo::ERROR);
+        report($e);
+        SiapeLog::info("Erro ao importar servidores: ". $e->getMessage());
         LogError::newError("Erro ao importar servidores", $e);
         $this->result["servidores"]['Resultado'] = 'ERRO: ' . $e->getMessage() . ' - Linha: ' . $e->getLine();
       }
