@@ -38,6 +38,7 @@ class UsuarioSeeder extends Seeder
         'apelido' => 'Geisimar',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
+        'is_admin' => true,
       ],
       [
         'email' => 'rickgrana@gmail.com',
@@ -46,6 +47,7 @@ class UsuarioSeeder extends Seeder
         'apelido' => 'Grana',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
+        'is_admin' => true,
       ],
       [
         'email' => 'guibitar@gmail.com',
@@ -54,6 +56,7 @@ class UsuarioSeeder extends Seeder
         'apelido' => 'Guilherme',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
+        'is_admin' => true,
       ],
       [
         'email' => 'cimei.teixeira@gmail.com',
@@ -62,6 +65,7 @@ class UsuarioSeeder extends Seeder
         'apelido' => 'Cimei',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
+        'is_admin' => true,
       ],
       [
         'email' => 'marco.coelho@firstbps.com.br',
@@ -70,6 +74,7 @@ class UsuarioSeeder extends Seeder
         'apelido' => 'Marco',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
+        'is_admin' => true,
       ],
       [
         'email' => 'juliane.perini@mds.gov.br',
@@ -78,6 +83,7 @@ class UsuarioSeeder extends Seeder
         'apelido' => 'Juliane',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'FEMININO',
+        'is_admin' => true,
       ],
       [
         'email' => 'thais.brito@economia.gov.br',
@@ -86,6 +92,7 @@ class UsuarioSeeder extends Seeder
         'apelido' => 'Thais',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'FEMININO',
+        'is_admin' => true,
       ],
       [
         'email' => 'bruno.santos@firstbps.com.br',
@@ -94,6 +101,34 @@ class UsuarioSeeder extends Seeder
         'apelido' => 'Bruno',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
+        'is_admin' => true,
+      ],
+      [
+        'email' => 'keilla.oliveira@gestao.gov.br',
+        'nome' => 'Keilla Terumi Nishi de Oliveira',
+        'cpf' => '01837409129',
+        'apelido' => 'Keilla',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'FEMININO',
+        'is_admin' => true,
+      ],
+      [
+        'email' => 'gabrieldnb7@gmail.com',
+        'nome' => ' Gabriel Marcos da Silva',
+        'cpf' => '44239586003',
+        'apelido' => 'Gabriel',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'MASCULINO',
+        'is_admin' => true,
+      ],
+      [
+        'email' => 'joaovictor.santiago2521@gmail.com',
+        'nome' => ' João Victor Santiago',
+        'cpf' => '42007045010',
+        'apelido' => 'João',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'MASCULINO',
+        'is_admin' => true,
       ]
     ];
 
