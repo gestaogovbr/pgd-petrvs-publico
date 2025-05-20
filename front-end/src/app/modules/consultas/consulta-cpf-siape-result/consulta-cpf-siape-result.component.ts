@@ -94,6 +94,7 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
                   } else {
                     this.dialog.alert("Erro", "Erro ao processar CPF: " + result?.message);
                   }
+                  this.downloadSiape();
                 },
                 error => {
                   this.loading = false;
@@ -161,6 +162,39 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
 
     if(this.metadata?.integrantes) {
       this.integrantes = this.metadata?.integrantes;
+    }
+  }
+
+  public async downloadSiape() {
+    this.loading = true;
+    try {
+      const response = await firstValueFrom(this.dao!.baixaLogSiape(this.cpf as string));
+      const contentType = response.type; 
+      const dataCriacao = new Date().toISOString().slice(0, 10);
+  
+      const extensoes: Record<string, string> = {
+        'application/xml': 'xml',
+        'text/plain': 'txt',
+        'application/zip': 'zip',
+      };
+      
+      const extensao = extensoes[contentType] ?? (console.warn('Tipo de conteúdo inesperado:', contentType), 'txt');
+  
+      const nomeArquivo = `log_cpf_${this.cpf}_${dataCriacao}.${extensao}`;
+  
+      const blob = new Blob([response], { type: contentType });
+      const url = window.URL.createObjectURL(blob);
+  
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = nomeArquivo;
+      link.click();
+  
+      window.URL.revokeObjectURL(url);
+    } catch (error: any) {
+      this.erros = error;
+    } finally {
+      this.loading = false;
     }
   }
 

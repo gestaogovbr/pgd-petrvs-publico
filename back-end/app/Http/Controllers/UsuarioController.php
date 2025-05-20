@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 use ZipArchive;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
+use Illuminate\Support\Facades\File;
 
 class UsuarioController extends ControllerBase
 {
@@ -80,7 +81,7 @@ class UsuarioController extends ControllerBase
         $nomeArquivo = 'dados_cpf_' . $data['cpf'] . '.zip';
 
         try{
-            $retornos = $this->service->consultaCPFSiape($request->cpf);
+            $retornos = $this->service->consultaCpfSiapeXml($request->cpf);
 
             $zipFile = tempnam(sys_get_temp_dir(), 'zip');
             $zip = new ZipArchive();
@@ -100,6 +101,7 @@ class UsuarioController extends ControllerBase
             ])->deleteFileAfterSend(true);
 
         } catch (\Throwable $th) {
+            report($th);
             $tempFile = tempnam(sys_get_temp_dir(), 'txt');
             $mensagemErro = date('Y-m-d H:i:s') . " - " . $th->getMessage() . PHP_EOL;
 
@@ -107,5 +109,23 @@ class UsuarioController extends ControllerBase
 
             return response()->download($tempFile, $nomeArquivo)->deleteFileAfterSend(true);
         }
+    }
+
+    public function downloadLogSiape(Request $request)
+    {
+        $logPath = storage_path('logs/siape.log');
+
+        if (!file_exists($logPath)) {
+            return response()->json(['error' => 'Arquivo de log não encontrado.'], 404);
+        }
+
+        return response()->download(
+            $logPath,
+            'siape.log',
+            [
+                'Content-Type' => File::mimeType($logPath),
+                'Content-Disposition' => 'attachment; filename="siape.log"',
+            ]
+        );
     }
 }
