@@ -19,6 +19,7 @@ use App\Models\Programa;
 use App\Models\ProgramaParticipante;
 use App\Models\DocumentoAssinatura;
 use App\Models\PlanoEntregaEntrega;
+use App\Models\TipoModalidade;
 use Carbon\Carbon;
 use DateTime;
 use Throwable;
@@ -192,6 +193,7 @@ class PlanoTrabalhoService extends ServiceBase
     public function validateStore($data, $unidade, $action)
     {
         $usuario = Usuario::with("areasTrabalho")->find($data["usuario_id"]);
+        $tipoModalidade = TipoModalidade::find($data["tipo_modalidade_id"]);
         $programa = Programa::find($data["programa_id"]);
         $condicoes = $this->buscaCondicoes($data);
         /* Resumo da PTR:TABELA_1 para Inclusão e Alteração:
@@ -221,6 +223,11 @@ class PlanoTrabalhoService extends ServiceBase
         /* Validar documento_id */
         if (empty($data["documento_id"])) {
             throw new ServerException("ValidatePlanoTrabalho", "TCR não foi gerado.");
+        }
+
+        // Validar Modalidade
+        if (!empty($tipoModalidade) && $tipoModalidade->exige_pedagio && !empty($usuario->pedagio)) {
+            throw new ServerException("ValidatePlanoTrabalho", "Não é possível usar essa Modalidade para usuários em pedágio.");
         }
         if ($action == ServiceBase::ACTION_INSERT) {
             /*

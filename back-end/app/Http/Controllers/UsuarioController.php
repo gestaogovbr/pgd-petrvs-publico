@@ -93,15 +93,16 @@ class UsuarioController extends ControllerBase
   public function atualizaPedagio(Request $request)
   {
     try {
-      $data = $request->validate([
-        'usuario_id' => ['required'],
-        'data_inicial_pedagio' => ['required'],
-        'data_final_pedagio' => ['required'],
-        'tipo_pedagio' => ['required']
-      ]);
+      $data = $request->input('data');
+      $validated = validator($data, [
+        'usuario_id' => ['required', 'uuid'],
+        'data_inicial_pedagio' => ['required', 'date', 'before_or_equal:data_final_pedagio'],
+        'data_final_pedagio' => ['required', 'date', 'after_or_equal:data_inicial_pedagio'],
+        'tipo_pedagio' => ['required', 'integer', 'in:1,2'],
+      ])->validate();
       return response()->json([
         'success' => true,
-        'data' => $this->service->atualizaPedagio($data)
+        'data' => $this->service->atualizaPedagio($validated)
       ]);
     } catch (IBaseException $e) {
       return response()->json(['error' => $e->getMessage()]);

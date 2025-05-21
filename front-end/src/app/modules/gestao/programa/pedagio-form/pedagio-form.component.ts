@@ -94,14 +94,16 @@ export class PedagioFormComponent extends PageFormBase<
 	public async loadData(entity: Usuario, form: FormGroup) {
 		this.entity = this.metadata?.usuario || entity;
 		this.form = form;
-		this.form.patchValue(entity);
+		console.log(this.entity);
+		
+
 		this.form.controls.data_inicial_pedagio.setValue(
-			moment(entity.data_inicial_pedagio).toDate()
+			moment(this.entity?.data_inicial_pedagio).toDate()
 		);
 		this.form.controls.data_final_pedagio.setValue(
-			moment(entity.data_final_pedagio).toDate()
+			moment(this.entity?.data_final_pedagio).toDate()
 		);
-		this.form.controls.tipo_pedagio.setValue(entity.tipo_pedagio);
+		this.form.controls.tipo_pedagio.setValue(this.entity?.tipo_pedagio);
 	}
 
 	public async saveData(form: IIndexable): Promise<Usuario | undefined> {
@@ -116,9 +118,8 @@ export class PedagioFormComponent extends PageFormBase<
 		this.loadData(this.entity, form);
 	}
 
-	public async atualizaPedagio(): Promise<Usuario> {
-		console.log("atualizaPedagio");
-		
+	public async atualizaPedagio() {
+		this.submitting = true;
 		const data = {
 			usuario_id: this.entity?.id,
 			data_inicial_pedagio: this.form?.controls.data_inicial_pedagio.value,
@@ -128,16 +129,13 @@ export class PedagioFormComponent extends PageFormBase<
 
 		try {
 			const response = await this.dao?.atualizaPedagio(data);
-			if (response) {
-				this.entity = response;
-			}
-			if (!this.entity) {
-				throw new Error("Entity is undefined.");
-			}
-			return this.entity;
+			this.dialog.alert('Sucesso', 'Pedágio atualizado com sucesso!');
+			this.close();
 		} catch (error) {
 			// this.dialog.alert("Erro ao atualizar pedagio!", error);
 			throw error;
+		} finally {
+			this.submitting = false;
 		}
 	}
 

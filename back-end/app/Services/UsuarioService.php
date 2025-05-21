@@ -19,6 +19,8 @@ use App\Services\Siape\DadosExternosSiape;
 use Exception;
 use SimpleXMLElement;
 use Throwable;
+use Carbon\Carbon;
+
 
 class UsuarioService extends ServiceBase
 {
@@ -493,8 +495,10 @@ class UsuarioService extends ServiceBase
         if (empty($usuario)) {
             throw new ValidateException("Usuário não encontrado", 422);
         }
-        $usuario->data_inicial_pedagio = $data['data_inicial_pedagio'];
-        $usuario->data_final_pedagio = $data['data_final_pedagio'];
+
+
+        $usuario->data_inicial_pedagio = Carbon::parse($data['data_inicial_pedagio']);
+        $usuario->data_final_pedagio = Carbon::parse($data['data_final_pedagio']);
         $usuario->tipo_pedagio = $data['tipo_pedagio'];
         $usuario->save();
         return $usuario;

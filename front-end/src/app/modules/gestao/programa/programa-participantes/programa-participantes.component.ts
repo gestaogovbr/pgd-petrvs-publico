@@ -71,7 +71,19 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
 
 
     this.BOTAO_PEDAGIO = { label: "Bloquear modalidade teletrabalho", icon: "bi bi-ban", color: "btn-outline-danger", onClick: (usuario: Usuario) => {
-      this.go.navigate({ route: ['gestao', 'programa', 'pedagio', usuario.id] }, {metadata: {'usuario': usuario}}); 
+      this.go.navigate(
+        { 
+          route: ['gestao', 'programa', 'pedagio', usuario.id] }, 
+        {
+          metadata: {'usuario': usuario},
+          modalClose: async (modalResult) => {
+            if (modalResult) {
+              this.grid?.reloadFilter();
+              this.cdRef.detectChanges();
+            }
+          }
+        }
+    ); 
     }};
 
 
@@ -85,7 +97,7 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
     if(row.usuario_externo) return result;
     if (this.auth.hasPermissionTo('MOD_PART_HAB') && !this.isHabilitado(row)) result.push(this.BOTAO_HABILITAR);
     if (this.auth.hasPermissionTo('MOD_PART_DESAB') && this.isHabilitado(row)) result.push(this.BOTAO_DESABILITAR);
-    result.push(this.BOTAO_PEDAGIO);
+    if (this.auth.hasPermissionTo('MOD_PART_PEDAGIO')) result.push(this.BOTAO_PEDAGIO);
     return result;
   }
 

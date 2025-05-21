@@ -81,16 +81,14 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
       });
   }
 
-  public async atualizaPedagio(data: any): Promise<Usuario> {
-    try {
-      const response = await firstValueFrom(
-        this.server.post('api/Usuario/atualiza-pedagio', { data })
-      );
-      return response.data as Usuario;
-    } catch (error) {
-      console.error("Erro ao atualizar pedagio!", error);
-      throw error;
-    }
+
+
+  public atualizaPedagio(data: any) {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/atualiza-pedagio', {data }).subscribe(response => {
+        resolve(!!response?.success);
+      }, error => reject(error));
+    });
   }
   
   
