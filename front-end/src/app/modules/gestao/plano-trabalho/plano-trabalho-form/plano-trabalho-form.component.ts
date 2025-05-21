@@ -225,9 +225,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.cdRef.detectChanges();
   }
 
-  public async onUsuarioSelect(selected: SelectItem) {
-    console.log(selected);
-    
+  public async onUsuarioSelect(selected: SelectItem) {    
     let programa_habilitado = selected.entity.participacoes_programas.find((x: { habilitado: number; }) => x.habilitado == 1);
     
     this.form!.controls.usuario_texto_complementar.setValue(selected.entity.texto_complementar_plano || "");
