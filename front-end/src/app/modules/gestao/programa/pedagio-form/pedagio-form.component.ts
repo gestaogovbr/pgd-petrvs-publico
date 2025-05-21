@@ -141,20 +141,31 @@ export class PedagioFormComponent extends PageFormBase<
 
 	public updateDates(event: any): void {
 		const opcao = event.target.value;
-		const dataInicial = moment().startOf("day").toDate();
+		this.updateDateFields(opcao, moment().startOf("day"));
+	}
 
-		this.form?.controls.data_inicial_pedagio.setValue(dataInicial);
+	public onDataInicioChange(event: any): void {
+		const opcao = this.form?.controls.tipo_pedagio.value;
+		const dataInicial = moment(event.target.value);
 
-		if (opcao === "1") {
+		if (!dataInicial.isValid()) {
+			this.form?.controls.data_final_pedagio.setValue(null);
+			return;
+		}
+
+		this.updateDateFields(opcao, dataInicial);
+	}
+
+	private updateDateFields(opcao: string, dataInicial: moment.Moment): void {
+		this.form?.controls.data_inicial_pedagio.setValue(dataInicial.toDate());
+
+		const diasAdicionais = opcao === "1" ? 365 : opcao === "2" ? 180 : 0;
+		if (diasAdicionais > 0) {
 			this.form?.controls.data_final_pedagio.setValue(
-				moment(dataInicial).add(365, "days").toDate()
-			);
-		} else if (opcao === "2") {
-			this.form?.controls.data_final_pedagio.setValue(
-				moment(dataInicial).add(180, "days").toDate()
+				dataInicial.add(diasAdicionais, "days").toDate()
 			);
 		}
 	}
-	public onDataInicioChange(event: any) {}
+	
 	public onDataFimChange(event: any) {}
 }
