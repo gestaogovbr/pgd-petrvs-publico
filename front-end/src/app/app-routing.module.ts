@@ -12,10 +12,12 @@ import { PanelGuard } from "./guards/panel.guard";
 import { PanelLoginComponent } from "./modules/panel/panel-login/panel-login.component";
 import { ConsultaCpfSiapeFormComponent } from './modules/consultas/consulta-cpf-siape-form/consulta-cpf-siape-form.component';
 import { ConsultaUnidadeSiapeFormComponent } from './modules/consultas/consulta-unidade-siape-form/consulta-unidade-siape-form.component';
+import {TesteImpersonateComponent} from "./modules/teste/teste-impersonate/teste-impersonate.component";
 
 const routes: Routes = [
   { path: 'panel-login', component: PanelLoginComponent },
   { path: 'panel', loadChildren: () => import('./modules/panel/panel.module').then(m => m.PanelModule), canActivate: [PanelGuard] },
+  { path: 'impersonate', component: TesteImpersonateComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste - Impersonate" } },
   { path: 'home', loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule), canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Login Petrvs", login: true } },
   { path: 'login-retorno', component: LoginRetornoComponent, data: { title: "Retorno de login", login: true } },
