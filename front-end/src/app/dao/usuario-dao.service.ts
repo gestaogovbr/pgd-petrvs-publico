@@ -53,6 +53,10 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
     return this.server.postDownload('api/usuario/exportar-cpf-siape', { cpf });
   }
 
+    public baixaLogSiape(cpf: string) {
+    return this.server.postDownload('api/usuario/download-cpf-siape', { cpf });
+  }
+
   public consultarSIAPE(cpf: string) {
     return this.server.post('api/usuario/consultar-cpf-siape', { cpf });
   }

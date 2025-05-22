@@ -14,17 +14,25 @@
   [hasAdd]="!this.disabled"
 >
   <columns>
-    <column [titleTemplate]="titleCadeia" [template]="columnCadeia" [editTemplate]="editCadeia" [verticalAlign]="'middle'" [width]="300" [align]="'center'">
+    <column [titleTemplate]="titleCadeia" [template]="columnCadeia" [editTemplate]="editCadeia" 
+      [verticalAlign]="'middle'" [width]="300" [align]="'left'">
       <ng-template let-header="header" #titleCadeia>
-        <div class="text-center"><span><strong>Cadeia de valor</strong></span></div>
+        <strong>Cadeia de valor</strong>
       </ng-template>
       <ng-template let-row="row" #columnCadeia>
-        <div class="w-100 d-flex justify-content-center">
-          <p>{{row.cadeia_valor_processo?.cadeia_valor?.nome}}</p>
-        </div>
+          {{row.cadeia_valor_processo?.cadeia_valor?.nome}}
       </ng-template>
       <ng-template let-row="row" #editCadeia>
-        <input-search label #cadeiaValor [placeholder]="'Selecione a ' + lex.translate('cadeia de valor')" [join]="['unidade']" [where]="[['unidade_id', '==', auth.unidade?.id]]" [selectParams]="{filter: {unidade_id: auth.unidade?.id}}" controlName="cadeia_valor_id" [dao]="cadeiaValorDao" (change)="onCadeiaChange($event)" required></input-search>
+        <input-search label #cadeiaValor
+          controlName="cadeia_valor_id"
+          [placeholder]="'Selecione a ' + lex.translate('cadeia de valor')" 
+          [join]="['unidade']"
+          [where]="[['unidade_id', '==', auth.unidade?.id]]"
+          [selectParams]="{filter: {unidade_id: auth.unidade?.id}}"
+          [dao]="cadeiaValorDao"
+          (change)="onCadeiaChange($event)"
+          required
+        ></input-search>
       </ng-template>
     </column>
 
@@ -34,23 +42,35 @@
       [editTemplate]="editProcesso" 
       [verticalAlign]="'middle'" 
       [width]="300" 
-      [align]="'center'"
+      [align]="'left'"
     >
       <ng-template let-header="header" #titleProcesso>
-        <div class="text-center"><span><strong>Processo</strong></span></div>
+        <strong>Processo</strong>
       </ng-template>
       <ng-template let-row="row" #columnProcesso>
-        <div class="w-100 d-flex justify-content-center">
-          <p>{{row.cadeia_valor_processo?.nome}}</p>
-        </div>
+          {{row.cadeia_valor_processo?.nome}}
       </ng-template>
       <ng-template let-row="row" #editProcesso>
-        <input-select #cadeiaProcesso fullEntity controlName="cadeia_valor_processo_id" controlName="cadeia_valor_processo_id" [control]="form!.controls.cadeia_valor_processo_id" [items]="processos" required></input-select>
+        <input-search #cadeiaProcesso 
+          label 
+          required  
+          [disabled]="this.form!.controls!.cadeia_valor_id.value ? undefined : 'true'"
+          controlName="cadeia_valor_processo_id"
+          [placeholder]="'Selecione o Processo'" 
+          [dao]="processosDao"
+          [selectRoute]="{
+            route: ['gestao', 'cadeia-valor', 'processos'],
+            params: {
+              mode: 'search',
+              id: this.form!.controls!.cadeia_valor_id.value
+            }
+          }"
+        ></input-search>
       </ng-template>
     </column>
-    <column title="Nível" [template]="columnNivel">
+    <column title="Nível" [template]="columnNivel" [width]="50">
       <ng-template let-row="row" #columnNivel>
-          <span> {{row.cadeia_valor_processo?.sequencia}}</span>
+          <span> {{row.cadeia_valor_processo?.sequencia_completa}}</span>
       </ng-template>
     </column>
     <column type="options" *ngIf="!this.disabled"></column>

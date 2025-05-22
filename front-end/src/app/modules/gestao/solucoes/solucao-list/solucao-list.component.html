@@ -8,8 +8,8 @@
     (select)="onSelect($event)"
     [hasAdd]="this.isCurador"
     labelAdd="Incluir Nova Solução"
-    [hasEdit]="this.auth.hasPermissionTo('MOD_SOLUCOES_EDT') && isCurador"
-    [hasDelete]="this.auth.hasPermissionTo('MOD_SOLUCOES_DEL') && isCurador"
+    [hasEdit]="false"
+    [hasDelete]="false"
 >
     <toolbar *ngIf="!selectable">
         <button type="button" class="btn btn-outline-success" 
@@ -107,7 +107,6 @@
         </column>
         <column 
             type="options"  
-            [onEdit]="edit" 
             [dynamicButtons]="dynamicButtons.bind(this)">
         </column>
     </columns>

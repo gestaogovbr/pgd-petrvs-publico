@@ -764,7 +764,7 @@ class IntegracaoService extends ServiceBase
             "isr.codigo_servo_exercicio as exercicio, " .
             "isr.situacao_funcional as situacao_funcional, " .
             "isr.data_modificacao as data_modificacao, " .
-            "isr.funcoes as gestor, " .
+            "isr.funcoes as gestor " .
             "FROM integracao_servidores as isr LEFT JOIN usuarios as u " .
             "ON isr.cpf = u.cpf " .
             "WHERE u.cpf is NULL";
@@ -846,7 +846,8 @@ class IntegracaoService extends ServiceBase
         array_push($this->result['servidores']["Observações"], 'Na tabela Usuários constam agora ' .
           Usuario::count() . ' servidores!');
       } catch (Throwable $e) {
-        $this->logSiape("Erro ao importar servidores", throwableToArray($e), Tipo::ERROR);
+        report($e);
+        SiapeLog::info("Erro ao importar servidores: ". $e->getMessage());
         LogError::newError("Erro ao importar servidores", $e);
         $this->result["servidores"]['Resultado'] = 'ERRO: ' . $e->getMessage() . ' - Linha: ' . $e->getLine();
       }
