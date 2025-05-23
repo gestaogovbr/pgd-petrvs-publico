@@ -621,6 +621,13 @@ export class LookupService implements IIndexable {
     { key: "DELETE", value: "DELETE" },
   ];
 
+  public TIPO_LOG_AUDIT: LookupItem[] = [
+    { key: "created", value: "Criado" },
+    { key: "updated", value: "Editado" },
+    { key: "delete", value: "Excluído" },
+  ];
+
+
   public TIPO_LOG_ERROR: LookupItem[] = [
     { key: "ERROR", value: "ERROR" },
     { key: "FRONT-ERROR", value: "FRONT-ERROR" },

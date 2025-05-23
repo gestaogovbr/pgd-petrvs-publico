@@ -29,8 +29,8 @@ class ChangeService extends ServiceBase
             $query->where('auditable_id', $modelId);
         }
 
-        if (filled($filters['event'] ?? null)) {
-            $query->where('event', $filters['event']);
+        if (filled($filters['type'] ?? null)) {
+            $query->where('event', $filters['type']);
         }
 
         if (filled($filters['user_id'] ?? null)) {
@@ -99,14 +99,34 @@ class ChangeService extends ServiceBase
         foreach ($data['where'] ?? [] as $condition) {
             [$field, $operator, $value] = $condition;
 
-            if ($field === 'date_time') {
-                if ($operator === '>=') $filters['date_from'] = $value;
-                if ($operator === '<=') $filters['date_to'] = $value;
+            switch ($operator) {
+                case '>=':
+                    if ($field === 'date_time') {
+                        $filters['date_from'] = $value;
+                    }
+                    break;
+
+                case '<=':
+                    if ($field === 'date_time') {
+                        $filters['date_to'] = $value;
+                    }
+                    break;
+
+                case '==':
+                    $filters[$field] = $value;
+                    break;
+
+                case 'in':
+                    $filters[$field] = ['in' => $value];
+                    break;
+
+                // Adicione mais operadores conforme necessário, como '!=', 'like', etc.
             }
         }
 
         return $filters;
     }
+
 
 //    public function showResponsaveis($usuario_ids)
 //    {
