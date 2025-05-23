@@ -11,27 +11,70 @@
     </div>
 
   </filter>
- 
   <div class="accordion mt-3" id="accordionLogs">
 
     <div class="accordion-item" *ngFor="let change of changes">
       <h2 class="accordion-header">
-        <button class="accordion-button collapsed" type="button" [attr.data-bs-toggle]="'collapse'" [attr.data-bs-target]="'#collapse_'+ change.id" aria-expanded="false" [attr.aria-controls]="'collapse_'+ change.id">
-          <div class="d-flex justify-content-start align-items-center m-0">
-            <span class="acao me-2"> <badge [label]="change.event" [color]="change.event == 'DELETE' ? '#910404' : '#030521'"></badge></span>
-            <span class="tabela me-2">{{change.auditable_type}}</span>
-            <span class="data"><badge [label]="util.getDateTimeFormatted(change.created_at)" [color]="'#676789'"></badge></span>
+        <button class="accordion-button collapsed text-start px-3 py-2" type="button"
+                [attr.data-bs-toggle]="'collapse'"
+                [attr.data-bs-target]="'#collapse_' + change.id"
+                aria-expanded="false"
+                [attr.aria-controls]="'collapse_' + change.id">
+
+          <div class="w-100">
+            <!-- Linha 1: Quem alterou -->
+            <div class="text-muted small mb-1">
+              Alterado por: <strong class="text-dark">{{ change.usuario }}</strong>
+            </div>
+
+            <!-- Linha 2: Tipo de evento -->
+            <div class="mb-1">
+        <span class="badge rounded-pill px-3 py-1 fw-semibold text-uppercase me-2"
+              [ngStyle]="{
+                'background-color': change.event === 'delete' ? '#dc3545' : (change.event === 'created' ? '#198754' : '#b58900'),
+                'color': '#fff'
+              }">
+          {{ change.event }}
+        </span>
+              <span class="fw-semibold">{{ change.auditable_type.split('\\').pop() }}</span>
+            </div>
+
+            <!-- Linha 3: Data/hora -->
+            <div class="text-muted small">
+              {{ util.getDateTimeFormatted(change.created_at) }}
+            </div>
           </div>
+
         </button>
       </h2>
-      <div [attr.id]="'collapse_'+ change.id" class="accordion-collapse collapse" [attr.data-bs-target]="'#accordionLogs'">
-        <div class="accordion-body">
-          <json-viewer [json]="change.old_values"></json-viewer>
+
+
+
+      <div [id]="'collapse_' + change.id" class="accordion-collapse collapse" data-bs-parent="#accordionLogs">
+        <div class="accordion-body bg-light-subtle rounded shadow-sm">
+
+          <div class="row">
+            <div class="col-md-6">
+              <h6 class="text-muted">Antes</h6>
+              <div class="border p-2 rounded bg-white shadow-sm">
+                <json-viewer [json]="change.old_values"></json-viewer>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <h6 class="text-muted">Depois</h6>
+              <div class="border p-2 rounded bg-white shadow-sm">
+                <json-viewer [json]="change.new_values"></json-viewer>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
-  
+
   </div>
+
 
   <pagination [rows]="rowsLimit"></pagination>
 </grid>
