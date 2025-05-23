@@ -17,85 +17,88 @@ use OwenIt\Auditing\Models\Audit;
 class ChangeService extends ServiceBase
 {
 
-
     public function query($data)
-{
-    $modelId = $data['where'][0][2];
+    {
+        $modelId = $data['where'][0][2] ?? null;
+        $filters = $data['filters'] ?? [];
+        // Processa cláusulas WHERE do payload
+        foreach ($data['where'] ?? [] as $condition) {
+            [$field, $operator, $value] = $condition;
 
-    $firstAudit = Audit::where('auditable_id', $modelId)->first();
+            // Converte campos date_time para filtros esperados
+            if ($field === 'date_time') {
+                if ($operator === '>=') $filters['date_from'] = $value;
+                if ($operator === '<=') $filters['date_to'] = $value;
+            }
 
-    if (!$firstAudit) {
+            // Se houver filtro por ID do modelo
+            if ($field === 'auditable_id' && $operator === '=') {
+                $modelId = $value;
+            }
+        }
+        if (!$modelId) {
+            return [
+                'count' => 0,
+                'rows' => [],
+                'extra' => ['error' => 'ID do modelo não informado.']
+            ];
+        }
+
+        $firstAudit = Audit::where('auditable_id', $modelId)->first();
+
+        if (!$firstAudit) {
+            return [
+                'count' => 0,
+                'rows' => [],
+                'extra' => ['error' => 'Nenhuma auditoria encontrada.']
+            ];
+        }
+
+        $modelClass = $firstAudit->auditable_type;
+        $modelInstance = $modelClass::find($modelId);
+
+        if (!$modelInstance) {
+            return [
+                'count' => 0,
+                'rows' => [],
+                'extra' => ['error' => 'Modelo não encontrado.']
+            ];
+        }
+
+        // Aplicação de filtros no modelo e relacionados
+        $audits = $this->getModelAudits($modelClass, $modelId, $filters);
+        $relationAudits = $this->getRelatedAudits($modelInstance, $filters);
+
+        $allAudits = $audits->merge($relationAudits)->sortByDesc('created_at')->values();
+
+        // Paginação
+        $page = request('page', 1);
+        $perPage = request('per_page', 20);
+
+        $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
+            $allAudits->forPage($page, $perPage),
+            $allAudits->count(),
+            $perPage,
+            $page
+        );
+
         return [
-            'count' => 0,
-            'rows' => [],
-            'extra' => ['error' => 'Nenhuma auditoria encontrada.']
+            'count' => $paginator->total(),
+            'rows' => $paginator->items(),
+            'extra' => [
+                'current_page' => $paginator->currentPage(),
+                'last_page' => $paginator->lastPage(),
+                'model' => class_basename($modelClass),
+                'model_id' => $modelId,
+                'relacoes' => $this->getModelRelations($modelInstance),
+            ],
         ];
     }
 
-    $modelClass = $firstAudit->auditable_type;
-    $modelInstance = $modelInstance = $modelClass::find($modelId);
-
-
-    $audits = collect();
-
-    // Auditorias do modelo principal
-    $mainAudits = Audit::where('auditable_type', $modelClass)
-        ->where('auditable_id', $modelId)
-        ->get()
-        ->map(function ($audit) use ($modelClass) {
-            $audit->source = class_basename($modelClass); // ou 'principal'
-            return $audit;
-        });
-
-    $audits = $audits->merge($mainAudits);
-
-    // Auditorias das relações
-    $relacoes = $this->getModelRelations($modelInstance);
-
-    foreach ($relacoes as $relationName) {
-        try {
-            $relation = $modelInstance->$relationName();
-
-            if ($relation instanceof Relation) {
-                $related = $relation->getResults();
-
-                if ($related instanceof \Illuminate\Support\Collection) {
-                    $relatedItems = $related;
-                } elseif ($related) {
-                    $relatedItems = collect([$related]);
-                } else {
-                    continue;
-                }
-
-                foreach ($relatedItems as $item) {
-                    $relatedAudits = Audit::where('auditable_type', get_class($item))
-                        ->where('auditable_id', $item->id)
-                        ->get()
-                        ->map(function ($audit) use ($relationName) {
-                            $audit->source = $relationName;
-                            return $audit;
-                        });
-
-                    $audits = $audits->merge($relatedAudits);
-                }
-            }
-        } catch (\Throwable $e) {
-            continue;
-        }
-    }
-
-    $audits = $audits->sortByDesc('created_at')->values();
-
-    return [
-        'count' => $audits->count(),
-        'rows' => $audits,
-        'extra' => []
-    ];
-}
 
     public function proxyRows($rows)
     {
-        
+
         try {
             if (empty($rows) || !isset($rows[0]['table_name'])) {
                 return [];
@@ -112,7 +115,7 @@ class ChangeService extends ServiceBase
             foreach ($rows as $row) {
                 $row['_metadata'] = array(
                     'relacoes' => $relacoes,
-                    'responsavel' => (DB::table(config('petrvs.schemas.tenant_aplicacao').'.usuarios')->where('id', $row['user_id'])->first())->nome
+                    'responsavel' => (DB::table(config('petrvs.schemas.tenant_aplicacao') . '.usuarios')->where('id', $row['user_id'])->first())->nome
                 );
             }
             return $rows;
@@ -149,38 +152,114 @@ class ChangeService extends ServiceBase
 
     }
 
-    protected function getModelRelations($modelInstance)
-{
-    $relations = [];
+    protected function getModelAudits(string $modelClass, string $modelId, array $filters = [])
+    {
+        $query = Audit::where('auditable_type', $modelClass)
+            ->where('auditable_id', $modelId);
 
-    $class = get_class($modelInstance);
-    $methods = get_class_methods($modelInstance);
-
-    foreach ($methods as $method) {
-        // Ignora métodos herdados do Eloquent base para evitar falsos positivos
-        if ((new \ReflectionMethod($class, $method))->class != $class) {
-            continue;
+        if (!empty($filters['event'])) {
+            $query->where('event', $filters['event']);
         }
 
-        // Ignora métodos com parâmetros obrigatórios
-        $reflection = new \ReflectionMethod($class, $method);
-        if ($reflection->getNumberOfRequiredParameters() > 0) {
-            continue;
+        if (!empty($filters['user_id'])) {
+            $query->where('user_id', $filters['user_id']);
         }
 
-        try {
-            $return = $modelInstance->$method();
-
-            if ($return instanceof \Illuminate\Database\Eloquent\Relations\Relation) {
-                $relations[] = $method;
-            }
-        } catch (\Throwable $e) {
-            // Ignora qualquer erro ao tentar acessar métodos não-relacionais
-            continue;
+        if (!empty($filters['date_from'])) {
+            $query->whereDate('created_at', '>=', $filters['date_from']);
         }
+
+        if (!empty($filters['date_to'])) {
+            $query->whereDate('created_at', '<=', $filters['date_to']);
+        }
+
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('old_values', 'like', "%$search%")
+                    ->orWhere('new_values', 'like', "%$search%")
+                    ->orWhere('tags', 'like', "%$search%")
+                    ->orWhere('url', 'like', "%$search%");
+            });
+        }
+
+        return $query->orderByDesc('created_at')->get()->map(function ($audit) use ($modelClass) {
+            $audit->source = class_basename($modelClass);
+            $audit->old_values = json_decode($audit->old_values, true);
+            $audit->new_values = json_decode($audit->new_values, true);
+            $audit->usuario = optional($audit->user)->nome ?? 'Desconhecido';
+            return $audit;
+        });
     }
 
-    return $relations;
-}
+    protected function getRelatedAudits(Model $modelInstance, array $filters = [])
+    {
+        $audits = collect();
+        $relacoes = $this->getModelRelations($modelInstance);
+
+        foreach ($relacoes as $relationName) {
+            try {
+                $relation = $modelInstance->$relationName();
+
+                if ($relation instanceof Relation) {
+                    $related = $relation->getResults();
+
+                    $relatedItems = collect();
+                    if ($related instanceof \Illuminate\Support\Collection) {
+                        $relatedItems = $related;
+                    } elseif ($related instanceof Model) {
+                        $relatedItems = collect([$related]);
+                    }
+
+                    foreach ($relatedItems as $item) {
+                        $query = Audit::where('auditable_type', get_class($item))
+                            ->where('auditable_id', $item->id);
+
+                        if (!empty($filters['event'])) {
+                            $query->where('event', $filters['event']);
+                        }
+
+                        if (!empty($filters['user_id'])) {
+                            $query->where('user_id', $filters['user_id']);
+                        }
+
+                        if (!empty($filters['date_from'])) {
+                            $query->whereDate('created_at', '>=', $filters['date_from']);
+                        }
+
+                        if (!empty($filters['date_to'])) {
+                            $query->whereDate('created_at', '<=', $filters['date_to']);
+                        }
+
+                        if (!empty($filters['search'])) {
+                            $search = $filters['search'];
+                            $query->where(function ($q) use ($search) {
+                                $q->where('old_values', 'like', "%$search%")
+                                    ->orWhere('new_values', 'like', "%$search%")
+                                    ->orWhere('tags', 'like', "%$search%")
+                                    ->orWhere('url', 'like', "%$search%");
+                            });
+                        }
+
+                        $relatedAudits = $query->orderByDesc('created_at')->get()->map(function ($audit) use ($relationName) {
+                            $audit->source = $relationName;
+                            $audit->old_values = json_decode($audit->old_values, true);
+                            $audit->new_values = json_decode($audit->new_values, true);
+                            $audit->usuario = optional($audit->user)->nome ?? 'Desconhecido';
+                            return $audit;
+                        });
+
+                        $audits = $audits->merge($relatedAudits);
+                    }
+                }
+            } catch (\Throwable $e) {
+                continue;
+            }
+        }
+
+        return $audits;
+    }
+
+
 
 }

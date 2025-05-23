@@ -13,6 +13,7 @@ import { EntityItem } from 'src/app/services/entity.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { ExcelService } from 'src/app/services/excel.service';
 import { Base } from 'src/app/models/base.model';
+import {InputTextComponent} from "../../../../components/input/input-text/input-text.component";
 
 @Component({
   selector: 'app-change-list',
@@ -23,7 +24,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild('selectResponsaveis', { static: false }) public selectResponsaveis?: InputSelectComponent;
   @ViewChild('relacao', { static: false }) public relacao?: InputSelectComponent;
-
+  @ViewChild('usuario', { static: false })  public usuario?: InputTextComponent;
   public toolbarButtons: ToolbarButton[] = [];
   public allPages: ListenerAllPagesService;
   public usuarioDao: UsuarioDaoService;
@@ -52,6 +53,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
       row_id_text: {default: ""},
       row_id_search: {default: ""}
     });
+    this.join = ["usuario"];
     this.orderBy = [['id', 'desc']];
   }
 
@@ -60,7 +62,14 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     this.filter?.controls.row_id_text.setValue(this.urlParams?.get('id'));
   }
 
-
+  ngAfterViewInit() {
+    super.ngAfterViewInit();
+    this.selectResponsaveis!.loading = true;
+    this.dao?.showResponsaveis().then(responsaveis => {
+      this.responsaveis = responsaveis || [];
+      this.cdRef.detectChanges();
+    }).finally(() => this.selectResponsaveis!.loading = false);
+  }
   public async loadChanges(changes?: Base[]){
     this.changes = changes as Change[];
   }

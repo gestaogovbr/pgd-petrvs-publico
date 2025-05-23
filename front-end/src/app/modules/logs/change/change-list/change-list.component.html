@@ -2,7 +2,7 @@
 
   <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
     <div class="row">
-      <input-select #selectResponsaveis label="Responsável pelo registro" controlName="usuario_id" [control]="filter!.controls.usuario_id" [items]="responsaveis"></input-select>
+      <input-search [size]="12" #usuario label="Responsável pelo registro"  controlName="usuario_id" [dao]="usuarioDao" required ></input-search>
     </div>
     <div class="row">
       <input-datetime [size]="4" datetime label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Início dos registros"></input-datetime>
