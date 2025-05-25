@@ -44,7 +44,7 @@
       ></input-datetime>
       <input-select
         [size]="2"
-        label="Tipo"
+        label="Ação"
         icon="bi bi-arrow-up-right-circle"
         controlName="tipo"
         [control]="filter!.controls.tipo"
@@ -68,12 +68,6 @@
         itemTodos="(Todos)"
       ></input-select>
     </div>
-    <div class="row">
-      <input-datetime [size]="4" datetime label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Início dos registros"></input-datetime>
-      <input-datetime [size]="4" datetime label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Fim dos registros"></input-datetime>
-      <input-select [size]="4" label="Ação" icon="bi bi-arrow-up-right-circle" controlName="tipo" [control]="filter!.controls.tipo" [items]="lookup.TIPO_LOG_AUDIT" itemTodos="Todos" valueTodos=""></input-select>
-    </div>
-
   </filter>
   <div class="accordion mt-3" id="accordionLogs">
     <div class="accordion-item" *ngFor="let change of changes">
