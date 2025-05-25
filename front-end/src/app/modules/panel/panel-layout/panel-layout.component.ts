@@ -30,7 +30,7 @@ export class PanelLayoutComponent extends PageBase implements OnInit {
 		this.authService.detailUser().then((user) => {
 			this.currentUser = user;
 			this.title =
-				"Bem vindo " + user.nome + " - Voce está em Ambiente " + this.gb.ENV;
+				"Bem-vindo, " + user.nome + "! Você está em ambiente " + this.gb.ENV;
 		});
 	}
 

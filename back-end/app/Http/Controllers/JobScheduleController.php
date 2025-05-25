@@ -3,27 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\Contracts\IBaseException;
-use App\Services\JobAgendadoService;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Jobs\SincronizarSiapeJob;
 use App\Jobs\LogJob;
 use App\Models\JobSchedule;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\ControllerBase;
 use Throwable;
 
-class JobAgendadoController extends Controller {
+class JobScheduleController extends ControllerBase {
 
-
-    public function __construct(protected JobAgendadoService $jobAgendadoService)
-    {
+    public function checkPermissions($action, $request, $service, $unidade, $usuario) {
+        switch ($action) {
+        }
     }
 
     public function listar(Request $request)
     {
         try {
             $tenantId = $request->get('tenant_id');
-            $jobs = $this->jobAgendadoService->listar($tenantId);
+            $jobs = $this->service->listar($tenantId);
             return response()->json(['success' => true, 'data' => $jobs]);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
@@ -31,7 +30,9 @@ class JobAgendadoController extends Controller {
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json([
+                'error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."
+            ]);
         }
     }
 
@@ -40,7 +41,7 @@ class JobAgendadoController extends Controller {
         try {
             $tenantId = $request->get('tenant_id');
             $dados = $request->only((new JobSchedule)->getFillable());
-            $result = $this->jobAgendadoService->createJob($dados, $tenantId);
+            $result = $this->service->createJob($dados, $tenantId);
             return response()->json($result);
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
@@ -56,7 +57,7 @@ class JobAgendadoController extends Controller {
     {
         try {
             $tenantId = $request->get('tenant_id');
-            $result = $this->jobAgendadoService->removerJob($id, $tenantId);
+            $result = $this->service->removerJob($id, $tenantId);
             return response()->json($result);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
@@ -83,7 +84,7 @@ class JobAgendadoController extends Controller {
 
     public function getClassJobs()
     {
-        $jobs = $this->jobAgendadoService->getAllClassJobs();
+        $jobs = $this->service->getAllClassJobs();
         return response()->json(['success' => true, 'data' => $jobs]);
     }
 }

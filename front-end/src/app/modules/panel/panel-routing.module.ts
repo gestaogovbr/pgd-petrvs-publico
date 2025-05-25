@@ -13,6 +13,7 @@ import { PanelAdminsFormComponent } from './panel-admins-form/panel-admins-form.
 import { PanelAdminGuard } from 'src/app/guards/panel_admin.guard';
 import { PanelChangePasswordComponent } from './panel-change-password/panel-change-password.component';
 import {PanelEnvComponent} from "./panel-env/panel-env.component";
+import { PanelJobAgendadosListComponent } from './panel-jobs-agendados-list/panel-jobs-agendados-list.component';
 
 const routes: Routes = [
   { path: '', 
@@ -25,6 +26,7 @@ const routes: Routes = [
       { path: 'tenants/:id/logs', component: PanelListLogsComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Logs", modal: true } },
       { path: 'seeder', component: PanelSeederComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Executa Seeder no Tenant", modal: true }, canActivate: [PanelAdminGuard] },
       { path: 'job-agendados', component: JobAgendadoComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Job agendados", modal: true }, canActivate: [PanelAdminGuard] },
+      { path: 'job-agendados2', component: PanelJobAgendadosListComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Job agendados", modal: true }, canActivate: [PanelAdminGuard] },
       { path: 'logs2', component: PanelListLogsComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Logs", modal: true }, canActivate: [PanelAdminGuard] },
       { path: 'audit', component: PanelAuditComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta Audit", modal: true }, canActivate: [PanelAdminGuard] },
       { path: 'env', component: PanelEnvComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Dados ENV", modal: true }, canActivate: [PanelAdminGuard] },
