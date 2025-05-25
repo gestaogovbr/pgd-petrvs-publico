@@ -145,6 +145,7 @@ Route::middleware('auth:sanctum')->prefix('Change')->group(function () {
   Route::post('query', [ChangeController::class, 'query']);
   Route::post('get-by-id', [ChangeController::class, 'getById']);
   Route::post('showResponsaveis', [ChangeController::class, 'showResponsaveis']);
+  Route::post('list-models', [ChangeController::class, 'loadModels']);
 });
 Route::middleware('auth:sanctum')->prefix('Error')->group(function () {
   Route::post('query', [ErrorController::class, 'query']);

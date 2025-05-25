@@ -615,10 +615,10 @@ export class LookupService implements IIndexable {
   ];
 
   public TIPO_LOG_CHANGE: LookupItem[] = [
-    { key: "ADD", value: "ADD" },
-    { key: "EDIT", value: "EDIT" },
-    { key: "SOFT_DELETE", value: "SOFT_DELETE" },
-    { key: "DELETE", value: "DELETE" },
+    { key: "ADD", value: "Adicionar" },
+    { key: "EDIT", value: "Alterar" },
+    { key: "SOFT_DELETE", value: "Excluir" },
+    { key: "DELETE", value: "Excluir Permanente" },
   ];
 
   public TIPO_LOG_AUDIT: LookupItem[] = [

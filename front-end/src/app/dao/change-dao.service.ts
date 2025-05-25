@@ -35,4 +35,15 @@ export class ChangeDaoService extends DaoBaseService<Change> {
       });
     });
   }
+
+  public listModels(): Promise<LookupItem[]> {
+    return new Promise<LookupItem[]>((resolve, reject) => {
+      this.server.post('api/Change/list-models', []).subscribe(response => {
+        resolve(response.models);
+      }, error => {
+        console.log("Erro ao buscar a lista de Modelos!", error);
+        resolve([]);
+      });
+    });
+  }
 }

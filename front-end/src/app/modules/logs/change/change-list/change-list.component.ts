@@ -14,6 +14,8 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { ExcelService } from 'src/app/services/excel.service';
 import { Base } from 'src/app/models/base.model';
 import {InputTextComponent} from "../../../../components/input/input-text/input-text.component";
+import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import { SelectItem } from 'src/app/components/input/input-base';
 
 @Component({
   selector: 'app-change-list',
@@ -24,7 +26,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild('selectResponsaveis', { static: false }) public selectResponsaveis?: InputSelectComponent;
   @ViewChild('relacao', { static: false }) public relacao?: InputSelectComponent;
-  @ViewChild('usuario', { static: false })  public usuario?: InputTextComponent;
+  @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
   public toolbarButtons: ToolbarButton[] = [];
   public allPages: ListenerAllPagesService;
   public usuarioDao: UsuarioDaoService;
@@ -33,6 +35,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   public responsaveis: LookupItem[] = [];
   public relacoes: LookupItem[] = [];
   public changes: Change[] = [];
+  public models: LookupItem[] = [];
 
 
   constructor(public injector: Injector, dao: ChangeDaoService, public xlsx: ExcelService) {
@@ -48,6 +51,8 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
       data_inicio: {default: ""},
       data_fim: {default: ""},
       tabela: {default: ""},
+      search: {default: ""},
+      model: {default: ""},
       tipo: {default: ""},
       row_id: {default: ""},
       row_id_text: {default: ""},
@@ -62,14 +67,20 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     this.filter?.controls.row_id_text.setValue(this.urlParams?.get('id'));
   }
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
     super.ngAfterViewInit();
-    this.selectResponsaveis!.loading = true;
+    
+    this.models = await this.dao?.listModels() || [];
+    console.log(this.models);
+    
+    //this.selectResponsaveis!.loading = true;
     this.dao?.showResponsaveis().then(responsaveis => {
       this.responsaveis = responsaveis || [];
       this.cdRef.detectChanges();
-    }).finally(() => this.selectResponsaveis!.loading = false);
+    });
+    //.finally(() => this.selectResponsaveis!.loading = false);
   }
+
   public async loadChanges(changes?: Base[]){
     this.changes = changes as Change[];
   }
@@ -113,7 +124,8 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   }
 
 
-
-
+  public async onUsuarioSelect(selected: SelectItem) {
+    console.log(selected);
+  }
 
 }

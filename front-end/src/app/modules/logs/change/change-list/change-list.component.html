@@ -1,8 +1,72 @@
-<grid [dao]="dao" [hasEdit]="false" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [loadList]="loadChanges.bind(this)">
-
-  <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+<grid
+  [dao]="dao"
+  [hasEdit]="false"
+  [title]="isModal ? '' : title"
+  [orderBy]="orderBy"
+  [groupBy]="groupBy"
+  [join]="join"
+  [loadList]="loadChanges.bind(this)"
+>
+  <filter
+    [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')"
+    [form]="filter"
+    [where]="filterWhere"
+    [submit]="filterSubmit.bind(this)"
+    [clear]="filterClear.bind(this)"
+    [collapseChange]="filterCollapseChange.bind(this)"
+    [collapsed]="!selectable && filterCollapsed"
+  >
     <div class="row">
-      <input-search [size]="12" #usuario label="Responsável pelo registro"  controlName="usuario_id" [dao]="usuarioDao" required ></input-search>
+      <input-search
+        #usuario
+        label="Responsável pelo registro"
+        [control]="filter!.controls.usuario_id"
+        controlName="usuario_id"
+        [dao]="usuarioDao"
+        [size]="6"
+        (select)="onUsuarioSelect($event)"
+      ></input-search>
+      <input-datetime
+        [size]="2"
+        datetime
+        label="Início"
+        controlName="data_inicio"
+        [control]="filter!.controls.data_inicio"
+        labelInfo="Início dos registros"
+      ></input-datetime>
+      <input-datetime
+        [size]="2"
+        datetime
+        label="Fim"
+        controlName="data_fim"
+        [control]="filter!.controls.data_fim"
+        labelInfo="Fim dos registros"
+      ></input-datetime>
+      <input-select
+        [size]="2"
+        label="Tipo"
+        icon="bi bi-arrow-up-right-circle"
+        controlName="tipo"
+        [control]="filter!.controls.tipo"
+        [items]="lookup.TIPO_LOG_CHANGE"
+        itemTodos="(Todos)"
+        valueTodos=""
+      ></input-select>
+      <input-text
+        [size]="6"
+        label="Texto geral"
+        controlName="search"
+        [control]="filter!.controls.search"
+        placeholder="Texto geral para busca"
+      ></input-text>
+      <input-select
+        [size]="4"
+        label="Modelo"
+        controlName="model"
+        [control]="filter!.controls.modelo"
+        [items]="models"
+        itemTodos="(Todos)"
+      ></input-select>
     </div>
     <div class="row">
       <input-datetime [size]="4" datetime label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Início dos registros"></input-datetime>
@@ -12,7 +76,6 @@
 
   </filter>
   <div class="accordion mt-3" id="accordionLogs">
-
     <div class="accordion-item" *ngFor="let change of changes">
       <h2 class="accordion-header">
         <button class="accordion-button collapsed text-start px-3 py-2" type="button"
@@ -72,7 +135,6 @@
         </div>
       </div>
     </div>
-
   </div>
 
 
