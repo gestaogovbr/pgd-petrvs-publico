@@ -84,10 +84,34 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
 
 
   public atualizaPedagio(data: any) {
-    return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/atualiza-pedagio', {data }).subscribe(response => {
-        resolve(!!response?.success);
-      }, error => reject(error));
+    return new Promise<Usuario>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/atualiza-pedagio', { data }).subscribe({
+        next: (response) => {
+          const usuario = response?.data as Usuario;
+          if (usuario) {
+            resolve(usuario);
+          } else {
+            reject(new Error('Invalid response data'));
+          }
+        },
+        error: (error) => reject(error)
+      });
+    });
+  }
+
+  public removePedagio(usuarioId: string) {
+    return new Promise<Usuario>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/remove-pedagio', {data: { usuario_id: usuarioId }}).subscribe({
+        next: (response) => {
+          const usuario = response?.data as Usuario;
+          if (usuario) {
+            resolve(usuario);
+          } else {
+            reject(new Error('Invalid response data'));
+          }
+        },
+        error: (error) => reject(error)
+      });
     });
   }
   

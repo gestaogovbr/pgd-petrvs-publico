@@ -24,6 +24,7 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
 
   public unidadeDao: UnidadeDaoService;
   public programaParticipanteDao: ProgramaParticipanteDaoService;
+  public usuarioDao: UsuarioDaoService;
   public programaDao: ProgramaDaoService;
   public multiselectMenu: ToolbarButton[] = [];
   public programa: Programa | null = null;
@@ -31,6 +32,7 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
   public BOTAO_DESABILITAR: ToolbarButton = { label: this.lex.translate("Desabilitar"), hint: this.lex.translate("Desabilitar"), icon: "bi bi-person-x-fill", color: "btn-outline-danger", onClick: this.desabilitarParticipante.bind(this) };
 
   public BOTAO_PEDAGIO: ToolbarButton;
+  public BOTAO_REMOVE_PEDAGIO: ToolbarButton;
 
   public condicoes: LookupItem[] = [
     {
@@ -48,6 +50,7 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.programaParticipanteDao = injector.get<ProgramaParticipanteDaoService>(ProgramaParticipanteDaoService);
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
+    this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     /* Inicializações */
     this.code = "MOD_PART";
     this.filter = this.fh.FormBuilder({
@@ -70,7 +73,7 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
     });
 
 
-    this.BOTAO_PEDAGIO = { label: "Bloquear modalidade teletrabalho", icon: "bi bi-ban", color: "btn-outline-danger", onClick: (usuario: Usuario) => {
+    this.BOTAO_PEDAGIO = { label: "Tornar teletrabalho indisponível", icon: "bi bi-ban", color: "btn-outline-danger", onClick: (usuario: Usuario) => {
       this.go.navigate(
         { 
           route: ['gestao', 'programa', 'pedagio', usuario.id] }, 
@@ -78,13 +81,15 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
           metadata: {'usuario': usuario},
           modalClose: async (modalResult) => {
             if (modalResult) {
-              this.grid?.reloadFilter();
+              this.refresh(modalResult.id);
               this.cdRef.detectChanges();
             }
           }
         }
-    ); 
+      ); 
     }};
+
+    this.BOTAO_REMOVE_PEDAGIO = { label: "Tornar teletrabalho disponível novamente", icon: "bi bi-check2-circle", color: "btn-outline-primary", onClick: this.removePedagio.bind(this)};
 
 
     this.join = ["areasTrabalho.unidade:id,sigla", "planos_trabalho:id,status", "participacoes_programas.programa:id"];
@@ -97,7 +102,8 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
     if(row.usuario_externo) return result;
     if (this.auth.hasPermissionTo('MOD_PART_HAB') && !this.isHabilitado(row)) result.push(this.BOTAO_HABILITAR);
     if (this.auth.hasPermissionTo('MOD_PART_DESAB') && this.isHabilitado(row)) result.push(this.BOTAO_DESABILITAR);
-    if (this.auth.hasPermissionTo('MOD_PART_PEDAGIO')) result.push(this.BOTAO_PEDAGIO);
+    if (this.auth.hasPermissionTo('MOD_PART_PEDAGIO') && !row.pedagio) result.push(this.BOTAO_PEDAGIO);
+    if (this.auth.hasPermissionTo('MOD_PART_PEDAGIO') && row.pedagio) result.push(this.BOTAO_REMOVE_PEDAGIO);
     return result;
   }
 
@@ -237,6 +243,19 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
 
   public hasPlanoTrabalhoAtivo(row: Usuario): boolean {
     return !!row.planos_trabalho?.find(x => x.status == "ATIVO" && this.util.between(now(), { start: x.data_inicio, end: x.data_fim }));
+  }
+
+  public async removePedagio(row: any) {
+    this.dialog.confirm("Remover teletrabalho indisponível ?", "Deseja realmente remover o teletrabalho indisponível do servidor " + (row.nome as string).toUpperCase() + " ?").then(async confirm => {
+      if (confirm) {
+        await this.usuarioDao!.removePedagio(row.id).then(resposta => {
+          (this.grid?.query || this.query!).refreshId(row.id);
+          this.cdRef.detectChanges();
+        }, error => {
+          this.dialog.alert("Erro", error);
+        });
+      }
+    });
   }
 
 }

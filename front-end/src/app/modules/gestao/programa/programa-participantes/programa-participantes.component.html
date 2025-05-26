@@ -24,6 +24,7 @@
             <ng-template let-row="row" #columnUsuario>
                 <strong>{{row.nome }}</strong><br>
                 <label class="badge text-bg-warning" *ngIf="row.usuario_externo">Usuário Externo</label>
+                <label class="badge text-bg-danger" *ngIf="row.pedagio">Teletrabalho indisponível</label>
             </ng-template>
         </column>
 

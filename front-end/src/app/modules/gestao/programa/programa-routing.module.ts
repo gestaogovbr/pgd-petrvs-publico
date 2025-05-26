@@ -14,7 +14,7 @@ const routes: Routes = [
   { path: ':id/edit', component: ProgramaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Programa", modal: true } },
   { path: ':id/consult', component: ProgramaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Programa", modal: true } },
   { path: ':id/participantes', component: ProgramaParticipantesComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Participantes do Programa", modal: true } },
-  { path: 'pedagio/:idUsuario', component: PedagioFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Bloquear modalidade teletrabalho para o agente público", modal: true } },
+  { path: 'pedagio/:idUsuario', component: PedagioFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Tornar a modalidade teletrabalho indisponível para o agente público", modal: true } },
 ];
 
 @NgModule({

@@ -118,8 +118,9 @@ export class PedagioFormComponent extends PageFormBase<
 		this.loadData(this.entity, form);
 	}
 
-	public async atualizaPedagio() {
+	public async atualizaPedagio(): Promise<Usuario | undefined> {
 		this.submitting = true;
+		let result = undefined
 		const data = {
 			usuario_id: this.entity?.id,
 			data_inicial_pedagio: this.form?.controls.data_inicial_pedagio.value,
@@ -128,8 +129,9 @@ export class PedagioFormComponent extends PageFormBase<
 		};
 
 		try {
-			const response = await this.dao?.atualizaPedagio(data);
-			this.dialog.alert('Sucesso', 'Pedágio atualizado com sucesso!');
+			result = await this.dao?.atualizaPedagio(data);
+			this.dialog.alert('Sucesso', 'Teletrabalho indisponível para o período');
+			this.go.setModalResult(this.modalRoute?.queryParams?.idroute, result);
 			this.close();
 		} catch (error) {
 			// this.dialog.alert("Erro ao atualizar pedagio!", error);
@@ -137,6 +139,7 @@ export class PedagioFormComponent extends PageFormBase<
 		} finally {
 			this.submitting = false;
 		}
+		return result;
 	}
 
 	public updateDates(event: any): void {

@@ -227,7 +227,13 @@ class PlanoTrabalhoService extends ServiceBase
 
         // Validar Modalidade
         if (!empty($tipoModalidade) && $tipoModalidade->exige_pedagio && !empty($usuario->pedagio)) {
-            throw new ServerException("ValidatePlanoTrabalho", "Não é possível usar essa Modalidade para usuários em pedágio.");
+            throw new ServerException(
+                "ValidatePlanoTrabalho", 
+                "Modalidade Teletrabalho indisponível para o participante de " . 
+                Carbon::parse($usuario->data_inicial_pedagio)->format('d/m/Y') . 
+                " até " . 
+                Carbon::parse($usuario->data_final_pedagio)->format('d/m/Y')
+            );
         }
         if ($action == ServiceBase::ACTION_INSERT) {
             /*
