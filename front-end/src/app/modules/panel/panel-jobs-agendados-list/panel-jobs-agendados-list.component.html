@@ -7,8 +7,6 @@
     [selectable]="selectable" 
     (select)="onSelect($event)"
     labelAdd="Incluir Novo Agendamento"
-    [hasEdit]="this.auth.hasPermissionTo('MOD_SOLUCOES_EDT')"
-    [hasDelete]="this.auth.hasPermissionTo('MOD_SOLUCOES_DEL')"
 >
     <toolbar *ngIf="!selectable">
     </toolbar>
@@ -68,11 +66,11 @@
                 <span>{{row.expressao_cron.trim()}}</span>
             </ng-template>
         </column>
-        <column 
-            type="options"  
-            [onEdit]="edit" 
-            [dynamicButtons]="dynamicButtons.bind(this)">
-        </column>
+        <column type="options"
+            [onEdit]="edit"
+            [dynamicOptions]="dynamicOptions.bind(this)"
+            [dynamicButtons]="dynamicButtons.bind(this)"
+        ></column>     
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

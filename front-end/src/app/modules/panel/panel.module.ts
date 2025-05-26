@@ -18,7 +18,7 @@ import { PanelChangePasswordComponent } from './panel-change-password/panel-chan
 import {PanelEnvComponent} from "./panel-env/panel-env.component";
 import {PanelAuditComponent} from "./panel-audit/panel-audit.component";
 import { PanelJobAgendadosListComponent } from './panel-jobs-agendados-list/panel-jobs-agendados-list.component';
-
+import { PanelJobsAgendadosFormComponent } from './panel-jobs-agendados-form/panel-jobs-agendados-form.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +34,7 @@ import { PanelJobAgendadosListComponent } from './panel-jobs-agendados-list/pane
     PanelChangePasswordComponent,
     JobAgendadoComponent,
     PanelJobAgendadosListComponent,
+    PanelJobsAgendadosFormComponent,
     PanelEnvComponent
   ],
     imports: [

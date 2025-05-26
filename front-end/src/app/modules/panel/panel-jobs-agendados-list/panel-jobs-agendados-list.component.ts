@@ -92,6 +92,11 @@ export class PanelJobAgendadosListComponent extends PageListBase<JobAgendado, Jo
     return result;
   }
 
+  public dynamicOptions(row: JobAgendado): ToolbarButton[] {
+      let result: ToolbarButton[] = [];
+      return result;
+  }
+
   public dynamicButtons(row: JobAgendado): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.consult.bind(this) });  

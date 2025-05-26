@@ -1,0 +1,50 @@
+<editable-form
+  [form]="form!"
+  [disabled]="formDisabled"
+  [title]="isModal ? '' : title"
+  initialFocus="nome"
+  (submit)="onSaveData()"
+  (cancel)="onCancel()"
+>
+  <div class="row">
+    <input-text 
+      [size]="12" 
+      label="Nome do Agendamento" 
+      icon="bi bi-textarea-t" 
+      controlName="nome" 
+      [control]="form!.controls.nome" 
+      [attr.maxlength]=250
+      required   
+    ></input-text>
+    <input-select
+      [size]="4"
+      label="Tenant"
+      controlName="tenant_id"
+      [items]="tenants"
+      [control]="form!.controls.tenant_id"
+      required
+    ></input-select>
+    <input-select
+      [size]="4"
+      label="Job"
+      controlName="classe"
+      [items]="jobTypes"
+      [control]="form!.controls.classe"
+      required
+    ></input-select>
+    <input-text 
+      [size]="4" 
+      label="Expressão CRON" 
+      icon="bi bi-textarea-t" 
+      controlName="expressao_cron" 
+      [control]="form!.controls.expressao_cron" 
+      [attr.maxlength]=20
+      placeholder="A expressão CRON para o agendamento. Ex: 0 0 * * *"
+      required   
+    ></input-text>
+  </div>
+</editable-form>
+
+
+
+
