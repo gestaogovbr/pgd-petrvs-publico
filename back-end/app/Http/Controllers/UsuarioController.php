@@ -96,6 +96,8 @@ class UsuarioController extends ControllerBase
   public function atualizaPedagio(Request $request)
   {
     try {
+      if (!parent::loggedUser()->hasPermissionTo('MOD_PART_PEDAGIO')) throw new ServerException("ValidateUsuario", "Usuário precisa ter capacidade MOD_PART_PEDAGIO");
+
       $data = $request->input('data');
       $validated = validator($data, [
         'usuario_id' => ['required', 'uuid'],
@@ -120,6 +122,8 @@ class UsuarioController extends ControllerBase
   public function removerPedagio(Request $request)
   {
     try {
+      if (!parent::loggedUser()->hasPermissionTo('MOD_PART_PEDAGIO')) throw new ServerException("ValidateUsuario", "Usuário precisa ter capacidade MOD_PART_PEDAGIO");
+
       $data = $request->input('data');
       $validated = validator($data, [
         'usuario_id' => ['required', 'uuid'],

@@ -94,9 +94,6 @@ export class PedagioFormComponent extends PageFormBase<
 	public async loadData(entity: Usuario, form: FormGroup) {
 		this.entity = this.metadata?.usuario || entity;
 		this.form = form;
-		console.log(this.entity);
-		
-
 		this.form.controls.data_inicial_pedagio.setValue(
 			moment(this.entity?.data_inicial_pedagio).toDate()
 		);
