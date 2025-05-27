@@ -92,6 +92,7 @@ use FontLib\Table\Type\post;
 use App\Http\Controllers\JobAgendadoController;
 use App\Http\Controllers\RelatoController;
 use App\Http\Controllers\SolucaoUnidadeController;
+
 use App\Http\Controllers\ImpersonationController;
 /*
 |--------------------------------------------------------------------------

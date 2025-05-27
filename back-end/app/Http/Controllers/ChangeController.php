@@ -47,8 +47,8 @@ class ChangeController extends ControllerBase {
                     $class = 'App\\Models\\' . str_replace('.php', '', $file);
                     if (is_subclass_of($class, \Illuminate\Database\Eloquent\Model::class)) {
                         return [
-                            'key' => class_basename($class),
-                            'value' => $class,
+                            'key' => ($class),
+                            'value' =>  class_basename($class),
                         ];
                     }
                     return null;

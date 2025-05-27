@@ -1,9 +1,10 @@
 <?php
 
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use Stancl\Tenancy\Middleware\InitializeTenancyByPath;
-
+use App\Http\Controllers\ImpersonationController;
 
 /*
 |--------------------------------------------------------------------------

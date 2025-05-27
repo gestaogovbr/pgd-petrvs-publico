@@ -52,6 +52,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
       data_fim: {default: ""},
       tabela: {default: ""},
       search: {default: ""},
+      modelo: {default: ""},
       model: {default: ""},
       tipo: {default: ""},
       row_id: {default: ""},
@@ -90,7 +91,9 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     filter.controls.data_inicio.setValue("");
     filter.controls.data_fim.setValue("");
     filter.controls.tabela.setValue("");
-    filter.controls.tipo.setValue("");
+    filter.controls.f.setValue("");
+    filter.controls.search.setValue("");
+    filter.controls.modelo.setValue("");
     filter.controls.opcao_filtro.setValue("ID do registro");
     super.filterClear(filter);
   }
@@ -119,6 +122,12 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     };    
     if(form.tipo?.length){
       result.push(["type", "==", form.tipo]);
+    };
+    if(form.modelo?.length){
+      result.push(["auditable_type", "==", form.modelo]);
+    };
+    if(form.search?.length){
+      result.push(["search", "==", form.search]);
     };
     return result;
   }

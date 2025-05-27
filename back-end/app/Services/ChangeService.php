@@ -22,7 +22,9 @@ class ChangeService extends ServiceBase
         $query = Audit::query();
 
         if ($modelClass) {
-            $query->where('auditable_type', $modelClass);
+            $auditableType = str_replace('\\\\', '\\', $modelClass);
+            \Log::info($modelClass);
+            $query->where('auditable_type', $auditableType);
         }
 
         if ($modelId) {
@@ -120,7 +122,6 @@ class ChangeService extends ServiceBase
                     $filters[$field] = ['in' => $value];
                     break;
 
-                // Adicione mais operadores conforme necessário, como '!=', 'like', etc.
             }
         }
 

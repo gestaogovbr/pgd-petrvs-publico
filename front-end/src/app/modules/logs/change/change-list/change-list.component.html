@@ -8,7 +8,7 @@
   [loadList]="loadChanges.bind(this)"
 >
   <filter
-    [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')"
+    [deleted]="false"
     [form]="filter"
     [where]="filterWhere"
     [submit]="filterSubmit.bind(this)"
