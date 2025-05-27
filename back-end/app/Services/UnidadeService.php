@@ -561,7 +561,16 @@ class UnidadeService extends ServiceBase
               == false	......................	retornar somente as unidades ativas
       */
 
-    public function consultaUnidadeSiape(string $unidadecodigoSiape): SimpleXMLElement
+    public function consultaUnidadeSiape(string $unidadecodigoSiape): array
+    {
+
+        $retorno = $this->buscaDadosUnidade($unidadecodigoSiape);
+        
+        return simpleXmlElementToArray($retorno);
+
+    }
+
+    public function consultaUnidadeSiapeXml(string $unidadecodigoSiape): SimpleXMLElement
     {
 
         return $this->buscaDadosUnidade($unidadecodigoSiape);
