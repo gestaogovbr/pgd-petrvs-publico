@@ -84,7 +84,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       "unidade.entidade", 
       "entregas.entrega", 
       "entregas.plano_entrega_entrega:id,plano_entrega_id", 
-      "usuario",
+      "usuario.participacoes_programas",
+      "usuario.lotacao",
       "programa.template_tcr", 
       "tipo_modalidade", 
       "documento", 
@@ -144,6 +145,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   public atualizarTcr() {
     this.entity = this.loadEntity();
+ 
     if (!this.formDisabled) {
       let textoUsuario = this.form!.controls.usuario_texto_complementar.value;
       let textoUnidade = this.form!.controls.unidade_texto_complementar.value;
@@ -154,6 +156,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.template = this.entity.programa?.template_tcr;
       this.editingId = ["ADD", "EDIT"].includes(documento?._status || "") ? documento!.id : undefined;
     }
+
+    
+    
 
     this.cdRef.detectChanges();
   }
@@ -306,17 +311,13 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public async loadData(entity: PlanoTrabalho, form: FormGroup, action?: string) {
-
     if(action == 'clone') {
+ 
       entity.id = "";
       entity.data_inicio = new Date();
-      entity.data_fim = new Date();
+      entity.data_fim = moment().add(1, 'day').toDate();
       entity.documento_id = null;
-      entity.entregas = entity.entregas.map((entrega: PlanoTrabalhoEntrega) => {
-        entrega.id = this.documentoDao.generateUuid();
-        entrega._status = "ADD";
-        return entrega as PlanoTrabalhoEntrega;
-      });
+      entity.entregas = this.entregasClonadas(entity.entregas)
     }
 
     this.planoTrabalho = new PlanoTrabalho(entity);
@@ -329,14 +330,35 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     ]);
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
-    if (action == 'clone') {
-      form.controls.data_inicio.setValue("");
-      form.controls.data_fim.setValue("");
+
+    if(action == 'clone') {
+      this.form?.controls.usuario_texto_complementar.setValue(entity.usuario?.texto_complementar_plano || "");
+    } else {
+      this.atualizarTcr();
     }
+
     /*let documento = entity.documentos.find(x => x.id == entity.documento_id);
     if(documento) this._datasource = documento.datasource;*/
     this.calculaTempos();
-    this.atualizarTcr();
+    
+  }
+
+  public entregasClonadas(entregas: PlanoTrabalhoEntrega[]) {
+
+    // Se a entrega for vinculada a um plano de entrega, o plano de entrega precisa estar vigente
+    // Se a entrega tiver sido excluida do plano de entrega, o plano de entrega precisa estar vigente
+
+    const entregasVigentes = entregas.filter((entrega: PlanoTrabalhoEntrega) => {
+      return entrega.plano_entrega_entrega !== null && entrega.plano_entrega_entrega_id !== null;
+    });
+
+    return entregasVigentes.map((entrega: PlanoTrabalhoEntrega) => {
+      entrega.id = this.documentoDao.generateUuid();
+      entrega._status = "ADD";
+      entrega.forca_trabalho = 0;
+      return entrega as PlanoTrabalhoEntrega;
+    }); 
+    
   }
 
   public async initializeData(form: FormGroup) {
@@ -377,13 +399,16 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   /* Cria um objeto Plano baseado nos dados do formulário */
-  public loadEntity(): PlanoTrabalho {
+  public loadEntity(): PlanoTrabalho {    
     let plano: PlanoTrabalho = this.util.fill(new PlanoTrabalho(), this.entity!);
     plano = this.util.fillForm(plano, this.form!.value);
     plano.usuario = (this.usuario!.selectedEntity || this.entity?.usuario) as Usuario;
     plano.unidade = (this.unidade?.selectedEntity || this.entity?.unidade) as Unidade;
     plano.programa = (this.programa?.selectedEntity || this.entity?.programa) as Programa;
     plano.tipo_modalidade = (this.tipoModalidade!.selectedEntity || this.entity?.tipo_modalidade) as TipoModalidade;   
+    plano.documento = this.entity?.documento;
+    plano.documento_id = this.form?.controls.documento_id.value;
+    
     return plano;
   }
 
@@ -398,6 +423,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.entity!.documentos = this.entity!.documentos.filter((documento: Documento) => {
         return ["ADD", "EDIT", "DELETE"].includes(documento._status || "");
       });
+      
       /* Salva separadamente as informações do plano */
       let requests: Promise<any>[] = [this.dao!.save(this.entity!, this.join)];
       if (this.form!.controls.editar_texto_complementar_unidade.value) requests.push(this.unidadeDao.update(this.entity!.unidade_id, { texto_complementar_plano: this.form!.controls.unidade_texto_complementar.value }));

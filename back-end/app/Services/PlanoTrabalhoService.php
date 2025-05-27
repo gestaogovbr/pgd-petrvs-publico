@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Programa;
 use App\Models\ProgramaParticipante;
 use App\Models\DocumentoAssinatura;
+use App\Models\PlanoEntregaEntrega;
 use Carbon\Carbon;
 use DateTime;
 use Throwable;
@@ -75,7 +76,7 @@ class PlanoTrabalhoService extends ServiceBase
             $data["where"][] = ['unidade_id', 'in', array_unique($ids)];
 
         }
-        if ($subordinadas[2]) { // Verifica se o índice existe
+        if (isset($subordinadas[2])) { // Verifica se o índice existe
             $unidadeService = new UnidadeService();
 
             // Define $uId corretamente, verificando a existência do índice
@@ -113,8 +114,27 @@ class PlanoTrabalhoService extends ServiceBase
 
             // Se houver IDs, adiciona a condição unificada
             if (!empty($unidadeIds)) {
-                $data["where"][] = ['unidade_id', 'in', array_unique($unidadeIds)];
+                // Filtra somente os elementos que são arrays (evita strings perdidas)
+                $arraysSomente = array_filter($unidadeIds, 'is_array');
+
+                if (!empty($arraysSomente)) {
+                    // Achata apenas os arrays válidos
+                    $unidadeIds = array_merge(...$arraysSomente);
+                }
+
+                // Agora $unidadeIds pode conter valores de strings soltas + os mesclados
+                // Então garantimos que tudo seja um array plano e único
+                $unidadeIds = array_unique(
+                    array_merge(
+                        is_array($unidadeIds) ? $unidadeIds : [$unidadeIds]
+                    )
+                );
+
+                $data["where"][] = ['unidade_id', 'in', array_values($unidadeIds)];
             }
+
+
+
         }
         foreach ($data["where"] as $condition) {
             if (is_array($condition) && $condition[0] == "data_filtro") {
@@ -215,6 +235,11 @@ class PlanoTrabalhoService extends ServiceBase
             /* (RN_PTR_Y) Para incluir um Plano de Trabalho para um participante, é necessário que este esteja LOTADO/COLABORADOR na unidade executora, a menos que este possua a capacidade MOD_PTR_USERS_INCL; */
             if (!parent::loggedUser()->hasPermissionTo('MOD_PTR_USERS_INCL') && !$condicoes["participanteColaboradorUnidadeExecutora"] && !$condicoes["participanteLotadoUnidadeExecutora"]) {
                 throw new ServerException("ValidatePlanoTrabalho", "Participante do plano não é LOTADO ou COLABORADOR na unidade executora. (MOD_PTR_USERS_INCL)\n[ver RN_PTR_Y]");
+            }
+
+            $entregasValidas = $this->validarClone($data);
+            if ($entregasValidas) {
+                throw new ServerException("ValidatePlanoTrabalho", $entregasValidas);
             }
         } else if ($action == ServiceBase::ACTION_EDIT) {
             /*
@@ -517,11 +542,11 @@ class PlanoTrabalhoService extends ServiceBase
                 'gestorUnidadeSuperior' => [
                     'gestor' => $gestoresUnidadeSuperior["gestor"]?->id == $logado->id,
                     'gestorSubstituto' => count(array_filter(
-                        $gestoresUnidadeSuperior["gestoresSubstitutos"], 
+                        $gestoresUnidadeSuperior["gestoresSubstitutos"],
                         fn($value) => $value !== null && isset($value["id"]) && $value["id"] == $logado->id
-                    )) > 0,                    
+                    )) > 0,
                     'gestorDelegado' => count(array_filter(
-                        $gestoresUnidadeSuperior["gestoresDelegados"] ?? [], 
+                        $gestoresUnidadeSuperior["gestoresDelegados"] ?? [],
                         fn($value) => $value !== null && isset($value["id"]) && $value["id"] == $logado->id
                     )) > 0
                 ],
@@ -1100,5 +1125,27 @@ class PlanoTrabalhoService extends ServiceBase
             $this->setBuffer("jaAssinaramTCR", $plano_trabalho_id, $result);
         }
         return $result;
+    }
+
+    public function validarClone($planoTrabalho)
+    {
+        if ($this->hasBuffer("validarClone", $planoTrabalho["id"])) {
+            return $this->getBuffer("validarClone", $planoTrabalho["id"]);
+        } else {
+    
+            // percorrer entregas que tem plano_entrega_entrega_id e validar se o plano de entrega está ativo
+            foreach ($planoTrabalho['entregas'] as $entrega) {
+                if ($entrega['plano_entrega_entrega_id']) {
+                    $planoEntregaEntrega = PlanoEntregaEntrega::find($entrega['plano_entrega_entrega_id']);
+                    $status = $planoEntregaEntrega->planoEntrega->status;
+                    // verifica se o plano de entrega está ativo    
+                    if ($planoEntregaEntrega !== null && !in_array($planoEntregaEntrega->planoEntrega->status, ["ATIVO", "AVALIADO", "CONCLUIDO"])) {
+                        return "O plano de trabalho não pode ser clonado porque o plano de entrega da entrega:" . $entrega['descricao'] . " não está ativo.";
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }
