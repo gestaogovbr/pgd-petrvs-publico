@@ -1,3 +1,6 @@
+## 2.3.20 27/05/2025
+### Corrigido
+ - Correção no SQL de vinculos do SIAPE.
 ## 2.3.19 19/05/2025
 ### Modificado
  - Adicionado as regras de perfis do SIAPE o perfil Administrador Geral
