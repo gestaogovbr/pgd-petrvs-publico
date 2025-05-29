@@ -42,7 +42,6 @@ class JobScheduleService extends ServiceBase {
         }
     }
 
-
     private function validateCreateJob($dados,  $tenantId) : bool{
         $nomeClasseBuscarDadosSiapeJob = getClassNameFromPath('app/Jobs/BuscarDadosSiapeJob.php');
         $nomeClasseSincronizaSiapeJob = getClassNameFromPath('app/Jobs/SincronizarSiapeJob.php');
@@ -50,6 +49,7 @@ class JobScheduleService extends ServiceBase {
         $jobBuscarDadosJaExiste = JobSchedule::where('tenant_id', $tenantId)
         ->where('classe', $nomeClasseBuscarDadosSiapeJob)
         ->exists();
+
         $jobSincronizaSiapeExiste = JobSchedule::where('tenant_id', $tenantId)
         ->where('classe', $nomeClasseSincronizaSiapeJob)
         ->exists();
@@ -72,21 +72,6 @@ class JobScheduleService extends ServiceBase {
 
         return true;
 
-    }
-    public function removerJob($id, $tenantId = null) {
-        $query = JobSchedule::where('id', $id);
-        if ($tenantId) {
-            $query->where('tenant_id', $tenantId);
-        }
-
-        $job = $query->first();
-
-        if (!$job) {
-            return ['success' => false, 'message' => 'Job não encontrado.'];
-        }
-
-        $job->delete();
-        return ['success' => true, 'message' => 'Job removido com sucesso.'];
     }
 
     public function getAllClassJobs() {

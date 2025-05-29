@@ -1,14 +1,13 @@
 import { Component, Injector, ViewChild } from "@angular/core";
-import { FormGroup } from "@angular/forms";
+import { AbstractControl, FormGroup } from "@angular/forms";
 import { EditableFormComponent } from "src/app/components/editable-form/editable-form.component";
 import { IIndexable } from "src/app/models/base.model";
 import { PageFormBase } from "src/app/modules/base/page-form-base";
-import { InputSearchComponent } from "src/app/components/input/input-search/input-search.component";
-import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
 import { JobAgendado } from "src/app/models/job-agendado.model";
 import { JobAgendadoDaoService } from "src/app/dao/job-agendado-dao.service";
 import { TenantDaoService } from "src/app/dao/tenant-dao.service";
 import { Tenant } from "src/app/models/tenant.model";
+import { LookupItem } from "src/app/services/lookup.service";
 
 @Component({
   selector: 'panel-jobs-agendados-form',
@@ -32,8 +31,13 @@ export class PanelJobsAgendadosFormComponent extends PageFormBase<JobAgendado, J
       tenant_id: { default: null },
       nome: { default: "" },
       classe: { default: "" },
-      expressao_cron: { default: "* * * * *" }
-    });
+      expressao_cron: { default: "* * * * *" },
+      periodicidade: { default: null },
+      intervalo_qtde: { default: 0 },
+      intervalo_tipo: { default: null },
+      dia: { default: null },
+      horario: { default: null }
+    }, this.cdRef, this.validate);
   }
 
   public async loadData(entity: JobAgendado, form: FormGroup) {
@@ -68,7 +72,6 @@ export class PanelJobsAgendadosFormComponent extends PageFormBase<JobAgendado, J
               key: tenant.id,
               value: tenant.id
             }));
-            console.log(this.tenants);
           }
         );
       } catch (error) {
@@ -90,4 +93,55 @@ export class PanelJobsAgendadosFormComponent extends PageFormBase<JobAgendado, J
          console.error("Erro ao carregar os tipos de jobs: ", error);
        }
     }
+
+    public validate = (control: AbstractControl, controlName: string) => {
+        let result = null;
+
+        if(controlName == 'nome' && control.value == null){
+          result = "Inválido";
+        }
+
+        if(controlName == 'tenant_id' && control.value == null){
+          result = "Inválido";
+        }
+
+        if(controlName == 'classe' && control.value == null){
+          result = "Inválido";
+        }
+
+        if(controlName == 'periodicidade' && control.value == null){
+          result = "Inválido";
+        }
+
+        if(controlName == 'intervalo_qtde' && control.value == null && this.form?.get('periodicidade')?.value == 'cada'){
+          result = "Inválido";
+        }
+
+        if(controlName == 'intervalo_tipo' && control.value == null && this.form?.get('periodicidade')?.value == 'cada'){
+          result = "Inválido";
+        }
+
+        if(controlName == 'dia' && this.form?.get('periodicidade')?.value == 'dia' && (
+          control.value == null || control.value < 0
+        )){
+          result = "Inválido";
+        }
+
+        if(controlName == 'horario' &&
+          (control.value == null || control.value == "") && (
+          (this.form?.get('periodicidade')?.value == 'dia') ||
+          (this.form?.get('periodicidade')?.value == 'todos') ||
+          (this.form?.get('periodicidade')?.value == 'domingo') ||
+          (this.form?.get('periodicidade')?.value == 'segunda') ||
+          (this.form?.get('periodicidade')?.value == 'terca') ||
+          (this.form?.get('periodicidade')?.value == 'quarta') ||
+          (this.form?.get('periodicidade')?.value == 'quinta') ||
+          (this.form?.get('periodicidade')?.value == 'sexta') ||
+          (this.form?.get('periodicidade')?.value == 'sabado')
+        )) {
+          result = "Inválido";
+        }
+
+        return result;
+      }
 }

@@ -918,6 +918,25 @@ export class LookupService implements IIndexable {
     { key: "trabalho", value: "Plano de Trabalho" }
   ];
 
+  public AGENDAMENTO_PERIODICIDADES: LookupItem[] = [
+    { key: 'cada', value: "A cada" },
+    { key: 'dia', value: "No dia" },
+    { key: 'todos', value: "Todos os dias" },
+    { key: 'domingo', value: "Todo domingo" },
+    { key: 'segunda', value: "Toda segunda" },
+    { key: 'terça', value: "Toda terça" },
+    { key: 'quarta', value: "Toda quarta" },
+    { key: 'quinta', value: "Toda quinta" },
+    { key: 'sexta', value: "Toda sexta" },
+    { key: 'sabado', value: "Toda sábado" },
+    { key: 'custom', value: "Personalizado" }
+  ];
+
+  public AGENDAMENTO_INTERVALO_TIPOS: LookupItem[] = [
+    { key: 'minuto', value: "minuto(s)" },
+    { key: 'hora', value: "hora(s)" }
+  ];
+
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);
   }

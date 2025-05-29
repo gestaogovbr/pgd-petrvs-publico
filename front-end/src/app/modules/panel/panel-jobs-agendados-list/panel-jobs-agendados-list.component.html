@@ -61,9 +61,9 @@
                 <span>{{row.classe}}</span>
             </ng-template>  
         </column>
-        <column title="Expressão Cron" [template]="columnTipo">
+        <column title="Periodicidade" [template]="columnTipo">
             <ng-template let-row="row" #columnTipo>
-                <span>{{row.expressao_cron.trim()}}</span>
+                <span>{{expressaoText(row)}}</span>
             </ng-template>
         </column>
         <column type="options"

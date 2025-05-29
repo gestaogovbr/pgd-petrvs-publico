@@ -3,18 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\Contracts\IBaseException;
-use Illuminate\Http\Request;
-use App\Jobs\SincronizarSiapeJob;
-use App\Jobs\LogJob;
-use App\Models\JobSchedule;
-use Illuminate\Support\Facades\Log;
+use App\Exceptions\ServerException;
 use App\Http\Controllers\ControllerBase;
+use App\Jobs\LogJob;
+use App\Jobs\SincronizarSiapeJob;
+use App\Models\JobSchedule;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class JobScheduleController extends ControllerBase {
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
+            case 'STORE':
+            case 'EDIT':
+                //throw new ServerException("ProgramaStore", "Edição não realizada");
+                break;
         }
     }
 
@@ -33,39 +38,6 @@ class JobScheduleController extends ControllerBase {
             return response()->json([
                 'error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."
             ]);
-        }
-    }
-
-    public function createJob(Request $request)
-    {
-        try {
-            $tenantId = $request->get('tenant_id');
-            $dados = $request->only((new JobSchedule)->getFillable());
-            $result = $this->service->createJob($dados, $tenantId);
-            return response()->json($result);
-        }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
-        }
-        catch (Throwable $e) {
-            $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
-        }
-    }
-
-    public function removerJob(Request $request, $id)
-    {
-        try {
-            $tenantId = $request->get('tenant_id');
-            $result = $this->service->removerJob($id, $tenantId);
-            return response()->json($result);
-        } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
-        }
-        catch (Throwable $e) {
-            $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 

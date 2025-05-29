@@ -55,12 +55,8 @@ Route::middleware(['panel'])->prefix('Seeder')->group(function () {
 
 Route::middleware(['panel'])->prefix('JobAgendado')->group(function () {
     defaultRoutes(JobScheduleController::class);
-
     Route::get('/getAll', [JobScheduleController::class, 'listar']);
-    Route::post('/create', [JobScheduleController::class, 'createJob']);
     Route::get('/getClassJobs', [JobScheduleController::class, 'getClassJobs']);
-    Route::delete('/delete/{id}', [JobScheduleController::class, 'removerJob']);
-
 });
 
 Route::middleware(['panel'])->prefix('Env')->group(function () {

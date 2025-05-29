@@ -105,4 +105,22 @@ export class PanelJobAgendadosListComponent extends PageListBase<JobAgendado, Jo
     
     return result;
   }
+
+  public expressaoText(row: JobAgendado) {
+    if (row.periodicidade == 'custom') {
+      return row.expressao_cron;
+    } else {
+      if (row.periodicidade == 'cada') {
+        return 'A cada ' + row.intervalo_qtde + ' ' +
+          this.lookup.getValue(this.lookup.AGENDAMENTO_INTERVALO_TIPOS, row.intervalo_tipo);
+      } else if (row.periodicidade == 'todos') {
+        return 'Todos os dias às ' + row.horario + 'h';
+      } else if (row.periodicidade == 'dia') {
+        return 'Todo dia às ' + row.dia + ' às ' + row.horario + 'h';
+      } else {
+        return this.lookup.getValue(this.lookup.AGENDAMENTO_PERIODICIDADES, row.periodicidade) +
+          ' às ' + row.horario + 'h';
+      }
+    }
+  }
 }
