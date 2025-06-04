@@ -185,7 +185,14 @@ export class AppComponent {
       LOGS_ENVIOS: { name: "Log dos Envios à API PGD", permition: '', route: ['logs', 'envios'], icon: this.entity.getIcon('Envio') },
       DEV_CPF_CONSULTA_SIAPE: { name: "Consulta CPF SIAPE", permition: '', route: ['consultas', 'cpf-siape'], icon: this.entity.getIcon('ConsultaCPFSIAPE') },
       DEV_UNIDADE_CONSULTA_SIAPE: { name: "Consulta Unidade SIAPE", permition: '', route: ['consultas', 'cpf-unidade'], icon: this.entity.getIcon('ConsultaUnidadeSIAPE') },
-
+      /* RELATORIOS */
+      RELATORIO_PLANO_TRABALHO: {
+        name: this.lex.translate("Planos de Trabalho"),
+        permition: 'MOD_RELATORIO_PT',
+        route: ['relatorios', 'plano-trabalho'],
+        icon: this.entity.getIcon('PlanoTrabalho')
+      },
+      /* Outros */
       PAINEL: { name: "Painel", permition: '', route: ['panel'], icon: "" },
       AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
     };
@@ -250,6 +257,13 @@ export class AppComponent {
         // this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
         this.menuSchema.TIPOS_TAREFAS
       ].sort(this.orderMenu)
+    }, {
+      name: this.lex.translate("Relatórios"),
+      permition: "MOD_RELATORIOS",
+      id: "navbarDropdownRelatorios",
+      menu: [
+        this.menuSchema.RELATORIO_PLANO_TRABALHO
+      ].sort(this.orderMenu)
     }];
 
     this.moduloExecucao = [
@@ -292,6 +306,13 @@ export class AppComponent {
         this.menuSchema.UNIDADES,
         this.menuSchema.USUARIOS,
         this.menuSchema.PERFIS
+      ].sort(this.orderMenu)
+    }, {
+      name: this.lex.translate("Relatórios"),
+      permition: "MENU_RELATORIOS",
+      id: "navbarDropdownRelatorios",
+      menu: [
+        this.menuSchema.RELATORIO_PLANO_TRABALHO
       ].sort(this.orderMenu)
     }];
 
