@@ -20,10 +20,11 @@ export type Contexto = "EXECUCAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO"
 export type Schema = {
   name: string,
   permition?: string,
-  route: string[],
+  route?: string[],
   metadata?: RouteMetadata,
   params?: any,
-  icon: string
+  icon: string;
+  onClick?: () => void;
 };
 export type MenuSchema = { [key: string]: Schema };
 export type MenuItem = {
@@ -192,6 +193,24 @@ export class AppComponent {
         route: ['relatorios', 'plano-trabalho'],
         icon: this.entity.getIcon('PlanoTrabalho')
       },
+      RELATORIO_PLANO_ENTREGA: {
+        name: this.lex.translate("Planos de Entrega"),
+        permition: 'MOD_RELATORIO_PT',
+        icon: this.entity.getIcon('PlanoEntrega'),
+        onClick: ()=> this.emDesenvolvimento()
+      },
+      RELATORIO_USUARIOS: {
+        name: this.lex.translate("Agentes Públicos"),
+        permition: 'MOD_RELATORIO_USUARIO',
+        icon: this.entity.getIcon('Usuario'),
+        onClick: ()=> this.emDesenvolvimento()
+      },
+      RELATORIO_UNIDADES: {
+        name: "Unidades",
+        permition: 'MOD_RELATORIO_UNIDADE',
+        icon: this.entity.getIcon('Unidade'),
+        onClick: ()=> this.emDesenvolvimento()
+      },
       /* Outros */
       PAINEL: { name: "Painel", permition: '', route: ['panel'], icon: "" },
       AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
@@ -262,7 +281,10 @@ export class AppComponent {
       permition: "MOD_RELATORIOS",
       id: "navbarDropdownRelatorios",
       menu: [
-        this.menuSchema.RELATORIO_PLANO_TRABALHO
+        this.menuSchema.RELATORIO_PLANO_TRABALHO,
+        this.menuSchema.RELATORIO_PLANO_ENTREGA,
+        this.menuSchema.RELATORIO_USUARIOS,
+        this.menuSchema.RELATORIO_UNIDADES
       ].sort(this.orderMenu)
     }];
 
@@ -309,10 +331,13 @@ export class AppComponent {
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Relatórios"),
-      permition: "MENU_RELATORIOS",
+      permition: "MOD_RELATORIOS",
       id: "navbarDropdownRelatorios",
       menu: [
-        this.menuSchema.RELATORIO_PLANO_TRABALHO
+        this.menuSchema.RELATORIO_PLANO_TRABALHO,
+        this.menuSchema.RELATORIO_PLANO_ENTREGA,
+        this.menuSchema.RELATORIO_USUARIOS,
+        this.menuSchema.RELATORIO_UNIDADES
       ].sort(this.orderMenu)
     }];
 
@@ -462,6 +487,10 @@ export class AppComponent {
 
   public logout() {
     this.auth.logOut();
+  }
+
+  public emDesenvolvimento() {
+    this.dialog.alert('Atenção', 'Item em desenvolvimento');
   }
 
 }

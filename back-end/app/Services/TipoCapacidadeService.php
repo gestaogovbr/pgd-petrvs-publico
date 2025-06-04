@@ -417,6 +417,9 @@ class TipoCapacidadeService extends ServiceBase
       "descricao" => "Módulo de Relatórios",
       "capacidades" => [
         ["MOD_RELATORIO_PT", "Permite acessar Relatório de Planos de Trabalho"],
+        ["MOD_RELATORIO_PE", "Permite acessar Relatório de Planos de Entrega"],
+        ["MOD_RELATORIO_USUARIO", "Permite acessar Relatório de Agentes Públicos"],
+        ["MOD_RELATORIO_UNIDADE", "Permite acessar Relatório de Unidades"],
       ]
     ]
   ];
