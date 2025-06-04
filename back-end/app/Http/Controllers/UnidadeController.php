@@ -260,12 +260,17 @@ class UnidadeController extends ControllerBase
 
   public function consultaUnidadeSiape(Request $request){
      $data = $request->validate([
-            'cpf' => [],
+            'unidade' => [],
         ]);
 
       try {
-             $retorno = $this->service->consultaUnidadeSiape($request->unidade);
-
+        $retorno = $this->service->consultaUnidadeSiape($request->unidade);
+        if (empty($retorno)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nenhum dado encontrado para a unidade informada.'
+            ], Response::HTTP_NOT_FOUND);
+        }
         return response()->json([
             'success' => true,
             'dados' => $retorno,

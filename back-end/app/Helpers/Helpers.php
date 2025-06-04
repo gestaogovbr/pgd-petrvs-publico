@@ -47,3 +47,39 @@ if (!function_exists('simpleXmlElementToArray')) {
         return $array;
     }
 }
+
+if (! function_exists('simpleXmlElementToArrayComNamespace')) {
+   
+    function simpleXmlElementToArrayComNamespace(SimpleXMLElement $element): array
+    {
+        $array = [];
+
+        foreach ($element->attributes() as $atributo => $valor) {
+            $array['@attributes'][$atributo] = (string) $valor;
+        }
+
+        $namespaces = $element->getDocNamespaces(true);
+
+        $nsFilhos = $namespaces[''] ?? null;
+
+        if ($nsFilhos === null) {
+            return [ '_value' => trim((string) $element) ];
+        }
+
+        foreach ($element->children($nsFilhos) as $chave => $filho) {
+
+            $valor = trim((string) $filho);
+
+            if (isset($array[$chave])) {
+                if (! is_array($array[$chave]) || array_keys($array[$chave]) !== range(0, count($array[$chave]) - 1)) {
+                    $array[$chave] = [ $array[$chave] ];
+                }
+                $array[$chave][] = $valor;
+            } else {
+                $array[$chave] = $valor;
+            }
+        }
+
+        return $array;
+    }
+}
