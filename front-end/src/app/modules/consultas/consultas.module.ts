@@ -12,6 +12,7 @@ import { ConsultaCpfSiapeResultComponent } from './consulta-cpf-siape-result/con
   declarations: [
     ConsultaCpfSiapeFormComponent,
     ConsultaCpfSiapeResultComponent,
+    ConsultaUnidadeSiapeFormComponent,
     ConsultaUnidadeSiapeFormComponent
   ],
   imports: [
