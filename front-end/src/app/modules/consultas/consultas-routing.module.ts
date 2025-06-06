@@ -5,6 +5,7 @@ import { ConfigResolver } from 'src/app/resolvies/config.resolver';
 import { ConsultaCpfSiapeFormComponent } from './consulta-cpf-siape-form/consulta-cpf-siape-form.component';
 import { ConsultaUnidadeSiapeFormComponent } from './consulta-unidade-siape-form/consulta-unidade-siape-form.component';
 import { ConsultaCpfSiapeResultComponent } from './consulta-cpf-siape-result/consulta-cpf-siape-result.component';
+import { ConsultaUnidadeSiapeResultComponent } from './consulta-unidade-siape-result/consulta-unidade-siape-result.component';
 
 const routes: Routes = [
   { 
@@ -35,6 +36,17 @@ const routes: Routes = [
     data: {
       modal: true,
       title: "Consulta SIAPE por CPF - Resultados",
+    },
+  },
+  { 
+    path: 'unidade-siape-result',
+    component: ConsultaUnidadeSiapeResultComponent,
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: {
+      modal: true,
+      title: "Consulta SIAPE por Unidade - Resultados",
     },
   },
 ];

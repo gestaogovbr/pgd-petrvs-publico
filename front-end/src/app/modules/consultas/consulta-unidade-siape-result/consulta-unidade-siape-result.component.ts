@@ -15,9 +15,9 @@ import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.
 import { Unidade } from 'src/app/models/unidade.model';
 
 @Component({
-  selector: 'consulta-cpf-siape-result',
-  templateUrl: './consulta-cpf-siape-result.component.html',
-  styleUrls: ['./consulta-cpf-siape-result.component.scss']
+  selector: 'consulta-unidade-siape-result',
+  templateUrl: './consulta-unidade-siape-result.component.html',
+  styleUrls: ['./consulta-unidade-siape-result.component.scss']
 })
 export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, UnidadeDaoService> {
 

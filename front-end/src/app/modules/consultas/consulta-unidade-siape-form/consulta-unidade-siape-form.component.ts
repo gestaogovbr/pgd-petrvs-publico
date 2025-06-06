@@ -105,10 +105,10 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
   }
 
   public loadData(entity: Unidade, form: FormGroup, action?: string): Promise<void> | void {
-    throw new Error('Method not implemented.');
+    // throw new Error('Method not implemented.');
   }
   public initializeData(form: FormGroup): Promise<void> | void {
-    throw new Error('Method not implemented.');
+    // throw new Error('Method not implemented.');
   }
   public saveData(form: IIndexable): Promise<boolean | Unidade | NavigateResult | null | undefined> {
     throw new Error('Method not implemented.');
