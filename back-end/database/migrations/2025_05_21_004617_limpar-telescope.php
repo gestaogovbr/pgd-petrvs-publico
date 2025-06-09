@@ -11,17 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (Schema::hasTable('telescope_entries_tags')) {
-            DB::table('telescope_entries_tags')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
+
+        try{
+            if (Schema::hasTable('telescope_entries_tags')) {
+                DB::table('telescope_entries_tags')->truncate();
+            }
+
+            if (Schema::hasTable('telescope_entries')) {
+                DB::table('telescope_entries')->truncate();
+            }
+
+            if (Schema::hasTable('telescope_monitoring')) {
+                DB::table('telescope_monitoring')->truncate();
+            }
+        }finally {
+            DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
         }
 
-        if (Schema::hasTable('telescope_entries')) {
-            DB::table('telescope_entries')->truncate();
-        }
-
-        if (Schema::hasTable('telescope_monitoring')) {
-            DB::table('telescope_monitoring')->truncate();
-        }
     }
 
     /**
