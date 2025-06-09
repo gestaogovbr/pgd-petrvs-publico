@@ -2,7 +2,7 @@
     <span class="visually-hidden"></span>
 </div>
 
-<div class="consulta-cpf-siape-result">
+<div class="consulta-unidade-siape-result">
     
     <div class="dados-siape">
         <div class="row" *ngIf="!dados">
@@ -18,18 +18,12 @@
                 </p>
             </div>
             <div class="col-md-12">
-                <p><b>{{dados.nome}}</b></p>
+                <p><b>{{dados.siglaOrgao}}</b></p>
             </div>
-            <!-- <div class="row" *ngFor="let dados of dado">
-                <div class="col-md-12">
-                    <p>Sigla: {{dado.Sigla}}</p>
-                    <p>
-                        <span class="unidade">
-                            {{dadoFuncional.codigo + ' - ' + dadoFuncional.insituidora}}
-                        </span>
-                    </p>
-                </div>
-            </div> -->
+            <div class="col-md-12">
+                <p><b>{{dados.nomeExtendido}}</b></p>
+            </div>
+            
         </div>
     </div>
     <separator></separator>
@@ -46,17 +40,12 @@
                 </p>
             </div>
             <div class="col-md-12">
-                <p><b>{{unidade.nome}}</b></p>
-                <p>Matrícula #{{unidade.codigo}}</p>
-                <!-- <p>
-                    <span class="unidade" *ngFor="let integrante of integrantes">
-                        {{integrante.unidade_codigo + ' - ' + integrante.unidade_sigla + ' (' + integrante.atribuicoes.join('/') + ')'}}
-                    </span>
-                </p>  -->
+                <p><b>{{unidade?.nome}}</b></p>
+                <p>Sigla #{{unidade?.sigla}}</p>
             </div>
         </div>
     </div>
-    <separator>
-        <toolbar [buttons]="toolbarButtons"></toolbar>
-    </separator>
+    <separator> 
+         <toolbar [buttons]="toolbarButtons"></toolbar>
+     </separator>
 </div>

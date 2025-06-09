@@ -57,7 +57,7 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
           const extensao = extensoes[contentType] ?? (console.warn('Tipo de conteúdo inesperado:', contentType), 'txt');
           
     
-          const nomeArquivo = `dados_cpf_${this.codigoUnidade}_${dataCriacao}.${extensao}`;
+          const nomeArquivo = `dados_unidade_${this.codigoUnidade}_${dataCriacao}.${extensao}`;
     
           const blob = new Blob([response], { type: contentType });
           const url = window.URL.createObjectURL(blob);
@@ -92,11 +92,11 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
                 async result => {
                   this.loading = false;
                   if (result?.success) {
-                    await this.loadUsuario();
+                    await this.loadUnidade();
                     this.dialog.alert("Sucesso", result.message);
                     this.log = result.log;
                   } else {
-                    this.dialog.alert("Erro", "Erro ao processar CPF: " + result?.message);
+                    this.dialog.alert("Erro", "Erro ao processar a Unidade: " + result?.message);
                   }
                   this.downloadSiape();
                 },
@@ -104,8 +104,8 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
                   this.loading = false;
                   console.log(error);
                   this.log = error.error?.message;
-                  this.error("Erro ao processar CPF: " + error.error?.message);
-                  this.dialog.alert("Erro", "Erro ao processar CPF: " + (error.message ?? error.error?.message));
+                  this.error("Erro ao processar a Unidade: " + error.error?.message);
+                  this.dialog.alert("Erro", "Erro ao processar a Unidade: " + (error.message ?? error.error?.message));
                 }
             )
           } catch (error: any) {
@@ -156,7 +156,7 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
 
     if(this.metadata?.unidade) {
       this.codigoUnidade = this.metadata?.codigoUnidade;
-      this.title = 'Dados do CPF: ' + this.codigoUnidade;
+      this.title = 'Dados da Unidade: ' + this.codigoUnidade;
     }
 
     if(this.metadata?.unidade) {
@@ -167,9 +167,6 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
       this.dados = this.metadata?.dados;
     }
 
-    // if(this.metadata?.dadosFuncionais) {
-    //   this.dadosFuncionais = this.metadata?.dadosFuncionais;
-    // }
 
     if(this.metadata?.integrantes) {
       this.integrantes = this.metadata?.integrantes;
@@ -209,7 +206,7 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
     }
   }
 
-  public async loadUsuario() {
+  public async loadUnidade() {
     this.loading = true;
     try {
       const codigo = this.codigoUnidade?.replace(/\D/g, '');
@@ -220,10 +217,6 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
         this.unidade = unidades[0];
       }
 
-      if (this.unidade) {
-        const integrantesList = await this.integranteDao!.carregarIntegrantes(this.unidade.id, "");
-        this.integrantes = integrantesList.integrantes.filter(integrante => integrante.atribuicoes?.length > 0);
-      }
     } finally {
       this.loading = false;
     }

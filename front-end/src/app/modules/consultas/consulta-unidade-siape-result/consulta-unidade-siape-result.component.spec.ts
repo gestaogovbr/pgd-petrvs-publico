@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ConsultaUnidadeSiapeResultComponent } from './consulta-unidade-siape-result.component';
 
-describe('ConsultaCpfSiapeResultComponent', () => {
+describe('ConsultaUnidadeSiapeResultComponent', () => {
   let component: ConsultaUnidadeSiapeResultComponent;
   let fixture: ComponentFixture<ConsultaUnidadeSiapeResultComponent>;
 
