@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
@@ -12,9 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::table('telescope_entries_tags')->delete();
-        DB::table('telescope_entries')->delete();
-        DB::table('telescope_monitoring')->delete();
+        if (Schema::hasTable('telescope_entries_tags')) {
+            DB::table('telescope_entries_tags')->truncate();
+        }
+
+        if (Schema::hasTable('telescope_entries')) {
+            DB::table('telescope_entries')->truncate();
+        }
+
+        if (Schema::hasTable('telescope_monitoring')) {
+            DB::table('telescope_monitoring')->truncate();
+        }
     }
 
     /**
