@@ -58,9 +58,9 @@ class UsuarioController extends ControllerBase
         }
     }
 
-    public function consultarCPFSiape(Request $request)
+    public function consultarCPFSiape(Request $request) 
     {
-        $data = $request->validate([
+        $request->validate([
             'cpf' => [],
         ]);
 
