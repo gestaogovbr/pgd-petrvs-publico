@@ -3,9 +3,7 @@ import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
-import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
-import { Usuario } from 'src/app/models/usuario.model';
 import { NavigateResult } from 'src/app/services/navigate.service';
 import { PageFormBase } from '../../base/page-form-base';
 import { firstValueFrom } from 'rxjs';
@@ -31,7 +29,6 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
 
   public codigoUnidade: string|null = null;
   public dados: any;
-  // public dadosFuncionais: any;
   public integrantes: IntegranteConsolidado[] = [];
   public dialog: DialogService;
 
@@ -131,17 +128,10 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
     throw new Error('Method not implemented.');
   }
 
-  // public loadData(entity: Usuario, form: FormGroup): void | Promise<void>
-  // {
-  // }
 
   public initializeData(form: FormGroup): void | Promise<void> {
-    //throw new Error('Method not implemented.');
   }
 
-  // public saveData(form: IIndexable): Promise<boolean | Usuario | NavigateResult | null | undefined> {
-  //   throw new Error('Method not implemented.');
-  // }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;

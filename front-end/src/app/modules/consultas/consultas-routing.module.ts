@@ -15,7 +15,6 @@ const routes: Routes = [
     resolve: { config: ConfigResolver },
     runGuardsAndResolvers: 'always',
     data: {
-      title: "Consulta SIAPE por Unidade"
     } 
   },
   { 
