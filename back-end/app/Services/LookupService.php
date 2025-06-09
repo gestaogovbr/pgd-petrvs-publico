@@ -90,8 +90,9 @@ class LookupService {
         return array_values(array_filter($itens, function($d) use ($k) {return $d['key'] == $k;}))[0]['code'];
     }
 
-    public static function getValue($itens, $k) : string {
-        return array_values(array_filter($itens, function($d) use ($k) {return $d['key'] == $k;}))[0]['value'];
+    public static function getValue($itens, $k): ?string {
+        $map = array_column($itens, 'value', 'key');
+        return $map[$k] ?? null;
     }
 }
 

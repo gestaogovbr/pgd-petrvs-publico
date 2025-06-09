@@ -246,7 +246,7 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
   }
 
   public async removePedagio(row: any) {
-    this.dialog.confirm("Remover teletrabalho indisponível ?", "Deseja realmente remover o teletrabalho indisponível do servidor " + (row.nome as string).toUpperCase() + " ?").then(async confirm => {
+    this.dialog.confirm("Remover teletrabalho indisponível ?", "Deseja tornar a modalidade teletrabalho disponível para o participante " + (row.nome as string).toUpperCase() + " ?").then(async confirm => {
       if (confirm) {
         await this.usuarioDao!.removePedagio(row.id).then(resposta => {
           (this.grid?.query || this.query!).refreshId(row.id);

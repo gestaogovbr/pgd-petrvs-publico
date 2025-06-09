@@ -227,13 +227,31 @@ class PlanoTrabalhoService extends ServiceBase
 
         // Validar Modalidade
         if (!empty($tipoModalidade) && $tipoModalidade->exige_pedagio && !empty($usuario->pedagio)) {
-            throw new ServerException(
+            if (empty($usuario->data_inicial_pedagio) || empty($usuario->data_final_pedagio)) {
+                throw new ServerException(
+                    "ValidateUsuario",
+                    "Dados de pedágio incompletos para o participante. Verifique as datas de início e fim do pedágio."
+                );
+            }
+            // Verificar sobreposição de datasAdd commentMore actions
+            $inicioPedagio = Carbon::parse($usuario->data_inicial_pedagio);
+            $fimPedagio = Carbon::parse($usuario->data_final_pedagio);
+
+            $inicioPlano = Carbon::parse($data["data_inicio"]);
+            $fimPlano = Carbon::parse($data["data_fim"]);
+
+            $sobrepoe = !(
+                $fimPlano < $inicioPedagio || $inicioPlano > $fimPedagio
+            );
+            if ($sobrepoe) {
+                throw new ServerException(
                 "ValidatePlanoTrabalho", 
                 "Modalidade Teletrabalho indisponível para o participante de " . 
                 Carbon::parse($usuario->data_inicial_pedagio)->format('d/m/Y') . 
                 " até " . 
                 Carbon::parse($usuario->data_final_pedagio)->format('d/m/Y')
-            );
+                );
+            }
         }
         if ($action == ServiceBase::ACTION_INSERT) {
             /*
