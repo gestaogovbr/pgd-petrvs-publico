@@ -111,6 +111,7 @@ class UsuarioController extends ControllerBase
 
         } catch (\Throwable $th) {
             report($th);
+            
             $tempFile = tempnam(sys_get_temp_dir(), 'txt');
             $mensagemErro = date('Y-m-d H:i:s') . " - " . $th->getMessage() . PHP_EOL;
 
