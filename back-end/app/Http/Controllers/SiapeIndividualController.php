@@ -69,10 +69,10 @@ class SiapeIndividualController extends ControllerBase
         ];
         try {
             $data = $request->validate([
-                'unidade_id' => [],
+                'unidade' => [],
             ]);
             
-            $this->service->processaUnidade($data['unidade_id']);
+            $this->service->processaUnidade($data['unidade']);
             $retorno['log'] = $this->getLogSiape();
             return response()->json(
                 $retorno,

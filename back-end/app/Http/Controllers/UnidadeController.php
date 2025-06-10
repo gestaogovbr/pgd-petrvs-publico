@@ -337,7 +337,7 @@ class UnidadeController extends ControllerBase
     return response()->json(['error' => "Não foi possível identificar a instituidora da unidade."]);
   }
 
-  public function exportarCPFSiape(Request $request)
+  public function exportarUnidadeSiape(Request $request)
     {
         $data = $request->validate([
         'unidade' => [],
@@ -346,17 +346,17 @@ class UnidadeController extends ControllerBase
         $nomeArquivo = 'dados_unidade_' . $data['unidade'] . '.zip';
 
         try{
-            $retornos = $this->service->consultaUnidadeSiapeXml($request->unidade);
-
+            $retorno = $this->service->consultaUnidadeSiapeXml($request->unidade);
+            Log::alert("dadosUnidadeSiapeXml", ['unidade' => $request->unidade, 'retornos' => $retorno->asXML()]);
             $zipFile = tempnam(sys_get_temp_dir(), 'zip');
             $zip = new ZipArchive();
-            $zip->open($zipFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-
-            foreach ($retornos as $index => $retorno) {
+            $code =  $zip->open($zipFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+            if ($code !== true) {
+              throw new \RuntimeException("Falha ao criar o ZIP em {$zipFile} (código $code)");
+            }
                 $tempFile = tempnam(sys_get_temp_dir(), 'xml');
                 file_put_contents($tempFile, $retorno->asXML());
-                $zip->addFile($tempFile, "arquivo_{$index}.xml");
-            }
+                $zip->addFile($tempFile, "arquivo_{$request->unidade}.xml");
 
             $zip->close();
 

@@ -3,9 +3,7 @@ import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
-import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
-import { Usuario } from 'src/app/models/usuario.model';
 import { NavigateResult } from 'src/app/services/navigate.service';
 import { PageFormBase } from '../../base/page-form-base';
 import { firstValueFrom } from 'rxjs';
@@ -31,7 +29,6 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
 
   public codigoUnidade: string|null = null;
   public dados: any;
-  // public dadosFuncionais: any;
   public integrantes: IntegranteConsolidado[] = [];
   public dialog: DialogService;
 
@@ -57,7 +54,7 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
           const extensao = extensoes[contentType] ?? (console.warn('Tipo de conteúdo inesperado:', contentType), 'txt');
           
     
-          const nomeArquivo = `dados_cpf_${this.codigoUnidade}_${dataCriacao}.${extensao}`;
+          const nomeArquivo = `dados_unidade_${this.codigoUnidade}_${dataCriacao}.${extensao}`;
     
           const blob = new Blob([response], { type: contentType });
           const url = window.URL.createObjectURL(blob);
@@ -92,11 +89,11 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
                 async result => {
                   this.loading = false;
                   if (result?.success) {
-                    await this.loadUsuario();
+                    await this.loadUnidade();
                     this.dialog.alert("Sucesso", result.message);
                     this.log = result.log;
                   } else {
-                    this.dialog.alert("Erro", "Erro ao processar CPF: " + result?.message);
+                    this.dialog.alert("Erro", "Erro ao processar a Unidade: " + result?.message);
                   }
                   this.downloadSiape();
                 },
@@ -104,8 +101,8 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
                   this.loading = false;
                   console.log(error);
                   this.log = error.error?.message;
-                  this.error("Erro ao processar CPF: " + error.error?.message);
-                  this.dialog.alert("Erro", "Erro ao processar CPF: " + (error.message ?? error.error?.message));
+                  this.error("Erro ao processar a Unidade: " + error.error?.message);
+                  this.dialog.alert("Erro", "Erro ao processar a Unidade: " + (error.message ?? error.error?.message));
                 }
             )
           } catch (error: any) {
@@ -131,17 +128,10 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
     throw new Error('Method not implemented.');
   }
 
-  // public loadData(entity: Usuario, form: FormGroup): void | Promise<void>
-  // {
-  // }
 
   public initializeData(form: FormGroup): void | Promise<void> {
-    //throw new Error('Method not implemented.');
   }
 
-  // public saveData(form: IIndexable): Promise<boolean | Usuario | NavigateResult | null | undefined> {
-  //   throw new Error('Method not implemented.');
-  // }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
@@ -156,7 +146,7 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
 
     if(this.metadata?.unidade) {
       this.codigoUnidade = this.metadata?.codigoUnidade;
-      this.title = 'Dados do CPF: ' + this.codigoUnidade;
+      this.title = 'Dados da Unidade: ' + this.codigoUnidade;
     }
 
     if(this.metadata?.unidade) {
@@ -167,9 +157,6 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
       this.dados = this.metadata?.dados;
     }
 
-    // if(this.metadata?.dadosFuncionais) {
-    //   this.dadosFuncionais = this.metadata?.dadosFuncionais;
-    // }
 
     if(this.metadata?.integrantes) {
       this.integrantes = this.metadata?.integrantes;
@@ -209,7 +196,7 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
     }
   }
 
-  public async loadUsuario() {
+  public async loadUnidade() {
     this.loading = true;
     try {
       const codigo = this.codigoUnidade?.replace(/\D/g, '');
@@ -220,10 +207,6 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
         this.unidade = unidades[0];
       }
 
-      if (this.unidade) {
-        const integrantesList = await this.integranteDao!.carregarIntegrantes(this.unidade.id, "");
-        this.integrantes = integrantesList.integrantes.filter(integrante => integrante.atribuicoes?.length > 0);
-      }
     } finally {
       this.loading = false;
     }
