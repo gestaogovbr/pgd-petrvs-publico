@@ -129,7 +129,8 @@ class In24_2023Seeder extends Seeder
         "nome" => "Presencial",
         "plano_trabalho_calcula_horas" => 0,
         "atividade_tempo_despendido" => 0,
-        "atividade_esforco" => 0
+        "atividade_esforco" => 0,
+        "exige_pedagio" => 0
       ],
       [
         "id" => "97dfa3f0-67d5-4b5c-9ed2-65eb7dea99b3",
@@ -139,7 +140,8 @@ class In24_2023Seeder extends Seeder
         "nome" => "Teletrabalho (Integral)",
         "plano_trabalho_calcula_horas" => 0,
         "atividade_tempo_despendido" => 0,
-        "atividade_esforco" => 0
+        "atividade_esforco" => 0,
+        "exige_pedagio" => 1
       ],
       [
         "id" => "fd58d1d3-cbaf-4a51-947a-6cd174ee4db0",
@@ -149,7 +151,8 @@ class In24_2023Seeder extends Seeder
         "nome" => "Teletrabalho (Parcial)",
         "plano_trabalho_calcula_horas" => 0,
         "atividade_tempo_despendido" => 0,
-        "atividade_esforco" => 0
+        "atividade_esforco" => 0,
+        "exige_pedagio" => 1
       ],
       [
         "id" => "1245de0b-8f57-4f7c-91c5-5d7f092c9a8f",
@@ -160,6 +163,7 @@ class In24_2023Seeder extends Seeder
         "plano_trabalho_calcula_horas" => 0,
         "atividade_tempo_despendido" => 0,
         "atividade_esforco" => 0,
+        "exige_pedagio" => 1
       ],
       [
         "id" => "999160ef-9d72-4a20-b56c-046785af06cf",
@@ -170,6 +174,7 @@ class In24_2023Seeder extends Seeder
         "plano_trabalho_calcula_horas" => 0,
         "atividade_tempo_despendido" => 0,
         "atividade_esforco" => 0,
+        "exige_pedagio" => 1
       ],
     );
 
@@ -1733,7 +1738,9 @@ class In24_2023Seeder extends Seeder
     );
 
     foreach ($tipos_modalidades as $tipo_modalidade) {
-      TipoModalidade::firstOrCreate(['id' => $tipo_modalidade['id']], $tipo_modalidade);
+      // criar ou atualizar o registro
+      TipoModalidade::updateOrCreate(['id' => $tipo_modalidade['id']], $tipo_modalidade);
+      //TipoModalidade::firstOrCreate(['id' => $tipo_modalidade['id']], $tipo_modalidade);
     }
 
     foreach ($tipos_atividades as $tipo_atividade) {

@@ -28,6 +28,8 @@ use App\Services\Siape\Consulta\Resources\UnidadeResource;
 use App\Services\Siape\Consulta\Resources\UnidadesResource;
 use App\Services\Siape\Consulta\SiapeUnidadeService;
 use App\Services\Siape\Consulta\SiapeUnidadesService;
+use Carbon\Carbon;
+
 
 class UsuarioService extends ServiceBase
 {
@@ -520,4 +522,32 @@ class UsuarioService extends ServiceBase
       'funcionais'  => $dadosFuncionaisArray,
     ];
   }
+    public function atualizaPedagio($data)
+    {
+        $usuario = Usuario::find($data['usuario_id']);
+        if (empty($usuario)) {
+            throw new ValidateException("Usuário não encontrado", 422);
+        }
+
+
+        $usuario->data_inicial_pedagio = Carbon::parse($data['data_inicial_pedagio']);
+        $usuario->data_final_pedagio = Carbon::parse($data['data_final_pedagio']);
+        $usuario->tipo_pedagio = $data['tipo_pedagio'];
+        $usuario->save();
+        return $usuario;
+    }
+
+    public function removePedagio($data)
+    {
+        $usuario = Usuario::find($data['usuario_id']);
+        if (empty($usuario)) {
+            throw new ValidateException("Usuário não encontrado", 422);
+        }
+        $usuario->data_inicial_pedagio = null;
+        $usuario->data_final_pedagio = null;
+        $usuario->tipo_pedagio = null;
+        $usuario->save();
+        return $usuario;
+    }
+
 }

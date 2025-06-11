@@ -18,6 +18,12 @@
                 <profile-picture [url]="row.url_foto" [size]="40" [hint]="row.nome"></profile-picture>
             </ng-template>
         </column>
+
+        <column title="Pedágio" field="pedagio" [template]="columnPedagio">
+            <ng-template let-row="row" #columnPedagio>
+                <i *ngIf="row.pedagio" class="bi bi-exclamation-triangle text-danger" [attr.data-bs-toggle]="'tooltip'" [title]="'Em pedágio até: ' + dao!.getDateFormatted(row.data_inicial_pedagio)"></i>
+            </ng-template>
+        </column>
         <column title="CPF" field="cpf"></column>
         <column title="Nome" field="nome" orderBy="nome" [template]="columnNome">
             <ng-template let-row="row" #columnNome>

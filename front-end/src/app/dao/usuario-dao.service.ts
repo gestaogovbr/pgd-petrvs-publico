@@ -9,6 +9,7 @@ import { AtividadePausa } from '../models/atividade-pausa.model';
 import { PlanoTrabalho } from '../models/plano-trabalho.model';
 import { TemplateDataset } from '../modules/uteis/templates/template.service';
 import { PlanoTrabalhoEntrega } from '../models/plano-trabalho-entrega.model';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -59,6 +60,40 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
 
   public consultarSIAPE(cpf: string) {
     return this.server.post('api/usuario/consultar-cpf-siape', { cpf });
+  }
+
+
+
+  public atualizaPedagio(data: any) {
+    return new Promise<Usuario>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/atualiza-pedagio', { data }).subscribe({
+        next: (response) => {
+          const usuario = response?.data as Usuario;
+          if (usuario) {
+            resolve(usuario);
+          } else {
+            reject(new Error('Invalid response data'));
+          }
+        },
+        error: (error) => reject(error)
+      });
+    });
+  }
+
+  public removePedagio(usuarioId: string) {
+    return new Promise<Usuario>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/remove-pedagio', {data: { usuario_id: usuarioId }}).subscribe({
+        next: (response) => {
+          const usuario = response?.data as Usuario;
+          if (usuario) {
+            resolve(usuario);
+          } else {
+            reject(new Error('Invalid response data'));
+          }
+        },
+        error: (error) => reject(error)
+      });
+    });
   }
   
   public sincronizarSIAPE(cpf: string) {

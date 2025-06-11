@@ -49,7 +49,7 @@ use OwenIt\Auditing\Auditable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Lab404\Impersonate\Models\Impersonate;
-
+use Carbon\Carbon;
 class UsuarioConfig
 {
 }
@@ -61,7 +61,7 @@ class Usuario extends Authenticatable implements AuditableContract
     protected $table = "usuarios";
 
     protected $with = ['perfil'];
-
+    protected $appends = ['pedagio'];
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
         'nome', /* varchar(256); NOT NULL; */ // Nome do usuário
         'email', /* varchar(100); NOT NULL; */ // E-mail do usuário
@@ -93,6 +93,7 @@ class Usuario extends Authenticatable implements AuditableContract
         'data_modificacao',
         'usuario_externo',
         'is_admin',
+        'pedagio'
     ];
 
     public function proxyFill($dataOrEntity, $unidade, $action)
@@ -431,6 +432,13 @@ class Usuario extends Authenticatable implements AuditableContract
             $url = "/assets/images/profile.png";
         }
         return $url;
+    }
+
+    public function getPedagioAttribute(){
+        if ($this->data_final_pedagio) {
+            return Carbon::parse($this->data_final_pedagio)->isFuture();
+        }
+        return false;         
     }
 
     public function getConfigAttribute($value)
