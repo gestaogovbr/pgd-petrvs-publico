@@ -6,7 +6,7 @@ import { InputLevelItem } from 'src/app/components/input/input-level/input-level
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { CadeiaValorProcessoDaoService } from 'src/app/dao/cadeia-valor-processo-dao.service';
-import { Base, IIndexable } from 'src/app/models/base.model';
+import { IIndexable } from 'src/app/models/base.model';
 import { CadeiaValorProcesso } from 'src/app/models/cadeia-valor-processo.model';
 import { CadeiaValor } from 'src/app/models/cadeia-valor.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
@@ -25,12 +25,10 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
   @Input() set entity(value: CadeiaValor | undefined) { super.entity = value; } get entity(): CadeiaValor | undefined { return super.entity; }
 
   public button: any;
-  public isSearching: boolean = false;
 
   public processosDao?: CadeiaValorProcessoDaoService;
 
   public get items(): CadeiaValorProcesso[] {
-    if (this.isSearching) return this.entity?.processos || [];
     if (!this.gridControl.value) this.gridControl.setValue(new CadeiaValor());
     if (!this.gridControl.value.processos) this.gridControl.value.processos = [];
     return this.gridControl.value.processos;
@@ -46,19 +44,6 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
       sequencia: { default: 1 },
       nivel: { default: "" }
     }, this.cdRef, this.validate);
-  }
-
-  public async ngOnInit() {
-    super.ngOnInit();
-
-    this.isSearching = this.queryParams.mode == 'search';
-    if (this.isSearching) {
-      const id = this.queryParams.id;
-      if (id) {
-        this.entity = (await this.dao?.getById(id, ['processos'])) as CadeiaValor | undefined;
-        this.sortProcessos();
-      }
-    }
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -279,14 +264,5 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
     }, this.items.filter(x => !x.processo_pai_id));
     return items;
   };
-
-  public onSelect(selected: Base | IIndexable | null) {
-    const routeId = (this.modalRoute || this.snapshot)?.queryParams?.idroute;
-    console.log(selected);
-    if(selected && !(selected instanceof Event) && routeId?.length) {
-      this.go.setModalResult(routeId, selected);
-      this.close();
-    }
-  }
 
 }

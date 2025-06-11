@@ -29,6 +29,11 @@ class TipoCapacidadeService extends ServiceBase
         ["MENU_GESTAO_ACESSO", "Permite acessar os menus Planejamento, Execução e Avaliação"],
         ["MENU_DEV_ACESSO", "Permite acessar os menus Manutenção, Logs e Auditorias e Testes"],
         ["MENU_DEV_CONSULTAS", "Permite acessar menus de consultas do Desenvolvedor"],
+        ["MENU_RX_CURRICULUM_ACESSO", "Permite acessar o menu Curriculum"],
+        ["MENU_RX_OPORTUNIDADES_ACESSO", "Permite acessar o menu Oportunidades"],
+        ["MENU_RX_PESQUISAS_ACESSO", "Permite acessar o menu Pesquisas"],
+        ["MENU_RX_QUEST_DINAMICOS_ACESSO", "Permite acessar o menu Questionários Dinâmicos"],
+        ["MENU_RX_CADASTROS_ACESSO", "Permite acessar o menu Cadastros (RaioX)"],
       ]
     ], [
       "codigo" => "MOD_AFT",
@@ -396,8 +401,7 @@ class TipoCapacidadeService extends ServiceBase
       "capacidades" => [
         ["MOD_CLI_EDT", "Permite editar clientes"],
         ["MOD_CLI_EXCL", "Permite excluir clientes"],
-        ["MOD_CLI_INCL", "Permite incluir clientes"],
-        ["MOD_CLI_ATI", "Permite ativar/inativar clientes"]
+        ["MOD_CLI_INCL", "Permite incluir clientes"]
       ]
     ], [
       "codigo" => "MOD_TIPO_CLI",
@@ -405,7 +409,7 @@ class TipoCapacidadeService extends ServiceBase
       "capacidades" => [
         ["MOD_TIPO_CLI_EDT", "Permite editar tipos de clientes"],
         ["MOD_TIPO_CLI_EXCL", "Permite excluir tipos de clientes"],
-        ["MOD_TIPO_CLI_INCL", "Permite incluir tipos de clientes"]      
+        ["MOD_TIPO_CLI_INCL", "Permite incluir tipos de clientes"]
       ]
     ]
   ];

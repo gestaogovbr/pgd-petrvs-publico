@@ -1,11 +1,9 @@
 <?php
 
 namespace App\Services;
-
 use App\Services\ServiceBase;
 use App\Models\Produto;
 use Illuminate\Support\Facades\Auth;
-use DB;
 
 class ProdutoService extends ServiceBase
 {
@@ -21,22 +19,11 @@ class ProdutoService extends ServiceBase
   public function proxyRows($rows)
   {
     foreach ($rows as $row) {
-        $row->_metadata = [
-            "vinculoEntregas" => $row->entregas->count(),
-        ];
-
-        foreach ($row->produtoProcessoCadeiaValor as $n => $cadeia) {
-            $resultado = DB::select(
-                "SELECT fn_obter_processo_sequencia(?) AS sequencia",
-                [$cadeia->cadeia_valor_processo_id]
-            );
-
-            $row->produtoProcessoCadeiaValor[$n]
-                ->cadeiaValorProcesso
-                ->sequencia_completa = $resultado[0]->sequencia;
-        }
+      $row->_metadata = [
+        "vinculoEntregas" => $row->entregas->count(),
+      ];
     }
-    return $rows;
+    return $rows;  
   }
 
   public function atribuirTodos() {

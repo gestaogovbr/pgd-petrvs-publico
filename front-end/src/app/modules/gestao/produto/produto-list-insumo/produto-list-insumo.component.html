@@ -59,12 +59,6 @@
           controlName="cliente_id" 
           [control]="form!.controls.cliente_id" 
           [dao]="clienteDao"
-          [selectRoute]="{
-            route: ['cadastros', 'cliente'], 
-            params: {
-              mode: 'fornecedores'
-            }
-          }"
         ></input-search>
       </ng-template>
     </column>
@@ -88,10 +82,9 @@
             [attr.required]="isInterno() ? '' : null" 
             label=""
             placeholder="Produto ou Serviço"
-            controlName="produto_insumo_id"
+            controlName="produto_insumo_id" 
             [control]="form!.controls.produto_insumo_id" 
-            [dao]="produtoDao"
-            [disabled]="this.form!.controls!.unidade_insumo_id.value ? undefined : 'true'"
+            [dao]="produtoDao" 
             [where]="[['id', '!=', entity?.id]]"
             [selectRoute]="{
               route: ['gestao', 'produto'], 

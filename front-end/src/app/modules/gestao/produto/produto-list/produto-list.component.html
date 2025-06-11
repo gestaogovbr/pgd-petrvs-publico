@@ -9,7 +9,7 @@
     (select)="onSelect($event)"
     labelAdd="Incluir Novo Produto ou Serviço"
     [hasAdd]="this.isChefe && !this.isSearching && this.auth.hasPermissionTo('MOD_PROD_INCL')"
-    [hasEdit]="false"
+    [hasEdit]="this.isChefe && !this.isSearching && this.auth.hasPermissionTo('MOD_PROD_EDT')"
 >
     <toolbar *ngIf="!selectable">
         <button type="button" class="btn btn-outline-success" 
@@ -77,8 +77,7 @@
           </ng-template>
         </column>
 
-        <!-- Pedido da Keila em 07/04 deixar o status visível -->
-        <column title="Status" [template]="columnStatus">
+        <column title="Status" [template]="columnStatus" *ngIf="this.isCurador && !this.isSearching">
             <ng-template let-row="row" #columnStatus>
                 <badge
                     [color]="row.deleted_at ? 'secondary': (ativo(row) ? 'success' : 'danger')" 

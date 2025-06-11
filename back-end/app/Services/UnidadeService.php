@@ -358,17 +358,8 @@ class UnidadeService extends ServiceBase
      */
     public function unidadesFilhas($unidadeId): array
     {
-       // não usar o path, usar unidade_pai_id, precisa ser recursivo
-        $unidade = Unidade::find($unidadeId);
-        if (empty($unidade)) throw new NotFoundException("Unidade não encontrada");
-        $unidades = [];
-        $filhas = Unidade::where('unidade_pai_id', $unidadeId)->get();
-        foreach ($filhas as $filha) {
-            array_push($unidades, $filha->id);
-            $unidades = array_merge($unidades, $this->unidadesFilhas($filha->id));
-        }
-        return $unidades;
-
+        $path = DB::table('unidades')->select('path')->where('id', $unidadeId)->first()->path . '/' . $unidadeId;
+        return array_map(fn($x) => $x->id, DB::table('unidades')->select('id')->where('path', 'like', $path)->orWhere('path', 'like', $path . '/%')->get()->toArray());
     }
 
     /**

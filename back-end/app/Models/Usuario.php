@@ -58,7 +58,6 @@ class Usuario extends Authenticatable implements AuditableContract
 {
     use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable,Impersonate;
 
-
     protected $table = "usuarios";
 
     protected $with = ['perfil'];
@@ -389,9 +388,9 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasMany(UnidadeIntegrante::class)->has('curador');
     }
 
-    public function isCurador(): bool
+    public function curador()
     {
-        return $this->isDeveloper() || UnidadeIntegrante::where('usuario_id', $this->id)->whereHas('curador')->exists();
+        return $this->hasOne(UnidadeIntegrante::class)->has('curador');
     }
 
     public function lotacoes()

@@ -116,8 +116,6 @@ export class ServerService {
       withCredentials: true,
       headers: {}
     };
-    options.headers["Accept"] = "*/*";
-    options.headers["Content-Type"] = "application/json";
     let xPetrvs: any = {};
     /* Opções de autenticação do usuário */ 
     if(this.gb.isEmbedded && this.auth.apiToken?.length) {

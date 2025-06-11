@@ -20,13 +20,15 @@
       [editTemplate]="editSolucao" 
       [verticalAlign]="'middle'" 
       [width]="300" 
-      [align]="'left'"
+      [align]="'center'"
     >
       <ng-template let-header="header" #titleSolucao>
-        <span><strong>Solução</strong></span>
+        <div class="text-center"><span><strong>Solução</strong></span></div>
       </ng-template>
       <ng-template let-row="row" #columnSolucao>
-          {{row.solucao.nome}}
+        <div class="w-100 d-flex justify-content-center">
+          <p>{{row.solucao.nome}}</p>
+        </div>
       </ng-template>
       <ng-template let-row="row" #editSolucao>
         <input-search #solucao label required  

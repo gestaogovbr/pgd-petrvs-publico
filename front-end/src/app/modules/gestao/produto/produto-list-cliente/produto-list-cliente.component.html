@@ -20,7 +20,7 @@
           </div>  
           <div class="col-6">
             <input-search label="Unidade" #unidade_relacionada controlName="unidade_relacionada_id" [dao]="unidadeDao"  *ngIf="tipoCliente.selectedItem?.value == 'Unidade de órgão/entidade'"></input-search>
-            <input-select label="Cliente" #cliente controlName="cliente_relacionado_id" [dao]="clienteDao" [where]="[['tipo_cliente_id', '==', form!.controls.tipo_cliente_id.value], ['data_desativado', '==', null]]" *ngIf="tipoCliente.selectedItem?.value != 'Unidade de órgão/entidade'"></input-select>
+            <input-select label="Cliente" #cliente controlName="cliente_relacionado_id" [dao]="clienteDao" [where]="[['tipo_cliente_id', '==', form!.controls.tipo_cliente_id.value]]" *ngIf="tipoCliente.selectedItem?.value != 'Unidade de órgão/entidade'"></input-select>
           </div>
         </div>
       </ng-template>

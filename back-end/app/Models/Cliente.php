@@ -15,16 +15,14 @@ class Cliente extends ModelBase
     public $fillable = [
         'nome',
         'tipo_cliente_id',
-        'unidade_id',
-        'data_desativado'
+        'unidade_id'
     ];
 
     protected $casts = [
         'id' => 'string',
         'nome' => 'string',
         'tipo_cliente_id' => 'string',
-        'unidade_id' => 'string',
-        'data_desativado' => 'datetime',
+        'unidade_id' => 'string'
     ];
 
     public function tipoCliente()

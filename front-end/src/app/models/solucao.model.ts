@@ -10,7 +10,6 @@ export class Solucao extends Base {
   public url?: string = ""; 
   public solucoes_unidades?: SolucaoUnidade[] = [];
   public produtos_solucoes?: ProdutoSolucao[] = [];
-  public possui_vinculos: boolean = false;
   public constructor(data?: any) { super(); this.initialization(data); }
 }
 

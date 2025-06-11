@@ -11,9 +11,7 @@ use App\Exceptions\ServerException;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Throwable;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Auth\Access\AuthorizationException;
+
 abstract class ControllerBase extends Controller
 {
     public string $collection = "";
@@ -24,14 +22,10 @@ abstract class ControllerBase extends Controller
 
     public function __construct() {
         if(empty($this->collection)) {
-            $this->collection = str_replace("Controller", "",
-                str_replace("App\\Http\\Controllers", "App\\Models", get_class($this))
-            );
+            $this->collection = str_replace("Controller", "", str_replace("App\\Http\\Controllers", "App\\Models", get_class($this)));
         }
         if(empty($this->service)) {
-            $chield = str_replace("App\\Http", "App",
-                str_replace("Controller", "Service", get_class($this))
-            );
+            $chield = str_replace("App\\Http", "App", str_replace("Controller", "Service", get_class($this)));
             try {
                 if(!empty(app($chield))) {
                     $this->service = new $chield();
@@ -62,41 +56,27 @@ abstract class ControllerBase extends Controller
     public function getUnidade(Request $request) {
         $result = null;
         $headers = $this->getPetrvsHeader($request);
-        $unidade_id = !empty($headers) && !empty($headers["unidade_id"])
-            ? $headers["unidade_id"]
-            : ($request->hasSession()
-                ? $request->session()->get("unidade_id")
-                : ""
-            );
-        $usuario = self::loggedUser()
-            ? Usuario::find(self::loggedUser()->id)
-            : null;
-        $lotacao = $usuario?->lotacao?->unidade
-            ?? $usuario?->areasTrabalho?->first()?->unidade
-            ?? null;
+        $unidade_id = !empty($headers) && !empty($headers["unidade_id"]) ? $headers["unidade_id"] : ($request->hasSession() ? $request->session()->get("unidade_id") : "");
+        $usuario = self::loggedUser() ? Usuario::find(self::loggedUser()->id) : null;
+        $lotacao = $usuario?->lotacao?->unidade ?? $usuario?->areasTrabalho?->first()?->unidade ?? null;
         if(!empty($unidade_id)) {
-            $usuario = Usuario::where("id", self::loggedUser()?->id)
-                ->with([
-                    "areasTrabalho" => function ($query) use ($unidade_id) {
-                        $query->where("unidade_id", $unidade_id);
-                    },
-                    "areasTrabalho.unidade"
-                ])->first();
+            $usuario = Usuario::where("id", self::loggedUser()?->id)->with(["areasTrabalho" => function ($query) use ($unidade_id) {
+                $query->where("unidade_id", $unidade_id);
+            }, "areasTrabalho.unidade"])->first();
             if(isset($usuario->areasTrabalho[0]) && !empty($usuario->areasTrabalho[0]->unidade_id)) {
                 return $usuario->areasTrabalho[0]->unidade;
             }
-        } elseif(!empty($lotacao)){ /* Caso não haja nenhuma unidade selecionada, utiliza a lotação (essa situação não deverá acontecer) */
+        } else if(!empty($lotacao)){ /* Caso não haja nenhuma unidade selecionada, utiliza a lotação (essa situação não deverá acontecer) */
             return $lotacao;
         }
         return $result;
     }
 
+/*     $tenant = Tenant::find('SENAPPEN');
+tenancy()->initialize($tenant); */
+
     public function getUsuario(Request $request) {
-        return !empty(self::loggedUser())
-            ? Usuario::where("id", self::loggedUser()?->id)
-                ->with("areasTrabalho.unidade")
-                ->first()
-            : null;
+        return !empty(self::loggedUser()) ? Usuario::where("id", self::loggedUser()?->id)->with("areasTrabalho.unidade")->first() : null;
     }
 
     /**
@@ -108,11 +88,7 @@ abstract class ControllerBase extends Controller
     public function searchText(Request $request)
     {
         try {
-            $this->checkPermissions("SEARCHTEXT", $request,
-                $this->service,
-                $this->getUnidade($request),
-                $this->getUsuario($request)
-            );
+            $this->checkPermissions("SEARCHTEXT", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'query' => ['min:0'],
                 'fields' => ['required', 'array'],
@@ -126,32 +102,11 @@ abstract class ControllerBase extends Controller
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-        catch (AuthenticationException $e) {
-            return response()->json(['error' => 'Não autenticado.'], 401);
-        }
-        catch (AuthorizationException $e) {
-            return response()->json(['error' => 'Acesso negado.'], 403);
-        }
-        catch (HttpException $e) {
-            Log::warning('HttpException', [
-                'status' => $e->getStatusCode(),
-                'message' => $e->getMessage()
-            ]);
-            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
-        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error([
-                'user_id' => optional(self::loggedUser())->id,
-                'ip' => request()->ip(),
-                'url' => request()->fullUrl(),
-                'data' => request()->all(),
-                'error' => $dataError,
-            ]);
-            return response()->json(['error' => "Código ".$dataError['code'].
-                ": Ocorreu um erro inesperado ao buscar pelo elemento."], 500);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
-
     }
 
     /**
@@ -163,11 +118,7 @@ abstract class ControllerBase extends Controller
     public function searchKey(Request $request)
     {
         try {
-            $this->checkPermissions("SEARCHKEY", $request,
-                $this->service,
-                $this->getUnidade($request),
-                $this->getUsuario($request)
-            );
+            $this->checkPermissions("SEARCHKEY", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'key' => ['required'],
                 'fields' => ['required', 'array'],
@@ -180,32 +131,11 @@ abstract class ControllerBase extends Controller
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-        catch (AuthenticationException $e) {
-            return response()->json(['error' => 'Não autenticado.'], 401);
-        }
-        catch (AuthorizationException $e) {
-            return response()->json(['error' => 'Acesso negado.'], 403);
-        }
-        catch (HttpException $e) {
-            Log::warning('HttpException', [
-                'status' => $e->getStatusCode(),
-                'message' => $e->getMessage()
-            ]);
-            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
-        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error([
-                'user_id' => optional(self::loggedUser())->id,
-                'ip' => request()->ip(),
-                'url' => request()->fullUrl(),
-                'data' => request()->all(),
-                'error' => $dataError,
-            ]);
-            return response()->json(['error' => "Código ".$dataError['code'].
-                ": Ocorreu um erro inesperado ao buscar pelo elemento."], 500);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
-
     }
 
     /**
@@ -218,11 +148,7 @@ abstract class ControllerBase extends Controller
     public function getById(Request $request)
     {
         try {
-            $this->checkPermissions("GETBYID", $request,
-                $this->service,
-                $this->getUnidade($request),
-                $this->getUsuario($request)
-            );
+            $this->checkPermissions("GETBYID", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'id' => ['required'],
                 'with' => ['array'],
@@ -234,32 +160,11 @@ abstract class ControllerBase extends Controller
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-        catch (AuthenticationException $e) {
-            return response()->json(['error' => 'Não autenticado.'], 401);
-        }
-        catch (AuthorizationException $e) {
-            return response()->json(['error' => 'Acesso negado.'], 403);
-        }
-        catch (HttpException $e) {
-            Log::warning('HttpException', [
-                'status' => $e->getStatusCode(),
-                'message' => $e->getMessage()
-            ]);
-            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
-        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error([
-                'user_id' => optional(self::loggedUser())->id,
-                'ip' => request()->ip(),
-                'url' => request()->fullUrl(),
-                'data' => request()->all(),
-                'error' => $dataError,
-            ]);
-            return response()->json(['error' => "Código ".$dataError['code'].
-                ": Ocorreu um erro inesperado ao buscar pela chave."], 500);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
-
     }
 
     /**
@@ -272,11 +177,7 @@ abstract class ControllerBase extends Controller
     public function getAllIds(Request $request)
     {
         try {
-            $this->checkPermissions("GETALLIDS", $request,
-                $this->service,
-                $this->getUnidade($request),
-                $this->getUsuario($request)
-            );
+            $this->checkPermissions("GETALLIDS", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'fields' => ['array'],
                 'with' => ['array'],
@@ -291,32 +192,11 @@ abstract class ControllerBase extends Controller
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-        catch (AuthenticationException $e) {
-            return response()->json(['error' => 'Não autenticado.'], 401);
-        }
-        catch (AuthorizationException $e) {
-            return response()->json(['error' => 'Acesso negado.'], 403);
-        }
-        catch (HttpException $e) {
-            Log::warning('HttpException', [
-                'status' => $e->getStatusCode(),
-                'message' => $e->getMessage()
-            ]);
-            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
-        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error([
-                'user_id' => optional(self::loggedUser())->id,
-                'ip' => request()->ip(),
-                'url' => request()->fullUrl(),
-                'data' => request()->all(),
-                'error' => $dataError,
-            ]);
-            return response()->json(['error' => "Código ".$dataError['code'].
-                ": Ocorreu um erro inesperado ao buscar pelas chaves."], 500);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
-
     }
 
     /**
@@ -328,11 +208,7 @@ abstract class ControllerBase extends Controller
     public function query(Request $request)
     {
         try {
-            $this->checkPermissions("QUERY", $request,
-                $this->service,
-                $this->getUnidade($request),
-                $this->getUsuario($request)
-            );
+            $this->checkPermissions("QUERY", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'page' => ['required'],
                 'with' => ['array'],
@@ -351,32 +227,11 @@ abstract class ControllerBase extends Controller
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-        catch (AuthenticationException $e) {
-            return response()->json(['error' => 'Não autenticado.'], 401);
-        }
-        catch (AuthorizationException $e) {
-            return response()->json(['error' => 'Acesso negado.'], 403);
-        }
-        catch (HttpException $e) {
-            Log::warning('HttpException', [
-                'status' => $e->getStatusCode(),
-                'message' => $e->getMessage()
-            ]);
-            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
-        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error([
-                'user_id' => optional(self::loggedUser())->id,
-                'ip' => request()->ip(),
-                'url' => request()->fullUrl(),
-                'data' => request()->all(),
-                'error' => $dataError,
-            ]);
-            return response()->json(['error' => "Código ".$dataError['code'].
-                ": Ocorreu um erro inesperado ao realizar a consulta."], 500);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
-
     }
 
     /**
@@ -388,6 +243,7 @@ abstract class ControllerBase extends Controller
      */
     public function download(Request $request, string $tenantId, string $file)
     {
+        //$this->checkPermissions("DOWNLOAD", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
         return response()->file($this->service->download($tenantId, $file));
     }
 
@@ -401,11 +257,7 @@ abstract class ControllerBase extends Controller
     public function downloadUrl(Request $request)
     {
         try {
-            $this->checkPermissions("DOWNLOADURL", $request,
-                $this->service,
-                $this->getUnidade($request),
-                $this->getUsuario($request)
-            );
+            $this->checkPermissions("DOWNLOADURL", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'file' => ['required'],
             ]);
@@ -413,32 +265,11 @@ abstract class ControllerBase extends Controller
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-        catch (AuthenticationException $e) {
-            return response()->json(['error' => 'Não autenticado.'], 401);
-        }
-        catch (AuthorizationException $e) {
-            return response()->json(['error' => 'Acesso negado.'], 403);
-        }
-        catch (HttpException $e) {
-            Log::warning('HttpException', [
-                'status' => $e->getStatusCode(),
-                'message' => $e->getMessage()
-            ]);
-            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
-        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error([
-                'user_id' => optional(self::loggedUser())->id,
-                'ip' => request()->ip(),
-                'url' => request()->fullUrl(),
-                'data' => request()->all(),
-                'error' => $dataError,
-            ]);
-            return response()->json(['error' => "Código ".$dataError['code'].
-                ": Ocorreu um erro inesperado ao realizar o download."], 500);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
-
     }
 
     /**
@@ -451,11 +282,7 @@ abstract class ControllerBase extends Controller
     public function deleteFile(Request $request)
     {
         try {
-            $this->checkPermissions("DELETEFILE", $request,
-                $this->service,
-                $this->getUnidade($request),
-                $this->getUsuario($request)
-            );
+            $this->checkPermissions("DELETEFILE", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'file' => ['required'],
             ]);
@@ -463,32 +290,11 @@ abstract class ControllerBase extends Controller
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-        catch (AuthenticationException $e) {
-            return response()->json(['error' => 'Não autenticado.'], 401);
-        }
-        catch (AuthorizationException $e) {
-            return response()->json(['error' => 'Acesso negado.'], 403);
-        }
-        catch (HttpException $e) {
-            Log::warning('HttpException', [
-                'status' => $e->getStatusCode(),
-                'message' => $e->getMessage()
-            ]);
-            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
-        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error([
-                'user_id' => optional(self::loggedUser())->id,
-                'ip' => request()->ip(),
-                'url' => request()->fullUrl(),
-                'data' => request()->all(),
-                'error' => $dataError,
-            ]);
-            return response()->json(['error' => "Código ".$dataError['code'].
-                ": Ocorreu um erro inesperado ao excluir o arquivo."], 500);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
-
     }
 
     /**
@@ -503,54 +309,20 @@ abstract class ControllerBase extends Controller
     public function upload(Request $request)
     {
         try {
-            $this->checkPermissions("UPLOAD", $request,
-                $this->service,
-                $this->getUnidade($request),
-                $this->getUsuario($request)
-            );
+            $this->checkPermissions("UPLOAD", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'path' => ['required'],
                 'name' => ['required']
             ]);
-            return response()->json([
-                'success' => true,
-                'path' => $this->service->upload(
-                    $data["path"],
-                    $data["name"],
-                    $request->has('file')
-                        ? $request->file('file')
-                        : null
-                    )
-            ]);
+            return response()->json(['success' => true, 'path' => $this->service->upload($data["path"], $data["name"], $request->has('file') ? $request->file('file') : null)]);
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-        catch (AuthenticationException $e) {
-            return response()->json(['error' => 'Não autenticado.'], 401);
-        }
-        catch (AuthorizationException $e) {
-            return response()->json(['error' => 'Acesso negado.'], 403);
-        }
-        catch (HttpException $e) {
-            Log::warning('HttpException', [
-                'status' => $e->getStatusCode(),
-                'message' => $e->getMessage()
-            ]);
-            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
-        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error([
-                'user_id' => optional(self::loggedUser())->id,
-                'ip' => request()->ip(),
-                'url' => request()->fullUrl(),
-                'data' => request()->all(),
-                'error' => $dataError,
-            ]);
-            return response()->json(['error' => "Código ".$dataError['code'].
-                ": Ocorreu um erro inesperado ao realizar o upload."], 500);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
-
     }
 
     /**
@@ -565,53 +337,21 @@ abstract class ControllerBase extends Controller
     public function uploadBase64(Request $request)
     {
         try {
-            $this->checkPermissions("UPLOADBASE64", $request,
-                $this->service,
-                $this->getUnidade($request),
-                $this->getUsuario($request)
-            );
+            $this->checkPermissions("UPLOADBASE64", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'path' => ['required'],
                 'name' => ['required'],
                 'file' => ['required'],
             ]);
-            return response()->json([
-                'success' => true,
-                'path' => $this->service->uploadBase64(
-                    $data["path"],
-                    $data["name"],
-                    $data["file"]
-                )
-            ]);
+            return response()->json(['success' => true, 'path' => $this->service->uploadBase64($data["path"], $data["name"], $data["file"])]);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-        catch (AuthenticationException $e) {
-            return response()->json(['error' => 'Não autenticado.'], 401);
-        }
-        catch (AuthorizationException $e) {
-            return response()->json(['error' => 'Acesso negado.'], 403);
-        }
-        catch (HttpException $e) {
-            Log::warning('HttpException', [
-                'status' => $e->getStatusCode(),
-                'message' => $e->getMessage()
-            ]);
-            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
-        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error([
-                'user_id' => optional(self::loggedUser())->id,
-                'ip' => request()->ip(),
-                'url' => request()->fullUrl(),
-                'data' => request()->all(),
-                'error' => $dataError,
-            ]);
-            return response()->json(['error' => "Código ".$dataError['code'].
-                ": Ocorreu um erro inesperado ao realizar o upload."], 500);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
-
     }
 
     /**
@@ -623,11 +363,7 @@ abstract class ControllerBase extends Controller
     public function store(Request $request)
     {
         try {
-            $this->checkPermissions("STORE", $request,
-                $this->service,
-                $this->getUnidade($request),
-                $this->getUsuario($request)
-            );
+            $this->checkPermissions("STORE", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'entity' => ['required'],
                 'with' => ['array']
@@ -642,36 +378,15 @@ abstract class ControllerBase extends Controller
                 'success' => true,
                 'rows' => [$result]
             ]);
-        }
+        } 
         catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-        catch (AuthenticationException $e) {
-            return response()->json(['error' => 'Não autenticado.'], 401);
-        }
-        catch (AuthorizationException $e) {
-            return response()->json(['error' => 'Acesso negado.'], 403);
-        }
-        catch (HttpException $e) {
-            Log::warning('HttpException', [
-                'status' => $e->getStatusCode(),
-                'message' => $e->getMessage()
-            ]);
-            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
-        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error([
-                'user_id' => optional(self::loggedUser())->id,
-                'ip' => request()->ip(),
-                'url' => request()->fullUrl(),
-                'data' => request()->all(),
-                'error' => $dataError,
-            ]);
-            return response()->json(['error' => "Código ".$dataError['code'].
-                ": Ocorreu um erro inesperado ao salvar o registro."], 500);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado.".$e->getMessage()]);
         }
-
     }
 
     /**
@@ -683,11 +398,7 @@ abstract class ControllerBase extends Controller
     public function update(Request $request)
     {
         try {
-            $this->checkPermissions("UPDATE", $request,
-                $this->service,
-                $this->getUnidade($request),
-                $this->getUsuario($request)
-            );
+            $this->checkPermissions("UPDATE", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'id' => ['required'],
                 'data' => ['required'],
@@ -707,37 +418,16 @@ abstract class ControllerBase extends Controller
             ]);
             return response()->json([
                 'success' => true,
-                'rows' => [$result]
+                'rows' => [$result] 
             ]);
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-        catch (AuthenticationException $e) {
-            return response()->json(['error' => 'Não autenticado.'], 401);
-        }
-        catch (AuthorizationException $e) {
-            return response()->json(['error' => 'Acesso negado.'], 403);
-        }
-        catch (HttpException $e) {
-            Log::warning('HttpException', [
-                'status' => $e->getStatusCode(),
-                'message' => $e->getMessage()
-            ]);
-            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
-        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error([
-                'user_id' => optional(self::loggedUser())->id,
-                'ip' => request()->ip(),
-                'url' => request()->fullUrl(),
-                'data' => request()->all(),
-                'error' => $dataError,
-            ]);
-            return response()->json(['error' => "Código ".$dataError['code'].
-                ": Ocorreu um erro inesperado ao atualizar o registro."], 500);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
-
     }
 
     /**
@@ -749,11 +439,7 @@ abstract class ControllerBase extends Controller
     public function updateJson(Request $request)
     {
         try {
-            $this->checkPermissions("UPDATEJSON", $request,
-                $this->service,
-                $this->getUnidade($request),
-                $this->getUsuario($request)
-            );
+            $this->checkPermissions("UPDATEJSON", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'id' => ['required'],
                 'data' => ['nullable'],
@@ -776,32 +462,11 @@ abstract class ControllerBase extends Controller
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-        catch (AuthenticationException $e) {
-            return response()->json(['error' => 'Não autenticado.'], 401);
-        }
-        catch (AuthorizationException $e) {
-            return response()->json(['error' => 'Acesso negado.'], 403);
-        }
-        catch (HttpException $e) {
-            Log::warning('HttpException', [
-                'status' => $e->getStatusCode(),
-                'message' => $e->getMessage()
-            ]);
-            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
-        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error([
-                'user_id' => optional(self::loggedUser())->id,
-                'ip' => request()->ip(),
-                'url' => request()->fullUrl(),
-                'data' => request()->all(),
-                'error' => $dataError,
-            ]);
-            return response()->json(['error' => "Código ".$dataError['code'].
-                ": Ocorreu um erro inesperado ao atualizar o JSON."], 500);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
-
     }
 
     /**
@@ -813,11 +478,7 @@ abstract class ControllerBase extends Controller
     public function destroy(Request $request)
     {
         try {
-            $this->checkPermissions("DESTROY", $request,
-                $this->service,
-                $this->getUnidade($request),
-                $this->getUsuario($request)
-            );
+            $this->checkPermissions("DESTROY", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'id' => ['required']
             ]);
@@ -825,30 +486,10 @@ abstract class ControllerBase extends Controller
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-        catch (AuthenticationException $e) {
-            return response()->json(['error' => 'Não autenticado.'], 401);
-        }
-        catch (AuthorizationException $e) {
-            return response()->json(['error' => 'Acesso negado.'], 403);
-        }
-        catch (HttpException $e) {
-            Log::warning('HttpException', [
-                'status' => $e->getStatusCode(),
-                'message' => $e->getMessage()
-            ]);
-            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
-        }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error([
-                'user_id' => optional(self::loggedUser())->id,
-                'ip' => request()->ip(),
-                'url' => request()->fullUrl(),
-                'data' => request()->all(),
-                'error' => $dataError,
-            ]);
-            return response()->json(['error' => "Código ".$dataError['code'].
-                ": Ocorreu um erro inesperado ao remover o registro."], 500);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
 }

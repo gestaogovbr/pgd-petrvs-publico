@@ -18,7 +18,6 @@ class ClienteValidador extends BaseValidador
             'nome' => 'required|string|max:255',
             'tipo_cliente_id' => 'required|uuid|exists:tipos_clientes,id',
             'unidade_id' => 'nullable|uuid|exists:unidades,id',
-            'data_desativado' => 'nullable|date'
         ]);
 
         if ($validator->fails()) {

@@ -1,9 +1,9 @@
-
 ## 2.3.19 19/05/2025
 ### Modificado
  - Adicionado as regras de perfis do SIAPE o perfil Administrador Geral
  ### Removido
  - Removido os campos de jornada advindos do SIAPE e do sistema
+
 ## 2.3.18 12/05/2025
 ### Adicionado
  - Recurso para clonar plano de trabalho
@@ -64,7 +64,6 @@ evitar erros comuns de má configuração, nos envios de dados e sincronização
  - Ajustes nas capacidades para os novos perfis
 ### Removido
  - Alteração de lotação pelo caminho da chefia
-
 
 ## 2.3.11 13/03/2025
 ### Corrigido

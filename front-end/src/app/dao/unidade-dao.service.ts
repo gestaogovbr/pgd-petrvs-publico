@@ -133,14 +133,6 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
     });
   }
 
-  public unidadesInferiores(unidade_id: string): Promise<string[]> {
-    return new Promise<string[]>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/linhaDescendente', { unidade_id }).subscribe(response => {
-        resolve(response?.unidades || []);
-      }, error => reject(error));
-    });
-  }
-
   public lotados(unidade_id: string): Promise<Usuario[]> {
     return new Promise<Usuario[]>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/lotados', { unidade_id }).subscribe(response => {

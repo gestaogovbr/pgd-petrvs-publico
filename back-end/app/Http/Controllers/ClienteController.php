@@ -10,7 +10,7 @@ class ClienteController extends ControllerBase
 {
     private array $validators;
 
-    public $updatable = ['nome', 'tipo_cliente_id', 'data_desativado'];
+    public $updatable = ['nome', 'tipo_cliente_id'];
 
     public function __construct(IValidador ...$validator)
     {

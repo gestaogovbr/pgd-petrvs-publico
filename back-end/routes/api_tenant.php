@@ -359,7 +359,6 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
   Route::post('hierarquia', [UnidadeController::class, 'hierarquia']);
   Route::post('filhas', [UnidadeController::class, 'filhas']);
   Route::post('linhaAscendente', [UnidadeController::class, 'linhaAscendente']);
-  Route::post('linhaDescendente', [UnidadeController::class, 'linhaDescendente']);
   Route::post('lookup-todas-unidades', [UnidadeController::class, 'lookupTodasUnidades']);
   Route::post('obter-instituidora', [UnidadeController::class, 'obterInstitudora']);
 });

@@ -23,28 +23,11 @@ export class DocumentoService {
     return {route: ['uteis', 'templates'], params: {filter: {especie}}};
   }*/
 
-  public preview(data: any): void {
+  public preview(data: any) {
     const documento = data as Documento;
-
-    if (!documento || !documento.id || !documento.conteudo) {
-      this.dialog.topAlert("Documento inválido para pré-visualização!", 5000);
-      console.warn('Documento inválido para pré-visualização:', documento);
-      return;
-    }
-
-    this.go.navigate(
-        {
-          route: ['uteis', 'documentos', 'preview', documento.id],
-        },
-        {
-          metadata: { documento },
-        }
-    );
-
-    // Descomente se quiser abrir o modal:
-    // this.dialog.html({ title: "Pré-visualização do documento", modalWidth: 1000 }, documento.conteudo, []);
+    this.go.navigate({route: ['uteis', 'documentos' , 'preview', documento.id]}, {metadata: {documento}});
+    //this.dialog.html({ title: "Pre-visualização do documento", modalWidth: 1000 }, documento.conteudo!, []);
   }
-
 
   public onLinkClick(link: DocumentoLink) {
     if(link?.tipo == "SEI") {

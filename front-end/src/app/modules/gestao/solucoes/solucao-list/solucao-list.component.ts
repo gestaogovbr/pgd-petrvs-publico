@@ -6,7 +6,7 @@ import { SolucaoDaoService } from "src/app/dao/solucao-dao.service";
 import { SolucaoUnidadeDaoService } from "src/app/dao/solucao-unidade-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
-import { Base, IIndexable } from "src/app/models/base.model";
+import { Base } from "src/app/models/base.model";
 import { SolucaoUnidade } from "src/app/models/solucao-unidade.model";
 import { Solucao } from "src/app/models/solucao.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
@@ -103,10 +103,9 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     let result: ToolbarButton[] = [];
     if(!row._status) result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });  
   
-    if (this.isCurador && !row.possui_vinculos && this.ativo(row.id, false)) {
-      if (this.auth.hasPermissionTo('MOD_SOLUCOES_EXCL')) result.push({ label: "Excluir", icon: "bi bi-trash", color: 'btn-outline-danger', onClick: this.delete.bind(this) });
-      if (this.auth.hasPermissionTo('MOD_SOLUCOES_EDT')) result.push({ label: "Editar", icon: "bi bi-pencil", color: 'btn-outline-primary', onClick: this.edit.bind(this) });   
-    }
+    if (this.isCurador)
+      result.push({ label: "Excluir", icon: "bi bi-trash", color: 'btn-outline-danger', onClick: this.delete.bind(this) });   
+    
     return result;
   }
   
@@ -148,7 +147,7 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     }
 
     if (form.status == 'ativo') {
-      result.push(["so_ativos_unidade", "==", form.unidade_id ?? this.unidadeId]);
+      result.push(["unidade_ativa", "==", form.unidade_id ?? this.unidadeId]);
     }
 
     if (form.status == 'inativo') {
@@ -268,14 +267,14 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
     });
   }
 
-  public ativo(solucaoId: string, porStatus: boolean = true): boolean {
+  public ativo(solucaoId: string): boolean {
     let unidadeId = this.auth.unidade?.id;
     let solucaoUnidade = this.getSolucaoUnidade(solucaoId, unidadeId);
     if (!solucaoUnidade) {
       return false;
     }
     
-    return porStatus ? (solucaoUnidade.status ? true : false) : true;
+    return solucaoUnidade.status ? true : false;
   }
 
   private getSolucaoUnidade(solucaoId: string, unidadeId: string | undefined): SolucaoUnidade | null {
@@ -292,9 +291,4 @@ export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoServic
       onConfirm();
     }
   }
-
-  public afterAdd = (modalResult: any) => {
-    this.grid?.reloadFilter();
-    this.loadingSolucoesUnidades();
-  };
 }

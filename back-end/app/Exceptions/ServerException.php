@@ -16,7 +16,6 @@ class ServerException extends Exception implements IBaseException
         "CapacidadeStore" => "Usuário não tem permissão para inserir/alterar nessa tabela",
         "CapacidadeUpdate" => "Usuário não tem permissão para realizar esta alteração",
         "CapacidadeDestroy" => "Usuário não tem permissão para excluir registros desta tabela",
-        "ClienteDestroy" => "Cliente",
         "ProdutoStore" => "Usuário não tem permissão para inserir/alterar Produtos",
         "ProdutoUpdate" => "Usuário não tem permissão para ativar/desativar Produtos",
         "ProdutoDestroy" => "Usuário não tem permissão para excluir Produtos",
