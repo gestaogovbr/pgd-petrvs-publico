@@ -37,4 +37,25 @@ class ChangeController extends ControllerBase {
             return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
+
+    public function loadModels() {
+        return response()->json([
+            'success' => true,
+            'models' => collect(scandir(app_path('Models')))
+                ->filter(fn($file) => str_ends_with($file, '.php'))
+                ->map(function ($file) {
+                    $class = 'App\\Models\\' . str_replace('.php', '', $file);
+                    if (is_subclass_of($class, \Illuminate\Database\Eloquent\Model::class)) {
+                        return [
+                            'key' => ($class),
+                            'value' =>  class_basename($class),
+                        ];
+                    }
+                    return null;
+                })
+                ->filter()
+                ->values()
+                ->toArray()
+        ]);
+    }
 }

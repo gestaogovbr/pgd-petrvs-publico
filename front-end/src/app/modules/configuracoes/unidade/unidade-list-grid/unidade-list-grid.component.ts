@@ -45,12 +45,13 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
         icon: "bi bi-arrows-collapse",
         color: "btn-outline-danger",
         label: "Unificar",
-        onClick: (unidade: Unidade) => this.go.navigate({ route: ['configuracoes', 'unidade', 'merge'] }, this.modalRefresh())
+        onClick: (unidade: Unidade) => this.go.navigate({ route: ['logs', 'unidade', 'merge'] }, this.modalRefresh())
       });
     }
     this.rowsLimit = 10;
     this.addOption(this.OPTION_INFORMACOES, "MOD_UND");
     this.addOption(this.OPTION_EXCLUIR, "MOD_UND_EXCL");
+    this.addOption(this.OPTION_LOGS);
   }
 
   public dynamicOptions(row: any): ToolbarButton[] {

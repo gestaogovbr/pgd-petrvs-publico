@@ -13,6 +13,9 @@ import { EntityItem } from 'src/app/services/entity.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { ExcelService } from 'src/app/services/excel.service';
 import { Base } from 'src/app/models/base.model';
+import {InputTextComponent} from "../../../../components/input/input-text/input-text.component";
+import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import { SelectItem } from 'src/app/components/input/input-base';
 
 @Component({
   selector: 'app-change-list',
@@ -23,7 +26,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild('selectResponsaveis', { static: false }) public selectResponsaveis?: InputSelectComponent;
   @ViewChild('relacao', { static: false }) public relacao?: InputSelectComponent;
-
+  @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
   public toolbarButtons: ToolbarButton[] = [];
   public allPages: ListenerAllPagesService;
   public usuarioDao: UsuarioDaoService;
@@ -32,6 +35,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   public responsaveis: LookupItem[] = [];
   public relacoes: LookupItem[] = [];
   public changes: Change[] = [];
+  public models: LookupItem[] = [];
 
 
   constructor(public injector: Injector, dao: ChangeDaoService, public xlsx: ExcelService) {
@@ -47,11 +51,15 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
       data_inicio: {default: ""},
       data_fim: {default: ""},
       tabela: {default: ""},
+      search: {default: ""},
+      modelo: {default: ""},
+      model: {default: ""},
       tipo: {default: ""},
       row_id: {default: ""},
       row_id_text: {default: ""},
       row_id_search: {default: ""}
     });
+    this.join = ["usuario"];
     this.orderBy = [['id', 'desc']];
   }
 
@@ -60,39 +68,22 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     this.filter?.controls.row_id_text.setValue(this.urlParams?.get('id'));
   }
 
-  carregaResposaveis(user_ids: string[]){
-    this.selectResponsaveis!.loading = true;
-    this.dao?.showResponsaveis(user_ids).then(responsaveis => {
-      this.responsaveis = responsaveis.map((r: any) => ({ key: r.id, value: r.nome }));
-    }).finally(() => this.selectResponsaveis!.loading = false);
-  }
-
-  montaRelacoes(changes: Change[]){
-    this.relacoes = changes[0]._metadata.relacoes.map((r: any) => ({key: r, value: r}));    
+  async ngAfterViewInit() {
+    super.ngAfterViewInit();
+    
+    this.models = await this.dao?.listModels() || [];
+    console.log(this.models);
+    
+    //this.selectResponsaveis!.loading = true;
+    this.dao?.showResponsaveis().then(responsaveis => {
+      this.responsaveis = responsaveis || [];
+      this.cdRef.detectChanges();
+    });
+    //.finally(() => this.selectResponsaveis!.loading = false);
   }
 
   public async loadChanges(changes?: Base[]){
-    if(changes){
-      this.changes = changes as Change[];
-      let user_ids = this.changes.map((change: Change) => {return change.user_id})     
-      user_ids = Array.from(new Set(user_ids))
-      this.carregaResposaveis(user_ids)
-      if(this.changes.length > 1) this.montaRelacoes(this.changes)
-    }
-  }
-
-  public onRelacaoChange(event: any) {
-    const relacao = event.target.value;
-    const relacoes: any[] = this.filter?.controls.relacoes.value || [];
-
-    if (!relacoes.includes(relacao)) {
-      relacoes.push(relacao);
-    } else {
-      const index = relacoes.indexOf(relacao);
-      relacoes.splice(index, 1);
-    }
-    this.filter?.controls.relacoes.setValue(relacoes);
-   
+    this.changes = changes as Change[];
   }
 
   public filterClear(filter: FormGroup) {
@@ -100,7 +91,9 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     filter.controls.data_inicio.setValue("");
     filter.controls.data_fim.setValue("");
     filter.controls.tabela.setValue("");
-    filter.controls.tipo.setValue("");
+    filter.controls.f.setValue("");
+    filter.controls.search.setValue("");
+    filter.controls.modelo.setValue("");
     filter.controls.opcao_filtro.setValue("ID do registro");
     super.filterClear(filter);
   }
@@ -130,19 +123,18 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     if(form.tipo?.length){
       result.push(["type", "==", form.tipo]);
     };
+    if(form.modelo?.length){
+      result.push(["auditable_type", "==", form.modelo]);
+    };
+    if(form.search?.length){
+      result.push(["search", "==", form.search]);
+    };
     return result;
   }
 
-  exportarCSV(){
-    const registrosExportaveis = this.changes.map(change => {
-      return {
-          ...change,
-          delta: JSON.stringify(change.delta)
-      };
-    });
-    this.xlsx.exportJSON('logs', registrosExportaveis)
+
+  public async onUsuarioSelect(selected: SelectItem) {
+    console.log(selected);
   }
-
-
 
 }
