@@ -1,9 +1,27 @@
+## 2.4.0 11/06/2025
+### Adicionado
+ - Função para bloquear o teletrabalho para servidores em pedágio
+ - Filtros no módulo de Agendamento de Jobs.
+ - Edição de Agendamentos.
+ - Adicionada opção de periodicidade dos Agendamentos.
+ - Adicionado a opção de processar um cpf no fluxo de consulta do SIAPE
+ - Adicionado a opção de processar uma unidade no fluxo de consulta do SIAPE
+### Modificado
+ - Redução do tamanho do banco de dados, pela modificão da utilização do Redis pelo Telescope. 
+ - Redução do tamanho da imagem de Build, agilizando a atualização do sistema.
+ - Redesenhado o layout de consultas do SIAPE (CPF e Unidade).
+ - Alterado o formato de download do xml de unidade (agora virá zipado como no CPF)
+### Corrigido
+ - Corrigido erro 403 ao registrar execução do Plano de Trabalho (PT).
+ - Corrigida a ordenação incorreta dos processos da Comissão de Validação (CV)
+## 2.3.20 27/05/2025
+### Corrigido
+ - Correção no SQL de vinculos do SIAPE.
 ## 2.3.19 19/05/2025
 ### Modificado
  - Adicionado as regras de perfis do SIAPE o perfil Administrador Geral
  ### Removido
  - Removido os campos de jornada advindos do SIAPE e do sistema
-
 ## 2.3.18 12/05/2025
 ### Adicionado
  - Recurso para clonar plano de trabalho
@@ -64,6 +82,7 @@ evitar erros comuns de má configuração, nos envios de dados e sincronização
  - Ajustes nas capacidades para os novos perfis
 ### Removido
  - Alteração de lotação pelo caminho da chefia
+
 
 ## 2.3.11 13/03/2025
 ### Corrigido

@@ -253,6 +253,7 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_PART_INCL", "Permite incluir participantes do programa"],
         ["MOD_PART_DESAB", "Permite desabilitar participantes do programa"],
         ["MOD_PRGT_EXT", "Permite visualizar todos os programas, independente da hierarquia de unidades"],
+        ["MOD_PART_PEDAGIO", "Permite gerenciar o período de pedagio dos participantes do programa"]
       ]
     ], [
       "codigo" => "MOD_PROD",

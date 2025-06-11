@@ -5,6 +5,7 @@ namespace App\Services\Siape;
 use App\Exceptions\ErrorDataSiapeException;
 use App\Exceptions\ErrorDataSiapeFaultCodeException;
 use App\Exceptions\RequestConectaGovException;
+use App\Facades\SiapeLog;
 use App\Models\SiapeBlackListServidores;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
@@ -40,11 +41,13 @@ class ProcessaDadosSiapeBD
                     'dadosPessoais' => $this->processaDadosPessoais( $servidor->cpf, $servidor->responseDadosPessoais),
                     'dadosFuncionais' => $this->processaDadosFuncionais( $servidor->cpf, $servidor->responseDadosFuncionais),
                 ];
-            } 
+            }
             catch (ErrorDataSiapeException $e) {
+                report($e);
                 continue;
             } catch (Exception $e) {
-                Log::error('Erro ao processar servidor #' . $servidor->cpf, [$e]);
+                report($e);
+                Log::channel('siape')->error('Erro ao processar servidor #' . $servidor->cpf, [$e]);
                 continue;
             }
         }
@@ -59,7 +62,7 @@ class ProcessaDadosSiapeBD
         return $servidor->data_modificacao ?? '1970-01-01 00:00:00';
     }
 
-    private function processaDadosPessoais(
+    public function processaDadosPessoais(
         string $cpf,
         string $dadosPessoais
     ): array {
@@ -69,21 +72,22 @@ class ProcessaDadosSiapeBD
             $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
             $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
             $xmlResponse->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
+            // Log::error('==>',$xmlResponse->xpath('//ns1:consultaDadosPessoaisResponse/out')); VERIFICAR ISSO AMANHA
 
             $dadosPessoais = $xmlResponse->xpath('//ns1:consultaDadosPessoaisResponse/out')[0];
             $dadosPessoaisArray = $this->simpleXmlElementToArray($dadosPessoais);
 
             return $dadosPessoaisArray;
-        } 
-       
+        }
+
         catch (Exception $e) {
             report($e);
-            Log::error("Falha nos dados pessoais:", [$dadosPessoais]);
-            throw new ErrorDataSiapeException("Falha ao tratar dados do Siape");
+            Log::channel('siape')->error("Falha nos dados funcionais:", [$dadosPessoais]);
+            throw new ErrorDataSiapeException("Falha ao tratar dados pessoais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape.log");
         }
     }
 
-    private function processaDadosFuncionais(
+    public function processaDadosFuncionais(
         string $cpf,
         string $dadosFuncionais
     ): array {
@@ -99,14 +103,16 @@ class ProcessaDadosSiapeBD
             return $dadosFuncionaisArray;
         } catch (Exception $e) {
             report($e);
-            Log::error("Falha nos dados funcionais:", [$dadosFuncionais]);
-            throw new ErrorDataSiapeException("Falha ao tratar dados do Siape");
+            Log::channel('siape')->error("Falha nos dados funcionais:", [$dadosFuncionais]);
+            throw new ErrorDataSiapeException("Falha ao tratar dados funcionais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape.log");
         }
     }
 
     private function decideDadosFuncionais(array $dadosfuncionaisArray)
     {
-        if (count($dadosfuncionaisArray) == 1) return $this->simpleXmlElementToArray($dadosfuncionaisArray[0]);
+        if (count($dadosfuncionaisArray) == 1) {
+            return $this->simpleXmlElementToArray($dadosfuncionaisArray[0]);
+        }
 
         $retorno = [];
         foreach ($dadosfuncionaisArray as $dadosFuncionais) {
@@ -138,17 +144,18 @@ class ProcessaDadosSiapeBD
         $dadosUorgArray = [];
         foreach ($response as $dadosUnidades) {
             try {
-                $responseXml = $this->prepareResponseXml($dadosUnidades->response);
+                $dadosUorg = $this->processaDadosUorg($dadosUnidades->response);
             } catch (Exception $e) {
-                Log::error('Erro ao processar XML da Unidade', [$e->getMessage()]);
+                report($e);
+                SiapeLog::error('Erro ao processar XML da Unidade: '.$e->getMessage(), [$dadosUnidades->response]);
                 continue;
             }
 
-            $responseXml->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
-            $responseXml->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
-            $responseXml->registerXPathNamespace('ent', 'http://entidade.wssiapenet');
+            if(is_null($dadosUorg)) {
+                SiapeLog::error('Retorno nulo do array: ', [$dadosUnidades->response]);
+                continue;
+            }
 
-            $dadosUorg = $responseXml->xpath('//ns1:dadosUorgResponse/out')[0];
             $dadosUorgArray[] = [
                 'data_modificacao' => $dadosUnidades->data_modificacao,
                 'dados' => $this->simpleXmlElementToArray($dadosUorg)
@@ -159,6 +166,27 @@ class ProcessaDadosSiapeBD
         }
 
         return $dadosUorgArray;
+    }
+
+    public function processaDadosUorg($dados) : SimpleXMLElement|null {
+        try {
+            $responseXml = $this->prepareResponseXml($dados);
+        } catch (Exception $e) {
+            report($e);
+            throw new ErrorDataSiapeException("Erro ao processar XML da Unidade");
+        }
+
+        $responseXml->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+        $responseXml->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
+        $responseXml->registerXPathNamespace('ent', 'http://entidade.wssiapenet');
+
+        $out = $responseXml->xpath('//ns1:dadosUorgResponse/out');
+
+        if (!$out) {
+            return null;
+        }
+
+        return $out[0];
     }
 
     private function sanitizeXml(string &$response): void
@@ -172,7 +200,6 @@ class ProcessaDadosSiapeBD
 
     private function prepareResponseServidorXml(string $cpf, string $response): SimpleXMLElement
     {
-        
         $responseXml = $this->prepareResponseXml($response);
 
         $fault = $responseXml->xpath('//soap:Fault');
@@ -181,7 +208,7 @@ class ProcessaDadosSiapeBD
                 ['cpf' => $cpf],
                 ['id' => (string) Str::uuid(), 'response' => $response]
             );
-            
+
             throw new ErrorDataSiapeFaultCodeException(sprintf('faultcode #%s: ',(string) $fault[0]->faultcode ). (string) $fault[0]->faultstring);
         }
         return $responseXml;
@@ -195,6 +222,7 @@ class ProcessaDadosSiapeBD
         $response
         XML;
         $responseXml = simplexml_load_string($response, "SimpleXMLElement", LIBXML_NOCDATA);
+
         if ($responseXml === false) {
             $errors = libxml_get_errors();
             foreach ($errors as $error) {

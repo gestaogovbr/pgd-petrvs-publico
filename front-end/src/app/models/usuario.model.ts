@@ -150,5 +150,10 @@ export class Usuario extends Base implements HasNotificacao {
     //public perfil_id: number = 0; /* ID do perfil - Setar o primeiro do list*/
     public perfil_id: string = ""; /* ID do perfil - Setar o primeiro do list*/
 
+    public tipo_pedagio: number | null = null; /* Tipo de Pedágio */
+    public data_inicial_pedagio: Date | null = null; /* Data Inicial do Pedágio */
+    public data_final_pedagio: Date | null = null; /* Data Final do Pedágio */
+    public pedagio: boolean = false;
+
     public constructor(data?: any) { super(); this.initialization(data); }
 }

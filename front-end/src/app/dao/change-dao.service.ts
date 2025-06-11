@@ -24,14 +24,24 @@ export class ChangeDaoService extends DaoBaseService<Change> {
     });
   }
 
-  public showResponsaveis(ids: string[]): Promise<LookupItem[]> {
-    console.log(ids);
-    
+
+  public showResponsaveis(): Promise<LookupItem[]> {
     return new Promise<LookupItem[]>((resolve, reject) => {
-      this.server.post('api/Change/showResponsaveis', { usuario_ids: ids }).subscribe(response => {
+      this.server.post('api/Change/showResponsaveis', []).subscribe(response => {
         resolve(response.responsaveis);
       }, error => {
         console.log("Erro ao buscar a lista dos responsáveis pelas alterações no Banco de Dados-!", error);
+        resolve([]);
+      });
+    });
+  }
+
+  public listModels(): Promise<LookupItem[]> {
+    return new Promise<LookupItem[]>((resolve, reject) => {
+      this.server.post('api/Change/list-models', []).subscribe(response => {
+        resolve(response.models);
+      }, error => {
+        console.log("Erro ao buscar a lista de Modelos!", error);
         resolve([]);
       });
     });

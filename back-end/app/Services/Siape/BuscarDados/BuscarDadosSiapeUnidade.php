@@ -56,7 +56,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
        return $xmlUnidades;
     }
 
-    private function getUnidades(SiapeListaUORGS $listaUorgs) : ?array {
+    public function getUnidades(SiapeListaUORGS $listaUorgs) : ?array {
         try {
             $xmlResponse = $this->prepareResponseXml($listaUorgs->response);
         } catch (\Exception $e) {

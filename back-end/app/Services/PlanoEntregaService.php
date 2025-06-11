@@ -408,9 +408,6 @@ class PlanoEntregaService extends ServiceBase
             $data["orderBy"] = [['unidade.path', 'desc']];
         }
 
-
-
-        Log::info($data['where']);
         foreach ($data["where"] as $condition) {
             if (is_array($condition) && $condition[0] == "data_filtro") {
                 $dataInicio = $this->getFilterValue($data["where"], "data_filtro_inicio");

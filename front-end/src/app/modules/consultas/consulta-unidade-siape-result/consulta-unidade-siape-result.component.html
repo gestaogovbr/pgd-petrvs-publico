@@ -1,0 +1,51 @@
+<div class="spinner-border" role="status" *ngIf="loading">
+    <span class="visually-hidden"></span>
+</div>
+
+<div class="consulta-unidade-siape-result">
+    
+    <div class="dados-siape">
+        <div class="row" *ngIf="!dados">
+            <div class="col-md-12">
+                <p class="subtitle">Dados não encontrados no SIAPE para a unidade informada.</p>
+            </div>
+        </div>
+        <div class="row" *ngIf="dados">
+            <div class="col-md-12">
+                <p class="subtitle">
+                    <i class="bi bi-cloud-arrow-down-fill"></i>
+                    Dados localizados no SIAPE 
+                </p>
+            </div>
+            <div class="col-md-12">
+                <p>Sigla: <b>{{dados.siglaOrgao}}</b></p>
+            </div>
+            <div class="col-md-12">
+                <p>Nome: <b>{{dados.nomeExtendido}}</b></p>
+            </div>
+            
+        </div>
+    </div>
+    <separator></separator>
+    <div class="dados-petrvs">
+        <div class="row" *ngIf="!unidade">
+            <div class="col-md-12">
+                <p class="subtitle">Nenhuma unidade encontrado no Petrvs com o Unidade informada.</p>
+            </div>
+        </div>
+        <div class="row" *ngIf="unidade">
+            <div class="col-md-12">
+                <p class="subtitle">
+                    <i class="bi bi-building"></i> Unidade encontrada no Petrvs
+                </p>
+            </div>
+            <div class="col-md-12">
+                <p>Sigla: <b>{{unidade?.sigla}}</b></p>
+                <p>Nome: <b>{{unidade?.nome}}</b></p>
+            </div>
+        </div>
+    </div>
+    <separator> 
+         <toolbar [buttons]="toolbarButtons"></toolbar>
+     </separator>
+</div>
