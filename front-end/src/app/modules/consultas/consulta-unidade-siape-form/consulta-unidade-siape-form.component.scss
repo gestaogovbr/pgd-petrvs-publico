@@ -1,0 +1,18 @@
+.btn-unidade {
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.btn-unidade:hover {
+    background-color: #0056b3;
+}
+
+::ng-deep .consulta-unidade-siape-form input[type="text"] {
+    font-size: 20px !important;
+    text-align: center !important;
+}

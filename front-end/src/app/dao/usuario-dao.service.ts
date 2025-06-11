@@ -49,36 +49,19 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
     });
   }
 
-  public consultaCPFSIAPE(cpf: string) {
-    this.server.postDownload('api/usuario/consulta-cpf-siape', { cpf })
-      .subscribe((response: Blob) => {
-        const contentType = response.type; 
-        const dataCriacao = new Date().toISOString().slice(0, 10);
-  
-        const extensoes: Record<string, string> = {
-          'application/xml': 'xml',
-          'text/plain': 'txt',
-          'application/zip': 'zip',
-        };
-        
-        const extensao = extensoes[contentType] ?? (console.warn('Tipo de conteúdo inesperado:', contentType), 'txt');
-        
-  
-        const nomeArquivo = `dados_cpf_${cpf}_${dataCriacao}.${extensao}`;
-  
-        const blob = new Blob([response], { type: contentType });
-        const url = window.URL.createObjectURL(blob);
-  
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = nomeArquivo;
-        link.click();
-  
-        window.URL.revokeObjectURL(url);
-      }, error => {
-        console.error('Erro ao realizar o download:', error);
-      });
+  public exportarCPFSIAPE(cpf: string) {
+    return this.server.postDownload('api/usuario/exportar-cpf-siape', { cpf });
+  }
+
+    public baixaLogSiape(cpf: string) {
+    return this.server.postDownload('api/usuario/download-cpf-siape', { cpf });
+  }
+
+  public consultarSIAPE(cpf: string) {
+    return this.server.post('api/usuario/consultar-cpf-siape', { cpf });
   }
   
-  
+  public sincronizarSIAPE(cpf: string) {
+    return this.server.post('api/usuario/processar-siape', { cpf });
+  }
 }
