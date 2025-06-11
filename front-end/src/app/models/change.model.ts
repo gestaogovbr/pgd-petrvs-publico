@@ -2,14 +2,16 @@ import { Base } from './base.model';
 
 export class Change extends Base {
 
-    public user_id: string = "";      //Data e Hora em que o registro foi criado
-    public date_time: string = "";      //Data e Hora em que o registro foi criado
-    public table_name: string = "";     //Nome da tabela
-    public row_id: string = "";         //ID do registro alterado
-    public type: string = "";           //Tipo de Operação realizada no registro ["ADD", "EDIT", "DELETE"]
-    public delta: any[] = [];          //Alterações realizadas
+    public id: string = "";
+    public auditable_id: string = "";
+    public auditable_type: string = "";
+    public user_id: string = "";
+    public user_type: string = "";
+    public usuario: string = "";
+    public created_at: Date = new Date();
+    public event: string = "";
+    public new_values: {[key: string]: any } = {};
+    public old_values: {[key: string]: any } = {};
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

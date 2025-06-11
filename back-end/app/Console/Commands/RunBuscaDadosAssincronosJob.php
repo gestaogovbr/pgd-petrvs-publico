@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Console\Commands;
 
 use App\Services\TenantService;
@@ -28,21 +27,21 @@ class RunBuscaDadosAssincronosJob extends Command
     public function handle()
     {
         $tenantId = $this->argument('tenant');
-        if(!$tenantId){
+        if (! $tenantId) {
             $this->error('Tenant não informado.');
             return;
         }
 
         try {
             $tenantService = new TenantService();
-        $tenantService->inicializeTenant($tenantId);
+            $tenantService->inicializeTenant($tenantId);
 
-        $classe = new \App\Jobs\BuscarDadosSiapeJob($tenantId);
-        $classe->handle();
-        $this->info('Job executado com sucesso.');
+            $classe = new \App\Jobs\BuscarDadosSiapeJob($tenantId);
+            $classe->handle();
+            $this->info('Job executado com sucesso.');
         } catch (\Throwable $th) {
             Log::error($th->getMessage(), [$th]);
-            $this->error('erro ao buscar dados no tenant: '.$tenantId);
+            $this->error('erro ao buscar dados no tenant: ' . $tenantId);
         }
     }
 }

@@ -19,6 +19,7 @@ use App\Models\Programa;
 use App\Models\ProgramaParticipante;
 use App\Models\DocumentoAssinatura;
 use App\Models\PlanoEntregaEntrega;
+use App\Models\TipoModalidade;
 use Carbon\Carbon;
 use DateTime;
 use Throwable;
@@ -192,6 +193,7 @@ class PlanoTrabalhoService extends ServiceBase
     public function validateStore($data, $unidade, $action)
     {
         $usuario = Usuario::with("areasTrabalho")->find($data["usuario_id"]);
+        $tipoModalidade = TipoModalidade::find($data["tipo_modalidade_id"]);
         $programa = Programa::find($data["programa_id"]);
         $condicoes = $this->buscaCondicoes($data);
         /* Resumo da PTR:TABELA_1 para Inclusão e Alteração:
@@ -221,6 +223,35 @@ class PlanoTrabalhoService extends ServiceBase
         /* Validar documento_id */
         if (empty($data["documento_id"])) {
             throw new ServerException("ValidatePlanoTrabalho", "TCR não foi gerado.");
+        }
+
+        // Validar Modalidade
+        if (!empty($tipoModalidade) && $tipoModalidade->exige_pedagio && !empty($usuario->pedagio)) {
+            if (empty($usuario->data_inicial_pedagio) || empty($usuario->data_final_pedagio)) {
+                throw new ServerException(
+                    "ValidateUsuario",
+                    "Dados de pedágio incompletos para o participante. Verifique as datas de início e fim do pedágio."
+                );
+            }
+            // Verificar sobreposição de datasAdd commentMore actions
+            $inicioPedagio = Carbon::parse($usuario->data_inicial_pedagio);
+            $fimPedagio = Carbon::parse($usuario->data_final_pedagio);
+
+            $inicioPlano = Carbon::parse($data["data_inicio"]);
+            $fimPlano = Carbon::parse($data["data_fim"]);
+
+            $sobrepoe = !(
+                $fimPlano < $inicioPedagio || $inicioPlano > $fimPedagio
+            );
+            if ($sobrepoe) {
+                throw new ServerException(
+                "ValidatePlanoTrabalho", 
+                "Modalidade Teletrabalho indisponível para o participante de " . 
+                Carbon::parse($usuario->data_inicial_pedagio)->format('d/m/Y') . 
+                " até " . 
+                Carbon::parse($usuario->data_final_pedagio)->format('d/m/Y')
+                );
+            }
         }
         if ($action == ServiceBase::ACTION_INSERT) {
             /*
