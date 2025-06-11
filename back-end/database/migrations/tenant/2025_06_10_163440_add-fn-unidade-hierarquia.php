@@ -12,7 +12,7 @@ return new class extends Migration
     {
         DB::statement(<<<EOD
             CREATE FUNCTION `fn_obter_unidade_hierarquia`(p_unidade_id CHAR(36))
-            RETURNS varchar(255) CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci
+            RETURNS TEXT CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci
             DETERMINISTIC
             BEGIN
                 DECLARE V_PATH TEXT;
@@ -38,7 +38,8 @@ return new class extends Migration
                     and u.unidade_pai_id IS NOT NULL
                 )
                 SELECT GROUP_CONCAT(sigla ORDER BY nivel DESC SEPARATOR '/') INTO V_PATH
-                FROM ancestrais;
+                FROM ancestrais
+                WHERE nivel > 1;
 
                 RETURN V_PATH;
             END;
