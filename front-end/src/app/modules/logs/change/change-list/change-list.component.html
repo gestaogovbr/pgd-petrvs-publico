@@ -1,56 +1,136 @@
-<grid [dao]="dao" [hasEdit]="false" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [loadList]="loadChanges.bind(this)">
-  <toolbar>
-    <button class="btn btn-outline-info me-2" (click)="exportarCSV()" *ngIf="changes.length"><i class="bi bi-filetype-csv"> Exportar CSV</i></button>
-  </toolbar>
+<grid
+  [dao]="dao"
+  [hasEdit]="false"
+  [title]="isModal ? '' : title"
+  [orderBy]="orderBy"
+  [groupBy]="groupBy"
+  [join]="join"
+  [loadList]="loadChanges.bind(this)"
+>
+  <filter
+    [deleted]="false"
+    [form]="filter"
+    [where]="filterWhere"
+    [submit]="filterSubmit.bind(this)"
+    [clear]="filterClear.bind(this)"
+    [collapseChange]="filterCollapseChange.bind(this)"
+    [collapsed]="!selectable && filterCollapsed"
+  >
+    <div class="row">
+      <input-search
+        #usuario
+        label="Responsável pelo registro"
+        [control]="filter!.controls.usuario_id"
+        controlName="usuario_id"
+        [dao]="usuarioDao"
+        [size]="6"
+        (select)="onUsuarioSelect($event)"
+      ></input-search>
+      <input-datetime
+        [size]="2"
+        datetime
+        label="Início"
+        controlName="data_inicio"
+        [control]="filter!.controls.data_inicio"
+        labelInfo="Início dos registros"
+      ></input-datetime>
+      <input-datetime
+        [size]="2"
+        datetime
+        label="Fim"
+        controlName="data_fim"
+        [control]="filter!.controls.data_fim"
+        labelInfo="Fim dos registros"
+      ></input-datetime>
+      <input-select
+        [size]="2"
+        label="Ação"
+        icon="bi bi-arrow-up-right-circle"
+        controlName="tipo"
+        [control]="filter!.controls.tipo"
+        [items]="lookup.TIPO_LOG_AUDIT"
+        itemTodos="(Todos)"
+        valueTodos=""
+      ></input-select>
+      <input-text
+        [size]="6"
+        label="Texto geral"
+        controlName="search"
+        [control]="filter!.controls.search"
+        placeholder="Texto geral para busca"
+      ></input-text>
+      <input-select
+        [size]="4"
+        label="Modelo"
+        controlName="model"
+        [control]="filter!.controls.modelo"
+        [items]="models"
+        itemTodos="(Todos)"
+      ></input-select>
+    </div>
+  </filter>
+  <div class="accordion mt-3" id="accordionLogs">
+    <div class="accordion-item" *ngFor="let change of changes">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed text-start px-3 py-2" type="button"
+                [attr.data-bs-toggle]="'collapse'"
+                [attr.data-bs-target]="'#collapse_' + change.id"
+                aria-expanded="false"
+                [attr.aria-controls]="'collapse_' + change.id">
 
-  <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
-    <div class="row">
-      <input-select #selectResponsaveis label="Responsável pelo registro" controlName="usuario_id" [control]="filter!.controls.usuario_id" [items]="responsaveis"></input-select>
-    </div>
-    <div class="row">
-      <input-datetime [size]="4" datetime label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Início dos registros"></input-datetime>
-      <input-datetime [size]="4" datetime label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Fim dos registros"></input-datetime>
-      <input-select [size]="4" label="Tipo" icon="bi bi-arrow-up-right-circle" controlName="tipo" [control]="filter!.controls.tipo" [items]="lookup.TIPO_LOG_CHANGE" itemTodos="Todos" valueTodos=""></input-select>
-    </div>
-    <!-- TODO -->
-    <!-- <div class="row">
-      <div class="col-12">
-        <div class="card card-body mt-3">
-          <h6 class="mb-3">Relacionamentos</h6>
+          <div class="w-100">
+            <!-- Linha 1: Quem alterou -->
+            <div class="text-muted small mb-1">
+              Alterado por: <strong class="text-dark">{{ change.usuario }}</strong>
+            </div>
+
+            <!-- Linha 2: Tipo de evento -->
+            <div class="mb-1">
+        <span class="badge rounded-pill px-3 py-1 fw-semibold text-uppercase me-2"
+              [ngStyle]="{
+                'background-color': change.event === 'delete' ? '#dc3545' : (change.event === 'created' ? '#198754' : '#b58900'),
+                'color': '#fff'
+              }">
+          {{ change.event }}
+        </span>
+              <span class="fw-semibold">{{ change.auditable_type.split('\\').pop() }}</span>
+            </div>
+
+            <!-- Linha 3: Data/hora -->
+            <div class="text-muted small">
+              {{ util.getDateTimeFormatted(change.created_at) }}
+            </div>
+          </div>
+
+        </button>
+      </h2>
+
+
+
+      <div [id]="'collapse_' + change.id" class="accordion-collapse collapse" data-bs-parent="#accordionLogs">
+        <div class="accordion-body bg-light-subtle rounded shadow-sm">
+
           <div class="row">
-            <div *ngFor="let relacao of relacoes; let i=index" class="col-md-2">
-              <div class="form-check">
-                <input type="checkbox" [value]="relacao.key" (change)="onRelacaoChange($event)" class="form-check-input" [id]="relacao.key">
-                <label class="form-check-label" [for]="relacao.key">{{relacao.value}}</label>          
+            <div class="col-md-6">
+              <h6 class="text-muted">Antes</h6>
+              <div class="border p-2 rounded bg-white shadow-sm">
+                <json-viewer [json]="change.old_values"></json-viewer>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <h6 class="text-muted">Depois</h6>
+              <div class="border p-2 rounded bg-white shadow-sm">
+                <json-viewer [json]="change.new_values"></json-viewer>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div> -->
-  </filter>
- 
-  <div class="accordion mt-3" id="accordionLogs">
 
-    <div class="accordion-item" *ngFor="let change of changes">
-      <h2 class="accordion-header">
-        <button class="accordion-button collapsed" type="button" [attr.data-bs-toggle]="'collapse'" [attr.data-bs-target]="'#collapse_'+ change.id" aria-expanded="false" [attr.aria-controls]="'collapse_'+ change.id">
-          <div class="d-flex justify-content-start align-items-center m-0">
-            <span class="nome me-2">{{change._metadata.responsavel}}</span>
-            <span class="acao me-2"> <badge [label]="change.type" [color]="change.type == 'DELETE' ? '#910404' : '#030521'"></badge></span>
-            <span class="tabela me-2">{{change.table_name}}</span>
-            <span class="data"><badge [label]="util.getDateTimeFormatted(change.date_time)" [color]="'#676789'"></badge></span>
-          </div>
-        </button>
-      </h2>
-      <div [attr.id]="'collapse_'+ change.id" class="accordion-collapse collapse" [attr.data-bs-target]="'#accordionLogs'">
-        <div class="accordion-body">
-          <json-viewer [json]="change.delta"></json-viewer>
         </div>
       </div>
     </div>
-  
   </div>
+
 
   <pagination [rows]="rowsLimit"></pagination>
 </grid>
