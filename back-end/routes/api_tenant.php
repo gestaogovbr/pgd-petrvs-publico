@@ -93,6 +93,8 @@ use App\Http\Controllers\JobAgendadoController;
 use App\Http\Controllers\RelatoController;
 use App\Http\Controllers\SolucaoUnidadeController;
 use App\Http\Controllers\ImpersonationController;
+use App\Http\Controllers\RelatorioController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -503,4 +505,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ->middleware('auth:sanctum')
         ->name('impersonate');
   Route::get('/impersonate/stop', [ImpersonationController::class, 'stopImpersonating'])->name('impersonate.stop');
+});
+
+Route::middleware(['auth:sanctum'])->prefix('Relatorio')->group(function () {
+    Route::post('planos-trabalho/query', [RelatorioController::class, 'queryPlanosTrabalho']);
 });
