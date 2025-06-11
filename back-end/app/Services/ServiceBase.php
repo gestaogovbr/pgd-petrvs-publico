@@ -88,7 +88,7 @@ class ServiceBase extends DynamicMethods
     return class_exists($fullName) ? $this->_services[$name] : null;
   }
 
- 
+
   public function __construct($collection = null)
   {
     $this->collection = $collection ?? $this->collection;
@@ -130,7 +130,7 @@ class ServiceBase extends DynamicMethods
       });
     });
   }
- 
+
   public function hasStoredProcedure($procedure)
   {
     try {
@@ -522,7 +522,7 @@ class ServiceBase extends DynamicMethods
     $sql = $query->toSql();
     $this->applyOrderBy($query, $data);
     $query->select($data["select"]);
-    
+
     $rows = $query->get();
     $values = [];
     foreach ($rows as $row) {
@@ -684,7 +684,7 @@ class ServiceBase extends DynamicMethods
     $query = $model::query();
     if (!empty($data["deleted"]) && $data["deleted"]) $query = is_subclass_of(get_class($model), "App\Models\ModelBase") ? $query->withTrashed() : $query;
     if (method_exists($this, 'proxyQuery')) $this->proxyQuery($query, $data);
-    $data["with"] = isset($this->joinable) ? $this->getJoinable($data["with"] ?? []) : $data["with"];
+    $data["with"] = isset($this->joinable) ? $this->getJoinable($data["with"] ?? []) : $data["with"] ?? [];
     if (count($data['with']) > 0) {
       $this->applyWith($query, $data);
     }
@@ -827,7 +827,7 @@ class ServiceBase extends DynamicMethods
     } catch(UnauthorizedUserPanelException $e) {
       if ($transaction) DB::rollback();
       throw $e;
-    }     
+    }
     catch (Throwable $e) {
       if ($transaction) DB::rollback();
       throw $e;
