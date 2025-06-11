@@ -1,0 +1,76 @@
+<grid [dao]="dao" 
+    [add]="add" 
+    [title]="isModal ? '' : title" 
+    [orderBy]="orderBy" 
+    [groupBy]="groupBy" 
+    [join]="join"
+    [selectable]="selectable" 
+    (select)="onSelect($event)"
+    labelAdd="Incluir Novo Agendamento"
+>
+    <toolbar *ngIf="!selectable">
+    </toolbar>
+    <filter 
+        [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')"
+        deletedLabel="Mostrar Excluídos"
+        [form]="filter" 
+        [where]="filterWhere" 
+        [submit]="filterSubmit.bind(this)"
+    >
+        <div class="row">
+            <input-text
+                [size]="6"
+                label="Nome"
+                controlName="nome"
+                [control]="filter!.controls.nome"
+                placeholder="Nome do Agendamento"
+                [attr.maxlength]=250
+            ></input-text>
+            <input-select
+                [size]="3"
+                label="Tenant"
+                controlName="tenant_id"
+                [items]="tenants"
+                [control]="filter!.controls.tenant_id"
+                itemTodos="(Todos)"
+            ></input-select>
+            <input-select
+                [size]="3"
+                label="Job"
+                controlName="classe"
+                [items]="jobTypes"
+                [control]="filter!.controls.classe"
+                itemTodos="(Todos)"
+            ></input-select>
+        </div>
+    </filter>
+    
+    <columns>
+        <column title="Tenant" [template]="columnTenant">
+            <ng-template let-row="row" #columnTenant>
+                <span>{{row.tenant_id}}</span>
+            </ng-template>
+        </column>
+        <column title="Nome" [template]="columnNome">
+            <ng-template let-row="row" #columnNome>
+                <span>{{row.nome}}</span>
+            </ng-template>
+        </column>
+        <column title="Job" [template]="columnClasse">
+            <ng-template let-row="row" #columnClasse>
+                <span>{{row.classe}}</span>
+            </ng-template>  
+        </column>
+        <column title="Periodicidade" [template]="columnTipo">
+            <ng-template let-row="row" #columnTipo>
+                <span>{{expressaoText(row)}}</span>
+            </ng-template>
+        </column>
+        <column type="options"
+            [onEdit]="edit"
+            [dynamicOptions]="dynamicOptions.bind(this)"
+            [dynamicButtons]="dynamicButtons.bind(this)"
+        ></column>     
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

@@ -615,11 +615,18 @@ export class LookupService implements IIndexable {
   ];
 
   public TIPO_LOG_CHANGE: LookupItem[] = [
-    { key: "ADD", value: "ADD" },
-    { key: "EDIT", value: "EDIT" },
-    { key: "SOFT_DELETE", value: "SOFT_DELETE" },
-    { key: "DELETE", value: "DELETE" },
+    { key: "ADD", value: "Adicionar" },
+    { key: "EDIT", value: "Alterar" },
+    { key: "SOFT_DELETE", value: "Excluir" },
+    { key: "DELETE", value: "Excluir Permanente" },
   ];
+
+  public TIPO_LOG_AUDIT: LookupItem[] = [
+    { key: "created", value: "Criado" },
+    { key: "updated", value: "Editado" },
+    { key: "delete", value: "Excluído" },
+  ];
+
 
   public TIPO_LOG_ERROR: LookupItem[] = [
     { key: "ERROR", value: "ERROR" },
@@ -916,6 +923,25 @@ export class LookupService implements IIndexable {
     { key: "participante", value: "Participante" },
     { key: "entrega", value: "Plano de Entrega" },
     { key: "trabalho", value: "Plano de Trabalho" }
+  ];
+
+  public AGENDAMENTO_PERIODICIDADES: LookupItem[] = [
+    { key: 'cada', value: "A cada" },
+    { key: 'dia', value: "No dia" },
+    { key: 'todos', value: "Todos os dias" },
+    { key: 'domingo', value: "Todo domingo" },
+    { key: 'segunda', value: "Toda segunda" },
+    { key: 'terça', value: "Toda terça" },
+    { key: 'quarta', value: "Toda quarta" },
+    { key: 'quinta', value: "Toda quinta" },
+    { key: 'sexta', value: "Toda sexta" },
+    { key: 'sabado', value: "Toda sábado" },
+    { key: 'custom', value: "Personalizado" }
+  ];
+
+  public AGENDAMENTO_INTERVALO_TIPOS: LookupItem[] = [
+    { key: 'minuto', value: "minuto(s)" },
+    { key: 'hora', value: "hora(s)" }
   ];
 
   public getLookup(itens: LookupItem[], key: any) {

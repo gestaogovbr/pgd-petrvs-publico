@@ -1,0 +1,92 @@
+<editable-form
+  [form]="form!"
+  [disabled]="formDisabled"
+  [title]="isModal ? '' : title"
+  initialFocus="nome"
+  (submit)="onSaveData()"
+  (cancel)="onCancel()"
+>
+  <div class="row">
+    <input-text 
+      [size]="12" 
+      label="Nome do Agendamento" 
+      icon="bi bi-textarea-t" 
+      controlName="nome" 
+      [control]="form!.controls.nome" 
+      [attr.maxlength]=250
+      required   
+    ></input-text>
+    <input-select
+      [size]="3"
+      label="Tenant"
+      controlName="tenant_id"
+      [items]="tenants"
+      [control]="form!.controls.tenant_id"
+      required
+    ></input-select>
+    <input-select
+      [size]="4"
+      label="Job"
+      controlName="classe"
+      [items]="jobTypes"
+      [control]="form!.controls.classe"
+      required
+    ></input-select>
+    <input-select
+      [size]="2"
+      label="Peridicidade"
+      controlName="periodicidade"
+      [items]="lookup.AGENDAMENTO_PERIODICIDADES"
+      [control]="form!.controls.periodicidade"
+      required
+    ></input-select>
+    <input-text *ngIf="form!.controls.periodicidade.value === 'custom'"
+      [size]="2" 
+      label="Expressão CRON" 
+      icon="bi bi-textarea-t"
+      controlName="expressao_cron"
+      [control]="form!.controls.expressao_cron"
+      [attr.maxlength]=20
+      placeholder="A expressão CRON para o agendamento. Ex: 0 0 * * *"
+      required   
+    ></input-text>
+    <input-number *ngIf="form!.controls.periodicidade.value === 'dia'"
+      [size]="1"
+      label="Dia"
+      icon="bi bi-clock"
+      controlName="dia"
+      [control]="form!.controls.dia"
+    ></input-number>
+    <input-number *ngIf="form!.controls.periodicidade.value === 'cada'"
+      [size]="1"
+      label="Intervalo"
+      icon="bi bi-clock"
+      controlName="intervalo_qtde"
+      maxValue="31"
+      minValue="1"
+      [control]="form!.controls.intervalo_qtde"
+    ></input-number>
+    <input-select *ngIf="form!.controls.periodicidade.value === 'cada'"
+      [size]="2"
+      label="Tipo"
+      controlName="intervalo_tipo"
+      [items]="lookup.AGENDAMENTO_INTERVALO_TIPOS"
+      [control]="form!.controls.intervalo_tipo"
+    ></input-select>
+    <input-datetime
+      *ngIf="form!.controls.periodicidade.value && 
+        form!.controls.periodicidade.value !== 'cada' &&
+        form!.controls.periodicidade.value !== 'custom'"
+      noIcon
+      label="Horário"
+      time
+      [size]="2"
+      controlName="horario"
+      [control]="form!.controls.horario"
+    ></input-datetime>
+  </div>
+</editable-form>
+
+
+
+

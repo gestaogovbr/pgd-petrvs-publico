@@ -6,6 +6,7 @@ use App\Services\Siape\BuscarDados\BuscarDadosSiape;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
 
 trait DadosExternosSiape
@@ -66,6 +67,8 @@ trait DadosExternosSiape
 
         $retornoFuncionais = $this->siapeClassBuscaDados->buscaSincrona($xmlDataFuncionais);
         $xmlFuncional = $this->siapeClassBuscaDados->prepareResponseXml($retornoFuncionais);
+        // Log::info('======BODE======', [$retornoFuncionais]);
+        // Log::info('XML Funcional', [$xmlFuncional]);
 
         $xmlDataPessoais = $this->siapeClassBuscaDados->consultaDadosPessoais(
             $this->configIntegracaoSiape['siglaSistema'],
@@ -80,7 +83,7 @@ trait DadosExternosSiape
         $retornoPessoais = $this->siapeClassBuscaDados->buscaSincrona($xmlDataPessoais);
         $xmlPessoal = $this->siapeClassBuscaDados->prepareResponseXml($retornoPessoais);
 
-        $out = $xmlPessoal->xpath('//out')[0]; 
+        $out = isset($xmlPessoal->xpath('//out')[0]) ? $xmlPessoal->xpath('//out')[0] : $xmlPessoal->xpath('//out'); 
 
         $newXmlPessoal = new SimpleXMLElement('<out/>');
 
@@ -91,7 +94,6 @@ trait DadosExternosSiape
                     $newXmlPessoal->addChild($field, (string) $out->$field);
                 }
             }
-
 
         return [
             $xmlFuncional,

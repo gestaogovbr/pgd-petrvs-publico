@@ -4,8 +4,19 @@
         <span *ngIf="!isNoIcon" class="input-group-text" [id]="generatedId(controlName) + '_icon'"><i class="bi bi-calendar3"></i></span>
         <input *ngIf="!isTime" #inputElement [type]="isDate || isFirefox || isTime24hours ? 'date' : 'datetime-local'" #dateInput class="form-control" [class.no-indicator]="isNoIndicator" [class.firefox-date]="isFirefox"
             [id]="generatedId(controlName) + '_date'" [class.is-invalid]="isInvalid()" [disabled]="isDisabled" (change)="onChangeDateTime($event)" [attr.aria-describedby]="generatedId(controlName) + '_icon'" [max]="maxDate" [min]="minDate">
-        <input *ngIf="hasTimeInput" [type]="isTime24hours ? 'text' : 'time'" #timeInput class="form-control firefox-time" [class.no-indicator]="isNoIndicator"
-            [id]="generatedId(controlName) + '_time'" [class.is-invalid]="isInvalid()" [mask]="isTime24hours ? '00:00' : ''" [showMaskTyped]="true" [disabled]="isDisabled" (change)="onChangeDateTime($event)">
+        <input *ngIf="hasTimeInput"
+            [type]="isTime24hours ? 'text' : 'time'"
+            #timeInput
+            class="form-control firefox-time"
+            [class.no-indicator]="isNoIndicator"
+            [id]="generatedId(controlName) + '_time'"
+            [class.is-invalid]="isInvalid()"
+            [mask]="isTime24hours ? '00:00' : ''"
+            [showMaskTyped]="true"
+            [disabled]="isDisabled"
+            [formControl]="formControl"
+            [attr.value]="control ? undefined : value"
+            (change)="onChangeDateTime($event)">
         <span *ngIf="sufix" class="input-group-text">{{sufix}}</span>
     </div>
 </input-container>
