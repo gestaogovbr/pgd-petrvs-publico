@@ -162,35 +162,18 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
     } */
 
   public consultaUnidadeSIAPE(unidade: string) {
-    this.server.postDownload('api/unidade/consulta-unidade-siape', { unidade })
-      .subscribe((response: Blob) => {
-        const contentType = response.type; 
-        const dataCriacao = new Date().toISOString().slice(0, 10);
-  
-        let extensao = '';
-        if (contentType === 'application/xml') {
-          extensao = 'xml';
-        } else if (contentType === 'text/plain') {
-          extensao = 'txt';
-        } else {
-          console.warn('Tipo de conteúdo inesperado:', contentType);
-          extensao = 'txt'; 
-        }
-  
-        const nomeArquivo = `dados_unidade_${unidade}_${dataCriacao}.${extensao}`;
-  
-        const blob = new Blob([response], { type: contentType });
-        const url = window.URL.createObjectURL(blob);
-  
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = nomeArquivo;
-        link.click();
-  
-        window.URL.revokeObjectURL(url);
-      }, error => {
-        console.error('Erro ao realizar o download:', error);
-      });
+    return this.server.post('api/unidade/consultar-unidade-siape', { unidade });
+  }
+  public exportarUnidadeSIAPE(unidade: string) {
+    return this.server.postDownload('api/unidade/exportar-unidade-siape', { unidade });
+  }
+
+  public sincronizarSIAPE(unidade: string) {
+    return this.server.post('api/unidade/processar-siape', { unidade });
+  }
+
+  public baixaLogSiape(unidade: string) {
+    return this.server.postDownload('api/unidade/download-unidade-siape', { unidade });
   }
 
   public obterInstituidora(unidade_id: string): Promise<Unidade> {

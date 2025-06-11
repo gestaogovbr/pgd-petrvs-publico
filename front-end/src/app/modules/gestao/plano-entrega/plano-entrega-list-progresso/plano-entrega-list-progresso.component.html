@@ -2,7 +2,7 @@
   <toolbar *ngIf="!selectable"></toolbar>
   <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
     <div class="row">
-      <input-datetime [size]="3" noIcon label="Data inical do progresso" controlName="data_inicial_progresso" [control]="filter!.controls.data_inicial_progresso" labelInfo="Data que foi registrado o progresso"></input-datetime>
+      <input-datetime [size]="3" noIcon label="Data inicial do progresso" controlName="data_inicial_progresso" [control]="filter!.controls.data_inicial_progresso" labelInfo="Data que foi registrado o progresso"></input-datetime>
       <input-datetime [size]="3" noIcon label="Data final do progresso" controlName="data_final_progresso" [control]="filter!.controls.data_final_progresso" labelInfo="Data que foi registrado o progresso"></input-datetime>
     </div>
   </filter>

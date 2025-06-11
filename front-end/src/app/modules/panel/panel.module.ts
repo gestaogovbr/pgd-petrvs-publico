@@ -17,7 +17,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { PanelChangePasswordComponent } from './panel-change-password/panel-change-password.component';
 import {PanelEnvComponent} from "./panel-env/panel-env.component";
 import {PanelAuditComponent} from "./panel-audit/panel-audit.component";
-
+import { PanelJobAgendadosListComponent } from './panel-jobs-agendados-list/panel-jobs-agendados-list.component';
+import { PanelJobsAgendadosFormComponent } from './panel-jobs-agendados-form/panel-jobs-agendados-form.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,9 @@ import {PanelAuditComponent} from "./panel-audit/panel-audit.component";
     PanelAdminsFormComponent,
     PanelChangePasswordComponent,
     JobAgendadoComponent,
-      PanelEnvComponent
+    PanelJobAgendadosListComponent,
+    PanelJobsAgendadosFormComponent,
+    PanelEnvComponent
   ],
     imports: [
         CommonModule,
