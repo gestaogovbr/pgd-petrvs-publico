@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 import { ConfigResolver } from 'src/app/resolvies/config.resolver';
-import { ChangeFormComponent } from './change/change-form/change-form.component';
 import { ChangeListComponent } from './change/change-list/change-list.component';
 import { ErrorFormComponent } from './error/error-form/error-form.component';
 import { ErrorListComponent } from './error/error-list/error-list.component';

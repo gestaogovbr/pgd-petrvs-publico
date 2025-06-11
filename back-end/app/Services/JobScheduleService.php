@@ -8,7 +8,7 @@ use App\Traits\TenantConnection;
 use Carbon\Carbon;
 use Exception;
 
-class JobAgendadoService extends ServiceBase {
+class JobScheduleService extends ServiceBase {
 
     use TenantConnection;
 
@@ -23,7 +23,7 @@ class JobAgendadoService extends ServiceBase {
 
     public function createJob($dados, $tenantId = null) {
         try {
-            
+
             if(!is_null($tenantId) && !$this->validateCreateJob($dados, $tenantId)){
                 throw new Exception(sprintf("já existe um job %s no banco de dados para o tenant %s, não será possivel criar outro", $dados['classe'], $tenantId));
             }
@@ -42,7 +42,6 @@ class JobAgendadoService extends ServiceBase {
         }
     }
 
-
     private function validateCreateJob($dados,  $tenantId) : bool{
         $nomeClasseBuscarDadosSiapeJob = getClassNameFromPath('app/Jobs/BuscarDadosSiapeJob.php');
         $nomeClasseSincronizaSiapeJob = getClassNameFromPath('app/Jobs/SincronizarSiapeJob.php');
@@ -50,6 +49,7 @@ class JobAgendadoService extends ServiceBase {
         $jobBuscarDadosJaExiste = JobSchedule::where('tenant_id', $tenantId)
         ->where('classe', $nomeClasseBuscarDadosSiapeJob)
         ->exists();
+
         $jobSincronizaSiapeExiste = JobSchedule::where('tenant_id', $tenantId)
         ->where('classe', $nomeClasseSincronizaSiapeJob)
         ->exists();
@@ -58,35 +58,20 @@ class JobAgendadoService extends ServiceBase {
             $jobBuscarDadosJaExiste = JobSchedule::where('tenant_id', $tenantId)
             ->where('classe', $nomeClasseBuscarDadosSiapeJob)
             ->exists();
-            
+
             return !$jobBuscarDadosJaExiste;
         }
-        
+
         if($dados['classe'] == $nomeClasseSincronizaSiapeJob){
-            
+
             $jobSincronizaSiapeExiste = JobSchedule::where('tenant_id', $tenantId)
             ->where('classe', $nomeClasseSincronizaSiapeJob)
             ->exists();
             return !$jobSincronizaSiapeExiste;
         }
-        
+
         return true;
 
-    }
-    public function removerJob($id, $tenantId = null) {
-        $query = JobSchedule::where('id', $id);
-        if ($tenantId) {
-            $query->where('tenant_id', $tenantId);
-        }
-
-        $job = $query->first();
-
-        if (!$job) {
-            return ['success' => false, 'message' => 'Job não encontrado.'];
-        }
-
-        $job->delete();
-        return ['success' => true, 'message' => 'Job removido com sucesso.'];
     }
 
     public function getAllClassJobs() {
@@ -96,12 +81,12 @@ class JobAgendadoService extends ServiceBase {
             if (strpos($file, '.php') !== false) {
                 $job = str_replace('.php', '', $file);
                 $namespace = 'App\\Jobs\\';
-    
+
                 $fullClassName = $namespace . $job;
-    
+
                 if (class_exists($fullClassName)) {
                     $interfaces = class_implements($fullClassName);
-    
+
                     if ($interfaces && in_array('App\\Jobs\\Contratos\\ContratoJobSchedule', $interfaces)) {
                         $jobs[$job] = $fullClassName::getDescricao();
                         continue;
@@ -109,7 +94,7 @@ class JobAgendadoService extends ServiceBase {
                 }
             }
         }
-    
+
         return $jobs;
     }
 
@@ -124,7 +109,7 @@ class JobAgendadoService extends ServiceBase {
         $jobSincronizaSiapeExiste = JobSchedule::where('tenant_id', $tenantId)
         ->where('classe', $nomeClasseSincronizaSiapeJob)
         ->exists();
-        
+
         $now = Carbon::now();
 
         if(!$jobBuscarDadosJaExiste){
@@ -150,7 +135,7 @@ class JobAgendadoService extends ServiceBase {
             $minute = $now->format('i');
             $hour = $now->format('H');
             $expressaoCron = "{$minute} {$hour} * * *";
-    
+
             $job = new JobSchedule([
                 'nome' => 'Sincroniza Dados Siape ' . $tenantId,
                 'classe' => 'SincronizarSiapeJob',

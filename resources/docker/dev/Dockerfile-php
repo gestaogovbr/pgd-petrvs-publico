@@ -1,45 +1,58 @@
 # syntax=docker/dockerfile:1
 FROM php:8.2-apache
+
 # instala recursos adicionais
-RUN apt-get update
-RUN apt-get install -y sed vim git zlib1g-dev libzip-dev unzip curl openssl libssl-dev libxml2-dev nano iputils-ping dnsutils telnet libpng-dev
-RUN apt-get install -y libjpeg-dev cron supervisor \
+RUN apt-get update && apt-get install -y \
+    sed \
+    git \
+    zlib1g-dev \
+    libzip-dev \
+    unzip \
+    curl \
+    openssl \
+    libssl-dev \
+    libxml2-dev \
+    nano \
+    iputils-ping \
+    dnsutils \
+    libpng-dev \
+    libjpeg-dev \
+    cron \
+    supervisor \
+    default-mysql-client \
     && pecl install redis
 
-# Instalar o cliente MySQL para utilizar o mysqldump
-RUN apt-get install -y default-mysql-client
-
 # Bibliotecas php
-RUN docker-php-ext-install zip pdo_mysql mysqli pdo_mysql soap gd
-# instala openssl utilizando um workaround
-RUN docker-php-ext-install openssl || true
-RUN cp /usr/src/php/ext/openssl/config0.m4 /usr/src/php/ext/openssl/config.m4
-RUN docker-php-ext-install openssl pcntl
-RUN docker-php-ext-enable redis
+RUN docker-php-ext-install zip pdo_mysql mysqli soap gd \
+    && docker-php-ext-install openssl || true \
+    && cp /usr/src/php/ext/openssl/config0.m4 /usr/src/php/ext/openssl/config.m4 \
+    && docker-php-ext-install openssl pcntl \
+    && docker-php-ext-enable redis
+
 # cria diretorio do document-root
 WORKDIR /var/www
 VOLUME /var/www
 # copia arquivos de configuracao
 COPY ./apache2.conf /etc/apache2/apache2.conf
 COPY ./000-default.conf /etc/apache2/sites-available/000-default.conf
-COPY ./xdebug-enable.sh /usr/local/etc/php/conf.d/xdebug-enable.sh
-COPY ./xdebug-disable.sh /usr/local/etc/php/conf.d/xdebug-disable.sh
+COPY ./xdebug-enable.sh ./xdebug-disable.sh /usr/local/etc/php/conf.d/
 COPY ./cacert.pem /usr/local/etc/php/cacert.pem
 COPY horizon.conf /etc/supervisor/conf.d/horizon.conf
 COPY php.ini /usr/local/etc/php/php.ini
 # Adiciona a entrada do cron
 #RUN echo "* * * * * cd /var/www/ && /usr/local/bin/php artisan schedule:run >> /var/www/schedule.log 2>&1" | crontab -
 
-
 # instala o composer
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-RUN php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+    php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
+    rm composer-setup.php
+
 # habilita o modulo rewrite
-RUN a2enmod rewrite
-RUN a2enmod headers
+RUN a2enmod rewrite headers
 RUN pecl install xdebug-3.3.2 && docker-php-ext-enable xdebug
 RUN echo "xdebug.mode=off" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
     echo "xdebug.start_with_request=yes" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
     echo "xdebug.client_host=host.docker.internal" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
     echo "xdebug.discover_client_host=0" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
-    echo "xdebug.client_port=9004" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null
+    echo "xdebug.client_port=9004" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*

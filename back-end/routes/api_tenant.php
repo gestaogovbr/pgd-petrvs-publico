@@ -88,10 +88,10 @@ use App\Http\Controllers\QuestionarioPerguntaController;
 use App\Http\Controllers\QuestionarioPerguntaRespostaController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\TipoClienteController;
-use FontLib\Table\Type\post;
-use App\Http\Controllers\JobAgendadoController;
 use App\Http\Controllers\RelatoController;
 use App\Http\Controllers\SolucaoUnidadeController;
+use App\Http\Controllers\SiapeIndividualController;
+
 use App\Http\Controllers\ImpersonationController;
 /*
 |--------------------------------------------------------------------------
@@ -145,6 +145,7 @@ Route::middleware('auth:sanctum')->prefix('Change')->group(function () {
   Route::post('query', [ChangeController::class, 'query']);
   Route::post('get-by-id', [ChangeController::class, 'getById']);
   Route::post('showResponsaveis', [ChangeController::class, 'showResponsaveis']);
+  Route::post('list-models', [ChangeController::class, 'loadModels']);
 });
 Route::middleware('auth:sanctum')->prefix('Error')->group(function () {
   Route::post('query', [ErrorController::class, 'query']);
@@ -342,6 +343,8 @@ Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () {
 /* Modulos: Configurações */
 Route::middleware(['auth:sanctum'])->prefix('Usuario')->group(function () {
   defaultRoutes(UsuarioController::class);
+  Route::post('atualiza-pedagio', [UsuarioController::class, 'atualizaPedagio']);
+  Route::post('remove-pedagio', [UsuarioController::class, 'removerPedagio']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Perfil')->group(function () {
   defaultRoutes(PerfilController::class);
@@ -491,10 +494,20 @@ Route::middleware(['auth:sanctum'])->prefix('Relato')->group(function () {
   Route::post('store', [RelatoController::class, 'store']);
   Route::get('confirmar/{email}/{nome}', [RelatoController::class, 'confirmar']);
 });
-Route::middleware('auth:sanctum')->post('/usuario/consulta-cpf-siape', [UsuarioController::class, 'consultaCPFSiape']);
-Route::middleware('auth:sanctum')->post('/unidade/consulta-unidade-siape', [UnidadeController::class, 'consultaUnidadeSiape']);
-Route::middleware(['auth:sanctum'])->prefix('SolucaoUnidade')->group(function () {
-  defaultRoutes(SolucaoUnidadeController::class);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/usuario/consultar-cpf-siape', [UsuarioController::class, 'consultarCPFSiape']);
+    Route::post('/usuario/exportar-cpf-siape', [UsuarioController::class, 'exportarCPFSiape']);
+    Route::post('/usuario/download-cpf-siape', [UsuarioController::class, 'downloadLogSiape']);
+    Route::post('/unidade/consultar-unidade-siape', [UnidadeController::class, 'consultaUnidadeSiape']);
+    Route::post('/unidade/exportar-unidade-siape', [UnidadeController::class, 'exportarUnidadeSiape']);
+    Route::post('/unidade/download-unidade-siape', [UnidadeController::class, 'downloadLogSiape']);
+    Route::post('/usuario/processar-siape', [SiapeIndividualController::class, 'processaServidor']);
+    Route::post('/unidade/processar-siape', [SiapeIndividualController::class, 'processaUnidade']);
+
+    Route::prefix('SolucaoUnidade')->group(function () {
+        defaultRoutes(SolucaoUnidadeController::class);
+    });
 });
 
 

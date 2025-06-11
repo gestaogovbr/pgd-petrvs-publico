@@ -24,6 +24,7 @@
             <ng-template let-row="row" #columnUsuario>
                 <strong>{{row.nome }}</strong><br>
                 <label class="badge text-bg-warning" *ngIf="row.usuario_externo">Usuário Externo</label>
+                <label class="badge text-bg-danger" *ngIf="row.pedagio">Teletrabalho indisponível</label>
             </ng-template>
         </column>
 
@@ -40,7 +41,7 @@
         <column [title]="lex.translate('Vínculos')" [template]="columnLotacao">
             <ng-template let-row="row" #columnLotacao>
                 <div *ngFor="let area of row.areas_trabalho">
-                    <small>{{area.unidade.sigla}}</small>
+                    <small>{{area.unidade?.sigla}}</small>
                 </div>
             </ng-template>
         </column>

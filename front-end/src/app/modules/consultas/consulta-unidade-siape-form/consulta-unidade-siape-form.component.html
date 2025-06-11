@@ -1,12 +1,37 @@
+<div class="spinner-border" role="status" *ngIf="loading">
+    <span class="visually-hidden"></span>
+</div>
+
+<div class="consulta-unidade-siape-form">
 <editable-form [form]="form!" [disabled]="false" [title]="isModal ? '' : title">
     <div *ngIf="erros?.length" class="alert alert-danger mt-2 break-spaces" role="alert">{{erros}}</div>
+
     <div class="row">
-      
-        <div class="row">
-            <input-text [size]="3" label="Unidade" controlName="unidade"  [attr.minlength]=1 required></input-text>
+        <div class="col-md-4 intro">
+            <h2>Consulta Unidade Siape</h2>
+            <p>Para acessar as informações do servidor no SIAPE, informe o código da unidade abaixo
+                 e clique em Localizar.
+            </p>
         </div>
     </div>
-    <separator>
-        <toolbar [buttons]="toolbarButtons"></toolbar>
-    </separator>
+    <div class="row">
+        <div class="col-md-4">
+            <input-text
+                controlName="unidade"
+                label="Unidade"
+                labelInfo="Informe o código da unidade para busca no SIAPE"
+                [size]="4"
+                [attr.maxlength]=50
+                hostClass="inputUnidade"
+                relativeId="inputUnidade"
+                placeholder="Informe o código unidade"
+            ></input-text>
+            <button type="button" class="btn btn-outline-primary btn-block btn-unidade"
+                (click)="onClickUnidade()" 
+                [disabled]="loading || !form.valid">
+                Localizar
+            </button>
+        </div>
+    </div>
 </editable-form>
+</div>
