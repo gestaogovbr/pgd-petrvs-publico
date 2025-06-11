@@ -1,4 +1,4 @@
-## 2.3.21 09/06/2025
+## 2.4.0 11/06/2025
 ### Adicionado
  - Função para bloquear o teletrabalho para servidores em pedágio
  - Filtros no módulo de Agendamento de Jobs.
