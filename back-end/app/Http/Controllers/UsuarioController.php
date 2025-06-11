@@ -62,7 +62,7 @@ class UsuarioController extends ControllerBase
     {
         $request->validate([
             'cpf' => [],
-        ]);
+        ]); 
 
       try {
              $retorno = $this->service->consultaCPFSiape($request->cpf);
