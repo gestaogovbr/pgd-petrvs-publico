@@ -1,0 +1,36 @@
+filter {
+    .row {
+        align-items: end;
+    }
+}
+
+.busca-avancada {
+    .busca-avancada-link, .busca-avancada-clear {
+        margin-bottom: 6px;
+
+        a {
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            color: black;
+        }
+    }
+
+    .busca-avancada-filtros-aplicados {
+        margin-top: 4px;
+        font-size: 12px;
+
+        span {
+            font-size: 12px;
+            background-color: #ccc;
+            padding: 1px 5px;
+            margin-right: 3px;
+            border-radius: 3px;
+        }
+    }
+}
+
+.ativar-desativar {
+    display: flex;
+    flex-direction: row-reverse;
+}
