@@ -33,6 +33,7 @@ export class FilterComponent extends ComponentBase implements OnInit {
   @Input() visible: boolean = true;
   @Input() deleted: boolean = false;
   @Input() deletedLabel: string = 'Mostrar os deletados';
+  @Input() filterLabel: string = 'Filtrar';
   @Input() noButtons?: string;
   @Input() collapsed: boolean = true;
   @Input() grid?: GridComponent;
