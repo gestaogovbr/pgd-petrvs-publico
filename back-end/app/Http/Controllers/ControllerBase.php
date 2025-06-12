@@ -25,10 +25,10 @@ abstract class ControllerBase extends Controller
             $this->collection = str_replace("Controller", "", str_replace("App\\Http\\Controllers", "App\\Models", get_class($this)));
         }
         if(empty($this->service)) {
-            $chield = str_replace("App\\Http", "App", str_replace("Controller", "Service", get_class($this)));
+            $child = str_replace("App\\Http", "App", str_replace("Controller", "Service", get_class($this)));
             try {
-                if(!empty(app($chield))) {
-                    $this->service = new $chield();
+                if(!empty(app($child))) {
+                    $this->service = new $child();
                 }
             } catch (BindingResolutionException $e) {}
         }
@@ -378,7 +378,7 @@ tenancy()->initialize($tenant); */
                 'success' => true,
                 'rows' => [$result]
             ]);
-        } 
+        }
         catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
@@ -418,7 +418,7 @@ tenancy()->initialize($tenant); */
             ]);
             return response()->json([
                 'success' => true,
-                'rows' => [$result] 
+                'rows' => [$result]
             ]);
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);

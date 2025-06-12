@@ -1,0 +1,29 @@
+<editable-form 
+    [form]="form!" 
+    [title]="isModal ? '' : title" 
+    (submit)="atualizaPedagio()" 
+    (cancel)="onCancel()"
+    confirmLabel="Confirmar"
+>
+
+<div class="row">
+  <div class="col-md-12 situacao">
+      <input-radio [size]="3"
+          label="Selecione a hipótese normativa aplicável ao impedimento para a modalidade Teletrabalho:" 
+          controlName="tipo_pedagio" 
+          [items]="OPTIONS"
+          circle="true"
+          required
+          (change)="updateDates($event)" 
+      ></input-radio>
+  </div>
+
+    <div class="col-md-6">
+        <input-datetime date [size]="3" label="Data Início" icon="bi bi-calendar-date" controlName="data_inicial_pedagio" [control]="form!.controls.data_inicial_pedagio" (change)="onDataInicioChange($event)" [labelInfo]="'Início do período de pedágio'" required></input-datetime>
+    </div>
+    <div class="col-md-6">
+        <input-datetime date [size]="3" label="Data Fim" icon="bi bi-calendar-date" controlName="data_final_pedagio" [control]="form!.controls.data_final_pedagio" (change)="onDataFimChange($event)" [labelInfo]="'Fim do período de pedágio'" required></input-datetime>
+    </div>
+</div>
+
+</editable-form>

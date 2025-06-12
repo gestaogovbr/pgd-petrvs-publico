@@ -6,7 +6,7 @@ use App\Exceptions\Contracts\IBaseException;
 use App\Http\Controllers\ControllerBase;
 use App\Models\Tenant;
 use App\Services\AuditService;
-use App\Services\JobAgendadoService;
+use App\Services\JobScheduleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Throwable;

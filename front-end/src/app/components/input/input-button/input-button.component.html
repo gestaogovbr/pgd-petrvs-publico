@@ -1,10 +1,42 @@
-<input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" required [control]="control" [loading]="false" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
+<input-container
+    [labelPosition]="labelPosition"
+    [labelClass]="labelClass"
+    [controlName]="controlName"
+    required
+    [control]="control"
+    [loading]="false"
+    [disabled]="disabled"
+    [label]="label"
+    [labelInfo]="labelInfo"
+    [icon]="icon"
+    [bold]="bold"
+>
     <div class="input-group">
-        <input *ngIf="viewInit" #inputElement [type]="isNumbers ? 'number' : 'text'" class="form-control" [attr.value]="!isDisabled ? undefined : control ? control.value : value"
-            [class.text-uppercase]="textCase == 'upper'" [class.text-lowercase]="textCase == 'lower'"
-            [formControl]="formControl" [id]="generatedId(controlName)" [class.is-invalid]="isInvalid()" 
-            [readonly]="isDisabled || loading" [attr.aria-describedby]="generatedId(controlName) + '_button'" (change)="onChange($event)"  [attr.maxlength]="maxLength ? maxLength : undefined">
-        <button *ngIf="!isDisabled" [id]="generatedId(controlName) + '_button'" class="btn btn-outline-secondary" [class.disabled]="loading" type="button" (click)="onButtonClick($event)">
+        <input
+            #inputElement
+            *ngIf="viewInit"
+            class="form-control"
+            [type]="isNumbers ? 'number' : 'text'"
+            [attr.value]="!isDisabled ? undefined : control ? control.value : value"
+            [class.text-uppercase]="textCase == 'upper'"
+            [class.text-lowercase]="textCase == 'lower'"
+            [formControl]="formControl"
+            [id]="generatedId(controlName)"
+            [class.is-invalid]="isInvalid()" 
+            [readonly]="isDisabled || loading"
+            [attr.aria-describedby]="generatedId(controlName) + '_button'"
+            (change)="onChange($event)"
+            [mask]="maskFormat"
+            [attr.maxlength]="maxLength ? maxLength : undefined"
+        >
+        <button
+            *ngIf="!isDisabled"
+            [id]="generatedId(controlName) + '_button'"
+            class="btn btn-outline-secondary"
+            [class.disabled]="loading"
+            type="button"
+            (click)="onButtonClick($event)"
+        >
             <i *ngIf="!loading" [class]="iconButton"></i>
             <div *ngIf="loading" class="spinner-border spinner-border-sm" role="status">
                 <span class="visually-hidden"></span>

@@ -4,7 +4,6 @@ import { LogRoutingModule } from './log-routing.module';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ChangeListComponent } from './change/change-list/change-list.component';
-import { ChangeFormComponent } from './change/change-form/change-form.component';
 import { ErrorFormComponent } from './error/error-form/error-form.component';
 import { ErrorListComponent } from './error/error-list/error-list.component';
 import { EnvioListComponent } from './envios/envio-list/envio-list.component';
@@ -17,7 +16,6 @@ import { EnvioItemEntregaListComponent } from './envios/envio-item-entrega-list/
 @NgModule({
   declarations: [
     ChangeListComponent,
-    ChangeFormComponent,
     ErrorListComponent,
     ErrorFormComponent,
     EnvioListComponent,

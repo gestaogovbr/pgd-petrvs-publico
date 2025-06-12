@@ -22,10 +22,12 @@ abstract class BuscarDadosSiape
     private $client;
     private $secret;
     private ?int $quantidadeMaxRequisicoes;
+    public $config;
 
     public function __construct(
-        private readonly mixed $config
+        mixed $config
     ) {
+        $this->config = $config;
         $this->cpf = $config["cpf"];
         $this->url = $config["url"];
         $this->client = $config["conectagov_chave"];
@@ -42,8 +44,8 @@ abstract class BuscarDadosSiape
     public function getToken()
     {
         if (self::$token && now()->lessThan(self::$tokenExpiresAt)) {
-        return self::$token;
-    }
+            return self::$token;
+        }
 
         $curl = curl_init();
 
@@ -82,8 +84,8 @@ abstract class BuscarDadosSiape
         throw new RequestConectaGovException('Falha ao gerar o token. Response: ' . $response);
     }
 
-
-    protected function executaRequisicoes(array $xmlsData){
+    // a partir de um lote de servidores, busca os dados da API
+    public function executaRequisicoes(array $xmlsData){
         $token = $this->getToken();
 
         $url = $this->getUrl() . '/api-consulta-siape/v1/consulta-siape';
@@ -150,12 +152,19 @@ abstract class BuscarDadosSiape
         return $respostas;
     }
 
+    public function executaRequisicao(string $xmlData)
+    {
+       return $this->buscaSincrona($xmlData);
+    }
+
     private function sanitizeXml(string &$response): void
     {
         $response = trim($response);
         $response = preg_replace('/&(?!amp;|lt;|gt;|quot;|apos;)/', '&amp;', $response);
         $response = preg_replace('/[^\P{C}\t\n\r]/u', '', $response);
         $response = preg_replace('/xmlns=""/', '', $response);
+        $response = str_replace('\"', '"', $response);
+        $response = str_replace("\n", '', $response);
     }
 
     public function prepareResponseXml(string $response) : SimpleXMLElement
@@ -165,10 +174,11 @@ abstract class BuscarDadosSiape
         $response = <<<XML
         $response
         XML;
-        $responseXml = simplexml_load_string($response, "SimpleXMLElement", LIBXML_NOCDATA);
+        $responseXml = simplexml_load_string($response, 'SimpleXMLElement', LIBXML_NOCDATA);
         if ($responseXml === false) {
             $errors = libxml_get_errors();
             foreach ($errors as $error) {
+                Log::alert("==========");
                 Log::error('XML Error: ' . $error->message);
             }
             libxml_clear_errors();
@@ -213,10 +223,10 @@ abstract class BuscarDadosSiape
             CURLOPT_POSTFIELDS => $xmlData,
         ]);
 
-        Log::info('Busca - Request para ' . $this->geturl() . '/api-consulta-siape/v1/consulta-siape', [
+        /*Log::info('Busca - Request para ' . $this->geturl() . '/api-consulta-siape/v1/consulta-siape', [
             'headers' => $headers,
             'body' => $xmlData
-        ]);
+        ]);*/
 
         $response = curl_exec($curl);
 
@@ -227,7 +237,7 @@ abstract class BuscarDadosSiape
         }
 
         curl_close($curl);
-        Log::info(' Response: ' . $response);
+        //Log::info(' Response: ' . $response);
         return $response;
     }
 

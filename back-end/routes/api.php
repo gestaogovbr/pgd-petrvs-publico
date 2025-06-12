@@ -9,7 +9,7 @@ use App\Http\Controllers\LoginController;
 use Stancl\Tenancy\Middleware\InitializeTenancyByPath;
 use App\Http\Controllers\SeederController;
 use App\Http\Controllers\TenantController;
-use App\Http\Controllers\JobAgendadoController;
+use App\Http\Controllers\JobScheduleController;
 
 
 /* Testes *
@@ -54,11 +54,9 @@ Route::middleware(['panel'])->prefix('Seeder')->group(function () {
 });
 
 Route::middleware(['panel'])->prefix('JobAgendado')->group(function () {
-    Route::get('/getAll', [JobAgendadoController::class, 'listar']);
-    Route::post('/create', [JobAgendadoController::class, 'createJob']);
-    Route::get('/getClassJobs', [JobAgendadoController::class, 'getClassJobs']);
-    Route::delete('/delete/{id}', [JobAgendadoController::class, 'removerJob']);
-
+    defaultRoutes(JobScheduleController::class);
+    Route::get('/getAll', [JobScheduleController::class, 'listar']);
+    Route::get('/getClassJobs', [JobScheduleController::class, 'getClassJobs']);
 });
 
 Route::middleware(['panel'])->prefix('Env')->group(function () {

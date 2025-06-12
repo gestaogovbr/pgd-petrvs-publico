@@ -2,23 +2,34 @@
 
 namespace App\Services;
 
-use App\Models\Usuario;
-use App\Models\Unidade;
-use App\Models\Programa;
+use Exception;
+use Throwable;
+use SimpleXMLElement;
 use App\Models\Perfil;
-use App\Models\UnidadeIntegrante;
-use App\Models\UnidadeIntegranteAtribuicao;
-use App\Services\ServiceBase;
+use App\Models\Unidade;
+use App\Models\Usuario;
+use App\Models\Programa;
 use App\Services\RawWhere;
+use App\Services\ServiceBase;
+use App\Models\UnidadeIntegrante;
+use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Log;
+use App\Exceptions\ValidateException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
-use App\Exceptions\ServerException;
-use App\Exceptions\ValidateException;
 use App\Services\Siape\DadosExternosSiape;
-use Exception;
-use SimpleXMLElement;
-use Throwable;
+use App\Models\UnidadeIntegranteAtribuicao;
+use App\Services\Siape\Consulta\Resources\DadosPessoaisResource;
+use App\Services\Siape\Consulta\Resources\DadosFuncionaisResource;
+use App\Services\Siape\Consulta\SiapeDadosPessoaisService;
+use App\Services\Siape\Consulta\SiapeDadosFuncionaisService;
+use App\Models\SiapeDadosUORG;
+use App\Services\Siape\Consulta\Resources\UnidadeResource;
+use App\Services\Siape\Consulta\Resources\UnidadesResource;
+use App\Services\Siape\Consulta\SiapeUnidadeService;
+use App\Services\Siape\Consulta\SiapeUnidadesService;
+use Carbon\Carbon;
+
 
 class UsuarioService extends ServiceBase
 {
@@ -282,6 +293,9 @@ class UsuarioService extends ServiceBase
   {
     $data["with"] = [];
     $data['cpf'] = $this->UtilService->onlyNumbers($data['cpf']);
+
+    unset($data['pedagio']);
+
     if (!empty($data['telefone']))
       $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
     /* Armazena as informações que serão necessárias no extraStore */
@@ -297,6 +311,7 @@ class UsuarioService extends ServiceBase
   public function proxyUpdate($data, $unidade)
   {
     $data["with"] = [];
+    unset($data['pedagio']);
     $this->validarPerfil($data);
     $this->validarColaborador($data);
     return $data;
@@ -390,31 +405,96 @@ class UsuarioService extends ServiceBase
   }
 
   public function validarColaborador($data) : void
-{
-    // Se é um usuário externo não pode ter outro perfil com nível < 6
-    $usuarioExterno = $data['usuario_externo'] ?? null;
-    if ($usuarioExterno === null) {
-        return;
+  {
+      // Se é um usuário externo não pode ter outro perfil com nível < 6
+      $usuarioExterno = $data['usuario_externo'] ?? null;
+      if ($usuarioExterno === null) {
+          return;
+      }
+
+      // Garantir que perfil_id está definido antes de buscar no banco
+      if (!isset($data['perfil_id'])) {
+          throw new ServerException("ValidateUsuario", "ID do perfil não foi informado.");
+      }
+
+      $perfil = Perfil::find($data['perfil_id']);
+      if (!$perfil) {
+          throw new ServerException("ValidateUsuario", "Perfil não encontrado.");
+      }
+
+      if ($perfil->nivel < 6 && $usuarioExterno == 1) {
+          throw new ServerException("ValidateUsuario", "Usuário externo não pode ter o nível de acesso: " . $perfil->nome);
+      } elseif ($perfil->nivel == 6 && $usuarioExterno == 0) {
+          throw new ServerException("ValidateUsuario", "Usuário não pode ter o nível de acesso: " . $perfil->nome);
+      }
     }
 
-    // Garantir que perfil_id está definido antes de buscar no banco
-    if (!isset($data['perfil_id'])) {
-        throw new ServerException("ValidateUsuario", "ID do perfil não foi informado.");
-    }
+    
 
-    $perfil = Perfil::find($data['perfil_id']);
-    if (!$perfil) {
-        throw new ServerException("ValidateUsuario", "Perfil não encontrado.");
-    }
+  public function searchText($data)
+  {
+      if (!in_array('usuario_externo', $data['fields'])) {
+          $data['fields'][] = 'usuario_externo';
+      }
+      $text = "%" . str_replace(" ", "%", $data['query']) . "%";
+      $model = App($this->collection);
+      $table = $model->getTable();
 
-    if ($perfil->nivel < 6 && $usuarioExterno == 1) {
-        throw new ServerException("ValidateUsuario", "Usuário externo não pode ter o nível de acesso: " . $perfil->nome);
-    } elseif ($perfil->nivel == 6 && $usuarioExterno == 0) {
-        throw new ServerException("ValidateUsuario", "Usuário não pode ter o nível de acesso: " . $perfil->nome);
-    }
+
+      // Garante que os campos tenham o nome da tabela
+      $data["select"] = array_map(fn ($field) => str_contains($field, ".") ? $field : $table . "." . $field, array_merge(['id'], $data['fields']));
+
+
+      // Usa Eloquent query() em vez de DB::table()
+      $query = $model->query();
+
+      if (method_exists($this, 'proxySearch')) {
+          $this->proxySearch($query, $data, $text);
+      }
+
+      // Adiciona condição LIKE para busca nos campos informados
+      $likes = ["or"];
+      foreach ($data['fields'] as $field) {
+          array_push($likes, [$field, 'like', $text]);
+      }
+
+      // Garante que deleted_at seja tratado corretamente
+      $condicaoDeletados = array_filter($data['where'], fn ($w) => is_array($w) && $w[0] == "deleted_at");
+      if (empty($condicaoDeletados)) {
+          array_push($data['where'], ['deleted_at', '=', null]);
+      }
+
+      $where = [$likes, $data['where']];
+      $this->applyWhere($query, $where, $data);
+      $this->applyOrderBy($query, $data);
+
+      // Busca apenas os campos informados
+      $query->select($data["select"]);
+      // Obtém os resultados
+      $rows = $query->get();
+
+      $values = [];
+
+      $data['fields'] = array_filter($data['fields'], fn($field) => $field !== 'usuario_externo');
+
+      foreach ($rows as $row) {
+          // Ajusta os campos para ordenação
+          $orderFields = array_map(fn ($order) => str_replace(".", "_", $order[0]), $data['orderBy'] ?? []);
+          $orderValues = array_map(fn ($field) => $row->$field ?? null, $orderFields);
+
+          array_push($values, [
+              $row->id,
+              array_map(fn ($field) => $row->$field ?? null, $data['fields']),
+              $orderValues
+          ]);
+      }
+      return $values;
   }
 
-
+  public function consultaCpfSiapeXml(string $cpf): array
+  {
+    return $this->buscaServidor($cpf);
+  }
   /**
    *
    * @param string $cpf
@@ -422,69 +502,56 @@ class UsuarioService extends ServiceBase
    */
   public function consultaCPFSiape(string $cpf): array{
 
-      return $this->buscaServidor($cpf);
+    $dadosPessoaisService = new SiapeDadosPessoaisService();
+    $dadosFuncionaisService = new SiapeDadosFuncionaisService();
 
+    $dadosPessoaisXml = $dadosPessoaisService->buscarCPF($cpf);
+    $dadosFuncionaisXml = $dadosFuncionaisService->buscarCPF($cpf);
+
+    $dadosPessoais = new DadosPessoaisResource($dadosPessoaisXml);
+    $dadosFuncionais = new DadosFuncionaisResource($dadosFuncionaisXml);
+
+    $dadosFuncionaisArray = $dadosFuncionais->toArray();
+
+    $dadosFuncionaisArray = array_map(function($item) {
+      $unidade = Unidade::where('codigo', $item['codUorgExercicio'])->first();
+      $item['unidadeSigla'] = $unidade?->sigla;
+      return $item;
+    }, $dadosFuncionaisArray);
+
+    //$unidade = new UnidadeResource($unidadeXml);
+    
+    return [
+      'pessoais'    => $dadosPessoais->toArray(),
+      'funcionais'  => $dadosFuncionaisArray,
+    ];
   }
-    public function searchText($data)
+    public function atualizaPedagio($data)
     {
-        if (!in_array('usuario_externo', $data['fields'])) {
-            $data['fields'][] = 'usuario_externo';
-        }
-        $text = "%" . str_replace(" ", "%", $data['query']) . "%";
-        $model = App($this->collection);
-        $table = $model->getTable();
-
-
-        // Garante que os campos tenham o nome da tabela
-        $data["select"] = array_map(fn ($field) => str_contains($field, ".") ? $field : $table . "." . $field, array_merge(['id'], $data['fields']));
-
-
-        // Usa Eloquent query() em vez de DB::table()
-        $query = $model->query();
-
-        if (method_exists($this, 'proxySearch')) {
-            $this->proxySearch($query, $data, $text);
+        $usuario = Usuario::find($data['usuario_id']);
+        if (empty($usuario)) {
+            throw new ValidateException("Usuário não encontrado", 422);
         }
 
-        // Adiciona condição LIKE para busca nos campos informados
-        $likes = ["or"];
-        foreach ($data['fields'] as $field) {
-            array_push($likes, [$field, 'like', $text]);
+
+        $usuario->data_inicial_pedagio = Carbon::parse($data['data_inicial_pedagio']);
+        $usuario->data_final_pedagio = Carbon::parse($data['data_final_pedagio']);
+        $usuario->tipo_pedagio = $data['tipo_pedagio'];
+        $usuario->save();
+        return $usuario;
+    }
+
+    public function removePedagio($data)
+    {
+        $usuario = Usuario::find($data['usuario_id']);
+        if (empty($usuario)) {
+            throw new ValidateException("Usuário não encontrado", 422);
         }
-
-        // Garante que deleted_at seja tratado corretamente
-        $condicaoDeletados = array_filter($data['where'], fn ($w) => is_array($w) && $w[0] == "deleted_at");
-        if (empty($condicaoDeletados)) {
-            array_push($data['where'], ['deleted_at', '=', null]);
-        }
-
-        $where = [$likes, $data['where']];
-        $this->applyWhere($query, $where, $data);
-        $this->applyOrderBy($query, $data);
-
-        // Busca apenas os campos informados
-        $query->select($data["select"]);
-        // Obtém os resultados
-        $rows = $query->get();
-
-        $values = [];
-
-        $data['fields'] = array_filter($data['fields'], fn($field) => $field !== 'usuario_externo');
-
-        foreach ($rows as $row) {
-
-
-            // Ajusta os campos para ordenação
-            $orderFields = array_map(fn ($order) => str_replace(".", "_", $order[0]), $data['orderBy'] ?? []);
-            $orderValues = array_map(fn ($field) => $row->$field ?? null, $orderFields);
-
-            array_push($values, [
-                $row->id,
-                array_map(fn ($field) => $row->$field ?? null, $data['fields']),
-                $orderValues
-            ]);
-        }
-        return $values;
+        $usuario->data_inicial_pedagio = null;
+        $usuario->data_final_pedagio = null;
+        $usuario->tipo_pedagio = null;
+        $usuario->save();
+        return $usuario;
     }
 
 }

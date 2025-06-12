@@ -1,12 +1,38 @@
+<div class="spinner-border" role="status" *ngIf="loading">
+    <span class="visually-hidden"></span>
+</div>
+
+<div class="consulta-cpf-siape-form">
 <editable-form [form]="form!" [disabled]="false" [title]="isModal ? '' : title">
     <div *ngIf="erros?.length" class="alert alert-danger mt-2 break-spaces" role="alert">{{erros}}</div>
+
     <div class="row">
-      
-        <div class="row">
-            <input-text [size]="3" label="CPF" controlName="cpf" [maskFormat]="'000.000.000-00'" [attr.maxlength]=15 required></input-text>
+        <div class="col-md-4 intro">
+            <h2>Consulta CPF SIAPE</h2>
+            <p>Para acessar as informações do servidor no SIAPE, informe o número do CPF abaixo
+                 e clique em Localizar CPF.
+            </p>
         </div>
     </div>
-    <separator>
-        <toolbar [buttons]="toolbarButtons"></toolbar>
-    </separator>
+    <div class="row">
+        <div class="col-md-4">
+            <input-text
+                controlName="cpf"
+                label="CPF"
+                labelInfo="Informe o CPF para busca no SIAPE"
+                [size]="4"
+                [attr.maxlength]=15
+                hostClass="inputCPF"
+                relativeId="inputCPF"
+                placeholder="Informe o CPF"
+                [maskFormat]="'000.000.000-00'"
+            ></input-text>
+            <button type="button" class="btn btn-outline-primary btn-block btn-cpf"
+                (click)="onClickCPF()" 
+                [disabled]="loading || !form.valid">
+                Localizar CPF
+            </button>
+        </div>
+    </div>
 </editable-form>
+</div>

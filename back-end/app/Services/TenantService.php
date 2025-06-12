@@ -43,7 +43,7 @@ class TenantService extends ServiceBase
             Log::info('Iniciando cadastro de tenant...');
             $tenant = parent::store($dataOrEntity, $unidade, false);
             if($tenant){
-                $this->JobAgendadoService->createJobsSiape($tenant->id);
+                $this->JobScheduleService->createJobsSiape($tenant->id);
             }
         } catch (\Exception $e) {
             throw $e;

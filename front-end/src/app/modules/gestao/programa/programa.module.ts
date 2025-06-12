@@ -7,13 +7,15 @@ import { ProgramaListComponent } from './programa-list/programa-list.component';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ProgramaParticipantesComponent } from './programa-participantes/programa-participantes.component';
+import { PedagioFormComponent } from './pedagio-form/pedagio-form.component';
 
 
 @NgModule({
   declarations: [
     ProgramaFormComponent,
     ProgramaListComponent,
-    ProgramaParticipantesComponent
+    ProgramaParticipantesComponent,
+    PedagioFormComponent
   ],
   imports: [
     CommonModule,

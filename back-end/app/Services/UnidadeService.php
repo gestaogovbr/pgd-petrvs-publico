@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use App\Exceptions\ServerException;
 use App\Services\Siape\DadosExternosSiape;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
 use Throwable;
 
@@ -561,7 +562,34 @@ class UnidadeService extends ServiceBase
               == false	......................	retornar somente as unidades ativas
       */
 
-    public function consultaUnidadeSiape(string $unidadecodigoSiape): SimpleXMLElement
+    public function consultaUnidadeSiape(string $unidadecodigoSiape): array
+{
+    $retornoXml = $this->buscaDadosUnidade($unidadecodigoSiape);
+
+    $retornoXml->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+    $retornoXml->registerXPathNamespace('ns1',  'http://servico.wssiapenet');
+
+    $resultado = $retornoXml->xpath('//soap:Body/ns1:dadosUorgResponse/out');
+
+    if (!isset($resultado[0]) || !($resultado[0] instanceof SimpleXMLElement)) {
+        Log::error("Não foi possível encontrar <out> em dadosUorgResponse");
+        return [];
+    }
+
+    /** @var SimpleXMLElement $out */
+    $out = $resultado[0];
+
+    $retornoArray = simpleXmlElementToArrayComNamespace($out);
+
+    // Log::info('--- XML bruto de <out> ---');
+    // Log::info($out->asXML());
+
+    // Log::info('--- Array convertido de <out> --- ' . json_encode($retornoArray, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+
+    return $retornoArray;
+}
+
+    public function consultaUnidadeSiapeXml(string $unidadecodigoSiape): SimpleXMLElement
     {
 
         return $this->buscaDadosUnidade($unidadecodigoSiape);
