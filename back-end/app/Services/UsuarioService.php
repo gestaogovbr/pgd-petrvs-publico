@@ -293,6 +293,9 @@ class UsuarioService extends ServiceBase
   {
     $data["with"] = [];
     $data['cpf'] = $this->UtilService->onlyNumbers($data['cpf']);
+
+    unset($data['pedagio']);
+
     if (!empty($data['telefone']))
       $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
     /* Armazena as informações que serão necessárias no extraStore */
@@ -308,6 +311,7 @@ class UsuarioService extends ServiceBase
   public function proxyUpdate($data, $unidade)
   {
     $data["with"] = [];
+    unset($data['pedagio']);
     $this->validarPerfil($data);
     $this->validarColaborador($data);
     return $data;
