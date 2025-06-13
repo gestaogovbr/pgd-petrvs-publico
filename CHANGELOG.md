@@ -1,3 +1,7 @@
+## 2.4.1 13/06/2025
+### Corrigido
+ - Bug na habilitação do pedágio
+ - Bug na criação de plano de trabalho pelo perfil colaborador
 ## 2.4.0 11/06/2025
 ### Adicionado
  - Função para bloquear o teletrabalho para servidores em pedágio
