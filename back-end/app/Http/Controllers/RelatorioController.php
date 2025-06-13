@@ -1,13 +1,17 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Exceptions\Contracts\IBaseException;
 use App\Exceptions\ServerException;
 use App\Http\Controllers\ControllerBase;
+use App\Http\Responses\CsvResponse;
+use App\Services\CSV\RelatorioPlanoTrabalhoCsv;
+use App\Services\CsvExporter;
 use App\Services\RelatorioPlanoTrabalhoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
 use Throwable;
-use App\Exceptions\Contracts\IBaseException;
 
 class RelatorioController extends ControllerBase {
 
@@ -22,8 +26,8 @@ class RelatorioController extends ControllerBase {
 
         try {
             $data = $request->validate([
-                'page' => ['required'],
-                'limit' => ['required'],
+                'page' => ['nullable'],
+                'limit' => ['nullable'],
                 'orderBy' => ['array'],
                 'deleted' => ['nullable'],
                 'where' => ['array']
@@ -32,14 +36,17 @@ class RelatorioController extends ControllerBase {
             $service = new RelatorioPlanoTrabalhoService();
             $result = $service->query($data);
 
-            \Log::info($result);
-
-            return response()->json([
-                'success' => true,
-                'count' => $result['count'],
-                'rows' => $result['rows'],
-                'extra' => $result['extra']
-            ]);
+            if (!$request->is('*/csv')) {
+                 return response()->json([
+                    'success' => true,
+                    'count' => $result['count'],
+                    'rows' => $result['rows'],
+                    'extra' => $result['extra']
+                ]);
+            } else {
+                $csv = RelatorioPlanoTrabalhoCsv::toCSV($result['rows']);
+                return CsvResponse::fromData($csv, 'relatorio-planos-trabalho.csv');
+            }
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
         }

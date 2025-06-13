@@ -12,8 +12,6 @@ class ViewRelatorioPlanoTrabalho extends Model
     public $incrementing = false;
 
     protected $casts = [
-        'dataInicio' => 'date',
-        'dataFim' => 'date',
         'chd' => 'double:2'
     ];
 }

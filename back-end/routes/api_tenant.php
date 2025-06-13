@@ -522,4 +522,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::middleware(['auth:sanctum'])->prefix('Relatorio')->group(function () {
     Route::post('planos-trabalho/query', [RelatorioController::class, 'queryPlanosTrabalho']);
+    Route::post('planos-trabalho/csv', [RelatorioController::class, 'queryPlanosTrabalho']);
 });
