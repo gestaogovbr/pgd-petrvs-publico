@@ -156,7 +156,7 @@ export class ServerService {
     return result;
   }
 
-  public postDownload(url: string, params: any): Observable<Blob> {
+  public postDownload(url: string, params?: any): Observable<Blob> {
     let result;
   
     if (typeof this.batch !== "undefined") {
