@@ -1,12 +1,14 @@
 <grid [dao]="dao" 
     [title]="title" 
     [orderBy]="orderBy"
+    [relatorios]="relatorios"
 >
     <toolbar *ngIf="!selectable"></toolbar>
     <filter 
         [form]="filter" 
         [where]="filterWhere" 
         [submit]="filterSubmit.bind(this)" 
+        [filter]="onButtonFilterClick"
         [collapseChange]="filterCollapseChange.bind(this)" 
         [collapsed]="!selectable && filterCollapsed"
         filterLabel="Consultar"
@@ -14,7 +16,7 @@
         <div class="row">   
             <input-search 
                 #unidade 
-                [size]="5" 
+                [size]="4" 
                 label="Unidade de Consulta"
                 [control]="filter!.controls.unidade_id" 
                 controlName="unidade_id" 
@@ -54,6 +56,12 @@
                 controlName="incluir_unidades_subordinadas"
                 [control]="filter!.controls.incluir_unidades_subordinadas"
             ></input-switch>
+            <input-switch
+                [size]="1"
+                label="Exportar para Excel"
+                controlName="exportar"
+                [control]="filter!.controls.exportar"
+            ></input-switch>
         </div>
     </filter>
     
@@ -73,7 +81,7 @@
                 <span>{{row.unidadeHierarquia}}</span>
             </ng-template>
         </column>
-        <column title="Distribuição % do esforço em relação à CHD no período" [template]="columnCHD">
+        <column title="Distribuição % da CHD no período" [template]="columnCHD">
             <ng-template let-row="row" #columnCHD>
                <span>{{row.chd | number:'1.2-2'}}%</span>
             </ng-template>

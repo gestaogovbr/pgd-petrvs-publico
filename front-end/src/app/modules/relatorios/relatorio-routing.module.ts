@@ -2,12 +2,12 @@ import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { AuthGuard } from "src/app/guards/auth.guard";
 import { ConfigResolver } from "src/app/resolvies/config.resolver";
-import { PlanoTrabalhoReportComponent } from "./plano-trabalho-report/plano-trabalho-report.component";
+import { RelatorioPlanoTrabalhoComponent } from "./relatorio-plano-trabalho/relatorio-plano-trabalho.component";
 
 
 const routes: Routes = [
   { path: 'planos-trabalho',
-    component: PlanoTrabalhoReportComponent,
+    component: RelatorioPlanoTrabalhoComponent,
     canActivate: [AuthGuard],
     resolve: { config: ConfigResolver },
     runGuardsAndResolvers: 'always',

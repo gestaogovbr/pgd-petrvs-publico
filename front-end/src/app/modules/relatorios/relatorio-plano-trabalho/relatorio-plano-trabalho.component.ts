@@ -8,19 +8,25 @@ import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
 import { RelatorioPlanoTrabalho } from "src/app/models/relatorio-plano-trabalho.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
 import moment from 'moment';
+import { firstValueFrom } from "rxjs";
+import { LookupItem } from "src/app/services/lookup.service";
+import { QueryOptions } from "src/app/dao/query-options";
 
 @Component({
-  selector: 'plano-trabalho-report',
-  templateUrl: './plano-trabalho-report.component.html',
-  styleUrls: ['./plano-trabalho-report.component.scss']
+  selector: 'relatorio-plano-trabalho',
+  templateUrl: './relatorio-plano-trabalho.component.html',
+  styleUrls: ['./relatorio-plano-trabalho.component.scss']
 })
-export class PlanoTrabalhoReportComponent extends PageListBase<RelatorioPlanoTrabalho, RelatorioPlanoTrabalhoDaoService> {
+export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlanoTrabalho, RelatorioPlanoTrabalhoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
   public botoes: ToolbarButton[] = [];
   public unidadeId: string = '';
+  public relatorios: LookupItem[] = [
+      {key: "PTR_LISTA", value: "Lista Planos de Trabalhos"},
+    ];
 
   constructor(public injector: Injector, dao: RelatorioPlanoTrabalhoDaoService) {
     super(injector, RelatorioPlanoTrabalho, RelatorioPlanoTrabalhoDaoService);
@@ -32,12 +38,13 @@ export class PlanoTrabalhoReportComponent extends PageListBase<RelatorioPlanoTra
       agrupar: { default: true },
       data_inicio: { default: "" },
       data_fim: { default: "" },
-      somente_vigentes: { default: true },
-      incluir_periodos_avaliativos: { default: true },
-      incluir_unidades_subordinadas: { default: true }
+      somente_vigentes: { default: false },
+      incluir_periodos_avaliativos: { default: false },
+      incluir_unidades_subordinadas: { default: false },
+      exportar: { default: false }
     });
   
-    this.orderBy = [['id', 'asc']];
+    this.orderBy = [['unidadeHierarquia', 'asc'], ['numero', 'asc']];
   }
 
   public async ngOnInit() {
@@ -62,7 +69,27 @@ export class PlanoTrabalhoReportComponent extends PageListBase<RelatorioPlanoTra
     let form: any = filter.value;
 
     if (form.unidade_id?.length) {
-      //result.push(["unidade_ativa", "==", form.unidade_id]);
+      result.push(["unidade_id", "==", form.unidade_id]);
+    }
+
+    if (form.data_inicio) {
+      result.push(["dataInicio", ">=", form.data_inicio]);
+    }
+
+    if (form.data_fim) {
+      result.push(["dataFim", "<=", form.data_fim]);
+    }
+
+    if (form.somente_vigentes) {
+      result.push(["somente_vigentes", "==", 1]);
+    }
+
+    if (form.incluir_periodos_avaliativos) {
+      result.push(["incluir_periodos_avaliativos", "==", 1]);
+    }
+
+    if (form.incluir_unidades_subordinadas) {
+      result.push(["incluir_unidades_subordinadas", "==", 1]);
     }
     
     return result;
@@ -82,6 +109,42 @@ export class PlanoTrabalhoReportComponent extends PageListBase<RelatorioPlanoTra
       return duration;
     }
     return 0;
+  }
+
+  public onButtonFilterClick = (filter: FormGroup) => {
+    let form: any = filter.value;
+    let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
+
+    if (form?.exportar) {
+      this.download(queryOptions);
+    } else {
+      this.grid?.query?.reload(queryOptions);
+    }
+  }
+
+  public async download(queryOptions: QueryOptions){
+    let error: any = undefined;
+    this.loading = true;
+    try {
+      this.dao!.exportar({
+        where: queryOptions.where,
+        orderBy: queryOptions.orderBy
+      }).subscribe(blob => {
+        const url = window.URL.createObjectURL(blob);
+  
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'relatorio-plano-trabalho.csv';
+        link.click();
+        window.URL.revokeObjectURL(url);
+      });
+
+      this.loading = false;
+    } catch (error: any) {
+      this.error(error);
+    } finally {
+      this.loading = false;
+    }
   }
 
 }

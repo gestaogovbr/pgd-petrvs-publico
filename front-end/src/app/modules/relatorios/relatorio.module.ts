@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { RelatorioRoutingModule } from './relatorio-routing.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ComponentsModule } from 'src/app/components/components.module';
-import { PlanoTrabalhoReportComponent } from './plano-trabalho-report/plano-trabalho-report.component';
+import { RelatorioPlanoTrabalhoComponent } from './relatorio-plano-trabalho/relatorio-plano-trabalho.component';
 
 @NgModule({
   declarations: [
-    PlanoTrabalhoReportComponent
+    RelatorioPlanoTrabalhoComponent
   ],
   imports: [
     CommonModule,
