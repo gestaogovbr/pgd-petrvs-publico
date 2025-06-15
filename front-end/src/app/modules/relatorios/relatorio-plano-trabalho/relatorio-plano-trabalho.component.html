@@ -68,7 +68,7 @@
     <columns>
         <column title="#ID" [template]="columnID">
             <ng-template let-row="row" #columnID>
-                <span>#{{row.numero}}</span>
+                <a class="link" (click)="go.navigate({ route: ['/gestao/plano-trabalho/', row.id,'consult'] })" target="_blank">#{{row.numero}}</a>
             </ng-template>
         </column>
         <column title="Nome" [template]="columnNome">
