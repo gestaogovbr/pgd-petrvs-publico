@@ -40,4 +40,12 @@ class RelatorioPlanoTrabalhoService extends ServiceBase
 
         $data["where"] = $where;
     }
+
+    public function proxyRows(&$rows) {
+        foreach($rows as $row) {
+            $row['nota'] = json_decode($row['nota']);
+        }
+
+        return $rows;
+    }
 }

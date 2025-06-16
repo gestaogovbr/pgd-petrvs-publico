@@ -1,7 +1,6 @@
 <grid [dao]="dao" 
     [title]="title" 
     [orderBy]="orderBy"
-    [relatorios]="relatorios"
 >
     <toolbar *ngIf="!selectable"></toolbar>
     <filter 
@@ -111,9 +110,49 @@
                 <span>{{getDuracao(row)}}</span>
             </ng-template>
         </column>
-        <column title="Períodos Avaliativos" [template]="columnPeriodos">
+        <column title="Períodos Avaliativos" [template]="columnPeriodos" *ngIf="resumido">
             <ng-template let-row="row" #columnPeriodos>
                 <span>{{row.qtdePeriodosAvaliativos}}</span>
+            </ng-template>
+        </column>
+        <column title="Início" [template]="columnAvaliacaoInicio" *ngIf="!resumido">
+            <ng-template let-row="row" #columnAvaliacaoInicio>
+                <span>{{dao!.getDateFormatted(row.data_inicio_avaliativo) || '-'}}</span>
+            </ng-template>
+        </column>
+        <column title="Fim" [template]="columnAvaliacaoFim" *ngIf="!resumido">
+            <ng-template let-row="row" #columnAvaliacaoFim>
+                <span>{{dao!.getDateFormatted(row.data_fim_avaliativo) || '-'}}</span>
+            </ng-template>
+        </column>
+        <column title="Data de conclusão do Registro de Execução" [template]="columnAvaliacaoConclusao" *ngIf="!resumido">
+            <ng-template let-row="row" #columnAvaliacaoConclusao>
+                <span>{{dao!.getDateFormatted(row.data_avaliacao) || '-'}}</span>
+            </ng-template>
+        </column>
+        <column title="Situação do Registro de Execução" [template]="columnExecucaoSituacao" *ngIf="!resumido">
+            <ng-template let-row="row" #columnExecucaoSituacao>
+                <span>{{row.situacao_execucao || '-'}}</span>
+            </ng-template>
+        </column>
+        <column title="Data da Avaliação" [template]="columnAvaliacaoData" *ngIf="!resumido">
+            <ng-template let-row="row" #columnAvaliacaoData>
+                <span>{{dao!.getDateFormatted(row.data_avaliacao) || '-'}}</span>
+            </ng-template>
+        </column>
+        <column title="Nota da Avaliação" [template]="columnAvaliacaoNota" *ngIf="!resumido">
+            <ng-template let-row="row" #columnAvaliacaoNota>
+                <span>{{row.nota || '-'}}</span>
+            </ng-template>
+        </column>
+        <column title="Situação da Avaliação" [template]="columnAvaliacaoSituacao" *ngIf="!resumido">
+            <ng-template let-row="row" #columnAvaliacaoSituacao>
+                <span>{{row.situacao_avaliacao || '-'}}</span>
+            </ng-template>
+        </column>
+        <column title="Data do Recurso" [template]="columnAvaliacaoRecurso" *ngIf="!resumido">
+            <ng-template let-row="row" #columnAvaliacaoRecurso>
+                <span>{{row.recurso || '-'}}</span>
             </ng-template>
         </column>
     </columns>

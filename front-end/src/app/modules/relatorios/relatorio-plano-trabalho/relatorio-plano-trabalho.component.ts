@@ -11,6 +11,7 @@ import moment from 'moment';
 import { firstValueFrom } from "rxjs";
 import { LookupItem } from "src/app/services/lookup.service";
 import { QueryOptions } from "src/app/dao/query-options";
+import { RelatorioPlanoTrabalhoDetalhadoDaoService } from "src/app/dao/relatorio-plano-trabalho-detalhado-dao.service";
 
 @Component({
   selector: 'relatorio-plano-trabalho',
@@ -22,16 +23,18 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
 
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
+  public relatorioPlanoTrabalhoDao: RelatorioPlanoTrabalhoDaoService;
+  public relatorioPlanoTrabalhoDetalhadoDao: RelatorioPlanoTrabalhoDetalhadoDaoService;
   public botoes: ToolbarButton[] = [];
   public unidadeId: string = '';
-  public relatorios: LookupItem[] = [
-      {key: "PTR_LISTA", value: "Lista Planos de Trabalhos"},
-    ];
+  public resumido: boolean = true;
 
   constructor(public injector: Injector, dao: RelatorioPlanoTrabalhoDaoService) {
     super(injector, RelatorioPlanoTrabalho, RelatorioPlanoTrabalhoDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.relatorioPlanoTrabalhoDao = injector.get<RelatorioPlanoTrabalhoDaoService>(RelatorioPlanoTrabalhoDaoService);
+    this.relatorioPlanoTrabalhoDetalhadoDao = injector.get<RelatorioPlanoTrabalhoDetalhadoDaoService>(RelatorioPlanoTrabalhoDetalhadoDaoService);
     this.title = "Relatório de Planos de Trabalho";
     this.filter = this.fh.FormBuilder({
       unidade_id: { default: this.auth.unidade?.id },
@@ -114,6 +117,17 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
   public onButtonFilterClick = (filter: FormGroup) => {
     let form: any = filter.value;
     let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
+    this.resumido = !form.incluir_periodos_avaliativos;
+    
+    if (this.grid && this.grid.query) {
+      this.cdRef.detectChanges();
+      this.grid.loadColumns();
+      
+      if (!form.incluir_periodos_avaliativos){
+        this.grid.query.collection = 'Relatorio/planos-trabalho';
+      } else {
+        this.grid.query.collection = 'Relatorio/planos-trabalho-detalhado';         }
+    }
 
     if (form?.exportar) {
       this.download(queryOptions);
