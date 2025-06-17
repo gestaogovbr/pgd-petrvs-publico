@@ -395,7 +395,7 @@ export class AuthService {
   public isLotacaoUsuario(pUnidade: Unidade | null = null): boolean {
     let unidade = pUnidade || this.unidade!;
     let lotacao = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
-    return lotacao?.id == unidade.id;
+    return lotacao?.id == unidade?.id;
   }
 
   public isUsuarioDeveloper(): boolean {
