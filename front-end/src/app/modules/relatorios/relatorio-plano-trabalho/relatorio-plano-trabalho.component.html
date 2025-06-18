@@ -127,7 +127,7 @@
         </column>
         <column title="Data de conclusão do Registro de Execução" [template]="columnAvaliacaoConclusao" *ngIf="!resumido">
             <ng-template let-row="row" #columnAvaliacaoConclusao>
-                <span>{{dao!.getDateFormatted(row.data_avaliacao) || '-'}}</span>
+                <span>{{dao!.getDateFormatted(row.data_conclusao) || '-'}}</span>
             </ng-template>
         </column>
         <column title="Situação do Registro de Execução" [template]="columnExecucaoSituacao" *ngIf="!resumido">

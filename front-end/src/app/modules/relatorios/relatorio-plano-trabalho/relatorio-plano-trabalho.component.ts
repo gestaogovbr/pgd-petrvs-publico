@@ -130,17 +130,17 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
     }
 
     if (form?.exportar) {
-      this.download(queryOptions);
+      this.downloadXls(queryOptions);
     } else {
       this.grid?.query?.reload(queryOptions);
     }
   }
 
-  public async download(queryOptions: QueryOptions){
+  public async downloadCsv(queryOptions: QueryOptions){
     let error: any = undefined;
     this.loading = true;
     try {
-      this.dao!.exportar({
+      this.dao!.exportarCsv(this.resumido, {
         where: queryOptions.where,
         orderBy: queryOptions.orderBy
       }).subscribe(blob => {
@@ -151,6 +151,40 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
         link.download = 'relatorio-plano-trabalho.csv';
         link.click();
         window.URL.revokeObjectURL(url);
+      });
+
+      this.loading = false;
+    } catch (error: any) {
+      this.error(error);
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  public async downloadXls(queryOptions: QueryOptions){
+    let error: any = undefined;
+    this.loading = true;
+    try {
+      this.dao!.exportarXls(this.resumido, {
+        where: queryOptions.where,
+        orderBy: queryOptions.orderBy
+      }).subscribe(res => {
+
+        if (res && res.body) {
+          const blob = new Blob([res.body!], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          });
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'relatorio-planos-trabalho.xlsx';
+          link.click();
+          window.URL.revokeObjectURL(url);
+        }
+      }, error => {
+        this.dialog.alert('Erro ao gerar Excel', 'Houve um erro ao tentar baixar o arquivo');
+        console.log(error);
+        this.error(error);
       });
 
       this.loading = false;
