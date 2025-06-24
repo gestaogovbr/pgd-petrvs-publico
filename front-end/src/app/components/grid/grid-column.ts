@@ -47,6 +47,7 @@ export class GridColumn {
   public cellClass?: string;
   public always?: string;
   public metadata?: any;
+  public style: { [key: string]: string } = {};
 
   public isType(type: ColumnType) {
     return (this.type + ":").startsWith(type + ":");

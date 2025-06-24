@@ -9,13 +9,34 @@
                 <div class="table-responsive" [style.min-height]="minHeight + 'px'">
                     <table class="table" [class.table-hover]="isSelectable" [class.scrollable]="scrollable">
                         <thead *ngIf="!isNoHeader">
+                            <tr *ngIf="headerGroups">
+                                <th *ngFor="let header of headerGroups.headersRef"
+                                    [attr.colspan]="header.colspan"
+                                    [style.text-align]="header.align"
+                                    [style]="header.style"
+                                >
+                                    <strong>{{ header.title }}</strong>
+                                </th>
+                            </tr>
                             <tr>
                                 <th *ngIf="multiselecting" class="grid-multiselect-header">
                                     <i class="bi bi-card-checklist"></i>
                                 </th>
-                                <th *ngFor="let column of columns; let idx = index" [class]="column.cellClass || ''" [class.grid-editable-options]="isEditableGridOptions(column)" scope="col"
-                                    [style.width.px]="column.width" [style.min-width.px]="column.minWidth" [style.max-width.px]="column.maxWidth" [style.vertical-align]="column.verticalAlign">
-                                    <column-header [column]="column" [index]="idx" [grid]="self"></column-header>
+                                <th *ngFor="let column of columns; let idx = index"
+                                    [class]="column.cellClass || ''"
+                                    [class.grid-editable-options]="isEditableGridOptions(column)"
+                                    [style.width.px]="column.width"
+                                    [style.min-width.px]="column.minWidth"
+                                    [style.max-width.px]="column.maxWidth"
+                                    [style.vertical-align]="column.verticalAlign"
+                                    [style]="column.style"
+                                    scope="col"
+                                >
+                                    <column-header
+                                        [column]="column"
+                                        [index]="idx"
+                                        [grid]="self"
+                                    ></column-header>
                                 </th>
                             </tr>
                         </thead>
@@ -46,7 +67,9 @@
                                         [class.text-center]="column.align == 'center'" [class.text-end]="column.align == 'right'" 
                                         [class.grid-column-expanded]="column.isType('expand') && !!expandedIds[row.id]" 
                                         [class.grid-column-editing-options]="column.editing" [class.text-end]="column.isType('options')"
-                                        [style.width.px]="column.width" [style.min-width.px]="column.minWidth" [style.max-width.px]="column.maxWidth">
+                                        [style.width.px]="column.width" [style.min-width.px]="column.minWidth" [style.max-width.px]="column.maxWidth"
+                                        [style]="column.style"
+                                    >
                                         <column-row *ngIf="!column.inType(['options', 'expand'])" [index]="idx" [column]="column" [row]="row" [grid]="self"></column-row>
                                         <column-expand *ngIf="column.isType('expand')" [index]="idx" [toggleable]="!isNoToggleable" [expanded]="!!expandedIds[row.id]" [column]="column" [row]="row" [grid]="self"></column-expand>
                                         <column-options *ngIf="column.isType('options') && !multiselecting" [(calcWidth)]="column.width" [index]="idx" [column]="column" [row]="row" [grid]="self" [options]="column.options" [buttons]="column.buttons || []" [dynamicOptions]="column.dynamicOptions" [dynamicButtons]="column.dynamicButtons" [upDownButtons]="column.upDownButtons"></column-options>
