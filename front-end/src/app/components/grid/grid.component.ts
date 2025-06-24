@@ -34,6 +34,9 @@ import {SidePanelComponent} from "./side-panel/side-panel.component";
 import {LookupItem} from "src/app/services/lookup.service";
 import {TemplateDaoService} from "src/app/dao/template-dao.service";
 import {DocumentoService} from "src/app/modules/uteis/documentos/documento.service";
+import { HeaderGroupComponent } from "./header-group/header-group.component";
+import { HeaderGroupDirective } from "./header-group/header-group.directive";
+import { HeaderGroupsComponent } from "./header-groups/header-groups.component";
 
 export type GroupBy = {field: string; label: string; value?: any};
 
@@ -69,6 +72,7 @@ export class GridComponent extends ComponentBase implements OnInit {
 	@ContentChild(SidePanelComponent) sidePanel?: SidePanelComponent;
 	@ContentChild(ToolbarComponent) toolbarRef?: ToolbarComponent;
 	@ContentChild(PaginationComponent) paginationRef?: PaginationComponent;
+	@ContentChild(HeaderGroupsComponent) headerGroups?: HeaderGroupsComponent;
 	@ViewChild(FormGroupDirective) formDirective?: FormGroupDirective;
 	@Output() select = new EventEmitter<Base | IIndexable | null>();
 	@Input() dao?: DaoBaseService<Base>;
@@ -416,6 +420,7 @@ export class GridComponent extends ComponentBase implements OnInit {
 		this.loadReport();
 		this.loadToolbar();
 		this.loadPagination();
+
 		/* Habilita muiltiselect caso multiselectEnabled esteja presente */
 		if (this.isMultiselectEnabled) this.enableMultiselect(true);
 	}
