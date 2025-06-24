@@ -156,6 +156,7 @@ class UsuarioSeeder extends Seeder
         'uf' => 'DF',
         'sexo' => $usuario['sexo'],
         'data_modificacao' => $this->timenow,
+        'is_admin' => $usuario['is_admin'],
       ]);
       $user->save();
 
