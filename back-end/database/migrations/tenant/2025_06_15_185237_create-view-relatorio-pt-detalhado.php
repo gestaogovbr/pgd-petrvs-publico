@@ -35,8 +35,10 @@ return new class extends Migration
             ptc.data_inicio as data_inicio_avaliativo,
             ptc.data_fim as data_fim_avaliativo,
             ptc.data_conclusao,
-            a.data_avaliacao,
-            a.nota,
+            aval_antiga.data_avaliacao AS data_avaliacao,
+            aval_antiga.nota AS nota,
+            (case when a.id = aval_antiga.id then NULL else a.data_avaliacao END) as data_reavaliacao,
+            (case when a.id = aval_antiga.id then NULL else a.nota END) as nota_reavaliacao,
             case when ptc.data_conclusao is null
                 then
                     CASE when CURDATE() <= DATE_ADD(ptc.data_fim, INTERVAL 10 DAY)
@@ -67,6 +69,16 @@ return new class extends Migration
             (`tm`.`id` = `pt`.`tipo_modalidade_id`))
         left join planos_trabalhos_consolidacoes ptc ON ptc.plano_trabalho_id = pt.id and ptc.deleted_at IS NULL
         left join avaliacoes a on a.id = ptc.avaliacao_id and a.deleted_at is null
+        LEFT JOIN (
+            SELECT a1.*
+            FROM (
+                SELECT *,
+                    ROW_NUMBER() OVER (PARTITION BY plano_trabalho_consolidacao_id ORDER BY data_avaliacao ASC) AS rn
+                FROM avaliacoes
+                WHERE deleted_at IS NULL
+            ) a1
+            WHERE a1.rn = 1
+        ) aval_antiga ON aval_antiga.plano_trabalho_consolidacao_id = ptc.id
         where
             `pt`.`deleted_at` is null;
         EOD);

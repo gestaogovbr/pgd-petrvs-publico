@@ -43,7 +43,8 @@ class RelatorioPlanoTrabalhoService extends ServiceBase
 
     public function proxyRows(&$rows) {
         foreach($rows as $row) {
-            $row['nota'] = json_decode($row['nota']);
+            $row['nota'] = str_replace('"', '', json_decode($row['nota']));
+            $row['nota_reavaliacao'] = str_replace('"', '', json_decode($row['nota_reavaliacao']));
         }
 
         return $rows;

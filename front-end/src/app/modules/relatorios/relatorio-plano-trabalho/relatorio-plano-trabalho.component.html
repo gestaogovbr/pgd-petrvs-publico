@@ -63,6 +63,13 @@
             ></input-switch>
         </div>
     </filter>
+
+    <header-groups *ngIf="!resumido">
+        <header-group title="" colspan="9"></header-group>
+        <header-group title="PERÍODOS AVALIATIVOS" colspan="10"
+            [style]="{ 'border': '1px solid var(--bs-border-color)', 'text-align': 'center' }"
+        ></header-group>
+    </header-groups>
     
     <columns>
         <column title="#ID" [template]="columnID">
@@ -115,7 +122,12 @@
                 <span>{{row.qtdePeriodosAvaliativos}}</span>
             </ng-template>
         </column>
-        <column title="Início" [template]="columnAvaliacaoInicio" *ngIf="!resumido">
+        <column
+            title="Início" 
+            [template]="columnAvaliacaoInicio"
+            *ngIf="!resumido"
+            [style]="{ 'border-left': '1px solid var(--bs-border-color)' }"
+        >
             <ng-template let-row="row" #columnAvaliacaoInicio>
                 <span>{{dao!.getDateFormatted(row.data_inicio_avaliativo) || '-'}}</span>
             </ng-template>
@@ -153,6 +165,16 @@
         <column title="Data do Recurso" [template]="columnAvaliacaoRecurso" *ngIf="!resumido">
             <ng-template let-row="row" #columnAvaliacaoRecurso>
                 <span>{{row.recurso || '-'}}</span>
+            </ng-template>
+        </column>
+        <column title="Data da Reavaliação" [template]="columnReavaliacaoData" *ngIf="!resumido">
+            <ng-template let-row="row" #columnReavaliacaoData>
+                <span>{{dao!.getDateFormatted(row.data_reavaliacao) || '-'}}</span>
+            </ng-template>
+        </column>
+        <column title="Nota da Reavaliação" [template]="columnReavaliacaoNota" *ngIf="!resumido">
+            <ng-template let-row="row" #columnReavaliacaoNota>
+                <span>{{row.nota_reavaliacao || '-'}}</span>
             </ng-template>
         </column>
     </columns>
