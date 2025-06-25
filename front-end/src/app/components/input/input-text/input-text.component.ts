@@ -20,6 +20,7 @@ export class InputTextComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
   @ViewChild('inputElement') inputElement?: ElementRef;
   @Output() change = new EventEmitter<Event>();
+  @Output() blur = new EventEmitter<Event>();
   @Input() hostClass: string = ""; 
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
@@ -86,6 +87,10 @@ export class InputTextComponent extends InputBase implements OnInit {
 
   public onChange(event: Event) {
     if(this.change) this.change.emit(event); 
+  }
+
+  public onBlur(event: Event) {
+    if(this.blur) this.blur.emit(event); 
   }
 
   public onKeyUp(event: Event) {
