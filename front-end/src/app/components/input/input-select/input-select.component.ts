@@ -308,7 +308,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
 		if ((this.control && this.control.value != value) || (!this.control && this.value != value)) {
 			this.value = value;
 			if (this.control) this.control.setValue(value);
-			if (this.change) this.change.emit(new Event('change'));
+			if (this.change) this.change.emit(new Event("change"));
 		}
 	}
 
