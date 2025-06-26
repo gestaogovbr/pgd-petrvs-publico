@@ -8,10 +8,12 @@ import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
 import { RelatorioPlanoTrabalho } from "src/app/models/relatorio-plano-trabalho.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
 import moment from 'moment';
-import { firstValueFrom } from "rxjs";
 import { LookupItem } from "src/app/services/lookup.service";
 import { QueryOptions } from "src/app/dao/query-options";
 import { RelatorioPlanoTrabalhoDetalhadoDaoService } from "src/app/dao/relatorio-plano-trabalho-detalhado-dao.service";
+import { TipoModalidadeDaoService } from "src/app/dao/tipo-modalidade-dao.service";
+import { TipoAvaliacaoDaoService } from "src/app/dao/tipo-avaliacao-dao.service";
+import { TipoAvaliacaoNotaDaoService } from "src/app/dao/tipo-avaliacao-nota-dao.service";
 
 @Component({
   selector: 'relatorio-plano-trabalho',
@@ -23,16 +25,23 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
 
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
+  public tipoModalidadeDao: TipoModalidadeDaoService;
+  public tipoAvaliacaoNotaDao: TipoAvaliacaoNotaDaoService;
   public relatorioPlanoTrabalhoDao: RelatorioPlanoTrabalhoDaoService;
   public relatorioPlanoTrabalhoDetalhadoDao: RelatorioPlanoTrabalhoDetalhadoDaoService;
   public botoes: ToolbarButton[] = [];
   public unidadeId: string = '';
   public resumido: boolean = true;
+  public loaded: boolean = false;
+  public tiposModalidade: LookupItem[] = [];
+  public tiposNotas: LookupItem[] = [];
 
   constructor(public injector: Injector, dao: RelatorioPlanoTrabalhoDaoService) {
     super(injector, RelatorioPlanoTrabalho, RelatorioPlanoTrabalhoDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
+    this.tipoAvaliacaoNotaDao = injector.get<TipoAvaliacaoNotaDaoService>(TipoAvaliacaoNotaDaoService);
     this.relatorioPlanoTrabalhoDao = injector.get<RelatorioPlanoTrabalhoDaoService>(RelatorioPlanoTrabalhoDaoService);
     this.relatorioPlanoTrabalhoDetalhadoDao = injector.get<RelatorioPlanoTrabalhoDetalhadoDaoService>(RelatorioPlanoTrabalhoDetalhadoDaoService);
     this.title = "Relatório de Planos de Trabalho";
@@ -44,7 +53,25 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
       somente_vigentes: { default: false },
       incluir_periodos_avaliativos: { default: false },
       incluir_unidades_subordinadas: { default: false },
-      exportar: { default: false }
+      exportar: { default: false },
+      id: { default: "" },
+      participanteNome: { default: "" },
+      unidadeNome: { default: "" },
+      chd: { default: "" },
+      status: { default: "" },
+      modalidade: { default: ""},
+      duracao: { default: ""},
+      qtdePeriodosAvaliativos: { default: ""},
+      data_inicio_avaliativo: { default: ""},
+      data_fim_avaliativo: { default: ""},
+      data_conclusao: { default: "" },
+      situacao_execucao: { default: "" },
+      data_avaliacao: { default: "" },
+      nota: { default: "" },
+      situacao_avaliacao: { default: "" },
+      recurso: { default: "" },
+      data_reavaliacao: { default: "" },
+      nota_reavaliacao: { default: "" },
     });
   
     this.orderBy = [['unidadeHierarquia', 'asc'], ['numero', 'asc']];
@@ -52,6 +79,27 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
 
   public async ngOnInit() {
     super.ngOnInit();
+
+    this.tipoModalidadeDao.query().asPromise().then(modalidades => {
+      this.tiposModalidade = this.lookup.map(modalidades, 'id', 'nome');
+    });
+
+    this.tipoAvaliacaoNotaDao.query({ orderBy: [['sequencia', 'asc']] })
+      .asPromise().then(notas => {
+        const sanitizeNotas = notas.map(nota => ({
+          id: nota.nota,
+          nota: nota.nota.replaceAll('"', '')
+        }))
+        .filter((item, index, self) =>
+          index === self.findIndex(t => t.nota === item.nota)
+        );
+        this.tiposNotas = this.lookup.map(sanitizeNotas, 'id', 'nota');
+      });
+  }
+
+  public ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+    this.loaded = true;
   }
 
   public onAgruparChange(event: Event) {
@@ -94,6 +142,74 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
     if (form.incluir_unidades_subordinadas) {
       result.push(["incluir_unidades_subordinadas", "==", 1]);
     }
+
+    if (form.id) {
+      result.push(["numero", "like", "%" + form.id + "%"]);
+    }
+
+    if (form.participanteNome) {
+      result.push(["participanteNome", "like", "%" + form.participanteNome + "%"]);
+    }
+
+    if (form.unidadeNome) {
+      result.push(["unidadeHierarquia", "like", "%" + form.unidadeNome + "%"]);
+    }
+
+    if (form.chd) {
+      result.push(["chd", "==", form.chd]);
+    }
+
+    if (form.status) {
+      result.push(["status", "==", form.status]);
+    }
+
+    if (form.modalidade) {
+      result.push(["tipo_modalidade_id", "==", form.modalidade]);
+    }
+
+    if (form.nota) {
+      result.push(["nota", "==", form.nota]);
+    }
+
+    if (form.duracao) {
+      result.push(["duracao", "==", form.duracao]);
+    }
+
+    if (this.resumido && form.qtdePeriodosAvaliativos) {
+      result.push(["qtdePeriodosAvaliativos", "==", form.qtdePeriodosAvaliativos]);
+    }
+
+    if (form.nota_reavaliacao) {
+      result.push(["nota_reavaliacao", "==", form.nota_reavaliacao]);
+    }
+
+    if (form.situacao_avaliacao) {
+      result.push(["situacao_avaliacao", "==", form.situacao_avaliacao]);
+    }
+
+    if (form.situacao_execucao) {
+      result.push(["situacao_execucao", "==", form.situacao_execucao]);
+    }
+
+    if (form.data_inicio_avaliativo) {
+      result.push(["data_inicio_avaliativo", ">=", form.data_inicio_avaliativo]);
+    }
+
+    if (form.data_fim_avaliativo) {
+      result.push(["data_fim_avaliativo", "<=", form.data_fim_avaliativo]);
+    }
+
+    if (form.data_avaliacao) {
+      result.push(["data_avaliacao", "==", form.data_avaliacao.toISOString().slice(0,10)]);
+    }
+
+    if (form.data_reavaliacao) {
+      result.push(["data_reavaliacao", "==", form.data_reavaliacao.toISOString().slice(0,10)]);
+    }
+
+    if (form.data_conclusao) {
+      result.push(["data_conclusao", "==", form.data_conclusao.toISOString().slice(0,10)]);
+    }
     
     return result;
   };
@@ -121,7 +237,9 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
     
     if (this.grid && this.grid.query) {
       this.cdRef.detectChanges();
+      this.loaded = false;
       this.grid.loadColumns();
+      this.loaded = true;
       
       if (!form.incluir_periodos_avaliativos){
         this.grid.query.collection = 'Relatorio/planos-trabalho';
@@ -192,6 +310,12 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
       this.error(error);
     } finally {
       this.loading = false;
+    }
+  }
+
+  public onValueChange(event: Event) {
+    if (this.loaded) {
+      this.onButtonFilterClick(this.filter!);
     }
   }
 

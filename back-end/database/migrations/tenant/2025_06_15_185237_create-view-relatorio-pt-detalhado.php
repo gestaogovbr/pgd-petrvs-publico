@@ -25,20 +25,22 @@ return new class extends Migration
             `usu`.`nome` AS `participanteNome`,
             CONCAT(`fn_obter_unidade_hierarquia`(`pt`.`unidade_id`), '/', uni.sigla) AS `unidadeHierarquia`,
             `uni`.`sigla` AS `unidadeSigla`,
+            `pt`.`tipo_modalidade_id`,
             `tm`.`nome` AS `tipoModalidadeNome`,
+            DATEDIFF(`pt`.`data_fim`, `pt`.`data_inicio`) + 1 AS `duracao`,
             nvl((
                 SELECT sum(nvl(pte.forca_trabalho, 0) * 1)
                 FROM planos_trabalhos_entregas pte
                 WHERE pte.plano_trabalho_id = pt.id
                 and pte.deleted_at is null
             ), 0) as chd,
-            ptc.data_inicio as data_inicio_avaliativo,
-            ptc.data_fim as data_fim_avaliativo,
-            ptc.data_conclusao,
-            aval_antiga.data_avaliacao AS data_avaliacao,
-            aval_antiga.nota AS nota,
-            (case when a.id = aval_antiga.id then NULL else a.data_avaliacao END) as data_reavaliacao,
-            (case when a.id = aval_antiga.id then NULL else a.nota END) as nota_reavaliacao,
+            CAST(ptc.data_inicio AS DATE) as data_inicio_avaliativo,
+            CAST(ptc.data_fim AS DATE)as data_fim_avaliativo,
+            CAST(ptc.data_conclusao AS DATE) as data_conclusao,
+            CAST(aval_antiga.data_avaliacao AS DATE) AS data_avaliacao,
+            JSON_UNQUOTE(aval_antiga.nota) AS nota,
+            (case when a.id = aval_antiga.id then NULL else CAST(a.data_avaliacao AS DATE) END) as data_reavaliacao,
+            (case when a.id = aval_antiga.id then NULL else JSON_UNQUOTE(a.nota) END) as nota_reavaliacao,
             case when ptc.data_conclusao is null
                 then
                     CASE when CURDATE() <= DATE_ADD(ptc.data_fim, INTERVAL 10 DAY)

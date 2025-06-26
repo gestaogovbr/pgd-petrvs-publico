@@ -14,10 +14,18 @@ class RelatorioPlanoTrabalhoService extends ServiceBase
 
     public function proxyQuery($query, &$data)
     {
-        $where = [];
+        $where = $data["where"] ?? [];
+
+        // remove a condições especificadas, pois tem tratamento diferenciado no proxyQuery
+        $where = array_values(array_filter($where, function ($item) {
+            return ($item[0] !== 'somente_vigentes')
+                && ($item[0] !== 'incluir_unidades_subordinadas')
+                && ($item[0] !== 'incluir_periodos_avaliativos')
+                && ($item[0] !== 'unidade_id');
+        }));
+
         $somenteVigentes = $this->extractWhere($data, "somente_vigentes");
         $subordinadas = $this->extractWhere($data, "incluir_unidades_subordinadas");
-
         $unidadeId = $this->extractWhere($data, "unidade_id");
 
         if (isset($unidadeId[2])) {

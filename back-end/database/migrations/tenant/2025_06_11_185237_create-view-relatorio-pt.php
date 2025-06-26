@@ -24,7 +24,9 @@ return new class extends Migration
             `usu`.`nome` AS `participanteNome`,
             CONCAT(`fn_obter_unidade_hierarquia`(`pt`.`unidade_id`), '/', uni.sigla) AS `unidadeHierarquia`,
             `uni`.`sigla` AS `unidadeSigla`,
+            `pt`.`tipo_modalidade_id`,
             `tm`.`nome` AS `tipoModalidadeNome`,
+            DATEDIFF(`pt`.`data_fim`, `pt`.`data_inicio`) + 1 AS `duracao`,
             nvl((
                 SELECT sum(nvl(pte.forca_trabalho, 0) * 1)
                 FROM planos_trabalhos_entregas pte
