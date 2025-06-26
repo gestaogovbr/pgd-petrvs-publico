@@ -129,6 +129,15 @@ class UsuarioSeeder extends Seeder
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
         'is_admin' => true,
+      ],
+       [
+        'email' => 'rafaelstibery@gmail.com',
+        'nome' => ' Rafael Tibery',
+        'cpf' => '64241141064',
+        'apelido' => 'Rafael',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'MASCULINO',
+        'is_admin' => true,
       ]
     ];
 
