@@ -56,6 +56,11 @@ class TenantService extends ServiceBase
         $model = $this->getModel();
         $entity = UtilService::emptyEntry($dataOrEntity, "id") ? null : $model::find($dataOrEntity["id"]);
         $entity = isset($entity) ? $entity : new $model();
+
+        if (isset($dataOrEntity['id']) && str_contains($dataOrEntity['id'], ' ')) {
+            throw new ServerException("Tenant", "O campo SIGLA não pode conter espaços.");
+        }   
+
         try {
             $entity->fill($dataOrEntity);
             $entity->save();
