@@ -93,6 +93,9 @@ use App\Http\Controllers\SolucaoUnidadeController;
 use App\Http\Controllers\SiapeIndividualController;
 
 use App\Http\Controllers\ImpersonationController;
+use App\Http\Controllers\RelatorioController;
+use App\Http\Controllers\TipoAvaliacaoNotaController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -238,6 +241,9 @@ Route::middleware(['auth:sanctum'])->prefix('TipoJustificativa')->group(function
 });
 Route::middleware(['auth:sanctum'])->prefix('TipoAvaliacao')->group(function () {
   defaultRoutes(TipoAvaliacaoController::class);
+});
+Route::middleware(['auth:sanctum'])->prefix('TipoAvaliacaoNota')->group(function () {
+  Route::post('query', [TipoAvaliacaoNotaController::class, 'query']);
 });
 Route::middleware(['auth:sanctum'])->prefix('TipoModalidade')->group(function () {
   defaultRoutes(TipoModalidadeController::class);
