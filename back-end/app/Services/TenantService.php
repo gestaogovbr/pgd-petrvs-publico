@@ -61,6 +61,14 @@ class TenantService extends ServiceBase
             throw new ServerException("Tenant", "O campo SIGLA não pode conter espaços.");
         }   
 
+        $domainExists = DB::table('domains')
+            ->where('domain', $dataOrEntity['dominio_url'])
+            ->exists();
+        if ($domainExists) {
+            throw new ServerException("Tenant", "O domínio já está cadastrado.");
+        }
+   
+
         try {
             $entity->fill($dataOrEntity);
             $entity->save();
