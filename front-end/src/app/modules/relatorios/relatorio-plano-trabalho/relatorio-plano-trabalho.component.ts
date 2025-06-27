@@ -1,5 +1,5 @@
 import { Component, Injector, ViewChild } from "@angular/core";
-import { FormGroup } from "@angular/forms";
+import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
 import { RelatorioPlanoTrabalhoDaoService } from "src/app/dao/relatorio-plano-trabalho-dao.service";
@@ -12,7 +12,6 @@ import { LookupItem } from "src/app/services/lookup.service";
 import { QueryOptions } from "src/app/dao/query-options";
 import { RelatorioPlanoTrabalhoDetalhadoDaoService } from "src/app/dao/relatorio-plano-trabalho-detalhado-dao.service";
 import { TipoModalidadeDaoService } from "src/app/dao/tipo-modalidade-dao.service";
-import { TipoAvaliacaoDaoService } from "src/app/dao/tipo-avaliacao-dao.service";
 import { TipoAvaliacaoNotaDaoService } from "src/app/dao/tipo-avaliacao-nota-dao.service";
 
 @Component({
@@ -37,82 +36,77 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
   public tiposNotas: LookupItem[] = [];
 
   constructor(public injector: Injector, dao: RelatorioPlanoTrabalhoDaoService) {
-    super(injector, RelatorioPlanoTrabalho, RelatorioPlanoTrabalhoDaoService);
-    this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
-    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
-    this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
-    this.tipoAvaliacaoNotaDao = injector.get<TipoAvaliacaoNotaDaoService>(TipoAvaliacaoNotaDaoService);
-    this.relatorioPlanoTrabalhoDao = injector.get<RelatorioPlanoTrabalhoDaoService>(RelatorioPlanoTrabalhoDaoService);
-    this.relatorioPlanoTrabalhoDetalhadoDao = injector.get<RelatorioPlanoTrabalhoDetalhadoDaoService>(RelatorioPlanoTrabalhoDetalhadoDaoService);
-    this.title = "Relatório de Planos de Trabalho";
-    this.filter = this.fh.FormBuilder({
-      unidade_id: { default: this.auth.unidade?.id },
-      agrupar: { default: true },
-      data_inicio: { default: "" },
-      data_fim: { default: "" },
-      somente_vigentes: { default: false },
-      incluir_periodos_avaliativos: { default: false },
-      incluir_unidades_subordinadas: { default: false },
-      exportar: { default: false },
-      id: { default: "" },
-      participanteNome: { default: "" },
-      unidadeNome: { default: "" },
-      chd: { default: "" },
-      status: { default: "" },
-      modalidade: { default: ""},
-      duracao: { default: ""},
-      qtdePeriodosAvaliativos: { default: ""},
-      data_inicio_avaliativo: { default: ""},
-      data_fim_avaliativo: { default: ""},
-      data_conclusao: { default: "" },
-      situacao_execucao: { default: "" },
-      data_avaliacao: { default: "" },
-      nota: { default: "" },
-      situacao_avaliacao: { default: "" },
-      recurso: { default: "" },
-      data_reavaliacao: { default: "" },
-      nota_reavaliacao: { default: "" },
-    });
-  
-    this.orderBy = [['unidadeHierarquia', 'asc'], ['numero', 'asc']];
+      super(injector, RelatorioPlanoTrabalho, RelatorioPlanoTrabalhoDaoService);
+      this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+      this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+      this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
+      this.tipoAvaliacaoNotaDao = injector.get<TipoAvaliacaoNotaDaoService>(TipoAvaliacaoNotaDaoService);
+      this.relatorioPlanoTrabalhoDao = injector.get<RelatorioPlanoTrabalhoDaoService>(RelatorioPlanoTrabalhoDaoService);
+      this.relatorioPlanoTrabalhoDetalhadoDao = injector.get<RelatorioPlanoTrabalhoDetalhadoDaoService>(RelatorioPlanoTrabalhoDetalhadoDaoService);
+      this.title = "Relatório de Planos de Trabalho";
+      this.filter = this.fh.FormBuilder({
+          unidade_id: { default: this.auth.unidade?.id },
+          agrupar: { default: true },
+          data_inicio: { default: "" },
+          data_fim: { default: "" },
+          somente_vigentes: { default: false },
+          incluir_periodos_avaliativos: { default: false },
+          incluir_unidades_subordinadas: { default: false },
+          exportar: { default: false },
+          id: { default: "" },
+          participanteNome: { default: "" },
+          unidadeNome: { default: "" },
+          chd: { default: "" },
+          status: { default: "" },
+          modalidade: { default: ""},
+          duracao: { default: ""},
+          qtdePeriodosAvaliativos: { default: ""},
+          data_inicio_avaliativo: { default: ""},
+          data_fim_avaliativo: { default: ""},
+          data_conclusao: { default: "" },
+          situacao_execucao: { default: "" },
+          data_avaliacao: { default: "" },
+          nota: { default: "" },
+          situacao_avaliacao: { default: "" },
+          recurso: { default: "" },
+          data_reavaliacao: { default: "" },
+          nota_reavaliacao: { default: "" },
+      });
+
+      
+      this.filter!.get('unidade_id')?.setValidators(this.requiredValidator.bind(this));
+      this.filter.get('unidade_id')?.updateValueAndValidity();
+
+      this.orderBy = [['unidadeHierarquia', 'asc'], ['numero', 'asc']];
+  }
+
+  public requiredValidator(control: AbstractControl): ValidationErrors | null { 
+      return this.util.empty(control.value) ? { errorMessage: "Obrigatório" } : null;
   }
 
   public async ngOnInit() {
-    super.ngOnInit();
+      super.ngOnInit();
 
-    this.tipoModalidadeDao.query().asPromise().then(modalidades => {
-      this.tiposModalidade = this.lookup.map(modalidades, 'id', 'nome');
-    });
-
-    this.tipoAvaliacaoNotaDao.query({ orderBy: [['sequencia', 'asc']] })
-      .asPromise().then(notas => {
-        const sanitizeNotas = notas.map(nota => ({
-          id: nota.nota,
-          nota: nota.nota.replaceAll('"', '')
-        }))
-        .filter((item, index, self) =>
-          index === self.findIndex(t => t.nota === item.nota)
-        );
-        this.tiposNotas = this.lookup.map(sanitizeNotas, 'id', 'nota');
+      this.tipoModalidadeDao.query().asPromise().then(modalidades => {
+          this.tiposModalidade = this.lookup.map(modalidades, 'id', 'nome');
       });
+
+      this.tipoAvaliacaoNotaDao.query({ orderBy: [['sequencia', 'asc']] })
+          .asPromise().then(notas => {
+              const sanitizeNotas = notas.map(nota => ({
+              id: nota.nota,
+              nota: nota.nota.replaceAll('"', '')
+              }))
+              .filter((item, index, self) =>
+              index === self.findIndex(t => t.nota === item.nota)
+              );
+              this.tiposNotas = this.lookup.map(sanitizeNotas, 'id', 'nota');
+          });
   }
 
   public ngAfterViewInit(): void {
-    super.ngAfterViewInit();
-    this.loaded = true;
-  }
-
-  public onAgruparChange(event: Event) {
-    const agrupar = this.filter!.controls.agrupar.value;
-    if (
-      (agrupar && !this.groupBy?.length) ||
-      (!agrupar && this.groupBy?.length)
-    ) {
-      this.groupBy = agrupar
-        ? [{ field: "unidade.sigla", label: "Unidade" }]
-        : [];
-      this.grid!.reloadFilter();
-    }    
+      super.ngAfterViewInit();
+      this.loaded = true;
   }
 
   public filterWhere = (filter: FormGroup) => {
@@ -234,23 +228,27 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
     let form: any = filter.value;
     let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
     this.resumido = !form.incluir_periodos_avaliativos;
-    
-    if (this.grid && this.grid.query) {
-      this.cdRef.detectChanges();
-      this.loaded = false;
-      this.grid.loadColumns();
-      this.loaded = true;
-      
-      if (!form.incluir_periodos_avaliativos){
-        this.grid.query.collection = 'Relatorio/planos-trabalho';
-      } else {
-        this.grid.query.collection = 'Relatorio/planos-trabalho-detalhado';         }
-    }
 
-    if (form?.exportar) {
-      this.downloadXls(queryOptions);
+    if (this.filter!.valid) {
+      if (this.grid && this.grid.query) {
+        this.cdRef.detectChanges();
+        this.loaded = false;
+        this.grid.loadColumns();
+        this.loaded = true;
+        
+        if (!form.incluir_periodos_avaliativos){
+          this.grid.query.collection = 'Relatorio/planos-trabalho';
+        } else {
+          this.grid.query.collection = 'Relatorio/planos-trabalho-detalhado';         }
+      }
+
+      if (form?.exportar) {
+        this.downloadXls(queryOptions);
+      } else {
+        this.grid?.query?.reload(queryOptions);
+      }
     } else {
-      this.grid?.query?.reload(queryOptions);
+      this.filter!.markAllAsTouched(); 
     }
   }
 
@@ -318,5 +316,4 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
       this.onButtonFilterClick(this.filter!);
     }
   }
-
 }
