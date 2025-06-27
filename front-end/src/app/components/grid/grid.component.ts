@@ -34,8 +34,6 @@ import {SidePanelComponent} from "./side-panel/side-panel.component";
 import {LookupItem} from "src/app/services/lookup.service";
 import {TemplateDaoService} from "src/app/dao/template-dao.service";
 import {DocumentoService} from "src/app/modules/uteis/documentos/documento.service";
-import { HeaderGroupComponent } from "./header-group/header-group.component";
-import { HeaderGroupDirective } from "./header-group/header-group.directive";
 import { HeaderGroupsComponent } from "./header-groups/header-groups.component";
 
 export type GroupBy = {field: string; label: string; value?: any};
