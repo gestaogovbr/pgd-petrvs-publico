@@ -189,7 +189,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
     if(consolidacao.status == "AVALIADO" && consolidacao!.avaliacao) {
       result.push(BOTAO_VER_AVALIACAO);
       /* (RN_AVL_2) [PT] O usuário do plano de trabalho que possuir o acesso MOD_PTR_CSLD_REC_AVAL poderá recorrer da nota atribuida dentro do limites estabelecido pelo programa; */
-      if(true || usuarioEhDonoDoPlano && this.auth.hasPermissionTo('MOD_PTR_CSLD_REC_AVAL') && consolidacao!.avaliacao?.data_avaliacao && ['Inadequado', 'Não executado'].includes(consolidacao!.avaliacao?.nota)) {       
+      if(usuarioEhDonoDoPlano && this.auth.hasPermissionTo('MOD_PTR_CSLD_REC_AVAL') && consolidacao!.avaliacao?.data_avaliacao && ['Inadequado', 'Não executado'].includes(consolidacao!.avaliacao?.nota)) {       
         result.push(BOTAO_FAZER_RECURSO);
       }
 
