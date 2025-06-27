@@ -41,21 +41,24 @@ class UpdatePerfilUsuarios extends Migration
             $perfilColaborador = NivelAcessoService::getPerfilColaborador();
         }
 
-        // Atualiza perfil de usuários de administrador para administrador negocial 
-        Usuario::where('perfil_id', $perfilAdministradorGeral->id)
-            ->update(['perfil_id' => $perfilAdministradorNegocial->id]);
+        if ($perfilAdministradorGeral != null) {           
+            // Atualiza perfil de usuários de administrador para administrador negocial 
+            Usuario::where('perfil_id', $perfilAdministradorGeral->id)
+                ->update(['perfil_id' => $perfilAdministradorNegocial->id]);
 
-        // Atualiza perfil de usuários de desenvolvedor para administrador geral 
-        Usuario::where('perfil_id', $perfilDesenvolvedor->id)
-            ->update(['perfil_id' => $perfilAdministradorGeral->id]);
+            // Atualiza perfil de usuários de desenvolvedor para administrador geral 
+            Usuario::where('perfil_id', $perfilDesenvolvedor->id)
+                ->update(['perfil_id' => $perfilAdministradorGeral->id]);
+       
 
-        // Atualiza os perfis
-        foreach ($perfilService->perfis as $registro) {
-            $perfil = Perfil::where('nivel', $registro[0])->first();
-            $perfil->nome = $registro[1];
-            $perfil->descricao = $registro[2];
-            $perfil->save();
-        };
+            // Atualiza os perfis
+            foreach ($perfilService->perfis as $registro) {
+                $perfil = Perfil::where('nivel', $registro[0])->first();
+                $perfil->nome = $registro[1];
+                $perfil->descricao = $registro[2];
+                $perfil->save();
+            };
+        }
         
     }
 
