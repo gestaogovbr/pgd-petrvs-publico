@@ -16,14 +16,18 @@ class ChangeService extends ServiceBase
     {
         $filters = $this->prepareFilters($data);
         $modelClass = $filters['auditable_type'] ?? null;
-        $modelId = $filters['auditable_id'] ?? null;
+        $modelId = $filters['auditable_id'] ?? $filters['row_id'] ?? null;
 
-        // Consulta base
+        if (!$modelClass && $modelId) {
+            $modelClass = Audit::where('auditable_id', $modelId)
+                ->orderByDesc('created_at')
+                ->value('auditable_type');
+        }
+
         $query = Audit::query();
 
         if ($modelClass) {
             $auditableType = str_replace('\\\\', '\\', $modelClass);
-            \Log::info($modelClass);
             $query->where('auditable_type', $auditableType);
         }
 
@@ -64,7 +68,14 @@ class ChangeService extends ServiceBase
 
         $paginator = $query->orderByDesc('created_at')->paginate($perPage, ['*'], 'page', $page);
 
-        $paginator->getCollection()->transform(function ($audit) {
+        $relatedAudits = collect();
+        if ($modelClass && $modelId) {
+            $relatedAudits = $this->getRelatedAudits($modelClass, (int) $modelId);
+        }
+
+        $allAudits = $paginator->getCollection()->concat($relatedAudits)->sortByDesc('created_at');
+
+        $allAudits = $allAudits->map(function ($audit) {
             $audit->old_values = is_string($audit->old_values)
                 ? json_decode($audit->old_values, true)
                 : $audit->old_values;
@@ -79,14 +90,15 @@ class ChangeService extends ServiceBase
             if (class_exists($audit->auditable_type)) {
                 $related = $audit->auditable_type::find($audit->auditable_id);
             }
+
             $audit->relacionado = $related instanceof Model ? $related->toArray() : null;
 
             return $audit;
         });
 
         return [
-            'count' => $paginator->total(),
-            'rows' => $paginator->items(),
+            'count' => $allAudits->count(),
+            'rows' => $allAudits->values(),
             'extra' => [
                 'current_page' => $paginator->currentPage(),
                 'last_page' => $paginator->lastPage(),
@@ -121,17 +133,54 @@ class ChangeService extends ServiceBase
                 case 'in':
                     $filters[$field] = ['in' => $value];
                     break;
-
             }
         }
 
         return $filters;
     }
 
+    /**
+     * Retorna audits de relacionamentos relacionados ao modelo principal.
+     */
+    private function getRelatedAudits(string $modelClass, int|string $modelId): \Illuminate\Support\Collection
+    {
+        $relatedAudits = collect();
+        $modelInstance = new $modelClass;
 
-//    public function showResponsaveis($usuario_ids)
-//    {
-//        $usuario_ids_flat = array_reduce($usuario_ids, 'array_merge', []);
-//        return Usuario::whereIn('id', $usuario_ids_flat)->select('id', 'nome')->get();
-//    }
+        if (!method_exists($modelInstance, 'getAuditRelations')) {
+            return $relatedAudits;
+        }
+
+        foreach ($modelInstance->getAuditRelations() as $relation) {
+            $relatedIds = collect();
+
+            if (isset($relation['via'])) {
+                $viaModel = $relation['via']['model'];
+                $viaKey = $relation['via']['foreign_key'];
+
+                $viaIds = $viaModel::where($viaKey, $modelId)->pluck('id');
+                if ($viaIds->isEmpty()) {
+                    continue;
+                }
+
+                $relatedIds = $relation['model']::whereIn($relation['foreign_key'], $viaIds)->pluck('id');
+            } else {
+                $relatedIds = $relation['model']::where($relation['foreign_key'], $modelId)->pluck('id');
+            }
+
+            if ($relatedIds->isEmpty()) {
+                continue;
+            }
+
+            $relatedIds->chunk(500)->each(function ($chunk) use ($relation, &$relatedAudits) {
+                $audits = Audit::where('auditable_type', $relation['model'])
+                    ->whereIn('auditable_id', $chunk->toArray())
+                    ->limit(100)
+                    ->get();
+                $relatedAudits = $relatedAudits->concat($audits);
+            });
+        }
+        return $relatedAudits->sortByDesc('created_at');
+    }
+
 }
