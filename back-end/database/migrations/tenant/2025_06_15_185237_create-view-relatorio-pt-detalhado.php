@@ -91,6 +91,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        DB::statement('DROP VIEW IF EXISTS view_relatorio_plano_trabalho_detalhado');
     }
 };
