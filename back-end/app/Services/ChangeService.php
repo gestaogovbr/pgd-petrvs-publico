@@ -70,7 +70,7 @@ class ChangeService extends ServiceBase
 
         $relatedAudits = collect();
         if ($modelClass && $modelId) {
-            $relatedAudits = $this->getRelatedAudits($modelClass, (int) $modelId);
+            $relatedAudits = $this->getRelatedAudits($modelClass,  $modelId);
         }
 
         $allAudits = $paginator->getCollection()->concat($relatedAudits)->sortByDesc('created_at');
@@ -142,7 +142,7 @@ class ChangeService extends ServiceBase
     /**
      * Retorna audits de relacionamentos relacionados ao modelo principal.
      */
-    private function getRelatedAudits(string $modelClass, int|string $modelId): \Illuminate\Support\Collection
+    private function getRelatedAudits(string $modelClass, string $modelId): \Illuminate\Support\Collection
     {
         $relatedAudits = collect();
         $modelInstance = new $modelClass;
