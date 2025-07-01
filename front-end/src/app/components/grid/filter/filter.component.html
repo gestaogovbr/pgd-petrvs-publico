@@ -9,7 +9,7 @@
             </div>
             <div class="btn-group" role="group" aria-label="Grupo de botões para filtrar e limpar filtro">
                 <button type="button" [id]="getId('_filter_filtrar')" class="btn btn-outline-success" (click)="onButtonFilterClick()">
-                    <i class="bi bi-filter-circle"></i> Filtrar
+                    <i class="bi bi-filter-circle"></i> {{ filterLabel }}
                 </button>
                 <button type="button" [id]="getId('_filter_limpar')" class="btn btn-outline-danger" (click)="onButtonClearClick()">
                     <i class="bi bi-x-circle"></i> Limpar

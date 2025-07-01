@@ -40,6 +40,16 @@ class PlanoTrabalho extends ModelBase
     //'numero', /* int; NOT NULL; */// Número do plano de trabalho (Gerado pelo sistema)
   ];
 
+  public const STATUSES = [
+    'INCLUIDO' => 'Incluído',
+    'AGUARDANDO_ASSINATURA' => 'Aguardando Assinatura',
+    'ATIVO' => 'Ativo',
+    'CONCLUIDO' => 'Concluído',
+    'AVALIADO' => 'Avaliado',
+    'SUSPENSO' => 'Suspenso',
+    'CANCELADO' => 'Cancelado'
+  ];
+
   public $fillable_changes = ['entregas', 'documentos'];
 
   public $delete_cascade = ['documentos'];
