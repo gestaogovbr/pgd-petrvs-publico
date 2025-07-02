@@ -195,9 +195,9 @@ export class AppComponent {
       },
       RELATORIO_PLANO_ENTREGA: {
         name: this.lex.translate("Planos de Entrega"),
-        permition: 'MOD_RELATORIO_PT',
-        icon: this.entity.getIcon('PlanoEntrega'),
-        onClick: ()=> this.emDesenvolvimento()
+        permition: 'MOD_RELATORIO_PE',
+        route: ['relatorios', 'planos-entrega'],
+        icon: this.entity.getIcon('PlanoEntrega')
       },
       RELATORIO_USUARIOS: {
         name: this.lex.translate("Agentes Públicos"),

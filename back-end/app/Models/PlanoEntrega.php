@@ -18,22 +18,32 @@ class PlanoEntrega extends ModelBase
 
     protected $with = [];
 
-    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
-        'nome', /* varchar(256); NOT NULL; */ // Nome do plano de entregas
-        'planejamento_id', /* char(36); */
-        'cadeia_valor_id', /* char(36); */
-        'unidade_id', /* char(36); NOT NULL; */
-        'plano_entrega_id', /* char(36); */
-        'data_arquivamento', /* datetime; */ // Data de arquivamento do plano de entregas
-        'programa_id', /* char(36); NOT NULL; */
-        'criacao_usuario_id', /* char(36); NOT NULL; */
-        //'status', /* enum('INCLUIDO','HOMOLOGANDO','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO','CANCELADO'); */// Status atual do plano de entregas
-        'data_inicio', /* datetime; NOT NULL; */ // Data inicial do plano de entregas
-        'data_fim', /* datetime; */ // Data final do plano de entregas
-        //'avaliacao_id',
-        //'deleted_at', /* timestamp; */
-        //'numero', /* int; NOT NULL; */// Número do plano de entrega (Gerado pelo sistema)
-    ];
+  public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
+    'nome', /* varchar(256); NOT NULL; */ // Nome do plano de entregas
+    'planejamento_id', /* char(36); */
+    'cadeia_valor_id', /* char(36); */
+    'unidade_id', /* char(36); NOT NULL; */
+    'plano_entrega_id', /* char(36); */
+    'data_arquivamento', /* datetime; */ // Data de arquivamento do plano de entregas
+    'programa_id', /* char(36); NOT NULL; */
+    'criacao_usuario_id', /* char(36); NOT NULL; */
+    //'status', /* enum('INCLUIDO','HOMOLOGANDO','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO','CANCELADO'); */// Status atual do plano de entregas
+    'data_inicio', /* datetime; NOT NULL; */ // Data inicial do plano de entregas
+    'data_fim', /* datetime; */ // Data final do plano de entregas
+    //'avaliacao_id',
+    //'deleted_at', /* timestamp; */
+    //'numero', /* int; NOT NULL; */// Número do plano de entrega (Gerado pelo sistema)
+  ];
+
+  public const STATUSES = [
+    'INCLUIDO' => 'Incluído',
+    'HOMOLOGANDO' => 'Aguardando homologação',
+    'ATIVO' => 'Em execução',
+    'CONCLUIDO' => 'Concluído',
+    'AVALIADO' => 'Avaliado',
+    'SUSPENSO' => 'Suspenso',
+    'CANCELADO' => 'Cancelado'
+  ];
 
     public $fillable_changes = ["entregas"];
 
