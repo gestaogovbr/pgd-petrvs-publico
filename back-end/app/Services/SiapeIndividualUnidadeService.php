@@ -102,12 +102,14 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
     private function montaXmlUnidade($codigoDaUnidade)
     {
+        $orgao =  strval(intval($this->service->config['codOrgao']));
+
         return $this->service->getBuscarDadosSiapeUnidade()->getUorgAsXml(
             $this->service->config['siglaSistema'],
             $this->service->config['nomeSistema'],
             $this->service->config['senha'],
             $this->service->getBuscarDadosSiapeUnidade()->getCpf(),
-            $this->service->getOrgao(),
+            $orgao,
             $codigoDaUnidade
         );
     }
