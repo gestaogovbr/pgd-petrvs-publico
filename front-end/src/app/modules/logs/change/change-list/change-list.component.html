@@ -66,6 +66,7 @@
         [control]="filter!.controls.modelo"
         [items]="models"
         itemTodos="(Todos)"
+        [disabled]="(filter?.controls?.row_id_text?.value ?? '').length > 0 ? 'true' : undefined"
       ></input-select>
     </div>
   </filter>

@@ -70,7 +70,7 @@ class ChangeService extends ServiceBase
 
         $relatedAudits = collect();
         if ($modelClass && $modelId) {
-            $relatedAudits = $this->getRelatedAudits($modelClass,  $modelId);
+            $relatedAudits = $this->getRelatedAudits($modelClass,  $modelId, $filters);
         }
 
         $allAudits = $paginator->getCollection()->concat($relatedAudits)->sortByDesc('created_at');
@@ -142,7 +142,7 @@ class ChangeService extends ServiceBase
     /**
      * Retorna audits de relacionamentos relacionados ao modelo principal.
      */
-    private function getRelatedAudits(string $modelClass, string $modelId): \Illuminate\Support\Collection
+    private function getRelatedAudits(string $modelClass, string $modelId, array $filters = []): \Illuminate\Support\Collection
     {
         $relatedAudits = collect();
         $modelInstance = new $modelClass;
@@ -172,15 +172,44 @@ class ChangeService extends ServiceBase
                 continue;
             }
 
-            $relatedIds->chunk(500)->each(function ($chunk) use ($relation, &$relatedAudits) {
-                $audits = Audit::where('auditable_type', $relation['model'])
-                    ->whereIn('auditable_id', $chunk->toArray())
-                    ->limit(100)
-                    ->get();
+            $relatedIds->chunk(500)->each(function ($chunk) use ($relation, &$relatedAudits, $filters) {
+                $query = Audit::where('auditable_type', $relation['model'])
+                    ->whereIn('auditable_id', $chunk->toArray());
+
+                // Aplicar filtros adicionais
+                if (filled($filters['type'] ?? null)) {
+                    $query->where('event', $filters['type']);
+                }
+
+                if (filled($filters['user_id'] ?? null)) {
+                    $query->where('user_id', $filters['user_id']);
+                }
+
+                if (filled($filters['date_from'] ?? null)) {
+                    $query->whereDate('created_at', '>=', $filters['date_from']);
+                }
+
+                if (filled($filters['date_to'] ?? null)) {
+                    $query->whereDate('created_at', '<=', $filters['date_to']);
+                }
+
+                if (filled($filters['search'] ?? null)) {
+                    $search = $filters['search'];
+                    $query->where(function ($q) use ($search) {
+                        $q->where('old_values', 'like', "%{$search}%")
+                            ->orWhere('new_values', 'like', "%{$search}%")
+                            ->orWhere('tags', 'like', "%{$search}%")
+                            ->orWhere('url', 'like', "%{$search}%");
+                    });
+                }
+
+                $audits = $query->limit(100)->get();
                 $relatedAudits = $relatedAudits->concat($audits);
             });
         }
+
         return $relatedAudits->sortByDesc('created_at');
     }
+
 
 }
