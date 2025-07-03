@@ -48,4 +48,18 @@ class CadeiaValor extends ModelBase
   {
     return $this->belongsTo(Entidade::class);
   }
+    public function getAuditRelations(): array
+    {
+        return [
+            [
+                'model' => \App\Models\PlanoEntrega::class,
+                'foreign_key' => 'cadeia_valor_id',
+            ],
+            [
+                'model' => \App\Models\CadeiaValorProcesso::class,
+                'foreign_key' => 'cadeia_valor_id',
+            ],
+        ];
+    }
+
 }

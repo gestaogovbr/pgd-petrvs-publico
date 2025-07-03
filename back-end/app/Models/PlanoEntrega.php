@@ -129,6 +129,11 @@ class PlanoEntrega extends ModelBase
                 'model' => \App\Models\Avaliacao::class,
                 'foreign_key' => 'plano_entrega_id',
             ],
+            [
+                'model' => \App\Models\CadeiaValor::class,
+                'foreign_key' => 'cadeia_valor_id',
+            ],
+
         ];
     }
 
