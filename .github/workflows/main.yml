@@ -43,8 +43,8 @@ jobs:
         env:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
           DOCKER_HUB_TAG_LATEST: latest
-          DOCKER_HUB_TAG_NEW: 2.4.0
-          DOCKER_HUB_TAG_OLD: 2.3.20
+          DOCKER_HUB_TAG_NEW: 2.4.2
+          DOCKER_HUB_TAG_OLD: 2.4.1
           DOCKER_HUB_USERNAME: segescginf
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
           DEPLOY_PATH: ./
