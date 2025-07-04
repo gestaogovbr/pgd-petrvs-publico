@@ -3,7 +3,6 @@ import { Injectable,Injector } from '@angular/core';
 import { DaoBaseService } from './dao-base.service';
 import { RelatorioPlanoEntrega } from '../models/relatorio-plano-entrega.model';
 import { Observable } from 'rxjs';
-import { HttpResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'

@@ -41,8 +41,7 @@ class RelatorioPlanoEntregaService extends ServiceBase
 
 
         if (isset($somenteVigentes[2])) {
-            $where[] = ["dataInicio", "<=", now()];
-            $where[] = ["dataFim", ">=", now()];
+            $where[] = RawWhere::raw("(CURDATE() BETWEEN dataInicio and dataFim)");
         }
 
         $data["where"] = $where;
@@ -50,7 +49,7 @@ class RelatorioPlanoEntregaService extends ServiceBase
 
     public function proxyRows(&$rows) {
         foreach($rows as $row) {
-            $row['nota'] = str_replace('"', '', json_decode($row['nota']));
+            $row['nota'] = str_replace('"', '', $row['nota']);
         }
 
         return $rows;

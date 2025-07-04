@@ -7,7 +7,6 @@ import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
 import { RelatorioPlanoEntrega } from "src/app/models/relatorio-plano-entrega.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
-import moment from 'moment';
 import { LookupItem } from "src/app/services/lookup.service";
 import { QueryOptions } from "src/app/dao/query-options";
 import { TipoAvaliacaoNotaDaoService } from "src/app/dao/tipo-avaliacao-nota-dao.service";
@@ -41,29 +40,21 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
           agrupar: { default: true },
           data_inicio: { default: "" },
           data_fim: { default: "" },
-          somente_vigentes: { default: false },
-          incluir_periodos_avaliativos: { default: false },
           incluir_unidades_subordinadas: { default: false },
           exportar: { default: false },
+          somente_vigentes: { default: false },
           id: { default: "" },
-          participanteNome: { default: "" },
+          nome: { default: "" },
           unidadeNome: { default: "" },
-          chd: { default: "" },
           status: { default: "" },
-          modalidade: { default: ""},
           duracao: { default: ""},
-          qtdePeriodosAvaliativos: { default: ""},
-          data_inicio_avaliativo: { default: ""},
-          data_fim_avaliativo: { default: ""},
           data_conclusao: { default: "" },
-          situacao_execucao: { default: "" },
           data_avaliacao: { default: "" },
           nota: { default: "" },
           situacao_avaliacao: { default: "" },
-          recurso: { default: "" },
-          data_reavaliacao: { default: "" },
-          nota_reavaliacao: { default: "" },
-      });
+          homologador: { default: "" },
+          entregaNome: { default: "" },
+        });
 
       
       this.filter!.get('unidade_id')?.setValidators(this.requiredValidator.bind(this));
@@ -118,10 +109,6 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
       result.push(["somente_vigentes", "==", 1]);
     }
 
-    if (form.incluir_periodos_avaliativos) {
-      result.push(["incluir_periodos_avaliativos", "==", 1]);
-    }
-
     if (form.incluir_unidades_subordinadas) {
       result.push(["incluir_unidades_subordinadas", "==", 1]);
     }
@@ -130,24 +117,16 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
       result.push(["numero", "like", "%" + form.id + "%"]);
     }
 
-    if (form.participanteNome) {
-      result.push(["participanteNome", "like", "%" + form.participanteNome + "%"]);
+    if (form.entregaNome) {
+      result.push(["entregaNome", "like", "%" + form.entregaNome + "%"]);
     }
 
     if (form.unidadeNome) {
       result.push(["unidadeHierarquia", "like", "%" + form.unidadeNome + "%"]);
     }
 
-    if (form.chd) {
-      result.push(["chd", "==", form.chd]);
-    }
-
     if (form.status) {
       result.push(["status", "==", form.status]);
-    }
-
-    if (form.modalidade) {
-      result.push(["tipo_modalidade_id", "==", form.modalidade]);
     }
 
     if (form.nota) {
@@ -158,36 +137,12 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
       result.push(["duracao", "==", form.duracao]);
     }
 
-    if (form.nota_reavaliacao) {
-      result.push(["nota_reavaliacao", "==", form.nota_reavaliacao]);
-    }
-
     if (form.situacao_avaliacao) {
       result.push(["situacao_avaliacao", "==", form.situacao_avaliacao]);
     }
 
-    if (form.situacao_execucao) {
-      result.push(["situacao_execucao", "==", form.situacao_execucao]);
-    }
-
-    if (form.data_inicio_avaliativo) {
-      result.push(["data_inicio_avaliativo", ">=", form.data_inicio_avaliativo]);
-    }
-
-    if (form.data_fim_avaliativo) {
-      result.push(["data_fim_avaliativo", "<=", form.data_fim_avaliativo]);
-    }
-
     if (form.data_avaliacao) {
       result.push(["data_avaliacao", "==", form.data_avaliacao.toISOString().slice(0,10)]);
-    }
-
-    if (form.data_reavaliacao) {
-      result.push(["data_reavaliacao", "==", form.data_reavaliacao.toISOString().slice(0,10)]);
-    }
-
-    if (form.data_conclusao) {
-      result.push(["data_conclusao", "==", form.data_conclusao.toISOString().slice(0,10)]);
     }
     
     return result;
@@ -205,12 +160,7 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
 
     if (this.filter!.valid) {
       if (this.grid && this.grid.query) {
-        this.cdRef.detectChanges();
-        this.loaded = false;
-        this.grid.loadColumns();
         this.loaded = true;
-        
-        this.grid.query.collection = 'Relatorio/planos-entrega';
       }
 
       if (form?.exportar) {
@@ -257,8 +207,6 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
   }
 
   public onValueChange(event: Event) {
-    if (this.loaded) {
-      this.onButtonFilterClick(this.filter!);
-    }
+    this.onButtonFilterClick(this.filter!);
   }
 }
