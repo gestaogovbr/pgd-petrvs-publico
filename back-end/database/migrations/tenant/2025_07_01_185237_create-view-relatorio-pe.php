@@ -15,9 +15,10 @@ return new class extends Migration
         CREATE OR REPLACE
         ALGORITHM = UNDEFINED VIEW `view_relatorio_plano_entrega` AS
         select
-            `pe`.`id` AS `plano_entrega_id`,
+            `pe`.`id` AS `id`,
             `pe`.`numero` AS `numero`,
             `pe`.`status` AS `status`,
+            pe.nome as entregaNome,
             CAST(`pe`.`data_inicio` AS DATE) AS `dataInicio`,
             CAST(`pe`.`data_fim` AS DATE) AS `dataFim`,
             `pe`.`unidade_id` AS `unidade_id`,

@@ -18,6 +18,8 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
+use function PHPUnit\Framework\isEmpty;
+
 class RelatorioPlanoEntregaExport implements FromCollection, WithMapping, WithHeadings,
     WithColumnFormatting, WithProperties, WithStyles, WithColumnWidths, WithEvents
 {
@@ -56,10 +58,10 @@ class RelatorioPlanoEntregaExport implements FromCollection, WithMapping, WithHe
     public function columnWidths(): array
     {
         return [
-            'A' => 10,
-            'B' => 30,
+            'A' => 30,
+            'B' => 10,
             'C' => 30,
-            'D' => 12,
+            'D' => 15,
             'E' => 20,
             'F' => 15,
             'G' => 15,
@@ -73,30 +75,33 @@ class RelatorioPlanoEntregaExport implements FromCollection, WithMapping, WithHe
 
     public function map($row): array
     {
-        $inicio = Carbon::createFromFormat('Y-m-d', $row->dataInicio);
-        $fim = Carbon::createFromFormat('Y-m-d', $row->dataFim);
-
         return [
             $row->unidadeHierarquia,
             '#'.$row->numero,
-            $row->nome,
+            $row->entregaNome,
+            '-',
             PlanoEntrega::STATUSES[$row->status],
             Date::stringToExcel($row->dataInicio),
             Date::stringToExcel($row->dataFim),
             $row->duracao,
-            '',
+            '-',
             Date::stringToExcel($row->data_avaliacao),
-            $row->situacao_avaliacao,
-            $row->nota
+            $this->coalesce($row->situacao_avaliacao),
+            $this->coalesce($row->nota)
         ];
+    }
+
+    public function coalesce($value)
+    {
+        return strlen(trim($value)) ? $value : '-';
     }
 
     public function columnFormats(): array
     {
         return [
-            'E' => NumberFormat::FORMAT_DATE_DDMMYYYY,
             'F' => NumberFormat::FORMAT_DATE_DDMMYYYY,
-            'I' => NumberFormat::FORMAT_DATE_DDMMYYYY,
+            'G' => NumberFormat::FORMAT_DATE_DDMMYYYY,
+            'J' => NumberFormat::FORMAT_DATE_DDMMYYYY,
         ];
     }
 
@@ -115,6 +120,16 @@ class RelatorioPlanoEntregaExport implements FromCollection, WithMapping, WithHe
     public function styles(Worksheet $sheet)
     {
         return [
+            // borda no conjunto inteiro + 1 linha de header
+            'A1:L'.(count($this->rows) + 1) => [
+                'borders' => [
+                    'outline' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'color' => ['argb' => '000000'],
+                    ],
+                ]
+            ],
+            // cabeçalho
             1    => [
                 'font' => ['bold' => true],
                 'alignment' => [
@@ -127,53 +142,9 @@ class RelatorioPlanoEntregaExport implements FromCollection, WithMapping, WithHe
                     ],
                 ]
             ],
-            'E' => [
+            'D:L' => [
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'F' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'G' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'H' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'I' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'J' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'K' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'L' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            // borda no conjunto inteiro + 1 linha de header
-            'A1:L'.(count($this->rows) + 1) => [
-                'borders' => [
-                    'outline' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                        'color' => ['argb' => '000000'],
-                    ],
                 ]
             ]
         ];

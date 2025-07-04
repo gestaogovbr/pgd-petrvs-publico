@@ -8,8 +8,6 @@
         [where]="filterWhere" 
         [submit]="filterSubmit.bind(this)" 
         [filter]="onButtonFilterClick"
-        [collapseChange]="filterCollapseChange.bind(this)" 
-        [collapsed]="!selectable && filterCollapsed"
         filterLabel="Consultar"
     >
         <div class="row">   
@@ -129,6 +127,7 @@
                     [control]="filter!.controls.status"
                     controlName="this.filter.status"
                     (change)="onValueChange($event)"
+                    nullable
                 ></input-select> 
             </ng-template>
             <ng-template let-row="row" #columnStatus>
@@ -201,6 +200,24 @@
             </ng-template>
         </column>
 
+        <column title="Data da conclusão" [template]="columnConclusao"
+            [titleTemplate]="titleDataConclusao"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleDataConclusao>
+                <input-datetime
+                    date
+                    controlName="data_avaliacao"
+                    [control]="filter!.controls.data_conclusao"
+                    (blur)="onValueChange($event)"
+                ></input-datetime>
+            </ng-template>
+            <ng-template let-row="row" #columnConclusao>
+                <span> - </span>
+            </ng-template>
+        </column>
+
         <column title="Situação da Avaliação" [template]="columnAvaliacaoSituacao"
             [titleTemplate]="titleAvaliacaoSituacao"
             [verticalAlign]="'bottom'"
@@ -228,14 +245,14 @@
             <ng-template let-header="header" #titleAvaliacaoNota>
                 <input-select 
                     [items]="tiposNotas"
-                    [control]="filter!.controls.nota_avaliacao"
-                    controlName="this.filter.nota_avaliacao"
+                    [control]="filter!.controls.nota"
+                    controlName="this.filter.nota"
                     (change)="onValueChange($event)"
                     nullable
                 ></input-select> 
             </ng-template>
             <ng-template let-row="row" #columnAvaliacaoNota>
-                <span>{{row.nota_avaliacao || '-'}}</span>
+                <span>{{row.nota || '-'}}</span>
             </ng-template>
         </column>
     </columns>
