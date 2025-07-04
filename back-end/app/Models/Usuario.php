@@ -316,6 +316,10 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id');
     }
 
+    /**
+     * @deprecated message: Não utilizar essa função, será descontinuada.
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function unidadesIntegrantes()
     {
         return $this->hasMany(UnidadeIntegrante::class);
