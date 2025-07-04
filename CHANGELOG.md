@@ -1,3 +1,9 @@
+## 2.4.2 03/07/2025
+### Corrigido
+ - Correção na edição de planos de entrega
+ - Mudança na forma de atualizar cidades e UFs das unidades vindas do SIAPE
+ - correção na busca dos códigos dos orgãos das unidades no SIAPE
+
 ## 2.4.1 13/06/2025
 ### Corrigido
  - Bug na habilitação do pedágio

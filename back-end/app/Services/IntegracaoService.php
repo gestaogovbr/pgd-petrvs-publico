@@ -488,8 +488,9 @@ class IntegracaoService extends ServiceBase
           "LEFT JOIN unidades un_atual_pai ON (un_atual_pai.id = u.unidade_pai_id) " .
           "LEFT JOIN unidades und ON (iu.pai_servo = und.codigo) " .
           "LEFT JOIN cidades c ON (iu.municipio_ibge = c.codigo_ibge) " .
+          "LEFT JOIN cidades c2 ON u.cidade_id = c2.id ".
           "" .
-          "WHERE (u.id is null OR iu.nomeuorg != u.nome " .
+          "WHERE (u.id is null OR c2.id != c.id OR iu.nomeuorg != u.nome " .
           "OR iu.siglauorg != u.sigla " .
           "OR iu.pai_servo != " .
           "(SELECT codigo as cod_unidade_pai FROM unidades u2 " .
@@ -499,6 +500,7 @@ class IntegracaoService extends ServiceBase
         $this->unidadesSelecionadas = DB::select($consulta_sql);
         // Executa atualizações das unidades caso necessário.
         if (!empty($this->unidadesSelecionadas)) {
+          SiapeLog::info("Iniciando atualização de unidades selecionadas", ['count' => count($this->unidadesSelecionadas)]);
           DB::transaction(function () use (&$self, $entidade_id) {
             foreach ($self->unidadesSelecionadas as $unidade) {
               SiapeLog::info("Iniciando atualização de unidade", (array) $unidade);
