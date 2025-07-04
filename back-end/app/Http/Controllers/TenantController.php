@@ -35,11 +35,7 @@ class TenantController extends ControllerBase {
                     'entity' => ['required'],
                     'with' => ['array']
                 ]);
-                if(!Tenant::find($data['entity']['id'])) {
-                    if (Domain::where('domain', $data['entity']['dominio_url'])->exists()) {
-                        throw new ServerException("TenantStore", "URL já cadastrada");
-                    }
-                }
+                
 
                 if(!$this->checkUserPermission($data['entity']['id']))
                     return response()->json(['error' => 'Tenant não encontrado.'], 404);

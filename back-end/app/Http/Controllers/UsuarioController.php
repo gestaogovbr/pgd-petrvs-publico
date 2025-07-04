@@ -21,15 +21,18 @@ class UsuarioController extends ControllerBase
     public function checkPermissions($action, $request, $service, $unidade, $usuario)
     {
         switch ($action) {
-        case 'STORE':
-            if (!$usuario->hasPermissionTo('MOD_USER_EDT')) throw new ServerException("CapacidadeStore", "Inserção não realizada");
-            break;
-        case 'EDIT':
-            if (!$usuario->hasPermissionTo('MOD_USER_EDT')) throw new ServerException("CapacidadeStore", "Edição não realizada");
-            break;
-        case 'DESTROY':
-            if (!$usuario->hasPermissionTo('MOD_USER_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não realizada");
-            break;
+            case 'STORE':
+                if (!$usuario->hasPermissionTo('MOD_USER_EDT'))
+                    throw new ServerException("CapacidadeStore", "Inserção não realizada");
+                break;
+            case 'EDIT':
+                if (!$usuario->hasPermissionTo('MOD_USER_EDT'))
+                    throw new ServerException("CapacidadeStore", "Edição não realizada");
+                break;
+            case 'DESTROY':
+                if (!$usuario->hasPermissionTo('MOD_USER_EXCL'))
+                    throw new ServerException("CapacidadeStore", "Exclusão não realizada");
+                break;
         }
     }
 
@@ -54,25 +57,25 @@ class UsuarioController extends ControllerBase
         } catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo " . $dataError['code'] . ": Ocorreu um erro inesperado."]);
         }
     }
 
-    public function consultarCPFSiape(Request $request) 
+    public function consultarCPFSiape(Request $request)
     {
         $request->validate([
             'cpf' => [],
-        ]); 
-
-      try {
-             $retorno = $this->service->consultaCPFSiape($request->cpf);
-
-        return response()->json([
-            'success' => true,
-            'funcionais' => $retorno['funcionais'],
-            'pessoais' => $retorno['pessoais']
         ]);
-        }  catch (Throwable $e) {
+
+        try {
+            $retorno = $this->service->consultaCPFSiape($request->cpf);
+
+            return response()->json([
+                'success' => true,
+                'funcionais' => $retorno['funcionais'],
+                'pessoais' => $retorno['pessoais']
+            ]);
+        } catch (Throwable $e) {
             report($e);
             return response()->json([
                 'success' => false,
@@ -84,12 +87,12 @@ class UsuarioController extends ControllerBase
     public function exportarCPFSiape(Request $request)
     {
         $data = $request->validate([
-        'cpf' => [],
+            'cpf' => [],
         ]);
 
         $nomeArquivo = 'dados_cpf_' . $data['cpf'] . '.zip';
 
-        try{
+        try {
             $retornos = $this->service->consultaCpfSiapeXml($request->cpf);
 
             $zipFile = tempnam(sys_get_temp_dir(), 'zip');
@@ -106,12 +109,12 @@ class UsuarioController extends ControllerBase
 
             return response()->download($zipFile, $nomeArquivo, [
                 'Content-Type' => 'application/zip',
-                'Content-Disposition' => sprintf('attachment; filename="%s"',$nomeArquivo),
+                'Content-Disposition' => sprintf('attachment; filename="%s"', $nomeArquivo),
             ])->deleteFileAfterSend(true);
 
         } catch (\Throwable $th) {
             report($th);
-            
+
             $tempFile = tempnam(sys_get_temp_dir(), 'txt');
             $mensagemErro = date('Y-m-d H:i:s') . " - " . $th->getMessage() . PHP_EOL;
 
@@ -137,5 +140,55 @@ class UsuarioController extends ControllerBase
                 'Content-Disposition' => 'attachment; filename="siape.log"',
             ]
         );
+    }
+    public function atualizaPedagio(Request $request)
+    {
+        try {
+            if (!parent::loggedUser()->hasPermissionTo('MOD_PART_PEDAGIO'))
+                throw new ServerException("ValidateUsuario", "Usuário precisa ter capacidade MOD_PART_PEDAGIO");
+
+            $data = $request->input('data');
+            $validated = validator($data, [
+                'usuario_id' => ['required', 'uuid'],
+                'data_inicial_pedagio' => ['required', 'date', 'before_or_equal:data_final_pedagio'],
+                'data_final_pedagio' => ['required', 'date', 'after_or_equal:data_inicial_pedagio'],
+                'tipo_pedagio' => ['required', 'integer', 'in:1,2'],
+            ])->validate();
+            return response()->json([
+                'success' => true,
+                'data' => $this->service->atualizaPedagio($validated)
+            ]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+
+        } catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo " . $dataError['code'] . ": Ocorreu um erro inesperado."]);
+        }
+    }
+
+    public function removerPedagio(Request $request)
+    {
+        try {
+            if (!parent::loggedUser()->hasPermissionTo('MOD_PART_PEDAGIO'))
+                throw new ServerException("ValidateUsuario", "Usuário precisa ter capacidade MOD_PART_PEDAGIO");
+
+            $data = $request->input('data');
+            $validated = validator($data, [
+                'usuario_id' => ['required', 'uuid'],
+            ])->validate();
+            return response()->json([
+                'success' => true,
+                'data' => $this->service->removePedagio($validated)
+            ]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+
+        } catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo " . $dataError['code'] . ": Ocorreu um erro inesperado."]);
+        }
     }
 }
