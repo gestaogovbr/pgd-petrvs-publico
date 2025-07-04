@@ -78,7 +78,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
       unidades_subordinadas: {default: false},
       incluir_arquivados: {default: false}
     });
-    this.rowsLimit = 10;
+    this.rowsLimit = 20;
     this.addOption(this.OPTION_INFORMACOES);
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }

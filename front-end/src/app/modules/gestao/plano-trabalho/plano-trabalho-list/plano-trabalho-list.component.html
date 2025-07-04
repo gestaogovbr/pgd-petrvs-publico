@@ -40,7 +40,7 @@
                 <span *ngIf="row.entregas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-list-check"></i> {{row.entregas?.length}}</span>
             </ng-template>
             <ng-template let-row="row" #columnExpandedEntregas>
-                <plano-trabalho-list-entrega [entity]="row" [planoTrabalhoEditavel]="row._metadata.editavel || false" (atualizaPlanoTrabalhoEvent)="(grid?.query || query)?.refreshId($event)"></plano-trabalho-list-entrega>
+                <plano-trabalho-list-entrega [entity]="row" [planoTrabalhoEditavel]="row._metadata?.editavel || false" (atualizaPlanoTrabalhoEvent)="(grid?.query || query)?.refreshId($event)"></plano-trabalho-list-entrega>
             </ng-template>
         </column>
         <column [titleTemplate]="titleNumero" [template]="columnNumero" [minWidth]="50">
