@@ -101,6 +101,32 @@ class Integracao implements InterfaceIntegracao
         
     }
 
+    public function aremoveDeterminadasAtribuicoes(array $atribuicoesRemover, UnidadeIntegrante $integranteNovoOuExistente,bool $forcarLotado = false): void
+    {
+        foreach ($atribuicoesRemover as $atribuicao) {
+           if ($atribuicao === EnumAtribuicao::LOTADO->value && $forcarLotado) {
+                array_push($this->atribuicoesFinais, sprintf("Atribuição %s não é válida para o integrante %s", $atribuicao, $integranteNovoOuExistente->id));
+                continue;
+            }
+            $this->removeAtribuicao($integranteNovoOuExistente, EnumAtribuicao::from($atribuicao));
+        }
+    }
+
+    public function removeAtribuicao(UnidadeIntegrante $integrante, EnumAtribuicao $atribuicao): void
+    {
+        $atribuicaoExistente = UnidadeIntegranteAtribuicao::where('unidade_integrante_id', $integrante->id)
+            ->where('atribuicao', $atribuicao->value)
+            ->first();
+
+        if ($atribuicaoExistente) {
+            $atribuicaoExistente->delete();
+            $integrante->delete();
+            array_push($this->atribuicoesFinais, sprintf("Atribuição %s removida do integrante %s", $atribuicao->value, $integrante->id));
+        } else {
+            array_push($this->atribuicoesFinais, sprintf("Atribuição %s já não existe para o integrante %s", $atribuicao->value, $integrante->id));
+        }
+    }
+
 
 
     public function setTransaction(bool $transaction): void
