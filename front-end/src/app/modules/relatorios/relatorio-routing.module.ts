@@ -3,7 +3,7 @@ import { RouterModule, Routes } from "@angular/router";
 import { AuthGuard } from "src/app/guards/auth.guard";
 import { ConfigResolver } from "src/app/resolvies/config.resolver";
 import { RelatorioPlanoEntregaComponent } from "./relatorio-plano-entrega/relatorio-plano-entrega.component";
-
+import { RelatorioPlanoTrabalhoComponent } from "./relatorio-plano-trabalho/relatorio-plano-trabalho.component";
 
 const routes: Routes = [
   { path: 'planos-trabalho',
