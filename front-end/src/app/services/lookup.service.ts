@@ -958,6 +958,13 @@ export class LookupService implements IIndexable {
     { key: 'Registrado com atraso', value: "Registrado com atraso" },
   ];
 
+  public RELATORIO_PE_SITUACOES_AVALIACAO: LookupItem[] = [
+    { key: 'Aguardando', value: "Aguardando" },
+    { key: 'Atrasado', value: "Atrasado" },
+    { key: 'Registrado no período', value: "Registrado no período" },
+    { key: 'Registrado com atraso', value: "Registrado com atraso" },
+  ];
+
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);
   }
