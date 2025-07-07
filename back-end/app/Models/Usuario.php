@@ -322,7 +322,7 @@ class Usuario extends Authenticatable implements AuditableContract
      */
     public function unidadesIntegrantes()
     {
-        return $this->hasMany(UnidadeIntegrante::class);
+        return $this->hasMany(UnidadeIntegrante::class, 'usuario_id', 'id');
     }
 
     public function unidadeIntegranteAtribuicoes($unidadeId)
