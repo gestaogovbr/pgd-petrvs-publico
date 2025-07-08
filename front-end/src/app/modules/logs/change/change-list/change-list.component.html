@@ -89,7 +89,7 @@
             <div class="mb-1">
         <span class="badge rounded-pill px-3 py-1 fw-semibold text-uppercase me-2"
               [ngStyle]="{
-                'background-color': change.event === 'delete' ? '#dc3545' : (change.event === 'created' ? '#198754' : '#b58900'),
+                'background-color': change.event === 'deleted' ? '#dc3545' : (change.event === 'created' ? '#198754' : '#b58900'),
                 'color': '#fff'
               }">
           {{ change.event }}
