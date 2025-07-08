@@ -130,7 +130,6 @@ class PlanoEntrega extends ModelBase
                 'model' => \App\Models\PlanoEntregaEntrega::class,
                 'foreign_key' => 'plano_entrega_id',
             ],
-
             [
                 'model' => \App\Models\StatusJustificativa::class,
                 'foreign_key' => 'plano_entrega_id',
@@ -141,10 +140,24 @@ class PlanoEntrega extends ModelBase
             ],
             [
                 'model' => \App\Models\CadeiaValor::class,
-                'foreign_key' => 'cadeia_valor_id',
+                'foreign_key' => 'id',
+                'via' => [
+                    'model' => \App\Models\PlanoEntrega::class,
+                    'foreign_key' => 'id', // chave primária do próprio PlanoEntrega
+                    'local_key' => 'cadeia_valor_id', // coluna que guarda o vínculo
+                ]
             ],
-
+            [
+                'model' => \App\Models\Planejamento::class,
+                'foreign_key' => 'id',
+                'via' => [
+                    'model' => \App\Models\PlanoEntrega::class,
+                    'foreign_key' => 'id',
+                    'local_key' => 'planejamento_id',
+                ]
+            ],
         ];
     }
+
 
 }
