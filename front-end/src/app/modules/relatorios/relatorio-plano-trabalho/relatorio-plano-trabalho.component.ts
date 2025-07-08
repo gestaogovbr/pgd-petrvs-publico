@@ -49,6 +49,8 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
           agrupar: { default: true },
           data_inicio: { default: "" },
           data_fim: { default: "" },
+          periodo_inicio: { default: "" },
+          periodo_fim: { default: "" },
           somente_vigentes: { default: false },
           incluir_periodos_avaliativos: { default: false },
           incluir_unidades_subordinadas: { default: false },
@@ -77,11 +79,23 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
       this.filter!.get('unidade_id')?.setValidators(this.requiredValidator.bind(this));
       this.filter.get('unidade_id')?.updateValueAndValidity();
 
+      this.filter!.get('data_fim')?.setValidators(this.periodoValidator.bind(this));
+      this.filter.get('data_fim')?.updateValueAndValidity();
+
       this.orderBy = [['unidadeHierarquia', 'asc'], ['numero', 'asc']];
   }
 
   public requiredValidator(control: AbstractControl): ValidationErrors | null { 
       return this.util.empty(control.value) ? { errorMessage: "Obrigatório" } : null;
+  }
+
+  
+  public periodoValidator(control: AbstractControl): ValidationErrors | null
+  {
+    const dataInicio = this.filter?.get('data_inicio')?.value;
+    const dataFim = new Date(control.value);
+
+    return dataFim < dataInicio ? { errorMessage: "deve ser maior que a data inicial" } : null;
   }
 
   public async ngOnInit() {
@@ -123,6 +137,14 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
 
     if (form.data_fim) {
       result.push(["dataFim", "<=", form.data_fim]);
+    }
+
+    if (form.periodo_inicio) {
+      result.push(["periodoInicio", ">=", form.periodo_inicio]);
+    }
+
+    if (form.periodo_fim) {
+      result.push(["periodoFim", "<=", form.periodo_fim]);
     }
 
     if (form.somente_vigentes) {

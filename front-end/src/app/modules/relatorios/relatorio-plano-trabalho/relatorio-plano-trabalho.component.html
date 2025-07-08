@@ -24,22 +24,23 @@
             <input-datetime
                 [size]="2"
                 date
-                label="Data início de consulta"
-                controlName="this.filter.data_inicio"
-                [control]="filter!.controls.data_inicio"
+                label="Período para consulta: início"
+                controlName="this.filter.periodo_inicio"
+                [control]="filter!.controls.periodo_inicio"
                 labelInfo="Data início de consulta"
             ></input-datetime>
             <input-datetime
                 [size]="2"
                 date
-                label="Data fim da consulta"
-                controlName="data_fim"
-                [control]="filter!.controls.data_fim"
+                label="Período para consulta: fim"
+                controlName="periodo_fim"
+                [control]="filter!.controls.periodo_fim"
                 labelInfo="Data fim da consulta"
             ></input-datetime>
             <input-switch
                 [size]="1"
                 label="Somente vigentes"
+                
                 controlName="somente_vigentes"
                 [control]="filter!.controls.somente_vigentes"
             ></input-switch>
