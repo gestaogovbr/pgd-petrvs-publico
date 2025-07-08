@@ -96,6 +96,24 @@ class Planejamento extends ModelBase
                 'model' => \App\Models\PlanejamentoObjetivo::class,
                 'foreign_key' => 'planejamento_id',
             ],
+            [
+                'model' => \App\Models\Entidade::class,
+                'foreign_key' => 'id',
+                'via' => [
+                    'model' => \App\Models\Planejamento::class,
+                    'foreign_key' => 'id',
+                    'local_key' => 'entidade_id',
+                ]
+            ],
+            [
+                'model' => \App\Models\Unidade::class,
+                'foreign_key' => 'id',
+                'via' => [
+                    'model' => \App\Models\Planejamento::class,
+                    'foreign_key' => 'id',
+                    'local_key' => 'unidade_id',
+                ]
+            ],
         ];
     }
 

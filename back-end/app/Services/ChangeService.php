@@ -154,29 +154,39 @@ class ChangeService extends ServiceBase
         foreach ($modelInstance->getAuditRelations() as $relation) {
             $relatedIds = collect();
 
+            $getModelQuery = function ($model) {
+                $query = $model::query();
+                if (in_array(\Illuminate\Database\Eloquent\SoftDeletes::class, class_uses_recursive($model))) {
+                    $query->withTrashed();
+                }
+                return $query;
+            };
+
             if (isset($relation['via'])) {
                 $viaModel = $relation['via']['model'];
                 $viaKey = $relation['via']['foreign_key'];
+                $viaQuery = $getModelQuery($viaModel);
 
-                $viaIds = $viaModel::where($viaKey, $modelId)->pluck('id');
+                $viaIds = $viaQuery->where($viaKey, $modelId)->pluck('id');
                 if ($viaIds->isEmpty()) {
                     continue;
                 }
 
-                $relatedIds = $relation['model']::whereIn($relation['foreign_key'], $viaIds)->pluck('id');
+                $relatedQuery = $getModelQuery($relation['model']);
+                $relatedIds = $relatedQuery->whereIn($relation['foreign_key'], $viaIds)->pluck('id');
             } else {
-                $relatedIds = $relation['model']::where($relation['foreign_key'], $modelId)->pluck('id');
+                $relatedQuery = $getModelQuery($relation['model']);
+                $relatedIds = $relatedQuery->where($relation['foreign_key'], $modelId)->pluck('id');
             }
 
             if ($relatedIds->isEmpty()) {
                 continue;
             }
 
-            $relatedIds->chunk(500)->each(function ($chunk) use ($relation, &$relatedAudits, $filters) {
+            $relatedIds->unique()->chunk(500)->each(function ($chunk) use ($relation, &$relatedAudits, $filters) {
                 $query = Audit::where('auditable_type', $relation['model'])
                     ->whereIn('auditable_id', $chunk->toArray());
 
-                // Aplicar filtros adicionais
                 if (filled($filters['type'] ?? null)) {
                     $query->where('event', $filters['type']);
                 }
@@ -203,13 +213,14 @@ class ChangeService extends ServiceBase
                     });
                 }
 
-                $audits = $query->limit(100)->get();
-                $relatedAudits = $relatedAudits->concat($audits);
+                $audits = $query->get();
+                $relatedAudits = $relatedAudits->merge($audits);
             });
         }
 
-        return $relatedAudits->sortByDesc('created_at');
+        return $relatedAudits->unique('id')->sortByDesc('created_at');
     }
+
 
 
 }
