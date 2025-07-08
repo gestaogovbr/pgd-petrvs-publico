@@ -19,24 +19,9 @@ return new class extends Migration
         DB::statement("CREATE TABLE IF NOT EXISTS unidades_integrantes_atribuicoes_old LIKE unidades_integrantes_atribuicoes");
         DB::statement("INSERT INTO unidades_integrantes_atribuicoes_old SELECT * FROM unidades_integrantes_atribuicoes");
 
-        UnidadeIntegrante::onlyTrashed()
-            ->with(['atribuicoes' => function ($q) {
-                $q->withTrashed();
-            }])
-            ->chunk(100, function ($batch) {
-                foreach ($batch as $unidade) {
-                    DB::beginTransaction();
-                    try {
-                        $unidade->atribuicoes()->forceDelete();
-                        $unidade->forceDelete();
-                        DB::commit();
-                    } catch (\Throwable $th) {
-                        DB::rollBack();
-                        throw $th;
-                    }
-                }
-            });
-
+        DB::statement("DELETE FROM unidades_integrantes_atribuicoes WHERE deleted_at IS NOT NULL");
+        DB::statement("DELETE FROM unidades_integrantes WHERE deleted_at IS NOT NULL");
+        
         $duplicates = DB::select(
             "SELECT *
             FROM unidades_integrantes ui
