@@ -11,6 +11,13 @@
                 <button type="button" [id]="getId('_filter_filtrar')" class="btn btn-outline-success" (click)="onButtonFilterClick()">
                     <i class="bi bi-filter-circle"></i> Filtrar
                 </button>
+                <button type="button"
+                    *ngIf="hasExportExcel"
+                    class="btn  btn-outline-success"
+                    (click)="onButtonExcelClick()"
+                >
+                    <i class="bi bi-file-excel"></i> Exportar para Excel
+                </button>
                 <button type="button" [id]="getId('_filter_limpar')" class="btn btn-outline-danger" (click)="onButtonClearClick()">
                     <i class="bi bi-x-circle"></i> Limpar
                 </button>

@@ -35,10 +35,12 @@ export class FilterComponent extends ComponentBase implements OnInit {
   @Input() deletedLabel: string = 'Mostrar os deletados';
   @Input() noButtons?: string;
   @Input() collapsed: boolean = true;
+  @Input() hasExportExcel: boolean = false;
   @Input() grid?: GridComponent;
   @Input() query?: QueryContext<Base>;
   @Input() queryOptions?: QueryOptions;
   @Input() hidden?: string;
+  @Input() exportExcel?: (filter: FormGroup) => undefined | void;
 
   public deletedControl: FormControl = new FormControl(false);
 
@@ -91,6 +93,12 @@ export class FilterComponent extends ComponentBase implements OnInit {
       //if(this.deletedControl.value) queryOptions.deleted = true;
       queryOptions.deleted = this.deletedControl.value ? true : false;
       (this.grid?.query || this.query!).reload(queryOptions);
+    }
+  }
+
+  public onButtonExcelClick() {
+    if (this.hasExportExcel && this.exportExcel) {
+      this.exportExcel(this.form!);
     }
   }
 }
