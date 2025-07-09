@@ -6,6 +6,7 @@ import { Base } from 'src/app/models/base.model';
 import { IFormGroupHelper } from 'src/app/services/form-helper.service';
 import { ComponentBase } from '../../component-base';
 import { GridComponent } from '../grid.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'filter',
@@ -41,7 +42,8 @@ export class FilterComponent extends ComponentBase implements OnInit {
   @Input() query?: QueryContext<Base>;
   @Input() queryOptions?: QueryOptions;
   @Input() hidden?: string;
-  @Input() exportExcel?: (filter: FormGroup) => undefined | void;
+  @Input() exportExcel?: (form: any, queryOptions: QueryOptions) => Observable<any>;
+  @Input() excelFileName: string = 'export.xlsx';
 
   public deletedControl: FormControl = new FormControl(false);
 
@@ -98,8 +100,33 @@ export class FilterComponent extends ComponentBase implements OnInit {
   }
 
   public onButtonExcelClick() {
-    if (this.hasExportExcel && this.exportExcel) {
-      this.exportExcel(this.form!);
+    let form: any = this.form!.value;
+    let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
+
+    if (this.form!.valid && this.exportExcel) {
+      this.grid!.loading = true;
+      try {
+        this.exportExcel?.(form, queryOptions).subscribe(res => {
+          if (res && res.body) {
+            const blob = new Blob([res.body!], {
+              type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = this.excelFileName;
+            link.click();
+            window.URL.revokeObjectURL(url);
+          }
+        }, error => {
+          console.log(error);
+        });
+
+        this.grid!.loading = false;
+      } finally {
+        this.grid!.loading = false;
+      }
+      
     }
   }
 }
