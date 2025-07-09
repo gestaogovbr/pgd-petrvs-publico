@@ -13,6 +13,7 @@ import { QueryOptions } from "src/app/dao/query-options";
 import { RelatorioPlanoTrabalhoDetalhadoDaoService } from "src/app/dao/relatorio-plano-trabalho-detalhado-dao.service";
 import { TipoModalidadeDaoService } from "src/app/dao/tipo-modalidade-dao.service";
 import { TipoAvaliacaoNotaDaoService } from "src/app/dao/tipo-avaliacao-nota-dao.service";
+import { of } from 'rxjs';
 
 @Component({
   selector: 'relatorio-plano-trabalho',
@@ -49,6 +50,8 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
           agrupar: { default: true },
           data_inicio: { default: "" },
           data_fim: { default: "" },
+          periodo_inicio: { default: "" },
+          periodo_fim: { default: "" },
           somente_vigentes: { default: false },
           incluir_periodos_avaliativos: { default: false },
           incluir_unidades_subordinadas: { default: false },
@@ -77,11 +80,23 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
       this.filter!.get('unidade_id')?.setValidators(this.requiredValidator.bind(this));
       this.filter.get('unidade_id')?.updateValueAndValidity();
 
+      this.filter!.get('data_fim')?.setValidators(this.periodoValidator.bind(this));
+      this.filter.get('data_fim')?.updateValueAndValidity();
+
       this.orderBy = [['unidadeHierarquia', 'asc'], ['numero', 'asc']];
   }
 
   public requiredValidator(control: AbstractControl): ValidationErrors | null { 
       return this.util.empty(control.value) ? { errorMessage: "Obrigatório" } : null;
+  }
+
+  
+  public periodoValidator(control: AbstractControl): ValidationErrors | null
+  {
+    const dataInicio = this.filter?.get('data_inicio')?.value;
+    const dataFim = new Date(control.value);
+
+    return dataFim < dataInicio ? { errorMessage: "deve ser maior que a data inicial" } : null;
   }
 
   public async ngOnInit() {
@@ -123,6 +138,14 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
 
     if (form.data_fim) {
       result.push(["dataFim", "<=", form.data_fim]);
+    }
+
+    if (form.periodo_inicio) {
+      result.push(["periodoInicio", ">=", form.periodo_inicio]);
+    }
+
+    if (form.periodo_fim) {
+      result.push(["periodoFim", "<=", form.periodo_fim]);
     }
 
     if (form.somente_vigentes) {
@@ -242,73 +265,26 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
           this.grid.query.collection = 'Relatorio/planos-trabalho-detalhado';         }
       }
 
-      if (form?.exportar) {
-        this.downloadXls(queryOptions);
-      } else {
-        this.grid?.query?.reload(queryOptions);
-      }
+      this.grid?.query?.reload(queryOptions);
     } else {
       this.filter!.markAllAsTouched(); 
     }
   }
 
-  public async downloadCsv(queryOptions: QueryOptions){
-    let error: any = undefined;
+  public exportExcel = (form: any, queryOptions: QueryOptions) => {
     this.loading = true;
-    try {
-      this.dao!.exportarCsv(this.resumido, {
+    try{
+      return this.dao!.exportarXls(!form.incluir_periodos_avaliativos, {
         where: queryOptions.where,
         orderBy: queryOptions.orderBy
-      }).subscribe(blob => {
-        const url = window.URL.createObjectURL(blob);
-  
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'relatorio-plano-trabalho.csv';
-        link.click();
-        window.URL.revokeObjectURL(url);
       });
-
-      this.loading = false;
     } catch (error: any) {
       this.error(error);
     } finally {
       this.loading = false;
     }
-  }
 
-  public async downloadXls(queryOptions: QueryOptions){
-    let error: any = undefined;
-    this.loading = true;
-    try {
-      this.dao!.exportarXls(this.resumido, {
-        where: queryOptions.where,
-        orderBy: queryOptions.orderBy
-      }).subscribe(res => {
-
-        if (res && res.body) {
-          const blob = new Blob([res.body!], {
-            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-          });
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = 'relatorio-planos-trabalho.xlsx';
-          link.click();
-          window.URL.revokeObjectURL(url);
-        }
-      }, error => {
-        this.dialog.alert('Erro ao gerar Excel', 'Houve um erro ao tentar baixar o arquivo');
-        console.log(error);
-        this.error(error);
-      });
-
-      this.loading = false;
-    } catch (error: any) {
-      this.error(error);
-    } finally {
-      this.loading = false;
-    }
+    return of(null);
   }
 
   public onValueChange(event: Event) {
