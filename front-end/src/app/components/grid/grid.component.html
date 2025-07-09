@@ -1,112 +1,249 @@
 <div [class.grid-invisible]="!visible" class="h-100 hidden-print">
-    <div *ngIf="error?.length && !editing" class="alert alert-danger mt-2" role="alert">
-        <span><u><strong>{{ (error || '').split('&')[0] }}</strong></u></span><br>{{ (error || '').split('&')[1] }}
-    </div>
-    <form [formGroup]="form!" class="grid-list-container h-100">
-        <div class="row m-0 p-0 h-100">
-            <div [class]="classColTable">
-                <ng-content></ng-content>
-                <div class="table-responsive" [style.min-height]="minHeight + 'px'">
-                    <table class="table" [class.table-hover]="isSelectable" [class.scrollable]="scrollable">
-                        <thead *ngIf="!isNoHeader">
-                            <tr *ngIf="headerGroups">
-                                <th *ngFor="let header of headerGroups.headersRef"
-                                    [attr.colspan]="header.colspan"
-                                    [style.text-align]="header.align"
-                                    [style]="header.style"
-                                >
-                                    <strong>{{ header.title }}</strong>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th *ngIf="multiselecting" class="grid-multiselect-header">
-                                    <i class="bi bi-card-checklist"></i>
-                                </th>
-                                <th *ngFor="let column of columns; let idx = index"
-                                    [class]="column.cellClass || ''"
-                                    [class.grid-editable-options]="isEditableGridOptions(column)"
-                                    [style.width.px]="column.width"
-                                    [style.min-width.px]="column.minWidth"
-                                    [style.max-width.px]="column.maxWidth"
-                                    [style.vertical-align]="column.verticalAlign"
-                                    [style]="column.style"
-                                    scope="col"
-                                >
-                                    <column-header
-                                        [column]="column"
-                                        [index]="idx"
-                                        [grid]="self"
-                                    ></column-header>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <ng-container *ngFor="let row of items">
-                                <tr *ngIf="!!getGroupSeparator(row)" class="grid-no-hover">
-                                    <td class="grid-no-hover px-0" [attr.colspan]="columns.length">
-                                        <ng-container *ngIf="groupTemplate" [ngTemplateOutlet]="groupTemplate" [ngTemplateOutletContext]="{grid: this, separator: getGroupSeparator(row), group: getGroupSeparator(row)!.group}"></ng-container>
-                                        <strong *ngIf="!groupTemplate" class="grid-group-text px-2">{{getGroupSeparator(row)!.text}}</strong>
-                                    </td>
-                                </tr>
-                                <tr *ngIf="error?.length && editing?.id == row.id" class="grid-no-hover">
-                                    <td class="grid-no-hover px-0 border-0" [attr.colspan]="columns.length">
-                                        <div *ngIf="error?.length" class="alert alert-danger mt-2 mb-5" role="alert">
-                                            <span><u><strong>{{ (error || '').split('&')[0] }}</strong></u></span><br>{{ (error || '').split('&')[1] }}
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr *ngIf="!isSeparator(row)" [id]="'row_' + (row || {id: null})['id']" [class.d-none]="row._status == 'DELETE'" [class.deleted_at]="row.deleted_at" [class.table-active]="(row || {id: null})['id'] == (selected || {id: null})['id']" (click)="onRowClick($event, row)" [attr.role]="isSelectable ? 'button' : undefined">
-                                    <td *ngIf="multiselecting" class="grid-multiselect-column">
-                                        <input *ngIf="!canSelect || canSelect(row)" class="form-check-input" type="checkbox" name="gird_multiselect_ids[]" [attr.checked]="isMultiselectChecked(row)" (change)="onMultiselectChange($event, row)">
-                                    </td>                    
-                                    <!--td *ngIf="isSeparator(row); else fields" class="grid-no-hover" [attr.colspan]="columns.length">
-                                        <strong class="grid-group-text">{{row.text}}</strong>
-                                    </td>
-                                    <ng-template #fields/-->
-                                    <td *ngFor="let column of columns; let idx = index" [class]="'grid-column ' + (column.cellClass || '')" 
-                                        [class.text-center]="column.align == 'center'" [class.text-end]="column.align == 'right'" 
-                                        [class.grid-column-expanded]="column.isType('expand') && !!expandedIds[row.id]" 
-                                        [class.grid-column-editing-options]="column.editing" [class.text-end]="column.isType('options')"
-                                        [style.width.px]="column.width" [style.min-width.px]="column.minWidth" [style.max-width.px]="column.maxWidth"
-                                        [style]="column.style"
-                                    >
-                                        <column-row *ngIf="!column.inType(['options', 'expand'])" [index]="idx" [column]="column" [row]="row" [grid]="self"></column-row>
-                                        <column-expand *ngIf="column.isType('expand')" [index]="idx" [toggleable]="!isNoToggleable" [expanded]="!!expandedIds[row.id]" [column]="column" [row]="row" [grid]="self"></column-expand>
-                                        <column-options *ngIf="column.isType('options') && !multiselecting" [(calcWidth)]="column.width" [index]="idx" [column]="column" [row]="row" [grid]="self" [options]="column.options" [buttons]="column.buttons || []" [dynamicOptions]="column.dynamicOptions" [dynamicButtons]="column.dynamicButtons" [upDownButtons]="column.upDownButtons"></column-options>
-                                    </td>
-                                    <!--/ng-template/-->
-                                </tr>
-                                <tr *ngIf="isNoToggleable || !!expandedIds[row.id]">
-                                    <td class="grid-expanded-background">&nbsp;</td>
-                                    <td [attr.colspan]="columns.length-1" class="grid-expanded-background">
-                                        <ng-container *ngIf="expandedColumn?.expandTemplate" [ngTemplateOutlet]="expandedColumn!.expandTemplate!" [ngTemplateOutletContext]="{row: row, grid: this}"></ng-container>
-                                    </td>
-                                </tr>
-                            </ng-container>
-                            <tr *ngIf="isLoading">
-                                <td [attr.colspan]="columns.length" class="grid-no-hover">
-                                    <div class="d-flex justify-content-center my-2">
-                                        <div class="spinner-border" role="status">
-                                            <span class="visually-hidden"></span>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <ng-content *ngIf="paginationRef?.type == 'infinity'" select="pagination"></ng-content>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div *ngIf="sidePanel" [class]="classColPanel">
-                <toolbar *ngIf="!sidePanel.isNoToolbar && (sidePanel.title?.length || this.editing)" [title]="sidePanel.title" [buttons]="this.editing ? panelButtons : []"></toolbar>
-                <ng-container *ngIf="!this.editing && sidePanel.template" [ngTemplateOutlet]="sidePanel.template" [ngTemplateOutletContext]="{row: selected, grid: this, metadata: getMetadata(selected)}"></ng-container>
-                <ng-container *ngIf="this.editing && sidePanel.editTemplate" [ngTemplateOutlet]="sidePanel.editTemplate" [ngTemplateOutletContext]="{row: selected, grid: this, metadata: getMetadata(selected)}"></ng-container>
-            </div>
+  <div *ngIf="error?.length && !editing" class="alert alert-danger mt-2" role="alert">
+    <span>
+      <u><strong>{{ (error || '').split('&')[0] }}</strong></u>
+    </span>
+    <br />
+    {{ (error || '').split('&')[1] }}
+  </div>
+
+  <form [formGroup]="form!" class="grid-list-container h-100">
+    <div class="row m-0 p-0 h-100">
+      <div [class]="classColTable">
+        <ng-content></ng-content>
+
+        <div class="table-responsive grid-scroll-container"
+            [style.min-height]="minHeight + 'px'"
+            [style.max-height.px]="maxHeight"
+        >
+          <table
+            class="table"
+            [class.table-hover]="isSelectable"
+            [class.scrollable]="scrollable"
+          >
+            <thead *ngIf="!isNoHeader">
+              <tr *ngIf="headerGroups">
+                <th
+                  *ngFor="let header of headerGroups.headersRef"
+                  [attr.colspan]="header.colspan"
+                  [style.text-align]="header.align"
+                  [style]="header.style"
+                >
+                  <strong>{{ header.title }}</strong>
+                </th>
+              </tr>
+
+              <tr>
+                <th *ngIf="multiselecting" class="grid-multiselect-header">
+                  <i class="bi bi-card-checklist"></i>
+                </th>
+
+                <th
+                  *ngFor="let column of columns; let idx = index"
+                  [class]="column.cellClass || ''"
+                  [class.grid-editable-options]="isEditableGridOptions(column)"
+                  [style.width.px]="column.width"
+                  [style.min-width.px]="column.minWidth"
+                  [style.max-width.px]="column.maxWidth"
+                  [style.vertical-align]="column.verticalAlign"
+                  [style]="column.style"
+                  scope="col"
+                >
+                  <column-header
+                    [column]="column"
+                    [index]="idx"
+                    [grid]="self"
+                  ></column-header>
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <ng-container *ngFor="let row of items">
+                <!-- Linha de separador de grupo -->
+                <tr *ngIf="!!getGroupSeparator(row)" class="grid-no-hover">
+                  <td class="grid-no-hover px-0" [attr.colspan]="columns.length">
+                    <ng-container
+                      *ngIf="groupTemplate"
+                      [ngTemplateOutlet]="groupTemplate"
+                      [ngTemplateOutletContext]="{
+                        grid: this,
+                        separator: getGroupSeparator(row),
+                        group: getGroupSeparator(row)!.group
+                      }"
+                    ></ng-container>
+
+                    <strong *ngIf="!groupTemplate" class="grid-group-text px-2">
+                      {{ getGroupSeparator(row)!.text }}
+                    </strong>
+                  </td>
+                </tr>
+
+                <!-- Linha de erro por edição -->
+                <tr
+                  *ngIf="error?.length && editing?.id == row.id"
+                  class="grid-no-hover"
+                >
+                  <td
+                    class="grid-no-hover px-0 border-0"
+                    [attr.colspan]="columns.length"
+                  >
+                    <div
+                      *ngIf="error?.length"
+                      class="alert alert-danger mt-2 mb-5"
+                      role="alert"
+                    >
+                      <span>
+                        <u><strong>{{ (error || '').split('&')[0] }}</strong></u>
+                      </span>
+                      <br />
+                      {{ (error || '').split('&')[1] }}
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Linha principal da tabela -->
+                <tr
+                  *ngIf="!isSeparator(row)"
+                  [id]="'row_' + (row || {id: null})['id']"
+                  [class.d-none]="row._status == 'DELETE'"
+                  [class.deleted_at]="row.deleted_at"
+                  [class.table-active]="(row || {id: null})['id'] == (selected || {id: null})['id']"
+                  (click)="onRowClick($event, row)"
+                  [attr.role]="isSelectable ? 'button' : undefined"
+                >
+                  <td *ngIf="multiselecting" class="grid-multiselect-column">
+                    <input
+                      *ngIf="!canSelect || canSelect(row)"
+                      class="form-check-input"
+                      type="checkbox"
+                      name="gird_multiselect_ids[]"
+                      [attr.checked]="isMultiselectChecked(row)"
+                      (change)="onMultiselectChange($event, row)"
+                    />
+                  </td>
+
+                  <td
+                    *ngFor="let column of columns; let idx = index"
+                    [class]="'grid-column ' + (column.cellClass || '')"
+                    [class.text-center]="column.align == 'center'"
+                    [class.text-end]="column.align == 'right'"
+                    [class.grid-column-expanded]="column.isType('expand') && !!expandedIds[row.id]"
+                    [class.grid-column-editing-options]="column.editing"
+                    [class.text-end]="column.isType('options')"
+                    [style.width.px]="column.width"
+                    [style.min-width.px]="column.minWidth"
+                    [style.max-width.px]="column.maxWidth"
+                    [style]="column.style"
+                  >
+                    <column-row
+                      *ngIf="!column.inType(['options', 'expand'])"
+                      [index]="idx"
+                      [column]="column"
+                      [row]="row"
+                      [grid]="self"
+                    ></column-row>
+
+                    <column-expand
+                      *ngIf="column.isType('expand')"
+                      [index]="idx"
+                      [toggleable]="!isNoToggleable"
+                      [expanded]="!!expandedIds[row.id]"
+                      [column]="column"
+                      [row]="row"
+                      [grid]="self"
+                    ></column-expand>
+
+                    <column-options
+                      *ngIf="column.isType('options') && !multiselecting"
+                      [(calcWidth)]="column.width"
+                      [index]="idx"
+                      [column]="column"
+                      [row]="row"
+                      [grid]="self"
+                      [options]="column.options"
+                      [buttons]="column.buttons || []"
+                      [dynamicOptions]="column.dynamicOptions"
+                      [dynamicButtons]="column.dynamicButtons"
+                      [upDownButtons]="column.upDownButtons"
+                    ></column-options>
+                  </td>
+                </tr>
+
+                <!-- Linha expandida -->
+                <tr *ngIf="isNoToggleable || !!expandedIds[row.id]">
+                  <td class="grid-expanded-background">&nbsp;</td>
+                  <td
+                    [attr.colspan]="columns.length - 1"
+                    class="grid-expanded-background"
+                  >
+                    <ng-container
+                      *ngIf="expandedColumn?.expandTemplate"
+                      [ngTemplateOutlet]="expandedColumn!.expandTemplate!"
+                      [ngTemplateOutletContext]="{ row: row, grid: this }"
+                    ></ng-container>
+                  </td>
+                </tr>
+              </ng-container>
+
+              <!-- Spinner de carregamento -->
+              <tr *ngIf="isLoading">
+                <td [attr.colspan]="columns.length" class="grid-no-hover">
+                  <div class="d-flex justify-content-center my-2">
+                    <div class="spinner-border" role="status">
+                      <span class="visually-hidden"></span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Paginação infinita -->
+              <ng-content
+                *ngIf="paginationRef?.type == 'infinity'"
+                select="pagination"
+              ></ng-content>
+            </tbody>
+          </table>
         </div>
-    </form>
-    <div *ngIf="hasError()" class="invalid-feedback" [class.d-block]="isInvalid()">
-        <i class="bi bi-info-circle"></i>
-        {{errorMessage()}}
+      </div>
+
+      <!-- Side panel -->
+      <div *ngIf="sidePanel" [class]="classColPanel">
+        <toolbar
+          *ngIf="!sidePanel.isNoToolbar && (sidePanel.title?.length || this.editing)"
+          [title]="sidePanel.title"
+          [buttons]="this.editing ? panelButtons : []"
+        ></toolbar>
+
+        <ng-container
+          *ngIf="!this.editing && sidePanel.template"
+          [ngTemplateOutlet]="sidePanel.template"
+          [ngTemplateOutletContext]="{
+            row: selected,
+            grid: this,
+            metadata: getMetadata(selected)
+          }"
+        ></ng-container>
+
+        <ng-container
+          *ngIf="this.editing && sidePanel.editTemplate"
+          [ngTemplateOutlet]="sidePanel.editTemplate"
+          [ngTemplateOutletContext]="{
+            row: selected,
+            grid: this,
+            metadata: getMetadata(selected)
+          }"
+        ></ng-container>
+      </div>
     </div>
-    <ng-content *ngIf="paginationRef?.type == 'pages'" select="pagination"></ng-content>
+  </form>
+
+  <!-- Feedback de erro -->
+  <div *ngIf="hasError()" class="invalid-feedback" [class.d-block]="isInvalid()">
+    <i class="bi bi-info-circle"></i>
+    {{ errorMessage() }}
+  </div>
+
+  <!-- Paginação por páginas -->
+  <ng-content *ngIf="paginationRef?.type == 'pages'" select="pagination"></ng-content>
 </div>
