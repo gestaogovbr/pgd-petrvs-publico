@@ -56,6 +56,7 @@ class ServerException extends Exception implements IBaseException
         "ValidateUnidade" => "Erro ao validar Unidade",
         "ValidateUsuario" => "Erro ao validar o usuário",
         "TipoClienteExcluir" => "Tipo de Cliente",
+        "Tenant" => "Tenant",
     ];
 
     function __construct(string $code, string $extra = "", string $separator = " : ") {

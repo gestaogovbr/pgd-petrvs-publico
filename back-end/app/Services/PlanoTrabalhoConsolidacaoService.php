@@ -342,6 +342,8 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       PlanoTrabalhoConsolidacaoAfastamento::where("plano_trabalho_consolidacao_id", $id)->delete();
       PlanoTrabalhoConsolidacaoOcorrencia::where("plano_trabalho_consolidacao_id", $id)->delete();
       $this->statusService->atualizaStatus($consolidacao, 'INCLUIDO', 'Cancelado a conclusão nesta data.');
+      $this->statusService->atualizaStatus($consolidacao->planoTrabalho, 'ATIVO', 'Cancelado a conclusão nesta data.');
+
       DB::commit();
       return $this->consolidacaoDados($id);
     } catch (Throwable $e) {
