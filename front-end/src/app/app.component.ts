@@ -190,7 +190,7 @@ export class AppComponent {
       RELATORIO_PLANO_TRABALHO: {
         name: this.lex.translate("Planos de Trabalho"),
         permition: 'MOD_RELATORIO_PT',
-        route: ['relatorios', 'plano-trabalho'],
+        route: ['relatorios', 'planos-trabalho'],
         icon: this.entity.getIcon('PlanoTrabalho')
       },
       RELATORIO_PLANO_ENTREGA: {
