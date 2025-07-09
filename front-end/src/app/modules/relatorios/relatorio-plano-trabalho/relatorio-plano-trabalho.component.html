@@ -72,7 +72,12 @@
     </header-groups>
     
     <columns>
-        <column title="#ID" [template]="columnID" [titleTemplate]="titleID" [verticalAlign]="'bottom'" [align]="'center'">
+        <column title="#ID"
+            [template]="columnID" [titleTemplate]="titleID"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+            [width]="100"
+        >
             <ng-template let-header="header" #titleID>
                 <input-text 
                     [control]="filter!.controls.id"
@@ -87,7 +92,10 @@
             </ng-template>
         </column>
         
-        <column title="Nome" [template]="columnNome" [titleTemplate]="titleParticipanteNome" [verticalAlign]="'bottom'" [align]="'center'">
+        <column title="Nome" [template]="columnNome" [titleTemplate]="titleParticipanteNome"
+            [verticalAlign]="'bottom'" [align]="'center'"
+            [width]="200"
+        >
             <ng-template let-header="header" #titleParticipanteNome>
                 <input-text 
                     [control]="filter!.controls.participanteNome"
@@ -103,6 +111,7 @@
         <column title="Unidade Executora" [template]="columnUnidade" [titleTemplate]="titleUnidade"
             [verticalAlign]="'bottom'"
             [align]="'center'"
+            [width]="200"
         >
             <ng-template let-header="header" #titleUnidade>
                 <input-text 
@@ -120,6 +129,7 @@
             [template]="columnCHD"
             [titleTemplate]="titleCHD"
             [verticalAlign]="'bottom'" [align]="'center'"
+            [width]="100"
         >
             <ng-template let-header="header" #titleCHD>
                 <input-text 
@@ -137,6 +147,7 @@
             [template]="columnStatus"
             [titleTemplate]="titleStatus"
             [verticalAlign]="'bottom'" [align]="'center'"
+            [width]="120"
         >
             <ng-template let-header="header" #titleStatus>
                 <input-select 
@@ -153,6 +164,7 @@
 
         <column title="Modalidade" [template]="columnModalidade" [titleTemplate]="titleModalidade"
             [verticalAlign]="'bottom'" [align]="'center'"
+            [width]="150"
         >
             <ng-template let-header="header" #titleModalidade>
                 <input-select 
@@ -202,6 +214,7 @@
 
         <column title="Duração (dias)" [template]="columnDuracao" [titleTemplate]="titleDuracao"
             [verticalAlign]="'bottom'" [align]="'center'"
+            [width]="80"
         >
             <ng-template let-header="header" #titleDuracao>
                 <input-text 
@@ -215,8 +228,10 @@
             </ng-template>
         </column>
 
-        <column title="Períodos Avaliativos" [template]="columnPeriodos" [titleTemplate]="titlePeriodos"
+        <column title="Períodos Avaliativos"
+            [template]="columnPeriodos" [titleTemplate]="titlePeriodos"
             *ngIf="resumido" [verticalAlign]="'bottom'" [align]="'center'"
+            [width]="100"
         >
              <ng-template let-header="header" #titlePeriodos>
                 <input-text 
@@ -273,6 +288,7 @@
             *ngIf="!resumido"
             [verticalAlign]="'bottom'"
             [align]="'center'"
+            [width]="180"
         >
             <ng-template let-header="header" #titleConclusao>
                 <input-datetime
