@@ -333,6 +333,45 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
     }
   }
 
+  public exportExcel = (filter: FormGroup) => {
+    let form: any = filter.value;
+    let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
+
+    if (filter!.valid) {
+      this.loading = true;
+      try {
+        this.dao!.exportarXls(!form.incluir_periodos_avaliativos, {
+          where: queryOptions.where,
+          orderBy: queryOptions.orderBy
+        }).subscribe(res => {
+
+          if (res && res.body) {
+            const blob = new Blob([res.body!], {
+              type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'relatorio-planos-trabalho.xlsx';
+            link.click();
+            window.URL.revokeObjectURL(url);
+          }
+        }, error => {
+          this.dialog.alert('Erro ao gerar Excel', 'Houve um erro ao tentar baixar o arquivo');
+          console.log(error);
+          this.error(error);
+        });
+
+        this.loading = false;
+      } catch (error: any) {
+        this.error(error);
+      } finally {
+        this.loading = false;
+      }
+      
+    }
+  }
+
   public onValueChange(event: Event) {
     if (this.loaded) {
       this.onButtonFilterClick(this.filter!);

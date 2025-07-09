@@ -11,11 +11,13 @@
         [collapseChange]="filterCollapseChange.bind(this)" 
         [collapsed]="!selectable && filterCollapsed"
         filterLabel="Consultar"
+        [hasExportExcel]="true"
+        [exportExcel]="exportExcel"
     >
-        <div class="row">   
+        <div class="row" style="align-items: flex-end;">   
             <input-search 
                 #unidade 
-                [size]="4" 
+                [size]="5" 
                 label="Unidade de Consulta"
                 [control]="filter!.controls.unidade_id" 
                 controlName="unidade_id" 
@@ -40,7 +42,6 @@
             <input-switch
                 [size]="1"
                 label="Somente vigentes"
-                
                 controlName="somente_vigentes"
                 [control]="filter!.controls.somente_vigentes"
             ></input-switch>
@@ -55,12 +56,6 @@
                 label="Unidades Subordinadas"
                 controlName="incluir_unidades_subordinadas"
                 [control]="filter!.controls.incluir_unidades_subordinadas"
-            ></input-switch>
-            <input-switch
-                [size]="1"
-                label="Exportar para Excel"
-                controlName="exportar"
-                [control]="filter!.controls.exportar"
             ></input-switch>
         </div>
     </filter>
