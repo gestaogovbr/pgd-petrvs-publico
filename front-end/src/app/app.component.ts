@@ -21,11 +21,8 @@ export type Schema = {
   name: string,
   permition?: string,
   route?: string[],
-  route?: string[],
   metadata?: RouteMetadata,
   params?: any,
-  icon: string;
-  onClick?: () => void;
   icon: string;
   onClick?: () => void;
 };
