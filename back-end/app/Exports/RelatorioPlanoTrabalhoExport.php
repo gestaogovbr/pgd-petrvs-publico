@@ -1,7 +1,7 @@
 <?php
 namespace App\Exports;
 
-use App\Models\PlanoEntrega;
+use App\Models\PlanoTrabalho;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
@@ -18,7 +18,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class RelatorioPlanoEntregaExport implements FromCollection, WithMapping, WithHeadings,
+class RelatorioPlanoTrabalhoExport implements FromCollection, WithMapping, WithHeadings,
     WithColumnFormatting, WithProperties, WithStyles, WithColumnWidths, WithEvents
 {
     use RegistersEventListeners;
@@ -38,18 +38,15 @@ class RelatorioPlanoEntregaExport implements FromCollection, WithMapping, WithHe
     public function headings(): array
     {
         return [
-            'Unidade',
             '#ID',
-            'Nome',
-            'Homologação',
-            'Status',
+            'Nome do Participante',
+            'Unidade Executora',
+            'Distribuição % da CHD no período',
+            'Status do PT',
             'Início da Vigência',
             'Fim da Vigência',
             'Duração (dias)',
-            'Data da conclusão',
-            'Data da avaliação',
-            'Situação da avaliação',
-            'Nota da avaliação',
+            'Períodos Avaliativos'
         ];
     }
 
@@ -64,10 +61,7 @@ class RelatorioPlanoEntregaExport implements FromCollection, WithMapping, WithHe
             'F' => 15,
             'G' => 15,
             'H' => 10,
-            'I' => 10,
-            'J' => 10,
-            'K' => 10,
-            'L' => 10,
+            'I' => 10
         ];
     }
 
@@ -77,26 +71,23 @@ class RelatorioPlanoEntregaExport implements FromCollection, WithMapping, WithHe
         $fim = Carbon::createFromFormat('Y-m-d', $row->dataFim);
 
         return [
-            $row->unidadeHierarquia,
             '#'.$row->numero,
-            $row->nome,
-            PlanoEntrega::STATUSES[$row->status],
+            $row->participanteNome,
+            $row->unidadeHierarquia,
+            number_format((float) $row->chd, 2, ','),
+            PlanoTrabalho::STATUSES[$row->status],
             Date::stringToExcel($row->dataInicio),
             Date::stringToExcel($row->dataFim),
-            $row->duracao,
-            '',
-            Date::stringToExcel($row->data_avaliacao),
-            $row->situacao_avaliacao,
-            $row->nota
+            $inicio->diffInDays($fim),
+            $row->qtdePeriodosAvaliativos
         ];
     }
 
     public function columnFormats(): array
     {
         return [
-            'E' => NumberFormat::FORMAT_DATE_DDMMYYYY,
             'F' => NumberFormat::FORMAT_DATE_DDMMYYYY,
-            'I' => NumberFormat::FORMAT_DATE_DDMMYYYY,
+            'G' => NumberFormat::FORMAT_DATE_DDMMYYYY,
         ];
     }
 
@@ -104,11 +95,11 @@ class RelatorioPlanoEntregaExport implements FromCollection, WithMapping, WithHe
     {
         return [
             'creator'        => 'MGI',
-            'title'          => 'Relatório de Planos de Entrega',
-            'description'    => 'Relatório de Planos de Entrega do PGD Petrvs',
-            'subject'        => 'Planos de Entrega',
-            'keywords'       => 'pgd,plano de entrega',
-            'company'        => 'MGI',
+            'title'          => 'Relatório de Planos de Trabalho',
+            'description'    => 'Relatório de Planos de Trabalho do PGD Petrvs',
+            'subject'        => 'Planos de Trabalho',
+            'keywords'       => 'pgd,plano de trabalho',
+            'company'        => 'Governo Federal',
         ];
     }
 
@@ -152,23 +143,8 @@ class RelatorioPlanoEntregaExport implements FromCollection, WithMapping, WithHe
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                 ]
             ],
-            'J' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'K' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'L' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
             // borda no conjunto inteiro + 1 linha de header
-            'A1:L'.(count($this->rows) + 1) => [
+            'A1:I'.(count($this->rows) + 1) => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
@@ -183,7 +159,7 @@ class RelatorioPlanoEntregaExport implements FromCollection, WithMapping, WithHe
     {
         $event->sheet->getDelegate()->getRowDimension('1')->setRowHeight(60);
         $event->sheet->getDelegate()->getStyle('1')->getAlignment()->setWrapText(true);
-        $event->sheet->getStyle('A1:L1')->getFill()
+        $event->sheet->getStyle('A1:I1')->getFill()
           ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
           ->getStartColor()->setARGB('fc9fc0');
     }
