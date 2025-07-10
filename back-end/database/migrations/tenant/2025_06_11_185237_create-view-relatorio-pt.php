@@ -16,6 +16,7 @@ return new class extends Migration
         ALGORITHM = UNDEFINED VIEW `view_relatorio_plano_trabalho` AS
         select
             `pt`.`id` AS `id`,
+            `pt`.`id` AS `plano_trabalho_id`,
             `pt`.`numero` AS `numero`,
             `pt`.`status` AS `status`,
             CAST(`pt`.`data_inicio` AS DATE) AS `dataInicio`,
