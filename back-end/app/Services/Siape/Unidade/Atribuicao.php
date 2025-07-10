@@ -211,7 +211,7 @@ trait Atribuicao
         return $usuario->lotacao ? $usuario->lotacao->unidade : null;;
     }
 
-    private function usuarioTemPlanodeTrabalhoAtivo(Usuario $usuario, ?Unidade $unidade): bool
+    public function usuarioTemPlanodeTrabalhoAtivo(Usuario $usuario, ?Unidade $unidade): bool
     {
         if($unidade == null) return false;
         
@@ -282,10 +282,13 @@ trait Atribuicao
         return count(array_intersect([EnumAtribuicao::GESTOR->value, EnumAtribuicao::GESTOR_SUBSTITUTO->value, EnumAtribuicao::GESTOR_DELEGADO->value], $atribuicoes)) > 1;
     }
 
-    private function removeDeterminadasAtribuicoes(array $atribuicoesRemover, UnidadeIntegrante $integranteNovoOuExistente): void
+    public function removeDeterminadasAtribuicoes(array $atribuicoesRemover, UnidadeIntegrante $integranteNovoOuExistente): void
     {
         foreach ($integranteNovoOuExistente->atribuicoes as $atribuicao) {
-            if (in_array($atribuicao->atribuicao, $atribuicoesRemover)) $atribuicao->delete();
+            if (in_array($atribuicao->atribuicao, $atribuicoesRemover)) {
+                Log::info(sprintf("Removendo atribuição %s da unidade %s do integrante %s", $atribuicao->atribuicao, $integranteNovoOuExistente->unidade_id, $integranteNovoOuExistente->usuario_id));
+                $atribuicao->delete();
+            }
         }
     }
 }
