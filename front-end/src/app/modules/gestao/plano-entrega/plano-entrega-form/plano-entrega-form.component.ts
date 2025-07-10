@@ -17,7 +17,7 @@ import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { Programa } from 'src/app/models/programa.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
-
+import moment from 'moment';
 
 @Component({
   selector: 'app-plano-entrega-form',
@@ -119,22 +119,21 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     if(action == 'clone') {
       entity.id = "";
       entity.data_inicio = new Date();
-      entity.data_fim = new Date();
+       entity.data_fim = moment().add(1, 'day').toDate();
       entity.entregas = entity.entregas.map((entrega: PlanoEntregaEntrega) => {
         entrega.id = this.planoEntregaDao.generateUuid();
         entrega.plano_entrega_id = null;
         entrega._status = "ADD";
         entrega.progresso_realizado = 0;
+        entrega.data_inicio = new Date();
+        entrega.data_fim = moment().add(1, 'day').toDate();
+        entrega.progresso_esperado = 0;
         return entrega as PlanoEntregaEntrega;
       });
     }
 
     let formValue = Object.assign({}, form.value);
-    form.patchValue(this.util.fillForm(formValue, entity));
-    if (action == 'clone') {
-      form.controls.data_inicio.setValue("");
-      form.controls.data_fim.setValue("");
-    }
+    form.patchValue(this.util.fillForm(formValue, entity));    
     this.cdRef.detectChanges();
   }
 

@@ -165,11 +165,15 @@ export class DaoBaseService<T extends Base> {
           .subscribe(
             (response) => {
               let data = this.iso8601ToDate(response?.value);
-              resolve({
-                value: data.value,
-                text: this.getSelectItemText(data.data),
-                entity: data.entity,
-              });
+              if (!data) {                
+                resolve(null); 
+              } else {              
+                resolve({
+                  value: data.value,
+                  text: this.getSelectItemText(data.data),
+                  entity: data.entity,
+                });
+              }
             },
             (error) => reject(error)
           );
