@@ -35,9 +35,11 @@ class PlanoEntregaService extends ServiceBase
         $planoEntregaEntrega = PlanoEntregaEntrega::find($entrega["id"]);
         if ($planoEntregaEntrega?->planoEntrega?->Programa?->termo_obrigatorio && ($entrega["_status"] == "DELETE" || ($entrega["_status"] == "EDIT" && $this->alteracaoEntregaImpactaPlanoTrabalho($entrega)))) {
             foreach (PlanoTrabalhoEntrega::where("plano_entrega_entrega_id", $entrega["id"])->get() as $entregaPlanoTrabalho) {
-                if (!in_array($entregaPlanoTrabalho->plano_trabalho_id, $impactados)) $impactados[] = $entregaPlanoTrabalho->plano_trabalho_id;
+                if (!in_array($entregaPlanoTrabalho->plano_trabalho_id, $impactados))
+                    $impactados[] = $entregaPlanoTrabalho->plano_trabalho_id;
             }
-        };
+        }
+        ;
         return $impactados;
     }
 
@@ -88,18 +90,44 @@ class PlanoEntregaService extends ServiceBase
                     // não se aplica à Unidade Instituidora, ou seja, alterações realizadas em planos de entregas de unidades instituidoras não precisam ser notificadas à sua Unidade-pai;
                     $unidadePai = $planoEntrega->unidade->unidadePai;
                     if (!empty($unidadePai->id) && !$planoEntrega->unidade->instituidora) {
-                        $destinatarios = array_map(fn($x) => $x->usuario, $unidadePai->gestoresSubstitutos?->all() ?? []);
-                        if (!empty($unidadePai->gestor)) $destinatarios[] = $unidadePai->gestor->usuario;
-                        array_merge($destinatarios, array_map(fn($x) => $x->usuario, $unidadePai->gestoresDelegados?->all() ?? []));
+                        $destinatarios = array_filter(array_map(
+                            fn($x) => $x->usuario ?? null,
+                            $unidadePai->gestoresSubstitutos?->all() ?? []
+                        ));
+
+                        if (!empty($unidadePai->gestor?->usuario)) {
+                            $destinatarios[] = $unidadePai->gestor->usuario;
+                        }
+
+                        // Aqui é importante sobrescrever $destinatarios com o resultado de array_merge,
+                        // pois a chamada original não modifica o array em si.
+                        $destinatarios = array_merge(
+                            $destinatarios,
+                            array_filter(array_map(
+                                fn($x) => $x->usuario ?? null,
+                                $unidadePai->gestoresDelegados?->all() ?? []
+                            ))
+                        );
+
+                        // Remove duplicatas com base no ID
+                        $destinatarios = array_filter($destinatarios, fn($x) => !is_null($x)); // garante que todos são válidos
+
                         $usuarioHomologou = StatusJustificativa::where('codigo', 'ATIVO')
                             ->where('plano_entrega_id', $planoEntrega->id)
-                            ->orderByDesc('created_at')->first()?->usuario;
-                        if (!empty($usuarioHomologou?->id) && count(array_filter($destinatarios, fn($x) => $x->id == $usuarioHomologou->id)) <= 0) array_push($destinatarios, $usuarioHomologou);
+                            ->orderByDesc('created_at')
+                            ->first()?->usuario;
+
+                        // Adiciona se for diferente e não estiver na lista
+                        if (!empty($usuarioHomologou?->id) && !collect($destinatarios)->contains(fn($x) => $x->id === $usuarioHomologou->id)) {
+                            $destinatarios[] = $usuarioHomologou;
+                        }
+
                         $this->notificacoesService->send("PENT_ALTERACAO", [
                             "destinatarios" => $destinatarios,
                             "plano_entrega" => $planoEntrega,
                             "servidor" => $usuario
                         ]);
+
                     }
                 }
                 break;
@@ -351,7 +379,8 @@ class PlanoEntregaService extends ServiceBase
         //  (RI_PENT_C) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de entrega não arquivados.
         $arquivados = $this->extractWhere($data, "incluir_arquivados");
         $subordinadas = $this->extractWhere($data, "incluir_subordinadas");
-        if (empty($arquivados) || !$arquivados[2]) $data["where"][] = ["data_arquivamento", "==", null];
+        if (empty($arquivados) || !$arquivados[2])
+            $data["where"][] = ["data_arquivamento", "==", null];
         // (RI_PENT_D) Na visualização de Avaliação, deverá trazer a unidade ao qual o usuário é gestor e todas as suas subordinadas imediatas.
         $filhas = $this->extractWhere($data, "unidades_filhas");
         $unidades_vinculadas = $this->extractWhere($data, "unidades_vinculadas");
@@ -503,7 +532,6 @@ class PlanoEntregaService extends ServiceBase
     }
 
     public function validaPermissaoIncluir($dataOrEntity, $usuario)
-
     {
         /*
         (RN_PENT_Z) Condições para que um Plano de Entregas possa ser criado:
@@ -536,10 +564,13 @@ class PlanoEntregaService extends ServiceBase
         $programa = Programa::find($dataOrEntity["programa_id"]);
         $this->validaPermissaoIncluir($dataOrEntity, $usuario);
         if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_EXTRPL')) {
-            if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");
+            if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity))
+                throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");
         }
-        if ($this->temSobreposicaoDeDatas($dataOrEntity)) throw new ServerException("ValidatePlanoEntrega", "Esta unidade já possui plano de entregas cadastrado para o período.");
-        if (!$this->programaService->programaVigente($programa)) throw new ServerException("ValidatePlanoEntrega", "O regramento não está vigente.");
+        if ($this->temSobreposicaoDeDatas($dataOrEntity))
+            throw new ServerException("ValidatePlanoEntrega", "Esta unidade já possui plano de entregas cadastrado para o período.");
+        if (!$this->programaService->programaVigente($programa))
+            throw new ServerException("ValidatePlanoEntrega", "O regramento não está vigente.");
         if ($action == ServiceBase::ACTION_EDIT) {
             /*
               (RN_PENT_L) Para ALTERAR um plano de entregas:
@@ -550,22 +581,26 @@ class PlanoEntregaService extends ServiceBase
                   - o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND" (independente de qualquer outra condição);
             */
             $condicoes = $this->buscaCondicoes($dataOrEntity);
-            if (!$condicoes['planoValido']) throw new ServerException("ValidatePlanoEntrega", "O plano de entregas não é válido, ou seja, foi apagado, cancelado ou arquivado.\n[ver RN_PENT_L]");
+            if (!$condicoes['planoValido'])
+                throw new ServerException("ValidatePlanoEntrega", "O plano de entregas não é válido, ou seja, foi apagado, cancelado ou arquivado.\n[ver RN_PENT_L]");
             $condition1 = ($condicoes['planoIncluido'] || $condicoes['planoHomologando']) && $condicoes['gestorUnidadePlano'];
             $condition2 = $condicoes['gestorUnidadePaiUnidadePlano'] && $usuario->hasPermissionTo("MOD_PENT_EDT_FLH");
             $condition3 = $condicoes['planoAtivo'] && ($condicoes['gestorUnidadePlano'] || $condicoes['gestorUnidadePaiUnidadePlano']) && $usuario->hasPermissionTo(['MOD_PENT_EDT_ATV_HOMOL', 'MOD_PENT_EDT_ATV_ATV']);
             $condition4 = $usuario->hasPermissionTo('MOD_PENT_QQR_UND');
-            if (!$condition4 && !($condition1 || $condition2 || $condition3)) throw new ServerException("ValidatePlanoEntrega", "Ao menos uma das seguintes condições precisa ser atendida:\n" .
-                "1. o plano de entregas estar com o status INCLUIDO ou HOMOLOGANDO, e o usuário logado ser um dos gestores da unidade executora;\n" .
-                "2. o usuário logado possuir a capacidade MOD_PENT_EDT_FLH e ser um dos gestores da unidade-pai do plano de entregas;\n" .
-                "3. o plano de entregas estar com o status ATIVO, o usuário logado precisa atender os critírios da [PTR:TABELA_1] e possuir a capacidade MOD_PENT_EDT_ATV_HOMOL ou MOD_PENT_EDT_ATV_ATV;\n" .
-                "4. o usuário logado possuir a capacidade MOD_PENT_QQR_UND.\n[ver RN_PENT_L]");
+            if (!$condition4 && !($condition1 || $condition2 || $condition3))
+                throw new ServerException("ValidatePlanoEntrega", "Ao menos uma das seguintes condições precisa ser atendida:\n" .
+                    "1. o plano de entregas estar com o status INCLUIDO ou HOMOLOGANDO, e o usuário logado ser um dos gestores da unidade executora;\n" .
+                    "2. o usuário logado possuir a capacidade MOD_PENT_EDT_FLH e ser um dos gestores da unidade-pai do plano de entregas;\n" .
+                    "3. o plano de entregas estar com o status ATIVO, o usuário logado precisa atender os critírios da [PTR:TABELA_1] e possuir a capacidade MOD_PENT_EDT_ATV_HOMOL ou MOD_PENT_EDT_ATV_ATV;\n" .
+                    "4. o usuário logado possuir a capacidade MOD_PENT_QQR_UND.\n[ver RN_PENT_L]");
             /* (RN_PENT_K)
                 Após criado um plano de entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id;
             */
             $planoEntrega = PlanoEntrega::find($dataOrEntity["id"]);
-            if ($dataOrEntity["unidade_id"] != $planoEntrega->unidade_id) throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar a sua Unidade.\n[ver RN_PENT_K]");
-            if ($dataOrEntity["programa_id"] != $planoEntrega->programa_id) throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.\n[ver RN_PENT_K]");
+            if ($dataOrEntity["unidade_id"] != $planoEntrega->unidade_id)
+                throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar a sua Unidade.\n[ver RN_PENT_K]");
+            if ($dataOrEntity["programa_id"] != $planoEntrega->programa_id)
+                throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.\n[ver RN_PENT_K]");
         }
     }
 

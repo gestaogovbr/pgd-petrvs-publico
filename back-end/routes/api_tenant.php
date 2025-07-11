@@ -98,6 +98,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
+use App\Http\Controllers\RelatorioController;
+use App\Http\Controllers\TipoAvaliacaoNotaController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -537,4 +540,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ->middleware('auth:sanctum')
         ->name('impersonate');
   Route::get('/impersonate/stop', [ImpersonationController::class, 'stopImpersonating'])->name('impersonate.stop');
+});
+
+Route::middleware(['auth:sanctum'])->prefix('Relatorio')->group(function () {
+    Route::post('planos-trabalho/query', [RelatorioController::class, 'queryPlanosTrabalho']);
+    Route::post('planos-trabalho/csv', [RelatorioController::class, 'queryPlanosTrabalho']);
+    Route::post('planos-trabalho/xls', [RelatorioController::class, 'queryPlanosTrabalho']);
+
+    Route::post('planos-trabalho-detalhado/query', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
+    Route::post('planos-trabalho-detalhado/csv', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
+    Route::post('planos-trabalho-detalhado/xls', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
 });

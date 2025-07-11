@@ -69,6 +69,8 @@ import { JsonViewerComponent } from './json-viewer/json-viewer.component';
 import { InputChooseComponent } from './input/input-choose/input-choose.component';
 import { ReactionComponent } from './reaction/reaction.component';
 import { InputCheckComponent } from './input/input-check/input-check.component';
+import { HeaderGroupComponent } from './grid/header-group/header-group.component';
+import { HeaderGroupsComponent } from './grid/header-groups/header-groups.component';
 
 const maskConfigFunction: () => Partial<IConfig> = () => {
   return {
@@ -137,7 +139,9 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
     ButtonDashboardComponent,
     JsonViewerComponent,
     ReactionComponent,
-    InputCheckComponent
+    InputCheckComponent,
+    HeaderGroupComponent,
+    HeaderGroupsComponent
   ],
   imports: [
     CommonModule,
@@ -208,7 +212,9 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
     DoubleScrollbarComponent,
     JsonViewerComponent,
     ReactionComponent,
-    InputCheckComponent
+    InputCheckComponent,
+    HeaderGroupComponent,
+    HeaderGroupsComponent
   ],
   providers: [
     { 

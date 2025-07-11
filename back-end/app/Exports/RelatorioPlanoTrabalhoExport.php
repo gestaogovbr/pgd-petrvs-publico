@@ -118,27 +118,7 @@ class RelatorioPlanoTrabalhoExport implements FromCollection, WithMapping, WithH
                     ],
                 ]
             ],
-            'E' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'F' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'G' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'H' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'I' => [
+            'E:I' => [
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                 ]
