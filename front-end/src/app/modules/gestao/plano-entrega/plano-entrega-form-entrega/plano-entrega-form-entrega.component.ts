@@ -216,7 +216,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     if(unidade) this.idsUnidadesAscendentes.push(unidade.id);
     form.patchValue(this.util.fillForm(formValue, entityWithout));
     form.controls.meta.setValue(this.planoEntregaService.getValor(entity.meta));
-    form.controls.realizado.setValue(this.planoEntregaService.getValor(entity.realizado));
+    form.controls.realizado.setValue(this.planoEntregaService.getValor(entity.realizado));    
     form.controls.objetivos.setValue(entity.objetivos);
     form.controls.processos.setValue(entity.processos);
     form.controls.produtos.setValue(entity.produtos);
