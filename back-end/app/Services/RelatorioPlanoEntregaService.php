@@ -20,12 +20,16 @@ class RelatorioPlanoEntregaService extends ServiceBase
         $where = array_values(array_filter($where, function ($item) {
             return ($item[0] !== 'somente_vigentes')
                 && ($item[0] !== 'incluir_unidades_subordinadas')
+                && ($item[0] !== 'periodoInicio')
+                && ($item[0] !== 'periodoFim')
                 && ($item[0] !== 'unidade_id');
         }));
 
         $somenteVigentes = $this->extractWhere($data, "somente_vigentes");
         $subordinadas = $this->extractWhere($data, "incluir_unidades_subordinadas");
         $unidadeId = $this->extractWhere($data, "unidade_id");
+        $periodoInicio = $this->extractWhere($data, "periodoInicio");
+        $periodoFim = $this->extractWhere($data, "periodoFim");
 
         if (isset($unidadeId[2])) {
             $unidadeIds = [$unidadeId[2]];
@@ -39,9 +43,26 @@ class RelatorioPlanoEntregaService extends ServiceBase
 
         $where[] = ['unidade_id', 'in', $unidadeIds];
 
-
         if (isset($somenteVigentes[2])) {
             $where[] = RawWhere::raw("(CURDATE() BETWEEN dataInicio and dataFim)");
+        }
+
+         if(isset($periodoInicio[2]) && isset($periodoFim[2])) {
+            $where[] = RawWhere::raw("(? between dataInicio and dataFim) or (? between dataInicio and dataFim)",
+                [$periodoInicio[2], $periodoFim[2]]
+            );
+        } else{
+            if (isset($dataperiodoInicioInicio[2])) {
+                $where[] = RawWhere::raw("(? between dataInicio and dataFim)",
+                    [$periodoInicio[2]]
+                );
+            }
+
+            if (isset($periodoFim[2])) {
+                 $where[] = RawWhere::raw("(? between dataInicio and dataFim)",
+                    [$periodoFim[2]]
+                );
+            }
         }
 
         $data["where"] = $where;
