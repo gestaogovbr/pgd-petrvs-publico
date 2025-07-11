@@ -97,14 +97,6 @@ use App\Http\Controllers\UsuarioController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
-<<<<<<<<< Temporary merge branch 1
-=========
-use App\Http\Controllers\ImpersonationController;
-use App\Http\Controllers\RelatorioController;
-use App\Http\Controllers\TipoAvaliacaoNotaController;
-
->>>>>>>>> Temporary merge branch 2
 /*
 |--------------------------------------------------------------------------
 | API Routes
