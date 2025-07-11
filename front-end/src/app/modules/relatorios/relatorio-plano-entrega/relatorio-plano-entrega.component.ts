@@ -10,6 +10,7 @@ import { PageListBase } from "src/app/modules/base/page-list-base";
 import { LookupItem } from "src/app/services/lookup.service";
 import { QueryOptions } from "src/app/dao/query-options";
 import { TipoAvaliacaoNotaDaoService } from "src/app/dao/tipo-avaliacao-nota-dao.service";
+import { of } from "rxjs";
 
 @Component({
   selector: 'relatorio-plano-entrega',
@@ -40,6 +41,8 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
           agrupar: { default: true },
           data_inicio: { default: "" },
           data_fim: { default: "" },
+          periodo_inicio: { default: "" },
+          periodo_fim: { default: "" },
           incluir_unidades_subordinadas: { default: false },
           exportar: { default: false },
           somente_vigentes: { default: false },
@@ -105,6 +108,16 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
       result.push(["dataFim", "<=", form.data_fim]);
     }
 
+    if (form.periodo_inicio) {
+      result.push(["periodoInicio", ">=", form.periodo_inicio]);
+    }
+
+    debugger;
+
+    if (form.periodo_fim) {
+      result.push(["periodoFim", "<=", form.periodo_fim]);
+    }
+
     if (form.somente_vigentes) {
       result.push(["somente_vigentes", "==", 1]);
     }
@@ -162,48 +175,26 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
       if (this.grid && this.grid.query) {
         this.loaded = true;
       }
-
-      if (form?.exportar) {
-        this.downloadXls(queryOptions);
-      } else {
-        this.grid?.query?.reload(queryOptions);
-      }
+      this.grid?.query?.reload(queryOptions);
     } else {
       this.filter!.markAllAsTouched(); 
     }
   }
 
-  public async downloadXls(queryOptions: QueryOptions){
-    let error: any = undefined;
+  public exportExcel = (form: any, queryOptions: QueryOptions) => {
     this.loading = true;
-    try {
-      this.dao!.exportarXls({
+    try{
+      return this.dao!.exportarXls({
         where: queryOptions.where,
         orderBy: queryOptions.orderBy
-      }).subscribe(res => {
-        if (res && res.body) {
-          const blob = new Blob([res.body!], {
-            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-          });
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = 'relatorio-planos-entrega.xlsx';
-          link.click();
-          window.URL.revokeObjectURL(url);
-        }
-      }, error => {
-        this.dialog.alert('Erro ao gerar Excel', 'Houve um erro ao tentar baixar o arquivo');
-        console.log(error);
-        this.error(error);
       });
-
-      this.loading = false;
     } catch (error: any) {
       this.error(error);
     } finally {
       this.loading = false;
     }
+
+    return of(null);
   }
 
   public onValueChange(event: Event) {
