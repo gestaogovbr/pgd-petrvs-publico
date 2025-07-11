@@ -38,8 +38,8 @@ return new class extends Migration
                     ELSE 'Registrado com atraso' END
                 end as situacao_avaliacao
         from
-            `petrvs_mgi`.`planos_entregas` `pe`
-        join `petrvs_mgi`.`unidades` `uni` on
+            `planos_entregas` `pe`
+        join `unidades` `uni` on
             (`uni`.`id` = `pe`.`unidade_id`)
         left join avaliacoes a on a.id = pe.avaliacao_id and a.deleted_at is null
         where pe.deleted_at is null;
