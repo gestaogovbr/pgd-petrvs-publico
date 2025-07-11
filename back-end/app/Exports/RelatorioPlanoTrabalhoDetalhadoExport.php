@@ -88,7 +88,7 @@ class RelatorioPlanoTrabalhoDetalhadoExport extends RelatorioPlanoTrabalhoExport
     {
         $sheet->mergeCells('I1:R1');
 
-        return array_replace_recursive(parent::styles($sheet), [
+        return [
             1   => [
                 'borders' => [
                     'allBorders' => [
@@ -132,47 +132,7 @@ class RelatorioPlanoTrabalhoDetalhadoExport extends RelatorioPlanoTrabalhoExport
                     ],
                 ]
             ],
-            'J' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'K' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'L' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'M' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'N' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'O' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'P' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'Q' => [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ],
-            'R' => [
+            'J:R' => [
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                 ]
@@ -186,7 +146,7 @@ class RelatorioPlanoTrabalhoDetalhadoExport extends RelatorioPlanoTrabalhoExport
                     ],
                 ]
             ]
-        ]);
+        ];
     }
 
     public static function afterSheet(AfterSheet $event)
