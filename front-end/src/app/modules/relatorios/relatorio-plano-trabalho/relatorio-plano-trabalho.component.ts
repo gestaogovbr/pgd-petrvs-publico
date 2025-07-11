@@ -262,7 +262,8 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
         if (!form.incluir_periodos_avaliativos){
           this.grid.query.collection = 'Relatorio/planos-trabalho';
         } else {
-          this.grid.query.collection = 'Relatorio/planos-trabalho-detalhado';         }
+          this.grid.query.collection = 'Relatorio/planos-trabalho-detalhado';         
+        }
       }
 
       this.grid?.query?.reload(queryOptions);

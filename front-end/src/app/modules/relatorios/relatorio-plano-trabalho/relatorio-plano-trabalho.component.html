@@ -87,7 +87,7 @@
                 ></input-text>
             </ng-template>
             <ng-template let-row="row" #columnID>
-                <a class="link" (click)="go.navigate({ route: ['/gestao/plano-trabalho/', row.id,'consult'] })" target="_blank">
+                <a class="link" (click)="go.navigate({ route: ['/gestao/plano-trabalho/', row.plano_trabalho_id,'consult'] })" target="_blank">
                     #{{row.numero}}
                 </a>
             </ng-template>
