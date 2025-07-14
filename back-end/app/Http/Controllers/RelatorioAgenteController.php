@@ -17,7 +17,7 @@ class RelatorioAgenteController extends ControllerBase {
         return true;
     }
 
-    public function queryPlanosTrabalho(Request $request) {
+    public function query(Request $request) {
         if (!$this->getUsuario($request)->hasPermissionTo('MOD_RELATORIO_USUARIO')){
             throw new ServerException("RelatorioCapacidade", "Acesso negado ao relatório de Agentes.");
         }
