@@ -46,22 +46,22 @@ class RelatorioPlanoTrabalhoService extends ServiceBase
 
 
         if (isset($somenteVigentes[2])) {
-            $where[] = RawWhere::raw("(now() between dataInicio and dataFim)");
+            $where[] = new RawWhere("(now() between dataInicio and dataFim)", []);
         }
 
         if(isset($periodoInicio[2]) && isset($periodoFim[2])) {
-            $where[] = RawWhere::raw("(? between dataInicio and dataFim) or (? between dataInicio and dataFim)",
+            $where[] = new RawWhere("(? between dataInicio and dataFim) or (? between dataInicio and dataFim)",
                 [$periodoInicio[2], $periodoFim[2]]
             );
         } else{
-            if (isset($dataperiodoInicioInicio[2])) {
-                $where[] = RawWhere::raw("(? between dataInicio and dataFim)",
+            if (isset($periodoInicio[2])) {
+                $where[] = new RawWhere("(? between dataInicio and dataFim)",
                     [$periodoInicio[2]]
                 );
             }
 
             if (isset($periodoFim[2])) {
-                 $where[] = RawWhere::raw("(? between dataInicio and dataFim)",
+                 $where[] = new RawWhere("(? between dataInicio and dataFim)",
                     [$periodoFim[2]]
                 );
             }
