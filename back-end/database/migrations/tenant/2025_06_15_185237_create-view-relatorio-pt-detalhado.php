@@ -62,12 +62,12 @@ return new class extends Migration
                     ELSE 'Registrado com atraso' END
                 end as situacao_avaliacao
         from
-            (((`petrvs_mgi`.`planos_trabalhos` `pt`
-        join `petrvs_mgi`.`usuarios` `usu` on
+            (((`planos_trabalhos` `pt`
+        join `usuarios` `usu` on
             (`usu`.`id` = `pt`.`usuario_id`))
-        join `petrvs_mgi`.`unidades` `uni` on
+        join `unidades` `uni` on
             (`uni`.`id` = `pt`.`unidade_id`))
-        join `petrvs_mgi`.`tipos_modalidades` `tm` on
+        join `tipos_modalidades` `tm` on
             (`tm`.`id` = `pt`.`tipo_modalidade_id`))
         left join planos_trabalhos_consolidacoes ptc ON ptc.plano_trabalho_id = pt.id and ptc.deleted_at IS NULL
         left join avaliacoes a on a.id = ptc.avaliacao_id and a.deleted_at is null
