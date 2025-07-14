@@ -35,6 +35,11 @@ class ProcessaDadosSiapeBD
 
         foreach ($results as $servidor) {
             try {
+                if($this->cpfNaBlackList($servidor->cpf)){
+                    SiapeLog::info('Servidor na blacklist: ' . $servidor->cpf);
+                    continue; 
+                }
+
                 $dadosServidorArray[] = [
                     'cpf' => $servidor->cpf,
                     'data_modificacao' => $this->previneDataNula($servidor),
@@ -71,7 +76,6 @@ class ProcessaDadosSiapeBD
             $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
             $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
             $xmlResponse->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
-            // Log::error('==>',$xmlResponse->xpath('//ns1:consultaDadosPessoaisResponse/out')); VERIFICAR ISSO AMANHA
 
             $dadosPessoais = $xmlResponse->xpath('//ns1:consultaDadosPessoaisResponse/out')[0];
             $dadosPessoaisArray = $this->simpleXmlElementToArray($dadosPessoais);
@@ -233,5 +237,11 @@ class ProcessaDadosSiapeBD
         }
 
         return $responseXml;
+    }
+
+    private function cpfNaBlackList(string $cpf): bool
+    {
+        return SiapeBlackListServidores::where('cpf', $cpf)
+            ->exists();
     }
 }
