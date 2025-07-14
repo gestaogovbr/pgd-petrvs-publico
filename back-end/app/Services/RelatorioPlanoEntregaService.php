@@ -44,26 +44,28 @@ class RelatorioPlanoEntregaService extends ServiceBase
         $where[] = ['unidade_id', 'in', $unidadeIds];
 
         if (isset($somenteVigentes[2])) {
-            $where[] = RawWhere::raw("(CURDATE() BETWEEN dataInicio and dataFim)");
+            $where[] = new RawWhere("(CURDATE() BETWEEN dataInicio and dataFim)", []);
         }
 
          if(isset($periodoInicio[2]) && isset($periodoFim[2])) {
-            $where[] = RawWhere::raw("(? between dataInicio and dataFim) or (? between dataInicio and dataFim)",
+            $where[] = new RawWhere("(? between dataInicio and dataFim) or (? between dataInicio and dataFim)",
                 [$periodoInicio[2], $periodoFim[2]]
             );
         } else{
-            if (isset($dataperiodoInicioInicio[2])) {
-                $where[] = RawWhere::raw("(? between dataInicio and dataFim)",
+            if (isset($periodoInicio[2])) {
+                $where[] = new RawWhere("(? between dataInicio and dataFim)",
                     [$periodoInicio[2]]
                 );
             }
 
             if (isset($periodoFim[2])) {
-                 $where[] = RawWhere::raw("(? between dataInicio and dataFim)",
-                    [$periodoFim[2]]
-                );
+                $where[] =
+                    new RawWhere("(? between dataInicio and dataFim)", [$periodoFim[2]])
+                ;
             }
         }
+
+        \Log::info($where);
 
         $data["where"] = $where;
     }
