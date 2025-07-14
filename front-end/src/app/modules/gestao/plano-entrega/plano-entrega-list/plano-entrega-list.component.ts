@@ -177,7 +177,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 				this.dialog
 					.alert(
 						"Atenção!",
-						"Não serão clonada as metas e as entregas cujos vínculos com objetivos estratégicos, processos de cadeia de valor ou entregas de unidade superior não sejam mais possíveis não serão clonadas."
+						"Não serão clonadas as metas e as entregas cujos vínculos com objetivos estratégicos, processos de cadeia de valor ou entregas de unidade superior não sejam mais possíveis."
 					)
 					.then(() => {
 						this.go.navigate(
