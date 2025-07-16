@@ -122,10 +122,10 @@ class UsuarioSeeder extends Seeder
         'is_admin' => true,
       ],
       [
-        'email' => 'joaovictor.santiago2521@gmail.com',
-        'nome' => ' João Victor Santiago',
-        'cpf' => '42007045010',
-        'apelido' => 'João',
+        'email' => 'diego.braga@gestao.gov.br',
+        'nome' => ' Diego Braga',
+        'cpf' => '02559875101',
+        'apelido' => 'Diego',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
         'is_admin' => true,
@@ -133,7 +133,7 @@ class UsuarioSeeder extends Seeder
        [
         'email' => 'rafaelstibery@gmail.com',
         'nome' => ' Rafael Tibery',
-        'cpf' => '64241141064',
+        'cpf' => '05210244121',
         'apelido' => 'Rafael',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
