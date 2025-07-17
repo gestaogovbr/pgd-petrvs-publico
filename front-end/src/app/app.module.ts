@@ -18,6 +18,8 @@ import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ErrorsInterceptor } from './interceptors/errors-interceptor';
 
 registerLocaleData(localePt);
 
@@ -44,7 +46,8 @@ registerLocaleData(localePt);
     DynamicDialogModule
   ],
   providers: [
-    { provide: LOCALE_ID, useValue: 'pt-BR' }
+    { provide: LOCALE_ID, useValue: 'pt-BR' },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
