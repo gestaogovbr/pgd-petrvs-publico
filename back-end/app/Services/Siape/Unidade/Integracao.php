@@ -3,6 +3,7 @@
 namespace App\Services\Siape\Unidade;
 
 use App\Exceptions\ServerException;
+use App\Facades\SiapeLog;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
@@ -91,6 +92,7 @@ class Integracao implements InterfaceIntegracao
 
         collect($vinculoDTO->atribuicoes)->map(function ($atribuicao) use ($usuario, $unidadeDestino, $integranteNovoOuExistente, $vinculoDTO) {
            $alteracao = $this->executarAcao($atribuicao, $usuario, $unidadeDestino, $integranteNovoOuExistente);
+           SiapeLog::info(sprintf("Atribuição %s do usuário %s na unidade %s", $atribuicao, $usuario->id, $unidadeDestino->id), $alteracao);
            array_push($this->atribuicoesFinais, $alteracao);
            unset($vinculoDTO->atribuicoes[$atribuicao]);
         });
@@ -101,16 +103,6 @@ class Integracao implements InterfaceIntegracao
         
     }
 
-    public function aremoveDeterminadasAtribuicoes(array $atribuicoesRemover, UnidadeIntegrante $integranteNovoOuExistente,bool $forcarLotado = false): void
-    {
-        foreach ($atribuicoesRemover as $atribuicao) {
-           if ($atribuicao === EnumAtribuicao::LOTADO->value && $forcarLotado) {
-                array_push($this->atribuicoesFinais, sprintf("Atribuição %s não é válida para o integrante %s", $atribuicao, $integranteNovoOuExistente->id));
-                continue;
-            }
-            $this->removeAtribuicao($integranteNovoOuExistente, EnumAtribuicao::from($atribuicao));
-        }
-    }
 
     public function removeAtribuicao(UnidadeIntegrante $integrante, EnumAtribuicao $atribuicao): void
     {
