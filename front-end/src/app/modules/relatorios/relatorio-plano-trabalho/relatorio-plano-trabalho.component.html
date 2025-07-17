@@ -390,13 +390,13 @@
             <ng-template let-header="header" #titleAvaliacaoRecurso>
                 <input-datetime
                     date
-                    controlName="data_conclusao"
-                    [control]="filter!.controls.data_conclusao"
+                    controlName="data_recurso"
+                    [control]="filter!.controls.data_recurso"
                     (blur)="onValueChange($event)"
                 ></input-datetime>
             </ng-template>
             <ng-template let-row="row" #columnAvaliacaoRecurso>
-                <span>{{row.recurso || '-'}}</span>
+                <span>{{dao!.getDateFormatted(row.data_recurso) || '-'}}</span>
             </ng-template>
         </column>
 

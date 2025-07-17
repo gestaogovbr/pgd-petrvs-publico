@@ -71,7 +71,7 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
           data_avaliacao: { default: "" },
           nota: { default: "" },
           situacao_avaliacao: { default: "" },
-          recurso: { default: "" },
+          data_recurso: { default: "" },
           data_reavaliacao: { default: "" },
           nota_reavaliacao: { default: "" },
       });
@@ -127,6 +127,8 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
+
+    this.resumido = !form.incluir_periodos_avaliativos;
 
     if (form.unidade_id?.length) {
       result.push(["unidade_id", "==", form.unidade_id]);
@@ -196,36 +198,43 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
       result.push(["qtdePeriodosAvaliativos", "==", form.qtdePeriodosAvaliativos]);
     }
 
-    if (form.nota_reavaliacao) {
-      result.push(["nota_reavaliacao", "==", form.nota_reavaliacao]);
-    }
+    if (!this.resumido) {
 
-    if (form.situacao_avaliacao) {
-      result.push(["situacao_avaliacao", "==", form.situacao_avaliacao]);
-    }
+      if (form.nota_reavaliacao) {
+        result.push(["nota_reavaliacao", "==", form.nota_reavaliacao]);
+      }
 
-    if (form.situacao_execucao) {
-      result.push(["situacao_execucao", "==", form.situacao_execucao]);
-    }
+      if (form.situacao_avaliacao) {
+        result.push(["situacao_avaliacao", "==", form.situacao_avaliacao]);
+      }
 
-    if (form.data_inicio_avaliativo) {
-      result.push(["data_inicio_avaliativo", ">=", form.data_inicio_avaliativo]);
-    }
+      if (form.situacao_execucao) {
+        result.push(["situacao_execucao", "==", form.situacao_execucao]);
+      }
 
-    if (form.data_fim_avaliativo) {
-      result.push(["data_fim_avaliativo", "<=", form.data_fim_avaliativo]);
-    }
+      if (form.data_inicio_avaliativo) {
+        result.push(["data_inicio_avaliativo", ">=", form.data_inicio_avaliativo]);
+      }
 
-    if (form.data_avaliacao) {
-      result.push(["data_avaliacao", "==", form.data_avaliacao.toISOString().slice(0,10)]);
-    }
+      if (form.data_fim_avaliativo) {
+        result.push(["data_fim_avaliativo", "<=", form.data_fim_avaliativo]);
+      }
 
-    if (form.data_reavaliacao) {
-      result.push(["data_reavaliacao", "==", form.data_reavaliacao.toISOString().slice(0,10)]);
-    }
+      if (form.data_recurso) {
+        result.push(["data_recurso", "==", form.data_recurso.toISOString().slice(0,10)]);
+      }
 
-    if (form.data_conclusao) {
-      result.push(["data_conclusao", "==", form.data_conclusao.toISOString().slice(0,10)]);
+      if (form.data_avaliacao) {
+        result.push(["data_avaliacao", "==", form.data_avaliacao.toISOString().slice(0,10)]);
+      }
+
+      if (form.data_reavaliacao) {
+        result.push(["data_reavaliacao", "==", form.data_reavaliacao.toISOString().slice(0,10)]);
+      }
+
+      if (form.data_conclusao) {
+        result.push(["data_conclusao", "==", form.data_conclusao.toISOString().slice(0,10)]);
+      }
     }
     
     return result;
