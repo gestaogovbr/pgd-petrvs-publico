@@ -48,8 +48,17 @@ class RelatorioPlanoEntregaService extends ServiceBase
         }
 
          if(isset($periodoInicio[2]) && isset($periodoFim[2])) {
-            $where[] = new RawWhere("((? between dataInicio and dataFim) or (? between dataInicio and dataFim))",
-                [$periodoInicio[2], $periodoFim[2]]
+            $where[] = new RawWhere("(
+                (? between dataInicio and dataFim)
+                    or (? between dataInicio and dataFim)
+                    or (dataInicio between ? and ?)
+                    or (dataFim between ? and ?)
+                )",
+                [
+                    $periodoInicio[2], $periodoFim[2],
+                    $periodoInicio[2], $periodoFim[2],
+                    $periodoInicio[2], $periodoFim[2]
+                ]
             );
         } else{
             if (isset($periodoInicio[2])) {
