@@ -16,6 +16,8 @@ import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ErrorsInterceptor } from './interceptors/errors-interceptor';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,9 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
     NgScrollbarModule,
     DynamicDialogModule
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
