@@ -41,6 +41,7 @@ return new class extends Migration
             JSON_UNQUOTE(aval_antiga.nota) AS nota,
             (case when a.id = aval_antiga.id then NULL else CAST(a.data_avaliacao AS DATE) END) as data_reavaliacao,
             (case when a.id = aval_antiga.id then NULL else JSON_UNQUOTE(a.nota) END) as nota_reavaliacao,
+            aval_antiga.data_recurso,
             case when ptc.data_conclusao is null
                 then
                     CASE when CURDATE() <= DATE_ADD(ptc.data_fim, INTERVAL 10 DAY)
