@@ -23,7 +23,7 @@ return new class extends Migration
             CAST(`pt`.`data_fim` AS DATE) AS `dataFim`,
             `pt`.`unidade_id` AS `unidade_id`,
             `usu`.`nome` AS `participanteNome`,
-            CONCAT(`fn_obter_unidade_hierarquia`(`pt`.`unidade_id`), '/', uni.sigla) AS `unidadeHierarquia`,
+            `fn_obter_unidade_hierarquia`(`pt`.`unidade_id`) AS `unidadeHierarquia`,
             `uni`.`sigla` AS `unidadeSigla`,
             `pt`.`tipo_modalidade_id`,
             `tm`.`nome` AS `tipoModalidadeNome`,
