@@ -34,7 +34,6 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
       this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
       this.dao = injector.get<RelatorioAgenteDaoService>(RelatorioAgenteDaoService);
 
-      this.title = "Relatório de Planos de Entrega";
       this.filter = this.fh.FormBuilder({
         unidade_id: { default: this.auth.unidade?.id },
         incluir_unidades_subordinadas: { default: false },
@@ -42,13 +41,25 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
         id: { default: "" },
         nome: { default: "" },
         unidadeNome: { default: "" },
-        status: { default: "" }
+        status: { default: "" },
+        matricula: { default: "" },
+        jornada: { default: "" },
+        perfil: { default: "" },
+        situacao: { default: "" },
+        selecao: { default: "" },
+        lotado: { default: "" },
+        modalidade: { default: "" },
+        modalidadeSouGov: { default: "" },
+        comparacaoSouGovPetrvs: { default: "" },
+        indisponibilidadeTeletrabalho: { default: "" },
+        inicioIndisponibilidadeTeletrabalho: { default: "" },
+        fimIndisponibilidadeTeletrabalho: { default: "" }
       });
 
       this.filter!.get('unidade_id')?.setValidators(this.requiredValidator.bind(this));
       this.filter.get('unidade_id')?.updateValueAndValidity();
 
-      this.orderBy = [['unidadeHierarquia', 'asc'], ['numero', 'asc']];
+      this.orderBy = [['unidadeHierarquia', 'asc'], ['nome', 'asc']];
   }
 
   public requiredValidator(control: AbstractControl): ValidationErrors | null { 
@@ -84,9 +95,53 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
       result.push(["nome", "like", "%" + form.nome + "%"]);
     }
 
-    if (form.unidadeNome) {
-      result.push(["unidadeHierarquia", "like", "%" + form.unidadeNome + "%"]);
+    if (form.lotado) {
+      result.push(["unidadeHierarquia", "like", "%" + form.lotado + "%"]);
     }
+
+    if (form.matricula?.length) {
+      result.push(["matricula", "==", form.matricula]);
+    }
+
+    if (form.jornada?.length) {
+      result.push(["jornada", "==", form.jornada]);
+    }
+
+    if (form.perfil?.length) {
+      result.push(["perfil", "==", form.perfil]);
+    }
+
+    if (form.situacao?.length) {
+      result.push(["situacao", "==", form.situacao]);
+    }
+    if (form.selecao?.length) {
+      result.push(["selecao", "==", form.selecao]);
+    }
+
+    if (form.modalidade?.length) {
+      result.push(["tipo_modalidade_id", "==", form.modalidade]);
+    }
+
+    if (form.modalidadeSouGov?.length) {
+      result.push(["modalidadeSouGov", "==", form.modalidadeSouGov]);
+    }
+
+    if (form.comparacaoSouGovPetrvs?.length) {
+      result.push(["comparacaoSouGovPetrvs", "==", form.comparacaoSouGovPetrvs]);
+    }
+
+    if (form.indisponibilidadeTeletrabalho?.length) {
+      result.push(["indisponibilidadeTeletrabalho", "==", form.indisponibilidadeTeletrabalho]);
+    }
+
+    if (form.inicioIndisponibilidadeTeletrabalho?.length) {
+      result.push(["inicioIndisponibilidadeTeletrabalho", "==", form.inicioIndisponibilidadeTeletrabalho]);
+    }
+
+    if (form.fimIndisponibilidadeTeletrabalho?.length) {
+      result.push(["fimIndisponibilidadeTeletrabalho", "==", form.fimIndisponibilidadeTeletrabalho]);
+    }
+
     
     return result;
   };

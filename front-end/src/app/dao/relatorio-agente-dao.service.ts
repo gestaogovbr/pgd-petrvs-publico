@@ -10,10 +10,10 @@ import { Observable } from 'rxjs';
 export class RelatorioAgenteDaoService extends DaoBaseService<RelatorioAgente>{
  
   constructor(protected injector: Injector) { 
-    super("Relatorio-agente", injector);
+    super("RelatorioAgente", injector);
   }
 
   public exportarXls(queryOptions: QueryOptions): Observable<any> {
-    return this.server.getBlobWithReponse('api/Relatorio-agente/xls', queryOptions);
+    return this.server.getBlobWithReponse('api/RelatorioAgente/xls', queryOptions);
   }
 }
