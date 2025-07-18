@@ -12,6 +12,7 @@ import { QueryOptions } from "src/app/dao/query-options";
 import { TipoAvaliacaoNotaDaoService } from "src/app/dao/tipo-avaliacao-nota-dao.service";
 import { of } from "rxjs";
 import { TipoModalidadeDaoService } from "src/app/dao/tipo-modalidade-dao.service";
+import { PerfilDaoService } from "src/app/dao/perfil-dao.service";
 
 @Component({
   selector: 'relatorio-agente',
@@ -21,15 +22,18 @@ import { TipoModalidadeDaoService } from "src/app/dao/tipo-modalidade-dao.servic
 export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, RelatorioAgenteDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
+  public perfilDao: PerfilDaoService;
   public unidadeDao: UnidadeDaoService;
   public tipoModalidadeDao: TipoModalidadeDaoService;
   public botoes: ToolbarButton[] = [];
   public unidadeId: string = '';
   public loaded: boolean = false;
   public tiposModalidade: LookupItem[] = [];
+  public perfis: LookupItem[] = [];
 
   constructor(public injector: Injector, dao: RelatorioAgenteDaoService) {
       super(injector, RelatorioAgente, RelatorioAgenteDaoService);
+      this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
       this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
       this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
       this.dao = injector.get<RelatorioAgenteDaoService>(RelatorioAgenteDaoService);
@@ -44,16 +48,16 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
         status: { default: "" },
         matricula: { default: "" },
         jornada: { default: "" },
-        perfil: { default: "" },
+        perfil_id: { default: "" },
         situacao: { default: "" },
         selecao: { default: "" },
         lotado: { default: "" },
         modalidade: { default: "" },
         modalidadeSouGov: { default: "" },
         comparacaoSouGovPetrvs: { default: "" },
-        indisponibilidadeTeletrabalho: { default: "" },
-        inicioIndisponibilidadeTeletrabalho: { default: "" },
-        fimIndisponibilidadeTeletrabalho: { default: "" }
+        tipo_pedagio: { default: "" },
+        data_inicial_pedagio: { default: "" },
+        data_final_pedagio: { default: "" }
       });
 
       this.filter!.get('unidade_id')?.setValidators(this.requiredValidator.bind(this));
@@ -71,6 +75,14 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
 
       this.tipoModalidadeDao.query().asPromise().then(modalidades => {
           this.tiposModalidade = this.lookup.map(modalidades, 'id', 'nome');
+      });
+
+      this.perfilDao.query().asPromise().then(perfis => {
+          this.perfis = this.lookup.map(perfis, 'id', 'nome')
+            .map(item => ({
+              key: item.key,
+              value: item.value.replace('Perfil ', '')
+            })); // Remove a palavra 'Perfil' dos perfis
       });
   }
 
@@ -100,22 +112,23 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
     }
 
     if (form.matricula?.length) {
-      result.push(["matricula", "==", form.matricula]);
+      result.push(["matricula", "like", "%" + form.matricula + "%"]);
     }
 
     if (form.jornada?.length) {
       result.push(["jornada", "==", form.jornada]);
     }
 
-    if (form.perfil?.length) {
-      result.push(["perfil", "==", form.perfil]);
+    if (form.perfil_id?.length) {
+      result.push(["perfil_id", "==", form.perfil_id]);
     }
 
     if (form.situacao?.length) {
       result.push(["situacao", "==", form.situacao]);
     }
+
     if (form.selecao?.length) {
-      result.push(["selecao", "==", form.selecao]);
+      result.push(["programaNome", "like", "%" + form.selecao + "%"]);
     }
 
     if (form.modalidade?.length) {
@@ -130,16 +143,16 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
       result.push(["comparacaoSouGovPetrvs", "==", form.comparacaoSouGovPetrvs]);
     }
 
-    if (form.indisponibilidadeTeletrabalho?.length) {
-      result.push(["indisponibilidadeTeletrabalho", "==", form.indisponibilidadeTeletrabalho]);
+    if (form.tipo_pedagio?.length) {
+      result.push(["tipo_pedagio", "==", form.tipo_pedagio]);
     }
 
-    if (form.inicioIndisponibilidadeTeletrabalho?.length) {
-      result.push(["inicioIndisponibilidadeTeletrabalho", "==", form.inicioIndisponibilidadeTeletrabalho]);
+    if (form.data_inicial_pedagio) {
+      result.push(["data_inicial_pedagio", "==",  form.data_inicial_pedagio.toISOString().slice(0,10)]);
     }
 
-    if (form.fimIndisponibilidadeTeletrabalho?.length) {
-      result.push(["fimIndisponibilidadeTeletrabalho", "==", form.fimIndisponibilidadeTeletrabalho]);
+    if (form.data_final_pedagio) {
+      result.push(["data_final_pedagio", "==", form.data_final_pedagio.toISOString().slice(0,10)]);
     }
 
     
