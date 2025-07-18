@@ -200,176 +200,75 @@
             </ng-template>
         </column>
 
-        
-
-        <column title="Homologação" [template]="columnHomologacao"
-            [titleTemplate]="titleEntregaHomologacao"
-            [verticalAlign]="'bottom'" [align]="'center'"
-            [width]="100"
-        >
-            <ng-template let-header="header" #titleEntregaHomologacao>
-                <input-text 
-                    [control]="filter!.controls.homologador"
-                    controlName="this.filter.homologador"
-                    (blur)="onValueChange($event)"
-                ></input-text>
-            </ng-template>
-            <ng-template let-row="row" #columnHomologacao>
-                <span> {{row.homologador || '-'}}</span>
-            </ng-template>
-        </column>
-
-        <column title="Status"
-            [template]="columnStatus"
-            [titleTemplate]="titleStatus"
-            [verticalAlign]="'bottom'"
-            [align]="'center'"
-            [width]="100"
-        >
-            <ng-template let-header="header" #titleStatus>
-                <input-select 
-                    [items]="lookup.PLANO_ENTREGA_STATUS" 
-                    [control]="filter!.controls.status"
-                    controlName="this.filter.status"
-                    (change)="onValueChange($event)"
-                    nullable
-                ></input-select> 
-            </ng-template>
-            <ng-template let-row="row" #columnStatus>
-               <span>{{lookup.getValue(lookup.PLANO_ENTREGA_STATUS, row.status)}}</span>
-            </ng-template>
-        </column>
-
-        <column title="Início da Vigência"
-            [template]="columnDataInicio" [titleTemplate]="titleDataInicio"
-            [verticalAlign]="'bottom'" [align]="'center'"
-            [width]="180"
-        >
-            <ng-template let-header="header" #titleDataInicio>
-                <input-datetime
-                    date
-                    controlName="data_inicio"
-                    [control]="filter!.controls.data_inicio"
-                    (blur)="onValueChange($event)"
-                ></input-datetime>
-            </ng-template>
-            <ng-template let-row="row" #columnDataInicio>
-                <span>{{dao!.getDateFormatted(row.dataInicio)}}</span>
-            </ng-template>
-        </column>
-
-        <column title="Fim da Vigência"
-            [template]="columnDataFim" [titleTemplate]="titleDataFim"
-            [verticalAlign]="'bottom'" [align]="'center'"
-            [width]="180"
-        >
-            <ng-template let-header="header" #titleDataFim>
-                <input-datetime
-                    date
-                    controlName="data_fim"
-                    [control]="filter!.controls.data_fim"
-                    (blur)="onValueChange($event)"
-                ></input-datetime>
-            </ng-template>
-            <ng-template let-row="row" #columnDataFim>
-                <span>{{dao!.getDateFormatted(row.dataFim)}}</span><br>
-            </ng-template>
-        </column>
-
-        <column title="Duração (dias)"
-            [template]="columnDuracao" [titleTemplate]="titleDuracao"
-            [verticalAlign]="'bottom'" [align]="'center'"
+        <column title="Comparação Sougov x Petrvs"
+            [template]="columnComparacao"
+            [titleTemplate]="titleComparacao" [verticalAlign]="'bottom'"
             [width]="80"
         >
-            <ng-template let-header="header" #titleDuracao>
+            <ng-template let-header="header" #titleComparacao>
                 <input-text 
-                    [control]="filter!.controls.duracao"
-                    controlName="this.filter.duracao"
+                    [control]="filter!.controls.comparacaoSouGovPetrvs"
+                    controlName="this.filter.comparacaoSouGovPetrvs"
                     (blur)="onValueChange($event)"
                 ></input-text>
             </ng-template>
-            <ng-template let-row="row" #columnDuracao>
-                <span>{{row.duracao}}</span>
+
+            <ng-template let-row="row" #columnComparacao>
+                <span> {{row.comparacaoSouGovPetrvs || '-'}}</span>
             </ng-template>
         </column>
 
-        <column title="Data da Avaliação" [template]="columnAvaliacaoData"
-            [titleTemplate]="titleDataAvaliacao"
-            [verticalAlign]="'bottom'"
-            [align]="'center'"
-            [width]="180"
+        <column title="Indisponibilidade de teletrabalho"
+            [template]="columnIndisponibilidadeTeletrabalho"
+            [titleTemplate]="titleIndisponibilidadeTeletrabalho" [verticalAlign]="'bottom'"
+            [width]="120"
         >
-            <ng-template let-header="header" #titleDataAvaliacao>
-                <input-datetime
-                    date
-                    controlName="data_avaliacao"
-                    [control]="filter!.controls.data_avaliacao"
+            <ng-template let-header="header" #titleIndisponibilidadeTeletrabalho>
+                <input-text 
+                    [control]="filter!.controls.indisponibilidadeTeletrabalho"
+                    controlName="this.filter.indisponibilidadeTeletrabalho"
                     (blur)="onValueChange($event)"
-                ></input-datetime>
+                ></input-text>
             </ng-template>
-            <ng-template let-row="row" #columnAvaliacaoData>
-                <span>{{dao!.getDateFormatted(row.data_avaliacao) || '-'}}</span>
+
+            <ng-template let-row="row" #columnIndisponibilidadeTeletrabalho>
+                <span> {{row.indisponibilidadeTeletrabalho || '-'}}</span>
             </ng-template>
         </column>
 
-        <column title="Data da conclusão" [template]="columnConclusao"
-            [titleTemplate]="titleDataConclusao"
-            [verticalAlign]="'bottom'"
-            [align]="'center'"
-            [width]="180"
+        <column title="Início Indisponibilidade de teletrabalho"
+            [template]="columnInicioIndisponibilidadeTeletrabalho"
+            [titleTemplate]="titleInicioIndisponibilidadeTeletrabalho" [verticalAlign]="'bottom'"
+            [width]="80"
         >
-            <ng-template let-header="header" #titleDataConclusao>
-                <input-datetime
-                    date
-                    controlName="data_avaliacao"
-                    [control]="filter!.controls.data_conclusao"
+            <ng-template let-header="header" #titleInicioIndisponibilidadeTeletrabalho>
+                <input-text 
+                    [control]="filter!.controls.inicioIndisponibilidadeTeletrabalho"
+                    controlName="this.filter.inicioIndisponibilidadeTeletrabalho"
                     (blur)="onValueChange($event)"
-                ></input-datetime>
+                ></input-text>
             </ng-template>
-            <ng-template let-row="row" #columnConclusao>
-                <span> - </span>
+
+            <ng-template let-row="row" #columnInicioIndisponibilidadeTeletrabalho>
+                <span> {{row.inicioIndisponibilidadeTeletrabalho || '-'}}</span>
             </ng-template>
         </column>
 
-        <column title="Situação da Avaliação"
-            [template]="columnAvaliacaoSituacao"
-            [titleTemplate]="titleAvaliacaoSituacao"
-            [verticalAlign]="'bottom'"
-            [align]="'center'"
-            [width]="100"
+        <column title="Fim Indisponibilidade de teletrabalho"
+            [template]="columnFimIndisponibilidadeTeletrabalho"
+            [titleTemplate]="titleFimIndisponibilidadeTeletrabalho" [verticalAlign]="'bottom'"
+            [width]="80"
         >
-            <ng-template let-header="header" #titleAvaliacaoSituacao>
-                <input-select 
-                    [items]="lookup.RELATORIO_PE_SITUACOES_AVALIACAO" 
-                    [control]="filter!.controls.situacao_avaliacao"
-                    controlName="this.filter.situacao_avaliacao"
-                    (change)="onValueChange($event)"
-                    nullable
-                ></input-select> 
+            <ng-template let-header="header" #titleFimIndisponibilidadeTeletrabalho>
+                <input-text 
+                    [control]="filter!.controls.fimIndisponibilidadeTeletrabalho"
+                    controlName="this.filter.fimIndisponibilidadeTeletrabalho"
+                    (blur)="onValueChange($event)"
+                ></input-text>
             </ng-template>
-            <ng-template let-row="row" #columnAvaliacaoSituacao>
-                <span>{{row.situacao_avaliacao || '-'}}</span>
-            </ng-template>
-        </column>
 
-        <column title="Nota da Avaliação"
-            [template]="columnAvaliacaoNota"
-            [titleTemplate]="titleAvaliacaoNota"
-            [verticalAlign]="'bottom'"
-            [align]="'center'"
-            [width]="100"
-        >
-            <ng-template let-header="header" #titleAvaliacaoNota>
-                <input-select 
-                    [items]="tiposNotas"
-                    [control]="filter!.controls.nota"
-                    controlName="this.filter.nota"
-                    (change)="onValueChange($event)"
-                    nullable
-                ></input-select> 
-            </ng-template>
-            <ng-template let-row="row" #columnAvaliacaoNota>
-                <span>{{row.nota || '-'}}</span>
+            <ng-template let-row="row" #columnFimIndisponibilidadeTeletrabalho>
+                <span> {{row.fimIndisponibilidadeTeletrabalho || '-'}}</span>
             </ng-template>
         </column>
     </columns>

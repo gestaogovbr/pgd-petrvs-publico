@@ -203,7 +203,7 @@ export class AppComponent {
         name: this.lex.translate("Agentes Públicos"),
         permition: 'MOD_RELATORIO_USUARIO',
         icon: this.entity.getIcon('Usuario'),
-        onClick: ()=> this.emDesenvolvimento()
+        route: ['relatorios', 'agentes'],
       },
       RELATORIO_UNIDADES: {
         name: "Unidades",

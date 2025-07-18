@@ -16,7 +16,7 @@ const routes: Routes = [
     data: { 
       title: "Relatório de Planos de Trabalho",
     }*/
-   path: 'agente',
+   path: 'agentes',
     component: RelatorioAgenteComponent,
     canActivate: [AuthGuard],
     resolve: { config: ConfigResolver },

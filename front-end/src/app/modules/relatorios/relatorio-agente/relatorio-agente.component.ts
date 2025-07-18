@@ -80,20 +80,12 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
       result.push(["incluir_unidades_subordinadas", "==", 1]);
     }
 
-    if (form.id) {
-      result.push(["numero", "like", "%" + form.id + "%"]);
-    }
-
     if (form.nome) {
       result.push(["nome", "like", "%" + form.nome + "%"]);
     }
 
     if (form.unidadeNome) {
       result.push(["unidadeHierarquia", "like", "%" + form.unidadeNome + "%"]);
-    }
-
-    if (form.status) {
-      result.push(["status", "==", form.status]);
     }
     
     return result;
