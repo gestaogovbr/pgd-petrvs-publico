@@ -38,8 +38,7 @@ return new class extends Migration
                     and u.unidade_pai_id IS NOT NULL
                 )
                 SELECT GROUP_CONCAT(sigla ORDER BY nivel DESC SEPARATOR '/') INTO V_PATH
-                FROM ancestrais
-                WHERE nivel > 1;
+                FROM ancestrais;
 
                 RETURN V_PATH;
             END;
