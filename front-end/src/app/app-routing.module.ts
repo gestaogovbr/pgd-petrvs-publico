@@ -63,6 +63,7 @@ const routes: Routes = [
   { path: 'extension', loadChildren: () => import('./modules/extension/extension.module').then(m => m.ExtensionModule) },
   { path: 'logs', loadChildren: () => import('./modules/logs/log.module').then(m => m.LogModule), canActivate: [AuthGuard] },
   { path: 'rotinas', loadChildren: () => import('./modules/rotinas/rotina.module').then(m => m.RotinaModule), canActivate: [AuthGuard] },
+  { path: 'relatorios', loadChildren: () => import('./modules/relatorios/relatorio.module').then(m => m.RelatorioModule), canActivate: [AuthGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
 
