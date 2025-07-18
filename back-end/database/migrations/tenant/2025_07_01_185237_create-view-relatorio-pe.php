@@ -22,7 +22,7 @@ return new class extends Migration
             CAST(`pe`.`data_inicio` AS DATE) AS `dataInicio`,
             CAST(`pe`.`data_fim` AS DATE) AS `dataFim`,
             `pe`.`unidade_id` AS `unidade_id`,
-            CONCAT(`fn_obter_unidade_hierarquia`(`pe`.`unidade_id`), '/', uni.sigla) AS `unidadeHierarquia`,
+            `fn_obter_unidade_hierarquia`(`pe`.`unidade_id`) AS `unidadeHierarquia`,
             `uni`.`sigla` AS `unidadeSigla`,
             DATEDIFF(`pe`.`data_fim`, `pe`.`data_inicio`) + 1 AS `duracao`,
             CAST(a.data_avaliacao AS DATE) AS data_avaliacao,
