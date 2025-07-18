@@ -982,4 +982,17 @@ export class LookupService implements IIndexable {
   public ordenarLookupItem(array: LookupItem[]): LookupItem[] {
     return array.sort((a, b) => (a.value < b.value) ? -1 : 1);
   }
+
+  // use para mapear uma coleção de objetos para LookupItem[]
+  // Exemplo: this.lookupService.map(data, 'id', 'name');
+  public map<T>(
+    data: T[],
+    keyField: keyof T,
+    valueField: keyof T
+  ): LookupItem[] {
+    return data.map(item => ({
+      key: String(item[keyField]),
+      value: String(item[valueField])
+    }));
+  }
 }
