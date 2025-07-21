@@ -163,7 +163,7 @@ class LoginController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function authenticateSession(Request $request)
-    {
+    {        
         if (Auth::check()) {
             $entidade = $this->registrarEntidade($request, true);
             $usuario = $this->registrarUsuario($request, self::loggedUser());
@@ -663,52 +663,75 @@ class LoginController extends Controller
         );
     }
 
-    public function signInGovBrRedirect(Request $request)
-    {
+   public function signInGovBrRedirect(Request $request)
+{
+    try {
         $entidade = $this->registrarEntidade($request);
+
         $url_dinamica_callback = config("services.govbr.redirect") . $entidade->sigla;
         $dados = [
             "code_challenge" => config("services.govbr.code_challenge"),
             "code_challenge_method" => config("services.govbr.code_challenge_method"),
         ];
+
         $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback, $dados);
+
         return $this->govBrProvider($config = $login_govbr_select_tenancy)
             ->scopes(['openid', 'email', 'profile'])
             ->redirect();
+
+    } catch (\Throwable $e) {
+        \Log::error("Erro ao redirecionar para o GovBr", [
+            'erro' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return redirect()->route('erro.500'); 
     }
+}
+
 
     public function signInGovBrCallback(Request $request)
     {
-        $entidade = $this->registrarEntidade($request);
-        $url_dinamica_callback = config("services.govbr.redirect") . $entidade->sigla;
-        $dados = [
-            "code" => $request->code,
-            "state" => $request->state,
-            "code_verifier" => config("services.govbr.code_verifier")
-        ];
-        $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback, $dados);
-        $this->stimulusRouteGovBr();
-        $user = $this->govBrProvider($config = $login_govbr_select_tenancy)->stateless()->user();
-        if (!empty($user)) {
-            $token = $user->token;
-            $cpf = $user->cpf;
-            $email = $user->email;
-            $email = explode("#", $email);
-            $email = $email[0];
-            $email = str_replace("_", "@", $email);
-            $usuario = $this->registrarUsuario($request, Usuario::where('cpf', $cpf)->first());
-            if (($usuario)) {
-                Auth::loginUsingId($usuario->id);
-                $request->session()->regenerate();
-                $request->session()->put("kind", "GOVBR");
-                return view("govbr");
+        try {
+            $entidade = $this->registrarEntidade($request);
+            $url_dinamica_callback = config("services.govbr.redirect") . $entidade->sigla;
+            $dados = [
+                "code" => $request->code,
+                "state" => $request->state,
+                "code_verifier" => config("services.govbr.code_verifier")
+            ];
+            $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback, $dados);
+            $this->stimulusRouteGovBr();
+            $user = $this->govBrProvider($config = $login_govbr_select_tenancy)->stateless()->user();
+            if (!empty($user)) {
+                $token = $user->token;
+                $cpf = $user->cpf;
+                $email = $user->email;
+                $email = explode("#", $email);
+                $email = $email[0];
+                $email = str_replace("_", "@", $email);
+                $usuario = $this->registrarUsuario($request, Usuario::where('cpf', $cpf)->first());
+                if (($usuario)) {
+                    Auth::loginUsingId($usuario->id);
+                    $request->session()->regenerate();
+                    $request->session()->put("kind", "GOVBR");
+                    return view("govbr");
+                } else {
+                    return LogError::newError('As credenciais fornecidas são inválidas. CPF: ' . $cpf, new Exception("signInGovBrCallback"));
+                }
             } else {
-                return LogError::newError('As credenciais fornecidas são inválidas. CPF: ' . $cpf, new Exception("signInGovBrCallback"));
+                return $this->govBrProvider($config = $login_govbr_select_tenancy)
+                    ->scopes(['openid', 'email', 'profile'])
+                    ->redirect();
             }
-        } else {
-            return $this->govBrProvider($config = $login_govbr_select_tenancy)
-                ->scopes(['openid', 'email', 'profile'])
-                ->redirect();
+        } catch (\Throwable $e) {
+            \Log::error("Erro em callback do GovBr", [
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->route('erro.500'); 
         }
     }
 
