@@ -1,8 +1,14 @@
-## 2.5 03/07/2025
+## 2.5.0 21/07/2025
 ### Adicionado
 - Relatório de Planos de Trabalho
 - Relatório de Planos de Entrega
 - Adição da Data de Recurso
+- Tela e componente no front para exibir erro 500
+
+### Corrigido
+- Remoção e validação de duplicidade na relação de usuários com unidades
+### Modificado
+- Opção para ver logs em cada registro das listas
 
 ## 2.4.2 03/07/2025
 ### Corrigido
