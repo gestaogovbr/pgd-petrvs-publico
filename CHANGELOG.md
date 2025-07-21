@@ -2,6 +2,7 @@
 ### Adicionado
 - Relatório de Planos de Trabalho
 - Relatório de Planos de Entrega
+- Adição da Data de Recurso
 
 ## 2.4.2 03/07/2025
 ### Corrigido
