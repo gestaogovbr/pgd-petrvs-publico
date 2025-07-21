@@ -35,7 +35,17 @@ class PlanoEntrega extends ModelBase
         //'numero', /* int; NOT NULL; */// Número do plano de entrega (Gerado pelo sistema)
     ];
 
-    public $fillable_changes = ["entregas"];
+  public const STATUSES = [
+    'INCLUIDO' => 'Incluído',
+    'HOMOLOGANDO' => 'Aguardando homologação',
+    'ATIVO' => 'Em execução',
+    'CONCLUIDO' => 'Concluído',
+    'AVALIADO' => 'Avaliado',
+    'SUSPENSO' => 'Suspenso',
+    'CANCELADO' => 'Cancelado'
+  ];
+
+  public $fillable_changes = ["entregas"];
 
     public $delete_cascade = [];
 

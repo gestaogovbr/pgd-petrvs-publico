@@ -1,5 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localePt from '@angular/common/locales/pt';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
@@ -18,6 +20,8 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ErrorsInterceptor } from './interceptors/errors-interceptor';
+
+registerLocaleData(localePt);
 
 @NgModule({
   declarations: [
@@ -42,7 +46,8 @@ import { ErrorsInterceptor } from './interceptors/errors-interceptor';
     DynamicDialogModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true },
+    { provide: LOCALE_ID, useValue: 'pt-BR' }
   ],
   bootstrap: [AppComponent]
 })

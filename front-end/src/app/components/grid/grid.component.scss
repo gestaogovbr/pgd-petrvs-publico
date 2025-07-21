@@ -42,3 +42,22 @@
 .grid-invisible {
     display: none;
 }
+
+
+.grid-scroll-container {
+    overflow: auto;
+    position: relative;
+}
+
+.grid-scroll-container table {
+    min-width: 100%;
+    width: max-content;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.grid-scroll-container thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
