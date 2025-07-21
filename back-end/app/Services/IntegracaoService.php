@@ -631,6 +631,7 @@ class IntegracaoService extends ServiceBase
           "JOIN usuarios AS usuario ON ui.usuario_id = usuario.id ".
           "JOIN integracao_servidores AS isr ON isr.cpf = usuario.cpf ".
           "WHERE uia.atribuicao = 'LOTADO' AND u.codigo <> isr.codigo_servo_exercicio and ui.deleted_at IS NULL ".
+          "AND uia.deleted_at IS NULL ".
           "ORDER BY exercicio_antigo ASC");
 
 
@@ -699,10 +700,10 @@ class IntegracaoService extends ServiceBase
                 $dbResult = $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
               } catch (\Throwable $th) {
                 report($th);
-                LogError::newWarn("IntegracaoService: Durante integração não foi possível alterar lotação!", [$dbResult, $vinculo]);
+                SiapeLog::error("IntegracaoService: Durante integração não foi possível alterar lotação!", [$dbResult, $vinculo]);
               }
               if(!$dbResult){
-                LogError::newWarn("IntegracaoService: Durante integração não foi possível alterar lotação!", [$dbResult, $vinculo]);
+               SiapeLog::error("IntegracaoService: Houve uma falha na tentantiva de alterar a lotação", [$dbResult, $vinculo]);
               } else{
                   array_push($atualizacoesLotacoesResult, $dbResult);
               }
@@ -719,7 +720,7 @@ class IntegracaoService extends ServiceBase
               } else {
                     //FIXME não sera mais alocado em nenhuma unidade se não existir.
                     // $unidadeExercicioId = $unidadeExercicioRaizId;
-                    LogError::newWarn("IntegracaoService: Durante atualização de lotações, agente público informou unidade de exercício não ativa ou inexistente.", [$linha]);
+                    SiapeLog::error("IntegracaoService: Durante atualização de lotações, agente público informou unidade de exercício não ativa ou inexistente.", [$linha]);
                     continue;
               }
 
@@ -731,10 +732,10 @@ class IntegracaoService extends ServiceBase
               try {
                 $dbResult = $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
               } catch (\Throwable $th) {
-                LogError::newWarn("IntegracaoService: Durante integração não foi possível alterar lotação!", [$dbResult, $vinculo]);
+                SiapeLog::error("IntegracaoService: Durante integração não foi possível alterar lotação!", [$dbResult, $vinculo]);
               }
               if(!$dbResult){
-                LogError::newWarn("IntegracaoService: Durante integração não foi possível alterar lotação!", [$dbResult, $vinculo]);
+                SiapeLog::error("IntegracaoService: Houve uma falha na tentantiva de alterar a lotação", [$dbResult, $vinculo]);
               } else{
                   array_push($atualizacoesLotacoesResult, $dbResult);
               }
@@ -779,6 +780,10 @@ class IntegracaoService extends ServiceBase
           if(!empty($perfilParticipante)) $perfilParticipanteId = $perfilParticipante->id;
 
           if (empty($perfilParticipanteId)) throw new ServerException("ValidateUsuario", "Perfil usuário comum (" . $usuarioComum . ") não encontrado no banco de dados. Verificar configuração no painel SaaS.\n[ver XXX_XXX]");
+
+          if( empty($vinculos_isr) || !is_array($vinculos_isr)) {
+            SiapeLog::info("Não foram encontrados servidores para serem inseridos na tabela usuários.");
+          }
 
           foreach ($vinculos_isr as $v_isr) {
             $v_isr = $this->UtilService->object2array($v_isr);
@@ -836,9 +841,6 @@ class IntegracaoService extends ServiceBase
               'atribuicoes' => $atribuicoes,
             ]);
 
-            /* QueryMan, Farias, criou rotina para gerar exercícios (lotação)
-            de forma simplificada. Aqui é criado o exercício vinculando
-            o usuário a unidade. Em caso de dúvida, olhar rotina. */
             $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
           }
           SiapeLog::info('Concluída a fase de atualização das lotações dos servidores!.....');
@@ -1056,5 +1058,7 @@ class IntegracaoService extends ServiceBase
       $unidadeRaiz->save();
     }
   }
+
+    
 
 }
