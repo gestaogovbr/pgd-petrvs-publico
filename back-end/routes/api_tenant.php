@@ -518,13 +518,13 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware(['auth:sanctum'])->prefix('Relatorio')->group(function () {
-    //Route::post('planos-trabalho/query', [RelatorioController::class, 'queryPlanosTrabalho']);
+    Route::post('planos-trabalho/query', [RelatorioController::class, 'queryPlanosTrabalho']);
     //Route::post('planos-trabalho/csv', [RelatorioController::class, 'queryPlanosTrabalho']);
-    //Route::post('planos-trabalho/xls', [RelatorioController::class, 'queryPlanosTrabalho']);
+    Route::post('planos-trabalho/xls', [RelatorioController::class, 'queryPlanosTrabalho']);
 
-    //Route::post('planos-trabalho-detalhado/query', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
+    Route::post('planos-trabalho-detalhado/query', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
     //Route::post('planos-trabalho-detalhado/csv', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
-    //Route::post('planos-trabalho-detalhado/xls', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
+    Route::post('planos-trabalho-detalhado/xls', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
 
     Route::post('planos-entrega/query', [RelatorioPlanoEntregaController::class, 'query']);
     Route::post('planos-entrega/xls', [RelatorioPlanoEntregaController::class, 'query']);
