@@ -4,7 +4,6 @@
 - Relatório de Planos de Entrega
 - Adição da Data de Recurso
 - Tela e componente no front para exibir erro 500
-
 ### Corrigido
 - Remoção e validação de duplicidade na relação de usuários com unidades
 ### Modificado
