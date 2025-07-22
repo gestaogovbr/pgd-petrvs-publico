@@ -61,7 +61,11 @@
                 <div class="card-body py-3 px-3">
                   <ng-container *ngFor="let itemMenu of item.menu">
                     <li *ngIf="itemMenu && (!itemMenu.permition?.length || auth.hasPermissionTo(itemMenu.permition))">
-                      <a *ngIf="itemMenu != '-'; else divider" [class]="menuItemClass('dropdown-item', itemMenu)" role="button" (click)="openModule(itemMenu)">
+                      <a *ngIf="itemMenu != '-'; else divider"
+                        [class]="menuItemClass('dropdown-item', itemMenu)"
+                        role="button"
+                        (click)="itemMenu.onClick ? itemMenu.onClick() : openModule(itemMenu)"
+                      >
                         <i [class]="itemMenu.icon"></i>
                         {{ itemMenu.name }}
                       </a>
@@ -235,4 +239,6 @@
     </div>
   </div>
 </footer>
+</div>
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer">
 </div>
