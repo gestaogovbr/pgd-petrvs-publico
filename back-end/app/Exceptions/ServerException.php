@@ -32,6 +32,7 @@ class ServerException extends Exception implements IBaseException
         "ProgramaConcluir" => "Usuário não tem permissão para concluir regramentos",
         "ProgramaUpdate" => "Usuário não tem permissão para alterar regramentos",
         "ProgramaDestroy" => "Usuário não tem permissão para excluir regramentos",
+        "RelatorioCapacidade" => "Usuário não tem permissão para abrir este Relatório",
         "ValidateAvaliacao" => "Erro ao validar avaliacao",
         "ValidateRecursoAvaliacao" => "Erro ao validar o recurso da avaliação",
         "ValidateAtividade" => "Erro ao validar atividade",
@@ -55,7 +56,6 @@ class ServerException extends Exception implements IBaseException
         "ValidateUnidade" => "Erro ao validar Unidade",
         "ValidateUsuario" => "Erro ao validar o usuário",
         "TipoClienteExcluir" => "Tipo de Cliente",
-        "Tenant" => "Tenant",
     ];
 
     function __construct(string $code, string $extra = "", string $separator = " : ") {

@@ -36,6 +36,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   public relacoes: LookupItem[] = [];
   public changes: Change[] = [];
   public models: LookupItem[] = [];
+  public consultaFinalizada = false;
 
 
   constructor(public injector: Injector, dao: ChangeDaoService, public xlsx: ExcelService) {
@@ -72,7 +73,6 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     super.ngAfterViewInit();
     
     this.models = await this.dao?.listModels() || [];
-    console.log(this.models);
     
     //this.selectResponsaveis!.loading = true;
     this.dao?.showResponsaveis().then(responsaveis => {
@@ -84,6 +84,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
 
   public async loadChanges(changes?: Base[]){
     this.changes = changes as Change[];
+    this.consultaFinalizada = true;
   }
 
   public filterClear(filter: FormGroup) {
@@ -134,7 +135,6 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
 
 
   public async onUsuarioSelect(selected: SelectItem) {
-    console.log(selected);
   }
 
 }

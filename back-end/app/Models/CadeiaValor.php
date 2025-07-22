@@ -48,4 +48,53 @@ class CadeiaValor extends ModelBase
   {
     return $this->belongsTo(Entidade::class);
   }
+    public function getAuditRelations(): array
+    {
+        return [
+            [
+                'model' => \App\Models\PlanoEntrega::class,
+                'foreign_key' => 'cadeia_valor_id',
+            ],
+            [
+                'model' => \App\Models\CadeiaValorProcesso::class,
+                'foreign_key' => 'cadeia_valor_id',
+            ],
+            [
+                'model' => \App\Models\CadeiaValorProcesso::class,
+                'foreign_key' => 'processo_pai_id',
+                'via' => [
+                    'model' => \App\Models\CadeiaValorProcesso::class,
+                    'foreign_key' => 'cadeia_valor_id',
+                ]
+            ],
+            [
+                'model' => \App\Models\PlanoEntregaEntregaProcesso::class,
+                'foreign_key' => 'cadeia_processo_id',
+                'via' => [
+                    'model' => \App\Models\CadeiaValorProcesso::class,
+                    'foreign_key' => 'cadeia_valor_id',
+                ]
+            ],
+            [
+                'model' => \App\Models\Entidade::class,
+                'foreign_key' => 'id',
+                'via' => [
+                    'model' => \App\Models\CadeiaValor::class,
+                    'foreign_key' => 'id',
+                    'local_key' => 'entidade_id',
+                ]
+            ],
+            [
+                'model' => \App\Models\Unidade::class,
+                'foreign_key' => 'id',
+                'via' => [
+                    'model' => \App\Models\CadeiaValor::class,
+                    'foreign_key' => 'id',
+                    'local_key' => 'unidade_id',
+                ]
+            ],
+        ];
+    }
+
+
 }
