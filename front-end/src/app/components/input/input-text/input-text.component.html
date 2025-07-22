@@ -2,9 +2,18 @@
     <div class="input-group">
         <span *ngIf="prefix" class="input-group-text">{{prefix}}</span>
         <input *ngIf="viewInit && !maskFormat" #inputElement [type]="isNumbers ? 'number' : isPassword ? 'password' : 'text'" class="form-control {{hostClass}}" [attr.min]="minValue" [attr.max]="maxValue" [attr.step]="stepValue"
-            [class.text-uppercase]="textCase == 'upper'" [class.text-lowercase]="textCase == 'lower'" [class.text-end]="isNumbers || isRight" (change)="onChange($event)" (keyup)="onKeyUp($event)"
-            [formControl]="formControl" [id]="generatedId(controlName)" [class.is-invalid]="isInvalid()" (keydown.enter)="onEnterKeyDown($event)"
-            [readonly]="isDisabled" [attr.placeholder]="placeholder?.length ? placeholder : undefined" [attr.value]="control ? undefined : value" [attr.maxlength]="maxLength ? maxLength : undefined">
+            [id]="generatedId(controlName)"
+            [formControl]="formControl"
+            [class.text-uppercase]="textCase == 'upper'" [class.text-lowercase]="textCase == 'lower'" [class.text-end]="isNumbers || isRight"
+            (change)="onChange($event)"
+            (keyup)="onKeyUp($event)"
+            (blur)="onBlur($event)"
+            [class.is-invalid]="isInvalid()"
+            (keydown.enter)="onEnterKeyDown($event)"
+            [readonly]="isDisabled"
+            [attr.placeholder]="placeholder?.length ? placeholder : undefined"
+            [attr.value]="control ? undefined : value"
+            [attr.maxlength]="maxLength ? maxLength : undefined">
         <input *ngIf="viewInit && maskFormat" #inputElement [type]="isNumbers ? 'number' : isPassword ? 'password' : 'text'" class="form-control {{hostClass}}" [attr.min]="minValue" [attr.max]="maxValue" [attr.step]="stepValue"
             [class.text-uppercase]="textCase == 'upper'" [class.text-lowercase]="textCase == 'lower'" [class.text-end]="isNumbers || isRight" (change)="onChange($event)" (keyup)="onKeyUp($event)"
             [formControl]="formControl" [id]="generatedId(controlName)" [class.is-invalid]="isInvalid()" [mask]="maskFormat" [dropSpecialCharacters]="maskDropSpecialCharacters" (keydown.enter)="onEnterKeyDown($event)"

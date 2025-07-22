@@ -34,6 +34,7 @@ class TipoCapacidadeService extends ServiceBase
         ["MENU_RX_PESQUISAS_ACESSO", "Permite acessar o menu Pesquisas"],
         ["MENU_RX_QUEST_DINAMICOS_ACESSO", "Permite acessar o menu Questionários Dinâmicos"],
         ["MENU_RX_CADASTROS_ACESSO", "Permite acessar o menu Cadastros (RaioX)"],
+        ["MENU_RELATORIOS", "Permite acessar o menu Relatórios"],
       ]
     ], [
       "codigo" => "MOD_AFT",
@@ -411,6 +412,15 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_TIPO_CLI_EDT", "Permite editar tipos de clientes"],
         ["MOD_TIPO_CLI_EXCL", "Permite excluir tipos de clientes"],
         ["MOD_TIPO_CLI_INCL", "Permite incluir tipos de clientes"]
+      ]
+    ], [
+      "codigo" => "MOD_RELATORIOS",
+      "descricao" => "Módulo de Relatórios",
+      "capacidades" => [
+        ["MOD_RELATORIO_PT", "Permite acessar Relatório de Planos de Trabalho"],
+        ["MOD_RELATORIO_PE", "Permite acessar Relatório de Planos de Entrega"],
+        ["MOD_RELATORIO_USUARIO", "Permite acessar Relatório de Agentes Públicos"],
+        ["MOD_RELATORIO_UNIDADE", "Permite acessar Relatório de Unidades"],
       ]
     ]
   ];

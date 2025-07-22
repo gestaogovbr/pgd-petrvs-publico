@@ -1,7 +1,7 @@
 
 <label *ngIf="labelPosition == 'top' && label.length" for="{{controlName}}" class="d-flex align-items-center mb-1" [class]="labelClass" [class.radio]="isRadio" [class.fw-bold]="bold" [class.control-label]="isRadio">
     <i *ngIf="icon.length" [class]="icon"></i>
-    <span class="mx-1">{{label}} <span class="required-field" *ngIf="isRequired">*</span></span>
+    <span class="mx-1" [innerHTML]="label"><span class="required-field" *ngIf="isRequired">*</span></span>
     <i *ngIf="labelInfo.length" class="bi bi-info-circle label-info text-muted ms-auto" data-bs-toggle="tooltip" data-bs-placement="top" [attr.data-bs-title]="labelInfo"></i>
 </label>
 <!-- Container -->

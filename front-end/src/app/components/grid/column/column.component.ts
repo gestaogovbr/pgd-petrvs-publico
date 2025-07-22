@@ -52,6 +52,7 @@ export class ColumnComponent implements OnInit {
   @Input() cellClass?: string;
   @Input() always?: string;
   @Input() metadata?: any;
+  @Input() style: { [key: string]: string } = {};
 
   constructor() { }
 

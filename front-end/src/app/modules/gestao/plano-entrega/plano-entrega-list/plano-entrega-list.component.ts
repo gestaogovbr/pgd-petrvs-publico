@@ -59,7 +59,6 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   public BOTAO_EXCLUIR: ToolbarButton;
   public BOTAO_HOMOLOGAR: ToolbarButton;
   public BOTAO_LIBERAR_HOMOLOGACAO: ToolbarButton;
-  public BOTAO_LOGS: ToolbarButton;
   public BOTAO_REATIVAR: ToolbarButton;
   public BOTAO_RETIRAR_HOMOLOGACAO: ToolbarButton;
   public BOTAO_SUSPENDER: ToolbarButton;
@@ -117,6 +116,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       'unidade.unidade_pai',
       'avaliacao'
     ];
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
     this.BOTAO_ADERIR_OPTION = { label: "Aderir", icon: this.entityService.getIcon("Adesao"), onClick: (() => { this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] }, { metadata: { planoEntrega: this.linha }, modalClose: (modalResult) => { this.refresh(); } }); }).bind(this) };
     this.BOTAO_ADERIR_TOOLBAR = { label: "Aderir", disabled: !this.habilitarAdesaoToolbar, icon: this.entityService.getIcon("Adesao"), onClick: (() => { this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] }, { modalClose: (modalResult) => { this.refresh(); } }); }).bind(this) };
@@ -134,13 +134,14 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.BOTAO_EXCLUIR = { label: "Excluir", icon: "bi bi-trash", onClick: this.delete.bind(this) };
     this.BOTAO_HOMOLOGAR = { label: "Homologar", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), onClick: this.homologar.bind(this) };
     this.BOTAO_LIBERAR_HOMOLOGACAO = { label: "Liberar para homologação", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "HOMOLOGANDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "HOMOLOGANDO"), onClick: this.liberarHomologacao.bind(this) };
-    this.BOTAO_LOGS = { label: "Logs", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), onClick: (planoEntrega: PlanoEntrega) => this.go.navigate({ route: ['logs', 'change', planoEntrega.id, 'consult'] }) };
     this.BOTAO_REATIVAR = { label: "Reativar", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), onClick: this.reativar.bind(this) };
     this.BOTAO_RETIRAR_HOMOLOGACAO = { label: "Retirar de homologação", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), onClick: this.retirarHomologacao.bind(this) };
     this.BOTAO_SUSPENDER = { label: "Suspender", id: "PAUSADO", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), onClick: this.suspender.bind(this) };
     this.botoes = [this.BOTAO_ALTERAR, this.BOTAO_ARQUIVAR, this.BOTAO_AVALIAR, this.BOTAO_CANCELAR_PLANO, this.BOTAO_CANCELAR_AVALIACAO, this.BOTAO_CANCELAR_CONCLUSAO,
     this.BOTAO_CANCELAR_HOMOLOGACAO, this.BOTAO_CONCLUIR, this.BOTAO_CONSULTAR, this.BOTAO_DESARQUIVAR, this.BOTAO_EXCLUIR, this.BOTAO_HOMOLOGAR, this.BOTAO_LIBERAR_HOMOLOGACAO,
-    this.BOTAO_LOGS, this.BOTAO_REATIVAR, this.BOTAO_RETIRAR_HOMOLOGACAO, this.BOTAO_SUSPENDER];
+      this.OPTION_LOGS
+    ];
+
     //this.BOTAO_ADERIR_OPTION, this.BOTAO_ADERIR_TOOLBAR,
   }
 
@@ -523,11 +524,6 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e este possuir a capacidade "MOD_PENT_LIB_HOMOL"
         */
         return !this.execucao && this.planoEntregaService.situacaoPlano(planoEntrega) == 'INCLUIDO' && planoEntrega.entregas.length > 0 && (this.unidadeService.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_LIB_HOMOL")));
-      case this.BOTAO_LOGS:
-        /*
-        
-        */
-        return this.unidadeService.isGestorUnidade(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_AVAL_SUBORD");
       case this.BOTAO_REATIVAR:
         /*
           (RN_PENT_AC) Para REATIVAR um plano de entregas:
@@ -556,6 +552,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
         return this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (this.unidadeService.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_SUSP")) || this.auth.isGestorLinhaAscendente(planoEntrega.unidade!));
       case this.BOTAO_CLONAR:
         return this.auth.hasPermissionTo("MOD_PENT_INCL");
+      case this.OPTION_LOGS:
+        return true;
      }
     return false;
   }
