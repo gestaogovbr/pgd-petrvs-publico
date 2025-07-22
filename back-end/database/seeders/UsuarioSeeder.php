@@ -133,7 +133,7 @@ class UsuarioSeeder extends Seeder
        [
         'email' => 'rafaelstibery@gmail.com',
         'nome' => ' Rafael Tibery',
-        'cpf' => '05210244121',
+        'cpf' => '64241141064',
         'apelido' => 'Rafael',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
@@ -143,6 +143,11 @@ class UsuarioSeeder extends Seeder
 
     $cpfsParaExcluir = ['05182319177'];
     Usuario::whereIn('cpf', $cpfsParaExcluir)->delete();
+
+    $usuario = Usuario::onlyTrashed()->where('cpf', '40921185898')->first();
+    if ($usuario) {
+      $usuario->restore();
+    }
 
     $entidade = Entidade::first();
     // Operação de inserção de usuários desenvolvedores
@@ -183,6 +188,11 @@ class UsuarioSeeder extends Seeder
           'unidade_integrante_id' => $integrante->id
         ]);
       }
+    }
+
+    $usuario = Usuario::where('email', 'rafaelstibery@gmail.com')->first();
+    if ($usuario) {
+      $usuario->update(['cpf' => '05210244121']);
     }
   }
 }
