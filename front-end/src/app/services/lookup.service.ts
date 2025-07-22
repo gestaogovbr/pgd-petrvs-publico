@@ -944,6 +944,27 @@ export class LookupService implements IIndexable {
     { key: 'hora', value: "hora(s)" }
   ];
 
+  public RELATORIO_PT_SITUACOES_EXECUCAO: LookupItem[] = [
+    { key: 'Aguardando', value: "Aguardando" },
+    { key: 'Atrasado', value: "Atrasado" },
+    { key: 'Registrado no período', value: "Registrado no período" },
+    { key: 'Registrado com atraso', value: "Registrado com atraso" },
+  ];
+
+  public RELATORIO_PT_SITUACOES_AVALIACAO: LookupItem[] = [
+    { key: 'Aguardando', value: "Aguardando" },
+    { key: 'Atrasado', value: "Atrasado" },
+    { key: 'Registrado no período', value: "Registrado no período" },
+    { key: 'Registrado com atraso', value: "Registrado com atraso" },
+  ];
+
+  public RELATORIO_PE_SITUACOES_AVALIACAO: LookupItem[] = [
+    { key: 'Aguardando', value: "Aguardando" },
+    { key: 'Atrasado', value: "Atrasado" },
+    { key: 'Registrado no período', value: "Registrado no período" },
+    { key: 'Registrado com atraso', value: "Registrado com atraso" },
+  ];
+
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);
   }
@@ -981,5 +1002,18 @@ export class LookupService implements IIndexable {
 
   public ordenarLookupItem(array: LookupItem[]): LookupItem[] {
     return array.sort((a, b) => (a.value < b.value) ? -1 : 1);
+  }
+
+  // use para mapear uma coleção de objetos para LookupItem[]
+  // Exemplo: this.lookupService.map(data, 'id', 'name');
+  public map<T>(
+    data: T[],
+    keyField: keyof T,
+    valueField: keyof T
+  ): LookupItem[] {
+    return data.map(item => ({
+      key: String(item[keyField]),
+      value: String(item[valueField])
+    }));
   }
 }

@@ -56,5 +56,19 @@ class CadeiaValorProcesso extends ModelBase
 
         return implode('.', $sequencia);
     }
+    public function getAuditRelations(): array
+    {
+        return [
+            [
+                'model' => \App\Models\PlanoEntregaEntregaProcesso::class,
+                'foreign_key' => 'cadeia_processo_id',
+            ],
+            [
+                'model' => \App\Models\CadeiaValorProcesso::class,
+                'foreign_key' => 'processo_pai_id',
+            ],
+        ];
+    }
+
 
 }

@@ -70,3 +70,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/impersonate/{userId}', [ImpersonationController::class, 'impersonate'])->name('impersonate.start');
     Route::get('/impersonate/stop', [ImpersonationController::class, 'stopImpersonating'])->name('impersonate.stop');
 });
+
+
+
+Route::view('/web/erro-500', 'erros.500')->name('erro.500');

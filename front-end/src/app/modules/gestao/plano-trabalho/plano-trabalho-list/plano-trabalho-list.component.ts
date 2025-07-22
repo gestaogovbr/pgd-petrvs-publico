@@ -250,7 +250,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 				this.go.navigate({ route: ['gestao', 'plano-trabalho', planoTrabalho.id, 'clone'] }, this.modalRefreshId(planoTrabalho)) 
 			});
 		}};
-
+		this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
 		this.botoes = [
 			this.BOTAO_ALTERAR,
 			this.BOTAO_ARQUIVAR,
@@ -267,6 +267,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			this.BOTAO_REATIVAR,
 			this.BOTAO_SUSPENDER,
 			this.BOTAO_CLONAR,
+			this.OPTION_LOGS
 		];
 		this.rowsLimit = 10;
 	}
@@ -716,6 +717,8 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 					case this.BOTAO_TERMOS:
 						return this.auth.hasPermissionTo("MOD_PTR");
 					case this.BOTAO_CONSOLIDACOES:
+						return true;
+					case this.OPTION_LOGS:
 						return true;
 					case this.BOTAO_CLONAR:
 						return (planoConcluido || planoAvaliado) && this.auth.hasPermissionTo("MOD_PTR_INCL");

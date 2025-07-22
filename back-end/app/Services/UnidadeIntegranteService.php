@@ -43,7 +43,7 @@ class UnidadeIntegranteService extends ServiceBase
         "unidade_nome" => $usuario ? $vinculo->unidade->nome : null,
         "unidade_sigla" => $usuario ? $vinculo->unidade->sigla : null,
         "unidade_codigo" => $usuario ? $vinculo->unidade->codigo : null,
-        "atribuicoes" => $vinculo->atribuicoes->map(fn ($a) => $a->atribuicao),
+        "atribuicoes" => $vinculo->usuario->unidadeIntegranteAtribuicoes($vinculo->unidade->id)->map(fn ($a) => $a->atribuicao),
         'data_modificacao' => $dataModificacao,
         'usuario_externo' => $unidade ? $vinculo->usuario->usuario_externo : false,
       ];

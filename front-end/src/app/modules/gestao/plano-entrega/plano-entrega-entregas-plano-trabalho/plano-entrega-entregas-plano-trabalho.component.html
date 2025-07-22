@@ -13,7 +13,7 @@
             <grid [items]="plano.entregas">
               <columns>
 
-                <column type="expand"  [expandTemplate]="columnExpandedAtividades" [style]="'vertical-align:middle'">
+                <column type="expand"  [expandTemplate]="columnExpandedAtividades">
                   <ng-template let-row="row" #columnExpandedAtividades>
                     <plano-trabalho-entrega-atividades [entregaId]="row.id"></plano-trabalho-entrega-atividades>
                   </ng-template>
