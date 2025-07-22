@@ -139,6 +139,12 @@ trait Atribuicao
             $this->alteracoes = ['lotacao' => sprintf('O servidor %s já possui um plano de trabalho ativo nessa unidade %s, alterando a lotação para COLABORADOR:', $usuario->id, $unidadeDestino->id)];
             $this->processaColaborador($unidadeDestino, $usuario,  $usuario->lotacao);
         }
+
+        if ($this->usuarioEGestorEmOutraUnidade($usuario, $unidadeDestino)) {
+            $this->alteracoes = ['removido' => sprintf('Removendo o Gestor %s de outra Unidade pois ele será lotado na unidade %s', $usuario->id, $unidadeDestino->id)];
+            $this->removeUsuarioDaGestaoAtual($usuario);
+        }
+
         $this->removeLotacao($usuario);
         $this->alteracoes = ['lotacao' => sprintf('Lotando o servidor %s na Unidade %s', $usuario->id, $unidadeDestino->id)];
         $this->lotaServidor(EnumAtribuicao::LOTADO, $integranteNovoOuExistente);
