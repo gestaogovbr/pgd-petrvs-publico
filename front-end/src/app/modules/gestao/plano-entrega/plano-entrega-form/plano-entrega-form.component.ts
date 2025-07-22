@@ -136,9 +136,11 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
         entrega.plano_entrega_id = null;
         entrega._status = "ADD";
         entrega.progresso_realizado = 0;
+        entrega.progresso_esperado = 0;
+        entrega.realizado.valor = 0;
+        entrega.realizado.porcentagem = 0;
         entrega.data_inicio = new Date();
         entrega.data_fim = moment().add(1, 'day').toDate();
-        entrega.progresso_esperado = 0;
         return entrega as PlanoEntregaEntrega;
       });
     }
