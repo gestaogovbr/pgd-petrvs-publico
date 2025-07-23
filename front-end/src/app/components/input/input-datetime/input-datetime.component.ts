@@ -22,6 +22,7 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
   @ViewChild('timeInput') timeInput?: ElementRef;
   @Output() buttonClick = new EventEmitter<Event>();
   @Output() change = new EventEmitter<Event>();
+  @Output() blur = new EventEmitter<Event>();
   @Input() hostClass: string = ""; 
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
@@ -175,4 +176,9 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
     apenasData = apenasData ? true : this.isDate;
     return dataHora ? moment(dataHora).format(apenasData ? "DD/MM/YYYY" : "DD/MM/YYYY HH:mm") : "";
   }
+
+  public onBlur(event: Event) {
+    if(this.blur) this.blur.emit(event); 
+  }
+
 }

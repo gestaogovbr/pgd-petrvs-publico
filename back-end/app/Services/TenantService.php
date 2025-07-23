@@ -64,7 +64,7 @@ class TenantService extends ServiceBase
         $domainExists = DB::table('domains')
             ->where('domain', $dataOrEntity['dominio_url'])
             ->exists();
-        if ($domainExists) {
+        if ($domainExists && $action != "EDIT" && $dataOrEntity['dominio_url'] != $entity->dominio_url) {
             throw new ServerException("Tenant", "O domínio já está cadastrado.");
         }
    

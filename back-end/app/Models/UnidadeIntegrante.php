@@ -60,7 +60,7 @@ class UnidadeIntegrante extends ModelBase //Pivot //ModelBase
   // hasMany
   public function atribuicoes()
   {
-    return $this->hasMany(UnidadeIntegranteAtribuicao::class);
+    return $this->hasMany(UnidadeIntegranteAtribuicao::class, 'unidade_integrante_id', 'id');
   }
   // Belongs
   public function unidade()

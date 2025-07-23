@@ -4,7 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 6.8.5 - 2024-10-10
+
+### Fixed
+- Upgraded dependencies. #TINY-11331
+- Invalid HTML elements within an `svg` element are removed. #TINY-11331
+
+## 6.8.4 - 2024-06-19
+
+### Fixed
+- HTML entities that were double decoded in `noscript` elements caused an XSS vulnerability. #TINY-11019
+- It was possible to inject XSS HTML that was not matching the regexp when using the `noneditable_regexp` option. #TINY-11022
 
 ## 6.8.3 - 2024-02-08
 

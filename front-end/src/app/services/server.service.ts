@@ -156,7 +156,7 @@ export class ServerService {
     return result;
   }
 
-  public postDownload(url: string, params: any): Observable<Blob> {
+  public postDownload(url: string, params?: any): Observable<Blob> {
     let result;
   
     if (typeof this.batch !== "undefined") {
@@ -217,12 +217,19 @@ export class ServerService {
     return this.http.get(this.gb.servidorURL + '/' + url, {...options, params: params, responseType: 'blob'});
   }
 
-    public getBlob(url: string, params: any): Observable<Blob> {
-        let options = this.requestOptions();
-        options.responseType = 'blob';
-        const result = this.http.post<Blob>(this.gb.servidorURL + '/' + url, params, options);
-        return result.pipe(catchError(this.errorHandle.bind(this))) as Observable<Blob>;
-      }
+  public getBlob(url: string, params: any): Observable<Blob> {
+    let options = this.requestOptions();
+    options.responseType = 'blob';
+    const result = this.http.post<Blob>(this.gb.servidorURL + '/' + url, params, options);
+    return result.pipe(catchError(this.errorHandle.bind(this))) as Observable<Blob>;
+  }
+
+  public getBlobWithReponse(url: string, params: any): Observable<any> {
+    let options = this.requestOptions();
+    options.responseType = 'blob';
+    options.observe = 'response';
+    return this.http.post(this.gb.servidorURL + '/' + url, params, options);
+  }
 
   private addCustomHeaders(options: any): any {
     options.headers['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
