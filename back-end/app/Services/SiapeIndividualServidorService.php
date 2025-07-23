@@ -151,7 +151,7 @@ class SiapeIndividualServidorService extends ServiceBase
         ]);
 
 
-        $this->removeVinculoParaforcarSerLotadoNovamente($cpf, $unidade);
+        $this->removeVinculoParaforcarSerLotadoNovamente($cpf);
 
         $integracaoService = new IntegracaoService([]);
 
@@ -171,25 +171,16 @@ class SiapeIndividualServidorService extends ServiceBase
     }
 
 
-    private function removeVinculoParaforcarSerLotadoNovamente(string $cpf, array $unidade)
+    private function removeVinculoParaforcarSerLotadoNovamente(string $cpf)
     {
         $usuario = Usuario::where('cpf', $cpf)->first();
         if (!$usuario) {
             return;
         }
+        
+        $this->removeTodasAsGestoesDoUsuario($usuario);
 
-        $unidadeIntegrante = UnidadeIntegrante::where('usuario_id', $usuario->id)
-            ->where('unidade_id', $unidade['id'])
-            ->first();
-
-        if (!$unidadeIntegrante) {
-            return;
-        }
-
-        $this->removeDeterminadasAtribuicoes([
-            EnumsAtribuicao::GESTOR->value,
-            EnumsAtribuicao::LOTADO->value,
-        ], $unidadeIntegrante);
+        $this->removeLotacao($usuario);
     }
 
     private function montaXmlUnidade($codigoDaUnidade)
