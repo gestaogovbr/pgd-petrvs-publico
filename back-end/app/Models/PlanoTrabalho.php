@@ -51,7 +51,7 @@ class PlanoTrabalho extends ModelBase
   ];
 
 
-    public $fillable_changes = ['entregas', 'documentos'];
+  public $fillable_changes = ['entregas', 'documentos'];
 
     public $delete_cascade = ['documentos'];
 
