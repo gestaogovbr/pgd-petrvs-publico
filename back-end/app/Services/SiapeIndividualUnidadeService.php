@@ -50,32 +50,16 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
         $dadosUnidadeResponseXml = $this->service->getBuscarDadosSiapeUnidade()->executaRequisicao($xmlDadosDaUnidade); //xml
 
+        SiapeLog::info('Dados da unidade recebidos do SIAPE', ['response' => $dadosUnidadeResponseXml]);
+
         SiapeLog::info('Buscando a lista de urogs');
 
-        $this->service->getBuscarDadosSiapeUnidades()->listaUorgs(
-            $this->service->config['siglaSistema'],
-            $this->service->config['nomeSistema'],
-            $this->service->config['senha'],
-            $this->service->getBuscarDadosSiapeUnidade()->getCpf(),
-            $codOrgao,
-            $this->service->config['parmExistPag'],
-            $this->service->config['parmTipoVinculo']
-        );
-
-        $uorgs = SiapeListaUORGS::where('processado', 0)
-            ->orderBy('updated_at', 'desc')
-            ->first();
-
-        $listaUorgs = $this->service->getBuscarDadosSiapeUnidade()->getUnidades($uorgs);
-
-        $unidade = collect($listaUorgs)->firstWhere('codigo', $codigoUnidade);
 
         SiapeLog::info('Salvando os dados da unidade');
 
-        SiapeDadosUORG::insert([
+        SiapeDadosUORG::insert([    
             'id' => Str::uuid(),
-            'data_modificacao' => DateTime::createFromFormat('dmY', $unidade['dataUltimaTransacao'])
-                ->format('Y-m-d 00:00:00'),
+            'data_modificacao' => today(),
             'response' => $dadosUnidadeResponseXml,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
@@ -87,8 +71,8 @@ class SiapeIndividualUnidadeService extends ServiceBase
         $entidades = Entidade::all();
         $inputs = [
             'unidades' => true,
-            'servidores' => false,
-            'gestores' => false,
+            'servidores' => true,
+            'gestores' => true,
         ];
         $retorno = [];
         foreach ($entidades as $entidade) {
