@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Usuario;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\DB;
 
@@ -43,7 +44,12 @@ class RelatorioAgenteService extends ServiceBase
     }
 
     public function proxyRows(&$rows) {
+
+        $tipos = Usuario::getTiposIndisponibilidades();
+
         foreach($rows as $row) {
+            $row->tipoPedagio = $tipos[$row->tipo_pedagio] ?? '-';
+            $row->perfil = str_replace('Perfil ', '', $row->perfil);
         }
 
         return $rows;

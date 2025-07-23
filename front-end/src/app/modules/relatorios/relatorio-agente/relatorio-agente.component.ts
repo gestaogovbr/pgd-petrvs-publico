@@ -107,8 +107,8 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
       result.push(["nome", "like", "%" + form.nome + "%"]);
     }
 
-    if (form.lotado) {
-      result.push(["unidadeHierarquia", "like", "%" + form.lotado + "%"]);
+    if (form.unidadeNome) {
+      result.push(["unidadeHierarquia", "like", "%" + form.unidadeNome + "%"]);
     }
 
     if (form.matricula?.length) {

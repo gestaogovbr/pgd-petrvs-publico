@@ -238,7 +238,7 @@
             </ng-template>
 
             <ng-template let-row="row" #columnIndisponibilidadeTeletrabalho>
-                <span> {{this.lookup.getValue(this.lookup.INDISPONIBILIDADE_TIPOS, row.tipo_pedagio) || '-'}}</span>
+                <span> {{ row.tipoPedagio || '-'}}</span>
             </ng-template>
         </column>
 
