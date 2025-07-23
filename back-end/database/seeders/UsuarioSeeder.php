@@ -122,10 +122,10 @@ class UsuarioSeeder extends Seeder
         'is_admin' => true,
       ],
       [
-        'email' => 'joaovictor.santiago2521@gmail.com',
-        'nome' => ' João Victor Santiago',
-        'cpf' => '42007045010',
-        'apelido' => 'João',
+        'email' => 'diego.braga@gestao.gov.br',
+        'nome' => ' Diego Braga',
+        'cpf' => '02559875101',
+        'apelido' => 'Diego',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
         'is_admin' => true,
@@ -141,8 +141,13 @@ class UsuarioSeeder extends Seeder
       ]
     ];
 
-    $cpfsParaExcluir = ['05182319177','40921185898'];
+    $cpfsParaExcluir = ['05182319177'];
     Usuario::whereIn('cpf', $cpfsParaExcluir)->delete();
+
+    $usuario = Usuario::onlyTrashed()->where('cpf', '40921185898')->first();
+    if ($usuario) {
+      $usuario->restore();
+    }
 
     $entidade = Entidade::first();
     // Operação de inserção de usuários desenvolvedores
@@ -183,6 +188,11 @@ class UsuarioSeeder extends Seeder
           'unidade_integrante_id' => $integrante->id
         ]);
       }
+    }
+
+    $usuario = Usuario::where('email', 'rafaelstibery@gmail.com')->first();
+    if ($usuario) {
+      $usuario->update(['cpf' => '05210244121']);
     }
   }
 }

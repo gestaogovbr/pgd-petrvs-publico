@@ -1,3 +1,14 @@
+## 2.5.0 21/07/2025
+### Adicionado
+- Relatório de Planos de Trabalho
+- Relatório de Planos de Entrega
+- Adição da Data de Recurso
+- Tela e componente no front para exibir erro 500
+### Corrigido
+- Remoção e validação de duplicidade na relação de usuários com unidades
+### Modificado
+- Opção para ver logs em cada registro das listas
+
 ## 2.4.2 03/07/2025
 ### Corrigido
  - Correção na edição de planos de entrega
@@ -8,6 +19,7 @@
 ### Corrigido
  - Bug na habilitação do pedágio
  - Bug na criação de plano de trabalho pelo perfil colaborador
+
 ## 2.4.0 11/06/2025
 ### Adicionado
  - Função para bloquear o teletrabalho para servidores em pedágio

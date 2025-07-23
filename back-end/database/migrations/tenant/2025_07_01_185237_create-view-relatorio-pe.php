@@ -29,11 +29,11 @@ return new class extends Migration
             JSON_UNQUOTE(a.nota) AS nota,
             case when a.data_avaliacao is null
                 then
-                    CASE when a.data_avaliacao <= DATE_ADD(now(), INTERVAL 10 DAY)
+                    CASE when CAST(a.data_avaliacao as date) <= DATE_ADD(now(), INTERVAL 10 DAY)
                     THEN 'Aguardando'
                     ELSE 'Atrasado' END
                 else
-                    CASE when a.data_avaliacao <= DATE_ADD(now(), INTERVAL 10 DAY)
+                    CASE when cast(a.data_avaliacao as date) <= DATE_ADD(now(), INTERVAL 10 DAY)
                     THEN 'Registrado no período'
                     ELSE 'Registrado com atraso' END
                 end as situacao_avaliacao
