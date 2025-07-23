@@ -9,6 +9,11 @@ use App\Http\Controllers\AtividadeTarefaController;
 use App\Http\Controllers\AvaliacaoController;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\CadeiaValorController;
+use App\Http\Controllers\CadeiaValorProcessoController;
+use App\Http\Controllers\CalendarioController;
+use App\Http\Controllers\CapacidadeController;
+use App\Http\Controllers\CapacidadeTecnicaController;
+use App\Http\Controllers\CargoController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\CentroTreinamentoController;
 use App\Http\Controllers\ChangeController;
@@ -67,6 +72,7 @@ use App\Http\Controllers\ReacaoController;
 use App\Http\Controllers\RelatoController;
 use App\Http\Controllers\RelatorioAgenteController;
 use App\Http\Controllers\RelatorioController;
+use App\Http\Controllers\RelatorioPlanoEntregaController;
 use App\Http\Controllers\RotinaDiariaController;
 use App\Http\Controllers\SiapeIndividualController;
 use App\Http\Controllers\SolucaoController;
@@ -80,17 +86,23 @@ use App\Http\Controllers\TipoClienteController;
 use App\Http\Controllers\TipoCursoController;
 use App\Http\Controllers\TipoDocumentoController;
 use App\Http\Controllers\TipoJustificativaController;
+
 use App\Http\Controllers\TipoModalidadeController;
 use App\Http\Controllers\TipoMotivoAfastamentoController;
 use App\Http\Controllers\TipoProcessoController;
 use App\Http\Controllers\TipoTarefaController;
 use App\Http\Controllers\UnidadeController;
 use App\Http\Controllers\UnidadeIntegranteAtribuicaoController;
-
 use App\Http\Controllers\UnidadeIntegranteController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+
+
+
+
+
 
 /*
 |--------------------------------------------------------------------------
