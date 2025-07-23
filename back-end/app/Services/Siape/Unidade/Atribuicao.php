@@ -227,7 +227,7 @@ trait Atribuicao
         if($unidade == null) return false;
         
         return $usuario->planosTrabalho()
-            ->where('unidade_id', $unidade->id);
+            ->where('unidade_id', $unidade->id)->exists();
     }
 
     private function lotaServidor(EnumAtribuicao $atribuicao, UnidadeIntegrante $unidadeIntegrante)
