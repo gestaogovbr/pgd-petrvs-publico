@@ -3,16 +3,12 @@
 namespace App\Services\Siape\Unidade;
 
 use App\Exceptions\NotFoundException;
-use App\Exceptions\ServerException;
 use App\Facades\SiapeLog;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
 use App\Services\Siape\Unidade\Enum\Atribuicao as EnumAtribuicao;
-use Exception;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 trait Atribuicao
 {
@@ -223,7 +219,7 @@ trait Atribuicao
 
     private function getUnidadeAtualDoUsuario(Usuario $usuario): Unidade|null
     {
-        return $usuario->lotacao ? $usuario->lotacao->unidade : null;;
+        return $usuario->lotacao ? $usuario->lotacao->unidade : null;
     }
 
     public function usuarioTemPlanodeTrabalhoAtivo(Usuario $usuario, ?Unidade $unidade): bool
@@ -231,8 +227,7 @@ trait Atribuicao
         if($unidade == null) return false;
         
         return $usuario->planosTrabalho()
-            ->where('unidade_id', $unidade->id)
-            ->where('status', 'ATIVO')->exists();
+            ->where('unidade_id', $unidade->id)->exists();
     }
 
     private function lotaServidor(EnumAtribuicao $atribuicao, UnidadeIntegrante $unidadeIntegrante)
