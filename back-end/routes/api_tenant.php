@@ -9,11 +9,6 @@ use App\Http\Controllers\AtividadeTarefaController;
 use App\Http\Controllers\AvaliacaoController;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\CadeiaValorController;
-use App\Http\Controllers\CadeiaValorProcessoController;
-use App\Http\Controllers\CalendarioController;
-use App\Http\Controllers\CapacidadeController;
-use App\Http\Controllers\CapacidadeTecnicaController;
-use App\Http\Controllers\CargoController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\CentroTreinamentoController;
 use App\Http\Controllers\ChangeController;
@@ -96,7 +91,6 @@ use App\Http\Controllers\UnidadeIntegranteController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -518,6 +512,19 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
+Route::middleware(['auth:sanctum'])->prefix('Relatorio')->group(function () {
+    Route::post('planos-trabalho/query', [RelatorioController::class, 'queryPlanosTrabalho']);
+    //Route::post('planos-trabalho/csv', [RelatorioController::class, 'queryPlanosTrabalho']);
+    Route::post('planos-trabalho/xls', [RelatorioController::class, 'queryPlanosTrabalho']);
+
+    Route::post('planos-trabalho-detalhado/query', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
+    //Route::post('planos-trabalho-detalhado/csv', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
+    Route::post('planos-trabalho-detalhado/xls', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
+
+    Route::post('planos-entrega/query', [RelatorioPlanoEntregaController::class, 'query']);
+    Route::post('planos-entrega/xls', [RelatorioPlanoEntregaController::class, 'query']);
+});
+
 Route::middleware(['auth:sanctum'])->prefix('RelatorioAgente')->group(function () {
     Route::post('query', [RelatorioAgenteController::class, 'query']);
     Route::post('xls', [RelatorioAgenteController::class, 'query']);
@@ -528,4 +535,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ->middleware('auth:sanctum')
         ->name('impersonate');
   Route::get('/impersonate/stop', [ImpersonationController::class, 'stopImpersonating'])->name('impersonate.stop');
+});
+
+Route::middleware(['auth:sanctum'])->prefix('Relatorio')->group(function () {
+    Route::post('planos-trabalho/query', [RelatorioController::class, 'queryPlanosTrabalho']);
+    Route::post('planos-trabalho/csv', [RelatorioController::class, 'queryPlanosTrabalho']);
+    Route::post('planos-trabalho/xls', [RelatorioController::class, 'queryPlanosTrabalho']);
+
+    Route::post('planos-trabalho-detalhado/query', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
+    Route::post('planos-trabalho-detalhado/csv', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
+    Route::post('planos-trabalho-detalhado/xls', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
 });

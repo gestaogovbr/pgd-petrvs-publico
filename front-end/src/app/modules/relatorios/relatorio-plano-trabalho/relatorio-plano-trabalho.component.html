@@ -1,0 +1,445 @@
+<grid [dao]="dao" 
+    [title]="title" 
+    [orderBy]="orderBy"
+    [maxHeight]="450"
+>
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter 
+        [form]="filter" 
+        [where]="filterWhere" 
+        [submit]="filterSubmit.bind(this)" 
+        [filter]="onButtonFilterClick"
+        [collapseChange]="filterCollapseChange.bind(this)" 
+        [collapsed]="!selectable && filterCollapsed"
+        filterLabel="Consultar"
+        [hasExportExcel]="true"
+        [exportExcel]="exportExcel"
+        [excelFileName]="'relatorio-planos-trabalho.xlsx'"
+    >
+        <div class="row" style="align-items: flex-end;">   
+            <input-search 
+                #unidade 
+                [size]="5" 
+                label="Unidade de Consulta"
+                [control]="filter!.controls.unidade_id" 
+                controlName="unidade_id" 
+                [dao]="unidadeDao"
+            ></input-search>  
+            <input-datetime
+                [size]="2"
+                date
+                label="Período para consulta: início"
+                controlName="this.filter.periodo_inicio"
+                [control]="filter!.controls.periodo_inicio"
+                labelInfo="Data início de consulta"
+            ></input-datetime>
+            <input-datetime
+                [size]="2"
+                date
+                label="Período para consulta: fim"
+                controlName="periodo_fim"
+                [control]="filter!.controls.periodo_fim"
+                labelInfo="Data fim da consulta"
+            ></input-datetime>
+            <input-switch
+                [size]="1"
+                label="Somente vigentes"
+                controlName="somente_vigentes"
+                [control]="filter!.controls.somente_vigentes"
+            ></input-switch>
+            <input-switch
+                [size]="1"
+                label="Períodos avaliativos"
+                controlName="incluir_periodos_avaliativos"
+                [control]="filter!.controls.incluir_periodos_avaliativos"
+            ></input-switch>
+            <input-switch
+                [size]="1"
+                label="Unidades Subordinadas"
+                controlName="incluir_unidades_subordinadas"
+                [control]="filter!.controls.incluir_unidades_subordinadas"
+            ></input-switch>
+        </div>
+    </filter>
+
+    <header-groups *ngIf="!resumido">
+        <header-group title="" colspan="9"></header-group>
+        <header-group title="PERÍODOS AVALIATIVOS" colspan="10"
+            [style]="{
+                'border': '2px solid #72767b',
+                'text-align': 'left'
+            }"
+        ></header-group>
+    </header-groups>
+    
+    <columns>
+        <column title="#ID"
+            [template]="columnID" [titleTemplate]="titleID"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+            [width]="100"
+        >
+            <ng-template let-header="header" #titleID>
+                <input-text 
+                    [control]="filter!.controls.id"
+                    controlName="this.filter.id"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+            <ng-template let-row="row" #columnID>
+                <a class="link" (click)="go.navigate({ route: ['/gestao/plano-trabalho/', row.plano_trabalho_id,'consult'] })" target="_blank">
+                    #{{row.numero}}
+                </a>
+            </ng-template>
+        </column>
+        
+        <column title="Nome" [template]="columnNome" [titleTemplate]="titleParticipanteNome"
+            [verticalAlign]="'bottom'" [align]="'center'"
+            [width]="200"
+        >
+            <ng-template let-header="header" #titleParticipanteNome>
+                <input-text 
+                    [control]="filter!.controls.participanteNome"
+                    controlName="this.filter.participanteNome"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+            <ng-template let-row="row" #columnNome>
+                <span> {{row.participanteNome}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Unidade Executora" [template]="columnUnidade" [titleTemplate]="titleUnidade"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+            [width]="200"
+        >
+            <ng-template let-header="header" #titleUnidade>
+                <input-text 
+                    [control]="filter!.controls.unidadeNome"
+                    controlName="this.filter.unidadeNome"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+            <ng-template let-row="row" #columnUnidade>
+                <span>{{row.unidadeHierarquia}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Distribuição % da CHD no período"
+            [template]="columnCHD"
+            [titleTemplate]="titleCHD"
+            [verticalAlign]="'bottom'" [align]="'center'"
+            [width]="100"
+        >
+            <ng-template let-header="header" #titleCHD>
+                <input-text 
+                    [control]="filter!.controls.chd"
+                    controlName="this.filter.chd"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+            <ng-template let-row="row" #columnCHD>
+               <span>{{row.chd | number:'1.2-2'}}%</span>
+            </ng-template>
+        </column>
+
+        <column title="Status do PT"
+            [template]="columnStatus"
+            [titleTemplate]="titleStatus"
+            [verticalAlign]="'bottom'" [align]="'center'"
+            [width]="120"
+        >
+            <ng-template let-header="header" #titleStatus>
+                <input-select 
+                    [items]="lookup.PLANO_TRABALHO_STATUS" 
+                    [control]="filter!.controls.status"
+                    controlName="this.filter.status"
+                    (change)="onValueChange($event)"
+                ></input-select> 
+            </ng-template>
+            <ng-template let-row="row" #columnStatus>
+               <span>{{lookup.getValue(lookup.PLANO_TRABALHO_STATUS, row.status)}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Modalidade" [template]="columnModalidade" [titleTemplate]="titleModalidade"
+            [verticalAlign]="'bottom'" [align]="'center'"
+            [width]="150"
+        >
+            <ng-template let-header="header" #titleModalidade>
+                <input-select 
+                    [items]="tiposModalidade" 
+                    [control]="filter!.controls.modalidade"
+                    controlName="this.filter.modalidade"
+                    (change)="onValueChange($event)"
+                    nullable
+                ></input-select>
+            </ng-template>
+            <ng-template let-row="row" #columnModalidade>
+                <span>{{row.tipoModalidadeNome}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Início da Vigência" [template]="columnDataInicio" [titleTemplate]="titleDataInicio"
+            [verticalAlign]="'bottom'" [align]="'center'"
+        >
+            <ng-template let-header="header" #titleDataInicio>
+                <input-datetime
+                    date
+                    controlName="data_inicio"
+                    [control]="filter!.controls.data_inicio"
+                    (blur)="onValueChange($event)"
+                ></input-datetime>
+            </ng-template>
+            <ng-template let-row="row" #columnDataInicio>
+                <span>{{dao!.getDateFormatted(row.dataInicio)}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Fim da Vigência" [template]="columnDataFim" [titleTemplate]="titleDataFim"
+            [verticalAlign]="'bottom'" [align]="'center'"
+        >
+            <ng-template let-header="header" #titleDataFim>
+                <input-datetime
+                    date
+                    controlName="data_fim"
+                    [control]="filter!.controls.data_fim"
+                    (blur)="onValueChange($event)"
+                ></input-datetime>
+            </ng-template>
+            <ng-template let-row="row" #columnDataFim>
+                <span>{{dao!.getDateFormatted(row.dataFim)}}</span><br>
+            </ng-template>
+        </column>
+
+        <column title="Duração (dias)" [template]="columnDuracao" [titleTemplate]="titleDuracao"
+            [verticalAlign]="'bottom'" [align]="'center'"
+            [width]="80"
+        >
+            <ng-template let-header="header" #titleDuracao>
+                <input-text 
+                    [control]="filter!.controls.duracao"
+                    controlName="this.filter.duracao"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+            <ng-template let-row="row" #columnDuracao>
+                <span>{{row.duracao}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Períodos Avaliativos"
+            [template]="columnPeriodos" [titleTemplate]="titlePeriodos"
+            *ngIf="resumido" [verticalAlign]="'bottom'" [align]="'center'"
+            [width]="100"
+        >
+             <ng-template let-header="header" #titlePeriodos>
+                <input-text 
+                    [control]="filter!.controls.qtdePeriodosAvaliativos"
+                    controlName="this.filter.qtdePeriodosAvaliativos"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+            <ng-template let-row="row" #columnPeriodos>
+                <span>{{row.qtdePeriodosAvaliativos}}</span>
+            </ng-template>
+        </column>
+
+        <column
+            title="Início do Período Avaliativo" 
+            [template]="columnAvaliacaoInicio"
+            *ngIf="!resumido"
+            [style]="{ 'border-left': '2px solid #72767b' }"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+            [titleTemplate]="titleAvaliacaoInicio"
+        >
+            <ng-template let-header="header" #titleAvaliacaoInicio>
+                <input-datetime
+                    date
+                    controlName="data_inicio_avaliativo"
+                    [control]="filter!.controls.data_inicio_avaliativo"
+                    (blur)="onValueChange($event)"
+                ></input-datetime>
+            </ng-template>
+            <ng-template let-row="row" #columnAvaliacaoInicio>
+                <span>{{dao!.getDateFormatted(row.data_inicio_avaliativo) || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Fim do Período Avaliativo"
+            [template]="columnAvaliacaoFim"
+            [titleTemplate]="titleAvaliacaoFim"
+            *ngIf="!resumido"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleAvaliacaoFim>
+                <input-datetime
+                    date
+                    controlName="data_fim_avaliativo"
+                    [control]="filter!.controls.data_fim_avaliativo"
+                    (blur)="onValueChange($event)"
+                ></input-datetime>
+            </ng-template>
+            <ng-template let-row="row" #columnAvaliacaoFim>
+                <span>{{dao!.getDateFormatted(row.data_fim_avaliativo) || '-'}}</span>
+            </ng-template>
+        </column>
+        <column title="Data de conclusão do Registro de Execução"
+            [template]="columnAvaliacaoConclusao"
+            [titleTemplate]="titleConclusao"
+            *ngIf="!resumido"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+            [width]="180"
+        >
+            <ng-template let-header="header" #titleConclusao>
+                <input-datetime
+                    date
+                    controlName="data_conclusao"
+                    [control]="filter!.controls.data_conclusao"
+                    (blur)="onValueChange($event)"
+                ></input-datetime>
+            </ng-template>
+            <ng-template let-row="row" #columnAvaliacaoConclusao>
+                <span>{{dao!.getDateFormatted(row.data_conclusao) || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Situação do Registro de Execução"
+            [template]="columnExecucaoSituacao"
+            [titleTemplate]="titleExecucaoSituacao"
+            *ngIf="!resumido"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleExecucaoSituacao>
+                <input-select 
+                    [items]="lookup.RELATORIO_PT_SITUACOES_EXECUCAO" 
+                    [control]="filter!.controls.situacao_execucao"
+                    controlName="this.filter.situacao_execucao"
+                    (change)="onValueChange($event)"
+                    nullable
+                ></input-select> 
+            </ng-template>
+            <ng-template let-row="row" #columnExecucaoSituacao>
+                <span>{{row.situacao_execucao || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Data da Avaliação" [template]="columnAvaliacaoData"
+            [titleTemplate]="titleDataAvaliacao"
+            *ngIf="!resumido"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleDataAvaliacao>
+                <input-datetime
+                    date
+                    controlName="data_avaliacao"
+                    [control]="filter!.controls.data_avaliacao"
+                    (blur)="onValueChange($event)"
+                ></input-datetime>
+            </ng-template>
+            <ng-template let-row="row" #columnAvaliacaoData>
+                <span>{{dao!.getDateFormatted(row.data_avaliacao) || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Nota da Avaliação" [template]="columnAvaliacaoNota" *ngIf="!resumido"
+            [titleTemplate]="titleAvaliacaoNota"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleAvaliacaoNota>
+                <input-select 
+                    [items]="tiposNotas" 
+                    [control]="filter!.controls.nota"
+                    controlName="this.filter.nota"
+                    (change)="onValueChange($event)"
+                    nullable
+                ></input-select> 
+            </ng-template>
+            <ng-template let-row="row" #columnAvaliacaoNota>
+                <span>{{row.nota || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Situação da Avaliação" [template]="columnAvaliacaoSituacao" *ngIf="!resumido"
+            [titleTemplate]="titleAvaliacaoSituacao"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleAvaliacaoSituacao>
+                <input-select 
+                    [items]="lookup.RELATORIO_PT_SITUACOES_AVALIACAO" 
+                    [control]="filter!.controls.situacao_avaliacao"
+                    controlName="this.filter.situacao_avaliacao"
+                    (change)="onValueChange($event)"
+                    nullable
+                ></input-select> 
+            </ng-template>
+            <ng-template let-row="row" #columnAvaliacaoSituacao>
+                <span>{{row.situacao_avaliacao || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Data do Recurso" [template]="columnAvaliacaoRecurso" *ngIf="!resumido"
+            [titleTemplate]="titleAvaliacaoRecurso"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleAvaliacaoRecurso>
+                <input-datetime
+                    date
+                    controlName="data_recurso"
+                    [control]="filter!.controls.data_recurso"
+                    (blur)="onValueChange($event)"
+                ></input-datetime>
+            </ng-template>
+            <ng-template let-row="row" #columnAvaliacaoRecurso>
+                <span>{{dao!.getDateFormatted(row.data_recurso) || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Data da Reavaliação" [template]="columnReavaliacaoData" *ngIf="!resumido"
+            [titleTemplate]="titleReavaliacaoData"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleReavaliacaoData>
+                <input-datetime
+                    date
+                    controlName="data_reavaliacao"
+                    [control]="filter!.controls.data_reavaliacao"
+                    (blur)="onValueChange($event)"
+                ></input-datetime>
+            </ng-template>
+            <ng-template let-row="row" #columnReavaliacaoData>
+                <span>{{dao!.getDateFormatted(row.data_reavaliacao) || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Nota da Reavaliação" [template]="columnReavaliacaoNota" *ngIf="!resumido"
+            [titleTemplate]="titleReavaliacaoNota"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleReavaliacaoNota>
+                <input-select 
+                    [items]="tiposNotas" 
+                    [control]="filter!.controls.nota_reavaliacao"
+                    controlName="this.filter.nota_reavaliacao"
+                    (change)="onValueChange($event)"
+                    nullable
+                ></input-select> 
+            </ng-template>
+            <ng-template let-row="row" #columnReavaliacaoNota>
+                <span>{{row.nota_reavaliacao || '-'}}</span>
+            </ng-template>
+        </column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

@@ -112,8 +112,6 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
       result.push(["periodoInicio", ">=", form.periodo_inicio]);
     }
 
-    debugger;
-
     if (form.periodo_fim) {
       result.push(["periodoFim", "<=", form.periodo_fim]);
     }
