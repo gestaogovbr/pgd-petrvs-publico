@@ -872,41 +872,61 @@ class IntegracaoService extends ServiceBase
 
         $chefes = [];
 
-      $chefes = DB::table('integracao_unidades as iu')
+        $primeira = DB::table('integracao_unidades as iu')
           ->join('unidades as u', 'iu.codigo_siape', '=', 'u.codigo')
-          ->leftJoin('usuarios as chefe', function($join) {
-              $join->on('iu.cpf_titular_autoridade_uorg', '=', 'chefe.cpf')
-                  ->whereNull('chefe.deleted_at');
+          ->leftJoin('usuarios as chefe', function ($join) {
+            $join->on('iu.cpf_titular_autoridade_uorg', '=', 'chefe.cpf')
+              ->whereNull('chefe.deleted_at');
           })
-          ->leftJoin('integracao_servidores as is_chef', function($join) {
-              $join->on('iu.cpf_titular_autoridade_uorg', '=', 'is_chef.cpf')
-                  ->where('is_chef.vinculo_ativo', '=', 1);
+          ->leftJoin('integracao_servidores as is_chef', function ($join) {
+            $join->on('iu.cpf_titular_autoridade_uorg', '=', 'is_chef.cpf')
+              ->where('is_chef.vinculo_ativo', '=', 1);
           })
-          ->join('unidades_integrantes as ui', function($join) {
-              $join->on('chefe.id', '=', 'ui.usuario_id')
-                  ->on('u.id',      '=', 'ui.unidade_id');
+          ->join('unidades_integrantes as ui', function ($join) {
+            $join->on('chefe.id', '=', 'ui.usuario_id')
+              ->on('u.id',      '=', 'ui.unidade_id');
           })
-          ->join('unidades_integrantes_atribuicoes as uia', function($join) {
-              $join->on('ui.id', '=', 'uia.unidade_integrante_id')
-                  ->where('uia.atribuicao', '=', 'LOTADO')
-                  ->whereNull('uia.deleted_at');
+          ->join('unidades_integrantes_atribuicoes as uia', function ($join) {
+            $join->on('ui.id', '=', 'uia.unidade_integrante_id')
+              ->where('uia.atribuicao', '=', 'LOTADO')
+              ->whereNull('uia.deleted_at');
           })
           ->whereNull('u.deleted_at')
-          ->whereNotExists(function($query) {
-              $query->select(DB::raw(1))
-                    ->from('unidades_integrantes as ui2')
-                    ->join('unidades_integrantes_atribuicoes as uia2', function($join) {
-                        $join->on('ui2.id', '=', 'uia2.unidade_integrante_id')
-                            ->where('uia2.atribuicao', '=', 'GESTOR')
-                            ->whereNull('uia2.deleted_at');
-                    })
-                    ->whereColumn('ui2.usuario_id', 'chefe.id')
-                    ->whereNull('ui2.deleted_at');
+          ->whereNotExists(function ($query) {
+            $query->select(DB::raw(1))
+              ->from('unidades_integrantes as ui2')
+              ->join('unidades_integrantes_atribuicoes as uia2', function ($join) {
+                $join->on('ui2.id', '=', 'uia2.unidade_integrante_id')
+                  ->where('uia2.atribuicao', '=', 'GESTOR')
+                  ->whereNull('uia2.deleted_at');
+              })
+              ->whereColumn('ui2.usuario_id', 'chefe.id')
+              ->whereNull('ui2.deleted_at');
           })
-          ->select(
-              'u.id      as id_unidade',
-              'chefe.id  as id_chefe'
-          )
+          ->select([
+            'u.id           as id_unidade',
+            'chefe.id       as id_chefe',
+          ]);
+
+        $segunda = DB::table('integracao_unidades as iu')
+          ->join('unidades as u', 'iu.codigo_siape', '=', 'u.codigo')
+          ->join('unidades_integrantes as ui', function ($join) {
+            $join->on('ui.unidade_id', '=', 'u.id')
+              ->whereNull('ui.deleted_at');
+          })
+          ->join('unidades_integrantes_atribuicoes as uia', function ($join) {
+            $join->on('ui.id', '=', 'uia.unidade_integrante_id')
+              ->where('uia.atribuicao', '=', 'GESTOR')
+              ->whereNull('uia.deleted_at');
+          })
+          ->whereNull('iu.cpf_titular_autoridade_uorg')
+          ->select([
+            'u.id                                    as id_unidade',
+            DB::raw('iu.cpf_titular_autoridade_uorg as id_chefe'),
+          ]);
+
+        $chefes = $primeira
+          ->unionAll($segunda)
           ->get()
           ->map(fn($item) => (array) $item)
           ->toArray();
