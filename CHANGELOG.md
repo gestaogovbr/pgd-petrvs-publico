@@ -1,3 +1,7 @@
+## 2.5.1 24/07/2025
+### Corrigido
+- Correção dos relatórios para bancos de dados MySQL
+
 ## 2.5.0 21/07/2025
 ### Adicionado
 - Relatório de Planos de Trabalho
