@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         DB::statement(<<<EOD
-        CREATE OR REPLACE
+        CREATE
         ALGORITHM = UNDEFINED VIEW `view_relatorio_plano_trabalho_detalhado` AS
         select
             `ptc`.`id` AS `id`,

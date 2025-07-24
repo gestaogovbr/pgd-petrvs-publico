@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
          DB::statement(<<<EOD
-        CREATE OR REPLACE
+        CREATE
         ALGORITHM = UNDEFINED VIEW `view_relatorio_plano_trabalho` AS
         select
             `pt`.`id` AS `id`,
@@ -28,8 +28,8 @@ return new class extends Migration
             `pt`.`tipo_modalidade_id`,
             `tm`.`nome` AS `tipoModalidadeNome`,
             DATEDIFF(`pt`.`data_fim`, `pt`.`data_inicio`) + 1 AS `duracao`,
-            nvl((
-                SELECT sum(nvl(pte.forca_trabalho, 0) * 1)
+            coalesce((
+                SELECT sum(coalesce(pte.forca_trabalho, 0) * 1)
                 FROM planos_trabalhos_entregas pte
                 WHERE pte.plano_trabalho_id = pt.id
                 and pte.deleted_at is null
