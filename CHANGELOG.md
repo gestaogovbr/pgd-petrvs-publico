@@ -1,6 +1,8 @@
 ## 2.5.1 24/07/2025
 ### Corrigido
-- Correção dos relatórios para bancos de dados MySQL
+- Correção dos relatórios para bancos de dados MySQL;
+- Correção nas listagens que estavam passando dos limites da página;
+- Correção na seleção do plano de entrega no cadastro de Planos de Trabalho.
 
 ## 2.5.0 21/07/2025
 ### Adicionado
