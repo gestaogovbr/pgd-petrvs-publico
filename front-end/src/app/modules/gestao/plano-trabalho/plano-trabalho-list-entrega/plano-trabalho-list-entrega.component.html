@@ -17,7 +17,7 @@
         <input-select #origem controlName="origem" controlName="origem" [control]="form!.controls.origem" [items]="lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO" (change)="onOrigemChange(row)"></input-select>
         <!-- <input-search *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(origem?.value)" label #planoEntrega [placeholder]="'Selecione o ' + lex.translate('Plano de entrega')" [join]="['entregas.entrega:id,nome', 'unidade']" [where]="origem?.value == 'PROPRIA_UNIDADE' ? [['unidade_id', '==', entity?.unidade_id]] : undefined" [selectParams]="origem?.value == 'PROPRIA_UNIDADE' ? {filter: {unidade_id: entity?.unidade_id}} : undefined" controlName="plano_entrega_id" [dao]="planoEntregaDao" (change)="onPlanoEntregaChange($event)"></input-search> -->
         <!-- (RN_PTR_G) Na criação/alteração de um Plano de Trabalho só podem ser criadas/alteradas entregas se vinculadas a entregas de planos de entregas não canceladas; //-->
-        <input-search *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(origem?.value)" label #planoEntrega [placeholder]="'Selecione o ' + lex.translate('Plano de entrega')" [join]="['entregas.entrega:id,nome', 'unidade']" [where]="origem?.value == 'PROPRIA_UNIDADE' ? [['unidade_id', '==', entity?.unidade_id], ['status', '==', 'ATIVO']] : [['status', '==', 'ATIVO']]" [selectParams]="origem?.value == 'PROPRIA_UNIDADE' ? {filter: {unidade_id: entity?.unidade_id, status: 'ATIVO'}} : {filter: {status: 'ATIVO'}}" controlName="plano_entrega_id" [dao]="planoEntregaDao" (change)="onPlanoEntregaChange($event)"></input-search>
+        <input-search *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(this.form?.get('origem')?.value)" label #planoEntrega [placeholder]="'Selecione o ' + lex.translate('Plano de entrega')" [join]="['entregas.entrega:id,nome', 'unidade']" [where]="origem?.value == 'PROPRIA_UNIDADE' ? [['unidade_id', '==', entity?.unidade_id], ['status', '==', 'ATIVO']] : [['status', '==', 'ATIVO']]" [selectParams]="origem?.value == 'PROPRIA_UNIDADE' ? {filter: {unidade_id: entity?.unidade_id, status: 'ATIVO'}} : {filter: {status: 'ATIVO'}}" controlName="plano_entrega_id" [dao]="planoEntregaDao" (change)="onPlanoEntregaChange($event)"></input-search>
         <input-text *ngIf="origem?.value == 'OUTRO_ORGAO'" #orgao controlName="orgao" placeholder="Órgão" [attr.maxlength]=250></input-text>
       </ng-template>
     </column>
@@ -25,14 +25,15 @@
       <ng-template let-header="header" class="text-center" #titleEntrega><span><strong>Entrega</strong></span></ng-template>
       <ng-template let-row="row" #columnEntrega>
         <small>{{ planoTrabalhoService.tipoEntrega(row, entity).descricao }}</small>
-        <div *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(planoTrabalhoService.tipoEntrega(row, entity).tipo)" class="w-100">
+        
+        <div *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(this.form?.get('origem')?.value)" class="w-100">
           <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateFormatted(row.plano_entrega_entrega?.data_inicio)" hint="Data de início"></badge>
           <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateFormatted(row.plano_entrega_entrega?.data_fim)" hint="Data de término"></badge>
         </div>
         <reaction [entity]="row" origem="PLANO_TRABALHO_ENTREGA"></reaction>
       </ng-template>
       <ng-template let-row="row" #editEntrega>
-        <input-select *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(origem?.value)" #entrega nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregas" (change)="onEntregaChange($event)"></input-select>
+        <input-select *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(this.form?.get('origem')?.value)" #entrega nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregas" (change)="onEntregaChange($event)"></input-select>
         <div *ngIf="entrega?.selectedItem" class="w-100">
           <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateFormatted(entrega!.selectedItem!.data!.data_inicio)" hint="Data de início"></badge>
           <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateFormatted(entrega!.selectedItem!.data!.data_fim)" hint="Data de término"></badge>
