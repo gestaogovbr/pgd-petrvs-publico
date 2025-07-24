@@ -36,7 +36,9 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
       entidade_id: { default: this.auth.unidade?.entidade_id },
       inativos: { default: false },
       instituidora: { default: false },
-      nome: { default: "" }
+      nome: { default: "" },
+      tem_chefe_titular: { default: false },
+      tem_chefe_substituto: { default: false }
     });
     this.groupBy = [{ field: "entidade.sigla", label: "Entidade" }];
     // Testa se o usuário possui permissão unificar unidade
@@ -94,4 +96,11 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
   public get labelInfoInativas(): string {
     return this.selectable ? 'Se lista só as unidades inativas' : 'Se lista também as unidades inativas';
   }
+
+  public temChefeTitular(row: Unidade): boolean {
+    return  !(row.gestor == null);
+  }
+  public temChefeSubstituta(row: Unidade): boolean {
+    return (row.gestores_substitutos != null) && row.gestores_substitutos.length > 0;
+  } 
 }
