@@ -439,7 +439,7 @@ class Usuario extends Authenticatable implements AuditableContract
         if ($this->data_final_pedagio) {
             return Carbon::parse($this->data_final_pedagio)->isFuture();
         }
-        return false;         
+        return false;
     }
 
     public function getConfigAttribute($value)
@@ -500,8 +500,17 @@ class Usuario extends Authenticatable implements AuditableContract
         // For example
         return $this->is_admin == 1;
     }
+
     public function impersonateGuard()
     {
         return 'sanctum';
+    }
+
+    public static function getTiposIndisponibilidades()
+    {
+        return [
+            '1' => 'Art 10, §2º, INC SEGES/SPGRT nº 24/2024- Primeiro ano do Estágio Probatório.',
+            '2' => 'Art 10, §3º, INC SEGES/SPGRT nº 24/2024- Movimentação entre órgãos há menos de 6 (seis) meses.'
+        ];
     }
 }
