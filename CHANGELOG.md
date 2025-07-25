@@ -1,3 +1,7 @@
+## 2.5.2 28/07/2025
+### Adicionado
+ - Clonagem de Plano de Entrega
+ 
 ## 2.5.1 24/07/2025
 ### Corrigido
 - Correção dos relatórios para bancos de dados MySQL;
