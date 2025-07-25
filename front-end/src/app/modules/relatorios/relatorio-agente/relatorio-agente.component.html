@@ -22,7 +22,17 @@
                 [control]="filter!.controls.unidade_id" 
                 controlName="unidade_id" 
                 [dao]="unidadeDao"
-            ></input-search>
+                [selectRoute]="{
+                    route: ['configuracoes', 'unidade'],
+                    params: auth.hasPermissionTo('MOD_RELATORIO_USUARIO_TODAS_UNIDADES')
+                    ? { }
+                    : { unidade_pai: auth.unidade?.id }
+                }"
+                [where]="auth.hasPermissionTo('MOD_RELATORIO_USUARIO_TODAS_UNIDADES')
+                    ? []
+                    : [['id', 'in', [this.unidades]]]"
+            >
+            </input-search>
             <input-switch
                 [size]="2"
                 label="Unidades Subordinadas"
