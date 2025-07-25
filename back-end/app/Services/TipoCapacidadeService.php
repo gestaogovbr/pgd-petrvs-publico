@@ -413,16 +413,27 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_TIPO_CLI_EXCL", "Permite excluir tipos de clientes"],
         ["MOD_TIPO_CLI_INCL", "Permite incluir tipos de clientes"]
       ]
-    ], [
-      "codigo" => "MOD_RELATORIOS",
-      "descricao" => "Módulo de Relatórios",
-      "capacidades" => [
-        ["MOD_RELATORIO_PT", "Permite acessar Relatório de Planos de Trabalho"],
-        ["MOD_RELATORIO_PE", "Permite acessar Relatório de Planos de Entrega"],
-        ["MOD_RELATORIO_USUARIO", "Permite acessar Relatório de Agentes Públicos"],
-        ["MOD_RELATORIO_UNIDADE", "Permite acessar Relatório de Unidades"],
-      ]
-    ]
+    ],
+    [
+        "codigo" => "MOD_RELATORIOS",
+        "descricao" => "Módulo de Relatórios",
+    ],
+    [
+        "codigo" => "MOD_RELATORIO_PT",
+        "descricao" => "Relatório de Planos de Trabalho",
+    ],
+    [
+        "codigo" => "MOD_RELATORIO_PE",
+        "descricao" => "Relatório de Planos de Entrega",
+    ],
+    [
+        "codigo" => "MOD_RELATORIO_USUARIO",
+        "descricao" => "Relatório de Agentes Públicos",
+    ],
+    [
+        "codigo" => "MOD_RELATORIO_UNIDADE",
+        "descricao" => "Relatório de Unidades",
+    ],
   ];
 
   private function differentDev(&$data)
