@@ -19,6 +19,7 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @Input() selectable: boolean = false;
   @Input() snapshot?: ActivatedRouteSnapshot;
+  @Input() unidade_pai?: string;
   @ViewChild('instituidora', { static: false }) public instituidora?: InputSwitchComponent;
 
   public cidadeDao: CidadeDaoService;
@@ -36,7 +37,7 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
       entidade_id: { default: this.auth.unidade?.entidade_id },
       inativos: { default: false },
       instituidora: { default: false },
-      nome: { default: "" }
+      nome: { default: "" },
     });
     this.groupBy = [{ field: "entidade.sigla", label: "Entidade" }];
     // Testa se o usuário possui permissão unificar unidade
@@ -48,7 +49,6 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
         onClick: (unidade: Unidade) => this.go.navigate({ route: ['logs', 'unidade', 'merge'] }, this.modalRefresh())
       });
     }
-    this.rowsLimit = 10;
     this.addOption(this.OPTION_INFORMACOES, "MOD_UND");
     this.addOption(this.OPTION_EXCLUIR, "MOD_UND_EXCL");
     this.addOption(this.OPTION_LOGS);
@@ -88,6 +88,11 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
     if (form.entidade_id?.length) result.push(["entidade_id", "==", form.entidade_id]);
     if (form.nome?.length) result.push(["or", ["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]]);
     if (form.instituidora) result.push(["instituidora", "==", 1]);
+    
+    if (this.unidade_pai) {
+       result.push(["unidade_pai", "==", this.unidade_pai]);
+    }
+
     return result;
   }
 
