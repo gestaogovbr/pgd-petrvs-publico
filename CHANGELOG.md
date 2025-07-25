@@ -17,6 +17,7 @@
 ### Corrigido
 - Alterado a forma de buscar chefias na base de dados, se baseando na lotação do servidor
 - Corrigido vínculo de chefia em uma unidade quando o servidor está lotado em outra unidade
+- remoção dos dados de servidores aposentados do tenant da FUNASA (centralizado)
 
 ## 2.5.1 24/07/2025
 ### Corrigido
