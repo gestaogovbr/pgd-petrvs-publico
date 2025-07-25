@@ -28,7 +28,7 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
   public loaded: boolean = false;
   public tiposModalidade: LookupItem[] = [];
   public perfis: LookupItem[] = [];
-  public unidades?: string;
+  public unidades?: any[];
 
   constructor(public injector: Injector, dao: RelatorioAgenteDaoService) {
       super(injector, RelatorioAgente, RelatorioAgenteDaoService);
@@ -78,7 +78,7 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
         const unidades = (await this.unidadeDao.subordinadas(this.auth?.unidade?.id))
           .map((item: any) => item.id);
         unidades.push(this.auth.unidade.id);
-        this.unidades = unidades.join(',');
+        this.unidades = unidades;
         console.log(this.unidades);
       }
 

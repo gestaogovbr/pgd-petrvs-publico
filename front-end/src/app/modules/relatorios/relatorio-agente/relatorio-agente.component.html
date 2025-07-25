@@ -30,7 +30,7 @@
                 }"
                 [where]="auth.hasPermissionTo('MOD_RELATORIO_USUARIO_TODAS_UNIDADES')
                     ? []
-                    : [['id', 'in', [this.unidades]]]"
+                    : [['id', 'in', this.unidades]]"
             >
             </input-search>
             <input-switch
