@@ -346,6 +346,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_PROD_INCL"],
       ["codigo" => "MOD_PROD_EDT"],
       ["codigo" => "MOD_PROD_EXCL"],
+      ["codigo" => "MOD_RELATORIO_USUARIO_TODAS_UNIDADES"],
       ["codigo" => "MOD_SOLUCOES"],
       ["codigo" => "MOD_SOLUCOES_INCL"],
       ["codigo" => "MOD_SOLUCOES_EDT"],
@@ -367,7 +368,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_CLI_INCL"],
       ["codigo" => "MOD_ENTD_EDT"],
       ["codigo" => "MOD_FER"],
-        ["codigo" => "MOD_UND_TUDO"],
+      ["codigo" => "MOD_UND_TUDO"],
       ["codigo" => "MOD_FER_EDT"],
       ["codigo" => "MOD_FER_EXCL"],
       ["codigo" => "MOD_FER_INCL"],
@@ -383,7 +384,6 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_UND_INST"],
       ["codigo" => "MOD_PART_PEDAGIO"],
       ["codigo" => "MOD_AUDIT_LOG"],
-
     ]);
 
     $capacidades_colaborador = array_merge(

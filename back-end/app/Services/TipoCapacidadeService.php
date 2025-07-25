@@ -431,6 +431,10 @@ class TipoCapacidadeService extends ServiceBase
         "descricao" => "Relatório de Agentes Públicos",
     ],
     [
+        "codigo" => "MOD_RELATORIO_USUARIO_TODAS_UNIDADES",
+        "descricao" => "Relatório de Agentes Públicos - Listar todas as unidades",
+    ],
+    [
         "codigo" => "MOD_RELATORIO_UNIDADE",
         "descricao" => "Relatório de Unidades",
     ],
