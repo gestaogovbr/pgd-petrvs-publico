@@ -2,21 +2,16 @@
 
 namespace App\Services;
 
+use App\Enums\Atribuicao as EnumsAtribuicao;
 use App\Facades\SiapeLog;
 use App\Models\Entidade;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeDadosUORG;
-use App\Models\SiapeListaServidores;
 use App\Models\SiapeListaUORGS;
 use App\Models\Unidade;
-use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
-use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidores;
-use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
-use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidades;
-use App\Services\Siape\ProcessaDadosSiapeBD;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
+use App\Models\Usuario;
+use App\Services\Siape\Unidade\Atribuicao;
 use Illuminate\Support\Str;
 use Exception;
 use DateTime;
@@ -24,14 +19,14 @@ use Carbon\Carbon;
 
 class SiapeIndividualServidorService extends ServiceBase
 {
-    use LogTrait;
+    use LogTrait, Atribuicao;
 
     private SiapeIndividualService $service;
 
     public function fluxoSiape(string $cpf, SiapeIndividualService $service)
     {
         SiapeLog::info('Iniciando o processo de sincronização cpf #:' . $cpf);
-        
+
         $this->service = $service;
 
         SiapeLog::info('Limpando tabelas de controle do SIAPE para o cpf');
@@ -55,6 +50,12 @@ class SiapeIndividualServidorService extends ServiceBase
 
         $dadosPessoaisResponseXml = $this->service->getBuscarDadosSiapeServidor()
             ->executaRequisicao($xmlDadosPessoais);
+
+        SiapeLog::info('retorno dos dados recebido do SIAPE', [
+            'dados_funcionais' => $dadosFuncionaisResponseXml,
+            'dados_pessoais' => $dadosPessoaisResponseXml,
+        ]);
+
 
         SiapeLog::info('Processando retorno do SIAPE');
 
@@ -81,11 +82,11 @@ class SiapeIndividualServidorService extends ServiceBase
         }
 
         SiapeLog::info('Montando XML dos dados da unidade');
-        
+
         $xmlDadosDaUnidade = $this->montaXmlUnidade($codigoDaUnidade);
 
         SiapeLog::info('Executando requisicao no SIAPE');
-        
+
         $dadosUnidadeResponseXml = $this->service->getBuscarDadosSiapeUnidade()->executaRequisicao($xmlDadosDaUnidade); //xml
 
 
@@ -140,6 +141,9 @@ class SiapeIndividualServidorService extends ServiceBase
             'updated_at' => Carbon::now(),
         ]);
 
+
+        $this->removeVinculoParaforcarSerLotadoNovamente($cpf);
+
         $integracaoService = new IntegracaoService([]);
 
         $entidades = Entidade::all();
@@ -157,6 +161,18 @@ class SiapeIndividualServidorService extends ServiceBase
         return $retorno;
     }
 
+
+    private function removeVinculoParaforcarSerLotadoNovamente(string $cpf)
+    {
+        $usuario = Usuario::where('cpf', $cpf)->first();
+        if (!$usuario) {
+            return;
+        }
+        
+        $this->removeTodasAsGestoesDoUsuario($usuario);
+
+        $this->removeLotacao($usuario);
+    }
 
     private function montaXmlUnidade($codigoDaUnidade)
     {
