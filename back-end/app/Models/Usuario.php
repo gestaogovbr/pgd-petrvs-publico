@@ -79,6 +79,8 @@ class Usuario extends Authenticatable implements AuditableContract
         'texto_complementar_plano', /* longtext; */ // Campo de mensagem adicional do plano de trabalho
         'situacao_funcional',
         'data_nascimento',
+        'nome_jornada', /* varchar(100); NULL */ // Nome da Jornada
+        'cod_jornada', /* int; NULL */ // Codigo da Jornada
         //'deleted_at', /* timestamp; */
         //'remember_token', /* varchar(100); */
         //'password', /* varchar(255); */// Senha do usuário
