@@ -41,7 +41,7 @@ class UsuarioSeeder extends Seeder
         'is_admin' => true,
       ],
       [
-        'email' => 'rickgrana@gmail.com',
+        'email' => 'ricardo.grana@gestao.gov.br',
         'nome' => 'Ricardo Grana de Lima',
         'cpf' => '74065505291',
         'apelido' => 'Grana',
@@ -113,7 +113,7 @@ class UsuarioSeeder extends Seeder
         'is_admin' => true,
       ],
       [
-        'email' => 'gabrieldnb7@gmail.com',
+        'email' => 'gabriel.s.domingos@gestao.gov.br',
         'nome' => ' Gabriel Marcos da Silva',
         'cpf' => '44239586003',
         'apelido' => 'Gabriel',
@@ -133,7 +133,7 @@ class UsuarioSeeder extends Seeder
        [
         'email' => 'rafaelstibery@gmail.com',
         'nome' => ' Rafael Tibery',
-        'cpf' => '64241141064',
+        'cpf' => '05210244121',
         'apelido' => 'Rafael',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
@@ -151,7 +151,9 @@ class UsuarioSeeder extends Seeder
 
     $entidade = Entidade::first();
     // Operação de inserção de usuários desenvolvedores
-    $unidade_pai = Unidade::where('entidade_id', $entidade->id)->first();
+    if ($entidade) {
+        $unidade_pai = Unidade::where('entidade_id', $entidade->id)->first();
+    }
 
     foreach ($usuarios_desenvolvedores as $usuario) {
       $user = Usuario::where('cpf', $usuario['cpf'])->first() ?? new Usuario();
@@ -176,17 +178,19 @@ class UsuarioSeeder extends Seeder
 
       if(empty($user->lotacoes())){
         # criar se não existir
-        $integrante = UnidadeIntegrante::firstOrCreate(
-          [
-            'unidade_id' => $unidade_pai->id,
-            'usuario_id' => $user->id
-          ]
-        );
+        if ($unidade_pai) {
+            $integrante = UnidadeIntegrante::firstOrCreate(
+            [
+                'unidade_id' => $unidade_pai->id,
+                'usuario_id' => $user->id
+            ]
+            );
 
-        UnidadeIntegranteAtribuicao::firstOrCreate([
-          'atribuicao' => "LOTADO",
-          'unidade_integrante_id' => $integrante->id
-        ]);
+            UnidadeIntegranteAtribuicao::firstOrCreate([
+            'atribuicao' => "LOTADO",
+            'unidade_integrante_id' => $integrante->id
+            ]);
+        }
       }
     }
 
