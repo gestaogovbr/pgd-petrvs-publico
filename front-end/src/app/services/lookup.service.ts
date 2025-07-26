@@ -978,6 +978,11 @@ export class LookupService implements IIndexable {
     { key: 'Registrado com atraso', value: "Registrado com atraso" },
   ];
 
+  public RELATORIO_UNIDADE_TIPOS: LookupItem[] = [
+    { key: 'Instituidora', value: "Instituidora" },
+    { key: 'Executora', value: "Executora" }
+  ];
+
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);
   }

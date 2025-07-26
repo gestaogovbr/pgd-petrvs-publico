@@ -5,8 +5,7 @@ import { ConfigResolver } from "src/app/resolvies/config.resolver";
 import { RelatorioAgenteComponent } from "./relatorio-agente/relatorio-agente.component";
 import { RelatorioPlanoEntregaComponent } from "./relatorio-plano-entrega/relatorio-plano-entrega.component";
 import { RelatorioPlanoTrabalhoComponent } from "./relatorio-plano-trabalho/relatorio-plano-trabalho.component";
-
-
+import { RelatorioUnidadeComponent } from "./relatorio-unidade/relatorio-unidade.component";
 
 const routes: Routes = [
   { path: 'planos-trabalho',
@@ -34,6 +33,15 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     data: { 
       title: "Relatório de Agentes Públicos",
+    }
+  }, {
+   path: 'unidades',
+    component: RelatorioUnidadeComponent,
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: { 
+      title: "Relatório de Unidades",
     }
   }
 ]

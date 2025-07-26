@@ -209,7 +209,8 @@ export class AppComponent {
         name: "Unidades",
         permition: 'MOD_RELATORIO_UNIDADE',
         icon: this.entity.getIcon('Unidade'),
-        onClick: ()=> this.emDesenvolvimento()
+        route: ['relatorios', 'unidades'],
+        //onClick: ()=> this.emDesenvolvimento()
       },
       /* Outros */
       PAINEL: { name: "Painel", permition: '', route: ['panel'], icon: "" },
