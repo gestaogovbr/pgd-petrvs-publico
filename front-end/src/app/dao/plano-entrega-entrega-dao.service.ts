@@ -63,5 +63,21 @@ export class PlanoEntregaEntregaDaoService extends DaoBaseService<PlanoEntregaEn
     };
   }
 
+  public possuiVinculosExcluidos(entregaIds: string[]): Promise<string[]> {
+    return new Promise<string[]>((resolve) => {
+      this.server.post('api/' + this.collection + '/possui-vinculos-excluidos', {
+        entregaIds: entregaIds
+      }).subscribe({
+        next: (response) => {
+          resolve(response?.vinculos_excluidos || []);
+        },
+        error: (error) => {
+          console.error("Erro ao verificar vínculos excluídos da entrega:", error);
+          resolve([]);
+        }
+      });
+    })
+  }
+
 }
 
