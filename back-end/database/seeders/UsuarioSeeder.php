@@ -41,7 +41,7 @@ class UsuarioSeeder extends Seeder
         'is_admin' => true,
       ],
       [
-        'email' => 'rickgrana@gmail.com',
+        'email' => 'ricardo.grana@gestao.gov.br',
         'nome' => 'Ricardo Grana de Lima',
         'cpf' => '74065505291',
         'apelido' => 'Grana',
@@ -113,7 +113,7 @@ class UsuarioSeeder extends Seeder
         'is_admin' => true,
       ],
       [
-        'email' => 'gabrieldnb7@gmail.com',
+        'email' => 'gabriel.s.domingos@gestao.gov.br',
         'nome' => ' Gabriel Marcos da Silva',
         'cpf' => '44239586003',
         'apelido' => 'Gabriel',
@@ -138,15 +138,31 @@ class UsuarioSeeder extends Seeder
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
         'is_admin' => true,
+       ],
+       [
+        'email' => 'rhuan.rodrigues@gestao.gov.br',
+        'nome' => ' Rhuan Maciel Rodrigues',
+        'cpf' => '13968027469',
+        'apelido' => 'Rhuan',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'MASCULINO',
+        'is_admin' => true,
       ]
     ];
 
-    $cpfsParaExcluir = ['05182319177','40921185898'];
+    $cpfsParaExcluir = ['05182319177'];
     Usuario::whereIn('cpf', $cpfsParaExcluir)->delete();
+
+    $usuario = Usuario::onlyTrashed()->where('cpf', '40921185898')->first();
+    if ($usuario) {
+      $usuario->restore();
+    }
 
     $entidade = Entidade::first();
     // Operação de inserção de usuários desenvolvedores
-    $unidade_pai = Unidade::where('entidade_id', $entidade->id)->first();
+    if ($entidade) {
+        $unidade_pai = Unidade::where('entidade_id', $entidade->id)->first();
+    }
 
     foreach ($usuarios_desenvolvedores as $usuario) {
       $user = Usuario::where('cpf', $usuario['cpf'])->first() ?? new Usuario();
@@ -171,18 +187,25 @@ class UsuarioSeeder extends Seeder
 
       if(empty($user->lotacoes())){
         # criar se não existir
-        $integrante = UnidadeIntegrante::firstOrCreate(
-          [
-            'unidade_id' => $unidade_pai->id,
-            'usuario_id' => $user->id
-          ]
-        );
+        if ($unidade_pai) {
+            $integrante = UnidadeIntegrante::firstOrCreate(
+            [
+                'unidade_id' => $unidade_pai->id,
+                'usuario_id' => $user->id
+            ]
+            );
 
-        UnidadeIntegranteAtribuicao::firstOrCreate([
-          'atribuicao' => "LOTADO",
-          'unidade_integrante_id' => $integrante->id
-        ]);
+            UnidadeIntegranteAtribuicao::firstOrCreate([
+            'atribuicao' => "LOTADO",
+            'unidade_integrante_id' => $integrante->id
+            ]);
+        }
       }
+    }
+
+    $usuario = Usuario::where('email', 'rafaelstibery@gmail.com')->first();
+    if ($usuario) {
+      $usuario->update(['cpf' => '05210244121']);
     }
   }
 }

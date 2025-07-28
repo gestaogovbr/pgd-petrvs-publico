@@ -12,6 +12,12 @@ enum Atribuicao: string
     case GESTOR_DELEGADO = 'GESTOR_DELEGADO';
     case LOTADO = 'LOTADO';
     case CURADOR = 'CURADOR';
+
+
+    public static function getValues(): array
+    {
+        return array_map(fn($atrib) => $atrib->value, Atribuicao::cases());
+    }
 }
 
 ?>
