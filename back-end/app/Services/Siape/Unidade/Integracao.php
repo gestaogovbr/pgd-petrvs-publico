@@ -3,6 +3,7 @@
 namespace App\Services\Siape\Unidade;
 
 use App\Exceptions\ServerException;
+use App\Facades\SiapeLog;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
@@ -91,6 +92,7 @@ class Integracao implements InterfaceIntegracao
 
         collect($vinculoDTO->atribuicoes)->map(function ($atribuicao) use ($usuario, $unidadeDestino, $integranteNovoOuExistente, $vinculoDTO) {
            $alteracao = $this->executarAcao($atribuicao, $usuario, $unidadeDestino, $integranteNovoOuExistente);
+           SiapeLog::info(sprintf("Atribuição %s do usuário %s na unidade %s", $atribuicao, $usuario->id, $unidadeDestino->id), $alteracao);
            array_push($this->atribuicoesFinais, $alteracao);
            unset($vinculoDTO->atribuicoes[$atribuicao]);
         });
@@ -99,6 +101,22 @@ class Integracao implements InterfaceIntegracao
             $this->removeDeterminadasAtribuicoes($atribuicoesRemover, $integranteNovoOuExistente);
         }
         
+    }
+
+
+    public function removeAtribuicao(UnidadeIntegrante $integrante, EnumAtribuicao $atribuicao): void
+    {
+        $atribuicaoExistente = UnidadeIntegranteAtribuicao::where('unidade_integrante_id', $integrante->id)
+            ->where('atribuicao', $atribuicao->value)
+            ->first();
+
+        if ($atribuicaoExistente) {
+            $atribuicaoExistente->delete();
+            $integrante->delete();
+            array_push($this->atribuicoesFinais, sprintf("Atribuição %s removida do integrante %s", $atribuicao->value, $integrante->id));
+        } else {
+            array_push($this->atribuicoesFinais, sprintf("Atribuição %s já não existe para o integrante %s", $atribuicao->value, $integrante->id));
+        }
     }
 
 

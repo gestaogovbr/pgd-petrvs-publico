@@ -350,6 +350,7 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntrega')->group(function () {
   defaultRoutes(PlanoEntregaEntregaController::class);
   Route::post('hierarquia', [PlanoEntregaEntregaController::class, 'hierarquia']);
+  Route::post('possui-vinculos-excluidos', [PlanoEntregaEntregaController::class, 'possuiVinculosExcluidos']);
 });
 
 Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () {

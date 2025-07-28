@@ -50,4 +50,24 @@ class PlanoEntregaEntregaController extends ControllerBase {
         }
     }
 
+    public function possuiVinculosExcluidos(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'entregaIds' => ['required'],
+            ]);
+            $result = $this->service->possuiVinculosExcluidos($data['entregaIds']);
+            return response()->json([
+                'success' => true,
+                'vinculos_excluidos' => $result
+            ]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        } catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+        }
+    }   
+
 }

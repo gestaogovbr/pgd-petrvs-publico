@@ -2,14 +2,16 @@
 
 namespace App\Services\Siape\Gestor;
 
-use App\Enums\Atribuicao;
+use App\Enums\Atribuicao as EnumsAtribuicao;
 use App\Exceptions\ServerException;
 use App\Models\Perfil;
+use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Services\LogTrait;
 use App\Services\NivelAcessoService;
 use App\Services\PerfilService;
 use App\Services\Siape\Contrato\InterfaceIntegracao;
+use App\Services\Siape\Unidade\Atribuicao;
 use App\Services\Tipo;
 use App\Services\UnidadeIntegranteService;
 use Illuminate\Support\Facades\Log;
@@ -17,7 +19,7 @@ use Illuminate\Support\Facades\Log;
 class Integracao implements InterfaceIntegracao
 {
 
-    use LogTrait;
+    use LogTrait, Atribuicao;
 
     private array $message = [];
 
@@ -61,7 +63,8 @@ class Integracao implements InterfaceIntegracao
     {
 
         if (empty($dado['id_chefe'])) {
-            //TODO mesmo se houver uma chefia, não será removida, manterá, previnido inconsistências de dados
+            $unidade = Unidade::find($dado['id_unidade']);
+            $this->removeAtualGestorDaUnidade($unidade);
             array_push($this->message['vazio'],  $dado['id_unidade']);
             $this->logSiape("Chefe não informado para a unidade " . $dado['id_unidade'], $dado, Tipo::WARNING);
             return;
@@ -95,11 +98,11 @@ class Integracao implements InterfaceIntegracao
     private function preparaChefia(array|null $queryChefeAtribuicoes, string $unidadeExercicioId): array
     {
         if (empty($queryChefeAtribuicoes) || !is_array($queryChefeAtribuicoes) || !array_key_exists($unidadeExercicioId, $queryChefeAtribuicoes)) {
-            return [Atribuicao::LOTADO->value, Atribuicao::GESTOR->value];
+            return [EnumsAtribuicao::LOTADO->value, EnumsAtribuicao::GESTOR->value];
         }
 
-        $chefeAtribuicoes = array_diff($queryChefeAtribuicoes[$unidadeExercicioId], [Atribuicao::DELEGADO->value, Atribuicao::GESTOR_SUBSTITUTO->value]);
-        if (!in_array(Atribuicao::GESTOR->value, $chefeAtribuicoes)) array_push($chefeAtribuicoes, Atribuicao::GESTOR->value);
+        $chefeAtribuicoes = array_diff($queryChefeAtribuicoes[$unidadeExercicioId], [EnumsAtribuicao::DELEGADO->value, EnumsAtribuicao::GESTOR_SUBSTITUTO->value]);
+        if (!in_array(EnumsAtribuicao::GESTOR->value, $chefeAtribuicoes)) array_push($chefeAtribuicoes, EnumsAtribuicao::GESTOR->value);
         $chefeAtribuicoes = array_values(array_unique($chefeAtribuicoes));
         return $chefeAtribuicoes;
     }
@@ -107,11 +110,11 @@ class Integracao implements InterfaceIntegracao
     private function preparaSubstituto(array|null $queryChefeAtribuicoes, string $unidadeExercicioId): array
     {
         if (empty($queryChefeAtribuicoes) || !is_array($queryChefeAtribuicoes) || !array_key_exists($unidadeExercicioId, $queryChefeAtribuicoes)) {
-            return [Atribuicao::GESTOR_SUBSTITUTO->value];
+            return [EnumsAtribuicao::GESTOR_SUBSTITUTO->value];
         }
 
-        $chefeAtribuicoes = array_diff($queryChefeAtribuicoes[$unidadeExercicioId], [Atribuicao::GESTOR->value]);
-        if (!in_array(Atribuicao::GESTOR->value, $chefeAtribuicoes)) array_push($chefeAtribuicoes, Atribuicao::GESTOR->value);
+        $chefeAtribuicoes = array_diff($queryChefeAtribuicoes[$unidadeExercicioId], [EnumsAtribuicao::GESTOR->value]);
+        if (!in_array(EnumsAtribuicao::GESTOR->value, $chefeAtribuicoes)) array_push($chefeAtribuicoes, EnumsAtribuicao::GESTOR->value);
         $chefeAtribuicoes = array_values(array_unique($chefeAtribuicoes));
         return $chefeAtribuicoes;
     }

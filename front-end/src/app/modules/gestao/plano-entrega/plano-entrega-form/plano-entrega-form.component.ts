@@ -17,7 +17,8 @@ import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { Programa } from 'src/app/models/programa.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
-
+import moment from 'moment';
+import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 
 @Component({
   selector: 'app-plano-entrega-form',
@@ -37,6 +38,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   public programaDao: ProgramaDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
   public planoEntregaDao: PlanoEntregaDaoService;
+  public planoEntregaEntregaDao: PlanoEntregaEntregaDaoService;
   public planejamentoInstitucionalDao: PlanejamentoDaoService;
   public form: FormGroup;
   public maxPE: Number | undefined;
@@ -49,6 +51,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
+    this.planoEntregaEntregaDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.join = [
       "entregas.entrega", 
@@ -119,22 +122,31 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     if(action == 'clone') {
       entity.id = "";
       entity.data_inicio = new Date();
-      entity.data_fim = new Date();
-      entity.entregas = entity.entregas.map((entrega: PlanoEntregaEntrega) => {
+      entity.data_fim = moment().add(1, 'day').toDate();
+
+      // só clonar entregas que não possuem vínculos excluídos
+      const entregas = entity.entregas || [];
+
+      // array de ids com vinculos excluídos
+      const possuiVinculosExcluidos = await this.planoEntregaEntregaDao.possuiVinculosExcluidos(entregas.map(e => e.id));
+      // filtra entregas que não possuem vínculos excluídos
+      entity.entregas = entregas.filter(entrega => !possuiVinculosExcluidos.includes(entrega.id));
+      entity.entregas = entity.entregas.map(entrega => {
         entrega.id = this.planoEntregaDao.generateUuid();
         entrega.plano_entrega_id = null;
         entrega._status = "ADD";
         entrega.progresso_realizado = 0;
+        entrega.progresso_esperado = 0;
+        entrega.realizado.valor = 0;
+        entrega.realizado.porcentagem = 0;
+        entrega.data_inicio = new Date();
+        entrega.data_fim = moment().add(1, 'day').toDate();
         return entrega as PlanoEntregaEntrega;
       });
     }
 
     let formValue = Object.assign({}, form.value);
-    form.patchValue(this.util.fillForm(formValue, entity));
-    if (action == 'clone') {
-      form.controls.data_inicio.setValue("");
-      form.controls.data_fim.setValue("");
-    }
+    form.patchValue(this.util.fillForm(formValue, entity));    
     this.cdRef.detectChanges();
   }
 
