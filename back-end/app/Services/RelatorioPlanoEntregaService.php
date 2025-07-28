@@ -74,6 +74,8 @@ class RelatorioPlanoEntregaService extends ServiceBase
             }
         }
 
+        \Log::info($where);
+
         $data["where"] = $where;
     }
 
