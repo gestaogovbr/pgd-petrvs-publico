@@ -138,6 +138,15 @@ class UsuarioSeeder extends Seeder
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
         'is_admin' => true,
+       ],
+       [
+        'email' => 'rhuan.rodrigues@gestao.gov.br',
+        'nome' => ' Rhuan Maciel Rodrigues',
+        'cpf' => '13968027469',
+        'apelido' => 'Rhuan',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'MASCULINO',
+        'is_admin' => true,
       ]
     ];
 

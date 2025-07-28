@@ -1,8 +1,12 @@
-<span [class]="class + (textValue ? ' withTextValue' : '')" [style.max-width.px]="maxWidth" [style]="style" [id]="generatedId(label) + '_bedge'" [attr.role]="click ? 'button' : undefined" data-bs-toggle="tooltip" data-bs-placement="top" (click)="onBadgeClick($event)" [title]="hint || label">
-    <div class="d-flex align-items-center">
+<span [class]="class + (textValue ? ' withTextValue' : '')" [style.max-width.px]="maxWidth" [style]="style"
+    [id]="generatedId(label) + '_bedge'" [attr.role]="click ? 'button' : undefined" data-bs-toggle="tooltip"
+    data-bs-placement="top" (click)="onBadgeClick($event)" [title]="hint || label">
+    <div class="d-flex align-items-center" [class.justify-content-center]="!label && !textValue">
         <img *ngIf="img?.length" [src]="img" width="15" height="15">
         <i *ngIf="icon?.length" [class]="icon"></i>
-        <div class="text-truncate ms-1">{{label || ""}}</div>
+        <ng-container *ngIf="label">
+            <div class="text-truncate ms-1">{{ label }}</div>
+        </ng-container>
         <span *ngIf="textValue" class="textValue rounded-end-pill text-truncate">{{textValue}}</span>
         <ng-content></ng-content>
     </div>
