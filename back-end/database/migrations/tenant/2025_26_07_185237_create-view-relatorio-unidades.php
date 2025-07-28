@@ -40,7 +40,7 @@ return new class extends Migration
                 `uni`.`id` AS `id`,
                 `uni`.`id` AS `unidade_id`,
                 `fn_obter_unidade_hierarquia`(`uni`.`id`) AS `unidadeHierarquia`,
-                uni.nome,
+                uni.sigla,
                 uni.codigo,
                 case when uni.instituidora = 1 then 'Instituidora' else 'Executora' end as tipo,
                 chefia.id as chefiaId,

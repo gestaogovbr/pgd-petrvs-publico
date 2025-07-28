@@ -46,7 +46,7 @@ export class RelatorioUnidadeComponent extends PageListBase<RelatorioUnidade, Re
     this.filter!.get('unidade_id')?.setValidators(this.requiredValidator.bind(this));
     this.filter.get('unidade_id')?.updateValueAndValidity();
 
-    this.orderBy = [['unidadeHierarquia', 'asc'], ['nome', 'asc']];
+    this.orderBy = [['unidadeHierarquia', 'asc'], ['sigla', 'asc']];
   }
 
   public requiredValidator(control: AbstractControl): ValidationErrors | null { 

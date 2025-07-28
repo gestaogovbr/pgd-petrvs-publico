@@ -36,57 +36,42 @@ class RelatorioUnidadeExport implements FromCollection, WithMapping, WithHeading
     public function headings(): array
     {
         return [
-            'Nome',
-            'Matrícula SIAPE',
-            'Jornada',
-            'Perfil',
-            'Situação',
-            'Seleção',
-            'Lotado',
-            'Modalidade SouGov',
-            'Modalidade do último Plano de Trabalho',
-            'Comparação Sougov x Petrvs',
-            'Indisponibilidade de teletrabalho',
-            'Início Indisponibilidade de teletrabalho',
-            'Fim Indisponibilidade de teletrabalho'
+            'Sigla',
+            'Unidade',
+            'Uorg',
+            'Tipo',
+            'Chefia',
+            'Chefia substituta',
+            'Delegados',
+            'Vinculados'
         ];
     }
 
     public function columnWidths(): array
     {
         return [
-            'A' => 40, // Nome
-            'B' => 10, // Matrícula SIAPE
-            'C' => 10, // Jornada
-            'D' => 20, // Perfil
-            'E' => 20, // Situação
-            'F' => 30, // Seleção
-            'G' => 30, // Lotado
-            'H' => 20, // Modalidade SouGov
-            'I' => 30, // Modalidade do último Plano de Trabalho
-            'J' => 15, // Comparação Sougov x Petrvs
-            'K' => 40, // Indisponibilidade de teletrabalho
-            'L' => 15, // Início Indisponibilidade de teletrabalho
-            'M' => 15, // Fim Indisponibilidade de teletrabalho
+            'A' => 20, // Sigla
+            'B' => 45, // Unidade
+            'C' => 10, // Uorg
+            'D' => 15, // Tipo
+            'E' => 40, // Chefia
+            'F' => 10, // Chefia substituta
+            'G' => 10, // Delegados
+            'H' => 10, // Vinculados
         ];
     }
 
     public function map($row): array
     {
         return [
-            $row->nome,
-            $row->matricula,
-            $row->jornada ?? '-',
-            $row->perfil,
-            $row->situacao ?? '-',
-            $row->programaNome,
+            $row->sigla,
             $row->unidadeHierarquia,
-            '-',
-            $row->tipoModalidadeNome,
-            '-',
-            $row->tipoPedagio,
-            Date::stringToExcel($row->data_inicial_pedagio),
-            Date::stringToExcel($row->data_final_pedagio)
+            $row->codigo,
+            $row->tipo,
+            $row->chefiaNome,
+            $row->totalSubstitutos,
+            $row->totalDelegados,
+            $row->totalAgentes
         ];
     }
 
@@ -98,8 +83,6 @@ class RelatorioUnidadeExport implements FromCollection, WithMapping, WithHeading
     public function columnFormats(): array
     {
         return [
-            'L' => NumberFormat::FORMAT_DATE_DDMMYYYY,
-            'M' => NumberFormat::FORMAT_DATE_DDMMYYYY
         ];
     }
 
@@ -119,7 +102,7 @@ class RelatorioUnidadeExport implements FromCollection, WithMapping, WithHeading
     {
         return [
             // borda no conjunto inteiro + 1 linha de header
-            'A1:M'.(count($this->rows) + 1) => [
+            'A1:H'.(count($this->rows) + 1) => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
@@ -140,7 +123,7 @@ class RelatorioUnidadeExport implements FromCollection, WithMapping, WithHeading
                     ],
                 ]
             ],
-            'B:M' => [
+            'C:H' => [
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                 ]
@@ -152,9 +135,8 @@ class RelatorioUnidadeExport implements FromCollection, WithMapping, WithHeading
     {
         $event->sheet->getDelegate()->getRowDimension('1')->setRowHeight(60);
         $event->sheet->getDelegate()->getStyle('1')->getAlignment()->setWrapText(true);
-        $event->sheet->getStyle('A1:M1')->getFill()
+        $event->sheet->getStyle('A1:H1')->getFill()
           ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
           ->getStartColor()->setARGB('fc9fc0');
-        $event->sheet->getStyle('K')->getAlignment()->setWrapText(true); // quebra de texto
     }
 }
