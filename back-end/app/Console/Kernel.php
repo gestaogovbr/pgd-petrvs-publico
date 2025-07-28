@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\ExecutaSiape::class,
         \App\Console\Commands\InsertLog::class,
         \App\Console\Commands\RunBuscaDadosAssincronosJob::class,
+        \App\Console\Commands\InativaUsuarioSiape::class,
     ];
 
     protected function commands()

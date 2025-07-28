@@ -28,9 +28,14 @@
     </column>
     <column title="Situação" [template]="columnSituacao">
       <ng-template let-row="row" #columnSituacao>
-        <div class="one-per-line">
-          <badge *ngIf="row.instituidora" color="primary" icon="bi bi-star" label="Instituidora"></badge>
-          <badge [color]="!row.data_inativacao ? 'success' : 'danger'" [icon]="!row.data_inativacao ? 'bi bi-check-circle' : 'bi bi-x-circle'" [label]="!row.data_inativacao ? 'Ativo' : 'Inativo'"></badge>
+        
+        <div class="">
+          <badge hint="Instituidora" *ngIf="row.instituidora" color="primary" icon="bi bi-star" ></badge>
+          <badge [hint]="!row.data_inativacao ? 'Ativo' : 'Inativo'" [color]="!row.data_inativacao ? 'success' : 'danger'" [icon]="!row.data_inativacao ? 'bi bi-check-circle' : 'bi bi-x-circle'" ></badge>
+          <badge hint="Sem chefia substituta" *ngIf="!temChefeSubstituta(row)" icon="bi bi-exclamation-circle" [color]="'warning'" >
+          </badge>
+          <badge hint="Sem chefia titular" *ngIf="!temChefeTitular(row)" icon="bi bi-exclamation-triangle-fill" [color]="'danger'"  >
+          </badge>
         </div>
       </ng-template>
     </column>
