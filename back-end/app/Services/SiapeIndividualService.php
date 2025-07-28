@@ -2,25 +2,12 @@
 
 namespace App\Services;
 
-use App\Facades\SiapeLog;
-use App\Models\Entidade;
-use App\Models\SiapeConsultaDadosFuncionais;
-use App\Models\SiapeConsultaDadosPessoais;
-use App\Models\SiapeDadosUORG;
-use App\Models\SiapeListaServidores;
-use App\Models\SiapeListaUORGS;
-use App\Models\Unidade;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidores;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidades;
 use App\Services\Siape\ProcessaDadosSiapeBD;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
-use Exception;
-use DateTime;
-use Carbon\Carbon;
 
 class SiapeIndividualService extends ServiceBase
 {
