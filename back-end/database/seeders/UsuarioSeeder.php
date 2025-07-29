@@ -203,9 +203,14 @@ class UsuarioSeeder extends Seeder
       }
     }
 
-    $usuario = Usuario::where('email', 'rafaelstibery@gmail.com')->first();
-    if ($usuario) {
-      $usuario->update(['cpf' => '05210244121']);
+    $rafael = Usuario::where('email', 'rafaelstibery@gmail.com')->first();
+    if ($rafael) {
+      $rafael->update(['cpf' => '05210244121']);
+    }
+
+    $gabriel = Usuario::where('email', 'gabriel.s.domingos@gestao.gov.br')->first();
+    if ($gabriel) {
+      $gabriel->update(['cpf' => '06737232167']);
     }
   }
 }
