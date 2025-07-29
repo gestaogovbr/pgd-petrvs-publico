@@ -24,11 +24,11 @@
                 [dao]="unidadeDao"
                 [selectRoute]="{
                     route: ['configuracoes', 'unidade'],
-                    params: auth.hasPermissionTo('MOD_RELATORIO_USUARIO_TODAS_UNIDADES')
+                    params: auth.hasPermissionTo('MOD_RELATORIO_UNIDADE_TODAS_UNIDADES')
                     ? { }
                     : { unidade_pai: auth.unidade?.id }
                 }"
-                [where]="auth.hasPermissionTo('MOD_RELATORIO_USUARIO_TODAS_UNIDADES')
+                [where]="auth.hasPermissionTo('MOD_RELATORIO_UNIDADE_TODAS_UNIDADES')
                     ? []
                     : [['id', 'in', this.unidades]]"
             >
@@ -156,7 +156,20 @@
             </ng-template>
 
             <ng-template let-row="row" #columnTotalSubstitutos>
-                <span> {{row.totalSubstitutos ?? '-'}}</span>
+                <a class="nav-link px-3" role="button"
+                    (click)="go.navigate({
+                        route: ['relatorios', 'agentes'] },
+                        {
+                            metadata: {
+                                unidade_id: this.filter!.get('unidade_id')?.value,
+                                perfil_id: auth.unidade
+                            }
+                        }
+                    )"
+                >
+                    <i class="bi bi-people"></i>
+                    {{row.totalSubstitutos ?? '-'}}
+                </a>
             </ng-template>
         </column>
 

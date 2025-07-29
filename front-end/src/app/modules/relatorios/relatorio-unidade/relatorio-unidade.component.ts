@@ -73,9 +73,9 @@ export class RelatorioUnidadeComponent extends PageListBase<RelatorioUnidade, Re
     let result: any[] = [];
     let form: any = filter.value;
 
-    if (form.unidade_id?.length) {
+   
       result.push(["unidade_id", "==", form.unidade_id]);
-    }
+    
 
     if (form.incluir_unidades_subordinadas) {
       result.push(["incluir_unidades_subordinadas", "==", 1]);

@@ -28,11 +28,9 @@ class RelatorioUnidadeService extends ServiceBase
         $subordinadas = $this->extractWhere($data, "incluir_unidades_subordinadas");
         $unidadeId = $this->extractWhere($data, "unidade_id");
 
-        if (isset($unidadeId[2])) {
-            $unidadeIds = [$unidadeId[2]];
-        }
+        $unidadeIds = [$unidadeId[2]];
 
-        if (isset($unidadeId[2]) && isset($subordinadas[2])) {
+        if (isset($subordinadas[2])) {
             $unidadeService = new UnidadeService();
             $subordinadasIds = $unidadeService->subordinadas($unidadeId[2])->pluck('id')->toArray();
             $unidadeIds = array_merge($unidadeIds, $subordinadasIds);
