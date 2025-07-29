@@ -203,7 +203,7 @@ export class AppComponent {
         name: this.lex.translate("Agentes Públicos"),
         permition: 'MOD_RELATORIO_USUARIO',
         icon: this.entity.getIcon('Usuario'),
-        onClick: ()=> this.emDesenvolvimento()
+        route: ['relatorios', 'agentes'],
       },
       RELATORIO_UNIDADES: {
         name: "Unidades",
@@ -293,7 +293,15 @@ export class AppComponent {
       this.menuSchema.ATIVIDADES,
       Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "UNIDADE" } }),
       //this.menuSchema.AFASTAMENTOS,
-      this.menuSchema.OCORRENCIAS
+      this.menuSchema.OCORRENCIAS,
+      {
+        name: this.lex.translate("Relatórios"),
+        permition: "MOD_RELATORIOS",
+        id: "navbarDropdownRelatorios",
+        menu: [
+          this.menuSchema.RELATORIO_USUARIOS
+        ].sort(this.orderMenu)
+      }
     ];
 
     this.moduloAdministrador = [{

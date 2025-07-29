@@ -20,18 +20,7 @@ export class PedagioFormComponent extends PageFormBase<
 	@ViewChild(EditableFormComponent, {static: false})
 	public editableForm?: EditableFormComponent;
 
-	public OPTIONS: LookupItem[] = [
-		{
-			key: "1",
-			value:
-				"Art 10, §2º, INC SEGES/SPGRT nº 24/2024- Primeiro ano do Estágio Probatório.",
-		},
-		{
-			key: "2",
-			value:
-				"Art 10, §3º, INC SEGES/SPGRT nº 24/2024- Movimentação entre órgãos há menos de 6 (seis) meses.",
-		},
-	];
+	public OPTIONS: LookupItem[] = this.lookup.INDISPONIBILIDADE_TIPOS;
 
 	constructor(public injector: Injector) {
 		super(injector, Usuario, UsuarioDaoService);

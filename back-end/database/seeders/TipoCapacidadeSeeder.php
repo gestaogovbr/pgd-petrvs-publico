@@ -65,39 +65,41 @@ class TipoCapacidadeSeeder extends Seeder
         $capacidadePai->save();
       }
       // Garante que o perfil de Desenvolvedor tenha todos os tipos de capacidades filhas
-      foreach ($modulo['capacidades'] as $capacidadeFilha) {
-        $tipoCapacidadeFilha = TipoCapacidade::withTrashed()->updateOrCreate(
-          ['id' => $utilService->uuid($capacidadeFilha[0])],
-          [
-            'codigo' => $capacidadeFilha[0],
-            'descricao' => $capacidadeFilha[1],
-            'grupo_id' => $tipoCapacidadePai->id,
-            'deleted_at' => NULL
-          ]
-        );
-        $tipoCapacidadeFilha->save();
+      if(isset($modulo['capacidades'])) {
+        foreach ($modulo['capacidades'] as $capacidadeFilha) {
+            $tipoCapacidadeFilha = TipoCapacidade::withTrashed()->updateOrCreate(
+            ['id' => $utilService->uuid($capacidadeFilha[0])],
+            [
+                'codigo' => $capacidadeFilha[0],
+                'descricao' => $capacidadeFilha[1],
+                'grupo_id' => $tipoCapacidadePai->id,
+                'deleted_at' => NULL
+            ]
+            );
+            $tipoCapacidadeFilha->save();
 
-        $capacidade = Capacidade::withTrashed()->where('perfil_id', $developerId)->where('tipo_capacidade_id', $tipoCapacidadeFilha->id)->first();
-        if ($capacidade) {
-          if ($capacidade->trashed()) {
-            $capacidade->restore();
-          }
-        } else {
-          $capacidade = new Capacidade();
-          $capacidade->fill([
-            'id' => $utilService->uuid($capacidadeFilha[0] .$developerId),
-            'perfil_id' => $developerId,
-            'tipo_capacidade_id' => $tipoCapacidadeFilha->id
-          ]);
-          $capacidade->save();
+            $capacidade = Capacidade::withTrashed()->where('perfil_id', $developerId)->where('tipo_capacidade_id', $tipoCapacidadeFilha->id)->first();
+            if ($capacidade) {
+            if ($capacidade->trashed()) {
+                $capacidade->restore();
+            }
+            } else {
+            $capacidade = new Capacidade();
+            $capacidade->fill([
+                'id' => $utilService->uuid($capacidadeFilha[0] .$developerId),
+                'perfil_id' => $developerId,
+                'tipo_capacidade_id' => $tipoCapacidadeFilha->id
+            ]);
+            $capacidade->save();
+            }
         }
       }
       $qtdCapacidadesPrincipais += 1;
-      $qtdCapacidadesFilhas += count($modulo['capacidades']);
+      $qtdCapacidadesFilhas += count($modulo['capacidades'] ?? []);
     }
     // exclui os tipos de capacidades filhas que não existem mais no vetor declarado no serviço TipoCapacidadeService
     foreach ($dadosModulosCapacidades as $modulo) {
-      $capacidades = array_map(fn ($z) => $z[0], $modulo['capacidades']);
+      $capacidades = array_map(fn ($z) => $z[0], $modulo['capacidades'] ?? []);
       // representa todos os tipos de capacidade existentes na tabela, filhas do módulo, que não existem mais
       $filhosNulos = TipoCapacidade::where('grupo_id', $utilService->uuid($modulo['codigo']))->whereNotIn('codigo', $capacidades)->get();
       foreach ($filhosNulos as $filhoNulo)
