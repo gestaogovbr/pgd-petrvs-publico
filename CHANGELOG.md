@@ -1,3 +1,9 @@
+## 2.5.3 29/07/2025
+### Corrigido
+- Corrigida permissão do Relatório de Planos de Trabalho
+- Corrigida permissão do Relatório de Planos de Entrega
+- Corrigido a rota de acesso ao SIAPE INDIVIDUAL de Unidades
+
 ## 2.5.2 28/07/2025
 ### Adicionado
  - Clonagem de Plano de Entrega

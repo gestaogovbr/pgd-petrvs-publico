@@ -168,8 +168,15 @@ class SiapeIndividualServidorService extends ServiceBase
         if (!$usuario) {
             return;
         }
+
+        $unidade = $usuario->lotacao->unidade;
         
         $this->removeTodasAsGestoesDoUsuario($usuario);
+
+        if($this->usuarioTemPlanodeTrabalhoAtivo($usuario, $unidade)) {
+            SiapeLog::warning('O usuário ' . $usuario->nome . ' possui plano de trabalho ativo, não será removido.');
+            return;
+        }
 
         $this->removeLotacao($usuario);
     }
