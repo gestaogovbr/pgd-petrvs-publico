@@ -1,3 +1,41 @@
+## 2.5.2 28/07/2025
+### Adicionado
+ - Clonagem de Plano de Entrega
+ - Inclusão de ícones e alertas para unidades sem chefia e/ou com chefias substitutas
+ - Inclusão de job de inativação de servidores excluídos no SIAPE
+ - Validações ao lotar um servidor (prevenindo ser chefe em outra unidade)
+### Modificado
+- Modificado ícone de "ativo" da situação das unidades executoras
+- Removida chefia titular de unidades sem chefias no SIAPE
+- Removida chefia titular de unidades onde o seu chefe está lotado em outra unidade (SIAPE)
+- Servidores e chefias lotados em outras unidades continuarão vinculados à sua unidade anterior, caso haja qualquer tipo de plano de trabalho na unidade (independente do status do plano)
+- No processamento individual do SIAPE por CPF, agora todos os vínculos do servidor são limpos, forçando um novo vínculo
+- No processamento individual do SIAPE por unidade, agora a data de modificação é forçada (como já é feito no processamento por CPF)
+- No processamento individual do SIAPE por unidade, agora são processados também os servidores e chefias, além da própria unidade
+- Centralizadas a maioria das mensagens de log do fluxo do SIAPE no arquivo siape.log
+- Chefia não altera mais a lotação de um servidor (o servidor deve estar previamente lotado na unidade) 
+### Corrigido
+- Alterado a forma de buscar chefias na base de dados, se baseando na lotação do servidor
+- Corrigido vínculo de chefia em uma unidade quando o servidor está lotado em outra unidade
+- remoção dos dados de servidores aposentados do tenant da FUNASA (centralizado)
+
+## 2.5.1 24/07/2025
+### Corrigido
+- Correção dos relatórios para bancos de dados MySQL;
+- Correção nas listagens que estavam passando dos limites da página;
+- Correção na seleção do plano de entrega no cadastro de Planos de Trabalho.
+
+## 2.5.0 21/07/2025
+### Adicionado
+- Relatório de Planos de Trabalho
+- Relatório de Planos de Entrega
+- Adição da Data de Recurso
+- Tela e componente no front para exibir erro 500
+### Corrigido
+- Remoção e validação de duplicidade na relação de usuários com unidades
+### Modificado
+- Opção para ver logs em cada registro das listas
+
 ## 2.4.2 03/07/2025
 ### Corrigido
  - Correção na edição de planos de entrega
@@ -8,6 +46,7 @@
 ### Corrigido
  - Bug na habilitação do pedágio
  - Bug na criação de plano de trabalho pelo perfil colaborador
+
 ## 2.4.0 11/06/2025
 ### Adicionado
  - Função para bloquear o teletrabalho para servidores em pedágio

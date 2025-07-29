@@ -45,10 +45,14 @@ class AvaliacaoController extends ControllerBase {
                 ]);
                 $avaliacao = Avaliacao::find($data["id"]);
                 if(empty($avaliacao)) throw new ServerException("ValidateAvaliacao", "Avaliação não encontrada");
+
                 /* (RN_AVL_2) [PT] O usuário do plano de trabalho que possuir o acesso MOD_PTR_CSLD_REC_AVAL poderá recorrer da nota atribuida dentro do limites estabelecido pelo programa; */
                 if(!$usuario->hasPermissionTo('MOD_PTR_CSLD_REC_AVAL')) throw new ServerException("ValidateAvaliacao", "Usuário não possuí o acesso MOD_PTR_CSLD_REC_AVAL.\n[ver RN_AVL_2]");
+
                 $planoTrabalho = $avaliacao->planoTrabalhoConsolidacao->planoTrabalho;
+
                 if($planoTrabalho->usuario_id != $usuario->id) throw new ServerException("ValidateAvaliacao", "Apenas o usuário do plano de trabalho poderá recorrer.\n[ver RN_AVL_2]");
+
                 $programa = $planoTrabalho->programa;
                 if($programa->dias_tolerancia_recurso_avaliacao > 0 && (UtilService::daystamp($avaliacao->data_avaliacao) + $programa->dias_tolerancia_recurso_avaliacao < UtilService::daystamp($unidadeService->hora($planoTrabalho->unidade_id))))
                     # desabilitado validação enquanto não tiver as notificações
@@ -57,16 +61,16 @@ class AvaliacaoController extends ControllerBase {
         }
     }
 
-    public function canAvaliar($data, $usuario) {        
+    public function canAvaliar($data, $usuario) {
         $unidadeService = new UnidadeService();
         $usuarioService = new UsuarioService();
         $consolidacao = !empty($data["plano_trabalho_consolidacao_id"]) ? PlanoTrabalhoConsolidacao::find($data["plano_trabalho_consolidacao_id"]) : null;
         $planoEntrega = !empty($data["plano_entrega_id"]) ? PlanoEntrega::find($data["plano_entrega_id"]) : null;
         /* (RN_AVL_4) [PT] Somente será possível realizar avaliação de consolidação CONCLUIDO ou AVALIADO; */
         if(!empty($consolidacao) && !in_array($consolidacao->status, ["CONCLUIDO", "AVALIADO"])) throw new ServerException("ValidateAvaliacao", "Para avaliar é necessário estar Concluído ou já Avaliado, e para cancelar é necessário estar Avaliado.\n[ver RN_AVL_4]");
-        /* (RN_AVL_1) [PT;PE] A avaliação somente poderá ser realizada pelo superior imediatamente hierárquico ou por quem delegado através da 
-            atribuição de avaliador (no caso de consolidação o superior hierárquico é o gestor da unidade, substituto ou delegado, já para o 
-            plano de entrega o superior será o gestor, substituto ou delegado da unidade imediatamente superior). Deverá possuir tambem a 
+        /* (RN_AVL_1) [PT;PE] A avaliação somente poderá ser realizada pelo superior imediatamente hierárquico ou por quem delegado através da
+            atribuição de avaliador (no caso de consolidação o superior hierárquico é o gestor da unidade, substituto ou delegado, já para o
+            plano de entrega o superior será o gestor, substituto ou delegado da unidade imediatamente superior). Deverá possuir tambem a
             capacidade MOD_PTR_CSLD_AVAL (consolidação do plano de trabalho), ou MOD_PENT_AVAL/MOD_PENT_AVAL_SUBORD (plano de entrega); */
         $avaliador = fn($unidade) => $usuarioService->isGestorUnidade($unidade);
         $unidade = !empty($consolidacao) ? $consolidacao->planoTrabalho->unidade : ($planoEntrega?->unidade?->instituidora == 1 ? $planoEntrega?->unidade : $planoEntrega?->unidade?->unidadePai);
@@ -80,7 +84,8 @@ class AvaliacaoController extends ControllerBase {
 
     public function recorrer(Request $request) {
         try {
-            $this->checkPermissions("RECORRER", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
+            $this->checkPermissions("RECORRER", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
+
             $data = $request->validate([
                 'id' => ['required'],
                 'recurso' => ['required'],
@@ -100,7 +105,7 @@ class AvaliacaoController extends ControllerBase {
 
     public function cancelarAvaliacao(Request $request) {
         try {
-            $this->checkPermissions("CANCELAR_AVALIACAO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
+            $this->checkPermissions("CANCELAR_AVALIACAO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'id' => ['required']
             ]);

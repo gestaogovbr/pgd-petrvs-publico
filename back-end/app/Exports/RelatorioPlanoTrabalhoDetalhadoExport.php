@@ -51,7 +51,7 @@ class RelatorioPlanoTrabalhoDetalhadoExport extends RelatorioPlanoTrabalhoExport
             Date::stringToExcel($row->data_avaliacao),
             $row->situacao_avaliacao,
             $row->nota,
-            '',
+            Date::stringToExcel($row->data_recurso),
             Date::stringToExcel($row->data_avaliacao),
             $row->nota
         ]);
@@ -64,6 +64,7 @@ class RelatorioPlanoTrabalhoDetalhadoExport extends RelatorioPlanoTrabalhoExport
             'J' => NumberFormat::FORMAT_DATE_DDMMYYYY,
             'K' => NumberFormat::FORMAT_DATE_DDMMYYYY,
             'M' => NumberFormat::FORMAT_DATE_DDMMYYYY,
+            'P' => NumberFormat::FORMAT_DATE_DDMMYYYY,
             'Q' => NumberFormat::FORMAT_DATE_DDMMYYYY,
         ]);
     }
@@ -132,7 +133,7 @@ class RelatorioPlanoTrabalhoDetalhadoExport extends RelatorioPlanoTrabalhoExport
                     ],
                 ]
             ],
-            'J:R' => [
+            'D:R' => [
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                 ]

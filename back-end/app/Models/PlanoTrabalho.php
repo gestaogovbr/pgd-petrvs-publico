@@ -50,7 +50,6 @@ class PlanoTrabalho extends ModelBase
     'CANCELADO' => 'Cancelado'
   ];
 
-
     public $fillable_changes = ['entregas', 'documentos'];
 
     public $delete_cascade = ['documentos'];

@@ -8,6 +8,7 @@ use App\Repository\IntegracaoServidorRepository;
 use App\Services\LogTrait;
 use App\Services\Siape\Contrato\InterfaceIntegracao;
 use App\Services\Siape\Imprimir;
+use App\Services\Siape\Unidade\Atribuicao;
 use App\Services\Tipo;
 use App\Services\UtilService;
 use Illuminate\Support\Facades\Log;

@@ -49,6 +49,7 @@ class RelatorioPlanoTrabalhoService extends ServiceBase
             $where[] = new RawWhere("(now() between dataInicio and dataFim)", []);
         }
 
+
         if(isset($periodoInicio[2]) && isset($periodoFim[2])) {
             $where[] = new RawWhere("(
                 (? between dataInicio and dataFim)

@@ -1,4 +1,8 @@
 <grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasAdd]="this.auth.hasPermissionTo('MOD_USER_ATRIB')" [hasEdit]="this.auth.hasPermissionTo('MOD_USER_ATRIB')" [hasDelete]="this.auth.hasPermissionTo('MOD_USER_ATRIB')" editable [add]="adicionarIntegrante.bind(this)" [load]="carregarIntegrante.bind(this)" [remove]="removerIntegrante.bind(this)" [save]="salvarIntegrante.bind(this)">
+  <div *ngIf="entity?.gestor == null" class="col">
+        <top-alert type="warning" 
+        [message]="'Unidade sem chefia titular: verifique junto ao seu órgão ou entidade se é necessário realizar ajustes no Siape ou aguarde as alterações já realizadas serem refletidas no Petrvs. Enquanto isso, a unidade deve ter ao menos um agente público com atribuição de chefia substituta.'"></top-alert>
+    </div>
   <span *ngIf="!isNoPersist"><strong>{{ 'Unidade: ' + (entity?.nome || "")}}</strong></span>
   <columns>
     <column [title]="lex.translate('Usuários')" [template]="columnUsuario" [editTemplate]="editUsuario" [maxWidth]="150">

@@ -66,8 +66,8 @@
         <header-group title="" colspan="9"></header-group>
         <header-group title="PERÍODOS AVALIATIVOS" colspan="10"
             [style]="{
-                'border': '1px solid var(--bs-border-color)',
-                'text-align': 'center'
+                'border': '2px solid #72767b',
+                'text-align': 'left'
             }"
         ></header-group>
     </header-groups>
@@ -247,10 +247,10 @@
         </column>
 
         <column
-            title="Início" 
+            title="Início do Período Avaliativo" 
             [template]="columnAvaliacaoInicio"
             *ngIf="!resumido"
-            [style]="{ 'border-left': '1px solid var(--bs-border-color)' }"
+            [style]="{ 'border-left': '2px solid #72767b' }"
             [verticalAlign]="'bottom'"
             [align]="'center'"
             [titleTemplate]="titleAvaliacaoInicio"
@@ -268,8 +268,12 @@
             </ng-template>
         </column>
 
-        <column title="Fim" [template]="columnAvaliacaoFim" [titleTemplate]="titleAvaliacaoFim"
-            *ngIf="!resumido" [verticalAlign]="'bottom'" [align]="'center'"
+        <column title="Fim do Período Avaliativo"
+            [template]="columnAvaliacaoFim"
+            [titleTemplate]="titleAvaliacaoFim"
+            *ngIf="!resumido"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
         >
             <ng-template let-header="header" #titleAvaliacaoFim>
                 <input-datetime
@@ -390,13 +394,13 @@
             <ng-template let-header="header" #titleAvaliacaoRecurso>
                 <input-datetime
                     date
-                    controlName="data_conclusao"
-                    [control]="filter!.controls.data_conclusao"
+                    controlName="data_recurso"
+                    [control]="filter!.controls.data_recurso"
                     (blur)="onValueChange($event)"
                 ></input-datetime>
             </ng-template>
             <ng-template let-row="row" #columnAvaliacaoRecurso>
-                <span>{{row.recurso || '-'}}</span>
+                <span>{{dao!.getDateFormatted(row.data_recurso) || '-'}}</span>
             </ng-template>
         </column>
 

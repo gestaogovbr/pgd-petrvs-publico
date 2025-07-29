@@ -28,7 +28,7 @@ class Unidade extends ModelBase
 
     protected $table = 'unidades';
 
-    protected $with = ['cidade'];
+    protected $with = ['cidade','gestor', 'gestoresSubstitutos'];
 
     protected $keyType = 'string';
 
@@ -175,11 +175,6 @@ class Unidade extends ModelBase
     {
         return $this->subordinadas()->with('todasSubordinadas');
     }
-
-
-
-
-
 
     // Others relationships
     public function gestor()

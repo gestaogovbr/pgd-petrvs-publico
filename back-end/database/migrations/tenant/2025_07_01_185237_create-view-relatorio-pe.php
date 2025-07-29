@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -12,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
           DB::statement(<<<EOD
-        CREATE OR REPLACE
+        CREATE
         ALGORITHM = UNDEFINED VIEW `view_relatorio_plano_entrega` AS
         select
             `pe`.`id` AS `id`,
@@ -22,18 +23,18 @@ return new class extends Migration
             CAST(`pe`.`data_inicio` AS DATE) AS `dataInicio`,
             CAST(`pe`.`data_fim` AS DATE) AS `dataFim`,
             `pe`.`unidade_id` AS `unidade_id`,
-            CONCAT(`fn_obter_unidade_hierarquia`(`pe`.`unidade_id`), '/', uni.sigla) AS `unidadeHierarquia`,
+            `fn_obter_unidade_hierarquia`(`pe`.`unidade_id`) AS `unidadeHierarquia`,
             `uni`.`sigla` AS `unidadeSigla`,
             DATEDIFF(`pe`.`data_fim`, `pe`.`data_inicio`) + 1 AS `duracao`,
             CAST(a.data_avaliacao AS DATE) AS data_avaliacao,
             JSON_UNQUOTE(a.nota) AS nota,
             case when a.data_avaliacao is null
                 then
-                    CASE when a.data_avaliacao <= DATE_ADD(now(), INTERVAL 10 DAY)
+                    CASE when CAST(a.data_avaliacao as date) <= DATE_ADD(now(), INTERVAL 10 DAY)
                     THEN 'Aguardando'
                     ELSE 'Atrasado' END
                 else
-                    CASE when a.data_avaliacao <= DATE_ADD(now(), INTERVAL 10 DAY)
+                    CASE when cast(a.data_avaliacao as date) <= DATE_ADD(now(), INTERVAL 10 DAY)
                     THEN 'Registrado no período'
                     ELSE 'Registrado com atraso' END
                 end as situacao_avaliacao
