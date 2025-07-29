@@ -1,4 +1,4 @@
-## 2.5.2 29/07/2025
+## 2.5.3 29/07/2025
 ### Corrigido
 - Corrigida permissão do Relatório de Planos de Trabalho
 - Corrigida permissão do Relatório de Planos de Entrega
