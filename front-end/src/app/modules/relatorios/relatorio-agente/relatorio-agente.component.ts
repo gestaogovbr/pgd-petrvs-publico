@@ -4,15 +4,13 @@ import { GridComponent } from "src/app/components/grid/grid.component";
 import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
 import { RelatorioAgenteDaoService } from "src/app/dao/relatorio-agente-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
-import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
 import { RelatorioAgente } from "src/app/models/relatorio-agente.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
 import { LookupItem } from "src/app/services/lookup.service";
 import { QueryOptions } from "src/app/dao/query-options";
-import { TipoAvaliacaoNotaDaoService } from "src/app/dao/tipo-avaliacao-nota-dao.service";
-import { of } from "rxjs";
 import { TipoModalidadeDaoService } from "src/app/dao/tipo-modalidade-dao.service";
 import { PerfilDaoService } from "src/app/dao/perfil-dao.service";
+import { of } from "rxjs";
 
 @Component({
   selector: 'relatorio-agente',
@@ -30,6 +28,7 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
   public loaded: boolean = false;
   public tiposModalidade: LookupItem[] = [];
   public perfis: LookupItem[] = [];
+  public unidades?: any[];
 
   constructor(public injector: Injector, dao: RelatorioAgenteDaoService) {
       super(injector, RelatorioAgente, RelatorioAgenteDaoService);
@@ -64,6 +63,8 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
       this.filter.get('unidade_id')?.updateValueAndValidity();
 
       this.orderBy = [['unidadeHierarquia', 'asc'], ['nome', 'asc']];
+
+      
   }
 
   public requiredValidator(control: AbstractControl): ValidationErrors | null { 
@@ -72,6 +73,14 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
 
   public async ngOnInit() {
       super.ngOnInit();
+
+      if (this.auth.unidade) {
+        const unidades = (await this.unidadeDao.subordinadas(this.auth?.unidade?.id))
+          .map((item: any) => item.id);
+        unidades.push(this.auth.unidade.id);
+        this.unidades = unidades;
+        console.log(this.unidades);
+      }
 
       this.tipoModalidadeDao.query().asPromise().then(modalidades => {
           this.tiposModalidade = this.lookup.map(modalidades, 'id', 'nome');

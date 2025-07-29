@@ -293,7 +293,15 @@ export class AppComponent {
       this.menuSchema.ATIVIDADES,
       Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "UNIDADE" } }),
       //this.menuSchema.AFASTAMENTOS,
-      this.menuSchema.OCORRENCIAS
+      this.menuSchema.OCORRENCIAS,
+      {
+        name: this.lex.translate("Relatórios"),
+        permition: "MOD_RELATORIOS",
+        id: "navbarDropdownRelatorios",
+        menu: [
+          this.menuSchema.RELATORIO_USUARIOS
+        ].sort(this.orderMenu)
+      }
     ];
 
     this.moduloAdministrador = [{
