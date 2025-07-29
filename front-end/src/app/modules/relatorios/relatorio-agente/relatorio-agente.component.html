@@ -94,7 +94,7 @@
             </ng-template>
 
             <ng-template let-row="row" #columnJornada>
-                <span> {{row.jornada ? row.jornada + 'h' : '-'}}</span>
+                <span> {{row.jornada ? row.jornada : '-'}}</span>
             </ng-template>
         </column>
 

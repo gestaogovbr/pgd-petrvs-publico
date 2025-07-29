@@ -11,13 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-         DB::statement(<<<EOD
+        DB::statement(<<<EOD
         CREATE OR REPLACE
         ALGORITHM = UNDEFINED VIEW `view_relatorio_agentes` AS
+        with ultimos_planos_trabalho as (
+            select usuario_id, max(id) as id
+            from
+                `planos_trabalhos`
+            where
+            `deleted_at` is null
+            and `status` in ('ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO')
+            group by usuario_id
+        )
         SELECT distinct `u`.`id` AS `id`,
             `u`.`nome` AS `nome`,
             `u`.`matricula` AS `matricula`,
-            '' AS `jornada`,
+            u.nome_jornada AS `jornada`,
             u.perfil_id,
             `p`.`nome` AS `perfil`,
             `u`.`situacao_funcional` AS `situacao_funcional`,
@@ -31,7 +40,7 @@ return new class extends Migration
             u.data_final_pedagio,
             u.tipo_pedagio
         from
-            (((((((`usuarios` `u`
+            `usuarios` `u`
         left join (
             select
                 `pp1`.`usuario_id` AS `usuario_id`,
@@ -54,49 +63,24 @@ return new class extends Migration
                     `pp`.`deleted_at` is null) `pp1`
             where
                 `pp1`.`rn` = 1) `programa_ultimo` on
-            (`programa_ultimo`.`usuario_id` = `u`.`id`))
-        left join (
-            select
-                `pt`.`usuario_id` AS `usuario_id`,
-                `pt`.`id` AS `id`,
-                `pt`.`tipo_modalidade_id` AS `tipo_modalidade_id`
-            from
-                `planos_trabalhos` `pt`
-            where
-                `pt`.`deleted_at` is null
-                and `pt`.`status` in ('ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO')
-                    and (`pt`.`data_inicio`,
-                    `pt`.`id`) = (
-                    select
-                        `pt2`.`data_inicio`,
-                        max(`pt2`.`id`)
-                    from
-                        `planos_trabalhos` `pt2`
-                    where
-                        `pt2`.`usuario_id` = `pt`.`usuario_id`
-                        and `pt2`.`deleted_at` is null
-                        and `pt2`.`status` in ('ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO')
-                    group by
-                        `pt2`.`data_inicio`
-                    order by
-                        `pt2`.`data_inicio` desc
-                    limit 1)) `pt_ultimo_pactuado` on
-            (`pt_ultimo_pactuado`.`usuario_id` = `u`.`id`))
+            `programa_ultimo`.`usuario_id` = `u`.`id`
+        left join ultimos_planos_trabalho upt ON upt.usuario_id = u.id
+        left join planos_trabalhos pt_ultimo_pactuado on pt_ultimo_pactuado.id = upt.id
         left join `unidades_integrantes` `ui` on
-            (`ui`.`usuario_id` = `u`.`id`
-                and `ui`.`deleted_at` is null))
+            `ui`.`usuario_id` = `u`.`id`
+                and `ui`.`deleted_at` is null
         left join `unidades_integrantes_atribuicoes` `uia` on
-            (`uia`.`unidade_integrante_id` = `ui`.`id`
+            `uia`.`unidade_integrante_id` = `ui`.`id`
                 and `uia`.`deleted_at` is null
-                and `uia`.`atribuicao` = 'LOTADO'))
+                and `uia`.`atribuicao` = 'LOTADO'
         left join `unidades` `uni` on
-            (`uni`.`id` = `ui`.`unidade_id`
+            `uni`.`id` = `ui`.`unidade_id`
                 and `uni`.`deleted_at` is null
-                and `uia`.`atribuicao` = 'LOTADO'))
+                and `uia`.`atribuicao` = 'LOTADO'
         left join `perfis` `p` on
-            (`p`.`id` = `u`.`perfil_id`))
+            `p`.`id` = `u`.`perfil_id`
         left join `tipos_modalidades` `tm` on
-            (`tm`.`id` = `pt_ultimo_pactuado`.`tipo_modalidade_id`))
+            `tm`.`id` = `pt_ultimo_pactuado`.`tipo_modalidade_id`
         where
             `u`.`deleted_at` is null
         order by
