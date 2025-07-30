@@ -165,42 +165,48 @@ class UsuarioSeeder extends Seeder
     }
 
     foreach ($usuarios_desenvolvedores as $usuario) {
-      $user = Usuario::where('cpf', $usuario['cpf'])->first() ?? new Usuario();
-      $user->fill([
-        'email' => $usuario['email'],
-        'nome' => $usuario['nome'],
-        'cpf' => $usuario['cpf'],
-        'apelido' => $usuario['apelido'],
-        'perfil_id' => $usuario['perfil_id'],
-        'matricula' => str_pad(
-          rand(1000000, 9999999),
-          7,
-          0,
-          STR_PAD_LEFT
-        ),
-        'uf' => 'DF',
-        'sexo' => $usuario['sexo'],
-        'data_modificacao' => $this->timenow,
-        'is_admin' => $usuario['is_admin'],
-      ]);
-      $user->save();
+      try {
+      
+        $user = Usuario::where('cpf', $usuario['cpf'])->first() ?? new Usuario();
+        $user->fill([
+          'email' => $usuario['email'],
+          'nome' => $usuario['nome'],
+          'cpf' => $usuario['cpf'],
+          'apelido' => $usuario['apelido'],
+          'perfil_id' => $usuario['perfil_id'],
+          'matricula' => str_pad(
+            rand(1000000, 9999999),
+            7,
+            0,
+            STR_PAD_LEFT
+          ),
+          'uf' => 'DF',
+          'sexo' => $usuario['sexo'],
+          'data_modificacao' => $this->timenow,
+          'is_admin' => $usuario['is_admin'],
+        ]);
+        $user->save();
 
-      if(empty($user->lotacoes())){
-        # criar se não existir
-        if ($unidade_pai) {
-            $integrante = UnidadeIntegrante::firstOrCreate(
-            [
-                'unidade_id' => $unidade_pai->id,
-                'usuario_id' => $user->id
-            ]
-            );
+        if(empty($user->lotacoes())){
+          # criar se não existir
+          if ($unidade_pai) {
+              $integrante = UnidadeIntegrante::firstOrCreate(
+              [
+                  'unidade_id' => $unidade_pai->id,
+                  'usuario_id' => $user->id
+              ]
+              );
 
-            UnidadeIntegranteAtribuicao::firstOrCreate([
-            'atribuicao' => "LOTADO",
-            'unidade_integrante_id' => $integrante->id
-            ]);
+              UnidadeIntegranteAtribuicao::firstOrCreate([
+              'atribuicao' => "LOTADO",
+              'unidade_integrante_id' => $integrante->id
+              ]);
+          }
         }
+      } catch (\Exception $e) {
+        continue;
       }
+
     }
 
     $rafael = Usuario::where('email', 'rafaelstibery@gmail.com')->first();
