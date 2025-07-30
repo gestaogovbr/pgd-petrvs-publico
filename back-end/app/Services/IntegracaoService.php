@@ -590,7 +590,11 @@ class IntegracaoService extends ServiceBase
         isr.telefone,
         isr.data_modificacao AS data_modificacao,
         u.data_modificacao AS data_modificacao_anterior,
-        isr.data_nascimento
+        isr.data_nascimento,
+        u.nome_jornada AS nome_jornada_antigo,
+        isr.nome_jornada AS nome_jornada,
+        u.cod_jornada AS cod_jornada_antigo,
+        isr.cod_jornada AS cod_jornada
     FROM
         integracao_servidores isr
         LEFT JOIN usuarios u ON (isr.cpf = u.cpf)
@@ -600,6 +604,8 @@ class IntegracaoService extends ServiceBase
         isr.matriculasiape != u.matricula OR
         isr.nomeguerra != u.apelido OR
         isr.telefone != u.telefone OR
+        (isr.nome_jornada != u.nome_jornada OR isr.nome_jornada IS NOT NULL AND u.nome_jornada IS NULL) OR
+        (isr.cod_jornada != u.cod_jornada OR isr.cod_jornada IS NOT NULL AND u.cod_jornada IS NULL) OR
         (isr.data_modificacao > u.data_modificacao OR isr.data_modificacao IS NOT NULL AND u.data_nascimento IS NULL )
         "
         );
@@ -607,6 +613,8 @@ class IntegracaoService extends ServiceBase
           "nome = :nome, apelido = :nomeguerra, " .
           "email = :email, matricula = :matricula, " .
           "telefone = :telefone, " .
+          "cod_jornada = :cod_jornada, " .
+          "nome_jornada = :nome_jornada, " .
           "data_nascimento = :data_nascimento, " .
           "data_modificacao = :data_modificacao WHERE id = :id";
 
@@ -675,6 +683,8 @@ class IntegracaoService extends ServiceBase
                 'email'         => $linha->emailfuncional,
                 'matricula'     => $linha->matriculasiape,
                 'telefone'      => $linha->telefone,
+                'cod_jornada'      => $linha->cod_jornada,
+                'nome_jornada'      => $linha->nome_jornada,
                 'id'            => $linha->id,
                 'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
                 'data_nascimento' => $linha->data_nascimento,
