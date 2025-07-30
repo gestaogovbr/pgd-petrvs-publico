@@ -38,6 +38,7 @@ class IntegracaoServidor extends ModelBase
     'funcoes', /* json; */
     'cpf_chefia_imediata', /* varchar(50); */ // Registra CPF da chefia imediata informado pelo Siape.
     'email_chefia_imediata', /* varchar(50); */ // Registra e-mail da chefia imediata informado pelo Siape.
+    'modalidade_pgd',/* varchar(50); */ // Modalidade de participação no PGD
     //'deleted_at', /* timestamp; */
   ];
 

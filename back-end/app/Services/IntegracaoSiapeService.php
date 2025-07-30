@@ -81,6 +81,7 @@ class IntegracaoSiapeService extends ServiceBase
         'telefone' =>  '',
         'cpf_chefia_imediata' => $this->UtilService->valueOrDefault($dadosFuncionais['cpfChefiaImediata'], null),
         'email_chefia_imediata' => $this->UtilService->valueOrDefault($dadosFuncionais['emailChefiaImediata'], null),
+        'modalidade_pgd' => $this->UtilService->valueOrDefault($dadosFuncionais['modalidadePGD'], null),
         'matriculas' => [
           'dados' => [
             'vinculo_ativo' => true,

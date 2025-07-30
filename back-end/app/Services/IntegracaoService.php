@@ -591,7 +591,9 @@ class IntegracaoService extends ServiceBase
         isr.telefone,
         isr.data_modificacao AS data_modificacao,
         u.data_modificacao AS data_modificacao_anterior,
-        isr.data_nascimento
+        isr.data_nascimento,
+        u.modalidade_pgd AS modalidade_pgd_anterior,
+        isr.modalidade_pgd
     FROM
         integracao_servidores isr
         LEFT JOIN usuarios u ON (isr.cpf = u.cpf)
@@ -601,6 +603,7 @@ class IntegracaoService extends ServiceBase
         isr.matriculasiape != u.matricula OR
         isr.nomeguerra != u.apelido OR
         isr.telefone != u.telefone OR
+        (isr.modalidade_pgd != u.modalidade_pgd OR isr.modalidade_pgd IS NOT NULL AND u.modalidade_pgd IS NULL) OR
         (isr.data_modificacao > u.data_modificacao OR isr.data_modificacao IS NOT NULL AND u.data_nascimento IS NULL )
         "
         );
@@ -609,6 +612,7 @@ class IntegracaoService extends ServiceBase
           "email = :email, matricula = :matricula, " .
           "telefone = :telefone, " .
           "data_nascimento = :data_nascimento, " .
+          "modalidade_pgd = :modalidade_pgd, " .
           "data_modificacao = :data_modificacao WHERE id = :id";
 
         // Adicionar algoritmo para trocar lotação.
@@ -678,6 +682,7 @@ class IntegracaoService extends ServiceBase
                 'email'         => $linha->emailfuncional,
                 'matricula'     => $linha->matriculasiape,
                 'telefone'      => $linha->telefone,
+                'modalidade_pgd' => $linha->modalidade_pgd,
                 'id'            => $linha->id,
                 'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
                 'data_nascimento' => $linha->data_nascimento,
