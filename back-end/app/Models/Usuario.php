@@ -80,6 +80,7 @@ class Usuario extends Authenticatable implements AuditableContract
         'situacao_funcional',
         'data_nascimento',
         'modalidade_pgd', /* varchar(100); NULL */ // Modalidade do usuário no PGD
+        'participa_pgd',/* enum('sim','não'); */ // Participação do usuário no PGD
         //'deleted_at', /* timestamp; */
         //'remember_token', /* varchar(100); */
         //'password', /* varchar(255); */// Senha do usuário

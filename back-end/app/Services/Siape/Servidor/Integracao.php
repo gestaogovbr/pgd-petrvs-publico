@@ -165,6 +165,7 @@ class Integracao implements InterfaceIntegracao
             'funcoes' => $ativo['funcoes'],
             'matricula' => $this->utilService->valueOrDefault($ativo['matriculasiape'], null),
             'modalidade_pgd' => $this->utilService->valueOrDefault($servidor['modalidade_pgd'], null),
+            'participa_pgd' => $this->utilService->valueOrDefault($servidor['participa_pgd'], null),
             'cpf_chefia_imediata' => $this->getCPFChefiaImediata($servidor, $this->utilService),
             'email_chefia_imediata' => $this->getEmailChefiaImediata($servidor, $this->utilService),
             'deleted_at' => null,

@@ -30,6 +30,7 @@ class ServidorDTO
     public ?string $cpf_chefia_imediata;
     public ?string $email_chefia_imediata;
     public ?string $modalidade_pgd;
+    public ?string $participa_pgd;
     public ?string $deleted_at;
 
     public function __construct(array $data)
