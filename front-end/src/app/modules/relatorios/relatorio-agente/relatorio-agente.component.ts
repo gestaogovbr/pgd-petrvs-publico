@@ -50,7 +50,7 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
         perfil_id: { default: "" },
         situacao: { default: "" },
         selecao: { default: "" },
-        lotado: { default: "" },
+        lotado: { default: this.metadata?.lotado ?? "" },
         modalidade: { default: "" },
         modalidadeSouGov: { default: "" },
         comparacaoSouGovPetrvs: { default: "" },
@@ -63,8 +63,6 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
       this.filter.get('unidade_id')?.updateValueAndValidity();
 
       this.orderBy = [['unidadeHierarquia', 'asc'], ['nome', 'asc']];
-
-      
   }
 
   public requiredValidator(control: AbstractControl): ValidationErrors | null { 
@@ -74,12 +72,16 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
   public async ngOnInit() {
       super.ngOnInit();
 
+      if(this.metadata?.unidade_id) {
+        this.filter?.controls.unidade_id.setValue(this.metadata?.unidade_id);
+        this.saveUsuarioConfig();
+      }
+
       if (this.auth.unidade) {
         const unidades = (await this.unidadeDao.subordinadas(this.auth?.unidade?.id))
           .map((item: any) => item.id);
         unidades.push(this.auth.unidade.id);
         this.unidades = unidades;
-        console.log(this.unidades);
       }
 
       this.tipoModalidadeDao.query().asPromise().then(modalidades => {
@@ -92,6 +94,8 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
               key: item.key,
               value: item.value.replace('Perfil ', '')
             })); // Remove a palavra 'Perfil' dos perfis
+
+          console.log(this.perfis);
       });
   }
 
@@ -164,6 +168,9 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
       result.push(["data_final_pedagio", "==", form.data_final_pedagio.toISOString().slice(0,10)]);
     }
 
+    if (this.metadata?.atribuicao) {
+      result.push(["atribuicao", "==", this.metadata.atribuicao]);
+    }
     
     return result;
   };
