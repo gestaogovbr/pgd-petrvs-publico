@@ -386,6 +386,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_PROD_EDT"],
       ["codigo" => "MOD_PROD_EXCL"],
       ["codigo" => "MOD_RELATORIO_USUARIO_TODAS_UNIDADES"],
+      ["codigo" => "MOD_RELATORIO_UNIDADE_TODAS_UNIDADES"],
       ["codigo" => "MOD_UND_INST"],
       ["codigo" => "MOD_PART_PEDAGIO"],
       ["codigo" => "MOD_AUDIT_LOG"],
