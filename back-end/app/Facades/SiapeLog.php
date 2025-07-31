@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Facades;
 
 
@@ -17,7 +18,7 @@ class SiapeLog
     public static function info($message, array $context = [])
     {
         Log::channel('siape')->info($message, $context);
-        if(self::$imprimirNoTerminal) {
+        if (self::$imprimirNoTerminal) {
             imprimeNoTerminal($message);
         }
     }
@@ -25,9 +26,16 @@ class SiapeLog
     public static function error($message, array $context = [])
     {
         Log::channel('siape')->error($message, $context);
-        if(self::$imprimirNoTerminal) {
+        if (self::$imprimirNoTerminal) {
             imprimeNoTerminal($message);
         }
     }
 
+    public static function warning($message, array $context = [])
+    {
+        Log::channel('siape')->warning($message, $context);
+        if (self::$imprimirNoTerminal) {
+            imprimeNoTerminal($message);
+        }
+    }
 }
