@@ -50,7 +50,7 @@ return new class extends Migration
             case
                 when `uni`.`instituidora` = 1 then 'Instituidora'
                 else 'Executora'
-            end AS `tipo`,
+            end collate utf8mb4_unicode_ci AS `tipo`,
             `chefia`.`id` AS `chefiaId`,
             `chefia`.`nome` AS `chefiaNome`,
             `contadores`.`totalVinculados` AS `totalVinculados`,
