@@ -71,7 +71,7 @@ class RelatorioUnidadeExport implements FromCollection, WithMapping, WithHeading
             $row->chefiaNome,
             $row->totalSubstitutos,
             $row->totalDelegados,
-            $row->totalAgentes
+            $row->totalVinculados
         ];
     }
 
