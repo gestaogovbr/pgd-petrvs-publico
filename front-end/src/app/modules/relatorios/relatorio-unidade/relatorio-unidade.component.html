@@ -161,8 +161,8 @@
                         route: ['relatorios', 'agentes'] },
                         {
                             metadata: {
-                                unidade_id: this.filter!.get('unidade_id')?.value,
-                                perfil_id: auth.unidade
+                                unidade_id: row.unidade_id,
+                                atribuicao: 'GESTOR_SUBSTITUTO'
                             }
                         }
                     )"
@@ -189,27 +189,53 @@
             </ng-template>
 
             <ng-template let-row="row" #columnTotalDelegados>
-                <span> {{row.totalDelegados ?? '-'}}</span>
+                <a class="nav-link px-3" role="button"
+                    (click)="go.navigate({
+                        route: ['relatorios', 'agentes'] },
+                        {
+                            metadata: {
+                                unidade_id: row.unidade_id,
+                                atribuicao: 'GESTOR_DELEGADO'
+                            }
+                        }
+                    )"
+                >
+                    <i class="bi bi-people"></i>
+                    {{row.totalDelegados ?? '-'}}
+                </a>
             </ng-template>
         </column>
 
         <column title="Vinculados"
-            [template]="columnTotalAgentes"
-            [titleTemplate]="titleTotalAgentes"
+            [template]="columnTotalVinculados"
+            [titleTemplate]="titleTotalVinculados"
             [verticalAlign]="'bottom'"
             [align]="'center'"
             [width]="100"
         >
-            <ng-template let-header="header" #titleTotalAgentes>
+            <ng-template let-header="header" #titleTotalVinculados>
                 <input-text 
-                    [control]="filter!.controls.totalAgentes"
-                    controlName="this.filter.totalAgentes"
+                    [control]="filter!.controls.totalVinculados"
+                    controlName="this.filter.totalVinculados"
                     (blur)="onValueChange($event)"
                 ></input-text>
             </ng-template>
 
-            <ng-template let-row="row" #columnTotalAgentes>
-                <span> {{row.totalAgentes ?? '-'}}</span>
+            <ng-template let-row="row" #columnTotalVinculados>
+                <a class="nav-link px-3" role="button"
+                    (click)="go.navigate({
+                        route: ['relatorios', 'agentes'] },
+                        {
+                            metadata: {
+                                unidade_id: row.unidade_id,
+                                atribuicao: 'COLABORADOR'
+                            }
+                        }
+                    )"
+                >
+                    <i class="bi bi-people"></i>
+                    {{row.totalVinculados ?? '-'}}
+                </a>
             </ng-template>
         </column>
     </columns>

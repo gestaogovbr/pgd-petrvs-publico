@@ -38,7 +38,7 @@ export class RelatorioUnidadeComponent extends PageListBase<RelatorioUnidade, Re
       uorg: { default: "" },
       tipo: { default: "" },
       chefiaNome: { default: "" },
-      totalAgentes: { default: "" },
+      totalVinculados: { default: "" },
       totalSubstitutos: { default: "" },
       totalDelegados: { default: "" }
     });
@@ -101,8 +101,8 @@ export class RelatorioUnidadeComponent extends PageListBase<RelatorioUnidade, Re
       result.push(["chefiaNome", "like", "%" + form.chefiaNome + "%"]);
     }
 
-    if (form.totalAgentes?.length) {
-      result.push(["totalAgentes", "==", form.totalAgentes]);
+    if (form.totalVinculados?.length) {
+      result.push(["totalVinculados", "==", form.totalVinculados]);
     }
 
     if (form.totalSubstitutos?.length) {

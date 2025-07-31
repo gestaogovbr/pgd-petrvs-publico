@@ -8,7 +8,7 @@ export class RelatorioUnidade extends Base {
     public tipo: 'Instituidora' | 'Executora' = 'Executora';
     public chefiaId: number | null = null;
     public chefiaNome: string | null = null;
-    public totalAgentes: number = 0;
+    public totalVinculados: number = 0;
     public totalSubstitutos: number = 0;
     public totalDelegados: number = 0;
 
