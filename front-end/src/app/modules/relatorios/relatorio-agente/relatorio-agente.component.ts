@@ -63,6 +63,7 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
       this.filter.get('unidade_id')?.updateValueAndValidity();
 
       this.orderBy = [['unidadeHierarquia', 'asc'], ['nome', 'asc']];
+      this.rowsLimit = 10;
   }
 
   public requiredValidator(control: AbstractControl): ValidationErrors | null { 
