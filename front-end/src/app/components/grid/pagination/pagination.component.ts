@@ -27,6 +27,9 @@ export class PaginationComponent extends ComponentBase implements OnInit {
     return this._type;
   }
 
+  @Input() infiniteScrollContainer: string|null = null;
+  @Input() fromRoot: boolean = false;
+
   private _query?: QueryContext<Base>;
   private _type: PaginationType = "infinity";
 
