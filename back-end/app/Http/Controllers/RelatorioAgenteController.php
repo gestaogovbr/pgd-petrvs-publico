@@ -34,7 +34,6 @@ class RelatorioAgenteController extends ControllerBase {
             $service = new RelatorioAgenteService();
             $result = $service->query($data);
 
-
             if ($request->is('*/xls')) {
                 return Excel::download(
                     new RelatorioAgenteExport($result['rows']),
@@ -46,7 +45,7 @@ class RelatorioAgenteController extends ControllerBase {
                 'success' => true,
                 'count' => $result['count'],
                 'rows' => $result['rows'],
-                'extra' => $result['extra']
+                'extra' => []
             ]);
 
         }  catch (IBaseException $e) {
