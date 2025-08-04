@@ -622,7 +622,7 @@ class IntegracaoService extends ServiceBase
 
             "(SELECT u2.id " .
             "FROM unidades AS u2 " .
-            "WHERE isr.codigo_servo_exercicio = u2.codigo) AS exercicio_atual_id, " .
+            "WHERE isr.codigo_servo_exercicio = u2.codigo LIMIT 1) AS exercicio_atual_id, " .
 
             " uia.atribuicao AS atribuicao " .
 
