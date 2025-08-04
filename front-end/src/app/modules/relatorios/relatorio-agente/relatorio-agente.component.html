@@ -3,6 +3,7 @@
     [orderBy]="orderBy"
     [maxHeight]="450"
     [scrollable]="true"
+    [className]="'relatorio-agente'"
 >
     <toolbar *ngIf="!selectable"></toolbar>
     <filter 
@@ -293,5 +294,9 @@
             </ng-template>
         </column>
     </columns>
-    <pagination [rows]="rowsLimit"></pagination>
+    <pagination
+        [rows]="rowsLimit"
+        [infiniteScrollContainer]="'.relatorio-agente-table'"
+        [fromRoot]="true"
+    ></pagination>
 </grid>
