@@ -568,6 +568,61 @@ class UnidadeService extends ServiceBase
         }
         return $result;
     }
+    /**
+     * Retorna os gestores que podem assinar o TCR em caso de usuário informado ser gestor.
+     * @param Unidade $unidade
+     * @param int $usuarioId
+     * @param int $participanteId
+     * @return array
+     */
+    public function getGestoresPorUnidade($unidade, $usuarioId, $participanteId): array
+    {
+        if (!$unidade) {
+            return []; // garante que não será null
+        }
+
+        $atribuicoes = $this->usuarioService->atribuicoesGestor($unidade->id, $usuarioId);
+
+        if ($atribuicoes["gestor"]) {
+            return array_values(array_filter([
+                $unidade->unidadePai?->gestor?->usuario_id,
+                ...($unidade->unidadePai?->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? [])
+            ]));
+        }
+
+        if ($atribuicoes["gestorSubstituto"]) {
+            return array_values(array_filter(array_merge(
+                [$unidade->gestor?->usuario_id, $unidade->unidadePai?->gestor?->usuario_id],
+                $unidade->unidadePai?->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? [],
+                $unidade->gestoresSubstitutos?->reject(fn($g) => $g->usuario_id == $participanteId)->pluck('usuario_id')->toArray() ?? []
+            )));
+        }
+
+        if ($atribuicoes["gestorDelegado"]) {
+            return array_values(array_filter(array_merge(
+                [$unidade->gestor?->usuario_id],
+                $unidade->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? []
+            )));
+        }
+
+        // Se o usuário não é gestor, substituto ou delegado, retorna somente o gestor titular e os substitutos
+
+        $gestores = array_values(array_filter(array_merge(
+            [$unidade->gestor?->usuario_id],
+            $unidade->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? []
+        )));
+
+        if (count($gestores) > 0) {
+            return $gestores;
+        } else {
+            // Se não houver gestores, retorna o gestor da unidade superior
+            return array_values(array_filter([
+                $unidade->unidadePai?->gestor?->usuario_id,
+                ...($unidade->unidadePai?->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? [])
+            ]));
+        }
+    }
+
 
     //
     /*
