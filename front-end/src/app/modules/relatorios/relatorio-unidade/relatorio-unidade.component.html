@@ -2,6 +2,8 @@
     [title]="title" 
     [orderBy]="orderBy"
     [maxHeight]="450"
+    [scrollable]="true"
+    [className]="'relatorio-unidade'"
 >
     <toolbar *ngIf="!selectable"></toolbar>
     <filter 
@@ -239,5 +241,9 @@
             </ng-template>
         </column>
     </columns>
-    <pagination [rows]="rowsLimit"></pagination>
+    <pagination
+        [rows]="rowsLimit"
+        [infiniteScrollContainer]="'.relatorio-unidade-table'"
+        [fromRoot]="true"
+    ></pagination>
 </grid>
