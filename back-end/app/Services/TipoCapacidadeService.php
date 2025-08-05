@@ -413,7 +413,8 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_TIPO_CLI_EXCL", "Permite excluir tipos de clientes"],
         ["MOD_TIPO_CLI_INCL", "Permite incluir tipos de clientes"]
       ]
-    ], [
+    ],
+    [
         "codigo" => "MOD_RELATORIOS",
         "descricao" => "Módulo de Relatórios",
     ],

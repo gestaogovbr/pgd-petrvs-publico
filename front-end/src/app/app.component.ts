@@ -186,7 +186,7 @@ export class AppComponent {
       LOGS_ENVIOS: { name: "Log dos Envios à API PGD", permition: '', route: ['logs', 'envios'], icon: this.entity.getIcon('Envio') },
       DEV_CPF_CONSULTA_SIAPE: { name: "Consulta CPF SIAPE", permition: '', route: ['consultas', 'cpf-siape'], icon: this.entity.getIcon('ConsultaCPFSIAPE') },
       DEV_UNIDADE_CONSULTA_SIAPE: { name: "Consulta Unidade SIAPE", permition: '', route: ['consultas', 'unidade-siape'], icon: this.entity.getIcon('ConsultaUnidadeSIAPE') },
-            /* RELATORIOS */
+      /* RELATORIOS */
       RELATORIO_PLANO_TRABALHO: {
         name: this.lex.translate("Planos de Trabalho"),
         permition: 'MOD_RELATORIO_PT',
@@ -203,7 +203,7 @@ export class AppComponent {
         name: this.lex.translate("Agentes Públicos"),
         permition: 'MOD_RELATORIO_USUARIO',
         icon: this.entity.getIcon('Usuario'),
-        onClick: ()=> this.emDesenvolvimento()
+        route: ['relatorios', 'agentes'],
       },
       RELATORIO_UNIDADES: {
         name: "Unidades",
@@ -293,7 +293,15 @@ export class AppComponent {
       this.menuSchema.ATIVIDADES,
       Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "UNIDADE" } }),
       //this.menuSchema.AFASTAMENTOS,
-      this.menuSchema.OCORRENCIAS
+      this.menuSchema.OCORRENCIAS,
+      {
+        name: this.lex.translate("Relatórios"),
+        permition: "MOD_RELATORIOS",
+        id: "navbarDropdownRelatorios",
+        menu: [
+          this.menuSchema.RELATORIO_USUARIOS
+        ].sort(this.orderMenu)
+      }
     ];
 
     this.moduloAdministrador = [{

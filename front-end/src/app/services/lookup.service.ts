@@ -944,6 +944,19 @@ export class LookupService implements IIndexable {
     { key: 'hora', value: "hora(s)" }
   ];
 
+  public INDISPONIBILIDADE_TIPOS: LookupItem[] = [
+    {
+			key: "1",
+			value:
+				"Art 10, §2º, INC SEGES/SPGRT nº 24/2024- Primeiro ano do Estágio Probatório.",
+		},
+		{
+			key: "2",
+			value:
+				"Art 10, §3º, INC SEGES/SPGRT nº 24/2024- Movimentação entre órgãos há menos de 6 (seis) meses.",
+		},
+  ];
+
   public RELATORIO_PT_SITUACOES_EXECUCAO: LookupItem[] = [
     { key: 'Aguardando', value: "Aguardando" },
     { key: 'Atrasado', value: "Atrasado" },

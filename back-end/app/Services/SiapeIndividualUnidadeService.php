@@ -32,6 +32,9 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
         $xmlDadosDaUnidade = $this->montaXmlUnidade($codigoUnidade);
 
+        SiapeLog::info('XML montado: ' . $xmlDadosDaUnidade);
+
+
         SiapeLog::info('Executando requisição no SIAPE');
 
         $dadosUnidadeResponseXml = $this->service->getBuscarDadosSiapeUnidade()->executaRequisicao($xmlDadosDaUnidade); //xml
