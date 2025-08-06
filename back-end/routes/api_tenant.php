@@ -73,6 +73,7 @@ use App\Http\Controllers\RelatoController;
 use App\Http\Controllers\RelatorioAgenteController;
 use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\RelatorioPlanoEntregaController;
+use App\Http\Controllers\RelatorioUnidadeController;
 use App\Http\Controllers\RotinaDiariaController;
 use App\Http\Controllers\SiapeIndividualController;
 use App\Http\Controllers\SolucaoController;
@@ -85,8 +86,8 @@ use App\Http\Controllers\TipoCapacidadeController;
 use App\Http\Controllers\TipoClienteController;
 use App\Http\Controllers\TipoCursoController;
 use App\Http\Controllers\TipoDocumentoController;
-use App\Http\Controllers\TipoJustificativaController;
 
+use App\Http\Controllers\TipoJustificativaController;
 use App\Http\Controllers\TipoModalidadeController;
 use App\Http\Controllers\TipoMotivoAfastamentoController;
 use App\Http\Controllers\TipoProcessoController;
@@ -97,6 +98,7 @@ use App\Http\Controllers\UnidadeIntegranteController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 
 
@@ -542,6 +544,11 @@ Route::middleware(['auth:sanctum'])->prefix('Relatorio')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('RelatorioAgente')->group(function () {
     Route::post('query', [RelatorioAgenteController::class, 'query']);
     Route::post('xls', [RelatorioAgenteController::class, 'query']);
+});
+
+Route::middleware(['auth:sanctum'])->prefix('RelatorioUnidade')->group(function () {
+    Route::post('query', [RelatorioUnidadeController::class, 'query']);
+    Route::post('xls', [RelatorioUnidadeController::class, 'query']);
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
