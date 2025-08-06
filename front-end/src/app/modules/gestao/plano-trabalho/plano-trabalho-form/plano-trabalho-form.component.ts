@@ -442,12 +442,26 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.entity = responses[0] as PlanoTrabalho;
     } finally {
       this.submitting = false;
+      this.exibeAlertaTotalAssinaturas(this.entity);
     }
     return true;
   }
 
   public onTabSelect(tab: LookupItem) {
     if (tab.key == "TERMO") this.atualizarTcr();
+  }
+
+  public exibeAlertaTotalAssinaturas(plano: PlanoTrabalho | undefined) {
+    if(plano){
+       let assinaturasExigidas = this.planoTrabalhoService.contadorAssinaturasExigidas(plano);
+       let msg = ''
+       if (assinaturasExigidas == 1) 
+        msg = "O participante tem atribuição de chefia substituta da unidade superior à sua unidade de lotação. Por isso, este Plano de Trabalho exigirá somente uma assinatura.";
+        else if (assinaturasExigidas == 3)
+        msg = "Este Plano de Trabalho está sendo criado numa unidade diferente da unidade de lotação. Por isso, a chefia da unidade do plano também deverá assiná-lo";
+    
+      this.dialog.alert("Atenção", msg, "OK");
+    }
   }
 
   public titleEdit = (entity: PlanoTrabalho): string => {
