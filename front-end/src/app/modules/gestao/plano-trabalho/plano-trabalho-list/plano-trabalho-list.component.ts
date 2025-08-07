@@ -17,7 +17,6 @@ import {PlanoTrabalhoService} from "../plano-trabalho.service";
 import {DocumentoService} from "src/app/modules/uteis/documentos/documento.service";
 import {UtilService} from "src/app/services/util.service";
 import {UnidadeService} from "src/app/services/unidade.service";
-
 @Component({
 	selector: "plano-trabalho-list",
 	templateUrl: "./plano-trabalho-list.component.html",
@@ -64,7 +63,6 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 	public BOTAO_REATIVAR: ToolbarButton;
 	public BOTAO_SUSPENDER: ToolbarButton;
 	public BOTAO_TERMOS: ToolbarButton;
-	public BOTAO_RELATORIO: ToolbarButton;
 	public BOTAO_CONSOLIDACOES: ToolbarButton;
 	public DATAS_FILTRO: LookupItem[] = [
 		{key: "VIGENTE", value: "Vigente"},
@@ -191,11 +189,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			icon: "bi bi-info-circle",
 			onClick: this.consult.bind(this),
 		};
-		this.BOTAO_RELATORIO = {
-			label: "Relatório",
-			icon: "bi bi-file-pdf",
-			onClick: (row: PlanoTrabalho) => this.report(row, "PTR_LISTA_ENTREGAS"),
-		};
+	
 		this.BOTAO_TERMOS = {
 			label: "Termos",
 			icon: "bi bi-file-earmark-check",
@@ -261,7 +255,6 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			this.BOTAO_DESARQUIVAR,
 			this.BOTAO_ENVIAR_ASSINATURA,
 			this.BOTAO_INFORMACOES,
-			this.BOTAO_RELATORIO,
 			this.BOTAO_TERMOS,
 			this.BOTAO_CONSOLIDACOES,
 			this.BOTAO_REATIVAR,
@@ -292,7 +285,6 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		this.botoes.forEach((botao) => {
 			if (this.botaoAtendeCondicoes(botao, row)) result.push(botao);
 		});
-		result.push(this.BOTAO_RELATORIO);
 		return result;
 	}
 
@@ -728,6 +720,22 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		return false;
 	}
 
+	public contadorAssinaturas(planoTrabalho: PlanoTrabalho): string {
+    let assinaturasExigidas = this.planoTrabalhoService.contadorAssinaturasExigidas(planoTrabalho);
+    let jaAssinaramTCR = planoTrabalho._metadata?.jaAssinaramTCR || {};
+   	const assinaturasNecessarias = [
+        ...(jaAssinaramTCR.participante || []),
+        ...(jaAssinaramTCR.gestores_unidade_executora || []),
+        ...(jaAssinaramTCR.gestores_unidade_lotacao || []),
+        ...(jaAssinaramTCR.gestores_entidade || [])
+    ];
+		const totalExigidasUnicas = new Set(assinaturasNecessarias).size;
+
+
+    return `${totalExigidasUnicas} de ${assinaturasExigidas}`;
+	}
+
+
 	public arquivar(planoTrabalho: PlanoTrabalho) {
 		this.go.navigate(this.routeStatus, {
 			metadata: {
@@ -833,23 +841,6 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		});
 	}
 
-	public report(planoTrabalho: PlanoTrabalho, codigo: string) {
-		const consulta: any = {
-			id: planoTrabalho.id,
-			join: [
-				"unidade.entidade",
-				"unidade.gestor.usuario:id",
-				"usuario",
-				"programa.template_tcr",
-				"tipo_modalidade",
-				"entregas.plano_entrega_entrega.entrega",
-				"entregas.plano_entrega_entrega.plano_entrega:id,unidade_id",
-				"entregas.plano_entrega_entrega.plano_entrega.unidade",
-				"entregas.entrega",
-			],
-		};
-		this.grid?.buildRowReport(codigo, consulta);
-	}
 
 	public enviarParaAssinatura(planoTrabalho: PlanoTrabalho) {
 		this.go.navigate(this.routeStatus, {
