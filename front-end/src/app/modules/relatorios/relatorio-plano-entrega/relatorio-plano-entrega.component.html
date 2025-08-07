@@ -3,7 +3,6 @@
     [orderBy]="orderBy"
     [maxHeight]="400"
     [scrollable]="true"
-    [className]="'relatorio-pe'"
 >
     <toolbar *ngIf="!selectable"></toolbar>
     <filter 
@@ -281,9 +280,5 @@
             </ng-template>
         </column>
     </columns>
-    <pagination
-        [rows]="rowsLimit"
-        [infiniteScrollContainer]="'.relatorio-pe-table'"
-        [fromRoot]="true"
-    ></pagination>
+    <pagination [rows]="rowsLimit"></pagination>
 </grid>

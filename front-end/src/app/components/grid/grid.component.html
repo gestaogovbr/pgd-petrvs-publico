@@ -12,12 +12,9 @@
       <div [class]="classColTable">
         <ng-content></ng-content>
 
-        <div
-          [class]="'table-responsive' +
-            (this.className? ' ' + this.className + '-table': '') +
-            (scrollable ? ' grid-scroll-container' : '')"
-          [style.min-height]="minHeight + 'px'"
-          [style.max-height.px]="maxHeight"
+        <div [class]="'table-responsive' + (scrollable ? ' grid-scroll-container' : '')"
+            [style.min-height]="minHeight + 'px'"
+            [style.max-height.px]="maxHeight"
         >
           <table
             class="table"
