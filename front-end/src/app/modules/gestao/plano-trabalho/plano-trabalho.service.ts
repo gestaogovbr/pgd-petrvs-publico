@@ -290,21 +290,4 @@ export class PlanoTrabalhoService {
   }
 
 
-  public contadorAssinaturasExigidas(planoTrabalho: PlanoTrabalho): number {
-		let assinaturasExigidas = 2;
-		let gestorUnidadeSuperior =
-			planoTrabalho._metadata?.atribuicoesLogadoUnidadeSuperior.gestor ||
-			planoTrabalho._metadata?.atribuicoesLogadoUnidadeSuperior
-				.gestorSubstituto;
-		let unidadeIds = this.auth.unidades?.map((u) => u.id) || [];
-		if (!unidadeIds.includes(planoTrabalho.unidade_id)) assinaturasExigidas = 3;
-		if (gestorUnidadeSuperior) assinaturasExigidas = 1;
-
-		return assinaturasExigidas;
-	}
-
-/*   public assinaturaUsuarioEhExigida(exigidas: AssinaturaList): boolean {
-    return [...exigidas.participante, ...exigidas.gestores_unidade_executora, ...exigidas.gestores_unidade_lotacao, ...exigidas.gestores_entidade].includes(this.auth.usuario?.id!); 
-  } */
-  
 }

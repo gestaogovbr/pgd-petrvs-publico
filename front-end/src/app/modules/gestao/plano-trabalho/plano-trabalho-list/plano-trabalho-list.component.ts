@@ -721,7 +721,6 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 	}
 
 	public contadorAssinaturas(planoTrabalho: PlanoTrabalho): string {
-    let assinaturasExigidas = this.planoTrabalhoService.contadorAssinaturasExigidas(planoTrabalho);
     let jaAssinaramTCR = planoTrabalho._metadata?.jaAssinaramTCR || {};
    	const assinaturasNecessarias = [
         ...(jaAssinaramTCR.participante || []),
@@ -732,7 +731,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		const totalExigidasUnicas = new Set(assinaturasNecessarias).size;
 
 
-    return `${totalExigidasUnicas} de ${assinaturasExigidas}`;
+    return `${totalExigidasUnicas} de ${planoTrabalho._metadata?.quantidadeAssinaturasExigidas}`;
 	}
 
 
