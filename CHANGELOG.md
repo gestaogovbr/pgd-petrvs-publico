@@ -1,3 +1,13 @@
+
+## 2.6.0 08/08/2025
+### Corrigido
+- Corrigido erro de cardinalidade na integração com SIAPE
+- Corrigido erro na exclusão de atribuições do usuário
+- Corrigido assinaturas de planos de trabalhos de unidades sem chefias
+
+### Removido
+- Permissão para Adm. master inativar unidades
+
 ## 2.5.3 29/07/2025
 ### Corrigido
 - Corrigida permissão do Relatório de Planos de Trabalho
