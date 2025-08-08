@@ -1,31 +1,78 @@
-<h3 *ngIf="isModal" class="my-2">{{title}}</h3>
-<grid [dao]="dao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="false" [hasEdit]="auth.hasPermissionTo('MOD_UND_EDT')">
+<h3 *ngIf="isModal" class="my-2">{{ title }}</h3>
+
+<grid
+  [dao]="dao"
+  [add]="add"
+  [orderBy]="orderBy"
+  [groupBy]="groupBy"
+  [join]="join"
+  [selectable]="selectable"
+  (select)="onSelect($event)"
+  [hasAdd]="false"
+  [hasEdit]="auth.hasPermissionTo('MOD_UND_EDT')"
+>
   <toolbar *ngIf="!selectable" [buttons]="buttons"></toolbar>
-  <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
-    <div class="row">
-      <!-- <input-search #entidade [size]="5" [control]="filter!.controls.entidade_id" controlName="entidade_id" [control]="filter!.controls.entidade_id" [dao]="entidadeDao"></input-search> -->
-      <input-text [size]="10" label="Nome" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome ou sigla..." [attr.maxlength]=250></input-text>
-      <input-switch #instituidora [size]="1" label="Instit." labelClass="text-nowrap" controlName="instituidora" [control]="filter!.controls.instituidora" [labelInfo]="'Se lista SOMENTE as ' + lex.translate('unidades') + ' instituidoras de ' + lex.translate('programas')"></input-switch>
-      <input-switch [size]="1" label="Inativos" controlName="inativos" [control]="filter!.controls.inativos" [labelInfo]="labelInfoInativas"></input-switch>
+
+  <filter
+    [deleted]="auth.hasPermissionTo('MOD_AUDIT_DEL')"
+    [form]="filter"
+    [where]="filterWhere"
+    [submit]="filterSubmit.bind(this)"
+    [clear]="filterClear.bind(this)"
+    [collapseChange]="filterCollapseChange.bind(this)"
+    [collapsed]="!selectable && filterCollapsed"
+  >
+    <div class="row">      
+      <input-text
+        [size]="10"
+        label="Nome"
+        controlName="nome"
+        [control]="filter!.controls.nome"
+        placeholder="Nome ou sigla..."
+        [attr.maxlength]="250"
+      ></input-text>
+
+      <input-switch
+        #instituidora
+        [size]="1"
+        label="Instit."
+        labelClass="text-nowrap"
+        controlName="instituidora"
+        [control]="filter!.controls.instituidora"
+        [labelInfo]="'Se lista SOMENTE as ' + lex.translate('unidades') + ' instituidoras de ' + lex.translate('programas')"
+      ></input-switch>
+
+      <input-switch
+        [size]="1"
+        label="Inativos"
+        controlName="inativos"
+        [control]="filter!.controls.inativos"
+        [labelInfo]="labelInfoInativas"
+      ></input-switch>
     </div>
   </filter>
+
   <columns>
-    <column title="Sigla" field="sigla"></column>
+    <column title="Sigla" field="sigla" orderBy="sigla"></column>
+
     <column title="Nome" [template]="columnNome" orderBy="nome">
       <ng-template let-row="row" #columnNome>
-        <span class="d-block">{{row.nome}}</span>
+        <span class="d-block">{{ row.nome }}</span>
         <span *ngIf="row.unidade" class="badge bg-light text-dark">
           <i class="bi bi-arrow-return-right"></i>
-          {{row.unidade.sigla}}
+          {{ row.unidade.sigla }}
         </span>
       </ng-template>
     </column>
+
     <column title="Código" field="codigo"></column>
+
     <column [title]="lex.translate('Cidade')" [template]="columnCidade">
       <ng-template let-row="row" #columnCidade>
-        <span>{{(row.cidade?.nome || "") + "/" + (row.cidade?.uf || "")}}</span>
+        <span>{{ (row.cidade?.nome || '') + '/' + (row.cidade?.uf || '') }}</span>
       </ng-template>
     </column>
+
     <column title="Situação" [template]="columnSituacao">
       <ng-template let-row="row" #columnSituacao>
         
@@ -39,7 +86,14 @@
         </div>
       </ng-template>
     </column>
-    <column type="options" [onEdit]="edit" [options]="options" [dynamicOptions]="dynamicOptions.bind(this)"></column>
+
+    <column
+      type="options"
+      [onEdit]="edit"
+      [options]="options"
+      [dynamicOptions]="dynamicOptions.bind(this)"
+    ></column>
   </columns>
+
   <pagination [rows]="rowsLimit"></pagination>
 </grid>
