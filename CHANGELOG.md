@@ -3,6 +3,8 @@
 ### Adicionado
 - Relatório de Agentes Públicos
 - Relatório de Unidades
+- Alerta ao assinar plano de trabalho que exijam a assinatura de um ou três agentes públicos
+- Contador de assinaturas
 ### Corrigido
 - Corrigido erro de cardinalidade na integração com SIAPE
 - Corrigido erro na exclusão de atribuições do usuário
@@ -15,6 +17,7 @@
 
 ### Removido
 - Permissão para Adm. master inativar unidades
+- Botões de relatório (legado) em planos de trabalhos
 
 ## 2.5.3 29/07/2025
 ### Corrigido
