@@ -289,8 +289,5 @@ export class PlanoTrabalhoService {
     };
   }
 
-/*   public assinaturaUsuarioEhExigida(exigidas: AssinaturaList): boolean {
-    return [...exigidas.participante, ...exigidas.gestores_unidade_executora, ...exigidas.gestores_unidade_lotacao, ...exigidas.gestores_entidade].includes(this.auth.usuario?.id!); 
-  } */
-  
+
 }

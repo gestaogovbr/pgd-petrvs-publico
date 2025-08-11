@@ -1,3 +1,24 @@
+
+## 2.6.0 08/08/2025
+### Adicionado
+- Relatório de Agentes Públicos
+- Relatório de Unidades
+- Alerta ao assinar plano de trabalho que exijam a assinatura de um ou três agentes públicos
+- Contador de assinaturas
+### Corrigido
+- Corrigido erro de cardinalidade na integração com SIAPE
+- Corrigido erro na exclusão de atribuições do usuário
+- Corrigido assinaturas de planos de trabalhos de unidades sem chefias
+- Collation no Relatorio de Planos de Trabalho
+- Exibição incompleta do Relatório de Planos de Trabalho
+- Exibição incompleta do Relatório de Planos de Entrega
+- Situações dos planos cancelados no Relatórios de Planos de Trabalho
+- Exibição dos Planos de Entrega de origem da Própria Unidade no cadastro de Planos de Trabalho
+
+### Removido
+- Permissão para Adm. master inativar unidades
+- Botões de relatório (legado) em planos de trabalhos
+
 ## 2.5.3 29/07/2025
 ### Corrigido
 - Corrigida permissão do Relatório de Planos de Trabalho

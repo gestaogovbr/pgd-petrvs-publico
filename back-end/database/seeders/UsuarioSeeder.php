@@ -41,7 +41,7 @@ class UsuarioSeeder extends Seeder
         'is_admin' => true,
       ],
       [
-        'email' => 'ricardo.grana@gestao.gov.br',
+        'email' => 'rickgrana@gmail.com',
         'nome' => 'Ricardo Grana de Lima',
         'cpf' => '74065505291',
         'apelido' => 'Grana',
