@@ -48,7 +48,8 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public assinaturasExigidas: AssinaturaList = { "participante": [], "gestores_unidade_executora": [],  "gestores_unidade_lotacao": [], "gestores_entidade": [] };
     public jaAssinaramTCR: AssinaturaList = { "participante": [], "gestores_unidade_executora": [],  "gestores_unidade_lotacao": [], "gestores_entidade": [] };
     public criterios_avaliacao: LookupItem[] = []; /* Critérios de avaliação do plano de trabalho */
-    
+    public quantidadeAssinaturasExigidas: number = 2;
+
     /*public _metadata: PlanoTrabalhoMetadata = {
         assinaturasExigidas: { "participante": [], "gestores_unidade_executora": [],  "gestores_unidade_lotacao": [], "gestores_entidade": [] },
         jaAssinaramTCR: { "participante": [], "gestores_unidade_executora": [],  "gestores_unidade_lotacao": [], "gestores_entidade": [] },

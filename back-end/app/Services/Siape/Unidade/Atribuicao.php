@@ -247,7 +247,7 @@ trait Atribuicao
     private function LimparAtribuicoes(UnidadeIntegrante $integranteNovoOuExistente, bool $removerLotado = false): void
     {
         if ($removerLotado) {
-            $integranteNovoOuExistente->deleteCascade();
+            $integranteNovoOuExistente->atribuicoes()->delete();
             return;
         }
         $integranteNovoOuExistente->atribuicoes()->each(function ($unidadeIntegrantesAtribuicoes) {

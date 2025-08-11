@@ -1,7 +1,11 @@
 <tabs right [title]="isModal ? '' : title" [select]="onSelectTab.bind(this)">
     <tab key="TABELA" icon="bi bi-table" label="Lista" [template]="grid">
         <ng-template #grid>
-            <unidade-list-grid [selectable]="selectable" [snapshot]="snapshot || modalRoute || route.snapshot"></unidade-list-grid>
+            <unidade-list-grid
+                [selectable]="selectable"
+                [snapshot]="snapshot || modalRoute || route.snapshot"
+                [unidade_pai]="queryParams.unidade_pai"
+            ></unidade-list-grid>
         </ng-template>
     </tab>
     <tab *ngIf="!selectable" key="MAPA" icon="bi bi-card-heading" label="Mapa" [template]="mapa">
