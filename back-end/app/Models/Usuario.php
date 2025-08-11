@@ -79,6 +79,8 @@ class Usuario extends Authenticatable implements AuditableContract
         'texto_complementar_plano', /* longtext; */ // Campo de mensagem adicional do plano de trabalho
         'situacao_funcional',
         'data_nascimento',
+        'nome_jornada', /* varchar(100); NULL */ // Nome da Jornada
+        'cod_jornada', /* int; NULL */ // Codigo da Jornada
         //'deleted_at', /* timestamp; */
         //'remember_token', /* varchar(100); */
         //'password', /* varchar(255); */// Senha do usuário
@@ -439,7 +441,7 @@ class Usuario extends Authenticatable implements AuditableContract
         if ($this->data_final_pedagio) {
             return Carbon::parse($this->data_final_pedagio)->isFuture();
         }
-        return false;         
+        return false;
     }
 
     public function getConfigAttribute($value)
@@ -500,8 +502,17 @@ class Usuario extends Authenticatable implements AuditableContract
         // For example
         return $this->is_admin == 1;
     }
+
     public function impersonateGuard()
     {
         return 'sanctum';
+    }
+
+    public static function getTiposIndisponibilidades()
+    {
+        return [
+            '1' => 'Art 10, §2º, INC SEGES/SPGRT nº 24/2024- Primeiro ano do Estágio Probatório.',
+            '2' => 'Art 10, §3º, INC SEGES/SPGRT nº 24/2024- Movimentação entre órgãos há menos de 6 (seis) meses.'
+        ];
     }
 }

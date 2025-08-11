@@ -6,4 +6,12 @@
             [disabled]="!query.enableNext">PRÓXIMA <i class="bi-arrow-right-circle"></i></button>
     </div>
 </div>
-<div *ngIf="isType('infinity')" class="search-results" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()"></div>
+<div *ngIf="isType('infinity')"
+    class="search-results"
+    infiniteScroll
+    [infiniteScrollDistance]="2"
+    [infiniteScrollThrottle]="50"
+    (scrolled)="onScroll()"
+    [infiniteScrollContainer]="infiniteScrollContainer"
+    [fromRoot]="fromRoot"
+></div>

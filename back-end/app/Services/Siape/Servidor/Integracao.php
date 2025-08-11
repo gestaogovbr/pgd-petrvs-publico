@@ -164,6 +164,8 @@ class Integracao implements InterfaceIntegracao
             'dataexercicionoorgao' => $this->getDataExercicio($ativo, $this->utilService, $this->integracaoConfig['tipo']),
             'funcoes' => $ativo['funcoes'],
             'matricula' => $this->utilService->valueOrDefault($ativo['matriculasiape'], null),
+            'nome_jornada' => $this->utilService->valueOrDefault($servidor['nome_jornada'], null),
+            'cod_jornada' => $this->utilService->valueOrDefault($servidor['cod_jornada'], null),
             'cpf_chefia_imediata' => $this->getCPFChefiaImediata($servidor, $this->utilService),
             'email_chefia_imediata' => $this->getEmailChefiaImediata($servidor, $this->utilService),
             'deleted_at' => null,
