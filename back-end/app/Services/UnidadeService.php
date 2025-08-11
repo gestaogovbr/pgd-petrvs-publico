@@ -4,17 +4,17 @@ namespace App\Services;
 
 use App\Exceptions\LogError;
 use App\Exceptions\NotFoundException;
+use App\Exceptions\ServerException;
 use App\Models\ModelBase;
+use App\Models\Programa;
+use App\Models\Unidade;
+use App\Services\RawWhere;
+use App\Services\ServiceBase;
+use App\Services\Siape\DadosExternosSiape;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use DateTime;
 use DateTimeZone;
-use App\Models\Unidade;
-use App\Models\Programa;
-use App\Services\ServiceBase;
-use Illuminate\Support\Facades\DB;
-use App\Exceptions\ServerException;
-use App\Services\Siape\DadosExternosSiape;
-use Exception;
-use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
 use Throwable;
 
@@ -301,6 +301,8 @@ class UnidadeService extends ServiceBase
         //  unidades-list-grid
         $dataInativacao = $this->extractWhere($data, "data_inativacao");                    //  	data_inativacao (selectable)
         $inativos = empty($dataInativacao) || $dataInativacao[1] == "!=" ? true : false;    //  		!= null		......................	retornar somente as unidades inativas   => $inativos = true
+
+
         foreach ($data["where"] as $condition) {                                             //  		== null		......................	retornar somente as unidades ativas     => $inativos = false
             if (is_array($condition) && $condition[0] == "subordinadas") {                   //  	inativos (not selectable)
                 $subordinadas = $condition[2];                                              //  		== true		......................	retornar unidades ativas e inativas     => $inativos = true
@@ -310,11 +312,28 @@ class UnidadeService extends ServiceBase
                 array_push($where, $condition);
             }
         }
+
         if (!empty($dataInativacao) || empty($inativos)) array_push($where, ["data_inativacao", $inativos ? "!=" : "==", null]);
+
         if (!$usuario->hasPermissionTo("MOD_UND_TUDO")) {
             $areasTrabalhoWhere = $this->usuarioService->areasTrabalhoWhere($subordinadas, null, "unidades");
-            array_push($where, new RawWhere("($areasTrabalhoWhere)", []));
+            $where[] = new RawWhere("($areasTrabalhoWhere)", []);
         }
+
+        // utilize para exibir apenas a unidades a partir de um determinado pai
+        $unidade_pai = $this->extractWhere($data, "unidade_pai");
+        if (isset($unidade_pai[2])) {
+            $subordinadasIds = $this->subordinadas($unidade_pai[2])->pluck('id')->toArray();
+            $unidadeIds = array_merge([$unidade_pai[2]], $subordinadasIds);
+            $where[] = ['informal', '==', 0];
+            $where[] = ['id', 'in', $unidadeIds];
+
+            // remove o unidade_pai das condições, uma vez que a coluna não existe
+            $where = array_values(array_filter($where, function ($item) {
+                return !is_array($item) || ($item[0] !== 'unidade_pai');
+            }));
+        }
+
         $data["where"] = $where;
         return $data;
     }
@@ -549,6 +568,61 @@ class UnidadeService extends ServiceBase
         }
         return $result;
     }
+    /**
+     * Retorna os gestores que podem assinar o TCR em caso de usuário informado ser gestor.
+     * @param Unidade $unidade
+     * @param int $usuarioId
+     * @param int $participanteId
+     * @return array
+     */
+    public function getGestoresPorUnidade($unidade, $usuarioId, $participanteId): array
+    {
+        if (!$unidade) {
+            return []; // garante que não será null
+        }
+
+        $atribuicoes = $this->usuarioService->atribuicoesGestor($unidade->id, $usuarioId);
+
+        if ($atribuicoes["gestor"]) {
+            return array_values(array_filter([
+                $unidade->unidadePai?->gestor?->usuario_id,
+                ...($unidade->unidadePai?->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? [])
+            ]));
+        }
+
+        if ($atribuicoes["gestorSubstituto"]) {
+            return array_values(array_filter(array_merge(
+                [$unidade->gestor?->usuario_id, $unidade->unidadePai?->gestor?->usuario_id],
+                $unidade->unidadePai?->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? [],
+                $unidade->gestoresSubstitutos?->reject(fn($g) => $g->usuario_id == $participanteId)->pluck('usuario_id')->toArray() ?? []
+            )));
+        }
+
+        if ($atribuicoes["gestorDelegado"]) {
+            return array_values(array_filter(array_merge(
+                [$unidade->gestor?->usuario_id],
+                $unidade->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? []
+            )));
+        }
+
+        // Se o usuário não é gestor, substituto ou delegado, retorna somente o gestor titular e os substitutos
+
+        $gestores = array_values(array_filter(array_merge(
+            [$unidade->gestor?->usuario_id],
+            $unidade->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? []
+        )));
+
+        if (count($gestores) > 0) {
+            return $gestores;
+        } else {
+            // Se não houver gestores, retorna o gestor da unidade superior
+            return array_values(array_filter([
+                $unidade->unidadePai?->gestor?->usuario_id,
+                ...($unidade->unidadePai?->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? [])
+            ]));
+        }
+    }
+
 
     //
     /*
