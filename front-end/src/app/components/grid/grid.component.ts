@@ -213,6 +213,8 @@ export class GridComponent extends ComponentBase implements OnInit {
 		return this._loading;
 	}
 
+	@Input() className: string|null = null;
+
 	/* Propriedades private e métodos get e set */
 	private _query?: QueryContext<Base>;
 	private _list?: Observable<any[]>;
