@@ -116,10 +116,6 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
       result.push(["periodoFim", "<=", form.periodo_fim.toISOString().slice(0,10)]);
     }
 
-    if (form.homologacao) {
-      result.push(["data_homologacao", "==", form.homologacao.toISOString().slice(0,10)]);
-    }
-
     if (form.somente_vigentes) {
       result.push(["somente_vigentes", "==", 1]);
     }

@@ -1,0 +1,249 @@
+<grid [dao]="dao" 
+    [title]="title" 
+    [orderBy]="orderBy"
+    [maxHeight]="450"
+    [scrollable]="true"
+    [className]="'relatorio-unidade'"
+>
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter 
+        [form]="filter" 
+        [where]="filterWhere" 
+        [submit]="filterSubmit.bind(this)" 
+        [filter]="onButtonFilterClick"
+        filterLabel="Consultar"
+        [hasExportExcel]="true"
+        [exportExcel]="exportExcel"
+        [excelFileName]="'relatorio_unidades.xlsx'"
+    >
+        <div class="row">   
+            <input-search 
+                #unidade 
+                [size]="6" 
+                label="Unidade de Consulta"
+                [control]="filter!.controls.unidade_id" 
+                controlName="unidade_id" 
+                [dao]="unidadeDao"
+                [selectRoute]="{
+                    route: ['configuracoes', 'unidade'],
+                    params: auth.hasPermissionTo('MOD_RELATORIO_UNIDADE_TODAS_UNIDADES')
+                    ? { }
+                    : { unidade_pai: auth.unidade?.id }
+                }"
+                [where]="auth.hasPermissionTo('MOD_RELATORIO_UNIDADE_TODAS_UNIDADES')
+                    ? []
+                    : [['id', 'in', this.unidades]]"
+            >
+            </input-search>
+            <input-switch
+                [size]="2"
+                label="Unidades Subordinadas"
+                controlName="incluir_unidades_subordinadas"
+                [control]="filter!.controls.incluir_unidades_subordinadas"
+            ></input-switch>
+        </div>
+    </filter>
+    <columns>
+        <column title="Sigla"
+            [template]="columnSigla"
+            [titleTemplate]="titleSigla" [verticalAlign]="'bottom'"
+            [width]="200"
+        >
+            <ng-template let-header="header" #titleSigla>
+                <input-text 
+                    [control]="filter!.controls.unidadeNome"
+                    controlName="this.filter.unidadeNome"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnSigla>
+                <span> {{row.unidadeHierarquia || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Unidade"
+            [template]="columnNome"
+            [titleTemplate]="titleNome" [verticalAlign]="'bottom'"
+            [width]="200"
+        >
+            <ng-template let-header="header" #titleNome>
+                <input-text 
+                    [control]="filter!.controls.nome"
+                    controlName="this.filter.nome"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnNome>
+                <span> {{row.nome}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Uorg"
+                [template]="columnUorg"
+                [titleTemplate]="titleUorg"
+                [verticalAlign]="'bottom'"
+                [width]="60"
+        >
+            <ng-template let-header="header" #titleUorg>
+                <input-text 
+                    [control]="filter!.controls.uorg"
+                    controlName="this.filter.uorg"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnUorg>
+                <span> {{row.codigo || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Tipo"
+            [template]="columnTipo"
+            [titleTemplate]="titleTipo"
+            [verticalAlign]="'bottom'"
+            [width]="100"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleTipo>
+                <input-select 
+                    [items]="lookup.RELATORIO_UNIDADE_TIPOS" 
+                    [control]="filter!.controls.tipo"
+                    controlName="this.filter.tipo"
+                    (change)="onValueChange($event)"
+                    nullable
+                ></input-select> 
+            </ng-template>
+
+            <ng-template let-row="row" #columnTipo>
+                <span> {{row.tipo || '-'}}</span>
+            </ng-template>
+        </column>
+
+
+        <column title="Chefia"
+            [template]="columnChefiaNome"
+            [titleTemplate]="titleChefiaNome"
+            [verticalAlign]="'bottom'"
+            [width]="200"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleChefiaNome>
+                <input-text 
+                    [control]="filter!.controls.chefiaNome"
+                    controlName="this.filter.chefiaNome"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnChefiaNome>
+                <span> {{row.chefiaNome || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Chefia substituta"
+            [template]="columnTotalSubstitutos"
+            [titleTemplate]="titleTotalSubstitutos"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+            [width]="100"
+        >
+            <ng-template let-header="header" #titleTotalSubstitutos>
+                <input-text 
+                    [control]="filter!.controls.totalSubstitutos"
+                    controlName="this.filter.totalSubstitutos"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnTotalSubstitutos>
+                <a class="nav-link px-3" role="button"
+                    (click)="go.navigate({
+                        route: ['relatorios', 'agentes'] },
+                        {
+                            metadata: {
+                                unidade_id: row.unidade_id,
+                                atribuicao: 'GESTOR_SUBSTITUTO'
+                            }
+                        }
+                    )"
+                >
+                    <i class="bi bi-people"></i>
+                    {{row.totalSubstitutos ?? '-'}}
+                </a>
+            </ng-template>
+        </column>
+
+        <column title="Delegados"
+            [template]="columnTotalDelegados"
+            [titleTemplate]="titleTotalDelegados"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+            [width]="100"
+        >
+            <ng-template let-header="header" #titleTotalDelegados>
+                <input-text 
+                    [control]="filter!.controls.totalDelegados"
+                    controlName="this.filter.totalDelegados"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnTotalDelegados>
+                <a class="nav-link px-3" role="button"
+                    (click)="go.navigate({
+                        route: ['relatorios', 'agentes'] },
+                        {
+                            metadata: {
+                                unidade_id: row.unidade_id,
+                                atribuicao: 'GESTOR_DELEGADO'
+                            }
+                        }
+                    )"
+                >
+                    <i class="bi bi-people"></i>
+                    {{row.totalDelegados ?? '-'}}
+                </a>
+            </ng-template>
+        </column>
+
+        <column title="Vinculados"
+            [template]="columnTotalVinculados"
+            [titleTemplate]="titleTotalVinculados"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+            [width]="100"
+        >
+            <ng-template let-header="header" #titleTotalVinculados>
+                <input-text 
+                    [control]="filter!.controls.totalVinculados"
+                    controlName="this.filter.totalVinculados"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnTotalVinculados>
+                <a class="nav-link px-3" role="button"
+                    (click)="go.navigate({
+                        route: ['relatorios', 'agentes'] },
+                        {
+                            metadata: {
+                                unidade_id: row.unidade_id,
+                                atribuicao: 'COLABORADOR'
+                            }
+                        }
+                    )"
+                >
+                    <i class="bi bi-people"></i>
+                    {{row.totalVinculados ?? '-'}}
+                </a>
+            </ng-template>
+        </column>
+    </columns>
+    <pagination
+        [rows]="rowsLimit"
+        [infiniteScrollContainer]="'.relatorio-unidade-table'"
+        [fromRoot]="true"
+    ></pagination>
+</grid>
