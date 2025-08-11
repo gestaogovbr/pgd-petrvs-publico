@@ -72,7 +72,6 @@ class UsuarioSSCSeeder extends Seeder
             'perfil_id' => $usuarioData['perfil_id'],
             'sexo' => $usuarioData['sexo'],
             'is_admin' => $usuarioData['is_admin'],
-            'unidade_id' => $unidadePaiId,
             'created_at' => $this->timenow,
             'updated_at' => $this->timenow,
           ]
