@@ -17,9 +17,11 @@ class PlanoTrabalhoDataSource extends DataSource
             'programa',
             'usuario',
             'entregas' => function ($query) {
-                $query->whereHas('planoEntregaEntrega.planoEntrega', function($query) {
-                    $query->whereIn('status', ['ATIVO', 'CONCLUIDO', 'AVALIADO']);
-                });
+                $query
+                    ->whereDoesntHave('planoEntregaEntrega.planoEntrega')
+                    ->orWhereHas('planoEntregaEntrega.planoEntrega', function($query) {
+                        $query->whereIn('status', ['ATIVO', 'CONCLUIDO', 'AVALIADO']);
+                    });
             },
             'entregas.planoTrabalho',
             'consolidacoes' => function ($query) {
@@ -32,7 +34,7 @@ class PlanoTrabalhoDataSource extends DataSource
         if (!$planoTrabalho) {
             throw new ExportPgdException("Plano de Trabalho {$exportSource->id} inválido para exportação");
         }
-      
+
         if (!$planoTrabalho->programa){
             throw new ExportPgdException("Plano de Trabalho {$exportSource->id} não possui Programa válido");
         }

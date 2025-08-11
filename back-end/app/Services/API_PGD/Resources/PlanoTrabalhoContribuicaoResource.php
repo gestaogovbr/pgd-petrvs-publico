@@ -10,12 +10,12 @@ class PlanoTrabalhoContribuicaoResource extends JsonResource
     {
       return [
         "id_contribuicao"     => $this->id,
-        "tipo_contribuicao"   => $this->planoEntregaEntrega 
-          ? (($this->planoEntregaEntrega && ($this->planoEntregaEntrega->unidade_id == $this->planoTrabalho->unidade_id)) ? 1 : 3) 
+        "tipo_contribuicao"   => $this->planoEntregaEntrega
+          ? (($this->planoEntregaEntrega && ($this->planoEntregaEntrega->unidade_id == $this->planoTrabalho->unidade_id)) ? 1 : 3)
           : 2,
         "percentual_contribuicao" => floor($this->forca_trabalho ?? 0),
         "id_plano_entregas"   => $this->planoEntregaEntrega->plano_entrega_id ?? null,
-        "id_entrega"          => $this->planoEntregaEntrega->id ?? null,
+        "id_entrega"          => $this->planoEntregaEntrega->id ?? $this->id
       ];
     }
 }
