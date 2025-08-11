@@ -821,6 +821,7 @@ class PlanoTrabalhoService extends ServiceBase
             $unidade = Unidade::find($row->unidade_id);
             $row->_metadata = [
                 'assinaturasExigidas' => $this->assinaturasExigidas($row),
+                'quantidadeAssinaturasExigidas' => $this->quantidadeAssinaturasExigidas($row),
                 'jaAssinaramTCR' => $this->jaAssinaramTCR($row->id),
                 'podeCancelar' => empty($this->validateCancelamento($row->id)),
                 'atribuicoesParticipante' => $this->usuarioService->atribuicoesGestor($row->unidade_id, $row->usuario_id),
@@ -1238,5 +1239,28 @@ class PlanoTrabalhoService extends ServiceBase
             Usuario::with("lotacao")->find($planoTrabalho["usuario_id"]),
             Unidade::find($planoTrabalho["unidade_id"])
         ];
+    }
+
+    private function quantidadeAssinaturasExigidas($planoTrabalho): int
+    {
+        $usuarioId = $planoTrabalho['usuario_id'];
+        $unidadeId = $planoTrabalho['unidade_id'];
+        
+        // Verifica as atribuições do usuário na unidade do plano
+        $unidade = Unidade::find($unidadeId);
+        $atribuicoes = $this->usuarioService->atribuicoesGestor($unidade->unidade_pai_id, $usuarioId);
+        
+        // Se o usuário for gestor substituto da unidade superior: 1 assinatura
+        if ($atribuicoes['gestorSubstituto']) {
+            return 1;
+        }
+        
+        // Se o usuário não for lotado na unidade: 3 assinaturas
+        if (!$this->usuarioService->isLotacao($usuarioId, $unidadeId) ) {
+            return 3;
+        }
+        
+        // Caso contrário: 2 assinaturas (padrão)
+        return 2;
     }
 }
