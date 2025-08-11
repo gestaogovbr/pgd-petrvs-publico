@@ -86,12 +86,32 @@ class UnidadeController extends ControllerBase
       ]);
     }  catch (IBaseException $e) {
       return response()->json(['error' => $e->getMessage()]);
+    }
+    catch (Throwable $e) {
+        $dataError = throwableToArrayLog($e);
+        Log::error($dataError);
+        return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+    }
   }
-  catch (Throwable $e) {
-      $dataError = throwableToArrayLog($e);
-      Log::error($dataError);
-      return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
-  }
+
+  public function subordinadas(Request $request)
+  {
+    try {
+      $data = $request->validate([
+        'unidade_id' => ['required']
+      ]);
+      return response()->json([
+        'success' => true,
+        'subordinadas' => $this->service->subordinadas($data["unidade_id"])
+      ]);
+    }  catch (IBaseException $e) {
+      return response()->json(['error' => $e->getMessage()]);
+    }
+    catch (Throwable $e) {
+        $dataError = throwableToArrayLog($e);
+        Log::error($dataError);
+        return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+    }
   }
 
   public function metadadosUnidade(Request $request)
@@ -305,7 +325,7 @@ class UnidadeController extends ControllerBase
 
         $unidadeId = $unidade->unidade_pai_id;
       }
-  
+
     } catch (IBaseException $e) {
       return response()->json(['error' => $e->getMessage()]);
     } catch (Throwable $e) {
@@ -313,7 +333,7 @@ class UnidadeController extends ControllerBase
       Log::error($dataError);
       return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
     }
-    
+
     return response()->json(['error' => "Não foi possível identificar a instituidora da unidade."]);
   }
 
@@ -373,5 +393,5 @@ class UnidadeController extends ControllerBase
             ]
         );
     }
-  
+
 }
