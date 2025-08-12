@@ -595,7 +595,11 @@ class IntegracaoService extends ServiceBase
         u.nome_jornada AS nome_jornada_antigo,
         isr.nome_jornada AS nome_jornada,
         u.cod_jornada AS cod_jornada_antigo,
-        isr.cod_jornada AS cod_jornada
+        isr.cod_jornada AS cod_jornada,
+        u.modalidade_pgd AS modalidade_pgd_anterior,
+        isr.modalidade_pgd,
+        u.participa_pgd AS participa_pgd_anterior,
+        isr.participa_pgd
     FROM
         integracao_servidores isr
         LEFT JOIN usuarios u ON (isr.cpf = u.cpf)
@@ -607,6 +611,8 @@ class IntegracaoService extends ServiceBase
         isr.telefone != u.telefone OR
         (isr.nome_jornada != u.nome_jornada OR isr.nome_jornada IS NOT NULL AND u.nome_jornada IS NULL) OR
         (isr.cod_jornada != u.cod_jornada OR isr.cod_jornada IS NOT NULL AND u.cod_jornada IS NULL) OR
+        (isr.modalidade_pgd != u.modalidade_pgd OR isr.modalidade_pgd IS NOT NULL AND u.modalidade_pgd IS NULL) OR
+        (isr.participa_pgd != u.participa_pgd OR isr.participa_pgd IS NOT NULL AND u.participa_pgd IS NULL) OR
         (isr.data_modificacao > u.data_modificacao OR isr.data_modificacao IS NOT NULL AND u.data_nascimento IS NULL )
         "
         );
@@ -617,6 +623,8 @@ class IntegracaoService extends ServiceBase
           "cod_jornada = :cod_jornada, " .
           "nome_jornada = :nome_jornada, " .
           "data_nascimento = :data_nascimento, " .
+          "modalidade_pgd = :modalidade_pgd, " .
+          "participa_pgd = :participa_pgd, " .
           "data_modificacao = :data_modificacao WHERE id = :id";
 
         // Adicionar algoritmo para trocar lotação.
@@ -688,6 +696,8 @@ class IntegracaoService extends ServiceBase
                 'telefone'      => $linha->telefone,
                 'cod_jornada'      => $linha->cod_jornada,
                 'nome_jornada'      => $linha->nome_jornada,
+                'modalidade_pgd' => $linha->modalidade_pgd,
+                'participa_pgd' => $linha->participa_pgd,
                 'id'            => $linha->id,
                 'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
                 'data_nascimento' => $linha->data_nascimento,
