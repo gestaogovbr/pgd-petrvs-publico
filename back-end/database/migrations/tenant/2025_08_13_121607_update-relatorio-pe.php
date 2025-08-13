@@ -69,7 +69,7 @@ return new class extends Migration
             `uni`.`sigla` COLLATE utf8mb4_unicode_ci AS `unidadeSigla`,
             DATEDIFF(`pe`.`data_fim`, `pe`.`data_inicio`) + 1 AS `duracao`,
             CAST(a.data_avaliacao AS DATE) AS data_avaliacao,
-            JSON_UNQUOTE(a.nota) COLLATE utf8mb4_unicode_ci AS nota,
+            JSON_UNQUOTE(a.nota) AS nota,
             case when a.data_avaliacao is null
                 then
                     CASE when CAST(a.data_avaliacao as date) <= DATE_ADD(now(), INTERVAL 30 DAY)
