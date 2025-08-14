@@ -454,12 +454,13 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public exibeAlertaTotalAssinaturas(plano: PlanoTrabalho | undefined) {
     if(plano){
        let assinaturasExigidas = plano._metadata?.quantidadeAssinaturasExigidas;
+       let unidadeVinculada = plano._metadata?.unidadeVinculada;
        let msg = ''
        if (assinaturasExigidas == 1) 
         msg = "O participante tem atribuição de chefia substituta da unidade superior à sua unidade de lotação. Por isso, este Plano de Trabalho exigirá somente uma assinatura.";
-        else if (assinaturasExigidas == 3)
+       else if (assinaturasExigidas == 3 || !unidadeVinculada)
         msg = "Este Plano de Trabalho está sendo criado numa unidade diferente da unidade de lotação. Por isso, a chefia da unidade do plano também deverá assiná-lo";
-      if (assinaturasExigidas != 2)  
+      if (assinaturasExigidas != 2 || msg !== '')
         this.dialog.alert("Atenção", msg, "OK");
     }
   }
