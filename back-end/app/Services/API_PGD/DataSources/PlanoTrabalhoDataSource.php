@@ -18,7 +18,7 @@ class PlanoTrabalhoDataSource extends DataSource
             'usuario',
             'entregas' => function ($query) {
                 $query
-                    ->whereDoesntHave('planoEntregaEntrega.planoEntrega')
+                    ->whereDoesntHave('planoEntregaEntrega')
                     ->orWhereHas('planoEntregaEntrega.planoEntrega', function($query) {
                         $query->whereIn('status', ['ATIVO', 'CONCLUIDO', 'AVALIADO']);
                     });
@@ -36,19 +36,23 @@ class PlanoTrabalhoDataSource extends DataSource
         }
 
         if (!$planoTrabalho->programa){
-            throw new ExportPgdException("Plano de Trabalho {$exportSource->id} não possui Programa válido");
+            throw new ExportPgdException("Plano de Trabalho nº {$planoTrabalho->numero} não possui Programa válido");
         }
 
         if (!$planoTrabalho->usuario){
-            throw new ExportPgdException("Plano de Trabalho {$exportSource->id} não possui Usuário");
+            throw new ExportPgdException("Plano de Trabalho nº {$planoTrabalho->numero} não possui Usuário");
         }
 
         if (!$planoTrabalho->usuario->lotacao){
-            throw new ExportPgdException("Usuário do Plano de Trabalho {$exportSource->id} não possui Lotação");
+            throw new ExportPgdException("Usuário do Plano de Trabalho nº {$planoTrabalho->numero} não possui Lotação");
         }
 
         if (!$planoTrabalho->usuario->ultimaParticipacaoPrograma){
-            throw new ExportPgdException("Usuário do Plano de trabalho {$exportSource->id} não possui Participação Ativa");
+            throw new ExportPgdException("Usuário do Plano de trabalho nº {$planoTrabalho->numero} não possui Participação Ativa");
+        }
+
+        if (!$planoTrabalho->entregas) {
+            throw new ExportPgdException("Plano de Trabalho nº {$planoTrabalho->numero} não possui contribuições");
         }
 
         return $planoTrabalho;

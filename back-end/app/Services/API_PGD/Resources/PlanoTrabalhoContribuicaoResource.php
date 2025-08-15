@@ -15,7 +15,7 @@ class PlanoTrabalhoContribuicaoResource extends JsonResource
           : 2,
         "percentual_contribuicao" => floor($this->forca_trabalho ?? 0),
         "id_plano_entregas"   => $this->planoEntregaEntrega->plano_entrega_id ?? null,
-        "id_entrega"          => $this->planoEntregaEntrega->id ?? $this->id
+        "id_entrega"          => $this->planoEntregaEntrega->id ?? null
       ];
     }
 }
