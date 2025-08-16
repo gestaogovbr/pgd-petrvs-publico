@@ -93,46 +93,32 @@ return new class extends Migration
         left join (
             select
                 `a1`.`id` AS `id`,
-                `a1`.`created_at` AS `created_at`,
-                `a1`.`updated_at` AS `updated_at`,
-                `a1`.`deleted_at` AS `deleted_at`,
                 `a1`.`data_avaliacao` AS `data_avaliacao`,
                 `a1`.`nota` AS `nota`,
-                `a1`.`justificativa` AS `justificativa`,
-                `a1`.`justificativas` AS `justificativas`,
-                `a1`.`recurso` AS `recurso`,
-                `a1`.`avaliador_id` AS `avaliador_id`,
                 `a1`.`plano_trabalho_consolidacao_id` AS `plano_trabalho_consolidacao_id`,
-                `a1`.`plano_entrega_id` AS `plano_entrega_id`,
-                `a1`.`tipo_avaliacao_id` AS `tipo_avaliacao_id`,
-                `a1`.`tipo_avaliacao_nota_id` AS `tipo_avaliacao_nota_id`,
                 `a1`.`data_recurso` AS `data_recurso`,
                 `a1`.`rn` AS `rn`
             from
                 (
                 select
                     `avaliacoes`.`id` AS `id`,
-                    `avaliacoes`.`created_at` AS `created_at`,
-                    `avaliacoes`.`updated_at` AS `updated_at`,
-                    `avaliacoes`.`deleted_at` AS `deleted_at`,
                     `avaliacoes`.`data_avaliacao` AS `data_avaliacao`,
                     `avaliacoes`.`nota` AS `nota`,
-                    `avaliacoes`.`justificativa` AS `justificativa`,
-                    `avaliacoes`.`justificativas` AS `justificativas`,
-                    `avaliacoes`.`recurso` AS `recurso`,
                     `avaliacoes`.`data_recurso` AS `data_recurso`,
-                    `avaliacoes`.`avaliador_id` AS `avaliador_id`,
                     `avaliacoes`.`plano_trabalho_consolidacao_id` AS `plano_trabalho_consolidacao_id`,
-                    `avaliacoes`.`plano_entrega_id` AS `plano_entrega_id`,
-                    `avaliacoes`.`tipo_avaliacao_id` AS `tipo_avaliacao_id`,
-                    `avaliacoes`.`tipo_avaliacao_nota_id` AS `tipo_avaliacao_nota_id`,
                     row_number() over ( partition by `avaliacoes`.`plano_trabalho_consolidacao_id`
                 order by
                     `avaliacoes`.`data_avaliacao`) AS `rn`
                 from
                     `avaliacoes`
                 where
-                    `avaliacoes`.`deleted_at` is null) `a1`
+                    `avaliacoes`.`deleted_at` is null
+                group by `avaliacoes`.`id`,
+                    `avaliacoes`.`data_avaliacao`,
+                    `avaliacoes`.`nota`,
+                    `avaliacoes`.`data_recurso`,
+                    `avaliacoes`.`plano_trabalho_consolidacao_id`
+            ) `a1`
             where
                 `a1`.`rn` = 1) `aval_antiga` on
             (`aval_antiga`.`plano_trabalho_consolidacao_id` = `ptc`.`id`))

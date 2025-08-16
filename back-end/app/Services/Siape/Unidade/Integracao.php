@@ -149,7 +149,10 @@ class Integracao implements InterfaceIntegracao
     private function criaVinculoDoUsuarioComUnidade(string $usuarioId, string $unidadeId): UnidadeIntegrante
     {
         //fixme colocar no repositorio
-        $integranteNovoOuExistente = UnidadeIntegrante::firstOrCreate(['unidade_id' => $unidadeId, 'usuario_id' => $usuarioId]);
+        $integranteNovoOuExistente = UnidadeIntegrante::withTrashed()->firstOrCreate(['unidade_id' => $unidadeId, 'usuario_id' => $usuarioId]);
+        if($integranteNovoOuExistente->trashed()) {
+            $integranteNovoOuExistente->restore();
+        }
         return $integranteNovoOuExistente;
     }
 }
