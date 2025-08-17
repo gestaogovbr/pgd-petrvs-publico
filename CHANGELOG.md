@@ -1,3 +1,9 @@
+## 2.6.1 10/08/2025
+### Corrigido
+- Corrigido erro no relacionamento de atribuições do usuário
+- Correção do Relatório de Unidades
+- Correção do Relatório Detalhado de Planos de Trabalho
+- Modificações de collation dos Relatórios de Planos de Trabalho, Entrega e Unidades
 
 ## 2.6.0 08/08/2025
 ### Adicionado
