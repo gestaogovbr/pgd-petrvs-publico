@@ -596,7 +596,6 @@ class IntegracaoService extends ServiceBase
         isr.nome_jornada AS nome_jornada,
         u.cod_jornada AS cod_jornada_antigo,
         isr.cod_jornada AS cod_jornada,
-        isr.data_nascimento,
         u.modalidade_pgd AS modalidade_pgd_anterior,
         isr.modalidade_pgd,
         u.participa_pgd AS participa_pgd_anterior,

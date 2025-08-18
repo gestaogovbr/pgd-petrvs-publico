@@ -821,6 +821,8 @@ class PlanoTrabalhoService extends ServiceBase
             $unidade = Unidade::find($row->unidade_id);
             $row->_metadata = [
                 'assinaturasExigidas' => $this->assinaturasExigidas($row),
+                'quantidadeAssinaturasExigidas' => $this->quantidadeAssinaturasExigidas($row),
+                'unidadeVinculada' => $this->isUnidadeVinculada($row),
                 'jaAssinaramTCR' => $this->jaAssinaramTCR($row->id),
                 'podeCancelar' => empty($this->validateCancelamento($row->id)),
                 'atribuicoesParticipante' => $this->usuarioService->atribuicoesGestor($row->unidade_id, $row->usuario_id),
@@ -1239,4 +1241,78 @@ class PlanoTrabalhoService extends ServiceBase
             Unidade::find($planoTrabalho["unidade_id"])
         ];
     }
+
+    private function quantidadeAssinaturasExigidas($planoTrabalho): int
+    {
+        $usuarioId = $planoTrabalho['usuario_id'];
+        $unidadeId = $planoTrabalho['unidade_id'];
+        
+        // Verifica as atribuições do usuário na unidade do plano
+        $unidade = Unidade::find($unidadeId);
+        $atribuicoesUnidadePlano = $this->usuarioService->atribuicoesGestor($unidadeId, $usuarioId);
+
+        // Verifica as atribuições do usuário da unidade pai a undiade do plano
+        $atribuicoesUnidadePai = $this->usuarioService->atribuicoesGestor($unidade->unidade_pai_id, $usuarioId);
+
+        // Se o usuário for gestor substituto da unidade superior: 1 assinatura
+        if ($atribuicoesUnidadePai['gestorSubstituto']) {
+            return 1;
+        }
+        
+        // Se o usuário não for lotado na unidade e não tiver chefias relacionadas a unidade: 3 assinaturas
+        if (!$this->usuarioService->isLotacao($usuarioId, $unidadeId)) {
+            if($this->possuiAtribuicao($atribuicoesUnidadePlano)){
+                return 2 + $this->quantidadeAssinaturasExigidasLotacao($usuarioId, $atribuicoesUnidadePlano);
+            }
+
+            return 3;
+        }
+        
+        // Caso contrário: 2 assinaturas (padrão)
+        return 2;
+    }
+
+    /**
+     *  Recebe um array de atribuições e retorna um bool indicando se alguma das atribuições é verdadeira
+     */
+    private function possuiAtribuicao($atribuicoes): bool{
+        foreach ($atribuicoes as $value) {
+            if ($value) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     *  Recebe o usuario e as atribuições do plano, retornando o numero de assinaturas esperadas pela unidade de lotação
+     */
+    private function quantidadeAssinaturasExigidasLotacao($usuarioId, $atribuicoesUnidadePlano): int
+    {
+        $usuario = Usuario::find($usuarioId);
+        $atribuicoesUnidadeLotacao = $this->usuarioService->atribuicoesGestor($usuario->lotacao?->unidade_id, $usuarioId);
+
+        // Se o usuário for gestor da unidade: 0 assinatura
+        if ($atribuicoesUnidadeLotacao['gestor'] && $atribuicoesUnidadePlano['gestorSubstituto']) {
+            return 0;
+        }
+        
+        // Caso contrário: 1 assinatura (padrão)
+        return 1;
+    }
+
+
+    /**
+     *  Recebe o plano de trabalho e verifica se ele é cadastrado para a unidade de lotação do usuário
+     */
+    private function isUnidadeVinculada($planoTrabalho): bool
+    {
+        $unidadeId = $planoTrabalho['unidade_id'];
+        
+        $usuario = Usuario::find($planoTrabalho['usuario_id']);
+        $usuario->lotacao = null;
+        return $usuario->lotacao?->unidade_id == $unidadeId;
+    }
+    
 }

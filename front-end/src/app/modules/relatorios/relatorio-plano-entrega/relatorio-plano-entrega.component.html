@@ -3,6 +3,7 @@
     [orderBy]="orderBy"
     [maxHeight]="400"
     [scrollable]="true"
+    [className]="'relatorio-pe'"
 >
     <toolbar *ngIf="!selectable"></toolbar>
     <filter 
@@ -115,14 +116,15 @@
             [width]="100"
         >
             <ng-template let-header="header" #titleEntregaHomologacao>
-                <input-text 
-                    [control]="filter!.controls.homologador"
-                    controlName="this.filter.homologador"
+                <input-datetime
+                    date
+                    controlName="homologacao"
+                    [control]="filter!.controls.homologacao"
                     (blur)="onValueChange($event)"
-                ></input-text>
+                ></input-datetime>
             </ng-template>
             <ng-template let-row="row" #columnHomologacao>
-                <span> {{row.homologador || '-'}}</span>
+                <span> {{ dao!.getDateFormatted(row.data_homologacao) || 'Dispensado'}}</span>
             </ng-template>
         </column>
 
@@ -234,7 +236,7 @@
                 ></input-datetime>
             </ng-template>
             <ng-template let-row="row" #columnConclusao>
-                <span> - </span>
+                <span>{{dao!.getDateFormatted(row.data_conclusao) || '-'}}</span>
             </ng-template>
         </column>
 
@@ -280,5 +282,9 @@
             </ng-template>
         </column>
     </columns>
-    <pagination [rows]="rowsLimit"></pagination>
+    <pagination
+        [rows]="rowsLimit"
+        [infiniteScrollContainer]="'.relatorio-pe-table'"
+        [fromRoot]="true"
+    ></pagination>
 </grid>

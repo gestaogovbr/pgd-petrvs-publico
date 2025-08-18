@@ -1,5 +1,5 @@
 {
-    "version": "2.5.3",
+    "version": "2.6.1",
     "externalLibs": [
         "https://apis.google.com/js/platform.js"
     ],

@@ -60,16 +60,16 @@ class RelatorioPlanoEntregaExport implements FromCollection, WithMapping, WithHe
         return [
             'A' => 30,
             'B' => 10,
-            'C' => 30,
+            'C' => 40,
             'D' => 15,
             'E' => 20,
             'F' => 15,
             'G' => 15,
             'H' => 10,
-            'I' => 10,
-            'J' => 10,
-            'K' => 10,
-            'L' => 10,
+            'I' => 15,
+            'J' => 15,
+            'K' => 20,
+            'L' => 20,
         ];
     }
 
@@ -79,12 +79,12 @@ class RelatorioPlanoEntregaExport implements FromCollection, WithMapping, WithHe
             $row->unidadeHierarquia,
             '#'.$row->numero,
             $row->entregaNome,
-            '-',
+            Date::stringToExcel($row->data_homologacao),
             PlanoEntrega::STATUSES[$row->status],
             Date::stringToExcel($row->dataInicio),
             Date::stringToExcel($row->dataFim),
             $row->duracao,
-            '-',
+            Date::stringToExcel($row->data_conclusao),
             Date::stringToExcel($row->data_avaliacao),
             $this->coalesce($row->situacao_avaliacao),
             $this->coalesce($row->nota)
@@ -99,8 +99,10 @@ class RelatorioPlanoEntregaExport implements FromCollection, WithMapping, WithHe
     public function columnFormats(): array
     {
         return [
+            'D' => NumberFormat::FORMAT_DATE_DDMMYYYY,
             'F' => NumberFormat::FORMAT_DATE_DDMMYYYY,
             'G' => NumberFormat::FORMAT_DATE_DDMMYYYY,
+            'I' => NumberFormat::FORMAT_DATE_DDMMYYYY,
             'J' => NumberFormat::FORMAT_DATE_DDMMYYYY,
         ];
     }
