@@ -554,4 +554,25 @@ class UsuarioService extends ServiceBase
         return $usuario;
     }
 
+    /**
+     * Ativa temporariamente um usuário definindo sua situacao_siape como ATIVO_TEMPORARIO
+     * @param array $data
+     * @return Usuario
+     * @throws ValidateException
+     */
+    public function ativarTemporariamente($data)
+    {
+        $usuario = Usuario::find($data['usuario_id']);
+        if (empty($usuario)) {
+            throw new ValidateException("Usuário não encontrado", 422);
+        }
+
+        $usuario->situacao_siape = 'ATIVO_TEMPORARIO';
+        $usuario->justicativa_ativacao_temporaria = $data['justificativa'];
+        $usuario->data_ativacao_temporaria = Carbon::now();
+        $usuario->save();
+        
+        return $usuario;
+    }
+
 }

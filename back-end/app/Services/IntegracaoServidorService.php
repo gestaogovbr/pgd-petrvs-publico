@@ -37,7 +37,10 @@ class IntegracaoServidorService extends ServiceBase
         continue;
       }
       $integracaoUnidade->removeDeterminadasAtribuicoes($atribuicoes, $unidadeIntegrante);
-      Usuario::where('id', $usuarioId)->delete();
+
+      Usuario::where('id', $usuarioId)->update([
+        'situacao_siape' => 'INATIVO',
+      ]);
       SiapeBlackListServidores::where('cpf', $cpf)
       ->update([
           'inativado' => 1
