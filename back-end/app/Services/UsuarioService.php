@@ -104,9 +104,14 @@ class UsuarioService extends ServiceBase
    * Informa quais atribuições de gestor o usuário logado possui na unidade recebida como parâmetro.
    * @param string $unidade_id
    */
-  public function atribuicoesGestor(string $unidadeId, ?string $usuarioId = null)
+  public function atribuicoesGestor(?string $unidadeId, ?string $usuarioId = null)
   {
+    
     $result = ["gestor" => false, "gestorSubstituto" => false, "gestorDelegado" => false];
+
+    if(!$unidadeId)
+      return $result;
+
     $key = [$unidadeId, $usuarioId];
     if ($this->hasBuffer("atribuicoesGestor", $key)) {
       $result = $this->getBuffer("atribuicoesGestor", $key);
