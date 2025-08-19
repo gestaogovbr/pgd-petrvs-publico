@@ -14,6 +14,7 @@ class NivelAcessoService extends ServiceBase{
   const PERFIL_CHEFIA = 3;
   const PERFIL_PARTICIPANTE = 5;
   const PERFIL_COLABORADOR = 6;
+  const PERFIL_CONSULTA = 7;
 
 
   static function getPerfilDesenvolvedor(): ?Perfil {
@@ -35,5 +36,9 @@ class NivelAcessoService extends ServiceBase{
 
   static function getPerfilColaborador(): ?Perfil {
     return Perfil::where('nivel', self::PERFIL_COLABORADOR)->first();
+  }
+
+  static function getPerfilConsulta(): ?Perfil {
+    return Perfil::where('nivel', self::PERFIL_CONSULTA)->first();
   }
 }
