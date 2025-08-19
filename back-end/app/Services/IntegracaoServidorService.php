@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\Atribuicao;
 use App\Facades\SiapeLog;
+use App\Models\Perfil;
 use App\Models\SiapeBlackListServidores;
 use App\Models\UnidadeIntegrante;
 use App\Models\Usuario;
@@ -21,8 +22,14 @@ class IntegracaoServidorService extends ServiceBase
       return [];
     }
 
+    $consultaId = $this->nivelAcessoService->getPerfilConsulta()->id;
+    if (!$consultaId) {
+      return [];
+    }
+    // Atualizar os usuários para perfil consulta
     Usuario::whereIn('id', $ids)->update([
       'situacao_siape' => 'INATIVO',
+      'perfil_id' => $consultaId,
     ]);
 
     $cpfs = Usuario::whereIn('id', $ids)->pluck('cpf');
