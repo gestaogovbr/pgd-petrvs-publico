@@ -202,4 +202,15 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
   public onValueChange(event: Event) {
     this.onButtonFilterClick(this.filter!);
   }
+
+  public getDataHomologacao(row: any): string {
+
+    let retorno = this.dao!.getDateFormatted(row.data_homologacao) || '';
+    if (row.status === 'ATIVO' || row.status === 'CONCLUIDO' || row.status === 'AVALIADO' || row.status === 'SUSPENSO') {
+      if (retorno === '') {
+        return 'Dispensado';
+      }
+    }
+    return retorno;
+  }
 }
