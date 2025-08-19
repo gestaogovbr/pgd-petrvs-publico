@@ -21,32 +21,14 @@ class IntegracaoServidorService extends ServiceBase
       return [];
     }
 
+    Usuario::whereIn('id', $ids)->update([
+      'situacao_siape' => 'INATIVO',
+    ]);
 
-    $unidadesIntegrantes = UnidadeIntegrante::whereIn('usuario_id', $ids)->get();
-    $integracaoUnidade = new Integracao([]);
-
-    $atribuicoes = array_column(Atribuicao::cases(), 'value');
-
-    foreach ($unidadesIntegrantes as $unidadeIntegrante) {
-      $usuarioId = $unidadeIntegrante->usuario->id;
-      $cpf = $unidadeIntegrante->usuario->cpf;
-      $temPlanodeTrabalhoAtivo = $integracaoUnidade->usuarioTemPlanodeTrabalhoAtivo($unidadeIntegrante->usuario, $unidadeIntegrante->unidade);
-      if ($temPlanodeTrabalhoAtivo) {
-        SiapeLog::info("ISiape: Servidor com plano de trabalho ativo, não será removido.", $unidadeIntegrante->toArray());
-        unset($ids[$usuarioId]);
-        continue;
-      }
-      $integracaoUnidade->removeDeterminadasAtribuicoes($atribuicoes, $unidadeIntegrante);
-
-      Usuario::where('id', $usuarioId)->update([
-        'situacao_siape' => 'INATIVO',
-      ]);
-      SiapeBlackListServidores::where('cpf', $cpf)
-      ->update([
-          'inativado' => 1
-      ]);
-      }
-
+    $cpfs = Usuario::whereIn('id', $ids)->pluck('cpf');
+    SiapeBlackListServidores::whereIn('cpf', $cpfs)->update([
+      'inativado' => 1
+    ]);
     SiapeLog::info("ISiape: Servidores removidos do SIAPE e excluídos do sistema.", ['ids' => $ids]);
 
     return $ids;
