@@ -59,7 +59,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
 
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    if (row.situacao_siape == 'INATIVO'){
+    if (row.situacao_siape == 'INATIVO' && this.auth.hasPermissionTo("MOD_USER_REATIVAR")){
       result.push({ label: "Ativar temporariamente", icon: "bi bi-check2",  onClick: (usuario: Usuario) => { this.abrirFormAtivar(usuario); }});
     }
 
