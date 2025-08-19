@@ -35,6 +35,8 @@ class RelatorioAgenteService extends ServiceBase
                 `u`.`nome` AS `nome`,
                 `u`.`matricula` AS `matricula`,
                 `u`.`nome_jornada` AS `jornada`,
+                `u`.`participa_pgd` AS `participaPGD`,
+                `u`.`modalidade_pgd` AS `modalidadeSouGov`,
                 `u`.`perfil_id` AS `perfil_id`,
                 `p`.`nome` AS `perfil`,
                 `u`.`situacao_funcional` AS `situacao_funcional`,
@@ -215,6 +217,12 @@ TEXT;
         if (isset($programaNome[2])) {
             $sql .= " and `programa_ultimo`.`programanome` like ?";
             $params[] = $programaNome[2];
+        }
+
+        $modalidade = $this->extractWhere($data, "modalidadeSouGov");
+        if (isset($modalidade[2])) {
+            $sql .= " and ( `u`.`participa_pgd` = 'sim' and `u`.`modalidade_pgd` = ? )";
+            $params[] = $modalidade[2];
         }
 
         $tipo_modalidade_id = $this->extractWhere($data, "tipo_modalidade_id");
