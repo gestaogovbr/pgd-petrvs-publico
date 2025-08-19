@@ -101,19 +101,19 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
     }
 
     if (form.data_inicio) {
-      result.push(["dataInicio", ">=", form.data_inicio]);
+      result.push(["dataInicio", ">=", form.data_inicio.toISOString().slice(0,10)]);
     }
 
     if (form.data_fim) {
-      result.push(["dataFim", "<=", form.data_fim]);
+      result.push(["dataFim", "<=", form.data_fim.toISOString().slice(0,10)]);
     }
 
     if (form.periodo_inicio) {
-      result.push(["periodoInicio", ">=", form.periodo_inicio]);
+      result.push(["periodoInicio", ">=", form.periodo_inicio.toISOString().slice(0,10)]);
     }
 
     if (form.periodo_fim) {
-      result.push(["periodoFim", "<=", form.periodo_fim]);
+      result.push(["periodoFim", "<=", form.periodo_fim.toISOString().slice(0,10)]);
     }
 
     if (form.somente_vigentes) {

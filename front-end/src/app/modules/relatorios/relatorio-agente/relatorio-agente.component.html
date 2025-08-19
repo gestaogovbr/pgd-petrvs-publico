@@ -1,0 +1,302 @@
+<grid [dao]="dao" 
+    [title]="title" 
+    [orderBy]="orderBy"
+    [maxHeight]="450"
+    [scrollable]="true"
+    [className]="'relatorio-agente'"
+>
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter 
+        [form]="filter" 
+        [where]="filterWhere" 
+        [submit]="filterSubmit.bind(this)" 
+        [filter]="onButtonFilterClick"
+        filterLabel="Consultar"
+        [hasExportExcel]="true"
+        [exportExcel]="exportExcel"
+        [excelFileName]="'relatorio_agente.xlsx'"
+    >
+        <div class="row">   
+            <input-search 
+                #unidade 
+                [size]="6" 
+                label="Unidade de Consulta"
+                [control]="filter!.controls.unidade_id" 
+                controlName="unidade_id" 
+                [dao]="unidadeDao"
+                [selectRoute]="{
+                    route: ['configuracoes', 'unidade'],
+                    params: auth.hasPermissionTo('MOD_RELATORIO_USUARIO_TODAS_UNIDADES')
+                    ? { }
+                    : { unidade_pai: auth.unidade?.id }
+                }"
+                [where]="auth.hasPermissionTo('MOD_RELATORIO_USUARIO_TODAS_UNIDADES')
+                    ? []
+                    : [['id', 'in', this.unidades]]"
+            >
+            </input-search>
+            <input-switch
+                [size]="2"
+                label="Unidades Subordinadas"
+                controlName="incluir_unidades_subordinadas"
+                [control]="filter!.controls.incluir_unidades_subordinadas"
+            ></input-switch>
+        </div>
+    </filter>
+    <columns>
+
+        <column title="Nome"
+            [template]="columnNome"
+            [titleTemplate]="titleNome" [verticalAlign]="'bottom'"
+            [width]="200"
+        >
+            <ng-template let-header="header" #titleNome>
+                <input-text 
+                    [control]="filter!.controls.nome"
+                    controlName="this.filter.nome"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnNome>
+                <span> {{row.nome}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Matrícula SIAPE"
+            [template]="columnMatricula"
+            [titleTemplate]="titleMatricula" [verticalAlign]="'bottom'"
+            [width]="80"
+        >
+            <ng-template let-header="header" #titleMatricula>
+                <input-text 
+                    [control]="filter!.controls.matricula"
+                    controlName="this.filter.matricula"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnMatricula>
+                <span> {{row.matricula || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Jornada"
+            [template]="columnJornada"
+            [titleTemplate]="titleJornada" [verticalAlign]="'bottom'"
+            [width]="80"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleJornada>
+                <input-text 
+                    [control]="filter!.controls.jornada"
+                    controlName="this.filter.jornada"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnJornada>
+                <span> {{row.jornada ? row.jornada : '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Perfil"
+            [template]="columnPerfil"
+            [titleTemplate]="titlePerfil" [verticalAlign]="'bottom'"
+            [width]="150"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titlePerfil>
+                <input-select 
+                    [items]="perfis" 
+                    [control]="filter!.controls.perfil_id"
+                    controlName="this.filter.perfil_id"
+                    (change)="onValueChange($event)"
+                    nullable
+                ></input-select> 
+            </ng-template>
+
+            <ng-template let-row="row" #columnPerfil>
+                <span> {{row.perfil.replace('Perfil ', '') || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Situação"
+            [template]="columnSituacao"
+            [titleTemplate]="titleSituacao" [verticalAlign]="'bottom'"
+            [width]="100"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleSituacao>
+                <input-text 
+                    [control]="filter!.controls.situacao"
+                    controlName="this.filter.situacao"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnSituacao>
+                <span> {{row.situacao || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Seleção"
+            [template]="columnSelecao"
+            [titleTemplate]="titleSelecao" [verticalAlign]="'bottom'"
+            [width]="100"
+        >
+            <ng-template let-header="header" #titleSelecao>
+                <input-text 
+                    [control]="filter!.controls.selecao"
+                    controlName="this.filter.selecao"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnSelecao>
+                <span> {{row.programaNome || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Lotado"
+            [template]="columnLotado"
+            [titleTemplate]="titleLotado" [verticalAlign]="'bottom'"
+            [width]="200"
+        >
+            <ng-template let-header="header" #titleLotado>
+                <input-text 
+                    [control]="filter!.controls.unidadeNome"
+                    controlName="this.filter.unidadeNome"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnLotado>
+                <span> {{row.unidadeHierarquia || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Modalidade SouGov"
+            [template]="columnModalidadeSouGov"
+            [titleTemplate]="titleModalidadeSouGov"
+            [verticalAlign]="'bottom'" [align]="'center'"
+            [width]="150"
+        >
+            <ng-template let-header="header" #titleModalidadeSouGov>
+                <input-select 
+                    [items]="tiposModalidade" 
+                    [control]="filter!.controls.modalidadeSouGov"
+                    controlName="this.filter.modalidadeSouGov"
+                    (change)="onValueChange($event)"
+                    nullable
+                ></input-select>
+            </ng-template>
+            <ng-template let-row="row" #columnModalidadeSouGov>
+                <span>{{row.modalidadeSouGov}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Modalidade do último Plano de Trabalho" [template]="columnModalidade" [titleTemplate]="titleModalidade"
+            [verticalAlign]="'bottom'" [align]="'center'"
+            [width]="150"
+        >
+            <ng-template let-header="header" #titleModalidade>
+                <input-select 
+                    [items]="tiposModalidade" 
+                    [control]="filter!.controls.modalidade"
+                    controlName="this.filter.modalidade"
+                    (change)="onValueChange($event)"
+                    nullable
+                ></input-select>
+            </ng-template>
+            <ng-template let-row="row" #columnModalidade>
+                <span>{{row.tipoModalidadeNome}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Comparação Sougov x Petrvs"
+            [template]="columnComparacao"
+            [titleTemplate]="titleComparacao" [verticalAlign]="'bottom'"
+            [width]="80"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleComparacao>
+                <input-text 
+                    [control]="filter!.controls.comparacaoSouGovPetrvs"
+                    controlName="this.filter.comparacaoSouGovPetrvs"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnComparacao>
+                <span> {{row.comparacaoSouGovPetrvs || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Indisponibilidade de teletrabalho"
+            [template]="columnIndisponibilidadeTeletrabalho"
+            [titleTemplate]="titleIndisponibilidadeTeletrabalho" [verticalAlign]="'bottom'"
+            [width]="120"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleIndisponibilidadeTeletrabalho>
+                <input-select 
+                    [items]="lookup.INDISPONIBILIDADE_TIPOS" 
+                    [control]="filter!.controls.tipo_pedagio"
+                    controlName="this.filter.tipo_pedagio"
+                    (change)="onValueChange($event)"
+                    nullable
+                ></input-select> 
+            </ng-template>
+
+            <ng-template let-row="row" #columnIndisponibilidadeTeletrabalho>
+                <span> {{ row.tipoPedagio || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Início Indisponibilidade de teletrabalho"
+            [template]="columnInicioIndisponibilidadeTeletrabalho"
+            [titleTemplate]="titleInicioIndisponibilidadeTeletrabalho" [verticalAlign]="'bottom'"
+            [width]="180"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleInicioIndisponibilidadeTeletrabalho>
+                <input-datetime
+                    date
+                    controlName="data_inicial_pedagio"
+                    [control]="filter!.controls.data_inicial_pedagio"
+                    (blur)="onValueChange($event)"
+                ></input-datetime>
+            </ng-template>
+
+            <ng-template let-row="row" #columnInicioIndisponibilidadeTeletrabalho>
+                <span>{{dao!.getDateFormatted(row.data_inicial_pedagio)}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Fim Indisponibilidade de teletrabalho"
+            [template]="columnFimIndisponibilidadeTeletrabalho"
+            [titleTemplate]="titleFimIndisponibilidadeTeletrabalho" [verticalAlign]="'bottom'"
+            [width]="180"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleFimIndisponibilidadeTeletrabalho>
+                <input-datetime
+                    date
+                    controlName="data_final_pedagio"
+                    [control]="filter!.controls.data_final_pedagio"
+                    (blur)="onValueChange($event)"
+                ></input-datetime>
+            </ng-template>
+
+            <ng-template let-row="row" #columnFimIndisponibilidadeTeletrabalho>
+                <span>{{dao!.getDateFormatted(row.data_final_pedagio)}}</span>
+            </ng-template>
+        </column>
+    </columns>
+    <pagination
+        [rows]="rowsLimit"
+        [infiniteScrollContainer]="'.relatorio-agente-table'"
+        [fromRoot]="true"
+    ></pagination>
+</grid>
