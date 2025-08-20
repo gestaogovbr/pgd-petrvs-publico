@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\Atribuicao;
 use App\Facades\SiapeLog;
+use App\Models\Perfil;
 use App\Models\SiapeBlackListServidores;
 use App\Models\UnidadeIntegrante;
 use App\Models\Usuario;
@@ -21,29 +22,20 @@ class IntegracaoServidorService extends ServiceBase
       return [];
     }
 
+    $consultaId = $this->nivelAcessoService->getPerfilConsulta()->id;
+    if (!$consultaId) {
+      return [];
+    }
+    // Atualizar os usuários para perfil consulta
+    Usuario::whereIn('id', $ids)->update([
+      'situacao_siape' => 'INATIVO',
+      'perfil_id' => $consultaId,
+    ]);
 
-    $unidadesIntegrantes = UnidadeIntegrante::whereIn('usuario_id', $ids)->get();
-    $integracaoUnidade = new Integracao([]);
-
-    $atribuicoes = array_column(Atribuicao::cases(), 'value');
-
-    foreach ($unidadesIntegrantes as $unidadeIntegrante) {
-      $usuarioId = $unidadeIntegrante->usuario->id;
-      $cpf = $unidadeIntegrante->usuario->cpf;
-      $temPlanodeTrabalhoAtivo = $integracaoUnidade->usuarioTemPlanodeTrabalhoAtivo($unidadeIntegrante->usuario, $unidadeIntegrante->unidade);
-      if ($temPlanodeTrabalhoAtivo) {
-        SiapeLog::info("ISiape: Servidor com plano de trabalho ativo, não será removido.", $unidadeIntegrante->toArray());
-        unset($ids[$usuarioId]);
-        continue;
-      }
-      $integracaoUnidade->removeDeterminadasAtribuicoes($atribuicoes, $unidadeIntegrante);
-      Usuario::where('id', $usuarioId)->delete();
-      SiapeBlackListServidores::where('cpf', $cpf)
-      ->update([
-          'inativado' => 1
-      ]);
-      }
-
+    $cpfs = Usuario::whereIn('id', $ids)->pluck('cpf');
+    SiapeBlackListServidores::whereIn('cpf', $cpfs)->update([
+      'inativado' => 1
+    ]);
     SiapeLog::info("ISiape: Servidores removidos do SIAPE e excluídos do sistema.", ['ids' => $ids]);
 
     return $ids;

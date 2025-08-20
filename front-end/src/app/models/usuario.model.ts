@@ -81,6 +81,8 @@ export type UsuarioSituacaoFuncional = "ATIVO_PERMANENTE" |
     "QE/MRE_CEDIDO" |
     "QUADRO_ESPEC_QE/MRE";
 
+export type UsuarioSituacaoSiape = "ATIVO" | "INATIVO" | "ATIVO_TEMPORARIO";
+
 export class UsuarioConfig {
     etiquetas: LookupItem[] = [];
     menu_contexto: string = "EXECUCAO";
@@ -145,6 +147,7 @@ export class Usuario extends Base implements HasNotificacao {
     public id_google: string | null = null; /* ID do usuário google */
     public url_foto: string | null = null; /* URL da foto do usuário (temporário) */
     public situacao_funcional: UsuarioSituacaoFuncional = "ATIVO_PERMANENTE";
+    public situacao_siape: UsuarioSituacaoSiape | null = null;
     public texto_complementar_plano: string | null = ""; // Mensagem adicional para o plano de trabalho
 
     //public perfil_id: number = 0; /* ID do perfil - Setar o primeiro do list*/
