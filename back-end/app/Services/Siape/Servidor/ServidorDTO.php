@@ -31,6 +31,7 @@ class ServidorDTO
     public ?string $email_chefia_imediata;
     public ?string $nome_jornada;
     public ?int $cod_jornada;
+    public ?string $ident_unica;
     public ?string $deleted_at;
 
     public function __construct(array $data)

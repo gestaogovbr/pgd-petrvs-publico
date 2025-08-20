@@ -35,9 +35,9 @@ class ProcessaDadosSiapeBD
 
         foreach ($results as $servidor) {
             try {
-                if($this->cpfNaBlackList($servidor->cpf)){
+                if ($this->cpfNaBlackList($servidor->cpf)) {
                     SiapeLog::info('Servidor na blacklist: ' . $servidor->cpf);
-                    continue; 
+                    continue;
                 }
 
                 $dadosServidorArray[] = [
@@ -51,7 +51,7 @@ class ProcessaDadosSiapeBD
                 continue;
             } catch (Exception $e) {
                 report($e);
-                Log::channel('siape')->error('Erro ao processar servidor #' . $servidor->cpf, [$e]);
+                SiapeLog::error('Erro ao processar servidor #' . $servidor->cpf, [$e]);
                 continue;
             }
         }
@@ -104,7 +104,7 @@ class ProcessaDadosSiapeBD
             return $dadosFuncionaisArray;
         } catch (Exception $e) {
             report($e);
-           SiapeLog::error(sprintf("CPF:#%s Falha nos dados funcionais:", $cpf), [$dadosFuncionais]);
+            SiapeLog::error(sprintf("CPF:#%s Falha nos dados funcionais:", $cpf), [$dadosFuncionais]);
             throw new ErrorDataSiapeException("Falha ao tratar dados funcionais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape.log");
         }
     }
@@ -120,7 +120,7 @@ class ProcessaDadosSiapeBD
             $dados = $this->simpleXmlElementToArray($dadosFuncionais);
             if (!empty($dados['dataOcorrExclusao'])) continue;
 
-            $retorno = $dados;
+            array_push($retorno, $dados);
         }
         return $retorno;
     }
@@ -205,9 +205,11 @@ class ProcessaDadosSiapeBD
         $responseXml = $this->prepareResponseXml($response);
 
         $fault = $responseXml->xpath('//soap:Fault');
-        if ($fault && isset($fault[0]->faultcode) && (string) $fault[0]->faultcode === Erros::faultcode 
-        && isset($fault[0]->faultstring) && 
-        (string) $fault[0]->faultstring === Erros::getFaultStringNaoExistemDados()) {
+        if (
+            $fault && isset($fault[0]->faultcode) && (string) $fault[0]->faultcode === Erros::faultcode
+            && isset($fault[0]->faultstring) &&
+            (string) $fault[0]->faultstring === Erros::getFaultStringNaoExistemDados()
+        ) {
             SiapeBlackListServidores::firstOrCreate(
                 ['cpf' => $cpf],
                 ['id' => (string) Str::uuid(), 'response' => $response]

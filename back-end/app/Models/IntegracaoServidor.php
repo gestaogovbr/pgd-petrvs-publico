@@ -40,6 +40,7 @@ class IntegracaoServidor extends ModelBase
     'email_chefia_imediata', /* varchar(50); */ // Registra e-mail da chefia imediata informado pelo Siape.
     'nome_jornada', 
     'cod_jornada', 
+    'ident_unica', /* varchar(50); NULL */ // Identificação única
     //'deleted_at', /* timestamp; */
   ];
 
