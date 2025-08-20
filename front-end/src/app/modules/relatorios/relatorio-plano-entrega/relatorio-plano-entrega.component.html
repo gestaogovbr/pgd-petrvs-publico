@@ -124,7 +124,7 @@
                 ></input-datetime>
             </ng-template>
             <ng-template let-row="row" #columnHomologacao>
-                <span> {{ dao!.getDateFormatted(row.data_homologacao) || 'Dispensado'}}</span>
+                <span> {{ this.getDataHomologacao(row) }}</span>
             </ng-template>
         </column>
 
