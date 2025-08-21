@@ -51,6 +51,7 @@ class IntegracaoServidorService extends ServiceBase
   {
     $ids = Usuario::join('siape_blacklist_servidores as s', 'usuarios.cpf', '=', 's.cpf')
       ->where('s.inativado', 0)
+      ->where('s.created_at', '<', now()->subDays(30)) 
       ->pluck('usuarios.id');
 
     return $ids->toArray();
