@@ -14,6 +14,12 @@ use App\Services\Siape\Unidade\Integracao;
 class IntegracaoServidorService extends ServiceBase
 {
 
+  public function __construct(
+  ) {
+    parent::__construct();
+    $this->nivelAcessoService = new NivelAcessoService();
+  }
+
   public function processaServidoresRemovidosNoSiape(): array
   {
     $ids = $this->listIdsUsuariosRemovidosNaoExcluidos();
