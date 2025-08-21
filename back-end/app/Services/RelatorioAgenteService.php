@@ -36,7 +36,11 @@ class RelatorioAgenteService extends ServiceBase
                 `u`.`matricula` AS `matricula`,
                 `u`.`nome_jornada` AS `jornada`,
                 `u`.`participa_pgd` AS `participaPGD`,
-                `u`.`modalidade_pgd` AS `modalidadeSouGov`,
+                COALESCE(`modalidade_siape`.`nome`, `tms`.`nome`) AS `modalidadeSouGov`,
+                case `tms`.`tipo_modalidade_id`
+                    when `tm`.`id` then 'IGUAL'
+                    else 'DIFERENTE'
+                end as comparacaoSouGovPetrvs,
                 `u`.`perfil_id` AS `perfil_id`,
                 `p`.`nome` AS `perfil`,
                 `u`.`situacao_funcional` AS `situacao_funcional`,
@@ -119,6 +123,10 @@ class RelatorioAgenteService extends ServiceBase
                 (`p`.`id` = `u`.`perfil_id`)
             left join `tipos_modalidades` `tm` on
                 (`tm`.`id` = `pt_ultimo_pactuado`.`tipo_modalidade_id`)
+            left join `tipos_modalidades_siape` `tms` on
+                (`tms`.`id` = `u`.`modalidade_pgd`)
+            left join `tipos_modalidades` `modalidade_siape` on 
+                (`tms`.`tipo_modalidade_id` = `modalidade_siape`.`id`)
             where
                 `u`.`deleted_at` is null
                 and `uia`.`atribuicao` is not null
@@ -221,8 +229,17 @@ TEXT;
 
         $modalidade = $this->extractWhere($data, "modalidadeSouGov");
         if (isset($modalidade[2])) {
-            $sql .= " and ( `u`.`participa_pgd` = 'sim' and `u`.`modalidade_pgd` = ? )";
+            $sql .= " and ( `u`.`participa_pgd` = 'sim' and `tms`.`tipo_modalidade_id` = ? )";
             $params[] = $modalidade[2];
+        }
+
+        $comparacaoSouGovPetrvs = $this->extractWhere($data, "comparacaoSouGovPetrvs");
+        if (isset($comparacaoSouGovPetrvs[2])) {
+            $operacaoComparacao = $this->getComparacaoSouGov($comparacaoSouGovPetrvs[2]);
+
+            if($operacaoComparacao != ''){
+                $sql .= " and ( COALESCE(`tms`.`tipo_modalidade_id`, '') $operacaoComparacao COALESCE(`tm`.`id`, '') ) ";
+            }
         }
 
         $tipo_modalidade_id = $this->extractWhere($data, "tipo_modalidade_id");
@@ -304,5 +321,15 @@ TEXT;
         }
 
         return $rows;
+    }
+
+    private function getComparacaoSouGov($comparacaoSouGovPetrvs){
+        $operacaoComparacao ='';
+        if($comparacaoSouGovPetrvs == 'IGUAL')
+            $operacaoComparacao = '=';
+        else if ($comparacaoSouGovPetrvs == 'DIFERENTE')
+            $operacaoComparacao = '!=';
+
+        return $operacaoComparacao;
     }
 }
