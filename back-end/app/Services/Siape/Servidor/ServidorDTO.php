@@ -16,7 +16,7 @@ class ServidorDTO
     public ?string $data_nascimento;
     public ?string $telefone;
     public ?string $vinculo_ativo;
-    public ?string $matriculasiape;
+    public string $matriculasiape;
     public ?string $codigo_cargo;
     public ?string $coduorgexercicio;
     public ?string $coduorglotacao;

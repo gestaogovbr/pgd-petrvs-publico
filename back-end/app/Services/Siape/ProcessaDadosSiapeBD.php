@@ -109,10 +109,10 @@ class ProcessaDadosSiapeBD
         }
     }
 
-    private function decideDadosFuncionais(array $dadosfuncionaisArray)
+    private function decideDadosFuncionais(array $dadosfuncionaisArray) : array
     {
         if (count($dadosfuncionaisArray) == 1) {
-            return $this->simpleXmlElementToArray($dadosfuncionaisArray[0]);
+            return [$this->simpleXmlElementToArray($dadosfuncionaisArray[0])];
         }
 
         $retorno = [];

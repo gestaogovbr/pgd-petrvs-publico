@@ -41,7 +41,7 @@ class IntegracaoSiapeService extends ServiceBase
       $dadosPessoaisOrig = $pessoa['dadosPessoais'];
       $dadosFuncionaisOrig = $pessoa['dadosFuncionais'];
 
-      $pessoal = $this->processaDadosPessoais($dadosPessoaisOrig);
+      $pessoal = $this->processaDadosPessoais($pessoa, $dadosPessoaisOrig);
 
       $funcionais = [];
       foreach ($dadosFuncionaisOrig as $dadofuncional) {
@@ -49,7 +49,7 @@ class IntegracaoSiapeService extends ServiceBase
         if (is_null($funcional)) {
           continue;
         }
-        $funcionais[] = $funcional;
+        array_push($funcionais, $funcional);
       }
 
       if (empty($funcionais)) {
@@ -73,9 +73,8 @@ class IntegracaoSiapeService extends ServiceBase
     }
   }
 
-  private function processaDadosPessoais(array $dadosPessoais): array
+  private function processaDadosPessoais(array $pessoa, array $dadosPessoais): array
   {
-
     if (!empty($dadosPessoais['dataNascimento'])) {
       $dt = DateTime::createFromFormat('dmY', $dadosPessoais['dataNascimento']);
       if ($dt !== false) {
@@ -99,28 +98,28 @@ class IntegracaoSiapeService extends ServiceBase
     return $pessoal;
   }
 
-  private function processaDadosFuncionais(array $df): array|null
+  private function processaDadosFuncionais(array $dadosFuncionais): array|null
   {
-    if (empty($df) || !is_array($df)) {
+    if (empty($dadosFuncionais) || !is_array($dadosFuncionais)) {
       return null;
     }
 
-    if (($df['codSitFuncional'] ?? null) == self::SITUACAO_FUNCIONAL_ATIVO_EM_OUTRO_ORGAO) {
+    if (($dadosFuncionais['codSitFuncional'] ?? null) == self::SITUACAO_FUNCIONAL_ATIVO_EM_OUTRO_ORGAO) {
       return null;
     }
 
-    if (!empty($df['dataOcorrIngressoOrgao'])) {
-      $dt = DateTime::createFromFormat('dmY', $df['dataOcorrIngressoOrgao']);
-      $df['dataOcorrIngressoOrgao'] = $dt ? $dt->format('Y-m-d 00:00:00') : null;
+    if (!empty($dadosFuncionais['dataOcorrIngressoOrgao'])) {
+      $dt = DateTime::createFromFormat('dmY', $dadosFuncionais['dataOcorrIngressoOrgao']);
+      $dadosFuncionais['dataOcorrIngressoOrgao'] = $dt ? $dt->format('Y-m-d 00:00:00') : null;
     }
 
-    if (!empty($df['codUorgExercicio'])) {
-      $df['codUorgExercicio'] = strval(intval($df['codUorgExercicio']));
+    if (!empty($dadosFuncionais['codUorgExercicio'])) {
+      $dadosFuncionais['codUorgExercicio'] = strval(intval($dadosFuncionais['codUorgExercicio']));
     }
 
     // Contrato temporário: mapear unidade pela sigla da lotação
-    if (($df['codSitFuncional'] ?? null) == self::SITUACAO_FUNCIONAL_CONTRATO_TEMPORARIO) {
-      $sigla = trim($df['siglaUorgLotacao'] ?? '');
+    if (($dadosFuncionais['codSitFuncional'] ?? null) == self::SITUACAO_FUNCIONAL_CONTRATO_TEMPORARIO) {
+      $sigla = trim($dadosFuncionais['siglaUorgLotacao'] ?? '');
       if ($sigla === '') {
         return null;
       }
@@ -128,44 +127,43 @@ class IntegracaoSiapeService extends ServiceBase
       if (!$unidadeServidorTemporario) {
         return null;
       }
-      $df['codUorgExercicio'] = $unidadeServidorTemporario->codigo;
+      $dadosFuncionais['codUorgExercicio'] = $unidadeServidorTemporario->codigo;
     }
 
     // Função (legacy/TODO)
     $funcao = null;
-    if (!empty($df['codAtivFun']) && $df['codAtivFun']) {
+    if (!empty($dadosFuncionais['codAtivFun']) && $dadosFuncionais['codAtivFun']) {
       $funcao = [
         'funcao' => [
           'tipo_funcao'  => '1',
-          'uorg_funcao'  => $df['codUorgExercicio'] ?? null,
+          'uorg_funcao'  => $dadosFuncionais['codUorgExercicio'] ?? null,
         ],
       ];
     }
 
     $matricula = [
       'vinculo_ativo'         => true,
-      'matriculasiape'        => $this->UtilService->valueOrDefault($df['matriculaSiape'] ?? null),
-      'tipo'                  => $this->UtilService->valueOrDefault($df['codCargo'] ?? null),
-      'coduorgexercicio'      => $this->UtilService->valueOrDefault($df['codUorgExercicio'] ?? null),
-      'coduorglotacao'        => $this->UtilService->valueOrDefault($df['codUorgLotacao'] ?? null),
-      'codigo_servo_exercicio' => $this->UtilService->valueOrDefault($df['codUorgExercicio'] ?? null),
+      'matriculasiape'        => $this->UtilService->valueOrDefault($dadosFuncionais['matriculaSiape'] ?? null),
+      'tipo'                  => $this->UtilService->valueOrDefault($dadosFuncionais['codCargo'] ?? null),
+      'coduorgexercicio'      => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgExercicio'] ?? null),
+      'coduorglotacao'        => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgLotacao'] ?? null),
+      'codigo_servo_exercicio' => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgExercicio'] ?? null),
       'nomeguerra'            => '',
-      'codsitfuncional'       => $this->UtilService->valueOrDefault($df['codSitFuncional'] ?? null),
-      'codupag'               => $this->UtilService->valueOrDefault($df['codUpag'] ?? null),
-      'dataexercicionoorgao'  => $this->UtilService->valueOrDefault($df['dataOcorrIngressoOrgao'] ?? null),
+      'codsitfuncional'       => $this->UtilService->valueOrDefault($dadosFuncionais['codSitFuncional'] ?? null),
+      'codupag'               => $this->UtilService->valueOrDefault($dadosFuncionais['codUpag'] ?? null),
+      'dataexercicionoorgao'  => $this->UtilService->valueOrDefault($dadosFuncionais['dataOcorrIngressoOrgao'] ?? null),
       'funcoes'               => $funcao,
-      'ident_unica'           => $this->UtilService->valueOrDefault($df['identUnica'] ?? null),
+      'ident_unica'           => $this->UtilService->valueOrDefault($dadosFuncionais['identUnica'] ?? null),
     ];
 
-    $funcionais[] = [
-      'identUnica'        => $this->UtilService->valueOrDefault($df['identUnica'] ?? null),
-      'emailfuncional'        => $this->UtilService->valueOrDefault($df['emailInstitucional'] ?? null),
-      'cpf_chefia_imediata'   => $this->UtilService->valueOrDefault($df['cpfChefiaImediata'] ?? null, null),
-      'email_chefia_imediata' => $this->UtilService->valueOrDefault($df['emailChefiaImediata'] ?? null, null),
+    $funcional = [
+      'emailfuncional'        => $this->UtilService->valueOrDefault($dadosFuncionais['emailInstitucional'] ?? null),
+      'cpf_chefia_imediata'   => $this->UtilService->valueOrDefault($dadosFuncionais['cpfChefiaImediata'] ?? null, null),
+      'email_chefia_imediata' => $this->UtilService->valueOrDefault($dadosFuncionais['emailChefiaImediata'] ?? null, null),
       'matriculas'            => ['dados' => $matricula],
     ];
 
-    return $funcionais;
+    return $funcional;
   }
 
   public function retornarUorgs($uorgInicial = 1)

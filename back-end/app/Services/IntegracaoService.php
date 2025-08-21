@@ -588,7 +588,7 @@ class IntegracaoService extends ServiceBase
         u.data_modificacao AS data_modificacao_anterior,
         isr.data_nascimento,
         isr.ident_unica AS ident_unica,
-        u.ident_unica AS ident_unica_anterior,
+        u.ident_unica AS ident_unica_anterior
     FROM
         integracao_servidores isr
         LEFT JOIN usuarios u ON (isr.matriculasiape = u.matricula)
@@ -602,9 +602,8 @@ class IntegracaoService extends ServiceBase
         );
         $sqlUpdateDados = "UPDATE usuarios SET " .
           "nome = :nome, apelido = :nomeguerra, " .
-          "email = :email, matricula = :matricula, " .
+          "email = :email, " .
           "ident_unica = :ident_unica, " .
-          "telefone = :telefone, " .
           "data_nascimento = :data_nascimento, " .
           "data_modificacao = :data_modificacao WHERE id = :id";
 
@@ -673,7 +672,6 @@ class IntegracaoService extends ServiceBase
                 'nome'          => $linha->nome_servidor,
                 'nomeguerra'    => $linha->nome_guerra,
                 'email'         => $linha->emailfuncional,
-                'telefone'      => $linha->telefone,
                 'id'            => $linha->id,
                 'ident_unica'   => $linha->ident_unica,
                 'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
@@ -768,7 +766,7 @@ class IntegracaoService extends ServiceBase
             "isr.ident_unica as ident_unica, " .
             "isr.funcoes as gestor " .
             "FROM integracao_servidores as isr LEFT JOIN usuarios as u " .
-            "ON isr.matricula = u.matriculasiape " .
+            "ON isr.matriculasiape = u.matricula " .
             "WHERE u.matricula is NULL";
 
           $vinculos_isr = DB::select($query);

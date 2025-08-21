@@ -131,7 +131,7 @@ class Integracao implements InterfaceIntegracao
         foreach($servidor['funcionais'] as $funcional){
             $ativo = $this->getAtivo($funcional);
             $pessoal = $servidor['pessoal'];
-            $emailFuncional = $this->getEmail($servidor['pessoal'], $funcional, $this->utilService);
+            $emailFuncional = $this->getEmail($ativo ,$funcional, $this->utilService);
 
             if (!$ativo || empty($emailFuncional)) {
                 continue;
@@ -140,6 +140,11 @@ class Integracao implements InterfaceIntegracao
 
             if(empty($ativo['matriculasiape'])){
                 SiapeLog::info('Matrícula SIAPE vazia', ['cpf' => $pessoal['cpf']]);
+                continue;
+            }
+
+            if(empty($pessoal['cpf'])){
+                SiapeLog::info('CPF SIAPE vazio', $pessoal);
                 continue;
             }
 
