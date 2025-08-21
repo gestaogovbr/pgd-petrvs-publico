@@ -22,6 +22,7 @@ class RelatorioPlanoEntregaService extends ServiceBase
                 && ($item[0] !== 'incluir_unidades_subordinadas')
                 && ($item[0] !== 'periodoInicio')
                 && ($item[0] !== 'periodoFim')
+                && ($item[0] !== 'situacao_conclusao')
                 && ($item[0] !== 'unidade_id');
         }));
 
@@ -30,6 +31,7 @@ class RelatorioPlanoEntregaService extends ServiceBase
         $unidadeId = $this->extractWhere($data, "unidade_id");
         $periodoInicio = $this->extractWhere($data, "periodoInicio");
         $periodoFim = $this->extractWhere($data, "periodoFim");
+        $situacao_conclusao = $this->extractWhere($data, "situacao_conclusao");
 
         if (isset($unidadeId[2])) {
             $unidadeIds = [$unidadeId[2]];
@@ -45,6 +47,14 @@ class RelatorioPlanoEntregaService extends ServiceBase
 
         if (isset($somenteVigentes[2])) {
             $where[] = new RawWhere("(CURDATE() BETWEEN dataInicio and dataFim)", []);
+        }
+
+        if (isset($situacao_conclusao[2]) && $situacao_conclusao[2] == 'Pendente') {
+            $where[] = new RawWhere("(data_conclusao is null)", []);
+        }
+
+        if (isset($situacao_conclusao[2]) && $situacao_conclusao[2] == 'Registrado') {
+            $where[] = new RawWhere("(data_conclusao is not null)", []);
         }
 
          if(isset($periodoInicio[2]) && isset($periodoFim[2])) {
