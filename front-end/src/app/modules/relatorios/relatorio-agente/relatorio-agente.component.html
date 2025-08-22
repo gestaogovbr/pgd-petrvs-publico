@@ -176,7 +176,7 @@
             </ng-template>
         </column>
 
-        <column title="Modalidade SouGov"
+        <column title="Modalidade Siape"
             [template]="columnModalidadeSouGov"
             [titleTemplate]="titleModalidadeSouGov"
             [verticalAlign]="'bottom'" [align]="'center'"
@@ -210,11 +210,11 @@
                 ></input-select>
             </ng-template>
             <ng-template let-row="row" #columnModalidade>
-                <span>{{row.tipoModalidadeNome}}</span>
+                <span>{{row.tipoModalidadeNome || '-'}}</span>
             </ng-template>
         </column>
 
-        <column title="Comparação Sougov x Petrvs"
+        <column title="Comparação Siape x Petrvs"
             [template]="columnComparacao"
             [titleTemplate]="titleComparacao" [verticalAlign]="'bottom'"
             [width]="80"
