@@ -568,6 +568,8 @@ class UsuarioService extends ServiceBase
     public function ativarTemporariamente($data)
     {
         $usuario = Usuario::find($data['usuario_id']);
+        $participanteId = $this->nivelAcessoService->getPerfilParticipante()->id;
+
         if (empty($usuario)) {
             throw new ValidateException("Usuário não encontrado", 422);
         }
@@ -575,6 +577,7 @@ class UsuarioService extends ServiceBase
         $usuario->situacao_siape = 'ATIVO_TEMPORARIO';
         $usuario->justicativa_ativacao_temporaria = $data['justificativa'];
         $usuario->data_ativacao_temporaria = Carbon::now();
+        $usuario->perfil_id = $participanteId;
         $usuario->save();
         
         return $usuario;

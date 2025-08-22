@@ -11,7 +11,7 @@
     ></app-button-dashboard>
   </div>
 
-  <div class="col-6 col-sm-3 mb-3">
+  <div class="col-6 col-sm-3 mb-3" *ngIf="!auth.isUsuarioConsulta()">
     <app-button-dashboard
       [title]="'Planos de entregas'"
       [imgIcon]="gb.getResourcePath('assets/icons/home/service.svg')"

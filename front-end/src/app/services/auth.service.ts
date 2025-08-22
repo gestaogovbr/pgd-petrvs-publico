@@ -402,6 +402,11 @@ export class AuthService {
     return this.usuario?.perfil?.nivel == 0;
   }
 
+  public isUsuarioConsulta(): boolean {
+    return this.usuario?.perfil?.nivel == 7;
+  }
+
+
   
   /**
    * Informa se o usuário logado possui função de curador
