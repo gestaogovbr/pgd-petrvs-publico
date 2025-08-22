@@ -99,14 +99,20 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
 
   public onSubmit() {
     if (this.justificativaForm.valid) {
-      this.dialog.confirm("Confirmação", "Ao confirmar, o usuário poderá realizar alterações no sistema durante 30 dias. Deseja continuar?").then(() => {
-        this.usuarioDao.ativarTemporariamente(this.justificativaForm.controls.usuario_id.value, this.justificativaForm.controls.justificativa.value).then(() => {
-          this.dialog.alert("Sucesso", "Usuário ativado temporariamente.");
-          this.justificativaForm.reset();
-          this.cdRef.detectChanges();
-        }).catch(error => {
-          this.dialog.alert("Erro", "Erro ao ativar usuário temporariamente.");
-        });
+      this.dialog.confirm("Confirmação", "Ao confirmar, o usuário poderá realizar alterações no sistema durante 30 dias. Deseja continuar?").then((confirm: boolean) => {
+        if (confirm) {
+          const ativo = this.usuarioDao.ativarTemporariamente(this.justificativaForm.controls.usuario_id.value, this.justificativaForm.controls.justificativa.value)
+          ativo.then(() => {
+            this.dialog.alert("Sucesso", "Usuário ativado temporariamente.");
+            this.justificativaForm.reset();
+            this.cdRef.detectChanges();
+          });   
+          ativo.finally(() => {
+            this.dialog.closeAll();
+            this.refresh()
+
+          });
+        }
       });
     }
   }
