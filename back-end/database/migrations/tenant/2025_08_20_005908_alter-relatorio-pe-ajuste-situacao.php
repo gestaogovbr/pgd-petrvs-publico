@@ -46,7 +46,7 @@ return new class extends Migration
             DATEDIFF(`pe`.`data_fim`, `pe`.`data_inicio`) + 1 AS `duracao`,
             CAST(a.data_avaliacao AS DATE) AS data_avaliacao,
             JSON_UNQUOTE(a.nota) AS nota,
-            case when pe.status = 'CANCELADO'
+            case when pe.status = 'CANCELADO' or pe.status = 'SUSPENSO'
                 then null
                 else case when a.data_avaliacao is null
                     then
@@ -62,6 +62,14 @@ return new class extends Migration
                     end
                 end
             collate utf8mb4_unicode_ci as situacao_avaliacao,
+            CASE when pe.status = 'CANCELADO' or pe.status = 'SUSPENSO'
+                then null
+                else case when scpe.created_at is null
+                        then 'Pendente'
+                        else 'Registrado'
+                    end
+                end
+            collate utf8mb4_unicode_ci as situacao_conclusao,
             CAST(spe.created_at as DATE) as data_homologacao,
             CAST(scpe.created_at as DATE) as data_conclusao
         from
