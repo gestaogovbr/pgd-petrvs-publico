@@ -237,7 +237,7 @@
                 ></input-select> 
             </ng-template>
             <ng-template let-row="row" #columnSituacaoConclusao>
-                <span>{{ row.data_conclusao ? 'Registrado' : 'Pendente' }}</span>
+                <span>{{ row.situacao_conclusao || '-' }}</span>
             </ng-template>
         </column>
 
