@@ -1,6 +1,12 @@
 <span *ngIf="!isNoPersist"><strong>{{ 'Servidor: ' + entity?.nome }}</strong></span>
 
 <div class="row">
+    
+    <div class="col">
+        <top-alert type="warning" [message]="'Ao conceder a um agente público a atribuição de Chefe Substituto ou de Delegado em uma unidade, deve lhe ser concedido também o nível de acesso: Unidade, Administrador Negocial ou Master.'"></top-alert>
+        <top-alert type="alert" [message]="'As informações de lotação e chefia do agente público não podem ser excluídas ou alteradas.'"></top-alert>
+        <top-alert type="warning" *ngIf="formPerfil.controls.situacao_siape.value == 'ATIVO_TEMPORARIO'" [message]="'O usuário está inativo no SIAPE. O acesso será mantido por até 30 dias para regularização das pendências. Após esse prazo, o sistema realizará a inativação automática.'"></top-alert>
+    </div>
     <div class="col-12">
         <editable-form [form]="formPerfil!" [noButtons]="isNoButtons()" [disabled]="formDisabled" title="" (submit)="salvarPerfil()">
             <div class="row">
@@ -8,10 +14,6 @@
                 <input-select [size]="6" label="Situação SIAPE" controlName="situacao_siape" [items]="lookup.USUARIO_SITUACAO_SIAPE" disabled></input-select>
             </div>
         </editable-form>
-    </div>
-    <div class="col">
-        <top-alert type="warning" *ngIf="formPerfil.controls.situacao_siape.value == 'ATIVO_TEMPORARIO'" [message]="'O usuário está inativo no SIAPE. O acesso será mantido por até 30 dias para regularização das pendências. Após esse prazo, o sistema realizará a inativação automática.'"></top-alert>
-        <top-alert type="warning" [message]="'Ao conceder a ' + lex.translate('um usuário') + ' a atribuição de ' + lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, 'GESTOR') + ', ' + lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, 'GESTOR_SUBSTITUTO') + ' ou de ' + lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, 'GESTOR_DELEGADO') + ' em ' + lex.translate('uma unidade') + ', deve lhe ser concedido também ' + lex.translate('o nível de acesso') + ' correspondente.'"></top-alert>
     </div>
 </div>
 
