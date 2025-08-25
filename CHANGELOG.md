@@ -1,3 +1,7 @@
+## 2.6.2 25/08/2025
+### Adicionado
+
+
 ## 2.6.1 10/08/2025
 ### Corrigido
 - Corrigido erro no relacionamento de atribuições do usuário
