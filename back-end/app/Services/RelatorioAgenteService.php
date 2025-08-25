@@ -36,6 +36,7 @@ class RelatorioAgenteService extends ServiceBase
                 `u`.`matricula` AS `matricula`,
                 `u`.`nome_jornada` AS `jornada`,
                 `u`.`participa_pgd` AS `participaPGD`,
+                `u`.`situacao_siape` AS `situacao`,
                 COALESCE(`modalidade_siape`.`nome`, `tms`.`nome`) AS `modalidadeSouGov`,
                 case 
                     when  `u`.`situacao_siape` = 'INATIVO' OR (COALESCE(`tms`.`tipo_modalidade_id`, '') = COALESCE(`tm`.`id`, '') AND COALESCE(`tm`.`id`, '') = '' ) then '-'
@@ -232,6 +233,12 @@ TEXT;
         if (isset($modalidade[2])) {
             $sql .= " and ( `u`.`participa_pgd` = 'sim' and `tms`.`tipo_modalidade_id` = ? )";
             $params[] = $modalidade[2];
+        }        
+
+        $situacaoSiape = $this->extractWhere($data, "situacao");
+        if (isset($situacaoSiape[2])) {
+            $sql .= " and ( `u`.`situacao_siape` = ? )";
+            $params[] = $situacaoSiape[2];
         }
 
         $comparacaoSouGovPetrvs = $this->extractWhere($data, "comparacaoSouGovPetrvs");

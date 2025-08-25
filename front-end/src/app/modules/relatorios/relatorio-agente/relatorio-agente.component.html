@@ -128,11 +128,13 @@
             [align]="'center'"
         >
             <ng-template let-header="header" #titleSituacao>
-                <input-text 
+                <input-select 
+                    [items]="tiposSituacao" 
                     [control]="filter!.controls.situacao"
                     controlName="this.filter.situacao"
-                    (blur)="onValueChange($event)"
-                ></input-text>
+                    (change)="onValueChange($event)"
+                    nullable
+                ></input-select>
             </ng-template>
 
             <ng-template let-row="row" #columnSituacao>
