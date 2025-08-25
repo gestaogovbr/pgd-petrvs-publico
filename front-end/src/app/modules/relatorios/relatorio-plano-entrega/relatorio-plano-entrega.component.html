@@ -116,14 +116,15 @@
             [width]="100"
         >
             <ng-template let-header="header" #titleEntregaHomologacao>
-                <input-text 
-                    [control]="filter!.controls.homologador"
-                    controlName="this.filter.homologador"
+                <input-datetime
+                    date
+                    controlName="homologacao"
+                    [control]="filter!.controls.homologacao"
                     (blur)="onValueChange($event)"
-                ></input-text>
+                ></input-datetime>
             </ng-template>
             <ng-template let-row="row" #columnHomologacao>
-                <span> {{row.homologador || '-'}}</span>
+                <span> {{ this.getDataHomologacao(row) }}</span>
             </ng-template>
         </column>
 
@@ -201,6 +202,45 @@
             </ng-template>
         </column>
 
+        <column title="Data da conclusão" [template]="columnConclusao"
+            [titleTemplate]="titleDataConclusao"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+            [width]="180"
+        >
+            <ng-template let-header="header" #titleDataConclusao>
+                <input-datetime
+                    date
+                    controlName="data_conclusao"
+                    [control]="filter!.controls.data_conclusao"
+                    (blur)="onValueChange($event)"
+                ></input-datetime>
+            </ng-template>
+            <ng-template let-row="row" #columnConclusao>
+                <span>{{dao!.getDateFormatted(row.data_conclusao) || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Situação da conclusão" [template]="columnSituacaoConclusao"
+            [titleTemplate]="titleSituacaoConclusao"
+            [verticalAlign]="'bottom'"
+            [align]="'center'"
+            [width]="180"
+        >
+            <ng-template let-header="header" #titleSituacaoConclusao>
+                <input-select 
+                    [items]="lookup.RELATORIO_PE_SITUACOES_CONCLUSAO" 
+                    [control]="filter!.controls.situacao_conclusao"
+                    controlName="this.filter.situacao_conclusao"
+                    (change)="onValueChange($event)"
+                    nullable
+                ></input-select> 
+            </ng-template>
+            <ng-template let-row="row" #columnSituacaoConclusao>
+                <span>{{ row.situacao_conclusao || '-' }}</span>
+            </ng-template>
+        </column>
+
         <column title="Data da Avaliação" [template]="columnAvaliacaoData"
             [titleTemplate]="titleDataAvaliacao"
             [verticalAlign]="'bottom'"
@@ -220,24 +260,6 @@
             </ng-template>
         </column>
 
-        <column title="Data da conclusão" [template]="columnConclusao"
-            [titleTemplate]="titleDataConclusao"
-            [verticalAlign]="'bottom'"
-            [align]="'center'"
-            [width]="180"
-        >
-            <ng-template let-header="header" #titleDataConclusao>
-                <input-datetime
-                    date
-                    controlName="data_avaliacao"
-                    [control]="filter!.controls.data_conclusao"
-                    (blur)="onValueChange($event)"
-                ></input-datetime>
-            </ng-template>
-            <ng-template let-row="row" #columnConclusao>
-                <span> - </span>
-            </ng-template>
-        </column>
 
         <column title="Situação da Avaliação"
             [template]="columnAvaliacaoSituacao"
