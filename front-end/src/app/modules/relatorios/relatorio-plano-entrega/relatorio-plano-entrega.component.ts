@@ -55,6 +55,7 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
           data_avaliacao: { default: "" },
           nota: { default: "" },
           situacao_avaliacao: { default: "" },
+          situacao_conclusao: { default: "" },
           homologacao: { default: "" },
           entregaNome: { default: "" },
         });
@@ -150,6 +151,10 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
 
     if (form.situacao_avaliacao) {
       result.push(["situacao_avaliacao", "==", form.situacao_avaliacao]);
+    }
+
+    if (form.situacao_conclusao) {
+      result.push(["situacao_conclusao", "==", form.situacao_conclusao]);
     }
 
     if (form.data_avaliacao) {
