@@ -40,7 +40,11 @@ class UsuarioService extends ServiceBase
   const LOGIN_MICROSOFT = "AZURE";
   const LOGIN_FIREBASE = "FIREBASE";
 
-
+  public function __construct(
+  ) {
+    parent::__construct();
+    $this->nivelAcessoService = new NivelAcessoService();
+  }
 
   public function atualizarFotoPerfil($tipo, &$usuario, $url)
   {
