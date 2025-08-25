@@ -1,9 +1,11 @@
 ## 2.6.2 25/08/2025
 ### Adicionado
 - Envio de contribuições não vinculadas a Planos de Entrega
+- Readicionada importação da jornada de trabalho do SIAPE
 ### Modificado
 - Adição da data e homologação e de conclusão no Relatório de Planos de Entrega
 - Adição da situação de conclusão no Relatório de Planos de Entrega
+- Adição da jornada de trabalho no Relatório de Agentes Públicos
 ### Corrigido
 - Correção do campo de Situação de Avaliação no Relatório de Planos de Entrega
 - Correção de buffer no Envio de Planos de Trabalho
