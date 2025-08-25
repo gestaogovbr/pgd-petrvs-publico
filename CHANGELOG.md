@@ -5,6 +5,7 @@
 - Adição da situação de conclusão no Relatório de Planos de Entrega
 ### Corrigido
 - Correção do campo de Situação de Avaliação no Relatório de Planos de Entrega
+- Correção de buffer no Envio de Planos de Trabalho
 
 ## 2.6.1 10/08/2025
 ### Corrigido
