@@ -31,16 +31,18 @@ export class RelatorioErrosEnvioComponent extends PageListBase<RelatorioErrosEnv
         incluir_unidades_subordinadas: { default: false },
         exportar: { default: false },
         id: { default: "" },
-        matricula: { default: "" },
+        categoria: { default: "" },
+        envioNumero: { default: "" },
+        numero: { default: "" },
         data_inicial: { default: "" },
-        data_final: { default: "" }
+        data_final: { default: "" },
+        data_envio: { default: "" },
+        motivo: { default: "" },
       });
 
       this.filter!.get('unidade_id')?.setValidators(this.requiredValidator.bind(this));
       this.filter.get('unidade_id')?.updateValueAndValidity();
-
-      this.orderBy = [['unidadeHierarquia', 'asc'], ['nome', 'asc']];
-      this.rowsLimit = 10;
+      this.rowsLimit = 100;
   }
 
   public requiredValidator(control: AbstractControl): ValidationErrors | null { 
@@ -80,24 +82,36 @@ export class RelatorioErrosEnvioComponent extends PageListBase<RelatorioErrosEnv
       result.push(["incluir_unidades_subordinadas", "==", 1]);
     }
 
-    if (form.nome) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
-    }
-
     if (form.unidadeNome) {
       result.push(["unidadeHierarquia", "like", "%" + form.unidadeNome + "%"]);
     }
 
-    if (form.matricula?.length) {
-      result.push(["matricula", "like", "%" + form.matricula + "%"]);
+    if (form.categoria?.length) {
+      result.push(["categoria", "==", form.categoria]);
+    }
+
+    if (form.envioNumero?.length) {
+      result.push(["envioNumero", "==", form.envioNumero]);
+    }
+
+    if (form.numero?.length) {
+      result.push(["numero", "like", "%" + form.numero + "%"]);
     }
 
     if (form.data_inicial) {
-      result.push(["data_inicial_pedagio", "==",  form.data_inicial.toISOString().slice(0,10)]);
+      result.push(["data_envio", ">=",  form.data_inicial.toISOString().slice(0,10)]);
     }
 
-    if (form.data_final_) {
-      result.push(["data_final_pedagio", "==", form.data_final.toISOString().slice(0,10)]);
+    if (form.data_final) {
+      result.push(["data_envio", "<=", form.data_final.toISOString().slice(0,10)]);
+    }
+
+    if (form.data_envio) {
+      result.push(["data_envio", "==", form.data_envio.toISOString().slice(0,10)]);
+    }
+
+    if (form.motivo?.length) {
+      result.push(["motivo", "like", form.motivo]);
     }
     
     return result;
@@ -126,10 +140,12 @@ export class RelatorioErrosEnvioComponent extends PageListBase<RelatorioErrosEnv
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
     this.loading = true;
     try{
-      return this.dao!.exportarXls({
+      const exportar$ = this.dao!.exportarXls({
         where: queryOptions.where,
         orderBy: queryOptions.orderBy
       });
+
+      return exportar$;
     } catch (error: any) {
       this.error(error);
     } finally {

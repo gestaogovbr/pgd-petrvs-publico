@@ -212,7 +212,7 @@ export class AppComponent {
         route: ['relatorios', 'unidades'],
       },
       RELATORIO_ENVIOS: {
-        name: "Envios",
+        name: "Erros de API",
         permition: 'MOD_RELATORIO_ENVIOS',
         icon: this.entity.getIcon('Envio'),
         route: ['relatorios', 'erros-envio'],

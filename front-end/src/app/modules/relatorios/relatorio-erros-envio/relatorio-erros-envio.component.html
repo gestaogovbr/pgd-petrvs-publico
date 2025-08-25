@@ -48,18 +48,19 @@
             [template]="columnCategoria"
             [titleTemplate]="titleCategoria" 
             [verticalAlign]="'bottom'"
-            [width]="200"
+            [width]="100"
         >
             <ng-template let-header="header" #titleCategoria>
-                <input-text 
+                <input-select 
+                    [items]="lookup.ENVIO_ITEM_TIPO" 
                     [control]="filter!.controls.categoria"
                     controlName="this.filter.categoria"
-                    (blur)="onValueChange($event)"
-                ></input-text>
+                    (change)="onValueChange($event)"
+                ></input-select> 
             </ng-template>
 
             <ng-template let-row="row" #columnCategoria>
-                <span> {{ row.categoria }}</span>
+                <span> {{ lookup.getValue(lookup.ENVIO_ITEM_TIPO, row.categoria) }}</span>
             </ng-template>
         </column>
 
@@ -67,7 +68,7 @@
                 [template]="columnId"
                 [titleTemplate]="titleId" 
                 [verticalAlign]="'bottom'"
-                [width]="120"
+                [width]="180"
         >
             <ng-template let-header="header" #titleId>
                 <input-text 
@@ -78,46 +79,65 @@
             </ng-template>
 
             <ng-template let-row="row" #columnId>
-                <span> {{ row.id }}</span>
+                <span> {{ row.uid }}</span>
             </ng-template>
         </column>
 
-        <column title="Matrícula SIAPE"
+        <column title="Número/Matrícula SIAPE"
             [template]="columnMatricula"
             [titleTemplate]="titleMatricula" [verticalAlign]="'bottom'"
-            [width]="80"
+            [width]="50"
         >
             <ng-template let-header="header" #titleMatricula>
                 <input-text 
-                    [control]="filter!.controls.matricula"
-                    controlName="this.filter.matricula"
+                    [control]="filter!.controls.numero"
+                    controlName="this.filter.numero"
                     (blur)="onValueChange($event)"
                 ></input-text>
             </ng-template>
 
             <ng-template let-row="row" #columnMatricula>
-                <span> {{row.matricula || '-'}}</span>
+                <span> {{row.numero || '-'}}</span>
             </ng-template>
         </column>
 
-        <column title="Data"
+        <column title="Nº Envio" 
+                [template]="columnEnvioId"
+                [titleTemplate]="titleEnvioId" 
+                [verticalAlign]="'bottom'"
+                [width]="50"
+        >
+            <ng-template let-header="header" #titleEnvioId>
+                <input-text 
+                    [control]="filter!.controls.envioNumero"
+                    controlName="this.filter.envioNumero"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnEnvioId>
+                <span> {{ row.envioNumero }}</span>
+            </ng-template>
+        </column>
+
+        <column title="Data do Envio"
             [template]="columnData"
             [titleTemplate]="titleData"
             [verticalAlign]="'bottom'"
-            [width]="180"
+            [width]="50"
             [align]="'center'"
         >
             <ng-template let-header="header" #titleData>
                 <input-datetime
                     date
-                    controlName="this.filter.data"
-                    [control]="filter!.controls.data"
+                    controlName="this.filter.data_envio"
+                    [control]="filter!.controls.data_envio"
                     (blur)="onValueChange($event)"
                 ></input-datetime>
             </ng-template>
 
             <ng-template let-row="row" #columnData>
-                <span>{{ dao!.getDateFormatted(row.data) }}</span>
+                <span>{{ dao!.getDateTimeFormatted(row.data_envio) }}</span>
             </ng-template>
         </column>
 
@@ -142,7 +162,7 @@
     </columns>
     <pagination
         [rows]="rowsLimit"
-        [infiniteScrollContainer]="'.relatorio-agente-table'"
+        [infiniteScrollContainer]="'.relatorio-erros-envio-table'"
         [fromRoot]="true"
     ></pagination>
 </grid>
