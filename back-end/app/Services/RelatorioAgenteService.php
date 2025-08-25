@@ -37,8 +37,9 @@ class RelatorioAgenteService extends ServiceBase
                 `u`.`nome_jornada` AS `jornada`,
                 `u`.`participa_pgd` AS `participaPGD`,
                 COALESCE(`modalidade_siape`.`nome`, `tms`.`nome`) AS `modalidadeSouGov`,
-                case COALESCE(`tms`.`tipo_modalidade_id`, '')
-                    when COALESCE(`tm`.`id`, '') then 'IGUAL'
+                case 
+                    when  `u`.`situacao_siape` = 'INATIVO' then '-'
+                    when COALESCE(`tms`.`tipo_modalidade_id`, '') = COALESCE(`tm`.`id`, '') then 'IGUAL'
                     else 'DIFERENTE'
                 end as comparacaoSouGovPetrvs,
                 `u`.`perfil_id` AS `perfil_id`,
@@ -237,7 +238,9 @@ TEXT;
         if (isset($comparacaoSouGovPetrvs[2])) {
             $operacaoComparacao = $this->getComparacaoSouGov($comparacaoSouGovPetrvs[2]);
 
-            if($operacaoComparacao != ''){
+            if($operacaoComparacao == '-'){
+                $sql .= " and ( `u`.`situacao_siape` = 'INATIVO') ";
+            }else if($operacaoComparacao != ''){
                 $sql .= " and ( COALESCE(`tms`.`tipo_modalidade_id`, '') $operacaoComparacao COALESCE(`tm`.`id`, '') ) ";
             }
         }
@@ -329,6 +332,8 @@ TEXT;
             $operacaoComparacao = '=';
         else if ($comparacaoSouGovPetrvs == 'DIFERENTE')
             $operacaoComparacao = '!=';
+        else if ($comparacaoSouGovPetrvs == '-')
+            $operacaoComparacao = '-';
 
         return $operacaoComparacao;
     }
