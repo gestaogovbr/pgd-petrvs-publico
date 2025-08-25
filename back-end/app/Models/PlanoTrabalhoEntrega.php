@@ -24,6 +24,7 @@ class PlanoTrabalhoEntrega extends ModelBase
     'plano_trabalho_id', /* char(36); NOT NULL; */
     //'deleted_at', /* timestamp; */
     //'meta', /* json; */// Meta para a entrega
+    'data_envio_api_pgd', /* timestamp; */ // Data de envio para a API PGD
   ];
 
   public $delete_cascade = ['reacoes'];

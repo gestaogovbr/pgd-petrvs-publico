@@ -1,3 +1,13 @@
+## 2.6.2 25/08/2025
+### Adicionado
+- Envio de contribuições não vinculadas a Planos de Entrega
+### Modificado
+- Adição da data e homologação e de conclusão no Relatório de Planos de Entrega
+- Adição da situação de conclusão no Relatório de Planos de Entrega
+### Corrigido
+- Correção do campo de Situação de Avaliação no Relatório de Planos de Entrega
+- Correção de buffer no Envio de Planos de Trabalho
+
 ## 2.6.1 10/08/2025
 ### Corrigido
 - Corrigido erro no relacionamento de atribuições do usuário
