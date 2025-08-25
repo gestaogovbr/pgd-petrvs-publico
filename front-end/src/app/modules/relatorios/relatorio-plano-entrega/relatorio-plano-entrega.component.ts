@@ -55,7 +55,7 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
           data_avaliacao: { default: "" },
           nota: { default: "" },
           situacao_avaliacao: { default: "" },
-          homologador: { default: "" },
+          homologacao: { default: "" },
           entregaNome: { default: "" },
         });
 
@@ -155,6 +155,10 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
     if (form.data_avaliacao) {
       result.push(["data_avaliacao", "==", form.data_avaliacao.toISOString().slice(0,10)]);
     }
+
+     if (form.data_conclusao) {
+      result.push(["data_conclusao", "==", form.data_conclusao.toISOString().slice(0,10)]);
+    }
     
     return result;
   };
@@ -197,5 +201,16 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
 
   public onValueChange(event: Event) {
     this.onButtonFilterClick(this.filter!);
+  }
+
+  public getDataHomologacao(row: any): string {
+
+    let retorno = this.dao!.getDateFormatted(row.data_homologacao) || '';
+    if (row.status === 'ATIVO' || row.status === 'CONCLUIDO' || row.status === 'AVALIADO' || row.status === 'SUSPENSO') {
+      if (retorno === '') {
+        return 'Dispensado';
+      }
+    }
+    return retorno;
   }
 }

@@ -116,14 +116,15 @@
             [width]="100"
         >
             <ng-template let-header="header" #titleEntregaHomologacao>
-                <input-text 
-                    [control]="filter!.controls.homologador"
-                    controlName="this.filter.homologador"
+                <input-datetime
+                    date
+                    controlName="homologacao"
+                    [control]="filter!.controls.homologacao"
                     (blur)="onValueChange($event)"
-                ></input-text>
+                ></input-datetime>
             </ng-template>
             <ng-template let-row="row" #columnHomologacao>
-                <span> {{row.homologador || '-'}}</span>
+                <span> {{ this.getDataHomologacao(row) }}</span>
             </ng-template>
         </column>
 
@@ -235,7 +236,7 @@
                 ></input-datetime>
             </ng-template>
             <ng-template let-row="row" #columnConclusao>
-                <span> - </span>
+                <span>{{dao!.getDateFormatted(row.data_conclusao) || '-'}}</span>
             </ng-template>
         </column>
 
