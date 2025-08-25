@@ -37,8 +37,8 @@ class RelatorioAgenteService extends ServiceBase
                 `u`.`nome_jornada` AS `jornada`,
                 `u`.`participa_pgd` AS `participaPGD`,
                 COALESCE(`modalidade_siape`.`nome`, `tms`.`nome`) AS `modalidadeSouGov`,
-                case `tms`.`tipo_modalidade_id`
-                    when `tm`.`id` then 'IGUAL'
+                case COALESCE(`tms`.`tipo_modalidade_id`, '')
+                    when COALESCE(`tm`.`id`, '') then 'IGUAL'
                     else 'DIFERENTE'
                 end as comparacaoSouGovPetrvs,
                 `u`.`perfil_id` AS `perfil_id`,
