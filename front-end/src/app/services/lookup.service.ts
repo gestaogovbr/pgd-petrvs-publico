@@ -184,6 +184,12 @@ export class LookupService implements IIndexable {
     { key: "DESCONHECIDO", value: "Desconhecido" }
   ];
 
+  public USUARIO_SITUACAO_SIAPE: LookupItem[] = [
+    { key: "ATIVO", value: "Ativo" },
+    { key: "INATIVO", value: "Inativo" },
+    { key: "ATIVO_TEMPORARIO", value: "Ativo Temporário" }
+  ];
+
   public ATIVIDADE_STATUS: LookupItem[] = [
     { key: "INCLUIDO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" },
     { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
@@ -976,6 +982,11 @@ export class LookupService implements IIndexable {
     { key: 'Atrasado', value: "Atrasado" },
     { key: 'Registrado no período', value: "Registrado no período" },
     { key: 'Registrado com atraso', value: "Registrado com atraso" },
+  ];
+
+  public RELATORIO_PE_SITUACOES_CONCLUSAO: LookupItem[] = [
+    { key: 'Registrado', value: "Registrado" },
+    { key: 'Pendente', value: "Pendente" }
   ];
 
   public RELATORIO_UNIDADE_TIPOS: LookupItem[] = [

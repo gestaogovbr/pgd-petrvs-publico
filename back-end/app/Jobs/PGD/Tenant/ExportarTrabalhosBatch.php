@@ -31,7 +31,7 @@ class ExportarTrabalhosBatch extends ExportarBatch
     }
 
     public function send() {
-        DB::connection()->getPdo()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+        // DB::connection()->getPdo()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
 
         $tenantId = static::getTenantId();
 
