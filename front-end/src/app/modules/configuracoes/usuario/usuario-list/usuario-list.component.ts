@@ -1,5 +1,5 @@
-import { Component, Injector, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component, Injector, ViewChild, TemplateRef } from '@angular/core';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
@@ -15,14 +15,20 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 })
 export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-
+  @ViewChild("justificativaDialog", { static: false }) public justificativaDialog?: TemplateRef<any>;
+  public justificativaForm: FormGroup;
+  
   public unidadeDao: UnidadeDaoService;
   public perfilDao: PerfilDaoService;
+  public usuarioDao: UsuarioDaoService;
+
 
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
+    this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+
     /* Inicializações */
     this.title = this.lex.translate("Usuários");
     this.code = "MOD_CFG_USER";
@@ -33,12 +39,30 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
       perfil_id: { default: null },
       atribuicoes: { default: null }
     });
+    this.justificativaForm = this.fh.FormBuilder({
+      justificativa: { default: ""},
+      usuario_id: { default: null }
+    }, this.cdRef, this.validateJustificativa);
+
     this.addOption(this.OPTION_INFORMACOES, "MOD_USER");
     // this.addOption(this.OPTION_EXCLUIR, "MOD_USER_EXCL");       // Tratar de forma diferenciada a exclusão de usuário
   }
 
+  public validateJustificativa = (control: AbstractControl, controlName: string) => {
+    let result = null;   
+    if(controlName == 'justificativa' && !control.value.length){
+      result = "Obrigatório";
+    }
+    return result;
+  }
+
+
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
+    if (row.situacao_siape == 'INATIVO' && this.auth.hasPermissionTo("MOD_USER_REATIVAR")){
+      result.push({ label: "Ativar temporariamente", icon: "bi bi-check2",  onClick: (usuario: Usuario) => { this.abrirFormAtivar(usuario); }});
+    }
+
     // Testa se o usuário logado possui permissão para gerenciar as atribuições do usuário do grid
     if (this.auth.hasPermissionTo("MOD_USER_ATRIB")) result.push({ label: "Atribuições", icon: "bi bi-list-task",  onClick: (usuario: Usuario) => { this.go.navigate({ route: ['configuracoes', 'usuario', usuario.id, 'integrante'] }, { metadata: { entity: row } }); }});
     return result;
@@ -60,4 +84,37 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     }
     return result;
   }
+
+  public onCancel() {
+    this.justificativaForm.reset();
+  }
+  
+  public abrirFormAtivar(usuario: Usuario) {
+    this.justificativaForm.controls.usuario_id.setValue(usuario.id);
+    if (this.justificativaDialog) {
+      this.dialog.template({title: "Ativar temporariamente"}, this.justificativaDialog, [], null);
+    }
+  }
+
+
+  public onSubmit() {
+    if (this.justificativaForm.valid) {
+      this.dialog.confirm("Confirmação", "Ao confirmar, o usuário poderá realizar alterações no sistema durante 30 dias. Deseja continuar?").then((confirm: boolean) => {
+        if (confirm) {
+          const ativo = this.usuarioDao.ativarTemporariamente(this.justificativaForm.controls.usuario_id.value, this.justificativaForm.controls.justificativa.value)
+          ativo.then(() => {
+            this.dialog.alert("Sucesso", "Usuário ativado temporariamente.");
+            this.justificativaForm.reset();
+            this.cdRef.detectChanges();
+          });   
+          ativo.finally(() => {
+            this.dialog.closeAll();
+            this.refresh()
+
+          });
+        }
+      });
+    }
+  }
+
 }

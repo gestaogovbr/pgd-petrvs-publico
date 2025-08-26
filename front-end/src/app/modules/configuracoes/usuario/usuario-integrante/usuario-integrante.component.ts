@@ -53,6 +53,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
       atribuicao: { default: "" },
     }, this.cdRef, this.validate);
     this.formPerfil = this.fh.FormBuilder({
+      situacao_siape: { default: "" },
       perfil_id: { default: "" }
     }, this.cdRef, this.validate);
     this.join = ["integracaoServidor"]
@@ -110,6 +111,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
       } finally {
         this.perfilUsuario = entity.perfil_id;
         this.formPerfil.controls.perfil_id.setValue(this.perfilUsuario);
+        this.formPerfil.controls.situacao_siape.setValue(entity.situacao_siape);
         this.items = [];
         integrantes.forEach(i => this.items?.push(this.integranteService.completarIntegrante(i, i.id, entity.id, i.atribuicoes)));
         this.items = this.integranteService.ordenarIntegrantes(this.items);

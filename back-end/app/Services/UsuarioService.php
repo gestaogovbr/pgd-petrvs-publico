@@ -40,7 +40,11 @@ class UsuarioService extends ServiceBase
   const LOGIN_MICROSOFT = "AZURE";
   const LOGIN_FIREBASE = "FIREBASE";
 
-
+  public function __construct(
+  ) {
+    parent::__construct();
+    $this->nivelAcessoService = new NivelAcessoService();
+  }
 
   public function atualizarFotoPerfil($tipo, &$usuario, $url)
   {
@@ -556,6 +560,30 @@ class UsuarioService extends ServiceBase
         $usuario->data_final_pedagio = null;
         $usuario->tipo_pedagio = null;
         $usuario->save();
+        return $usuario;
+    }
+
+    /**
+     * Ativa temporariamente um usuário definindo sua situacao_siape como ATIVO_TEMPORARIO
+     * @param array $data
+     * @return Usuario
+     * @throws ValidateException
+     */
+    public function ativarTemporariamente($data)
+    {
+        $usuario = Usuario::find($data['usuario_id']);
+        $participanteId = $this->nivelAcessoService->getPerfilParticipante()->id;
+
+        if (empty($usuario)) {
+            throw new ValidateException("Usuário não encontrado", 422);
+        }
+
+        $usuario->situacao_siape = 'ATIVO_TEMPORARIO';
+        $usuario->justicativa_ativacao_temporaria = $data['justificativa'];
+        $usuario->data_ativacao_temporaria = Carbon::now();
+        $usuario->perfil_id = $participanteId;
+        $usuario->save();
+        
         return $usuario;
     }
 
