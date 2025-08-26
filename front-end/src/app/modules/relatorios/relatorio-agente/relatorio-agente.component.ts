@@ -11,7 +11,6 @@ import { QueryOptions } from "src/app/dao/query-options";
 import { TipoModalidadeDaoService } from "src/app/dao/tipo-modalidade-dao.service";
 import { PerfilDaoService } from "src/app/dao/perfil-dao.service";
 import { of } from "rxjs";
-import { TipoSituacaoDaoService } from "src/app/dao/tipo-situacao-dao.service";
 
 @Component({
   selector: 'relatorio-agente',
@@ -24,7 +23,6 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
   public perfilDao: PerfilDaoService;
   public unidadeDao: UnidadeDaoService;
   public tipoModalidadeDao: TipoModalidadeDaoService;
-  public tipoSituacaoDao: TipoSituacaoDaoService;
   public botoes: ToolbarButton[] = [];
   public unidadeId: string = '';
   public loaded: boolean = false;
@@ -38,7 +36,6 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
       this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
       this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
       this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
-      this.tipoSituacaoDao = injector.get<TipoSituacaoDaoService>(TipoSituacaoDaoService);
       this.dao = injector.get<RelatorioAgenteDaoService>(RelatorioAgenteDaoService);
 
       this.filter = this.fh.FormBuilder({
@@ -91,10 +88,6 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
 
       this.tipoModalidadeDao.query().asPromise().then(modalidades => {
           this.tiposModalidade = this.lookup.map(modalidades, 'id', 'nome');
-      });
-
-      this.tipoSituacaoDao.query().asPromise().then(situacoes => {
-          this.tiposSituacao = this.lookup.map(situacoes, 'nome', 'nome');
       });
 
       this.perfilDao.query().asPromise().then(perfis => {
