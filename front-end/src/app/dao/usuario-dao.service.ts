@@ -34,6 +34,7 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
       { field: "telefone", label: "Telefone" },
       { field: "sexo", label: "Sexo", lookup: this.lookup.SEXO },
       { field: "situacao_funcional", label: "Situação Funcional", lookup: this.lookup.USUARIO_SITUACAO_FUNCIONAL },
+      { field: "situacao_siape", label: "Situação SIAPE", lookup: this.lookup.USUARIO_SITUACAO_SIAPE },
       { field: "texto_complementar_plano", label: "Mensagem do Plano de trabalho", type: "TEMPLATE"}
     ], deeps);
   }
@@ -98,5 +99,11 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
   
   public sincronizarSIAPE(cpf: string) {
     return this.server.post('api/usuario/processar-siape', { cpf });
+  }
+
+  public ativarTemporariamente(usuario_id: string, justificativa: string): Promise<any> {
+    return firstValueFrom(this.server.post('api/Usuario/ativar-temporariamente', {
+      data: { usuario_id: usuario_id, justificativa: justificativa }
+    }));
   }
 }
