@@ -2,11 +2,15 @@
 ### Adicionado
 - Envio de contribuições não vinculadas a Planos de Entrega
 - Readicionada importação da jornada de trabalho do SIAPE
+- Adição de campo situação do agente público no SIAPE
+- Opção de ativar temporariamente o agente público
+- Adição de novo perfil (Consulta), usado para agentes públicos inativos    
+- JOB diário para inativar agentes públicos ausentes na integração SIAPE
 ### Modificado
 - Adição da data e homologação e de conclusão no Relatório de Planos de Entrega
 - Adição da situação de conclusão no Relatório de Planos de Entrega
 - Adição da jornada de trabalho no Relatório de Agentes Públicos
-- Adição de campom situação no Relatório de Agentes Públicos
+- Adição de campo situação no Relatório de Agentes Públicos
 ### Corrigido
 - Correção do campo de Situação de Avaliação no Relatório de Planos de Entrega
 - Correção de buffer no Envio de Planos de Trabalho
