@@ -78,9 +78,12 @@ class Usuario extends Authenticatable implements AuditableContract
         'uf', /* char(2); */ // UF do usuário
         'texto_complementar_plano', /* longtext; */ // Campo de mensagem adicional do plano de trabalho
         'situacao_funcional',
+        'situacao_siape', /* enum('ATIVO','INATIVO','ATIVO_TEMPORARIO'); NULL; */ // Situação no SIAPE
         'data_nascimento',
         'nome_jornada', /* varchar(100); NULL */ // Nome da Jornada
         'cod_jornada', /* int; NULL */ // Codigo da Jornada
+        'modalidade_pgd', /* varchar(100); NULL */ // Modalidade do usuário no PGD
+        'participa_pgd',/* enum('sim','não'); */ // Participação do usuário no PGD
         //'deleted_at', /* timestamp; */
         //'remember_token', /* varchar(100); */
         //'password', /* varchar(255); */// Senha do usuário
