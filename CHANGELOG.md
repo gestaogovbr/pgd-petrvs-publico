@@ -1,3 +1,21 @@
+## 2.6.2 25/08/2025
+### Adicionado
+- Envio de contribuições não vinculadas a Planos de Entrega
+- Readicionada importação da jornada de trabalho do SIAPE
+- Adição de campo situação do agente público no SIAPE
+- Opção de ativar temporariamente o agente público
+- Adição de novo perfil (Consulta), usado para agentes públicos inativos    
+- JOB diário para inativar agentes públicos ausentes na integração SIAPE
+### Modificado
+- Adição da data e homologação e de conclusão no Relatório de Planos de Entrega
+- Adição da situação de conclusão no Relatório de Planos de Entrega
+- Adição da jornada de trabalho no Relatório de Agentes Públicos
+- Adição de campo situação no Relatório de Agentes Públicos
+### Corrigido
+- Correção do campo de Situação de Avaliação no Relatório de Planos de Entrega
+- Correção de buffer no Envio de Planos de Trabalho
+- Correção de Texto com número de assinaturas solicitadas no Plano de Trabalho
+
 ## 2.6.1 10/08/2025
 ### Corrigido
 - Corrigido erro no relacionamento de atribuições do usuário
@@ -11,6 +29,10 @@
 - Relatório de Unidades
 - Alerta ao assinar plano de trabalho que exijam a assinatura de um ou três agentes públicos
 - Contador de assinaturas
+- JOB de inativação de agentes públicos excluídos na integração SIAPE
+- Flag para identificar situação de agentes públicos (ativo, inativo, ativo temporário)
+- Opção para ativar temporariamente o agente público
+- Novo perfil (Consulta), usado para agentes públicos inativos
 ### Corrigido
 - Corrigido erro de cardinalidade na integração com SIAPE
 - Corrigido erro na exclusão de atribuições do usuário
