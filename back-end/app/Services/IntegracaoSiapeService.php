@@ -55,7 +55,6 @@ class IntegracaoSiapeService extends ServiceBase
       if (empty($funcionais)) {
         return null;
       }
-
       return [
         'pessoal'    => $pessoal,
         'funcionais' => $funcionais,

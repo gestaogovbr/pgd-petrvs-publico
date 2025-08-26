@@ -38,7 +38,7 @@ class Integracao implements InterfaceIntegracao
     {
         foreach ($this->getServidores() as $servidor) {
             $entidades = $this->montaEntidadeServidor($servidor);
-            if (!empty($entidade)) {
+            if (!empty($entidades)) {
                 array_map(fn($entidade) => $this->salvaEntidade($entidade), $entidades);
             }
         }
@@ -127,10 +127,11 @@ class Integracao implements InterfaceIntegracao
 
     private function montaEntidadeServidor(array $servidor): array
     {
+        Log::info("montaEntidadeServidor", $servidor);
         $entidades = [];
+        $pessoal = $servidor['pessoal'];
         foreach($servidor['funcionais'] as $funcional){
             $ativo = $this->getAtivo($funcional);
-            $pessoal = $servidor['pessoal'];
             $emailFuncional = $this->getEmail($ativo ,$funcional, $this->utilService);
 
             if (!$ativo || empty($emailFuncional)) {

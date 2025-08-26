@@ -24,6 +24,7 @@ class ProcessaDadosSiapeBD
         $results = DB::table('siape_consultaDadosPessoais AS p')
             ->join('siape_consultaDadosFuncionais AS f', 'p.cpf', '=', 'f.cpf')
             ->select('p.cpf', 'p.response AS responseDadosPessoais', 'f.response AS responseDadosFuncionais', 'p.data_modificacao')
+            ->where('p.processado', 0)
             ->get();
 
         if (!$results) {

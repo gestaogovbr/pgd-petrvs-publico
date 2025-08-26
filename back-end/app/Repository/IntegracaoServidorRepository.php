@@ -8,10 +8,9 @@ class IntegracaoServidorRepository{
     public function __construct(private IntegracaoServidor $integracaoServidor){
     }
 
-    //FIXME modificar para buscar pelo cpf e matricula
     public function getServidor(string $cpf, string $matricula){
         return $this->integracaoServidor->where('cpf', $cpf)
-        ->where('matricula', $matricula)
+        ->where('matriculasiape', $matricula)
         ->orderBy('created_at', 'desc')
         ->first();
     }
