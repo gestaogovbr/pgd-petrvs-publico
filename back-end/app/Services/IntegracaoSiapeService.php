@@ -83,6 +83,8 @@ class IntegracaoSiapeService extends ServiceBase
         'email_chefia_imediata' => $this->UtilService->valueOrDefault($dadosFuncionais['emailChefiaImediata'], null),
         'nome_jornada' => $this->UtilService->valueOrDefault($dadosFuncionais['nomeJornada'], null),
         'cod_jornada' => $this->UtilService->valueOrDefault((int) $dadosFuncionais['codJornada'], null),
+        'modalidade_pgd' => $this->getModalidadePgd($dadosFuncionais['modalidadePGD'] ?? null),
+        'participa_pgd' => $this->UtilService->valueOrDefault($dadosFuncionais['participaPGD'], null),
         'matriculas' => [
           'dados' => [
             'vinculo_ativo' => true,
@@ -199,5 +201,12 @@ class IntegracaoSiapeService extends ServiceBase
       }
     }
     return $PessoasPetrvs;
+  }
+
+  private function getModalidadePgd($modalidadeSiape)
+  {
+    if (empty($modalidadeSiape)) return null;
+    
+    return $this->tipoModalidadeSiapeService->buscarPorNome($modalidadeSiape)?->id;
   }
 }

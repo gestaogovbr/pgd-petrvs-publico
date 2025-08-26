@@ -104,7 +104,7 @@ class Integracao implements InterfaceIntegracao
                 'codigo_servo_exercicio', 'nomeguerra', 'codigo_situacao_funcional', 
                 'situacao_funcional', 'codupag', 'dataexercicionoorgao', 'funcoes', 
                 'cpf_chefia_imediata', 'email_chefia_imediata','cod_jornada',
-                'nome_jornada'
+                'nome_jornada','modalidade_pgd','participa_pgd'
             ]);
             $registro =  $this->repository->update($entidade->cpf, $dadosAtualizados);
             array_push($this->cpfsIntegracaoAlterados, $entidade->cpf);
@@ -167,6 +167,8 @@ class Integracao implements InterfaceIntegracao
             'matricula' => $this->utilService->valueOrDefault($ativo['matriculasiape'], null),
             'nome_jornada' => $this->utilService->valueOrDefault($servidor['nome_jornada'], null),
             'cod_jornada' => $this->utilService->valueOrDefault($servidor['cod_jornada'], null),
+            'modalidade_pgd' => $this->utilService->valueOrDefault($servidor['modalidade_pgd'], null),
+            'participa_pgd' => $this->utilService->valueOrDefault($servidor['participa_pgd'], 'não'),
             'cpf_chefia_imediata' => $this->getCPFChefiaImediata($servidor, $this->utilService),
             'email_chefia_imediata' => $this->getEmailChefiaImediata($servidor, $this->utilService),
             'deleted_at' => null,

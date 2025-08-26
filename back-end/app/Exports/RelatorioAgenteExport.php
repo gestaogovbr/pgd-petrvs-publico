@@ -43,9 +43,9 @@ class RelatorioAgenteExport implements FromCollection, WithMapping, WithHeadings
             'Situação',
             'Seleção',
             'Lotado',
-            'Modalidade SouGov',
+            'Modalidade Siape',
             'Modalidade do último Plano de Trabalho',
-            'Comparação Sougov x Petrvs',
+            'Comparação Siape x Petrvs',
             'Indisponibilidade de teletrabalho',
             'Início Indisponibilidade de teletrabalho',
             'Fim Indisponibilidade de teletrabalho'
@@ -62,9 +62,9 @@ class RelatorioAgenteExport implements FromCollection, WithMapping, WithHeadings
             'E' => 20, // Situação
             'F' => 30, // Seleção
             'G' => 30, // Lotado
-            'H' => 20, // Modalidade SouGov
+            'H' => 20, // Modalidade Siape
             'I' => 30, // Modalidade do último Plano de Trabalho
-            'J' => 15, // Comparação Sougov x Petrvs
+            'J' => 15, // Comparação Siape x Petrvs
             'K' => 40, // Indisponibilidade de teletrabalho
             'L' => 15, // Início Indisponibilidade de teletrabalho
             'M' => 15, // Fim Indisponibilidade de teletrabalho
