@@ -129,7 +129,7 @@
         >
             <ng-template let-header="header" #titleSituacao>
                 <input-select 
-                    [items]="tiposSituacao" 
+                    [items]="lookup.USUARIO_SITUACAO_SIAPE" 
                     [control]="filter!.controls.situacao"
                     controlName="this.filter.situacao"
                     (change)="onValueChange($event)"
@@ -138,7 +138,7 @@
             </ng-template>
 
             <ng-template let-row="row" #columnSituacao>
-                <span> {{row.situacao || '-'}}</span>
+                <span> {{lookup.getValue(lookup.USUARIO_SITUACAO_SIAPE, row.situacao) || '-'}}</span>
             </ng-template>
         </column>
 

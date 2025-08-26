@@ -89,7 +89,6 @@ use App\Http\Controllers\TipoDocumentoController;
 
 use App\Http\Controllers\TipoJustificativaController;
 use App\Http\Controllers\TipoModalidadeController;
-use App\Http\Controllers\TipoSituacaoController;
 use App\Http\Controllers\TipoMotivoAfastamentoController;
 use App\Http\Controllers\TipoProcessoController;
 use App\Http\Controllers\TipoTarefaController;
@@ -272,9 +271,6 @@ Route::middleware(['auth:sanctum'])->prefix('TipoDocumento')->group(function () 
 Route::middleware(['auth:sanctum'])->prefix('TipoProcesso')->group(function () {
   defaultRoutes(TipoProcessoController::class);
   Route::post('atualizar', [TipoProcessoController::class, 'atualizar']);
-});
-Route::middleware(['auth:sanctum'])->prefix('TipoSituacao')->group(function () {
-  defaultRoutes(TipoSituacaoController::class);
 });
 
 /* Modulos: Gestão */
