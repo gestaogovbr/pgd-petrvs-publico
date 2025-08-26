@@ -128,15 +128,17 @@
             [align]="'center'"
         >
             <ng-template let-header="header" #titleSituacao>
-                <input-text 
+                <input-select 
+                    [items]="lookup.USUARIO_SITUACAO_SIAPE" 
                     [control]="filter!.controls.situacao"
                     controlName="this.filter.situacao"
-                    (blur)="onValueChange($event)"
-                ></input-text>
+                    (change)="onValueChange($event)"
+                    nullable
+                ></input-select>
             </ng-template>
 
             <ng-template let-row="row" #columnSituacao>
-                <span> {{row.situacao || '-'}}</span>
+                <span> {{lookup.getValue(lookup.USUARIO_SITUACAO_SIAPE, row.situacao) || '-'}}</span>
             </ng-template>
         </column>
 
@@ -176,7 +178,7 @@
             </ng-template>
         </column>
 
-        <column title="Modalidade SouGov"
+        <column title="Modalidade Siape"
             [template]="columnModalidadeSouGov"
             [titleTemplate]="titleModalidadeSouGov"
             [verticalAlign]="'bottom'" [align]="'center'"
@@ -192,7 +194,7 @@
                 ></input-select>
             </ng-template>
             <ng-template let-row="row" #columnModalidadeSouGov>
-                <span>{{row.modalidadeSouGov}}</span>
+                <span>{{row.participaPGD === 'sim' ? row.modalidadeSouGov || '-' : '-'}}</span>
             </ng-template>
         </column>
 
@@ -210,11 +212,11 @@
                 ></input-select>
             </ng-template>
             <ng-template let-row="row" #columnModalidade>
-                <span>{{row.tipoModalidadeNome}}</span>
+                <span>{{row.tipoModalidadeNome || '-'}}</span>
             </ng-template>
         </column>
 
-        <column title="Comparação Sougov x Petrvs"
+        <column title="Comparação Siape x Petrvs"
             [template]="columnComparacao"
             [titleTemplate]="titleComparacao" [verticalAlign]="'bottom'"
             [width]="80"

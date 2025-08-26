@@ -39,7 +39,7 @@ class LoginController extends Controller
 
     private function registrarUsuario($request, $usuario, $update = null)
     {
-        if (isset($usuario)) {
+        if (isset($usuario)) {          
             if (isset($update) && count($update) > 0) {
                 $usuario->update($update);
                 $usuario->fresh();
@@ -167,6 +167,9 @@ class LoginController extends Controller
         if (Auth::check()) {
             $entidade = $this->registrarEntidade($request, true);
             $usuario = $this->registrarUsuario($request, self::loggedUser());
+            if ($usuario === null) {
+                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
+            }
             return response()->json([
                 "success" => true,
                 "kind" => $request->session()->get("kind"),
@@ -181,6 +184,9 @@ class LoginController extends Controller
                 $request->session()->put("kind", "SESSION");
                 $entidade = $this->registrarEntidade($request);
                 $usuario = $this->registrarUsuario($request, $usuario);
+                if ($usuario === null) {
+                    return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
+                }
                 return response()->json([
                     "success" => true,
                     "kind" => $request->session()->get("kind"),
@@ -214,6 +220,9 @@ class LoginController extends Controller
             $request->session()->put("kind", "USERPASSWORD");
             $entidade = $this->registrarEntidade($request);
             $usuario = $this->registrarUsuario($request, self::loggedUser());
+            if ($usuario === null) {
+                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
+            }
             return response()->json([
                 'success' => true,
                 "entidade" => $entidade,
@@ -240,6 +249,9 @@ class LoginController extends Controller
         if (!isset($tokenData['error'])) {
             $entidade = $this->registrarEntidade($request);
             $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->first());
+            if ($usuario === null) {
+                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
+            }
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_FIREBASE, $usuario, $tokenData["picture"]);
@@ -272,6 +284,9 @@ class LoginController extends Controller
         if (!isset($tokenData['error'])) {
             $entidade = $this->registrarEntidade($request);
             $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->first());
+            if ($usuario === null) {
+                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
+            }
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
@@ -288,45 +303,7 @@ class LoginController extends Controller
         return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateGoogleToken"), $tokenData);
     }
 
-    /**
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function authenticatePrfGoogleToken(Request $request, GoogleService $auth, IntegracaoService $integracao)
-    {
-        $credentials = $request->validate([
-            'entidade' => ['required'],
-            'token' => ['required']
-        ]);
-        $tokenData = $auth->verifyToken($credentials['token']);
-        if (!isset($tokenData['error'])) {
-            $usuario = Usuario::where('email', $tokenData['email'])->first();
-            if (!isset($usuario) && $integracao->autoIncluir) {
-                $usuario = new Usuario();
-                $lotacao = new UnidadeIntegrante();
-                $service = new IntegracaoService();
-                $service->salvaUsuarioLotacaoGoogle($usuario, $lotacao, $tokenData, $auth);
-            }
-            if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
-                $usuarioService = new UsuarioService();
-                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
-                $request->session()->regenerate();
-                $request->session()->put("kind", "GOOGLE");
-                $entidade = $this->registrarEntidade($request);
-                $usuario = $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"]]);
-                return response()->json([
-                    'success' => true,
-                    "entidade" => $entidade,
-                    "usuario" => $usuario,
-                    "horario_servidor" => CalendarioService::horarioServidor()
-                ]);
-            }
-        }
-        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticatePrfGoogleToken"), $tokenData);
-    }
-
+    
     
     /**
      * Handle an authentication attempt.
@@ -448,94 +425,9 @@ class LoginController extends Controller
         return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateApiGoogleToken"), $tokenData);
     }
 
-    /**
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function authenticateApiPrfGoogleToken(Request $request, GoogleService $auth, IntegracaoService $integracao)
-    {
-        $credentials = $request->validate([
-            'entidade' => ['required'],
-            'token' => ['required'],
-            'device_name' => ['required'],
-        ]);
-        $tokenData = $auth->verifyToken($credentials['token']);
-        if (!isset($tokenData['error'])) {
-            $usuario = Usuario::where('email', $tokenData['email'])->first();
-            if (!isset($usuario) && $integracao->autoIncluir) {
-                $usuario = new Usuario();
-                $lotacao = new UnidadeIntegrante();
-                $service = new IntegracaoService();
-                $service->salvaUsuarioLotacaoGoogle($usuario, $lotacao, $tokenData, $auth);
-            }
-            if (isset($usuario)) { // && Hash::check($request->password, $user->password)
-                $usuarioService = new UsuarioService();
-                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
-                $request->session()->regenerate();
-                $request->session()->put("kind", "GOOGLE");
-                $usuario->save();
-                $entidade = $this->registrarEntidade($request);
-                $usuario = $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"]]);
-                return response()->json([
-                    'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
-                    'entidade' => $entidade,
-                    'usuario' => $usuario,
-                    "horario_servidor" => CalendarioService::horarioServidor()
-                ]);
-            }
-        }
-        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateApiPrfGoogleToken"), $tokenData);
-    }
+    
 
-    /**
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function generateApiPrfSessionToken(Request $request, ApiService $api, IntegracaoService $integracao)
-    {
-        $credentials = $request->validate([
-            'entidade' => ['required'],
-            'token' => ['required']
-        ]);
-        $tenant = Tenant::find($credentials["entidade"]);
-        if (empty($tenant) || empty($tenant->modulo_sei_private_key)) return LogError::newError('ENTITY_NOT_FOUND');
-        tenancy()->initialize($tenant);
-        $privateKey = "-----BEGIN PRIVATE KEY-----\n" . $tenant->modulo_sei_private_key . "\n-----END PRIVATE KEY-----";
-        //$entidade = Entidade::where("sigla", $credentials["entidade"])->first();
-        //if (empty($entidade)) return LogError::newError('ENTITY_NOT_FOUND');
-        $tokenData = $api->verifyToken($credentials['token'], $privateKey, $credentials["entidade"]);
-        if (!isset($tokenData['error'])) {
-            $usuario = !empty($tokenData['email']) ? Usuario::where('email', $tokenData['email'])->first() :
-                Usuario::where('cpf', $tokenData['cpf'])->first();
-            if (!isset($usuario) && $integracao->autoIncluir) {
-                $usuario = new Usuario();
-                $lotacao = new UnidadeIntegrante();
-                $service = new IntegracaoService();
-                $service->salvaUsuarioLotacaoApi($usuario, $lotacao, $tokenData, $api);
-            }
-            if (isset($usuario)) { // && Hash::check($request->password, $user->password)
-                $request->session()->regenerate();
-                $request->session()->put("kind", "SEI");
-                $usuario->save();
-                $entidade = $this->registrarEntidade($request);
-                $usuario = $this->registrarUsuario($request, $usuario, !empty($tokenData["id_sei"]) ? ['id_sei' => $tokenData["id_sei"]] : []);
-                return response()->json([
-                    'token' => $usuario->createToken("SEI_" . $tokenData["id_sei"])->plainTextToken,
-                    'entidade' => $entidade,
-                    'usuario' => $usuario,
-                    "horario_servidor" => CalendarioService::horarioServidor()
-                ]);
-            } else {
-                return LogError::newError('USER_NOT_FOUND', new Exception("generateApiPrfSessionToken"), $tokenData);
-            }
-        }
-        return LogError::newError('As credenciais fornecidas são inválidas.' . $tokenData['error'], new Exception("generateApiPrfSessionToken"), $tokenData);
-    }
-
+    
     
     /**
      * Verify an firebase token
@@ -570,9 +462,9 @@ class LoginController extends Controller
     {
         if ($config) {
             /**
-             * @disregard P1009 Undefined type
+             * @disregard P1013 Undefined method
+             * @phpstan-ignore-next-line
              */
-            // @php-ignore
             return Socialite::driver('azure')->setConfig($config);
         }
         return Socialite::driver('azure');
@@ -611,6 +503,9 @@ class LoginController extends Controller
             $email = $email[0];
             //$email = str_replace("_", "@", $email);
             $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->first());
+            if ($usuario === null) {
+                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
+            }
             if (($usuario)) {
                 Auth::loginUsingId($usuario->id);
                 $request->session()->regenerate();
@@ -638,9 +533,9 @@ class LoginController extends Controller
         if ($config) {
             // O método setConfig existe mesmo VSCode dizendo que não.
             /**
-             * @disregard P1009 Undefined type
+             * @disregard P1013 Undefined method
+             * @phpstan-ignore-next-line
              */
-            // @php-ignore
             return Socialite::driver('govbr')->setConfig($config);
         }
         return Socialite::driver('govbr');
@@ -681,7 +576,7 @@ class LoginController extends Controller
             ->redirect();
 
     } catch (\Throwable $e) {
-        \Log::error("Erro ao redirecionar para o GovBr", [
+        Log::error("Erro ao redirecionar para o GovBr", [
             'erro' => $e->getMessage(),
             'trace' => $e->getTraceAsString(),
         ]);
@@ -712,21 +607,24 @@ class LoginController extends Controller
                 $email = $email[0];
                 $email = str_replace("_", "@", $email);
                 $usuario = $this->registrarUsuario($request, Usuario::where('cpf', $cpf)->first());
-                if (($usuario)) {
-                    Auth::loginUsingId($usuario->id);
-                    $request->session()->regenerate();
-                    $request->session()->put("kind", "GOVBR");
-                    return view("govbr");
-                } else {
-                    return LogError::newError('As credenciais fornecidas são inválidas. CPF: ' . $cpf, new Exception("signInGovBrCallback"));
-                }
+            if ($usuario === null) {
+                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
+            }
+            if (($usuario)) {
+                Auth::loginUsingId($usuario->id);
+                $request->session()->regenerate();
+                $request->session()->put("kind", "GOVBR");
+                return view("govbr");
+            } else {
+                return LogError::newError('As credenciais fornecidas são inválidas. CPF: ' . $cpf, new Exception("signInGovBrCallback"));
+            }
             } else {
                 return $this->govBrProvider($config = $login_govbr_select_tenancy)
                     ->scopes(['openid', 'email', 'profile'])
                     ->redirect();
             }
         } catch (\Throwable $e) {
-            \Log::error("Erro em callback do GovBr", [
+            Log::error("Erro em callback do GovBr", [
                 'erro' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);

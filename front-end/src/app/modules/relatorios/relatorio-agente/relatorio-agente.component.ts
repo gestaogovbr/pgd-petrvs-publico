@@ -27,6 +27,7 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
   public unidadeId: string = '';
   public loaded: boolean = false;
   public tiposModalidade: LookupItem[] = [];
+  public tiposSituacao: LookupItem[] = [];
   public perfis: LookupItem[] = [];
   public unidades?: any[];
 
