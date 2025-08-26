@@ -39,12 +39,7 @@ class LoginController extends Controller
 
     private function registrarUsuario($request, $usuario, $update = null)
     {
-        if (isset($usuario)) {
-            // Verificar se o usuário está inativo no SIAPE
-            if ($usuario->situacao_siape === 'INATIVO') {
-                return null; // Retorna null para indicar falha na autenticação
-            }
-            
+        if (isset($usuario)) {          
             if (isset($update) && count($update) > 0) {
                 $usuario->update($update);
                 $usuario->fresh();
