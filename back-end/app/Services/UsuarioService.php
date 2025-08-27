@@ -29,7 +29,7 @@ use App\Services\Siape\Consulta\Resources\UnidadesResource;
 use App\Services\Siape\Consulta\SiapeUnidadeService;
 use App\Services\Siape\Consulta\SiapeUnidadesService;
 use Carbon\Carbon;
-
+use Illuminate\Database\Eloquent\Collection;
 
 class UsuarioService extends ServiceBase
 {
@@ -554,7 +554,7 @@ class UsuarioService extends ServiceBase
         return $usuario;
     }
 
-    public function matriculas($cpf) : array
+    public function matriculas($cpf) : Collection
     {
         $usuarios = Usuario::where('cpf', $cpf)->get();
         
