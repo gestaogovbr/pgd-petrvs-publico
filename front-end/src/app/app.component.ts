@@ -479,6 +479,12 @@ export class AppComponent {
     this.auth.selecionaUnidade(id, this.cdRef);
   }
 
+  public getMatriculaPelaUnidadeComCpf(idUnidade: string, cpf: string): string {
+    let matricula = this.auth.usuario?.matriculas?.find(x => x.unidades?.find(y => y.id == idUnidade) && x.cpf == cpf);
+    return matricula?.matricula || 'N/A';
+    
+  }
+
   public async onToolbarButtonClick(btn: ToolbarButton) {
     try {
       btn.running = true;

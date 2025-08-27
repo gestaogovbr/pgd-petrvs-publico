@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Injectable, Injector } from '@angular/core';
 import { Unidade } from '../models/unidade.model';
 import { Usuario, UsuarioConfig } from '../models/usuario.model';
+
 import { DialogService } from './dialog.service';
 import { GlobalsService } from './globals.service';
 import { GoogleApiService } from './google-api.service';
@@ -176,6 +177,7 @@ export class AuthService {
       if (!usuarioContextos.includes(this.usuario?.config.menu_contexto)) this.gb.contexto = this.app?.menuContexto.find(c => c.key === this.usuario?.config.menu_contexto);
       this.gb.setContexto(usuarioContextos[0]);
       this.notificacao.updateNaoLidas();
+      this.popularMatriculasUsuario();
     } else {
       this.usuario = undefined;
       this.kind = undefined;
@@ -498,6 +500,37 @@ export class AuthService {
       return login();
     } else {
       return this.server.get('sanctum/csrf-cookie').toPromise().then(login);
+    }
+  }
+
+  /**
+   * Busca as matrículas do usuário através do CPF
+   * @param cpf CPF do usuário
+   * @returns Promise com array de usuários
+   */
+  public buscarMatriculas(cpf: string): Promise<Usuario[]> {
+    return new Promise<Usuario[]>((resolve, reject) => {
+      this.server.post('api/Usuario/matriculas', { cpf }).subscribe({
+        next: (response) => {
+          const matriculas = response?.data?.map((item: any) => new Usuario(item)) || [];
+          resolve(matriculas);
+        },
+        error: (error) => reject(error)
+      });
+    });
+  }
+
+  /**
+   * Popula as matrículas do usuário logado
+   */
+  public async popularMatriculasUsuario(): Promise<void> {
+    if (this.usuario?.cpf) {
+      try {
+        this.usuario.matriculas = await this.buscarMatriculas(this.usuario.cpf);
+      } catch (error) {
+        console.error('Erro ao buscar matrículas do usuário:', error);
+        this.usuario.matriculas = [];
+      }
     }
   }
 }

@@ -142,6 +142,7 @@ Route::middleware(['auth:sanctum'])->post('/login-session', [LoginController::cl
 /* Geral */
 Route::middleware('auth:sanctum')->post('/search-text', [ControllerBase::class, 'searchText']);
 Route::middleware('auth:sanctum')->post('/usuarios/query', [UsuarioController::class, 'query']);
+Route::middleware('auth:sanctum')->post('/usuario/matriculas', [UsuarioController::class, 'matriculas']);
 Route::get('/integracao', [IntegracaoController::class, 'sincronizar']);
 Route::middleware('auth:sanctum')->prefix('Calendario')->group(function () {
   Route::post('feriados', [CalendarioController::class, 'feriados']);

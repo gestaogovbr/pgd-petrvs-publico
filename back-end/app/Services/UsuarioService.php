@@ -554,4 +554,15 @@ class UsuarioService extends ServiceBase
         return $usuario;
     }
 
+    public function matriculas($cpf) : array
+    {
+        $usuarios = Usuario::where('cpf', $cpf)->get();
+        
+        if ($usuarios->isEmpty()) {
+            throw new ValidateException("Nenhum usuário encontrado com o CPF informado.", 404);
+        }
+        
+        return $usuarios;
+    }
+
 }
