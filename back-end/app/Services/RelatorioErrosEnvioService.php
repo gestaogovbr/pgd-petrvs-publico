@@ -30,6 +30,7 @@ class RelatorioErrosEnvioService extends ServiceBase
         )
             SELECT
                 ei.id,
+                COUNT(*) OVER() AS total_rows,
                 ei.created_at as data_envio,
                 ei.tipo AS categoria,
                 e.numero as envioNumero,
@@ -98,15 +99,11 @@ TEXT;
 
        $this->applyFiltros($data, $sql, $params);
 
-        // contagem
-        $total = DB::select("SELECT count(*) as total from ($sql) queryTotal", $params);
-        $count = $total[0]->total;
-
         // finalização - order, limit e offset
         $sql .= ' ORDER BY 2 DESC';
 
         if (!empty($data['limit'])) {
-            $sql .= ' LIMIT 100 OFFSET '.(max($data['page'] - 1, 0) * 10);
+            $sql .= ' LIMIT 100 OFFSET '.(max($data['page'] - 1, 0) * 100);
         }
 
         $rows = DB::select($sql, $params);
@@ -114,7 +111,7 @@ TEXT;
         $this->proxyRows($rows);
 
         return [
-            'count' => $count,
+            'count' => $rows[0]->total_rows ?? 0,
             'rows' => collect($rows)
         ];
     }
@@ -144,16 +141,41 @@ TEXT;
             $params[] = $envioNumero[2];
         }
 
-         $motivo = $this->extractWhere($data, "motivo");
+        $usuarioId = $this->extractWhere($data, "usuario_id");
+        if (isset($usuarioId[2])) {
+            $sql .= " and (ei.tipo = 'participante' and u.id = ?)";
+            $params[] = $usuarioId[2];
+        }
+
+        $dataInicio = $this->extractWhere($data, "envio_inicio");
+        if (isset($dataInicio[2])) {
+            $sql .= " and ei.created_at >= ?";
+            $params[] = $dataInicio[2];
+        }
+
+        $dataFim = $this->extractWhere($data, "envio_fim");
+        if (isset($dataFim[2])) {
+            $sql .= " and ei.created_at <= ?";
+            $params[] = $dataFim[2] . " 23:59:59";
+        }
+
+        $dataEnvio = $this->extractWhere($data, "data_envio");
+        if (isset($dataFim[2])) {
+            $sql .= " and (ei.created_at between ? and ?)";
+            $params[] = $dataEnvio[2];
+            $params[] = $dataEnvio[2] . " 23:59:59";
+        }
+
+        $motivo = $this->extractWhere($data, "motivo");
         if (isset($motivo[2])) {
             $sql .= " and ei.erros like concat('%', ?, '%')";
             $params[] = $motivo[2];
         }
 
-        /*$unidadeHierarquia = $this->extractWhere($data, "unidadeHierarquia");
-        if (isset($unidadeHierarquia[2])) {
-            $sql .= " and unidadeHierarquia like ?";
-            $params[] = $unidadeHierarquia[2];
-        }*/
+        $id = $this->extractWhere($data, "id");
+        if (isset($id[2])) {
+            $sql .= " and ei.uid like concat('%', ?, '%')";
+            $params[] = $id[2];
+        }
     }
 }

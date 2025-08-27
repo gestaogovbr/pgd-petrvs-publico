@@ -7,6 +7,8 @@ import { RelatorioErrosEnvio } from "src/app/models/relatorio-erros-envio.model"
 import { PageListBase } from "src/app/modules/base/page-list-base";
 import { QueryOptions } from "src/app/dao/query-options";
 import { of } from "rxjs";
+import moment from 'moment';
+import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
 
 @Component({
   selector: 'relatorio-erros-envio',
@@ -17,6 +19,7 @@ export class RelatorioErrosEnvioComponent extends PageListBase<RelatorioErrosEnv
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public unidadeDao: UnidadeDaoService;
+  public usuarioDao: UsuarioDaoService;
   public unidadeId: string = '';
   public loaded: boolean = false;
   public unidades?: any[];
@@ -24,6 +27,7 @@ export class RelatorioErrosEnvioComponent extends PageListBase<RelatorioErrosEnv
   constructor(public injector: Injector, dao: RelatorioErrosEnvioDaoService) {
       super(injector, RelatorioErrosEnvio, RelatorioErrosEnvioDaoService);
       this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+      this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
       this.dao = injector.get<RelatorioErrosEnvioDaoService>(RelatorioErrosEnvioDaoService);
 
       this.filter = this.fh.FormBuilder({
@@ -34,10 +38,11 @@ export class RelatorioErrosEnvioComponent extends PageListBase<RelatorioErrosEnv
         categoria: { default: "" },
         envioNumero: { default: "" },
         numero: { default: "" },
-        data_inicial: { default: "" },
-        data_final: { default: "" },
+        envio_inicio: { default: moment().subtract(30, 'days').toDate() },
+        envio_fim: { default: moment().toDate() },
         data_envio: { default: "" },
         motivo: { default: "" },
+        usuario_id: { default: "" },
       });
 
       this.filter!.get('unidade_id')?.setValidators(this.requiredValidator.bind(this));
@@ -86,6 +91,10 @@ export class RelatorioErrosEnvioComponent extends PageListBase<RelatorioErrosEnv
       result.push(["unidadeHierarquia", "like", "%" + form.unidadeNome + "%"]);
     }
 
+    if (form.id?.length) {
+      result.push(["id", "like", form.id]);
+    }
+
     if (form.categoria?.length) {
       result.push(["categoria", "==", form.categoria]);
     }
@@ -98,12 +107,12 @@ export class RelatorioErrosEnvioComponent extends PageListBase<RelatorioErrosEnv
       result.push(["numero", "like", "%" + form.numero + "%"]);
     }
 
-    if (form.data_inicial) {
-      result.push(["data_envio", ">=",  form.data_inicial.toISOString().slice(0,10)]);
+    if (form.envio_inicio) {
+      result.push(["envio_inicio", ">=",  form.envio_inicio.toISOString().slice(0,10)]);
     }
 
-    if (form.data_final) {
-      result.push(["data_envio", "<=", form.data_final.toISOString().slice(0,10)]);
+    if (form.envio_fim) {
+      result.push(["envio_fim", "<=", form.envio_fim.toISOString().slice(0,10)]);
     }
 
     if (form.data_envio) {
@@ -113,6 +122,11 @@ export class RelatorioErrosEnvioComponent extends PageListBase<RelatorioErrosEnv
     if (form.motivo?.length) {
       result.push(["motivo", "like", form.motivo]);
     }
+
+    if (form.usuario_id?.length) {
+      result.push(["usuario_id", "==", form.usuario_id]);
+    }
+
     
     return result;
   };
