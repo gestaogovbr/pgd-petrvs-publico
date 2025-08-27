@@ -17,6 +17,7 @@ class PerfilService extends ServiceBase {
         [3, "Perfil Unidade", "Representantes de unidades executoras"],
         [5, "Perfil Participante", "Agentes públicos selecionáveis para o PGD"],
         [6, "Perfil Colaborador", "Agente públicos não selecionáveis para o PGD (ex: Terceirizados)"],
+        [7, "Perfil Consulta", "Agente públicos inativos na integração SIAPE da instalação"],
     ];
 
     /**

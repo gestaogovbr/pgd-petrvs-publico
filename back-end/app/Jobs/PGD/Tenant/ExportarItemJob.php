@@ -166,20 +166,23 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 
         if ($this->source->auditIds)
         {
-            /*DB::table('audits')
-                ->whereIn('id', $this->source->auditIds)
-                ->update([
-                    'tags' => json_encode(['SUCESSO']),
-                    'error_message' => null
-                ]);*/
-
             DB::table('audits')
-                ->where('auditable_type', $this->getAuditableType())
-                ->where('auditable_id', $this->source->id)
+                ->whereIn('id', $this->source->auditIds)
                 ->update([
                     'enviado' => true,
                     'error_message' => null
                 ]);
+
+            DB::table('audits')
+                ->where('auditable_type', $this->getAuditableType())
+                ->where('auditable_id', $this->source->id)
+                ->where('enviado', false)
+                ->update([
+                    'enviado' => true,
+                    'error_message' => null
+                ]);
+
+
         }
 
         Log::info("[{$this->tenantId}] {$this->source->tipo}: {$this->source->id} - SUCESSO");
