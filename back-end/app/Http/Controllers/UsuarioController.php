@@ -198,6 +198,28 @@ class UsuarioController extends ControllerBase
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
 
+        }  catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo " . $dataError['code'] . ": Ocorreu um erro inesperado."]);
+        }
+    }
+
+    public function matriculas(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'cpf' => ['required', 'string', 'size:11']
+            ]);
+
+            $usuarios = $this->service->matriculas($data['cpf']);
+
+            return response()->json([
+                'success' => true,
+                'usuarios' => $usuarios
+            ]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
         } catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
