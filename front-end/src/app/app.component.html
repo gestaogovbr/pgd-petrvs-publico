@@ -144,9 +144,9 @@
           <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 shadow border border-300" aria-labelledby="navbarDropdownBranch" data-bs-popper="static">
             <div class="card position-relative border-0">
               <div class="card-body py-3 px-3 pb-0 overflow-auto scrollbar" style="height: 20rem">
-                <ul *ngIf="unidades?.length" class="nav d-flex flex-column">
-                  <li *ngFor="let unidade of unidades" class="nav-item">
-                    <a [class.active]="unidade.id == auth.unidade?.id" class="nav-link " role="button" (click)="selecionaUnidade(unidade.id)"> {{unidade.sigla}} ({{ getMatriculaPelaUnidadeComCpf(unidade.id, auth.usuario?.cpf || '') }}) </a>
+                <ul *ngIf="unidadesVinculadas?.length" class="nav d-flex flex-column">
+                  <li *ngFor="let unidade of unidadesVinculadas" class="nav-item">
+                    <a [class.active]="unidade.id == auth.unidade?.id" class="nav-link " role="button" (click)="selecionaUnidade(unidade.id, getMatriculaPelaUnidadeComCpf(unidade.id, auth.usuario?.cpf || ''))"> {{unidade.sigla}} ({{ getMatriculaPelaUnidadeComCpf(unidade.id, auth.usuario?.cpf || '') }}) </a>
                   </li>
                 </ul>
               </div>
