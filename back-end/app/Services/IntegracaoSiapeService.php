@@ -257,4 +257,11 @@ class IntegracaoSiapeService extends ServiceBase
     }
     return $PessoasPetrvs;
   }
+
+  private function getModalidadePgd($modalidadeSiape)
+  {
+    if (empty($modalidadeSiape)) return null;
+    
+    return $this->tipoModalidadeSiapeService->buscarPorNome($modalidadeSiape)?->id;
+  }
 }

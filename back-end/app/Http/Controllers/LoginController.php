@@ -41,7 +41,7 @@ class LoginController extends Controller
 
     private function registrarUsuario($request, $usuario, $update = null)
     {
-        if (isset($usuario)) {
+        if (isset($usuario)) {          
             if (isset($update) && count($update) > 0) {
                 $usuario->update($update);
                 $usuario->fresh();
@@ -216,6 +216,9 @@ class LoginController extends Controller
         if (Auth::guard('web')->check()) {
             $entidade = $this->registrarEntidade($request, true);
             $usuario = $this->registrarUsuario($request, self::loggedUser());
+            if ($usuario === null) {
+                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
+            }
             return response()->json([
                 "success" => true,
                 "kind" => $request->session()->get("kind"),
@@ -230,6 +233,9 @@ class LoginController extends Controller
                 $request->session()->put("kind", "SESSION");
                 $entidade = $this->registrarEntidade($request);
                 $usuario = $this->registrarUsuario($request, $usuario);
+                if ($usuario === null) {
+                    return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
+                }
                 return response()->json([
                     "success" => true,
                     "kind" => $request->session()->get("kind"),
@@ -263,6 +269,9 @@ class LoginController extends Controller
             $request->session()->put("kind", "USERPASSWORD");
             $entidade = $this->registrarEntidade($request);
             $usuario = $this->registrarUsuario($request, self::loggedUser());
+            if ($usuario === null) {
+                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
+            }
             return response()->json([
                 'success' => true,
                 "entidade" => $entidade,
@@ -289,6 +298,9 @@ class LoginController extends Controller
         if (!isset($tokenData['error'])) {
             $entidade = $this->registrarEntidade($request);
             $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->first());
+            if ($usuario === null) {
+                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
+            }
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_FIREBASE, $usuario, $tokenData["picture"]);
@@ -321,6 +333,9 @@ class LoginController extends Controller
         if (!isset($tokenData['error'])) {
             $entidade = $this->registrarEntidade($request);
             $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->first());
+            if ($usuario === null) {
+                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
+            }
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
@@ -662,6 +677,9 @@ class LoginController extends Controller
             $email = $email[0];
             //$email = str_replace("_", "@", $email);
             $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->first());
+            if ($usuario === null) {
+                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
+            }
             if (($usuario)) {
                 Auth::loginUsingId($usuario->id);
                 $request->session()->regenerate();
@@ -764,14 +782,17 @@ class LoginController extends Controller
                 $email = $email[0];
                 $email = str_replace("_", "@", $email);
                 $usuario = $this->registrarUsuario($request, Usuario::where('cpf', $cpf)->first());
-                if (($usuario)) {
-                    Auth::loginUsingId($usuario->id);
-                    $request->session()->regenerate();
-                    $request->session()->put("kind", "GOVBR");
-                    return view("govbr");
-                } else {
-                    return LogError::newError('As credenciais fornecidas são inválidas. CPF: ' . $cpf, new Exception("signInGovBrCallback"));
-                }
+            if ($usuario === null) {
+                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
+            }
+            if (($usuario)) {
+                Auth::loginUsingId($usuario->id);
+                $request->session()->regenerate();
+                $request->session()->put("kind", "GOVBR");
+                return view("govbr");
+            } else {
+                return LogError::newError('As credenciais fornecidas são inválidas. CPF: ' . $cpf, new Exception("signInGovBrCallback"));
+            }
             } else {
                 return $this->govBrProvider($config = $login_govbr_select_tenancy)
                     ->scopes(['openid', 'email', 'profile'])

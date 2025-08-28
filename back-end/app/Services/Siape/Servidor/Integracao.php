@@ -95,7 +95,8 @@ class Integracao implements InterfaceIntegracao
                 'codigo_cargo', 'coduorgexercicio', 'coduorglotacao',
                 'codigo_servo_exercicio', 'nomeguerra', 'codigo_situacao_funcional', 
                 'situacao_funcional', 'codupag', 'dataexercicionoorgao', 'funcoes', 
-                'cpf_chefia_imediata', 'email_chefia_imediata', 'ident_unica'
+                'cpf_chefia_imediata', 'email_chefia_imediata', 'ident_unica','cod_jornada',
+                'nome_jornada','modalidade_pgd','participa_pgd'
             ]);
 
             $registro =  $this->repository->update($entidade->cpf, $entidade->matriculasiape, $dadosAtualizados);
