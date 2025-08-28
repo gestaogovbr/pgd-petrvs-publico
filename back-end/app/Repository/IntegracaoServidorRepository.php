@@ -24,9 +24,11 @@ class IntegracaoServidorRepository{
         return $entidade->save();
     }
 
-    public function update(string $cpf, array $data)
+    public function update(string $cpf, string $matricula ,array $data)
     {
-        return (bool) $this->integracaoServidor->where('cpf', $cpf)->update($data);
+        return (bool) $this->integracaoServidor->where('cpf', $cpf)
+        ->where('matriculasiape', $matricula)
+        ->update($data);
     }
    
 }

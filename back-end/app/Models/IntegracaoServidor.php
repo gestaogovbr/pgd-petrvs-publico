@@ -42,7 +42,7 @@ class IntegracaoServidor extends ModelBase
     'cod_jornada', 
     'ident_unica', /* varchar(50); NULL */ // Identificação única
     'modalidade_pgd',/* varchar(50); */ // Modalidade de participação no PGD
-    'participa_pgd',/* enum('sim','não'); */ // Participação do servidor no PGD
+    'participa_pgd',/* varchar(50); NULL */ // Participação do servidor no PGD
     //'deleted_at', /* timestamp; */
   ];
 
