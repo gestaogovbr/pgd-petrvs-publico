@@ -128,7 +128,6 @@ class Integracao implements InterfaceIntegracao
 
     private function montaEntidadeServidor(array $servidor): array
     {
-        Log::info("montaEntidadeServidor", $servidor);
         $entidades = [];
         $pessoal = $servidor['pessoal'];
         foreach($servidor['funcionais'] as $funcional){
@@ -178,6 +177,10 @@ class Integracao implements InterfaceIntegracao
                 'cpf_chefia_imediata' => $this->getCPFChefiaImediata($funcional, $this->utilService),
                 'email_chefia_imediata' => $this->getEmailChefiaImediata($funcional, $this->utilService),
                 'ident_unica' => $this->utilService->valueOrDefault($ativo['ident_unica'], null),
+                'modalidade_pgd' => $this->utilService->valueOrDefault($ativo['modalidade_pgd'], null),
+                'participa_pgd' => $this->utilService->valueOrDefault($ativo['participa_pgd'], null),
+                'cod_jornada' => $this->utilService->valueOrDefault($ativo['cod_jornada'], null),
+                'nome_jornada' => $this->utilService->valueOrDefault($ativo['nome_jornada'], null),
                 'deleted_at' => null,
             ];
             array_push($entidades, $this->createFromDTO(new ServidorDTO($servidor)));

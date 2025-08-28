@@ -153,6 +153,10 @@ class IntegracaoSiapeService extends ServiceBase
       'dataexercicionoorgao'  => $this->UtilService->valueOrDefault($dadosFuncionais['dataOcorrIngressoOrgao'] ?? null),
       'funcoes'               => $funcao,
       'ident_unica'           => $this->UtilService->valueOrDefault($dadosFuncionais['identUnica'] ?? null),
+      'modalidade_pgd'        => $this->UtilService->valueOrDefault($dadosFuncionais['modalidadePGD'] ?? null),
+      'participa_pgd'         => $this->UtilService->valueOrDefault($dadosFuncionais['participaPGD'] ?? null),
+      'cod_jornada'           => $this->UtilService->valueOrDefault($dadosFuncionais['codJornada'] ?? null),
+      'nome_jornada'          => $this->UtilService->valueOrDefault($dadosFuncionais['nomeJornada'] ?? null)
     ];
 
     $funcional = [
