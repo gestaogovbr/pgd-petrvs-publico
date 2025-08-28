@@ -34,6 +34,7 @@ export class AuthService {
   public entidade?: Entidade;
   public unidade?: Unidade;
   public unidades?: Unidade[];
+  public unidadesVinculadas?: Unidade[];
   public app?: AppComponent;
 
   private _apiToken: string | undefined = undefined;
@@ -178,6 +179,7 @@ export class AuthService {
       this.gb.setContexto(usuarioContextos[0]);
       this.notificacao.updateNaoLidas();
       this.popularMatriculasUsuario();
+      this.setUnidadesVinculadas();
     } else {
       this.usuario = undefined;
       this.kind = undefined;
@@ -325,11 +327,11 @@ export class AuthService {
   }
   
 
-  public selecionaUnidade(id: string, cdRef?: ChangeDetectorRef) {
-    if (this.unidades?.find(x => x.id == id)) {
+  public selecionaUnidade(id: string, matricula?: string, cdRef?: ChangeDetectorRef) {
+    if (this.unidadesVinculadas?.find(x => x.id == id)) {
       this.unidade = undefined;
       cdRef?.detectChanges();
-      return this.server.post("api/seleciona-unidade", { unidade_id: id }).toPromise().then(response => {
+      return this.server.post("api/seleciona-unidade", { unidade_id: id, matricula: matricula }).toPromise().then(response => {
         if (response?.unidade) {
           this.unidade = Object.assign(new Unidade(), response?.unidade) as Unidade;
           //if(!this.unidades?.find(x => x.id == this.unidade!.id)) this.unidades?.push(this.unidade);
@@ -343,6 +345,7 @@ export class AuthService {
         return undefined;
       });
     } else {
+      console.log('inválido');
       return Promise.resolve(undefined);
     }
   }
@@ -508,16 +511,35 @@ export class AuthService {
     }
   }
 
-  /**
-   * Busca as matrículas do usuário através do CPF
-   * @param cpf CPF do usuário
-   * @returns Promise com array de usuários
-   */
+  public buscarUnidadesVinculadas(cpf: string): Promise<Unidade[]> {
+    return new Promise<Unidade[]>((resolve, reject) => {
+      this.server.post('api/usuario/unidades-vinculadas', { cpf }).subscribe({
+        next: (response) => {
+          const unidades = response?.unidades?.map((item: any) => new Unidade(item)) || [];
+          resolve(unidades);
+        },
+        error: (error) => reject(error)
+      });
+    });
+  }
+
+  public async setUnidadesVinculadas(): Promise<void>{
+    if (this.usuario?.cpf) {
+      try {
+        this.unidadesVinculadas = await this.buscarUnidadesVinculadas(this.usuario.cpf);
+        console.log('Unidades Vinculadas:', this.unidadesVinculadas);
+      } catch (error) {
+        console.error('Erro ao buscar matrículas do usuário:', error);
+        this.unidadesVinculadas = [];
+      }
+    }
+  }
+
   public buscarMatriculas(cpf: string): Promise<Usuario[]> {
     return new Promise<Usuario[]>((resolve, reject) => {
-      this.server.post('api/Usuario/matriculas', { cpf }).subscribe({
+      this.server.post('api/usuario/matriculas', { cpf }).subscribe({
         next: (response) => {
-          const matriculas = response?.data?.map((item: any) => new Usuario(item)) || [];
+          const matriculas = response?.usuarios?.map((item: any) => new Usuario(item)) || [];
           resolve(matriculas);
         },
         error: (error) => reject(error)
@@ -525,9 +547,7 @@ export class AuthService {
     });
   }
 
-  /**
-   * Popula as matrículas do usuário logado
-   */
+  
   public async popularMatriculasUsuario(): Promise<void> {
     if (this.usuario?.cpf) {
       try {
