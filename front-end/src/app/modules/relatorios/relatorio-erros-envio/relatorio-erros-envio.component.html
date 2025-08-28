@@ -1,0 +1,189 @@
+<grid [dao]="dao" 
+    [title]="title" 
+    [orderBy]="orderBy"
+    [maxHeight]="450"
+    [scrollable]="true"
+    [className]="'relatorio-erros-envio'"
+>
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter 
+        [form]="filter"
+        [where]="filterWhere" 
+        [submit]="filterSubmit.bind(this)" 
+        [filter]="onButtonFilterClick"
+        filterLabel="Consultar"
+        [hasExportExcel]="true"
+        [exportExcel]="exportExcel"
+        [excelFileName]="'relatorio_erros_envio.xlsx'"
+    >
+        <div class="row">   
+            <input-search 
+                #unidade 
+                [size]="4" 
+                label="Unidade de Consulta"
+                [control]="filter!.controls.unidade_id" 
+                controlName="unidade_id" 
+                [dao]="unidadeDao"
+                [selectRoute]="{
+                    route: ['configuracoes', 'unidade'],
+                    params: auth.hasPermissionTo('MOD_RELATORIO_ENVIOS_TODAS_UNIDADES')
+                    ? { }
+                    : { unidade_pai: auth.unidade?.id }
+                }"
+                [where]="auth.hasPermissionTo('MOD_RELATORIO_ENVIOS_TODAS_UNIDADES')
+                    ? []
+                    : [['id', 'in', this.unidades]]"
+            >
+            </input-search>
+            <input-switch
+                [size]="1"
+                label="Subordinadas"
+                controlName="incluir_unidades_subordinadas"
+                [control]="filter!.controls.incluir_unidades_subordinadas"
+            ></input-switch>
+             <input-search #usuario
+                [size]="3"
+                controlName="usuario_id"
+                [dao]="usuarioDao"
+            ></input-search>
+            <input-datetime
+                [size]="2"
+                date
+                label="Data de envio: início"
+                controlName="this.filter.envio_inicio"
+                [control]="filter!.controls.envio_inicio"
+                labelInfo="Data início de consulta"
+            ></input-datetime>
+            <input-datetime
+                [size]="2"
+                date
+                label="Data de envio: fim"
+                controlName="this.filter.envio_fim"
+                [control]="filter!.controls.envio_fim"
+                labelInfo="Data final de consulta"
+            ></input-datetime>
+        </div>
+    </filter>
+    <columns>
+        <column title="Categoria"
+            [template]="columnCategoria"
+            [titleTemplate]="titleCategoria" 
+            [verticalAlign]="'bottom'"
+            [width]="100"
+        >
+            <ng-template let-header="header" #titleCategoria>
+                <input-select 
+                    [items]="lookup.ENVIO_ITEM_TIPO" 
+                    [control]="filter!.controls.categoria"
+                    controlName="this.filter.categoria"
+                    (change)="onValueChange($event)"
+                ></input-select> 
+            </ng-template>
+
+            <ng-template let-row="row" #columnCategoria>
+                <span> {{ lookup.getValue(lookup.ENVIO_ITEM_TIPO, row.categoria) }}</span>
+            </ng-template>
+        </column>
+
+        <column title="ID" 
+                [template]="columnId"
+                [titleTemplate]="titleId" 
+                [verticalAlign]="'bottom'"
+                [width]="180"
+        >
+            <ng-template let-header="header" #titleId>
+                <input-text 
+                    [control]="filter!.controls.id"
+                    controlName="this.filter.id"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnId>
+                <span> {{ row.uid }}</span>
+            </ng-template>
+        </column>
+
+        <column title="Número/Matrícula SIAPE"
+            [template]="columnMatricula"
+            [titleTemplate]="titleMatricula" [verticalAlign]="'bottom'"
+            [width]="50"
+        >
+            <ng-template let-header="header" #titleMatricula>
+                <input-text 
+                    [control]="filter!.controls.numero"
+                    controlName="this.filter.numero"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnMatricula>
+                <span> {{row.numero || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Nº Envio" 
+                [template]="columnEnvioId"
+                [titleTemplate]="titleEnvioId" 
+                [verticalAlign]="'bottom'"
+                [width]="50"
+        >
+            <ng-template let-header="header" #titleEnvioId>
+                <input-text 
+                    [control]="filter!.controls.envioNumero"
+                    controlName="this.filter.envioNumero"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnEnvioId>
+                <span> {{ row.envioNumero }}</span>
+            </ng-template>
+        </column>
+
+        <column title="Data do Envio"
+            [template]="columnData"
+            [titleTemplate]="titleData"
+            [verticalAlign]="'bottom'"
+            [width]="50"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleData>
+                <input-datetime
+                    date
+                    controlName="this.filter.data_envio"
+                    [control]="filter!.controls.data_envio"
+                    (blur)="onValueChange($event)"
+                ></input-datetime>
+            </ng-template>
+
+            <ng-template let-row="row" #columnData>
+                <span>{{ dao!.getDateTimeFormatted(row.data_envio) }}</span>
+            </ng-template>
+        </column>
+
+        <column title="Motivo" 
+            [template]="columnMotivo"
+            [titleTemplate]="titleMotivo" 
+            [verticalAlign]="'bottom'"
+            [width]="200"
+        >
+            <ng-template let-header="header" #titleMotivo>
+                <input-text 
+                    [control]="filter!.controls.motivo"
+                    controlName="this.filter.motivo"
+                    (blur)="onValueChange($event)"
+                ></input-text>
+            </ng-template>
+
+            <ng-template let-row="row" #columnMotivo>
+                <span> {{ row.motivo }}</span>
+            </ng-template>
+        </column>
+    </columns>
+    <pagination
+        [rows]="rowsLimit"
+        [infiniteScrollContainer]="'.relatorio-erros-envio-table'"
+        [fromRoot]="true"
+    ></pagination>
+</grid>

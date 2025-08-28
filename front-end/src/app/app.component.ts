@@ -210,7 +210,12 @@ export class AppComponent {
         permition: 'MOD_RELATORIO_UNIDADE',
         icon: this.entity.getIcon('Unidade'),
         route: ['relatorios', 'unidades'],
-        //onClick: ()=> this.emDesenvolvimento()
+      },
+      RELATORIO_ENVIOS: {
+        name: "Erros de API",
+        permition: 'MOD_RELATORIO_ENVIOS',
+        icon: this.entity.getIcon('Envio'),
+        route: ['relatorios', 'erros-envio'],
       },
       /* Outros */
       PAINEL: { name: "Painel", permition: '', route: ['panel'], icon: "" },
@@ -285,7 +290,8 @@ export class AppComponent {
         this.menuSchema.RELATORIO_PLANO_TRABALHO,
         this.menuSchema.RELATORIO_PLANO_ENTREGA,
         this.menuSchema.RELATORIO_USUARIOS,
-        this.menuSchema.RELATORIO_UNIDADES
+        this.menuSchema.RELATORIO_UNIDADES,
+        this.menuSchema.RELATORIO_ENVIOS
       ].sort(this.orderMenu)
     }];
 
@@ -346,7 +352,8 @@ export class AppComponent {
         this.menuSchema.RELATORIO_PLANO_TRABALHO,
         this.menuSchema.RELATORIO_PLANO_ENTREGA,
         this.menuSchema.RELATORIO_USUARIOS,
-        this.menuSchema.RELATORIO_UNIDADES
+        this.menuSchema.RELATORIO_UNIDADES,
+        this.menuSchema.RELATORIO_ENVIOS
       ].sort(this.orderMenu)
     }];
 

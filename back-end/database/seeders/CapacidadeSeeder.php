@@ -323,6 +323,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_RELATORIOS"],
       ["codigo" => "MOD_RELATORIO_USUARIO"],
       ["codigo" => "MOD_RELATORIO_UNIDADE"],
+      ["codigo" => "MOD_RELATORIO_ENVIOS"],
       ["codigo" => "MOD_RELATORIO_PT"],
       ["codigo" => "MOD_RELATORIO_PE"],
       ["codigo" => "MOD_TEMP"],
@@ -395,6 +396,8 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_PROD_EXCL"],
       ["codigo" => "MOD_RELATORIO_USUARIO_TODAS_UNIDADES"],
       ["codigo" => "MOD_RELATORIO_UNIDADE_TODAS_UNIDADES"],
+      ["codigo" => "MOD_RELATORIO_ENVIOS"],
+      ["codigo" => "MOD_RELATORIO_ENVIOS_TODAS_UNIDADES"],
       ["codigo" => "MOD_UND_INST"],
       ["codigo" => "MOD_PART_PEDAGIO"],
       ["codigo" => "MOD_AUDIT_LOG"],
@@ -418,68 +421,71 @@ class CapacidadeSeeder extends Seeder
     $capacidadesRepetidas = [];
 
     $devId = $this->nivelAcessoService->getPerfilDesenvolvedor()->id;
-    $participanteId = $this->nivelAcessoService->getPerfilParticipante()->id;
+    $participanteId = $this->nivelAcessoService->getPerfilParticipante()?->id;
     $colaboradorId = $this->nivelAcessoService->getPerfilColaborador()->id;
-    $admGeralId = $this->nivelAcessoService->getPerfilAdministradorGeral()->id;
+    $admGeralId = $this->nivelAcessoService->getPerfilAdministradorGeral()?->id;
     $admId = $this->nivelAcessoService->getPerfilAdministrador()->id;
     $chefeId = $this->nivelAcessoService->getPerfilChefia()->id;
-    $consultaId = $this->nivelAcessoService->getPerfilConsulta()->id;
+    $consultaId = $this->nivelAcessoService->getPerfilConsulta()?->id;
 
+    if ($consultaId) {
+        foreach ($capacidades_consulta as $c) {
+            $capacidade = [
+                "id" => $this->utilService->uuid("Consulta" . $c['codigo']),
+                "created_at" => $this->timenow,
+                "updated_at" => $this->timenow,
+                "deleted_at" => NULL,
+                "perfil_id" => $consultaId,
+                "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
+            ];
 
-    foreach ($capacidades_consulta as $c) {
-      $capacidade = [
-        "id" => $this->utilService->uuid("Consulta" . $c['codigo']),
-        "created_at" => $this->timenow,
-        "updated_at" => $this->timenow,
-        "deleted_at" => NULL,
-        "perfil_id" => $consultaId,
-        "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
-      ];
+            $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
+            $queryTipoCapacidade = TipoCapacidade::find($capacidade['tipo_capacidade_id']);
 
-      $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
-      $queryTipoCapacidade = TipoCapacidade::find($capacidade['tipo_capacidade_id']);
-
-      if ($queryTipoCapacidade) {
-        if (!empty ($queryCapacidade)) {
-          $queryCapacidade->restore();
-          array_push($capacidadesRestauradas, $capacidade['id']);
-        } else {
-          $result = Capacidade::insertOrIgnore($capacidade);
-          //if (!$result) echo("Capacidade já existe: (" . $c['codigo'] . ") Participante.\n");
+            if ($queryTipoCapacidade) {
+                if (!empty ($queryCapacidade)) {
+                $queryCapacidade->restore();
+                array_push($capacidadesRestauradas, $capacidade['id']);
+                } else {
+                $result = Capacidade::insertOrIgnore($capacidade);
+                //if (!$result) echo("Capacidade já existe: (" . $c['codigo'] . ") Participante.\n");
+                }
+                !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, ["Participante", $c['codigo']]);
+            } else {
+                // echo("Erro: TipoCapacidade inexistente(" . "código: " . $c['codigo'] . " - ID: " . $capacidade['tipo_capacidade_id']. ")");
+                array_push($tipoCapacidadesInexistentes, ["Consulta", $c['codigo']]);
+            }
         }
-        !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, ["Participante", $c['codigo']]);
-      } else {
-        // echo("Erro: TipoCapacidade inexistente(" . "código: " . $c['codigo'] . " - ID: " . $capacidade['tipo_capacidade_id']. ")");
-        array_push($tipoCapacidadesInexistentes, ["Consulta", $c['codigo']]);
-      }
     }
 
-    foreach ($capacidades_participante as $c) {
-      $capacidade = [
-        "id" => $this->utilService->uuid("Participante" . $c['codigo']),
-        "created_at" => $this->timenow,
-        "updated_at" => $this->timenow,
-        "deleted_at" => NULL,
-        "perfil_id" => $participanteId,
-        "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
-      ];
+    if ($participanteId) {
+        foreach ($capacidades_participante as $c) {
+            $capacidade = [
+                "id" => $this->utilService->uuid("Participante" . $c['codigo']),
+                "created_at" => $this->timenow,
+                "updated_at" => $this->timenow,
+                "deleted_at" => NULL,
+                "perfil_id" => $participanteId,
+                "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
+            ];
 
-      $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
-      $queryTipoCapacidade = TipoCapacidade::find($capacidade['tipo_capacidade_id']);
+            $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
+            $queryTipoCapacidade = TipoCapacidade::find($capacidade['tipo_capacidade_id']);
 
-      if ($queryTipoCapacidade) {
-        if (!empty ($queryCapacidade)) {
-          $queryCapacidade->restore();
-          array_push($capacidadesRestauradas, $capacidade['id']);
-        } else {
-          $result = Capacidade::insertOrIgnore($capacidade);
-          //if (!$result) echo("Capacidade já existe: (" . $c['codigo'] . ") Participante.\n");
+            if ($queryTipoCapacidade) {
+                if (!empty ($queryCapacidade)) {
+                $queryCapacidade->restore();
+                array_push($capacidadesRestauradas, $capacidade['id']);
+                } else {
+                $result = Capacidade::insertOrIgnore($capacidade);
+                //if (!$result) echo("Capacidade já existe: (" . $c['codigo'] . ") Participante.\n");
+                }
+                !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, ["Participante", $c['codigo']]);
+            } else {
+                // echo("Erro: TipoCapacidade inexistente(" . "código: " . $c['codigo'] . " - ID: " . $capacidade['tipo_capacidade_id']. ")");
+                array_push($tipoCapacidadesInexistentes, ["Participante", $c['codigo']]);
+            }
         }
-        !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, ["Participante", $c['codigo']]);
-      } else {
-        // echo("Erro: TipoCapacidade inexistente(" . "código: " . $c['codigo'] . " - ID: " . $capacidade['tipo_capacidade_id']. ")");
-        array_push($tipoCapacidadesInexistentes, ["Participante", $c['codigo']]);
-      }
     }
 
     foreach ($capacidades_chefia_de_unidade_executora as $c) {
