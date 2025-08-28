@@ -238,10 +238,32 @@ class UsuarioController extends ControllerBase
                 'usuario_id' => ['required', 'uuid'],
                 'justificativa' => ['required', 'string'],
             ])->validate();
-
+            
             return response()->json([
                 'success' => true,
                 'data' => $this->service->ativarTemporariamente($validated)
+            ]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        } catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo " . $dataError['code'] . ": Ocorreu um erro inesperado."]);
+        }
+    }
+    
+    public function unidadesVinculadas(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'cpf' => ['required', 'string', 'size:11']
+            ]);
+
+            $unidades = $this->service->unidadesVinculadas($data['cpf']);
+
+            return response()->json([
+                'success' => true,
+                'unidades' => $unidades
             ]);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
