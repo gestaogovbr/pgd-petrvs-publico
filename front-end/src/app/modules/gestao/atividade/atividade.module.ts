@@ -16,6 +16,7 @@ import { AtividadeDashboardComponent } from './atividade-dashboard/atividade-das
 import { AtividadeFormTarefaComponent } from './atividade-form-tarefa/atividade-form-tarefa.component';
 import { AtividadeListTarefaComponent } from './atividade-list-tarefa/atividade-list-tarefa.component';
 import { AtividadeHierarquiaComponent } from './atividade-hierarquia/atividade-hierarquia.component';
+import { PlanoEntregaAtividadesComponent } from './plano-entrega-atividades/plano-entrega-atividades.component';
 import { OrganizationChartModule } from 'primeng/organizationchart';
 
 
@@ -32,7 +33,8 @@ import { OrganizationChartModule } from 'primeng/organizationchart';
     AtividadeFormTarefaComponent,
     AtividadeListTarefaComponent,
     AtividadeListKanbanComponent,
-    AtividadeHierarquiaComponent
+    AtividadeHierarquiaComponent,
+    PlanoEntregaAtividadesComponent
   ],
   imports: [
     CommonModule,
@@ -43,7 +45,8 @@ import { OrganizationChartModule } from 'primeng/organizationchart';
   ],
   exports: [
     AtividadeListGridComponent,
-    AtividadeListTarefaComponent
+    AtividadeListTarefaComponent,
+    PlanoEntregaAtividadesComponent
   ]
 })
 export class AtividadeModule { }

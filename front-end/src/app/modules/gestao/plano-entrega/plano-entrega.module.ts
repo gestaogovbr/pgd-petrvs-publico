@@ -22,6 +22,7 @@ import { PlanoEntregaEntregasVinculadasComponent } from './plano-entrega-entrega
 import { PlanoEntregaEntregaDetalhesComponent } from './plano-entrega-entrega-detalhes/plano-entrega-entrega-detalhes.component';
 import { OrganizationChartModule } from 'primeng/organizationchart';
 import { PlanoEntregaListProdutoComponent } from './plano-entrega-list-produto/plano-entrega-list-produto.component';
+import { AtividadeModule } from '../atividade/atividade.module';
 
 
 @NgModule({
@@ -51,7 +52,8 @@ import { PlanoEntregaListProdutoComponent } from './plano-entrega-list-produto/p
     PlanejamentoModule,
     CadeiaValorModule,
     OrganizationChartModule,
-    UteisModule
+    UteisModule,
+    AtividadeModule
   ]
 })
 export class PlanoEntregaModule { }
