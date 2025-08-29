@@ -160,7 +160,7 @@ TEXT;
         }
 
         $dataEnvio = $this->extractWhere($data, "data_envio");
-        if (isset($dataFim[2])) {
+        if (isset($dataEnvio[2])) {
             $sql .= " and (ei.created_at between ? and ?)";
             $params[] = $dataEnvio[2];
             $params[] = $dataEnvio[2] . " 23:59:59";
