@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Capacidade;
-use App\Models\Perfil;
 use App\Models\TipoCapacidade;
 use App\Services\UtilService;
 use App\Services\NivelAcessoService;
@@ -205,6 +204,8 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_PROD_INCL"],
       ["codigo" => "MOD_PROD_EDT"],
       ["codigo" => "MOD_PROD_EXCL"],
+      ["codigo" => "MOD_RELATORIO_ENVIOS"],
+      ["codigo" => "MOD_RELATORIO_ENVIOS_TODAS_UNIDADES"],
       ["codigo" => "MOD_SOLUCOES"],
       ["codigo" => "MOD_SOLUCOES_INCL"],
       ["codigo" => "MOD_SOLUCOES_EDT"],
