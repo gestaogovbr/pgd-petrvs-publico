@@ -4,7 +4,9 @@ import { PageBase } from 'src/app/modules/base/page-base';
 import { Atividade, Checklist } from 'src/app/models/atividade.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { Comentario } from 'src/app/models/comentario';
+import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
+import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { AtividadeOptionsMetadata, AtividadeService } from '../../atividade/atividade.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { CalendarService } from 'src/app/services/calendar.service';
@@ -41,6 +43,7 @@ export class PlanoEntregaAtividadesComponent extends PageBase {
   public calendar: CalendarService;
   public unidadeDao: UnidadeDaoService;
   public atividadeService: AtividadeService;
+  public planoTrabalhoDao: PlanoTrabalhoDaoService;
   public atividades: any[] = [];
   public atividadeOptionsMetadata: AtividadeOptionsMetadata;
   public joinAtividade: string[] = ['demandante', 'tipo_atividade', 'comentarios', 'reacoes.usuario:id,nome,apelido'];
@@ -60,6 +63,7 @@ export class PlanoEntregaAtividadesComponent extends PageBase {
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.atividadeService = injector.get<AtividadeService>(AtividadeService);
     this.calendar = injector.get<CalendarService>(CalendarService);
+    this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
     this.atividadeOptionsMetadata = {
       refreshId: this.atividadeRefreshId.bind(this),
       removeId: this.atividadeRemoveId.bind(this),
@@ -279,27 +283,27 @@ export class PlanoEntregaAtividadesComponent extends PageBase {
   * Atividades 
   ****************************************************************************************/
   public async addAtividade(entrega: any) {
-    // let planoTrabalho: PlanoTrabalho | undefined = entrega.plano_trabalho || this.entity!.plano_trabalho;
-    // let unidade = await this.unidadeDao.getById(this.entrega.unidade_id);
-    // let efemerides = this.calendar.calculaDataTempoUnidade(this.entity!.data_inicio, this.entity!.data_fim, planoTrabalho!.carga_horaria, unidade!, "ENTREGA");
-    // const tempoPlanejado = this.calendar.horasUteis(this.entity!.data_inicio, this.entity!.data_fim, planoTrabalho!.carga_horaria, unidade!, "DISTRIBUICAO");
-    // const dataInicio = this.util.maxDate(this.util.setTime(this.entity!.data_inicio, 0, 0, 0), planoTrabalho!.data_inicio);
-    // const dataFim = this.util.minDate(this.util.setTime(this.entity!.data_fim, 23, 59, 59), planoTrabalho!.data_fim);
+    let planoTrabalho: any | undefined = await this.planoTrabalhoDao.getById(entrega.plano_trabalho_id);
+    let unidade = await this.unidadeDao.getById(this.entrega.unidade_id);
+    let efemerides = this.calendar.calculaDataTempoUnidade(this.entrega!.data_inicio, this.entrega!.data_fim, planoTrabalho!.carga_horaria, unidade!, "ENTREGA");
+    const tempoPlanejado = this.calendar.horasUteis(this.entrega!.data_inicio, this.entrega!.data_fim, planoTrabalho!.carga_horaria, unidade!, "DISTRIBUICAO");
+    const dataInicio = this.util.maxDate(this.util.setTime(this.entrega!.data_inicio, 0, 0, 0), planoTrabalho!.data_inicio);
+    const dataFim = this.util.minDate(this.util.setTime(this.entrega!.data_fim, 23, 59, 59), planoTrabalho!.data_fim);
     let id = this.dao!.generateUuid();
     let atividade = new Atividade({
       id: id,
-      // plano_trabalho: planoTrabalho,
+      plano_trabalho: planoTrabalho,
       plano_trabalho_entrega: entrega,
       demandante: this.auth.usuario,
       usuario: this.auth.usuario,
-      // unidade: this.unidade,
-      // data_distribuicao: dataInicio,
-      // carga_horaria: planoTrabalho!.carga_horaria,
-      // data_estipulada_entrega: dataFim,
-      // data_inicio: dataInicio,
-      // data_entrega: dataFim,
-      // tempo_planejado: tempoPlanejado,
-      // tempo_despendido: efemerides?.tempoUtil || 0,
+      unidade: unidade,
+      data_distribuicao: dataInicio,
+      carga_horaria: planoTrabalho!.carga_horaria,
+      data_estipulada_entrega: dataFim,
+      data_inicio: dataInicio,
+      data_entrega: dataFim,
+      tempo_planejado: tempoPlanejado,
+      tempo_despendido: efemerides?.tempoUtil || 0,
       status: 'CONCLUIDO',
       progresso: 100,
       plano_trabalho_id: this.entrega!.plano_trabalho_id,
