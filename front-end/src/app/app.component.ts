@@ -15,6 +15,7 @@ import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.ser
 import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 import { UnidadeService } from './services/unidade.service';
+import { Unidade } from './models/unidade.model';
 
 export type Contexto = "EXECUCAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
 export type Schema = {
@@ -461,6 +462,10 @@ export class AppComponent {
     return this.auth.unidades || [];
   }
 
+  public get unidadesVinculadas(): Unidade[] {
+    return this.auth.unidadesVinculadas || [];
+  }
+
   public get usuarioNome(): string {
     return this.utils.shortName(this.auth.usuario?.apelido.length ? this.auth.usuario?.apelido : this.auth.usuario?.nome || "");
   }
@@ -482,8 +487,19 @@ export class AppComponent {
     popup.restore();
   }
 
-  public selecionaUnidade(id: string) {
-    this.auth.selecionaUnidade(id, this.cdRef);
+  public async selecionaUnidade(id: string, matricula: string) {
+    const matriculaAnterior = this.auth.usuario?.matricula;
+    
+    await this.auth.selecionaUnidade(id, matricula, this.cdRef);
+    
+    if (matricula && matricula !== matriculaAnterior) {
+      window.location.reload();
+    }
+  }
+
+  public getMatriculaPelaUnidadeComCpf(idUnidade: string, cpf: string): string {
+    let matricula = this.auth.usuario?.matriculas?.find(x => x.unidades?.find(y => y.id == idUnidade) && x.cpf == cpf);
+    return matricula?.matricula || 'N/A';
   }
 
   public async onToolbarButtonClick(btn: ToolbarButton) {

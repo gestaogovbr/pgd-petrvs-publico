@@ -29,7 +29,7 @@ use App\Services\Siape\Consulta\Resources\UnidadesResource;
 use App\Services\Siape\Consulta\SiapeUnidadeService;
 use App\Services\Siape\Consulta\SiapeUnidadesService;
 use Carbon\Carbon;
-
+use Illuminate\Database\Eloquent\Collection;
 
 class UsuarioService extends ServiceBase
 {
@@ -550,7 +550,7 @@ class UsuarioService extends ServiceBase
         return $usuario;
     }
 
-    public function removePedagio($data)
+    public function removePedagio($data) 
     {
         $usuario = Usuario::find($data['usuario_id']);
         if (empty($usuario)) {
@@ -585,6 +585,35 @@ class UsuarioService extends ServiceBase
         $usuario->save();
         
         return $usuario;
+    }
+
+    public function matriculas($cpf) : Collection
+    {
+        $usuarios = Usuario::with('unidades')->where('cpf', $cpf)->get();
+        
+        if ($usuarios->isEmpty()) {
+            throw new ValidateException("Nenhum usuário encontrado com o CPF informado.", 404);
+        }
+        
+        return $usuarios;
+    }
+    
+
+    public function unidadesVinculadas($cpf) : Collection
+    {
+        $unidades = Unidade::select('unidades.*')
+            ->join('unidades_integrantes as ui', 'unidades.id', '=', 'ui.unidade_id')
+            ->join('usuarios as us', 'us.id', '=', 'ui.usuario_id')
+            ->join('unidades_integrantes_atribuicoes as uia', 'ui.id', '=', 'uia.unidade_integrante_id')
+            ->where('us.cpf', $cpf)
+            ->whereNull('uia.deleted_at')
+            ->get();
+        
+        if ($unidades->isEmpty()) {
+            throw new ValidateException("Nenhum usuário encontrado com o CPF informado.", 404);
+        }
+        
+        return $unidades;
     }
 
 }
