@@ -12,14 +12,12 @@
       <ng-template let-row="row" #columnAtividadeDescricao>
         <span class="text-nowrap d-block">
           <badge icon="bi bi-hash" [label]="row.numero" color="light" [data]="row.numero" [click]=""></badge>
-          <!--badge *ngIf="row.tipo_atividade" [icon]="entityService.getIcon('TipoAtividade')" [label]="row.tipo_atividade.nome" color="light"></badge-->
         </span>
         <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>
         <reaction [entity]="row" origem="ATIVIDADE"></reaction>
       </ng-template>
       <ng-template let-row="row" #editAtividadeDescricao>
         <input-textarea *ngIf="!this.disabled" label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="formAtividade!.controls.descricao" required></input-textarea>
-        <!--input-search [label]="lex.translate('Tipo de atividade')" #tipoAtividade [size]="12" [emptyValue]="null" controlName="tipo_atividade_id" [control]="formAtividade!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" (select)="onTipoAtividadeSelect($event)" [labelInfo]="lex.translate('Tipo de atividade') + ' utilizado para classificar a atividade'" [required]="!auth.hasPermissionTo('MOD_ATV_TIPO_ATV_VAZIO') ? 'true' : undefined"></input-search-->
       </ng-template>
     </column>
 
@@ -31,8 +29,6 @@
         </div>
       </ng-template>
       <ng-template let-row="row" #editTempos>
-        <!--input-datetime icon="bi bi-file-earmark-plus" [label]="lex.translate('Data de distribuição')" controlName="data_distribuicao" [control]="formAtividade!.controls.data_distribuicao" (change)="onDataDistribuicaoChange($event)" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime-->
-        <!--input-datetime icon="bi bi-calendar-check" [label]="lex.translate('Prazo de entrega')" controlName="data_estipulada_entrega" [control]="formAtividade!.controls.data_estipulada_entrega" (change)="onDataEstipuladaEntregaChange($event)" labelInfo="Data estipulada para entrega da atividade"></input-datetime-->
         <separator title="Início e Conclusão" collapse [collapsed]="true">
           <input-datetime icon="bi bi-play-circle" label="Início" controlName="data_inicio" [control]="formAtividade!.controls.data_inicio" labelInfo="Data de inicialização da atividade"></input-datetime>
           <input-datetime icon="bi bi-check-circle" label="Conclusão" controlName="data_entrega" [control]="formAtividade!.controls.data_entrega" labelInfo="Data da conclusão da atividade"></input-datetime>
