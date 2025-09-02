@@ -23,6 +23,7 @@ import { PlanoEntregaEntregaDetalhesComponent } from './plano-entrega-entrega-de
 import { OrganizationChartModule } from 'primeng/organizationchart';
 import { PlanoEntregaListProdutoComponent } from './plano-entrega-list-produto/plano-entrega-list-produto.component';
 import { AtividadeModule } from '../atividade/atividade.module';
+import { PlanoEntregaListAtividadesComponent } from './plano-entrega-list-atividades/plano-entrega-list-atividades.component';
 
 
 @NgModule({
@@ -43,7 +44,8 @@ import { AtividadeModule } from '../atividade/atividade.module';
     PlanoEntregaFormProgressoComponent,
     PlanoEntregaEntregasVinculadasComponent,
     PlanoEntregaEntregaDetalhesComponent,
-    PlanoEntregaListProdutoComponent
+    PlanoEntregaListProdutoComponent,
+    PlanoEntregaListAtividadesComponent
   ],
   imports: [
     CommonModule,

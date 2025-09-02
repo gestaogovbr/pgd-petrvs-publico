@@ -12,7 +12,7 @@
                 <span  class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row.atividades?.length}}</span>
             </ng-template>
             <ng-template let-row="row" #columnExpandedAtividades>
-                <plano-entrega-atividades [entrega]="row" [disabled]="isDisabled"></plano-entrega-atividades>
+                <plano-entrega-list-atividades [entrega]="row" [disabled]="isDisabled"></plano-entrega-list-atividades>
             </ng-template>
         </column>
         <!--

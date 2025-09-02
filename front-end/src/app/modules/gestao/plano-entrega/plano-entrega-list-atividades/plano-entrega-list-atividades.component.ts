@@ -4,24 +4,22 @@ import { PageBase } from 'src/app/modules/base/page-base';
 import { Atividade, Checklist } from 'src/app/models/atividade.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { Comentario } from 'src/app/models/comentario';
-import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
-import { AtividadeOptionsMetadata, AtividadeService } from '../../atividade/atividade.service';
+import { AtividadeOptionsMetadata, AtividadeService } from 'src/app/modules/gestao/atividade/atividade.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { BadgeButton } from 'src/app/components/badge/badge.component';
-import { IIndexable } from 'src/app/models/base.model';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 
 @Component({
-  selector: 'plano-entrega-atividades',
-  templateUrl: './plano-entrega-atividades.component.html',
-  styleUrls: ['./plano-entrega-atividades.component.scss']
+  selector: 'plano-entrega-list-atividades',
+  templateUrl: './plano-entrega-list-atividades.component.html',
+  styleUrls: ['./plano-entrega-list-atividades.component.scss']
 })
-export class PlanoEntregaAtividadesComponent extends PageBase {
+export class PlanoEntregaListAtividadesComponent extends PageBase {
   @ViewChild('gridAtividades', { static: false }) public gridAtividades?: GridComponent;
   @ViewChild('etiqueta', { static: false }) public etiqueta?: InputSelectComponent;
 
@@ -80,11 +78,9 @@ export class PlanoEntregaAtividadesComponent extends PageBase {
       data_estipulada_entrega: { default: new Date() },
       data_inicio: { default: new Date() },
       data_entrega: { default: new Date() },
-      //tipo_atividade_id: { default: null }
     }, this.cdRef, this.validateAtividade);
     this.formEdit = this.fh.FormBuilder({
       descricao: { default: "" },
-      //tipo_atividade_id: { default: null },
       comentarios: { default: [] },
       progresso: { default: 0 },
       etiquetas: { default: [] },
@@ -150,11 +146,9 @@ export class PlanoEntregaAtividadesComponent extends PageBase {
     let result = null;
     if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    } else if (['data_inicio', 'data_entrega'].includes(controlName) && !this.util.isDataValid(control.value)) {//'data_distribuicao', 'data_estipulada_entrega',
+    } else if (['data_inicio', 'data_entrega'].includes(controlName) && !this.util.isDataValid(control.value)) {
       result = "Inválido";
-    } /*else if (controlName == 'data_estipulada_entrega' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
-      result = "Menor que distribuição";
-    }*/ else if (controlName == 'data_inicio' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
+    } else if (controlName == 'data_inicio' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
       result = "Menor que distribuição";
     } else if (controlName == 'data_entrega' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
       result = "Menor que distribuição";
@@ -176,20 +170,16 @@ export class PlanoEntregaAtividadesComponent extends PageBase {
 
   public async onColumnAtividadeDescricaoEdit(row: any) {
     this.formAtividade.controls.descricao.setValue(row.descricao);
-    //this.formEdit.controls.tipo_atividade_id.setValue(row.tipo_atividade_id);
     this.formAtividade.controls.comentarios.setValue(row.comentarios);
   }
 
   public async onColumnAtividadeDescricaoSave(row: any) {
     try {
-      // this.atividadeService.comentarioAtividade(this.tipoAtividade?.selectedEntity, this.formAtividade!.controls.comentarios);
       const saved = await this.dao!.update(row.id, {
         descricao: this.formAtividade.controls.descricao.value,
-        //tipo_atividade_id: this.formEdit.controls.tipo_atividade_id.value,
         comentarios: (this.formAtividade.controls.comentarios.value || []).filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || ""))
       });
       row.descricao = this.formAtividade.controls.descricao.value;
-      //row.tipo_atividade_id = this.formEdit.controls.tipo_atividade_id.value;
       row.comentarios = this.formAtividade.controls.comentarios.value;
       return !!saved;
     } catch (error) {
