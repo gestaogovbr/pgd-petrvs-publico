@@ -18,16 +18,7 @@
         </column>
         <column title="Criado em" field="created_at" type="datetime"></column>
         <column title="Atualizado em" field="updated_at" type="datetime"></column>
-        <column type="options" [onEdit]="edit" [options]="options">
-            <ng-template #optionTemplate let-row>
-                <button class="btn btn-sm btn-outline-danger" 
-                        title="Remover da blacklist" 
-                        (click)="removerCpf(row.cpf)"
-                        [disabled]="loading">
-                    <i class="bi bi-trash"></i> Remover
-                </button>
-            </ng-template>
-        </column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

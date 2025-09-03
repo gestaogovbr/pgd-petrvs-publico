@@ -25,9 +25,14 @@ export class BlacklistServidorListComponent extends PageListBase<SiapeBlacklistS
       cpf: { default: '' },
       inativado: { default: null }
     });
-    this.addOption(this.OPTION_INFORMACOES);
     this.addOption(this.OPTION_EXCLUIR, "MOD_SIAPE_BLACKLIST_EXCL");
-    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
+    this.options.push({
+      icon: "bi bi-trash",
+      label: "Remover",
+      hint: "Remover da blacklist",
+      color: "btn-outline-danger",
+      onClick: (row: any) => this.removerCpf(row.cpf)
+    });
   }
 
   public async removerCpf(cpf: string): Promise<void> {
