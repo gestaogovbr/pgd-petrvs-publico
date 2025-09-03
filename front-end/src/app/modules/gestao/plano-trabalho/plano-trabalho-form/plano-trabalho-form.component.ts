@@ -452,7 +452,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public exibeAlertaTotalAssinaturas(plano: PlanoTrabalho | undefined) {
-    if(plano){
+    if(plano && plano._metadata){
+      console.log(plano);
+      
        let assinaturasExigidas = plano._metadata?.quantidadeAssinaturasExigidas;
        let unidadeVinculada = plano._metadata?.unidadeVinculada;
        let msg = ''

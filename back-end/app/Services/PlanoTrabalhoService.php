@@ -225,6 +225,11 @@ class PlanoTrabalhoService extends ServiceBase
         if (empty($data["documento_id"])) {
             throw new ServerException("ValidatePlanoTrabalho", "TCR não foi gerado.");
         }
+        
+        // validar entregas
+        if (empty($data["entregas"])) {
+            throw new ServerException("ValidatePlanoTrabalho", "Não possível gravar Plano de Trabalho sem planejamento dos trabalhos a serem realizados");
+        }
 
         // Validar Modalidade
         if (!empty($tipoModalidade) && $tipoModalidade->exige_pedagio && !empty($usuario->pedagio)) {
@@ -1311,7 +1316,6 @@ class PlanoTrabalhoService extends ServiceBase
         $unidadeId = $planoTrabalho['unidade_id'];
         
         $usuario = Usuario::find($planoTrabalho['usuario_id']);
-        $usuario->lotacao = null;
         return $usuario->lotacao?->unidade_id == $unidadeId;
     }
     

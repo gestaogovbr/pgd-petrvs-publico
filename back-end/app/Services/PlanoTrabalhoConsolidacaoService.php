@@ -277,7 +277,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
 
       /* se array de atividades estiver vazio, não pode concluir */
       if (count($dados["atividades"] ?? []) == 0) {
-        throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Nenhuma atividade foi adicionada");
+        throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Antes de concluir, é necessário fazer a descrição dos trabalhos executados.");
       }
       $IdsEntregasPlanoTrabalho = $consolidacao->planoTrabalho->entregas->pluck('id');
       /* Para cada ID de entrega, verificar se existe em dados[atividades].plano_trabalho_entrega_id */
