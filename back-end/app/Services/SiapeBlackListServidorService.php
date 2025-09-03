@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\SiapeBlackListServidor;
 use App\Services\ServiceBase;
-use App\Models\SiapeBlackListServidores;
 use Exception;
 
 class SiapeBlackListServidorService extends ServiceBase
@@ -12,7 +12,7 @@ class SiapeBlackListServidorService extends ServiceBase
     public function remover(string $cpf): array
     {
         try {
-            $registros = SiapeBlackListServidores::where('cpf', $cpf)->get();
+            $registros = SiapeBlackListServidor::where('cpf', $cpf)->get();
             
             if ($registros->isEmpty()) {
                 return [

@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Enums\Atribuicao;
 use App\Facades\SiapeLog;
 use App\Models\Perfil;
-use App\Models\SiapeBlackListServidores;
+use App\Models\SiapeBlackListServidor;
 use App\Models\UnidadeIntegrante;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
@@ -39,7 +39,7 @@ class IntegracaoServidorService extends ServiceBase
     ]);
 
     $cpfs = Usuario::whereIn('id', $ids)->pluck('cpf');
-    SiapeBlackListServidores::whereIn('cpf', $cpfs)->update([
+    SiapeBlackListServidor::whereIn('cpf', $cpfs)->update([
       'inativado' => 1
     ]);
     SiapeLog::info("ISiape: Servidores removidos do SIAPE e excluídos do sistema.", ['ids' => $ids]);
