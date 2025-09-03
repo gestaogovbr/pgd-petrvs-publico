@@ -76,6 +76,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public editingId?: string;
   public gestoresUnidadeExecutora: string[] = [];
   public programaMetadata: ProgramaMetadata;
+  public usuarioUnidades: LookupItem[] = [];
+
 
 
   constructor(public injector: Injector) {
@@ -194,7 +196,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     // Validar se as entregas pertencem ao plano de entregas da unidade
   };
 
-  public onUnidadeSelect(selected: SelectItem) {
+  public onUnidadeSelect(selected: Event) {
+
     let unidade = this.unidade?.selectedEntity as Unidade;
     let usuario = this.usuario?.selectedEntity as Usuario;
     this.entity!.unidade = unidade;
@@ -229,14 +232,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     let programa_habilitado = selected.entity.participacoes_programas.find((x: { habilitado: number; }) => x.habilitado == 1);
     
     this.form!.controls.usuario_texto_complementar.setValue(selected.entity.texto_complementar_plano || "");
-    if(!this.form?.controls.unidade_id.value) {
-      selected.entity.unidades?.every(async (unidade: any) => {
-        if (selected.entity.lotacao.unidade_id == unidade.id) {
-          this.preencheUnidade(unidade);
-          return false;
-        } else return true;
-      })
-    }
+    this.form!.controls.unidade_id.setValue(null);
+
+
     let programas = await this.programaDao.query({
       where: [['vigentesUnidadeExecutora', '==', selected.entity.lotacao.unidade_id]],
       join: this.joinPrograma,
@@ -266,9 +264,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public preencheUnidade(unidade: Unidade) {
-    this.form?.controls.unidade_id.setValue(unidade.id);
-    this.entity!.unidade = unidade;
-    this.entity!.unidade_id = unidade.id;
+    //this.form?.controls.unidade_id.setValue(unidade.id);
+    //this.entity!.unidade = unidade;
+    //this.entity!.unidade_id = unidade.id;
     this.form!.controls.forma_contagem_carga_horaria.setValue(unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
     this.form!.controls.unidade_texto_complementar.setValue(unidade?.texto_complementar_plano || "");
     this.unidadeDao.getById(unidade.id, ['gestor:id,usuario_id','gestores_substitutos:id,usuario_id','gestores_delegados:id,usuario_id']).then( unidade => {
@@ -330,13 +328,17 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.planoTrabalho = new PlanoTrabalho(entity);
     await Promise.all([
       this.calendar.loadFeriadosCadastrados(entity.unidade_id),
-      this.usuario?.loadSearch(entity.usuario || entity.usuario_id),
-      this.unidade?.loadSearch(entity.unidade || entity.unidade_id),
+      this.usuario?.loadSearch(entity.usuario || entity.usuario_id),      
       this.programa?.loadSearch(entity.programa || entity.programa_id),
-      this.tipoModalidade?.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id)
+      this.tipoModalidade?.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id),
+      this.usuarioUnidades = this.auth.usuario?.areas_trabalho?.map(x => ({
+        key: x.unidade!.id,
+        value: x.unidade!.sigla + " - " + x.unidade!.nome
+      })) || []
     ]);
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
+    this.form!.controls.unidade_id.setValue(null);
 
     if(action == 'clone') {
       this.form?.controls.usuario_texto_complementar.setValue(entity.usuario?.texto_complementar_plano || "");
@@ -480,21 +482,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
     return result;
   }
-
-  //Não apagar
-  /*public addItemHandleCriteriosAvaliacao(): LookupItem | undefined {
-    let result = undefined;
-    const value = this.form!.controls.criterio_avaliacao.value;
-    const key = this.util.textHash(value);
-    if(value?.length && this.util.validateLookupItem(this.form!.controls.criterios_avaliacao.value, key)) {
-      result = {
-        key: key,
-        value: this.form!.controls.criterio_avaliacao.value
-      };
-      this.form!.controls.criterio_avaliacao.setValue("");
-    }
-    return result;
-  };*/
 
   public async signDocumento(documento: Documento) {
     await this.documentoService.sign([documento]);
