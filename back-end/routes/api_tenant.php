@@ -75,6 +75,7 @@ use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\RelatorioPlanoEntregaController;
 use App\Http\Controllers\RelatorioUnidadeController;
 use App\Http\Controllers\RotinaDiariaController;
+use App\Http\Controllers\SiapeBlackListServidorController;
 use App\Http\Controllers\SiapeIndividualController;
 use App\Http\Controllers\SolucaoController;
 use App\Http\Controllers\SolucaoUnidadeController;
@@ -523,6 +524,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/unidade/download-unidade-siape', [UnidadeController::class, 'downloadLogSiape']);
     Route::post('/usuario/processar-siape', [SiapeIndividualController::class, 'processaServidor']);
     Route::post('/unidade/processar-siape', [SiapeIndividualController::class, 'processaUnidade']);
+    Route::post('/siape-blacklist/remover-cpf', [SiapeBlackListServidorController::class, 'remover']);
 
     Route::prefix('SolucaoUnidade')->group(function () {
         defaultRoutes(SolucaoUnidadeController::class);
