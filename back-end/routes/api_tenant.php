@@ -525,6 +525,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/usuario/processar-siape', [SiapeIndividualController::class, 'processaServidor']);
     Route::post('/unidade/processar-siape', [SiapeIndividualController::class, 'processaUnidade']);
     Route::post('/siape-blacklist/remover-cpf', [SiapeBlackListServidorController::class, 'remover']);
+    Route::post('/SiapeBlacklistServidor/query', [SiapeBlackListServidorController::class, 'query']);
+
 
     Route::prefix('SolucaoUnidade')->group(function () {
         defaultRoutes(SolucaoUnidadeController::class);
