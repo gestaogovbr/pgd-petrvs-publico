@@ -1,12 +1,15 @@
 <separator collapse [collapsed]="false" [title]="lex.translate('Atividades')" [icon]="entityService.getIcon('Atividade')">
   <grid [items]="itemsEntregas" #gridEntregas [minHeight]="0" [hasEdit]="false">
+
     <columns>
       <column type="expand" [width]="50" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')" [align]="'center'" [hint]="lex.translate('Consolidação')" [template]="columnConsolidacao" [expandTemplate]="columnExpandedConsolidacao">
         <ng-template let-row="row" #columnConsolidacao>
           <span *ngIf="row.atividades?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row.atividades?.length}}</span>
         </ng-template>
         <ng-template let-row="row" #columnExpandedConsolidacao>
-          <grid [items]="row.atividades" [minHeight]="0" #gridAtividades editable [form]="formAtividade" [hasAdd]="!disabled" [hasDelete]="false" [hasEdit]="false" [add]="addAtividade.bind(this, row.entrega)" [load]="loadAtividade.bind(this)" [remove]="removeAtividade.bind(this, row.atividades)" [save]="saveAtividade.bind(this)">
+          <grid [items]="row.atividades" [minHeight]="0" #gridAtividades editable [form]="formAtividade" [hasDelete]="false" [hasEdit]="false" [hasAdd]="row.status == 'ATIVO'" [add]="addAtividade.bind(this, row.entrega)" [load]="loadAtividade.bind(this)" [remove]="removeAtividade.bind(this, row.atividades)" [save]="saveAtividade.bind(this)">
+
+
             <columns>
               <column type="expand" [width]="50" icon="bi bi-boxes" [align]="'center'" [hint]="'Tarefas da ' + lex.translate('atividade')" [template]="columnTarefas" [expandTemplate]="columnExpandedTarefas">
                 <ng-template let-row="row" #columnTarefas>
