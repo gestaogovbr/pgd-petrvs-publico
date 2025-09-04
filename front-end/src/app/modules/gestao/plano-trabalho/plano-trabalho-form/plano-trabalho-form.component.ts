@@ -181,9 +181,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       result = "Menor que programa";
     } else if (this.programa && controlName == 'data_fim' && moment(control.value as Date).startOf('day') > moment(this.programa!.selectedEntity?.data_fim).startOf('day')) {
       result = "Maior que programa";
-    } /*else if (controlName == 'criterios_avaliacao' && control.value.length < 1) {
-      result = "Insira ao menos um critério de avaliação";
-    }*/
+    } 
     return result;
   }
 
