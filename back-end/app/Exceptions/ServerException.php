@@ -56,6 +56,8 @@ class ServerException extends Exception implements IBaseException
         "ValidateUnidade" => "Erro ao validar Unidade",
         "ValidateUsuario" => "Erro ao validar o usuário",
         "TipoClienteExcluir" => "Tipo de Cliente",
+        "UsuarioDestroy" => "Usuário não tem permissão para excluir Agentes",
+        "UsuarioDestroyNaoColaborador" => "Não é possível excluir usuários com nível diferente de Colaborador",
     ];
 
     function __construct(string $code, string $extra = "", string $separator = " : ") {
