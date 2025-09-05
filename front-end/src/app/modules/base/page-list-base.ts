@@ -33,7 +33,6 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   public addParams?: any;
   public rowsLimit = QueryContext.DEFAULT_LIMIT;
   public selectable: boolean = false;
-  public onDeleteMessage: string = "Deseja realmente excluir";
   public static selectRoute?: FullRoute;
   public afterAdd?: (modalResult: any) => void;
   public afterEdit?: (modalResult: any) => void;
@@ -201,7 +200,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   public delete = async (doc: M) => {
     const self = this;
 
-    this.dialog.confirm("Excluir?", this.onDeleteMessage).then(confirm => {
+    this.dialog.confirm("Exclui ?", "Deseja realmente excluir?").then(confirm => {
       if(confirm) {
         this.dao!.delete(doc).then(function () {
           (self.grid!.query || self.query!).removeId(doc.id);
