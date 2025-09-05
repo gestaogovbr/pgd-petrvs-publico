@@ -7,19 +7,15 @@ use App\Services\CalendarioService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
-use App\Services\NivelAcessoService;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 use ZipArchive;
-use OwenIt\Auditing\Auditable;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Response;
 
 class UsuarioController extends ControllerBase
 {
-    public static $sameTransaction = true;
-
     public $updatable = ["config", "notificacoes", "texto_complementar_plano", "perfil_id"];
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario)
@@ -34,17 +30,8 @@ class UsuarioController extends ControllerBase
                     throw new ServerException("CapacidadeStore", "Edição não realizada");
                 break;
             case 'DESTROY':
-                if (!$usuario->hasPermissionTo('MOD_USER_EXCL')) {
-                    throw new ServerException("UsuarioDestroy", "Exclusão não realizada");
-                }
-
-                $nivelAcessoService = new NivelAcessoService();
-                $dados = $this->service->getById(['id' => $request->input('id')]);
-
-                if ($dados->perfil->id != $nivelAcessoService->getPerfilColaborador()->id) {
-                    throw new ServerException("UsuarioDestroyNaoColaborador");
-                }
-
+                if (!$usuario->hasPermissionTo('MOD_USER_EXCL'))
+                    throw new ServerException("CapacidadeStore", "Exclusão não realizada");
                 break;
         }
     }
@@ -216,7 +203,7 @@ class UsuarioController extends ControllerBase
                 'usuario_id' => ['required', 'uuid'],
                 'justificativa' => ['required', 'string'],
             ])->validate();
-
+            
             return response()->json([
                 'success' => true,
                 'data' => $this->service->ativarTemporariamente($validated)
