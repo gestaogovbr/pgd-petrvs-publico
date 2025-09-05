@@ -85,11 +85,11 @@
             </ng-template>
         </column>
 
-        <column title="ID" 
+        <column title="#ID" 
                 [template]="columnId"
                 [titleTemplate]="titleId" 
                 [verticalAlign]="'bottom'"
-                [width]="180"
+                [width]="80"
         >
             <ng-template let-header="header" #titleId>
                 <input-text 
@@ -100,25 +100,25 @@
             </ng-template>
 
             <ng-template let-row="row" #columnId>
-                <span> {{ row.uid }}</span>
+                <span> {{ row.numero || '-' }}</span>
             </ng-template>
         </column>
 
-        <column title="Número/Matrícula SIAPE"
+        <column title="Matrícula SIAPE"
             [template]="columnMatricula"
             [titleTemplate]="titleMatricula" [verticalAlign]="'bottom'"
             [width]="50"
         >
             <ng-template let-header="header" #titleMatricula>
                 <input-text 
-                    [control]="filter!.controls.numero"
-                    controlName="this.filter.numero"
+                    [control]="filter!.controls.matricula"
+                    controlName="this.filter.matricula"
                     (blur)="onValueChange($event)"
                 ></input-text>
             </ng-template>
 
             <ng-template let-row="row" #columnMatricula>
-                <span> {{row.numero || '-'}}</span>
+                <span> {{row.matricula || '-'}}</span>
             </ng-template>
         </column>
 
@@ -126,7 +126,7 @@
                 [template]="columnEnvioId"
                 [titleTemplate]="titleEnvioId" 
                 [verticalAlign]="'bottom'"
-                [width]="50"
+                [width]="80"
         >
             <ng-template let-header="header" #titleEnvioId>
                 <input-text 
@@ -166,7 +166,7 @@
             [template]="columnMotivo"
             [titleTemplate]="titleMotivo" 
             [verticalAlign]="'bottom'"
-            [width]="200"
+            [width]="300"
         >
             <ng-template let-header="header" #titleMotivo>
                 <input-text 

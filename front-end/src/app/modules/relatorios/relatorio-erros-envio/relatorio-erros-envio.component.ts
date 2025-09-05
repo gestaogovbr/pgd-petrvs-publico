@@ -37,7 +37,7 @@ export class RelatorioErrosEnvioComponent extends PageListBase<RelatorioErrosEnv
         id: { default: "" },
         categoria: { default: "" },
         envioNumero: { default: "" },
-        numero: { default: "" },
+        matricula: { default: "" },
         envio_inicio: { default: moment().subtract(30, 'days').toDate() },
         envio_fim: { default: moment().toDate() },
         data_envio: { default: "" },
@@ -92,7 +92,7 @@ export class RelatorioErrosEnvioComponent extends PageListBase<RelatorioErrosEnv
     }
 
     if (form.id?.length) {
-      result.push(["id", "like", form.id]);
+      result.push(["numero", "like", form.id]);
     }
 
     if (form.categoria?.length) {
@@ -103,8 +103,8 @@ export class RelatorioErrosEnvioComponent extends PageListBase<RelatorioErrosEnv
       result.push(["envioNumero", "==", form.envioNumero]);
     }
 
-    if (form.numero?.length) {
-      result.push(["numero", "like", "%" + form.numero + "%"]);
+    if (form.matricula?.length) {
+      result.push(["matricula", "like", "%" + form.matricula + "%"]);
     }
 
     if (form.envio_inicio) {

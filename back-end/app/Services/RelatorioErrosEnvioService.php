@@ -36,11 +36,11 @@ class RelatorioErrosEnvioService extends ServiceBase
                 e.numero as envioNumero,
                 ei.uid,
                 CASE
-                    WHEN ei.tipo = 'participante' THEN u.matricula
                     WHEN ei.tipo = 'trabalho' THEN pt.numero
                     WHEN ei.tipo = 'entrega' THEN pe.numero
                     ELSE null
                 END as numero,
+                u.matricula,
                 CASE
                     WHEN ei.tipo = 'participante' THEN lotacoes.unidade_id
                     WHEN ei.tipo = 'trabalho' THEN pt.unidade_id
@@ -127,12 +127,17 @@ TEXT;
         $numero = $this->extractWhere($data, "numero");
         if (isset($numero[2])) {
             $sql .= " and CASE
-                        WHEN ei.tipo = 'participante' THEN u.matricula
                         WHEN ei.tipo = 'trabalho' THEN pt.numero
                         WHEN ei.tipo = 'entrega' THEN pe.numero
                         ELSE null
                     END like ?";
             $params[] = $numero[2];
+        }
+
+        $matricula = $this->extractWhere($data, "matricula");
+        if (isset($matricula[2])) {
+            $sql .= " and u.matricula like ?";
+            $params[] = $matricula[2];
         }
 
         $envioNumero = $this->extractWhere($data, "envioNumero");
