@@ -34,6 +34,8 @@ class RelatorioPlanoTrabalhoService extends ServiceBase
 
         if (isset($unidadeId[2])) {
             $unidadeIds = [$unidadeId[2]];
+        } else {
+            $unidadeIds = [];
         }
 
         if (isset($unidadeId[2]) && isset($subordinadas[2])) {

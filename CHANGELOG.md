@@ -1,3 +1,9 @@
+## 2.6.3 08/09/2025
+### Corrigido
+- Permissões nos Relatórios
+### Removido
+- Indexação de ambiente de homologação nos buscadores
+
 ## 2.6.2 25/08/2025
 ### Adicionado
 - Envio de contribuições não vinculadas a Planos de Entrega
