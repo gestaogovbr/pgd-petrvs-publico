@@ -857,10 +857,12 @@ class IntegracaoService extends ServiceBase
 
             $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
           }
-          SiapeLog::info('Concluída a fase de atualização das lotações dos servidores!.....');
-        });
+        SiapeLog::info('Concluída a fase de atualização das lotações dos servidores!.....');
+      });
 
-        $this->result['servidores']['Resultado'] = 'Sucesso';
+      $this->verificarUsuariosExternosIntegracao();
+
+      $this->result['servidores']['Resultado'] = 'Sucesso';
         array_push($this->result['servidores']["Observações"], 'Na tabela Usuários constam agora ' .
           Usuario::count() . ' servidores!');
       } catch (Throwable $e) {
@@ -1100,6 +1102,59 @@ class IntegracaoService extends ServiceBase
       $unidadeRaiz->codigo = $siapeUnidadeRaiz->codigo_siape;
       SiapeLog::info(sprintf("Corrigindo unidade raiz %s", $siapeUnidadeRaiz->siglauorg));
       $unidadeRaiz->save();
+    }
+  }
+
+  
+  private function verificarUsuariosExternosIntegracao(): void
+  {
+    try {
+      $usuariosExternos = DB::select(
+        "SELECT u.* FROM usuarios AS u 
+         INNER JOIN integracao_servidores AS ise ON u.matricula = ise.matriculasiape 
+         WHERE u.usuario_externo = 1"
+      );
+
+      if (empty($usuariosExternos)) {
+        return;
+      }
+
+      SiapeLog::info(sprintf("Encontrados %d usuários externos para atualizar.", count($usuariosExternos)));
+
+      foreach ($usuariosExternos as $usuarioData) {
+        DB::update(
+          "UPDATE usuarios SET usuario_externo = 0 WHERE id = ?",
+          [$usuarioData->id]
+        );
+
+        $usuario = Usuario::find($usuarioData->id);
+        if ($usuario && $usuario->perfil) {
+          $perfilColaborador = $this->nivelAcessoService->getPerfilColaborador();
+          $perfilParticipante = $this->nivelAcessoService->getPerfilParticipante();
+
+          if ($perfilColaborador && $perfilParticipante && 
+              $usuario->perfil->id === $perfilColaborador->id) {
+            $this->perfilService->alteraPerfilUsuario($usuario->id, $perfilParticipante->id);
+            SiapeLog::info(sprintf(
+              "Usuário %s (%s) teve perfil alterado de Colaborador para Participante.",
+              $usuario->nome,
+              $usuario->matricula
+            ));
+          }
+        }
+
+        SiapeLog::info(sprintf(
+          "Usuário %s (%s) atualizado: usuario_externo = 0.",
+          $usuarioData->nome,
+          $usuarioData->matricula
+        ));
+      }
+    } catch (Throwable $e) {
+      report($e);
+      SiapeLog::error(sprintf(
+        "Erro ao verificar usuários externos na integração: %s",
+        $e->getMessage()
+      ));
     }
   }
 }
