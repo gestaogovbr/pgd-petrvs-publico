@@ -74,6 +74,7 @@ use App\Http\Controllers\RelatorioAgenteController;
 use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\RelatorioPlanoEntregaController;
 use App\Http\Controllers\RelatorioUnidadeController;
+use App\Http\Controllers\RelatorioErrosEnvioController;
 use App\Http\Controllers\RotinaDiariaController;
 use App\Http\Controllers\SiapeBlackListServidorController;
 use App\Http\Controllers\SiapeIndividualController;
@@ -99,13 +100,6 @@ use App\Http\Controllers\UnidadeIntegranteController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-
-
-
-
-
-
 
 /*
 |--------------------------------------------------------------------------
@@ -143,6 +137,8 @@ Route::middleware(['auth:sanctum'])->post('/login-session', [LoginController::cl
 /* Geral */
 Route::middleware('auth:sanctum')->post('/search-text', [ControllerBase::class, 'searchText']);
 Route::middleware('auth:sanctum')->post('/usuarios/query', [UsuarioController::class, 'query']);
+Route::middleware('auth:sanctum')->post('/usuario/matriculas', [UsuarioController::class, 'matriculas']);
+Route::middleware('auth:sanctum')->post('/usuario/unidades-vinculadas', [UsuarioController::class, 'unidadesVinculadas']);
 Route::get('/integracao', [IntegracaoController::class, 'sincronizar']);
 Route::middleware('auth:sanctum')->prefix('Calendario')->group(function () {
   Route::post('feriados', [CalendarioController::class, 'feriados']);
@@ -535,11 +531,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::middleware(['auth:sanctum'])->prefix('Relatorio')->group(function () {
     Route::post('planos-trabalho/query', [RelatorioController::class, 'queryPlanosTrabalho']);
-    //Route::post('planos-trabalho/csv', [RelatorioController::class, 'queryPlanosTrabalho']);
     Route::post('planos-trabalho/xls', [RelatorioController::class, 'queryPlanosTrabalho']);
 
     Route::post('planos-trabalho-detalhado/query', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
-    //Route::post('planos-trabalho-detalhado/csv', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
     Route::post('planos-trabalho-detalhado/xls', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
 
     Route::post('planos-entrega/query', [RelatorioPlanoEntregaController::class, 'query']);
@@ -556,19 +550,14 @@ Route::middleware(['auth:sanctum'])->prefix('RelatorioUnidade')->group(function 
     Route::post('xls', [RelatorioUnidadeController::class, 'query']);
 });
 
+Route::middleware(['auth:sanctum'])->prefix('RelatorioErrosEnvio')->group(function () {
+    Route::post('query', [RelatorioErrosEnvioController::class, 'query']);
+    Route::post('xls', [RelatorioErrosEnvioController::class, 'query']);
+});
+
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/impersonate', [ImpersonationController::class, 'impersonate'])
         ->middleware('auth:sanctum')
         ->name('impersonate');
   Route::get('/impersonate/stop', [ImpersonationController::class, 'stopImpersonating'])->name('impersonate.stop');
-});
-
-Route::middleware(['auth:sanctum'])->prefix('Relatorio')->group(function () {
-    Route::post('planos-trabalho/query', [RelatorioController::class, 'queryPlanosTrabalho']);
-    Route::post('planos-trabalho/csv', [RelatorioController::class, 'queryPlanosTrabalho']);
-    Route::post('planos-trabalho/xls', [RelatorioController::class, 'queryPlanosTrabalho']);
-
-    Route::post('planos-trabalho-detalhado/query', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
-    Route::post('planos-trabalho-detalhado/csv', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
-    Route::post('planos-trabalho-detalhado/xls', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
 });

@@ -127,13 +127,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       data_estipulada_entrega: { default: new Date() },
       data_inicio: { default: new Date() },
       data_entrega: { default: new Date() },
-      //tipo_atividade_id: { default: null }
     }, this.cdRef, this.validateAtividade);
-    /*this.formOcorrencia = this.fh.FormBuilder({
-      data_inicio: { default: new Date() },
-      data_fim: { default: new Date() },
-      descricao: { default: "" }
-    }, this.cdRef, this.validateOcorrencia);*/
     this.formComparecimento = this.fh.FormBuilder({
       data_comparecimento: { default: new Date() },
       unidade_id: { default: "" },
@@ -141,7 +135,6 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     }, this.cdRef, this.validateComparecimento);
     this.formEdit = this.fh.FormBuilder({
       descricao: { default: "" },
-      //tipo_atividade_id: { default: null },
       comentarios: { default: [] },
       progresso: { default: 0 },
       etiquetas: { default: [] },
@@ -212,18 +205,6 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     return result;
   }
 
-  //Não apagar
-  /*public validateOcorrencia = (control: AbstractControl, controlName: string) => { 
-    let result = null;
-    if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
-      result = "Obrigatório";
-    } else if(['data_inicio', 'data_fim'].includes(controlName) && !this.util.isDataValid(control.value)) {
-      result = "Inválido";
-    } else if(controlName == 'data_fim' && control.value.getTime() < this.formOcorrencia?.controls.data_inicio.value.getTime()) {
-      result = "Menor que início";
-    } 
-    return result;
-  }*/
 
   public validateComparecimento = (control: AbstractControl, controlName: string) => {
     let result = null;
@@ -248,7 +229,10 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
         progresso_realizado: x.plano_entrega_entrega ? x.plano_entrega_entrega.progresso_realizado : 0,
         objetivos: x.plano_entrega_entrega ? x.plano_entrega_entrega.objetivos : [],
         processos: x.plano_entrega_entrega ? x.plano_entrega_entrega.processos : [],
+        status: dados.planoTrabalho.status,
+
       };
+      console.log(result);
       return result;
     });
     this.programa = dados.programa;
@@ -544,33 +528,6 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       }
     });
   }
-
-  /*public async loadOcorrencia(form: FormGroup, row: any) {
-    this.formAtividade.patchValue({
-      data_inicio: row.data_inicio,
-      data_fim: row.data_fim,
-      descricao: row.descricao
-    });
-    this.cdRef.detectChanges();
-  }
-
-  public async saveOcorrencia(form: FormGroup, row: any) {
-    let result = undefined;
-    this.formOcorrencia.markAllAsTouched();
-    if (this.formOcorrencia!.valid) {
-      row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
-      row.data_inicio = form.controls.data_inicio.value;
-      row.data_fim = form.controls.data_fim.value;
-      row.descricao = form.controls.descricao.value;
-      this.submitting = true;
-      try {
-        result = await this.consolidacaoOcorrenciaDao?.save(row);
-      } finally {
-        this.submitting = false;
-      }
-    }
-    return result;
-  }*/
 
   public async editOcorrencia(row: any) {
     this.go.navigate({ route: ["gestao", "ocorrencia", row.id, "edit"] }, {

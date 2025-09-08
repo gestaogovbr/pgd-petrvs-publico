@@ -15,6 +15,7 @@ import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.ser
 import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 import { UnidadeService } from './services/unidade.service';
+import { Unidade } from './models/unidade.model';
 
 export type Contexto = "EXECUCAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX" ;
 export type Schema = {
@@ -187,9 +188,11 @@ export class AppComponent {
       LOGS_ENVIOS: { name: "Log dos Envios à API PGD", permition: '', route: ['logs', 'envios'], icon: this.entity.getIcon('Envio') },
       DEV_CPF_CONSULTA_SIAPE: { name: "Consulta CPF SIAPE", permition: '', route: ['consultas', 'cpf-siape'], icon: this.entity.getIcon('ConsultaCPFSIAPE') },
       DEV_UNIDADE_CONSULTA_SIAPE: { name: "Consulta Unidade SIAPE", permition: '', route: ['consultas', 'unidade-siape'], icon: this.entity.getIcon('ConsultaUnidadeSIAPE') },
+
       /* SIAPE */
       BLACKLIST_SERVIDOR: { name: "Blacklist Servidor", permition: '', route: ['siape', 'blacklist-servidor'], icon: 'bi bi-person-x' },
-            /* RELATORIOS */
+      /* RELATORIOS */
+
       RELATORIO_PLANO_TRABALHO: {
         name: this.lex.translate("Planos de Trabalho"),
         permition: 'MOD_RELATORIO_PT',
@@ -213,7 +216,12 @@ export class AppComponent {
         permition: 'MOD_RELATORIO_UNIDADE',
         icon: this.entity.getIcon('Unidade'),
         route: ['relatorios', 'unidades'],
-        //onClick: ()=> this.emDesenvolvimento()
+      },
+      RELATORIO_ENVIOS: {
+        name: "Erros de API",
+        permition: 'MOD_RELATORIO_ENVIOS',
+        icon: this.entity.getIcon('Envio'),
+        route: ['relatorios', 'erros-envio'],
       },
       /* Outros */
       PAINEL: { name: "Painel", permition: '', route: ['panel'], icon: "" },
@@ -288,7 +296,8 @@ export class AppComponent {
         this.menuSchema.RELATORIO_PLANO_TRABALHO,
         this.menuSchema.RELATORIO_PLANO_ENTREGA,
         this.menuSchema.RELATORIO_USUARIOS,
-        this.menuSchema.RELATORIO_UNIDADES
+        this.menuSchema.RELATORIO_UNIDADES,
+        this.menuSchema.RELATORIO_ENVIOS
       ].sort(this.orderMenu)
     }];
 
@@ -349,7 +358,8 @@ export class AppComponent {
         this.menuSchema.RELATORIO_PLANO_TRABALHO,
         this.menuSchema.RELATORIO_PLANO_ENTREGA,
         this.menuSchema.RELATORIO_USUARIOS,
-        this.menuSchema.RELATORIO_UNIDADES
+        this.menuSchema.RELATORIO_UNIDADES,
+        this.menuSchema.RELATORIO_ENVIOS
       ].sort(this.orderMenu)
     }];
 
@@ -459,6 +469,10 @@ export class AppComponent {
     return this.auth.unidades || [];
   }
 
+  public get unidadesVinculadas(): Unidade[] {
+    return this.auth.unidadesVinculadas || [];
+  }
+
   public get usuarioNome(): string {
     return this.utils.shortName(this.auth.usuario?.apelido.length ? this.auth.usuario?.apelido : this.auth.usuario?.nome || "");
   }
@@ -480,8 +494,19 @@ export class AppComponent {
     popup.restore();
   }
 
-  public selecionaUnidade(id: string) {
-    this.auth.selecionaUnidade(id, this.cdRef);
+  public async selecionaUnidade(id: string, matricula: string) {
+    const matriculaAnterior = this.auth.usuario?.matricula;
+    
+    await this.auth.selecionaUnidade(id, matricula, this.cdRef);
+    
+    if (matricula && matricula !== matriculaAnterior) {
+      window.location.reload();
+    }
+  }
+
+  public getMatriculaPelaUnidadeComCpf(idUnidade: string, cpf: string): string {
+    let matricula = this.auth.usuario?.matriculas?.find(x => x.unidades?.find(y => y.id == idUnidade) && x.cpf == cpf);
+    return matricula?.matricula || 'N/A';
   }
 
   public async onToolbarButtonClick(btn: ToolbarButton) {

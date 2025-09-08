@@ -34,6 +34,8 @@ class RelatorioPlanoEntregaService extends ServiceBase
 
         if (isset($unidadeId[2])) {
             $unidadeIds = [$unidadeId[2]];
+        } else {
+            $unidadeIds = [];
         }
 
         if (isset($unidadeId[2]) && isset($subordinadas[2])) {
@@ -74,6 +76,8 @@ class RelatorioPlanoEntregaService extends ServiceBase
                 ;
             }
         }
+
+        \Log::info($where);
 
         $data["where"] = $where;
     }
