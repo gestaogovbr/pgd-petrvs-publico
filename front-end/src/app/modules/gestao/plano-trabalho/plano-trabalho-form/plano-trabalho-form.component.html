@@ -6,8 +6,8 @@
           <div class="row">
             <!-- (RI_PTR_1) No formulário de inclusão/edição de um plano de trabalho, o input-search de unidade, programa e usuario devem ficar desabilitados nas edições e habilitado apenas nas inclusões; -->
             <input-search #usuario [size]="4" required [disabled]="action == 'new' ? undefined : 'true'" controlName="usuario_id" [dao]="usuarioDao" [join]="['afastamentos','lotacao','unidades','participacoes_programas']" (select)="onUsuarioSelect($event)"></input-search>
-            <input-select #unidade [size]="4" required [disabled]="action == 'new' ? undefined : 'true'" controlName="unidade_id" nullable [items]="usuarioUnidades" [value]="undefined" [label]="lex.translate('Unidade')"  (select)="onUnidadeSelect($event)"></input-select>
-            <input-search #programa [size]="4" [label]="lex.translate('Programa de gestão')" icon="bi bi-file-bar-graph" required [disabled]="['new', 'clone'].includes(action)  ? undefined : 'true'" controlName="programa_id" [join]="joinPrograma" [dao]="programaDao" (select)="onProgramaSelect($event)" [metadata]="programaMetadata"></input-search>
+            <input-select #unidade [size]="4" required [disabled]="action == 'new' ? undefined : 'true'" controlName="unidade_id" nullable [items]="usuarioUnidades" [value]="undefined" [label]="lex.translate('Unidade')"  (change)="onUnidadeSelect()"></input-select>
+            <input-select #programa [size]="4" [label]="lex.translate('Programa de gestão')" icon="bi bi-file-bar-graph" required [disabled]="'true'" controlName="programa_id"></input-select>
           </div>
           <div class="row">
             <input-datetime date [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="form!.controls.data_inicio" (change)="onDataInicioChange($event)" [labelInfo]="'Início da Vigência do '+ lex.translate('Plano de trabalho')" required></input-datetime>
@@ -51,7 +51,7 @@
     <tab *ngIf="checkFilled(['usuario_id', 'programa_id', 'tipo_modalidade_id'])" key="TERMO" [label]="lex.translate('Termo')">
       <!--top-alert *ngIf="!isTermos" type="warning" message="Para [INSERIR] ou [ASSINAR] termos escolha opção Termos de adesão na tela de listagem, ou utilize o Sei"></top-alert/-->
       <div clss="row">
-        <documentos #documentos [entity]="entity" [disabled]="formDisabled" noPersist [cdRef]="cdRef" [needSign]="planoTrabalhoService.needSign" [extraTags]="planoTrabalhoService.extraTags" especie="TCR" [editingId]="formDisabled ? undefined : editingId" [datasource]="datasource" [template]="programa?.selectedEntity?.template_tcr" [blocked]="true"></documentos>
+        <documentos #documentos [entity]="entity" [disabled]="formDisabled" noPersist [cdRef]="cdRef" [needSign]="planoTrabalhoService.needSign" [extraTags]="planoTrabalhoService.extraTags" especie="TCR" [editingId]="formDisabled ? undefined : editingId" [datasource]="datasource" [template]="selectedPrograma?.template_tcr" [blocked]="true"></documentos>
       </div>
     </tab>
   </tabs>

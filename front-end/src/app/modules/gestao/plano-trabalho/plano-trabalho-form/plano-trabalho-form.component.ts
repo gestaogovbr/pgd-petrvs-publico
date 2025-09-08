@@ -33,6 +33,7 @@ import { Template } from 'src/app/models/template.model';
 import { UtilService } from 'src/app/services/util.service';
 import moment from 'moment';
 import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
+import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
 
 @Component({
   selector: 'plano-trabalho-form',
@@ -46,8 +47,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   @ViewChild('gridDocumentos', { static: false }) public gridDocumentos?: GridComponent;
   @ViewChild('tabs', { static: false }) public tabs?: TabsComponent;
   @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
-  @ViewChild('programa', { static: false }) public programa?: InputSearchComponent;
-  @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
+  @ViewChild('programa', { static: false }) public programa?: InputSelectComponent;
+  @ViewChild('unidade', { static: false }) public unidade?: InputSelectComponent;
   @ViewChild('tipoModalidade', { static: false }) public tipoModalidade?: InputSearchComponent;
   @ViewChild('planoEntrega', { static: false }) public planoEntrega?: InputSearchComponent;
   @ViewChild('atividade', { static: false }) public atividade?: InputSearchComponent;
@@ -77,6 +78,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public gestoresUnidadeExecutora: string[] = [];
   public programaMetadata: ProgramaMetadata;
   public usuarioUnidades: LookupItem[] = [];
+  public selectedPrograma?: Programa;
+  public selectedUnidade?: Unidade;
 
 
 
@@ -155,7 +158,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.form?.controls.documento_id.setValue(documento?.id);
       this.form?.controls.documentos.setValue(this.entity!.documentos);
       this.datasource = documento?.datasource || {};
-      this.template = this.entity.programa?.template_tcr;
+      this.template = this.selectedPrograma?.template_tcr;
       this.editingId = ["ADD", "EDIT"].includes(documento?._status || "") ? documento!.id : undefined;
     }
 
@@ -179,9 +182,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       result = "Inválido";
     } else if (controlName == 'data_fim' && this.util.isDataValid(this.form?.controls.data_inicio.value) && this.util.asTimestamp(control.value) <= this.util.asTimestamp(this.form!.controls.data_inicio.value)) {
       result = "Menor que o início";
-    } else if (this.programa && controlName == 'data_inicio' && moment(control.value as Date).startOf('day') < moment(this.programa!.selectedEntity?.data_inicio).startOf('day')) {
+    } else if (this.programa && controlName == 'data_inicio' && moment(control.value as Date).startOf('day') < moment(this.selectedPrograma?.data_inicio).startOf('day')) {
       result = "Menor que programa";
-    } else if (this.programa && controlName == 'data_fim' && moment(control.value as Date).startOf('day') > moment(this.programa!.selectedEntity?.data_fim).startOf('day')) {
+    } else if (this.programa && controlName == 'data_fim' && moment(control.value as Date).startOf('day') > moment(this.selectedPrograma?.data_fim).startOf('day')) {
       result = "Maior que programa";
     } /*else if (controlName == 'criterios_avaliacao' && control.value.length < 1) {
       result = "Insira ao menos um critério de avaliação";
@@ -196,19 +199,48 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     // Validar se as entregas pertencem ao plano de entregas da unidade
   };
 
-  public onUnidadeSelect(selected: Event) {
+  public onUnidadeSelect() {
+    if(this.unidade!.selectedItem){
+      console.log(this.unidade!.selectedItem.key);
+      this.carregaProgramas(this.unidade?.selectedItem?.key);
+      console.log(this.usuario?.selectedEntity?.unidades);
+      
 
-    let unidade = this.unidade?.selectedEntity as Unidade;
-    let usuario = this.usuario?.selectedEntity as Usuario;
-    this.entity!.unidade = unidade;
-    this.entity!.unidade_id = unidade.id;
-    this.form!.controls.forma_contagem_carga_horaria.setValue(unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
-    this.form!.controls.unidade_texto_complementar.setValue(unidade?.texto_complementar_plano || "");
-    this.form!.controls.usuario_texto_complementar.setValue(usuario?.texto_complementar_plano || "");
+      let unidade = this.usuario?.selectedEntity?.unidades.find((u: Unidade) => u.id == this.unidade?.selectedItem?.key);
+      this.selectedUnidade = unidade;
 
-    this.unidadeDao.getById(unidade.id, ['gestor:id,usuario_id','gestores_substitutos:id,usuario_id','gestores_delegados:id,usuario_id']).then( unidade => {
-      this.buscaGestoresUnidadeExecutora(unidade);
-    });
+      let usuario = this.usuario?.selectedEntity as Usuario;
+      this.entity!.unidade = unidade;
+      this.entity!.unidade_id = unidade.id;
+      this.form!.controls.forma_contagem_carga_horaria.setValue(unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
+      this.form!.controls.unidade_texto_complementar.setValue(unidade?.texto_complementar_plano || "");
+      this.form!.controls.usuario_texto_complementar.setValue(usuario?.texto_complementar_plano || "");
+
+      this.unidadeDao.getById(unidade.id, ['gestor:id,usuario_id','gestores_substitutos:id,usuario_id','gestores_delegados:id,usuario_id']).then( unidade => {
+        this.buscaGestoresUnidadeExecutora(unidade);
+      });
+    } else {
+      if (this.programa) this.programa.items = [];
+    }
+  }
+
+  async carregaProgramas(unidadeId: string) {
+    let programas = await this.programaDao.query({
+      where: [['vigentesUnidadeExecutora', '==', unidadeId]],
+      join: this.joinPrograma,
+      orderBy: [["unidade.path", "desc"]]
+    }).asPromise()
+
+    if (programas.length > 0) {
+      if (this.programa) this.programa.items = programas.map(prog => ({
+        key: prog.id,
+        value: prog.nome,
+        entity: prog
+      }));
+      this.preenchePrograma(programas[0]);
+    } else {
+      this.regramentoNaoEncontrado();
+    }
   }
 
   public podeEditarTextoComplementar(unidade_id : string) : string|undefined {
@@ -217,29 +249,18 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     'true' ; 
   }
 
-  public onProgramaSelect(selected: SelectItem) {
-    let programa = selected.entity as Programa;
-    this.entity!.programa_id = programa.id;
-    this.entity!.programa = programa;
-    this.form?.controls.criterios_avaliacao.setValue(programa.plano_trabalho_criterios_avaliacao || []);
-    this.form?.controls.data_inicio.updateValueAndValidity();
-    this.form?.controls.data_fim.updateValueAndValidity();
-    this.calculaTempos();
-    this.cdRef.detectChanges();
-  }
-
   public async onUsuarioSelect(selected: SelectItem) {    
-    let programa_habilitado = selected.entity.participacoes_programas.find((x: { habilitado: number; }) => x.habilitado == 1);
+
+    if (this.programa) this.programa.items = [];
     
+    this.usuarioUnidades = selected.entity.unidades?.map((unidade: Unidade) => ({
+      key: unidade!.id,
+      value: unidade!.sigla + " - " + unidade!.nome
+    })) || []
+    
+   
     this.form!.controls.usuario_texto_complementar.setValue(selected.entity.texto_complementar_plano || "");
     this.form!.controls.unidade_id.setValue(null);
-
-
-    let programas = await this.programaDao.query({
-      where: [['vigentesUnidadeExecutora', '==', selected.entity.lotacao.unidade_id]],
-      join: this.joinPrograma,
-      orderBy: [["unidade.path", "desc"]]
-    }).asPromise();
 
     if(selected.entity.pedagio) {
       let modalidades = await this.tipoModalidadeDao.query({
@@ -247,31 +268,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       }).asPromise();
       this.form?.controls.tipo_modalidade_id.setValue(modalidades[0]?.id);
     }
-    
-    if (programa_habilitado) {
-      const programaEncontrado = programas.find((x: Programa) => x.id == programa_habilitado.programa_id);
-      if (programaEncontrado) {
-        this.preenchePrograma(programaEncontrado);
-      } else {
-        this.regramentoNaoEncontrado();
-      }
-    } else {
-      this.regramentoNaoEncontrado();
-    }
-
+   
     this.calculaTempos();
     this.cdRef.detectChanges();
-  }
-
-  public preencheUnidade(unidade: Unidade) {
-    //this.form?.controls.unidade_id.setValue(unidade.id);
-    //this.entity!.unidade = unidade;
-    //this.entity!.unidade_id = unidade.id;
-    this.form!.controls.forma_contagem_carga_horaria.setValue(unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
-    this.form!.controls.unidade_texto_complementar.setValue(unidade?.texto_complementar_plano || "");
-    this.unidadeDao.getById(unidade.id, ['gestor:id,usuario_id','gestores_substitutos:id,usuario_id','gestores_delegados:id,usuario_id']).then( unidade => {
-      this.buscaGestoresUnidadeExecutora(unidade);
-    });
   }
 
   public preenchePrograma(programa: Programa) {
@@ -304,11 +303,10 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     const fim = this.form?.controls.data_fim.value;
     const carga = this.form?.controls.carga_horaria.value || 8;
     const usuario = this.usuario?.selectedEntity as Usuario;
-    const unidade = this.unidade?.selectedEntity as Unidade;
-    if (usuario && unidade && this.util.isDataValid(inicio) && this.util.isDataValid(fim) && this.util.asTimestamp(inicio) < this.util.asTimestamp(fim)) {
-      this.calendar.loadFeriadosCadastrados(unidade.id).then((feriados) => {
-        this.horasTotais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, unidade, "ENTREGA", [], []);
-        this.horasParciais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, unidade, "ENTREGA", [], usuario.afastamentos);
+    if (usuario && this.selectedUnidade && this.util.isDataValid(inicio) && this.util.isDataValid(fim) && this.util.asTimestamp(inicio) < this.util.asTimestamp(fim)) {
+      this.calendar.loadFeriadosCadastrados(this.selectedUnidade.id).then((feriados) => {
+        this.horasTotais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, this.selectedUnidade!, "ENTREGA", [], []);
+        this.horasParciais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, this.selectedUnidade!, "ENTREGA", [], usuario.afastamentos);
         this.form?.controls.tempo_total.setValue(this.horasTotais.tempoUtil);
         this.form?.controls.tempo_proporcional.setValue(this.horasParciais.tempoUtil);
       });
@@ -329,12 +327,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     await Promise.all([
       this.calendar.loadFeriadosCadastrados(entity.unidade_id),
       this.usuario?.loadSearch(entity.usuario || entity.usuario_id),      
-      this.programa?.loadSearch(entity.programa || entity.programa_id),
       this.tipoModalidade?.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id),
-      this.usuarioUnidades = this.auth.usuario?.areas_trabalho?.map(x => ({
-        key: x.unidade!.id,
-        value: x.unidade!.sigla + " - " + x.unidade!.nome
-      })) || []
+     
     ]);
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
@@ -378,25 +372,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.entity.carga_horaria = this.auth.entidade?.carga_horaria_padrao || 8;
       this.entity.forma_contagem_carga_horaria = this.auth.entidade?.forma_contagem_carga_horaria || "DIA";
       if (this.auth.unidade) {
-        this.entity.unidade_id = this.auth.unidade!.id;
-     
-        let programas = await this.programaDao.query({
-          where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]],
-          join: this.joinPrograma,
-          orderBy: [["unidade.path", "desc"]]
-        }).asPromise();      
-
-        let programa_habilitado = this.auth.usuario?.participacoes_programas.find((x: { habilitado?: number; }) => x.habilitado === 1);      
-        if (programa_habilitado) {
-          const programaEncontrado = programas.find((x: Programa) => x.id == programa_habilitado.programa_id);
-          if (programaEncontrado) {
-            this.preenchePrograma(programaEncontrado);
-          } else {
-            this.regramentoNaoEncontrado();
-          }
-        } else {
-          this.regramentoNaoEncontrado();        
-        }
+        this.entity.unidade_id = this.auth.unidade!.id;     
         this.buscaGestoresUnidadeExecutora(this.auth.unidade!);
         if(!this.gestoresUnidadeExecutora.includes(this.auth.unidade!.id)) {
           this.entity.usuario_id = this.auth.usuario!.id;
@@ -415,8 +391,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     let plano: PlanoTrabalho = this.util.fill(new PlanoTrabalho(), this.entity!);
     plano = this.util.fillForm(plano, this.form!.value);
     plano.usuario = (this.usuario!.selectedEntity || this.entity?.usuario) as Usuario;
-    plano.unidade = (this.unidade?.selectedEntity || this.entity?.unidade) as Unidade;
-    plano.programa = (this.programa?.selectedEntity || this.entity?.programa) as Programa;
+    plano.unidade = (this.selectedUnidade || this.entity?.unidade) as Unidade;
+    plano.programa = (this.selectedPrograma || this.entity?.programa) as Programa;
     plano.tipo_modalidade = (this.tipoModalidade!.selectedEntity || this.entity?.tipo_modalidade) as TipoModalidade;   
     plano.documento = this.entity?.documento;
     plano.documento_id = this.form?.controls.documento_id.value;
