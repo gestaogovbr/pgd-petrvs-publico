@@ -24,7 +24,10 @@
                 <p>Nome: <b>{{dados.nomeExtendido}}</b></p>
             </div>
             <div class="col-md-12">
-                <p>CPF da chefia: <b>{{dados.cpfTitularAutoridadeUorg}}</b></p>
+                <p>CPF Titular Autoridade: <b>{{dados.cpfTitularAutoridadeUorg}}</b></p>
+            </div>
+            <div class="col-md-12">
+                <p>Código Unidade Pai: <b>{{dados.codUorgPai}}</b></p>
             </div>
             
         </div>
@@ -43,9 +46,10 @@
                 </p>
             </div>
             <div class="col-md-12">
-                <p>Sigla: <b>{{unidade?.sigla}}</b></p>
-                <p>Nome: <b>{{unidade?.nome}}</b></p>
-                <p>CPF da chefia: <b>{{unidade?.gestor?.usuario?.cpf}}</b></p>
+                <p>Sigla: <b>{{unidade.sigla}}</b></p>
+                <p>Nome: <b>{{unidade.nome}}</b></p>
+                <p>CPF Titular Autoridade: <b>{{unidade.gestor?.usuario?.cpf}}</b></p>
+                <p>Código Unidade Pai: <b>{{unidade.unidade_pai?.codigo}}</b></p>
             </div>
         </div>
     </div>
