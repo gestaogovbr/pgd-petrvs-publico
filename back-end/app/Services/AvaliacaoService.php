@@ -75,6 +75,7 @@ class AvaliacaoService extends ServiceBase
         $consolidacao->avaliacao_id = null;
         $consolidacao->save();
         $this->statusService->atualizaStatus($consolidacao, 'CONCLUIDO');
+        $this->statusService->atualizaStatus($consolidacao->planoTrabalho, 'ATIVO', 'Cancelado a avaliação do plano de trabalho.');
       } else if (!empty($planoEntrega)) {
         $planoEntrega->avaliacao_id = null;
         $planoEntrega->save();

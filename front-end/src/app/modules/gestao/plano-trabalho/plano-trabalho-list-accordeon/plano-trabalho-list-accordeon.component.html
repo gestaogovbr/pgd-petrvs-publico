@@ -10,6 +10,7 @@
 
 <accordion #accordion [items]="planos" [selectedIndex]="selectedIndex" [titleTemplate]="planoTrabalhoSectionTitle" [template]="planoTrabalhoSection">
     <ng-template let-item="item" #planoTrabalhoSectionTitle>
+
         <div class="row w-100">
             <div class="col-md-1">{{'#' + item.numero}}</div>
             <div class="col-md-4">
