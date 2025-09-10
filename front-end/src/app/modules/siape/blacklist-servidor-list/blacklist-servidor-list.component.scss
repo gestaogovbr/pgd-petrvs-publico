@@ -1,0 +1,16 @@
+/* Estilos específicos para o componente blacklist-servidor-list */
+
+.btn-outline-danger {
+  margin-right: 5px;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+}
+
+.btn-outline-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

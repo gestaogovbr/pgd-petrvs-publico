@@ -22,6 +22,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
   public perfilDao: PerfilDaoService;
   public usuarioDao: UsuarioDaoService;
 
+  public onDeleteMessage: string = "Este usuário deixará de ter acesso ao sistema. Deseja confirmar a exclusão?";
 
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
@@ -45,7 +46,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     }, this.cdRef, this.validateJustificativa);
 
     this.addOption(this.OPTION_INFORMACOES, "MOD_USER");
-    // this.addOption(this.OPTION_EXCLUIR, "MOD_USER_EXCL");       // Tratar de forma diferenciada a exclusão de usuário
+    this.addOption(this.OPTION_EXCLUIR, "MOD_USER_EXCL");
   }
 
   public validateJustificativa = (control: AbstractControl, controlName: string) => {
