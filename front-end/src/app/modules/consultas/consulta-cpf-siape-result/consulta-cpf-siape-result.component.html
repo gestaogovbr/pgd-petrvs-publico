@@ -34,25 +34,27 @@
     </div>
     <separator></separator>
     <div class="dados-petrvs">
-        <div class="row" *ngIf="!usuario">
+        <div class="row" *ngIf="usuarios.length === 0">
             <div class="col-md-12">
                 <p class="subtitle">Nenhum usuário encontrado no Petrvs com o CPF informado.</p>
             </div>
         </div>
-        <div class="row" *ngIf="usuario">
+        <div class="row" *ngIf="usuarios.length > 0">
             <div class="col-md-12">
                 <p class="subtitle">
-                    <i class="bi bi-person"></i> Usuário encontrado no Petrvs
+                    <i class="bi bi-person"></i> {{usuarios.length > 1 ? 'Usuários encontrados' : 'Usuário encontrado'}} no Petrvs
                 </p>
             </div>
-            <div class="col-md-12">
-                <p><b>{{usuario.nome}}</b></p>
-                <p>Matrícula #{{usuario.matricula}}</p>
-                <p>
-                    <span class="unidade" *ngFor="let integrante of integrantes">
-                        {{integrante.unidade_codigo + ' - ' + integrante.unidade_sigla + ' (' + integrante.atribuicoes.join('/') + ')'}}
-                    </span>
-                </p> 
+            <div class="col-md-12" *ngFor="let usuario of usuarios; let i = index">
+                <div class="mb-3" [class.border-bottom]="i < usuarios.length - 1" [class.pb-3]="i < usuarios.length - 1">
+                    <p><b>{{usuario.nome}}</b></p>
+                    <p>Matrícula #{{usuario.matricula}}</p>
+                    <p>
+                        <span class="unidade" *ngFor="let integrante of getIntegrantesByUsuario(usuario.id)">
+                            {{integrante.unidade_codigo + ' - ' + integrante.unidade_sigla + ' (' + integrante.atribuicoes.join('/') + ')'}}
+                        </span>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
