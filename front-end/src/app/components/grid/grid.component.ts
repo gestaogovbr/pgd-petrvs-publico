@@ -404,8 +404,22 @@ export class GridComponent extends ComponentBase implements OnInit {
 			after: () => {
 				this.cdRef.detectChanges();
 					setTimeout(() => {
-						const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-						const tooltipList = Array.from(tooltipTriggerList).map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+						// Dispose any existing tooltips first
+						const existingTooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+						existingTooltips.forEach(el => {
+							const tooltip = bootstrap.Tooltip.getInstance(el);
+							if (tooltip) {
+								tooltip.dispose();
+							}
+						});
+
+						// Initialize new tooltips
+						const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+						const tooltipList = Array.from(tooltipTriggerList).map(tooltipTriggerEl => 
+							new bootstrap.Tooltip(tooltipTriggerEl, {
+								trigger: 'hover' // Only show on hover
+							})
+						);
 					}, 300);
 			},
 		});

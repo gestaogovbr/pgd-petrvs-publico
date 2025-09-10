@@ -3,7 +3,7 @@
 namespace App\Services\Siape\BuscarDados;
 
 use App\Models\IntegracaoServidor;
-use App\Models\SiapeBlackListServidores;
+use App\Models\SiapeBlackListServidor;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeListaServidores;
@@ -24,7 +24,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
 
         $this->limpaTabela();
         $servidoresJaProcessadas = IntegracaoServidor::all();
-        $blacklistServidores = SiapeBlackListServidores::all();
+        $blacklistServidores = SiapeBlackListServidor::all();
 
         $response = SiapeListaServidores::where('processado', 0)
             ->orderBy('updated_at', 'desc')->get();
