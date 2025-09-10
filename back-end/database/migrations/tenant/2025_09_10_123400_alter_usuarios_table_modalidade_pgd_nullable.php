@@ -13,9 +13,13 @@ return new class extends Migration
     {
         Schema::table('usuarios', function (Blueprint $table) {
             $table->dropForeign('usuarios_modalidade_pgd_foreign');
-            
-            $table->foreignUuid('modalidade_pgd')->nullable()->change();
-            
+        });
+        
+        Schema::table('usuarios', function (Blueprint $table) {
+            $table->uuid('modalidade_pgd')->nullable()->change();
+        });
+        
+        Schema::table('usuarios', function (Blueprint $table) {
             $table->foreign('modalidade_pgd')->references('id')->on('tipos_modalidades_siape');
         });
     }
@@ -27,9 +31,13 @@ return new class extends Migration
     {
         Schema::table('usuarios', function (Blueprint $table) {
             $table->dropForeign('usuarios_modalidade_pgd_foreign');
-            
-            $table->foreignUuid('modalidade_pgd')->nullable(false)->change();
-            
+        });
+        
+        Schema::table('usuarios', function (Blueprint $table) {
+            $table->uuid('modalidade_pgd')->nullable(false)->change();
+        });
+        
+        Schema::table('usuarios', function (Blueprint $table) {
             $table->foreign('modalidade_pgd')->references('id')->on('tipos_modalidades_siape');
         });
     }
