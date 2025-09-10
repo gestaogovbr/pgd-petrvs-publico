@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\IntegracaoServidorRepository;
 use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
-use App\Services\Siape\Servidor\Integracao;
+use App\Services\Siape\Servidor\Integracao as ServidorIntegracao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Facades\SiapeLog;
@@ -553,7 +553,7 @@ class IntegracaoService extends ServiceBase
 
           $integracaoServidoresRepository = new IntegracaoServidorRepository(new IntegracaoServidor);
           try {
-            $integracaoServidorProcessar =  new Integracao(
+            $integracaoServidorProcessar =  new ServidorIntegracao(
               $integracaoServidoresRepository,
               $this->UtilService
             );
@@ -684,13 +684,15 @@ class IntegracaoService extends ServiceBase
 
               $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->matriculasiape);
 
+              $modalidadePgdValida = $this->validarModalidadePgd($linha->modalidade_pgd);
+
               DB::update($sqlUpdateDados, [
                 'nome'          => $linha->nome_servidor,
                 'nomeguerra'    => $linha->nome_guerra,
                 'email'         => $linha->emailfuncional,
                 'cod_jornada'      => $linha->cod_jornada,
                 'nome_jornada'      => $linha->nome_jornada,
-                'modalidade_pgd' => $linha->modalidade_pgd,
+                'modalidade_pgd' => $modalidadePgdValida,
                 'participa_pgd' => $linha->participa_pgd,
                 'id'            => $linha->id,
                 'ident_unica'   => $linha->ident_unica,
@@ -1106,6 +1108,34 @@ class IntegracaoService extends ServiceBase
   }
 
   
+  
+  private function validarModalidadePgd($modalidadeString)
+  {
+    if (empty($modalidadeString)) {
+      return null;
+    }
+
+    if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $modalidadeString)) {
+      $exists = DB::table('tipos_modalidades_siape')
+        ->where('id', $modalidadeString)
+        ->exists();
+      
+      return $exists ? $modalidadeString : null;
+    }
+
+    $modalidade = DB::table('tipos_modalidades_siape')
+      ->where('nome', $modalidadeString)
+      ->first();
+
+    if ($modalidade) {
+      SiapeLog::info("Modalidade '{$modalidadeString}' convertida para UUID: {$modalidade->id}");
+      return $modalidade->id;
+    }
+
+    SiapeLog::warning("Modalidade '{$modalidadeString}' não encontrada na tabela tipos_modalidades_siape. Valor será definido como null.");
+    return null;
+  }
+
   private function verificarUsuariosExternosIntegracao(): void
   {
     try {

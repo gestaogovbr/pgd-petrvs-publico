@@ -174,7 +174,11 @@ class SiapeIndividualServidorService extends ServiceBase
             return;
         }
 
-        $unidade = $usuario->lotacao->unidade;
+        $unidade = $usuario->lotacao?->unidade;
+
+        if(!$unidade) {
+            return;
+        }
         
         $this->removeTodasAsGestoesDoUsuario($usuario);
 
