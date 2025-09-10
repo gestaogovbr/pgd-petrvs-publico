@@ -130,6 +130,7 @@ export class Usuario extends Base implements HasNotificacao {
     public unidades?: Unidade[];
     public unidades_integrantes?: UnidadeIntegrante[];
     public audits_externo?: any= [];
+    public regramentos?: string[] = [];
 
     public nome: string = ""; /* Nome do Usuário */
     public email: string = ""; /* Email do Usuário */

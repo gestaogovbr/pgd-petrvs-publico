@@ -157,6 +157,7 @@ class UsuarioService extends ServiceBase
    * @param string $usuario_id
    * @param string $pgd_id
    * @return bool
+   * @deprecated
    */
   public function isParticipanteHabilitado(string|null $usuarioId = null, string $programaId): bool
   {

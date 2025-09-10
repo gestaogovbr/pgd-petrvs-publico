@@ -46,6 +46,7 @@ class UnidadeIntegranteService extends ServiceBase
         "atribuicoes" => $vinculo->usuario->unidadeIntegranteAtribuicoes($vinculo->unidade->id)->map(fn ($a) => $a->atribuicao),
         'data_modificacao' => $dataModificacao,
         'usuario_externo' => $unidade ? $vinculo->usuario->usuario_externo : false,
+        'regramentos' => $usuario ? $this->unidadeService->regramentosAscendentes($vinculo->unidade->id) : [],
       ];
     }
     return ['rows' => array_values(array_filter($result, fn ($vinculo) => count($vinculo["atribuicoes"]) > 0))];

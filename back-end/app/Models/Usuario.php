@@ -439,7 +439,7 @@ class Usuario extends Authenticatable implements AuditableContract
         }
         return $url;
     }
-
+  
     public function getPedagioAttribute(){
         if ($this->data_final_pedagio) {
             return Carbon::parse($this->data_final_pedagio)->isFuture();

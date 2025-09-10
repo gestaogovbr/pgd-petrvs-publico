@@ -212,7 +212,6 @@ class PlanoTrabalhoService extends ServiceBase
         /* (RN_PTR_AA) Um Plano de Trabalho não pode ser incluído/alterado se apresentar período conflitante com outro Plano de Trabalho já existente para a mesma unidade/servidor, a menos que o usuário logado possua a capacidade MOD_PTR_INTSC_DATA; */
         $conflito = PlanoTrabalho::
             where("usuario_id", $data["usuario_id"])->
-            where("unidade_id", $data["unidade_id"])->
             where("data_inicio", "<=", $data["data_fim"])->
             where("data_fim", ">=", $data["data_inicio"])->
             where("status", "!=", "CANCELADO")->
@@ -828,7 +827,7 @@ class PlanoTrabalhoService extends ServiceBase
                 'atribuicoesParticipante' => $this->usuarioService->atribuicoesGestor($row->unidade_id, $row->usuario_id),
                 'atribuicoesLogado' => $this->usuarioService->atribuicoesGestor($row->unidade_id),
                 'atribuicoesLogadoUnidadeSuperior' => empty($unidade->unidade_pai_id) ? ["gestor" => false, "gestorSubstituto" => false, "gestorDelegado" => false] : $this->usuarioService->atribuicoesGestor($unidade->unidade_pai_id),
-                'usuarioEhParticipanteHabilitado' => $this->usuario->isParticipanteHabilitado(null, $row->programa_id)
+                'usuarioEhParticipanteHabilitado' => $this->unidadeService->unidadeEhHabilitada($row->unidade_id, $row->programa_id)
             ];
         }
         return $rows;

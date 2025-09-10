@@ -37,9 +37,9 @@
             </ng-template>
         </column>
 
-        <column [title]="lex.translate('Última data SIAPE')" [template]="columnDataSIAPE">
-            <ng-template let-row="row" #columnDataSIAPE>
-                <span>{{ util.getDateFormatted(row.ultima_atualizacao) }} </span>
+        <column [title]="lex.translate('Regramento')" [template]="columnRegramento">
+            <ng-template let-row="row" #columnRegramento>
+                <span *ngFor="let regramento of row.regramentos">{{ regramento.nome || '' }} </span>
             </ng-template>
         </column>
 

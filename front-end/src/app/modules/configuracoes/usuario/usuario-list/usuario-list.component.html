@@ -13,20 +13,17 @@
         </div>
     </filter>
     <columns>
-        <column icon="bi-person" [align]="'center'" [template]="columnFoto">
-            <ng-template let-row="row" #columnFoto>
-                <profile-picture [url]="row.url_foto" [size]="40" [hint]="row.nome"></profile-picture>
-            </ng-template>
-        </column>
-
-     
+            
+        <column title="Matrícula" field="matricula"></column>
         <column title="CPF" field="cpf"></column>
         <column title="Nome" field="nome" orderBy="nome" [template]="columnNome">
             <ng-template let-row="row" #columnNome>
                 {{row.nome}}<br>
-                <label class="badge text-bg-warning" *ngIf="row.usuario_externo">Usuário Externo</label>
+                <label class="badge text-bg-warning" *ngIf="row.usuario_externo">Usuário Externo</label>                
+                <label class="badge text-bg-danger" *ngIf="row.pedagio">Teletrabalho indisponível</label>
             </ng-template>
         </column>
+
         <column [title]="lex.translate('Perfil')" [template]="columnPerfil">
             <ng-template let-row="row" #columnPerfil>
                 <strong>{{row.perfil?.nome || ""}}</strong>
@@ -39,7 +36,7 @@
                 </label>
             </ng-template>
         </column>
-        <column type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)" [options]="options"></column>
+        <column type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)" [options]="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

@@ -22,6 +22,9 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
   public perfilDao: PerfilDaoService;
   public usuarioDao: UsuarioDaoService;
 
+  public BOTAO_PEDAGIO: ToolbarButton;
+  public BOTAO_REMOVE_PEDAGIO: ToolbarButton;
+
 
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
@@ -45,7 +48,25 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     }, this.cdRef, this.validateJustificativa);
 
     this.addOption(this.OPTION_INFORMACOES, "MOD_USER");
-    // this.addOption(this.OPTION_EXCLUIR, "MOD_USER_EXCL");       // Tratar de forma diferenciada a exclusão de usuário
+    
+     this.BOTAO_PEDAGIO = { label: "Tornar teletrabalho indisponível", icon: "bi bi-ban", color: "btn-outline-danger", onClick: (usuario: Usuario) => {
+      this.go.navigate(
+        { 
+          route: ['gestao', 'programa', 'pedagio', usuario.id] }, 
+        {
+          metadata: {'usuario': usuario},
+          modalClose: async (modalResult) => {
+            if (modalResult) {
+              this.refresh(modalResult.id);
+              this.cdRef.detectChanges();
+            }
+          }
+        }
+      ); 
+    }};
+
+    this.BOTAO_REMOVE_PEDAGIO = { label: "Tornar teletrabalho disponível novamente", icon: "bi bi-check2-circle", color: "btn-outline-primary", onClick: this.removePedagio.bind(this)};
+
   }
 
   public validateJustificativa = (control: AbstractControl, controlName: string) => {
@@ -56,6 +77,14 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     return result;
   }
 
+  public dynamicButtons(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    if(row.usuario_externo) return result;
+    if (this.auth.hasPermissionTo('MOD_PART_PEDAGIO') && !row.pedagio) result.push(this.BOTAO_PEDAGIO);
+    if (this.auth.hasPermissionTo('MOD_PART_PEDAGIO') && row.pedagio) result.push(this.BOTAO_REMOVE_PEDAGIO);
+    return result;
+  }
+
 
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
@@ -64,7 +93,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     }
 
     // Testa se o usuário logado possui permissão para gerenciar as atribuições do usuário do grid
-    if (this.auth.hasPermissionTo("MOD_USER_ATRIB")) result.push({ label: "Atribuições", icon: "bi bi-list-task",  onClick: (usuario: Usuario) => { this.go.navigate({ route: ['configuracoes', 'usuario', usuario.id, 'integrante'] }, { metadata: { entity: row } }); }});
+    // if (this.auth.hasPermissionTo("MOD_USER_ATRIB")) result.push({ label: "Atribuições", icon: "bi bi-list-task",  onClick: (usuario: Usuario) => { this.go.navigate({ route: ['configuracoes', 'usuario', usuario.id, 'integrante'] }, { metadata: { entity: row } }); }});
     return result;
   }
 
@@ -115,6 +144,19 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
         }
       });
     }
+  }
+
+  public async removePedagio(row: any) {
+    this.dialog.confirm("Remover teletrabalho indisponível ?", "Deseja tornar a modalidade teletrabalho disponível para o participante " + (row.nome as string).toUpperCase() + " ?").then(async confirm => {
+      if (confirm) {
+        await this.usuarioDao!.removePedagio(row.id).then(resposta => {
+          (this.grid?.query || this.query!).refreshId(row.id);
+          this.cdRef.detectChanges();
+        }, error => {
+          this.dialog.alert("Erro", error);
+        });
+      }
+    });
   }
 
 }

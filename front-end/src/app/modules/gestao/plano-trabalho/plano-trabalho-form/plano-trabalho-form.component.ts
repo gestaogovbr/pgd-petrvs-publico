@@ -201,11 +201,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   public onUnidadeSelect() {
     if(this.unidade!.selectedItem){
-      console.log(this.unidade!.selectedItem.key);
       this.carregaProgramas(this.unidade?.selectedItem?.key);
-      console.log(this.usuario?.selectedEntity?.unidades);
-      
-
       let unidade = this.usuario?.selectedEntity?.unidades.find((u: Unidade) => u.id == this.unidade?.selectedItem?.key);
       this.selectedUnidade = unidade;
 
