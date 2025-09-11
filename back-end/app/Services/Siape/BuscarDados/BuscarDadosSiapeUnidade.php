@@ -27,6 +27,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
 
             SiapeDadosUORG::insert([
                 'id' => Str::uuid(),
+                'codigo' => $dados[0],
                 'data_modificacao' => DateTime::createFromFormat('dmY', $dataultimaAtualizacao)->format('Y-m-d 00:00:00'),
                 'response' => $xml,
                 'created_at' => Carbon::now(),
