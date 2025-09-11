@@ -35,13 +35,8 @@ class InativacaoUnidadesSiape implements ShouldQueue, ContratoJobSchedule
             return;
         }
 
-        // TODO: Implementar a lógica de inativação de unidades SIAPE
-        // Exemplo de estrutura baseada no InativacaoUsuariosSiape:
-        // $integracaoUnidadeService = app()->make('App\\Services\\IntegracaoUnidadeService');
-        // $ids = $integracaoUnidadeService->processaUnidadesRemovidasNoSiape();
-        // if (empty($ids)) {
-        //     return;
-        // }
+        $integracaoUnidadeService = new \App\Services\IntegracaoUnidadeService();
+        $integracaoUnidadeService->processaUnidadesRemovidasNoSiape();
         
         Log::info("Job InativacaoUnidadesSiape executado", ['tenant_id' => $this->tenantId]);
     }

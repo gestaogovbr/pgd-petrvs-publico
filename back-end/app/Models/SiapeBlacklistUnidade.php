@@ -15,6 +15,7 @@ class SiapeBlacklistUnidade extends ModelBase
         'id',
         'codigo',
         'response',
+        'inativado',
         'created_at',
         'updated_at'
     ];
