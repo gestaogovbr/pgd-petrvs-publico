@@ -3,6 +3,7 @@
 namespace App\Services\Siape\BuscarDados;
 
 use App\Models\IntegracaoUnidade;
+use App\Models\SiapeBlacklistUnidade;
 use App\Models\SiapeDadosUORG;
 use App\Models\SiapeListaUORGS;
 use Carbon\Carbon;
@@ -120,6 +121,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
         $this->limpaTabela();
         
         $unidadesJaProcessadas = IntegracaoUnidade::all();
+        $blacklistUnidades = SiapeBlacklistUnidade::all();
 
         $uorgs = SiapeListaUORGS::where('processado', 0)
                 ->orderBy('updated_at', 'desc')
@@ -132,8 +134,13 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
             return;
         }
 
-        $unidades = array_filter($unidades, function ($unidade) use ($unidadesJaProcessadas) 
+        $unidades = array_filter($unidades, function ($unidade) use ($unidadesJaProcessadas, $blacklistUnidades) 
         {
+             $estaNaBlackList =  $blacklistUnidades->firstWhere('codigo', $unidade['codigo']);
+            if ($estaNaBlackList) {
+                Log::alert("está na black list deverá ser ignorado: ".$unidade['codigo']);
+                return false;
+            }
            $unidadeProcessada =  $unidadesJaProcessadas->firstWhere('codigo_siape', $unidade['codigo']);
 
            if(!$unidadeProcessada){
@@ -160,21 +167,6 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
         $unidadesXML = $this->getUnidadesAsXML($unidades);
 
         $this->buscarUnidades($unidadesXML);
-
-        /*$inserts = [];
-        foreach ($xmlResponse as $dados => $xml) {
-            $dados = explode(".", $dados);
-            $dataultimaAtualizacao = $dados[1];
-            array_push($inserts, [
-                'id' => Str::uuid(),
-                'data_modificacao' => DateTime::createFromFormat('dmY', $dataultimaAtualizacao)->format('Y-m-d 00:00:00'),
-                'response' => $xml,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]);
-        }
-        SiapeDadosUORG::insert($inserts);
-        */
 
         $uorgs->processado = 1;
         $uorgs->save();
