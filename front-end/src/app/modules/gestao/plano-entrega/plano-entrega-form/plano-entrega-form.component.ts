@@ -155,18 +155,23 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.entity.unidade_id = this.auth.unidade?.id || "";
     this.entity.unidade = this.auth.unidade;
 
-    let programas = await this.programaDao.query({
-      where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]],
-      orderBy: [["unidade.path", "desc"]]
-    }).asPromise();
-    let ultimo = programas[0];
+    let ultimo = null;
+    if (this.auth.unidade?.id) {
+      let programas = await this.programaDao.query({
+        where: [['vigentesUnidadeExecutora', '==', this.auth.unidade?.id]],
+        orderBy: [["unidade.path", "desc"]]
+      }).asPromise();
+      ultimo = programas[0];
+      const di = new Date(this.entity.data_inicio).toLocaleDateString();
+      const df= this.entity.data_fim ? new Date(this.entity.data_fim).toLocaleDateString() : new Date().toLocaleDateString();
+      this.entity.nome = this.auth.unidade!.sigla + " - " + di + " - " + df;
+    }
+
     if(ultimo){
       this.entity.programa = ultimo;
       this.entity.programa_id = ultimo.id;
     }
-    const di = new Date(this.entity.data_inicio).toLocaleDateString();
-    const df= this.entity.data_fim ? new Date(this.entity.data_fim).toLocaleDateString() : new Date().toLocaleDateString();
-    this.entity.nome = this.auth.unidade!.sigla + " - " + di + " - " + df;
+
     this.loadData(this.entity!, this.form!);
   }
 
