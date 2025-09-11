@@ -17,6 +17,7 @@ use DateTime;
 use DateTimeZone;
 use SimpleXMLElement;
 use Throwable;
+use Carbon\Carbon;
 
 class UnidadeService extends ServiceBase
 {
@@ -668,5 +669,44 @@ class UnidadeService extends ServiceBase
 
         return $this->buscaDadosUnidade($unidadecodigoSiape);
 
+    }
+
+   
+    public function processarUnidadesTemporarias(): void
+    {
+        $dataLimite = Carbon::now()->subDays(30);
+
+        $unidadesParaInativar = Unidade::whereNotNull('data_inicio_inativacao')
+            ->where('data_inicio_inativacao', '<=', $dataLimite)
+            ->whereNull('data_inativacao')
+            ->get();
+
+        if ($unidadesParaInativar->isEmpty()) {
+            Log::info("Nenhuma unidade temporária encontrada para inativação após 30 dias");
+            return;
+        }
+
+        $idsInativadas = [];
+        
+        foreach ($unidadesParaInativar as $unidade) {
+            $unidade->data_inativacao = Carbon::now();
+            $unidade->save();
+            
+            $idsInativadas[] = $unidade->id;
+            
+            Log::info("Unidade inativada após 30 dias do início da inativação", [
+                'unidade_id' => $unidade->id,
+                'nome' => $unidade->nome,
+                'sigla' => $unidade->sigla,
+                'codigo' => $unidade->codigo,
+                'data_inicio_inativacao' => $unidade->data_inicio_inativacao,
+                'data_inativacao' => $unidade->data_inativacao
+            ]);
+        }
+
+        Log::info("Inativação de unidades temporárias concluída", [
+            'total_inativadas' => count($idsInativadas),
+            'ids' => $idsInativadas
+        ]);
     }
 }
