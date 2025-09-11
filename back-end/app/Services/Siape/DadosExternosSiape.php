@@ -67,8 +67,6 @@ trait DadosExternosSiape
 
         $retornoFuncionais = $this->siapeClassBuscaDados->buscaSincrona($xmlDataFuncionais);
         $xmlFuncional = $this->siapeClassBuscaDados->prepareResponseXml($retornoFuncionais);
-        // Log::info('======BODE======', [$retornoFuncionais]);
-        // Log::info('XML Funcional', [$xmlFuncional]);
 
         $xmlDataPessoais = $this->siapeClassBuscaDados->consultaDadosPessoais(
             $this->configIntegracaoSiape['siglaSistema'],

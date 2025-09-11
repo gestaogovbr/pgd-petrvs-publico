@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Enums\Atribuicao as EnumsAtribuicao;
 use App\Facades\SiapeLog;
 use App\Models\Entidade;
 use App\Models\SiapeConsultaDadosFuncionais;
@@ -59,76 +58,82 @@ class SiapeIndividualServidorService extends ServiceBase
 
         SiapeLog::info('Processando retorno do SIAPE');
 
-        $dadosFuncionais = $this->service->getProcessaDadosSiape()
+        $dadosFuncionaisArray = $this->service->getProcessaDadosSiape()
             ->processaDadosFuncionais($cpf, $dadosFuncionaisResponseXml);
 
-        if (!$dadosFuncionais) {
+        if (!$dadosFuncionaisArray) {
             throw new Exception("Não há dados para este CPF");
         }
 
-        SiapeLog::info('Iniciando o processo da unidade do servidor');
-        $codigoDaUnidade = strval(intval($dadosFuncionais['codUorgExercicio']));
-
-        $unidadeJaProcessada = Unidade::where('codigo', $codigoDaUnidade)->first();
-
-        SiapeLog::info('Verifica se a unidade foi processada');
-
-        if (!$unidadeJaProcessada) {
-            throw new Exception(
-                "O CPF pertence à unidade de código $codigoDaUnidade," .
-                    " que ainda não foi processada." .
-                    " É preciso fazer uma carga total na unidade primeiro."
-            );
+        if (!is_array($dadosFuncionaisArray) || !isset($dadosFuncionaisArray[0])) {
+            $dadosFuncionaisArray = [$dadosFuncionaisArray];
         }
 
-        SiapeLog::info('Montando XML dos dados da unidade');
+        foreach ($dadosFuncionaisArray as $dadosFuncionais) {
+            SiapeLog::info('Iniciando o processo da unidade do servidor');
+            $codigoDaUnidade = strval(intval($dadosFuncionais['codUorgExercicio']));
 
-        $xmlDadosDaUnidade = $this->montaXmlUnidade($codigoDaUnidade);
+            $unidadeJaProcessada = Unidade::where('codigo', $codigoDaUnidade)->first();
 
-        SiapeLog::info('Executando requisicao no SIAPE');
+            SiapeLog::info('Verifica se a unidade foi processada');
 
-        $dadosUnidadeResponseXml = $this->service->getBuscarDadosSiapeUnidade()->executaRequisicao($xmlDadosDaUnidade); //xml
+            if (!$unidadeJaProcessada) {
+                throw new Exception(
+                    "O CPF pertence à unidade de código $codigoDaUnidade," .
+                        " que ainda não foi processada." .
+                        " É preciso fazer uma carga total na unidade primeiro."
+                );
+            }
+
+            SiapeLog::info('Montando XML dos dados da unidade');
+
+            $xmlDadosDaUnidade = $this->montaXmlUnidade($codigoDaUnidade);
+
+            SiapeLog::info('Executando requisicao no SIAPE');
+
+            $dadosUnidadeResponseXml = $this->service->getBuscarDadosSiapeUnidade()->executaRequisicao($xmlDadosDaUnidade); //xml
 
 
-        $this->service->getBuscarDadosSiapeUnidades()->listaUorgs(
-            $this->service->config['siglaSistema'],
-            $this->service->config['nomeSistema'],
-            $this->service->config['senha'],
-            $this->service->getBuscarDadosSiapeUnidade()->getCpf(),
-            $codOrgao,
-            $this->service->config['parmExistPag'],
-            $this->service->config['parmTipoVinculo']
-        );
+            $this->service->getBuscarDadosSiapeUnidades()->listaUorgs(
+                $this->service->config['siglaSistema'],
+                $this->service->config['nomeSistema'],
+                $this->service->config['senha'],
+                $this->service->getBuscarDadosSiapeUnidade()->getCpf(),
+                $codOrgao,
+                $this->service->config['parmExistPag'],
+                $this->service->config['parmTipoVinculo']
+            );
 
-        $uorgs = SiapeListaUORGS::where('processado', 0)
-            ->orderBy('updated_at', 'desc')
-            ->first();
+            $uorgs = SiapeListaUORGS::where('processado', 0)
+                ->orderBy('updated_at', 'desc')
+                ->first();
 
-        $listaUorgs = $this->service->getBuscarDadosSiapeUnidade()->getUnidades($uorgs);
+            $listaUorgs = $this->service->getBuscarDadosSiapeUnidade()->getUnidades($uorgs);
 
-        $unidade = collect($listaUorgs)->firstWhere('codigo', $codigoDaUnidade);
+            $unidade = collect($listaUorgs)->firstWhere('codigo', $codigoDaUnidade);
 
-        SiapeLog::info('Salvando os dados da unidade');
+            SiapeLog::info('Salvando os dados da unidade');
 
-        SiapeDadosUORG::insert([
-            'id' => Str::uuid(),
-            'data_modificacao' => DateTime::createFromFormat('dmY', $unidade['dataUltimaTransacao'])
-                ->format('Y-m-d 00:00:00'),
-            'response' => $dadosUnidadeResponseXml,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
-        ]);
+            SiapeDadosUORG::insert([
+                'id' => Str::uuid(),
+                'data_modificacao' => DateTime::createFromFormat('dmY', $unidade['dataUltimaTransacao'])
+                    ->format('Y-m-d 00:00:00'),
+                'response' => $dadosUnidadeResponseXml,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
 
-        SiapeLog::info('Salvando os dados funcionais do servidor');
+            SiapeLog::info('Salvando os dados funcionais do servidor');
 
-        SiapeConsultaDadosFuncionais::insert([
-            'id' => Str::uuid(),
-            'cpf' => $cpf,
-            'data_modificacao' => today(),
-            'response' => $dadosFuncionaisResponseXml,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
-        ]);
+            SiapeConsultaDadosFuncionais::insert([
+                'id' => Str::uuid(),
+                'cpf' => $cpf,
+                'data_modificacao' => today(),
+                'response' => $dadosFuncionaisResponseXml,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
+        }
 
         SiapeLog::info('Salvando os dados pessoais do servidor');
 
@@ -169,7 +174,11 @@ class SiapeIndividualServidorService extends ServiceBase
             return;
         }
 
-        $unidade = $usuario->lotacao->unidade;
+        $unidade = $usuario->lotacao?->unidade;
+
+        if(!$unidade) {
+            return;
+        }
         
         $this->removeTodasAsGestoesDoUsuario($usuario);
 

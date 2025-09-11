@@ -7,13 +7,15 @@ import { RelatorioAgenteComponent } from './relatorio-agente/relatorio-agente.co
 import { RelatorioUnidadeComponent } from './relatorio-unidade/relatorio-unidade.component';
 import { RelatorioPlanoTrabalhoComponent } from './relatorio-plano-trabalho/relatorio-plano-trabalho.component';
 import { RelatorioPlanoEntregaComponent } from './relatorio-plano-entrega/relatorio-plano-entrega.component';
+import { RelatorioErrosEnvioComponent } from './relatorio-erros-envio/relatorio-erros-envio.component';
 
 @NgModule({
   declarations: [
     RelatorioPlanoTrabalhoComponent,
     RelatorioPlanoEntregaComponent,
     RelatorioAgenteComponent,
-    RelatorioUnidadeComponent
+    RelatorioUnidadeComponent,
+    RelatorioErrosEnvioComponent
   ],
   imports: [
     CommonModule,

@@ -570,6 +570,8 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 								gestorLogado ||
 								planoTrabalho._metadata?.atribuicoesLogado.gestorDelegado;
 						}
+						let podeEditar = planoTrabalho._metadata?.podeEditar;
+
 						let condition1 = this.auth.hasPermissionTo("MOD_PTR_EDT");
 						let condition2 = this.planoTrabalhoService.isValido(planoTrabalho);
 						let condition3 =
@@ -582,7 +584,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 							...planoTrabalho._metadata,
 							editavel: condition1 && condition2 && (condition3 || condition4),
 						};
-						return condition1 && condition2 && (condition3 || condition4);
+						return condition1 && condition2 && (condition3 || condition4) && podeEditar;
 					case this.BOTAO_ARQUIVAR:
 						/*
             (RN_PTR_N) Condições para que um Plano de Trabalho possa ser arquivado:

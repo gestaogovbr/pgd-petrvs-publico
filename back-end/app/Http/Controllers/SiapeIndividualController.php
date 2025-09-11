@@ -28,6 +28,7 @@ class SiapeIndividualController extends ControllerBase
                 Response::HTTP_OK
             );
         } catch (\Exception $e) {
+            report($e);
             $retorno['success'] = false;
             $retorno['message'] = $e->getMessage();
             $retorno['log'] = $this->getLogSiape();
