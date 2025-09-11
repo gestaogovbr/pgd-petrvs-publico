@@ -16,7 +16,7 @@ class ServidorDTO
     public ?string $data_nascimento;
     public ?string $telefone;
     public ?string $vinculo_ativo;
-    public ?string $matriculasiape;
+    public string $matriculasiape;
     public ?string $codigo_cargo;
     public ?string $coduorgexercicio;
     public ?string $coduorglotacao;
@@ -31,6 +31,7 @@ class ServidorDTO
     public ?string $email_chefia_imediata;
     public ?string $nome_jornada;
     public ?int $cod_jornada;
+    public ?string $ident_unica;
     public ?string $modalidade_pgd;
     public ?string $participa_pgd;
     public ?string $deleted_at;
