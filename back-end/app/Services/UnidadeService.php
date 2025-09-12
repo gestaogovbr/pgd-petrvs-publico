@@ -11,6 +11,8 @@ use App\Models\Unidade;
 use App\Services\RawWhere;
 use App\Services\ServiceBase;
 use App\Services\Siape\DadosExternosSiape;
+use App\Services\Siape\Unidade\Atribuicao;
+use App\Models\UnidadeIntegrante;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use DateTime;
@@ -22,7 +24,7 @@ use Carbon\Carbon;
 class UnidadeService extends ServiceBase
 {
 
-    use DadosExternosSiape;
+    use DadosExternosSiape, Atribuicao;
 
     public function validateStore($data, $unidade, $action)
     {
@@ -52,7 +54,7 @@ class UnidadeService extends ServiceBase
      * @param boolean $unidadesSubordinadas Define se devem ser incluídas ou não as unidades subordinadas
      * @return array|LogError
      */
-    public function dashboards($idsUnidades, $programa_id, $unidadesSubordinadas): array|LogError
+    public function dashboards($idsUnidades, $programa_id, $unidadesSubordinadas)
     {
         if (count($idsUnidades) > 0) {
             $unidadesFilhas = [];
@@ -694,13 +696,28 @@ class UnidadeService extends ServiceBase
             
             $idsInativadas[] = $unidade->id;
             
+            $usuariosVinculados = UnidadeIntegrante::where('unidade_id', $unidade->id)
+                ->whereNull('deleted_at')
+                ->get();
+            
+            foreach ($usuariosVinculados as $integranteUnidade) {
+                $this->LimparAtribuicoes($integranteUnidade, true); 
+                
+                Log::info("Atribuições removidas do usuário vinculado à unidade inativada", [
+                    'usuario_id' => $integranteUnidade->usuario_id,
+                    'unidade_id' => $unidade->id,
+                    'unidade_integrante_id' => $integranteUnidade->id
+                ]);
+            }
+            
             Log::info("Unidade inativada após 30 dias do início da inativação", [
                 'unidade_id' => $unidade->id,
                 'nome' => $unidade->nome,
                 'sigla' => $unidade->sigla,
                 'codigo' => $unidade->codigo,
                 'data_inicio_inativacao' => $unidade->data_inicio_inativacao,
-                'data_inativacao' => $unidade->data_inativacao
+                'data_inativacao' => $unidade->data_inativacao,
+                'usuarios_afetados' => $usuariosVinculados->count()
             ]);
         }
 
