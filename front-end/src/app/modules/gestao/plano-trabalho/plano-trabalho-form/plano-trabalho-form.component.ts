@@ -271,6 +271,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   public preenchePrograma(programa: Programa) {
     if(programa){
+      this.selectedPrograma = programa;
       this.form?.controls.programa_id.setValue(programa.id);
       this.entity!.programa_id = programa.id;
       this.entity!.programa = programa;

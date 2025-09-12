@@ -48,6 +48,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       url_foto: { default: "" },
       texto_complementar_plano: { default: "" },
       data_nascimento: { default: null },
+      situacao_siape: { default: null },
     }, this.cdRef, this.validate);
     this.planoDataset = this.planoTrabalhoDao.dataset();
     this.join = ["auditsExterno", "ultimoPlanoTrabalhoAtivo.documentos"]
