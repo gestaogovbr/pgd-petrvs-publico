@@ -70,6 +70,9 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		{key: "INICIAM", value: "Iniciam"},
 		{key: "FINALIZAM", value: "Finalizam"},
 	];
+	
+	public groupByHierarquia = [{field: "hierarquia", label: "Unidade"}];
+	public groupByPadrao = [{field: "unidade.sigla", label: "Unidade"}];
 
 	constructor(public injector: Injector) {
 		super(injector, PlanoTrabalho, PlanoTrabalhoDaoService);
@@ -122,8 +125,8 @@ export class PlanoTrabalhoListComponent extends PageListBase<
             "unidade:id,sigla,entidade_id,unidade_pai_id",
             "usuario:id,nome,matricula,url_foto",
 		];
-		this.temAtribuicaoChefia = this.auth.isGestorAlgumaAreaTrabalho(false);
-		this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
+		this.temAtribuicaoChefia = this.auth.isGestorAlgumaAreaTrabalho(false, false);
+		this.groupBy = this.groupByPadrao;
 		this.BOTAO_ALTERAR = {
 			label: "Alterar",
 			icon: "bi bi-pencil-square",
@@ -427,6 +430,9 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		if (this.filter!.controls.meus_planos.value)
 			result.push(["usuario.id", "==", this.auth.usuario?.id]);
 
+		this.groupBy = this.filter!.controls.subordinadas.value
+					? this.groupByHierarquia
+					: this.groupByPadrao
 		return result;
 	};
 
@@ -437,7 +443,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			(!agrupar && this.groupBy?.length)
 		) {
 			this.groupBy = agrupar
-				? [{field: "unidade.sigla", label: "Unidade"}]
+				? this.groupByPadrao
 				: [];
 			this.grid!.reloadFilter();
 		}

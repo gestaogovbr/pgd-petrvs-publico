@@ -78,7 +78,7 @@ class PlanoTrabalhoService extends ServiceBase
             $data["where"][] = ['unidade_id', 'in', array_unique($ids)];
 
         }
-        if (isset($subordinadas[2])) { // Verifica se o índice existe
+        if (isset($subordinadas[2]) && $subordinadas[2]) { // Verifica se o índice existe
             $unidadeService = new UnidadeService();
 
             // Define $uId corretamente, verificando a existência do índice
@@ -86,6 +86,11 @@ class PlanoTrabalhoService extends ServiceBase
                 $uId = isset($unidades_vinculadas[2]) ? $unidades_vinculadas[2] : null;
             } else {
                 $uId = isset($unidadeId[2]) ? $unidadeId[2] : null;
+                // busca a nomeclatura da hierarquia da unidade 
+                $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';
+                $data['select'][] = DB::raw("$queryHierarquia AS hierarquia");
+                $data['orderBy'] = [[DB::raw($queryHierarquia), 'asc']];
+                
             }
 
             // Só continua se $uId não for nulo

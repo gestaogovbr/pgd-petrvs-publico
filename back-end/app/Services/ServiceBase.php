@@ -475,16 +475,21 @@ class ServiceBase extends DynamicMethods
     $data['orderBy'] = $data['orderBy'] ?? [];
     $data["join"] = $data["join"] ?? [];
     foreach ($data['orderBy'] as $order) {
-      $fieldPath = explode(".", $order[0]);
-      $field = array_pop($fieldPath);
-      $source = $this->applyJoin($query, $data, $fieldPath, $model);
-      $aliasField = "_" . str_replace(".", "_", $order[0]);
-      if (strtolower($order[1]) == "desc") {
-        $query->orderByDesc(DB::raw($aliasField));
-      } else {
-        $query->orderBy(DB::raw($aliasField));
+      $rawOrder = $order[0];
+      if(is_string($rawOrder)){
+        $fieldPath = explode(".", $order[0]);
+        $field = array_pop($fieldPath);
+        $source = $this->applyJoin($query, $data, $fieldPath, $model);
+        $aliasField = "_" . str_replace(".", "_", $order[0]);
+        $rawOrder = DB::raw($aliasField);
+
+        array_push($data["select"], $source . "." . $field . " AS " . $aliasField);
       }
-      array_push($data["select"], $source . "." . $field . " AS " . $aliasField);
+      if (strtolower($order[1]) == "desc") {
+        $query->orderByDesc($rawOrder);
+      } else {
+        $query->orderBy($rawOrder);
+      }
     }
   }
 
