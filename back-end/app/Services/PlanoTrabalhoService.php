@@ -68,6 +68,7 @@ class PlanoTrabalhoService extends ServiceBase
         // (RI_PTR_C) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de trabalho não arquivados.
         $arquivados = $this->extractWhere($data, "incluir_arquivados");
         $subordinadas = $this->extractWhere($data, "incluir_subordinadas");
+        $hierarquia = $this->extractWhere($data, "incluir_hierarquia");
         // (RN_PTR_I) Quando a Unidade Executora não for a unidade de lotação do servidor, seu gestor imediato e seus substitutos devem ter acesso ao seu Plano de Trabalho (e à sua execução);
         $lotadosMinhaUnidade = $this->extractWhere($data, "lotados_minha_unidade");
         if (empty($arquivados) || !$arquivados[2])
@@ -87,10 +88,12 @@ class PlanoTrabalhoService extends ServiceBase
             } else {
                 $uId = isset($unidadeId[2]) ? $unidadeId[2] : null;
                 // busca a nomeclatura da hierarquia da unidade 
-                $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';
-                $data['select'][] = DB::raw("$queryHierarquia AS hierarquia");
-                $data['orderBy'] = [[DB::raw($queryHierarquia), 'asc']];
-                
+            
+                if(isset($hierarquia[2]) && $hierarquia[2]){
+                    $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';
+                    $data['select'][] = DB::raw("$queryHierarquia AS hierarquia");
+                    $data['orderBy'] = [[DB::raw($queryHierarquia), 'asc']];
+                }
             }
 
             // Só continua se $uId não for nulo

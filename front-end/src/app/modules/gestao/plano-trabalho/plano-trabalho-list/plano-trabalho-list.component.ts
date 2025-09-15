@@ -429,10 +429,18 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		]);
 		if (this.filter!.controls.meus_planos.value)
 			result.push(["usuario.id", "==", this.auth.usuario?.id]);
+		if(this.filter!.controls.subordinadas.value){
+			this.groupBy = this.groupByHierarquia
+			result.push([
+				"incluir_hierarquia",
+				 "==",
+				 true
+			]);
+		}else{
+			this.groupBy = this.groupByPadrao
+		}
 
-		this.groupBy = this.filter!.controls.subordinadas.value
-					? this.groupByHierarquia
-					: this.groupByPadrao
+		
 		return result;
 	};
 
