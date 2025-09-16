@@ -688,7 +688,7 @@ class IntegracaoService extends ServiceBase
 
               $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->cpf_servidor);
 
-              $modalidadePgdValida = $this->validarModalidadePgd($linha->modalidade_pgd);
+               $modalidadePgdValida = $this->validarModalidadePgd($linha->modalidade_pgd);
 
               DB::update($sqlUpdateDados, [
                 'nome'          => $linha->nome_servidor,
@@ -1110,5 +1110,31 @@ class IntegracaoService extends ServiceBase
       SiapeLog::info(sprintf("Corrigindo unidade raiz %s", $siapeUnidadeRaiz->siglauorg));
       $unidadeRaiz->save();
     }
+  }
+  private function validarModalidadePgd($modalidadeString)
+  {
+    if (empty($modalidadeString)) {
+      return null;
+    }
+
+    if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $modalidadeString)) {
+      $exists = DB::table('tipos_modalidades_siape')
+        ->where('id', $modalidadeString)
+        ->exists();
+      
+      return $exists ? $modalidadeString : null;
+    }
+
+    $modalidade = DB::table('tipos_modalidades_siape')
+      ->where('nome', $modalidadeString)
+      ->first();
+
+    if ($modalidade) {
+      SiapeLog::info("Modalidade '{$modalidadeString}' convertida para UUID: {$modalidade->id}");
+      return $modalidade->id;
+    }
+
+    SiapeLog::warning("Modalidade '{$modalidadeString}' não encontrada na tabela tipos_modalidades_siape. Valor será definido como null.");
+    return null;
   }
 }

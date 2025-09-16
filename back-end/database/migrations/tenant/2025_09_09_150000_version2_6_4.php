@@ -25,4 +25,8 @@ return new class extends Migration
     {
         $this->version("2.6.3");
     }
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> develop

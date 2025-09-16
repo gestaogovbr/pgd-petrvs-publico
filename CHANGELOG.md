@@ -4,7 +4,6 @@
 - Ajustes na tabela de usuários para modalidade PGD nullable
 - Melhorias nas mensagens de erro e tratamento de exceções
 - Correção de problemas na carga individual SIAPE
-
 ## 2.6.3 08/09/2025
 ### Corrigido
 - Permissões nos Relatórios
