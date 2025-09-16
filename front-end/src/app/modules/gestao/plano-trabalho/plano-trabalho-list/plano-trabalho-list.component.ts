@@ -125,9 +125,9 @@ export class PlanoTrabalhoListComponent extends PageListBase<
             "unidade:id,sigla,entidade_id,unidade_pai_id",
             "usuario:id,nome,matricula,url_foto",
 		];
-		const NAO_INCLUI_SUBSTITUTO = false;
-		const NAO_INCLUI_DELEGADO = false;
-		this.temAtribuicaoChefia = this.auth.isGestorAlgumaAreaTrabalho(NAO_INCLUI_DELEGADO, NAO_INCLUI_SUBSTITUTO);
+		const INCLUIR_SUBSTITUTO = true;
+		const INCLUIR_DELEGADO = true;
+		this.temAtribuicaoChefia = this.auth.isGestorAlgumaAreaTrabalho(!INCLUIR_DELEGADO, !INCLUIR_SUBSTITUTO);
 		this.groupBy = this.groupByPadrao;
 		this.BOTAO_ALTERAR = {
 			label: "Alterar",
