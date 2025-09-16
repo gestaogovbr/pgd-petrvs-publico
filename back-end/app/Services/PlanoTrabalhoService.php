@@ -90,9 +90,7 @@ class PlanoTrabalhoService extends ServiceBase
                 // busca a nomeclatura da hierarquia da unidade 
             
                 if(isset($hierarquia[2]) && $hierarquia[2]){
-                    $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';
-                    $data['select'][] = DB::raw("$queryHierarquia AS hierarquia");
-                    $data['orderBy'] = [[DB::raw($queryHierarquia), 'asc']];
+                    $this->attachHierarquia($data);
                 }
             }
 
@@ -1341,5 +1339,15 @@ class PlanoTrabalhoService extends ServiceBase
         $usuario = Usuario::find($planoTrabalho['usuario_id']);
         return $usuario->lotacao?->unidade_id == $unidadeId;
     }
+
+    /**
+     *  Adiciona os componentes relacionados a nomeclatura da hierarquia da unidade
+     */
+    private function attachHierarquia(&$data): void
+    {
+        $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';
+        $data['select'][] = DB::raw("$queryHierarquia AS hierarquia");
+        $data['orderBy'] = [[DB::raw($queryHierarquia), 'asc']];
+    }    
     
 }

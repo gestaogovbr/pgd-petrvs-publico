@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use ReflectionObject;
 use Throwable;
 use Exception;
+use Illuminate\Contracts\Database\Query\Expression;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Session;
 use App\Exceptions\UnauthorizedUserPanelException;
@@ -476,7 +477,7 @@ class ServiceBase extends DynamicMethods
     $data["join"] = $data["join"] ?? [];
     foreach ($data['orderBy'] as $order) {
       $rawOrder = $order[0];
-      if(is_string($rawOrder)){
+      if(!($rawOrder instanceof Expression)){
         $fieldPath = explode(".", $order[0]);
         $field = array_pop($fieldPath);
         $source = $this->applyJoin($query, $data, $fieldPath, $model);
