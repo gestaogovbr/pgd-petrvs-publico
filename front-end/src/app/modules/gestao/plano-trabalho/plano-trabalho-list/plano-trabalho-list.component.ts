@@ -440,6 +440,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			]);
 		}else{
 			this.groupBy = this.groupByPadrao
+			if(this.grid) this.grid.groupBy = this.groupBy;
 		}
 
 		
