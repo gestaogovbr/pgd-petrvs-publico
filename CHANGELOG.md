@@ -1,3 +1,16 @@
+## 2.6.4 10/09/2025
+### Corrigido
+- Correção de constraint de chave estrangeira na modalidade PGD
+- Ajustes na tabela de usuários para modalidade PGD nullable
+- Melhorias nas mensagens de erro e tratamento de exceções
+- Correção de problemas na carga individual SIAPE
+    
+## 2.6.3 08/09/2025
+### Corrigido
+- Permissões nos Relatórios
+### Removido
+- Indexação de ambiente de homologação nos buscadores
+
 ## 2.6.2 25/08/2025
 ### Adicionado
 - Envio de contribuições não vinculadas a Planos de Entrega

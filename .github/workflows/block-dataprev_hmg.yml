@@ -1,0 +1,15 @@
+name: Block PRs from dataprev_hmg
+
+on:
+  pull_request:
+
+jobs:
+  block-dataprev_hmg:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check source branch
+        run: |
+          if [[ "${{ github.head_ref }}" == "dataprev_hmg" ]]; then
+            echo "🚫 Pull requests da branch 'dataprev_hmg' não são permitidos."
+            exit 1
+          fi
