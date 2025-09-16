@@ -569,12 +569,15 @@ class IntegracaoService extends ServiceBase
           $this->result = $integracaoServidorProcessar->getResult();
         });
 
+        /**
+         * Posteriormente, será decidido o que fazer com as diferenças entre tabela usuários e integração_servidores.
+         */
+
 
         // Seleciona todos os servidores que sofreram alteração nos seus dados pessoais ou atingiu critério quanto data_modificação.
         $atualizacoesDados = DB::select(
           "SELECT
         u.id,
-        isr.matriculasiape,
         isr.cpf AS cpf_servidor,
         u.nome AS nome_anterior,
         isr.nome AS nome_servidor,
@@ -582,13 +585,13 @@ class IntegracaoService extends ServiceBase
         isr.nomeguerra AS nome_guerra,
         u.email AS email_anterior,
         isr.emailfuncional,
+        u.matricula AS matricula_anterior,
+        isr.matriculasiape,
         u.telefone AS telefone_anterior,
         isr.telefone,
         isr.data_modificacao AS data_modificacao,
         u.data_modificacao AS data_modificacao_anterior,
         isr.data_nascimento,
-        isr.ident_unica AS ident_unica,
-        u.ident_unica AS ident_unica_anterior,
         u.nome_jornada AS nome_jornada_antigo,
         isr.nome_jornada AS nome_jornada,
         u.cod_jornada AS cod_jornada_antigo,
@@ -599,10 +602,11 @@ class IntegracaoService extends ServiceBase
         isr.participa_pgd
     FROM
         integracao_servidores isr
-        LEFT JOIN usuarios u ON (isr.matriculasiape = u.matricula)
+        LEFT JOIN usuarios u ON (isr.cpf = u.cpf)
     WHERE
         isr.nome != u.nome OR
         isr.emailfuncional != u.email OR
+        isr.matriculasiape != u.matricula OR
         isr.nomeguerra != u.apelido OR
         isr.telefone != u.telefone OR
         (isr.nome_jornada != u.nome_jornada OR isr.nome_jornada IS NOT NULL AND u.nome_jornada IS NULL) OR
@@ -614,8 +618,8 @@ class IntegracaoService extends ServiceBase
         );
         $sqlUpdateDados = "UPDATE usuarios SET " .
           "nome = :nome, apelido = :nomeguerra, " .
-          "email = :email, " .
-          "ident_unica = :ident_unica, " .
+          "email = :email, matricula = :matricula, " .
+          "telefone = :telefone, " .
           "cod_jornada = :cod_jornada, " .
           "nome_jornada = :nome_jornada, " .
           "data_nascimento = :data_nascimento, " .
@@ -642,7 +646,7 @@ class IntegracaoService extends ServiceBase
             "JOIN unidades_integrantes AS ui ON ui.id = uia.unidade_integrante_id " .
             "JOIN unidades AS u ON ui.unidade_id = u.id " .
             "JOIN usuarios AS usuario ON ui.usuario_id = usuario.id " .
-            "JOIN integracao_servidores AS isr ON isr.matriculasiape = usuario.matricula " .
+            "JOIN integracao_servidores AS isr ON isr.cpf = usuario.cpf " .
             "WHERE uia.atribuicao = 'LOTADO' AND u.codigo <> isr.codigo_servo_exercicio and ui.deleted_at IS NULL " .
             "AND uia.deleted_at IS NULL " .
             "ORDER BY exercicio_antigo ASC"
@@ -650,14 +654,14 @@ class IntegracaoService extends ServiceBase
 
 
         $sqlServidoresInseridosNaoLotados = DB::select(
-          "SELECT u.id AS usuario_id, un.id AS unidade_id , u.matricula
+          "SELECT u.id AS usuario_id, un.id AS unidade_id , u.cpf
           FROM usuarios AS u
-          INNER JOIN integracao_servidores AS ius ON u.matricula = ius.matriculasiape
+          INNER JOIN integracao_servidores AS ius ON u.cpf = ius.cpf
           INNER JOIN unidades AS un ON un.codigo = ius.codigo_servo_exercicio
           WHERE u.id NOT IN
               (SELECT u.id
               FROM usuarios AS u
-              INNER JOIN integracao_servidores AS ius ON u.matricula = ius.matriculasiape
+              INNER JOIN integracao_servidores AS ius ON u.cpf = ius.cpf
               INNER JOIN unidades_integrantes AS ui ON u.id = ui.usuario_id
               INNER  JOIN unidades_integrantes_atribuicoes AS uia ON ui.id = uia.unidade_integrante_id
               WHERE uia.atribuicao = 'LOTADO'
@@ -680,9 +684,9 @@ class IntegracaoService extends ServiceBase
           if (!empty($atualizacoesDados)) {
             foreach ($atualizacoesDados as $linha) {
 
-              SiapeLog::info("Atualizando dados do servidor Matricula: " . $linha->matriculasiape);
+              SiapeLog::info("Atualizando dados do servidor CPF: " . $linha->cpf_servidor);
 
-              $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->matriculasiape);
+              $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->cpf_servidor);
 
               $modalidadePgdValida = $this->validarModalidadePgd($linha->modalidade_pgd);
 
@@ -690,12 +694,13 @@ class IntegracaoService extends ServiceBase
                 'nome'          => $linha->nome_servidor,
                 'nomeguerra'    => $linha->nome_guerra,
                 'email'         => $linha->emailfuncional,
+                'matricula'     => $linha->matriculasiape,
+                'telefone'      => $linha->telefone,
                 'cod_jornada'      => $linha->cod_jornada,
                 'nome_jornada'      => $linha->nome_jornada,
                 'modalidade_pgd' => $modalidadePgdValida,
                 'participa_pgd' => $linha->participa_pgd,
                 'id'            => $linha->id,
-                'ident_unica'   => $linha->ident_unica,
                 'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
                 'data_nascimento' => $linha->data_nascimento,
               ]);
@@ -785,11 +790,10 @@ class IntegracaoService extends ServiceBase
             "isr.codigo_servo_exercicio as exercicio, " .
             "isr.situacao_funcional as situacao_funcional, " .
             "isr.data_modificacao as data_modificacao, " .
-            "isr.ident_unica as ident_unica, " .
             "isr.funcoes as gestor " .
             "FROM integracao_servidores as isr LEFT JOIN usuarios as u " .
-            "ON isr.matriculasiape = u.matricula " .
-            "WHERE u.matricula is NULL";
+            "ON isr.cpf = u.cpf " .
+            "WHERE u.cpf is NULL";
 
           $vinculos_isr = DB::select($query);
 
@@ -821,10 +825,9 @@ class IntegracaoService extends ServiceBase
               'exercicio' => $this->UtilService->valueOrDefault($v_isr['exercicio']),
               'uf' => $this->UtilService->valueOrDefault($v_isr['uf'], null),
               'data_modificacao' => $this->UtilService->asDateTime($v_isr['data_modificacao']),
-              'ident_unica' => $this->UtilService->valueOrDefault($v_isr['ident_unica']),
             ]);
 
-            $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($registro->email, $registro->matricula);
+            $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($registro->email, $registro->cpf);
 
             SiapeLog::info("Inserindo servidor na tabela Usuários", $registro->toArray());
             $registro->save();
@@ -836,8 +839,12 @@ class IntegracaoService extends ServiceBase
             isset($unidadeExercicioId->id) ? $unidadeExercicioId = $unidadeExercicioId->id : $unidadeExercicioId = null;
 
             if (is_null($unidadeExercicioId)) {
-              SiapeLog::info(sprintf("O servidor matricula #%s não tem unidade de  exercicio, não será alocado", $registro['matricula']));
+              SiapeLog::info(sprintf("O servidor cpf #%s não tem unidade de  exercicio, não será alocado", $registro['cpf']));
               continue;
+              // $unidadeExercicioId = $unidadeExercicioRaizId;
+              // LogError::newWarn("IntegracaoService: Durante integração, foi definido o exercício na unidadeRaiz(" .
+              //   $this->unidadeRaiz . ") para o CPF(" .
+              //   $registro['cpf'] . ") uma vez que informação não foi encontrada.", [$usuarioId, $registro['cpf']]);
             }
 
             $queryAtribuicoes = $registro->getUnidadesAtribuicoesAttribute();
@@ -859,12 +866,10 @@ class IntegracaoService extends ServiceBase
 
             $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
           }
-        SiapeLog::info('Concluída a fase de atualização das lotações dos servidores!.....');
-      });
+          SiapeLog::info('Concluída a fase de atualização das lotações dos servidores!.....');
+        });
 
-      $this->verificarUsuariosExternosIntegracao();
-
-      $this->result['servidores']['Resultado'] = 'Sucesso';
+        $this->result['servidores']['Resultado'] = 'Sucesso';
         array_push($this->result['servidores']["Observações"], 'Na tabela Usuários constam agora ' .
           Usuario::count() . ' servidores!');
       } catch (Throwable $e) {
@@ -986,17 +991,17 @@ class IntegracaoService extends ServiceBase
     SiapeLog::info("Concluída a fase de reconstrução das funções de chefia!");
   }
 
-  private function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(string $email, string $matricula): void
+  private function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(string $email, string $cpf): void
   {
-    $usuario = Usuario::where('email', $email)->where('matricula', '!=', $matricula)->first();
+    $usuario = Usuario::where('email', $email)->where('cpf', '!=', $cpf)->first();
     if (!empty($usuario)) {
-      LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. Matricula: %s, Email: %s", $matricula, $email));
-      $novoemail = $usuario->matricula . "@petrvs.gov.br";
-      $outroUsuarioComesseEmail = Usuario::where('email', $novoemail)->where('matricula', '!=', $usuario->matricula)->first();
+      LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. CPF: %s, Email: %s", $cpf, $email));
+      $novoemail = $usuario->cpf . "@petrvs.gov.br";
+      $outroUsuarioComesseEmail = Usuario::where('email', $novoemail)->where('cpf', '!=', $usuario->cpf)->first();
       if (!empty($outroUsuarioComesseEmail)) {
-        $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($novoemail, $usuario->matricula);
+        $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($novoemail, $usuario->cpf);
       }
-      SiapeLog::info("IntegracaoService: Alterando email duplicado para email fake", ['matricula' => $matricula, 'email' => $email, 'usuario' => $usuario->toJson()]);
+      SiapeLog::info("IntegracaoService: Alterando email duplicado para email fake", ['cpf' => $cpf, 'email' => $email, 'usuario' => $usuario->toJson()]);
       $usuario->update(['email' => $novoemail]);
     }
   }
@@ -1104,87 +1109,6 @@ class IntegracaoService extends ServiceBase
       $unidadeRaiz->codigo = $siapeUnidadeRaiz->codigo_siape;
       SiapeLog::info(sprintf("Corrigindo unidade raiz %s", $siapeUnidadeRaiz->siglauorg));
       $unidadeRaiz->save();
-    }
-  }
-
-  
-  
-  private function validarModalidadePgd($modalidadeString)
-  {
-    if (empty($modalidadeString)) {
-      return null;
-    }
-
-    if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $modalidadeString)) {
-      $exists = DB::table('tipos_modalidades_siape')
-        ->where('id', $modalidadeString)
-        ->exists();
-      
-      return $exists ? $modalidadeString : null;
-    }
-
-    $modalidade = DB::table('tipos_modalidades_siape')
-      ->where('nome', $modalidadeString)
-      ->first();
-
-    if ($modalidade) {
-      SiapeLog::info("Modalidade '{$modalidadeString}' convertida para UUID: {$modalidade->id}");
-      return $modalidade->id;
-    }
-
-    SiapeLog::warning("Modalidade '{$modalidadeString}' não encontrada na tabela tipos_modalidades_siape. Valor será definido como null.");
-    return null;
-  }
-
-  private function verificarUsuariosExternosIntegracao(): void
-  {
-    try {
-      $usuariosExternos = DB::select(
-        "SELECT u.* FROM usuarios AS u 
-         INNER JOIN integracao_servidores AS ise ON u.matricula = ise.matriculasiape 
-         WHERE u.usuario_externo = 1"
-      );
-
-      if (empty($usuariosExternos)) {
-        return;
-      }
-
-      SiapeLog::info(sprintf("Encontrados %d usuários externos para atualizar.", count($usuariosExternos)));
-
-      foreach ($usuariosExternos as $usuarioData) {
-        DB::update(
-          "UPDATE usuarios SET usuario_externo = 0 WHERE id = ?",
-          [$usuarioData->id]
-        );
-
-        $usuario = Usuario::find($usuarioData->id);
-        if ($usuario && $usuario->perfil) {
-          $perfilColaborador = $this->nivelAcessoService->getPerfilColaborador();
-          $perfilParticipante = $this->nivelAcessoService->getPerfilParticipante();
-
-          if ($perfilColaborador && $perfilParticipante && 
-              $usuario->perfil->id === $perfilColaborador->id) {
-            $this->perfilService->alteraPerfilUsuario($usuario->id, $perfilParticipante->id);
-            SiapeLog::info(sprintf(
-              "Usuário %s (%s) teve perfil alterado de Colaborador para Participante.",
-              $usuario->nome,
-              $usuario->matricula
-            ));
-          }
-        }
-
-        SiapeLog::info(sprintf(
-          "Usuário %s (%s) atualizado: usuario_externo = 0.",
-          $usuarioData->nome,
-          $usuarioData->matricula
-        ));
-      }
-    } catch (Throwable $e) {
-      report($e);
-      SiapeLog::error(sprintf(
-        "Erro ao verificar usuários externos na integração: %s",
-        $e->getMessage()
-      ));
     }
   }
 }

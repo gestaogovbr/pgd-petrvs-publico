@@ -23,150 +23,91 @@ class IntegracaoSiapeService extends ServiceBase
     $this->siape = new ProcessaDadosSiapeBD();
   }
 
-  private function retornarPessoa(array $pessoa): array|null
+  function retornarPessoa(array $pessoa): array | null
   {
-    if (
-      empty($pessoa['dadosPessoais']) ||
-      empty($pessoa['dadosFuncionais']) ||
-      !is_array($pessoa['dadosFuncionais'])
-    ) {
-      LogError::newWarn(
-        "ISiape: Erro de conexão ou problemas com CPF " . ($pessoa['cpf'] ?? '(desconhecido)') . " durante consulta aos dados pessoais.",
-        "Dados pessoais ou funcionais não encontrados."
-      );
+    if (!isset($pessoa['dadosPessoais']) || !isset($pessoa['dadosFuncionais'])) {
+      LogError::newWarn("ISiape: Erro de conexão ou problemas com CPF " . $pessoa['cpf'] . " durante consulta aos dados pessoais.", "Dados pessoais ou funcionais não encontrados.");
       return null;
     }
-
+    $dadosPessoais = [];
+    $dadosFuncionais = [];
     try {
-      $dadosPessoaisOrig = $pessoa['dadosPessoais'];
-      $dadosFuncionaisOrig = $pessoa['dadosFuncionais'];
+      $dadosPessoais = $pessoa['dadosPessoais'];
 
-      $pessoal = $this->processaDadosPessoais($pessoa, $dadosPessoaisOrig);
+      $dadosFuncionais = $pessoa['dadosFuncionais'];
 
-      $funcionais = [];
-      foreach ($dadosFuncionaisOrig as $dadofuncional) {
-        $funcional = $this->processaDadosFuncionais($dadofuncional);
-        if (is_null($funcional)) {
-          continue;
-        }
-        array_push($funcionais, $funcional);
-      }
-
-      if (empty($funcionais)) {
+      if(empty($dadosFuncionais) || empty($dadosPessoais)){
         return null;
       }
-      return [
-        'pessoal'    => $pessoal,
-        'funcionais' => $funcionais,
+
+      if ($dadosFuncionais['codSitFuncional'] == self::SITUACAO_FUNCIONAL_ATIVO_EM_OUTRO_ORGAO) return null;
+
+      $funcao = null;
+
+      //TODO remover a opção de função do codigo do banco e esse if abaixo
+      if (!empty($dadosFuncionais['codAtivFun']) && $dadosFuncionais['codAtivFun']) {
+        $funcao = array('funcao' => ['tipo_funcao' => '1', 'uorg_funcao' => $dadosFuncionais['codUorgExercicio']]);
+      }
+
+      if (!empty($dadosPessoais['dataNascimento'])) {
+        $dadosPessoais['dataNascimento'] = DateTime::createFromFormat('dmY', $dadosPessoais['dataNascimento'])->format('Y-m-d 00:00:00');
+      }
+
+      if (!empty($dadosFuncionais['dataOcorrIngressoOrgao'])) {
+        $dadosFuncionais['dataOcorrIngressoOrgao'] = DateTime::createFromFormat('dmY', $dadosFuncionais['dataOcorrIngressoOrgao'])->format('Y-m-d 00:00:00');
+      }
+
+      if (!empty($dadosFuncionais['codUorgExercicio'])) {
+        $dadosFuncionais['codUorgExercicio'] = strval(intval($dadosFuncionais['codUorgExercicio']));
+      }
+
+      if($dadosFuncionais['codSitFuncional']== self::SITUACAO_FUNCIONAL_CONTRATO_TEMPORARIO){
+        $unidadeServidorTemporario = Unidade::where('sigla', trim($dadosFuncionais['siglaUorgLotacao']))->first();
+        if(!$unidadeServidorTemporario) return null;
+
+        $dadosFuncionais['codUorgExercicio'] = $unidadeServidorTemporario->codigo;
+      }
+
+      $Pessoa = [
+        'cpf_ativo' => true,
+        'data_modificacao' => $pessoa['data_modificacao'],
+        'cpf' => $pessoa['cpf'],
+        'nome' => $this->UtilService->valueOrDefault($dadosPessoais['nome']),
+        'emailfuncional' => $this->UtilService->valueOrDefault($dadosFuncionais['emailInstitucional']),
+        'sexo' => $this->UtilService->valueOrDefault($dadosPessoais['nomeSexo']),
+        'municipio' => $this->UtilService->valueOrDefault($dadosPessoais['nomeMunicipNasc']),
+        'uf' => $this->UtilService->valueOrDefault($dadosPessoais['ufNascimento'], null),
+        'data_nascimento' => $this->UtilService->valueOrDefault($dadosPessoais['dataNascimento'], null),
+        'telefone' =>  '',
+        'cpf_chefia_imediata' => $this->UtilService->valueOrDefault($dadosFuncionais['cpfChefiaImediata'], null),
+        'email_chefia_imediata' => $this->UtilService->valueOrDefault($dadosFuncionais['emailChefiaImediata'], null),
+        'nome_jornada' => $this->UtilService->valueOrDefault($dadosFuncionais['nomeJornada'], null),
+        'cod_jornada' => $this->UtilService->valueOrDefault((int) $dadosFuncionais['codJornada'], null),
+        'modalidade_pgd' => $this->getModalidadePgd($dadosFuncionais['modalidadePGD'] ?? null),
+        'participa_pgd' => $this->UtilService->valueOrDefault($dadosFuncionais['participaPGD'], null),
+        'matriculas' => [
+          'dados' => [
+            'vinculo_ativo' => true,
+            'matriculasiape' => $this->UtilService->valueOrDefault($dadosFuncionais['matriculaSiape']),
+            'tipo' => $this->UtilService->valueOrDefault($dadosFuncionais['codCargo']),
+            'coduorgexercicio' => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgExercicio']),
+            'coduorglotacao' => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgLotacao']),
+            'codigo_servo_exercicio' => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgExercicio']),
+            'nomeguerra' => '',
+            'codsitfuncional' => $this->UtilService->valueOrDefault($dadosFuncionais['codSitFuncional']),
+            'codupag' => $this->UtilService->valueOrDefault($dadosFuncionais['codUpag']),
+            'dataexercicionoorgao' => $this->UtilService->valueOrDefault($dadosFuncionais['dataOcorrIngressoOrgao']),
+            'funcoes' => $funcao
+          ]
+        ]
       ];
+      return $Pessoa;
     } catch (Throwable $e) {
-      Log::error(
-        "ISiape: Erro de conexão ou problemas com CPF " . ($pessoa['cpf'] ?? '(desconhecido)') . " durante consulta aos dados pessoais.",
-        [$e]
-      );
-      LogError::newWarn(
-        "ISiape: Erro de conexão ou problemas com CPF " . ($pessoa['cpf'] ?? '(desconhecido)') . " durante consulta aos dados pessoais.",
-        $e->getMessage()
-      );
-      return null;
-    }
-  }
-
-  private function processaDadosPessoais(array $pessoa, array $dadosPessoais): array
-  {
-    if (!empty($dadosPessoais['dataNascimento'])) {
-      $dt = DateTime::createFromFormat('dmY', $dadosPessoais['dataNascimento']);
-      if ($dt !== false) {
-        $dadosPessoais['dataNascimento'] = $dt->format('Y-m-d 00:00:00');
-      } else {
-        $dadosPessoais['dataNascimento'] = null;
-      }
+      Log::error("ISiape: Erro de conexão ou problemas com CPF " . $pessoa['cpf'] . " durante consulta aos dados pessoais.", [$e]);
+      LogError::newWarn("ISiape: Erro de conexão ou problemas com CPF " . $pessoa['cpf'] . " durante consulta aos dados pessoais.", $e->getMessage());
     }
 
-    $pessoal = [
-      'cpf_ativo'        => true,
-      'data_modificacao' => $pessoa['data_modificacao'] ?? null,
-      'cpf'              => $pessoa['cpf'] ?? null,
-      'nome'             => $this->UtilService->valueOrDefault($dadosPessoais['nome'] ?? null),
-      'sexo'             => $this->UtilService->valueOrDefault($dadosPessoais['nomeSexo'] ?? null),
-      'municipio'        => $this->UtilService->valueOrDefault($dadosPessoais['nomeMunicipNasc'] ?? null),
-      'uf'               => $this->UtilService->valueOrDefault($dadosPessoais['ufNascimento'] ?? null, null),
-      'data_nascimento'  => $this->UtilService->valueOrDefault($dadosPessoais['dataNascimento'] ?? null, null),
-      'telefone'         => '',
-    ];
-    return $pessoal;
-  }
-
-  private function processaDadosFuncionais(array $dadosFuncionais): array|null
-  {
-    if (empty($dadosFuncionais) || !is_array($dadosFuncionais)) {
-      return null;
-    }
-
-    if (($dadosFuncionais['codSitFuncional'] ?? null) == self::SITUACAO_FUNCIONAL_ATIVO_EM_OUTRO_ORGAO) {
-      return null;
-    }
-
-    if (!empty($dadosFuncionais['dataOcorrIngressoOrgao'])) {
-      $dt = DateTime::createFromFormat('dmY', $dadosFuncionais['dataOcorrIngressoOrgao']);
-      $dadosFuncionais['dataOcorrIngressoOrgao'] = $dt ? $dt->format('Y-m-d 00:00:00') : null;
-    }
-
-    if (!empty($dadosFuncionais['codUorgExercicio'])) {
-      $dadosFuncionais['codUorgExercicio'] = strval(intval($dadosFuncionais['codUorgExercicio']));
-    }
-
-    // Contrato temporário: mapear unidade pela sigla da lotação
-    if (($dadosFuncionais['codSitFuncional'] ?? null) == self::SITUACAO_FUNCIONAL_CONTRATO_TEMPORARIO) {
-      $sigla = trim($dadosFuncionais['siglaUorgLotacao'] ?? '');
-      if ($sigla === '') {
-        return null;
-      }
-      $unidadeServidorTemporario = Unidade::where('sigla', $sigla)->first();
-      if (!$unidadeServidorTemporario) {
-        return null;
-      }
-      $dadosFuncionais['codUorgExercicio'] = $unidadeServidorTemporario->codigo;
-    }
-
-    // Função (legacy/TODO)
-    $funcao = null;
-    if (!empty($dadosFuncionais['codAtivFun']) && $dadosFuncionais['codAtivFun']) {
-      $funcao = [
-        'funcao' => [
-          'tipo_funcao'  => '1',
-          'uorg_funcao'  => $dadosFuncionais['codUorgExercicio'] ?? null,
-        ],
-      ];
-    }
-
-    $matricula = [
-      'vinculo_ativo'         => true,
-      'matriculasiape'        => $this->UtilService->valueOrDefault($dadosFuncionais['matriculaSiape'] ?? null),
-      'tipo'                  => $this->UtilService->valueOrDefault($dadosFuncionais['codCargo'] ?? null),
-      'coduorgexercicio'      => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgExercicio'] ?? null),
-      'coduorglotacao'        => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgLotacao'] ?? null),
-      'codigo_servo_exercicio' => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgExercicio'] ?? null),
-      'nomeguerra'            => '',
-      'codsitfuncional'       => $this->UtilService->valueOrDefault($dadosFuncionais['codSitFuncional'] ?? null),
-      'codupag'               => $this->UtilService->valueOrDefault($dadosFuncionais['codUpag'] ?? null),
-      'dataexercicionoorgao'  => $this->UtilService->valueOrDefault($dadosFuncionais['dataOcorrIngressoOrgao'] ?? null),
-      'funcoes'               => $funcao,
-      'ident_unica'           => $this->UtilService->valueOrDefault($dadosFuncionais['identUnica'] ?? null),
-      'modalidade_pgd'        => $this->UtilService->valueOrDefault($dadosFuncionais['modalidadePGD'] ?? null),
-      'participa_pgd'         => $this->UtilService->valueOrDefault($dadosFuncionais['participaPGD'] ?? null),
-      'cod_jornada'           => $this->UtilService->valueOrDefault($dadosFuncionais['codJornada'] ?? null),
-      'nome_jornada'          => $this->UtilService->valueOrDefault($dadosFuncionais['nomeJornada'] ?? null)
-    ];
-
-    $funcional = [
-      'emailfuncional'        => $this->UtilService->valueOrDefault($dadosFuncionais['emailInstitucional'] ?? null),
-      'cpf_chefia_imediata'   => $this->UtilService->valueOrDefault($dadosFuncionais['cpfChefiaImediata'] ?? null, null),
-      'email_chefia_imediata' => $this->UtilService->valueOrDefault($dadosFuncionais['emailChefiaImediata'] ?? null, null),
-      'matriculas'            => ['dados' => $matricula],
-    ];
-
-    return $funcional;
+    return null;
   }
 
   public function retornarUorgs($uorgInicial = 1)
@@ -192,7 +133,7 @@ class IntegracaoSiapeService extends ServiceBase
 
 
           if (!empty($this->UtilService->valueOrNull($uorgWsdl, "nomeMunicipio"))) {
-            $consulta_sql = DB::select("SELECT * FROM cidades WHERE nome LIKE :nomeMunicipio", ['nomeMunicipio' => $uorgWsdl['nomeMunicipio']]);
+              $consulta_sql = DB::select("SELECT * FROM cidades WHERE nome LIKE :nomeMunicipio", ['nomeMunicipio' => $uorgWsdl['nomeMunicipio']]);
             if (!empty($consulta_sql)) {
               $consulta_sql = $this->UtilService->object2array($consulta_sql)[0];
               $uorgWsdl['codMunicipio'] = $consulta_sql['codigo_ibge'];

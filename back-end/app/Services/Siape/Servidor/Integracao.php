@@ -2,7 +2,6 @@
 
 namespace App\Services\Siape\Servidor;
 
-use App\Facades\SiapeLog;
 use App\Models\IntegracaoServidor as entidade;
 use App\Models\IntegracaoServidor;
 use App\Repository\IntegracaoServidorRepository;
@@ -21,7 +20,7 @@ class Integracao implements InterfaceIntegracao
     use PreparaServidor, Imprimir, LogTrait;
 
     private array $servidores = [];
-    private array $matriculasIntegracaoAlterados = [];
+    private array $cpfsIntegracaoAlterados = [];
     private array $cpfsComEmaisFuncionaisVazios = [];
     private array $servidoresRegistradosNoBD = [];
     private bool $echo = false;
@@ -37,9 +36,9 @@ class Integracao implements InterfaceIntegracao
     public function processar(): void
     {
         foreach ($this->getServidores() as $servidor) {
-            $entidades = $this->montaEntidadeServidor($servidor);
-            if (!empty($entidades)) {
-                array_map(fn($entidade) => $this->salvaEntidade($entidade), $entidades);
+            $entidade = $this->montaEntidadeServidor($servidor);
+            if ($entidade) {
+                $this->salvaEntidade($entidade);
             }
         }
 
@@ -75,11 +74,15 @@ class Integracao implements InterfaceIntegracao
 
     private function salvaEntidade(entidade $entidade): void
     {
-        $registroDobanco = $this->repository->getServidor($entidade->cpf, $entidade->matriculasiape);
+        $registroDobanco = $this->repository->getUmPeloCPF($entidade->cpf);
 
-        if (!in_array($entidade->matriculasiape, $this->matriculasIntegracaoAlterados) && $registroDobanco == null) {
+        if (!in_array($entidade->cpf, $this->cpfsIntegracaoAlterados) && $registroDobanco == null) {
+            /*$this->logSiape('Salvando Novo Servidor na tabela integracao_servidores: ' , [
+                'integracao_servidores'=>$entidade->toJson()
+            ], Tipo::INFO);**/
+
             $registro = $this->repository->save($entidade);
-            array_push($this->matriculasIntegracaoAlterados, $entidade->matriculasiape);
+            array_push($this->cpfsIntegracaoAlterados, $entidade->cpf);
 
             $this->verificaEmailsFuncionaisVazios($entidade);
 
@@ -87,26 +90,26 @@ class Integracao implements InterfaceIntegracao
             return;
         }
 
-        if ($registroDobanco && !in_array($entidade->matriculasiape, $this->matriculasIntegracaoAlterados)) {
+        if ($registroDobanco && !in_array($entidade->cpf, $this->cpfsIntegracaoAlterados)) {
             
+            /*$this->logSiape('Atualizando Servidor na tabela integracao_servidores: ' , [
+                'integracao_servidores_antigo'=>$registroDobanco->toJson(),
+                'integracao_servidores_novo'=>$entidade->toJson()
+            ], Tipo::INFO);*/
+
             $dadosAtualizados = $entidade->only([
                 'cpf_ativo', 'data_modificacao', 'nome', 'emailfuncional', 'sexo',
                 'municipio', 'uf', 'data_nascimento', 'telefone', 'vinculo_ativo', 
                 'codigo_cargo', 'coduorgexercicio', 'coduorglotacao',
                 'codigo_servo_exercicio', 'nomeguerra', 'codigo_situacao_funcional', 
                 'situacao_funcional', 'codupag', 'dataexercicionoorgao', 'funcoes', 
-                'cpf_chefia_imediata', 'email_chefia_imediata', 'ident_unica','cod_jornada',
+                'cpf_chefia_imediata', 'email_chefia_imediata','cod_jornada',
                 'nome_jornada','modalidade_pgd','participa_pgd'
             ]);
-
-            $registro =  $this->repository->update($entidade->cpf, $entidade->matriculasiape, $dadosAtualizados);
-            
-            array_push($this->matriculasIntegracaoAlterados, $entidade->cpf);
-            
+            $registro =  $this->repository->update($entidade->cpf, $dadosAtualizados);
+            array_push($this->cpfsIntegracaoAlterados, $entidade->cpf);
             $this->verificaEmailsFuncionaisVazios($entidade);
-            
             if ($registro) $this->salvaNoArrayServidoresRegistradosNoBD($entidade);
-
             return;
         }
     }
@@ -114,81 +117,64 @@ class Integracao implements InterfaceIntegracao
 
     private function salvaNoArrayServidoresRegistradosNoBD(entidade $entidade): void
     {
-        array_push($this->servidoresRegistradosNoBD, $entidade->matriculasiape);
+        array_push($this->servidoresRegistradosNoBD, $entidade->cpf);
     }
 
     private function verificaEmailsFuncionaisVazios(entidade $entidade): void
     {
-        str_contains($entidade->matriculasiape, '@petrvs.gov.br') ?
+        str_contains($entidade->emailfuncional, '@petrvs.gov.br') ?
             array_push($this->cpfsComEmaisFuncionaisVazios,
-                "Matricula   : " . $entidade->matriculasiape .
+                "CPF: " . $entidade->cpf .
                     " (" . $entidade->situacao_funcional . ") - " .
                     $entidade->emailfuncional) : true;
     }
 
-    private function montaEntidadeServidor(array $servidor): array
+    private function montaEntidadeServidor(array $servidor): ?entidade
     {
-        $entidades = [];
-        $pessoal = $servidor['pessoal'];
-        foreach($servidor['funcionais'] as $funcional){
-            $ativo = $this->getAtivo($funcional);
-            $emailFuncional = $this->getEmail($ativo ,$funcional, $this->utilService);
 
-            if (!$ativo || empty($emailFuncional)) {
-                continue;
-            }
-            $this->setFuncoes($ativo);
+        $ativo = $this->getAtivo($servidor);
+        $emailFuncional = $this->getEmail($servidor, $this->utilService);
 
-            if(empty($ativo['matriculasiape'])){
-                SiapeLog::info('Matrícula SIAPE vazia', ['cpf' => $pessoal['cpf']]);
-                continue;
-            }
-
-            if(empty($pessoal['cpf'])){
-                SiapeLog::info('CPF SIAPE vazio', $pessoal);
-                continue;
-            }
-
-            $servidor = [
-                'id' => Uuid::uuid4(),
-                'cpf_ativo' => $this->utilService->valueOrDefault($pessoal['cpf_ativo']),
-                'data_modificacao' => $this->getDataModificacao($pessoal, $this->utilService, $this->integracaoConfig['tipo']),
-                'cpf' => $this->utilService->valueOrDefault($this->utilService->onlyNumbers($pessoal['cpf']), null),
-                'nome' => $this->getNome($pessoal, $this->utilService),
-                'emailfuncional' => $emailFuncional,
-                'sexo' => $this->utilService->valueOrDefault($pessoal['sexo'], null),
-                'municipio' => $this->utilService->valueOrDefault($pessoal['municipio'], null),
-                'uf' => $this->utilService->valueOrDefault($pessoal['uf'], null),
-                'data_nascimento' => $this->getDataNascimento($pessoal, $this->utilService, $this->integracaoConfig['tipo']),
-                'telefone' => $this->utilService->valueOrDefault($pessoal['telefone'], null),
-                'vinculo_ativo' => $this->utilService->valueOrDefault($ativo['vinculo_ativo'], null),
-                'matriculasiape' => $this->utilService->valueOrDefault($ativo['matriculasiape'], null),
-                'codigo_cargo' => $this->utilService->valueOrDefault($ativo['tipo'], null),
-                'coduorgexercicio' => $this->utilService->valueOrDefault($ativo['coduorgexercicio'], null, $option = "uorg"),
-                'coduorglotacao' => $this->utilService->valueOrDefault($ativo['coduorglotacao'], null, $option = "uorg"),
-                'codigo_servo_exercicio' => $this->utilService->valueOrDefault($ativo['codigo_servo_exercicio'], null, $option = "uorg"),
-                'nomeguerra' => $this->getNomeDeGuerra($ativo, $pessoal, $this->utilService),
-                'codigo_situacao_funcional' => $this->utilService->valueOrDefault($ativo['codsitfuncional'], null),
-                'situacao_funcional' => $this->getSituacaoFuncional($ativo, $this->utilService),
-                'codupag' => $this->utilService->valueOrDefault($ativo['codupag'], null),
-                'dataexercicionoorgao' => $this->getDataExercicio($ativo, $this->utilService, $this->integracaoConfig['tipo']),
-                'funcoes' => $ativo['funcoes'],
-                'matricula' => $this->utilService->valueOrDefault($ativo['matriculasiape'], null),
-                'cpf_chefia_imediata' => $this->getCPFChefiaImediata($funcional, $this->utilService),
-                'email_chefia_imediata' => $this->getEmailChefiaImediata($funcional, $this->utilService),
-                'ident_unica' => $this->utilService->valueOrDefault($ativo['ident_unica'], null),
-                'modalidade_pgd' => $this->utilService->valueOrDefault($ativo['modalidade_pgd'], null),
-                'participa_pgd' => $this->utilService->valueOrDefault($ativo['participa_pgd'], null),
-                'cod_jornada' => $this->utilService->valueOrDefault($ativo['cod_jornada'], null),
-                'nome_jornada' => $this->utilService->valueOrDefault($ativo['nome_jornada'], null),
-                'deleted_at' => null,
-            ];
-            array_push($entidades, $this->createFromDTO(new ServidorDTO($servidor)));
+        if (!$ativo || empty($emailFuncional)) {
+            return null;
         }
+        $this->setFuncoes($ativo);
 
-        return $entidades;
+        $servidor = [
+            'id' => Uuid::uuid4(),
+            'cpf_ativo' => $this->utilService->valueOrDefault($servidor['cpf_ativo']),
+            'data_modificacao' => $this->getDataModificacao($servidor, $this->utilService, $this->integracaoConfig['tipo']),
+            'cpf' => $this->utilService->valueOrDefault($this->utilService->onlyNumbers($servidor['cpf']), null),
+            'nome' => $this->getNome($servidor, $this->utilService),
+            'emailfuncional' => $emailFuncional,
+            'sexo' => $this->utilService->valueOrDefault($servidor['sexo'], null),
+            'municipio' => $this->utilService->valueOrDefault($servidor['municipio'], null),
+            'uf' => $this->utilService->valueOrDefault($servidor['uf'], null),
+            'data_nascimento' => $this->getDataNascimento($servidor, $this->utilService, $this->integracaoConfig['tipo']),
+            'telefone' => $this->utilService->valueOrDefault($servidor['telefone'], null),
+            'vinculo_ativo' => $this->utilService->valueOrDefault($ativo['vinculo_ativo'], null),
+            'matriculasiape' => $this->utilService->valueOrDefault($ativo['matriculasiape'], null),
+            'codigo_cargo' => $this->utilService->valueOrDefault($ativo['tipo'], null),
+            'coduorgexercicio' => $this->utilService->valueOrDefault($ativo['coduorgexercicio'], null, $option = "uorg"),
+            'coduorglotacao' => $this->utilService->valueOrDefault($ativo['coduorglotacao'], null, $option = "uorg"),
+            'codigo_servo_exercicio' => $this->utilService->valueOrDefault($ativo['codigo_servo_exercicio'], null, $option = "uorg"),
+            'nomeguerra' => $this->getNomeDeGuerra($ativo, $servidor, $this->utilService),
+            'codigo_situacao_funcional' => $this->utilService->valueOrDefault($ativo['codsitfuncional'], null),
+            'situacao_funcional' => $this->getSituacaoFuncional($ativo, $this->utilService),
+            'codupag' => $this->utilService->valueOrDefault($ativo['codupag'], null),
+            'dataexercicionoorgao' => $this->getDataExercicio($ativo, $this->utilService, $this->integracaoConfig['tipo']),
+            'funcoes' => $ativo['funcoes'],
+            'matricula' => $this->utilService->valueOrDefault($ativo['matriculasiape'], null),
+            'nome_jornada' => $this->utilService->valueOrDefault($servidor['nome_jornada'], null),
+            'cod_jornada' => $this->utilService->valueOrDefault($servidor['cod_jornada'], null),
+            'modalidade_pgd' => $this->utilService->valueOrDefault($servidor['modalidade_pgd'], null),
+            'participa_pgd' => $this->utilService->valueOrDefault($servidor['participa_pgd'], 'não'),
+            'cpf_chefia_imediata' => $this->getCPFChefiaImediata($servidor, $this->utilService),
+            'email_chefia_imediata' => $this->getEmailChefiaImediata($servidor, $this->utilService),
+            'deleted_at' => null,
+        ];
 
-
+        return $this->createFromDTO(new ServidorDTO($servidor));
     }
 
 

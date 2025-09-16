@@ -274,19 +274,6 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       if (!is_array($dados)) {
         throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Dados de consolidação inválidos");
       }
-
-      /* se array de atividades estiver vazio, não pode concluir */
-      if (count($dados["atividades"] ?? []) == 0) {
-        throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Antes de concluir, é necessário fazer a descrição dos trabalhos executados.");
-      }
-      $IdsEntregasPlanoTrabalho = $consolidacao->planoTrabalho->entregas->pluck('id');
-      /* Para cada ID de entrega, verificar se existe em dados[atividades].plano_trabalho_entrega_id */
-      foreach($IdsEntregasPlanoTrabalho as $IdEntregaPlanoTrabalho) {
-        if(!in_array($IdEntregaPlanoTrabalho, array_column($dados["atividades"] ?? [], "plano_trabalho_entrega_id"))) {
-          throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Para concluir é preciso que todas as entregas tenham atividades associadas");
-        }
-      }
-
       $dataConclusao = new DateTime();
       $consolidacao->data_conclusao = $dataConclusao;
       $consolidacao->save();

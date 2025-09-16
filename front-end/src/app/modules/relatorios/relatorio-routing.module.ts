@@ -6,7 +6,6 @@ import { RelatorioAgenteComponent } from "./relatorio-agente/relatorio-agente.co
 import { RelatorioPlanoEntregaComponent } from "./relatorio-plano-entrega/relatorio-plano-entrega.component";
 import { RelatorioPlanoTrabalhoComponent } from "./relatorio-plano-trabalho/relatorio-plano-trabalho.component";
 import { RelatorioUnidadeComponent } from "./relatorio-unidade/relatorio-unidade.component";
-import { RelatorioErrosEnvioComponent } from "./relatorio-erros-envio/relatorio-erros-envio.component";
 
 const routes: Routes = [
   { path: 'planos-trabalho',
@@ -43,15 +42,6 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     data: { 
       title: "Relatório de Unidades",
-    }
-  }, {
-   path: 'erros-envio',
-    component: RelatorioErrosEnvioComponent,
-    canActivate: [AuthGuard],
-    resolve: { config: ConfigResolver },
-    runGuardsAndResolvers: 'always',
-    data: { 
-      title: "Relatório de Erros de Envio",
     }
   }
 ]

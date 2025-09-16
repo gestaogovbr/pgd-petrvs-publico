@@ -105,25 +105,28 @@ export class FilterComponent extends ComponentBase implements OnInit {
 
     if (this.form!.valid && this.exportExcel) {
       this.grid!.loading = true;
- 
-      this.exportExcel?.(form, queryOptions).subscribe(res => {
-        this.grid!.loading = false;
-        if (res && res.body) {
-          const blob = new Blob([res.body!], {
-            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-          });
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = this.excelFileName;
-          link.click();
-          window.URL.revokeObjectURL(url);
-        }
-      }, error => {
-        console.log(error);
-        this.grid!.loading = false;
-      }); 
+      try {
+        this.exportExcel?.(form, queryOptions).subscribe(res => {
+          if (res && res.body) {
+            const blob = new Blob([res.body!], {
+              type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = this.excelFileName;
+            link.click();
+            window.URL.revokeObjectURL(url);
+          }
+        }, error => {
+          console.log(error);
+        });
 
+        this.grid!.loading = false;
+      } finally {
+        this.grid!.loading = false;
+      }
+      
     }
   }
 }

@@ -14,12 +14,6 @@ class EnvioItem extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
-    const TIPOS = [
-        'trabalho' => 'Plano de Trabalho',
-        'entrega' => 'Plano de Entrega',
-        'participante' => 'Participante',
-    ];
-
     public function usuario()
     {
         return $this->belongsTo(Usuario::class, 'uid');

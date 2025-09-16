@@ -8,9 +8,8 @@ class IntegracaoServidorRepository{
     public function __construct(private IntegracaoServidor $integracaoServidor){
     }
 
-    public function getServidor(string $cpf, string $matricula){
+    public function getUmPeloCPF(string $cpf){
         return $this->integracaoServidor->where('cpf', $cpf)
-        ->where('matriculasiape', $matricula)
         ->orderBy('created_at', 'desc')
         ->first();
     }
@@ -24,11 +23,9 @@ class IntegracaoServidorRepository{
         return $entidade->save();
     }
 
-    public function update(string $cpf, string $matricula ,array $data)
+    public function update(string $cpf, array $data)
     {
-        return (bool) $this->integracaoServidor->where('cpf', $cpf)
-        ->where('matriculasiape', $matricula)
-        ->update($data);
+        return (bool) $this->integracaoServidor->where('cpf', $cpf)->update($data);
     }
    
 }

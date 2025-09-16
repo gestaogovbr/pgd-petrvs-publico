@@ -46,8 +46,8 @@ registerLocaleData(localePt);
     DynamicDialogModule
   ],
   providers: [
-    { provide: LOCALE_ID, useValue: 'pt-BR' },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true },
+    { provide: LOCALE_ID, useValue: 'pt-BR' }
   ],
   bootstrap: [AppComponent]
 })

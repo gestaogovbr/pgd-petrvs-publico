@@ -67,7 +67,7 @@ class Usuario extends Authenticatable implements AuditableContract
         'email', /* varchar(100); NOT NULL; */ // E-mail do usuário
         'email_verified_at', /* timestamp; */ // Data de verificação do e-mail do usuário
         'cpf', /* varchar(14); NOT NULL; */ // CPF do usuário
-        'matricula', /* varchar(50); NOT NULL; */ // Matrícula funcional do usuário
+        'matricula', /* varchar(50); */ // Matrícula funcional do usuário
         'apelido', /* varchar(100); NOT NULL; */ // Apelido/Nome de guerra/Nome social
         'telefone', /* varchar(50); */ // Telefone do usuário
         'sexo', /* enum('MASCULINO','FEMININO'); */ // Sexo do usuário
@@ -82,9 +82,8 @@ class Usuario extends Authenticatable implements AuditableContract
         'data_nascimento',
         'nome_jornada', /* varchar(100); NULL */ // Nome da Jornada
         'cod_jornada', /* int; NULL */ // Codigo da Jornada
-        'ident_unica', /* varchar(50); NULL */ // Identificação única
         'modalidade_pgd', /* varchar(100); NULL */ // Modalidade do usuário no PGD
-        'participa_pgd',/* varchar(50); NULL; */ // Participação do usuário no PGD
+        'participa_pgd',/* enum('sim','não'); */ // Participação do usuário no PGD
         //'deleted_at', /* timestamp; */
         //'remember_token', /* varchar(100); */
         //'password', /* varchar(255); */// Senha do usuário

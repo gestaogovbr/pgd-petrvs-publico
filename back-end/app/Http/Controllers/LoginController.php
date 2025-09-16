@@ -27,13 +27,11 @@ class LoginController extends Controller
     private function registrarEntidade($request, $session = false)
     {
         $with = ["feriados", "gestor", "gestorSubstituto"];
-        $entidadeId = $session ? $request->session()->get('entidade_id') : null;
-        $entidade   = $entidadeId ? Entidade::with($with)->find($entidadeId) : null;
-
+        $entidade = $session ? Entidade::with($with)->find($request->session()->put("entidade_id")) : null;
         $sigla = $request->has('entidade') ? $request->input('entidade') : ($request->headers->has("X-Entidade") ? $request->headers->get("X-Entidade") : config("petrvs")["entidade"]);
         if (empty($entidade) && !empty($sigla)) {
             $entidade = Entidade::with($with)->where("sigla", $sigla)->first();
-            Log::alert("entidade ::" . $sigla, [is_null($entidade)]);
+            Log::alert("entidade ::".$sigla, [is_null($entidade)] );
             $request->session()->put("entidade_id", $entidade->id);
         }
         return $entidade;
@@ -83,16 +81,6 @@ class LoginController extends Controller
         return Auth::user();
     }
 
-    private function isStatelessSanctum(Request $request): bool
-    {
-        return (bool) optional($request->user())->currentAccessToken();
-    }
-
-    private function forceWebGuard(): void
-    {
-        Auth::shouldUse('web');
-    }
-
     /**
      * Seleciona Unidade Atual
      *
@@ -103,54 +91,30 @@ class LoginController extends Controller
     {
         $data = $request->validate([
             'unidade_id' => ['required'],
-            'matricula'  => ['nullable', 'string'],
         ]);
-
-        $this->forceWebGuard();
-
-        if (!Auth::guard('web')->check()) {
-            return LogError::newError('Usuário não logado', new \Exception("selecionaUnidade"));
-        }
-
-        $usuario = Auth::guard('web')->user();
-
-        if (!empty($data['matricula'])) {
-            $usuarioMatricula = Usuario::where('matricula', $data['matricula'])->first();
-
-            if ($usuarioMatricula && $usuarioMatricula->id !== $usuario->id) {
-                Auth::guard('web')->logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                Auth::guard('web')->loginUsingId($usuarioMatricula->id, remember: false);
-                $request->session()->regenerate();
-
-                $usuario = $usuarioMatricula;
-            }
-        }
-
-        $usuario = Usuario::where('id', $usuario->id)
-            ->with(['areasTrabalho' => function ($query) use ($data) {
-                $query->where('unidade_id', $data['unidade_id']);
+        if (Auth::check()) {
+            $usuario = Auth::user();
+            $usuario = Usuario::where("id", $usuario->id)->with(["areasTrabalho" => function ($query) use ($data) {
+                $query->where('unidade_id', $data["unidade_id"]);
             }])->first();
+            if (isset($usuario->areasTrabalho[0]) && !empty($usuario->areasTrabalho[0]->id)) {
+                $request->session()->put("unidade_id", $usuario->areasTrabalho[0]->id);
+                $config = $usuario->config ?? [];
+                $config['unidade_id'] = $data["unidade_id"];
+                $usuario->config = $config;
+                $usuario->save();
 
-        if (!isset($usuario->areasTrabalho[0]) || empty($usuario->areasTrabalho[0]->id)) {
-            return LogError::newError('Unidade não encontrada no usuário', new \Exception("selecionaUnidade"));
+                return response()->json([
+                    "status" => "OK",
+                    "unidade" => Unidade::find($data["unidade_id"])
+                ]);
+            } else {
+                return LogError::newError('Unidade não encontrada no usuário', new Exception("selecionaUnidade"));
+            }
+        } else {
+            return LogError::newError('Usuário não logado', new Exception("selecionaUnidade"));
         }
-
-        $request->session()->put('unidade_id', $data['unidade_id']);
-
-        $config = $usuario->config ?? [];
-        $config['unidade_id'] = $data['unidade_id'];
-        $usuario->config = $config;
-        $usuario->save();
-
-        return response()->json([
-            'status'  => 'OK',
-            'unidade' => Unidade::find($data['unidade_id']),
-        ]);
     }
-
 
     /**
      * Obtem horário da unidade atual do usuário logado (considerando UTC pelo código IBGE)
@@ -185,23 +149,12 @@ class LoginController extends Controller
     public function logout(Request $request, FirebaseAuthService $auth)
     {
         $usuario = self::loggedUser();
-
-        if ($usuario && $this->isStatelessSanctum($request)) {
-            optional($usuario->currentAccessToken())->delete();
-            return response()->json(['status' => 'OK']);
-        }
-
-        $this->forceWebGuard();
-        if (Auth::guard('web')->check()) {
-            Auth::guard('web')->logout();
-        }
-
+        if (!empty($usuario) && !empty($usuario->currentAccessToken())) $usuario->currentAccessToken()->delete();
+        Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
-        return response()->json(['status' => 'OK']);
+        return response()->json(["status" => "OK"]);
     }
-
 
     /**
      * Handle an authentication attempt.
@@ -210,10 +163,8 @@ class LoginController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function authenticateSession(Request $request)
-    {
-         $this->forceWebGuard();
-
-        if (Auth::guard('web')->check()) {
+    {        
+        if (Auth::check()) {
             $entidade = $this->registrarEntidade($request, true);
             $usuario = $this->registrarUsuario($request, self::loggedUser());
             if ($usuario === null) {
@@ -228,7 +179,7 @@ class LoginController extends Controller
             ]);
         } else if (!empty(config("petrvs.auto-login"))) {
             $usuario = Usuario::where('email', config("petrvs.auto-login"))->first();
-            if (isset($usuario) && Auth::guard('web')->loginUsingId($usuario->id)) {
+            if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
                 $request->session()->regenerate();
                 $request->session()->put("kind", "SESSION");
                 $entidade = $this->registrarEntidade($request);
@@ -352,46 +303,8 @@ class LoginController extends Controller
         return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateGoogleToken"), $tokenData);
     }
 
-    /**
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function authenticatePrfGoogleToken(Request $request, GoogleService $auth, IntegracaoService $integracao)
-    {
-        $credentials = $request->validate([
-            'entidade' => ['required'],
-            'token' => ['required']
-        ]);
-        $tokenData = $auth->verifyToken($credentials['token']);
-        if (!isset($tokenData['error'])) {
-            $usuario = Usuario::where('email', $tokenData['email'])->first();
-            if (!isset($usuario) && $integracao->autoIncluir) {
-                $usuario = new Usuario();
-                $lotacao = new UnidadeIntegrante();
-                $service = new IntegracaoService();
-                $service->salvaUsuarioLotacaoGoogle($usuario, $lotacao, $tokenData, $auth);
-            }
-            if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
-                $usuarioService = new UsuarioService();
-                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
-                $request->session()->regenerate();
-                $request->session()->put("kind", "GOOGLE");
-                $entidade = $this->registrarEntidade($request);
-                $usuario = $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"]]);
-                return response()->json([
-                    'success' => true,
-                    "entidade" => $entidade,
-                    "usuario" => $usuario,
-                    "horario_servidor" => CalendarioService::horarioServidor()
-                ]);
-            }
-        }
-        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticatePrfGoogleToken"), $tokenData);
-    }
-
-
+    
+    
     /**
      * Handle an authentication attempt.
      *
@@ -512,95 +425,10 @@ class LoginController extends Controller
         return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateApiGoogleToken"), $tokenData);
     }
 
-    /**
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function authenticateApiPrfGoogleToken(Request $request, GoogleService $auth, IntegracaoService $integracao)
-    {
-        $credentials = $request->validate([
-            'entidade' => ['required'],
-            'token' => ['required'],
-            'device_name' => ['required'],
-        ]);
-        $tokenData = $auth->verifyToken($credentials['token']);
-        if (!isset($tokenData['error'])) {
-            $usuario = Usuario::where('email', $tokenData['email'])->first();
-            if (!isset($usuario) && $integracao->autoIncluir) {
-                $usuario = new Usuario();
-                $lotacao = new UnidadeIntegrante();
-                $service = new IntegracaoService();
-                $service->salvaUsuarioLotacaoGoogle($usuario, $lotacao, $tokenData, $auth);
-            }
-            if (isset($usuario)) { // && Hash::check($request->password, $user->password)
-                $usuarioService = new UsuarioService();
-                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
-                $request->session()->regenerate();
-                $request->session()->put("kind", "GOOGLE");
-                $usuario->save();
-                $entidade = $this->registrarEntidade($request);
-                $usuario = $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"]]);
-                return response()->json([
-                    'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
-                    'entidade' => $entidade,
-                    'usuario' => $usuario,
-                    "horario_servidor" => CalendarioService::horarioServidor()
-                ]);
-            }
-        }
-        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateApiPrfGoogleToken"), $tokenData);
-    }
+    
 
-    /**
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function generateApiPrfSessionToken(Request $request, ApiService $api, IntegracaoService $integracao)
-    {
-        $credentials = $request->validate([
-            'entidade' => ['required'],
-            'token' => ['required']
-        ]);
-        $tenant = Tenant::find($credentials["entidade"]);
-        if (empty($tenant) || empty($tenant->modulo_sei_private_key)) return LogError::newError('ENTITY_NOT_FOUND');
-        tenancy()->initialize($tenant);
-        $privateKey = "-----BEGIN PRIVATE KEY-----\n" . $tenant->modulo_sei_private_key . "\n-----END PRIVATE KEY-----";
-        //$entidade = Entidade::where("sigla", $credentials["entidade"])->first();
-        //if (empty($entidade)) return LogError::newError('ENTITY_NOT_FOUND');
-        $tokenData = $api->verifyToken($credentials['token'], $privateKey, $credentials["entidade"]);
-        if (!isset($tokenData['error'])) {
-            $usuario = !empty($tokenData['email']) ? Usuario::where('email', $tokenData['email'])->first() :
-                Usuario::where('cpf', $tokenData['cpf'])->first();
-            if (!isset($usuario) && $integracao->autoIncluir) {
-                $usuario = new Usuario();
-                $lotacao = new UnidadeIntegrante();
-                $service = new IntegracaoService();
-                $service->salvaUsuarioLotacaoApi($usuario, $lotacao, $tokenData, $api);
-            }
-            if (isset($usuario)) { // && Hash::check($request->password, $user->password)
-                $request->session()->regenerate();
-                $request->session()->put("kind", "SEI");
-                $usuario->save();
-                $entidade = $this->registrarEntidade($request);
-                $usuario = $this->registrarUsuario($request, $usuario, !empty($tokenData["id_sei"]) ? ['id_sei' => $tokenData["id_sei"]] : []);
-                return response()->json([
-                    'token' => $usuario->createToken("SEI_" . $tokenData["id_sei"])->plainTextToken,
-                    'entidade' => $entidade,
-                    'usuario' => $usuario,
-                    "horario_servidor" => CalendarioService::horarioServidor()
-                ]);
-            } else {
-                return LogError::newError('USER_NOT_FOUND', new Exception("generateApiPrfSessionToken"), $tokenData);
-            }
-        }
-        return LogError::newError('As credenciais fornecidas são inválidas.' . $tokenData['error'], new Exception("generateApiPrfSessionToken"), $tokenData);
-    }
-
-
+    
+    
     /**
      * Verify an firebase token
      *
@@ -634,11 +462,9 @@ class LoginController extends Controller
     {
         if ($config) {
             /**
-             * @disregard P1009 Undefined type
+             * @disregard P1013 Undefined method
              * @phpstan-ignore-next-line
              */
-            // @php-ignore
-            // @phpstan-ignore-next-line
             return Socialite::driver('azure')->setConfig($config);
         }
         return Socialite::driver('azure');
@@ -707,11 +533,9 @@ class LoginController extends Controller
         if ($config) {
             // O método setConfig existe mesmo VSCode dizendo que não.
             /**
-             * @disregard P1009 Undefined type
+             * @disregard P1013 Undefined method
              * @phpstan-ignore-next-line
              */
-            // @php-ignore
-            // @phpstan-ignore-next-line
             return Socialite::driver('govbr')->setConfig($config);
         }
         return Socialite::driver('govbr');
@@ -734,31 +558,32 @@ class LoginController extends Controller
         );
     }
 
-    public function signInGovBrRedirect(Request $request)
-    {
-        try {
-            $entidade = $this->registrarEntidade($request);
+   public function signInGovBrRedirect(Request $request)
+{
+    try {
+        $entidade = $this->registrarEntidade($request);
 
-            $url_dinamica_callback = config("services.govbr.redirect") . $entidade->sigla;
-            $dados = [
-                "code_challenge" => config("services.govbr.code_challenge"),
-                "code_challenge_method" => config("services.govbr.code_challenge_method"),
-            ];
+        $url_dinamica_callback = config("services.govbr.redirect") . $entidade->sigla;
+        $dados = [
+            "code_challenge" => config("services.govbr.code_challenge"),
+            "code_challenge_method" => config("services.govbr.code_challenge_method"),
+        ];
 
-            $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback, $dados);
+        $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback, $dados);
 
-            return $this->govBrProvider($config = $login_govbr_select_tenancy)
-                ->scopes(['openid', 'email', 'profile'])
-                ->redirect();
-        } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error("Erro ao redirecionar para o GovBr", [
-                'erro' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+        return $this->govBrProvider($config = $login_govbr_select_tenancy)
+            ->scopes(['openid', 'email', 'profile'])
+            ->redirect();
 
-            return redirect()->route('erro.500');
-        }
+    } catch (\Throwable $e) {
+        Log::error("Erro ao redirecionar para o GovBr", [
+            'erro' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return redirect()->route('erro.500'); 
     }
+}
 
 
     public function signInGovBrCallback(Request $request)
@@ -799,21 +624,20 @@ class LoginController extends Controller
                     ->redirect();
             }
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error("Erro em callback do GovBr", [
+            Log::error("Erro em callback do GovBr", [
                 'erro' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return redirect()->route('erro.500');
+            return redirect()->route('erro.500'); 
         }
     }
 
-    private function stimulusRouteGovBr()
-    {
-        $response = Http::get('sso.acesso.gov.br/token');
-        if ($response->unauthorized() != 401) {
-            return LogError::newWarn('Falha de conexão ao GovBR.');
-        }
-        return $response;
+    private function stimulusRouteGovBr(){
+      $response = Http::get('sso.acesso.gov.br/token');
+      if ($response->unauthorized() != 401) {
+        return LogError::newWarn('Falha de conexão ao GovBR.');
+      }
+      return $response;
     }
 }
