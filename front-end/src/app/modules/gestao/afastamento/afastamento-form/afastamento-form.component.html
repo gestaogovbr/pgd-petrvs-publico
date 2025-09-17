@@ -5,8 +5,14 @@
         <input-search [size]="6" #tipoMotivoAfastamento controlName="tipo_motivo_afastamento_id" [dao]="tipoMotivoAfastamentoDao" required label="Motivo"></input-search>
     </div>
     <div class="row">
-        <input-datetime [date]="isHoras() ? undefined : ''" [size]="6" label="Início" controlName="data_inicio"></input-datetime>
-        <input-datetime [date]="isHoras() ? undefined : ''" [size]="6" label="Fim" controlName="data_fim"></input-datetime>
+        <input-datetime [date]="isHoras() ? undefined : ''" [size]="4" label="Início" controlName="data_inicio"></input-datetime>
+        <input-datetime [date]="isHoras() ? undefined : ''" [size]="4" label="Fim" controlName="data_fim"></input-datetime>
+        <input-number
+            [size]="4"
+            label="Horas para compensação"
+            [control]="form!.controls.horas"
+            controlName="horas"
+        ></input-number>
     </div>
     <div class="row">
         <input-textarea [size]="12" [rows]="3" label="Observações" controlName="observacoes" [attr.maxlength]=250></input-textarea>
