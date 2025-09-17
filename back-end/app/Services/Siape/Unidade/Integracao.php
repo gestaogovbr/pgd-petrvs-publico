@@ -74,9 +74,13 @@ class Integracao implements InterfaceIntegracao
         $integranteNovoOuExistente = $this->criaVinculoDoUsuarioComUnidade($usuario->id, $unidadeDestino->id);
 
         if (empty($vinculoDTO->atribuicoes)) {
-            array_push($this->atribuicoesFinais, ["O vínculo de LOTADO não pode ser apagado; apenas transferido, através da atribuição de lotação em outra unidade."]);
-            $this->limpaTodasAtribuicoesMenosLotado($usuario, $integranteNovoOuExistente);
-            return ;
+            if($this->usuarioTemPlanodeTrabalhoAtivo($usuario, $unidadeDestino)){
+                throw new ServerException("ValidateIntegrante", sprintf("O servidor possui plano de trabalho ativo na unidade %s", $unidadeDestino->sigla));
+            } else {
+                array_push($this->atribuicoesFinais, ["O vínculo de LOTADO não pode ser apagado; apenas transferido, através da atribuição de lotação em outra unidade."]);
+                $this->limpaTodasAtribuicoesMenosLotado($usuario, $integranteNovoOuExistente);
+                return ;
+            }
         }
         
         $todasLotacoesAntigas = $usuario->getUnidadesAtribuicoesAttribute();
