@@ -627,22 +627,14 @@ class PlanoEntregaService extends ServiceBase
         $dataInicio = new DateTime($planoEntrega["data_inicio"]);
         $dataFim = new DateTime($planoEntrega["data_fim"]);
 
-        $planosDaUnidade = PlanoEntrega::where('unidade_id', $planoEntrega["unidade_id"])
-            ->where('status', '!=', 'CANCELADO')
-            ->where(function ($query) use ($dataInicio, $dataFim) {
-                $query->where(function ($q) use ($dataInicio, $dataFim) {
-                    $q->where('data_inicio', '<=', $dataInicio)
-                      ->where('data_fim', '>=', $dataInicio);
-                })->orWhere(function ($q) use ($dataInicio, $dataFim) {
-                    $q->where('data_inicio', '<=', $dataFim)
-                      ->where('data_fim', '>=', $dataFim);
-                })->orWhere(function ($q) use ($dataInicio, $dataFim) {
-                    $q->where('data_inicio', '>=', $dataInicio)
-                      ->where('data_fim', '<=', $dataFim);
-                });
-            })
-            ->where("id", "!=", UtilService::valueOrNull($planoEntrega, "id"))
-            ->get();
+        $planosDaUnidade = PlanoEntrega::where('unidade_id', $planoEntrega['unidade_id'])
+        ->where('status', '!=', 'CANCELADO')
+        ->where(function ($query) use ($dataInicio, $dataFim) {
+            $query->where('data_inicio', '<=', $dataFim)
+                ->where('data_fim', '>=', $dataInicio);
+        })
+        ->where('id', '!=', UtilService::valueOrNull($planoEntrega, 'id'))
+        ->get();
 
         return $planosDaUnidade->count() > 0;
     }
