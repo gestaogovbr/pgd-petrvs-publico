@@ -78,7 +78,7 @@ class RelatorioPlanoTrabalhoExport implements FromCollection, WithMapping, WithH
             PlanoTrabalho::STATUSES[$row->status],
             Date::stringToExcel($row->dataInicio),
             Date::stringToExcel($row->dataFim),
-            $inicio->diffInDays($fim),
+            $row->duracao,
             $row->qtdePeriodosAvaliativos
         ];
     }
