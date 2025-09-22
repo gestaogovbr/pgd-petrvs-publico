@@ -1,3 +1,8 @@
+## 2.6.5 22/09/2025
+### Corrigido
+- Alerta do PT em unidade diferente aparecendo mesmo quando está sendo feito na própria unidade de lotação
+- Corrigido colaborador externo com dados no SIAPE (agora deixará de ser externo e se tornará um colaborador do sistema).
+
 ## 2.6.4 10/09/2025
 ### Corrigido
 - Correção de constraint de chave estrangeira na modalidade PGD
