@@ -7,12 +7,6 @@
         php_value max_execution_time 1200
     </IfModule>
 
-    <IfModule mod_headers.c>
-        <If "%{HTTP_HOST} == 'hmg.pgdpetrvs.gestao.gov.br/'">
-            Header set X-Robots-Tag "noindex, nofollow"
-        </If>
-    </IfModule>
-
     <FilesMatch "\.(jpg|gif|js|json|ico|css|png|jpeg|ttf|otf|eot|woff|woff2|md)$">
         Header unset Access-Control-Allow-Origin
         Header add Access-Control-Allow-Origin "*"

@@ -26,15 +26,6 @@
                 [control]="filter!.controls.unidade_id" 
                 controlName="unidade_id" 
                 [dao]="unidadeDao"
-                [selectRoute]="{
-                    route: ['configuracoes', 'unidade'],
-                    params: auth.hasPermissionTo('MOD_RELATORIO_PT_TODAS_UNIDADES')
-                    ? { }
-                    : { unidade_pai: auth.unidade?.id }
-                }"
-                [where]="auth.hasPermissionTo('MOD_RELATORIO_PT_TODAS_UNIDADES')
-                    ? []
-                    : [['id', 'in', this.unidades]]"
             ></input-search>  
             <input-datetime
                 [size]="2"

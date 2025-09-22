@@ -20,7 +20,7 @@ import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.
 })
 export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, UsuarioDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent
-  public usuario?: Usuario|null;
+  public usuarios: Usuario[] = [];
   public integranteDao: UnidadeIntegranteDaoService;
   public erros: string = '';
   public log: string = '';
@@ -149,7 +149,7 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
     }
 
     if(this.metadata?.usuario) {
-      this.usuario = this.metadata?.usuario;
+      this.usuarios = Array.isArray(this.metadata?.usuario) ? this.metadata?.usuario : [this.metadata?.usuario];
     }
 
     if(this.metadata?.dadosPessoais) {
@@ -198,6 +198,10 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
     }
   }
 
+  public getIntegrantesByUsuario(usuarioId: string): IntegranteConsolidado[] {
+    return this.integrantes.filter(integrante => integrante.usuario_id === usuarioId);
+  }
+
   public async loadUsuario() {
     this.loading = true;
     try {
@@ -206,12 +210,14 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
         .asPromise();
 
       if (usuarios) {
-        this.usuario = usuarios[0];
+        this.usuarios = usuarios;
       }
 
-      if (this.usuario) {
-        const integrantesList = await this.integranteDao!.carregarIntegrantes("", this.usuario.id);
-        this.integrantes = integrantesList.integrantes.filter(integrante => integrante.atribuicoes?.length > 0);
+      this.integrantes = [];
+      for (const usuario of this.usuarios) {
+        const integrantesList = await this.integranteDao!.carregarIntegrantes("", usuario.id);
+        const integrantesUsuario = integrantesList.integrantes.filter(integrante => integrante.atribuicoes?.length > 0);
+        this.integrantes.push(...integrantesUsuario);
       }
     } finally {
       this.loading = false;
