@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        $this->version("2.6.4");
+        $this->version("2.6.5");
     }
 
     /**
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down()
     {
-        $this->version("2.6.3");
+        $this->version("2.6.4");
     }
 };

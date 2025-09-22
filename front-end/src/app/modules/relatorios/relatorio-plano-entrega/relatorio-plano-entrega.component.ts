@@ -28,7 +28,6 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
   public unidadeId: string = '';
   public loaded: boolean = false;
   public tiposNotas: LookupItem[] = [];
-  public unidades?: any[];
 
   constructor(public injector: Injector, dao: RelatorioPlanoEntregaDaoService) {
       super(injector, RelatorioPlanoEntrega, RelatorioPlanoEntregaDaoService);
@@ -62,19 +61,10 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
         });
 
       
-      this.filter!.get('unidade_id')?.setValidators([
-        this.lotacaoValidator.bind(this),
-        this.requiredValidator.bind(this)
-      ]);
-
+      this.filter!.get('unidade_id')?.setValidators(this.requiredValidator.bind(this));
       this.filter.get('unidade_id')?.updateValueAndValidity();
 
       this.orderBy = [['unidadeHierarquia', 'asc'], ['numero', 'asc']];
-  }
-
-  public lotacaoValidator(control: AbstractControl): ValidationErrors | null
-  {
-    return !this.auth.unidade ? { errorMessage: "Usuário sem unidade de lotação" } : null;
   }
 
   public requiredValidator(control: AbstractControl): ValidationErrors | null { 
@@ -83,13 +73,6 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
 
   public async ngOnInit() {
       super.ngOnInit();
-
-      if (this.auth.unidade) {
-        const unidades = (await this.unidadeDao.subordinadas(this.auth?.unidade?.id))
-          .map((item: any) => item.id);
-        unidades.push(this.auth.unidade.id);
-        this.unidades = unidades;
-      }
 
       this.tipoAvaliacaoNotaDao.query({ orderBy: [['sequencia', 'asc']] })
           .asPromise().then(notas => {
