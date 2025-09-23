@@ -26,18 +26,6 @@
     } catch (e) {
       console.log("A configuração será carregada pelo environment-config");
     }     
-
-    document.addEventListener("DOMContentLoaded", function() {
-      const host = window.location.hostname;
-
-      // não indexa o petrvs se não for produção
-      if (host.includes("dsv") || host.includes("hmg") || host.includes("localhost")) {
-        const meta = document.createElement("meta");
-        meta.name = "robots";
-        meta.content = "noindex, nofollow";
-        document.head.appendChild(meta);
-      }
-    });
   </script>
   <script src="http://localhost/environment-config"></script>
 </head>

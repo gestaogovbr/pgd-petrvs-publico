@@ -424,16 +424,8 @@ class TipoCapacidadeService extends ServiceBase
         "descricao" => "Relatório de Planos de Trabalho",
     ],
     [
-        "codigo" => "MOD_RELATORIO_PT_TODAS_UNIDADES",
-        "descricao" => "Relatório de Planos de Trabalho - Listar todas as unidades",
-    ],
-    [
         "codigo" => "MOD_RELATORIO_PE",
         "descricao" => "Relatório de Planos de Entrega",
-    ],
-    [
-        "codigo" => "MOD_RELATORIO_PE_TODAS_UNIDADES",
-        "descricao" => "Relatório de Planos de Entrega - Listar todas as unidades",
     ],
     [
         "codigo" => "MOD_RELATORIO_USUARIO",

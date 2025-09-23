@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\IntegracaoServidorRepository;
 use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
-use App\Services\Siape\Servidor\Integracao;
+use App\Services\Siape\Servidor\Integracao as ServidorIntegracao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Facades\SiapeLog;
@@ -553,7 +553,7 @@ class IntegracaoService extends ServiceBase
 
           $integracaoServidoresRepository = new IntegracaoServidorRepository(new IntegracaoServidor);
           try {
-            $integracaoServidorProcessar =  new Integracao(
+            $integracaoServidorProcessar =  new ServidorIntegracao(
               $integracaoServidoresRepository,
               $this->UtilService
             );
@@ -724,10 +724,10 @@ class IntegracaoService extends ServiceBase
                 $dbResult = $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
               } catch (\Throwable $th) {
                 report($th);
-                SiapeLog::error("IntegracaoService: Durante integração não foi possível alterar lotação!", [$dbResult, $vinculo]);
+                SiapeLog::error("IntegracaoService: Durante integração não foi possível alterar lotação!", [$vinculo]);
               }
-              if (!$dbResult) {
-                SiapeLog::error("IntegracaoService: Houve uma falha na tentantiva de alterar a lotação", [$dbResult, $vinculo]);
+              if (!isset($dbResult)) {
+                SiapeLog::error("IntegracaoService: Houve uma falha na tentantiva de alterar a lotação", [$vinculo]);
               } else {
                 array_push($atualizacoesLotacoesResult, $dbResult);
               }
@@ -1136,5 +1136,57 @@ class IntegracaoService extends ServiceBase
 
     SiapeLog::warning("Modalidade '{$modalidadeString}' não encontrada na tabela tipos_modalidades_siape. Valor será definido como null.");
     return null;
+  }  
+  
+  private function verificarUsuariosExternosIntegracao(): void
+  {
+    try {
+      $usuariosExternos = DB::select(
+        "SELECT u.* FROM usuarios AS u 
+         INNER JOIN integracao_servidores AS ise ON u.matricula = ise.matriculasiape 
+         WHERE u.usuario_externo = 1"
+      );
+
+      if (empty($usuariosExternos)) {
+        return;
+      }
+
+      SiapeLog::info(sprintf("Encontrados %d usuários externos para atualizar.", count($usuariosExternos)));
+
+      foreach ($usuariosExternos as $usuarioData) {
+        DB::update(
+          "UPDATE usuarios SET usuario_externo = 0 WHERE id = ?",
+          [$usuarioData->id]
+        );
+
+        $usuario = Usuario::find($usuarioData->id);
+        if ($usuario && $usuario->perfil) {
+          $perfilColaborador = $this->nivelAcessoService->getPerfilColaborador();
+          $perfilParticipante = $this->nivelAcessoService->getPerfilParticipante();
+
+          if ($perfilColaborador && $perfilParticipante && 
+              $usuario->perfil->id === $perfilColaborador->id) {
+            $this->perfilService->alteraPerfilUsuario($usuario->id, $perfilParticipante->id);
+            SiapeLog::info(sprintf(
+              "Usuário %s (%s) teve perfil alterado de Colaborador para Participante.",
+              $usuario->nome,
+              $usuario->matricula
+            ));
+          }
+        }
+
+        SiapeLog::info(sprintf(
+          "Usuário %s (%s) atualizado: usuario_externo = 0.",
+          $usuarioData->nome,
+          $usuarioData->matricula
+        ));
+      }
+    } catch (Throwable $e) {
+      report($e);
+      SiapeLog::error(sprintf(
+        "Erro ao verificar usuários externos na integração: %s",
+        $e->getMessage()
+      ));
+    }
   }
 }

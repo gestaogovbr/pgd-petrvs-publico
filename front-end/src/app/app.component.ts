@@ -16,7 +16,7 @@ import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 import { UnidadeService } from './services/unidade.service';
 
-export type Contexto = "EXECUCAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
+export type Contexto = "EXECUCAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX" ;
 export type Schema = {
   name: string,
   permition?: string,
@@ -92,6 +92,7 @@ export class AppComponent {
   public moduloExecucao: any;
   public moduloAdministrador: any;
   public moduloDev: any;
+  public moduloSiape: any;
   public unidadeService: UnidadeService;
   private _menu: any;
   private _menuDetectChanges: any;
@@ -186,6 +187,8 @@ export class AppComponent {
       LOGS_ENVIOS: { name: "Log dos Envios à API PGD", permition: '', route: ['logs', 'envios'], icon: this.entity.getIcon('Envio') },
       DEV_CPF_CONSULTA_SIAPE: { name: "Consulta CPF SIAPE", permition: '', route: ['consultas', 'cpf-siape'], icon: this.entity.getIcon('ConsultaCPFSIAPE') },
       DEV_UNIDADE_CONSULTA_SIAPE: { name: "Consulta Unidade SIAPE", permition: '', route: ['consultas', 'unidade-siape'], icon: this.entity.getIcon('ConsultaUnidadeSIAPE') },
+      /* SIAPE */
+      BLACKLIST_SERVIDOR: { name: "Blacklist Servidor", permition: '', route: ['siape', 'blacklist-servidor'], icon: 'bi bi-person-x' },
             /* RELATORIOS */
       RELATORIO_PLANO_TRABALHO: {
         name: this.lex.translate("Planos de Trabalho"),
@@ -381,15 +384,17 @@ export class AppComponent {
       id: "navbarDropdownDevConsultas",
       menu: [
         this.menuSchema.DEV_CPF_CONSULTA_SIAPE,
-        this.menuSchema.DEV_UNIDADE_CONSULTA_SIAPE
+        this.menuSchema.DEV_UNIDADE_CONSULTA_SIAPE,
+        this.menuSchema.BLACKLIST_SERVIDOR
       ]
     }];
+
 
     this.menuContexto = [
       { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.moduloGestao },
       { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.moduloExecucao },
       { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: this.lex.translate("Administrador"), menu: this.moduloAdministrador },
-      { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.moduloDev }
+      { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.moduloDev },
     ]
 
   }

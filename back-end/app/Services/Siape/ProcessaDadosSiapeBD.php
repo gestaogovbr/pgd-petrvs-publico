@@ -6,7 +6,7 @@ use App\Exceptions\ErrorDataSiapeException;
 use App\Exceptions\ErrorDataSiapeFaultCodeException;
 use App\Exceptions\RequestConectaGovException;
 use App\Facades\SiapeLog;
-use App\Models\SiapeBlackListServidores;
+use App\Models\SiapeBlackListServidor;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeDadosUORG;
@@ -208,7 +208,7 @@ class ProcessaDadosSiapeBD
         if ($fault && isset($fault[0]->faultcode) && (string) $fault[0]->faultcode === Erros::faultcode 
         && isset($fault[0]->faultstring) && 
         (string) $fault[0]->faultstring === Erros::getFaultStringNaoExistemDados()) {
-            SiapeBlackListServidores::firstOrCreate(
+            SiapeBlackListServidor::firstOrCreate(
                 ['cpf' => $cpf],
                 ['id' => (string) Str::uuid(), 'response' => $response]
             );
@@ -241,7 +241,7 @@ class ProcessaDadosSiapeBD
 
     private function cpfNaBlackList(string $cpf): bool
     {
-        return SiapeBlackListServidores::where('cpf', $cpf)
+        return SiapeBlackListServidor::where('cpf', $cpf)
             ->exists();
     }
 }
