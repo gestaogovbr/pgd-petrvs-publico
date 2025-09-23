@@ -103,7 +103,7 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
     let fim = this.util.asDate(this.form!.controls.data_fim.value);
     if(this.consolidacao && inicio && fim && (this.util.daystamp(inicio) < this.util.daystamp(this.consolidacao.data_inicio) || 
       this.util.daystamp(fim) > this.util.daystamp(this.consolidacao.data_fim))) {
-      result = "Atenção: Data da consolidação do plano é de " + this.util.getDateFormatted(this.consolidacao.data_inicio) + " a " + this.util.getDateFormatted(this.consolidacao.data_fim);
+      //result = "Atenção: Data da consolidação do plano é de " + this.util.getDateFormatted(this.consolidacao.data_inicio) + " a " + this.util.getDateFormatted(this.consolidacao.data_fim);
     }
     return result;
   }
