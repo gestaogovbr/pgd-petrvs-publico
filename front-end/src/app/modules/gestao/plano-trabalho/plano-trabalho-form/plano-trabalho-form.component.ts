@@ -35,6 +35,7 @@ import moment from 'moment';
 import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
 import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
 import { UnidadeIntegrante } from 'src/app/models/unidade-integrante.model';
+import { UnidadeIntegranteAtribuicao } from 'src/app/models/unidade-integrante-atribuicao.model';
 
 @Component({
   selector: 'plano-trabalho-form',
@@ -92,7 +93,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       "entregas.plano_entrega_entrega:id,plano_entrega_id", 
       "usuario.participacoes_programas",
       "usuario.lotacao",
-      "usuario.areas_trabalho",
+      "usuario.areas_trabalho.atribuicoes",
       "usuario.unidades",
       "programa.template_tcr", 
       "tipo_modalidade", 
@@ -337,10 +338,16 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
    * @param usuario - Entidade do usuário selecionado
    */
   private processarUnidadesUsuario(usuario: Usuario): void {
-    const unidadeIds = usuario.areas_trabalho?.map((at: UnidadeIntegrante) => at.unidade_id) || [];
+    const unidadeIds = usuario.areas_trabalho?.map((at: UnidadeIntegrante) => {
+      let usuarioAtribuicoes = at.atribuicoes.map((a: UnidadeIntegranteAtribuicao) => a.atribuicao);
+      if (usuarioAtribuicoes.length == 1 && usuarioAtribuicoes.includes('GESTOR_DELEGADO')) {
+        return [];
+      }
+      return at.unidade_id;
+    }) || [];
     
     this.usuarioUnidades = usuario.unidades?.filter((unidade: Unidade) => 
-      unidadeIds.includes(unidade.id)
+      unidadeIds.flat().includes(unidade.id)
     ).map((unidade: Unidade) => ({
       key: unidade.id,
       value: `${unidade.sigla} - ${unidade.nome}`
