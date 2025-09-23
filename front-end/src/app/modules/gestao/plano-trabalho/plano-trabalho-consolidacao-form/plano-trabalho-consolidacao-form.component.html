@@ -134,7 +134,7 @@
     </columns>
   </grid>
 </separator>
-<separator collapse [collapsed]="false" [title]="lex.translate('Afastamentos')" [icon]="entityService.getIcon('Afastamento')">
+<separator collapse [collapsed]="false" [title]="lex.translate('Ocorrências')" [icon]="entityService.getIcon('Afastamento')">
   <grid [items]="itemsAfastamentos" [minHeight]="0" #gridAfastamento [hasEdit]="false" [hasDelete]="false" [hasAdd]="!disabled" [add]="addAfastamento.bind(this)" editable>
     <columns>
       <column title="Início" [width]="300" type="datetime" field="data_inicio"></column>

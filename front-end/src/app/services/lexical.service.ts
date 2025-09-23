@@ -26,7 +26,7 @@ export class LexicalService {
   public defaults: Translate = {
     "adesao": {single: "adesão", plural: "adesões", female: true},
     "administrador": {single: "administrador", plural: "administradores", female: false},
-    "afastamento": {single: "afastamento", plural: "afastamentos", female: false},
+    "afastamento": {single: "ocorrência", plural: "ocorrências", female: true},
     "área de trabalho": {single: "área de trabalho", plural: "áreas de trabalho", female: true},
     "area do conhecimento": {single: "area do conhecimento", plural: "areas dos conhecimentos", female: true},
     "atividade": {single: "atividade", plural: "atividades", female: false},
