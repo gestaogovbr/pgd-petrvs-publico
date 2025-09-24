@@ -76,6 +76,9 @@ class PlanoTrabalhoService extends ServiceBase
         $unidadeId = $this->extractWhere($data, "unidade_id");
         if (is_array($unidadeId) && isset($unidadeId[2])) {
             $ids[] = $unidadeId[2];
+            if(is_array($ids) && is_array($ids[0]))
+                $ids = array_unique(...$ids);
+            
             $data["where"][] = ['unidade_id', 'in', array_unique($ids)];
 
         }
