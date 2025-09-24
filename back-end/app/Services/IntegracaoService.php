@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\IntegracaoServidorRepository;
 use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
-use App\Services\Siape\Servidor\Integracao;
+use App\Services\Siape\Servidor\Integracao as ServidorIntegracao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Facades\SiapeLog;
@@ -553,7 +553,7 @@ class IntegracaoService extends ServiceBase
 
           $integracaoServidoresRepository = new IntegracaoServidorRepository(new IntegracaoServidor);
           try {
-            $integracaoServidorProcessar =  new Integracao(
+            $integracaoServidorProcessar =  new ServidorIntegracao(
               $integracaoServidoresRepository,
               $this->UtilService
             );
@@ -688,6 +688,8 @@ class IntegracaoService extends ServiceBase
 
               $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->cpf_servidor);
 
+               $modalidadePgdValida = $this->validarModalidadePgd($linha->modalidade_pgd);
+
               DB::update($sqlUpdateDados, [
                 'nome'          => $linha->nome_servidor,
                 'nomeguerra'    => $linha->nome_guerra,
@@ -696,7 +698,7 @@ class IntegracaoService extends ServiceBase
                 'telefone'      => $linha->telefone,
                 'cod_jornada'      => $linha->cod_jornada,
                 'nome_jornada'      => $linha->nome_jornada,
-                'modalidade_pgd' => $linha->modalidade_pgd,
+                'modalidade_pgd' => $modalidadePgdValida,
                 'participa_pgd' => $linha->participa_pgd,
                 'id'            => $linha->id,
                 'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
@@ -722,10 +724,10 @@ class IntegracaoService extends ServiceBase
                 $dbResult = $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
               } catch (\Throwable $th) {
                 report($th);
-                SiapeLog::error("IntegracaoService: Durante integração não foi possível alterar lotação!", [$dbResult, $vinculo]);
+                SiapeLog::error("IntegracaoService: Durante integração não foi possível alterar lotação!", [$vinculo]);
               }
-              if (!$dbResult) {
-                SiapeLog::error("IntegracaoService: Houve uma falha na tentantiva de alterar a lotação", [$dbResult, $vinculo]);
+              if (!isset($dbResult)) {
+                SiapeLog::error("IntegracaoService: Houve uma falha na tentantiva de alterar a lotação", [$vinculo]);
               } else {
                 array_push($atualizacoesLotacoesResult, $dbResult);
               }
@@ -1107,6 +1109,84 @@ class IntegracaoService extends ServiceBase
       $unidadeRaiz->codigo = $siapeUnidadeRaiz->codigo_siape;
       SiapeLog::info(sprintf("Corrigindo unidade raiz %s", $siapeUnidadeRaiz->siglauorg));
       $unidadeRaiz->save();
+    }
+  }
+  private function validarModalidadePgd($modalidadeString)
+  {
+    if (empty($modalidadeString)) {
+      return null;
+    }
+
+    if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $modalidadeString)) {
+      $exists = DB::table('tipos_modalidades_siape')
+        ->where('id', $modalidadeString)
+        ->exists();
+      
+      return $exists ? $modalidadeString : null;
+    }
+
+    $modalidade = DB::table('tipos_modalidades_siape')
+      ->where('nome', $modalidadeString)
+      ->first();
+
+    if ($modalidade) {
+      SiapeLog::info("Modalidade '{$modalidadeString}' convertida para UUID: {$modalidade->id}");
+      return $modalidade->id;
+    }
+
+    SiapeLog::warning("Modalidade '{$modalidadeString}' não encontrada na tabela tipos_modalidades_siape. Valor será definido como null.");
+    return null;
+  }  
+  
+  private function verificarUsuariosExternosIntegracao(): void
+  {
+    try {
+      $usuariosExternos = DB::select(
+        "SELECT u.* FROM usuarios AS u 
+         INNER JOIN integracao_servidores AS ise ON u.matricula = ise.matriculasiape 
+         WHERE u.usuario_externo = 1"
+      );
+
+      if (empty($usuariosExternos)) {
+        return;
+      }
+
+      SiapeLog::info(sprintf("Encontrados %d usuários externos para atualizar.", count($usuariosExternos)));
+
+      foreach ($usuariosExternos as $usuarioData) {
+        DB::update(
+          "UPDATE usuarios SET usuario_externo = 0 WHERE id = ?",
+          [$usuarioData->id]
+        );
+
+        $usuario = Usuario::find($usuarioData->id);
+        if ($usuario && $usuario->perfil) {
+          $perfilColaborador = $this->nivelAcessoService->getPerfilColaborador();
+          $perfilParticipante = $this->nivelAcessoService->getPerfilParticipante();
+
+          if ($perfilColaborador && $perfilParticipante && 
+              $usuario->perfil->id === $perfilColaborador->id) {
+            $this->perfilService->alteraPerfilUsuario($usuario->id, $perfilParticipante->id);
+            SiapeLog::info(sprintf(
+              "Usuário %s (%s) teve perfil alterado de Colaborador para Participante.",
+              $usuario->nome,
+              $usuario->matricula
+            ));
+          }
+        }
+
+        SiapeLog::info(sprintf(
+          "Usuário %s (%s) atualizado: usuario_externo = 0.",
+          $usuarioData->nome,
+          $usuarioData->matricula
+        ));
+      }
+    } catch (Throwable $e) {
+      report($e);
+      SiapeLog::error(sprintf(
+        "Erro ao verificar usuários externos na integração: %s",
+        $e->getMessage()
+      ));
     }
   }
 }
