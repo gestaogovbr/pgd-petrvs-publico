@@ -1,5 +1,6 @@
 ## 2.7.0 29/09/2025
-
+### Corrigido
+- Corrigido regra para clonar planos de entrega
 ## 2.6.5 22/09/2025
 ### Corrigido
 - Alerta do PT em unidade diferente aparecendo mesmo quando está sendo feito na própria unidade de lotação
