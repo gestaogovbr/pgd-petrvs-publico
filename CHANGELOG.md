@@ -1,7 +1,14 @@
 ## 2.7.0 29/09/2025
+### Adicionado
+- Registro de Horas nos Afastamentos
+- Exclusão de Colaboradores externos
 ### Corrigido
 - Corrigido regra para clonar planos de entrega
 - Corrigido criação dos registros de execução após edição do plano de trabalho
+- Correção na Nota e Situação de Reavaliação no Relatório de Planos de Trabalho
+### Modificado
+- Afastamentos passam a ser denominados de Ocorrências
+
 ## 2.6.5 22/09/2025
 ### Corrigido
 - Alerta do PT em unidade diferente aparecendo mesmo quando está sendo feito na própria unidade de lotação
