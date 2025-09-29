@@ -34,6 +34,11 @@
                 <span> {{dao!.getDateFormatted(row.data_fim)}}</span>
             </ng-template>
         </column>
+        <column title="Horas" [template]="columnHoras">
+            <ng-template let-row="row" #columnHoras>
+                <span> {{row.horas}}</span>
+            </ng-template>
+        </column>
         <column title="Observações" field="observacoes"></column>
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>

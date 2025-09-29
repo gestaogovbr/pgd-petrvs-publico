@@ -9,6 +9,7 @@ export class Afastamento extends Base {
     public observacoes: string | null = null; /* Observação sobre o afastamento */
     public data_inicio: Date = new Date(); /* Início do afastamento  */
     public data_fim: Date = new Date(); /* Fim do afastamento */
+    public horas: number|null = null /*  */
     public usuario_id: string = "" /*  */
     public tipo_motivo_afastamento_id: string = ""; /*  */
 

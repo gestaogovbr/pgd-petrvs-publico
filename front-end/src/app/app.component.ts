@@ -149,7 +149,7 @@ export class AppComponent {
       // TIPOS_MOTIVOS_AFASTAMENTOS: { name: this.lex.translate("Tipos de Motivo de Afastamento"), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: this.entity.getIcon('TipoMotivoAfastamento') },
       TIPOS_PROCESSOS: { name: this.lex.translate("Tipos de Processo"), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: this.entity.getIcon('TipoProcesso') },
       /* Gestão */
-      AFASTAMENTOS: { name: this.lex.translate("Afastamentos"), permition: 'MOD_AFT', route: ['gestao', 'afastamento'], icon: this.entity.getIcon('Afastamento') },
+      AFASTAMENTOS: { name: this.lex.translate("Ocorrências"), permition: 'MOD_AFT', route: ['gestao', 'afastamento'], icon: this.entity.getIcon('Afastamento') },
       OCORRENCIAS: { name: this.lex.translate("Ocorrencias"), permition: 'MOD_OCOR', route: ['gestao', 'ocorrencia'], icon: this.entity.getIcon('Ocorrencia') },
       CADEIAS_VALORES: { name: this.lex.translate("Cadeias de Valores"), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
       ATIVIDADES: { name: this.lex.translate("Atividades"), permition: 'MOD_ATV', route: ['gestao', 'atividade'], icon: this.entity.getIcon('Atividade') },

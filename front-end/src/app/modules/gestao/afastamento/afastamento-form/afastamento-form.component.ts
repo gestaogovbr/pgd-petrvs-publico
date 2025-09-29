@@ -31,11 +31,12 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
     super(injector, Afastamento, AfastamentoDaoService);
     this.tipoMotivoAfastamentoDao = injector.get<TipoMotivoAfastamentoDaoService>(TipoMotivoAfastamentoDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
-    this.title = this.lex.translate('Afastamento');
+    this.title = this.lex.translate('Ocorrências');
     this.form = this.fh.FormBuilder({
       observacoes: {default: ""},
       data_inicio: {default: new Date()},
       data_fim: {default: new Date()},
+      horas: {default: ""},
       usuario_id: {default: ""},
       tipo_motivo_afastamento_id: {default: ""}
     }, this.cdRef, this.validate);
@@ -55,6 +56,8 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
     if(['usuario_id', 'tipo_motivo_afastamento_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     } else if(['data_inicio', 'data_fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+      result = "Inválido";
+    } else if(['horas'].indexOf(controlName) >= 0 && (control.value < 0 || control.value > 9999)) {
       result = "Inválido";
     }
 
@@ -100,7 +103,7 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
     let fim = this.util.asDate(this.form!.controls.data_fim.value);
     if(this.consolidacao && inicio && fim && (this.util.daystamp(inicio) < this.util.daystamp(this.consolidacao.data_inicio) || 
       this.util.daystamp(fim) > this.util.daystamp(this.consolidacao.data_fim))) {
-      result = "Atenção: Data da consolidação do plano é de " + this.util.getDateFormatted(this.consolidacao.data_inicio) + " a " + this.util.getDateFormatted(this.consolidacao.data_fim);
+      //result = "Atenção: Data da consolidação do plano é de " + this.util.getDateFormatted(this.consolidacao.data_inicio) + " a " + this.util.getDateFormatted(this.consolidacao.data_fim);
     }
     return result;
   }
