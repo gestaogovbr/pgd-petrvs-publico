@@ -564,10 +564,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       
       this.exibeAlertaTotalAssinaturas(this.entity);
       return true;
-    } catch (error) {
-      console.error('Erro ao salvar plano de trabalho:', error);
-      this.dialog.alert('Erro', 'Ocorreu um erro ao salvar o plano de trabalho. Tente novamente.');
-      return false;
     } finally {
       this.submitting = false;
     }

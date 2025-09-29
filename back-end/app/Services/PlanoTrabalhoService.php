@@ -225,6 +225,11 @@ class PlanoTrabalhoService extends ServiceBase
             throw new ServerException("ValidatePlanoTrabalho", "TCR não foi gerado.");
         }
 
+        // Validar atividades
+        if (empty($data['entregas']) || (is_array($data['entregas']) && count($data['entregas']) == 0)) {
+            throw new ServerException("ValidatePlanoTrabalho", "Não é possível gravar Plano de Trabalho sem planejamento dos trabalhos a serem realizados.");
+        }
+
         // Validar Modalidade
         if (!empty($tipoModalidade) && $tipoModalidade->exige_pedagio && !empty($usuario->pedagio)) {
             if (empty($usuario->data_inicial_pedagio) || empty($usuario->data_final_pedagio)) {
