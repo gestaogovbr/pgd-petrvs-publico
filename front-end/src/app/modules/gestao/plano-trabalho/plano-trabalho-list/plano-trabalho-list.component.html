@@ -11,14 +11,13 @@
         <!-- (RN_PTR_I) Quando a Unidade Executora não for a unidade de lotação do servidor, seu gestor imediato e seus substitutos devem ter acesso ao seu Plano de Trabalho (e à sua execução); -->
         <input-switch [size]="1"
                       label="Meus"
-                      (change)="disableSub()"
                       labelPosition="left"
                       [control]="filter!.controls.meus_planos"
         >
         </input-switch>
         <input-switch *ngIf="temAtribuicaoChefia" [size]="4" labelPosition="left" label="Lotados em minha unidade" controlName="lotados_minha_unidade" [control]="filter!.controls.lotados_minha_unidade" (change)="onLotadosMinhaUnidadeChange($event)"></input-switch>
         <!--<input-switch [size]="4" labelPosition="left" label="Agrupar por unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>-->
-        <input-switch [size]="4" labelPosition="left" label="Unidades Subordinadas" controlName="subordinadas" [control]="filter!.controls.subordinadas" (change)="disableMeus()" ></input-switch>
+        <input-switch [size]="4" labelPosition="left" label="Unidades Subordinadas" controlName="subordinadas" [control]="filter!.controls.subordinadas" ></input-switch>
     </toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
