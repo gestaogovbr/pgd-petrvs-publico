@@ -20,7 +20,6 @@ class PlanoTrabalhoAvaliacaoResource extends JsonResource
 
     function converteAvaliacao($nota)
     {
-        \Log::info("Nota recebida: ".str_replace('"', "", $nota));
         switch(str_replace('"', "", $nota)) {
             case 'Excepcional':
             return 1;
