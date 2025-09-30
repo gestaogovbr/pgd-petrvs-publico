@@ -1,13 +1,23 @@
-## 2.7.0 29/09/2025
+## 2.7.0 30/09/2025
 ### Adicionado
 - Registro de Horas nos Afastamentos
 - Exclusão de Colaboradores externos
+- Sistema de múltiplas matrículas para usuários
+- Exibição do número de matrícula do usuário no módulo de gestão
+- Filtros de unidades por matrícula do usuário
+- Novos campos PGD e jornada de trabalho na integração SIAPE
 ### Corrigido
 - Corrigido regra para clonar planos de entrega
 - Corrigido criação dos registros de execução após edição do plano de trabalho
 - Correção na Nota e Situação de Reavaliação no Relatório de Planos de Trabalho
+- Validação de código de unidade vazio antes do processamento no SIAPE
+- Remoção de log redundante de erro no serviço de integração
+- Melhorias no processamento de dados e tratamento de erros na integração SIAPE
 ### Modificado
 - Afastamentos passam a ser denominados de Ocorrências
+- Métodos de integração de servidor modificados para usar CPF e matrícula
+- Melhorias no processamento de dados da integração SIAPE
+- Aprimoramento do tratamento de unidades extintas
 
 ## 2.6.5 22/09/2025
 ### Corrigido
