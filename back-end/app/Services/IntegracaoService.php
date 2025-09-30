@@ -718,7 +718,7 @@ class IntegracaoService extends ServiceBase
                 $dbResult = $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
               } catch (\Throwable $th) {
                 report($th);
-                SiapeLog::error("IntegracaoService: Durante integração não foi possível alterar lotação!", [$dbResult, $vinculo]);
+                SiapeLog::error("IntegracaoService: Durante integração não foi possível alterar lotação!", [$vinculo]);
               }
               if (!isset($dbResult)) {
                 SiapeLog::error("IntegracaoService: Houve uma falha na tentantiva de alterar a lotação", [$vinculo]);
