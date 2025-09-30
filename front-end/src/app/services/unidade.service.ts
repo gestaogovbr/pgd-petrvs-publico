@@ -31,10 +31,11 @@ export class UnidadeService {
    * @param incluiDelegado 
    * @returns
   */
-  public isGestorUnidade(pUnidade: Unidade | string | null = null, incluiDelegado: boolean = true): boolean {
+  public isGestorUnidade(pUnidade: Unidade | string | null = null, incluiDelegado: boolean = true, incluiSubstituto: boolean = true): boolean {
     let id_unidade = pUnidade == null ? this.auth.unidade?.id || null : (typeof pUnidade == "string" ? pUnidade : pUnidade.id);
     let areaTrabalho = this.auth.unidades?.find(x => x.id == id_unidade);
-    let gestores = [areaTrabalho?.gestor?.usuario_id, ...(areaTrabalho?.gestores_substitutos?.map(x => x.usuario_id) || [])];
+    let gestores = [areaTrabalho?.gestor?.usuario_id];
+    if (incluiSubstituto) gestores.push(...(areaTrabalho?.gestores_substitutos?.map(x => x.usuario_id) || []));
     if (incluiDelegado) gestores.push(...(areaTrabalho?.gestores_delegados?.map(x => x.usuario_id) || []));
     return !!id_unidade && !!areaTrabalho && gestores.includes(this.auth.usuario!.id);
   }

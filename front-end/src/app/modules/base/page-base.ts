@@ -156,7 +156,17 @@ export abstract class PageBase implements OnInit, ModalPage {
 
     
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = Array.from(tooltipTriggerList).map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    const tooltipList = Array.from(tooltipTriggerList).map(tooltipTriggerEl => {
+      const tooltip = new bootstrap.Tooltip(tooltipTriggerEl, {
+        trigger: 'manual'
+      });
+
+      tooltipTriggerEl.addEventListener('mouseenter', () => tooltip.show());
+      tooltipTriggerEl.addEventListener('mouseleave', () => tooltip.hide());
+      tooltipTriggerEl.addEventListener('click', () => tooltip.hide());
+
+      return tooltip;
+    });
 
     this.cdRef.detectChanges();
     this.viewInit = true;

@@ -3,6 +3,7 @@
 namespace App\Services\Siape\Servidor;
 
 use App\Services\UtilService;
+use Illuminate\Support\Facades\Log;
 
 trait PreparaServidor
 {
@@ -15,21 +16,15 @@ trait PreparaServidor
      */
     public function getAtivo(array $servidor): ?array
     {
-
-        $ativo = null;
-
-        $dados = isset($servidor['matriculas']['dados']['vinculo_ativo']) ? [$servidor['matriculas']['dados']] : $servidor['matriculas']['dados'];
-        foreach ($dados as $matricula) {
-            if (isset($matricula['vinculo_ativo']) && $matricula['vinculo_ativo'] == 'true') {
-                $ativo = $matricula;
-            }
+        if(isset($servidor['matriculas']) && isset($servidor['matriculas']['dados'])){
+            return $servidor['matriculas']['dados'];
         }
-        return $ativo;
+        return null;
     }
 
-    public function getEmail(array $servidor, UtilService $utilService): ?string
+    public function getEmail(array $matriculas, array $dadosFuncionais, UtilService $utilService): ?string
     {
-        $email =  $utilService->valueOrDefault($servidor['emailfuncional'], $servidor['cpf'] . "@petrvs.gov.br");
+        $email =  $utilService->valueOrDefault($dadosFuncionais['emailfuncional'], $matriculas['matriculasiape'] . "@petrvs.gov.br");
         if (!empty($email)) {
             $email = str_contains($email, "@") ? $email : $email . "@prf.gov.br";
             $email = mb_strtolower($email, 'UTF-8');

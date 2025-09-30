@@ -16,6 +16,8 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\InsertLog::class,
         \App\Console\Commands\RunBuscaDadosAssincronosJob::class,
         \App\Console\Commands\InativaUsuarioSiape::class,
+        \App\Console\Commands\InativaUnidadesSiape::class,
+        \App\Console\Commands\InativaUnidadesTemporarios::class,
     ];
 
     protected function commands()
@@ -35,6 +37,21 @@ class Kernel extends ConsoleKernel
                 \App\Jobs\InativacaoUsuariosTemporarios::dispatch($tenant->id);
             }
         })->dailyAt('03:00')->name('Inativação Usuários Temporários');
+        
+        $schedule->call(function () {
+            $tenants = \App\Models\Tenant::all();
+            foreach ($tenants as $tenant) {
+                \App\Jobs\InativacaoUnidadesSiape::dispatch($tenant->id);
+            }
+        })->dailyAt('00:15')->name('Inativação Unidades SIAPE');
+        
+        // Job para inativar unidades temporárias às 00:30 diariamente
+        $schedule->call(function () {
+            $tenants = \App\Models\Tenant::all();
+            foreach ($tenants as $tenant) {
+                \App\Jobs\InativacaoUnidadesTemporarios::dispatch($tenant->id);
+            }
+        })->dailyAt('00:30')->name('Inativação Unidades Temporários');
         
         $agendamentosPrincipal = JobSchedule::where('ativo', true)->get();
         foreach ($agendamentosPrincipal as $jobEntity) {
