@@ -10,6 +10,7 @@
 - Corrigido regra para clonar planos de entrega
 - Corrigido criação dos registros de execução após edição do plano de trabalho
 - Correção na Nota e Situação de Reavaliação no Relatório de Planos de Trabalho
+- Correção no envio de Notas das Avaliações dos Planos de Trabalho para API 
 - Validação de código de unidade vazio antes do processamento no SIAPE
 - Remoção de log redundante de erro no serviço de integração
 - Melhorias no processamento de dados e tratamento de erros na integração SIAPE
