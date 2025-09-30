@@ -627,13 +627,15 @@ class PlanoEntregaService extends ServiceBase
         $dataInicio = new DateTime($planoEntrega["data_inicio"]);
         $dataFim = new DateTime($planoEntrega["data_fim"]);
 
-        $planosDaUnidade = PlanoEntrega::where('unidade_id', $planoEntrega["unidade_id"])
-            ->where('status', '!=', 'CANCELADO')
-            ->where(function ($query) use ($dataInicio, $dataFim) {
-                $query->whereBetween('data_inicio', [$dataInicio, $dataFim])
-                    ->orWhereBetween('data_fim', [$dataInicio, $dataFim]);
-            })
-            ->where("id", "!=", UtilService::valueOrNull($planoEntrega, "id"))->get();
+        $planosDaUnidade = PlanoEntrega::where('unidade_id', $planoEntrega['unidade_id'])
+        ->where('status', '!=', 'CANCELADO')
+        ->where(function ($query) use ($dataInicio, $dataFim) {
+            $query->where('data_inicio', '<=', $dataFim)
+                ->where('data_fim', '>=', $dataInicio);
+        })
+        ->where('id', '!=', UtilService::valueOrNull($planoEntrega, 'id'))
+        ->get();
+
         return $planosDaUnidade->count() > 0;
     }
 
