@@ -147,6 +147,9 @@ class ProcessaDadosSiapeBD
         $dadosUorgArray = [];
         foreach ($response as $dadosUnidades) {
             try {
+                if(empty($dadosUnidades->codigo)){
+                    throw new ErrorDataSiapeException("Código da Unidade vazia");
+                } 
                 $dadosUorg = $this->processaDadosUorg($dadosUnidades->codigo, $dadosUnidades->response);
             } catch (Exception $e) {
                 report($e);
