@@ -358,8 +358,8 @@ export class AuthService {
    * Informa se o usuário logado é gestor de alguma das suas áreas de trabalho.
    * @returns
    */
-  public isGestorAlgumaAreaTrabalho(incluiDelegado: boolean = true): boolean {
-    return !!this.unidades?.filter(x => this.unidadeService.isGestorUnidade(x, incluiDelegado)).length;
+  public isGestorAlgumaAreaTrabalho(incluiDelegado: boolean = true, incluiSubstituto: boolean = true): boolean {
+    return !!this.unidades?.filter(x => this.unidadeService.isGestorUnidade(x, incluiDelegado, incluiSubstituto)).length;
   }
 
   /**

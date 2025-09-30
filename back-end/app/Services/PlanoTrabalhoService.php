@@ -68,6 +68,7 @@ class PlanoTrabalhoService extends ServiceBase
         // (RI_PTR_C) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de trabalho não arquivados.
         $arquivados = $this->extractWhere($data, "incluir_arquivados");
         $subordinadas = $this->extractWhere($data, "incluir_subordinadas");
+        $hierarquia = $this->extractWhere($data, "incluir_hierarquia");
         // (RN_PTR_I) Quando a Unidade Executora não for a unidade de lotação do servidor, seu gestor imediato e seus substitutos devem ter acesso ao seu Plano de Trabalho (e à sua execução);
         $lotadosMinhaUnidade = $this->extractWhere($data, "lotados_minha_unidade");
         if (empty($arquivados) || !$arquivados[2])
@@ -75,10 +76,13 @@ class PlanoTrabalhoService extends ServiceBase
         $unidadeId = $this->extractWhere($data, "unidade_id");
         if (is_array($unidadeId) && isset($unidadeId[2])) {
             $ids[] = $unidadeId[2];
+            if(is_array($ids) && is_array($ids[0]))
+                $ids = array_unique(...$ids);
+            
             $data["where"][] = ['unidade_id', 'in', array_unique($ids)];
 
         }
-        if (isset($subordinadas[2])) { // Verifica se o índice existe
+        if (isset($subordinadas[2]) && $subordinadas[2]) { // Verifica se o índice existe
             $unidadeService = new UnidadeService();
 
             // Define $uId corretamente, verificando a existência do índice
@@ -86,6 +90,11 @@ class PlanoTrabalhoService extends ServiceBase
                 $uId = isset($unidades_vinculadas[2]) ? $unidades_vinculadas[2] : null;
             } else {
                 $uId = isset($unidadeId[2]) ? $unidadeId[2] : null;
+                // busca a nomeclatura da hierarquia da unidade 
+            
+                if(isset($hierarquia[2]) && $hierarquia[2]){
+                    $this->attachHierarquia($data);
+                }
             }
 
             // Só continua se $uId não for nulo
@@ -1322,5 +1331,15 @@ class PlanoTrabalhoService extends ServiceBase
         $usuario->lotacao = null;
         return $usuario->lotacao?->unidade_id == $unidadeId;
     }
+
+    /**
+     *  Adiciona os componentes relacionados a nomeclatura da hierarquia da unidade
+     */
+    private function attachHierarquia(&$data): void
+    {
+        $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';
+        $data['select'][] = DB::raw("$queryHierarquia AS hierarquia");
+        $data['orderBy'] = [[DB::raw($queryHierarquia), 'asc']];
+    }    
     
 }
