@@ -7,6 +7,7 @@ use App\Exceptions\ErrorDataSiapeFaultCodeException;
 use App\Exceptions\RequestConectaGovException;
 use App\Facades\SiapeLog;
 use App\Models\SiapeBlackListServidor;
+use App\Models\SiapeBlacklistUnidade;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeDadosUORG;
@@ -145,7 +146,7 @@ class ProcessaDadosSiapeBD
         $dadosUorgArray = [];
         foreach ($response as $dadosUnidades) {
             try {
-                $dadosUorg = $this->processaDadosUorg($dadosUnidades->response);
+                $dadosUorg = $this->processaDadosUorg($dadosUnidades->codigo, $dadosUnidades->response);
             } catch (Exception $e) {
                 report($e);
                 SiapeLog::error('Erro ao processar XML da Unidade: ' . $e->getMessage(), [$dadosUnidades->response]);
@@ -169,10 +170,10 @@ class ProcessaDadosSiapeBD
         return $dadosUorgArray;
     }
 
-    public function processaDadosUorg($dados): SimpleXMLElement|null
+    public function processaDadosUorg(string $codigo, $dados): SimpleXMLElement|null
     {
         try {
-            $responseXml = $this->prepareResponseXml($dados);
+            $responseXml = $this->prepareResponseUorgXml($codigo, $dados);
         } catch (Exception $e) {
             report($e);
             throw new ErrorDataSiapeException("Erro ao processar XML da Unidade");
@@ -210,6 +211,24 @@ class ProcessaDadosSiapeBD
         (string) $fault[0]->faultstring === Erros::getFaultStringNaoExistemDados()) {
             SiapeBlackListServidor::firstOrCreate(
                 ['cpf' => $cpf],
+                ['id' => (string) Str::uuid(), 'response' => $response]
+            );
+
+            throw new ErrorDataSiapeFaultCodeException(sprintf('faultcode #%s: ', (string) $fault[0]->faultcode) . (string) $fault[0]->faultstring);
+        }
+        return $responseXml;
+    }
+
+    private function prepareResponseUorgXml(string $codigo, string $response): SimpleXMLElement
+    {
+        $responseXml = $this->prepareResponseXml($response);
+
+        $fault = $responseXml->xpath('//soap:Fault');
+        if ($fault && isset($fault[0]->faultcode) && (string) $fault[0]->faultcode === Erros::faultcode 
+        && isset($fault[0]->faultstring) && 
+        (string) $fault[0]->faultstring === Erros::getFaultStringNaoExistemDados()) {
+            SiapeBlacklistUnidade::firstOrCreate(
+                ['codigo' => $codigo],
                 ['id' => (string) Str::uuid(), 'response' => $response]
             );
 
