@@ -18,6 +18,7 @@
 - Métodos de integração de servidor modificados para usar CPF e matrícula
 - Melhorias no processamento de dados da integração SIAPE
 - Aprimoramento do tratamento de unidades extintas
+- Agrupamento de Planos de Trabalho por unidade na listagem de planejamento
 
 ## 2.6.5 22/09/2025
 ### Corrigido
