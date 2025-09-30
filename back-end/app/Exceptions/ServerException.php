@@ -47,6 +47,7 @@ class ServerException extends Exception implements IBaseException
         "ValidateProduto" => "Erro ao validar Produto/Serviço",
         "ValidatePlanoTrabalho" => "Erro ao validar Plano de Trabalho",
         "ValidatePlanoTrabalhoConsolidacao" => "Erro ao validar Consolidação do Plano de Trabalho",
+        "ConcluirPlanoTrabalhoConsolidacao" => "Erro ao concluir a execução do Plano de Trabalho",
         "ValidatePlanoTrabalhoEntrega" => "Erro ao validar Entrega do Plano de Trabalho",
         "ValidateProgramaParticipante" => "Erro ao validar o Participante",
         "ValidatePrograma" => "Erro ao validar o Regramento",

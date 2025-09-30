@@ -6,6 +6,11 @@
 - Exibição do número de matrícula do usuário no módulo de gestão
 - Filtros de unidades por matrícula do usuário
 - Novos campos PGD e jornada de trabalho na integração SIAPE
+- Validação de entregas na criação do plano de trabalho
+- Somente deve ser possível editar um PT se o registro de execução não tiver sido concluído
+- O registro de execução só deve ser feito após o plano de trabalho entrar no status "Aprovado"
+- O participante deve preencher TODOS os campos de descrição dos trabalhos realizados, antes de concluir o registro de execução
+- Ao cancelar avaliação do plano de trabalho, na tela de planejamento o mesmo deve retornar ao status "Aprovado"
 ### Corrigido
 - Corrigido regra para clonar planos de entrega
 - Corrigido criação dos registros de execução após edição do plano de trabalho
