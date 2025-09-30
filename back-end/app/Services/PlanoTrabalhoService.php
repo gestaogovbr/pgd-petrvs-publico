@@ -235,6 +235,11 @@ class PlanoTrabalhoService extends ServiceBase
             throw new ServerException("ValidatePlanoTrabalho", "TCR não foi gerado.");
         }
 
+        // Validar atividades
+        if (empty($data['entregas']) || (is_array($data['entregas']) && count($data['entregas']) == 0)) {
+            throw new ServerException("ValidatePlanoTrabalho", "Não é possível gravar Plano de Trabalho sem planejamento dos trabalhos a serem realizados.");
+        }
+
         // Validar Modalidade
         if (!empty($tipoModalidade) && $tipoModalidade->exige_pedagio && !empty($usuario->pedagio)) {
             if (empty($usuario->data_inicial_pedagio) || empty($usuario->data_final_pedagio)) {
@@ -832,6 +837,20 @@ class PlanoTrabalhoService extends ServiceBase
         return null;
     }
 
+    public function validaEdicao($planoId)
+    {
+        $plano = PlanoTrabalho::find($planoId);
+        if (empty($plano)) {
+            throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não encontrado.");
+        }
+
+        foreach ($plano->consolidacoes as $consolidacao) {
+            if ($consolidacao->status != "INCLUIDO")
+                return false;
+        }
+        return true;
+    }
+
     public function proxyRows($rows)
     {
         foreach ($rows as $row) {
@@ -842,6 +861,7 @@ class PlanoTrabalhoService extends ServiceBase
                 'unidadeVinculada' => $this->isUnidadeVinculada($row),
                 'jaAssinaramTCR' => $this->jaAssinaramTCR($row->id),
                 'podeCancelar' => empty($this->validateCancelamento($row->id)),
+                'podeEditar' => $this->validaEdicao($row->id),
                 'atribuicoesParticipante' => $this->usuarioService->atribuicoesGestor($row->unidade_id, $row->usuario_id),
                 'atribuicoesLogado' => $this->usuarioService->atribuicoesGestor($row->unidade_id),
                 'atribuicoesLogadoUnidadeSuperior' => empty($unidade->unidade_pai_id) ? ["gestor" => false, "gestorSubstituto" => false, "gestorDelegado" => false] : $this->usuarioService->atribuicoesGestor($unidade->unidade_pai_id),
