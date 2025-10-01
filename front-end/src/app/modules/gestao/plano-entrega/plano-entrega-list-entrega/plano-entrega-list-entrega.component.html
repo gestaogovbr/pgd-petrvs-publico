@@ -7,14 +7,6 @@
         </span>
     </ng-template>
     <columns>
-        <column type="expand" [width]="50" icon="bi bi-list-check" [align]="'center'" [hint]="'Atividades da entrega'" [template]="columnAtividades" [expandTemplate]="columnExpandedAtividades">
-            <ng-template let-row="row" #columnAtividades>
-                <span  class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row.atividades?.length}}</span>
-            </ng-template>
-            <ng-template let-row="row" #columnExpandedAtividades>
-                <plano-entrega-list-atividades [entrega]="row" [disabled]="isDisabled"></plano-entrega-list-atividades>
-            </ng-template>
-        </column>
         <!--
         <column type="expand" icon="bi bi-list-check" [align]="'center'" [hint]="lex.translate('Entrega')" [template]="columnEntregas" [expandTemplate]="columnExpandedEntregas">
             <ng-template let-row="row" #columnEntregas>
@@ -114,7 +106,7 @@
         <column [title]="lex.translate('Modelo de Entrega') + '\nComentários'" [template]="columnEntregaCometario" [editTemplate]="columnEntregaCometario">
             <ng-template let-row="row" #columnEntregaCometario>
                 <badge *ngIf="row.entrega" color="light" icon="bi bi-list-check" [label]="row.entrega?.nome"></badge>
-                <comentarios-widget *ngIf="row.comentarios?.length"  [entity]="row" [selectable]="!execucao || !!grid?.editing" origem="PLANO_ENTREGA_ENTREGA" [grid]="grid" [save]="refreshComentarios.bind(this)"></comentarios-widget>
+                <comentarios-widget [entity]="row" [selectable]="!execucao || !!grid?.editing" origem="PLANO_ENTREGA_ENTREGA" [grid]="grid" [save]="refreshComentarios.bind(this)"></comentarios-widget>
             </ng-template>
         </column>
         <column type="options" [onEdit]="edit.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)" [dynamicOptions]="dynamicOptions.bind(this)"></column>

@@ -22,8 +22,6 @@ import { PlanoEntregaEntregasVinculadasComponent } from './plano-entrega-entrega
 import { PlanoEntregaEntregaDetalhesComponent } from './plano-entrega-entrega-detalhes/plano-entrega-entrega-detalhes.component';
 import { OrganizationChartModule } from 'primeng/organizationchart';
 import { PlanoEntregaListProdutoComponent } from './plano-entrega-list-produto/plano-entrega-list-produto.component';
-import { AtividadeModule } from '../atividade/atividade.module';
-import { PlanoEntregaListAtividadesComponent } from './plano-entrega-list-atividades/plano-entrega-list-atividades.component';
 
 
 @NgModule({
@@ -44,8 +42,7 @@ import { PlanoEntregaListAtividadesComponent } from './plano-entrega-list-ativid
     PlanoEntregaFormProgressoComponent,
     PlanoEntregaEntregasVinculadasComponent,
     PlanoEntregaEntregaDetalhesComponent,
-    PlanoEntregaListProdutoComponent,
-    PlanoEntregaListAtividadesComponent
+    PlanoEntregaListProdutoComponent
   ],
   imports: [
     CommonModule,
@@ -54,8 +51,7 @@ import { PlanoEntregaListAtividadesComponent } from './plano-entrega-list-ativid
     PlanejamentoModule,
     CadeiaValorModule,
     OrganizationChartModule,
-    UteisModule,
-    AtividadeModule
+    UteisModule
   ]
 })
 export class PlanoEntregaModule { }

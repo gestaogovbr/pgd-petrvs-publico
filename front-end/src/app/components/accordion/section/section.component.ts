@@ -29,11 +29,6 @@ export class SectionComponent extends ComponentBase implements OnInit {
   }
 
   public async onClick() {
-    // Não expandir se o item estiver desabilitado
-    if(this.item?.accordionDisabled) {
-      return;
-    }
-    
     this.selected = true;
     if(this.accordion) this.accordion.selectedIndex = this.index;
     if(this.load) {

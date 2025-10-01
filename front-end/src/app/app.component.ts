@@ -150,7 +150,7 @@ export class AppComponent {
       // TIPOS_MOTIVOS_AFASTAMENTOS: { name: this.lex.translate("Tipos de Motivo de Afastamento"), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: this.entity.getIcon('TipoMotivoAfastamento') },
       TIPOS_PROCESSOS: { name: this.lex.translate("Tipos de Processo"), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: this.entity.getIcon('TipoProcesso') },
       /* Gestão */
-      AFASTAMENTOS: { name: this.lex.translate("Afastamentos"), permition: 'MOD_AFT', route: ['gestao', 'afastamento'], icon: this.entity.getIcon('Afastamento') },
+      AFASTAMENTOS: { name: this.lex.translate("Ocorrências"), permition: 'MOD_AFT', route: ['gestao', 'afastamento'], icon: this.entity.getIcon('Afastamento') },
       OCORRENCIAS: { name: this.lex.translate("Ocorrencias"), permition: 'MOD_OCOR', route: ['gestao', 'ocorrencia'], icon: this.entity.getIcon('Ocorrencia') },
       CADEIAS_VALORES: { name: this.lex.translate("Cadeias de Valores"), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
       ATIVIDADES: { name: this.lex.translate("Atividades"), permition: 'MOD_ATV', route: ['gestao', 'atividade'], icon: this.entity.getIcon('Atividade') },
@@ -188,11 +188,9 @@ export class AppComponent {
       LOGS_ENVIOS: { name: "Log dos Envios à API PGD", permition: '', route: ['logs', 'envios'], icon: this.entity.getIcon('Envio') },
       DEV_CPF_CONSULTA_SIAPE: { name: "Consulta CPF SIAPE", permition: '', route: ['consultas', 'cpf-siape'], icon: this.entity.getIcon('ConsultaCPFSIAPE') },
       DEV_UNIDADE_CONSULTA_SIAPE: { name: "Consulta Unidade SIAPE", permition: '', route: ['consultas', 'unidade-siape'], icon: this.entity.getIcon('ConsultaUnidadeSIAPE') },
-
       /* SIAPE */
       BLACKLIST_SERVIDOR: { name: "Blacklist Servidor", permition: '', route: ['siape', 'blacklist-servidor'], icon: 'bi bi-person-x' },
-      /* RELATORIOS */
-
+            /* RELATORIOS */
       RELATORIO_PLANO_TRABALHO: {
         name: this.lex.translate("Planos de Trabalho"),
         permition: 'MOD_RELATORIO_PT',
@@ -216,12 +214,7 @@ export class AppComponent {
         permition: 'MOD_RELATORIO_UNIDADE',
         icon: this.entity.getIcon('Unidade'),
         route: ['relatorios', 'unidades'],
-      },
-      RELATORIO_ENVIOS: {
-        name: "Erros de API",
-        permition: 'MOD_RELATORIO_ENVIOS',
-        icon: this.entity.getIcon('Envio'),
-        route: ['relatorios', 'erros-envio'],
+        //onClick: ()=> this.emDesenvolvimento()
       },
       /* Outros */
       PAINEL: { name: "Painel", permition: '', route: ['panel'], icon: "" },
@@ -296,8 +289,7 @@ export class AppComponent {
         this.menuSchema.RELATORIO_PLANO_TRABALHO,
         this.menuSchema.RELATORIO_PLANO_ENTREGA,
         this.menuSchema.RELATORIO_USUARIOS,
-        this.menuSchema.RELATORIO_UNIDADES,
-        this.menuSchema.RELATORIO_ENVIOS
+        this.menuSchema.RELATORIO_UNIDADES
       ].sort(this.orderMenu)
     }];
 
@@ -358,8 +350,7 @@ export class AppComponent {
         this.menuSchema.RELATORIO_PLANO_TRABALHO,
         this.menuSchema.RELATORIO_PLANO_ENTREGA,
         this.menuSchema.RELATORIO_USUARIOS,
-        this.menuSchema.RELATORIO_UNIDADES,
-        this.menuSchema.RELATORIO_ENVIOS
+        this.menuSchema.RELATORIO_UNIDADES
       ].sort(this.orderMenu)
     }];
 

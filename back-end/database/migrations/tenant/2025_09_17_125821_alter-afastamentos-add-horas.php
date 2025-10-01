@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('integracao_servidores', function (Blueprint $table) {
-            $table->string('participa_pgd', 50)->nullable()->change();
+        Schema::table('afastamentos', function (Blueprint $table) {
+            $table->integer('horas')->nullable(true)->after('data_fim');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('integracao_servidores', function (Blueprint $table) {
-            $table->boolean('participa_pgd')->nullable(false)->change();
+        Schema::table('afastamentos', function (Blueprint $table) {
+            $table->dropColumn('horas');
         });
     }
 };

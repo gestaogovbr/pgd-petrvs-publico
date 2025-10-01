@@ -451,14 +451,6 @@ class TipoCapacidadeService extends ServiceBase
         "codigo" => "MOD_RELATORIO_UNIDADE_TODAS_UNIDADES",
         "descricao" => "Relatório de Unidades - Listar todas as unidades",
     ],
-    [
-        "codigo" => "MOD_RELATORIO_ENVIOS",
-        "descricao" => "Relatório de Erros de Envio",
-    ],
-    [
-        "codigo" => "MOD_RELATORIO_ENVIOS_TODAS_UNIDADES",
-        "descricao" => "Relatório de Erros de Envio - Listar todas as unidades",
-    ],
   ];
 
   private function differentDev(&$data)

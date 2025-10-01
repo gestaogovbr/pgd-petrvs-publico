@@ -52,8 +52,8 @@ class RelatorioPlanoTrabalhoDetalhadoExport extends RelatorioPlanoTrabalhoExport
             $row->situacao_avaliacao,
             $row->nota,
             Date::stringToExcel($row->data_recurso),
-            Date::stringToExcel($row->data_avaliacao),
-            $row->nota
+            Date::stringToExcel($row->data_reavaliacao),
+            $row->nota_reavaliacao
         ]);
     }
 

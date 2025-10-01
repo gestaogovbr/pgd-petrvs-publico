@@ -10,7 +10,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('CREATE INDEX envio_itens_sucesso_IDX ON envio_itens (sucesso,created_at DESC)');
+       DB::statement('update planos_trabalhos set data_envio_api_pgd = null');
     }
 
     /**
@@ -18,6 +18,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement('DROP INDEX envio_itens_sucesso_IDX ON envio_itens');
+        //
     }
 };

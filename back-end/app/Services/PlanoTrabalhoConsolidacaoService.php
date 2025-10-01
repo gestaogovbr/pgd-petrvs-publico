@@ -269,21 +269,21 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       //if(!empty($anterior) && in_array($anterior->status, ["INCLUIDO"])) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Existe consolidação anterior ainda não concluída");
       $dados = $this->consolidacaoDados($id);
       $consolidacao = PlanoTrabalhoConsolidacao::find($id);
-      if(empty($consolidacao)) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Consolidação não encontrada");
-      if(!empty($consolidacao->data_conclusao)) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Consolidação já concluída");
+      if(empty($consolidacao)) throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Consolidação não encontrada");
+      if(!empty($consolidacao->data_conclusao)) throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Consolidação já concluída");
       if (!is_array($dados)) {
-        throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Dados de consolidação inválidos");
+        throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Dados de consolidação inválidos");
       }
 
       /* se array de atividades estiver vazio, não pode concluir */
       if (count($dados["atividades"] ?? []) == 0) {
-        throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Antes de concluir, é necessário fazer a descrição dos trabalhos executados.");
+        throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Antes de concluir, é necessário fazer a descrição dos trabalhos executados.");
       }
       $IdsEntregasPlanoTrabalho = $consolidacao->planoTrabalho->entregas->pluck('id');
       /* Para cada ID de entrega, verificar se existe em dados[atividades].plano_trabalho_entrega_id */
       foreach($IdsEntregasPlanoTrabalho as $IdEntregaPlanoTrabalho) {
         if(!in_array($IdEntregaPlanoTrabalho, array_column($dados["atividades"] ?? [], "plano_trabalho_entrega_id"))) {
-          throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Para concluir é preciso que todas as entregas tenham atividades associadas");
+          throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Para concluir é preciso que todas as entregas tenham atividades associadas");
         }
       }
 

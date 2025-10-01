@@ -32,7 +32,7 @@ import { OrganizationChartModule } from 'primeng/organizationchart';
     AtividadeFormTarefaComponent,
     AtividadeListTarefaComponent,
     AtividadeListKanbanComponent,
-    AtividadeHierarquiaComponent,
+    AtividadeHierarquiaComponent
   ],
   imports: [
     CommonModule,
@@ -43,7 +43,7 @@ import { OrganizationChartModule } from 'primeng/organizationchart';
   ],
   exports: [
     AtividadeListGridComponent,
-    AtividadeListTarefaComponent,
+    AtividadeListTarefaComponent
   ]
 })
 export class AtividadeModule { }

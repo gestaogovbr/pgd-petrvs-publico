@@ -24,7 +24,6 @@ export type PlanoTrabalhoMetadata = {
 };
 
 export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
-    public accordionDisabled: boolean = false;
     public tipo_modalidade?: TipoModalidade;
     public unidade?: Unidade;
     public usuario?: Usuario;

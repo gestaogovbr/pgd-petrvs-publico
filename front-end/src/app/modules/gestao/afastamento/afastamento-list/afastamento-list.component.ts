@@ -26,7 +26,7 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
     this.join = ["tipo_motivo_afastamento:id, nome", "usuario: id, nome"];
     this.tipoMotivoAfastamentoDao = injector.get<TipoMotivoAfastamentoDaoService>(TipoMotivoAfastamentoDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
-    this.title = this.lex.translate("Afastamentos");
+    this.title = this.lex.translate("Ocorrências");
     this.code = "MOD_AFT";
     this.filter = this.fh.FormBuilder({
       observacoes: {default: ""},

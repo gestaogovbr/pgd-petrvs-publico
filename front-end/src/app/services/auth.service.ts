@@ -358,8 +358,8 @@ export class AuthService {
    * Informa se o usuário logado é gestor de alguma das suas áreas de trabalho.
    * @returns
    */
-  public isGestorAlgumaAreaTrabalho(incluiDelegado: boolean = true): boolean {
-    return !!this.unidades?.filter(x => this.unidadeService.isGestorUnidade(x, incluiDelegado)).length;
+  public isGestorAlgumaAreaTrabalho(incluiDelegado: boolean = true, incluiSubstituto: boolean = true): boolean {
+    return !!this.unidades?.filter(x => this.unidadeService.isGestorUnidade(x, incluiDelegado, incluiSubstituto)).length;
   }
 
   /**
@@ -400,7 +400,7 @@ export class AuthService {
   public isLotacaoUsuario(pUnidade: Unidade | null = null): boolean {
     let unidade = pUnidade || this.unidade!;
     let lotacao = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
-    return lotacao?.id == unidade?.id;
+    return lotacao?.id == unidade.id;
   }
 
   public isUsuarioDeveloper(): boolean {

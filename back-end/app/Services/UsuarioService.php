@@ -13,7 +13,6 @@ use App\Services\RawWhere;
 use App\Services\ServiceBase;
 use App\Models\UnidadeIntegrante;
 use App\Exceptions\ServerException;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Exceptions\ValidateException;
 use Illuminate\Support\Facades\Storage;
@@ -587,7 +586,7 @@ class UsuarioService extends ServiceBase
         
         return $usuario;
     }
-
+    
     public function matriculas($cpf) : Collection
     {
         $usuarios = Usuario::with('unidades')->where('cpf', $cpf)->get();
@@ -598,26 +597,23 @@ class UsuarioService extends ServiceBase
         
         return $usuarios;
     }
+    
 
-
-  public function unidadesVinculadas($cpf): \Illuminate\Support\Collection
-  {
-    $rows = DB::select("
-        SELECT DISTINCT u.* 
-        FROM unidades AS u
-        INNER JOIN unidades_integrantes AS ui ON u.id = ui.unidade_id
-        INNER JOIN usuarios AS us          ON us.id = ui.usuario_id
-        INNER JOIN unidades_integrantes_atribuicoes AS uia ON ui.id = uia.unidade_integrante_id
-        WHERE us.cpf = ? 
-          AND uia.deleted_at IS NULL
-    ", [$cpf]);
-
-    $unidades = collect($rows);
-    if ($unidades->isEmpty()) {
-      throw new ValidateException('Nenhum usuário encontrado com o CPF informado.', 404);
+    public function unidadesVinculadas($cpf) : Collection
+    {
+        $unidades = Unidade::select('unidades.*')
+            ->join('unidades_integrantes as ui', 'unidades.id', '=', 'ui.unidade_id')
+            ->join('usuarios as us', 'us.id', '=', 'ui.usuario_id')
+            ->join('unidades_integrantes_atribuicoes as uia', 'ui.id', '=', 'uia.unidade_integrante_id')
+            ->where('us.cpf', $cpf)
+            ->whereNull('uia.deleted_at')
+            ->get();
+        
+        if ($unidades->isEmpty()) {
+            throw new ValidateException("Nenhum usuário encontrado com o CPF informado.", 404);
+        }
+        
+        return $unidades;
     }
-    return $unidades;
-  }
-
 
 }

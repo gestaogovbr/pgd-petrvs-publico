@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\IntegracaoServidorRepository;
 use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
-use App\Services\Siape\Servidor\Integracao as ServidorIntegracao;
+use App\Services\Siape\Servidor\Integracao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Facades\SiapeLog;
@@ -553,7 +553,7 @@ class IntegracaoService extends ServiceBase
 
           $integracaoServidoresRepository = new IntegracaoServidorRepository(new IntegracaoServidor);
           try {
-            $integracaoServidorProcessar =  new ServidorIntegracao(
+            $integracaoServidorProcessar =  new Integracao(
               $integracaoServidoresRepository,
               $this->UtilService
             );
@@ -683,7 +683,6 @@ class IntegracaoService extends ServiceBase
               SiapeLog::info("Atualizando dados do servidor Matricula: " . $linha->matriculasiape);
 
               $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->matriculasiape);
-
               $modalidadePgdValida = $this->validarModalidadePgd($linha->modalidade_pgd);
 
               DB::update($sqlUpdateDados, [
@@ -859,12 +858,10 @@ class IntegracaoService extends ServiceBase
 
             $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
           }
-        SiapeLog::info('Concluída a fase de atualização das lotações dos servidores!.....');
-      });
+          SiapeLog::info('Concluída a fase de atualização das lotações dos servidores!.....');
+        });
 
-      $this->verificarUsuariosExternosIntegracao();
-
-      $this->result['servidores']['Resultado'] = 'Sucesso';
+        $this->result['servidores']['Resultado'] = 'Sucesso';
         array_push($this->result['servidores']["Observações"], 'Na tabela Usuários constam agora ' .
           Usuario::count() . ' servidores!');
       } catch (Throwable $e) {
@@ -1106,10 +1103,7 @@ class IntegracaoService extends ServiceBase
       $unidadeRaiz->save();
     }
   }
-
-  
-  
-  private function validarModalidadePgd($modalidadeString)
+private function validarModalidadePgd($modalidadeString)
   {
     if (empty($modalidadeString)) {
       return null;
@@ -1134,8 +1128,8 @@ class IntegracaoService extends ServiceBase
 
     SiapeLog::warning("Modalidade '{$modalidadeString}' não encontrada na tabela tipos_modalidades_siape. Valor será definido como null.");
     return null;
-  }
-
+  }  
+  
   private function verificarUsuariosExternosIntegracao(): void
   {
     try {

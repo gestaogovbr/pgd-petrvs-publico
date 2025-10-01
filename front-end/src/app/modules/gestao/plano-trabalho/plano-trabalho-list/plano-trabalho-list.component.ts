@@ -70,6 +70,9 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		{key: "INICIAM", value: "Iniciam"},
 		{key: "FINALIZAM", value: "Finalizam"},
 	];
+	
+	public groupByHierarquia = [{field: "hierarquia", label: "Unidade"}];
+	public groupByPadrao = [{field: "unidade.sigla", label: "Unidade"}];
 
 	constructor(public injector: Injector) {
 		super(injector, PlanoTrabalho, PlanoTrabalhoDaoService);
@@ -122,8 +125,10 @@ export class PlanoTrabalhoListComponent extends PageListBase<
             "unidade:id,sigla,entidade_id,unidade_pai_id",
             "usuario:id,nome,matricula,url_foto",
 		];
-		this.temAtribuicaoChefia = this.auth.isGestorAlgumaAreaTrabalho(false);
-		this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
+		const INCLUIR_SUBSTITUTO = true;
+		const INCLUIR_DELEGADO = true;
+		this.temAtribuicaoChefia = this.auth.isGestorAlgumaAreaTrabalho(!INCLUIR_DELEGADO, !INCLUIR_SUBSTITUTO);
+		this.groupBy = this.groupByPadrao;
 		this.BOTAO_ALTERAR = {
 			label: "Alterar",
 			icon: "bi bi-pencil-square",
@@ -426,7 +431,19 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		]);
 		if (this.filter!.controls.meus_planos.value)
 			result.push(["usuario.id", "==", this.auth.usuario?.id]);
+		if(this.filter!.controls.subordinadas.value){
+			this.groupBy = this.groupByHierarquia
+			result.push([
+				"incluir_hierarquia",
+				 "==",
+				 true
+			]);
+		}else{
+			this.groupBy = this.groupByPadrao
+			if(this.grid) this.grid.groupBy = this.groupBy;
+		}
 
+		
 		return result;
 	};
 
@@ -437,7 +454,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			(!agrupar && this.groupBy?.length)
 		) {
 			this.groupBy = agrupar
-				? [{field: "unidade.sigla", label: "Unidade"}]
+				? this.groupByPadrao
 				: [];
 			this.grid!.reloadFilter();
 		}
@@ -571,7 +588,6 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 								planoTrabalho._metadata?.atribuicoesLogado.gestorDelegado;
 						}
 						let podeEditar = planoTrabalho._metadata?.podeEditar;
-
 						let condition1 = this.auth.hasPermissionTo("MOD_PTR_EDT");
 						let condition2 = this.planoTrabalhoService.isValido(planoTrabalho);
 						let condition3 =

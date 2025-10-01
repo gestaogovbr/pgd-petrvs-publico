@@ -1,6 +1,5 @@
 <separator collapse [collapsed]="false" [title]="lex.translate('Atividades')" [icon]="entityService.getIcon('Atividade')">
   <grid [items]="itemsEntregas" #gridEntregas [minHeight]="0" [hasEdit]="false">
-
     <columns>
       <column type="expand" [width]="50" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')" [align]="'center'" [hint]="lex.translate('Consolidação')" [template]="columnConsolidacao" [expandTemplate]="columnExpandedConsolidacao">
         <ng-template let-row="row" #columnConsolidacao>
@@ -8,8 +7,6 @@
         </ng-template>
         <ng-template let-row="row" #columnExpandedConsolidacao>
           <grid [items]="row.atividades" [minHeight]="0" #gridAtividades editable [form]="formAtividade" [hasDelete]="false" [hasEdit]="false" [hasAdd]="row.status == 'ATIVO'" [add]="addAtividade.bind(this, row.entrega)" [load]="loadAtividade.bind(this)" [remove]="removeAtividade.bind(this, row.atividades)" [save]="saveAtividade.bind(this)">
-
-
             <columns>
               <column type="expand" [width]="50" icon="bi bi-boxes" [align]="'center'" [hint]="'Tarefas da ' + lex.translate('atividade')" [template]="columnTarefas" [expandTemplate]="columnExpandedTarefas">
                 <ng-template let-row="row" #columnTarefas>
@@ -137,7 +134,7 @@
     </columns>
   </grid>
 </separator>
-<separator collapse [collapsed]="false" [title]="lex.translate('Afastamentos')" [icon]="entityService.getIcon('Afastamento')">
+<separator collapse [collapsed]="false" [title]="lex.translate('Ocorrências')" [icon]="entityService.getIcon('Afastamento')">
   <grid [items]="itemsAfastamentos" [minHeight]="0" #gridAfastamento [hasEdit]="false" [hasDelete]="false" [hasAdd]="!disabled" [add]="addAfastamento.bind(this)" editable>
     <columns>
       <column title="Início" [width]="300" type="datetime" field="data_inicio"></column>
