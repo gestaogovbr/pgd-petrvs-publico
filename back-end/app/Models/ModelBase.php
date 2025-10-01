@@ -42,8 +42,8 @@ class ModelBase extends Model implements AuditableContract
         if (in_array($relationType, ["HasMany", "HasOne"])) {
           $relatedModel = $relation->getRelated();
           $children = $relatedModel::where($relation->getForeignKeyName(), $this->id)->get();
-          foreach ($children as $chield) {
-            if (method_exists($chield, 'deleteCascade')) $chield->deleteCascade();
+          foreach ($children as $child) {
+            if (method_exists($child, 'deleteCascade')) $child->deleteCascade();
           }
         }
       }
