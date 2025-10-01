@@ -19,7 +19,7 @@ export class BlacklistServidorListComponent extends PageListBase<SiapeBlacklistS
   constructor(public injector: Injector) {
     super(injector, SiapeBlacklistServidor, SiapeBlacklistServidorDaoService);
     /* Inicializações */
-    this.title = this.lex.translate('Blacklist Servidor');
+    this.title = this.lex.translate('CPFs indisponíveis');
     this.code = "MOD_SIAPE_BLACKLIST";
     this.filter = this.fh.FormBuilder({
       cpf: { default: '' },
