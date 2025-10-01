@@ -29,7 +29,7 @@ export class BlacklistServidorListComponent extends PageListBase<SiapeBlacklistS
     this.options.push({
       icon: "bi bi-trash",
       label: "Remover",
-      hint: "Remover da blacklist",
+      hint: "Remover da lista",
       color: "btn-outline-danger",
       onClick: (row: any) => this.removerCpf(row.cpf)
     });
@@ -39,15 +39,15 @@ export class BlacklistServidorListComponent extends PageListBase<SiapeBlacklistS
     try {
       const sucesso = await this.dao?.removerCpf(cpf);
       if (sucesso) {
-        this.dialog?.alert("Sucesso", "CPF removido da blacklist com sucesso!");
+        this.dialog?.alert("Sucesso", "CPF removido da lista de CPF's com sucesso!");
         if (this.grid?.query) {
           this.grid.query.refresh();
         }
       } else {
-        this.dialog?.alert("Erro", "Falha ao remover CPF da blacklist.");
+        this.dialog?.alert("Erro", "Falha ao remover CPF da lista.");
       }
     } catch (error) {
-      this.dialog?.alert("Erro", "Erro ao remover CPF da blacklist.");
+      this.dialog?.alert("Erro", "Erro ao remover CPF da lista.");
     }
   }
 
