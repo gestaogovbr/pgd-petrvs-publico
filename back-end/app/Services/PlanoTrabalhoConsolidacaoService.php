@@ -91,7 +91,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'planoTrabalho.entregas.planoEntregaEntrega.entrega:id,nome,tipo_indicador', 
       'planoTrabalho.entregas.planoEntregaEntrega.objetivos.objetivo', 
       'planoTrabalho.entregas.planoEntregaEntrega.processos.processo', 
-      'planoTrabalho.tipoModalidade'
+      'planoTrabalho.tipoModalidade',
     ])->find($id);
     $concluido = in_array($consolidacao->status, ["CONCLUIDO", "AVALIADO"]);
     $planosEntregasIds = array_map(fn($pe) => $pe->planoEntregaEntrega?->plano_entrega_id, $consolidacao->planoTrabalho->entregas?->all() ?? []);
