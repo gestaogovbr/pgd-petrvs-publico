@@ -248,6 +248,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
         progresso_realizado: x.plano_entrega_entrega ? x.plano_entrega_entrega.progresso_realizado : 0,
         objetivos: x.plano_entrega_entrega ? x.plano_entrega_entrega.objetivos : [],
         processos: x.plano_entrega_entrega ? x.plano_entrega_entrega.processos : [],
+        status: dados.planoTrabalho.status,
       };
       return result;
     });
