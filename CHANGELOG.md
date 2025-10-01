@@ -1,3 +1,10 @@
+## 2.7.1 01/10/2025
+### Adicionado
+- Campo de identificação única (ident_unica) nas tabelas de usuários e integração de servidores para melhor controle de dados
+
+### Corrigido
+- Correção de resultados duplicados na consulta de unidades vinculadas ao usuário
+
 ## 2.7.0 30/09/2025
 ### Adicionado
 - Registro de Horas nos Afastamentos
