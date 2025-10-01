@@ -54,6 +54,7 @@ export class PlanoTrabalhoListAccordeonComponent extends PageFrameBase {
         if(this.util.asTimestamp(this.planos[i].data_inicio) <= agora && agora <= this.util.asTimestamp(this.planos[i].data_fim) && ["ATIVO", "CONCLUIDO"].includes(this.planos[i].status)) {
           this.selectedIndex = i;
         }
+        this.planos[i].accordionDisabled = ['AGUARDANDO_ASSINATURA', 'INCLUIDO'].includes(this.planos[i].status);
       }
     } finally {
       this.accordion!.loading = false;
