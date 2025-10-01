@@ -607,6 +607,7 @@ class UsuarioService extends ServiceBase
             ->join('unidades_integrantes_atribuicoes as uia', 'ui.id', '=', 'uia.unidade_integrante_id')
             ->where('us.cpf', $cpf)
             ->whereNull('uia.deleted_at')
+            ->distinct()
             ->get();
         
         if ($unidades->isEmpty()) {
