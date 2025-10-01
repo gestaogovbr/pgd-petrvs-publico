@@ -4,6 +4,7 @@
 
 ### Corrigido
 - Correção de resultados duplicados na consulta de unidades vinculadas ao usuário
+- Corrigido botão para adicionar atividades no registro de execução
 
 ## 2.7.0 30/09/2025
 ### Adicionado
