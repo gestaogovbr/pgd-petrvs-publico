@@ -1,3 +1,6 @@
+## 2.7.1 (hotfix) 01/10/2025
+### Corrigido
+- Corrigido botão para adicionar atividades no registro de execução
 ## 2.7.0 30/09/2025
 ### Adicionado
 - Registro de Horas nos Afastamentos
