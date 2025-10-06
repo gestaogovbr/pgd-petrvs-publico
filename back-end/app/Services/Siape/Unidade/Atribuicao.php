@@ -132,8 +132,8 @@ trait Atribuicao
         }
         
         if ($this->usuarioTemPlanodeTrabalhoAtivo($usuario, $this->getUnidadeAtualDoUsuario($usuario))) {
-            $this->alteracoes = ['lotacao' => sprintf('O servidor %s já possui um plano de trabalho ativo nessa unidade %s, alterando a lotação para COLABORADOR:', $usuario->id, $unidadeDestino->id)];
-            $this->processaColaborador($unidadeDestino, $usuario,  $usuario->lotacao);
+            $this->alteracoes = ['lotacao' => sprintf('O servidor %s possui um plano de trabalho ativo nessa unidade %s, alterando a lotação para COLABORADOR:', $usuario->id, $unidadeDestino->id)];
+            $this->processaColaborador($usuario->lotacao->unidade, $usuario,  $usuario->lotacao);
         }
 
         if ($this->usuarioEGestorEmOutraUnidade($usuario, $unidadeDestino)) {
