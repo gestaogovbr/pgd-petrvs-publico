@@ -1,3 +1,4 @@
+## 2.7.4 13/10/2025
 ## 2.7.3 06/10/2025
 ### Corrigido
 - Corrigido envio de Contribuições da Própria unidade
