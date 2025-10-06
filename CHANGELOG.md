@@ -1,3 +1,4 @@
+## 2.7.3 06/10/2025
 ## 2.7.2 02/10/2025
 ### Corrigido
 - Corrigido matriculas duplicadas
