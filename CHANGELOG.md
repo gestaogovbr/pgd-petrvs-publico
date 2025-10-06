@@ -1,14 +1,17 @@
+## 2.7.3 06/10/2025
+### Corrigido
+- Corrigido envio de Contribuições da Própria unidade
+
 ## 2.7.2 02/10/2025
 ### Corrigido
 - Corrigido matriculas duplicadas
+
 ## 2.7.1 01/10/2025
 ### Adicionado
 - Campo de identificação única (ident_unica) nas tabelas de usuários e integração de servidores para melhor controle de dados
-
 ### Corrigido
 - Correção de resultados duplicados na consulta de unidades vinculadas ao usuário
 - Corrigido botão para adicionar atividades no registro de execução
-
 ### Modificado
 - Alterado o nome do relatório de CPF's inexistentes, bloqueados e/ou exonerados do SIAPE de Blacklist Servidor para "CPFs indisponíveis"
 
