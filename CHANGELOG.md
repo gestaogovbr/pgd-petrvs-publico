@@ -1,4 +1,6 @@
 ## 2.7.4 13/10/2025
+### Modificado
+- Atualizado o arquivo update.sh para incluir o parâmetro --deploy-seed
 ## 2.7.3 06/10/2025
 ### Corrigido
 - Corrigido envio de Contribuições da Própria unidade
