@@ -48,6 +48,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       url_foto: { default: "" },
       texto_complementar_plano: { default: "" },
       data_nascimento: { default: null },
+      situacao_siape: { default: null },
     }, this.cdRef, this.validate);
     this.planoDataset = this.planoTrabalhoDao.dataset();
     this.join = ["auditsExterno", "ultimoPlanoTrabalhoAtivo.documentos"]
@@ -91,6 +92,8 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     return new Promise<boolean>(async (resolve, reject) => {
       this.unidadesIntegrantes!.grid!.confirm();
       let usuario = this.util.fill(new Usuario(), this.entity!);
+      // retira audits_externo do objeto
+      delete usuario.audits_externo;
       usuario = this.util.fillForm(usuario, this.form!.value);
       usuario.perfil_id = this.unidadesIntegrantes?.formPerfil.controls.perfil_id.value;
       let integrantesConsolidados: IntegranteConsolidado[] = this.unidadesIntegrantes?.items || [];

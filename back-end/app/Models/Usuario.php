@@ -495,7 +495,7 @@ class Usuario extends Authenticatable implements AuditableContract
 
     public function auditsExterno(): MorphMany
     {
-        return $this->morphMany(Audit::class, 'auditable')->with('user')->where('auditable_type', 'App\Models\Usuario');
+        return $this->morphMany(Audit::class, 'auditable')->with('user')->where('auditable_type', 'App\Models\Usuario')->limit(3);
     }
 
     public function setMatriculaAttribute($value)
