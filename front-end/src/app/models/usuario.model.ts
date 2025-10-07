@@ -9,6 +9,7 @@ import { DocumentoAssinatura } from './documento-assinatura.model';
 import { Entidade } from './entidade.model';
 import { Favorito } from './favorito.model';
 import { Integracao } from './integracao.model';
+
 import { NotificacaoDestinatario } from './notificacao-destinatario.model';
 import { HasNotificacao, Notificacao, NotificacoesConfig } from './notificacao.model';
 import { Perfil } from './perfil.model';
@@ -113,6 +114,7 @@ export class Usuario extends Base implements HasNotificacao {
     public favoritos?: Favorito[];
     public gerencias_substitutas?: UnidadeIntegrante[] = [];
     public gerencias_delegadas?: UnidadeIntegrante[] = [];
+    public matriculas?: Usuario[] = [];
     //public historicos_projeto?: ProjetoHistorico[];
     public integracoes?: Integracao[];
     public notificacoes_destinatario?: NotificacaoDestinatario[];

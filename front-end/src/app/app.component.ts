@@ -15,6 +15,7 @@ import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.ser
 import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 import { UnidadeService } from './services/unidade.service';
+import { Unidade } from './models/unidade.model';
 
 export type Contexto = "EXECUCAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX" ;
 export type Schema = {
@@ -149,7 +150,7 @@ export class AppComponent {
       // TIPOS_MOTIVOS_AFASTAMENTOS: { name: this.lex.translate("Tipos de Motivo de Afastamento"), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: this.entity.getIcon('TipoMotivoAfastamento') },
       TIPOS_PROCESSOS: { name: this.lex.translate("Tipos de Processo"), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: this.entity.getIcon('TipoProcesso') },
       /* Gestão */
-      AFASTAMENTOS: { name: this.lex.translate("Afastamentos"), permition: 'MOD_AFT', route: ['gestao', 'afastamento'], icon: this.entity.getIcon('Afastamento') },
+      AFASTAMENTOS: { name: this.lex.translate("Ocorrências"), permition: 'MOD_AFT', route: ['gestao', 'afastamento'], icon: this.entity.getIcon('Afastamento') },
       OCORRENCIAS: { name: this.lex.translate("Ocorrencias"), permition: 'MOD_OCOR', route: ['gestao', 'ocorrencia'], icon: this.entity.getIcon('Ocorrencia') },
       CADEIAS_VALORES: { name: this.lex.translate("Cadeias de Valores"), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
       ATIVIDADES: { name: this.lex.translate("Atividades"), permition: 'MOD_ATV', route: ['gestao', 'atividade'], icon: this.entity.getIcon('Atividade') },
@@ -188,7 +189,7 @@ export class AppComponent {
       DEV_CPF_CONSULTA_SIAPE: { name: "Consulta CPF SIAPE", permition: '', route: ['consultas', 'cpf-siape'], icon: this.entity.getIcon('ConsultaCPFSIAPE') },
       DEV_UNIDADE_CONSULTA_SIAPE: { name: "Consulta Unidade SIAPE", permition: '', route: ['consultas', 'unidade-siape'], icon: this.entity.getIcon('ConsultaUnidadeSIAPE') },
       /* SIAPE */
-      BLACKLIST_SERVIDOR: { name: "Blacklist Servidor", permition: '', route: ['siape', 'blacklist-servidor'], icon: 'bi bi-person-x' },
+      BLACKLIST_SERVIDOR: { name: "CPFs indisponíveis", permition: '', route: ['siape', 'blacklist-servidor'], icon: 'bi bi-person-x' },
             /* RELATORIOS */
       RELATORIO_PLANO_TRABALHO: {
         name: this.lex.translate("Planos de Trabalho"),
@@ -459,6 +460,10 @@ export class AppComponent {
     return this.auth.unidades || [];
   }
 
+  public get unidadesVinculadas(): Unidade[] {
+    return this.auth.unidadesVinculadas || [];
+  }
+
   public get usuarioNome(): string {
     return this.utils.shortName(this.auth.usuario?.apelido.length ? this.auth.usuario?.apelido : this.auth.usuario?.nome || "");
   }
@@ -480,8 +485,19 @@ export class AppComponent {
     popup.restore();
   }
 
-  public selecionaUnidade(id: string) {
-    this.auth.selecionaUnidade(id, this.cdRef);
+  public async selecionaUnidade(id: string, matricula: string) {
+    const matriculaAnterior = this.auth.usuario?.matricula;
+    
+    await this.auth.selecionaUnidade(id, matricula, this.cdRef);
+    
+    if (matricula && matricula !== matriculaAnterior) {
+      window.location.reload();
+    }
+  }
+
+  public getMatriculaPelaUnidadeComCpf(idUnidade: string, cpf: string): string {
+    let matricula = this.auth.usuario?.matriculas?.find(x => x.unidades?.find(y => y.id == idUnidade) && x.cpf == cpf);
+    return matricula?.matricula || 'N/A';
   }
 
   public async onToolbarButtonClick(btn: ToolbarButton) {

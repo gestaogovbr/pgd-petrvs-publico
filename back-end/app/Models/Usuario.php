@@ -2,54 +2,59 @@
 
 namespace App\Models;
 
-use Throwable;
 use App\Casts\AsJson;
+use App\Exceptions\ServerException;
+use App\Models\Afastamento;
 use App\Models\Anexo;
-use App\Models\Change;
-use App\Models\Perfil;
-use App\Models\Projeto;
-use App\Models\Entidade;
-use App\Models\Favorito;
-use App\Traits\AutoUuid;
 use App\Models\Atividade;
+use App\Models\AtividadeTarefa;
 use App\Models\Avaliacao;
-use App\Models\Documento;
+use App\Models\Change;
 use App\Models\Comentario;
 use App\Models\Curriculum;
+use App\Models\Documento;
+use App\Models\DocumentoAssinatura;
+use App\Models\Entidade;
+use App\Models\Favorito;
 use App\Models\Integracao;
-use App\Models\Afastamento;
+use App\Models\IntegracaoServidor;
 use App\Models\Notificacao;
+use App\Models\NotificacaoConfig;
+use App\Models\NotificacaoDestinatario;
+use App\Models\NotificacaoWhatsapp;
+use App\Models\Perfil;
 use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalho;
-use App\Models\ProjetoTarefa;
+use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\ProgramaParticipante;
+use App\Models\Projeto;
+use App\Models\ProjetoHistorico;
 use App\Models\ProjetoRecurso;
+use App\Models\ProjetoTarefa;
+use App\Models\QuestionarioPreenchimento;
+use App\Models\StatusJustificativa;
+use App\Models\UnidadeIntegrante;
+use App\Models\UnidadeIntegranteAtribuicao;
+use App\Services\UsuarioService;
+use App\Traits\AutoUuid;
 use App\Traits\HasPermissions;
 use App\Traits\MergeRelations;
-use App\Models\AtividadeTarefa;
-use App\Models\ProjetoHistorico;
-use App\Services\UsuarioService;
-use App\Models\NotificacaoConfig;
-use Laravel\Sanctum\HasApiTokens;
-use App\Exceptions\ServerException;
-use App\Models\DocumentoAssinatura;
-use App\Models\NotificacaoWhatsapp;
-use App\Models\StatusJustificativa;
-use App\Models\ProgramaParticipante;
-use App\Models\NotificacaoDestinatario;
-use Illuminate\Notifications\Notifiable;
-use App\Models\PlanoTrabalhoConsolidacao;
-use App\Models\QuestionarioPreenchimento;
-use App\Models\IntegracaoServidor;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
-use OwenIt\Auditing\Auditable;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Lab404\Impersonate\Models\Impersonate;
-use Carbon\Carbon;
+use Laravel\Sanctum\HasApiTokens;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use Throwable;
+use ReflectionObject;
+
 class UsuarioConfig
 {
 }
@@ -321,7 +326,7 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id');
     }
 
-    
+
     public function unidadesIntegrantes()
     {
         return $this->hasMany(UnidadeIntegrante::class, 'usuario_id', 'id');
@@ -517,5 +522,22 @@ class Usuario extends Authenticatable implements AuditableContract
             '1' => 'Art 10, §2º, INC SEGES/SPGRT nº 24/2024- Primeiro ano do Estágio Probatório.',
             '2' => 'Art 10, §3º, INC SEGES/SPGRT nº 24/2024- Movimentação entre órgãos há menos de 6 (seis) meses.'
         ];
+    }
+
+    public function deleteCascade()
+    {
+        foreach ($this->delete_cascade as $relationName) {
+            $relation = $this->{Str::camel($relationName)}();
+            $relationType = (new ReflectionObject($relation))->getShortName();
+            if (in_array($relationType, ["HasMany", "HasOne"])) {
+                $relatedModel = $relation->getRelated();
+                $children = $relatedModel::where($relation->getForeignKeyName(), $this->id)->get();
+                foreach ($children as $child) {
+                    if (method_exists($child, 'deleteCascade')) $child->deleteCascade();
+                }
+            }
+        }
+
+        $this->delete();
     }
 }

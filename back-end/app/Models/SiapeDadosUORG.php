@@ -14,6 +14,7 @@ class SiapeDadosUORG extends ModelBase
 
     protected $fillable = [
         'id',
+        'codigo',
         'response',
         'processado',
         'data_modificacao',

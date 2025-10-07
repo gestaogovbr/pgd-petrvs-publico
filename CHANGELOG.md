@@ -1,3 +1,48 @@
+## 2.7.3 06/10/2025
+### Corrigido
+- Corrigido envio de Contribuições da Própria unidade
+
+## 2.7.2 02/10/2025
+### Corrigido
+- Corrigido matriculas duplicadas
+
+## 2.7.1 01/10/2025
+### Adicionado
+- Campo de identificação única (ident_unica) nas tabelas de usuários e integração de servidores para melhor controle de dados
+### Corrigido
+- Correção de resultados duplicados na consulta de unidades vinculadas ao usuário
+- Corrigido botão para adicionar atividades no registro de execução
+### Modificado
+- Alterado o nome do relatório de CPF's inexistentes, bloqueados e/ou exonerados do SIAPE de Blacklist Servidor para "CPFs indisponíveis"
+
+## 2.7.0 30/09/2025
+### Adicionado
+- Registro de Horas nos Afastamentos
+- Exclusão de Colaboradores externos
+- Sistema de múltiplas matrículas para usuários
+- Exibição do número de matrícula do usuário no módulo de gestão
+- Filtros de unidades por matrícula do usuário
+- Novos campos PGD e jornada de trabalho na integração SIAPE
+- Validação de entregas na criação do plano de trabalho
+- Somente deve ser possível editar um PT se o registro de execução não tiver sido concluído
+- O registro de execução só deve ser feito após o plano de trabalho entrar no status "Aprovado"
+- O participante deve preencher TODOS os campos de descrição dos trabalhos realizados, antes de concluir o registro de execução
+- Ao cancelar avaliação do plano de trabalho, na tela de planejamento o mesmo deve retornar ao status "Aprovado"
+### Corrigido
+- Corrigido regra para clonar planos de entrega
+- Corrigido criação dos registros de execução após edição do plano de trabalho
+- Correção na Nota e Situação de Reavaliação no Relatório de Planos de Trabalho
+- Correção no envio de Notas das Avaliações dos Planos de Trabalho para API 
+- Validação de código de unidade vazio antes do processamento no SIAPE
+- Remoção de log redundante de erro no serviço de integração
+- Melhorias no processamento de dados e tratamento de erros na integração SIAPE
+### Modificado
+- Afastamentos passam a ser denominados de Ocorrências
+- Métodos de integração de servidor modificados para usar CPF e matrícula
+- Melhorias no processamento de dados da integração SIAPE
+- Aprimoramento do tratamento de unidades extintas
+- Agrupamento de Planos de Trabalho por unidade na listagem de planejamento
+
 ## 2.6.5 22/09/2025
 ### Corrigido
 - Alerta do PT em unidade diferente aparecendo mesmo quando está sendo feito na própria unidade de lotação

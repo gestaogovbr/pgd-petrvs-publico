@@ -68,6 +68,7 @@ class PlanoTrabalhoService extends ServiceBase
         // (RI_PTR_C) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de trabalho não arquivados.
         $arquivados = $this->extractWhere($data, "incluir_arquivados");
         $subordinadas = $this->extractWhere($data, "incluir_subordinadas");
+        $hierarquia = $this->extractWhere($data, "incluir_hierarquia");
         // (RN_PTR_I) Quando a Unidade Executora não for a unidade de lotação do servidor, seu gestor imediato e seus substitutos devem ter acesso ao seu Plano de Trabalho (e à sua execução);
         $lotadosMinhaUnidade = $this->extractWhere($data, "lotados_minha_unidade");
         if (empty($arquivados) || !$arquivados[2])
@@ -75,10 +76,13 @@ class PlanoTrabalhoService extends ServiceBase
         $unidadeId = $this->extractWhere($data, "unidade_id");
         if (is_array($unidadeId) && isset($unidadeId[2])) {
             $ids[] = $unidadeId[2];
+            if(is_array($ids) && is_array($ids[0]))
+                $ids = array_unique(...$ids);
+            
             $data["where"][] = ['unidade_id', 'in', array_unique($ids)];
 
         }
-        if (isset($subordinadas[2])) { // Verifica se o índice existe
+        if (isset($subordinadas[2]) && $subordinadas[2]) { // Verifica se o índice existe
             $unidadeService = new UnidadeService();
 
             // Define $uId corretamente, verificando a existência do índice
@@ -86,6 +90,11 @@ class PlanoTrabalhoService extends ServiceBase
                 $uId = isset($unidades_vinculadas[2]) ? $unidades_vinculadas[2] : null;
             } else {
                 $uId = isset($unidadeId[2]) ? $unidadeId[2] : null;
+                // busca a nomeclatura da hierarquia da unidade 
+            
+                if(isset($hierarquia[2]) && $hierarquia[2]){
+                    $this->attachHierarquia($data);
+                }
             }
 
             // Só continua se $uId não for nulo
@@ -502,67 +511,75 @@ class PlanoTrabalhoService extends ServiceBase
      */
     public function atualizaConsolidacoes($plano)
     {
-        $existentes = $plano->consolidacoes->all();
-        $merged = [];
-        $dataInicioVigencia = date("Y-m-d", strtotime($plano->data_inicio)); /* Transforma de datetime para date */
-        $dataFimVigencia = date("Y-m-d", strtotime($plano->data_fim)); /* Transforma de datetime para date */
-        $dataInicio = $dataInicioVigencia;
-        while (strtotime($dataInicio) <= strtotime($dataFimVigencia)) {
-            $dataFim = date("Y-m-d", min(strtotime($this->proxDataConsolidacao($dataInicio, $plano->programa)), strtotime($dataFimVigencia)));
-            $igual = array_filter($existentes, fn($c) => $c->data_inicio == $dataInicio && $c->data_fim == $dataFim)[0] ?? null;
-            $intersecao = array_filter($existentes, fn($c) => $c->status != "INCLUIDO" && strtotime($dataInicio) <= strtotime($c->data_fim) && strtotime($dataFim) >= strtotime($c->data_inicio))[0] ?? null;
-            if (!empty($igual)) { /* (RN_CSLD_4) Caso exista períodos iguais, o período existente será mantido (para este perído nada será feito, manterá a mesma ID) */
-                $merged[] = $igual;
-                $existentes = array_filter($existentes, fn($e) => $e->id !== $igual->id);
-                $dataInicio = date("Y-m-d", strtotime($igual->data_fim . ' + 1 days'));
-            } else if (!empty($intersecao)) { /* Se houver intersecção do período gerado com um existente que esteja com status CONCLUIDO ou AVALIADO */
-                $existentes = array_filter($existentes, fn($e) => $e->id !== $intersecao->id);
-                if ($intersecao->data_inicio == $dataInicio) { /* (RN_CSLD_5) Se as datas de início forem iguais o periodo existente será mantido */
-                    $dataInicio = date("Y-m-d", strtotime($intersecao->data_fim . ' + 1 days'));
-                } else { /* (RN_CSLD_6) Se as datas de início forem diferente, então será criado um novo perído entre o novo início e o início do período CONCLUIDO/AVALIADO, e o período CONCLUIDO/AVALIADO será mantido */
+        DB::transaction(function () use ($plano) {
+            $existentes = $plano->consolidacoes->sortBy('data_inicio')->values();
+            $merged = [];
+            $dataInicioVigencia = Carbon::parse($plano->data_inicio)->toDateString(); /* Transforma de datetime para date */
+            $dataFimVigencia = Carbon::parse($plano->data_fim)->toDateString(); /* Transforma de datetime para date */
+            $dataInicio = Carbon::parse($dataInicioVigencia);
+            $limite = Carbon::parse($dataFimVigencia);
+            while ($dataInicio->lessThanOrEqualTo($limite)) {
+                $proximoFim =  Carbon::parse($this->proxDataConsolidacao($dataInicio->toDateString(), $plano->programa));
+                $dataFim = $proximoFim->greaterThan($limite) ? $limite->copy() : $proximoFim;
+                $igual = $existentes->first(fn($c) => $c->data_inicio === $dataInicio->toDateString() && $c->data_fim === $dataFim->toDateString());
+                $intersecao = $existentes->first(fn($c) => $c->status !== "INCLUIDO" && $dataInicio->lessThanOrEqualTo(Carbon::parse($c->data_fim)) && $dataFim->greaterThanOrEqualTo(Carbon::parse($c->data_inicio)));
+                if (!empty($igual)) { /* (RN_CSLD_4) Caso exista períodos iguais, o período existente será mantido (para este perído nada será feito, manterá a mesma ID) */
+                    $merged[] = $igual;
+                    $existentes = $existentes->reject(fn($e) => $e->id === $igual->id)->values();
+                    $dataInicio = Carbon::parse($igual->data_fim)->addDay();
+                } else if (!empty($intersecao)) { /* Se houver intersecção do período gerado com um existente que esteja com status CONCLUIDO ou AVALIADO */
+                    $existentes = $existentes->reject(fn($e) => $e->id === $intersecao->id)->values();
+                    if ($intersecao->data_inicio === $dataInicio->toDateString()) { /* (RN_CSLD_5) Se as datas de início forem iguais o periodo existente será mantido */
+                        $dataInicio = Carbon::parse($intersecao->data_fim)->addDay();
+                    } else { /* (RN_CSLD_6) Se as datas de início forem diferente, então será criado um novo perído entre o novo início e o início do período CONCLUIDO/AVALIADO, e o período CONCLUIDO/AVALIADO será mantido */
+                        $novo = new PlanoTrabalhoConsolidacao([
+                            'data_inicio' => $dataInicio->toDateString(),
+                            'data_fim' =>  Carbon::parse($intersecao->data_inicio)->subDay()->toDateString(),
+                            'plano_trabalho_id' => $plano->id,
+                            'status' => 'INCLUIDO'
+                        ]);
+                        $novo->save();
+                        $merged[] = $novo;
+                        $dataInicio =  Carbon::parse($intersecao->data_inicio);
+                    }
+                } else { /* Novo período */
                     $novo = new PlanoTrabalhoConsolidacao([
-                        'data_inicio' => $dataInicio,
-                        'data_fim' => date("Y-m-d", strtotime($intersecao->data_inicio . ' - 1 days')),
+                        'data_inicio' => $dataInicio->toDateString(),
+                        'data_fim' => $dataFim->toDateString(),
                         'plano_trabalho_id' => $plano->id,
                         'status' => 'INCLUIDO'
                     ]);
                     $novo->save();
                     $merged[] = $novo;
-                    $dataInicio = $intersecao->data_inicio;
+                    $dataInicio = $dataFim->copy()->addDay();
                 }
-            } else { /* Novo período */
-                $novo = new PlanoTrabalhoConsolidacao([
-                    'data_inicio' => $dataInicio,
-                    'data_fim' => $dataFim,
-                    'plano_trabalho_id' => $plano->id,
-                    'status' => 'INCLUIDO'
-                ]);
-                $novo->save();
-                $merged[] = $novo;
-                $dataInicio = date("Y-m-d", strtotime($dataFim . ' + 1 days'));
             }
-        }
-        foreach ($existentes as $anterior) {
-            /* Remove o registro da consolidação completamente vazio */
-            $anterior->delete();
-        }
-        /* Refaz todas as datas finais das consolidações considerando sempre data_inicio da próxima - 1 dia */
-        $this->atualizaDataFimConsolidacoes($plano->id);
+            foreach ($existentes as $anterior) {
+                /* Remove o registro da consolidação completamente vazio */
+                $anterior->delete();
+            }
+            /* Refaz todas as datas finais das consolidações considerando sempre data_inicio da próxima - 1 dia */
+            $this->atualizaDataFimConsolidacoes($plano->id);
+        });
     }
-
     /* Refaz todas as datas finais das consolidações considerando sempre data_inicio da próxima - 1 dia */
     public function atualizaDataFimConsolidacoes($planoId)
     {
         $plano = PlanoTrabalho::find($planoId);
-        $consolidacoes = $plano?->consolidacoes?->all() ?? [];
-        for ($i = 1; $i < count($consolidacoes); $i++) {
-            if (strtotime($consolidacoes[$i - 1]->data_fim) != strtotime($consolidacoes[$i]->data_inicio . " -1 days")) {
-                $consolidacoes[$i - 1]->data_fim = date("Y-m-d", strtotime($consolidacoes[$i]->data_inicio . " -1 days"));
-                $consolidacoes[$i - 1]->save();
+        $consolidacoes = $plano?->consolidacoes()?->orderBy('data_inicio')?->get() ?? collect();
+        if ($consolidacoes->isEmpty()) {
+            return;
+        }
+        for ($i = 1; $i < $consolidacoes->count(); $i++) {
+            $anterior = $consolidacoes[$i - 1];
+            $atual = $consolidacoes[$i];
+            $fimEsperado =  Carbon::parse($atual->data_inicio)->subDay()->toDateString();
+            if ($anterior->data_fim !== $fimEsperado) {
+                $anterior->data_fim = $fimEsperado;
+                $anterior->save();
             }
         }
     }
-
     /**
      * Retorna os planos de trabalho de um usuário (validando se ele tem acesso a esse plano)
      *
@@ -819,6 +836,20 @@ class PlanoTrabalhoService extends ServiceBase
         return null;
     }
 
+    public function validaEdicao($planoId)
+    {
+        $plano = PlanoTrabalho::find($planoId);
+        if (empty($plano)) {
+            throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não encontrado.");
+        }
+
+        foreach ($plano->consolidacoes as $consolidacao) {
+            if ($consolidacao->status != "INCLUIDO")
+                return false;
+        }
+        return true;
+    }
+
     public function proxyRows($rows)
     {
         foreach ($rows as $row) {
@@ -829,6 +860,7 @@ class PlanoTrabalhoService extends ServiceBase
                 'unidadeVinculada' => $this->isUnidadeVinculada($row),
                 'jaAssinaramTCR' => $this->jaAssinaramTCR($row->id),
                 'podeCancelar' => empty($this->validateCancelamento($row->id)),
+                'podeEditar' => $this->validaEdicao($row->id),
                 'atribuicoesParticipante' => $this->usuarioService->atribuicoesGestor($row->unidade_id, $row->usuario_id),
                 'atribuicoesLogado' => $this->usuarioService->atribuicoesGestor($row->unidade_id),
                 'atribuicoesLogadoUnidadeSuperior' => empty($unidade->unidade_pai_id) ? ["gestor" => false, "gestorSubstituto" => false, "gestorDelegado" => false] : $this->usuarioService->atribuicoesGestor($unidade->unidade_pai_id),
@@ -1318,5 +1350,15 @@ class PlanoTrabalhoService extends ServiceBase
         $usuario->lotacao = null;
         return $usuario->lotacao?->unidade_id == $unidadeId;
     }
+
+    /**
+     *  Adiciona os componentes relacionados a nomeclatura da hierarquia da unidade
+     */
+    private function attachHierarquia(&$data): void
+    {
+        $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';
+        $data['select'][] = DB::raw("$queryHierarquia AS hierarquia");
+        $data['orderBy'] = [[DB::raw($queryHierarquia), 'asc']];
+    }    
     
 }

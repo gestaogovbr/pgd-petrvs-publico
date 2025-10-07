@@ -26,6 +26,7 @@ class UnidadeIntegranteService extends ServiceBase
 
     if (!empty($unidadeId) && empty($unidade)) throw new ServerException("ValidateIntegrante", "Unidade não encontrada no banco");
     if (!empty($usuarioId) && empty($usuario)) throw new ServerException("ValidateIntegrante", "Usuário não encontrado no banco");
+
     foreach (($unidade ? $unidade->integrantes ?? [] : $usuario->unidadesIntegrantes ?? []) as $vinculo) {
 
       $unidadeOuUsuarioDoVinculo = $unidade ? $vinculo->usuario : $vinculo->unidade;
@@ -37,6 +38,7 @@ class UnidadeIntegranteService extends ServiceBase
 
       $result[$unidadeOuUsuarioDoVinculo->id] = [
         "id" => $unidade ? $vinculo->usuario->id : $vinculo->unidade->id,
+        "matricula" => $unidade ? $vinculo->usuario->matricula : null,
         "usuario_nome" => $unidade ? $vinculo->usuario->nome : null,
         "usuario_apelido" => $unidade ? $vinculo->usuario->apelido : null,
         "usuario_url_foto" => $unidade ? $vinculo->usuario->url_foto : null,

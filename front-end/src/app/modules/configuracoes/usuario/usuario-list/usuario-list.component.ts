@@ -25,6 +25,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
   public BOTAO_PEDAGIO: ToolbarButton;
   public BOTAO_REMOVE_PEDAGIO: ToolbarButton;
 
+  public onDeleteMessage: string = "Este usuário deixará de ter acesso ao sistema. Deseja confirmar a exclusão?";
 
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
@@ -67,6 +68,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
 
     this.BOTAO_REMOVE_PEDAGIO = { label: "Tornar teletrabalho disponível novamente", icon: "bi bi-check2-circle", color: "btn-outline-primary", onClick: this.removePedagio.bind(this)};
 
+    this.addOption(this.OPTION_EXCLUIR, "MOD_USER_EXCL");
   }
 
   public validateJustificativa = (control: AbstractControl, controlName: string) => {
