@@ -9,7 +9,7 @@ use App\Models\Usuario;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 
-class UsuarioDevSeeder extends Seeder
+class UsuarioAdminSeeder extends Seeder
 {
   /**
    * Run the database seeds.
@@ -36,7 +36,8 @@ class UsuarioDevSeeder extends Seeder
       [
         'email' => 'gabriel.s.domingos@gestao.gov.br',
         'nome' => 'Gabriel Marcos da Silva Domingos',
-        'cpf' => '00000000000',
+        'cpf' => '99775708095',
+        'matricula' => str_pad(rand(100000, 999999), 6, '0', STR_PAD_LEFT),
         'apelido' => 'Gabriel',
         'perfil_id' => $perfilDevId,
         'sexo' => 'MASCULINO',
@@ -60,6 +61,7 @@ class UsuarioDevSeeder extends Seeder
         'email' => $usuarioData['email'],
         'nome' => $usuarioData['nome'],
         'cpf' => $usuarioData['cpf'],
+        'matricula' => $usuarioData['matricula'],
         'apelido' => $usuarioData['apelido'],
         'perfil_id' => $usuarioData['perfil_id'],
         'sexo' => $usuarioData['sexo'],
