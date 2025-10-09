@@ -20,6 +20,7 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
   @Input() selectable: boolean = false;
   @Input() snapshot?: ActivatedRouteSnapshot;
   @Input() unidade_pai?: string;
+  @Input() unidades?: string[];
   @ViewChild('instituidora', { static: false }) public instituidora?: InputSwitchComponent;
 
   public cidadeDao: CidadeDaoService;
@@ -93,6 +94,10 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
     
     if (this.unidade_pai) {
        result.push(["unidade_pai", "==", this.unidade_pai]);
+    }
+
+    if (this.unidades && this.unidades.length) {
+       result.push(["id", "in", this.unidades]);
     }
 
     return result;
