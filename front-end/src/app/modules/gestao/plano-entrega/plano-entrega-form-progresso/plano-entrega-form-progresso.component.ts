@@ -37,6 +37,7 @@ export class PlanoEntregaFormProgressoComponent extends PageFormBase<PlanoEntreg
       realizado: { default: null },
       progresso_esperado: { default: 100 },
       progresso_realizado: { default: null }, 
+      registro_execucao: { default: null },
       usuario_id: {default: null},
       plano_entrega_entrega_id: {default: null},     
     }, this.cdRef, this.validate);

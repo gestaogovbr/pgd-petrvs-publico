@@ -17,6 +17,7 @@ export class PlanoEntregaEntregaProgresso extends Base implements HasMetaRealiza
   public realizado: EntregaValor = {};
   public progresso_esperado: number = 100;
   public progresso_realizado: number = 0;
+  public registro_execucao?: string;
 
   public plano_entrega_entrega_id: string = '';
   public usuario_id: string = '';                  
