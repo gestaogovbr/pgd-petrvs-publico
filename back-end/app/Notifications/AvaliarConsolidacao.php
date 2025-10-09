@@ -7,6 +7,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Models\PlanoTrabalhoConsolidacao;
+use NotificationChannels\MicrosoftTeams\MicrosoftTeamsMessage;
+use NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel;
+
 use App\Models\Usuario;
 
 class AvaliarConsolidacao extends Notification
@@ -28,7 +31,7 @@ class AvaliarConsolidacao extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        return ['mail', 'database', MicrosoftTeamsChannel::class];
     }
 
     /**
@@ -80,5 +83,13 @@ class AvaliarConsolidacao extends Notification
                          ' está aguardando sua avaliação.',
             'url' => '/planos-trabalho/' . $this->consolidacao->id
         ];
+    }
+
+    public function toTeams(object $notifiable)
+    {
+        return MicrosoftTeamsMessage::create()
+            ->to('https://mtegovbr.webhook.office.com/webhookb2/4a813ce6-d43f-4b2a-b3f7-c8ce8309d1fe@3ec92969-5a51-4f18-8ac9-ef98fbafa978/IncomingWebhook/604e8722f37b4489a176b028cb1b57fb/61e8613c-7173-4b24-8fe1-211f3a67163e/V2VcSRvTQUPVOGPSbfyxefFKV22a-6HOMrTVGcuwJ79Kg1')
+            ->title($this->toArray($notifiable)['titulo'])
+            ->content($this->toArray($notifiable)['mensagem']);
     }
 }
