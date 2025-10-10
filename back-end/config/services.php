@@ -45,4 +45,7 @@ return [
       'redirect' => env('LOGIN_UNICO_REDIRECT_URI'),
       'environment' => env('LOGIN_UNICO_ENV')
     ],
+    'microsoft_teams' => [
+        'coges_url' => env('TEAMS_COGES_URL', 'https://default3ec929695a514f188ac9ef98fbafa9.78.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/2a67cf86109142f39b1146fa6d05213e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=eKJK1pg7BIjsYlR-2LNHSeENVP1QSiux5ZesNxw3H6Q'),
+    ],
 ];
