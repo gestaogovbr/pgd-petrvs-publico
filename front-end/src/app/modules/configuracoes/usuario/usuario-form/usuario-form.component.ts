@@ -48,7 +48,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       url_foto: { default: "" },
       texto_complementar_plano: { default: "" },
       data_nascimento: { default: null },
-      situacao_siape: { default: null },
+      situacao_siape: { default: 'ATIVO' },
     }, this.cdRef, this.validate);
     this.planoDataset = this.planoTrabalhoDao.dataset();
     this.join = ["auditsExterno", "ultimoPlanoTrabalhoAtivo.documentos"]
@@ -148,5 +148,6 @@ Formulário de 'Atribuições' (menu de opções: ...)
 5. Alterar um usuário apagando vários vínculos completos com diversas unidades, sem incluir a unidade de lotação.
 6. Alterar um usuário apagando vários vínculos completos com diversas unidades, incluindo sua unidade de lotação.
 7. Alterar um usuário inserindo a atribuição de 'Gestor' a mais de uma unidade.
+
 
  */
