@@ -35,5 +35,5 @@ class InativaUsuarioSiape extends Command
         Log::info("Inativação de usuários SIAPE executada com sucesso.");
     }
 
-   
+
 }
