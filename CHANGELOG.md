@@ -1,6 +1,8 @@
 ## 2.7.4 13/10/2025
 ### Modificado
 - Atualizado o arquivo update.sh para incluir o parâmetro --deploy-seed
+- Modificado a validação do CPF ao processar Usuário Siape
+
 ## 2.7.3 06/10/2025
 ### Corrigido
 - Corrigido envio de Contribuições da Própria unidade
