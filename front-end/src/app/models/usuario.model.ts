@@ -17,9 +17,6 @@ import { PlanoEntrega } from './plano-entrega.model';
 import { PlanoTrabalhoConsolidacao } from './plano-trabalho-consolidacao.model';
 import { PlanoTrabalho } from './plano-trabalho.model';
 import { ProgramaParticipante } from './programa-participante.model';
-import { ProjetoRecurso } from './projeto-recurso.model';
-import { ProjetoTarefa } from './projeto-tarefa.model';
-import { Projeto } from './projeto.model';
 import { UnidadeIntegrante } from './unidade-integrante.model';
 import { Unidade } from './unidade.model';
 
@@ -125,10 +122,7 @@ export class Usuario extends Base implements HasNotificacao {
     public planos_trabalho?: PlanoTrabalho[];
     public planos_trabalho_criados?: PlanoEntrega[];
     public ultimo_plano_trabalho_ativo?: PlanoTrabalho;
-    public projetos?: Projeto[];
-    public recursos_projeto?: ProjetoRecurso[];
     public tarefas_atividade?: AtividadeTarefa[];
-    public tarefas_projeto?: ProjetoTarefa[];
     public unidades?: Unidade[];
     public unidades_integrantes?: UnidadeIntegrante[];
     public audits_externo?: any= [];
@@ -160,6 +154,7 @@ export class Usuario extends Base implements HasNotificacao {
     public data_inicial_pedagio: Date | null = null; /* Data Inicial do Pedágio */
     public data_final_pedagio: Date | null = null; /* Data Final do Pedágio */
     public pedagio: boolean = false;
+    public modalidade_pgd: string | null = null; /* Modalidade PGD */
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

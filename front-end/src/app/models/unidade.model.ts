@@ -11,7 +11,6 @@ import { PlanoEntregaEntrega } from './plano-entrega-entrega.model';
 import { PlanoEntrega } from './plano-entrega.model';
 import { PlanoTrabalho } from './plano-trabalho.model';
 import { Programa } from './programa.model';
-import { ProjetoRecurso } from './projeto-recurso.model';
 import { Template } from './template.model';
 import { UnidadeIntegrante } from './unidade-integrante.model';
 import { Usuario } from './usuario.model';
@@ -31,7 +30,6 @@ export class Unidade extends Base implements HasNotificacao {
     public planos_entrega?: PlanoEntrega[]; /* Lista de planos de entrega */
     public entregas_plano_entrega?: PlanoEntregaEntrega[]; /* Lista de entregas de plano de entrega */
     public programas?: Programa[]; /* Lista de programas */
-    public recursos_projeto?: ProjetoRecurso[]; /* Lista de recursos de projeto */
     public notificacoes_templates?: Template[];  /* Lista de templates */
     public unidades?: Unidade[]; /* Lista de unidades */
     public planejamentos?: Planejamento[]; /* Lista de planejamentos institucionais */

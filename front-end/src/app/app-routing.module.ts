@@ -28,7 +28,6 @@ const routes: Routes = [
   { path: 'cadastros/entrega', loadChildren: () => import('./modules/cadastros/entrega/entrega.module').then(m => m.EntregaModule), canActivate: [AuthGuard] },
   { path: 'cadastros/eixo-tematico', loadChildren: () => import('./modules/cadastros/eixo-tematico/eixo-tematico.module').then(m => m.EixoTematicoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/feriado', loadChildren: () => import('./modules/cadastros/feriado/feriado.module').then(m => m.FeriadoModule), canActivate: [AuthGuard] },
-  { path: 'cadastros/material-servico', loadChildren: () => import('./modules/cadastros/material-servico/material-servico.module').then(m => m.MaterialServicoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/templates', loadChildren: () => import('./modules/uteis/templates/template.module').then(m => m.TemplateModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-tarefa', loadChildren: () => import('./modules/cadastros/tipo-tarefa/tipo-tarefa.module').then(m => m.TipoTarefaModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-atividade', loadChildren: () => import('./modules/cadastros/tipo-atividade/tipo-atividade.module').then(m => m.TipoAtividadeModule), canActivate: [AuthGuard] },
