@@ -83,7 +83,7 @@ class Usuario extends Authenticatable implements AuditableContract
         'uf', /* char(2); */ // UF do usuário
         'texto_complementar_plano', /* longtext; */ // Campo de mensagem adicional do plano de trabalho
         'situacao_funcional',
-        'situacao_siape', /* enum('ATIVO','INATIVO','ATIVO_TEMPORARIO'); NULL; */ // Situação no SIAPE
+        'situacao_siape', /* enum('ATIVO','INATIVO','ATIVO_TEMPORARIO'); NOT NULL; DEFAULT: 'ATIVO'; */ // Situação no SIAPE
         'data_nascimento',
         'nome_jornada', /* varchar(100); NULL */ // Nome da Jornada
         'cod_jornada', /* int; NULL */ // Codigo da Jornada
@@ -495,7 +495,7 @@ class Usuario extends Authenticatable implements AuditableContract
 
     public function auditsExterno(): MorphMany
     {
-        return $this->morphMany(Audit::class, 'auditable')->with('user')->where('auditable_type', 'App\Models\Usuario');
+        return $this->morphMany(Audit::class, 'auditable')->with('user')->where('auditable_type', 'App\Models\Usuario')->limit(3);
     }
 
     public function setMatriculaAttribute($value)
