@@ -7,6 +7,7 @@
 ### Corrigido
 - Corrigido envio de Contribuições da Própria unidade
 - Correção na paginação dos Planos de Trabalho
+- status vazio na tela de servidores
 
 ## 2.7.2 02/10/2025
 ### Corrigido
