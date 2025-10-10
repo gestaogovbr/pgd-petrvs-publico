@@ -51,7 +51,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
   @ViewChild('programa', { static: false }) public programa?: InputSelectComponent;
   @ViewChild('unidade', { static: false }) public unidade?: InputSelectComponent;
-  @ViewChild('tipoModalidade', { static: false }) public tipoModalidade?: InputSearchComponent;
+  @ViewChild('tipoModalidade', { static: false }) public tipoModalidade?: InputSelectComponent;
   @ViewChild('planoEntrega', { static: false }) public planoEntrega?: InputSearchComponent;
   @ViewChild('atividade', { static: false }) public atividade?: InputSearchComponent;
   @ViewChild('entrega', { static: false }) public entrega?: InputSelectComponent;
@@ -82,6 +82,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public usuarioUnidades: LookupItem[] = [];
   public selectedPrograma?: Programa;
   public selectedUnidade?: Unidade;
+  public selectedModalidade?: TipoModalidade;
+  public tipoModalidadeItems: LookupItem[] = [];
 
 
 
@@ -290,6 +292,50 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     }
   }
 
+  async carregaModalidades(pedagio: boolean) {
+    try {
+      const modalidades = await this.tipoModalidadeDao.query({
+        where: [['exige_pedagio', '==', pedagio ? 0 : 1]],
+        join: ['modalidadeSiape'],
+      }).asPromise();
+
+      if (modalidades.length > 0) {
+        this.tipoModalidadeItems = modalidades.map(mod => ({
+          key: mod.id,
+          value: mod.nome,
+          data: mod
+        }));
+        this.selecionaModalidade();
+      } else {
+        this.dialog.alert('Erro', 'Não foi possível carregar as modalidades disponíveis.');
+      }
+    } catch (error) {
+      console.error('Erro ao carregar modalidades:', error);
+      this.dialog.alert('Erro', 'Ocorreu um erro ao carregar as modalidades.');
+    }
+  }
+
+  public selecionaModalidade() {
+    //buscar em tipoModalidadeItems.data.modalidade_siape.id == entity.usuario.modalidade_pgd
+    let modalidade = this.tipoModalidadeItems.find((mod: LookupItem) => (mod.data as TipoModalidade).modalidade_siape?.id == this.entity?.usuario?.modalidade_pgd);
+    if (modalidade) {
+      this.form?.controls.tipo_modalidade_id.setValue(modalidade.key);
+      this.selectedModalidade = modalidade.data;
+    } else {
+      this.form?.controls.tipo_modalidade_id.setValue(this.tipoModalidadeItems[0].key);
+    }
+  }
+
+  public changeModalidade() {
+    if (this.entity!.usuario?.modalidade_pgd != this.form?.controls.tipo_modalidade_id.value) {
+      this.dialog.confirm('Atenção', 'changeModalidadeVocê está propondo plano de trabalho com modalidade distinta daquela registrada pela sua chefia no SouGov Líder. Deseja continuar?').then((result) => {
+        if (!result) {
+          this.selecionaModalidade();
+        }
+      });
+    }
+  }
+
   public podeEditarTextoComplementar(unidade_id : string) : string|undefined {
     return (unidade_id == this.auth.unidadeGestor()?.id) ? 
     undefined:
@@ -313,7 +359,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       }
 
       if (selected.entity.pedagio) {
-        await this.configurarModalidadePedagio();
+        await this.carregaModalidades(true);
+      } else {
+        await this.carregaModalidades(false);
       }
       
       this.calculaTempos();
@@ -390,22 +438,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.form!.controls.unidade_id.setValue(null);
   }
 
-  /**
-   * Configura a modalidade de pedágio baseada nas modalidades disponíveis
-   */
-  private async configurarModalidadePedagio(): Promise<void> {
-    try {
-      const modalidades = await this.tipoModalidadeDao.query({
-        where: [['exige_pedagio', '==', 0]]
-      }).asPromise();
-      
-      if (modalidades && modalidades.length > 0) {
-        this.form?.controls.tipo_modalidade_id.setValue(modalidades[0].id);
-      }
-    } catch (error) {
-      console.error('Erro ao configurar modalidade de pedágio:', error);
-    }
-  }
 
   public preenchePrograma(programa: Programa) {
     if(programa){
@@ -461,8 +493,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.planoTrabalho = new PlanoTrabalho(entity);
     await Promise.all([
       this.calendar.loadFeriadosCadastrados(entity.unidade_id),
-      this.usuario?.loadSearch(entity.usuario || entity.usuario_id),      
-      this.tipoModalidade?.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id)     
+      this.usuario?.loadSearch(entity.usuario || entity.usuario_id)       
     ]);
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
@@ -473,11 +504,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     } else {
       this.atualizarTcr();
     }
-
-    /*let documento = entity.documentos.find(x => x.id == entity.documento_id);
-    if(documento) this._datasource = documento.datasource;*/
-    this.calculaTempos();
-    
+    this.calculaTempos();    
   }
 
   public entregasClonadas(entregas: PlanoTrabalhoEntrega[]) {
@@ -514,6 +541,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       }
     }
     await this.loadData(this.entity, this.form!);
+
     let nowDate = new Date(); 
     nowDate.setHours(0,0,0,0)
     this.form?.controls.data_inicio.setValue(nowDate);
@@ -527,7 +555,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     plano.usuario = (this.usuario!.selectedEntity || this.entity?.usuario) as Usuario;
     plano.unidade = (this.selectedUnidade || this.entity?.unidade) as Unidade;
     plano.programa = (this.selectedPrograma || this.entity?.programa) as Programa;
-    plano.tipo_modalidade = (this.tipoModalidade!.selectedEntity || this.entity?.tipo_modalidade) as TipoModalidade;   
+    plano.tipo_modalidade = (this.selectedModalidade || this.entity?.tipo_modalidade) as TipoModalidade;   
     plano.documento = this.entity?.documento;
     plano.documento_id = this.form?.controls.documento_id.value;
     

@@ -1,9 +1,6 @@
-<!--- 
-(RN_PTR_V) Condições para que um Plano de Trabalho possa ser criado:
-  - o usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
-  ... As outras regras serão validadas ao gravar pois necessitam da definição da unidade e do período
-(RN_PTR_AB) Um Plano de Trabalho não pode ser excluído;  
-//-->
+<ng-container *ngIf="auth.usuario.participa_pgd == 'sim'">
+
+
 <grid multiselect [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [selectable]="selectable" (select)="onSelect($event)" [relatorios]="relatorios" [hasDelete]="false"
     [hasAdd]="auth.hasPermissionTo('MOD_PTR_INCL')" [hasEdit]="false" [dynamicMultiselectMenu]="dynamicMultiselectMenu.bind(this)" [multiselectAllFields]="multiselectAllFields">
@@ -112,3 +109,4 @@
     </report>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>
+</ng-container>
