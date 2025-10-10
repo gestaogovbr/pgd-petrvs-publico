@@ -71,17 +71,21 @@ class PlanoTrabalhoService extends ServiceBase
         $hierarquia = $this->extractWhere($data, "incluir_hierarquia");
         // (RN_PTR_I) Quando a Unidade Executora não for a unidade de lotação do servidor, seu gestor imediato e seus substitutos devem ter acesso ao seu Plano de Trabalho (e à sua execução);
         $lotadosMinhaUnidade = $this->extractWhere($data, "lotados_minha_unidade");
-        if (empty($arquivados) || !$arquivados[2])
+
+        if (empty($arquivados) || !$arquivados[2]) {
             $data["where"][] = ["data_arquivamento", "==", null];
+        }
+
         $unidadeId = $this->extractWhere($data, "unidade_id");
+
         if (is_array($unidadeId) && isset($unidadeId[2])) {
             $ids[] = $unidadeId[2];
             if(is_array($ids) && is_array($ids[0]))
                 $ids = array_unique(...$ids);
             
             $data["where"][] = ['unidade_id', 'in', array_unique($ids)];
-
         }
+
         if (isset($subordinadas[2]) && $subordinadas[2]) { // Verifica se o índice existe
             $unidadeService = new UnidadeService();
 
@@ -90,8 +94,8 @@ class PlanoTrabalhoService extends ServiceBase
                 $uId = isset($unidades_vinculadas[2]) ? $unidades_vinculadas[2] : null;
             } else {
                 $uId = isset($unidadeId[2]) ? $unidadeId[2] : null;
-                // busca a nomeclatura da hierarquia da unidade 
-            
+                // busca a nomeclatura da hierarquia da unidade
+
                 if(isset($hierarquia[2]) && $hierarquia[2]){
                     $this->attachHierarquia($data);
                 }
@@ -1252,7 +1256,7 @@ class PlanoTrabalhoService extends ServiceBase
                 if ($entrega['plano_entrega_entrega_id']) {
                     $planoEntregaEntrega = PlanoEntregaEntrega::find($entrega['plano_entrega_entrega_id']);
                     $status = $planoEntregaEntrega->planoEntrega->status;
-                    // verifica se o plano de entrega está ativo    
+                    // verifica se o plano de entrega está ativo
                     if ($planoEntregaEntrega !== null && !in_array($planoEntregaEntrega->planoEntrega->status, ["ATIVO", "AVALIADO", "CONCLUIDO"])) {
                         return "O plano de trabalho não pode ser clonado porque o plano de entrega da entrega:" . $entrega['descricao'] . " não está ativo.";
                     }
@@ -1283,7 +1287,7 @@ class PlanoTrabalhoService extends ServiceBase
     {
         $usuarioId = $planoTrabalho['usuario_id'];
         $unidadeId = $planoTrabalho['unidade_id'];
-        
+
         // Verifica as atribuições do usuário na unidade do plano
         $unidade = Unidade::find($unidadeId);
         $atribuicoesUnidadePlano = $this->usuarioService->atribuicoesGestor($unidadeId, $usuarioId);
@@ -1295,7 +1299,7 @@ class PlanoTrabalhoService extends ServiceBase
         if ($atribuicoesUnidadePai['gestorSubstituto']) {
             return 1;
         }
-        
+
         // Se o usuário não for lotado na unidade e não tiver chefias relacionadas a unidade: 3 assinaturas
         if (!$this->usuarioService->isLotacao($usuarioId, $unidadeId)) {
             if($this->possuiAtribuicao($atribuicoesUnidadePlano)){
@@ -1304,7 +1308,7 @@ class PlanoTrabalhoService extends ServiceBase
 
             return 3;
         }
-        
+
         // Caso contrário: 2 assinaturas (padrão)
         return 2;
     }
@@ -1334,7 +1338,7 @@ class PlanoTrabalhoService extends ServiceBase
         if ($atribuicoesUnidadeLotacao['gestor'] && $atribuicoesUnidadePlano['gestorSubstituto']) {
             return 0;
         }
-        
+
         // Caso contrário: 1 assinatura (padrão)
         return 1;
     }
@@ -1346,7 +1350,7 @@ class PlanoTrabalhoService extends ServiceBase
     private function isUnidadeVinculada($planoTrabalho): bool
     {
         $unidadeId = $planoTrabalho['unidade_id'];
-        
+
         $usuario = Usuario::find($planoTrabalho['usuario_id']);
         $usuario->lotacao = null;
         return $usuario->lotacao?->unidade_id == $unidadeId;
@@ -1359,7 +1363,13 @@ class PlanoTrabalhoService extends ServiceBase
     {
         $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';
         $data['select'][] = DB::raw("$queryHierarquia AS hierarquia");
-        $data['orderBy'] = [[DB::raw($queryHierarquia), 'asc']];
-    }    
-    
+
+        $data['orderBy'] = array_map(function ($item) use($queryHierarquia) {
+            if ($item[0] === 'hierarquia') {
+                $item[0] = DB::raw($queryHierarquia);
+            }
+            return $item;
+        }, $data['orderBy']);
+    }
+
 }
