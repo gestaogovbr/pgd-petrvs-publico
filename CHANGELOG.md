@@ -4,12 +4,11 @@
 - Modificado a validação do CPF ao processar Usuário Siape
 ### Corrigido
 - Status vazio na tela de servidores
+- Correção na paginação dos Planos de Trabalho
 
 ## 2.7.3 06/10/2025
 ### Corrigido
 - Corrigido envio de Contribuições da Própria unidade
-- Correção na paginação dos Planos de Trabalho
-
 
 ## 2.7.2 02/10/2025
 ### Corrigido
