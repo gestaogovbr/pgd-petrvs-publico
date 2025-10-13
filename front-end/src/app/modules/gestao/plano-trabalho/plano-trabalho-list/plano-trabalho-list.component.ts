@@ -17,6 +17,7 @@ import {PlanoTrabalhoService} from "../plano-trabalho.service";
 import {DocumentoService} from "src/app/modules/uteis/documentos/documento.service";
 import {UtilService} from "src/app/services/util.service";
 import {UnidadeService} from "src/app/services/unidade.service";
+import { QueryOrderBy } from "src/app/dao/dao-base.service";
 @Component({
 	selector: "plano-trabalho-list",
 	templateUrl: "./plano-trabalho-list.component.html",
@@ -71,8 +72,15 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		{key: "FINALIZAM", value: "Finalizam"},
 	];
 	
-	public groupByHierarquia = [{field: "hierarquia", label: "Unidade"}];
-	public groupByPadrao = [{field: "unidade.sigla", label: "Unidade"}];
+	public groupByHierarquia = [
+		{field: "hierarquia", label: "Unidade"}
+	];
+	public orderByHierarquia: QueryOrderBy[] = [['numero','desc']];
+
+	public groupByPadrao = [
+		{field: "unidade.sigla", label: "Unidade"}
+	];
+	public orderByPadrao: QueryOrderBy[] = [["numero", "desc"]];
 
 	constructor(public injector: Injector) {
 		super(injector, PlanoTrabalho, PlanoTrabalhoDaoService);
@@ -129,6 +137,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		const INCLUIR_DELEGADO = true;
 		this.temAtribuicaoChefia = this.auth.isGestorAlgumaAreaTrabalho(!INCLUIR_DELEGADO, !INCLUIR_SUBSTITUTO);
 		this.groupBy = this.groupByPadrao;
+		this.orderBy = this.orderByPadrao;
 		this.BOTAO_ALTERAR = {
 			label: "Alterar",
 			icon: "bi bi-pencil-square",
@@ -395,44 +404,56 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 	public filterWhere = (filter: FormGroup) => {
 		let result: any[] = [];
 		let form: any = filter.value;
+
 		if (form.tipo_modalidade_id?.length) {
 			result.push(["tipo_modalidade_id", "==", form.tipo_modalidade_id]);
 		}
+
 		if (form.data_filtro) {
 			result.push(["data_filtro", "==", form.data_filtro]);
 			result.push(["data_filtro_inicio", "==", form.data_filtro_inicio]);
 			result.push(["data_filtro_fim", "==", form.data_filtro_fim]);
 		}
+
 		if (form.usuario?.length)
 			result.push([
 				"usuario.nome",
 				"like",
 				"%" + form.usuario.trim().replace(" ", "%") + "%",
 			]);
+
 		if (this.filter?.controls.meus_planos.value) {
 			let w1: [string, string, string[]] = ["unidade_id", "in", (this.auth.unidades || []).map(u => u.id)];
 			result.push(w1);
 		}
+
 		if (form.unidade_id?.length)
 			result.push(["unidade_id", "==", form.unidade_id]);
+
 		if (form.status) result.push(["status", "==", form.status]);
+
 		if (form.lotados_minha_unidade)
 			result.push(["lotados_minha_unidade", "==", true]);
+
 		//  (RI_PTR_C) Por padrão, os planos de trabalho retornados na listagem do grid são os que não foram arquivados.
 		result.push([
 			"incluir_arquivados",
 			"==",
 			this.filter!.controls.arquivados.value,
 		]);
+
 		result.push([
 			"incluir_subordinadas",
 			"==",
 			this.filter!.controls.subordinadas.value,
 		]);
+
 		if (this.filter!.controls.meus_planos.value)
 			result.push(["usuario.id", "==", this.auth.usuario?.id]);
-		if(this.filter!.controls.subordinadas.value){
-			this.groupBy = this.groupByHierarquia
+
+		if(form.subordinadas){
+			this.groupBy = this.groupByHierarquia;
+			this.orderBy = this.orderByHierarquia;
 			result.push([
 				"incluir_hierarquia",
 				 "==",
@@ -440,10 +461,11 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			]);
 		}else{
 			this.groupBy = this.groupByPadrao
-			if(this.grid) this.grid.groupBy = this.groupBy;
+			this.orderBy = this.orderByPadrao;
 		}
 
-		
+		if(this.grid) this.grid.groupBy = this.groupBy;
+
 		return result;
 	};
 
