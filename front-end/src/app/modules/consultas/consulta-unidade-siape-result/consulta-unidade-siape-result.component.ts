@@ -200,7 +200,7 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
     this.loading = true;
     try {
       const codigo = this.codigoUnidade?.replace(/\D/g, '');
-      const unidades = await this.dao?.query({ where: [['codigo', '==', codigo]], join: ['gestor.usuario:cpf', 'unidade_pai:codigo'] })
+      const unidades = await this.dao?.query({ where: [['codigo', '==', codigo]], join: ['gestor.usuario:cpf', 'unidadePai:codigo'] })
         .asPromise();
 
       if (unidades) {
