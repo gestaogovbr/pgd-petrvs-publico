@@ -60,8 +60,18 @@ class UnidadeIntegranteService extends ServiceBase
     foreach ($vinculos as $vinculo) {
       try {
         $usuario = Usuario::find($vinculo["usuario_id"]);
-        $unidade = Unidade::find($vinculo["unidade_id"]);
-        if (empty($unidade) || empty($usuario)) throw new ServerException("ValidateIntegrante", "Unidade/Usuário não existe no banco: ".json_encode($vinculo));
+        $unidade = Unidade::where('id', $vinculo["unidade_id"])->whereNull('data_inativacao')->first();
+        
+        if (empty($usuario)) {
+            Log::error('Usuário não encontrado ao processar vínculo', ['vinculo' => $vinculo]);
+            throw new ServerException("ValidateIntegrante", "Usuário não encontrado no sistema");
+        }
+        
+        if (empty($unidade)) {
+            Log::error('Unidade não encontrada ou está inativada ao processar vínculo', ['vinculo' => $vinculo]);
+            throw new ServerException("ValidateIntegrante", "Unidade não encontrada ou está inativada");
+        }
+        
         //FIXME Isso aqui não deveria estar aqui.
         if (!empty($vinculo['_metadata']['perfil_id'])) $this->usuarioService->update(['id' => $usuario->id, 'perfil_id' => $vinculo['_metadata']['perfil_id']], $unidade);
 
