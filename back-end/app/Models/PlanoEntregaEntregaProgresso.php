@@ -24,6 +24,7 @@ class PlanoEntregaEntregaProgresso extends ModelBase
     'realizado', /* json; */ // Valor realizado da entrega
     'progresso_esperado', /* decimal(5,2); DEFAULT: '0.00'; */ // Percentual esperado de progresso do Plano de Entregas
     'progresso_realizado', /* decimal(5,2); DEFAULT: '0.00'; */ // Percentual realizado de progresso do Plano de Entregas
+    'registro_execucao', /* longtext; */ // Registro de execução da entrega
     //'deleted_at', /* timestamp; */
   ];
 
