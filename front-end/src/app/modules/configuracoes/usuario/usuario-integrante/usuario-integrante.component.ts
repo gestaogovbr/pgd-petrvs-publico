@@ -53,7 +53,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
       atribuicao: { default: "" },
     }, this.cdRef, this.validate);
     this.formPerfil = this.fh.FormBuilder({
-      situacao_siape: { default: "" },
+      situacao_siape: { default: "ATIVO" },
       perfil_id: { default: "" }
     }, this.cdRef, this.validate);
     this.join = ["integracaoServidor"]
