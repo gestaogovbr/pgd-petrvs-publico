@@ -1,0 +1,35 @@
+name: Run Pest Tests
+
+on:
+  pull_request:
+    branches:
+      - dataprev_dsv
+      - dataprev_hmg
+
+jobs:
+  pest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, dom, json, zip, pdo, pdo_mysql, soap, gd
+          coverage: none
+
+      - name: Validate Composer
+        run: composer validate --no-interaction
+
+      - name: Install dependencies
+        working-directory: back-end
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run Pest tests
+        working-directory: back-end
+        run: ./vendor/bin/pest --ci
