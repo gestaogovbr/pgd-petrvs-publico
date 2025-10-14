@@ -26,6 +26,11 @@ jobs:
       - name: Validate Composer
         working-directory: back-end
         run: composer validate --no-interaction
+      - name: Configure Composer allow-plugins
+        working-directory: back-end
+        run: |
+          composer config --no-plugins allow-plugins.pestphp/pest-plugin true
+          composer config --no-plugins allow-plugins.pestphp/pest-plugin-laravel true
 
       - name: Install dependencies
         working-directory: back-end
