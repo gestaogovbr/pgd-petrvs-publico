@@ -33,8 +33,12 @@ docker exec petrvs_php bash -lc "cd /var/www && ./vendor/bin/pest tests/Unit/Bas
 Exemplo básico (já incluso):
 
 ```php
+interface BasicoMockInterface {
+    public function metodo(string $x): string;
+}
+
 it('usa Mockery para mock simples', function () {
-    $mock = Mockery::mock(stdClass::class);
+    $mock = Mockery::mock(BasicoMockInterface::class);
     $mock->shouldReceive('metodo')->with('x')->andReturn('ok');
     expect($mock->metodo('x'))->toBe('ok');
 });
@@ -47,6 +51,19 @@ afterEach(function () {
 ## Dicas
 - Mantenha `Mockery::close()` no `afterEach` para limpar mocks.
 - Use `expect()->...` para assertions fluídas do Pest.
+
+## Cobertura de código (HTML)
+- Requer Xdebug com modo `coverage` ativado.
+- Executar sempre dentro do container `petrvs_php`.
+
+Gerar cobertura em `app/coverage`:
+
+```
+docker exec petrvs_php bash -lc "cd /var/www && XDEBUG_MODE=coverage ./vendor/bin/pest --ci --coverage-html app/coverage"
+```
+
+- Após rodar, abra `back-end/app/coverage/index.html` (ou `dashboard.html`) no navegador.
+- Se aparecer o aviso para ativar cobertura, garanta que a variável `XDEBUG_MODE=coverage` está presente no comando acima.
 
 ## CI: Execução automática em Pull Requests
 - O workflow `.github/workflows/pest.yml` executa testes em PRs para `dataprev_dsv` e `dataprev_hmg`.

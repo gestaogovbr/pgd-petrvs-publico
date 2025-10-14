@@ -1,5 +1,10 @@
 <?php
 
+interface BasicoMockInterface
+{
+    public function metodo(string $x): string;
+}
+
 describe('Teste básico com Pest e Mockery', function () {
 
     it('valida operações simples', function () {
@@ -9,7 +14,7 @@ describe('Teste básico com Pest e Mockery', function () {
     });
 
     it('usa Mockery para mock simples', function () {
-        $mock = Mockery::mock(stdClass::class);
+        $mock = Mockery::mock(BasicoMockInterface::class);
         $mock->shouldReceive('metodo')->with('x')->andReturn('ok');
 
         expect($mock->metodo('x'))->toBe('ok');

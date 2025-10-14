@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/app/Models</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/nv.d3.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">/var/www/app</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Models</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Afastamento.php.html#10">App\Models\Afastamento</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Anexo.php.html#9">App\Models\Anexo</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AreaAtividadeExterna.php.html#10">App\Models\AreaAtividadeExterna</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AreaConhecimento.php.html#8">App\Models\AreaConhecimento</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AreaTematica.php.html#7">App\Models\AreaTematica</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#16">App\Models\Atividade</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AtividadePausa.php.html#8">App\Models\AtividadePausa</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AtividadeTarefa.php.html#12">App\Models\AtividadeTarefa</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Audit.php.html#10">App\Models\Audit</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Avaliacao.php.html#11">App\Models\Avaliacao</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AvaliacaoEntregaChecklist.php.html#10">App\Models\AvaliacaoEntregaChecklist</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CadeiaValor.php.html#11">App\Models\CadeiaValor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CadeiaValorProcesso.php.html#9">App\Models\CadeiaValorProcesso</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Capacidade.php.html#9">App\Models\Capacidade</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CapacidadeTecnica.php.html#8">App\Models\CapacidadeTecnica</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Cargo.php.html#7">App\Models\Cargo</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Catalogo.php.html#9">App\Models\Catalogo</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CentroTreinamento.php.html#7">App\Models\CentroTreinamento</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Change.php.html#9">App\Models\Change</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Cidade.php.html#10">App\Models\Cidade</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Cliente.php.html#9">App\Models\Cliente</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Comentario.php.html#13">App\Models\Comentario</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Comparecimento.php.html#9">App\Models\Comparecimento</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Curriculum.php.html#12">App\Models\Curriculum</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CurriculumGraduacao.php.html#7">App\Models\CurriculumGraduacao</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CurriculumProfissional.php.html#13">App\Models\CurriculumProfissional</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Curso.php.html#10">App\Models\Curso</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Disciplina.php.html#8">App\Models\Disciplina</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Documento.php.html#20">App\Models\Documento</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DocumentoAssinatura.php.html#9">App\Models\DocumentoAssinatura</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EixoTematico.php.html#8">App\Models\EixoTematico</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#20">App\Models\Entidade</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EntidadeEmail.php.html#7">App\Models\EntidadeEmail</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entrega.php.html#10">App\Models\Entrega</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Envio.php.html#10">App\Models\Envio</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EnvioItem.php.html#9">App\Models\EnvioItem</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Favorito.php.html#9">App\Models\Favorito</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Feriado.php.html#9">App\Models\Feriado</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Funcao.php.html#7">App\Models\Funcao</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GrupoEspecializado.php.html#7">App\Models\GrupoEspecializado</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoAtividadeExterna.php.html#9">App\Models\HistoricoAtividadeExterna</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoAtividadeInterna.php.html#9">App\Models\HistoricoAtividadeInterna</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoCursoExterno.php.html#8">App\Models\HistoricoCursoExterno</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoCursoInterno.php.html#9">App\Models\HistoricoCursoInterno</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoDocenciaExterna.php.html#9">App\Models\HistoricoDocenciaExterna</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoDocenciaInterna.php.html#8">App\Models\HistoricoDocenciaInterna</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoFuncao.php.html#10">App\Models\HistoricoFuncao</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoLotacao.php.html#9">App\Models\HistoricoLotacao</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Integracao.php.html#9">App\Models\Integracao</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="JobSchedule.php.html#8">App\Models\JobSchedule</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Logs.php.html#9">App\Models\Logs</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MaterialServico.php.html#8">App\Models\MaterialServico</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ModelBase.php.html#17">App\Models\ModelBase</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Notificacao.php.html#10">App\Models\Notificacao</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="NotificacaoDestinatario.php.html#10">App\Models\NotificacaoDestinatario</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="NotificacaoWhatsapp.php.html#9">App\Models\NotificacaoWhatsapp</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Ocorrencia.php.html#10">App\Models\Ocorrencia</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PainelUsuario.php.html#12">App\Models\PainelUsuario</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PainelUsuarioTenant.php.html#7">App\Models\PainelUsuarioTenant</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Perfil.php.html#9">App\Models\Perfil</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Planejamento.php.html#12">App\Models\Planejamento</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanejamentoObjetivo.php.html#10">App\Models\PlanejamentoObjetivo</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntrega.php.html#15">App\Models\PlanoEntrega</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntrega.php.html#15">App\Models\PlanoEntregaEntrega</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntregaObjetivo.php.html#9">App\Models\PlanoEntregaEntregaObjetivo</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntregaProcesso.php.html#9">App\Models\PlanoEntregaEntregaProcesso</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntregaProduto.php.html#9">App\Models\PlanoEntregaEntregaProduto</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntregaProgresso.php.html#10">App\Models\PlanoEntregaEntregaProgresso</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalho.php.html#17">App\Models\PlanoTrabalho</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacao.php.html#11">App\Models\PlanoTrabalhoConsolidacao</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacaoAfastamento.php.html#10">App\Models\PlanoTrabalhoConsolidacaoAfastamento</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacaoAtividade.php.html#10">App\Models\PlanoTrabalhoConsolidacaoAtividade</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacaoOcorrencia.php.html#10">App\Models\PlanoTrabalhoConsolidacaoOcorrencia</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoEntrega.php.html#12">App\Models\PlanoTrabalhoEntrega</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Produto.php.html#11">App\Models\Produto</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProdutoCliente.php.html#9">App\Models\ProdutoCliente</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProdutoInsumo.php.html#9">App\Models\ProdutoInsumo</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProdutoProcessoCadeiaValor.php.html#8">App\Models\ProdutoProcessoCadeiaValor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProdutoSolucao.php.html#8">App\Models\ProdutoSolucao</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Programa.php.html#15">App\Models\Programa</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProgramaParticipante.php.html#9">App\Models\ProgramaParticipante</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Projeto.php.html#18">App\Models\Projeto</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoAlocacao.php.html#11">App\Models\ProjetoAlocacao</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoAlocacaoRegra.php.html#9">App\Models\ProjetoAlocacaoRegra</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoFase.php.html#8">App\Models\ProjetoFase</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoHistorico.php.html#9">App\Models\ProjetoHistorico</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoRecurso.php.html#11">App\Models\ProjetoRecurso</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoRegra.php.html#10">App\Models\ProjetoRegra</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoTarefa.php.html#14">App\Models\ProjetoTarefa</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Questionario.php.html#9">App\Models\Questionario</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionarioPergunta.php.html#11">App\Models\QuestionarioPergunta</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionarioPerguntaResposta.php.html#11">App\Models\QuestionarioPerguntaResposta</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionarioPreenchimento.php.html#11">App\Models\QuestionarioPreenchimento</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Reacao.php.html#11">App\Models\Reacao</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Solucao.php.html#10">App\Models\Solucao</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SolucaoUnidade.php.html#9">App\Models\SolucaoUnidade</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StatusJustificativa.php.html#12">App\Models\StatusJustificativa</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Template.php.html#13">App\Models\Template</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Tenant.php.html#10">App\Models\Tenant</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoAtividade.php.html#9">App\Models\TipoAtividade</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoAvaliacao.php.html#9">App\Models\TipoAvaliacao</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoAvaliacaoJustificativa.php.html#8">App\Models\TipoAvaliacaoJustificativa</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoAvaliacaoNota.php.html#10">App\Models\TipoAvaliacaoNota</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoCapacidade.php.html#8">App\Models\TipoCapacidade</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoCliente.php.html#9">App\Models\TipoCliente</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoCurso.php.html#7">App\Models\TipoCurso</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoDocumento.php.html#9">App\Models\TipoDocumento</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoJustificativa.php.html#8">App\Models\TipoJustificativa</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoModalidade.php.html#9">App\Models\TipoModalidade</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoModalidadeSiape.php.html#7">App\Models\TipoModalidadeSiape</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoMotivoAfastamento.php.html#8">App\Models\TipoMotivoAfastamento</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoProcesso.php.html#9">App\Models\TipoProcesso</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoProjeto.php.html#8">App\Models\TipoProjeto</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoTarefa.php.html#10">App\Models\TipoTarefa</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#25">App\Models\Unidade</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UnidadeIntegrante.php.html#10">App\Models\UnidadeIntegrante</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UnidadeIntegranteAtribuicao.php.html#8">App\Models\UnidadeIntegranteAtribuicao</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#62">App\Models\Usuario</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ViewApiPgd.php.html#9">App\Models\ViewApiPgd</a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Usuario.php.html#62">App\Models\Usuario</a></td><td class="text-right">6642</td></tr>
+       <tr><td><a href="Unidade.php.html#25">App\Models\Unidade</a></td><td class="text-right">1190</td></tr>
+       <tr><td><a href="Entidade.php.html#20">App\Models\Entidade</a></td><td class="text-right">342</td></tr>
+       <tr><td><a href="JobSchedule.php.html#8">App\Models\JobSchedule</a></td><td class="text-right">210</td></tr>
+       <tr><td><a href="Audit.php.html#10">App\Models\Audit</a></td><td class="text-right">156</td></tr>
+       <tr><td><a href="ModelBase.php.html#17">App\Models\ModelBase</a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="PainelUsuario.php.html#12">App\Models\PainelUsuario</a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="CadeiaValorProcesso.php.html#9">App\Models\CadeiaValorProcesso</a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Template.php.html#13">App\Models\Template</a></td><td class="text-right">42</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Afastamento.php.html#27"><abbr title="App\Models\Afastamento::consolidacoes">consolidacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Afastamento.php.html#32"><abbr title="App\Models\Afastamento::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Afastamento.php.html#36"><abbr title="App\Models\Afastamento::tipoMotivoAfastamento">tipoMotivoAfastamento</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Anexo.php.html#27"><abbr title="App\Models\Anexo::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Anexo.php.html#31"><abbr title="App\Models\Anexo::comentario">comentario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AreaAtividadeExterna.php.html#22"><abbr title="App\Models\AreaAtividadeExterna::historicosAtividadesExternas">historicosAtividadesExternas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AreaAtividadeExterna.php.html#26"><abbr title="App\Models\AreaAtividadeExterna::historicosCursosExternos">historicosCursosExternos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AreaAtividadeExterna.php.html#30"><abbr title="App\Models\AreaAtividadeExterna::historicosDocenciasExternas">historicosDocenciasExternas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AreaConhecimento.php.html#20"><abbr title="App\Models\AreaConhecimento::cursos">cursos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AreaTematica.php.html#19"><abbr title="App\Models\AreaTematica::capacidadesTecnicas">capacidadesTecnicas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#59"><abbr title="App\Models\Atividade::booted">booted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#75"><abbr title="App\Models\Atividade::statusHistorico">statusHistorico</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#79"><abbr title="App\Models\Atividade::latestStatus">latestStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#83"><abbr title="App\Models\Atividade::tarefas">tarefas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#87"><abbr title="App\Models\Atividade::tarefasProjeto">tarefasProjeto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#91"><abbr title="App\Models\Atividade::pausas">pausas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#95"><abbr title="App\Models\Atividade::comentarios">comentarios</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#99"><abbr title="App\Models\Atividade::documentos">documentos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#103"><abbr title="App\Models\Atividade::consolidacoes">consolidacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#107"><abbr title="App\Models\Atividade::reacoes">reacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#112"><abbr title="App\Models\Atividade::planoTrabalho">planoTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#116"><abbr title="App\Models\Atividade::planoTrabalhoEntrega">planoTrabalhoEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#120"><abbr title="App\Models\Atividade::tipoAtividade">tipoAtividade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#124"><abbr title="App\Models\Atividade::demandante">demandante</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#128"><abbr title="App\Models\Atividade::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#132"><abbr title="App\Models\Atividade::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#136"><abbr title="App\Models\Atividade::documentoRequisicao">documentoRequisicao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#140"><abbr title="App\Models\Atividade::documentoEntrega">documentoEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#145"><abbr title="App\Models\Atividade::scopeDoUsuario">scopeDoUsuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#149"><abbr title="App\Models\Atividade::scopeDosPlanosTrabalho">scopeDosPlanosTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#153"><abbr title="App\Models\Atividade::scopeNaoIniciadas">scopeNaoIniciadas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#157"><abbr title="App\Models\Atividade::scopeConcluidas">scopeConcluidas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#161"><abbr title="App\Models\Atividade::scopeNaoConcluidas">scopeNaoConcluidas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#165"><abbr title="App\Models\Atividade::scopeAtrasadas">scopeAtrasadas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#169"><abbr title="App\Models\Atividade::scopeDistribuidas">scopeDistribuidas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#173"><abbr title="App\Models\Atividade::scopeIniciadas">scopeIniciadas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Atividade.php.html#177"><abbr title="App\Models\Atividade::scopeEmAndamento">scopeEmAndamento</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AtividadePausa.php.html#22"><abbr title="App\Models\AtividadePausa::atividade">atividade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AtividadeTarefa.php.html#37"><abbr title="App\Models\AtividadeTarefa::comentarios">comentarios</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AtividadeTarefa.php.html#41"><abbr title="App\Models\AtividadeTarefa::documentos">documentos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AtividadeTarefa.php.html#46"><abbr title="App\Models\AtividadeTarefa::documento">documento</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AtividadeTarefa.php.html#50"><abbr title="App\Models\AtividadeTarefa::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AtividadeTarefa.php.html#54"><abbr title="App\Models\AtividadeTarefa::tipoTarefa">tipoTarefa</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AtividadeTarefa.php.html#58"><abbr title="App\Models\AtividadeTarefa::atividade">atividade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Audit.php.html#53"><abbr title="App\Models\Audit::user">user</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Audit.php.html#61"><abbr title="App\Models\Audit::auditable">auditable</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Audit.php.html#66"><abbr title="App\Models\Audit::getTableTypeAttribute">getTableTypeAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Audit.php.html#72"><abbr title="App\Models\Audit::getPerformedByAttribute">getPerformedByAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Audit.php.html#77"><abbr title="App\Models\Audit::getDetailsAttribute">getDetailsAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Audit.php.html#103"><abbr title="App\Models\Audit::createdAt">createdAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Avaliacao.php.html#47"><abbr title="App\Models\Avaliacao::entregasChecklist">entregasChecklist</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Avaliacao.php.html#52"><abbr title="App\Models\Avaliacao::avaliador">avaliador</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Avaliacao.php.html#56"><abbr title="App\Models\Avaliacao::tipoAvaliacao">tipoAvaliacao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Avaliacao.php.html#61"><abbr title="App\Models\Avaliacao::tipoAvaliacaoNota">tipoAvaliacaoNota</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Avaliacao.php.html#66"><abbr title="App\Models\Avaliacao::planoEntrega">planoEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Avaliacao.php.html#70"><abbr title="App\Models\Avaliacao::planoTrabalhoConsolidacao">planoTrabalhoConsolidacao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AvaliacaoEntregaChecklist.php.html#33"><abbr title="App\Models\AvaliacaoEntregaChecklist::avaliacao">avaliacao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AvaliacaoEntregaChecklist.php.html#37"><abbr title="App\Models\AvaliacaoEntregaChecklist::planoEntregaEntrega">planoEntregaEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AvaliacaoEntregaChecklist.php.html#41"><abbr title="App\Models\AvaliacaoEntregaChecklist::planoTrabalhoEntrega">planoTrabalhoEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CadeiaValor.php.html#34"><abbr title="App\Models\CadeiaValor::processos">processos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CadeiaValor.php.html#38"><abbr title="App\Models\CadeiaValor::planosEntrega">planosEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CadeiaValor.php.html#43"><abbr title="App\Models\CadeiaValor::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CadeiaValor.php.html#47"><abbr title="App\Models\CadeiaValor::entidade">entidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CadeiaValor.php.html#51"><abbr title="App\Models\CadeiaValor::getAuditRelations">getAuditRelations</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CadeiaValorProcesso.php.html#30"><abbr title="App\Models\CadeiaValorProcesso::processosEntrega">processosEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CadeiaValorProcesso.php.html#34"><abbr title="App\Models\CadeiaValorProcesso::processos">processos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CadeiaValorProcesso.php.html#39"><abbr title="App\Models\CadeiaValorProcesso::cadeiaValor">cadeiaValor</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CadeiaValorProcesso.php.html#43"><abbr title="App\Models\CadeiaValorProcesso::processoPai">processoPai</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CadeiaValorProcesso.php.html#47"><abbr title="App\Models\CadeiaValorProcesso::getSequenciaCompleta">getSequenciaCompleta</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CadeiaValorProcesso.php.html#59"><abbr title="App\Models\CadeiaValorProcesso::getAuditRelations">getAuditRelations</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Capacidade.php.html#23"><abbr title="App\Models\Capacidade::perfil">perfil</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Capacidade.php.html#27"><abbr title="App\Models\Capacidade::tipoCapacidade">tipoCapacidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CapacidadeTecnica.php.html#21"><abbr title="App\Models\CapacidadeTecnica::areaTematica">areaTematica</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CapacidadeTecnica.php.html#26"><abbr title="App\Models\CapacidadeTecnica::historicosAtividadesInternas">historicosAtividadesInternas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Cargo.php.html#23"><abbr title="App\Models\Cargo::curriculunsProfissionais">curriculunsProfissionais</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Catalogo.php.html#42"><abbr title="App\Models\Catalogo::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Catalogo.php.html#47"><abbr title="App\Models\Catalogo::curadorResponsavel">curadorResponsavel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CentroTreinamento.php.html#18"><abbr title="App\Models\CentroTreinamento::curriculunsProfissionais">curriculunsProfissionais</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Change.php.html#34"><abbr title="App\Models\Change::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Cidade.php.html#26"><abbr title="App\Models\Cidade::unidades">unidades</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Cidade.php.html#30"><abbr title="App\Models\Cidade::entidades">entidades</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Cidade.php.html#34"><abbr title="App\Models\Cidade::feriados">feriados</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Cidade.php.html#38"><abbr title="App\Models\Cidade::curriculuns">curriculuns</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Cliente.php.html#28"><abbr title="App\Models\Cliente::tipoCliente">tipoCliente</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Cliente.php.html#33"><abbr title="App\Models\Cliente::clienteProduto">clienteProduto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Cliente.php.html#38"><abbr title="App\Models\Cliente::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Comentario.php.html#38"><abbr title="App\Models\Comentario::anexos">anexos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Comentario.php.html#42"><abbr title="App\Models\Comentario::comentarios">comentarios</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Comentario.php.html#47"><abbr title="App\Models\Comentario::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Comentario.php.html#51"><abbr title="App\Models\Comentario::comentarioPai">comentarioPai</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Comentario.php.html#55"><abbr title="App\Models\Comentario::atividade">atividade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Comentario.php.html#59"><abbr title="App\Models\Comentario::atividadeTarefa">atividadeTarefa</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Comentario.php.html#63"><abbr title="App\Models\Comentario::projeto">projeto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Comentario.php.html#67"><abbr title="App\Models\Comentario::projetoTarefa">projetoTarefa</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Comparecimento.php.html#29"><abbr title="App\Models\Comparecimento::planoTrabalhoConsolidacao">planoTrabalhoConsolidacao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Comparecimento.php.html#33"><abbr title="App\Models\Comparecimento::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Curriculum.php.html#35"><abbr title="App\Models\Curriculum::graduacoes">graduacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Curriculum.php.html#40"><abbr title="App\Models\Curriculum::curriculumProfissional">curriculumProfissional</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Curriculum.php.html#45"><abbr title="App\Models\Curriculum::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Curriculum.php.html#49"><abbr title="App\Models\Curriculum::cidade">cidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CurriculumGraduacao.php.html#20"><abbr title="App\Models\CurriculumGraduacao::curriculum">curriculum</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CurriculumGraduacao.php.html#24"><abbr title="App\Models\CurriculumGraduacao::curso">curso</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CurriculumProfissional.php.html#45"><abbr title="App\Models\CurriculumProfissional::curriculum">curriculum</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CurriculumProfissional.php.html#49"><abbr title="App\Models\CurriculumProfissional::centroTreinamento">centroTreinamento</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CurriculumProfissional.php.html#53"><abbr title="App\Models\CurriculumProfissional::cargo">cargo</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CurriculumProfissional.php.html#57"><abbr title="App\Models\CurriculumProfissional::grupoEspecializado">grupoEspecializado</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CurriculumProfissional.php.html#62"><abbr title="App\Models\CurriculumProfissional::unidadeAtual">unidadeAtual</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CurriculumProfissional.php.html#67"><abbr title="App\Models\CurriculumProfissional::historicosAtividadesInternas">historicosAtividadesInternas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CurriculumProfissional.php.html#71"><abbr title="App\Models\CurriculumProfissional::historicosAtividadesExternas">historicosAtividadesExternas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CurriculumProfissional.php.html#75"><abbr title="App\Models\CurriculumProfissional::historicosCursosInternos">historicosCursosInternos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CurriculumProfissional.php.html#79"><abbr title="App\Models\CurriculumProfissional::historicosCursosExternos">historicosCursosExternos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CurriculumProfissional.php.html#83"><abbr title="App\Models\CurriculumProfissional::historicosDocenciasInternas">historicosDocenciasInternas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CurriculumProfissional.php.html#87"><abbr title="App\Models\CurriculumProfissional::historicosDocenciasExternas">historicosDocenciasExternas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CurriculumProfissional.php.html#91"><abbr title="App\Models\CurriculumProfissional::historicosFuncoes">historicosFuncoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CurriculumProfissional.php.html#95"><abbr title="App\Models\CurriculumProfissional::historicosLotacoes">historicosLotacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Curso.php.html#24"><abbr title="App\Models\Curso::areaConhecimento">areaConhecimento</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Curso.php.html#28"><abbr title="App\Models\Curso::tipoCurso">tipoCurso</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Curso.php.html#33"><abbr title="App\Models\Curso::curriculunsGraduacoes">curriculunsGraduacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Curso.php.html#37"><abbr title="App\Models\Curso::historicosCursosInternos">historicosCursosInternos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Disciplina.php.html#20"><abbr title="App\Models\Disciplina::historicosDocenciasInternas">historicosDocenciasInternas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Documento.php.html#51"><abbr title="App\Models\Documento::booted">booted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Documento.php.html#67"><abbr title="App\Models\Documento::assinaturas">assinaturas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Documento.php.html#71"><abbr title="App\Models\Documento::tarefasAtividade">tarefasAtividade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Documento.php.html#75"><abbr title="App\Models\Documento::tarefasProjeto">tarefasProjeto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Documento.php.html#79"><abbr title="App\Models\Documento::programas">programas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Documento.php.html#83"><abbr title="App\Models\Documento::planosTrabalho">planosTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Documento.php.html#87"><abbr title="App\Models\Documento::atividadesRequisitadas">atividadesRequisitadas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Documento.php.html#91"><abbr title="App\Models\Documento::atividadesEntregues">atividadesEntregues</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Documento.php.html#96"><abbr title="App\Models\Documento::template">template</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Documento.php.html#100"><abbr title="App\Models\Documento::planoTrabalho">planoTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Documento.php.html#104"><abbr title="App\Models\Documento::tipoDocumento">tipoDocumento</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Documento.php.html#108"><abbr title="App\Models\Documento::tipoProcesso">tipoProcesso</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Documento.php.html#112"><abbr title="App\Models\Documento::entidade">entidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Documento.php.html#116"><abbr title="App\Models\Documento::atividade">atividade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Documento.php.html#120"><abbr title="App\Models\Documento::atividadeTarefa">atividadeTarefa</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Documento.php.html#124"><abbr title="App\Models\Documento::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DocumentoAssinatura.php.html#25"><abbr title="App\Models\DocumentoAssinatura::documento">documento</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DocumentoAssinatura.php.html#29"><abbr title="App\Models\DocumentoAssinatura::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EixoTematico.php.html#23"><abbr title="App\Models\EixoTematico::objetivos">objetivos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#61"><abbr title="App\Models\Entidade::booted">booted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#80"><abbr title="App\Models\Entidade::feriados">feriados</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#84"><abbr title="App\Models\Entidade::documentos">documentos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#88"><abbr title="App\Models\Entidade::planejamentos">planejamentos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#92"><abbr title="App\Models\Entidade::cadeiasValores">cadeiasValores</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#96"><abbr title="App\Models\Entidade::integracoes">integracoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#100"><abbr title="App\Models\Entidade::notificacoesTemplates">notificacoesTemplates</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#104"><abbr title="App\Models\Entidade::relatoriosTemplates">relatoriosTemplates</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#108"><abbr title="App\Models\Entidade::unidades">unidades</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#112"><abbr title="App\Models\Entidade::tiposTarefas">tiposTarefas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#117"><abbr title="App\Models\Entidade::cidade">cidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#121"><abbr title="App\Models\Entidade::gestor">gestor</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#125"><abbr title="App\Models\Entidade::gestorSubstituto">gestorSubstituto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#129"><abbr title="App\Models\Entidade::tipoModalidade">tipoModalidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#133"><abbr title="App\Models\Entidade::emails">emails</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#139"><abbr title="App\Models\Entidade::getNotificacoesAttribute">getNotificacoesAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entidade.php.html#144"><abbr title="App\Models\Entidade::setNotificacoesAttribute">setNotificacoesAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EntidadeEmail.php.html#18"><abbr title="App\Models\EntidadeEmail::entidade">entidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entrega.php.html#34"><abbr title="App\Models\Entrega::entregasPlanoEntrega">entregasPlanoEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entrega.php.html#39"><abbr title="App\Models\Entrega::entregasPlanoTrabalho">entregasPlanoTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Entrega.php.html#45"><abbr title="App\Models\Entrega::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Envio.php.html#22"><abbr title="App\Models\Envio::booted">booted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EnvioItem.php.html#17"><abbr title="App\Models\EnvioItem::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EnvioItem.php.html#22"><abbr title="App\Models\EnvioItem::planoTrabalho">planoTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EnvioItem.php.html#27"><abbr title="App\Models\EnvioItem::planoEntrega">planoEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Favorito.php.html#27"><abbr title="App\Models\Favorito::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Feriado.php.html#31"><abbr title="App\Models\Feriado::entidade">entidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Feriado.php.html#35"><abbr title="App\Models\Feriado::cidade">cidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Funcao.php.html#22"><abbr title="App\Models\Funcao::historicosFuncoes">historicosFuncoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GrupoEspecializado.php.html#18"><abbr title="App\Models\GrupoEspecializado::curriculunsProfissionais">curriculunsProfissionais</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoAtividadeExterna.php.html#19"><abbr title="App\Models\HistoricoAtividadeExterna::curriculumProfissional">curriculumProfissional</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoAtividadeExterna.php.html#23"><abbr title="App\Models\HistoricoAtividadeExterna::areaAtividadeExterna">areaAtividadeExterna</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoAtividadeInterna.php.html#21"><abbr title="App\Models\HistoricoAtividadeInterna::curriculumProfissional">curriculumProfissional</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoAtividadeInterna.php.html#25"><abbr title="App\Models\HistoricoAtividadeInterna::capacidadeTecnica">capacidadeTecnica</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoCursoExterno.php.html#23"><abbr title="App\Models\HistoricoCursoExterno::curriculumProfissional">curriculumProfissional</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoCursoExterno.php.html#27"><abbr title="App\Models\HistoricoCursoExterno::areaAtividadeExterna">areaAtividadeExterna</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoCursoInterno.php.html#21"><abbr title="App\Models\HistoricoCursoInterno::curriculumProfissional">curriculumProfissional</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoCursoInterno.php.html#29"><abbr title="App\Models\HistoricoCursoInterno::curso">curso</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoDocenciaExterna.php.html#20"><abbr title="App\Models\HistoricoDocenciaExterna::curriculumProfissional">curriculumProfissional</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoDocenciaExterna.php.html#24"><abbr title="App\Models\HistoricoDocenciaExterna::areaAtividadeExterna">areaAtividadeExterna</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoDocenciaInterna.php.html#19"><abbr title="App\Models\HistoricoDocenciaInterna::curriculumProfissional">curriculumProfissional</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoDocenciaInterna.php.html#23"><abbr title="App\Models\HistoricoDocenciaInterna::disciplina">disciplina</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoFuncao.php.html#21"><abbr title="App\Models\HistoricoFuncao::curriculumProfissional">curriculumProfissional</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoFuncao.php.html#25"><abbr title="App\Models\HistoricoFuncao::funcao">funcao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoFuncao.php.html#29"><abbr title="App\Models\HistoricoFuncao::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoLotacao.php.html#19"><abbr title="App\Models\HistoricoLotacao::curriculumProfissional">curriculumProfissional</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="HistoricoLotacao.php.html#23"><abbr title="App\Models\HistoricoLotacao::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Integracao.php.html#33"><abbr title="App\Models\Integracao::entidade">entidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Integracao.php.html#37"><abbr title="App\Models\Integracao::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="JobSchedule.php.html#19"><abbr title="App\Models\JobSchedule::proxyFill">proxyFill</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Logs.php.html#11"><abbr title="App\Models\Logs::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Logs.php.html#20"><abbr title="App\Models\Logs::boot">boot</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Logs.php.html#30"><abbr title="App\Models\Logs::tenant">tenant</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Logs.php.html#36"><abbr title="App\Models\Logs::scopeCreatedAt">scopeCreatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Logs.php.html#42"><abbr title="App\Models\Logs::scopeTenantId">scopeTenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MaterialServico.php.html#30"><abbr title="App\Models\MaterialServico::projetosRecursos">projetosRecursos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ModelBase.php.html#26"><abbr title="App\Models\ModelBase::jsonEncodeArrayList">jsonEncodeArrayList</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ModelBase.php.html#36"><abbr title="App\Models\ModelBase::deleteCascade">deleteCascade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ModelBase.php.html#55"><abbr title="App\Models\ModelBase::scopeDoUsuario">scopeDoUsuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Notificacao.php.html#25"><abbr title="App\Models\Notificacao::booted">booted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Notificacao.php.html#35"><abbr title="App\Models\Notificacao::destinatarios">destinatarios</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Notificacao.php.html#40"><abbr title="App\Models\Notificacao::remetente">remetente</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="NotificacaoDestinatario.php.html#32"><abbr title="App\Models\NotificacaoDestinatario::notificacao">notificacao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="NotificacaoDestinatario.php.html#36"><abbr title="App\Models\NotificacaoDestinatario::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="NotificacaoWhatsapp.php.html#25"><abbr title="App\Models\NotificacaoWhatsapp::booted">booted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="NotificacaoWhatsapp.php.html#40"><abbr title="App\Models\NotificacaoWhatsapp::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Ocorrencia.php.html#30"><abbr title="App\Models\Ocorrencia::consolidacoes">consolidacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Ocorrencia.php.html#35"><abbr title="App\Models\Ocorrencia::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Ocorrencia.php.html#39"><abbr title="App\Models\Ocorrencia::planoTrabalho">planoTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PainelUsuario.php.html#16"><abbr title="App\Models\PainelUsuario::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PainelUsuario.php.html#41"><abbr title="App\Models\PainelUsuario::assignTenants">assignTenants</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PainelUsuario.php.html#47"><abbr title="App\Models\PainelUsuario::tenants">tenants</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PainelUsuario.php.html#52"><abbr title="App\Models\PainelUsuario::deleteCascade">deleteCascade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PainelUsuarioTenant.php.html#18"><abbr title="App\Models\PainelUsuarioTenant::tenant">tenant</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PainelUsuarioTenant.php.html#23"><abbr title="App\Models\PainelUsuarioTenant::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Perfil.php.html#30"><abbr title="App\Models\Perfil::usuarios">usuarios</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Perfil.php.html#34"><abbr title="App\Models\Perfil::capacidades">capacidades</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Planejamento.php.html#45"><abbr title="App\Models\Planejamento::proxyFill">proxyFill</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Planejamento.php.html#52"><abbr title="App\Models\Planejamento::objetivosOkr">objetivosOkr</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Planejamento.php.html#57"><abbr title="App\Models\Planejamento::objetivos">objetivos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Planejamento.php.html#62"><abbr title="App\Models\Planejamento::planejamentos">planejamentos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Planejamento.php.html#67"><abbr title="App\Models\Planejamento::planosEntrega">planosEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Planejamento.php.html#73"><abbr title="App\Models\Planejamento::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Planejamento.php.html#78"><abbr title="App\Models\Planejamento::entidade">entidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Planejamento.php.html#83"><abbr title="App\Models\Planejamento::planejamentoSuperior">planejamentoSuperior</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Planejamento.php.html#88"><abbr title="App\Models\Planejamento::getAuditRelations">getAuditRelations</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanejamentoObjetivo.php.html#32"><abbr title="App\Models\PlanejamentoObjetivo::objetivos">objetivos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanejamentoObjetivo.php.html#36"><abbr title="App\Models\PlanejamentoObjetivo::objetivosFilhos">objetivosFilhos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanejamentoObjetivo.php.html#40"><abbr title="App\Models\PlanejamentoObjetivo::objetivosEntrega">objetivosEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanejamentoObjetivo.php.html#45"><abbr title="App\Models\PlanejamentoObjetivo::planejamento">planejamento</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanejamentoObjetivo.php.html#49"><abbr title="App\Models\PlanejamentoObjetivo::eixoTematico">eixoTematico</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanejamentoObjetivo.php.html#53"><abbr title="App\Models\PlanejamentoObjetivo::objetivoPai">objetivoPai</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanejamentoObjetivo.php.html#57"><abbr title="App\Models\PlanejamentoObjetivo::objetivoSuperior">objetivoSuperior</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntrega.php.html#52"><abbr title="App\Models\PlanoEntrega::booted">booted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntrega.php.html#60"><abbr title="App\Models\PlanoEntrega::statusHistorico">statusHistorico</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntrega.php.html#65"><abbr title="App\Models\PlanoEntrega::latestStatus">latestStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntrega.php.html#70"><abbr title="App\Models\PlanoEntrega::entregas">entregas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntrega.php.html#75"><abbr title="App\Models\PlanoEntrega::planosEntrega">planosEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntrega.php.html#80"><abbr title="App\Models\PlanoEntrega::planosTrabalho">planosTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntrega.php.html#85"><abbr title="App\Models\PlanoEntrega::avaliacoes">avaliacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntrega.php.html#91"><abbr title="App\Models\PlanoEntrega::planejamento">planejamento</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntrega.php.html#96"><abbr title="App\Models\PlanoEntrega::cadeiaValor">cadeiaValor</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntrega.php.html#101"><abbr title="App\Models\PlanoEntrega::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntrega.php.html#106"><abbr title="App\Models\PlanoEntrega::criador">criador</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntrega.php.html#111"><abbr title="App\Models\PlanoEntrega::programa">programa</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntrega.php.html#116"><abbr title="App\Models\PlanoEntrega::planoEntregaSuperior">planoEntregaSuperior</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntrega.php.html#121"><abbr title="App\Models\PlanoEntrega::avaliacao">avaliacao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntrega.php.html#126"><abbr title="App\Models\PlanoEntrega::getAuditRelations">getAuditRelations</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntrega.php.html#56"><abbr title="App\Models\PlanoEntregaEntrega::progressos">progressos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntrega.php.html#60"><abbr title="App\Models\PlanoEntregaEntrega::objetivos">objetivos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntrega.php.html#64"><abbr title="App\Models\PlanoEntregaEntrega::processos">processos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntrega.php.html#68"><abbr title="App\Models\PlanoEntregaEntrega::comentarios">comentarios</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntrega.php.html#72"><abbr title="App\Models\PlanoEntregaEntrega::entregasPlanoTrabalho">entregasPlanoTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntrega.php.html#76"><abbr title="App\Models\PlanoEntregaEntrega::reacoes">reacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntrega.php.html#81"><abbr title="App\Models\PlanoEntregaEntrega::planoEntrega">planoEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntrega.php.html#85"><abbr title="App\Models\PlanoEntregaEntrega::entrega">entrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntrega.php.html#89"><abbr title="App\Models\PlanoEntregaEntrega::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntrega.php.html#93"><abbr title="App\Models\PlanoEntregaEntrega::entregaPai">entregaPai</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntrega.php.html#98"><abbr title="App\Models\PlanoEntregaEntrega::produtos">produtos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntregaObjetivo.php.html#27"><abbr title="App\Models\PlanoEntregaEntregaObjetivo::objetivo">objetivo</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntregaObjetivo.php.html#31"><abbr title="App\Models\PlanoEntregaEntregaObjetivo::entrega">entrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntregaProcesso.php.html#27"><abbr title="App\Models\PlanoEntregaEntregaProcesso::processo">processo</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntregaProcesso.php.html#32"><abbr title="App\Models\PlanoEntregaEntregaProcesso::entrega">entrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntregaProduto.php.html#21"><abbr title="App\Models\PlanoEntregaEntregaProduto::entrega">entrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntregaProduto.php.html#26"><abbr title="App\Models\PlanoEntregaEntregaProduto::produto">produto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntregaProgresso.php.html#41"><abbr title="App\Models\PlanoEntregaEntregaProgresso::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoEntregaEntregaProgresso.php.html#45"><abbr title="App\Models\PlanoEntregaEntregaProgresso::planoEntregaEntrega">planoEntregaEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalho.php.html#61"><abbr title="App\Models\PlanoTrabalho::booted">booted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalho.php.html#69"><abbr title="App\Models\PlanoTrabalho::statusHistorico">statusHistorico</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalho.php.html#74"><abbr title="App\Models\PlanoTrabalho::latestStatus">latestStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalho.php.html#79"><abbr title="App\Models\PlanoTrabalho::entregas">entregas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalho.php.html#84"><abbr title="App\Models\PlanoTrabalho::documentos">documentos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalho.php.html#89"><abbr title="App\Models\PlanoTrabalho::atividades">atividades</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalho.php.html#94"><abbr title="App\Models\PlanoTrabalho::ocorrencias">ocorrencias</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalho.php.html#99"><abbr title="App\Models\PlanoTrabalho::consolidacoes">consolidacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalho.php.html#105"><abbr title="App\Models\PlanoTrabalho::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalho.php.html#110"><abbr title="App\Models\PlanoTrabalho::criador">criador</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalho.php.html#115"><abbr title="App\Models\PlanoTrabalho::programa">programa</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalho.php.html#120"><abbr title="App\Models\PlanoTrabalho::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalho.php.html#125"><abbr title="App\Models\PlanoTrabalho::tipoModalidade">tipoModalidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalho.php.html#130"><abbr title="App\Models\PlanoTrabalho::documento">documento</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalho.php.html#135"><abbr title="App\Models\PlanoTrabalho::ultimaAssinatura">ultimaAssinatura</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalho.php.html#141"><abbr title="App\Models\PlanoTrabalho::getAuditRelations">getAuditRelations</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacao.php.html#36"><abbr title="App\Models\PlanoTrabalhoConsolidacao::statusHistorico">statusHistorico</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacao.php.html#40"><abbr title="App\Models\PlanoTrabalhoConsolidacao::latestStatus">latestStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacao.php.html#44"><abbr title="App\Models\PlanoTrabalhoConsolidacao::afastamentos">afastamentos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacao.php.html#48"><abbr title="App\Models\PlanoTrabalhoConsolidacao::ocorrencias">ocorrencias</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacao.php.html#52"><abbr title="App\Models\PlanoTrabalhoConsolidacao::comparecimentos">comparecimentos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacao.php.html#56"><abbr title="App\Models\PlanoTrabalhoConsolidacao::avaliacoes">avaliacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacao.php.html#63"><abbr title="App\Models\PlanoTrabalhoConsolidacao::planoTrabalho">planoTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacao.php.html#67"><abbr title="App\Models\PlanoTrabalhoConsolidacao::avaliacao">avaliacao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacaoAfastamento.php.html#35"><abbr title="App\Models\PlanoTrabalhoConsolidacaoAfastamento::consolidacao">consolidacao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacaoAfastamento.php.html#39"><abbr title="App\Models\PlanoTrabalhoConsolidacaoAfastamento::afastamento">afastamento</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacaoAtividade.php.html#35"><abbr title="App\Models\PlanoTrabalhoConsolidacaoAtividade::consolidacao">consolidacao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacaoAtividade.php.html#39"><abbr title="App\Models\PlanoTrabalhoConsolidacaoAtividade::atividade">atividade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacaoOcorrencia.php.html#35"><abbr title="App\Models\PlanoTrabalhoConsolidacaoOcorrencia::consolidacao">consolidacao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoConsolidacaoOcorrencia.php.html#39"><abbr title="App\Models\PlanoTrabalhoConsolidacaoOcorrencia::ocorrencia">ocorrencia</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoEntrega.php.html#33"><abbr title="App\Models\PlanoTrabalhoEntrega::atividades">atividades</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoEntrega.php.html#37"><abbr title="App\Models\PlanoTrabalhoEntrega::reacoes">reacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoEntrega.php.html#42"><abbr title="App\Models\PlanoTrabalhoEntrega::planoTrabalho">planoTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoEntrega.php.html#46"><abbr title="App\Models\PlanoTrabalhoEntrega::planoEntregaEntrega">planoEntregaEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PlanoTrabalhoEntrega.php.html#50"><abbr title="App\Models\PlanoTrabalhoEntrega::entrega">entrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Produto.php.html#57"><abbr title="App\Models\Produto::booted">booted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Produto.php.html#65"><abbr title="App\Models\Produto::produtoInsumos">produtoInsumos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Produto.php.html#70"><abbr title="App\Models\Produto::produtoProcessoCadeiaValor">produtoProcessoCadeiaValor</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Produto.php.html#75"><abbr title="App\Models\Produto::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Produto.php.html#80"><abbr title="App\Models\Produto::setTipoAttribute">setTipoAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Produto.php.html#86"><abbr title="App\Models\Produto::isTipoValido">isTipoValido</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Produto.php.html#91"><abbr title="App\Models\Produto::produtoCliente">produtoCliente</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Produto.php.html#96"><abbr title="App\Models\Produto::produtoSolucoes">produtoSolucoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Produto.php.html#101"><abbr title="App\Models\Produto::solucoes">solucoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Produto.php.html#106"><abbr title="App\Models\Produto::entregas">entregas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Produto.php.html#111"><abbr title="App\Models\Produto::responsavel">responsavel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProdutoCliente.php.html#26"><abbr title="App\Models\ProdutoCliente::produto">produto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProdutoCliente.php.html#31"><abbr title="App\Models\ProdutoCliente::cliente">cliente</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProdutoInsumo.php.html#34"><abbr title="App\Models\ProdutoInsumo::produto">produto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProdutoInsumo.php.html#39"><abbr title="App\Models\ProdutoInsumo::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProdutoInsumo.php.html#44"><abbr title="App\Models\ProdutoInsumo::cliente">cliente</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProdutoInsumo.php.html#49"><abbr title="App\Models\ProdutoInsumo::produtoRelacionado">produtoRelacionado</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProdutoProcessoCadeiaValor.php.html#27"><abbr title="App\Models\ProdutoProcessoCadeiaValor::produto">produto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProdutoProcessoCadeiaValor.php.html#32"><abbr title="App\Models\ProdutoProcessoCadeiaValor::cadeiaValorProcesso">cadeiaValorProcesso</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProdutoSolucao.php.html#25"><abbr title="App\Models\ProdutoSolucao::produto">produto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProdutoSolucao.php.html#30"><abbr title="App\Models\ProdutoSolucao::solucao">solucao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Programa.php.html#70"><abbr title="App\Models\Programa::participantes">participantes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Programa.php.html#74"><abbr title="App\Models\Programa::planosEntrega">planosEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Programa.php.html#78"><abbr title="App\Models\Programa::planosTrabalho">planosTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Programa.php.html#83"><abbr title="App\Models\Programa::tipoAvaliacaoPlanoTrabalho">tipoAvaliacaoPlanoTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Programa.php.html#87"><abbr title="App\Models\Programa::tipoAvaliacaoPlanoEntrega">tipoAvaliacaoPlanoEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Programa.php.html#91"><abbr title="App\Models\Programa::tipoDocumentoTcr">tipoDocumentoTcr</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Programa.php.html#95"><abbr title="App\Models\Programa::templateTcr">templateTcr</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Programa.php.html#99"><abbr title="App\Models\Programa::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Programa.php.html#109"><abbr title="App\Models\Programa::documento">documento</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProgramaParticipante.php.html#25"><abbr title="App\Models\ProgramaParticipante::programa">programa</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProgramaParticipante.php.html#29"><abbr title="App\Models\ProgramaParticipante::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Projeto.php.html#62"><abbr title="App\Models\Projeto::booted">booted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Projeto.php.html#77"><abbr title="App\Models\Projeto::fases">fases</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Projeto.php.html#81"><abbr title="App\Models\Projeto::tarefas">tarefas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Projeto.php.html#85"><abbr title="App\Models\Projeto::tarefasProjeto">tarefasProjeto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Projeto.php.html#89"><abbr title="App\Models\Projeto::regras">regras</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Projeto.php.html#93"><abbr title="App\Models\Projeto::alocacoes">alocacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Projeto.php.html#97"><abbr title="App\Models\Projeto::recursos">recursos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Projeto.php.html#101"><abbr title="App\Models\Projeto::historicos">historicos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Projeto.php.html#105"><abbr title="App\Models\Projeto::comentarios">comentarios</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Projeto.php.html#110"><abbr title="App\Models\Projeto::fase">fase</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Projeto.php.html#114"><abbr title="App\Models\Projeto::tipoProjeto">tipoProjeto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Projeto.php.html#118"><abbr title="App\Models\Projeto::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoAlocacao.php.html#34"><abbr title="App\Models\ProjetoAlocacao::regras">regras</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoAlocacao.php.html#39"><abbr title="App\Models\ProjetoAlocacao::projeto">projeto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoAlocacao.php.html#43"><abbr title="App\Models\ProjetoAlocacao::tarefa">tarefa</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoAlocacao.php.html#47"><abbr title="App\Models\ProjetoAlocacao::recurso">recurso</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoAlocacaoRegra.php.html#29"><abbr title="App\Models\ProjetoAlocacaoRegra::projetoAlocacao">projetoAlocacao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoAlocacaoRegra.php.html#33"><abbr title="App\Models\ProjetoAlocacaoRegra::regra">regra</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoFase.php.html#33"><abbr title="App\Models\ProjetoFase::projetos">projetos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoFase.php.html#38"><abbr title="App\Models\ProjetoFase::projeto">projeto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoHistorico.php.html#32"><abbr title="App\Models\ProjetoHistorico::projeto">projeto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoHistorico.php.html#36"><abbr title="App\Models\ProjetoHistorico::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoRecurso.php.html#36"><abbr title="App\Models\ProjetoRecurso::alocacoes">alocacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoRecurso.php.html#41"><abbr title="App\Models\ProjetoRecurso::projeto">projeto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoRecurso.php.html#45"><abbr title="App\Models\ProjetoRecurso::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoRecurso.php.html#49"><abbr title="App\Models\ProjetoRecurso::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoRecurso.php.html#53"><abbr title="App\Models\ProjetoRecurso::materialServico">materialServico</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoRegra.php.html#37"><abbr title="App\Models\ProjetoRegra::regrasAlocacao">regrasAlocacao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoRegra.php.html#42"><abbr title="App\Models\ProjetoRegra::projeto">projeto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoTarefa.php.html#66"><abbr title="App\Models\ProjetoTarefa::alocacoes">alocacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoTarefa.php.html#70"><abbr title="App\Models\ProjetoTarefa::tarefas">tarefas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoTarefa.php.html#74"><abbr title="App\Models\ProjetoTarefa::comentarios">comentarios</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoTarefa.php.html#79"><abbr title="App\Models\ProjetoTarefa::projeto">projeto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoTarefa.php.html#83"><abbr title="App\Models\ProjetoTarefa::tarefaProjeto">tarefaProjeto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoTarefa.php.html#87"><abbr title="App\Models\ProjetoTarefa::documento">documento</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoTarefa.php.html#91"><abbr title="App\Models\ProjetoTarefa::atividade">atividade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoTarefa.php.html#95"><abbr title="App\Models\ProjetoTarefa::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ProjetoTarefa.php.html#99"><abbr title="App\Models\ProjetoTarefa::tarefaPai">tarefaPai</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Questionario.php.html#26"><abbr title="App\Models\Questionario::perguntas">perguntas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Questionario.php.html#30"><abbr title="App\Models\Questionario::preenchimentos">preenchimentos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionarioPergunta.php.html#38"><abbr title="App\Models\QuestionarioPergunta::questionario">questionario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionarioPergunta.php.html#42"><abbr title="App\Models\QuestionarioPergunta::perguntaOrigem">perguntaOrigem</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionarioPergunta.php.html#47"><abbr title="App\Models\QuestionarioPergunta::respostas">respostas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionarioPerguntaResposta.php.html#27"><abbr title="App\Models\QuestionarioPerguntaResposta::pergunta">pergunta</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionarioPerguntaResposta.php.html#31"><abbr title="App\Models\QuestionarioPerguntaResposta::preenchimento">preenchimento</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionarioPreenchimento.php.html#32"><abbr title="App\Models\QuestionarioPreenchimento::questionario">questionario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionarioPreenchimento.php.html#36"><abbr title="App\Models\QuestionarioPreenchimento::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionarioPreenchimento.php.html#41"><abbr title="App\Models\QuestionarioPreenchimento::respostas">respostas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Reacao.php.html#28"><abbr title="App\Models\Reacao::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Reacao.php.html#32"><abbr title="App\Models\Reacao::atividade">atividade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Reacao.php.html#36"><abbr title="App\Models\Reacao::planoTrabalhoEntrega">planoTrabalhoEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Reacao.php.html#40"><abbr title="App\Models\Reacao::planoEntregaEntrega">planoEntregaEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Solucao.php.html#20"><abbr title="App\Models\Solucao::booted">booted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Solucao.php.html#51"><abbr title="App\Models\Solucao::scopeStatus">scopeStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Solucao.php.html#56"><abbr title="App\Models\Solucao::solucoesUnidades">solucoesUnidades</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Solucao.php.html#60"><abbr title="App\Models\Solucao::produtosSolucoes">produtosSolucoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SolucaoUnidade.php.html#35"><abbr title="App\Models\SolucaoUnidade::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StatusJustificativa.php.html#30"><abbr title="App\Models\StatusJustificativa::planoEntrega">planoEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StatusJustificativa.php.html#34"><abbr title="App\Models\StatusJustificativa::planoTrabalho">planoTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StatusJustificativa.php.html#38"><abbr title="App\Models\StatusJustificativa::planoTrabalhoConsolidacao">planoTrabalhoConsolidacao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StatusJustificativa.php.html#42"><abbr title="App\Models\StatusJustificativa::atividade">atividade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StatusJustificativa.php.html#46"><abbr title="App\Models\StatusJustificativa::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Template.php.html#19"><abbr title="App\Models\Template::booted">booted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Template.php.html#50"><abbr title="App\Models\Template::programas">programas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Template.php.html#54"><abbr title="App\Models\Template::documentos">documentos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Template.php.html#59"><abbr title="App\Models\Template::entidade">entidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Template.php.html#63"><abbr title="App\Models\Template::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Tenant.php.html#17"><abbr title="App\Models\Tenant::tenantsLogs">tenantsLogs</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Tenant.php.html#22"><abbr title="App\Models\Tenant::userPanels">userPanels</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoAtividade.php.html#25"><abbr title="App\Models\TipoAtividade::booted">booted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoAtividade.php.html#40"><abbr title="App\Models\TipoAtividade::atividades">atividades</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoAvaliacao.php.html#30"><abbr title="App\Models\TipoAvaliacao::avaliacoes">avaliacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoAvaliacao.php.html#34"><abbr title="App\Models\TipoAvaliacao::notas">notas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoAvaliacaoJustificativa.php.html#21"><abbr title="App\Models\TipoAvaliacaoJustificativa::tipoAvaliacaoNota">tipoAvaliacaoNota</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoAvaliacaoJustificativa.php.html#25"><abbr title="App\Models\TipoAvaliacaoJustificativa::tipoJustificativa">tipoJustificativa</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoAvaliacaoNota.php.html#37"><abbr title="App\Models\TipoAvaliacaoNota::tipoAvaliacao">tipoAvaliacao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoAvaliacaoNota.php.html#42"><abbr title="App\Models\TipoAvaliacaoNota::justificativas">justificativas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoCapacidade.php.html#25"><abbr title="App\Models\TipoCapacidade::filhos">filhos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoCapacidade.php.html#29"><abbr title="App\Models\TipoCapacidade::capacidades">capacidades</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoCliente.php.html#18"><abbr title="App\Models\TipoCliente::clientes">clientes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoCurso.php.html#18"><abbr title="App\Models\TipoCurso::cursos">cursos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoDocumento.php.html#23"><abbr title="App\Models\TipoDocumento::programas">programas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoDocumento.php.html#27"><abbr title="App\Models\TipoDocumento::documentos">documentos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoJustificativa.php.html#22"><abbr title="App\Models\TipoJustificativa::tiposAvaliacoesJustificativas">tiposAvaliacoesJustificativas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoModalidade.php.html#26"><abbr title="App\Models\TipoModalidade::planosTrabalho">planosTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoModalidade.php.html#30"><abbr title="App\Models\TipoModalidade::entidades">entidades</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoModalidadeSiape.php.html#16"><abbr title="App\Models\TipoModalidadeSiape::tipoModalidade">tipoModalidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoMotivoAfastamento.php.html#32"><abbr title="App\Models\TipoMotivoAfastamento::afastamentos">afastamentos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoProcesso.php.html#23"><abbr title="App\Models\TipoProcesso::booted">booted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoProcesso.php.html#38"><abbr title="App\Models\TipoProcesso::documentos">documentos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoProjeto.php.html#24"><abbr title="App\Models\TipoProjeto::projetos">projetos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TipoTarefa.php.html#24"><abbr title="App\Models\TipoTarefa::tarefas">tarefas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#67"><abbr title="App\Models\Unidade::booted">booted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#84"><abbr title="App\Models\Unidade::atividades">atividades</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#89"><abbr title="App\Models\Unidade::planosTrabalho">planosTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#94"><abbr title="App\Models\Unidade::planosEntrega">planosEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#99"><abbr title="App\Models\Unidade::entregasPlanoEntrega">entregasPlanoEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#104"><abbr title="App\Models\Unidade::programas">programas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#109"><abbr title="App\Models\Unidade::recursosProjeto">recursosProjeto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#114"><abbr title="App\Models\Unidade::notificacoesTemplates">notificacoesTemplates</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#119"><abbr title="App\Models\Unidade::unidades">unidades</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#124"><abbr title="App\Models\Unidade::planejamentos">planejamentos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#129"><abbr title="App\Models\Unidade::cadeiasValor">cadeiasValor</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#134"><abbr title="App\Models\Unidade::integrantes">integrantes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#139"><abbr title="App\Models\Unidade::historicosLotacoes">historicosLotacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#144"><abbr title="App\Models\Unidade::historicosFuncoes">historicosFuncoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#149"><abbr title="App\Models\Unidade::curriculunsProfissionais">curriculunsProfissionais</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#155"><abbr title="App\Models\Unidade::entidade">entidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#160"><abbr title="App\Models\Unidade::cidade">cidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#165"><abbr title="App\Models\Unidade::unidadePai">unidadePai</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#170"><abbr title="App\Models\Unidade::subordinadas">subordinadas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#175"><abbr title="App\Models\Unidade::todasSubordinadas">todasSubordinadas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#181"><abbr title="App\Models\Unidade::gestor">gestor</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#186"><abbr title="App\Models\Unidade::gestoresSubstitutos">gestoresSubstitutos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#191"><abbr title="App\Models\Unidade::gestoresDelegados">gestoresDelegados</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#196"><abbr title="App\Models\Unidade::lotados">lotados</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#201"><abbr title="App\Models\Unidade::colaboradores">colaboradores</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#206"><abbr title="App\Models\Unidade::avaliadoresPlanoEntrega">avaliadoresPlanoEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#211"><abbr title="App\Models\Unidade::avaliadoresPlanoTrabalho">avaliadoresPlanoTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#217"><abbr title="App\Models\Unidade::getNotificacoesAttribute">getNotificacoesAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#223"><abbr title="App\Models\Unidade::setNotificacoesAttribute">setNotificacoesAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unidade.php.html#228"><abbr title="App\Models\Unidade::getIntegrantesAtribuicoesAttribute">getIntegrantesAtribuicoesAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UnidadeIntegrante.php.html#23"><abbr title="App\Models\UnidadeIntegrante::gestores">gestores</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UnidadeIntegrante.php.html#28"><abbr title="App\Models\UnidadeIntegrante::lotado">lotado</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UnidadeIntegrante.php.html#32"><abbr title="App\Models\UnidadeIntegrante::gestor">gestor</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UnidadeIntegrante.php.html#36"><abbr title="App\Models\UnidadeIntegrante::gestorSubstituto">gestorSubstituto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UnidadeIntegrante.php.html#40"><abbr title="App\Models\UnidadeIntegrante::gestorDelegado">gestorDelegado</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UnidadeIntegrante.php.html#44"><abbr title="App\Models\UnidadeIntegrante::curador">curador</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UnidadeIntegrante.php.html#48"><abbr title="App\Models\UnidadeIntegrante::colaborador">colaborador</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UnidadeIntegrante.php.html#52"><abbr title="App\Models\UnidadeIntegrante::avaliadorPlanoEntrega">avaliadorPlanoEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UnidadeIntegrante.php.html#56"><abbr title="App\Models\UnidadeIntegrante::avaliadorPlanoTrabalho">avaliadorPlanoTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UnidadeIntegrante.php.html#61"><abbr title="App\Models\UnidadeIntegrante::atribuicoes">atribuicoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UnidadeIntegrante.php.html#66"><abbr title="App\Models\UnidadeIntegrante::unidade">unidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UnidadeIntegrante.php.html#70"><abbr title="App\Models\UnidadeIntegrante::usuario">usuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UnidadeIntegranteAtribuicao.php.html#22"><abbr title="App\Models\UnidadeIntegranteAtribuicao::vinculo">vinculo</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#109"><abbr title="App\Models\Usuario::proxyFill">proxyFill</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#178"><abbr title="App\Models\Usuario::gerenciaEntidade">gerenciaEntidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#183"><abbr title="App\Models\Usuario::isDeveloper">isDeveloper</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#187"><abbr title="App\Models\Usuario::gerenciaSubstitutaEntidade">gerenciaSubstitutaEntidade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#192"><abbr title="App\Models\Usuario::curriculum">curriculum</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#198"><abbr title="App\Models\Usuario::afastamentos">afastamentos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#203"><abbr title="App\Models\Usuario::anexos">anexos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#208"><abbr title="App\Models\Usuario::consolidacoes">consolidacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#213"><abbr title="App\Models\Usuario::assinaturas">assinaturas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#218"><abbr title="App\Models\Usuario::ultimaAssinatura">ultimaAssinatura</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#223"><abbr title="App\Models\Usuario::avaliacoes">avaliacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#228"><abbr title="App\Models\Usuario::atividades">atividades</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#233"><abbr title="App\Models\Usuario::atividadesDemandadas">atividadesDemandadas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#238"><abbr title="App\Models\Usuario::tarefasAtividade">tarefasAtividade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#243"><abbr title="App\Models\Usuario::tarefasProjeto">tarefasProjeto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#248"><abbr title="App\Models\Usuario::favoritos">favoritos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#253"><abbr title="App\Models\Usuario::comentarios">comentarios</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#258"><abbr title="App\Models\Usuario::projetos">projetos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#263"><abbr title="App\Models\Usuario::recursosProjeto">recursosProjeto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#268"><abbr title="App\Models\Usuario::historicosProjeto">historicosProjeto</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#273"><abbr title="App\Models\Usuario::notificacoesEnviadas">notificacoesEnviadas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#278"><abbr title="App\Models\Usuario::notificacoesWhatsapp">notificacoesWhatsapp</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#283"><abbr title="App\Models\Usuario::notificacoesDestinatario">notificacoesDestinatario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#288"><abbr title="App\Models\Usuario::planosTrabalho">planosTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#293"><abbr title="App\Models\Usuario::ultimoPlanoTrabalho">ultimoPlanoTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#299"><abbr title="App\Models\Usuario::ultimoPlanoTrabalhoAtivo">ultimoPlanoTrabalhoAtivo</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#304"><abbr title="App\Models\Usuario::participacoesProgramas">participacoesProgramas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#309"><abbr title="App\Models\Usuario::ultimaParticipacaoPrograma">ultimaParticipacaoPrograma</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#314"><abbr title="App\Models\Usuario::integracoes">integracoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#319"><abbr title="App\Models\Usuario::planosEntregaCriados">planosEntregaCriados</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#324"><abbr title="App\Models\Usuario::planosTrabalhoCriados">planosTrabalhoCriados</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#330"><abbr title="App\Models\Usuario::unidadesIntegrantes">unidadesIntegrantes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#335"><abbr title="App\Models\Usuario::unidadeIntegranteAtribuicoes">unidadeIntegranteAtribuicoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#340"><abbr title="App\Models\Usuario::unidadesIntegranteAtribuicoes">unidadesIntegranteAtribuicoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#345"><abbr title="App\Models\Usuario::statusHistorico">statusHistorico</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#350"><abbr title="App\Models\Usuario::documentos">documentos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#355"><abbr title="App\Models\Usuario::preenchimentos">preenchimentos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#361"><abbr title="App\Models\Usuario::perfil">perfil</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#367"><abbr title="App\Models\Usuario::unidades">unidades</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#373"><abbr title="App\Models\Usuario::gerenciaTitular">gerenciaTitular</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#378"><abbr title="App\Models\Usuario::gerencias">gerencias</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#383"><abbr title="App\Models\Usuario::gerenciasSubstitutas">gerenciasSubstitutas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#388"><abbr title="App\Models\Usuario::gerenciasDelegadas">gerenciasDelegadas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#393"><abbr title="App\Models\Usuario::lotacao">lotacao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#398"><abbr title="App\Models\Usuario::curadores">curadores</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#403"><abbr title="App\Models\Usuario::curador">curador</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#408"><abbr title="App\Models\Usuario::lotacoes">lotacoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#414"><abbr title="App\Models\Usuario::areasTrabalho">areasTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#419"><abbr title="App\Models\Usuario::colaboracoes">colaboracoes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#424"><abbr title="App\Models\Usuario::colaboracao">colaboracao</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#430"><abbr title="App\Models\Usuario::integracaoServidor">integracaoServidor</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#436"><abbr title="App\Models\Usuario::getUrlFotoAttribute">getUrlFotoAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#448"><abbr title="App\Models\Usuario::getPedagioAttribute">getPedagioAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#455"><abbr title="App\Models\Usuario::getConfigAttribute">getConfigAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#461"><abbr title="App\Models\Usuario::setConfigAttribute">setConfigAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#466"><abbr title="App\Models\Usuario::getNotificacoesAttribute">getNotificacoesAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#472"><abbr title="App\Models\Usuario::setNotificacoesAttribute">setNotificacoesAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#477"><abbr title="App\Models\Usuario::getChangesAttribute">getChangesAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#483"><abbr title="App\Models\Usuario::getUnidadesAtribuicoesAttribute">getUnidadesAtribuicoesAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#496"><abbr title="App\Models\Usuario::auditsExterno">auditsExterno</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#501"><abbr title="App\Models\Usuario::setMatriculaAttribute">setMatriculaAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#508"><abbr title="App\Models\Usuario::canImpersonate">canImpersonate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#514"><abbr title="App\Models\Usuario::impersonateGuard">impersonateGuard</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#519"><abbr title="App\Models\Usuario::getTiposIndisponibilidades">getTiposIndisponibilidades</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Usuario.php.html#527"><abbr title="App\Models\Usuario::deleteCascade">deleteCascade</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ViewApiPgd.php.html#31"><abbr title="App\Models\ViewApiPgd::scopeEntrega">scopeEntrega</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ViewApiPgd.php.html#42"><abbr title="App\Models\ViewApiPgd::scopeTrabalho">scopeTrabalho</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ViewApiPgd.php.html#53"><abbr title="App\Models\ViewApiPgd::scopeParticipante">scopeParticipante</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ViewApiPgd.php.html#58"><abbr title="App\Models\ViewApiPgd::scopeByTipo">scopeByTipo</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ViewApiPgd.php.html#63"><abbr title="App\Models\ViewApiPgd::getIdsByTipo">getIdsByTipo</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ViewApiPgd.php.html#68"><abbr title="App\Models\ViewApiPgd::getByInterval">getByInterval</abbr></a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="JobSchedule.php.html#19"><abbr title="App\Models\JobSchedule::proxyFill">proxyFill</abbr></a></td><td class="text-right">210</td></tr>
+       <tr><td><a href="Audit.php.html#77"><abbr title="App\Models\Audit::getDetailsAttribute">getDetailsAttribute</abbr></a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="ModelBase.php.html#36"><abbr title="App\Models\ModelBase::deleteCascade">deleteCascade</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="PainelUsuario.php.html#52"><abbr title="App\Models\PainelUsuario::deleteCascade">deleteCascade</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Usuario.php.html#527"><abbr title="App\Models\Usuario::deleteCascade">deleteCascade</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Usuario.php.html#109"><abbr title="App\Models\Usuario::proxyFill">proxyFill</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Usuario.php.html#483"><abbr title="App\Models\Usuario::getUnidadesAtribuicoesAttribute">getUnidadesAtribuicoesAttribute</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="ModelBase.php.html#26"><abbr title="App\Models\ModelBase::jsonEncodeArrayList">jsonEncodeArrayList</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Unidade.php.html#228"><abbr title="App\Models\Unidade::getIntegrantesAtribuicoesAttribute">getIntegrantesAtribuicoesAttribute</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Usuario.php.html#436"><abbr title="App\Models\Usuario::getUrlFotoAttribute">getUrlFotoAttribute</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="CadeiaValorProcesso.php.html#47"><abbr title="App\Models\CadeiaValorProcesso::getSequenciaCompleta">getSequenciaCompleta</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Entidade.php.html#139"><abbr title="App\Models\Entidade::getNotificacoesAttribute">getNotificacoesAttribute</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Template.php.html#19"><abbr title="App\Models\Template::booted">booted</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Unidade.php.html#67"><abbr title="App\Models\Unidade::booted">booted</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Unidade.php.html#217"><abbr title="App\Models\Unidade::getNotificacoesAttribute">getNotificacoesAttribute</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Usuario.php.html#448"><abbr title="App\Models\Usuario::getPedagioAttribute">getPedagioAttribute</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Usuario.php.html#455"><abbr title="App\Models\Usuario::getConfigAttribute">getConfigAttribute</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Usuario.php.html#466"><abbr title="App\Models\Usuario::getNotificacoesAttribute">getNotificacoesAttribute</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Usuario.php.html#501"><abbr title="App\Models\Usuario::setMatriculaAttribute">setMatriculaAttribute</abbr></a></td><td class="text-right">6</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 10.1.16</a> using <a href="https://www.php.net/" target="_top">PHP 8.2.29</a> and <a href="https://phpunit.de/">PHPUnit 10.5.36</a> at Mon Oct 13 22:09:06 -03 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/jquery.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="../_js/d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="../_js/nv.d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([119,0,0,0,0,0,0,0,0,0,0,24], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([539,0,0,0,0,0,0,0,0,0,0,0], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[0,3,"<a href=\"Afastamento.php.html#10\">App\\Models\\Afastamento<\/a>"],[0,2,"<a href=\"Anexo.php.html#9\">App\\Models\\Anexo<\/a>"],[0,3,"<a href=\"AreaAtividadeExterna.php.html#10\">App\\Models\\AreaAtividadeExterna<\/a>"],[0,1,"<a href=\"AreaConhecimento.php.html#8\">App\\Models\\AreaConhecimento<\/a>"],[0,1,"<a href=\"AreaTematica.php.html#7\">App\\Models\\AreaTematica<\/a>"],[0,27,"<a href=\"Atividade.php.html#16\">App\\Models\\Atividade<\/a>"],[0,1,"<a href=\"AtividadePausa.php.html#8\">App\\Models\\AtividadePausa<\/a>"],[0,6,"<a href=\"AtividadeTarefa.php.html#12\">App\\Models\\AtividadeTarefa<\/a>"],[0,12,"<a href=\"Audit.php.html#10\">App\\Models\\Audit<\/a>"],[0,6,"<a href=\"Avaliacao.php.html#11\">App\\Models\\Avaliacao<\/a>"],[0,3,"<a href=\"AvaliacaoEntregaChecklist.php.html#10\">App\\Models\\AvaliacaoEntregaChecklist<\/a>"],[0,5,"<a href=\"CadeiaValor.php.html#11\">App\\Models\\CadeiaValor<\/a>"],[0,7,"<a href=\"CadeiaValorProcesso.php.html#9\">App\\Models\\CadeiaValorProcesso<\/a>"],[0,2,"<a href=\"Capacidade.php.html#9\">App\\Models\\Capacidade<\/a>"],[0,2,"<a href=\"CapacidadeTecnica.php.html#8\">App\\Models\\CapacidadeTecnica<\/a>"],[0,1,"<a href=\"Cargo.php.html#7\">App\\Models\\Cargo<\/a>"],[0,2,"<a href=\"Catalogo.php.html#9\">App\\Models\\Catalogo<\/a>"],[0,1,"<a href=\"CentroTreinamento.php.html#7\">App\\Models\\CentroTreinamento<\/a>"],[0,1,"<a href=\"Change.php.html#9\">App\\Models\\Change<\/a>"],[0,4,"<a href=\"Cidade.php.html#10\">App\\Models\\Cidade<\/a>"],[0,3,"<a href=\"Cliente.php.html#9\">App\\Models\\Cliente<\/a>"],[0,8,"<a href=\"Comentario.php.html#13\">App\\Models\\Comentario<\/a>"],[0,2,"<a href=\"Comparecimento.php.html#9\">App\\Models\\Comparecimento<\/a>"],[0,4,"<a href=\"Curriculum.php.html#12\">App\\Models\\Curriculum<\/a>"],[0,2,"<a href=\"CurriculumGraduacao.php.html#7\">App\\Models\\CurriculumGraduacao<\/a>"],[0,13,"<a href=\"CurriculumProfissional.php.html#13\">App\\Models\\CurriculumProfissional<\/a>"],[0,4,"<a href=\"Curso.php.html#10\">App\\Models\\Curso<\/a>"],[0,1,"<a href=\"Disciplina.php.html#8\">App\\Models\\Disciplina<\/a>"],[0,16,"<a href=\"Documento.php.html#20\">App\\Models\\Documento<\/a>"],[0,2,"<a href=\"DocumentoAssinatura.php.html#9\">App\\Models\\DocumentoAssinatura<\/a>"],[100,0,"<a href=\"DocumentoLink.php.html#5\">App\\Models\\DocumentoLink<\/a>"],[0,1,"<a href=\"EixoTematico.php.html#8\">App\\Models\\EixoTematico<\/a>"],[0,18,"<a href=\"Entidade.php.html#20\">App\\Models\\Entidade<\/a>"],[0,1,"<a href=\"EntidadeEmail.php.html#7\">App\\Models\\EntidadeEmail<\/a>"],[0,3,"<a href=\"Entrega.php.html#10\">App\\Models\\Entrega<\/a>"],[100,0,"<a href=\"EnvVariable.php.html#9\">App\\Models\\EnvVariable<\/a>"],[0,1,"<a href=\"Envio.php.html#10\">App\\Models\\Envio<\/a>"],[0,3,"<a href=\"EnvioItem.php.html#9\">App\\Models\\EnvioItem<\/a>"],[100,0,"<a href=\"Error.php.html#9\">App\\Models\\Error<\/a>"],[0,1,"<a href=\"Favorito.php.html#9\">App\\Models\\Favorito<\/a>"],[0,2,"<a href=\"Feriado.php.html#9\">App\\Models\\Feriado<\/a>"],[0,1,"<a href=\"Funcao.php.html#7\">App\\Models\\Funcao<\/a>"],[0,1,"<a href=\"GrupoEspecializado.php.html#7\">App\\Models\\GrupoEspecializado<\/a>"],[0,2,"<a href=\"HistoricoAtividadeExterna.php.html#9\">App\\Models\\HistoricoAtividadeExterna<\/a>"],[0,2,"<a href=\"HistoricoAtividadeInterna.php.html#9\">App\\Models\\HistoricoAtividadeInterna<\/a>"],[0,2,"<a href=\"HistoricoCursoExterno.php.html#8\">App\\Models\\HistoricoCursoExterno<\/a>"],[0,2,"<a href=\"HistoricoCursoInterno.php.html#9\">App\\Models\\HistoricoCursoInterno<\/a>"],[0,2,"<a href=\"HistoricoDocenciaExterna.php.html#9\">App\\Models\\HistoricoDocenciaExterna<\/a>"],[0,2,"<a href=\"HistoricoDocenciaInterna.php.html#8\">App\\Models\\HistoricoDocenciaInterna<\/a>"],[0,3,"<a href=\"HistoricoFuncao.php.html#10\">App\\Models\\HistoricoFuncao<\/a>"],[0,2,"<a href=\"HistoricoLotacao.php.html#9\">App\\Models\\HistoricoLotacao<\/a>"],[0,2,"<a href=\"Integracao.php.html#9\">App\\Models\\Integracao<\/a>"],[100,0,"<a href=\"IntegracaoServidor.php.html#8\">App\\Models\\IntegracaoServidor<\/a>"],[100,0,"<a href=\"IntegracaoUnidade.php.html#8\">App\\Models\\IntegracaoUnidade<\/a>"],[0,14,"<a href=\"JobSchedule.php.html#8\">App\\Models\\JobSchedule<\/a>"],[0,5,"<a href=\"Logs.php.html#9\">App\\Models\\Logs<\/a>"],[0,1,"<a href=\"MaterialServico.php.html#8\">App\\Models\\MaterialServico<\/a>"],[0,10,"<a href=\"ModelBase.php.html#17\">App\\Models\\ModelBase<\/a>"],[0,3,"<a href=\"Notificacao.php.html#10\">App\\Models\\Notificacao<\/a>"],[100,0,"<a href=\"NotificacaoConfig.php.html#5\">App\\Models\\NotificacaoConfig<\/a>"],[0,2,"<a href=\"NotificacaoDestinatario.php.html#10\">App\\Models\\NotificacaoDestinatario<\/a>"],[0,2,"<a href=\"NotificacaoWhatsapp.php.html#9\">App\\Models\\NotificacaoWhatsapp<\/a>"],[0,3,"<a href=\"Ocorrencia.php.html#10\">App\\Models\\Ocorrencia<\/a>"],[100,0,"<a href=\"OrgaoCentralExportacao.php.html#9\">App\\Models\\OrgaoCentralExportacao<\/a>"],[0,8,"<a href=\"PainelUsuario.php.html#12\">App\\Models\\PainelUsuario<\/a>"],[0,2,"<a href=\"PainelUsuarioTenant.php.html#7\">App\\Models\\PainelUsuarioTenant<\/a>"],[0,2,"<a href=\"Perfil.php.html#9\">App\\Models\\Perfil<\/a>"],[0,9,"<a href=\"Planejamento.php.html#12\">App\\Models\\Planejamento<\/a>"],[0,7,"<a href=\"PlanejamentoObjetivo.php.html#10\">App\\Models\\PlanejamentoObjetivo<\/a>"],[0,15,"<a href=\"PlanoEntrega.php.html#15\">App\\Models\\PlanoEntrega<\/a>"],[0,11,"<a href=\"PlanoEntregaEntrega.php.html#15\">App\\Models\\PlanoEntregaEntrega<\/a>"],[0,2,"<a href=\"PlanoEntregaEntregaObjetivo.php.html#9\">App\\Models\\PlanoEntregaEntregaObjetivo<\/a>"],[0,2,"<a href=\"PlanoEntregaEntregaProcesso.php.html#9\">App\\Models\\PlanoEntregaEntregaProcesso<\/a>"],[0,2,"<a href=\"PlanoEntregaEntregaProduto.php.html#9\">App\\Models\\PlanoEntregaEntregaProduto<\/a>"],[0,2,"<a href=\"PlanoEntregaEntregaProgresso.php.html#10\">App\\Models\\PlanoEntregaEntregaProgresso<\/a>"],[0,16,"<a href=\"PlanoTrabalho.php.html#17\">App\\Models\\PlanoTrabalho<\/a>"],[0,8,"<a href=\"PlanoTrabalhoConsolidacao.php.html#11\">App\\Models\\PlanoTrabalhoConsolidacao<\/a>"],[0,2,"<a href=\"PlanoTrabalhoConsolidacaoAfastamento.php.html#10\">App\\Models\\PlanoTrabalhoConsolidacaoAfastamento<\/a>"],[0,2,"<a href=\"PlanoTrabalhoConsolidacaoAtividade.php.html#10\">App\\Models\\PlanoTrabalhoConsolidacaoAtividade<\/a>"],[0,2,"<a href=\"PlanoTrabalhoConsolidacaoOcorrencia.php.html#10\">App\\Models\\PlanoTrabalhoConsolidacaoOcorrencia<\/a>"],[0,5,"<a href=\"PlanoTrabalhoEntrega.php.html#12\">App\\Models\\PlanoTrabalhoEntrega<\/a>"],[0,11,"<a href=\"Produto.php.html#11\">App\\Models\\Produto<\/a>"],[0,2,"<a href=\"ProdutoCliente.php.html#9\">App\\Models\\ProdutoCliente<\/a>"],[0,4,"<a href=\"ProdutoInsumo.php.html#9\">App\\Models\\ProdutoInsumo<\/a>"],[0,2,"<a href=\"ProdutoProcessoCadeiaValor.php.html#8\">App\\Models\\ProdutoProcessoCadeiaValor<\/a>"],[0,2,"<a href=\"ProdutoSolucao.php.html#8\">App\\Models\\ProdutoSolucao<\/a>"],[0,9,"<a href=\"Programa.php.html#15\">App\\Models\\Programa<\/a>"],[0,2,"<a href=\"ProgramaParticipante.php.html#9\">App\\Models\\ProgramaParticipante<\/a>"],[0,12,"<a href=\"Projeto.php.html#18\">App\\Models\\Projeto<\/a>"],[0,4,"<a href=\"ProjetoAlocacao.php.html#11\">App\\Models\\ProjetoAlocacao<\/a>"],[0,2,"<a href=\"ProjetoAlocacaoRegra.php.html#9\">App\\Models\\ProjetoAlocacaoRegra<\/a>"],[0,2,"<a href=\"ProjetoFase.php.html#8\">App\\Models\\ProjetoFase<\/a>"],[0,2,"<a href=\"ProjetoHistorico.php.html#9\">App\\Models\\ProjetoHistorico<\/a>"],[0,5,"<a href=\"ProjetoRecurso.php.html#11\">App\\Models\\ProjetoRecurso<\/a>"],[0,2,"<a href=\"ProjetoRegra.php.html#10\">App\\Models\\ProjetoRegra<\/a>"],[0,9,"<a href=\"ProjetoTarefa.php.html#14\">App\\Models\\ProjetoTarefa<\/a>"],[0,2,"<a href=\"Questionario.php.html#9\">App\\Models\\Questionario<\/a>"],[0,3,"<a href=\"QuestionarioPergunta.php.html#11\">App\\Models\\QuestionarioPergunta<\/a>"],[0,2,"<a href=\"QuestionarioPerguntaResposta.php.html#11\">App\\Models\\QuestionarioPerguntaResposta<\/a>"],[0,3,"<a href=\"QuestionarioPreenchimento.php.html#11\">App\\Models\\QuestionarioPreenchimento<\/a>"],[0,4,"<a href=\"Reacao.php.html#11\">App\\Models\\Reacao<\/a>"],[100,0,"<a href=\"SiapeBlackListServidor.php.html#8\">App\\Models\\SiapeBlackListServidor<\/a>"],[100,0,"<a href=\"SiapeBlacklistUnidade.php.html#8\">App\\Models\\SiapeBlacklistUnidade<\/a>"],[100,0,"<a href=\"SiapeConsultaDadosFuncionais.php.html#8\">App\\Models\\SiapeConsultaDadosFuncionais<\/a>"],[100,0,"<a href=\"SiapeConsultaDadosPessoais.php.html#8\">App\\Models\\SiapeConsultaDadosPessoais<\/a>"],[100,0,"<a href=\"SiapeDadosUORG.php.html#8\">App\\Models\\SiapeDadosUORG<\/a>"],[100,0,"<a href=\"SiapeListaServidores.php.html#8\">App\\Models\\SiapeListaServidores<\/a>"],[100,0,"<a href=\"SiapeListaUORGS.php.html#8\">App\\Models\\SiapeListaUORGS<\/a>"],[0,4,"<a href=\"Solucao.php.html#10\">App\\Models\\Solucao<\/a>"],[0,1,"<a href=\"SolucaoUnidade.php.html#9\">App\\Models\\SolucaoUnidade<\/a>"],[0,5,"<a href=\"StatusJustificativa.php.html#12\">App\\Models\\StatusJustificativa<\/a>"],[0,6,"<a href=\"Template.php.html#13\">App\\Models\\Template<\/a>"],[0,2,"<a href=\"Tenant.php.html#10\">App\\Models\\Tenant<\/a>"],[100,0,"<a href=\"TenantsLogs.php.html#9\">App\\Models\\TenantsLogs<\/a>"],[0,2,"<a href=\"TipoAtividade.php.html#9\">App\\Models\\TipoAtividade<\/a>"],[0,2,"<a href=\"TipoAvaliacao.php.html#9\">App\\Models\\TipoAvaliacao<\/a>"],[0,2,"<a href=\"TipoAvaliacaoJustificativa.php.html#8\">App\\Models\\TipoAvaliacaoJustificativa<\/a>"],[0,2,"<a href=\"TipoAvaliacaoNota.php.html#10\">App\\Models\\TipoAvaliacaoNota<\/a>"],[0,2,"<a href=\"TipoCapacidade.php.html#8\">App\\Models\\TipoCapacidade<\/a>"],[0,1,"<a href=\"TipoCliente.php.html#9\">App\\Models\\TipoCliente<\/a>"],[0,1,"<a href=\"TipoCurso.php.html#7\">App\\Models\\TipoCurso<\/a>"],[0,2,"<a href=\"TipoDocumento.php.html#9\">App\\Models\\TipoDocumento<\/a>"],[0,1,"<a href=\"TipoJustificativa.php.html#8\">App\\Models\\TipoJustificativa<\/a>"],[0,2,"<a href=\"TipoModalidade.php.html#9\">App\\Models\\TipoModalidade<\/a>"],[0,1,"<a href=\"TipoModalidadeSiape.php.html#7\">App\\Models\\TipoModalidadeSiape<\/a>"],[0,1,"<a href=\"TipoMotivoAfastamento.php.html#8\">App\\Models\\TipoMotivoAfastamento<\/a>"],[0,2,"<a href=\"TipoProcesso.php.html#9\">App\\Models\\TipoProcesso<\/a>"],[0,1,"<a href=\"TipoProjeto.php.html#8\">App\\Models\\TipoProjeto<\/a>"],[0,1,"<a href=\"TipoTarefa.php.html#10\">App\\Models\\TipoTarefa<\/a>"],[100,0,"<a href=\"Traffic.php.html#8\">App\\Models\\Traffic<\/a>"],[0,34,"<a href=\"Unidade.php.html#25\">App\\Models\\Unidade<\/a>"],[0,12,"<a href=\"UnidadeIntegrante.php.html#10\">App\\Models\\UnidadeIntegrante<\/a>"],[0,1,"<a href=\"UnidadeIntegranteAtribuicao.php.html#8\">App\\Models\\UnidadeIntegranteAtribuicao<\/a>"],[100,0,"<a href=\"Usuario.php.html#58\">App\\Models\\UsuarioConfig<\/a>"],[0,81,"<a href=\"Usuario.php.html#62\">App\\Models\\Usuario<\/a>"],[0,6,"<a href=\"ViewApiPgd.php.html#9\">App\\Models\\ViewApiPgd<\/a>"],[100,0,"<a href=\"ViewPgdParticipantes.php.html#7\">App\\Models\\ViewPgdParticipantes<\/a>"],[100,0,"<a href=\"ViewPgdPlanosEntrega.php.html#7\">App\\Models\\ViewPgdPlanosEntrega<\/a>"],[100,0,"<a href=\"ViewPgdPlanosTrabalho.php.html#7\">App\\Models\\ViewPgdPlanosTrabalho<\/a>"],[100,0,"<a href=\"ViewRelatorioPlanoEntrega.php.html#7\">App\\Models\\ViewRelatorioPlanoEntrega<\/a>"],[100,0,"<a href=\"ViewRelatorioPlanoTrabalho.php.html#7\">App\\Models\\ViewRelatorioPlanoTrabalho<\/a>"],[100,0,"<a href=\"ViewRelatorioPlanoTrabalhoDetalhado.php.html#7\">App\\Models\\ViewRelatorioPlanoTrabalhoDetalhado<\/a>"],[100,0,"<a href=\"ViewRelatorioUnidade.php.html#7\">App\\Models\\ViewRelatorioUnidade<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[0,1,"<a href=\"Afastamento.php.html#27\">App\\Models\\Afastamento::consolidacoes<\/a>"],[0,1,"<a href=\"Afastamento.php.html#32\">App\\Models\\Afastamento::usuario<\/a>"],[0,1,"<a href=\"Afastamento.php.html#36\">App\\Models\\Afastamento::tipoMotivoAfastamento<\/a>"],[0,1,"<a href=\"Anexo.php.html#27\">App\\Models\\Anexo::usuario<\/a>"],[0,1,"<a href=\"Anexo.php.html#31\">App\\Models\\Anexo::comentario<\/a>"],[0,1,"<a href=\"AreaAtividadeExterna.php.html#22\">App\\Models\\AreaAtividadeExterna::historicosAtividadesExternas<\/a>"],[0,1,"<a href=\"AreaAtividadeExterna.php.html#26\">App\\Models\\AreaAtividadeExterna::historicosCursosExternos<\/a>"],[0,1,"<a href=\"AreaAtividadeExterna.php.html#30\">App\\Models\\AreaAtividadeExterna::historicosDocenciasExternas<\/a>"],[0,1,"<a href=\"AreaConhecimento.php.html#20\">App\\Models\\AreaConhecimento::cursos<\/a>"],[0,1,"<a href=\"AreaTematica.php.html#19\">App\\Models\\AreaTematica::capacidadesTecnicas<\/a>"],[0,1,"<a href=\"Atividade.php.html#59\">App\\Models\\Atividade::booted<\/a>"],[0,1,"<a href=\"Atividade.php.html#75\">App\\Models\\Atividade::statusHistorico<\/a>"],[0,1,"<a href=\"Atividade.php.html#79\">App\\Models\\Atividade::latestStatus<\/a>"],[0,1,"<a href=\"Atividade.php.html#83\">App\\Models\\Atividade::tarefas<\/a>"],[0,1,"<a href=\"Atividade.php.html#87\">App\\Models\\Atividade::tarefasProjeto<\/a>"],[0,1,"<a href=\"Atividade.php.html#91\">App\\Models\\Atividade::pausas<\/a>"],[0,1,"<a href=\"Atividade.php.html#95\">App\\Models\\Atividade::comentarios<\/a>"],[0,1,"<a href=\"Atividade.php.html#99\">App\\Models\\Atividade::documentos<\/a>"],[0,1,"<a href=\"Atividade.php.html#103\">App\\Models\\Atividade::consolidacoes<\/a>"],[0,1,"<a href=\"Atividade.php.html#107\">App\\Models\\Atividade::reacoes<\/a>"],[0,1,"<a href=\"Atividade.php.html#112\">App\\Models\\Atividade::planoTrabalho<\/a>"],[0,1,"<a href=\"Atividade.php.html#116\">App\\Models\\Atividade::planoTrabalhoEntrega<\/a>"],[0,1,"<a href=\"Atividade.php.html#120\">App\\Models\\Atividade::tipoAtividade<\/a>"],[0,1,"<a href=\"Atividade.php.html#124\">App\\Models\\Atividade::demandante<\/a>"],[0,1,"<a href=\"Atividade.php.html#128\">App\\Models\\Atividade::usuario<\/a>"],[0,1,"<a href=\"Atividade.php.html#132\">App\\Models\\Atividade::unidade<\/a>"],[0,1,"<a href=\"Atividade.php.html#136\">App\\Models\\Atividade::documentoRequisicao<\/a>"],[0,1,"<a href=\"Atividade.php.html#140\">App\\Models\\Atividade::documentoEntrega<\/a>"],[0,1,"<a href=\"Atividade.php.html#145\">App\\Models\\Atividade::scopeDoUsuario<\/a>"],[0,1,"<a href=\"Atividade.php.html#149\">App\\Models\\Atividade::scopeDosPlanosTrabalho<\/a>"],[0,1,"<a href=\"Atividade.php.html#153\">App\\Models\\Atividade::scopeNaoIniciadas<\/a>"],[0,1,"<a href=\"Atividade.php.html#157\">App\\Models\\Atividade::scopeConcluidas<\/a>"],[0,1,"<a href=\"Atividade.php.html#161\">App\\Models\\Atividade::scopeNaoConcluidas<\/a>"],[0,1,"<a href=\"Atividade.php.html#165\">App\\Models\\Atividade::scopeAtrasadas<\/a>"],[0,1,"<a href=\"Atividade.php.html#169\">App\\Models\\Atividade::scopeDistribuidas<\/a>"],[0,1,"<a href=\"Atividade.php.html#173\">App\\Models\\Atividade::scopeIniciadas<\/a>"],[0,1,"<a href=\"Atividade.php.html#177\">App\\Models\\Atividade::scopeEmAndamento<\/a>"],[0,1,"<a href=\"AtividadePausa.php.html#22\">App\\Models\\AtividadePausa::atividade<\/a>"],[0,1,"<a href=\"AtividadeTarefa.php.html#37\">App\\Models\\AtividadeTarefa::comentarios<\/a>"],[0,1,"<a href=\"AtividadeTarefa.php.html#41\">App\\Models\\AtividadeTarefa::documentos<\/a>"],[0,1,"<a href=\"AtividadeTarefa.php.html#46\">App\\Models\\AtividadeTarefa::documento<\/a>"],[0,1,"<a href=\"AtividadeTarefa.php.html#50\">App\\Models\\AtividadeTarefa::usuario<\/a>"],[0,1,"<a href=\"AtividadeTarefa.php.html#54\">App\\Models\\AtividadeTarefa::tipoTarefa<\/a>"],[0,1,"<a href=\"AtividadeTarefa.php.html#58\">App\\Models\\AtividadeTarefa::atividade<\/a>"],[0,1,"<a href=\"Audit.php.html#53\">App\\Models\\Audit::user<\/a>"],[0,1,"<a href=\"Audit.php.html#61\">App\\Models\\Audit::auditable<\/a>"],[0,1,"<a href=\"Audit.php.html#66\">App\\Models\\Audit::getTableTypeAttribute<\/a>"],[0,1,"<a href=\"Audit.php.html#72\">App\\Models\\Audit::getPerformedByAttribute<\/a>"],[0,7,"<a href=\"Audit.php.html#77\">App\\Models\\Audit::getDetailsAttribute<\/a>"],[0,1,"<a href=\"Audit.php.html#103\">App\\Models\\Audit::createdAt<\/a>"],[0,1,"<a href=\"Avaliacao.php.html#47\">App\\Models\\Avaliacao::entregasChecklist<\/a>"],[0,1,"<a href=\"Avaliacao.php.html#52\">App\\Models\\Avaliacao::avaliador<\/a>"],[0,1,"<a href=\"Avaliacao.php.html#56\">App\\Models\\Avaliacao::tipoAvaliacao<\/a>"],[0,1,"<a href=\"Avaliacao.php.html#61\">App\\Models\\Avaliacao::tipoAvaliacaoNota<\/a>"],[0,1,"<a href=\"Avaliacao.php.html#66\">App\\Models\\Avaliacao::planoEntrega<\/a>"],[0,1,"<a href=\"Avaliacao.php.html#70\">App\\Models\\Avaliacao::planoTrabalhoConsolidacao<\/a>"],[0,1,"<a href=\"AvaliacaoEntregaChecklist.php.html#33\">App\\Models\\AvaliacaoEntregaChecklist::avaliacao<\/a>"],[0,1,"<a href=\"AvaliacaoEntregaChecklist.php.html#37\">App\\Models\\AvaliacaoEntregaChecklist::planoEntregaEntrega<\/a>"],[0,1,"<a href=\"AvaliacaoEntregaChecklist.php.html#41\">App\\Models\\AvaliacaoEntregaChecklist::planoTrabalhoEntrega<\/a>"],[0,1,"<a href=\"CadeiaValor.php.html#34\">App\\Models\\CadeiaValor::processos<\/a>"],[0,1,"<a href=\"CadeiaValor.php.html#38\">App\\Models\\CadeiaValor::planosEntrega<\/a>"],[0,1,"<a href=\"CadeiaValor.php.html#43\">App\\Models\\CadeiaValor::unidade<\/a>"],[0,1,"<a href=\"CadeiaValor.php.html#47\">App\\Models\\CadeiaValor::entidade<\/a>"],[0,1,"<a href=\"CadeiaValor.php.html#51\">App\\Models\\CadeiaValor::getAuditRelations<\/a>"],[0,1,"<a href=\"CadeiaValorProcesso.php.html#30\">App\\Models\\CadeiaValorProcesso::processosEntrega<\/a>"],[0,1,"<a href=\"CadeiaValorProcesso.php.html#34\">App\\Models\\CadeiaValorProcesso::processos<\/a>"],[0,1,"<a href=\"CadeiaValorProcesso.php.html#39\">App\\Models\\CadeiaValorProcesso::cadeiaValor<\/a>"],[0,1,"<a href=\"CadeiaValorProcesso.php.html#43\">App\\Models\\CadeiaValorProcesso::processoPai<\/a>"],[0,2,"<a href=\"CadeiaValorProcesso.php.html#47\">App\\Models\\CadeiaValorProcesso::getSequenciaCompleta<\/a>"],[0,1,"<a href=\"CadeiaValorProcesso.php.html#59\">App\\Models\\CadeiaValorProcesso::getAuditRelations<\/a>"],[0,1,"<a href=\"Capacidade.php.html#23\">App\\Models\\Capacidade::perfil<\/a>"],[0,1,"<a href=\"Capacidade.php.html#27\">App\\Models\\Capacidade::tipoCapacidade<\/a>"],[0,1,"<a href=\"CapacidadeTecnica.php.html#21\">App\\Models\\CapacidadeTecnica::areaTematica<\/a>"],[0,1,"<a href=\"CapacidadeTecnica.php.html#26\">App\\Models\\CapacidadeTecnica::historicosAtividadesInternas<\/a>"],[0,1,"<a href=\"Cargo.php.html#23\">App\\Models\\Cargo::curriculunsProfissionais<\/a>"],[0,1,"<a href=\"Catalogo.php.html#42\">App\\Models\\Catalogo::unidade<\/a>"],[0,1,"<a href=\"Catalogo.php.html#47\">App\\Models\\Catalogo::curadorResponsavel<\/a>"],[0,1,"<a href=\"CentroTreinamento.php.html#18\">App\\Models\\CentroTreinamento::curriculunsProfissionais<\/a>"],[0,1,"<a href=\"Change.php.html#34\">App\\Models\\Change::usuario<\/a>"],[0,1,"<a href=\"Cidade.php.html#26\">App\\Models\\Cidade::unidades<\/a>"],[0,1,"<a href=\"Cidade.php.html#30\">App\\Models\\Cidade::entidades<\/a>"],[0,1,"<a href=\"Cidade.php.html#34\">App\\Models\\Cidade::feriados<\/a>"],[0,1,"<a href=\"Cidade.php.html#38\">App\\Models\\Cidade::curriculuns<\/a>"],[0,1,"<a href=\"Cliente.php.html#28\">App\\Models\\Cliente::tipoCliente<\/a>"],[0,1,"<a href=\"Cliente.php.html#33\">App\\Models\\Cliente::clienteProduto<\/a>"],[0,1,"<a href=\"Cliente.php.html#38\">App\\Models\\Cliente::unidade<\/a>"],[0,1,"<a href=\"Comentario.php.html#38\">App\\Models\\Comentario::anexos<\/a>"],[0,1,"<a href=\"Comentario.php.html#42\">App\\Models\\Comentario::comentarios<\/a>"],[0,1,"<a href=\"Comentario.php.html#47\">App\\Models\\Comentario::usuario<\/a>"],[0,1,"<a href=\"Comentario.php.html#51\">App\\Models\\Comentario::comentarioPai<\/a>"],[0,1,"<a href=\"Comentario.php.html#55\">App\\Models\\Comentario::atividade<\/a>"],[0,1,"<a href=\"Comentario.php.html#59\">App\\Models\\Comentario::atividadeTarefa<\/a>"],[0,1,"<a href=\"Comentario.php.html#63\">App\\Models\\Comentario::projeto<\/a>"],[0,1,"<a href=\"Comentario.php.html#67\">App\\Models\\Comentario::projetoTarefa<\/a>"],[0,1,"<a href=\"Comparecimento.php.html#29\">App\\Models\\Comparecimento::planoTrabalhoConsolidacao<\/a>"],[0,1,"<a href=\"Comparecimento.php.html#33\">App\\Models\\Comparecimento::unidade<\/a>"],[0,1,"<a href=\"Curriculum.php.html#35\">App\\Models\\Curriculum::graduacoes<\/a>"],[0,1,"<a href=\"Curriculum.php.html#40\">App\\Models\\Curriculum::curriculumProfissional<\/a>"],[0,1,"<a href=\"Curriculum.php.html#45\">App\\Models\\Curriculum::usuario<\/a>"],[0,1,"<a href=\"Curriculum.php.html#49\">App\\Models\\Curriculum::cidade<\/a>"],[0,1,"<a href=\"CurriculumGraduacao.php.html#20\">App\\Models\\CurriculumGraduacao::curriculum<\/a>"],[0,1,"<a href=\"CurriculumGraduacao.php.html#24\">App\\Models\\CurriculumGraduacao::curso<\/a>"],[0,1,"<a href=\"CurriculumProfissional.php.html#45\">App\\Models\\CurriculumProfissional::curriculum<\/a>"],[0,1,"<a href=\"CurriculumProfissional.php.html#49\">App\\Models\\CurriculumProfissional::centroTreinamento<\/a>"],[0,1,"<a href=\"CurriculumProfissional.php.html#53\">App\\Models\\CurriculumProfissional::cargo<\/a>"],[0,1,"<a href=\"CurriculumProfissional.php.html#57\">App\\Models\\CurriculumProfissional::grupoEspecializado<\/a>"],[0,1,"<a href=\"CurriculumProfissional.php.html#62\">App\\Models\\CurriculumProfissional::unidadeAtual<\/a>"],[0,1,"<a href=\"CurriculumProfissional.php.html#67\">App\\Models\\CurriculumProfissional::historicosAtividadesInternas<\/a>"],[0,1,"<a href=\"CurriculumProfissional.php.html#71\">App\\Models\\CurriculumProfissional::historicosAtividadesExternas<\/a>"],[0,1,"<a href=\"CurriculumProfissional.php.html#75\">App\\Models\\CurriculumProfissional::historicosCursosInternos<\/a>"],[0,1,"<a href=\"CurriculumProfissional.php.html#79\">App\\Models\\CurriculumProfissional::historicosCursosExternos<\/a>"],[0,1,"<a href=\"CurriculumProfissional.php.html#83\">App\\Models\\CurriculumProfissional::historicosDocenciasInternas<\/a>"],[0,1,"<a href=\"CurriculumProfissional.php.html#87\">App\\Models\\CurriculumProfissional::historicosDocenciasExternas<\/a>"],[0,1,"<a href=\"CurriculumProfissional.php.html#91\">App\\Models\\CurriculumProfissional::historicosFuncoes<\/a>"],[0,1,"<a href=\"CurriculumProfissional.php.html#95\">App\\Models\\CurriculumProfissional::historicosLotacoes<\/a>"],[0,1,"<a href=\"Curso.php.html#24\">App\\Models\\Curso::areaConhecimento<\/a>"],[0,1,"<a href=\"Curso.php.html#28\">App\\Models\\Curso::tipoCurso<\/a>"],[0,1,"<a href=\"Curso.php.html#33\">App\\Models\\Curso::curriculunsGraduacoes<\/a>"],[0,1,"<a href=\"Curso.php.html#37\">App\\Models\\Curso::historicosCursosInternos<\/a>"],[0,1,"<a href=\"Disciplina.php.html#20\">App\\Models\\Disciplina::historicosDocenciasInternas<\/a>"],[0,1,"<a href=\"Documento.php.html#51\">App\\Models\\Documento::booted<\/a>"],[0,1,"<a href=\"Documento.php.html#67\">App\\Models\\Documento::assinaturas<\/a>"],[0,1,"<a href=\"Documento.php.html#71\">App\\Models\\Documento::tarefasAtividade<\/a>"],[0,1,"<a href=\"Documento.php.html#75\">App\\Models\\Documento::tarefasProjeto<\/a>"],[0,1,"<a href=\"Documento.php.html#79\">App\\Models\\Documento::programas<\/a>"],[0,1,"<a href=\"Documento.php.html#83\">App\\Models\\Documento::planosTrabalho<\/a>"],[0,1,"<a href=\"Documento.php.html#87\">App\\Models\\Documento::atividadesRequisitadas<\/a>"],[0,1,"<a href=\"Documento.php.html#91\">App\\Models\\Documento::atividadesEntregues<\/a>"],[0,1,"<a href=\"Documento.php.html#96\">App\\Models\\Documento::template<\/a>"],[0,1,"<a href=\"Documento.php.html#100\">App\\Models\\Documento::planoTrabalho<\/a>"],[0,1,"<a href=\"Documento.php.html#104\">App\\Models\\Documento::tipoDocumento<\/a>"],[0,1,"<a href=\"Documento.php.html#108\">App\\Models\\Documento::tipoProcesso<\/a>"],[0,1,"<a href=\"Documento.php.html#112\">App\\Models\\Documento::entidade<\/a>"],[0,1,"<a href=\"Documento.php.html#116\">App\\Models\\Documento::atividade<\/a>"],[0,1,"<a href=\"Documento.php.html#120\">App\\Models\\Documento::atividadeTarefa<\/a>"],[0,1,"<a href=\"Documento.php.html#124\">App\\Models\\Documento::usuario<\/a>"],[0,1,"<a href=\"DocumentoAssinatura.php.html#25\">App\\Models\\DocumentoAssinatura::documento<\/a>"],[0,1,"<a href=\"DocumentoAssinatura.php.html#29\">App\\Models\\DocumentoAssinatura::usuario<\/a>"],[0,1,"<a href=\"EixoTematico.php.html#23\">App\\Models\\EixoTematico::objetivos<\/a>"],[0,1,"<a href=\"Entidade.php.html#61\">App\\Models\\Entidade::booted<\/a>"],[0,1,"<a href=\"Entidade.php.html#80\">App\\Models\\Entidade::feriados<\/a>"],[0,1,"<a href=\"Entidade.php.html#84\">App\\Models\\Entidade::documentos<\/a>"],[0,1,"<a href=\"Entidade.php.html#88\">App\\Models\\Entidade::planejamentos<\/a>"],[0,1,"<a href=\"Entidade.php.html#92\">App\\Models\\Entidade::cadeiasValores<\/a>"],[0,1,"<a href=\"Entidade.php.html#96\">App\\Models\\Entidade::integracoes<\/a>"],[0,1,"<a href=\"Entidade.php.html#100\">App\\Models\\Entidade::notificacoesTemplates<\/a>"],[0,1,"<a href=\"Entidade.php.html#104\">App\\Models\\Entidade::relatoriosTemplates<\/a>"],[0,1,"<a href=\"Entidade.php.html#108\">App\\Models\\Entidade::unidades<\/a>"],[0,1,"<a href=\"Entidade.php.html#112\">App\\Models\\Entidade::tiposTarefas<\/a>"],[0,1,"<a href=\"Entidade.php.html#117\">App\\Models\\Entidade::cidade<\/a>"],[0,1,"<a href=\"Entidade.php.html#121\">App\\Models\\Entidade::gestor<\/a>"],[0,1,"<a href=\"Entidade.php.html#125\">App\\Models\\Entidade::gestorSubstituto<\/a>"],[0,1,"<a href=\"Entidade.php.html#129\">App\\Models\\Entidade::tipoModalidade<\/a>"],[0,1,"<a href=\"Entidade.php.html#133\">App\\Models\\Entidade::emails<\/a>"],[0,2,"<a href=\"Entidade.php.html#139\">App\\Models\\Entidade::getNotificacoesAttribute<\/a>"],[0,1,"<a href=\"Entidade.php.html#144\">App\\Models\\Entidade::setNotificacoesAttribute<\/a>"],[0,1,"<a href=\"EntidadeEmail.php.html#18\">App\\Models\\EntidadeEmail::entidade<\/a>"],[0,1,"<a href=\"Entrega.php.html#34\">App\\Models\\Entrega::entregasPlanoEntrega<\/a>"],[0,1,"<a href=\"Entrega.php.html#39\">App\\Models\\Entrega::entregasPlanoTrabalho<\/a>"],[0,1,"<a href=\"Entrega.php.html#45\">App\\Models\\Entrega::unidade<\/a>"],[0,1,"<a href=\"Envio.php.html#22\">App\\Models\\Envio::booted<\/a>"],[0,1,"<a href=\"EnvioItem.php.html#17\">App\\Models\\EnvioItem::usuario<\/a>"],[0,1,"<a href=\"EnvioItem.php.html#22\">App\\Models\\EnvioItem::planoTrabalho<\/a>"],[0,1,"<a href=\"EnvioItem.php.html#27\">App\\Models\\EnvioItem::planoEntrega<\/a>"],[0,1,"<a href=\"Favorito.php.html#27\">App\\Models\\Favorito::usuario<\/a>"],[0,1,"<a href=\"Feriado.php.html#31\">App\\Models\\Feriado::entidade<\/a>"],[0,1,"<a href=\"Feriado.php.html#35\">App\\Models\\Feriado::cidade<\/a>"],[0,1,"<a href=\"Funcao.php.html#22\">App\\Models\\Funcao::historicosFuncoes<\/a>"],[0,1,"<a href=\"GrupoEspecializado.php.html#18\">App\\Models\\GrupoEspecializado::curriculunsProfissionais<\/a>"],[0,1,"<a href=\"HistoricoAtividadeExterna.php.html#19\">App\\Models\\HistoricoAtividadeExterna::curriculumProfissional<\/a>"],[0,1,"<a href=\"HistoricoAtividadeExterna.php.html#23\">App\\Models\\HistoricoAtividadeExterna::areaAtividadeExterna<\/a>"],[0,1,"<a href=\"HistoricoAtividadeInterna.php.html#21\">App\\Models\\HistoricoAtividadeInterna::curriculumProfissional<\/a>"],[0,1,"<a href=\"HistoricoAtividadeInterna.php.html#25\">App\\Models\\HistoricoAtividadeInterna::capacidadeTecnica<\/a>"],[0,1,"<a href=\"HistoricoCursoExterno.php.html#23\">App\\Models\\HistoricoCursoExterno::curriculumProfissional<\/a>"],[0,1,"<a href=\"HistoricoCursoExterno.php.html#27\">App\\Models\\HistoricoCursoExterno::areaAtividadeExterna<\/a>"],[0,1,"<a href=\"HistoricoCursoInterno.php.html#21\">App\\Models\\HistoricoCursoInterno::curriculumProfissional<\/a>"],[0,1,"<a href=\"HistoricoCursoInterno.php.html#29\">App\\Models\\HistoricoCursoInterno::curso<\/a>"],[0,1,"<a href=\"HistoricoDocenciaExterna.php.html#20\">App\\Models\\HistoricoDocenciaExterna::curriculumProfissional<\/a>"],[0,1,"<a href=\"HistoricoDocenciaExterna.php.html#24\">App\\Models\\HistoricoDocenciaExterna::areaAtividadeExterna<\/a>"],[0,1,"<a href=\"HistoricoDocenciaInterna.php.html#19\">App\\Models\\HistoricoDocenciaInterna::curriculumProfissional<\/a>"],[0,1,"<a href=\"HistoricoDocenciaInterna.php.html#23\">App\\Models\\HistoricoDocenciaInterna::disciplina<\/a>"],[0,1,"<a href=\"HistoricoFuncao.php.html#21\">App\\Models\\HistoricoFuncao::curriculumProfissional<\/a>"],[0,1,"<a href=\"HistoricoFuncao.php.html#25\">App\\Models\\HistoricoFuncao::funcao<\/a>"],[0,1,"<a href=\"HistoricoFuncao.php.html#29\">App\\Models\\HistoricoFuncao::unidade<\/a>"],[0,1,"<a href=\"HistoricoLotacao.php.html#19\">App\\Models\\HistoricoLotacao::curriculumProfissional<\/a>"],[0,1,"<a href=\"HistoricoLotacao.php.html#23\">App\\Models\\HistoricoLotacao::unidade<\/a>"],[0,1,"<a href=\"Integracao.php.html#33\">App\\Models\\Integracao::entidade<\/a>"],[0,1,"<a href=\"Integracao.php.html#37\">App\\Models\\Integracao::usuario<\/a>"],[0,14,"<a href=\"JobSchedule.php.html#19\">App\\Models\\JobSchedule::proxyFill<\/a>"],[0,1,"<a href=\"Logs.php.html#11\">App\\Models\\Logs::__construct<\/a>"],[0,1,"<a href=\"Logs.php.html#20\">App\\Models\\Logs::boot<\/a>"],[0,1,"<a href=\"Logs.php.html#30\">App\\Models\\Logs::tenant<\/a>"],[0,1,"<a href=\"Logs.php.html#36\">App\\Models\\Logs::scopeCreatedAt<\/a>"],[0,1,"<a href=\"Logs.php.html#42\">App\\Models\\Logs::scopeTenantId<\/a>"],[0,1,"<a href=\"MaterialServico.php.html#30\">App\\Models\\MaterialServico::projetosRecursos<\/a>"],[0,3,"<a href=\"ModelBase.php.html#26\">App\\Models\\ModelBase::jsonEncodeArrayList<\/a>"],[0,6,"<a href=\"ModelBase.php.html#36\">App\\Models\\ModelBase::deleteCascade<\/a>"],[0,1,"<a href=\"ModelBase.php.html#55\">App\\Models\\ModelBase::scopeDoUsuario<\/a>"],[0,1,"<a href=\"Notificacao.php.html#25\">App\\Models\\Notificacao::booted<\/a>"],[0,1,"<a href=\"Notificacao.php.html#35\">App\\Models\\Notificacao::destinatarios<\/a>"],[0,1,"<a href=\"Notificacao.php.html#40\">App\\Models\\Notificacao::remetente<\/a>"],[0,1,"<a href=\"NotificacaoDestinatario.php.html#32\">App\\Models\\NotificacaoDestinatario::notificacao<\/a>"],[0,1,"<a href=\"NotificacaoDestinatario.php.html#36\">App\\Models\\NotificacaoDestinatario::usuario<\/a>"],[0,1,"<a href=\"NotificacaoWhatsapp.php.html#25\">App\\Models\\NotificacaoWhatsapp::booted<\/a>"],[0,1,"<a href=\"NotificacaoWhatsapp.php.html#40\">App\\Models\\NotificacaoWhatsapp::usuario<\/a>"],[0,1,"<a href=\"Ocorrencia.php.html#30\">App\\Models\\Ocorrencia::consolidacoes<\/a>"],[0,1,"<a href=\"Ocorrencia.php.html#35\">App\\Models\\Ocorrencia::usuario<\/a>"],[0,1,"<a href=\"Ocorrencia.php.html#39\">App\\Models\\Ocorrencia::planoTrabalho<\/a>"],[0,1,"<a href=\"PainelUsuario.php.html#16\">App\\Models\\PainelUsuario::__construct<\/a>"],[0,1,"<a href=\"PainelUsuario.php.html#41\">App\\Models\\PainelUsuario::assignTenants<\/a>"],[0,1,"<a href=\"PainelUsuario.php.html#47\">App\\Models\\PainelUsuario::tenants<\/a>"],[0,5,"<a href=\"PainelUsuario.php.html#52\">App\\Models\\PainelUsuario::deleteCascade<\/a>"],[0,1,"<a href=\"PainelUsuarioTenant.php.html#18\">App\\Models\\PainelUsuarioTenant::tenant<\/a>"],[0,1,"<a href=\"PainelUsuarioTenant.php.html#23\">App\\Models\\PainelUsuarioTenant::usuario<\/a>"],[0,1,"<a href=\"Perfil.php.html#30\">App\\Models\\Perfil::usuarios<\/a>"],[0,1,"<a href=\"Perfil.php.html#34\">App\\Models\\Perfil::capacidades<\/a>"],[0,1,"<a href=\"Planejamento.php.html#45\">App\\Models\\Planejamento::proxyFill<\/a>"],[0,1,"<a href=\"Planejamento.php.html#52\">App\\Models\\Planejamento::objetivosOkr<\/a>"],[0,1,"<a href=\"Planejamento.php.html#57\">App\\Models\\Planejamento::objetivos<\/a>"],[0,1,"<a href=\"Planejamento.php.html#62\">App\\Models\\Planejamento::planejamentos<\/a>"],[0,1,"<a href=\"Planejamento.php.html#67\">App\\Models\\Planejamento::planosEntrega<\/a>"],[0,1,"<a href=\"Planejamento.php.html#73\">App\\Models\\Planejamento::unidade<\/a>"],[0,1,"<a href=\"Planejamento.php.html#78\">App\\Models\\Planejamento::entidade<\/a>"],[0,1,"<a href=\"Planejamento.php.html#83\">App\\Models\\Planejamento::planejamentoSuperior<\/a>"],[0,1,"<a href=\"Planejamento.php.html#88\">App\\Models\\Planejamento::getAuditRelations<\/a>"],[0,1,"<a href=\"PlanejamentoObjetivo.php.html#32\">App\\Models\\PlanejamentoObjetivo::objetivos<\/a>"],[0,1,"<a href=\"PlanejamentoObjetivo.php.html#36\">App\\Models\\PlanejamentoObjetivo::objetivosFilhos<\/a>"],[0,1,"<a href=\"PlanejamentoObjetivo.php.html#40\">App\\Models\\PlanejamentoObjetivo::objetivosEntrega<\/a>"],[0,1,"<a href=\"PlanejamentoObjetivo.php.html#45\">App\\Models\\PlanejamentoObjetivo::planejamento<\/a>"],[0,1,"<a href=\"PlanejamentoObjetivo.php.html#49\">App\\Models\\PlanejamentoObjetivo::eixoTematico<\/a>"],[0,1,"<a href=\"PlanejamentoObjetivo.php.html#53\">App\\Models\\PlanejamentoObjetivo::objetivoPai<\/a>"],[0,1,"<a href=\"PlanejamentoObjetivo.php.html#57\">App\\Models\\PlanejamentoObjetivo::objetivoSuperior<\/a>"],[0,1,"<a href=\"PlanoEntrega.php.html#52\">App\\Models\\PlanoEntrega::booted<\/a>"],[0,1,"<a href=\"PlanoEntrega.php.html#60\">App\\Models\\PlanoEntrega::statusHistorico<\/a>"],[0,1,"<a href=\"PlanoEntrega.php.html#65\">App\\Models\\PlanoEntrega::latestStatus<\/a>"],[0,1,"<a href=\"PlanoEntrega.php.html#70\">App\\Models\\PlanoEntrega::entregas<\/a>"],[0,1,"<a href=\"PlanoEntrega.php.html#75\">App\\Models\\PlanoEntrega::planosEntrega<\/a>"],[0,1,"<a href=\"PlanoEntrega.php.html#80\">App\\Models\\PlanoEntrega::planosTrabalho<\/a>"],[0,1,"<a href=\"PlanoEntrega.php.html#85\">App\\Models\\PlanoEntrega::avaliacoes<\/a>"],[0,1,"<a href=\"PlanoEntrega.php.html#91\">App\\Models\\PlanoEntrega::planejamento<\/a>"],[0,1,"<a href=\"PlanoEntrega.php.html#96\">App\\Models\\PlanoEntrega::cadeiaValor<\/a>"],[0,1,"<a href=\"PlanoEntrega.php.html#101\">App\\Models\\PlanoEntrega::unidade<\/a>"],[0,1,"<a href=\"PlanoEntrega.php.html#106\">App\\Models\\PlanoEntrega::criador<\/a>"],[0,1,"<a href=\"PlanoEntrega.php.html#111\">App\\Models\\PlanoEntrega::programa<\/a>"],[0,1,"<a href=\"PlanoEntrega.php.html#116\">App\\Models\\PlanoEntrega::planoEntregaSuperior<\/a>"],[0,1,"<a href=\"PlanoEntrega.php.html#121\">App\\Models\\PlanoEntrega::avaliacao<\/a>"],[0,1,"<a href=\"PlanoEntrega.php.html#126\">App\\Models\\PlanoEntrega::getAuditRelations<\/a>"],[0,1,"<a href=\"PlanoEntregaEntrega.php.html#56\">App\\Models\\PlanoEntregaEntrega::progressos<\/a>"],[0,1,"<a href=\"PlanoEntregaEntrega.php.html#60\">App\\Models\\PlanoEntregaEntrega::objetivos<\/a>"],[0,1,"<a href=\"PlanoEntregaEntrega.php.html#64\">App\\Models\\PlanoEntregaEntrega::processos<\/a>"],[0,1,"<a href=\"PlanoEntregaEntrega.php.html#68\">App\\Models\\PlanoEntregaEntrega::comentarios<\/a>"],[0,1,"<a href=\"PlanoEntregaEntrega.php.html#72\">App\\Models\\PlanoEntregaEntrega::entregasPlanoTrabalho<\/a>"],[0,1,"<a href=\"PlanoEntregaEntrega.php.html#76\">App\\Models\\PlanoEntregaEntrega::reacoes<\/a>"],[0,1,"<a href=\"PlanoEntregaEntrega.php.html#81\">App\\Models\\PlanoEntregaEntrega::planoEntrega<\/a>"],[0,1,"<a href=\"PlanoEntregaEntrega.php.html#85\">App\\Models\\PlanoEntregaEntrega::entrega<\/a>"],[0,1,"<a href=\"PlanoEntregaEntrega.php.html#89\">App\\Models\\PlanoEntregaEntrega::unidade<\/a>"],[0,1,"<a href=\"PlanoEntregaEntrega.php.html#93\">App\\Models\\PlanoEntregaEntrega::entregaPai<\/a>"],[0,1,"<a href=\"PlanoEntregaEntrega.php.html#98\">App\\Models\\PlanoEntregaEntrega::produtos<\/a>"],[0,1,"<a href=\"PlanoEntregaEntregaObjetivo.php.html#27\">App\\Models\\PlanoEntregaEntregaObjetivo::objetivo<\/a>"],[0,1,"<a href=\"PlanoEntregaEntregaObjetivo.php.html#31\">App\\Models\\PlanoEntregaEntregaObjetivo::entrega<\/a>"],[0,1,"<a href=\"PlanoEntregaEntregaProcesso.php.html#27\">App\\Models\\PlanoEntregaEntregaProcesso::processo<\/a>"],[0,1,"<a href=\"PlanoEntregaEntregaProcesso.php.html#32\">App\\Models\\PlanoEntregaEntregaProcesso::entrega<\/a>"],[0,1,"<a href=\"PlanoEntregaEntregaProduto.php.html#21\">App\\Models\\PlanoEntregaEntregaProduto::entrega<\/a>"],[0,1,"<a href=\"PlanoEntregaEntregaProduto.php.html#26\">App\\Models\\PlanoEntregaEntregaProduto::produto<\/a>"],[0,1,"<a href=\"PlanoEntregaEntregaProgresso.php.html#41\">App\\Models\\PlanoEntregaEntregaProgresso::usuario<\/a>"],[0,1,"<a href=\"PlanoEntregaEntregaProgresso.php.html#45\">App\\Models\\PlanoEntregaEntregaProgresso::planoEntregaEntrega<\/a>"],[0,1,"<a href=\"PlanoTrabalho.php.html#61\">App\\Models\\PlanoTrabalho::booted<\/a>"],[0,1,"<a href=\"PlanoTrabalho.php.html#69\">App\\Models\\PlanoTrabalho::statusHistorico<\/a>"],[0,1,"<a href=\"PlanoTrabalho.php.html#74\">App\\Models\\PlanoTrabalho::latestStatus<\/a>"],[0,1,"<a href=\"PlanoTrabalho.php.html#79\">App\\Models\\PlanoTrabalho::entregas<\/a>"],[0,1,"<a href=\"PlanoTrabalho.php.html#84\">App\\Models\\PlanoTrabalho::documentos<\/a>"],[0,1,"<a href=\"PlanoTrabalho.php.html#89\">App\\Models\\PlanoTrabalho::atividades<\/a>"],[0,1,"<a href=\"PlanoTrabalho.php.html#94\">App\\Models\\PlanoTrabalho::ocorrencias<\/a>"],[0,1,"<a href=\"PlanoTrabalho.php.html#99\">App\\Models\\PlanoTrabalho::consolidacoes<\/a>"],[0,1,"<a href=\"PlanoTrabalho.php.html#105\">App\\Models\\PlanoTrabalho::usuario<\/a>"],[0,1,"<a href=\"PlanoTrabalho.php.html#110\">App\\Models\\PlanoTrabalho::criador<\/a>"],[0,1,"<a href=\"PlanoTrabalho.php.html#115\">App\\Models\\PlanoTrabalho::programa<\/a>"],[0,1,"<a href=\"PlanoTrabalho.php.html#120\">App\\Models\\PlanoTrabalho::unidade<\/a>"],[0,1,"<a href=\"PlanoTrabalho.php.html#125\">App\\Models\\PlanoTrabalho::tipoModalidade<\/a>"],[0,1,"<a href=\"PlanoTrabalho.php.html#130\">App\\Models\\PlanoTrabalho::documento<\/a>"],[0,1,"<a href=\"PlanoTrabalho.php.html#135\">App\\Models\\PlanoTrabalho::ultimaAssinatura<\/a>"],[0,1,"<a href=\"PlanoTrabalho.php.html#141\">App\\Models\\PlanoTrabalho::getAuditRelations<\/a>"],[0,1,"<a href=\"PlanoTrabalhoConsolidacao.php.html#36\">App\\Models\\PlanoTrabalhoConsolidacao::statusHistorico<\/a>"],[0,1,"<a href=\"PlanoTrabalhoConsolidacao.php.html#40\">App\\Models\\PlanoTrabalhoConsolidacao::latestStatus<\/a>"],[0,1,"<a href=\"PlanoTrabalhoConsolidacao.php.html#44\">App\\Models\\PlanoTrabalhoConsolidacao::afastamentos<\/a>"],[0,1,"<a href=\"PlanoTrabalhoConsolidacao.php.html#48\">App\\Models\\PlanoTrabalhoConsolidacao::ocorrencias<\/a>"],[0,1,"<a href=\"PlanoTrabalhoConsolidacao.php.html#52\">App\\Models\\PlanoTrabalhoConsolidacao::comparecimentos<\/a>"],[0,1,"<a href=\"PlanoTrabalhoConsolidacao.php.html#56\">App\\Models\\PlanoTrabalhoConsolidacao::avaliacoes<\/a>"],[0,1,"<a href=\"PlanoTrabalhoConsolidacao.php.html#63\">App\\Models\\PlanoTrabalhoConsolidacao::planoTrabalho<\/a>"],[0,1,"<a href=\"PlanoTrabalhoConsolidacao.php.html#67\">App\\Models\\PlanoTrabalhoConsolidacao::avaliacao<\/a>"],[0,1,"<a href=\"PlanoTrabalhoConsolidacaoAfastamento.php.html#35\">App\\Models\\PlanoTrabalhoConsolidacaoAfastamento::consolidacao<\/a>"],[0,1,"<a href=\"PlanoTrabalhoConsolidacaoAfastamento.php.html#39\">App\\Models\\PlanoTrabalhoConsolidacaoAfastamento::afastamento<\/a>"],[0,1,"<a href=\"PlanoTrabalhoConsolidacaoAtividade.php.html#35\">App\\Models\\PlanoTrabalhoConsolidacaoAtividade::consolidacao<\/a>"],[0,1,"<a href=\"PlanoTrabalhoConsolidacaoAtividade.php.html#39\">App\\Models\\PlanoTrabalhoConsolidacaoAtividade::atividade<\/a>"],[0,1,"<a href=\"PlanoTrabalhoConsolidacaoOcorrencia.php.html#35\">App\\Models\\PlanoTrabalhoConsolidacaoOcorrencia::consolidacao<\/a>"],[0,1,"<a href=\"PlanoTrabalhoConsolidacaoOcorrencia.php.html#39\">App\\Models\\PlanoTrabalhoConsolidacaoOcorrencia::ocorrencia<\/a>"],[0,1,"<a href=\"PlanoTrabalhoEntrega.php.html#33\">App\\Models\\PlanoTrabalhoEntrega::atividades<\/a>"],[0,1,"<a href=\"PlanoTrabalhoEntrega.php.html#37\">App\\Models\\PlanoTrabalhoEntrega::reacoes<\/a>"],[0,1,"<a href=\"PlanoTrabalhoEntrega.php.html#42\">App\\Models\\PlanoTrabalhoEntrega::planoTrabalho<\/a>"],[0,1,"<a href=\"PlanoTrabalhoEntrega.php.html#46\">App\\Models\\PlanoTrabalhoEntrega::planoEntregaEntrega<\/a>"],[0,1,"<a href=\"PlanoTrabalhoEntrega.php.html#50\">App\\Models\\PlanoTrabalhoEntrega::entrega<\/a>"],[0,1,"<a href=\"Produto.php.html#57\">App\\Models\\Produto::booted<\/a>"],[0,1,"<a href=\"Produto.php.html#65\">App\\Models\\Produto::produtoInsumos<\/a>"],[0,1,"<a href=\"Produto.php.html#70\">App\\Models\\Produto::produtoProcessoCadeiaValor<\/a>"],[0,1,"<a href=\"Produto.php.html#75\">App\\Models\\Produto::unidade<\/a>"],[0,1,"<a href=\"Produto.php.html#80\">App\\Models\\Produto::setTipoAttribute<\/a>"],[0,1,"<a href=\"Produto.php.html#86\">App\\Models\\Produto::isTipoValido<\/a>"],[0,1,"<a href=\"Produto.php.html#91\">App\\Models\\Produto::produtoCliente<\/a>"],[0,1,"<a href=\"Produto.php.html#96\">App\\Models\\Produto::produtoSolucoes<\/a>"],[0,1,"<a href=\"Produto.php.html#101\">App\\Models\\Produto::solucoes<\/a>"],[0,1,"<a href=\"Produto.php.html#106\">App\\Models\\Produto::entregas<\/a>"],[0,1,"<a href=\"Produto.php.html#111\">App\\Models\\Produto::responsavel<\/a>"],[0,1,"<a href=\"ProdutoCliente.php.html#26\">App\\Models\\ProdutoCliente::produto<\/a>"],[0,1,"<a href=\"ProdutoCliente.php.html#31\">App\\Models\\ProdutoCliente::cliente<\/a>"],[0,1,"<a href=\"ProdutoInsumo.php.html#34\">App\\Models\\ProdutoInsumo::produto<\/a>"],[0,1,"<a href=\"ProdutoInsumo.php.html#39\">App\\Models\\ProdutoInsumo::unidade<\/a>"],[0,1,"<a href=\"ProdutoInsumo.php.html#44\">App\\Models\\ProdutoInsumo::cliente<\/a>"],[0,1,"<a href=\"ProdutoInsumo.php.html#49\">App\\Models\\ProdutoInsumo::produtoRelacionado<\/a>"],[0,1,"<a href=\"ProdutoProcessoCadeiaValor.php.html#27\">App\\Models\\ProdutoProcessoCadeiaValor::produto<\/a>"],[0,1,"<a href=\"ProdutoProcessoCadeiaValor.php.html#32\">App\\Models\\ProdutoProcessoCadeiaValor::cadeiaValorProcesso<\/a>"],[0,1,"<a href=\"ProdutoSolucao.php.html#25\">App\\Models\\ProdutoSolucao::produto<\/a>"],[0,1,"<a href=\"ProdutoSolucao.php.html#30\">App\\Models\\ProdutoSolucao::solucao<\/a>"],[0,1,"<a href=\"Programa.php.html#70\">App\\Models\\Programa::participantes<\/a>"],[0,1,"<a href=\"Programa.php.html#74\">App\\Models\\Programa::planosEntrega<\/a>"],[0,1,"<a href=\"Programa.php.html#78\">App\\Models\\Programa::planosTrabalho<\/a>"],[0,1,"<a href=\"Programa.php.html#83\">App\\Models\\Programa::tipoAvaliacaoPlanoTrabalho<\/a>"],[0,1,"<a href=\"Programa.php.html#87\">App\\Models\\Programa::tipoAvaliacaoPlanoEntrega<\/a>"],[0,1,"<a href=\"Programa.php.html#91\">App\\Models\\Programa::tipoDocumentoTcr<\/a>"],[0,1,"<a href=\"Programa.php.html#95\">App\\Models\\Programa::templateTcr<\/a>"],[0,1,"<a href=\"Programa.php.html#99\">App\\Models\\Programa::unidade<\/a>"],[0,1,"<a href=\"Programa.php.html#109\">App\\Models\\Programa::documento<\/a>"],[0,1,"<a href=\"ProgramaParticipante.php.html#25\">App\\Models\\ProgramaParticipante::programa<\/a>"],[0,1,"<a href=\"ProgramaParticipante.php.html#29\">App\\Models\\ProgramaParticipante::usuario<\/a>"],[0,1,"<a href=\"Projeto.php.html#62\">App\\Models\\Projeto::booted<\/a>"],[0,1,"<a href=\"Projeto.php.html#77\">App\\Models\\Projeto::fases<\/a>"],[0,1,"<a href=\"Projeto.php.html#81\">App\\Models\\Projeto::tarefas<\/a>"],[0,1,"<a href=\"Projeto.php.html#85\">App\\Models\\Projeto::tarefasProjeto<\/a>"],[0,1,"<a href=\"Projeto.php.html#89\">App\\Models\\Projeto::regras<\/a>"],[0,1,"<a href=\"Projeto.php.html#93\">App\\Models\\Projeto::alocacoes<\/a>"],[0,1,"<a href=\"Projeto.php.html#97\">App\\Models\\Projeto::recursos<\/a>"],[0,1,"<a href=\"Projeto.php.html#101\">App\\Models\\Projeto::historicos<\/a>"],[0,1,"<a href=\"Projeto.php.html#105\">App\\Models\\Projeto::comentarios<\/a>"],[0,1,"<a href=\"Projeto.php.html#110\">App\\Models\\Projeto::fase<\/a>"],[0,1,"<a href=\"Projeto.php.html#114\">App\\Models\\Projeto::tipoProjeto<\/a>"],[0,1,"<a href=\"Projeto.php.html#118\">App\\Models\\Projeto::usuario<\/a>"],[0,1,"<a href=\"ProjetoAlocacao.php.html#34\">App\\Models\\ProjetoAlocacao::regras<\/a>"],[0,1,"<a href=\"ProjetoAlocacao.php.html#39\">App\\Models\\ProjetoAlocacao::projeto<\/a>"],[0,1,"<a href=\"ProjetoAlocacao.php.html#43\">App\\Models\\ProjetoAlocacao::tarefa<\/a>"],[0,1,"<a href=\"ProjetoAlocacao.php.html#47\">App\\Models\\ProjetoAlocacao::recurso<\/a>"],[0,1,"<a href=\"ProjetoAlocacaoRegra.php.html#29\">App\\Models\\ProjetoAlocacaoRegra::projetoAlocacao<\/a>"],[0,1,"<a href=\"ProjetoAlocacaoRegra.php.html#33\">App\\Models\\ProjetoAlocacaoRegra::regra<\/a>"],[0,1,"<a href=\"ProjetoFase.php.html#33\">App\\Models\\ProjetoFase::projetos<\/a>"],[0,1,"<a href=\"ProjetoFase.php.html#38\">App\\Models\\ProjetoFase::projeto<\/a>"],[0,1,"<a href=\"ProjetoHistorico.php.html#32\">App\\Models\\ProjetoHistorico::projeto<\/a>"],[0,1,"<a href=\"ProjetoHistorico.php.html#36\">App\\Models\\ProjetoHistorico::usuario<\/a>"],[0,1,"<a href=\"ProjetoRecurso.php.html#36\">App\\Models\\ProjetoRecurso::alocacoes<\/a>"],[0,1,"<a href=\"ProjetoRecurso.php.html#41\">App\\Models\\ProjetoRecurso::projeto<\/a>"],[0,1,"<a href=\"ProjetoRecurso.php.html#45\">App\\Models\\ProjetoRecurso::usuario<\/a>"],[0,1,"<a href=\"ProjetoRecurso.php.html#49\">App\\Models\\ProjetoRecurso::unidade<\/a>"],[0,1,"<a href=\"ProjetoRecurso.php.html#53\">App\\Models\\ProjetoRecurso::materialServico<\/a>"],[0,1,"<a href=\"ProjetoRegra.php.html#37\">App\\Models\\ProjetoRegra::regrasAlocacao<\/a>"],[0,1,"<a href=\"ProjetoRegra.php.html#42\">App\\Models\\ProjetoRegra::projeto<\/a>"],[0,1,"<a href=\"ProjetoTarefa.php.html#66\">App\\Models\\ProjetoTarefa::alocacoes<\/a>"],[0,1,"<a href=\"ProjetoTarefa.php.html#70\">App\\Models\\ProjetoTarefa::tarefas<\/a>"],[0,1,"<a href=\"ProjetoTarefa.php.html#74\">App\\Models\\ProjetoTarefa::comentarios<\/a>"],[0,1,"<a href=\"ProjetoTarefa.php.html#79\">App\\Models\\ProjetoTarefa::projeto<\/a>"],[0,1,"<a href=\"ProjetoTarefa.php.html#83\">App\\Models\\ProjetoTarefa::tarefaProjeto<\/a>"],[0,1,"<a href=\"ProjetoTarefa.php.html#87\">App\\Models\\ProjetoTarefa::documento<\/a>"],[0,1,"<a href=\"ProjetoTarefa.php.html#91\">App\\Models\\ProjetoTarefa::atividade<\/a>"],[0,1,"<a href=\"ProjetoTarefa.php.html#95\">App\\Models\\ProjetoTarefa::usuario<\/a>"],[0,1,"<a href=\"ProjetoTarefa.php.html#99\">App\\Models\\ProjetoTarefa::tarefaPai<\/a>"],[0,1,"<a href=\"Questionario.php.html#26\">App\\Models\\Questionario::perguntas<\/a>"],[0,1,"<a href=\"Questionario.php.html#30\">App\\Models\\Questionario::preenchimentos<\/a>"],[0,1,"<a href=\"QuestionarioPergunta.php.html#38\">App\\Models\\QuestionarioPergunta::questionario<\/a>"],[0,1,"<a href=\"QuestionarioPergunta.php.html#42\">App\\Models\\QuestionarioPergunta::perguntaOrigem<\/a>"],[0,1,"<a href=\"QuestionarioPergunta.php.html#47\">App\\Models\\QuestionarioPergunta::respostas<\/a>"],[0,1,"<a href=\"QuestionarioPerguntaResposta.php.html#27\">App\\Models\\QuestionarioPerguntaResposta::pergunta<\/a>"],[0,1,"<a href=\"QuestionarioPerguntaResposta.php.html#31\">App\\Models\\QuestionarioPerguntaResposta::preenchimento<\/a>"],[0,1,"<a href=\"QuestionarioPreenchimento.php.html#32\">App\\Models\\QuestionarioPreenchimento::questionario<\/a>"],[0,1,"<a href=\"QuestionarioPreenchimento.php.html#36\">App\\Models\\QuestionarioPreenchimento::usuario<\/a>"],[0,1,"<a href=\"QuestionarioPreenchimento.php.html#41\">App\\Models\\QuestionarioPreenchimento::respostas<\/a>"],[0,1,"<a href=\"Reacao.php.html#28\">App\\Models\\Reacao::usuario<\/a>"],[0,1,"<a href=\"Reacao.php.html#32\">App\\Models\\Reacao::atividade<\/a>"],[0,1,"<a href=\"Reacao.php.html#36\">App\\Models\\Reacao::planoTrabalhoEntrega<\/a>"],[0,1,"<a href=\"Reacao.php.html#40\">App\\Models\\Reacao::planoEntregaEntrega<\/a>"],[0,1,"<a href=\"Solucao.php.html#20\">App\\Models\\Solucao::booted<\/a>"],[0,1,"<a href=\"Solucao.php.html#51\">App\\Models\\Solucao::scopeStatus<\/a>"],[0,1,"<a href=\"Solucao.php.html#56\">App\\Models\\Solucao::solucoesUnidades<\/a>"],[0,1,"<a href=\"Solucao.php.html#60\">App\\Models\\Solucao::produtosSolucoes<\/a>"],[0,1,"<a href=\"SolucaoUnidade.php.html#35\">App\\Models\\SolucaoUnidade::unidade<\/a>"],[0,1,"<a href=\"StatusJustificativa.php.html#30\">App\\Models\\StatusJustificativa::planoEntrega<\/a>"],[0,1,"<a href=\"StatusJustificativa.php.html#34\">App\\Models\\StatusJustificativa::planoTrabalho<\/a>"],[0,1,"<a href=\"StatusJustificativa.php.html#38\">App\\Models\\StatusJustificativa::planoTrabalhoConsolidacao<\/a>"],[0,1,"<a href=\"StatusJustificativa.php.html#42\">App\\Models\\StatusJustificativa::atividade<\/a>"],[0,1,"<a href=\"StatusJustificativa.php.html#46\">App\\Models\\StatusJustificativa::usuario<\/a>"],[0,2,"<a href=\"Template.php.html#19\">App\\Models\\Template::booted<\/a>"],[0,1,"<a href=\"Template.php.html#50\">App\\Models\\Template::programas<\/a>"],[0,1,"<a href=\"Template.php.html#54\">App\\Models\\Template::documentos<\/a>"],[0,1,"<a href=\"Template.php.html#59\">App\\Models\\Template::entidade<\/a>"],[0,1,"<a href=\"Template.php.html#63\">App\\Models\\Template::unidade<\/a>"],[0,1,"<a href=\"Tenant.php.html#17\">App\\Models\\Tenant::tenantsLogs<\/a>"],[0,1,"<a href=\"Tenant.php.html#22\">App\\Models\\Tenant::userPanels<\/a>"],[0,1,"<a href=\"TipoAtividade.php.html#25\">App\\Models\\TipoAtividade::booted<\/a>"],[0,1,"<a href=\"TipoAtividade.php.html#40\">App\\Models\\TipoAtividade::atividades<\/a>"],[0,1,"<a href=\"TipoAvaliacao.php.html#30\">App\\Models\\TipoAvaliacao::avaliacoes<\/a>"],[0,1,"<a href=\"TipoAvaliacao.php.html#34\">App\\Models\\TipoAvaliacao::notas<\/a>"],[0,1,"<a href=\"TipoAvaliacaoJustificativa.php.html#21\">App\\Models\\TipoAvaliacaoJustificativa::tipoAvaliacaoNota<\/a>"],[0,1,"<a href=\"TipoAvaliacaoJustificativa.php.html#25\">App\\Models\\TipoAvaliacaoJustificativa::tipoJustificativa<\/a>"],[0,1,"<a href=\"TipoAvaliacaoNota.php.html#37\">App\\Models\\TipoAvaliacaoNota::tipoAvaliacao<\/a>"],[0,1,"<a href=\"TipoAvaliacaoNota.php.html#42\">App\\Models\\TipoAvaliacaoNota::justificativas<\/a>"],[0,1,"<a href=\"TipoCapacidade.php.html#25\">App\\Models\\TipoCapacidade::filhos<\/a>"],[0,1,"<a href=\"TipoCapacidade.php.html#29\">App\\Models\\TipoCapacidade::capacidades<\/a>"],[0,1,"<a href=\"TipoCliente.php.html#18\">App\\Models\\TipoCliente::clientes<\/a>"],[0,1,"<a href=\"TipoCurso.php.html#18\">App\\Models\\TipoCurso::cursos<\/a>"],[0,1,"<a href=\"TipoDocumento.php.html#23\">App\\Models\\TipoDocumento::programas<\/a>"],[0,1,"<a href=\"TipoDocumento.php.html#27\">App\\Models\\TipoDocumento::documentos<\/a>"],[0,1,"<a href=\"TipoJustificativa.php.html#22\">App\\Models\\TipoJustificativa::tiposAvaliacoesJustificativas<\/a>"],[0,1,"<a href=\"TipoModalidade.php.html#26\">App\\Models\\TipoModalidade::planosTrabalho<\/a>"],[0,1,"<a href=\"TipoModalidade.php.html#30\">App\\Models\\TipoModalidade::entidades<\/a>"],[0,1,"<a href=\"TipoModalidadeSiape.php.html#16\">App\\Models\\TipoModalidadeSiape::tipoModalidade<\/a>"],[0,1,"<a href=\"TipoMotivoAfastamento.php.html#32\">App\\Models\\TipoMotivoAfastamento::afastamentos<\/a>"],[0,1,"<a href=\"TipoProcesso.php.html#23\">App\\Models\\TipoProcesso::booted<\/a>"],[0,1,"<a href=\"TipoProcesso.php.html#38\">App\\Models\\TipoProcesso::documentos<\/a>"],[0,1,"<a href=\"TipoProjeto.php.html#24\">App\\Models\\TipoProjeto::projetos<\/a>"],[0,1,"<a href=\"TipoTarefa.php.html#24\">App\\Models\\TipoTarefa::tarefas<\/a>"],[0,2,"<a href=\"Unidade.php.html#67\">App\\Models\\Unidade::booted<\/a>"],[0,1,"<a href=\"Unidade.php.html#84\">App\\Models\\Unidade::atividades<\/a>"],[0,1,"<a href=\"Unidade.php.html#89\">App\\Models\\Unidade::planosTrabalho<\/a>"],[0,1,"<a href=\"Unidade.php.html#94\">App\\Models\\Unidade::planosEntrega<\/a>"],[0,1,"<a href=\"Unidade.php.html#99\">App\\Models\\Unidade::entregasPlanoEntrega<\/a>"],[0,1,"<a href=\"Unidade.php.html#104\">App\\Models\\Unidade::programas<\/a>"],[0,1,"<a href=\"Unidade.php.html#109\">App\\Models\\Unidade::recursosProjeto<\/a>"],[0,1,"<a href=\"Unidade.php.html#114\">App\\Models\\Unidade::notificacoesTemplates<\/a>"],[0,1,"<a href=\"Unidade.php.html#119\">App\\Models\\Unidade::unidades<\/a>"],[0,1,"<a href=\"Unidade.php.html#124\">App\\Models\\Unidade::planejamentos<\/a>"],[0,1,"<a href=\"Unidade.php.html#129\">App\\Models\\Unidade::cadeiasValor<\/a>"],[0,1,"<a href=\"Unidade.php.html#134\">App\\Models\\Unidade::integrantes<\/a>"],[0,1,"<a href=\"Unidade.php.html#139\">App\\Models\\Unidade::historicosLotacoes<\/a>"],[0,1,"<a href=\"Unidade.php.html#144\">App\\Models\\Unidade::historicosFuncoes<\/a>"],[0,1,"<a href=\"Unidade.php.html#149\">App\\Models\\Unidade::curriculunsProfissionais<\/a>"],[0,1,"<a href=\"Unidade.php.html#155\">App\\Models\\Unidade::entidade<\/a>"],[0,1,"<a href=\"Unidade.php.html#160\">App\\Models\\Unidade::cidade<\/a>"],[0,1,"<a href=\"Unidade.php.html#165\">App\\Models\\Unidade::unidadePai<\/a>"],[0,1,"<a href=\"Unidade.php.html#170\">App\\Models\\Unidade::subordinadas<\/a>"],[0,1,"<a href=\"Unidade.php.html#175\">App\\Models\\Unidade::todasSubordinadas<\/a>"],[0,1,"<a href=\"Unidade.php.html#181\">App\\Models\\Unidade::gestor<\/a>"],[0,1,"<a href=\"Unidade.php.html#186\">App\\Models\\Unidade::gestoresSubstitutos<\/a>"],[0,1,"<a href=\"Unidade.php.html#191\">App\\Models\\Unidade::gestoresDelegados<\/a>"],[0,1,"<a href=\"Unidade.php.html#196\">App\\Models\\Unidade::lotados<\/a>"],[0,1,"<a href=\"Unidade.php.html#201\">App\\Models\\Unidade::colaboradores<\/a>"],[0,1,"<a href=\"Unidade.php.html#206\">App\\Models\\Unidade::avaliadoresPlanoEntrega<\/a>"],[0,1,"<a href=\"Unidade.php.html#211\">App\\Models\\Unidade::avaliadoresPlanoTrabalho<\/a>"],[0,2,"<a href=\"Unidade.php.html#217\">App\\Models\\Unidade::getNotificacoesAttribute<\/a>"],[0,1,"<a href=\"Unidade.php.html#223\">App\\Models\\Unidade::setNotificacoesAttribute<\/a>"],[0,3,"<a href=\"Unidade.php.html#228\">App\\Models\\Unidade::getIntegrantesAtribuicoesAttribute<\/a>"],[0,1,"<a href=\"UnidadeIntegrante.php.html#23\">App\\Models\\UnidadeIntegrante::gestores<\/a>"],[0,1,"<a href=\"UnidadeIntegrante.php.html#28\">App\\Models\\UnidadeIntegrante::lotado<\/a>"],[0,1,"<a href=\"UnidadeIntegrante.php.html#32\">App\\Models\\UnidadeIntegrante::gestor<\/a>"],[0,1,"<a href=\"UnidadeIntegrante.php.html#36\">App\\Models\\UnidadeIntegrante::gestorSubstituto<\/a>"],[0,1,"<a href=\"UnidadeIntegrante.php.html#40\">App\\Models\\UnidadeIntegrante::gestorDelegado<\/a>"],[0,1,"<a href=\"UnidadeIntegrante.php.html#44\">App\\Models\\UnidadeIntegrante::curador<\/a>"],[0,1,"<a href=\"UnidadeIntegrante.php.html#48\">App\\Models\\UnidadeIntegrante::colaborador<\/a>"],[0,1,"<a href=\"UnidadeIntegrante.php.html#52\">App\\Models\\UnidadeIntegrante::avaliadorPlanoEntrega<\/a>"],[0,1,"<a href=\"UnidadeIntegrante.php.html#56\">App\\Models\\UnidadeIntegrante::avaliadorPlanoTrabalho<\/a>"],[0,1,"<a href=\"UnidadeIntegrante.php.html#61\">App\\Models\\UnidadeIntegrante::atribuicoes<\/a>"],[0,1,"<a href=\"UnidadeIntegrante.php.html#66\">App\\Models\\UnidadeIntegrante::unidade<\/a>"],[0,1,"<a href=\"UnidadeIntegrante.php.html#70\">App\\Models\\UnidadeIntegrante::usuario<\/a>"],[0,1,"<a href=\"UnidadeIntegranteAtribuicao.php.html#22\">App\\Models\\UnidadeIntegranteAtribuicao::vinculo<\/a>"],[0,4,"<a href=\"Usuario.php.html#109\">App\\Models\\Usuario::proxyFill<\/a>"],[0,1,"<a href=\"Usuario.php.html#178\">App\\Models\\Usuario::gerenciaEntidade<\/a>"],[0,1,"<a href=\"Usuario.php.html#183\">App\\Models\\Usuario::isDeveloper<\/a>"],[0,1,"<a href=\"Usuario.php.html#187\">App\\Models\\Usuario::gerenciaSubstitutaEntidade<\/a>"],[0,1,"<a href=\"Usuario.php.html#192\">App\\Models\\Usuario::curriculum<\/a>"],[0,1,"<a href=\"Usuario.php.html#198\">App\\Models\\Usuario::afastamentos<\/a>"],[0,1,"<a href=\"Usuario.php.html#203\">App\\Models\\Usuario::anexos<\/a>"],[0,1,"<a href=\"Usuario.php.html#208\">App\\Models\\Usuario::consolidacoes<\/a>"],[0,1,"<a href=\"Usuario.php.html#213\">App\\Models\\Usuario::assinaturas<\/a>"],[0,1,"<a href=\"Usuario.php.html#218\">App\\Models\\Usuario::ultimaAssinatura<\/a>"],[0,1,"<a href=\"Usuario.php.html#223\">App\\Models\\Usuario::avaliacoes<\/a>"],[0,1,"<a href=\"Usuario.php.html#228\">App\\Models\\Usuario::atividades<\/a>"],[0,1,"<a href=\"Usuario.php.html#233\">App\\Models\\Usuario::atividadesDemandadas<\/a>"],[0,1,"<a href=\"Usuario.php.html#238\">App\\Models\\Usuario::tarefasAtividade<\/a>"],[0,1,"<a href=\"Usuario.php.html#243\">App\\Models\\Usuario::tarefasProjeto<\/a>"],[0,1,"<a href=\"Usuario.php.html#248\">App\\Models\\Usuario::favoritos<\/a>"],[0,1,"<a href=\"Usuario.php.html#253\">App\\Models\\Usuario::comentarios<\/a>"],[0,1,"<a href=\"Usuario.php.html#258\">App\\Models\\Usuario::projetos<\/a>"],[0,1,"<a href=\"Usuario.php.html#263\">App\\Models\\Usuario::recursosProjeto<\/a>"],[0,1,"<a href=\"Usuario.php.html#268\">App\\Models\\Usuario::historicosProjeto<\/a>"],[0,1,"<a href=\"Usuario.php.html#273\">App\\Models\\Usuario::notificacoesEnviadas<\/a>"],[0,1,"<a href=\"Usuario.php.html#278\">App\\Models\\Usuario::notificacoesWhatsapp<\/a>"],[0,1,"<a href=\"Usuario.php.html#283\">App\\Models\\Usuario::notificacoesDestinatario<\/a>"],[0,1,"<a href=\"Usuario.php.html#288\">App\\Models\\Usuario::planosTrabalho<\/a>"],[0,1,"<a href=\"Usuario.php.html#293\">App\\Models\\Usuario::ultimoPlanoTrabalho<\/a>"],[0,1,"<a href=\"Usuario.php.html#299\">App\\Models\\Usuario::ultimoPlanoTrabalhoAtivo<\/a>"],[0,1,"<a href=\"Usuario.php.html#304\">App\\Models\\Usuario::participacoesProgramas<\/a>"],[0,1,"<a href=\"Usuario.php.html#309\">App\\Models\\Usuario::ultimaParticipacaoPrograma<\/a>"],[0,1,"<a href=\"Usuario.php.html#314\">App\\Models\\Usuario::integracoes<\/a>"],[0,1,"<a href=\"Usuario.php.html#319\">App\\Models\\Usuario::planosEntregaCriados<\/a>"],[0,1,"<a href=\"Usuario.php.html#324\">App\\Models\\Usuario::planosTrabalhoCriados<\/a>"],[0,1,"<a href=\"Usuario.php.html#330\">App\\Models\\Usuario::unidadesIntegrantes<\/a>"],[0,1,"<a href=\"Usuario.php.html#335\">App\\Models\\Usuario::unidadeIntegranteAtribuicoes<\/a>"],[0,1,"<a href=\"Usuario.php.html#340\">App\\Models\\Usuario::unidadesIntegranteAtribuicoes<\/a>"],[0,1,"<a href=\"Usuario.php.html#345\">App\\Models\\Usuario::statusHistorico<\/a>"],[0,1,"<a href=\"Usuario.php.html#350\">App\\Models\\Usuario::documentos<\/a>"],[0,1,"<a href=\"Usuario.php.html#355\">App\\Models\\Usuario::preenchimentos<\/a>"],[0,1,"<a href=\"Usuario.php.html#361\">App\\Models\\Usuario::perfil<\/a>"],[0,1,"<a href=\"Usuario.php.html#367\">App\\Models\\Usuario::unidades<\/a>"],[0,1,"<a href=\"Usuario.php.html#373\">App\\Models\\Usuario::gerenciaTitular<\/a>"],[0,1,"<a href=\"Usuario.php.html#378\">App\\Models\\Usuario::gerencias<\/a>"],[0,1,"<a href=\"Usuario.php.html#383\">App\\Models\\Usuario::gerenciasSubstitutas<\/a>"],[0,1,"<a href=\"Usuario.php.html#388\">App\\Models\\Usuario::gerenciasDelegadas<\/a>"],[0,1,"<a href=\"Usuario.php.html#393\">App\\Models\\Usuario::lotacao<\/a>"],[0,1,"<a href=\"Usuario.php.html#398\">App\\Models\\Usuario::curadores<\/a>"],[0,1,"<a href=\"Usuario.php.html#403\">App\\Models\\Usuario::curador<\/a>"],[0,1,"<a href=\"Usuario.php.html#408\">App\\Models\\Usuario::lotacoes<\/a>"],[0,1,"<a href=\"Usuario.php.html#414\">App\\Models\\Usuario::areasTrabalho<\/a>"],[0,1,"<a href=\"Usuario.php.html#419\">App\\Models\\Usuario::colaboracoes<\/a>"],[0,1,"<a href=\"Usuario.php.html#424\">App\\Models\\Usuario::colaboracao<\/a>"],[0,1,"<a href=\"Usuario.php.html#430\">App\\Models\\Usuario::integracaoServidor<\/a>"],[0,3,"<a href=\"Usuario.php.html#436\">App\\Models\\Usuario::getUrlFotoAttribute<\/a>"],[0,2,"<a href=\"Usuario.php.html#448\">App\\Models\\Usuario::getPedagioAttribute<\/a>"],[0,2,"<a href=\"Usuario.php.html#455\">App\\Models\\Usuario::getConfigAttribute<\/a>"],[0,1,"<a href=\"Usuario.php.html#461\">App\\Models\\Usuario::setConfigAttribute<\/a>"],[0,2,"<a href=\"Usuario.php.html#466\">App\\Models\\Usuario::getNotificacoesAttribute<\/a>"],[0,1,"<a href=\"Usuario.php.html#472\">App\\Models\\Usuario::setNotificacoesAttribute<\/a>"],[0,1,"<a href=\"Usuario.php.html#477\">App\\Models\\Usuario::getChangesAttribute<\/a>"],[0,4,"<a href=\"Usuario.php.html#483\">App\\Models\\Usuario::getUnidadesAtribuicoesAttribute<\/a>"],[0,1,"<a href=\"Usuario.php.html#496\">App\\Models\\Usuario::auditsExterno<\/a>"],[0,2,"<a href=\"Usuario.php.html#501\">App\\Models\\Usuario::setMatriculaAttribute<\/a>"],[0,1,"<a href=\"Usuario.php.html#508\">App\\Models\\Usuario::canImpersonate<\/a>"],[0,1,"<a href=\"Usuario.php.html#514\">App\\Models\\Usuario::impersonateGuard<\/a>"],[0,1,"<a href=\"Usuario.php.html#519\">App\\Models\\Usuario::getTiposIndisponibilidades<\/a>"],[0,5,"<a href=\"Usuario.php.html#527\">App\\Models\\Usuario::deleteCascade<\/a>"],[0,1,"<a href=\"ViewApiPgd.php.html#31\">App\\Models\\ViewApiPgd::scopeEntrega<\/a>"],[0,1,"<a href=\"ViewApiPgd.php.html#42\">App\\Models\\ViewApiPgd::scopeTrabalho<\/a>"],[0,1,"<a href=\"ViewApiPgd.php.html#53\">App\\Models\\ViewApiPgd::scopeParticipante<\/a>"],[0,1,"<a href=\"ViewApiPgd.php.html#58\">App\\Models\\ViewApiPgd::scopeByTipo<\/a>"],[0,1,"<a href=\"ViewApiPgd.php.html#63\">App\\Models\\ViewApiPgd::getIdsByTipo<\/a>"],[0,1,"<a href=\"ViewApiPgd.php.html#68\">App\\Models\\ViewApiPgd::getByInterval<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>

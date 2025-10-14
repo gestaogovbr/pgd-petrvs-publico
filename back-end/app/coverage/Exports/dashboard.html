@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/app/Exports</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/nv.d3.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">/var/www/app</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Exports</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="RelatorioAgenteExport.php.html#19">App\Exports\RelatorioAgenteExport</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoEntregaExport.php.html#23">App\Exports\RelatorioPlanoEntregaExport</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoTrabalhoDetalhadoExport.php.html#11">App\Exports\RelatorioPlanoTrabalhoDetalhadoExport</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoTrabalhoExport.php.html#21">App\Exports\RelatorioPlanoTrabalhoExport</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioUnidadeExport.php.html#19">App\Exports\RelatorioUnidadeExport</a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="RelatorioAgenteExport.php.html#19">App\Exports\RelatorioAgenteExport</a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="RelatorioPlanoEntregaExport.php.html#23">App\Exports\RelatorioPlanoEntregaExport</a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="RelatorioUnidadeExport.php.html#19">App\Exports\RelatorioUnidadeExport</a></td><td class="text-right">132</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="RelatorioAgenteExport.php.html#26"><abbr title="App\Exports\RelatorioAgenteExport::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioAgenteExport.php.html#31"><abbr title="App\Exports\RelatorioAgenteExport::collection">collection</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioAgenteExport.php.html#36"><abbr title="App\Exports\RelatorioAgenteExport::headings">headings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioAgenteExport.php.html#55"><abbr title="App\Exports\RelatorioAgenteExport::columnWidths">columnWidths</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioAgenteExport.php.html#74"><abbr title="App\Exports\RelatorioAgenteExport::map">map</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioAgenteExport.php.html#93"><abbr title="App\Exports\RelatorioAgenteExport::coalesce">coalesce</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioAgenteExport.php.html#98"><abbr title="App\Exports\RelatorioAgenteExport::columnFormats">columnFormats</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioAgenteExport.php.html#106"><abbr title="App\Exports\RelatorioAgenteExport::properties">properties</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioAgenteExport.php.html#118"><abbr title="App\Exports\RelatorioAgenteExport::styles">styles</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioAgenteExport.php.html#151"><abbr title="App\Exports\RelatorioAgenteExport::afterSheet">afterSheet</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoEntregaExport.php.html#30"><abbr title="App\Exports\RelatorioPlanoEntregaExport::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoEntregaExport.php.html#35"><abbr title="App\Exports\RelatorioPlanoEntregaExport::collection">collection</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoEntregaExport.php.html#40"><abbr title="App\Exports\RelatorioPlanoEntregaExport::headings">headings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoEntregaExport.php.html#58"><abbr title="App\Exports\RelatorioPlanoEntregaExport::columnWidths">columnWidths</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoEntregaExport.php.html#76"><abbr title="App\Exports\RelatorioPlanoEntregaExport::map">map</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoEntregaExport.php.html#94"><abbr title="App\Exports\RelatorioPlanoEntregaExport::coalesce">coalesce</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoEntregaExport.php.html#99"><abbr title="App\Exports\RelatorioPlanoEntregaExport::columnFormats">columnFormats</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoEntregaExport.php.html#110"><abbr title="App\Exports\RelatorioPlanoEntregaExport::properties">properties</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoEntregaExport.php.html#122"><abbr title="App\Exports\RelatorioPlanoEntregaExport::styles">styles</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoEntregaExport.php.html#155"><abbr title="App\Exports\RelatorioPlanoEntregaExport::afterSheet">afterSheet</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoTrabalhoDetalhadoExport.php.html#13"><abbr title="App\Exports\RelatorioPlanoTrabalhoDetalhadoExport::headings">headings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoTrabalhoDetalhadoExport.php.html#41"><abbr title="App\Exports\RelatorioPlanoTrabalhoDetalhadoExport::map">map</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoTrabalhoDetalhadoExport.php.html#60"><abbr title="App\Exports\RelatorioPlanoTrabalhoDetalhadoExport::columnFormats">columnFormats</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoTrabalhoDetalhadoExport.php.html#72"><abbr title="App\Exports\RelatorioPlanoTrabalhoDetalhadoExport::columnWidths">columnWidths</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoTrabalhoDetalhadoExport.php.html#88"><abbr title="App\Exports\RelatorioPlanoTrabalhoDetalhadoExport::styles">styles</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoTrabalhoDetalhadoExport.php.html#153"><abbr title="App\Exports\RelatorioPlanoTrabalhoDetalhadoExport::afterSheet">afterSheet</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoTrabalhoExport.php.html#28"><abbr title="App\Exports\RelatorioPlanoTrabalhoExport::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoTrabalhoExport.php.html#33"><abbr title="App\Exports\RelatorioPlanoTrabalhoExport::collection">collection</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoTrabalhoExport.php.html#38"><abbr title="App\Exports\RelatorioPlanoTrabalhoExport::headings">headings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoTrabalhoExport.php.html#53"><abbr title="App\Exports\RelatorioPlanoTrabalhoExport::columnWidths">columnWidths</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoTrabalhoExport.php.html#68"><abbr title="App\Exports\RelatorioPlanoTrabalhoExport::map">map</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoTrabalhoExport.php.html#86"><abbr title="App\Exports\RelatorioPlanoTrabalhoExport::columnFormats">columnFormats</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoTrabalhoExport.php.html#94"><abbr title="App\Exports\RelatorioPlanoTrabalhoExport::properties">properties</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoTrabalhoExport.php.html#106"><abbr title="App\Exports\RelatorioPlanoTrabalhoExport::styles">styles</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioPlanoTrabalhoExport.php.html#138"><abbr title="App\Exports\RelatorioPlanoTrabalhoExport::afterSheet">afterSheet</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioUnidadeExport.php.html#26"><abbr title="App\Exports\RelatorioUnidadeExport::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioUnidadeExport.php.html#31"><abbr title="App\Exports\RelatorioUnidadeExport::collection">collection</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioUnidadeExport.php.html#36"><abbr title="App\Exports\RelatorioUnidadeExport::headings">headings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioUnidadeExport.php.html#50"><abbr title="App\Exports\RelatorioUnidadeExport::columnWidths">columnWidths</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioUnidadeExport.php.html#64"><abbr title="App\Exports\RelatorioUnidadeExport::map">map</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioUnidadeExport.php.html#78"><abbr title="App\Exports\RelatorioUnidadeExport::coalesce">coalesce</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioUnidadeExport.php.html#83"><abbr title="App\Exports\RelatorioUnidadeExport::columnFormats">columnFormats</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioUnidadeExport.php.html#89"><abbr title="App\Exports\RelatorioUnidadeExport::properties">properties</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioUnidadeExport.php.html#101"><abbr title="App\Exports\RelatorioUnidadeExport::styles">styles</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RelatorioUnidadeExport.php.html#134"><abbr title="App\Exports\RelatorioUnidadeExport::afterSheet">afterSheet</abbr></a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="RelatorioAgenteExport.php.html#93"><abbr title="App\Exports\RelatorioAgenteExport::coalesce">coalesce</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="RelatorioPlanoEntregaExport.php.html#94"><abbr title="App\Exports\RelatorioPlanoEntregaExport::coalesce">coalesce</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="RelatorioUnidadeExport.php.html#78"><abbr title="App\Exports\RelatorioUnidadeExport::coalesce">coalesce</abbr></a></td><td class="text-right">6</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 10.1.16</a> using <a href="https://www.php.net/" target="_top">PHP 8.2.29</a> and <a href="https://phpunit.de/">PHPUnit 10.5.36</a> at Mon Oct 13 22:09:06 -03 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/jquery.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="../_js/d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="../_js/nv.d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([5,0,0,0,0,0,0,0,0,0,0,0], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([45,0,0,0,0,0,0,0,0,0,0,0], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[0,11,"<a href=\"RelatorioAgenteExport.php.html#19\">App\\Exports\\RelatorioAgenteExport<\/a>"],[0,11,"<a href=\"RelatorioPlanoEntregaExport.php.html#23\">App\\Exports\\RelatorioPlanoEntregaExport<\/a>"],[0,6,"<a href=\"RelatorioPlanoTrabalhoDetalhadoExport.php.html#11\">App\\Exports\\RelatorioPlanoTrabalhoDetalhadoExport<\/a>"],[0,9,"<a href=\"RelatorioPlanoTrabalhoExport.php.html#21\">App\\Exports\\RelatorioPlanoTrabalhoExport<\/a>"],[0,11,"<a href=\"RelatorioUnidadeExport.php.html#19\">App\\Exports\\RelatorioUnidadeExport<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[0,1,"<a href=\"RelatorioAgenteExport.php.html#26\">App\\Exports\\RelatorioAgenteExport::__construct<\/a>"],[0,1,"<a href=\"RelatorioAgenteExport.php.html#31\">App\\Exports\\RelatorioAgenteExport::collection<\/a>"],[0,1,"<a href=\"RelatorioAgenteExport.php.html#36\">App\\Exports\\RelatorioAgenteExport::headings<\/a>"],[0,1,"<a href=\"RelatorioAgenteExport.php.html#55\">App\\Exports\\RelatorioAgenteExport::columnWidths<\/a>"],[0,1,"<a href=\"RelatorioAgenteExport.php.html#74\">App\\Exports\\RelatorioAgenteExport::map<\/a>"],[0,2,"<a href=\"RelatorioAgenteExport.php.html#93\">App\\Exports\\RelatorioAgenteExport::coalesce<\/a>"],[0,1,"<a href=\"RelatorioAgenteExport.php.html#98\">App\\Exports\\RelatorioAgenteExport::columnFormats<\/a>"],[0,1,"<a href=\"RelatorioAgenteExport.php.html#106\">App\\Exports\\RelatorioAgenteExport::properties<\/a>"],[0,1,"<a href=\"RelatorioAgenteExport.php.html#118\">App\\Exports\\RelatorioAgenteExport::styles<\/a>"],[0,1,"<a href=\"RelatorioAgenteExport.php.html#151\">App\\Exports\\RelatorioAgenteExport::afterSheet<\/a>"],[0,1,"<a href=\"RelatorioPlanoEntregaExport.php.html#30\">App\\Exports\\RelatorioPlanoEntregaExport::__construct<\/a>"],[0,1,"<a href=\"RelatorioPlanoEntregaExport.php.html#35\">App\\Exports\\RelatorioPlanoEntregaExport::collection<\/a>"],[0,1,"<a href=\"RelatorioPlanoEntregaExport.php.html#40\">App\\Exports\\RelatorioPlanoEntregaExport::headings<\/a>"],[0,1,"<a href=\"RelatorioPlanoEntregaExport.php.html#58\">App\\Exports\\RelatorioPlanoEntregaExport::columnWidths<\/a>"],[0,1,"<a href=\"RelatorioPlanoEntregaExport.php.html#76\">App\\Exports\\RelatorioPlanoEntregaExport::map<\/a>"],[0,2,"<a href=\"RelatorioPlanoEntregaExport.php.html#94\">App\\Exports\\RelatorioPlanoEntregaExport::coalesce<\/a>"],[0,1,"<a href=\"RelatorioPlanoEntregaExport.php.html#99\">App\\Exports\\RelatorioPlanoEntregaExport::columnFormats<\/a>"],[0,1,"<a href=\"RelatorioPlanoEntregaExport.php.html#110\">App\\Exports\\RelatorioPlanoEntregaExport::properties<\/a>"],[0,1,"<a href=\"RelatorioPlanoEntregaExport.php.html#122\">App\\Exports\\RelatorioPlanoEntregaExport::styles<\/a>"],[0,1,"<a href=\"RelatorioPlanoEntregaExport.php.html#155\">App\\Exports\\RelatorioPlanoEntregaExport::afterSheet<\/a>"],[0,1,"<a href=\"RelatorioPlanoTrabalhoDetalhadoExport.php.html#13\">App\\Exports\\RelatorioPlanoTrabalhoDetalhadoExport::headings<\/a>"],[0,1,"<a href=\"RelatorioPlanoTrabalhoDetalhadoExport.php.html#41\">App\\Exports\\RelatorioPlanoTrabalhoDetalhadoExport::map<\/a>"],[0,1,"<a href=\"RelatorioPlanoTrabalhoDetalhadoExport.php.html#60\">App\\Exports\\RelatorioPlanoTrabalhoDetalhadoExport::columnFormats<\/a>"],[0,1,"<a href=\"RelatorioPlanoTrabalhoDetalhadoExport.php.html#72\">App\\Exports\\RelatorioPlanoTrabalhoDetalhadoExport::columnWidths<\/a>"],[0,1,"<a href=\"RelatorioPlanoTrabalhoDetalhadoExport.php.html#88\">App\\Exports\\RelatorioPlanoTrabalhoDetalhadoExport::styles<\/a>"],[0,1,"<a href=\"RelatorioPlanoTrabalhoDetalhadoExport.php.html#153\">App\\Exports\\RelatorioPlanoTrabalhoDetalhadoExport::afterSheet<\/a>"],[0,1,"<a href=\"RelatorioPlanoTrabalhoExport.php.html#28\">App\\Exports\\RelatorioPlanoTrabalhoExport::__construct<\/a>"],[0,1,"<a href=\"RelatorioPlanoTrabalhoExport.php.html#33\">App\\Exports\\RelatorioPlanoTrabalhoExport::collection<\/a>"],[0,1,"<a href=\"RelatorioPlanoTrabalhoExport.php.html#38\">App\\Exports\\RelatorioPlanoTrabalhoExport::headings<\/a>"],[0,1,"<a href=\"RelatorioPlanoTrabalhoExport.php.html#53\">App\\Exports\\RelatorioPlanoTrabalhoExport::columnWidths<\/a>"],[0,1,"<a href=\"RelatorioPlanoTrabalhoExport.php.html#68\">App\\Exports\\RelatorioPlanoTrabalhoExport::map<\/a>"],[0,1,"<a href=\"RelatorioPlanoTrabalhoExport.php.html#86\">App\\Exports\\RelatorioPlanoTrabalhoExport::columnFormats<\/a>"],[0,1,"<a href=\"RelatorioPlanoTrabalhoExport.php.html#94\">App\\Exports\\RelatorioPlanoTrabalhoExport::properties<\/a>"],[0,1,"<a href=\"RelatorioPlanoTrabalhoExport.php.html#106\">App\\Exports\\RelatorioPlanoTrabalhoExport::styles<\/a>"],[0,1,"<a href=\"RelatorioPlanoTrabalhoExport.php.html#138\">App\\Exports\\RelatorioPlanoTrabalhoExport::afterSheet<\/a>"],[0,1,"<a href=\"RelatorioUnidadeExport.php.html#26\">App\\Exports\\RelatorioUnidadeExport::__construct<\/a>"],[0,1,"<a href=\"RelatorioUnidadeExport.php.html#31\">App\\Exports\\RelatorioUnidadeExport::collection<\/a>"],[0,1,"<a href=\"RelatorioUnidadeExport.php.html#36\">App\\Exports\\RelatorioUnidadeExport::headings<\/a>"],[0,1,"<a href=\"RelatorioUnidadeExport.php.html#50\">App\\Exports\\RelatorioUnidadeExport::columnWidths<\/a>"],[0,1,"<a href=\"RelatorioUnidadeExport.php.html#64\">App\\Exports\\RelatorioUnidadeExport::map<\/a>"],[0,2,"<a href=\"RelatorioUnidadeExport.php.html#78\">App\\Exports\\RelatorioUnidadeExport::coalesce<\/a>"],[0,1,"<a href=\"RelatorioUnidadeExport.php.html#83\">App\\Exports\\RelatorioUnidadeExport::columnFormats<\/a>"],[0,1,"<a href=\"RelatorioUnidadeExport.php.html#89\">App\\Exports\\RelatorioUnidadeExport::properties<\/a>"],[0,1,"<a href=\"RelatorioUnidadeExport.php.html#101\">App\\Exports\\RelatorioUnidadeExport::styles<\/a>"],[0,1,"<a href=\"RelatorioUnidadeExport.php.html#134\">App\\Exports\\RelatorioUnidadeExport::afterSheet<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>
