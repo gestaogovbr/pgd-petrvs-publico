@@ -24,6 +24,7 @@ jobs:
           coverage: none
 
       - name: Validate Composer
+        working-directory: back-end
         run: composer validate --no-interaction
 
       - name: Install dependencies
