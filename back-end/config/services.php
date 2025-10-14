@@ -46,6 +46,6 @@ return [
       'environment' => env('LOGIN_UNICO_ENV')
     ],
     'microsoft_teams' => [
-        'coges_url' => env('TEAMS_COGES_URL', 'https://default3ec929695a514f188ac9ef98fbafa9.78.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/2a67cf86109142f39b1146fa6d05213e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=eKJK1pg7BIjsYlR-2LNHSeENVP1QSiux5ZesNxw3H6Q'),
+        'coges_url' => env('TEAMS_COGES_URL', 'https://mtegovbr.webhook.office.com/webhookb2/4a813ce6-d43f-4b2a-b3f7-c8ce8309d1fe@3ec92969-5a51-4f18-8ac9-ef98fbafa978/IncomingWebhook/b2685a3ab03d4799a64d77d0806d25e0/ed39299e-5b8e-4025-a6f9-2b483b21cf82/V2Rp4W1YS-W7AlFNy5WhJVrAid6YxrMjjVv-2tWb0ZOK81'),
     ],
 ];
