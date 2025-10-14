@@ -53,6 +53,14 @@ class Kernel extends ConsoleKernel
             }
         })->dailyAt('00:30')->name('Inativação Unidades Temporários');
         
+        // Job para verificar avaliações pendentes às 05:00 diariamente
+        $schedule->call(function () {
+            $tenants = \App\Models\Tenant::all();
+            foreach ($tenants as $tenant) {
+                \App\Jobs\VerificarAvaliacoesPendentes::dispatch($tenant->id);
+            }
+        })->dailyAt('05:00')->name('Verificar Avaliações Pendentes');
+        
         $agendamentosPrincipal = JobSchedule::where('ativo', true)->get();
         foreach ($agendamentosPrincipal as $jobEntity) {
             $job = JobWithoutTenant::getJob($jobEntity->classe);
