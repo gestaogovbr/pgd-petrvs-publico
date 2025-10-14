@@ -390,6 +390,7 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"],
         ["MOD_USER_ATRIB", "Permite gerenciar atribuições de usuário"],
         ["MOD_USER_REATIVAR", "Permite reativar usuário"],
+        ["MOD_USER_LIST_ALL", "Permite listar todos os usuários"],
       ]
     ], [
       "codigo" => "MOD_AUDIT",

@@ -1,6 +1,7 @@
 import { Component, Injector, ViewChild, TemplateRef } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
@@ -15,6 +16,7 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 })
 export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @ViewChild("unidade", { static: false }) public unidade?: InputSearchComponent;
   @ViewChild("justificativaDialog", { static: false }) public justificativaDialog?: TemplateRef<any>;
   public justificativaForm: FormGroup;
   
@@ -28,6 +30,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
   public onDeleteMessage: string = "Este usuário deixará de ter acesso ao sistema. Deseja confirmar a exclusão?";
 
   constructor(public injector: Injector) {
+
     super(injector, Usuario, UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
@@ -37,6 +40,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     this.title = this.lex.translate("Usuários");
     this.code = "MOD_CFG_USER";
     this.join = ["perfil:id,nome"];
+    
     this.filter = this.fh.FormBuilder({
       usuario: { default: "" },
       unidade_id: { default: "" },
@@ -69,6 +73,11 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     this.BOTAO_REMOVE_PEDAGIO = { label: "Tornar teletrabalho disponível novamente", icon: "bi bi-check2-circle", color: "btn-outline-primary", onClick: this.removePedagio.bind(this)};
 
     this.addOption(this.OPTION_EXCLUIR, "MOD_USER_EXCL");
+
+    if (!this.auth.hasPermissionTo("MOD_USER_LIST_ALL")){
+      this.filter.controls.unidade_id.setValue(this.auth.usuario?.areas_trabalho?.map(ui => ui.unidade_id));
+    }
+
   }
 
   public validateJustificativa = (control: AbstractControl, controlName: string) => {
@@ -104,8 +113,9 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     if (filter?.controls.usuario?.value?.length) {
       result.push(["nome", "like", "%" + filter?.controls.usuario?.value.trim().replace(" ", "%") + "%"]);
     }
-    if (filter?.controls.unidade_id?.value?.length) {
-      result.push(["lotacao", "==", filter?.controls.unidade_id.value]);
+    if (filter?.controls.unidade_id?.value?.length) {    
+      const operador = this.auth.hasPermissionTo("MOD_USER_LIST_ALL") ? "==" : "in";
+      result.push(["lotacao", operador, filter?.controls.unidade_id.value]);
     }
     if (filter?.controls.perfil_id?.value?.length) {
       result.push(["perfil_id", "==", filter?.controls.perfil_id?.value]);

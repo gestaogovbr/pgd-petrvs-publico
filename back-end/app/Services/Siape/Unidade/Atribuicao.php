@@ -129,12 +129,7 @@ trait Atribuicao
         if (!empty($this->getUnidadeAtualDoUsuario($usuario)) && $this->getUnidadeAtualDoUsuario($usuario)->id == $unidadeDestino->id) {
             $this->alteracoes = ['info' => sprintf('O servidor  %s já está lotado nessa unidade %s:', $usuario->id, $unidadeDestino->id)];
             return;
-        }
-        
-        if ($this->usuarioTemPlanodeTrabalhoAtivo($usuario, $this->getUnidadeAtualDoUsuario($usuario))) {
-            $this->alteracoes = ['lotacao' => sprintf('O servidor %s já possui um plano de trabalho ativo nessa unidade %s, alterando a lotação para COLABORADOR:', $usuario->id, $unidadeDestino->id)];
-            $this->processaColaborador($unidadeDestino, $usuario,  $usuario->lotacao);
-        }
+        }               
 
         if ($this->usuarioEGestorEmOutraUnidade($usuario, $unidadeDestino)) {
             $this->alteracoes = ['removido' => sprintf('Removendo o Gestor %s de outra Unidade pois ele será lotado na unidade %s', $usuario->id, $unidadeDestino->id)];

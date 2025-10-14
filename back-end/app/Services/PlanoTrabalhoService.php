@@ -1131,14 +1131,6 @@ class PlanoTrabalhoService extends ServiceBase
             );
         }
 
-        if ($programa->plano_trabalho_assinatura_gestor_lotacao && $lotacao) {
-            $ids["gestores_unidade_lotacao"] = $this->unidadeService->getGestoresPorUnidade(
-                $lotacao,
-                $planoTrabalho['usuario_id'],
-                $participante->id
-            );
-        }
-
         $this->setBuffer("assinaturasExigidas", $keys, $ids);
         return $ids;
     }
@@ -1289,7 +1281,6 @@ class PlanoTrabalhoService extends ServiceBase
 
         // Verifica as atribuições do usuário na unidade do plano
         $unidade = Unidade::find($unidadeId);
-        $atribuicoesUnidadePlano = $this->usuarioService->atribuicoesGestor($unidadeId, $usuarioId);
 
         // Verifica as atribuições do usuário da unidade pai a undiade do plano
         $atribuicoesUnidadePai = $this->usuarioService->atribuicoesGestor($unidade->unidade_pai_id, $usuarioId);
@@ -1297,15 +1288,6 @@ class PlanoTrabalhoService extends ServiceBase
         // Se o usuário for gestor substituto da unidade superior: 1 assinatura
         if ($atribuicoesUnidadePai['gestorSubstituto']) {
             return 1;
-        }
-
-        // Se o usuário não for lotado na unidade e não tiver chefias relacionadas a unidade: 3 assinaturas
-        if (!$this->usuarioService->isLotacao($usuarioId, $unidadeId)) {
-            if($this->possuiAtribuicao($atribuicoesUnidadePlano)){
-                return 2 + $this->quantidadeAssinaturasExigidasLotacao($usuarioId, $atribuicoesUnidadePlano);
-            }
-
-            return 3;
         }
 
         // Caso contrário: 2 assinaturas (padrão)

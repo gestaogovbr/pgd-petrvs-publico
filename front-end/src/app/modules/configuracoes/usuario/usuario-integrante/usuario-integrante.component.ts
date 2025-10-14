@@ -197,7 +197,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
  * Método chamado para inserir uma atribuição no grid, seja este componente persistente ou não.
  * @returns 
  */
-  public async adicionarIntegrante() {
+  public async adicionarIntegrante(): Promise<IIndexable> {
     this.editando = true;
     if (this.grid) this.grid.error = '';
     let novo = {
@@ -248,6 +248,10 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    */
   public async salvarIntegrante(form: FormGroup, row: IntegranteConsolidado) 
   {
+
+    let confirm = await this.dialog.confirm("Atenção!", "Estou ciente de que "+ this.entity?.nome +" poderá pactuar plano de trabalho em outra unidade e ser avaliado pela respectiva chefia");
+    if (!confirm) return false;
+
     let novasAtribuicoes = this.lookup.uniqueLookupItem(form!.controls.atribuicoes.value);
     form.controls.atribuicoes.setValue(novasAtribuicoes);
     
@@ -335,40 +339,6 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     }
     return this.auth?.hasPermissionTo('MOD_USER_ATRIB') ?? false;
   }
-  /* 
   
-  TESTES MÍNIMOS RECOMENDADOS PARA A VALIDAÇÃO DO COMPONENTE - USUARIO-INTEGRANTE
-
-  CENÁRIO: CAMINHO FELIZ
-  Formulário completo do usuário - aba 'Atribuições'
-  1. Perder a gerência
-  2. Assumir a gerência da unidade em que já está lotado
-  3. Assumir a gerência de uma unidade em que não está lotado (unidade já existente do grid)
-  4. Assumir a gerência de uma unidade em que não está lotado (unidade ainda não existente do grid)
-  5. Trocar de gerência, assumindo a de uma unidade que já existe no grid
-  6. Trocar de gerência, assumindo a de uma unidade que ainda não existe no grid
-  7. Alterar atribuições (exceto gerência e lotação) em uma unidade que já existe no grid
-  8. Alterar atribuições (exceto gerência e lotação) em uma unidade que ainda não existe no grid
-  9. Alterar a lotação de um usuário para uma unidade que já está no grid
-  10. Alterar a lotação de um usuário para uma unidade que ainda não está no grid
-  11. Realizar várias das ações acima ao mesmo tempo (ações que sejam coerentes e não conflitantes), antes de salvar o formulário
-  12. Excluir o vínculo completo do usuário com uma unidade em que ele não é lotado
-
-  CENÁRIO: CAMINHO FELIZ
-  Formulário de Atribuições do usuário - grupo de botões opcionais (...)
-  1. Perder a gerência
-  2. Assumir a gerência da unidade em que já está lotado
-  3. Assumir a gerência de uma unidade em que não está lotado (unidade já existente do grid)
-  4. Assumir a gerência de uma unidade em que não está lotado (unidade ainda não existente do grid)
-  5. Trocar de gerência, assumindo a de uma unidade que já existe no grid
-  6. Trocar de gerência, assumindo a de uma unidade que ainda não existe no grid
-  7. Alterar atribuições (exceto gerência e lotação) em uma unidade que já existe no grid
-  8. Alterar atribuições (exceto gerência e lotação) em uma unidade que ainda não existe no grid
-  9. Alterar a lotação de um usuário para uma unidade que já está no grid
-  10. Alterar a lotação de um usuário para uma unidade que ainda não está no grid
-  11. Excluir o vínculo completo do usuário com uma unidade em que ele não é lotado
-
-  
-  */
 
 }

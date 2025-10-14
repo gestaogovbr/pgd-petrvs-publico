@@ -189,6 +189,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       result = "Menor que programa";
     } else if (this.isEndDateAfterProgramEnd(control, controlName)) {
       result = "Maior que programa";
+    } else if (this.limit365days(control, controlName)) {
+      result = "Limite de 365 dias";
     }
     
     return result;
@@ -228,6 +230,19 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     
     return moment(control.value as Date).startOf('day') > 
            moment(this.selectedPrograma.data_fim).startOf('day');
+  }
+
+  private limit365days = (control: AbstractControl, controlName: string) => {
+    if (controlName !== 'data_fim') return false;
+
+    const startDate = this.form?.controls.data_inicio.value;
+    if (!this.util.isDataValid(startDate) || !this.util.isDataValid(control.value)) return false;
+
+    const start = moment(startDate).startOf('day');
+    const end = moment(control.value).startOf('day');
+    const limit = start.clone().add(365, 'days');
+    // Retorna true quando ultrapassa 365 dias
+    return end.isAfter(limit);
   }
 
   public formValidation = async (form?: FormGroup) => {
@@ -604,19 +619,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public exibeAlertaTotalAssinaturas(plano: PlanoTrabalho | undefined) {
     if(plano && plano._metadata){      
       let assinaturasExigidas = plano._metadata?.quantidadeAssinaturasExigidas;
-      let unidadeVinculada = plano._metadata?.unidadeVinculada;
-      let msg = ''
-      
+    
       if (assinaturasExigidas == 1) 
-        msg = "O participante tem atribuição de chefia substituta da unidade superior à sua unidade de lotação. Por isso, este Plano de Trabalho exigirá somente uma assinatura.";
-      else if ((assinaturasExigidas == 3 || !unidadeVinculada) 
-          && (plano.unidade_id != this.auth.usuario?.lotacao?.unidade_id)) {
-        msg = "Este Plano de Trabalho está sendo criado numa unidade diferente da unidade de lotação. Por isso, a chefia da unidade do plano também deverá assiná-lo";
-      }
-
-      if (assinaturasExigidas != 2 || msg !== '') {
-        this.dialog.alert("Atenção", msg, "OK");
-      }
+        this.dialog.alert("Atenção", "O participante tem atribuição de chefia substituta da unidade superior à sua unidade de lotação. Por isso, este Plano de Trabalho exigirá somente uma assinatura.", "OK");
     }
   }
 
