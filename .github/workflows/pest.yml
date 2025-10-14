@@ -31,6 +31,13 @@ jobs:
         working-directory: back-end
         run: composer install --no-interaction --prefer-dist
 
+      - name: Ensure Pest is installed
+        working-directory: back-end
+        run: |
+          if [ ! -f vendor/bin/pest ]; then
+            composer update pestphp/pest pestphp/pest-plugin-laravel --no-interaction --prefer-dist
+          fi
+
       - name: Run Pest tests
         working-directory: back-end
         run: ./vendor/bin/pest --ci
