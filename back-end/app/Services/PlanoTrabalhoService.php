@@ -92,6 +92,9 @@ class PlanoTrabalhoService extends ServiceBase
             // Define $uId corretamente, verificando a existência do índice
             if (empty($unidadeId)) {
                 $uId = isset($unidades_vinculadas[2]) ? $unidades_vinculadas[2] : null;
+                if(isset($hierarquia[2]) && $hierarquia[2]){
+                    $this->attachHierarquia($data);
+                }
             } else {
                 $uId = isset($unidadeId[2]) ? $unidadeId[2] : null;
                 // busca a nomeclatura da hierarquia da unidade

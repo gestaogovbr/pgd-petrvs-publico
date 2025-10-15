@@ -383,6 +383,18 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			control.value < this.filter?.controls.data_filtro_inicio.value
 		) {
 			result = "Menor que início";
+		} else if(
+			controlName == "subordinadas" &&
+			control.value &&
+			!this.filter?.controls.unidade_id.value
+		) {
+			result = "Não pode ser usado sem Unidade Executora relacionada."
+		}else if(
+			controlName == "unidade_id" &&
+			this.filter?.controls.subordinadas.value &&
+			!control.value
+		) {
+			result = "Não pode ser vazio."
 		}
 		return result;
 	};
@@ -982,4 +994,15 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 
 		//this.grid!.reloadFilter();
 	}
+	
+  public onButtonFilterClick = (filter: FormGroup) => {
+    let form: any = filter.value;
+    let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
+
+    if (this.filter!.valid) {
+      this.grid?.query?.reload(queryOptions);
+    } else {
+      this.filter!.markAllAsTouched(); 
+    }
+  }
 }
