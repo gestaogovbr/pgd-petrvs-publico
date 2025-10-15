@@ -84,6 +84,16 @@ trait Atribuicao
             }
         }
 
+        $lotacoes = $usuario->lotacoes;
+
+        foreach ($lotacoes as $lotacao) {
+            if ($lotacao->unidade_id != $unidadeDestino->id) continue;
+            if ($lotacao->usuario_id == $usuario->id) {
+                $this->alteracoes = ['info' => sprintf('O servidor já é lotado na unidade!', $usuario->id, $unidadeDestino->id)];
+                return;
+            }
+        }
+
         $this->alteracoes = ['lotacao' => sprintf('Atribuindo Colaborador ao servidor %s na Unidade %s', $usuario->id, $unidadeDestino->id)];
         $this->lotaServidor(EnumAtribuicao::COLABORADOR, $integranteNovoOuExistente);
     }
