@@ -381,7 +381,7 @@ export class AppComponent {
         this.menuSchema.TESTE_IMPERSONATE,
       ]
     }, {
-      name: this.lex.translate("SIAPE"),
+      name: this.lex.translate("Consultas"),
       permition: "MENU_DEV_ACESSO",
       id: "navbarDropdownDevConsultas",
       menu: [
@@ -390,7 +390,7 @@ export class AppComponent {
         this.menuSchema.BLACKLIST_SERVIDOR
       ]
     }, {
-      name: this.lex.translate("API PGD"),
+      name: this.lex.translate("Envio API"),
       permition: "MENU_DEV_ACESSO",
       id: "navbarDropdownDevApiPgd",
       menu: [
