@@ -373,28 +373,25 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 
 	public filterValidate = (control: AbstractControl, controlName: string) => {
 		let result = null;
-		if (
-			controlName == "data_filtro_inicio" &&
-			control.value > this.filter?.controls.data_filtro_fim.value
-		) {
-			result = "Maior que fim";
-		} else if (
-			controlName == "data_filtro_fim" &&
-			control.value < this.filter?.controls.data_filtro_inicio.value
-		) {
-			result = "Menor que início";
-		} else if(
-			controlName == "subordinadas" &&
-			control.value &&
-			!this.filter?.controls.unidade_id.value
-		) {
-			result = "Não pode ser usado sem Unidade Executora relacionada."
-		}else if(
-			controlName == "unidade_id" &&
-			this.filter?.controls.subordinadas.value &&
-			!control.value
-		) {
-			result = "Não pode ser vazio."
+		switch (true){
+			case controlName == "data_filtro_inicio" &&
+				control.value > this.filter?.controls.data_filtro_fim.value:
+				result = "Maior que fim";
+				break;
+			case controlName == "data_filtro_fim" &&
+				control.value < this.filter?.controls.data_filtro_inicio.value:
+				result = "Menor que início";
+				break;
+			case controlName == "subordinadas" &&
+				control.value &&
+				!this.filter?.controls.unidade_id.value:
+				result = "Não pode ser usado sem Unidade Executora relacionada."
+				break;
+			case controlName == "unidade_id" &&
+				this.filter?.controls.subordinadas.value &&
+				!control.value:
+				result = "Não pode ser vazio."
+				break;
 		}
 		return result;
 	};
