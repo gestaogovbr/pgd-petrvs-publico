@@ -41,7 +41,7 @@ class ParticipanteResource extends JsonResource
             "id"                        => $this->id,
             "tipo"                      => 'participante',
             "origem_unidade"            => "SIAPE",
-            'cod_unidade_instituidora'  => $this->ultimoPlanoTrabalho->unidade->codigo ?? null,
+            'cod_unidade_instituidora'  => $this->ultimoPlanoTrabalho->programa->unidade->codigo ?? null,
             'cod_unidade_lotacao'       => $this->lotacao->unidade->codigo ?? null,
             'matricula_siape'           => str_pad($this->matricula, 7, '0', STR_PAD_LEFT),
             'cpf'                       => $this->cpf,
