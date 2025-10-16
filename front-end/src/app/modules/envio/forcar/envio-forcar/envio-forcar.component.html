@@ -1,0 +1,10 @@
+<editable-form 
+    [form]="form!" 
+    [title]="isModal ? '' : title" 
+    (submit)="onSaveData()" 
+    (cancel)="onCancel()"
+    confirmLabel="Forçar envio"
+>
+    <p>Utilize esta opção para forçar o envio de dados para a API PGD.</p>
+
+</editable-form>
