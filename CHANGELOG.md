@@ -1,3 +1,4 @@
+## 2.7.5 20/10/2025
 ## 2.7.4 13/10/2025
 ### Modificado
 - Atualizado o arquivo update.sh para incluir o parâmetro --deploy-seed
