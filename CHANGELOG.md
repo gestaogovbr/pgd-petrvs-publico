@@ -1,4 +1,7 @@
 ## 2.7.5 20/10/2025
+### Adicionado
+    - Opção para Reiniciar Envios à API PGD, o que permite um reenvio completo da base completa à API.
+
 ## 2.7.4 13/10/2025
 ### Modificado
 - Atualizado o arquivo update.sh para incluir o parâmetro --deploy-seed
