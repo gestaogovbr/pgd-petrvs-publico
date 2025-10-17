@@ -9,4 +9,12 @@ export class EnvioDaoService extends DaoBaseService<Envio> {
   constructor(protected injector: Injector) {
     super("Envio", injector);
   }
+
+  public reiniciar() {
+    return this.server.post('api/Envio/reiniciar');
+  }
+
+  public forcar(entidade_id: string) {
+    return this.server.post('api/Envio/forcar', { id: entidade_id });
+  }
 }

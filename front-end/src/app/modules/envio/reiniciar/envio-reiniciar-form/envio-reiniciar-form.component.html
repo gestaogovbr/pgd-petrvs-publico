@@ -1,0 +1,20 @@
+<editable-form 
+    [form]="form!" 
+    [title]="isModal ? '' : title" 
+    (submit)="onSaveData()" 
+    (cancel)="onCancel()"
+    confirmLabel="Confirmar operação"
+>
+    <p>Utilize esta opção caso necessite efetuar o reenvio completo de dados para a API PGD.</p>
+    <div class="alert alert-warning" role="alert">
+
+        <div style="display: flex; gap: 20px">
+            <i class="bi bi-exclamation-diamond-fill fs-1"></i>
+            <div>
+                    <p>A operação pode ser mais demorada devido ao reenvio completo.</p>
+                    <p>Caso deseje prosseguir, clique em "Confirma operação".</p>
+            </div>
+        </div>
+    </div>
+
+</editable-form>
