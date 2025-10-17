@@ -59,7 +59,7 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
 
     public static function getDescricao(): string
     {
-        return "Enviar Tenant Individual para API do PGD";
+        return "Enviar para API do PGD";
     }
 
     public function handle(
