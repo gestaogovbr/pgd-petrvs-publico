@@ -373,16 +373,25 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 
 	public filterValidate = (control: AbstractControl, controlName: string) => {
 		let result = null;
-		if (
-			controlName == "data_filtro_inicio" &&
-			control.value > this.filter?.controls.data_filtro_fim.value
-		) {
-			result = "Maior que fim";
-		} else if (
-			controlName == "data_filtro_fim" &&
-			control.value < this.filter?.controls.data_filtro_inicio.value
-		) {
-			result = "Menor que início";
+		switch (true){
+			case controlName == "data_filtro_inicio" &&
+				control.value > this.filter?.controls.data_filtro_fim.value:
+				result = "Maior que fim";
+				break;
+			case controlName == "data_filtro_fim" &&
+				control.value < this.filter?.controls.data_filtro_inicio.value:
+				result = "Menor que início";
+				break;
+			case controlName == "subordinadas" &&
+				control.value &&
+				!this.filter?.controls.unidade_id.value:
+				result = "Não pode ser usado sem Unidade Executora relacionada."
+				break;
+			case controlName == "unidade_id" &&
+				this.filter?.controls.subordinadas.value &&
+				!control.value:
+				result = "Não pode ser vazio."
+				break;
 		}
 		return result;
 	};
@@ -982,4 +991,15 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 
 		//this.grid!.reloadFilter();
 	}
+	
+  public onButtonFilterClick = (filter: FormGroup) => {
+    let form: any = filter.value;
+    let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
+
+    if (this.filter!.valid) {
+      this.grid?.query?.reload(queryOptions);
+    } else {
+      this.filter!.markAllAsTouched(); 
+    }
+  }
 }
