@@ -1,6 +1,8 @@
 ## 2.7.5 20/10/2025
 ### Adicionado
-    - Opção para Reiniciar Envios à API PGD, o que permite um reenvio completo da base completa à API.
+- Opção para Reiniciar Envios à API PGD, o que permite um reenvio completo da base completa à API.
+### Corrigido
+- Envio de participantes que não possuem regramento ativo
 
 ## 2.7.4 13/10/2025
 ### Modificado
