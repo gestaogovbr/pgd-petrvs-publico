@@ -76,7 +76,7 @@ export class TenantDaoService extends DaoBaseService<Tenant> {
     });
   }
 
-   public forcaRenvio(item: TipoCapacidade) {
+   public forcarEnvio(item: TipoCapacidade) {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('config/' + this.collection + '/forcar-reenvio', {
         tenant_id: item.id,
