@@ -11,8 +11,8 @@ import {
 	ViewChild,
 } from "@angular/core";
 import {AbstractControl, FormGroup, FormGroupDirective} from "@angular/forms";
-import {Observable} from "rxjs";
-import {DaoBaseService, QueryOrderBy} from "src/app/dao/dao-base.service";
+import {Observable, Subject, of, takeUntil} from "rxjs";
+import {DaoBaseService, queryEvents, QueryOrderBy} from "src/app/dao/dao-base.service";
 import {QueryContext} from "src/app/dao/query-context";
 import {QueryOptions} from "src/app/dao/query-options";
 import {Base, IIndexable} from "src/app/models/base.model";
@@ -399,8 +399,9 @@ export class GridComponent extends ComponentBase implements OnInit {
 		this.ngAfterContentInit();
 	}
 
-	public queryInit() {
+	public queryInit(events: queryEvents = {}) {
 		this.query = this.dao?.query(this.queryOptions, {
+			resolve: events.resolve,
 			after: () => {
 				this.cdRef.detectChanges();
 					setTimeout(() => {
