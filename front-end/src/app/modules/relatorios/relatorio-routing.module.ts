@@ -6,6 +6,7 @@ import { RelatorioAgenteComponent } from "./relatorio-agente/relatorio-agente.co
 import { RelatorioPlanoEntregaComponent } from "./relatorio-plano-entrega/relatorio-plano-entrega.component";
 import { RelatorioPlanoTrabalhoComponent } from "./relatorio-plano-trabalho/relatorio-plano-trabalho.component";
 import { RelatorioUnidadeComponent } from "./relatorio-unidade/relatorio-unidade.component";
+import { IndicadorEquipeComponent } from "./indicadores-equipes/indicadores-equipes.component";
 
 const routes: Routes = [
   { path: 'planos-trabalho',
@@ -42,6 +43,15 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     data: { 
       title: "Relatório de Unidades",
+    }
+  }, {
+   path: 'indicadores/equipes',
+    component: IndicadorEquipeComponent,
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: { 
+      title: "Indicadores de Equipe",
     }
   }
 ]

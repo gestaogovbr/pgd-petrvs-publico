@@ -45,6 +45,7 @@ use App\Http\Controllers\HistoricoDocenciaInternaController;
 use App\Http\Controllers\HistoricoFuncaoController;
 use App\Http\Controllers\HistoricoLotacaoController;
 use App\Http\Controllers\ImpersonationController;
+use App\Http\Controllers\IndicadoresController;
 use App\Http\Controllers\IntegracaoController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MaterialServicoController;
@@ -581,4 +582,9 @@ Route::middleware(['auth:sanctum'])->prefix('Relatorio')->group(function () {
     Route::post('planos-trabalho-detalhado/query', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
     Route::post('planos-trabalho-detalhado/csv', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
     Route::post('planos-trabalho-detalhado/xls', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
+});
+
+Route::middleware(['auth:sanctum'])->prefix('IndicadorEquipe')->group(function () {
+    Route::post('query', [IndicadoresController::class, 'query']);
+    // Route::post('xls', [RelatorioUnidadeController::class, 'query']);
 });
