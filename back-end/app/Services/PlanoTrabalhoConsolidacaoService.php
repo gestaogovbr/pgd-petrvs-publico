@@ -406,4 +406,117 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     }
   }
 
+  /**
+   * Retorna as consolidações pendentes do usuário
+   * 
+   * @param   string  $usuarioId  ID do usuário
+   * @return  array
+   */
+  public function pendenciasUsuario($usuarioId): array {
+    $hoje = now()->toDateString();
+    
+    // Buscar consolidações INCLUIDO que já passaram da data_fim + tolerância
+    $consolidacoesPendentes = PlanoTrabalhoConsolidacao::with([
+      'planoTrabalho.programa:id,nome,dias_tolerancia_consolidacao',
+      'planoTrabalho.unidade:id,nome,sigla'
+    ])
+    ->whereHas('planoTrabalho', function($query) use ($usuarioId) {
+      $query->where('usuario_id', $usuarioId);
+    })
+    ->where('status', 'INCLUIDO')
+    ->whereRaw("DATE_ADD(data_fim, INTERVAL COALESCE((SELECT dias_tolerancia_consolidacao FROM programas WHERE id = (SELECT programa_id FROM planos_trabalhos WHERE id = plano_trabalho_id)), 10) DAY) < ?", [$hoje])
+    ->orderBy('data_fim', 'asc')
+    ->get();
+
+    $pendencias = [];
+    foreach ($consolidacoesPendentes as $consolidacao) {
+      $dataLimite = \Carbon\Carbon::parse($consolidacao->data_fim)
+        ->addDays($consolidacao->planoTrabalho->programa->dias_tolerancia_consolidacao ?? 10);
+      
+      $diasAtraso = now()->diffInDays($dataLimite, false); // false para valores negativos quando em atraso
+      
+      $pendencias[] = [
+        'id' => $consolidacao->id,
+        'data_inicio' => $consolidacao->data_inicio,
+        'data_fim' => $consolidacao->data_fim,
+        'data_limite' => $dataLimite->toDateString(),
+        'dias_atraso' => abs($diasAtraso),
+        'plano_trabalho' => [
+          'id' => $consolidacao->planoTrabalho->id,
+          'numero' => $consolidacao->planoTrabalho->numero,
+          'programa' => $consolidacao->planoTrabalho->programa->nome,
+          'unidade' => $consolidacao->planoTrabalho->unidade->nome
+        ]
+      ];
+    }
+
+    return $pendencias;
+  }
+
+  /**
+   * Detecta inconsistências em consolidações concluídas ou avaliadas
+   * onde entregas do plano de trabalho não possuem atividades associadas
+   */
+  public function detectarInconsistencias($usuario_id = null)
+  {
+    $query = PlanoTrabalhoConsolidacao::with([
+      'planoTrabalho.entregas',
+      'planoTrabalho.usuario',
+      'planoTrabalho.unidade',
+      'planoTrabalho.programa'
+    ])
+    ->whereIn('status', ['CONCLUIDO', 'AVALIADO']);
+
+    if ($usuario_id) {
+      $query->whereHas('planoTrabalho', function($q) use ($usuario_id) {
+        $q->where('usuario_id', $usuario_id);
+      });
+    }
+
+    $consolidacoes = $query->get();
+    $inconsistencias = [];
+
+    foreach ($consolidacoes as $consolidacao) {
+      $entregasSemAtividade = [];
+      
+      foreach ($consolidacao->planoTrabalho->entregas as $entrega) {
+        // Verifica se a entrega não possui atividades associadas
+        // adicionar no where o plano_trabalho_consolidacao_id
+        $temAtividade = Atividade::where('plano_trabalho_entrega_id', $entrega->id)
+          ->where('plano_trabalho_consolidacao_id', $consolidacao->id)
+          ->exists();
+        
+        if (!$temAtividade) {
+          $entregasSemAtividade[] = [
+            'id' => $entrega->id,
+            'descricao' => $entrega->descricao,
+            'data_inicio' => $entrega->data_inicio,
+            'data_fim' => $entrega->data_fim
+          ];
+        }
+      }
+
+      // Se há entregas sem atividade, adiciona à lista de inconsistências
+      if (!empty($entregasSemAtividade)) {
+        $inconsistencias[] = [
+          'consolidacao_id' => $consolidacao->id,
+          'status' => $consolidacao->status,
+          'data_inicio' => $consolidacao->data_inicio,
+          'data_fim' => $consolidacao->data_fim,
+          'plano_trabalho' => [
+            'id' => $consolidacao->planoTrabalho->id,
+            'numero' => $consolidacao->planoTrabalho->numero,
+            'usuario' => $consolidacao->planoTrabalho->usuario->nome,
+            'programa' => $consolidacao->planoTrabalho->programa->nome,
+            'unidade' => $consolidacao->planoTrabalho->unidade->nome
+          ],
+          'entregas_sem_atividade' => $entregasSemAtividade,
+          'total_entregas_sem_atividade' => count($entregasSemAtividade)
+        ];
+      }
+    }
+
+    return $inconsistencias;
+  }
+
 }

@@ -85,5 +85,30 @@ export class PlanoTrabalhoConsolidacaoDaoService extends DaoBaseService<PlanoTra
     });
   }
 
+  public pendenciasUsuario(): Promise<any[]> {
+    return new Promise<any[]>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/pendencias-usuario', {}).subscribe(response => {
+        if(response?.error) {
+          reject(response?.error);
+        } else {
+          resolve(response?.dados || []);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public inconsistencias(usuarioId?: string): Promise<any[]> {
+    return new Promise<any[]>((resolve, reject) => {
+      const data = usuarioId ? { usuario_id: usuarioId } : {};
+      this.server.post('api/' + this.collection + '/inconsistencias', data).subscribe(response => {
+        if(response?.error) {
+          reject(response?.error);
+        } else {
+          resolve(response?.dados || []);
+        }
+      }, error => reject(error));
+    });
+  }
+
 }
 

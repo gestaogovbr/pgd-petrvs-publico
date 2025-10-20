@@ -1,5 +1,79 @@
 <p class="text-secondary">Você está acessando o módulo de Execução.</p>
 
+<!-- Seção de Pendências de Consolidação -->
+<div class="row mt-3" *ngIf="pendenciasConsolidacao.length > 0">
+  <div class="col-12">
+    <div class="card border-warning">
+      <div class="card-header bg-warning text-dark">
+        <h6 class="mb-0">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          Consolidações Pendentes ({{ pendenciasConsolidacao.length }})
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-12" *ngFor="let pendencia of pendenciasConsolidacao">
+            <div class="alert alert-warning d-flex justify-content-between align-items-center mb-2">
+              <div>
+                <strong>Plano de trabalho: {{ pendencia.plano_trabalho.numero }}</strong><br>
+                <small class="text-muted">
+                  Período: {{ pendencia.data_inicio | date:'dd/MM/yyyy' }} - {{ pendencia.data_fim | date:'dd/MM/yyyy' }}
+                  | Limite: {{ pendencia.data_limite | date:'dd/MM/yyyy' }}
+                  | <span class="text-danger">{{ pendencia.dias_atraso }} dias em atraso</span>
+                </small>
+              </div>
+              <button 
+                type="button" 
+                class="btn btn-warning btn-sm"
+                (click)="abrirConsolidacao()"
+                title="Consolidar agora">
+                <i class="bi bi-arrow-right"></i> Consolidar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Seção de Inconsistências de Consolidação -->
+<div class="row mt-3" *ngIf="inconsistenciasConsolidacao.length > 0">
+  <div class="col-12">
+    <div class="card border-danger">
+      <div class="card-header bg-danger text-white">
+        <h6 class="mb-0">
+          <i class="bi bi-bug-fill me-2"></i>
+          Inconsistências Detectadas ({{ inconsistenciasConsolidacao.length }})
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-12" *ngFor="let inconsistencia of inconsistenciasConsolidacao">
+            <div class="alert alert-danger d-flex justify-content-between align-items-center mb-2">
+              <div>
+                <strong>Plano de trabalho: {{ inconsistencia.plano_trabalho.numero }}</strong><br>
+                <small class="text-muted">
+                  Período: {{ inconsistencia.data_inicio | date:'dd/MM/yyyy' }} - {{ inconsistencia.data_fim | date:'dd/MM/yyyy' }}
+                  | Status: {{ inconsistencia.status }}
+                  | <span class="text-danger">{{ inconsistencia.entregas_sem_atividade.length }} entrega(s) sem atividade</span>
+                </small>
+              </div>
+              <button 
+                type="button" 
+                class="btn btn-danger btn-sm"
+                (click)="abrirDetalhesInconsistencia(inconsistencia)"
+                title="Ver detalhes">
+                <i class="bi bi-eye"></i> Detalhes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="row mt-5">
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
@@ -37,7 +111,7 @@
       [imgIcon]="gb.getResourcePath('assets/icons/home/ranking.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
-      [route]="{route: ['avaliacao/plano-trabalho/consolidacao/avaliacao']}"
+      [route]="{route: ['avaliação/plano-trabalho/consolidacao/avaliacao']}"
     ></app-button-dashboard>
   </div>
 
