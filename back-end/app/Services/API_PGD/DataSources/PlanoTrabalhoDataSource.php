@@ -47,10 +47,6 @@ class PlanoTrabalhoDataSource extends DataSource
             throw new ExportPgdException("Usuário do Plano de Trabalho nº {$planoTrabalho->numero} não possui Lotação");
         }
 
-        if (!$planoTrabalho->usuario->ultimaParticipacaoPrograma){
-            throw new ExportPgdException("Usuário do Plano de trabalho nº {$planoTrabalho->numero} não possui Participação Ativa");
-        }
-
         if (!$planoTrabalho->entregas) {
             throw new ExportPgdException("Plano de Trabalho nº {$planoTrabalho->numero} não possui contribuições");
         }
