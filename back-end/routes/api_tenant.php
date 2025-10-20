@@ -320,6 +320,7 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalho')->group(function () 
   Route::post('enviar-para-assinatura', [PlanoTrabalhoController::class, 'enviarParaAssinatura']);
   Route::post('metadados-plano', [PlanoTrabalhoController::class, 'metadadosPlano']);
   Route::post('get-by-usuario', [PlanoTrabalhoController::class, 'getByUsuario']);
+  Route::post('planos-usuario-com-pendencias', [PlanoTrabalhoController::class, 'planosUsuarioComPendencias']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Comparecimento')->group(function () {
   defaultRoutes(ComparecimentoController::class);

@@ -1375,7 +1375,7 @@ class PlanoTrabalhoService extends ServiceBase
         }, $data['orderBy']);
     }
 
-    private function planosUsuarioComPendencias(int $usuarioId): bool
+    public function planosUsuarioComPendencias(string $usuarioId): bool
     {
         $planos = PlanoTrabalho::where('usuario_id', $usuarioId)
             ->orderByDesc('numero')

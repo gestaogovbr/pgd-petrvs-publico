@@ -76,6 +76,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public editingId?: string;
   public gestoresUnidadeExecutora: string[] = [];
   public programaMetadata: ProgramaMetadata;
+  public planosUsuarioComPendencias: boolean = false;
 
 
   constructor(public injector: Injector) {
@@ -318,6 +319,15 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public async loadData(entity: PlanoTrabalho, form: FormGroup, action?: string) {
+    this.planosUsuarioComPendencias = await this.dao!.planosUsuarioComPendencias(this.auth.usuario!.id);
+    if(this.planosUsuarioComPendencias) {
+      this.action = 'consult';
+      if (this.editableForm) {
+        this.editableForm.error = 'Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.';
+      }
+    }
+    
+
     if(action == 'clone') {
  
       entity.id = "";
