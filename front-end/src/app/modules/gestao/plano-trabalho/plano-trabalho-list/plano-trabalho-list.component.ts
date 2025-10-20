@@ -385,12 +385,12 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			case controlName == "subordinadas" &&
 				control.value &&
 				!this.filter?.controls.unidade_id.value:
-				result = "Não pode ser usado sem Unidade Executora relacionada."
+				result = "Selecione a unidade executora."
 				break;
 			case controlName == "unidade_id" &&
 				this.filter?.controls.subordinadas.value &&
 				!control.value:
-				result = "Não pode ser vazio."
+				result = "Selecione a unidade executora."
 				break;
 		}
 		return result;
