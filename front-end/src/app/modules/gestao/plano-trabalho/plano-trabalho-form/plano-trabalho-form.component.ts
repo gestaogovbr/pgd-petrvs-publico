@@ -234,7 +234,11 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
         this.editableForm.noButtons = 'true';
         this.editableForm.error = 'Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.';
       }
+    } else {
+      this.editableForm!.noButtons = undefined;
+      this.editableForm!.error = undefined;
     }
+    
     let programa_habilitado = selected.entity.participacoes_programas.find((x: { habilitado: number; }) => x.habilitado == 1);
     
     this.form!.controls.usuario_texto_complementar.setValue(selected.entity.texto_complementar_plano || "");
