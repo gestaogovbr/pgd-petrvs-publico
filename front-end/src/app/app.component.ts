@@ -190,6 +190,7 @@ export class AppComponent {
       DEV_UNIDADE_CONSULTA_SIAPE: { name: "Consulta Unidade SIAPE", permition: '', route: ['consultas', 'unidade-siape'], icon: this.entity.getIcon('ConsultaUnidadeSIAPE') },
       /* SIAPE */
       BLACKLIST_SERVIDOR: { name: "CPFs indisponíveis", permition: '', route: ['siape', 'blacklist-servidor'], icon: 'bi bi-person-x' },
+      BLACKLIST_UNIDADE: { name: "Unidades indisponíveis", permition: '', route: ['siape', 'blacklist-unidade'], icon: 'bi bi-building-dash' },
             /* RELATORIOS */
       RELATORIO_PLANO_TRABALHO: {
         name: this.lex.translate("Planos de Trabalho"),
@@ -386,7 +387,8 @@ export class AppComponent {
       menu: [
         this.menuSchema.DEV_CPF_CONSULTA_SIAPE,
         this.menuSchema.DEV_UNIDADE_CONSULTA_SIAPE,
-        this.menuSchema.BLACKLIST_SERVIDOR
+        this.menuSchema.BLACKLIST_SERVIDOR,
+        this.menuSchema.BLACKLIST_UNIDADE
       ]
     }];
 
