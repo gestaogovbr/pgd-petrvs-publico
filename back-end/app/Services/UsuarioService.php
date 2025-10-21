@@ -510,30 +510,18 @@ class UsuarioService extends ServiceBase
    * @return SimpleXMLElement[]
    */
   public function consultaCPFSiape(string $cpf): array{
-
-    $dadosPessoaisService = new SiapeDadosPessoaisService();
-    $dadosFuncionaisService = new SiapeDadosFuncionaisService();
-
-    $dadosPessoaisXml = $dadosPessoaisService->buscarCPF($cpf);
-    $dadosFuncionaisXml = $dadosFuncionaisService->buscarCPF($cpf);
-
-    $dadosPessoais = new DadosPessoaisResource($dadosPessoaisXml);
-    $dadosFuncionais = new DadosFuncionaisResource($dadosFuncionaisXml);
-
-    $dadosFuncionaisArray = $dadosFuncionais->toArray();
-
-    $dadosFuncionaisArray = array_map(function($item) {
-      $unidade = Unidade::where('codigo', $item['codUorgExercicio'])->first();
-      $item['unidadeSigla'] = $unidade?->sigla;
-      return $item;
-    }, $dadosFuncionaisArray);
-
-    //$unidade = new UnidadeResource($unidadeXml);
-    
-    return [
-      'pessoais'    => $dadosPessoais->toArray(),
-      'funcionais'  => $dadosFuncionaisArray,
-    ];
+    [$dadosFuncionaisArray, $dadosPessoaisArray] = $this->buscaServidor($cpf);
+ 
+     $dadosFuncionaisArray = array_map(function($item) {
+       $unidade = Unidade::where('codigo', $item['codUorgExercicio'])->first();
+       $item['unidadeSigla'] = $unidade?->sigla;
+       return $item;
+     }, $dadosFuncionaisArray);
+ 
+     return [
+      'pessoais'    => $dadosPessoaisArray,
+       'funcionais'  => $dadosFuncionaisArray,
+     ];
   }
     public function atualizaPedagio($data)
     {

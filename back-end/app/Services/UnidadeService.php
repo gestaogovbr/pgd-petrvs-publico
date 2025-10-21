@@ -20,11 +20,14 @@ use DateTimeZone;
 use SimpleXMLElement;
 use Throwable;
 use Carbon\Carbon;
+use App\Services\Siape\ProcessaDadosSiapeBD;
+use App\Exceptions\ErrorDataSiapeFaultCodeException;
 
 class UnidadeService extends ServiceBase
 {
 
     use DadosExternosSiape, Atribuicao;
+
 
     public function validateStore($data, $unidade, $action)
     {
@@ -640,31 +643,33 @@ class UnidadeService extends ServiceBase
       */
 
     public function consultaUnidadeSiape(string $unidadecodigoSiape): array
-{
-    $retornoXml = $this->buscaDadosUnidade($unidadecodigoSiape);
+    {
+        $retornoXml = $this->buscaDadosUnidade($unidadecodigoSiape);
 
-    $retornoXml->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
-    $retornoXml->registerXPathNamespace('ns1',  'http://servico.wssiapenet');
+        try {
+            $retornoXml = (new ProcessaDadosSiapeBD())->prepareResponseUorgXml($unidadecodigoSiape, $retornoXml->asXML());
+        } catch (ErrorDataSiapeFaultCodeException $e) {
+            report($e);
+            return [];
+        }
 
-    $resultado = $retornoXml->xpath('//soap:Body/ns1:dadosUorgResponse/out');
+        $retornoXml->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+        $retornoXml->registerXPathNamespace('ns1',  'http://servico.wssiapenet');
 
-    if (!isset($resultado[0]) || !($resultado[0] instanceof SimpleXMLElement)) {
-        Log::error("Não foi possível encontrar <out> em dadosUorgResponse");
-        return [];
+        $resultado = $retornoXml->xpath('//soap:Body/ns1:dadosUorgResponse/out');
+
+        if (!isset($resultado[0]) || !($resultado[0] instanceof SimpleXMLElement)) {
+            Log::error("Não foi possível encontrar <out> em dadosUorgResponse");
+            return [];
+        }
+
+        /** @var SimpleXMLElement $out */
+        $out = $resultado[0];
+
+        $retornoArray = simpleXmlElementToArrayComNamespace($out);
+
+        return $retornoArray;
     }
-
-    /** @var SimpleXMLElement $out */
-    $out = $resultado[0];
-
-    $retornoArray = simpleXmlElementToArrayComNamespace($out);
-
-    // Log::info('--- XML bruto de <out> ---');
-    // Log::info($out->asXML());
-
-    // Log::info('--- Array convertido de <out> --- ' . json_encode($retornoArray, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
-
-    return $retornoArray;
-}
 
     public function consultaUnidadeSiapeXml(string $unidadecodigoSiape): SimpleXMLElement
     {

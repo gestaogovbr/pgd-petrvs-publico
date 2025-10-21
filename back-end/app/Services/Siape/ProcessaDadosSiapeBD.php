@@ -225,7 +225,7 @@ class ProcessaDadosSiapeBD
         return $responseXml;
     }
 
-     private function prepareResponseUorgXml(string $codigo, string $response): SimpleXMLElement
+     public function prepareResponseUorgXml(string $codigo, string $response): SimpleXMLElement
     {
         $responseXml = $this->prepareResponseXml($response);
 
