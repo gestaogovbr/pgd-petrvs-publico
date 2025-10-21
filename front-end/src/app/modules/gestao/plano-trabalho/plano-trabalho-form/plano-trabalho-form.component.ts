@@ -227,6 +227,14 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public async onUsuarioSelect(selected: SelectItem) {    
+    if (['new', 'clone'].includes(this.action))
+      this.planosUsuarioComPendencias = await this.dao!.planosUsuarioComPendencias(selected.entity.id);
+    if(this.planosUsuarioComPendencias) {
+      if (this.editableForm) {
+        this.editableForm.noButtons = 'true';
+        this.editableForm.error = 'Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.';
+      }
+    }
     let programa_habilitado = selected.entity.participacoes_programas.find((x: { habilitado: number; }) => x.habilitado == 1);
     
     this.form!.controls.usuario_texto_complementar.setValue(selected.entity.texto_complementar_plano || "");
@@ -319,15 +327,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public async loadData(entity: PlanoTrabalho, form: FormGroup, action?: string) {
-    this.planosUsuarioComPendencias = await this.dao!.planosUsuarioComPendencias(this.auth.usuario!.id);
-    if(this.planosUsuarioComPendencias) {
-      this.action = 'consult';
-      if (this.editableForm) {
-        this.editableForm.error = 'Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.';
-      }
-    }
-    
-
     if(action == 'clone') {
  
       entity.id = "";
