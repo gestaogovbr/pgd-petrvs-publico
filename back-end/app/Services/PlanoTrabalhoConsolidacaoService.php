@@ -456,6 +456,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
   /**
    * Detecta inconsistências em consolidações concluídas ou avaliadas
    * onde entregas do plano de trabalho não possuem atividades associadas
+   * 
+   * Utiliza as tabelas de snapshot (PlanoTrabalhoConsolidacaoAtividade) para 
+   * verificar as atividades que existiam no momento da conclusão da consolidação
    */
   public function detectarInconsistencias($usuario_id = null)
   {
@@ -474,17 +477,41 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     }
 
     $consolidacoes = $query->get();
+    
+    if ($consolidacoes->isEmpty()) {
+      return [];
+    }
+
+    // Otimização: Buscar todos os snapshots de atividades de uma vez
+    $consolidacaoIds = $consolidacoes->pluck('id');
+    
+    // Buscar snapshots de atividades das consolidações usando a tabela correta
+    $snapshotsAtividades = PlanoTrabalhoConsolidacaoAtividade::whereIn('plano_trabalho_consolidacao_id', $consolidacaoIds)
+      ->select('plano_trabalho_consolidacao_id', 'snapshot')
+      ->get()
+      ->groupBy('plano_trabalho_consolidacao_id');
+
     $inconsistencias = [];
 
     foreach ($consolidacoes as $consolidacao) {
       $entregasSemAtividade = [];
       
+      // Obter snapshots de atividades para esta consolidação
+      $snapshotsConsolidacao = $snapshotsAtividades->get($consolidacao->id, collect());
+      
+      // Extrair plano_trabalho_entrega_id dos snapshots
+      $entregasComAtividade = $snapshotsConsolidacao->map(function($snapshot) {
+        // O campo snapshot é convertido pelo cast AsJson que retorna um objeto stdClass
+        // Precisamos converter para array ou acessar como objeto
+        $snapshotData = $snapshot->snapshot;
+        if (is_object($snapshotData)) {
+          return $snapshotData->plano_trabalho_entrega_id ?? null;
+        }
+        return $snapshotData['plano_trabalho_entrega_id'] ?? null;
+      })->filter()->unique();
+      
       foreach ($consolidacao->planoTrabalho->entregas as $entrega) {
-        // Verifica se a entrega não possui atividades associadas
-        // adicionar no where o plano_trabalho_consolidacao_id
-        $temAtividade = Atividade::where('plano_trabalho_entrega_id', $entrega->id)
-          ->where('plano_trabalho_consolidacao_id', $consolidacao->id)
-          ->exists();
+        $temAtividade = $entregasComAtividade->contains($entrega->id);
         
         if (!$temAtividade) {
           $entregasSemAtividade[] = [
