@@ -78,6 +78,8 @@ class Unidade extends ModelBase
         'checklist' => AsJson::class,
         'expediente' => AsJson::class,
         'deployed_at' => 'datetime',
+        'data_inativacao' => 'datetime',
+        'data_inicio_inativacao' => 'datetime',
     ];
 
     // Has

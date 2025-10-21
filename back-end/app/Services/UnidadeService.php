@@ -307,9 +307,9 @@ class UnidadeService extends ServiceBase
 
 
         foreach ($data["where"] as $condition) {                                             //  		== null		......................	retornar somente as unidades ativas     => $inativos = false
-            if (is_array($condition) && $condition[0] == "subordinadas") {                   //  	inativos (not selectable)
-                $subordinadas = $condition[2];                                              //  		== true		......................	retornar unidades ativas e inativas     => $inativos = true
-            } else if (is_array($condition) && $condition[0] == "inativos") {                //  		== false	......................	retornar somente as unidades ativas     => $inativos = false
+            if (is_array($condition) && $condition[0] == "subordinadas") {                   //  		inativos (not selectable)
+                $subordinadas = $condition[2];                                              //  			== true		......................	retornar unidades ativas e inativas     => $inativos = true
+            } else if (is_array($condition) && $condition[0] == "inativos") {                //  			== false	......................	retornar somente as unidades ativas     => $inativos = false
                 $inativos = $condition[2];
             } else {
                 array_push($where, $condition);
