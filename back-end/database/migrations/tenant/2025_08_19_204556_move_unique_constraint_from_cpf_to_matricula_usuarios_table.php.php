@@ -32,6 +32,34 @@ return new class extends Migration
     {
         $table = 'usuarios';
 
+        $duplicatedMatriculas = DB::select("
+            SELECT matricula, COUNT(*) as count
+            FROM usuarios
+            WHERE matricula IS NOT NULL
+            GROUP BY matricula
+            HAVING COUNT(*) > 1
+        ");
+
+        foreach ($duplicatedMatriculas as $duplicate) {
+            $duplicatedUsers = DB::select("
+                SELECT id, matricula
+                FROM usuarios
+                WHERE matricula = ?
+                ORDER BY id ASC
+            ", [$duplicate->matricula]);
+
+            for ($i = 1; $i < count($duplicatedUsers); $i++) {
+                $user = $duplicatedUsers[$i];
+                $newMatricula = $user->matricula . '9';
+                
+                while (DB::selectOne("SELECT id FROM usuarios WHERE matricula = ?", [$newMatricula])) {
+                    $newMatricula .= '9';
+                }
+                
+                DB::update("UPDATE usuarios SET matricula = ? WHERE id = ?", [$newMatricula, $user->id]);
+            }
+        }
+
         if ($index = $this->getUniqueIndexName($table, 'cpf')) {
             DB::statement("ALTER TABLE `{$table}` DROP INDEX `{$index}`");
         }

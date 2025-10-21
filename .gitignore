@@ -58,3 +58,4 @@ microservice/api-pgd/storage/logs/schedule.log
 back-end/supervisord.log
 back-end/supervisord.pid
 back-end/storage/logs/*.log
+kubectl

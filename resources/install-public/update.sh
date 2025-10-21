@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Script para parar containers, puxar novas imagens e reiniciar containers
+# Use --deploy-seed para executar o DeployPRODSeeder
 
 echo "Parando containers..."
 # Parar containers
@@ -43,7 +44,12 @@ echo "Executando php artisan migrate..."
 # Execute o shell do container e o comando php artisan migrate
 docker exec petrvs_php bash -c "php artisan migrate"
 docker exec petrvs_php bash -c "php artisan tenants:migrate"
-docker exec petrvs_php bash -c 'php artisan tenants:run db:seed --option="class=DeployPRODSeeder"'
+
+# Executa o DeployPRODSeeder apenas se a flag --deploy-seed for passada
+if [[ "$*" == *"--deploy-seed"* ]]; then
+    echo "Executando DeployPRODSeeder..."
+    docker exec petrvs_php bash -c 'php artisan tenants:run db:seed --option="class=DeployPRODSeeder"'
+fi
 
 sleep 10
 
