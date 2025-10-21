@@ -4,20 +4,20 @@ namespace App\Http\Controllers;
 use App\Exceptions\Contracts\IBaseException;
 use App\Exceptions\ServerException;
 use App\Http\Controllers\ControllerBase;
-use App\Services\IndicadoresService;
+use App\Services\IndicadoresGestaoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class IndicadoresController extends ControllerBase {
+class IndicadoresGestaoController extends ControllerBase {
 
     protected function checkPermissions($action, $request, $service, $unidade, $usuario) {
         return true;
     }
 
     public function query(Request $request) {
-        if (!$this->getUsuario($request)->hasPermissionTo('MOD_IND_EQUIPES')){
-            throw new ServerException("RelatorioCapacidade", "Acesso negado aos Indicadores de Equipes.");
+        if (!$this->getUsuario($request)->hasPermissionTo('MOD_IND_GESTAO')){
+            throw new ServerException("RelatorioCapacidade", "Acesso negado aos Indicadores de Gestão.");
         }
 
         try {
@@ -29,15 +29,8 @@ class IndicadoresController extends ControllerBase {
                 'where' => ['array']
             ]);
 
-            $service = new IndicadoresService();
+            $service = new IndicadoresGestaoService();
             $result = $service->query($data);
-
-            //if ($request->is('*/xls')) {
-            /*    return Excel::download(
-                    new RelatorioAgenteExport($result['rows']),
-                    'relatorio-agentes.xlsx'
-                );
-            }*/
 
             return response()->json([
                 'success' => true,

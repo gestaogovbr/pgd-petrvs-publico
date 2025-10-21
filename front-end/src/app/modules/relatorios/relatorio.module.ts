@@ -8,6 +8,7 @@ import { RelatorioUnidadeComponent } from './relatorio-unidade/relatorio-unidade
 import { RelatorioPlanoTrabalhoComponent } from './relatorio-plano-trabalho/relatorio-plano-trabalho.component';
 import { RelatorioPlanoEntregaComponent } from './relatorio-plano-entrega/relatorio-plano-entrega.component';
 import { IndicadorEquipeComponent } from './indicadores-equipes/indicadores-equipes.component';
+import { IndicadorGestaoComponent } from './indicadores-gestao/indicadores-gestao.component';
 import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 @NgModule({
@@ -16,7 +17,8 @@ import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2
     RelatorioPlanoEntregaComponent,
     RelatorioAgenteComponent,
     RelatorioUnidadeComponent,
-    IndicadorEquipeComponent
+    IndicadorEquipeComponent,
+    IndicadorGestaoComponent
   ],
   imports: [
     CommonModule,

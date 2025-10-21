@@ -234,8 +234,7 @@ export class AppComponent {
         name: "Gestão do PGD",
         permition: 'MOD_IND_GESTAO',
         icon: this.entity.getIcon('Unidade'),
-        //route: ['indicadores', 'gestao'],
-        onClick: ()=> this.emDesenvolvimento()
+        route: ['relatorios', 'indicadores', 'gestao'],
       },
       /* Outros */
       PAINEL: { name: "Painel", permition: '', route: ['panel'], icon: "" },

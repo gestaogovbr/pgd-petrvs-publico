@@ -46,6 +46,7 @@ use App\Http\Controllers\HistoricoFuncaoController;
 use App\Http\Controllers\HistoricoLotacaoController;
 use App\Http\Controllers\ImpersonationController;
 use App\Http\Controllers\IndicadoresController;
+use App\Http\Controllers\IndicadoresGestaoController;
 use App\Http\Controllers\IntegracaoController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MaterialServicoController;
@@ -586,5 +587,8 @@ Route::middleware(['auth:sanctum'])->prefix('Relatorio')->group(function () {
 
 Route::middleware(['auth:sanctum'])->prefix('IndicadorEquipe')->group(function () {
     Route::post('query', [IndicadoresController::class, 'query']);
-    // Route::post('xls', [RelatorioUnidadeController::class, 'query']);
+});
+
+Route::middleware(['auth:sanctum'])->prefix('IndicadorGestao')->group(function () {
+    Route::post('query', [IndicadoresGestaoController::class, 'query']);
 });
