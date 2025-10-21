@@ -24,7 +24,6 @@
                     <badge *ngIf="row.unidade" color="light" [icon]="entityService.getIcon('Unidade')" [label]="row.unidade.sigla"></badge>
                     <badge *ngIf="row.destinatario?.length" color="light" icon="bi bi-mailbox" [label]="row.destinatario"></badge>
                 </span>
-                <reaction [entity]="row" origem="PLANO_ENTREGA_ENTREGA" *ngIf="execucao"></reaction>
             </ng-template>
         </column>
         <column [title]="'Etiquetas'" [width]="100" [template]="columnEtiquetas" [editTemplate]="columnEtiquetas" [columnEditTemplate]="selectable ? undefined : columnEtiquetasEdit" [edit]="selectable ? undefined : onColumnEtiquetasEdit.bind(this)" [save]="selectable ? undefined : onColumnEtiquetasSave.bind(this)">
@@ -62,7 +61,7 @@
                 <input-number [size]="12" label="Realizado" sufix="%" icon="bi bi-clock" controlName="progresso_realizado" [control]="form!.controls.progresso_realizado" labelInfo="Progresso de execução (% Concluído)"></input-number>
             </ng-template>
         </column>-->
-        <column [title]="'Progresso\nChecklist'" [width]="200" [template]="columnProgChecklist" [editTemplate]="columnProgChecklist" [columnEditTemplate]="selectable ? undefined : columnChecklistEdit" [edit]="selectable ? undefined : onColumnChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnChecklistSave.bind(this)" *ngIf="execucao">
+        <column [title]="'Progresso\nChecklist'" [width]="200" [template]="columnProgChecklist" *ngIf="execucao">
             <ng-template let-row="row" #columnProgChecklist>
                 <progress-bar [value]="row.progresso_realizado" [goal]="row.progresso_esperado" color="success"></progress-bar>
                 <separator *ngIf="row.checklist?.length" small title="Checklist" collapse [collapsed]="true">
@@ -103,12 +102,6 @@
                 </separator>
             </ng-template>
         </column> -->
-        <column [title]="lex.translate('Modelo de Entrega') + '\nComentários'" [template]="columnEntregaCometario" [editTemplate]="columnEntregaCometario">
-            <ng-template let-row="row" #columnEntregaCometario>
-                <badge *ngIf="row.entrega" color="light" icon="bi bi-list-check" [label]="row.entrega?.nome"></badge>
-                <comentarios-widget [entity]="row" [selectable]="!execucao || !!grid?.editing" origem="PLANO_ENTREGA_ENTREGA" [grid]="grid" [save]="refreshComentarios.bind(this)"></comentarios-widget>
-            </ng-template>
-        </column>
         <column type="options" [onEdit]="edit.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)" [dynamicOptions]="dynamicOptions.bind(this)"></column>
     </columns>
 </grid>

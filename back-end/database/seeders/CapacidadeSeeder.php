@@ -321,7 +321,11 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_RELATORIO_USUARIO"],
       ["codigo" => "MOD_RELATORIO_UNIDADE"],
       ["codigo" => "MOD_RELATORIO_PT"],
+      ["codigo" => "MOD_RELATORIO_PT_UNIDADES_VINCULADAS"],
       ["codigo" => "MOD_RELATORIO_PE"],
+      ["codigo" => "MOD_RELATORIO_PE_UNIDADES_VINCULADAS"],
+      ["codigo" => "MOD_RELATORIO_USUARIO_UNIDADES_VINCULADAS"],
+      ["codigo" => "MOD_RELATORIO_UNIDADE_UNIDADES_VINCULADAS"],
       ["codigo" => "MOD_TEMP"],
       ["codigo" => "MOD_TEMP_INCL"],
       ["codigo" => "MOD_TEMP_EDT"],
@@ -408,7 +412,32 @@ class CapacidadeSeeder extends Seeder
     );
     // retirar algumas capacidades do colaborador
     $capacidades_colaborador = array_filter($capacidades_colaborador, function ($c) {
-      return !in_array($c['codigo'], ["MOD_CADV_EDT", "MOD_CADV_EXCL", "MOD_CADV_INCL",  "MOD_EXTM_EDT", "MOD_EXTM_EXCL", "MOD_EXTM_INCL", "MOD_PENT_QQR_UND", "MOD_PLAN_INST_EDT", "MOD_PLAN_INST_EXCL", "MOD_PLAN_INST_INCL", "MOD_PRGT_CONCL", "MOD_PRGT_EDT", "MOD_PRGT_EXCL", "MOD_UND_INATV", "MOD_UND_INTG", "MOD_UND_INTG_EDT", "MOD_UND_INTG_EXCL", "MOD_UND_INTG_GST", "MOD_UND_INTG_INCL", "MOD_UND_INST"]);
+        return !in_array($c['codigo'], [
+            "MOD_CADV_EDT",
+            "MOD_CADV_EXCL",
+            "MOD_CADV_INCL",
+            "MOD_EXTM_EDT",
+            "MOD_EXTM_EXCL",
+            "MOD_EXTM_INCL",
+            "MOD_PENT_QQR_UND",
+            "MOD_PLAN_INST_EDT",
+            "MOD_PLAN_INST_EXCL",
+            "MOD_PLAN_INST_INCL",
+            "MOD_PRGT_CONCL",
+            "MOD_PRGT_EDT",
+            "MOD_PRGT_EXCL",
+            "MOD_RELATORIO_PT_UNIDADES_VINCULADAS",
+            "MOD_RELATORIO_PE_UNIDADES_VINCULADAS",
+            "MOD_RELATORIO_USUARIO_UNIDADES_VINCULADAS",
+            "MOD_RELATORIO_UNIDADE_UNIDADES_VINCULADAS",
+            "MOD_UND_INATV",
+            "MOD_UND_INTG",
+            "MOD_UND_INTG_EDT",
+            "MOD_UND_INTG_EXCL",
+            "MOD_UND_INTG_GST",
+            "MOD_UND_INTG_INCL",
+            "MOD_UND_INST"
+        ]);
     });
 
     // Inserção de dados
