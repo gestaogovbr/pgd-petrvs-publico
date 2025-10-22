@@ -99,15 +99,32 @@ class IndicadoresGestaoService extends ServiceBase
 
     public function queryUnidades($data)
     {
+
+        $sql = "SELECT pe.id
+                FROM planos_entregas pe
+                WHERE pe.unidade_id = uni.id
+                and pe.deleted_at is null
+                and pe.status not in ('CANCELADO')";
+
+        $params = [];
+
+        $data_inicial = $this->extractWhere($data, "data_inicial");
+        if (isset($data_inicial[2])) {
+            $sql .= " and `pe`.`data_inicio` >= ?";
+            $params[] = $data_inicial[2];
+        }
+
+        $data_final = $this->extractWhere($data, "data_final");
+        if (isset($data_final[2])) {
+            $sql .= " and date(`pe`.`data_fim`) <= ?";
+            $params[] = $data_final[2];
+        }
+
         $sql = <<<TEXT
            select
                 sum(
                     case when exists(
-                        SELECT pe.id
-                        FROM planos_entregas pe
-                        WHERE pe.unidade_id = uni.id
-                        and pe.deleted_at is null
-                        and pe.status not in ('CANCELADO')
+                        $sql
                         limit 1
                     )
                     then 1
@@ -118,13 +135,9 @@ class IndicadoresGestaoService extends ServiceBase
             where uni.deleted_at is null
         TEXT;
 
-        $params = [];
-
         if (isset($this->unidadeIds)) {
             $sql .= " and uni.id in ($this->unidadeIds)";
         }
-
-        $this->applyFiltros($data, $sql, $params);
 
         $rows = DB::select($sql, $params);
 

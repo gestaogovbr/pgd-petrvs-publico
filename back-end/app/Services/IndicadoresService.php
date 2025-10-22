@@ -72,7 +72,7 @@ class IndicadoresService extends ServiceBase
     }
 
     public function applyFiltros($data, &$sql, &$params)
-        {
+    {
         $data_inicial = $this->extractWhere($data, "data_inicial");
         if (isset($data_inicial[2])) {
             $sql .= " and `a`.`data_avaliacao` >= ?";
