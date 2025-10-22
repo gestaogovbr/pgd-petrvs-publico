@@ -220,14 +220,14 @@ export class AppComponent {
       INDICADORES_ENTREGAS: {
         name: "Entregas",
         permition: 'MOD_IND_ENTREGAS',
-        icon: this.entity.getIcon('Unidade'),
+        icon: this.entity.getIcon('PlanoEntrega'),
         // route: ['indicadores', 'entregas'],
         onClick: ()=> this.emDesenvolvimento()
       },
       INDICADORES_EQUIPES: {
         name: "Equipes",
         permition: 'MOD_IND_EQUIPES',
-        icon: this.entity.getIcon('Unidade'),
+        icon: this.entity.getIcon('Usuario'),
         route: ['relatorios', 'indicadores', 'equipes'],
       },
       INDICADORES_GESTAO: {

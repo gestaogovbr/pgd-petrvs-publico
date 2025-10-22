@@ -58,14 +58,27 @@
         </div>
     </filter>
     <p *ngIf="!pieChartData.labels?.length" class="no-data">Sem dados para exibir</p>
-    <div style="display: flex; max-width: 700px; margin: 50px auto;" *ngIf="pieChartData.labels?.length">
-        <canvas
-            baseChart
-            [data]="pieChartData"
-            [type]="pieChartType"
-            [options]="pieChartOptions"
-        >
-        </canvas>
+    <div class="graficos">
+        <div class="grafico" *ngIf="pieChartData.labels?.length">
+            <canvas
+                baseChart
+                [data]="pieChartData"
+                [type]="'pie'"
+                [options]="pieChartOptions"
+                style="max-width: 90%;"
+            ></canvas>
+        </div>
+
+        <div class="grafico" *ngIf="pieChartUnidadesData.labels?.length">
+            <canvas
+                baseChart
+                [data]="pieChartUnidadesData"
+                [type]="'pie'"
+                [options]="pieChartUnidadesOptions"
+                style="max-width: 90%;"
+            ></canvas>
+        </div>
     </div>
+
 </grid>
 

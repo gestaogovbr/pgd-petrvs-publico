@@ -1,4 +1,4 @@
-import { Component, Injector, ViewChild } from "@angular/core";
+import { Component, Injector, QueryList, ViewChild, ViewChildren } from "@angular/core";
 import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
@@ -20,7 +20,7 @@ Chart.register(ChartDataLabels);
 })
 export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGestao, IndicadorGestaoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
+  @ViewChildren(BaseChartDirective) charts!: QueryList<BaseChartDirective>;
 
   public permissao: string = 'MOD_IND_GESTAO';
   public botoes: ToolbarButton[] = [];
@@ -33,14 +33,13 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
       },
     ],
   };
-  public pieChartType: ChartType = 'pie';
   public pieChartOptions: ChartConfiguration['options'] = {
     responsive: true,
     maintainAspectRatio: false, // permite ajustar o tamanho real do gráfico
     layout: {
       padding: {
         top: 0,
-        bottom: 20,
+        bottom: 30,
         left: 20,
         right: 40
       }
@@ -52,10 +51,10 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
       title: {
         display: true,
         text: 'Taxa de cobertura do PGD entre os agentes públicos',
-        font: { size: 14 },
+        font: { size: 16 },
         padding: {
             top: 10,   // espaço acima do título
-            bottom: 30 // espaço entre o título e o gráfico
+            bottom: 50 // espaço entre o título e o gráfico
         }
       },
       datalabels: {
@@ -75,7 +74,56 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
       },
     },
   };
-  public pieChartLegend = true;
+
+  public pieChartUnidadesData: ChartData<'pie', number[], string | string[]> = {
+    labels: [],
+    datasets: [
+      {
+        data: [],
+      },
+    ],
+  };
+  public pieChartUnidadesOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    maintainAspectRatio: false, // permite ajustar o tamanho real do gráfico
+    layout: {
+      padding: {
+        top: 0,
+        bottom: 30,
+        left: 20,
+        right: 40
+      }
+    },
+    plugins: {
+      legend: {
+        display: false
+      },
+      title: {
+        display: true,
+        text: ' Taxa de cobertura do PGD nas unidades',
+        font: { size: 16 },
+        padding: {
+            top: 10,   // espaço acima do título
+            bottom: 50 // espaço entre o título e o gráfico
+        }
+      },
+      datalabels: {
+        formatter: (value, ctx) => {
+          if (ctx.chart.data.labels) {
+            return ctx.chart.data.labels[ctx.dataIndex];
+          }
+          return '';
+        },
+        anchor: 'end',      // coloca o label na borda da fatia
+        align: 'end',       // alinha fora da fatia
+        offset: 8,          // distância do centro da fatia
+        font: {
+          weight: 'bold',
+          size: 14
+        }
+      },
+    },
+  };
 
   constructor(public injector: Injector, dao: IndicadorGestaoDaoService) {
       super(injector, IndicadorGestao, IndicadorGestaoDaoService);
@@ -84,8 +132,6 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
         unidade_id: { default: this.auth.unidade?.id },
         incluir_unidades_subordinadas: { default: false },
         exportar: { default: false },
-        nota: { default: "" },
-        qtde: { default: "" },
         data_inicial: { default: "" },
         data_final: { default: "" },
         somente_vigentes: { default: "" }
@@ -118,17 +164,40 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
       }
   }
 
-  public onQueryResolve(rows: any[] | null) {
+  public onQueryResolve(rows: any | null) {
     if (rows) {
-      const total = rows.reduce((sum, row) => sum + row.qtde, 0);
-      this.pieChartData.labels = rows.map(row => row.categoria +
-          ' (' + ((row.qtde / total) * 100)
+      const data = rows[0];
+      this.pieChartData.labels = [
+        'Participantes (' + ((data.totalParticipantes / data.totalUsuarios) * 100)
+          .toFixed(2)
+          .replace(".", ",")
+          + '%)',
+        'Não Participantes (' + (((data.totalUsuarios - data.totalParticipantes) / data.totalUsuarios) * 100)
           .toFixed(2)
           .replace(".", ",")
           + '%)'
-        );
-      this.pieChartData.datasets[0].data = rows.map(row => Number(row.qtde));
-      this.chart?.update();
+      ];
+      this.pieChartData.datasets[0].data = [
+        data.totalParticipantes,
+        data.totalUsuarios - data.totalParticipantes
+      ];
+
+      this.pieChartUnidadesData.labels = [
+        'Com PGD em vigor (' + ((data.totalUnidadesPE / data.totalUnidades) * 100)
+          .toFixed(2)
+          .replace(".", ",")
+          + '%)',
+        'Sem PGD em vigor (' + (((data.totalUnidades - data.totalUnidadesPE) / data.totalUnidades) * 100)
+          .toFixed(2)
+          .replace(".", ",")
+          + '%)'
+      ];
+      this.pieChartUnidadesData.datasets[0].data = [
+        data.totalUnidadesPE,
+        data.totalUnidades - data.totalUnidadesPE
+      ];
+
+      this.charts.forEach(chart => chart.update());
     }
   }
 
@@ -180,18 +249,5 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
   }
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
-    this.loading = true;
-    try{
-      return this.dao!.exportarXls({
-        where: queryOptions.where,
-        orderBy: queryOptions.orderBy
-      });
-    } catch (error: any) {
-      this.error(error);
-    } finally {
-      this.loading = false;
-    }
-
-    return of(null);
   }
 }

@@ -129,7 +129,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
     });
   }
 
-  public onQueryResolve(rows: any[] | null) {
+  public onQueryResolve(rows: any | null) {
   }
 
   ngOnInit() {
