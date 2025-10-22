@@ -64,8 +64,6 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
       result.push({ label: "Ativar temporariamente", icon: "bi bi-check2",  onClick: (usuario: Usuario) => { this.abrirFormAtivar(usuario); }});
     }
 
-    // Testa se o usuário logado possui permissão para gerenciar as atribuições do usuário do grid
-    if (this.auth.hasPermissionTo("MOD_USER_ATRIB")) result.push({ label: "Atribuições", icon: "bi bi-list-task",  onClick: (usuario: Usuario) => { this.go.navigate({ route: ['configuracoes', 'usuario', usuario.id, 'integrante'] }, { metadata: { entity: row } }); }});
     return result;
   }
 
