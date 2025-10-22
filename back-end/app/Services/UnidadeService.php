@@ -648,6 +648,7 @@ class UnidadeService extends ServiceBase
 
         try {
             $retornoXml = (new ProcessaDadosSiapeBD())->prepareResponseUorgXml($unidadecodigoSiape, $retornoXml->asXML());
+            Log::info("Dados processados para unidade $unidadecodigoSiape", [$retornoXml->asXML()]);
         } catch (ErrorDataSiapeFaultCodeException $e) {
             report($e);
             return [];
