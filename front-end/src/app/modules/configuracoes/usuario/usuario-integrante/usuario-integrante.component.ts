@@ -67,6 +67,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public async onUnidadeChange(event: Event) {
     const unidade_id = this.form?.controls.unidade_id.value;
     let atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO
+    let atribuicoesSelecionadas = this.form?.controls.atribuicoes.value.map((item: { key: () => any; }) => item.key)
     if (unidade_id) {
       const unidade = await this.unidadeDao.getById(unidade_id);
 
@@ -87,9 +88,13 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
           }
         })
       }
+      
+      atribuicoes = atribuicoes.filter(
+        atribuicao => !atribuicoesSelecionadas.includes(atribuicao.key) 
+      );
 
       this.atribuicoes = atribuicoes;
-      this.form?.controls.atribuicao.setValue("COLABORADOR");
+      this.form?.controls.atribuicao.setValue(atribuicoesSelecionadas.includes('COLABORADOR')?'':"COLABORADOR");
     } else {
       this.atribuicoes = [];
     }
@@ -183,9 +188,17 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   };
 
   public deleteItemHandle(row: LookupItem): boolean | undefined | void {
-    return row.key != "LOTADO";
-  };
+    if(row.key == "LOTADO")
+      return false;
+    
+    let atribuicaoExcluida = row.key;
 
+    let atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO  
+    this.atribuicoes = atribuicoes.filter(atribuicao =>
+       atribuicao.key == atribuicaoExcluida || this.atribuicoes.includes(atribuicao));
+    return true;
+  };
+  
   /**
    * Método chamado na edição de uma atribuição do usuário
    * @param form 
