@@ -30,7 +30,7 @@
             <document-preview *ngIf="entity?.ultimo_plano_trabalho_ativo" [html]="entity?.ultimo_plano_trabalho_ativo?.documentos?.[0]?.conteudo || ''" emptysDocumentMensage="Vazio"></document-preview>
         </tab>
         <tab key="ATRIBUICOES" [label]="lex.translate('Atribuições')">
-            <usuario-integrante #unidadesIntegrantes noPersist [entity]="entity" [atribuicoesReadOnly]="!isEdit"></usuario-integrante>
+            <usuario-integrante #unidadesIntegrantes noPersist [entity]="entity" [readOnly]="!isEdit"></usuario-integrante>
         </tab>
     </tabs>
 </editable-form>

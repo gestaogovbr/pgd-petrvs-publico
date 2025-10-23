@@ -28,7 +28,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   @Input() set entity(value: Usuario | undefined) { super.entity = value; } get entity(): Usuario | undefined { return super.entity; }
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() parent?: PageFormBase<Usuario, UsuarioDaoService>;
-  @Input() atribuicoesReadOnly = false;
+  @Input() readOnly = false;
 
   public formPerfil: FormGroup;
   public items: IntegranteConsolidado[] = [];
