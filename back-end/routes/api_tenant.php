@@ -388,6 +388,7 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
   Route::post('linhaAscendente', [UnidadeController::class, 'linhaAscendente']);
   Route::post('lookup-todas-unidades', [UnidadeController::class, 'lookupTodasUnidades']);
   Route::post('obter-instituidora', [UnidadeController::class, 'obterInstitudora']);
+  Route::post('ativar-temporariamente', [UnidadeController::class, 'ativarTemporariamente']);
 });
 Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegrante')->group(function () {
   Route::post('carregar-integrantes', [UnidadeIntegranteController::class, 'carregarIntegrantes']);
