@@ -67,7 +67,10 @@ class UsuarioAdminSeeder extends Seeder
     ];
 
     foreach ($usuarios as $usuarioData) {
-      $usuario = Usuario::where('email', $usuarioData['email'])->first();
+      // Verificar se usuário já existe por email ou CPF
+      $usuario = Usuario::where('email', $usuarioData['email'])
+        ->orWhere('cpf', $usuarioData['cpf'])
+        ->first();
 
       if ($usuario) {
         if (!$usuario->is_admin) {
@@ -75,28 +78,47 @@ class UsuarioAdminSeeder extends Seeder
           $usuario->updated_at = $this->timenow;
           $usuario->save();
         }
+        
+        // Verificar se já existe UnidadeIntegrante para este usuário
+        $integranteExistente = UnidadeIntegrante::where('usuario_id', $usuario->id)
+          ->where('unidade_id', $unidadePaiId)
+          ->first();
+          
+        if (!$integranteExistente) {
+          $integrante = UnidadeIntegrante::create([
+            'unidade_id' => $unidadePaiId,
+            'usuario_id' => $usuario->id,
+          ]);
+
+          UnidadeIntegranteAtribuicao::create([
+            'atribuicao' => 'LOTADO',
+            'unidade_integrante_id' => $integrante->id,
+          ]);
+        }
         continue;
       }
 
-      $usuario = Usuario::create([
-        'email' => $usuarioData['email'],
-        'nome' => $usuarioData['nome'],
-        'cpf' => $usuarioData['cpf'],
-        'matricula' => $usuarioData['matricula'],
-        'apelido' => $usuarioData['apelido'],
-        'perfil_id' => $usuarioData['perfil_id'],
-        'sexo' => $usuarioData['sexo'],
-        'is_admin' => $usuarioData['is_admin'],
-        'created_at' => $this->timenow,
-        'updated_at' => $this->timenow,
-      ]);
+      // Criar usuário usando new e save para garantir que o ID seja gerado
+      $usuario = new Usuario();
+      $usuario->email = $usuarioData['email'];
+      $usuario->nome = $usuarioData['nome'];
+      $usuario->cpf = $usuarioData['cpf'];
+      $usuario->matricula = $usuarioData['matricula'];
+      $usuario->apelido = $usuarioData['apelido'];
+      $usuario->perfil_id = $usuarioData['perfil_id'];
+      $usuario->sexo = $usuarioData['sexo'];
+      $usuario->is_admin = $usuarioData['is_admin'];
+      $usuario->created_at = $this->timenow;
+      $usuario->updated_at = $this->timenow;
+      
+      $usuario->save();
 
-      $integrante = UnidadeIntegrante::firstOrCreate([
+      $integrante = UnidadeIntegrante::create([
         'unidade_id' => $unidadePaiId,
         'usuario_id' => $usuario->id,
       ]);
 
-      UnidadeIntegranteAtribuicao::firstOrCreate([
+      UnidadeIntegranteAtribuicao::create([
         'atribuicao' => 'LOTADO',
         'unidade_integrante_id' => $integrante->id,
       ]);
