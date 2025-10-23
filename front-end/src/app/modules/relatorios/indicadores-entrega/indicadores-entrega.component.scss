@@ -1,0 +1,25 @@
+.link {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.no-data {
+  text-align: center;
+  color: #666;
+  font-weight: bold;
+  padding: 50px;
+}
+.graficos {
+  display: flex;
+  justify-content: center; /* centraliza os gráficos dentro do container */
+  align-items: center;     /* alinha verticalmente */
+  width: 100%;
+  margin: 50px auto;
+  gap: 20px;               /* espaço fixo entre os gráficos */
+}
+
+.grafico {
+  flex: 1;                  /* cada gráfico ocupa metade */
+  display: flex;
+  justify-content: center;  /* centraliza o canvas dentro do bloco */
+}

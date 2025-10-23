@@ -169,20 +169,4 @@ export class IndicadorEquipeComponent extends RelatorioBaseComponent<IndicadorEq
       this.filter!.markAllAsTouched(); 
     }
   }
-
-  public exportExcel = (form: any, queryOptions: QueryOptions) => {
-    this.loading = true;
-    try{
-      return this.dao!.exportarXls({
-        where: queryOptions.where,
-        orderBy: queryOptions.orderBy
-      });
-    } catch (error: any) {
-      this.error(error);
-    } finally {
-      this.loading = false;
-    }
-
-    return of(null);
-  }
 }

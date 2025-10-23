@@ -46,6 +46,7 @@ use App\Http\Controllers\HistoricoFuncaoController;
 use App\Http\Controllers\HistoricoLotacaoController;
 use App\Http\Controllers\ImpersonationController;
 use App\Http\Controllers\IndicadoresController;
+use App\Http\Controllers\IndicadoresEntregaController;
 use App\Http\Controllers\IndicadoresGestaoController;
 use App\Http\Controllers\IntegracaoController;
 use App\Http\Controllers\LoginController;
@@ -585,10 +586,8 @@ Route::middleware(['auth:sanctum'])->prefix('Relatorio')->group(function () {
     Route::post('planos-trabalho-detalhado/xls', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
 });
 
-Route::middleware(['auth:sanctum'])->prefix('IndicadorEquipe')->group(function () {
-    Route::post('query', [IndicadoresController::class, 'query']);
-});
-
-Route::middleware(['auth:sanctum'])->prefix('IndicadorGestao')->group(function () {
-    Route::post('query', [IndicadoresGestaoController::class, 'query']);
+Route::middleware(['auth:sanctum'])->prefix('Indicadores')->group(function () {
+    Route::post('equipe/query', [IndicadoresController::class, 'query']);
+    Route::post('gestao/query', [IndicadoresGestaoController::class, 'query']);
+    Route::post('entrega/query', [IndicadoresEntregaController::class, 'query']);
 });

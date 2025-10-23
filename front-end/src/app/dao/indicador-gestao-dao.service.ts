@@ -10,10 +10,6 @@ import { IndicadorGestao } from '../models/indicador-gestao';
 export class IndicadorGestaoDaoService extends DaoBaseService<IndicadorGestao>{
  
   constructor(protected injector: Injector) { 
-    super("IndicadorGestao", injector);
-  }
-
-  public exportarXls(queryOptions: QueryOptions): Observable<any> {
-    return this.server.getBlobWithReponse('api/IndicadorGestao/xls', queryOptions);
+    super("Indicadores/gestao", injector);
   }
 }

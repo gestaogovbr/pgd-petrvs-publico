@@ -120,6 +120,11 @@ class IndicadoresGestaoService extends ServiceBase
             $params[] = $data_final[2];
         }
 
+        $somenteVigentes = $this->extractWhere($data, "somente_vigentes");
+        if (isset($somenteVigentes[2])) {
+            $where[] = new RawWhere("(now() between date(`pe`.`data_inicio`) and date(`pe`.`data_fim`))", []);
+        }
+
         $sql = <<<TEXT
            select
                 sum(

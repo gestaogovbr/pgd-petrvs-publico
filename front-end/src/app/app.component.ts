@@ -221,8 +221,7 @@ export class AppComponent {
         name: "Entregas",
         permition: 'MOD_IND_ENTREGAS',
         icon: this.entity.getIcon('PlanoEntrega'),
-        // route: ['indicadores', 'entregas'],
-        onClick: ()=> this.emDesenvolvimento()
+        route: ['relatorios', 'indicadores', 'entregas'],
       },
       INDICADORES_EQUIPES: {
         name: "Equipes",

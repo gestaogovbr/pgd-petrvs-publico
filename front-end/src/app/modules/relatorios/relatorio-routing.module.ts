@@ -8,6 +8,7 @@ import { RelatorioPlanoTrabalhoComponent } from "./relatorio-plano-trabalho/rela
 import { RelatorioUnidadeComponent } from "./relatorio-unidade/relatorio-unidade.component";
 import { IndicadorEquipeComponent } from "./indicadores-equipes/indicadores-equipes.component";
 import { IndicadorGestaoComponent } from "./indicadores-gestao/indicadores-gestao.component";
+import { IndicadorEntregaComponent } from "./indicadores-entrega/indicadores-entrega.component";
 
 const routes: Routes = [
   { path: 'planos-trabalho',
@@ -62,6 +63,15 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     data: { 
       title: "Indicadores de Gestão",
+    }
+  }, {
+   path: 'indicadores/entregas',
+    component: IndicadorEntregaComponent,
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: { 
+      title: "Indicadores de Entrega",
     }
   }
 ]

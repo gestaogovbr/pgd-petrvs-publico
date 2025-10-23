@@ -3,26 +3,26 @@ import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
 import { QueryOptions } from "src/app/dao/query-options";
-import { of } from "rxjs";
-import { Chart, ChartConfiguration, ChartData, ChartType, ChartOptions, Plugin } from 'chart.js';
+import { Chart, ChartConfiguration, ChartData } from 'chart.js';
 import { BaseChartDirective } from "ng2-charts";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { IndicadorGestao } from "src/app/models/indicador-gestao";
+import { IndicadorEntrega } from "src/app/models/indicador-entrega";
 import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.component";
-import { IndicadorGestaoDaoService } from "src/app/dao/indicador-gestao-dao.service";
+import { IndicadorEntregaDaoService } from "src/app/dao/indicador-entrega-dao.service";
+import { CHART_COLORS } from "src/app/services/chart";
 
 Chart.register(ChartDataLabels);
 
 @Component({
-  selector: 'indicadores-gestao',
-  templateUrl: './indicadores-gestao.component.html',
-  styleUrls: ['./indicadores-gestao.component.scss']
+  selector: 'indicadores-entrega',
+  templateUrl: './indicadores-entrega.component.html',
+  styleUrls: ['./indicadores-entrega.component.scss']
 })
-export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGestao, IndicadorGestaoDaoService> {
+export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorEntrega, IndicadorEntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChildren(BaseChartDirective) charts!: QueryList<BaseChartDirective>;
 
-  public permissao: string = 'MOD_IND_GESTAO';
+  public permissao: string = 'MOD_IND_EQUIPES';
   public botoes: ToolbarButton[] = [];
   
   public pieChartData: ChartData<'pie', number[], string | string[]> = {
@@ -30,6 +30,7 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
     datasets: [
       {
         data: [],
+        backgroundColor: CHART_COLORS,
       },
     ],
   };
@@ -50,7 +51,7 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
       },
       title: {
         display: true,
-        text: 'Taxa de cobertura do PGD entre os agentes públicos',
+        text: 'Entregas',
         font: { size: 16 },
         padding: {
             top: 10,   // espaço acima do título
@@ -75,7 +76,7 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
     },
   };
 
-  public pieChartUnidadesData: ChartData<'pie', number[], string | string[]> = {
+  /*public pieChartProcessosData: ChartData<'pie', number[], string | string[]> = {
     labels: [],
     datasets: [
       {
@@ -83,7 +84,7 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
       },
     ],
   };
-  public pieChartUnidadesOptions: ChartConfiguration['options'] = {
+  public pieChartProcessosOptions: ChartConfiguration['options'] = {
     responsive: true,
     maintainAspectRatio: false, // permite ajustar o tamanho real do gráfico
     layout: {
@@ -123,10 +124,10 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
         }
       },
     },
-  };
+  };*/
 
-  constructor(public injector: Injector, dao: IndicadorGestaoDaoService) {
-      super(injector, IndicadorGestao, IndicadorGestaoDaoService);
+  constructor(public injector: Injector, dao: IndicadorEntregaDaoService) {
+      super(injector, IndicadorEntrega, IndicadorEntregaDaoService);
 
       this.filter = this.fh.FormBuilder({
         unidade_id: { default: this.auth.unidade?.id },
@@ -161,39 +162,17 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
       }
   }
 
-  public onQueryResolve(rows: any | null) {
+  public onQueryResolve(rows: any[] | null) {
     if (rows) {
-      const data = rows[0];
-      this.pieChartData.labels = [
-        'Participantes (' + ((data.totalParticipantes / data.totalUsuarios) * 100)
-          .toFixed(2)
-          .replace(".", ",")
-          + '%)',
-        'Não Participantes (' + (((data.totalUsuarios - data.totalParticipantes) / data.totalUsuarios) * 100)
+      const itens = rows.filter(row => row.total > 0);
+      const total = itens.reduce((sum, row) => sum + row.total, 0);
+      this.pieChartData.labels = itens.map(row => row.categoria +
+          ' (' + ((row.total / total) * 100)
           .toFixed(2)
           .replace(".", ",")
           + '%)'
-      ];
-      this.pieChartData.datasets[0].data = [
-        data.totalParticipantes,
-        data.totalUsuarios - data.totalParticipantes
-      ];
-
-      this.pieChartUnidadesData.labels = [
-        'Com PGD em vigor (' + ((data.totalUnidadesPE / data.totalUnidades) * 100)
-          .toFixed(2)
-          .replace(".", ",")
-          + '%)',
-        'Sem PGD em vigor (' + (((data.totalUnidades - data.totalUnidadesPE) / data.totalUnidades) * 100)
-          .toFixed(2)
-          .replace(".", ",")
-          + '%)'
-      ];
-      this.pieChartUnidadesData.datasets[0].data = [
-        data.totalUnidadesPE,
-        data.totalUnidades - data.totalUnidadesPE
-      ];
-
+        );
+      this.pieChartData.datasets[0].data = itens.map(row => Number(row.total));
       this.charts.forEach(chart => chart.update());
     }
   }
@@ -206,6 +185,8 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
+
+    debugger;
 
     if (form.unidade_id?.length) {
       result.push(["unidade_id", "==", form.unidade_id]);
@@ -231,20 +212,4 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
     return result;
   };
 
-  public onButtonFilterClick = (filter: FormGroup) => {
-    let form: any = filter.value;
-    let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
-
-    if (this.filter!.valid) {
-      if (this.grid && this.grid.query) {
-        this.loaded = true;
-      }
-      this.grid?.query?.reload(queryOptions);
-    } else {
-      this.filter!.markAllAsTouched(); 
-    }
-  }
-
-  public exportExcel = (form: any, queryOptions: QueryOptions) => {
-  }
 }
