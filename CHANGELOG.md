@@ -3,6 +3,8 @@
 - Colaboradores externos com vinculo no siape.
 ### Modificado
 - ADM Negocial acessa todos os seus vínculos nos Relatórios
+### Adicionado
+- Bloqueio para inclusão de novo Plano de Trabalho ou Plano de Entrega quando houver pendências em mais de 2 dos respectivos planos.
 
 ## 2.7.5 20/10/2025
 ### Adicionado
