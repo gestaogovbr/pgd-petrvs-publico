@@ -1,8 +1,10 @@
 ## 2.7.6 24/10/2025
 ### Corrigido
 - Colaboradores externos com vinculo no siape.
+- Erro ao buscar Plano de Trabalho indicando Unidades Subordinadas sem selecionar unidade executora.
 ### Modificado
 - ADM Negocial acessa todos os seus vínculos nos Relatórios
+- Ao selecionar a opção "Unidades Subordinadas", campo "Unidade Executora" é obrigatório na busca de Plano de Trabalho.
 ### Adicionado
 - Bloqueio para inclusão de novo Plano de Trabalho ou Plano de Entrega quando houver pendências em mais de 2 dos respectivos planos.
 
