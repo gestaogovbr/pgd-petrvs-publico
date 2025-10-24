@@ -11,6 +11,7 @@ import { Usuario } from '../models/usuario.model';
 import { TreeNode } from 'primeng/api';
 import { LookupItem } from '../services/lookup.service';
 import { Planejamento } from '../models/planejamento.model';
+import { firstValueFrom } from 'rxjs';
 
 
 export type UnidadeDashboard = {
@@ -182,6 +183,12 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
         resolve(response?.unidade);
       }, error => reject(error));
     });
+  }
+
+  public ativarTemporariamente(unidade_id: string, justificativa: string): Promise<any> {
+    return firstValueFrom(this.server.post('api/Unidade/ativar-temporariamente', {
+      data: { unidade_id: unidade_id, justificativa: justificativa }
+    }));
   }
       
 }
