@@ -95,10 +95,10 @@ class PlanoTrabalhoService extends ServiceBase
             } else {
                 $uId = isset($unidadeId[2]) ? $unidadeId[2] : null;
                 // busca a nomeclatura da hierarquia da unidade
+            }
 
-                if(isset($hierarquia[2]) && $hierarquia[2]){
-                    $this->attachHierarquia($data);
-                }
+            if(isset($hierarquia[2]) && $hierarquia[2]){
+                $this->attachHierarquia($data);
             }
 
             // Só continua se $uId não for nulo
