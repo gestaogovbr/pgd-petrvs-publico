@@ -26,11 +26,9 @@
                 [dao]="unidadeDao"
                 [selectRoute]="{
                     route: ['configuracoes', 'unidade'],
-                    params: auth.hasPermissionTo('MOD_RELATORIO_UNIDADE_TODAS_UNIDADES')
-                    ? { }
-                    : { unidade_pai: auth.unidade?.id }
+                    params: { unidades: this.unidades }
                 }"
-                [where]="auth.hasPermissionTo('MOD_RELATORIO_UNIDADE_TODAS_UNIDADES')
+                [where]="auth.hasPermissionTo(permissao + '_TODAS_UNIDADES')
                     ? []
                     : [['id', 'in', this.unidades]]"
             >
