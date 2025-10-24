@@ -1,3 +1,7 @@
+## 2.7.6 24/10/2025
+### Modificado
+- ADM Negocial acessa todos os seus vínculos nos Relatórios 
+
 ## 2.7.5 20/10/2025
 ### Adicionado
 - Opção para Reiniciar Envios à API PGD, o que permite um reenvio completo da base completa à API.
