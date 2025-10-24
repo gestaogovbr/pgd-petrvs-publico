@@ -95,10 +95,10 @@ class PlanoTrabalhoService extends ServiceBase
             } else {
                 $uId = isset($unidadeId[2]) ? $unidadeId[2] : null;
                 // busca a nomeclatura da hierarquia da unidade
+            }
 
-                if(isset($hierarquia[2]) && $hierarquia[2]){
-                    $this->attachHierarquia($data);
-                }
+            if(isset($hierarquia[2]) && $hierarquia[2]){
+                $this->attachHierarquia($data);
             }
 
             // Só continua se $uId não for nulo
@@ -286,6 +286,9 @@ class PlanoTrabalhoService extends ServiceBase
             /* (RN_PTR_Y) Para incluir um Plano de Trabalho para um participante, é necessário que este esteja LOTADO/COLABORADOR na unidade executora, a menos que este possua a capacidade MOD_PTR_USERS_INCL; */
             if (!parent::loggedUser()->hasPermissionTo('MOD_PTR_USERS_INCL') && !$condicoes["participanteColaboradorUnidadeExecutora"] && !$condicoes["participanteLotadoUnidadeExecutora"]) {
                 throw new ServerException("ValidatePlanoTrabalho", "Participante do plano não é LOTADO ou COLABORADOR na unidade executora. (MOD_PTR_USERS_INCL)\n[ver RN_PTR_Y]");
+            }
+            if ($this->planosUsuarioComPendencias($data['usuario_id'])) {
+                throw new ServerException("ValidatePlanoTrabalho", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");
             }
 
             $entregasValidas = $this->validarClone($data);
@@ -1371,5 +1374,23 @@ class PlanoTrabalhoService extends ServiceBase
             return $item;
         }, $data['orderBy']);
     }
+
+    public function planosUsuarioComPendencias(string $usuarioId): bool
+    {
+        $planos = PlanoTrabalho::where('usuario_id', $usuarioId)
+            ->orderByDesc('numero')
+            ->take(2)
+            ->get();
+
+        if ($planos->count() < 2) {
+            return false;
+        }
+
+        $planoAnterior = $planos->get(1);
+        $statusesPendentes = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO'];
+
+        return in_array($planoAnterior->status, $statusesPendentes, true);
+    }
+
 
 }
