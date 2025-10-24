@@ -1,6 +1,8 @@
 ## 2.7.6 24/10/2025
+### Corrigido
+- Colaboradores externos com vinculo no siape.
 ### Modificado
-- ADM Negocial acessa todos os seus vínculos nos Relatórios 
+- ADM Negocial acessa todos os seus vínculos nos Relatórios
 
 ## 2.7.5 20/10/2025
 ### Adicionado
