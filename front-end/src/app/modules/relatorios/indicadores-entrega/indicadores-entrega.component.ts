@@ -34,6 +34,7 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
       },
     ],
   };
+
   public pieChartOptions: ChartConfiguration['options'] = {
     responsive: true,
     maintainAspectRatio: false, // permite ajustar o tamanho real do gráfico
@@ -50,13 +51,7 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
         display: false
       },
       title: {
-        display: true,
-        text: 'Entregas',
-        font: { size: 16 },
-        padding: {
-            top: 10,   // espaço acima do título
-            bottom: 50 // espaço entre o título e o gráfico
-        }
+        display: false
       },
       datalabels: {
         formatter: (value, ctx) => {
@@ -76,55 +71,16 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
     },
   };
 
-  /*public pieChartProcessosData: ChartData<'pie', number[], string | string[]> = {
+  public pieChartAvaliacoesData: ChartData<'pie', number[], string | string[]> = {
     labels: [],
     datasets: [
       {
         data: [],
+        backgroundColor: CHART_COLORS,
       },
     ],
   };
-  public pieChartProcessosOptions: ChartConfiguration['options'] = {
-    responsive: true,
-    maintainAspectRatio: false, // permite ajustar o tamanho real do gráfico
-    layout: {
-      padding: {
-        top: 0,
-        bottom: 30,
-        left: 20,
-        right: 40
-      }
-    },
-    plugins: {
-      legend: {
-        display: false
-      },
-      title: {
-        display: true,
-        text: ' Taxa de cobertura do PGD nas unidades',
-        font: { size: 16 },
-        padding: {
-            top: 10,   // espaço acima do título
-            bottom: 50 // espaço entre o título e o gráfico
-        }
-      },
-      datalabels: {
-        formatter: (value, ctx) => {
-          if (ctx.chart.data.labels) {
-            return ctx.chart.data.labels[ctx.dataIndex];
-          }
-          return '';
-        },
-        anchor: 'end',      // coloca o label na borda da fatia
-        align: 'end',       // alinha fora da fatia
-        offset: 8,          // distância do centro da fatia
-        font: {
-          weight: 'bold',
-          size: 14
-        }
-      },
-    },
-  };*/
+
 
   constructor(public injector: Injector, dao: IndicadorEntregaDaoService) {
       super(injector, IndicadorEntrega, IndicadorEntregaDaoService);
@@ -162,9 +118,10 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
       }
   }
 
-  public onQueryResolve(rows: any[] | null) {
-    if (rows) {
-      const itens = rows.filter(row => row.total > 0);
+  public onQueryResolve(rows: IndicadorEntrega[] | null) {
+    if (rows && rows.length) {
+      const itens = rows[0].entregas.filter(row => row.total > 0);
+
       const total = itens.reduce((sum, row) => sum + row.total, 0);
       this.pieChartData.labels = itens.map(row => row.categoria +
           ' (' + ((row.total / total) * 100)
@@ -173,6 +130,17 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
           + '%)'
         );
       this.pieChartData.datasets[0].data = itens.map(row => Number(row.total));
+
+      const avaliacoes = rows[0].avaliacoes.filter(row => row.total > 0);
+      const totalAvaliacoes = avaliacoes.reduce((sum, row) => sum + row.total, 0);
+      this.pieChartAvaliacoesData.labels = avaliacoes.map(row => row.categoria +
+          ' (' + ((row.total / totalAvaliacoes) * 100)
+          .toFixed(2)
+          .replace(".", ",")
+          + '%)'
+        );
+      this.pieChartAvaliacoesData.datasets[0].data = avaliacoes.map(row => Number(row.total));
+
       this.charts.forEach(chart => chart.update());
     }
   }
@@ -185,8 +153,6 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
-
-    debugger;
 
     if (form.unidade_id?.length) {
       result.push(["unidade_id", "==", form.unidade_id]);

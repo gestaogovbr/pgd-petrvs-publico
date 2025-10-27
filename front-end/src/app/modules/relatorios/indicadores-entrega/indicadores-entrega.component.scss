@@ -8,18 +8,37 @@
   color: #666;
   font-weight: bold;
   padding: 50px;
+  width: 100%;
 }
+
 .graficos {
   display: flex;
-  justify-content: center; /* centraliza os gráficos dentro do container */
-  align-items: center;     /* alinha verticalmente */
+  justify-content: center;
+  align-items: flex-start;
   width: 100%;
-  margin: 50px auto;
-  gap: 20px;               /* espaço fixo entre os gráficos */
+  margin: 10px auto;
+  gap: 20px;
 }
 
 .grafico {
-  flex: 1;                  /* cada gráfico ocupa metade */
+  flex: 1;
   display: flex;
-  justify-content: center;  /* centraliza o canvas dentro do bloco */
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.grafico .titulo{
+  font-weight: bold;
+}
+
+.grafico-wrapper {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  margin: 0 auto;
+}
+
+canvas {
+  margin: 0 auto;
 }

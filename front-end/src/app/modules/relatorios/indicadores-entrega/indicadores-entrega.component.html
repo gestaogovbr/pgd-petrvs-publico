@@ -56,18 +56,35 @@
             ></input-switch>
         </div>
     </filter>
-    <p *ngIf="!pieChartData.labels?.length" class="no-data">Sem dados para exibir</p>
     <div class="graficos">
-        <div class="grafico" *ngIf="pieChartData.labels?.length">
-            <canvas
-                baseChart
-                [data]="pieChartData"
-                [type]="'pie'"
-                [options]="pieChartOptions"
-                style="max-width: 90%;"
-            ></canvas>
+        <div class="grafico">
+            <div class="titulo">Taxa de vinculação das entregas</div>
+            <p *ngIf="!pieChartData.labels?.length" class="no-data">Sem dados para exibir</p>
+            <div class="grafico-wrapper">
+                <canvas
+                    baseChart
+                    *ngIf="pieChartData.labels?.length"
+                    [data]="pieChartData"
+                    [type]="'pie'"
+                    [options]="pieChartOptions"
+                    style="max-width: 90%;"
+                ></canvas>
+            </div>
+        </div>
+        <div class="grafico">
+            <div class="titulo">Taxa de alocação de horas</div>
+            <p *ngIf="!pieChartAvaliacoesData.labels?.length" class="no-data">Sem dados para exibir</p>
+            <div class="grafico-wrapper">
+                <canvas
+                    baseChart
+                    *ngIf="pieChartAvaliacoesData.labels?.length"
+                    [data]="pieChartAvaliacoesData"
+                    [type]="'pie'"
+                    [options]="pieChartOptions"
+                    style="max-width: 90%;"
+                ></canvas>
+            </div>
         </div>
     </div>
-
 </grid>
 

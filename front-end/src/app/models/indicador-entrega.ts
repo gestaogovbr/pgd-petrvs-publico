@@ -1,9 +1,18 @@
 import { Base } from './base.model';
 
+interface IndicadorEntregaEntrega {
+    categoria: string;
+    total: number;
+}
+
+interface IndicadorEntregaAvaliacao {
+    categoria: string;
+    total: number;
+}
+
 export class IndicadorEntrega extends Base {
-    public totalObjetivos: number = 0;
-    public totalProcessos: number = 0;
-    public total: number = 0
+    public entregas: IndicadorEntregaEntrega[] = [];
+    public avaliacoes: IndicadorEntregaAvaliacao[] = [];
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }
