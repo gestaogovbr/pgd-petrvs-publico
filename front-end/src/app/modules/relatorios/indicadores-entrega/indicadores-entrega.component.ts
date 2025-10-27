@@ -37,35 +37,35 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
 
   public pieChartOptions: ChartConfiguration['options'] = {
     responsive: true,
-    maintainAspectRatio: false, // permite ajustar o tamanho real do gráfico
+    maintainAspectRatio: false,
     layout: {
       padding: {
-        top: 0,
-        bottom: 30,
-        left: 20,
-        right: 40
+        top: 50,
+        bottom: 70,
+        left: 50,
+        right: 50
       }
     },
     plugins: {
       legend: {
-        display: false
+        position: 'bottom'
       },
       title: {
         display: false
       },
       datalabels: {
         formatter: (value, ctx) => {
-          if (ctx.chart.data.labels) {
-            return ctx.chart.data.labels[ctx.dataIndex];
-          }
-          return '';
+          const dataset = ctx.chart.data.datasets[0];
+          const total = (dataset.data as number[]).reduce((a, b) => a + b, 0);
+          const percentage = ((value / total) * 100).toFixed(2).replace('.', ',');
+          return percentage + '%';
         },
         anchor: 'end',      // coloca o label na borda da fatia
         align: 'end',       // alinha fora da fatia
-        offset: 8,          // distância do centro da fatia
+        offset: 3,          // distância do centro da fatia
         font: {
           weight: 'bold',
-          size: 14
+          size: 10
         }
       },
     },
@@ -80,7 +80,6 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
       },
     ],
   };
-
 
   constructor(public injector: Injector, dao: IndicadorEntregaDaoService) {
       super(injector, IndicadorEntrega, IndicadorEntregaDaoService);
@@ -119,26 +118,19 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
   }
 
   public onQueryResolve(rows: IndicadorEntrega[] | null) {
+
+    this.loading = false;
+    
     if (rows && rows.length) {
       const itens = rows[0].entregas.filter(row => row.total > 0);
 
       const total = itens.reduce((sum, row) => sum + row.total, 0);
-      this.pieChartData.labels = itens.map(row => row.categoria +
-          ' (' + ((row.total / total) * 100)
-          .toFixed(2)
-          .replace(".", ",")
-          + '%)'
-        );
+      this.pieChartData.labels = itens.map(row => row.categoria);
       this.pieChartData.datasets[0].data = itens.map(row => Number(row.total));
 
       const avaliacoes = rows[0].avaliacoes.filter(row => row.total > 0);
       const totalAvaliacoes = avaliacoes.reduce((sum, row) => sum + row.total, 0);
-      this.pieChartAvaliacoesData.labels = avaliacoes.map(row => row.categoria +
-          ' (' + ((row.total / totalAvaliacoes) * 100)
-          .toFixed(2)
-          .replace(".", ",")
-          + '%)'
-        );
+      this.pieChartAvaliacoesData.labels = avaliacoes.map(row => row.categoria);
       this.pieChartAvaliacoesData.datasets[0].data = avaliacoes.map(row => Number(row.total));
 
       this.charts.forEach(chart => chart.update());
@@ -153,6 +145,8 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
+
+    this.loading = true;
 
     if (form.unidade_id?.length) {
       result.push(["unidade_id", "==", form.unidade_id]);
