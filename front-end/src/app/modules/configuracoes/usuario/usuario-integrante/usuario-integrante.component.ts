@@ -88,9 +88,10 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
           }
         })
       }
+      let isLotado = atribuicoesSelecionadas.includes('LOTADO')
       
       atribuicoes = atribuicoes.filter(
-        atribuicao => !atribuicoesSelecionadas.includes(atribuicao.key) 
+        atribuicao => atribuicao.key == 'COLABORADOR'? !isLotado : !atribuicoesSelecionadas.includes(atribuicao.key) 
       );
 
       this.atribuicoes = atribuicoes;
@@ -193,9 +194,13 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     
     let atribuicaoExcluida = row.key;
 
+    let isLotado =  this.form?.controls.atribuicoes.value.filter((val: any) => val.key == "LOTADO").length>0
+
     let atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO  
     this.atribuicoes = atribuicoes.filter(atribuicao =>
-       atribuicao.key == atribuicaoExcluida || this.atribuicoes.includes(atribuicao));
+      
+         atribuicao.key == 'COLABORADOR'? !isLotado : atribuicao.key == atribuicaoExcluida || this.atribuicoes.includes(atribuicao)
+      );
     return true;
   };
   
