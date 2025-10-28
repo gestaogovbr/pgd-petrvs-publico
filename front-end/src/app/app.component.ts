@@ -183,9 +183,11 @@ export class AppComponent {
       LOGS_ERROS: { name: "Log dos Erros", permition: '', route: ['logs', 'error'], icon: this.entity.getIcon('Error') },
       LOGS_TRAFEGOS: { name: "Log do Tráfego", permition: '', route: ['logs', 'traffic'], icon: this.entity.getIcon('Traffic') },
       TESTE_IMPERSONATE: { name: "Teste IMPERSONATE", permition: '', route: ['impersonate'], icon: this.entity.getIcon('Teste') },
-      LOGS_ENVIOS: { name: "Log dos Envios à API PGD", permition: '', route: ['logs', 'envios'], icon: this.entity.getIcon('Envio') },
       DEV_CPF_CONSULTA_SIAPE: { name: "Consulta CPF SIAPE", permition: '', route: ['consultas', 'cpf-siape'], icon: this.entity.getIcon('ConsultaCPFSIAPE') },
       DEV_UNIDADE_CONSULTA_SIAPE: { name: "Consulta Unidade SIAPE", permition: '', route: ['consultas', 'unidade-siape'], icon: this.entity.getIcon('ConsultaUnidadeSIAPE') },
+      ENVIO_LOGS: { name: "Log dos Envios", permition: '', route: ['logs', 'envios'], icon: 'bi-list-check' },
+      ENVIO_FORCAR: { name: "Forçar Envio", permition: '', route: ['envios', 'forcar'], icon: this.entity.getIcon('Envio') },
+      ENVIO_REINICIAR: { name: "Resetar Envios", permition: '', route: ['envios', 'reiniciar'], icon: 'bi-arrow-clockwise' },
       /* SIAPE */
       BLACKLIST_SERVIDOR: { name: "CPFs indisponíveis", permition: '', route: ['siape', 'blacklist-servidor'], icon: 'bi bi-person-x' },
             /* RELATORIOS */
@@ -367,8 +369,7 @@ export class AppComponent {
       menu: [
         this.menuSchema.LOGS_ALTERACOES,
         this.menuSchema.LOGS_ERROS,
-        this.menuSchema.LOGS_TRAFEGOS,
-        this.menuSchema.LOGS_ENVIOS
+        this.menuSchema.LOGS_TRAFEGOS
       ]
     }, {
       name: this.lex.translate("Testes"),
@@ -379,15 +380,25 @@ export class AppComponent {
       ]
     }, {
       name: this.lex.translate("Consultas"),
-      permition: "MENU_DEV_CONSULTAS",
+      permition: "MENU_DEV_ACESSO",
       id: "navbarDropdownDevConsultas",
       menu: [
         this.menuSchema.DEV_CPF_CONSULTA_SIAPE,
         this.menuSchema.DEV_UNIDADE_CONSULTA_SIAPE,
         this.menuSchema.BLACKLIST_SERVIDOR
       ]
+    }, {
+      name: this.lex.translate("Envio API"),
+      permition: "MENU_DEV_ACESSO",
+      id: "navbarDropdownDevApiPgd",
+      menu: [
+        this.menuSchema.ENVIO_LOGS,
+        this.menuSchema.ENVIO_FORCAR,
+        this.menuSchema.ENVIO_REINICIAR
+      ]
     }];
 
+    
 
     this.menuContexto = [
       { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.moduloGestao },

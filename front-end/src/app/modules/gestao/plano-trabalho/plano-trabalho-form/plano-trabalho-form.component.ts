@@ -84,7 +84,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public selectedUnidade?: Unidade;
   public selectedModalidade?: TipoModalidade;
   public tipoModalidadeItems: LookupItem[] = [];
-
+  public planosUsuarioComPendencias: boolean = false;
 
 
   constructor(public injector: Injector) {
@@ -357,30 +357,72 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     'true' ; 
   }
 
-  /**
-   * Método executado quando um usuário é selecionado no formulário.
-   * Atualiza as unidades disponíveis, programa e calcula tempos.
-   * @param selected - Item selecionado contendo informações do usuário
-   */
-  public async onUsuarioSelect(selected: SelectItem) {
-    try {
-      this.resetProgramaItems();
-      this.processarUnidadesUsuario(selected.entity);
-      this.preencherTextoComplementarUsuario(selected.entity);      
-      if (this.entity?.unidade_id) {
-        await this.processarUnidadeExistente();
-      } else {
-        this.limparUnidadeSelecionada();
-      }
+  public onProgramaSelect(selected: SelectItem) {
+    let programa = selected.entity as Programa;
+    this.entity!.programa_id = programa.id;
+    this.entity!.programa = programa;
+    this.form?.controls.criterios_avaliacao.setValue(programa.plano_trabalho_criterios_avaliacao || []);
+    this.form?.controls.data_inicio.updateValueAndValidity();
+    this.form?.controls.data_fim.updateValueAndValidity();
+    this.calculaTempos();
+    this.cdRef.detectChanges();
+  }
 
-      if (selected.entity.pedagio) {
-        await this.carregaModalidades(true);
+  public async onUsuarioSelect(selected: SelectItem) {    
+    try {
+      if (['new', 'clone'].includes(this.action))
+        this.planosUsuarioComPendencias = await this.dao!.planosUsuarioComPendencias(selected.entity.id);
+      if(this.planosUsuarioComPendencias) {
+        if (this.editableForm) {
+          this.editableForm.noButtons = 'true';
+          this.editableForm.error = 'Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.';
+        }
       } else {
-        await this.carregaModalidades(false);
+        this.editableForm!.noButtons = undefined;
+        this.editableForm!.error = undefined;
       }
       
-      this.calculaTempos();
-      this.cdRef.detectChanges();
+      let programa_habilitado = selected.entity.participacoes_programas.find((x: { habilitado: number; }) => x.habilitado == 1);
+      
+      this.form!.controls.usuario_texto_complementar.setValue(selected.entity.texto_complementar_plano || "");
+      if(!this.form?.controls.unidade_id.value) {
+        selected.entity.unidades?.every(async (unidade: any) => {
+          if (selected.entity.lotacao.unidade_id == unidade.id) {
+            //this.preencheUnidade(unidade);
+            return false;
+          } else return true;
+        })
+      }
+      let programas = await this.programaDao.query({
+        where: [['vigentesUnidadeExecutora', '==', selected.entity.lotacao.unidade_id]],
+        join: this.joinPrograma,
+        orderBy: [["unidade.path", "desc"]]
+      }).asPromise();
+
+      if(selected.entity.pedagio) {
+        let modalidades = await this.tipoModalidadeDao.query({
+          where: [['exige_pedagio', '==', 0]]
+        }).asPromise();
+        this.form?.controls.tipo_modalidade_id.setValue(modalidades[0]?.id);
+      }
+      
+      if (programa_habilitado) {
+        const programaEncontrado = programas.find((x: Programa) => x.id == programa_habilitado.programa_id);
+        if (programaEncontrado) {
+          this.preenchePrograma(programaEncontrado);
+        } else {
+          this.limparUnidadeSelecionada();
+        }
+
+        if (selected.entity.pedagio) {
+          await this.carregaModalidades(true);
+        } else {
+          await this.carregaModalidades(false);
+        }
+        
+        this.calculaTempos();
+        this.cdRef.detectChanges();
+      }  
     } catch (error) {
       console.error('Erro ao selecionar usuário:', error);
       this.dialog.alert('Erro', 'Ocorreu um erro ao processar a seleção do usuário.');
