@@ -249,9 +249,6 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public async salvarIntegrante(form: FormGroup, row: IntegranteConsolidado) 
   {
 
-    let confirm = await this.dialog.confirm("Atenção!", "Estou ciente de que "+ this.entity?.nome +" poderá pactuar plano de trabalho em outra unidade e ser avaliado pela respectiva chefia");
-    if (!confirm) return false;
-
     let novasAtribuicoes = this.lookup.uniqueLookupItem(form!.controls.atribuicoes.value);
     form.controls.atribuicoes.setValue(novasAtribuicoes);
     

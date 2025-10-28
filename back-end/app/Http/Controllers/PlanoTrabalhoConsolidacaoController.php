@@ -52,10 +52,11 @@ class PlanoTrabalhoConsolidacaoController extends ControllerBase {
             $this->checkPermissions('CONC', $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'id' => ['required'],
+                'justificativa_conclusao' => ['nullable', 'string'],
             ]);
             return response()->json([
                 'success' => true,
-                'dados' => $this->service->concluir($data["id"])
+                'dados' => $this->service->concluir($data["id"], $data["justificativa_conclusao"])
             ]);
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);

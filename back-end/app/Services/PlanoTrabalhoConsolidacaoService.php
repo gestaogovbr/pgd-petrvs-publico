@@ -144,7 +144,8 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'afastamentos' => $afastamentos,
       'ocorrencias' => $ocorrencias,
       'comparecimentos' => $consolidacao->comparecimentos ?? [],
-      'status' => $consolidacao->status
+      'status' => $consolidacao->status,
+      'justificativa_conclusao' => $consolidacao->justificativa_conclusao,
     ];
   }
 
@@ -260,7 +261,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
    * @param   string  $id       O ID da Consolidação do Plano de Trabalho.
    * @return  array
    */
-  public function concluir($id): array
+  public function concluir($id, $justificativa_conclusao): array
   {
     DB::beginTransaction();
     try {
@@ -289,6 +290,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
 
       $dataConclusao = new DateTime();
       $consolidacao->data_conclusao = $dataConclusao;
+      if (!empty($justificativa_conclusao)) {
+        $consolidacao->justificativa_conclusao = $justificativa_conclusao;
+      }
       $consolidacao->save();
       /* Snapshot das atividades */
       foreach(array_map(fn($a) => $a["id"], $dados["atividades"] ?? []) as $atividadeId) {
@@ -350,6 +354,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       if(empty($consolidacao)) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Consolidação não encontrada");
       if(empty($consolidacao->data_conclusao)) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Consolidação não concluída");
       $consolidacao->data_conclusao = null;
+      $consolidacao->justificativa_conclusao = null;
       $consolidacao->save();
       PlanoTrabalhoConsolidacaoAtividade::where("plano_trabalho_consolidacao_id", $id)->delete();
       PlanoTrabalhoConsolidacaoAfastamento::where("plano_trabalho_consolidacao_id", $id)->delete();

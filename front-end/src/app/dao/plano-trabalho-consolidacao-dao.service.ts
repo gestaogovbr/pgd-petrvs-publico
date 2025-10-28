@@ -61,9 +61,9 @@ export class PlanoTrabalhoConsolidacaoDaoService extends DaoBaseService<PlanoTra
     });
   }
 
-  public concluir(id: string): Promise<ConsolidacaoDados> {
+  public concluir(id: string, justificativa_conclusao: string | null): Promise<ConsolidacaoDados> {
     return new Promise<ConsolidacaoDados>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/concluir', {id}).subscribe(response => {
+      this.server.post('api/' + this.collection + '/concluir', {id, justificativa_conclusao}).subscribe(response => {
         if(response?.error) {
           reject(response?.error);
         } else {
