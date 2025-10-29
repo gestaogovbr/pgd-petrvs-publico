@@ -50,6 +50,7 @@ export class Unidade extends Base implements HasNotificacao {
     public checklist: LookupItem[] = []; //Nome dos checklist
     public data_inativacao: Date | null = null; //Data em que a unidade foi inativada, se for o caso
     public instituidora: number = 0; //Se a unidade é instituidora (Programas)
+    public executora: number = 1; //Se a unidade pode cadastrar planos
     public informal: number = 1; //Se a unidade é informal
     public expediente: Expediente | null = null; // Expediente (Não nulo)
     public texto_complementar_plano: string | null = ""; // Mensagem adicional para o plano de trabalho
