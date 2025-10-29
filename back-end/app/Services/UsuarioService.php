@@ -8,6 +8,7 @@ use SimpleXMLElement;
 use App\Models\Perfil;
 use App\Models\Unidade;
 use App\Models\Usuario;
+use App\Models\PlanoTrabalho;
 use App\Models\Programa;
 use App\Services\RawWhere;
 use App\Services\ServiceBase;
@@ -15,6 +16,7 @@ use App\Models\UnidadeIntegrante;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Log;
 use App\Exceptions\ValidateException;
+use App\Models\PlanoTrabalhoConsolidacao;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use App\Services\Siape\DadosExternosSiape;
@@ -615,6 +617,37 @@ class UsuarioService extends ServiceBase
         }
         
         return $unidades;
+    }
+
+    public function pendenciasChefe(){
+      // usuário logado
+      $usuario_id = parent::loggedUser()->id;
+
+      $unidadesGerenciadas = Unidade::whereHas('gestor', fn($q) => $q->where('usuario_id', $usuario_id))
+      ->orWhereHas('gestoresSubstitutos', fn($q) => $q->where('usuario_id', $usuario_id))
+      ->orWhereHas('gestoresDelegados', fn($q) => $q->where('usuario_id', $usuario_id))
+      ->get();
+
+      // Registros de execução que precisam ser avaliados
+      $registrosExecucao = PlanoTrabalhoConsolidacao::where('status', 'CONCLUIDO')
+      ->whereHas('planoTrabalho', function($q) use ($unidadesGerenciadas) {
+        $q->whereIn('unidade_id', $unidadesGerenciadas->pluck('id'));
+      });
+
+      // Planos de trabalhos que precisam da assinatura do chefe da unidade
+      $planosTrabalhos = PlanoTrabalho::where('status', 'AGUARDANDO_ASSINATURA')
+      ->whereHas('unidade', function($q) use ($unidadesGerenciadas) {
+        $q->whereIn('id', $unidadesGerenciadas->pluck('id'));
+      });
+
+      // Planos de entregas que precisam ter registros de execução
+
+      // Planos de entregas que precisam ser avaliados
+
+      return [
+        'registrosExecucao' => $registrosExecucao->get(),
+        'planosTrabalhos' => $planosTrabalhos->get(),
+      ];
     }
 
 }

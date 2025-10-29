@@ -368,6 +368,7 @@ Route::middleware(['auth:sanctum'])->prefix('Usuario')->group(function () {
   Route::post('atualiza-pedagio', [UsuarioController::class, 'atualizaPedagio']);
   Route::post('remove-pedagio', [UsuarioController::class, 'removerPedagio']);
   Route::post('ativar-temporariamente', [UsuarioController::class, 'ativarTemporariamente']);
+  Route::post('pendencias-chefe', [UsuarioController::class, 'pendenciasChefe']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Perfil')->group(function () {
   defaultRoutes(PerfilController::class);
