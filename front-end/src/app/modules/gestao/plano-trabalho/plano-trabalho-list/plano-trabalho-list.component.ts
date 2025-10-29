@@ -130,7 +130,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			"entregas.entrega",
 			"entregas.reacoes.usuario:id,nome,apelido",
             "unidade.entidade:id,sigla",
-            "unidade:id,sigla,entidade_id,unidade_pai_id",
+            "unidade:id,sigla,entidade_id,unidade_pai_id,data_inativacao",
             "usuario:id,nome,matricula,url_foto",
 		];
 		const INCLUIR_SUBSTITUTO = true;
@@ -762,7 +762,9 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 					case this.OPTION_LOGS:
 						return true;
 					case this.BOTAO_CLONAR:
-						return (planoConcluido || planoAvaliado) && this.auth.hasPermissionTo("MOD_PTR_INCL");
+						const inativacao = (planoTrabalho.unidade?.data_inativacao as any);
+						const unidadeAtiva = inativacao === null || inativacao === undefined || inativacao === "";
+						return unidadeAtiva && (!planoAguardandoAssinatura) && this.auth.hasPermissionTo("MOD_PTR_INCL");
 				}
 			}
 		}

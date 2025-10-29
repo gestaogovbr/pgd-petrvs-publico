@@ -66,6 +66,6 @@
                 </input-multiselect>
             </ng-template>
         </column>
-        <column type="options"></column>
+        <column type="options" *ngIf="!atribuicoesReadOnly"></column>
     </columns>
 </grid>

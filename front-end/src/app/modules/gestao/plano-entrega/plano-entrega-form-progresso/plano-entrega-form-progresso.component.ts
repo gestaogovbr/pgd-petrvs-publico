@@ -70,6 +70,9 @@ export class PlanoEntregaFormProgressoComponent extends PageFormBase<PlanoEntreg
     form.patchValue(this.util.fillForm(formValue, entityWithout));
     form.controls.meta.setValue(this.planoEntregaService.getValor(entity.meta));
     form.controls.realizado.setValue(this.planoEntregaService.getValor(entity.realizado));
+    if (entity.registro_execucao !== undefined) {
+      form.controls.registro_execucao.setValue(entity.registro_execucao);
+    }
   }
 
   public async initializeData(form: FormGroup) {
@@ -100,6 +103,7 @@ export class PlanoEntregaFormProgressoComponent extends PageFormBase<PlanoEntreg
     progresso = this.util.fillForm(progresso, valueWithout);
     progresso.meta = this.planoEntregaService.getEntregaValor(this.entity!.plano_entrega_entrega?.entrega!, meta);
     progresso.realizado = this.planoEntregaService.getEntregaValor(this.entity!.plano_entrega_entrega?.entrega!, realizado);
+    progresso.registro_execucao = this.form!.controls.registro_execucao.value || null;
 
     // Persiste o checklist atualizado na entrega (quando houver)
     if (this.planoEntregaEntrega?.id) {

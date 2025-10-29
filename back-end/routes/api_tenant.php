@@ -76,6 +76,7 @@ use App\Http\Controllers\RelatorioPlanoEntregaController;
 use App\Http\Controllers\RelatorioUnidadeController;
 use App\Http\Controllers\RotinaDiariaController;
 use App\Http\Controllers\SiapeBlackListServidorController;
+use App\Http\Controllers\SiapeBlacklistUnidadeController;
 use App\Http\Controllers\SiapeIndividualController;
 use App\Http\Controllers\SolucaoController;
 use App\Http\Controllers\SolucaoUnidadeController;
@@ -388,6 +389,7 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
   Route::post('linhaAscendente', [UnidadeController::class, 'linhaAscendente']);
   Route::post('lookup-todas-unidades', [UnidadeController::class, 'lookupTodasUnidades']);
   Route::post('obter-instituidora', [UnidadeController::class, 'obterInstitudora']);
+  Route::post('ativar-temporariamente', [UnidadeController::class, 'ativarTemporariamente']);
 });
 Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegrante')->group(function () {
   Route::post('carregar-integrantes', [UnidadeIntegranteController::class, 'carregarIntegrantes']);
@@ -534,6 +536,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('SolucaoUnidade')->group(function () {
         defaultRoutes(SolucaoUnidadeController::class);
     });
+    Route::post('/unidade/remover-blacklist', [SiapeBlacklistUnidadeController::class, 'remover']);
+    Route::post('/SiapeBlacklistUnidade/query', [SiapeBlacklistUnidadeController::class, 'query']);
 });
 
 Route::middleware(['auth:sanctum'])->prefix('Relatorio')->group(function () {

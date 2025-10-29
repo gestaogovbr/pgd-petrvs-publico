@@ -28,6 +28,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   @Input() set entity(value: Usuario | undefined) { super.entity = value; } get entity(): Usuario | undefined { return super.entity; }
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() parent?: PageFormBase<Usuario, UsuarioDaoService>;
+  @Input() atribuicoesReadOnly = false;
 
   public formPerfil: FormGroup;
   public items: IntegranteConsolidado[] = [];
@@ -142,6 +143,10 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     
     if (this.util.array_diff(['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO'], atribuicoes.map(na => na.key) || []).length < 2) {
       return "A um mesmo servidor só pode ser atribuída uma função de gestor (titular, substituto ou delegado), para uma mesma Unidade!";
+    }
+
+    if (this.util.array_diff(['LOTADO', 'COLABORADOR'], atribuicoes.map(na => na.key) || []).length < 1) {
+      return "Não é possível associar atribuição de Vinculado quando o servidor já possui atribuição Lotado";
     }
 
     const attrCurador = form!.controls.atribuicoes.value.filter((attr: any) => attr.key == 'CURADOR');

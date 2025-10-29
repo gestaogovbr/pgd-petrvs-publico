@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\Atribuicao;
 use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
 use App\Models\Unidade;
@@ -400,10 +401,10 @@ class PlanoTrabalhoService extends ServiceBase
         }
         if ($action == ServiceBase::ACTION_INSERT) {
             /* (RN_PTR_AC) Quando um participante tiver um plano de trabalho criado, ele se tornará automaticamente um COLABORADOR da sua unidade executora; */
-            if (!$this->usuarioService->isIntegrante("COLABORADOR", $plano->unidade_id, $plano->usuario_id)) {
+            if ($this->precisaAtribuirUsuarioColaborador($plano)) {
                 $this->unidadeIntegranteAtribuicaoService->store([
                     'unidade_integrante_id' => UnidadeIntegrante::firstOrCreate(['unidade_id' => $plano->unidade_id, 'usuario_id' => $plano->usuario_id])->id,
-                    'atribuicao' => 'COLABORADOR'
+                    'atribuicao' => Atribuicao::COLABORADOR->value
                 ], $unidade, false);
             }
             /* (RN_PTR_C) Quando o gestor da Unidade Executora criar o primeiro Plano de Trabalho para um servidor, este tornar-se-á automaticamente um participante habilitado; */
@@ -1357,6 +1358,15 @@ class PlanoTrabalhoService extends ServiceBase
         $usuario = Usuario::find($planoTrabalho['usuario_id']);
         $usuario->lotacao = null;
         return $usuario->lotacao?->unidade_id == $unidadeId;
+    }
+
+    /**
+     *  Recebe o plano de trabalho e verifica se necessita adicionar atribuição de colaborador ao usuário
+     *  Quando o usuário possuir atribuição de LOTADO ou COLABORADOR não há necessidade
+     */
+    private function precisaAtribuirUsuarioColaborador($plano){
+        return !$this->usuarioService->isIntegrante(Atribuicao::COLABORADOR->value, $plano->unidade_id, $plano->usuario_id)
+             && !$this->usuarioService->isIntegrante(Atribuicao::LOTADO->value, $plano->unidade_id, $plano->usuario_id);
     }
 
     /**
