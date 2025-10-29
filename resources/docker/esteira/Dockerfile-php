@@ -20,6 +20,7 @@ RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install mysqli
 RUN docker-php-ext-enable pdo_mysql
 RUN docker-php-ext-install soap
+RUN docker-php-ext-install calendar
 # RUN docker-php-ext-install curl
 # Instalar openssl utilizando um workaround
 RUN docker-php-ext-install openssl || true
