@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Feriado;
+use Ramsey\Uuid\Uuid;
 
 class FeriadoSeeder extends Seeder
 {
@@ -33,7 +34,7 @@ class FeriadoSeeder extends Seeder
         "mes" => 1,
         "ano" => NULL,
         "tipoDia" => "MES",
-        "recorrente" => 0,
+        "recorrente" => 1,
         "abrangencia" => "NACIONAL",
         "codigo_ibge" => NULL,
         "uf" => NULL,
@@ -51,7 +52,7 @@ class FeriadoSeeder extends Seeder
 
         "ano" => NULL,
         "tipoDia" => "MES",
-        "recorrente" => 0,
+        "recorrente" => 1,
         "abrangencia" => "NACIONAL",
         "codigo_ibge" => NULL,
         "uf" => NULL,
@@ -68,7 +69,7 @@ class FeriadoSeeder extends Seeder
         "mes" => 5,
         "ano" => NULL,
         "tipoDia" => "MES",
-        "recorrente" => 0,
+        "recorrente" => 1,
         "abrangencia" => "NACIONAL",
         "codigo_ibge" => NULL,
         "uf" => NULL,
@@ -85,7 +86,7 @@ class FeriadoSeeder extends Seeder
         "mes" => 9,
         "ano" => NULL,
         "tipoDia" => "MES",
-        "recorrente" => 0,
+        "recorrente" => 1,
         "abrangencia" => "NACIONAL",
         "codigo_ibge" => NULL,
         "uf" => NULL,
@@ -102,7 +103,7 @@ class FeriadoSeeder extends Seeder
         "mes" => 10,
         "ano" => NULL,
         "tipoDia" => "MES",
-        "recorrente" => 0,
+        "recorrente" => 1,
         "abrangencia" => "NACIONAL",
         "codigo_ibge" => NULL,
         "uf" => NULL,
@@ -119,7 +120,7 @@ class FeriadoSeeder extends Seeder
         "mes" => 11,
         "ano" => NULL,
         "tipoDia" => "MES",
-        "recorrente" => 0,
+        "recorrente" => 1,
         "abrangencia" => "NACIONAL",
         "codigo_ibge" => NULL,
         "uf" => NULL,
@@ -136,7 +137,7 @@ class FeriadoSeeder extends Seeder
         "mes" => 11,
         "ano" => NULL,
         "tipoDia" => "MES",
-        "recorrente" => 0,
+        "recorrente" => 1,
         "abrangencia" => "NACIONAL",
         "codigo_ibge" => NULL,
         "uf" => NULL,
@@ -153,7 +154,7 @@ class FeriadoSeeder extends Seeder
         "mes" => 12,
         "ano" => NULL,
         "tipoDia" => "MES",
-        "recorrente" => 0,
+        "recorrente" => 1,
         "abrangencia" => "NACIONAL",
         "codigo_ibge" => NULL,
         "uf" => NULL,
@@ -170,7 +171,7 @@ class FeriadoSeeder extends Seeder
         "mes" => 12,
         "ano" => NULL,
         "tipoDia" => "MES",
-        "recorrente" => 0,
+        "recorrente" => 1,
         "abrangencia" => "NACIONAL",
         "codigo_ibge" => NULL,
         "uf" => NULL,
@@ -178,8 +179,74 @@ class FeriadoSeeder extends Seeder
         "cidade_id" => NULL,
       ),
     );
+
     foreach ($feriados as $feriado) {
       Feriado::firstOrCreate(['id' => $feriado['id']], $feriado);
+    }
+
+    for($ano=2024; $ano <= date('Y') + 2; $ano++)
+    {
+      // Carnaval
+      $dataCarnaval = easter_date($ano) - (47 * 24 * 60 * 60);
+
+      $feriadoCarnaval = Feriado::where('nome', 'Carnaval')->where('ano', $ano)->first();
+
+      if (!$feriadoCarnaval) {
+        $id = (string) Uuid::uuid4();
+      } else {
+        $id = $feriadoCarnaval->id;
+      }
+
+      $dados = array(
+        "id" => $id,
+        "created_at" => $this->timenow,
+        "updated_at" => $this->timenow,
+        "deleted_at" => NULL,
+        "nome" => "Carnaval",
+        "dia" => (int)date('d', $dataCarnaval),
+        "mes" => (int)date('m', $dataCarnaval),
+        "ano" => $ano,
+        "tipoDia" => "MES",
+        "recorrente" => 0,
+        "abrangencia" => "NACIONAL",
+        "codigo_ibge" => NULL,
+        "uf" => NULL,
+        "entidade_id" => NULL,
+        "cidade_id" => NULL,
+      );
+
+      Feriado::firstOrCreate(['id' => $id], $dados);
+
+      // Paixão de Cristo  
+      $dataPaixao = easter_date($ano) - (2 * 24 * 60 * 60);
+
+      $feriadoPaixao = Feriado::where('nome', 'Sexta-feira santa')->where('ano', $ano)->first();
+
+      if (!$feriadoPaixao) {
+        $id = (string) Uuid::uuid4();
+      } else {
+        $id = $feriadoCarnaval->id;
+      }
+
+      $dados = array(
+        "id" => $id,
+        "created_at" => $this->timenow,
+        "updated_at" => $this->timenow,
+        "deleted_at" => NULL,
+        "nome" => "Sexta-feira santa",
+        "dia" => (int)date('d', $dataPaixao),
+        "mes" => (int)date('m', $dataPaixao),
+        "ano" => $ano,
+        "tipoDia" => "MES",
+        "recorrente" => 0,
+        "abrangencia" => "NACIONAL",
+        "codigo_ibge" => NULL,
+        "uf" => NULL,
+        "entidade_id" => NULL,
+        "cidade_id" => NULL,
+      );
+
+      Feriado::firstOrCreate(['id' => $id], $dados);
     }
   }
 }
