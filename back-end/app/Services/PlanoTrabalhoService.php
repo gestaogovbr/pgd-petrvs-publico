@@ -287,6 +287,12 @@ class PlanoTrabalhoService extends ServiceBase
             if (!parent::loggedUser()->hasPermissionTo('MOD_PTR_USERS_INCL') && !$condicoes["participanteColaboradorUnidadeExecutora"] && !$condicoes["participanteLotadoUnidadeExecutora"]) {
                 throw new ServerException("ValidatePlanoTrabalho", "Participante do plano não é LOTADO ou COLABORADOR na unidade executora. (MOD_PTR_USERS_INCL)\n[ver RN_PTR_Y]");
             }
+
+            /* Só é permitido o cadastro de planos em unidades definidas como executoras */
+            if(!$this->isUnidadeExecutora($data['unidade_id'])){
+                throw new ServerException("ValidatePlanoEntrega", "Não é possível criar um plano para unidades não executoras.");
+            }
+
             if ($this->planosUsuarioComPendencias($data['usuario_id'])) {
                 throw new ServerException("ValidatePlanoTrabalho", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");
             }
@@ -1390,6 +1396,11 @@ class PlanoTrabalhoService extends ServiceBase
         $statusesPendentes = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO'];
 
         return in_array($planoAnterior->status, $statusesPendentes, true);
+    }
+
+    private function isUnidadeExecutora($unidadeId){
+        $unidadeService = new UnidadeService();
+        return $unidadeService->isUnidadeExecutora($unidadeId);
     }
 
 

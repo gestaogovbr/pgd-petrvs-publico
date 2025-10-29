@@ -603,6 +603,10 @@ class PlanoEntregaService extends ServiceBase
                 throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.\n[ver RN_PENT_K]");
         }
         if ($action == ServiceBase::ACTION_INSERT) {
+            /* Só é permitido o cadastro de planos em unidades definidas como executoras */
+            if(!$this->isUnidadeExecutora($dataOrEntity["unidade_id"])){
+                throw new ServerException("ValidatePlanoEntrega", "Não é possível criar um plano para unidades não executoras.");
+            }
             $planosComPendencias = $this->planosUnidadeComPendencias($dataOrEntity["unidade_id"]);
             if ($planosComPendencias) {
                 throw new ServerException("ValidatePlanoEntrega", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");
@@ -694,6 +698,11 @@ class PlanoEntregaService extends ServiceBase
         $statusesPendentes = ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'];
 
         return in_array($planoAnterior->status, $statusesPendentes, true);
+    }
+
+    private function isUnidadeExecutora($unidadeId){
+        $unidadeService = new UnidadeService();
+        return $unidadeService->isUnidadeExecutora($unidadeId);
     }
 
 }
