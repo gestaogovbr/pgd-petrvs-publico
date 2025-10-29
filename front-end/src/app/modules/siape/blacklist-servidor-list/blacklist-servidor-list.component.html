@@ -5,8 +5,8 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="6" label="CPF" controlName="cpf" placeholder="CPF..." [attr.maxlength]="14"></input-text>
-            <input-select [size]="6" label="Status" controlName="inativado" [items]="[{key: null, value: 'Todos'}, {key: false, value: 'Ativo'}, {key: true, value: 'Inativado'}]"></input-select>
+            <input-text [size]="6" label="CPF" controlName="cpf" placeholder="CPF..." [attr.maxlength]="14" [form]="filter"></input-text>
+            <input-select [size]="6" label="Status" controlName="inativado" [items]="[{key: null, value: 'Todos'}, {key: false, value: 'Ativo'}, {key: true, value: 'Inativado'}]" [form]="filter"></input-select>
         </div>
     </filter>
     <columns>
