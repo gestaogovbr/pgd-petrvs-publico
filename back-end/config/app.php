@@ -1,6 +1,7 @@
 <?php
 
-$app_file = file_exists("../public/app.json") ? file_get_contents("../public/app.json") : "{'version': '1.0.0'}";
+$app_file_name = dirname(__FILE__)."/../public/app.json";
+$app_file = file_exists($app_file_name) ? file_get_contents($app_file_name) : "{'version': '1.0.0'}";
 $app_json = json_decode($app_file, true) ?? ["version" => "1.0.1"];
 
 return [
@@ -188,6 +189,7 @@ return [
         App\Providers\UtilServiceProvider::class,
         Lab404\Impersonate\ImpersonateServiceProvider::class,
         OwenIt\Auditing\AuditingServiceProvider::class,
+        NotificationChannels\MicrosoftTeams\MicrosoftTeamsServiceProvider::class,
     ],
 
     /*
