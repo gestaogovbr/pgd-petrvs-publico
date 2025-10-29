@@ -764,7 +764,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 					case this.BOTAO_CLONAR:
 						const inativacao = (planoTrabalho.unidade?.data_inativacao as any);
 						const unidadeAtiva = inativacao === null || inativacao === undefined || inativacao === "";
-						return unidadeAtiva && (planoConcluido || planoAvaliado) && this.auth.hasPermissionTo("MOD_PTR_INCL");
+						return unidadeAtiva && (!planoAguardandoAssinatura) && this.auth.hasPermissionTo("MOD_PTR_INCL");
 				}
 			}
 		}
