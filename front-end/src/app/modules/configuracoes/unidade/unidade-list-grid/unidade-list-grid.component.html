@@ -97,3 +97,15 @@
 
   <pagination [rows]="rowsLimit"></pagination>
 </grid>
+
+<ng-template #justificativaDialog>
+  <form [formGroup]="justificativaForm">
+    <input-textarea label="Justificativa" controlName="justificativa" [rows]="3"></input-textarea>
+    <div class="row">
+      <div class="col-md-12 text-right">
+        <button type="button" class="btn btn-outline-secondary me-2" (click)="onCancel()">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="onSubmit()">Enviar</button>
+      </div>
+    </div>
+  </form>
+</ng-template>

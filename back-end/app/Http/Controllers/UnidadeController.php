@@ -394,4 +394,29 @@ class UnidadeController extends ControllerBase
         );
     }
 
+    public function ativarTemporariamente(Request $request)
+    {
+        try {
+            if (!parent::loggedUser()->hasPermissionTo('MOD_UND_EDT'))
+                throw new ServerException("ValidateUnidade", "Usuário precisa ter capacidade MOD_UND_EDT");
+
+            $data = $request->input('data');
+            $validated = validator($data, [
+                'unidade_id' => ['required', 'uuid'],
+                'justificativa' => ['required', 'string'],
+            ])->validate();
+            
+            return response()->json([
+                'success' => true,
+                'data' => $this->service->ativarTemporariamente($validated)
+            ]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        } catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo " . $dataError['code'] . ": Ocorreu um erro inesperado."]);
+        }
+    }
+
 }

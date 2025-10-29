@@ -22,6 +22,7 @@ use Throwable;
 use Carbon\Carbon;
 use App\Services\Siape\ProcessaDadosSiapeBD;
 use App\Exceptions\ErrorDataSiapeFaultCodeException;
+use App\Exceptions\ValidateException;
 
 class UnidadeService extends ServiceBase
 {
@@ -648,6 +649,7 @@ class UnidadeService extends ServiceBase
 
         try {
             $retornoXml = (new ProcessaDadosSiapeBD())->prepareResponseUorgXml($unidadecodigoSiape, $retornoXml->asXML());
+            Log::info("Dados processados para unidade $unidadecodigoSiape", [$retornoXml->asXML()]);
         } catch (ErrorDataSiapeFaultCodeException $e) {
             report($e);
             return [];
@@ -730,5 +732,22 @@ class UnidadeService extends ServiceBase
             'total_inativadas' => count($idsInativadas),
             'ids' => $idsInativadas
         ]);
+    }
+
+    public function ativarTemporariamente($data)
+    {
+        $unidade = Unidade::find($data['unidade_id']);
+
+        if (empty($unidade)) {
+            throw new ValidateException("Unidade não encontrada", 422);
+        }
+
+        $unidade->justificativa_ativacao_temporaria = $data['justificativa'];
+        $unidade->data_ativacao_temporaria = Carbon::now();
+        $unidade->data_inicio_inativacao = Carbon::now();
+        $unidade->data_inativacao = null;
+        $unidade->save();
+        
+        return $unidade;
     }
 }

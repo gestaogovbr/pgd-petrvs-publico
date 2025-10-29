@@ -54,6 +54,8 @@ class Unidade extends ModelBase
         'cidade_id', /* char(36); */
         //'deleted_at', /* timestamp; */
         'data_modificacao',
+        'data_ativacao_temporaria', /* datetime; */
+        'justificativa_ativacao_temporaria', /* text; */
     ];
 
     public $fillable_relations = [];
@@ -80,6 +82,7 @@ class Unidade extends ModelBase
         'deployed_at' => 'datetime',
         'data_inativacao' => 'datetime',
         'data_inicio_inativacao' => 'datetime',
+        'data_ativacao_temporaria' => 'datetime',
     ];
 
     // Has
