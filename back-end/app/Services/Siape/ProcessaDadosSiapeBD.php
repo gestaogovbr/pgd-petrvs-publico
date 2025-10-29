@@ -212,8 +212,13 @@ class ProcessaDadosSiapeBD
         $fault = $responseXml->xpath('//soap:Fault');
         if (
             $fault && isset($fault[0]->faultcode) && (string) $fault[0]->faultcode === Erros::faultcode
-            && isset($fault[0]->faultstring) &&
-            (string) $fault[0]->faultstring === Erros::getFaultStringNaoExistemDados()
+            && isset($fault[0]->faultstring)
+            && (function () use ($fault) {
+                $faultString = trim((string) $fault[0]->faultstring);
+                $faultStrings = Erros::getFaultStringNaoExistemDados();
+                return in_array($faultString, $faultStrings, true)
+                    || in_array(html_entity_decode($faultString, ENT_QUOTES | ENT_HTML5, 'UTF-8'), $faultStrings, true);
+            })()
         ) {
             SiapeBlackListServidor::firstOrCreate(
                 ['cpf' => $cpf],
@@ -230,13 +235,22 @@ class ProcessaDadosSiapeBD
         $responseXml = $this->prepareResponseXml($response);
 
         $fault = $responseXml->xpath('//soap:Fault');
-        if ($fault && isset($fault[0]->faultcode) && (string) $fault[0]->faultcode === Erros::faultcode 
-        && isset($fault[0]->faultstring) && 
-        (string) $fault[0]->faultstring === Erros::getFaultStringNaoExistemDados()) {
-            SiapeBlacklistUnidade::firstOrCreate(
+
+        if (
+            $fault && isset($fault[0]->faultcode) && (string) $fault[0]->faultcode === Erros::faultcode
+            && isset($fault[0]->faultstring)
+            && (function () use ($fault) {
+                $faultString = trim((string) $fault[0]->faultstring);
+                $faultStrings = Erros::getFaultStringNaoExistemDados();
+                $decoded = html_entity_decode($faultString, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                return in_array($faultString, $faultStrings, true) || in_array($decoded, $faultStrings, true);
+            })()
+        ) {
+            $test = SiapeBlacklistUnidade::firstOrCreate(
                 ['codigo' => $codigo],
                 ['id' => (string) Str::uuid(), 'response' => $response]
             );
+            Log::info("Unidade $codigo adicionada à blacklist", [$test]);
 
             throw new ErrorDataSiapeFaultCodeException(sprintf('faultcode #%s: ', (string) $fault[0]->faultcode) . (string) $fault[0]->faultstring);
         }
