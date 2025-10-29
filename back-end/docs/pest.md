@@ -52,18 +52,26 @@ afterEach(function () {
 - Mantenha `Mockery::close()` no `afterEach` para limpar mocks.
 - Use `expect()->...` para assertions fluídas do Pest.
 
-## Cobertura de código (HTML)
+## Cobertura de código (XML)
 - Requer Xdebug com modo `coverage` ativado.
 - Executar sempre dentro do container `petrvs_php`.
 
-Gerar cobertura em `app/coverage`:
+Gerar cobertura em formato Clover XML em `app/coverage/cov.xml`:
 
 ```
-docker exec petrvs_php bash -lc "cd /var/www && XDEBUG_MODE=coverage ./vendor/bin/pest --ci --coverage-html app/coverage"
+docker exec petrvs_php bash -lc "cd /var/www && XDEBUG_MODE=coverage ./vendor/bin/pest --ci --coverage-clover app/coverage/cov.xml"
 ```
 
-- Após rodar, abra `back-end/app/coverage/index.html` (ou `dashboard.html`) no navegador.
+- A saída será um arquivo `cov.xml` dentro de `back-end/app/coverage`.
+- Caso queira limitar aos testes unitários para evitar falhas de testes de features bloquearem a geração do XML:
+
+```
+docker exec petrvs_php bash -lc "cd /var/www && XDEBUG_MODE=coverage ./vendor/bin/pest --ci --coverage-clover app/coverage/cov.xml tests/Unit"
+```
+
 - Se aparecer o aviso para ativar cobertura, garanta que a variável `XDEBUG_MODE=coverage` está presente no comando acima.
+
+Observação: a pasta `app/coverage` não conterá HTML; o conteúdo agora é o `cov.xml` para integração com ferramentas de CI.
 
 ## CI: Execução automática em Pull Requests
 - O workflow `.github/workflows/pest.yml` executa testes em PRs para `dataprev_dsv` e `dataprev_hmg`.
