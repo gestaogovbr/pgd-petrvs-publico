@@ -422,6 +422,9 @@ class TipoCapacidadeService extends ServiceBase
     [
         "codigo" => "MOD_RELATORIO_PT",
         "descricao" => "Relatório de Planos de Trabalho",
+        "capacidades" => [
+            ["MOD_RELATORIO_PT_UNIDADES_VINCULADAS", "Relatório de Planos de Trabalho - Permite usuário filtrar por todas as unidades vinculadas" ]
+        ]
     ],
     [
         "codigo" => "MOD_RELATORIO_PT_TODAS_UNIDADES",
@@ -430,6 +433,9 @@ class TipoCapacidadeService extends ServiceBase
     [
         "codigo" => "MOD_RELATORIO_PE",
         "descricao" => "Relatório de Planos de Entrega",
+        "capacidades" => [
+            ["MOD_RELATORIO_PE_UNIDADES_VINCULADAS", "Relatório de Planos de Entrega - Permite usuário filtrar por todas as unidades vinculadas" ]
+        ]
     ],
     [
         "codigo" => "MOD_RELATORIO_PE_TODAS_UNIDADES",
@@ -438,6 +444,9 @@ class TipoCapacidadeService extends ServiceBase
     [
         "codigo" => "MOD_RELATORIO_USUARIO",
         "descricao" => "Relatório de Agentes Públicos",
+        "capacidades" => [
+            ["MOD_RELATORIO_USUARIO_UNIDADES_VINCULADAS", "Relatório de Agentes Públicos - Permite usuário filtrar por todas as unidades vinculadas" ]
+        ]
     ],
     [
         "codigo" => "MOD_RELATORIO_USUARIO_TODAS_UNIDADES",
@@ -446,6 +455,9 @@ class TipoCapacidadeService extends ServiceBase
     [
         "codigo" => "MOD_RELATORIO_UNIDADE",
         "descricao" => "Relatório de Unidades",
+         "capacidades" => [
+            ["MOD_RELATORIO_UNIDADE_UNIDADES_VINCULADAS", "Relatório de Unidades - Permite usuário filtrar por todas as unidades vinculadas" ]
+        ]
     ],
     [
         "codigo" => "MOD_RELATORIO_UNIDADE_TODAS_UNIDADES",

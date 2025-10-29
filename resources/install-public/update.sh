@@ -46,7 +46,7 @@ docker exec petrvs_php bash -c "php artisan migrate"
 docker exec petrvs_php bash -c "php artisan tenants:migrate"
 
 # Executa o DeployPRODSeeder apenas se a flag --deploy-seed for passada
-if [[ "$*" == *"--deploy-seed"* ]]; then
+if [[  "$*" != *"--deploy-seed"* ]]; then
     echo "Executando DeployPRODSeeder..."
     docker exec petrvs_php bash -c 'php artisan tenants:run db:seed --option="class=DeployPRODSeeder"'
 fi

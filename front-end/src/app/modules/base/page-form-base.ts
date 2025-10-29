@@ -128,7 +128,6 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
   }
 
   public error = (error: any) => {
-    console.log(error);
     if (this.editableForm) {
       if (error.validationErrors) {
         this.editableForm.error = "";  

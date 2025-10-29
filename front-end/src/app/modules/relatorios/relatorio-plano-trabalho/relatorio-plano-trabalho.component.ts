@@ -14,28 +14,25 @@ import { RelatorioPlanoTrabalhoDetalhadoDaoService } from "src/app/dao/relatorio
 import { TipoModalidadeDaoService } from "src/app/dao/tipo-modalidade-dao.service";
 import { TipoAvaliacaoNotaDaoService } from "src/app/dao/tipo-avaliacao-nota-dao.service";
 import { of } from 'rxjs';
+import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.component";
 
 @Component({
   selector: 'relatorio-plano-trabalho',
   templateUrl: './relatorio-plano-trabalho.component.html',
   styleUrls: ['./relatorio-plano-trabalho.component.scss']
 })
-export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlanoTrabalho, RelatorioPlanoTrabalhoDaoService> {
+export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<RelatorioPlanoTrabalho, RelatorioPlanoTrabalhoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
-  public usuarioDao: UsuarioDaoService;
-  public unidadeDao: UnidadeDaoService;
+  public permissao: string = 'MOD_RELATORIO_PT';
   public tipoModalidadeDao: TipoModalidadeDaoService;
   public tipoAvaliacaoNotaDao: TipoAvaliacaoNotaDaoService;
   public relatorioPlanoTrabalhoDao: RelatorioPlanoTrabalhoDaoService;
   public relatorioPlanoTrabalhoDetalhadoDao: RelatorioPlanoTrabalhoDetalhadoDaoService;
   public botoes: ToolbarButton[] = [];
-  public unidadeId: string = '';
   public resumido: boolean = true;
-  public loaded: boolean = false;
   public tiposModalidade: LookupItem[] = [];
   public tiposNotas: LookupItem[] = [];
-  public unidades?: any[];
 
   constructor(public injector: Injector, dao: RelatorioPlanoTrabalhoDaoService) {
       super(injector, RelatorioPlanoTrabalho, RelatorioPlanoTrabalhoDaoService);
@@ -90,16 +87,6 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
 
       this.orderBy = [['unidadeHierarquia', 'asc'], ['numero', 'asc']];
   }
-
-  public lotacaoValidator(control: AbstractControl): ValidationErrors | null
-  {
-    return !this.auth.unidade ? { errorMessage: "Usuário sem unidade de lotação" } : null;
-  }
-
-  public requiredValidator(control: AbstractControl): ValidationErrors | null { 
-      return this.util.empty(control.value) ? { errorMessage: "Obrigatório" } : null;
-  }
-
   
   public periodoValidator(control: AbstractControl): ValidationErrors | null
   {
@@ -111,13 +98,6 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
 
   public async ngOnInit() {
       super.ngOnInit();
-
-      if (this.auth.unidade) {
-        const unidades = (await this.unidadeDao.subordinadas(this.auth?.unidade?.id))
-          .map((item: any) => item.id);
-        unidades.push(this.auth.unidade.id);
-        this.unidades = unidades;
-      }
 
       this.tipoModalidadeDao.query().asPromise().then(modalidades => {
           this.tiposModalidade = this.lookup.map(modalidades, 'id', 'nome');
@@ -257,12 +237,6 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
     return result;
   };
 
-  public onFilterClear() {
-    this.filter?.reset()
-    this.grid!.reloadFilter();
-    this.cdRef.markForCheck();
-  }
-
   public getDuracao(row: RelatorioPlanoTrabalho): number {
     if (row.dataInicio && row.dataFim) {
       const start = moment(row.dataInicio, 'YYYY-MM-DD');
@@ -312,11 +286,5 @@ export class RelatorioPlanoTrabalhoComponent extends PageListBase<RelatorioPlano
     }
 
     return of(null);
-  }
-
-  public onValueChange(event: Event) {
-    if (this.loaded) {
-      this.onButtonFilterClick(this.filter!);
-    }
   }
 }

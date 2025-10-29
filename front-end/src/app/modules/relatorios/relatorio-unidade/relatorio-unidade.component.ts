@@ -9,24 +9,20 @@ import { PageListBase } from "src/app/modules/base/page-list-base";
 import { LookupItem } from "src/app/services/lookup.service";
 import { QueryOptions } from "src/app/dao/query-options";
 import { of } from "rxjs";
-
+import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.component";
 @Component({
   selector: 'relatorio-unidade',
   templateUrl: './relatorio-unidade.component.html',
   styleUrls: ['./relatorio-unidade.component.scss']
 })
-export class RelatorioUnidadeComponent extends PageListBase<RelatorioUnidade, RelatorioUnidadeDaoService> {
+export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioUnidade, RelatorioUnidadeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
-  public unidadeDao: UnidadeDaoService;
+  public permissao: string = 'MOD_RELATORIO_UNIDADE';
   public botoes: ToolbarButton[] = [];
-  public unidadeId: string = '';
-  public loaded: boolean = false;
-  public unidades?: any[];
 
   constructor(public injector: Injector) {
     super(injector, RelatorioUnidade, RelatorioUnidadeDaoService);
-    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
 
     this.filter = this.fh.FormBuilder({
       unidade_id: { default: this.auth.unidade?.id },
@@ -47,21 +43,6 @@ export class RelatorioUnidadeComponent extends PageListBase<RelatorioUnidade, Re
     this.filter.get('unidade_id')?.updateValueAndValidity();
 
     this.orderBy = [['unidadeHierarquia', 'asc'], ['sigla', 'asc']];
-  }
-
-  public requiredValidator(control: AbstractControl): ValidationErrors | null { 
-      return this.util.empty(control.value) ? { errorMessage: "Obrigatório" } : null;
-  }
-
-  public async ngOnInit() {
-      super.ngOnInit();
-
-      if (this.auth.unidade) {
-        const unidades = (await this.unidadeDao.subordinadas(this.auth?.unidade?.id))
-          .map((item: any) => item.id);
-        unidades.push(this.auth.unidade.id);
-        this.unidades = unidades;
-      }
   }
 
   public ngAfterViewInit(): void {
@@ -116,12 +97,6 @@ export class RelatorioUnidadeComponent extends PageListBase<RelatorioUnidade, Re
     return result;
   };
 
-  public onFilterClear() {
-    this.filter?.reset()
-    this.grid!.reloadFilter();
-    this.cdRef.markForCheck();
-  }
-
   public onButtonFilterClick = (filter: FormGroup) => {
     let form: any = filter.value;
     let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
@@ -150,9 +125,5 @@ export class RelatorioUnidadeComponent extends PageListBase<RelatorioUnidade, Re
     }
 
     return of(null);
-  }
-
-  public onValueChange(event: Event) {
-    this.onButtonFilterClick(this.filter!);
   }
 }

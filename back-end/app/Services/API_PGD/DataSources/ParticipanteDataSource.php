@@ -14,12 +14,6 @@ class ParticipanteDataSource extends DataSource
         }
 
         $participante = Usuario::with([
-                /*'ultimoPlanoTrabalho',
-                'ultimoPlanoTrabalho.tipoModalidade',
-                'ultimoPlanoTrabalho.ultimaAssinatura',
-                'ultimaParticipacaoPrograma',
-                'ultimaParticipacaoPrograma.programa.unidade',
-                'unidadesIntegrantes.unidade',*/
                 'unidadesIntegrantes' => function($query) {
                     $query->whereHas('atribuicoes', function ($query) {
                         $query
