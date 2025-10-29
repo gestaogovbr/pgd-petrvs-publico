@@ -744,6 +744,8 @@ class UnidadeService extends ServiceBase
 
         $unidade->justificativa_ativacao_temporaria = $data['justificativa'];
         $unidade->data_ativacao_temporaria = Carbon::now();
+        $unidade->data_inicio_inativacao = Carbon::now();
+        $unidade->data_inativacao = null;
         $unidade->save();
         
         return $unidade;
