@@ -5,37 +5,11 @@ namespace App\Services;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\DB;
 
-class IndicadoresEntregaEntregaService extends ServiceBase
+class IndicadoresEntregaEntregaService extends IndicadoresEntregaService
 {
-    private $unidadeId;
-    private $unidadeIds;
-    private $subordinadas;
-    private $unidadeService;
-
-    public function __construct() {}
-
     public function query($data)
     {
-        $this->unidadeId = $this->extractWhere($data, "unidade_id");
-        $this->subordinadas = $this->extractWhere($data, "incluir_unidades_subordinadas");
-
-        if (isset($this->unidadeId[2])) {
-            $unidadeIds = [$this->unidadeId[2]];
-
-            if (isset($this->subordinadas[2])) {
-                $this->unidadeService = new UnidadeService();
-                $subordinadasIds = $this->unidadeService->subordinadas(
-                    $this->unidadeId[2]
-                )->pluck('id')->toArray();
-                $unidadeIds = array_merge($unidadeIds, $subordinadasIds);
-            }
-
-            $this->unidadeIds = implode(",",
-                array_map(function($item) {
-                    return "'".$item."'";
-                }, $unidadeIds)
-            );
-        }
+        $this->prepareQuery($data);
 
         $filtros = '';
 

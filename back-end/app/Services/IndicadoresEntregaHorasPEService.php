@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
-use App\Services\ServiceBase;
 use Illuminate\Support\Facades\DB;
 
-class IndicadoresEntregaAvaliacaoService extends IndicadoresEntregaService
+class IndicadoresEntregaHorasPEService extends IndicadoresEntregaService
 {
     public function query($data)
     {
@@ -37,14 +36,19 @@ class IndicadoresEntregaAvaliacaoService extends IndicadoresEntregaService
         }
 
         $sql = <<<TEXT
-            SELECT a.nota as id, REPLACE(JSON_UNQUOTE(a.nota), '"', '') as categoria, count(*) as total
+            SELECT
+                ROUND(AVG(CASE REPLACE(JSON_UNQUOTE(a.nota), '"', '') 
+                    WHEN 'Excepcional' then 5
+                    WHEN 'Alto desempenho' then 4
+                    WHEN 'Adequado' then 3
+                    WHEN 'Inadequado' then 2
+                    WHEN 'Não executado' then 1
+                END), 2) as media
             FROM planos_entregas pe
-            left join avaliacoes a on pe.avaliacao_id = a.id and a.deleted_at is null
+            left join  avaliacoes a on pe.avaliacao_id = a.id and a.deleted_at is null
             where pe.deleted_at is null
               and pe.avaliacao_id is not null
               $filtros
-            group by a.nota, REPLACE(JSON_UNQUOTE(a.nota), '"', '')
-            order by 3 desc
         TEXT;
 
         $rows = DB::select($sql, $params);

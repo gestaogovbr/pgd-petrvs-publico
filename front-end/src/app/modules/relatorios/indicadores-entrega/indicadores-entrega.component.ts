@@ -33,7 +33,7 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
         backgroundColor: CHART_COLORS,
       },
     ],
-  };
+  }
 
   public pieChartOptions: ChartConfiguration['options'] = {
     responsive: true,
@@ -69,7 +69,7 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
         }
       },
     },
-  };
+  }
 
   public pieChartAvaliacoesData: ChartData<'pie', number[], string | string[]> = {
     labels: [],
@@ -79,7 +79,46 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
         backgroundColor: CHART_COLORS,
       },
     ],
-  };
+  }
+
+  public barChartOptions: ChartConfiguration<'bar'>['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {},
+      y: {
+        beginAtZero: true,
+        min: 0,
+        max: 5,
+        suggestedMax: 5,
+        ticks: {
+          stepSize: 1,
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: true,
+      },
+      datalabels: {
+        anchor: 'end',
+        align: 'end',
+        formatter: (value) => 
+            Number(value).toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }),
+      },
+    },
+  }
+
+  public barChartData: ChartData<'bar'> = {
+    labels: ['Período total'],
+    datasets: [
+      { data: [], label: 'Planos de Trabalho' },
+      { data: [], label: 'Planos de Entrega' },
+    ],
+  }
 
   constructor(public injector: Injector, dao: IndicadorEntregaDaoService) {
       super(injector, IndicadorEntrega, IndicadorEntregaDaoService);
@@ -132,6 +171,13 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
       const totalAvaliacoes = avaliacoes.reduce((sum, row) => sum + row.total, 0);
       this.pieChartAvaliacoesData.labels = avaliacoes.map(row => row.categoria);
       this.pieChartAvaliacoesData.datasets[0].data = avaliacoes.map(row => Number(row.total));
+
+      this.barChartData.datasets[1].data = [rows[0].horas.trabalhos ?? 0];
+      this.barChartData.datasets[0].data = [rows[0].horas.entregas ?? 0];
+      this.barChartData.labels = ['Diferença: ' +
+        (Number(rows[0].horas.trabalhos) - Number(rows[0].horas.entregas))
+        .toFixed(2).replace('.', ',')
+      ];
 
       this.charts.forEach(chart => chart.update());
     }

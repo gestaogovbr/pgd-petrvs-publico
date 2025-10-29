@@ -67,12 +67,11 @@
                     [data]="pieChartData"
                     [type]="'pie'"
                     [options]="pieChartOptions"
-                    style="max-width: 90%;"
                 ></canvas>
             </div>
         </div>
         <div class="grafico">
-            <div class="titulo">Taxa de alocação de horas</div>
+            <div class="titulo">Distribuição das avaliações dos planos de entregas</div>
             <p *ngIf="!pieChartAvaliacoesData.labels?.length" class="no-data">Sem dados para exibir</p>
             <div class="grafico-wrapper">
                 <canvas
@@ -81,8 +80,21 @@
                     [data]="pieChartAvaliacoesData"
                     [type]="'pie'"
                     [options]="pieChartOptions"
-                    style="max-width: 90%;"
                 ></canvas>
+            </div>
+        </div>
+        <div class="grafico">
+            <div class="titulo">Coerência entre desempenhos dos Planos de Trabalho (PTs) e do Plano de Entregas (PE)</div>
+            <p *ngIf="!barChartData.datasets[0].data?.length" class="no-data">Sem dados para exibir</p>
+            <div class="grafico-wrapper">
+                <canvas
+                    baseChart
+                    *ngIf="barChartData.datasets[0].data?.length"
+                    [data]="barChartData"
+                    [options]="barChartOptions"
+                    [type]="'bar'"
+                >
+                </canvas>
             </div>
         </div>
     </div>

@@ -99,7 +99,6 @@ class IndicadoresGestaoService extends ServiceBase
 
     public function queryUnidades($data)
     {
-
         $sql = "SELECT pe.id
                 FROM planos_entregas pe
                 WHERE pe.unidade_id = uni.id
