@@ -115,7 +115,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 			"planejamento:id,nome",
 			"programa:id,nome",
 			"cadeia_valor:id,nome",
-			"unidade:id,sigla,path",
+			"unidade:id,sigla,path,data_inativacao",
 			"entregas.entrega",
 			"entregas.objetivos.objetivo",
 			"entregas.processos.processo",
@@ -981,11 +981,15 @@ export class PlanoEntregaListComponent extends PageListBase<
 						this.auth.isGestorLinhaAscendente(planoEntrega.unidade!))
 				);
 			case this.BOTAO_CLONAR:
+				const unidadeAtiva =
+					!planoEntrega.unidade?.data_inativacao ||
+					planoEntrega.unidade?.data_inativacao === ("" as any);
 				return (
 					this.auth.hasPermissionTo("MOD_PENT_INCL") &&
 					["CONCLUIDO", "AVALIADO"].includes(
 						this.planoEntregaService.situacaoPlano(planoEntrega)
-					)
+					) &&
+					unidadeAtiva
 				);
 		}
 		return false;
