@@ -682,6 +682,7 @@ class PlanoEntregaService extends ServiceBase
     private function planosUnidadeComPendencias($unidadeId): bool
     {
         $planos = PlanoEntrega::where('unidade_id', $unidadeId)
+            ->whereNotIn('status', ['CANCELADO', 'SUSPENSO'])
             ->orderByDesc('numero')
             ->take(2)
             ->get();
