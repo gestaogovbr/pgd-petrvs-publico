@@ -1,7 +1,8 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [selectable]="selectable" (select)="onSelect($event)"
     [hasAdd]="auth.hasPermissionTo('MOD_SIAPE_BLACKLIST_INCL')"
-    [hasEdit]="auth.hasPermissionTo('MOD_SIAPE_BLACKLIST_EDT')">
+    [hasEdit]="auth.hasPermissionTo('MOD_SIAPE_BLACKLIST_EDT')"
+    [fields]="fields" [leftJoin]="leftJoin">
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
@@ -11,6 +12,8 @@
     </filter>
     <columns>
         <column title="CPF" field="cpf"></column>
+        <column title="Nome" field="nome"></column>
+        <column title="Matricula" field="matricula"></column>
         <column title="Status" field="inativado">
             <ng-template #columnTemplate let-row>
                 <badge [color]="row.inativado ? 'danger' : 'success'" [label]="row.inativado ? 'Inativado' : 'Ativo'"></badge>

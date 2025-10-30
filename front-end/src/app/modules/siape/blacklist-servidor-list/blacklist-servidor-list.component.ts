@@ -21,6 +21,8 @@ export class BlacklistServidorListComponent extends PageListBase<SiapeBlacklistS
     /* Inicializações */
     this.title = this.lex.translate('CPFs indisponíveis');
     this.code = "MOD_SIAPE_BLACKLIST";
+    this.fields = [ "usuarios.matricula", "usuarios.nome", "siape_blacklist_servidores.*" ];
+    this.leftJoin = [["usuarios", "siape_blacklist_servidores.cpf", "usuarios.cpf"]];
     this.filter = this.fh.FormBuilder({
       cpf: { default: '' },
       inativado: { default: null }

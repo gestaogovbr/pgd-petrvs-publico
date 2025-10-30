@@ -92,6 +92,8 @@ export class GridComponent extends ComponentBase implements OnInit {
 	@Input() orderBy?: QueryOrderBy[];
 	@Input() groupBy?: GroupBy[];
 	@Input() join: string[] = [];
+	@Input() leftJoin?: [string, string, string][];
+	@Input() fields?: string[];
 	@Input() relatorios: LookupItem[] = [];
 	@Input() form: FormGroup = new FormGroup({});
 	@Input() noHeader?: string;
@@ -505,6 +507,8 @@ export class GridComponent extends ComponentBase implements OnInit {
 			],
 			join: this.join || [],
 			limit: this.rowsLimit,
+			leftJoin: this.leftJoin,
+			fields: this.fields
 		};
 	}
 
