@@ -4,6 +4,9 @@
 - Não permitir a duplicidade de atribuições para o agente público
 ### Modificado
 - Desbloqueio da clonagem do Plano de Trabalho e Plano de Entrega para outros status
+- Regra de exclusão de agentes públicos: apenas os agentes com perfil colaborador (usuário externo) são passíveis de exclusão.
+- Aba "mais informações" de agentes públicos: campos do formulário são apenas para leitura, impossibiliando a edição por essa tela.
+
 ## 2.7.6 24/10/2025
 ### Corrigido
 - Colaboradores externos com vinculo no siape.
