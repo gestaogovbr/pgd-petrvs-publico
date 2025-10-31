@@ -1,5 +1,6 @@
 ## 2.7.7 29/10/2025
-
+### Corrigido
+- Correção do bloqueio de planos de trabalho
 ## 2.7.6 24/10/2025
 ### Corrigido
 - Colaboradores externos com vinculo no siape.
