@@ -84,6 +84,11 @@ trait Atribuicao
             }
         }
 
+        if (!$unidadeDestino->executora) {
+            $this->alteracoes = ['info' => sprintf('Não é possível atribuir Colaborador em unidade não executora!', $usuario->id, $unidadeDestino->id)];
+            return;
+        }
+        
         $this->alteracoes = ['lotacao' => sprintf('Atribuindo Colaborador ao servidor %s na Unidade %s', $usuario->id, $unidadeDestino->id)];
         $this->lotaServidor(EnumAtribuicao::COLABORADOR, $integranteNovoOuExistente);
     }
