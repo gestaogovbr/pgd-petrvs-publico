@@ -42,3 +42,78 @@
   </div>
 
 </div>
+
+<div class="mt-4">
+  <h5 class="mb-3">Pendências da unidade</h5>
+
+  <div class="row">
+    <div class="col-12 col-md-6 mb-4">
+      <div class="card h-100">
+        <div class="card-header bg-light">
+          Registros de Execução que precisam de avaliação
+        </div>
+        <div class="card-body">
+          <div *ngIf="!registrosExecucao.length" class="text-muted">Nenhum registro encontrado.</div>
+          <ul class="list-group" *ngIf="registrosExecucao.length">
+            <li class="list-group-item" *ngFor="let r of registrosExecucao; trackBy: trackById">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <div><strong>Status:</strong> {{r.status}}</div>
+                  <div><strong>Período:</strong> {{formatDate(r.data_inicio)}} - {{formatDate(r.data_fim)}}</div>
+                  <div><strong>Plano Trabalho:</strong> {{r.plano_trabalho?.numero}}</div>
+                </div>
+                <button class="btn btn-primary btn-sm align-self-start" (click)="abrirConsolidacoes()">Avaliar</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 mb-4">
+      <div class="card h-100">
+        <div class="card-header bg-light">
+          Planos de Trabalho que precisam da sua assinatura
+        </div>
+        <div class="card-body">
+          <div *ngIf="!planosTrabalhos.length" class="text-muted">Nenhum plano encontrado.</div>
+          <ul class="list-group" *ngIf="planosTrabalhos.length">
+            <li class="list-group-item" *ngFor="let p of planosTrabalhos; trackBy: trackById">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <div><strong>Número:</strong> {{p.numero}}</div>
+                  <div><strong>Status:</strong> {{p.status}}</div>
+                  <div><strong>Período:</strong> {{formatDate(p.data_inicio)}} - {{formatDate(p.data_fim)}}</div>
+                  <div><strong>Usuário:</strong> {{p.usuario?.nome}}</div>
+                </div>
+                <button class="btn btn-primary btn-sm align-self-start" (click)="abrirPlanosTrabalho(p.numero)">Assinar</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 mb-4">
+      <div class="card">
+        <div class="card-header bg-light">
+          Entregas de que precisam de registros de execução
+        </div>
+        <div class="card-body">
+          <div *ngIf="!planosEntregaEntregas.length" class="text-muted">Nenhuma entrega encontrada.</div>
+          <ul class="list-group" *ngIf="planosEntregaEntregas.length">
+            <li class="list-group-item" *ngFor="let e of planosEntregaEntregas; trackBy: trackById">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <div><strong>Plano Entrega:</strong> {{e.plano_entrega?.numero}} - {{e.plano_entrega?.nome}}</div>
+                  <div><strong>Descrição:</strong> {{e.descricao}}</div>
+                </div>
+                <button class="btn btn-primary btn-sm align-self-start" (click)="abrirPlanosEntregas(e.plano_entrega?.nome)">Registrar Execução</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

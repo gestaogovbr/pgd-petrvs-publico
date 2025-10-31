@@ -27,7 +27,8 @@
             <input-switch [size]="2" label="Arquivados" controlName="arquivados" [control]="filter!.controls.arquivados" labelInfo="Listar também os planos de trabalho arquivados"></input-switch>
         </div>
         <div class="row">
-          <input-search [size]="6" [control]="filter!.controls.tipo_modalidade_id" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao"></input-search>
+          <input-text [size]="2" [label]="lex.translate('Nº')" controlName="numero" [control]="filter!.controls.numero" placeholder="Nº" [attr.maxlength]=250></input-text>
+          <input-search [size]="4" [control]="filter!.controls.tipo_modalidade_id" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao"></input-search>
           <input-select [size]="2" label="Data" itemTodos="- Nenhum -" [valueTodos]="null" controlName="data_filtro" [control]="filter!.controls.data_filtro" [items]="DATAS_FILTRO"></input-select>
           <input-datetime [size]="2" date [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Início" controlName="data_filtro_inicio" [control]="filter!.controls.data_filtro_inicio" labelInfo="Data início do período"></input-datetime>
           <input-datetime [size]="2" date [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Fim" controlName="data_filtro_fim" [control]="filter!.controls.data_filtro_fim" labelInfo="Data fim do período"></input-datetime>
