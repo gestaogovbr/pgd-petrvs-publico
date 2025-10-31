@@ -103,7 +103,8 @@ class Usuario extends Authenticatable implements AuditableContract
         'data_modificacao',
         'usuario_externo',
         'is_admin',
-        'pedagio'
+        'pedagio',
+        'data_ativacao_temporaria' /* date; */
     ];
 
     public function proxyFill($dataOrEntity, $unidade, $action)

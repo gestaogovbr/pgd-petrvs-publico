@@ -67,4 +67,8 @@ export class BlacklistServidorListComponent extends PageListBase<SiapeBlacklistS
 
     return result;
   }
+
+  public statusTitleHint = () : string => {
+    return "O respectivo CPF não retornado pelo SIAPE deve passar por um processamento diário no PGD Petrvs e ser marcado como inativo";
+  }
 }

@@ -13,10 +13,10 @@
     <columns>
         <column title="CPF" field="cpf"></column>
         <column title="Nome" field="nome"></column>
-        <column title="Matricula" field="matricula"></column>
-        <column title="Status" field="inativado">
-            <ng-template #columnTemplate let-row>
-                <badge [color]="row.inativado ? 'danger' : 'success'" [label]="row.inativado ? 'Inativado' : 'Ativo'"></badge>
+        <column title="Matrícula" field="matricula"></column>
+        <column title="Status" field="inativado" [template]="columnStatus" [titleHint]="statusTitleHint()">
+            <ng-template #columnStatus let-row="row">
+                <badge [color]="row.inativado ? 'secondary' : 'success'" [label]="row.inativado ? 'Inativado' : 'Ativo'"></badge>
             </ng-template>
         </column>
         <column title="Criado em" field="created_at" type="datetime"></column>
