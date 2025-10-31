@@ -1,10 +1,12 @@
 import { Component, Injector, ViewChild, TemplateRef } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
+import { Perfil } from 'src/app/models/perfil.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
@@ -46,7 +48,6 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     }, this.cdRef, this.validateJustificativa);
 
     this.addOption(this.OPTION_INFORMACOES, "MOD_USER");
-    this.addOption(this.OPTION_EXCLUIR, "MOD_USER_EXCL");
   }
 
   public validateJustificativa = (control: AbstractControl, controlName: string) => {
@@ -64,8 +65,10 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
       result.push({ label: "Ativar temporariamente", icon: "bi bi-check2",  onClick: (usuario: Usuario) => { this.abrirFormAtivar(usuario); }});
     }
 
-    // Testa se o usuário logado possui permissão para gerenciar as atribuições do usuário do grid
-    if (this.auth.hasPermissionTo("MOD_USER_ATRIB")) result.push({ label: "Atribuições", icon: "bi bi-list-task",  onClick: (usuario: Usuario) => { this.go.navigate({ route: ['configuracoes', 'usuario', usuario.id, 'integrante'] }, { metadata: { entity: row } }); }});
+    if(row.perfil.nivel === Perfil.NIVEL.COLABORADOR && !!row.usuario_externo ) {
+      result.push(this.OPTION_EXCLUIR)
+    }
+
     return result;
   }
 
