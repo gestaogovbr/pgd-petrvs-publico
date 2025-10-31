@@ -289,7 +289,7 @@ class PlanoTrabalhoService extends ServiceBase
             }
 
             /* Só é permitido o cadastro de planos em unidades definidas como executoras */
-            if(!$this->isUnidadeExecutora($data['unidade_id'])){
+            if(!$this->unidadeService->isUnidadeExecutora($data['unidade_id'])){
                 throw new ServerException("ValidatePlanoEntrega", "Não é possível criar um plano para unidades não executoras.");
             }
 
@@ -1397,11 +1397,5 @@ class PlanoTrabalhoService extends ServiceBase
 
         return in_array($planoAnterior->status, $statusesPendentes, true);
     }
-
-    private function isUnidadeExecutora($unidadeId){
-        $unidadeService = new UnidadeService();
-        return $unidadeService->isUnidadeExecutora($unidadeId);
-    }
-
 
 }
