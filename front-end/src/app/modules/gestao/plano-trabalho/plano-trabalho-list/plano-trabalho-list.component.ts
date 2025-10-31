@@ -762,7 +762,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 					case this.OPTION_LOGS:
 						return true;
 					case this.BOTAO_CLONAR:
-						return (planoConcluido || planoAvaliado) && this.auth.hasPermissionTo("MOD_PTR_INCL");
+						return (!planoAguardandoAssinatura) && this.auth.hasPermissionTo("MOD_PTR_INCL");
 				}
 			}
 		}
