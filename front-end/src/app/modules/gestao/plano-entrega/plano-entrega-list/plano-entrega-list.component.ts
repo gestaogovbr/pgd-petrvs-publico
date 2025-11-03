@@ -983,7 +983,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 			case this.BOTAO_CLONAR:
 				return (
 					this.auth.hasPermissionTo("MOD_PENT_INCL") &&
-					["CONCLUIDO", "AVALIADO"].includes(
+					!["HOMOLOGANDO"].includes(
 						this.planoEntregaService.situacaoPlano(planoEntrega)
 					)
 				);
