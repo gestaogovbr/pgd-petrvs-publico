@@ -2,7 +2,6 @@ import { Component, Injector, QueryList, ViewChild, ViewChildren } from "@angula
 import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
-import { QueryOptions } from "src/app/dao/query-options";
 import { Chart, ChartConfiguration, ChartData } from 'chart.js';
 import { BaseChartDirective } from "ng2-charts";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -171,10 +170,10 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
       this.pieChartAvaliacoesData.labels = avaliacoes.map(row => row.categoria);
       this.pieChartAvaliacoesData.datasets[0].data = avaliacoes.map(row => Number(row.total));
 
-      this.barChartData.datasets[1].data = [rows[0].horas.trabalhos ?? 0];
-      this.barChartData.datasets[0].data = [rows[0].horas.entregas ?? 0];
+      this.barChartData.datasets[1].data = [rows[0].desempenho.trabalhos ?? 0];
+      this.barChartData.datasets[0].data = [rows[0].desempenho.entregas ?? 0];
       this.barChartData.labels = ['Diferença: ' +
-        (Number(rows[0].horas.trabalhos) - Number(rows[0].horas.entregas))
+        (Number(rows[0].desempenho.trabalhos) - Number(rows[0].desempenho.entregas))
         .toFixed(2).replace('.', ',')
       ];
 
@@ -231,9 +230,18 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
       if (this.grid && this.grid.query) {
       }
       this.grid?.query?.reload(queryOptions);
+      this.dao!.queryHoras({
+        where: queryOptions.where
+      }).subscribe(result => {
+        this.graficoHoras(result);
+      });
     } else {
       this.filter!.markAllAsTouched(); 
     }
+  }
+
+  public graficoHoras(result: any) {
+
   }
 
 }

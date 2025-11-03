@@ -48,4 +48,38 @@ class IndicadoresEntregaController extends ControllerBase {
             return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
     }
+
+    public function getHoras(Request $request) {
+        if (!$this->getUsuario($request)->hasPermissionTo('MOD_IND_ENTREGAS')){
+            throw new ServerException("RelatorioCapacidade", "Acesso negado aos Indicadores de Entregas.");
+        }
+
+        try {
+            $data = $request->validate([
+                'page' => ['nullable'],
+                'limit' => ['nullable'],
+                'orderBy' => ['array'],
+                'deleted' => ['nullable'],
+                'where' => ['array']
+            ]);
+
+            $service = new IndicadoresEntregaService();
+            $result = $service->query($data);
+
+            return response()->json([
+                'success' => true,
+                'count' => $result['count'],
+                'rows' => $result['rows'],
+                'extra' => []
+            ]);
+
+        }  catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
+        }
+    }
 }

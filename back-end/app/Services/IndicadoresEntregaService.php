@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Services\ServiceBase;
-use Illuminate\Support\Facades\DB;
 
 class IndicadoresEntregaService extends ServiceBase
 {
@@ -24,11 +23,11 @@ class IndicadoresEntregaService extends ServiceBase
         $indicadoresEntregaAvaliacaoService = new IndicadoresEntregaAvaliacaoService();
         $avaliacoes = $indicadoresEntregaAvaliacaoService->query($data);
 
-        $indicadoresHorasPEAvaliacaoService = new IndicadoresEntregaHorasPEService();
-        $mediaHorasPE = $indicadoresHorasPEAvaliacaoService->query($data);
+        $indicadoresEntregaDesempenhoPEService = new IndicadoresEntregaDesempenhoPEService();
+        $mediaAvaliacoesPE = $indicadoresEntregaDesempenhoPEService->query($data);
 
-        $indicadoresHorasPTAvaliacaoService = new IndicadoresEntregaHorasPTService();
-        $mediaHorasPT = $indicadoresHorasPTAvaliacaoService->query($data);
+        $indicadoresEntregaDesempenhoPTService = new IndicadoresEntregaDesempenhoPTService();
+        $mediaAvaliacoesPT = $indicadoresEntregaDesempenhoPTService->query($data);
 
         return [
             'count' => 0,
@@ -36,9 +35,9 @@ class IndicadoresEntregaService extends ServiceBase
                 [
                     'entregas' => $entregas,
                     'avaliacoes' => $avaliacoes,
-                    'horas' => [
-                        'entregas'  => $mediaHorasPE[0]->media ?? 0,
-                        'trabalhos' => $mediaHorasPT[0]->media ?? 0
+                    'desempenho' => [
+                        'entregas'  => $mediaAvaliacoesPE[0]->media ?? 0,
+                        'trabalhos' => $mediaAvaliacoesPT[0]->media ?? 0
                     ],
                 ]
             ]

@@ -18,7 +18,7 @@ interface IndicadorEntregaHoras {
 export class IndicadorEntrega extends Base {
     public entregas: IndicadorEntregaEntrega[] = [];
     public avaliacoes: IndicadorEntregaAvaliacao[] = [];
-    public horas: IndicadorEntregaHoras = { entregas: 0, trabalhos: 0 };
+    public desempenho: IndicadorEntregaHoras = { entregas: 0, trabalhos: 0 };
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }
