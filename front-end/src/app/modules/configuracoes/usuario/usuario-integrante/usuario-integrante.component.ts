@@ -68,7 +68,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public async onUnidadeChange(event: Event) {
     const unidade_id = this.form?.controls.unidade_id.value;
     let atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO
-    let atribuicoesSelecionadas = this.form?.controls.atribuicoes.value.map((item: { key: () => any; }) => item.key)
+    const atribuicoesSelecionadas = this.form?.controls.atribuicoes.value.map((item: { key: () => any; }) => item.key)
     if (unidade_id) {
       const unidade = await this.unidadeDao.getById(unidade_id);
 
