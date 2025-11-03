@@ -401,8 +401,10 @@ export class GridComponent extends ComponentBase implements OnInit {
 
 	public queryInit(events: queryEvents = {}) {
 		this.query = this.dao?.query(this.queryOptions, {
+			before: events.before,
 			resolve: events.resolve,
 			after: () => {
+				events.after && events.after();
 				this.cdRef.detectChanges();
 					setTimeout(() => {
 						// Dispose existing tooltips to prevent duplicates

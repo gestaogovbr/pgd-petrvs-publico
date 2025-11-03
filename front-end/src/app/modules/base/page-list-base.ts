@@ -121,15 +121,24 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
 
   public onLoad() {
     this.grid?.queryInit({
-      resolve: (rows) => this.onQueryResolve(rows)
+      before: () => this.beforeQuery(),
+      resolve: (rows) => this.onQueryResolve(rows),
+      after: () => this.afterQuery()
     });
     if(!this.grid) this.query = this.dao?.query(this.queryOptions, {
+      before: () => this.beforeQuery(),
       resolve: (rows) => this.onQueryResolve(rows),
-      after: () => this.cdRef.detectChanges()
+      after: () => this.afterQuery()
     });
   }
 
   public onQueryResolve(rows: any | null) {
+  }
+
+  protected beforeQuery() {}
+
+  protected afterQuery() {
+    this.cdRef.detectChanges();
   }
 
   ngOnInit() {
