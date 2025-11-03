@@ -241,7 +241,12 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     if (confirm) {
       let index = this.items.indexOf(entrega);
       if (this.isNoPersist) {
-        entrega._status = "DELETE";
+        if(entrega._status == "ADD"){
+          this.items.splice(index, 1);
+          this.cdRef.detectChanges();
+        }
+        else
+          entrega._status = "DELETE";
       } else {
         this.dao!.delete(entrega).then(() => {
           //this.grid!.query!.removeId(entrega.id);
