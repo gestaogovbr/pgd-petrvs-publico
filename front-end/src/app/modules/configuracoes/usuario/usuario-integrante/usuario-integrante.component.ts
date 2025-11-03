@@ -89,7 +89,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
           }
         })
       }
-      let isLotado = atribuicoesSelecionadas.includes('LOTADO')
+      const isLotado = atribuicoesSelecionadas.includes('LOTADO')
       
       atribuicoes = atribuicoes.filter(
         atribuicao => atribuicao.key == 'COLABORADOR'? !isLotado : !atribuicoesSelecionadas.includes(atribuicao.key) 
