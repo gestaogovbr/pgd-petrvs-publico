@@ -193,11 +193,11 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     if(row.key == "LOTADO")
       return false;
     
-    let atribuicaoExcluida = row.key;
+    const atribuicaoExcluida = row.key;
 
-    let isLotado =  this.form?.controls.atribuicoes.value.filter((val: any) => val.key == "LOTADO").length>0
+    const isLotado =  this.form?.controls.atribuicoes.value.filter((val: any) => val.key == "LOTADO").length>0
 
-    let atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO  
+    const atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO  
     this.atribuicoes = atribuicoes.filter(atribuicao =>
       
          atribuicao.key == 'COLABORADOR'? !isLotado : atribuicao.key == atribuicaoExcluida || this.atribuicoes.includes(atribuicao)
