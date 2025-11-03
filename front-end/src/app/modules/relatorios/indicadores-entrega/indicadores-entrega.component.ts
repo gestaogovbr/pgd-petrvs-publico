@@ -157,7 +157,6 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
   }
 
   public onQueryResolve(rows: IndicadorEntrega[] | null) {
-
     this.loading = false;
     
     if (rows && rows.length) {
@@ -185,14 +184,21 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
 
   public ngAfterViewInit(): void {
       super.ngAfterViewInit();
-      this.loaded = true;
+  }
+
+  protected beforeQuery(): void {
+    super.beforeQuery();
+    this.loading = true;
+  }
+
+  protected afterQuery(): void {
+    super.afterQuery();
+    this.loading = false;
   }
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
-
-    this.loading = true;
 
     if (form.unidade_id?.length) {
       result.push(["unidade_id", "==", form.unidade_id]);
@@ -214,8 +220,20 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
       result.push(["somente_vigentes", "==", 1]);
     }
 
-
     return result;
-  };
+  }
+
+  public onButtonFilterClick = (filter: FormGroup) => {
+    let form: any = filter.value;
+    let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
+
+    if (this.filter!.valid) {
+      if (this.grid && this.grid.query) {
+      }
+      this.grid?.query?.reload(queryOptions);
+    } else {
+      this.filter!.markAllAsTouched(); 
+    }
+  }
 
 }

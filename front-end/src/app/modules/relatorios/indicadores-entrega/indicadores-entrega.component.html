@@ -6,7 +6,8 @@
     <filter 
         [form]="filter" 
         [where]="filterWhere" 
-        [submit]="filterSubmit.bind(this)" 
+        [submit]="filterSubmit.bind(this)"
+        [filter]="onButtonFilterClick"
         filterLabel="Consultar"
     >
         <div class="row">   
