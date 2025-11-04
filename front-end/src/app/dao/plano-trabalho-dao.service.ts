@@ -164,5 +164,17 @@ export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
     });
   }
 
+  public planosUsuarioComPendencias(usuarioId: string) {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/planos-usuario-com-pendencias', { usuario_id: usuarioId }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(response?.dados || false);
+        }
+      }, error => reject(error));
+    });
+  }
+
 }
 

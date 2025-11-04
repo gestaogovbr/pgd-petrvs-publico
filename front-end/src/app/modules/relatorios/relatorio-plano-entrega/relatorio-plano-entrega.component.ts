@@ -6,36 +6,29 @@ import { RelatorioPlanoEntregaDaoService } from "src/app/dao/relatorio-plano-ent
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
 import { RelatorioPlanoEntrega } from "src/app/models/relatorio-plano-entrega.model";
-import { PageListBase } from "src/app/modules/base/page-list-base";
 import { LookupItem } from "src/app/services/lookup.service";
 import { QueryOptions } from "src/app/dao/query-options";
 import { TipoAvaliacaoNotaDaoService } from "src/app/dao/tipo-avaliacao-nota-dao.service";
 import { of } from "rxjs";
+import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.component";
 
 @Component({
   selector: 'relatorio-plano-entrega',
   templateUrl: './relatorio-plano-entrega.component.html',
   styleUrls: ['./relatorio-plano-entrega.component.scss']
 })
-export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoEntrega, RelatorioPlanoEntregaDaoService> {
+export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<RelatorioPlanoEntrega, RelatorioPlanoEntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-
-  public usuarioDao: UsuarioDaoService;
-  public unidadeDao: UnidadeDaoService;
   public tipoAvaliacaoNotaDao: TipoAvaliacaoNotaDaoService;
-  public relatorioPlanoEntregaDao: RelatorioPlanoEntregaDaoService;
   public botoes: ToolbarButton[] = [];
-  public unidadeId: string = '';
-  public loaded: boolean = false;
   public tiposNotas: LookupItem[] = [];
-  public unidades?: any[];
+  public permissao: string = 'MOD_RELATORIO_PE';
 
   constructor(public injector: Injector, dao: RelatorioPlanoEntregaDaoService) {
       super(injector, RelatorioPlanoEntrega, RelatorioPlanoEntregaDaoService);
       this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
       this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
       this.tipoAvaliacaoNotaDao = injector.get<TipoAvaliacaoNotaDaoService>(TipoAvaliacaoNotaDaoService);
-      this.relatorioPlanoEntregaDao = injector.get<RelatorioPlanoEntregaDaoService>(RelatorioPlanoEntregaDaoService);
       this.title = "Relatório de Planos de Entrega";
       this.filter = this.fh.FormBuilder({
           unidade_id: { default: this.auth.unidade?.id },
@@ -72,24 +65,8 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
       this.orderBy = [['unidadeHierarquia', 'asc'], ['numero', 'asc']];
   }
 
-  public lotacaoValidator(control: AbstractControl): ValidationErrors | null
-  {
-    return !this.auth.unidade ? { errorMessage: "Usuário sem unidade de lotação" } : null;
-  }
-
-  public requiredValidator(control: AbstractControl): ValidationErrors | null { 
-      return this.util.empty(control.value) ? { errorMessage: "Obrigatório" } : null;
-  }
-
   public async ngOnInit() {
       super.ngOnInit();
-
-      if (this.auth.unidade) {
-        const unidades = (await this.unidadeDao.subordinadas(this.auth?.unidade?.id))
-          .map((item: any) => item.id);
-        unidades.push(this.auth.unidade.id);
-        this.unidades = unidades;
-      }
 
       this.tipoAvaliacaoNotaDao.query({ orderBy: [['sequencia', 'asc']] })
           .asPromise().then(notas => {
@@ -107,7 +84,6 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
   public ngAfterViewInit(): void {
       super.ngAfterViewInit();
       this.loaded = true;
-      
   }
 
   public filterWhere = (filter: FormGroup) => {
@@ -185,12 +161,6 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
     return result;
   };
 
-  public onFilterClear() {
-    this.filter?.reset()
-    this.grid!.reloadFilter();
-    this.cdRef.markForCheck();
-  }
-
   public onButtonFilterClick = (filter: FormGroup) => {
     let form: any = filter.value;
     let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
@@ -219,10 +189,6 @@ export class RelatorioPlanoEntregaComponent extends PageListBase<RelatorioPlanoE
     }
 
     return of(null);
-  }
-
-  public onValueChange(event: Event) {
-    this.onButtonFilterClick(this.filter!);
   }
 
   public getDataHomologacao(row: any): string {

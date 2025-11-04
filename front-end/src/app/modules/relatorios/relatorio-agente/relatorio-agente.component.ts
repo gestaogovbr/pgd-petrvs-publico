@@ -5,38 +5,33 @@ import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
 import { RelatorioAgenteDaoService } from "src/app/dao/relatorio-agente-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { RelatorioAgente } from "src/app/models/relatorio-agente.model";
-import { PageListBase } from "src/app/modules/base/page-list-base";
 import { LookupItem } from "src/app/services/lookup.service";
 import { QueryOptions } from "src/app/dao/query-options";
 import { TipoModalidadeDaoService } from "src/app/dao/tipo-modalidade-dao.service";
 import { PerfilDaoService } from "src/app/dao/perfil-dao.service";
 import { of } from "rxjs";
+import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.component";
 
 @Component({
   selector: 'relatorio-agente',
   templateUrl: './relatorio-agente.component.html',
   styleUrls: ['./relatorio-agente.component.scss']
 })
-export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, RelatorioAgenteDaoService> {
+export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAgente, RelatorioAgenteDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
+  public permissao: string = 'MOD_RELATORIO_USUARIO';
   public perfilDao: PerfilDaoService;
-  public unidadeDao: UnidadeDaoService;
   public tipoModalidadeDao: TipoModalidadeDaoService;
   public botoes: ToolbarButton[] = [];
-  public unidadeId: string = '';
-  public loaded: boolean = false;
   public tiposModalidade: LookupItem[] = [];
   public tiposSituacao: LookupItem[] = [];
   public perfis: LookupItem[] = [];
-  public unidades?: any[];
 
   constructor(public injector: Injector, dao: RelatorioAgenteDaoService) {
       super(injector, RelatorioAgente, RelatorioAgenteDaoService);
       this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
-      this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
       this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
-      this.dao = injector.get<RelatorioAgenteDaoService>(RelatorioAgenteDaoService);
 
       this.filter = this.fh.FormBuilder({
         unidade_id: { default: this.auth.unidade?.id },
@@ -67,23 +62,12 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
       this.rowsLimit = 10;
   }
 
-  public requiredValidator(control: AbstractControl): ValidationErrors | null { 
-      return this.util.empty(control.value) ? { errorMessage: "Obrigatório" } : null;
-  }
-
   public async ngOnInit() {
       super.ngOnInit();
 
       if(this.metadata?.unidade_id) {
         this.filter?.controls.unidade_id.setValue(this.metadata?.unidade_id);
         this.saveUsuarioConfig();
-      }
-
-      if (this.auth.unidade) {
-        const unidades = (await this.unidadeDao.subordinadas(this.auth?.unidade?.id))
-          .map((item: any) => item.id);
-        unidades.push(this.auth.unidade.id);
-        this.unidades = unidades;
       }
 
       this.tipoModalidadeDao.query().asPromise().then(modalidades => {
@@ -96,8 +80,6 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
               key: item.key,
               value: item.value.replace('Perfil ', '')
             })); // Remove a palavra 'Perfil' dos perfis
-
-          console.log(this.perfis);
       });
   }
 
@@ -177,12 +159,6 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
     return result;
   };
 
-  public onFilterClear() {
-    this.filter?.reset()
-    this.grid!.reloadFilter();
-    this.cdRef.markForCheck();
-  }
-
   public onButtonFilterClick = (filter: FormGroup) => {
     let form: any = filter.value;
     let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
@@ -211,9 +187,5 @@ export class RelatorioAgenteComponent extends PageListBase<RelatorioAgente, Rela
     }
 
     return of(null);
-  }
-
-  public onValueChange(event: Event) {
-    this.onButtonFilterClick(this.filter!);
   }
 }

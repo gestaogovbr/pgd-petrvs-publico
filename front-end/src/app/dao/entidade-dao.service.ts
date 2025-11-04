@@ -38,4 +38,17 @@ export class EntidadeDaoService extends DaoBaseService<Entidade> {
     });
   }
 
+  public forcaEnvio(entidade_id: string) {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/forcar-envio', {
+        id: entidade_id,
+      }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
 }

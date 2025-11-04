@@ -396,4 +396,22 @@ class PlanoTrabalhoController extends ControllerBase {
             return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
+
+    public function planosUsuarioComPendencias(Request $request) {
+        try {
+            $data = $request->validate([
+                'usuario_id' => ['required']
+            ]);
+            return response()->json([
+                'dados' => $this->service->planosUsuarioComPendencias($data['usuario_id'])
+            ]);
+        }  catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+        }
+    }
 }
