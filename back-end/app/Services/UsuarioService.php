@@ -32,6 +32,7 @@ use App\Services\Siape\Consulta\Resources\UnidadeResource;
 use App\Services\Siape\Consulta\Resources\UnidadesResource;
 use App\Services\Siape\Consulta\SiapeUnidadeService;
 use App\Services\Siape\Consulta\SiapeUnidadesService;
+use App\Enums\StatusEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -633,7 +634,7 @@ class UsuarioService extends ServiceBase
       $unidadesFilhas = Unidade::whereIn('unidade_pai_id', $unidadesGerenciadas->pluck('id'))->get();
 
       // Registros de execução que precisam ser avaliados
-      $registrosExecucao = PlanoTrabalhoConsolidacao::where('status', 'CONCLUIDO')
+      $registrosExecucao = PlanoTrabalhoConsolidacao::where('status', StatusEnum::CONCLUIDO)
       ->whereHas('planoTrabalho', function($q) use ($unidadesGerenciadas) {
         $q->whereIn('unidade_id', $unidadesGerenciadas->pluck('id'));
       })->select([
@@ -648,7 +649,7 @@ class UsuarioService extends ServiceBase
       }]);
 
       // Planos de trabalhos que precisam da assinatura do chefe da unidade
-      $planosTrabalhos = PlanoTrabalho::where('status', 'AGUARDANDO_ASSINATURA')
+      $planosTrabalhos = PlanoTrabalho::where('status', StatusEnum::AGUARDANDO_ASSINATURA)
       ->whereHas('unidade', function($q) use ($unidadesGerenciadas) {
         $q->whereIn('id', $unidadesGerenciadas->pluck('id'));
       })
@@ -680,7 +681,7 @@ class UsuarioService extends ServiceBase
       ]);
 
       // Planos de entregas que precisam ser avaliados.
-      $planosEntregas = PlanoEntrega::where('status', 'CONCLUIDO')
+      $planosEntregas = PlanoEntrega::where('status', StatusEnum::CONCLUIDO)
       ->whereHas('unidade', function($q) use ($unidadesFilhas) {
         $q->whereIn('id', $unidadesFilhas->pluck('id'));
       })->select([

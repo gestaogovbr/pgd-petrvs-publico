@@ -16,6 +16,7 @@ use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 use App\Models\Programa;
 use App\Models\TipoAvaliacao;
 use App\Models\Unidade;
+use App\Enums\StatusEnum;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -93,7 +94,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'planoTrabalho.entregas.planoEntregaEntrega.processos.processo', 
       'planoTrabalho.tipoModalidade'
     ])->find($id);
-    $concluido = in_array($consolidacao->status, ["CONCLUIDO", "AVALIADO"]);
+    $concluido = in_array($consolidacao->status, [StatusEnum::CONCLUIDO, StatusEnum::AVALIADO]);
     $planosEntregasIds = array_map(fn($pe) => $pe->planoEntregaEntrega?->plano_entrega_id, $consolidacao->planoTrabalho->entregas?->all() ?? []);
     $planoTrabalho = $consolidacao->planoTrabalho;
     $atividades = Atividade::with([
@@ -324,7 +325,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
         $consolidacaoOcorrencia->save();
       }
       /* Atualiza o status */
-      $this->statusService->atualizaStatus($consolidacao, 'CONCLUIDO', 'A consolidação foi concluída nesta data.');
+      $this->statusService->atualizaStatus($consolidacao, StatusEnum::CONCLUIDO, 'A consolidação foi concluída nesta data.');
       DB::commit();
       return $this->consolidacaoDados($id);
     } catch (Throwable $e) {
@@ -354,8 +355,8 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       PlanoTrabalhoConsolidacaoAtividade::where("plano_trabalho_consolidacao_id", $id)->delete();
       PlanoTrabalhoConsolidacaoAfastamento::where("plano_trabalho_consolidacao_id", $id)->delete();
       PlanoTrabalhoConsolidacaoOcorrencia::where("plano_trabalho_consolidacao_id", $id)->delete();
-      $this->statusService->atualizaStatus($consolidacao, 'INCLUIDO', 'Cancelado a conclusão nesta data.');
-      $this->statusService->atualizaStatus($consolidacao->planoTrabalho, 'ATIVO', 'Cancelado a conclusão nesta data.');
+      $this->statusService->atualizaStatus($consolidacao, StatusEnum::INCLUIDO, 'Cancelado a conclusão nesta data.');
+      $this->statusService->atualizaStatus($consolidacao->planoTrabalho, StatusEnum::ATIVO, 'Cancelado a conclusão nesta data.');
 
       DB::commit();
       return $this->consolidacaoDados($id);
@@ -399,10 +400,10 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     $consolidacao = $avaliacao->planoTrabalhoConsolidacao;
     $consolidacao->avaliacao_id = $avaliacao->id;
     $consolidacao->save();
-    $this->statusService->atualizaStatus($consolidacao, 'AVALIADO');
+    $this->statusService->atualizaStatus($consolidacao, StatusEnum::AVALIADO);
     /* (RN_PTR_L) Um Plano de Trabalho adquire o status 'CONCLUIDO' quando a sua última consolidação for avaliada; */
     if(PlanoTrabalhoConsolidacao::where("plano_trabalho_id", $consolidacao->plano_trabalho_id)->orderByDesc("data_fim")->first()->id == $consolidacao->id) {
-      $this->statusService->atualizaStatus($consolidacao->planoTrabalho, 'CONCLUIDO');
+      $this->statusService->atualizaStatus($consolidacao->planoTrabalho, StatusEnum::CONCLUIDO);
     }
   }
 
@@ -423,7 +424,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     ->whereHas('planoTrabalho', function($query) use ($usuarioId) {
       $query->where('usuario_id', $usuarioId);
     })
-    ->where('status', 'INCLUIDO')
+    ->where('status', StatusEnum::INCLUIDO)
     ->whereRaw("DATE_ADD(data_fim, INTERVAL COALESCE((SELECT dias_tolerancia_consolidacao FROM programas WHERE id = (SELECT programa_id FROM planos_trabalhos WHERE id = plano_trabalho_id)), 10) DAY) < ?", [$hoje])
     ->orderBy('data_fim', 'asc')
     ->get();
@@ -468,7 +469,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'planoTrabalho.unidade',
       'planoTrabalho.programa'
     ])
-    ->whereIn('status', ['CONCLUIDO', 'AVALIADO']);
+    ->whereIn('status', [StatusEnum::CONCLUIDO, StatusEnum::AVALIADO]);
 
     if ($usuario_id) {
       $query->whereHas('planoTrabalho', function($q) use ($usuario_id) {
