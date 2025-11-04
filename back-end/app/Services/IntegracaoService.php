@@ -985,7 +985,7 @@ class IntegracaoService extends ServiceBase
 
   private function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(string $email, string $matricula): void
   {
-    $usuario = Usuario::where('email', $email)->where('matricula', '!=', $matricula)->first();
+    $usuario = Usuario::where('email', $email)->first();
     if (!empty($usuario)) {
       LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. Matricula: %s, Email: %s", $matricula, $email));
       $novoemail = $usuario->matricula . "@petrvs.gov.br";
