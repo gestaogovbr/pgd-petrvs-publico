@@ -20,6 +20,8 @@ class Integracao implements InterfaceIntegracao
 
     use PreparaServidor, Imprimir, LogTrait;
 
+    public const SISTEMA_ORIGEM = 'SIAPE';
+
     private array $servidores = [];
     private array $matriculasIntegracaoAlterados = [];
     private array $cpfsComEmaisFuncionaisVazios = [];
@@ -152,14 +154,14 @@ class Integracao implements InterfaceIntegracao
             $servidor = [
                 'id' => Uuid::uuid4(),
                 'cpf_ativo' => $this->utilService->valueOrDefault($pessoal['cpf_ativo']),
-                'data_modificacao' => $this->getDataModificacao($pessoal, $this->utilService, "SIAPE"),
+                'data_modificacao' => $this->getDataModificacao($pessoal, $this->utilService, self::SISTEMA_ORIGEM),
                 'cpf' => $this->utilService->valueOrDefault($this->utilService->onlyNumbers($pessoal['cpf']), null),
                 'nome' => $this->getNome($pessoal, $this->utilService),
                 'emailfuncional' => $emailFuncional,
                 'sexo' => $this->utilService->valueOrDefault($pessoal['sexo'], null),
                 'municipio' => $this->utilService->valueOrDefault($pessoal['municipio'], null),
                 'uf' => $this->utilService->valueOrDefault($pessoal['uf'], null),
-                'data_nascimento' => $this->getDataNascimento($pessoal, $this->utilService, "SIAPE"),
+                'data_nascimento' => $this->getDataNascimento($pessoal, $this->utilService, self::SISTEMA_ORIGEM),
                 'telefone' => $this->utilService->valueOrDefault($pessoal['telefone'], null),
                 'vinculo_ativo' => $this->utilService->valueOrDefault($ativo['vinculo_ativo'], null),
                 'matriculasiape' => $this->utilService->valueOrDefault($ativo['matriculasiape'], null),
@@ -171,7 +173,7 @@ class Integracao implements InterfaceIntegracao
                 'codigo_situacao_funcional' => $this->utilService->valueOrDefault($ativo['codsitfuncional'], null),
                 'situacao_funcional' => $this->getSituacaoFuncional($ativo, $this->utilService),
                 'codupag' => $this->utilService->valueOrDefault($ativo['codupag'], null),
-                'dataexercicionoorgao' => $this->getDataExercicio($ativo, $this->utilService, "SIAPE"),
+                'dataexercicionoorgao' => $this->getDataExercicio($ativo, $this->utilService, self::SISTEMA_ORIGEM),
                 'funcoes' => $ativo['funcoes'],
                 'matricula' => $this->utilService->valueOrDefault($ativo['matriculasiape'], null),
                 'cpf_chefia_imediata' => $this->getCPFChefiaImediata($funcional, $this->utilService),
