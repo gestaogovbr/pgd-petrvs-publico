@@ -11,6 +11,7 @@ use App\Services\ServiceBase;
 use App\Services\CalendarioService;
 use App\Services\UtilService;
 use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
 use App\Models\Documento;
 use Illuminate\Support\Facades\DB;
 use App\Models\PlanoTrabalhoConsolidacao;
@@ -290,7 +291,7 @@ class PlanoTrabalhoService extends ServiceBase
 
             /* Só é permitido o cadastro de planos em unidades definidas como executoras */
             if(!$this->unidadeService->isUnidadeExecutora($data['unidade_id'])){
-                throw new ServerException("ValidatePlanoEntrega", "Não é possível criar um plano para unidades não executoras.");
+                throw new ValidateException("Não é possível criar um plano para unidades não executoras.", 422);
             }
 
             if ($this->planosUsuarioComPendencias($data['usuario_id'])) {
