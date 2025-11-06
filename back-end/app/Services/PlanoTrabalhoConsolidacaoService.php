@@ -414,8 +414,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
    * @return  array
    */
   public function pendenciasUsuario($usuarioId): array {
-    $hoje = now()->toDateString();
-    
+
     // Buscar consolidações INCLUIDO que já passaram da data_fim + tolerância
     $consolidacoesPendentes = PlanoTrabalhoConsolidacao::with([
       'planoTrabalho.programa:id,nome,dias_tolerancia_consolidacao',
@@ -425,7 +424,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       $query->where('usuario_id', $usuarioId);
     })
     ->where('status', StatusEnum::INCLUIDO)
-    ->whereRaw("DATE_ADD(data_fim, INTERVAL COALESCE((SELECT dias_tolerancia_consolidacao FROM programas WHERE id = (SELECT programa_id FROM planos_trabalhos WHERE id = plano_trabalho_id)), 10) DAY) < ?", [$hoje])
+    ->whereDate('data_fim', '<', now()->subDays(10))
     ->orderBy('data_fim', 'asc')
     ->get();
 
