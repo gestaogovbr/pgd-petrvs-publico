@@ -1033,7 +1033,11 @@ class IntegracaoService extends ServiceBase
     $usuario = Usuario::where('email', $email)->first();
     if (!empty($usuario)) {
       LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. Matricula: %s, Email: %s", $matricula, $email));
-      $novoemail = $usuario->matricula . "@petrvs.gov.br";
+      $novoemailBase = $usuario->matricula;
+      if (empty($novoemailBase)) {
+        $novoemailBase = \Illuminate\Support\Str::uuid()->toString();
+      }
+      $novoemail = $novoemailBase . "@petrvs.gov.br";
       $outroUsuarioComesseEmail = Usuario::where('email', $novoemail)->where('matricula', '!=', $usuario->matricula)->first();
       if (!empty($outroUsuarioComesseEmail)) {
         $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($novoemail, $usuario->matricula);
