@@ -811,33 +811,11 @@ class IntegracaoService extends ServiceBase
             $unidadeExercicio = Unidade::where('codigo', $codigoExercicio)->first();
             $unidadeExercicioIdCheck = isset($unidadeExercicio->id) ? $unidadeExercicio->id : null;
 
-            if (!empty($cpfCheck) && !empty($unidadeExercicioIdCheck)) {
-              $usuarioLotadoMesmaUnidade = DB::table('usuarios as u')
-                ->join('unidades_integrantes as ui', 'ui.usuario_id', '=', 'u.id')
-                ->join('unidades_integrantes_atribuicoes as uia', 'uia.unidade_integrante_id', '=', 'ui.id')
-                ->where('u.cpf', $cpfCheck)
-                ->where('ui.unidade_id', $unidadeExercicioIdCheck)
-                ->where('uia.atribuicao', 'LOTADO')
-                ->whereNull('u.deleted_at')
-                ->whereNull('uia.deleted_at')
-                ->select('u.id')
-                ->orderBy('u.created_at', 'asc')
-                ->first();
-
-              if (!empty($usuarioLotadoMesmaUnidade) && isset($usuarioLotadoMesmaUnidade->id)) {
-                DB::table('usuarios')
-                  ->where('id', $usuarioLotadoMesmaUnidade->id)
-                  ->update(['matricula' => $matriculaNova]);
-                SiapeLog::info(sprintf(
-                  'Atualizada matrícula do usuário CPF %s para %s (unidade exercício código %s) sem criar novo usuário.',
-                  (string) $cpfCheck,
-                  (string) $matriculaNova,
-                  (string) $codigoExercicio
-                ));
-                continue;
-              }
-            }
-            $registro = new Usuario([
+           if(!$this->verificaSeUsuarioSoMudouMatricula($cpfCheck, $unidadeExercicioIdCheck, $matriculaNova, $codigoExercicio)) {
+            continue;
+           }
+           
+           $registro = new Usuario([
               'id' => Uuid::uuid4(),
               'email' => $this->UtilService->valueOrDefault($v_isr['emailfuncional']),
               'nome' => $this->UtilService->valueOrDefault($v_isr['nome']),
@@ -1013,6 +991,39 @@ class IntegracaoService extends ServiceBase
         'e os Servidores são atualizados e AMBOS com sucesso.';
     }
     SiapeLog::info("Concluída a fase de reconstrução das funções de chefia!");
+  }
+
+  private function verificaSeUsuarioSoMudouMatricula(string $cpfCheck, string $unidadeExercicioIdCheck, string $matriculaNova, string $codigoExercicio): bool
+  {
+
+    if (!empty($cpfCheck) && !empty($unidadeExercicioIdCheck)) {
+      $usuarioLotadoMesmaUnidade = DB::table('usuarios as u')
+        ->join('unidades_integrantes as ui', 'ui.usuario_id', '=', 'u.id')
+        ->join('unidades_integrantes_atribuicoes as uia', 'uia.unidade_integrante_id', '=', 'ui.id')
+        ->where('u.cpf', $cpfCheck)
+        ->where('ui.unidade_id', $unidadeExercicioIdCheck)
+        ->where('uia.atribuicao', 'LOTADO')
+        ->whereNull('u.deleted_at')
+        ->whereNull('uia.deleted_at')
+        ->select('u.id')
+        ->orderBy('u.created_at', 'asc')
+        ->first();
+
+      if (!empty($usuarioLotadoMesmaUnidade) && isset($usuarioLotadoMesmaUnidade->id)) {
+        DB::table('usuarios')
+          ->where('id', $usuarioLotadoMesmaUnidade->id)
+          ->update(['matricula' => $matriculaNova]);
+        SiapeLog::info(sprintf(
+          'Atualizada matrícula do usuário CPF %s para %s (unidade exercício código %s) sem criar novo usuário.',
+          (string) $cpfCheck,
+          (string) $matriculaNova,
+          (string) $codigoExercicio
+        ));
+        return false;
+      }
+      return true;
+    }
+    return true;
   }
 
   private function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(string $email, string $matricula): void

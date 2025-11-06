@@ -4,15 +4,11 @@ namespace App\Services\Siape\Servidor;
 
 use App\Facades\SiapeLog;
 use App\Models\IntegracaoServidor as entidade;
-use App\Models\IntegracaoServidor;
 use App\Repository\IntegracaoServidorRepository;
 use App\Services\LogTrait;
 use App\Services\Siape\Contrato\InterfaceIntegracao;
 use App\Services\Siape\Imprimir;
-use App\Services\Siape\Unidade\Atribuicao;
-use App\Services\Tipo;
 use App\Services\UtilService;
-use Illuminate\Support\Facades\Log;
 use Ramsey\Uuid\Uuid;
 
 class Integracao implements InterfaceIntegracao
@@ -101,6 +97,8 @@ class Integracao implements InterfaceIntegracao
                 'nome_jornada','modalidade_pgd','participa_pgd'
             ]);
 
+            $dadosAtualizados['participa_pgd'] = $this->normalizeParticipaPGD($dadosAtualizados['participa_pgd']);
+
             $registro =  $this->repository->update($entidade->cpf, $entidade->matriculasiape, $dadosAtualizados);
             
             array_push($this->matriculasIntegracaoAlterados, $entidade->cpf);
@@ -180,7 +178,7 @@ class Integracao implements InterfaceIntegracao
                 'email_chefia_imediata' => $this->getEmailChefiaImediata($funcional, $this->utilService),
                 'ident_unica' => $this->utilService->valueOrDefault($ativo['ident_unica'], null),
                 'modalidade_pgd' => $this->utilService->valueOrDefault($ativo['modalidade_pgd'], null),
-                'participa_pgd' => $this->utilService->valueOrDefault($ativo['participa_pgd'], null),
+                'participa_pgd' => $this->normalizeParticipaPGD($this->utilService->valueOrDefault($ativo['participa_pgd'], null)),
                 'cod_jornada' => $this->utilService->valueOrDefault($ativo['cod_jornada'], null),
                 'nome_jornada' => $this->utilService->valueOrDefault($ativo['nome_jornada'], null),
                 'deleted_at' => null,
@@ -191,6 +189,50 @@ class Integracao implements InterfaceIntegracao
         return $entidades;
 
 
+    }
+
+    /**
+     * Normaliza o valor de participa_pgd para os valores aceitos no BD
+     * Aceita variações como 'SIM', 'S', true, 1 -> 'sim'
+     * e 'NAO', 'NÃO', 'N', false, 0, 'nÃ£o' -> 'não'
+     */
+    private function normalizeParticipaPGD($value): ?string
+    {
+        if ($value === null) return 'não';
+
+        $v = is_bool($value) ? ($value ? 'sim' : 'não') : (string)$value;
+
+        $v = trim(mb_strtolower($v));
+
+        if ($v === '' || $v === 'null' || $v === 'undefined') return 'não';
+
+        if ($v === 'nÃ£o' || $v === 'nÃo' || $v === 'nao') {
+            $v = 'não';
+        }
+
+        $vSemAcento = $v;
+        if (function_exists('iconv')) {
+            $converted = @iconv('UTF-8', 'ASCII//TRANSLIT', $v);
+            if ($converted !== false) {
+                $vSemAcento = $converted;
+            }
+        }
+        $vSemAcento = preg_replace('/[^a-z0-9]/', '', (string)$vSemAcento);
+
+        if (in_array($v, ['1', 's', 'sim', 'yes', 'true'], true) || in_array($vSemAcento, ['1', 's', 'sim', 'yes', 'true'], true)) {
+            return 'sim';
+        }
+        if (in_array($v, ['0', 'n', 'não', 'nao', 'no', 'false', 'nÃ£o'], true) || in_array($vSemAcento, ['0', 'n', 'nao', 'no', 'false'], true)) {
+            return 'não';
+        }
+
+        if (strlen($vSemAcento) > 0) {
+            $first = $vSemAcento[0];
+            if ($first === 's') return 'sim';
+            if ($first === 'n') return 'não';
+        }
+
+        return 'não';
     }
 
 
