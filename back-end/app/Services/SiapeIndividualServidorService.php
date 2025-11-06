@@ -301,53 +301,52 @@ class SiapeIndividualServidorService extends ServiceBase
 
     private function removeVinculoParaforcarSerLotadoNovamente(string $cpf)
     {
-        $usuario = Usuario::where('cpf', $cpf)->first();
-        if (!$usuario) {
+        // Pode existir mais de um usuário com o mesmo CPF: executa o fluxo para cada um
+        $usuarios = Usuario::where('cpf', $cpf)->get();
+        if ($usuarios->isEmpty()) {
             return;
         }
 
-        $unidade = $usuario->lotacao?->unidade;
+        foreach ($usuarios as $usuario) {
+            $unidade = $usuario->lotacao?->unidade;
 
-        if(!$unidade) {
-            return;
-        }
-        
-        $usuario->usuario_externo = 0;
-        $usuario->save();
+            if(!$unidade) {
+                continue;
+            }
+            
+            $usuario->usuario_externo = 0;
+            $usuario->save();
 
-        try {
-            $blacklistRegistro = SiapeBlackListServidor::where('cpf', $cpf)
-                ->first();
+            try {
+                $blacklistRegistro = SiapeBlackListServidor::where('cpf', $cpf)
+                    ->first();
 
-            if ($blacklistRegistro) {
-                if ((int)($blacklistRegistro->inativado ?? 0) === 1) {
-                    $usuario->situacao_siape = 'ATIVO';
-                    $usuario->save();
-                    SiapeLog::info('Usuário reativado pela remoção da blacklist (inativado=1)', [
+                if ($blacklistRegistro) {
+                    if ((int)($blacklistRegistro->inativado ?? 0) === 1) {
+                        $usuario->situacao_siape = 'ATIVO';
+                        $usuario->save();
+                        SiapeLog::info('Usuário reativado pela remoção da blacklist (inativado=1)', [
+                            'cpf' => $cpf,
+                            'usuario_id' => $usuario->id ?? null,
+                        ]);
+                    }
+
+                    $blacklistRegistro->forceDelete();
+                    SiapeLog::info('Registro removido da tabela siape_blacklist_servidores', [
                         'cpf' => $cpf
                     ]);
                 }
-
-                $blacklistRegistro->forceDelete();
-                SiapeLog::info('Registro removido da tabela siape_blacklist_servidores', [
-                    'cpf' => $cpf
+            } catch (Exception $e) {
+                SiapeLog::error('Erro ao processar remoção na siape_blacklist_servidores', [
+                    'cpf' => $cpf,
+                    'erro' => $e->getMessage()
                 ]);
             }
-        } catch (Exception $e) {
-            SiapeLog::error('Erro ao processar remoção na siape_blacklist_servidores', [
-                'cpf' => $cpf,
-                'erro' => $e->getMessage()
-            ]);
-        }
-        
-        $this->removeTodasAsGestoesDoUsuario($usuario);
+            
+            $this->removeTodasAsGestoesDoUsuario($usuario);
 
-        if($this->usuarioTemPlanodeTrabalhoAtivo($usuario, $unidade)) {
-            SiapeLog::warning('O usuário ' . $usuario->nome . ' possui plano de trabalho ativo, não será removido.');
-            return;
+            $this->removeLotacao($usuario);
         }
-
-        $this->removeLotacao($usuario);
     }
 
     private function montaXmlUnidade($codigoDaUnidade)

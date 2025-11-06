@@ -701,6 +701,8 @@ class IntegracaoService extends ServiceBase
             }
           };
 
+          $this->atualizarMatriculasUsuariosSemMatricula();
+
           if (!empty($sqlServidoresInseridosNaoLotados)) {
             foreach ($sqlServidoresInseridosNaoLotados as $inserirLotacao) {
 
@@ -1172,6 +1174,44 @@ private function validarModalidadePgd($modalidadeString)
     SiapeLog::warning("Modalidade '{$modalidadeString}' não encontrada na tabela tipos_modalidades_siape. Valor será definido como null.");
     return null;
   }  
+  
+  private function atualizarMatriculasUsuariosSemMatricula(): void
+  {
+    try {
+      $usuariosSemMatricula = DB::table('usuarios')
+        ->whereNull('deleted_at')
+        ->where(function ($q) {
+          $q->whereNull('matricula')
+            ->orWhere('matricula', '');
+        })
+        ->whereNotNull('cpf')
+        ->whereRaw("cpf <> ''")
+        ->select('id', 'cpf')
+        ->get();
+
+      if ($usuariosSemMatricula->isEmpty()) {
+        return;
+      }
+
+      foreach ($usuariosSemMatricula as $usr) {
+        $matriculaSiape = DB::table('integracao_servidores')
+          ->where('cpf', $usr->cpf)
+          ->value('matriculasiape');
+
+        if (!empty($matriculaSiape)) {
+          DB::table('usuarios')
+            ->where('id', $usr->id)
+            ->update(['matricula' => $matriculaSiape]);
+          SiapeLog::info(sprintf("Atualizada matrícula do usuário id=%s a partir do SIAPE.", $usr->id));
+        } else {
+          SiapeLog::warning(sprintf("Matrícula SIAPE não encontrada para usuário id=%s com CPF %s.", $usr->id, $usr->cpf));
+        }
+      }
+    } catch (Throwable $e) {
+      report($e);
+      SiapeLog::error(sprintf("Erro ao atualizar matrículas de usuários sem matrícula: %s", $e->getMessage()));
+    }
+  }
   
   private function verificarUsuariosExternosIntegracao(): void
   {
