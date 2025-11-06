@@ -8,6 +8,7 @@ use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeDadosUORG;
 use App\Models\SiapeListaUORGS;
+use App\Models\SiapeBlackListServidor;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Services\Siape\Unidade\Atribuicao;
@@ -313,6 +314,31 @@ class SiapeIndividualServidorService extends ServiceBase
         
         $usuario->usuario_externo = 0;
         $usuario->save();
+
+        try {
+            $blacklistRegistro = SiapeBlackListServidor::where('cpf', $cpf)
+                ->first();
+
+            if ($blacklistRegistro) {
+                if ((int)($blacklistRegistro->inativado ?? 0) === 1) {
+                    $usuario->situacao_siape = 'ATIVO';
+                    $usuario->save();
+                    SiapeLog::info('Usuário reativado pela remoção da blacklist (inativado=1)', [
+                        'cpf' => $cpf
+                    ]);
+                }
+
+                $blacklistRegistro->forceDelete();
+                SiapeLog::info('Registro removido da tabela siape_blacklist_servidores', [
+                    'cpf' => $cpf
+                ]);
+            }
+        } catch (Exception $e) {
+            SiapeLog::error('Erro ao processar remoção na siape_blacklist_servidores', [
+                'cpf' => $cpf,
+                'erro' => $e->getMessage()
+            ]);
+        }
         
         $this->removeTodasAsGestoesDoUsuario($usuario);
 
