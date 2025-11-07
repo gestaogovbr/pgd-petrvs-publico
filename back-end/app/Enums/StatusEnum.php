@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum StatusEnum: int 
+enum StatusEnum: string
 {
     case INCLUIDO = 'INCLUIDO';
     case HOMOLOGANDO = 'HOMOLOGANDO';
