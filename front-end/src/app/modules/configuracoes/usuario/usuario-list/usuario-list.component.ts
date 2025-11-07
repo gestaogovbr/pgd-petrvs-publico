@@ -37,6 +37,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     this.join = ["perfil:id,nome"];
     this.filter = this.fh.FormBuilder({
       usuario: { default: "" },
+      cpf: { default: "" },
       unidade_id: { default: "" },
       perfil_id: { default: null },
       atribuicoes: { default: null }
@@ -84,6 +85,9 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     }
     if (filter?.controls.atribuicoes?.value?.length) {
       result.push(["atribuicoes", "==", filter?.controls.atribuicoes?.value]);
+    }
+    if (filter?.controls.cpf?.value?.length) {
+      result.push(["cpf", "==", filter?.controls.cpf?.value]);
     }
     return result;
   }

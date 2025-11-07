@@ -432,9 +432,9 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 				"like",
 				"%" + form.usuario.trim().replace(" ", "%") + "%",
 			]);
-
-		if (form.numero?.length)
-			result.push(["numero", "==", form.numero.trim()]);
+	
+		if (form.numero)
+			result.push(["numero", "==", String(form.numero).trim()]);
 
 		if (this.filter?.controls.meus_planos.value) {
 			let w1: [string, string, string[]] = ["unidade_id", "in", (this.auth.unidades || []).map(u => u.id)];
@@ -480,6 +480,8 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 
 		if(this.grid) this.grid.groupBy = this.groupBy;
 
+		console.log(result);
+		
 		return result;
 	};
 
