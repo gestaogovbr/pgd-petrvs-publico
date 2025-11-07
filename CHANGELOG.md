@@ -1,3 +1,4 @@
+## 2.7.8 10/11/2025
 ## 2.7.7 29/10/2025
 ### Corrigido
 - Correção do bloqueio de planos de trabalho
