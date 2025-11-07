@@ -1,4 +1,12 @@
 ## 2.7.8 10/11/2025
+### Corrigido
+- Pesquisa por CPF no SIAPE: agora, quando existem vários usuários com o mesmo CPF e matrículas diferentes, todos aparecem na lista de resultados.
+- Exportação por CPF no SIAPE: o arquivo gerado foi corrigido e passa a abrir normalmente, mesmo quando há múltiplos registros.
+- Aviso sobre dados do SIAPE na tela de resultados: texto menor e melhor posicionado para facilitar a leitura.
+### Modificado
+- Integração com o SIAPE: aprimoramos a atualização das matrículas ausentes dos usuários, com mais validações e registros, tornando o processo mais confiável.
+- Endereços de e‑mail temporários: quando a matrícula não estiver preenchida, o sistema cria automaticamente um e‑mail temporário único para evitar duplicidades.
+- Tela de resultados da consulta de CPF no SIAPE: o carregamento foi aprimorado para exibir, de forma consistente, todos os usuários retornados pela consulta.
 ## 2.7.7 29/10/2025
 ### Corrigido
 - Correção do bloqueio de planos de trabalho
