@@ -21,14 +21,14 @@
                 <p><b>{{dadosPessoais.nome}}</b></p>
             </div>
             <div class="row" *ngFor="let dadoFuncional of dadosFuncionais">
-                <div class="col-md-12">
-                    <p>Matrícula: {{dadoFuncional.matriculaSiape}}</p>
-                    <p>
+                <div class="col-md-12 d-flex flex-column">
+                    <p class="mb-1">Matrícula: {{dadoFuncional.matriculaSiape}}</p>
+                    <p class="mb-0">
                         <span class="unidade">
                             {{dadoFuncional.codUorgExercicio + ' - ' + dadoFuncional.siglaUorgExercicio}}
                         </span>
                     </p>
-                    <p>Aviso: Dados do SIAPE podem ser diferentes do processado.</p>
+                    <small class="text-muted mt-2">Aviso: Dados do SIAPE podem ser diferentes do processado.</small>
                 </div>
             </div>
         </div>
