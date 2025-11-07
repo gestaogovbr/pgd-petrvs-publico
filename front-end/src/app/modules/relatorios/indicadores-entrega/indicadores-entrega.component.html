@@ -85,6 +85,26 @@
             </div>
         </div>
         <div class="grafico">
+            <div class="titulo">Taxa de alocação de horas</div>
+            <p *ngIf="!pieChartHorasData.labels?.length" class="no-data">Sem dados para exibir</p>
+            <div *ngIf="loadingHoras; else graficoHoras" class="d-flex justify-content-center my-2">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden"></span>
+                </div>
+            </div>
+            <ng-template #graficoHoras>
+                <div class="grafico-wrapper">
+                    <canvas
+                        baseChart
+                        *ngIf="pieChartHorasData.labels?.length"
+                        [data]="pieChartHorasData"
+                        [type]="'pie'"
+                        [options]="pieChartOptions"
+                    ></canvas>
+                </div>
+            </ng-template>
+        </div>
+        <div class="grafico">
             <div class="titulo">Coerência entre desempenhos dos Planos de Trabalho (PTs) e do Plano de Entregas (PE)</div>
             <p *ngIf="!barChartData.datasets[0].data?.length" class="no-data">Sem dados para exibir</p>
             <div class="grafico-wrapper">

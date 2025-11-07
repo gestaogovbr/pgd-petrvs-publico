@@ -5,6 +5,7 @@ use App\Exceptions\Contracts\IBaseException;
 use App\Exceptions\ServerException;
 use App\Http\Controllers\ControllerBase;
 use App\Services\IndicadoresEntregaService;
+use App\Services\IndicadoresEntregaHorasService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -49,7 +50,7 @@ class IndicadoresEntregaController extends ControllerBase {
         }
     }
 
-    public function getHoras(Request $request) {
+    public function horas(Request $request) {
         if (!$this->getUsuario($request)->hasPermissionTo('MOD_IND_ENTREGAS')){
             throw new ServerException("RelatorioCapacidade", "Acesso negado aos Indicadores de Entregas.");
         }
@@ -63,13 +64,13 @@ class IndicadoresEntregaController extends ControllerBase {
                 'where' => ['array']
             ]);
 
-            $service = new IndicadoresEntregaService();
+            $service = new IndicadoresEntregaHorasService();
             $result = $service->query($data);
 
             return response()->json([
                 'success' => true,
-                'count' => $result['count'],
-                'rows' => $result['rows'],
+                'count' => count($result),
+                'rows' => $result,
                 'extra' => []
             ]);
 

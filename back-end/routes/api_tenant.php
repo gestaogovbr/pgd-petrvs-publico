@@ -590,4 +590,5 @@ Route::middleware(['auth:sanctum'])->prefix('Indicadores')->group(function () {
     Route::post('equipe/query', [IndicadoresController::class, 'query']);
     Route::post('gestao/query', [IndicadoresGestaoController::class, 'query']);
     Route::post('entrega/query', [IndicadoresEntregaController::class, 'query']);
+    Route::post('entrega/horas', [IndicadoresEntregaController::class, 'horas']);
 });

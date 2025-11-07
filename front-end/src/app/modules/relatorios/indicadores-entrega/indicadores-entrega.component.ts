@@ -23,6 +23,7 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
 
   public permissao: string = 'MOD_IND_EQUIPES';
   public botoes: ToolbarButton[] = [];
+  public loadingHoras: boolean = false;
   
   public pieChartData: ChartData<'pie', number[], string | string[]> = {
     labels: [],
@@ -40,14 +41,19 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
     layout: {
       padding: {
         top: 50,
-        bottom: 70,
+        bottom: 60,
         left: 50,
         right: 50
       }
     },
     plugins: {
       legend: {
-        position: 'bottom'
+        position: 'bottom',
+        title: {
+            display: true,
+            text: ' ', // cria o espaçamento acima da legenda
+            padding: { top: 30, bottom: 0 }, // ajustável
+        },
       },
       title: {
         display: false
@@ -61,7 +67,8 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
         },
         anchor: 'end',      // coloca o label na borda da fatia
         align: 'end',       // alinha fora da fatia
-        offset: 3,          // distância do centro da fatia
+        offset: 10,          // distância do centro da fatia
+        clamp: true,
         font: {
           weight: 'bold',
           size: 10
@@ -71,6 +78,16 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
   }
 
   public pieChartAvaliacoesData: ChartData<'pie', number[], string | string[]> = {
+    labels: [],
+    datasets: [
+      {
+        data: [],
+        backgroundColor: CHART_COLORS,
+      },
+    ],
+  }
+
+  public pieChartHorasData: ChartData<'pie', number[], string | string[]> = {
     labels: [],
     datasets: [
       {
@@ -153,6 +170,15 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
         this.filter?.controls.unidade_id.setValue(this.metadata?.unidade_id);
         this.saveUsuarioConfig();
       }
+
+      let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
+
+      this.loadingHoras = true;
+      this.dao!.queryHoras({
+        where: queryOptions.where
+      }).subscribe(result => {
+        this.graficoHoras(result.rows);
+      });
   }
 
   public onQueryResolve(rows: IndicadorEntrega[] | null) {
@@ -230,18 +256,39 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
       if (this.grid && this.grid.query) {
       }
       this.grid?.query?.reload(queryOptions);
-      this.dao!.queryHoras({
-        where: queryOptions.where
-      }).subscribe(result => {
-        this.graficoHoras(result);
-      });
+
+      if (!this.loadingHoras) {
+        this.loadingHoras = true;
+        this.dao!.queryHoras({
+            where: queryOptions.where
+        }).subscribe(result => {
+            this.graficoHoras(result.rows);
+        });
+      }
     } else {
       this.filter!.markAllAsTouched(); 
     }
   }
 
-  public graficoHoras(result: any) {
+  public graficoHoras(rows: any[]) {
+    const tipos = rows.filter(row => row.horas_entregas > 0);
+    const total = tipos.reduce((sum, row) => sum + row.horas_entregas, 0);
+    this.pieChartHorasData.labels = tipos.map(row => row.categoria);
+    this.pieChartHorasData.datasets[0].data = tipos.map(row => Number(row.horas_entregas));
 
+    if (rows[0] && rows[0].horas_planos != total) {
+        const valor = Number(rows[0].horas_planos) - total;
+        if ((valor / rows[0].horas_planos) > 0.01) {
+            this.pieChartHorasData.labels.push('Horas não alocadas');
+            this.pieChartHorasData.datasets[0].data.push(Number(rows[0].horas_planos) - total);
+        } else {
+             this.pieChartHorasData.labels.push('Horas não alocadas (' + valor.toFixed(2).replace('.', ',') + 'h)');
+        }
+    }
+
+     this.loadingHoras = false;
+
+    this.charts.forEach(chart => chart.update());
   }
 
 }
