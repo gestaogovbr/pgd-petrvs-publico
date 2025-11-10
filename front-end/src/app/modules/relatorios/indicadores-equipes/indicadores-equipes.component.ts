@@ -10,6 +10,7 @@ import { IndicadorEquipe } from "src/app/models/indicador-equipe";
 import { Chart, ChartConfiguration, ChartData, ChartType, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from "ng2-charts";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { CHART_COLORS } from "src/app/services/chart";
 
 Chart.register(ChartDataLabels);
 
@@ -30,42 +31,31 @@ export class IndicadorEquipeComponent extends RelatorioBaseComponent<IndicadorEq
     datasets: [
       {
         data: [],
+        backgroundColor: CHART_COLORS,
       },
     ],
   };
   public pieChartType: ChartType = 'pie';
   public pieChartOptions: ChartConfiguration['options'] = {
     responsive: true,
-    maintainAspectRatio: false, // permite ajustar o tamanho real do gráfico
+    maintainAspectRatio: false,
     layout: {
-      padding: {
-        top: 20,
-        bottom: 20,
-        left: 20,
-        right: 40
-      }
+      padding: { right: 80 }
     },
     plugins: {
       legend: {
+        position: 'right',
+        
+      },
+      title: {
         display: false
       },
       datalabels: {
-        formatter: (value, ctx) => {
-          if (ctx.chart.data.labels) {
-            return ctx.chart.data.labels[ctx.dataIndex];
-          }
-          return '';
-        },
-        anchor: 'end',      // coloca o label na borda da fatia
-        align: 'end',       // alinha fora da fatia
-        offset: 2,          // distância do centro da fatia
-        font: {
-          weight: 'bold',
-          size: 14
-        }
-      },
+        display: false
+      }
     },
-  };
+  }
+
   public pieChartLegend = true;
 
   constructor(public injector: Injector, dao: IndicadorEquipeDaoService) {

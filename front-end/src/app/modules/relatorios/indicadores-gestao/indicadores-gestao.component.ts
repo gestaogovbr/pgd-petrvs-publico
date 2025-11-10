@@ -35,45 +35,27 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
   };
   public pieChartOptions: ChartConfiguration['options'] = {
     responsive: true,
-    maintainAspectRatio: false, // permite ajustar o tamanho real do gráfico
+    maintainAspectRatio: false,
     layout: {
-      padding: {
-        top: 0,
-        bottom: 30,
-        left: 20,
-        right: 40
-      }
     },
     plugins: {
       legend: {
-        display: false
+        position: 'bottom',
+        align: 'center',
+        labels: {
+          boxWidth: 12,
+          padding: 10,
+          textAlign: 'left',
+        }
       },
       title: {
-        display: true,
-        text: 'Taxa de cobertura do PGD entre os agentes públicos',
-        font: { size: 16 },
-        padding: {
-            top: 10,   // espaço acima do título
-            bottom: 50 // espaço entre o título e o gráfico
-        }
+        display: false
       },
       datalabels: {
-        formatter: (value, ctx) => {
-          if (ctx.chart.data.labels) {
-            return ctx.chart.data.labels[ctx.dataIndex];
-          }
-          return '';
-        },
-        anchor: 'end',      // coloca o label na borda da fatia
-        align: 'end',       // alinha fora da fatia
-        offset: 8,          // distância do centro da fatia
-        font: {
-          weight: 'bold',
-          size: 14
-        }
-      },
+        display: false
+      }
     },
-  };
+  }
 
   public pieChartUnidadesData: ChartData<'pie', number[], string | string[]> = {
     labels: [],
@@ -85,43 +67,26 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
   };
   public pieChartUnidadesOptions: ChartConfiguration['options'] = {
     responsive: true,
-    maintainAspectRatio: false, // permite ajustar o tamanho real do gráfico
+    maintainAspectRatio: false,
     layout: {
-      padding: {
-        top: 0,
-        bottom: 30,
-        left: 20,
-        right: 40
-      }
     },
     plugins: {
       legend: {
-        display: false
+        position: 'bottom',
+        align: 'center',
+        fullSize: true,
+        labels: {
+          boxWidth: 12,
+          padding: 20,
+          textAlign: 'left',
+        }
       },
       title: {
-        display: true,
-        text: ' Taxa de cobertura do PGD nas unidades',
-        font: { size: 16 },
-        padding: {
-            top: 10,   // espaço acima do título
-            bottom: 50 // espaço entre o título e o gráfico
-        }
+        display: false
       },
       datalabels: {
-        formatter: (value, ctx) => {
-          if (ctx.chart.data.labels) {
-            return ctx.chart.data.labels[ctx.dataIndex];
-          }
-          return '';
-        },
-        anchor: 'end',      // coloca o label na borda da fatia
-        align: 'end',       // alinha fora da fatia
-        offset: 8,          // distância do centro da fatia
-        font: {
-          weight: 'bold',
-          size: 14
-        }
-      },
+        display: false
+      }
     },
   };
 
@@ -159,6 +124,16 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
         this.filter?.controls.unidade_id.setValue(this.metadata?.unidade_id);
         this.saveUsuarioConfig();
       }
+  }
+
+  protected beforeQuery(): void {
+    super.beforeQuery();
+    this.loading = true;
+  }
+
+  protected afterQuery(): void {
+    super.afterQuery();
+    this.loading = false;
   }
 
   public onQueryResolve(rows: any | null) {

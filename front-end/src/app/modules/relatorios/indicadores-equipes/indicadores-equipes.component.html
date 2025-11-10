@@ -57,15 +57,25 @@
             ></input-switch>
         </div>
     </filter>
-    <p *ngIf="!pieChartData.labels?.length" class="no-data">Sem dados para exibir</p>
-    <div style="display: flex; max-width: 700px; margin: 50px auto;" *ngIf="pieChartData.labels?.length">
-        <canvas
-            baseChart
-            [data]="pieChartData"
-            [type]="pieChartType"
-            [options]="pieChartOptions"
-        >
-        </canvas>
+    <div class="grafico">
+        <div class="titulo">Distribuição das avaliações dos planos de trabalho por categoria</div>
+        <p *ngIf="!pieChartData.labels?.length" class="no-data">Sem dados para exibir</p>
+        <div *ngIf="loading; else grafico" class="d-flex justify-content-center my-2">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden"></span>
+            </div>
+        </div>
+        <ng-template #grafico>
+            <div class="grafico-wrapper" *ngIf="!loading">
+                <canvas
+                    baseChart
+                    [data]="pieChartData"
+                    [type]="pieChartType"
+                    [options]="pieChartOptions"
+                >
+                </canvas>
+            </div>
+        </ng-template>
     </div>
 </grid>
 

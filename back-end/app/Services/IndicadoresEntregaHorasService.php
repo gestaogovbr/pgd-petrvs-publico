@@ -164,8 +164,6 @@ class IndicadoresEntregaHorasService extends IndicadoresEntregaService
             group by categoria
         TEXT;
 
-        \Log::info($sql);
-
         $rows = DB::select($sql, $params);
 
         return $rows;

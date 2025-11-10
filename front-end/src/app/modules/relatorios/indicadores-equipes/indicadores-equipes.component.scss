@@ -8,4 +8,40 @@
   color: #666;
   font-weight: bold;
   padding: 50px;
+  width: 100%;
+}
+
+.graficos {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  margin: 10px auto;
+  gap: 20px;
+}
+
+.grafico {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.grafico .titulo{
+  font-weight: bold;
+}
+
+.grafico-wrapper {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  max-width: 600px;
+  height: 400px;
+}
+
+canvas {
+  margin: 0 auto;
+  width: 100% !important;
+  height: 100% !important;
 }

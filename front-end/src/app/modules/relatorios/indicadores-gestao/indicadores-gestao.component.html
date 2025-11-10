@@ -57,28 +57,47 @@
             ></input-switch>
         </div>
     </filter>
-    <p *ngIf="!pieChartData.labels?.length" class="no-data">Sem dados para exibir</p>
     <div class="graficos">
         <div class="grafico" *ngIf="pieChartData.labels?.length">
-            <canvas
-                baseChart
-                [data]="pieChartData"
-                [type]="'pie'"
-                [options]="pieChartOptions"
-                style="max-width: 90%;"
-            ></canvas>
+            <div class="titulo">Taxa de cobertura do PGD entre os agentes públicos</div>
+            <p *ngIf="!pieChartData.labels?.length" class="no-data">Sem dados para exibir</p>
+            <div *ngIf="loading; else grafico" class="d-flex justify-content-center my-2">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden"></span>
+                </div>
+            </div>
+            <ng-template #grafico>
+                <div class="grafico-wrapper">
+                    <canvas
+                        baseChart
+                        [data]="pieChartData"
+                        [type]="'pie'"
+                        [options]="pieChartOptions"
+                    ></canvas>
+                </div>
+            </ng-template>
         </div>
 
+        
         <div class="grafico" *ngIf="pieChartUnidadesData.labels?.length">
-            <canvas
-                baseChart
-                [data]="pieChartUnidadesData"
-                [type]="'pie'"
-                [options]="pieChartUnidadesOptions"
-                style="max-width: 90%;"
-            ></canvas>
+            <div class="titulo">Taxa de cobertura do PGD nas unidades</div>
+            <p *ngIf="!pieChartUnidadesData.labels?.length" class="no-data">Sem dados para exibir</p>
+            <div *ngIf="loading; else graficoUnidades" class="d-flex justify-content-center my-2">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden"></span>
+                </div>
+            </div>
+            <ng-template #graficoUnidades>
+                <div class="grafico-wrapper">
+                    <canvas
+                        baseChart
+                        [data]="pieChartUnidadesData"
+                        [type]="'pie'"
+                        [options]="pieChartUnidadesOptions"
+                    ></canvas>
+                </div>
+            </ng-template>
         </div>
     </div>
-
 </grid>
 
