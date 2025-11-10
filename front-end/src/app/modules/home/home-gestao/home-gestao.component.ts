@@ -1,9 +1,11 @@
 import { Component , Injector } from '@angular/core';
 import * as moment from 'moment';
+import { filter } from 'rxjs';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { GlobalsService } from 'src/app/services/globals.service';
 import { LexicalService } from 'src/app/services/lexical.service';
+import { LookupService } from 'src/app/services/lookup.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 
 @Component({
@@ -23,9 +25,11 @@ export class HomeGestaoComponent {
   public gb: GlobalsService;
   public auth: AuthService;
   public go: NavigateService;
+  public lookup: LookupService;
 
   constructor(injector: Injector) {
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.lookup = injector.get<LookupService>(LookupService);
     this.lex = injector.get<LexicalService>(LexicalService);
     this.gb = injector.get<GlobalsService>(GlobalsService);
     this.auth = injector.get<AuthService>(AuthService);
@@ -70,12 +74,35 @@ export class HomeGestaoComponent {
       params: {
         filter: {
           nome: nome,
+          unidade_id: null,
+          meus_planos: false
         }
       }
     });
   }
-  public abrirConsolidacoes() {
-    this.go.navigate({route: ['avaliacao', 'plano-trabalho', 'consolidacao', 'avaliacao']});
+  public abrirAvaliacaoPlanoEntrega(planoEntrega: any) {
+    this.go.navigate({
+      route: ['gestao', 'plano-entrega'],
+      params: {
+        avaliacao: true,
+        filter: {
+          meus_planos: false,
+          nome: planoEntrega.nome,
+          unidade_id: null
+        }
+      }
+    });
+  }
+  public abrirConsolidacoes(usuario_id: string, unidade_id: string) {
+    this.go.navigate({
+      route: ['avaliacao', 'plano-trabalho', 'consolidacao', 'avaliacao'], 
+      params: {
+        filter: {
+          usuario_id: usuario_id,
+          unidade_id: unidade_id,
+        }
+      }
+    });
   }
 
 }
