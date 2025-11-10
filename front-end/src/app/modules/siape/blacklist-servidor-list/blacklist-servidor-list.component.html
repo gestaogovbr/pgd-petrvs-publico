@@ -1,3 +1,8 @@
+<top-alert [type]="'warning'" [message]="'Atenção:'">
+    <ng-container>
+        <p class="my-1 ms-4" *ngFor="let message of topAlertMessages()">{{ message }}</p>
+    </ng-container>
+</top-alert>
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [selectable]="selectable" (select)="onSelect($event)"
     [hasAdd]="auth.hasPermissionTo('MOD_SIAPE_BLACKLIST_INCL')"
