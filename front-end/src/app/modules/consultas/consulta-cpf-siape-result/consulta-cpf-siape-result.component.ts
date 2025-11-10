@@ -163,6 +163,10 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
     if(this.metadata?.integrantes) {
       this.integrantes = this.metadata?.integrantes;
     }
+
+    if (this.cpf) {
+      this.loadUsuario();
+    }
   }
 
   public async downloadSiape() {
@@ -206,12 +210,9 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
     this.loading = true;
     try {
       const cpf = this.cpf?.replace(/\D/g, '');
-      const usuarios = await this.dao?.query({ where: [['cpf', '==', cpf]] })
-        .asPromise();
+      const usuarios = await this.dao!.query({ where: [['cpf', '==', cpf]] }).getAll();
 
-      if (usuarios) {
-        this.usuarios = usuarios;
-      }
+      this.usuarios = usuarios ?? [];
 
       this.integrantes = [];
       for (const usuario of this.usuarios) {
