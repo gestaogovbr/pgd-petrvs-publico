@@ -301,11 +301,18 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasOne(PlanoTrabalho::class)->where('status', 'ATIVO')->latestOfMany();
     }
 
+    /**
+     * @deprecated
+     * Não existe mais a seleção de participantes 
+     */
     public function participacoesProgramas()
     {
         return $this->hasMany(ProgramaParticipante::class);
     }
-
+    /**
+     * @deprecated
+     * Não existe mais a seleção de participantes 
+     */
     public function ultimaParticipacaoPrograma()
     {
         return $this->hasOne(ProgramaParticipante::class)->latestOfMany();

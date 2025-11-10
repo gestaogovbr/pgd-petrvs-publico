@@ -382,9 +382,15 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       } else {
         this.editableForm!.noButtons = undefined;
         this.editableForm!.error = undefined;
+        this.processarUnidadesUsuario(selected.entity);
+        this.resetProgramaItems();
+
+        if (selected.entity.pedagio) {
+          await this.carregaModalidades(true);
+        } else {
+          await this.carregaModalidades(false);
+        }
       }
-      
-      let programa_habilitado = selected.entity.participacoes_programas.find((x: { habilitado: number; }) => x.habilitado == 1);
       
       this.form!.controls.usuario_texto_complementar.setValue(selected.entity.texto_complementar_plano || "");
       if(!this.form?.controls.unidade_id.value) {
@@ -395,11 +401,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
           } else return true;
         })
       }
-      let programas = await this.programaDao.query({
-        where: [['vigentesUnidadeExecutora', '==', selected.entity.lotacao.unidade_id]],
-        join: this.joinPrograma,
-        orderBy: [["unidade.path", "desc"]]
-      }).asPromise();
 
       if(selected.entity.pedagio) {
         let modalidades = await this.tipoModalidadeDao.query({
@@ -408,23 +409,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
         this.form?.controls.tipo_modalidade_id.setValue(modalidades[0]?.id);
       }
       
-      if (programa_habilitado) {
-        const programaEncontrado = programas.find((x: Programa) => x.id == programa_habilitado.programa_id);
-        if (programaEncontrado) {
-          this.preenchePrograma(programaEncontrado);
-        } else {
-          this.limparUnidadeSelecionada();
-        }
-
-        if (selected.entity.pedagio) {
-          await this.carregaModalidades(true);
-        } else {
-          await this.carregaModalidades(false);
-        }
-        
-        this.calculaTempos();
-        this.cdRef.detectChanges();
-      }  
+     
     } catch (error) {
       console.error('Erro ao selecionar usuário:', error);
       this.dialog.alert('Erro', 'Ocorreu um erro ao processar a seleção do usuário.');
