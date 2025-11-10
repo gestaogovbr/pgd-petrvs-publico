@@ -11,6 +11,7 @@ use App\Services\ServiceBase;
 use App\Services\CalendarioService;
 use App\Services\UtilService;
 use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
 use App\Models\Documento;
 use Illuminate\Support\Facades\DB;
 use App\Models\PlanoTrabalhoConsolidacao;
@@ -286,6 +287,12 @@ class PlanoTrabalhoService extends ServiceBase
             if (!parent::loggedUser()->hasPermissionTo('MOD_PTR_USERS_INCL') && !$condicoes["participanteColaboradorUnidadeExecutora"] && !$condicoes["participanteLotadoUnidadeExecutora"]) {
                 throw new ServerException("ValidatePlanoTrabalho", "Participante do plano não é LOTADO ou COLABORADOR na unidade executora. (MOD_PTR_USERS_INCL)\n[ver RN_PTR_Y]");
             }
+
+            /* Só é permitido o cadastro de planos em unidades definidas como executoras */
+            if(!$this->unidadeService->isUnidadeExecutora($data['unidade_id'])){
+                throw new ValidateException("Não é possível criar um plano para unidades não executoras.", 422);
+            }
+
             if ($this->planosUsuarioComPendencias($data['usuario_id'])) {
                 throw new ServerException("ValidatePlanoTrabalho", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");
             }
@@ -1372,6 +1379,5 @@ class PlanoTrabalhoService extends ServiceBase
 
         return in_array($planoAnterior->status, $statusesPendentes, true);
     }
-
 
 }

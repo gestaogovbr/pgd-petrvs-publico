@@ -7,6 +7,7 @@ use App\Models\PlanoEntrega;
 use App\Models\Usuario;
 use App\Models\StatusJustificativa;
 use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
 use App\Models\PlanoEntregaEntrega;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Models\Programa;
@@ -603,6 +604,10 @@ class PlanoEntregaService extends ServiceBase
                 throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.\n[ver RN_PENT_K]");
         }
         if ($action == ServiceBase::ACTION_INSERT) {
+            /* Só é permitido o cadastro de planos em unidades definidas como executoras */
+            if(!$this->unidadeService->isUnidadeExecutora($dataOrEntity["unidade_id"])){
+                throw new ValidateException("Não é possível criar um plano para unidades não executoras.", 422);
+            }
             $planosComPendencias = $this->planosUnidadeComPendencias($dataOrEntity["unidade_id"]);
             if ($planosComPendencias) {
                 throw new ServerException("ValidatePlanoEntrega", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");

@@ -76,6 +76,12 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
         );
       }
 
+      if (!unidade?.executora) {
+        atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(
+          atribuicao => atribuicao.key !== 'COLABORADOR'
+        );
+      }
+
       if(this.perfil){
         await this.perfilDao.getById(this.perfil.currentValue).then(perfil => {
           if (!perfil) return;

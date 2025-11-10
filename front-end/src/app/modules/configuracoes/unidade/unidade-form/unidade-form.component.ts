@@ -50,6 +50,10 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     return !this.auth.hasPermissionTo('MOD_UND_INST') ? 'true' : undefined;
   }
 
+  public get executoraIsDisabled() {
+    return !this.auth.hasPermissionTo('MOD_UND_INST') ? 'true' : undefined;
+  }
+
   public get codigoIsDisabled() {
     return !this.informal && this.action == 'new' ? undefined : 'true';
   }
@@ -79,6 +83,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       cidade_id: { default: "" },
       uf: { default: "" },
       instituidora: { default: false },
+      executora: { default: true },
       informal: { default: true },
       atividades_arquivamento_automatico: { default: 0 },
       distribuicao_forma_contagem_prazos: { default: "DIAS_UTEIS" },
@@ -155,11 +160,11 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
 
   public saveData(form: IIndexable): Promise<Unidade> {
     return new Promise<Unidade>(async (resolve, reject) => {
-      this.notificacoes!.saveData();
+      // this.notificacoes!.saveData();
       let unidade: Unidade = this.util.fill(new Unidade(), this.entity!);
       unidade = this.util.fillForm(unidade, this.form!.value);
-      unidade.notificacoes = this.entity!.notificacoes;
-      unidade.notificacoes_templates = this.entity!.notificacoes_templates;
+      // unidade.notificacoes = this.entity!.notificacoes;
+      // unidade.notificacoes_templates = this.entity!.notificacoes_templates;
       if (!this.form!.controls.usar_expediente_unidade) unidade.expediente = null;
       resolve(unidade);
     });

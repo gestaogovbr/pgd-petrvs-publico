@@ -753,4 +753,13 @@ class UnidadeService extends ServiceBase
             'ids' => $idsInativadas
         ]);
     }
+
+    public function isUnidadeExecutora($unidadeId): bool
+    {
+        return Unidade::where('id', $unidadeId)
+            ->where('executora', true)
+            ->exists();
+    }
+
+    
 }
