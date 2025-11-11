@@ -37,14 +37,23 @@ class IndicadoresEntregaAvaliacaoService extends IndicadoresEntregaService
         }
 
         $sql = <<<TEXT
-            SELECT a.nota as id, REPLACE(JSON_UNQUOTE(a.nota), '"', '') as categoria, count(*) as total
-            FROM planos_entregas pe
-            left join avaliacoes a on pe.avaliacao_id = a.id and a.deleted_at is null
-            where pe.deleted_at is null
-              and pe.avaliacao_id is not null
-              $filtros
-            group by a.nota, REPLACE(JSON_UNQUOTE(a.nota), '"', '')
-            order by 3 desc
+            WITH avaliacoes_pe as (
+                SELECT a.nota as id, REPLACE(JSON_UNQUOTE(a.nota), '"', '') as nota, count(*) as total
+                FROM planos_entregas pe
+                left join avaliacoes a on pe.avaliacao_id = a.id and a.deleted_at is null
+                where pe.deleted_at is null
+                and pe.avaliacao_id is not null
+                $filtros
+                group by a.nota, REPLACE(JSON_UNQUOTE(a.nota), '"', '')
+            ),
+             notas_validas as (
+                SELECT distinct REPLACE(JSON_UNQUOTE(tan.nota), '"', '') as nota, sequencia
+                from tipos_avaliacoes_notas tan
+            )
+            SELECT nv.nota as categoria, COALESCE (avpe.total, 0) as total
+            from notas_validas nv
+            left join avaliacoes_pe avpe on avpe.nota = nv.nota
+            ORDER BY nv.sequencia asc
         TEXT;
 
         $rows = DB::select($sql, $params);
