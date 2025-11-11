@@ -47,30 +47,31 @@ class IndicadoresEntregaEntregaService extends IndicadoresEntregaService
                     ON pte.plano_entrega_entrega_id = pee.id
                     and pte.deleted_at is null
                 LEFT JOIN planos_entregas pe
-                    on pe.id = pee.plano_entrega_id 
+                    on pe.id = pee.plano_entrega_id
                     and pe.deleted_at is null
                 WHERE pte.deleted_at is NULL
                     $filtros
             )
             SELECT 'Vinculadas a Objetivos' as categoria, count(distinct peeo.id) as total
             FROM entregas
-            INNER JOIN planos_entregas_entregas_objetivos peeo 
+            INNER JOIN planos_entregas_entregas_objetivos peeo
                 on peeo.entrega_id = entregas.plano_entrega_entrega_id
-                and peeo.deleted_at is NULL 
-                            
-            UNION
-                        
-            SELECT 'Vinculadas a Objetivos', count(distinct peep.id) as total
+                and peeo.deleted_at is NULL
+
+            UNION ALL
+
+            SELECT 'Vinculadas a Processos', count(distinct peep.id) as total
             FROM entregas
-            INNER JOIN planos_entregas_entregas_processos peep 
+            INNER JOIN planos_entregas_entregas_processos peep
                 on peep.entrega_id = entregas.plano_entrega_entrega_id
-                and peep.deleted_at is NULL 
-                    
-            UNION
-                        
+                and peep.deleted_at is NULL
+
+            UNION ALL
+
             SELECT 'Não Vinculadas', count(*)
-            FROM entregas  
+            FROM entregas
             WHERE entregas.plano_entrega_entrega_id IS NULL
+            ORDER BY 2 DESC
         TEXT;
 
         $rows = DB::select($sql, $params);
