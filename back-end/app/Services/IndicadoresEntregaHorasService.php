@@ -12,8 +12,13 @@ class IndicadoresEntregaHorasService extends IndicadoresEntregaService
 
         $filtros = '';
 
+        $sqlUnidades = [];
         if (isset($this->unidadeIds)) {
-            $filtros .= " and pt.unidade_id in ($this->unidadeIds)";
+            foreach(explode(',', $this->unidadeIds) as $unidadeId) {
+                $sqlUnidades[] = "SELECT $unidadeId as id";
+            }
+
+            $sqlUnidades = implode(' UNION ALL ', $sqlUnidades);
         }
 
         $params = [];
@@ -37,10 +42,15 @@ class IndicadoresEntregaHorasService extends IndicadoresEntregaService
 
         $sql = <<<TEXT
             WITH RECURSIVE
+                unidades_filtradas AS (
+                    $sqlUnidades
+                ),
                 planos_validos as (
                     select pt.id, pt.usuario_id, pt.data_inicio, pt.data_fim, pt.unidade_id, pt.carga_horaria
                     from planos_trabalhos pt
+                    inner join unidades_filtradas uni on uni.id = pt.unidade_id
                     where pt.deleted_at is null
+                      and pt.status in ('ATIVO', 'CONCLUIDO', 'AVALIADO')
                     $filtros
                 ),
                 limites AS (
@@ -87,19 +97,19 @@ class IndicadoresEntregaHorasService extends IndicadoresEntregaService
                             f.abrangencia = 'NACIONAL'
                             OR (
                                 f.abrangencia = 'ESTADUAL'
-                                AND f.uf = (
+                                AND f.uf in (
                                     SELECT cid.uf
                                     FROM unidades uni
                                     INNER JOIN cidades cid ON cid.id = uni.cidade_id
-                                    WHERE uni.id in (select unidade_id from planos_validos)
+                                    WHERE uni.id in (select id from unidades_filtradas)
                                 )
                             )
                             OR (
                                 f.abrangencia = 'MUNICIPAL'
-                                AND f.cidade_id = (
+                                AND f.cidade_id in (
                                     SELECT cidade_id
                                     FROM unidades
-                                    WHERE id in (select unidade_id from planos_validos)
+                                    WHERE id in (select id from unidades_filtradas)
                                 )
                             )
                         )
@@ -140,28 +150,41 @@ class IndicadoresEntregaHorasService extends IndicadoresEntregaService
                             and a.deleted_at is null
                         )
                     group by pdu.id
+                ),
+                categorias as (
+                    SELECT 'Própria Unidade' as nome
+                    UNION
+                    SELECT 'Outras Unidades' as nome
+                    UNION
+                    SELECT 'Não vinculadas a entregas'
+                ),
+                resultado as (
+                    SELECT
+                        CASE WHEN pte.plano_entrega_entrega_id IS NULL
+                            then 'Não vinculadas a entregas'
+                            else
+                                CASE WHEN pe.unidade_id = pv.unidade_id
+                                    THEN 'Própria Unidade'
+                                    ELSE 'Outras Unidades'
+                                END
+                        end as categoria,
+                        sum(round(pte.forca_Trabalho * pch.dias_uteis *
+                            pv.carga_horaria
+                            / 100, 2)
+                        ) as horas
+                    from planos_validos pv
+                    inner join planos_ch pch on pch.id = pv.id
+                    inner join planos_trabalhos_entregas pte on pte.plano_trabalho_id = pch.id and pte.deleted_at is null
+                    inner join usuarios u on u.id = pv.usuario_id and u.deleted_at is null
+                    left join planos_entregas_entregas pee on pee.id = pte.plano_entrega_entrega_id
+                    left join planos_entregas pe on pe.id = pee.plano_entrega_id
+                    group by categoria
                 )
-            SELECT
-                CASE WHEN pte.plano_entrega_entrega_id IS NULL
-                    then 'Não vinculadas a entregas'
-                    else
-                        CASE WHEN pe.unidade_id = pv.unidade_id
-                            THEN 'Própria Unidade'
-                            ELSE 'Outras Unidades'
-                        END
-                end as categoria,
-                sum(round(pte.forca_Trabalho * pch.dias_uteis *
-                    pv.carga_horaria
-                    / 100, 2)
-                ) as horas_entregas,
-                (select sum(horasTotais) from planos_ch) as horas_planos
-            from planos_validos pv
-            inner join planos_ch pch on pch.id = pv.id
-            inner join planos_trabalhos_entregas pte on pte.plano_trabalho_id = pch.id and pte.deleted_at is null
-            inner join usuarios u on u.id = pv.usuario_id and u.deleted_at is null
-            left join planos_entregas_entregas pee on pee.id = pte.plano_entrega_entrega_id
-            left join planos_entregas pe on pe.id = pee.plano_entrega_id
-            group by categoria
+                SELECT c.nome as categoria,
+                    coalesce(r.horas, 0) as horas
+                FROM categorias c
+                LEFT JOIN resultado r on r.categoria = c.nome
+                ORDER BY 2 desc
         TEXT;
 
         $rows = DB::select($sql, $params);
