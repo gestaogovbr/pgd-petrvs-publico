@@ -59,7 +59,8 @@ class IndicadoresGestaoService extends ServiceBase
            with lotacoes as (
                 select
                     `ui`.`usuario_id` AS `usuario_id`,
-                    `ui`.`unidade_id` AS `unidade_id`
+                    `ui`.`unidade_id` AS `unidade_id`,
+                    uia.created_at
                 from
                     (`unidades_integrantes` `ui`
                 join `unidades_integrantes_atribuicoes` `uia` on
@@ -150,5 +151,16 @@ class IndicadoresGestaoService extends ServiceBase
 
     public function applyFiltros($data, &$sql, &$params)
     {
+        $data_inicial = $this->extractWhere($data, "data_inicial");
+        if (isset($data_inicial[2])) {
+            $sql .= " and `lotacoes`.`created_at` >= ?";
+            $params[] = $data_inicial[2];
+        }
+
+        $data_final = $this->extractWhere($data, "data_final");
+        if (isset($data_final[2])) {
+            $sql .= " and date(`lotacoes`.`created_at`) <= ?";
+            $params[] = $data_final[2];
+        }
     }
 }

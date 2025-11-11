@@ -31,26 +31,16 @@
 .grafico .titulo{
   font-weight: bold;
   margin-bottom: 20px;
+  text-align: center;
 }
 
 .grafico-wrapper {
   position: relative;
   width: 100%;
-  margin: 0 auto;
-  max-width: 600px;
   height: 300px;
+  margin: 0 auto;
 }
 
 canvas {
   margin: 0 auto;
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.chartjs-legend ul {
-  display: flex !important;
-  flex-direction: column !important; /* ✅ força uma coluna */
-  align-items: flex-start !important; /* alinha à esquerda */
-  margin: 0;
-  padding: 0;
 }

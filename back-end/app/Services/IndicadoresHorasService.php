@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
 
-class IndicadoresEntregaHorasService extends IndicadoresEntregaService
+class IndicadoresHorasService extends IndicadoresEntregaService
 {
     public function query($data)
     {

@@ -23,7 +23,6 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
 
   public permissao: string = 'MOD_IND_EQUIPES';
   public botoes: ToolbarButton[] = [];
-  public loadingHoras: boolean = false;
   public totalAvaliacoes: number = 0;
   
   public pieChartData: ChartData<'pie', number[], string | string[]> = {
@@ -63,16 +62,6 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
   }
 
   public pieChartAvaliacoesData: ChartData<'pie', number[], string | string[]> = {
-    labels: [],
-    datasets: [
-      {
-        data: [],
-        backgroundColor: CHART_COLORS,
-      },
-    ],
-  }
-
-  public pieChartHorasData: ChartData<'pie', number[], string | string[]> = {
     labels: [],
     datasets: [
       {
@@ -171,15 +160,6 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
         this.filter?.controls.unidade_id.setValue(this.metadata?.unidade_id);
         this.saveUsuarioConfig();
       }
-
-      let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
-
-      this.loadingHoras = true;
-      this.dao!.queryHoras({
-        where: queryOptions.where
-      }).subscribe(result => {
-        this.graficoHoras(result.rows);
-      });
   }
 
   public onQueryResolve(rows: IndicadorEntrega[] | null) {
@@ -269,38 +249,12 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
     let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
 
     if (this.filter!.valid) {
-
       this.query?.reload(queryOptions);
-
-      if (!this.loadingHoras) {
-        this.loadingHoras = true;
-        this.dao!.queryHoras({
-            where: queryOptions.where
-        }).subscribe(result => {
-            this.graficoHoras(result.rows);
-        });
-      }
     } else {
       this.filter!.markAllAsTouched(); 
     }
   }
 
-  public graficoHoras(rows: any[]) {
-    const tipos = rows; //.filter(row => row.horas > 0);
-    const total = tipos.reduce((sum, row) => sum + row.horas, 0);
-
-    this.pieChartHorasData.datasets[0].data = tipos.map(row => row.horas);
-
-    this.pieChartHorasData.labels = tipos.map(row => row.categoria +
-        ' (' + ((total? (Number(row.horas) / total) : 0 * 100))
-        .toFixed(2)
-        .replace(".", ",")
-        + '%)'
-      );
-
-     this.loadingHoras = false;
-
-    this.charts.forEach(chart => chart.update());
-  }
+  
 
 }

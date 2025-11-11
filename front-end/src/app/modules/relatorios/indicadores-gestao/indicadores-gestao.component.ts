@@ -10,6 +10,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { IndicadorGestao } from "src/app/models/indicador-gestao";
 import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.component";
 import { IndicadorGestaoDaoService } from "src/app/dao/indicador-gestao-dao.service";
+import { CHART_COLORS } from "src/app/services/chart";
 
 Chart.register(ChartDataLabels);
 
@@ -30,6 +31,7 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
     datasets: [
       {
         data: [],
+        backgroundColor: CHART_COLORS,
       },
     ],
   };
@@ -37,23 +39,25 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
     responsive: true,
     maintainAspectRatio: false,
     layout: {
+      padding: {
+        bottom: 30
+      }
     },
     plugins: {
       legend: {
         position: 'bottom',
-        align: 'center',
+        align: 'start',
         labels: {
-          boxWidth: 12,
-          padding: 10,
+          boxWidth: 50,
           textAlign: 'left',
         }
       },
       title: {
         display: false
       },
-      datalabels: {
+      datalabels: { 
         display: false
-      }
+      },
     },
   }
 
@@ -62,6 +66,7 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
     datasets: [
       {
         data: [],
+        backgroundColor: CHART_COLORS,
       },
     ],
   };
@@ -69,26 +74,27 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
     responsive: true,
     maintainAspectRatio: false,
     layout: {
+      padding: {
+        bottom: 30
+      }
     },
     plugins: {
       legend: {
         position: 'bottom',
-        align: 'center',
-        fullSize: true,
+        align: 'start',
         labels: {
-          boxWidth: 12,
-          padding: 20,
+          boxWidth: 50,
           textAlign: 'left',
         }
       },
       title: {
         display: false
       },
-      datalabels: {
+      datalabels: { 
         display: false
-      }
+      },
     },
-  };
+  }
 
   constructor(public injector: Injector, dao: IndicadorGestaoDaoService) {
       super(injector, IndicadorGestao, IndicadorGestaoDaoService);
@@ -139,31 +145,37 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
   public onQueryResolve(rows: any | null) {
     if (rows) {
       const data = rows[0];
-      this.pieChartData.labels = [
-        'Participantes (' + ((data.totalParticipantes / data.totalUsuarios) * 100)
-          .toFixed(2)
-          .replace(".", ",")
-          + '%)',
-        'Não Participantes (' + (((data.totalUsuarios - data.totalParticipantes) / data.totalUsuarios) * 100)
-          .toFixed(2)
-          .replace(".", ",")
-          + '%)'
-      ];
-      this.pieChartData.datasets[0].data = [
-        data.totalParticipantes,
-        data.totalUsuarios - data.totalParticipantes
-      ];
+      if (!data || !data.totalUsuarios) {
+        this.pieChartData.labels = [];
+        this.pieChartData.datasets[0].data = [];
+      } else {
+        this.pieChartData.labels = [
+          'Participantes (' + ((data.totalParticipantes / data.totalUsuarios) * 100)
+            .toFixed(2)
+            .replace(".", ",")
+            + '%)',
+          'Não Participantes (' + (((data.totalUsuarios - data.totalParticipantes) / data.totalUsuarios) * 100)
+            .toFixed(2)
+            .replace(".", ",")
+            + '%)'
+        ];
+        this.pieChartData.datasets[0].data = [
+          data.totalParticipantes,
+          data.totalUsuarios - data.totalParticipantes
+        ];
 
-      this.pieChartUnidadesData.labels = [
-        'Com PGD em vigor (' + ((data.totalUnidadesPE / data.totalUnidades) * 100)
-          .toFixed(2)
-          .replace(".", ",")
-          + '%)',
-        'Sem PGD em vigor (' + (((data.totalUnidades - data.totalUnidadesPE) / data.totalUnidades) * 100)
-          .toFixed(2)
-          .replace(".", ",")
-          + '%)'
-      ];
+        this.pieChartUnidadesData.labels = [
+          'Com PGD em vigor (' + ((data.totalUnidadesPE / data.totalUnidades) * 100)
+            .toFixed(2)
+            .replace(".", ",")
+            + '%)',
+          'Sem PGD em vigor (' + (((data.totalUnidades - data.totalUnidadesPE) / data.totalUnidades) * 100)
+            .toFixed(2)
+            .replace(".", ",")
+            + '%)'
+        ];
+      }
+
       this.pieChartUnidadesData.datasets[0].data = [
         data.totalUnidadesPE,
         data.totalUnidades - data.totalUnidadesPE
@@ -211,10 +223,7 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
     let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
 
     if (this.filter!.valid) {
-      if (this.grid && this.grid.query) {
-        this.loaded = true;
-      }
-      this.grid?.query?.reload(queryOptions);
+      this.query?.reload(queryOptions);
     } else {
       this.filter!.markAllAsTouched(); 
     }

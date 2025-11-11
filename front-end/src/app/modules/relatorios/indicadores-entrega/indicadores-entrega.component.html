@@ -1,3 +1,4 @@
+<h3>Indicadores de Entregas</h3>
 <toolbar *ngIf="!selectable"></toolbar>
 <filter 
     [form]="filter" 
@@ -88,26 +89,6 @@
                     baseChart
                     *ngIf="pieChartAvaliacoesData.labels?.length"
                     [data]="pieChartAvaliacoesData"
-                    [type]="'pie'"
-                    [options]="pieChartOptions"
-                ></canvas>
-            </div>
-        </ng-template>
-    </div>
-    <div class="grafico">
-        <div class="titulo">Taxa de alocação de horas</div>
-        <p *ngIf="!pieChartHorasData.labels?.length" class="no-data">Sem dados para exibir</p>
-        <div *ngIf="loadingHoras; else graficoHoras" class="d-flex justify-content-center my-2">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden"></span>
-            </div>
-        </div>
-        <ng-template #graficoHoras>
-            <div class="grafico-wrapper">
-                <canvas
-                    baseChart
-                    *ngIf="pieChartHorasData.labels?.length"
-                    [data]="pieChartHorasData"
                     [type]="'pie'"
                     [options]="pieChartOptions"
                 ></canvas>

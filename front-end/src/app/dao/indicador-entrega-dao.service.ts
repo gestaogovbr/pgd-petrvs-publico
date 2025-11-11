@@ -11,8 +11,4 @@ export class IndicadorEntregaDaoService extends DaoBaseService<IndicadorEntrega>
   constructor(protected injector: Injector) { 
     super("Indicadores/entrega", injector);
   }
-
-  public queryHoras(queryOptions: QueryOptions): Observable<any> {
-    return this.server.post(this.PREFIX_URL + '/' + this.collection + '/horas', queryOptions);
-  }
 }
