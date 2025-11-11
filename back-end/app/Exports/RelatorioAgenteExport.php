@@ -73,7 +73,6 @@ class RelatorioAgenteExport implements FromCollection, WithMapping, WithHeadings
 
     public function map($row): array
     {
-        \Log::info($row->modalidadeSouGov);
         return [
             $row->nome,
             $row->matricula,
