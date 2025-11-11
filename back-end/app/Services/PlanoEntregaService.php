@@ -307,8 +307,7 @@ class PlanoEntregaService extends ServiceBase
         }
         $entregas = $planoEntrega->entregas;
         foreach($entregas as $entrega){
-            
-            if(!$entrega->descricao){
+            if($entrega->progressos->isEmpty()){
                 throw new ValidateException("Antes de concluir, é necessário fazer a descrição da evolução da entrega!");
             }
         }
