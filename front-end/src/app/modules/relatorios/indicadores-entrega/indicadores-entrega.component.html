@@ -1,66 +1,68 @@
-<grid [dao]="dao" 
-    [title]="title" 
-    [orderBy]="orderBy"
+<toolbar *ngIf="!selectable"></toolbar>
+<filter 
+    [form]="filter" 
+    [where]="filterWhere" 
+    [submit]="filterSubmit.bind(this)"
+    [filter]="onButtonFilterClick"
+    filterLabel="Consultar"
 >
-    <toolbar *ngIf="!selectable"></toolbar>
-    <filter 
-        [form]="filter" 
-        [where]="filterWhere" 
-        [submit]="filterSubmit.bind(this)"
-        [filter]="onButtonFilterClick"
-        filterLabel="Consultar"
-    >
-        <div class="row">   
-            <input-search 
-                #unidade 
-                [size]="6" 
-                label="Unidade de Consulta"
-                [control]="filter!.controls.unidade_id" 
-                controlName="unidade_id" 
-                [dao]="unidadeDao"
-                [selectRoute]="{
-                    route: ['configuracoes', 'unidade'],
-                    params: { unidades: this.unidades }
-                }"
-                [where]="auth.hasPermissionTo('MOD_IND_TODAS_UNIDADES')
-                    ? []
-                    : [['id', 'in', this.unidades]]"
-            >
-            </input-search>
-            <input-datetime
-                [size]="2"
-                date
-                label="Período para consulta: início"
-                controlName="this.filter.data_inicial"
-                [control]="filter!.controls.data_inicial"
-                labelInfo="Data início de consulta"
-            ></input-datetime>
-            <input-datetime
-                [size]="2"
-                date
-                label="Período para consulta: fim"
-                controlName="data_final"
-                [control]="filter!.controls.data_final"
-                labelInfo="Data fim da consulta"
-            ></input-datetime>
-            <input-switch
-                [size]="1"
-                label="Somente vigentes"
-                controlName="somente_vigentes"
-                [control]="filter!.controls.somente_vigentes"
-            ></input-switch>
-            <input-switch
-                [size]="1"
-                label="Processos Subordinadas"
-                controlName="incluir_unidades_subordinadas"
-                [control]="filter!.controls.incluir_unidades_subordinadas"
-            ></input-switch>
+    <div class="row">   
+        <input-search 
+            #unidade 
+            [size]="6" 
+            label="Unidade de Consulta"
+            [control]="filter!.controls.unidade_id" 
+            controlName="unidade_id" 
+            [dao]="unidadeDao"
+            [selectRoute]="{
+                route: ['configuracoes', 'unidade'],
+                params: { unidades: this.unidades }
+            }"
+            [where]="auth.hasPermissionTo('MOD_IND_TODAS_UNIDADES')
+                ? []
+                : [['id', 'in', this.unidades]]"
+        >
+        </input-search>
+        <input-datetime
+            [size]="2"
+            date
+            label="Período para consulta: início"
+            controlName="this.filter.data_inicial"
+            [control]="filter!.controls.data_inicial"
+            labelInfo="Data início de consulta"
+        ></input-datetime>
+        <input-datetime
+            [size]="2"
+            date
+            label="Período para consulta: fim"
+            controlName="data_final"
+            [control]="filter!.controls.data_final"
+            labelInfo="Data fim da consulta"
+        ></input-datetime>
+        <input-switch
+            [size]="1"
+            label="Somente vigentes"
+            controlName="somente_vigentes"
+            [control]="filter!.controls.somente_vigentes"
+        ></input-switch>
+        <input-switch
+            [size]="1"
+            label="Processos Subordinadas"
+            controlName="incluir_unidades_subordinadas"
+            [control]="filter!.controls.incluir_unidades_subordinadas"
+        ></input-switch>
+    </div>
+</filter>
+<div class="graficos">
+    <div class="grafico">
+        <div class="titulo">Taxa de vinculação das entregas</div>
+        <p *ngIf="!pieChartData.labels?.length" class="no-data">Sem dados para exibir</p>
+        <div *ngIf="loading; else graficoEntregas" class="d-flex justify-content-center my-2">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden"></span>
+            </div>
         </div>
-    </filter>
-    <div class="graficos">
-        <div class="grafico">
-            <div class="titulo">Taxa de vinculação das entregas</div>
-            <p *ngIf="!pieChartData.labels?.length" class="no-data">Sem dados para exibir</p>
+        <ng-template #graficoEntregas>
             <div class="grafico-wrapper">
                 <canvas
                     baseChart
@@ -70,11 +72,18 @@
                     [options]="pieChartOptions"
                 ></canvas>
             </div>
+        </ng-template>
+    </div>
+    <div class="grafico">
+        <div class="titulo">Distribuição das avaliações dos Planos de Entregas (PEs)</div>
+        <p *ngIf="!pieChartAvaliacoesData.labels?.length || !totalAvaliacoes" class="no-data">Sem dados de avaliações</p>
+        <div *ngIf="loading; else graficoAvaliacoes" class="d-flex justify-content-center my-2">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden"></span>
+            </div>
         </div>
-        <div class="grafico">
-            <div class="titulo">Distribuição das avaliações dos planos de entregas</div>
-            <p *ngIf="!pieChartAvaliacoesData.labels?.length" class="no-data">Sem dados para exibir</p>
-            <div class="grafico-wrapper">
+        <ng-template #graficoAvaliacoes>
+            <div class="grafico-wrapper" *ngIf="totalAvaliacoes">
                 <canvas
                     baseChart
                     *ngIf="pieChartAvaliacoesData.labels?.length"
@@ -83,30 +92,37 @@
                     [options]="pieChartOptions"
                 ></canvas>
             </div>
-        </div>
-        <div class="grafico">
-            <div class="titulo">Taxa de alocação de horas</div>
-            <p *ngIf="!pieChartHorasData.labels?.length" class="no-data">Sem dados para exibir</p>
-            <div *ngIf="loadingHoras; else graficoHoras" class="d-flex justify-content-center my-2">
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden"></span>
-                </div>
+        </ng-template>
+    </div>
+    <div class="grafico">
+        <div class="titulo">Taxa de alocação de horas</div>
+        <p *ngIf="!pieChartHorasData.labels?.length" class="no-data">Sem dados para exibir</p>
+        <div *ngIf="loadingHoras; else graficoHoras" class="d-flex justify-content-center my-2">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden"></span>
             </div>
-            <ng-template #graficoHoras>
-                <div class="grafico-wrapper">
-                    <canvas
-                        baseChart
-                        *ngIf="pieChartHorasData.labels?.length"
-                        [data]="pieChartHorasData"
-                        [type]="'pie'"
-                        [options]="pieChartOptions"
-                    ></canvas>
-                </div>
-            </ng-template>
         </div>
-        <div class="grafico">
-            <div class="titulo">Coerência entre desempenhos dos Planos de Trabalho (PTs) e do Plano de Entregas (PE)</div>
-            <p *ngIf="!barChartData.datasets[0].data?.length" class="no-data">Sem dados para exibir</p>
+        <ng-template #graficoHoras>
+            <div class="grafico-wrapper">
+                <canvas
+                    baseChart
+                    *ngIf="pieChartHorasData.labels?.length"
+                    [data]="pieChartHorasData"
+                    [type]="'pie'"
+                    [options]="pieChartOptions"
+                ></canvas>
+            </div>
+        </ng-template>
+    </div>
+    <div class="grafico">
+        <div class="titulo">Coerência entre desempenhos dos Planos de Trabalho (PTs) e do Planos de Entregas (PEs)</div>
+        <p *ngIf="!barChartData.datasets[0].data?.length" class="no-data">Sem dados para exibir</p>
+        <div *ngIf="loading; else graficoDesempenho" class="d-flex justify-content-center my-2">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden"></span>
+            </div>
+        </div>
+        <ng-template #graficoDesempenho>
             <div class="grafico-wrapper">
                 <canvas
                     baseChart
@@ -117,7 +133,7 @@
                 >
                 </canvas>
             </div>
-        </div>
+        </ng-template>
     </div>
-</grid>
+</div>
 

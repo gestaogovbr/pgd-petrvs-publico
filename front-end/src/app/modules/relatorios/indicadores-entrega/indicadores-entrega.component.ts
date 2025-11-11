@@ -24,6 +24,7 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
   public permissao: string = 'MOD_IND_EQUIPES';
   public botoes: ToolbarButton[] = [];
   public loadingHoras: boolean = false;
+  public totalAvaliacoes: number = 0;
   
   public pieChartData: ChartData<'pie', number[], string | string[]> = {
     labels: [],
@@ -40,39 +41,23 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
     maintainAspectRatio: false,
     layout: {
       padding: {
-        top: 50,
-        bottom: 60,
-        left: 50,
-        right: 50
+        bottom: 30
       }
     },
     plugins: {
       legend: {
         position: 'bottom',
-        title: {
-            display: true,
-            text: ' ', // cria o espaçamento acima da legenda
-            padding: { top: 30, bottom: 0 }, // ajustável
-        },
+        align: 'start',
+        labels: {
+          boxWidth: 50,
+          textAlign: 'left',
+        }
       },
       title: {
         display: false
       },
-      datalabels: {
-        formatter: (value, ctx) => {
-          const dataset = ctx.chart.data.datasets[0];
-          const total = (dataset.data as number[]).reduce((a, b) => a + b, 0);
-          const percentage = ((value / total) * 100).toFixed(2).replace('.', ',');
-          return percentage + '%';
-        },
-        anchor: 'end',      // coloca o label na borda da fatia
-        align: 'end',       // alinha fora da fatia
-        offset: 10,          // distância do centro da fatia
-        clamp: true,
-        font: {
-          weight: 'bold',
-          size: 10
-        }
+      datalabels: { 
+        display: false
       },
     },
   }
@@ -100,8 +85,14 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
   public barChartOptions: ChartConfiguration<'bar'>['options'] = {
     responsive: true,
     maintainAspectRatio: false,
+    layout: {
+      padding: {
+        bottom: 20, 
+      },
+    },
     scales: {
-      x: {},
+      x: {
+      },
       y: {
         beginAtZero: true,
         min: 0,
@@ -113,26 +104,36 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
       },
     },
     plugins: {
+      title: {
+        display: true,
+        text: '',
+        padding: {
+          bottom: 40,
+        },
+      },
       legend: {
         display: true,
+        position: 'bottom',
+        align: 'center',
       },
       datalabels: {
         anchor: 'end',
-        align: 'end',
+        align: 'top',
+        clamp: true,
         formatter: (value) => 
-            Number(value).toLocaleString('pt-BR', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-            }),
+          Number(value).toLocaleString('pt-BR', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+          }),
       },
     },
   }
 
   public barChartData: ChartData<'bar'> = {
-    labels: ['Período total'],
+    labels: [''],
     datasets: [
-      { data: [], label: 'Planos de Trabalho' },
-      { data: [], label: 'Planos de Entrega' },
+      { data: [], label: 'Média das Avaliações dos PEs',  backgroundColor: '#4CAF50', },
+      { data: [], label: 'Média das Avaliações dos PTs',  backgroundColor: '#FFC107' },
     ],
   }
 
@@ -185,23 +186,38 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
     this.loading = false;
     
     if (rows && rows.length) {
-      const itens = rows[0].entregas.filter(row => row.total > 0);
+      const itens = rows[0].entregas;
 
       const total = itens.reduce((sum, row) => sum + row.total, 0);
       this.pieChartData.labels = itens.map(row => row.categoria);
       this.pieChartData.datasets[0].data = itens.map(row => Number(row.total));
+      this.pieChartData.labels = itens.map(row => row.categoria +
+          ' (' + ((total ? ((Number(row.total) / total)) : 0) * 100)
+          .toFixed(2)
+          .replace(".", ",")
+          + '%)'
+        );
 
-      const avaliacoes = rows[0].avaliacoes.filter(row => row.total > 0);
-      const totalAvaliacoes = avaliacoes.reduce((sum, row) => sum + row.total, 0);
+      const avaliacoes = rows[0].avaliacoes;
+      this.totalAvaliacoes = avaliacoes.reduce((sum, row) => sum + row.total, 0);
       this.pieChartAvaliacoesData.labels = avaliacoes.map(row => row.categoria);
       this.pieChartAvaliacoesData.datasets[0].data = avaliacoes.map(row => Number(row.total));
+      this.pieChartAvaliacoesData.labels = avaliacoes.map(row => row.categoria +
+          ' (' + ((this.totalAvaliacoes ? (Number(row.total) / this.totalAvaliacoes) : 0) * 100)
+          .toFixed(2)
+          .replace(".", ",")
+          + '%)'
+        );
 
-      this.barChartData.datasets[1].data = [rows[0].desempenho.trabalhos ?? 0];
       this.barChartData.datasets[0].data = [rows[0].desempenho.entregas ?? 0];
-      this.barChartData.labels = ['Diferença: ' +
-        (Number(rows[0].desempenho.trabalhos) - Number(rows[0].desempenho.entregas))
-        .toFixed(2).replace('.', ',')
-      ];
+      this.barChartData.datasets[1].data = [rows[0].desempenho.trabalhos ?? 0];
+      if (this.barChartOptions?.plugins?.title) {
+        this.barChartOptions.plugins.title.text = 'Diferença: ' +
+          (Number(rows[0].desempenho.trabalhos) - Number(rows[0].desempenho.entregas))
+          .toFixed(2).replace('.', ',')
+      }
+
+      this.barChartOptions = { ...this.barChartOptions };
 
       this.charts.forEach(chart => chart.update());
     }
@@ -253,9 +269,8 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
     let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
 
     if (this.filter!.valid) {
-      if (this.grid && this.grid.query) {
-      }
-      this.grid?.query?.reload(queryOptions);
+
+      this.query?.reload(queryOptions);
 
       if (!this.loadingHoras) {
         this.loadingHoras = true;
@@ -271,20 +286,17 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
   }
 
   public graficoHoras(rows: any[]) {
-    const tipos = rows.filter(row => row.horas_entregas > 0);
-    const total = tipos.reduce((sum, row) => sum + row.horas_entregas, 0);
-    this.pieChartHorasData.labels = tipos.map(row => row.categoria);
-    this.pieChartHorasData.datasets[0].data = tipos.map(row => Number(row.horas_entregas));
+    const tipos = rows; //.filter(row => row.horas > 0);
+    const total = tipos.reduce((sum, row) => sum + row.horas, 0);
 
-    if (rows[0] && rows[0].horas_planos != total) {
-        const valor = Number(rows[0].horas_planos) - total;
-        if ((valor / rows[0].horas_planos) > 0.01) {
-            this.pieChartHorasData.labels.push('Horas não alocadas');
-            this.pieChartHorasData.datasets[0].data.push(Number(rows[0].horas_planos) - total);
-        } else {
-             this.pieChartHorasData.labels.push('Horas não alocadas (' + valor.toFixed(2).replace('.', ',') + 'h)');
-        }
-    }
+    this.pieChartHorasData.datasets[0].data = tipos.map(row => row.horas);
+
+    this.pieChartHorasData.labels = tipos.map(row => row.categoria +
+        ' (' + ((total? (Number(row.horas) / total) : 0 * 100))
+        .toFixed(2)
+        .replace(".", ",")
+        + '%)'
+      );
 
      this.loadingHoras = false;
 
