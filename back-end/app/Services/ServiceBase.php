@@ -948,6 +948,28 @@ class ServiceBase extends DynamicMethods
   }
 
   /**
+   * Validates the removal of a related entity from storage.
+   *
+   * @param  string $id
+   * @return boolean
+   */
+  public function validateDestroy($id)
+  {
+    $model = $this->getModel();
+    $entity = $model::find($id);
+    if (isset($entity)) {
+      try {
+        if (method_exists($this, "checkDestroy")) $this->checkDestroy($entity);
+        return true;
+      } catch (Throwable $e) {
+        throw $e;
+      }
+    } else {
+      throw new NotFoundException("Id não encontrado");
+    }
+  }
+
+  /**
    * @return boolean Informa se o usuário logado possui o perfil de Desenvolvedor ou não.
    */
   public function isLoggedUserADeveloper()

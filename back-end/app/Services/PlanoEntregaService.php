@@ -7,6 +7,7 @@ use App\Models\PlanoEntrega;
 use App\Models\Usuario;
 use App\Models\StatusJustificativa;
 use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
 use App\Models\PlanoEntregaEntrega;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Models\Programa;
@@ -49,10 +50,10 @@ class PlanoEntregaService extends ServiceBase
             $planoEntrega["criacao_usuario_id"] = parent::loggedUser()->id;
         } else { // ServiceBase::ACTION_EDIT
             /* (RN_PTR_E) O Plano de Trabalho precisará ser repactuado (retornar ao status de AGUARDANDO_ASSINATURA) quando houver quaisquer alterações no plano de entrega que impacte as entregas do plano de trabalho; (alterada a entrega ou cancelada); */
-            $this->buffer["planosTrabalhosImpactados"] = [];
-            foreach ($planoEntrega["entregas"] as $entrega) {
-                array_merge($this->buffer["planosTrabalhosImpactados"], $this->planosImpactadosPorAlteracaoEntrega($entrega));
-            }
+            // $this->buffer["planosTrabalhosImpactados"] = [];
+            // foreach ($planoEntrega["entregas"] as $entrega) {
+            //     array_merge($this->buffer["planosTrabalhosImpactados"], $this->planosImpactadosPorAlteracaoEntrega($entrega));
+            // }
         }
         return $planoEntrega;
     }
@@ -281,6 +282,7 @@ class PlanoEntregaService extends ServiceBase
     public function concluir($data, $unidade)
     {
         try {
+            $this->validaConclusaoPlanoEntrega($data["id"]);
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
             $this->statusService->atualizaStatus($planoEntrega, 'CONCLUIDO', $data["justificativa"]);
@@ -289,6 +291,28 @@ class PlanoEntregaService extends ServiceBase
             DB::rollback();
             throw $e;
         }
+        return true;
+    }
+
+    /**
+     * Valida se é possível concluir o plano de entrega indicado
+     */
+    public function validaConclusaoPlanoEntrega(string $idPlano): bool{
+        $planoEntrega = PlanoEntrega::find($idPlano);
+        if(empty($planoEntrega)){
+            throw new ValidateException("Plano de Entrega não encontrado!");
+        }
+        if($planoEntrega->status != 'ATIVO'){
+            throw new ValidateException("Plano de Entrega não está ativo!");
+        }
+        $entregas = $planoEntrega->entregas;
+        foreach($entregas as $entrega){
+            
+            if(!$entrega->descricao){
+                throw new ValidateException("Antes de concluir, é necessário fazer a descrição da evolução da entrega!");
+            }
+        }
+
         return true;
     }
 
@@ -601,12 +625,16 @@ class PlanoEntregaService extends ServiceBase
                 throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar a sua Unidade.\n[ver RN_PENT_K]");
             if ($dataOrEntity["programa_id"] != $planoEntrega->programa_id)
                 throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.\n[ver RN_PENT_K]");
+            if($this->planoTrabalhoEntregaSercice->hasContribuicoes($planoEntrega["entregas"]))
+                throw new ValidateException("Há contribuição de participantes para essa entrega, por isso ela não pode ser excluída");
         }
         if ($action == ServiceBase::ACTION_INSERT) {
             $planosComPendencias = $this->planosUnidadeComPendencias($dataOrEntity["unidade_id"]);
             if ($planosComPendencias) {
                 throw new ServerException("ValidatePlanoEntrega", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");
             }
+
+            $this->validaPlanoComEntregas($dataOrEntity);
         }
     }
 
@@ -697,4 +725,14 @@ class PlanoEntregaService extends ServiceBase
         return in_array($planoAnterior->status, $statusesPendentes, true);
     }
 
+    private function validaPlanoComEntregas($planoEntrega): bool
+    {
+        if (!$planoEntrega["entregas"]) {
+            throw new ValidateException("Não é possível gravar Plano de Entregas sem entrega cadastrada",422);
+        }
+
+        return true;
+    }
+
+    
 }

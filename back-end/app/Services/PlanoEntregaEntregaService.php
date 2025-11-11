@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\ValidateException;
 use App\Models\CadeiaValorProcesso;
 use App\Models\PlanejamentoObjetivo;
 use App\Models\PlanoEntregaEntrega;
@@ -32,6 +33,12 @@ class PlanoEntregaEntregaService extends ServiceBase
                 }
             }
         }
+    }
+
+    public function checkDestroy($planoEntregaEntrega){
+        if(!$this->planoTrabalhoEntregaService->hasContribuicoes($planoEntregaEntrega))
+            return true;
+        throw new ValidateException("Há contribuição de participantes para essa entrega, por isso ela não pode ser excluída");
     }
 
     public function extraDestroy($planoEntregaEntrega)

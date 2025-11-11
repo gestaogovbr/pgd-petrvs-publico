@@ -140,7 +140,7 @@
                     [style]="column.style"
                   >
                     <column-row
-                      *ngIf="!column.inType(['options', 'expand'])"
+                      *ngIf="!column.inType(['options', 'expand']) && (!column.expandable || !column.expandable(row))"
                       [index]="idx"
                       [column]="column"
                       [row]="row"
@@ -148,7 +148,7 @@
                     ></column-row>
 
                     <column-expand
-                      *ngIf="column.isType('expand')"
+                      *ngIf="column.isType('expand') && (!column.expandable || column.expandable(row))"
                       [index]="idx"
                       [toggleable]="!isNoToggleable"
                       [expanded]="!!expandedIds[row.id]"
