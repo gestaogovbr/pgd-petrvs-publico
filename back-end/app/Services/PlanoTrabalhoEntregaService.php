@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\PlanoTrabalhoEntrega;
 use App\Services\ServiceBase;
 use App\Exceptions\ServerException;
 
@@ -23,4 +24,9 @@ class PlanoTrabalhoEntregaService extends ServiceBase
     $this->planoTrabalhoService->repactuar($planoTrabalhoEntrega->plano_trabalho_id, true);      
   }
 
+
+  public function hasContribuicoes($entrega)
+  {
+      return PlanoTrabalhoEntrega::where('plano_entrega_entrega_id', $entrega->id)->exists();
+  }
 }
