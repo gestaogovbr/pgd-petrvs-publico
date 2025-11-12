@@ -584,6 +584,7 @@ export class LookupService implements IIndexable {
   ];
 
   public CONSOLIDACAO_STATUS: LookupItem[] = [
+    { key: "AGUARDANDO_REGISTRO", value: "Aguardando Registro", icon: "bi bi-clock", color: "secondary" },
     { key: "INCLUIDO", value: "Incluido", icon: "bi bi-pencil-square", color: "secondary" },
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary" },
     { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" }

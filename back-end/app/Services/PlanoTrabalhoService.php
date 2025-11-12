@@ -545,7 +545,7 @@ class PlanoTrabalhoService extends ServiceBase
                             'data_inicio' => $dataInicio->toDateString(),
                             'data_fim' =>  Carbon::parse($intersecao->data_inicio)->subDay()->toDateString(),
                             'plano_trabalho_id' => $plano->id,
-                            'status' => 'INCLUIDO'
+                            'status' => 'AGUARDANDO_REGISTRO'
                         ]);
                         $novo->save();
                         $merged[] = $novo;
@@ -556,7 +556,7 @@ class PlanoTrabalhoService extends ServiceBase
                         'data_inicio' => $dataInicio->toDateString(),
                         'data_fim' => $dataFim->toDateString(),
                         'plano_trabalho_id' => $plano->id,
-                        'status' => 'INCLUIDO'
+                        'status' => 'AGUARDANDO_REGISTRO'
                     ]);
                     $novo->save();
                     $merged[] = $novo;
