@@ -144,6 +144,11 @@ class AtividadeService extends ServiceBase
 
     public function extraStore(&$entity, $unidade, $action) {
         $metadados = $this->metadados($entity);
+        $consolidacao = PlanoTrabalhoConsolidacao::find($entity->plano_trabalho_consolidacao_id);
+        if ($consolidacao && $consolidacao->status == "AGUARDANDO_REGISTRO" ) {
+            $consolidacao->status = "INCLUIDO";
+            $consolidacao->save();
+        }
         /* Atualiza status */
         $status = $metadados["pausado"] ? "PAUSADO" : 
             ($metadados["concluido"] ? "CONCLUIDO" : 
