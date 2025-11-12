@@ -305,6 +305,8 @@ class UnidadeService extends ServiceBase
         $dataInativacao = $this->extractWhere($data, "data_inativacao");                    //  	data_inativacao (selectable)
         $inativos = empty($dataInativacao) || $dataInativacao[1] == "!=" ? true : false;    //  		!= null		......................	retornar somente as unidades inativas   => $inativos = true
 
+        // atribuição de chefe, chefe substituto ou delegado
+        $apenasChefiadas = $this->extractWhere($data, "apenas_chefiadas");
 
         foreach ($data["where"] as $condition) {                                             //  		== null		......................	retornar somente as unidades ativas     => $inativos = false
             if (is_array($condition) && $condition[0] == "subordinadas") {                   //  	inativos (not selectable)
@@ -321,6 +323,28 @@ class UnidadeService extends ServiceBase
         if (!$usuario->hasPermissionTo("MOD_UND_TUDO")) {
             $areasTrabalhoWhere = $this->usuarioService->areasTrabalhoWhere($subordinadas, null, "unidades");
             $where[] = new RawWhere("($areasTrabalhoWhere)", []);
+        }
+        
+
+
+        if($apenasChefiadas && $apenasChefiadas[2]){
+            // Consulta unidades onde o usuário tem atribuição de chefe, chefe substituto ou delegado
+            $atribuicoes = UnidadeIntegrante::select("unidade_id")
+                ->where('usuario_id', $usuario->id)
+                ->whereHas('atribuicoes', function($query) {
+                    $query->whereIn('atribuicao', ['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO']);
+                })
+                ->whereNull('deleted_at')
+                ->pluck('unidade_id')
+                ->toArray(); 
+            // Filtrar apenas unidades chefiadas pelo usuário
+            if (!empty($atribuicoes)) {
+                $where[] = ['id', 'in', $atribuicoes];
+            } else {
+                // Se não tem atribuições, retorna conjunto vazio
+                $where[] = ['id', 'in', []];
+            }
+
         }
 
         // utilize para exibir apenas a unidades a partir de um determinado pai
