@@ -598,6 +598,11 @@ export class PlanoEntregaListComponent extends PageListBase<
 	public dynamicButtons(row: PlanoEntrega): ToolbarButton[] {
 		let result: ToolbarButton[] = [];
 		let planoEntrega: PlanoEntrega = row as PlanoEntrega;
+		const dataInativacao = row.unidade?.data_inativacao as any;
+		const unidadeAtiva = dataInativacao != null && dataInativacao !== "";
+		if (unidadeAtiva) {
+			return [this.BOTAO_CONSULTAR];
+		}
 		switch (this.planoEntregaService.situacaoPlano(planoEntrega)) {
 			case "INCLUIDO":
 				if (this.botaoAtendeCondicoes(this.BOTAO_LIBERAR_HOMOLOGACAO, row))
@@ -642,7 +647,10 @@ export class PlanoEntregaListComponent extends PageListBase<
 	public dynamicOptions(row: PlanoEntrega): ToolbarButton[] {
 		let result: ToolbarButton[] = [];
 		this.linha = row;
-		this.botoes.forEach((botao) => {
+		const dataInativacao = row.unidade?.data_inativacao as any;
+		const unidadeAtiva = dataInativacao != null && dataInativacao !== "";
+		const base = unidadeAtiva ? [this.BOTAO_LOGS, this.BOTAO_CONSULTAR] : this.botoes;
+		base.forEach((botao) => {
 			if (this.botaoAtendeCondicoes(botao, row)) result.push(botao);
 		});
 		return result;
