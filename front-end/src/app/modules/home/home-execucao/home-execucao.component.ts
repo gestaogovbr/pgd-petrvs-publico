@@ -21,6 +21,7 @@ export class HomeExecucaoComponent implements OnInit {
   public go: NavigateService;
   public dialog: DialogService;
   public pendenciasConsolidacao: any[] = [];
+  public pendenciasConsolidacaoAgrupadas: { plano_trabalho: any, pendencias: any[] }[] = [];
   public inconsistenciasConsolidacao: any[] = [];
   public loadingPendencias: boolean = false;
   public loadingInconsistencias: boolean = false;
@@ -43,6 +44,7 @@ export class HomeExecucaoComponent implements OnInit {
     this.loadingPendencias = true;
     try {
       this.pendenciasConsolidacao = await this.consolidacaoDao.pendenciasUsuario();
+      this.pendenciasConsolidacaoAgrupadas = this.agruparPendenciasPorPlano(this.pendenciasConsolidacao);
     } catch (error) {
       console.error('Erro ao carregar pendências de consolidação:', error);
     } finally {
@@ -79,5 +81,21 @@ export class HomeExecucaoComponent implements OnInit {
       { title: "Detalhes da Inconsistência", modalWidth: 600 },
       detalhesHtml
     );
+  }
+
+  private agruparPendenciasPorPlano(pendencias: any[]): { plano_trabalho: any, pendencias: any[] }[] {
+    const map = new Map<string, { plano_trabalho: any, pendencias: any[] }>();
+    for (const p of pendencias || []) {
+      const plano = p?.plano_trabalho;
+      const key = plano?.id || plano?.numero;
+      if (!key) { continue; }
+      let grupo = map.get(key);
+      if (!grupo) {
+        grupo = { plano_trabalho: plano, pendencias: [] };
+        map.set(key, grupo);
+      }
+      grupo.pendencias.push(p);
+    }
+    return Array.from(map.values());
   }
 }

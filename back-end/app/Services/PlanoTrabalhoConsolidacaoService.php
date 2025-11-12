@@ -422,6 +422,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     ])
     ->whereHas('planoTrabalho', function($query) use ($usuarioId) {
       $query->where('usuario_id', $usuarioId);
+      $query->whereIn('status', [StatusEnum::ATIVO, StatusEnum::CONCLUIDO, StatusEnum::AVALIADO]);
     })
     ->where('status', StatusEnum::INCLUIDO)
     ->whereDate('data_fim', '<', now()->subDays(10))
