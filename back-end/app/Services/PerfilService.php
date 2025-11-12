@@ -7,18 +7,17 @@ use App\Services\ServiceBase;
 use App\Models\TipoCapacidade;
 use App\Models\Perfil;
 use Illuminate\Support\Facades\DB;
+use App\Enums\PerfilEnum;
 
 class PerfilService extends ServiceBase {
 
-    public $perfis = [
-        [0, "Perfil Desenvolvedor", "Representantes do órgão Central do Siorg"],
-        [1, "Perfil Administrador Master", "Representantes da unidade autorizadora"],
-        [2, "Perfil Administrador Negocial", "Representantes de unidades instituidoras"],
-        [3, "Perfil Unidade", "Representantes de unidades executoras"],
-        [5, "Perfil Participante", "Agentes públicos selecionáveis para o PGD"],
-        [6, "Perfil Colaborador", "Agente públicos não selecionáveis para o PGD (ex: Terceirizados)"],
-        [7, "Perfil Consulta", "Agente públicos inativos na integração SIAPE da instalação"],
-    ];
+    public $perfis = [];
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->perfis = PerfilEnum::asArray();
+    }
 
     /**
      * Estes usuários terão seus perfis automaticamente definidos como Desenvolvedor, se já estiverem cadastrados na tabela Usuários

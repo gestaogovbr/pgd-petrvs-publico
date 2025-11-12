@@ -986,7 +986,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 					planoEntrega.unidade?.data_inativacao === ("" as any);
 				return (
 					this.auth.hasPermissionTo("MOD_PENT_INCL") &&
-					["CONCLUIDO", "AVALIADO"].includes(
+					!["HOMOLOGANDO"].includes(
 						this.planoEntregaService.situacaoPlano(planoEntrega)
 					) &&
 					unidadeAtiva

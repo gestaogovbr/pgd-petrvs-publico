@@ -172,6 +172,8 @@ Route::middleware('auth:sanctum')->prefix('Error')->group(function () {
 Route::middleware('auth:sanctum')->prefix('Envio')->group(function () {
   Route::post('query', [EnvioController::class, 'query']);
   Route::post('get-by-id', [EnvioController::class, 'getById']);
+  Route::post('reiniciar', [EnvioController::class, 'reiniciar']);
+  Route::post('forcar', [EnvioController::class, 'forcar']);
 });
 Route::middleware('auth:sanctum')->prefix('EnvioItem')->group(function () {
   Route::post('query', [EnvioItemController::class, 'query']);
@@ -190,8 +192,6 @@ Route::middleware(['auth:sanctum'])->prefix('Integracao')->group(function () {
 });
 
 /* Testes */
-//Route::middleware(['auth:sanctum', 'can:ADMINISTRADOR'])->get('/teste', function (Request $request) { return ["OK"]; });
-
 Route::middleware('auth:sanctum')->post('/Teste/calculaDataTempoUnidade', [UsuarioController::class, 'calculaDataTempoUnidade']);
 
 /* Batch */
@@ -321,6 +321,7 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalho')->group(function () 
   Route::post('enviar-para-assinatura', [PlanoTrabalhoController::class, 'enviarParaAssinatura']);
   Route::post('metadados-plano', [PlanoTrabalhoController::class, 'metadadosPlano']);
   Route::post('get-by-usuario', [PlanoTrabalhoController::class, 'getByUsuario']);
+  Route::post('planos-usuario-com-pendencias', [PlanoTrabalhoController::class, 'planosUsuarioComPendencias']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Comparecimento')->group(function () {
   defaultRoutes(ComparecimentoController::class);

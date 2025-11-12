@@ -182,7 +182,7 @@ export class ServerService {
   }
   
 
-  public post(url: string, params: any): Observable<any> {
+  public post(url: string, params?: any): Observable<any> {
     let result;
     if(typeof this.batch != "undefined") {
       let action: BatchAction = {

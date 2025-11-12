@@ -8,6 +8,7 @@ use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeDadosUORG;
 use App\Models\SiapeListaUORGS;
+use App\Models\SiapeBlackListServidor;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Services\Siape\Unidade\Atribuicao;
@@ -28,7 +29,6 @@ class SiapeIndividualServidorService extends ServiceBase
 
         $this->service = $service;
 
-        // Validação e limpeza do CPF
         $cpfOriginal = $cpf;
         $cpf = $this->limparEValidarCpf($cpf);
         
@@ -61,8 +61,7 @@ class SiapeIndividualServidorService extends ServiceBase
         } catch (Exception $e) {
             SiapeLog::error('Erro ao montar XMLs', [
                 'cpf' => $cpf,
-                'erro' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'erro' => $e->getMessage()
             ]);
             throw new Exception("Erro ao montar XMLs para consulta SIAPE: " . $e->getMessage());
         }
@@ -87,8 +86,7 @@ class SiapeIndividualServidorService extends ServiceBase
         } catch (Exception $e) {
             SiapeLog::error('Erro ao executar requisições no SIAPE', [
                 'cpf' => $cpf,
-                'erro' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'erro' => $e->getMessage()
             ]);
             throw new Exception("Erro ao consultar dados no SIAPE: " . $e->getMessage());
         }
@@ -118,7 +116,6 @@ class SiapeIndividualServidorService extends ServiceBase
             SiapeLog::error('Erro ao processar dados funcionais', [
                 'cpf' => $cpf,
                 'erro' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
             ]);
             throw new Exception("Erro ao processar dados funcionais do SIAPE: " . $e->getMessage());
         }
@@ -251,7 +248,6 @@ class SiapeIndividualServidorService extends ServiceBase
             SiapeLog::error('Erro ao remover vínculos', [
                 'cpf' => $cpf,
                 'erro' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
             ]);
             // Não interrompe o fluxo, apenas loga o erro
         }
@@ -305,25 +301,52 @@ class SiapeIndividualServidorService extends ServiceBase
 
     private function removeVinculoParaforcarSerLotadoNovamente(string $cpf)
     {
-        $usuario = Usuario::where('cpf', $cpf)->first();
-        if (!$usuario) {
+        // Pode existir mais de um usuário com o mesmo CPF: executa o fluxo para cada um
+        $usuarios = Usuario::where('cpf', $cpf)->get();
+        if ($usuarios->isEmpty()) {
             return;
         }
 
-        $unidade = $usuario->lotacao?->unidade;
+        foreach ($usuarios as $usuario) {
+            $unidade = $usuario->lotacao?->unidade;
 
-        if(!$unidade) {
-            return;
+            if(!$unidade) {
+                continue;
+            }
+            
+            $usuario->usuario_externo = 0;
+            $usuario->save();
+
+            try {
+                $blacklistRegistro = SiapeBlackListServidor::where('cpf', $cpf)
+                    ->first();
+
+                if ($blacklistRegistro) {
+                    if ((int)($blacklistRegistro->inativado ?? 0) === 1) {
+                        $usuario->situacao_siape = 'ATIVO';
+                        $usuario->save();
+                        SiapeLog::info('Usuário reativado pela remoção da blacklist (inativado=1)', [
+                            'cpf' => $cpf,
+                            'usuario_id' => $usuario->id ?? null,
+                        ]);
+                    }
+
+                    $blacklistRegistro->forceDelete();
+                    SiapeLog::info('Registro removido da tabela siape_blacklist_servidores', [
+                        'cpf' => $cpf
+                    ]);
+                }
+            } catch (Exception $e) {
+                SiapeLog::error('Erro ao processar remoção na siape_blacklist_servidores', [
+                    'cpf' => $cpf,
+                    'erro' => $e->getMessage()
+                ]);
+            }
+            
+            $this->removeTodasAsGestoesDoUsuario($usuario);
+
+            $this->removeLotacao($usuario);
         }
-        
-        $this->removeTodasAsGestoesDoUsuario($usuario);
-
-        if($this->usuarioTemPlanodeTrabalhoAtivo($usuario, $unidade)) {
-            SiapeLog::warning('O usuário ' . $usuario->nome . ' possui plano de trabalho ativo, não será removido.');
-            return;
-        }
-
-        $this->removeLotacao($usuario);
     }
 
     private function montaXmlUnidade($codigoDaUnidade)

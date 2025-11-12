@@ -607,6 +607,12 @@ class PlanoEntregaService extends ServiceBase
             if ($dataOrEntity["programa_id"] != $planoEntrega->programa_id)
                 throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.\n[ver RN_PENT_K]");
         }
+        if ($action == ServiceBase::ACTION_INSERT) {
+            $planosComPendencias = $this->planosUnidadeComPendencias($dataOrEntity["unidade_id"]);
+            if ($planosComPendencias) {
+                throw new ServerException("ValidatePlanoEntrega", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");
+            }
+        }
     }
 
     /**
@@ -678,62 +684,22 @@ class PlanoEntregaService extends ServiceBase
         //if ($data["arquivar"]) $this->update(["id" => $planoEntrega->id, "data_arquivamento" => $this->dataHora()], $unidade, false);
     }
 
-}
+    private function planosUnidadeComPendencias($unidadeId): bool
+    {
+        $planos = PlanoEntrega::where('unidade_id', $unidadeId)
+            ->whereNotIn('status', ['CANCELADO', 'SUSPENSO'])
+            ->orderByDesc('numero')
+            ->take(2)
+            ->get();
 
-/**
- *                  MAPA DE COBERTURA DAS REGRAS DE NEGÓCIO - PLANO DE ENTREGAS
- *
- *   REGRAS NÃO     REGRAS TOTALMENTE        OUTRAS REGRAS       OUTRAS REGRAS
- *   IMPLEMENTADAS  IMPLEMENTADAS            100% COBERTAS       PARCIALMENTE COBERTAS
- *                  ----------------------------------------------------------------------
- *                  RN_PENT_A
- *                  RN_PENT_B
- *                  RN_PENT_C
- *                  RN_PENT_D
- *                  RN_PENT_E
- *                  RN_PENT_F
- *                  RN_PENT_G
- *   RN_PENT_H
- *                  RN_PENT_I
- *                  RN_PENT_J
- *                  RN_PENT_K
- *                  RN_PENT_L
- *                  RN_PENT_M
- *                  RN_PENT_N
- *                                                                  RN_PENT_O
- *                  RN_PENT_P
- *   RN_PENT_Q
- *                  RN_PENT_R
- *                  RN_PENT_S
- *                  RN_PENT_T
- *                  RN_PENT_U
- *                  RN_PENT_V
- *                  RN_PENT_W
- *                  RN_PENT_X
- *                  RN_PENT_Y
- *                  RN_PENT_Z
- *                  RN_PENT_AA
- *                  RN_PENT_AB
- *                  RN_PENT_AC
- *                  RN_PENT_AD
- *                  RN_PENT_AE
- *                  RN_PENT_AF
- *                  RN_PENT_AG
- *   RI_PENT_A
- *                  RI_PENT_B
- *                  RI_PENT_C
- *
- * Regras relativas a adesão de planos de entregas, assunto
- * adiado para discussão futura
- *   RN_PENT_2_1
- *   RN_PENT_2_2
- *                  RN_PENT_2_3
- *                  RN_PENT_2_4
- *   RN_PENT_2_5
- *   RN_PENT_2_6
- *   RN_PENT_2_7
- *   RN_PENT_3_1
- *                  RN_PENT_3_3
- *                  RN_PENT_4_1
- *
- */
+        if ($planos->count() < 2) {
+            return false;
+        }
+
+        $planoAnterior = $planos->get(1);
+        $statusesPendentes = ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'];
+
+        return in_array($planoAnterior->status, $statusesPendentes, true);
+    }
+
+}

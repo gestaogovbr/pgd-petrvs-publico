@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\Atribuicao;
 use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
 use App\Models\Unidade;
@@ -95,10 +96,10 @@ class PlanoTrabalhoService extends ServiceBase
             } else {
                 $uId = isset($unidadeId[2]) ? $unidadeId[2] : null;
                 // busca a nomeclatura da hierarquia da unidade
+            }
 
-                if(isset($hierarquia[2]) && $hierarquia[2]){
-                    $this->attachHierarquia($data);
-                }
+            if(isset($hierarquia[2]) && $hierarquia[2]){
+                $this->attachHierarquia($data);
             }
 
             // Só continua se $uId não for nulo
@@ -292,6 +293,9 @@ class PlanoTrabalhoService extends ServiceBase
             if (!parent::loggedUser()->hasPermissionTo('MOD_PTR_USERS_INCL') && !$condicoes["participanteColaboradorUnidadeExecutora"] && !$condicoes["participanteLotadoUnidadeExecutora"]) {
                 throw new ServerException("ValidatePlanoTrabalho", "Participante do plano não é LOTADO ou COLABORADOR na unidade executora. (MOD_PTR_USERS_INCL)\n[ver RN_PTR_Y]");
             }
+            if ($this->planosUsuarioComPendencias($data['usuario_id'])) {
+                throw new ServerException("ValidatePlanoTrabalho", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");
+            }
 
             $entregasValidas = $this->validarClone($data);
             if ($entregasValidas) {
@@ -402,10 +406,10 @@ class PlanoTrabalhoService extends ServiceBase
         }
         if ($action == ServiceBase::ACTION_INSERT) {
             /* (RN_PTR_AC) Quando um participante tiver um plano de trabalho criado, ele se tornará automaticamente um COLABORADOR da sua unidade executora; */
-            if (!$this->usuarioService->isIntegrante("COLABORADOR", $plano->unidade_id, $plano->usuario_id)) {
+            if ($this->precisaAtribuirUsuarioColaborador($plano)) {
                 $this->unidadeIntegranteAtribuicaoService->store([
                     'unidade_integrante_id' => UnidadeIntegrante::firstOrCreate(['unidade_id' => $plano->unidade_id, 'usuario_id' => $plano->usuario_id])->id,
-                    'atribuicao' => 'COLABORADOR'
+                    'atribuicao' => Atribuicao::COLABORADOR->value
                 ], $unidade, false);
             }
             /* (RN_PTR_C) Quando o gestor da Unidade Executora criar o primeiro Plano de Trabalho para um servidor, este tornar-se-á automaticamente um participante habilitado; */
@@ -1362,6 +1366,15 @@ class PlanoTrabalhoService extends ServiceBase
     }
 
     /**
+     *  Recebe o plano de trabalho e verifica se necessita adicionar atribuição de colaborador ao usuário
+     *  Quando o usuário possuir atribuição de LOTADO ou COLABORADOR não há necessidade
+     */
+    private function precisaAtribuirUsuarioColaborador($plano){
+        return !$this->usuarioService->isIntegrante(Atribuicao::COLABORADOR->value, $plano->unidade_id, $plano->usuario_id)
+             && !$this->usuarioService->isIntegrante(Atribuicao::LOTADO->value, $plano->unidade_id, $plano->usuario_id);
+    }
+
+    /**
      *  Adiciona os componentes relacionados a nomeclatura da hierarquia da unidade
      */
     private function attachHierarquia(&$data): void
@@ -1376,5 +1389,24 @@ class PlanoTrabalhoService extends ServiceBase
             return $item;
         }, $data['orderBy']);
     }
+
+    public function planosUsuarioComPendencias(string $usuarioId): bool
+    {
+        $planos = PlanoTrabalho::where('usuario_id', $usuarioId)
+            ->whereNotIn('status', ['CANCELADO', 'SUSPENSO'])
+            ->orderByDesc('numero')
+            ->take(2)
+            ->get();
+
+        if ($planos->count() < 2) {
+            return false;
+        }
+
+        $planoAnterior = $planos->get(1);
+        $statusesPendentes = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO'];
+
+        return in_array($planoAnterior->status, $statusesPendentes, true);
+    }
+
 
 }
