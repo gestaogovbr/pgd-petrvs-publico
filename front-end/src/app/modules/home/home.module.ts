@@ -7,12 +7,14 @@ import { HomeDevComponent } from './home-dev/home-dev.component';
 import { HomeAdministradorComponent } from './home-administrador/home-administrador.component';
 import { ComponentsModule } from "../../components/components.module";
 import { HomeAvaliadorComponent } from './home-avaliador/home-avaliador.component';
+import { HomeGestaoPendenciasComponent } from './home-gestao/home-gestao-pendencias.component';
 import { HomeRoutingModule } from './home-routing.module';
 
 @NgModule({
     declarations: [
         HomeComponent,
         HomeGestaoComponent,
+        HomeGestaoPendenciasComponent,
         HomeExecucaoComponent,
         HomeDevComponent,
         HomeAdministradorComponent,

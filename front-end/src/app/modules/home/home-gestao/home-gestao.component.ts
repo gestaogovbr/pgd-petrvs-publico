@@ -16,10 +16,9 @@ import { NavigateService } from 'src/app/services/navigate.service';
 export class HomeGestaoComponent {
 
   public usuarioDao: UsuarioDaoService;
-  public registrosExecucao: any[] = [];
-  public planosTrabalhos: any[] = [];
-  public planosEntregaEntregas: any[] = [];
-  public planosEntregas: any[] = [];
+  public totalPendenciasChefe: number = 0;
+  public pendenciasLoaded: boolean = false;
+
 
   public lex: LexicalService;
   public gb: GlobalsService;
@@ -42,67 +41,21 @@ export class HomeGestaoComponent {
   
   public async loadPendenciasChefe() {
     const res = await this.usuarioDao.getPendenciasChefe();
-    console.log('res', res);
-    let pendenciasChefe = (res as any)?.pendencias || [];
-    this.registrosExecucao = pendenciasChefe.registrosExecucao || [];
-    this.planosTrabalhos = pendenciasChefe.planosTrabalhos || [];
-    this.planosEntregaEntregas = pendenciasChefe.planosEntregaEntregas || [];
-    this.planosEntregas = pendenciasChefe.planosEntregas || [];
+    const pendenciasChefe = (res as any)?.pendencias || {};
+    this.totalPendenciasChefe = ((pendenciasChefe.planosEntregaEntregas || []).length)
+      + ((pendenciasChefe.planosEntregas || []).length)
+      + ((pendenciasChefe.registrosExecucao || []).length)
+      + ((pendenciasChefe.planosTrabalhos || []).length);
+    this.pendenciasLoaded = true;
+
   }
 
   public formatDate(date: string): string {
     return date ? moment(date).format('DD/MM/YYYY') : '';
   }
 
-  public trackById(_: number, item: any) { return item?.id; }
-
-  public abrirPlanosTrabalho(numero: string) {
-    this.go.navigate({
-      route: ['gestao', 'plano-trabalho'], 
-      params: {
-        filter: {
-          numero: numero, 
-          meus_planos: false
-        }
-      }
-    });
-  }
-
-  public abrirPlanosEntregas(nome: string) {
-    this.go.navigate({
-      route: ['execucao', 'plano-entrega'],
-      params: {
-        filter: {
-          nome: nome,
-          unidade_id: null,
-          meus_planos: false
-        }
-      }
-    });
-  }
-  public abrirAvaliacaoPlanoEntrega(planoEntrega: any) {
-    this.go.navigate({
-      route: ['gestao', 'plano-entrega'],
-      params: {
-        avaliacao: true,
-        filter: {
-          meus_planos: false,
-          nome: planoEntrega.nome,
-          unidade_id: null
-        }
-      }
-    });
-  }
-  public abrirConsolidacoes(usuario_id: string, unidade_id: string) {
-    this.go.navigate({
-      route: ['avaliacao', 'plano-trabalho', 'consolidacao', 'avaliacao'], 
-      params: {
-        filter: {
-          usuario_id: usuario_id,
-          unidade_id: unidade_id,
-        }
-      }
-    });
+  public abrirPendenciasModal() {
+    this.go.navigate({ route: ['home','gestao','pendencias'] }, { modal: true });
   }
 
 }
