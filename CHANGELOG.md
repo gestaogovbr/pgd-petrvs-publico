@@ -1,3 +1,31 @@
+## 2.7.8 10/11/2025
+### Corrigido
+- Pesquisa por CPF no SIAPE: agora, quando existem vários usuários com o mesmo CPF e matrículas diferentes, todos aparecem na lista de resultados.
+- Exportação por CPF no SIAPE: o arquivo gerado foi corrigido e passa a abrir normalmente, mesmo quando há múltiplos registros.
+- Aviso sobre dados do SIAPE na tela de resultados: texto menor e melhor posicionado para facilitar a leitura.
+### Modificado
+- Integração com o SIAPE: aprimoramos a atualização das matrículas ausentes dos usuários, com mais validações e registros, tornando o processo mais confiável.
+- Endereços de e‑mail temporários: quando a matrícula não estiver preenchida, o sistema cria automaticamente um e‑mail temporário único para evitar duplicidades.
+- Tela de resultados da consulta de CPF no SIAPE: o carregamento foi aprimorado para exibir, de forma consistente, todos os usuários retornados pela consulta.
+## 2.7.7 29/10/2025
+### Corrigido
+- Correção do bloqueio de planos de trabalho
+- Não permitir a duplicidade de atribuições para o agente público
+### Modificado
+- Desbloqueio da clonagem do Plano de Trabalho e Plano de Entrega para outros status
+- Regra de exclusão de agentes públicos: apenas os agentes com perfil colaborador (usuário externo) são passíveis de exclusão.
+- Aba "mais informações" de agentes públicos: campos do formulário são apenas para leitura, impossibiliando a edição por essa tela.
+
+## 2.7.6 24/10/2025
+### Corrigido
+- Colaboradores externos com vinculo no siape.
+- Erro ao buscar Plano de Trabalho indicando Unidades Subordinadas sem selecionar unidade executora.
+### Modificado
+- ADM Negocial acessa todos os seus vínculos nos Relatórios
+- Ao selecionar a opção "Unidades Subordinadas", campo "Unidade Executora" é obrigatório na busca de Plano de Trabalho.
+### Adicionado
+- Bloqueio para inclusão de novo Plano de Trabalho ou Plano de Entrega quando houver pendências em mais de 2 dos respectivos planos.
+
 ## 2.7.5 20/10/2025
 ### Adicionado
 - Opção para Reiniciar Envios à API PGD, o que permite um reenvio completo da base completa à API.

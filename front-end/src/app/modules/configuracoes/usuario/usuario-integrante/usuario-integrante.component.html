@@ -10,7 +10,7 @@
     <div class="col-12">
         <editable-form [form]="formPerfil!" [noButtons]="isNoButtons()" [disabled]="formDisabled" title="" (submit)="salvarPerfil()">
             <div class="row">
-                <input-select [size]="6" #perfil (change)="onUnidadeChange($event)" [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [label]="lex.translate('Perfil')" controlName="perfil_id" [dao]="perfilDao" [where]="[['nivel', '>=', ( editando && !entity?.usuario_externo) ? 0 : 6]]" required></input-select>
+                <input-select [size]="6" #perfil (change)="onUnidadeChange($event)" [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') || readOnly ? 'true' : undefined" [label]="lex.translate('Perfil')" controlName="perfil_id" [dao]="perfilDao" [where]="[['nivel', '>=', ( editando && !entity?.usuario_externo) ? 0 : 6]]" required></input-select>
                 <input-select [size]="6" label="Situação SIAPE" controlName="situacao_siape" [items]="lookup.USUARIO_SITUACAO_SIAPE" disabled></input-select>
             </div>
         </editable-form>
@@ -66,6 +66,6 @@
                 </input-multiselect>
             </ng-template>
         </column>
-        <column type="options" *ngIf="!atribuicoesReadOnly"></column>
+        <column type="options" *ngIf="!readOnly"></column>
     </columns>
 </grid>
