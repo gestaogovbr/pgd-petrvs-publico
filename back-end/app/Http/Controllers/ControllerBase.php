@@ -520,28 +520,4 @@ tenancy()->initialize($tenant); */
             return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function validateDestroy(Request $request)
-    {
-        try {
-            $this->checkPermissions("DESTROY", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
-            $data = $request->validate([
-                'id' => ['required']
-            ]);
-            return response()->json(['success' => $this->service->validateDestroy($data["id"])]);
-        }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
-        }
-        catch (Throwable $e) {
-            $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
-        }
-    }
 }

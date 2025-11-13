@@ -35,8 +35,9 @@ class PlanoEntregaEntregaService extends ServiceBase
         }
     }
 
-    public function checkDestroy($planoEntregaEntrega){
-        if(!$this->planoTrabalhoEntregaService->hasContribuicoes($planoEntregaEntrega))
+    public function validateDestroy($id)
+    {
+        if(!$this->planoTrabalhoEntregaService->hasContribuicao($id))
             return true;
         throw new ValidateException("Há contribuição de participantes para essa entrega, por isso ela não pode ser excluída");
     }

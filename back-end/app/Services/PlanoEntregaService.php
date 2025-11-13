@@ -281,8 +281,8 @@ class PlanoEntregaService extends ServiceBase
 
     public function concluir($data, $unidade)
     {
+        $this->validaConclusaoPlanoEntrega($data["id"]);
         try {
-            $this->validaConclusaoPlanoEntrega($data["id"]);
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
             $this->statusService->atualizaStatus($planoEntrega, 'CONCLUIDO', $data["justificativa"]);
@@ -624,8 +624,7 @@ class PlanoEntregaService extends ServiceBase
                 throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar a sua Unidade.\n[ver RN_PENT_K]");
             if ($dataOrEntity["programa_id"] != $planoEntrega->programa_id)
                 throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.\n[ver RN_PENT_K]");
-            if($this->planoTrabalhoEntregaSercice->hasContribuicoes($planoEntrega["entregas"]))
-                throw new ValidateException("Há contribuição de participantes para essa entrega, por isso ela não pode ser excluída");
+            $this->verificaContribuicoesEntregas($dataOrEntity["entregas"]);
         }
         if ($action == ServiceBase::ACTION_INSERT) {
             $planosComPendencias = $this->planosUnidadeComPendencias($dataOrEntity["unidade_id"]);
@@ -635,6 +634,17 @@ class PlanoEntregaService extends ServiceBase
 
             $this->validaPlanoComEntregas($dataOrEntity);
         }
+    }
+
+    private function verificaContribuicoesEntregas($entregas){
+        $idsEntregasDelete = [];
+        foreach ($entregas as $entrega) {
+            if (isset($entrega['_status']) && $entrega['_status'] === 'DELETE') {
+                $idsEntregasDelete[] = $entrega['id'];
+            }
+        }
+        if($idsEntregasDelete && $this->planoTrabalhoEntregaService->hasContribuicao($idsEntregasDelete))
+            throw new ValidateException("Há contribuição de participantes para uma entrega removida, por isso o plano não pode ser editado");
     }
 
     /**

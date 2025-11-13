@@ -245,8 +245,13 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
           this.items.splice(index, 1);
           this.cdRef.detectChanges();
         }
-        else
-          entrega._status = "DELETE";
+        else{
+          this.dao!.validateDestroy(entrega).then(() => {
+            entrega._status = "DELETE";
+          }).catch((error) => {
+            this.dialog.alert("Erro", "Erro ao excluir: " + (error?.message ? error?.message : error));
+          });
+        }
       } else {
         this.dao!.delete(entrega).then(() => {
           //this.grid!.query!.removeId(entrega.id);

@@ -25,8 +25,13 @@ class PlanoTrabalhoEntregaService extends ServiceBase
   }
 
 
-  public function hasContribuicoes($entrega)
+  public function hasContribuicao($idEntrega)
   {
-      return PlanoTrabalhoEntrega::where('plano_entrega_entrega_id', $entrega->id)->exists();
+      if (!is_array($idEntrega)) {
+        $idEntrega = [$idEntrega];
+      }
+      
+      return PlanoTrabalhoEntrega::whereIn('plano_entrega_entrega_id', $idEntrega)
+          ->whereNull('deleted_at');
   }
 }

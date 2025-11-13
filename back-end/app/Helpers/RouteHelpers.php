@@ -10,7 +10,6 @@ if (!function_exists('defaultRoutes')) {
         Route::post('update', [$controllerClass, 'update']);
         Route::post('update-json', [$controllerClass, 'updateJson']);
         Route::post('destroy', [$controllerClass, 'destroy']);
-        Route::post('validate-destroy', [$controllerClass, 'validateDestroy']);
         Route::post('get-by-id', [$controllerClass, 'getById']);
         Route::post('get-all-ids', [$controllerClass, 'getAllIds']);
         Route::post('query', [$controllerClass, 'query']);
