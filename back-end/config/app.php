@@ -189,7 +189,6 @@ return [
         App\Providers\UtilServiceProvider::class,
         Lab404\Impersonate\ImpersonateServiceProvider::class,
         OwenIt\Auditing\AuditingServiceProvider::class,
-        NotificationChannels\MicrosoftTeams\MicrosoftTeamsServiceProvider::class,
     ],
 
     /*
