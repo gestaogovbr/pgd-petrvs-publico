@@ -30,6 +30,7 @@ class PlanoEntrega extends ModelBase
         //'status', /* enum('INCLUIDO','HOMOLOGANDO','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO','CANCELADO'); */// Status atual do plano de entregas
         'data_inicio', /* datetime; NOT NULL; */ // Data inicial do plano de entregas
         'data_fim', /* datetime; */ // Data final do plano de entregas
+        'avaliado_at', /* date; data em que o plano teve o status trasicionado para AVALIADO */
         //'avaliacao_id',
         //'deleted_at', /* timestamp; */
         //'numero', /* int; NOT NULL; */// Número do plano de entrega (Gerado pelo sistema)
@@ -53,6 +54,12 @@ class PlanoEntrega extends ModelBase
     {
         static::creating(function ($planoEntrega) {
             $planoEntrega->numero = DB::select("CALL sequence_plano_entrega_numero()")[0]->number;
+        });
+
+        static::updating(function (PlanoEntrega $planoEntrega) {
+            if ($planoEntrega->isDirty('status') && $planoEntrega->status === 'AVALIADO') {
+                $planoEntrega->avaliado_at = date('Y-m-d');
+            }
         });
     }
 
