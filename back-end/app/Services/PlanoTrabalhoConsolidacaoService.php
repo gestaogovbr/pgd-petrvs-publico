@@ -20,7 +20,6 @@ use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Throwable;
-use App\Notifications\AvaliarConsolidacao;
 
 class PlanoTrabalhoConsolidacaoService extends ServiceBase
 {
@@ -406,19 +405,5 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       $this->statusService->atualizaStatus($consolidacao->planoTrabalho, 'CONCLUIDO');
     }
   }
-
-  // Verificar todas as consolidações com status 'CONCLUIDO';
-  // Chefe tem  até 10 dias após a conclusão para avaliar
-  public function verificarAvaliacoesPendentes() {
-    $consolidacoes = PlanoTrabalhoConsolidacao::where("status", "CONCLUIDO")->get();
-    foreach($consolidacoes as $consolidacao) {
-      if($consolidacao->data_conclusao->diffInDays(now()) <= 10) {
-        $chefe = $consolidacao->planoTrabalho->unidade->gestor->usuario;
-        $chefe->notify(new AvaliarConsolidacao($consolidacao->planoTrabalho));
-      }
-    }
-  }
-
-
 
 }
