@@ -12,7 +12,7 @@
     <ng-template let-item="item" #planoTrabalhoSectionTitle>
         <div class="row w-100">
             <div class="col-md-1">{{'#' + item.numero}}</div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <badge [icon]="entityService.getIcon('Usuario')" [label]="item.usuario?.nome" color="light" [hint]="lex.translate('Participante') + ': ' + item.usuario?.nome"></badge>
                 <badge [icon]="entityService.getIcon('Unidade')" [label]="item.unidade?.sigla" color="light" [hint]="lex.translate('Unidade') + ': ' + item.unidade?.nome"></badge>
                 <badge [icon]="entityService.getIcon('Programa')" [label]="item.programa?.nome" color="light" [hint]="lex.translate('Programa')"></badge>
@@ -21,9 +21,9 @@
             <div class="col-md-3">
                 {{dao!.getDateFormatted(item.data_inicio)+" até "+dao!.getDateFormatted(item.data_fim)}}
             </div>
-            <div class="col-md-2">
+            <!-- <div class="col-md-2">
                 <badge *ngFor="let badge of getPlanoBadges(item)" [badge]="badge"></badge>
-            </div>
+            </div> -->
             <div class="col-md-2">
                 <badge [label]="lookup.getValue(lookup.PLANO_TRABALHO_STATUS, item.status)" [icon]="lookup.getIcon(lookup.PLANO_TRABALHO_STATUS, item.status)" [color]="lookup.getColor(lookup.PLANO_TRABALHO_STATUS, item.status)"></badge>
             </div>
