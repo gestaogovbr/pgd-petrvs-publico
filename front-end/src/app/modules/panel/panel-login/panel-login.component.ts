@@ -61,7 +61,6 @@ export class PanelLoginComponent {
                 }
             })
             .catch(error => {
-                debugger;
                 alert('Erro durante o login:'+error.error.error);
                 console.error('Erro durante o login:', error.error.error);
             });
