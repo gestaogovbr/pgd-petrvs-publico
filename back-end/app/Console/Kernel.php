@@ -68,7 +68,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('horizon:snapshot')->everyFiveMinutes();
 
-        # TODO: Adaptar o comando para ser rodado no tenant
-        $schedule->command('planos:arquivar_avaliados')->dailyAt('04:00')->name('Arquivar Planos Avaliados (PTs e PEs)');
+        $schedule->command('planos:arquivar-avaliados --days=90')->dailyAt('04:00')->name('Arquivar Planos Avaliados (PTs e PEs)');
     }
 }
