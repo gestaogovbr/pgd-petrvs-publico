@@ -1,4 +1,5 @@
 ## 2.7.9 17/11/2025
+- Removido limite máximo de 100% CHD por entrega em Plano de Trabalho
 ## 2.7.8 10/11/2025
 ### Corrigido
 - Pesquisa por CPF no SIAPE: agora, quando existem vários usuários com o mesmo CPF e matrículas diferentes, todos aparecem na lista de resultados.
