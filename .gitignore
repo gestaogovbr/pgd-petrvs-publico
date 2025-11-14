@@ -9,8 +9,6 @@ front-end/.angular/*
 
 *Zone.Identifier*
 
-package-lock.json
-
 /resources/mysql/*
 /resources/docker/mariadb/*
 
