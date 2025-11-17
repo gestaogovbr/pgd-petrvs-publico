@@ -16,6 +16,9 @@ import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 import { UnidadeService } from './services/unidade.service';
 import { Unidade } from './models/unidade.model';
+import { SiapeBlacklistServidorDaoService } from './dao/siape-blacklist-servidor-dao.service';
+import { SiapeBlacklistServidor } from './models/siape-blacklist-servidor.model';
+declare var bootstrap: any;
 
 export type Contexto = "EXECUCAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX" ;
 export type Schema = {
@@ -82,6 +85,7 @@ export class AppComponent {
   public lookup: LookupService;
   public entity: EntityService;
   public notificacao: NotificacaoService;
+  public siapeBlacklistDao: SiapeBlacklistServidorDaoService;
   public menuSchema: MenuSchema = {};
   public menuToolbar: any[] = [];
   public menuContexto: MenuContexto[] = [];
@@ -97,6 +101,9 @@ export class AppComponent {
   public unidadeService: UnidadeService;
   private _menu: any;
   private _menuDetectChanges: any;
+  public siapeBlacklistRows: SiapeBlacklistServidor[] = [];
+  public siapeBlacklistMatriculas: string[] = [];
+  public tooltipWarning: string = 'Matrícula em processo de inativação';
 
   constructor(public injector: Injector) {
     /* Instancia singleton da aplicação */
@@ -116,6 +123,7 @@ export class AppComponent {
     this.entity = injector.get<EntityService>(EntityService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     this.unidadeService = injector.get<UnidadeService>(UnidadeService);
+    this.siapeBlacklistDao = injector.get<SiapeBlacklistServidorDaoService>(SiapeBlacklistServidorDaoService);
     /* Inicializações */
     this.notificacao.heartbeat();
     this.auth.app = this;
@@ -128,6 +136,10 @@ export class AppComponent {
     this.lex.cdRef = this.cdRef;
     /* Definição do menu do sistema */
     this.setMenuVars();
+
+    if (this.auth?.usuario?.cpf) {
+      this.consultarBlacklistCpf(this.auth.usuario.cpf);
+    }
   }
 
   public setMenuVars() {
@@ -520,6 +532,52 @@ export class AppComponent {
   public getMatriculaPelaUnidadeComCpf(idUnidade: string, cpf: string): string {
     let matricula = this.auth.usuario?.matriculas?.find(x => x.unidades?.find(y => y.id == idUnidade) && x.cpf == cpf);
     return matricula?.matricula || 'N/A';
+  }
+
+  public async consultarBlacklistCpf(cpf: string): Promise<void> {
+    try {
+      const response = await this.siapeBlacklistDao.queryByCpf(cpf).toPromise();
+      const rows = response?.rows || [];
+      this.siapeBlacklistRows = rows.map((r: any) => new SiapeBlacklistServidor(r));
+      this.siapeBlacklistMatriculas = this.siapeBlacklistRows
+        .map(r => r.matricula)
+        .filter((m: string | undefined) => !!m && !!(m as string).length) as string[];
+      this.cdRef.detectChanges();
+      this.initTooltips();
+    } catch (e) {
+      this.siapeBlacklistRows = [];
+      this.siapeBlacklistMatriculas = [];
+    }
+  }
+
+  public initTooltips(): void {
+    const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]')) as HTMLElement[];
+    tooltipTriggerList.forEach((el: any) => {
+      const t = new bootstrap.Tooltip(el, { trigger: 'manual' });
+      el.addEventListener('mouseenter', () => t.show());
+      el.addEventListener('mouseleave', () => t.hide());
+      el.addEventListener('click', () => t.hide());
+    });
+  }
+
+  public hasBlacklistResponse(): boolean {
+    console.log(this.siapeBlacklistRows);
+    return this.siapeBlacklistRows.length > 0;
+  }
+
+  public hasSpecificMatriculas(): boolean {
+    console.log(this.siapeBlacklistMatriculas);
+    return this.siapeBlacklistMatriculas.length > 0;
+  }
+
+  public shouldHighlightMatricula(matricula: string | null | undefined): boolean {
+    if (!this.hasBlacklistResponse()) return false;
+    if (this.hasSpecificMatriculas()) return !!matricula && this.siapeBlacklistMatriculas.includes(matricula);
+    return true;
+  }
+
+  public shouldHighlightSigla(): boolean {
+    return this.hasBlacklistResponse() && !this.hasSpecificMatriculas();
   }
 
   public async onToolbarButtonClick(btn: ToolbarButton) {

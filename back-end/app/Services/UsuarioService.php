@@ -578,7 +578,9 @@ class UsuarioService extends ServiceBase
     
     public function matriculas($cpf) : Collection
     {
-        $usuarios = Usuario::with('unidades')->where('cpf', $cpf)->get();
+        $usuarios = Usuario::with('unidades')->where('cpf', $cpf)
+        ->where('situacao_siape', '!=', UsuarioSituacaoSiape::INATIVO->value)
+        ->get();
         
         if ($usuarios->isEmpty()) {
             throw new ValidateException("Nenhum usuário encontrado com o CPF informado.", 404);
@@ -595,6 +597,7 @@ class UsuarioService extends ServiceBase
             ->join('usuarios as us', 'us.id', '=', 'ui.usuario_id')
             ->join('unidades_integrantes_atribuicoes as uia', 'ui.id', '=', 'uia.unidade_integrante_id')
             ->where('us.cpf', $cpf)
+            ->where('situacao_siape', '!=', UsuarioSituacaoSiape::INATIVO->value)
             ->whereNull('uia.deleted_at')
             ->distinct()
             ->get();

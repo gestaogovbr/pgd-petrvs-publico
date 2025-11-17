@@ -3,6 +3,7 @@ import { Base } from './base.model';
 export class SiapeBlacklistServidor extends Base {
     public cpf: string = ""; 
     public inativado: boolean = false; 
+    public matricula: string = "";
 
     public constructor(data?: any) { 
         super(); 
