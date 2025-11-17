@@ -76,11 +76,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
         );
       }
 
-      if (!unidade?.executora) {
-        atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(
-          atribuicao => atribuicao.key !== 'COLABORADOR'
-        );
-      }
+      let perfilColaborador = false;
 
       if(this.perfil){
         await this.perfilDao.getById(this.perfil.currentValue).then(perfil => {
@@ -90,8 +86,15 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
             atribuicoes = atribuicoes.filter(
               atribuicao => atribuicao.key !== 'CURADOR' && atribuicao.key !== 'GESTOR_SUBSTITUTO'
             );
+            perfilColaborador = true;
           }
         })
+      }
+
+      if (!unidade?.executora && !perfilColaborador) {
+        atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(
+          atribuicao => atribuicao.key !== 'COLABORADOR'
+        );
       }
 
       this.atribuicoes = atribuicoes;
