@@ -99,8 +99,7 @@ export class HomeGestaoPendenciasComponent extends PageBase {
           meus_planos: false,
           nome: planoEntrega.nome,
           unidade_id: null
-        },
-        modal: true
+        }
       }
     });
     rota.then(success => {
