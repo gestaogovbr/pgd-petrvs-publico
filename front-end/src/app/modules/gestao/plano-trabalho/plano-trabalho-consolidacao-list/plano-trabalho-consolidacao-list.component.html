@@ -7,7 +7,7 @@
                 <!--span *ngIf="row?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row?.length}}</span//-->
             </ng-template>
             <ng-template let-row="row" #columnExpandedConsolidacao>
-                <plano-trabalho-consolidacao-form #consolidacao [disabled]="isDisabled(row)" [entity]="row" [planoTrabalho]="entity" [cdRef]="cdRef"></plano-trabalho-consolidacao-form>
+                <plano-trabalho-consolidacao-form #consolidacao [disabled]="isDisabled(row)" (refreshList)="onRefresh($event, row)" [entity]="row" [planoTrabalho]="entity" [cdRef]="cdRef"></plano-trabalho-consolidacao-form>
             </ng-template>
         </column>
         <column title="Data início" [template]="columnDataInicio">

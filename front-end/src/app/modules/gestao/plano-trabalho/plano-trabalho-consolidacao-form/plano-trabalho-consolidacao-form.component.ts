@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Injector, Input, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Injector, Input, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
@@ -70,6 +70,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   get disabled(): boolean {
     return this._disabled;
   }
+  @Output() refreshList = new EventEmitter<Atividade>();
 
   //public consolidacaoOcorrenciaDao: PlanoTrabalhoConsolidacaoOcorrenciaDaoService;
   public ocorrenciaDao: OcorrenciaDaoService;
@@ -356,6 +357,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       try {
         result = await this.atividadeDao?.save(row, this.joinAtividade, ['etiquetas', 'checklist', 'comentarios', 'pausas', 'tarefas']);
         this.atividadeRefreshId(row.id, result);
+        if (!!result.id) this.refreshList.emit(result);
       } catch (error: any) {
         result = false;
         this.gridAtividades!.error = error.message || error;
