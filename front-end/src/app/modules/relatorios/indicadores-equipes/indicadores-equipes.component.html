@@ -17,7 +17,7 @@
             [dao]="unidadeDao"
             [selectRoute]="{
                 route: ['configuracoes', 'unidade'],
-                params: { unidades: this.unidades }
+                params: { unidades: (auth.hasPermissionTo('MOD_IND_TODAS_UNIDADES') ? null : this.unidades) }
             }"
             [where]="auth.hasPermissionTo('MOD_IND_TODAS_UNIDADES')
                 ? []
