@@ -2,21 +2,18 @@
 
 namespace App\Services;
 
-use App\Enums\Atribuicao;
 use App\Enums\UsuarioSituacaoSiape;
 use App\Facades\SiapeLog;
-use App\Models\Perfil;
 use App\Models\SiapeBlackListServidor;
-use App\Models\UnidadeIntegrante;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
-use App\Services\Siape\Unidade\Integracao;
 
 class IntegracaoServidorService extends ServiceBase
 {
-
-  public function __construct(
-  ) {
+  const SIAPE_BLACKLIST_INATIVO = 1;
+  const SIAPE_BLACKLIST_ATIVO = 0;
+  public function __construct()
+  {
     parent::__construct();
     $this->nivelAcessoService = new NivelAcessoService();
   }
@@ -33,16 +30,23 @@ class IntegracaoServidorService extends ServiceBase
     if (!$consultaId) {
       return [];
     }
-    // Atualizar os usuários para perfil consulta
+
     Usuario::whereIn('id', $ids)->update([
       'situacao_siape' => UsuarioSituacaoSiape::INATIVO->value,
       'perfil_id' => $consultaId,
     ]);
 
-    $cpfs = Usuario::whereIn('id', $ids)->pluck('cpf');
-    SiapeBlackListServidor::whereIn('cpf', $cpfs)->update([
-      'inativado' => 1
-    ]);
+    $usuarios = Usuario::whereIn('id', $ids)->select('cpf', 'matricula')->get();
+    $cpfs = $usuarios->pluck('cpf');
+    SiapeBlackListServidor::whereIn('cpf', $cpfs)->whereNull('matricula')->update(['inativado' => 1]);
+    foreach ($usuarios as $usuario) {
+      if (empty($usuario->matricula)) {
+        continue;
+      }
+      SiapeBlackListServidor::where('cpf', $usuario->cpf)
+        ->where('matricula', $usuario->matricula)
+        ->update(['inativado' => self::SIAPE_BLACKLIST_INATIVO]);
+    }
     SiapeLog::info("ISiape: Servidores removidos do SIAPE e excluídos do sistema.", ['ids' => $ids]);
 
     return $ids;
@@ -50,9 +54,15 @@ class IntegracaoServidorService extends ServiceBase
 
   private function listIdsUsuariosRemovidosNaoExcluidos(): array
   {
-    $ids = Usuario::join('siape_blacklist_servidores as s', 'usuarios.cpf', '=', 's.cpf')
-      ->where('s.inativado', 0)
-      ->where('s.created_at', '<', now()->subDays(30)) 
+    $ids = Usuario::join('siape_blacklist_servidores as s', function ($join) {
+      $join->on('usuarios.cpf', '=', 's.cpf')
+        ->where(function ($q) {
+          $q->whereNull('s.matricula')
+            ->orWhereColumn('usuarios.matricula', 's.matricula');
+        });
+    })
+      ->where('s.inativado', self::SIAPE_BLACKLIST_ATIVO)
+      ->where('s.created_at', '<', now()->subDays(30))
       ->pluck('usuarios.id');
 
     return $ids->toArray();
