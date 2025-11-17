@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 
 class IndicadoresHorasService extends IndicadoresEntregaService
 {
+    // Horas alocadas nos Planos de Trabalho
     public function query($data)
     {
         $this->prepareQuery($data);

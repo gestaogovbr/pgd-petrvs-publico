@@ -53,6 +53,7 @@ class IndicadoresGestaoService extends ServiceBase
         ];
     }
 
+    // quantos usuarios participam de PGD
     public function queryUsuarios($data)
     {
         $sql = <<<TEXT
@@ -98,6 +99,7 @@ class IndicadoresGestaoService extends ServiceBase
         return $rows[0];
     }
 
+    // quantos unidades possuem PE
     public function queryUnidades($data)
     {
         $sql = "SELECT pe.id

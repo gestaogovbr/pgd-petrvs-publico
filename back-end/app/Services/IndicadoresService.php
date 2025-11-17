@@ -10,6 +10,7 @@ class IndicadoresService extends ServiceBase
 {
     public function __construct() {}
 
+    // Distribuição das avaliações dos Planos de Trabalho
     public function query($data)
     {
         $filtros = '';
@@ -35,7 +36,7 @@ class IndicadoresService extends ServiceBase
 
             $filtros .= " and pt.unidade_id in ($unidadeIds)";
         }
-        
+
         $this->applyFiltros($data, $sql, $params);
 
         $sql = <<<TEXT
@@ -53,6 +54,7 @@ class IndicadoresService extends ServiceBase
             notas_validas as (
                 SELECT distinct REPLACE(JSON_UNQUOTE(tan.nota), '"', '') as nota, sequencia
                 from tipos_avaliacoes_notas tan
+                where tan.deleted_at is null
             )
             SELECT nv.nota, COALESCE (avpt.qtde, 0) as qtde
             from notas_validas nv
