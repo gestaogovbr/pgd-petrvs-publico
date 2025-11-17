@@ -25,7 +25,7 @@
                 <badge *ngFor="let badge of getPlanoBadges(item)" [badge]="badge"></badge>
             </div> -->
             <div class="col-md-2">
-                <badge [label]="lookup.getValue(lookup.PLANO_TRABALHO_STATUS, item.status)" [icon]="lookup.getIcon(lookup.PLANO_TRABALHO_STATUS, item.status)" [color]="lookup.getColor(lookup.PLANO_TRABALHO_STATUS, item.status)"></badge>
+                <badge [label]="lookup.getValue(lookup.PLANO_TRABALHO_STATUS, planoTrabalhoStatus(item))" [icon]="lookup.getIcon(lookup.PLANO_TRABALHO_STATUS, planoTrabalhoStatus(item))" [color]="lookup.getColor(lookup.PLANO_TRABALHO_STATUS, planoTrabalhoStatus(item))"></badge>
             </div>
         </div>
     </ng-template>

@@ -4,6 +4,7 @@ import { AccordionComponent } from 'src/app/components/accordion/accordion.compo
 import { BadgeButton } from 'src/app/components/badge/badge.component';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
+import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 
@@ -90,4 +91,12 @@ export class PlanoTrabalhoListAccordeonComponent extends PageFrameBase {
     return plano._metadata.badges;
   }
 
+  protected planoTrabalhoStatus(planoTrabalho: PlanoTrabalho) {
+    if(planoTrabalho.status === "ATIVO" &&
+      !planoTrabalho.consolidacoes.find((consolidacao : PlanoTrabalhoConsolidacao) => consolidacao.status !== "CONCLUIDO")) {
+      return "CONCLUIDO";
+    }
+
+    return planoTrabalho.status;
+  }
 }
