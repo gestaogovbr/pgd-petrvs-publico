@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\Atribuicao;
+use App\Enums\UsuarioSituacaoSiape;
 use App\Facades\SiapeLog;
 use App\Models\Perfil;
 use App\Models\SiapeBlackListServidor;
@@ -34,7 +35,7 @@ class IntegracaoServidorService extends ServiceBase
     }
     // Atualizar os usuários para perfil consulta
     Usuario::whereIn('id', $ids)->update([
-      'situacao_siape' => 'INATIVO',
+      'situacao_siape' => UsuarioSituacaoSiape::INATIVO->value,
       'perfil_id' => $consultaId,
     ]);
 

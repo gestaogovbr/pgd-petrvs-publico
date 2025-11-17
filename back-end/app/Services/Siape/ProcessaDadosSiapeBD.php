@@ -2,6 +2,7 @@
 
 namespace App\Services\Siape;
 
+use App\Enums\UsuarioSituacaoSiape;
 use App\Exceptions\ErrorDataSiapeException;
 use App\Exceptions\ErrorDataSiapeFaultCodeException;
 use App\Exceptions\RequestConectaGovException;
@@ -11,6 +12,7 @@ use App\Models\SiapeBlacklistUnidade;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeDadosUORG;
+use App\Models\Usuario;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
@@ -102,6 +104,7 @@ class ProcessaDadosSiapeBD
 
             $dadosFuncionais = $xmlResponse->xpath('//tipo:DadosFuncionais');
             $dadosFuncionaisArray = $this->decideDadosFuncionais($dadosFuncionais);
+            $this->processaMultiplasMatriculasInativas($cpf, $dadosFuncionaisArray);
 
             return $dadosFuncionaisArray;
         } catch (Exception $e) {
@@ -125,6 +128,54 @@ class ProcessaDadosSiapeBD
             array_push($retorno, $dados);
         }
         return $retorno;
+    }
+
+    private function processaMultiplasMatriculasInativas(string $cpf, array $dadosFuncionaisArray) : void
+    {
+        $usuarios = Usuario::whereNull('deleted_at')
+        ->whereIn('cpf', function ($query) use ($cpf) {
+            $query->select('cpf')
+                ->from('usuarios')
+                ->whereNull('deleted_at')
+                ->whereNotNull('matricula')
+                ->where('cpf', $cpf)
+                ->groupBy('cpf')
+                ->havingRaw('COUNT(DISTINCT matricula) > 1');
+        })
+        ->get();
+        if(in_array($usuarios->count(), [0,1])){
+            return ;
+        }
+        $todasMatriculas = $usuarios->pluck('matricula')->toArray();
+        foreach($usuarios as $usuario){
+            $matricula = $usuario->matricula;
+           foreach($dadosFuncionaisArray as $dadosFuncionais){
+                if($dadosFuncionais['matricula'] == $matricula){
+                   SiapeBlackListServidor::where('matricula', $matricula)->delete();
+                    $usuario->update([
+                        'situacao_siape' => UsuarioSituacaoSiape::ATIVO->value,
+                        'data_ativacao_temporaria' => null,
+                        'justicativa_ativacao_temporaria' => null,
+                    ]);
+                     $todasMatriculas = array_diff($todasMatriculas, [$matricula]);
+                }
+           }
+
+           
+        }
+        foreach($todasMatriculas as $matricula){
+            $usuario = $usuarios->firstWhere('matricula', $matricula);
+            if(in_array($usuario->situacao_siape, [UsuarioSituacaoSiape::INATIVO->value, UsuarioSituacaoSiape::ATIVO_TEMPORARIO->value]) ){
+                continue;
+            }  
+
+            SiapeBlackListServidor::create([
+                    'matricula' => $matricula,
+                    'cpf' => $cpf,
+                ]);
+                SiapeLog::info(sprintf("CPF:#%s Matrícula:#%s Adicionada na lista de cpf inativos:", $cpf, $matricula));
+            }
+   
     }
 
     function simpleXmlElementToArray(SimpleXMLElement $element): array

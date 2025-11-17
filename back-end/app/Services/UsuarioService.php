@@ -30,6 +30,7 @@ use App\Services\Siape\Consulta\SiapeUnidadeService;
 use App\Services\Siape\Consulta\SiapeUnidadesService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use App\Enums\UsuarioSituacaoSiape;
 
 class UsuarioService extends ServiceBase
 {
@@ -566,7 +567,7 @@ class UsuarioService extends ServiceBase
             throw new ValidateException("Usuário não encontrado", 422);
         }
 
-        $usuario->situacao_siape = 'ATIVO_TEMPORARIO';
+        $usuario->situacao_siape = UsuarioSituacaoSiape::ATIVO_TEMPORARIO->value;
         $usuario->justicativa_ativacao_temporaria = $data['justificativa'];
         $usuario->data_ativacao_temporaria = Carbon::now();
         $usuario->perfil_id = $participanteId;

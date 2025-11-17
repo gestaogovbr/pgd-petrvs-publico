@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Facades\SiapeLog;
+use App\Enums\UsuarioSituacaoSiape;
 use App\Models\Entidade;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
@@ -323,7 +324,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
                 if ($blacklistRegistro) {
                     if ((int)($blacklistRegistro->inativado ?? 0) === 1) {
-                        $usuario->situacao_siape = 'ATIVO';
+                        $usuario->situacao_siape = UsuarioSituacaoSiape::ATIVO->value;
                         $usuario->save();
                         SiapeLog::info('Usuário reativado pela remoção da blacklist (inativado=1)', [
                             'cpf' => $cpf,
