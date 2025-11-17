@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\Atribuicao as EnumsAtribuicao;
 use App\Exceptions\LogError;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
@@ -332,18 +333,13 @@ class UnidadeService extends ServiceBase
             $atribuicoes = UnidadeIntegrante::select("unidade_id")
                 ->where('usuario_id', $usuario->id)
                 ->whereHas('atribuicoes', function($query) {
-                    $query->whereIn('atribuicao', ['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO']);
+                    $query->whereIn('atribuicao', [EnumsAtribuicao::GESTOR,EnumsAtribuicao::GESTOR_SUBSTITUTO, EnumsAtribuicao::DELEGADO]);
                 })
                 ->whereNull('deleted_at')
                 ->pluck('unidade_id')
                 ->toArray(); 
             // Filtrar apenas unidades chefiadas pelo usuário
-            if (!empty($atribuicoes)) {
-                $where[] = ['id', 'in', $atribuicoes];
-            } else {
-                // Se não tem atribuições, retorna conjunto vazio
-                $where[] = ['id', 'in', []];
-            }
+            $where[] = ['id', 'in', $atribuicoes];
 
         }
 

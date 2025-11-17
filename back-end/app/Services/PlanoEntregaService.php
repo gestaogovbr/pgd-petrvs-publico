@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\PlanoEntregaStatus;
 use App\Models\Unidade;
 use App\Models\PlanoEntrega;
 use App\Models\Usuario;
@@ -48,12 +49,6 @@ class PlanoEntregaService extends ServiceBase
     {
         if ($action == ServiceBase::ACTION_INSERT) {
             $planoEntrega["criacao_usuario_id"] = parent::loggedUser()->id;
-        } else { // ServiceBase::ACTION_EDIT
-            /* (RN_PTR_E) O Plano de Trabalho precisará ser repactuado (retornar ao status de AGUARDANDO_ASSINATURA) quando houver quaisquer alterações no plano de entrega que impacte as entregas do plano de trabalho; (alterada a entrega ou cancelada); */
-            // $this->buffer["planosTrabalhosImpactados"] = [];
-            // foreach ($planoEntrega["entregas"] as $entrega) {
-            //     array_merge($this->buffer["planosTrabalhosImpactados"], $this->planosImpactadosPorAlteracaoEntrega($entrega));
-            // }
         }
         return $planoEntrega;
     }
@@ -302,7 +297,7 @@ class PlanoEntregaService extends ServiceBase
         if(empty($planoEntrega)){
             throw new ValidateException("Plano de Entrega não encontrado!");
         }
-        if($planoEntrega->status != 'ATIVO'){
+        if($planoEntrega->status != PlanoEntregaStatus::ATIVO){
             throw new ValidateException("Plano de Entrega não está ativo!");
         }
         $entregas = $planoEntrega->entregas;
@@ -323,7 +318,7 @@ class PlanoEntregaService extends ServiceBase
     public function emCurso(PlanoEntrega $plano): bool
     {
         $planoEntrega = !empty($plano['id']) ? PlanoEntrega::find($plano['id']) : $plano;
-        return empty($plano['id']) ? false : ($this->isPlanoEntregaValido($plano) && $planoEntrega->status == 'ATIVO');
+        return empty($plano['id']) ? false : ($this->isPlanoEntregaValido($plano) && $planoEntrega->status == PlanoEntregaStatus::ATIVO);
     }
 
     public function homologar($data, $unidade)
