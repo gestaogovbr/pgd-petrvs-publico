@@ -390,6 +390,7 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"],
         ["MOD_USER_ATRIB", "Permite gerenciar atribuições de usuário"],
         ["MOD_USER_REATIVAR", "Permite reativar usuário"],
+        ["MOD_USER_LIST_ALL", "Permite listar todos os usuários"],
       ]
     ], [
       "codigo" => "MOD_AUDIT",
@@ -414,6 +415,17 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_TIPO_CLI_EXCL", "Permite excluir tipos de clientes"],
         ["MOD_TIPO_CLI_INCL", "Permite incluir tipos de clientes"]
       ]
+    ],
+    [
+        "codigo" => "MOD_INDICADORES",
+        "descricao" => "Módulo de Indicadores",
+        "capacidades" => [
+            ["MOD_IND_ENTREGAS", "Indicadores de Entregas"],
+            ["MOD_IND_EQUIPES", "Indicadores de Equipes"],
+            ["MOD_IND_GESTAO", "Indicadores de Gestão do PGD"],
+            ["MOD_IND_TODAS_UNIDADES", "Indicadores - Listar todas as unidades"],
+            ["MOD_IND_VINCULADAS", "Indicadores - Permite usuário filtrar por todas as unidades vinculadas"],
+        ]
     ],
     [
         "codigo" => "MOD_RELATORIOS",

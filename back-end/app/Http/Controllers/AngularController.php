@@ -10,7 +10,7 @@ class AngularController extends Controller
     {
         $app_config = config("app");
         $petrvs_config = config("petrvs");
-        $google_config = config("google");
+        $google_config = config("google", []);
         $config = json_encode([
             "api_url" => $app_config["url"],
             "entidade" => $petrvs_config["entidade"],
@@ -18,7 +18,7 @@ class AngularController extends Controller
             "logo_url" => $petrvs_config["logo"], 
             "versao" => $app_config["version"],
             "login" => [
-                "google_client_id" => $google_config["client_id"],
+                "google_client_id" => $google_config["client_id"] ?? '',
                 "gsuit" => $petrvs_config["login"]["gsuit"],
                 "azure" => $petrvs_config["login"]["azure"],
                 "institucional" => $petrvs_config["login"]["institucional"],

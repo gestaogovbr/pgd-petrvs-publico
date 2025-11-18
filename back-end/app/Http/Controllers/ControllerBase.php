@@ -243,6 +243,8 @@ tenancy()->initialize($tenant); */
                 'limit' => ['required'],
                 'orderBy' => ['array'],
                 'deleted' => ['nullable'],
+                'join' => ['array'],
+                'fields' => ['array'],
                 'where' => ['array']
             ]);
             $result = $this->service->query($data);

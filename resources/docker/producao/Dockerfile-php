@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
     mysqli \
     soap \
     curl \
+    calendar \
     && docker-php-ext-enable pdo_mysql \
     && rm -rf /var/lib/apt/lists/*
 

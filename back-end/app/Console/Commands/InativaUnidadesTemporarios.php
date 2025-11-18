@@ -35,7 +35,8 @@ class InativaUnidadesTemporarios extends Command
         
         $this->info("Executando inativação de unidades temporárias para o tenant: {$tenantId}");
         
-        InativacaoUnidadesTemporarios::dispatch($tenantId);
+        $inativacaoUnidadesTemporarios = new InativacaoUnidadesTemporarios($tenantId);
+        $inativacaoUnidadesTemporarios->handle();
         
         $this->info("Job de inativação de unidades temporárias executado com sucesso!");
         

@@ -51,6 +51,7 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
       gestor_substituto_id: {default: null},
       expediente: {default: null},
       uf: {default: null},
+      habilitar_relatos_siape: {default: false},
       email_responsavel_siape: {default: ""},
       email_remetente_siape: {default: ""},
       emails: {default: []}
@@ -136,6 +137,10 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
 
   public titleEdit = (entity: Entidade): string => {
     return "Editando " + this.lex.translate("Entidade") + ': ' + (entity?.sigla || "");
+  }
+
+  public onAfterSave(entity: Entidade): void {
+    this.auth.entidade = entity;
   }
 }
 

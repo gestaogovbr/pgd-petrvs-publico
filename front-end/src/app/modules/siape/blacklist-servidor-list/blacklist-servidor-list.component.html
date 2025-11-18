@@ -1,19 +1,27 @@
+<top-alert [type]="'warning'" [message]="'Atenção:'">
+    <ng-container>
+        <p class="my-1 ms-4" *ngFor="let message of topAlertMessages()">{{ message }}</p>
+    </ng-container>
+</top-alert>
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [selectable]="selectable" (select)="onSelect($event)"
     [hasAdd]="auth.hasPermissionTo('MOD_SIAPE_BLACKLIST_INCL')"
-    [hasEdit]="auth.hasPermissionTo('MOD_SIAPE_BLACKLIST_EDT')">
+    [hasEdit]="auth.hasPermissionTo('MOD_SIAPE_BLACKLIST_EDT')"
+    [fields]="fields" [leftJoin]="leftJoin">
     <toolbar *ngIf="!selectable"></toolbar>
-    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="6" label="CPF" controlName="cpf" placeholder="CPF..." [attr.maxlength]="14"></input-text>
-            <input-select [size]="6" label="Status" controlName="inativado" [items]="[{key: null, value: 'Todos'}, {key: false, value: 'Ativo'}, {key: true, value: 'Inativado'}]"></input-select>
+            <input-text [size]="6" label="CPF" controlName="cpf" placeholder="CPF..." [attr.maxlength]="14" [form]="filter"></input-text>
+            <input-select [size]="6" label="Status" controlName="inativado" [items]="[{key: null, value: 'Todos'}, {key: false, value: 'Processado'}, {key: true, value: 'Não processado'}]" [form]="filter"></input-select>
         </div>
     </filter>
     <columns>
         <column title="CPF" field="cpf"></column>
-        <column title="Status" field="inativado">
-            <ng-template #columnTemplate let-row>
-                <badge [color]="row.inativado ? 'danger' : 'success'" [label]="row.inativado ? 'Inativado' : 'Ativo'"></badge>
+        <column title="Nome" field="nome"></column>
+        <column title="Matrícula" field="matricula"></column>
+        <column title="Status" field="inativado" [template]="columnStatus" [titleHint]="statusTitleHint()">
+            <ng-template #columnStatus let-row="row">
+                <badge [color]="row.inativado ? 'secondary' : 'success'" [label]="row.inativado ? 'Não processado' : 'Processado'"></badge>
             </ng-template>
         </column>
         <column title="Criado em" field="created_at" type="datetime"></column>

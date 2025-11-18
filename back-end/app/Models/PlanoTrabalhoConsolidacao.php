@@ -59,6 +59,13 @@ class PlanoTrabalhoConsolidacao extends ModelBase
   }
   // Verificar se há a possibilidade de fazer um relacionamento utilizando a chave da entrega e pela data
   // public function atividades() { return $this->hasMany(Atividade::class); } 
+
+  // Relação com as atividades consolidadas (snapshots)
+  public function atividadesConsolidadas()
+  {
+    return $this->hasMany(PlanoTrabalhoConsolidacaoAtividade::class, 'plano_trabalho_consolidacao_id');
+  }
+
   // Belongs
   public function planoTrabalho()
   {
