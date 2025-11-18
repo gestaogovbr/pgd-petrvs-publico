@@ -513,12 +513,39 @@ class UnidadeService extends ServiceBase
      */
     public function linhaAscendente($unidade_id): array
     {
-        $path = Unidade::find($unidade_id)->path;
-        if (!empty($path)) {
-            return array_filter(explode('/', $path), fn($x) => $x != "");
-        } else {
-            return [$unidade_id];
+        $result = [];
+        $currentUnit = Unidade::find($unidade_id);
+        
+        while ($currentUnit) {
+            $result[] = $currentUnit->id;
+            $currentUnit = $currentUnit->unidadePai;
         }
+
+        return array_reverse($result);
+    }
+
+    /**
+     * Retorna um array com os programas que compõem a linha hierárquica ascendente da unidade recebida como parâmetro.
+     * @param string $unidade_id
+     * @return array
+     */
+    public function regramentosAscendentes($unidade_id): array
+    {
+        $unidades = $this->linhaAscendente($unidade_id);
+        $programas = Programa::whereIn('unidade_id', $unidades)->where('data_fim', '>=', now())->get()->toArray();
+        return $programas;
+    }
+
+    /**
+     * Retorna um boolean indicando se a unidade recebida como parâmetro está na linha do programa recebido.
+     * @param string $unidade_id
+     * @param string $programa_id
+     * @return boolean
+     */
+    public function unidadeEhHabilitada($unidade_id, $programa_id): bool
+    {
+        $programas = $this->regramentosAscendentes($unidade_id);
+        return collect($programas)->pluck('id')->contains($programa_id);
     }
 
     public function lookupTodasUnidades(): array
@@ -750,4 +777,12 @@ class UnidadeService extends ServiceBase
         
         return $unidade;
     }
+    public function isUnidadeExecutora($unidadeId): bool
+    {
+        return Unidade::where('id', $unidadeId)
+            ->where('executora', true)
+            ->exists();
+    }
+
+    
 }

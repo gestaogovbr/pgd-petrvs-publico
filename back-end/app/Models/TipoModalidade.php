@@ -31,5 +31,8 @@ class TipoModalidade extends ModelBase
   {
     return $this->hasMany(Entidade::class);
   }
-  // Belongs
+  public function modalidadeSiape()
+  {
+    return $this->hasOne(TipoModalidadeSiape::class);
+  }
 }

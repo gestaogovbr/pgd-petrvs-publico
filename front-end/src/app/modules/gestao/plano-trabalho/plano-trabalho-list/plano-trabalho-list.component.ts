@@ -219,7 +219,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 				)).bind(this),
 		};
 		this.BOTAO_CONSOLIDACOES = {
-			label: "Consolidações",
+			label: "Registro de execução",
 			icon: this.entityService.getIcon("PlanoTrabalhoConsolidacao"),
 			onClick: ((row: PlanoTrabalho) =>
 				this.go.navigate(
@@ -765,7 +765,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 					case this.BOTAO_TERMOS:
 						return this.auth.hasPermissionTo("MOD_PTR");
 					case this.BOTAO_CONSOLIDACOES:
-						return true;
+						return planoAtivo;
 					case this.OPTION_LOGS:
 						return true;
 					case this.BOTAO_CLONAR:
