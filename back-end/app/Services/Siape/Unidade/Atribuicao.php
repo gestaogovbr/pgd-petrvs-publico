@@ -8,6 +8,7 @@ use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
+use App\Services\NivelAcessoService;
 use App\Services\Siape\Unidade\Enum\Atribuicao as EnumAtribuicao;
 
 trait Atribuicao
@@ -84,8 +85,8 @@ trait Atribuicao
             }
         }
 
-        if (!$unidadeDestino->executora) {
-            $this->alteracoes = ['info' => sprintf('Não é possível atribuir Colaborador em unidade não executora!', $usuario->id, $unidadeDestino->id)];
+        if (!$unidadeDestino->executora && $usuario->perfil->nivel != NivelAcessoService::PERFIL_COLABORADOR) {
+            $this->alteracoes = ['info' => sprintf('Não é possível atribuir Colaborador a um usuário com perfil diferente de Colaborador em unidade não executora!', $usuario->id, $unidadeDestino->id)];
             return;
         }
         
