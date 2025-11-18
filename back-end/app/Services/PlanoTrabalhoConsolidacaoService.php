@@ -16,6 +16,7 @@ use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 use App\Models\Programa;
 use App\Models\TipoAvaliacao;
 use App\Models\Unidade;
+use App\Enums\StatusEnum;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -93,7 +94,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'planoTrabalho.entregas.planoEntregaEntrega.processos.processo', 
       'planoTrabalho.tipoModalidade'
     ])->find($id);
-    $concluido = in_array($consolidacao->status, ["CONCLUIDO", "AVALIADO"]);
+    $concluido = in_array($consolidacao->status, [StatusEnum::CONCLUIDO, StatusEnum::AVALIADO]);
     $planosEntregasIds = array_map(fn($pe) => $pe->planoEntregaEntrega?->plano_entrega_id, $consolidacao->planoTrabalho->entregas?->all() ?? []);
     $planoTrabalho = $consolidacao->planoTrabalho;
     $atividades = Atividade::with([
@@ -324,7 +325,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
         $consolidacaoOcorrencia->save();
       }
       /* Atualiza o status */
-      $this->statusService->atualizaStatus($consolidacao, 'CONCLUIDO', 'A consolidação foi concluída nesta data.');
+      $this->statusService->atualizaStatus($consolidacao, StatusEnum::CONCLUIDO, 'A consolidação foi concluída nesta data.');
       DB::commit();
       return $this->consolidacaoDados($id);
     } catch (Throwable $e) {
@@ -354,8 +355,8 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       PlanoTrabalhoConsolidacaoAtividade::where("plano_trabalho_consolidacao_id", $id)->delete();
       PlanoTrabalhoConsolidacaoAfastamento::where("plano_trabalho_consolidacao_id", $id)->delete();
       PlanoTrabalhoConsolidacaoOcorrencia::where("plano_trabalho_consolidacao_id", $id)->delete();
-      $this->statusService->atualizaStatus($consolidacao, 'INCLUIDO', 'Cancelado a conclusão nesta data.');
-      $this->statusService->atualizaStatus($consolidacao->planoTrabalho, 'ATIVO', 'Cancelado a conclusão nesta data.');
+      $this->statusService->atualizaStatus($consolidacao, StatusEnum::INCLUIDO, 'Cancelado a conclusão nesta data.');
+      $this->statusService->atualizaStatus($consolidacao->planoTrabalho, StatusEnum::ATIVO, 'Cancelado a conclusão nesta data.');
 
       DB::commit();
       return $this->consolidacaoDados($id);
@@ -399,11 +400,151 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     $consolidacao = $avaliacao->planoTrabalhoConsolidacao;
     $consolidacao->avaliacao_id = $avaliacao->id;
     $consolidacao->save();
-    $this->statusService->atualizaStatus($consolidacao, 'AVALIADO');
+    $this->statusService->atualizaStatus($consolidacao, StatusEnum::AVALIADO);
     /* (RN_PTR_L) Um Plano de Trabalho adquire o status 'CONCLUIDO' quando a sua última consolidação for avaliada; */
     if(PlanoTrabalhoConsolidacao::where("plano_trabalho_id", $consolidacao->plano_trabalho_id)->orderByDesc("data_fim")->first()->id == $consolidacao->id) {
-      $this->statusService->atualizaStatus($consolidacao->planoTrabalho, 'CONCLUIDO');
+      $this->statusService->atualizaStatus($consolidacao->planoTrabalho, StatusEnum::CONCLUIDO);
     }
+  }
+
+  /**
+   * Retorna as consolidações pendentes do usuário
+   * 
+   * @param   string  $usuarioId  ID do usuário
+   * @return  array
+   */
+  public function pendenciasUsuario($usuarioId): array {
+
+    // Buscar consolidações INCLUIDO que já passaram da data_fim + tolerância
+    $consolidacoesPendentes = PlanoTrabalhoConsolidacao::with([
+      'planoTrabalho.programa:id,nome,dias_tolerancia_consolidacao',
+      'planoTrabalho.unidade:id,nome,sigla'
+    ])
+    ->whereHas('planoTrabalho', function($query) use ($usuarioId) {
+      $query->where('usuario_id', $usuarioId);
+      $query->whereIn('status', [StatusEnum::ATIVO, StatusEnum::CONCLUIDO, StatusEnum::AVALIADO]);
+    })
+    ->where('status', StatusEnum::INCLUIDO)
+    ->whereDate('data_fim', '<', now()->subDays(10))
+    ->orderBy('data_fim', 'asc')
+    ->get();
+
+    $pendencias = [];
+    foreach ($consolidacoesPendentes as $consolidacao) {
+      $dataLimite = \Carbon\Carbon::parse($consolidacao->data_fim)
+        ->addDays($consolidacao->planoTrabalho->programa->dias_tolerancia_consolidacao ?? 10);
+      
+      $diasAtraso = now()->diffInDays($dataLimite, false); // false para valores negativos quando em atraso
+      
+      $pendencias[] = [
+        'id' => $consolidacao->id,
+        'data_inicio' => $consolidacao->data_inicio,
+        'data_fim' => $consolidacao->data_fim,
+        'data_limite' => $dataLimite->toDateString(),
+        'dias_atraso' => abs($diasAtraso),
+        'plano_trabalho' => [
+          'id' => $consolidacao->planoTrabalho->id,
+          'numero' => $consolidacao->planoTrabalho->numero,
+          'programa' => $consolidacao->planoTrabalho->programa->nome,
+          'unidade' => $consolidacao->planoTrabalho->unidade->nome
+        ]
+      ];
+    }
+
+    return $pendencias;
+  }
+
+  /**
+   * Detecta inconsistências em consolidações concluídas ou avaliadas
+   * onde entregas do plano de trabalho não possuem atividades associadas
+   * 
+   * Utiliza as tabelas de snapshot (PlanoTrabalhoConsolidacaoAtividade) para 
+   * verificar as atividades que existiam no momento da conclusão da consolidação
+   */
+  public function detectarInconsistencias($usuario_id = null)
+  {
+    $query = PlanoTrabalhoConsolidacao::with([
+      'planoTrabalho.entregas',
+      'planoTrabalho.usuario',
+      'planoTrabalho.unidade',
+      'planoTrabalho.programa'
+    ])
+    ->whereIn('status', [StatusEnum::CONCLUIDO, StatusEnum::AVALIADO]);
+
+    if ($usuario_id) {
+      $query->whereHas('planoTrabalho', function($q) use ($usuario_id) {
+        $q->where('usuario_id', $usuario_id);
+      });
+    }
+
+    $consolidacoes = $query->get();
+    
+    if ($consolidacoes->isEmpty()) {
+      return [];
+    }
+
+    // Otimização: Buscar todos os snapshots de atividades de uma vez
+    $consolidacaoIds = $consolidacoes->pluck('id');
+    
+    // Buscar snapshots de atividades das consolidações usando a tabela correta
+    $snapshotsAtividades = PlanoTrabalhoConsolidacaoAtividade::whereIn('plano_trabalho_consolidacao_id', $consolidacaoIds)
+      ->select('plano_trabalho_consolidacao_id', 'snapshot')
+      ->get()
+      ->groupBy('plano_trabalho_consolidacao_id');
+
+    $inconsistencias = [];
+
+    foreach ($consolidacoes as $consolidacao) {
+      $entregasSemAtividade = [];
+      
+      // Obter snapshots de atividades para esta consolidação
+      $snapshotsConsolidacao = $snapshotsAtividades->get($consolidacao->id, collect());
+      
+      // Extrair plano_trabalho_entrega_id dos snapshots
+      $entregasComAtividade = $snapshotsConsolidacao->map(function($snapshot) {
+        // O campo snapshot é convertido pelo cast AsJson que retorna um objeto stdClass
+        // Precisamos converter para array ou acessar como objeto
+        $snapshotData = $snapshot->snapshot;
+        if (is_object($snapshotData)) {
+          return $snapshotData->plano_trabalho_entrega_id ?? null;
+        }
+        return $snapshotData['plano_trabalho_entrega_id'] ?? null;
+      })->filter()->unique();
+      
+      foreach ($consolidacao->planoTrabalho->entregas as $entrega) {
+        $temAtividade = $entregasComAtividade->contains($entrega->id);
+        
+        if (!$temAtividade) {
+          $entregasSemAtividade[] = [
+            'id' => $entrega->id,
+            'descricao' => $entrega->descricao,
+            'data_inicio' => $entrega->data_inicio,
+            'data_fim' => $entrega->data_fim
+          ];
+        }
+      }
+
+      // Se há entregas sem atividade, adiciona à lista de inconsistências
+      if (!empty($entregasSemAtividade)) {
+        $inconsistencias[] = [
+          'consolidacao_id' => $consolidacao->id,
+          'status' => $consolidacao->status,
+          'data_inicio' => $consolidacao->data_inicio,
+          'data_fim' => $consolidacao->data_fim,
+          'plano_trabalho' => [
+            'id' => $consolidacao->planoTrabalho->id,
+            'numero' => $consolidacao->planoTrabalho->numero,
+            'usuario' => $consolidacao->planoTrabalho->usuario->nome,
+            'programa' => $consolidacao->planoTrabalho->programa->nome,
+            'unidade' => $consolidacao->planoTrabalho->unidade->nome
+          ],
+          'entregas_sem_atividade' => $entregasSemAtividade,
+          'total_entregas_sem_atividade' => count($entregasSemAtividade)
+        ];
+      }
+    }
+
+    return $inconsistencias;
   }
 
 }

@@ -101,6 +101,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		this.code = "MOD_PTR";
 		this.filter = this.fh.FormBuilder(
 			{
+				numero: {default: ""},
 				agrupar: {default: true},
 				subordinadas: { default: false },
 				lotados_minha_unidade: {default: false},
@@ -398,6 +399,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 
 	public filterClear(filter: FormGroup) {
 		filter.controls.usuario.setValue("");
+		filter.controls.numero.setValue("");
 		filter.controls.unidade_id.setValue(null);
 		filter.controls.status.setValue(null);
 		filter.controls.arquivados.setValue(false);
@@ -430,6 +432,9 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 				"like",
 				"%" + form.usuario.trim().replace(" ", "%") + "%",
 			]);
+	
+		if (form.numero)
+			result.push(["numero", "==", String(form.numero).trim()]);
 
 		if (this.filter?.controls.meus_planos.value) {
 			let w1: [string, string, string[]] = ["unidade_id", "in", (this.auth.unidades || []).map(u => u.id)];
@@ -475,6 +480,8 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 
 		if(this.grid) this.grid.groupBy = this.groupBy;
 
+		console.log(result);
+		
 		return result;
 	};
 

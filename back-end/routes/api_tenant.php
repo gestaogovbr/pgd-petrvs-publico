@@ -334,6 +334,8 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacao')->group(
   Route::post('consolidacao-dados', [PlanoTrabalhoConsolidacaoController::class, 'consolidacaoDados']);
   Route::post('concluir', [PlanoTrabalhoConsolidacaoController::class, 'concluir']);
   Route::post('cancelar-conclusao', [PlanoTrabalhoConsolidacaoController::class, 'cancelarConclusao']);
+  Route::post('pendencias-usuario', [PlanoTrabalhoConsolidacaoController::class, 'pendenciasUsuario']);
+  Route::post('inconsistencias', [PlanoTrabalhoConsolidacaoController::class, 'inconsistencias']);
 });
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
   defaultRoutes(PlanoEntregaController::class);
@@ -368,6 +370,7 @@ Route::middleware(['auth:sanctum'])->prefix('Usuario')->group(function () {
   Route::post('atualiza-pedagio', [UsuarioController::class, 'atualizaPedagio']);
   Route::post('remove-pedagio', [UsuarioController::class, 'removerPedagio']);
   Route::post('ativar-temporariamente', [UsuarioController::class, 'ativarTemporariamente']);
+  Route::post('pendencias-chefe', [UsuarioController::class, 'pendenciasChefe']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Perfil')->group(function () {
   defaultRoutes(PerfilController::class);

@@ -106,4 +106,8 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
       data: { usuario_id: usuario_id, justificativa: justificativa }
     }));
   }
+
+  public getPendenciasChefe(): Promise<any[]> {
+    return firstValueFrom(this.server.post('api/Usuario/pendencias-chefe', {}));
+  }
 }
