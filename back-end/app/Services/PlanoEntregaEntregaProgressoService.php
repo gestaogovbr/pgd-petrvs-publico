@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class PlanoEntregaEntregaProgressoService extends ServiceBase
 {
+
   public function extraStore($entity, $unidade, $action)
   {
     $this->updateEntrega($entity);
@@ -25,8 +26,11 @@ class PlanoEntregaEntregaProgressoService extends ServiceBase
   private function updateEntrega($data){
     $entrega = PlanoEntregaEntrega::find($data["plano_entrega_entrega_id"]);
     $progressos = PlanoEntregaEntregaProgresso::where("plano_entrega_entrega_id", $entrega->id)->orderBy('data_progresso', 'desc')->get();
+    
     if ($progressos->isNotEmpty()) {
+      // Pega o último progresso lançado (mais recente)
       $ultimoProgresso = $progressos->first();
+      
       $entrega->update([
         'progresso_esperado' => $ultimoProgresso->progresso_esperado,
         'progresso_realizado' => $ultimoProgresso->progresso_realizado,
@@ -37,4 +41,5 @@ class PlanoEntregaEntregaProgressoService extends ServiceBase
       ]);
     }
   }
+
 }

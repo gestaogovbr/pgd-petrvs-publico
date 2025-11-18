@@ -1,32 +1,38 @@
 <h3 *ngIf="!isModal" class="my-2">{{title}}</h3>
-<grid [dao]="dao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+<grid [dao]="dao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" 
     [selectable]="selectable" (select)="onSelect($event)"
     [hasAdd]="auth.hasPermissionTo('MOD_USER_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_USER_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="4" [label]="lex.translate('Usuário')" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Nome" [attr.maxlength]=250></input-text>
-            <input-search [size]="4" [label]="lex.translate('Lotação')" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
-            <input-select [size]="4" [label]="lex.translate('Perfil')" controlName="perfil_id" nullable [control]="filter!.controls.perfil_id" [dao]="perfilDao"></input-select>
+            <input-text [size]="3" [label]="lex.translate('CPF')" controlName="cpf" [control]="filter!.controls.cpf" placeholder="CPF" [attr.maxlength]=11></input-text>
+            <input-text [size]="3" [label]="lex.translate('Usuário')" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Nome" [attr.maxlength]=250></input-text>
+            <input-search [size]="3" [label]="lex.translate('Lotação')" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+            <input-select [size]="3" [label]="lex.translate('Perfil')" controlName="perfil_id" nullable [control]="filter!.controls.perfil_id" [dao]="perfilDao"></input-select>
             <input-check [size]="12" [label]="lex.translate('Atribuições')" controlName="atribuicoes" [control]="filter!.controls.atribuicoes" [items]="lookup.UNIDADE_INTEGRANTE_TIPO" [inline]="true"></input-check>
         </div>
     </filter>
     <columns>
-        <column icon="bi-person" [align]="'center'" [template]="columnFoto">
-            <ng-template let-row="row" #columnFoto>
-                <profile-picture [url]="row.url_foto" [size]="40" [hint]="row.nome"></profile-picture>
-            </ng-template>
-        </column>
-
-     
+            
+        <column title="Matrícula" field="matricula"></column>
         <column title="CPF" field="cpf"></column>
         <column title="Nome" field="nome" orderBy="nome" [template]="columnNome">
             <ng-template let-row="row" #columnNome>
                 {{row.nome}}<br>
-                <label class="badge text-bg-warning" *ngIf="row.usuario_externo">Usuário Externo</label>
+                <label class="badge text-bg-warning" *ngIf="row.usuario_externo">Usuário Externo</label>                
+                <label class="badge text-bg-danger" *ngIf="row.pedagio">Teletrabalho indisponível</label>
             </ng-template>
         </column>
+
+        <column title="Regramentos" [template]="columnRegramentos">
+            <ng-template let-row="row" #columnRegramentos>
+                <div *ngFor="let regramento of row.regramentos" class="d-block">
+                    <label class="">{{regramento}}</label>
+                </div>
+            </ng-template>
+        </column>
+
         <column [title]="lex.translate('Perfil')" [template]="columnPerfil">
             <ng-template let-row="row" #columnPerfil>
                 <strong>{{row.perfil?.nome || ""}}</strong>
@@ -39,7 +45,7 @@
                 </label>
             </ng-template>
         </column>
-        <column type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)" [options]="options"></column>
+        <column type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)" [options]="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

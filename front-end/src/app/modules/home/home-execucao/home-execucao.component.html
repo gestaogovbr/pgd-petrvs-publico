@@ -37,9 +37,88 @@
       [imgIcon]="gb.getResourcePath('assets/icons/home/ranking.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
-      [route]="{route: ['avaliacao/plano-trabalho/consolidacao/avaliacao']}"
+      [route]="{route: ['avaliação/plano-trabalho/consolidacao/avaliacao']}"
     ></app-button-dashboard>
   </div>
 
 </div>
 
+
+<!-- Seção de Pendências de Consolidação -->
+<div class="row mt-3" *ngIf="pendenciasConsolidacaoAgrupadas.length > 0">
+  <div class="col-12">
+    <div class="card border-warning">
+      <div class="card-header bg-warning text-dark">
+        <h6 class="mb-0 d-flex align-items-center">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          Registros de Execução pendentes ({{pendenciasConsolidacao.length}})
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-12" *ngFor="let grupo of pendenciasConsolidacaoAgrupadas">
+            <div class="alert alert-warning mb-2">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <div>
+                  <strong>Plano de trabalho: {{ grupo.plano_trabalho?.numero }}</strong>
+                  <span class="badge bg-warning text-dark rounded-pill ms-2">({{ grupo.pendencias?.length }})</span>
+                </div>
+                <button 
+                  type="button" 
+                  class="btn btn-warning btn-sm"
+                  (click)="abrirConsolidacao()"
+                  title="Registrar agora">
+                  Registrar
+                </button>
+              </div>
+              <div *ngFor="let pendencia of grupo.pendencias" class="small text-muted">
+                Período: {{ pendencia.data_inicio | date:'dd/MM/yyyy' }} - {{ pendencia.data_fim | date:'dd/MM/yyyy' }}
+                | Limite: {{ pendencia.data_limite | date:'dd/MM/yyyy' }}
+                | <span class="text-danger">{{ pendencia.dias_atraso }} dias em atraso</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Seção de Inconsistências de Consolidação -->
+<div class="row mt-3" *ngIf="inconsistenciasConsolidacao.length > 0">
+  <div class="col-12">
+    <div class="card border-danger">
+      <div class="card-header bg-danger text-white">
+        <h6 class="mb-0">
+          <span class=" d-flex justify-content-between align-items-center">
+            Inconsistências Detectadas
+            <div class="badge bg-warning text-dark">{{ inconsistenciasConsolidacao.length }}</div>
+          </span> 
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-12" *ngFor="let inconsistencia of inconsistenciasConsolidacao">
+            <div class="alert alert-danger d-flex justify-content-between align-items-center mb-2">
+              <div>
+                <strong>Plano de trabalho: {{ inconsistencia.plano_trabalho.numero }}</strong><br>
+                <small class="text-muted">
+                  Período: {{ inconsistencia.data_inicio | date:'dd/MM/yyyy' }} - {{ inconsistencia.data_fim | date:'dd/MM/yyyy' }}
+                  | Status: {{ inconsistencia.status }}
+                  | <span class="text-danger">{{ inconsistencia.entregas_sem_atividade.length }} registro(s) de execução concluído sem descrição do trabalho realizado</span>
+                </small>
+              </div>
+              <button 
+                type="button" 
+                class="btn btn-danger btn-sm"
+                (click)="abrirDetalhesInconsistencia(inconsistencia)"
+                title="Ver detalhes">
+                <i class="bi bi-eye"></i> Detalhes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

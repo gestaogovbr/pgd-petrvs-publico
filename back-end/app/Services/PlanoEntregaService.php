@@ -7,6 +7,7 @@ use App\Models\PlanoEntrega;
 use App\Models\Usuario;
 use App\Models\StatusJustificativa;
 use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
 use App\Models\PlanoEntregaEntrega;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Models\Programa;
@@ -563,6 +564,11 @@ class PlanoEntregaService extends ServiceBase
         $usuario = Usuario::find(parent::loggedUser()->id);
         $programa = Programa::find($dataOrEntity["programa_id"]);
         $this->validaPermissaoIncluir($dataOrEntity, $usuario);
+        $unidade = Unidade::find($dataOrEntity["unidade_id"]);
+        if(!is_null($unidade?->data_inativacao)){
+            throw new ServerException("ValidatePlanoEntrega", "A unidade está inativa.");
+        }
+       
         if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_EXTRPL')) {
             if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity))
                 throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");
@@ -603,6 +609,10 @@ class PlanoEntregaService extends ServiceBase
                 throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.\n[ver RN_PENT_K]");
         }
         if ($action == ServiceBase::ACTION_INSERT) {
+            /* Só é permitido o cadastro de planos em unidades definidas como executoras */
+            if(!$this->unidadeService->isUnidadeExecutora($dataOrEntity["unidade_id"])){
+                throw new ValidateException("Não é possível criar um plano para unidades não executoras.", 422);
+            }
             $planosComPendencias = $this->planosUnidadeComPendencias($dataOrEntity["unidade_id"]);
             if ($planosComPendencias) {
                 throw new ServerException("ValidatePlanoEntrega", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");
@@ -682,6 +692,7 @@ class PlanoEntregaService extends ServiceBase
     private function planosUnidadeComPendencias($unidadeId): bool
     {
         $planos = PlanoEntrega::where('unidade_id', $unidadeId)
+            ->whereNotIn('status', ['CANCELADO', 'SUSPENSO'])
             ->orderByDesc('numero')
             ->take(2)
             ->get();

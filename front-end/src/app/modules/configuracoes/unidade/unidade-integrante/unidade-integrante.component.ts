@@ -55,10 +55,14 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     this.entity = this.metadata?.unidade;
   
     if (this.entity) {
-      if (this.entity?.instituidora) {
-        this.tiposAtribuicao = this.lookup.UNIDADE_INTEGRANTE_TIPO;
-      } else {
-        this.tiposAtribuicao = this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(
+      let tiposPermitidos = this.lookup.UNIDADE_INTEGRANTE_TIPO;
+      if(!this.entity?.executora){
+        tiposPermitidos = tiposPermitidos.filter(
+          atribuicao => atribuicao.key !== 'COLABORADOR'
+        );
+      }
+      if (!this.entity?.instituidora) {
+        this.tiposAtribuicao = tiposPermitidos.filter(
           atribuicao => atribuicao.key !== 'CURADOR'
         );
       }
@@ -114,6 +118,9 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     let atribuicoes: LookupItem[] = form!.controls.atribuicoes.value;
     if (this.util.array_diff(['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO'], atribuicoes.map(x => x.key) || []).length < 2) {
       return "A um mesmo servidor só pode ser atribuída uma função de gestor (titular, substituto ou delegado), para uma mesma Unidade!";
+    }
+    if (!this.entity?.executora && this.util.array_diff(['COLABORADOR'], atribuicoes.map(x => x.key) || []).length < 2) {
+      return "Não é possível atribuir colaborador a uma unidade não executora.";
     }
     return undefined;
   }

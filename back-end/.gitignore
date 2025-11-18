@@ -14,11 +14,10 @@ yarn-error.log
 /.idea
 /.vscode
 /.env
-/composer.lock
-/package-lock.json
 /public/index.html
 /storage/logs
-
+/storage/phpstan
+.phpstan-diagnostics/
 # managed
 **.data.json
 **.node-persist**

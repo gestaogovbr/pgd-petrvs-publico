@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 */
 
 /* Rotas do Angular */
+Route::get('/', [AngularController::class, 'index']);
 Route::any('/{any}', [AngularController::class, 'index'])->where('any', '^(?!api|sanctum|config|web|download|environment-config|login-unico).*$');
 
 /* Rotas diversas */

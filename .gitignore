@@ -9,8 +9,6 @@ front-end/.angular/*
 
 *Zone.Identifier*
 
-package-lock.json
-
 /resources/mysql/*
 /resources/docker/mariadb/*
 
@@ -37,7 +35,6 @@ back-end/database/seeders/ZUnidadeOrigemAtividadeSeeder.php
 back-end/public/info.php
 back-end/servidores.xml
 back-end/unidades.xml
-back-end/tests/*
 back-end/local_files/*
 front-end/src/environments/environment.prod.ts
 front-end/src/proxy.conf.json
@@ -59,3 +56,5 @@ back-end/supervisord.log
 back-end/supervisord.pid
 back-end/storage/logs/*.log
 kubectl
+.trae/diagnostics/
+.vscode/diagnostics/
