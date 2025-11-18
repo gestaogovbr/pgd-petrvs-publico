@@ -165,11 +165,11 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
         ];
 
         this.pieChartUnidadesData.labels = [
-          'Com PGD em vigor (' + ((data.totalUnidadesPE / data.totalUnidades) * 100)
+          'Com PE cadastrado (' + ((data.totalUnidadesPE / data.totalUnidades) * 100)
             .toFixed(2)
             .replace(".", ",")
             + '%)',
-          'Sem PGD em vigor (' + (((data.totalUnidades - data.totalUnidadesPE) / data.totalUnidades) * 100)
+          'Sem PE cadastrado (' + (((data.totalUnidades - data.totalUnidadesPE) / data.totalUnidades) * 100)
             .toFixed(2)
             .replace(".", ",")
             + '%)'
