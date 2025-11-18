@@ -36,6 +36,7 @@ use App\Models\StatusJustificativa;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Services\UsuarioService;
+use App\Services\UnidadeService;
 use App\Traits\AutoUuid;
 use App\Traits\HasPermissions;
 use App\Traits\MergeRelations;
@@ -66,7 +67,7 @@ class Usuario extends Authenticatable implements AuditableContract
     protected $table = "usuarios";
 
     protected $with = ['perfil'];
-    protected $appends = ['pedagio'];
+    protected $appends = ['pedagio','regramentos'];
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
         'nome', /* varchar(256); NOT NULL; */ // Nome do usuário
         'email', /* varchar(100); NOT NULL; */ // E-mail do usuário
@@ -450,6 +451,11 @@ class Usuario extends Authenticatable implements AuditableContract
             $url = "/assets/images/profile.png";
         }
         return $url;
+    }
+
+    public function getRegramentosAttribute(){
+        $unidadeService = new UnidadeService();
+        return array_map(fn($p) => $p["nome"], $unidadeService->regramentosAscendentes($this->lotacao->unidade_id));
     }
   
     public function getPedagioAttribute(){

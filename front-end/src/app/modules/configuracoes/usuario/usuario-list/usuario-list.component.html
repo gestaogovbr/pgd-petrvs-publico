@@ -24,6 +24,14 @@
             </ng-template>
         </column>
 
+        <column title="Regramentos" [template]="columnRegramentos">
+            <ng-template let-row="row" #columnRegramentos>
+                <div *ngFor="let regramento of row.regramentos" class="d-block">
+                    <label class="">{{regramento}}</label>
+                </div>
+            </ng-template>
+        </column>
+
         <column [title]="lex.translate('Perfil')" [template]="columnPerfil">
             <ng-template let-row="row" #columnPerfil>
                 <strong>{{row.perfil?.nome || ""}}</strong>

@@ -345,7 +345,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   public changeModalidade() {
     if (this.entity!.usuario?.modalidade_pgd != this.form?.controls.tipo_modalidade_id.value) {
-      this.dialog.confirm('Atenção', 'changeModalidadeVocê está propondo plano de trabalho com modalidade distinta daquela registrada pela sua chefia imadiata no SouGov Líder. Deseja continuar?').then((result) => {
+      this.dialog.confirm('Atenção', 'Você está propondo plano de trabalho com modalidade distinta daquela registrada pela sua chefia imadiata no SouGov Líder. Deseja continuar?').then((result) => {
         if (!result) {
           this.selecionaModalidade();
         }
