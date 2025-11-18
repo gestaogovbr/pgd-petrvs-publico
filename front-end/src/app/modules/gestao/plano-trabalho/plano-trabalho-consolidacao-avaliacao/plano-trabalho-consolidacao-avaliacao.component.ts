@@ -260,5 +260,11 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public getNota(row:any) {
     return row.tipo_avaliacao.notas.find((x: any) => x.codigo == row.nota);
   }
+
+  protected avaliacaoStatus(status: string) : string | undefined {
+    return {
+      "CONCLUIDO": "Aguardando Avaliação"
+    }[status]
+  }
 }
 
