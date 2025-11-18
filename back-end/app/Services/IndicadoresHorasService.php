@@ -93,7 +93,7 @@ class IndicadoresHorasService extends IndicadoresEntregaService
                         END AS data_feriado
                     FROM feriados f
                     LEFT JOIN anos a ON f.recorrente = 1
-                    WHERE
+                    WHERE f.deleted_at IS NULL and
                         (
                             f.abrangencia = 'NACIONAL'
                             OR (
@@ -147,8 +147,8 @@ class IndicadoresHorasService extends IndicadoresEntregaService
                             SELECT id
                             FROM afastamentos a
                             WHERE a.usuario_id = pdu.usuario_id
-                            and du.data BETWEEN a.data_inicio AND date(a.data_fim)
-                            and a.deleted_at is null
+                              and du.data BETWEEN a.data_inicio AND date(a.data_fim)
+                              and a.deleted_at is null
                         )
                     group by pdu.id
                 ),
@@ -185,7 +185,7 @@ class IndicadoresHorasService extends IndicadoresEntregaService
                     coalesce(r.horas, 0) as horas
                 FROM categorias c
                 LEFT JOIN resultado r on r.categoria = c.nome
-                ORDER BY 2 desc
+                ORDER BY 1 desc
         TEXT;
 
         $rows = DB::select($sql, $params);
