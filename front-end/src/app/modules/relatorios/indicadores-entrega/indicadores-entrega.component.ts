@@ -40,7 +40,7 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
     maintainAspectRatio: false,
     layout: {
       padding: {
-        bottom: 30
+        bottom: 50
       }
     },
     plugins: {

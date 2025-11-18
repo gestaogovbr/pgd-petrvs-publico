@@ -56,8 +56,6 @@
 </filter>
 <div class="graficos">
     <div class="grafico">
-        <p *ngIf="auth.hasPermissionTo('MOD_IND_TODAS_UNIDADES')">Sim</p>
-        <p *ngIf="!auth.hasPermissionTo('MOD_IND_TODAS_UNIDADES')">Não</p>
         <div class="titulo">Taxa de vinculação das entregas</div>
         <p *ngIf="!pieChartData.labels?.length" class="no-data">Sem dados para exibir</p>
         <div *ngIf="loading; else graficoEntregas" class="d-flex justify-content-center my-2">
@@ -86,7 +84,10 @@
             </div>
         </div>
         <ng-template #graficoAvaliacoes>
-            <div class="grafico-wrapper" *ngIf="totalAvaliacoes">
+            <div class="grafico-wrapper"
+                *ngIf="totalAvaliacoes" 
+                style="height: 350px"
+            >
                 <canvas
                     baseChart
                     *ngIf="pieChartAvaliacoesData.labels?.length"
