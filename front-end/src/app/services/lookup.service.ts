@@ -851,6 +851,11 @@ export class LookupService implements IIndexable {
     { key: 'SMTP', value: 'SMTP' },
   ];
 
+  public INTEGRACAO_SMTP_HABILITAR_RELATOS: LookupItem[] = [
+    { key: true, value: 'Habilitar' },
+    { key: false, value: 'Não habilitar' }
+  ];
+
   public GOV_BR_ENV: LookupItem[] = [
     { key: 'staging', value: 'Teste' },
     { key: 'production', value: 'Produção' },
