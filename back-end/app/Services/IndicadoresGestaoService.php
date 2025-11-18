@@ -14,6 +14,7 @@ class IndicadoresGestaoService extends ServiceBase
 
     public function __construct() {}
 
+    // Taxa de cobertura do PGD entre os agentes públicos
     public function query($data)
     {
         $this->unidadeId = $this->extractWhere($data, "unidade_id");
@@ -56,12 +57,19 @@ class IndicadoresGestaoService extends ServiceBase
     // quantos usuarios participam de PGD
     public function queryUsuarios($data)
     {
+        $sql = "";
+        $params = [];
+
+        if (isset($this->unidadeIds)) {
+            $sql .= " and ui.unidade_id in ($this->unidadeIds)";
+        }
+
+       $this->applyFiltros($data, $sql, $params);
+
         $sql = <<<TEXT
            with lotacoes as (
-                select
-                    `ui`.`usuario_id` AS `usuario_id`,
-                    `ui`.`unidade_id` AS `unidade_id`,
-                    uia.created_at
+                select distinct
+                    `ui`.`usuario_id` AS `usuario_id`
                 from
                     (`unidades_integrantes` `ui`
                 join `unidades_integrantes_atribuicoes` `uia` on
@@ -70,6 +78,7 @@ class IndicadoresGestaoService extends ServiceBase
                 where
                     `ui`.`deleted_at` is null
                     and `uia`.`atribuicao` = 'LOTADO'
+                    $sql
                 order by
                     `ui`.`usuario_id`
             )
@@ -82,17 +91,9 @@ class IndicadoresGestaoService extends ServiceBase
                 ) as totalParticipantes,
                 count(distinct u.id) as totalUsuarios
             FROM usuarios u
-            left join `lotacoes` on (`lotacoes`.`usuario_id` = `u`.`id`)
+            inner join `lotacoes` on (`lotacoes`.`usuario_id` = `u`.`id`)
             where u.deleted_at is null
         TEXT;
-
-        $params = [];
-
-        if (isset($this->unidadeIds)) {
-            $sql .= " and lotacoes.unidade_id in ($this->unidadeIds)";
-        }
-
-       $this->applyFiltros($data, $sql, $params);
 
         $rows = DB::select($sql, $params);
 
@@ -155,13 +156,13 @@ class IndicadoresGestaoService extends ServiceBase
     {
         $data_inicial = $this->extractWhere($data, "data_inicial");
         if (isset($data_inicial[2])) {
-            $sql .= " and `lotacoes`.`created_at` >= ?";
+            $sql .= " and `uia`.`created_at` >= ?";
             $params[] = $data_inicial[2];
         }
 
         $data_final = $this->extractWhere($data, "data_final");
         if (isset($data_final[2])) {
-            $sql .= " and date(`lotacoes`.`created_at`) <= ?";
+            $sql .= " and date(`uia`.`created_at`) <= ?";
             $params[] = $data_final[2];
         }
     }
