@@ -33,6 +33,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
   public tiposAtribuicao: LookupItem[] = [];
+  public tiposAtribuicaoPermitidos: LookupItem[] = [];
   public perfilDao: PerfilDaoService;
 
   constructor(public injector: Injector) {
@@ -55,14 +56,9 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     this.entity = this.metadata?.unidade;
   
     if (this.entity) {
-      let tiposPermitidos = this.lookup.UNIDADE_INTEGRANTE_TIPO;
-      if(!this.entity?.executora){
-        tiposPermitidos = tiposPermitidos.filter(
-          atribuicao => atribuicao.key !== 'COLABORADOR'
-        );
-      }
+      this.tiposAtribuicaoPermitidos = this.lookup.UNIDADE_INTEGRANTE_TIPO;
       if (!this.entity?.instituidora) {
-        this.tiposAtribuicao = tiposPermitidos.filter(
+        this.tiposAtribuicao = this.tiposAtribuicaoPermitidos.filter(
           atribuicao => atribuicao.key !== 'CURADOR'
         );
       }
@@ -113,14 +109,30 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     if ((controlName == "usuario_id") && this.grid?.adding && this.items.map(i => i.id).includes(control.value)) result = "O usuário já é integrante desta unidade. Edite-o, ao invés de incluí-lo novamente!";
     return result;
   }
+  public asyncFormValidation = async(form?: FormGroup) =>
+  {
+    let error = this.formValidation(form);
+    if(error){
+      return error;
+    }
+
+    let atribuicoes: LookupItem[] = form!.controls.atribuicoes.value;
+    let usuario = await this.usuarioDao.getById(form!.controls.usuario_id.value);
+    let perfil = await this.perfilDao.getById(form!.controls.perfil_id.value);
+    let isUnidadeExecutora = this.entity?.executora;
+    let perfilColaborador = perfil?.nivel == 6;
+    if(usuario && !perfilColaborador && !isUnidadeExecutora
+      && (atribuicoes.map(x => x.key) || []).includes('COLABORADOR')) {
+      return "Não é possível atribuir Colaborador a um usuário com perfil diferente de Colaborador em unidade não executora.";
+    }
+    return undefined;
+
+  }
 
   public formValidation = (form?: FormGroup) => {
     let atribuicoes: LookupItem[] = form!.controls.atribuicoes.value;
     if (this.util.array_diff(['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO'], atribuicoes.map(x => x.key) || []).length < 2) {
       return "A um mesmo servidor só pode ser atribuída uma função de gestor (titular, substituto ou delegado), para uma mesma Unidade!";
-    }
-    if (!this.entity?.executora && this.util.array_diff(['COLABORADOR'], atribuicoes.map(x => x.key) || []).length < 2) {
-      return "Não é possível atribuir colaborador a uma unidade não executora.";
     }
     return undefined;
   }
@@ -161,8 +173,13 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     let usuario = this.perfis.find(p => p.id == row.id);
     form.controls.usuario_id.setValue(this.grid?.adding ? row.usuario_id : row.id);
     form.controls.perfil_id.setValue(usuario?.perfil_id);
+    this.tiposAtribuicao = this.tiposAtribuicaoPermitidos;
     if (usuario?.usuario_externo) {
       this.tiposAtribuicao = this.tiposAtribuicao.filter((x: LookupItem) => x.key != 'GESTOR_SUBSTITUTO');
+    }
+    let isUnidadeExecutora = this.entity?.executora;
+    if(usuario && usuario?.perfil?.nivel !== 6 && !isUnidadeExecutora){
+      this.tiposAtribuicao = this.tiposAtribuicao.filter((x: LookupItem) => x.key != 'COLABORADOR');
     }
     form.controls.atribuicoes.setValue(this.integranteService.converterAtribuicoes(row.atribuicoes));
     form.controls.atribuicao.setValue("");
@@ -224,7 +241,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     form.controls.atribuicoes.setValue(novasAtribuicoes);
     if (this.grid) this.grid.error = "";
     this.cdRef.detectChanges();
-    let error = this.formValidation(form);
+    let error = await this.asyncFormValidation(form);
     if (!error) {
       let confirm = true;
       let alteracaoGestor = this.integranteService.haAlteracaoGerencia(novasAtribuicoes.map(x => x.key), Object.assign(row, { usuario_nome: this.usuario?.selectedItem?.entity.nome }), (this.grid?.items as IntegranteConsolidado[]) || [], this.entity?.sigla || "");

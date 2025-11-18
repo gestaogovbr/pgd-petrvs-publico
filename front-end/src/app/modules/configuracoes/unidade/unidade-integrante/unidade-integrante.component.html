@@ -5,7 +5,7 @@
     </div>
   <div *ngIf="!entity?.executora" class="col">
         <top-alert type="warning" 
-        [message]="'Para unidade não executora não será possível escolher a atribuição de Vinculado.'"></top-alert>
+        [message]="'Não é possível atribuir Colaborador a um usuário com perfil diferente de Colaborador em unidade não executora.'"></top-alert>
     </div>
   <span *ngIf="!isNoPersist"><strong>{{ 'Unidade: ' + (entity?.nome || "")}}</strong></span>
   <columns>

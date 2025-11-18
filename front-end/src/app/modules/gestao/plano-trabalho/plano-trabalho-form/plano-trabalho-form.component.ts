@@ -85,7 +85,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public selectedModalidade?: TipoModalidade;
   public tipoModalidadeItems: LookupItem[] = [];
   public planosUsuarioComPendencias: boolean = false;
-  public unidadeWhere:any;
 
 
   constructor(public injector: Injector) {
@@ -146,7 +145,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       todosUnidadeExecutora: false,
       vigentesUnidadeExecutora: true
     }
-    this.unidadeWhere = [['executora', '==', true]];
   }
 
   public ngOnInit() {
