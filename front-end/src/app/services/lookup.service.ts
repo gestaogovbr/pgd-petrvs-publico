@@ -664,7 +664,7 @@ export class LookupService implements IIndexable {
     { key: "AGUARDANDO_ASSINATURA", value: "Aguardando assinatura", icon: "bi bi-clock", color: "warning", data: { justificar: [] } },
     { key: "ATIVO", value: "Aprovado", icon: "bi bi-check2-circle", color: "success", data: { justificar: [] } },
     { key: "CONCLUIDO", value: "Executado", icon: "bi bi-clipboard2-check", color: "primary", data: { justificar: [] } },
-    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info", data: { justificar: [] } },  // Um plano de trabalho é considerado avaliado quando todas as suas consolidações o forem
+    // { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info", data: { justificar: [] } },  // Um plano de trabalho é considerado avaliado quando todas as suas consolidações o forem
     { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "dark", data: { justificar: [] } },
     { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger", data: { justificar: [] } }
   ];
@@ -849,6 +849,11 @@ export class LookupService implements IIndexable {
     { key: 'SIAPE', value: 'API Consulta SIAPE' },
     { key: 'API', value: 'API de envio de dados' },
     { key: 'SMTP', value: 'SMTP' },
+  ];
+
+  public INTEGRACAO_SMTP_HABILITAR_RELATOS: LookupItem[] = [
+    { key: true, value: 'Habilitar' },
+    { key: false, value: 'Não habilitar' }
   ];
 
   public GOV_BR_ENV: LookupItem[] = [

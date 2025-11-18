@@ -45,6 +45,9 @@ use App\Http\Controllers\HistoricoDocenciaInternaController;
 use App\Http\Controllers\HistoricoFuncaoController;
 use App\Http\Controllers\HistoricoLotacaoController;
 use App\Http\Controllers\ImpersonationController;
+use App\Http\Controllers\IndicadoresController;
+use App\Http\Controllers\IndicadoresEntregaController;
+use App\Http\Controllers\IndicadoresGestaoController;
 use App\Http\Controllers\IntegracaoController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MaterialServicoController;
@@ -334,6 +337,8 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacao')->group(
   Route::post('consolidacao-dados', [PlanoTrabalhoConsolidacaoController::class, 'consolidacaoDados']);
   Route::post('concluir', [PlanoTrabalhoConsolidacaoController::class, 'concluir']);
   Route::post('cancelar-conclusao', [PlanoTrabalhoConsolidacaoController::class, 'cancelarConclusao']);
+  Route::post('pendencias-usuario', [PlanoTrabalhoConsolidacaoController::class, 'pendenciasUsuario']);
+  Route::post('inconsistencias', [PlanoTrabalhoConsolidacaoController::class, 'inconsistencias']);
 });
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
   defaultRoutes(PlanoEntregaController::class);
@@ -368,6 +373,7 @@ Route::middleware(['auth:sanctum'])->prefix('Usuario')->group(function () {
   Route::post('atualiza-pedagio', [UsuarioController::class, 'atualizaPedagio']);
   Route::post('remove-pedagio', [UsuarioController::class, 'removerPedagio']);
   Route::post('ativar-temporariamente', [UsuarioController::class, 'ativarTemporariamente']);
+  Route::post('pendencias-chefe', [UsuarioController::class, 'pendenciasChefe']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Perfil')->group(function () {
   defaultRoutes(PerfilController::class);
@@ -578,4 +584,11 @@ Route::middleware(['auth:sanctum'])->prefix('Relatorio')->group(function () {
     Route::post('planos-trabalho-detalhado/query', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
     Route::post('planos-trabalho-detalhado/csv', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
     Route::post('planos-trabalho-detalhado/xls', [RelatorioController::class, 'queryPlanosTrabalhoDetalhado']);
+});
+
+Route::middleware(['auth:sanctum'])->prefix('Indicadores')->group(function () {
+    Route::post('equipe/query', [IndicadoresController::class, 'query']);
+    Route::post('equipe/horas', [IndicadoresController::class, 'horas']);
+    Route::post('gestao/query', [IndicadoresGestaoController::class, 'query']);
+    Route::post('entrega/query', [IndicadoresEntregaController::class, 'query']);
 });

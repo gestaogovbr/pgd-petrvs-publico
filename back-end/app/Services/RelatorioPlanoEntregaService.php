@@ -22,7 +22,6 @@ class RelatorioPlanoEntregaService extends ServiceBase
                 && ($item[0] !== 'incluir_unidades_subordinadas')
                 && ($item[0] !== 'periodoInicio')
                 && ($item[0] !== 'periodoFim')
-                && ($item[0] !== 'situacao_conclusao')
                 && ($item[0] !== 'unidade_id');
         }));
 

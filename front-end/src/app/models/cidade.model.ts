@@ -1,8 +1,6 @@
 import { Base } from './base.model';
-import { Curriculum } from './curriculum.model';
 
 export class Cidade extends Base {
-  public curriculuns?: Curriculum[];
 
   public codigo_ibge: string = ""; //Código IBGE
   public nome: string = ""; //Nome da cidade;

@@ -29,6 +29,8 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   public orderBy?: QueryOrderBy[];
   public groupBy?: GroupBy[];
   public join: string[] = [];
+  public fields?: string[];
+  public leftJoin?: [string, string, string][];
   public addRoute?: string[];
   public addParams?: any;
   public rowsLimit = QueryContext.DEFAULT_LIMIT;
@@ -115,13 +117,32 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
       where: this.filterWhere && this.filter ? this.filterWhere(this.filter) : [],
       orderBy: [...(this.groupBy || []).map(x => [x.field, "asc"] as QueryOrderBy), ...(this.orderBy || [])],
       join: this.join || [],
-      limit: this.rowsLimit
+      limit: this.rowsLimit,
+      leftJoin: this.leftJoin,
+      fields: this.fields
     };
   }
 
   public onLoad() {
-    this.grid?.queryInit();
-    if(!this.grid) this.query = this.dao?.query(this.queryOptions, { after: () => this.cdRef.detectChanges() });
+    this.grid?.queryInit({
+      before: () => this.beforeQuery(),
+      resolve: (rows) => this.onQueryResolve(rows),
+      after: () => this.afterQuery()
+    });
+    if(!this.grid) this.query = this.dao?.query(this.queryOptions, {
+      before: () => this.beforeQuery(),
+      resolve: (rows) => this.onQueryResolve(rows),
+      after: () => this.afterQuery()
+    });
+  }
+
+  public onQueryResolve(rows: any | null) {
+  }
+
+  protected beforeQuery() {}
+
+  protected afterQuery() {
+    this.cdRef.detectChanges();
   }
 
   ngOnInit() {

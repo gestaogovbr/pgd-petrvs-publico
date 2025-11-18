@@ -138,7 +138,6 @@ export class AppComponent {
       EIXOS_TEMATICOS: { name: this.lex.translate("Eixos Temáticos"), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: this.entity.getIcon('EixoTematico') },
       // ENTREGAS: { name: this.lex.translate("Modelos de Entregas"), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: this.entity.getIcon('Entrega') },
       FERIADOS: { name: this.lex.translate("Feriados"), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: this.entity.getIcon('Feriado') },
-      MATERIAIS_SERVICOS: { name: this.lex.translate("Materiais e Serviços"), permition: '', route: ['cadastros', 'material-servico'], icon: this.entity.getIcon('MaterialServico') },
       TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'templates'], icon: this.entity.getIcon('Template'), params: { modo: "listagem" } },
       TIPOS_TAREFAS: { name: this.lex.translate("Tipos de Tarefas"), permition: 'MOD_TIPO_TRF', route: ['cadastros', 'tipo-tarefa'], icon: this.entity.getIcon('TipoTarefa') },
       TIPOS_ATIVIDADES: { name: this.lex.translate("Tipos de Atividades"), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: this.entity.getIcon('TipoAtividade') },
@@ -161,7 +160,6 @@ export class AppComponent {
       PROGRAMAS_GESTAO: { name: this.lex.translate("Programas de Gestão"), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: this.entity.getIcon('Programa') },
       HABILITACOES_PROGRAMA: { name: this.lex.translate("Habilitações"), permition: 'MOD_PART', route: ['gestao', 'programa', 'participantes'], icon: this.entity.getIcon('Programa') },
       PORTIFOLIOS: { name: this.lex.translate("Portifólios"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
-      PROJETOS: { name: this.lex.translate("Projetos"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
       PRODUTOS: { name: this.lex.translate("Produtos e Serviços"), permition: 'MOD_PROD', route: ['gestao', 'produto'], icon: this.entity.getIcon('Projeto') }, // TODO : retornar esse menu ao subir produtos
       SOLUCOES: { name: this.lex.translate("Soluções"), permition: 'MOD_SOLUCOES', route: ['gestao', 'solucao'], icon: this.entity.getIcon('Solucao') }, // TODO : retornar esse menu ao subir produtos
       /* Execucao */
@@ -218,6 +216,24 @@ export class AppComponent {
         icon: this.entity.getIcon('Unidade'),
         route: ['relatorios', 'unidades'],
         //onClick: ()=> this.emDesenvolvimento()
+      },
+      INDICADORES_ENTREGAS: {
+        name: "Entregas",
+        permition: 'MOD_IND_ENTREGAS',
+        icon: this.entity.getIcon('PlanoEntrega'),
+        route: ['relatorios', 'indicadores', 'entregas'],
+      },
+      INDICADORES_EQUIPES: {
+        name: "Equipes",
+        permition: 'MOD_IND_EQUIPES',
+        icon: this.entity.getIcon('Usuario'),
+        route: ['relatorios', 'indicadores', 'equipes'],
+      },
+      INDICADORES_GESTAO: {
+        name: "Gestão do PGD",
+        permition: 'MOD_IND_GESTAO',
+        icon: this.entity.getIcon('Unidade'),
+        route: ['relatorios', 'indicadores', 'gestao'],
       },
       /* Outros */
       PAINEL: { name: "Painel", permition: '', route: ['panel'], icon: "" },
@@ -294,6 +310,15 @@ export class AppComponent {
         this.menuSchema.RELATORIO_USUARIOS,
         this.menuSchema.RELATORIO_UNIDADES
       ].sort(this.orderMenu)
+    }, {
+      name: this.lex.translate("Indicadores"),
+      permition: "MOD_INDICADORES",
+      id: "navbarDropdownIndicadores",
+      menu: [
+        this.menuSchema.INDICADORES_ENTREGAS,
+        this.menuSchema.INDICADORES_EQUIPES,
+        this.menuSchema.INDICADORES_GESTAO
+      ].sort(this.orderMenu)
     }];
 
     this.moduloExecucao = [
@@ -308,6 +333,15 @@ export class AppComponent {
         id: "navbarDropdownRelatorios",
         menu: [
           this.menuSchema.RELATORIO_USUARIOS
+        ].sort(this.orderMenu)
+      }, {
+        name: this.lex.translate("Indicadores"),
+        permition: "MOD_INDICADORES",
+        id: "navbarDropdownIndicadores",
+        menu: [
+          this.menuSchema.INDICADORES_ENTREGAS,
+          this.menuSchema.INDICADORES_EQUIPES,
+          this.menuSchema.INDICADORES_GESTAO
         ].sort(this.orderMenu)
       }
     ];
@@ -354,6 +388,15 @@ export class AppComponent {
         this.menuSchema.RELATORIO_PLANO_ENTREGA,
         this.menuSchema.RELATORIO_USUARIOS,
         this.menuSchema.RELATORIO_UNIDADES
+      ].sort(this.orderMenu)
+    }, {
+      name: this.lex.translate("Indicadores"),
+      permition: "MOD_INDICADORES",
+      id: "navbarDropdownIndicadores",
+      menu: [
+        this.menuSchema.INDICADORES_ENTREGAS,
+        this.menuSchema.INDICADORES_EQUIPES,
+        this.menuSchema.INDICADORES_GESTAO
       ].sort(this.orderMenu)
     }];
 

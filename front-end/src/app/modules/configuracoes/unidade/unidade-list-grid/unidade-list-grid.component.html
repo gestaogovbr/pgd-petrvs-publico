@@ -78,7 +78,7 @@
         
         <div class="">
           <badge hint="Instituidora" *ngIf="row.instituidora" color="primary" icon="bi bi-star" ></badge>
-          <badge [hint]="!row.data_inativacao ? 'Ativo' : 'Inativo'" [color]="!row.data_inativacao ? 'success' : 'danger'" [icon]="!row.data_inativacao ? 'bi bi-check-circle' : 'bi bi-x-circle'" ></badge>
+          <badge [hint]="getSituacaoHint(row)" [color]="getSituacaoColor(row)" [icon]="getSituacaoIcon(row)" ></badge>
           <badge hint="Sem chefia substituta" *ngIf="!temChefeSubstituta(row)" icon="bi bi-exclamation-circle" [color]="'warning'" >
           </badge>
           <badge hint="Sem chefia titular" *ngIf="!temChefeTitular(row)" icon="bi bi-exclamation-triangle-fill" [color]="'danger'"  >

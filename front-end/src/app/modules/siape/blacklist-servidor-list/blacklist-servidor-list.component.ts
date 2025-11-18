@@ -21,6 +21,8 @@ export class BlacklistServidorListComponent extends PageListBase<SiapeBlacklistS
     /* Inicializações */
     this.title = this.lex.translate('CPFs indisponíveis');
     this.code = "MOD_SIAPE_BLACKLIST";
+    this.fields = [ "usuarios.matricula", "usuarios.nome", "siape_blacklist_servidores.*" ];
+    this.leftJoin = [["usuarios", "siape_blacklist_servidores.cpf", "usuarios.cpf"]];
     this.filter = this.fh.FormBuilder({
       cpf: { default: '' },
       inativado: { default: null }
@@ -37,6 +39,8 @@ export class BlacklistServidorListComponent extends PageListBase<SiapeBlacklistS
 
   public async removerCpf(cpf: string): Promise<void> {
     try {
+      const confirm = await this.dialog.confirm("Remover da lista", "Ao retirar este CPF da lista, o usuário voltará a estar ATIVO no sistema. Deseja continuar?")
+      if (!confirm) return;
       const sucesso = await this.dao?.removerCpf(cpf);
       if (sucesso) {
         this.dialog?.alert("Sucesso", "CPF removido da lista de CPF's com sucesso!");
@@ -64,5 +68,16 @@ export class BlacklistServidorListComponent extends PageListBase<SiapeBlacklistS
     }
 
     return result;
+  }
+
+  protected statusTitleHint = () : string => {
+    return "O respectivo CPF não retornado pelo SIAPE deve passar por um processamento diário no PGD Petrvs e ser marcado como inativo";
+  }
+
+  protected topAlertMessages = () : string[] => {
+    return ['- O usuário cujo CPF está com STATUS 1 está INATIVO no sistema.',
+    '- O usuário cujo CPF está com STATUS VAZIO não foi encontrado na consulta ao Siape. Se este CPF não for retirado da lista em até 30 dias, a partir da primeira consulta ao Siape na qual não foi encontrado, ele entrará no STATUS 1.',
+    '- Ao retirar um CPF da lista, o usuário voltará a estar ATIVO no sistema, por isso, certifique-se de que realmente precisa realizar esta ação.',
+    '- Ao retirar um CPF da lista, recomenda-se realizar a carga individual deste no Siape.'];
   }
 }

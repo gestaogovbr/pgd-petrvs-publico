@@ -61,9 +61,9 @@ export class PlanoTrabalhoConsolidacaoDaoService extends DaoBaseService<PlanoTra
     });
   }
 
-  public concluir(id: string): Promise<ConsolidacaoDados> {
+  public concluir(id: string, justificativa_conclusao: string | null): Promise<ConsolidacaoDados> {
     return new Promise<ConsolidacaoDados>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/concluir', {id}).subscribe(response => {
+      this.server.post('api/' + this.collection + '/concluir', {id, justificativa_conclusao}).subscribe(response => {
         if(response?.error) {
           reject(response?.error);
         } else {
@@ -80,6 +80,31 @@ export class PlanoTrabalhoConsolidacaoDaoService extends DaoBaseService<PlanoTra
           reject(response?.error);
         } else {
           resolve(this.loadConsolidacaoDados(response));
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public pendenciasUsuario(): Promise<any[]> {
+    return new Promise<any[]>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/pendencias-usuario', {}).subscribe(response => {
+        if(response?.error) {
+          reject(response?.error);
+        } else {
+          resolve(response?.dados || []);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public inconsistencias(usuarioId?: string): Promise<any[]> {
+    return new Promise<any[]>((resolve, reject) => {
+      const data = usuarioId ? { usuario_id: usuarioId } : {};
+      this.server.post('api/' + this.collection + '/inconsistencias', data).subscribe(response => {
+        if(response?.error) {
+          reject(response?.error);
+        } else {
+          resolve(response?.dados || []);
         }
       }, error => reject(error));
     });
