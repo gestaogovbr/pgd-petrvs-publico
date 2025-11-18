@@ -212,6 +212,11 @@ class PlanoTrabalhoService extends ServiceBase
         $tipoModalidade = TipoModalidade::find($data["tipo_modalidade_id"]);
         $programa = Programa::find($data["programa_id"]);
         $condicoes = $this->buscaCondicoes($data);
+
+        $unidade = Unidade::find($data["unidade_id"]);
+        if(!is_null($unidade?->data_inativacao)){
+            throw new ServerException("ValidatePlanoEntrega", "A unidade está inativa.");
+        }
         /* Resumo da PTR:TABELA_1 para Inclusão e Alteração:
         Usuario do Plano          Usuario Logado
         PT do Chefe.............: CF?,CF+,CS+

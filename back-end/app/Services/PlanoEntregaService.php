@@ -564,6 +564,11 @@ class PlanoEntregaService extends ServiceBase
         $usuario = Usuario::find(parent::loggedUser()->id);
         $programa = Programa::find($dataOrEntity["programa_id"]);
         $this->validaPermissaoIncluir($dataOrEntity, $usuario);
+        $unidade = Unidade::find($dataOrEntity["unidade_id"]);
+        if(!is_null($unidade?->data_inativacao)){
+            throw new ServerException("ValidatePlanoEntrega", "A unidade está inativa.");
+        }
+       
         if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_EXTRPL')) {
             if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity))
                 throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");

@@ -124,6 +124,36 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
     return row.gestores_substitutos?.length > 0;
   }
 
+  public isAtivo(row: any): boolean {
+    const inativacao = row?.data_inativacao as any;
+    return inativacao === null || inativacao === undefined || inativacao === "";
+  }
+
+  public isAtivoTemporario(row: any): boolean {
+    const inativacao = row?.data_inativacao as any;
+    const ativacaoTemp = row?.data_ativacao_temporaria as any;
+    const hasAtivacaoTemp = ativacaoTemp !== null && ativacaoTemp !== undefined && ativacaoTemp !== "";
+    return (inativacao === null || inativacao === undefined || inativacao === "") && hasAtivacaoTemp;
+  }
+
+  public getSituacaoHint(row: any): string {
+    if (this.isAtivoTemporario(row)) return "Ativo Temporário";
+    if (this.isAtivo(row)) return "Ativo";
+    return "Inativo";
+  }
+
+  public getSituacaoColor(row: any): string {
+    if (this.isAtivoTemporario(row)) return "info";
+    if (this.isAtivo(row)) return "success";
+    return "danger";
+  }
+
+  public getSituacaoIcon(row: any): string {
+    if (this.isAtivoTemporario(row)) return "bi bi-clock-history";
+    if (this.isAtivo(row)) return "bi bi-check-circle";
+    return "bi bi-x-circle";
+  }
+
   public validateJustificativa = (control: AbstractControl, controlName: string) => {
     let result = null;
     if (controlName == 'justificativa' && !control.value?.length) {
