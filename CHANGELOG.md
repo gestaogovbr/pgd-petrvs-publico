@@ -9,7 +9,6 @@
 - Configuração para exibir a opção de Problemas de Lotação
 ### Modificado
 - O regramento agora é vinculado pela hierarquia de unidades.
-- O regramento agora é vinculado pela hierarquia de unidades.
 - Melhorias no tratamento de unidades que não estão mais ativas (extintas): o sistema passa a marcá-las como inativas sem apagar seus dados, preservando histórico e vínculos.
 ### Corrigido
 - Exportação de Status do PT no Relatório de PT
