@@ -6,7 +6,7 @@
           <div class="row">
             <!-- (RI_PTR_1) No formulário de inclusão/edição de um plano de trabalho, o input-search de unidade, programa e usuario devem ficar desabilitados nas edições e habilitado apenas nas inclusões; -->
             <input-search #usuario [size]="4" required [disabled]="action == 'new' ? undefined : 'true'" controlName="usuario_id" [dao]="usuarioDao" [join]="['afastamentos','lotacao','unidades','participacoes_programas']" (select)="onUsuarioSelect($event)"></input-search>
-            <input-search #unidade [size]="4" required [disabled]="action == 'new' ? undefined : 'true'" controlName="unidade_id" [dao]="unidadeDao" (select)="onUnidadeSelect($event)" [where]="unidadeWhere" ></input-search>
+            <input-search #unidade [size]="4" required [disabled]="action == 'new' ? undefined : 'true'" controlName="unidade_id" [dao]="unidadeDao" (select)="onUnidadeSelect($event)" ></input-search>
             <input-search #programa [size]="4" [label]="lex.translate('Programa de gestão')" icon="bi bi-file-bar-graph" required [disabled]="['new', 'clone'].includes(action)  ? undefined : 'true'" controlName="programa_id" [join]="joinPrograma" [dao]="programaDao" (select)="onProgramaSelect($event)" [metadata]="programaMetadata"></input-search>
           </div>
           <div class="row">

@@ -77,7 +77,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public gestoresUnidadeExecutora: string[] = [];
   public programaMetadata: ProgramaMetadata;
   public planosUsuarioComPendencias: boolean = false;
-  public unidadeWhere:any;
 
 
   constructor(public injector: Injector) {
@@ -136,7 +135,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       todosUnidadeExecutora: false,
       vigentesUnidadeExecutora: true
     }
-    this.unidadeWhere = [['executora', '==', true]];
   }
 
   public ngOnInit() {
