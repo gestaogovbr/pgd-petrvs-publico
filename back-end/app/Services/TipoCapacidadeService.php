@@ -417,6 +417,17 @@ class TipoCapacidadeService extends ServiceBase
       ]
     ],
     [
+        "codigo" => "MOD_INDICADORES",
+        "descricao" => "Módulo de Indicadores",
+        "capacidades" => [
+            ["MOD_IND_ENTREGAS", "Indicadores de Entregas"],
+            ["MOD_IND_EQUIPES", "Indicadores de Equipes"],
+            ["MOD_IND_GESTAO", "Indicadores de Gestão do PGD"],
+            ["MOD_IND_TODAS_UNIDADES", "Indicadores - Listar todas as unidades"],
+            ["MOD_IND_VINCULADAS", "Indicadores - Permite usuário filtrar por todas as unidades vinculadas"],
+        ]
+    ],
+    [
         "codigo" => "MOD_RELATORIOS",
         "descricao" => "Módulo de Relatórios",
     ],

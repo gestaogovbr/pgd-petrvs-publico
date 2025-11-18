@@ -217,6 +217,24 @@ export class AppComponent {
         route: ['relatorios', 'unidades'],
         //onClick: ()=> this.emDesenvolvimento()
       },
+      INDICADORES_ENTREGAS: {
+        name: "Entregas",
+        permition: 'MOD_IND_ENTREGAS',
+        icon: this.entity.getIcon('PlanoEntrega'),
+        route: ['relatorios', 'indicadores', 'entregas'],
+      },
+      INDICADORES_EQUIPES: {
+        name: "Equipes",
+        permition: 'MOD_IND_EQUIPES',
+        icon: this.entity.getIcon('Usuario'),
+        route: ['relatorios', 'indicadores', 'equipes'],
+      },
+      INDICADORES_GESTAO: {
+        name: "Gestão do PGD",
+        permition: 'MOD_IND_GESTAO',
+        icon: this.entity.getIcon('Unidade'),
+        route: ['relatorios', 'indicadores', 'gestao'],
+      },
       /* Outros */
       PAINEL: { name: "Painel", permition: '', route: ['panel'], icon: "" },
       AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
@@ -292,6 +310,15 @@ export class AppComponent {
         this.menuSchema.RELATORIO_USUARIOS,
         this.menuSchema.RELATORIO_UNIDADES
       ].sort(this.orderMenu)
+    }, {
+      name: this.lex.translate("Indicadores"),
+      permition: "MOD_INDICADORES",
+      id: "navbarDropdownIndicadores",
+      menu: [
+        this.menuSchema.INDICADORES_ENTREGAS,
+        this.menuSchema.INDICADORES_EQUIPES,
+        this.menuSchema.INDICADORES_GESTAO
+      ].sort(this.orderMenu)
     }];
 
     this.moduloExecucao = [
@@ -306,6 +333,15 @@ export class AppComponent {
         id: "navbarDropdownRelatorios",
         menu: [
           this.menuSchema.RELATORIO_USUARIOS
+        ].sort(this.orderMenu)
+      }, {
+        name: this.lex.translate("Indicadores"),
+        permition: "MOD_INDICADORES",
+        id: "navbarDropdownIndicadores",
+        menu: [
+          this.menuSchema.INDICADORES_ENTREGAS,
+          this.menuSchema.INDICADORES_EQUIPES,
+          this.menuSchema.INDICADORES_GESTAO
         ].sort(this.orderMenu)
       }
     ];
@@ -352,6 +388,15 @@ export class AppComponent {
         this.menuSchema.RELATORIO_PLANO_ENTREGA,
         this.menuSchema.RELATORIO_USUARIOS,
         this.menuSchema.RELATORIO_UNIDADES
+      ].sort(this.orderMenu)
+    }, {
+      name: this.lex.translate("Indicadores"),
+      permition: "MOD_INDICADORES",
+      id: "navbarDropdownIndicadores",
+      menu: [
+        this.menuSchema.INDICADORES_ENTREGAS,
+        this.menuSchema.INDICADORES_EQUIPES,
+        this.menuSchema.INDICADORES_GESTAO
       ].sort(this.orderMenu)
     }];
 

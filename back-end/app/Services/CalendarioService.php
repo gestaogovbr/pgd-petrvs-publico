@@ -304,7 +304,7 @@ class CalendarioService
         $inicio = $ano == date('Y', $dataInicio) ? $dataInicio : mktime(0, 0, 0, 1, 1, $ano);
         $fim = mktime(0, 0, 0, 31, 12, $ano);
         $listaFeriados = $this->listaFeriadosCadastrados($inicio, $fim, $unidade);
-        $listaFeriadosReligiosos = $this->listaFeriadosReligiosos($inicio, $fim, $unidade);
+        $listaFeriadosReligiosos = $this->listaFeriadosReligiosos($inicio, $fim);
       }
       $diaUtil = !static::isFeriadoReligioso($diaAtual, $listaFeriadosReligiosos) && static::isFeriadoCadastrado($diaAtual, $listaFeriados) && !static::isFinalSemana($inicio);
       /* calcula em dias */
