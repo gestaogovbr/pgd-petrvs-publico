@@ -6,6 +6,16 @@
 - Módulo de pendências do chefe
 - Módulo de pendências do participante
 - Informações na lista de usuários
+- Indicadores de Equipes
+- Indicadores de Entregas
+- Indicadores de Gestão
+- Configuração para exibir a opção de Problemas de Lotação
+### Modificado
+- O regramento agora é vinculado pela hierarquia de unidades.
+### Corrigido
+- Exportação de Status do PT no Relatório de PT
+- Filtro de Situação da conclusão no Relatório de PE
+- Exportação de Modalidade SIAPE no Relatório de Agentes Públicos
 ### Removido
 - Removido limite máximo de 100% CHD por entrega em Plano de Trabalho
 - Tela de seleção de participante no regramento
