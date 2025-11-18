@@ -1,6 +1,14 @@
 <?php
 
 return [
-    'client_id' => env('GOOGLE_CLIENT_ID', env('GAPI_CLIENT_ID', ''))
-    //'client_id' => '658610174073-2l3gapp369n09q7fabji01977hcpiipf.apps.googleusercontent.com'
+    /*
+    |--------------------------------------------------------------------------
+    | Google OAuth Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Valores padrão para integração de login Google usados pelo front-end.
+    | Em ambientes de CI e testes, podem permanecer como strings vazias.
+    |
+    */
+    'client_id' => env('GOOGLE_CLIENT_ID', ''),
 ];

@@ -8,11 +8,13 @@
                 <button *ngIf="gb.isToolbar" type="button" class="btn-close btn-minimize" data-bs-dismiss="modal" aria-label="Minimize" (click)="minimize()"></button>
                 <button type="button" class="btn-close" [class.btn-no-left-margin]="gb.isEmbedded" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>            
-            <div class="modal-body">                
+            <div class="modal-body">  
+                
                 <document-preview *ngIf="html?.length" noMargin [html]="html"></document-preview>
                 <ng-template #body></ng-template>
                 <ng-container *ngIf="template" [ngTemplateOutlet]="template" [ngTemplateOutletContext]="templateContext"></ng-container>
                 {{message}}
+                <textarea *ngIf="isPrompt" class="form-control" [placeholder]="defaultValue" [(ngModel)]="inputValue">{{defaultValue}}</textarea>
             </div>
             <div *ngIf="buttons.length" class="modal-footer hidden-print">
                 <button *ngFor="let button of buttons" type="button" [class]="'btn ' + (button.color || 'btn-primary')" (click)="buttonClick(button)">

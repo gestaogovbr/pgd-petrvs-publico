@@ -8,6 +8,7 @@ use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
+use function simpleXmlElementToArray;
 
 trait DadosExternosSiape
 {
@@ -47,7 +48,7 @@ trait DadosExternosSiape
     /**
      *
      * @param string $cpf
-     * @return SimpleXMLElement[]
+     * @return array [dadosFuncionais[], dadosPessoais]
      */
     public function buscaServidor(string $cpf): array
     {
@@ -55,6 +56,7 @@ trait DadosExternosSiape
         $this->inicializaSiape('buscaServidor');
         $codOrgao = strval(intval($this->configIntegracaoSiape['codOrgao']));
 
+        // Dados funcionais
         $xmlDataFuncionais = $this->siapeClassBuscaDados->consultaDadosFuncionais(
             $this->configIntegracaoSiape['siglaSistema'],
             $this->configIntegracaoSiape['nomeSistema'],
@@ -68,6 +70,27 @@ trait DadosExternosSiape
         $retornoFuncionais = $this->siapeClassBuscaDados->buscaSincrona($xmlDataFuncionais);
         $xmlFuncional = $this->siapeClassBuscaDados->prepareResponseXml($retornoFuncionais);
 
+        // Tratar múltiplos dados funcionais seguindo ProcessaDadosSiapeBD
+        $xmlFuncional->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+        $xmlFuncional->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
+        $xmlFuncional->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
+
+        $dadosFuncionaisElements = $xmlFuncional->xpath('//tipo:DadosFuncionais') ?: [];
+        $dadosFuncionaisArray = [];
+
+        if (count($dadosFuncionaisElements) === 1) {
+            $dadosFuncionaisArray = [ simpleXmlElementToArray($dadosFuncionaisElements[0]) ];
+        } else {
+            foreach ($dadosFuncionaisElements as $df) {
+                $dados = simpleXmlElementToArray($df);
+                if (!empty($dados['dataOcorrExclusao'])) {
+                    continue;
+                }
+                $dadosFuncionaisArray[] = $dados;
+            }
+        }
+
+        // Dados pessoais (manter saída mínima necessária)
         $xmlDataPessoais = $this->siapeClassBuscaDados->consultaDadosPessoais(
             $this->configIntegracaoSiape['siglaSistema'],
             $this->configIntegracaoSiape['nomeSistema'],
@@ -81,21 +104,22 @@ trait DadosExternosSiape
         $retornoPessoais = $this->siapeClassBuscaDados->buscaSincrona($xmlDataPessoais);
         $xmlPessoal = $this->siapeClassBuscaDados->prepareResponseXml($retornoPessoais);
 
-        $out = isset($xmlPessoal->xpath('//out')[0]) ? $xmlPessoal->xpath('//out')[0] : $xmlPessoal->xpath('//out'); 
+        $outNodes = $xmlPessoal->xpath('//out');
+        $out = isset($outNodes[0]) ? $outNodes[0] : null;
+        $dadosPessoaisArray = [];
 
-        $newXmlPessoal = new SimpleXMLElement('<out/>');
-
-            $fieldsToKeep = ['nome', 'dataNascimento'];
-
-            foreach ($fieldsToKeep as $field) {
-                if (isset($out->$field)) {
-                    $newXmlPessoal->addChild($field, (string) $out->$field);
+        if ($out instanceof SimpleXMLElement) {
+            $todosCampos = simpleXmlElementToArray($out);
+            foreach (['nome', 'dataNascimento'] as $field) {
+                if (array_key_exists($field, $todosCampos)) {
+                    $dadosPessoaisArray[$field] = $todosCampos[$field];
                 }
             }
+        }
 
         return [
-            $xmlFuncional,
-            $newXmlPessoal
+            $dadosFuncionaisArray,
+            $dadosPessoaisArray
         ];
     }
 }

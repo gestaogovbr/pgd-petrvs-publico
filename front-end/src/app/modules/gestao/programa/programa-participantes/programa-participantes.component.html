@@ -1,4 +1,4 @@
-<grid multiselect [dao]="dao" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy"
+<!-- <grid multiselect [dao]="dao" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy"
     [join]="join" editable [selectable]="selectable" 
     (select)="onSelect($event)" [hasAdd]="false" [hasEdit]="false" [hasDelete]="false" [multiselectMenu]="multiselectMenu">
     <toolbar *ngIf="!selectable">
@@ -53,4 +53,6 @@
         <column type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
-</grid>
+</grid> -->
+
+<top-alert message="A seleção do participante deve ser feita por meio do SouGov Líder"></top-alert>
