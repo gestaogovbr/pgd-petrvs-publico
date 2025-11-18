@@ -81,9 +81,9 @@ class RelatorioAgenteExport implements FromCollection, WithMapping, WithHeadings
             $row->situacao ?? '-',
             $row->programaNome,
             $row->unidadeHierarquia,
-            '-',
+            $row->modalidadeSouGov,
             $row->tipoModalidadeNome,
-            '-',
+            $row->comparacaoSouGovPetrvs,
             $row->tipoPedagio,
             Date::stringToExcel($row->data_inicial_pedagio),
             Date::stringToExcel($row->data_final_pedagio)
