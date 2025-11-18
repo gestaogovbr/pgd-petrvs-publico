@@ -7,6 +7,7 @@
 - Indicadores de Entregas
 - Indicadores de Gestão
 - Configuração para exibir a opção de Problemas de Lotação
+- Adicionado campo executora para indicar unidades que poder ter Plano de Entrega cadastrado
 ### Modificado
 - O regramento agora é vinculado pela hierarquia de unidades.
 - Melhorias no tratamento de unidades que não estão mais ativas (extintas): o sistema passa a marcá-las como inativas sem apagar seus dados, preservando histórico e vínculos.
