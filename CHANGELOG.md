@@ -1,5 +1,13 @@
-## 2.7.9 17/11/2025
+## 2.8.0 17/11/2025
+### Modificado
+- O regramento agora é vinculado pela hierarquia de unidades.
+### Adicionado
+- Módulo de pendências do chefe
+- Módulo de pendências do participante
+- Informações na lista de usuários
+### Removido
 - Removido limite máximo de 100% CHD por entrega em Plano de Trabalho
+- Tela de seleção de participante no regramento
 ## 2.7.8 10/11/2025
 ### Corrigido
 - Pesquisa por CPF no SIAPE: agora, quando existem vários usuários com o mesmo CPF e matrículas diferentes, todos aparecem na lista de resultados.
