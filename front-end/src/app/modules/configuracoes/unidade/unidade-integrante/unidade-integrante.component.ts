@@ -118,8 +118,9 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
 
     let atribuicoes: LookupItem[] = form!.controls.atribuicoes.value;
     let usuario = await this.usuarioDao.getById(form!.controls.usuario_id.value);
+    let perfil = await this.perfilDao.getById(form!.controls.perfil_id.value);
     let isUnidadeExecutora = this.entity?.executora;
-    let perfilColaborador = usuario?.perfil?.nivel == 6;
+    let perfilColaborador = perfil?.nivel == 6;
     if(usuario && !perfilColaborador && !isUnidadeExecutora
       && (atribuicoes.map(x => x.key) || []).includes('COLABORADOR')) {
       return "Não é possível atribuir Colaborador a um usuário com perfil diferente de Colaborador em unidade não executora.";
