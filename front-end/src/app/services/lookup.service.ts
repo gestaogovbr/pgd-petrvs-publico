@@ -653,7 +653,7 @@ export class LookupService implements IIndexable {
   public PLANO_ENTREGA_STATUS: LookupItem[] = [
     { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary", data: { justificar: ["HOMOLOGANDO"] } },
     { key: "HOMOLOGANDO", value: "Aguardando homologação", icon: "bi bi-clock", color: "warning", data: { justificar: ["ATIVO"] } },
-    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success", data: { justificar: ["CONCLUIDO"] } },
+    { key: "ATIVO", value: "Homologado", icon: "bi bi-caret-right", color: "success", data: { justificar: ["CONCLUIDO"] } },
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary", data: { justificar: ["AVALIADO"] } },
     { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info", data: { justificar: [] } },
     { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "dark", data: { justificar: [] } },

@@ -1327,4 +1327,28 @@ export class PlanoEntregaListComponent extends PageListBase<
     - (RN_PENT_Z) ... O usuário logado precisa possuir a capacidade "MOD_PENT_INCL"
      */
 	}
+
+	protected statusLabel(planoEntrega: PlanoEntrega) : string {
+		// @ts-ignore
+		const statusLabel = {
+			"ATIVO" : planoEntrega.has_progresso ? "Incluído" : "Aguardando Registro"
+		}[planoEntrega.status];
+		return statusLabel || this.lookup.getValue(this.lookup.PLANO_ENTREGA_STATUS, planoEntrega.status)
+	}
+
+	protected statusColor(planoEntrega: PlanoEntrega) : string {
+		// @ts-ignore
+		const statusColor = {
+			"ATIVO" : planoEntrega.has_progresso ? "ATIVO" : "INCLUIDO"
+		}[planoEntrega.status] 
+		return this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, statusColor ?? planoEntrega.status)
+	}
+
+	protected statusIcon(planoEntrega: PlanoEntrega) : string {
+		// @ts-ignore
+		const statusIcon = {
+			"ATIVO" : planoEntrega.has_progresso ? "INCLUIDO" : "HOMOLOGANDO"
+		}[planoEntrega.status] 
+		return this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, statusIcon ?? planoEntrega.status )
+	}
 }

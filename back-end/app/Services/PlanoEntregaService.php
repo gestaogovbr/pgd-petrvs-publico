@@ -376,6 +376,17 @@ class PlanoEntregaService extends ServiceBase
     {
         $where = $ids = [];
 
+        $data['select'][]= DB::raw(
+        "(
+            select 1 
+            from planos_entregas_entregas 
+                join planos_entregas_entregas_progressos 
+                    on planos_entregas_entregas.id = planos_entregas_entregas_progressos.plano_entrega_entrega_id
+            where planos_entregas_entregas.plano_entrega_id = planos_entregas.id and 
+                planos_entregas_entregas_progressos.deleted_at is null
+            limit 1
+        ) is not null as has_progresso"
+        );
         //  (RI_PENT_C) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de entrega não arquivados.
         $arquivados = $this->extractWhere($data, "incluir_arquivados");
         $subordinadas = $this->extractWhere($data, "incluir_subordinadas");
