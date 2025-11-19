@@ -456,7 +456,9 @@ class Usuario extends Authenticatable implements AuditableContract
 
     public function getRegramentosAttribute(){
         $unidadeService = new UnidadeService();
-        return array_map(fn($p) => $p["nome"], $unidadeService->regramentosAscendentes($this->lotacao->unidade_id));
+        return $this->lotacao
+            ? array_map(fn($p) => $p["nome"], $unidadeService->regramentosAscendentes($this->lotacao->unidade_id))
+            : [];
     }
   
     public function getPedagioAttribute(){
