@@ -85,6 +85,9 @@ export class DialogComponent implements OnInit {
 	public minimized: boolean = false;
 	public templateContext: any;
 	public templateResult?: Promise<DialogTemplateResult>;
+	public inputValue: string = "";
+	public defaultValue: string = "";
+	public isPrompt: boolean = false;
 
 	private _factory?: ComponentFactoryResolver;
 	public get factory(): ComponentFactoryResolver {

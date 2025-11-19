@@ -20,11 +20,15 @@ use DateTimeZone;
 use SimpleXMLElement;
 use Throwable;
 use Carbon\Carbon;
+use App\Services\Siape\ProcessaDadosSiapeBD;
+use App\Exceptions\ErrorDataSiapeFaultCodeException;
+use App\Exceptions\ValidateException;
 
 class UnidadeService extends ServiceBase
 {
 
     use DadosExternosSiape, Atribuicao;
+
 
     public function validateStore($data, $unidade, $action)
     {
@@ -307,9 +311,9 @@ class UnidadeService extends ServiceBase
 
 
         foreach ($data["where"] as $condition) {                                             //  		== null		......................	retornar somente as unidades ativas     => $inativos = false
-            if (is_array($condition) && $condition[0] == "subordinadas") {                   //  	inativos (not selectable)
-                $subordinadas = $condition[2];                                              //  		== true		......................	retornar unidades ativas e inativas     => $inativos = true
-            } else if (is_array($condition) && $condition[0] == "inativos") {                //  		== false	......................	retornar somente as unidades ativas     => $inativos = false
+            if (is_array($condition) && $condition[0] == "subordinadas") {                   //  		inativos (not selectable)
+                $subordinadas = $condition[2];                                              //  			== true		......................	retornar unidades ativas e inativas     => $inativos = true
+            } else if (is_array($condition) && $condition[0] == "inativos") {                //  			== false	......................	retornar somente as unidades ativas     => $inativos = false
                 $inativos = $condition[2];
             } else {
                 array_push($where, $condition);
@@ -509,12 +513,39 @@ class UnidadeService extends ServiceBase
      */
     public function linhaAscendente($unidade_id): array
     {
-        $path = Unidade::find($unidade_id)->path;
-        if (!empty($path)) {
-            return array_filter(explode('/', $path), fn($x) => $x != "");
-        } else {
-            return [$unidade_id];
+        $result = [];
+        $currentUnit = Unidade::find($unidade_id);
+        
+        while ($currentUnit) {
+            $result[] = $currentUnit->id;
+            $currentUnit = $currentUnit->unidadePai;
         }
+
+        return array_reverse($result);
+    }
+
+    /**
+     * Retorna um array com os programas que compõem a linha hierárquica ascendente da unidade recebida como parâmetro.
+     * @param string $unidade_id
+     * @return array
+     */
+    public function regramentosAscendentes($unidade_id): array
+    {
+        $unidades = $this->linhaAscendente($unidade_id);
+        $programas = Programa::whereIn('unidade_id', $unidades)->where('data_fim', '>=', now())->get()->toArray();
+        return $programas;
+    }
+
+    /**
+     * Retorna um boolean indicando se a unidade recebida como parâmetro está na linha do programa recebido.
+     * @param string $unidade_id
+     * @param string $programa_id
+     * @return boolean
+     */
+    public function unidadeEhHabilitada($unidade_id, $programa_id): bool
+    {
+        $programas = $this->regramentosAscendentes($unidade_id);
+        return collect($programas)->pluck('id')->contains($programa_id);
     }
 
     public function lookupTodasUnidades(): array
@@ -640,31 +671,34 @@ class UnidadeService extends ServiceBase
       */
 
     public function consultaUnidadeSiape(string $unidadecodigoSiape): array
-{
-    $retornoXml = $this->buscaDadosUnidade($unidadecodigoSiape);
+    {
+        $retornoXml = $this->buscaDadosUnidade($unidadecodigoSiape);
 
-    $retornoXml->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
-    $retornoXml->registerXPathNamespace('ns1',  'http://servico.wssiapenet');
+        try {
+            $retornoXml = (new ProcessaDadosSiapeBD())->prepareResponseUorgXml($unidadecodigoSiape, $retornoXml->asXML());
+            Log::info("Dados processados para unidade $unidadecodigoSiape", [$retornoXml->asXML()]);
+        } catch (ErrorDataSiapeFaultCodeException $e) {
+            report($e);
+            return [];
+        }
 
-    $resultado = $retornoXml->xpath('//soap:Body/ns1:dadosUorgResponse/out');
+        $retornoXml->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+        $retornoXml->registerXPathNamespace('ns1',  'http://servico.wssiapenet');
 
-    if (!isset($resultado[0]) || !($resultado[0] instanceof SimpleXMLElement)) {
-        Log::error("Não foi possível encontrar <out> em dadosUorgResponse");
-        return [];
+        $resultado = $retornoXml->xpath('//soap:Body/ns1:dadosUorgResponse/out');
+
+        if (!isset($resultado[0]) || !($resultado[0] instanceof SimpleXMLElement)) {
+            Log::error("Não foi possível encontrar <out> em dadosUorgResponse");
+            return [];
+        }
+
+        /** @var SimpleXMLElement $out */
+        $out = $resultado[0];
+
+        $retornoArray = simpleXmlElementToArrayComNamespace($out);
+
+        return $retornoArray;
     }
-
-    /** @var SimpleXMLElement $out */
-    $out = $resultado[0];
-
-    $retornoArray = simpleXmlElementToArrayComNamespace($out);
-
-    // Log::info('--- XML bruto de <out> ---');
-    // Log::info($out->asXML());
-
-    // Log::info('--- Array convertido de <out> --- ' . json_encode($retornoArray, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
-
-    return $retornoArray;
-}
 
     public function consultaUnidadeSiapeXml(string $unidadecodigoSiape): SimpleXMLElement
     {
@@ -726,4 +760,29 @@ class UnidadeService extends ServiceBase
             'ids' => $idsInativadas
         ]);
     }
+
+    public function ativarTemporariamente($data)
+    {
+        $unidade = Unidade::find($data['unidade_id']);
+
+        if (empty($unidade)) {
+            throw new ValidateException("Unidade não encontrada", 422);
+        }
+
+        $unidade->justificativa_ativacao_temporaria = $data['justificativa'];
+        $unidade->data_ativacao_temporaria = Carbon::now();
+        $unidade->data_inicio_inativacao = Carbon::now();
+        $unidade->data_inativacao = null;
+        $unidade->save();
+        
+        return $unidade;
+    }
+    public function isUnidadeExecutora($unidadeId): bool
+    {
+        return Unidade::where('id', $unidadeId)
+            ->where('executora', true)
+            ->exists();
+    }
+
+    
 }

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\SiapeBlackListServidor;
+use App\Models\Usuario;
 use App\Services\ServiceBase;
 use Exception;
 
@@ -26,6 +27,11 @@ class SiapeBlackListServidorService extends ServiceBase
             
             foreach ($registros as $registro) {
                 $registro->forceDelete();
+            }
+
+            $usuario = Usuario::where('cpf', $cpf)->first();
+            if ($usuario) {
+                $usuario->update(['situacao_siape' => 'ATIVO', 'data_ativacao_temporaria' => null]);
             }
             
             return [

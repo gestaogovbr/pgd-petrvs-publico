@@ -1,0 +1,48 @@
+name: Run Pest Tests
+
+on:
+  pull_request:
+    branches:
+      - dataprev_dsv
+      - dataprev_hmg
+
+jobs:
+  pest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, dom, json, zip, pdo, pdo_mysql, soap, gd, sqlite3, pdo_sqlite
+          coverage: none
+
+      - name: Validate Composer
+        working-directory: back-end
+        run: composer validate --no-interaction
+      - name: Configure Composer allow-plugins
+        working-directory: back-end
+        run: |
+          composer config --no-plugins allow-plugins.pestphp/pest-plugin true
+          composer config --no-plugins allow-plugins.pestphp/pest-plugin-laravel true
+
+      - name: Install dependencies
+        working-directory: back-end
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Ensure Pest is installed
+        working-directory: back-end
+        run: |
+          if [ ! -f vendor/bin/pest ]; then
+            composer update pestphp/pest pestphp/pest-plugin-laravel --no-interaction --prefer-dist
+          fi
+
+      - name: Run Pest tests
+        working-directory: back-end
+        run: ./vendor/bin/pest --ci

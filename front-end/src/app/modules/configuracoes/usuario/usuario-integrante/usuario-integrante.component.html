@@ -4,6 +4,7 @@
     
     <div class="col">
         <top-alert type="warning" [message]="'Ao conceder a um agente público a atribuição de Chefe Substituto ou de Delegado em uma unidade, deve lhe ser concedido também o nível de acesso: Unidade, Administrador Negocial ou Master.'"></top-alert>
+        <top-alert type="warning" [message]="'Não é possível atribuir Colaborador a um usuário com perfil diferente de Colaborador em unidade não executora.'"></top-alert>
         <top-alert type="alert" [message]="'As informações de lotação e chefia do agente público não podem ser excluídas ou alteradas.'"></top-alert>
         <top-alert type="warning" *ngIf="formPerfil.controls.situacao_siape.value == 'ATIVO_TEMPORARIO'" [message]="'O usuário está inativo no SIAPE. O acesso será mantido por até 30 dias para regularização das pendências. Após esse prazo, o sistema realizará a inativação automática.'"></top-alert>
     </div>
@@ -37,9 +38,9 @@
             </ng-template>
         </column>
 
-        <column [title]="lex.translate('Última data SIAPE')" [template]="columnDataSIAPE">
-            <ng-template let-row="row" #columnDataSIAPE>
-                <span>{{ util.getDateFormatted(row.ultima_atualizacao) }} </span>
+        <column [title]="lex.translate('Regramento')" [template]="columnRegramento">
+            <ng-template let-row="row" #columnRegramento>
+                <span *ngFor="let regramento of row.regramentos">{{ regramento.nome || '' }} </span>
             </ng-template>
         </column>
 

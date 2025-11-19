@@ -45,6 +45,7 @@ class Entidade extends ModelBase
     //'deleted_at', /* timestamp; */
     'email_responsavel_siape', /* varchar(100); NULL; */ // Email do Responsável pelas alterações no SIAPE (#818)
     'email_remetente_siape', /* varchar(100); NULL; */ // Email do Remetente a enviar nos relatos de alterações no SIAPE (#818)
+    'habilitar_relatos_siape' /* tinyint; NOT NULL; DEFAULT: '0'; */ // Indica se o relato de erros de lotação no SIAPE está habilitado (#818)
   ];
 
   public $delete_cascade = ['feriados', 'emails'];

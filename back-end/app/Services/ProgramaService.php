@@ -23,12 +23,12 @@ class ProgramaService extends ServiceBase
 
     $dadosEscolhidos = !empty($vigentesUnidadeExecutora) ? $vigentesUnidadeExecutora : (!empty($todosUnidadeExecutora) ? $todosUnidadeExecutora : null);
     if ($dadosEscolhidos !== null) {
-      if (!parent::loggedUser()->hasPermissionTo('MOD_PRGT_EXT')) {
+      
         $unidadesComPrograma = $this->programaUnidadeSuperior($dadosEscolhidos[2]);
         if (!empty($unidadesComPrograma)) {
             $where[] = ['unidade_id', 'in', $unidadesComPrograma->pluck('id')->toArray()];
         }
-      }
+     
       if ($dadosEscolhidos === $vigentesUnidadeExecutora) {
         $where[] = ['data_inicio', '<=', now()];
         $where[] = ['data_fim', '>=', now()];

@@ -48,6 +48,7 @@ export class DialogService {
   private _utils?: UtilService;
   public get utils(): UtilService { this._utils = this._utils || this.injector.get<UtilService>(UtilService); return this._utils };
 
+ 
 
   modalClosed = new Subject<void>();
   
@@ -174,6 +175,24 @@ export class DialogService {
         resolve({button, dialog});
       });
     }));
+  }
+
+  public prompt(title: string, message: string, defaultValue?: string): Promise<string | null> {
+    const dialogView = this.createDialogView();
+    const dialog = dialogView.instance;
+    dialog.title = title;
+    dialog.message = message;
+    dialog.defaultValue = defaultValue ?? '';
+    dialog.isPrompt = true;
+    dialog.buttons = [{ label: "Ok", value: true, color: "btn-success" }, { label: "Cancelar", value: false, color: "btn-danger" }];
+    dialog.cdRef.detectChanges();
+    this.cdRef?.detectChanges();
+    return new Promise<string | null>((resolve, reject) => {
+      dialog.onButtonClick.subscribe(button => {
+        dialog.close();
+        resolve(button.value ? dialog.inputValue || '' : null);
+      });
+    });
   }
 
   public modal(route: ActivatedRouteSnapshot){

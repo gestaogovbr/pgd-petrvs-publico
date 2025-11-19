@@ -1,4 +1,16 @@
-<p class="text-secondary">Você está acessando o módulo de Gestão. Matrícula: {{auth.usuario?.matricula}}</p>
+<p class="text-secondary">Você está acessando o módulo de Gestão. Matrícula: {{auth.usuario?.matricula}}. </p>
+
+<!-- Banner de pendências como chefe -->
+<div *ngIf="pendenciasLoaded && totalPendenciasChefe > 0" class="alert alert-warning d-flex justify-content-between align-items-center mt-3">
+  <div>
+    Você tem
+    <button type="button" class="btn btn-link p-0 align-baseline" (click)="abrirPendenciasModal()">{{ totalPendenciasChefe }}</button>
+    pendências.
+  </div>
+  <div>
+    <button type="button" class="btn btn-sm btn-primary" (click)="abrirPendenciasModal()">Ver detalhes</button>
+  </div>
+</div>
 
 <div class="row mt-5">
   <div class="col-6 col-sm-3 mb-3">
