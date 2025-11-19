@@ -1329,11 +1329,13 @@ export class PlanoEntregaListComponent extends PageListBase<
 	}
 
 	protected statusLabel(planoEntrega: PlanoEntrega) : string {
+		const isAvaliacao = this.queryParams.avaliacao
 		// @ts-ignore
 		const statusLabel = {
-			"ATIVO" : planoEntrega.has_progresso ? "Incluído" : "Aguardando Registro"
+			"ATIVO" : planoEntrega.has_progresso ? "Incluído" : "Aguardando Registro",
+			"CONCLUIDO": isAvaliacao ? "Aguardando Avaliação" : null
 		}[planoEntrega.status];
-		return statusLabel || this.lookup.getValue(this.lookup.PLANO_ENTREGA_STATUS, planoEntrega.status)
+		return statusLabel ?? this.lookup.getValue(this.lookup.PLANO_ENTREGA_STATUS, planoEntrega.status)
 	}
 
 	protected statusColor(planoEntrega: PlanoEntrega) : string {
@@ -1347,7 +1349,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 	protected statusIcon(planoEntrega: PlanoEntrega) : string {
 		// @ts-ignore
 		const statusIcon = {
-			"ATIVO" : planoEntrega.has_progresso ? "INCLUIDO" : "HOMOLOGANDO"
+			"ATIVO" : planoEntrega.has_progresso ? "ATIVO" : "HOMOLOGANDO"
 		}[planoEntrega.status] 
 		return this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, statusIcon ?? planoEntrega.status )
 	}

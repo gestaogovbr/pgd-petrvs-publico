@@ -465,7 +465,7 @@ export class AuthService {
     let $ids_gerencias = [...$ids_gerencias_delegadas, ...$ids_gerencias_substitutas];
     if (this.usuario?.gerencia_titular?.unidade?.id) $ids_gerencias.push(this.usuario?.gerencia_titular!.unidade_id);
     $ids_gerencias.forEach(x => { if (!!unidade.path && unidade.path.split('/').slice(1).includes(x)) result = true; });
-    return false;
+    return result;
   }
 
 
