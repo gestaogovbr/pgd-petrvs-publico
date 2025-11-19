@@ -1,3 +1,6 @@
+## 2.8.1 18/11/2025
+### Corrigido
+- Corrigido o problema de exibição do regramento na lista de usuários
 ## 2.8.0 17/11/2025
 ### Adicionado
 - Módulo de pendências do chefe
