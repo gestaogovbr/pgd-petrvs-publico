@@ -390,6 +390,13 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
           await this.carregaModalidades(false);
         }
       }
+
+      console.log(selected.entity);
+      
+      if (selected.entity.participa_pgd == 'não') {
+        this.dialog.alert('Atenção', 'Antes de elaborar plano de trabalho, solicite à sua chefia imadiata que selecione-o como participante do PGD no SouGov Líder e aguarde a atualização do sistema');
+        this.editableForm!.noButtons = 'true';
+      }
       
       this.form!.controls.usuario_texto_complementar.setValue(selected.entity.texto_complementar_plano || "");
       if(!this.form?.controls.unidade_id.value) {
@@ -443,42 +450,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       key: unidade.id,
       value: `${unidade.sigla} - ${unidade.nome}`
     })) || [];
-  }
-
-  /**
-   * Preenche o texto complementar do usuário no formulário
-   * @param usuario - Entidade do usuário selecionado
-   */
-  private preencherTextoComplementarUsuario(usuario: Usuario): void {
-    this.form!.controls.usuario_texto_complementar.setValue(usuario.texto_complementar_plano || "");
-  }
-
-  /**
-   * Processa a unidade existente selecionada
-   */
-  private async processarUnidadeExistente(): Promise<void> {
-    this.onUnidadeSelect();
-    
-    if (this.programa && this.entity?.programa) {
-      this.programa.items = [{
-        key: this.entity.programa_id || '',
-        value: this.entity.programa.nome || '',
-        data: this.entity.programa
-      }];
-    }
-    
-    this.preenchePrograma(this.entity?.programa as Programa);
-    this.selectedUnidade = this.entity?.unidade;
-    this.form!.controls.unidade_id.setValue(this.entity?.unidade_id);
-    this.form!.controls.programa_id.setValue(this.entity?.programa_id);
-    this.selectedPrograma = this.entity?.programa;
-  }
-
-  /**
-   * Limpa a seleção de unidade
-   */
-  private limparUnidadeSelecionada(): void {
-    this.form!.controls.unidade_id.setValue(null);
   }
 
 
