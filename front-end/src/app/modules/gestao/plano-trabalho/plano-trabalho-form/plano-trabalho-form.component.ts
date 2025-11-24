@@ -309,8 +309,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   async carregaModalidades(pedagio: boolean) {
     try {
+      const where: [string, string, any][] = pedagio ? [['exige_pedagio', '==', 0]] : [];
       const modalidades = await this.tipoModalidadeDao.query({
-        where: [['exige_pedagio', '==', pedagio ? 0 : 1]],
+        where: where,
         join: ['modalidadeSiape'],
       }).asPromise();
 
