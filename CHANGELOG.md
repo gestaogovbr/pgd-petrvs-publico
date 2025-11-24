@@ -1,3 +1,6 @@
+## 2.8.2 24/11/2025
+### Corrigido
+- Corrigido o problema de exibição da modalidade presencial no plano de trabalho
 ## 2.8.1 18/11/2025
 ### Corrigido
 - Corrigido o problema de exibição do regramento na lista de usuários
