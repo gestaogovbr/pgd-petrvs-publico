@@ -624,8 +624,9 @@ class UsuarioService extends ServiceBase
 
       // Registros de execução que precisam ser avaliados
       $registrosExecucao = PlanoTrabalhoConsolidacao::where('status', StatusEnum::CONCLUIDO)
-      ->whereHas('planoTrabalho', function($q) use ($unidadesGerenciadas) {
+      ->whereHas('planoTrabalho', function($q) use ($unidadesGerenciadas, $usuario_id) {
         $q->whereIn('unidade_id', $unidadesGerenciadas->pluck('id'));
+        $q->where('usuario_id', '!=', $usuario_id);
       })->select([
         'planos_trabalhos_consolidacoes.id',
         'planos_trabalhos_consolidacoes.status',
