@@ -391,8 +391,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
         }
       }
 
-      console.log(selected.entity);
-      
       if (selected.entity.participa_pgd == 'não') {
         this.dialog.alert('Atenção', 'Antes de elaborar plano de trabalho, solicite à sua chefia imadiata que selecione-o como participante do PGD no SouGov Líder e aguarde a atualização do sistema');
         this.editableForm!.noButtons = 'true';
