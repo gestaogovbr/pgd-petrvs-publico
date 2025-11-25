@@ -18,12 +18,12 @@ class PlanoTrabalhoConsolidacao extends ModelBase
   {
     static::updated(function ($consolidacao) {
       $planoTrabalho = $consolidacao->planoTrabalho;
-      if ($consolidacao->isDirty('status') && $consolidacao->status === 'CONCLUIDO') {
+      if ($consolidacao->isDirty('status') && $consolidacao->status === 'CONCLUIDO' && $planoTrabalho->status === 'ATIVO') {
         $allConcluido = $planoTrabalho->consolidacoes()
                                       ->where('status', '!=', 'CONCLUIDO')
                                       ->doesntExist();
         
-        if ($allConcluido && $planoTrabalho->status === 'ATIVO') {
+        if ($allConcluido) {
           $planoTrabalho->status = 'CONCLUIDO';
           $planoTrabalho->save();
         }
