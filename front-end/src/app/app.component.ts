@@ -219,19 +219,19 @@ export class AppComponent {
       },
       INDICADORES_ENTREGAS: {
         name: "Entregas",
-        permition: 'MOD_IND_ENTREGAS',
+        //permition: 'MOD_IND_ENTREGAS',
         icon: this.entity.getIcon('PlanoEntrega'),
         route: ['relatorios', 'indicadores', 'entregas'],
       },
       INDICADORES_EQUIPES: {
         name: "Equipes",
-        permition: 'MOD_IND_EQUIPES',
+        // permition: 'MOD_IND_EQUIPES',
         icon: this.entity.getIcon('Usuario'),
         route: ['relatorios', 'indicadores', 'equipes'],
       },
       INDICADORES_GESTAO: {
         name: "Gestão do PGD",
-        permition: 'MOD_IND_GESTAO',
+        // permition: 'MOD_IND_GESTAO',
         icon: this.entity.getIcon('Unidade'),
         route: ['relatorios', 'indicadores', 'gestao'],
       },
@@ -312,7 +312,6 @@ export class AppComponent {
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Indicadores"),
-      permition: "MOD_INDICADORES",
       id: "navbarDropdownIndicadores",
       menu: [
         this.menuSchema.INDICADORES_ENTREGAS,
@@ -336,7 +335,6 @@ export class AppComponent {
         ].sort(this.orderMenu)
       }, {
         name: this.lex.translate("Indicadores"),
-        permition: "MOD_INDICADORES",
         id: "navbarDropdownIndicadores",
         menu: [
           this.menuSchema.INDICADORES_ENTREGAS,
@@ -391,7 +389,6 @@ export class AppComponent {
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Indicadores"),
-      permition: "MOD_INDICADORES",
       id: "navbarDropdownIndicadores",
       menu: [
         this.menuSchema.INDICADORES_ENTREGAS,

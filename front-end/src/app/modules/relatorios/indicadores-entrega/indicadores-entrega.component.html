@@ -56,7 +56,13 @@
 </filter>
 <div class="graficos">
     <div class="grafico">
-        <div class="titulo">Taxa de vinculação das entregas</div>
+        <div class="titulo">Taxa de vinculação das entregas
+            <i  class="bi bi-info-circle label-info text-muted"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Indica a proporção de entregas vinculadas em relação ao total de entregas cadastradas"
+            ></i>
+        </div>
         <p *ngIf="!pieChartData.labels?.length" class="no-data">Sem dados para exibir</p>
         <div *ngIf="loading; else graficoEntregas" class="d-flex justify-content-center my-2">
             <div class="spinner-border" role="status">
@@ -76,7 +82,13 @@
         </ng-template>
     </div>
     <div class="grafico">
-        <div class="titulo">Distribuição das avaliações dos Planos de Entregas (PEs)</div>
+        <div class="titulo">Distribuição das avaliações dos Planos de Entregas (PEs)
+            <i  class="bi bi-info-circle label-info text-muted"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Indica a proporção de cada nota de avaliação dos planos de entregas em relação ao total de avaliações"
+            ></i>
+        </div>
         <p *ngIf="!pieChartAvaliacoesData.labels?.length || !totalAvaliacoes" class="no-data">Sem dados de avaliações</p>
         <div *ngIf="loading; else graficoAvaliacoes" class="d-flex justify-content-center my-2">
             <div class="spinner-border" role="status">
@@ -99,7 +111,13 @@
         </ng-template>
     </div>
     <div class="grafico">
-        <div class="titulo">Coerência entre desempenhos dos Planos de Trabalho (PTs) e do Planos de Entregas (PEs)</div>
+        <div class="titulo">Coerência entre desempenhos dos Planos de Trabalho (PTs) e do Planos de Entregas (PEs)
+            <i  class="bi bi-info-circle label-info text-muted"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Indica o grau de alinhamento entre o desempenho individual dos participantes do PGD, conforme avaliações de seus Planos de Trabalho, e o desempenho geral da unidade de execução, conforme avaliação do Plano de Entregas."
+            ></i>
+        </div>
         <p *ngIf="!barChartData.datasets[0].data?.length" class="no-data">Sem dados para exibir</p>
         <div *ngIf="loading; else graficoDesempenho" class="d-flex justify-content-center my-2">
             <div class="spinner-border" role="status">

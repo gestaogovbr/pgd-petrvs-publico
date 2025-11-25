@@ -48,6 +48,7 @@ class IndicadoresEntregaDesempenhoPEService extends IndicadoresEntregaService
             left join avaliacoes a on pe.avaliacao_id = a.id and a.deleted_at is null
             where pe.deleted_at is null
               and pe.avaliacao_id is not null
+              and pe.status in ('ATIVO','CONCLUIDO','AVALIADO')
               $filtros
         TEXT;
 
