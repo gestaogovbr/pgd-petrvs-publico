@@ -107,13 +107,15 @@ export class HomeGestaoPendenciasComponent extends PageBase {
     });
   }
 
-  public abrirConsolidacoes(usuario_id: string, unidade_id: string) {
+  public abrirConsolidacoes(usuario_id: string, unidade_id: string, numero: string) {
     let rota = this.go.navigate({
       route: ['avaliacao', 'plano-trabalho', 'consolidacao', 'avaliacao'], 
       params: {
         filter: {
           usuario_id: usuario_id,
           unidade_id: unidade_id,
+          incluir_arquivados: true,
+          numero: numero
         }
       }
     });
