@@ -27,6 +27,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
 
   /* configurações */
   public orderBy?: QueryOrderBy[];
+  public modalInfiniteScrollContainer: string|null = null;
   public groupBy?: GroupBy[];
   public join: string[] = [];
   public addRoute?: string[];
