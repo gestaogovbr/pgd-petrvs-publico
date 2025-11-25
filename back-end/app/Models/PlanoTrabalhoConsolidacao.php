@@ -14,6 +14,29 @@ class PlanoTrabalhoConsolidacao extends ModelBase
 
   protected $with = [];
 
+  protected static function booted()
+  {
+    static::updated(function ($consolidacao) {
+      $planoTrabalho = $consolidacao->planoTrabalho;
+      if ($consolidacao->isDirty('status') && $consolidacao->status === 'CONCLUIDO') {
+        $allConcluido = $planoTrabalho->consolidacoes()
+                                      ->where('status', '!=', 'CONCLUIDO')
+                                      ->doesntExist();
+        
+        if ($allConcluido && $planoTrabalho->status === 'ATIVO') {
+          $planoTrabalho->status = 'CONCLUIDO';
+          $planoTrabalho->save();
+        }
+      }
+
+      if($consolidacao->isDirty('status') && $consolidacao->status !== 'CONCLUIDO' && $planoTrabalho->status === 'CONCLUIDO') {
+        $planoTrabalho->status = 'ATIVO';
+        $planoTrabalho->save();
+      }
+    });
+  }
+
+
   public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
     'data_inicio', /* date; NOT NULL; */ // Data inicial da consolidacão
     'data_fim', /* date; NOT NULL; */ // Data final da consolidação
