@@ -7,8 +7,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement('ALTER TABLE planos_trabalhos ADD COLUMN avaliado_at DATE DEFAULT NULL');
-        DB::statement('ALTER TABLE planos_entregas  ADD COLUMN avaliado_at DATE DEFAULT NULL');
+        DB::statement('ALTER TABLE planos_trabalhos ADD COLUMN avaliado_at DATE DEFAULT NULL COMMENT "Data em que todos os planos_trabalhos_consolidacoes tiveram o status alterado para AVALIADO"');
+        DB::statement('ALTER TABLE planos_entregas  ADD COLUMN avaliado_at DATE DEFAULT NULL COMMENT "Data em que o plano teve seu status alterado para AVALIADO"');
         DB::statement("UPDATE planos_trabalhos SET avaliado_at = COALESCE(DATE(updated_at), '". date("Y-m-d") . "') 
                        WHERE (
                             SELECT
