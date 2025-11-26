@@ -440,18 +440,7 @@ export class AppComponent {
         this.menuSchema.ENVIO_FORCAR,
         this.menuSchema.ENVIO_REINICIAR
       ]
-    }, {
-      name: this.lex.translate("Envio API"),
-      permition: "MENU_DEV_ACESSO",
-      id: "navbarDropdownDevApiPgd",
-      menu: [
-        this.menuSchema.ENVIO_LOGS,
-        this.menuSchema.ENVIO_FORCAR,
-        this.menuSchema.ENVIO_REINICIAR
-      ]
     }];
-
-    
 
     this.menuContexto = [
       { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.moduloGestao },
@@ -459,7 +448,6 @@ export class AppComponent {
       { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: this.lex.translate("Administrador"), menu: this.moduloAdministrador },
       { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.moduloDev },
     ]
-
   }
 
   public orderMenu(a: any, b: any) {
