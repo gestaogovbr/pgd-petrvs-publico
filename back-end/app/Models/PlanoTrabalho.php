@@ -64,12 +64,6 @@ class PlanoTrabalho extends ModelBase
         static::creating(function ($planoTrabalho) {
             $planoTrabalho->numero = DB::select("CALL sequence_plano_trabalho_numero()")[0]->number;
         });
-
-        static::updating(function (PlanoTrabalho $planoTrabalho) {
-            if ($planoTrabalho->isDirty('status') && $planoTrabalho->status === 'AVALIADO') {
-                $planoTrabalho->avaliado_at = date('Y-m-d');
-            }
-        });
     }
 
     // Has

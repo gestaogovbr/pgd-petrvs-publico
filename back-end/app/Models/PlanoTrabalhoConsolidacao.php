@@ -32,6 +32,26 @@ class PlanoTrabalhoConsolidacao extends ModelBase
     'data_conclusao' => 'datetime'
   ];
 
+  protected static function booted()
+  {
+    static::updating(function (PlanoTrabalhoConsolidacao $consolidacao) {
+        $planoTrabalho = $consolidacao->planoTrabalho;
+        if ($consolidacao->isDirty('status') && $consolidacao->status === 'AVALIADO') {
+            $isAllConsolidacoesAvaliadas = $planoTrabalho->consolidacoes()
+                                                          ->where('status', '!=', 'AVALIADO')
+                                                          ->where('id', '!=', $consolidacao->id)
+                                                          ->doesntExist();
+            if ($isAllConsolidacoesAvaliadas) {
+              $planoTrabalho->update(['avaliado_at' => date('Y-m-d')]);
+            }
+        }
+
+        if ($consolidacao->isDirty('status') && $consolidacao->status !== 'AVALIADO' && !!$planoTrabalho->avaliado_at) {
+          $planoTrabalho->update(['avaliado_at' => null]);
+        }
+    });
+  }
+
   // Has
   public function statusHistorico()
   {
