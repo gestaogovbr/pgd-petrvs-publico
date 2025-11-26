@@ -204,7 +204,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
         },
         modalClose: async (modalResult) => {
           if (modalResult) {
-            if (!this.isNoPersist) await this.dao?.save({...modalResult});
+            if (!this.isNoPersist) await this.dao?.save(modalResult);
             this.items[index] = modalResult;
           };
         }
