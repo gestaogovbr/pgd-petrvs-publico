@@ -17,10 +17,13 @@
       </div>
     </tab>
     <tab key="SIAPE" label="Alteraçõe no SIAPE">
-      <div class="row email-remetente">
+      <div class="row">
+          <input-radio [size]="4" label="Relato de Erros de Lotação" controlName="habilitar_relatos_siape" [items]="lookup.INTEGRACAO_SMTP_HABILITAR_RELATOS"></input-radio>
+      </div>
+      <div class="row email-remetente" *ngIf="form!.controls.habilitar_relatos_siape.value">
         <input-text [size]="6" label="E-mail do Remetente para envio das alterações no SIAPE" controlName="email_remetente_siape" [attr.maxlength]=100  placeholder="Utilizar um e-mail @gestao.gov.br"></input-text>
       </div>
-      <separator title="E-mails dos Responsáveis pelas alterações no SIAPE na organização">
+      <separator title="E-mails dos Responsáveis pelas alterações no SIAPE na organização" *ngIf="form!.controls.habilitar_relatos_siape.value">
         <grid #grid 
           [control]="form!.controls.emails" 
           [form]="formEmail!" 

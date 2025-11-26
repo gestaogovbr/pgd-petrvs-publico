@@ -8,6 +8,7 @@ use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
+use App\Services\NivelAcessoService;
 use App\Services\Siape\Unidade\Enum\Atribuicao as EnumAtribuicao;
 
 trait Atribuicao
@@ -84,6 +85,11 @@ trait Atribuicao
             }
         }
 
+        if (!$unidadeDestino->executora && $usuario->perfil->nivel != NivelAcessoService::PERFIL_COLABORADOR) {
+            $this->alteracoes = ['info' => sprintf('Não é possível atribuir Colaborador a um usuário com perfil diferente de Colaborador em unidade não executora!', $usuario->id, $unidadeDestino->id)];
+            return;
+        }
+        
         $this->alteracoes = ['lotacao' => sprintf('Atribuindo Colaborador ao servidor %s na Unidade %s', $usuario->id, $unidadeDestino->id)];
         $this->lotaServidor(EnumAtribuicao::COLABORADOR, $integranteNovoOuExistente);
     }
@@ -129,12 +135,7 @@ trait Atribuicao
         if (!empty($this->getUnidadeAtualDoUsuario($usuario)) && $this->getUnidadeAtualDoUsuario($usuario)->id == $unidadeDestino->id) {
             $this->alteracoes = ['info' => sprintf('O servidor  %s já está lotado nessa unidade %s:', $usuario->id, $unidadeDestino->id)];
             return;
-        }
-        
-        if ($this->usuarioTemPlanodeTrabalhoAtivo($usuario, $this->getUnidadeAtualDoUsuario($usuario))) {
-            $this->alteracoes = ['lotacao' => sprintf('O servidor %s já possui um plano de trabalho ativo nessa unidade %s, alterando a lotação para COLABORADOR:', $usuario->id, $unidadeDestino->id)];
-            $this->processaColaborador($unidadeDestino, $usuario,  $usuario->lotacao);
-        }
+        }               
 
         if ($this->usuarioEGestorEmOutraUnidade($usuario, $unidadeDestino)) {
             $this->alteracoes = ['removido' => sprintf('Removendo o Gestor %s de outra Unidade pois ele será lotado na unidade %s', $usuario->id, $unidadeDestino->id)];

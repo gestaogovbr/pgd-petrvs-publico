@@ -20,7 +20,7 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
   styleUrls: ['./usuario-form.component.scss']
 })
 export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoService> {
-  isEdit = false;
+  canEditAtribuicoes = false;
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(UsuarioIntegranteComponent, { static: false }) public unidadesIntegrantes?: UsuarioIntegranteComponent;
   @ViewChild('lotacao', { static: false }) public lotacao?: InputSearchComponent;
@@ -112,7 +112,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   
   ngOnInit() {
     super.ngOnInit();
-    this.isEdit = this.snapshot?.data['edit'] ?? false;
+    this.canEditAtribuicoes = this.snapshot?.data['canEditAtribuicoes'] ?? false;
   }
 }
 

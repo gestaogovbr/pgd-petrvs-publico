@@ -85,7 +85,7 @@
       </div>
     </div>
     <ul class="navbar-nav navbar-nav-icons flex-row align-items-center justify-content-end">
-      <li class="nav-item ms-3 ms-lg-2">
+      <li class="nav-item ms-3 ms-lg-2" *ngIf="this.auth.entidade?.habilitar_relatos_siape">
         <a class="nav-link" role="button" 
           (click)="go.navigate({route: ['relatos','lotacao']},{ root: true, modal: true })" 
           [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" title="Suporte Petrvs">

@@ -76,7 +76,7 @@ class Integracao implements InterfaceIntegracao
         if (empty($vinculoDTO->atribuicoes)) {
             array_push($this->atribuicoesFinais, ["O vínculo de LOTADO não pode ser apagado; apenas transferido, através da atribuição de lotação em outra unidade."]);
             $this->limpaTodasAtribuicoesMenosLotado($usuario, $integranteNovoOuExistente);
-            return ;
+            return;           
         }
         
         $todasLotacoesAntigas = $usuario->getUnidadesAtribuicoesAttribute();

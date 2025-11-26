@@ -83,6 +83,8 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
     })();
   }
 
+  public onAfterSave(entity: Base){}
+
   public async onSaveData() {
     const self = this;
     let error: any = undefined;
@@ -99,6 +101,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
         let entity = await this.saveData(this.form!.value);
         if(entity){
           const modalResult = typeof entity == "boolean" ? this.entity?.id : entity instanceof NavigateResult ? entity.modalResult : (await this.dao!.save(entity as M, this.join)).id;
+          this.onAfterSave(entity as M);
           if(self.modalRoute?.queryParams?.idroute?.length) self.go.setModalResult(self.modalRoute?.queryParams?.idroute, modalResult);
           //self.dialog.alert("Sucesso", this.mensagemSalvarSucesso).then(() => self.go.back());
           self.close();

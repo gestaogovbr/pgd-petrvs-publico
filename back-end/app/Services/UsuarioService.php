@@ -8,6 +8,9 @@ use SimpleXMLElement;
 use App\Models\Perfil;
 use App\Models\Unidade;
 use App\Models\Usuario;
+use App\Models\PlanoTrabalho;
+use App\Models\PlanoEntrega;
+use App\Models\PlanoEntregaEntrega;
 use App\Models\Programa;
 use App\Services\RawWhere;
 use App\Services\ServiceBase;
@@ -15,6 +18,7 @@ use App\Models\UnidadeIntegrante;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Log;
 use App\Exceptions\ValidateException;
+use App\Models\PlanoTrabalhoConsolidacao;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use App\Services\Siape\DadosExternosSiape;
@@ -28,6 +32,7 @@ use App\Services\Siape\Consulta\Resources\UnidadeResource;
 use App\Services\Siape\Consulta\Resources\UnidadesResource;
 use App\Services\Siape\Consulta\SiapeUnidadeService;
 use App\Services\Siape\Consulta\SiapeUnidadesService;
+use App\Enums\StatusEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use App\Enums\UsuarioSituacaoSiape;
@@ -158,6 +163,7 @@ class UsuarioService extends ServiceBase
    * @param string $usuario_id
    * @param string $pgd_id
    * @return bool
+   * @deprecated
    */
   public function isParticipanteHabilitado(string|null $usuarioId = null, string $programaId): bool
   {
@@ -607,6 +613,87 @@ class UsuarioService extends ServiceBase
         }
         
         return $unidades;
+    }
+
+    public function pendenciasChefe(){
+      // usuário logado
+      $usuario_id = parent::loggedUser()->id;
+
+      $unidadesGerenciadas = Unidade::whereHas('gestor', fn($q) => $q->where('usuario_id', $usuario_id))
+      ->orWhereHas('gestoresSubstitutos', fn($q) => $q->where('usuario_id', $usuario_id))
+      ->orWhereHas('gestoresDelegados', fn($q) => $q->where('usuario_id', $usuario_id))
+      ->get();
+
+      $unidadesFilhas = Unidade::whereIn('unidade_pai_id', $unidadesGerenciadas->pluck('id'))->get();
+
+      // Registros de execução que precisam ser avaliados
+      $registrosExecucao = PlanoTrabalhoConsolidacao::where('status', StatusEnum::CONCLUIDO)
+      ->whereHas('planoTrabalho', function($q) use ($unidadesGerenciadas) {
+        $q->whereIn('unidade_id', $unidadesGerenciadas->pluck('id'));
+      })->select([
+        'planos_trabalhos_consolidacoes.id',
+        'planos_trabalhos_consolidacoes.status',
+        'planos_trabalhos_consolidacoes.data_inicio',
+        'planos_trabalhos_consolidacoes.data_fim',
+        'planos_trabalhos_consolidacoes.plano_trabalho_id',
+      ])
+      ->with(['planoTrabalho' => function($q) {
+        $q->select(['id','numero','usuario_id', 'unidade_id']);
+      }]);
+
+      // Planos de trabalhos que precisam da assinatura do chefe da unidade
+      $planosTrabalhos = PlanoTrabalho::where('status', StatusEnum::AGUARDANDO_ASSINATURA)
+      ->whereHas('unidade', function($q) use ($unidadesGerenciadas) {
+        $q->whereIn('id', $unidadesGerenciadas->pluck('id'));
+      })
+      ->select([
+        'planos_trabalhos.id',
+        'planos_trabalhos.numero',
+        'planos_trabalhos.status',
+        'planos_trabalhos.data_inicio',
+        'planos_trabalhos.data_fim',
+        'planos_trabalhos.usuario_id',
+      ])
+      ->with(['usuario' => function($q) {
+        $q->select(['id','nome']);
+      }]);
+
+      // Planos de entregas que precisam ter progressos.
+      $entregasSemProgresso = PlanoEntregaEntrega::query()
+      ->whereHas('planoEntrega.unidade', fn($q) => $q->whereIn('id', $unidadesGerenciadas->pluck('id')))
+      ->doesntHave('progressos')
+      ->select([
+          'planos_entregas_entregas.id',
+          'planos_entregas_entregas.descricao',
+          'planos_entregas_entregas.plano_entrega_id'
+      ])
+      ->with([
+          'planoEntrega' => function($q) {
+              $q->whereNotIn('status', [StatusEnum::SUSPENSO, StatusEnum::CANCELADO]);
+              $q->select(['id','numero','nome']);
+          }
+      ]);
+
+      // Planos de entregas que precisam ser avaliados.
+      $planosEntregas = PlanoEntrega::where('status', StatusEnum::CONCLUIDO)
+      ->whereHas('unidade', function($q) use ($unidadesFilhas) {
+        $q->whereIn('id', $unidadesFilhas->pluck('id'));
+      })->select([
+        'planos_entregas.id',
+        'planos_entregas.numero',
+        'planos_entregas.status',
+        'planos_entregas.nome',
+        'planos_entregas.data_inicio',
+        'planos_entregas.data_fim',
+      ]);
+
+
+      return [
+        'registrosExecucao' => $registrosExecucao->get(),
+        'planosTrabalhos' => $planosTrabalhos->get(),
+        'planosEntregaEntregas' => $entregasSemProgresso->get(),
+        'planosEntregas' => $planosEntregas->get(),
+      ];
     }
 
 }

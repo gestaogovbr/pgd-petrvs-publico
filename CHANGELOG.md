@@ -1,3 +1,30 @@
+## 2.8.2 24/11/2025
+### Corrigido
+- Corrigido o problema de exibição da modalidade presencial no plano de trabalho
+- Corrigido o problema de exibição da tela de planos de trabalho quando usuário não é participante do PGD
+## 2.8.1 18/11/2025
+### Corrigido
+- Corrigido o problema de exibição do regramento na lista de usuários
+## 2.8.0 17/11/2025
+### Adicionado
+- Módulo de pendências do chefe
+- Módulo de pendências do participante
+- Informações na lista de usuários
+- Indicadores de Equipes
+- Indicadores de Entregas
+- Indicadores de Gestão
+- Configuração para exibir a opção de Problemas de Lotação
+- Adicionado campo executora para indicar unidades que poder ter Plano de Entrega cadastrado
+### Modificado
+- O regramento agora é vinculado pela hierarquia de unidades.
+- Melhorias no tratamento de unidades que não estão mais ativas (extintas): o sistema passa a marcá-las como inativas sem apagar seus dados, preservando histórico e vínculos.
+### Corrigido
+- Exportação de Status do PT no Relatório de PT
+- Filtro de Situação da conclusão no Relatório de PE
+- Exportação de Modalidade SIAPE no Relatório de Agentes Públicos
+### Removido
+- Removido limite máximo de 100% CHD por entrega em Plano de Trabalho
+- Tela de seleção de participante no regramento
 ## 2.7.8 10/11/2025
 ### Corrigido
 - Pesquisa por CPF no SIAPE: agora, quando existem vários usuários com o mesmo CPF e matrículas diferentes, todos aparecem na lista de resultados.
