@@ -223,12 +223,7 @@ class PlanoTrabalhoService extends ServiceBase
         PT do Chefe Sub.........: CF,CS?,CF+,CS+
         PT do Delegado..........: CF,CS,DL?
         PT do Lotado/Colaborador: CF,CS,DL,LC? */
-        $validoTabela1 = false;
-        if ($condicoes['usuarioEhParticipantePlano']) { /* Plano do próprio usuário logado */
-            $validoTabela1 = $condicoes['usuarioEhParticipanteHabilitado'];
-        } else {
-            $validoTabela1 = $condicoes["gestorUnidadeExecutora"] || $condicoes['logadoEhChefe'];
-        }
+
         /* (RN_PTR_AA) Um Plano de Trabalho não pode ser incluído/alterado se apresentar período conflitante com outro Plano de Trabalho já existente para a mesma unidade/servidor, a menos que o usuário logado possua a capacidade MOD_PTR_INTSC_DATA; */
         $conflito = PlanoTrabalho::
             where("usuario_id", $data["usuario_id"])->
@@ -287,7 +282,7 @@ class PlanoTrabalhoService extends ServiceBase
                 - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA (RN_PTR_AA)
             */
             /* (RN_PTR_B) O Plano de Trabalho pode ser incluído pelo próprio servidor, se ele for "participante do programa" habilitado, ou pelas condições da TABELA_1 */
-            if (!$validoTabela1)
+            if ($usuario->participa_pgd != 'sim')
                 throw new ServerException("ValidatePlanoTrabalho", "Usuário não foi selecionado para participar do regramento. Solicite à chefia para fazer a seleção de participante na aba de planejamento");
             /* (RN_PTR_Y) Para incluir um Plano de Trabalho para um participante, é necessário que este esteja LOTADO/COLABORADOR na unidade executora, a menos que este possua a capacidade MOD_PTR_USERS_INCL; */
             if (!parent::loggedUser()->hasPermissionTo('MOD_PTR_USERS_INCL') && !$condicoes["participanteColaboradorUnidadeExecutora"] && !$condicoes["participanteLotadoUnidadeExecutora"]) {
@@ -313,9 +308,9 @@ class PlanoTrabalhoService extends ServiceBase
             */
             if (!$condicoes['planoValido'])
                 throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho não é válido, ou seja, foi apagado, cancelado ou arquivado.\n[ver RN_PTR_M]");
-            if (($condicoes['planoIncluido'] || $condicoes['planoAguardandoAssinatura']) && !$validoTabela1)
+            if (($condicoes['planoIncluido'] || $condicoes['planoAguardandoAssinatura']))
                 throw new ServerException("ValidateUsuario", "Para alterar um plano de trabalho no status INCLUIDO ou AGUARDANDO_ASSINATURA, o usuário logado precisa atender os critérios da ação Alterar da [PTR:TABELA_1].\n[ver RN_PTR_M]");
-            if ($condicoes['planoAtivo'] && (!$validoTabela1 || !$usuario->hasPermissionTo('MOD_PTR_EDT_ATV')))
+            if ($condicoes['planoAtivo'] && (!$usuario->hasPermissionTo('MOD_PTR_EDT_ATV')))
                 throw new ServerException("ValidateUsuario", "Para alterar um plano de trabalho no status ATIVO, o usuário logado precisa atender os critérios da ação Alterar da TABELA_1 e possuir a capacidade específica (MOD_PTR_EDT_ATV).\n[ver RN_PTR_M]");
             $plano = PlanoTrabalho::find($data["id"]);
             /*
