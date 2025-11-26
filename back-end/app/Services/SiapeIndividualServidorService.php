@@ -305,6 +305,7 @@ class SiapeIndividualServidorService extends ServiceBase
         // Pode existir mais de um usuário com o mesmo CPF: executa o fluxo para cada um
         $usuarios = Usuario::where('cpf', $cpf)->get();
         if ($usuarios->isEmpty()) {
+            $this->removendoDaBlackList($cpf);
             return;
         }
 
@@ -347,6 +348,19 @@ class SiapeIndividualServidorService extends ServiceBase
             $this->removeTodasAsGestoesDoUsuario($usuario);
 
             $this->removeLotacao($usuario);
+        }
+    }
+
+    private function removendoDaBlackList(string $cpf) :void
+    {
+        $blacklistRegistro = SiapeBlackListServidor::where('cpf', $cpf)
+                    ->first();
+
+        if ($blacklistRegistro) {
+            $blacklistRegistro->forceDelete();
+            SiapeLog::info('Registro removido da tabela siape_blacklist_servidores', [
+                'cpf' => $cpf
+            ]);
         }
     }
 
