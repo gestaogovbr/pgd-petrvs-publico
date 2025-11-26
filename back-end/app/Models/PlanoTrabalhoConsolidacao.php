@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StatusEnum;
 use App\Models\ModelBase;
 use App\Models\PlanoTrabalho;
 use App\Models\Comparecimento;
@@ -36,9 +37,9 @@ class PlanoTrabalhoConsolidacao extends ModelBase
   {
     static::updating(function (PlanoTrabalhoConsolidacao $consolidacao) {
         $planoTrabalho = $consolidacao->planoTrabalho;
-        if ($consolidacao->isDirty('status') && $consolidacao->status === 'AVALIADO') {
+        if ($consolidacao->isDirty('status') && $consolidacao->status === StatusEnum::AVALIADO->value) {
             $isAllConsolidacoesAvaliadas = $planoTrabalho->consolidacoes()
-                                                          ->where('status', '!=', 'AVALIADO')
+                                                          ->where('status', '!=', StatusEnum::AVALIADO->value)
                                                           ->where('id', '!=', $consolidacao->id)
                                                           ->doesntExist();
             if ($isAllConsolidacoesAvaliadas) {
@@ -46,7 +47,7 @@ class PlanoTrabalhoConsolidacao extends ModelBase
             }
         }
 
-        if ($consolidacao->isDirty('status') && $consolidacao->status !== 'AVALIADO' && !!$planoTrabalho->avaliado_at) {
+        if ($consolidacao->isDirty('status') && $consolidacao->status !== StatusEnum::AVALIADO->value && !!$planoTrabalho->avaliado_at) {
           $planoTrabalho->update(['avaliado_at' => null]);
         }
     });
@@ -78,7 +79,7 @@ class PlanoTrabalhoConsolidacao extends ModelBase
     return $this->hasMany(Avaliacao::class, 'plano_trabalho_consolidacao_id');
   }
   // Verificar se há a possibilidade de fazer um relacionamento utilizando a chave da entrega e pela data
-  // public function atividades() { return $this->hasMany(Atividade::class); } 
+  public function atividades() { return $this->hasMany(Atividade::class); } 
   // Belongs
   public function planoTrabalho()
   {

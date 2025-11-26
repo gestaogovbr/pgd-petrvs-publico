@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StatusEnum;
 use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Usuario;
@@ -57,7 +58,7 @@ class PlanoEntrega extends ModelBase
         });
 
         static::updating(function (PlanoEntrega $planoEntrega) {
-            if ($planoEntrega->isDirty('status') && $planoEntrega->status === 'AVALIADO') {
+            if ($planoEntrega->isDirty('status') && $planoEntrega->status === StatusEnum::AVALIADO->value) {
                 $planoEntrega->avaliado_at = date('Y-m-d');
             }
         });
