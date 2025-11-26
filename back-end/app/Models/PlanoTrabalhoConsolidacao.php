@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StatusEnum;
 use App\Models\ModelBase;
 use App\Models\PlanoTrabalho;
 use App\Models\Comparecimento;
@@ -18,18 +19,18 @@ class PlanoTrabalhoConsolidacao extends ModelBase
   {
     static::updated(function ($consolidacao) {
       $planoTrabalho = $consolidacao->planoTrabalho;
-      if ($consolidacao->isDirty('status') && $consolidacao->status === 'CONCLUIDO' && $planoTrabalho->status === 'ATIVO') {
+      if ($consolidacao->isDirty('status') && $consolidacao->status === StatusEnum::CONCLUIDO->value && $planoTrabalho->status === StatusEnum::ATIVO->value) {
         $allConcluido = $planoTrabalho->consolidacoes()
-                                      ->where('status', '!=', 'CONCLUIDO')
+                                      ->where('status', '!=', StatusEnum::CONCLUIDO->value)
                                       ->doesntExist();
         
         if ($allConcluido) {
-          $planoTrabalho->status = 'CONCLUIDO';
+          $planoTrabalho->status = StatusEnum::CONCLUIDO->value;
           $planoTrabalho->save();
         }
       }
 
-      if($consolidacao->isDirty('status') && $consolidacao->status !== 'CONCLUIDO' && $planoTrabalho->status === 'CONCLUIDO') {
+      if($consolidacao->isDirty('status') && $consolidacao->status !== StatusEnum::CONCLUIDO->value && $planoTrabalho->status === StatusEnum::CONCLUIDO->value) {
         $planoTrabalho->status = 'ATIVO';
         $planoTrabalho->save();
       }
