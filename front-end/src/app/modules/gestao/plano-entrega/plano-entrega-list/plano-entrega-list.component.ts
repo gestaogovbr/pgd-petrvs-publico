@@ -33,6 +33,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 	public showFilter: boolean = true;
 	public avaliacao: boolean = false;
 	public execucao: boolean = false;
+	public planejamento: boolean = false;
 	public linha?: PlanoEntrega;
 	public unidadeDao: UnidadeDaoService;
 	public avaliacaoDao: AvaliacaoDaoService;
@@ -346,6 +347,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 		super.ngOnInit();
 		this.execucao = !!this.queryParams?.execucao;
 		this.avaliacao = !!this.queryParams?.avaliacao;
+		this.planejamento = !!this.queryParams?.planejamento;
 		this.showFilter =
 			typeof this.queryParams?.showFilter != "undefined"
 				? this.queryParams.showFilter == "true"
@@ -545,11 +547,15 @@ export class PlanoEntregaListComponent extends PageListBase<
 			result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
 		if (this.isModal) {
 			result.push(["status", "==", "ATIVO"]);
-		} else if (form.status || this.avaliacao) {
+		} else if (form.status || this.avaliacao || this.planejamento || this.execucao) {
+			const status : string[] = []
+			if (this.planejamento) status.push('INCLUIDO', 'HOMOLOGANDO', 'ATIVO')
+			if (this.execucao) status.push('ATIVO')
+			if (this.avaliacao) status.push('CONCLUIDO', 'AVALIADO')
 			result.push([
 				"status",
 				"in",
-				form.status ? [form.status] : ["CONCLUIDO", "AVALIADO"],
+				form.status ? [form.status] : status,
 			]);
 		}
 
@@ -1330,9 +1336,13 @@ export class PlanoEntregaListComponent extends PageListBase<
 
 	protected statusLabel(planoEntrega: PlanoEntrega) : string {
 		const isAvaliacao = this.queryParams.avaliacao
+		const ativoLabel = () => {
+			if (this.planejamento) return "Homologado"
+			return planoEntrega.has_progresso ? "Incluído" : "Aguardando Registro"
+		}
 		// @ts-ignore
 		const statusLabel = {
-			"ATIVO" : planoEntrega.has_progresso ? "Incluído" : "Aguardando Registro",
+			"ATIVO" : ativoLabel(),
 			"CONCLUIDO": isAvaliacao ? "Aguardando Avaliação" : null
 		}[planoEntrega.status];
 		return statusLabel ?? this.lookup.getValue(this.lookup.PLANO_ENTREGA_STATUS, planoEntrega.status)
@@ -1341,7 +1351,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 	protected statusColor(planoEntrega: PlanoEntrega) : string {
 		// @ts-ignore
 		const statusColor = {
-			"ATIVO" : planoEntrega.has_progresso ? "ATIVO" : "INCLUIDO"
+			"ATIVO" : planoEntrega.has_progresso || this.planejamento ? "ATIVO" : "INCLUIDO"
 		}[planoEntrega.status] 
 		return this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, statusColor ?? planoEntrega.status)
 	}
@@ -1349,7 +1359,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 	protected statusIcon(planoEntrega: PlanoEntrega) : string {
 		// @ts-ignore
 		const statusIcon = {
-			"ATIVO" : planoEntrega.has_progresso ? "ATIVO" : "HOMOLOGANDO"
+			"ATIVO" : planoEntrega.has_progresso || this.planejamento ? "ATIVO" : "HOMOLOGANDO"
 		}[planoEntrega.status] 
 		return this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, statusIcon ?? planoEntrega.status )
 	}
