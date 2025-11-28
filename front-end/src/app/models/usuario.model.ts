@@ -19,6 +19,8 @@ import { PlanoTrabalho } from './plano-trabalho.model';
 import { ProgramaParticipante } from './programa-participante.model';
 import { UnidadeIntegrante } from './unidade-integrante.model';
 import { Unidade } from './unidade.model';
+import { TipoModalidadeSiape } from './tipo-modalidade-siape.model';
+
 
 export type UsuarioSituacaoFuncional = "ATIVO_PERMANENTE" |
     "APOSENTADO" |
@@ -156,6 +158,7 @@ export class Usuario extends Base implements HasNotificacao {
     public pedagio: boolean = false;
     public modalidade_pgd: string | null = null; /* Modalidade PGD */
     public participa_pgd: string = 'sim'; /* Participa PGD */
+    public tipo_modalidade_siape?: TipoModalidadeSiape;
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

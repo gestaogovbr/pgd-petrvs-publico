@@ -119,7 +119,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   }
 
   public async loadData(entity: IIndexable, form?: FormGroup | undefined) {
-    if (entity.id) {
+    if (entity && entity.id) {
       this.editando = true;
       let integrantes: IntegranteConsolidado[] = [];
       try {
