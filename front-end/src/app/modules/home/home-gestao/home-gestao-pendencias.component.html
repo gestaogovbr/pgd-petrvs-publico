@@ -21,7 +21,7 @@
                   <div><strong>Período :</strong> {{formatDate(r.data_inicio)}} - {{formatDate(r.data_fim)}}</div>
                   <div><strong>Plano Trabalho: </strong> {{r.plano_trabalho?.numero}}</div>
                 </div>
-                <button class="btn btn-primary btn-sm align-self-start" (click)="abrirConsolidacoes(r.plano_trabalho?.usuario_id, r.plano_trabalho?.unidade_id)">Avaliar</button>
+                <button class="btn btn-primary btn-sm align-self-start" (click)="abrirConsolidacoes(r.plano_trabalho?.usuario_id, r.plano_trabalho?.unidade_id, r.plano_trabalho?.numero)">Avaliar</button>
               </div>
             </li>
           </ul>
@@ -72,7 +72,6 @@
               <div class="d-flex justify-content-between">
                 <div>
                   <div><strong>Plano Entrega:</strong> {{e.plano_entrega?.numero}} - {{e.plano_entrega?.nome}}</div>
-                  <div><strong>Descrição:</strong> {{e.descricao}}</div>
                 </div>
                 <button class="btn btn-primary btn-sm align-self-start" (click)="abrirPlanosEntregas(e.plano_entrega?.nome)">Registrar Execução</button>
               </div>
