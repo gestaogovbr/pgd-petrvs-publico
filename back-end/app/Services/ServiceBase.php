@@ -1005,7 +1005,7 @@ class ServiceBase extends DynamicMethods
    */
   public static function unidadeLotacaoUsuarioLogado(): Unidade
   {
-    return static::loggedUser()->lotacao->unidade;
+    return static::loggedUser()->lotacao?->unidade;
   }
 
   /**
