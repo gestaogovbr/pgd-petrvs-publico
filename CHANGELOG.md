@@ -3,6 +3,10 @@
 - Corrigidos e simplificados os registros de pendências do chefe
 - Corrigida a permissão para alteração de atribuições nos Perfis Master e Negocial
 - Corrigido o acesso do usuário não participante do PGD à tela de Plano de Trabalho
+### Modificado
+- Regras para quem possui mais de uma matrícula: ao trocar de unidade, o sistema passa a escolher a matrícula correta automaticamente, reduzindo erros e evitando duplicidade.
+- Exibição da matrícula ao trocar de unidade ficou mais clara e traz aviso quando a matrícula estiver em processo de inativação.
+- Ajustes nas regras de edição de atribuições para usuários com múltiplas matrículas, deixando o uso mais previsível e consistente com os perfis de acesso.
 ## 2.8.2 24/11/2025
 ### Corrigido
 - Corrigido o problema de exibição da modalidade presencial no plano de trabalho
