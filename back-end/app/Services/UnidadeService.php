@@ -87,10 +87,13 @@ class UnidadeService extends ServiceBase
     public function hora($idOrUnidade)
     {
         $unidade = gettype($idOrUnidade) == "string" ? Unidade::find($idOrUnidade) : $idOrUnidade;
-        $timeZone = $unidade->cidade?->timezone ?? -3;
-        $timezone_abbr = timezone_name_from_abbr("", -3600 * abs($timeZone), 0);
-        $dateTime = new DateTime('now', new DateTimeZone($timezone_abbr));
+        $timeZoneOffset = $unidade->cidade?->timezone ?? -3;
+
+        $calendarioService = new CalendarioService;
+        $timezone = $calendarioService->utcToTimezone($timeZoneOffset);
+        $dateTime = new DateTime('now', new DateTimeZone($timezone));
         $dateTime->setTimestamp($dateTime->getTimestamp());
+
         return ServiceBase::toIso8601($dateTime);
     }
 
@@ -515,7 +518,7 @@ class UnidadeService extends ServiceBase
     {
         $result = [];
         $currentUnit = Unidade::find($unidade_id);
-        
+
         while ($currentUnit) {
             $result[] = $currentUnit->id;
             $currentUnit = $currentUnit->unidadePai;
@@ -707,7 +710,7 @@ class UnidadeService extends ServiceBase
 
     }
 
-   
+
     public function processarUnidadesTemporarias(): void
     {
         $dataLimite = Carbon::now()->subDays(30);
@@ -723,27 +726,27 @@ class UnidadeService extends ServiceBase
         }
 
         $idsInativadas = [];
-        
+
         foreach ($unidadesParaInativar as $unidade) {
             $unidade->data_inativacao = Carbon::now();
             $unidade->save();
-            
+
             $idsInativadas[] = $unidade->id;
-            
+
             $usuariosVinculados = UnidadeIntegrante::where('unidade_id', $unidade->id)
                 ->whereNull('deleted_at')
                 ->get();
-            
+
             foreach ($usuariosVinculados as $integranteUnidade) {
-                $this->LimparAtribuicoes($integranteUnidade, true); 
-                
+                $this->LimparAtribuicoes($integranteUnidade, true);
+
                 Log::info("Atribuições removidas do usuário vinculado à unidade inativada", [
                     'usuario_id' => $integranteUnidade->usuario_id,
                     'unidade_id' => $unidade->id,
                     'unidade_integrante_id' => $integranteUnidade->id
                 ]);
             }
-            
+
             Log::info("Unidade inativada após 30 dias do início da inativação", [
                 'unidade_id' => $unidade->id,
                 'nome' => $unidade->nome,
@@ -774,7 +777,7 @@ class UnidadeService extends ServiceBase
         $unidade->data_inicio_inativacao = Carbon::now();
         $unidade->data_inativacao = null;
         $unidade->save();
-        
+
         return $unidade;
     }
     public function isUnidadeExecutora($unidadeId): bool
@@ -784,5 +787,5 @@ class UnidadeService extends ServiceBase
             ->exists();
     }
 
-    
+
 }
