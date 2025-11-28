@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Facades\SiapeLog;
+use App\Enums\UsuarioSituacaoSiape;
 use App\Models\Entidade;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
@@ -304,6 +305,7 @@ class SiapeIndividualServidorService extends ServiceBase
         // Pode existir mais de um usuário com o mesmo CPF: executa o fluxo para cada um
         $usuarios = Usuario::where('cpf', $cpf)->get();
         if ($usuarios->isEmpty()) {
+            $this->removendoDaBlackList($cpf);
             return;
         }
 
@@ -323,7 +325,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
                 if ($blacklistRegistro) {
                     if ((int)($blacklistRegistro->inativado ?? 0) === 1) {
-                        $usuario->situacao_siape = 'ATIVO';
+                        $usuario->situacao_siape = UsuarioSituacaoSiape::ATIVO->value;
                         $usuario->save();
                         SiapeLog::info('Usuário reativado pela remoção da blacklist (inativado=1)', [
                             'cpf' => $cpf,
@@ -346,6 +348,19 @@ class SiapeIndividualServidorService extends ServiceBase
             $this->removeTodasAsGestoesDoUsuario($usuario);
 
             $this->removeLotacao($usuario);
+        }
+    }
+
+    private function removendoDaBlackList(string $cpf) :void
+    {
+        $blacklistRegistro = SiapeBlackListServidor::where('cpf', $cpf)
+                    ->first();
+
+        if ($blacklistRegistro) {
+            $blacklistRegistro->forceDelete();
+            SiapeLog::info('Registro removido da tabela siape_blacklist_servidores', [
+                'cpf' => $cpf
+            ]);
         }
     }
 

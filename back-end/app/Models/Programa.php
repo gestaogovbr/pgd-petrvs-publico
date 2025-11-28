@@ -66,6 +66,11 @@ class Programa extends ModelBase
     "checklist_avaliacao_entregas_plano_trabalho" => AsJson::class,
   ];
 
+
+  /**
+   * @deprected
+   * Não existe mais seleção de participantes
+   */
   // Has
   public function participantes()
   {
