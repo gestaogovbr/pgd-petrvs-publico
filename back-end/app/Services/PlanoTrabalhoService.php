@@ -12,13 +12,10 @@ use App\Services\ServiceBase;
 use App\Services\CalendarioService;
 use App\Services\UtilService;
 use App\Exceptions\ServerException;
-use App\Exceptions\ValidateException;
 use App\Models\Documento;
 use Illuminate\Support\Facades\DB;
 use App\Models\PlanoTrabalhoConsolidacao;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Programa;
-use App\Models\ProgramaParticipante;
 use App\Models\DocumentoAssinatura;
 use App\Models\PlanoEntregaEntrega;
 use App\Models\TipoModalidade;
@@ -26,7 +23,6 @@ use Carbon\Carbon;
 use DateTime;
 use Throwable;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Builder;
 
 class PlanoTrabalhoService extends ServiceBase
 {
@@ -408,10 +404,6 @@ class PlanoTrabalhoService extends ServiceBase
                     'atribuicao' => Atribuicao::COLABORADOR->value
                 ], $unidade, false);
             }
-            /* (RN_PTR_C) Quando o gestor da Unidade Executora criar o primeiro Plano de Trabalho para um servidor, este tornar-se-á automaticamente um participante habilitado; */
-            $participante = ProgramaParticipante::where('programa_id', $plano->programa_id)->where('usuario_id', $plano->usuario_id)->first() ?? new ProgramaParticipante(['usuario_id' => $plano->usuario_id, 'programa_id' => $plano->programa_id]);
-            $participante->habilitado = true;
-            $participante->save();
         }
     }
 
