@@ -996,8 +996,8 @@ class ServiceBase extends DynamicMethods
   public function dataHora()
   {
     $unidadeId = Session::get('unidade_id') ?? $this->loggedUser()->lotacao?->unidade_id;
-    if (empty($unidadeId)) $unidadeId = Unidade::whereNull("unidade_pai_id")->fisrt()?->id;
-    return $this->unidadeService->hora(Session::get('unidade_id'));
+    if (empty($unidadeId)) $unidadeId = Unidade::whereNull("unidade_pai_id")->first()?->id;
+    return $this->unidadeService->hora($unidadeId);
   }
 
   /**

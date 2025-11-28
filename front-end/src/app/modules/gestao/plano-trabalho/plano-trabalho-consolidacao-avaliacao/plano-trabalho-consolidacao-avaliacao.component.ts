@@ -73,6 +73,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
     this.title = "Avaliações " + this.lex.translate("das Consolidações");
     this.code = "MOD_PTR_CSLD_AVAL";
     this.filter = this.fh.FormBuilder({
+      numero: {default: null},
       usuario_id: {default: null},
       unidade_id: {default: null},
       unidades_subordinadas: {default: false},
@@ -95,6 +96,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
 //    if(form.usuario_id?.length) result.push(["usuario_id", "==", form.usuario_id]);
     if(form.usuario_id?.length) result.push(["plano_trabalho.usuario.id", "==", form.usuario_id]);
     if(form.unidade_id?.length) result.push(["plano_trabalho.unidade.id", "==", form.unidade_id]);
+    if(form.numero) result.push(["plano_trabalho.numero", "==", String(form.numero).trim()]);
     if(form.unidades_subordinadas) result.push(["unidades_subordinadas", "==", true]);
     if(form.incluir_arquivados) result.push(["incluir_arquivados", "==", true]);
     return result;

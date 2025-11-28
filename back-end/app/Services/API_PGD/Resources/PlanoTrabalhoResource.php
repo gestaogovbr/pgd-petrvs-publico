@@ -46,8 +46,6 @@ class PlanoTrabalhoResource extends JsonResource
     function converteStatus($status)
     {
         switch ($status) {
-            case 'CANCELADO':
-                return 1;
             case 'ATIVO':
                 return 3;
             case 'CONCLUIDO':

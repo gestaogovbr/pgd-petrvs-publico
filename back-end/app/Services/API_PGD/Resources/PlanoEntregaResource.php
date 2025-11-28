@@ -32,8 +32,6 @@ class PlanoEntregaResource extends JsonResource
     function getStatus()
     {
         switch ($this->status) {
-            case 'CANCELADO':
-                return 1;
             case 'ATIVO':
                 return 3;
             case 'CONCLUIDO':

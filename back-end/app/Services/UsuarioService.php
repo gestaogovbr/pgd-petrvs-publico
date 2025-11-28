@@ -35,6 +35,7 @@ use App\Services\Siape\Consulta\SiapeUnidadesService;
 use App\Enums\StatusEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use App\Enums\UsuarioSituacaoSiape;
 
 class UsuarioService extends ServiceBase
 {
@@ -572,7 +573,7 @@ class UsuarioService extends ServiceBase
             throw new ValidateException("Usuário não encontrado", 422);
         }
 
-        $usuario->situacao_siape = 'ATIVO_TEMPORARIO';
+        $usuario->situacao_siape = UsuarioSituacaoSiape::ATIVO_TEMPORARIO->value;
         $usuario->justicativa_ativacao_temporaria = $data['justificativa'];
         $usuario->data_ativacao_temporaria = Carbon::now();
         $usuario->perfil_id = $participanteId;
@@ -583,7 +584,9 @@ class UsuarioService extends ServiceBase
     
     public function matriculas($cpf) : Collection
     {
-        $usuarios = Usuario::with('unidades')->where('cpf', $cpf)->get();
+        $usuarios = Usuario::with('unidades')->where('cpf', $cpf)
+        ->where('situacao_siape', '!=', UsuarioSituacaoSiape::INATIVO->value)
+        ->get();
         
         if ($usuarios->isEmpty()) {
             throw new ValidateException("Nenhum usuário encontrado com o CPF informado.", 404);
@@ -600,6 +603,7 @@ class UsuarioService extends ServiceBase
             ->join('usuarios as us', 'us.id', '=', 'ui.usuario_id')
             ->join('unidades_integrantes_atribuicoes as uia', 'ui.id', '=', 'uia.unidade_integrante_id')
             ->where('us.cpf', $cpf)
+            ->where('situacao_siape', '!=', UsuarioSituacaoSiape::INATIVO->value)
             ->whereNull('uia.deleted_at')
             ->distinct()
             ->get();
@@ -624,8 +628,9 @@ class UsuarioService extends ServiceBase
 
       // Registros de execução que precisam ser avaliados
       $registrosExecucao = PlanoTrabalhoConsolidacao::where('status', StatusEnum::CONCLUIDO)
-      ->whereHas('planoTrabalho', function($q) use ($unidadesGerenciadas) {
+      ->whereHas('planoTrabalho', function($q) use ($unidadesGerenciadas, $usuario_id) {
         $q->whereIn('unidade_id', $unidadesGerenciadas->pluck('id'));
+        $q->where('usuario_id', '!=', $usuario_id);
       })->select([
         'planos_trabalhos_consolidacoes.id',
         'planos_trabalhos_consolidacoes.status',
@@ -639,8 +644,9 @@ class UsuarioService extends ServiceBase
 
       // Planos de trabalhos que precisam da assinatura do chefe da unidade
       $planosTrabalhos = PlanoTrabalho::where('status', StatusEnum::AGUARDANDO_ASSINATURA)
-      ->whereHas('unidade', function($q) use ($unidadesGerenciadas) {
+      ->whereHas('unidade', function($q) use ($unidadesGerenciadas, $usuario_id) {
         $q->whereIn('id', $unidadesGerenciadas->pluck('id'));
+        $q->where('usuario_id', '!=', $usuario_id);
       })
       ->select([
         'planos_trabalhos.id',
@@ -654,21 +660,20 @@ class UsuarioService extends ServiceBase
         $q->select(['id','nome']);
       }]);
 
-      // Planos de entregas que precisam ter progressos.
+      // Planos de entregas que precisam ter progressos (agrupados por plano de entrega).
       $entregasSemProgresso = PlanoEntregaEntrega::query()
-      ->whereHas('planoEntrega.unidade', fn($q) => $q->whereIn('id', $unidadesGerenciadas->pluck('id')))
-      ->doesntHave('progressos')
-      ->select([
-          'planos_entregas_entregas.id',
-          'planos_entregas_entregas.descricao',
-          'planos_entregas_entregas.plano_entrega_id'
-      ])
-      ->with([
+        ->whereHas('planoEntrega.unidade', fn($q) => $q->whereIn('id', $unidadesGerenciadas->pluck('id')))
+        ->doesntHave('progressos')
+        ->whereHas('planoEntrega', function($q) {
+          $q->whereNotIn('status', [StatusEnum::SUSPENSO, StatusEnum::CANCELADO]);
+        })
+        ->selectRaw('planos_entregas_entregas.plano_entrega_id, COUNT(*) as total_sem_progresso')
+        ->groupBy('planos_entregas_entregas.plano_entrega_id')
+        ->with([
           'planoEntrega' => function($q) {
-              $q->whereNotIn('status', [StatusEnum::SUSPENSO, StatusEnum::CANCELADO]);
-              $q->select(['id','numero','nome']);
+            $q->select(['id','numero','nome']);
           }
-      ]);
+        ]);
 
       // Planos de entregas que precisam ser avaliados.
       $planosEntregas = PlanoEntrega::where('status', StatusEnum::CONCLUIDO)
