@@ -1,3 +1,8 @@
+## 2.8.3 01/12/2025
+### Corrigido
+- Corrigidos e simplificados os registros de pendências do chefe
+- Corrigida a permissão para alteração de atribuições nos Perfis Master e Negocial
+- Corrigido o acesso do usuário não participante do PGD à tela de Plano de Trabalho
 ## 2.8.2 24/11/2025
 ### Corrigido
 - Corrigido o problema de exibição da modalidade presencial no plano de trabalho
