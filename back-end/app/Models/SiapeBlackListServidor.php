@@ -14,6 +14,7 @@ class SiapeBlackListServidor extends ModelBase
     protected $fillable = [
         'id',
         'cpf',
+        'matricula',
         'response',
         'created_at',
         'updated_at'

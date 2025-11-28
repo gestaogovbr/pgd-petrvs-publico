@@ -24,4 +24,12 @@ export class SiapeBlacklistServidorDaoService extends DaoBaseService<SiapeBlackl
     });
   }
 
+  public queryByCpf(cpf: string): any {
+    return this.server.post('api/SiapeBlacklistServidor/query', {
+      page: 1,
+      limit: 50,
+      where: [["cpf", "==", cpf]]
+    });
+  }
+
 }

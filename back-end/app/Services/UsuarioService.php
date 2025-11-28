@@ -35,6 +35,7 @@ use App\Services\Siape\Consulta\SiapeUnidadesService;
 use App\Enums\StatusEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use App\Enums\UsuarioSituacaoSiape;
 
 class UsuarioService extends ServiceBase
 {
@@ -572,7 +573,7 @@ class UsuarioService extends ServiceBase
             throw new ValidateException("Usuário não encontrado", 422);
         }
 
-        $usuario->situacao_siape = 'ATIVO_TEMPORARIO';
+        $usuario->situacao_siape = UsuarioSituacaoSiape::ATIVO_TEMPORARIO->value;
         $usuario->justicativa_ativacao_temporaria = $data['justificativa'];
         $usuario->data_ativacao_temporaria = Carbon::now();
         $usuario->perfil_id = $participanteId;
@@ -583,7 +584,9 @@ class UsuarioService extends ServiceBase
     
     public function matriculas($cpf) : Collection
     {
-        $usuarios = Usuario::with('unidades')->where('cpf', $cpf)->get();
+        $usuarios = Usuario::with('unidades')->where('cpf', $cpf)
+        ->where('situacao_siape', '!=', UsuarioSituacaoSiape::INATIVO->value)
+        ->get();
         
         if ($usuarios->isEmpty()) {
             throw new ValidateException("Nenhum usuário encontrado com o CPF informado.", 404);
@@ -600,6 +603,7 @@ class UsuarioService extends ServiceBase
             ->join('usuarios as us', 'us.id', '=', 'ui.usuario_id')
             ->join('unidades_integrantes_atribuicoes as uia', 'ui.id', '=', 'uia.unidade_integrante_id')
             ->where('us.cpf', $cpf)
+            ->where('situacao_siape', '!=', UsuarioSituacaoSiape::INATIVO->value)
             ->whereNull('uia.deleted_at')
             ->distinct()
             ->get();
