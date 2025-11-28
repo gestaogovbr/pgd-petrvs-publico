@@ -3,6 +3,7 @@
 - Corrigidos e simplificados os registros de pendências do chefe
 - Corrigida a permissão para alteração de atribuições nos Perfis Master e Negocial
 - Corrigido o acesso do usuário não participante do PGD à tela de Plano de Trabalho
+- Problema em cidades com fuso horário UTC-2
 ### Modificado
 - Regras para quem possui mais de uma matrícula: ao trocar de unidade, o sistema passa a escolher a matrícula correta automaticamente, reduzindo erros e evitando duplicidade.
 - Exibição da matrícula ao trocar de unidade ficou mais clara e traz aviso quando a matrícula estiver em processo de inativação.
