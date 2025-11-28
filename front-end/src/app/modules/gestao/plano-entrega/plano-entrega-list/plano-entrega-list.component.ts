@@ -552,11 +552,13 @@ export class PlanoEntregaListComponent extends PageListBase<
 			if (this.planejamento) status.push('INCLUIDO', 'HOMOLOGANDO', 'ATIVO')
 			if (this.execucao) status.push('ATIVO')
 			if (this.avaliacao) status.push('CONCLUIDO', 'AVALIADO')
-			result.push([
-				"status",
-				"in",
-				form.status ? [form.status] : status,
-			]);
+			if (form.status || !!status.length) {
+				result.push([
+					"status",
+					"in",
+					form.status ? [form.status] : status,
+				]);
+			}
 		}
 
 		//  (RI_PENT_C) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados.
@@ -1340,27 +1342,24 @@ export class PlanoEntregaListComponent extends PageListBase<
 			if (this.planejamento) return "Homologado"
 			return planoEntrega.has_progresso ? "Incluído" : "Aguardando Registro"
 		}
-		// @ts-ignore
-		const statusLabel = {
-			"ATIVO" : ativoLabel(),
-			"CONCLUIDO": isAvaliacao ? "Aguardando Avaliação" : null
-		}[planoEntrega.status];
-		return statusLabel ?? this.lookup.getValue(this.lookup.PLANO_ENTREGA_STATUS, planoEntrega.status)
+		const statusLabelMap: Record<string, string | null | undefined> = {
+			'ATIVO': ativoLabel(),
+			'CONCLUIDO': isAvaliacao ? 'Aguardando Avaliação' : null
+		}
+		return statusLabelMap[planoEntrega.status] ?? this.lookup.getValue(this.lookup.PLANO_ENTREGA_STATUS, planoEntrega.status)
 	}
 
 	protected statusColor(planoEntrega: PlanoEntrega) : string {
-		// @ts-ignore
-		const statusColor = {
+		const statusColorMap: Record<string, string | null | undefined> = {
 			"ATIVO" : planoEntrega.has_progresso || this.planejamento ? "ATIVO" : "INCLUIDO"
-		}[planoEntrega.status] 
-		return this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, statusColor ?? planoEntrega.status)
+		}
+		return this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, statusColorMap[planoEntrega.status] ?? planoEntrega.status)
 	}
 
 	protected statusIcon(planoEntrega: PlanoEntrega) : string {
-		// @ts-ignore
-		const statusIcon = {
+		const statusIconMap: Record<string, string | null | undefined> = {
 			"ATIVO" : planoEntrega.has_progresso || this.planejamento ? "ATIVO" : "HOMOLOGANDO"
-		}[planoEntrega.status] 
-		return this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, statusIcon ?? planoEntrega.status )
+		}
+		return this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, statusIconMap[planoEntrega.status] ?? planoEntrega.status )
 	}
 }

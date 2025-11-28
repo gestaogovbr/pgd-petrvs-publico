@@ -357,7 +357,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       try {
         result = await this.atividadeDao?.save(row, this.joinAtividade, ['etiquetas', 'checklist', 'comentarios', 'pausas', 'tarefas']);
         this.atividadeRefreshId(row.id, result);
-        if (!!result.id) this.refreshList.emit(result);
+        if (!!result && !!result.id) this.refreshList.emit(result);
       } catch (error: any) {
         result = false;
         this.gridAtividades!.error = error.message || error;

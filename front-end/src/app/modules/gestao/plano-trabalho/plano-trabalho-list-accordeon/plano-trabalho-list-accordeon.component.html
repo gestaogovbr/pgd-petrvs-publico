@@ -21,9 +21,6 @@
             <div class="col-md-3">
                 {{dao!.getDateFormatted(item.data_inicio)+" até "+dao!.getDateFormatted(item.data_fim)}}
             </div>
-            <!-- <div class="col-md-2">
-                <badge *ngFor="let badge of getPlanoBadges(item)" [badge]="badge"></badge>
-            </div> -->
             <div class="col-md-2">
                 <badge [label]="lookup.getValue(lookup.PLANO_TRABALHO_STATUS, planoTrabalhoStatus(item))" [icon]="lookup.getIcon(lookup.PLANO_TRABALHO_STATUS, planoTrabalhoStatus(item))" [color]="lookup.getColor(lookup.PLANO_TRABALHO_STATUS, planoTrabalhoStatus(item))"></badge>
             </div>
