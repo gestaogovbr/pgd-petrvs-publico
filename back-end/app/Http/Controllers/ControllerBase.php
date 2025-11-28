@@ -126,14 +126,13 @@ tenancy()->initialize($tenant); */
                 'values' => $this->service->searchText($data)
             ]);
         }  catch (IBaseException $e) {
-
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
         catch (Throwable $e) {
             Log::error('Erro capturado', ['exception' => $e]);
             $dataError = throwableToArrayLog($e);
             //Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
     }
 
@@ -157,12 +156,12 @@ tenancy()->initialize($tenant); */
                 'value' => $this->service->searchKey($data)
             ]);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
     }
 
@@ -186,12 +185,12 @@ tenancy()->initialize($tenant); */
                 'data' => $this->service->getById($data)
             ]);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
     }
 
@@ -218,12 +217,12 @@ tenancy()->initialize($tenant); */
                 'extra' => $result["extra"]
             ]);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
     }
 
@@ -255,12 +254,12 @@ tenancy()->initialize($tenant); */
                 'extra' => $result['extra']
             ]);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
     }
 
@@ -293,12 +292,12 @@ tenancy()->initialize($tenant); */
             ]);
             return response()->json(['success' => true, 'url' => $this->service->downloadUrl($data["file"])]);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
     }
 
@@ -318,12 +317,12 @@ tenancy()->initialize($tenant); */
             ]);
             return response()->json(['success' => $this->service->deleteFile($data["file"])]);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
     }
 
@@ -346,12 +345,12 @@ tenancy()->initialize($tenant); */
             ]);
             return response()->json(['success' => true, 'path' => $this->service->upload($data["path"], $data["name"], $request->has('file') ? $request->file('file') : null)]);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
     }
 
@@ -375,12 +374,12 @@ tenancy()->initialize($tenant); */
             ]);
             return response()->json(['success' => true, 'path' => $this->service->uploadBase64($data["path"], $data["name"], $data["file"])]);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
     }
 
@@ -410,12 +409,12 @@ tenancy()->initialize($tenant); */
             ]);
         }
         catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado.".$e->getMessage()]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado.".$e->getMessage()], 500);
         }
     }
 
@@ -436,7 +435,7 @@ tenancy()->initialize($tenant); */
             ]);
             foreach (array_keys($data["data"]) as $key) {
                 if($key != "id" && !in_array($key, $this->updatable)) {
-                    return response()->json(['error' => "Não é possível atualizar"]);
+                    return response()->json(['error' => "Não é possível atualizar"], 500);
                 }
             }
             $unidade = $this->getUnidade($request);
@@ -451,12 +450,12 @@ tenancy()->initialize($tenant); */
                 'rows' => [$result]
             ]);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
     }
 
@@ -477,7 +476,7 @@ tenancy()->initialize($tenant); */
                 'with' => ['array']
             ]);
             if(!in_array($data["field"], $this->updatable)) {
-                return response()->json(['error' => "Não é possível atualizar"]);
+                return response()->json(['error' => "Não é possível atualizar"], 500);
             }
             $unidade = $this->getUnidade($request);
             $entity = $this->service->updateJson($data, $unidade, !ControllerBase::$sameTransaction);
@@ -490,12 +489,12 @@ tenancy()->initialize($tenant); */
                 'rows' => [$result] //$this->service->update($request->all(), $unidade)
             ]);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
     }
 
@@ -514,12 +513,12 @@ tenancy()->initialize($tenant); */
             ]);
             return response()->json(['success' => $this->service->destroy($data["id"], !ControllerBase::$sameTransaction)]);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
         }
     }
 }
