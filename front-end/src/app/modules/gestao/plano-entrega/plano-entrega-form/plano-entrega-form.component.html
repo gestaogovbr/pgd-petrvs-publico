@@ -2,7 +2,7 @@
     <div>
         <div class="row">
             <input-search #unidade [size]="4" [disabled]="entity?.id ? 'disabled' : undefined" controlName="unidade_id" [dao]="unidadeDao" (change)="onUnidadeChange()" [where]="unidadeWhere" required [selectParams]="{filter: {apenas_chefiadas: true}}"></input-search>
-            <input-search #programa [size]="4" [disabled]="entity?.id ? 'disabled' : undefined" controlName="programa_id" [dao]="programaDao" (change)="onProgramaChange()" required [metadata]="programaMetadata"></input-search>
+            <input-select #programa [size]="4" [label]="lex.translate('Programa de gestão')" icon="bi bi-file-bar-graph" required  [disabled]="entity?.id ? 'disabled' : undefined" controlName="programa_id" (change)="onProgramaChange()"></input-select>
             <input-datetime date [size]="2" label="Início" controlName="data_inicio" [labelInfo]="'Início ' + lex.translate('Plano de Entrega')" (change)="onDataChange()" required></input-datetime>
             <input-datetime date [size]="2" #data_fim label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entrega')" (change)="onDataChange()" required></input-datetime>
         </div>

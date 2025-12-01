@@ -61,7 +61,7 @@ export class PlanoEntregaFormProgressoComponent extends PageFormBase<PlanoEntreg
       result = "Inválido";
     } else if (['registro_execucao'].indexOf(controlName) >= 0 && !(control.value?.length>0)) {
       result = "Obrigatório";
-    } else if (['progresso_realizado'].indexOf(controlName) >= 0 && !(control.value?.length>0)) {
+    } else if (['progresso_realizado'].indexOf(controlName) >= 0 && !(control.value > 0 || control.value?.length>0)) {
       result = "Obrigatório";
     }
 
