@@ -66,12 +66,13 @@ export class InputSelectComponent extends InputBase implements OnInit {
 	@Input() detailsButtonIcon?: string;
 	@Input() searchButton?: string;
 	@Input() searchButtonIcon?: string;
-	@Input() listHeight: number = 200;
-	@Input() prefix?: string;
-	@Input() sufix?: string;
-	@Input() required?: string;
-	@Input() filter?: string[];
-	@Input() orderBy?: QueryOrderBy[];
+  @Input() listHeight: number = 200;
+  @Input() prefix?: string;
+  @Input() sufix?: string;
+  @Input() required?: string;
+  @Input() filter?: string[];
+  @Input() orderBy?: QueryOrderBy[];
+  @Input() itemDisablePredicate?: (item: LookupItem) => boolean;
 	@Input() set where(value: any[] | undefined) {
 		if (JSON.stringify(this._where) != JSON.stringify(value)) {
 			this._where = value;
@@ -243,9 +244,9 @@ export class InputSelectComponent extends InputBase implements OnInit {
 		);
 	}
 
-	public itemIndisponivel(item: LookupItem): boolean {
-		return item.data?.indisponivel || false;
-	}
+  public itemIndisponivel(item: LookupItem): boolean {
+    return (this.itemDisablePredicate ? this.itemDisablePredicate(item) : (item.data?.indisponivel || false));
+  }
 
 	public getSelectItemValue(row: IIndexable): string {
 		return (
@@ -326,9 +327,10 @@ export class InputSelectComponent extends InputBase implements OnInit {
 		}
 	}
 
-	public onItemClick(item: LookupItem) {
-		this.setValue(item.key);
-	}
+  public onItemClick(item: LookupItem) {
+    if (this.itemIndisponivel(item)) return;
+    this.setValue(item.key);
+  }
 
 	public onAddClick(event: Event) {
 		const modalRoute = this.addRoute!;
