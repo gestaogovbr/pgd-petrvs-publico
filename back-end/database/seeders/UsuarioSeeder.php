@@ -147,6 +147,24 @@ class UsuarioSeeder extends Seeder
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
         'is_admin' => true,
+       ],
+       [
+        'email' => 'leon.siqueira@dataprev.gov.br',
+        'nome' => ' Leon Siqueira',
+        'cpf' => '11122233396',
+        'apelido' => 'Leon',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'MASCULINO',
+        'is_admin' => true,
+      ],
+      [
+        'email' => 'lucas.desousa@dataprev.gov.br',
+        'nome' => ' Lucas de Sousa',
+        'cpf' => '00011122285',
+        'apelido' => 'Lucas',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'sexo' => 'MASCULINO',
+        'is_admin' => true,
       ]
     ];
 
