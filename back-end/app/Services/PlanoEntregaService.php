@@ -581,6 +581,11 @@ class PlanoEntregaService extends ServiceBase
         $usuario = Usuario::find(parent::loggedUser()->id);
         $programa = Programa::find($dataOrEntity["programa_id"]);
         $this->validaPermissaoIncluir($dataOrEntity, $usuario);
+        $unidade = Unidade::find($dataOrEntity["unidade_id"]);
+        if(!is_null($unidade?->data_inativacao)){
+            throw new ServerException("ValidatePlanoEntrega", "A unidade está inativa.");
+        }
+       
         if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_EXTRPL')) {
             if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity))
                 throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");
@@ -622,6 +627,10 @@ class PlanoEntregaService extends ServiceBase
             $this->verificaContribuicoesEntregas($dataOrEntity["entregas"]);
         }
         if ($action == ServiceBase::ACTION_INSERT) {
+            /* Só é permitido o cadastro de planos em unidades definidas como executoras */
+            if(!$this->unidadeService->isUnidadeExecutora($dataOrEntity["unidade_id"])){
+                throw new ValidateException("Não é possível criar um plano para unidades não executoras.", 422);
+            }
             $planosComPendencias = $this->planosUnidadeComPendencias($dataOrEntity["unidade_id"]);
             if ($planosComPendencias) {
                 throw new ServerException("ValidatePlanoEntrega", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");

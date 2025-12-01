@@ -155,18 +155,35 @@ export abstract class PageBase implements OnInit, ModalPage {
     };
 
     
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = Array.from(tooltipTriggerList).map(tooltipTriggerEl => {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = Array.from(tooltipTriggerList).map((tooltipTriggerEl: Element) => {
+      if (!(tooltipTriggerEl instanceof HTMLElement)) return null;
+
       const tooltip = new bootstrap.Tooltip(tooltipTriggerEl, {
         trigger: 'manual'
       });
 
-      tooltipTriggerEl.addEventListener('mouseenter', () => tooltip.show());
-      tooltipTriggerEl.addEventListener('mouseleave', () => tooltip.hide());
-      tooltipTriggerEl.addEventListener('click', () => tooltip.hide());
+      const isVisible = (el: HTMLElement) => {
+        if (!document.body.contains(el)) return false;
+        const style = window.getComputedStyle(el);
+        return style.display !== 'none' && style.visibility !== 'hidden';
+      };
 
+      const safeShow = () => {
+        try {
+          if (isVisible(tooltipTriggerEl)) tooltip.show();
+        } catch (_) { /* no-op */ }
+      };
+      const safeHide = () => {
+        try { tooltip.hide(); } catch (_) { /* no-op */ }
+      };
+
+      tooltipTriggerEl.addEventListener('mouseenter', safeShow);
+      tooltipTriggerEl.addEventListener('mouseleave', safeHide);
+      tooltipTriggerEl.addEventListener('click', safeHide);
       return tooltip;
-    });
+    }).filter(Boolean as any);
+
 
     this.cdRef.detectChanges();
     this.viewInit = true;

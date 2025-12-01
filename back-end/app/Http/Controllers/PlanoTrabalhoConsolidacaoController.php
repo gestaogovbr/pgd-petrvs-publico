@@ -52,10 +52,11 @@ class PlanoTrabalhoConsolidacaoController extends ControllerBase {
             $this->checkPermissions('CONC', $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'id' => ['required'],
+                'justificativa_conclusao' => ['nullable', 'string'],
             ]);
             return response()->json([
                 'success' => true,
-                'dados' => $this->service->concluir($data["id"])
+                'dados' => $this->service->concluir($data["id"], $data["justificativa_conclusao"])
             ]);
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
@@ -87,4 +88,40 @@ class PlanoTrabalhoConsolidacaoController extends ControllerBase {
         }
     }
 
+    public function pendenciasUsuario(Request $request) {
+        try {
+            $this->checkPermissions('QUERY', $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
+            return response()->json([
+                'success' => true,
+                'dados' => $this->service->pendenciasUsuario($this->getUsuario($request)->id)
+            ]);
+        }  catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+        }
+    }
+
+    public function inconsistencias(Request $request) {
+        try {
+            $this->checkPermissions('QUERY', $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
+            $data = $request->validate([
+                'usuario_id' => ['nullable', 'string'],
+            ]);
+            return response()->json([
+                'success' => true,
+                'dados' => $this->service->detectarInconsistencias($data['usuario_id'] ?? null)
+            ]);
+        }  catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+        }
+    }
 }

@@ -14,6 +14,7 @@ class ExampleTest extends TestCase
      */
     public function test_example()
     {
+        $this->withoutMiddleware();
         $response = $this->get('/');
 
         $response->assertStatus(200);

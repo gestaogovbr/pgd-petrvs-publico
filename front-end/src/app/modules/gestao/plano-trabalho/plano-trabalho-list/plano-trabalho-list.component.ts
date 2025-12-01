@@ -101,6 +101,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		this.code = "MOD_PTR";
 		this.filter = this.fh.FormBuilder(
 			{
+				numero: {default: ""},
 				agrupar: {default: true},
 				subordinadas: { default: false },
 				lotados_minha_unidade: {default: false},
@@ -130,7 +131,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			"entregas.entrega",
 			"entregas.reacoes.usuario:id,nome,apelido",
             "unidade.entidade:id,sigla",
-            "unidade:id,sigla,entidade_id,unidade_pai_id",
+            "unidade:id,sigla,entidade_id,unidade_pai_id,data_inativacao",
             "usuario:id,nome,matricula,url_foto",
 		];
 		const INCLUIR_SUBSTITUTO = true;
@@ -218,7 +219,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 				)).bind(this),
 		};
 		this.BOTAO_CONSOLIDACOES = {
-			label: "Consolidações",
+			label: "Registro de execução",
 			icon: this.entityService.getIcon("PlanoTrabalhoConsolidacao"),
 			onClick: ((row: PlanoTrabalho) =>
 				this.go.navigate(
@@ -398,6 +399,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 
 	public filterClear(filter: FormGroup) {
 		filter.controls.usuario.setValue("");
+		filter.controls.numero.setValue("");
 		filter.controls.unidade_id.setValue(null);
 		filter.controls.status.setValue(null);
 		filter.controls.arquivados.setValue(false);
@@ -430,6 +432,9 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 				"like",
 				"%" + form.usuario.trim().replace(" ", "%") + "%",
 			]);
+	
+		if (form.numero)
+			result.push(["numero", "==", String(form.numero).trim()]);
 
 		if (this.filter?.controls.meus_planos.value) {
 			let w1: [string, string, string[]] = ["unidade_id", "in", (this.auth.unidades || []).map(u => u.id)];
@@ -475,6 +480,8 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 
 		if(this.grid) this.grid.groupBy = this.groupBy;
 
+		console.log(result);
+		
 		return result;
 	};
 
@@ -758,11 +765,13 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 					case this.BOTAO_TERMOS:
 						return this.auth.hasPermissionTo("MOD_PTR");
 					case this.BOTAO_CONSOLIDACOES:
-						return true;
+						return planoAtivo;
 					case this.OPTION_LOGS:
 						return true;
 					case this.BOTAO_CLONAR:
-						return (!planoAguardandoAssinatura) && this.auth.hasPermissionTo("MOD_PTR_INCL");
+						const inativacao = (planoTrabalho.unidade?.data_inativacao as any);
+						const unidadeAtiva = inativacao === null || inativacao === undefined || inativacao === "";
+						return unidadeAtiva && (!planoAguardandoAssinatura) && this.auth.hasPermissionTo("MOD_PTR_INCL");
 				}
 			}
 		}

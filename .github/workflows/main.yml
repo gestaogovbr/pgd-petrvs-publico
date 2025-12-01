@@ -43,8 +43,8 @@ jobs:
         env:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
           DOCKER_HUB_TAG_LATEST: latest
-          DOCKER_HUB_TAG_NEW: 2.7.7
-          DOCKER_HUB_TAG_OLD: 2.7.6
+          DOCKER_HUB_TAG_NEW: 2.8.2
+          DOCKER_HUB_TAG_OLD: 2.8.1
           DOCKER_HUB_USERNAME: segescginf
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
           DEPLOY_PATH: ./
@@ -112,7 +112,7 @@ jobs:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs-develop
           DOCKER_HUB_TAG: dsv
           SSH_USER: root
-          SSH_HOST: 200.152.38.137
+          SSH_HOST: 200.152.47.207
           SSH_PORT: 7223
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_DSV }}
           DEPLOY_PATH: ./
@@ -160,7 +160,7 @@ jobs:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs-develop
           DOCKER_HUB_TAG: hmg
           SSH_USER: root
-          SSH_HOST: 200.152.38.137
+          SSH_HOST: 200.152.47.207
           SSH_PORT: 7222
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_HMG }}
           DEPLOY_PATH: ./
@@ -209,7 +209,7 @@ jobs:
           DOCKER_HUB_IMAGE: segescginf/pgdpetrvs-develop
           DOCKER_HUB_TAG: treina
           SSH_USER: root
-          SSH_HOST: 200.152.38.137
+          SSH_HOST: 200.152.47.207
           SSH_PORT: 7228
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_TREINA }}
           DEPLOY_PATH: ./

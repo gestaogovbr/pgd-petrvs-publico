@@ -43,6 +43,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   public form: FormGroup;
   public maxPE: Number | undefined;
   public programaMetadata: ProgramaMetadata;
+  public unidadeWhere:any;
 
 
   constructor(public injector: Injector) {
@@ -79,6 +80,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       todosUnidadeExecutora: false,      
       vigentesUnidadeExecutora: true
     }  
+    this.unidadeWhere = [['executora', '==', true],['apenas_chefiadas','==',true]];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {

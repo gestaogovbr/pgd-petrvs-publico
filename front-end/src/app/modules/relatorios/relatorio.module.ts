@@ -7,19 +7,30 @@ import { RelatorioAgenteComponent } from './relatorio-agente/relatorio-agente.co
 import { RelatorioUnidadeComponent } from './relatorio-unidade/relatorio-unidade.component';
 import { RelatorioPlanoTrabalhoComponent } from './relatorio-plano-trabalho/relatorio-plano-trabalho.component';
 import { RelatorioPlanoEntregaComponent } from './relatorio-plano-entrega/relatorio-plano-entrega.component';
+import { IndicadorEquipeComponent } from './indicadores-equipes/indicadores-equipes.component';
+import { IndicadorGestaoComponent } from './indicadores-gestao/indicadores-gestao.component';
+import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { IndicadorEntregaComponent } from './indicadores-entrega/indicadores-entrega.component';
 
 @NgModule({
   declarations: [
     RelatorioPlanoTrabalhoComponent,
     RelatorioPlanoEntregaComponent,
     RelatorioAgenteComponent,
-    RelatorioUnidadeComponent
+    RelatorioUnidadeComponent,
+    IndicadorEquipeComponent,
+    IndicadorGestaoComponent,
+    IndicadorEntregaComponent
   ],
   imports: [
     CommonModule,
     ComponentsModule,
+    BaseChartDirective,
     ReactiveFormsModule,
-    RelatorioRoutingModule,
+    RelatorioRoutingModule
+  ],
+  providers: [
+    provideCharts(withDefaultRegisterables())
   ]
 })
 

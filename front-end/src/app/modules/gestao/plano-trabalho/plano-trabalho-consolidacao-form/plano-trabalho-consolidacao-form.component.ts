@@ -289,7 +289,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       plano_trabalho_entrega: entrega,
       plano_trabalho_consolidacao: this.entity,
       demandante: this.auth.usuario,
-      usuario: this.auth.usuario,
+      usuario: planoTrabalho!.usuario,
       unidade: this.unidade,
       data_distribuicao: dataInicio,
       carga_horaria: planoTrabalho!.carga_horaria,
@@ -304,7 +304,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       plano_trabalho_entrega_id: entrega.id,
       plano_trabalho_consolidacao_id: this.entity!.id,
       demandante_id: this.auth.usuario!.id,
-      usuario_id: this.auth.usuario!.id,
+      usuario_id: planoTrabalho!.usuario!.id,
       unidade_id: this.unidade!.id,
       metadados: { // Simula os metadados enviados pelo servidor
         atrasado: false,

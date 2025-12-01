@@ -11,8 +11,6 @@ use App\Services\NivelAcessoService;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 use ZipArchive;
-use OwenIt\Auditing\Auditable;
-use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Response;
 
@@ -114,7 +112,8 @@ class UsuarioController extends ControllerBase
 
             foreach ($retornos as $index => $retorno) {
                 $tempFile = tempnam(sys_get_temp_dir(), 'xml');
-                file_put_contents($tempFile, $retorno->asXML());
+                $xmlContent = $this->normalizaParaXmlString($retorno);
+                file_put_contents($tempFile, $xmlContent);
                 $zip->addFile($tempFile, "arquivo_{$index}.xml");
             }
 
@@ -134,6 +133,43 @@ class UsuarioController extends ControllerBase
             file_put_contents($tempFile, $mensagemErro, FILE_APPEND);
 
             return response()->download($tempFile, $nomeArquivo)->deleteFileAfterSend(true);
+        }
+    }
+
+    private function normalizaParaXmlString($data): string
+    {
+        try {
+            if ($data instanceof \SimpleXMLElement) {
+                return $data->asXML();
+            }
+
+            if (is_array($data)) {
+                $xml = new \SimpleXMLElement('<out/>');
+                $this->arrayParaXml($data, $xml);
+                return $xml->asXML();
+            }
+
+            if (is_string($data)) {
+                return $data;
+            }
+
+            return json_encode($data, JSON_UNESCAPED_UNICODE);
+        } catch (\Throwable $e) {
+            report($e);
+            return '<out><error>Falha ao converter dados para XML</error></out>';
+        }
+    }
+
+    private function arrayParaXml(array $data, \SimpleXMLElement $xml): void
+    {
+        foreach ($data as $key => $value) {
+            $tag = is_numeric($key) ? 'item' : preg_replace('/[^a-zA-Z0-9_\-]/', '', (string) $key);
+            if (is_array($value)) {
+                $child = $xml->addChild($tag);
+                $this->arrayParaXml($value, $child);
+            } else {
+                $xml->addChild($tag, htmlspecialchars((string) $value));
+            }
         }
     }
 
@@ -264,6 +300,24 @@ class UsuarioController extends ControllerBase
             return response()->json([
                 'success' => true,
                 'unidades' => $unidades
+            ]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        } catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo " . $dataError['code'] . ": Ocorreu um erro inesperado."]);
+        }
+    }
+
+    public function pendenciasChefe(Request $request)
+    {
+        try {
+            $pendencias = $this->service->pendenciasChefe();
+
+            return response()->json([
+                'success' => true,
+                'pendencias' => $pendencias
             ]);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
