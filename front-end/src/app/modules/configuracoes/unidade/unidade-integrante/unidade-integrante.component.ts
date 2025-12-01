@@ -103,6 +103,25 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     return perfil?.perfil?.nome;
   }
 
+  public disablePerfilItemUnidade(row: any, item: { key: any, value: string, data?: any }): boolean {
+    const nivelLogado = this.auth.usuario?.perfil?.nivel ?? 6;
+    const nivelItem = item?.data?.nivel ?? undefined;
+    if (typeof nivelItem === 'number') {
+      return nivelItem < nivelLogado;
+    }
+    return false;
+  }
+
+  public desabilitaSelectPerfilUnidade(row: any): boolean {
+    const nivelLogado = this.auth.usuario?.perfil?.nivel ?? 6;
+    const usuarioEditando = this.perfis.find(p => p.id === row.id);
+    const nivelEditando = usuarioEditando?.perfil?.nivel;
+    if (typeof nivelEditando === 'number') {
+      return nivelEditando < nivelLogado;
+    }
+    return false;
+  }
+
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
     if (["usuario_id", "atribuicoes"].includes(controlName) && !control.value?.length) result = "Obrigatório";

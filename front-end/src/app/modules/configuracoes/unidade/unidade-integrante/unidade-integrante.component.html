@@ -67,7 +67,7 @@
         <badge color="gray" [label]="getPerfil(row.id) || ''"></badge><br>
       </ng-template>
       <ng-template let-row="row" #editPerfil>
-        <input-select [size]="12" [label]="lex.translate('Perfil')" controlName="perfil_id" [dao]="perfilDao" [where]="[['nivel', '>=', !row?.usuario_externo ? 0 : 6]]" required></input-select>
+        <input-select [size]="12" [label]="lex.translate('Perfil')" controlName="perfil_id" [dao]="perfilDao" [fullEntity]="'true'" [itemDisablePredicate]="disablePerfilItemUnidade.bind(this, row)" [disabled]="desabilitaSelectPerfilUnidade(row) ? 'true' : undefined" required></input-select>
       </ng-template>
     </column>
     <column type="options"></column>
