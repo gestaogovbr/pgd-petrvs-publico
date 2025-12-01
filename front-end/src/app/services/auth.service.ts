@@ -180,6 +180,7 @@ export class AuthService {
       this.notificacao.updateNaoLidas();
       this.popularMatriculasUsuario();
       this.setUnidadesVinculadas();
+      if (this.app && this.usuario?.cpf) this.app.consultarBlacklistCpf(this.usuario.cpf);
     } else {
       this.usuario = undefined;
       this.kind = undefined;

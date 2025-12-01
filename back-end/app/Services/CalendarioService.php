@@ -11,6 +11,7 @@ use DateTime;
 use DateTimeZone;
 use Exception;
 use Throwable;
+use InvalidArgumentException;
 
 class Interval
 {
@@ -426,11 +427,11 @@ class CalendarioService
 
   @param  DateTime         $inicio        Data e hora de inicio
   @param  (data | número)  $fimOuTempo    Se a intenção for calcular a dataFim então será passado o tempo.
-                                          Se for passada uma data, então será calculado o tempo. 
+                                          Se for passada uma data, então será calculado o tempo.
       O tempo é calculado da seguinte forma:
       1) Se forma for DIAS, então será sempre um mútiplo de cargaHoraria (dias = fimOuTempo / cargaHoraria)
       2) Se forma for HORAS, será as horas em forma decimal
-  @param  string           $forma         Forma de contagem dos prazos (dias/horas - úteis/corridos)      
+  @param  string           $forma         Forma de contagem dos prazos (dias/horas - úteis/corridos)
   @param  int | null       $cargaHoraria  Carga horária que será considerada para os cálculos
   @param  Expediente       $expediente    Expediente que será utilizado para os cálculos. Não obrigatório caso seja dias/horas corridas.
   @param  array | null     $feriados      Lista dos feriados, quando aplicável
@@ -517,7 +518,7 @@ class CalendarioService
         'intervalos' => [new Interval(['start' => 0, 'end' => 0])]
       ]);
       if ($expediente) {
-        $diaIso = $dDiaAtual->format('Y-m-d');        
+        $diaIso = $dDiaAtual->format('Y-m-d');
         $especial = array_filter($expediente->especial, function (Turno $x) use (&$diaIso) {
           if (is_string($x->data)) {
               $data = DateTime::createFromFormat('Y-m-d H:i:s', $x->data);
@@ -527,8 +528,8 @@ class CalendarioService
           } else if ($x->data instanceof DateTime) {
               $data = $x->data;
           } else {
-              return false; 
-          }      
+              return false;
+          }
           return $data->format('Y-m-d') == $diaIso;
         });
         $turnos = [...$expediente->$diaSemana, ...array_filter($especial, function ($x) {
@@ -572,7 +573,7 @@ class CalendarioService
             array_filter($dia->intervalos, function (Interval $x) use (&$dia) {
               return $x->start <= $dia->tFim && $x->end >= $dia->tInicio; }),
           );
-          /* Calcula as horas dos intervalos (os intervalos já estão unificados e ajustados para dentro do expediente) 
+          /* Calcula as horas dos intervalos (os intervalos já estão unificados e ajustados para dentro do expediente)
           dia.hNaoUteis = dia.intervalo.reduce((a, v) => a + this.util.getHoursBetween(v.start, v.end), 0); */
         } else { /* Caso no dia não tenha nenhum turno ou horario especial com expediente */
           $dia->tInicio = 0;
@@ -709,4 +710,92 @@ class CalendarioService
     return $result;
   }
 
+  function utcToTimezone(int $utcOffset): string
+  {
+    switch ($utcOffset) {
+        case -12:
+            return 'Etc/GMT+12';
+
+        case -11:
+            return 'Pacific/Niue';
+
+        case -10:
+            return 'Pacific/Honolulu';
+
+        case -9:
+            return 'America/Anchorage';
+
+        case -8:
+            return 'America/Los_Angeles';
+
+        case -7:
+            return 'America/Denver';
+
+        case -6:
+            return 'America/Mexico_City';
+
+        case -5:
+            return 'America/New_York';
+
+        case -4:
+            return 'America/Manaus';
+
+        case -3:
+            return 'America/Sao_Paulo';
+
+        case -2:
+            return 'America/Noronha';
+
+        case -1:
+            return 'Atlantic/Cape_Verde';
+
+        case 0:
+            return 'Etc/UTC';
+
+        case 1:
+            return 'Europe/Berlin';
+
+        case 2:
+            return 'Europe/Athens';
+
+        case 3:
+            return 'Europe/Moscow';
+
+        case 4:
+            return 'Asia/Dubai';
+
+        case 5:
+            return 'Asia/Karachi';
+
+        case 6:
+            return 'Asia/Dhaka';
+
+        case 7:
+            return 'Asia/Bangkok';
+
+        case 8:
+            return 'Asia/Shanghai';
+
+        case 9:
+            return 'Asia/Tokyo';
+
+        case 10:
+            return 'Australia/Sydney';
+
+        case 11:
+            return 'Pacific/Guadalcanal';
+
+        case 12:
+            return 'Pacific/Auckland';
+
+        case 13:
+            return 'Pacific/Tongatapu';
+
+        case 14:
+            return 'Pacific/Kiritimati';
+
+        default:
+            throw new InvalidArgumentException("UTC offset inválido: {$utcOffset}");
+    }
+  }
 }
