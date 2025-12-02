@@ -593,7 +593,6 @@ class UnidadeService extends ServiceBase
         if ($this->hasBuffer("gestoresUnidadeSuperior", $unidadeId)) {
             return $this->getBuffer("gestoresUnidadeSuperior", $unidadeId);
         } else {
-            // Primeiro busca apenas o ID da unidade superior para reduzir payload
             $unidadeSupId = Unidade::query()
                 ->select('unidade_pai_id')
                 ->find($unidadeId)?->unidade_pai_id;
@@ -606,7 +605,6 @@ class UnidadeService extends ServiceBase
                 ]);
             }
 
-            // Carrega a unidade superior com relações necessárias já em eager load para evitar N+1
             $unidadeSup = Unidade::with([
                 'gestor.usuario',
                 'gestoresSubstitutos.usuario',
@@ -655,35 +653,49 @@ class UnidadeService extends ServiceBase
             return []; // garante que não será null
         }
 
+        $unidade->loadMissing([
+            'gestor' => fn($q) => $q->select('id', 'usuario_id', 'unidade_id'),
+            'gestoresSubstitutos' => fn($q) => $q->select('id', 'usuario_id', 'unidade_id'),
+            'gestoresDelegados' => fn($q) => $q->select('id', 'usuario_id', 'unidade_id'),
+            'unidadePai.gestor' => fn($q) => $q->select('id', 'usuario_id', 'unidade_id'),
+            'unidadePai.gestoresSubstitutos' => fn($q) => $q->select('id', 'usuario_id', 'unidade_id'),
+        ]);
+
+        $gestorTitularId = $unidade->gestor?->usuario_id;
+        $substitutosIds   = $unidade->gestoresSubstitutos?->pluck('usuario_id')->all() ?? [];
+        $delegadosIds     = $unidade->gestoresDelegados?->pluck('usuario_id')->all() ?? [];
+        $paiGestorId      = $unidade->unidadePai?->gestor?->usuario_id;
+        $paiSubstitutosIds = $unidade->unidadePai?->gestoresSubstitutos?->pluck('usuario_id')->all() ?? [];
+
         $atribuicoes = $this->usuarioService->atribuicoesGestor($unidade->id, $usuarioId);
 
         if ($atribuicoes["gestor"]) {
             return array_values(array_filter([
-                $unidade->unidadePai?->gestor?->usuario_id,
-                ...($unidade->unidadePai?->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? [])
+                $paiGestorId,
+                ...$paiSubstitutosIds
             ]));
         }
 
         if ($atribuicoes["gestorSubstituto"]) {
             return array_values(array_filter(array_merge(
-                [$unidade->gestor?->usuario_id, $unidade->unidadePai?->gestor?->usuario_id],
-                $unidade->unidadePai?->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? [],
-                $unidade->gestoresSubstitutos?->reject(fn($g) => $g->usuario_id == $participanteId)->pluck('usuario_id')->toArray() ?? []
+                [$gestorTitularId, $paiGestorId],
+                $paiSubstitutosIds,
+                array_values(array_filter($substitutosIds, fn($id) => $id != $participanteId))
             )));
         }
 
         if ($atribuicoes["gestorDelegado"]) {
             return array_values(array_filter(array_merge(
-                [$unidade->gestor?->usuario_id],
-                $unidade->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? []
+                [$gestorTitularId],
+                $substitutosIds
             )));
         }
 
         // Se o usuário não é gestor, substituto ou delegado, retorna somente o gestor titular e os substitutos
 
         $gestores = array_values(array_filter(array_merge(
-            [$unidade->gestor?->usuario_id],
-            $unidade->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? []
+            [$gestorTitularId],
+            $substitutosIds
         )));
 
         if (count($gestores) > 0) {
@@ -691,8 +703,8 @@ class UnidadeService extends ServiceBase
         } else {
             // Se não houver gestores, retorna o gestor da unidade superior
             return array_values(array_filter([
-                $unidade->unidadePai?->gestor?->usuario_id,
-                ...($unidade->unidadePai?->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? [])
+                $paiGestorId,
+                ...$paiSubstitutosIds
             ]));
         }
     }
