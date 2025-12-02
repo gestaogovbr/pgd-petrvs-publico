@@ -337,7 +337,7 @@ class UnidadeService extends ServiceBase
             $atribuicoes = UnidadeIntegrante::select("unidade_id")
                 ->where('usuario_id', $usuario->id)
                 ->whereHas('atribuicoes', function($query) {
-                    $query->whereIn('atribuicao', [EnumsAtribuicao::GESTOR,EnumsAtribuicao::GESTOR_SUBSTITUTO, EnumsAtribuicao::DELEGADO]);
+                    $query->whereIn('atribuicao', [EnumsAtribuicao::GESTOR->value,EnumsAtribuicao::GESTOR_SUBSTITUTO->value, EnumsAtribuicao::DELEGADO->value]);
                 })
                 ->whereNull('deleted_at')
                 ->pluck('unidade_id')

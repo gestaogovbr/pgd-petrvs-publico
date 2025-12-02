@@ -297,7 +297,7 @@ class PlanoEntregaService extends ServiceBase
         if(empty($planoEntrega)){
             throw new ValidateException("Plano de Entrega não encontrado!");
         }
-        if($planoEntrega->status != PlanoEntregaStatus::ATIVO){
+        if($planoEntrega->status != PlanoEntregaStatus::ATIVO->value){
             throw new ValidateException("Plano de Entrega não está ativo!");
         }
         $entregas = $planoEntrega->entregas;
@@ -318,7 +318,7 @@ class PlanoEntregaService extends ServiceBase
     public function emCurso(PlanoEntrega $plano): bool
     {
         $planoEntrega = !empty($plano['id']) ? PlanoEntrega::find($plano['id']) : $plano;
-        return empty($plano['id']) ? false : ($this->isPlanoEntregaValido($plano) && $planoEntrega->status == PlanoEntregaStatus::ATIVO);
+        return empty($plano['id']) ? false : ($this->isPlanoEntregaValido($plano) && $planoEntrega->status == PlanoEntregaStatus::ATIVO->value);
     }
 
     public function homologar($data, $unidade)
