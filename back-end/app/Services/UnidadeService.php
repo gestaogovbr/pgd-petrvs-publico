@@ -593,11 +593,30 @@ class UnidadeService extends ServiceBase
         if ($this->hasBuffer("gestoresUnidadeSuperior", $unidadeId)) {
             return $this->getBuffer("gestoresUnidadeSuperior", $unidadeId);
         } else {
-            $unidadeSup = Unidade::find($unidadeId)?->unidadePai;
+            // Primeiro busca apenas o ID da unidade superior para reduzir payload
+            $unidadeSupId = Unidade::query()
+                ->select('unidade_pai_id')
+                ->find($unidadeId)?->unidade_pai_id;
+
+            if (empty($unidadeSupId)) {
+                return $this->setBuffer("gestoresUnidadeSuperior", $unidadeId, [
+                    "gestor" => null,
+                    "gestoresSubstitutos" => [],
+                    "gestoresDelegados" => [],
+                ]);
+            }
+
+            // Carrega a unidade superior com relações necessárias já em eager load para evitar N+1
+            $unidadeSup = Unidade::with([
+                'gestor.usuario',
+                'gestoresSubstitutos.usuario',
+                'gestoresDelegados.usuario',
+            ])->find($unidadeSupId);
+
             return $this->setBuffer("gestoresUnidadeSuperior", $unidadeId, [
                 "gestor" => $unidadeSup?->gestor?->usuario,
                 "gestoresSubstitutos" => $unidadeSup?->gestoresSubstitutos->map(fn($x) => $x->usuario)->toArray() ?? [],
-                "gestoresDelegados" => $unidadeSup?->gestoresDelegados->map(fn($x) => $x->usuario)->toArray() ?? []
+                "gestoresDelegados" => $unidadeSup?->gestoresDelegados->map(fn($x) => $x->usuario)->toArray() ?? [],
             ]);
         }
     }
