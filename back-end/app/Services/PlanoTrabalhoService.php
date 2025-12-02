@@ -1138,21 +1138,27 @@ class PlanoTrabalhoService extends ServiceBase
             ];
             return $ids;
         }
+        $requirePart = (bool) $programa->plano_trabalho_assinatura_participante;
+        $requireGestEnt = (bool) $programa->plano_trabalho_assinatura_gestor_entidade;
+        $requireGestUnid = (bool) $programa->plano_trabalho_assinatura_gestor_unidade;
 
-        $entidade = $unidade->entidade;
-
-        if ($programa->plano_trabalho_assinatura_participante) {
+        if ($requirePart) {
             $ids["participante"][] = $participante->id;
         }
 
-        if ($programa->plano_trabalho_assinatura_gestor_entidade && $entidade) {
-            $ids["gestores_entidade"] = array_values(array_filter([
-                $entidade->gestor_id,
-                $entidade->gestor_substituto_id
-            ]));
+        if ($requireGestEnt) {
+            $unidade->loadMissing(['entidade' => function ($q) {
+                $q->select('id', 'gestor_id', 'gestor_substituto_id');
+            }]);
+            if ($unidade->entidade) {
+                $ids["gestores_entidade"] = array_values(array_filter([
+                    $unidade->entidade->gestor_id,
+                    $unidade->entidade->gestor_substituto_id
+                ]));
+            }
         }
 
-        if ($programa->plano_trabalho_assinatura_gestor_unidade) {
+        if ($requireGestUnid) {
             $ids["gestores_unidade_executora"] = $this->unidadeService->getGestoresPorUnidade(
                 $unidade,
                 $planoTrabalho['usuario_id'],
