@@ -23,6 +23,7 @@ use Carbon\Carbon;
 use App\Services\Siape\ProcessaDadosSiapeBD;
 use App\Exceptions\ErrorDataSiapeFaultCodeException;
 use App\Exceptions\ValidateException;
+use Illuminate\Support\Facades\Session;
 
 class UnidadeService extends ServiceBase
 {
@@ -86,15 +87,22 @@ class UnidadeService extends ServiceBase
 
     public function hora($idOrUnidade)
     {
-        $unidade = gettype($idOrUnidade) == "string" ? Unidade::find($idOrUnidade) : $idOrUnidade;
+        $key = gettype($idOrUnidade) == "string" ? $idOrUnidade : $idOrUnidade->id;
+        if (Session::has($key)) {
+            return Session::get($key);
+        }
+        
+
+        $unidade = gettype($idOrUnidade) == "string" ? Unidade::find($idOrUnidade)->with("cidade") : $idOrUnidade;
         $timeZoneOffset = $unidade->cidade?->timezone ?? -3;
 
         $calendarioService = new CalendarioService;
         $timezone = $calendarioService->utcToTimezone($timeZoneOffset);
         $dateTime = new DateTime('now', new DateTimeZone($timezone));
         $dateTime->setTimestamp($dateTime->getTimestamp());
-
-        return ServiceBase::toIso8601($dateTime);
+        $result = ServiceBase::toIso8601($dateTime);
+        Session::put($key, $result);
+        return $result;
     }
 
     public function inativar($id, $inativo)
@@ -402,15 +410,15 @@ class UnidadeService extends ServiceBase
         $unidade = null;
 
         if (!empty($unidadeId)) {
-            $unidade = Unidade::find($unidadeId);
+            $unidade = Unidade::query()->setEagerLoads([])->find($unidadeId);
             if ($unidade) {
                 $unidades = Unidade::whereIn("id", array_filter(explode('/', $unidade->path), fn($x) => $x != ""))->get()->toArray();
                 $this->obterIrmaosRecursivamente($unidade, $irmaos);
             }
         } else {
-            $unidade = Unidade::where('unidade_pai_id', null)->first();
+            $unidade = Unidade::query()->setEagerLoads([])->where('unidade_pai_id', null)->first();
             if ($unidade) {
-                $unidades = Unidade::whereIn("id", array_filter(explode('/', $unidade->path), fn($x) => $x != ""))->get();
+                $unidades = Unidade::query()->setEagerLoads([])->whereIn("id", array_filter(explode('/', $unidade->path), fn($x) => $x != ""))->get();
                 $unidades = $unidades->toArray();
                 $unidades[] = $unidade;
             }
@@ -428,7 +436,7 @@ class UnidadeService extends ServiceBase
     public function subordinadas($id)
     {
 
-        $unidade = Unidade::findOrFail($id);
+        $unidade = Unidade::query()->setEagerLoads([])->findOrFail($id);
 
         if (!$unidade) {
             throw new NotFoundException("Unidade não encontrada");
@@ -436,7 +444,7 @@ class UnidadeService extends ServiceBase
 
         // Obtém todas as unidades subordinadas de forma recursiva
         $subordinadas = collect(); // Inicializa uma Collection vazia
-        $filhas = Unidade::where('unidade_pai_id', $id)->get(); // Obtém as unidades filhas diretas
+        $filhas = Unidade::query()->setEagerLoads([])->where('unidade_pai_id', $id)->get(); // Obtém as unidades filhas diretas
 
         foreach ($filhas as $filha) {
             $subordinadas->push($filha); // Adiciona a unidade filha à lista
@@ -452,7 +460,7 @@ class UnidadeService extends ServiceBase
     private function buscarSubordinadasRecursivamente($unidade)
     {
         $subordinadas = collect();
-        $filhas = Unidade::where('unidade_pai_id', $unidade->id)->get();
+        $filhas = Unidade::query()->setEagerLoads([])->where('unidade_pai_id', $unidade->id)->get();
 
         foreach ($filhas as $filha) {
             $subordinadas->push($filha);
@@ -517,11 +525,14 @@ class UnidadeService extends ServiceBase
     public function linhaAscendente($unidade_id): array
     {
         $result = [];
-        $currentUnit = Unidade::find($unidade_id);
+        // Raw DB traversal to ignore any model-level eager loads or mutators
+        $current = DB::table('unidades')->select('id', 'unidade_pai_id')->where('id', $unidade_id)->first();
 
-        while ($currentUnit) {
-            $result[] = $currentUnit->id;
-            $currentUnit = $currentUnit->unidadePai;
+        while ($current) {
+            $result[] = $current->id;
+            $current = $current->unidade_pai_id
+                ? DB::table('unidades')->select('id', 'unidade_pai_id')->where('id', $current->unidade_pai_id)->first()
+                : null;
         }
 
         return array_reverse($result);
