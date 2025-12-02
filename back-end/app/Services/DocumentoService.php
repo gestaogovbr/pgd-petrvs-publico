@@ -12,6 +12,7 @@ use App\Exceptions\ServerException;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\App;
 use App\Services\UtilService;
+use Illuminate\Database\Eloquent\Builder;
 
 
 use Throwable;
@@ -96,6 +97,57 @@ class DocumentoService extends ServiceBase {
         $pdf = Pdf::loadHTML($head . $documento->conteudo . $assinaturas);        
         $pdf->render();
         return $pdf->output();
+    }
+
+    public function proxyQuery($query, &$data) {
+        $where = [];
+        $unidade_id = null;
+        $subordinadas = false;
+        $usuario = parent::loggedUser();
+        foreach($data["where"] as $condition) {
+            if(is_array($condition) && $condition[0] == "unidade_id") {
+                $unidade_id = $condition[2];
+            } else if(is_array($condition) && $condition[0] == "unidades_subordinadas") {
+                $subordinadas = $condition[2];
+            } else if(is_array($condition) && $condition[0] == "numero_processo") {
+                $query->whereRaw("JSON_CONTAINS(link, ?, '$.numero_processo')", [$condition[2]]);
+            } else {
+                array_push($where, $condition);
+            }
+        }
+        $data["where"] = $this->prefixWhere($where, "Documento");
+        $unidades_ids = [];
+        if(!empty($unidade_id)) {
+            array_push($unidades_ids, $unidade_id);
+        } else if(!empty($usuario)) {
+            foreach($usuario->areasTrabalho as $lotacao) {
+                array_push($unidades_ids, $lotacao->unidade_id);
+            }
+        }
+        if(count($unidades_ids) > 0) {
+            $query->where(function($q) use ($unidades_ids, $subordinadas) {
+                $q->whereHas('atividade.unidade', function (Builder $q2) use ($unidades_ids, $subordinadas) {
+                    $q2->where(function($q3) use ($unidades_ids, $subordinadas) {
+                        $q3->whereIn('id', $unidades_ids);
+                        if($subordinadas) {
+                            foreach($unidades_ids as $unidade) {
+                                $q3->orWhere('path', 'like', "%/$unidade%");
+                            }
+                        }
+                    });
+                })
+                ->orWhereHas('planoTrabalho.unidade', function (Builder $q2) use ($unidades_ids, $subordinadas) {
+                    $q2->where(function($q3) use ($unidades_ids, $subordinadas) {
+                        $q3->whereIn('id', $unidades_ids);
+                        if($subordinadas) {
+                            foreach($unidades_ids as $unidade) {
+                                $q3->orWhere('path', 'like', "%/$unidade%");
+                            }
+                        }
+                    });
+                });
+            });
+        }
     }
 
 }
