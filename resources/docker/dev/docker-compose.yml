@@ -9,6 +9,7 @@ services:
     volumes:
       - ../mariadb:/var/lib/mysql
       - ./my.cnf:/etc/mysql/my.cnf
+      - ../../../back-end/storage/logs:/var/www/storage/logs
     environment:
       MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
       MYSQL_USER: petrvs
