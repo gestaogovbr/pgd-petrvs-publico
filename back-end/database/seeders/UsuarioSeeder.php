@@ -68,15 +68,6 @@ class UsuarioSeeder extends Seeder
         'is_admin' => true,
       ],
       [
-        'email' => 'marco.coelho@firstbps.com.br',
-        'nome' => 'Marco Coelho',
-        'cpf' => '03400125954',
-        'apelido' => 'Marco',
-        'perfil_id' => $perfilDesenvolvedorId,
-        'sexo' => 'MASCULINO',
-        'is_admin' => true,
-      ],
-      [
         'email' => 'juliane.perini@mds.gov.br',
         'nome' => 'Juliane Helriguel de Melo Perini',
         'cpf' => '78232848120',
@@ -101,15 +92,6 @@ class UsuarioSeeder extends Seeder
         'apelido' => 'Bruno',
         'perfil_id' => $perfilDesenvolvedorId,
         'sexo' => 'MASCULINO',
-        'is_admin' => true,
-      ],
-      [
-        'email' => 'keilla.oliveira@gestao.gov.br',
-        'nome' => 'Keilla Terumi Nishi de Oliveira',
-        'cpf' => '01837409129',
-        'apelido' => 'Keilla',
-        'perfil_id' => $perfilDesenvolvedorId,
-        'sexo' => 'FEMININO',
         'is_admin' => true,
       ],
       [
