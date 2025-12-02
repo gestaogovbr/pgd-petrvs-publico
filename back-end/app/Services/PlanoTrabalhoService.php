@@ -934,8 +934,24 @@ class PlanoTrabalhoService extends ServiceBase
      */
     public function isPlanoTrabalhoValido($plano): bool
     {
-        $planoTrabalho = !empty($plano['id']) ? PlanoTrabalho::withTrashed()->where('id', $plano['id'])->first() : $plano;
-        return empty($plano['id']) ? false : (!$planoTrabalho->trashed() && !$plano['data_arquivamento'] && $planoTrabalho->status != 'CANCELADO');
+        if (empty($plano['id'])) {
+            return false;
+        }
+
+        // Cache by plano id to avoid repeated DB hits within the request lifecycle
+        $cacheKey = $plano['id'];
+        if ($this->hasBuffer('isPlanoTrabalhoValido', $cacheKey)) {
+            return $this->getBuffer('isPlanoTrabalhoValido', $cacheKey);
+        }
+
+        // Fetch minimal fields needed for validation
+        $planoTrabalho = PlanoTrabalho::withTrashed()
+            ->select(['id', 'deleted_at', 'status'])
+            ->where('id', $plano['id'])
+            ->first();
+
+        $isValid = (!$planoTrabalho->trashed() && !$plano['data_arquivamento'] && $planoTrabalho->status != 'CANCELADO');
+        return $this->setBuffer('isPlanoTrabalhoValido', $cacheKey, $isValid);
     }
 
     /**
