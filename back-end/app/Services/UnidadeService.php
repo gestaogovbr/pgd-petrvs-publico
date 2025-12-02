@@ -25,11 +25,12 @@ use App\Exceptions\ErrorDataSiapeFaultCodeException;
 use App\Exceptions\ValidateException;
 use Illuminate\Support\Facades\Session;
 
+
 class UnidadeService extends ServiceBase
 {
 
     use DadosExternosSiape, Atribuicao;
-
+    public static $CACHE_LINHA_ASCENDENTE = [];
 
     public function validateStore($data, $unidade, $action)
     {
@@ -524,9 +525,9 @@ class UnidadeService extends ServiceBase
      */
     public function linhaAscendente($unidade_id): array
     {
-        static $cache = [];
-        if (array_key_exists($unidade_id, $cache)) {
-            return $cache[$unidade_id];
+        
+        if (array_key_exists($unidade_id, self::$CACHE_LINHA_ASCENDENTE)) {
+            return self::$CACHE_LINHA_ASCENDENTE[$unidade_id];
         }
 
         $result = [];
@@ -540,7 +541,7 @@ class UnidadeService extends ServiceBase
         }
 
         $result = array_reverse($result);
-        $cache[$unidade_id] = $result;
+        self::$CACHE_LINHA_ASCENDENTE[$unidade_id] = $result;
         return $result;
     }
 

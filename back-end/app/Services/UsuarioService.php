@@ -36,6 +36,7 @@ use App\Enums\StatusEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use App\Enums\UsuarioSituacaoSiape;
+use App\Services\UnidadeService;
 
 class UsuarioService extends ServiceBase
 {
@@ -332,6 +333,21 @@ class UsuarioService extends ServiceBase
     $this->validarColaborador($data);
     return $data;
   }
+
+  public function proxyRows(&$rows)
+  {
+    foreach ($rows as $row) {
+      $row["regramentos"] = $this->proxyRegramentos($row);
+    }
+    return $rows;
+  }
+
+  public function proxyRegramentos($row){
+        $unidadeService = new UnidadeService();
+        return $row["lotacao"]
+            ? array_map(fn($p) => $p["nome"], $unidadeService->regramentosAscendentes($row["lotacao"]->unidade_id))
+            : [];
+    }
 
   /**
    * Este método impede que um usuário seja inserido com e-mail/CPF já existentes no Banco de Dados, bem como
