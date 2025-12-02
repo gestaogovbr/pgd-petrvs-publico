@@ -1014,18 +1014,28 @@ class ServiceBase extends DynamicMethods
   public function applyWith(&$entity, &$data)
   {
     $data['with'] = $this->getCamelWith($data['with']);
-    //$model = $this->getModel();
+    $withArray = [];
     foreach ($data['with'] as $key => $with) {
-      $withs = explode('.', $with);
-      $last = array_slice($withs, -1, 1)[0];
-      if (str_contains($last, ':')) {   // se o último elemento contiver campos...
-        $entity->with(gettype($key) == "string" ? [$key => $with] : $with);  // aplica o método 'with' normalmente nele...
-        array_splice($withs, -1, 1, explode(':', $last)[0]);   // depois retira os : e os campos
+      $relationWithFields = gettype($key) == 'string' ? $key : $with;
+      $parts = explode(':', $relationWithFields, 2);
+      $relationPath = $parts[0];
+      $fields = isset($parts[1]) && strlen($parts[1]) ? array_map('trim', explode(',', $parts[1])) : null;
+
+      if ($fields && count($fields)) {
+        $relatedModel = $this->getNestedModel($this->getModel(), $relationPath);
+        if ($relatedModel) {
+          $primaryKey = $relatedModel->getKeyName();
+          if (!in_array($primaryKey, $fields)) $fields[] = $primaryKey;
+        }
+        $withArray[$relationPath] = function ($q) use ($fields) {
+          $q->select($fields);
+        };
+      } else {
+        $withArray[] = $relationPath;
       }
-      while (count($withs) > 0) {
-        $entity->with(implode('.', $withs));
-        array_pop($withs);
-      }
+    }
+    if (!empty($withArray)) {
+      $entity->with($withArray);
     }
   }
 
