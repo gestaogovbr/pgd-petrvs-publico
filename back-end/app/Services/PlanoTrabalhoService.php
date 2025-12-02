@@ -962,8 +962,24 @@ class PlanoTrabalhoService extends ServiceBase
      */
     public function isPlano($status, $plano): bool
     {
-        $planoTrabalho = !empty($plano['id']) ? PlanoTrabalho::withTrashed()->find($plano['id']) : $plano;
-        return empty($plano['id']) ? false : ($this->isPlanoTrabalhoValido($plano) && $planoTrabalho->status == $status);
+        if (empty($plano['id'])) {
+            return false;
+        }
+
+        // Cache by plano id to avoid repeated DB hits within the request lifecycle
+        $cacheKey = $plano['id'];
+        if ($this->hasBuffer('isPlano', $cacheKey)) {
+            return $this->getBuffer('isPlano', $cacheKey);
+        }
+
+        // Fetch minimal fields needed for validation
+        $planoTrabalho = PlanoTrabalho::withTrashed()
+            ->select(['id', 'status'])
+            ->where('id', $plano['id'])
+            ->first();
+
+        $isValid = $this->isPlanoTrabalhoValido($plano) && $planoTrabalho->status == $status;
+        return $this->setBuffer('isPlano', $cacheKey, $isValid);
     }
 
     public function arquivar($data, $unidade)
@@ -1123,7 +1139,6 @@ class PlanoTrabalhoService extends ServiceBase
             return $ids;
         }
 
-        $lotacao = $participante->lotacao?->unidade;
         $entidade = $unidade->entidade;
 
         if ($programa->plano_trabalho_assinatura_participante) {
