@@ -524,8 +524,12 @@ class UnidadeService extends ServiceBase
      */
     public function linhaAscendente($unidade_id): array
     {
+        static $cache = [];
+        if (array_key_exists($unidade_id, $cache)) {
+            return $cache[$unidade_id];
+        }
+
         $result = [];
-        // Raw DB traversal to ignore any model-level eager loads or mutators
         $current = DB::table('unidades')->select('id', 'unidade_pai_id')->where('id', $unidade_id)->first();
 
         while ($current) {
@@ -535,7 +539,9 @@ class UnidadeService extends ServiceBase
                 : null;
         }
 
-        return array_reverse($result);
+        $result = array_reverse($result);
+        $cache[$unidade_id] = $result;
+        return $result;
     }
 
     /**
