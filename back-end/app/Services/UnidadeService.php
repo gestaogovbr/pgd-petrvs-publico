@@ -88,13 +88,15 @@ class UnidadeService extends ServiceBase
 
     public function hora($idOrUnidade)
     {
-        $key = gettype($idOrUnidade) == "string" ? $idOrUnidade : $idOrUnidade->id;
+        $key = is_string($idOrUnidade) ? $idOrUnidade : $idOrUnidade->id;
         if (Session::has($key)) {
             return Session::get($key);
         }
         
-
-        $unidade = gettype($idOrUnidade) == "string" ? Unidade::find($idOrUnidade)->with("cidade") : $idOrUnidade;
+        
+        $unidade = is_string($idOrUnidade)
+            ? Unidade::with('cidade')->find($idOrUnidade)
+            : ($idOrUnidade?->load('cidade'));
         $timeZoneOffset = $unidade->cidade?->timezone ?? -3;
 
         $calendarioService = new CalendarioService;
