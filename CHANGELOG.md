@@ -1,3 +1,6 @@
+## 2.9.0 03/12/2025
+### Modificado
+
 ## 2.8.3 01/12/2025
 ### Corrigido
 - Corrigidos e simplificados os registros de pendências do chefe
