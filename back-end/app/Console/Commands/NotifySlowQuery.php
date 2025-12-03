@@ -47,6 +47,8 @@ class NotifySlowQuery extends Command
         $notification = NotificationFactory::make('slow_query', [
             'sql' => preg_replace('/\s+/', ' ', trim((string)($lastData['sql'] ?? ''))),
             'time_ms' => (int)($lastData['time_ms'] ?? 0),
+            'tenant' => $lastData['tenant'] ?? null,
+            'file' => $lastData['file'] ?? null,
         ]);
 
         if (!$notification instanceof SlowQueryNotificacao) {
