@@ -136,18 +136,39 @@ class DatabaseTuningServiceProvider extends ServiceProvider
     private function resolveSourceFile(): ?string
     {
         $frames = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        foreach ($frames as $frame) {
-            $file = $frame['file'] ?? null;
-            if (!$file) {
-                continue;
+        $self = __FILE__;
+        $isAppFile = function (?string $file) use ($self): bool {
+            if (!$file) return false;
+            if (str_contains($file, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR)) return false;
+            if (str_contains($file, DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR)) return false;
+            if ($file === $self) return false;
+            if (str_contains($file, DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Providers' . DIRECTORY_SEPARATOR)) return false;
+            return true;
+        };
+
+        $idx = null;
+        for ($i = 0; $i < count($frames); $i++) {
+            $class = $frames[$i]['class'] ?? '';
+            $func = $frames[$i]['function'] ?? '';
+            $file = $frames[$i]['file'] ?? '';
+            if (str_contains($class, 'Illuminate\\Database\\Connection') && in_array($func, ['run','select','statement','insert','update'])) {
+                $idx = $i; break;
             }
-            if (str_contains($file, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR)) {
-                continue;
+            if (str_contains($class, 'PDOStatement') && $func === 'execute') {
+                $idx = $i; break;
             }
-            if (str_contains($file, DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR)) {
-                continue;
+        }
+
+        if ($idx !== null) {
+            for ($j = $idx + 1; $j < count($frames); $j++) {
+                $file = $frames[$j]['file'] ?? null;
+                if ($isAppFile($file)) return $file;
             }
-            return $file;
+        }
+
+        for ($i = count($frames) - 1; $i >= 0; $i--) {
+            $file = $frames[$i]['file'] ?? null;
+            if ($isAppFile($file)) return $file;
         }
         return null;
     }
