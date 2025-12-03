@@ -73,7 +73,7 @@ services:
   petrvs_scheduler:
     <<: *petrvs_base
     container_name: petrvs_scheduler
-    command: > 
+    command: >
       /bin/sh -c "while :; do php /var/www/artisan schedule:run >> /var/www/storage/logs/scheduler.log 2>&1; sleep 60; done"
     depends_on:
       - petrvs_php

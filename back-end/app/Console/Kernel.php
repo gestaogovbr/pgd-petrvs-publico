@@ -20,6 +20,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\InativaUnidadesTemporarios::class,
         \App\Console\Commands\SlowLogCheck::class,
         \App\Console\Commands\NotifySlowQuery::class,
+        \App\Console\Commands\SlowLogWatch::class,
     ];
 
     protected function commands()
