@@ -966,8 +966,8 @@ class PlanoTrabalhoService extends ServiceBase
             return false;
         }
 
-        // Cache by plano id to avoid repeated DB hits within the request lifecycle
-        $cacheKey = $plano['id'];
+        // Cache by plano id and status to avoid repeated DB hits within the request lifecycle
+        $cacheKey = $plano['id'] . $status;
         if ($this->hasBuffer('isPlano', $cacheKey)) {
             return $this->getBuffer('isPlano', $cacheKey);
         }
