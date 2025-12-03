@@ -132,7 +132,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
     return this.form!.controls[controlName] as FormControl;
   }
 
-  public error = (error: any) => {
+  public error = (error: any, prependMessage?: string) => {
     if (this.editableForm) {
       if (typeof error === 'object' && error !== null && 'validationErrors' in error && error.validationErrors) {
         this.editableForm.error = "";  
@@ -143,7 +143,21 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
           }
         });
       } else {
-        this.editableForm.error = typeof error === 'string' ? error : 'Ocorreu um erro desconhecido';
+
+        let errorMessage: string = 'Ocorreu um erro desconhecido';
+        
+        if (typeof error === 'string') {
+          errorMessage = error;
+        } else {
+          if (typeof error === 'object' && 'message' in error) {
+            errorMessage = error.message;
+          }
+        }
+
+        if (prependMessage) { 
+          errorMessage = prependMessage + ':' + errorMessage;
+        }
+        this.editableForm.error = errorMessage;
         console.error(error);
       }
     }
