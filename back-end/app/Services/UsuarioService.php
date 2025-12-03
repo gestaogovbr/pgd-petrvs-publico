@@ -36,6 +36,7 @@ use App\Enums\StatusEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use App\Enums\UsuarioSituacaoSiape;
+use App\Services\UnidadeService;
 
 class UsuarioService extends ServiceBase
 {
@@ -192,8 +193,14 @@ class UsuarioService extends ServiceBase
     if ($this->hasBuffer("isIntegrante", $key)) {
       $result = $this->getBuffer("isIntegrante", $key);
     } else {
-      $unidadesIntegrantesIds = UnidadeIntegrante::select('id')->where("unidade_id", $unidadeId)->where("usuario_id", isset($usuarioId) ? $usuarioId : parent::loggedUser()->id)->get()->map(fn($x) => $x->id);
-      $result = $this->setBuffer("isIntegrante", $key, count($unidadesIntegrantesIds) > 0 && UnidadeIntegranteAtribuicao::where("atribuicao", $atribuicao)->whereIn("unidade_integrante_id", $unidadesIntegrantesIds)->exists());
+      $uid = $usuarioId ?? parent::loggedUser()->id;
+      $exists = UnidadeIntegranteAtribuicao::where('atribuicao', $atribuicao)
+        ->whereHas('vinculo', function ($q) use ($unidadeId, $uid) {
+          $q->where('unidade_id', $unidadeId)
+            ->where('usuario_id', $uid);
+        })
+        ->exists();
+      $result = $this->setBuffer("isIntegrante", $key, $exists);
     }
     return $result;
   }
@@ -332,6 +339,21 @@ class UsuarioService extends ServiceBase
     $this->validarColaborador($data);
     return $data;
   }
+
+  public function proxyRows(&$rows)
+  {
+    foreach ($rows as $row) {
+      $row["regramentos"] = $this->proxyRegramentos($row);
+    }
+    return $rows;
+  }
+
+  public function proxyRegramentos($row){
+        $unidadeService = new UnidadeService();
+        return $row["lotacao"]
+            ? array_map(fn($p) => $p["nome"], $unidadeService->regramentosAscendentes($row["lotacao"]->unidade_id))
+            : [];
+    }
 
   /**
    * Este método impede que um usuário seja inserido com e-mail/CPF já existentes no Banco de Dados, bem como
