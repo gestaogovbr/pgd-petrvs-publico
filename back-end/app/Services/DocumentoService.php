@@ -12,6 +12,7 @@ use App\Exceptions\ServerException;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\App;
 use App\Services\UtilService;
+use Illuminate\Database\Eloquent\Builder;
 
 
 use Throwable;
