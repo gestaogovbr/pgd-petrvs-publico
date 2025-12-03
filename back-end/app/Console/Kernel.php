@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\InativaUsuarioSiape::class,
         \App\Console\Commands\InativaUnidadesSiape::class,
         \App\Console\Commands\InativaUnidadesTemporarios::class,
+        \App\Console\Commands\SlowLogCheck::class,
     ];
 
     protected function commands()
