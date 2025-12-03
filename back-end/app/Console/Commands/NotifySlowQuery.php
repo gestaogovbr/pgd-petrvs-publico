@@ -61,4 +61,3 @@ class NotifySlowQuery extends Command
         return 0;
     }
 }
-
