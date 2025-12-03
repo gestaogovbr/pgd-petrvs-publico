@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Notification;
+use App\Factories\NotificationFactory;
 use function extension_loaded;
 use function function_exists;
 use function stream_set_blocking;
@@ -56,8 +58,36 @@ class SlowLogWatch extends Command
 
     private function notify(): void
     {
-        Artisan::call('db:slow-log:notify');
-        $this->line(trim(Artisan::output()));
+        $path = storage_path('logs/mysql-slow.log');
+        $lines = @file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
+        $lastData = null;
+        for ($i = count($lines) - 1; $i >= 0; $i--) {
+            $trim = ltrim($lines[$i]);
+            if ($trim === '' || str_starts_with($trim, 'mariadbd,') || str_starts_with($trim, '#')) {
+                continue;
+            }
+            $data = json_decode($trim, true);
+            if (is_array($data) && isset($data['sql'])) {
+                $lastData = $data;
+                break;
+            }
+        }
+        if (!$lastData) {
+            Artisan::call('db:slow-log:notify');
+            $this->line(trim(Artisan::output()));
+            return;
+        }
+        $notification = NotificationFactory::make('slow_query', [
+            'sql' => preg_replace('/\s+/', ' ', trim((string)($lastData['sql'] ?? ''))),
+            'time_ms' => (int)($lastData['time_ms'] ?? 0),
+            'tenant' => $lastData['tenant'] ?? null,
+            'file' => $lastData['file'] ?? null,
+        ]);
+        if ($notification) {
+            Notification::route('microsoftTeams', config('services.microsoft_teams.coges_url'))
+                ->notify($notification);
+            $this->line('Notificação enviada ao Microsoft Teams.');
+        }
     }
 
     private function watchInotify(string $path, int $interval): void

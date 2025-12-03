@@ -119,7 +119,37 @@ class DatabaseTuningServiceProvider extends ServiceProvider
             'time_ms' => $timeMs,
             'sql' => $event->sql,
             'bindings' => $event->bindings,
+            'tenant' => $this->resolveTenantId(),
+            'file' => $this->resolveSourceFile(),
         ];
+    }
+
+    private function resolveTenantId(): ?string
+    {
+        try {
+            return function_exists('tenant') ? tenant('id') : null;
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    private function resolveSourceFile(): ?string
+    {
+        $frames = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        foreach ($frames as $frame) {
+            $file = $frame['file'] ?? null;
+            if (!$file) {
+                continue;
+            }
+            if (str_contains($file, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR)) {
+                continue;
+            }
+            if (str_contains($file, DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR)) {
+                continue;
+            }
+            return $file;
+        }
+        return null;
     }
 
     private function attachExplainIfApplicable(array &$entry, QueryExecuted $event, bool $logExplain): void

@@ -28,6 +28,8 @@ class SlowQueryNotificacao extends Notification
     {
         $sql = (string)($this->data['sql'] ?? '');
         $timeMs = (int)($this->data['time_ms'] ?? 0);
+        $tenant = (string)($this->data['tenant'] ?? '');
+        $file = (string)($this->data['file'] ?? '');
 
         return MicrosoftTeamsAdaptiveCard::create()
             ->to(config('services.microsoft_teams.coges_url'))
@@ -46,6 +48,14 @@ class SlowQueryNotificacao extends Notification
                     ->setSpacing('Large')
                     ->setSeparator(true),
                 TextBlock::create()
+                    ->setText('Tenant: ' . ($tenant !== '' ? $tenant : '(nulo)'))
+                    ->setSpacing('Medium')
+                    ->setSeparator(true),
+                TextBlock::create()
+                    ->setText('Arquivo: ' . ($file !== '' ? $file : '(nulo)'))
+                    ->setSpacing('Medium')
+                    ->setSeparator(true),
+                TextBlock::create()
                     ->setText('Query:')
                     ->setWeight('Bolder')
                     ->setSpacing('Medium'),
@@ -58,4 +68,3 @@ class SlowQueryNotificacao extends Notification
             ]);
     }
 }
-
