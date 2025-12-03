@@ -9,6 +9,7 @@ services:
     volumes:
       - ../mariadb:/var/lib/mysql
       - ./my.cnf:/etc/mysql/my.cnf
+      - ../../../back-end/storage/logs:/var/www/storage/logs
     environment:
       MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
       MYSQL_USER: petrvs
@@ -58,7 +59,7 @@ services:
   petrvs_queue:
     <<: *petrvs_base
     container_name: petrvs_queue
-    command: ["supervisord", "-c", "/etc/supervisor/conf.d/horizon.conf"]
+    command: ["/bin/bash", "-c", "mkdir -p /var/www/storage/logs && touch /var/www/storage/logs/mysql-slow.log && chmod 660 /var/www/storage/logs/mysql-slow.log && supervisord -c /etc/supervisor/conf.d/horizon.conf"]
     deploy:
       resources:
         limits:
@@ -72,7 +73,7 @@ services:
   petrvs_scheduler:
     <<: *petrvs_base
     container_name: petrvs_scheduler
-    command: > 
+    command: >
       /bin/sh -c "while :; do php /var/www/artisan schedule:run >> /var/www/storage/logs/scheduler.log 2>&1; sleep 60; done"
     depends_on:
       - petrvs_php

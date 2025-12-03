@@ -28,7 +28,7 @@ class Unidade extends ModelBase
 
     protected $table = 'unidades';
 
-    protected $with = ['cidade','gestor', 'gestoresSubstitutos'];
+    protected $with = ['gestor', 'gestoresSubstitutos'];
 
     protected $keyType = 'string';
 
