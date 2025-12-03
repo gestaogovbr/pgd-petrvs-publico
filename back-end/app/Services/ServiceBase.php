@@ -647,7 +647,8 @@ class ServiceBase extends DynamicMethods
     }
     $query->where('id', $data['id']);
     $query = is_subclass_of(get_class($model), "App\Models\ModelBase") ? $query->withTrashed() : $query;
-    $rows = method_exists($this, 'proxyRows') ? $this->proxyRows($query->get()) : $query->get();
+    $rows = $query->get();
+    $rows = method_exists($this, 'proxyRows') ? $this->proxyRows($rows) : $rows;
     if (count($rows) == 1) {
       return $rows[0];
     } else {
