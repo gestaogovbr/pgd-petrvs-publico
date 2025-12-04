@@ -517,7 +517,6 @@ export class AppComponent {
 
   public menuItemClass(baseClass: string, item: any) {
     let routeUrl = this.go.getRouteUrl().replace(/^\//, "");
-    if (item.menu?.find((x: any) => !x)) console.log(item);
     return baseClass + (item.route?.join("/") == routeUrl || item.menu?.find((x: any) => x?.route?.join("/") == routeUrl) ? " fw-bold" : "");
   }
 
@@ -604,12 +603,10 @@ export class AppComponent {
   }
 
   public hasBlacklistResponse(): boolean {
-    console.log(this.siapeBlacklistRows);
     return this.siapeBlacklistRows.length > 0;
   }
 
   public hasSpecificMatriculas(): boolean {
-    console.log(this.siapeBlacklistMatriculas);
     return this.siapeBlacklistMatriculas.length > 0;
   }
 

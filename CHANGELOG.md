@@ -1,3 +1,9 @@
+## 2.9.0 03/12/2025
+### Modificado
+- Melhorias significativas em desempenho das queries e adição de cache para otimização de performance
+### Adicionado
+- Monitoramento do desempenho das queries
+- Notificação de performance das queries
 ## 2.8.3 01/12/2025
 ### Corrigido
 - Corrigidos e simplificados os registros de pendências do chefe
