@@ -550,7 +550,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 		} else if (form.status || this.avaliacao || this.planejamento || this.execucao) {
 			const status : string[] = []
 			if (this.planejamento) status.push('INCLUIDO', 'HOMOLOGANDO', 'ATIVO')
-			if (this.execucao) status.push('ATIVO')
+			if (this.execucao) status.push('ATIVO', 'CONCLUIDO')
 			if (this.avaliacao) status.push('CONCLUIDO', 'AVALIADO')
 			if (form.status || !!status.length) {
 				result.push([
