@@ -546,7 +546,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 		if (form.cadeia_valor_id)
 			result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
 		if (this.isModal) {
-			result.push(["status", "==", "ATIVO"]);
+			result.push(["status", "in", ["ATIVO", "CONCLUIDO", "AVALIADO"]]);
 		} else if (form.status || this.avaliacao || this.planejamento || this.execucao) {
 			const status : string[] = []
 			if (this.planejamento) status.push('INCLUIDO', 'HOMOLOGANDO', 'ATIVO')
