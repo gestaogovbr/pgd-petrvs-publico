@@ -304,8 +304,6 @@ class PlanoTrabalhoService extends ServiceBase
             */
             if (!$condicoes['planoValido'])
                 throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho não é válido, ou seja, foi apagado, cancelado ou arquivado.\n[ver RN_PTR_M]");
-            if (($condicoes['planoIncluido'] || $condicoes['planoAguardandoAssinatura']))
-                throw new ServerException("ValidateUsuario", "Para alterar um plano de trabalho no status INCLUIDO ou AGUARDANDO_ASSINATURA, o usuário logado precisa atender os critérios da ação Alterar da [PTR:TABELA_1].\n[ver RN_PTR_M]");
             if ($condicoes['planoAtivo'] && (!$usuario->hasPermissionTo('MOD_PTR_EDT_ATV')))
                 throw new ServerException("ValidateUsuario", "Para alterar um plano de trabalho no status ATIVO, o usuário logado precisa atender os critérios da ação Alterar da TABELA_1 e possuir a capacidade específica (MOD_PTR_EDT_ATV).\n[ver RN_PTR_M]");
             $plano = PlanoTrabalho::find($data["id"]);
