@@ -88,5 +88,5 @@ RUN chmod a+x /root/setup_production.sh && \
 
 # Garantir existência do mysql-slow.log com permissão correta
 RUN mkdir -p /var/www/storage/logs && \
-    touch /var/www/storage/logs/mysql-slow.log && \
-    chmod 660 /var/www/storage/logs/mysql-slow.log
+    touch /var/www/storage/logs/$(date +%d-%m-%Y)-mysql-slow.log && \
+    chmod 777 /var/www/storage/logs/*-mysql-slow.log
