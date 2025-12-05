@@ -15,9 +15,9 @@ echo "Puxando novas imagens..."
 # Puxar novas imagens
 docker-compose pull
 
-echo "Reiniciando containers em modo detached..."
-# Reiniciar containers em modo detached
-docker-compose up -d
+echo "Reiniciando containers em modo detached (forcando rebuild)..."
+# Reiniciar containers com rebuild para aplicar mudancas de Dockerfile/Imagem
+docker-compose up -d --build
 
 echo "Copiando o .env para o container..."
 # Copia o .env para container

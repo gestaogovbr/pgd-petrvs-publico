@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1
 FROM php:8.2-apache
+ARG ELASTIC_APM_ENABLED=false
 
 # Instalar recursos adicionais
 RUN apt-get update && apt-get install -y \
@@ -10,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     unzip \
     curl \
+    ca-certificates \
     libcurl4-openssl-dev \
     openssl \
     libssl-dev \
@@ -33,6 +35,22 @@ RUN docker-php-ext-install openssl || true && \
 # Instalar extensões via PECL
 RUN pecl install redis inotify && \
     docker-php-ext-enable redis inotify
+
+RUN curl -L https://apm-agent-php.elastic.co/install.sh | bash -s -- --version 1.15.1 || true && \
+    if [ -d "/opt/elastic/apm-agent-php" ]; then \
+      EXT_DIR=$(php -r 'echo ini_get("extension_dir");'); \
+      if [ -f "/opt/elastic/apm-agent-php/extensions/$(php -r 'echo PHP_ZTS?"zts":"no-zts";')-$(php -r 'echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;')/elastic_apm.so" ]; then \
+        cp /opt/elastic/apm-agent-php/extensions/$(php -r 'echo PHP_ZTS?"zts":"no-zts";')-$(php -r 'echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;')/elastic_apm.so "$EXT_DIR/elastic_apm.so"; \
+      fi; \
+      echo "extension=elastic_apm.so\nelastic_apm.bootstrap_php_part_file=/opt/elastic/apm-agent-php/src/bootstrap_php_part.php" > /usr/local/etc/php/conf.d/elastic-apm.ini; \
+    fi
+
+ENV ELASTIC_APM_ENABLED=${ELASTIC_APM_ENABLED} \
+    ELASTIC_APM_ENVIRONMENT=prd \
+    ELASTIC_APM_SERVICE_NAME=pdg \
+    ELASTIC_APM_SECRET_TOKEN=prd_token_apm_elk \
+    ELASTIC_APM_SERVER_URL=http://n221p044341.fast.prevnet:8200 \
+    ELASTIC_APM_GLOBAL_LABELS=cliente=mgi,categoria=backend
 
 # Criar diretório DocumentRoot e /etc/apache2/ssl
 WORKDIR /var/www
