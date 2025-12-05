@@ -383,6 +383,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
         this.editableForm!.error = undefined;
         this.processarUnidadesUsuario(selected.entity);
         this.resetProgramaItems();
+        this.carregaProgramas(selected.entity.lotacao.unidade_id);
 
         if (selected.entity.pedagio) {
           await this.carregaModalidades(true);
@@ -492,7 +493,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     }
   }
 
-  public async loadData(entity: PlanoTrabalho, form: FormGroup, action?: string) {
+  public async loadData(entity: PlanoTrabalho, form: FormGroup, action?: string) {     
     if(action == 'clone') {
  
       entity.id = "";
