@@ -3,24 +3,33 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use Stancl\Tenancy\Database\Models\Domain;
 
 class TenantConfigurationsService
 {
+    private const DOMAIN_CACHE_TTL_SECONDS = 900;
+    private const HTTPS_PORT = 443;
 
     public function handle(string $tenantId = null, $domain = null): ?Domain
     {
         $tenant = null;
         if ($tenantId) {
-            $tenant = Domain::where('tenant_id', $tenantId)->with('tenant')->first();
+            $tenant = Cache::remember('domain:tenant_id:'.$tenantId, self::DOMAIN_CACHE_TTL_SECONDS, function () use ($tenantId) {
+                return Domain::where('tenant_id', $tenantId)->with('tenant')->first();
+            });
         }
         if (!$tenant && $domain) {
-            $tenant = Domain::where('domain', $domain)->with('tenant')->first();
+            $tenant = Cache::remember('domain:domain:'.$domain, self::DOMAIN_CACHE_TTL_SECONDS, function () use ($domain) {
+                return Domain::where('domain', $domain)->with('tenant')->first();
+            });
         }
 
         if (!$tenant) {
             $entidade = env('PETRVS_ENTIDADE');
-            $tenant = Domain::where('tenant_id', $entidade)->with('tenant')->first();
+            $tenant = Cache::remember('domain:tenant_id:'.$entidade, self::DOMAIN_CACHE_TTL_SECONDS, function () use ($entidade) {
+                return Domain::where('tenant_id', $entidade)->with('tenant')->first();
+            });
         }
 
         if ($tenant) {
@@ -44,7 +53,7 @@ class TenantConfigurationsService
         config(['session.domain' => $settings['dominio_url']]);
         config(['sanctum.stateful' => [
             $settings['dominio_url'],
-            $settings['dominio_url'] . ":443"
+            $settings['dominio_url'] . ":" . self::HTTPS_PORT
         ]]);
         #Petrvs
         config(['petrvs.schemas.base' => $settings['id']]);

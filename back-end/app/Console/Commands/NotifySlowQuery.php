@@ -10,11 +10,11 @@ use Illuminate\Support\Facades\Notification;
 class NotifySlowQuery extends Command
 {
     protected $signature = 'db:slow-log:notify';
-    protected $description = 'Lê o último registro do mysql-slow.log e envia notificação ao Microsoft Teams';
+    protected $description = 'Lê o último registro do slow log diário e envia notificação ao Microsoft Teams';
 
     public function handle()
     {
-        $path = storage_path('logs/mysql-slow.log');
+        $path = storage_path('logs/' . now()->format('d-m-Y') . '-mysql-slow.log');
         if (!file_exists($path)) {
             $this->error('Arquivo não encontrado: ' . $path);
             return 1;

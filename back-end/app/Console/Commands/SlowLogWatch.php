@@ -17,12 +17,12 @@ use function stat;
 class SlowLogWatch extends Command
 {
     protected $signature = 'db:slow-log:watch {--interval=5}';
-    protected $description = 'Observa alterações em storage/logs/mysql-slow.log e dispara db:slow-log:notify ao modificar';
+    protected $description = 'Observa alterações no slow log diário e dispara db:slow-log:notify ao modificar';
     private const MICROSECONDS_IN_SECOND = 1000000;
 
     public function handle()
     {
-        $path = storage_path('logs/mysql-slow.log');
+        $path = storage_path('logs/' . now()->format('d-m-Y') . '-mysql-slow.log');
         $interval = max(1, (int) $this->option('interval'));
 
         $this->info('Iniciando watcher do slow log em: ' . $path);
@@ -58,7 +58,7 @@ class SlowLogWatch extends Command
 
     private function notify(): void
     {
-        $path = storage_path('logs/mysql-slow.log');
+        $path = storage_path('logs/' . now()->format('d-m-Y') . '-mysql-slow.log');
         $lines = @file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
         $lastData = null;
         for ($i = count($lines) - 1; $i >= 0; $i--) {
