@@ -99,15 +99,14 @@ class DatabaseTuningServiceProvider extends ServiceProvider
     {
         $thresholdMs = (int) round($longQueryTime * 1000);
         $logExplain = (bool) config('slow_query.log_queries_not_using_indexes', true);
-        $logPath = storage_path('logs/mysql-slow.log');
-        DB::listen(function (QueryExecuted $event) use ($thresholdMs, $logExplain, $logPath) {
+        DB::listen(function (QueryExecuted $event) use ($thresholdMs, $logExplain) {
             $timeMs = (int) round($event->time);
             if ($timeMs < $thresholdMs) {
                 return;
             }
             $entry = $this->buildEntry($event, $timeMs);
             $this->attachExplainIfApplicable($entry, $event, $logExplain);
-            $this->writeSlowLog($logPath, $entry);
+            $this->writeSlowLog($this->currentSlowLogPath(), $entry);
         });
     }
 
@@ -194,5 +193,11 @@ class DatabaseTuningServiceProvider extends ServiceProvider
         } catch (\Throwable $e) {
             Log::warning('Falha ao escrever mysql-slow.log', ['error' => $e->getMessage()]);
         }
+    }
+
+    private function currentSlowLogPath(): string
+    {
+        $filename = now()->format('d-m-Y') . '-mysql-slow.log';
+        return storage_path('logs/' . $filename);
     }
 }
