@@ -24,6 +24,8 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
   public permissao: string = 'MOD_IND_EQUIPES';
   public botoes: ToolbarButton[] = [];
   public totalAvaliacoes: number = 0;
+  public totalVinculacoes: number = 0;
+  public totalDesempenho: number = 0;
   
   public pieChartData: ChartData<'pie', number[], string | string[]> = {
     labels: [],
@@ -168,11 +170,11 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
     if (rows && rows.length) {
       const itens = rows[0].entregas;
 
-      const total = itens.reduce((sum, row) => sum + row.total, 0);
+      this.totalVinculacoes = itens.reduce((sum, row) => sum + row.total, 0);
       this.pieChartData.labels = itens.map(row => row.categoria);
       this.pieChartData.datasets[0].data = itens.map(row => Number(row.total));
       this.pieChartData.labels = itens.map(row => row.categoria +
-          ' (' + ((total ? ((Number(row.total) / total)) : 0) * 100)
+          ' (' + ((this.totalVinculacoes ? ((Number(row.total) / this.totalVinculacoes)) : 0) * 100)
           .toFixed(2)
           .replace(".", ",")
           + '%)'
@@ -191,6 +193,8 @@ export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorE
 
       this.barChartData.datasets[0].data = [rows[0].desempenho.entregas ?? 0];
       this.barChartData.datasets[1].data = [rows[0].desempenho.trabalhos ?? 0];
+      this.totalDesempenho = rows[0].desempenho.entregas + rows[0].desempenho.trabalhos;
+
       if (this.barChartOptions?.plugins?.title) {
         this.barChartOptions.plugins.title.text = 'Diferença: ' +
           (Number(rows[0].desempenho.trabalhos) - Number(rows[0].desempenho.entregas))

@@ -63,14 +63,14 @@
                 title="Indica a proporção de entregas vinculadas em relação ao total de entregas cadastradas"
             ></i>
         </div>
-        <p *ngIf="!pieChartData.labels?.length" class="no-data">Sem dados para exibir</p>
+        <p *ngIf="!totalVinculacoes" class="no-data">Sem dados de entregas para exibir</p>
         <div *ngIf="loading; else graficoEntregas" class="d-flex justify-content-center my-2">
             <div class="spinner-border" role="status">
                 <span class="visually-hidden"></span>
             </div>
         </div>
         <ng-template #graficoEntregas>
-            <div class="grafico-wrapper">
+            <div class="grafico-wrapper" *ngIf="totalVinculacoes">
                 <canvas
                     baseChart
                     *ngIf="pieChartData.labels?.length"
@@ -118,14 +118,14 @@
                 title="Indica o grau de alinhamento entre o desempenho individual dos participantes do PGD, conforme avaliações de seus Planos de Trabalho, e o desempenho geral da unidade de execução, conforme avaliação do Plano de Entregas."
             ></i>
         </div>
-        <p *ngIf="!barChartData.datasets[0].data?.length" class="no-data">Sem dados para exibir</p>
+        <p *ngIf="!totalDesempenho" class="no-data">Sem dados de PT ou PE para exibir</p>
         <div *ngIf="loading; else graficoDesempenho" class="d-flex justify-content-center my-2">
             <div class="spinner-border" role="status">
                 <span class="visually-hidden"></span>
             </div>
         </div>
         <ng-template #graficoDesempenho>
-            <div class="grafico-wrapper">
+            <div class="grafico-wrapper" *ngIf="totalDesempenho">
                 <canvas
                     baseChart
                     *ngIf="barChartData.datasets[0].data?.length"

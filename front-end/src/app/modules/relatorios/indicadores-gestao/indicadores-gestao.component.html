@@ -63,14 +63,14 @@
                 title="Indica a proporção de participantes do PGD informados no Siape em relação ao total de de agentes públicos."
             ></i>
         </div>
-        <p *ngIf="!pieChartData.labels?.length" class="no-data">Sem dados para exibir</p>
+        <p *ngIf="!totalParticipantes" class="no-data">Sem dados de Participantes para exibir</p>
         <div *ngIf="loading; else grafico" class="d-flex justify-content-center my-2">
             <div class="spinner-border" role="status">
                 <span class="visually-hidden"></span>
             </div>
         </div>
         <ng-template #grafico>
-            <div class="grafico-wrapper">
+            <div class="grafico-wrapper" *ngIf="totalParticipantes">
                 <canvas
                     baseChart
                     [data]="pieChartData"
