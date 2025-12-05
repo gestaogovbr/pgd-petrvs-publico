@@ -15,9 +15,9 @@ echo "Puxando novas imagens..."
 # Puxar novas imagens
 docker-compose pull
 
-echo "Reiniciando containers em modo detached..."
-# Reiniciar containers em modo detached
-docker-compose up -d
+echo "Reiniciando containers em modo detached (forcando rebuild)..."
+# Reiniciar containers com rebuild para aplicar mudancas de Dockerfile/Imagem
+docker-compose up -d --build
 
 echo "Copiando o .env para o container..."
 # Copia o .env para container
@@ -36,8 +36,8 @@ docker exec -it petrvs_php touch /var/www/storage/logs/laravel.log
 docker exec -it petrvs_php chmod 777 /var/www/storage/logs/laravel.log
 docker exec -it petrvs_php touch /var/www/storage/logs/siape.log
 docker exec -it petrvs_php chmod 777 /var/www/storage/logs/siape.log
-docker exec -it petrvs_php touch /var/www/storage/logs/mysql-slow.log
-docker exec -it petrvs_php chmod 660 /var/www/storage/logs/mysql-slow.log
+docker exec -it petrvs_php bash -lc 'touch /var/www/storage/logs/$(date +%d-%m-%Y)-mysql-slow.log'
+docker exec -it petrvs_php bash -lc 'chmod 777 /var/www/storage/logs/*-mysql-slow.log'
 
 #Limpar Cache 
 echo "Limpar Cache"
