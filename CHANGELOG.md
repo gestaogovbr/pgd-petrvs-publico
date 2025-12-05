@@ -1,3 +1,13 @@
+## 2.9.1 05/12/2025 (Hotfix)
+### Modificado
+- Registro de consultas lentas diário: o arquivo de log de consultas lentas passa a ser gerado diariamente no formato `dd-mm-YYYY-mysql-slow.log`, facilitando auditoria e organização dos registros.
+- Criação automática do log diário: adicionamos um agendamento para garantir a criação do arquivo de log do dia com as permissões necessárias antes do início das operações.
+### Corrigido
+- Estabilidade no monitoramento de desempenho: correções para evitar falhas na leitura e notificação das consultas lentas, garantindo avisos consistentes.
+- Consistência ao notificar consultas lentas: ajustes na leitura do último registro válido do log para evitar mensagens incorretas.
+### Segurança
+- Melhoria no controle de limpeza de logs: adicionado processo diário para remoção de logs antigos (mais de 10 dias), reduzindo exposição e uso de armazenamento.
+
 ## 2.9.0 03/12/2025
 ### Modificado
 - Melhorias significativas em desempenho das queries e adição de cache para otimização de performance
