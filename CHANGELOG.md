@@ -1,3 +1,8 @@
+## 2.9.2 05/12/2025 (Hotfix)
+### Adicionado
+- Suporte ao Elastic APM na infraestrutura Docker, permitindo monitoramento de performance do PHP com variáveis configuráveis via `.env`.
+### Modificado
+- Ajustes na integração e configuração do APM para permitir habilitar/desabilitar por ambiente e manter desativado por padrão quando não definido.
 ## 2.9.1 05/12/2025 (Hotfix)
 ### Modificado
 - Registro de consultas lentas diário: o arquivo de log de consultas lentas passa a ser gerado diariamente no formato `dd-mm-YYYY-mysql-slow.log`, facilitando auditoria e organização dos registros.
