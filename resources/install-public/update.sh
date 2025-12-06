@@ -17,6 +17,8 @@ docker-compose pull
 
 echo "Reiniciando containers em modo detached (forcando rebuild)..."
 # Reiniciar containers com rebuild para aplicar mudancas de Dockerfile/Imagem
+ELASTIC_APM_ENABLED=$(grep -E '^ELASTIC_APM_ENABLED=' back-end/.env | cut -d'=' -f2 | tr -d '"')
+export ELASTIC_APM_ENABLED
 docker-compose up -d --build
 
 echo "Copiando o .env para o container..."

@@ -23,8 +23,12 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile-php
+      args:
+        ELASTIC_APM_ENABLED: ${ELASTIC_APM_ENABLED:-false}
     container_name: petrvs_php_producao
     working_dir: /var/www
+    env_file:
+      - ../../../back-end/.env
     ports:
       - "80:80"
       - "443:443"
