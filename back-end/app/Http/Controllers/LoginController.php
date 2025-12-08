@@ -41,7 +41,7 @@ class LoginController extends Controller
 
     private function registrarUsuario($request, $usuario, $update = null)
     {
-        if (isset($usuario)) {          
+        if (isset($usuario)) {
             if (isset($update) && count($update) > 0) {
                 $usuario->update($update);
                 $usuario->fresh();
@@ -68,7 +68,9 @@ class LoginController extends Controller
                     $query->where('data_leitura', null);
                 }
             ])->first();
-            $request->session()->put("unidade_id", $usuario->lotacao?->id);
+
+            $config = $usuario->config ?? [];
+            $request->session()->put("unidade_id", $config['unidade_id'] ?? $usuario->lotacao?->unidade_id);
         }
         return $usuario;
     }
@@ -352,8 +354,8 @@ class LoginController extends Controller
         return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateGoogleToken"), $tokenData);
     }
 
-    
-    
+
+
     /**
      * Handle an authentication attempt.
      *
@@ -474,10 +476,10 @@ class LoginController extends Controller
         return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateApiGoogleToken"), $tokenData);
     }
 
-    
 
-    
-    
+
+
+
     /**
      * Verify an firebase token
      *
@@ -635,7 +637,7 @@ class LoginController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return redirect()->route('erro.500'); 
+            return redirect()->route('erro.500');
         }
     }
 

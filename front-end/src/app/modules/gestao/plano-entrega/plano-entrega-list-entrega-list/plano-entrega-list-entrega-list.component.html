@@ -48,5 +48,8 @@
         <column type="options"></column>
 
     </columns>
-    <pagination [rows]="rowsLimit"></pagination>
+    <pagination [rows]="rowsLimit" 
+    [fromRoot]="true"
+    [infiniteScrollContainer]="modalInfiniteScrollContainer"
+    ></pagination>
 </grid>

@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Usuario;
+use App\Enums\UsuarioSituacaoSiape;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -36,7 +37,7 @@ class InativacaoUsuariosTemporarios implements ShouldQueue
 
         // Buscar usuários com situacao_siape = 'ATIVO_TEMPORARIO' 
         // que foram ativados temporariamente há mais de 30 dias
-        $usuariosParaInativar = Usuario::where('situacao_siape', 'ATIVO_TEMPORARIO')
+        $usuariosParaInativar = Usuario::where('situacao_siape', UsuarioSituacaoSiape::ATIVO_TEMPORARIO->value)
             ->where('data_ativacao_temporaria', '<=', $dataLimite)
             ->get();
 
@@ -49,7 +50,7 @@ class InativacaoUsuariosTemporarios implements ShouldQueue
         
         foreach ($usuariosParaInativar as $usuario) {
             // Inativar o usuário
-            $usuario->situacao_siape = 'INATIVO';
+            $usuario->situacao_siape = UsuarioSituacaoSiape::INATIVO->value;
             $usuario->save();
             
             $idsInativados[] = $usuario->id;

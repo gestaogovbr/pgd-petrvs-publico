@@ -18,6 +18,10 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\InativaUsuarioSiape::class,
         \App\Console\Commands\InativaUnidadesSiape::class,
         \App\Console\Commands\InativaUnidadesTemporarios::class,
+        \App\Console\Commands\SlowLogCheck::class,
+        \App\Console\Commands\NotifySlowQuery::class,
+        \App\Console\Commands\SlowLogWatch::class,
+        \App\Console\Commands\SlowLogPrune::class,
     ];
 
     protected function commands()
@@ -67,5 +71,8 @@ class Kernel extends ConsoleKernel
         }
 
         $schedule->command('horizon:snapshot')->everyFiveMinutes();
+
+        $schedule->command('db:slow-log:prune-old')->dailyAt('04:00');
+        $schedule->command('db:slow-log:ensure-daily --perm=777')->dailyAt('00:01');
     }
 }

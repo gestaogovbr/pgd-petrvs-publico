@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StatusEnum;
 use App\Models\ModelBase;
 use App\Models\PlanoTrabalho;
 use App\Models\Comparecimento;
@@ -13,6 +14,29 @@ class PlanoTrabalhoConsolidacao extends ModelBase
   protected $table = 'planos_trabalhos_consolidacoes';
 
   protected $with = [];
+
+  protected static function booted()
+  {
+    static::updated(function ($consolidacao) {
+      $planoTrabalho = $consolidacao->planoTrabalho;
+      if ($consolidacao->isDirty('status') && $consolidacao->status === StatusEnum::CONCLUIDO->value && $planoTrabalho->status === StatusEnum::ATIVO->value) {
+        $allConcluido = $planoTrabalho->consolidacoes()
+                                      ->where('status', '!=', StatusEnum::CONCLUIDO->value)
+                                      ->doesntExist();
+        
+        if ($allConcluido) {
+          $planoTrabalho->status = StatusEnum::CONCLUIDO->value;
+          $planoTrabalho->save();
+        }
+      }
+
+      if($consolidacao->isDirty('status') && $consolidacao->status !== StatusEnum::CONCLUIDO->value && $planoTrabalho->status === StatusEnum::CONCLUIDO->value) {
+        $planoTrabalho->status = 'ATIVO';
+        $planoTrabalho->save();
+      }
+    });
+  }
+
 
   public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
     'data_inicio', /* date; NOT NULL; */ // Data inicial da consolidacão

@@ -1,9 +1,6 @@
 <badge *ngIf="show" [icon]="icon" [color]="color" [rounded]="!isNoRounded" [data]="documento" [click]="documentoService.onDocumentoClick.bind(documentoService)" [hint]="documentoService.documentoHint(documento!)">
     <div class="d-flex flex-column">
-    <ng-container *ngIf="isLinkSei">
-        {{documento?.link?.numero_processo || emptyMessage}}<br>
-        <small *ngIf="documento?.link?.numero_documento?.length">Sei nº {{documento?.link?.numero_documento}}</small>
-    </ng-container>
+  
     <ng-container *ngIf="isLinkUrl">
         {{documento?.titulo || emptyMessage}}
     </ng-container>
@@ -19,13 +16,4 @@
         </div>
     </separator>
 </div>
-</badge>
-<badge *ngIf="documento && !isLinkSei && !isLinkUrl && (isWithLink || isOnlyLink) && hasLink" [class]="'d-block'" color="warning" [icon]="linkIcon" [rounded]="false" [data]="documento.link" [click]="documentoService.onLinkClick.bind(documentoService)" [hint]="documentoService.documentoHint(documento)">
-    <ng-container *ngIf="documento?.link?.tipo == 'SEI'">
-        {{documento.link?.numero_processo || emptyMessage}}<br>
-        <small *ngIf="documento?.link?.numero_documento?.length">Sei nº {{documento.link?.numero_documento}}</small>
-    </ng-container>
-    <ng-container *ngIf="documento?.link?.tipo == 'URL'">
-        {{documento.titulo || emptyMessage}}
-    </ng-container>
 </badge>

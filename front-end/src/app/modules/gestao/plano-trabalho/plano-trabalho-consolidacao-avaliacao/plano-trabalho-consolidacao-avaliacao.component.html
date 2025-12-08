@@ -17,8 +17,9 @@
                 <toolbar *ngIf="!selectable"></toolbar>
                 <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed" [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')">
                     <div class="row">
-                        <input-search [size]="5" #usuario [control]="filter!.controls.usuario_id" controlName="usuario_id" [dao]="usuarioDao"></input-search>
-                        <input-search [size]="5" #unidade [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao" (change)="onUnidadeChange($event)"></input-search>
+                        <input-text [size]="2" [label]="lex.translate('Nº')" controlName="numero" [control]="filter!.controls.numero" placeholder="Nº" [attr.maxlength]=250></input-text>
+                        <input-search [size]="4" #usuario [control]="filter!.controls.usuario_id" controlName="usuario_id" [dao]="usuarioDao"></input-search>
+                        <input-search [size]="4" #unidade [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao" (change)="onUnidadeChange($event)"></input-search>
                         <input-switch [size]="1" #subordinadas [disabled]="canFilterSubordinadas" label="Sub." [control]="filter!.controls.unidades_subordinadas" controlName="unidades_subordinadas" labelInfo="Incluir as unidades subordinadas"></input-switch>
                         <input-switch [size]="1" #arquivadas label="Arq." [control]="filter!.controls.incluir_arquivados" controlName="incluir_arquivados" labelInfo="Incluir os planos de trabalhos arquivados"></input-switch>
                     </div>

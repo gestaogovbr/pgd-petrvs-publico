@@ -506,6 +506,10 @@ echo "Limpando storage/logs"
 docker exec -it petrvs_php bash -c 'sudo rm -f /var/www/storage/logs/*.log'
 docker exec -it petrvs_php touch /var/www/storage/logs/laravel.log
 docker exec -it petrvs_php chmod 777 /var/www/storage/logs/laravel.log
+docker exec -it petrvs_php touch /var/www/storage/logs/siape.log
+docker exec -it petrvs_php chmod 777 /var/www/storage/logs/siape.log
+docker exec -it petrvs_php touch /var/www/storage/logs/mysql-slow.log
+docker exec -it petrvs_php chmod 660 /var/www/storage/logs/mysql-slow.log
 
 echo "Conectando banco de dados..."
 sleep 10

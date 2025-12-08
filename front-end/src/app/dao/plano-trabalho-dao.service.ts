@@ -36,7 +36,7 @@ export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.planoTrabalhoEntregaDao = injector.get<PlanoTrabalhoEntregaDaoService>(PlanoTrabalhoEntregaDaoService);
     this.lookup = injector.get<LookupService>(LookupService);
-    this.inputSearchConfig.searchFields = ["numero", "data_inicio", "data_fim", "usuario.nome"];
+    this.inputSearchConfig.searchFields = ["numero", "data_inicio", "data_fim"];
     this.inputSearchConfig.display = (data: any[]) => "#" + data[0] + ": " + this.util.getDateFormatted(data[1]) + " a " + this.util.getDateFormatted(data[2]) + " - " + data[3];
   }
 

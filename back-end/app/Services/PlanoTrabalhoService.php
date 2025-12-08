@@ -12,13 +12,10 @@ use App\Services\ServiceBase;
 use App\Services\CalendarioService;
 use App\Services\UtilService;
 use App\Exceptions\ServerException;
-use App\Exceptions\ValidateException;
 use App\Models\Documento;
 use Illuminate\Support\Facades\DB;
 use App\Models\PlanoTrabalhoConsolidacao;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Programa;
-use App\Models\ProgramaParticipante;
 use App\Models\DocumentoAssinatura;
 use App\Models\PlanoEntregaEntrega;
 use App\Models\TipoModalidade;
@@ -26,7 +23,6 @@ use Carbon\Carbon;
 use DateTime;
 use Throwable;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Builder;
 
 class PlanoTrabalhoService extends ServiceBase
 {
@@ -223,12 +219,7 @@ class PlanoTrabalhoService extends ServiceBase
         PT do Chefe Sub.........: CF,CS?,CF+,CS+
         PT do Delegado..........: CF,CS,DL?
         PT do Lotado/Colaborador: CF,CS,DL,LC? */
-        $validoTabela1 = false;
-        if ($condicoes['usuarioEhParticipantePlano']) { /* Plano do próprio usuário logado */
-            $validoTabela1 = $condicoes['usuarioEhParticipanteHabilitado'];
-        } else {
-            $validoTabela1 = $condicoes["gestorUnidadeExecutora"] || $condicoes['logadoEhChefe'];
-        }
+
         /* (RN_PTR_AA) Um Plano de Trabalho não pode ser incluído/alterado se apresentar período conflitante com outro Plano de Trabalho já existente para a mesma unidade/servidor, a menos que o usuário logado possua a capacidade MOD_PTR_INTSC_DATA; */
         $conflito = PlanoTrabalho::
             where("usuario_id", $data["usuario_id"])->
@@ -287,7 +278,7 @@ class PlanoTrabalhoService extends ServiceBase
                 - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA (RN_PTR_AA)
             */
             /* (RN_PTR_B) O Plano de Trabalho pode ser incluído pelo próprio servidor, se ele for "participante do programa" habilitado, ou pelas condições da TABELA_1 */
-            if (!$validoTabela1)
+            if ($usuario->participa_pgd != 'sim')
                 throw new ServerException("ValidatePlanoTrabalho", "Usuário não foi selecionado para participar do regramento. Solicite à chefia para fazer a seleção de participante na aba de planejamento");
             /* (RN_PTR_Y) Para incluir um Plano de Trabalho para um participante, é necessário que este esteja LOTADO/COLABORADOR na unidade executora, a menos que este possua a capacidade MOD_PTR_USERS_INCL; */
             if (!parent::loggedUser()->hasPermissionTo('MOD_PTR_USERS_INCL') && !$condicoes["participanteColaboradorUnidadeExecutora"] && !$condicoes["participanteLotadoUnidadeExecutora"]) {
@@ -313,9 +304,7 @@ class PlanoTrabalhoService extends ServiceBase
             */
             if (!$condicoes['planoValido'])
                 throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho não é válido, ou seja, foi apagado, cancelado ou arquivado.\n[ver RN_PTR_M]");
-            if (($condicoes['planoIncluido'] || $condicoes['planoAguardandoAssinatura']) && !$validoTabela1)
-                throw new ServerException("ValidateUsuario", "Para alterar um plano de trabalho no status INCLUIDO ou AGUARDANDO_ASSINATURA, o usuário logado precisa atender os critérios da ação Alterar da [PTR:TABELA_1].\n[ver RN_PTR_M]");
-            if ($condicoes['planoAtivo'] && (!$validoTabela1 || !$usuario->hasPermissionTo('MOD_PTR_EDT_ATV')))
+            if ($condicoes['planoAtivo'] && (!$usuario->hasPermissionTo('MOD_PTR_EDT_ATV')))
                 throw new ServerException("ValidateUsuario", "Para alterar um plano de trabalho no status ATIVO, o usuário logado precisa atender os critérios da ação Alterar da TABELA_1 e possuir a capacidade específica (MOD_PTR_EDT_ATV).\n[ver RN_PTR_M]");
             $plano = PlanoTrabalho::find($data["id"]);
             /*
@@ -413,10 +402,6 @@ class PlanoTrabalhoService extends ServiceBase
                     'atribuicao' => Atribuicao::COLABORADOR->value
                 ], $unidade, false);
             }
-            /* (RN_PTR_C) Quando o gestor da Unidade Executora criar o primeiro Plano de Trabalho para um servidor, este tornar-se-á automaticamente um participante habilitado; */
-            $participante = ProgramaParticipante::where('programa_id', $plano->programa_id)->where('usuario_id', $plano->usuario_id)->first() ?? new ProgramaParticipante(['usuario_id' => $plano->usuario_id, 'programa_id' => $plano->programa_id]);
-            $participante->habilitado = true;
-            $participante->save();
         }
     }
 
@@ -947,8 +932,24 @@ class PlanoTrabalhoService extends ServiceBase
      */
     public function isPlanoTrabalhoValido($plano): bool
     {
-        $planoTrabalho = !empty($plano['id']) ? PlanoTrabalho::withTrashed()->where('id', $plano['id'])->first() : $plano;
-        return empty($plano['id']) ? false : (!$planoTrabalho->trashed() && !$plano['data_arquivamento'] && $planoTrabalho->status != 'CANCELADO');
+        if (empty($plano['id'])) {
+            return false;
+        }
+
+        // Cache by plano id to avoid repeated DB hits within the request lifecycle
+        $cacheKey = $plano['id'];
+        if ($this->hasBuffer('isPlanoTrabalhoValido', $cacheKey)) {
+            return $this->getBuffer('isPlanoTrabalhoValido', $cacheKey);
+        }
+
+        // Fetch minimal fields needed for validation
+        $planoTrabalho = PlanoTrabalho::withTrashed()
+            ->select(['id', 'deleted_at', 'status'])
+            ->where('id', $plano['id'])
+            ->first();
+
+        $isValid = (!$planoTrabalho->trashed() && !$plano['data_arquivamento'] && $planoTrabalho->status != 'CANCELADO');
+        return $this->setBuffer('isPlanoTrabalhoValido', $cacheKey, $isValid);
     }
 
     /**
@@ -959,8 +960,24 @@ class PlanoTrabalhoService extends ServiceBase
      */
     public function isPlano($status, $plano): bool
     {
-        $planoTrabalho = !empty($plano['id']) ? PlanoTrabalho::withTrashed()->find($plano['id']) : $plano;
-        return empty($plano['id']) ? false : ($this->isPlanoTrabalhoValido($plano) && $planoTrabalho->status == $status);
+        if (empty($plano['id'])) {
+            return false;
+        }
+
+        // Cache by plano id and status to avoid repeated DB hits within the request lifecycle
+        $cacheKey = $plano['id'] . $status;
+        if ($this->hasBuffer('isPlano', $cacheKey)) {
+            return $this->getBuffer('isPlano', $cacheKey);
+        }
+
+        // Fetch minimal fields needed for validation
+        $planoTrabalho = PlanoTrabalho::withTrashed()
+            ->select(['id', 'status'])
+            ->where('id', $plano['id'])
+            ->first();
+
+        $isValid = $this->isPlanoTrabalhoValido($plano) && $planoTrabalho->status == $status;
+        return $this->setBuffer('isPlano', $cacheKey, $isValid);
     }
 
     public function arquivar($data, $unidade)
@@ -1119,22 +1136,27 @@ class PlanoTrabalhoService extends ServiceBase
             ];
             return $ids;
         }
+        $requirePart = (bool) $programa->plano_trabalho_assinatura_participante;
+        $requireGestEnt = (bool) $programa->plano_trabalho_assinatura_gestor_entidade;
+        $requireGestUnid = (bool) $programa->plano_trabalho_assinatura_gestor_unidade;
 
-        $lotacao = $participante->lotacao?->unidade;
-        $entidade = $unidade->entidade;
-
-        if ($programa->plano_trabalho_assinatura_participante) {
+        if ($requirePart) {
             $ids["participante"][] = $participante->id;
         }
 
-        if ($programa->plano_trabalho_assinatura_gestor_entidade && $entidade) {
-            $ids["gestores_entidade"] = array_values(array_filter([
-                $entidade->gestor_id,
-                $entidade->gestor_substituto_id
-            ]));
+        if ($requireGestEnt) {
+            $unidade->loadMissing(['entidade' => function ($q) {
+                $q->select('id', 'gestor_id', 'gestor_substituto_id');
+            }]);
+            if ($unidade->entidade) {
+                $ids["gestores_entidade"] = array_values(array_filter([
+                    $unidade->entidade->gestor_id,
+                    $unidade->entidade->gestor_substituto_id
+                ]));
+            }
         }
 
-        if ($programa->plano_trabalho_assinatura_gestor_unidade) {
+        if ($requireGestUnid) {
             $ids["gestores_unidade_executora"] = $this->unidadeService->getGestoresPorUnidade(
                 $unidade,
                 $planoTrabalho['usuario_id'],
