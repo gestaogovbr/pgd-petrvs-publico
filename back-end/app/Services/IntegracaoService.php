@@ -15,23 +15,19 @@ use App\Models\SiapeDadosUORG;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Exceptions\LogError;
-use App\Exceptions\NotFoundException;
 use App\Services\ServiceBase;
 use App\Models\IntegracaoUnidade;
 use App\Models\IntegracaoServidor;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\ServerException;
-use App\Http\Middleware\TenantConfigurations;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\IntegracaoServidorRepository;
 use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
 use App\Services\Siape\Servidor\Integracao;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Facades\SiapeLog;
-use stdClass;
 
 class IntegracaoService extends ServiceBase
 {
@@ -995,7 +991,7 @@ class IntegracaoService extends ServiceBase
     SiapeLog::info("Concluída a fase de reconstrução das funções de chefia!");
   }
 
-  private function verificaSeUsuarioSoMudouMatricula(string $cpfCheck, string $unidadeExercicioIdCheck, string $matriculaNova, string $codigoExercicio): bool
+  private function verificaSeUsuarioSoMudouMatricula(string $cpfCheck, ?string $unidadeExercicioIdCheck, string $matriculaNova, string $codigoExercicio): bool
   {
 
     if (!empty($cpfCheck) && !empty($unidadeExercicioIdCheck)) {

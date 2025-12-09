@@ -3,6 +3,7 @@
 namespace App\Factories;
 
 use App\Notifications\SlowQueryNotificacao;
+use App\Notifications\InternalServerErrorNotificacao;
 
 class NotificationFactory
 {
@@ -10,8 +11,8 @@ class NotificationFactory
     {
         return match ($type) {
             'slow_query' => new SlowQueryNotificacao($data),
+            'error_500' => new InternalServerErrorNotificacao($data),
             default => null,
         };
     }
 }
-
