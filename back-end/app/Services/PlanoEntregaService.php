@@ -25,10 +25,8 @@ class PlanoEntregaService extends ServiceBase
 
     public function alteracaoEntregaImpactaPlanoTrabalho($entregaAlterada)
     {
-        $entregaAnterior = PlanoEntregaEntrega::find($entregaAlterada["id"]);
-        return $entregaAnterior->descricao != $entregaAlterada["descricao"] ||
-            $this->utilService->asTimestamp($entregaAnterior->data_inicio) != $this->utilService->asTimestamp($entregaAlterada["data_inicio"]) ||
-            $this->utilService->asTimestamp($entregaAnterior->data_fim) != $this->utilService->asTimestamp($entregaAlterada["data_fim"]);
+        //Alterações em entregas não impactam Plano de Trabalho
+        return false;
     }
 
     public function planosImpactadosPorAlteracaoEntrega($entrega)
@@ -49,6 +47,12 @@ class PlanoEntregaService extends ServiceBase
     {
         if ($action == ServiceBase::ACTION_INSERT) {
             $planoEntrega["criacao_usuario_id"] = parent::loggedUser()->id;
+        } else { // ServiceBase::ACTION_EDIT
+            /* (RN_PTR_E) O Plano de Trabalho precisará ser repactuado (retornar ao status de AGUARDANDO_ASSINATURA) quando houver quaisquer alterações no plano de entrega que impacte as entregas do plano de trabalho; (alterada a entrega ou cancelada); */
+            $this->buffer["planosTrabalhosImpactados"] = [];
+            foreach ($planoEntrega["entregas"] as $entrega) {
+                array_merge($this->buffer["planosTrabalhosImpactados"], $this->planosImpactadosPorAlteracaoEntrega($entrega));
+            }
         }
         return $planoEntrega;
     }
@@ -76,11 +80,7 @@ class PlanoEntregaService extends ServiceBase
                 //(RN_PENT_AE) Se a alteração for feita com o plano de entregas no status ATIVO e o usuário logado possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL", o plano de entregas voltará ao status "HOMOLOGANDO";
                 //(RN_PENT_AF) Se a alteração for feita com o plano de entregas no status ATIVO e o usuário logado possuir a capacidade "MOD_PENT_EDT_ATV_ATV", o plano de entregas permanecerá no status "ATIVO";
                 if ($planoEntrega->status == 'ATIVO') {
-                    if ($usuario->hasPermissionTo('MOD_PENT_EDT_ATV_ATV')) {
-                        $this->statusService->atualizaStatus($planoEntrega, 'ATIVO', 'O plano foi alterado nesta data e permaneceu no status ATIVO porque o usuário logado possui a capacidade MOD_PENT_EDT_ATV_ATV.');
-                    } else if ($usuario->hasPermissionTo('MOD_PENT_EDT_ATV_HOMOL')) {
-                        $this->statusService->atualizaStatus($planoEntrega, 'HOMOLOGANDO', 'O plano foi alterado nesta data e retornou ao status AGUARDANDO HOMOLOGAÇÃO porque o usuário logado possui a capacidade MOD_PENT_EDT_ATV_HOMOL.');
-                    }
+                    $this->statusService->atualizaStatus($planoEntrega, 'ATIVO', 'O plano foi alterado nesta data e permaneceu no status ATIVO.');
                     // (RN_PENT_M) Qualquer alteração, depois de o Plano de Entregas ser homologado, precisa ser notificada
                     // ao gestor da Unidade-pai (Unidade A) ou à pessoa que homologou. Essa comunicação sobre eventuais ajustes,
                     // não se aplica à Unidade Instituidora, ou seja, alterações realizadas em planos de entregas de unidades instituidoras não precisam ser notificadas à sua Unidade-pai;
