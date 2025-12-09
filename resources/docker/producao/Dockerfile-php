@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     unzip \
     curl \
+    gnupg \
+    dirmngr \
     ca-certificates \
     libcurl4-openssl-dev \
     openssl \
@@ -36,18 +38,19 @@ RUN docker-php-ext-install openssl || true && \
 RUN pecl install redis inotify && \
     docker-php-ext-enable redis inotify
 
-RUN curl -L https://apm-agent-php.elastic.co/install.sh | bash -s -- --version 1.15.1 || true && \
-    if [ -d "/opt/elastic/apm-agent-php" ]; then \
-      EXT_DIR=$(php -r 'echo ini_get("extension_dir");'); \
-      if [ -f "/opt/elastic/apm-agent-php/extensions/$(php -r 'echo PHP_ZTS?"zts":"no-zts";')-$(php -r 'echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;')/elastic_apm.so" ]; then \
-        cp /opt/elastic/apm-agent-php/extensions/$(php -r 'echo PHP_ZTS?"zts":"no-zts";')-$(php -r 'echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;')/elastic_apm.so "$EXT_DIR/elastic_apm.so"; \
-      fi; \
-      echo "extension=elastic_apm.so\nelastic_apm.bootstrap_php_part_file=/opt/elastic/apm-agent-php/src/bootstrap_php_part.php" > /usr/local/etc/php/conf.d/elastic-apm.ini; \
+ARG ELASTIC_APM_VERSION=1.15.1
+RUN set -eux; \
+    URL=$(curl -s "https://api.github.com/repos/elastic/apm-agent-php/releases/tags/v${ELASTIC_APM_VERSION}" | grep -oE "https://[^\"]+\.deb" | head -n1) || true; \
+    if [ -n "$URL" ]; then \
+      curl -L "$URL" -o /tmp/apm-agent-php.deb; \
+      apt-get update && apt-get install -y ca-certificates curl || true; \
+      if ! dpkg -i /tmp/apm-agent-php.deb; then apt-get -y install -f && dpkg -i /tmp/apm-agent-php.deb; fi; \
+      echo "Elastic APM PHP agent installed via .deb."; \
     fi
 
 ENV ELASTIC_APM_ENABLED=${ELASTIC_APM_ENABLED} \
     ELASTIC_APM_ENVIRONMENT=prd \
-    ELASTIC_APM_SERVICE_NAME=pdg \
+    ELASTIC_APM_SERVICE_NAME=pgd \
     ELASTIC_APM_SECRET_TOKEN=prd_token_apm_elk \
     ELASTIC_APM_SERVER_URL=http://n221p044341.fast.prevnet:8200 \
     ELASTIC_APM_GLOBAL_LABELS=cliente=mgi,categoria=backend

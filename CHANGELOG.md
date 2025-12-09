@@ -1,3 +1,11 @@
+## 2.9.3 09/12/2025
+### Adicionado
+- Avisos de erro interno do sistema enviados ao Microsoft Teams, com informações básicas para acompanhamento rápido.
+### Modificado
+- Melhorias de desempenho em carregamento e operações frequentes, tornando o uso mais ágil e fluido.
+### Corrigido
+- Ajustes no fluxo de “forçar SIAPE”: mensagens mais claras, validações adicionais e resposta mais estável em casos de erro.
+
 ## 2.9.2 05/12/2025 (Hotfix)
 ### Adicionado
 - Suporte ao Elastic APM na infraestrutura Docker, permitindo monitoramento de performance do PHP com variáveis configuráveis via `.env`.
