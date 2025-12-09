@@ -4,6 +4,9 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use App\Services\ErrorInterceptor;
 use App\Models\Error;
 use Throwable;
 
@@ -50,6 +53,12 @@ class Handler extends ExceptionHandler
                     $erro->save();
                 } catch (\Throwable $e) {}
             }
+        });
+
+        $this->renderable(function (Throwable $e, Request $request) {
+            $response = response()->make('', Response::HTTP_INTERNAL_SERVER_ERROR);
+            (new ErrorInterceptor())->intercept($e, $request, $response);
+            return null;
         });
     }
 }
