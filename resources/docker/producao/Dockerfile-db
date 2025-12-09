@@ -1,10 +1,2 @@
 # syntax=docker/dockerfile:1
 FROM mysql:8-debian
-
-# Installar recursos adicionais
-RUN apt-get update
-RUN apt-get install -y chrony
-
-# Instalar e configurar sicronizador de tempo - Chrony
-COPY ./configuracoes/chrony/chrony.conf /etc/chrony/chrony.conf
-RUN service chrony restart
