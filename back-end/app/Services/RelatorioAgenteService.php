@@ -37,10 +37,13 @@ class RelatorioAgenteService extends ServiceBase
                 `u`.`nome_jornada` AS `jornada`,
                 `u`.`participa_pgd` AS `participaPGD`,
                 `u`.`situacao_siape` AS `situacao`,
-                COALESCE(`modalidade_siape`.`nome`, `tms`.`nome`) AS `modalidadeSouGov`,
                 case 
-                    when  `u`.`situacao_siape` = 'INATIVO' OR (COALESCE(`tms`.`tipo_modalidade_id`, '') = COALESCE(`tm`.`id`, '') AND COALESCE(`tm`.`id`, '') = '' ) then '-'
-                    when COALESCE(`tms`.`tipo_modalidade_id`, '') = COALESCE(`tm`.`id`, '') then 'IGUAL'
+                    when `u`.`participa_pgd` = 'sim' then `tm_sougov`.`nome`
+                    else '-'
+                end AS `modalidadeSouGov`,
+                case 
+                    when  `u`.`situacao_siape` = 'INATIVO' OR `tm`.`id` IS NULL OR `u`.`participa_pgd` = 'não' then '-'
+                    when COALESCE(`u`.`tipo_modalidade_id`, '') = COALESCE(`tm`.`id`, '') then 'IGUAL'
                     else 'DIFERENTE'
                 end as comparacaoSouGovPetrvs,
                 `u`.`perfil_id` AS `perfil_id`,
@@ -51,8 +54,12 @@ class RelatorioAgenteService extends ServiceBase
                 `fn_obter_unidade_hierarquia`(`uni_lotacao`.`id`) AS `unidadeHierarquia`,
                 `uni_lotacao`.`id` AS `unidadeLotacao`,
                 `uni_lotacao`.`sigla` AS `unidadeNome`,
-                `pt_ultimo_pactuado`.`tipo_modalidade_id` AS `tipo_modalidade_id`,
-                `tm`.`nome` AS `tipoModalidadeNome`,
+                COALESCE(`u`.`tipo_modalidade_id`, CASE WHEN `u`.`participa_pgd` = 'não' THEN ? ELSE ? END) AS `tipo_modalidade_id`,
+                CASE 
+                    WHEN `u`.`participa_pgd` = 'sim' THEN `tm_sougov`.`nome`
+                    WHEN `u`.`participa_pgd` = 'não' THEN `tm_presencial`.`nome`
+                    ELSE `tm_sem`.`nome`
+                END AS `tipoModalidadeNome`,
                 `u`.`data_inicial_pedagio` AS `data_inicial_pedagio`,
                 `u`.`data_final_pedagio` AS `data_final_pedagio`,
                 `u`.`tipo_pedagio` AS `tipo_pedagio`
@@ -125,20 +132,32 @@ class RelatorioAgenteService extends ServiceBase
                 (`p`.`id` = `u`.`perfil_id`)
             left join `tipos_modalidades` `tm` on
                 (`tm`.`id` = `pt_ultimo_pactuado`.`tipo_modalidade_id`)
-            left join `tipos_modalidades_siape` `tms` on
-                (`tms`.`tipo_modalidade_id` = `u`.`tipo_modalidade_id`)
-            left join `tipos_modalidades` `modalidade_siape` on 
-                (`tms`.`tipo_modalidade_id` = `modalidade_siape`.`id`)
+            left join `tipos_modalidades` `tm_sougov` on
+                (`tm_sougov`.`id` = `u`.`tipo_modalidade_id`)
+            left join `tipos_modalidades` `tm_presencial` on
+                (`tm_presencial`.`id` = ?)
+            left join `tipos_modalidades` `tm_sem` on
+                (`tm_sem`.`id` = ?)
             where
                 `u`.`deleted_at` is null
                 and `uia`.`atribuicao` is not null
 TEXT;
 
+        $presencialId = DB::table('tipos_modalidades')
+            ->where('nome', 'Presencial')
+            ->whereNull('deleted_at')
+            ->value('id');
+
+        $semDadosSiapeId = DB::table('tipos_modalidades')
+            ->where('nome', 'Sem dados do SIAPE')
+            ->whereNull('deleted_at')
+            ->value('id');
+
         $unidadeId = $this->extractWhere($data, "unidade_id");
         $atribuicao = $this->extractWhere($data, "atribuicao");
         $subordinadas = $this->extractWhere($data, "incluir_unidades_subordinadas");
 
-        $params = [];
+        $params = [$presencialId, $semDadosSiapeId, $presencialId, $semDadosSiapeId];
 
         if (isset($unidadeId[2])) {
             $unidadeIds = [$unidadeId[2]];
@@ -231,9 +250,9 @@ TEXT;
 
         $modalidade = $this->extractWhere($data, "modalidadeSouGov");
         if (isset($modalidade[2])) {
-            $sql .= " and ( `u`.`participa_pgd` = 'sim' and `tms`.`tipo_modalidade_id` = ? )";
+            $sql .= " and ( `u`.`participa_pgd` = 'sim' and `u`.`tipo_modalidade_id` = ? )";
             $params[] = $modalidade[2];
-        }        
+        }
 
         $situacaoSiape = $this->extractWhere($data, "situacao");
         if (isset($situacaoSiape[2])) {
@@ -246,15 +265,15 @@ TEXT;
             $operacaoComparacao = $this->getComparacaoSouGov($comparacaoSouGovPetrvs[2]);
 
             if($operacaoComparacao == '-'){
-                $sql .= " and ( `u`.`situacao_siape` = 'INATIVO' OR (COALESCE(`tms`.`tipo_modalidade_id`, '') = COALESCE(`tm`.`id`, '') AND COALESCE(`tm`.`id`, '') = '' ) ) ";
+                $sql .= " and ( `u`.`situacao_siape` = 'INATIVO' OR `tm`.`id` IS NULL OR `u`.`participa_pgd` = 'não' ) ";
             }else if($operacaoComparacao != ''){
-                $sql .= " and ( COALESCE(`tms`.`tipo_modalidade_id`, '') $operacaoComparacao COALESCE(`tm`.`id`, '') and  COALESCE(`tm`.`id`, '') != '') ";
+                $sql .= " and ( `u`.`participa_pgd` = 'sim' and COALESCE(`u`.`tipo_modalidade_id`, '') $operacaoComparacao COALESCE(`tm`.`id`, '') and  COALESCE(`tm`.`id`, '') != '') ";
             }
         }
 
         $tipo_modalidade_id = $this->extractWhere($data, "tipo_modalidade_id");
         if (isset($tipo_modalidade_id[2])) {
-            $sql .= " and `pt_ultimo_pactuado`.`tipo_modalidade_id` = ?";
+            $sql .= " and `u`.`tipo_modalidade_id` = ?";
             $params[] = $tipo_modalidade_id[2];
         }
 
