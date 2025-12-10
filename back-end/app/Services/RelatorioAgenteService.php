@@ -126,7 +126,7 @@ class RelatorioAgenteService extends ServiceBase
             left join `tipos_modalidades` `tm` on
                 (`tm`.`id` = `pt_ultimo_pactuado`.`tipo_modalidade_id`)
             left join `tipos_modalidades_siape` `tms` on
-                (`tms`.`id` = `u`.`modalidade_pgd`)
+                (`tms`.`tipo_modalidade_id` = `u`.`tipo_modalidade_id`)
             left join `tipos_modalidades` `modalidade_siape` on 
                 (`tms`.`tipo_modalidade_id` = `modalidade_siape`.`id`)
             where

@@ -589,7 +589,7 @@ class IntegracaoService extends ServiceBase
         isr.nome_jornada AS nome_jornada,
         u.cod_jornada AS cod_jornada_antigo,
         isr.cod_jornada AS cod_jornada,
-        u.modalidade_pgd AS modalidade_pgd_anterior,
+        u.tipo_modalidade_id AS tipo_modalidade_id_anterior,
         isr.modalidade_pgd,
         u.participa_pgd AS participa_pgd_anterior,
         isr.participa_pgd
@@ -603,7 +603,7 @@ class IntegracaoService extends ServiceBase
         isr.telefone != u.telefone OR
         (isr.nome_jornada != u.nome_jornada OR isr.nome_jornada IS NOT NULL AND u.nome_jornada IS NULL) OR
         (isr.cod_jornada != u.cod_jornada OR isr.cod_jornada IS NOT NULL AND u.cod_jornada IS NULL) OR
-        (isr.modalidade_pgd != u.modalidade_pgd OR isr.modalidade_pgd IS NOT NULL AND u.modalidade_pgd IS NULL) OR
+        (isr.modalidade_pgd IS NOT NULL AND u.tipo_modalidade_id IS NULL) OR
         (isr.participa_pgd != u.participa_pgd OR isr.participa_pgd IS NOT NULL AND u.participa_pgd IS NULL) OR
         (isr.data_modificacao > u.data_modificacao OR isr.data_modificacao IS NOT NULL AND u.data_nascimento IS NULL )
         "
@@ -615,7 +615,7 @@ class IntegracaoService extends ServiceBase
           "cod_jornada = :cod_jornada, " .
           "nome_jornada = :nome_jornada, " .
           "data_nascimento = :data_nascimento, " .
-          "modalidade_pgd = :modalidade_pgd, " .
+        "tipo_modalidade_id = :tipo_modalidade_id, " .
           "participa_pgd = :participa_pgd, " .
           "data_modificacao = :data_modificacao WHERE id = :id";
 
@@ -687,7 +687,7 @@ class IntegracaoService extends ServiceBase
                 'email'         => $linha->emailfuncional,
                 'cod_jornada'      => $linha->cod_jornada,
                 'nome_jornada'      => $linha->nome_jornada,
-                'modalidade_pgd' => $modalidadePgdValida,
+                'tipo_modalidade_id' => $modalidadePgdValida,
                 'participa_pgd' => $linha->participa_pgd,
                 'id'            => $linha->id,
                 'ident_unica'   => $linha->ident_unica,
@@ -1150,29 +1150,33 @@ class IntegracaoService extends ServiceBase
   }
 private function validarModalidadePgd($modalidadeString)
   {
+    $fallbackId = DB::table('tipos_modalidades')
+      ->where('nome', 'Sem dados do SIAPE')
+      ->whereNull('deleted_at')
+      ->value('id');
+
     if (empty($modalidadeString)) {
-      return null;
+      return $fallbackId;
     }
 
     if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $modalidadeString)) {
-      $exists = DB::table('tipos_modalidades_siape')
+      $tipoId = DB::table('tipos_modalidades_siape')
         ->where('id', $modalidadeString)
-        ->exists();
-      
-      return $exists ? $modalidadeString : null;
+        ->value('tipo_modalidade_id');
+      return $tipoId ?? $fallbackId;
     }
 
-    $modalidade = DB::table('tipos_modalidades_siape')
+    $tipoId = DB::table('tipos_modalidades_siape')
       ->where('nome', $modalidadeString)
-      ->first();
+      ->value('tipo_modalidade_id');
 
-    if ($modalidade) {
-      SiapeLog::info("Modalidade '{$modalidadeString}' convertida para UUID: {$modalidade->id}");
-      return $modalidade->id;
+    if ($tipoId) {
+      SiapeLog::info("Modalidade '{$modalidadeString}' convertida para TipoModalidade: {$tipoId}");
+      return $tipoId;
     }
 
-    SiapeLog::warning("Modalidade '{$modalidadeString}' não encontrada na tabela tipos_modalidades_siape. Valor será definido como null.");
-    return null;
+    SiapeLog::warning("Modalidade '{$modalidadeString}' não encontrada na tabela tipos_modalidades_siape. Valor será definido para 'Sem dados do SIAPE'.");
+    return $fallbackId;
   }  
   
   private function atualizarMatriculasUsuariosSemMatricula(): void
