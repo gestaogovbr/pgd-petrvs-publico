@@ -10,40 +10,58 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::transaction(function () {
-            $backupTable = 'usuarios_backup_modalidade_pgd';
+        if (!Schema::hasColumn('usuarios', 'modalidade_pgd')) {
+            return;
+        }
+        $backupTable = 'usuarios_backup_modalidade_pgd';
 
-            if (!Schema::hasTable($backupTable)) {
-                Schema::create($backupTable, function (Blueprint $table) {
-                    $table->uuid('id')->primary();
-                    $table->uuid('modalidade_pgd')->nullable();
-                    $table->string('participa_pgd', 10)->nullable();
-                });
-            }
-
-            DB::statement("INSERT INTO `$backupTable` (`id`, `modalidade_pgd`, `participa_pgd`) SELECT `id`, `modalidade_pgd`, `participa_pgd` FROM `usuarios`");
-
-            try {
-                Schema::table('usuarios', function (Blueprint $table) {
-                    $table->dropForeign('usuarios_modalidade_pgd_foreign');
-                });
-            } catch (\Throwable $e) {
-            }
-
-            Schema::table('usuarios', function (Blueprint $table) {
-                $table->renameColumn('modalidade_pgd', 'tipo_modalidade_id');
+        if (!Schema::hasTable($backupTable)) {
+            Schema::create($backupTable, function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->uuid('modalidade_pgd')->nullable();
+                $table->string('participa_pgd', 10)->nullable();
             });
+        }
 
-            try {
-                Schema::table('usuarios', function (Blueprint $table) {
-                    $table->foreign('tipo_modalidade_id')
-                        ->references('id')
-                        ->on('tipos_modalidades')
-                        ->onDelete('restrict')
-                        ->onUpdate('cascade');
-                });
-            } catch (\Throwable $e) {
-            }
+        DB::statement("INSERT INTO `$backupTable` (`id`, `modalidade_pgd`, `participa_pgd`) SELECT `id`, `modalidade_pgd`, `participa_pgd` FROM `usuarios`");
+
+        try {
+            Schema::table('usuarios', function (Blueprint $table) {
+                $table->dropForeign('usuarios_modalidade_pgd_foreign');
+            });
+        } catch (\Throwable $e) {
+        }
+
+        Schema::table('usuarios', function (Blueprint $table) {
+            $table->renameColumn('modalidade_pgd', 'tipo_modalidade_id');
+        });
+
+        try {
+            Schema::table('usuarios', function (Blueprint $table) {
+                $table->foreign('tipo_modalidade_id')
+                    ->references('id')
+                    ->on('tipos_modalidades')
+                    ->onDelete('restrict')
+                    ->onUpdate('cascade');
+            });
+        } catch (\Throwable $e) {
+        }
+
+        $presencialId = DB::table('tipos_modalidades')
+            ->where('nome', 'Presencial')
+            ->whereNull('deleted_at')
+            ->value('id');
+
+        $semDadosSiapeId = DB::table('tipos_modalidades')
+            ->where('nome', 'Sem dados do SIAPE')
+            ->whereNull('deleted_at')
+            ->value('id');
+
+        if (!$presencialId || !$semDadosSiapeId) {
+            Artisan::call('db:seed', [
+                '--class' => 'In24_2023Seeder',
+                '--force' => true,
+            ]);
 
             $presencialId = DB::table('tipos_modalidades')
                 ->where('nome', 'Presencial')
@@ -54,24 +72,9 @@ return new class extends Migration
                 ->where('nome', 'Sem dados do SIAPE')
                 ->whereNull('deleted_at')
                 ->value('id');
+        }
 
-            if (!$presencialId || !$semDadosSiapeId) {
-                Artisan::call('db:seed', [
-                    '--class' => 'In24_2023Seeder',
-                    '--force' => true,
-                ]);
-
-                $presencialId = DB::table('tipos_modalidades')
-                    ->where('nome', 'Presencial')
-                    ->whereNull('deleted_at')
-                    ->value('id');
-
-                $semDadosSiapeId = DB::table('tipos_modalidades')
-                    ->where('nome', 'Sem dados do SIAPE')
-                    ->whereNull('deleted_at')
-                    ->value('id');
-            }
-
+        DB::transaction(function () use ($backupTable, $presencialId, $semDadosSiapeId) {
             DB::statement(<<<SQL
                 UPDATE `usuarios` AS u
                 INNER JOIN `$backupTable` AS b ON b.id = u.id
@@ -100,13 +103,13 @@ return new class extends Migration
                   ->whereNull('tipo_modalidade_id')
                   ->update(['tipo_modalidade_id' => $semDadosSiapeId]);
             }
-
-            Schema::table('usuarios', function (Blueprint $table) {
-                $table->uuid('tipo_modalidade_id')->nullable(false)->change();
-            });
-
-            Schema::dropIfExists($backupTable);
         });
+
+        Schema::table('usuarios', function (Blueprint $table) {
+            $table->uuid('tipo_modalidade_id')->nullable(false)->change();
+        });
+
+        Schema::dropIfExists($backupTable);
     }
 
     public function down(): void
