@@ -39,7 +39,8 @@ class RelatorioAgenteService extends ServiceBase
                 `u`.`situacao_siape` AS `situacao`,
                 case 
                     when `u`.`participa_pgd` = 'sim' then `tm_sougov`.`nome`
-                    else '-'
+                    when `u`.`participa_pgd` = 'não' then `tm_presencial`.`nome`
+                    else `tm_sem`.`nome`
                 end AS `modalidadeSouGov`,
                 case 
                     when  `u`.`situacao_siape` = 'INATIVO' OR `tm`.`id` IS NULL OR `u`.`participa_pgd` = 'não' then '-'
@@ -250,7 +251,7 @@ TEXT;
 
         $modalidade = $this->extractWhere($data, "modalidadeSouGov");
         if (isset($modalidade[2])) {
-            $sql .= " and ( `u`.`participa_pgd` = 'sim' and `u`.`tipo_modalidade_id` = ? )";
+            $sql .= " and `u`.`tipo_modalidade_id` = ?";
             $params[] = $modalidade[2];
         }
 
