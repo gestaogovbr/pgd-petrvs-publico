@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 
 class SiapeIndividualController extends ControllerBase
 {
@@ -16,6 +17,14 @@ class SiapeIndividualController extends ControllerBase
             'message' => 'Processamento concluído.',
             'log' => null,
         ];
+        $tenantId = function_exists('tenant') ? (tenant('id') ?? 'central') : 'central';
+        $lock = Cache::lock('siape:processaServidor:' . $tenantId, 600);
+        if (!$lock->get()) {
+            $retorno['success'] = false;
+            $retorno['message'] = 'já existe uma requisição ativa nesse tenant neste momento, por favor aguarde e tente novamente em instantes';
+            $retorno['log'] = $this->getLogSiape();
+            return response()->json($retorno, Response::HTTP_BAD_REQUEST);
+        }
         try {
             $data = $request->validate([
                 'cpf' => [],
@@ -33,6 +42,8 @@ class SiapeIndividualController extends ControllerBase
             $retorno['message'] = $e->getMessage();
             $retorno['log'] = $this->getLogSiape();
             return response()->json($retorno, Response::HTTP_BAD_REQUEST);
+        } finally {
+            $lock->release();
         }
     }
 
