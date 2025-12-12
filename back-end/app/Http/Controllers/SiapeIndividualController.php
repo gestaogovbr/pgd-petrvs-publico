@@ -37,7 +37,8 @@ class SiapeIndividualController extends ControllerBase
     }
 
     private function getLogSiape(){
-        $logPath = storage_path('logs/siape.log');
+        $tenantId = function_exists('tenant') ? (tenant('id') ?? 'central') : 'central';
+        $logPath = storage_path('logs/siape_' . $tenantId . '.log');
       
         if (!file_exists($logPath)) {
             return null;

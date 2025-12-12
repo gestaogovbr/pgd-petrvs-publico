@@ -88,7 +88,8 @@ class ProcessaDadosSiapeBD
         } catch (Exception $e) {
             report($e);
             SiapeLog::error(sprintf("CPF:#%s Falha nos dados pessoais:", $cpf), [$dadosPessoais]);
-            throw new ErrorDataSiapeException("Falha ao tratar dados pessoais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape.log");
+            $tenantId = function_exists('tenant') ? (tenant('id') ?? 'central') : 'central';
+            throw new ErrorDataSiapeException("Falha ao tratar dados pessoais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape_{$tenantId}.log");
         }
     }
 
@@ -111,7 +112,8 @@ class ProcessaDadosSiapeBD
         } catch (Exception $e) {
             report($e);
             SiapeLog::error(sprintf("CPF:#%s Falha nos dados funcionais:", $cpf), [$dadosFuncionais]);
-            throw new ErrorDataSiapeException("Falha ao tratar dados funcionais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape.log");
+            $tenantId = function_exists('tenant') ? (tenant('id') ?? 'central') : 'central';
+            throw new ErrorDataSiapeException("Falha ao tratar dados funcionais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape_{$tenantId}.log");
         }
     }
 
