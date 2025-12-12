@@ -755,6 +755,7 @@ export class PlanoEntregaListComponent extends PageListBase<
               - o usuário logado precisa ser gestor de alguma Unidade da linha hierárquica ascendente da Unidade do plano (Unidade A e superiores), e possuir a capacidade "MOD_PENT_AVAL_SUBORD";
               - sugerir arquivamento automático (vide RI_PENT_A); 
         */
+				if (!this.avaliacao) return false;
 				let condic1 =
 					planoEntrega.unidade?.instituidora == 1
 						? this.unidadeService.isGestorUnidade(planoEntrega.unidade?.id)
