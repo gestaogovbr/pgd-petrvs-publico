@@ -1,3 +1,4 @@
+## 2.9.4 09/12/2025
 ## 2.9.3 09/12/2025
 ### Adicionado
 - Avisos de erro interno do sistema enviados ao Microsoft Teams, com informações básicas para acompanhamento rápido.
