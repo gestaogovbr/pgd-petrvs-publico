@@ -5,6 +5,7 @@
 ### Corrigido
 - Ajustes nas permissões das telas de Configurações (Unidade e Usuário).
 - Correções de visibilidade e bloqueio de ações conforme o perfil.
+- Corrigida edição de entrega em Plano de Entrega que evitava o preenchimento automático da data em edição de entrega
 ## 2.9.3 09/12/2025
 ### Adicionado
 - Avisos de erro interno do sistema enviados ao Microsoft Teams, com informações básicas para acompanhamento rápido.
