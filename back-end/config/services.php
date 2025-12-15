@@ -46,6 +46,7 @@ return [
       'environment' => env('LOGIN_UNICO_ENV')
     ],
     'microsoft_teams' => [
+        'enabled' => env('TEAMS_ENABLE', false),
         'coges_url' => env('TEAMS_COGES_URL', ''),
         'errors_url' => env('TEAMS_ERRORS_URL', ''),
     ],
