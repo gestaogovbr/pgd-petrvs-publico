@@ -1,4 +1,10 @@
 ## 2.9.4 09/12/2025
+### Modificado
+- Regras de acesso mais consistentes entre perfis.
+- Mensagens mais claras quando uma ação não é permitida.
+### Corrigido
+- Ajustes nas permissões das telas de Configurações (Unidade e Usuário).
+- Correções de visibilidade e bloqueio de ações conforme o perfil.
 ## 2.9.3 09/12/2025
 ### Adicionado
 - Avisos de erro interno do sistema enviados ao Microsoft Teams, com informações básicas para acompanhamento rápido.
