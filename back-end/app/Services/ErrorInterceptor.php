@@ -16,6 +16,12 @@ class ErrorInterceptor
     public function intercept(Throwable $e, Request $request, Response $response): void
     {
         if (method_exists($response, 'getStatusCode') && $response->getStatusCode() === self::HTTP_INTERNAL_SERVER_ERROR) {
+            $enabled = (bool)config('services.microsoft_teams.enabled');
+            $errorsUrl = trim((string)config('services.microsoft_teams.errors_url'));
+            $cogesUrl = trim((string)config('services.microsoft_teams.coges_url'));
+            if (!$enabled || ($errorsUrl === '' && $cogesUrl === '')) {
+                return;
+            }
             $user = Auth::user();
             $notification = NotificationFactory::make('error_500', [
                 'message' => $e->getMessage(),

@@ -113,7 +113,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 		);
 		this.join = [
 			"planejamento:id,nome",
-			"programa:id,nome",
+			"programa:id,nome,data_fim",
 			"cadeia_valor:id,nome",
 			"unidade:id,sigla,path,data_inativacao",
 			"entregas.entrega",
