@@ -2,6 +2,7 @@
 ### Modificado
 - Regras de acesso mais consistentes entre perfis.
 - Mensagens mais claras quando uma ação não é permitida.
+- Comentários já cadastrados voltam a ser exibidos na listagem de plano de entrega
 ### Corrigido
 - Ajustes nas permissões das telas de Configurações (Unidade e Usuário).
 - Correções de visibilidade e bloqueio de ações conforme o perfil.
