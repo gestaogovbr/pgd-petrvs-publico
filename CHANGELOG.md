@@ -8,6 +8,7 @@
 - Correções de visibilidade e bloqueio de ações conforme o perfil.
 - Corrigida edição de entrega em Plano de Entrega que evitava o preenchimento automático da data em edição de entrega
 - Corrigido erro que impedia chefe de unidade cancelar conclusão de plano de entrega
+- Erro de notificação ao Microsoft Teams quando ocorre um erro interno no sistema
 ## 2.9.3 09/12/2025
 ### Adicionado
 - Avisos de erro interno do sistema enviados ao Microsoft Teams, com informações básicas para acompanhamento rápido.
