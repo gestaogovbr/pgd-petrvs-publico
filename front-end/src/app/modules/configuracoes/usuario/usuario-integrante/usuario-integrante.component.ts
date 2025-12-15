@@ -14,6 +14,7 @@ import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import {InputSelectComponent} from "../../../../components/input/input-select/input-select.component";
+import { Perfil } from 'src/app/models/perfil.model';
 
 @Component({
   selector: 'usuario-integrante',
@@ -135,6 +136,25 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
         this.grid!.loading = false;
       }
     }
+  }
+
+  public disablePerfilItem(item: { key: any, value: string, data?: Perfil }): boolean {
+    const perfilNivelAtual = this.auth.usuario?.perfil?.nivel ?? Perfil.NIVEL.PARTICIPANTE;
+    const nivelItem = item?.data?.nivel ?? undefined;
+    if (typeof nivelItem === 'number') {
+      return nivelItem < perfilNivelAtual;
+    }
+    return false;
+  }
+
+  public isPerfilSuperiorAoLogado(): boolean {
+    const nivelLogado = this.auth.usuario?.perfil?.nivel ?? Perfil.NIVEL.PARTICIPANTE;
+    const nivelEditando = this.formPerfil.controls.perfil_id.value;
+    if (!nivelEditando) return false;
+    // Quando o perfil selecionado no formulário é de nível superior (valor numérico menor), desabilita
+    const itemSelecionado = this.perfil?.items.find(i => i.key === nivelEditando);
+    const nivelItem = itemSelecionado?.data?.nivel;
+    return typeof nivelItem === 'number' ? (nivelItem < nivelLogado) : false;
   }
 
   public async salvarPerfil() {

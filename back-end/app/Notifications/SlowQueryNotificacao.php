@@ -26,6 +26,11 @@ class SlowQueryNotificacao extends Notification
 
     public function toMicrosoftTeams($notifiable)
     {
+        $enabled = (bool)config('services.microsoft_teams.enabled');
+        $cogesUrl = trim((string)config('services.microsoft_teams.coges_url'));
+        if (!$enabled || $cogesUrl === '') {
+            return null;
+        }
         $sql = (string)($this->data['sql'] ?? '');
         $timeMs = (int)($this->data['time_ms'] ?? 0);
         $tenant = (string)($this->data['tenant'] ?? '');

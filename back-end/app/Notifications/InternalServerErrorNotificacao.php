@@ -27,6 +27,12 @@ class InternalServerErrorNotificacao extends Notification
 
     public function toMicrosoftTeams($notifiable)
     {
+        $enabled = (bool)config('services.microsoft_teams.enabled');
+        $errorsUrl = trim((string)config('services.microsoft_teams.errors_url'));
+        $cogesUrl = trim((string)config('services.microsoft_teams.coges_url'));
+        if (!$enabled || ($errorsUrl === '' && $cogesUrl === '')) {
+            return null;
+        }
         $message = (string)($this->data['message'] ?? '');
         $code = (int)($this->data['code'] ?? Response::HTTP_INTERNAL_SERVER_ERROR);
         $method = (string)($this->data['method'] ?? '');
