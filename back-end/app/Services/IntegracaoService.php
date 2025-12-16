@@ -1026,7 +1026,7 @@ class IntegracaoService extends ServiceBase
 
   private function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(string $email, string $matricula): void
   {
-    $usuario = Usuario::where('email', $email)->first();
+    $usuario = Usuario::withTrashed()->where('email', $email)->first();
     if (!empty($usuario)) {
       LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. Matricula: %s, Email: %s", $matricula, $email));
       $novoemailBase = $usuario->matricula;
@@ -1034,7 +1034,7 @@ class IntegracaoService extends ServiceBase
         $novoemailBase = \Illuminate\Support\Str::uuid()->toString();
       }
       $novoemail = $novoemailBase . "@petrvs.gov.br";
-      $outroUsuarioComesseEmail = Usuario::where('email', $novoemail)->where('matricula', '!=', $usuario->matricula)->first();
+      $outroUsuarioComesseEmail = Usuario::withTrashed()->where('email', $novoemail)->where('matricula', '!=', $usuario->matricula)->first();
       if (!empty($outroUsuarioComesseEmail)) {
         $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($novoemail, $usuario->matricula);
       }
