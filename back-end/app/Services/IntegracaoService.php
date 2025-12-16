@@ -1043,18 +1043,27 @@ class IntegracaoService extends ServiceBase
     }
   }
 
+  /**
+   * @deprecated Será removido na próxima versão.
+   */
   public function salvaUsuarioLotacaoGoogle(&$usuario, &$lotacao, $tokenData, $auth)
   {
     $auth->fillUsuarioWithCredential($usuario, $tokenData);
     $this->salvarUsuarioLotacao($usuario, $lotacao);
   }
 
+  /**
+   * @deprecated Será removido na próxima versão.
+   */
   public function salvaUsuarioLotacaoApi(&$usuario, &$lotacao, $tokenData, $api)
   {
     $api->fillUsuarioWithCredential($usuario, $tokenData);
     $this->salvarUsuarioLotacao($usuario, $lotacao);
   }
 
+  /**
+   * @deprecated Será removido na próxima versão.
+   */
   public function salvaUsuarioLotacaoDprf(&$usuario, &$lotacao, $profile, $auth)
   {
     $auth->fillUsuarioWithProfile($usuario, $profile);
@@ -1083,6 +1092,9 @@ class IntegracaoService extends ServiceBase
     }
   }
 
+  /**
+   * @deprecated Será removido na próxima versão.
+   */
   public function atualizaLogs($user_id, string $table_name, string $row_id, string $type, array $delta)
   {
     /*
