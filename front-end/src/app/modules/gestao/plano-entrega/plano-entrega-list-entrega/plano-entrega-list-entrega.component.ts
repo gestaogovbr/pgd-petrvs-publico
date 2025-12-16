@@ -116,7 +116,9 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     this.formEdit = this.fh.FormBuilder({
       progresso_realizado: { default: 0 },
       etiquetas: { default: [] },
-      etiqueta: { default: null }
+      etiqueta: { default: null },
+      meta: { default: 0 },
+      realizado: { default: 0 }
     });
     // Testa se o usuário possui permissão para exibir dados da entrega do plano de entregas
     this.addOption(Object.assign({ onClick: this.consult.bind(this) }, this.OPTION_INFORMACOES), "MOD_PENT");
@@ -312,15 +314,6 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     if(row) row.comentarios = modalResult.comentarios || [];
   }
 
-  public onRealizadaChange() {
-    const meta = this.form?.controls.meta.value;
-    const realizado = this.form?.controls.realizado.value;
-    if (meta && realizado) {
-      let totalRealizado = !isNaN(realizado) ? ((realizado / meta) * 100).toFixed(0) || 0 : 0;
-      this.form?.controls.progresso_realizado.setValue(totalRealizado);
-    }
-  }
-
   public addItemHandleEtiquetas(): LookupItem | undefined {
     let result = undefined;
     if (this.etiqueta && this.etiqueta.selectedItem) {
@@ -383,6 +376,24 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     });
   }
 
+  public async onColumnMetaEdit(row: any) {
+    this.formEdit.controls.meta.setValue(this.planoEntregaService.getValor(row.meta));
+    this.formEdit.controls.realizado.setValue(this.planoEntregaService.getValor(row.realizado));
+  }
+  
+  public async onColumnMetaSave(row: any) {
+    try {
+      let realizado = this.planoEntregaService.getEntregaValor(row.entrega,this.formEdit.controls.realizado.value);
+      const saved = await this.dao!.update(row.id, {
+        realizado: realizado
+      });
+      row.realizado = realizado;
+      return !!saved;
+    } catch (error) {
+      return false;
+    }
+  }
+
   public async onColumnChecklistEdit(row: any) {
     this.formEdit.controls.progresso_realizado.setValue(row.progresso_realizado);
     this.checklist = this.util.clone(row.checklist);
@@ -413,5 +424,9 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   
   public getObjetivos(row: any){
     return row.objetivos.filter((x: any) => x._status != 'DELETE');
+  }
+
+  public isMetaEditavel(){
+    return this.execucao && this.entity?.status !== "CONCLUIDO";
   }
 }

@@ -42,14 +42,14 @@
                 <span *ngIf="row.data_fim"> {{dao!.getDateFormatted(row.data_fim)}}</span>
             </ng-template>
         </column>
-        <column [title]="'Meta'" [width]="100" [template]="columnMetaRealizado" [editTemplate]="editMetaRealizado">
+        <column [title]="'Meta'" [width]="100" [template]="columnMetaRealizado" [editTemplate]="editMetaRealizado" [columnEditTemplate]="isMetaEditavel() ? editMetaRealizado : undefined" [edit]="isMetaEditavel() ? onColumnMetaEdit.bind(this) : undefined" [save]="isMetaEditavel() ? onColumnMetaSave.bind(this) : undefined">
             <ng-template let-row="row" #columnMetaRealizado>
                 <badge icon="bi bi-graph-up-arrow" [textValue]="planoEntregaService.getValorMeta(row)" color="light" hint="Planejada"></badge><br>
                 <badge icon="bi bi-check-lg" [textValue]="planoEntregaService.getValorRealizado(row)" color="light" hint="Realizada"></badge>
             </ng-template>
             <ng-template let-row="row" #editMetaRealizado>
-                <plano-entrega-valor-meta-input icon="bi bi-graph-up-arrow" [entrega]="row.entrega" disabled [size]="6" [control]="form!.controls.meta" label="Meta"></plano-entrega-valor-meta-input>
-                <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="row.entrega" [size]="6" [control]="form!.controls.realizado" label="Realizada" [change]="onRealizadaChange.bind(this)"></plano-entrega-valor-meta-input>
+                <plano-entrega-valor-meta-input icon="bi bi-graph-up-arrow" [entrega]="row.entrega" disabled [size]="6" [control]="formEdit!.controls.meta" label="Meta"></plano-entrega-valor-meta-input>
+                <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="row.entrega" [size]="6" [control]="formEdit!.controls.realizado" label="Realizada" ></plano-entrega-valor-meta-input>
             </ng-template>
         </column>
         <!--<column title="Progresso\nChecklist" [width]="100" [template]="columnProgresso" [editTemplate]="editProgresso">
