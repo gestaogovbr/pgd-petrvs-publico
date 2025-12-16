@@ -678,7 +678,7 @@ class IntegracaoService extends ServiceBase
 
               SiapeLog::info("Atualizando dados do servidor Matricula: " . $linha->matriculasiape);
 
-              $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->matriculasiape);
+              $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->matriculasiape, $linha->id);
               $modalidadePgdValida = $this->validarModalidadePgd($linha->modalidade_pgd);
 
               DB::update($sqlUpdateDados, [
@@ -1024,22 +1024,34 @@ class IntegracaoService extends ServiceBase
     return true;
   }
 
-  private function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(string $email, string $matricula): void
+  public function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(string $email, string $matricula, string $ignoreId = null): void
   {
-    $usuario = Usuario::withTrashed()->where('email', $email)->first();
-    if (!empty($usuario)) {
-      LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. Matricula: %s, Email: %s", $matricula, $email));
-      $novoemailBase = $usuario->matricula;
-      if (empty($novoemailBase)) {
-        $novoemailBase = \Illuminate\Support\Str::uuid()->toString();
+    $email = trim(mb_strtolower($email, 'UTF-8'));
+    
+    $usuarios = Usuario::withoutGlobalScopes()
+        ->where('email', $email)
+        ->when($ignoreId, function ($query) use ($ignoreId) {
+            return $query->where('id', '!=', $ignoreId);
+        })
+        ->get();
+
+    foreach ($usuarios as $usuario) {
+      if (!empty($usuario)) {
+        LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. Matricula: %s, Email: %s", $matricula, $email));
+        
+        $novoemailBase = $usuario->matricula;
+        if (empty($novoemailBase)) {
+          $novoemailBase = \Illuminate\Support\Str::uuid()->toString();
+        }
+        
+        $novoemail = $novoemailBase . "@petrvs.gov.br";
+        
+        $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($novoemail, $usuario->matricula, $usuario->id);
+        
+        SiapeLog::info("IntegracaoService: Alterando email duplicado para email fake", ['matricula' => $matricula, 'email' => $email, 'usuario' => $usuario->toJson()]);
+        
+        DB::table('usuarios')->where('id', $usuario->id)->update(['email' => $novoemail]);
       }
-      $novoemail = $novoemailBase . "@petrvs.gov.br";
-      $outroUsuarioComesseEmail = Usuario::withTrashed()->where('email', $novoemail)->where('matricula', '!=', $usuario->matricula)->first();
-      if (!empty($outroUsuarioComesseEmail)) {
-        $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($novoemail, $usuario->matricula);
-      }
-      SiapeLog::info("IntegracaoService: Alterando email duplicado para email fake", ['matricula' => $matricula, 'email' => $email, 'usuario' => $usuario->toJson()]);
-      $usuario->update(['email' => $novoemail]);
     }
   }
 
@@ -1079,6 +1091,7 @@ class IntegracaoService extends ServiceBase
     if ($this->fillUsuarioWithSiape($usuario, $lotacao)) { //se quem está logado existe na tabela integracao_servidores
       $perfil_nivel_5_id = $this->nivelAcessoService->getPerfilParticipante()->id;
       $usuario->perfil_id = $perfil_nivel_5_id;
+      $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($usuario->email, $usuario->matricula, $usuario->id);
       $usuario->save();
       $usuario->fresh();
       if (!empty($lotacao->unidade_id)) { // se sua Unidade estiver cadastrada, insere-se uma lotação principal pra ele

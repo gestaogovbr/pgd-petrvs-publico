@@ -88,17 +88,12 @@ class IntegracaoServiceEmailTest extends TestCase
         
         $this->assertDatabaseHas('usuarios', ['email' => $email]);
 
-        // Acessa método privado via Reflection
-        $reflection = new \ReflectionClass(IntegracaoService::class);
-        $method = $reflection->getMethod('verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake');
-        $method->setAccessible(true);
-
         // Executa a correção
         // Precisamos garantir que o Model Usuario não falhe ao tentar atualizar
         // Desabilitamos eventos para evitar Auditable/Logs no update
         Usuario::flushEventListeners();
 
-        $method->invokeArgs($this->service, [$email, '22222']);
+        $this->service->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($email, '22222');
 
         // Verifica se o antigo foi renomeado
         $usuarioAntigo = DB::table('usuarios')->where('id', $id)->first();
@@ -125,20 +120,40 @@ class IntegracaoServiceEmailTest extends TestCase
         // Verifica que ele ainda existe no banco com esse email (incluindo trash)
         $this->assertDatabaseHas('usuarios', ['id' => $id, 'email' => $email]);
 
-        // Acessa método privado
-        $reflection = new \ReflectionClass(IntegracaoService::class);
-        $method = $reflection->getMethod('verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake');
-        $method->setAccessible(true);
-        
         Usuario::flushEventListeners();
 
         // Executa a correção
-        $method->invokeArgs($this->service, [$email, '44444']);
+        $this->service->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($email, '44444');
 
         // Verifica se o antigo foi renomeado
         $usuarioAntigo = DB::table('usuarios')->where('id', $id)->first();
         
         $this->assertNotEquals($email, $usuarioAntigo->email, "O e-mail do usuário deletado deveria ter sido alterado.");
         $this->assertStringContainsString('@petrvs.gov.br', $usuarioAntigo->email);
+    }
+
+    public function test_nao_deve_alterar_email_se_for_o_proprio_usuario_ignorado()
+    {
+        // Cria usuário
+        $email = 'proprio@teste.gov.br';
+        $id = \Illuminate\Support\Str::uuid()->toString();
+        
+        DB::table('usuarios')->insert([
+            'id' => $id,
+            'email' => $email,
+            'matricula' => '55555',
+            'nome' => 'Proprio',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+        
+        Usuario::flushEventListeners();
+
+        // Executa a correção passando o ID para ignorar
+        $this->service->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($email, '55555', $id);
+
+        // Verifica se o email NÃO foi alterado
+        $usuario = DB::table('usuarios')->where('id', $id)->first();
+        $this->assertEquals($email, $usuario->email, "O e-mail do próprio usuário não deveria ser alterado.");
     }
 }
