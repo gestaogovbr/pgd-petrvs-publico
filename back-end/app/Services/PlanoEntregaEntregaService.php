@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Enums\StatusEnum;
+use App\Exceptions\ValidateException;
 use App\Models\CadeiaValorProcesso;
 use App\Models\PlanejamentoObjetivo;
 use App\Models\PlanoEntregaEntrega;
@@ -42,6 +44,19 @@ class PlanoEntregaEntregaService extends ServiceBase
         foreach ($planosTrabalhosImpactados as $planoTrabalhoId) {
             $this->planoTrabalhoService->repactuar($planoTrabalhoId, true);
         }
+    }
+
+    public function proxyupdate(&$data, $unidade)
+    {
+        if(!isset($data["realizado"])) return $data;
+        
+        $planoEntregaEntrega = $this->planoEntregaEntregaService->getById([
+                "id" => $data["id"]
+            ]);
+        
+        /* Não é possível alterar a meta realizada após a conclusão do plano de entrega */
+        if($planoEntregaEntrega->planoEntrega->status == StatusEnum::HOMOLOGANDO->value) throw new ValidateException("Não é possível atualizar a meta realizada de plano de entrega já concluído.");
+        return $data;
     }
 
     public function proxyQuery($query, &$data)
