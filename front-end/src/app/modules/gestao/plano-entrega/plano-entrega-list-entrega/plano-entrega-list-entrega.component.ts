@@ -392,7 +392,8 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       }
       const saved = await this.dao!.update(row.id, {
         realizado: realizado,
-        progresso_realizado: totalRealizado
+        progresso_realizado: totalRealizado,
+        _monitor: false
       });
 
       row.realizado = realizado;

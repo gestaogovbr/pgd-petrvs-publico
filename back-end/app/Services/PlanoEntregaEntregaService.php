@@ -91,8 +91,9 @@ class PlanoEntregaEntregaService extends ServiceBase
         return $data;
     }
 
-    public function afterUpdate($data)
+    public function afterUpdate($data, $dataRequest)
     {
+        if(!$dataRequest["_monitor"]) return;
         $entrega = PlanoEntregaEntrega::find($data['id']);
         $usuario = parent::loggedUser();
 
