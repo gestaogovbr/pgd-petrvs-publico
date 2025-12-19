@@ -1,3 +1,7 @@
+## 2.9.5 19/12/2025
+### Corrigido
+- Ajuste na atualização automática da modalidade PGD dos usuários, garantindo a recuperação correta a partir do último plano de trabalho.
+
 ## 2.9.4 09/12/2025
 ### Modificado
 - Regras de acesso mais consistentes entre perfis.
