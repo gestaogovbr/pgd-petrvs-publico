@@ -55,7 +55,7 @@ class PlanoEntregaEntregaService extends ServiceBase
             ]);
         
         /* Não é possível alterar a meta realizada após a conclusão do plano de entrega */
-        if($planoEntregaEntrega->planoEntrega->status == StatusEnum::HOMOLOGANDO->value) throw new ValidateException("Não é possível atualizar a meta realizada de plano de entrega já concluído.");
+        if($planoEntregaEntrega->planoEntrega->status == StatusEnum::CONCLUIDO->value) throw new ValidateException("Não é possível atualizar a meta realizada de plano de entrega já concluído.");
         return $data;
     }
 

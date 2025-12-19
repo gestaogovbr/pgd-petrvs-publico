@@ -384,10 +384,20 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   public async onColumnMetaSave(row: any) {
     try {
       let realizado = this.planoEntregaService.getEntregaValor(row.entrega,this.formEdit.controls.realizado.value);
+      const valorMeta = this.formEdit?.controls.meta.value;
+      const valorRealizado = this.formEdit?.controls.realizado.value;
+      let totalRealizado = row.progresso_realizado;
+      if (valorRealizado) {
+        totalRealizado = !isNaN(valorRealizado) ? ((valorRealizado / valorMeta) * 100).toFixed(0) || 0 : 0;
+      }
       const saved = await this.dao!.update(row.id, {
-        realizado: realizado
+        realizado: realizado,
+        progresso_realizado: totalRealizado
       });
+
       row.realizado = realizado;
+      if(valorMeta && valorRealizado) row.progresso_realizado = totalRealizado;
+
       return !!saved;
     } catch (error) {
       return false;
