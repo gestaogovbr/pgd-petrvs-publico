@@ -1,12 +1,26 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
     public function up(): void
     {
+        // Remove a restrição de chave estrangeira para permitir inserir IDs de tipos_modalidades (UUIDs do sistema)
+        // que podem não existir na tabela tipos_modalidades_siape (que é a referência atual).
+        // A próxima migração irá renomear a coluna e redefinir a chave estrangeira corretamente.
+        try {
+            Schema::table('usuarios', function (Blueprint $table) {
+                $table->dropForeign('usuarios_modalidade_pgd_foreign');
+            });
+        } catch (\Throwable $e) {
+            // Ignora se a chave não existir
+        }
+
+        // 1. Tenta recuperar a modalidade a partir do último plano de trabalho do usuário
         DB::table('usuarios')
             ->whereNull('modalidade_pgd')
             ->chunkById(100, function ($users) {
