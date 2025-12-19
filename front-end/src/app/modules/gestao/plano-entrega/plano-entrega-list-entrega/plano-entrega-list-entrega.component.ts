@@ -388,7 +388,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       const valorRealizado = this.formEdit?.controls.realizado.value;
       let totalRealizado = row.progresso_realizado;
       if (valorRealizado) {
-        totalRealizado = !isNaN(valorRealizado) ? ((valorRealizado / valorMeta) * 100).toFixed(0) || 0 : 0;
+        totalRealizado = !isNaN(valorRealizado) ? Math.min(((valorRealizado / valorMeta) * 100), 100).toFixed(0) || 0 : 0;
       }
       const saved = await this.dao!.update(row.id, {
         realizado: realizado,
