@@ -7,6 +7,25 @@ return new class extends Migration
 {
     public function up(): void
     {
+        DB::table('usuarios')
+            ->whereNull('modalidade_pgd')
+            ->chunkById(100, function ($users) {
+                foreach ($users as $user) {
+                    $lastPlan = DB::table('planos_trabalhos')
+                        ->where('usuario_id', $user->id)
+                        ->whereNull('deleted_at')
+                        ->orderBy('data_inicio', 'desc')
+                        ->select('tipo_modalidade_id')
+                        ->first();
+
+                    if ($lastPlan && !empty($lastPlan->tipo_modalidade_id)) {
+                        DB::table('usuarios')
+                            ->where('id', $user->id)
+                            ->update(['modalidade_pgd' => $lastPlan->tipo_modalidade_id]);
+                    }
+                }
+            });
+
         $rows = DB::select(<<<SQL
             SELECT u2.id, u2.cpf, u2.modalidade_pgd
             FROM usuarios AS u2
