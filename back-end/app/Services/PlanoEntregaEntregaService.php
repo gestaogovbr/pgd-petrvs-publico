@@ -93,7 +93,6 @@ class PlanoEntregaEntregaService extends ServiceBase
 
     public function afterUpdate($data, $dataRequest)
     {
-        if(!$dataRequest["_monitor"]) return;
         $entrega = PlanoEntregaEntrega::find($data['id']);
         $usuario = parent::loggedUser();
 
@@ -109,10 +108,13 @@ class PlanoEntregaEntregaService extends ServiceBase
 
         $atributosParaMonitorar = [
             'progresso_esperado',
-            'progresso_realizado',
             'meta',
-            'realizado',
         ];
+        
+        if(!isset($dataRequest["_monitor"]) || $dataRequest["_monitor"]){
+            $atributosParaMonitorar[] = 'realizado';
+            $atributosParaMonitorar[] = 'progresso_realizado';
+        }
 
         $dadosAlterados = false;
         foreach ($atributosParaMonitorar as $atributo) {
