@@ -89,19 +89,31 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
                   this.loading = false;
                   if (result?.success) {
                     await this.loadUsuario();
-                    this.dialog.alert("Sucesso", result.message);
+                    if(result.resumo) {
+                        this.mostrarResumo(result.resumo, result.message);
+                    } else {
+                        this.dialog.alert("Sucesso", result.message);
+                    }
                     this.log = result.log;
                   } else {
-                    this.dialog.alert("Erro", "Erro ao processar CPF: " + result?.message);
+                    if (result?.resumo) {
+                        this.mostrarResumo(result.resumo, "Erro ao processar CPF: " + result?.message);
+                    } else {
+                        this.dialog.alert("Erro", "Erro ao processar CPF: " + result?.message);
+                    }
                   }
                   this.downloadSiape();
                 },
                 error => {
                   this.loading = false;
                   console.log(error);
-                  this.log = error.error?.message;
-                  this.error("Erro ao processar CPF: " + error.error?.message);
-                  this.dialog.alert("Erro", "Erro ao processar CPF: " + (error.message ?? error.error?.message));
+                  const result = error.error;
+                  if (result?.resumo) {
+                      this.mostrarResumo(result.resumo, "Erro ao processar CPF: " + (result.message ?? error.message));
+                  } else {
+                      this.dialog.alert("Erro", "Erro ao processar CPF: " + (result?.message ?? error.message));
+                  }
+                  this.log = result?.log ?? error.message;
                 }
             )
           } catch (error: any) {
@@ -223,6 +235,27 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
     } finally {
       this.loading = false;
     }
+  }
+
+  private mostrarResumo(resumo: any[], titulo: string) {
+    if (!Array.isArray(resumo)) {
+        this.dialog.alert(titulo, 'Resumo inválido');
+        return;
+    }
+    let msg = '';
+    resumo.forEach((item, index) => {
+        msg += `Usuario ${index + 1}:\n`;
+        msg += `Status: ${item.status}\n`;
+        msg += `Mensagem: ${item.mensagem}\n`;
+        msg += `Existia: ${item.usuario_existia ? 'Sim' : 'Não'}\n`;
+        msg += `Inserido: ${item.usuario_inserido ? 'Sim' : 'Não'}\n`;
+        msg += `Lotação Associada: ${item.lotacao_associada ? 'Sim' : 'Não'}\n`;
+        if (item.alteracoes && item.alteracoes.length > 0) {
+            msg += `Alterações: ${item.alteracoes.join(', ')}\n`;
+        }
+        msg += '\n';
+    });
+    this.dialog.alert(titulo, msg);
   }
 
 }

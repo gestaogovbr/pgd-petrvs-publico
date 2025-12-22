@@ -30,8 +30,9 @@ class SiapeIndividualController extends ControllerBase
                 'cpf' => [],
             ]);
             
-            $this->service->processaServidor($data['cpf']);
+            $resultado = $this->service->processaServidor($data['cpf']);
             $retorno['log'] = $this->getLogSiape();
+            $retorno['resumo'] = $resultado;
             return response()->json(
                 $retorno,
                 Response::HTTP_OK
@@ -41,6 +42,7 @@ class SiapeIndividualController extends ControllerBase
             $retorno['success'] = false;
             $retorno['message'] = $e->getMessage();
             $retorno['log'] = $this->getLogSiape();
+            $retorno['resumo'] = $this->service->getResumo();
             return response()->json($retorno, Response::HTTP_BAD_REQUEST);
         } finally {
             $lock->release();
