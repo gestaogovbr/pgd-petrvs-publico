@@ -1,4 +1,4 @@
-import { Component, Inject, Injector, ViewChild } from '@angular/core';
+import { Component, Inject, Injector, ViewChild, TemplateRef } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
@@ -20,6 +20,7 @@ import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.
 })
 export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, UsuarioDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent
+  @ViewChild('resumoTpl') resumoTpl?: TemplateRef<any>;
   public usuarios: Usuario[] = [];
   public integranteDao: UnidadeIntegranteDaoService;
   public erros: string = '';
@@ -242,20 +243,26 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
         this.dialog.alert(titulo, 'Resumo inválido');
         return;
     }
-    let msg = '';
-    resumo.forEach((item, index) => {
-        msg += `Usuario ${index + 1}:\n`;
-        msg += `Status: ${item.status}\n`;
-        msg += `Mensagem: ${item.mensagem}\n`;
-        msg += `Existia: ${item.usuario_existia ? 'Sim' : 'Não'}\n`;
-        msg += `Inserido: ${item.usuario_inserido ? 'Sim' : 'Não'}\n`;
-        msg += `Lotação Associada: ${item.lotacao_associada ? 'Sim' : 'Não'}\n`;
-        if (item.alteracoes && item.alteracoes.length > 0) {
-            msg += `Alterações: ${item.alteracoes.join(', ')}\n`;
-        }
-        msg += '\n';
-    });
-    this.dialog.alert(titulo, msg);
+    
+    if (this.resumoTpl) {
+      this.dialog.template({ title: titulo, modalWidth: 700 }, this.resumoTpl, [{ label: "Ok", color: "btn-primary" }], { resumo: resumo });
+    } else {
+      // Fallback in case template is not loaded for some reason
+      let msg = '';
+      resumo.forEach((item, index) => {
+          msg += `Usuario ${index + 1}:\n`;
+          msg += `Status: ${item.status}\n`;
+          msg += `Mensagem: ${item.mensagem}\n`;
+          msg += `Existia: ${item.usuario_existia ? 'Sim' : 'Não'}\n`;
+          msg += `Inserido: ${item.usuario_inserido ? 'Sim' : 'Não'}\n`;
+          msg += `Lotação Associada: ${item.lotacao_associada ? 'Sim' : 'Não'}\n`;
+          if (item.alteracoes && item.alteracoes.length > 0) {
+              msg += `Alterações: ${item.alteracoes.join(', ')}\n`;
+          }
+          msg += '\n';
+      });
+      this.dialog.alert(titulo, msg);
+    }
   }
 
 }
