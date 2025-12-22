@@ -3,12 +3,9 @@
 namespace App\Services;
 
 use App\Exceptions\BadGatewayException;
-use App\Exceptions\IntegrationException;
-use Exception;
 use Throwable;
 use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
-use App\Models\Perfil;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Models\SiapeDadosUORG;
@@ -29,6 +26,9 @@ use App\Services\Siape\Servidor\Integracao;
 use Illuminate\Support\Facades\Log;
 use App\Facades\SiapeLog;
 
+/**
+ * @property UtilService $UtilService
+ */
 class IntegracaoService extends ServiceBase
 {
   use LogTrait;
@@ -662,6 +662,8 @@ class IntegracaoService extends ServiceBase
         );
         $atualizacoesLotacoesResult = [];
 
+        $this->processarAtualizacoesDados($atualizacoesDados, $sqlUpdateDados);
+
         DB::transaction(function () use (&$atualizacoesDados, &$sqlUpdateDados, &$atualizacoesLotacoes, &$sqlServidoresInseridosNaoLotados, &$atualizacoesLotacoesResult) {
           /**
            * Atualiza os dados pessoais de todos os servidores ATIVOS presentes na tabela USUARIOS.
@@ -673,6 +675,7 @@ class IntegracaoService extends ServiceBase
           //   throw new IntegrationException("IntegracaoService: Durante atualização de lotações, unidade de exercício raiz $this->unidadeRaiz não encontrada.");
           // }
           // $unidadeExercicioRaizId = $unidadeExercicioRaiz->id;
+          /*
           if (!empty($atualizacoesDados)) {
             foreach ($atualizacoesDados as $linha) {
 
@@ -696,6 +699,7 @@ class IntegracaoService extends ServiceBase
               ]);
             }
           };
+          */
 
           $this->atualizarMatriculasUsuariosSemMatricula();
 
@@ -1173,7 +1177,7 @@ class IntegracaoService extends ServiceBase
       $unidadeRaiz->save();
     }
   }
-private function validarModalidadePgd($modalidadeString)
+protected function validarModalidadePgd($modalidadeString)
   {
     if (empty($modalidadeString)) {
       return null;
@@ -1287,6 +1291,45 @@ private function validarModalidadePgd($modalidadeString)
         "Erro ao verificar usuários externos na integração: %s",
         $e->getMessage()
       ));
+    }
+  }
+
+  /**
+   * Processa as atualizações de dados dos servidores em lotes.
+   *
+   * @param array $atualizacoesDados
+   * @param string $sqlUpdateDados
+   * @return void
+   */
+  private function processarAtualizacoesDados(array $atualizacoesDados, string $sqlUpdateDados): void
+  {
+    $chunkSize = 50;
+    $transactionRetries = 3;
+    $chunks = array_chunk($atualizacoesDados, $chunkSize);
+
+    foreach ($chunks as $chunk) {
+      DB::transaction(function () use ($chunk, $sqlUpdateDados) {
+        foreach ($chunk as $linha) {
+          SiapeLog::info("Atualizando dados do servidor Matricula: " . $linha->matriculasiape);
+
+          $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->matriculasiape, $linha->id);
+          $modalidadePgdValida = $this->validarModalidadePgd($linha->modalidade_pgd);
+
+          DB::update($sqlUpdateDados, [
+            'nome'          => $linha->nome_servidor,
+            'nomeguerra'    => $linha->nome_guerra,
+            'email'         => $linha->emailfuncional,
+            'cod_jornada'   => $linha->cod_jornada,
+            'nome_jornada'  => $linha->nome_jornada,
+            'modalidade_pgd' => $modalidadePgdValida,
+            'participa_pgd' => $linha->participa_pgd,
+            'id'            => $linha->id,
+            'ident_unica'   => $linha->ident_unica,
+            'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
+            'data_nascimento' => $linha->data_nascimento,
+          ]);
+        }
+      }, $transactionRetries);
     }
   }
 }
