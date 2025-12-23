@@ -186,4 +186,43 @@ class SiapeIndividualServidorServiceTest extends TestCase
          $this->assertTrue($resumo[0]['usuario_existia']);
          $this->assertContains('nome', $resumo[0]['alteracoes']);
     }
+
+    /** @test */
+    public function deve_retornar_parcial_se_lotacao_falhar_para_usuario_existente()
+    {
+        $cpf = '55566677788';
+        
+        // Create user that "exists"
+        $usuario = new Usuario();
+        $usuario->fill([
+            'nome' => 'Usuario Sem Lotacao',
+            'email' => 'semlotacao@teste.com',
+            'cpf' => $cpf,
+            'apelido' => 'SemLotacao',
+            'matricula' => '44444',
+            'situacao_siape' => 'ATIVO'
+        ]);
+        $usuario->save();
+
+        // User state "before"
+        $usuariosAntes = [[
+            'id' => $usuario->id,
+            'matricula' => $usuario->matricula,
+            'nome' => $usuario->nome,
+            'email' => $usuario->email,
+            'situacao_siape' => $usuario->situacao_siape,
+            'lotacao_id' => null
+        ]];
+
+        $reflection = new \ReflectionClass(SiapeIndividualServidorService::class);
+        $method = $reflection->getMethod('gerarResumo');
+        $method->setAccessible(true);
+
+        $resumo = $method->invokeArgs($this->service, [$usuariosAntes, $cpf]);
+
+        $this->assertTrue($resumo[0]['usuario_existia']);
+        $this->assertFalse($resumo[0]['lotacao_associada']);
+        $this->assertEquals('parcial', $resumo[0]['status']);
+        $this->assertStringContainsString('Lotação não associada', $resumo[0]['mensagem']);
+    }
 }

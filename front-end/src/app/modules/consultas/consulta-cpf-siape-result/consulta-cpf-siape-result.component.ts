@@ -91,16 +91,16 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
                   if (result?.success) {
                     await this.loadUsuario();
                     if(result.resumo) {
-                        this.mostrarResumo(result.resumo, result.message);
+                        await this.mostrarResumo(result.resumo, result.message);
                     } else {
-                        this.dialog.alert("Sucesso", result.message);
+                        await this.dialog.alert("Sucesso", result.message);
                     }
                     this.log = result.log;
                   } else {
                     if (result?.resumo) {
-                        this.mostrarResumo(result.resumo, "Erro ao processar CPF: " + result?.message);
+                        await this.mostrarResumo(result.resumo, "Erro ao processar CPF: " + result?.message);
                     } else {
-                        this.dialog.alert("Erro", "Erro ao processar CPF: " + result?.message);
+                        await this.dialog.alert("Erro", "Erro ao processar CPF: " + result?.message);
                     }
                   }
                   this.downloadSiape();
@@ -238,20 +238,23 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
     }
   }
 
-  private mostrarResumo(resumo: any[], titulo: string) {
+  private async mostrarResumo(resumo: any[], titulo: string) {
     if (!Array.isArray(resumo)) {
         this.dialog.alert(titulo, 'Resumo inválido');
         return;
     }
     
     if (this.resumoTpl) {
-      this.dialog.template({ title: titulo, modalWidth: 700 }, this.resumoTpl, [{ label: "Ok", color: "btn-primary", value: true }], { resumo: resumo })
-      .asPromise().then((dialogResult: any) => {
-        // Wait for button click
-        if (dialogResult.button.label === "Ok") {
-            dialogResult.dialog.close();
-        }
-      });
+      if (resumo.some(item => item.status === 'parcial') && titulo.toLowerCase().includes('sucesso')) {
+         titulo = 'Parcial';
+      }
+
+      const dialogResult = await this.dialog.template({ title: titulo, modalWidth: 700 }, this.resumoTpl, [{ label: "Ok", color: "btn-primary", value: true }], { resumo: resumo })
+      .asPromise();
+      
+      if (dialogResult?.button?.label === "Ok" && dialogResult?.dialog) {
+          dialogResult.dialog.close();
+      }
     } else {
       // Fallback in case template is not loaded for some reason
       let msg = '';
@@ -267,7 +270,7 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
           }
           msg += '\n';
       });
-      this.dialog.alert(titulo, msg);
+      await this.dialog.alert(titulo, msg);
     }
   }
 

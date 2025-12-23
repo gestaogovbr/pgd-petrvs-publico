@@ -73,9 +73,9 @@ class SiapeIndividualServidorService extends ServiceBase
             }
             
             // Refine status based on lotacao
-            if ($item['usuario_inserido'] && !$item['lotacao_associada']) {
+            if (!$item['lotacao_associada']) {
                 $item['status'] = 'parcial';
-                $item['mensagem'] .= ' (Usuário criado mas sem lotação)';
+                $item['mensagem'] .= ' (Lotação não associada)';
             }
 
             $resumo[] = $item;
