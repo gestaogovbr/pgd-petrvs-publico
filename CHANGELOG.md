@@ -4,6 +4,8 @@
 
 ### Modificado
 - `Consulta Unidade SIAPE` agora permite no máximo a inserção de 9 algarismos.
+- Alterado nomenclatura do histórico de execução para registro de execução
+- Habilitada edição de meta realizada na execução de plano de entrega
 
 ### Corrigido
 - Solução para conflitos de e-mail que impediam a importação ou reativação de usuários do SIAPE.
