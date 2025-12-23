@@ -1,4 +1,6 @@
 ## 2.9.5 19/12/2025
+### Modificado
+- `Consulta Unidade SIAPE` agora permite no máximo a inserção de 9 algarismos.
 ### Corrigido
 - Ajuste na atualização automática da modalidade PGD dos usuários, garantindo a recuperação correta a partir do último plano de trabalho.
 
