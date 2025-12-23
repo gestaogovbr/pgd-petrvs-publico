@@ -245,7 +245,13 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
     }
     
     if (this.resumoTpl) {
-      this.dialog.template({ title: titulo, modalWidth: 700 }, this.resumoTpl, [{ label: "Ok", color: "btn-primary" }], { resumo: resumo });
+      this.dialog.template({ title: titulo, modalWidth: 700 }, this.resumoTpl, [{ label: "Ok", color: "btn-primary", value: true }], { resumo: resumo })
+      .asPromise().then((dialogResult: any) => {
+        // Wait for button click
+        if (dialogResult.button.label === "Ok") {
+            dialogResult.dialog.close();
+        }
+      });
     } else {
       // Fallback in case template is not loaded for some reason
       let msg = '';

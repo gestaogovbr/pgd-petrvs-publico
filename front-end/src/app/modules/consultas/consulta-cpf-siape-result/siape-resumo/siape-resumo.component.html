@@ -32,7 +32,8 @@
                   <i class="bi bi-plus-circle text-primary me-2" *ngIf="!item.usuario_existia"></i>
                   <span>
                     <strong>Usuário:</strong> 
-                    {{ item.usuario_existia ? 'Já existia no sistema' : 'Novo usuário criado' }}
+                    <span *ngIf="item.usuario_existia">{{ item.nome }} já cadastrado no sistema</span>
+                    <span *ngIf="!item.usuario_existia">Novo usuário criado</span>
                   </span>
                 </li>
                 <li class="d-flex align-items-center">

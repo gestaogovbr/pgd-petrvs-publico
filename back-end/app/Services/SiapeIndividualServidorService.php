@@ -47,6 +47,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
             $item = [
                 'status' => $status,
+                'nome' => $uDepois->nome,
                 'usuario_existia' => !!$uAntes,
                 'usuario_inserido' => !$uAntes,
                 'lotacao_associada' => !empty($uDepois->lotacao),
@@ -89,6 +90,9 @@ class SiapeIndividualServidorService extends ServiceBase
 
         $this->service = $service;
         $this->resumo = null;
+        
+        $cpfOriginal = $cpf;
+        $cpf = $this->limparEValidarCpf($cpf);
 
         $usuariosAntes = Usuario::with(['lotacao.unidade'])->where('cpf', $cpf)->get()->map(function($u) {
             return [
@@ -102,8 +106,6 @@ class SiapeIndividualServidorService extends ServiceBase
         })->toArray();
 
         try {
-            $cpfOriginal = $cpf;
-        $cpf = $this->limparEValidarCpf($cpf);
         
         SiapeLog::info('CPF processado', [
             'cpf_original' => $cpfOriginal,
