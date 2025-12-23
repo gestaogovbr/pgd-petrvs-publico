@@ -368,6 +368,17 @@ class In24_TreinaSeeder extends Seeder
         "atividade_tempo_despendido" => 0,
         "atividade_esforco" => 0,
       ],
+      [
+        "id" => "0b5c6b9f-6f7a-4d3b-8c2a-2a0c2b3b9a1f",
+        "created_at" => $this->timenow,
+        "updated_at" => $this->timenow,
+        "deleted_at" => NULL,
+        "nome" => "Sem dados do SIAPE",
+        "plano_trabalho_calcula_horas" => 0,
+        "atividade_tempo_despendido" => 0,
+        "atividade_esforco" => 0,
+        "exige_pedagio" => 0,
+      ],
     );
 
     
@@ -756,9 +767,14 @@ class In24_TreinaSeeder extends Seeder
     );
 
     $number = 1;
-    $results = DB::select("CALL sequence_template_numero()");
-    if (!empty($results)) {
-      $number = $results[0]->number;
+    try {
+      $results = DB::select("CALL sequence_template_numero()");
+      if (!empty($results)) {
+        $number = $results[0]->number;
+      }
+    } catch (\Throwable $e) {
+      $max = DB::table('templates')->max('numero');
+      $number = ($max ?? 0) + 1;
     }
 
     $templates = array(

@@ -54,10 +54,14 @@ class SiapeIndividualService extends ServiceBase
 
     private function limpaLogSiape(string $cpf)
     {
-        $logPath = storage_path('logs/siape.log');
+        $tenantId = function_exists('tenant') ? (tenant('id') ?? 'central') : 'central';
+        $logPath = storage_path('logs/siape_' . $tenantId . '.log');
 
         if (File::exists($logPath)) {
             File::put($logPath, '');
+        } else {
+            File::put($logPath, '');
+            @chmod($logPath, 0777);
         }
 
 

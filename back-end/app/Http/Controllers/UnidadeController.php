@@ -378,7 +378,8 @@ class UnidadeController extends ControllerBase
 
     public function downloadLogSiape(Request $request)
     {
-        $logPath = storage_path('logs/siape.log');
+        $tenantId = function_exists('tenant') ? (tenant('id') ?? 'central') : 'central';
+        $logPath = storage_path('logs/siape_' . $tenantId . '.log');
 
         if (!file_exists($logPath)) {
             return response()->json(['error' => 'Arquivo de log não encontrado.'], 404);
@@ -386,10 +387,10 @@ class UnidadeController extends ControllerBase
 
         return response()->download(
             $logPath,
-            'siape.log',
+            'siape_' . $tenantId . '.log',
             [
                 'Content-Type' => File::mimeType($logPath),
-                'Content-Disposition' => 'attachment; filename="siape.log"',
+                'Content-Disposition' => 'attachment; filename="siape_' . $tenantId . '.log"',
             ]
         );
     }

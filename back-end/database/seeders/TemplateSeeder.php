@@ -44,7 +44,14 @@ class TemplateSeeder extends Seeder
     foreach ($templates as $t) {
       Template::firstOrCreate(['codigo' => $t['codigo']], [
         'id' => $t['id'],
-        'numero' => DB::select("CALL sequence_template_numero()")[0]->number,
+        'numero' => (function () {
+          try {
+            return DB::select("CALL sequence_template_numero()")[0]->number;
+          } catch (\Throwable $e) {
+            $max = DB::table('templates')->max('numero');
+            return ($max ?? 0) + 1;
+          }
+        })(),
         'especie' => $t['especie'],
         'titulo' => $t['titulo'],
         'conteudo' => $t['conteudo'],

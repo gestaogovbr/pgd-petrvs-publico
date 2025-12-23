@@ -112,10 +112,8 @@ return [
             'via' => App\Logging\DatabaseLogger::class
         ],
         'siape' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/siape.log'),
-            'level' => env('LOG_LEVEL', 'debug'),
-            'days' => 3,
+            'driver' => 'custom',
+            'via' => App\Logging\SiapeLogger::class,
         ],
     ],
 
