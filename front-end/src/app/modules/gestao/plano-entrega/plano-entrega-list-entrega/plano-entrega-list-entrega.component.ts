@@ -183,7 +183,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   public dynamicButtons(row: any): ToolbarButton[] {
     const btns = [];
     if(this.isDisabled) btns.push(Object.assign({ onClick: this.consult.bind(this) }, this.OPTION_INFORMACOES));
-    if(this.execucao) btns.push({ label: "Histórico de execução", icon: "bi bi-activity", color: 'btn-outline-info', onClick: this.showProgresso.bind(this) });   
+    if(this.execucao) btns.push({ label: this.lex.translate("Históricos de Execução"), icon: "bi bi-activity", color: 'btn-outline-info', onClick: this.showProgresso.bind(this) });   
     if(!row._status) btns.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });   
     return btns;
   }

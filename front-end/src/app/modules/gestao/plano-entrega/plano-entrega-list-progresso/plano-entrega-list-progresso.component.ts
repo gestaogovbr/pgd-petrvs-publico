@@ -21,7 +21,7 @@ export class PlanoEntregaListProgressoComponent extends PageListBase<PlanoEntreg
   constructor(public injector: Injector) {
     super(injector, PlanoEntregaEntregaProgresso, PlanoEntregaEntregaProgressoDaoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
-    this.title = this.lex.translate("Histórico de execução");
+    this.title = this.lex.translate("Histórico de Execução");
     this.orderBy = [['data_progresso','desc']];
     this.join = ['plano_entrega_entrega.entrega'];
     this.filter = this.fh.FormBuilder({
