@@ -37,6 +37,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use App\Enums\UsuarioSituacaoSiape;
 use App\Services\UnidadeService;
+use App\Services\IntegracaoService;
 
 class UsuarioService extends ServiceBase
 {
@@ -46,11 +47,14 @@ class UsuarioService extends ServiceBase
   const LOGIN_GOOGLE = "GOOGLE";
   const LOGIN_MICROSOFT = "AZURE";
   const LOGIN_FIREBASE = "FIREBASE";
+  
+  protected $integracaoService;
 
   public function __construct(
   ) {
     parent::__construct();
     $this->nivelAcessoService = new NivelAcessoService();
+    $this->integracaoService = new IntegracaoService();
   }
 
   public function atualizarFotoPerfil($tipo, &$usuario, $url)
@@ -378,7 +382,7 @@ class UsuarioService extends ServiceBase
       $query1 = Usuario::where("id", "!=", $data["id"])->where(function ($query) use ($data) {
         return $query->where("cpf", UtilService::onlyNumbers($data["cpf"]))->orWhere("email", $data["email"]);
       });
-      $query2 = Usuario::where("id", "!=", $data["id"])->whereNotNull("deleted_at")->where(function ($query) use ($data) {
+      $query2 = Usuario::onlyTrashed()->where("id", "!=", $data["id"])->where(function ($query) use ($data) {
         return $query->where("cpf", UtilService::onlyNumbers($data["cpf"]))->orWhere("email", $data["email"]);
       });
       $alreadyHas = $query1->first() ?? $query2->first();
@@ -396,6 +400,11 @@ class UsuarioService extends ServiceBase
           $data["nome"] = $alreadyHas->nome;
           $data["apelido"] = $alreadyHas->apelido;
           $data["data_nascimento"] = $alreadyHas->data_nascimento;
+          
+          if (isset($this->integracaoService)) {
+             $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($data['email'], $data['matricula'], $alreadyHas->id);
+          }
+
           $alreadyHas->deleted_at = null;
           return $alreadyHas;
         } else {

@@ -1,0 +1,20 @@
+.resumo-card {
+  transition: all 0.3s ease;
+}
+
+.resumo-card:hover {
+  transform: translateY(-2px);
+}
+
+.card-header {
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.badge {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.list-unstyled li {
+  padding: 4px 0;
+}
