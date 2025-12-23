@@ -63,3 +63,7 @@
         <toolbar [buttons]="toolbarButtons"></toolbar>
     </separator>
 </div>
+
+<ng-template #resumoTpl let-resumo="resumo">
+  <app-siape-resumo [resumo]="resumo"></app-siape-resumo>
+</ng-template>

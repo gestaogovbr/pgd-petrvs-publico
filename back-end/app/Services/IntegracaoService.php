@@ -3,12 +3,9 @@
 namespace App\Services;
 
 use App\Exceptions\BadGatewayException;
-use App\Exceptions\IntegrationException;
-use Exception;
 use Throwable;
 use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
-use App\Models\Perfil;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Models\SiapeDadosUORG;
@@ -29,6 +26,9 @@ use App\Services\Siape\Servidor\Integracao;
 use Illuminate\Support\Facades\Log;
 use App\Facades\SiapeLog;
 
+/**
+ * @property UtilService $UtilService
+ */
 class IntegracaoService extends ServiceBase
 {
   use LogTrait;
@@ -662,6 +662,8 @@ class IntegracaoService extends ServiceBase
         );
         $atualizacoesLotacoesResult = [];
 
+        $this->processarAtualizacoesDados($atualizacoesDados, $sqlUpdateDados);
+
         DB::transaction(function () use (&$atualizacoesDados, &$sqlUpdateDados, &$atualizacoesLotacoes, &$sqlServidoresInseridosNaoLotados, &$atualizacoesLotacoesResult) {
           /**
            * Atualiza os dados pessoais de todos os servidores ATIVOS presentes na tabela USUARIOS.
@@ -673,12 +675,13 @@ class IntegracaoService extends ServiceBase
           //   throw new IntegrationException("IntegracaoService: Durante atualização de lotações, unidade de exercício raiz $this->unidadeRaiz não encontrada.");
           // }
           // $unidadeExercicioRaizId = $unidadeExercicioRaiz->id;
+          /*
           if (!empty($atualizacoesDados)) {
             foreach ($atualizacoesDados as $linha) {
 
               SiapeLog::info("Atualizando dados do servidor Matricula: " . $linha->matriculasiape);
 
-              $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->matriculasiape);
+              $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->matriculasiape, $linha->id);
               $modalidadePgdValida = $this->validarModalidadePgd($linha->modalidade_pgd);
 
               DB::update($sqlUpdateDados, [
@@ -696,6 +699,7 @@ class IntegracaoService extends ServiceBase
               ]);
             }
           };
+          */
 
           $this->atualizarMatriculasUsuariosSemMatricula();
 
@@ -1024,37 +1028,58 @@ class IntegracaoService extends ServiceBase
     return true;
   }
 
-  private function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(string $email, string $matricula): void
+  public function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(string $email, string $matricula, string $ignoreId = null): void
   {
-    $usuario = Usuario::where('email', $email)->first();
-    if (!empty($usuario)) {
-      LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. Matricula: %s, Email: %s", $matricula, $email));
-      $novoemailBase = $usuario->matricula;
-      if (empty($novoemailBase)) {
-        $novoemailBase = \Illuminate\Support\Str::uuid()->toString();
+    $email = trim(mb_strtolower($email, 'UTF-8'));
+    
+    $usuarios = Usuario::withoutGlobalScopes()
+        ->where('email', $email)
+        ->when($ignoreId, function ($query) use ($ignoreId) {
+            return $query->where('id', '!=', $ignoreId);
+        })
+        ->get();
+
+    foreach ($usuarios as $usuario) {
+      if (!empty($usuario)) {
+        LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. Matricula: %s, Email: %s", $matricula, $email));
+        
+        $novoemailBase = $usuario->matricula;
+        if (empty($novoemailBase)) {
+          $novoemailBase = \Illuminate\Support\Str::uuid()->toString();
+        }
+        
+        $novoemail = $novoemailBase . "@petrvs.gov.br";
+        
+        $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($novoemail, $usuario->matricula, $usuario->id);
+        
+        SiapeLog::info("IntegracaoService: Alterando email duplicado para email fake", ['matricula' => $matricula, 'email' => $email, 'usuario' => $usuario->toJson()]);
+        
+        DB::table('usuarios')->where('id', $usuario->id)->update(['email' => $novoemail]);
       }
-      $novoemail = $novoemailBase . "@petrvs.gov.br";
-      $outroUsuarioComesseEmail = Usuario::where('email', $novoemail)->where('matricula', '!=', $usuario->matricula)->first();
-      if (!empty($outroUsuarioComesseEmail)) {
-        $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($novoemail, $usuario->matricula);
-      }
-      SiapeLog::info("IntegracaoService: Alterando email duplicado para email fake", ['matricula' => $matricula, 'email' => $email, 'usuario' => $usuario->toJson()]);
-      $usuario->update(['email' => $novoemail]);
     }
   }
 
+  /**
+   * @deprecated Será removido na próxima versão.
+   */
   public function salvaUsuarioLotacaoGoogle(&$usuario, &$lotacao, $tokenData, $auth)
   {
     $auth->fillUsuarioWithCredential($usuario, $tokenData);
     $this->salvarUsuarioLotacao($usuario, $lotacao);
   }
 
+  /**
+   * @deprecated Será removido na próxima versão.
+   */
   public function salvaUsuarioLotacaoApi(&$usuario, &$lotacao, $tokenData, $api)
   {
     $api->fillUsuarioWithCredential($usuario, $tokenData);
     $this->salvarUsuarioLotacao($usuario, $lotacao);
   }
 
+  /**
+   * @deprecated Será removido na próxima versão.
+   */
   public function salvaUsuarioLotacaoDprf(&$usuario, &$lotacao, $profile, $auth)
   {
     $auth->fillUsuarioWithProfile($usuario, $profile);
@@ -1070,6 +1095,7 @@ class IntegracaoService extends ServiceBase
     if ($this->fillUsuarioWithSiape($usuario, $lotacao)) { //se quem está logado existe na tabela integracao_servidores
       $perfil_nivel_5_id = $this->nivelAcessoService->getPerfilParticipante()->id;
       $usuario->perfil_id = $perfil_nivel_5_id;
+      $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($usuario->email, $usuario->matricula, $usuario->id);
       $usuario->save();
       $usuario->fresh();
       if (!empty($lotacao->unidade_id)) { // se sua Unidade estiver cadastrada, insere-se uma lotação principal pra ele
@@ -1083,6 +1109,9 @@ class IntegracaoService extends ServiceBase
     }
   }
 
+  /**
+   * @deprecated Será removido na próxima versão.
+   */
   public function atualizaLogs($user_id, string $table_name, string $row_id, string $type, array $delta)
   {
     /*
@@ -1148,7 +1177,7 @@ class IntegracaoService extends ServiceBase
       $unidadeRaiz->save();
     }
   }
-private function validarModalidadePgd($modalidadeString)
+protected function validarModalidadePgd($modalidadeString)
   {
     $fallbackId = DB::table('tipos_modalidades')
       ->where('nome', 'Sem dados do SIAPE')
@@ -1266,6 +1295,45 @@ private function validarModalidadePgd($modalidadeString)
         "Erro ao verificar usuários externos na integração: %s",
         $e->getMessage()
       ));
+    }
+  }
+
+  /**
+   * Processa as atualizações de dados dos servidores em lotes.
+   *
+   * @param array $atualizacoesDados
+   * @param string $sqlUpdateDados
+   * @return void
+   */
+  private function processarAtualizacoesDados(array $atualizacoesDados, string $sqlUpdateDados): void
+  {
+    $chunkSize = 50;
+    $transactionRetries = 3;
+    $chunks = array_chunk($atualizacoesDados, $chunkSize);
+
+    foreach ($chunks as $chunk) {
+      DB::transaction(function () use ($chunk, $sqlUpdateDados) {
+        foreach ($chunk as $linha) {
+          SiapeLog::info("Atualizando dados do servidor Matricula: " . $linha->matriculasiape);
+
+          $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->matriculasiape, $linha->id);
+          $modalidadePgdValida = $this->validarModalidadePgd($linha->modalidade_pgd);
+
+          DB::update($sqlUpdateDados, [
+            'nome'          => $linha->nome_servidor,
+            'nomeguerra'    => $linha->nome_guerra,
+            'email'         => $linha->emailfuncional,
+            'cod_jornada'   => $linha->cod_jornada,
+            'nome_jornada'  => $linha->nome_jornada,
+            'modalidade_pgd' => $modalidadePgdValida,
+            'participa_pgd' => $linha->participa_pgd,
+            'id'            => $linha->id,
+            'ident_unica'   => $linha->ident_unica,
+            'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
+            'data_nascimento' => $linha->data_nascimento,
+          ]);
+        }
+      }, $transactionRetries);
     }
   }
 }
