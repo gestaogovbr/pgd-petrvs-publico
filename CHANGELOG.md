@@ -3,7 +3,8 @@
 - `Consulta Unidade SIAPE` agora permite no máximo a inserção de 9 algarismos.
 ### Corrigido
 - Ajuste na atualização automática da modalidade PGD dos usuários, garantindo a recuperação correta a partir do último plano de trabalho.
-
+- Corrigido problema que dificultava o uso de datas e horários no navegador Firefox.
+- Ajustes no tratamento de datas ao realizar a consolidação do Plano de Trabalho.
 ## 2.9.4 09/12/2025
 ### Modificado
 - Regras de acesso mais consistentes entre perfis.
