@@ -1,7 +1,12 @@
 ## 2.9.5 19/12/2025
+### Adicionado
+- Visualização de resumo ao sincronizar dados do SIAPE, mostrando detalhes do que foi processado.
+
 ### Modificado
 - `Consulta Unidade SIAPE` agora permite no máximo a inserção de 9 algarismos.
+
 ### Corrigido
+- Solução para conflitos de e-mail que impediam a importação ou reativação de usuários do SIAPE.
 - Ajuste na atualização automática da modalidade PGD dos usuários, garantindo a recuperação correta a partir do último plano de trabalho.
 - Corrigido problema que dificultava o uso de datas e horários no navegador Firefox.
 - Ajustes no tratamento de datas ao realizar a consolidação do Plano de Trabalho.
