@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
+        Schema::disableForeignKeyConstraints();
 
         try{
             if (Schema::hasTable('telescope_entries_tags')) {
@@ -26,7 +26,7 @@ return new class extends Migration
                 DB::table('telescope_monitoring')->truncate();
             }
         }finally {
-            DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
+            Schema::enableForeignKeyConstraints();
         }
 
     }

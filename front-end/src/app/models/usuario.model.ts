@@ -154,7 +154,7 @@ export class Usuario extends Base implements HasNotificacao {
     public data_inicial_pedagio: Date | null = null; /* Data Inicial do Pedágio */
     public data_final_pedagio: Date | null = null; /* Data Final do Pedágio */
     public pedagio: boolean = false;
-    public modalidade_pgd: string | null = null; /* Modalidade PGD */
+    public tipo_modalidade_id: string | null = null; /* Tipo de Modalidade PGD */
     public participa_pgd: string = 'sim'; /* Participa PGD */
 
     public constructor(data?: any) { super(); this.initialization(data); }

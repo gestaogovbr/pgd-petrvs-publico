@@ -103,7 +103,8 @@ export class LexicalService {
     "unidade": {single: "unidade", plural: "unidades", female: true},
     "usuario": {single: "usuário", plural: "usuários", female: false},
     "valor institucional": {single: "valor institucional", plural: "valores institucionais", female: false},
-    "tipo de avaliação do registro de execução do plano de trabalho": {single: "Tipo de avaliação do registro de execução do plano de trabalho", plural: "Tipos de avaliações do registro de execução do plano de trabalho", female: false}
+    "tipo de avaliação do registro de execução do plano de trabalho": {single: "Tipo de avaliação do registro de execução do plano de trabalho", plural: "Tipos de avaliações do registro de execução do plano de trabalho", female: false},
+    "histórico de execução": {single: "histórico de execução", plural : "históricos de execução", female : false},
   };
 
   public plurals: IIndexable = {}; // Vetor reverso, contendo os plurais para permitir encontrar a key do vetor defaults pelo plural (melhorar performance)
