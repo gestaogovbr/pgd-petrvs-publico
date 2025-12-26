@@ -64,10 +64,14 @@ describe('IntegracaoService - processarAtualizacoesDados', function () {
             }), 3); // 3 retries
 
         // Mock DB Update
-        // Esperamos 55 atualizações
+        // Esperamos 55 atualizações com os parâmetros corretos
         DB::shouldReceive('update')
             ->times(55)
-            ->with($sqlUpdateDados, Mockery::type('array'));
+            ->with($sqlUpdateDados, Mockery::on(function ($bindings) {
+                // Validação estrita para garantir que não ocorra erro de parâmetro inválido
+                return array_key_exists('tipo_modalidade_id', $bindings) 
+                    && !array_key_exists('modalidade_pgd', $bindings);
+            }));
 
         // Mock Log Facade para interceptar SiapeLog
         $loggerMock = Mockery::mock(\Psr\Log\LoggerInterface::class);

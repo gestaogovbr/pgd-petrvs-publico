@@ -76,16 +76,21 @@ class UnidadeIntegranteService extends ServiceBase
         //FIXME Isso aqui não deveria estar aqui.
         if (!empty($vinculo['_metadata']['perfil_id'])) $this->usuarioService->update(['id' => $usuario->id, 'perfil_id' => $vinculo['_metadata']['perfil_id']], $unidade);
 
-        $integracao = new Integracao($vinculos);
-        $integracao->setTransaction($transaction); 
-        $integracao->processar();
-        $alteracoesFinais = $integracao->getAtribuicoesFinais();
-        array_merge($result, $alteracoesFinais);
         
       } catch (Throwable $e) {
         report($e);
         throw $e;
       }
+    }
+    try {
+        $integracao = new Integracao($vinculos);
+        $integracao->setTransaction($transaction); 
+        $integracao->processar();
+        $alteracoesFinais = $integracao->getAtribuicoesFinais();
+        array_merge($result, $alteracoesFinais);
+    } catch (Throwable $e) {
+        report($e);
+        throw $e;
     }
     return $result;
   }
