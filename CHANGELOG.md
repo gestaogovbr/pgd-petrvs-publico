@@ -1,3 +1,8 @@
+## 2.9.6 26/12/2025
+### Correções Críticas
+- Corrigido erro de "timeout" que ocorria ao tentar salvar atribuições de usuários, garantindo que as alterações sejam gravadas corretamente mesmo em operações mais demoradas.
+
+
 ## 2.9.5 19/12/2025
 ### Adicionado
 - Visualização de resumo ao sincronizar dados do SIAPE, mostrando detalhes do que foi processado.
