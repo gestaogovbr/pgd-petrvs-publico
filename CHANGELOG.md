@@ -1,3 +1,9 @@
+## 2.9.6 26/12/2025
+### Correções Críticas
+- Corrigida a importação das CTUs do SIAPE (PF), evitando registros faltantes na carga.
+- Ajustado o cálculo e a atualização da meta realizada na execução de PE, garantindo números consolidados corretos.
+- Revisado o fluxo de registro de execução para impedir falhas e inconsistências ao salvar novas execuções.
+
 ## 2.9.5 19/12/2025
 ### Adicionado
 - Visualização de resumo ao sincronizar dados do SIAPE, mostrando detalhes do que foi processado.
