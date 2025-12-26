@@ -369,8 +369,13 @@ class UsuarioService extends ServiceBase
     if($action == ServiceBase::ACTION_EDIT){
       if(!empty($data['matricula']) && strlen($data['matricula']) > 50)
         throw new ValidateException("O campo de matrícula deve ter no máximo 50 caracteres", 422);
-    if (empty($data["integrantes"][0]))
+      if (empty($data["integrantes"][0]))
         throw new ValidateException("Selecione uma unidade!", 422);
+      
+      if (!isset($data['tipo_modalidade_id'])) {
+        $buscaTipoModalidade = Usuario::where("id", "=", $data["id"])->value('tipo_modalidade_id');
+        $data['tipo_modalidade_id'] = $buscaTipoModalidade;
+      }
     }
     if ($action == ServiceBase::ACTION_INSERT) {
       if (empty($data["email"]))
@@ -396,6 +401,7 @@ class UsuarioService extends ServiceBase
             if (is_null($data['matricula'] ?? null)) {
                 $data['matricula'] = $alreadyHas->matricula;
             }
+
 
           $data["nome"] = $alreadyHas->nome;
           $data["apelido"] = $alreadyHas->apelido;
