@@ -333,6 +333,11 @@ class PlanoTrabalhoService extends ServiceBase
             }
 
         }
+        $this->validarVigenciaRegramento($inicioPlano, $fimPlano, $programa);
+    }
+
+    private function validarVigenciaRegramento($inicioPlano, $fimPlano, $programa): void
+    {
         if ($inicioPlano < $programa->data_inicio || $fimPlano > $programa->data_fim) {
             throw new ServerException("ValidatePlanoTrabalho", "As datas do plano de trabalho estão fora do período vigência do regramento.");
         }
