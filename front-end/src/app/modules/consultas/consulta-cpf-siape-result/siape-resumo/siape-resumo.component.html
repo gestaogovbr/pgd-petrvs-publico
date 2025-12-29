@@ -1,0 +1,77 @@
+<div class="siape-resumo-container">
+  <div *ngFor="let item of resumo; let i = index" class="resumo-card mb-3">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-bold text-secondary">
+          <i class="bi bi-person-badge me-2"></i>
+          Servidor #{{ i + 1 }}
+        </h6>
+        <span class="badge rounded-pill" [ngClass]="'bg-' + getStatusClass(item.status)">
+          <i [class]="getStatusIcon(item.status) + ' me-1'"></i>
+          {{ getStatusLabel(item.status) }}
+        </span>
+      </div>
+      <div class="card-body">
+        
+        <!-- Mensagem Principal -->
+        <div class="alert" [ngClass]="'alert-' + getStatusClass(item.status)" role="alert">
+          <i [class]="getStatusIcon(item.status) + ' me-2'"></i>
+          {{ item.mensagem }}
+        </div>
+
+        <div class="row g-3">
+          <!-- Status de Criação/Existência -->
+          <div class="col-md-6">
+            <div class="p-3 bg-white border rounded h-100">
+              <h6 class="border-bottom pb-2 mb-3 text-primary">
+                <i class="bi bi-database me-2"></i>Status do Registro
+              </h6>
+              <ul class="list-unstyled mb-0">
+                <li class="mb-2 d-flex align-items-center">
+                  <i class="bi bi-check2 text-success me-2" *ngIf="item.usuario_existia"></i>
+                  <i class="bi bi-plus-circle text-primary me-2" *ngIf="!item.usuario_existia"></i>
+                  <span>
+                    <strong>Usuário:</strong> 
+                    <span *ngIf="item.usuario_existia">{{ item.nome }} já cadastrado no sistema</span>
+                    <span *ngIf="!item.usuario_existia">Novo usuário criado</span>
+                  </span>
+                </li>
+                <li class="d-flex align-items-center">
+                  <i class="bi bi-check2 text-success me-2" *ngIf="item.lotacao_associada"></i>
+                  <i class="bi bi-x-circle text-danger me-2" *ngIf="!item.lotacao_associada"></i>
+                  <span>
+                    <strong>Lotação:</strong> 
+                    {{ item.lotacao_associada ? 'Associada com sucesso' : 'Não associada' }}
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Alterações Realizadas -->
+          <div class="col-md-6" *ngIf="item.alteracoes && item.alteracoes.length > 0">
+            <div class="p-3 bg-white border rounded h-100">
+              <h6 class="border-bottom pb-2 mb-3 text-warning">
+                <i class="bi bi-pencil-square me-2"></i>Dados Atualizados
+              </h6>
+              <div class="d-flex flex-wrap gap-2">
+                <span *ngFor="let campo of item.alteracoes" class="badge bg-light text-dark border">
+                  {{ campo }}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Caso não haja alterações -->
+           <div class="col-md-6" *ngIf="!item.alteracoes || item.alteracoes.length === 0">
+            <div class="p-3 bg-white border rounded h-100 d-flex align-items-center justify-content-center text-muted">
+              <i class="bi bi-check-all fs-4 me-2"></i>
+              <span>Nenhuma alteração necessária nos dados cadastrais.</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

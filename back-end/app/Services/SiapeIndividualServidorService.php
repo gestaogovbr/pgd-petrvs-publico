@@ -23,15 +23,89 @@ class SiapeIndividualServidorService extends ServiceBase
     use LogTrait, Atribuicao;
 
     private SiapeIndividualService $service;
+    private $resumo = null;
+
+    public function getResumo() {
+        return $this->resumo;
+    }
+
+    private function gerarResumo(array $usuariosAntes, string $cpf, string $status = 'sucesso', string $mensagem = 'Processamento concluído')
+    {
+        $resumo = [];
+        $usuariosDepois = Usuario::with(['lotacao.unidade'])->where('cpf', $cpf)->get();
+
+        // Map users by matricula (or id if matricula missing)
+        $mapAntes = [];
+        foreach ($usuariosAntes as $u) {
+            $key = $u['matricula'] ?? $u['id'];
+            $mapAntes[$key] = $u;
+        }
+
+        foreach ($usuariosDepois as $uDepois) {
+            $key = $uDepois->matricula ?? $uDepois->id;
+            $uAntes = $mapAntes[$key] ?? null;
+
+            $item = [
+                'status' => $status,
+                'nome' => $uDepois->nome,
+                'usuario_existia' => !!$uAntes,
+                'usuario_inserido' => !$uAntes,
+                'lotacao_associada' => !empty($uDepois->lotacao),
+                'alteracoes' => [],
+                'mensagem' => $mensagem
+            ];
+
+            if ($uAntes) {
+                // Compare fields
+                $campos = ['nome', 'email', 'matricula', 'situacao_siape'];
+                foreach ($campos as $campo) {
+                    if (($uAntes[$campo] ?? null) != $uDepois->$campo) {
+                        $item['alteracoes'][] = $campo;
+                    }
+                }
+                // Check lotacao change
+                $lotacaoAntesId = $uAntes['lotacao_id'] ?? null;
+                $lotacaoDepoisId = $uDepois->lotacao?->unidade_id;
+                
+                if ($lotacaoAntesId != $lotacaoDepoisId) {
+                     $item['alteracoes'][] = 'lotacao_id';
+                }
+            }
+            
+            // Refine status based on lotacao
+            if (!$item['lotacao_associada']) {
+                $item['status'] = 'parcial';
+                $item['mensagem'] .= ' (Lotação não associada)';
+            }
+
+            $resumo[] = $item;
+        }
+
+        return $resumo;
+    }
 
     public function fluxoSiape(string $cpf, SiapeIndividualService $service)
     {
         SiapeLog::info('Iniciando o processo de sincronização cpf #:' . $cpf);
 
         $this->service = $service;
-
+        $this->resumo = null;
+        
         $cpfOriginal = $cpf;
         $cpf = $this->limparEValidarCpf($cpf);
+
+        $usuariosAntes = Usuario::with(['lotacao.unidade'])->where('cpf', $cpf)->get()->map(function($u) {
+            return [
+                'id' => $u->id,
+                'matricula' => $u->matricula,
+                'nome' => $u->nome,
+                'email' => $u->email,
+                'situacao_siape' => $u->situacao_siape,
+                'lotacao_id' => $u->lotacao?->unidade_id
+            ];
+        })->toArray();
+
+        try {
         
         SiapeLog::info('CPF processado', [
             'cpf_original' => $cpfOriginal,
@@ -288,7 +362,8 @@ class SiapeIndividualServidorService extends ServiceBase
                 'retorno_keys' => is_array($retorno) ? array_keys($retorno) : 'não é array'
             ]);
 
-            return $retorno;
+            $this->resumo = $this->gerarResumo($usuariosAntes, $cpf, 'sucesso');
+            return $this->resumo;
         } catch (Exception $e) {
             SiapeLog::error('Erro na sincronização final', [
                 'cpf' => $cpf,
@@ -296,6 +371,11 @@ class SiapeIndividualServidorService extends ServiceBase
                 'trace' => $e->getTraceAsString()
             ]);
             throw new Exception("Erro na sincronização final: " . $e->getMessage());
+        }
+
+        } catch (Exception $e) {
+            $this->resumo = $this->gerarResumo($usuariosAntes, $cpf, 'erro', $e->getMessage());
+            throw $e;
         }
     }
 

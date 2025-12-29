@@ -30,12 +30,13 @@ class ProcessaDadosSiapeBD
             ->where('p.processado', 0)
             ->get();
 
-        if (!$results) {
+        if ($results->isEmpty()) {
             return [];
         }
 
 
         $dadosServidorArray = [];
+        $cpfsProcessados = [];
 
         foreach ($results as $servidor) {
             try {
@@ -50,6 +51,7 @@ class ProcessaDadosSiapeBD
                     'dadosPessoais' => $this->processaDadosPessoais($servidor->cpf, $servidor->responseDadosPessoais),
                     'dadosFuncionais' => $this->processaDadosFuncionais($servidor->cpf, $servidor->responseDadosFuncionais),
                 ];
+                $cpfsProcessados[] = $servidor->cpf;
             } catch (ErrorDataSiapeException $e) {
                 report($e);
                 continue;
@@ -60,8 +62,10 @@ class ProcessaDadosSiapeBD
             }
         }
 
-        SiapeConsultaDadosPessoais::query()->update(['processado' => 1]);
-        SiapeConsultaDadosFuncionais::query()->update(['processado' => 1]);
+        if (!empty($cpfsProcessados)) {
+            SiapeConsultaDadosPessoais::query()->whereIn('cpf', $cpfsProcessados)->update(['processado' => 1]);
+            SiapeConsultaDadosFuncionais::query()->whereIn('cpf', $cpfsProcessados)->update(['processado' => 1]);
+        }
         return $dadosServidorArray;
     }
 
@@ -81,14 +85,19 @@ class ProcessaDadosSiapeBD
             $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
             $xmlResponse->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
 
-            $dadosPessoais = $xmlResponse->xpath('//ns1:consultaDadosPessoaisResponse/out')[0];
+            $out = $xmlResponse->xpath('//ns1:consultaDadosPessoaisResponse/out');
+            if (empty($out) || !isset($out[0])) {
+                throw new ErrorDataSiapeException('Retorno vazio para consulta de dados pessoais');
+            }
+            $dadosPessoais = $out[0];
             $dadosPessoaisArray = $this->simpleXmlElementToArray($dadosPessoais);
 
             return $dadosPessoaisArray;
         } catch (Exception $e) {
             report($e);
             SiapeLog::error(sprintf("CPF:#%s Falha nos dados pessoais:", $cpf), [$dadosPessoais]);
-            throw new ErrorDataSiapeException("Falha ao tratar dados pessoais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape.log");
+            $tenantId = function_exists('tenant') ? (tenant('id') ?? 'central') : 'central';
+            throw new ErrorDataSiapeException("Falha ao tratar dados pessoais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape_{$tenantId}.log");
         }
     }
 
@@ -111,7 +120,8 @@ class ProcessaDadosSiapeBD
         } catch (Exception $e) {
             report($e);
             SiapeLog::error(sprintf("CPF:#%s Falha nos dados funcionais:", $cpf), [$dadosFuncionais]);
-            throw new ErrorDataSiapeException("Falha ao tratar dados funcionais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape.log");
+            $tenantId = function_exists('tenant') ? (tenant('id') ?? 'central') : 'central';
+            throw new ErrorDataSiapeException("Falha ao tratar dados funcionais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape_{$tenantId}.log");
         }
     }
 
@@ -222,7 +232,7 @@ class ProcessaDadosSiapeBD
         $response = SiapeDadosUORG::where('processado', 0)
             ->orderBy('updated_at', 'desc')->get();
 
-        if (!$response) {
+        if ($response->isEmpty()) {
             return [];
         }
         $dadosUorgArray = [];

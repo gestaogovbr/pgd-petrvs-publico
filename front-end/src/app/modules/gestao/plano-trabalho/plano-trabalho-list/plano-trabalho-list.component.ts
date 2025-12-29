@@ -121,13 +121,13 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		this.join = [
 			"unidade.gestor.usuario:id",
 			"documento.assinaturas.usuario:id,nome,url_foto",
-            "documento.assinaturas:id,usuario_id,documento_id",
+      "documento.assinaturas:id,usuario_id,documento_id",
 			"programa:id,nome",
-            "documento:id,numero",
+      "documento:id,numero,titulo,especie,conteudo,tipo",
 			"tipo_modalidade:id,nome",
-			"entregas.plano_entrega_entrega.entrega",
+			"entregas.plano_entrega_entrega.entrega:descricao",
 			"entregas.plano_entrega_entrega.plano_entrega:id,unidade_id",
-			"entregas.plano_entrega_entrega.plano_entrega.unidade",
+			"entregas.plano_entrega_entrega.plano_entrega.unidade:id,sigla",
 			"entregas.entrega",
 			"entregas.reacoes.usuario:id,nome,apelido",
             "unidade.entidade:id,sigla",
@@ -479,9 +479,6 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		}
 
 		if(this.grid) this.grid.groupBy = this.groupBy;
-
-		console.log(result);
-		
 		return result;
 	};
 

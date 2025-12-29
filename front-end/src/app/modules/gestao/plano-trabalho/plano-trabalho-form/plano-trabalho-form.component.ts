@@ -337,8 +337,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public selecionaModalidade() {
-    //buscar em tipoModalidadeItems.data.modalidade_siape.id == entity.usuario.modalidade_pgd
-    let modalidade = this.tipoModalidadeItems.find((mod: LookupItem) => (mod.data as TipoModalidade).modalidade_siape?.id == this.entity?.usuario?.modalidade_pgd);
+    //buscar por igualdade direta de tipo_modalidade_id
+    let modalidade = this.tipoModalidadeItems.find((mod: LookupItem) => (mod.data as TipoModalidade).id == this.entity?.usuario?.tipo_modalidade_id);
     if (modalidade) {
       this.form?.controls.tipo_modalidade_id.setValue(modalidade.key);
       this.selectedModalidade = modalidade.data;
@@ -348,7 +348,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public changeModalidade() {
-    if (this.entity!.usuario?.modalidade_pgd != this.form?.controls.tipo_modalidade_id.value) {
+    if (this.entity!.usuario?.tipo_modalidade_id != this.form?.controls.tipo_modalidade_id.value) {
       this.dialog.confirm('Atenção', 'Você está propondo plano de trabalho com modalidade distinta daquela registrada pela sua chefia imadiata no SouGov Líder. Deseja continuar?').then((result) => {
         if (!result) {
           this.selecionaModalidade();
@@ -388,6 +388,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
         this.editableForm!.error = undefined;
         this.processarUnidadesUsuario(selected.entity);
         this.resetProgramaItems();
+        this.carregaProgramas(selected.entity.lotacao.unidade_id);
 
         if (selected.entity.pedagio) {
           await this.carregaModalidades(true);
@@ -497,7 +498,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     }
   }
 
-  public async loadData(entity: PlanoTrabalho, form: FormGroup, action?: string) {
+  public async loadData(entity: PlanoTrabalho, form: FormGroup, action?: string) {     
     if(action == 'clone') {
  
       entity.id = "";

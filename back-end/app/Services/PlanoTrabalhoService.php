@@ -304,8 +304,6 @@ class PlanoTrabalhoService extends ServiceBase
             */
             if (!$condicoes['planoValido'])
                 throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho não é válido, ou seja, foi apagado, cancelado ou arquivado.\n[ver RN_PTR_M]");
-            if (($condicoes['planoIncluido'] || $condicoes['planoAguardandoAssinatura']))
-                throw new ServerException("ValidateUsuario", "Para alterar um plano de trabalho no status INCLUIDO ou AGUARDANDO_ASSINATURA, o usuário logado precisa atender os critérios da ação Alterar da [PTR:TABELA_1].\n[ver RN_PTR_M]");
             if ($condicoes['planoAtivo'] && (!$usuario->hasPermissionTo('MOD_PTR_EDT_ATV')))
                 throw new ServerException("ValidateUsuario", "Para alterar um plano de trabalho no status ATIVO, o usuário logado precisa atender os critérios da ação Alterar da TABELA_1 e possuir a capacidade específica (MOD_PTR_EDT_ATV).\n[ver RN_PTR_M]");
             $plano = PlanoTrabalho::find($data["id"]);
@@ -935,8 +933,24 @@ class PlanoTrabalhoService extends ServiceBase
      */
     public function isPlanoTrabalhoValido($plano): bool
     {
-        $planoTrabalho = !empty($plano['id']) ? PlanoTrabalho::withTrashed()->where('id', $plano['id'])->first() : $plano;
-        return empty($plano['id']) ? false : (!$planoTrabalho->trashed() && !$plano['data_arquivamento'] && $planoTrabalho->status != 'CANCELADO');
+        if (empty($plano['id'])) {
+            return false;
+        }
+
+        // Cache by plano id to avoid repeated DB hits within the request lifecycle
+        $cacheKey = $plano['id'];
+        if ($this->hasBuffer('isPlanoTrabalhoValido', $cacheKey)) {
+            return $this->getBuffer('isPlanoTrabalhoValido', $cacheKey);
+        }
+
+        // Fetch minimal fields needed for validation
+        $planoTrabalho = PlanoTrabalho::withTrashed()
+            ->select(['id', 'deleted_at', 'status'])
+            ->where('id', $plano['id'])
+            ->first();
+
+        $isValid = (!$planoTrabalho->trashed() && !$plano['data_arquivamento'] && $planoTrabalho->status != 'CANCELADO');
+        return $this->setBuffer('isPlanoTrabalhoValido', $cacheKey, $isValid);
     }
 
     /**
@@ -947,8 +961,24 @@ class PlanoTrabalhoService extends ServiceBase
      */
     public function isPlano($status, $plano): bool
     {
-        $planoTrabalho = !empty($plano['id']) ? PlanoTrabalho::withTrashed()->find($plano['id']) : $plano;
-        return empty($plano['id']) ? false : ($this->isPlanoTrabalhoValido($plano) && $planoTrabalho->status == $status);
+        if (empty($plano['id'])) {
+            return false;
+        }
+
+        // Cache by plano id and status to avoid repeated DB hits within the request lifecycle
+        $cacheKey = $plano['id'] . $status;
+        if ($this->hasBuffer('isPlano', $cacheKey)) {
+            return $this->getBuffer('isPlano', $cacheKey);
+        }
+
+        // Fetch minimal fields needed for validation
+        $planoTrabalho = PlanoTrabalho::withTrashed()
+            ->select(['id', 'status'])
+            ->where('id', $plano['id'])
+            ->first();
+
+        $isValid = $this->isPlanoTrabalhoValido($plano) && $planoTrabalho->status == $status;
+        return $this->setBuffer('isPlano', $cacheKey, $isValid);
     }
 
     public function arquivar($data, $unidade)
@@ -1107,22 +1137,27 @@ class PlanoTrabalhoService extends ServiceBase
             ];
             return $ids;
         }
+        $requirePart = (bool) $programa->plano_trabalho_assinatura_participante;
+        $requireGestEnt = (bool) $programa->plano_trabalho_assinatura_gestor_entidade;
+        $requireGestUnid = (bool) $programa->plano_trabalho_assinatura_gestor_unidade;
 
-        $lotacao = $participante->lotacao?->unidade;
-        $entidade = $unidade->entidade;
-
-        if ($programa->plano_trabalho_assinatura_participante) {
+        if ($requirePart) {
             $ids["participante"][] = $participante->id;
         }
 
-        if ($programa->plano_trabalho_assinatura_gestor_entidade && $entidade) {
-            $ids["gestores_entidade"] = array_values(array_filter([
-                $entidade->gestor_id,
-                $entidade->gestor_substituto_id
-            ]));
+        if ($requireGestEnt) {
+            $unidade->loadMissing(['entidade' => function ($q) {
+                $q->select('id', 'gestor_id', 'gestor_substituto_id');
+            }]);
+            if ($unidade->entidade) {
+                $ids["gestores_entidade"] = array_values(array_filter([
+                    $unidade->entidade->gestor_id,
+                    $unidade->entidade->gestor_substituto_id
+                ]));
+            }
         }
 
-        if ($programa->plano_trabalho_assinatura_gestor_unidade) {
+        if ($requireGestUnid) {
             $ids["gestores_unidade_executora"] = $this->unidadeService->getGestoresPorUnidade(
                 $unidade,
                 $planoTrabalho['usuario_id'],

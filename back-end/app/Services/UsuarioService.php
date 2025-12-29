@@ -36,6 +36,8 @@ use App\Enums\StatusEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use App\Enums\UsuarioSituacaoSiape;
+use App\Services\UnidadeService;
+use App\Services\IntegracaoService;
 
 class UsuarioService extends ServiceBase
 {
@@ -45,11 +47,14 @@ class UsuarioService extends ServiceBase
   const LOGIN_GOOGLE = "GOOGLE";
   const LOGIN_MICROSOFT = "AZURE";
   const LOGIN_FIREBASE = "FIREBASE";
+  
+  protected $integracaoService;
 
   public function __construct(
   ) {
     parent::__construct();
     $this->nivelAcessoService = new NivelAcessoService();
+    $this->integracaoService = new IntegracaoService();
   }
 
   public function atualizarFotoPerfil($tipo, &$usuario, $url)
@@ -192,8 +197,14 @@ class UsuarioService extends ServiceBase
     if ($this->hasBuffer("isIntegrante", $key)) {
       $result = $this->getBuffer("isIntegrante", $key);
     } else {
-      $unidadesIntegrantesIds = UnidadeIntegrante::select('id')->where("unidade_id", $unidadeId)->where("usuario_id", isset($usuarioId) ? $usuarioId : parent::loggedUser()->id)->get()->map(fn($x) => $x->id);
-      $result = $this->setBuffer("isIntegrante", $key, count($unidadesIntegrantesIds) > 0 && UnidadeIntegranteAtribuicao::where("atribuicao", $atribuicao)->whereIn("unidade_integrante_id", $unidadesIntegrantesIds)->exists());
+      $uid = $usuarioId ?? parent::loggedUser()->id;
+      $exists = UnidadeIntegranteAtribuicao::where('atribuicao', $atribuicao)
+        ->whereHas('vinculo', function ($q) use ($unidadeId, $uid) {
+          $q->where('unidade_id', $unidadeId)
+            ->where('usuario_id', $uid);
+        })
+        ->exists();
+      $result = $this->setBuffer("isIntegrante", $key, $exists);
     }
     return $result;
   }
@@ -333,6 +344,21 @@ class UsuarioService extends ServiceBase
     return $data;
   }
 
+  public function proxyRows(&$rows)
+  {
+    foreach ($rows as $row) {
+      $row["regramentos"] = $this->proxyRegramentos($row);
+    }
+    return $rows;
+  }
+
+  public function proxyRegramentos($row){
+        $unidadeService = new UnidadeService();
+        return $row["lotacao"]
+            ? array_map(fn($p) => $p["nome"], $unidadeService->regramentosAscendentes($row["lotacao"]->unidade_id))
+            : [];
+    }
+
   /**
    * Este método impede que um usuário seja inserido com e-mail/CPF já existentes no Banco de Dados, bem como
    * impede também a inserção de um usuário com o perfil de Desenvolvedor. Usuários com esse perfil só podem ser inseridos
@@ -356,7 +382,7 @@ class UsuarioService extends ServiceBase
       $query1 = Usuario::where("id", "!=", $data["id"])->where(function ($query) use ($data) {
         return $query->where("cpf", UtilService::onlyNumbers($data["cpf"]))->orWhere("email", $data["email"]);
       });
-      $query2 = Usuario::where("id", "!=", $data["id"])->whereNotNull("deleted_at")->where(function ($query) use ($data) {
+      $query2 = Usuario::onlyTrashed()->where("id", "!=", $data["id"])->where(function ($query) use ($data) {
         return $query->where("cpf", UtilService::onlyNumbers($data["cpf"]))->orWhere("email", $data["email"]);
       });
       $alreadyHas = $query1->first() ?? $query2->first();
@@ -374,6 +400,11 @@ class UsuarioService extends ServiceBase
           $data["nome"] = $alreadyHas->nome;
           $data["apelido"] = $alreadyHas->apelido;
           $data["data_nascimento"] = $alreadyHas->data_nascimento;
+          
+          if (isset($this->integracaoService)) {
+             $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($data['email'], $data['matricula'], $alreadyHas->id);
+          }
+
           $alreadyHas->deleted_at = null;
           return $alreadyHas;
         } else {

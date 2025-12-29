@@ -67,7 +67,7 @@ class Usuario extends Authenticatable implements AuditableContract
     protected $table = "usuarios";
 
     protected $with = ['perfil'];
-    protected $appends = ['pedagio','regramentos'];
+    protected $appends = ['pedagio'];
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
         'nome', /* varchar(256); NOT NULL; */ // Nome do usuário
         'email', /* varchar(100); NOT NULL; */ // E-mail do usuário
@@ -88,7 +88,7 @@ class Usuario extends Authenticatable implements AuditableContract
         'data_nascimento',
         'nome_jornada', /* varchar(100); NULL */ // Nome da Jornada
         'cod_jornada', /* int; NULL */ // Codigo da Jornada
-        'modalidade_pgd', /* varchar(100); NULL */ // Modalidade do usuário no PGD
+        'tipo_modalidade_id', /* char(36); NULL */ // Tipo de modalidade do usuário no PGD
         'participa_pgd',/* enum('sim','não'); */ // Participação do usuário no PGD
         //'deleted_at', /* timestamp; */
         //'remember_token', /* varchar(100); */
@@ -453,14 +453,7 @@ class Usuario extends Authenticatable implements AuditableContract
         }
         return $url;
     }
-
-    public function getRegramentosAttribute(){
-        $unidadeService = new UnidadeService();
-        return $this->lotacao
-            ? array_map(fn($p) => $p["nome"], $unidadeService->regramentosAscendentes($this->lotacao->unidade_id))
-            : [];
-    }
-  
+    
     public function getPedagioAttribute(){
         if ($this->data_final_pedagio) {
             return Carbon::parse($this->data_final_pedagio)->isFuture();

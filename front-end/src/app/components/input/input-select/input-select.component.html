@@ -27,8 +27,8 @@
                                 </a>
                             </li>
                             <ng-container *ngFor="let option of items">
-                                <li *ngIf="itemVisible(option) && !itemIndisponivel(option)">
-                                    <a class="dropdown-item text-wrap text-break" [class.active]="isActive(itemTodosButton)" [style.color]="isNoColor ? undefined : (option.color || '#000000')" [id]="generatedId(controlName) + '_' + getStringId(option.key)" (click)="onItemClick(option)">
+                                <li *ngIf="itemVisible(option)">
+                                    <a class="dropdown-item text-wrap text-break" [class.disabled]="itemIndisponivel(option) ? true : undefined" [class.active]="isActive(itemTodosButton)" [style.color]="isNoColor ? undefined : (option.color || '#000000')" [id]="generatedId(controlName) + '_' + getStringId(option.key)" (click)="onItemClick(option)">
                                         <i *ngIf="!isNoIcon && option.icon" [class]="option.icon"></i>
                                         {{option.value}}
                                     </a>
