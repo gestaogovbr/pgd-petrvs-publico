@@ -5,14 +5,9 @@
     <input-datetime date [size]="4" label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entregas') + '(Estimativa Inicial)'" required></input-datetime>
   </div>
 
-  <div class="row">
+  <div class="row visually-hidden">
     <plano-entrega-valor-meta-input icon="bi bi-graph-up-arrow" [entrega]="entity?.plano_entrega_entrega?.entrega" [size]="6" [control]="form!.controls.meta" label="Meta" [disabled]="'true'"></plano-entrega-valor-meta-input>
     <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="entity?.plano_entrega_entrega?.entrega" [size]="6" [control]="form!.controls.realizado" label="Valor Inicial" labelInfo="Valor da meta verificado no início do plano de entrega" [disabled]="'true'"></plano-entrega-valor-meta-input>
-  </div>
-
-  <div class="row">
-    <input-number [size]="6" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
-    <input-number [size]="6" label="Progresso Realizado" controlName="progresso_realizado" sufix="%"></input-number>
   </div>
 
   <div class="row">

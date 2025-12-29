@@ -1,3 +1,51 @@
+## 2.9.5 19/12/2025
+### Adicionado
+- Visualização de resumo ao sincronizar dados do SIAPE, mostrando detalhes do que foi processado.
+
+### Modificado
+- `Consulta Unidade SIAPE` agora permite no máximo a inserção de 9 algarismos.
+- Alterado nomenclatura do histórico de execução para registro de execução
+- Habilitada edição de meta realizada na execução de plano de entrega
+
+### Corrigido
+- Solução para conflitos de e-mail que impediam a importação ou reativação de usuários do SIAPE.
+- Ajuste na atualização automática da modalidade PGD dos usuários, garantindo a recuperação correta a partir do último plano de trabalho.
+- Corrigido problema que dificultava o uso de datas e horários no navegador Firefox.
+- Ajustes no tratamento de datas ao realizar a consolidação do Plano de Trabalho.
+## 2.9.4 09/12/2025
+### Modificado
+- Regras de acesso mais consistentes entre perfis.
+- Mensagens mais claras quando uma ação não é permitida.
+- Comentários já cadastrados voltam a ser exibidos na listagem de plano de entrega
+### Corrigido
+- Ajustes nas permissões das telas de Configurações (Unidade e Usuário).
+- Correções de visibilidade e bloqueio de ações conforme o perfil.
+- Corrigida edição de entrega em Plano de Entrega que evitava o preenchimento automático da data em edição de entrega
+- Corrigido erro que impedia chefe de unidade cancelar conclusão de plano de entrega
+- Erro de notificação ao Microsoft Teams quando ocorre um erro interno no sistema
+## 2.9.3 09/12/2025
+### Adicionado
+- Avisos de erro interno do sistema enviados ao Microsoft Teams, com informações básicas para acompanhamento rápido.
+### Modificado
+- Melhorias de desempenho em carregamento e operações frequentes, tornando o uso mais ágil e fluido.
+### Corrigido
+- Ajustes no fluxo de “forçar SIAPE”: mensagens mais claras, validações adicionais e resposta mais estável em casos de erro.
+
+## 2.9.2 05/12/2025 (Hotfix)
+### Adicionado
+- Suporte ao Elastic APM na infraestrutura Docker, permitindo monitoramento de performance do PHP com variáveis configuráveis via `.env`.
+### Modificado
+- Ajustes na integração e configuração do APM para permitir habilitar/desabilitar por ambiente e manter desativado por padrão quando não definido.
+## 2.9.1 05/12/2025 (Hotfix)
+### Modificado
+- Registro de consultas lentas diário: o arquivo de log de consultas lentas passa a ser gerado diariamente no formato `dd-mm-YYYY-mysql-slow.log`, facilitando auditoria e organização dos registros.
+- Criação automática do log diário: adicionamos um agendamento para garantir a criação do arquivo de log do dia com as permissões necessárias antes do início das operações.
+### Corrigido
+- Estabilidade no monitoramento de desempenho: correções para evitar falhas na leitura e notificação das consultas lentas, garantindo avisos consistentes.
+- Consistência ao notificar consultas lentas: ajustes na leitura do último registro válido do log para evitar mensagens incorretas.
+### Segurança
+- Melhoria no controle de limpeza de logs: adicionado processo diário para remoção de logs antigos (mais de 10 dias), reduzindo exposição e uso de armazenamento.
+
 ## 2.9.0 03/12/2025
 ### Modificado
 - Melhorias significativas em desempenho das queries e adição de cache para otimização de performance

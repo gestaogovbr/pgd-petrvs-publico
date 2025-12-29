@@ -116,7 +116,9 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     this.formEdit = this.fh.FormBuilder({
       progresso_realizado: { default: 0 },
       etiquetas: { default: [] },
-      etiqueta: { default: null }
+      etiqueta: { default: null },
+      meta: { default: 0 },
+      realizado: { default: 0 }
     });
     // Testa se o usuário possui permissão para exibir dados da entrega do plano de entregas
     this.addOption(Object.assign({ onClick: this.consult.bind(this) }, this.OPTION_INFORMACOES), "MOD_PENT");
@@ -183,7 +185,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   public dynamicButtons(row: any): ToolbarButton[] {
     const btns = [];
     if(this.isDisabled) btns.push(Object.assign({ onClick: this.consult.bind(this) }, this.OPTION_INFORMACOES));
-    if(this.execucao) btns.push({ label: "Histórico de execução", icon: "bi bi-activity", color: 'btn-outline-info', onClick: this.showProgresso.bind(this) });   
+    if(this.execucao) btns.push({ label: this.lex.translate("Históricos de Execução"), icon: "bi bi-activity", color: 'btn-outline-info', onClick: this.showProgresso.bind(this) });   
     if(!row._status) btns.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });   
     return btns;
   }
@@ -204,7 +206,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
         },
         modalClose: async (modalResult) => {
           if (modalResult) {
-            if (!this.isNoPersist) await this.dao?.save(modalResult);
+            if (!this.isNoPersist) await this.dao?.save({...modalResult});
             this.items[index] = modalResult;
           };
         }
@@ -312,15 +314,6 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     if(row) row.comentarios = modalResult.comentarios || [];
   }
 
-  public onRealizadaChange() {
-    const meta = this.form?.controls.meta.value;
-    const realizado = this.form?.controls.realizado.value;
-    if (meta && realizado) {
-      let totalRealizado = !isNaN(realizado) ? ((realizado / meta) * 100).toFixed(0) || 0 : 0;
-      this.form?.controls.progresso_realizado.setValue(totalRealizado);
-    }
-  }
-
   public addItemHandleEtiquetas(): LookupItem | undefined {
     let result = undefined;
     if (this.etiqueta && this.etiqueta.selectedItem) {
@@ -383,6 +376,35 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     });
   }
 
+  public async onColumnMetaEdit(row: any) {
+    this.formEdit.controls.meta.setValue(this.planoEntregaService.getValor(row.meta));
+    this.formEdit.controls.realizado.setValue(this.planoEntregaService.getValor(row.realizado));
+  }
+  
+  public async onColumnMetaSave(row: any) {
+    try {
+      let realizado = this.planoEntregaService.getEntregaValor(row.entrega,this.formEdit.controls.realizado.value);
+      const valorMeta = this.formEdit?.controls.meta.value;
+      const valorRealizado = this.formEdit?.controls.realizado.value;
+      let totalRealizado = row.progresso_realizado;
+      if (valorRealizado) {
+        totalRealizado = !isNaN(valorRealizado) ? Math.min(((valorRealizado / valorMeta) * 100), 100).toFixed(0) || 0 : 0;
+      }
+      const saved = await this.dao!.update(row.id, {
+        realizado: realizado,
+        progresso_realizado: totalRealizado,
+        _monitor: false
+      });
+
+      row.realizado = realizado;
+      if(valorMeta && valorRealizado) row.progresso_realizado = totalRealizado;
+
+      return !!saved;
+    } catch (error) {
+      return false;
+    }
+  }
+
   public async onColumnChecklistEdit(row: any) {
     this.formEdit.controls.progresso_realizado.setValue(row.progresso_realizado);
     this.checklist = this.util.clone(row.checklist);
@@ -413,5 +435,9 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   
   public getObjetivos(row: any){
     return row.objetivos.filter((x: any) => x._status != 'DELETE');
+  }
+
+  public isMetaEditavel(){
+    return this.execucao && this.entity?.status !== "CONCLUIDO";
   }
 }

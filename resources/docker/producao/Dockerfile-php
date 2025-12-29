@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1
 FROM php:8.2-apache
+ARG ELASTIC_APM_ENABLED=false
 
 # Instalar recursos adicionais
 RUN apt-get update && apt-get install -y \
@@ -10,6 +11,9 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     unzip \
     curl \
+    gnupg \
+    dirmngr \
+    ca-certificates \
     libcurl4-openssl-dev \
     openssl \
     libssl-dev \
@@ -33,6 +37,23 @@ RUN docker-php-ext-install openssl || true && \
 # Instalar extensões via PECL
 RUN pecl install redis inotify && \
     docker-php-ext-enable redis inotify
+
+ARG ELASTIC_APM_VERSION=1.15.1
+RUN set -eux; \
+    URL=$(curl -s "https://api.github.com/repos/elastic/apm-agent-php/releases/tags/v${ELASTIC_APM_VERSION}" | grep -oE "https://[^\"]+\.deb" | head -n1) || true; \
+    if [ -n "$URL" ]; then \
+      curl -L "$URL" -o /tmp/apm-agent-php.deb; \
+      apt-get update && apt-get install -y ca-certificates curl || true; \
+      if ! dpkg -i /tmp/apm-agent-php.deb; then apt-get -y install -f && dpkg -i /tmp/apm-agent-php.deb; fi; \
+      echo "Elastic APM PHP agent installed via .deb."; \
+    fi
+
+ENV ELASTIC_APM_ENABLED=${ELASTIC_APM_ENABLED} \
+    ELASTIC_APM_ENVIRONMENT=prd \
+    ELASTIC_APM_SERVICE_NAME=pgd \
+    ELASTIC_APM_SECRET_TOKEN=prd_token_apm_elk \
+    ELASTIC_APM_SERVER_URL=http://n221p044341.fast.prevnet:8200 \
+    ELASTIC_APM_GLOBAL_LABELS=cliente=mgi,categoria=backend
 
 # Criar diretório DocumentRoot e /etc/apache2/ssl
 WORKDIR /var/www
@@ -70,5 +91,5 @@ RUN chmod a+x /root/setup_production.sh && \
 
 # Garantir existência do mysql-slow.log com permissão correta
 RUN mkdir -p /var/www/storage/logs && \
-    touch /var/www/storage/logs/mysql-slow.log && \
-    chmod 660 /var/www/storage/logs/mysql-slow.log
+    touch /var/www/storage/logs/$(date +%d-%m-%Y)-mysql-slow.log && \
+    chmod 777 /var/www/storage/logs/*-mysql-slow.log

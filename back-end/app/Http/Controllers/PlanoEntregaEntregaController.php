@@ -11,7 +11,7 @@ use Throwable;
 
 class PlanoEntregaEntregaController extends ControllerBase {
 
-    public $updatable = ["realizado", "progresso_realizado", "comentarios", "etiquetas", "checklist"];
+    public $updatable = ["realizado", "progresso_realizado", "comentarios", "etiquetas", "checklist", "_monitor"];
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {

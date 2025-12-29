@@ -19,14 +19,14 @@ class SlowLogCheck extends Command
      *
      * @var string
      */
-    protected $description = 'Lê storage/logs/mysql-slow.log, agrupa por query e exibe relatório das piores queries';
+    protected $description = 'Lê o slow log diário, agrupa por query e exibe relatório das piores queries';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $path = storage_path('logs/mysql-slow.log');
+        $path = storage_path('logs/' . now()->format('d-m-Y') . '-mysql-slow.log');
         if (!file_exists($path)) {
             $this->error('Arquivo não encontrado: ' . $path);
             return 1;

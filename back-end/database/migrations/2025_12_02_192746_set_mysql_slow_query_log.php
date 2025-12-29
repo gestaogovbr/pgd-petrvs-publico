@@ -13,6 +13,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (DB::getDriverName() !== 'mysql') {
+            return;
+        }
+
         $slow = DB::select("SHOW VARIABLES LIKE 'slow_query_log'");
         $file = DB::select("SHOW VARIABLES LIKE 'slow_query_log_file'");
         $slowVal = isset($slow[0]) ? ($slow[0]->Value ?? $slow[0]->Value ?? ($slow[0]->value ?? null)) : null;
@@ -36,6 +40,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (DB::getDriverName() !== 'mysql') {
+            return;
+        }
+
         DB::beginTransaction();
         try {
             DB::statement("SET GLOBAL slow_query_log = 0");

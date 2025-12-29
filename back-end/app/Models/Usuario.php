@@ -88,7 +88,7 @@ class Usuario extends Authenticatable implements AuditableContract
         'data_nascimento',
         'nome_jornada', /* varchar(100); NULL */ // Nome da Jornada
         'cod_jornada', /* int; NULL */ // Codigo da Jornada
-        'modalidade_pgd', /* varchar(100); NULL */ // Modalidade do usuário no PGD
+        'tipo_modalidade_id', /* char(36); NULL */ // Tipo de modalidade do usuário no PGD
         'participa_pgd',/* enum('sim','não'); */ // Participação do usuário no PGD
         //'deleted_at', /* timestamp; */
         //'remember_token', /* varchar(100); */
