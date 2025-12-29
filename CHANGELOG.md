@@ -1,3 +1,21 @@
+## 2.9.0 03/12/2025
+### Modificado
+- Melhorias significativas em desempenho das queries e adição de cache para otimização de performance
+### Adicionado
+- Monitoramento do desempenho das queries
+- Notificação de performance das queries
+## 2.8.3 01/12/2025
+### Corrigido
+- Corrigidos e simplificados os registros de pendências do chefe
+- Corrigida a permissão para alteração de atribuições nos Perfis Master e Negocial
+- Corrigido o acesso do usuário não participante do PGD à tela de Plano de Trabalho
+- Problema em cidades com fuso horário UTC-2
+- Corrigida listagem infinita em modal de vinculação de entregas em cadastro de entrega
+### Modificado
+- Regras para quem possui mais de uma matrícula: ao trocar de unidade, o sistema passa a escolher a matrícula correta automaticamente, reduzindo erros e evitando duplicidade.
+- Exibição da matrícula ao trocar de unidade ficou mais clara e traz aviso quando a matrícula estiver em processo de inativação.
+- Ajustes nas regras de edição de atribuições para usuários com múltiplas matrículas, deixando o uso mais previsível e consistente com os perfis de acesso.
+- PEs e PTs cancelados não são mais enviados para a API do PGD.
 ## 2.8.2 24/11/2025
 ### Corrigido
 - Corrigido o problema de exibição da modalidade presencial no plano de trabalho

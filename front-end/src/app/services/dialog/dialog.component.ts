@@ -191,6 +191,7 @@ export class DialogComponent implements OnInit {
 				this.modalWidth = parseInt(
 					this.route.queryParams?.modalWidth || modal.modalWidth
 				);
+				modal.modalInfiniteScrollContainer = `#${this.id}`;
 				(modal.titleSubscriber as Subject<string>).subscribe((title) => {
 					this.title = title;
 					this.cdRef.detectChanges();

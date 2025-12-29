@@ -67,7 +67,7 @@ class Usuario extends Authenticatable implements AuditableContract
     protected $table = "usuarios";
 
     protected $with = ['perfil'];
-    protected $appends = ['pedagio','regramentos'];
+    protected $appends = ['pedagio'];
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
         'nome', /* varchar(256); NOT NULL; */ // Nome do usuário
         'email', /* varchar(100); NOT NULL; */ // E-mail do usuário
@@ -438,7 +438,7 @@ class Usuario extends Authenticatable implements AuditableContract
     public function tipoModalidadeSiape()
     {
         return $this->belongsTo(TipoModalidadeSiape::class, 'modalidade_pgd');
-    }  
+    }
 
 
     public function integracaoServidor()

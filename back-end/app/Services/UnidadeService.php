@@ -23,12 +23,14 @@ use Carbon\Carbon;
 use App\Services\Siape\ProcessaDadosSiapeBD;
 use App\Exceptions\ErrorDataSiapeFaultCodeException;
 use App\Exceptions\ValidateException;
+use Illuminate\Support\Facades\Session;
+
 
 class UnidadeService extends ServiceBase
 {
 
     use DadosExternosSiape, Atribuicao;
-
+    public static $CACHE_LINHA_ASCENDENTE = [];
 
     public function validateStore($data, $unidade, $action)
     {
@@ -86,12 +88,24 @@ class UnidadeService extends ServiceBase
 
     public function hora($idOrUnidade)
     {
-        $unidade = gettype($idOrUnidade) == "string" ? Unidade::find($idOrUnidade) : $idOrUnidade;
-        $timeZone = $unidade->cidade?->timezone ?? -3;
-        $timezone_abbr = timezone_name_from_abbr("", -3600 * abs($timeZone), 0);
-        $dateTime = new DateTime('now', new DateTimeZone($timezone_abbr));
+        $key = is_string($idOrUnidade) ? $idOrUnidade : $idOrUnidade->id;
+        if (Session::has($key)) {
+            return Session::get($key);
+        }
+        
+        
+        $unidade = is_string($idOrUnidade)
+            ? Unidade::with('cidade')->find($idOrUnidade)
+            : ($idOrUnidade?->load('cidade'));
+        $timeZoneOffset = $unidade->cidade?->timezone ?? -3;
+
+        $calendarioService = new CalendarioService;
+        $timezone = $calendarioService->utcToTimezone($timeZoneOffset);
+        $dateTime = new DateTime('now', new DateTimeZone($timezone));
         $dateTime->setTimestamp($dateTime->getTimestamp());
-        return ServiceBase::toIso8601($dateTime);
+        $result = ServiceBase::toIso8601($dateTime);
+        Session::put($key, $result);
+        return $result;
     }
 
     public function inativar($id, $inativo)
@@ -399,15 +413,15 @@ class UnidadeService extends ServiceBase
         $unidade = null;
 
         if (!empty($unidadeId)) {
-            $unidade = Unidade::find($unidadeId);
+            $unidade = Unidade::query()->setEagerLoads([])->find($unidadeId);
             if ($unidade) {
                 $unidades = Unidade::whereIn("id", array_filter(explode('/', $unidade->path), fn($x) => $x != ""))->get()->toArray();
                 $this->obterIrmaosRecursivamente($unidade, $irmaos);
             }
         } else {
-            $unidade = Unidade::where('unidade_pai_id', null)->first();
+            $unidade = Unidade::query()->setEagerLoads([])->where('unidade_pai_id', null)->first();
             if ($unidade) {
-                $unidades = Unidade::whereIn("id", array_filter(explode('/', $unidade->path), fn($x) => $x != ""))->get();
+                $unidades = Unidade::query()->setEagerLoads([])->whereIn("id", array_filter(explode('/', $unidade->path), fn($x) => $x != ""))->get();
                 $unidades = $unidades->toArray();
                 $unidades[] = $unidade;
             }
@@ -425,7 +439,7 @@ class UnidadeService extends ServiceBase
     public function subordinadas($id)
     {
 
-        $unidade = Unidade::findOrFail($id);
+        $unidade = Unidade::query()->setEagerLoads([])->findOrFail($id);
 
         if (!$unidade) {
             throw new NotFoundException("Unidade não encontrada");
@@ -433,7 +447,7 @@ class UnidadeService extends ServiceBase
 
         // Obtém todas as unidades subordinadas de forma recursiva
         $subordinadas = collect(); // Inicializa uma Collection vazia
-        $filhas = Unidade::where('unidade_pai_id', $id)->get(); // Obtém as unidades filhas diretas
+        $filhas = Unidade::query()->setEagerLoads([])->where('unidade_pai_id', $id)->get(); // Obtém as unidades filhas diretas
 
         foreach ($filhas as $filha) {
             $subordinadas->push($filha); // Adiciona a unidade filha à lista
@@ -449,7 +463,7 @@ class UnidadeService extends ServiceBase
     private function buscarSubordinadasRecursivamente($unidade)
     {
         $subordinadas = collect();
-        $filhas = Unidade::where('unidade_pai_id', $unidade->id)->get();
+        $filhas = Unidade::query()->setEagerLoads([])->where('unidade_pai_id', $unidade->id)->get();
 
         foreach ($filhas as $filha) {
             $subordinadas->push($filha);
@@ -513,15 +527,24 @@ class UnidadeService extends ServiceBase
      */
     public function linhaAscendente($unidade_id): array
     {
-        $result = [];
-        $currentUnit = Unidade::find($unidade_id);
         
-        while ($currentUnit) {
-            $result[] = $currentUnit->id;
-            $currentUnit = $currentUnit->unidadePai;
+        if (array_key_exists($unidade_id, self::$CACHE_LINHA_ASCENDENTE)) {
+            return self::$CACHE_LINHA_ASCENDENTE[$unidade_id];
         }
 
-        return array_reverse($result);
+        $result = [];
+        $current = DB::table('unidades')->select('id', 'unidade_pai_id')->where('id', $unidade_id)->first();
+
+        while ($current) {
+            $result[] = $current->id;
+            $current = $current->unidade_pai_id
+                ? DB::table('unidades')->select('id', 'unidade_pai_id')->where('id', $current->unidade_pai_id)->first()
+                : null;
+        }
+
+        $result = array_reverse($result);
+        self::$CACHE_LINHA_ASCENDENTE[$unidade_id] = $result;
+        return $result;
     }
 
     /**
@@ -572,11 +595,28 @@ class UnidadeService extends ServiceBase
         if ($this->hasBuffer("gestoresUnidadeSuperior", $unidadeId)) {
             return $this->getBuffer("gestoresUnidadeSuperior", $unidadeId);
         } else {
-            $unidadeSup = Unidade::find($unidadeId)?->unidadePai;
+            $unidadeSupId = Unidade::query()
+                ->select('unidade_pai_id')
+                ->find($unidadeId)?->unidade_pai_id;
+
+            if (empty($unidadeSupId)) {
+                return $this->setBuffer("gestoresUnidadeSuperior", $unidadeId, [
+                    "gestor" => null,
+                    "gestoresSubstitutos" => [],
+                    "gestoresDelegados" => [],
+                ]);
+            }
+
+            $unidadeSup = Unidade::with([
+                'gestor.usuario',
+                'gestoresSubstitutos.usuario',
+                'gestoresDelegados.usuario',
+            ])->find($unidadeSupId);
+
             return $this->setBuffer("gestoresUnidadeSuperior", $unidadeId, [
                 "gestor" => $unidadeSup?->gestor?->usuario,
                 "gestoresSubstitutos" => $unidadeSup?->gestoresSubstitutos->map(fn($x) => $x->usuario)->toArray() ?? [],
-                "gestoresDelegados" => $unidadeSup?->gestoresDelegados->map(fn($x) => $x->usuario)->toArray() ?? []
+                "gestoresDelegados" => $unidadeSup?->gestoresDelegados->map(fn($x) => $x->usuario)->toArray() ?? [],
             ]);
         }
     }
@@ -615,35 +655,49 @@ class UnidadeService extends ServiceBase
             return []; // garante que não será null
         }
 
+        $unidade->loadMissing([
+            'gestor' => fn($q) => $q->select('id', 'usuario_id', 'unidade_id'),
+            'gestoresSubstitutos' => fn($q) => $q->select('id', 'usuario_id', 'unidade_id'),
+            'gestoresDelegados' => fn($q) => $q->select('id', 'usuario_id', 'unidade_id'),
+            'unidadePai.gestor' => fn($q) => $q->select('id', 'usuario_id', 'unidade_id'),
+            'unidadePai.gestoresSubstitutos' => fn($q) => $q->select('id', 'usuario_id', 'unidade_id'),
+        ]);
+
+        $gestorTitularId = $unidade->gestor?->usuario_id;
+        $substitutosIds   = $unidade->gestoresSubstitutos?->pluck('usuario_id')->all() ?? [];
+        $delegadosIds     = $unidade->gestoresDelegados?->pluck('usuario_id')->all() ?? [];
+        $paiGestorId      = $unidade->unidadePai?->gestor?->usuario_id;
+        $paiSubstitutosIds = $unidade->unidadePai?->gestoresSubstitutos?->pluck('usuario_id')->all() ?? [];
+
         $atribuicoes = $this->usuarioService->atribuicoesGestor($unidade->id, $usuarioId);
 
         if ($atribuicoes["gestor"]) {
             return array_values(array_filter([
-                $unidade->unidadePai?->gestor?->usuario_id,
-                ...($unidade->unidadePai?->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? [])
+                $paiGestorId,
+                ...$paiSubstitutosIds
             ]));
         }
 
         if ($atribuicoes["gestorSubstituto"]) {
             return array_values(array_filter(array_merge(
-                [$unidade->gestor?->usuario_id, $unidade->unidadePai?->gestor?->usuario_id],
-                $unidade->unidadePai?->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? [],
-                $unidade->gestoresSubstitutos?->reject(fn($g) => $g->usuario_id == $participanteId)->pluck('usuario_id')->toArray() ?? []
+                [$gestorTitularId, $paiGestorId],
+                $paiSubstitutosIds,
+                array_values(array_filter($substitutosIds, fn($id) => $id != $participanteId))
             )));
         }
 
         if ($atribuicoes["gestorDelegado"]) {
             return array_values(array_filter(array_merge(
-                [$unidade->gestor?->usuario_id],
-                $unidade->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? []
+                [$gestorTitularId],
+                $substitutosIds
             )));
         }
 
         // Se o usuário não é gestor, substituto ou delegado, retorna somente o gestor titular e os substitutos
 
         $gestores = array_values(array_filter(array_merge(
-            [$unidade->gestor?->usuario_id],
-            $unidade->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? []
+            [$gestorTitularId],
+            $substitutosIds
         )));
 
         if (count($gestores) > 0) {
@@ -651,8 +705,8 @@ class UnidadeService extends ServiceBase
         } else {
             // Se não houver gestores, retorna o gestor da unidade superior
             return array_values(array_filter([
-                $unidade->unidadePai?->gestor?->usuario_id,
-                ...($unidade->unidadePai?->gestoresSubstitutos?->pluck('usuario_id')->toArray() ?? [])
+                $paiGestorId,
+                ...$paiSubstitutosIds
             ]));
         }
     }
@@ -707,7 +761,7 @@ class UnidadeService extends ServiceBase
 
     }
 
-   
+
     public function processarUnidadesTemporarias(): void
     {
         $dataLimite = Carbon::now()->subDays(30);
@@ -723,27 +777,27 @@ class UnidadeService extends ServiceBase
         }
 
         $idsInativadas = [];
-        
+
         foreach ($unidadesParaInativar as $unidade) {
             $unidade->data_inativacao = Carbon::now();
             $unidade->save();
-            
+
             $idsInativadas[] = $unidade->id;
-            
+
             $usuariosVinculados = UnidadeIntegrante::where('unidade_id', $unidade->id)
                 ->whereNull('deleted_at')
                 ->get();
-            
+
             foreach ($usuariosVinculados as $integranteUnidade) {
-                $this->LimparAtribuicoes($integranteUnidade, true); 
-                
+                $this->LimparAtribuicoes($integranteUnidade, true);
+
                 Log::info("Atribuições removidas do usuário vinculado à unidade inativada", [
                     'usuario_id' => $integranteUnidade->usuario_id,
                     'unidade_id' => $unidade->id,
                     'unidade_integrante_id' => $integranteUnidade->id
                 ]);
             }
-            
+
             Log::info("Unidade inativada após 30 dias do início da inativação", [
                 'unidade_id' => $unidade->id,
                 'nome' => $unidade->nome,
@@ -774,7 +828,7 @@ class UnidadeService extends ServiceBase
         $unidade->data_inicio_inativacao = Carbon::now();
         $unidade->data_inativacao = null;
         $unidade->save();
-        
+
         return $unidade;
     }
     public function isUnidadeExecutora($unidadeId): bool
@@ -784,5 +838,5 @@ class UnidadeService extends ServiceBase
             ->exists();
     }
 
-    
+
 }
