@@ -1398,7 +1398,10 @@ class PlanoTrabalhoService extends ServiceBase
     public function planosUsuarioComPendencias(string $usuarioId): bool
     {
         $planos = PlanoTrabalho::where('usuario_id', $usuarioId)
-            ->whereNotIn('status', ['CANCELADO', 'SUSPENSO'])
+            ->whereNotIn('status', ['CANCELADO', 'SUSPENSO'])            
+            ->whereDoesntHave('consolidacoes', function ($query) {
+                $query->where('status', 'AVALIADO');
+            })
             ->orderByDesc('numero')
             ->take(2)
             ->get();
