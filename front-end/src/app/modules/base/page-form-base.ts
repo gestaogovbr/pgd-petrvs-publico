@@ -141,7 +141,19 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
           }
         });
       } else {
-        this.editableForm.error = typeof error === 'string' ? error : 'Ocorreu um erro desconhecido';
+
+        let errorMessage: string = 'Ocorreu um erro desconhecido';
+        
+        if (typeof error === 'string') {
+          errorMessage = error;
+        } else {
+          if (typeof error === 'object' && 'message' in error) {
+            errorMessage = error.message;
+          }
+        }
+
+        this.editableForm.error = errorMessage;
+        console.error(error);
       }
     }
   }
