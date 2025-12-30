@@ -126,8 +126,7 @@ tenancy()->initialize($tenant); */
                 'values' => $this->service->searchText($data)
             ]);
         }  catch (IBaseException $e) {
-
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
         catch (Throwable $e) {
             Log::error('Erro capturado', ['exception' => $e]);
@@ -157,7 +156,7 @@ tenancy()->initialize($tenant); */
                 'value' => $this->service->searchKey($data)
             ]);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -186,7 +185,7 @@ tenancy()->initialize($tenant); */
                 'data' => $this->service->getById($data)
             ]);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -218,7 +217,7 @@ tenancy()->initialize($tenant); */
                 'extra' => $result["extra"]
             ]);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -255,7 +254,7 @@ tenancy()->initialize($tenant); */
                 'extra' => $result['extra']
             ]);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -293,7 +292,7 @@ tenancy()->initialize($tenant); */
             ]);
             return response()->json(['success' => true, 'url' => $this->service->downloadUrl($data["file"])]);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -318,7 +317,7 @@ tenancy()->initialize($tenant); */
             ]);
             return response()->json(['success' => $this->service->deleteFile($data["file"])]);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -410,7 +409,7 @@ tenancy()->initialize($tenant); */
             ]);
         }
         catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -451,7 +450,7 @@ tenancy()->initialize($tenant); */
                 'rows' => [$result]
             ]);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -490,7 +489,7 @@ tenancy()->initialize($tenant); */
                 'rows' => [$result] //$this->service->update($request->all(), $unidade)
             ]);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -514,7 +513,7 @@ tenancy()->initialize($tenant); */
             ]);
             return response()->json(['success' => $this->service->destroy($data["id"], !ControllerBase::$sameTransaction)]);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage(), $e->getCode()]);
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
