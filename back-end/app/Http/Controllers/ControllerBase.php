@@ -11,6 +11,7 @@ use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -419,10 +420,7 @@ abstract class ControllerBase extends Controller
     {
         try {
             $this->checkPermissions("STORE", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
-            $data = $request->validate([
-                'entity' => ['required'],
-                'with' => ['array']
-            ]);
+            $data = $this->validateStore($request);
             $unidade = $this->getUnidade($request);
             $entity = $this->service->store($data['entity'], $unidade, !ControllerBase::$sameTransaction);
             $result = $this->service->getById([
@@ -433,6 +431,9 @@ abstract class ControllerBase extends Controller
                 'success' => true,
                 'rows' => [$result]
             ]);
+        }
+        catch(ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         catch (ValidateException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
@@ -450,6 +451,21 @@ abstract class ControllerBase extends Controller
         }
     }
 
+    protected function validateStore(Request $request) {
+        return $request->validate([
+                'entity' => ['required'],
+                'with' => ['array']
+            ]);
+    }
+
+    protected function validateUpdate(Request $request) {
+        return $request->validate([
+                'id' => ['required'],
+                'data' => ['required'],
+                'with' => ['array']
+            ]);
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -460,11 +476,7 @@ abstract class ControllerBase extends Controller
     {
         try {
             $this->checkPermissions("UPDATE", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
-            $data = $request->validate([
-                'id' => ['required'],
-                'data' => ['required'],
-                'with' => ['array']
-            ]);
+            $data = $this->validateUpdate($request);
             foreach (array_keys($data["data"]) as $key) {
                 if($key != "id" && !in_array($key, $this->updatable)) {
                     return response()->json(['error' => "Não é possível atualizar"]);
