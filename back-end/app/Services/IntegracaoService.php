@@ -1325,7 +1325,7 @@ protected function validarModalidadePgd($modalidadeString)
             'email'         => $linha->emailfuncional,
             'cod_jornada'   => $linha->cod_jornada,
             'nome_jornada'  => $linha->nome_jornada,
-            'modalidade_pgd' => $modalidadePgdValida,
+            'tipo_modalidade_id' => $modalidadePgdValida,
             'participa_pgd' => $linha->participa_pgd,
             'id'            => $linha->id,
             'ident_unica'   => $linha->ident_unica,
