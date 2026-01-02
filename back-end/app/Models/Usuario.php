@@ -305,7 +305,7 @@ class Usuario extends Authenticatable implements AuditableContract
 
     /**
      * @deprecated
-     * Não existe mais a seleção de participantes 
+     * Não existe mais a seleção de participantes
      */
     public function participacoesProgramas()
     {
@@ -313,7 +313,7 @@ class Usuario extends Authenticatable implements AuditableContract
     }
     /**
      * @deprecated
-     * Não existe mais a seleção de participantes 
+     * Não existe mais a seleção de participantes
      */
     public function ultimaParticipacaoPrograma()
     {
@@ -435,6 +435,11 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasOne(UnidadeIntegrante::class)->has('colaborador');
     } // unidade com a qual possui TCR
 
+    public function tipoModalidadeSiape()
+    {
+        return $this->belongsTo(TipoModalidadeSiape::class, 'modalidade_pgd');
+    }
+
 
     public function integracaoServidor()
     {
@@ -453,7 +458,14 @@ class Usuario extends Authenticatable implements AuditableContract
         }
         return $url;
     }
-    
+
+    public function getRegramentosAttribute(){
+        $unidadeService = new UnidadeService();
+        return $this->lotacao
+            ? array_map(fn($p) => $p["nome"], $unidadeService->regramentosAscendentes($this->lotacao->unidade_id))
+            : [];
+    }
+
     public function getPedagioAttribute(){
         if ($this->data_final_pedagio) {
             return Carbon::parse($this->data_final_pedagio)->isFuture();
@@ -548,5 +560,14 @@ class Usuario extends Authenticatable implements AuditableContract
         }
 
         $this->delete();
+    }
+
+    public function matriculas()
+    {
+        return $this->hasMany(
+            self::class,
+            'cpf',
+            'cpf'
+        );
     }
 }

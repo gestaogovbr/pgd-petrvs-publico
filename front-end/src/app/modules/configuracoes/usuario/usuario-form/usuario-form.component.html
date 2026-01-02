@@ -21,6 +21,51 @@
                 </div>
             </div>
         </tab>
+        <tab key="SITUACAO" label="Situação" *ngIf="!isNew">
+            <div class="row">
+                <div class="col-md-12">
+                    <top-alert *ngIf="!entity?.matriculas" type="warning" [message]="'Nenhum matrícula associada ao usuário'"></top-alert>
+                    <grid #matriculas [items]="getMatriculas()" minHeight="auto" noMargin>
+                        <columns>
+                            <column [title]="lex.translate('Nº Matrícula')" [template]="columnMatricula">
+                                <ng-template let-row="row" #columnMatricula>
+                                    <span>{{ row.matricula || 'Não definida' }} </span>
+                                </ng-template>
+                            </column>
+                            <column [title]="lex.translate('Lotação')" [template]="columnUnidade">
+                                <ng-template let-row="row" #columnUnidade>
+                                    <span>{{ row.lotacao?.unidade?.sigla || '(Não definida)' }} </span>
+                                </ng-template>
+                            </column>
+                            <column [title]="lex.translate('Situação Funcional')" [template]="columnSituacao">
+                                <ng-template let-row="row" #columnSituacao>
+                                    <span>{{ lookup.getValue(lookup.USUARIO_SITUACAO_FUNCIONAL, row.situacao_funcional) }} </span>
+                                </ng-template>
+                            </column>
+                        </columns>
+                    </grid>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <top-alert *ngIf="!entity?.regramentos" type="warning" [message]="'Nenhum regramento cadastrado para o usuário'"></top-alert>
+                    <grid #regramentos_grid [items]="regramentos" *ngIf="regramentos.length" minHeight="auto" noMargin>
+                        <columns>
+                            <column [title]="lex.translate('Regramentos')" [template]="columnRegramento">
+                                <ng-template let-row="row" #columnRegramento>
+                                    <span>{{ row.nome || '' }} </span>
+                                </ng-template>
+                            </column>
+                        </columns>
+                    </grid>
+                </div>
+            </div>
+            <div class="row">
+                <input-display [size]="3" label="Participante do PGD" [value]="entity?.participa_pgd?.toUpperCase()"></input-display>
+                <input-display [size]="6" label="Modalidade" [value]="entity?.tipo_modalidade_siape ? entity?.tipo_modalidade_siape?.nome?.toUpperCase() : 'Não definida'"></input-display>
+            </div>
+        </tab>
         <tab key="CONFIGURACOES" label="TCR- Particularidades do participante" *ngIf="entity?.id && !entity?.usuario_externo">
             <div class="row">
                 <input-editor [label]="''" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
