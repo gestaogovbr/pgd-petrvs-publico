@@ -1,4 +1,4 @@
-## 2.9.6 02/01/2026
+## 2.9.7 02/01/2026
 ### Adicionado
 - Adição de Aba de Situação na consulta de Agentes Públicos, com dados de matrículas, regramentos, modalidade e participação no PGD;
 ### Modificado
@@ -8,7 +8,7 @@
 - Indicadores de entrega não contabilizam mais PEs cancelados.
 
 ## 2.9.6 26/12/2025
-### Correções Críticas
+### Corrigido
 - Corrigido erro de "timeout" que ocorria ao tentar salvar atribuições de usuários, garantindo que as alterações sejam gravadas corretamente mesmo em operações mais demoradas.
 
 
