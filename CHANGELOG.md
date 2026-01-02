@@ -6,6 +6,7 @@
 - Adicionadas descrições para cada Indicador;
 ### Corrigido
 - Indicadores de entrega não contabilizam mais PEs cancelados.
+- Registros via siape com erro de modalidade impedindo importação correta 
 
 ## 2.9.6 26/12/2025
 ### Corrigido
