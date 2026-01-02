@@ -1,5 +1,6 @@
 ## 2.9.6 02/01/2026
 ### Adicionado
+- Adição de Aba de Situação na consulta de Agentes Públicos, com dados de matrículas, regramentos, modalidade e participação no PGD;
 ### Modificado
 - Usuários passam a poder acessar indicadores de outros órgãos que não o da sua lotação;
 - Adicionadas descrições para cada Indicador;
