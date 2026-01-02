@@ -1,3 +1,11 @@
+## 2.9.6 02/01/2026
+### Adicionado
+### Modificado
+- Usuários passam a poder acessar indicadores de outros órgãos que não o da sua lotação;
+- Adicionadas descrições para cada Indicador;
+### Corrigido
+- Indicadores de entrega não contabilizam mais PEs cancelados.
+
 ## 2.9.5 19/12/2025
 ### Adicionado
 - Visualização de resumo ao sincronizar dados do SIAPE, mostrando detalhes do que foi processado.
