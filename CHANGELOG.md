@@ -4,9 +4,11 @@
 ### Modificado
 - Usuários passam a poder acessar indicadores de outros órgãos que não o da sua lotação;
 - Adicionadas descrições para cada Indicador;
+- Modificado a regra que bloqueia a criação de novos planos de trabalhos
 ### Corrigido
 - Indicadores de entrega não contabilizam mais PEs cancelados.
 - Registros via siape com erro de modalidade impedindo importação correta 
+- Correção nos prazos da lista de pendências;
 
 ## 2.9.6 26/12/2025
 ### Corrigido
