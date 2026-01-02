@@ -130,7 +130,7 @@ class IntegracaoService extends ServiceBase
         $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade_id);
         $values[':id'] = Uuid::uuid4();
         $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
-        $values[':data_modificacao'] = $this->UtilService->asDateTime($unidade->data_modificacao_siape);
+        $values[':data_modificacao'] = UtilService::asDateTime($unidade->data_modificacao_siape);
         $this->unidadesInseridas[$unidade->id_servo] = ["unidade_id" => $values[':id'], "path" => $values[':path']];
         $unidadeJaExisteNoBanco = Unidade::where("codigo", $unidade->id_servo)->first();
         if ($unidadeJaExisteNoBanco) {
@@ -173,7 +173,7 @@ class IntegracaoService extends ServiceBase
       $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade_id);
       $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
       $values[':unidade_id'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["unidade_id"] : null;
-      $values[':data_modificacao'] = $this->UtilService->asDateTime($unidade->data_modificacao_siape);
+      $values[':data_modificacao'] = UtilService::asDateTime($unidade->data_modificacao_siape);
 
       $sql = "UPDATE unidades SET path = :path, unidade_pai_id = :unidade_id, codigo = :codigo, " .
         "nome = :nome, sigla = :sigla, cidade_id = :cidade_id, data_modificacao = :data_modificacao WHERE id = :id";
@@ -203,7 +203,7 @@ class IntegracaoService extends ServiceBase
       return ["unidade_id" => $values[':id'], "path" => $values[':path']];
     } else { // Só entra aqui se a Unidade já existir e não tiver mudado o Pai. Nesse caso, atualiza apenas os outros dados (Nome, Sigla).
       $values[':id'] = $unidade->id;
-      $values[':data_modificacao'] = $this->UtilService->asDateTime($unidade->data_modificacao_siape);
+      $values[':data_modificacao'] = UtilService::asDateTime($unidade->data_modificacao_siape);
 
       $sql = "UPDATE unidades SET codigo = :codigo, nome = :nome, sigla = :sigla, cidade_id = :cidade_id,  data_modificacao = :data_modificacao WHERE id = :id";
       DB::update($sql, $values);
@@ -694,7 +694,7 @@ class IntegracaoService extends ServiceBase
                 'participa_pgd' => $linha->participa_pgd,
                 'id'            => $linha->id,
                 'ident_unica'   => $linha->ident_unica,
-                'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
+                'data_modificacao' => UtilService::asDateTime($linha->data_modificacao),
                 'data_nascimento' => $linha->data_nascimento,
               ]);
             }
@@ -806,10 +806,10 @@ class IntegracaoService extends ServiceBase
           }
 
           foreach ($vinculos_isr as $v_isr) {
-            $v_isr = $this->UtilService->object2array($v_isr);
-            $cpfCheck = $this->UtilService->valueOrDefault($v_isr['cpf']);
-            $matriculaNova = $this->UtilService->valueOrDefault($v_isr['matricula']);
-            $codigoExercicio = $this->UtilService->valueOrDefault($v_isr['exercicio']);
+            $v_isr = UtilService::object2array($v_isr);
+            $cpfCheck = UtilService::valueOrDefault($v_isr['cpf']);
+            $matriculaNova = UtilService::valueOrDefault($v_isr['matricula']);
+            $codigoExercicio = UtilService::valueOrDefault($v_isr['exercicio']);
             $unidadeExercicio = Unidade::where('codigo', $codigoExercicio)->first();
             $unidadeExercicioIdCheck = isset($unidadeExercicio->id) ? $unidadeExercicio->id : null;
 
@@ -819,20 +819,20 @@ class IntegracaoService extends ServiceBase
            
            $registro = new Usuario([
               'id' => Uuid::uuid4(),
-              'email' => $this->UtilService->valueOrDefault($v_isr['emailfuncional']),
-              'nome' => $this->UtilService->valueOrDefault($v_isr['nome']),
-              'cpf' => $this->UtilService->valueOrDefault($v_isr['cpf']),
-              'matricula' => $this->UtilService->valueOrDefault($v_isr['matricula']),
-              'apelido' => $this->UtilService->valueOrDefault($v_isr['apelido']),
-              'telefone' => $this->UtilService->valueOrDefault($v_isr['telefone'], null),
-              'data_nascimento' => $this->UtilService->valueOrDefault($v_isr['data_nascimento'], null),
-              'sexo' => $this->UtilService->valueOrDefault($v_isr['sexo']),
-              'situacao_funcional' => $this->UtilService->valueOrDefault($v_isr['situacao_funcional'], "DESCONHECIDO"),
+              'email' => UtilService::valueOrDefault($v_isr['emailfuncional']),
+              'nome' => UtilService::valueOrDefault($v_isr['nome']),
+              'cpf' => UtilService::valueOrDefault($v_isr['cpf']),
+              'matricula' => UtilService::valueOrDefault($v_isr['matricula']),
+              'apelido' => UtilService::valueOrDefault($v_isr['apelido']),
+              'telefone' => UtilService::valueOrDefault($v_isr['telefone'], null),
+              'data_nascimento' => UtilService::valueOrDefault($v_isr['data_nascimento'], null),
+              'sexo' => UtilService::valueOrDefault($v_isr['sexo']),
+              'situacao_funcional' => UtilService::valueOrDefault($v_isr['situacao_funcional'], "DESCONHECIDO"),
               'perfil_id' => $perfilParticipanteId,
-              'exercicio' => $this->UtilService->valueOrDefault($v_isr['exercicio']),
-              'uf' => $this->UtilService->valueOrDefault($v_isr['uf'], null),
-              'data_modificacao' => $this->UtilService->asDateTime($v_isr['data_modificacao']),
-              'ident_unica' => $this->UtilService->valueOrDefault($v_isr['ident_unica']),
+              'exercicio' => UtilService::valueOrDefault($v_isr['exercicio']),
+              'uf' => UtilService::valueOrDefault($v_isr['uf'], null),
+              'data_modificacao' => UtilService::asDateTime($v_isr['data_modificacao']),
+              'ident_unica' => UtilService::valueOrDefault($v_isr['ident_unica']),
             ]);
 
             $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($registro->email, $registro->matricula);
@@ -1329,7 +1329,7 @@ protected function validarModalidadePgd($modalidadeString)
             'participa_pgd' => $linha->participa_pgd,
             'id'            => $linha->id,
             'ident_unica'   => $linha->ident_unica,
-            'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
+            'data_modificacao' => UtilService::asDateTime($linha->data_modificacao),
             'data_nascimento' => $linha->data_nascimento,
           ]);
         }

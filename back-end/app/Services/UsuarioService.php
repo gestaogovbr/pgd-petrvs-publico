@@ -319,14 +319,14 @@ class UsuarioService extends ServiceBase
   public function proxyStore(&$data, $unidade, $action)
   {
     $data["with"] = [];
-    $data['cpf'] = $this->UtilService->onlyNumbers($data['cpf']);
+    $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
 
     unset($data['pedagio']);
 
     if (!empty($data['telefone']))
-      $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
+      $data['telefone'] = UtilService::onlyNumbers($data['telefone']);
     /* Armazena as informações que serão necessárias no extraStore */
-    $this->buffer = ["integrantes" => $this->UtilService->getNested($data, "integrantes")];
+    $this->buffer = ["integrantes" => UtilService::getNested($data, "integrantes")];
     $this->validarPerfil($data);
     $this->validarColaborador($data);
     return $data;

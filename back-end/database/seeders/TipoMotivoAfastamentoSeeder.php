@@ -60,7 +60,7 @@ class TipoMotivoAfastamentoSeeder extends Seeder
         $sigla = substr($sigla, 0, 3) . $cod;
   
         TipoMotivoAfastamento::firstOrCreate(['nome' => $row['nome']], [
-          "id" => $this->utilService->uuid($row['nome']),
+          "id" => UtilService::uuid($row['nome']),
           "data_inicio" => $data,
           "data_fim" =>  $data,
           "situacao" => "S",

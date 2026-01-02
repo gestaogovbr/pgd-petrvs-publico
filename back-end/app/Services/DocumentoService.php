@@ -82,7 +82,6 @@ class DocumentoService extends ServiceBase {
     }
 
     public function gerarPDF($data){
-        $utilservice = New UtilService();
         $documento = Documento::find($data["documento_id"]);
         if(empty($documento)) throw new ServerException("ValidateDocumento", "Documento não encontrado");        
         $head = '<head><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">';
@@ -90,7 +89,7 @@ class DocumentoService extends ServiceBase {
         if($documento->assinaturas) {
             $assinaturas .= "<div style='display:block; '><br><hr><h5>Assinatura(s):</h5>";
             foreach ($documento->assinaturas as $assinatura) {
-                $assinaturas .= "<div style='margin-bottom:5px;'><p style='margin:0; padding:0;'>{$assinatura->usuario->nome}</p><small>Assinado em: {$utilservice->getDateTimeFormatted($assinatura->data_assinatura)} <br>{$assinatura->assinatura}</small></div>";
+                $assinaturas .= "<div style='margin-bottom:5px;'><p style='margin:0; padding:0;'>{$assinatura->usuario->nome}</p><small>Assinado em: " . UtilService::getDateTimeFormatted($assinatura->data_assinatura) . " <br>{$assinatura->assinatura}</small></div>";
             }
             $assinaturas .= '</div>';
         }

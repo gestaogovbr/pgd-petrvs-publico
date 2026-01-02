@@ -449,9 +449,9 @@ class PlanoTrabalhoService extends ServiceBase
     /* Será a data_inicio, ou a data_fim do último período CONCLUIDO ou AVALIADO. O que for maior. */
     public function dataFinalMinimaConsolidacao($plano, $novoInicio)
     {
-        $result = $this->utilService->asTimestamp($novoInicio);
+        $result = UtilService::asTimestamp($novoInicio);
         foreach ($plano->consolidacoes as $consolidacao) {
-            $data = $this->utilService->asTimestamp($consolidacao->status != "INCLUIDO" ? $consolidacao->data_fim : $result);
+            $data = UtilService::asTimestamp($consolidacao->status != "INCLUIDO" ? $consolidacao->data_fim : $result);
             $result = max($result, $data);
         }
         return date('Y-m-d', $result);
@@ -460,9 +460,9 @@ class PlanoTrabalhoService extends ServiceBase
     /* Será a data_fim, ou a data_inicio do primeiro período CONCLUIDO ou AVALIADO. O que for menor. */
     public function dataInicialMaximaConsolidacao($plano, $novoFim)
     {
-        $result = $this->utilService->asTimestamp($novoFim);
+        $result = UtilService::asTimestamp($novoFim);
         foreach ($plano->consolidacoes as $consolidacao) {
-            $data = $this->utilService->asTimestamp($consolidacao->status != "INCLUIDO" ? $consolidacao->data_inicio : $result);
+            $data = UtilService::asTimestamp($consolidacao->status != "INCLUIDO" ? $consolidacao->data_inicio : $result);
             $result = min($result, $data);
         }
         return date('Y-m-d', $result);

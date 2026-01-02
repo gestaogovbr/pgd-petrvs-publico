@@ -468,12 +468,12 @@ class CapacidadeSeeder extends Seeder
 
     foreach ($capacidades_consulta as $c) {
       $capacidade = [
-        "id" => $this->utilService->uuid("Consulta" . $c['codigo']),
+        "id" => UtilService::uuid("Consulta" . $c['codigo']),
         "created_at" => $this->timenow,
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
         "perfil_id" => $consultaId,
-        "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
+        "tipo_capacidade_id" => UtilService::uuid($c['codigo']),
       ];
 
       $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
@@ -496,12 +496,12 @@ class CapacidadeSeeder extends Seeder
 
     foreach ($capacidades_participante as $c) {
       $capacidade = [
-        "id" => $this->utilService->uuid("Participante" . $c['codigo']),
+        "id" => UtilService::uuid("Participante" . $c['codigo']),
         "created_at" => $this->timenow,
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
         "perfil_id" => $participanteId,
-        "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
+        "tipo_capacidade_id" => UtilService::uuid($c['codigo']),
       ];
 
       $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
@@ -524,12 +524,12 @@ class CapacidadeSeeder extends Seeder
 
     foreach ($capacidades_chefia_de_unidade_executora as $c) {
       $capacidade = [
-        "id" => $this->utilService->uuid("Chefia de Unidade Executora" . $c['codigo']),
+        "id" => UtilService::uuid("Chefia de Unidade Executora" . $c['codigo']),
         "created_at" => $this->timenow,
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
         "perfil_id" => $chefeId,
-        "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
+        "tipo_capacidade_id" => UtilService::uuid($c['codigo']),
       ];
       $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
       $queryTipoCapacidade = TipoCapacidade::find($capacidade['tipo_capacidade_id']);
@@ -549,12 +549,12 @@ class CapacidadeSeeder extends Seeder
 
     foreach ($capacidades_administrador_negocial as $c) {
       $capacidade = [
-        "id" => $this->utilService->uuid("Administrador Negocial Novo" . $c['codigo']),
+        "id" => UtilService::uuid("Administrador Negocial Novo" . $c['codigo']),
         "created_at" => $this->timenow,
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
         "perfil_id" => $admId,
-        "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
+        "tipo_capacidade_id" => UtilService::uuid($c['codigo']),
       ];
 
       $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
@@ -575,12 +575,12 @@ class CapacidadeSeeder extends Seeder
 
     foreach ($capacidades_administrador_geral as $c) {
       $capacidade = [
-        "id" => $this->utilService->uuid("Administrador Geral" . $c['codigo']),
+        "id" => UtilService::uuid("Administrador Geral" . $c['codigo']),
         "created_at" => $this->timenow,
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
         "perfil_id" => $admGeralId,
-        "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
+        "tipo_capacidade_id" => UtilService::uuid($c['codigo']),
       ];
 
       $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
@@ -601,12 +601,12 @@ class CapacidadeSeeder extends Seeder
 
     foreach ($capacidades_colaborador as $c) {
       $capacidade = [
-        "id" => $this->utilService->uuid("Colaborador" . $c['codigo']),
+        "id" => UtilService::uuid("Colaborador" . $c['codigo']),
         "created_at" => $this->timenow,
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
         "perfil_id" => $colaboradorId,
-        "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
+        "tipo_capacidade_id" => UtilService::uuid($c['codigo']),
       ];
 
       $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);

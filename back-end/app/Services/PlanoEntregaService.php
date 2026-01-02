@@ -26,8 +26,8 @@ class PlanoEntregaService extends ServiceBase
     {
         $entregaAnterior = PlanoEntregaEntrega::find($entregaAlterada["id"]);
         return $entregaAnterior->descricao != $entregaAlterada["descricao"] ||
-            $this->utilService->asTimestamp($entregaAnterior->data_inicio) != $this->utilService->asTimestamp($entregaAlterada["data_inicio"]) ||
-            $this->utilService->asTimestamp($entregaAnterior->data_fim) != $this->utilService->asTimestamp($entregaAlterada["data_fim"]);
+            UtilService::asTimestamp($entregaAnterior->data_inicio) != UtilService::asTimestamp($entregaAlterada["data_inicio"]) ||
+            UtilService::asTimestamp($entregaAnterior->data_fim) != UtilService::asTimestamp($entregaAlterada["data_fim"]);
     }
 
     public function planosImpactadosPorAlteracaoEntrega($entrega)
