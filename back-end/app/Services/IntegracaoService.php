@@ -787,6 +787,7 @@ class IntegracaoService extends ServiceBase
             "isr.situacao_funcional as situacao_funcional, " .
             "isr.data_modificacao as data_modificacao, " .
             "isr.ident_unica as ident_unica, " .
+            "isr.modalidade_pgd, ".
             "isr.funcoes as gestor " .
             "FROM integracao_servidores as isr LEFT JOIN usuarios as u " .
             "ON isr.matriculasiape = u.matricula " .
@@ -800,7 +801,9 @@ class IntegracaoService extends ServiceBase
           if (!empty($perfilParticipante)) $perfilParticipanteId = $perfilParticipante->id;
 
           if (empty($perfilParticipanteId)) throw new ServerException("ValidateUsuario", "Perfil usuário comum (" . $usuarioComum . ") não encontrado no banco de dados. Verificar configuração no painel SaaS.\n[ver XXX_XXX]");
-
+          
+          $tipoModalidadeNaoIdentificada = $this->validarModalidadePgd('');
+          
           if (empty($vinculos_isr) || !is_array($vinculos_isr)) {
             SiapeLog::info("Não foram encontrados servidores para serem inseridos na tabela usuários.");
           }
@@ -810,12 +813,15 @@ class IntegracaoService extends ServiceBase
             $cpfCheck = $this->UtilService->valueOrDefault($v_isr['cpf']);
             $matriculaNova = $this->UtilService->valueOrDefault($v_isr['matricula']);
             $codigoExercicio = $this->UtilService->valueOrDefault($v_isr['exercicio']);
+            $tipoModalidadePgd = $this->UtilService->valueOrDefault($v_isr['modalidade_pgd']);
             $unidadeExercicio = Unidade::where('codigo', $codigoExercicio)->first();
             $unidadeExercicioIdCheck = isset($unidadeExercicio->id) ? $unidadeExercicio->id : null;
 
            if(!$this->verificaSeUsuarioSoMudouMatricula($cpfCheck, $unidadeExercicioIdCheck, $matriculaNova, $codigoExercicio)) {
             continue;
            }
+
+          $tipoModalidadePgd = empty($tipoModalidadePgd)? $tipoModalidadeNaoIdentificada : $this->validarModalidadePgd($tipoModalidadePgd);
            
            $registro = new Usuario([
               'id' => Uuid::uuid4(),
@@ -829,6 +835,7 @@ class IntegracaoService extends ServiceBase
               'sexo' => $this->UtilService->valueOrDefault($v_isr['sexo']),
               'situacao_funcional' => $this->UtilService->valueOrDefault($v_isr['situacao_funcional'], "DESCONHECIDO"),
               'perfil_id' => $perfilParticipanteId,
+              'tipo_modalidade_id' => $tipoModalidadePgd,
               'exercicio' => $this->UtilService->valueOrDefault($v_isr['exercicio']),
               'uf' => $this->UtilService->valueOrDefault($v_isr['uf'], null),
               'data_modificacao' => $this->UtilService->asDateTime($v_isr['data_modificacao']),
@@ -1028,7 +1035,7 @@ class IntegracaoService extends ServiceBase
     return true;
   }
 
-  public function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(string $email, string $matricula, string $ignoreId = null): void
+  public function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(string $email, ?string $matricula, string $ignoreId = null): void
   {
     $email = trim(mb_strtolower($email, 'UTF-8'));
     
