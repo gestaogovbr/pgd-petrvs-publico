@@ -107,7 +107,7 @@ class IndicadoresGestaoService extends ServiceBase
                 FROM planos_entregas pe
                 WHERE pe.unidade_id = uni.id
                 and pe.deleted_at is null
-                and pe.status not in ('CANCELADO')";
+                and pe.status in ('ATIVO','CONCLUIDO','AVALIADO')";
 
         $params = [];
 

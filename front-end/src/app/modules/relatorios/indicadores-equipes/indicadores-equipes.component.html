@@ -56,15 +56,21 @@
 </filter>
 <div class="graficos">
     <div class="grafico">
-        <div class="titulo">Distribuição das avaliações dos Planos de Trabalho</div>
-        <p *ngIf="!pieChartData.labels?.length" class="no-data">Sem avaliações para exibir</p>
+        <div class="titulo">Distribuição das avaliações dos Planos de Trabalho
+            <i  class="bi bi-info-circle label-info text-muted"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Indica a proporção de cada nota de avaliação dos planos de trabalho em relação ao total de avaliações."
+            ></i>
+        </div>
+        <p *ngIf="!loading && !totalAvaliacoes" class="no-data">Sem dados de avaliações para exibir</p>
         <div *ngIf="loading; else grafico" class="d-flex justify-content-center my-2">
             <div class="spinner-border" role="status">
                 <span class="visually-hidden"></span>
             </div>
         </div>
         <ng-template #grafico>
-            <div class="grafico-wrapper" *ngIf="!loading" style="height: 340px;">
+            <div class="grafico-wrapper" *ngIf="!loading && totalAvaliacoes" style="height: 340px;">
                 <canvas
                     baseChart
                     [data]="pieChartData"
@@ -76,15 +82,21 @@
         </ng-template>
     </div>
     <div class="grafico">
-        <div class="titulo">Horas alocadas nos Planos de Trabalho</div>
-        <p *ngIf="!pieChartHorasData.labels?.length" class="no-data">Sem dados para exibir</p>
+        <div class="titulo">Horas alocadas nos Planos de Trabalho
+            <i  class="bi bi-info-circle label-info text-muted"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Indica a proporção da carga horária da equipe alocada a atividades não vinculada a entregas em relação ao total de horas da equipe no período."
+            ></i>
+        </div>
+        <p *ngIf="!totalHoras" class="no-data">Sem dados de horas para exibir</p>
         <div *ngIf="loadingHoras; else graficoHoras" class="d-flex justify-content-center my-2">
             <div class="spinner-border" role="status">
                 <span class="visually-hidden"></span>
             </div>
         </div>
         <ng-template #graficoHoras>
-            <div class="grafico-wrapper">
+            <div class="grafico-wrapper" *ngIf="totalHoras">
                 <canvas
                     baseChart
                     *ngIf="pieChartHorasData.labels?.length"
