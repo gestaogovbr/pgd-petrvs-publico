@@ -24,7 +24,6 @@ uses(TestCase::class);
  * - Deve converter data de modificação usando UtilService.
  * - Deve registrar logs.
  */
-
 describe('IntegracaoService - processarAtualizacoesDados', function () {
     
     afterEach(function () {
@@ -78,10 +77,15 @@ describe('IntegracaoService - processarAtualizacoesDados', function () {
             ->andReturn($loggerMock);
 
         // Mock UtilService
-        // $utilServiceMock = Mockery::mock('overload:App\Services\UtilService' . UtilService::class);
-        // $utilServiceMock->shouldReceive('asDateTime')
-        //     ->times(55)
-        //     ->andReturn(new DateTime('2023-10-01 00:00:00'));
+        $criar_mock_utils = false; # O mock mexe com a implementação do método, então influi na execução dos outros testes
+
+        if($criar_mock_utils) {
+            $utilServiceMock = Mockery::mock('alias:'.UtilService::class);
+            $utilServiceMock->shouldReceive('asDateTime')
+                ->times(55)
+                ->andReturn(new DateTime('2023-10-01 00:00:00'));
+        }
+
 
         // Partial Mock do IntegracaoService
         /** @var IntegracaoService|MockInterface $service */
@@ -91,7 +95,8 @@ describe('IntegracaoService - processarAtualizacoesDados', function () {
         
         // Injetar mock do UtilService
         /** @var UtilService $utilServiceMock */
-        // $service->UtilService = $utilServiceMock;
+        if($criar_mock_utils)
+            $service->UtilService = $utilServiceMock;
 
         // Mockar métodos internos chamados dentro do loop
         $service->shouldReceive('verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake')
