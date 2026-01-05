@@ -9,7 +9,7 @@
 - Indicadores de entrega não contabilizam mais PEs cancelados.
 - Registros via siape com erro de modalidade impedindo importação correta 
 - Correção nos prazos da lista de pendências;
-
+- Corrigido link de direcionamento para o Plano de Entrega na lista de pendências.
 ## 2.9.6 26/12/2025
 ### Corrigido
 - Corrigido erro de "timeout" que ocorria ao tentar salvar atribuições de usuários, garantindo que as alterações sejam gravadas corretamente mesmo em operações mais demoradas.
