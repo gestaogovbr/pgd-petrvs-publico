@@ -25,6 +25,7 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
 
   public permissao: string = 'MOD_IND_GESTAO';
   public botoes: ToolbarButton[] = [];
+  public totalParticipantes: number = 0;
   
   public pieChartData: ChartData<'pie', number[], string | string[]> = {
     labels: [],
@@ -145,6 +146,8 @@ export class IndicadorGestaoComponent extends RelatorioBaseComponent<IndicadorGe
   public onQueryResolve(rows: any | null) {
     if (rows) {
       const data = rows[0];
+      this.totalParticipantes = data.totalUsuarios;
+      
       if (!data || !data.totalUsuarios) {
         this.pieChartData.labels = [];
         this.pieChartData.datasets[0].data = [];
