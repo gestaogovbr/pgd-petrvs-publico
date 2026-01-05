@@ -9,11 +9,11 @@ return new class extends Migration
 
     public function up(): void
     {
-        $this->version("2.9.6");
+        $this->version("2.9.7");
     }
 
     public function down(): void
     {
-        $this->version("2.9.5");
+        $this->version("2.9.6");
     }
 };
