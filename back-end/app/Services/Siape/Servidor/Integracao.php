@@ -27,7 +27,7 @@ class Integracao implements InterfaceIntegracao
     private array $integracaoConfig = [];
 
     public function __construct(
-        private readonly IntegracaoServidorRepository $repository, private readonly UtilService $utilService
+        private readonly IntegracaoServidorRepository $repository
         )
     {
     }

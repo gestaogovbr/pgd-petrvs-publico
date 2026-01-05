@@ -26,9 +26,6 @@ use App\Services\Siape\Servidor\Integracao;
 use Illuminate\Support\Facades\Log;
 use App\Facades\SiapeLog;
 
-/**
- * @property UtilService $UtilService
- */
 class IntegracaoService extends ServiceBase
 {
   use LogTrait;
@@ -549,10 +546,7 @@ class IntegracaoService extends ServiceBase
 
           $integracaoServidoresRepository = new IntegracaoServidorRepository(new IntegracaoServidor);
           try {
-            $integracaoServidorProcessar =  new Integracao(
-              $integracaoServidoresRepository,
-              $this->UtilService
-            );
+            $integracaoServidorProcessar =  new Integracao($integracaoServidoresRepository);
           } catch (Throwable $e) {
             LogError::newError("Erro ao truncar a tabela integracao_servidores", $e);
             SiapeLog::info(sprintf("Erro ao truncar a tabela integracao_servidores: %s", $e->getMessage()), throwableToArray($e));

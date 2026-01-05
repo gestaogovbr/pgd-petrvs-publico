@@ -40,7 +40,6 @@ class In24_TreinaSeeder extends Seeder
   public $brasilia;
   public $unidades;
   public $entidade;
-  public $utilService;
   public $nivelAcessoService;
 
   public function __construct()
@@ -48,7 +47,6 @@ class In24_TreinaSeeder extends Seeder
     $this->timenow = now();
     $this->brasilia = Cidade::where('codigo_ibge', '5300108')->first();
 
-    $this->utilService = new UtilService();
     $this->nivelAcessoService = new NivelAcessoService();
 
     // Pega a primeira entidade criada no tenant ou cria uma nova

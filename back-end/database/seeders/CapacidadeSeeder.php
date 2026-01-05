@@ -18,13 +18,11 @@ class CapacidadeSeeder extends Seeder
    */
 
   public $timenow;
-  public $utilService;
   public $nivelAcessoService;
 
   public function __construct()
   {
     $this->timenow = now();
-    $this->utilService = new UtilService();
     $this->nivelAcessoService = new NivelAcessoService();
   }
 

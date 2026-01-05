@@ -16,17 +16,14 @@ use Carbon\Carbon;
 class TipoMotivoAfastamentoSeeder extends Seeder
 {
 
-  public $utilService;
-
   /**
    * Run the database seeds.
    *
    * @return void
    */
 
-   public function __construct(UtilService $utilService)
+   public function __construct()
    {
-     $this->utilService = $utilService;
    }
 
   public function run()

@@ -93,11 +93,6 @@ describe('IntegracaoService - processarAtualizacoesDados', function () {
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
         
-        // Injetar mock do UtilService
-        /** @var UtilService $utilServiceMock */
-        if($criar_mock_utils)
-            $service->UtilService = $utilServiceMock;
-
         // Mockar métodos internos chamados dentro do loop
         $service->shouldReceive('verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake')
             ->times(55);
