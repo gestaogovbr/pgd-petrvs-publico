@@ -159,7 +159,6 @@ class IntegracaoService extends ServiceBase
             'updated_at' => $timenow,
             'data_modificacao' => $values[':data_modificacao'],
           ]);
-          $this->atualizaLogs($this->logged_user_id, 'unidades', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Unidade nova inserida informada pelo SIAPE: ' . $values[':nome'], 'Valores inseridos' => DB::table('unidades')->where('id', $id)->first()]);
         } catch (Throwable $e) {
           Log::error(sprintf("Erro ao inserir Unidade %s: %s", $values[':codigo'], $e->getMessage()), throwableToArray($e));
           LogError::newWarn("Erro ao inserir Unidade", $values);
@@ -178,12 +177,6 @@ class IntegracaoService extends ServiceBase
       $sql = "UPDATE unidades SET path = :path, unidade_pai_id = :unidade_id, codigo = :codigo, " .
         "nome = :nome, sigla = :sigla, cidade_id = :cidade_id, data_modificacao = :data_modificacao WHERE id = :id";
       DB::update($sql, $values);
-      $this->atualizaLogs($this->logged_user_id, 'unidades', $values[':id'], 'EDIT', [
-        'Rotina' => 'Integração',
-        'Observação' => 'A Unidade sofreu alterações na hierarquia e possivelmente em outros campos (ver: nome/codigo/sigla/path/cidade_id/unidade_id)!',
-        'Valores anteriores' => ['path' => $unidade->path_antigo, 'unidade_id' => $unidade->id_pai_antigo, 'codigo' => $unidade->codigo_antigo, 'nome' => $unidade->nome_antigo, 'sigla' => $unidade->sigla_antiga, 'cidade_id' => $unidade->cidade_antiga],
-        'Valores atuais' => $values
-      ]);
 
       array_push($this->paisAlterados, $unidade);
 
@@ -455,7 +448,6 @@ class IntegracaoService extends ServiceBase
         // $this->logSiape("Unidades removidas da tabela integracao_unidades", $unidades_integracao_remover, Tipo::INFO);
         SiapeLog::info("Concluída a fase de reconstrução da tabela integracao_unidades!.....");
         $n = IntegracaoUnidade::count();
-        $this->atualizaLogs($this->logged_user_id, 'integracao_unidades', 'todos os registros', 'ADD', ['Observação' => 'Total de unidades importadas do SIAPE: ' . $n . ' (apenas ATIVAS)']);
         array_push($this->result['unidades']["Observações"], 'Total de unidades importadas do SIAPE: ' . $n . ' (apenas ATIVAS)');
         array_push($this->result['unidades']['Observações'], 'Os dados das Unidades foram obtidos ' . ($this->useLocalFiles ? 'através de arquivo XML armazenado localmente!' : 'através de consulta à API do SIAPE!'));
 
@@ -1067,33 +1059,6 @@ class IntegracaoService extends ServiceBase
   }
 
   /**
-   * @deprecated Será removido na próxima versão.
-   */
-  public function salvaUsuarioLotacaoGoogle(&$usuario, &$lotacao, $tokenData, $auth)
-  {
-    $auth->fillUsuarioWithCredential($usuario, $tokenData);
-    $this->salvarUsuarioLotacao($usuario, $lotacao);
-  }
-
-  /**
-   * @deprecated Será removido na próxima versão.
-   */
-  public function salvaUsuarioLotacaoApi(&$usuario, &$lotacao, $tokenData, $api)
-  {
-    $api->fillUsuarioWithCredential($usuario, $tokenData);
-    $this->salvarUsuarioLotacao($usuario, $lotacao);
-  }
-
-  /**
-   * @deprecated Será removido na próxima versão.
-   */
-  public function salvaUsuarioLotacaoDprf(&$usuario, &$lotacao, $profile, $auth)
-  {
-    $auth->fillUsuarioWithProfile($usuario, $profile);
-    $this->salvarUsuarioLotacao($usuario, $lotacao);
-  }
-
-  /**
    * Cria uma lotação para o Usuário, se seus dados já existirem na tabela integracao_servidores,
    * e se ela já constar na tabela Unidades. Salva o novo usuário, independentemente da lotação
    */
@@ -1114,25 +1079,6 @@ class IntegracaoService extends ServiceBase
     } else {
       $usuario = null; // se quem está logando não existe na tabela integracao_servidores
     }
-  }
-
-  /**
-   * @deprecated Será removido na próxima versão.
-   */
-  public function atualizaLogs($user_id, string $table_name, string $row_id, string $type, array $delta)
-  {
-    /*
-      $change = DB::connection('log');
-      $change->setConnection('log');
-      $pdo = $change->getPdo();
-      $change->insert([
-            'date_time' => new DateTime(),
-            'user_id' => $user_id,
-            'table_name' => $table_name,
-            'row_id' => $row_id,
-            'type' => $type,
-            'delta' => json_encode($delta ?? ['Rotina' => 'Integração'])
-        ]);*/
   }
 
   /**
