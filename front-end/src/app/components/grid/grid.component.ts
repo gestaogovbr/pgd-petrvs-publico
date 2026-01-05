@@ -105,7 +105,7 @@ export class GridComponent extends ComponentBase implements OnInit {
 	@Input() control?: AbstractControl = undefined;
 	@Input() expanded?: string;
 	@Input() noToggleable?: string;
-	@Input() minHeight: number = 350;
+	@Input() minHeight: number|string = 350;
 	@Input() maxHeight: number|string = "auto";
 	@Input() multiselect?: string;
 	@Input() multiselectEnabled?: string;
