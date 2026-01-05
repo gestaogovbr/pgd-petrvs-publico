@@ -459,13 +459,6 @@ class Usuario extends Authenticatable implements AuditableContract
         return $url;
     }
 
-    public function getRegramentosAttribute(){
-        $unidadeService = new UnidadeService();
-        return $this->lotacao
-            ? array_map(fn($p) => $p["nome"], $unidadeService->regramentosAscendentes($this->lotacao->unidade_id))
-            : [];
-    }
-
     public function getPedagioAttribute(){
         if ($this->data_final_pedagio) {
             return Carbon::parse($this->data_final_pedagio)->isFuture();

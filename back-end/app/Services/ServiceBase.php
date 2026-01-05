@@ -560,7 +560,7 @@ class ServiceBase extends DynamicMethods
     if (count($data['with']) > 0) {
       $this->applyWith($entity, $data);
     }
-    $entity = $entity->find($data["key"]);
+    $entity = $entity->find(is_array($data["key"]) ? $data["key"][0] : $data["key"]);
     $text = "";
     if (!empty($entity)) {
       foreach ($data["fields"] as $field) {

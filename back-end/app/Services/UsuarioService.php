@@ -654,6 +654,8 @@ class UsuarioService extends ServiceBase
 
     public function pendenciasChefe(){
       // usuário logado
+      $diasAvaliacaoRegistroExecucao = 21;
+      $diasAvaliacaoPlanosEntregas = 31;
       $usuario_id = parent::loggedUser()->id;
 
       $unidadesGerenciadas = Unidade::whereHas('gestor', fn($q) => $q->where('usuario_id', $usuario_id))
@@ -666,14 +668,15 @@ class UsuarioService extends ServiceBase
       $unidadesFilhasIds = $unidadesFilhas->pluck('id')->all();
 
       // Registros de execução que precisam ser avaliados após o 21º dia da conclusão
+      // FIXME: Adicionar constante para os dias de avaliação
       $registrosExecucao = PlanoTrabalhoConsolidacao::where('status', StatusEnum::CONCLUIDO)
       ->whereHas('planoTrabalho', function($q) use ($unidadesGerenciadasIds, $usuario_id) {
         $q->whereIn('unidade_id', $unidadesGerenciadasIds)
           ->where('usuario_id', '!=', $usuario_id);
       })
-      ->whereHas('latestStatus', function($q) {
+      ->whereHas('latestStatus', function($q) use ($diasAvaliacaoRegistroExecucao) {
         $q->where('codigo', StatusEnum::CONCLUIDO->value)
-          ->where('created_at', '<', now()->subDays(21));
+          ->where('created_at', '<', now()->subDays($diasAvaliacaoRegistroExecucao));
       })
       ->select([
         'planos_trabalhos_consolidacoes.id',
@@ -712,9 +715,9 @@ class UsuarioService extends ServiceBase
       $entregasSemProgresso = PlanoEntregaEntrega::query()
         ->whereHas('planoEntrega.unidade', fn($q) => $q->whereIn('id', $unidadesGerenciadasIds))
         ->doesntHave('progressos')
-        ->whereHas('planoEntrega', function($q) {
+        ->whereHas('planoEntrega', function($q) use ($diasAvaliacaoPlanosEntregas) {
           $q->whereNotIn('status', [StatusEnum::SUSPENSO, StatusEnum::CANCELADO])
-            ->where('data_fim', '<=', now()->subDays(31));
+            ->where('data_fim', '<=', now()->subDays($diasAvaliacaoPlanosEntregas));
         })
         ->selectRaw('planos_entregas_entregas.plano_entrega_id, COUNT(*) as total_sem_progresso')
         ->groupBy('planos_entregas_entregas.plano_entrega_id')
@@ -726,13 +729,14 @@ class UsuarioService extends ServiceBase
 
       // Planos de entregas que precisam ser avaliados.
       //Só devem aparecer na tela de pendência a partir do 31º dia a contar da DATA DE CONCLUSÃO do plano de entregas
+       // FIXME: Adicionar constante para os dias de avaliação
       $planosEntregas = PlanoEntrega::where('status', StatusEnum::CONCLUIDO)
       ->whereHas('unidade', function($q) use ($unidadesFilhasIds) {
         $q->whereIn('id', $unidadesFilhasIds);
       })
-      ->whereHas('latestStatus', function($q) {
+      ->whereHas('latestStatus', function($q) use ($diasAvaliacaoPlanosEntregas) {
         $q->where('codigo', StatusEnum::CONCLUIDO->value)
-          ->where('created_at', '<', now()->subDays(31));
+          ->where('created_at', '<', now()->subDays($diasAvaliacaoPlanosEntregas));
       })
       ->select([
         'planos_entregas.id',
