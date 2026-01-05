@@ -307,7 +307,7 @@ export class DaoBaseService<T extends Base> {
               resolve(response.data ? this.getRow(response.data) : null);
             },
             (error) => {
-              resolve(null);
+              reject(error);
             }
           );
       } else {

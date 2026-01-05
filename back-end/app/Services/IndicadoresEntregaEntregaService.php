@@ -38,7 +38,7 @@ class IndicadoresEntregaEntregaService extends IndicadoresEntregaService
 
         $sql = <<<TEXT
             WITH entregas as (
-                SELECT pt.data_inicio, pt.data_fim, pt.unidade_id, pee.id as plano_entrega_entrega_id
+                SELECT pt.data_inicio, pt.data_fim, pt.unidade_id, pee.id as plano_entrega_entrega_id, pe.status as status_pe
                 FROM planos_trabalhos_entregas pte
                 INNER JOIN planos_trabalhos pt
                     ON pte.plano_trabalho_id = pt.id
@@ -50,13 +50,15 @@ class IndicadoresEntregaEntregaService extends IndicadoresEntregaService
                     on pe.id = pee.plano_entrega_id
                     and pe.deleted_at is null
                 WHERE pte.deleted_at is NULL
-                    $filtros
+                  and pt.status in ('ATIVO','CONCLUIDO','AVALIADO')
+                  $filtros
             )
             SELECT 'Vinculadas a Objetivos' as categoria, count(distinct peeo.id) as total
             FROM entregas
             INNER JOIN planos_entregas_entregas_objetivos peeo
                 on peeo.entrega_id = entregas.plano_entrega_entrega_id
                 and peeo.deleted_at is NULL
+            WHERE entregas.status_pe in ('ATIVO','CONCLUIDO','AVALIADO')
 
             UNION ALL
 
@@ -65,6 +67,7 @@ class IndicadoresEntregaEntregaService extends IndicadoresEntregaService
             INNER JOIN planos_entregas_entregas_processos peep
                 on peep.entrega_id = entregas.plano_entrega_entrega_id
                 and peep.deleted_at is NULL
+             WHERE entregas.status_pe in ('ATIVO','CONCLUIDO','AVALIADO')
 
             UNION ALL
 

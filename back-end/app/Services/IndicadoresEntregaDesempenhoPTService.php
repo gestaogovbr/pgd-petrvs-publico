@@ -52,6 +52,7 @@ class IndicadoresEntregaDesempenhoPTService extends IndicadoresEntregaService
                 on a.id = ptc.avaliacao_id
                 and a.deleted_at is null
             where pt.deleted_at is null
+              and pt.status in ('ATIVO','CONCLUIDO','AVALIADO')
               $filtros
         TEXT;
 

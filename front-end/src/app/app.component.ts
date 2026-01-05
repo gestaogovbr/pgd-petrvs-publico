@@ -231,19 +231,19 @@ export class AppComponent {
       },
       INDICADORES_ENTREGAS: {
         name: "Entregas",
-        permition: 'MOD_IND_ENTREGAS',
+        //permition: 'MOD_IND_ENTREGAS',
         icon: this.entity.getIcon('PlanoEntrega'),
         route: ['relatorios', 'indicadores', 'entregas'],
       },
       INDICADORES_EQUIPES: {
         name: "Equipes",
-        permition: 'MOD_IND_EQUIPES',
+        // permition: 'MOD_IND_EQUIPES',
         icon: this.entity.getIcon('Usuario'),
         route: ['relatorios', 'indicadores', 'equipes'],
       },
       INDICADORES_GESTAO: {
         name: "Gestão do PGD",
-        permition: 'MOD_IND_GESTAO',
+        // permition: 'MOD_IND_GESTAO',
         icon: this.entity.getIcon('Unidade'),
         route: ['relatorios', 'indicadores', 'gestao'],
       },
@@ -324,7 +324,6 @@ export class AppComponent {
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Indicadores"),
-      permition: "MOD_INDICADORES",
       id: "navbarDropdownIndicadores",
       menu: [
         this.menuSchema.INDICADORES_ENTREGAS,
@@ -348,7 +347,6 @@ export class AppComponent {
         ].sort(this.orderMenu)
       }, {
         name: this.lex.translate("Indicadores"),
-        permition: "MOD_INDICADORES",
         id: "navbarDropdownIndicadores",
         menu: [
           this.menuSchema.INDICADORES_ENTREGAS,
@@ -403,7 +401,6 @@ export class AppComponent {
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Indicadores"),
-      permition: "MOD_INDICADORES",
       id: "navbarDropdownIndicadores",
       menu: [
         this.menuSchema.INDICADORES_ENTREGAS,
@@ -455,18 +452,7 @@ export class AppComponent {
         this.menuSchema.ENVIO_FORCAR,
         this.menuSchema.ENVIO_REINICIAR
       ]
-    }, {
-      name: this.lex.translate("Envio API"),
-      permition: "MENU_DEV_ACESSO",
-      id: "navbarDropdownDevApiPgd",
-      menu: [
-        this.menuSchema.ENVIO_LOGS,
-        this.menuSchema.ENVIO_FORCAR,
-        this.menuSchema.ENVIO_REINICIAR
-      ]
     }];
-
-    
 
     this.menuContexto = [
       { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.moduloGestao },
@@ -474,7 +460,6 @@ export class AppComponent {
       { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: this.lex.translate("Administrador"), menu: this.moduloAdministrador },
       { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.moduloDev },
     ]
-
   }
 
   public orderMenu(a: any, b: any) {

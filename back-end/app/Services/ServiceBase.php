@@ -560,7 +560,7 @@ class ServiceBase extends DynamicMethods
     if (count($data['with']) > 0) {
       $this->applyWith($entity, $data);
     }
-    $entity = $entity->find($data["key"]);
+    $entity = $entity->find(is_array($data["key"]) ? $data["key"][0] : $data["key"]);
     $text = "";
     if (!empty($entity)) {
       foreach ($data["fields"] as $field) {
@@ -1004,9 +1004,9 @@ class ServiceBase extends DynamicMethods
   /**
    * @return Unidade Retorna a Unidade de lotação do usuário logado
    */
-  public static function unidadeLotacaoUsuarioLogado(): Unidade
+  public static function unidadeLotacaoUsuarioLogado(): ?Unidade
   {
-    return static::loggedUser()->lotacao->unidade;
+    return static::loggedUser()->lotacao?->unidade;
   }
 
   /**

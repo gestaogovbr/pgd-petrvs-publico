@@ -1,5 +1,17 @@
+## 2.9.7 02/01/2026
+### Adicionado
+- Adição de Aba de Situação na consulta de Agentes Públicos, com dados de matrículas, regramentos, modalidade e participação no PGD;
+### Modificado
+- Usuários passam a poder acessar indicadores de outros órgãos que não o da sua lotação;
+- Adicionadas descrições para cada Indicador;
+- Modificado a regra que bloqueia a criação de novos planos de trabalhos
+### Corrigido
+- Indicadores de entrega não contabilizam mais PEs cancelados.
+- Registros via siape com erro de modalidade impedindo importação correta 
+- Correção nos prazos da lista de pendências;
+- Corrigido link de direcionamento para o Plano de Entrega na lista de pendências.
 ## 2.9.6 26/12/2025
-### Correções Críticas
+### Corrigido
 - Corrigido erro de "timeout" que ocorria ao tentar salvar atribuições de usuários, garantindo que as alterações sejam gravadas corretamente mesmo em operações mais demoradas.
 
 
