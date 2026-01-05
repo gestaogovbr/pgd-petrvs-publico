@@ -683,7 +683,10 @@ class UsuarioService extends ServiceBase
         'planos_trabalhos_consolidacoes.plano_trabalho_id',
       ])
       ->with(['planoTrabalho' => function($q) {
-        $q->select(['id','numero','usuario_id', 'unidade_id']);
+        $q->select(['id','numero','usuario_id', 'unidade_id'])
+          ->with(['usuario' => function($q) {
+            $q->select(['id','nome']);
+          }]);
       }]);
 
       // Planos de trabalhos que precisam da assinatura do chefe da unidade
