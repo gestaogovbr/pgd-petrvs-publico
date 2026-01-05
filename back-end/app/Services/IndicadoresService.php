@@ -48,6 +48,7 @@ class IndicadoresService extends ServiceBase
                 where a.deleted_at is null
                     and ptc.deleted_at is null
                     and pt.deleted_at is null
+                    and pt.status in ('ATIVO','CONCLUIDO','AVALIADO')
                 $filtros
                 group by a.nota, REPLACE(JSON_UNQUOTE(a.nota), '"', '')
             ),

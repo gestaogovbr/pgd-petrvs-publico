@@ -421,6 +421,8 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
   public function pendenciasUsuario($usuarioId): array {
 
     // Buscar consolidações INCLUIDO que já passaram da data_fim + tolerância
+    // Só devem aparecer na tela de pendência a partir do 11º dia a contar da DATA FIM do período avaliativo. Se ao menos um período já tiver em atraso, deve aparecer na tela, mesmo que todos os outros estejam OK.
+
     $consolidacoesPendentes = PlanoTrabalhoConsolidacao::with([
       'planoTrabalho.programa:id,nome,dias_tolerancia_consolidacao',
       'planoTrabalho.unidade:id,nome,sigla'
@@ -430,14 +432,14 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       $query->whereIn('status', [StatusEnum::ATIVO, StatusEnum::CONCLUIDO, StatusEnum::AVALIADO]);
     })
     ->where('status', StatusEnum::INCLUIDO)
-    ->whereDate('data_fim', '<', now()->subDays(10))
+    ->whereDate('data_fim', '<', now()->subDays(11))
     ->orderBy('data_fim', 'asc')
     ->get();
 
     $pendencias = [];
     foreach ($consolidacoesPendentes as $consolidacao) {
       $dataLimite = \Carbon\Carbon::parse($consolidacao->data_fim)
-        ->addDays($consolidacao->planoTrabalho->programa->dias_tolerancia_consolidacao ?? 10);
+        ->addDays($consolidacao->planoTrabalho->programa->dias_tolerancia_consolidacao ?? 11);
       
       $diasAtraso = now()->diffInDays($dataLimite, false); // false para valores negativos quando em atraso
       

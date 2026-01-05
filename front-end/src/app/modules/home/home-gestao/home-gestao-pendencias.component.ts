@@ -78,6 +78,7 @@ export class HomeGestaoPendenciasComponent extends PageBase {
     let rota = this.go.navigate({
       route: ['execucao', 'plano-entrega'],
       params: {
+        execucao: true,
         filter: {
           nome: nome,
           unidade_id: null,
