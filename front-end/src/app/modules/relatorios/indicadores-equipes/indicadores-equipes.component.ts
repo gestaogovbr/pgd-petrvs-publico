@@ -26,6 +26,8 @@ export class IndicadorEquipeComponent extends RelatorioBaseComponent<IndicadorEq
   public permissao: string = 'MOD_IND_EQUIPES';
   public botoes: ToolbarButton[] = [];
   public loadingHoras: boolean = false;
+  public totalAvaliacoes: number = 0;
+  public totalHoras: number = 0;
   
   public pieChartData: ChartData<'pie', number[], string | string[]> = {
     labels: [],
@@ -129,9 +131,9 @@ export class IndicadorEquipeComponent extends RelatorioBaseComponent<IndicadorEq
 
   public onQueryResolve(rows: any[] | null) {
     if (rows) {
-      const total = rows.reduce((sum, row) => sum + row.qtde, 0);
+      this.totalAvaliacoes = rows.reduce((sum, row) => sum + row.qtde, 0);
       this.pieChartData.labels = rows.map(row => row.nota +
-          ' (' + ((row.qtde / total) * 100)
+          ' (' + ((row.qtde / this.totalAvaliacoes) * 100)
           .toFixed(2)
           .replace(".", ",")
           + '%)'
@@ -207,12 +209,12 @@ export class IndicadorEquipeComponent extends RelatorioBaseComponent<IndicadorEq
 
   public graficoHoras(rows: any[]) {
     const tipos = rows; //.filter(row => row.horas > 0);
-    const total = tipos.reduce((sum, row) => sum + row.horas, 0);
+    this.totalHoras = tipos.reduce((sum, row) => sum + row.horas, 0);
 
     this.pieChartHorasData.datasets[0].data = tipos.map(row => row.horas);
 
     this.pieChartHorasData.labels = tipos.map(row => row.categoria +
-        ' (' + (((total? (Number(row.horas) / total) : 0) * 100))
+        ' (' + (((this.totalHoras? (Number(row.horas) / this.totalHoras) : 0) * 100))
         .toFixed(2)
         .replace(".", ",")
         + '%)'
