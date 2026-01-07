@@ -33,6 +33,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
   public tiposAtribuicao: LookupItem[] = [];
+  public tiposAtribuicaoPermitidos: LookupItem[] = [];
   public perfilDao: PerfilDaoService;
 
   constructor(public injector: Injector) {
@@ -55,10 +56,9 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     this.entity = this.metadata?.unidade;
   
     if (this.entity) {
-      if (this.entity?.instituidora) {
-        this.tiposAtribuicao = this.lookup.UNIDADE_INTEGRANTE_TIPO;
-      } else {
-        this.tiposAtribuicao = this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(
+      this.tiposAtribuicaoPermitidos = this.lookup.UNIDADE_INTEGRANTE_TIPO;
+      if (!this.entity?.instituidora) {
+        this.tiposAtribuicao = this.tiposAtribuicaoPermitidos.filter(
           atribuicao => atribuicao.key !== 'CURADOR'
         );
       }
@@ -103,11 +103,49 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     return perfil?.perfil?.nome;
   }
 
+  public disablePerfilItemUnidade(row: any, item: { key: any, value: string, data?: any }): boolean {
+    const nivelLogado = this.auth.usuario?.perfil?.nivel ?? 6;
+    const nivelItem = item?.data?.nivel ?? undefined;
+    if (typeof nivelItem === 'number') {
+      return nivelItem < nivelLogado;
+    }
+    return false;
+  }
+
+  public desabilitaSelectPerfilUnidade(row: any): boolean {
+    const nivelLogado = this.auth.usuario?.perfil?.nivel ?? 6;
+    const usuarioEditando = this.perfis.find(p => p.id === row.id);
+    const nivelEditando = usuarioEditando?.perfil?.nivel;
+    if (typeof nivelEditando === 'number') {
+      return nivelEditando < nivelLogado;
+    }
+    return false;
+  }
+
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
     if (["usuario_id", "atribuicoes"].includes(controlName) && !control.value?.length) result = "Obrigatório";
     if ((controlName == "usuario_id") && this.grid?.adding && this.items.map(i => i.id).includes(control.value)) result = "O usuário já é integrante desta unidade. Edite-o, ao invés de incluí-lo novamente!";
     return result;
+  }
+  public asyncFormValidation = async(form?: FormGroup) =>
+  {
+    let error = this.formValidation(form);
+    if(error){
+      return error;
+    }
+
+    let atribuicoes: LookupItem[] = form!.controls.atribuicoes.value;
+    let usuario = await this.usuarioDao.getById(form!.controls.usuario_id.value);
+    let perfil = await this.perfilDao.getById(form!.controls.perfil_id.value);
+    let isUnidadeExecutora = this.entity?.executora;
+    let perfilColaborador = perfil?.nivel == 6;
+    if(usuario && !perfilColaborador && !isUnidadeExecutora
+      && (atribuicoes.map(x => x.key) || []).includes('COLABORADOR')) {
+      return "Não é possível atribuir Colaborador a um usuário com perfil diferente de Colaborador em unidade não executora.";
+    }
+    return undefined;
+
   }
 
   public formValidation = (form?: FormGroup) => {
@@ -154,8 +192,13 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     let usuario = this.perfis.find(p => p.id == row.id);
     form.controls.usuario_id.setValue(this.grid?.adding ? row.usuario_id : row.id);
     form.controls.perfil_id.setValue(usuario?.perfil_id);
+    this.tiposAtribuicao = this.tiposAtribuicaoPermitidos;
     if (usuario?.usuario_externo) {
       this.tiposAtribuicao = this.tiposAtribuicao.filter((x: LookupItem) => x.key != 'GESTOR_SUBSTITUTO');
+    }
+    let isUnidadeExecutora = this.entity?.executora;
+    if(usuario && usuario?.perfil?.nivel !== 6 && !isUnidadeExecutora){
+      this.tiposAtribuicao = this.tiposAtribuicao.filter((x: LookupItem) => x.key != 'COLABORADOR');
     }
     form.controls.atribuicoes.setValue(this.integranteService.converterAtribuicoes(row.atribuicoes));
     form.controls.atribuicao.setValue("");
@@ -217,7 +260,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     form.controls.atribuicoes.setValue(novasAtribuicoes);
     if (this.grid) this.grid.error = "";
     this.cdRef.detectChanges();
-    let error = this.formValidation(form);
+    let error = await this.asyncFormValidation(form);
     if (!error) {
       let confirm = true;
       let alteracaoGestor = this.integranteService.haAlteracaoGerencia(novasAtribuicoes.map(x => x.key), Object.assign(row, { usuario_nome: this.usuario?.selectedItem?.entity.nome }), (this.grid?.items as IntegranteConsolidado[]) || [], this.entity?.sigla || "");

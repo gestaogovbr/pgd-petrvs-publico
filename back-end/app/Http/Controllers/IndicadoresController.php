@@ -1,0 +1,78 @@
+<?php
+namespace App\Http\Controllers;
+
+use App\Exceptions\Contracts\IBaseException;
+use App\Exceptions\ServerException;
+use App\Http\Controllers\ControllerBase;
+use App\Services\IndicadoresService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Services\IndicadoresHorasService;
+use Throwable;
+
+class IndicadoresController extends ControllerBase {
+
+    protected function checkPermissions($action, $request, $service, $unidade, $usuario) {
+        return true;
+    }
+
+    public function query(Request $request) {
+        try {
+            $data = $request->validate([
+                'page' => ['nullable'],
+                'limit' => ['nullable'],
+                'orderBy' => ['array'],
+                'deleted' => ['nullable'],
+                'where' => ['array']
+            ]);
+
+            $service = new IndicadoresService();
+            $result = $service->query($data);
+
+            return response()->json([
+                'success' => true,
+                'count' => 0,
+                'rows' => $result,
+                'extra' => []
+            ]);
+
+        }  catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
+        }
+    }
+
+    public function horas(Request $request) {
+        try {
+            $data = $request->validate([
+                'page' => ['nullable'],
+                'limit' => ['nullable'],
+                'orderBy' => ['array'],
+                'deleted' => ['nullable'],
+                'where' => ['array']
+            ]);
+
+            $service = new IndicadoresHorasService();
+            $result = $service->query($data);
+
+            return response()->json([
+                'success' => true,
+                'count' => count($result),
+                'rows' => $result,
+                'extra' => []
+            ]);
+
+        }  catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
+        }
+    }
+}

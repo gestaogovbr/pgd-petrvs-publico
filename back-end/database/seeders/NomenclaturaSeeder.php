@@ -54,7 +54,7 @@ class NomenclaturaSeeder extends Seeder
       "template" => ['single' => "template", 'plural' => "templates", 'female' => false],
       "termo" => ['single' => "tcr compilado", 'plural' => "tcr compilados", 'female' => false],
       "tipo de atividade" => ['single' => "tipo de registro de execução", 'plural' => "tipos de registro de execução", 'female' => false],
-      "unidade" => ['single' => "unidade executora", 'plural' => "unidades executoras", 'female' => true],
+      "unidade" => ['single' => "unidade", 'plural' => "unidades", 'female' => true],
       "usuario" => ['single' => "usuário", 'plural' => "usuários", 'female' => false],
       // Faltantes com DB de Prod em 19/03/24
       "área de trabalho" => ['single' => "área de trabalho", 'plural' => "áreas de trabalho", 'female' => true],
@@ -89,7 +89,8 @@ class NomenclaturaSeeder extends Seeder
       "habilitar" => ['single' => "selecionar", 'plural' => "selecionar", 'female' => false],
       "modelo de entrega" => ['single' => "tipo de meta", 'plural' => "tipos de meta", 'female' => false],
       "ocorrência" => ['single' => "ocorrência", 'plural' => "ocorrências", 'female' => true],
-      "tipo de avaliação do registro de execução do plano de trabalho" => ['single' => "Tipo de avaliação do registro de execução do plano de trabalho", 'plural' => "Tipos de avaliações do registro de execução do plano de trabalho", 'female' => false]
+      "tipo de avaliação do registro de execução do plano de trabalho" => ['single' => "Tipo de avaliação do registro de execução do plano de trabalho", 'plural' => "Tipos de avaliações do registro de execução do plano de trabalho", 'female' => false],
+      "histórico de execução" =>['single' => "registro de execução", 'plural' => "registros de execução", 'female' => false],
     ];
 
     $entidade = Entidade::first() ?? new Entidade();

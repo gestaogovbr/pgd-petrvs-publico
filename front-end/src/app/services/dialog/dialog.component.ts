@@ -85,6 +85,9 @@ export class DialogComponent implements OnInit {
 	public minimized: boolean = false;
 	public templateContext: any;
 	public templateResult?: Promise<DialogTemplateResult>;
+	public inputValue: string = "";
+	public defaultValue: string = "";
+	public isPrompt: boolean = false;
 
 	private _factory?: ComponentFactoryResolver;
 	public get factory(): ComponentFactoryResolver {
@@ -188,6 +191,7 @@ export class DialogComponent implements OnInit {
 				this.modalWidth = parseInt(
 					this.route.queryParams?.modalWidth || modal.modalWidth
 				);
+				modal.modalInfiniteScrollContainer = `#${this.id}`;
 				(modal.titleSubscriber as Subject<string>).subscribe((title) => {
 					this.title = title;
 					this.cdRef.detectChanges();

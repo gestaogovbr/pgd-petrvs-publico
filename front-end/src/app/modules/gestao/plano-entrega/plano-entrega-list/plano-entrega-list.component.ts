@@ -114,9 +114,9 @@ export class PlanoEntregaListComponent extends PageListBase<
 		);
 		this.join = [
 			"planejamento:id,nome",
-			"programa:id,nome",
+			"programa:id,nome,data_fim",
 			"cadeia_valor:id,nome",
-			"unidade:id,sigla,path",
+			"unidade:id,sigla,path,data_inativacao,instituidora,unidade_pai_id",
 			"entregas.entrega",
 			"entregas.objetivos.objetivo",
 			"entregas.processos.processo",
@@ -606,6 +606,11 @@ export class PlanoEntregaListComponent extends PageListBase<
 	public dynamicButtons(row: PlanoEntrega): ToolbarButton[] {
 		let result: ToolbarButton[] = [];
 		let planoEntrega: PlanoEntrega = row as PlanoEntrega;
+		const dataInativacao = row.unidade?.data_inativacao as any;
+		const unidadeAtiva = dataInativacao != null && dataInativacao !== "";
+		if (unidadeAtiva) {
+			return [this.BOTAO_CONSULTAR];
+		}
 		switch (this.planoEntregaService.situacaoPlano(planoEntrega)) {
 			case "INCLUIDO":
 				if (this.botaoAtendeCondicoes(this.BOTAO_LIBERAR_HOMOLOGACAO, row))
@@ -650,7 +655,10 @@ export class PlanoEntregaListComponent extends PageListBase<
 	public dynamicOptions(row: PlanoEntrega): ToolbarButton[] {
 		let result: ToolbarButton[] = [];
 		this.linha = row;
-		this.botoes.forEach((botao) => {
+		const dataInativacao = row.unidade?.data_inativacao as any;
+		const unidadeAtiva = dataInativacao != null && dataInativacao !== "";
+		const base = unidadeAtiva ? [this.BOTAO_LOGS, this.BOTAO_CONSULTAR] : this.botoes;
+		base.forEach((botao) => {
 			if (this.botaoAtendeCondicoes(botao, row)) result.push(botao);
 		});
 		return result;
@@ -990,11 +998,15 @@ export class PlanoEntregaListComponent extends PageListBase<
 						this.auth.isGestorLinhaAscendente(planoEntrega.unidade!))
 				);
 			case this.BOTAO_CLONAR:
+				const unidadeAtiva =
+					!planoEntrega.unidade?.data_inativacao ||
+					planoEntrega.unidade?.data_inativacao === ("" as any);
 				return (
 					this.auth.hasPermissionTo("MOD_PENT_INCL") &&
 					!["HOMOLOGANDO"].includes(
 						this.planoEntregaService.situacaoPlano(planoEntrega)
-					)
+					) &&
+					unidadeAtiva
 				);
 		}
 		return false;

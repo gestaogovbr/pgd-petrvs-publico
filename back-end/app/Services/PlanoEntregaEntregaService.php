@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Enums\StatusEnum;
+use App\Exceptions\ValidateException;
 use App\Models\CadeiaValorProcesso;
 use App\Models\PlanejamentoObjetivo;
 use App\Models\PlanoEntregaEntrega;
@@ -34,6 +36,13 @@ class PlanoEntregaEntregaService extends ServiceBase
         }
     }
 
+    public function validateDestroy($id)
+    {
+        if(!$this->planoTrabalhoEntregaService->hasContribuicao($id))
+            return true;
+        throw new ValidateException("Há contribuição de participantes para essa entrega, por isso ela não pode ser excluída");
+    }
+
     public function extraDestroy($planoEntregaEntrega)
     {
         $entrega = $planoEntregaEntrega->toArray();
@@ -42,6 +51,19 @@ class PlanoEntregaEntregaService extends ServiceBase
         foreach ($planosTrabalhosImpactados as $planoTrabalhoId) {
             $this->planoTrabalhoService->repactuar($planoTrabalhoId, true);
         }
+    }
+
+    public function proxyupdate(&$data, $unidade)
+    {
+        if(!isset($data["realizado"])) return $data;
+        
+        $planoEntregaEntrega = $this->planoEntregaEntregaService->getById([
+                "id" => $data["id"]
+            ]);
+        
+        /* Não é possível alterar a meta realizada após a conclusão do plano de entrega */
+        if($planoEntregaEntrega->planoEntrega->status == StatusEnum::CONCLUIDO->value) throw new ValidateException("Não é possível atualizar a meta realizada de plano de entrega já concluído.");
+        return $data;
     }
 
     public function proxyQuery($query, &$data)
@@ -76,7 +98,7 @@ class PlanoEntregaEntregaService extends ServiceBase
         return $data;
     }
 
-    public function afterUpdate($data)
+    public function afterUpdate($data, $dataRequest)
     {
         $entrega = PlanoEntregaEntrega::find($data['id']);
         $usuario = parent::loggedUser();
@@ -93,10 +115,13 @@ class PlanoEntregaEntregaService extends ServiceBase
 
         $atributosParaMonitorar = [
             'progresso_esperado',
-            'progresso_realizado',
             'meta',
-            'realizado',
         ];
+        
+        if(!isset($dataRequest["_monitor"]) || $dataRequest["_monitor"]){
+            $atributosParaMonitorar[] = 'realizado';
+            $atributosParaMonitorar[] = 'progresso_realizado';
+        }
 
         $dadosAlterados = false;
         foreach ($atributosParaMonitorar as $atributo) {

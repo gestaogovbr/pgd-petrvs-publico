@@ -3,36 +3,32 @@
 namespace App\Services;
 
 use App\Exceptions\BadGatewayException;
-use App\Exceptions\IntegrationException;
-use Exception;
 use Throwable;
 use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
-use App\Models\Perfil;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Models\SiapeDadosUORG;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Exceptions\LogError;
-use App\Exceptions\NotFoundException;
 use App\Services\ServiceBase;
 use App\Models\IntegracaoUnidade;
 use App\Models\IntegracaoServidor;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\ServerException;
-use App\Http\Middleware\TenantConfigurations;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\IntegracaoServidorRepository;
 use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
 use App\Services\Siape\Servidor\Integracao;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Facades\SiapeLog;
-use stdClass;
 
+/**
+ * @property UtilService $UtilService
+ */
 class IntegracaoService extends ServiceBase
 {
   use LogTrait;
@@ -163,7 +159,6 @@ class IntegracaoService extends ServiceBase
             'updated_at' => $timenow,
             'data_modificacao' => $values[':data_modificacao'],
           ]);
-          $this->atualizaLogs($this->logged_user_id, 'unidades', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Unidade nova inserida informada pelo SIAPE: ' . $values[':nome'], 'Valores inseridos' => DB::table('unidades')->where('id', $id)->first()]);
         } catch (Throwable $e) {
           Log::error(sprintf("Erro ao inserir Unidade %s: %s", $values[':codigo'], $e->getMessage()), throwableToArray($e));
           LogError::newWarn("Erro ao inserir Unidade", $values);
@@ -182,12 +177,6 @@ class IntegracaoService extends ServiceBase
       $sql = "UPDATE unidades SET path = :path, unidade_pai_id = :unidade_id, codigo = :codigo, " .
         "nome = :nome, sigla = :sigla, cidade_id = :cidade_id, data_modificacao = :data_modificacao WHERE id = :id";
       DB::update($sql, $values);
-      $this->atualizaLogs($this->logged_user_id, 'unidades', $values[':id'], 'EDIT', [
-        'Rotina' => 'Integração',
-        'Observação' => 'A Unidade sofreu alterações na hierarquia e possivelmente em outros campos (ver: nome/codigo/sigla/path/cidade_id/unidade_id)!',
-        'Valores anteriores' => ['path' => $unidade->path_antigo, 'unidade_id' => $unidade->id_pai_antigo, 'codigo' => $unidade->codigo_antigo, 'nome' => $unidade->nome_antigo, 'sigla' => $unidade->sigla_antiga, 'cidade_id' => $unidade->cidade_antiga],
-        'Valores atuais' => $values
-      ]);
 
       array_push($this->paisAlterados, $unidade);
 
@@ -459,7 +448,6 @@ class IntegracaoService extends ServiceBase
         // $this->logSiape("Unidades removidas da tabela integracao_unidades", $unidades_integracao_remover, Tipo::INFO);
         SiapeLog::info("Concluída a fase de reconstrução da tabela integracao_unidades!.....");
         $n = IntegracaoUnidade::count();
-        $this->atualizaLogs($this->logged_user_id, 'integracao_unidades', 'todos os registros', 'ADD', ['Observação' => 'Total de unidades importadas do SIAPE: ' . $n . ' (apenas ATIVAS)']);
         array_push($this->result['unidades']["Observações"], 'Total de unidades importadas do SIAPE: ' . $n . ' (apenas ATIVAS)');
         array_push($this->result['unidades']['Observações'], 'Os dados das Unidades foram obtidos ' . ($this->useLocalFiles ? 'através de arquivo XML armazenado localmente!' : 'através de consulta à API do SIAPE!'));
 
@@ -593,7 +581,7 @@ class IntegracaoService extends ServiceBase
         isr.nome_jornada AS nome_jornada,
         u.cod_jornada AS cod_jornada_antigo,
         isr.cod_jornada AS cod_jornada,
-        u.modalidade_pgd AS modalidade_pgd_anterior,
+        u.tipo_modalidade_id AS tipo_modalidade_id_anterior,
         isr.modalidade_pgd,
         u.participa_pgd AS participa_pgd_anterior,
         isr.participa_pgd
@@ -607,7 +595,7 @@ class IntegracaoService extends ServiceBase
         isr.telefone != u.telefone OR
         (isr.nome_jornada != u.nome_jornada OR isr.nome_jornada IS NOT NULL AND u.nome_jornada IS NULL) OR
         (isr.cod_jornada != u.cod_jornada OR isr.cod_jornada IS NOT NULL AND u.cod_jornada IS NULL) OR
-        (isr.modalidade_pgd != u.modalidade_pgd OR isr.modalidade_pgd IS NOT NULL AND u.modalidade_pgd IS NULL) OR
+        (isr.modalidade_pgd IS NOT NULL AND u.tipo_modalidade_id IS NULL) OR
         (isr.participa_pgd != u.participa_pgd OR isr.participa_pgd IS NOT NULL AND u.participa_pgd IS NULL) OR
         (isr.data_modificacao > u.data_modificacao OR isr.data_modificacao IS NOT NULL AND u.data_nascimento IS NULL )
         "
@@ -619,7 +607,7 @@ class IntegracaoService extends ServiceBase
           "cod_jornada = :cod_jornada, " .
           "nome_jornada = :nome_jornada, " .
           "data_nascimento = :data_nascimento, " .
-          "modalidade_pgd = :modalidade_pgd, " .
+        "tipo_modalidade_id = :tipo_modalidade_id, " .
           "participa_pgd = :participa_pgd, " .
           "data_modificacao = :data_modificacao WHERE id = :id";
 
@@ -666,6 +654,8 @@ class IntegracaoService extends ServiceBase
         );
         $atualizacoesLotacoesResult = [];
 
+        $this->processarAtualizacoesDados($atualizacoesDados, $sqlUpdateDados);
+
         DB::transaction(function () use (&$atualizacoesDados, &$sqlUpdateDados, &$atualizacoesLotacoes, &$sqlServidoresInseridosNaoLotados, &$atualizacoesLotacoesResult) {
           /**
            * Atualiza os dados pessoais de todos os servidores ATIVOS presentes na tabela USUARIOS.
@@ -677,12 +667,13 @@ class IntegracaoService extends ServiceBase
           //   throw new IntegrationException("IntegracaoService: Durante atualização de lotações, unidade de exercício raiz $this->unidadeRaiz não encontrada.");
           // }
           // $unidadeExercicioRaizId = $unidadeExercicioRaiz->id;
+          /*
           if (!empty($atualizacoesDados)) {
             foreach ($atualizacoesDados as $linha) {
 
               SiapeLog::info("Atualizando dados do servidor Matricula: " . $linha->matriculasiape);
 
-              $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->matriculasiape);
+              $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->matriculasiape, $linha->id);
               $modalidadePgdValida = $this->validarModalidadePgd($linha->modalidade_pgd);
 
               DB::update($sqlUpdateDados, [
@@ -691,7 +682,7 @@ class IntegracaoService extends ServiceBase
                 'email'         => $linha->emailfuncional,
                 'cod_jornada'      => $linha->cod_jornada,
                 'nome_jornada'      => $linha->nome_jornada,
-                'modalidade_pgd' => $modalidadePgdValida,
+                'tipo_modalidade_id' => $modalidadePgdValida,
                 'participa_pgd' => $linha->participa_pgd,
                 'id'            => $linha->id,
                 'ident_unica'   => $linha->ident_unica,
@@ -700,6 +691,9 @@ class IntegracaoService extends ServiceBase
               ]);
             }
           };
+          */
+
+          $this->atualizarMatriculasUsuariosSemMatricula();
 
           if (!empty($sqlServidoresInseridosNaoLotados)) {
             foreach ($sqlServidoresInseridosNaoLotados as $inserirLotacao) {
@@ -785,6 +779,7 @@ class IntegracaoService extends ServiceBase
             "isr.situacao_funcional as situacao_funcional, " .
             "isr.data_modificacao as data_modificacao, " .
             "isr.ident_unica as ident_unica, " .
+            "isr.modalidade_pgd, ".
             "isr.funcoes as gestor " .
             "FROM integracao_servidores as isr LEFT JOIN usuarios as u " .
             "ON isr.matriculasiape = u.matricula " .
@@ -798,14 +793,29 @@ class IntegracaoService extends ServiceBase
           if (!empty($perfilParticipante)) $perfilParticipanteId = $perfilParticipante->id;
 
           if (empty($perfilParticipanteId)) throw new ServerException("ValidateUsuario", "Perfil usuário comum (" . $usuarioComum . ") não encontrado no banco de dados. Verificar configuração no painel SaaS.\n[ver XXX_XXX]");
-
+          
+          $tipoModalidadeNaoIdentificada = $this->validarModalidadePgd('');
+          
           if (empty($vinculos_isr) || !is_array($vinculos_isr)) {
             SiapeLog::info("Não foram encontrados servidores para serem inseridos na tabela usuários.");
           }
 
           foreach ($vinculos_isr as $v_isr) {
             $v_isr = $this->UtilService->object2array($v_isr);
-            $registro = new Usuario([
+            $cpfCheck = $this->UtilService->valueOrDefault($v_isr['cpf']);
+            $matriculaNova = $this->UtilService->valueOrDefault($v_isr['matricula']);
+            $codigoExercicio = $this->UtilService->valueOrDefault($v_isr['exercicio']);
+            $tipoModalidadePgd = $this->UtilService->valueOrDefault($v_isr['modalidade_pgd']);
+            $unidadeExercicio = Unidade::where('codigo', $codigoExercicio)->first();
+            $unidadeExercicioIdCheck = isset($unidadeExercicio->id) ? $unidadeExercicio->id : null;
+
+           if(!$this->verificaSeUsuarioSoMudouMatricula($cpfCheck, $unidadeExercicioIdCheck, $matriculaNova, $codigoExercicio)) {
+            continue;
+           }
+
+          $tipoModalidadePgd = empty($tipoModalidadePgd)? $tipoModalidadeNaoIdentificada : $this->validarModalidadePgd($tipoModalidadePgd);
+           
+           $registro = new Usuario([
               'id' => Uuid::uuid4(),
               'email' => $this->UtilService->valueOrDefault($v_isr['emailfuncional']),
               'nome' => $this->UtilService->valueOrDefault($v_isr['nome']),
@@ -817,6 +827,7 @@ class IntegracaoService extends ServiceBase
               'sexo' => $this->UtilService->valueOrDefault($v_isr['sexo']),
               'situacao_funcional' => $this->UtilService->valueOrDefault($v_isr['situacao_funcional'], "DESCONHECIDO"),
               'perfil_id' => $perfilParticipanteId,
+              'tipo_modalidade_id' => $tipoModalidadePgd,
               'exercicio' => $this->UtilService->valueOrDefault($v_isr['exercicio']),
               'uf' => $this->UtilService->valueOrDefault($v_isr['uf'], null),
               'data_modificacao' => $this->UtilService->asDateTime($v_isr['data_modificacao']),
@@ -983,37 +994,68 @@ class IntegracaoService extends ServiceBase
     SiapeLog::info("Concluída a fase de reconstrução das funções de chefia!");
   }
 
-  private function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(string $email, string $matricula): void
+  private function verificaSeUsuarioSoMudouMatricula(string $cpfCheck, ?string $unidadeExercicioIdCheck, string $matriculaNova, string $codigoExercicio): bool
   {
-    $usuario = Usuario::where('email', $email)->where('matricula', '!=', $matricula)->first();
-    if (!empty($usuario)) {
-      LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. Matricula: %s, Email: %s", $matricula, $email));
-      $novoemail = $usuario->matricula . "@petrvs.gov.br";
-      $outroUsuarioComesseEmail = Usuario::where('email', $novoemail)->where('matricula', '!=', $usuario->matricula)->first();
-      if (!empty($outroUsuarioComesseEmail)) {
-        $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($novoemail, $usuario->matricula);
+
+    if (!empty($cpfCheck) && !empty($unidadeExercicioIdCheck)) {
+      $usuarioLotadoMesmaUnidade = DB::table('usuarios as u')
+        ->join('unidades_integrantes as ui', 'ui.usuario_id', '=', 'u.id')
+        ->join('unidades_integrantes_atribuicoes as uia', 'uia.unidade_integrante_id', '=', 'ui.id')
+        ->where('u.cpf', $cpfCheck)
+        ->where('ui.unidade_id', $unidadeExercicioIdCheck)
+        ->where('uia.atribuicao', 'LOTADO')
+        ->whereNull('u.deleted_at')
+        ->whereNull('uia.deleted_at')
+        ->select('u.id')
+        ->orderBy('u.created_at', 'asc')
+        ->first();
+
+      if (!empty($usuarioLotadoMesmaUnidade) && isset($usuarioLotadoMesmaUnidade->id)) {
+        DB::table('usuarios')
+          ->where('id', $usuarioLotadoMesmaUnidade->id)
+          ->update(['matricula' => $matriculaNova]);
+        SiapeLog::info(sprintf(
+          'Atualizada matrícula do usuário CPF %s para %s (unidade exercício código %s) sem criar novo usuário.',
+          (string) $cpfCheck,
+          (string) $matriculaNova,
+          (string) $codigoExercicio
+        ));
+        return false;
       }
-      SiapeLog::info("IntegracaoService: Alterando email duplicado para email fake", ['matricula' => $matricula, 'email' => $email, 'usuario' => $usuario->toJson()]);
-      $usuario->update(['email' => $novoemail]);
+      return true;
     }
+    return true;
   }
 
-  public function salvaUsuarioLotacaoGoogle(&$usuario, &$lotacao, $tokenData, $auth)
+  public function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(string $email, ?string $matricula, string $ignoreId = null): void
   {
-    $auth->fillUsuarioWithCredential($usuario, $tokenData);
-    $this->salvarUsuarioLotacao($usuario, $lotacao);
-  }
+    $email = trim(mb_strtolower($email, 'UTF-8'));
+    
+    $usuarios = Usuario::withoutGlobalScopes()
+        ->where('email', $email)
+        ->when($ignoreId, function ($query) use ($ignoreId) {
+            return $query->where('id', '!=', $ignoreId);
+        })
+        ->get();
 
-  public function salvaUsuarioLotacaoApi(&$usuario, &$lotacao, $tokenData, $api)
-  {
-    $api->fillUsuarioWithCredential($usuario, $tokenData);
-    $this->salvarUsuarioLotacao($usuario, $lotacao);
-  }
-
-  public function salvaUsuarioLotacaoDprf(&$usuario, &$lotacao, $profile, $auth)
-  {
-    $auth->fillUsuarioWithProfile($usuario, $profile);
-    $this->salvarUsuarioLotacao($usuario, $lotacao);
+    foreach ($usuarios as $usuario) {
+      if (!empty($usuario)) {
+        LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. Matricula: %s, Email: %s", $matricula, $email));
+        
+        $novoemailBase = $usuario->matricula;
+        if (empty($novoemailBase)) {
+          $novoemailBase = \Illuminate\Support\Str::uuid()->toString();
+        }
+        
+        $novoemail = $novoemailBase . "@petrvs.gov.br";
+        
+        $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($novoemail, $usuario->matricula, $usuario->id);
+        
+        SiapeLog::info("IntegracaoService: Alterando email duplicado para email fake", ['matricula' => $matricula, 'email' => $email, 'usuario' => $usuario->toJson()]);
+        
+        DB::table('usuarios')->where('id', $usuario->id)->update(['email' => $novoemail]);
+      }
+    }
   }
 
   /**
@@ -1025,6 +1067,7 @@ class IntegracaoService extends ServiceBase
     if ($this->fillUsuarioWithSiape($usuario, $lotacao)) { //se quem está logado existe na tabela integracao_servidores
       $perfil_nivel_5_id = $this->nivelAcessoService->getPerfilParticipante()->id;
       $usuario->perfil_id = $perfil_nivel_5_id;
+      $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($usuario->email, $usuario->matricula, $usuario->id);
       $usuario->save();
       $usuario->fresh();
       if (!empty($lotacao->unidade_id)) { // se sua Unidade estiver cadastrada, insere-se uma lotação principal pra ele
@@ -1036,22 +1079,6 @@ class IntegracaoService extends ServiceBase
     } else {
       $usuario = null; // se quem está logando não existe na tabela integracao_servidores
     }
-  }
-
-  public function atualizaLogs($user_id, string $table_name, string $row_id, string $type, array $delta)
-  {
-    /*
-      $change = DB::connection('log');
-      $change->setConnection('log');
-      $pdo = $change->getPdo();
-      $change->insert([
-            'date_time' => new DateTime(),
-            'user_id' => $user_id,
-            'table_name' => $table_name,
-            'row_id' => $row_id,
-            'type' => $type,
-            'delta' => json_encode($delta ?? ['Rotina' => 'Integração'])
-        ]);*/
   }
 
   /**
@@ -1103,32 +1130,74 @@ class IntegracaoService extends ServiceBase
       $unidadeRaiz->save();
     }
   }
-private function validarModalidadePgd($modalidadeString)
+protected function validarModalidadePgd($modalidadeString)
   {
+    $fallbackId = DB::table('tipos_modalidades')
+      ->where('nome', 'Sem dados do SIAPE')
+      ->whereNull('deleted_at')
+      ->value('id');
+
     if (empty($modalidadeString)) {
-      return null;
+      return $fallbackId;
     }
 
     if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $modalidadeString)) {
-      $exists = DB::table('tipos_modalidades_siape')
+      $tipoId = DB::table('tipos_modalidades_siape')
         ->where('id', $modalidadeString)
-        ->exists();
-      
-      return $exists ? $modalidadeString : null;
+        ->value('tipo_modalidade_id');
+      return $tipoId ?? $fallbackId;
     }
 
-    $modalidade = DB::table('tipos_modalidades_siape')
+    $tipoId = DB::table('tipos_modalidades_siape')
       ->where('nome', $modalidadeString)
-      ->first();
+      ->value('tipo_modalidade_id');
 
-    if ($modalidade) {
-      SiapeLog::info("Modalidade '{$modalidadeString}' convertida para UUID: {$modalidade->id}");
-      return $modalidade->id;
+    if ($tipoId) {
+      SiapeLog::info("Modalidade '{$modalidadeString}' convertida para TipoModalidade: {$tipoId}");
+      return $tipoId;
     }
 
-    SiapeLog::warning("Modalidade '{$modalidadeString}' não encontrada na tabela tipos_modalidades_siape. Valor será definido como null.");
-    return null;
+    SiapeLog::warning("Modalidade '{$modalidadeString}' não encontrada na tabela tipos_modalidades_siape. Valor será definido para 'Sem dados do SIAPE'.");
+    return $fallbackId;
   }  
+  
+  private function atualizarMatriculasUsuariosSemMatricula(): void
+  {
+    try {
+      $usuariosSemMatricula = DB::table('usuarios')
+        ->whereNull('deleted_at')
+        ->where(function ($q) {
+          $q->whereNull('matricula')
+            ->orWhere('matricula', '');
+        })
+        ->whereNotNull('cpf')
+        ->whereRaw("cpf <> ''")
+        ->select('id', 'cpf')
+        ->get();
+
+      if ($usuariosSemMatricula->isEmpty()) {
+        return;
+      }
+
+      foreach ($usuariosSemMatricula as $usr) {
+        $matriculaSiape = DB::table('integracao_servidores')
+          ->where('cpf', $usr->cpf)
+          ->value('matriculasiape');
+
+        if (!empty($matriculaSiape)) {
+          DB::table('usuarios')
+            ->where('id', $usr->id)
+            ->update(['matricula' => $matriculaSiape]);
+          SiapeLog::info(sprintf("Atualizada matrícula do usuário id=%s a partir do SIAPE.", $usr->id));
+        } else {
+          SiapeLog::warning(sprintf("Matrícula SIAPE não encontrada para usuário id=%s com CPF %s.", $usr->id, $usr->cpf));
+        }
+      }
+    } catch (Throwable $e) {
+      report($e);
+      SiapeLog::error(sprintf("Erro ao atualizar matrículas de usuários sem matrícula: %s", $e->getMessage()));
+    }
+  }
   
   private function verificarUsuariosExternosIntegracao(): void
   {
@@ -1179,6 +1248,45 @@ private function validarModalidadePgd($modalidadeString)
         "Erro ao verificar usuários externos na integração: %s",
         $e->getMessage()
       ));
+    }
+  }
+
+  /**
+   * Processa as atualizações de dados dos servidores em lotes.
+   *
+   * @param array $atualizacoesDados
+   * @param string $sqlUpdateDados
+   * @return void
+   */
+  private function processarAtualizacoesDados(array $atualizacoesDados, string $sqlUpdateDados): void
+  {
+    $chunkSize = 50;
+    $transactionRetries = 3;
+    $chunks = array_chunk($atualizacoesDados, $chunkSize);
+
+    foreach ($chunks as $chunk) {
+      DB::transaction(function () use ($chunk, $sqlUpdateDados) {
+        foreach ($chunk as $linha) {
+          SiapeLog::info("Atualizando dados do servidor Matricula: " . $linha->matriculasiape);
+
+          $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->matriculasiape, $linha->id);
+          $modalidadePgdValida = $this->validarModalidadePgd($linha->modalidade_pgd);
+
+          DB::update($sqlUpdateDados, [
+            'nome'          => $linha->nome_servidor,
+            'nomeguerra'    => $linha->nome_guerra,
+            'email'         => $linha->emailfuncional,
+            'cod_jornada'   => $linha->cod_jornada,
+            'nome_jornada'  => $linha->nome_jornada,
+            'tipo_modalidade_id' => $modalidadePgdValida,
+            'participa_pgd' => $linha->participa_pgd,
+            'id'            => $linha->id,
+            'ident_unica'   => $linha->ident_unica,
+            'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
+            'data_nascimento' => $linha->data_nascimento,
+          ]);
+        }
+      }, $transactionRetries);
     }
   }
 }

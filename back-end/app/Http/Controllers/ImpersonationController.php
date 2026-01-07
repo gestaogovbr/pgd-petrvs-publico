@@ -119,7 +119,7 @@ class ImpersonationController extends Controller
                     $query->where('data_leitura', null);
                 }
             ])->first();
-            $request->session()->put("unidade_id", $usuario->lotacao?->id);
+            $request->session()->put("unidade_id", $usuario->lotacao?->unidade_id);
         }
         return $usuario;
     }

@@ -1,0 +1,141 @@
+<h3>Indicadores de Entregas</h3>
+<toolbar *ngIf="!selectable"></toolbar>
+<filter 
+    [form]="filter" 
+    [where]="filterWhere" 
+    [submit]="filterSubmit.bind(this)"
+    [filter]="onButtonFilterClick"
+    filterLabel="Consultar"
+>
+    <div class="row">   
+        <input-search 
+            #unidade 
+            [size]="6" 
+            label="Unidade de Consulta"
+            [control]="filter!.controls.unidade_id" 
+            controlName="unidade_id" 
+            [dao]="unidadeDao"
+            [selectRoute]="{
+                route: ['configuracoes', 'unidade'],
+                params: { unidades: (auth.hasPermissionTo('MOD_IND_TODAS_UNIDADES') ? null : this.unidades) }
+            }"
+            [where]="auth.hasPermissionTo('MOD_IND_TODAS_UNIDADES')
+                ? []
+                : [['id', 'in', this.unidades]]"
+        >
+        </input-search>
+        <input-datetime
+            [size]="2"
+            date
+            label="Período para consulta: início"
+            controlName="this.filter.data_inicial"
+            [control]="filter!.controls.data_inicial"
+            labelInfo="Data início de consulta"
+        ></input-datetime>
+        <input-datetime
+            [size]="2"
+            date
+            label="Período para consulta: fim"
+            controlName="data_final"
+            [control]="filter!.controls.data_final"
+            labelInfo="Data fim da consulta"
+        ></input-datetime>
+        <input-switch
+            [size]="1"
+            label="Somente vigentes"
+            controlName="somente_vigentes"
+            [control]="filter!.controls.somente_vigentes"
+        ></input-switch>
+        <input-switch
+            [size]="1"
+            label="Unidades Subordinadas"
+            controlName="incluir_unidades_subordinadas"
+            [control]="filter!.controls.incluir_unidades_subordinadas"
+        ></input-switch>
+    </div>
+</filter>
+<div class="graficos">
+    <div class="grafico">
+        <div class="titulo">Taxa de vinculação das entregas
+            <i  class="bi bi-info-circle label-info text-muted"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Indica a proporção de entregas vinculadas em relação ao total de entregas cadastradas"
+            ></i>
+        </div>
+        <p *ngIf="!totalVinculacoes" class="no-data">Sem dados de entregas para exibir</p>
+        <div *ngIf="loading; else graficoEntregas" class="d-flex justify-content-center my-2">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden"></span>
+            </div>
+        </div>
+        <ng-template #graficoEntregas>
+            <div class="grafico-wrapper" *ngIf="totalVinculacoes">
+                <canvas
+                    baseChart
+                    *ngIf="pieChartData.labels?.length"
+                    [data]="pieChartData"
+                    [type]="'pie'"
+                    [options]="pieChartOptions"
+                ></canvas>
+            </div>
+        </ng-template>
+    </div>
+    <div class="grafico">
+        <div class="titulo">Distribuição das avaliações dos Planos de Entregas (PEs)
+            <i  class="bi bi-info-circle label-info text-muted"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Indica a proporção de cada nota de avaliação dos planos de entregas em relação ao total de avaliações"
+            ></i>
+        </div>
+        <p *ngIf="!pieChartAvaliacoesData.labels?.length || !totalAvaliacoes" class="no-data">Sem dados de avaliações</p>
+        <div *ngIf="loading; else graficoAvaliacoes" class="d-flex justify-content-center my-2">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden"></span>
+            </div>
+        </div>
+        <ng-template #graficoAvaliacoes>
+            <div class="grafico-wrapper"
+                *ngIf="totalAvaliacoes" 
+                style="height: 350px"
+            >
+                <canvas
+                    baseChart
+                    *ngIf="pieChartAvaliacoesData.labels?.length"
+                    [data]="pieChartAvaliacoesData"
+                    [type]="'pie'"
+                    [options]="pieChartOptions"
+                ></canvas>
+            </div>
+        </ng-template>
+    </div>
+    <div class="grafico">
+        <div class="titulo">Coerência entre desempenhos dos Planos de Trabalho (PTs) e do Planos de Entregas (PEs)
+            <i  class="bi bi-info-circle label-info text-muted"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Indica o grau de alinhamento entre o desempenho individual dos participantes do PGD, conforme avaliações de seus Planos de Trabalho, e o desempenho geral da unidade de execução, conforme avaliação do Plano de Entregas."
+            ></i>
+        </div>
+        <p *ngIf="!totalDesempenho" class="no-data">Sem dados de PT ou PE para exibir</p>
+        <div *ngIf="loading; else graficoDesempenho" class="d-flex justify-content-center my-2">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden"></span>
+            </div>
+        </div>
+        <ng-template #graficoDesempenho>
+            <div class="grafico-wrapper" *ngIf="totalDesempenho">
+                <canvas
+                    baseChart
+                    *ngIf="barChartData.datasets[0].data?.length"
+                    [data]="barChartData"
+                    [options]="barChartOptions"
+                    [type]="'bar'"
+                >
+                </canvas>
+            </div>
+        </ng-template>
+    </div>
+</div>
+

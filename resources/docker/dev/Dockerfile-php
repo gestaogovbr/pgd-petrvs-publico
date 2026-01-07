@@ -20,14 +20,15 @@ RUN apt-get update && apt-get install -y \
     cron \
     supervisor \
     default-mysql-client \
-    && pecl install redis
+    && pecl install redis inotify \
+    && docker-php-ext-enable inotify
 
 # Bibliotecas php
-RUN docker-php-ext-install zip pdo_mysql mysqli soap gd \
+RUN docker-php-ext-install zip pdo_mysql mysqli soap gd calendar \
     && docker-php-ext-install openssl || true \
     && cp /usr/src/php/ext/openssl/config0.m4 /usr/src/php/ext/openssl/config.m4 \
     && docker-php-ext-install openssl pcntl \
-    && docker-php-ext-enable redis
+    && docker-php-ext-enable redis inotify
 
 # cria diretorio do document-root
 WORKDIR /var/www

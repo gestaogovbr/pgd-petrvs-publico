@@ -1,4 +1,4 @@
-import { Component, Inject, Injector, ViewChild } from '@angular/core';
+import { Component, Inject, Injector, ViewChild, TemplateRef } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
@@ -20,6 +20,7 @@ import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.
 })
 export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, UsuarioDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent
+  @ViewChild('resumoTpl') resumoTpl?: TemplateRef<any>;
   public usuarios: Usuario[] = [];
   public integranteDao: UnidadeIntegranteDaoService;
   public erros: string = '';
@@ -89,19 +90,31 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
                   this.loading = false;
                   if (result?.success) {
                     await this.loadUsuario();
-                    this.dialog.alert("Sucesso", result.message);
+                    if(result.resumo) {
+                        await this.mostrarResumo(result.resumo, result.message);
+                    } else {
+                        await this.dialog.alert("Sucesso", result.message);
+                    }
                     this.log = result.log;
                   } else {
-                    this.dialog.alert("Erro", "Erro ao processar CPF: " + result?.message);
+                    if (result?.resumo) {
+                        await this.mostrarResumo(result.resumo, "Erro ao processar CPF: " + result?.message);
+                    } else {
+                        await this.dialog.alert("Erro", "Erro ao processar CPF: " + result?.message);
+                    }
                   }
                   this.downloadSiape();
                 },
                 error => {
                   this.loading = false;
                   console.log(error);
-                  this.log = error.error?.message;
-                  this.error("Erro ao processar CPF: " + error.error?.message);
-                  this.dialog.alert("Erro", "Erro ao processar CPF: " + (error.message ?? error.error?.message));
+                  const result = error.error;
+                  if (result?.resumo) {
+                      this.mostrarResumo(result.resumo, "Erro ao processar CPF: " + (result.message ?? error.message));
+                  } else {
+                      this.dialog.alert("Erro", "Erro ao processar CPF: " + (result?.message ?? error.message));
+                  }
+                  this.log = result?.log ?? error.message;
                 }
             )
           } catch (error: any) {
@@ -163,6 +176,10 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
     if(this.metadata?.integrantes) {
       this.integrantes = this.metadata?.integrantes;
     }
+
+    if (this.cpf) {
+      this.loadUsuario();
+    }
   }
 
   public async downloadSiape() {
@@ -206,12 +223,9 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
     this.loading = true;
     try {
       const cpf = this.cpf?.replace(/\D/g, '');
-      const usuarios = await this.dao?.query({ where: [['cpf', '==', cpf]] })
-        .asPromise();
+      const usuarios = await this.dao!.query({ where: [['cpf', '==', cpf]] }).getAll();
 
-      if (usuarios) {
-        this.usuarios = usuarios;
-      }
+      this.usuarios = usuarios ?? [];
 
       this.integrantes = [];
       for (const usuario of this.usuarios) {
@@ -221,6 +235,42 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
       }
     } finally {
       this.loading = false;
+    }
+  }
+
+  private async mostrarResumo(resumo: any[], titulo: string) {
+    if (!Array.isArray(resumo)) {
+        this.dialog.alert(titulo, 'Resumo inválido');
+        return;
+    }
+    
+    if (this.resumoTpl) {
+      if (resumo.some(item => item.status === 'parcial') && titulo.toLowerCase().includes('sucesso')) {
+         titulo = 'Parcial';
+      }
+
+      const dialogResult = await this.dialog.template({ title: titulo, modalWidth: 700 }, this.resumoTpl, [{ label: "Ok", color: "btn-primary", value: true }], { resumo: resumo })
+      .asPromise();
+      
+      if (dialogResult?.button?.label === "Ok" && dialogResult?.dialog) {
+          dialogResult.dialog.close();
+      }
+    } else {
+      // Fallback in case template is not loaded for some reason
+      let msg = '';
+      resumo.forEach((item, index) => {
+          msg += `Usuario ${index + 1}:\n`;
+          msg += `Status: ${item.status}\n`;
+          msg += `Mensagem: ${item.mensagem}\n`;
+          msg += `Existia: ${item.usuario_existia ? 'Sim' : 'Não'}\n`;
+          msg += `Inserido: ${item.usuario_inserido ? 'Sim' : 'Não'}\n`;
+          msg += `Lotação Associada: ${item.lotacao_associada ? 'Sim' : 'Não'}\n`;
+          if (item.alteracoes && item.alteracoes.length > 0) {
+              msg += `Alterações: ${item.alteracoes.join(', ')}\n`;
+          }
+          msg += '\n';
+      });
+      await this.dialog.alert(titulo, msg);
     }
   }
 

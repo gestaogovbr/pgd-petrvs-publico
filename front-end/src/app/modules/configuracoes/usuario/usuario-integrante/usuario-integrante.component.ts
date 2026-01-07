@@ -14,6 +14,7 @@ import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import {InputSelectComponent} from "../../../../components/input/input-select/input-select.component";
+import { Perfil } from 'src/app/models/perfil.model';
 
 @Component({
   selector: 'usuario-integrante',
@@ -78,6 +79,8 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
         );
       }
 
+      let perfilColaborador = false;
+
       if(this.perfil){
         await this.perfilDao.getById(this.perfil.currentValue).then(perfil => {
           if (!perfil) return;
@@ -86,6 +89,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
             atribuicoes = atribuicoes.filter(
               atribuicao => atribuicao.key !== 'CURADOR' && atribuicao.key !== 'GESTOR_SUBSTITUTO'
             );
+            perfilColaborador = true;
           }
         })
       }
@@ -94,6 +98,12 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
       atribuicoes = atribuicoes.filter(
         atribuicao => atribuicao.key == 'COLABORADOR'? !isLotado : !atribuicoesSelecionadas.includes(atribuicao.key) 
       );
+
+      if (!unidade?.executora && !perfilColaborador) {
+        atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(
+          atribuicao => atribuicao.key !== 'COLABORADOR'
+        );
+      }
 
       this.atribuicoes = atribuicoes;
       this.form?.controls.atribuicao.setValue(atribuicoesSelecionadas.includes('COLABORADOR')?'':"COLABORADOR");
@@ -110,7 +120,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   }
 
   public async loadData(entity: IIndexable, form?: FormGroup | undefined) {
-    if (entity.id) {
+    if (entity && entity.id) {
       this.editando = true;
       let integrantes: IntegranteConsolidado[] = [];
       try {
@@ -126,6 +136,25 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
         this.grid!.loading = false;
       }
     }
+  }
+
+  public disablePerfilItem(item: { key: any, value: string, data?: Perfil }): boolean {
+    const perfilNivelAtual = this.auth.usuario?.perfil?.nivel ?? Perfil.NIVEL.PARTICIPANTE;
+    const nivelItem = item?.data?.nivel ?? undefined;
+    if (typeof nivelItem === 'number') {
+      return nivelItem < perfilNivelAtual;
+    }
+    return false;
+  }
+
+  public isPerfilSuperiorAoLogado(): boolean {
+    const nivelLogado = this.auth.usuario?.perfil?.nivel ?? Perfil.NIVEL.PARTICIPANTE;
+    const nivelEditando = this.formPerfil.controls.perfil_id.value;
+    if (!nivelEditando) return false;
+    // Quando o perfil selecionado no formulário é de nível superior (valor numérico menor), desabilita
+    const itemSelecionado = this.perfil?.items.find(i => i.key === nivelEditando);
+    const nivelItem = itemSelecionado?.data?.nivel;
+    return typeof nivelItem === 'number' ? (nivelItem < nivelLogado) : false;
   }
 
   public async salvarPerfil() {
@@ -220,7 +249,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
  * Método chamado para inserir uma atribuição no grid, seja este componente persistente ou não.
  * @returns 
  */
-  public async adicionarIntegrante() {
+  public async adicionarIntegrante(): Promise<IIndexable> {
     this.editando = true;
     if (this.grid) this.grid.error = '';
     let novo = {
@@ -271,6 +300,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    */
   public async salvarIntegrante(form: FormGroup, row: IntegranteConsolidado) 
   {
+
     let novasAtribuicoes = this.lookup.uniqueLookupItem(form!.controls.atribuicoes.value);
     form.controls.atribuicoes.setValue(novasAtribuicoes);
     
@@ -358,40 +388,6 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     }
     return this.auth?.hasPermissionTo('MOD_USER_ATRIB') ?? false;
   }
-  /* 
   
-  TESTES MÍNIMOS RECOMENDADOS PARA A VALIDAÇÃO DO COMPONENTE - USUARIO-INTEGRANTE
-
-  CENÁRIO: CAMINHO FELIZ
-  Formulário completo do usuário - aba 'Atribuições'
-  1. Perder a gerência
-  2. Assumir a gerência da unidade em que já está lotado
-  3. Assumir a gerência de uma unidade em que não está lotado (unidade já existente do grid)
-  4. Assumir a gerência de uma unidade em que não está lotado (unidade ainda não existente do grid)
-  5. Trocar de gerência, assumindo a de uma unidade que já existe no grid
-  6. Trocar de gerência, assumindo a de uma unidade que ainda não existe no grid
-  7. Alterar atribuições (exceto gerência e lotação) em uma unidade que já existe no grid
-  8. Alterar atribuições (exceto gerência e lotação) em uma unidade que ainda não existe no grid
-  9. Alterar a lotação de um usuário para uma unidade que já está no grid
-  10. Alterar a lotação de um usuário para uma unidade que ainda não está no grid
-  11. Realizar várias das ações acima ao mesmo tempo (ações que sejam coerentes e não conflitantes), antes de salvar o formulário
-  12. Excluir o vínculo completo do usuário com uma unidade em que ele não é lotado
-
-  CENÁRIO: CAMINHO FELIZ
-  Formulário de Atribuições do usuário - grupo de botões opcionais (...)
-  1. Perder a gerência
-  2. Assumir a gerência da unidade em que já está lotado
-  3. Assumir a gerência de uma unidade em que não está lotado (unidade já existente do grid)
-  4. Assumir a gerência de uma unidade em que não está lotado (unidade ainda não existente do grid)
-  5. Trocar de gerência, assumindo a de uma unidade que já existe no grid
-  6. Trocar de gerência, assumindo a de uma unidade que ainda não existe no grid
-  7. Alterar atribuições (exceto gerência e lotação) em uma unidade que já existe no grid
-  8. Alterar atribuições (exceto gerência e lotação) em uma unidade que ainda não existe no grid
-  9. Alterar a lotação de um usuário para uma unidade que já está no grid
-  10. Alterar a lotação de um usuário para uma unidade que ainda não está no grid
-  11. Excluir o vínculo completo do usuário com uma unidade em que ele não é lotado
-
-  
-  */
 
 }

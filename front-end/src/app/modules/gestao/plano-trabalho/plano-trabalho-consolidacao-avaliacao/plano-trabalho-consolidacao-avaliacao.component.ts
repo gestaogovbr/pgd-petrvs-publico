@@ -73,8 +73,9 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
     this.title = "Avaliações " + this.lex.translate("das Consolidações");
     this.code = "MOD_PTR_CSLD_AVAL";
     this.filter = this.fh.FormBuilder({
-      usuario_id: {default: ""},
-      unidade_id: {default: ""},
+      numero: {default: null},
+      usuario_id: {default: null},
+      unidade_id: {default: null},
       unidades_subordinadas: {default: false},
       incluir_arquivados: {default: false}
     });
@@ -95,6 +96,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
 //    if(form.usuario_id?.length) result.push(["usuario_id", "==", form.usuario_id]);
     if(form.usuario_id?.length) result.push(["plano_trabalho.usuario.id", "==", form.usuario_id]);
     if(form.unidade_id?.length) result.push(["plano_trabalho.unidade.id", "==", form.unidade_id]);
+    if(form.numero) result.push(["plano_trabalho.numero", "==", String(form.numero).trim()]);
     if(form.unidades_subordinadas) result.push(["unidades_subordinadas", "==", true]);
     if(form.incluir_arquivados) result.push(["incluir_arquivados", "==", true]);
     return result;
@@ -124,6 +126,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
 
   public onGridLoad(rows?: Base[]) {
     this.extra = (this.grid?.query || this.query!).extra;
+
     if(this.extra) {
       this.planos_trabalhos = ((this.planos_trabalhos || []) as PlanoTrabalho[]).concat(this.extra?.planos_trabalhos || []);
       this.programas = ((this.programas || []) as Programa[]).concat(this.extra?.programas || []);      
@@ -149,10 +152,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let consolidacao: PlanoTrabalhoConsolidacao = row as PlanoTrabalhoConsolidacao;
-
    
-    
-    
     let programa: Programa = consolidacao.plano_trabalho!.programa!;
     let isAvaliador: boolean = false;
     const usuarioId = consolidacao.plano_trabalho!.usuario_id;
@@ -210,18 +210,10 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   }
 
   public initGrid(grid: GridComponent) {
-    grid.queryInit();
-  }
-
-  public filterWhereHistorico = (filter: FormGroup) => {
-    let result: any[] = [];
-    let form: any = filter.value;
-    result.push(["status", "in", ["AVALIADO"]]);
-    if(form.usuario_id?.length) result.push(["plano_trabalho.usuario.id", "==", form.usuario_id]);
-    if(form.unidade_id?.length) result.push(["plano_trabalho.unidade.id", "==", form.unidade_id]);
-    if(form.unidades_subordinadas) result.push(["unidades_subordinadas", "==", true]);
-    if(form.incluir_arquivados) result.push(["incluir_arquivados", "==", true]);
-    return result;
+    // Não inicializa a query aqui para permitir que o onLoad padrão
+    // aplique queryParams.filter antes da primeira execução da query.
+    // A inicialização ocorrerá via PageListBase.onLoad.
+    // if(!grid.query) grid.queryInit();
   }
 
   public getAvaliacoes(row: any) {
@@ -236,26 +228,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
     } finally {
       this.loading = false;
     }
-  }
-
-  public onGridLoadHistorico(rows?: Base[]) {
-    this.extra = (this.grid?.query || this.query!).extra;
-    let planosTrabalhos = (this.extra?.planos_trabalhos || []) as PlanoTrabalho[];
-
-
-
-    planosTrabalhos.forEach(p => {
-      let plano = p as PlanoTrabalho;
-      plano.programa = this.extra?.programas?.find((x: Programa) => x.id == plano.programa_id);
-    });
-    rows?.forEach(v => {
-      this.consolidacaoId?.push(v.id);
-      let consolidacao = v as PlanoTrabalhoConsolidacao;
-      consolidacao.plano_trabalho = this.extra?.planos_trabalhos?.find((x: PlanoTrabalho) => x.id == consolidacao.plano_trabalho_id);
-      if(consolidacao.avaliacao) consolidacao.avaliacao.tipo_avaliacao = this.extra?.tipos_avaliacoes?.find((x: TipoAvaliacao) => x.id == consolidacao.avaliacao!.tipo_avaliacao_id);
-    });
-    this.loadData();
-  }
+  }  
 
   public getNota(row:any) {
     return row.tipo_avaliacao.notas.find((x: any) => x.codigo == row.nota);

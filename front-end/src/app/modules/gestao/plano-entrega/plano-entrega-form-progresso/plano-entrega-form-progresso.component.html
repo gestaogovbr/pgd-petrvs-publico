@@ -5,14 +5,23 @@
     <input-datetime date [size]="4" label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entregas') + '(Estimativa Inicial)'" required></input-datetime>
   </div>
 
-  <div class="row">
-    <plano-entrega-valor-meta-input icon="bi bi-graph-up-arrow" [entrega]="entity?.plano_entrega_entrega?.entrega" [size]="6" [control]="form!.controls.meta" label="Meta"></plano-entrega-valor-meta-input>
-    <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="entity?.plano_entrega_entrega?.entrega" [size]="6" [control]="form!.controls.realizado" label="Valor Inicial" labelInfo="Valor da meta verificado no início do plano de entrega"></plano-entrega-valor-meta-input>
+  <div class="row visually-hidden">
+    <plano-entrega-valor-meta-input icon="bi bi-graph-up-arrow" [entrega]="entity?.plano_entrega_entrega?.entrega" [size]="6" [control]="form!.controls.meta" label="Meta" [disabled]="'true'"></plano-entrega-valor-meta-input>
+    <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="entity?.plano_entrega_entrega?.entrega" [size]="6" [control]="form!.controls.realizado" label="Valor Inicial" labelInfo="Valor da meta verificado no início do plano de entrega" [disabled]="'true'"></plano-entrega-valor-meta-input>
   </div>
 
   <div class="row">
-    <input-number [size]="6" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
-    <input-number [size]="6" label="Progresso Realizado" controlName="progresso_realizado" sufix="%"></input-number>
+    <input-textarea [size]="12" label="Registro de Execução" controlName="registro_execucao" [placeholder]="'Descreva o progresso da execução...'" [rows]="4"></input-textarea>
+  </div>
+
+  <div class="row" *ngIf="entity?.plano_entrega_entrega?.checklist?.length">
+    <separator title="Etapas da Entrega" small></separator>
+    <table>
+      <tr *ngFor="let check of checklist; let i = index">
+        <td style="width: 48px;"><input-switch [size]="12" scale="small" [source]="checklist" [path]="i + '.checked'"></input-switch></td>
+        <td class="micro-text fw-ligh">{{check.texto}}</td>
+      </tr>
+    </table>
   </div>
 
 </editable-form>

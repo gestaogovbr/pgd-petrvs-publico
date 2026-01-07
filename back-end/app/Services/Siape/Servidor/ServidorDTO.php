@@ -31,7 +31,7 @@ class ServidorDTO
     public ?string $email_chefia_imediata;
     public ?string $nome_jornada;
     public ?int $cod_jornada;
-    public ?string $modalidade_pgd;
+    public ?string $modalidade_pgd; // permanece como origem SIAPE (id/nome)
     public ?string $participa_pgd;
     public ?string $deleted_at;
 

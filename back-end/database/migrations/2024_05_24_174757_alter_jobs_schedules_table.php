@@ -12,13 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('jobs_schedules', function (Blueprint $table) {
-            $table->dropColumn('diario');
-            $table->dropColumn('horario');
+            $table->dropColumn(['diario', 'horario']);
+        });
+
+        Schema::table('jobs_schedules', function (Blueprint $table) {
             $table->renameColumn('nome_do_job', 'nome');
+        });
+
+        Schema::table('jobs_schedules', function (Blueprint $table) {
             $table->addColumn('string', 'classe', [
                 'length' => 100,
                 'nullable' => false,
-            ])->after('nome_do_job');
+            ])->after('nome');
             $table->addColumn('integer', 'minutos')->after('classe')->nullable(true);
             $table->addColumn('integer', 'horas')->after('minutos')->nullable(true);
             $table->addColumn('integer', 'dias')->after('horas')->nullable(true);

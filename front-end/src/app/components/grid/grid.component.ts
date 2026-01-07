@@ -12,7 +12,7 @@ import {
 } from "@angular/core";
 import {AbstractControl, FormGroup, FormGroupDirective} from "@angular/forms";
 import {Observable, Subject, of, takeUntil} from "rxjs";
-import {DaoBaseService, QueryOrderBy} from "src/app/dao/dao-base.service";
+import {DaoBaseService, queryEvents, QueryOrderBy} from "src/app/dao/dao-base.service";
 import {QueryContext} from "src/app/dao/query-context";
 import {QueryOptions} from "src/app/dao/query-options";
 import {Base, IIndexable} from "src/app/models/base.model";
@@ -90,8 +90,11 @@ export class GridComponent extends ComponentBase implements OnInit {
 	@Input() addMetadata?: RouteMetadata;
 	@Input() labelAdd: string = "Incluir";
 	@Input() orderBy?: QueryOrderBy[];
+	@Input() priorOrderBy?: QueryOrderBy[];
 	@Input() groupBy?: GroupBy[];
 	@Input() join: string[] = [];
+	@Input() leftJoin?: [string, string, string][];
+	@Input() fields?: string[];
 	@Input() relatorios: LookupItem[] = [];
 	@Input() form: FormGroup = new FormGroup({});
 	@Input() noHeader?: string;
@@ -103,7 +106,7 @@ export class GridComponent extends ComponentBase implements OnInit {
 	@Input() control?: AbstractControl = undefined;
 	@Input() expanded?: string;
 	@Input() noToggleable?: string;
-	@Input() minHeight: number = 350;
+	@Input() minHeight: number|string = 350;
 	@Input() maxHeight: number|string = "auto";
 	@Input() multiselect?: string;
 	@Input() multiselectEnabled?: string;
@@ -399,9 +402,12 @@ export class GridComponent extends ComponentBase implements OnInit {
 		this.ngAfterContentInit();
 	}
 
-	public queryInit() {
+	public queryInit(events: queryEvents = {}) {
 		this.query = this.dao?.query(this.queryOptions, {
+			before: events.before,
+			resolve: events.resolve,
 			after: () => {
+				events.after && events.after();
 				this.cdRef.detectChanges();
 					setTimeout(() => {
 						// Dispose existing tooltips to prevent duplicates
@@ -500,11 +506,14 @@ export class GridComponent extends ComponentBase implements OnInit {
 					? this.filterRef?.where(this.filterRef.form)
 					: [],
 			orderBy: [
+				...(this.priorOrderBy || []),
 				...(this.groupBy || []).map((x) => [x.field, "asc"] as QueryOrderBy),
 				...(this.orderBy || []),
 			],
 			join: this.join || [],
 			limit: this.rowsLimit,
+			leftJoin: this.leftJoin,
+			fields: this.fields
 		};
 	}
 

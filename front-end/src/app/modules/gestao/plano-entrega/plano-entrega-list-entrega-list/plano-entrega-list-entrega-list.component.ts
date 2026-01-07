@@ -45,6 +45,11 @@ export class PlanoEntregaListEntregaListComponent extends PageListBase<PlanoEntr
     this.filter?.controls.unidade_id.setValue(this.idsUnidadesAscendentes[0]);
   }
 
+  onLoad(): void {
+    this.grid!.priorOrderBy=[["plano_entrega.created_at", "desc"]];
+    super.onLoad();
+  }
+
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     result.push({ label: "Informações", icon: "bi bi-info-circle", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult'] }, { modal: true }) });
@@ -53,6 +58,8 @@ export class PlanoEntregaListEntregaListComponent extends PageListBase<PlanoEntr
 
   public filterClear(filter: FormGroup) {
     super.filterClear(filter);
+    filter.controls.descricao.setValue("");
+    filter.controls.descricao_entrega.setValue("");
   }
 
   public filterWhere = (filter: FormGroup) => {
@@ -65,7 +72,7 @@ export class PlanoEntregaListEntregaListComponent extends PageListBase<PlanoEntr
     if (form.descricao?.length) {
       result.push(["descricao", "like", "%" + form.descricao.trim().replace(" ", "%") + "%"]);
     }
-    if (form.descricao?.length) {
+    if (form.descricao_entrega?.length) {
       result.push(["descricao_entrega", "like", "%" + form.descricao_entrega.trim().replace(" ", "%") + "%"]);
     }
     if (form.destinatario?.length) {

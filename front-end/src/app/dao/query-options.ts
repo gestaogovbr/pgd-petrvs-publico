@@ -6,6 +6,8 @@ export class QueryOptions {
     public limit?: number;
     public deleted?: boolean;
     public join?: string[];
+    public leftJoin?: [string, string, string][];
+    public fields?: string[];
     
     constructor(data?: any) {
         if(data) Object.assign(this, data);

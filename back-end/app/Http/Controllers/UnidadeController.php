@@ -378,7 +378,8 @@ class UnidadeController extends ControllerBase
 
     public function downloadLogSiape(Request $request)
     {
-        $logPath = storage_path('logs/siape.log');
+        $tenantId = function_exists('tenant') ? (tenant('id') ?? 'central') : 'central';
+        $logPath = storage_path('logs/siape_' . $tenantId . '.log');
 
         if (!file_exists($logPath)) {
             return response()->json(['error' => 'Arquivo de log não encontrado.'], 404);
@@ -386,12 +387,37 @@ class UnidadeController extends ControllerBase
 
         return response()->download(
             $logPath,
-            'siape.log',
+            'siape_' . $tenantId . '.log',
             [
                 'Content-Type' => File::mimeType($logPath),
-                'Content-Disposition' => 'attachment; filename="siape.log"',
+                'Content-Disposition' => 'attachment; filename="siape_' . $tenantId . '.log"',
             ]
         );
+    }
+
+    public function ativarTemporariamente(Request $request)
+    {
+        try {
+            if (!parent::loggedUser()->hasPermissionTo('MOD_UND_EDT'))
+                throw new ServerException("ValidateUnidade", "Usuário precisa ter capacidade MOD_UND_EDT");
+
+            $data = $request->input('data');
+            $validated = validator($data, [
+                'unidade_id' => ['required', 'uuid'],
+                'justificativa' => ['required', 'string'],
+            ])->validate();
+            
+            return response()->json([
+                'success' => true,
+                'data' => $this->service->ativarTemporariamente($validated)
+            ]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        } catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo " . $dataError['code'] . ": Ocorreu um erro inesperado."]);
+        }
     }
 
 }

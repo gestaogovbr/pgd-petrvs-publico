@@ -199,13 +199,13 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     let result = null;
     if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    } else if (['data_inicio', 'data_entrega'].includes(controlName) && !this.util.isDataValid(control.value)) {//'data_distribuicao', 'data_estipulada_entrega',
+    } else if (['data_inicio', 'data_entrega'].includes(controlName)  && control.value?.length && !this.util.isDataValid(control.value)) {//'data_distribuicao', 'data_estipulada_entrega',
       result = "Inválido";
     } /*else if (controlName == 'data_estipulada_entrega' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
       result = "Menor que distribuição";
-    }*/ else if (controlName == 'data_inicio' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
+    }*/ else if (controlName == 'data_inicio'  && control.value?.length && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
       result = "Menor que distribuição";
-    } else if (controlName == 'data_entrega' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
+    } else if (controlName == 'data_entrega'  && control.value?.length && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
       result = "Menor que distribuição";
     } else if (controlName == 'data_entrega' && control.value.getTime() < this.formAtividade?.controls.data_inicio.value.getTime()) {
       result = "Menor que início";
@@ -284,13 +284,14 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     const dataInicio = this.util.maxDate(this.util.setTime(this.entity!.data_inicio, 0, 0, 0), planoTrabalho!.data_inicio);
     const dataFim = this.util.minDate(this.util.setTime(this.entity!.data_fim, 23, 59, 59), planoTrabalho!.data_fim);
     let id = this.dao!.generateUuid();
+
     let atividade = new Atividade({
       id: id,
       plano_trabalho: planoTrabalho,
       plano_trabalho_entrega: entrega,
       plano_trabalho_consolidacao: this.entity,
       demandante: this.auth.usuario,
-      usuario: this.auth.usuario,
+      usuario: planoTrabalho!.usuario,
       unidade: this.unidade,
       data_distribuicao: dataInicio,
       carga_horaria: planoTrabalho!.carga_horaria,
@@ -305,7 +306,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       plano_trabalho_entrega_id: entrega.id,
       plano_trabalho_consolidacao_id: this.entity!.id,
       demandante_id: this.auth.usuario!.id,
-      usuario_id: this.auth.usuario!.id,
+      usuario_id: planoTrabalho!.usuario!.id,
       unidade_id: this.unidade!.id,
       metadados: { // Simula os metadados enviados pelo servidor
         atrasado: false,

@@ -85,7 +85,7 @@
       </div>
     </div>
     <ul class="navbar-nav navbar-nav-icons flex-row align-items-center justify-content-end">
-      <li class="nav-item ms-3 ms-lg-2">
+      <li class="nav-item ms-3 ms-lg-2" *ngIf="this.auth.entidade?.habilitar_relatos_siape">
         <a class="nav-link" role="button" 
           (click)="go.navigate({route: ['relatos','lotacao']},{ root: true, modal: true })" 
           [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" title="Suporte Petrvs">
@@ -136,9 +136,16 @@
       </li>
       <ng-container *ngIf="!auth.logging && auth.logged">
         
-        <li class="nav-item dropdown ms-3 ms-lg-2">
+         <li class="nav-item dropdown ms-3 ms-lg-2">
           <a class="nav-link" id="navbarDropdownBranch" href="#" role="button" [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true" data-bs-auto-close="outside" aria-expanded="false">
-            {{ auth.unidade?.sigla }} ({{auth.usuario?.matricula}})
+            <span >
+              {{ auth.unidade?.sigla }}
+            </span>
+            (
+            <span [class.text-danger]="shouldHighlightMatricula(auth.usuario?.matricula)" [attr.data-bs-toggle]="shouldHighlightMatricula(auth.usuario?.matricula) ? 'tooltip' : null" [attr.data-bs-placement]="shouldHighlightMatricula(auth.usuario?.matricula) ? 'bottom' : null" [attr.title]="shouldHighlightMatricula(auth.usuario?.matricula) ? tooltipWarning : null">
+              {{auth.usuario?.matricula}}
+            </span>
+            )
             <i class="bi bi-chevron-down fs-6"></i>
           </a>
           <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 shadow border border-300" aria-labelledby="navbarDropdownBranch" data-bs-popper="static">
@@ -146,7 +153,12 @@
               <div class="card-body py-3 px-3 pb-0 overflow-auto scrollbar" style="height: 20rem">
                 <ul *ngIf="unidadesVinculadas?.length" class="nav d-flex flex-column">
                   <li *ngFor="let unidade of unidadesVinculadas" class="nav-item">
-                    <a [class.active]="unidade.id == auth.unidade?.id" class="nav-link " role="button" (click)="selecionaUnidade(unidade.id, getMatriculaPelaUnidadeComCpf(unidade.id, auth.usuario?.cpf || ''))"> {{unidade.sigla}} ({{ getMatriculaPelaUnidadeComCpf(unidade.id, auth.usuario?.cpf || '') }}) </a>
+                    <a [class.active]="unidade.id == auth.unidade?.id" class="nav-link " role="button" (click)="selecionaUnidade(unidade.id, getMatriculaPelaUnidadeComCpf(unidade.id, auth.usuario?.cpf || ''))">
+                      <span>{{unidade.sigla}}</span>
+                      (
+                      <span [class.text-danger]="shouldHighlightMatricula(getMatriculaPelaUnidadeComCpf(unidade.id, auth.usuario?.cpf || ''))" [attr.data-bs-toggle]="shouldHighlightMatricula(getMatriculaPelaUnidadeComCpf(unidade.id, auth.usuario?.cpf || '')) ? 'tooltip' : null" [attr.data-bs-placement]="shouldHighlightMatricula(getMatriculaPelaUnidadeComCpf(unidade.id, auth.usuario?.cpf || '')) ? 'bottom' : null" [attr.title]="shouldHighlightMatricula(getMatriculaPelaUnidadeComCpf(unidade.id, auth.usuario?.cpf || '')) ? tooltipWarning : null">{{ getMatriculaPelaUnidadeComCpf(unidade.id, auth.usuario?.cpf || '') }}</span>
+                      )
+                    </a>
                   </li>
                 </ul>
               </div>

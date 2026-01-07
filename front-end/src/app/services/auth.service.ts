@@ -180,6 +180,7 @@ export class AuthService {
       this.notificacao.updateNaoLidas();
       this.popularMatriculasUsuario();
       this.setUnidadesVinculadas();
+      if (this.app && this.usuario?.cpf) this.app.consultarBlacklistCpf(this.usuario.cpf);
     } else {
       this.usuario = undefined;
       this.kind = undefined;
@@ -527,7 +528,6 @@ export class AuthService {
     if (this.usuario?.cpf) {
       try {
         this.unidadesVinculadas = await this.buscarUnidadesVinculadas(this.usuario.cpf);
-        console.log('Unidades Vinculadas:', this.unidadesVinculadas);
       } catch (error) {
         console.error('Erro ao buscar matrículas do usuário:', error);
         this.unidadesVinculadas = [];

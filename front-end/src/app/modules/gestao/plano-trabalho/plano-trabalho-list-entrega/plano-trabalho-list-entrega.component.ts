@@ -88,7 +88,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     if (['forca_trabalho'].indexOf(controlName) >= 0 && control.value == 1) return result;
     if (['forca_trabalho'].indexOf(controlName) >= 0 && !control.value) result = "Obrigatório!";
     if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório!";
-    if (['forca_trabalho'].indexOf(controlName) >= 0 && (control.value < 1 || control.value > 100)) result = "Deve estar entre 1 e 100";
+    if (['forca_trabalho'].indexOf(controlName) >= 0 && (control.value < 1)) result = "Deve ser maior que 0 ";
     if (['plano_entrega_entrega_id'].indexOf(controlName) >= 0) {
       if (['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(this.form?.controls.origem.value) && !control.value) result = "Obrigatório!";
       if (!!this.entity?.entregas?.filter(e => !!e.plano_entrega_entrega_id && e.id != this.grid?.editing?.id).find(x => x.plano_entrega_entrega_id == control.value)) result = "Esta entrega está em duplicidade!"; /* (*2) */

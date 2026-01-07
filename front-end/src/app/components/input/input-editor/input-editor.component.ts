@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, HostBinding, Injector, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators } from "@angular/forms";
-import { EditorComponent } from '@tinymce/tinymce-angular';
+import { EditorComponent, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 import { IIndexable } from 'src/app/models/base.model';
 import { DialogService } from 'src/app/services/dialog.service';
 import { Editor, EditorEvent, RawEditorOptions } from 'tinymce';
@@ -9,6 +9,7 @@ import { TemplateDataset, TemplateService, VariableTemplate } from 'src/app/modu
 import { LookupItem, LookupService } from 'src/app/services/lookup.service';
 import { TreeNode } from 'primeng/api';
 import { TreeNodeSelectEvent } from 'primeng/tree';
+import { GlobalsService } from 'src/app/services/globals.service';
 
 @Component({
   selector: 'input-editor',
@@ -50,6 +51,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
       if(this.viewInit) this.updateEditor();
     }
   }
+  public gb: GlobalsService = this.injector.get(GlobalsService);
   get template(): string | undefined {
     return this._template;
   }
@@ -75,7 +77,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
     }
   };
   get value(): string {
-    return this.isEditingTemplate ? this._editingTemplate : this._value;
+    return this.isEditingTemplate ? (this._editingTemplate || '') : (this._value || '');
   }
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
@@ -92,25 +94,29 @@ export class InputEditorComponent extends InputBase implements OnInit {
 
   public toolbars: string[] = [
     'customEditTemplateButton',
-    'customDoneEditTemplateButton customCancelEditTemplateButton | customAddMacroTemplate customHelpTemplate | undo redo | bold italic underline strikethrough | fontselect fontsize formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks code',
-    'customAddMacroTemplate customHelpTemplate | undo redo | customLockTemplate customUnlockTemplate | bold italic underline strikethrough | fontselect fontsize formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks code',
-    'undo redo | bold italic underline strikethrough | fontselect fontsize formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks code'
+    'customDoneEditTemplateButton customCancelEditTemplateButton | customAddMacroTemplate customHelpTemplate | undo redo | bold italic underline strikethrough | fontselect fontsize formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media link anchor codesample templates | ltr rtl visualblocks code',
+    // restore lock/unlock buttons in dataset toolbar
+    'customAddMacroTemplate customHelpTemplate | undo redo | customLockTemplate customUnlockTemplate | bold italic underline strikethrough | fontselect fontsize formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media link anchor codesample templates | ltr rtl visualblocks code',
+    'undo redo | bold italic underline strikethrough | fontselect fontsize formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media link anchor codesample templates | ltr rtl visualblocks code'
   ];
 
   public editor?: Editor;
   public dialog: DialogService;
   public templateService: TemplateService;
   public lookup: LookupService;
-  public plugins: string = 'print preview paste importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount imagetools textpattern noneditable help charmap quickbars emoticons';
+  public plugins: string = 'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons';
   public editorConfig: RawEditorOptions = {
     imagetools_cors_hosts: ['picsum.photos'],
     toolbar_sticky: true,
     image_advtab: true,
+    base_url: this.gb.baseURL + '/tinymce',
+    suffix: '.min',
+    zindex: 500001,
     /*toolbar: [
       'customEditTemplateButton',
-      'customDoneEditTemplateButton customCancelEditTemplateButton | customAddMacroTemplate customHelpTemplate | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks',
-      'customAddMacroTemplate customHelpTemplate | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks',
-      'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks'
+      'customDoneEditTemplateButton customCancelEditTemplateButton | customAddMacroTemplate customHelpTemplate | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media templates link anchor codesample | ltr rtl visualblocks',
+      'customAddMacroTemplate customHelpTemplate | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media templates link anchor codesample | ltr rtl visualblocks',
+      'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media templates link anchor codesample | ltr rtl visualblocks'
     ],*/
     menubar: false,
     statusbar: false,
@@ -320,9 +326,9 @@ export class InputEditorComponent extends InputBase implements OnInit {
 
   public get toolbar(): string {
     if(this.isEditingTemplate) {
-      return this.toolbars[0];
-    } else if(this.hasTemplate && this.canEditTemplate) {
       return this.toolbars[1];
+    } else if(this.hasTemplate && this.canEditTemplate) {
+      return this.toolbars[0];
     } else if(this.hasDataset) {
       return this.toolbars[2];
     } else if(!this.hasTemplate && !this.disabled) {

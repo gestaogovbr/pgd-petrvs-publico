@@ -18,15 +18,12 @@
         <span *ngIf="row.data_fim"> {{dao!.getDateFormatted(row.data_fim)}}</span>
       </ng-template>
     </column>
-    <column [title]="'Meta'" [width]="100" [template]="columnMetaRealizado">
-      <ng-template let-row="row" #columnMetaRealizado>
-        <badge icon="bi bi-graph-up-arrow" [textValue]="planoEntregaService.getValorMeta(row.plano_entrega_entrega)" color="light" hint="Planejada"></badge><br>
-        <badge icon="bi bi-check-lg" [textValue]="planoEntregaService.getValorRealizado(row.plano_entrega_entrega)" color="light" hint="Realizada"></badge>
-      </ng-template>
-    </column>
-    <column [title]="'Progresso'" [width]="200" [template]="columnProgresso" [editTemplate]="columnProgresso" [columnEditTemplate]="selectable ? undefined : columnProgresso">
+    <column [title]="'Registro execução'" [width]="350" [template]="columnProgresso" [editTemplate]="columnProgresso" [columnEditTemplate]="selectable ? undefined : columnProgresso">
       <ng-template let-row="row" #columnProgresso>
-        <progress-bar [value]="row.progresso_realizado" [goal]="row.progresso_esperado" color="success"></progress-bar>
+        <div *ngIf="row.registro_execucao" class="mt-2 p-2 bg-light rounded border-start border-3 border-info">
+          <small class="text-muted d-block mb-1"><i class="bi bi-chat-left-text"></i> Registro de Execução:</small>
+          <div class="text-break small">{{row.registro_execucao}}</div>
+        </div>
       </ng-template>
     </column>
     <column type="options" [onEdit]="edit" [options]="options"></column>

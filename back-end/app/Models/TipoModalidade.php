@@ -14,6 +14,7 @@ class TipoModalidade extends ModelBase
 
   public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
     'nome', /* varchar(256); NOT NULL; */ // Nome da modalidade
+    'exige_pedagio', /* tinyint; NOT NULL; */ // Se exige a política de pedágio
     'plano_trabalho_calcula_horas', /* tinyint; NOT NULL; */ // Se o plano de trabalho calcula horas (considerando a carga horária e os dias)
     'atividade_tempo_despendido', /* tinyint; NOT NULL; */ // Se calcula tempo despendido na atividade
     'atividade_esforco', /* tinyint; NOT NULL; */ // Se utiliza esforço (tempo para execução) na atividade
@@ -31,5 +32,8 @@ class TipoModalidade extends ModelBase
   {
     return $this->hasMany(Entidade::class);
   }
-  // Belongs
+  public function modalidadeSiape()
+  {
+    return $this->hasOne(TipoModalidadeSiape::class);
+  }
 }

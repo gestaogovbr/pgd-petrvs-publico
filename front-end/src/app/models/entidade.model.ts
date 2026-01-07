@@ -48,6 +48,7 @@ export class Entidade extends Base implements HasNotificacao, HasRelatorio {
     public tipo_modalidade_id: string | null = null; //Tipo de modalidade utilizada ao criar plano de trabalho
     public email_responsavel_siape: string = ""; // Email do responsável pelas alterações no SIAPE
     public email_remetente_siape: string = ""; // Email do remetente a ser usado em relato de alterações no SIAPE
+    public habilitar_relatos_siape: boolean = false; // Indica se o relato de erros de lotação no SIAPE está habilitado
 
     public emails: EntidadeEmail[] = []; /* Emails */
 

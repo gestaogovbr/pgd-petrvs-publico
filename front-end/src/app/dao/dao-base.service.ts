@@ -307,7 +307,7 @@ export class DaoBaseService<T extends Base> {
               resolve(response.data ? this.getRow(response.data) : null);
             },
             (error) => {
-              resolve(null);
+              reject(error);
             }
           );
       } else {
@@ -444,6 +444,8 @@ export class DaoBaseService<T extends Base> {
         limit: context.options.limit || 0,
         with: context.options.join || [],
         deleted: context.options.deleted,
+        join: context.options.leftJoin,
+        fields: context.options.fields,
         page: context.page,
       }
     );

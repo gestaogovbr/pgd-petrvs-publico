@@ -16,6 +16,9 @@ import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 import { UnidadeService } from './services/unidade.service';
 import { Unidade } from './models/unidade.model';
+import { SiapeBlacklistServidorDaoService } from './dao/siape-blacklist-servidor-dao.service';
+import { SiapeBlacklistServidor } from './models/siape-blacklist-servidor.model';
+declare var bootstrap: any;
 
 export type Contexto = "EXECUCAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX" ;
 export type Schema = {
@@ -82,6 +85,7 @@ export class AppComponent {
   public lookup: LookupService;
   public entity: EntityService;
   public notificacao: NotificacaoService;
+  public siapeBlacklistDao: SiapeBlacklistServidorDaoService;
   public menuSchema: MenuSchema = {};
   public menuToolbar: any[] = [];
   public menuContexto: MenuContexto[] = [];
@@ -97,6 +101,9 @@ export class AppComponent {
   public unidadeService: UnidadeService;
   private _menu: any;
   private _menuDetectChanges: any;
+  public siapeBlacklistRows: SiapeBlacklistServidor[] = [];
+  public siapeBlacklistMatriculas: string[] = [];
+  public tooltipWarning: string = 'Matrícula em processo de inativação';
 
   constructor(public injector: Injector) {
     /* Instancia singleton da aplicação */
@@ -116,6 +123,7 @@ export class AppComponent {
     this.entity = injector.get<EntityService>(EntityService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     this.unidadeService = injector.get<UnidadeService>(UnidadeService);
+    this.siapeBlacklistDao = injector.get<SiapeBlacklistServidorDaoService>(SiapeBlacklistServidorDaoService);
     /* Inicializações */
     this.notificacao.heartbeat();
     this.auth.app = this;
@@ -128,6 +136,10 @@ export class AppComponent {
     this.lex.cdRef = this.cdRef;
     /* Definição do menu do sistema */
     this.setMenuVars();
+
+    if (this.auth?.usuario?.cpf) {
+      this.consultarBlacklistCpf(this.auth.usuario.cpf);
+    }
   }
 
   public setMenuVars() {
@@ -138,7 +150,6 @@ export class AppComponent {
       EIXOS_TEMATICOS: { name: this.lex.translate("Eixos Temáticos"), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: this.entity.getIcon('EixoTematico') },
       // ENTREGAS: { name: this.lex.translate("Modelos de Entregas"), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: this.entity.getIcon('Entrega') },
       FERIADOS: { name: this.lex.translate("Feriados"), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: this.entity.getIcon('Feriado') },
-      MATERIAIS_SERVICOS: { name: this.lex.translate("Materiais e Serviços"), permition: '', route: ['cadastros', 'material-servico'], icon: this.entity.getIcon('MaterialServico') },
       TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'templates'], icon: this.entity.getIcon('Template'), params: { modo: "listagem" } },
       TIPOS_TAREFAS: { name: this.lex.translate("Tipos de Tarefas"), permition: 'MOD_TIPO_TRF', route: ['cadastros', 'tipo-tarefa'], icon: this.entity.getIcon('TipoTarefa') },
       TIPOS_ATIVIDADES: { name: this.lex.translate("Tipos de Atividades"), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: this.entity.getIcon('TipoAtividade') },
@@ -161,7 +172,6 @@ export class AppComponent {
       PROGRAMAS_GESTAO: { name: this.lex.translate("Programas de Gestão"), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: this.entity.getIcon('Programa') },
       HABILITACOES_PROGRAMA: { name: this.lex.translate("Habilitações"), permition: 'MOD_PART', route: ['gestao', 'programa', 'participantes'], icon: this.entity.getIcon('Programa') },
       PORTIFOLIOS: { name: this.lex.translate("Portifólios"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
-      PROJETOS: { name: this.lex.translate("Projetos"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
       PRODUTOS: { name: this.lex.translate("Produtos e Serviços"), permition: 'MOD_PROD', route: ['gestao', 'produto'], icon: this.entity.getIcon('Projeto') }, // TODO : retornar esse menu ao subir produtos
       SOLUCOES: { name: this.lex.translate("Soluções"), permition: 'MOD_SOLUCOES', route: ['gestao', 'solucao'], icon: this.entity.getIcon('Solucao') }, // TODO : retornar esse menu ao subir produtos
       /* Execucao */
@@ -192,6 +202,7 @@ export class AppComponent {
       ENVIO_REINICIAR: { name: "Resetar Envios", permition: '', route: ['envios', 'reiniciar'], icon: 'bi-arrow-clockwise' },
       /* SIAPE */
       BLACKLIST_SERVIDOR: { name: "CPFs indisponíveis", permition: '', route: ['siape', 'blacklist-servidor'], icon: 'bi bi-person-x' },
+      BLACKLIST_UNIDADE: { name: "Unidades indisponíveis", permition: '', route: ['siape', 'blacklist-unidade'], icon: 'bi bi-building-dash' },
             /* RELATORIOS */
       RELATORIO_PLANO_TRABALHO: {
         name: this.lex.translate("Planos de Trabalho"),
@@ -217,6 +228,24 @@ export class AppComponent {
         icon: this.entity.getIcon('Unidade'),
         route: ['relatorios', 'unidades'],
         //onClick: ()=> this.emDesenvolvimento()
+      },
+      INDICADORES_ENTREGAS: {
+        name: "Entregas",
+        //permition: 'MOD_IND_ENTREGAS',
+        icon: this.entity.getIcon('PlanoEntrega'),
+        route: ['relatorios', 'indicadores', 'entregas'],
+      },
+      INDICADORES_EQUIPES: {
+        name: "Equipes",
+        // permition: 'MOD_IND_EQUIPES',
+        icon: this.entity.getIcon('Usuario'),
+        route: ['relatorios', 'indicadores', 'equipes'],
+      },
+      INDICADORES_GESTAO: {
+        name: "Gestão do PGD",
+        // permition: 'MOD_IND_GESTAO',
+        icon: this.entity.getIcon('Unidade'),
+        route: ['relatorios', 'indicadores', 'gestao'],
       },
       /* Outros */
       PAINEL: { name: "Painel", permition: '', route: ['panel'], icon: "" },
@@ -293,6 +322,14 @@ export class AppComponent {
         this.menuSchema.RELATORIO_USUARIOS,
         this.menuSchema.RELATORIO_UNIDADES
       ].sort(this.orderMenu)
+    }, {
+      name: this.lex.translate("Indicadores"),
+      id: "navbarDropdownIndicadores",
+      menu: [
+        this.menuSchema.INDICADORES_ENTREGAS,
+        this.menuSchema.INDICADORES_EQUIPES,
+        this.menuSchema.INDICADORES_GESTAO
+      ].sort(this.orderMenu)
     }];
 
     this.moduloExecucao = [
@@ -307,6 +344,14 @@ export class AppComponent {
         id: "navbarDropdownRelatorios",
         menu: [
           this.menuSchema.RELATORIO_USUARIOS
+        ].sort(this.orderMenu)
+      }, {
+        name: this.lex.translate("Indicadores"),
+        id: "navbarDropdownIndicadores",
+        menu: [
+          this.menuSchema.INDICADORES_ENTREGAS,
+          this.menuSchema.INDICADORES_EQUIPES,
+          this.menuSchema.INDICADORES_GESTAO
         ].sort(this.orderMenu)
       }
     ];
@@ -354,6 +399,14 @@ export class AppComponent {
         this.menuSchema.RELATORIO_USUARIOS,
         this.menuSchema.RELATORIO_UNIDADES
       ].sort(this.orderMenu)
+    }, {
+      name: this.lex.translate("Indicadores"),
+      id: "navbarDropdownIndicadores",
+      menu: [
+        this.menuSchema.INDICADORES_ENTREGAS,
+        this.menuSchema.INDICADORES_EQUIPES,
+        this.menuSchema.INDICADORES_GESTAO
+      ].sort(this.orderMenu)
     }];
 
     this.moduloDev = [{
@@ -387,7 +440,8 @@ export class AppComponent {
       menu: [
         this.menuSchema.DEV_CPF_CONSULTA_SIAPE,
         this.menuSchema.DEV_UNIDADE_CONSULTA_SIAPE,
-        this.menuSchema.BLACKLIST_SERVIDOR
+        this.menuSchema.BLACKLIST_SERVIDOR,
+        this.menuSchema.BLACKLIST_UNIDADE
       ]
     }, {
       name: this.lex.translate("Envio API"),
@@ -400,15 +454,12 @@ export class AppComponent {
       ]
     }];
 
-    
-
     this.menuContexto = [
       { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.moduloGestao },
       { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.moduloExecucao },
       { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: this.lex.translate("Administrador"), menu: this.moduloAdministrador },
       { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.moduloDev },
     ]
-
   }
 
   public orderMenu(a: any, b: any) {
@@ -451,7 +502,6 @@ export class AppComponent {
 
   public menuItemClass(baseClass: string, item: any) {
     let routeUrl = this.go.getRouteUrl().replace(/^\//, "");
-    if (item.menu?.find((x: any) => !x)) console.log(item);
     return baseClass + (item.route?.join("/") == routeUrl || item.menu?.find((x: any) => x?.route?.join("/") == routeUrl) ? " fw-bold" : "");
   }
 
@@ -509,6 +559,50 @@ export class AppComponent {
   public getMatriculaPelaUnidadeComCpf(idUnidade: string, cpf: string): string {
     let matricula = this.auth.usuario?.matriculas?.find(x => x.unidades?.find(y => y.id == idUnidade) && x.cpf == cpf);
     return matricula?.matricula || 'N/A';
+  }
+
+  public async consultarBlacklistCpf(cpf: string): Promise<void> {
+    try {
+      const response = await this.siapeBlacklistDao.queryByCpf(cpf).toPromise();
+      const rows = response?.rows || [];
+      this.siapeBlacklistRows = rows.map((r: any) => new SiapeBlacklistServidor(r));
+      this.siapeBlacklistMatriculas = this.siapeBlacklistRows
+        .map(r => r.matricula)
+        .filter((m: string | undefined) => !!m && !!(m as string).length) as string[];
+      this.cdRef.detectChanges();
+      this.initTooltips();
+    } catch (e) {
+      this.siapeBlacklistRows = [];
+      this.siapeBlacklistMatriculas = [];
+    }
+  }
+
+  public initTooltips(): void {
+    const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]')) as HTMLElement[];
+    tooltipTriggerList.forEach((el: any) => {
+      const t = new bootstrap.Tooltip(el, { trigger: 'manual' });
+      el.addEventListener('mouseenter', () => t.show());
+      el.addEventListener('mouseleave', () => t.hide());
+      el.addEventListener('click', () => t.hide());
+    });
+  }
+
+  public hasBlacklistResponse(): boolean {
+    return this.siapeBlacklistRows.length > 0;
+  }
+
+  public hasSpecificMatriculas(): boolean {
+    return this.siapeBlacklistMatriculas.length > 0;
+  }
+
+  public shouldHighlightMatricula(matricula: string | null | undefined): boolean {
+    if (!this.hasBlacklistResponse()) return false;
+    if (this.hasSpecificMatriculas()) return !!matricula && this.siapeBlacklistMatriculas.includes(matricula);
+    return true;
+  }
+
+  public shouldHighlightSigla(): boolean {
+    return this.hasBlacklistResponse() && !this.hasSpecificMatriculas();
   }
 
   public async onToolbarButtonClick(btn: ToolbarButton) {

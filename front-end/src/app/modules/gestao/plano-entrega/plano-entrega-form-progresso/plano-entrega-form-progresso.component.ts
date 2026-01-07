@@ -22,6 +22,7 @@ export class PlanoEntregaFormProgressoComponent extends PageFormBase<PlanoEntreg
   public planoEntregaEntregaDao: PlanoEntregaEntregaDaoService;
   public planoEntregaEntregaId?: string;
   public planoEntregaEntrega?: PlanoEntregaEntrega | undefined;
+  public checklist: any[] = [];
   
   constructor(public injector: Injector) {   
     super(injector, PlanoEntregaEntregaProgresso, PlanoEntregaEntregaProgressoDaoService);
@@ -37,6 +38,7 @@ export class PlanoEntregaFormProgressoComponent extends PageFormBase<PlanoEntreg
       realizado: { default: null },
       progresso_esperado: { default: 100 },
       progresso_realizado: { default: null }, 
+      registro_execucao: { default: null },
       usuario_id: {default: null},
       plano_entrega_entrega_id: {default: null},     
     }, this.cdRef, this.validate);
@@ -57,7 +59,11 @@ export class PlanoEntregaFormProgressoComponent extends PageFormBase<PlanoEntreg
       result = "Inválido";
     } else if (['data_fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
-    } 
+    } else if (['registro_execucao'].indexOf(controlName) >= 0 && !(control.value?.length>0)) {
+      result = "Obrigatório";
+    } else if (['progresso_realizado'].indexOf(controlName) >= 0 && !(control.value > 0 || control.value?.length>0)) {
+      result = "Obrigatório";
+    }
 
     return result
   }
@@ -68,6 +74,9 @@ export class PlanoEntregaFormProgressoComponent extends PageFormBase<PlanoEntreg
     form.patchValue(this.util.fillForm(formValue, entityWithout));
     form.controls.meta.setValue(this.planoEntregaService.getValor(entity.meta));
     form.controls.realizado.setValue(this.planoEntregaService.getValor(entity.realizado));
+    if (entity.registro_execucao !== undefined) {
+      form.controls.registro_execucao.setValue(entity.registro_execucao);
+    }
   }
 
   public async initializeData(form: FormGroup) {
@@ -84,20 +93,33 @@ export class PlanoEntregaFormProgressoComponent extends PageFormBase<PlanoEntreg
     this.entity!.progresso_realizado = this.planoEntregaEntrega?.progresso_realizado!;
     this.entity!.data_inicio = this.planoEntregaEntrega?.data_inicio!;
     this.entity!.data_fim = this.planoEntregaEntrega?.data_fim!;
+    // Deep copy do checklist para edição local
+    this.checklist = Array.isArray((this.planoEntregaEntrega as any)?.checklist)
+      ? JSON.parse(JSON.stringify((this.planoEntregaEntrega as any).checklist))
+      : [];
     await this.loadData(this.entity!, form);
   }
 
-  public saveData(form: IIndexable): Promise<PlanoEntregaEntregaProgresso> {
-    return new Promise<PlanoEntregaEntregaProgresso>((resolve, reject) => {
-      let progresso: PlanoEntregaEntregaProgresso = this.util.fill(new PlanoEntregaEntregaProgresso(), this.entity!);
-      let {meta, realizado, ...valueWithout} = this.form!.value;
+  public async saveData(form: IIndexable): Promise<PlanoEntregaEntregaProgresso> {
+    let progresso: PlanoEntregaEntregaProgresso = this.util.fill(new PlanoEntregaEntregaProgresso(), this.entity!);
+    let {meta, realizado, ...valueWithout} = this.form!.value;
 
-      progresso = this.util.fillForm(progresso, valueWithout);
-      progresso.meta = this.planoEntregaService.getEntregaValor(this.entity!.plano_entrega_entrega?.entrega!, meta);
-      progresso.realizado = this.planoEntregaService.getEntregaValor(this.entity!.plano_entrega_entrega?.entrega!, realizado);
-      
-      resolve(progresso);
-    });
+    progresso = this.util.fillForm(progresso, valueWithout);
+    progresso.meta = this.planoEntregaService.getEntregaValor(this.entity!.plano_entrega_entrega?.entrega!, meta);
+    progresso.realizado = this.planoEntregaService.getEntregaValor(this.entity!.plano_entrega_entrega?.entrega!, realizado);
+    progresso.registro_execucao = this.form!.controls.registro_execucao.value || null;
+
+    // Persiste o checklist atualizado na entrega (quando houver)
+    if (this.planoEntregaEntrega?.id) {
+      try {
+        await this.planoEntregaEntregaDao.update(this.planoEntregaEntrega.id, { checklist: this.checklist } as any);
+      } catch (e) {
+        // Não bloqueia o salvamento do progresso, apenas registra erro no console
+        console.error('Falha ao salvar checklist da entrega:', e);
+      }
+    }
+
+    return progresso;
   }
 
   public titleEdit = (entity: PlanoEntregaEntregaProgresso): string => {

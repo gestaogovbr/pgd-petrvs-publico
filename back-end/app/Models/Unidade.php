@@ -28,7 +28,7 @@ class Unidade extends ModelBase
 
     protected $table = 'unidades';
 
-    protected $with = ['cidade','gestor', 'gestoresSubstitutos'];
+    protected $with = ['gestor', 'gestoresSubstitutos'];
 
     protected $keyType = 'string';
 
@@ -47,6 +47,7 @@ class Unidade extends ModelBase
         'data_inativacao', /* datetime; */ // Se a unidade está ou não inativa
         'data_inicio_inativacao', /* datetime; */ // Data de início do processo de inativação da unidade
         'instituidora', /* tinyint; NOT NULL; */ // Se a unidade é instituidora (Programas)
+        'executora', /* boolean; NOT NULL; DEFAULT: true; */ // Se a unidade pode cadastrar planos
         'informal', /* tinyint; NOT NULL; */ // Se a unidade é informal (Time volante, por ex.)
         'checklist', /* json; */ // Nome dos checklist
         'unidade_pai_id', /* char(36); */
@@ -54,6 +55,8 @@ class Unidade extends ModelBase
         'cidade_id', /* char(36); */
         //'deleted_at', /* timestamp; */
         'data_modificacao',
+        'data_ativacao_temporaria', /* datetime; */
+        'justificativa_ativacao_temporaria', /* text; */
     ];
 
     public $fillable_relations = [];
@@ -78,6 +81,9 @@ class Unidade extends ModelBase
         'checklist' => AsJson::class,
         'expediente' => AsJson::class,
         'deployed_at' => 'datetime',
+        'data_inativacao' => 'datetime',
+        'data_inicio_inativacao' => 'datetime',
+        'data_ativacao_temporaria' => 'datetime',
     ];
 
     // Has

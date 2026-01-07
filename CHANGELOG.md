@@ -1,3 +1,122 @@
+## 2.9.7 02/01/2026
+### Adicionado
+- Adição de Aba de Situação na consulta de Agentes Públicos, com dados de matrículas, regramentos, modalidade e participação no PGD;
+### Modificado
+- Usuários passam a poder acessar indicadores de outros órgãos que não o da sua lotação;
+- Adicionadas descrições para cada Indicador;
+- Modificado a regra que bloqueia a criação de novos planos de trabalhos
+### Corrigido
+- Indicadores de entrega não contabilizam mais PEs cancelados.
+- Registros via siape com erro de modalidade impedindo importação correta 
+- Correção nos prazos da lista de pendências;
+- Corrigido link de direcionamento para o Plano de Entrega na lista de pendências.
+## 2.9.6 26/12/2025
+### Corrigido
+- Corrigido erro de "timeout" que ocorria ao tentar salvar atribuições de usuários, garantindo que as alterações sejam gravadas corretamente mesmo em operações mais demoradas.
+
+
+## 2.9.5 19/12/2025
+### Adicionado
+- Visualização de resumo ao sincronizar dados do SIAPE, mostrando detalhes do que foi processado.
+
+### Modificado
+- `Consulta Unidade SIAPE` agora permite no máximo a inserção de 9 algarismos.
+- Alterado nomenclatura do histórico de execução para registro de execução
+- Habilitada edição de meta realizada na execução de plano de entrega
+
+### Corrigido
+- Solução para conflitos de e-mail que impediam a importação ou reativação de usuários do SIAPE.
+- Ajuste na atualização automática da modalidade PGD dos usuários, garantindo a recuperação correta a partir do último plano de trabalho.
+- Corrigido problema que dificultava o uso de datas e horários no navegador Firefox.
+- Ajustes no tratamento de datas ao realizar a consolidação do Plano de Trabalho.
+## 2.9.4 09/12/2025
+### Modificado
+- Regras de acesso mais consistentes entre perfis.
+- Mensagens mais claras quando uma ação não é permitida.
+- Comentários já cadastrados voltam a ser exibidos na listagem de plano de entrega
+### Corrigido
+- Ajustes nas permissões das telas de Configurações (Unidade e Usuário).
+- Correções de visibilidade e bloqueio de ações conforme o perfil.
+- Corrigida edição de entrega em Plano de Entrega que evitava o preenchimento automático da data em edição de entrega
+- Corrigido erro que impedia chefe de unidade cancelar conclusão de plano de entrega
+- Erro de notificação ao Microsoft Teams quando ocorre um erro interno no sistema
+## 2.9.3 09/12/2025
+### Adicionado
+- Avisos de erro interno do sistema enviados ao Microsoft Teams, com informações básicas para acompanhamento rápido.
+### Modificado
+- Melhorias de desempenho em carregamento e operações frequentes, tornando o uso mais ágil e fluido.
+### Corrigido
+- Ajustes no fluxo de “forçar SIAPE”: mensagens mais claras, validações adicionais e resposta mais estável em casos de erro.
+
+## 2.9.2 05/12/2025 (Hotfix)
+### Adicionado
+- Suporte ao Elastic APM na infraestrutura Docker, permitindo monitoramento de performance do PHP com variáveis configuráveis via `.env`.
+### Modificado
+- Ajustes na integração e configuração do APM para permitir habilitar/desabilitar por ambiente e manter desativado por padrão quando não definido.
+## 2.9.1 05/12/2025 (Hotfix)
+### Modificado
+- Registro de consultas lentas diário: o arquivo de log de consultas lentas passa a ser gerado diariamente no formato `dd-mm-YYYY-mysql-slow.log`, facilitando auditoria e organização dos registros.
+- Criação automática do log diário: adicionamos um agendamento para garantir a criação do arquivo de log do dia com as permissões necessárias antes do início das operações.
+### Corrigido
+- Estabilidade no monitoramento de desempenho: correções para evitar falhas na leitura e notificação das consultas lentas, garantindo avisos consistentes.
+- Consistência ao notificar consultas lentas: ajustes na leitura do último registro válido do log para evitar mensagens incorretas.
+### Segurança
+- Melhoria no controle de limpeza de logs: adicionado processo diário para remoção de logs antigos (mais de 10 dias), reduzindo exposição e uso de armazenamento.
+
+## 2.9.0 03/12/2025
+### Modificado
+- Melhorias significativas em desempenho das queries e adição de cache para otimização de performance
+### Adicionado
+- Monitoramento do desempenho das queries
+- Notificação de performance das queries
+## 2.8.3 01/12/2025
+### Corrigido
+- Corrigidos e simplificados os registros de pendências do chefe
+- Corrigida a permissão para alteração de atribuições nos Perfis Master e Negocial
+- Corrigido o acesso do usuário não participante do PGD à tela de Plano de Trabalho
+- Problema em cidades com fuso horário UTC-2
+- Corrigida listagem infinita em modal de vinculação de entregas em cadastro de entrega
+### Modificado
+- Regras para quem possui mais de uma matrícula: ao trocar de unidade, o sistema passa a escolher a matrícula correta automaticamente, reduzindo erros e evitando duplicidade.
+- Exibição da matrícula ao trocar de unidade ficou mais clara e traz aviso quando a matrícula estiver em processo de inativação.
+- Ajustes nas regras de edição de atribuições para usuários com múltiplas matrículas, deixando o uso mais previsível e consistente com os perfis de acesso.
+- PEs e PTs cancelados não são mais enviados para a API do PGD.
+## 2.8.2 24/11/2025
+### Corrigido
+- Corrigido o problema de exibição da modalidade presencial no plano de trabalho
+- Corrigido o problema de exibição da tela de planos de trabalho quando usuário não é participante do PGD
+## 2.8.1 18/11/2025
+### Corrigido
+- Corrigido o problema de exibição do regramento na lista de usuários
+## 2.8.0 17/11/2025
+### Adicionado
+- Módulo de pendências do chefe
+- Módulo de pendências do participante
+- Informações na lista de usuários
+- Indicadores de Equipes
+- Indicadores de Entregas
+- Indicadores de Gestão
+- Configuração para exibir a opção de Problemas de Lotação
+- Adicionado campo executora para indicar unidades que poder ter Plano de Entrega cadastrado
+### Modificado
+- O regramento agora é vinculado pela hierarquia de unidades.
+- Melhorias no tratamento de unidades que não estão mais ativas (extintas): o sistema passa a marcá-las como inativas sem apagar seus dados, preservando histórico e vínculos.
+### Corrigido
+- Exportação de Status do PT no Relatório de PT
+- Filtro de Situação da conclusão no Relatório de PE
+- Exportação de Modalidade SIAPE no Relatório de Agentes Públicos
+### Removido
+- Removido limite máximo de 100% CHD por entrega em Plano de Trabalho
+- Tela de seleção de participante no regramento
+## 2.7.8 10/11/2025
+### Corrigido
+- Pesquisa por CPF no SIAPE: agora, quando existem vários usuários com o mesmo CPF e matrículas diferentes, todos aparecem na lista de resultados.
+- Exportação por CPF no SIAPE: o arquivo gerado foi corrigido e passa a abrir normalmente, mesmo quando há múltiplos registros.
+- Aviso sobre dados do SIAPE na tela de resultados: texto menor e melhor posicionado para facilitar a leitura.
+### Modificado
+- Integração com o SIAPE: aprimoramos a atualização das matrículas ausentes dos usuários, com mais validações e registros, tornando o processo mais confiável.
+- Endereços de e‑mail temporários: quando a matrícula não estiver preenchida, o sistema cria automaticamente um e‑mail temporário único para evitar duplicidades.
+- Tela de resultados da consulta de CPF no SIAPE: o carregamento foi aprimorado para exibir, de forma consistente, todos os usuários retornados pela consulta.
 ## 2.7.7 29/10/2025
 ### Corrigido
 - Correção do bloqueio de planos de trabalho

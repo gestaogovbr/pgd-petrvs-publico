@@ -192,7 +192,7 @@
                 ></input-select>
             </ng-template>
             <ng-template let-row="row" #columnModalidadeSouGov>
-                <span>{{row.participaPGD === 'sim' ? row.modalidadeSouGov || '-' : '-'}}</span>
+                <span>{{row.modalidadeSouGov}}</span>
             </ng-template>
         </column>
 
@@ -210,7 +210,7 @@
                 ></input-select>
             </ng-template>
             <ng-template let-row="row" #columnModalidade>
-                <span>{{row.tipoModalidadeNome || '-'}}</span>
+                <span>{{row.tipoModalidadeNome}}</span>
             </ng-template>
         </column>
 

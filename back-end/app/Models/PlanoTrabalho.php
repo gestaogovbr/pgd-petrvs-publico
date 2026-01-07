@@ -44,8 +44,8 @@ class PlanoTrabalho extends ModelBase
   public const STATUSES = [
     'INCLUIDO' => 'Incluído',
     'AGUARDANDO_ASSINATURA' => 'Aguardando Assinatura',
-    'ATIVO' => 'Ativo',
-    'CONCLUIDO' => 'Concluído',
+    'ATIVO' => 'Aprovado',
+    'CONCLUIDO' => 'Executado',
     'AVALIADO' => 'Avaliado',
     'SUSPENSO' => 'Suspenso',
     'CANCELADO' => 'Cancelado'

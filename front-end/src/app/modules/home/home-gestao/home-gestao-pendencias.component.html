@@ -1,0 +1,112 @@
+
+<div class="mt-4">
+  <h5 class="mb-3">Pendências da unidade</h5>
+
+  <div class="row">
+    <div class="col-12 col-md-6 mb-4">
+      <div class="card h-100">
+        <div class="card-header bg-light">
+          <span class=" d-flex justify-content-between align-items-center">
+            Avaliações de planos de trabalho pendentes
+            <div class="badge bg-warning text-dark">{{registrosExecucao.length}}</div>
+          </span>
+        </div>
+        <div class="card-body with-scroll">
+          <div *ngIf="!registrosExecucao.length" class="text-muted">Nenhum registro encontrado.</div>
+          <ul class="list-group" *ngIf="registrosExecucao.length">
+            <li class="list-group-item" *ngFor="let r of registrosExecucao; trackBy: trackById">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <div><strong>Plano Trabalho: </strong> {{r.plano_trabalho?.numero}}</div>
+                  <div><strong>Status: </strong><badge [color]="lookup.getColor(lookup.CONSOLIDACAO_STATUS, r.status)" [icon]="lookup.getIcon(lookup.CONSOLIDACAO_STATUS, r.status)" [label]="lookup.getValue(lookup.CONSOLIDACAO_STATUS, r.status)"></badge></div>
+                  <div><strong>Período :</strong> {{formatDate(r.data_inicio)}} - {{formatDate(r.data_fim)}}</div>
+                  <div><strong>Usuário: </strong> {{r.plano_trabalho?.usuario?.nome}}</div>
+                </div>
+                <button class="btn btn-primary btn-sm align-self-start" (click)="abrirConsolidacoes(r.plano_trabalho?.usuario_id, r.plano_trabalho?.unidade_id, r.plano_trabalho?.numero)">Avaliar</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 mb-4">
+      <div class="card h-100">
+        <div class="card-header bg-light">
+          <span class=" d-flex justify-content-between align-items-center">
+            Planos de Trabalho que precisam da sua assinatura
+            <div class="badge bg-warning text-dark">{{planosTrabalhos.length}}</div>
+          </span>
+        </div>
+        <div class="card-body with-scroll">
+          <div *ngIf="!planosTrabalhos.length" class="text-muted">Nenhum plano encontrado.</div>
+          <ul class="list-group" *ngIf="planosTrabalhos.length">
+            <li class="list-group-item" *ngFor="let p of planosTrabalhos; trackBy: trackById">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <div><strong>Número: </strong> {{p.numero}}</div>
+                  <div><strong>Status: </strong><badge [color]="lookup.getColor(lookup.PLANO_TRABALHO_STATUS, p.status)" [icon]="lookup.getIcon(lookup.PLANO_TRABALHO_STATUS, p.status)" [label]="lookup.getValue(lookup.PLANO_TRABALHO_STATUS, p.status)"></badge><br>
+</div>
+                  <div><strong>Período: </strong> {{formatDate(p.data_inicio)}} - {{formatDate(p.data_fim)}}</div>
+                  <div><strong>Usuário: </strong> {{p.usuario?.nome}}</div>
+                </div>
+                <button class="btn btn-primary btn-sm align-self-start" (click)="abrirPlanosTrabalho(p.numero)">Assinar</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 mb-4">
+      <div class="card">
+        <div class="card-header bg-light">
+          <span class=" d-flex justify-content-between align-items-center">
+            Registro de execução de plano de entregas pendentes
+            <div class="badge bg-warning text-dark">{{planosEntregaEntregas.length}}</div>
+          </span>
+        </div>
+        <div class="card-body with-scroll">
+          <div *ngIf="!planosEntregaEntregas.length" class="text-muted">Nenhuma entrega encontrada.</div>
+          <ul class="list-group" *ngIf="planosEntregaEntregas.length">
+            <li class="list-group-item" *ngFor="let e of planosEntregaEntregas; trackBy: trackById">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <div><strong>Plano Entrega:</strong> {{e.plano_entrega?.numero}} - {{e.plano_entrega?.nome}}</div>
+                </div>
+                <button class="btn btn-primary btn-sm align-self-start" (click)="abrirPlanosEntregas(e.plano_entrega?.nome)">Registrar Execução</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 mb-4">
+      <div class="card">
+        <div class="card-header bg-light">
+          <span class=" d-flex justify-content-between align-items-center">
+            Avaliações de planos de entregas pendentes
+            <div class="badge bg-warning text-dark">{{planosEntregas.length}}</div>
+          </span>
+        </div>
+        <div class="card-body with-scroll">
+          <div *ngIf="!planosEntregas.length" class="text-muted">Nenhum plano de entrega encontrado.</div>
+          <ul class="list-group" *ngIf="planosEntregas.length">
+            <li class="list-group-item" *ngFor="let p of planosEntregas; trackBy: trackById">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <div><strong>Número:</strong> {{p.numero}}</div>
+                  <div><strong>Nome:</strong> {{p.nome}}</div>
+                  <div><strong>Período:</strong> {{formatDate(p.data_inicio)}} - {{formatDate(p.data_fim)}}</div>
+                  <div><strong>Status:</strong> <badge [color]="lookup.getColor(lookup.PLANO_ENTREGA_STATUS, p.status)" [icon]="lookup.getIcon(lookup.PLANO_ENTREGA_STATUS, p.status)" [label]="lookup.getValue(lookup.PLANO_ENTREGA_STATUS, p.status)"></badge></div>
+                </div>
+                <button class="btn btn-primary btn-sm align-self-start" (click)="abrirAvaliacaoPlanoEntrega(p)">Avaliar</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

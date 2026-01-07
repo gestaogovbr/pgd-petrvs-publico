@@ -8,6 +8,9 @@ use SimpleXMLElement;
 use App\Models\Perfil;
 use App\Models\Unidade;
 use App\Models\Usuario;
+use App\Models\PlanoTrabalho;
+use App\Models\PlanoEntrega;
+use App\Models\PlanoEntregaEntrega;
 use App\Models\Programa;
 use App\Services\RawWhere;
 use App\Services\ServiceBase;
@@ -15,6 +18,7 @@ use App\Models\UnidadeIntegrante;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Log;
 use App\Exceptions\ValidateException;
+use App\Models\PlanoTrabalhoConsolidacao;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use App\Services\Siape\DadosExternosSiape;
@@ -28,8 +32,12 @@ use App\Services\Siape\Consulta\Resources\UnidadeResource;
 use App\Services\Siape\Consulta\Resources\UnidadesResource;
 use App\Services\Siape\Consulta\SiapeUnidadeService;
 use App\Services\Siape\Consulta\SiapeUnidadesService;
+use App\Enums\StatusEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use App\Enums\UsuarioSituacaoSiape;
+use App\Services\UnidadeService;
+use App\Services\IntegracaoService;
 
 class UsuarioService extends ServiceBase
 {
@@ -39,11 +47,14 @@ class UsuarioService extends ServiceBase
   const LOGIN_GOOGLE = "GOOGLE";
   const LOGIN_MICROSOFT = "AZURE";
   const LOGIN_FIREBASE = "FIREBASE";
+  
+  protected $integracaoService;
 
   public function __construct(
   ) {
     parent::__construct();
     $this->nivelAcessoService = new NivelAcessoService();
+    $this->integracaoService = new IntegracaoService();
   }
 
   public function atualizarFotoPerfil($tipo, &$usuario, $url)
@@ -157,6 +168,7 @@ class UsuarioService extends ServiceBase
    * @param string $usuario_id
    * @param string $pgd_id
    * @return bool
+   * @deprecated
    */
   public function isParticipanteHabilitado(string|null $usuarioId = null, string $programaId): bool
   {
@@ -185,8 +197,14 @@ class UsuarioService extends ServiceBase
     if ($this->hasBuffer("isIntegrante", $key)) {
       $result = $this->getBuffer("isIntegrante", $key);
     } else {
-      $unidadesIntegrantesIds = UnidadeIntegrante::select('id')->where("unidade_id", $unidadeId)->where("usuario_id", isset($usuarioId) ? $usuarioId : parent::loggedUser()->id)->get()->map(fn($x) => $x->id);
-      $result = $this->setBuffer("isIntegrante", $key, count($unidadesIntegrantesIds) > 0 && UnidadeIntegranteAtribuicao::where("atribuicao", $atribuicao)->whereIn("unidade_integrante_id", $unidadesIntegrantesIds)->exists());
+      $uid = $usuarioId ?? parent::loggedUser()->id;
+      $exists = UnidadeIntegranteAtribuicao::where('atribuicao', $atribuicao)
+        ->whereHas('vinculo', function ($q) use ($unidadeId, $uid) {
+          $q->where('unidade_id', $unidadeId)
+            ->where('usuario_id', $uid);
+        })
+        ->exists();
+      $result = $this->setBuffer("isIntegrante", $key, $exists);
     }
     return $result;
   }
@@ -326,6 +344,21 @@ class UsuarioService extends ServiceBase
     return $data;
   }
 
+  public function proxyRows(&$rows)
+  {
+    foreach ($rows as $row) {
+      $row["regramentos"] = $this->proxyRegramentos($row);
+    }
+    return $rows;
+  }
+
+  public function proxyRegramentos($row){
+        $unidadeService = new UnidadeService();
+        return $row["lotacao"]
+            ? array_map(fn($p) => $p["nome"], $unidadeService->regramentosAscendentes($row["lotacao"]->unidade_id))
+            : [];
+    }
+
   /**
    * Este método impede que um usuário seja inserido com e-mail/CPF já existentes no Banco de Dados, bem como
    * impede também a inserção de um usuário com o perfil de Desenvolvedor. Usuários com esse perfil só podem ser inseridos
@@ -336,8 +369,13 @@ class UsuarioService extends ServiceBase
     if($action == ServiceBase::ACTION_EDIT){
       if(!empty($data['matricula']) && strlen($data['matricula']) > 50)
         throw new ValidateException("O campo de matrícula deve ter no máximo 50 caracteres", 422);
-    if (empty($data["integrantes"][0]))
+      if (empty($data["integrantes"][0]))
         throw new ValidateException("Selecione uma unidade!", 422);
+      
+      if (!isset($data['tipo_modalidade_id'])) {
+        $buscaTipoModalidade = Usuario::where("id", "=", $data["id"])->value('tipo_modalidade_id');
+        $data['tipo_modalidade_id'] = $buscaTipoModalidade;
+      }
     }
     if ($action == ServiceBase::ACTION_INSERT) {
       if (empty($data["email"]))
@@ -349,7 +387,7 @@ class UsuarioService extends ServiceBase
       $query1 = Usuario::where("id", "!=", $data["id"])->where(function ($query) use ($data) {
         return $query->where("cpf", UtilService::onlyNumbers($data["cpf"]))->orWhere("email", $data["email"]);
       });
-      $query2 = Usuario::where("id", "!=", $data["id"])->whereNotNull("deleted_at")->where(function ($query) use ($data) {
+      $query2 = Usuario::onlyTrashed()->where("id", "!=", $data["id"])->where(function ($query) use ($data) {
         return $query->where("cpf", UtilService::onlyNumbers($data["cpf"]))->orWhere("email", $data["email"]);
       });
       $alreadyHas = $query1->first() ?? $query2->first();
@@ -364,9 +402,15 @@ class UsuarioService extends ServiceBase
                 $data['matricula'] = $alreadyHas->matricula;
             }
 
+
           $data["nome"] = $alreadyHas->nome;
           $data["apelido"] = $alreadyHas->apelido;
           $data["data_nascimento"] = $alreadyHas->data_nascimento;
+          
+          if (isset($this->integracaoService)) {
+             $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($data['email'], $data['matricula'], $alreadyHas->id);
+          }
+
           $alreadyHas->deleted_at = null;
           return $alreadyHas;
         } else {
@@ -510,30 +554,18 @@ class UsuarioService extends ServiceBase
    * @return SimpleXMLElement[]
    */
   public function consultaCPFSiape(string $cpf): array{
-
-    $dadosPessoaisService = new SiapeDadosPessoaisService();
-    $dadosFuncionaisService = new SiapeDadosFuncionaisService();
-
-    $dadosPessoaisXml = $dadosPessoaisService->buscarCPF($cpf);
-    $dadosFuncionaisXml = $dadosFuncionaisService->buscarCPF($cpf);
-
-    $dadosPessoais = new DadosPessoaisResource($dadosPessoaisXml);
-    $dadosFuncionais = new DadosFuncionaisResource($dadosFuncionaisXml);
-
-    $dadosFuncionaisArray = $dadosFuncionais->toArray();
-
-    $dadosFuncionaisArray = array_map(function($item) {
-      $unidade = Unidade::where('codigo', $item['codUorgExercicio'])->first();
-      $item['unidadeSigla'] = $unidade?->sigla;
-      return $item;
-    }, $dadosFuncionaisArray);
-
-    //$unidade = new UnidadeResource($unidadeXml);
-    
-    return [
-      'pessoais'    => $dadosPessoais->toArray(),
-      'funcionais'  => $dadosFuncionaisArray,
-    ];
+    [$dadosFuncionaisArray, $dadosPessoaisArray] = $this->buscaServidor($cpf);
+ 
+     $dadosFuncionaisArray = array_map(function($item) {
+       $unidade = Unidade::where('codigo', $item['codUorgExercicio'])->first();
+       $item['unidadeSigla'] = $unidade?->sigla;
+       return $item;
+     }, $dadosFuncionaisArray);
+ 
+     return [
+      'pessoais'    => $dadosPessoaisArray,
+       'funcionais'  => $dadosFuncionaisArray,
+     ];
   }
     public function atualizaPedagio($data)
     {
@@ -578,7 +610,7 @@ class UsuarioService extends ServiceBase
             throw new ValidateException("Usuário não encontrado", 422);
         }
 
-        $usuario->situacao_siape = 'ATIVO_TEMPORARIO';
+        $usuario->situacao_siape = UsuarioSituacaoSiape::ATIVO_TEMPORARIO->value;
         $usuario->justicativa_ativacao_temporaria = $data['justificativa'];
         $usuario->data_ativacao_temporaria = Carbon::now();
         $usuario->perfil_id = $participanteId;
@@ -589,7 +621,9 @@ class UsuarioService extends ServiceBase
     
     public function matriculas($cpf) : Collection
     {
-        $usuarios = Usuario::with('unidades')->where('cpf', $cpf)->get();
+        $usuarios = Usuario::with('unidades')->where('cpf', $cpf)
+        ->where('situacao_siape', '!=', UsuarioSituacaoSiape::INATIVO->value)
+        ->get();
         
         if ($usuarios->isEmpty()) {
             throw new ValidateException("Nenhum usuário encontrado com o CPF informado.", 404);
@@ -606,6 +640,7 @@ class UsuarioService extends ServiceBase
             ->join('usuarios as us', 'us.id', '=', 'ui.usuario_id')
             ->join('unidades_integrantes_atribuicoes as uia', 'ui.id', '=', 'uia.unidade_integrante_id')
             ->where('us.cpf', $cpf)
+            ->where('situacao_siape', '!=', UsuarioSituacaoSiape::INATIVO->value)
             ->whereNull('uia.deleted_at')
             ->distinct()
             ->get();
@@ -615,6 +650,110 @@ class UsuarioService extends ServiceBase
         }
         
         return $unidades;
+    }
+
+    public function pendenciasChefe(){
+      // usuário logado
+      $diasAvaliacaoRegistroExecucao = 21;
+      $diasAvaliacaoPlanosEntregas = 31;
+      $usuario_id = parent::loggedUser()->id;
+
+      $unidadesGerenciadas = Unidade::whereHas('gestor', fn($q) => $q->where('usuario_id', $usuario_id))
+      ->orWhereHas('gestoresSubstitutos', fn($q) => $q->where('usuario_id', $usuario_id))
+      ->orWhereHas('gestoresDelegados', fn($q) => $q->where('usuario_id', $usuario_id))
+      ->get();
+      $unidadesGerenciadasIds = $unidadesGerenciadas->pluck('id')->all();
+
+      $unidadesFilhas = Unidade::whereIn('unidade_pai_id', $unidadesGerenciadasIds)->get();
+      $unidadesFilhasIds = $unidadesFilhas->pluck('id')->all();
+
+      // Registros de execução que precisam ser avaliados após o 21º dia da conclusão
+      // FIXME: Adicionar constante para os dias de avaliação
+      $registrosExecucao = PlanoTrabalhoConsolidacao::where('status', StatusEnum::CONCLUIDO)
+      ->whereHas('planoTrabalho', function($q) use ($unidadesGerenciadasIds, $usuario_id) {
+        $q->whereIn('unidade_id', $unidadesGerenciadasIds)
+          ->where('usuario_id', '!=', $usuario_id);
+      })
+      ->whereHas('latestStatus', function($q) use ($diasAvaliacaoRegistroExecucao) {
+        $q->where('codigo', StatusEnum::CONCLUIDO->value)
+          ->where('created_at', '<', now()->subDays($diasAvaliacaoRegistroExecucao));
+      })
+      ->select([
+        'planos_trabalhos_consolidacoes.id',
+        'planos_trabalhos_consolidacoes.status',
+        'planos_trabalhos_consolidacoes.data_inicio',
+        'planos_trabalhos_consolidacoes.data_fim',
+        'planos_trabalhos_consolidacoes.plano_trabalho_id',
+      ])
+      ->with(['planoTrabalho' => function($q) {
+        $q->select(['id','numero','usuario_id', 'unidade_id'])
+          ->with(['usuario' => function($q) {
+            $q->select(['id','nome']);
+          }]);
+      }]);
+
+      // Planos de trabalhos que precisam da assinatura do chefe da unidade
+      $planosTrabalhos = PlanoTrabalho::where('status', StatusEnum::AGUARDANDO_ASSINATURA)
+      ->where('usuario_id', '!=', $usuario_id)
+      ->whereHas('unidade', function($q) use ($unidadesGerenciadasIds) {
+        $q->whereIn('id', $unidadesGerenciadasIds);
+      })
+      ->select([
+        'planos_trabalhos.id',
+        'planos_trabalhos.numero',
+        'planos_trabalhos.status',
+        'planos_trabalhos.data_inicio',
+        'planos_trabalhos.data_fim',
+        'planos_trabalhos.usuario_id',
+      ])
+      ->with(['usuario' => function($q) {
+        $q->select(['id','nome']);
+      }]);
+
+      // Planos de entregas que precisam ter progressos (agrupados por plano de entrega). 
+      // Só devem aparecer na tela de pendência a partir do 31º dia a contar da DATA FIM da vigência
+      $entregasSemProgresso = PlanoEntregaEntrega::query()
+        ->whereHas('planoEntrega.unidade', fn($q) => $q->whereIn('id', $unidadesGerenciadasIds))
+        ->doesntHave('progressos')
+        ->whereHas('planoEntrega', function($q) use ($diasAvaliacaoPlanosEntregas) {
+          $q->whereNotIn('status', [StatusEnum::SUSPENSO, StatusEnum::CANCELADO])
+            ->where('data_fim', '<=', now()->subDays($diasAvaliacaoPlanosEntregas));
+        })
+        ->selectRaw('planos_entregas_entregas.plano_entrega_id, COUNT(*) as total_sem_progresso')
+        ->groupBy('planos_entregas_entregas.plano_entrega_id')
+        ->with([
+          'planoEntrega' => function($q) {
+            $q->select(['id','numero','nome']);
+          }
+        ]);
+
+      // Planos de entregas que precisam ser avaliados.
+      //Só devem aparecer na tela de pendência a partir do 31º dia a contar da DATA DE CONCLUSÃO do plano de entregas
+       // FIXME: Adicionar constante para os dias de avaliação
+      $planosEntregas = PlanoEntrega::where('status', StatusEnum::CONCLUIDO)
+      ->whereHas('unidade', function($q) use ($unidadesFilhasIds) {
+        $q->whereIn('id', $unidadesFilhasIds);
+      })
+      ->whereHas('latestStatus', function($q) use ($diasAvaliacaoPlanosEntregas) {
+        $q->where('codigo', StatusEnum::CONCLUIDO->value)
+          ->where('created_at', '<', now()->subDays($diasAvaliacaoPlanosEntregas));
+      })
+      ->select([
+        'planos_entregas.id',
+        'planos_entregas.numero',
+        'planos_entregas.status',
+        'planos_entregas.nome',
+        'planos_entregas.data_inicio',
+        'planos_entregas.data_fim',
+      ]);
+
+
+      return [
+        'registrosExecucao' => $registrosExecucao->get(),
+        'planosTrabalhos' => $planosTrabalhos->get(),
+        'planosEntregaEntregas' => $entregasSemProgresso->get(),
+        'planosEntregas' => $planosEntregas->get(),
+      ];
     }
 
 }

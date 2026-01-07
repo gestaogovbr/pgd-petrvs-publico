@@ -17,6 +17,7 @@ export class PlanoTrabalhoConsolidacao extends Base implements HasAvaliacao, Has
 
     public plano_trabalho_id: string = "";
     public avaliacao_id: string | null = null;
+    public justificativa_conclusao: string | null = null;
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

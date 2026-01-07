@@ -128,9 +128,18 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
   }
 
   public async concluir(consolidacao: PlanoTrabalhoConsolidacao) {
-    this.submitting = true;
+    
     try {
-      let response = await this.dao!.concluir(consolidacao.id);
+
+      //se usuário logado não for igual do do plano de trabalho, precisa registrar a justificativa
+      if(this.auth.usuario!.id != consolidacao.plano_trabalho?.usuario_id) {
+        // abrir modal para registrar justificativa
+        let justificativa = await this.dialog.prompt("Justificativa", "Por favor, insira a justificativa para a conclusão do planejamento.");
+        if(!justificativa) return;
+        consolidacao.justificativa_conclusao = justificativa;
+      }
+      this.submitting = true;
+      let response = await this.dao!.concluir(consolidacao.id, consolidacao.justificativa_conclusao || null);
       consolidacao.status = response.status as PlanoTrabalhoConsolidacaoStatus;
       this.refreshConsolidacao(consolidacao, response);
     } catch (error: any) {
@@ -145,6 +154,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     try {
       let response = await this.dao!.cancelarConclusao(consolidacao.id);
       consolidacao.status = response.status as PlanoTrabalhoConsolidacaoStatus;
+      consolidacao.justificativa_conclusao = null;
       this.refreshConsolidacao(consolidacao, response);
     } catch (error: any) {
       this.error(error.message || error);
@@ -200,6 +210,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
         (gestorParticipante.gestorSubstituto && (gestorLogado.gestor || gestorUnidadeSuperior.gestor || gestorUnidadeSuperior.gestorSubstituto)) ||
         (!gestorParticipante.gestor && !gestorParticipante.gestorSubstituto && (gestorLogado.gestor || gestorLogado.gestorSubstituto))
       );
+    const isGestor = this.unidadeService.isGestorUnidade(consolidacao!.plano_trabalho?.unidade_id);
     const BOTAO_CONCLUIR = { hint: "Concluir", icon: "bi bi-check-circle", color: "btn-outline-success", onClick: this.concluir.bind(this) };
     const BOTAO_CANCELAR_CONCLUSAO = { hint: "Cancelar conclusão", icon: "bi bi-backspace", color: "btn-outline-danger", onClick: this.cancelarConclusao.bind(this) };
     const BOTAO_AVALIAR = { hint: "Avaliar", icon: "bi bi-star", color: "btn-outline-warning", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.avaliar(row, this.entity!.programa!, this.refreshConsolidacao.bind(this)) };
@@ -209,11 +220,11 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
 
     //!this.isDisabled()
     if(true) {
-      if(consolidacao.status == "INCLUIDO" && (isUsuarioDoPlano || this.auth.hasPermissionTo("MOD_PTR_CSLD_CONCL"))) {
+      if(consolidacao.status == "INCLUIDO" && (isUsuarioDoPlano || isGestor || this.auth.hasPermissionTo("MOD_PTR_CSLD_CONCL"))) {
         result.push(BOTAO_CONCLUIR);
       }
       // this.planoTrabalhoService.diasParaConcluirConsolidacao(row, this.entity!.programa) >= 0 &&
-      if(consolidacao.status == "CONCLUIDO" && (isUsuarioDoPlano || this.auth.hasPermissionTo("MOD_PTR_CSLD_DES_CONCL"))) {
+      if(consolidacao.status == "CONCLUIDO" && (isUsuarioDoPlano || isGestor || this.auth.hasPermissionTo("MOD_PTR_CSLD_DES_CONCL"))) {
         result.push(BOTAO_CANCELAR_CONCLUSAO);
       }
       if(consolidacao.status == "CONCLUIDO" && isAvaliador) {

@@ -36,6 +36,7 @@ use App\Models\StatusJustificativa;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Services\UsuarioService;
+use App\Services\UnidadeService;
 use App\Traits\AutoUuid;
 use App\Traits\HasPermissions;
 use App\Traits\MergeRelations;
@@ -87,7 +88,7 @@ class Usuario extends Authenticatable implements AuditableContract
         'data_nascimento',
         'nome_jornada', /* varchar(100); NULL */ // Nome da Jornada
         'cod_jornada', /* int; NULL */ // Codigo da Jornada
-        'modalidade_pgd', /* varchar(100); NULL */ // Modalidade do usuário no PGD
+        'tipo_modalidade_id', /* char(36); NULL */ // Tipo de modalidade do usuário no PGD
         'participa_pgd',/* enum('sim','não'); */ // Participação do usuário no PGD
         //'deleted_at', /* timestamp; */
         //'remember_token', /* varchar(100); */
@@ -103,7 +104,8 @@ class Usuario extends Authenticatable implements AuditableContract
         'data_modificacao',
         'usuario_externo',
         'is_admin',
-        'pedagio'
+        'pedagio',
+        'data_ativacao_temporaria' /* date; */
     ];
 
     public function proxyFill($dataOrEntity, $unidade, $action)
@@ -301,11 +303,18 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasOne(PlanoTrabalho::class)->where('status', 'ATIVO')->latestOfMany();
     }
 
+    /**
+     * @deprecated
+     * Não existe mais a seleção de participantes
+     */
     public function participacoesProgramas()
     {
         return $this->hasMany(ProgramaParticipante::class);
     }
-
+    /**
+     * @deprecated
+     * Não existe mais a seleção de participantes
+     */
     public function ultimaParticipacaoPrograma()
     {
         return $this->hasOne(ProgramaParticipante::class)->latestOfMany();
@@ -426,6 +435,11 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasOne(UnidadeIntegrante::class)->has('colaborador');
     } // unidade com a qual possui TCR
 
+    public function tipoModalidadeSiape()
+    {
+        return $this->belongsTo(TipoModalidadeSiape::class, 'modalidade_pgd');
+    }
+
 
     public function integracaoServidor()
     {
@@ -539,5 +553,14 @@ class Usuario extends Authenticatable implements AuditableContract
         }
 
         $this->delete();
+    }
+
+    public function matriculas()
+    {
+        return $this->hasMany(
+            self::class,
+            'cpf',
+            'cpf'
+        );
     }
 }

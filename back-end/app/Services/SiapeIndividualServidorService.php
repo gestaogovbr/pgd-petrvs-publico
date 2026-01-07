@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use App\Facades\SiapeLog;
+use App\Enums\UsuarioSituacaoSiape;
 use App\Models\Entidade;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeDadosUORG;
 use App\Models\SiapeListaUORGS;
+use App\Models\SiapeBlackListServidor;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Services\Siape\Unidade\Atribuicao;
@@ -21,15 +23,89 @@ class SiapeIndividualServidorService extends ServiceBase
     use LogTrait, Atribuicao;
 
     private SiapeIndividualService $service;
+    private $resumo = null;
+
+    public function getResumo() {
+        return $this->resumo;
+    }
+
+    private function gerarResumo(array $usuariosAntes, string $cpf, string $status = 'sucesso', string $mensagem = 'Processamento concluído')
+    {
+        $resumo = [];
+        $usuariosDepois = Usuario::with(['lotacao.unidade'])->where('cpf', $cpf)->get();
+
+        // Map users by matricula (or id if matricula missing)
+        $mapAntes = [];
+        foreach ($usuariosAntes as $u) {
+            $key = $u['matricula'] ?? $u['id'];
+            $mapAntes[$key] = $u;
+        }
+
+        foreach ($usuariosDepois as $uDepois) {
+            $key = $uDepois->matricula ?? $uDepois->id;
+            $uAntes = $mapAntes[$key] ?? null;
+
+            $item = [
+                'status' => $status,
+                'nome' => $uDepois->nome,
+                'usuario_existia' => !!$uAntes,
+                'usuario_inserido' => !$uAntes,
+                'lotacao_associada' => !empty($uDepois->lotacao),
+                'alteracoes' => [],
+                'mensagem' => $mensagem
+            ];
+
+            if ($uAntes) {
+                // Compare fields
+                $campos = ['nome', 'email', 'matricula', 'situacao_siape'];
+                foreach ($campos as $campo) {
+                    if (($uAntes[$campo] ?? null) != $uDepois->$campo) {
+                        $item['alteracoes'][] = $campo;
+                    }
+                }
+                // Check lotacao change
+                $lotacaoAntesId = $uAntes['lotacao_id'] ?? null;
+                $lotacaoDepoisId = $uDepois->lotacao?->unidade_id;
+                
+                if ($lotacaoAntesId != $lotacaoDepoisId) {
+                     $item['alteracoes'][] = 'lotacao_id';
+                }
+            }
+            
+            // Refine status based on lotacao
+            if (!$item['lotacao_associada']) {
+                $item['status'] = 'parcial';
+                $item['mensagem'] .= ' (Lotação não associada)';
+            }
+
+            $resumo[] = $item;
+        }
+
+        return $resumo;
+    }
 
     public function fluxoSiape(string $cpf, SiapeIndividualService $service)
     {
         SiapeLog::info('Iniciando o processo de sincronização cpf #:' . $cpf);
 
         $this->service = $service;
-
+        $this->resumo = null;
+        
         $cpfOriginal = $cpf;
         $cpf = $this->limparEValidarCpf($cpf);
+
+        $usuariosAntes = Usuario::with(['lotacao.unidade'])->where('cpf', $cpf)->get()->map(function($u) {
+            return [
+                'id' => $u->id,
+                'matricula' => $u->matricula,
+                'nome' => $u->nome,
+                'email' => $u->email,
+                'situacao_siape' => $u->situacao_siape,
+                'lotacao_id' => $u->lotacao?->unidade_id
+            ];
+        })->toArray();
+
+        try {
         
         SiapeLog::info('CPF processado', [
             'cpf_original' => $cpfOriginal,
@@ -286,7 +362,8 @@ class SiapeIndividualServidorService extends ServiceBase
                 'retorno_keys' => is_array($retorno) ? array_keys($retorno) : 'não é array'
             ]);
 
-            return $retorno;
+            $this->resumo = $this->gerarResumo($usuariosAntes, $cpf, 'sucesso');
+            return $this->resumo;
         } catch (Exception $e) {
             SiapeLog::error('Erro na sincronização final', [
                 'cpf' => $cpf,
@@ -295,33 +372,76 @@ class SiapeIndividualServidorService extends ServiceBase
             ]);
             throw new Exception("Erro na sincronização final: " . $e->getMessage());
         }
+
+        } catch (Exception $e) {
+            $this->resumo = $this->gerarResumo($usuariosAntes, $cpf, 'erro', $e->getMessage());
+            throw $e;
+        }
     }
 
 
     private function removeVinculoParaforcarSerLotadoNovamente(string $cpf)
     {
-        $usuario = Usuario::where('cpf', $cpf)->first();
-        if (!$usuario) {
+        // Pode existir mais de um usuário com o mesmo CPF: executa o fluxo para cada um
+        $usuarios = Usuario::where('cpf', $cpf)->get();
+        if ($usuarios->isEmpty()) {
+            $this->removendoDaBlackList($cpf);
             return;
         }
 
-        $unidade = $usuario->lotacao?->unidade;
+        foreach ($usuarios as $usuario) {
+            $unidade = $usuario->lotacao?->unidade;
 
-        if(!$unidade) {
-            return;
+            if(!$unidade) {
+                continue;
+            }
+            
+            $usuario->usuario_externo = 0;
+            $usuario->save();
+
+            try {
+                $blacklistRegistro = SiapeBlackListServidor::where('cpf', $cpf)
+                    ->first();
+
+                if ($blacklistRegistro) {
+                    if ((int)($blacklistRegistro->inativado ?? 0) === 1) {
+                        $usuario->situacao_siape = UsuarioSituacaoSiape::ATIVO->value;
+                        $usuario->save();
+                        SiapeLog::info('Usuário reativado pela remoção da blacklist (inativado=1)', [
+                            'cpf' => $cpf,
+                            'usuario_id' => $usuario->id ?? null,
+                        ]);
+                    }
+
+                    $blacklistRegistro->forceDelete();
+                    SiapeLog::info('Registro removido da tabela siape_blacklist_servidores', [
+                        'cpf' => $cpf
+                    ]);
+                }
+            } catch (Exception $e) {
+                SiapeLog::error('Erro ao processar remoção na siape_blacklist_servidores', [
+                    'cpf' => $cpf,
+                    'erro' => $e->getMessage()
+                ]);
+            }
+            
+            $this->removeTodasAsGestoesDoUsuario($usuario);
+
+            $this->removeLotacao($usuario);
         }
-        
-        $usuario->usuario_externo = 0;
-        $usuario->save();
-        
-        $this->removeTodasAsGestoesDoUsuario($usuario);
+    }
 
-        if($this->usuarioTemPlanodeTrabalhoAtivo($usuario, $unidade)) {
-            SiapeLog::warning('O usuário ' . $usuario->nome . ' possui plano de trabalho ativo, não será removido.');
-            return;
+    private function removendoDaBlackList(string $cpf) :void
+    {
+        $blacklistRegistro = SiapeBlackListServidor::where('cpf', $cpf)
+                    ->first();
+
+        if ($blacklistRegistro) {
+            $blacklistRegistro->forceDelete();
+            SiapeLog::info('Registro removido da tabela siape_blacklist_servidores', [
+                'cpf' => $cpf
+            ]);
         }
-
-        $this->removeLotacao($usuario);
     }
 
     private function montaXmlUnidade($codigoDaUnidade)
