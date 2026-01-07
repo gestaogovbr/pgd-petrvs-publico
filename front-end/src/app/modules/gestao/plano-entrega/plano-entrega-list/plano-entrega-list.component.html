@@ -101,7 +101,7 @@
         </column>
         <column [title]="'Status\nAvaliação'" [template]="columnStatus">
             <ng-template let-row="row" #columnStatus>
-                <badge [color]="lookup.getColor(lookup.PLANO_ENTREGA_STATUS, row.status)" [icon]="lookup.getIcon(lookup.PLANO_ENTREGA_STATUS, row.status)" [label]="lookup.getValue(lookup.PLANO_ENTREGA_STATUS, row.status)"></badge><br>
+                <badge [color]="statusColor(row)" [icon]="statusIcon(row)" [label]="statusLabel(row)"></badge><br>
                 <badge *ngIf="row.data_arquivamento" color="warning" icon="bi bi-inboxes" label="Arquivado"></badge>
                 <badge *ngIf="row.deleted_at" color="danger" icon="bi bi-trash3" label="Excluído"></badge>
                 <avaliar-nota-badge *ngIf="row.avaliacao" [align]="'left'" [tipoAvaliacao]="row.avaliacao.tipo_avaliacao" [nota]="row.avaliacao.nota"></avaliar-nota-badge>
