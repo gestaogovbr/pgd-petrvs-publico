@@ -371,25 +371,16 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   public async onUsuarioSelect(selected: SelectItem) {    
     try {
-      if (['new', 'clone'].includes(this.action))
-        this.planosUsuarioComPendencias = await this.dao!.planosUsuarioComPendencias(selected.entity.id);
-      if(this.planosUsuarioComPendencias) {
-        if (this.editableForm) {
-          this.editableForm.noButtons = 'true';
-          this.editableForm.error = 'Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.';
-        }
-      } else {
-        this.editableForm!.noButtons = undefined;
-        this.editableForm!.error = undefined;
-        this.processarUnidadesUsuario(selected.entity);
-        this.resetProgramaItems();
-        this.carregaProgramas(selected.entity.lotacao.unidade_id);
+      this.editableForm!.noButtons = undefined;
+      this.editableForm!.error = undefined;
+      this.processarUnidadesUsuario(selected.entity);
+      this.resetProgramaItems();
+      this.carregaProgramas(selected.entity.lotacao.unidade_id);
 
-        if (selected.entity.pedagio) {
-          await this.carregaModalidades(true);
-        } else {
-          await this.carregaModalidades(false);
-        }
+      if (selected.entity.pedagio) {
+        await this.carregaModalidades(true);
+      } else {
+        await this.carregaModalidades(false);
       }
       const participa = this.utilService.slugify(selected.entity.participa_pgd ?? '');
       if (participa === 'nao') {

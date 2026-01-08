@@ -285,10 +285,6 @@ class PlanoTrabalhoService extends ServiceBase
                 throw new ServerException("ValidatePlanoTrabalho", "Participante do plano não é LOTADO ou COLABORADOR na unidade executora. (MOD_PTR_USERS_INCL)\n[ver RN_PTR_Y]");
             }
 
-            if ($this->planosUsuarioComPendencias($data['usuario_id'])) {
-                throw new ServerException("ValidatePlanoTrabalho", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");
-            }
-
             $entregasValidas = $this->validarClone($data);
             if ($entregasValidas) {
                 throw new ServerException("ValidatePlanoTrabalho", $entregasValidas);
@@ -436,6 +432,7 @@ class PlanoTrabalhoService extends ServiceBase
         $condition3 = $condicoes["assinaturaUsuarioExigida"];
         $condition4 = $condicoes["usuarioFaltaAssinar"];
         $condition5 = $condicoes["nrEntregas"] > 0;
+        $condition6 = $condicoes["planoTrabalhoPendente"];
         if (!$condition1 && !$condition2)
             throw new ServerException("ValidatePlanoTrabalho", "O TCR não pode ser assinado porque o plano de trabalho não está no status INCLUIDO nem AGUARDANDO ASSINATURA. [ver RN_PTR_O]");
         if (!$condition3)
@@ -444,6 +441,9 @@ class PlanoTrabalhoService extends ServiceBase
             throw new ServerException("ValidatePlanoTrabalho", "O TCR não pode ser assinado porque a assinatura do usuário logado não é exigida pelo programa ou ele já assinou o Termo. [ver RN_PTR_O]");
         if (!$condition5)
             throw new ServerException("ValidatePlanoTrabalho", "O TCR não pode ser assinado porque o plano precisa possuir ao menos uma entrega. [ver RN_PTR_O]");
+        if($condition6){
+            throw new ServerException("ValidatePlanoTrabalho", "O TCR não pode ser assinado porque existe plano de trabalho pendente de registro de execução e/ou avaliação para o usuário.");
+        }
     }
 
     /* Será a data_inicio, ou a data_fim do último período CONCLUIDO ou AVALIADO. O que for maior. */
@@ -921,6 +921,7 @@ class PlanoTrabalhoService extends ServiceBase
             $result["usuarioEhParticipanteHabilitado"] = $this->unidadeService->unidadeEhHabilitada($planoTrabalho["unidade_id"], $planoTrabalho["programa_id"]);
             $result["usuarioEhParticipantePlano"] = parent::loggedUser()->id == $planoTrabalho["usuario_id"];
             $result["usuarioJaAssinouTCR"] = !$this->usuarioFaltaAssinar(null, $planoTrabalho);
+            $result["planoTrabalhoPendente"] = $this->planosUsuarioComPendenciasExecucaoAvaliacao($planoTrabalho["usuario_id"], $planoTrabalho["id"]);
             return $this->setBuffer("buscaCondicoes", $entity["id"], $result);
         }
     }
@@ -1414,6 +1415,26 @@ class PlanoTrabalhoService extends ServiceBase
         $statusesPendentes = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO'];
 
         return in_array($planoAnterior->status, $statusesPendentes, true);
+    }
+
+    public function planosUsuarioComPendenciasExecucaoAvaliacao(string $usuarioId, $planoTrabalhoId): bool
+    {
+        $statusesPendentes = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO'];
+        $dataAssinatura = now();
+        $diasPendenciaDataFinalPlano = 30;
+
+        $planosPendentes = PlanoTrabalho::where('usuario_id', $usuarioId)
+            ->whereNotIn('status', ['CANCELADO', 'SUSPENSO'])
+            ->whereIn('status', $statusesPendentes)
+            ->where('id','!=', $planoTrabalhoId)
+            ->where('data_fim', '<', $dataAssinatura->subDays($diasPendenciaDataFinalPlano))
+            ->get();
+
+        if ($planosPendentes->count() > 0) {
+            return true;
+        }
+
+        return false;
     }
 
 }
