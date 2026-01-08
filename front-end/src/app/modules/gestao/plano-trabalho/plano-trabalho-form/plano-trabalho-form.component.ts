@@ -36,6 +36,7 @@ import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.mode
 import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
 import { UnidadeIntegrante } from 'src/app/models/unidade-integrante.model';
 import { UnidadeIntegranteAtribuicao } from 'src/app/models/unidade-integrante-atribuicao.model';
+import { ProgramaService } from 'src/app/services/programa.service';
 
 @Component({
   selector: 'plano-trabalho-form',
@@ -85,6 +86,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public selectedModalidade?: TipoModalidade;
   public tipoModalidadeItems: LookupItem[] = [];
   public planosUsuarioComPendencias: boolean = false;
+  public programaService: ProgramaService;
 
 
   constructor(public injector: Injector) {
@@ -117,6 +119,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
+    this.programaService = injector.get<ProgramaService>(ProgramaService);
+
     this.modalWidth = 1300;
     this.planoDataset = this.dao!.dataset();
     this.form = this.fh.FormBuilder({
@@ -285,7 +289,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       }
 
       const programas = await this.programaDao.query({
-        where: [['vigentesUnidadeExecutora', '==', unidadeId]],
+        where: [['todosUnidadeExecutora', '==', unidadeId]],
         join: this.joinPrograma,
         orderBy: [["unidade.path", "desc"]]
       }).asPromise();
@@ -296,7 +300,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
           value: prog.nome,
           data: prog
         }));
-        this.preenchePrograma(programas[0]);
+        const programaVigente = this.programaService.selecionaProgramaVigente(programas);
+        this.preenchePrograma(programaVigente || programas[0]);
       } else {
         this.regramentoNaoEncontrado();
       }
