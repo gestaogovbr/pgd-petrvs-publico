@@ -854,7 +854,7 @@ class PlanoTrabalhoService extends ServiceBase
         }
 
         foreach ($plano->consolidacoes as $consolidacao) {
-            if ($consolidacao->status != "INCLUIDO")
+            if (in_array($consolidacao->status, StatusEnum::statusEditaveisPlanoTrabalho()))
                 return false;
         }
         return true;

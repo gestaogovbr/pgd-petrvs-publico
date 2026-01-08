@@ -853,6 +853,7 @@ export class PlanoEntregaListComponent extends PageListBase<
         */
 				return (
 					this.planoEntregaService.situacaoPlano(planoEntrega) == "ATIVO" &&
+					this.execucao &&
 					(this.unidadeService.isGestorUnidade(planoEntrega.unidade) ||
 						(this.auth.isLotacaoUsuario(planoEntrega.unidade) &&
 							this.auth.hasPermissionTo("MOD_PENT_CONC")))
