@@ -26,7 +26,7 @@ class SiapeServidorFaultProcessor
         $this->responseXml = $responseXml;
         $this->cpf = $cpf;
         $this->responseString = $responseString;
-        $this->tipoDado = TipoDadoServidorSiape::tryFrom($tipoDado)->value ?? 'Dados';
+        $this->tipoDado = TipoDadoServidorSiape::tryFrom(strtoupper($tipoDado))->value ?? 'Dados';
     }
 
     public function process()
