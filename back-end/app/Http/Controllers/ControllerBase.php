@@ -23,6 +23,8 @@ abstract class ControllerBase extends Controller
     public $updatable = [];
 
     public static $sameTransaction = false;
+    private const HTTP_STATUS_RANGE_START = 400;
+    private const HTTP_STATUS_RANGE_END = 600;
 
     public function __construct() {
         if(empty($this->collection)) {
@@ -57,7 +59,7 @@ abstract class ControllerBase extends Controller
         }
 
         $code = (int) $e->getCode();
-        if ($code >= 400 && $code < 600) {
+        if ($code >= self::HTTP_STATUS_RANGE_START && $code < self::HTTP_STATUS_RANGE_END) {
             return $code;
         }
 
