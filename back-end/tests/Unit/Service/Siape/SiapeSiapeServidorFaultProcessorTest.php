@@ -20,7 +20,7 @@ beforeEach(function () {
 
     $this->cpf = '12345678901';
     $this->responseString = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soap:Body><soap:Fault><faultcode>0002</faultcode><faultstring>Não existem dados para consulta</faultstring></soap:Fault></soap:Body></soap:Envelope>';
-    $this->tipoDado = 'Dados Funcionais';
+    $this->tipoDado = 'FUNCIONAL';
 });
 
 test('lança exceção quando fault é processável', function () {

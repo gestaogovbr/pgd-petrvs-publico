@@ -12,6 +12,16 @@ enum TipoDadoServidorSiape: string
 {
     case FUNCIONAL = 'Dados Funcionais';
     case PESSOAL = 'Dados Pessoais';
+
+
+    static function getTipoDadoValue(string $tipoDado): string
+    {
+        return match (strtoupper($tipoDado)) {
+            'FUNCIONAL' => TipoDadoServidorSiape::FUNCIONAL->value,
+            'PESSOAL' => TipoDadoServidorSiape::PESSOAL->value,
+            default => 'Dados'
+        };
+    }
 }
 
 class SiapeServidorFaultProcessor
@@ -26,7 +36,7 @@ class SiapeServidorFaultProcessor
         $this->responseXml = $responseXml;
         $this->cpf = $cpf;
         $this->responseString = $responseString;
-        $this->tipoDado = TipoDadoServidorSiape::tryFrom(strtoupper($tipoDado))->value ?? 'Dados';
+        $this->tipoDado = TipoDadoServidorSiape::getTipoDadoValue($tipoDado);
     }
 
     public function process()
