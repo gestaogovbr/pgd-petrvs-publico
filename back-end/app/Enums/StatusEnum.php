@@ -16,7 +16,7 @@ enum StatusEnum: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::INCLUIDO => 'Incluído',
             self::HOMOLOGANDO => 'Homologando',
             self::AGUARDANDO_ASSINATURA => 'Aguardando Assinatura',
@@ -31,7 +31,7 @@ enum StatusEnum: string
 
     public function description(): string
     {
-        return match($this) {
+        return match ($this) {
             self::INCLUIDO => 'Plano foi incluído no sistema',
             self::HOMOLOGANDO => 'Plano está sendo homologado',
             self::AGUARDANDO_ASSINATURA => 'Plano está aguardando assinatura',
@@ -50,5 +50,10 @@ enum StatusEnum: string
             fn(self $e) => [$e->value, $e->label(), $e->description()],
             self::cases()
         );
+    }
+
+    public static function statusEditaveisPlanoTrabalho(): array
+    {
+        return [self::AGUARDANDO_REGISTRO, self::INCLUIDO];
     }
 }
