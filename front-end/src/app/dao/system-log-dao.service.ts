@@ -56,7 +56,11 @@ export class SystemLogDaoService extends DaoBaseService<SystemLog> {
       this.server.http.get(this.server.gb.servidorURL + '/' + url, options).subscribe(data => {
           const blob = new Blob([data as BlobPart], { type: 'text/plain' });
           const url = window.URL.createObjectURL(blob);
-          window.open(url, '_blank');
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = filename;
+          link.click();
+          window.URL.revokeObjectURL(url);
       }, error => {
           console.error("Erro ao baixar log:", error);
       });
