@@ -84,66 +84,112 @@ class IntegracaoGestorService extends ServiceBase
      */
     protected function montarArrayChefias(): array
     {
-        // Query para obter chefes titulares (vinculados via integracao_unidades e usuarios)
-        $primeira = DB::table('integracao_unidades as iu')
+        $chefias = [];
+
+        // 1. Obter todas as unidades da tabela integracao_unidades
+        $unidadesIntegracao = DB::table('integracao_unidades as iu')
             ->join('unidades as u', 'iu.codigo_siape', '=', 'u.codigo')
-            ->leftJoin('usuarios as chefe', function ($join) {
-                $join->on('iu.cpf_titular_autoridade_uorg', '=', 'chefe.cpf')
-                    ->whereNull('chefe.deleted_at');
-            })
-            ->leftJoin('integracao_servidores as is_chef', function ($join) {
-                $join->on('iu.cpf_titular_autoridade_uorg', '=', 'is_chef.cpf')
-                    ->where('is_chef.vinculo_ativo', '=', 1);
-            })
-            ->join('unidades_integrantes as ui', function ($join) {
-                $join->on('chefe.id', '=', 'ui.usuario_id')
-                    ->on('u.id',      '=', 'ui.unidade_id');
-            })
-            ->join('unidades_integrantes_atribuicoes as uia', function ($join) {
-                $join->on('ui.id', '=', 'uia.unidade_integrante_id')
-                    ->where('uia.atribuicao', '=', 'LOTADO')
-                    ->whereNull('uia.deleted_at');
-            })
+            ->select([
+                'u.id as id_unidade',
+                'u.codigo as codigo_unidade',
+                'iu.cpf_titular_autoridade_uorg as cpf_chefe'
+            ])
             ->whereNull('u.deleted_at')
-            ->whereNotExists(function ($query) {
-                $query->select(DB::raw(1))
-                    ->from('unidades_integrantes as ui2')
-                    ->join('unidades_integrantes_atribuicoes as uia2', function ($join) {
-                        $join->on('ui2.id', '=', 'uia2.unidade_integrante_id')
-                            ->where('uia2.atribuicao', '=', 'GESTOR')
-                            ->whereNull('uia2.deleted_at');
-                    })
-                    ->whereColumn('ui2.usuario_id', 'chefe.id')
-                    ->whereNull('ui2.deleted_at');
-            })
-            ->select([
-                'u.id           as id_unidade',
-                'chefe.id       as id_chefe',
-            ]);
+            ->get();
 
-        // Query para obter casos onde não há titular definido (remove gestores existentes)
-        $segunda = DB::table('integracao_unidades as iu')
-            ->join('unidades as u', 'iu.codigo_siape', '=', 'u.codigo')
-            ->join('unidades_integrantes as ui', function ($join) {
-                $join->on('ui.unidade_id', '=', 'u.id')
-                    ->whereNull('ui.deleted_at');
-            })
-            ->join('unidades_integrantes_atribuicoes as uia', function ($join) {
-                $join->on('ui.id', '=', 'uia.unidade_integrante_id')
-                    ->where('uia.atribuicao', '=', 'GESTOR')
-                    ->whereNull('uia.deleted_at');
-            })
-            ->whereNull('iu.cpf_titular_autoridade_uorg')
-            ->select([
-                'u.id                                    as id_unidade',
-                DB::raw('iu.cpf_titular_autoridade_uorg as id_chefe'),
-            ]);
+        foreach ($unidadesIntegracao as $unidade) {
+            $idUnidade = $unidade->id_unidade;
+            $cpfChefe = $unidade->cpf_chefe;
+            $codigoUnidade = $unidade->codigo_unidade;
 
-        return $primeira
-            ->unionAll($segunda)
-            ->get()
-            ->map(fn($item) => (array) $item)
-            ->toArray();
+            // 1.1 Se CPF do chefe for nulo ou vazio, remove chefia (id_chefe = null)
+            if (empty($cpfChefe)) {
+                $chefias[] = ['id_unidade' => $idUnidade, 'id_chefe' => null];
+                continue;
+            }
+
+            // 2. Busca do Usuário (Chefe)
+            // Primeiro busca na tabela integracao_servidores para garantir que é o servidor lotado nesta unidade
+            $servidorIntegracao = DB::table('integracao_servidores')
+                ->where('cpf', $cpfChefe)
+                ->where('codigo_servo_exercicio', $codigoUnidade)
+                ->first();
+
+            if (!$servidorIntegracao) {
+                SiapeLog::warning("Servidor com CPF {$cpfChefe} não encontrado na tabela integracao_servidores vinculado à unidade {$codigoUnidade}. Tentando buscar apenas pelo CPF na tabela de usuários.");
+                // Fallback: Tenta buscar usuário apenas pelo CPF se não encontrar o vínculo específico
+                // Isso pode acontecer se a integração de servidores ainda não rodou ou falhou para este servidor
+            }
+
+            // Busca o usuário na tabela usuarios
+            $usuario = Usuario::where('cpf', $cpfChefe)->first();
+
+            if (!$usuario) {
+                SiapeLog::warning("Usuário com CPF {$cpfChefe} (Chefe da unidade {$codigoUnidade}) não encontrado na tabela usuarios.");
+                continue;
+            }
+
+            $idUsuario = $usuario->id;
+
+            // 3. Validação e Correção da Lotação
+            // Verifica a lotação atual do usuário
+            $lotacaoAtual = DB::table('usuarios as u')
+                ->join('unidades_integrantes as ui', 'u.id', '=', 'ui.usuario_id')
+                ->join('unidades_integrantes_atribuicoes as uia', 'ui.id', '=', 'uia.unidade_integrante_id')
+                ->join('unidades as un', 'ui.unidade_id', '=', 'un.id')
+                ->where('uia.atribuicao', 'LOTADO')
+                ->whereNull('uia.deleted_at')
+                ->whereNull('ui.deleted_at')
+                ->where('u.id', $idUsuario)
+                ->select('un.id as id_unidade_lotacao')
+                ->first();
+            
+            $idUnidadeLotacaoAtual = $lotacaoAtual ? $lotacaoAtual->id_unidade_lotacao : null;
+
+            // Se a lotação atual for diferente da unidade de chefia, corrige a lotação
+            if ($idUnidadeLotacaoAtual !== $idUnidade) {
+                SiapeLog::info("Usuário {$idUsuario} (CPF {$cpfChefe}) será lotado na unidade {$codigoUnidade} para assumir chefia.");
+                
+                $vinculo = [[
+                    'usuario_id' => $idUsuario,
+                    'unidade_id' => $idUnidade,
+                    'atribuicoes' => ['LOTADO']
+                ]];
+
+                try {
+                    $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
+                } catch (Throwable $e) {
+                    SiapeLog::error("Erro ao tentar lotar usuário {$idUsuario} na unidade {$codigoUnidade}: " . $e->getMessage());
+                    // Não continua o processamento deste chefe se não conseguir lotar
+                    continue; 
+                }
+            }
+
+            // 4. Verificação de Chefia Existente
+            // Verifica se o usuário já é chefe nesta unidade
+            $chefiaAtual = DB::table('usuarios as u')
+                ->join('unidades_integrantes as ui', 'u.id', '=', 'ui.usuario_id')
+                ->join('unidades_integrantes_atribuicoes as uia', 'ui.id', '=', 'uia.unidade_integrante_id')
+                ->where('uia.atribuicao', 'GESTOR')
+                ->whereNull('uia.deleted_at')
+                ->whereNull('ui.deleted_at')
+                ->where('u.id', $idUsuario)
+                ->where('ui.unidade_id', $idUnidade)
+                ->exists();
+
+            if ($chefiaAtual) {
+                // Usuário já é chefe desta unidade, não precisa fazer nada
+                continue;
+            }
+
+            // Adiciona ao array de chefias a serem atualizadas
+            $chefias[] = [
+                'id_unidade' => $idUnidade,
+                'id_chefe' => $idUsuario
+            ];
+        }
+
+        return $chefias;
     }
 
     /**
