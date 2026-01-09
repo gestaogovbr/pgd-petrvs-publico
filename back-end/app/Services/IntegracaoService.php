@@ -656,42 +656,8 @@ class IntegracaoService extends ServiceBase
 
         $this->processarAtualizacoesDados($atualizacoesDados, $sqlUpdateDados);
 
-        DB::transaction(function () use (&$atualizacoesDados, &$sqlUpdateDados, &$atualizacoesLotacoes, &$sqlServidoresInseridosNaoLotados, &$atualizacoesLotacoesResult) {
-          /**
-           * Atualiza os dados pessoais de todos os servidores ATIVOS presentes na tabela USUARIOS.
-           * ESTA ROTINA NÃO DEVE INSERIR NOVOS SERVIDORES.
-           */
-          //FIXME não terá mais lotacao pra usuarios sem unidades de exercicio ativa.
-          // $unidadeExercicioRaiz = Unidade::where("codigo", $this->unidadeRaiz)->first();
-          // if(!$unidadeExercicioRaiz){
-          //   throw new IntegrationException("IntegracaoService: Durante atualização de lotações, unidade de exercício raiz $this->unidadeRaiz não encontrada.");
-          // }
-          // $unidadeExercicioRaizId = $unidadeExercicioRaiz->id;
-          /*
-          if (!empty($atualizacoesDados)) {
-            foreach ($atualizacoesDados as $linha) {
+        DB::transaction(function () use (&$atualizacoesDados, &$atualizacoesLotacoes, &$sqlServidoresInseridosNaoLotados, &$atualizacoesLotacoesResult) {
 
-              SiapeLog::info("Atualizando dados do servidor Matricula: " . $linha->matriculasiape);
-
-              $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->matriculasiape, $linha->id);
-              $modalidadePgdValida = $this->validarModalidadePgd($linha->modalidade_pgd);
-
-              DB::update($sqlUpdateDados, [
-                'nome'          => $linha->nome_servidor,
-                'nomeguerra'    => $linha->nome_guerra,
-                'email'         => $linha->emailfuncional,
-                'cod_jornada'      => $linha->cod_jornada,
-                'nome_jornada'      => $linha->nome_jornada,
-                'tipo_modalidade_id' => $modalidadePgdValida,
-                'participa_pgd' => $linha->participa_pgd,
-                'id'            => $linha->id,
-                'ident_unica'   => $linha->ident_unica,
-                'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
-                'data_nascimento' => $linha->data_nascimento,
-              ]);
-            }
-          };
-          */
 
           $this->atualizarMatriculasUsuariosSemMatricula();
 

@@ -74,5 +74,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('db:slow-log:prune-old')->dailyAt('04:00');
         $schedule->command('db:slow-log:ensure-daily --perm=777')->dailyAt('00:01');
+        
+        $schedule->command('logs:cleanup')->dailyAt('00:01');
     }
 }
