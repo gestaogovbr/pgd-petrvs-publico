@@ -8,9 +8,17 @@ use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use Mockery;
 use Symfony\Component\Finder\SplFileInfo;
+use App\Exceptions\ServerException;
+use Illuminate\Support\Facades\Log;
 
 class SystemLogsServiceTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
+    }
+
     public function test_it_returns_paginated_logs()
     {
         // Arrange
@@ -74,5 +82,96 @@ class SystemLogsServiceTest extends TestCase
         $this->assertTrue($result['success']);
         $this->assertEmpty($result['data']);
         $this->assertEquals(0, $result['meta']['total']);
+    }
+
+    public function test_it_downloads_small_file()
+    {
+        $filename = 'test_small.log';
+        $path = storage_path('logs/' . $filename);
+        
+        // Mock Security Log
+        Log::shouldReceive('info')->once();
+        
+        // Mock File facade
+        File::shouldReceive('exists')->with($path)->andReturn(true);
+        File::shouldReceive('size')->with($path)->andReturn(1024); // 1KB
+        
+        $service = new SystemLogsService();
+        $result = $service->downloadLog($filename);
+        
+        $this->assertEquals('file', $result['type']);
+        $this->assertEquals($path, $result['data']);
+        $this->assertEquals($filename, $result['filename']);
+    }
+
+    public function test_it_downloads_large_file_truncated()
+    {
+        $filename = 'test_large.log';
+        $path = storage_path('logs/' . $filename);
+        
+        // Create real file for fopen/fread
+        $content = str_repeat('A', 2 * 1024 * 1024 + 100); // 2MB + 100 bytes
+        file_put_contents($path, $content);
+        
+        try {
+            // Mock Security Log
+            Log::shouldReceive('info')->once();
+            
+            // Mock File facade
+            File::shouldReceive('exists')->with($path)->andReturn(true);
+            File::shouldReceive('size')->with($path)->andReturn(strlen($content));
+            
+            $service = new SystemLogsService();
+            $result = $service->downloadLog($filename);
+            
+            $this->assertEquals('content', $result['type']);
+            $this->assertEquals(2 * 1024 * 1024, strlen($result['data']));
+            $this->assertEquals($filename, $result['filename']);
+        } finally {
+            if (file_exists($path)) unlink($path);
+        }
+    }
+
+    public function test_it_throws_exception_for_invalid_filename()
+    {
+        Log::shouldReceive('info')->once();
+        Log::shouldReceive('warning')->once();
+        
+        $service = new SystemLogsService();
+        
+        $this->expectException(ServerException::class);
+        $this->expectExceptionMessage("Nome de arquivo inválido.");
+        
+        $service->downloadLog('../../../etc/passwd');
+    }
+
+    public function test_it_throws_exception_for_invalid_extension()
+    {
+        Log::shouldReceive('info')->once();
+        Log::shouldReceive('warning')->once();
+        
+        $service = new SystemLogsService();
+        
+        $this->expectException(ServerException::class);
+        $this->expectExceptionMessage("Tipo de arquivo não permitido.");
+        
+        $service->downloadLog('test.txt');
+    }
+
+    public function test_it_throws_exception_if_file_not_found()
+    {
+        $filename = 'not_found.log';
+        $path = storage_path('logs/' . $filename);
+        
+        Log::shouldReceive('info')->once();
+        
+        File::shouldReceive('exists')->with($path)->andReturn(false);
+        
+        $service = new SystemLogsService();
+        
+        $this->expectException(ServerException::class);
+        $this->expectExceptionMessage("Arquivo não encontrado.");
+        
+        $service->downloadLog($filename);
     }
 }
