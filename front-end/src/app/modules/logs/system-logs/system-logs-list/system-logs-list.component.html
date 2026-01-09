@@ -1,4 +1,4 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable" (select)="onSelect($event)">
+<grid [dao]="dao" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable" (select)="onSelect($event)">
     <toolbar *ngIf="!selectable"></toolbar>
     <columns>
         <column title="Arquivo" field="filename"></column>

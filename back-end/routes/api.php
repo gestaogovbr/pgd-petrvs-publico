@@ -77,7 +77,4 @@ Route::middleware(['panel'])->prefix('Audit')->group(function () {
     Route::post('query', [AuditController::class, 'query']);
 });
 
-Route::middleware(['panel'])->prefix('SystemLogs')->group(function () {
-    Route::get('getAll', [SystemLogsController::class, 'index']);
-    Route::get('download/{tenantId}/{file}', [SystemLogsController::class, 'download'])->middleware('throttle:60,1');
-});
+
