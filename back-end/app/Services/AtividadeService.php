@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\StatusEnum;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Models\AtividadePausa;
@@ -144,6 +145,12 @@ class AtividadeService extends ServiceBase
 
     public function extraStore(&$entity, $unidade, $action) {
         $metadados = $this->metadados($entity);
+        $consolidacao = PlanoTrabalhoConsolidacao::where(['id' => $entity->plano_trabalho_consolidacao_id,
+                                                          'status' => StatusEnum::AGUARDANDO_REGISTRO->value])->first();
+        if (!!$consolidacao) {
+            $consolidacao->status = StatusEnum::INCLUIDO->value;
+            $consolidacao->save();
+        }
         /* Atualiza status */
         $status = $metadados["pausado"] ? "PAUSADO" : 
             ($metadados["concluido"] ? "CONCLUIDO" : 
