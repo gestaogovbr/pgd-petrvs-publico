@@ -921,7 +921,7 @@ class PlanoTrabalhoService extends ServiceBase
             $result["usuarioEhParticipanteHabilitado"] = $this->unidadeService->unidadeEhHabilitada($planoTrabalho["unidade_id"], $planoTrabalho["programa_id"]);
             $result["usuarioEhParticipantePlano"] = parent::loggedUser()->id == $planoTrabalho["usuario_id"];
             $result["usuarioJaAssinouTCR"] = !$this->usuarioFaltaAssinar(null, $planoTrabalho);
-            $result["planoTrabalhoPendente"] = $this->planosUsuarioComPendenciasExecucaoAvaliacao($planoTrabalho["usuario_id"], $planoTrabalho["id"]);
+            $result["planoTrabalhoPendente"] = $this->planosUsuarioComPendenciasExecucaoAvaliacao($planoTrabalho["usuario_id"], $planoTrabalho["id"], now());
             return $this->setBuffer("buscaCondicoes", $entity["id"], $result);
         }
     }
@@ -1417,17 +1417,15 @@ class PlanoTrabalhoService extends ServiceBase
         return in_array($planoAnterior->status, $statusesPendentes, true);
     }
 
-    public function planosUsuarioComPendenciasExecucaoAvaliacao(string $usuarioId, $planoTrabalhoId): bool
+    public function planosUsuarioComPendenciasExecucaoAvaliacao(string $usuarioId, $planoTrabalhoId, $dataAssinatura): bool
     {
         $statusesPendentes = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO'];
-        $dataAssinatura = now();
         $diasPendenciaDataFinalPlano = 30;
 
         $planosPendentes = PlanoTrabalho::where('usuario_id', $usuarioId)
-            ->whereNotIn('status', ['CANCELADO', 'SUSPENSO'])
             ->whereIn('status', $statusesPendentes)
             ->where('id','!=', $planoTrabalhoId)
-            ->where('data_fim', '<', $dataAssinatura->subDays($diasPendenciaDataFinalPlano))
+            ->where('data_fim', '<', $dataAssinatura->subDays($diasPendenciaDataFinalPlano)->format('Y-m-d'))
             ->get();
 
         if ($planosPendentes->count() > 0) {

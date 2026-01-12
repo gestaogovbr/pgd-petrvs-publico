@@ -7,8 +7,6 @@ use Illuminate\Support\Facades\Log;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
-uses(TestCase::class);
-
 /*
  * Testes para o método processarAtualizacoesDados de IntegracaoService.
  * 

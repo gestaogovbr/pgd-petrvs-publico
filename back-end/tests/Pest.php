@@ -2,4 +2,4 @@
 
 use Tests\TestCase;
 
-uses(TestCase::class)->in('app');
+uses(TestCase::class)->in('Unit', 'Feature');

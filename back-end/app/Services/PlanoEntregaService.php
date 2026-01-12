@@ -615,7 +615,7 @@ class PlanoEntregaService extends ServiceBase
             }
             $planosComPendencias = $this->planosUnidadeComPendencias($dataOrEntity["unidade_id"]);
             if ($planosComPendencias) {
-                throw new ServerException("ValidatePlanoEntrega", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");
+                // throw new ServerException("ValidatePlanoEntrega", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");
             }
         }
     }
@@ -705,6 +705,26 @@ class PlanoEntregaService extends ServiceBase
         $statusesPendentes = ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'];
 
         return in_array($planoAnterior->status, $statusesPendentes, true);
+    }
+
+    public function planosUsuarioComPendenciasExecucaoAvaliacao(string $usuarioId, $planoEntregaId): bool
+    {
+        $statusesPendentes = ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'];
+        $dataAssinatura = now();
+        $diasPendenciaDataFinalPlano = 30;
+
+        $planosPendentes = PlanoEntrega::where('usuario_id', $usuarioId)
+            ->whereNotIn('status', ['CANCELADO', 'SUSPENSO'])
+            ->whereIn('status', $statusesPendentes)
+            ->where('id','!=', $planoEntregaId)
+            ->where('data_fim', '<', $dataAssinatura->subDays($diasPendenciaDataFinalPlano))
+            ->get();
+
+        if ($planosPendentes->count() > 0) {
+            return true;
+        }
+
+        return false;
     }
 
 }
