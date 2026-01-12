@@ -79,5 +79,23 @@ export class PlanoEntregaEntregaDaoService extends DaoBaseService<PlanoEntregaEn
     })
   }
 
+  public validateDestroy(entity: PlanoEntregaEntrega | string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.server
+        .post(this.PREFIX_URL + '/' + this.collection + '/validate-destroy', {
+          id: typeof entity == 'string' ? entity : entity.id,
+        }).subscribe({
+          next: (response) => {
+            if (response.error) {
+              reject(response.error);
+            } else {
+              resolve();
+            }
+          },
+          error:(error) => reject(error)}
+        );
+    });
+  }
+  
 }
 
