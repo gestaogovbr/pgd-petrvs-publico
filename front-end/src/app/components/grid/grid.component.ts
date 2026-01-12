@@ -90,6 +90,7 @@ export class GridComponent extends ComponentBase implements OnInit {
 	@Input() addMetadata?: RouteMetadata;
 	@Input() labelAdd: string = "Incluir";
 	@Input() orderBy?: QueryOrderBy[];
+	@Input() priorOrderBy?: QueryOrderBy[];
 	@Input() groupBy?: GroupBy[];
 	@Input() join: string[] = [];
 	@Input() leftJoin?: [string, string, string][];
@@ -505,6 +506,7 @@ export class GridComponent extends ComponentBase implements OnInit {
 					? this.filterRef?.where(this.filterRef.form)
 					: [],
 			orderBy: [
+				...(this.priorOrderBy || []),
 				...(this.groupBy || []).map((x) => [x.field, "asc"] as QueryOrderBy),
 				...(this.orderBy || []),
 			],

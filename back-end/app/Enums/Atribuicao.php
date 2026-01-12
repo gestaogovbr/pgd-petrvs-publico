@@ -8,5 +8,5 @@ enum Atribuicao: string
     case GESTOR = 'GESTOR';
     case LOTADO = 'LOTADO';
     case GESTOR_SUBSTITUTO = 'GESTOR_SUBSTITUTO';
-    case DELEGADO = 'DELEGADO';
+    case DELEGADO = 'GESTOR_DELEGADO';
 }

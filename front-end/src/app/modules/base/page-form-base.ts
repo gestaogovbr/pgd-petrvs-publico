@@ -69,7 +69,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
       try {
         if (["edit", "consult", "clone"].includes(this.action)) {
           const entity = await this.dao!.getById(this.id!, this.join).catch(error => {
-            this.error("Erro ao carregar os dados: " + (error.error?.message || error.message));
+            this.error("Erro ao carregar os dados: " + (error.error?.error || error.error?.message || error.message || error));
           })
           this.entity = entity!;
           await this.loadData(this.entity, this.form!, this.action);
@@ -77,7 +77,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
           await this.initializeData(this.form!);
         }
       } catch (error) {
-        this.error("Erro ao carregar dados: " + error);
+        this.error("Erro ao carregar dados: " + ((error as any)?.error?.error || (error as any)?.error?.message || (error as any)?.message || error));
       } finally {
         this.loading = false;
       }
@@ -109,7 +109,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
           self.close();
         }
       } catch (error: any) {
-        self.error(error.error?.message || error.message || error);
+        self.error(error?.error?.error || error?.error?.message || error?.message || error);
       } finally {
         self.submitting = false;
       }
@@ -149,9 +149,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
         if (typeof error === 'string') {
           errorMessage = error;
         } else {
-          if (typeof error === 'object' && 'message' in error) {
-            errorMessage = error.message;
-          }
+          errorMessage = error?.error?.error || error?.error?.message || error?.message || errorMessage;
         }
 
         if (prependMessage) { 
