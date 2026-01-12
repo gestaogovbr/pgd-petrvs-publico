@@ -115,7 +115,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 			"planejamento:id,nome",
 			"programa:id,nome,data_fim",
 			"cadeia_valor:id,nome",
-			"unidade:id,sigla,path,data_inativacao",
+			"unidade:id,sigla,path,data_inativacao,instituidora,unidade_pai_id",
 			"entregas.entrega",
 			"entregas.objetivos.objetivo",
 			"entregas.processos.processo",

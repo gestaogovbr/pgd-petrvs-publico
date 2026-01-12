@@ -189,8 +189,14 @@ export abstract class PageBase implements OnInit, ModalPage {
     this.viewInit = true;
   }
 
-  public error = (error: string) => {
-    this.dialog.topAlert(error);
+  public error = (error: any) => {
+    let message = 'Ocorreu um erro desconhecido';
+    if (typeof error === 'string') {
+      message = error;
+    } else if (error) {
+      message = error?.error?.error || error?.error?.message || error?.message || error?.toString?.() || message;
+    }
+    this.dialog.topAlert(message);
   }
 
   public saveUsuarioConfig(config?: any) {

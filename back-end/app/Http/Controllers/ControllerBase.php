@@ -8,9 +8,12 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Usuario;
 use App\Exceptions\LogError;
 use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
+use App\Exceptions\DataInvalidException;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 abstract class ControllerBase extends Controller
@@ -20,6 +23,8 @@ abstract class ControllerBase extends Controller
     public $updatable = [];
 
     public static $sameTransaction = false;
+    private const HTTP_STATUS_RANGE_START = 400;
+    private const HTTP_STATUS_RANGE_END = 600;
 
     public function __construct() {
         if(empty($this->collection)) {
@@ -36,6 +41,30 @@ abstract class ControllerBase extends Controller
     }
 
     abstract protected function checkPermissions($action, $request, $service, $unidade, $usuario);
+
+    protected function statusFromIBaseException(IBaseException $e): int
+    {
+        if ($e instanceof ValidateException || $e instanceof DataInvalidException) {
+            return Response::HTTP_BAD_REQUEST;
+        }
+
+        if ($e instanceof ServerException) {
+            $message = $e->getMessage();
+            if (str_starts_with($message, 'Erro ao validar')) {
+                return Response::HTTP_BAD_REQUEST;
+            }
+            if (str_starts_with($message, 'Usuário não tem permissão')) {
+                return Response::HTTP_FORBIDDEN;
+            }
+        }
+
+        $code = (int) $e->getCode();
+        if ($code >= self::HTTP_STATUS_RANGE_START && $code < self::HTTP_STATUS_RANGE_END) {
+            return $code;
+        }
+
+        return Response::HTTP_BAD_REQUEST;
+    }
 
     /**
      * Retorna o usuário logado
@@ -126,8 +155,10 @@ tenancy()->initialize($tenant); */
                 'success' => true,
                 'values' => $this->service->searchText($data)
             ]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             Log::error('Erro capturado', ['exception' => $e]);
@@ -156,8 +187,10 @@ tenancy()->initialize($tenant); */
                 'success' => true,
                 'value' => $this->service->searchKey($data)
             ]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -185,8 +218,10 @@ tenancy()->initialize($tenant); */
                 'success' => true,
                 'data' => $this->service->getById($data)
             ]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -217,8 +252,10 @@ tenancy()->initialize($tenant); */
                 'rows' => $result["rows"],
                 'extra' => $result["extra"]
             ]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -254,8 +291,10 @@ tenancy()->initialize($tenant); */
                 'rows' => $result['rows'],
                 'extra' => $result['extra']
             ]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -292,8 +331,10 @@ tenancy()->initialize($tenant); */
                 'file' => ['required'],
             ]);
             return response()->json(['success' => true, 'url' => $this->service->downloadUrl($data["file"])]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -317,8 +358,10 @@ tenancy()->initialize($tenant); */
                 'file' => ['required'],
             ]);
             return response()->json(['success' => $this->service->deleteFile($data["file"])]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -345,8 +388,10 @@ tenancy()->initialize($tenant); */
                 'name' => ['required']
             ]);
             return response()->json(['success' => true, 'path' => $this->service->upload($data["path"], $data["name"], $request->has('file') ? $request->file('file') : null)]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -374,8 +419,10 @@ tenancy()->initialize($tenant); */
                 'file' => ['required'],
             ]);
             return response()->json(['success' => true, 'path' => $this->service->uploadBase64($data["path"], $data["name"], $data["file"])]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -409,8 +456,11 @@ tenancy()->initialize($tenant); */
                 'rows' => [$result]
             ]);
         }
+        catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
         catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -450,8 +500,10 @@ tenancy()->initialize($tenant); */
                 'success' => true,
                 'rows' => [$result]
             ]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -489,8 +541,10 @@ tenancy()->initialize($tenant); */
                 'success' => true,
                 'rows' => [$result] //$this->service->update($request->all(), $unidade)
             ]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
@@ -513,8 +567,10 @@ tenancy()->initialize($tenant); */
                 'id' => ['required']
             ]);
             return response()->json(['success' => $this->service->destroy($data["id"], !ControllerBase::$sameTransaction)]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
