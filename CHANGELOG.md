@@ -1,3 +1,7 @@
+## 2.9.8 12/01/2026
+### Corrigido
+- Correção nas mensagens de erros de validação
+
 ## 2.9.7 02/01/2026
 ### Adicionado
 - Adição de Aba de Situação na consulta de Agentes Públicos, com dados de matrículas, regramentos, modalidade e participação no PGD;
