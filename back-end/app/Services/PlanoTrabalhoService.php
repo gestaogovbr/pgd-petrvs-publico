@@ -913,7 +913,7 @@ class PlanoTrabalhoService extends ServiceBase
             $result["planoSuspenso"] = $this->isPlano("SUSPENSO", $planoTrabalho);
             $result["planoValido"] = $this->isPlanoTrabalhoValido($planoTrabalho);
             $result["naoPossuiPeriodoConflitanteOutroPlano"] = count(PlanoTrabalho::withTrashed()->where("unidade_id", $planoTrabalho['unidade_id'])->where("usuario_id", $planoTrabalho['usuario_id'])->where("id", "!=", $planoTrabalho["id"])->get()
-                ->filter(fn($p) => $this->util->intersection([
+                ->filter(fn($p) => UtilService::intersection([
                     ['start' => UtilService::asDateTime($p->data_inicio), 'end' => UtilService::asDateTime($p->data_fim)],
                     ['start' => UtilService::asDateTime($planoTrabalho["data_inicio"]), 'end' => UtilService::asDateTime($planoTrabalho["data_fim"])]
                 ]) != null)) == 0;
@@ -1191,9 +1191,9 @@ class PlanoTrabalhoService extends ServiceBase
         $assinaram = $this->jaAssinaramTCR($planoTrabalho["id"]);
         return [
             "participante" => array_diff($exigidas["participante"], $assinaram["participante"]),
-            "gestores_unidade_executora" => empty($exigidas["gestores_unidade_executora"]) ? [] : (empty($this->util->intersecao($exigidas["gestores_unidade_executora"], $assinaram["gestores_unidade_executora"])) ? $exigidas["gestores_unidade_executora"] : []),
-            "gestores_unidade_lotacao" => empty($exigidas["gestores_unidade_lotacao"]) ? [] : (empty($this->util->intersecao($exigidas["gestores_unidade_lotacao"], $assinaram["gestores_unidade_lotacao"])) ? $exigidas["gestores_unidade_lotacao"] : []),
-            "gestores_entidade" => empty($exigidas["gestores_entidade"]) ? [] : (empty($this->util->intersecao($exigidas["gestores_entidade"], $assinaram["gestores_entidade"])) ? $exigidas["gestores_entidade"] : []),
+            "gestores_unidade_executora" => empty($exigidas["gestores_unidade_executora"]) ? [] : (empty(UtilService::intersecao($exigidas["gestores_unidade_executora"], $assinaram["gestores_unidade_executora"])) ? $exigidas["gestores_unidade_executora"] : []),
+            "gestores_unidade_lotacao" => empty($exigidas["gestores_unidade_lotacao"]) ? [] : (empty(UtilService::intersecao($exigidas["gestores_unidade_lotacao"], $assinaram["gestores_unidade_lotacao"])) ? $exigidas["gestores_unidade_lotacao"] : []),
+            "gestores_entidade" => empty($exigidas["gestores_entidade"]) ? [] : (empty(UtilService::intersecao($exigidas["gestores_entidade"], $assinaram["gestores_entidade"])) ? $exigidas["gestores_entidade"] : []),
         ];
     }
 
@@ -1240,9 +1240,9 @@ class PlanoTrabalhoService extends ServiceBase
         $exigidas = $this->assinaturasExigidas($planoTrabalho);
         $assinaram = empty($planoTrabalho["id"]) ? [] : $this->jaAssinaramTCR($planoTrabalho["id"]);
         return in_array($exigidas["participante"], $assinaram["participante"]) ||
-            !empty($this->util->intersecao($exigidas["gestores_unidade_executora"], $assinaram["gestores_unidade_executora"])) ||
-            !empty($this->util->intersecao($exigidas["gestores_unidade_lotacao"], $assinaram["gestores_unidade_lotacao"])) ||
-            !empty($this->util->intersecao($exigidas["gestores_entidade"], $assinaram["gestores_entidade"]));
+            !empty(UtilService::intersecao($exigidas["gestores_unidade_executora"], $assinaram["gestores_unidade_executora"])) ||
+            !empty(UtilService::intersecao($exigidas["gestores_unidade_lotacao"], $assinaram["gestores_unidade_lotacao"])) ||
+            !empty(UtilService::intersecao($exigidas["gestores_entidade"], $assinaram["gestores_entidade"]));
     }
 
     /**
