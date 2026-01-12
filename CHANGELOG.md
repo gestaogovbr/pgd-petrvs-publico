@@ -1,4 +1,11 @@
 ## 2.9.8 12/01/2026
+### Modificado
+- Seleção de regramentos na criação de PE limitada a unidade
+- Ao cadastrar PE é necessário a inserção de ao menos uma entrega
+- Ao cadastrar PE apenas unidades onde o usuário possui atribuição que permite a criação são selecionáveis
+- Edição de PE não remove mais assinatura.
+- Registro de execução só é liberado para PE após homologação, quando o plano entra em execução
+- Todos os campos passam a ser obrigatórios no registro cadastro de registro de execução
 ### Corrigido
 - Correção nas mensagens de erros de validação
 
