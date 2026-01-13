@@ -22,19 +22,11 @@ class PlanoEntregaService extends ServiceBase
 {
     public $unidades = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
 
-    public function alteracaoEntregaImpactaPlanoTrabalho($entregaAlterada)
-    {
-        $entregaAnterior = PlanoEntregaEntrega::find($entregaAlterada["id"]);
-        return $entregaAnterior->descricao != $entregaAlterada["descricao"] ||
-            UtilService::asTimestamp($entregaAnterior->data_inicio) != UtilService::asTimestamp($entregaAlterada["data_inicio"]) ||
-            UtilService::asTimestamp($entregaAnterior->data_fim) != UtilService::asTimestamp($entregaAlterada["data_fim"]);
-    }
-
     public function planosImpactadosPorAlteracaoEntrega($entrega)
     {
         $impactados = [];
         $planoEntregaEntrega = PlanoEntregaEntrega::find($entrega["id"]);
-        if ($planoEntregaEntrega?->planoEntrega?->Programa?->termo_obrigatorio && ($entrega["_status"] == "DELETE" || ($entrega["_status"] == "EDIT" && $this->alteracaoEntregaImpactaPlanoTrabalho($entrega)))) {
+        if ($planoEntregaEntrega?->planoEntrega?->Programa?->termo_obrigatorio && $entrega["_status"] == "DELETE") {
             foreach (PlanoTrabalhoEntrega::where("plano_entrega_entrega_id", $entrega["id"])->get() as $entregaPlanoTrabalho) {
                 if (!in_array($entregaPlanoTrabalho->plano_trabalho_id, $impactados))
                     $impactados[] = $entregaPlanoTrabalho->plano_trabalho_id;
