@@ -17,6 +17,7 @@ use App\Models\Programa;
 use App\Models\TipoAvaliacao;
 use App\Models\Unidade;
 use App\Enums\StatusEnum;
+use App\Services\Snapshot\PlanoTrabalhoConsolidacaoSnapshotService;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -271,8 +272,8 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       //if(!empty($anterior) && in_array($anterior->status, ["INCLUIDO"])) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Existe consolidação anterior ainda não concluída");
       $dados = $this->consolidacaoDados($id);
       $consolidacao = PlanoTrabalhoConsolidacao::find($id);
-      if(empty($consolidacao)) throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Consolidação não encontrada");
-      if(!empty($consolidacao->data_conclusao)) throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Consolidação já concluída");
+      if (empty($consolidacao)) throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Consolidação não encontrada");
+      if (!empty($consolidacao->data_conclusao)) throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Consolidação já concluída");
       if (!is_array($dados)) {
         throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Dados de consolidação inválidos");
       }
@@ -283,9 +284,11 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       }
       $IdsEntregasPlanoTrabalho = $consolidacao->planoTrabalho->entregas->pluck('id');
       /* Para cada ID de entrega, verificar se existe em dados[atividades].plano_trabalho_entrega_id */
-      foreach($IdsEntregasPlanoTrabalho as $IdEntregaPlanoTrabalho) {
-        if(!in_array($IdEntregaPlanoTrabalho, array_column($dados["atividades"] ?? [], "plano_trabalho_entrega_id"))) {
+      if (!(new UsuarioService)->isGestorUnidade(($dados['planoTrabalho'])->unidade_id)) {
+        foreach ($IdsEntregasPlanoTrabalho as $IdEntregaPlanoTrabalho) {
+          if (!in_array($IdEntregaPlanoTrabalho, array_column($dados["atividades"] ?? [], "plano_trabalho_entrega_id"))) {
           throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Para concluir é preciso que todas as entregas tenham atividades associadas");
+          }
         }
       }
 
@@ -295,39 +298,40 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
         $consolidacao->justificativa_conclusao = $justificativa_conclusao;
       }
       $consolidacao->save();
-      /* Snapshot das atividades */
-      foreach(array_map(fn($a) => $a["id"], $dados["atividades"] ?? []) as $atividadeId) {
-        $atividade = Atividade::find($atividadeId);
-        $consolidacaoAtividade = new PlanoTrabalhoConsolidacaoAtividade([
-          "data_conclusao" => $dataConclusao,
-          "snapshot" => $atividade->toArray(),
-          "plano_trabalho_consolidacao_id" => $id,
-          "atividade_id" => $atividade->id
-        ]);
-        $consolidacaoAtividade->save();
-      }
-      /* Snapshot dos afastamentos */
-      foreach(array_map(fn($a) => $a["id"], $dados["afastamentos"] ?? []) as $afastamentoId) {
-        $afastamento = Afastamento::find($afastamentoId);
-        $consolidacaoAfastamento = new PlanoTrabalhoConsolidacaoAfastamento([
-          "data_conclusao" => $dataConclusao,
-          "snapshot" => $afastamento->toArray(),
-          "plano_trabalho_consolidacao_id" => $id,
-          "afastamento_id" => $afastamento->id
-        ]);
-        $consolidacaoAfastamento->save();
-      }
-      /* Snapshot das ocorrencias */
-      foreach(array_map(fn($a) => $a["id"], $dados["ocorrencias"] ?? []) as $ocorrenciaId) {
-        $ocorrencia = Ocorrencia::find($ocorrenciaId);
-        $consolidacaoOcorrencia = new PlanoTrabalhoConsolidacaoOcorrencia([
-          "data_conclusao" => $dataConclusao,
-          "snapshot" => $ocorrencia->toArray(),
-          "plano_trabalho_consolidacao_id" => $id,
-          "ocorrencia_id" => $ocorrencia->id
-        ]);
-        $consolidacaoOcorrencia->save();
-      }
+      (new PlanoTrabalhoConsolidacaoSnapshotService())->createSnapshots($dados, $id, $dataConclusao);
+      // /* Snapshot das atividades */
+      // foreach(array_map(fn($a) => $a["id"], $dados["atividades"] ?? []) as $atividadeId) {
+      //   $atividade = Atividade::find($atividadeId);
+      //   $consolidacaoAtividade = new PlanoTrabalhoConsolidacaoAtividade([
+      //     "data_conclusao" => $dataConclusao,
+      //     "snapshot" => $atividade->toArray(),
+      //     "plano_trabalho_consolidacao_id" => $id,
+      //     "atividade_id" => $atividade->id
+      //   ]);
+      //   $consolidacaoAtividade->save();
+      // }
+      // /* Snapshot dos afastamentos */
+      // foreach(array_map(fn($a) => $a["id"], $dados["afastamentos"] ?? []) as $afastamentoId) {
+      //   $afastamento = Afastamento::find($afastamentoId);
+      //   $consolidacaoAfastamento = new PlanoTrabalhoConsolidacaoAfastamento([
+      //     "data_conclusao" => $dataConclusao,
+      //     "snapshot" => $afastamento->toArray(),
+      //     "plano_trabalho_consolidacao_id" => $id,
+      //     "afastamento_id" => $afastamento->id
+      //   ]);
+      //   $consolidacaoAfastamento->save();
+      // }
+      // /* Snapshot das ocorrencias */
+      // foreach(array_map(fn($a) => $a["id"], $dados["ocorrencias"] ?? []) as $ocorrenciaId) {
+      //   $ocorrencia = Ocorrencia::find($ocorrenciaId);
+      //   $consolidacaoOcorrencia = new PlanoTrabalhoConsolidacaoOcorrencia([
+      //     "data_conclusao" => $dataConclusao,
+      //     "snapshot" => $ocorrencia->toArray(),
+      //     "plano_trabalho_consolidacao_id" => $id,
+      //     "ocorrencia_id" => $ocorrencia->id
+      //   ]);
+      //   $consolidacaoOcorrencia->save();
+      // }
       /* Atualiza o status */
       $this->statusService->atualizaStatus($consolidacao, StatusEnum::CONCLUIDO, 'A consolidação foi concluída nesta data.');
       DB::commit();
