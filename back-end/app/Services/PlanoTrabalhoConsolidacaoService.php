@@ -17,7 +17,8 @@ use App\Models\Programa;
 use App\Models\TipoAvaliacao;
 use App\Models\Unidade;
 use App\Enums\StatusEnum;
-use App\Services\Snapshot\PlanoTrabalhoConsolidacaoSnapshotService;
+use App\Services\Snapshot\PlanoTrabalhoConsolidacaoRebuildService;
+use App\Services\Snapshot\PlanoTrabalhoConsolidacaoSnapshotCreatorService;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -137,20 +138,21 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     // }
 
     $repository = new PlanoTrabalhoConsolidacaoRepository();
+    $rebuilderService = new PlanoTrabalhoConsolidacaoRebuildService();
     $consolidacaoData = $repository->getConsolidacaoData($id);
     $consolidacao = $repository->findConsolidacaoById($id);
 
-    $atividades = array_map(fn($atividade) => $this->buildAtividadeConsolidacao($atividade->toArray(), $consolidacao), $consolidacaoData['atividades']->all());
-    $atividades = array_map(fn($atividade) => array_merge($atividade, ["metadados" => $this->atividadeService->metadados($atividade)]), $atividades);
-    $afastamentos = array_map(fn($afastamento) => $this->buildAfastamentoConsolidacao($afastamento->toArray(), $consolidacao), $consolidacaoData['afastamento']->all());
-    $ocorrencias = array_map(fn($ocorrencia) => $this->buildOcorrenciaConsolidacao($ocorrencia->toArray(), $consolidacao), $consolidacaoData['ocorrencia']->all());
+    // $atividades = array_map(fn($atividade) => $this->buildAtividadeConsolidacao($atividade->toArray(), $consolidacao), $consolidacaoData['atividades']->all());
+    // $atividades = array_map(fn($atividade) => array_merge($atividade, ["metadados" => $this->atividadeService->metadados($atividade)]), $atividades);
+    // $afastamentos = array_map(fn($afastamento) => $this->buildAfastamentoConsolidacao($afastamento->toArray(), $consolidacao), $consolidacaoData['afastamento']->all());
+    // $ocorrencias = array_map(fn($ocorrencia) => $this->buildOcorrenciaConsolidacao($ocorrencia->toArray(), $consolidacao), $consolidacaoData['ocorrencia']->all());
     return [
       'programa' => $consolidacao->programa,
       'planoTrabalho' => $consolidacao->planoTrabalho,
       'planosEntregas' => $consolidacaoData['planosEntregas'],
-      'atividades' => $atividades,
-      'afastamentos' => $afastamentos,
-      'ocorrencias' => $ocorrencias,
+      'atividades' => $rebuilderService->rebuildCollection($consolidacaoData['atividades']->all(), $consolidacao, 'atividades'),
+      'afastamentos' => $rebuilderService->rebuildCollection($consolidacaoData['afastamento']->all(), $consolidacao, 'afastamento'),
+      'ocorrencias' => $rebuilderService->rebuildCollection($consolidacaoData['ocorrencia']->all(), $consolidacao, 'ocorrencia'),
       'comparecimentos' => $consolidacao->comparecimentos ?? [],
       'status' => $consolidacao->status,
       'justificativa_conclusao' => $consolidacao->justificativa_conclusao,
@@ -307,7 +309,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
         $consolidacao->justificativa_conclusao = $justificativa_conclusao;
       }
       $consolidacao->save();
-      (new PlanoTrabalhoConsolidacaoSnapshotService())->createSnapshots($dados, $id, $dataConclusao);
+      (new PlanoTrabalhoConsolidacaoSnapshotCreatorService())->createSnapshots($dados, $id, $dataConclusao);
       // /* Snapshot das atividades */
       // foreach(array_map(fn($a) => $a["id"], $dados["atividades"] ?? []) as $atividadeId) {
       //   $atividade = Atividade::find($atividadeId);
