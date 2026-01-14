@@ -7,7 +7,7 @@ use App\Models\PlanoTrabalhoConsolidacaoAtividade;
 
 class AtividadeSnapshotCreator implements SnapshotCreatorInterface
 {
-    public function create(string $entityId, string $consolidacaoId, \DateTime $dataConclusao): void
+    public function create(string $entityId, string $consolidacaoId, $dataConclusao): void
     {
         $atividade = Atividade::find($entityId);
         $consolidacao = new PlanoTrabalhoConsolidacaoAtividade([

@@ -7,7 +7,7 @@ use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
 
 class AfastamentoSnapshotCreator implements SnapshotCreatorInterface
 {
-    public function create(string $entityId, string $consolidacaoId, \DateTime $dataConclusao): void
+    public function create(string $entityId, string $consolidacaoId, $dataConclusao): void
     {
         $afastamento = Afastamento::find($entityId);
         $consolidacao = new PlanoTrabalhoConsolidacaoAfastamento([

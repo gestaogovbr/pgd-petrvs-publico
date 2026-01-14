@@ -7,7 +7,7 @@ use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 
 class OcorrenciaSnapshotCreator implements SnapshotCreatorInterface
 {
-    public function create(string $entityId, string $consolidacaoId, \DateTime $dataConclusao): void
+    public function create(string $entityId, string $consolidacaoId, $dataConclusao): void
     {
         $ocorrencia = Ocorrencia::find($entityId);
         $consolidacao = new PlanoTrabalhoConsolidacaoOcorrencia([

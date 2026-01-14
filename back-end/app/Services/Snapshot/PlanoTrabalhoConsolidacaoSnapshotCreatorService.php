@@ -2,7 +2,7 @@
 
 namespace App\Services\Snapshot;
 
-class PlanoTrabalhoConsolidacaoSnapshotService
+class PlanoTrabalhoConsolidacaoSnapshotCreatorService
 {
     /** @var array<string, SnapshotCreatorInterface> */
     protected array $creators = [];
@@ -16,7 +16,7 @@ class PlanoTrabalhoConsolidacaoSnapshotService
         ];
     }
 
-    public function createSnapshots(array $dados, string $consolidacaoId, \DateTime $dataConclusao): void
+    public function createSnapshots(array $dados, string $consolidacaoId, $dataConclusao): void
     {
         /** @var SnapshotCreatorInterface $creator */
         foreach ($this->creators as $key => $creator) {

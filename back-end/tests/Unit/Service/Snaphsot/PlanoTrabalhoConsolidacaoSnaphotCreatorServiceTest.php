@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\Snapshot\PlanoTrabalhoConsolidacaoSnapshotService;
+use App\Services\Snapshot\PlanoTrabalhoConsolidacaoSnapshotCreatorService;
 use App\Services\Snapshot\SnapshotCreatorInterface;
 
 uses(Tests\TestCase::class);
@@ -29,7 +29,7 @@ test('cria snapshots para atividades quando dados fornecidos', function () {
         ->once();
 
     // Inject mock creator
-    $service = new class($mockCreator) extends PlanoTrabalhoConsolidacaoSnapshotService {
+    $service = new class($mockCreator) extends PlanoTrabalhoConsolidacaoSnapshotCreatorService {
         public function __construct($mockCreator) {
             $this->creators = ['atividades' => $mockCreator];
         }
@@ -50,7 +50,7 @@ test('cria snapshots para afastamentos quando dados fornecidos', function () {
         ->with('afastamento-1', $this->consolidacaoId, $this->dataConclusao)
         ->once();
 
-    $service = new class($mockCreator) extends PlanoTrabalhoConsolidacaoSnapshotService {
+    $service = new class($mockCreator) extends PlanoTrabalhoConsolidacaoSnapshotCreatorService {
         public function __construct($mockCreator) {
             $this->creators = ['afastamentos' => $mockCreator];
         }
@@ -71,7 +71,7 @@ test('cria snapshots para ocorrencias quando dados fornecidos', function () {
         ->with('ocorrencia-1', $this->consolidacaoId, $this->dataConclusao)
         ->once();
 
-    $service = new class($mockCreator) extends PlanoTrabalhoConsolidacaoSnapshotService {
+    $service = new class($mockCreator) extends PlanoTrabalhoConsolidacaoSnapshotCreatorService {
         public function __construct($mockCreator) {
             $this->creators = ['ocorrencias' => $mockCreator];
         }
@@ -86,7 +86,7 @@ test('não cria snapshots quando dados não fornecidos', function () {
     $mockCreator = Mockery::mock(SnapshotCreatorInterface::class);
     $mockCreator->shouldNotReceive('create');
 
-    $service = new class($mockCreator) extends PlanoTrabalhoConsolidacaoSnapshotService {
+    $service = new class($mockCreator) extends PlanoTrabalhoConsolidacaoSnapshotCreatorService {
         public function __construct($mockCreator) {
             $this->creators = ['atividades' => $mockCreator];
         }
@@ -110,7 +110,7 @@ test('processa múltiplos tipos de dados simultaneamente', function () {
     $mockAfastamento->shouldReceive('create')->once();
     $mockOcorrencia->shouldReceive('create')->once();
 
-    $service = new class($mockAtividade, $mockAfastamento, $mockOcorrencia) extends PlanoTrabalhoConsolidacaoSnapshotService {
+    $service = new class($mockAtividade, $mockAfastamento, $mockOcorrencia) extends PlanoTrabalhoConsolidacaoSnapshotCreatorService {
         public function __construct($mockAtividade, $mockAfastamento, $mockOcorrencia) {
             $this->creators = [
                 'atividades' => $mockAtividade,
