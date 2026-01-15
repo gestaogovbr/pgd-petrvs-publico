@@ -9,7 +9,7 @@ class OcorrenciaSnapshotRebuilder extends BaseRebuilder
 {
     public function rebuildFromSnapshot($ocorrencia, $consolidacaoId, $consolidacaoDataConclusao)
     {
-        assert($ocorrencia instanceof Ocorrencia);
+        if (!$ocorrencia instanceof Ocorrencia) throw new \TypeError;
         $ocorrencia = $ocorrencia->toArray();
         if (!empty($consolidacaoDataConclusao)) {
             $consolidacaoOcorrencia = PlanoTrabalhoConsolidacaoOcorrencia::where("plano_trabalho_consolidacao_id", $consolidacaoId)

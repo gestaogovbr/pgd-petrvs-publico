@@ -176,5 +176,5 @@ test('filtra tarefas por data de consolidação', function () {
 
 test('chamada do método com o tipo errado de modelo retorna AssertionError', function () {
     $naoAtividade = Mockery::mock('App\Models\NaoAtividade');
-    expect(fn() => $this->rebuilder->rebuildFromSnapshot($naoAtividade, $this->consolidacaoId, $this->dataConclusao))->toThrow(AssertionError::class);
+    expect(fn() => $this->rebuilder->rebuildFromSnapshot($naoAtividade, $this->consolidacaoId, $this->dataConclusao))->toThrow(TypeError::class);
 });

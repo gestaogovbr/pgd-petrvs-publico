@@ -18,7 +18,7 @@ class AtividadeSnapshotRebuilder extends BaseRebuilder
 
     public function rebuildFromSnapshot($atividade, $consolidacaoId, $consolidacaoDataConclusao)
     {
-        assert($atividade instanceof Atividade);
+        if (!$atividade instanceof Atividade) throw new \TypeError;
         $atividade = $atividade->toArray();
         if (!empty($consolidacaoDataConclusao)) {
             $consolidacaoAtividade = PlanoTrabalhoConsolidacaoAtividade::where("plano_trabalho_consolidacao_id", $consolidacaoId)

@@ -9,7 +9,7 @@ class AfastamentoSnapshotRebuilder extends BaseRebuilder
 {
     public function rebuildFromSnapshot($afastamento, $consolidacaoId, $consolidacaoDataConclusao)
     {
-        assert($afastamento instanceof Afastamento);
+        if (!$afastamento instanceof Afastamento) throw new \TypeError;
         $afastamento = $afastamento->toArray();
         if (!empty($consolidacaoDataConclusao)) {
             $consolidacaoAfastameto = PlanoTrabalhoConsolidacaoAfastamento::where("plano_trabalho_consolidacao_id", $consolidacaoId)
