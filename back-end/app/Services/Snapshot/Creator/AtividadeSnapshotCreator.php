@@ -1,6 +1,6 @@
 <?
 
-namespace App\Services\Snapshot;
+namespace App\Services\Snapshot\Creator;
 
 use App\Models\Atividade;
 use App\Models\PlanoTrabalhoConsolidacaoAtividade;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Snapshot;
+namespace App\Services\Snapshot\Creator;
 
 use App\Models\Ocorrencia;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;

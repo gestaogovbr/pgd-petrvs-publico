@@ -17,7 +17,7 @@ use App\Models\Programa;
 use App\Models\TipoAvaliacao;
 use App\Models\Unidade;
 use App\Enums\StatusEnum;
-use App\Services\Snapshot\PlanoTrabalhoConsolidacaoSnapshotCreatorService;
+use App\Services\Snapshot\Creator\PlanoTrabalhoConsolidacaoSnapshotCreatorService;
 use App\Services\Snapshot\Rebuilder\PlanoTrabalhoConsolidacaoRebuildService;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;

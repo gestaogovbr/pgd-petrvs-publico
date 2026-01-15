@@ -1,7 +1,7 @@
 <?php
 
-use App\Services\Snapshot\PlanoTrabalhoConsolidacaoSnapshotCreatorService;
-use App\Services\Snapshot\SnapshotCreatorInterface;
+use App\Services\Snapshot\Creator\PlanoTrabalhoConsolidacaoSnapshotCreatorService;
+use App\Services\Snapshot\Creator\SnapshotCreatorInterface;
 
 uses(Tests\TestCase::class);
 

@@ -1,8 +1,5 @@
 <?php
 
-use App\Models\Atividade;
-use App\Models\PlanoTrabalhoConsolidacaoAtividade;
-use App\Services\AtividadeService;
 use App\Services\Snapshot\Rebuilder\AtividadeSnapshotRebuilder;
 use Illuminate\Support\Facades\Schema;
 use DateTime;
