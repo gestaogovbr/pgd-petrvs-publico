@@ -1,13 +1,16 @@
 <?php
 
-namespace App\Services\Snapshot;
+namespace App\Services\Snapshot\Rebuilder;
 
+use App\Models\Afastamento;
 use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
 
-class AfastamentoSnapshotRebuilder implements SnapshotRebuilderInterface
+class AfastamentoSnapshotRebuilder extends BaseRebuilder
 {
     public function rebuildFromSnapshot($afastamento, $consolidacaoId, $consolidacaoDataConclusao)
     {
+        assert($afastamento instanceof Afastamento);
+        $afastamento = $afastamento->toArray();
         if (!empty($consolidacaoDataConclusao)) {
             $consolidacaoAfastameto = PlanoTrabalhoConsolidacaoAfastamento::where("plano_trabalho_consolidacao_id", $consolidacaoId)
                 ->where("data_conclusao", $consolidacaoDataConclusao)

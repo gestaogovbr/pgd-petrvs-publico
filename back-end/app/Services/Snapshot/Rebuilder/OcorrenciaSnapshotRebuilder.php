@@ -1,13 +1,16 @@
 <?php
 
-namespace App\Services\Snapshot;
+namespace App\Services\Snapshot\Rebuilder;
 
+use App\Models\Ocorrencia;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 
-class OcorrenciaSnapshotRebuilder implements SnapshotRebuilderInterface
+class OcorrenciaSnapshotRebuilder extends BaseRebuilder
 {
     public function rebuildFromSnapshot($ocorrencia, $consolidacaoId, $consolidacaoDataConclusao)
     {
+        assert($ocorrencia instanceof Ocorrencia);
+        $ocorrencia = $ocorrencia->toArray();
         if (!empty($consolidacaoDataConclusao)) {
             $consolidacaoOcorrencia = PlanoTrabalhoConsolidacaoOcorrencia::where("plano_trabalho_consolidacao_id", $consolidacaoId)
                 ->where("data_conclusao", $consolidacaoDataConclusao)

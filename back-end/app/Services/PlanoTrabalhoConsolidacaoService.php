@@ -17,8 +17,8 @@ use App\Models\Programa;
 use App\Models\TipoAvaliacao;
 use App\Models\Unidade;
 use App\Enums\StatusEnum;
-use App\Services\Snapshot\PlanoTrabalhoConsolidacaoRebuildService;
 use App\Services\Snapshot\PlanoTrabalhoConsolidacaoSnapshotCreatorService;
+use App\Services\Snapshot\Rebuilder\PlanoTrabalhoConsolidacaoRebuildService;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -150,9 +150,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'programa' => $consolidacao->programa,
       'planoTrabalho' => $consolidacao->planoTrabalho,
       'planosEntregas' => $consolidacaoData['planosEntregas'],
-      'atividades' => $rebuilderService->rebuildCollection($consolidacaoData['atividades']->all(), $consolidacao, 'atividades'),
-      'afastamentos' => $rebuilderService->rebuildCollection($consolidacaoData['afastamento']->all(), $consolidacao, 'afastamento'),
-      'ocorrencias' => $rebuilderService->rebuildCollection($consolidacaoData['ocorrencia']->all(), $consolidacao, 'ocorrencia'),
+      'atividades' => $rebuilderService->rebuildCollections($consolidacaoData['atividades']->all(), $consolidacao, 'atividades'),
+      'afastamentos' => $rebuilderService->rebuildCollections($consolidacaoData['afastamento']->all(), $consolidacao, 'afastamento'),
+      'ocorrencias' => $rebuilderService->rebuildCollections($consolidacaoData['ocorrencia']->all(), $consolidacao, 'ocorrencia'),
       'comparecimentos' => $consolidacao->comparecimentos ?? [],
       'status' => $consolidacao->status,
       'justificativa_conclusao' => $consolidacao->justificativa_conclusao,

@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Services\Snapshot;
+namespace App\Services\Snapshot\Rebuilder;
 
 use App\Models\PlanoTrabalhoConsolidacao;
-use App\Services\AtividadeService;
+use Illuminate\Database\Eloquent\Collection;
 
-class PlanoTrabalhoConsolidacaoRebuildService {
+class PlanoTrabalhoConsolidacaoRebuildService
+{
     /** @var array<string, SnapshotRebuilderInterface> */
     private $rebuilders;
 
-    private AtividadeService $atividadeService;
-
-    public function __construct() {
-        $this->atividadeService = new AtividadeService();
+    public function __construct()
+    {
 
         $this->rebuilders = [
             'atividades' => new AtividadeSnapshotRebuilder(),
@@ -21,26 +20,14 @@ class PlanoTrabalhoConsolidacaoRebuildService {
         ];
     }
 
-    public function rebuildCollection($collection, PlanoTrabalhoConsolidacao $consolidacao, string $type): array
+    public function rebuildCollections(Collection $collection, PlanoTrabalhoConsolidacao $consolidacao, string $type): array
     {
-        $rebuilder = $this->rebuilders[$type] ?? null;    
-    
-        if (!isset($this->rebuilders[$type])) {
-            throw new \InvalidArgumentException("Rebuilder não implementado: {$type}");
+        $rebuilder = $this->rebuilders[$type] ?? null;
+
+        if (!$rebuilder instanceof BaseRebuilder) {
+            throw new \InvalidArgumentException("Rebuilder não listado: {$type}");
         }
 
-        $rebuilt = array_map(fn($item) => 
-            $rebuilder->rebuildFromSnapshot($item->toArray(), $consolidacao->id, $consolidacao->data_c), 
-            $collection->all()
-        );
-
-        if ($type === 'atividade') { // Será que há como deixar isso só dentro dentro da classe de AtividadeSnapshotRebuilder?
-            $rebuilt = array_map(fn($atividade) => 
-                array_merge($atividade, ["metadados" => $this->atividadeService->metadados($atividade)]), 
-                $rebuilt
-            );
-        }
-
-        return $rebuilt;
+        return $rebuilder->rebuildCollection($collection, $consolidacao->id, $consolidacao->data_conclusao);
     }
 }

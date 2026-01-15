@@ -1,14 +1,25 @@
 <?php
 
-namespace App\Services\Snapshot;
+namespace App\Services\Snapshot\Rebuilder;
 
+use App\Models\Atividade;
 use App\Models\PlanoTrabalhoConsolidacaoAtividade;
+use App\Services\AtividadeService;
 use App\Services\UtilService;
 
-class AtividadeSnapshotRebuilder implements SnapshotRebuilderInterface
+class AtividadeSnapshotRebuilder extends BaseRebuilder
 {
+    private AtividadeService $atividadeService;
+
+    public function __construct()
+    {
+        $this->atividadeService = new AtividadeService();
+    }
+
     public function rebuildFromSnapshot($atividade, $consolidacaoId, $consolidacaoDataConclusao)
     {
+        assert($atividade instanceof Atividade);
+        $atividade = $atividade->toArray();
         if (!empty($consolidacaoDataConclusao)) {
             $consolidacaoAtividade = PlanoTrabalhoConsolidacaoAtividade::where("plano_trabalho_consolidacao_id", $consolidacaoId)
                 ->where("data_conclusao", $consolidacaoDataConclusao)
@@ -34,6 +45,19 @@ class AtividadeSnapshotRebuilder implements SnapshotRebuilderInterface
             $this->atualizarTarefas($atividade["tarefas"], $consolidacaoDataConclusao);
         }
         return $atividade;
+    }
+
+    public function rebuildCollection($collection, $consolidacaoId, $consolidacaoDataConclusao)
+    {
+        $rebuilt = parent::rebuildCollection($collection, $consolidacaoId, $consolidacaoDataConclusao);
+
+        $rebuilt = array_map(
+            fn($atividade) =>
+            array_merge($atividade, ["metadados" => $this->atividadeService->metadados($atividade)]),
+            $rebuilt
+        );
+
+        return $rebuilt;
     }
 
     private function atualizarComentarios(&$atividadeComentarios, $consolidacaoDataConclusao)
