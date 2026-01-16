@@ -1,3 +1,6 @@
+## 2.9.9 19/01/2026
+### Corrigido
+- Retira atribuição de chefe substituto quando receber a atribuiçõ de chefe
 ## 2.9.8 12/01/2026
 ### Modificado
 - Seleção de regramentos na criação de PE limitada a unidade
