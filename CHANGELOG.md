@@ -1,4 +1,10 @@
 ## 2.9.9 19/01/2026
+### Adicionado
+- Arquivamento automático de PTs e PEs avaliados após 90 dias de sua avaliação;
+- Usuários excluídos no SIAPE agora são movidos para CPFs indisponíveis via busca manual.
+### Modificado
+- Status de PTs e PEs renomeados;
+- Exibição de PTs e PEs segregada por status.
 ### Corrigido
 - Retira atribuição de chefe substituto quando receber a atribuiçõ de chefe
 ## 2.9.8 12/01/2026
