@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\Atribuicao;
+use App\Enums\StatusEnum;
 use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
 use App\Models\Unidade;
@@ -536,7 +537,7 @@ class PlanoTrabalhoService extends ServiceBase
                             'data_inicio' => $dataInicio->toDateString(),
                             'data_fim' =>  Carbon::parse($intersecao->data_inicio)->subDay()->toDateString(),
                             'plano_trabalho_id' => $plano->id,
-                            'status' => 'INCLUIDO'
+                            'status' => StatusEnum::AGUARDANDO_REGISTRO->value
                         ]);
                         $novo->save();
                         $merged[] = $novo;
@@ -547,7 +548,7 @@ class PlanoTrabalhoService extends ServiceBase
                         'data_inicio' => $dataInicio->toDateString(),
                         'data_fim' => $dataFim->toDateString(),
                         'plano_trabalho_id' => $plano->id,
-                        'status' => 'INCLUIDO'
+                        'status' => StatusEnum::AGUARDANDO_REGISTRO->value
                     ]);
                     $novo->save();
                     $merged[] = $novo;
@@ -844,7 +845,7 @@ class PlanoTrabalhoService extends ServiceBase
         }
 
         foreach ($plano->consolidacoes as $consolidacao) {
-            if ($consolidacao->status != "INCLUIDO")
+            if (in_array($consolidacao->status, StatusEnum::statusEditaveisPlanoTrabalho()))
                 return false;
         }
         return true;
