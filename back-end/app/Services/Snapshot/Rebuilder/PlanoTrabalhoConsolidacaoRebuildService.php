@@ -12,14 +12,8 @@ class PlanoTrabalhoConsolidacaoRebuildService
 
     public function __construct($rebuilders = null)
     {
-        // $this->rebuilders = [
-        //     'atividades' => new AtividadeSnapshotCreator(),
-        //     'afastamentos' => new AfastamentoSnapshotCreator(),
-        //     'ocorrencias' => new OcorrenciaSnapshotCreator(),
-        // ];
-
         foreach ($rebuilders as $key => $rebuilder) {
-            if(!$rebuilder instanceof BaseRebuilder) throw new \TypeError();
+            if (!$rebuilder instanceof BaseRebuilder) throw new \TypeError();
             $this->rebuilders[$key] = $rebuilder;
         }
     }
@@ -29,7 +23,6 @@ class PlanoTrabalhoConsolidacaoRebuildService
         $rebuilder = $this->rebuilders[$type] ?? null;
 
         if (!$rebuilder instanceof BaseRebuilder) throw new \TypeError("Rebuilder não listado: {$type}");
-        
 
         return $rebuilder->rebuildCollection($collection, $consolidacao->id, $consolidacao->data_conclusao);
     }

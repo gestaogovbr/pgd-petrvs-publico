@@ -9,14 +9,8 @@ class PlanoTrabalhoConsolidacaoSnapshotCreatorService
 
     public function __construct($creators = null)
     {
-        // $this->creators = [
-        //     'atividades' => new AtividadeSnapshotCreator(),
-        //     'afastamentos' => new AfastamentoSnapshotCreator(),
-        //     'ocorrencias' => new OcorrenciaSnapshotCreator(),
-        // ];
-
         foreach ($creators as $key => $creator) {
-            if(!$creator instanceof SnapshotCreatorInterface) throw new \TypeError();
+            if (!$creator instanceof SnapshotCreatorInterface) throw new \TypeError();
             $this->creators[$key] = $creator;
         }
     }
@@ -25,6 +19,7 @@ class PlanoTrabalhoConsolidacaoSnapshotCreatorService
     {
         /** @var SnapshotCreatorInterface $creator */
         foreach ($this->creators as $key => $creator) {
+            if (!array_key_exists($key, $dados)) continue; # Será que não deveria ser disparado um erro ?
             if (!is_array($dados[$key])) throw new \TypeError();
             $ids = array_map(fn($item) => $item["id"], $dados[$key]);
             foreach ($ids as $id) {

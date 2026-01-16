@@ -17,7 +17,13 @@ use App\Models\Programa;
 use App\Models\TipoAvaliacao;
 use App\Models\Unidade;
 use App\Enums\StatusEnum;
+use App\Services\Snapshot\Creator\AfastamentoSnapshotCreator;
+use App\Services\Snapshot\Creator\AtividadeSnapshotCreator;
+use App\Services\Snapshot\Creator\OcorrenciaSnapshotCreator;
 use App\Services\Snapshot\Creator\PlanoTrabalhoConsolidacaoSnapshotCreatorService;
+use App\Services\Snapshot\Rebuilder\AfastamentoSnapshotRebuilder;
+use App\Services\Snapshot\Rebuilder\AtividadeSnapshotRebuilder;
+use App\Services\Snapshot\Rebuilder\OcorrenciaSnapshotRebuilder;
 use App\Services\Snapshot\Rebuilder\PlanoTrabalhoConsolidacaoRebuildService;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
@@ -138,7 +144,12 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     // }
 
     $repository = new PlanoTrabalhoConsolidacaoRepository();
-    $rebuilderService = new PlanoTrabalhoConsolidacaoRebuildService();
+    $snapshotRebuilders = [
+      'atividades' => new AtividadeSnapshotRebuilder(new AtividadeService()),
+      'afastamento' => new AfastamentoSnapshotRebuilder(),
+      'ocorrencia' => new OcorrenciaSnapshotRebuilder()
+    ];
+    $rebuilderService = new PlanoTrabalhoConsolidacaoRebuildService($snapshotRebuilders);
     $consolidacaoData = $repository->getConsolidacaoData($id);
     $consolidacao = $repository->findConsolidacaoById($id);
 
@@ -309,7 +320,12 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
         $consolidacao->justificativa_conclusao = $justificativa_conclusao;
       }
       $consolidacao->save();
-      (new PlanoTrabalhoConsolidacaoSnapshotCreatorService())->createSnapshots($dados, $id, $dataConclusao);
+      $snapshotCreators = [
+        'atividades' => new AtividadeSnapshotCreator(),
+        'afastamentos' => new AfastamentoSnapshotCreator(),
+        'ocorrencias' => new OcorrenciaSnapshotCreator()
+      ];
+      (new PlanoTrabalhoConsolidacaoSnapshotCreatorService($snapshotCreators))->createSnapshots($dados, $id, $dataConclusao);
       // /* Snapshot das atividades */
       // foreach(array_map(fn($a) => $a["id"], $dados["atividades"] ?? []) as $atividadeId) {
       //   $atividade = Atividade::find($atividadeId);

@@ -11,9 +11,9 @@ class AtividadeSnapshotRebuilder extends BaseRebuilder
 {
     private AtividadeService $atividadeService;
 
-    public function __construct()
+    public function __construct(AtividadeService $atividadeService)
     {
-        $this->atividadeService = new AtividadeService();
+        $this->atividadeService = $atividadeService;
     }
 
     public function rebuildFromSnapshot($atividade, $consolidacaoId, $consolidacaoDataConclusao)
