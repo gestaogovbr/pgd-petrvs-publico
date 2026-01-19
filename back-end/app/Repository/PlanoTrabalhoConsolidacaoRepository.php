@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Repository;
+
 use App\Enums\StatusEnum;
 use App\Models\Afastamento;
 use App\Models\Atividade;

@@ -17,6 +17,7 @@ use App\Models\Programa;
 use App\Models\TipoAvaliacao;
 use App\Models\Unidade;
 use App\Enums\StatusEnum;
+use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Services\Snapshot\Creator\AfastamentoSnapshotCreator;
 use App\Services\Snapshot\Creator\AtividadeSnapshotCreator;
 use App\Services\Snapshot\Creator\OcorrenciaSnapshotCreator;
@@ -28,7 +29,6 @@ use App\Services\Snapshot\Rebuilder\PlanoTrabalhoConsolidacaoRebuildService;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
-use PlanoTrabalhoConsolidacaoRepository;
 use Throwable;
 
 class PlanoTrabalhoConsolidacaoService extends ServiceBase
@@ -146,8 +146,8 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     $repository = new PlanoTrabalhoConsolidacaoRepository();
     $snapshotRebuilders = [
       'atividades' => new AtividadeSnapshotRebuilder(new AtividadeService()),
-      'afastamento' => new AfastamentoSnapshotRebuilder(),
-      'ocorrencia' => new OcorrenciaSnapshotRebuilder()
+      'afastamentos' => new AfastamentoSnapshotRebuilder(),
+      'ocorrencias' => new OcorrenciaSnapshotRebuilder()
     ];
     $rebuilderService = new PlanoTrabalhoConsolidacaoRebuildService($snapshotRebuilders);
     $consolidacaoData = $repository->getConsolidacaoData($id);
@@ -161,9 +161,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'programa' => $consolidacao->programa,
       'planoTrabalho' => $consolidacao->planoTrabalho,
       'planosEntregas' => $consolidacaoData['planosEntregas'],
-      'atividades' => $rebuilderService->rebuildCollections($consolidacaoData['atividades']->all(), $consolidacao, 'atividades'),
-      'afastamentos' => $rebuilderService->rebuildCollections($consolidacaoData['afastamento']->all(), $consolidacao, 'afastamento'),
-      'ocorrencias' => $rebuilderService->rebuildCollections($consolidacaoData['ocorrencia']->all(), $consolidacao, 'ocorrencia'),
+      'atividades' => $rebuilderService->rebuildCollections($consolidacaoData['atividades'], $consolidacao, 'atividades'),
+      'afastamentos' => $rebuilderService->rebuildCollections($consolidacaoData['afastamentos'], $consolidacao, 'afastamentos'),
+      'ocorrencias' => $rebuilderService->rebuildCollections($consolidacaoData['ocorrencias'], $consolidacao, 'ocorrencias'),
       'comparecimentos' => $consolidacao->comparecimentos ?? [],
       'status' => $consolidacao->status,
       'justificativa_conclusao' => $consolidacao->justificativa_conclusao,
