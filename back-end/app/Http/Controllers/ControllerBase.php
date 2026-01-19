@@ -127,10 +127,6 @@ abstract class ControllerBase extends Controller
         return $result;
     }
 
-
-/*     $tenant = Tenant::find('SENAPPEN');
-tenancy()->initialize($tenant); */
-
     public function getUsuario(Request $request) {
         return !empty(self::loggedUser()) ? Usuario::where("id", self::loggedUser()?->id)->with("areasTrabalho.unidade")->first() : null;
     }
@@ -441,10 +437,7 @@ tenancy()->initialize($tenant); */
     {
         try {
             $this->checkPermissions("STORE", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
-            $data = $request->validate([
-                'entity' => ['required'],
-                'with' => ['array']
-            ]);
+            $data = $this->validateStore($request);
             $unidade = $this->getUnidade($request);
             $entity = $this->service->store($data['entity'], $unidade, !ControllerBase::$sameTransaction);
             $result = $this->service->getById([
@@ -469,6 +462,21 @@ tenancy()->initialize($tenant); */
         }
     }
 
+    protected function validateStore(Request $request) {
+        return $request->validate([
+                'entity' => ['required'],
+                'with' => ['array']
+            ]);
+    }
+
+    protected function validateUpdate(Request $request) {
+        return $request->validate([
+                'id' => ['required'],
+                'data' => ['required'],
+                'with' => ['array']
+            ]);
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -479,11 +487,7 @@ tenancy()->initialize($tenant); */
     {
         try {
             $this->checkPermissions("UPDATE", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
-            $data = $request->validate([
-                'id' => ['required'],
-                'data' => ['required'],
-                'with' => ['array']
-            ]);
+            $data = $this->validateUpdate($request);
             foreach (array_keys($data["data"]) as $key) {
                 if($key != "id" && !in_array($key, $this->updatable)) {
                     return response()->json(['error' => "Não é possível atualizar"], Response::HTTP_INTERNAL_SERVER_ERROR);

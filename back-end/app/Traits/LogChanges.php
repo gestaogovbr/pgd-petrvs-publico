@@ -40,7 +40,6 @@ trait LogChanges
     
     public static function logChange(Model $model, string $action)
     {
-        $util = new UtilService();
         $config = config("log");
 
         $delta = [];
@@ -48,7 +47,7 @@ trait LogChanges
             $oldAttributes = $model->getOriginal();
             $newAttributes = $model->getAttributes();
 
-            $delta = $util->differentAttributes($newAttributes, $oldAttributes);
+            $delta = UtilService::differentAttributes($newAttributes, $oldAttributes);
 
         } elseif (($action == "ADD" || $action == "DELETE" || $action == "SOFT_DELETE") && !empty($config["changes"])) {
             $delta = $model->getAttributes();

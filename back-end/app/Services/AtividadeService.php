@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\StatusEnum;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Models\AtividadePausa;
@@ -144,6 +145,12 @@ class AtividadeService extends ServiceBase
 
     public function extraStore(&$entity, $unidade, $action) {
         $metadados = $this->metadados($entity);
+        $consolidacao = PlanoTrabalhoConsolidacao::where(['id' => $entity->plano_trabalho_consolidacao_id,
+                                                          'status' => StatusEnum::AGUARDANDO_REGISTRO->value])->first();
+        if (!!$consolidacao) {
+            $consolidacao->status = StatusEnum::INCLUIDO->value;
+            $consolidacao->save();
+        }
         /* Atualiza status */
         $status = $metadados["pausado"] ? "PAUSADO" : 
             ($metadados["concluido"] ? "CONCLUIDO" : 
@@ -388,13 +395,12 @@ class AtividadeService extends ServiceBase
         $atividade = Atividade::find($data["id"]);
         if(!empty($atividade)) {
             $join = [];
-            $util = $this->utilService;
             $data["with"] = isset($this->joinable) ? $this->getJoinable($data["with"] ?? []) : $data["with"];
             if(count($data['with']) > 0) {
                 $data['with'] = $this->getCamelWith($data['with']);
                 foreach($data['with'] as $with) {
                     if(strtolower($with) == "usuario.afastamentos") {
-                        $join["usuario.afastamentos"] = function ($query) use ($atividade, $util) {
+                        $join["usuario.afastamentos"] = function ($query) use ($atividade) {
                             $tomorrow = Carbon::now()->add(1, "days")->format(ServiceBase::ISO8601_FORMAT);
                             $query->where("data_fim", ">=", $atividade->data_distribuicao);
                             $query->where("data_inicio", "<=", UtilService::maxDate($atividade->data_estipulada_entrega, $atividade->data_entrega, $tomorrow));

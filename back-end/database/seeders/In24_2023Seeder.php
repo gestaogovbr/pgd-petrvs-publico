@@ -32,14 +32,11 @@ class In24_2023Seeder extends Seeder
 
   public $timenow;
   public $brasilia;
-  public $utilService;
 
   public function __construct()
   {
     $this->timenow = now();
     $this->brasilia = Cidade::where('codigo_ibge', '5300108')->sole();
-    $this->utilService = new UtilService();
-
   }
 
   public function run()

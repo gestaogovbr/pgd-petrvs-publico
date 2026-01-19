@@ -19,7 +19,6 @@ class TipoCapacidadeSeeder extends Seeder
   public function run()
   {
     $tiposCapacidadesService = new TipoCapacidadeService();
-    $utilService = new UtilService();
     $qtdCapacidadesPrincipais = 0;
     $qtdCapacidadesFilhas = 0;
 
@@ -27,7 +26,7 @@ class TipoCapacidadeSeeder extends Seeder
     $perfilDesenvolvedor = Perfil::firstOrCreate(
       ['nivel' => 0],
       [
-        'id' => $utilService->uuid("Desenvolvedor"),
+        'id' => UtilService::uuid("Desenvolvedor"),
         'nivel' => 0,
         'nome' => "Perfil Desenvolvedor",
         'descricao' => 'Perfil de Desenvolvedor - Todas as permissões',
@@ -40,7 +39,7 @@ class TipoCapacidadeSeeder extends Seeder
     $dadosModulosCapacidades = $tiposCapacidadesService->tiposCapacidades;
     foreach ($dadosModulosCapacidades as $modulo) {
       $tipoCapacidadePai = TipoCapacidade::withTrashed()->updateOrCreate(
-        ['id' => $utilService->uuid($modulo['codigo'])],
+        ['id' => UtilService::uuid($modulo['codigo'])],
         [
           'codigo' => $modulo['codigo'],
           'descricao' => $modulo['descricao'],
@@ -58,7 +57,7 @@ class TipoCapacidadeSeeder extends Seeder
         }
       } else {
         $capacidadePai = Capacidade::create([
-          'id' => $utilService->uuid($modulo['codigo'] .$developerId),
+          'id' => UtilService::uuid($modulo['codigo'] .$developerId),
           'perfil_id' => $developerId,
           'tipo_capacidade_id' => $tipoCapacidadePai->id
         ]);
@@ -68,7 +67,7 @@ class TipoCapacidadeSeeder extends Seeder
       if(isset($modulo['capacidades'])) {
         foreach ($modulo['capacidades'] as $capacidadeFilha) {
             $tipoCapacidadeFilha = TipoCapacidade::withTrashed()->updateOrCreate(
-            ['id' => $utilService->uuid($capacidadeFilha[0])],
+            ['id' => UtilService::uuid($capacidadeFilha[0])],
             [
                 'codigo' => $capacidadeFilha[0],
                 'descricao' => $capacidadeFilha[1],
@@ -86,7 +85,7 @@ class TipoCapacidadeSeeder extends Seeder
             } else {
             $capacidade = new Capacidade();
             $capacidade->fill([
-                'id' => $utilService->uuid($capacidadeFilha[0] .$developerId),
+                'id' => UtilService::uuid($capacidadeFilha[0] .$developerId),
                 'perfil_id' => $developerId,
                 'tipo_capacidade_id' => $tipoCapacidadeFilha->id
             ]);
@@ -101,7 +100,7 @@ class TipoCapacidadeSeeder extends Seeder
     foreach ($dadosModulosCapacidades as $modulo) {
       $capacidades = array_map(fn ($z) => $z[0], $modulo['capacidades'] ?? []);
       // representa todos os tipos de capacidade existentes na tabela, filhas do módulo, que não existem mais
-      $filhosNulos = TipoCapacidade::where('grupo_id', $utilService->uuid($modulo['codigo']))->whereNotIn('codigo', $capacidades)->get();
+      $filhosNulos = TipoCapacidade::where('grupo_id', UtilService::uuid($modulo['codigo']))->whereNotIn('codigo', $capacidades)->get();
       foreach ($filhosNulos as $filhoNulo)
         $filhoNulo->deleteCascade();
     }

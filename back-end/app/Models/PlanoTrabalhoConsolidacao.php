@@ -17,20 +17,37 @@ class PlanoTrabalhoConsolidacao extends ModelBase
 
   protected static function booted()
   {
+    static::updating(function (PlanoTrabalhoConsolidacao $consolidacao) {
+      $planoTrabalho = $consolidacao->planoTrabalho;
+      if ($consolidacao->isDirty('status') && $consolidacao->status === StatusEnum::AVALIADO->value) {
+        $isAllConsolidacoesAvaliadas = $planoTrabalho->consolidacoes()
+          ->where('status', '!=', StatusEnum::AVALIADO->value)
+          ->where('id', '!=', $consolidacao->id)
+          ->doesntExist();
+        if ($isAllConsolidacoesAvaliadas) {
+          $planoTrabalho->update(['avaliado_at' => date('Y-m-d')]);
+        }
+      }
+
+      if ($consolidacao->isDirty('status') && $consolidacao->status !== StatusEnum::AVALIADO->value && !!$planoTrabalho->avaliado_at) {
+        $planoTrabalho->update(['avaliado_at' => null]);
+      }
+    });
+
     static::updated(function ($consolidacao) {
       $planoTrabalho = $consolidacao->planoTrabalho;
       if ($consolidacao->isDirty('status') && $consolidacao->status === StatusEnum::CONCLUIDO->value && $planoTrabalho->status === StatusEnum::ATIVO->value) {
         $allConcluido = $planoTrabalho->consolidacoes()
-                                      ->where('status', '!=', StatusEnum::CONCLUIDO->value)
-                                      ->doesntExist();
-        
+          ->where('status', '!=', StatusEnum::CONCLUIDO->value)
+          ->doesntExist();
+
         if ($allConcluido) {
           $planoTrabalho->status = StatusEnum::CONCLUIDO->value;
           $planoTrabalho->save();
         }
       }
 
-      if($consolidacao->isDirty('status') && $consolidacao->status !== StatusEnum::CONCLUIDO->value && $planoTrabalho->status === StatusEnum::CONCLUIDO->value) {
+      if ($consolidacao->isDirty('status') && $consolidacao->status !== StatusEnum::CONCLUIDO->value && $planoTrabalho->status === StatusEnum::CONCLUIDO->value) {
         $planoTrabalho->status = 'ATIVO';
         $planoTrabalho->save();
       }
@@ -82,7 +99,10 @@ class PlanoTrabalhoConsolidacao extends ModelBase
     return $this->hasMany(Avaliacao::class, 'plano_trabalho_consolidacao_id');
   }
   // Verificar se há a possibilidade de fazer um relacionamento utilizando a chave da entrega e pela data
-  // public function atividades() { return $this->hasMany(Atividade::class); } 
+  public function atividades()
+  {
+    return $this->hasMany(Atividade::class);
+  }
 
   // Relação com as atividades consolidadas (snapshots)
   public function atividadesConsolidadas()
