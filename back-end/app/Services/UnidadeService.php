@@ -200,7 +200,7 @@ class UnidadeService extends ServiceBase
         /*         if ((count(array_filter($dadosUnidades, fn($p) => $p['mediaAvaliacoes'] != null)) == 0)) {
                 $dadosArea['mediaAvaliacoes'] = null;
             } else {
-                $dadosArea['mediaAvaliacoes'] = $this->utilService->avg(array_map(fn($u) => $u['mediaAvaliacoes'],array_filter($dadosUnidades, fn($u) => $u['mediaAvaliacoes'] != null)));
+                $dadosArea['mediaAvaliacoes'] = UtilService::avg(array_map(fn($u) => $u['mediaAvaliacoes'],array_filter($dadosUnidades, fn($u) => $u['mediaAvaliacoes'] != null)));
             } */
         $dadosArea['percentualHorasNaoIniciadas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasAtividadesNaoIniciadas'] / $dadosArea['horasUteisTotais'];
         $dadosArea['percentualHorasEmAndamento'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasAtividadesEmAndamento'] / $dadosArea['horasUteisTotais'];
@@ -297,7 +297,7 @@ class UnidadeService extends ServiceBase
          *  de Trabalho (null) não será utilizada no cálculo da média da Unidade, caso contrário a média seria indevidamente afetada. A função array_map prepara o array com
          * os valores válidos das médias das avaliações dos Planos, que será enviado à função avg para o cálculo da média aritmética.
          */
-        /*         $result['mediaAvaliacoes'] = (count(array_filter($metadadosPlanosTrabalho, fn($p) => $p['mediaAvaliacoes'] != null)) == 0) ? null : $this->utilService->avg(array_map(function($p) {
+        /*         $result['mediaAvaliacoes'] = (count(array_filter($metadadosPlanosTrabalho, fn($p) => $p['mediaAvaliacoes'] != null)) == 0) ? null : UtilService::avg(array_map(function($p) {
                 if ($p['mediaAvaliacoes'] != null) return $p['mediaAvaliacoes'];
             }, $metadadosPlanosTrabalho)); */
 
@@ -397,7 +397,7 @@ class UnidadeService extends ServiceBase
                 ->update(['path' => DB::raw(sprintf("CONCAT('%s', SUBSTR(path, %d))", $newPath, strlen($newPath)))]);
         }
         /* Armazena as informações que serão necessárias no extraStore */
-        $this->buffer["integrantes"] = $this->UtilService->getNested($data, "integrantes") ?? [];
+        $this->buffer["integrantes"] = UtilService::getNested($data, "integrantes") ?? [];
         return $data;
     }
 

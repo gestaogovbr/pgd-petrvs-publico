@@ -18,11 +18,10 @@ class PerfilSeeder extends Seeder
   public function run()
   {
     $perfilService = new PerfilService();
-    $utilService = new UtilService();
     
     foreach ($perfilService->perfis as $registro) {
       $novoPerfil = [
-        'id' => $utilService->uuid($registro[0]),
+        'id' => UtilService::uuid($registro[0]),
         'nivel' => $registro[0],
         'nome' => $registro[1],
         'descricao' => $registro[2]
