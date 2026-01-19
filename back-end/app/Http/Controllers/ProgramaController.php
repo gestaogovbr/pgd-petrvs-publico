@@ -44,6 +44,18 @@ class ProgramaController extends ControllerBase {
         }
     }
 
+    protected function validateStore(Request $request) {
+        return $request->validate([
+                'entity' => ['required'],
+                'entity.prazo_max_plano_entrega' => ['required', 'integer', 'between:0,365'],
+                'with' => ['array']
+            ], [
+                'entity.prazo_max_plano_entrega.required' => 'Informe a duração Máxima P.E.',
+                'entity.prazo_max_plano_entrega.integer' => 'A duração Máxima P.E. deve ser um número inteiro.',
+                'entity.prazo_max_plano_entrega.between' => 'A duração Máxima P.E. deve ser entre 0 e 365 dias.'
+            ]);
+    }
+
     public function concluir(Request $request)
     {
         try {
