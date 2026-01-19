@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Siape\Servidor;
+namespace App\Services;
 
 use App\Services\ServiceBase;
 use App\Services\UtilService;
