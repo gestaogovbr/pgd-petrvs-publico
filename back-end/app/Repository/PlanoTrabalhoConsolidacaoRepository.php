@@ -31,7 +31,7 @@ class PlanoTrabalhoConsolidacaoRepository
     ];
   }
 
-  public function findConsolidacaoById($id): PlanoTrabalhoConsolidacao
+  public function findConsolidacaoById($id): PlanoTrabalhoConsolidacao | null
   {
     return PlanoTrabalhoConsolidacao::with([
       'comparecimentos.unidade:id,nome,sigla',

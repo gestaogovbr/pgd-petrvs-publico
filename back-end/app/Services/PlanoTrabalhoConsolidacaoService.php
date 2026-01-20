@@ -87,76 +87,17 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
    */
   public function consolidacaoDados($id): array
   {
-    // $consolidacao = PlanoTrabalhoConsolidacao::with([
-    //   //'ocorrencias', 
-    //   'comparecimentos.unidade:id,nome,sigla',
-    //   'avaliacao',
-    //   'avaliacoes',
-    //   'planoTrabalho.programa',
-    //   'planoTrabalho.unidade.gestor:id,usuario_id',
-    //   'planoTrabalho.unidade.gestoresSubstitutos:id,usuario_id',
-    //   'planoTrabalho.entregas.entrega',
-    //   'planoTrabalho.entregas.reacoes',
-    //   'planoTrabalho.entregas.planoEntregaEntrega:id,descricao,plano_entrega_id,entrega_id,meta,realizado,progresso_realizado',
-    //   'planoTrabalho.entregas.planoEntregaEntrega.entrega:id,nome,tipo_indicador',
-    //   'planoTrabalho.entregas.planoEntregaEntrega.objetivos.objetivo',
-    //   'planoTrabalho.entregas.planoEntregaEntrega.processos.processo',
-    //   'planoTrabalho.tipoModalidade'
-    // ])->find($id);
-    // $concluido = in_array($consolidacao->status, [StatusEnum::CONCLUIDO, StatusEnum::AVALIADO]);
-    // $planosEntregasIds = array_map(fn($pe) => $pe->planoEntregaEntrega?->plano_entrega_id, $consolidacao->planoTrabalho->entregas?->all() ?? []);
-    // $planoTrabalho = $consolidacao->planoTrabalho;
-    // $atividades = Atividade::with([
-    //   'demandante',
-    //   'usuario',
-    //   'tipoAtividade',
-    //   'pausas' => fn($q) => $q->withTrashed(),
-    //   'tarefas' => fn($q) => $q->withTrashed(),
-    //   'tarefas.tipoTarefa:id,nome',
-    //   'comentarios' => fn($q) => $q->withTrashed(),
-    //   'comentarios.usuario:id,nome,apelido',
-    //   'reacoes.usuario:id,nome,apelido'
-    // ]);
-    // $afastamentos = Afastamento::with(['tipoMotivoAfastamento']);
-    // $ocorrencias = Ocorrencia::with(['usuario']);
-    // if ($concluido) { /* Carrega atividades e afastamentos baseado no snapshot */
-    //   $atividades = $atividades->withTrashed()->whereHas('consolidacoes', function (Builder $query) use ($consolidacao) {
-    //     $query->where('plano_trabalho_consolidacao_id', $consolidacao->id)->where('data_conclusao', $consolidacao->data_conclusao);
-    //   })->get();
-    //   $afastamentos = $afastamentos->withTrashed()->whereHas('consolidacoes', function (Builder $query) use ($consolidacao) {
-    //     $query->where('plano_trabalho_consolidacao_id', $consolidacao->id)->where('data_conclusao', $consolidacao->data_conclusao);
-    //   })->get();
-    //   $ocorrencias = $ocorrencias->withTrashed()->whereHas('consolidacoes', function (Builder $query) use ($consolidacao) {
-    //     $query->where('plano_trabalho_consolidacao_id', $consolidacao->id)->where('data_conclusao', $consolidacao->data_conclusao);
-    //   })->get();
-    // } else {
-    //   $atividades = $atividades->where('data_estipulada_entrega', '>=', $consolidacao->data_inicio)->
-    //     where('data_distribuicao', '<=', $consolidacao->data_fim)->
-    //     where('usuario_id', $planoTrabalho->usuario_id)->get();
-    //   $afastamentos = $afastamentos->where("data_fim", ">=", $consolidacao->data_inicio)->
-    //     where('data_inicio', '<=', $consolidacao->data_fim)->
-    //     where('usuario_id', $planoTrabalho->usuario_id)->get();
-    //   /* RN_CSLD_15 - Será considerado apenas as ocorrências (que tenha intersecção do período da consolidação) cujo plano de trabalho seja o mesmo da consolidação ou caso o plano de trabalho esteja em branco. (ocorrência não vinculada a plano de trabalho) */
-    //   $ocorrencias = $ocorrencias->where("data_fim", ">=", $consolidacao->data_inicio)->
-    //     where('data_inicio', '<=', $consolidacao->data_fim)->
-    //     where('usuario_id', $planoTrabalho->usuario_id)->
-    //     where(function ($query) use ($planoTrabalho) { $query->whereNull('plano_trabalho_id')->orWhere('plano_trabalho_id', '=', $planoTrabalho->id); })->get();
-    // }
-
     $repository = new PlanoTrabalhoConsolidacaoRepository();
     $snapshotRebuilders = [
       'atividades' => new AtividadeSnapshotRebuilder(new AtividadeService()),
       'afastamentos' => new AfastamentoSnapshotRebuilder(),
       'ocorrencias' => new OcorrenciaSnapshotRebuilder()
     ];
+
     $rebuilderService = new PlanoTrabalhoConsolidacaoRebuildService($snapshotRebuilders);
     $consolidacaoData = $repository->getConsolidacaoData($id);
     $consolidacao = $repository->findConsolidacaoById($id);
 
-    // $atividades = array_map(fn($atividade) => $this->buildAtividadeConsolidacao($atividade->toArray(), $consolidacao), $consolidacaoData['atividades']->all());
-    // $atividades = array_map(fn($atividade) => array_merge($atividade, ["metadados" => $this->atividadeService->metadados($atividade)]), $atividades);
-    // $afastamentos = array_map(fn($afastamento) => $this->buildAfastamentoConsolidacao($afastamento->toArray(), $consolidacao), $consolidacaoData['afastamento']->all());
-    // $ocorrencias = array_map(fn($ocorrencia) => $this->buildOcorrenciaConsolidacao($ocorrencia->toArray(), $consolidacao), $consolidacaoData['ocorrencia']->all());
     return [
       'programa' => $consolidacao->programa,
       'planoTrabalho' => $consolidacao->planoTrabalho,
@@ -292,9 +233,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       /* (RN_CSLD_11) Não pode concluir a consolidação antes que a anterior não esteja concluida, e não pode retornar status da consolidação se a posterior estiver a frente (em status); */
       //$anterior = $this->anterior($id);
       //if(!empty($anterior) && in_array($anterior->status, ["INCLUIDO"])) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Existe consolidação anterior ainda não concluída");
-      $dados = $this->consolidacaoDados($id);
       $consolidacao = PlanoTrabalhoConsolidacao::find($id);
       if (empty($consolidacao)) throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Consolidação não encontrada");
+      $dados = $this->consolidacaoDados($id);
       if (!empty($consolidacao->data_conclusao)) throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Consolidação já concluída");
       if (!is_array($dados)) {
         throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Dados de consolidação inválidos");
@@ -326,39 +267,6 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
         'ocorrencias' => new OcorrenciaSnapshotCreator()
       ];
       (new PlanoTrabalhoConsolidacaoSnapshotCreatorService($snapshotCreators))->createSnapshots($dados, $id, $dataConclusao);
-      // /* Snapshot das atividades */
-      // foreach(array_map(fn($a) => $a["id"], $dados["atividades"] ?? []) as $atividadeId) {
-      //   $atividade = Atividade::find($atividadeId);
-      //   $consolidacaoAtividade = new PlanoTrabalhoConsolidacaoAtividade([
-      //     "data_conclusao" => $dataConclusao,
-      //     "snapshot" => $atividade->toArray(),
-      //     "plano_trabalho_consolidacao_id" => $id,
-      //     "atividade_id" => $atividade->id
-      //   ]);
-      //   $consolidacaoAtividade->save();
-      // }
-      // /* Snapshot dos afastamentos */
-      // foreach(array_map(fn($a) => $a["id"], $dados["afastamentos"] ?? []) as $afastamentoId) {
-      //   $afastamento = Afastamento::find($afastamentoId);
-      //   $consolidacaoAfastamento = new PlanoTrabalhoConsolidacaoAfastamento([
-      //     "data_conclusao" => $dataConclusao,
-      //     "snapshot" => $afastamento->toArray(),
-      //     "plano_trabalho_consolidacao_id" => $id,
-      //     "afastamento_id" => $afastamento->id
-      //   ]);
-      //   $consolidacaoAfastamento->save();
-      // }
-      // /* Snapshot das ocorrencias */
-      // foreach(array_map(fn($a) => $a["id"], $dados["ocorrencias"] ?? []) as $ocorrenciaId) {
-      //   $ocorrencia = Ocorrencia::find($ocorrenciaId);
-      //   $consolidacaoOcorrencia = new PlanoTrabalhoConsolidacaoOcorrencia([
-      //     "data_conclusao" => $dataConclusao,
-      //     "snapshot" => $ocorrencia->toArray(),
-      //     "plano_trabalho_consolidacao_id" => $id,
-      //     "ocorrencia_id" => $ocorrencia->id
-      //   ]);
-      //   $consolidacaoOcorrencia->save();
-      // }
       /* Atualiza o status */
       $this->statusService->atualizaStatus($consolidacao, StatusEnum::CONCLUIDO, 'A consolidação foi concluída nesta data.');
       DB::commit();
