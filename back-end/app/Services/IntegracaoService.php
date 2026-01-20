@@ -26,9 +26,6 @@ use App\Services\Siape\Servidor\Integracao;
 use Illuminate\Support\Facades\Log;
 use App\Facades\SiapeLog;
 
-/**
- * @property UtilService $UtilService
- */
 class IntegracaoService extends ServiceBase
 {
   use LogTrait;
@@ -130,7 +127,7 @@ class IntegracaoService extends ServiceBase
         $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade_id);
         $values[':id'] = Uuid::uuid4();
         $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
-        $values[':data_modificacao'] = $this->UtilService->asDateTime($unidade->data_modificacao_siape);
+        $values[':data_modificacao'] = UtilService::asDateTime($unidade->data_modificacao_siape);
         $this->unidadesInseridas[$unidade->id_servo] = ["unidade_id" => $values[':id'], "path" => $values[':path']];
         $unidadeJaExisteNoBanco = Unidade::where("codigo", $unidade->id_servo)->first();
         if ($unidadeJaExisteNoBanco) {
@@ -172,7 +169,7 @@ class IntegracaoService extends ServiceBase
       $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade_id);
       $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
       $values[':unidade_id'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["unidade_id"] : null;
-      $values[':data_modificacao'] = $this->UtilService->asDateTime($unidade->data_modificacao_siape);
+      $values[':data_modificacao'] = UtilService::asDateTime($unidade->data_modificacao_siape);
 
       $sql = "UPDATE unidades SET path = :path, unidade_pai_id = :unidade_id, codigo = :codigo, " .
         "nome = :nome, sigla = :sigla, cidade_id = :cidade_id, data_modificacao = :data_modificacao WHERE id = :id";
@@ -196,7 +193,7 @@ class IntegracaoService extends ServiceBase
       return ["unidade_id" => $values[':id'], "path" => $values[':path']];
     } else { // Só entra aqui se a Unidade já existir e não tiver mudado o Pai. Nesse caso, atualiza apenas os outros dados (Nome, Sigla).
       $values[':id'] = $unidade->id;
-      $values[':data_modificacao'] = $this->UtilService->asDateTime($unidade->data_modificacao_siape);
+      $values[':data_modificacao'] = UtilService::asDateTime($unidade->data_modificacao_siape);
 
       $sql = "UPDATE unidades SET codigo = :codigo, nome = :nome, sigla = :sigla, cidade_id = :cidade_id,  data_modificacao = :data_modificacao WHERE id = :id";
       DB::update($sql, $values);
@@ -330,21 +327,21 @@ class IntegracaoService extends ServiceBase
 
         DB::transaction(function () use (&$uos, &$self) {
           foreach ($uos as $uo) {
-            $uorg_codigo = $self->UtilService->valueOrDefault($uo["id_servo"]);
-            $uorg_ativa = $self->UtilService->valueOrDefault($uo["ativa"]) == 'true';
+            $uorg_codigo = UtilService::valueOrDefault($uo["id_servo"]);
+            $uorg_ativa = UtilService::valueOrDefault($uo["ativa"]) == 'true';
 
             $query_iu = DB::table('integracao_unidades')->where('id_servo', $uorg_codigo);
             $query_u = DB::table('unidades')->where('codigo', $uorg_codigo);
 
-            $uorg_siape_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["data_modificacao"]));
+            $uorg_siape_data_modificacao = UtilService::asTimeStamp(UtilService::valueOrDefault($uo["data_modificacao"]));
 
             // Não apagar o comentário, por favor. :)
-            # $uorg_siape_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["data_modificacao"]));
-            $iu_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($query_iu->value('data_modificacao')));
-            $u_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($query_u->value('data_modificacao')));
+            # $uorg_siape_data_modificacao = UtilService::asTimeStamp(UtilService::valueOrDefault($uo["data_modificacao"]));
+            $iu_data_modificacao = UtilService::asTimeStamp(UtilService::valueOrDefault($query_iu->value('data_modificacao')));
+            $u_data_modificacao = UtilService::asTimeStamp(UtilService::valueOrDefault($query_u->value('data_modificacao')));
 
             if (!empty($uorg_codigo) && $uorg_ativa) {
-              $tel = $self->UtilService->valueOrDefault($uo["telefone"], null);
+              $tel = UtilService::valueOrDefault($uo["telefone"], null);
               if (
                 !is_null($tel) && strlen($tel) == 19 &&
                 substr($tel, 0, 3) == '000' &&
@@ -353,61 +350,61 @@ class IntegracaoService extends ServiceBase
                 $tel = substr($tel, 3, 2) . substr($tel, 6, 8);
               }
 
-              $sigla = $self->UtilService->valueOrDefault($uo["siglauorg"], null);
+              $sigla = UtilService::valueOrDefault($uo["siglauorg"], null);
               if (!is_null($sigla)) {
                 $sigla = mb_strtoupper(trim($sigla), 'UTF-8');
               }
 
-              $email = $self->UtilService->valueOrDefault($uo["email"], null);
+              $email = UtilService::valueOrDefault($uo["email"], null);
               if (!is_null($email)) {
                 $email = mb_strtolower(trim($email), 'UTF-8');
               }
 
-              $cod_municipio_ibge = $self->UtilService->valueOrDefault($uo["municipio_ibge"], null);
-              $municipio_nome = $self->UtilService->valueOrDefault($uo["municipio_nome"], null);
+              $cod_municipio_ibge = UtilService::valueOrDefault($uo["municipio_ibge"], null);
+              $municipio_nome = UtilService::valueOrDefault($uo["municipio_nome"], null);
               if (!is_null($cod_municipio_ibge)) {
                 $query = "SELECT nome FROM cidades where codigo_ibge = :cod_municipio_ibge";
                 $db_result = DB::select($query, ["cod_municipio_ibge" => $cod_municipio_ibge]);
                 if (is_array($db_result) && !empty($db_result)) $municipio_nome = $db_result[0]->nome;
               }
 
-              $nomeuorg = $self->UtilService->valueOrDefault($uo["nomeuorg"], null);
+              $nomeuorg = UtilService::valueOrDefault($uo["nomeuorg"], null);
 
-              if (!is_null($nomeuorg)) $nomeuorg = $self->UtilService->getNomeFormatado($nomeuorg);
+              if (!is_null($nomeuorg)) $nomeuorg = UtilService::getNomeFormatado($nomeuorg);
               $unidade = [
-                'id_servo' => $self->UtilService->valueOrDefault($uo["id_servo"], null, $option = "uorg"),
-                'pai_servo' => $self->UtilService->valueOrDefault($uo["pai_servo"], null, $option = "uorg"),
-                'codigo_siape' => $self->UtilService->valueOrDefault($uo["codigo_siape"], null, $option = "uorg"),
-                'pai_siape' => $self->UtilService->valueOrDefault($uo["pai_siape"], null, $option = "uorg"),
-                'codupag' => $self->UtilService->valueOrDefault($uo["codupag"], null, $option = "uorg"),
+                'id_servo' => UtilService::valueOrDefault($uo["id_servo"], null, $option = "uorg"),
+                'pai_servo' => UtilService::valueOrDefault($uo["pai_servo"], null, $option = "uorg"),
+                'codigo_siape' => UtilService::valueOrDefault($uo["codigo_siape"], null, $option = "uorg"),
+                'pai_siape' => UtilService::valueOrDefault($uo["pai_siape"], null, $option = "uorg"),
+                'codupag' => UtilService::valueOrDefault($uo["codupag"], null, $option = "uorg"),
                 'nomeuorg' => $nomeuorg,
                 'siglauorg' => $sigla,
                 'telefone' => $tel,
                 'email' =>  $email,
-                'natureza' => $self->UtilService->valueOrDefault($uo["natureza"], null),
-                'fronteira' => $self->UtilService->valueOrDefault($uo["fronteira"], null),
-                'fuso_horario' => $self->UtilService->valueOrDefault($uo["fuso_horario"], null),
-                'cod_uop' => $self->UtilService->valueOrDefault($uo["cod_uop"], null, $option = "uorg"),
-                'cod_unidade' => $self->UtilService->valueOrDefault($uo["cod_unidade"], null, $option = "uorg"),
-                'tipo' => $self->UtilService->valueOrDefault($uo["tipo"], null),
-                'tipo_desc' => $self->UtilService->valueOrDefault($uo["tipo_desc"], null),
-                'na_rodovia' => $self->UtilService->valueOrDefault($uo["na_rodovia"], null),
-                'logradouro' => $self->UtilService->valueOrDefault($uo["logradouro"], null),
-                'bairro' => $self->UtilService->valueOrDefault($uo["bairro"], null),
-                'cep' => $self->UtilService->valueOrDefault($uo["cep"], null),
-                'ptn_ge_coordenada' => $self->UtilService->valueOrDefault($uo["ptn_ge_coordenada"], null),
-                'municipio_siafi_siape' => $self->UtilService->valueOrDefault($uo["municipio_siafi_siape"], null),
-                'municipio_siscom' => $self->UtilService->valueOrDefault($uo["municipio_siscom"], null),
+                'natureza' => UtilService::valueOrDefault($uo["natureza"], null),
+                'fronteira' => UtilService::valueOrDefault($uo["fronteira"], null),
+                'fuso_horario' => UtilService::valueOrDefault($uo["fuso_horario"], null),
+                'cod_uop' => UtilService::valueOrDefault($uo["cod_uop"], null, $option = "uorg"),
+                'cod_unidade' => UtilService::valueOrDefault($uo["cod_unidade"], null, $option = "uorg"),
+                'tipo' => UtilService::valueOrDefault($uo["tipo"], null),
+                'tipo_desc' => UtilService::valueOrDefault($uo["tipo_desc"], null),
+                'na_rodovia' => UtilService::valueOrDefault($uo["na_rodovia"], null),
+                'logradouro' => UtilService::valueOrDefault($uo["logradouro"], null),
+                'bairro' => UtilService::valueOrDefault($uo["bairro"], null),
+                'cep' => UtilService::valueOrDefault($uo["cep"], null),
+                'ptn_ge_coordenada' => UtilService::valueOrDefault($uo["ptn_ge_coordenada"], null),
+                'municipio_siafi_siape' => UtilService::valueOrDefault($uo["municipio_siafi_siape"], null),
+                'municipio_siscom' => UtilService::valueOrDefault($uo["municipio_siscom"], null),
                 'municipio_ibge' => $cod_municipio_ibge,
                 'municipio_nome' => $municipio_nome,
-                'municipio_uf' => $self->UtilService->valueOrDefault($uo["municipio_uf"], null),
-                'ativa' => $self->UtilService->valueOrDefault($uo["ativa"]),
-                'regimental' => $self->UtilService->valueOrDefault($uo["regimental"], null),
+                'municipio_uf' => UtilService::valueOrDefault($uo["municipio_uf"], null),
+                'ativa' => UtilService::valueOrDefault($uo["ativa"]),
+                'regimental' => UtilService::valueOrDefault($uo["regimental"], null),
                 'data_modificacao' => date("Y-m-d H:i:s", $uorg_siape_data_modificacao),
-                'und_nu_adicional' => $self->UtilService->valueOrDefault($uo["und_nu_adicional"], null),
-                'cnpjupag' => $self->UtilService->valueOrDefault($uo["cnpjupag"], null),
-                'cpf_titular_autoridade_uorg' =>  $self->UtilService->valueOrDefault($uo["cpf_titular_autoridade_uorg"], null),
-                'cpf_substituto_autoridade_uorg' => $self->UtilService->valueOrDefault($uo["cpf_substituto_autoridade_uorg"], null),
+                'und_nu_adicional' => UtilService::valueOrDefault($uo["und_nu_adicional"], null),
+                'cnpjupag' => UtilService::valueOrDefault($uo["cnpjupag"], null),
+                'cpf_titular_autoridade_uorg' =>  UtilService::valueOrDefault($uo["cpf_titular_autoridade_uorg"], null),
+                'cpf_substituto_autoridade_uorg' => UtilService::valueOrDefault($uo["cpf_substituto_autoridade_uorg"], null),
                 'deleted_at' => null,
               ];
 
@@ -541,10 +538,7 @@ class IntegracaoService extends ServiceBase
 
           $integracaoServidoresRepository = new IntegracaoServidorRepository(new IntegracaoServidor);
           try {
-            $integracaoServidorProcessar =  new Integracao(
-              $integracaoServidoresRepository,
-              $this->UtilService
-            );
+            $integracaoServidorProcessar =  new Integracao($integracaoServidoresRepository);
           } catch (Throwable $e) {
             LogError::newError("Erro ao truncar a tabela integracao_servidores", $e);
             SiapeLog::info(sprintf("Erro ao truncar a tabela integracao_servidores: %s", $e->getMessage()), throwableToArray($e));
@@ -686,7 +680,7 @@ class IntegracaoService extends ServiceBase
                 'participa_pgd' => $linha->participa_pgd,
                 'id'            => $linha->id,
                 'ident_unica'   => $linha->ident_unica,
-                'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
+                'data_modificacao' => UtilService::asDateTime($linha->data_modificacao),
                 'data_nascimento' => $linha->data_nascimento,
               ]);
             }
@@ -801,11 +795,11 @@ class IntegracaoService extends ServiceBase
           }
 
           foreach ($vinculos_isr as $v_isr) {
-            $v_isr = $this->UtilService->object2array($v_isr);
-            $cpfCheck = $this->UtilService->valueOrDefault($v_isr['cpf']);
-            $matriculaNova = $this->UtilService->valueOrDefault($v_isr['matricula']);
-            $codigoExercicio = $this->UtilService->valueOrDefault($v_isr['exercicio']);
-            $tipoModalidadePgd = $this->UtilService->valueOrDefault($v_isr['modalidade_pgd']);
+            $v_isr = UtilService::object2array($v_isr);
+            $cpfCheck = UtilService::valueOrDefault($v_isr['cpf']);
+            $matriculaNova = UtilService::valueOrDefault($v_isr['matricula']);
+            $codigoExercicio = UtilService::valueOrDefault($v_isr['exercicio']);
+            $tipoModalidadePgd = UtilService::valueOrDefault($v_isr['modalidade_pgd']);
             $unidadeExercicio = Unidade::where('codigo', $codigoExercicio)->first();
             $unidadeExercicioIdCheck = isset($unidadeExercicio->id) ? $unidadeExercicio->id : null;
 
@@ -817,21 +811,21 @@ class IntegracaoService extends ServiceBase
            
            $registro = new Usuario([
               'id' => Uuid::uuid4(),
-              'email' => $this->UtilService->valueOrDefault($v_isr['emailfuncional']),
-              'nome' => $this->UtilService->valueOrDefault($v_isr['nome']),
-              'cpf' => $this->UtilService->valueOrDefault($v_isr['cpf']),
-              'matricula' => $this->UtilService->valueOrDefault($v_isr['matricula']),
-              'apelido' => $this->UtilService->valueOrDefault($v_isr['apelido']),
-              'telefone' => $this->UtilService->valueOrDefault($v_isr['telefone'], null),
-              'data_nascimento' => $this->UtilService->valueOrDefault($v_isr['data_nascimento'], null),
-              'sexo' => $this->UtilService->valueOrDefault($v_isr['sexo']),
-              'situacao_funcional' => $this->UtilService->valueOrDefault($v_isr['situacao_funcional'], "DESCONHECIDO"),
+              'email' => UtilService::valueOrDefault($v_isr['emailfuncional']),
+              'nome' => UtilService::valueOrDefault($v_isr['nome']),
+              'cpf' => UtilService::valueOrDefault($v_isr['cpf']),
+              'matricula' => UtilService::valueOrDefault($v_isr['matricula']),
+              'apelido' => UtilService::valueOrDefault($v_isr['apelido']),
+              'telefone' => UtilService::valueOrDefault($v_isr['telefone'], null),
+              'data_nascimento' => UtilService::valueOrDefault($v_isr['data_nascimento'], null),
+              'sexo' => UtilService::valueOrDefault($v_isr['sexo']),
+              'situacao_funcional' => UtilService::valueOrDefault($v_isr['situacao_funcional'], "DESCONHECIDO"),
               'perfil_id' => $perfilParticipanteId,
               'tipo_modalidade_id' => $tipoModalidadePgd,
-              'exercicio' => $this->UtilService->valueOrDefault($v_isr['exercicio']),
-              'uf' => $this->UtilService->valueOrDefault($v_isr['uf'], null),
-              'data_modificacao' => $this->UtilService->asDateTime($v_isr['data_modificacao']),
-              'ident_unica' => $this->UtilService->valueOrDefault($v_isr['ident_unica']),
+              'exercicio' => UtilService::valueOrDefault($v_isr['exercicio']),
+              'uf' => UtilService::valueOrDefault($v_isr['uf'], null),
+              'data_modificacao' => UtilService::asDateTime($v_isr['data_modificacao']),
+              'ident_unica' => UtilService::valueOrDefault($v_isr['ident_unica']),
             ]);
 
             $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($registro->email, $registro->matricula);
@@ -1282,7 +1276,7 @@ protected function validarModalidadePgd($modalidadeString)
             'participa_pgd' => $linha->participa_pgd,
             'id'            => $linha->id,
             'ident_unica'   => $linha->ident_unica,
-            'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
+            'data_modificacao' => UtilService::asDateTime($linha->data_modificacao),
             'data_nascimento' => $linha->data_nascimento,
           ]);
         }

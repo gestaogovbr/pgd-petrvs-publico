@@ -14,6 +14,7 @@ import { Avaliacao } from 'src/app/models/avaliacao.model';
 import { Programa } from 'src/app/models/programa.model';
 import { AvaliacaoDaoService } from 'src/app/dao/avaliacao-dao.service';
 import { UnidadeService } from 'src/app/services/unidade.service';
+import { Atividade } from 'src/app/models/atividade.model';
 
 @Component({
   selector: 'plano-trabalho-consolidacao-list',
@@ -23,6 +24,7 @@ import { UnidadeService } from 'src/app/services/unidade.service';
 export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @Input() set entity(value: PlanoTrabalho | undefined) { super.entity = value; } get entity(): PlanoTrabalho | undefined { return super.entity; }
+  @ViewChild(PlanoTrabalhoConsolidacaoFormComponent) childComponent!: PlanoTrabalhoConsolidacaoFormComponent;
 
   public get items(): PlanoTrabalhoConsolidacao[] {
     return this.entity?.consolidacoes || [];
@@ -170,11 +172,17 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
   }
 
   public isDisabled(row?: PlanoTrabalhoConsolidacao): boolean {    
-    return row?.status != "INCLUIDO";
+    return !["INCLUIDO", "AGUARDANDO_REGISTRO"].includes(row?.status ?? "");
   }
 
   podeInserir(){
     return this.auth.hasPermissionTo("MOD_PTR_CSLD_INCL")
+  }
+
+  public onRefresh(atividade: Atividade, rowConsolidacao: PlanoTrabalhoConsolidacao){
+    if (!!atividade.plano_trabalho_entrega_id &&
+      rowConsolidacao.status == "AGUARDANDO_REGISTRO"
+    ) rowConsolidacao.status = "INCLUIDO"
   }
   
 
