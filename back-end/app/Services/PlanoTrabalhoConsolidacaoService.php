@@ -99,7 +99,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     $consolidacao = $repository->findConsolidacaoById($id);
 
     return [
-      'programa' => $consolidacao->programa,
+      'programa' => $consolidacao->planoTrabalho?->programa,
       'planoTrabalho' => $consolidacao->planoTrabalho,
       'planosEntregas' => $consolidacaoData['planosEntregas'],
       'atividades' => $rebuilderService->rebuildCollections($consolidacaoData['atividades'], $consolidacao, 'atividades'),

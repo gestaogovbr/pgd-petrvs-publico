@@ -258,3 +258,163 @@ describe('#concluir - happy path', function () {
         expect($updatedConsolidacao->justificativa_conclusao)->toBe('Justificativa teste');
     });
 });
+
+describe('#consolidacaoDados', function () {
+    test('retorna dados completos da consolidação', function () {
+        DB::table('usuarios')->insert([
+            'id' => 'user-test',
+            'nome' => 'Test User',
+            'email' => 'test@example.com',
+            'cpf' => '12345678901',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        DB::table('programas')->insert([
+            'id' => 'programa-test',
+            'nome' => 'Programa Test',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        DB::table('unidades')->insert([
+            'id' => 'unidade-test',
+            'nome' => 'Unidade Test',
+            'sigla' => 'UT',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        DB::table('planos_trabalhos')->insert([
+            'id' => 'plano-test',
+            'programa_id' => 'programa-test',
+            'usuario_id' => 'user-test',
+            'unidade_id' => 'unidade-test',
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-12-31',
+            'status' => 'ATIVO',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        // Create plano_entrega
+        DB::table('planos_entregas')->insert([
+            'id' => 'plano-entrega-test',
+            'nome' => 'Plano Entrega Test',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        // Create entrega
+        DB::table('entregas')->insert([
+            'id' => 'entrega-test',
+            'nome' => 'Entrega Test',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        // Create plano_entrega_entrega (the pivot/relationship table)
+        DB::table('planos_entregas_entregas')->insert([
+            'id' => 'plano-entrega-entrega-test',
+            'plano_entrega_id' => 'plano-entrega-test',
+            'entrega_id' => 'entrega-test',
+            'descricao' => 'Descrição da entrega',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        // Create plano_trabalho_entrega (connects plano_trabalho to plano_entrega_entrega)
+        DB::table('planos_trabalhos_entregas')->insert([
+            'id' => 'plano-trabalho-entrega-test',
+            'plano_trabalho_id' => 'plano-test',
+            'plano_entrega_entrega_id' => 'plano-entrega-entrega-test',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        DB::table('planos_trabalhos_consolidacoes')->insert([
+            'id' => 'consolidacao-test',
+            'plano_trabalho_id' => 'plano-test',
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-01-31',
+            'justificativa_conclusao' => 'Justificativa de teste',
+            'status' => 'INCLUIDO',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        DB::table('atividades')->insert([
+            'id' => 'atividade-test',
+            'plano_trabalho_consolidacao_id' => 'consolidacao-test',
+            'data_estipulada_entrega' => '2024-01-15',
+            'data_distribuicao' => '2024-01-20',
+            'usuario_id' => 'user-test',
+            'descricao' => 'Atividade de teste',
+            'unidade_id' => 'unidade-test',
+            'status' => 'CONCLUIDO',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        DB::table('ocorrencias')->insert([
+            'id'    => 'ocorrencia-test',
+            'usuario_id' => 'user-test',
+            'data_fim' => '2024-01-15',
+            'data_inicio' => '2024-01-20'
+        ]);
+        DB::table('planos_trabalhos_consolidacoes_ocorrencias')->insert([
+            'plano_trabalho_consolidacao_id' => 'consolidacao-test',
+            'ocorrencia_id' => 'ocorrencia-test'
+        ]);
+
+
+        DB::table('afastamentos')->insert([
+            'id'    => 'afastamento-test',
+            'usuario_id' => 'user-test',
+            'data_fim' => '2024-01-15',
+            'data_inicio' => '2024-01-20'
+        ]);
+        DB::table('planos_trabalhos_consolidacoes_afastamentos')->insert([
+            'plano_trabalho_consolidacao_id' => 'consolidacao-test',
+            'afastamento_id' => 'afastamento-test'
+        ]);
+
+        DB::table('comparecimentos')->insert([
+            'id' => 'comparecimento-test',
+            'plano_trabalho_consolidacao_id' => 'consolidacao-test'
+        ]);
+
+        $service = new PlanoTrabalhoConsolidacaoService();
+        $result = $service->consolidacaoDados('consolidacao-test');
+
+        expect($result)->toBeArray();
+        expect($result)->toHaveKeys([
+            'programa',
+            'planoTrabalho',
+            'planosEntregas',
+            'atividades',
+            'afastamentos',
+            'ocorrencias',
+            'comparecimentos',
+            'status',
+            'justificativa_conclusao'
+        ]);
+
+        expect($result['programa']->id)->toBe('programa-test');
+        expect($result['planoTrabalho']->id)->toBe('plano-test');
+        expect($result['planosEntregas']->contains('plano-entrega-test'))->toBe(true);
+        expect($result['atividades'][0]['id'])->toBe('atividade-test');
+        expect($result['afastamentos'][0]['id'])->toBe('afastamento-test');
+        expect($result['ocorrencias'][0]['id'])->toBe('ocorrencia-test');
+        expect($result['comparecimentos']->contains('comparecimento-test'))->toBe(true);
+        expect($result['status'])->toBe('INCLUIDO');
+        expect($result['justificativa_conclusao'])->toBe('Justificativa de teste');
+    });
+
+    test('retorna dados vazios quando consolidação não existe', function () {
+        $service = new PlanoTrabalhoConsolidacaoService();
+
+        expect(fn() => $service->consolidacaoDados('inexistente-id'))
+            ->toThrow(Exception::class);
+    });
+});

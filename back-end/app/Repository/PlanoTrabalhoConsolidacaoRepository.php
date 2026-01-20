@@ -19,7 +19,7 @@ class PlanoTrabalhoConsolidacaoRepository
     $planosEntregasIds = array_map(fn($pe) => $pe->planoEntregaEntrega?->plano_entrega_id, $consolidacao->planoTrabalho->entregas?->all() ?? []);
 
     return [
-      'programa' => $consolidacao->programa,
+      'programa' => $consolidacao->planoTrabalho?->programa,
       'planoTrabalho' => $consolidacao->planoTrabalho,
       'planosEntregas' => PlanoEntrega::whereIn("id", $planosEntregasIds)->get(),
       'atividades' => $this->getAtividades($consolidacao, $concluido),
