@@ -17,7 +17,10 @@ use App\Models\Programa;
 use App\Models\TipoAvaliacao;
 use App\Models\Unidade;
 use App\Enums\StatusEnum;
-use App\Services\Snapshot\PlanoTrabalhoConsolidacaoSnapshotService;
+use App\Services\Snapshot\Creator\AfastamentoSnapshotCreator;
+use App\Services\Snapshot\Creator\AtividadeSnapshotCreator;
+use App\Services\Snapshot\Creator\OcorrenciaSnapshotCreator;
+use App\Services\Snapshot\Creator\PlanoTrabalhoConsolidacaoSnapshotCreatorService;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -270,9 +273,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       /* (RN_CSLD_11) Não pode concluir a consolidação antes que a anterior não esteja concluida, e não pode retornar status da consolidação se a posterior estiver a frente (em status); */
       //$anterior = $this->anterior($id);
       //if(!empty($anterior) && in_array($anterior->status, ["INCLUIDO"])) throw new ServerException("ValidatePlanoTrabalhoConsolidacao", "Existe consolidação anterior ainda não concluída");
-      $dados = $this->consolidacaoDados($id);
       $consolidacao = PlanoTrabalhoConsolidacao::find($id);
       if (empty($consolidacao)) throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Consolidação não encontrada");
+      $dados = $this->consolidacaoDados($id);
       if (!empty($consolidacao->data_conclusao)) throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Consolidação já concluída");
       if (!is_array($dados)) {
         throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Dados de consolidação inválidos");
@@ -298,7 +301,12 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
         $consolidacao->justificativa_conclusao = $justificativa_conclusao;
       }
       $consolidacao->save();
-      (new PlanoTrabalhoConsolidacaoSnapshotService())->createSnapshots($dados, $id, $dataConclusao);
+      $snapshotCreators = [
+        'atividades' => new AtividadeSnapshotCreator(),
+        'afastamentos' => new AfastamentoSnapshotCreator(),
+        'ocorrencias' => new OcorrenciaSnapshotCreator()
+      ];
+      (new PlanoTrabalhoConsolidacaoSnapshotCreatorService($snapshotCreators))->createSnapshots($dados, $id, $dataConclusao);
       // /* Snapshot das atividades */
       // foreach(array_map(fn($a) => $a["id"], $dados["atividades"] ?? []) as $atividadeId) {
       //   $atividade = Atividade::find($atividadeId);
