@@ -37,7 +37,7 @@ class PerfilService extends ServiceBase {
                 if (empty($c['id'])){
                     $capacidadeCodigo = TipoCapacidade::find($c['tipo_capacidade_id'])->codigo;
                     $perfilNivel = Perfil::find($c['perfil_id'])->nivel;
-                    $c['id'] = $this->utilService->uuid($perfilNivel . $capacidadeCodigo);
+                    $c['id'] = UtilService::uuid($perfilNivel . $capacidadeCodigo);
                 }
             }
         };

@@ -11,7 +11,6 @@ class PetrvsService extends ServiceBase
 {
     public function showTables() {
         $tabelas = [];
-        $util = new UtilService();
         $result = DB::select('show tables');
         /**
          * SHOW TABLES devolve um array de objetos do tipo {'key' => 'value'}, onde 'value' é o nome da tabela e 'key' é uma
@@ -22,7 +21,7 @@ class PetrvsService extends ServiceBase
         foreach($result as $r){
             array_push($tabelas, [
                 'key' => array_values((array)$r)[0],
-                'value' => $util->inicialMaiuscula(array_values((array)$r)[0])
+                'value' => UtilService::inicialMaiuscula(array_values((array)$r)[0])
             ]);
         }
         /*  $tabelas = array_map(fn($t) => [
