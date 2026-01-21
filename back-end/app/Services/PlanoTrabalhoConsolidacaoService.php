@@ -281,16 +281,19 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
         throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Dados de consolidação inválidos");
       }
 
-      /* se array de atividades estiver vazio, não pode concluir */
-      if (count($dados["atividades"] ?? []) == 0) {
-        throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Antes de concluir, é necessário fazer a descrição dos trabalhos executados.");
-      }
-      $IdsEntregasPlanoTrabalho = $consolidacao->planoTrabalho->entregas->pluck('id');
       /* Para cada ID de entrega, verificar se existe em dados[atividades].plano_trabalho_entrega_id */
       if (!(new UsuarioService)->isGestorUnidade(($dados['planoTrabalho'])->unidade_id)) {
+        /* se array de atividades estiver vazio, não pode concluir */
+        if (count($dados["atividades"] ?? []) == 0) {
+          throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Antes de concluir, é necessário fazer a descrição dos trabalhos executados.");
+        }
+  
+        $IdsEntregasPlanoTrabalho = $consolidacao->planoTrabalho->entregas->pluck('id');
+
+        if($IdsEntregasPlanoTrabalho->isEmpty()) throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Para concluir é preciso que todas as entregas tenham atividades associadas");
         foreach ($IdsEntregasPlanoTrabalho as $IdEntregaPlanoTrabalho) {
           if (!in_array($IdEntregaPlanoTrabalho, array_column($dados["atividades"] ?? [], "plano_trabalho_entrega_id"))) {
-          throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Para concluir é preciso que todas as entregas tenham atividades associadas");
+            throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Para concluir é preciso que todas as entregas tenham atividades associadas");
           }
         }
       }
