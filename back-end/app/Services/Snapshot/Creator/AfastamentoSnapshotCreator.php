@@ -10,6 +10,7 @@ class AfastamentoSnapshotCreator implements SnapshotCreatorInterface
     public function create(string $entityId, string $consolidacaoId, $dataConclusao): void
     {
         $afastamento = Afastamento::find($entityId);
+        if (!$afastamento) throw new \Exception("Afastamento não encontrado");
         $consolidacao = new PlanoTrabalhoConsolidacaoAfastamento([
             "data_conclusao" => $dataConclusao,
             "snapshot" => $afastamento->toArray(),

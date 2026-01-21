@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Schema;
 use DateTime;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Tests\DatabaseSetup;
 
 uses(Tests\TestCase::class);
 
@@ -23,35 +24,7 @@ class TestAtividadeService extends AtividadeService
 }
 
 beforeEach(function () {
-    if (!Schema::hasTable('atividades')) {
-        Schema::create('atividades', function ($table) {
-            $table->uuid('id')->primary();
-            $table->string('descricao');
-            $table->integer('tempo_planejado')->nullable();
-            $table->datetime('data_estipulada_entrega')->nullable();
-            $table->datetime('data_entrega')->nullable();
-            $table->integer('tempo_despendido')->nullable();
-            $table->string('status')->default('PLANEJADO');
-            $table->json('etiquetas')->nullable();
-            $table->json('checklist')->nullable();
-            $table->integer('prioridade')->default(3);
-            $table->integer('progresso')->default(0);
-            $table->timestamps();
-            $table->softDeletes();
-        });
-    }
-
-    if (!Schema::hasTable('planos_trabalhos_consolidacoes_atividades')) {
-        Schema::create('planos_trabalhos_consolidacoes_atividades', function ($table) {
-            $table->uuid('id')->primary();
-            $table->uuid('plano_trabalho_consolidacao_id');
-            $table->uuid('atividade_id');
-            $table->datetime('data_conclusao');
-            $table->json('snapshot');
-            $table->timestamps();
-            $table->softDeletes();
-        });
-    }
+    DatabaseSetup::DBup();
 
     $this->testAtividadeService = new TestAtividadeService();
     $this->rebuilder = new AtividadeSnapshotRebuilder($this->testAtividadeService);

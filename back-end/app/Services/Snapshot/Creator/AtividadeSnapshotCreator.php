@@ -10,6 +10,7 @@ class AtividadeSnapshotCreator implements SnapshotCreatorInterface
     public function create(string $entityId, string $consolidacaoId, $dataConclusao): void
     {
         $atividade = Atividade::find($entityId);
+        if (!$atividade) throw new \Exception("Atividade não encontrada");
         $consolidacao = new PlanoTrabalhoConsolidacaoAtividade([
             "data_conclusao" => $dataConclusao,
             "snapshot" => $atividade->toArray(),

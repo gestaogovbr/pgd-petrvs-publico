@@ -10,6 +10,7 @@ class OcorrenciaSnapshotCreator implements SnapshotCreatorInterface
     public function create(string $entityId, string $consolidacaoId, $dataConclusao): void
     {
         $ocorrencia = Ocorrencia::find($entityId);
+        if (!$ocorrencia) throw new \Exception("Ocorrência não encontrada");
         $consolidacao = new PlanoTrabalhoConsolidacaoOcorrencia([
             "data_conclusao" => $dataConclusao,
             "snapshot" => $ocorrencia->toArray(),
