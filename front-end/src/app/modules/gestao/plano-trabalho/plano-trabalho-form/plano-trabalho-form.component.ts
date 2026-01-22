@@ -224,7 +224,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   private isStartDateBeforeProgramStart(control: AbstractControl, controlName: string): boolean {
     if (controlName !== 'data_inicio' || !this.selectedPrograma) return false;
-    
+
     return moment(control.value as Date).startOf('day') < 
            moment(this.selectedPrograma.data_inicio).startOf('day');
   }
@@ -363,15 +363,15 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     'true' ; 
   }
 
-  public onProgramaSelect(selected: SelectItem) {
-    let programa = selected.entity as Programa;
+  public onProgramaSelect() {
+    if (!this.programa?.selectedItem) return;
+    let programa = this.programa.selectedItem.data as Programa;
+    this.selectedPrograma = programa;
     this.entity!.programa_id = programa.id;
     this.entity!.programa = programa;
     this.form?.controls.criterios_avaliacao.setValue(programa.plano_trabalho_criterios_avaliacao || []);
     this.form?.controls.data_inicio.updateValueAndValidity();
     this.form?.controls.data_fim.updateValueAndValidity();
-    this.calculaTempos();
-    this.cdRef.detectChanges();
   }
 
   public async onUsuarioSelect(selected: SelectItem) {    
