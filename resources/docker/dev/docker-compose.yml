@@ -34,10 +34,6 @@ services:
       - TZ=America/Bahia
       - REDIS_HOST=petrvs_redis
       - RABBITMQ_HOST=petrvs_rabbitmq
-      - RABBITMQ_PORT=5672
-      - RABBITMQ_LOGIN=petrvs
-      - RABBITMQ_PASSWORD=PsEeTnRhVaS
-      - RABBITMQ_QUEUE=pgd_queue
     volumes:
       - ../../../back-end:/var/www
     deploy:
@@ -70,7 +66,7 @@ services:
       - "15672:15672"  # UI de gerenciamento
     environment:
       RABBITMQ_DEFAULT_USER: petrvs
-      RABBITMQ_DEFAULT_PASS: PsEeTnRhVaS
+      RABBITMQ_DEFAULT_PASS: petrvs
       RABBITMQ_DEFAULT_VHOST: /
       TZ: "America/Bahia"
     volumes:

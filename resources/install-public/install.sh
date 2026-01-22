@@ -75,6 +75,12 @@ PUSHER_APP_CLUSTER=mt1
 MIX_PUSHER_APP_KEY="\${PUSHER_APP_KEY}"
 MIX_PUSHER_APP_CLUSTER="\${PUSHER_APP_CLUSTER}
 
+RABBITMQ_HOST=petrvs_rabbitmq
+RABBITMQ_PORT=5672
+RABBITMQ_LOGIN=petrvs
+RABBITMQ_PASSWORD=petrvs
+RABBITMQ_QUEUE=pgd_queue
+
 TEAMS_COGES_URL=
 TEAMS_ERRORS_URL="
 
@@ -343,6 +349,8 @@ services:
     command: ['/bin/bash', '-c', 'mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf']
     depends_on:
       - petrvs_php
+      - petrvs_redis
+      - petrvs_rabbitmq
     volumes:
       - './.env:/var/www/.env'
       - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
@@ -353,6 +361,24 @@ services:
     container_name: petrvs_redis
     ports:
       - '6379:6379'
+  petrvs_rabbitmq:
+    image: rabbitmq:3-management
+    container_name: petrvs_rabbitmq
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # UI de gerenciamento
+    environment:
+      RABBITMQ_DEFAULT_USER: petrvs
+      RABBITMQ_DEFAULT_PASS: petrvs
+      RABBITMQ_DEFAULT_VHOST: /
+      TZ: "America/Bahia"
+    volumes:
+      - ../rabbitmq/data:/var/lib/rabbitmq
+      - ../rabbitmq/logs:/var/log/rabbitmq
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
 volumes:
   db_data:  # Declara o volume persistente
 "
@@ -385,11 +411,27 @@ services:
     command: ['/bin/bash', '-c', 'mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf']
     depends_on:
       - petrvs_php
+      - petrvs_redis
+      - petrvs_rabbitmq
     volumes:
       - './.env:/var/www/.env'
       - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
     stdin_open: true
     tty: true
+  petrvs_rabbitmq:
+    image: rabbitmq:3-management
+    container_name: petrvs_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: petrvs
+      RABBITMQ_DEFAULT_PASS: petrvs
+      RABBITMQ_DEFAULT_VHOST: /
+      TZ: "America/Bahia"
+    volumes:
+      - ../rabbitmq/data:/var/lib/rabbitmq
+      - ../rabbitmq/logs:/var/log/rabbitmq
   petrvs_redis:
     image: redis:alpine
     container_name: petrvs_redis

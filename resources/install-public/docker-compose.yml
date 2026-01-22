@@ -32,11 +32,31 @@ services:
     command: ["/bin/bash", "-c", "mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf"]
     depends_on:
       - petrvs_php
+      - petrvs_rabbitmq
+      - petrvs_redis
     volumes:
       - "./.env:/var/www/.env"
       - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
     stdin_open: true
     tty: true
+  petrvs_rabbitmq:
+    image: rabbitmq:3-management
+    container_name: petrvs_rabbitmq
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # UI de gerenciamento
+    environment:
+      RABBITMQ_DEFAULT_USER: petrvs
+      RABBITMQ_DEFAULT_PASS: petrvs
+      RABBITMQ_DEFAULT_VHOST: /
+      TZ: "America/Bahia"
+    volumes:
+      - ../rabbitmq/data:/var/lib/rabbitmq
+      - ../rabbitmq/logs:/var/log/rabbitmq
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
   petrvs_redis:
     image: redis:alpine
     container_name: petrvs_redis
