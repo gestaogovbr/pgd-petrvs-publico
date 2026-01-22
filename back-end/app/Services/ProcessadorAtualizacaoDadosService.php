@@ -320,26 +320,26 @@ class ProcessadorAtualizacaoDadosService extends ServiceBase
     private function gerarUsuario($v_isr, $tipoModalidadeNaoIdentificada, $perfilParticipanteId)
     {
         
-        $tipoModalidadePgd = $this->UtilService->valueOrDefault($v_isr['modalidade_pgd']);
+        $tipoModalidadePgd = UtilService::valueOrDefault($v_isr['modalidade_pgd']);
 
         $tipoModalidadePgd = empty($tipoModalidadePgd)? $tipoModalidadeNaoIdentificada : $this->integracaoService->validarModalidadePgd($tipoModalidadePgd);
         return new Usuario([
                     'id' => Uuid::uuid4(),
-                    'email' => $this->UtilService->valueOrDefault($v_isr['emailfuncional']),
-                    'nome' => $this->UtilService->valueOrDefault($v_isr['nome']),
-                    'cpf' => $this->UtilService->valueOrDefault($v_isr['cpf']),
-                    'matricula' => $this->UtilService->valueOrDefault($v_isr['matricula']),
-                    'apelido' => $this->UtilService->valueOrDefault($v_isr['apelido']),
-                    'telefone' => $this->UtilService->valueOrDefault($v_isr['telefone'], null),
-                    'data_nascimento' => $this->UtilService->valueOrDefault($v_isr['data_nascimento'], null),
-                    'sexo' => $this->UtilService->valueOrDefault($v_isr['sexo']),
-                    'situacao_funcional' => $this->UtilService->valueOrDefault($v_isr['situacao_funcional'], "DESCONHECIDO"),
+                    'email' => UtilService::valueOrDefault($v_isr['emailfuncional']),
+                    'nome' => UtilService::valueOrDefault($v_isr['nome']),
+                    'cpf' => UtilService::valueOrDefault($v_isr['cpf']),
+                    'matricula' => UtilService::valueOrDefault($v_isr['matricula']),
+                    'apelido' => UtilService::valueOrDefault($v_isr['apelido']),
+                    'telefone' => UtilService::valueOrDefault($v_isr['telefone'], null),
+                    'data_nascimento' => UtilService::valueOrDefault($v_isr['data_nascimento'], null),
+                    'sexo' => UtilService::valueOrDefault($v_isr['sexo']),
+                    'situacao_funcional' => UtilService::valueOrDefault($v_isr['situacao_funcional'], "DESCONHECIDO"),
                     'perfil_id' => $perfilParticipanteId,
                     'tipo_modalidade_id' => $tipoModalidadePgd,
-                    'exercicio' => $this->UtilService->valueOrDefault($v_isr['exercicio']),
-                    'uf' => $this->UtilService->valueOrDefault($v_isr['uf'], null),
-                    'data_modificacao' => $this->UtilService->asDateTime($v_isr['data_modificacao']),
-                    'ident_unica' => $this->UtilService->valueOrDefault($v_isr['ident_unica']),
+                    'exercicio' => UtilService::valueOrDefault($v_isr['exercicio']),
+                    'uf' => UtilService::valueOrDefault($v_isr['uf'], null),
+                    'data_modificacao' => UtilService::asDateTime($v_isr['data_modificacao']),
+                    'ident_unica' => UtilService::valueOrDefault($v_isr['ident_unica']),
                 ]);
     }
 
@@ -379,10 +379,10 @@ class ProcessadorAtualizacaoDadosService extends ServiceBase
         $tipoModalidadeNaoIdentificada = $this->integracaoService->validarModalidadePgd('');
         
         foreach ($vinculos_isr as $v_isr) {
-            $v_isr = $this->UtilService->object2array($v_isr);
-            $cpfCheck = $this->UtilService->valueOrDefault($v_isr['cpf']);
-            $matriculaNova = $this->UtilService->valueOrDefault($v_isr['matricula']);
-            $codigoExercicio = $this->UtilService->valueOrDefault($v_isr['exercicio']);
+            $v_isr = UtilService::object2array($v_isr);
+            $cpfCheck = UtilService::valueOrDefault($v_isr['cpf']);
+            $matriculaNova = UtilService::valueOrDefault($v_isr['matricula']);
+            $codigoExercicio = UtilService::valueOrDefault($v_isr['exercicio']);
             $unidadeExercicio = Unidade::where('codigo', $codigoExercicio)->first();
             $unidadeExercicioIdCheck = isset($unidadeExercicio->id) ? $unidadeExercicio->id : null;
 
