@@ -280,9 +280,13 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       if (!is_array($dados)) {
         throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Dados de consolidação inválidos");
       }
+      $usuarioService = new UsuarioService();
 
       /* Para cada ID de entrega, verificar se existe em dados[atividades].plano_trabalho_entrega_id */
-      if (!(new UsuarioService)->isGestorUnidadeRecursivo(($dados['planoTrabalho'])->unidade_id)) {
+      if (
+        !$usuarioService->isGestorUnidadeRecursivo(($dados['planoTrabalho'])->unidade_id) 
+        || ($dados['planoTrabalho'])->usuario_id == $usuarioService->loggedUser()->id
+      ) {
         /* se array de atividades estiver vazio, não pode concluir */
         if (count($dados["atividades"] ?? []) == 0) {
           throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Antes de concluir, é necessário fazer a descrição dos trabalhos executados.");
