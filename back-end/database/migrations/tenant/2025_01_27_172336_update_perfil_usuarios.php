@@ -9,6 +9,7 @@ use App\Services\PerfilService;
 use App\Services\UtilService;
 use App\Models\Perfil;
 use App\Models\Usuario;
+use Illuminate\Support\Facades\DB;
 
 class UpdatePerfilUsuarios extends Migration
 {
@@ -27,7 +28,7 @@ class UpdatePerfilUsuarios extends Migration
         if (!$perfilAdministradorNegocial) {
             DB::insert(
                 "INSERT IGNORE INTO perfis (id, nivel, nome, descricao, created_at) VALUES (?, ?, ?, ?, ?)",
-                [(new UtilService())->uuid('2'), 2, "Perfil Administrador Negocial", "Representantes de unidades instituidoras", now()]
+                [UtilService::uuid('2'), 2, "Perfil Administrador Negocial", "Representantes de unidades instituidoras", now()]
             );
             $perfilAdministradorNegocial = NivelAcessoService::getPerfilAdministrador();
         }
@@ -36,7 +37,7 @@ class UpdatePerfilUsuarios extends Migration
         if (!$perfilColaborador) {
             DB::insert(
                 "INSERT IGNORE INTO perfis (id, nivel, nome, descricao, created_at) VALUES (?, ?, ?, ?, ?)",
-                [(new UtilService())->uuid('6'), 6, "Perfil Colaborador", "Agente públicos não selecionáveis para o PGD (ex: estagiários, terceirizados, etc)", now()]
+                [UtilService::uuid('6'), 6, "Perfil Colaborador", "Agente públicos não selecionáveis para o PGD (ex: estagiários, terceirizados, etc)", now()]
             );
             $perfilColaborador = NivelAcessoService::getPerfilColaborador();
         }

@@ -584,6 +584,7 @@ export class LookupService implements IIndexable {
   ];
 
   public CONSOLIDACAO_STATUS: LookupItem[] = [
+    { key: "AGUARDANDO_REGISTRO", value: "Aguardando Registro", icon: "bi bi-clock", color: "secondary" },
     { key: "INCLUIDO", value: "Incluido", icon: "bi bi-pencil-square", color: "secondary" },
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary" },
     { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" }
@@ -652,7 +653,7 @@ export class LookupService implements IIndexable {
   public PLANO_ENTREGA_STATUS: LookupItem[] = [
     { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary", data: { justificar: ["HOMOLOGANDO"] } },
     { key: "HOMOLOGANDO", value: "Aguardando homologação", icon: "bi bi-clock", color: "warning", data: { justificar: ["ATIVO"] } },
-    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success", data: { justificar: ["CONCLUIDO"] } },
+    { key: "ATIVO", value: "Homologado", icon: "bi bi-caret-right", color: "success", data: { justificar: ["CONCLUIDO"] } },
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary", data: { justificar: ["AVALIADO"] } },
     { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info", data: { justificar: [] } },
     { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "dark", data: { justificar: [] } },
@@ -663,8 +664,8 @@ export class LookupService implements IIndexable {
     { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary", data: { justificar: ["AGUARDANDO_ASSINATURA"] } },
     { key: "AGUARDANDO_ASSINATURA", value: "Aguardando assinatura", icon: "bi bi-clock", color: "warning", data: { justificar: [] } },
     { key: "ATIVO", value: "Aprovado", icon: "bi bi-check2-circle", color: "success", data: { justificar: [] } },
-    { key: "CONCLUIDO", value: "Executado", icon: "bi bi-clipboard2-check", color: "primary", data: { justificar: [] } },
-    // { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info", data: { justificar: [] } },  // Um plano de trabalho é considerado avaliado quando todas as suas consolidações o forem
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary", data: { justificar: [] } },
+    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info", data: { justificar: [] } },
     { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "dark", data: { justificar: [] } },
     { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger", data: { justificar: [] } }
   ];

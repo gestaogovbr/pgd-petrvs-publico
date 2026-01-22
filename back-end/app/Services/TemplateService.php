@@ -340,9 +340,9 @@ class TemplateService extends ServiceBase
     public function formataValor($valor, $tipo){
         if(!empty($tipo)){
            switch ($tipo) {
-            case 'DATE': return $this->utilService->getDateFormatted($valor);           
-            case 'DATETIME': return $this->utilService->getDateTimeFormatted($valor);           
-            case 'TIME': return $this->utilService->getTimeFormatted($valor);           
+            case 'DATE': return UtilService::getDateFormatted($valor);           
+            case 'DATETIME': return UtilService::getDateTimeFormatted($valor);           
+            case 'TIME': return UtilService::getTimeFormatted($valor);           
             default: return $valor;
            }
         }

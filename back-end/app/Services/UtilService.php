@@ -36,7 +36,7 @@ class UtilService
         }, $source);
     }
 
-    public function valueOrDefault($value, $default = "", $option = "") {
+    public static function valueOrDefault($value, $default = "", $option = "") {
 
         // Trata númerações códigos siapes de uorgs com fins
         // de evitar erro nas respectivas querys
@@ -45,81 +45,11 @@ class UtilService
             return empty($value) || gettype($value) == "array" ? $default : $value;
         }
 
-        // Retorna descrição de situação funcional baseado
-        // no código informado pelo web service
-        if (strtolower($option) == "situacao_funcional" && !is_null($value)){
-            $situacoes = array(
-                "1"  => "ATIVO_PERMANENTE",
-                "2"  => "APOSENTADO",
-                "3"  => "CEDIDO/REQUISITADO",
-                "4"  => "NOMEADO_CARGO_COMISSIONADO",
-                "5"  => "SEM_VINCULO",
-                "6"  => "TABELISTA(ESP/EMERG)",
-                "7"  => "NATUREZA_ESPECIAL",
-                "8"  => "ATIVO_EM_OUTRO_ORGAO",
-                "9"  => "REDISTRIBUIDO",
-                "10" => "ATIVO_TRANSITORIO",
-                "11" => "EXCEDENTE_A_LOTACAO",
-                "12" => "CONTRATO_TEMPORARIO",
-                "13" => "EM_DISPONIBILIDADE",
-                "14" => "REQUISITADO_DE_OUTROS_ORGAOS",
-                "15" => "INSTITUIDOR_PENSAO",
-                "16" => "REQUISITADO_MILITAR_FORCAS_ARMADAS",
-                "17" => "APOSENTADO_TCU733/94",
-                "18" => "EXERCICIO_DESCENTRALIZADO_CARREIRA",
-                "19" => "EXERCICIO_PROVISORIO",
-                "20" => "CELETISTA",
-                "21" => "ATIVO_PERMANENTE_LEI_8878/94",
-                "22" => "ANISTIADO_ADCT_CF",
-                "23" => "CELETISTA/EMPREGADO",
-                "25" => "CLT_ANS_DECISAO_JUDICIAL",
-                "27" => "CLT_ANS_JUDICIAL_CEDIDO",
-                "29" => "CLT_APOS_COMPLEMENTO",
-                "30" => "CLT_APOS_DECISAO_JUDICIAL",
-                "31" => "INST_PS_DECISAO_JUDICIAL",
-                "32" => "EMPREGO_PUBLICO",
-                "33" => "REFORMA_CBM/PM",
-                "34" => "RESERVA_CBM/PM",
-                "35" => "REQUISITADO_MILITAR_GDF",
-                "36" => "ANISTIADO_PUBLICO_L10559",
-                "37" => "ANISTIADO_PRIVADO_L10559",
-                "38" => "ATIVO_DECISAO_JUDICIAL",
-                "40" => "CONTRATO_TEMPORARIO",
-                "41" => "COLAB_PCCTAE_E_MAGISTERIO",
-                "42" => "COLABORADOR_ICT",
-                "43" => "CLT_ANS_DEC_6657/08",
-                "44" => "EXERCICIO_7_ART93_8112",
-                "45" => "CEDIDO_SUS/LEI_8270",
-                "46" => "INST_ANIST_PUBLICO",
-                "47" => "INST_ANIST_PRIVADO",
-                "48" => "CELETISTA_DECISAO_JUDICIAL",
-                "49" => "CONTRATO_TEMPORARIO_CLT",
-                "50" => "EMPREGO_PCC/EX-TERRITORIO",
-                "51" => "EXC_INDISCIPLINA",
-                "52" => "CONTRATO_PROFESSOR_SUBSTITUTO",
-                "66" => "ESTAGIARIO",
-                "70" => "ESTAGIARIO_SIGEPE",
-                "71" => "RESIDENCIA_E_PMM",
-                "72" => "APOSENTADO_TEMPORARIRIO",
-                "75" => "CEDIDO_DF_ESTADO_MUNICIPIO",
-                "76" => "CONTRATO_TEMPORARIO",
-                "77" => "EXERC_DESCEN_CDT",
-                "80" => "EXERC_LEI_13681/18",
-                "84" => "PENSIONISTA",
-                "93" => "BENEFICIARIO_PENSAO",
-                "96" => "QE/MRE_CEDIDO",
-                "97" => "QUADRO_ESPEC_QE/MRE",
-            );
-
-            $value = intval($value);
-            array_key_exists($value, $situacoes) ? $value = $situacoes[$value] : $value = null;
-            return empty($value) || gettype($value) == "array" ? $default : $value;
-        }
         // Retorno conforme função original
         return empty($value) || gettype($value) == "array" ? $default : $value;
     }
 
-    public function object2array($object, $k = 1) {
+    public static function object2array($object, $k = 1) {
         return @json_decode(@json_encode($object),$k);
     }
 
@@ -216,7 +146,7 @@ class UtilService
     }
 
     public static function onlyNumbers($string) {
-        return preg_replace('/\D/', '', $string);
+        return preg_replace('/\D/', '', $string ?: '');
     }
 
     public static function inicialMaiuscula($termo){
@@ -401,7 +331,7 @@ class UtilService
      * @param array $valoresAnteriores  Array com os valores anteriores dos atributos, no formato [...['string', any]]
      * @return      Array com as diferenças encontradas, no formato [...['path\para\chave', 'valor atual', 'valor antigo']]
      */
-    public function differentAttributes(array $valoresAtuais, array $valoresAnteriores): array {
+    public static function differentAttributes(array $valoresAtuais, array $valoresAnteriores): array {
         $diferenca=array();
         $incluirDiferenca = function (string $pathParaAtributo, $valorAtual, $valorAnterior) use (&$diferenca) {
             array_push($diferenca,[$pathParaAtributo,$valorAtual,$valorAnterior]);
@@ -414,22 +344,22 @@ class UtilService
                     if($valorAnterior) {
                         $incluirDiferenca($atributo,$valorAtual,$valorAnterior);
                     }else{
-                        $new_diff = $this->differentAttributes($valorAtual === '[]' ? [] : $valorAtual, []);
+                        $new_diff = static::differentAttributes($valorAtual === '[]' ? [] : $valorAtual, []);
                         if( !empty($new_diff) ) {
                             foreach ($new_diff as $dif) { $incluirDiferenca("{$atributo}*{$dif[0]}",$dif[1],$dif[2]); }
                         }
                     }
 
                 } else {
-                    $new_diff = $this->differentAttributes($valorAtual === '[]' ? [] : $valorAtual, $valorAnterior === '[]' ? [] : $valorAnterior);
+                    $new_diff = static::differentAttributes($valorAtual === '[]' ? [] : $valorAtual, $valorAnterior === '[]' ? [] : $valorAnterior);
                     if( !empty($new_diff) ) {
                         foreach ($new_diff as $dif) { $incluirDiferenca("{$atributo}*{$dif[0]}",$dif[1],$dif[2]); }
                     }
                 }
             } else if( is_string($valorAtual) && json_decode($valorAtual) ){        // SE O VALOR ATUAL FOR UMA STRING JSON
                 if( is_array($valorAnterior) ){                                         // E O VALOR ANTERIOR FOR UM ARRAY
-                    if(is_array($this->object2array(json_decode($valorAtual)))) {     //... se o valor atual puder ser convertido para array,
-                        $new_diff = $this->differentAttributes($this->object2array(json_decode($valorAtual)),$valorAnterior); //... chama a função recursivamente passando os dois arrays
+                    if(is_array(static::object2array(json_decode($valorAtual)))) {     //... se o valor atual puder ser convertido para array,
+                        $new_diff = static::differentAttributes(static::object2array(json_decode($valorAtual)),$valorAnterior); //... chama a função recursivamente passando os dois arrays
                         if( !empty($new_diff) ) {
                             foreach ($new_diff as $dif) { $incluirDiferenca("{$atributo}*{$dif[0]}",$dif[1],$dif[2]); }
                         }
@@ -438,8 +368,8 @@ class UtilService
                     }
                 }else if( (is_string($valorAnterior) && json_decode($valorAnterior)) || json_encode($valorAnterior) ) {  // E O VALOR ANTERIOR TAMBÉM FOR UMA STRING/OBJETO JSON
                     //... se ambos puderem ser convertidas para array, chama-se a função recursivamente
-                    if(is_array($this->object2array(json_decode($valorAtual))) && (json_encode($valorAnterior) ? is_array($this->object2array($valorAnterior)) : is_array($this->object2array(json_decode($valorAnterior),3)))){
-                        $new_diff = $this->differentAttributes($this->object2array(json_decode($valorAtual)),json_encode($valorAnterior) ? $this->object2array($valorAnterior) : $this->object2array(json_decode($valorAnterior),3));
+                    if(is_array(static::object2array(json_decode($valorAtual))) && (json_encode($valorAnterior) ? is_array(static::object2array($valorAnterior)) : is_array(static::object2array(json_decode($valorAnterior),3)))){
+                        $new_diff = static::differentAttributes(static::object2array(json_decode($valorAtual)),json_encode($valorAnterior) ? static::object2array($valorAnterior) : static::object2array(json_decode($valorAnterior),3));
                         if( !empty($new_diff) ) {
                             foreach ($new_diff as $dif) { $incluirDiferenca("{$atributo}*{$dif[0]}",$dif[1],$dif[2]); }
                         }
@@ -506,7 +436,7 @@ class UtilService
       return $apelido;
     }
 
-    function getNomeFormatado(string $in){
+    public static function getNomeFormatado(string $in){
         $out = null;
         if(is_string($in) && !empty($in)){
             $in = mb_strtolower($in, 'UTF-8');

@@ -23,6 +23,7 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
   @Input() unidade_pai?: string;
   @Input() unidades?: string[];
   @ViewChild('instituidora', { static: false }) public instituidora?: InputSwitchComponent;
+  @ViewChild('apenas_chefiadas', { static: false }) public apenas_chefiadas?: InputSwitchComponent;
 
   public cidadeDao: CidadeDaoService;
   public entidadeDao: EntidadeDaoService;
@@ -46,6 +47,7 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
       entidade_id: { default: this.auth.unidade?.entidade_id },
       inativos: { default: false },
       instituidora: { default: false },
+      apenas_chefiadas: { default: false },
       nome: { default: "" },
       tem_chefe_titular: { default: false },
       tem_chefe_substituto: { default: false }
@@ -101,6 +103,8 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
     if (form.entidade_id?.length) result.push(["entidade_id", "==", form.entidade_id]);
     if (form.nome?.length) result.push(["or", ["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]]);
     if (form.instituidora) result.push(["instituidora", "==", 1]);
+    
+    if (form.apenas_chefiadas) result.push(["apenas_chefiadas", "==", 1]);
     
     if (this.unidade_pai) {
        result.push(["unidade_pai", "==", this.unidade_pai]);

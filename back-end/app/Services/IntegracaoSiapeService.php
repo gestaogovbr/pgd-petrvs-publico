@@ -87,11 +87,11 @@ class IntegracaoSiapeService extends ServiceBase
       'cpf_ativo'        => true,
       'data_modificacao' => $pessoa['data_modificacao'] ?? null,
       'cpf'              => $pessoa['cpf'] ?? null,
-      'nome'             => $this->UtilService->valueOrDefault($dadosPessoais['nome'] ?? null),
-      'sexo'             => $this->UtilService->valueOrDefault($dadosPessoais['nomeSexo'] ?? null),
-      'municipio'        => $this->UtilService->valueOrDefault($dadosPessoais['nomeMunicipNasc'] ?? null),
-      'uf'               => $this->UtilService->valueOrDefault($dadosPessoais['ufNascimento'] ?? null, null),
-      'data_nascimento'  => $this->UtilService->valueOrDefault($dadosPessoais['dataNascimento'] ?? null, null),
+      'nome'             => UtilService::valueOrDefault($dadosPessoais['nome'] ?? null),
+      'sexo'             => UtilService::valueOrDefault($dadosPessoais['nomeSexo'] ?? null),
+      'municipio'        => UtilService::valueOrDefault($dadosPessoais['nomeMunicipNasc'] ?? null),
+      'uf'               => UtilService::valueOrDefault($dadosPessoais['ufNascimento'] ?? null, null),
+      'data_nascimento'  => UtilService::valueOrDefault($dadosPessoais['dataNascimento'] ?? null, null),
       'telefone'         => '',
     ];
     return $pessoal;
@@ -142,27 +142,27 @@ class IntegracaoSiapeService extends ServiceBase
 
     $matricula = [
       'vinculo_ativo'         => true,
-      'matriculasiape'        => $this->UtilService->valueOrDefault($dadosFuncionais['matriculaSiape'] ?? null),
-      'tipo'                  => $this->UtilService->valueOrDefault($dadosFuncionais['codCargo'] ?? null),
-      'coduorgexercicio'      => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgExercicio'] ?? null),
-      'coduorglotacao'        => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgLotacao'] ?? null),
-      'codigo_servo_exercicio' => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgExercicio'] ?? null),
+      'matriculasiape'        => UtilService::valueOrDefault($dadosFuncionais['matriculaSiape'] ?? null),
+      'tipo'                  => UtilService::valueOrDefault($dadosFuncionais['codCargo'] ?? null),
+      'coduorgexercicio'      => UtilService::valueOrDefault($dadosFuncionais['codUorgExercicio'] ?? null),
+      'coduorglotacao'        => UtilService::valueOrDefault($dadosFuncionais['codUorgLotacao'] ?? null),
+      'codigo_servo_exercicio' => UtilService::valueOrDefault($dadosFuncionais['codUorgExercicio'] ?? null),
       'nomeguerra'            => '',
-      'codsitfuncional'       => $this->UtilService->valueOrDefault($dadosFuncionais['codSitFuncional'] ?? null),
-      'codupag'               => $this->UtilService->valueOrDefault($dadosFuncionais['codUpag'] ?? null),
-      'dataexercicionoorgao'  => $this->UtilService->valueOrDefault($dadosFuncionais['dataOcorrIngressoOrgao'] ?? null),
+      'codsitfuncional'       => UtilService::valueOrDefault($dadosFuncionais['codSitFuncional'] ?? null),
+      'codupag'               => UtilService::valueOrDefault($dadosFuncionais['codUpag'] ?? null),
+      'dataexercicionoorgao'  => UtilService::valueOrDefault($dadosFuncionais['dataOcorrIngressoOrgao'] ?? null),
       'funcoes'               => $funcao,
-      'ident_unica'           => $this->UtilService->valueOrDefault($dadosFuncionais['identUnica'] ?? null),
-      'modalidade_pgd'        => $this->UtilService->valueOrDefault($dadosFuncionais['modalidadePGD'] ?? null),
-      'participa_pgd'         => $this->UtilService->valueOrDefault($dadosFuncionais['participaPGD'] ?? null),
-      'cod_jornada'           => $this->UtilService->valueOrDefault($dadosFuncionais['codJornada'] ?? null),
-      'nome_jornada'          => $this->UtilService->valueOrDefault($dadosFuncionais['nomeJornada'] ?? null)
+      'ident_unica'           => UtilService::valueOrDefault($dadosFuncionais['identUnica'] ?? null),
+      'modalidade_pgd'        => UtilService::valueOrDefault($dadosFuncionais['modalidadePGD'] ?? null),
+      'participa_pgd'         => UtilService::valueOrDefault($dadosFuncionais['participaPGD'] ?? null),
+      'cod_jornada'           => UtilService::valueOrDefault($dadosFuncionais['codJornada'] ?? null),
+      'nome_jornada'          => UtilService::valueOrDefault($dadosFuncionais['nomeJornada'] ?? null)
     ];
 
     $funcional = [
-      'emailfuncional'        => $this->UtilService->valueOrDefault($dadosFuncionais['emailInstitucional'] ?? null),
-      'cpf_chefia_imediata'   => $this->UtilService->valueOrDefault($dadosFuncionais['cpfChefiaImediata'] ?? null, null),
-      'email_chefia_imediata' => $this->UtilService->valueOrDefault($dadosFuncionais['emailChefiaImediata'] ?? null, null),
+      'emailfuncional'        => UtilService::valueOrDefault($dadosFuncionais['emailInstitucional'] ?? null),
+      'cpf_chefia_imediata'   => UtilService::valueOrDefault($dadosFuncionais['cpfChefiaImediata'] ?? null, null),
+      'email_chefia_imediata' => UtilService::valueOrDefault($dadosFuncionais['emailChefiaImediata'] ?? null, null),
       'matriculas'            => ['dados' => $matricula],
     ];
 
@@ -191,49 +191,49 @@ class IntegracaoSiapeService extends ServiceBase
           }
 
 
-          if (!empty($this->UtilService->valueOrNull($uorgWsdl, "nomeMunicipio"))) {
+          if (!empty(UtilService::valueOrNull($uorgWsdl, "nomeMunicipio"))) {
             $consulta_sql = DB::select("SELECT * FROM cidades WHERE nome LIKE :nomeMunicipio", ['nomeMunicipio' => $uorgWsdl['nomeMunicipio']]);
             if (!empty($consulta_sql)) {
-              $consulta_sql = $this->UtilService->object2array($consulta_sql)[0];
+              $consulta_sql = UtilService::object2array($consulta_sql)[0];
               $uorgWsdl['codMunicipio'] = $consulta_sql['codigo_ibge'];
               $uorgWsdl['fuso_horario'] = $consulta_sql['timezone'];
             }
           }
 
           $inserir_uorg = [
-            'id_servo' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorg"))) ?: "",
-            'pai_servo' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorgPai"))) ?: "",
-            'codigo_siape' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorg"))) ?: "",
-            'pai_siape' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorgPai"))) ?: "",
-            'codupag' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorgPagadora"))) ?: "",
-            'nomeuorg' => $this->UtilService->valueOrNull($uorgWsdl, "nomeExtendido") ?: "",
-            'siglauorg' => $this->UtilService->valueOrNull($uorgWsdl, "siglaUorg") ?: "",
-            'telefone' => $this->UtilService->valueOrNull($uorgWsdl, "telefone") ?: "",
-            'email' => $this->UtilService->valueOrNull($uorgWsdl, "email") ?: "",
+            'id_servo' => strval(intval(UtilService::valueOrNull($uorgWsdl, "codUorg"))) ?: "",
+            'pai_servo' => strval(intval(UtilService::valueOrNull($uorgWsdl, "codUorgPai"))) ?: "",
+            'codigo_siape' => strval(intval(UtilService::valueOrNull($uorgWsdl, "codUorg"))) ?: "",
+            'pai_siape' => strval(intval(UtilService::valueOrNull($uorgWsdl, "codUorgPai"))) ?: "",
+            'codupag' => strval(intval(UtilService::valueOrNull($uorgWsdl, "codUorgPagadora"))) ?: "",
+            'nomeuorg' => UtilService::valueOrNull($uorgWsdl, "nomeExtendido") ?: "",
+            'siglauorg' => UtilService::valueOrNull($uorgWsdl, "siglaUorg") ?: "",
+            'telefone' => UtilService::valueOrNull($uorgWsdl, "telefone") ?: "",
+            'email' => UtilService::valueOrNull($uorgWsdl, "email") ?: "",
             'natureza' => '',
-            'fronteira' => $this->UtilService->valueOrNull($uorgWsdl, "fronteira") ?: "",
-            'fuso_horario' => $this->UtilService->valueOrNull($uorgWsdl, "fuso_horario") ?: "",
-            'cod_uop' => $this->UtilService->valueOrNull($uorgWsdl, "cod_uop") ?: "",
-            'cod_unidade' => $this->UtilService->valueOrNull($uorgWsdl, "cod_unidade") ?: "",
-            'tipo' => $this->UtilService->valueOrNull($uorgWsdl, "tipo") ?: "",
-            'tipo_desc' => $this->UtilService->valueOrNull($uorgWsdl, "tipo_desc") ?: "",
-            'na_rodovia' => $this->UtilService->valueOrNull($uorgWsdl, "na_rodovia") ?: "",
-            'logradouro' => $this->UtilService->valueOrNull($uorgWsdl, "logradouro") ?: "",
-            'bairro' => $this->UtilService->valueOrNull($uorgWsdl, "bairro") ?: "",
-            'cep' => $this->UtilService->valueOrNull($uorgWsdl, "cep") ?: "",
-            'ptn_ge_coordenada' => $this->UtilService->valueOrNull($uorgWsdl, "ptn_ge_coordenada") ?: "",
-            'municipio_siafi_siape' => $this->UtilService->valueOrNull($uorgWsdl, "codMunicipio") ?: "",
-            'municipio_siscom' => $this->UtilService->valueOrNull($uorgWsdl, "codMunicipio") ?: "",
-            'municipio_ibge' => $this->UtilService->valueOrNull($uorgWsdl, "codMunicipio") ?: "",
-            'municipio_nome' => $this->UtilService->valueOrNull($uorgWsdl, "nomeMunicipio") ?: "",
-            'municipio_uf' => $this->UtilService->valueOrNull($uorgWsdl, "siglaUfMunicipio") ?: "",
+            'fronteira' => UtilService::valueOrNull($uorgWsdl, "fronteira") ?: "",
+            'fuso_horario' => UtilService::valueOrNull($uorgWsdl, "fuso_horario") ?: "",
+            'cod_uop' => UtilService::valueOrNull($uorgWsdl, "cod_uop") ?: "",
+            'cod_unidade' => UtilService::valueOrNull($uorgWsdl, "cod_unidade") ?: "",
+            'tipo' => UtilService::valueOrNull($uorgWsdl, "tipo") ?: "",
+            'tipo_desc' => UtilService::valueOrNull($uorgWsdl, "tipo_desc") ?: "",
+            'na_rodovia' => UtilService::valueOrNull($uorgWsdl, "na_rodovia") ?: "",
+            'logradouro' => UtilService::valueOrNull($uorgWsdl, "logradouro") ?: "",
+            'bairro' => UtilService::valueOrNull($uorgWsdl, "bairro") ?: "",
+            'cep' => UtilService::valueOrNull($uorgWsdl, "cep") ?: "",
+            'ptn_ge_coordenada' => UtilService::valueOrNull($uorgWsdl, "ptn_ge_coordenada") ?: "",
+            'municipio_siafi_siape' => UtilService::valueOrNull($uorgWsdl, "codMunicipio") ?: "",
+            'municipio_siscom' => UtilService::valueOrNull($uorgWsdl, "codMunicipio") ?: "",
+            'municipio_ibge' => UtilService::valueOrNull($uorgWsdl, "codMunicipio") ?: "",
+            'municipio_nome' => UtilService::valueOrNull($uorgWsdl, "nomeMunicipio") ?: "",
+            'municipio_uf' => UtilService::valueOrNull($uorgWsdl, "siglaUfMunicipio") ?: "",
             'ativa' => "true",
-            'regimental' => $this->UtilService->valueOrNull($uorgWsdl, "indicadorUorgRegimenta") ?: "",
+            'regimental' => UtilService::valueOrNull($uorgWsdl, "indicadorUorgRegimenta") ?: "",
             'data_modificacao' => $dataUltimaTransacao,
-            'und_nu_adicional' => $this->UtilService->valueOrNull($uorgWsdl, "und_nu_adicional") ?: "",
-            'cnpjupag' => $this->UtilService->valueOrNull($uorgWsdl, "cnpjUpag") ?: "",
-            'cpf_titular_autoridade_uorg' => $this->UtilService->valueOrNull($uorgWsdl, "cpfTitularAutoridadeUorg") ?: "",
-            'cpf_substituto_autoridade_uorg' => $this->UtilService->valueOrNull($uorgWsdl, "cpfSubstitutoAutoridadeUorg") ?: "",
+            'und_nu_adicional' => UtilService::valueOrNull($uorgWsdl, "und_nu_adicional") ?: "",
+            'cnpjupag' => UtilService::valueOrNull($uorgWsdl, "cnpjUpag") ?: "",
+            'cpf_titular_autoridade_uorg' => UtilService::valueOrNull($uorgWsdl, "cpfTitularAutoridadeUorg") ?: "",
+            'cpf_substituto_autoridade_uorg' => UtilService::valueOrNull($uorgWsdl, "cpfSubstitutoAutoridadeUorg") ?: "",
           ];
           array_push($uorgsPetrvs['uorg'], $inserir_uorg);
         }

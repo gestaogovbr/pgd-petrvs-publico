@@ -3,7 +3,7 @@ import { Base } from './base.model';
 import { PlanoTrabalho } from './plano-trabalho.model';
 import { HasStatus, StatusJustificativa } from './status-justificativa.model';
 
-export type PlanoTrabalhoConsolidacaoStatus = 'CONCLUIDO' | 'AVALIADO' | 'INCLUIDO';
+export type PlanoTrabalhoConsolidacaoStatus = 'CONCLUIDO' | 'AVALIADO' | 'INCLUIDO' | 'AGUARDANDO_REGISTRO';
 
 export class PlanoTrabalhoConsolidacao extends Base implements HasAvaliacao, HasStatus {
     public plano_trabalho?: PlanoTrabalho;

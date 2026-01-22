@@ -36,6 +36,7 @@ class PlanoTrabalho extends ModelBase
         'data_fim', /* datetime; NOT NULL; */ // Fim do plano de trabalho
         'data_arquivamento', /* datetime; */ // Data de arquivamento do plano de trabalho
         'criterios_avaliacao',
+        'avaliado_at', /* date; data em que o plano teve o status trasicionado para AVALIADO */
         //'deleted_at', /* timestamp; */
         //'numero', /* int; NOT NULL; */// Número do plano de trabalho (Gerado pelo sistema)
     ];

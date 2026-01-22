@@ -5,6 +5,7 @@ namespace App\Services\Siape;
 use App\Services\Siape\BuscarDados\BuscarDadosSiape;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
+use App\Services\Siape\SiapeServidorFaultProcessor;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
@@ -69,6 +70,7 @@ trait DadosExternosSiape
 
         $retornoFuncionais = $this->siapeClassBuscaDados->buscaSincrona($xmlDataFuncionais);
         $xmlFuncional = $this->siapeClassBuscaDados->prepareResponseXml($retornoFuncionais);
+        (new SiapeServidorFaultProcessor($xmlFuncional, $cpf, $retornoFuncionais, 'FUNCIONAL'))->process();
 
         // Tratar múltiplos dados funcionais seguindo ProcessaDadosSiapeBD
         $xmlFuncional->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
@@ -79,7 +81,7 @@ trait DadosExternosSiape
         $dadosFuncionaisArray = [];
 
         if (count($dadosFuncionaisElements) === 1) {
-            $dadosFuncionaisArray = [ simpleXmlElementToArray($dadosFuncionaisElements[0]) ];
+            $dadosFuncionaisArray = [simpleXmlElementToArray($dadosFuncionaisElements[0])];
         } else {
             foreach ($dadosFuncionaisElements as $df) {
                 $dados = simpleXmlElementToArray($df);
@@ -100,9 +102,10 @@ trait DadosExternosSiape
             $this->configIntegracaoSiape['parmExistPag'],
             $this->configIntegracaoSiape['parmTipoVinculo']
         );
-        
+
         $retornoPessoais = $this->siapeClassBuscaDados->buscaSincrona($xmlDataPessoais);
         $xmlPessoal = $this->siapeClassBuscaDados->prepareResponseXml($retornoPessoais);
+        (new SiapeServidorFaultProcessor($xmlPessoal, $cpf, $retornoPessoais, 'PESSOAL'))->process();
 
         $outNodes = $xmlPessoal->xpath('//out');
         $out = isset($outNodes[0]) ? $outNodes[0] : null;

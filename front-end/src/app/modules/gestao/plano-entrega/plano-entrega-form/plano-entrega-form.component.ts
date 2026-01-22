@@ -19,6 +19,7 @@ import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import moment from 'moment';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
+import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 
 @Component({
   selector: 'app-plano-entrega-form',
@@ -29,7 +30,7 @@ import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega
 export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoEntregaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
-  @ViewChild('programa', { static: true }) public programa?: InputSearchComponent;
+  @ViewChild('programa', { static: false }) public programa?: InputSelectComponent;
   @ViewChild('unidade', { static: true }) public unidade?: InputSearchComponent;
   @ViewChild('nome', { static: true }) public nomePE?: InputTextComponent;
   @ViewChild('data_fim', { static: true }) public dataFim?: InputDatetimeComponent;
@@ -80,7 +81,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       todosUnidadeExecutora: false,      
       vigentesUnidadeExecutora: true
     }  
-    this.unidadeWhere = [['executora', '==', true]];
+    this.unidadeWhere = [['executora', '==', true],['apenas_chefiadas','==',true]];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -100,7 +101,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   public formValidation = (form?: FormGroup) => {    
     const inicio = this.form?.controls.data_inicio.value;
     const fim = this.form?.controls.data_fim.value;
-    const programa = this.programa?.selectedEntity as Programa;
+    const programa = this.programa?.selectedItem?.data as Programa;
     if (!programa) {
       return "Obrigatório selecionar o programa";
     } else if (!this.dao?.validDateTime(inicio)) {
@@ -158,7 +159,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.entity.unidade = this.auth.unidade;
 
     let programas = await this.programaDao.query({
-      where: [['vigentesUnidadeExecutora', '==', this.auth.unidade!.id]],
+      where: [['todosUnidadeExecutora', '==', this.auth.unidade!.id]],
       orderBy: [["unidade.path", "desc"]]
     }).asPromise();
     let ultimo = programas[0];
@@ -205,6 +206,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
 
     }
     this.sugereNome();
+    this.sugereRegramento();
 }
 
   public sugereNome() {
@@ -216,6 +218,53 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     //}
   }
 
+  public async sugereRegramento() {
+
+    try {
+      const unidadeId = this.form!.controls.unidade_id?.value;
+      if (!unidadeId) {
+        console.warn('ID da unidade não fornecido para carregar programas');
+        return;
+      }
+
+      let where = [['todosUnidadeExecutora', '==', unidadeId]];
+
+      if(this.entity?.id && this.entity.programa_id) where= [['id', '==', this.entity.programa_id]]
+
+      const programas = await this.programaDao.query({
+        where: where,
+        orderBy: [["unidade.path", "desc"]]
+      }).asPromise();
+
+      if (programas.length > 0) {
+        if (this.programa){
+          let programaVigente = programas[0];
+          let today = new Date();
+          this.programa.items = programas.map(prog => {
+            if(prog.data_inicio <= today && prog.data_fim >= today)
+              programaVigente=prog
+            return ({
+            key: prog.id,
+            value: prog.nome,
+            data: prog
+          })
+        });
+          if(programaVigente && this.entity){
+            this.entity.programa = programaVigente;
+            this.entity.programa_id = programaVigente.id;
+            this.programa.setValue(programaVigente.id)
+          }
+        }
+      }else{
+        if(this.programa)
+          this.programa.disabled = 'true';
+      }
+    } catch (error) {
+      console.error('Erro ao carregar programas:', error);
+      this.dialog.alert('Erro', 'Não foi possível carregar os programas disponíveis.');
+    }
+  }
+
   public somaDia(date: Date, days: number){
     let result = new Date(date);
     result.setDate(result.getDate() + days);
@@ -223,7 +272,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   }
 
   public onProgramaChange(){
-    const dias=(this.programa?.selectedEntity as Programa)?.prazo_max_plano_entrega;
+    const dias=(this.programa?.selectedItem?.data as Programa)?.prazo_max_plano_entrega;
     const data=this.somaDia(this.entity!.data_inicio,dias);
     if (!this.entity?.data_fim) {
       this.form!.controls.data_fim.setValue(new Date(data));

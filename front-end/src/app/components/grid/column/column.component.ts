@@ -24,6 +24,7 @@ export class ColumnComponent implements OnInit {
   @Input() dao?: DaoBaseService<Base>;
   @Input() orderBy: string = "";
   @Input() editable: boolean | ((row: any) => boolean) = false;
+  @Input() expandable?:((row: any) => boolean);
   @Input() template?: TemplateRef<unknown>;
   @Input() titleTemplate?: TemplateRef<unknown>;
   @Input() editTemplate?: TemplateRef<unknown>;

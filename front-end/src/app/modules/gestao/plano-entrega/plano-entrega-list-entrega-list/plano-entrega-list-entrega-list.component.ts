@@ -45,6 +45,11 @@ export class PlanoEntregaListEntregaListComponent extends PageListBase<PlanoEntr
     this.filter?.controls.unidade_id.setValue(this.idsUnidadesAscendentes[0]);
   }
 
+  onLoad(): void {
+    this.grid!.priorOrderBy=[["plano_entrega.created_at", "desc"]];
+    super.onLoad();
+  }
+
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     result.push({ label: "Informações", icon: "bi bi-info-circle", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult'] }, { modal: true }) });

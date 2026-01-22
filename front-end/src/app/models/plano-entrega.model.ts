@@ -49,6 +49,7 @@ export class PlanoEntrega extends Base implements HasStatus, HasAvaliacao {
   public planejamento_id: string | null = null;
   public cadeia_valor_id: string | null = null;
   public programa_id: string | null = null;
+	public has_progresso: boolean = false;
     
   public constructor(data?: any) { super(); this.initialization(data); }
 }

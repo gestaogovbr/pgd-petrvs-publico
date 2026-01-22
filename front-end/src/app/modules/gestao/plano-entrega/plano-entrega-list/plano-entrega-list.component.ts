@@ -33,6 +33,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 	public showFilter: boolean = true;
 	public avaliacao: boolean = false;
 	public execucao: boolean = false;
+	public planejamento: boolean = false;
 	public linha?: PlanoEntrega;
 	public unidadeDao: UnidadeDaoService;
 	public avaliacaoDao: AvaliacaoDaoService;
@@ -115,7 +116,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 			"planejamento:id,nome",
 			"programa:id,nome,data_fim",
 			"cadeia_valor:id,nome",
-			"unidade:id,sigla,path,data_inativacao",
+			"unidade:id,sigla,path,data_inativacao,instituidora,unidade_pai_id",
 			"entregas.entrega",
 			"entregas.objetivos.objetivo",
 			"entregas.processos.processo",
@@ -346,6 +347,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 		super.ngOnInit();
 		this.execucao = !!this.queryParams?.execucao;
 		this.avaliacao = !!this.queryParams?.avaliacao;
+		this.planejamento = !!this.queryParams?.planejamento;
 		this.showFilter =
 			typeof this.queryParams?.showFilter != "undefined"
 				? this.queryParams.showFilter == "true"
@@ -544,13 +546,19 @@ export class PlanoEntregaListComponent extends PageListBase<
 		if (form.cadeia_valor_id)
 			result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
 		if (this.isModal) {
-			result.push(["status", "==", "ATIVO"]);
-		} else if (form.status || this.avaliacao) {
-			result.push([
-				"status",
-				"in",
-				form.status ? [form.status] : ["CONCLUIDO", "AVALIADO"],
-			]);
+			result.push(["status", "in", ["ATIVO", "CONCLUIDO", "AVALIADO"]]);
+		} else if (form.status || this.avaliacao || this.planejamento || this.execucao) {
+			const status : string[] = []
+			if (this.planejamento) status.push('INCLUIDO', 'HOMOLOGANDO', 'ATIVO')
+			if (this.execucao) status.push('ATIVO', 'CONCLUIDO')
+			if (this.avaliacao) status.push('CONCLUIDO', 'AVALIADO')
+			if (form.status || !!status.length) {
+				result.push([
+					"status",
+					"in",
+					form.status ? [form.status] : status,
+				]);
+			}
 		}
 
 		//  (RI_PENT_C) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados.
@@ -755,6 +763,7 @@ export class PlanoEntregaListComponent extends PageListBase<
               - o usuário logado precisa ser gestor de alguma Unidade da linha hierárquica ascendente da Unidade do plano (Unidade A e superiores), e possuir a capacidade "MOD_PENT_AVAL_SUBORD";
               - sugerir arquivamento automático (vide RI_PENT_A); 
         */
+				if (!this.avaliacao) return false;
 				let condic1 =
 					planoEntrega.unidade?.instituidora == 1
 						? this.unidadeService.isGestorUnidade(planoEntrega.unidade?.id)
@@ -852,6 +861,7 @@ export class PlanoEntregaListComponent extends PageListBase<
         */
 				return (
 					this.planoEntregaService.situacaoPlano(planoEntrega) == "ATIVO" &&
+					this.execucao &&
 					(this.unidadeService.isGestorUnidade(planoEntrega.unidade) ||
 						(this.auth.isLotacaoUsuario(planoEntrega.unidade) &&
 							this.auth.hasPermissionTo("MOD_PENT_CONC")))
@@ -1338,5 +1348,32 @@ export class PlanoEntregaListComponent extends PageListBase<
 		/*
     - (RN_PENT_Z) ... O usuário logado precisa possuir a capacidade "MOD_PENT_INCL"
      */
+	}
+
+	protected statusLabel(planoEntrega: PlanoEntrega) : string {
+		const isAvaliacao = this.queryParams.avaliacao
+		const ativoLabel = () => {
+			if (this.planejamento) return "Homologado"
+			return planoEntrega.has_progresso ? "Incluído" : "Aguardando Registro"
+		}
+		const statusLabelMap: Record<string, string | null | undefined> = {
+			'ATIVO': ativoLabel(),
+			'CONCLUIDO': isAvaliacao ? 'Aguardando Avaliação' : null
+		}
+		return statusLabelMap[planoEntrega.status] ?? this.lookup.getValue(this.lookup.PLANO_ENTREGA_STATUS, planoEntrega.status)
+	}
+
+	protected statusColor(planoEntrega: PlanoEntrega) : string {
+		const statusColorMap: Record<string, string | null | undefined> = {
+			"ATIVO" : planoEntrega.has_progresso || this.planejamento ? "ATIVO" : "INCLUIDO"
+		}
+		return this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, statusColorMap[planoEntrega.status] ?? planoEntrega.status)
+	}
+
+	protected statusIcon(planoEntrega: PlanoEntrega) : string {
+		const statusIconMap: Record<string, string | null | undefined> = {
+			"ATIVO" : planoEntrega.has_progresso || this.planejamento ? "ATIVO" : "HOMOLOGANDO"
+		}
+		return this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, statusIconMap[planoEntrega.status] ?? planoEntrega.status )
 	}
 }
