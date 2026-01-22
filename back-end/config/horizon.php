@@ -207,7 +207,7 @@ return [
                 'timeout' => 60 * 60 * 24 * 2
             ],
             'supervisor-pgd' => [
-                'connection' => 'redis',
+                'connection' => 'rabbitmq',
                 'queue' => ['pgd_queue'],
                 'balance' => 'simple',
                 'processes' => env('PGD_PROCESSES', 4),
@@ -237,7 +237,7 @@ return [
                 'timeout' => 60 * 60 * 24 * 2
             ],
             'supervisor-pgd' => [
-                'connection' => 'redis',
+                'connection' => 'rabbitmq',
                 'queue' => ['pgd_queue'],
                 'balance' => 'simple',
                 'processes' => env('PGD_PROCESSES', 1),

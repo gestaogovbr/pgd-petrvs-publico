@@ -73,6 +73,24 @@ return [
             'timeout' => 90
         ],
 
+        'rabbitmq' => [
+            'driver' => 'rabbitmq',
+            'worker' => env('RABBITMQ_WORKER', 'horizon'),
+
+            'hosts' => [
+                [
+                    'host' => env('RABBITMQ_HOST', '127.0.0.1'),
+                    'port' => env('RABBITMQ_PORT', 5672),
+                    'user' => env('RABBITMQ_USER', 'petrvs'),
+                    'password' => env('RABBITMQ_PASSWORD', 'PsEeTnRhVaS'),
+                    'vhost' => env('RABBITMQ_VHOST', '/'),
+                ],
+            ],
+            'options' => [
+                'ssl_options' => [],
+            ],
+        ],
+
         'siape_queue' => [
             'driver' => 'redis',
             'connection' => 'default',
@@ -84,7 +102,7 @@ return [
         ],
 
         'pgd_queue' => [
-            'driver' => 'redis',
+            'driver' => 'rabbitmq',
             'connection' => 'default',
             'queue' => 'pgd_queue',
             'retry_after' => 60 * 60 * 4,

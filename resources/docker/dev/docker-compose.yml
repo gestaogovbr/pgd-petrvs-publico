@@ -33,6 +33,11 @@ services:
     environment:
       - TZ=America/Bahia
       - REDIS_HOST=petrvs_redis
+      - RABBITMQ_HOST=petrvs_rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_LOGIN=petrvs
+      - RABBITMQ_PASSWORD=PsEeTnRhVaS
+      - RABBITMQ_QUEUE=pgd_queue
     volumes:
       - ../../../back-end:/var/www
     deploy:
@@ -53,6 +58,28 @@ services:
     depends_on:
       - petrvs_db
       - petrvs_redis
+      - petrvs_rabbitmq
+    networks:
+      - appnet
+
+  petrvs_rabbitmq:
+    image: rabbitmq:3-management
+    container_name: petrvs_rabbitmq
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # UI de gerenciamento
+    environment:
+      RABBITMQ_DEFAULT_USER: petrvs
+      RABBITMQ_DEFAULT_PASS: PsEeTnRhVaS
+      RABBITMQ_DEFAULT_VHOST: /
+      TZ: "America/Bahia"
+    volumes:
+      - ../rabbitmq/data:/var/lib/rabbitmq
+      - ../rabbitmq/logs:/var/log/rabbitmq
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
     networks:
       - appnet
 
@@ -66,7 +93,7 @@ services:
           memory: 1024M
     depends_on:
       - petrvs_php
-      - petrvs_redis
+      - petrvs_rabbitmq
     networks:
       - appnet
 
