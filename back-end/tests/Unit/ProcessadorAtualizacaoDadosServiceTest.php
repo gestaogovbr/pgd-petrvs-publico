@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\IntegracaoService;
+use App\Services\ProcessadorAtualizacaoDadosService;
 use App\Services\UtilService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -10,10 +11,10 @@ use Tests\TestCase;
 uses(TestCase::class);
 
 /*
- * Testes para o método processarAtualizacoesDados de IntegracaoService.
+ * Testes para o método processarDadosPessoais de IntegracaoService.
  * 
  * Propósito:
- * O método processarAtualizacoesDados é responsável por persistir atualizações de dados dos servidores
+ * O método processarDadosPessoais é responsável por persistir atualizações de dados dos servidores
  * em lotes (chunks) dentro de transações de banco de dados, minimizando deadlocks e tempo de bloqueio.
  * 
  * Requisitos:
@@ -24,7 +25,7 @@ uses(TestCase::class);
  * - Deve converter data de modificação usando UtilService.
  * - Deve registrar logs.
  */
-describe('IntegracaoService - processarAtualizacoesDados', function () {
+describe('ProcessadorAtualizacaoDadosService - processar', function () {
     
     afterEach(function () {
         Mockery::close();
@@ -50,8 +51,19 @@ describe('IntegracaoService - processarAtualizacoesDados', function () {
                 'data_nascimento' => '1990-01-01',
             ];
         }
+        DB::shouldReceive('select')
+            ->andReturn($atualizacoesDados);
 
-        $sqlUpdateDados = "UPDATE usuarios SET ...";
+        $sqlUpdateDados = "UPDATE usuarios SET " .
+            "nome = :nome, apelido = :nomeguerra, " .
+            "email = :email, " .
+            "ident_unica = :ident_unica, " .
+            "cod_jornada = :cod_jornada, " .
+            "nome_jornada = :nome_jornada, " .
+            "data_nascimento = :data_nascimento, " .
+            "tipo_modalidade_id = :tipo_modalidade_id, " .
+            "participa_pgd = :participa_pgd, " .
+            "data_modificacao = :data_modificacao WHERE id = :id";
 
         // Mock DB Transaction
         // Esperamos 2 chamadas (2 chunks)
@@ -74,11 +86,12 @@ describe('IntegracaoService - processarAtualizacoesDados', function () {
 
         // Mock Log Facade para interceptar SiapeLog
         $loggerMock = Mockery::mock(\Psr\Log\LoggerInterface::class);
-        $loggerMock->shouldReceive('info')->times(55);
+        $loggerMock->shouldReceive('info')->times(56);
 
         Log::shouldReceive('channel')
             ->with('siape')
             ->andReturn($loggerMock);
+            
 
         // Mock UtilService
         $criar_mock_utils = false; # O mock mexe com a implementação do método, então influi na execução dos outros testes
@@ -90,28 +103,43 @@ describe('IntegracaoService - processarAtualizacoesDados', function () {
                 ->andReturn(new DateTime('2023-10-01 00:00:00'));
         }
 
-
         // Partial Mock do IntegracaoService
-        /** @var IntegracaoService|MockInterface $service */
-        $service = Mockery::mock(IntegracaoService::class)
+        /** @var ProcessadorAtualizacaoDadosService|MockInterface $service */
+        $service = Mockery::mock(ProcessadorAtualizacaoDadosService::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
+
+
+        // Acesso ao método privado via Reflection
+        $reflection = new ReflectionClass(ProcessadorAtualizacaoDadosService::class);
+        $method = $reflection->getMethod('processarDadosPessoais');
+        $method->setAccessible(true);
+
+        $property = $reflection->getProperty('result');
+        $property->setAccessible(true);
+        $property->setValue($service, [
+            'unidades' => ['Resultado' => 'Não foi executado!', 'Observações' => [], 'Falhas' => []],
+            'servidores' => ['Resultado' => 'Não foi executado!', 'Observações' => [], 'Falhas' => []],
+            'gestores' => ['Resultado' => '', 'Observações' => [], 'Falhas' => []]
+        ]);
+
+        // Configuração de services dependentes
+        $integracaoServiceMock = Mockery::mock(IntegracaoService::class);
         
         // Mockar métodos internos chamados dentro do loop
-        $service->shouldReceive('verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake')
+        $integracaoServiceMock->shouldReceive('verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake')
             ->times(55);
         
-        $service->shouldReceive('validarModalidadePgd')
+        $integracaoServiceMock->shouldReceive('validarModalidadePgd')
             ->times(55)
             ->andReturn(1);
 
-        // Acesso ao método privado via Reflection
-        $reflection = new ReflectionClass(IntegracaoService::class);
-        $method = $reflection->getMethod('processarAtualizacoesDados');
-        $method->setAccessible(true);
+        $property = $reflection->getParentClass()->getProperty('_services');
+        $property->setAccessible(true);
+        $property->setValue($service, ['integracaoService' => $integracaoServiceMock]);
 
         // 2. Act
-        $method->invoke($service, $atualizacoesDados, $sqlUpdateDados);
+        $method->invoke($service);
 
         // 3. Assert
         // As validações são feitas pelos expectations do Mockery
@@ -121,13 +149,15 @@ describe('IntegracaoService - processarAtualizacoesDados', function () {
         // Arrange
         $atualizacoesDados = [];
         $sqlUpdateDados = "UPDATE ...";
+        DB::shouldReceive('select')
+            ->andReturn($atualizacoesDados);
 
         DB::shouldReceive('transaction')->never();
         
-        $service = Mockery::mock(IntegracaoService::class)->makePartial();
+        $service = Mockery::mock(ProcessadorAtualizacaoDadosService::class)->makePartial();
 
-        $reflection = new ReflectionClass(IntegracaoService::class);
-        $method = $reflection->getMethod('processarAtualizacoesDados');
+        $reflection = new ReflectionClass(ProcessadorAtualizacaoDadosService::class);
+        $method = $reflection->getMethod('processarDadosPessoais');
         $method->setAccessible(true);
 
         // Act
@@ -139,15 +169,18 @@ describe('IntegracaoService - processarAtualizacoesDados', function () {
         $atualizacoesDados = [(object) ['matriculasiape' => '123']]; // Um item
         $sqlUpdateDados = "UPDATE ...";
 
+        DB::shouldReceive('select')
+            ->andReturn($atualizacoesDados);
+
         // Simula erro no banco
         DB::shouldReceive('transaction')
             ->once()
             ->andThrow(new Exception("Deadlock detectado"));
 
-        $service = Mockery::mock(IntegracaoService::class)->makePartial();
+        $service = Mockery::mock(ProcessadorAtualizacaoDadosService::class)->makePartial();
 
-        $reflection = new ReflectionClass(IntegracaoService::class);
-        $method = $reflection->getMethod('processarAtualizacoesDados');
+        $reflection = new ReflectionClass(ProcessadorAtualizacaoDadosService::class);
+        $method = $reflection->getMethod('processarDadosPessoais');
         $method->setAccessible(true);
 
         // Act & Assert
