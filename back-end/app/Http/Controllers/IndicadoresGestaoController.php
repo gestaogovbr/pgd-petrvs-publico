@@ -16,10 +16,6 @@ class IndicadoresGestaoController extends ControllerBase {
     }
 
     public function query(Request $request) {
-        if (!$this->getUsuario($request)->hasPermissionTo('MOD_IND_GESTAO')){
-            throw new ServerException("RelatorioCapacidade", "Acesso negado aos Indicadores de Gestão.");
-        }
-
         try {
             $data = $request->validate([
                 'page' => ['nullable'],

@@ -319,14 +319,14 @@ class UsuarioService extends ServiceBase
   public function proxyStore(&$data, $unidade, $action)
   {
     $data["with"] = [];
-    $data['cpf'] = $this->UtilService->onlyNumbers($data['cpf']);
+    $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
 
     unset($data['pedagio']);
 
     if (!empty($data['telefone']))
-      $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
+      $data['telefone'] = UtilService::onlyNumbers($data['telefone']);
     /* Armazena as informações que serão necessárias no extraStore */
-    $this->buffer = ["integrantes" => $this->UtilService->getNested($data, "integrantes")];
+    $this->buffer = ["integrantes" => UtilService::getNested($data, "integrantes")];
     $this->validarPerfil($data);
     $this->validarColaborador($data);
     return $data;
@@ -369,8 +369,13 @@ class UsuarioService extends ServiceBase
     if($action == ServiceBase::ACTION_EDIT){
       if(!empty($data['matricula']) && strlen($data['matricula']) > 50)
         throw new ValidateException("O campo de matrícula deve ter no máximo 50 caracteres", 422);
-    if (empty($data["integrantes"][0]))
+      if (empty($data["integrantes"][0]))
         throw new ValidateException("Selecione uma unidade!", 422);
+      
+      if (!isset($data['tipo_modalidade_id'])) {
+        $buscaTipoModalidade = Usuario::where("id", "=", $data["id"])->value('tipo_modalidade_id');
+        $data['tipo_modalidade_id'] = $buscaTipoModalidade;
+      }
     }
     if ($action == ServiceBase::ACTION_INSERT) {
       if (empty($data["email"]))
@@ -396,6 +401,7 @@ class UsuarioService extends ServiceBase
             if (is_null($data['matricula'] ?? null)) {
                 $data['matricula'] = $alreadyHas->matricula;
             }
+
 
           $data["nome"] = $alreadyHas->nome;
           $data["apelido"] = $alreadyHas->apelido;
@@ -648,21 +654,31 @@ class UsuarioService extends ServiceBase
 
     public function pendenciasChefe(){
       // usuário logado
+      $diasAvaliacaoRegistroExecucao = 21;
+      $diasAvaliacaoPlanosEntregas = 31;
       $usuario_id = parent::loggedUser()->id;
 
       $unidadesGerenciadas = Unidade::whereHas('gestor', fn($q) => $q->where('usuario_id', $usuario_id))
       ->orWhereHas('gestoresSubstitutos', fn($q) => $q->where('usuario_id', $usuario_id))
       ->orWhereHas('gestoresDelegados', fn($q) => $q->where('usuario_id', $usuario_id))
       ->get();
+      $unidadesGerenciadasIds = $unidadesGerenciadas->pluck('id')->all();
 
-      $unidadesFilhas = Unidade::whereIn('unidade_pai_id', $unidadesGerenciadas->pluck('id'))->get();
+      $unidadesFilhas = Unidade::whereIn('unidade_pai_id', $unidadesGerenciadasIds)->get();
+      $unidadesFilhasIds = $unidadesFilhas->pluck('id')->all();
 
-      // Registros de execução que precisam ser avaliados
+      // Registros de execução que precisam ser avaliados após o 21º dia da conclusão
+      // FIXME: Adicionar constante para os dias de avaliação
       $registrosExecucao = PlanoTrabalhoConsolidacao::where('status', StatusEnum::CONCLUIDO)
-      ->whereHas('planoTrabalho', function($q) use ($unidadesGerenciadas, $usuario_id) {
-        $q->whereIn('unidade_id', $unidadesGerenciadas->pluck('id'));
-        $q->where('usuario_id', '!=', $usuario_id);
-      })->select([
+      ->whereHas('planoTrabalho', function($q) use ($unidadesGerenciadasIds, $usuario_id) {
+        $q->whereIn('unidade_id', $unidadesGerenciadasIds)
+          ->where('usuario_id', '!=', $usuario_id);
+      })
+      ->whereHas('latestStatus', function($q) use ($diasAvaliacaoRegistroExecucao) {
+        $q->where('codigo', StatusEnum::CONCLUIDO->value)
+          ->where('created_at', '<', now()->subDays($diasAvaliacaoRegistroExecucao));
+      })
+      ->select([
         'planos_trabalhos_consolidacoes.id',
         'planos_trabalhos_consolidacoes.status',
         'planos_trabalhos_consolidacoes.data_inicio',
@@ -670,14 +686,17 @@ class UsuarioService extends ServiceBase
         'planos_trabalhos_consolidacoes.plano_trabalho_id',
       ])
       ->with(['planoTrabalho' => function($q) {
-        $q->select(['id','numero','usuario_id', 'unidade_id']);
+        $q->select(['id','numero','usuario_id', 'unidade_id'])
+          ->with(['usuario' => function($q) {
+            $q->select(['id','nome']);
+          }]);
       }]);
 
       // Planos de trabalhos que precisam da assinatura do chefe da unidade
       $planosTrabalhos = PlanoTrabalho::where('status', StatusEnum::AGUARDANDO_ASSINATURA)
-      ->whereHas('unidade', function($q) use ($unidadesGerenciadas, $usuario_id) {
-        $q->whereIn('id', $unidadesGerenciadas->pluck('id'));
-        $q->where('usuario_id', '!=', $usuario_id);
+      ->where('usuario_id', '!=', $usuario_id)
+      ->whereHas('unidade', function($q) use ($unidadesGerenciadasIds) {
+        $q->whereIn('id', $unidadesGerenciadasIds);
       })
       ->select([
         'planos_trabalhos.id',
@@ -691,12 +710,14 @@ class UsuarioService extends ServiceBase
         $q->select(['id','nome']);
       }]);
 
-      // Planos de entregas que precisam ter progressos (agrupados por plano de entrega).
+      // Planos de entregas que precisam ter progressos (agrupados por plano de entrega). 
+      // Só devem aparecer na tela de pendência a partir do 31º dia a contar da DATA FIM da vigência
       $entregasSemProgresso = PlanoEntregaEntrega::query()
-        ->whereHas('planoEntrega.unidade', fn($q) => $q->whereIn('id', $unidadesGerenciadas->pluck('id')))
+        ->whereHas('planoEntrega.unidade', fn($q) => $q->whereIn('id', $unidadesGerenciadasIds))
         ->doesntHave('progressos')
-        ->whereHas('planoEntrega', function($q) {
-          $q->whereNotIn('status', [StatusEnum::SUSPENSO, StatusEnum::CANCELADO]);
+        ->whereHas('planoEntrega', function($q) use ($diasAvaliacaoPlanosEntregas) {
+          $q->whereNotIn('status', [StatusEnum::SUSPENSO, StatusEnum::CANCELADO])
+            ->where('data_fim', '<=', now()->subDays($diasAvaliacaoPlanosEntregas));
         })
         ->selectRaw('planos_entregas_entregas.plano_entrega_id, COUNT(*) as total_sem_progresso')
         ->groupBy('planos_entregas_entregas.plano_entrega_id')
@@ -707,10 +728,17 @@ class UsuarioService extends ServiceBase
         ]);
 
       // Planos de entregas que precisam ser avaliados.
+      //Só devem aparecer na tela de pendência a partir do 31º dia a contar da DATA DE CONCLUSÃO do plano de entregas
+       // FIXME: Adicionar constante para os dias de avaliação
       $planosEntregas = PlanoEntrega::where('status', StatusEnum::CONCLUIDO)
-      ->whereHas('unidade', function($q) use ($unidadesFilhas) {
-        $q->whereIn('id', $unidadesFilhas->pluck('id'));
-      })->select([
+      ->whereHas('unidade', function($q) use ($unidadesFilhasIds) {
+        $q->whereIn('id', $unidadesFilhasIds);
+      })
+      ->whereHas('latestStatus', function($q) use ($diasAvaliacaoPlanosEntregas) {
+        $q->where('codigo', StatusEnum::CONCLUIDO->value)
+          ->where('created_at', '<', now()->subDays($diasAvaliacaoPlanosEntregas));
+      })
+      ->select([
         'planos_entregas.id',
         'planos_entregas.numero',
         'planos_entregas.status',

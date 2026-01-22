@@ -1,3 +1,41 @@
+## 2.9.9 19/01/2026
+### Adicionado
+- Arquivamento automático de PTs e PEs avaliados após 90 dias de sua avaliação;
+- Usuários excluídos no SIAPE agora são movidos para CPFs indisponíveis via busca manual.
+### Modificado
+- Status de PTs e PEs renomeados;
+- Exibição de PTs e PEs segregada por status.
+### Corrigido
+- Retira atribuição de chefe substituto quando receber a atribuição de chefe
+- Validação para Planos de entregas não ultrapassarem 365 dias
+## 2.9.8 12/01/2026
+### Modificado
+- Seleção de regramentos na criação de PE limitada a unidade
+- Ao cadastrar PE é necessário a inserção de ao menos uma entrega
+- Ao cadastrar PE apenas unidades onde o usuário possui atribuição que permite a criação são selecionáveis
+- Edição de PE não remove mais assinatura.
+- Registro de execução só é liberado para PE após homologação, quando o plano entra em execução
+- Todos os campos passam a ser obrigatórios no registro cadastro de registro de execução
+### Corrigido
+- Correção nas mensagens de erros de validação
+
+## 2.9.7 02/01/2026
+### Adicionado
+- Adição de Aba de Situação na consulta de Agentes Públicos, com dados de matrículas, regramentos, modalidade e participação no PGD;
+### Modificado
+- Usuários passam a poder acessar indicadores de outros órgãos que não o da sua lotação;
+- Adicionadas descrições para cada Indicador;
+- Modificado a regra que bloqueia a criação de novos planos de trabalhos
+### Corrigido
+- Indicadores de entrega não contabilizam mais PEs cancelados.
+- Registros via siape com erro de modalidade impedindo importação correta 
+- Correção nos prazos da lista de pendências;
+- Corrigido link de direcionamento para o Plano de Entrega na lista de pendências.
+## 2.9.6 26/12/2025
+### Corrigido
+- Corrigido erro de "timeout" que ocorria ao tentar salvar atribuições de usuários, garantindo que as alterações sejam gravadas corretamente mesmo em operações mais demoradas.
+
+
 ## 2.9.5 19/12/2025
 ### Adicionado
 - Visualização de resumo ao sincronizar dados do SIAPE, mostrando detalhes do que foi processado.

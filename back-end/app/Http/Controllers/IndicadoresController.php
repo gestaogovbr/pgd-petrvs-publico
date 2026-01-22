@@ -17,10 +17,6 @@ class IndicadoresController extends ControllerBase {
     }
 
     public function query(Request $request) {
-        if (!$this->getUsuario($request)->hasPermissionTo('MOD_IND_EQUIPES')){
-            throw new ServerException("RelatorioCapacidade", "Acesso negado aos Indicadores de Equipes.");
-        }
-
         try {
             $data = $request->validate([
                 'page' => ['nullable'],
@@ -51,10 +47,6 @@ class IndicadoresController extends ControllerBase {
     }
 
     public function horas(Request $request) {
-        if (!$this->getUsuario($request)->hasPermissionTo('MOD_IND_EQUIPES')){
-            throw new ServerException("RelatorioCapacidade", "Acesso negado aos Indicadores de Equipes.");
-        }
-
         try {
             $data = $request->validate([
                 'page' => ['nullable'],

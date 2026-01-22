@@ -8,8 +8,12 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Usuario;
 use App\Exceptions\LogError;
 use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
+use App\Exceptions\DataInvalidException;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 abstract class ControllerBase extends Controller
@@ -19,6 +23,8 @@ abstract class ControllerBase extends Controller
     public $updatable = [];
 
     public static $sameTransaction = false;
+    private const HTTP_STATUS_RANGE_START = 400;
+    private const HTTP_STATUS_RANGE_END = 600;
 
     public function __construct() {
         if(empty($this->collection)) {
@@ -35,6 +41,30 @@ abstract class ControllerBase extends Controller
     }
 
     abstract protected function checkPermissions($action, $request, $service, $unidade, $usuario);
+
+    protected function statusFromIBaseException(IBaseException $e): int
+    {
+        if ($e instanceof ValidateException || $e instanceof DataInvalidException) {
+            return Response::HTTP_BAD_REQUEST;
+        }
+
+        if ($e instanceof ServerException) {
+            $message = $e->getMessage();
+            if (str_starts_with($message, 'Erro ao validar')) {
+                return Response::HTTP_BAD_REQUEST;
+            }
+            if (str_starts_with($message, 'Usuário não tem permissão')) {
+                return Response::HTTP_FORBIDDEN;
+            }
+        }
+
+        $code = (int) $e->getCode();
+        if ($code >= self::HTTP_STATUS_RANGE_START && $code < self::HTTP_STATUS_RANGE_END) {
+            return $code;
+        }
+
+        return Response::HTTP_BAD_REQUEST;
+    }
 
     /**
      * Retorna o usuário logado
@@ -97,10 +127,6 @@ abstract class ControllerBase extends Controller
         return $result;
     }
 
-
-/*     $tenant = Tenant::find('SENAPPEN');
-tenancy()->initialize($tenant); */
-
     public function getUsuario(Request $request) {
         return !empty(self::loggedUser()) ? Usuario::where("id", self::loggedUser()?->id)->with("areasTrabalho.unidade")->first() : null;
     }
@@ -125,15 +151,16 @@ tenancy()->initialize($tenant); */
                 'success' => true,
                 'values' => $this->service->searchText($data)
             ]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             Log::error('Erro capturado', ['exception' => $e]);
             $dataError = throwableToArrayLog($e);
             //Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -156,13 +183,15 @@ tenancy()->initialize($tenant); */
                 'success' => true,
                 'value' => $this->service->searchKey($data)
             ]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -185,13 +214,15 @@ tenancy()->initialize($tenant); */
                 'success' => true,
                 'data' => $this->service->getById($data)
             ]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -217,13 +248,15 @@ tenancy()->initialize($tenant); */
                 'rows' => $result["rows"],
                 'extra' => $result["extra"]
             ]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -254,13 +287,15 @@ tenancy()->initialize($tenant); */
                 'rows' => $result['rows'],
                 'extra' => $result['extra']
             ]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -292,13 +327,15 @@ tenancy()->initialize($tenant); */
                 'file' => ['required'],
             ]);
             return response()->json(['success' => true, 'url' => $this->service->downloadUrl($data["file"])]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -317,13 +354,15 @@ tenancy()->initialize($tenant); */
                 'file' => ['required'],
             ]);
             return response()->json(['success' => $this->service->deleteFile($data["file"])]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -345,13 +384,15 @@ tenancy()->initialize($tenant); */
                 'name' => ['required']
             ]);
             return response()->json(['success' => true, 'path' => $this->service->upload($data["path"], $data["name"], $request->has('file') ? $request->file('file') : null)]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -374,13 +415,15 @@ tenancy()->initialize($tenant); */
                 'file' => ['required'],
             ]);
             return response()->json(['success' => true, 'path' => $this->service->uploadBase64($data["path"], $data["name"], $data["file"])]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -394,10 +437,7 @@ tenancy()->initialize($tenant); */
     {
         try {
             $this->checkPermissions("STORE", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
-            $data = $request->validate([
-                'entity' => ['required'],
-                'with' => ['array']
-            ]);
+            $data = $this->validateStore($request);
             $unidade = $this->getUnidade($request);
             $entity = $this->service->store($data['entity'], $unidade, !ControllerBase::$sameTransaction);
             $result = $this->service->getById([
@@ -409,14 +449,32 @@ tenancy()->initialize($tenant); */
                 'rows' => [$result]
             ]);
         }
+        catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
         catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado.".$e->getMessage()]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado.".$e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    protected function validateStore(Request $request) {
+        return $request->validate([
+                'entity' => ['required'],
+                'with' => ['array']
+            ]);
+    }
+
+    protected function validateUpdate(Request $request) {
+        return $request->validate([
+                'id' => ['required'],
+                'data' => ['required'],
+                'with' => ['array']
+            ]);
     }
 
     /**
@@ -429,14 +487,10 @@ tenancy()->initialize($tenant); */
     {
         try {
             $this->checkPermissions("UPDATE", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
-            $data = $request->validate([
-                'id' => ['required'],
-                'data' => ['required'],
-                'with' => ['array']
-            ]);
+            $data = $this->validateUpdate($request);
             foreach (array_keys($data["data"]) as $key) {
                 if($key != "id" && !in_array($key, $this->updatable)) {
-                    return response()->json(['error' => "Não é possível atualizar"]);
+                    return response()->json(['error' => "Não é possível atualizar"], Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
             }
             $unidade = $this->getUnidade($request);
@@ -450,13 +504,15 @@ tenancy()->initialize($tenant); */
                 'success' => true,
                 'rows' => [$result]
             ]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -477,7 +533,7 @@ tenancy()->initialize($tenant); */
                 'with' => ['array']
             ]);
             if(!in_array($data["field"], $this->updatable)) {
-                return response()->json(['error' => "Não é possível atualizar"]);
+                return response()->json(['error' => "Não é possível atualizar"], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
             $unidade = $this->getUnidade($request);
             $entity = $this->service->updateJson($data, $unidade, !ControllerBase::$sameTransaction);
@@ -489,13 +545,15 @@ tenancy()->initialize($tenant); */
                 'success' => true,
                 'rows' => [$result] //$this->service->update($request->all(), $unidade)
             ]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -513,13 +571,15 @@ tenancy()->initialize($tenant); */
                 'id' => ['required']
             ]);
             return response()->json(['success' => $this->service->destroy($data["id"], !ControllerBase::$sameTransaction)]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

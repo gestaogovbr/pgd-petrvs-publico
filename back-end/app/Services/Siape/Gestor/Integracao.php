@@ -15,6 +15,7 @@ use App\Services\Siape\Unidade\Atribuicao;
 use App\Services\Tipo;
 use App\Services\UnidadeIntegranteService;
 use Illuminate\Support\Facades\Log;
+use App\Models\UnidadeIntegrante;
 
 class Integracao implements InterfaceIntegracao
 {
@@ -80,6 +81,7 @@ class Integracao implements InterfaceIntegracao
 
         $this->logSiape("Salvando integrantes", $vinculo, Tipo::INFO);
         $this->unidadeIntegranteService->salvarIntegrantes($vinculo, false);
+        $this->removerGestorSubstituto($dado['id_chefe'], $unidadeExercicioId);
 
         $this->alteraPerfilAdministradorNegocial($dado['id_chefe'], $usuarioChefia);
         array_push($this->message['sucesso'], $dado['id_unidade']);
@@ -105,6 +107,15 @@ class Integracao implements InterfaceIntegracao
         if (!in_array(EnumsAtribuicao::GESTOR->value, $chefeAtribuicoes)) array_push($chefeAtribuicoes, EnumsAtribuicao::GESTOR->value);
         $chefeAtribuicoes = array_values(array_unique($chefeAtribuicoes));
         return $chefeAtribuicoes;
+    }
+
+    private function removerGestorSubstituto(string $idUsuario, string $idUnidade): void
+    {
+        $integrante = UnidadeIntegrante::where('usuario_id', $idUsuario)
+            ->where('unidade_id', $idUnidade)
+            ->first();
+        if (!$integrante) return;
+        $this->removeDeterminadasAtribuicoes([EnumsAtribuicao::GESTOR_SUBSTITUTO->value], $integrante);
     }
 
     private function preparaSubstituto(array|null $queryChefeAtribuicoes, string $unidadeExercicioId): array

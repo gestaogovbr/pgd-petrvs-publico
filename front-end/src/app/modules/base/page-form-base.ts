@@ -68,14 +68,16 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
       this.loading = true;
       try {
         if (["edit", "consult", "clone"].includes(this.action)) {
-          const entity = await this.dao!.getById(this.id!, this.join);
+          const entity = await this.dao!.getById(this.id!, this.join).catch(error => {
+            this.error("Erro ao carregar os dados: " + (error.error?.error || error.error?.message || error.message || error));
+          })
           this.entity = entity!;
           await this.loadData(this.entity, this.form!, this.action);
         } else { /* if (this.action == "new") */
           await this.initializeData(this.form!);
         }
-      } catch (erro) {
-        this.error("Erro ao carregar dados: " + erro);
+      } catch (error) {
+        this.error("Erro ao carregar dados: " + ((error as any)?.error?.error || (error as any)?.error?.message || (error as any)?.message || error));
       } finally {
         this.loading = false;
       }
@@ -107,7 +109,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
           self.close();
         }
       } catch (error: any) {
-        self.error(error.error?.message || error.message || error);
+        self.error(error?.error?.error || error?.error?.message || error?.message || error);
       } finally {
         self.submitting = false;
       }
@@ -130,9 +132,9 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
     return this.form!.controls[controlName] as FormControl;
   }
 
-  public error = (error: any) => {
+  public error = (error: any, prependMessage?: string) => {
     if (this.editableForm) {
-      if (error.validationErrors) {
+      if (typeof error === 'object' && error !== null && 'validationErrors' in error && error.validationErrors) {
         this.editableForm.error = "";  
         Object.entries(error.validationErrors).forEach(([field, messages]) => {
           const control = this.form!.get(field);
@@ -141,7 +143,20 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
           }
         });
       } else {
-        this.editableForm.error = typeof error === 'string' ? error : 'Ocorreu um erro desconhecido';
+
+        let errorMessage: string = 'Ocorreu um erro desconhecido';
+        
+        if (typeof error === 'string') {
+          errorMessage = error;
+        } else {
+          errorMessage = error?.error?.error || error?.error?.message || error?.message || errorMessage;
+        }
+
+        if (prependMessage) { 
+          errorMessage = prependMessage + ':' + errorMessage;
+        }
+        this.editableForm.error = errorMessage;
+        console.error(error);
       }
     }
   }

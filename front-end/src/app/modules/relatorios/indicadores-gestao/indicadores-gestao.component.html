@@ -56,15 +56,21 @@
 </filter>
 <div class="graficos">
     <div class="grafico">
-        <div class="titulo">Taxa de cobertura do PGD entre os agentes públicos</div>
-        <p *ngIf="!pieChartData.labels?.length" class="no-data">Sem dados para exibir</p>
+        <div class="titulo">Taxa de cobertura do PGD entre os agentes públicos
+            <i  class="bi bi-info-circle label-info text-muted"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Indica a proporção de participantes do PGD informados no Siape em relação ao total de de agentes públicos."
+            ></i>
+        </div>
+        <p *ngIf="!totalParticipantes" class="no-data">Sem dados de Participantes para exibir</p>
         <div *ngIf="loading; else grafico" class="d-flex justify-content-center my-2">
             <div class="spinner-border" role="status">
                 <span class="visually-hidden"></span>
             </div>
         </div>
         <ng-template #grafico>
-            <div class="grafico-wrapper">
+            <div class="grafico-wrapper" *ngIf="totalParticipantes">
                 <canvas
                     baseChart
                     [data]="pieChartData"
@@ -77,7 +83,13 @@
 
     
     <div class="grafico" *ngIf="pieChartUnidadesData.labels?.length">
-        <div class="titulo">Taxa de cobertura do PGD nas unidades</div>
+        <div class="titulo">Taxa de cobertura do PGD nas unidades
+            <i  class="bi bi-info-circle label-info text-muted"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Indica a proporção de unidades que têm Plano de Entregas cadastrados em relação ao total de Unidades Organizacionais."
+            ></i>
+        </div>
         <p *ngIf="!pieChartUnidadesData.labels?.length" class="no-data">Sem dados para exibir</p>
         <div *ngIf="loading; else graficoUnidades" class="d-flex justify-content-center my-2">
             <div class="spinner-border" role="status">
