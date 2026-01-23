@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 use Throwable;
 
-class ProcessadorAtualizacaoDadosService extends ServiceBase
+class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
 {
     private int $chunkSize = 50;
     private int $transactionRetries = 3;
@@ -41,7 +41,7 @@ class ProcessadorAtualizacaoDadosService extends ServiceBase
         foreach ($chunks as $chunk) {
             DB::transaction(function () use ($chunk) {
                 foreach ($chunk as $linha) {
-                    $this->atualizarServidor($linha);
+                    $this->usuarioService->atualizarServidor($linha);
                 }
             }, $this->transactionRetries);
         }
@@ -99,40 +99,6 @@ class ProcessadorAtualizacaoDadosService extends ServiceBase
         );
     }
 
-    private function atualizarServidor($linha): void
-    {
-        SiapeLog::info("Atualizando dados do servidor Matricula: " . $linha->matriculasiape);
-
-        $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($linha->emailfuncional, $linha->matriculasiape, $linha->id);
-        $modalidadePgdValida = $this->integracaoService->validarModalidadePgd($linha->modalidade_pgd);
-
-        $sqlUpdateDados = "UPDATE usuarios SET " .
-            "nome = :nome, apelido = :nomeguerra, " .
-            "email = :email, " .
-            "ident_unica = :ident_unica, " .
-            "cod_jornada = :cod_jornada, " .
-            "nome_jornada = :nome_jornada, " .
-            "data_nascimento = :data_nascimento, " .
-            "tipo_modalidade_id = :tipo_modalidade_id, " .
-            "participa_pgd = :participa_pgd, " .
-            "data_modificacao = :data_modificacao WHERE id = :id";
-
-
-        DB::update($sqlUpdateDados, [
-            'nome'               => $linha->nome_servidor,
-            'nomeguerra'         => $linha->nome_guerra,
-            'email'              => $linha->emailfuncional,
-            'cod_jornada'        => $linha->cod_jornada,
-            'nome_jornada'       => $linha->nome_jornada,
-            'tipo_modalidade_id' => $modalidadePgdValida,
-            'participa_pgd'      => $linha->participa_pgd,
-            'id'                 => $linha->id,
-            'ident_unica'        => $linha->ident_unica,
-            'data_modificacao'   => UtilService::asDateTime($linha->data_modificacao),
-            'data_nascimento'    => $linha->data_nascimento,
-        ]);
-    }
-
     private function processarLotacoes(): void
     {
         $atualizacoesLotacoes = DB::select(
@@ -177,7 +143,7 @@ class ProcessadorAtualizacaoDadosService extends ServiceBase
         $atualizacoesLotacoesResult = [];
         
         DB::transaction(function () use (&$atualizacoesLotacoes, &$sqlServidoresInseridosNaoLotados, &$atualizacoesLotacoesResult) {
-            $this->atualizarMatriculasUsuariosSemMatricula();
+            $this->usuarioService->atualizarMatriculasUsuariosSemMatricula();
 
             if (!empty($sqlServidoresInseridosNaoLotados)) {
                 foreach ($sqlServidoresInseridosNaoLotados as $inserirLotacao) {
@@ -248,101 +214,6 @@ class ProcessadorAtualizacaoDadosService extends ServiceBase
         return false;
     }
 
-    private function atualizarMatriculasUsuariosSemMatricula(): void
-    {
-        try {
-            $usuariosSemMatricula = DB::table('usuarios')
-            ->whereNull('deleted_at')
-            ->where(function ($q) {
-                $q->whereNull('matricula')
-                    ->orWhere('matricula', '');
-            })
-            ->whereNotNull('cpf')
-            ->whereRaw("cpf <> ''")
-            ->select('id', 'cpf')
-            ->get();
-
-            if ($usuariosSemMatricula->isEmpty()) {
-                return;
-            }
-
-            foreach ($usuariosSemMatricula as $usr) {
-                $matriculaSiape = DB::table('integracao_servidores')
-                    ->where('cpf', $usr->cpf)
-                    ->value('matriculasiape');
-
-                if (!empty($matriculaSiape)) {
-                    DB::table('usuarios')
-                        ->where('id', $usr->id)
-                        ->update(['matricula' => $matriculaSiape]);
-                    SiapeLog::info(sprintf("Atualizada matrícula do usuário id=%s a partir do SIAPE.", $usr->id));
-                } else {
-                    SiapeLog::warning(sprintf("Matrícula SIAPE não encontrada para usuário id=%s com CPF %s.", $usr->id, $usr->cpf));
-                }
-            }
-        } catch (Throwable $e) {
-            report($e);
-            SiapeLog::error(sprintf("Erro ao atualizar matrículas de usuários sem matrícula: %s", $e->getMessage()));
-        }
-    }
-    
-    private function verificaSeUsuarioSoMudouMatricula(string $cpfCheck, ?string $unidadeExercicioIdCheck, string $matriculaNova, string $codigoExercicio): bool
-    {
-        if (!empty($cpfCheck) && !empty($unidadeExercicioIdCheck)) {
-            $usuarioLotadoMesmaUnidade = DB::table('usuarios as u')
-                ->join('unidades_integrantes as ui', 'ui.usuario_id', '=', 'u.id')
-                ->join('unidades_integrantes_atribuicoes as uia', 'uia.unidade_integrante_id', '=', 'ui.id')
-                ->where('u.cpf', $cpfCheck)
-                ->where('ui.unidade_id', $unidadeExercicioIdCheck)
-                ->where('uia.atribuicao', 'LOTADO')
-                ->whereNull('u.deleted_at')
-                ->whereNull('uia.deleted_at')
-                ->select('u.id')
-                ->orderBy('u.created_at', 'asc')
-                ->first();
-
-            if (!empty($usuarioLotadoMesmaUnidade) && isset($usuarioLotadoMesmaUnidade->id)) {
-                DB::table('usuarios')
-                    ->where('id', $usuarioLotadoMesmaUnidade->id)
-                    ->update(['matricula' => $matriculaNova]);
-                SiapeLog::info(sprintf('Atualizada matrícula do usuário CPF %s para %s (unidade exercício código %s) sem criar novo usuário.',
-                    (string) $cpfCheck,
-                    (string) $matriculaNova,
-                    (string) $codigoExercicio
-                ));
-                return false;
-            }
-            return true;
-        }
-        return true;
-    }
-
-    private function gerarUsuario($v_isr, $tipoModalidadeNaoIdentificada, $perfilParticipanteId)
-    {
-        
-        $tipoModalidadePgd = UtilService::valueOrDefault($v_isr['modalidade_pgd']);
-
-        $tipoModalidadePgd = empty($tipoModalidadePgd)? $tipoModalidadeNaoIdentificada : $this->integracaoService->validarModalidadePgd($tipoModalidadePgd);
-        return new Usuario([
-                    'id' => Uuid::uuid4(),
-                    'email' => UtilService::valueOrDefault($v_isr['emailfuncional']),
-                    'nome' => UtilService::valueOrDefault($v_isr['nome']),
-                    'cpf' => UtilService::valueOrDefault($v_isr['cpf']),
-                    'matricula' => UtilService::valueOrDefault($v_isr['matricula']),
-                    'apelido' => UtilService::valueOrDefault($v_isr['apelido']),
-                    'telefone' => UtilService::valueOrDefault($v_isr['telefone'], null),
-                    'data_nascimento' => UtilService::valueOrDefault($v_isr['data_nascimento'], null),
-                    'sexo' => UtilService::valueOrDefault($v_isr['sexo']),
-                    'situacao_funcional' => UtilService::valueOrDefault($v_isr['situacao_funcional'], "DESCONHECIDO"),
-                    'perfil_id' => $perfilParticipanteId,
-                    'tipo_modalidade_id' => $tipoModalidadePgd,
-                    'exercicio' => UtilService::valueOrDefault($v_isr['exercicio']),
-                    'uf' => UtilService::valueOrDefault($v_isr['uf'], null),
-                    'data_modificacao' => UtilService::asDateTime($v_isr['data_modificacao']),
-                    'ident_unica' => UtilService::valueOrDefault($v_isr['ident_unica']),
-                ]);
-    }
-
     private function cadastrarUsuariosAusentes()
     {
         $query = "SELECT " .
@@ -386,11 +257,11 @@ class ProcessadorAtualizacaoDadosService extends ServiceBase
             $unidadeExercicio = Unidade::where('codigo', $codigoExercicio)->first();
             $unidadeExercicioIdCheck = isset($unidadeExercicio->id) ? $unidadeExercicio->id : null;
 
-            if(!$this->verificaSeUsuarioSoMudouMatricula($cpfCheck, $unidadeExercicioIdCheck, $matriculaNova, $codigoExercicio)) {
+            if(!$this->usuarioService->verificaSeUsuarioSoMudouMatricula($cpfCheck, $unidadeExercicioIdCheck, $matriculaNova, $codigoExercicio)) {
                 continue;
             }
         
-            $registro = $this->gerarUsuario($v_isr, $tipoModalidadeNaoIdentificada, $perfilParticipanteId);
+            $registro = $this->usuarioService->gerarUsuario($v_isr, $tipoModalidadeNaoIdentificada, $perfilParticipanteId);
 
             if (empty($matriculaNova)) {
                 SiapeLog::info("O servidor não tem matrícula relacionada, não será cadastrado", $registro->toArray());

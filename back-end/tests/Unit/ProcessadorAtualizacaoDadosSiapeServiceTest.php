@@ -1,7 +1,8 @@
 <?php
 
 use App\Services\IntegracaoService;
-use App\Services\ProcessadorAtualizacaoDadosService;
+use App\Services\UsuarioService;
+use App\Services\ProcessadorAtualizacaoDadosSiapeService;
 use App\Services\UtilService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -25,7 +26,7 @@ uses(TestCase::class);
  * - Deve converter data de modificação usando UtilService.
  * - Deve registrar logs.
  */
-describe('ProcessadorAtualizacaoDadosService - processar', function () {
+describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
     
     afterEach(function () {
         Mockery::close();
@@ -104,14 +105,14 @@ describe('ProcessadorAtualizacaoDadosService - processar', function () {
         }
 
         // Partial Mock do IntegracaoService
-        /** @var ProcessadorAtualizacaoDadosService|MockInterface $service */
-        $service = Mockery::mock(ProcessadorAtualizacaoDadosService::class)
+        /** @var ProcessadorAtualizacaoDadosSiapeService|MockInterface $service */
+        $service = Mockery::mock(ProcessadorAtualizacaoDadosSiapeService::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
 
         // Acesso ao método privado via Reflection
-        $reflection = new ReflectionClass(ProcessadorAtualizacaoDadosService::class);
+        $reflection = new ReflectionClass(ProcessadorAtualizacaoDadosSiapeService::class);
         $method = $reflection->getMethod('processarDadosPessoais');
         $method->setAccessible(true);
 
@@ -125,7 +126,11 @@ describe('ProcessadorAtualizacaoDadosService - processar', function () {
 
         // Configuração de services dependentes
         $integracaoServiceMock = Mockery::mock(IntegracaoService::class);
+        $usuarioServiceMock = Mockery::mock(UsuarioService::class);
         
+        $usuarioServiceMock->shouldReceive('atualizarServidor')
+            ->times(55);
+
         // Mockar métodos internos chamados dentro do loop
         $integracaoServiceMock->shouldReceive('verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake')
             ->times(55);
@@ -136,7 +141,8 @@ describe('ProcessadorAtualizacaoDadosService - processar', function () {
 
         $property = $reflection->getParentClass()->getProperty('_services');
         $property->setAccessible(true);
-        $property->setValue($service, ['integracaoService' => $integracaoServiceMock]);
+        $property->setValue($service, ['integracaoService' => $integracaoServiceMock,
+        'usuarioService' => $usuarioServiceMock]);
 
         // 2. Act
         $method->invoke($service);
@@ -154,9 +160,9 @@ describe('ProcessadorAtualizacaoDadosService - processar', function () {
 
         DB::shouldReceive('transaction')->never();
         
-        $service = Mockery::mock(ProcessadorAtualizacaoDadosService::class)->makePartial();
+        $service = Mockery::mock(ProcessadorAtualizacaoDadosSiapeService::class)->makePartial();
 
-        $reflection = new ReflectionClass(ProcessadorAtualizacaoDadosService::class);
+        $reflection = new ReflectionClass(ProcessadorAtualizacaoDadosSiapeService::class);
         $method = $reflection->getMethod('processarDadosPessoais');
         $method->setAccessible(true);
 
@@ -177,9 +183,9 @@ describe('ProcessadorAtualizacaoDadosService - processar', function () {
             ->once()
             ->andThrow(new Exception("Deadlock detectado"));
 
-        $service = Mockery::mock(ProcessadorAtualizacaoDadosService::class)->makePartial();
+        $service = Mockery::mock(ProcessadorAtualizacaoDadosSiapeService::class)->makePartial();
 
-        $reflection = new ReflectionClass(ProcessadorAtualizacaoDadosService::class);
+        $reflection = new ReflectionClass(ProcessadorAtualizacaoDadosSiapeService::class);
         $method = $reflection->getMethod('processarDadosPessoais');
         $method->setAccessible(true);
 

@@ -551,7 +551,7 @@ class IntegracaoService extends ServiceBase
           $this->result = $integracaoServidorProcessar->getResult();
         });
 
-        $this->processadorAtualizacaoDadosService->processar($this->result, $this->integracao_config["perfilComum"]);
+        $this->processadorAtualizacaoDadosSiapeService->processar($this->result, $this->integracao_config["perfilComum"]);
 
         $this->result['servidores']['Resultado'] = 'Sucesso';
         array_push($this->result['servidores']["Observações"], 'Na tabela Usuários constam agora ' .
