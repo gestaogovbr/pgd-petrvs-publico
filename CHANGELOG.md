@@ -1,3 +1,5 @@
+## 2.9.10 25/01/2026
+
 ## 2.9.9 19/01/2026
 ### Adicionado
 - Arquivamento automático de PTs e PEs avaliados após 90 dias de sua avaliação;
