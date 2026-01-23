@@ -1,5 +1,8 @@
 ## 2.9.10 25/01/2026
-
+### Corrigido
+- Correção de bugs em nova instalação de tenant
+### Modificado
+- Listagem de regramentos antigos e futuros no cadastro de Plano de trabalho
 ## 2.9.9 19/01/2026
 ### Adicionado
 - Arquivamento automático de PTs e PEs avaliados após 90 dias de sua avaliação;

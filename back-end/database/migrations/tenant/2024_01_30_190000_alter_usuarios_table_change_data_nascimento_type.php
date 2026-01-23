@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterUsuariosTableChangeDataNascimentoType extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -25,4 +25,4 @@ class AlterUsuariosTableChangeDataNascimentoType extends Migration
     {
         DB::statement("ALTER TABLE usuarios MODIFY data_nascimento DATE NULL DEFAULT NULL;");
     }
-}
+};

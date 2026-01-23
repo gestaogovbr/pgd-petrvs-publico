@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Query\Expression;
 
-class CreateAvaliacoesTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -52,4 +52,4 @@ class CreateAvaliacoesTable extends Migration
         });
         Schema::dropIfExists('avaliacoes');
     }
-}
+};

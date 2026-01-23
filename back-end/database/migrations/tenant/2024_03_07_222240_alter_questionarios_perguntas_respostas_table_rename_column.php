@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterQuestionariosPerguntasRespostasTableRenameColumn extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -39,4 +39,4 @@ class AlterQuestionariosPerguntasRespostasTableRenameColumn extends Migration
         $table->foreign('questionario_resposta_id','fk_questionario_resp_id')->references('id')->on("questionarios_preenchimentos")->onDelete('restrict')->onUpdate('cascade')->comment("Preenchimento");
       });
     }
-}
+};
