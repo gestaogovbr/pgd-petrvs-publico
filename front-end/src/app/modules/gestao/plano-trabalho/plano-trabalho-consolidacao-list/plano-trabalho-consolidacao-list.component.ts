@@ -220,7 +220,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
 
     //!this.isDisabled()
     if(true) {
-      if(consolidacao.status == "INCLUIDO" && (isUsuarioDoPlano || isGestor || this.auth.hasPermissionTo("MOD_PTR_CSLD_CONCL"))) {
+      if(["AGUARDANDO_REGISTRO", "INCLUIDO"].includes(consolidacao.status) && (isUsuarioDoPlano || isGestor || this.auth.hasPermissionTo("MOD_PTR_CSLD_CONCL"))) {
         result.push(BOTAO_CONCLUIR);
       }
       // this.planoTrabalhoService.diasParaConcluirConsolidacao(row, this.entity!.programa) >= 0 &&

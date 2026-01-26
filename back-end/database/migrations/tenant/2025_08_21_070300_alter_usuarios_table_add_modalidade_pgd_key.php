@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterUsuariosTableAddModalidadePGDKey extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -43,4 +43,4 @@ class AlterUsuariosTableAddModalidadePGDKey extends Migration
             $table->dropForeign('usuarios_modalidade_pgd_foreign');
         });
     }
-}
+};

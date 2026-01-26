@@ -52,6 +52,23 @@ class PlanoTrabalhoConsolidacao extends ModelBase
         $planoTrabalho->save();
       }
     });
+
+    static::updating(function (PlanoTrabalhoConsolidacao $consolidacao) {
+      $planoTrabalho = $consolidacao->planoTrabalho;
+      if ($consolidacao->isDirty('status') && $consolidacao->status === StatusEnum::AVALIADO->value) {
+        $isAllConsolidacoesAvaliadas = $planoTrabalho->consolidacoes()
+          ->where('status', '!=', StatusEnum::AVALIADO->value)
+          ->where('id', '!=', $consolidacao->id)
+          ->doesntExist();
+        if ($isAllConsolidacoesAvaliadas) {
+          $planoTrabalho->update(['avaliado_at' => date('Y-m-d')]);
+        }
+      }
+
+      if ($consolidacao->isDirty('status') && $consolidacao->status !== StatusEnum::AVALIADO->value && !!$planoTrabalho->avaliado_at) {
+        $planoTrabalho->update(['avaliado_at' => null]);
+      }
+    });
   }
 
 

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterTiposCapacidadesTablesAddIndex extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -29,4 +29,4 @@ class AlterTiposCapacidadesTablesAddIndex extends Migration
             $table->dropIndex('tipos_capacidades_codigo_unique');
         });
     }
-}
+};

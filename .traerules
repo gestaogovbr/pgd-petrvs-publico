@@ -1,0 +1,47 @@
+# Project Rules
+
+## Context & Environment
+- **Operating System:** Linux
+- **Project Structure:**
+  - `back-end/`: Laravel 10 API
+  - `front-end/`: Frontend application (Angular/Node)
+  - `resources/docker/dev/`: Docker environment configuration
+
+## Backend (Laravel)
+
+### Tech Stack
+- **Framework:** Laravel 10.x
+- **Language:** PHP 8.1+
+- **Testing Framework:** Pest PHP (`pestphp/pest` ^2.0)
+- **Database:** MariaDB (Host: `petrvs_db`, Port: 3306 internal / 3308 external)
+
+### Architecture Standards
+- **Design Pattern:** Service-Repository Pattern.
+  - **Controllers:** Should be thin and delegate logic to Services. MUST extend `App\Http\Controllers\ControllerBase`.
+  - **Services:** Place business logic in `app/Services`.
+  - **Repositories:** Place database queries in `app/Repository`.
+  - **DTOs:** Use Data Transfer Objects (`app/DTOs`) for complex data structures.
+  - **Enums:** Use PHP Enums (`app/Enums`) for constants and types.
+
+### Development Workflow (MANDATORY)
+- **Docker Execution:** ALL backend commands MUST be executed inside the `petrvs_php` container.
+  - **Artisan:** `docker exec -it petrvs_php php artisan <command>`
+  - **Composer:** `docker exec -it petrvs_php composer <command>`
+  - **Tests:** `docker exec -it petrvs_php ./vendor/bin/pest`
+  - **Tinker:** `docker exec -it petrvs_php php artisan tinker`
+
+### Code Style & Best Practices
+- **Type Safety:** Use strict types (`declare(strict_types=1);`) and return types whenever possible.
+- **Helpers:** Use `app/Helpers` for utility functions if necessary, but prefer injectable services.
+- **Multitenancy:** The project uses `stancl/tenancy`. Be aware of tenant context when creating models or migrations.
+- **Refactoring & New Code:**
+  - **SOLID:** Adhere to SOLID principles (Single Responsibility, Open/Closed, etc.).
+  - **No Magic Numbers:** Use Enums or Constants instead of hardcoded numbers/strings.
+  - **Clean Code:** Prioritize readability, meaningful variable names, and small functions.
+  - **Testing:** New code MUST include Unit Tests using Pest (`tests/Unit`).
+    - **Pest Docs:** Refer to [back-end/docs/pest.md](back-end/docs/pest.md) for guidelines.
+    - **CI:** Tests must pass in the CI pipeline; red builds should not be merged.
+
+## Useful Paths
+- `docker-compose.yml`: [resources/docker/dev/docker-compose.yml](resources/docker/dev/docker-compose.yml)
+- `composer.json`: [back-end/composer.json](back-end/composer.json)
