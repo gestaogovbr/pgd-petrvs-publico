@@ -11,7 +11,7 @@ use App\Models\Perfil;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
 
-class UpdatePerfilUsuarios extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.

@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Query\Expression;
 
-class CreateAvaliacoesEntregasChecklistTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -38,4 +38,4 @@ class CreateAvaliacoesEntregasChecklistTable extends Migration
     {
         Schema::dropIfExists('avaliacoes_entregas_checklist');
     }
-}
+};

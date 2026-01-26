@@ -1,0 +1,20 @@
+<grid [dao]="dao" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable" [hasEdit]="false" [hasDelete]="false" (select)="onSelect($event)">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <columns>
+        <column title="Arquivo" field="filename"></column>
+        <column title="Tamanho" field="size" [template]="sizeTemplate"></column>
+        <column title="Modificado em" field="last_modified" type="datetime"></column>
+        <column [template]="optionsTemplate" align="right"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
+
+<ng-template #sizeTemplate let-row="row">
+    <span>{{ row.size ? (row.size / 1048576).toFixed(2) : '0.00' }} MB</span>
+</ng-template>
+
+<ng-template #optionsTemplate let-row="row">
+    <button type="button" class="btn btn-outline-primary btn-sm" (click)="download(row)" title="Download">
+        <i class="bi bi-download"></i>
+    </button>
+</ng-template>

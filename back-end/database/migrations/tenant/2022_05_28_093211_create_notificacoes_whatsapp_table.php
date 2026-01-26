@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Query\Expression;
 
-class CreateNotificacoesWhatsappTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -40,4 +40,4 @@ class CreateNotificacoesWhatsappTable extends Migration
     {
         Schema::dropIfExists('notificacoes_whatsapp');
     }
-}
+};

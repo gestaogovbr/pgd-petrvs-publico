@@ -7,7 +7,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
-class CreateProjetosTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -86,4 +86,4 @@ class CreateProjetosTable extends Migration
         });
         Schema::dropIfExists('projetos');
     }
-}
+};

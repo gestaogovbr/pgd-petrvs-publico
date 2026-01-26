@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 
-class AlterTemplatesTableChangeEspecieValues extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -24,4 +24,4 @@ class AlterTemplatesTableChangeEspecieValues extends Migration
     {
       DB::statement("ALTER TABLE templates CHANGE especie especie ENUM('SEI', 'TCR', 'OUTRO', 'NOTIFICACAO')");
     }
-}
+};

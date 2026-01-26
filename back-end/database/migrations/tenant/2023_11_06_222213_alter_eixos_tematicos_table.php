@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-class AlterEixosTematicosTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -24,4 +24,4 @@ class AlterEixosTematicosTable extends Migration
     {
         DB::statement("ALTER TABLE eixos_tematicos MODIFY descricao VARCHAR(256);");
     }
-}
+};
