@@ -18,7 +18,15 @@ export class ProgramaService {
   ) { }
 
   public programaVigente(programa: Programa | undefined): boolean {
-    return programa ? (programa.data_fim >= new Date()) : true;
+    if (!programa) return true;
+    const hoje = new Date();
+    const inicio = new Date(programa.data_inicio);
+    const fim = new Date(programa.data_fim);
+    return inicio <= hoje && fim >= hoje;
+  }
+
+  public selecionaProgramaVigente(programas: Programa[]): Programa | undefined {
+    return programas.find((prog: Programa) => this.programaVigente(prog));
   }
 
 }

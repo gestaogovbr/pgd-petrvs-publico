@@ -20,6 +20,7 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import moment from 'moment';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
+import { ProgramaService } from 'src/app/services/programa.service';
 
 @Component({
   selector: 'app-plano-entrega-form',
@@ -41,6 +42,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   public planoEntregaDao: PlanoEntregaDaoService;
   public planoEntregaEntregaDao: PlanoEntregaEntregaDaoService;
   public planejamentoInstitucionalDao: PlanejamentoDaoService;
+  public programaService: ProgramaService;
   public form: FormGroup;
   public maxPE: Number | undefined;
   public programaMetadata: ProgramaMetadata;
@@ -55,6 +57,8 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.planoEntregaEntregaDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
+    this.programaService = injector.get<ProgramaService>(ProgramaService);
+
     this.join = [
       "entregas.entrega", 
       "entregas.objetivos.objetivo", 
@@ -78,8 +82,8 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     }, this.cdRef, this.validate);
 
     this.programaMetadata = {
-      todosUnidadeExecutora: false,      
-      vigentesUnidadeExecutora: true
+      todosUnidadeExecutora: true,      
+      vigentesUnidadeExecutora: false
     }  
     this.unidadeWhere = [['executora', '==', true],['apenas_chefiadas','==',true]];
   }
@@ -162,10 +166,10 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       where: [['todosUnidadeExecutora', '==', this.auth.unidade!.id]],
       orderBy: [["unidade.path", "desc"]]
     }).asPromise();
-    let ultimo = programas[0];
-    if(ultimo){
-      this.entity.programa = ultimo;
-      this.entity.programa_id = ultimo.id;
+    let programaVigente = this.programaService.selecionaProgramaVigente(programas) || programas[0];
+    if(programaVigente){
+      this.entity.programa = programaVigente;
+      this.entity.programa_id = programaVigente.id;
     }
     const di = new Date(this.entity.data_inicio).toLocaleDateString();
     const df= this.entity.data_fim ? new Date(this.entity.data_fim).toLocaleDateString() : new Date().toLocaleDateString();

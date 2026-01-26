@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePlanosEntregasEntregasTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -46,4 +46,4 @@ class CreatePlanosEntregasEntregasTable extends Migration
     {
         Schema::dropIfExists('planos_entregas_entregas');
     }
-}
+};

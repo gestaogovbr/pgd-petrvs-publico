@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterHistoricosDocenciasExternasCurriculumTableDropFkCursoId extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -33,4 +33,4 @@ class AlterHistoricosDocenciasExternasCurriculumTableDropFkCursoId extends Migra
             $table->foreign('curso_id', 'fk_hist_docen_ext_id_curso_id')->references('id')->on('cursos')->onDelete('restrict')->onUpdate('cascade')->comment("FK Curso ID");
         });
     }
-}
+};

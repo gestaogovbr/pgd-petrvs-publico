@@ -83,6 +83,7 @@ use App\Http\Controllers\SiapeBlacklistUnidadeController;
 use App\Http\Controllers\SiapeIndividualController;
 use App\Http\Controllers\SolucaoController;
 use App\Http\Controllers\SolucaoUnidadeController;
+use App\Http\Controllers\SystemLogsController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\TipoAtividadeController;
 use App\Http\Controllers\TipoAvaliacaoController;
@@ -145,7 +146,7 @@ Route::middleware(['auth:sanctum'])->get('/validate-token', [LoginController::cl
 Route::middleware(['auth:sanctum'])->post('/login-session', [LoginController::class, 'authenticateApiSession']);
 
 /* Geral */
-Route::middleware('auth:sanctum')->post('/search-text', [ControllerBase::class, 'searchText']);
+/* Route::middleware('auth:sanctum')->post('/search-text', [ControllerBase::class, 'searchText']); */
 Route::middleware('auth:sanctum')->post('/usuarios/query', [UsuarioController::class, 'query']);
 Route::middleware('auth:sanctum')->post('/usuario/matriculas', [UsuarioController::class, 'matriculas']);
 Route::middleware('auth:sanctum')->post('/usuario/unidades-vinculadas', [UsuarioController::class, 'unidadesVinculadas']);
@@ -592,4 +593,9 @@ Route::middleware(['auth:sanctum'])->prefix('Indicadores')->group(function () {
     Route::post('equipe/horas', [IndicadoresController::class, 'horas']);
     Route::post('gestao/query', [IndicadoresGestaoController::class, 'query']);
     Route::post('entrega/query', [IndicadoresEntregaController::class, 'query']);
+});
+
+Route::middleware(['auth:sanctum'])->prefix('SystemLogs')->group(function () {
+    Route::get('getAll', [SystemLogsController::class, 'index']);
+    Route::get('download/{tenantId}/{file}', [SystemLogsController::class, 'download'])->middleware('throttle:60,1');
 });

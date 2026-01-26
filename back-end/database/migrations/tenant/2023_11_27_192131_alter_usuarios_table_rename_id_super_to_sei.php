@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterUsuariosTableRenameIdSuperToSei extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -28,4 +28,4 @@ class AlterUsuariosTableRenameIdSuperToSei extends Migration
             $table->renameColumn("id_sei", "id_super");
         });
     }
-}
+};

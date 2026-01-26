@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterUnidadesTableAddDataModificacao extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -25,4 +25,4 @@ class AlterUnidadesTableAddDataModificacao extends Migration
             $table->dropColumn('data_modificacao');
         });
     }
-}
+};

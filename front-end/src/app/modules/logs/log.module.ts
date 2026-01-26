@@ -12,6 +12,7 @@ import { EnvioItemParticipanteListComponent } from './envios/envio-item-particip
 import { EnvioItemConsultComponent } from './envios/envio-item-consult/envio-item-consult.component';
 import { EnvioItemTrabalhoListComponent } from './envios/envio-item-trabalho-list/envio-item-trabalho-list.component';
 import { EnvioItemEntregaListComponent } from './envios/envio-item-entrega-list/envio-item-entrega-list.component';
+import { SystemLogsListComponent } from './system-logs/system-logs-list/system-logs-list.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { EnvioItemEntregaListComponent } from './envios/envio-item-entrega-list/
     EnvioItemConsultComponent,
     EnvioItemParticipanteListComponent,
     EnvioItemTrabalhoListComponent,
-    EnvioItemEntregaListComponent
+    EnvioItemEntregaListComponent,
+    SystemLogsListComponent
   ],
   imports: [
     CommonModule,

@@ -38,6 +38,7 @@ use Illuminate\Database\Eloquent\Collection;
 use App\Enums\UsuarioSituacaoSiape;
 use App\Services\UnidadeService;
 use App\Services\IntegracaoService;
+use Illuminate\Support\Facades\DB;
 
 class UsuarioService extends ServiceBase
 {
@@ -152,6 +153,37 @@ class UsuarioService extends ServiceBase
       return $this->setBuffer("isGestorUnidade", $unidadeId, $this->isIntegrante('GESTOR', $unidadeId) || $this->isIntegrante('GESTOR_SUBSTITUTO', $unidadeId) || ($incluiDelegado && $this->isIntegrante('GESTOR_DELEGADO', $unidadeId)));
     }
   }
+
+  public function isGestorUnidadeRecursivo(string $unidadeId, ?string $usuarioId = null): bool
+  {
+    $usuarioId = $usuarioId ?? $this->loggedUser()->id;
+    
+    $result = DB::select("
+        WITH RECURSIVE unidade_hierarchy AS (
+            SELECT id, unidade_pai_id, 0 as level
+            FROM unidades 
+            WHERE id = ?
+            
+            UNION ALL
+            
+            SELECT u.id, u.unidade_pai_id, uh.level + 1
+            FROM unidades u
+            INNER JOIN unidade_hierarchy uh ON u.id = uh.unidade_pai_id
+            WHERE uh.level < 10
+        )
+        SELECT COUNT(*) as count
+        FROM unidade_hierarchy uh
+        INNER JOIN unidades_integrantes ui ON ui.unidade_id = uh.id
+        INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
+        WHERE ui.usuario_id = ?
+          AND uia.atribuicao IN ('GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO')
+          AND ui.deleted_at IS NULL
+          AND uia.deleted_at IS NULL
+    ", [$unidadeId, $usuarioId]);
+    
+    return $result[0]->count > 0;
+  }
+
 
   /**
    * Informa se o usuário logado é participante do plano de trabalho recebido como parâmetro.

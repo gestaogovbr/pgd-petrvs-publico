@@ -11,12 +11,14 @@ import { EnvioItemConsultComponent } from './envios/envio-item-consult/envio-ite
 import { EnvioItemParticipanteListComponent } from './envios/envio-item-participante-list/envio-item-participante-list.component';
 import { EnvioItemTrabalhoListComponent } from './envios/envio-item-trabalho-list/envio-item-trabalho-list.component';
 import { EnvioItemEntregaListComponent } from './envios/envio-item-entrega-list/envio-item-entrega-list.component';
+import { SystemLogsListComponent } from './system-logs/system-logs-list/system-logs-list.component';
 
 const routes: Routes = [
   { path: 'change', component: ChangeListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Logs das Alterações" } },
   { path: 'change/:id/consult', component: ChangeListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Log de Alteração", modal: true } },
   { path: 'error', component: ErrorListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Logs dos Erros" } },
   { path: 'error/:id/consult', component: ErrorFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Log de Erro", modal: true } },
+  { path: 'system-logs', component: SystemLogsListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Logs do Sistema" } },
   { path: 'envios', component: EnvioListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Histórico de Envios à API PGD" } },
   { path: 'envios/:id/consult', component: EnvioConsultComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Dados do Envio à API PGD", modal: true } },
   { path: 'envios/:id/participantes', component: EnvioItemParticipanteListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Histórico de Participantes enviados", modal: true } },
