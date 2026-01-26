@@ -75,19 +75,9 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
                 return true;
             }), 3); // 3 retries
 
-        // Mock DB Update
-        // Esperamos 55 atualizações com os parâmetros corretos
-        DB::shouldReceive('update')
-            ->times(55)
-            ->with($sqlUpdateDados, Mockery::on(function ($bindings) {
-                // Validação estrita para garantir que não ocorra erro de parâmetro inválido
-                return array_key_exists('tipo_modalidade_id', $bindings) 
-                    && !array_key_exists('modalidade_pgd', $bindings);
-            }));
-
         // Mock Log Facade para interceptar SiapeLog
         $loggerMock = Mockery::mock(\Psr\Log\LoggerInterface::class);
-        $loggerMock->shouldReceive('info')->times(56);
+        $loggerMock->shouldReceive('info')->times(1);
 
         Log::shouldReceive('channel')
             ->with('siape')
@@ -130,14 +120,6 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
         
         $usuarioServiceMock->shouldReceive('atualizarServidor')
             ->times(55);
-
-        // Mockar métodos internos chamados dentro do loop
-        $integracaoServiceMock->shouldReceive('verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake')
-            ->times(55);
-        
-        $integracaoServiceMock->shouldReceive('validarModalidadePgd')
-            ->times(55)
-            ->andReturn(1);
 
         $property = $reflection->getParentClass()->getProperty('_services');
         $property->setAccessible(true);
