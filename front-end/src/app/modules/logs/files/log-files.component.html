@@ -1,0 +1,101 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <toolbar [title]="title"></toolbar>
+    </div>
+  </div>
+
+  <div class="card mt-2">
+    <div class="card-body">
+      <!-- Filtros Principais -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <label class="form-label fw-bold">Origem dos Logs</label>
+          <div class="btn-group w-100" role="group">
+            <button type="button" class="btn" [class.btn-primary]="type == 'central'" [class.btn-outline-primary]="type != 'central'" (click)="onTypeChange('central')">
+              <i class="bi bi-server"></i> Central
+            </button>
+            <button type="button" class="btn" [class.btn-primary]="type == 'tenant'" [class.btn-outline-primary]="type != 'tenant'" (click)="onTypeChange('tenant')">
+              <i class="bi bi-building"></i> Tenant
+            </button>
+          </div>
+        </div>
+        
+        <div class="col-md-5" *ngIf="type == 'tenant'">
+          <input-select [label]="'Selecione o Tenant'" [control]="form.controls.tenant_id" [items]="tenants" itemLabel="id" itemValue="id" (change)="onTenantChange()" [placeholder]="'Selecione...'"></input-select>
+        </div>
+      </div>
+
+      <separator [title]="'Filtros de Pesquisa'"></separator>
+
+      <!-- Filtros de Pesquisa -->
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <input-text [label]="'Nome do Arquivo'" [control]="form.controls.search" (keyup)="filterFiles()" placeholder="Filtrar por nome..."></input-text>
+        </div>
+        <div class="col-md-3">
+          <input-datetime [label]="'Data Início'" [control]="form.controls.data_inicio" (change)="filterFiles()"></input-datetime>
+        </div>
+        <div class="col-md-3">
+          <input-datetime [label]="'Data Fim'" [control]="form.controls.data_fim" (change)="filterFiles()"></input-datetime>
+        </div>
+      </div>
+
+      <!-- Tabela de Resultados -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">Nome do Arquivo</th>
+              <th scope="col">Data de Modificação</th>
+              <th scope="col">Tamanho</th>
+              <th scope="col" class="text-end">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let file of filteredFiles">
+              <td>
+                <i class="bi bi-file-text me-2 text-secondary"></i>
+                {{ file.filename }}
+              </td>
+              <td>{{ file.updated_at * 1000 | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+              <td><span class="badge bg-light text-dark border">{{ formatBytes(file.size) }}</span></td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-primary" (click)="download(file)" title="Baixar Arquivo">
+                  <i class="bi bi-download"></i> Download
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="!loading && filteredFiles.length === 0">
+              <td colspan="4" class="text-center py-4 text-muted">
+                <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+                Nenhum arquivo de log encontrado com os filtros atuais.
+              </td>
+            </tr>
+            <tr *ngIf="loading">
+              <td colspan="4" class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Carregando...</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Paginação -->
+      <div class="d-flex justify-content-between align-items-center mt-3" *ngIf="total > 0">
+        <span class="text-muted">Total de {{ total }} registros. Página {{ page }} de {{ lastPage }}.</span>
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-outline-secondary" (click)="prevPage()" [disabled]="page === 1">
+            <i class="bi bi-chevron-left"></i> Anterior
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="nextPage()" [disabled]="page === lastPage">
+            Próximo <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

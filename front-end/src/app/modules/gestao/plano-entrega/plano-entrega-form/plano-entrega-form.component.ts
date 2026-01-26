@@ -19,8 +19,8 @@ import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import moment from 'moment';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
-import { ProgramaService } from 'src/app/services/programa.service';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
+import { ProgramaService } from 'src/app/services/programa.service';
 
 @Component({
   selector: 'app-plano-entrega-form',
