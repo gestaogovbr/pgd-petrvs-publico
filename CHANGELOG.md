@@ -1,6 +1,8 @@
-## 2.9.10 25/01/2026
+## 2.9.10 26/01/2026
 ### Corrigido
 - Correção de bugs em nova instalação de tenant
+- Correção de problemas nas atribuições de chefia e substituições
+- Tratamento de falhas no processamento de servidores do SIAPE
 ### Modificado
 - Listagem de regramentos antigos e futuros no cadastro de Plano de trabalho
 ## 2.9.9 19/01/2026
