@@ -5,6 +5,7 @@
 - Tratamento de falhas no processamento de servidores do SIAPE
 ### Modificado
 - Listagem de regramentos antigos e futuros no cadastro de Plano de trabalho
+- Preencher os registros de execução deixa de ser obrigatório na conclusão de Planos de Trabalho dos subordinados
 ## 2.9.9 19/01/2026
 ### Adicionado
 - Arquivamento automático de PTs e PEs avaliados após 90 dias de sua avaliação;
