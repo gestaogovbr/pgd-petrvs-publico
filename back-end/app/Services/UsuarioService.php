@@ -2,46 +2,36 @@
 
 namespace App\Services;
 
-use Exception;
-use Throwable;
-use SimpleXMLElement;
+use App\Enums\StatusEnum;
+use App\Enums\UsuarioSituacaoSiape;
+use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
 use App\Models\Perfil;
-use App\Models\Unidade;
-use App\Models\Usuario;
-use App\Models\PlanoTrabalho;
 use App\Models\PlanoEntrega;
 use App\Models\PlanoEntregaEntrega;
+use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\Programa;
+use App\Models\TipoModalidade;
+use App\Models\Unidade;
+use App\Models\UnidadeIntegranteAtribuicao;
+use App\Models\Usuario;
+use App\Services\IntegracaoService;
+use App\Services\NivelAcessoService;
 use App\Services\RawWhere;
 use App\Services\ServiceBase;
-use App\Models\UnidadeIntegrante;
-use App\Exceptions\ServerException;
-use Illuminate\Support\Facades\Log;
-use App\Exceptions\ValidateException;
-use App\Models\PlanoTrabalhoConsolidacao;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Database\Eloquent\Builder;
 use App\Services\Siape\DadosExternosSiape;
-use App\Models\UnidadeIntegranteAtribuicao;
-use App\Services\Siape\Consulta\Resources\DadosPessoaisResource;
-use App\Services\Siape\Consulta\Resources\DadosFuncionaisResource;
-use App\Services\Siape\Consulta\SiapeDadosPessoaisService;
-use App\Services\Siape\Consulta\SiapeDadosFuncionaisService;
-use App\Models\SiapeDadosUORG;
-use App\Services\Siape\Consulta\Resources\UnidadeResource;
-use App\Services\Siape\Consulta\Resources\UnidadesResource;
-use App\Services\Siape\Consulta\SiapeUnidadeService;
-use App\Services\Siape\Consulta\SiapeUnidadesService;
-use App\Enums\StatusEnum;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
-use App\Enums\UsuarioSituacaoSiape;
 use App\Services\UnidadeService;
-use App\Services\IntegracaoService;
+use App\Services\UtilService;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Storage;
+use SimpleXMLElement;
+use Throwable;
 
 class UsuarioService extends ServiceBase
 {
-
   use DadosExternosSiape;
 
   const LOGIN_GOOGLE = "GOOGLE";
@@ -321,6 +311,16 @@ class UsuarioService extends ServiceBase
     $data["with"] = [];
     $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
 
+    if ($action == self::ACTION_INSERT) {
+        $defaultTipoModalidade = TipoModalidade::where('nome', 'Sem dados do SIAPE')->first();
+
+        if (!$defaultTipoModalidade) {
+            throw new ValidateException("Tipo de Modalidade Padrão não definido no sistema. Consulte um administrador", 422);
+        }
+        
+        $data['tipo_modalidade_id'] = $defaultTipoModalidade->id;
+    }
+
     unset($data['pedagio']);
 
     if (!empty($data['telefone']))
@@ -374,6 +374,14 @@ class UsuarioService extends ServiceBase
       
       if (!isset($data['tipo_modalidade_id'])) {
         $buscaTipoModalidade = Usuario::where("id", "=", $data["id"])->value('tipo_modalidade_id');
+
+        if (!$buscaTipoModalidade) {
+            $defaultTipoModalidade = TipoModalidade::where('nome', 'Sem dados do SIAPE')->first();
+
+            if ($defaultTipoModalidade) {
+                $buscaTipoModalidade = $defaultTipoModalidade->id;
+            }
+        }
         $data['tipo_modalidade_id'] = $buscaTipoModalidade;
       }
     }
@@ -409,7 +417,7 @@ class UsuarioService extends ServiceBase
           
           if (isset($this->integracaoService)) {
              $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($data['email'], $data['matricula'], $alreadyHas->id);
-          }
+          }  
 
           $alreadyHas->deleted_at = null;
           return $alreadyHas;
