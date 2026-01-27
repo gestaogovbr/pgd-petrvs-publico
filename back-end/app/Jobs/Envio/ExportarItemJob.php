@@ -145,7 +145,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     {
         $tags = [
             'Envio',
-            'tenant '.$this->tenantId,
+            $this->tenantId,
             $this->tag(),
             $this->id,
             'Execução '.$this->execucoes,

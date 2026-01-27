@@ -3,16 +3,14 @@ namespace App\Jobs\Envio;
 
 use App\Exceptions\ExportPgdException;
 use App\Models\Usuario;
-use App\Services\API_PGD\DataSources\DataSource;
-use App\Services\API_PGD\DataSources\ParticipanteDataSource;
-use App\Services\API_PGD\Resources\ParticipanteResource;
+use App\Jobs\Envio\Resources\ParticipanteResource;
 use Illuminate\Support\Facades\Log;
 
 class ExportarParticipanteJob extends ExportarItemJob
 {
     public static function getDescricao(): string
     {
-        return 'Exportar Dados de Participante para PGD';
+        return 'Enviar Participante para API';
     }
 
     public function getModel() {
@@ -39,7 +37,7 @@ class ExportarParticipanteJob extends ExportarItemJob
     }
 
     public function tag() {
-        return 'Usuário';
+        return 'Participante';
     }
 
     protected function logInfo($message) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\API_PGD\Resources;
+namespace App\Jobs\Envio\Resources;
 
 use App\Exceptions\ExportPgdException;
 use Illuminate\Http\Request;
@@ -14,7 +14,7 @@ class PlanoTrabalhoResource extends JsonResource
     {
         $calendarioService = new CalendarioService;
         $diasUteis = $calendarioService->qtdDiasUteis(
-            $this->data_inicio, $this->data_fim, 
+            $this->data_inicio, $this->data_fim,
             $this->unidade_id
         );
 
@@ -34,7 +34,7 @@ class PlanoTrabalhoResource extends JsonResource
             "data_termino"              => Carbon::parse($this->data_fim)->format('Y-m-d'),
             "carga_horaria_disponivel"  => $diasUteis * $this->carga_horaria,
             "contribuicoes"             => $this->entregas
-                ? PlanoTrabalhoContribuicaoResource::collection($this->entregas) 
+                ? PlanoTrabalhoContribuicaoResource::collection($this->entregas)
                 : [],
             "avaliacoes_registros_execucao" => $this->consolidacoes
                 ? PlanoTrabalhoAvaliacaoResource::collection($this->consolidacoes)

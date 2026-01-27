@@ -9,6 +9,8 @@ use App\Http\Controllers\SolucaoController;
 use App\Http\Controllers\TipoClienteController;
 use App\Models\Usuario;
 use App\Observers\UsuarioObserver;
+use App\Models\PlanoEntrega;
+use App\Observers\PlanoEntregaObserver;
 use App\Services\Validador\ClienteValidador;
 use App\Services\Validador\IValidador;
 use App\Services\Validador\ProdutoClienteValidador;
@@ -96,5 +98,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Usuario::observe(UsuarioObserver::class);
+        PlanoEntrega::observe(PlanoEntregaObserver::class);
     }
 }

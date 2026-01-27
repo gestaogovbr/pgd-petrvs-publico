@@ -34,7 +34,8 @@ class UsuarioObserver
 
             ExportarParticipanteJob::dispatch(
                 tenant('id'),
-                $usuario->id
+                $usuario->id,
+                $usuario->data_agendamento_envio
             )->onConnection('rabbitmq')->onQueue('pgd_queue');
         }
     }

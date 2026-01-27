@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('usuarios', function (Blueprint $table) {
-            $table->timestamp('data_agendamento_envio')->nullable()->comment('Data do agendamento para envio do usuário para a API PGD');
+        Schema::table('planos_entregas', function (Blueprint $table) {
+            $table->timestamp('data_agendamento_envio')->nullable()->comment('Data do agendamento para envio para a API');
             $table->timestamp('data_tentativa_envio')->nullable()->comment('Data da Ultima Tentativa de Envio');
             $table->text('log_envio')->nullable();
         });
@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('usuarios', function (Blueprint $table) {
+        Schema::table('planos_entregas', function (Blueprint $table) {
             $table->dropColumn('data_agendamento_envio');
             $table->dropColumn('data_tentativa_envio');
             $table->dropColumn('log_envio');

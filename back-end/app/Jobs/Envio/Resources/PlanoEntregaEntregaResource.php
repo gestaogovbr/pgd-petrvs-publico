@@ -1,5 +1,5 @@
 <?php
-namespace App\Services\API_PGD\Resources;
+namespace App\Jobs\Envio\Resources;
 
 use App\Exceptions\ExportPgdException;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -14,7 +14,7 @@ class PlanoEntregaEntregaResource extends JsonResource
             "nome_entrega"              => $this->descricao,
             "meta_entrega"              => $this->progresso_realizado,
             "tipo_meta"                 => $this->getMeta(), //$this->meta, //*
-            "data_entrega"              => $this->data_fim ? 
+            "data_entrega"              => $this->data_fim ?
                                             Carbon::parse($this->data_fim)->format('Y-m-d')
                                             : null,
             "nome_unidade_demandante" => $this->unidade->nome,
