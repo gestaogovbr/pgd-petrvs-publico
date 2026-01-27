@@ -88,6 +88,16 @@ return [
             ],
             'options' => [
                 'ssl_options' => [],
+                'queue' => [
+                    'durable' => true,   // fila duravel
+                    'arguments' => [
+                        'x-dead-letter-exchange' => ['S', 'dlx'],
+                        'x-dead-letter-routing-key' => ['S', 'jobs.failed'],
+                    ],
+                ],
+                'exchange' => [
+                    'durable' => true,
+                ],
             ],
         ],
 
