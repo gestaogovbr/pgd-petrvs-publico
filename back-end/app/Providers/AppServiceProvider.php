@@ -7,11 +7,11 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\SolucaoController;
 use App\Http\Controllers\TipoClienteController;
-use App\Models\TipoCliente;
+use App\Models\Usuario;
+use App\Observers\UsuarioObserver;
 use App\Services\Validador\ClienteValidador;
 use App\Services\Validador\IValidador;
 use App\Services\Validador\ProdutoClienteValidador;
-use App\Services\Validador\ProdutoClienteValidation;
 use App\Services\Validador\ProdutoProcessoCadeiaValorValidation;
 use App\Services\Validador\ProdutoInsumoValidation;
 use App\Services\Validador\ProdutoSolucaoValidador;
@@ -94,5 +94,7 @@ class AppServiceProvider extends ServiceProvider
             Cache::forget('domain:tenant_id:'.$domain->tenant_id);
             Cache::forget('domain:domain:'.$domain->domain);
         });
+
+        Usuario::observe(UsuarioObserver::class);
     }
 }
