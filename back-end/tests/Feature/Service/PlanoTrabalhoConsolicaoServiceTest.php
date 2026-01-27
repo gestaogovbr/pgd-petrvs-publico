@@ -75,10 +75,32 @@ describe('#concluir - exceções', function () {
         $service = Mockery::mock(PlanoTrabalhoConsolidacaoService::class)->makePartial()->shouldAllowMockingProtectedMethods();
         $service->shouldReceive('consolidacaoDados')
             ->with('consolidacao-123')
-            ->andReturn(['atividades' => []]);
+            ->andReturn(['atividades' => [], 'planoTrabalho' => (object)[]]);
 
         expect(fn() => $service->concluir('consolidacao-123', null))
             ->toThrow(ServerException::class, 'Antes de concluir, é necessário fazer a descrição dos trabalhos executados.');
+    });
+
+    test('lança exceção quando não há plano de trabalho', function () {
+
+        DB::table('planos_trabalhos_consolidacoes')->insert([
+            'id' => 'consolidacao-123',
+            'plano_trabalho_id' => 'plano-123',
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-01-31',
+            'status' => 'ATIVO',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        /** @var PlanoTrabalhoConsolidacaoService $service */
+        $service = Mockery::mock(PlanoTrabalhoConsolidacaoService::class)->makePartial()->shouldAllowMockingProtectedMethods();
+        $service->shouldReceive('consolidacaoDados')
+            ->with('consolidacao-123')
+            ->andReturn(['atividades' => [], 'planoTrabalho' => null]);
+
+        expect(fn() => $service->concluir('consolidacao-123', null))
+            ->toThrow(ServerException::class, 'Plano de Trabalho não encontrado');
     });
 
     test('executa rollback em caso de erro', function () {

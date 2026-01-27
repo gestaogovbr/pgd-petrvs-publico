@@ -240,6 +240,8 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       if (!is_array($dados)) {
         throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Dados de consolidação inválidos");
       }
+      if (empty($dados['planoTrabalho']))
+        throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Plano de Trabalho não encontrado");
 
       /* se array de atividades estiver vazio, não pode concluir */
       if (count($dados["atividades"] ?? []) == 0) {
@@ -250,7 +252,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       if (!(new UsuarioService)->isGestorUnidade(($dados['planoTrabalho'])->unidade_id)) {
         $IdsEntregasPlanoTrabalho = $consolidacao->planoTrabalho->entregas->pluck('id');
 
-        if($IdsEntregasPlanoTrabalho->isEmpty()) throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Para concluir é preciso que todas as entregas tenham atividades associadas");
+        if ($IdsEntregasPlanoTrabalho->isEmpty()) throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Para concluir é preciso que todas as entregas tenham atividades associadas");
         foreach ($IdsEntregasPlanoTrabalho as $IdEntregaPlanoTrabalho) {
           if (!in_array($IdEntregaPlanoTrabalho, array_column($dados["atividades"] ?? [], "plano_trabalho_entrega_id"))) {
             throw new ServerException("ConcluirPlanoTrabalhoConsolidacao", "Para concluir é preciso que todas as entregas tenham atividades associadas");
