@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use Exception;
 use Throwable;
 use SimpleXMLElement;
 use App\Models\Perfil;
@@ -14,30 +13,18 @@ use App\Models\PlanoEntregaEntrega;
 use App\Models\Programa;
 use App\Services\RawWhere;
 use App\Services\ServiceBase;
-use App\Models\UnidadeIntegrante;
 use App\Exceptions\ServerException;
-use Illuminate\Support\Facades\Log;
 use App\Exceptions\ValidateException;
 use App\Models\PlanoTrabalhoConsolidacao;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use App\Services\Siape\DadosExternosSiape;
 use App\Models\UnidadeIntegranteAtribuicao;
-use App\Services\Siape\Consulta\Resources\DadosPessoaisResource;
-use App\Services\Siape\Consulta\Resources\DadosFuncionaisResource;
-use App\Services\Siape\Consulta\SiapeDadosPessoaisService;
-use App\Services\Siape\Consulta\SiapeDadosFuncionaisService;
-use App\Models\SiapeDadosUORG;
-use App\Services\Siape\Consulta\Resources\UnidadeResource;
-use App\Services\Siape\Consulta\Resources\UnidadesResource;
-use App\Services\Siape\Consulta\SiapeUnidadeService;
-use App\Services\Siape\Consulta\SiapeUnidadesService;
 use App\Enums\StatusEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use App\Enums\UsuarioSituacaoSiape;
 use App\Services\UnidadeService;
-use App\Services\IntegracaoService;
 use Illuminate\Support\Facades\DB;
 
 class UsuarioService extends ServiceBase
@@ -49,14 +36,6 @@ class UsuarioService extends ServiceBase
   const LOGIN_MICROSOFT = "AZURE";
   const LOGIN_FIREBASE = "FIREBASE";
   
-  protected $integracaoService;
-
-  public function __construct(
-  ) {
-    parent::__construct();
-    $this->nivelAcessoService = new NivelAcessoService();
-    $this->integracaoService = new IntegracaoService();
-  }
 
   public function atualizarFotoPerfil($tipo, &$usuario, $url)
   {
@@ -473,7 +452,6 @@ class UsuarioService extends ServiceBase
     $perfilNovo = Perfil::find($data['perfil_id']);
     $perfilAtual = !empty($data['id']) ? $this->getById($data)["perfil_id"] : null;
 
-    $this->nivelAcessoService = new NivelAcessoService();
     $developer = $this->nivelAcessoService->getPerfilDesenvolvedor();
     if (empty($developer))
       throw new ServerException("ValidateUsuario", "Perfil de Desenvolvedor não encontrado no banco de dados");

@@ -1,3 +1,7 @@
+
+## 2.9.11 28/01/2026
+### Corrigido
+- Corrigido bug na carga de gestores do SIAPE
 ## 2.9.10 26/01/2026
 ### Corrigido
 - Correção de bugs em nova instalação de tenant
