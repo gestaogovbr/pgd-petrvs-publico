@@ -242,6 +242,9 @@ class PlanoTrabalhoService extends ServiceBase
             throw new ServerException("ValidatePlanoTrabalho", "Não é possível gravar Plano de Trabalho sem planejamento dos trabalhos a serem realizados.");
         }
 
+        $inicioPlano = Carbon::parse($data["data_inicio"]);
+        $fimPlano = Carbon::parse($data["data_fim"]);
+
         // Validar Modalidade
         if (!empty($tipoModalidade) && $tipoModalidade->exige_pedagio && !empty($usuario->pedagio)) {
             if (empty($usuario->data_inicial_pedagio) || empty($usuario->data_final_pedagio)) {
@@ -253,9 +256,6 @@ class PlanoTrabalhoService extends ServiceBase
             // Verificar sobreposição de datasAdd commentMore actions
             $inicioPedagio = Carbon::parse($usuario->data_inicial_pedagio);
             $fimPedagio = Carbon::parse($usuario->data_final_pedagio);
-
-            $inicioPlano = Carbon::parse($data["data_inicio"]);
-            $fimPlano = Carbon::parse($data["data_fim"]);
 
             $sobrepoe = !(
                 $fimPlano < $inicioPedagio || $inicioPlano > $fimPedagio
@@ -334,8 +334,14 @@ class PlanoTrabalhoService extends ServiceBase
             }
 
         }
-        if (!$this->programaService->programaVigente($programa))
-            throw new ServerException("ValidatePlanoTrabalho", "O regramento não está vigente.");
+        $this->validarVigenciaRegramento($inicioPlano, $fimPlano, $programa);
+    }
+
+    private function validarVigenciaRegramento($inicioPlano, $fimPlano, $programa): void
+    {
+        if ($inicioPlano < $programa->data_inicio || $fimPlano > $programa->data_fim) {
+            throw new ServerException("ValidatePlanoTrabalho", "As datas do plano de trabalho estão fora do período vigência do regramento.");
+        }
     }
 
     public function repactuar($planoId, $forcarGeracaoTcr = false)

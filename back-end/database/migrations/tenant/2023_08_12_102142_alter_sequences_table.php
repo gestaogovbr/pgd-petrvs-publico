@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-class AlterSequencesTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -24,4 +24,4 @@ class AlterSequencesTable extends Migration
     {
         //Ação de rollback desnecessária
     }
-}
+};

@@ -12,10 +12,8 @@ use App\Services\NivelAcessoService;
 use App\Services\PerfilService;
 use App\Services\Siape\Contrato\InterfaceIntegracao;
 use App\Services\Siape\Unidade\Atribuicao;
-use App\Services\Tipo;
 use App\Services\UnidadeIntegranteService;
-use Illuminate\Support\Facades\Log;
-use App\Models\UnidadeIntegrante;
+use App\Facades\SiapeLog;
 
 class Integracao implements InterfaceIntegracao
 {
@@ -50,11 +48,11 @@ class Integracao implements InterfaceIntegracao
     {
         foreach ($this->dados as $dado) {
             try {
-                $this->logSiape("iniciando o processamento da chefia:", $dado);
+                SiapeLog::info("iniciando o processamento da chefia:", $dado);
                 $this->processaChefia($dado);
             } catch (\Exception $e) {
                 array_push($this->message['erro'], $dado['id_unidade']);
-                $this->logSiape($e->getMessage(), $dado, Tipo::ERROR);
+                SiapeLog::error($e->getMessage(), $dado);
                 continue;
             }
         }
@@ -64,22 +62,24 @@ class Integracao implements InterfaceIntegracao
     {
 
         if (empty($dado['id_chefe'])) {
+            //verificar se a unidade está inativa
             $unidade = Unidade::find($dado['id_unidade']);
             $this->removeAtualGestorDaUnidade($unidade);
             array_push($this->message['vazio'],  $dado['id_unidade']);
-            $this->logSiape("Chefe não informado para a unidade " . $dado['id_unidade'], $dado, Tipo::WARNING);
+            SiapeLog::warning("Chefe não informado para a unidade " . $dado['id_unidade'], $dado);
             return;
         }
+        //verificar se o usuario está inativo
         $usuarioChefia = $this->userModel->find($dado['id_chefe']);
         $atribuicoesAtuaisDaChefia = $usuarioChefia->getUnidadesAtribuicoesAttribute();
         $unidadeExercicioId = $dado['id_unidade'];
         $chefeAtribuicoes = $this->preparaChefia($atribuicoesAtuaisDaChefia, $unidadeExercicioId);
 
-        $this->logSiape(sprintf("atribuições do usuário: %s na unidade %s", $dado['id_chefe'], $dado['id_unidade']), $chefeAtribuicoes);
+        SiapeLog::info(sprintf("atribuições do usuário: %s na unidade %s", $dado['id_chefe'], $dado['id_unidade']), $chefeAtribuicoes);
 
         $vinculo = $this->preparaVinculo($dado['id_chefe'], $unidadeExercicioId, $chefeAtribuicoes);
 
-        $this->logSiape("Salvando integrantes", $vinculo, Tipo::INFO);
+        SiapeLog::info("Salvando integrantes", $vinculo);
         $this->unidadeIntegranteService->salvarIntegrantes($vinculo, false);
         $this->removerGestorSubstituto($dado['id_chefe'], $unidadeExercicioId);
 
@@ -160,10 +160,10 @@ class Integracao implements InterfaceIntegracao
                 ':id' => $idUsuario
             ];
             $this->perfilService->alteraPerfilUsuario($idUsuario, $perfilChefeId);
-            $this->logSiape("Atualizando perfil do chefe", $values, Tipo::INFO);
+            SiapeLog::info("Atualizando perfil do chefe", $values);
             return;
         }
-        $this->logSiape("IntegracaoService: durante atualização de gestores, o usuário não teve seu perfil atualizado para um 'perfil de chefia' uma vez que é Desenvolvedor.", [$queryChefe->nome, $queryChefe->email]);
+        SiapeLog::info("IntegracaoService: durante atualização de gestores, o usuário não teve seu perfil atualizado para um 'perfil de chefia' uma vez que é Desenvolvedor.", [$queryChefe->nome, $queryChefe->email]);
     }
 
     /**

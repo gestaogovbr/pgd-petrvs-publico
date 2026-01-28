@@ -5,7 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
-class DeletaUsuariosDuplicados extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -77,4 +77,4 @@ class DeletaUsuariosDuplicados extends Migration
     public function down()
     {
     }
-}
+};

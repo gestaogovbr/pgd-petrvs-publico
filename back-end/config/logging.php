@@ -37,8 +37,14 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['tenant_custom'],
             'ignore_exceptions' => false,
+        ],
+
+        'tenant_custom' => [
+            'driver' => 'custom',
+            'via' => \App\Logging\TenantCustomLogger::class,
+            'level' => env('LOG_LEVEL', 'debug'),
         ],
 
         'single' => [

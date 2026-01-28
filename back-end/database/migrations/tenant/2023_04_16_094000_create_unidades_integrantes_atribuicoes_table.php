@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUnidadesIntegrantesAtribuicoesTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -35,4 +35,4 @@ class CreateUnidadesIntegrantesAtribuicoesTable extends Migration
     {
         Schema::dropIfExists('unidades_integrantes_atribuicoes');
     }
-}
+};

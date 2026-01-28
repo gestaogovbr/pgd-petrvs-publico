@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateQuestionariosPerguntasTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -43,7 +43,7 @@ class CreateQuestionariosPerguntasTable extends Migration
     {
         Schema::dropIfExists('questionarios_perguntas');
     }
-}
+};
 //LIVRE - Resposta Aberta (Texto Livre): Permite que os respondentes expressem suas opiniões em suas próprias palavras.
 
 //LISTA UNICA - Resposta de Escolha Única: respondente seleciona uma única opção entre as fornecidas.

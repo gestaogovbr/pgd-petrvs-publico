@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class RenameCurriculumsToCurriculunsTables extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -29,4 +29,4 @@ class RenameCurriculumsToCurriculunsTables extends Migration
       Schema::rename('curriculuns_graduacoes', 'curriculums_graduacoes');
       Schema::rename('curriculuns_profissionais', 'curriculums_profissionais');
     }
-}
+};

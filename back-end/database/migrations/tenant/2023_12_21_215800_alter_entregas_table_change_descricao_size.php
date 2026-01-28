@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterEntregasTableChangeDescricaoSize extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -23,4 +23,4 @@ class AlterEntregasTableChangeDescricaoSize extends Migration
         DB::statement("ALTER TABLE entregas MODIFY nome VARCHAR(256) NOT NULL;");
         DB::statement("ALTER TABLE entregas MODIFY descricao VARCHAR(256) NOT NULL;");
     }
-}
+};

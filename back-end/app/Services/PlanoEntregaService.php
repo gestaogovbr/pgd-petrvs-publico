@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use DateTime;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Carbon;
 use Throwable;
 
 class PlanoEntregaService extends ServiceBase
@@ -597,8 +598,13 @@ class PlanoEntregaService extends ServiceBase
         }
         if ($this->temSobreposicaoDeDatas($dataOrEntity))
             throw new ServerException("ValidatePlanoEntrega", "Esta unidade já possui plano de entregas cadastrado para o período.");
-        if (!$this->programaService->programaVigente($programa))
-            throw new ServerException("ValidatePlanoEntrega", "O regramento não está vigente.");
+        
+        $inicioPlano = Carbon::parse($dataOrEntity["data_inicio"]);
+        $fimPlano = Carbon::parse($dataOrEntity["data_fim"]);
+        if ($inicioPlano < $programa->data_inicio || $fimPlano > $programa->data_fim) {
+            throw new ServerException("ValidatePlanoEntrega", "As datas do plano de entregas estão fora do período vigência do regramento.");
+        }
+        
         if ($action == ServiceBase::ACTION_EDIT) {
             /*
               (RN_PENT_L) Para ALTERAR um plano de entregas:

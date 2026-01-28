@@ -10,6 +10,7 @@ use Stancl\Tenancy\Middleware\InitializeTenancyByPath;
 use App\Http\Controllers\SeederController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\JobScheduleController;
+use App\Http\Controllers\SystemLogsController;
 
 
 /* Testes *
@@ -75,3 +76,5 @@ Route::middleware(['panel'])->prefix('Audit')->group(function () {
     Route::get('getAll', [AuditController::class, 'listar']);
     Route::post('query', [AuditController::class, 'query']);
 });
+
+

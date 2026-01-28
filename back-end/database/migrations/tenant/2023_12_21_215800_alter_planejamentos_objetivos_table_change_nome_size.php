@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterPlanejamentosObjetivosTableChangeNomeSize extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -21,4 +21,4 @@ class AlterPlanejamentosObjetivosTableChangeNomeSize extends Migration
     {
         DB::statement("ALTER TABLE planejamentos_objetivos MODIFY nome VARCHAR(256) NOT NULL DEFAULT '';");
     }
-}
+};

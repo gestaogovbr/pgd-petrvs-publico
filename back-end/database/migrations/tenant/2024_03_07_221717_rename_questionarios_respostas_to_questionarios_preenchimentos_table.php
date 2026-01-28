@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 
-class RenameQuestionariosRespostasToQuestionariosPreenchimentosTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -24,4 +24,4 @@ class RenameQuestionariosRespostasToQuestionariosPreenchimentosTable extends Mig
     {
       Schema::rename('questionarios_preenchimentos','questionarios_respostas');
     }
-}
+};

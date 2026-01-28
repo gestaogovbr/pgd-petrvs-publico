@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterEntregasTableAddChecklistEtiquetas extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -27,4 +27,4 @@ class AlterEntregasTableAddChecklistEtiquetas extends Migration
             $table->dropColumn('etiquetas');
         });
     }
-}
+};

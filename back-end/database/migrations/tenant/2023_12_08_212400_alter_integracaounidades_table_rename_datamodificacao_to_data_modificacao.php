@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterIntegracaoUnidadesTableRenameDatamodificacaoToDataModificacao extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -29,4 +29,4 @@ class AlterIntegracaoUnidadesTableRenameDatamodificacaoToDataModificacao extends
             $table->renameColumn("data_modificacao", "datamodificacao");
         });
     }
-}
+};

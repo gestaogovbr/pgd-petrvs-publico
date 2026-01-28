@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use App\Traits\Version;
 
-class Version212 extends Migration
+return new class extends Migration
 {
     use Version;
 
@@ -26,4 +26,4 @@ class Version212 extends Migration
     {
         throw new Exception("Impossível retornar para versões já atualizadas");
     }
-}
+};

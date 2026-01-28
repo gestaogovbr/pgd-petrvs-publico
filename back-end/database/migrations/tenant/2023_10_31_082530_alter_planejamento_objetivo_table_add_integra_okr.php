@@ -6,7 +6,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-class AlterPlanejamentoObjetivoTableAddIntegraOkr extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -30,4 +30,4 @@ class AlterPlanejamentoObjetivoTableAddIntegraOkr extends Migration
             $table->dropColumn('integra_okr');
         });
     }
-}
+};

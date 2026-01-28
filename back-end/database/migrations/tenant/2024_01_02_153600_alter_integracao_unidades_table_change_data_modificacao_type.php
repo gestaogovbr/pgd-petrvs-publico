@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterIntegracaoUnidadesTableChangeDataModificacaoType extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -25,4 +25,4 @@ class AlterIntegracaoUnidadesTableChangeDataModificacaoType extends Migration
     {
         DB::statement("ALTER TABLE integracao_unidades MODIFY data_modificacao VARCHAR(50) NULL DEFAULT NULL;");
     }
-}
+};

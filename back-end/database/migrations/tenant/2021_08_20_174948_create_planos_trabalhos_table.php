@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
-class CreatePlanosTrabalhosTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -64,4 +64,4 @@ class CreatePlanosTrabalhosTable extends Migration
         });
         Schema::dropIfExists('planos_trabalhos');
     }
-}
+};

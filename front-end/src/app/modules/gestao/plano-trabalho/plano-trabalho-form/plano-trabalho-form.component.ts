@@ -36,6 +36,7 @@ import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.mode
 import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
 import { UnidadeIntegrante } from 'src/app/models/unidade-integrante.model';
 import { UnidadeIntegranteAtribuicao } from 'src/app/models/unidade-integrante-atribuicao.model';
+import { ProgramaService } from 'src/app/services/programa.service';
 
 @Component({
   selector: 'plano-trabalho-form',
@@ -85,6 +86,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public selectedModalidade?: TipoModalidade;
   public tipoModalidadeItems: LookupItem[] = [];
   public planosUsuarioComPendencias: boolean = false;
+  public programaService: ProgramaService;
 
 
   constructor(public injector: Injector) {
@@ -117,6 +119,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
+    this.programaService = injector.get<ProgramaService>(ProgramaService);
+
     this.modalWidth = 1300;
     this.planoDataset = this.dao!.dataset();
     this.form = this.fh.FormBuilder({
@@ -220,7 +224,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   private isStartDateBeforeProgramStart(control: AbstractControl, controlName: string): boolean {
     if (controlName !== 'data_inicio' || !this.selectedPrograma) return false;
-    
+
     return moment(control.value as Date).startOf('day') < 
            moment(this.selectedPrograma.data_inicio).startOf('day');
   }
@@ -285,7 +289,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       }
 
       const programas = await this.programaDao.query({
-        where: [['vigentesUnidadeExecutora', '==', unidadeId]],
+        where: [['todosUnidadeExecutora', '==', unidadeId]],
         join: this.joinPrograma,
         orderBy: [["unidade.path", "desc"]]
       }).asPromise();
@@ -296,7 +300,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
           value: prog.nome,
           data: prog
         }));
-        this.preenchePrograma(programas[0]);
+        const programaVigente = this.programaService.selecionaProgramaVigente(programas);
+        this.preenchePrograma(programaVigente || programas[0]);
       } else {
         this.regramentoNaoEncontrado();
       }
@@ -358,15 +363,15 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     'true' ; 
   }
 
-  public onProgramaSelect(selected: SelectItem) {
-    let programa = selected.entity as Programa;
+  public onProgramaSelect() {
+    if (!this.programa?.selectedItem) return;
+    let programa = this.programa.selectedItem.data as Programa;
+    this.selectedPrograma = programa;
     this.entity!.programa_id = programa.id;
     this.entity!.programa = programa;
     this.form?.controls.criterios_avaliacao.setValue(programa.plano_trabalho_criterios_avaliacao || []);
     this.form?.controls.data_inicio.updateValueAndValidity();
     this.form?.controls.data_fim.updateValueAndValidity();
-    this.calculaTempos();
-    this.cdRef.detectChanges();
   }
 
   public async onUsuarioSelect(selected: SelectItem) {    

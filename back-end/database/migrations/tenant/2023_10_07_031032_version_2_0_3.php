@@ -7,7 +7,7 @@ use App\Models\Tenant;
 use App\Traits\Version;
 use Illuminate\Support\Facades\DB;
 
-class Version203 extends Migration
+return new class extends Migration
 {
     use Version;
 
@@ -30,4 +30,4 @@ class Version203 extends Migration
     {
         throw new Exception("Impossível retornar para versões já atualizadas");
     }
-}
+};

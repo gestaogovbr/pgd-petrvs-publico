@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 
-use App\Models\Cidade;
 use App\Models\TipoAtividade;
 use App\Models\TipoAvaliacao;
 use App\Models\TipoModalidade;
@@ -31,12 +30,10 @@ class In24_2023Seeder extends Seeder
    */
 
   public $timenow;
-  public $brasilia;
 
   public function __construct()
   {
     $this->timenow = now();
-    $this->brasilia = Cidade::where('codigo_ibge', '5300108')->sole();
   }
 
   public function run()

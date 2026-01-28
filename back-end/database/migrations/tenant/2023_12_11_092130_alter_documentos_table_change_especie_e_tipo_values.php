@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 
-class AlterDocumentosTableChangeEspecieETipoValues extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -37,4 +37,4 @@ class AlterDocumentosTableChangeEspecieETipoValues extends Migration
         });
 
     }
-}
+};

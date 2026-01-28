@@ -9,6 +9,7 @@ use App\Models\Cidade;
 use App\Models\Entidade;
 use App\Models\Perfil;
 use App\Models\Unidade;
+use App\Models\TipoModalidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
@@ -278,6 +279,9 @@ class TenantService extends ServiceBase
 
             Log::info('Busca de Níveis de acesso.');
             $NivelAcessoService = new NivelAcessoService();
+
+            $tipoModalidadeId = TipoModalidade::first()->id;
+
             Log::info('Cadastro de Usuário.');
             $usuario = new Usuario([
                 'email' => $dataOrEntity->email,
@@ -285,6 +289,7 @@ class TenantService extends ServiceBase
                 'cpf' => $dataOrEntity->cpf,
                 'apelido' => $dataOrEntity->apelido,
                 'perfil_id' => $NivelAcessoService->getPerfilDesenvolvedor()->id,
+                'tipo_modalidade_id' => $tipoModalidadeId,
                 'data_inicio' => Carbon::now()
             ]);
             $usuario->save();

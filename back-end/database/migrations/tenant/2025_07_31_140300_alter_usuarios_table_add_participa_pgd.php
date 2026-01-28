@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterUsuariosTableAddParticipaPGD extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -30,4 +30,4 @@ class AlterUsuariosTableAddParticipaPGD extends Migration
             $table->dropColumn('participa_pgd');
         });
     }
-}
+};

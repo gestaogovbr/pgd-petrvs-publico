@@ -7,7 +7,7 @@ use App\Models\ModelBase;
 use App\Models\PlanoEntregaEntrega;
 use Illuminate\Support\Facades\DB;
 
-class AlterPlanosEntregasEntregasTableChangeEntregaIdNotNull extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -46,4 +46,4 @@ class AlterPlanosEntregasEntregasTableChangeEntregaIdNotNull extends Migration
         DB::table('entregas')->where('id', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa')->delete();
         
     }
-}
+};

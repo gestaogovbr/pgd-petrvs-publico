@@ -7,7 +7,7 @@
             <!-- (RI_PTR_1) No formulário de inclusão/edição de um plano de trabalho, o input-search de unidade, programa e usuario devem ficar desabilitados nas edições e habilitado apenas nas inclusões; -->
             <input-search #usuario [size]="4" required [disabled]="action == 'new' ? undefined : 'true'" controlName="usuario_id" [dao]="usuarioDao" [join]="['afastamentos','lotacao','unidades','areas_trabalho.atribuicoes']" (select)="onUsuarioSelect($event)"></input-search>
             <input-select #unidade [size]="4" required [disabled]="action == 'new' ? undefined : 'true'" controlName="unidade_id" nullable [items]="usuarioUnidades" [value]="undefined" [label]="lex.translate('Unidade')"  (change)="onUnidadeSelect()"></input-select>
-            <input-select #programa [size]="4" [label]="lex.translate('Programa de gestão')" icon="bi bi-file-bar-graph" required  controlName="programa_id"></input-select>
+            <input-select #programa [size]="4" [label]="lex.translate('Programa de gestão')" icon="bi bi-file-bar-graph" required controlName="programa_id" (change)="onProgramaSelect()"></input-select>
           </div>
           <div class="row">
             <input-datetime date [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="form!.controls.data_inicio" (change)="onDataInicioChange($event)" [labelInfo]="'Início da Vigência do '+ lex.translate('Plano de trabalho')" required></input-datetime>

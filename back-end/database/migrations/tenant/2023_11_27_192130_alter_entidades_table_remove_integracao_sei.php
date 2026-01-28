@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterEntidadesTableRemoveIntegracaoSei extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -32,4 +32,4 @@ class AlterEntidadesTableRemoveIntegracaoSei extends Migration
             $table->text('api_private_key')->nullable()->comment("Chave privada de API");
         });
     }
-}
+};

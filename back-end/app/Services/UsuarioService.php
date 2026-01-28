@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Storage;
 use SimpleXMLElement;
 use Throwable;
+use Illuminate\Support\Facades\DB;
 
 class UsuarioService extends ServiceBase
 {
@@ -37,7 +38,7 @@ class UsuarioService extends ServiceBase
   const LOGIN_GOOGLE = "GOOGLE";
   const LOGIN_MICROSOFT = "AZURE";
   const LOGIN_FIREBASE = "FIREBASE";
-  
+
   protected $integracaoService;
 
   public function __construct(
@@ -111,7 +112,7 @@ class UsuarioService extends ServiceBase
    */
   public function atribuicoesGestor(?string $unidadeId, ?string $usuarioId = null)
   {
-    
+
     $result = ["gestor" => false, "gestorSubstituto" => false, "gestorDelegado" => false];
 
     if(!$unidadeId)
@@ -142,6 +143,37 @@ class UsuarioService extends ServiceBase
       return $this->setBuffer("isGestorUnidade", $unidadeId, $this->isIntegrante('GESTOR', $unidadeId) || $this->isIntegrante('GESTOR_SUBSTITUTO', $unidadeId) || ($incluiDelegado && $this->isIntegrante('GESTOR_DELEGADO', $unidadeId)));
     }
   }
+
+  public function isGestorUnidadeRecursivo(string $unidadeId, ?string $usuarioId = null): bool
+  {
+    $usuarioId = $usuarioId ?? $this->loggedUser()->id;
+
+    $result = DB::select("
+        WITH RECURSIVE unidade_hierarchy AS (
+            SELECT id, unidade_pai_id, 0 as level
+            FROM unidades
+            WHERE id = ?
+
+            UNION ALL
+
+            SELECT u.id, u.unidade_pai_id, uh.level + 1
+            FROM unidades u
+            INNER JOIN unidade_hierarchy uh ON u.id = uh.unidade_pai_id
+            WHERE uh.level < 10
+        )
+        SELECT COUNT(*) as count
+        FROM unidade_hierarchy uh
+        INNER JOIN unidades_integrantes ui ON ui.unidade_id = uh.id
+        INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
+        WHERE ui.usuario_id = ?
+          AND uia.atribuicao IN ('GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO')
+          AND ui.deleted_at IS NULL
+          AND uia.deleted_at IS NULL
+    ", [$unidadeId, $usuarioId]);
+
+    return $result[0]->count > 0;
+  }
+
 
   /**
    * Informa se o usuário logado é participante do plano de trabalho recebido como parâmetro.
@@ -317,7 +349,7 @@ class UsuarioService extends ServiceBase
         if (!$defaultTipoModalidade) {
             throw new ValidateException("Tipo de Modalidade Padrão não definido no sistema. Consulte um administrador", 422);
         }
-        
+
         $data['tipo_modalidade_id'] = $defaultTipoModalidade->id;
     }
 
@@ -371,7 +403,7 @@ class UsuarioService extends ServiceBase
         throw new ValidateException("O campo de matrícula deve ter no máximo 50 caracteres", 422);
       if (empty($data["integrantes"][0]))
         throw new ValidateException("Selecione uma unidade!", 422);
-      
+
       if (!isset($data['tipo_modalidade_id'])) {
         $buscaTipoModalidade = Usuario::where("id", "=", $data["id"])->value('tipo_modalidade_id');
 
@@ -414,10 +446,10 @@ class UsuarioService extends ServiceBase
           $data["nome"] = $alreadyHas->nome;
           $data["apelido"] = $alreadyHas->apelido;
           $data["data_nascimento"] = $alreadyHas->data_nascimento;
-          
+
           if (isset($this->integracaoService)) {
              $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($data['email'], $data['matricula'], $alreadyHas->id);
-          }  
+          }
 
           $alreadyHas->deleted_at = null;
           return $alreadyHas;
@@ -490,7 +522,7 @@ class UsuarioService extends ServiceBase
       }
     }
 
-    
+
 
   public function searchText($data)
   {
@@ -563,13 +595,13 @@ class UsuarioService extends ServiceBase
    */
   public function consultaCPFSiape(string $cpf): array{
     [$dadosFuncionaisArray, $dadosPessoaisArray] = $this->buscaServidor($cpf);
- 
+
      $dadosFuncionaisArray = array_map(function($item) {
        $unidade = Unidade::where('codigo', $item['codUorgExercicio'])->first();
        $item['unidadeSigla'] = $unidade?->sigla;
        return $item;
      }, $dadosFuncionaisArray);
- 
+
      return [
       'pessoais'    => $dadosPessoaisArray,
        'funcionais'  => $dadosFuncionaisArray,
@@ -590,7 +622,7 @@ class UsuarioService extends ServiceBase
         return $usuario;
     }
 
-    public function removePedagio($data) 
+    public function removePedagio($data)
     {
         $usuario = Usuario::find($data['usuario_id']);
         if (empty($usuario)) {
@@ -623,23 +655,23 @@ class UsuarioService extends ServiceBase
         $usuario->data_ativacao_temporaria = Carbon::now();
         $usuario->perfil_id = $participanteId;
         $usuario->save();
-        
+
         return $usuario;
     }
-    
+
     public function matriculas($cpf) : Collection
     {
         $usuarios = Usuario::with('unidades')->where('cpf', $cpf)
         ->where('situacao_siape', '!=', UsuarioSituacaoSiape::INATIVO->value)
         ->get();
-        
+
         if ($usuarios->isEmpty()) {
             throw new ValidateException("Nenhum usuário encontrado com o CPF informado.", 404);
         }
-        
+
         return $usuarios;
     }
-    
+
 
     public function unidadesVinculadas($cpf) : Collection
     {
@@ -652,11 +684,11 @@ class UsuarioService extends ServiceBase
             ->whereNull('uia.deleted_at')
             ->distinct()
             ->get();
-        
+
         if ($unidades->isEmpty()) {
             throw new ValidateException("Nenhum usuário encontrado com o CPF informado.", 404);
         }
-        
+
         return $unidades;
     }
 
@@ -718,7 +750,7 @@ class UsuarioService extends ServiceBase
         $q->select(['id','nome']);
       }]);
 
-      // Planos de entregas que precisam ter progressos (agrupados por plano de entrega). 
+      // Planos de entregas que precisam ter progressos (agrupados por plano de entrega).
       // Só devem aparecer na tela de pendência a partir do 31º dia a contar da DATA FIM da vigência
       $entregasSemProgresso = PlanoEntregaEntrega::query()
         ->whereHas('planoEntrega.unidade', fn($q) => $q->whereIn('id', $unidadesGerenciadasIds))
