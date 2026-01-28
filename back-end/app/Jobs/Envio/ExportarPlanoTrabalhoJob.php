@@ -40,11 +40,11 @@ class ExportarPlanoTrabalhoJob extends ExportarItemJob
         ->find($this->id);
 
         if (!$planoTrabalho->usuario->lotacao){
-            throw new ExportPgdException("Usuário do Plano de Trabalho nº {$planoTrabalho->numero} não possui Lotação");
+            throw new ExportPgdException("Usuário do Plano de Trabalho não possui Lotação", $this->id);
         }
 
         if (!$planoTrabalho->entregas) {
-            throw new ExportPgdException("Plano de Trabalho nº {$planoTrabalho->numero} não possui contribuições");
+            throw new ExportPgdException("Plano de Trabalho não possui contribuições", $this->id);
         }
 
         return new PlanoTrabalhoResource($planoTrabalho);
@@ -60,15 +60,15 @@ class ExportarPlanoTrabalhoJob extends ExportarItemJob
     }
 
     public function tag() {
-        return 'Plano de Entrega';
+        return 'Plano de Trabalho';
     }
 
     protected function logInfo($message) {
-        Log::info("[{$this->tenantId}] Plano de Entrega #{$this->id} - {$message}");
+        Log::info("ENVIO [{$this->tenantId}] Plano de Trabalho #{$this->id} - {$message}");
     }
 
     protected function logError($message) {
-        Log::error("[{$this->tenantId}] Plano de Entrega #{$this->id} - {$message}");
+        Log::error("ENVIO [{$this->tenantId}] Plano de Trabalho #{$this->id} - {$message}");
     }
 }
 

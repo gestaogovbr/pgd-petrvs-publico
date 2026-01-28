@@ -88,17 +88,12 @@ class PgdService
             } else {
                 throw new ExportPgdException(
                     "Erro inesperado. Status: ".($response ? $response->status() : '').
-                    ". Msg: ".$exception->getMessage().
-                    ". URL: ".$endpoint.
-                    ". Data: ".print_r($body, true)
+                    ". Msg: ".$exception->getMessage()
                 );
             }
         } catch(\Throwable $exception) {
             throw new ExportPgdException(
-                "Erro inesperado.".
-                ". Msg: ".$exception->getMessage().
-                ". URL: ".$endpoint.
-                ". Data: ".print_r($body, true)
+                "Erro inesperado: ".$exception->getMessage()
             );
         }
     }

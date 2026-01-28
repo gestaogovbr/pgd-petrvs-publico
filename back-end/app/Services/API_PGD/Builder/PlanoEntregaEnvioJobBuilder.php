@@ -5,6 +5,7 @@ namespace App\Services\API_PGD\Builder;
 use App\Jobs\Envio\ExportarPlanoEntregaJob;
 use App\Models\PlanoEntrega;
 
+// classe responsavel por construir o job de envio do PE
 class PlanoEntregaEnvioJobBuilder
 {
     public static function make($tenantId, PlanoEntrega $planoEntrega)

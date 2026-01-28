@@ -12,27 +12,27 @@ class ParticipanteResource extends JsonResource
     public function toArray(Request $request)
     {
         if (!$this->matricula){
-            throw new ExportPgdException("Usuário {$this->id} sem Matrícula");
+            throw new ExportPgdException("Usuário sem Matrícula", $this->id);
         }
 
         if (!$this->ultimoPlanoTrabalho){
-            throw new ExportPgdException("Usuário {$this->id} não possui Planos de Trabalho");
+            throw new ExportPgdException("Usuário não possui Planos de Trabalho", $this->id);
         }
 
         $unidadeIntegrante = $this->unidadesIntegrantes->first();
 
         if (!$unidadeIntegrante || !$unidadeIntegrante->unidade || !$unidadeIntegrante->unidade->codigo){
-            throw new ExportPgdException("Usuário {$this->id} não possui unidade de Lotação");
+            throw new ExportPgdException("Usuário não possui unidade de Lotação", $this->id);
         }
 
         $dataAssinatura = $this->ultimaAssinatura->data_assinatura ?? null;
 
         if (!$dataAssinatura){
-            throw new ExportPgdException("Usuário {$this->id} não possui data de assinatura");
+            throw new ExportPgdException("Usuário não possui data de assinatura", $this->id);
         }
 
         if (!$this->ultimoPlanoTrabalho->tipoModalidade){
-            throw new ExportPgdException("Usuário {$this->id} não possui modalidade definida");
+            throw new ExportPgdException("Usuário não possui modalidade definida", $this->id);
         }
 
         $modalidade = new ModalidadeResource($this->ultimoPlanoTrabalho->tipoModalidade);

@@ -16,6 +16,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 
+// classe responsavel por enviar o job de PT
+// encadeia no processo o Participante e os PE relacionados às entregas
 class PlanoTrabalhoEnvioService
 {
     public static function processar($tenantId, PlanoTrabalho $planoTrabalho)

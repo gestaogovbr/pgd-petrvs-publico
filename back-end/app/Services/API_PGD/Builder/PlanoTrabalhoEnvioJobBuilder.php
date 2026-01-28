@@ -6,6 +6,7 @@ use App\Jobs\Envio\ExportarPlanoTrabalhoJob;
 use App\Models\PlanoTrabalho;
 use Carbon\Carbon;
 
+// classe responsavel por construir o job de envio do PT
 class PlanoTrabalhoEnvioJobBuilder
 {
     public static function make($tenantId, PlanoTrabalho $planoTrabalho)

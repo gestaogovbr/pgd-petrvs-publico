@@ -31,19 +31,19 @@ class ExportarPlanoEntregaJob extends ExportarItemJob
         ->find($this->id);
 
         if (!$planoEntrega){
-            throw new ExportPgdException("Plano de Entrega {$this->id} removido ou inválido");
+            throw new ExportPgdException("Plano de Entrega removido ou inválido", $this->id);
         }
 
         if (!$planoEntrega->programa){
-            throw new ExportPgdException("Plano de Entrega {$this->id} não possui Programa");
+            throw new ExportPgdException("Plano de Entrega não possui Programa", $this->id);
         }
 
         if (!$planoEntrega->unidade){
-            throw new ExportPgdException("Plano de Entrega {$this->id} não possui Unidade Executora");
+            throw new ExportPgdException("Plano de Entrega não possui Unidade Executora", $this->id);
         }
 
         if (!$planoEntrega->programa->unidade){
-            throw new ExportPgdException("Plano de Entrega {$this->id} não possui Unidade Instituidora");
+            throw new ExportPgdException("Plano de Entrega não possui Unidade Instituidora", $this->id);
         }
 
         return new PlanoEntregaResource($planoEntrega);
@@ -63,11 +63,11 @@ class ExportarPlanoEntregaJob extends ExportarItemJob
     }
 
     protected function logInfo($message) {
-        Log::info("[{$this->tenantId}] Plano de Entrega #{$this->id} - {$message}");
+        Log::info("ENVIO [{$this->tenantId}] Plano de Entrega #{$this->id} - {$message}");
     }
 
     protected function logError($message) {
-        Log::error("[{$this->tenantId}] Plano de Entrega #{$this->id} - {$message}");
+        Log::error("ENVIO [{$this->tenantId}] Plano de Entrega #{$this->id} - {$message}");
     }
 }
 

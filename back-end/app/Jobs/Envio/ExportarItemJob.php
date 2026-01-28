@@ -53,11 +53,11 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     abstract public function tag();
 
     protected function logInfo($message) {
-        Log::info("[{$this->tenantId}] #{$this->id} - {$message}");
+        Log::info("ENVIO [{$this->tenantId}] #{$this->id} - {$message}");
     }
 
     protected function logError($message) {
-        Log::error("[{$this->tenantId}] #{$this->id} - {$message}");
+        Log::error("ENVIO [{$this->tenantId}] #{$this->id} - {$message}");
     }
 
     public function handle(PgdService $pgdService)
@@ -161,7 +161,6 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     }
 
     public function failed(?Throwable $exception): void {
-        $mensagem = "Falha no ExportarItemJob: ".$exception->getMessage();
-        $this->insucesso($mensagem);
+        $this->insucesso($exception->getMessage());
     }
 }

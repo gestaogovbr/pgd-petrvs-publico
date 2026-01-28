@@ -33,7 +33,7 @@ class ExportarParticipanteJob extends ExportarItemJob
             ->find($this->id);
 
         if (!$model){
-            throw new ExportPgdException("Usuário {$this->id} inválido ou sem lotação");
+            throw new ExportPgdException("Usuário inválido ou sem lotação", $this->id);
         }
 
         return new ParticipanteResource($model);
@@ -53,11 +53,11 @@ class ExportarParticipanteJob extends ExportarItemJob
     }
 
     protected function logInfo($message) {
-        Log::info("[{$this->tenantId}] Usuário #{$this->id} - {$message}");
+        Log::info("ENVIO [{$this->tenantId}] Usuário #{$this->id} - {$message}");
     }
 
     protected function logError($message) {
-        Log::error("[{$this->tenantId}] Usuário #{$this->id} - {$message}");
+        Log::error("ENVIO [{$this->tenantId}] Usuário #{$this->id} - {$message}");
     }
 }
 
