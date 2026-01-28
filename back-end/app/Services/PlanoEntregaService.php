@@ -344,8 +344,10 @@ class PlanoEntregaService extends ServiceBase
     public function liberarHomologacao($data, $unidade)
     {
         try {
-            DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
+            if($this->planosUsuarioComPendenciasExecucaoAvaliacao($planoEntrega["usuario_id"], $planoEntrega["id"], now()))
+                throw new ValidateException("ValidatePlanoEntrega", "O plano possui entregas com pendências de execução/avaliação!");
+            DB::beginTransaction();
             $this->statusService->atualizaStatus($planoEntrega, 'HOMOLOGANDO', $data["justificativa"]);
             DB::commit();
         } catch (Throwable $e) {
@@ -615,7 +617,7 @@ class PlanoEntregaService extends ServiceBase
             }
             $planosComPendencias = $this->planosUnidadeComPendencias($dataOrEntity["unidade_id"]);
             if ($planosComPendencias) {
-                // throw new ServerException("ValidatePlanoEntrega", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");
+                throw new ServerException("ValidatePlanoEntrega", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");
             }
         }
     }
@@ -707,10 +709,9 @@ class PlanoEntregaService extends ServiceBase
         return in_array($planoAnterior->status, $statusesPendentes, true);
     }
 
-    public function planosUsuarioComPendenciasExecucaoAvaliacao(string $usuarioId, $planoEntregaId): bool
+    public function planosUsuarioComPendenciasExecucaoAvaliacao(string $usuarioId, $planoEntregaId, $dataAssinatura): bool
     {
         $statusesPendentes = ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'];
-        $dataAssinatura = now();
         $diasPendenciaDataFinalPlano = 30;
 
         $planosPendentes = PlanoEntrega::where('usuario_id', $usuarioId)
