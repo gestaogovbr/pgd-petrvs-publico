@@ -20,6 +20,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable;
 
+    protected $timestamp = null;
     public int $execucoes = 1;
     public bool $reagendado = false;
 
@@ -30,21 +31,24 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
         @id: ID do item a ser exportado
         @timestamp: Timestamp do agendamento. Usado para evitar envio de itens defasados
     */
-    public function __construct(protected string $tenantId, protected string $id, protected $timestamp)
+    public function __construct(protected string $tenantId, protected string $id)
     {
         $this->queue = 'pgd_queue';
 
         $tenant = tenancy()->find($tenantId);
         tenancy()->initialize($tenant);
 
+        $model = $this->getModel()->first();
+        $model->data_agendamento_envio = Carbon::now();
+        $model->saveQuietly();
+
+        $this->timestamp = $model->data_agendamento_envio;
         $this->api_cod_unidade_autorizadora = $tenant->api_cod_unidade_autorizadora;
     }
 
     abstract public function getModel();
 
     abstract public function getResource(): JsonResource;
-
-    public abstract function getEndpoint($dados): string;
 
     abstract public function tag();
 
@@ -84,25 +88,20 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 
             $resource = $this->getResource();
 
-            $body = (object) json_decode($resource->toJson(), true);
-            $body->cod_unidade_autorizadora = $this->api_cod_unidade_autorizadora;
-
-            unset($resource);
-
-            $success = $pgdService->enviarDados(
-                $this->tenantId,
-                $this->getEndpoint($body),
-                $body
+            $success = $this->enviar(
+                $pgdService,
+                $resource
             );
 
             if ($success) {
                 $this->sucesso();
             } else {
                 $this->logError('Erro no envio!');
-                var_dump($body);
+                var_dump($resource);
             }
 
             unset($body);
+            unset($resource);
 
         } catch(TokenPgdException $e) {
             Cache::put('api_down', true, 120); // circuit breaker
@@ -116,6 +115,9 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
             $this->fail($exception);
         }
     }
+
+    abstract public function enviar(PgdService $pgdService,
+                JsonResource $resource): bool;
 
     public function registrarTentativa() {
         $model = $this->getModel();

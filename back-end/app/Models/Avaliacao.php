@@ -71,4 +71,14 @@ class Avaliacao extends ModelBase
   {
     return $this->belongsTo(PlanoTrabalhoConsolidacao::class);
   }
+
+  public function isConsolidacao()
+  {
+    return !empty($this->plano_trabalho_consolidacao_id);
+  }
+
+  public function isPlanoEntrega()
+  {
+    return !empty($this->plano_entrega_id);
+  }
 }

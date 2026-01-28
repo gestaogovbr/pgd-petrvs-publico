@@ -2,8 +2,11 @@
 namespace App\Jobs\Envio;
 
 use App\Exceptions\ExportPgdException;
-use App\Models\Usuario;
+use App\Jobs\Envio\ExportarItemJob;
 use App\Jobs\Envio\Resources\ParticipanteResource;
+use App\Models\Usuario;
+use App\Services\API_PGD\PgdService;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Log;
 
 class ExportarParticipanteJob extends ExportarItemJob
@@ -36,6 +39,15 @@ class ExportarParticipanteJob extends ExportarItemJob
         return new ParticipanteResource($model);
     }
 
+    public function enviar(PgdService $pgdService,
+                JsonResource $resource): bool {
+        return $pgdService->enviarParticipante(
+                $this->tenantId,
+                $this->api_cod_unidade_autorizadora,
+                $resource
+        );
+    }
+
     public function tag() {
         return 'Participante';
     }
@@ -46,14 +58,6 @@ class ExportarParticipanteJob extends ExportarItemJob
 
     protected function logError($message) {
         Log::error("[{$this->tenantId}] Usuário #{$this->id} - {$message}");
-    }
-
-    public function getEndpoint($resource): string {
-        return "/organizacao/SIAPE/{$this->api_cod_unidade_autorizadora}/{$resource->cod_unidade_lotacao}/participante/{$resource->matricula_siape}";
-    }
-
-    public function displayName() {
-        return "Exportar Participante #{$this->id}";
     }
 }
 

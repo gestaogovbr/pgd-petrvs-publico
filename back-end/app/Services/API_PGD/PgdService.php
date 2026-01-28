@@ -4,7 +4,11 @@ namespace App\Services\API_PGD;
 use App\Exceptions\ExportPgdException;
 use App\Exceptions\LogError;
 use App\Exceptions\TokenPgdException;
+use App\Jobs\Envio\Resources\ParticipanteResource;
+use App\Jobs\Envio\Resources\PlanoEntregaResource;
+use App\Jobs\Envio\Resources\PlanoTrabalhoResource;
 use App\Models\Tenant;
+use App\Services\API_PGD\Types\ParticipantePgdType;
 use Exception;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\RequestException;
@@ -111,10 +115,10 @@ class PgdService
 
     public function authenticate(string $tenantId)
     {
-        $token = $this->getToken($tenantId);
+        $token = self::getToken($tenantId);
 
         if ($token){
-            $this->setToken($tenantId, $token);
+            self::setToken($tenantId, $token);
             return $token;
         }
 
@@ -164,7 +168,7 @@ class PgdService
             $dados = $response->json();
             $token = $dados['access_token'];
 
-            $this->setToken($tenantId, $token);
+            self::setToken($tenantId, $token);
 
             return $token;
         } catch(\Throwable $e) {
@@ -174,15 +178,45 @@ class PgdService
         }
     }
 
-    public function setToken($tenantId, $token) {
+    public function enviarParticipante($tenantId, $api_cod_unidade_autorizadora, ParticipanteResource $participante) : bool
+    {
+        $body = (object) json_decode($participante->toJson(), true);
+        $body->cod_unidade_autorizadora = $api_cod_unidade_autorizadora;
+
+        $url = "/organizacao/SIAPE/{$api_cod_unidade_autorizadora}/{$participante->cod_unidade_lotacao}/participante/{$participante->matricula_siape}";
+
+        return $this->enviarDados($tenantId, $url, $participante);
+    }
+
+    public function enviarPlanoEntrega($tenantId, $api_cod_unidade_autorizadora, PlanoEntregaResource $planoEntrega) : bool
+    {
+        $body = (object) json_decode($planoEntrega->toJson(), true);
+        $body->cod_unidade_autorizadora = $api_cod_unidade_autorizadora;
+
+        $url = "/organizacao/SIAPE/{$api_cod_unidade_autorizadora}/plano_entregas/{$planoEntrega->id_plano_entregas}";
+
+        return $this->enviarDados($tenantId, $url, $planoEntrega);
+    }
+
+    public function enviarPlanoTrabalho($tenantId, $api_cod_unidade_autorizadora, PlanoTrabalhoResource $planoTrabalho) : bool
+    {
+        $body = (object) json_decode($planoTrabalho->toJson(), true);
+        $body->cod_unidade_autorizadora = $api_cod_unidade_autorizadora;
+
+        $url = "/organizacao/SIAPE/{$api_cod_unidade_autorizadora}/plano_trabalho/{$planoTrabalho->id}";
+
+        return $this->enviarDados($tenantId, $url, $planoTrabalho);
+    }
+
+    public static function setToken($tenantId, $token) {
         Cache::put("pgd_token_$tenantId", $token, 60*10);
     }
 
-    public function getToken($tenantId) {
+    public static function getToken($tenantId) {
         return Cache::get("pgd_token_$tenantId", false);
     }
 
-    public function clearToken($tenantId) {
+    public static function clearToken($tenantId) {
         Cache::delete("pgd_token_$tenantId");
     }
 }

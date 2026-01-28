@@ -169,4 +169,8 @@ class PlanoTrabalho extends ModelBase
         ];
     }
 
+    public function isEmStatusParaEnvio() {
+        return in_array($this->status, ['ATIVO', 'CONCLUIDO', 'AVALIADO']);
+    }
+
 }

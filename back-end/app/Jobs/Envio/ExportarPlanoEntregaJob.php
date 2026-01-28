@@ -2,8 +2,11 @@
 namespace App\Jobs\Envio;
 
 use App\Exceptions\ExportPgdException;
-use App\Models\PlanoEntrega;
+use App\Jobs\Envio\ExportarItemJob;
 use App\Jobs\Envio\Resources\PlanoEntregaResource;
+use App\Models\PlanoEntrega;
+use App\Services\API_PGD\PgdService;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Log;
 
 class ExportarPlanoEntregaJob extends ExportarItemJob
@@ -46,6 +49,15 @@ class ExportarPlanoEntregaJob extends ExportarItemJob
         return new PlanoEntregaResource($planoEntrega);
     }
 
+    public function enviar(PgdService $pgdService,
+                JsonResource $resource): bool {
+        return $pgdService->enviarPlanoEntrega(
+                $this->tenantId,
+                $this->api_cod_unidade_autorizadora,
+                $resource
+        );
+    }
+
     public function tag() {
         return 'Plano de Entrega';
     }
@@ -56,14 +68,6 @@ class ExportarPlanoEntregaJob extends ExportarItemJob
 
     protected function logError($message) {
         Log::error("[{$this->tenantId}] Plano de Entrega #{$this->id} - {$message}");
-    }
-
-    public function getEndpoint($resource): string {
-        return "/organizacao/SIAPE/{$this->api_cod_unidade_autorizadora}/plano_entregas/{$resource->id_plano_entregas}";
-    }
-
-    public function displayName() {
-        return "Exportar Plano de Entrega #{$this->id}";
     }
 }
 

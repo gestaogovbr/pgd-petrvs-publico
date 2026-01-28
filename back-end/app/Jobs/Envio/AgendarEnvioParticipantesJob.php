@@ -2,7 +2,7 @@
 
 namespace App\Jobs\Envio;
 
-use App\Jobs\Envio\ExportarParticipanteJob;
+use App\Services\API_PGD\UsuarioEnvioService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -74,21 +74,7 @@ class AgendarEnvioParticipantesJob implements ShouldQueue
 
                     $qtde++;
 
-                    $timestamp = now();
-
-                    DB::table('usuarios')
-                        ->where('id', $usuario->id)
-                        ->update([
-                            'data_agendamento_envio' => now(),
-                        ]);
-
-                    ExportarParticipanteJob::dispatch(
-                        $tenant->id,
-                        $usuario->id,
-                        $timestamp
-                    )
-                    ->onConnection('rabbitmq')
-                    ->onQueue('pgd_queue');
+                    UsuarioEnvioService::processar($tenant->id, $usuario);
                 }
 
                 Log::info("Chunk processado ({$qtde} usuários até agora)");
