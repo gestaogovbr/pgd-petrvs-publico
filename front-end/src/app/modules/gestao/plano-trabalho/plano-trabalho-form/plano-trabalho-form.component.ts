@@ -94,7 +94,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.join = [
       "unidade.entidade", 
       "entregas.entrega", 
-      "entregas.plano_entrega_entrega:id,plano_entrega_id", 
+      "entregas.plano_entrega_entrega:id,plano_entrega_id,descricao,data_inicio,data_fim,progresso_realizado,progresso_realizado", 
       "usuario.participacoes_programas",
       "usuario.lotacao",
       "usuario.areas_trabalho.atribuicoes",
@@ -500,9 +500,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   public async loadData(entity: PlanoTrabalho, form: FormGroup, action?: string) {     
     if(action == 'clone') {
-
-      console.log(entity);
- 
       entity.id = "";
       entity.data_inicio = new Date();
       entity.data_fim = moment().add(1, 'day').toDate();
