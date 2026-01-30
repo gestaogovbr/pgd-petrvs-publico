@@ -12,6 +12,8 @@ front-end/.angular/*
 /resources/mysql/*
 /resources/docker/mariadb/*
 /resources/docker/rabbitmq/*
+/rabbitmq/*
+
 
 back-end/database/seeders/LogSeeder.php
 resources/docker/dev/docker-compose.yml
