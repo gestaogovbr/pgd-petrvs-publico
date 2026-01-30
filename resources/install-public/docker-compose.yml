@@ -51,8 +51,8 @@ services:
       RABBITMQ_DEFAULT_VHOST: /
       TZ: "America/Bahia"
     volumes:
-      - ../rabbitmq/data:/var/lib/rabbitmq
-      - ../rabbitmq/logs:/var/log/rabbitmq
+      - ../../rabbitmq/data:/var/lib/rabbitmq
+      - ../../rabbitmq/logs:/var/log/rabbitmq
     deploy:
       resources:
         limits:
