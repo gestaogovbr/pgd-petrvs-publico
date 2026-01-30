@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 use Mockery;
-use App\Exceptions\ValidateException;
+use App\Services\ServiceBase;
+use Illuminate\Support\Str;
+use ReflectionClass;
 
 class UsuarioServiceTest extends TestCase
 {
@@ -51,7 +53,7 @@ class UsuarioServiceTest extends TestCase
 
         // Cria perfil básico
         DB::table('perfis')->insert([
-            'id' => \Illuminate\Support\Str::uuid()->toString(),
+            'id' => Str::uuid()->toString(),
             'nome' => 'Participante',
             'nivel' => 1
         ]);
@@ -62,11 +64,11 @@ class UsuarioServiceTest extends TestCase
         // Instancia o service e injeta o mock
         $this->service = new UsuarioService();
         
-        // Injeção via Reflection já que a propriedade é protected
-        $reflection = new \ReflectionClass($this->service);
-        $property = $reflection->getProperty('integracaoService');
+        // Injeção via Reflection na propriedade _services da classe pai ServiceBase
+        $reflection = new ReflectionClass(ServiceBase::class);
+        $property = $reflection->getProperty('_services');
         $property->setAccessible(true);
-        $property->setValue($this->service, $this->integracaoServiceMock);
+        $property->setValue($this->service, ['integracaoService' => $this->integracaoServiceMock]);
     }
 
     protected function tearDown(): void
@@ -80,7 +82,7 @@ class UsuarioServiceTest extends TestCase
         // Dados do usuário antigo deletado
         $email = 'conflito@teste.gov.br';
         $cpf = '12345678900';
-        $id = \Illuminate\Support\Str::uuid()->toString();
+        $id = Str::uuid()->toString();
         $matricula = '11111';
 
         DB::table('usuarios')->insert([
@@ -96,7 +98,7 @@ class UsuarioServiceTest extends TestCase
 
         // Dados para reativação (tentativa de criar novo usuário com mesmos dados)
         $data = [
-            'id' => \Illuminate\Support\Str::uuid()->toString(), // ID novo, diferente do antigo
+            'id' => Str::uuid()->toString(), // ID novo, diferente do antigo
             'email' => $email,
             'cpf' => $cpf,
             'matricula' => '22222', // Matrícula diferente, mas mesmo CPF/Email
@@ -120,10 +122,10 @@ class UsuarioServiceTest extends TestCase
         $this->service = Mockery::mock(UsuarioService::class)->makePartial();
         
         // Re-injeta o mock do integracaoService
-        $reflection = new \ReflectionClass(UsuarioService::class);
-        $property = $reflection->getProperty('integracaoService');
+        $reflection = new ReflectionClass(ServiceBase::class);
+        $property = $reflection->getProperty('_services');
         $property->setAccessible(true);
-        $property->setValue($this->service, $this->integracaoServiceMock);
+        $property->setValue($this->service, ['integracaoService' => $this->integracaoServiceMock]);
         
         // Acessa o método validateStore diretamente se possível, ou via proxyStore que o chama?
         // ServiceBase usa __call para métodos mágicos?

@@ -125,7 +125,7 @@ class ProcessaDadosSiapeBD
         }
     }
 
-    private function decideDadosFuncionais(array $dadosfuncionaisArray) : array
+    private function decideDadosFuncionais(array $dadosfuncionaisArray): array
     {
         if (count($dadosfuncionaisArray) == 1) {
             return [$this->simpleXmlElementToArray($dadosfuncionaisArray[0])];
@@ -141,7 +141,7 @@ class ProcessaDadosSiapeBD
         return $retorno;
     }
 
-    private function processaMultiplasMatriculasInativas(string $cpf, array $dadosFuncionaisArray, string $dadosFuncionais) : void
+    private function processaMultiplasMatriculasInativas(string $cpf, array $dadosFuncionaisArray, string $dadosFuncionais): void
     {
         $usuarios = Usuario::whereNull('deleted_at')
             ->whereIn('cpf', function ($query) use ($cpf) {
@@ -230,6 +230,7 @@ class ProcessaDadosSiapeBD
     public function dadosUorg(): array
     {
         $response = SiapeDadosUORG::where('processado', 0)
+            ->whereNotNull('codigo')
             ->orderBy('updated_at', 'desc')->get();
 
         if ($response->isEmpty()) {
@@ -238,9 +239,6 @@ class ProcessaDadosSiapeBD
         $dadosUorgArray = [];
         foreach ($response as $dadosUnidades) {
             try {
-                if(empty($dadosUnidades->codigo)){
-                    throw new ErrorDataSiapeException("Código da Unidade vazia");
-                } 
                 $dadosUorg = $this->processaDadosUorg($dadosUnidades->codigo, $dadosUnidades->response);
             } catch (Exception $e) {
                 report($e);
@@ -321,7 +319,7 @@ class ProcessaDadosSiapeBD
         return $responseXml;
     }
 
-     public function prepareResponseUorgXml(string $codigo, string $response): SimpleXMLElement
+    public function prepareResponseUorgXml(string $codigo, string $response): SimpleXMLElement
     {
         $responseXml = $this->prepareResponseXml($response);
 

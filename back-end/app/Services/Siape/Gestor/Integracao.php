@@ -4,7 +4,7 @@ namespace App\Services\Siape\Gestor;
 
 use App\Enums\Atribuicao as EnumsAtribuicao;
 use App\Exceptions\ServerException;
-use App\Models\Perfil;
+use App\Models\UnidadeIntegrante;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Services\LogTrait;

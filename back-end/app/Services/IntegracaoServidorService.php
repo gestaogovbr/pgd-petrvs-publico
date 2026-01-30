@@ -12,11 +12,7 @@ class IntegracaoServidorService extends ServiceBase
 {
   const SIAPE_BLACKLIST_INATIVO = 1;
   const SIAPE_BLACKLIST_ATIVO = 0;
-  public function __construct()
-  {
-    parent::__construct();
-    $this->nivelAcessoService = new NivelAcessoService();
-  }
+
 
   public function processaServidoresRemovidosNoSiape(): array
   {

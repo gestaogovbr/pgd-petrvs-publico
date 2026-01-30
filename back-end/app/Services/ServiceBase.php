@@ -76,7 +76,6 @@ class ServiceBase extends DynamicMethods
   const ACTION_EDIT = "EDIT";
 
   public string $collection = "";
-  public $nivelAcessoService;
 
   public $buffer = []; /* Utilizado para passar informações entre os Proxys */
 
@@ -88,7 +87,6 @@ class ServiceBase extends DynamicMethods
     if (empty($this->_services[$name]) && class_exists($fullName)) $this->_services[$name] = new $fullName();
     return class_exists($fullName) ? $this->_services[$name] : null;
   }
-
 
   public function __construct($collection = null)
   {
