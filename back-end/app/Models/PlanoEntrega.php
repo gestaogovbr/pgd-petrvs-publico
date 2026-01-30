@@ -45,6 +45,10 @@ class PlanoEntrega extends ModelBase
     'CANCELADO' => 'Cancelado'
   ];
 
+  public const STATUSES_PENDENTES = [
+    'INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'
+  ];
+
   public $fillable_changes = ["entregas"];
 
     public $delete_cascade = [];

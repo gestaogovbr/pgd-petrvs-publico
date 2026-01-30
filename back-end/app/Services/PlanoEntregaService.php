@@ -704,19 +704,16 @@ class PlanoEntregaService extends ServiceBase
         }
 
         $planoAnterior = $planos->get(1);
-        $statusesPendentes = ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'];
 
-        return in_array($planoAnterior->status, $statusesPendentes, true);
+        return in_array($planoAnterior->status, PlanoEntrega::STATUSES_PENDENTES, true);
     }
 
     public function planosUsuarioComPendenciasExecucaoAvaliacao(string $usuarioId, $planoEntregaId, $dataAssinatura): bool
     {
-        $statusesPendentes = ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'];
         $diasPendenciaDataFinalPlano = 30;
 
         $planosPendentes = PlanoEntrega::where('usuario_id', $usuarioId)
-            ->whereNotIn('status', ['CANCELADO', 'SUSPENSO'])
-            ->whereIn('status', $statusesPendentes)
+            ->whereIn('status', PlanoEntrega::STATUSES_PENDENTES)
             ->where('id','!=', $planoEntregaId)
             ->where('data_fim', '<', $dataAssinatura->subDays($diasPendenciaDataFinalPlano))
             ->get();
