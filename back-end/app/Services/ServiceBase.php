@@ -872,7 +872,7 @@ class ServiceBase extends DynamicMethods
           }
         }
         if ($relations) $entity->fillRelations($relations);
-        $model::where('id', $data['id'])->update($submit);
+        $model::findOrFail($data['id'])->update($submit);
         $entity->fresh();
         if (method_exists($this, "extraUpdate")) $this->extraUpdate($entity, $unidade);
         if ($transaction) DB::commit();
@@ -902,9 +902,9 @@ class ServiceBase extends DynamicMethods
         if ($transaction) DB::beginTransaction();
         $data = method_exists($this, "proxyUpdateJson") ? $this->proxyUpdateJson($data, $unidade) : $data;
         if ($data['data'] == null) {
-          $model::where('id', $data['id'])->update([$data['field'] => null]);
+          $model::findOrFail($data['id'])->update([$data['field'] => null]);
         } else {
-          $model::where('id', $data['id'])->addBinding(json_encode($data['data']), 'join')->update([
+          $model::findOrFail($data['id'])->addBinding(json_encode($data['data']), 'join')->update([
             $data['field'] => DB::raw("JSON_MERGE_PATCH(IFNULL(" . preg_replace('/[^a-z0-9_]/i', '', $data['field']) . ", '{}'), ?)")
           ]);
         }
