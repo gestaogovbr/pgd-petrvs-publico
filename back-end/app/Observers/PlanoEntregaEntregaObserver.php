@@ -30,6 +30,8 @@ class PlanoEntregaEntregaObserver
             return;
         }
 
-        PlanoEntregaEnvioService::processar(tenant('id'), $planoEntregaEntrega->planoEntrega);
+        \Log::info('Agendando envio de PlanoEntregaEntrega ID '.$planoEntregaEntrega->id);
+
+        PlanoEntregaEnvioService::processar(tenant('id'), $planoEntregaEntrega->planoEntrega, 'PlanoEntregaEntrega');
     }
 }

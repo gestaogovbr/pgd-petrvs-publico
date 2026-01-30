@@ -20,14 +20,14 @@ use Illuminate\Support\Facades\DB;
 // encadeia no processo o Participante e os PE relacionados às entregas
 class PlanoTrabalhoEnvioService
 {
-    public static function processar($tenantId, PlanoTrabalho $planoTrabalho)
+    public static function processar($tenantId, PlanoTrabalho $planoTrabalho, string $origem = '')
     {
         $jobChain = [];
 
         DB::beginTransaction();
 
         try{
-            $jobPlanoTrabalho = PlanoTrabalhoEnvioJobBuilder::make($tenantId, $planoTrabalho);
+            $jobPlanoTrabalho = PlanoTrabalhoEnvioJobBuilder::make($tenantId, $planoTrabalho, $origem);
 
             if (!$jobPlanoTrabalho) {
                 DB::rollBack();
@@ -35,7 +35,7 @@ class PlanoTrabalhoEnvioService
             }
 
             // FASE 1 - Envio do Participante do PT
-            $jobUsuario = UsuarioEnvioJobBuilder::make($tenantId, $planoTrabalho->usuario);
+            $jobUsuario = UsuarioEnvioJobBuilder::make($tenantId, $planoTrabalho->usuario, $origem);
             if ($jobUsuario) {
                 DB::rollBack();
                 return false;
@@ -45,7 +45,7 @@ class PlanoTrabalhoEnvioService
             // FASE 2 - Envio dos Planos de Entrega, para devido envio das entregas vinculadas ao plano de trabalho
             foreach($planoTrabalho->entregas as $planoEntregaEntrega) {
                 if ($planoEntregaEntrega->plano_entrega_id) {
-                    $jobEntrega = PlanoEntregaEnvioJobBuilder::make($tenantId, $planoEntregaEntrega->planoEntrega);
+                    $jobEntrega = PlanoEntregaEnvioJobBuilder::make($tenantId, $planoEntregaEntrega->planoEntrega, $origem);
                     if ($jobEntrega) {
                         $jobChain[] = $jobEntrega;
                     }

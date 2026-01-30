@@ -15,6 +15,6 @@ class PlanoEntregaObserver
             return;
         }
 
-        PlanoEntregaEnvioService::processar(tenant('id'), $planoEntrega);
+        PlanoEntregaEnvioService::processar(tenant('id'), $planoEntrega, 'PlanoEntrega');
     }
 }

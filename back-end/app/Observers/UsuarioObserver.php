@@ -15,6 +15,6 @@ class UsuarioObserver
             return;
         }
 
-        UsuarioEnvioService::processar(tenant('id'), $usuario);
+        UsuarioEnvioService::processar(tenant('id'), $usuario, 'Usuario');
     }
 }

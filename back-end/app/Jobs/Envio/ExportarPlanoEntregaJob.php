@@ -49,9 +49,8 @@ class ExportarPlanoEntregaJob extends ExportarItemJob
         return new PlanoEntregaResource($planoEntrega);
     }
 
-    public function enviar(PgdService $pgdService,
-                JsonResource $resource): bool {
-        return $pgdService->enviarPlanoEntrega(
+    public function enviar(JsonResource $resource): bool {
+        return $this->pgdService->enviarPlanoEntrega(
                 $this->tenantId,
                 $this->api_cod_unidade_autorizadora,
                 $resource
@@ -60,14 +59,6 @@ class ExportarPlanoEntregaJob extends ExportarItemJob
 
     public function tag() {
         return 'Plano de Entrega';
-    }
-
-    protected function logInfo($message) {
-        Log::info("ENVIO [{$this->tenantId}] Plano de Entrega #{$this->id} - {$message}");
-    }
-
-    protected function logError($message) {
-        Log::error("ENVIO [{$this->tenantId}] Plano de Entrega #{$this->id} - {$message}");
     }
 }
 

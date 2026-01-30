@@ -39,9 +39,8 @@ class ExportarParticipanteJob extends ExportarItemJob
         return new ParticipanteResource($model);
     }
 
-    public function enviar(PgdService $pgdService,
-                JsonResource $resource): bool {
-        return $pgdService->enviarParticipante(
+    public function enviar(JsonResource $resource): bool {
+        return $this->pgdService->enviarParticipante(
                 $this->tenantId,
                 $this->api_cod_unidade_autorizadora,
                 $resource
@@ -50,14 +49,6 @@ class ExportarParticipanteJob extends ExportarItemJob
 
     public function tag() {
         return 'Participante';
-    }
-
-    protected function logInfo($message) {
-        Log::info("ENVIO [{$this->tenantId}] Usuário #{$this->id} - {$message}");
-    }
-
-    protected function logError($message) {
-        Log::error("ENVIO [{$this->tenantId}] Usuário #{$this->id} - {$message}");
     }
 }
 

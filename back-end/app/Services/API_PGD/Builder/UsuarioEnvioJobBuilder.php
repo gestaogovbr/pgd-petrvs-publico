@@ -8,8 +8,8 @@ use App\Models\Usuario;
 // classe responsavel por construir o job de envio do usuario
 class UsuarioEnvioJobBuilder
 {
-    public static function make($tenantId, Usuario $usuario)
+    public static function make($tenantId, Usuario $usuario, string $origem = '')
     {
-        return new ExportarParticipanteJob($tenantId, $usuario->id);
+        return new ExportarParticipanteJob($tenantId, $usuario->id, $origem);
     }
 }

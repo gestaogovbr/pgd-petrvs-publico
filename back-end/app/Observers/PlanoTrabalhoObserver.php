@@ -2,13 +2,8 @@
 
 namespace App\Observers;
 
-use App\Jobs\Envio\ExportarParticipanteJob;
-use App\Jobs\Envio\ExportarPlanoEntregaJob;
-use App\Jobs\Envio\ExportarPlanoTrabalhoJob;
 use App\Models\PlanoTrabalho;
 use App\Services\API_PGD\PlanoTrabalhoEnvioService;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 
 class PlanoTrabalhoObserver
@@ -24,6 +19,6 @@ class PlanoTrabalhoObserver
             return;
         }
 
-        PlanoTrabalhoEnvioService::processar(tenant('id'), $planoTrabalho);
+        PlanoTrabalhoEnvioService::processar(tenant('id'), $planoTrabalho, 'PlanoTrabalho');
     }
 }

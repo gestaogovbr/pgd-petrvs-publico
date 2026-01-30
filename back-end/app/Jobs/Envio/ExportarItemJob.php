@@ -23,15 +23,15 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     protected $timestamp = null;
     public int $execucoes = 1;
     public bool $reagendado = false;
-
     protected string $api_cod_unidade_autorizadora;
+    protected ?PgdService $pgdService;
 
     /*
         @tenantId: ID do Tenant
         @id: ID do item a ser exportado
         @timestamp: Timestamp do agendamento. Usado para evitar envio de itens defasados
     */
-    public function __construct(protected string $tenantId, protected string $id)
+    public function __construct(protected string $tenantId, protected string $id, protected $origem = '')
     {
         $this->queue = 'pgd_queue';
 
@@ -53,15 +53,16 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     abstract public function tag();
 
     protected function logInfo($message) {
-        Log::info("ENVIO [{$this->tenantId}] #{$this->id} - {$message}");
+        Log::info("ENVIO [{$this->tenantId}] ".$this->tag()." #{$this->id} - {$message}".($this->origem ? " (Origem: {$this->origem})" : ''));
     }
 
     protected function logError($message) {
-        Log::error("ENVIO [{$this->tenantId}] #{$this->id} - {$message}");
+        Log::error("ENVIO [{$this->tenantId}] ".$this->tag()." #{$this->id} - {$message}".($this->origem ? " (Origem: {$this->origem})" : ''));
     }
 
     public function handle(PgdService $pgdService)
     {
+        $this->pgdService = $pgdService;
         $this->execucoes += 1;
 
         if (Cache::get("api_down")) {
@@ -88,10 +89,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 
             $resource = $this->getResource();
 
-            $success = $this->enviar(
-                $pgdService,
-                $resource
-            );
+            $success = $this->enviar($resource);
 
             if ($success) {
                 $this->sucesso();
@@ -116,8 +114,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
         }
     }
 
-    abstract public function enviar(PgdService $pgdService,
-                JsonResource $resource): bool;
+    abstract public function enviar(JsonResource $resource): bool;
 
     public function registrarTentativa() {
         $model = $this->getModel();

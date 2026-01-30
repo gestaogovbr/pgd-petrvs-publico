@@ -10,12 +10,13 @@ use App\Http\Controllers\TipoClienteController;
 use App\Models\Avaliacao;
 use App\Models\PlanoEntrega;
 use App\Models\PlanoEntregaEntrega;
+use App\Models\PlanoEntregaEntregaProgresso;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Models\StatusJustificativa;
 use App\Models\Usuario;
-use App\Observers\AvaliacaoObserver;
 use App\Observers\PlanoEntregaEntregaObserver;
+use App\Observers\PlanoEntregaEntregaProgressoObserver;
 use App\Observers\PlanoEntregaObserver;
 use App\Observers\PlanoTrabalhoEntregaObserver;
 use App\Observers\PlanoTrabalhoObserver;
@@ -111,9 +112,10 @@ class AppServiceProvider extends ServiceProvider
         Usuario::observe(UsuarioObserver::class);
         PlanoEntrega::observe(PlanoEntregaObserver::class);
         PlanoEntregaEntrega::observe(PlanoEntregaEntregaObserver::class);
+        PlanoEntregaEntregaProgresso::observe(PlanoEntregaEntregaProgressoObserver::class);
         StatusJustificativa::observe(StatusJustificativaObserver::class);
         PlanoTrabalho::observe(PlanoTrabalhoObserver::class);
         PlanoTrabalhoEntrega::observe(PlanoTrabalhoEntregaObserver::class);
-        Avaliacao::observe(AvaliacaoObserver::class);
+        //Avaliacao::observe(AvaliacaoObserver::class);
     }
 }

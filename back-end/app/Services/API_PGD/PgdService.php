@@ -178,9 +178,9 @@ class PgdService
         $body = (object) json_decode($participante->toJson(), true);
         $body->cod_unidade_autorizadora = $api_cod_unidade_autorizadora;
 
-        $url = "/organizacao/SIAPE/{$api_cod_unidade_autorizadora}/{$participante->cod_unidade_lotacao}/participante/{$participante->matricula_siape}";
+        $url = "/organizacao/SIAPE/{$api_cod_unidade_autorizadora}/{$body->cod_unidade_lotacao}/participante/{$body->matricula_siape}";
 
-        return $this->enviarDados($tenantId, $url, $participante);
+        return $this->enviarDados($tenantId, $url, $body);
     }
 
     public function enviarPlanoEntrega($tenantId, $api_cod_unidade_autorizadora, PlanoEntregaResource $planoEntrega) : bool
@@ -188,9 +188,9 @@ class PgdService
         $body = (object) json_decode($planoEntrega->toJson(), true);
         $body->cod_unidade_autorizadora = $api_cod_unidade_autorizadora;
 
-        $url = "/organizacao/SIAPE/{$api_cod_unidade_autorizadora}/plano_entregas/{$planoEntrega->id_plano_entregas}";
+        $url = "/organizacao/SIAPE/{$api_cod_unidade_autorizadora}/plano_entregas/{$planoEntrega->id}";
 
-        return $this->enviarDados($tenantId, $url, $planoEntrega);
+        return $this->enviarDados($tenantId, $url, $body);
     }
 
     public function enviarPlanoTrabalho($tenantId, $api_cod_unidade_autorizadora, PlanoTrabalhoResource $planoTrabalho) : bool
@@ -200,7 +200,7 @@ class PgdService
 
         $url = "/organizacao/SIAPE/{$api_cod_unidade_autorizadora}/plano_trabalho/{$planoTrabalho->id}";
 
-        return $this->enviarDados($tenantId, $url, $planoTrabalho);
+        return $this->enviarDados($tenantId, $url, $body);
     }
 
     public static function setToken($tenantId, $token) {

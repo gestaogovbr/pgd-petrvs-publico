@@ -26,7 +26,7 @@ class StatusJustificativaObserver
                 return;
             }
 
-            PlanoEntregaEnvioService::processar(tenant('id'), $model->planoEntrega);
+            PlanoEntregaEnvioService::processar(tenant('id'), $model->planoEntrega, 'StatusJustificativa');
         }
     }
 }

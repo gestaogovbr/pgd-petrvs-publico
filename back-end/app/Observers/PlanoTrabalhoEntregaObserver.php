@@ -30,6 +30,6 @@ class PlanoTrabalhoEntregaObserver
             return;
         }
 
-        PlanoTrabalhoEnvioService::processar(tenant('id'), $planoTrabalhoEntrega->planoEntrega);
+        PlanoTrabalhoEnvioService::processar(tenant('id'), $planoTrabalhoEntrega->planoEntrega, 'PlanoTrabalhoEntrega');
     }
 }
