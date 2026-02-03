@@ -175,7 +175,6 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_PTR_EDT_ATV", "Permite editar planos de trabalho ativos"],
         ["MOD_PTR_CNC", "Permite cancelar planos de trabalho"],
         ["MOD_PTR_USERS_INCL",   "Permite incluir planos de trabalho para usuários que não estão lotados nas áreas de trabalho do usuário logado"],
-        ["MOD_PTR_INTSC_DATA", "Permite incluir planos de trabalho que possuam períodos conflitantes com outro plano já existente na mesma unidade executora"]
       ]
     ], [
       "codigo" => "MOD_PTR_ENTR",
