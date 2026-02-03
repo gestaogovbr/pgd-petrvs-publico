@@ -165,15 +165,14 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
   }
 
   public getDateValue() {
-    const strDate = this.dateInput?.nativeElement.value || "";
-    if (!strDate) {
-      return null
+    if (!this.value) return null;
+    const date = moment(this.value);
+    if (!date.isValid()) return null;
+
+    if (this.isFirefox || this.isDate) {
+      return date.format("YYYY-MM-DD");
     } else {
-      if (this.isFirefox || this.isDate) {
-        return moment(strDate).format("YYYY-MM-DD");
-      } else {
-        return moment(strDate).format("YYYY-MM-DDTHH:mm");
-      }
+      return date.format("YYYY-MM-DDTHH:mm");
     }
   }
 
