@@ -51,6 +51,8 @@ services:
     dns:
       - 8.8.8.8
       - 1.1.1.1
+    environment:
+      - APP_CONTEXT=web
     depends_on:
       - petrvs_db
       - petrvs_redis
@@ -70,8 +72,10 @@ services:
       RABBITMQ_DEFAULT_VHOST: /
       TZ: "America/Bahia"
     volumes:
-      - ../../../rabbitmq/data:/var/lib/rabbitmq
-      - ../../../rabbitmq/logs:/var/log/rabbitmq
+      - ../../rabbitmq/data:/var/lib/rabbitmq
+      - ../../rabbitmq/logs:/var/log/rabbitmq
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
     deploy:
       resources:
         limits:
@@ -87,6 +91,8 @@ services:
       resources:
         limits:
           memory: 1024M
+    environment:
+      - APP_CONTEXT=queue
     depends_on:
       - petrvs_php
       - petrvs_rabbitmq
