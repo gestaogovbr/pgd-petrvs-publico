@@ -2,6 +2,7 @@
 
 namespace App\Services\API_PGD\Builder;
 
+use App\Exceptions\EnvioNaoAgendadoException;
 use App\Jobs\Envio\ExportarPlanoTrabalhoJob;
 use App\Models\PlanoTrabalho;
 use Carbon\Carbon;
@@ -12,17 +13,18 @@ class PlanoTrabalhoEnvioJobBuilder
     public static function make($tenantId, PlanoTrabalho $planoTrabalho, string $origem = '')
     {
         // PlanoTrabalho precisa ter lotação, plano de trabalho e data de assinatura para exportação
-        if ($planoTrabalho->programa
-            && $planoTrabalho->unidade
-            && $planoTrabalho->programa->unidade
-            && $planoTrabalho->isEmStatusParaEnvio()
-        ) {
-            $planoTrabalho->data_agendamento_envio = Carbon::now();
-            $planoTrabalho->saveQuietly();
-
-            return new ExportarPlanoTrabalhoJob($tenantId, $planoTrabalho->id, $origem);
+        if (!$planoTrabalho->isEmStatusParaEnvio()) {
+            throw new EnvioNaoAgendadoException(
+                tenant('id'),
+                'PlanoTrabalho',
+                $planoTrabalho->id,
+                "Plano de trabalho não está em status válido para envio ao PGD."
+            );
         }
 
-        return null;
+        $planoTrabalho->data_agendamento_envio = Carbon::now();
+        $planoTrabalho->saveQuietly();
+
+        return new ExportarPlanoTrabalhoJob($tenantId, $planoTrabalho->id, $origem);
     }
 }

@@ -3,15 +3,20 @@
 namespace App\Models;
 
 use App\Casts\AsJson;
-use App\Models\ModelBase;
-use App\Models\Usuario;
-use App\Models\Unidade;
+use App\Enums\StatusEnum;
 use App\Models\Atividade;
-use App\Models\Programa;
 use App\Models\Documento;
-use App\Models\PlanoTrabalhoEntrega;
+use App\Models\DocumentoAssinatura;
+use App\Models\ModelBase;
+use App\Models\Ocorrencia;
 use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
+use App\Models\PlanoTrabalhoEntrega;
+use App\Models\Programa;
+use App\Models\StatusJustificativa;
 use App\Models\TipoModalidade;
+use App\Models\Unidade;
+use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
 
 class PlanoTrabalho extends ModelBase
@@ -170,7 +175,16 @@ class PlanoTrabalho extends ModelBase
     }
 
     public function isEmStatusParaEnvio() {
-        return in_array($this->status, ['ATIVO', 'CONCLUIDO', 'AVALIADO']);
+        if ($this->status instanceof \App\Enums\StatusEnum) {
+            $status = $this->status->value;
+        } else{
+            $status = (string)$this->status;
+        }
+
+        return ($status == StatusEnum::ATIVO->value)
+            || ($status == StatusEnum::CONCLUIDO->value)
+            || ($status == StatusEnum::AVALIADO->value)
+        ;
     }
 
 }

@@ -34,6 +34,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     public function __construct(protected string $tenantId, protected string $id, protected $origem = '')
     {
         $this->queue = 'pgd_queue';
+        $this->connection = 'rabbitmq';
 
         $tenant = tenancy()->find($tenantId);
         tenancy()->initialize($tenant);

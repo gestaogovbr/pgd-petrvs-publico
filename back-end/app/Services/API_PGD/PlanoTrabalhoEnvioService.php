@@ -2,19 +2,13 @@
 
 namespace App\Services\API_PGD;
 
-use App\Jobs\Envio\ExportarParticipanteJob;
-use App\Jobs\Envio\ExportarPlanoEntregaJob;
-use App\Jobs\Envio\ExportarPlanoTrabalhoJob;
 use App\Models\PlanoTrabalho;
 use App\Services\API_PGD\Builder\PlanoEntregaEnvioJobBuilder;
 use App\Services\API_PGD\Builder\PlanoTrabalhoEnvioJobBuilder;
 use App\Services\API_PGD\Builder\UsuarioEnvioJobBuilder;
-use App\Services\API_PGD\PlanoEntregaEnvioBuilderService;
-use App\Services\API_PGD\PlanoTrabalhoEnvioBuilderService;
-use App\Services\API_PGD\UsuarioEnvioBuilderService;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 // classe responsavel por enviar o job de PT
 // encadeia no processo o Participante e os PE relacionados às entregas
@@ -29,15 +23,17 @@ class PlanoTrabalhoEnvioService
         try{
             $jobPlanoTrabalho = PlanoTrabalhoEnvioJobBuilder::make($tenantId, $planoTrabalho, $origem);
 
-            if (!$jobPlanoTrabalho) {
+            if (empty($jobPlanoTrabalho)) {
                 DB::rollBack();
+                Log::info("Plano de trabalho ID {$planoTrabalho->id} não necessita envio ao PGD");
                 return false;
             }
 
             // FASE 1 - Envio do Participante do PT
             $jobUsuario = UsuarioEnvioJobBuilder::make($tenantId, $planoTrabalho->usuario, $origem);
-            if ($jobUsuario) {
+            if (empty($jobUsuario)) {
                 DB::rollBack();
+                Log::info("Plano de trabalho ID {$planoTrabalho->id} não necessita envio ao PGD - Usuário não gerou job");
                 return false;
             }
             $jobChain[] = $jobUsuario;
@@ -57,7 +53,10 @@ class PlanoTrabalhoEnvioService
 
             DB::commit();
 
-            Bus::chain($jobChain)->onConnection('rabbitmq')->onQueue('pgd_queue');
+            Log::info("Plano de trabalho ID {$planoTrabalho->id} agendado para envio com cadeia de " . count($jobChain) . " jobs.");
+
+            Bus::chain($jobChain)
+                ->dispatch();
 
             return true;
         } catch (\Exception $e) {

@@ -5,7 +5,7 @@ namespace App\Observers;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Services\API_PGD\PlanoTrabalhoEnvioService;
 use Illuminate\Support\Facades\Log;
-
+use App\Exceptions\EnvioNaoAgendadoException;
 class PlanoTrabalhoEntregaObserver
 {
     public function created(PlanoTrabalhoEntrega $planoTrabalhoEntrega): void
@@ -30,6 +30,10 @@ class PlanoTrabalhoEntregaObserver
             return;
         }
 
-        PlanoTrabalhoEnvioService::processar(tenant('id'), $planoTrabalhoEntrega->planoEntrega, 'PlanoTrabalhoEntrega');
+        try{
+            PlanoTrabalhoEnvioService::processar(tenant('id'), $planoTrabalhoEntrega->planoTrabalho, 'PlanoTrabalhoEntrega');
+        }catch(EnvioNaoAgendadoException $e) {
+            Log::info("Envio do plano de trabalho ID {$planoTrabalhoEntrega->planoTrabalho->id} não agendado: " . $e->getMessage());
+        }
     }
 }

@@ -81,7 +81,7 @@ class PlanoTrabalhoService extends ServiceBase
             $ids[] = $unidadeId[2];
             if(is_array($ids) && is_array($ids[0]))
                 $ids = array_unique(...$ids);
-            
+
             $data["where"][] = ['unidade_id', 'in', array_unique($ids)];
         }
 
@@ -444,13 +444,14 @@ class PlanoTrabalhoService extends ServiceBase
         $condition4 = $condicoes["usuarioFaltaAssinar"];
         $condition5 = $condicoes["nrEntregas"] > 0;
         if (!$condition1 && !$condition2)
-            throw new ServerException("ValidatePlanoTrabalho", "O TCR não pode ser assinado porque o plano de trabalho não está no status INCLUIDO nem AGUARDANDO ASSINATURA. [ver RN_PTR_O]");
+            throw new ServerException("ValidatePlanoTrabalho", "[1] O TCR não pode ser assinado porque o plano de trabalho não está no status INCLUIDO nem AGUARDANDO ASSINATURA. [ver RN_PTR_O]");
         if (!$condition3)
-            throw new ServerException("ValidatePlanoTrabalho", "O TCR não pode ser assinado porque a assinatura do usuário logado não é exigida pelo programa, ou o usuários não atende aos critérios das [PTR:TABELA_1] e [PTR:TABELA_3]. [ver RN_PTR_O]");
+            throw new ServerException("ValidatePlanoTrabalho", "[2] O TCR não pode ser assinado porque a assinatura do usuário logado não é exigida pelo programa, ou o usuários não atende aos critérios das [PTR:TABELA_1] e [PTR:TABELA_3]. [ver RN_PTR_O]");
         if (!$condition4)
-            throw new ServerException("ValidatePlanoTrabalho", "O TCR não pode ser assinado porque a assinatura do usuário logado não é exigida pelo programa ou ele já assinou o Termo. [ver RN_PTR_O]");
+            throw new ServerException("ValidatePlanoTrabalho", "[3] O TCR não pode ser assinado porque a assinatura do usuário logado não é exigida pelo programa ou ele já assinou o Termo. [ver RN_PTR_O]");
         if (!$condition5)
-            throw new ServerException("ValidatePlanoTrabalho", "O TCR não pode ser assinado porque o plano precisa possuir ao menos uma entrega. [ver RN_PTR_O]");
+            throw new ServerException("ValidatePlanoTrabalho", "[4] O TCR não pode ser assinado porque o plano precisa possuir ao menos uma entrega. [ver RN_PTR_O]");
+
     }
 
     /* Será a data_inicio, ou a data_fim do último período CONCLUIDO ou AVALIADO. O que for maior. */
@@ -1405,7 +1406,7 @@ class PlanoTrabalhoService extends ServiceBase
     public function planosUsuarioComPendencias(string $usuarioId): bool
     {
         $planos = PlanoTrabalho::where('usuario_id', $usuarioId)
-            ->whereNotIn('status', ['CANCELADO', 'SUSPENSO'])            
+            ->whereNotIn('status', ['CANCELADO', 'SUSPENSO'])
             ->whereDoesntHave('consolidacoes', function ($query) {
                 $query->where('status', 'AVALIADO');
             })

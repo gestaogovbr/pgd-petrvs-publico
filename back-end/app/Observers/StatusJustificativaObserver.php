@@ -6,6 +6,7 @@ use App\Models\StatusJustificativa;
 use App\Services\API_PGD\PlanoEntregaEnvioService;
 use App\Services\API_PGD\PlanoTrabalhoEnvioService;
 use Illuminate\Support\Facades\Log;
+use App\Exceptions\EnvioNaoAgendadoException;
 
 class StatusJustificativaObserver
 {
@@ -17,7 +18,11 @@ class StatusJustificativaObserver
                 return;
             }
 
-            PlanoTrabalhoEnvioService::processar(tenant('id'), $model->planoTrabalho);
+            try{
+                PlanoTrabalhoEnvioService::processar(tenant('id'), $model->planoTrabalho);
+            }catch(EnvioNaoAgendadoException $e) {
+                Log::info("Envio do plano de trabalho ID {$model->planoTrabalho->id} não agendado: " . $e->getMessage());
+            }
         }
 
         if ($model->isPlanoEntrega() && $model->isAtivo()) {
