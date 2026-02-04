@@ -88,6 +88,12 @@ class ServiceBase extends DynamicMethods
     return class_exists($fullName) ? $this->_services[$name] : null;
   }
 
+  public function __isset($name)
+  {
+    $fullName = "App\\Services\\" . ucfirst(str_ends_with($name, "Service") ? $name : $name . "Service");
+    return !empty($this->_services[$name]) || class_exists($fullName);
+  }
+
   public function __construct($collection = null)
   {
     $this->collection = $collection ?? $this->collection;

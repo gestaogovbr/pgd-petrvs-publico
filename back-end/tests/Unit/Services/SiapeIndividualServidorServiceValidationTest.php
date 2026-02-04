@@ -3,6 +3,7 @@
 use App\Services\SiapeIndividualServidorService;
 use App\Services\SiapeIndividualService;
 use App\Services\IntegracaoService;
+use App\Services\IntegracaoServiceFactory;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidades;
@@ -31,7 +32,8 @@ beforeEach(function () {
     Log::shouldReceive('alert');
     Log::shouldReceive('emergency');
 
-    $this->service = Mockery::mock(SiapeIndividualServidorService::class)->makePartial();
+    $this->integracaoServiceFactory = Mockery::mock(IntegracaoServiceFactory::class);
+    $this->service = Mockery::mock(SiapeIndividualServidorService::class, [$this->integracaoServiceFactory])->makePartial();
     $this->service->shouldAllowMockingProtectedMethods();
     
     $this->siapeConfig = [
@@ -570,6 +572,8 @@ describe('SiapeIndividualServidorService - Fluxo Principal', function () {
 
 describe('SiapeIndividualServidorService - Métodos Protegidos', function () {
     it('deve instanciar integracao service', function () {
+        $this->integracaoServiceFactory->shouldReceive('make')->with([])->andReturn(Mockery::mock(IntegracaoService::class));
+        
         $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'instanciarIntegracaoService');
         $method->setAccessible(true);
         $result = $method->invoke($this->service);
