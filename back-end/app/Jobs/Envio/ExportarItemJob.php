@@ -118,27 +118,27 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     abstract public function enviar(JsonResource $resource): bool;
 
     public function registrarTentativa() {
-        $model = $this->getModel();
-        $model->update(["data_tentativa_envio"=> Carbon::now()]);
+        $model = $this->getModel()->first();
+        $model->data_tentativa_envio = Carbon::now();
+        $model->saveQuietly();
     }
 
     public function sucesso() {
-        $model = $this->getModel();
-        $model->update([
-            "data_envio_api_pgd"=> Carbon::now(),
-            "log_envio" => null
-        ]);
+        $model = $this->getModel()->first();
+        $model->data_envio_api_pgd = Carbon::now();
+        $model->log_envio = null;
+        $model->saveQuietly();
+
         $this->logInfo("SUCESSO");
     }
 
     public function insucesso($message) {
         $this->logError($message);
 
-        $model = $this->getModel();
-        $model->update([
-            "data_tentativa_envio"=> Carbon::now(),
-            "log_envio" => $message
-        ]);
+        $model = $this->getModel()->first();
+        $model->data_tentativa_envio = Carbon::now();
+        $model->log_envio = $message;
+        $model->saveQuietly();
     }
 
     public function tags()

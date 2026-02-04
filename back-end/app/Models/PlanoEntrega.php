@@ -168,6 +168,15 @@ class PlanoEntrega extends ModelBase
     }
 
     public function isEmStatusParaEnvio() {
-        return in_array($this->status, ['ATIVO', 'CONCLUIDO', 'AVALIADO']);
+        if ($this->status instanceof \App\Enums\StatusEnum) {
+            $status = $this->status->value;
+        } else{
+            $status = (string)$this->status;
+        }
+
+        return ($status == StatusEnum::ATIVO->value)
+            || ($status == StatusEnum::CONCLUIDO->value)
+            || ($status == StatusEnum::AVALIADO->value)
+        ;
     }
 }

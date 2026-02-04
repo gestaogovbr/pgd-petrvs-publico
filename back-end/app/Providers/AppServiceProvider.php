@@ -97,11 +97,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         URL::forceScheme('https');
-        if($this->app->environment('APP_ENV') == 'local') {
+        /*if(env('APP_ENV') == 'local') {
             DB::listen(function ($query) {
                 Log::info($query->sql, $query->bindings, $query->time);
             });
-        }
+        }*/
 
         Domain::saved(function (Domain $domain) {
             Cache::forget('domain:tenant_id:'.$domain->tenant_id);
@@ -112,15 +112,13 @@ class AppServiceProvider extends ServiceProvider
             Cache::forget('domain:domain:'.$domain->domain);
         });
 
-        if($this->app->environment('APP_CONTEXT') == 'web') {
-            Usuario::observe(UsuarioObserver::class);
-            PlanoEntrega::observe(PlanoEntregaObserver::class);
-            PlanoEntregaEntrega::observe(PlanoEntregaEntregaObserver::class);
-            PlanoEntregaEntregaProgresso::observe(PlanoEntregaEntregaProgressoObserver::class);
-            StatusJustificativa::observe(StatusJustificativaObserver::class);
-            PlanoTrabalho::observe(PlanoTrabalhoObserver::class);
-            PlanoTrabalhoEntrega::observe(PlanoTrabalhoEntregaObserver::class);
-            \App\Models\PlanoTrabalhoConsolidacao::observe(PlanoTrabalhoConsolidacaoObserver::class);
-        }
+        Usuario::observe(UsuarioObserver::class);
+        PlanoEntrega::observe(PlanoEntregaObserver::class);
+        PlanoEntregaEntrega::observe(PlanoEntregaEntregaObserver::class);
+        PlanoEntregaEntregaProgresso::observe(PlanoEntregaEntregaProgressoObserver::class);
+        StatusJustificativa::observe(StatusJustificativaObserver::class);
+        PlanoTrabalho::observe(PlanoTrabalhoObserver::class);
+        PlanoTrabalhoEntrega::observe(PlanoTrabalhoEntregaObserver::class);
+        \App\Models\PlanoTrabalhoConsolidacao::observe(PlanoTrabalhoConsolidacaoObserver::class);
     }
 }

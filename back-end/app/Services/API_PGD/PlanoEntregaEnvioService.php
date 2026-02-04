@@ -14,9 +14,9 @@ class PlanoEntregaEnvioService
         $job = PlanoEntregaEnvioJobBuilder::make($tenantId, $planoEntrega, $origem);
         if ($job) {
             dispatch($job)->onConnection('rabbitmq')->onQueue('pgd_queue');
-             Log::info('Plano de Entrega agendado');
+             Log::info('PE agendado');
         } else {
-            Log::info('Plano de Entrega não selecionável para envio');
+            Log::info('PE não selecionável para envio');
         }
     }
 }

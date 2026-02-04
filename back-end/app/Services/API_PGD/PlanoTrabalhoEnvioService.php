@@ -9,6 +9,7 @@ use App\Services\API_PGD\Builder\UsuarioEnvioJobBuilder;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Exceptions\EnvioNaoAgendadoException;
 
 // classe responsavel por enviar o job de PT
 // encadeia no processo o Participante e os PE relacionados às entregas
@@ -25,7 +26,7 @@ class PlanoTrabalhoEnvioService
 
             if (empty($jobPlanoTrabalho)) {
                 DB::rollBack();
-                Log::info("Plano de trabalho ID {$planoTrabalho->id} não necessita envio ao PGD");
+                Log::info("PT ID {$planoTrabalho->id} não necessita envio");
                 return false;
             }
 
@@ -33,16 +34,17 @@ class PlanoTrabalhoEnvioService
             $jobUsuario = UsuarioEnvioJobBuilder::make($tenantId, $planoTrabalho->usuario, $origem);
             if (empty($jobUsuario)) {
                 DB::rollBack();
-                Log::info("Plano de trabalho ID {$planoTrabalho->id} não necessita envio ao PGD - Usuário não gerou job");
+                Log::info("PT #{$planoTrabalho->id} não necessita envio - Usuário não gerou job");
                 return false;
             }
             $jobChain[] = $jobUsuario;
 
+
             // FASE 2 - Envio dos Planos de Entrega, para devido envio das entregas vinculadas ao plano de trabalho
-            foreach($planoTrabalho->entregas as $planoEntregaEntrega) {
-                if ($planoEntregaEntrega->plano_entrega_id) {
-                    $jobEntrega = PlanoEntregaEnvioJobBuilder::make($tenantId, $planoEntregaEntrega->planoEntrega, $origem);
-                    if ($jobEntrega) {
+            foreach($planoTrabalho->entregas as $planoTrabalhoEntrega) {
+                if ($planoTrabalhoEntrega->plano_entrega_entrega_id) {
+                    $jobEntrega = PlanoEntregaEnvioJobBuilder::make($tenantId, $planoTrabalhoEntrega->planoEntregaEntrega->planoEntrega, $origem);
+                    if (!empty($jobEntrega)) {
                         $jobChain[] = $jobEntrega;
                     }
                 }
@@ -53,12 +55,13 @@ class PlanoTrabalhoEnvioService
 
             DB::commit();
 
-            Log::info("Plano de trabalho ID {$planoTrabalho->id} agendado para envio com cadeia de " . count($jobChain) . " jobs.");
+            Bus::chain($jobChain)->dispatch();
 
-            Bus::chain($jobChain)
-                ->dispatch();
+            Log::info("PT #{$planoTrabalho->id} agendado", [$origem]);
 
             return true;
+        } catch(EnvioNaoAgendadoException $e) {
+            Log::info("Envio do PT #{$planoTrabalho->id} não agendado: " . $e->getMessage(), [$origem]);
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;

@@ -5,7 +5,7 @@ namespace App\Observers;
 use App\Models\PlanoEntregaEntregaProgresso;
 use App\Services\API_PGD\PlanoEntregaEnvioService;
 use Illuminate\Support\Facades\Log;
-
+use App\Exceptions\EnvioNaoAgendadoException;
 class PlanoEntregaEntregaProgressoObserver
 {
     public function created(PlanoEntregaEntregaProgresso $progresso): void
@@ -31,6 +31,11 @@ class PlanoEntregaEntregaProgressoObserver
             return;
         }
 
-        PlanoEntregaEnvioService::processar(tenant('id'), $progresso->planoEntregaEntrega->planoEntrega, 'PlanoEntregaEntregaProgresso');
+        try{
+            PlanoEntregaEnvioService::processar(tenant('id'), $progresso->planoEntregaEntrega->planoEntrega, 'PlanoEntregaEntregaProgresso');
+        }catch(EnvioNaoAgendadoException $e) {
+            Log::info("Envio do PE #{$progresso->planoEntregaEntrega->planoEntrega->id} não agendado: " . $e->getMessage());
+        }
+
     }
 }

@@ -5,16 +5,22 @@ namespace App\Observers;
 use App\Models\PlanoEntrega;
 use App\Services\API_PGD\PlanoEntregaEnvioService;
 use Illuminate\Support\Facades\Log;
+use App\Exceptions\EnvioNaoAgendadoException;
 
 class PlanoEntregaObserver
 {
     public function updated(PlanoEntrega $planoEntrega): void
     {
         if (!tenancy()->initialized) {
-            Log::warning('Tentativa de agendar envio de plano de entrega sem tenant inicializado');
+            Log::warning('Tentativa de agendar envio de PE sem tenant inicializado');
             return;
         }
 
-        PlanoEntregaEnvioService::processar(tenant('id'), $planoEntrega, 'PlanoEntrega');
+        try{
+            PlanoEntregaEnvioService::processar(tenant('id'), $planoEntrega, 'PlanoEntrega');
+        }catch(EnvioNaoAgendadoException $e) {
+            Log::info("Envio do PE #{$planoEntrega->id} não agendado: " . $e->getMessage());
+        }
+
     }
 }

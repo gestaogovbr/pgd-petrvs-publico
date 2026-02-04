@@ -20,8 +20,6 @@ class PlanoTrabalhoConsolidacaoObserver
             return;
         }
 
-        Log::info("Agendando envio do plano de trabalho ID {$model->planoTrabalho->id} para o PGD");
-
         try{
             PlanoTrabalhoEnvioService::processar(tenant('id'), $model->planoTrabalho, 'PlanoTrabalhoConsolidacao');
         }catch(EnvioNaoAgendadoException $e) {

@@ -14,11 +14,13 @@ class PlanoTrabalhoEnvioJobBuilder
     {
         // PlanoTrabalho precisa ter lotação, plano de trabalho e data de assinatura para exportação
         if (!$planoTrabalho->isEmStatusParaEnvio()) {
+            $planoTrabalho->log_envio = 'PT não está em status válido para envio ao PGD.';
+            $planoTrabalho->saveQuietly();
             throw new EnvioNaoAgendadoException(
                 tenant('id'),
                 'PlanoTrabalho',
                 $planoTrabalho->id,
-                "Plano de trabalho não está em status válido para envio ao PGD."
+                "PT não está em status válido para envio ao PGD."
             );
         }
 
