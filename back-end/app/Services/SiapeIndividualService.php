@@ -68,7 +68,7 @@ class SiapeIndividualService extends ServiceBase
     }
 
 
-    private function getOrgao() {
+    public function getOrgao() {
         return strval(intval($this->config['codOrgao']));
     }
 

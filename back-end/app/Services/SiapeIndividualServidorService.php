@@ -17,7 +17,6 @@ use Illuminate\Support\Str;
 use Exception;
 use DateTime;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Brazanation\Documents\Cpf;
 
@@ -37,11 +36,6 @@ class SiapeIndividualServidorService extends ServiceBase
     private SiapeIndividualService $service;
     private ?array $resumo = null;
 
-    /**
-     * Retorna o resumo do processamento
-     * 
-     * @return array|null
-     */
     public function getResumo(): ?array
     {
         return $this->resumo;
@@ -49,10 +43,6 @@ class SiapeIndividualServidorService extends ServiceBase
 
     /**
      * Executa o fluxo completo de sincronização do SIAPE para um servidor
-     * 
-     * @param string $cpf
-     * @param SiapeIndividualService $service
-     * @return array|null
      * @throws Exception
      */
     public function fluxoSiape(string $cpf, SiapeIndividualService $service): ?array
@@ -89,10 +79,12 @@ class SiapeIndividualServidorService extends ServiceBase
         }
     }
 
-    /**
-     * Captura o estado atual dos usuários antes do processamento
-     */
-    private function capturarEstadoUsuarios(string $cpf): array
+    protected function instanciarIntegracaoService(): IntegracaoService
+    {
+        return new IntegracaoService([]);
+    }
+
+    protected function buscarUsuariosPorCpf(string $cpf): array
     {
         return Usuario::with(['lotacao.unidade'])
             ->where('cpf', $cpf)
@@ -107,9 +99,11 @@ class SiapeIndividualServidorService extends ServiceBase
             ])->toArray();
     }
 
-    /**
-     * Loga as informações iniciais do processamento
-     */
+    private function capturarEstadoUsuarios(string $cpf): array
+    {
+        return $this->buscarUsuariosPorCpf($cpf);
+    }
+
     private function logInicioProcessamento(string $cpfOriginal, string $cpfLimpo): void
     {
         SiapeLog::info('CPF processado', [
@@ -119,19 +113,18 @@ class SiapeIndividualServidorService extends ServiceBase
         ]);
     }
 
-    /**
-     * Remove dados antigos das tabelas de controle
-     */
-    private function limparDadosAnteriores(string $cpf): void
+    protected function limparDadosSiape(string $cpf): void
     {
-        SiapeLog::info("Limpando tabelas de controle do SIAPE para o cpf: {$cpf}");
         SiapeConsultaDadosPessoais::withTrashed()->where('cpf', $cpf)->forceDelete();
         SiapeConsultaDadosFuncionais::withTrashed()->where('cpf', $cpf)->forceDelete();
     }
 
-    /**
-     * Prepara os XMLs para consulta
-     */
+    private function limparDadosAnteriores(string $cpf): void
+    {
+        SiapeLog::info("Limpando tabelas de controle do SIAPE para o cpf: {$cpf}");
+        $this->limparDadosSiape($cpf);
+    }
+
     private function prepararXmlsConsulta(string $cpf): array
     {
         $codOrgao = strval(intval($this->service->config['codOrgao']));
@@ -161,9 +154,6 @@ class SiapeIndividualServidorService extends ServiceBase
         }
     }
 
-    /**
-     * Executa as requisições no serviço SIAPE
-     */
     private function executarConsultasSiape(string $cpf, string $xmlFuncionais, string $xmlPessoais): array
     {
         SiapeLog::info('Executando requisicoes no SIAPE', ['cpf' => $cpf, 'timestamp' => now()->toDateTimeString()]);
@@ -187,9 +177,6 @@ class SiapeIndividualServidorService extends ServiceBase
         }
     }
 
-    /**
-     * Loga preview das respostas
-     */
     private function logPreviewResposta(string $cpf, string $respFuncionais, string $respPessoais): void
     {
         SiapeLog::info('Processando retorno do SIAPE', [
@@ -199,9 +186,6 @@ class SiapeIndividualServidorService extends ServiceBase
         ]);
     }
 
-    /**
-     * Processa a resposta dos dados funcionais
-     */
     private function processarRespostaFuncionais(string $cpf, string $responseXml): array
     {
         try {
@@ -228,9 +212,6 @@ class SiapeIndividualServidorService extends ServiceBase
         }
     }
 
-    /**
-     * Garante que os dados funcionais sejam um array de arrays
-     */
     private function normalizarDadosFuncionais(string $cpf, mixed $dados): array
     {
         if (!is_array($dados) || !isset($dados[0])) {
@@ -243,9 +224,6 @@ class SiapeIndividualServidorService extends ServiceBase
         return $dados;
     }
 
-    /**
-     * Processa as unidades de cada vínculo funcional
-     */
     private function processarUnidadesDosServidores(string $cpf, array $dadosFuncionais): void
     {
         foreach ($dadosFuncionais as $index => $dados) {
@@ -253,9 +231,6 @@ class SiapeIndividualServidorService extends ServiceBase
         }
     }
 
-    /**
-     * Processa uma unidade individual
-     */
     private function processarUnidadeIndividual(string $cpf, int $index, array $dados): void
     {
         SiapeLog::info('Iniciando o processo da unidade do servidor', [
@@ -270,12 +245,14 @@ class SiapeIndividualServidorService extends ServiceBase
         $this->sincronizarDadosUnidade($cpf, $codigoUnidade);
     }
 
-    /**
-     * Valida se a unidade já foi processada
-     */
+    protected function verificarExistenciaUnidade(string $codigoUnidade): bool
+    {
+        return Unidade::where('codigo', $codigoUnidade)->exists();
+    }
+
     private function validarUnidadeProcessada(string $cpf, string $codigoUnidade, array $dados): void
     {
-        $unidadeProcessada = Unidade::where('codigo', $codigoUnidade)->exists();
+        $unidadeProcessada = $this->verificarExistenciaUnidade($codigoUnidade);
 
         if (!$unidadeProcessada) {
             SiapeLog::error('Unidade não processada encontrada', [
@@ -290,9 +267,6 @@ class SiapeIndividualServidorService extends ServiceBase
         }
     }
 
-    /**
-     * Sincroniza os dados da unidade com o SIAPE
-     */
     private function sincronizarDadosUnidade(string $cpf, string $codigoUnidade): void
     {
         SiapeLog::info('Montando XML e executando requisição da unidade');
@@ -305,9 +279,6 @@ class SiapeIndividualServidorService extends ServiceBase
         $this->salvarHistoricoUnidade($respUnidade, $unidadeSiape);
     }
 
-    /**
-     * Atualiza a lista de UORGs
-     */
     private function atualizarListaUorgs(string $codOrgao): void
     {
         $this->service->getBuscarDadosSiapeUnidades()->listaUorgs(
@@ -321,27 +292,23 @@ class SiapeIndividualServidorService extends ServiceBase
         );
     }
 
-    /**
-     * Busca dados da unidade na lista processada
-     */
-    private function buscarUnidadeNaLista(string $codigoUnidade): ?array
+    protected function buscarUorgNaoProcessada()
     {
-        $uorgs = SiapeListaUORGS::where('processado', 0)
+        return SiapeListaUORGS::where('processado', 0)
             ->orderBy('updated_at', 'desc')
             ->first();
+    }
+
+    private function buscarUnidadeNaLista(string $codigoUnidade): ?array
+    {
+        $uorgs = $this->buscarUorgNaoProcessada();
 
         $listaUorgs = $this->service->getBuscarDadosSiapeUnidade()->getUnidades($uorgs);
         return collect($listaUorgs)->firstWhere('codigo', $codigoUnidade);
     }
 
-    /**
-     * Salva histórico da unidade
-     */
-    private function salvarHistoricoUnidade(string $responseXml, ?array $unidadeSiape): void
+    protected function salvarHistoricoUnidadeDb(string $responseXml, ?array $unidadeSiape): void
     {
-        if (!$unidadeSiape) return;
-
-        SiapeLog::info('Salvando os dados da unidade');
         SiapeDadosUORG::insert([
             'id' => Str::uuid(),
             'data_modificacao' => DateTime::createFromFormat(self::FORMATO_DATA_SIAPE, $unidadeSiape['dataUltimaTransacao'])
@@ -352,13 +319,16 @@ class SiapeIndividualServidorService extends ServiceBase
         ]);
     }
 
-    /**
-     * Salva os dados da consulta nas tabelas de histórico
-     */
-    private function salvarDadosConsulta(string $cpf, string $respFuncionais, string $respPessoais): void
+    private function salvarHistoricoUnidade(string $responseXml, ?array $unidadeSiape): void
     {
-        SiapeLog::info('Salvando os dados funcionais e pessoais do servidor');
+        if (!$unidadeSiape) return;
 
+        SiapeLog::info('Salvando os dados da unidade');
+        $this->salvarHistoricoUnidadeDb($responseXml, $unidadeSiape);
+    }
+
+    protected function salvarDadosConsultaDb(string $cpf, string $respFuncionais, string $respPessoais): void
+    {
         SiapeConsultaDadosFuncionais::insert([
             'id' => Str::uuid(),
             'cpf' => $cpf,
@@ -378,9 +348,13 @@ class SiapeIndividualServidorService extends ServiceBase
         ]);
     }
 
-    /**
-     * Atualiza vínculos dos usuários para forçar nova lotação
-     */
+    private function salvarDadosConsulta(string $cpf, string $respFuncionais, string $respPessoais): void
+    {
+        SiapeLog::info('Salvando os dados funcionais e pessoais do servidor');
+
+        $this->salvarDadosConsultaDb($cpf, $respFuncionais, $respPessoais);
+    }
+
     private function atualizarVinculosUsuarios(string $cpf, array $dadosFuncionais): void
     {
         SiapeLog::info('Iniciando remoção de vínculos para forçar nova lotação', ['cpf' => $cpf]);
@@ -398,16 +372,18 @@ class SiapeIndividualServidorService extends ServiceBase
         }
     }
 
-    /**
-     * Executa a sincronização final com as entidades
-     */
+    protected function buscarTodasEntidades()
+    {
+        return Entidade::all();
+    }
+
     private function executarSincronizacaoFinal(string $cpf): void
     {
         SiapeLog::info('Iniciando sincronização final', ['cpf' => $cpf]);
 
         try {
-            $integracaoService = new IntegracaoService([]);
-            $entidades = Entidade::all();
+            $integracaoService = $this->instanciarIntegracaoService();
+            $entidades = $this->buscarTodasEntidades();
             
             SiapeLog::info('Processando entidades para sincronização', [
                 'cpf' => $cpf,
@@ -425,9 +401,6 @@ class SiapeIndividualServidorService extends ServiceBase
         }
     }
 
-    /**
-     * Sincroniza uma única entidade
-     */
     private function sincronizarEntidadeUnica(IntegracaoService $service, Entidade $entidade, string $cpf): void
     {
         SiapeLog::info('Sincronizando entidade', [
@@ -444,13 +417,14 @@ class SiapeIndividualServidorService extends ServiceBase
         ]);
     }
 
-    /**
-     * Gera o resumo final do processamento
-     */
+    protected function gerarUsuariosResumo(string $cpf) {
+        return Usuario::with(['lotacao.unidade'])->where('cpf', $cpf)->get();
+    }
+
     private function gerarResumo(array $usuariosAntes, string $cpf, string $status, string $mensagem = self::MSG_CONCLUIDO): array
     {
         $resumo = [];
-        $usuariosDepois = Usuario::with(['lotacao.unidade'])->where('cpf', $cpf)->get();
+        $usuariosDepois = $this->gerarUsuariosResumo($cpf);
         $mapAntes = collect($usuariosAntes)->keyBy(fn($u) => $u['matricula'] ?? $u['id']);
 
         foreach ($usuariosDepois as $uDepois) {
@@ -464,9 +438,6 @@ class SiapeIndividualServidorService extends ServiceBase
         return $resumo;
     }
 
-    /**
-     * Cria um item individual do resumo
-     */
     private function criarItemResumo(Usuario $uDepois, ?array $uAntes, string $status, string $mensagem): array
     {
         $item = [
@@ -491,9 +462,6 @@ class SiapeIndividualServidorService extends ServiceBase
         return $item;
     }
 
-    /**
-     * Detecta alterações entre o estado anterior e atual do usuário
-     */
     private function detectarAlteracoes(array $uAntes, Usuario $uDepois): array
     {
         $alteracoes = [];
@@ -512,12 +480,14 @@ class SiapeIndividualServidorService extends ServiceBase
         return $alteracoes;
     }
 
-    /**
-     * Remove vínculos para forçar nova lotação com validação de matrícula
-     */
+    protected function buscarUsuariosSimples(string $cpf)
+    {
+        return Usuario::where('cpf', $cpf)->get();
+    }
+
     private function removeVinculoParaforcarSerLotadoNovamente(string $cpf, array $dadosFuncionaisArray): void
     {
-        $usuarios = Usuario::where('cpf', $cpf)->get();
+        $usuarios = $this->buscarUsuariosSimples($cpf);
         
         if ($usuarios->isEmpty()) {
             $this->removendoDaBlackList($cpf);
@@ -531,9 +501,6 @@ class SiapeIndividualServidorService extends ServiceBase
         }
     }
 
-    /**
-     * Processa a remoção de vínculo para um usuário específico
-     */
     private function processarRemocaoVinculoUsuario(Usuario $usuario, string $cpf, array $matriculasSiape): void
     {
         if (!$usuario->lotacao?->unidade) return;
@@ -554,22 +521,21 @@ class SiapeIndividualServidorService extends ServiceBase
         $this->removeLotacao($usuario);
     }
 
-    /**
-     * Atualiza status do usuário
-     */
     private function atualizarStatusUsuario(Usuario $usuario): void
     {
         $usuario->usuario_externo = 0;
         $usuario->save();
     }
 
-    /**
-     * Verifica e processa registro na blacklist
-     */
+    protected function buscarBlacklist(string $cpf)
+    {
+        return SiapeBlackListServidor::where('cpf', $cpf)->first();
+    }
+
     private function verificarBlacklist(string $cpf, Usuario $usuario): void
     {
         try {
-            $blacklistRegistro = SiapeBlackListServidor::where('cpf', $cpf)->first();
+            $blacklistRegistro = $this->buscarBlacklist($cpf);
 
             if ($blacklistRegistro) {
                 $this->processarRegistroBlacklist($blacklistRegistro, $usuario, $cpf);
@@ -584,9 +550,6 @@ class SiapeIndividualServidorService extends ServiceBase
         }
     }
 
-    /**
-     * Processa um registro específico da blacklist
-     */
     private function processarRegistroBlacklist(SiapeBlackListServidor $registro, Usuario $usuario, string $cpf): void
     {
         if ((int)($registro->inativado ?? 0) === 1) {
@@ -602,12 +565,9 @@ class SiapeIndividualServidorService extends ServiceBase
         SiapeLog::info('Registro removido da blacklist', ['cpf' => $cpf]);
     }
 
-    /**
-     * Remove registro da blacklist se existir
-     */
-    private function removendoDaBlackList(string $cpf): void
+    protected function removendoDaBlackList(string $cpf): void
     {
-        $blacklistRegistro = SiapeBlackListServidor::where('cpf', $cpf)->first();
+        $blacklistRegistro = $this->buscarBlacklist($cpf);
         if ($blacklistRegistro) {
             $blacklistRegistro->forceDelete();
             SiapeLog::info('Registro removido da blacklist', ['cpf' => $cpf]);
@@ -665,21 +625,11 @@ class SiapeIndividualServidorService extends ServiceBase
     }
 
 
-    /**
-     * Limpa e valida o CPF utilizando bibliotecas seguras e consolidadas.
-     * Realiza sanitização, validação de tipos, formato e dígito verificador.
-     *
-     * @param string $cpf
-     * @return string CPF limpo (apenas números)
-     * @throws Exception Se o CPF for inválido
-     */
+   
     private function limparEValidarCpf(string $cpf): string
     {
-        // 1. Sanitização: Remove caracteres não numéricos
         $cpfLimpo = preg_replace('/[^0-9]/', '', $cpf);
 
-        // 2. Validação de Formato e Tipo com Laravel Validator
-        // Garante que é uma string numérica de 11 dígitos
         $validator = Validator::make(['cpf' => $cpfLimpo], [
             'cpf' => ['required', 'string', 'size:' . self::TAMANHO_CPF],
         ]);
@@ -693,16 +643,13 @@ class SiapeIndividualServidorService extends ServiceBase
             throw new Exception("CPF inválido: O CPF deve conter exatamente 11 dígitos numéricos.");
         }
 
-        // 3. Validação Lógica (Dígito Verificador e Bloqueio de Repetidos) com Brazanation\Documents
         try {
-            // O construtor da classe Cpf lança uma exceção se o documento for inválido
             new Cpf($cpfLimpo);
         } catch (\Exception $e) {
             SiapeLog::error('Erro ao validar CPF', [
                 'cpf_original' => $cpf,
                 'erro' => $e->getMessage()
             ]);
-            // Personaliza a mensagem para o usuário final
             throw new Exception("CPF inválido: Dígito verificador incorreto ou inválido.");
         }
 

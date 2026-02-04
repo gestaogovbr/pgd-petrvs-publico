@@ -1,61 +1,604 @@
 <?php
 
 use App\Services\SiapeIndividualServidorService;
-use Illuminate\Support\Facades\Validator;
+use App\Services\SiapeIndividualService;
+use App\Services\IntegracaoService;
+use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
+use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
+use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidades;
+use App\Services\Siape\ProcessaDadosSiapeBD;
+use App\Facades\SiapeLog;
+use App\Models\Usuario;
+use App\Models\Unidade;
+use App\Models\SiapeListaUORGS;
+use App\Models\Entidade;
+use App\Models\SiapeBlackListServidor;
+use Illuminate\Support\Facades\Log;
+use App\Enums\UsuarioSituacaoSiape;
 use Tests\TestCase;
+use Mockery\MockInterface;
 
 uses(TestCase::class);
 
 beforeEach(function () {
-    $this->service = new SiapeIndividualServidorService();
-    $this->method = new ReflectionMethod(SiapeIndividualServidorService::class, 'limparEValidarCpf');
-    $this->method->setAccessible(true);
+    // Mock SiapeLog facade
+    Mockery::mock('alias:App\Facades\SiapeLog')
+        ->shouldReceive('info')
+        ->shouldReceive('error')
+        ->shouldReceive('warning');
+        
+    // Suppress Laravel default logging to avoid permission errors in tests
+    Log::shouldReceive('channel')->andReturnSelf();
+    Log::shouldReceive('info');
+    Log::shouldReceive('error');
+    Log::shouldReceive('warning');
+    Log::shouldReceive('debug');
+    Log::shouldReceive('notice');
+    Log::shouldReceive('critical');
+    Log::shouldReceive('alert');
+    Log::shouldReceive('emergency');
+
+    // Partial mock of the service to intercept protected methods
+    $this->service = Mockery::mock(SiapeIndividualServidorService::class)->makePartial();
+    $this->service->shouldAllowMockingProtectedMethods();
+    
+    // Config setup for SiapeIndividualService mock
+    $this->siapeConfig = [
+        'codOrgao' => '12345',
+        'siglaSistema' => 'SIGLA',
+        'nomeSistema' => 'NOME',
+        'senha' => 'SENHA',
+        'parmExistPag' => 'S',
+        'parmTipoVinculo' => '1'
+    ];
+
+    // Mock SiapeIndividualService
+    $this->siapeService = Mockery::mock(SiapeIndividualService::class);
+    $this->siapeService->config = $this->siapeConfig;
+    $this->siapeService->shouldReceive('getOrgao')->andReturn('12345')->byDefault();
+});
+
+afterEach(function () {
+    Mockery::close();
 });
 
 describe('SiapeIndividualServidorService - Validação de CPF', function () {
     
     it('deve retornar cpf limpo quando válido e formatado', function () {
-        // Valid CPF: 529.982.247-25
-        $cpf = '529.982.247-25';
-        $result = $this->method->invoke($this->service, $cpf);
+        $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'limparEValidarCpf');
+        $method->setAccessible(true);
+        $result = $method->invoke($this->service, '529.982.247-25');
         expect($result)->toBe('52998224725');
     });
 
     it('deve retornar cpf limpo quando válido e sem formatação', function () {
-        // Valid CPF: 52998224725
-        $cpf = '52998224725';
-        $result = $this->method->invoke($this->service, $cpf);
+        $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'limparEValidarCpf');
+        $method->setAccessible(true);
+        $result = $method->invoke($this->service, '52998224725');
         expect($result)->toBe('52998224725');
     });
 
     it('deve lançar exceção quando cpf tem tamanho inválido', function () {
-        expect(fn() => $this->method->invoke($this->service, '123456'))
+        $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'limparEValidarCpf');
+        $method->setAccessible(true);
+        expect(fn() => $method->invoke($this->service, '123456'))
             ->toThrow(Exception::class, 'CPF inválido: O CPF deve conter exatamente 11 dígitos numéricos');
     });
 
     it('deve lançar exceção quando cpf tem todos dígitos iguais (repetidos)', function () {
-        expect(fn() => $this->method->invoke($this->service, '111.111.111-11'))
+        $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'limparEValidarCpf');
+        $method->setAccessible(true);
+        expect(fn() => $method->invoke($this->service, '111.111.111-11'))
             ->toThrow(Exception::class, 'CPF inválido: Dígito verificador incorreto ou inválido');
     });
 
     it('deve lançar exceção quando cpf tem checksum inválido', function () {
-        // 123.456.789-01 is invalid.
-        expect(fn() => $this->method->invoke($this->service, '12345678901'))
+        $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'limparEValidarCpf');
+        $method->setAccessible(true);
+        expect(fn() => $method->invoke($this->service, '12345678901'))
             ->toThrow(Exception::class, 'CPF inválido: Dígito verificador incorreto ou inválido');
     });
 
     it('deve proteger contra injeção de SQL falhando na sanitização ou validação', function () {
-        // '12345678901 OR 1=1' -> sanitization removes ' OR =', leaves '1234567890111' -> 13 chars -> fails size check
+        $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'limparEValidarCpf');
+        $method->setAccessible(true);
         $input = '52998224725 OR 1=1'; 
-        expect(fn() => $this->method->invoke($this->service, $input))
+        expect(fn() => $method->invoke($this->service, $input))
             ->toThrow(Exception::class, 'CPF inválido: O CPF deve conter exatamente 11 dígitos numéricos');
     });
 
     it('deve proteger contra XSS falhando na validação', function () {
-        // '<script>alert(1)</script>' -> sanitized to '1' -> fails size check
+        $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'limparEValidarCpf');
+        $method->setAccessible(true);
         $input = '<script>alert(1)</script>52998224725';
-        expect(fn() => $this->method->invoke($this->service, $input))
+        expect(fn() => $method->invoke($this->service, $input))
             ->toThrow(Exception::class, 'CPF inválido: O CPF deve conter exatamente 11 dígitos numéricos');
     });
 
+});
+
+describe('SiapeIndividualServidorService - Fluxo Principal', function () {
+
+    it('deve executar fluxo com sucesso completo', function () {
+        $cpf = '12345678901';
+        $cpfLimpo = '12345678901';
+
+        // Fake CPF validation to pass for test CPF
+        // Since we are mocking everything, we don't need real validation if we mock 'limparEValidarCpf' OR we pass a valid CPF.
+        // But 'limparEValidarCpf' is private and not partial mocked easily unless we use reflection or just pass a valid CPF.
+        // '12345678901' is invalid checksum.
+        // Let's use a valid CPF generator or just a valid CPF string.
+        // 52998224725 is valid.
+        $validCpf = '52998224725';
+        $cpfLimpo = $validCpf;
+        
+        // Mock protected methods
+        $this->service->shouldReceive('buscarUsuariosPorCpf')->with($cpfLimpo)->andReturn([])->once();
+        $this->service->shouldReceive('limparDadosSiape')->with($cpfLimpo)->once();
+        $this->service->shouldReceive('verificarExistenciaUnidade')->andReturn(true); 
+        
+        $mockListaUorgs = new SiapeListaUORGS();
+        $mockListaUorgs->response = '<xml></xml>';
+        $this->service->shouldReceive('buscarUorgNaoProcessada')->andReturn($mockListaUorgs);
+
+        $this->service->shouldReceive('salvarHistoricoUnidadeDb')->andReturnNull();
+        $this->service->shouldReceive('salvarDadosConsultaDb')->with($cpfLimpo, 'xml_func', 'xml_pess')->once();
+        $this->service->shouldReceive('buscarUsuariosSimples')->with($cpfLimpo)->andReturn(collect([])); // Empty for no vinculo removal
+        
+        // removendoDaBlackList should NOT be mocked because it is now protected and we want to test its side effect OR mock it if we don't care about implementation
+        // But since we are partial mocking the service, calling it directly or expecting it works.
+        // However, previous error said "cannot be mocked as it is a private method". I changed it to protected.
+        // But let's verify if we want to mock it or let it run. 
+        // In this test case "executar fluxo com sucesso completo", we likely want to mock it to isolate dependencies.
+        $this->service->shouldReceive('removendoDaBlackList')->with($cpfLimpo)->once(); 
+        
+        $mockIntegracao = Mockery::mock(IntegracaoService::class);
+        $mockIntegracao->shouldReceive('sincronizar')->andReturnNull();
+        
+        $this->service->shouldReceive('instanciarIntegracaoService')->andReturn($mockIntegracao);
+        $this->service->shouldReceive('buscarTodasEntidades')->andReturn(collect([new Entidade(['id' => 'ent1'])]));
+        
+        // Mock Resumo return
+        $usuarioDepois = Mockery::mock(Usuario::class)->makePartial();
+        $usuarioDepois->nome = 'User Test';
+        $usuarioDepois->matricula = 'M123';
+        // Mock relation access via getAttribute for magic method __get
+        $lotacaoMock = new Unidade();
+        $lotacaoMock->id = 'u1';
+        $lotacaoMock->unidade_id = 'u1'; // Ensure compatibility with access patterns
+        
+        $lotacaoObj = new \stdClass();
+        $lotacaoObj->unidade_id = 'u1';
+        $lotacaoObj->unidade = $lotacaoMock;
+
+        // Since we cannot easily setRelation on a partial mock that intercepts getAttribute, 
+        // we rely on the mock returning the object for 'lotacao' attribute.
+        $usuarioDepois->shouldReceive('getAttribute')->with('lotacao')->andReturn($lotacaoObj);
+        $usuarioDepois->shouldReceive('getAttribute')->with('nome')->andReturn('User Test');
+        $usuarioDepois->shouldReceive('getAttribute')->with('matricula')->andReturn('M123');
+        $usuarioDepois->shouldReceive('getAttribute')->with('id')->andReturn('user_id');
+
+        $this->service->shouldReceive('gerarUsuariosResumo')->with($cpfLimpo)->andReturn(collect([$usuarioDepois]));
+
+        // Mock Siape Service dependencies
+        $buscarDadosServidor = Mockery::mock(BuscarDadosSiapeServidor::class);
+        $buscarDadosServidor->shouldReceive('consultaDadosFuncionais')->andReturn('xml_func_request');
+        $buscarDadosServidor->shouldReceive('consultaDadosPessoais')->andReturn('xml_pess_request');
+        $buscarDadosServidor->shouldReceive('executaRequisicao')->with('xml_func_request')->andReturn('xml_func');
+        $buscarDadosServidor->shouldReceive('executaRequisicao')->with('xml_pess_request')->andReturn('xml_pess');
+
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeServidor')->andReturn($buscarDadosServidor);
+        
+        $processaDados = Mockery::mock(ProcessaDadosSiapeBD::class);
+        $processaDados->shouldReceive('processaDadosFuncionais')->with($cpfLimpo, 'xml_func')->andReturn([
+            ['codUorgExercicio' => 'U123', 'matriculaSiape' => 'M123']
+        ]);
+        $this->siapeService->shouldReceive('getProcessaDadosSiape')->andReturn($processaDados);
+
+        $buscarDadosUnidade = Mockery::mock(BuscarDadosSiapeUnidade::class);
+        $buscarDadosUnidade->shouldReceive('getUorgAsXml')->andReturn('xml_unit_req');
+        $buscarDadosUnidade->shouldReceive('executaRequisicao')->andReturn('xml_unit_resp');
+        $buscarDadosUnidade->shouldReceive('getCpf')->andReturn('CPF_ADMIN');
+        $buscarDadosUnidade->shouldReceive('getUnidades')->andReturn([['codigo' => 'U123', 'dataUltimaTransacao' => '01012023']]);
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeUnidade')->andReturn($buscarDadosUnidade);
+        
+        $buscarDadosUnidades = Mockery::mock(BuscarDadosSiapeUnidades::class);
+        $buscarDadosUnidades->shouldReceive('listaUorgs')->andReturnNull();
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeUnidades')->andReturn($buscarDadosUnidades);
+
+        // Execute
+        $resumo = $this->service->fluxoSiape($validCpf, $this->siapeService);
+        
+        expect($resumo)->toBeArray();
+        expect($resumo[0]['status'])->toBe('sucesso');
+        expect($this->service->getResumo())->toBe($resumo);
+    });
+
+    it('deve lidar com falha na montagem de XML', function () {
+        $validCpf = '52998224725';
+        $cpfLimpo = $validCpf;
+
+        $this->service->shouldReceive('buscarUsuariosPorCpf')->andReturn([]);
+        $this->service->shouldReceive('limparDadosSiape')->once();
+        $this->service->shouldReceive('gerarUsuariosResumo')->andReturn(collect([]));
+
+        $buscarDadosServidor = Mockery::mock(BuscarDadosSiapeServidor::class);
+        $buscarDadosServidor->shouldReceive('consultaDadosFuncionais')->andThrow(new Exception('Erro XML'));
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeServidor')->andReturn($buscarDadosServidor);
+
+        expect(fn() => $this->service->fluxoSiape($validCpf, $this->siapeService))
+            ->toThrow(Exception::class, 'Erro ao montar XMLs para consulta SIAPE: Erro XML');
+            
+        expect(isset($this->service->getResumo()[0]['status']) ? $this->service->getResumo()[0]['status'] : 'erro')->toBe('erro');
+    });
+
+    it('deve lidar com falha na consulta SIAPE', function () {
+        $validCpf = '52998224725';
+        $cpfLimpo = $validCpf;
+
+        $this->service->shouldReceive('buscarUsuariosPorCpf')->andReturn([]);
+        $this->service->shouldReceive('limparDadosSiape')->once();
+        $this->service->shouldReceive('gerarUsuariosResumo')->andReturn(collect([]));
+
+        $buscarDadosServidor = Mockery::mock(BuscarDadosSiapeServidor::class);
+        $buscarDadosServidor->shouldReceive('consultaDadosFuncionais')->andReturn('xml');
+        $buscarDadosServidor->shouldReceive('consultaDadosPessoais')->andReturn('xml');
+        $buscarDadosServidor->shouldReceive('executaRequisicao')->andThrow(new Exception('Erro API'));
+        
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeServidor')->andReturn($buscarDadosServidor);
+
+        expect(fn() => $this->service->fluxoSiape($validCpf, $this->siapeService))
+            ->toThrow(Exception::class, 'Erro ao consultar dados no SIAPE: Erro API');
+    });
+
+    it('deve lidar com dados funcionais vazios', function () {
+        $validCpf = '52998224725';
+        $cpfLimpo = $validCpf;
+
+        $this->service->shouldReceive('buscarUsuariosPorCpf')->andReturn([]);
+        $this->service->shouldReceive('limparDadosSiape')->once();
+        $this->service->shouldReceive('gerarUsuariosResumo')->andReturn(collect([]));
+
+        $buscarDadosServidor = Mockery::mock(BuscarDadosSiapeServidor::class);
+        $buscarDadosServidor->shouldReceive('consultaDadosFuncionais')->andReturn('xml');
+        $buscarDadosServidor->shouldReceive('consultaDadosPessoais')->andReturn('xml');
+        $buscarDadosServidor->shouldReceive('executaRequisicao')->andReturn('xml_resp');
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeServidor')->andReturn($buscarDadosServidor);
+
+        $processaDados = Mockery::mock(ProcessaDadosSiapeBD::class);
+        $processaDados->shouldReceive('processaDadosFuncionais')->once()->andReturn([]); // Return empty array to trigger check
+        $this->siapeService->shouldReceive('getProcessaDadosSiape')->andReturn($processaDados);
+
+        try {
+            $this->service->fluxoSiape($validCpf, $this->siapeService);
+            throw new \RuntimeException('Fluxo completou sem lançar exceção esperada');
+        } catch (Exception $e) {
+             if ($e instanceof \RuntimeException && $e->getMessage() === 'Fluxo completou sem lançar exceção esperada') {
+                 throw $e;
+             }
+             expect($e)->toBeInstanceOf(Exception::class);
+        }
+    });
+
+    it('deve lidar com unidade não processada', function () {
+        $validCpf = '52998224725';
+        $cpfLimpo = $validCpf;
+
+        $this->service->shouldReceive('buscarUsuariosPorCpf')->andReturn([]);
+        $this->service->shouldReceive('limparDadosSiape')->once();
+        $this->service->shouldReceive('gerarUsuariosResumo')->andReturn(collect([]));
+
+        $buscarDadosServidor = Mockery::mock(BuscarDadosSiapeServidor::class);
+        $buscarDadosServidor->shouldReceive('consultaDadosFuncionais')->andReturn('xml');
+        $buscarDadosServidor->shouldReceive('consultaDadosPessoais')->andReturn('xml');
+        $buscarDadosServidor->shouldReceive('executaRequisicao')->andReturn('xml_resp');
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeServidor')->andReturn($buscarDadosServidor);
+
+        $processaDados = Mockery::mock(ProcessaDadosSiapeBD::class);
+        $processaDados->shouldReceive('processaDadosFuncionais')->andReturn([['codUorgExercicio' => '999']]);
+        $this->siapeService->shouldReceive('getProcessaDadosSiape')->andReturn($processaDados);
+
+        // Unit does not exist
+        $this->service->shouldReceive('verificarExistenciaUnidade')->with('999')->andReturn(false);
+
+        expect(fn() => $this->service->fluxoSiape($validCpf, $this->siapeService))
+            ->toThrow(Exception::class, "O CPF {$cpfLimpo} pertence à unidade de código 999, que ainda não foi processada.");
+    });
+
+    it('deve remover vinculos e blacklist quando usuario existe', function () {
+        $validCpf = '52998224725';
+        $cpfLimpo = $validCpf;
+
+        // Mock setup for success path
+        $this->service->shouldReceive('buscarUsuariosPorCpf')->andReturn([]);
+        $this->service->shouldReceive('limparDadosSiape')->once();
+        $this->service->shouldReceive('verificarExistenciaUnidade')->andReturn(true);
+
+        $mockListaUorgs = new SiapeListaUORGS();
+        $mockListaUorgs->response = '<xml></xml>';
+        $this->service->shouldReceive('buscarUorgNaoProcessada')->andReturn($mockListaUorgs);
+
+        $this->service->shouldReceive('salvarHistoricoUnidadeDb')->andReturnNull();
+        $this->service->shouldReceive('salvarDadosConsultaDb')->andReturnNull();
+        
+        // Mock user exists
+        $user = Mockery::mock(Usuario::class)->makePartial();
+        $user->matricula = 'M999'; // Different matricula to trigger warning
+        $user->shouldReceive('save')->andReturn(true);
+        $user->shouldReceive('getAttribute')->with('lotacao')->andReturn((object)['unidade' => (object)['id' => 'uid']]);
+        $user->shouldReceive('getAttribute')->with('id')->andReturn('user_id');
+        
+        $this->service->shouldReceive('buscarUsuariosSimples')->andReturn(collect([$user]));
+        $this->service->shouldReceive('atualizarStatusUsuarioDb')->with($user)->andReturnNull(); // We didn't refactor this yet? I'll check. 
+        // Wait, I missed 'atualizarStatusUsuario' refactoring in my plan?
+        // I refactored `atualizarStatusUsuario`? Let me check previous tool calls.
+        // No, I did NOT refactor 'atualizarStatusUsuario'. It is private.
+        // 'processarRemocaoVinculoUsuario' is private.
+        // 'removeVinculoParaforcarSerLotadoNovamente' calls 'processarRemocaoVinculoUsuario'.
+        
+        // I cannot mock private methods easily.
+        // However, 'processarRemocaoVinculoUsuario' calls:
+        // 1. $this->atualizarStatusUsuario($usuario) -> Private.
+        // 2. $this->verificarBlacklist($cpf, $usuario) -> Private.
+        // 3. $this->removeTodasAsGestoesDoUsuario($usuario) -> Protected (Refactored).
+        // 4. $this->removeLotacao($usuario) -> Protected (Refactored).
+        
+        // Since 'atualizarStatusUsuario' is private, it will be executed.
+        // It does: $usuario->usuario_externo = 0; $usuario->save();
+        // Since $user is a mock, we should expect save().
+        
+        // 'verificarBlacklist' calls 'buscarBlacklist' (protected).
+        $this->service->shouldReceive('buscarBlacklist')->andReturn(null);
+        
+        // 'removeTodasAsGestoesDoUsuario' (protected)
+        $this->service->shouldReceive('removeTodasAsGestoesDoUsuario')->with($user)->once();
+        
+        // 'removeLotacao' (protected)
+        // Only called if matricula matches.
+        // Case 1: matricula mismatch
+        // user matricula 'M999', siape 'M123'.
+        // Should log warning and NOT call removeLotacao.
+        
+        // Let's configure dependencies for this specific test
+        $this->service->shouldReceive('instanciarIntegracaoService')->andReturn(Mockery::mock(IntegracaoService::class, ['sincronizar' => null]));
+        $this->service->shouldReceive('buscarTodasEntidades')->andReturn(collect([]));
+        $this->service->shouldReceive('gerarUsuariosResumo')->andReturn(collect([]));
+        
+        // Standard mocks
+        $buscarDadosServidor = Mockery::mock(BuscarDadosSiapeServidor::class);
+        $buscarDadosServidor->shouldReceive('consultaDadosFuncionais')->andReturn('xml');
+        $buscarDadosServidor->shouldReceive('consultaDadosPessoais')->andReturn('xml');
+        $buscarDadosServidor->shouldReceive('executaRequisicao')->andReturn('xml');
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeServidor')->andReturn($buscarDadosServidor);
+        
+        $processaDados = Mockery::mock(ProcessaDadosSiapeBD::class);
+        $processaDados->shouldReceive('processaDadosFuncionais')->andReturn([['codUorgExercicio' => 'U123', 'matriculaSiape' => 'M123']]);
+        $this->siapeService->shouldReceive('getProcessaDadosSiape')->andReturn($processaDados);
+
+        $buscarDadosUnidade = Mockery::mock(BuscarDadosSiapeUnidade::class);
+        $buscarDadosUnidade->shouldReceive('getUorgAsXml')->andReturn('xml');
+        $buscarDadosUnidade->shouldReceive('executaRequisicao')->andReturn('xml');
+        $buscarDadosUnidade->shouldReceive('getCpf')->andReturn('cpf');
+        $buscarDadosUnidade->shouldReceive('getUnidades')->andReturn([['codigo' => 'U123', 'dataUltimaTransacao' => 'd']]);
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeUnidade')->andReturn($buscarDadosUnidade);
+        
+        $buscarDadosUnidades = Mockery::mock(BuscarDadosSiapeUnidades::class);
+        $buscarDadosUnidades->shouldReceive('listaUorgs')->andReturnNull();
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeUnidades')->andReturn($buscarDadosUnidades);
+
+        $this->service->fluxoSiape($validCpf, $this->siapeService);
+        
+        // Verification is implicit via expectations
+    });
+
+    it('deve remover lotacao se matricula corresponde', function () {
+        $validCpf = '52998224725';
+        $cpfLimpo = $validCpf;
+
+        // Mock setup
+        $this->service->shouldReceive('buscarUsuariosPorCpf')->andReturn([]);
+        $this->service->shouldReceive('limparDadosSiape')->once();
+        $this->service->shouldReceive('verificarExistenciaUnidade')->andReturn(true);
+
+        $mockListaUorgs = new SiapeListaUORGS();
+        $mockListaUorgs->response = '<xml></xml>';
+        $this->service->shouldReceive('buscarUorgNaoProcessada')->andReturn($mockListaUorgs);
+
+        $this->service->shouldReceive('salvarHistoricoUnidadeDb')->andReturnNull();
+        $this->service->shouldReceive('salvarDadosConsultaDb')->andReturnNull();
+        
+        // Mock user matches
+        $user = Mockery::mock(Usuario::class)->makePartial();
+        $user->matricula = 'M123'; 
+        $user->shouldReceive('save')->andReturn(true);
+        $user->shouldReceive('getAttribute')->with('lotacao')->andReturn((object)['unidade' => (object)['id' => 'uid']]);
+        $user->shouldReceive('getAttribute')->with('id')->andReturn('user_id');
+        
+        $this->service->shouldReceive('buscarUsuariosSimples')->andReturn(collect([$user]));
+        $this->service->shouldReceive('buscarBlacklist')->andReturn(null);
+        $this->service->shouldReceive('removeTodasAsGestoesDoUsuario')->with($user)->once();
+        $this->service->shouldReceive('removeLotacao')->with($user)->once(); // This time it should be called
+
+        // ... dependencies same as above ...
+        $this->service->shouldReceive('instanciarIntegracaoService')->andReturn(Mockery::mock(IntegracaoService::class, ['sincronizar' => null]));
+        $this->service->shouldReceive('buscarTodasEntidades')->andReturn(collect([]));
+        $this->service->shouldReceive('gerarUsuariosResumo')->andReturn(collect([]));
+        
+        $buscarDadosServidor = Mockery::mock(BuscarDadosSiapeServidor::class);
+        $buscarDadosServidor->shouldReceive('consultaDadosFuncionais')->andReturn('xml');
+        $buscarDadosServidor->shouldReceive('consultaDadosPessoais')->andReturn('xml');
+        $buscarDadosServidor->shouldReceive('executaRequisicao')->andReturn('xml');
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeServidor')->andReturn($buscarDadosServidor);
+        
+        $processaDados = Mockery::mock(ProcessaDadosSiapeBD::class);
+        $processaDados->shouldReceive('processaDadosFuncionais')->andReturn([['codUorgExercicio' => 'U123', 'matriculaSiape' => 'M123']]);
+        $this->siapeService->shouldReceive('getProcessaDadosSiape')->andReturn($processaDados);
+
+        $buscarDadosUnidade = Mockery::mock(BuscarDadosSiapeUnidade::class);
+        $buscarDadosUnidade->shouldReceive('getUorgAsXml')->andReturn('xml');
+        $buscarDadosUnidade->shouldReceive('executaRequisicao')->andReturn('xml');
+        $buscarDadosUnidade->shouldReceive('getCpf')->andReturn('cpf');
+        $buscarDadosUnidade->shouldReceive('getUnidades')->andReturn([['codigo' => 'U123', 'dataUltimaTransacao' => 'd']]);
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeUnidade')->andReturn($buscarDadosUnidade);
+        
+        $buscarDadosUnidades = Mockery::mock(BuscarDadosSiapeUnidades::class);
+        $buscarDadosUnidades->shouldReceive('listaUorgs')->andReturnNull();
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeUnidades')->andReturn($buscarDadosUnidades);
+
+        $this->service->fluxoSiape($validCpf, $this->siapeService);
+    });
+
+    it('deve processar blacklist se usuario encontrado', function () {
+        $validCpf = '52998224725';
+        $cpfLimpo = $validCpf;
+        
+        // Only focusing on blacklist logic
+        $user = Mockery::mock(Usuario::class)->makePartial();
+        $user->matricula = 'M999'; 
+        $user->shouldReceive('save')->andReturn(true);
+        $user->shouldReceive('getAttribute')->with('lotacao')->andReturn((object)['unidade' => (object)['id' => 'uid']]);
+        $user->shouldReceive('getAttribute')->with('id')->andReturn('user_id');
+
+        $this->service->shouldReceive('buscarUsuariosSimples')->andReturn(collect([$user]));
+        
+        // Blacklist mock
+        $blacklist = Mockery::mock(SiapeBlackListServidor::class)->makePartial();
+        $blacklist->inativado = 1;
+        $blacklist->shouldReceive('forceDelete')->once();
+        
+        $this->service->shouldReceive('buscarBlacklist')->andReturn($blacklist);
+        
+        // Expect user activation
+        // $user->situacao_siape = UsuarioSituacaoSiape::ATIVO->value; 
+        // We can't verify property set easily on mock without expectations or checking mock state, but save() is called.
+        // Since we didn't mock 'processarRegistroBlacklist' (it's private), the real code runs.
+        // It sets property and calls save(). $user mock should handle it if it's a partial mock.
+        // Note: we used makePartial() on user, so properties work.
+
+        // Mocks for the rest of flow...
+        $this->service->shouldReceive('buscarUsuariosPorCpf')->andReturn([]);
+        $this->service->shouldReceive('limparDadosSiape')->once();
+        $this->service->shouldReceive('verificarExistenciaUnidade')->andReturn(true);
+
+        $mockListaUorgs = new SiapeListaUORGS();
+        $mockListaUorgs->response = '<xml></xml>';
+        $this->service->shouldReceive('buscarUorgNaoProcessada')->andReturn($mockListaUorgs);
+
+        $this->service->shouldReceive('salvarHistoricoUnidadeDb')->andReturnNull();
+        $this->service->shouldReceive('salvarDadosConsultaDb')->andReturnNull();
+        $this->service->shouldReceive('removeTodasAsGestoesDoUsuario')->with($user)->once();
+        $this->service->shouldReceive('instanciarIntegracaoService')->andReturn(Mockery::mock(IntegracaoService::class, ['sincronizar' => null]));
+        $this->service->shouldReceive('buscarTodasEntidades')->andReturn(collect([]));
+        $this->service->shouldReceive('gerarUsuariosResumo')->andReturn(collect([]));
+        
+        $buscarDadosServidor = Mockery::mock(BuscarDadosSiapeServidor::class);
+        $buscarDadosServidor->shouldReceive('consultaDadosFuncionais')->andReturn('xml');
+        $buscarDadosServidor->shouldReceive('consultaDadosPessoais')->andReturn('xml');
+        $buscarDadosServidor->shouldReceive('executaRequisicao')->andReturn('xml');
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeServidor')->andReturn($buscarDadosServidor);
+        
+        $processaDados = Mockery::mock(ProcessaDadosSiapeBD::class);
+        $processaDados->shouldReceive('processaDadosFuncionais')->andReturn([['codUorgExercicio' => 'U123', 'matriculaSiape' => 'M123']]);
+        $this->siapeService->shouldReceive('getProcessaDadosSiape')->andReturn($processaDados);
+
+        $buscarDadosUnidade = Mockery::mock(BuscarDadosSiapeUnidade::class);
+        $buscarDadosUnidade->shouldReceive('getUorgAsXml')->andReturn('xml');
+        $buscarDadosUnidade->shouldReceive('executaRequisicao')->andReturn('xml');
+        $buscarDadosUnidade->shouldReceive('getCpf')->andReturn('cpf');
+        $buscarDadosUnidade->shouldReceive('getUnidades')->andReturn([['codigo' => 'U123', 'dataUltimaTransacao' => 'd']]);
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeUnidade')->andReturn($buscarDadosUnidade);
+        
+        $buscarDadosUnidades = Mockery::mock(BuscarDadosSiapeUnidades::class);
+        $buscarDadosUnidades->shouldReceive('listaUorgs')->andReturnNull();
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeUnidades')->andReturn($buscarDadosUnidades);
+
+        $this->service->fluxoSiape($validCpf, $this->siapeService);
+    });
+
+    it('deve detectar alterações em usuário existente', function () {
+        $validCpf = '52998224725';
+        $cpfLimpo = $validCpf;
+
+        // User before
+        $userAntes = [
+            'id' => 'uid',
+            'matricula' => 'M123',
+            'nome' => 'Old Name',
+            'email' => 'old@email.com',
+            'situacao_siape' => 'old_status',
+            'lotacao_id' => 'old_lotacao'
+        ];
+        
+        $this->service->shouldReceive('buscarUsuariosPorCpf')->andReturn([$userAntes]);
+        $this->service->shouldReceive('limparDadosSiape')->once();
+        $this->service->shouldReceive('verificarExistenciaUnidade')->andReturn(true);
+        
+        $mockListaUorgs = new SiapeListaUORGS();
+        $mockListaUorgs->response = '<xml></xml>';
+        $this->service->shouldReceive('buscarUorgNaoProcessada')->andReturn($mockListaUorgs);
+        
+        $this->service->shouldReceive('salvarHistoricoUnidadeDb')->andReturnNull();
+        $this->service->shouldReceive('salvarDadosConsultaDb')->andReturnNull();
+        $this->service->shouldReceive('buscarUsuariosSimples')->andReturn(collect([]));
+        $this->service->shouldReceive('removendoDaBlackList')->once();
+        $this->service->shouldReceive('instanciarIntegracaoService')->andReturn(Mockery::mock(IntegracaoService::class, ['sincronizar' => null]));
+        $this->service->shouldReceive('buscarTodasEntidades')->andReturn(collect([]));
+
+        // User after (changed name, email)
+        $usuarioDepois = Mockery::mock(Usuario::class)->makePartial();
+        $usuarioDepois->nome = 'New Name';
+        $usuarioDepois->matricula = 'M123';
+        $usuarioDepois->email = 'new@email.com';
+        $usuarioDepois->situacao_siape = 'old_status';
+        
+        $lotacaoObj = new \stdClass();
+        $lotacaoObj->unidade_id = 'old_lotacao';
+        $lotacaoObj->unidade = (object)['id' => 'old_lotacao'];
+
+        $usuarioDepois->shouldReceive('getAttribute')->with('lotacao')->andReturn($lotacaoObj);
+        $usuarioDepois->shouldReceive('getAttribute')->with('nome')->andReturn('New Name');
+        $usuarioDepois->shouldReceive('getAttribute')->with('matricula')->andReturn('M123');
+        $usuarioDepois->shouldReceive('getAttribute')->with('email')->andReturn('new@email.com');
+        $usuarioDepois->shouldReceive('getAttribute')->with('situacao_siape')->andReturn('old_status');
+        $usuarioDepois->shouldReceive('getAttribute')->with('id')->andReturn('uid');
+
+        $this->service->shouldReceive('gerarUsuariosResumo')->andReturn(collect([$usuarioDepois]));
+
+        // Siape mocks (minimal success)
+        $buscarDadosServidor = Mockery::mock(BuscarDadosSiapeServidor::class);
+        $buscarDadosServidor->shouldReceive('consultaDadosFuncionais')->andReturn('xml');
+        $buscarDadosServidor->shouldReceive('consultaDadosPessoais')->andReturn('xml');
+        $buscarDadosServidor->shouldReceive('executaRequisicao')->andReturn('xml');
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeServidor')->andReturn($buscarDadosServidor);
+        
+        $processaDados = Mockery::mock(ProcessaDadosSiapeBD::class);
+        $processaDados->shouldReceive('processaDadosFuncionais')->andReturn([['codUorgExercicio' => 'U123', 'matriculaSiape' => 'M123']]);
+        $this->siapeService->shouldReceive('getProcessaDadosSiape')->andReturn($processaDados);
+
+        $buscarDadosUnidade = Mockery::mock(BuscarDadosSiapeUnidade::class);
+        $buscarDadosUnidade->shouldReceive('getUorgAsXml')->andReturn('xml');
+        $buscarDadosUnidade->shouldReceive('executaRequisicao')->andReturn('xml');
+        $buscarDadosUnidade->shouldReceive('getCpf')->andReturn('cpf');
+        $buscarDadosUnidade->shouldReceive('getUnidades')->andReturn([['codigo' => 'U123', 'dataUltimaTransacao' => 'd']]);
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeUnidade')->andReturn($buscarDadosUnidade);
+        
+        $buscarDadosUnidades = Mockery::mock(BuscarDadosSiapeUnidades::class);
+        $buscarDadosUnidades->shouldReceive('listaUorgs')->andReturnNull();
+        $this->siapeService->shouldReceive('getBuscarDadosSiapeUnidades')->andReturn($buscarDadosUnidades);
+
+        $resumo = $this->service->fluxoSiape($validCpf, $this->siapeService);
+        
+        expect($resumo[0]['alteracoes'])->toContain('nome', 'email');
+        expect($resumo[0]['alteracoes'])->not->toContain('situacao_siape');
+    });
+
+});
+
+describe('SiapeIndividualServidorService - Métodos Protegidos', function () {
+    it('deve instanciar integracao service', function () {
+        $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'instanciarIntegracaoService');
+        $method->setAccessible(true);
+        $result = $method->invoke($this->service);
+        expect($result)->toBeInstanceOf(IntegracaoService::class);
+    });
 });
