@@ -6,51 +6,9 @@ use App\Services\SiapeIndividualServidorService;
 use Tests\TestCase;
 use ReflectionMethod;
 use Mockery;
-use Illuminate\Support\Str;
-use App\Models\Usuario;
-use App\Models\SiapeConsultaDadosPessoais;
-use App\Models\SiapeConsultaDadosFuncionais;
-use App\Models\Unidade;
-use App\Models\SiapeListaUORGS;
-use App\Models\SiapeDadosUORG;
-use App\Models\Entidade;
-use App\Models\SiapeBlackListServidor;
-use App\Models\UnidadeIntegrante;
-use App\Models\UnidadeIntegranteAtribuicao;
-use ReflectionClass;
+use Illuminate\Support\Facades\Log;
 
-// Use default TestCase
 uses(TestCase::class);
-
-// Global storage for mocks
-$sharedMocks = [];
-
-beforeAll(function () {
-    global $sharedMocks;
-    
-    // Define aliases only if the class is not already loaded
-    // We use 'alias:' to mock static methods on Eloquent models
-    $classesToMock = [
-        'App\Models\Usuario',
-        'App\Models\SiapeConsultaDadosPessoais',
-        'App\Models\SiapeConsultaDadosFuncionais',
-        'App\Models\Unidade',
-        'App\Models\SiapeListaUORGS',
-        'App\Models\SiapeDadosUORG',
-        'App\Models\Entidade',
-        'App\Models\SiapeBlackListServidor',
-        'App\Models\UnidadeIntegrante',
-        'App\Models\UnidadeIntegranteAtribuicao',
-        'App\Facades\SiapeLog',
-    ];
-
-    foreach ($classesToMock as $class) {
-        if (!class_exists($class, false)) {
-            // We store the mock, but for aliases, Mockery manages the instance internally
-            $sharedMocks[$class] = Mockery::mock("alias:$class");
-        }
-    }
-});
 
 afterAll(function () {
     Mockery::close();
@@ -58,17 +16,44 @@ afterAll(function () {
 
 describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function () {
 
-    // Running all tests in a single 'it' block to prevent Mockery::close() 
-    // from destroying alias mocks between tests, which causes "Call to a member function __call() on null"
-    // errors because alias classes persist while their mock instances are cleared.
     it('executa fluxo completo de testes de banco de dados', function () {
-        global $sharedMocks;
-        $service = new SiapeIndividualServidorService();
+        // Create partial mock of the service to intercept getModel
+        $service = Mockery::mock(SiapeIndividualServidorService::class)->makePartial();
+        $service->shouldAllowMockingProtectedMethods();
+        
         $cpf = '12345678901';
 
-        // Setup common mocks
-        $sharedMocks['App\Facades\SiapeLog']->shouldReceive('info')->withAnyArgs()->andReturnNull();
-        $sharedMocks['App\Facades\SiapeLog']->shouldReceive('error')->withAnyArgs()->andReturnNull(); // Just in case
+        // Mocks for Models
+        $mockUsuario = Mockery::mock('App\Models\Usuario');
+        $mockPessoais = Mockery::mock('App\Models\SiapeConsultaDadosPessoais');
+        $mockFuncionais = Mockery::mock('App\Models\SiapeConsultaDadosFuncionais');
+        $mockUnidade = Mockery::mock('App\Models\Unidade');
+        $mockListaUORGS = Mockery::mock('App\Models\SiapeListaUORGS');
+        $mockDadosUORG = Mockery::mock('App\Models\SiapeDadosUORG');
+        $mockEntidade = Mockery::mock('App\Models\Entidade');
+        $mockBlackList = Mockery::mock('App\Models\SiapeBlackListServidor');
+        $mockUnidadeIntegrante = Mockery::mock('App\Models\UnidadeIntegrante');
+        $mockUnidadeIntegranteAtribuicao = Mockery::mock('App\Models\UnidadeIntegranteAtribuicao');
+
+        // Mock getModel to return appropriate model mocks
+        $service->shouldReceive('getModelInstance')->with('App\Models\Usuario')->andReturn($mockUsuario);
+        $service->shouldReceive('getModelInstance')->with('App\Models\SiapeConsultaDadosPessoais')->andReturn($mockPessoais);
+        $service->shouldReceive('getModelInstance')->with('App\Models\SiapeConsultaDadosFuncionais')->andReturn($mockFuncionais);
+        $service->shouldReceive('getModelInstance')->with('App\Models\Unidade')->andReturn($mockUnidade);
+        $service->shouldReceive('getModelInstance')->with('App\Models\SiapeListaUORGS')->andReturn($mockListaUORGS);
+        $service->shouldReceive('getModelInstance')->with('App\Models\SiapeDadosUORG')->andReturn($mockDadosUORG);
+        $service->shouldReceive('getModelInstance')->with('App\Models\Entidade')->andReturn($mockEntidade);
+        $service->shouldReceive('getModelInstance')->with('App\Models\SiapeBlackListServidor')->andReturn($mockBlackList);
+        $service->shouldReceive('getModelInstance')->with('App\Models\UnidadeIntegrante')->andReturn($mockUnidadeIntegrante);
+        $service->shouldReceive('getModelInstance')->with('App\Models\UnidadeIntegranteAtribuicao')->andReturn($mockUnidadeIntegranteAtribuicao);
+
+        // Mock Log facade to capture SiapeLog calls
+        Log::shouldReceive('channel')->andReturnSelf();
+        Log::shouldReceive('info')->withAnyArgs();
+        Log::shouldReceive('error')->withAnyArgs();
+        Log::shouldReceive('warning')->withAnyArgs();
+        Log::shouldReceive('debug')->withAnyArgs();
+        Log::shouldReceive('notice')->withAnyArgs();
 
         // --- Teste: deve buscar usuarios por cpf ---
         $builderMock1 = Mockery::mock('Illuminate\Database\Eloquent\Builder');
@@ -84,14 +69,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
             ]
         ]));
 
-        // We use the alias mock directly from the global array or by class name if needed
-        // Since we are inside the same process, we can access the alias.
-        // Note: For alias mocks, we should set expectations on the mock object we created.
-        // But since we can't easily retrieve it if lost, we rely on $sharedMocks if valid, 
-        // OR we can try to use the class name if Mockery allows.
-        
-        // Let's use the shared mock instance.
-        $sharedMocks['App\Models\Usuario']->shouldReceive('with')->with(['lotacao.unidade'])->andReturn($builderMock1);
+        $mockUsuario->shouldReceive('with')->with(['lotacao.unidade'])->andReturn($builderMock1);
 
         $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'buscarUsuariosPorCpf');
         $method->setAccessible(true);
@@ -107,13 +85,13 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
         $builderMockPessoais->shouldReceive('where')->with('cpf', $cpf)->andReturnSelf();
         $builderMockPessoais->shouldReceive('forceDelete')->once();
 
-        $sharedMocks['App\Models\SiapeConsultaDadosPessoais']->shouldReceive('withTrashed')->andReturn($builderMockPessoais);
+        $mockPessoais->shouldReceive('withTrashed')->andReturn($builderMockPessoais);
 
         $builderMockFuncionais = Mockery::mock('Illuminate\Database\Query\Builder');
         $builderMockFuncionais->shouldReceive('where')->with('cpf', $cpf)->andReturnSelf();
         $builderMockFuncionais->shouldReceive('forceDelete')->once();
 
-        $sharedMocks['App\Models\SiapeConsultaDadosFuncionais']->shouldReceive('withTrashed')->andReturn($builderMockFuncionais);
+        $mockFuncionais->shouldReceive('withTrashed')->andReturn($builderMockFuncionais);
 
         $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'limparDadosSiape');
         $method->setAccessible(true);
@@ -129,8 +107,8 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
         $builderMockUnidade2->shouldReceive('where')->with('codigo', 'U999')->andReturnSelf();
         $builderMockUnidade2->shouldReceive('exists')->andReturn(false);
 
-        $sharedMocks['App\Models\Unidade']->shouldReceive('where')->with('codigo', 'U123')->andReturn($builderMockUnidade1);
-        $sharedMocks['App\Models\Unidade']->shouldReceive('where')->with('codigo', 'U999')->andReturn($builderMockUnidade2);
+        $mockUnidade->shouldReceive('where')->with('codigo', 'U123')->andReturn($builderMockUnidade1);
+        $mockUnidade->shouldReceive('where')->with('codigo', 'U999')->andReturn($builderMockUnidade2);
 
         $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'verificarExistenciaUnidade');
         $method->setAccessible(true);
@@ -144,7 +122,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
         $builderMockUorg->shouldReceive('orderBy')->with('updated_at', 'desc')->andReturnSelf();
         $builderMockUorg->shouldReceive('first')->andReturn((object)['cod_uorg' => 'U2']);
 
-        $sharedMocks['App\Models\SiapeListaUORGS']->shouldReceive('where')->with('processado', 0)->andReturn($builderMockUorg);
+        $mockListaUORGS->shouldReceive('where')->with('processado', 0)->andReturn($builderMockUorg);
 
         $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'buscarUorgNaoProcessada');
         $method->setAccessible(true);
@@ -157,7 +135,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
         // --- Teste: deve salvar historico unidade db ---
         $unidadeSiape = ['dataUltimaTransacao' => '01012023'];
         
-        $sharedMocks['App\Models\SiapeDadosUORG']->shouldReceive('insert')->once()->with(Mockery::on(function ($arg) {
+        $mockDadosUORG->shouldReceive('insert')->once()->with(Mockery::on(function ($arg) {
             return isset($arg['id']) && $arg['response'] === '<xml></xml>';
         }));
 
@@ -167,11 +145,11 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
 
 
         // --- Teste: deve salvar dados consulta db ---
-        $sharedMocks['App\Models\SiapeConsultaDadosFuncionais']->shouldReceive('insert')->once()->with(Mockery::on(function ($arg) use ($cpf) {
+        $mockFuncionais->shouldReceive('insert')->once()->with(Mockery::on(function ($arg) use ($cpf) {
             return $arg['cpf'] === $cpf && $arg['response'] === '<func></func>';
         }));
 
-        $sharedMocks['App\Models\SiapeConsultaDadosPessoais']->shouldReceive('insert')->once()->with(Mockery::on(function ($arg) use ($cpf) {
+        $mockPessoais->shouldReceive('insert')->once()->with(Mockery::on(function ($arg) use ($cpf) {
             return $arg['cpf'] === $cpf && $arg['response'] === '<pess></pess>';
         }));
         
@@ -181,7 +159,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
 
 
         // --- Teste: deve buscar todas entidades ---
-        $sharedMocks['App\Models\Entidade']->shouldReceive('all')->andReturn(collect([(object)['nome' => 'E1']]));
+        $mockEntidade->shouldReceive('all')->andReturn(collect([(object)['nome' => 'E1']]));
         
         $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'buscarTodasEntidades');
         $method->setAccessible(true);
@@ -195,7 +173,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
         $builderMockSimples->shouldReceive('where')->with('cpf', $cpf)->andReturnSelf();
         $builderMockSimples->shouldReceive('get')->andReturn(collect([(object)['cpf' => $cpf]]));
 
-        $sharedMocks['App\Models\Usuario']->shouldReceive('where')->with('cpf', $cpf)->andReturn($builderMockSimples);
+        $mockUsuario->shouldReceive('where')->with('cpf', $cpf)->andReturn($builderMockSimples);
         
         $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'buscarUsuariosSimples');
         $method->setAccessible(true);
@@ -212,7 +190,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
         $builderMockRemoveBL->shouldReceive('where')->with('cpf', $cpf)->andReturnSelf();
         $builderMockRemoveBL->shouldReceive('first')->andReturn($modelInstanceMock);
 
-        $sharedMocks['App\Models\SiapeBlackListServidor']->shouldReceive('where')->with('cpf', $cpf)->andReturn($builderMockRemoveBL);
+        $mockBlackList->shouldReceive('where')->with('cpf', $cpf)->andReturn($builderMockRemoveBL);
 
         $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'removendoDaBlackList');
         $method->setAccessible(true);
@@ -224,7 +202,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
         $builderMockSeekBL->shouldReceive('where')->with('cpf', $cpf)->andReturnSelf();
         $builderMockSeekBL->shouldReceive('first')->andReturn((object)['cpf' => $cpf]);
 
-        $sharedMocks['App\Models\SiapeBlackListServidor']->shouldReceive('where')->with('cpf', $cpf)->andReturn($builderMockSeekBL);
+        $mockBlackList->shouldReceive('where')->with('cpf', $cpf)->andReturn($builderMockSeekBL);
 
         $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'buscarBlacklist');
         $method->setAccessible(true);
@@ -238,7 +216,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
         $builderMockResumo->shouldReceive('where')->with('cpf', $cpf)->andReturnSelf();
         $builderMockResumo->shouldReceive('get')->andReturn(collect([(object)['matricula' => 'M1']]));
 
-        $sharedMocks['App\Models\Usuario']->shouldReceive('with')->with(['lotacao.unidade'])->andReturn($builderMockResumo);
+        $mockUsuario->shouldReceive('with')->with(['lotacao.unidade'])->andReturn($builderMockResumo);
 
         $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'gerarUsuariosResumo');
         $method->setAccessible(true);
@@ -247,5 +225,116 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
         expect($result->count())->toBe(1);
 
     });
+
+    it('cobre cenários de exceção e fluxos alternativos', function () {
+        $service = Mockery::mock(SiapeIndividualServidorService::class)->makePartial();
+        $service->shouldAllowMockingProtectedMethods();
+        $cpf = '12345678901';
+
+        // Mocks
+        $mockUsuario = Mockery::mock('App\Models\Usuario');
+        $mockPessoais = Mockery::mock('App\Models\SiapeConsultaDadosPessoais');
+        $mockFuncionais = Mockery::mock('App\Models\SiapeConsultaDadosFuncionais');
+        $mockUnidade = Mockery::mock('App\Models\Unidade');
+        $mockListaUORGS = Mockery::mock('App\Models\SiapeListaUORGS');
+        $mockDadosUORG = Mockery::mock('App\Models\SiapeDadosUORG');
+        $mockEntidade = Mockery::mock('App\Models\Entidade');
+        $mockBlackList = Mockery::mock('App\Models\SiapeBlackListServidor');
+        
+        $service->shouldReceive('getModelInstance')->with('App\Models\Usuario')->andReturn($mockUsuario);
+        $service->shouldReceive('getModelInstance')->with('App\Models\SiapeConsultaDadosPessoais')->andReturn($mockPessoais);
+        $service->shouldReceive('getModelInstance')->with('App\Models\SiapeConsultaDadosFuncionais')->andReturn($mockFuncionais);
+        $service->shouldReceive('getModelInstance')->with('App\Models\Unidade')->andReturn($mockUnidade);
+        $service->shouldReceive('getModelInstance')->with('App\Models\SiapeListaUORGS')->andReturn($mockListaUORGS);
+        $service->shouldReceive('getModelInstance')->with('App\Models\SiapeDadosUORG')->andReturn($mockDadosUORG);
+        $service->shouldReceive('getModelInstance')->with('App\Models\Entidade')->andReturn($mockEntidade);
+        $service->shouldReceive('getModelInstance')->with('App\Models\SiapeBlackListServidor')->andReturn($mockBlackList);
+        $service->shouldReceive('getModelInstance')->withAnyArgs()->andReturn(Mockery::mock('stdClass'));
+
+        Log::shouldReceive('channel')->andReturnSelf();
+        Log::shouldReceive('info')->withAnyArgs();
+        Log::shouldReceive('error')->withAnyArgs();
+        Log::shouldReceive('warning')->withAnyArgs();
+
+        // 1. Test normalizarDadosFuncionais single item
+        $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'normalizarDadosFuncionais');
+        $method->setAccessible(true);
+        $singleData = (object)['foo' => 'bar'];
+        $result = $method->invoke($service, $cpf, $singleData);
+        expect($result)->toBeArray()->toHaveCount(1);
+        expect($result[0])->toBe($singleData);
+
+        // 2. Test salvarHistoricoUnidade logic
+        $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'salvarHistoricoUnidade');
+        $method->setAccessible(true);
+        // Case null
+        $method->invoke($service, '<xml>', null);
+        // Case not null
+        $mockDadosUORG->shouldReceive('insert');
+        $method->invoke($service, '<xml>', ['dataUltimaTransacao' => '01012023']);
+
+        // 3. Test atualizarVinculosUsuarios Exception
+        $service->shouldReceive('buscarUsuariosSimples')->with($cpf)->andThrow(new \Exception('Erro simulado'));
+        
+        $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'atualizarVinculosUsuarios');
+        $method->setAccessible(true);
+        $method->invoke($service, $cpf, []); // Should catch exception and log error
+
+        // 4. Test executarSincronizacaoFinal Exception
+        $service->shouldReceive('buscarTodasEntidades')->andThrow(new \Exception('Erro sync final'));
+        $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'executarSincronizacaoFinal');
+        $method->setAccessible(true);
+        
+        try {
+            $method->invoke($service, $cpf);
+        } catch (\Exception $e) {
+            expect($e->getMessage())->toContain('Erro na sincronização final');
+        }
+
+        // 5. Test criarItemResumo lotacao nao associada
+        $uDepois = Mockery::mock('App\Models\Usuario');
+        $uDepois->shouldReceive('getAttribute')->with('nome')->andReturn('Teste');
+        $uDepois->shouldReceive('getAttribute')->with('lotacao')->andReturn(null);
+        $uDepois->shouldReceive('getAttribute')->with('matricula')->andReturn('M1');
+        $uDepois->shouldReceive('getAttribute')->with('id')->andReturn(1);
+        $uDepois->shouldReceive('offsetExists')->with('lotacao')->andReturn(false);
+        
+        $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'criarItemResumo');
+        $method->setAccessible(true);
+        $item = $method->invoke($service, $uDepois, null, 'sucesso', 'msg');
+        expect($item['status'])->toBe('parcial');
+
+        // 6. Test detectarAlteracoes lotacao changed
+        $uAntes = ['lotacao_id' => 1];
+        $uDepois = Mockery::mock('App\Models\Usuario');
+        $uDepois->shouldReceive('getAttribute')->with('nome')->andReturn('Teste');
+        $uDepois->shouldReceive('getAttribute')->with('email')->andReturn('email');
+        $uDepois->shouldReceive('getAttribute')->with('matricula')->andReturn('M1');
+        $uDepois->shouldReceive('getAttribute')->with('situacao_siape')->andReturn('ativo');
+        $uDepois->shouldReceive('getAttribute')->with('lotacao')->andReturn((object)['unidade_id' => 2]);
+        $uDepois->shouldReceive('offsetExists')->with('lotacao')->andReturn(true);
+        
+        $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'detectarAlteracoes');
+        $method->setAccessible(true);
+        $alteracoes = $method->invoke($service, $uAntes, $uDepois);
+        expect($alteracoes)->toContain('lotacao_id');
+
+        // 7. Test verificarBlacklist Exception
+        $service->shouldReceive('buscarBlacklist')->with($cpf)->andThrow(new \Exception('Erro BL'));
+        $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'verificarBlacklist');
+        $method->setAccessible(true);
+        $uMock = Mockery::mock('App\Models\Usuario');
+        $method->invoke($service, $cpf, $uMock); // Should log error
+    });
+
+    it('cobre getModelInstance real', function () {
+        $service = new SiapeIndividualServidorService();
+        $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'getModelInstance');
+        $method->setAccessible(true);
+        
+        $obj = $method->invoke($service, 'stdClass');
+        expect($obj)->toBeInstanceOf('stdClass');
+    });
+
 
 });

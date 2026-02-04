@@ -84,9 +84,14 @@ class SiapeIndividualServidorService extends ServiceBase
         return new IntegracaoService([]);
     }
 
+    protected function getModelInstance(string $modelClass): mixed
+    {
+        return new $modelClass();
+    }
+
     protected function buscarUsuariosPorCpf(string $cpf): array
     {
-        return Usuario::with(['lotacao.unidade'])
+        return $this->getModelInstance(Usuario::class)->with(['lotacao.unidade'])
             ->where('cpf', $cpf)
             ->get()
             ->map(fn($u) => [
@@ -115,8 +120,8 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function limparDadosSiape(string $cpf): void
     {
-        SiapeConsultaDadosPessoais::withTrashed()->where('cpf', $cpf)->forceDelete();
-        SiapeConsultaDadosFuncionais::withTrashed()->where('cpf', $cpf)->forceDelete();
+        $this->getModelInstance(SiapeConsultaDadosPessoais::class)->withTrashed()->where('cpf', $cpf)->forceDelete();
+        $this->getModelInstance(SiapeConsultaDadosFuncionais::class)->withTrashed()->where('cpf', $cpf)->forceDelete();
     }
 
     private function limparDadosAnteriores(string $cpf): void
@@ -247,7 +252,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function verificarExistenciaUnidade(string $codigoUnidade): bool
     {
-        return Unidade::where('codigo', $codigoUnidade)->exists();
+        return $this->getModelInstance(Unidade::class)->where('codigo', $codigoUnidade)->exists();
     }
 
     private function validarUnidadeProcessada(string $cpf, string $codigoUnidade, array $dados): void
@@ -294,7 +299,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function buscarUorgNaoProcessada()
     {
-        return SiapeListaUORGS::where('processado', 0)
+        return $this->getModelInstance(SiapeListaUORGS::class)->where('processado', 0)
             ->orderBy('updated_at', 'desc')
             ->first();
     }
@@ -309,7 +314,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function salvarHistoricoUnidadeDb(string $responseXml, ?array $unidadeSiape): void
     {
-        SiapeDadosUORG::insert([
+        $this->getModelInstance(SiapeDadosUORG::class)->insert([
             'id' => Str::uuid(),
             'data_modificacao' => DateTime::createFromFormat(self::FORMATO_DATA_SIAPE, $unidadeSiape['dataUltimaTransacao'])
                 ->format(self::FORMATO_DATA_DB),
@@ -329,7 +334,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function salvarDadosConsultaDb(string $cpf, string $respFuncionais, string $respPessoais): void
     {
-        SiapeConsultaDadosFuncionais::insert([
+        $this->getModelInstance(SiapeConsultaDadosFuncionais::class)->insert([
             'id' => Str::uuid(),
             'cpf' => $cpf,
             'data_modificacao' => today(),
@@ -338,7 +343,7 @@ class SiapeIndividualServidorService extends ServiceBase
             'updated_at' => Carbon::now(),
         ]);
 
-        SiapeConsultaDadosPessoais::insert([
+        $this->getModelInstance(SiapeConsultaDadosPessoais::class)->insert([
             'id' => Str::uuid(),
             'cpf' => $cpf,
             'data_modificacao' => today(),
@@ -374,7 +379,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function buscarTodasEntidades()
     {
-        return Entidade::all();
+        return $this->getModelInstance(Entidade::class)->all();
     }
 
     private function executarSincronizacaoFinal(string $cpf): void
@@ -418,7 +423,7 @@ class SiapeIndividualServidorService extends ServiceBase
     }
 
     protected function gerarUsuariosResumo(string $cpf) {
-        return Usuario::with(['lotacao.unidade'])->where('cpf', $cpf)->get();
+        return $this->getModelInstance(Usuario::class)->with(['lotacao.unidade'])->where('cpf', $cpf)->get();
     }
 
     private function gerarResumo(array $usuariosAntes, string $cpf, string $status, string $mensagem = self::MSG_CONCLUIDO): array
@@ -482,7 +487,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function buscarUsuariosSimples(string $cpf)
     {
-        return Usuario::where('cpf', $cpf)->get();
+        return $this->getModelInstance(Usuario::class)->where('cpf', $cpf)->get();
     }
 
     private function removeVinculoParaforcarSerLotadoNovamente(string $cpf, array $dadosFuncionaisArray): void
@@ -529,7 +534,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function buscarBlacklist(string $cpf)
     {
-        return SiapeBlackListServidor::where('cpf', $cpf)->first();
+        return $this->getModelInstance(SiapeBlackListServidor::class)->where('cpf', $cpf)->first();
     }
 
     private function verificarBlacklist(string $cpf, Usuario $usuario): void
@@ -586,17 +591,8 @@ class SiapeIndividualServidorService extends ServiceBase
         );
     }
 
-    private function montaXmlListaServidores($codigoDaUnidade)
-    {
-        return $this->service->getBuscarDadosSiapeServidores()->listaServidores(
-            $this->service->config['siglaSistema'],
-            $this->service->config['nomeSistema'],
-            $this->service->config['senha'],
-            $this->service->getBuscarDadosSiapeUnidade()->getCpf(),
-            $this->service->getOrgao(),
-            $codigoDaUnidade
-        );
-    }
+    // Unused method removed
+
 
     private function montaXMLDadosFuncionais(string $cpf)
     {

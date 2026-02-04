@@ -21,13 +21,6 @@ use Mockery\MockInterface;
 uses(TestCase::class);
 
 beforeEach(function () {
-    // Mock SiapeLog facade
-    Mockery::mock('alias:App\Facades\SiapeLog')
-        ->shouldReceive('info')
-        ->shouldReceive('error')
-        ->shouldReceive('warning');
-        
-    // Suppress Laravel default logging to avoid permission errors in tests
     Log::shouldReceive('channel')->andReturnSelf();
     Log::shouldReceive('info');
     Log::shouldReceive('error');
@@ -38,11 +31,9 @@ beforeEach(function () {
     Log::shouldReceive('alert');
     Log::shouldReceive('emergency');
 
-    // Partial mock of the service to intercept protected methods
     $this->service = Mockery::mock(SiapeIndividualServidorService::class)->makePartial();
     $this->service->shouldAllowMockingProtectedMethods();
     
-    // Config setup for SiapeIndividualService mock
     $this->siapeConfig = [
         'codOrgao' => '12345',
         'siglaSistema' => 'SIGLA',
@@ -52,7 +43,6 @@ beforeEach(function () {
         'parmTipoVinculo' => '1'
     ];
 
-    // Mock SiapeIndividualService
     $this->siapeService = Mockery::mock(SiapeIndividualService::class);
     $this->siapeService->config = $this->siapeConfig;
     $this->siapeService->shouldReceive('getOrgao')->andReturn('12345')->byDefault();
@@ -123,16 +113,9 @@ describe('SiapeIndividualServidorService - Fluxo Principal', function () {
         $cpf = '12345678901';
         $cpfLimpo = '12345678901';
 
-        // Fake CPF validation to pass for test CPF
-        // Since we are mocking everything, we don't need real validation if we mock 'limparEValidarCpf' OR we pass a valid CPF.
-        // But 'limparEValidarCpf' is private and not partial mocked easily unless we use reflection or just pass a valid CPF.
-        // '12345678901' is invalid checksum.
-        // Let's use a valid CPF generator or just a valid CPF string.
-        // 52998224725 is valid.
         $validCpf = '52998224725';
         $cpfLimpo = $validCpf;
         
-        // Mock protected methods
         $this->service->shouldReceive('buscarUsuariosPorCpf')->with($cpfLimpo)->andReturn([])->once();
         $this->service->shouldReceive('limparDadosSiape')->with($cpfLimpo)->once();
         $this->service->shouldReceive('verificarExistenciaUnidade')->andReturn(true); 
@@ -143,13 +126,8 @@ describe('SiapeIndividualServidorService - Fluxo Principal', function () {
 
         $this->service->shouldReceive('salvarHistoricoUnidadeDb')->andReturnNull();
         $this->service->shouldReceive('salvarDadosConsultaDb')->with($cpfLimpo, 'xml_func', 'xml_pess')->once();
-        $this->service->shouldReceive('buscarUsuariosSimples')->with($cpfLimpo)->andReturn(collect([])); // Empty for no vinculo removal
+        $this->service->shouldReceive('buscarUsuariosSimples')->with($cpfLimpo)->andReturn(collect([])); 
         
-        // removendoDaBlackList should NOT be mocked because it is now protected and we want to test its side effect OR mock it if we don't care about implementation
-        // But since we are partial mocking the service, calling it directly or expecting it works.
-        // However, previous error said "cannot be mocked as it is a private method". I changed it to protected.
-        // But let's verify if we want to mock it or let it run. 
-        // In this test case "executar fluxo com sucesso completo", we likely want to mock it to isolate dependencies.
         $this->service->shouldReceive('removendoDaBlackList')->with($cpfLimpo)->once(); 
         
         $mockIntegracao = Mockery::mock(IntegracaoService::class);
@@ -158,21 +136,18 @@ describe('SiapeIndividualServidorService - Fluxo Principal', function () {
         $this->service->shouldReceive('instanciarIntegracaoService')->andReturn($mockIntegracao);
         $this->service->shouldReceive('buscarTodasEntidades')->andReturn(collect([new Entidade(['id' => 'ent1'])]));
         
-        // Mock Resumo return
         $usuarioDepois = Mockery::mock(Usuario::class)->makePartial();
         $usuarioDepois->nome = 'User Test';
         $usuarioDepois->matricula = 'M123';
-        // Mock relation access via getAttribute for magic method __get
+
         $lotacaoMock = new Unidade();
         $lotacaoMock->id = 'u1';
-        $lotacaoMock->unidade_id = 'u1'; // Ensure compatibility with access patterns
+        $lotacaoMock->unidade_id = 'u1'; 
         
         $lotacaoObj = new \stdClass();
         $lotacaoObj->unidade_id = 'u1';
         $lotacaoObj->unidade = $lotacaoMock;
 
-        // Since we cannot easily setRelation on a partial mock that intercepts getAttribute, 
-        // we rely on the mock returning the object for 'lotacao' attribute.
         $usuarioDepois->shouldReceive('getAttribute')->with('lotacao')->andReturn($lotacaoObj);
         $usuarioDepois->shouldReceive('getAttribute')->with('nome')->andReturn('User Test');
         $usuarioDepois->shouldReceive('getAttribute')->with('matricula')->andReturn('M123');
@@ -180,7 +155,6 @@ describe('SiapeIndividualServidorService - Fluxo Principal', function () {
 
         $this->service->shouldReceive('gerarUsuariosResumo')->with($cpfLimpo)->andReturn(collect([$usuarioDepois]));
 
-        // Mock Siape Service dependencies
         $buscarDadosServidor = Mockery::mock(BuscarDadosSiapeServidor::class);
         $buscarDadosServidor->shouldReceive('consultaDadosFuncionais')->andReturn('xml_func_request');
         $buscarDadosServidor->shouldReceive('consultaDadosPessoais')->andReturn('xml_pess_request');
