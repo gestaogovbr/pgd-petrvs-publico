@@ -30,9 +30,16 @@ docker exec petrvs_php bash -lc "cd /var/www && ./vendor/bin/pest tests/Unit/Bas
 - Configuração global em `back-end/tests/Pest.php`.
 
 ## Regras de Mocking e Banco de Dados (IMPORTANTE)
-1. **Zero Interação com Banco de Dados**: Testes unitários devem usar Mocks para todas as operações de banco.
-2. **Não Modifique Migrations**: A estrutura do banco deve ser assumida ou simulada, nunca alterada pelos testes unitários.
-3. **Padrão de Mocking**: Use `Mockery` para simular Models e Facades.
+1. **Zero Interação com Banco de Dados**: Testes unitários (`tests/Unit`) devem usar Mocks para todas as operações de banco.
+   - **PROIBIDO**: `Schema::create(...)`, `DB::table(...)->insert(...)`, `use RefreshDatabase`.
+   - **PROIBIDO**: Instanciar Models reais que tentam conectar ao banco.
+2. **Framework**: Utilize **Pest** para todos os novos testes.
+   - Arquivos legados em PHPUnit (`extends TestCase`) devem ser migrados.
+3. **Padrão de Mocking**: Use `Mockery` para simular Models, Services e Facades.
+4. **Isolamento**: O serviço testado deve ser isolado via `makePartial()`.
+
+### Padrão de Referência
+O arquivo `tests/Unit/Services/SiapeIndividualServidorServiceMethodsTest.php` é o padrão ouro a ser seguido.
 
 ### Exemplo do Padrão Adotado (Service com Partial Mock e Models Mockados)
 
@@ -41,34 +48,42 @@ use App\Services\ExemploService;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Log;
 
+uses(TestCase::class);
+
 // Garante limpeza dos mocks após cada teste
-afterEach(function () {
+afterAll(function () {
     Mockery::close();
 });
 
-it('executa lógica sem tocar no banco de dados', function () {
-    // 1. Mock de Facades (Logs, etc)
-    Log::shouldReceive('info')->withAnyArgs();
+describe('ExemploService - Nome do Grupo de Testes', function () {
+    it('executa lógica sem tocar no banco de dados', function () {
+        // 1. Mock de Facades (Logs, etc)
+        Log::shouldReceive('info')->withAnyArgs();
 
-    // 2. Mock de Models (com suporte a métodos mágicos do Eloquent se necessário)
-    $mockUsuario = Mockery::mock(Usuario::class);
-    $mockUsuario->shouldReceive('getAttribute')->with('nome')->andReturn('Teste');
-    
-    // 3. Service com Partial Mock para interceptar criação de models (Dependency Injection via método)
-    $service = Mockery::mock(ExemploService::class)->makePartial();
-    $service->shouldAllowMockingProtectedMethods();
-    
-    // Intercepta o método que instancia o Model (ex: getModelInstance)
-    $service->shouldReceive('getModelInstance')
-        ->with(Usuario::class)
-        ->andReturn($mockUsuario);
+        // 2. Mock de Models
+        $mockUsuario = Mockery::mock('App\Models\Usuario');
+        $mockUsuario->shouldReceive('getAttribute')->with('nome')->andReturn('Teste');
+        
+        // 3. Service com Partial Mock para interceptar criação de models
+        $service = Mockery::mock(ExemploService::class)->makePartial();
+        $service->shouldAllowMockingProtectedMethods();
+        
+        // Intercepta o método que instancia o Model (ex: getModelInstance)
+        $service->shouldReceive('getModelInstance')
+            ->with('App\Models\Usuario')
+            ->andReturn($mockUsuario);
 
-    // Execução do método testado
-    $resultado = $service->metodoTestado();
-    
-    expect($resultado)->toBeTrue();
+        // Execução do método testado
+        $resultado = $service->metodoTestado();
+        
+        expect($resultado)->toBeTrue();
+    });
 });
 ```
+
+## Status de Padronização (Refactoring)
+Consulte o arquivo `refactoring_tasks.md` para a lista de testes que precisam ser adequados ao padrão.
+
 
 ## Dicas
 - Mantenha `Mockery::close()` no `afterEach` para limpar mocks.
