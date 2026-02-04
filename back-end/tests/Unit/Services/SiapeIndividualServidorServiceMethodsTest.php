@@ -3,6 +3,7 @@
 namespace Tests\Unit\Services;
 
 use App\Services\SiapeIndividualServidorService;
+use App\Services\IntegracaoServiceFactory;
 use Tests\TestCase;
 use ReflectionMethod;
 use Mockery;
@@ -17,8 +18,11 @@ afterAll(function () {
 describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function () {
 
     it('executa fluxo completo de testes de banco de dados', function () {
+        // Mock dependencies
+        $mockFactory = Mockery::mock(IntegracaoServiceFactory::class);
+        
         // Create partial mock of the service to intercept getModel
-        $service = Mockery::mock(SiapeIndividualServidorService::class)->makePartial();
+        $service = Mockery::mock(SiapeIndividualServidorService::class, [$mockFactory])->makePartial();
         $service->shouldAllowMockingProtectedMethods();
         
         $cpf = '12345678901';
@@ -227,7 +231,8 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
     });
 
     it('cobre cenários de exceção e fluxos alternativos', function () {
-        $service = Mockery::mock(SiapeIndividualServidorService::class)->makePartial();
+        $mockFactory = Mockery::mock(IntegracaoServiceFactory::class);
+        $service = Mockery::mock(SiapeIndividualServidorService::class, [$mockFactory])->makePartial();
         $service->shouldAllowMockingProtectedMethods();
         $cpf = '12345678901';
 
@@ -328,7 +333,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
     });
 
     it('cobre getModelInstance real', function () {
-        $service = new SiapeIndividualServidorService();
+        $service = app(SiapeIndividualServidorService::class);
         $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'getModelInstance');
         $method->setAccessible(true);
         

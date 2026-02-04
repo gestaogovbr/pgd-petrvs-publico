@@ -13,6 +13,7 @@ use App\Models\SiapeBlackListServidor;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Services\Siape\Unidade\Atribuicao;
+use App\Services\IntegracaoServiceFactory;
 use Illuminate\Support\Str;
 use Exception;
 use DateTime;
@@ -35,6 +36,13 @@ class SiapeIndividualServidorService extends ServiceBase
 
     private SiapeIndividualService $service;
     private ?array $resumo = null;
+
+    public function __construct(
+        protected IntegracaoServiceFactory $integracaoServiceFactory,
+        $collection = null
+    ) {
+        parent::__construct($collection);
+    }
 
     public function getResumo(): ?array
     {
@@ -81,12 +89,12 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function instanciarIntegracaoService(): IntegracaoService
     {
-        return new IntegracaoService([]);
+        return $this->integracaoServiceFactory->make([]);
     }
 
     protected function getModelInstance(string $modelClass): mixed
     {
-        return new $modelClass();
+        return app($modelClass);
     }
 
     protected function buscarUsuariosPorCpf(string $cpf): array

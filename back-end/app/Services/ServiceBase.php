@@ -84,7 +84,7 @@ class ServiceBase extends DynamicMethods
   public function __get($name)
   {
     $fullName = "App\\Services\\" . ucfirst(str_ends_with($name, "Service") ? $name : $name . "Service");
-    if (empty($this->_services[$name]) && class_exists($fullName)) $this->_services[$name] = new $fullName();
+    if (empty($this->_services[$name]) && class_exists($fullName)) $this->_services[$name] = app($fullName);
     return class_exists($fullName) ? $this->_services[$name] : null;
   }
 
