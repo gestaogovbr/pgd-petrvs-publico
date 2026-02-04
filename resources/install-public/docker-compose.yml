@@ -13,6 +13,7 @@ services:
   petrvs_php:
     image: segescginf/pgdpetrvs:latest  # Substitua pela sua imagem real
     container_name: petrvs_php
+      - APP_CONTEXT=web
     ports:
       - "80:80"
       - "443:443"
@@ -21,24 +22,35 @@ services:
         limits:
           cpus: '2.0'
           memory: 4048M
+    depends_on:
+      petrvs_db:
+        condition: service_started
+      petrvs_redis:
+        condition: service_started
+      petrvs_rabbitmq:
+        condition: service_healthy
     volumes:
       - "./.env:/var/www/.env"
       - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
   petrvs_queue:
     image: segescginf/pgdpetrvs:latest
     container_name: petrvs_queue
+    command: ["/bin/bash", "-c", "mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf"]
     environment:
       - TZ=America/Bahia
-    command: ["/bin/bash", "-c", "mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf"]
-    depends_on:
-      - petrvs_php
-      - petrvs_rabbitmq
-      - petrvs_redis
+      - APP_CONTEXT=queue
     volumes:
       - "./.env:/var/www/.env"
       - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
     stdin_open: true
     tty: true
+    depends_on:
+      petrvs_db:
+        condition: service_started
+      petrvs_redis:
+        condition: service_started
+      petrvs_rabbitmq:
+        condition: service_healthy
   petrvs_rabbitmq:
     image: rabbitmq:3-management
     container_name: petrvs_rabbitmq
@@ -53,6 +65,8 @@ services:
     volumes:
       - ../../rabbitmq/data:/var/lib/rabbitmq
       - ../../rabbitmq/logs:/var/log/rabbitmq
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
     deploy:
       resources:
         limits:

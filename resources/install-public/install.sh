@@ -338,19 +338,28 @@ services:
         limits:
           cpus: '2.0'
           memory: 4048M
+    environment:
+      - APP_CONTEXT=queue
     volumes:
       - ./.env:/var/www/.env
       - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
+    depends_on:
+      petrvs_redis:
+        condition: service_started
+      petrvs_rabbitmq:
+        condition: service_healthy
   petrvs_queue:
     image: segescginf/pgdpetrvs:$IMAGE_TAG
     container_name: petrvs_queue
     environment:
       - TZ=America/Bahia
+      - APP_CONTEXT=queue
     command: ['/bin/bash', '-c', 'mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf']
     depends_on:
-      - petrvs_php
-      - petrvs_redis
-      - petrvs_rabbitmq
+      petrvs_redis:
+        condition: service_started
+      petrvs_rabbitmq:
+        condition: service_healthy
     volumes:
       - './.env:/var/www/.env'
       - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
@@ -375,6 +384,8 @@ services:
     volumes:
       - ../../rabbitmq/data:/var/lib/rabbitmq
       - ../../rabbitmq/logs:/var/log/rabbitmq
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
     deploy:
       resources:
         limits:
