@@ -15,7 +15,7 @@ import {TesteImpersonateComponent} from "./modules/teste/teste-impersonate/teste
 const routes: Routes = [
   { path: 'panel-login', component: PanelLoginComponent },
   { path: 'panel', loadChildren: () => import('./modules/panel/panel.module').then(m => m.PanelModule), canActivate: [PanelGuard] },
-  { path: 'impersonate', component: TesteImpersonateComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste - Impersonate" } },
+  { path: 'impersonate', component: TesteImpersonateComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Personificar" } },
   { path: 'home', loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule), canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Login Petrvs", login: true } },
   { path: 'login-retorno', component: LoginRetornoComponent, data: { title: "Retorno de login", login: true } },
