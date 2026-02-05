@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\Models;
+namespace Tests\IntegrationTenant\Models;
 
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
@@ -11,8 +11,6 @@ use App\Models\Entidade;
 use App\Services\Siape\Unidade\Enum\Atribuicao;
 
 test('usuario deve retornar relacionamento lotacao corretamente', function () {
-    $tenant = $this->setupTenant();
-
     $entidade = new Entidade();
     $entidade->id = \Illuminate\Support\Str::uuid();
     $entidade->fill([
@@ -81,8 +79,6 @@ test('usuario deve retornar relacionamento lotacao corretamente', function () {
 });
 
 test('usuario deve retornar null para lotacao quando nao possui atribuicao LOTADO', function () {
-    $tenant = $this->setupTenant();
-
     $tipoModalidade = new TipoModalidade();
     $tipoModalidade->id = \Illuminate\Support\Str::uuid();
     $tipoModalidade->fill([

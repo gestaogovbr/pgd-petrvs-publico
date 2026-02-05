@@ -5,88 +5,106 @@ Este documento define os padrões e práticas para a nova camada de testes de in
 ## Objetivo
 Testar Models, Repositories e interações diretas com o banco de dados (MySQL/MariaDB) e o comportamento do sistema em cenários multi-tenant.
 
-## Estrutura
-- **Diretório**: `back-end/tests/Integration`
-- **Classe Base**: `Tests\DatabaseTestCase`
-- **Suite**: `Integration`
+## Estrutura de Diretórios
 
-## Configuração
+O sistema possui duas suites de testes de integração distintas, dependendo do contexto do banco de dados:
 
-### 1. Classe Base (`DatabaseTestCase`)
-Todos os testes nesta camada devem usar a classe base `Tests\DatabaseTestCase` (configurado automaticamente no `Pest.php` para arquivos na pasta `Integration`).
+### 1. Testes de Integração Central (Root)
+*   **Diretório**: `back-end/tests/Integration`
+*   **Classe Base**: `Tests\DatabaseTestCase`
+*   **Suite**: `Integration`
+*   **Objetivo**: Testar funcionalidades que operam no banco de dados central (ex: criação de tenants, gestão administrativa global).
+*   **Contexto**: O teste inicia no contexto central. Se precisar de um tenant, ele deve ser criado manualmente, mas o foco é o banco principal.
 
-Esta classe utiliza a trait `RefreshDatabase`, garantindo que:
-- O banco de dados seja migrado antes dos testes.
-- Cada teste rode dentro de uma transação (ou limpe os dados), garantindo isolamento.
+### 2. Testes de Integração do Tenant
+*   **Diretório**: `back-end/tests/IntegrationTenant`
+*   **Classe Base**: `Tests\DatabaseTenantTestCase`
+*   **Suite**: `IntegrationTenant`
+*   **Objetivo**: Testar funcionalidades específicas de um tenant (regras de negócio da aplicação).
+*   **Contexto**: O teste **já inicia automaticamente dentro de um tenant**. O `DatabaseTenantTestCase` cria um tenant temporário, inicializa a tenância e carrega o schema do tenant.
 
-### 2. Tenancy (Multi-inquilino)
-O sistema utiliza `stancl/tenancy`. Para testes que dependem de um tenant ativo (maioria dos casos de negócio), utilize o método helper `setupTenant()`:
+## Configuração e Uso
+
+### Testes de Tenant (`IntegrationTenant`)
+
+Todos os arquivos criados dentro de `tests/IntegrationTenant` usarão automaticamente a classe base `Tests\DatabaseTenantTestCase` (configurado no `Pest.php`).
+
+**Características:**
+*   **Inicialização Automática**: Não é necessário chamar `$this->setupTenant()`. O `setUp` da classe base já cria o tenant e muda o contexto.
+*   **Schema Otimizado**: O schema do banco do tenant é carregado a partir de `database/schema/tenant-schema.sql` (gerado via `mysqldump`), o que é muito mais rápido do que rodar todas as migrations.
+*   **Isolamento**: Cada teste roda em uma transação no banco do tenant.
+
+**Exemplo:**
 
 ```php
-test('exemplo com tenant', function () {
-    // Cria um tenant, inicializa a tenância e troca a conexão do DB
-    $tenant = $this->setupTenant(); 
+// tests/IntegrationTenant/Models/UsuarioTest.php
+
+use App\Models\Usuario;
+
+test('pode criar usuário no contexto do tenant', function () {
+    // NÃO precisa chamar setupTenant(), já estamos no tenant.
     
-    // A partir daqui, operações no DB ocorrem no contexto do tenant
-    $user = User::factory()->create();
+    $usuario = Usuario::create([
+        'email' => 'teste@exemplo.com',
+        'nome' => 'Teste',
+        'cpf' => '00000000000'
+    ]);
     
-    expect($user->exists)->toBeTrue();
+    expect($usuario->exists)->toBeTrue();
+    // Verifica no banco do tenant atual
+    $this->assertDatabaseHas('usuarios', ['email' => 'teste@exemplo.com']); 
 });
 ```
 
-### 3. Executando os Testes
+### Testes Centrais (`Integration`)
 
-Para rodar apenas a suite de integração:
+Use para testar lógica que não depende de um tenant específico ou que gerencia tenants.
+
+**Exemplo:**
+
+```php
+// tests/Integration/TenantCreationTest.php
+
+test('pode criar um novo tenant', function () {
+    // Estamos no banco central
+    $tenant = App\Models\Tenant::create(['id' => 'novo_tenant']);
+    
+    $this->assertDatabaseHas('tenants', ['id' => 'novo_tenant']);
+});
+```
+
+## Executando os Testes
+
+Para rodar os testes de tenant:
+
+```bash
+./vendor/bin/pest --testsuite=IntegrationTenant
+# ou
+php artisan test tests/IntegrationTenant
+```
+
+Para rodar os testes centrais:
 
 ```bash
 ./vendor/bin/pest --testsuite=Integration
 ```
 
-Para rodar um arquivo específico:
+## Manutenção do Schema do Tenant
 
-```bash
-./vendor/bin/pest tests/Integration/ExampleDatabaseTest.php
-```
+Como os testes de tenant usam um arquivo SQL estático (`database/schema/tenant-schema.sql`) para velocidade, **sempre que você criar uma nova migration que altere tabelas do tenant**, você deve regenerar esse arquivo.
 
-## CI/CD (GitHub Actions)
+**Como regenerar o dump do schema do tenant:**
 
-No ambiente de CI (GitHub Actions), os testes rodam contra um container **MySQL 8.0**.
-- O workflow garante que um serviço MySQL esteja disponível.
-- As variáveis de ambiente `DB_CONNECTION`, `DB_HOST`, etc., são injetadas automaticamente.
-- **Snapshot**: O Laravel utiliza o esquema atual para recriar o banco rapidamente. Mantenha o arquivo de schema atualizado (`php artisan schema:dump`) se houver muitas migrations antigas.
+1.  Garanta que suas migrations estão atualizadas.
+2.  Gere um banco temporário e exporte o schema (pode ser feito manualmente ou via script auxiliar se disponível).
+3.  O objetivo é ter um dump `no-data` das tabelas do tenant salvo em `back-end/database/schema/tenant-schema.sql`.
+
+*Nota: Atualmente, este processo pode exigir um fluxo manual de criar um tenant, rodar migrations e fazer o dump.*
 
 ## Melhores Práticas
 
-1.  **Não use em Testes Unitários**: Testes em `tests/Unit` **NÃO** devem tocar no banco. Use Mocks.
-2.  **Isolamento**: Confie no `RefreshDatabase` para limpar o estado. Não dependa de dados criados em outros testes.
-3.  **Factories**: Utilize Model Factories (`User::factory()`) sempre que possível para criar dados de teste.
-4.  **Tenancy**: Se o teste for sobre criar um Tenant (fluxo administrativo), não use `setupTenant()`. Se for sobre funcionalidade interna do sistema (fluxo do usuário), use `setupTenant()`.
-
-## Exemplo Completo
-
-```php
-<?php
-
-namespace Tests\Integration;
-
-use Tests\DatabaseTestCase;
-use App\Models\User;
-
-// A classe base é injetada automaticamente pelo Pest.php
-// uses(DatabaseTestCase::class); 
-
-test('pode criar usuário no tenant', function () {
-    $tenant = $this->setupTenant();
-    
-    $user = User::create([
-        'email' => 'teste@exemplo.com',
-        'nome' => 'Teste',
-        'password' => 'password',
-        'cpf' => '00000000000'
-    ]);
-    
-    $this->assertDatabaseHas('users', [
-        'email' => 'teste@exemplo.com'
-    ]);
-});
-```
+1.  **Escolha o Diretório Certo**: 
+    *   Regra de negócio do sistema (Usuários, Unidades, Atividades)? -> `tests/IntegrationTenant`.
+    *   Infraestrutura do SaaS (Tenants, Domínios)? -> `tests/Integration`.
+2.  **Performance**: O `IntegrationTenant` é otimizado. Evite usar `RefreshDatabase` com `migrate:fresh` em cada teste; confie no carregamento do schema e nas transações.
+3.  **Factories**: Utilize Model Factories normalmente. Elas respeitarão a conexão atual (tenant ou central).
