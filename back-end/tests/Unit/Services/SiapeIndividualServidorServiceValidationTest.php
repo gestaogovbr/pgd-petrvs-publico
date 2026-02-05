@@ -8,16 +8,13 @@ use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidades;
 use App\Services\Siape\ProcessaDadosSiapeBD;
-use App\Facades\SiapeLog;
 use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\SiapeListaUORGS;
 use App\Models\Entidade;
 use App\Models\SiapeBlackListServidor;
 use Illuminate\Support\Facades\Log;
-use App\Enums\UsuarioSituacaoSiape;
 use Tests\TestCase;
-use Mockery\MockInterface;
 
 uses(TestCase::class);
 
