@@ -41,7 +41,7 @@ class IntegracaoGestorService extends ServiceBase
             $integracaoChefia = $this->createGestorIntegracao(
                 $chefes,
                 new Usuario(),
-                $this->unidadeIntegrante,
+                $this->unidadeIntegranteService,
                 $this->nivelAcessoService,
                 $this->perfilService,
                 $config
@@ -157,7 +157,7 @@ class IntegracaoGestorService extends ServiceBase
                 ]];
 
                 try {
-                    $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
+                    $this->unidadeIntegranteService->salvarIntegrantes($vinculo, false);
                 } catch (Throwable $e) {
                     SiapeLog::error("Erro ao tentar lotar usuário {$idUsuario} na unidade {$codigoUnidade}: " . $e->getMessage());
                     // Não continua o processamento deste chefe se não conseguir lotar
@@ -195,12 +195,12 @@ class IntegracaoGestorService extends ServiceBase
     /**
      * Factory method for GestorIntegracao to allow testing/mocking
      */
-    public function createGestorIntegracao(array $chefias, Usuario $usuario, $unidadeIntegrante, $nivelAcessoService, $perfilService, array $config): GestorIntegracao
+    public function createGestorIntegracao(array $chefias, Usuario $usuario, $unidadeIntegranteService, $nivelAcessoService, $perfilService, array $config): GestorIntegracao
     {
         return new GestorIntegracao(
             $chefias,
             $usuario,
-            $unidadeIntegrante,
+            $unidadeIntegranteService,
             $nivelAcessoService,
             $perfilService,
             $config

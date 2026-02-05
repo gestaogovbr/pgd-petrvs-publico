@@ -39,14 +39,6 @@ class UsuarioService extends ServiceBase
   const LOGIN_MICROSOFT = "AZURE";
   const LOGIN_FIREBASE = "FIREBASE";
 
-  protected $integracaoService;
-
-  public function __construct(
-  ) {
-    parent::__construct();
-    $this->nivelAcessoService = new NivelAcessoService();
-    $this->integracaoService = new IntegracaoService();
-  }
 
   public function atualizarFotoPerfil($tipo, &$usuario, $url)
   {
@@ -481,7 +473,6 @@ class UsuarioService extends ServiceBase
     $perfilNovo = Perfil::find($data['perfil_id']);
     $perfilAtual = !empty($data['id']) ? $this->getById($data)["perfil_id"] : null;
 
-    $this->nivelAcessoService = new NivelAcessoService();
     $developer = $this->nivelAcessoService->getPerfilDesenvolvedor();
     if (empty($developer))
       throw new ServerException("ValidateUsuario", "Perfil de Desenvolvedor não encontrado no banco de dados");

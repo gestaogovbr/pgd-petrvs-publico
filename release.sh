@@ -12,7 +12,7 @@ fi
 
 NEW_VERSION=$1
 PROJECT_ROOT=$(pwd)
-APP_JSON="back-end/public/app.json"
+APP_JSON="front-end/src/app.json"
 WORKFLOW=".github/workflows/main.yml"
 CHANGELOG="CHANGELOG.md"
 
