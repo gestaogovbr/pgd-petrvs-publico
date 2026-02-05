@@ -45,4 +45,11 @@ jobs:
 
       - name: Run Pest tests
         working-directory: back-end
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: petrvs_test
+          DB_USERNAME: root
+          DB_PASSWORD: root
         run: ./vendor/bin/pest --ci
