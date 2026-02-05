@@ -1,6 +1,6 @@
 <?php
 
-use App\Jobs\Envio\AgendarEnvioParticipantesJob;
+use App\Jobs\Envio\AgendarEnvioPlanosEntregasJob;
 use Illuminate\Database\Migrations\Migration;
 use Stancl\Tenancy\Tenancy;
 
@@ -13,7 +13,7 @@ return new class extends Migration
     {
         $tenant = app(Tenancy::class)->tenant;
 
-        AgendarEnvioParticipantesJob::dispatch($tenant->id)
+        AgendarEnvioPlanosEntregasJob::dispatch($tenant->id)
             ->onConnection('rabbitmq')
             ->onQueue('pgd_queue');
     }
