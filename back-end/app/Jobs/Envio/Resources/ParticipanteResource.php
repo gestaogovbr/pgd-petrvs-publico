@@ -45,7 +45,7 @@ class ParticipanteResource extends JsonResource
             'cod_unidade_lotacao'       => $this->lotacao->unidade->codigo ?? null,
             'matricula_siape'           => str_pad($this->matricula, 7, '0', STR_PAD_LEFT),
             'cpf'                       => $this->cpf,
-            'situacao'                  => 1,
+            'situacao'                  => ($this->participa_pgd == 'sim') ? 1 : 0,
             "modalidade_execucao"       => $modalidade->get(),
             "data_assinatura_tcr"       => $dataAssinatura ? Carbon::parse($dataAssinatura)->toDateTimeLocalString() : null
         ];
