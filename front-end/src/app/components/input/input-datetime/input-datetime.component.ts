@@ -125,7 +125,7 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
   }
 
   public get hasTimeInput(): boolean {
-    return !this.isDate && (this.isTime || this.isFirefox);
+    return !this.isDate && (this.isTime || this.isTime24hours);
   }
 
   ngAfterViewInit() {
@@ -147,8 +147,15 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
     const strTime = this.timeInput?.nativeElement.value || "00:00:00";
     let value = this.value; 
     try {
-      //let newValue = this.isTime ? strTime : this.util.strToDate(!this.isDate && this.isFirefox ? strDate + "T" + strTime : strDate);
-      value = this.isTime ? strTime : new Date(strDate + (strDate.includes("T") ? "" : "T" + strTime));
+      if (this.isTime) {
+        value = strTime;
+      } else {
+        const dateTimeStr = strDate + (strDate.includes("T") ? "" : "T" + strTime);
+        const m = moment(dateTimeStr);
+        if (!m.isValid()) throw new Error("Data inválida");
+        value = m.toDate();
+      }
+
       if((this.isTime && !this.util.isTimeValid(value)) || (!this.isTime && !this.util.isDataValid(value))) {
         throw new Error("Data inválida");
       }
@@ -169,7 +176,7 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
     const date = moment(this.value);
     if (!date.isValid()) return null;
 
-    if (this.isFirefox || this.isDate) {
+    if (this.isDate || this.isTime24hours) {
       return date.format("YYYY-MM-DD");
     } else {
       return date.format("YYYY-MM-DDTHH:mm");
