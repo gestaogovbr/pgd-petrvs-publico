@@ -160,5 +160,10 @@ export class Usuario extends Base implements HasNotificacao {
     public participa_pgd: string = 'sim'; /* Participa PGD */
     public tipo_modalidade_siape?: TipoModalidadeSiape;
 
+    public data_agendamento_envio?: Date | null = null; /* Data de agendamento do envio */
+    public data_tentativa_envio?: Date | null = null; /* Data da última tentativa de envio */
+    public data_envio_api_pgd?: Date | null = null; /* Data do envio para a API do PGD */
+    public log_envio: string | null = null; /* Log do envio do para a API do PGD */
+
     public constructor(data?: any) { super(); this.initialization(data); }
 }
