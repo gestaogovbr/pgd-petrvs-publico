@@ -14,6 +14,9 @@
         <testsuite name="Feature">
             <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
+        <testsuite name="IntegrationTenant">
+            <directory suffix="Test.php">./tests/IntegrationTenant</directory>
+        </testsuite>
     </testsuites>
     <coverage>
         <include>
