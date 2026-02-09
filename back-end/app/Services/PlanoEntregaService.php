@@ -343,10 +343,11 @@ class PlanoEntregaService extends ServiceBase
 
     public function liberarHomologacao($data, $unidade)
     {
+        $planoEntrega = PlanoEntrega::find($data["id"]);
+        if($this->planosUnidadeComPendenciasExecucaoAvaliacao($planoEntrega["unidade_id"], $planoEntrega["id"], now()))
+            throw new ValidateException("A unidade possui planos com pendências de execução/avaliação!");
+
         try {
-            $planoEntrega = PlanoEntrega::find($data["id"]);
-            if($this->planosUsuarioComPendenciasExecucaoAvaliacao($planoEntrega["usuario_id"], $planoEntrega["id"], now()))
-                throw new ValidateException("ValidatePlanoEntrega", "O plano possui entregas com pendências de execução/avaliação!");
             DB::beginTransaction();
             $this->statusService->atualizaStatus($planoEntrega, 'HOMOLOGANDO', $data["justificativa"]);
             DB::commit();
@@ -708,11 +709,11 @@ class PlanoEntregaService extends ServiceBase
         return in_array($planoAnterior->status, PlanoEntrega::STATUSES_PENDENTES, true);
     }
 
-    public function planosUsuarioComPendenciasExecucaoAvaliacao(string $usuarioId, $planoEntregaId, $dataAssinatura): bool
+    public function planosUnidadeComPendenciasExecucaoAvaliacao(string $unidadeId, $planoEntregaId, $dataAssinatura): bool
     {
         $diasPendenciaDataFinalPlano = 30;
 
-        $planosPendentes = PlanoEntrega::where('usuario_id', $usuarioId)
+        $planosPendentes = PlanoEntrega::where('unidade_id', $unidadeId)
             ->whereIn('status', PlanoEntrega::STATUSES_PENDENTES)
             ->where('id','!=', $planoEntregaId)
             ->where('data_fim', '<', $dataAssinatura->subDays($diasPendenciaDataFinalPlano))
