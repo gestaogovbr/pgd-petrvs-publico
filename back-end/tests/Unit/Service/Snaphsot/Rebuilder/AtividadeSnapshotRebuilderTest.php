@@ -1,13 +1,13 @@
 <?php
 
 use App\Models\Atividade;
+use App\Models\PlanoTrabalhoConsolidacaoAtividade;
 use App\Services\AtividadeService;
 use App\Services\Snapshot\Rebuilder\AtividadeSnapshotRebuilder;
-use Illuminate\Support\Facades\Schema;
 use DateTime;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
-use Tests\DatabaseSetup;
+
 
 uses(Tests\TestCase::class);
 
@@ -24,10 +24,11 @@ class TestAtividadeService extends AtividadeService
 }
 
 beforeEach(function () {
-    DatabaseSetup::DBup();
 
-    $this->testAtividadeService = new TestAtividadeService();
-    $this->rebuilder = new AtividadeSnapshotRebuilder($this->testAtividadeService);
+    $this->testAtividadeService = Mockery::mock(AtividadeService::class);
+    $this->rebuilder = Mockery::mock(AtividadeSnapshotRebuilder::class, [$this->testAtividadeService])
+        ->makePartial()
+        ->shouldAllowMockingProtectedMethods();
     $this->consolidacaoId = 'consolidacao-123';
     $this->dataConclusao = new DateTime('2024-01-15 10:00:00');
 });
@@ -72,12 +73,13 @@ describe('rebuildFromSnapshot', function () {
         ]);
 
         // Criar snapshot via SQL
-        DB::table('planos_trabalhos_consolidacoes_atividades')->insert([
+
+        $snapshot = (new PlanoTrabalhoConsolidacaoAtividade())->fill([
             'id' => 'snapshot-123',
             'plano_trabalho_consolidacao_id' => $this->consolidacaoId,
             'atividade_id' => 'atividade-123',
             'data_conclusao' => $this->dataConclusao->format('Y-m-d H:i:s'),
-            'snapshot' => json_encode([
+            'snapshot' => [
                 'descricao' => 'Descrição do snapshot',
                 'tempo_planejado' => 180,
                 'data_estipulada_entrega' => '2024-01-20 10:00:00',
@@ -90,10 +92,14 @@ describe('rebuildFromSnapshot', function () {
                 'prioridade' => 1,
                 'progresso' => 100,
                 'deleted_at' => null
-            ]),
+            ],
             'created_at' => now(),
             'updated_at' => now()
         ]);
+
+        $this->rebuilder->shouldReceive('consolidacaoAtividade')
+            ->with($this->consolidacaoId, $this->dataConclusao, 'atividade-123')
+            ->andReturn($snapshot);
 
 
         $resultado = $this->rebuilder->rebuildFromSnapshot($atividade, $this->consolidacaoId, $this->dataConclusao);
@@ -126,6 +132,10 @@ describe('rebuildFromSnapshot', function () {
             'tarefas' => []
         ]);
 
+        $this->rebuilder->shouldReceive('consolidacaoAtividade')
+            ->with($this->consolidacaoId, $this->dataConclusao, 'atividade-123')
+            ->andReturn(null);
+
         $resultado = $this->rebuilder->rebuildFromSnapshot($atividade, $this->consolidacaoId, $this->dataConclusao);
 
         expect($resultado['comentarios'])->toHaveCount(2);
@@ -146,6 +156,10 @@ describe('rebuildFromSnapshot', function () {
             'tarefas' => []
         ]);
 
+        $this->rebuilder->shouldReceive('consolidacaoAtividade')
+            ->with($this->consolidacaoId, $this->dataConclusao, 'atividade-123')
+            ->andReturn(null);
+
         $resultado = $this->rebuilder->rebuildFromSnapshot($atividade, $this->consolidacaoId, $this->dataConclusao);
 
         expect($resultado['pausas'])->toHaveCount(1);
@@ -164,6 +178,10 @@ describe('rebuildFromSnapshot', function () {
                 ['id' => '2', 'created_at' => '2024-01-20 10:00:00', 'deleted_at' => null, 'data_conclusao' => null] // Após consolidação
             ]
         ]);
+
+        $this->rebuilder->shouldReceive('consolidacaoAtividade')
+            ->with($this->consolidacaoId, $this->dataConclusao, 'atividade-123')
+            ->andReturn(null);
 
         $resultado = $this->rebuilder->rebuildFromSnapshot($atividade, $this->consolidacaoId, $this->dataConclusao);
 
@@ -206,6 +224,15 @@ describe('rebuildCollection', function () {
         ]);
 
         $collection = new Collection([$atividade1, $atividade2]);
+
+        $this->testAtividadeService->shouldReceive('metadados')
+            ->andReturnUsing(function ($atividade) {
+                return [
+                    'tempo_total' => 'metadados_' . ($atividade['tempo_planejado'] ?? 0),
+                    'progresso_calculado' => 'metadados_' . ($atividade['progresso'] ?? 0),
+                    'status_metadado' => 'metadados_' . $atividade['status']
+                ];
+            });
 
         $resultado = $this->rebuilder->rebuildCollection($collection, $this->consolidacaoId, null);
 

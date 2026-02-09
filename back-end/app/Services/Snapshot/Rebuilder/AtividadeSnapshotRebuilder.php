@@ -21,9 +21,7 @@ class AtividadeSnapshotRebuilder extends BaseRebuilder
         if (!$atividade instanceof Atividade) throw new \TypeError;
         $atividade = $atividade->toArray();
         if (!empty($consolidacaoDataConclusao)) {
-            $consolidacaoAtividade = PlanoTrabalhoConsolidacaoAtividade::where("plano_trabalho_consolidacao_id", $consolidacaoId)
-                ->where("data_conclusao", $consolidacaoDataConclusao)
-                ->where("atividade_id", $atividade["id"])->first();
+            $consolidacaoAtividade = $this->consolidacaoAtividade($consolidacaoId, $consolidacaoDataConclusao, $atividade["id"]);
             if (!empty($consolidacaoAtividade)) {
                 $snapshot = (object) $consolidacaoAtividade->snapshot;
                 $atividade["descricao"] = $snapshot->descricao;
@@ -59,6 +57,14 @@ class AtividadeSnapshotRebuilder extends BaseRebuilder
 
         return $rebuilt;
     }
+
+    protected function consolidacaoAtividade($consolidacaoId, $consolidacaoDataConclusao, $atividadeId)
+    {
+        return PlanoTrabalhoConsolidacaoAtividade::where("plano_trabalho_consolidacao_id", $consolidacaoId)
+            ->where("data_conclusao", $consolidacaoDataConclusao)
+            ->where("atividade_id", $atividadeId)->first();
+    }
+
 
     private function atualizarComentarios(&$atividadeComentarios, $consolidacaoDataConclusao)
     {

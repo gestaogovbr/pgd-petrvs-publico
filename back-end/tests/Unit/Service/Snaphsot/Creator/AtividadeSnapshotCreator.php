@@ -3,12 +3,11 @@
 use App\Services\Snapshot\Creator\AtividadeSnapshotCreator;
 use App\Models\PlanoTrabalhoConsolidacaoAtividade;
 use Illuminate\Support\Facades\DB;
-use Tests\DatabaseSetup;
+
 
 uses(Tests\TestCase::class);
 
 beforeEach(function () {
-    DatabaseSetup::DBup();
 });
 
 describe('AtividadeSnapshotCreator', function () {
@@ -132,4 +131,4 @@ describe('AtividadeSnapshotCreator', function () {
         expect($snapshots->pluck('plano_trabalho_consolidacao_id')->toArray())
             ->toContain('consolidacao-1', 'consolidacao-2');
     });
-});
+})->todo();

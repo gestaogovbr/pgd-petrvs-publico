@@ -12,9 +12,7 @@ class OcorrenciaSnapshotRebuilder extends BaseRebuilder
         if (!$ocorrencia instanceof Ocorrencia) throw new \TypeError;
         $ocorrencia = $ocorrencia->toArray();
         if (!empty($consolidacaoDataConclusao)) {
-            $consolidacaoOcorrencia = PlanoTrabalhoConsolidacaoOcorrencia::where("plano_trabalho_consolidacao_id", $consolidacaoId)
-                ->where("data_conclusao", $consolidacaoDataConclusao)
-                ->where("ocorrencia_id", $ocorrencia["id"])->first();
+            $consolidacaoOcorrencia = $this->consolidacaoOcorrencia($consolidacaoId, $consolidacaoDataConclusao, $ocorrencia["id"]);
             if (!empty($consolidacaoOcorrencia)) {
                 $snapshot = (object) $consolidacaoOcorrencia->snapshot;
                 $ocorrencia["descricao"] = $snapshot->descricao;
@@ -24,5 +22,11 @@ class OcorrenciaSnapshotRebuilder extends BaseRebuilder
             }
         }
         return $ocorrencia;
+    }
+
+    protected function consolidacaoOcorrencia($consolidacaoId, $consolidacaoDataConclusao, $ocorrenciaId) {
+        return PlanoTrabalhoConsolidacaoOcorrencia::where("plano_trabalho_consolidacao_id", $consolidacaoId)
+                ->where("data_conclusao", $consolidacaoDataConclusao)
+                ->where("ocorrencia_id", $ocorrenciaId)->first();
     }
 }

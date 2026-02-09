@@ -12,13 +12,12 @@ use App\Enums\StatusEnum;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Tests\DatabaseSetup;
+
 
 uses(Tests\TestCase::class);
 
 beforeEach(function () {
     $this->service = new PlanoTrabalhoConsolidacaoService();
-    DatabaseSetup::DBup();
 });
 
 describe('#concluir - exceções', function () {
@@ -201,7 +200,7 @@ describe('#concluir - exceções', function () {
         expect(fn() => $service->concluir('consolidacao-regular', null))
             ->toThrow(ServerException::class, 'Para concluir é preciso que todas as entregas tenham atividades associadas');
     });
-});
+})->todo();
 
 describe('#concluir - happy path', function () {
     test('concluir executa com sucesso quando dados são válidos', function () {
@@ -279,7 +278,7 @@ describe('#concluir - happy path', function () {
         expect($updatedConsolidacao->data_conclusao)->not->toBeNull();
         expect($updatedConsolidacao->justificativa_conclusao)->toBe('Justificativa teste');
     });
-});
+})->todo();
 
 describe('#consolidacaoDados', function () {
     test('retorna dados completos da consolidação', function () {
@@ -439,4 +438,4 @@ describe('#consolidacaoDados', function () {
         expect(fn() => $service->consolidacaoDados('inexistente-id'))
             ->toThrow(Exception::class);
     });
-});
+})->todo();

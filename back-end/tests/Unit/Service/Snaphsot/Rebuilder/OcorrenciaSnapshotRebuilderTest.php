@@ -1,18 +1,14 @@
 <?php
 
 use App\Models\Ocorrencia;
+use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 use App\Services\Snapshot\Rebuilder\OcorrenciaSnapshotRebuilder;
-use Illuminate\Support\Facades\Schema;
 use DateTime;
-use Illuminate\Support\Facades\DB;
-use Tests\DatabaseSetup;
 
 uses(Tests\TestCase::class);
 
 beforeEach(function () {
-    DatabaseSetup::DBup();
-
-    $this->rebuilder = new OcorrenciaSnapshotRebuilder();
+    $this->rebuilder = Mockery::mock(OcorrenciaSnapshotRebuilder::class)->makePartial()->shouldAllowMockingProtectedMethods();
     $this->consolidacaoId = 'consolidacao-123';
     $this->dataConclusao = new DateTime('2024-01-15 10:00:00');
 });
@@ -43,20 +39,24 @@ describe('rebuildFromSnapshot', function () {
             'data_fim' => '2024-01-01 18:00:00'
         ]);
 
-        DB::table('planos_trabalhos_consolidacoes_ocorrencias')->insert([
+        $snapshot = (new PlanoTrabalhoConsolidacaoOcorrencia)->fill([
             'id' => 'snapshot-123',
             'plano_trabalho_consolidacao_id' => $this->consolidacaoId,
             'ocorrencia_id' => 'ocorrencia-123',
             'data_conclusao' => $this->dataConclusao->format('Y-m-d H:i:s'),
-            'snapshot' => json_encode([
+            'snapshot' => [
                 'descricao' => 'Descrição do snapshot',
                 'data_inicio' => '2024-01-02 09:00:00',
                 'data_fim' => '2024-01-02 17:00:00',
                 'deleted_at' => null
-            ]),
+            ],
             'created_at' => now(),
             'updated_at' => now()
         ]);
+
+        $this->rebuilder->shouldReceive('consolidacaoOcorrencia')
+            ->with($this->consolidacaoId, $this->dataConclusao, 'ocorrencia-123')
+            ->andReturn($snapshot);
 
         $resultado = $this->rebuilder->rebuildFromSnapshot($ocorrencia, $this->consolidacaoId, $this->dataConclusao);
 

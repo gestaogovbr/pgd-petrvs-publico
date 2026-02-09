@@ -12,9 +12,7 @@ class AfastamentoSnapshotRebuilder extends BaseRebuilder
         if (!$afastamento instanceof Afastamento) throw new \TypeError;
         $afastamento = $afastamento->toArray();
         if (!empty($consolidacaoDataConclusao)) {
-            $consolidacaoAfastameto = PlanoTrabalhoConsolidacaoAfastamento::where("plano_trabalho_consolidacao_id", $consolidacaoId)
-                ->where("data_conclusao", $consolidacaoDataConclusao)
-                ->where("afastamento_id", $afastamento["id"])->first();
+            $consolidacaoAfastameto = $this->consolidacaoAfastamento($consolidacaoId, $consolidacaoDataConclusao, $afastamento["id"]);
             if (!empty($consolidacaoAfastameto)) {
                 $snapshot = (object) $consolidacaoAfastameto->snapshot;
                 $afastamento["observacoes"] = $snapshot->observacoes;
@@ -24,5 +22,12 @@ class AfastamentoSnapshotRebuilder extends BaseRebuilder
             }
         }
         return $afastamento;
+    }
+
+    protected function consolidacaoAfastamento($consolidacaoId, $consolidacaoDataConclusao, $afastamentoId)
+    {
+        return PlanoTrabalhoConsolidacaoAfastamento::where("plano_trabalho_consolidacao_id", $consolidacaoId)
+            ->where("data_conclusao", $consolidacaoDataConclusao)
+            ->where("afastamento_id", $afastamentoId)->first();
     }
 }
