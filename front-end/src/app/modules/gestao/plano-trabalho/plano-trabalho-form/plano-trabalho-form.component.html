@@ -37,5 +37,13 @@
         <documentos #documentos [entity]="entity" [disabled]="formDisabled" noPersist [cdRef]="cdRef" [needSign]="planoTrabalhoService.needSign" [extraTags]="planoTrabalhoService.extraTags" especie="TCR" [editingId]="formDisabled ? undefined : editingId" [datasource]="datasource" [template]="selectedPrograma?.template_tcr" [blocked]="true"></documentos>
       </div>
     </tab>
+    <tab key="Envio" [label]="lex.translate('Envio')">
+      <div class="row">
+        <input-display [size]="4" label="Data do Agendamento" [value]="entity?.data_agendamento_envio  | date:'dd/MM/yyyy HH:mm:ss'" icon="bi bi-calendar-date"></input-display>
+        <input-display [size]="4" label="Última Tentativa de Envio" [value]="entity?.data_tentativa_envio  | date:'dd/MM/yyyy HH:mm:ss'" icon="bi bi-calendar-date"></input-display>
+        <input-display [size]="4" label="Último Envio" [value]="entity?.data_envio_api_pgd  | date:'dd/MM/yyyy HH:mm:ss'" icon="bi bi-calendar-date"></input-display>
+        <input-display [size]="12" label="Log de Envio" [value]="entity?.log_envio"></input-display>
+      </div>
+    </tab>
   </tabs>
 </editable-form>
