@@ -1,4 +1,7 @@
-
+## 2.9.13 09/02/2026
+### Corrigido
+- Corrigido bug no relacionamento de unidades com usuários, quando há unidade inativa na lista;
+- Filtragem de PEs para mostrar planos por todo e qualquer status.
 ## 2.9.12 29/01/2026
 ### Corrigido
 - Corrigido bug na carga de gestores do SIAPE

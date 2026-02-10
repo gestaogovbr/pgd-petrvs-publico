@@ -39,7 +39,7 @@
                 </input-switch>
                 <input-text [size]="3" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+lex.translate('plano de entrega')" [attr.maxlength]=250></input-text>
                 <input-search #unidade [size]="4" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
-                <input-select [size]="3" label="Status" controlName="status" [control]="filter!.controls.status" [items]="lookup.PLANO_ENTREGA_STATUS" [filter]="avaliacao ? ['CONCLUIDO', 'AVALIADO'] : undefined" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+                <input-select [size]="3" label="Status" controlName="status" [control]="filter!.controls.status" [items]="lookup.PLANO_ENTREGA_STATUS" [filter]="avaliacao ? ['CONCLUIDO', 'AVALIADO'] : undefined" itemTodos="- Todos -" [valueTodos]="'TODOS'"></input-select>
                 <input-switch [size]="1" label="Arquivados" controlName="arquivadas" [control]="filter!.controls.arquivadas" labelInfo="Listar também os planos de entregas arquivados"></input-switch>
             </div>
             <div class="row">

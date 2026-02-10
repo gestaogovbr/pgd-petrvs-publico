@@ -552,7 +552,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 			if (this.planejamento) status.push('INCLUIDO', 'HOMOLOGANDO', 'ATIVO')
 			if (this.execucao) status.push('ATIVO', 'CONCLUIDO')
 			if (this.avaliacao) status.push('CONCLUIDO', 'AVALIADO')
-			if (form.status || !!status.length) {
+			if (form.status != 'TODOS' && (form.status || !!status.length)) {
 				result.push([
 					"status",
 					"in",
