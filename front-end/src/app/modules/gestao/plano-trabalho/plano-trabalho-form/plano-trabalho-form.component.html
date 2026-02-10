@@ -39,6 +39,7 @@
     </tab>
     <tab key="Envio" [label]="lex.translate('Envio')">
       <div class="row">
+        <input-display [size]="4" label="Alterado en" [value]="entity?.updated_at  | date:'dd/MM/yyyy HH:mm:ss'" icon="bi bi-calendar-date"></input-display>
         <input-display [size]="4" label="Data do Agendamento" [value]="entity?.data_agendamento_envio  | date:'dd/MM/yyyy HH:mm:ss'" icon="bi bi-calendar-date"></input-display>
         <input-display [size]="4" label="Última Tentativa de Envio" [value]="entity?.data_tentativa_envio  | date:'dd/MM/yyyy HH:mm:ss'" icon="bi bi-calendar-date"></input-display>
         <input-display [size]="4" label="Último Envio" [value]="entity?.data_envio_api_pgd  | date:'dd/MM/yyyy HH:mm:ss'" icon="bi bi-calendar-date"></input-display>
