@@ -2,39 +2,31 @@ import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
-import { Usuario } from 'src/app/models/usuario.model';
+import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
+import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { addDays } from 'date-fns';
 
 @Component({
-  selector: 'envio-usuario-list',
-  templateUrl: './envio-usuario-list.component.html',
-  styleUrls: ['./envio-usuario-list.component.scss']
+  selector: 'envio-plano-entrega-list',
+  templateUrl: './envio-plano-entrega-list.component.html',
+  styleUrls: ['./envio-plano-entrega-list.component.scss']
 })
-export class EnvioUsuarioListComponent extends PageListBase<Usuario, UsuarioDaoService> {
+export class EnvioPlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoEntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public toolbarButtons: ToolbarButton[] = [];
 
   constructor(public injector: Injector) {
-    super(injector, Usuario, UsuarioDaoService);
+    super(injector, PlanoEntrega, PlanoEntregaDaoService);
     /* Inicializações */
-    this.title = this.lex.translate('Envios de Participantes');
-    this.code = "MOD_ENVIO_USUARIO";
-    this.fields = [
-      "matricula",
-      "nome",
-      "cpf",
-      "updated_at",
-      "data_envio_api_pgd",
-      "data_agendamento_envio",
-      "data_tentativa_envio",
-      "log_envio"
-    ];
+    this.title = this.lex.translate('Envios de Planos de Etrega');
+    this.code = "MOD_ENVIO_PE";
+    this.join = ["unidade:id,sigla", "programa:id,nome"];
     this.filter = this.fh.FormBuilder({
-      cpf: { default: '' },
-      nome: { default: null },
+      numero: { default: '' },
+      nome: { default: '' },
+      unidadeId: { default: null },
       status: { default: null },
       envio_inicio: { default: null },
       envio_fim: { default: null },
@@ -46,8 +38,8 @@ export class EnvioUsuarioListComponent extends PageListBase<Usuario, UsuarioDaoS
     let result: any[] = [];
     let form: any = filter.value;
 
-    if (form.cpf?.length) {
-      result.push(["cpf", "like", "%" + form.cpf.trim().replace(" ", "%") + "%"]);
+    if (form.numero?.length) {
+      result.push(["numero", "like", "%" + form.numero.trim().replace(" ", "%") + "%"]);
     }
 
     if (form.nome?.length) {

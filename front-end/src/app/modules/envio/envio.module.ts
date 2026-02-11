@@ -7,13 +7,15 @@ import { EnvioReiniciarFormComponent } from './reiniciar/envio-reiniciar-form/en
 import { EnvioRoutingModule } from './envio-routing.module';
 import { EnvioForcarComponent } from './forcar/envio-forcar/envio-forcar.component';
 import { EnvioUsuarioListComponent } from './envio-usuario-list/envio-usuario-list.component';
+import { EnvioPlanoEntregaListComponent } from './envio-plao-entrega-list/envio-plano-entrega-list.component';
 
 
 @NgModule({
   declarations: [
     EnvioReiniciarFormComponent,
     EnvioForcarComponent,
-    EnvioUsuarioListComponent
+    EnvioUsuarioListComponent,
+    EnvioPlanoEntregaListComponent
   ],
   imports: [
     CommonModule,

@@ -203,6 +203,8 @@ export class AppComponent {
       //ENVIO_FORCAR: { name: "Forçar Envio", permition: '', route: ['envios', 'forcar'], icon: this.entity.getIcon('Envio') },
       //ENVIO_REINICIAR: { name: "Resetar Envios", permition: '', route: ['envios', 'reiniciar'], icon: 'bi-arrow-clockwise' },
       ENVIO_USUARIO: { name: "Logs de Participantes", permition: 'MOD_ENVIO_USUARIO', route: ['envios', 'participantes'], icon: 'bi bi-person' },
+      ENVIO_PLANO_ENTREGA: { name: "Logs de Planos de Entrega", permition: 'MOD_ENVIO_PE', route: ['envios', 'planos-entrega'], icon: 'bi bi-list-check' },
+      ENVIO_PLANO_TRABALHO: { name: "Logs de Planos de Trabalho", permition: 'MOD_ENVIO_PT', route: ['envios', 'planos-trabalho'], icon: 'bi bi-list-check' },
       /* SIAPE */
       BLACKLIST_SERVIDOR: { name: "CPFs indisponíveis", permition: '', route: ['siape', 'blacklist-servidor'], icon: 'bi bi-person-x' },
       BLACKLIST_UNIDADE: { name: "Unidades indisponíveis", permition: '', route: ['siape', 'blacklist-unidade'], icon: 'bi bi-building-dash' },
@@ -448,8 +450,10 @@ export class AppComponent {
         //this.menuSchema.ENVIO_LOGS,
         //this.menuSchema.ENVIO_FORCAR,
         //this.menuSchema.ENVIO_REINICIAR,
-        this.menuSchema.ENVIO_USUARIO
-      ]
+        this.menuSchema.ENVIO_USUARIO,
+        this.menuSchema.ENVIO_PLANO_ENTREGA,
+        this.menuSchema.ENVIO_PLANO_TRABALHO
+      ],
     },
     {
       name: this.lex.translate("Ferramentas"),

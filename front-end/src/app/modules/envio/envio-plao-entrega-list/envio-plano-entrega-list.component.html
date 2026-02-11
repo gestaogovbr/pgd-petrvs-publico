@@ -4,11 +4,13 @@
     [hasEdit]="false"
     [selectable]="selectable"
     [orderBy]="orderBy"
+    [join]="join"
 >
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)">
         <div class="row">
-            <input-text [size]="3" label="CPF" controlName="cpf" placeholder="CPF..." [attr.maxlength]="14" [form]="filter"></input-text>
+            <input-text [size]="1" label="#ID" controlName="numero" [form]="filter"></input-text>
+            <input-text [size]="3" label="Nome" controlName="nome" placeholder="Nome..." [form]="filter"></input-text>
             <input-select
                 [size]="2"
                 label="Status"
@@ -33,9 +35,22 @@
         </div>
     </filter>
     <columns>
-        <column title="CPF" field="cpf"></column>
+        <column [title]="lex.translate('#ID')" [template]="columnNumero">
+            <ng-template let-row="row" #columnNumero>
+                <span>#{{ row.numero }} </span>
+            </ng-template>
+        </column>
         <column title="Nome" field="nome"></column>
-        <column title="Matrícula" field="matricula"></column>
+        <column [title]="lex.translate('Unidade')" [template]="columnUnidade">
+            <ng-template let-row="row" #columnUnidade>
+                <span>{{ row.unidade?.sigla || 'Não definida' }} </span>
+            </ng-template>
+        </column>
+        <column [title]="lex.translate('Programa')" [template]="columnPrograma">
+            <ng-template let-row="row" #columnPrograma>
+                <span>{{ row.programa?.nome || 'Não definido' }} </span>
+            </ng-template>
+        </column>
         <column title="Atualizado em" [template]="columnUpdatedAt">
             <ng-template let-row="row" #columnUpdatedAt><span> {{row.updated_at | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
         </column>

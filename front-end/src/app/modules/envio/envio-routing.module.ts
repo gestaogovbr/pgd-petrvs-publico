@@ -5,6 +5,7 @@ import { ConfigResolver } from 'src/app/resolvies/config.resolver';
 import { EnvioReiniciarFormComponent } from './reiniciar/envio-reiniciar-form/envio-reiniciar-form.component';
 import { EnvioForcarComponent } from './forcar/envio-forcar/envio-forcar.component';
 import { EnvioUsuarioListComponent } from './envio-usuario-list/envio-usuario-list.component';
+import { EnvioPlanoEntregaListComponent } from './envio-plao-entrega-list/envio-plano-entrega-list.component';
 
 const routes: Routes = [
   { 
@@ -36,6 +37,17 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     data: {
       title: "Logs de Participantes",
+      modal: false
+    }
+  },
+  { 
+    path: 'planos-entrega',
+    component: EnvioPlanoEntregaListComponent,
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: {
+      title: "Logs de Planos de Entrega",
       modal: false
     }
   }
