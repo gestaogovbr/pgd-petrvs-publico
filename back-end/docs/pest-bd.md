@@ -80,7 +80,7 @@ Para rodar os testes de tenant:
 ```bash
 ./vendor/bin/pest --testsuite=IntegrationTenant
 # ou
-php artisan test tests/IntegrationTenant
+docker exec php artisan test tests/IntegrationTenant
 ```
 
 Para rodar os testes centrais:

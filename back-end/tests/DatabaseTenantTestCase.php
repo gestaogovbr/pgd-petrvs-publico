@@ -12,6 +12,7 @@ abstract class DatabaseTenantTestCase extends TestCase
     use RefreshDatabase;
 
     protected $tenant;
+    protected $tenantId = 'tenant_test';
 
     protected function setUp(): void
     {
@@ -22,13 +23,46 @@ abstract class DatabaseTenantTestCase extends TestCase
 
     protected function initializeTenant()
     {
-        $this->tenant = Tenant::create([
-            'id' => 'test_tenant_' . uniqid(),
-        ]);
+        $this->tenant = Tenant::find($this->tenantId);
+
+        if (!$this->tenant) {
+            // Verifica se o banco de dados já existe para evitar erro ao criar o tenant
+            $tempTenant = new Tenant(['id' => $this->tenantId]);
+            $databaseName = $tempTenant->database()->getName();
+            
+            $dbExists = false;
+            try {
+                $check = DB::select("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", [$databaseName]);
+                $dbExists = !empty($check);
+            } catch (\Throwable $e) {
+                // Ignora erro
+            }
+
+            if ($dbExists) {
+                // Se o banco existe, cria o registro sem disparar eventos de criação de banco
+                $this->tenant = Tenant::withoutEvents(function () {
+                    return Tenant::create(['id' => $this->tenantId]);
+                });
+            } else {
+                $this->tenant = Tenant::create([
+                    'id' => $this->tenantId,
+                ]);
+            }
+        }
 
         tenancy()->initialize($this->tenant);
         
         $this->loadTenantSchema();
+
+        // Ensure sequences table has a row (required for stored procedures)
+        if (Schema::connection('tenant')->hasTable('sequences')) {
+            if (DB::connection('tenant')->table('sequences')->count() == 0) {
+                 DB::connection('tenant')->table('sequences')->insert([
+                    'created_at' => now(), 
+                    'updated_at' => now()
+                 ]);
+            }
+        }
         
         DB::connection('tenant')->beginTransaction();
     }
