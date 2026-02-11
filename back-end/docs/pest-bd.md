@@ -30,7 +30,7 @@ O sistema possui duas suites de testes de integração distintas, dependendo do 
 A configuração de conexão com o banco de dados para os testes **não é hardcoded no arquivo `phpunit.xml`**. Em vez disso, ela deve ser fornecida através de variáveis de ambiente ou arquivo `.env`.
 
 *   **Ambiente Local (Docker)**: O arquivo `.env` deve conter as credenciais corretas. Geralmente, ao rodar dentro do container, o host é o nome do serviço (ex: `petrvs_db`).
-*   **Ambiente CI (GitHub Actions)**: As variáveis são definidas no workflow (ex: `DB_HOST: 127.0.0.1`), garantindo conexão com o serviço MySQL do runner.
+*   **Ambiente CI (GitHub Actions)**: As variáveis são definidas no workflow (ex: `DB_HOST: 127.0.0.1`), garantindo conexão com o serviço MariaDB do runner.
 
 **Solução de Problemas:**
 Se encontrar erros como `php_network_getaddresses: getaddrinfo for petrvs_db failed` (especialmente em CI), verifique se o `phpunit.xml` não está forçando um `DB_HOST` incorreto para o ambiente. A configuração deve vir do ambiente (`.env` ou variáveis de sistema).
