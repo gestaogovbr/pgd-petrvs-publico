@@ -316,6 +316,16 @@ class UsuarioService extends ServiceBase
         array_push($where, $condition);
       }
     }
+
+    $enviosPendentes = $this->extractWhere($data, "envios_pendentes");
+    if (isset($enviosPendentes[2])) {
+        $query->whereRaw("(data_envio_api_pgd < data_agendamento_envio)", []);
+    }
+
+     $where = array_values(array_filter($where, function ($item) {
+            return ($item[0] !== 'envios_pendentes');
+     }));
+
     if (!$usuario->hasPermissionTo("MOD_USER_TUDO")) {
       $areasTrabalhoWhere = $this->areasTrabalhoWhere($subordinadas, null, "where_unidades");
       array_push($where, new RawWhere("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($areasTrabalhoWhere))", []));

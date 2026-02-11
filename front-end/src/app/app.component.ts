@@ -198,9 +198,11 @@ export class AppComponent {
       IMPERSONATE: { name: "Personificar", permition: '', route: ['impersonate'], icon: this.entity.getIcon('Ferramentas') },
       DEV_CPF_CONSULTA_SIAPE: { name: "Consulta CPF SIAPE", permition: '', route: ['consultas', 'cpf-siape'], icon: this.entity.getIcon('ConsultaCPFSIAPE') },
       DEV_UNIDADE_CONSULTA_SIAPE: { name: "Consulta Unidade SIAPE", permition: '', route: ['consultas', 'unidade-siape'], icon: this.entity.getIcon('ConsultaUnidadeSIAPE') },
-      ENVIO_LOGS: { name: "Log dos Envios", permition: '', route: ['logs', 'envios'], icon: 'bi-list-check' },
-      ENVIO_FORCAR: { name: "Forçar Envio", permition: '', route: ['envios', 'forcar'], icon: this.entity.getIcon('Envio') },
-      ENVIO_REINICIAR: { name: "Resetar Envios", permition: '', route: ['envios', 'reiniciar'], icon: 'bi-arrow-clockwise' },
+      /* Envios */
+      //ENVIO_LOGS: { name: "Log dos Envios", permition: '', route: ['logs', 'envios'], icon: 'bi-list-check' },
+      //ENVIO_FORCAR: { name: "Forçar Envio", permition: '', route: ['envios', 'forcar'], icon: this.entity.getIcon('Envio') },
+      //ENVIO_REINICIAR: { name: "Resetar Envios", permition: '', route: ['envios', 'reiniciar'], icon: 'bi-arrow-clockwise' },
+      ENVIO_USUARIO: { name: "Logs de Participantes", permition: 'MOD_ENVIO_USUARIO', route: ['envios', 'participantes'], icon: 'bi bi-person' },
       /* SIAPE */
       BLACKLIST_SERVIDOR: { name: "CPFs indisponíveis", permition: '', route: ['siape', 'blacklist-servidor'], icon: 'bi bi-person-x' },
       BLACKLIST_UNIDADE: { name: "Unidades indisponíveis", permition: '', route: ['siape', 'blacklist-unidade'], icon: 'bi bi-building-dash' },
@@ -440,12 +442,13 @@ export class AppComponent {
       ]
     }, {
       name: this.lex.translate("Envio API"),
-      permition: "MENU_DEV_ACESSO",
+      permition: "MOD_ENVIOS",
       id: "navbarDropdownDevApiPgd",
       menu: [
-        this.menuSchema.ENVIO_LOGS,
-        this.menuSchema.ENVIO_FORCAR,
-        this.menuSchema.ENVIO_REINICIAR
+        //this.menuSchema.ENVIO_LOGS,
+        //this.menuSchema.ENVIO_FORCAR,
+        //this.menuSchema.ENVIO_REINICIAR,
+        this.menuSchema.ENVIO_USUARIO
       ]
     },
     {

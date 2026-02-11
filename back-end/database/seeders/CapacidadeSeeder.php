@@ -389,6 +389,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_CLI_EXCL"],
       ["codigo" => "MOD_CLI_INCL"],
       ["codigo" => "MOD_ENTD_EDT"],
+      ["codigo" => "MOD_ENVIOS"],
       ["codigo" => "MOD_FER"],
       ["codigo" => "MOD_UND_TUDO"],
       ["codigo" => "MOD_FER_EDT"],

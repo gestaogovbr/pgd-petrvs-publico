@@ -1000,6 +1000,16 @@ export class LookupService implements IIndexable {
     { key: 'Executora', value: "Executora" }
   ];
 
+  public ENVIO_USUARIO_STATUS: LookupItem[] = [
+    { key: 'Todos', value: "Todos" },
+    { key: 'Não agendados', value: "Não agendados" },
+    { key: 'Agendados', value: "Agendados" },
+    { key: 'Pendentes', value: "Pendentes" },
+    { key: 'Não enviados', value: "Não enviados" },
+    { key: 'Enviados', value: "Enviados" },
+    { key: 'Com falha', value: "Com falha" },
+  ];
+
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);
   }

@@ -6,12 +6,14 @@ import { UteisModule } from '../uteis/uteis.module';
 import { EnvioReiniciarFormComponent } from './reiniciar/envio-reiniciar-form/envio-reiniciar-form.component';
 import { EnvioRoutingModule } from './envio-routing.module';
 import { EnvioForcarComponent } from './forcar/envio-forcar/envio-forcar.component';
+import { EnvioUsuarioListComponent } from './envio-usuario-list/envio-usuario-list.component';
 
 
 @NgModule({
   declarations: [
     EnvioReiniciarFormComponent,
-    EnvioForcarComponent
+    EnvioForcarComponent,
+    EnvioUsuarioListComponent
   ],
   imports: [
     CommonModule,

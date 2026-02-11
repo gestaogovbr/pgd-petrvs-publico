@@ -4,6 +4,7 @@ import { AuthGuard } from 'src/app/guards/auth.guard';
 import { ConfigResolver } from 'src/app/resolvies/config.resolver';
 import { EnvioReiniciarFormComponent } from './reiniciar/envio-reiniciar-form/envio-reiniciar-form.component';
 import { EnvioForcarComponent } from './forcar/envio-forcar/envio-forcar.component';
+import { EnvioUsuarioListComponent } from './envio-usuario-list/envio-usuario-list.component';
 
 const routes: Routes = [
   { 
@@ -25,6 +26,17 @@ const routes: Routes = [
     data: {
       title: "Forçar envio",
       modal: true
+    }
+  },
+  { 
+    path: 'participantes',
+    component: EnvioUsuarioListComponent,
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: {
+      title: "Logs de Participantes",
+      modal: false
     }
   }
 ];
