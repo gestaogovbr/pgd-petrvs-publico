@@ -345,7 +345,7 @@ class PlanoEntregaService extends ServiceBase
     {
         $planoEntrega = PlanoEntrega::find($data["id"]);
         if($this->planosUnidadeComPendenciasExecucaoAvaliacao($planoEntrega["unidade_id"], $planoEntrega["id"], now()))
-            throw new ValidateException("A unidade possui planos com pendências de execução/avaliação!");
+            throw new ValidateException("Não é possível liberar para homologação um plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores!");
 
         try {
             DB::beginTransaction();
@@ -616,10 +616,10 @@ class PlanoEntregaService extends ServiceBase
             if(!$this->unidadeService->isUnidadeExecutora($dataOrEntity["unidade_id"])){
                 throw new ValidateException("Não é possível criar um plano para unidades não executoras.", 422);
             }
-            $planosComPendencias = $this->planosUnidadeComPendencias($dataOrEntity["unidade_id"]);
-            if ($planosComPendencias) {
-                throw new ServerException("ValidatePlanoEntrega", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");
-            }
+            // $planosComPendencias = $this->planosUnidadeComPendencias($dataOrEntity["unidade_id"]);
+            // if ($planosComPendencias) {
+            //     throw new ServerException("ValidatePlanoEntrega", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");
+            // }
         }
     }
 
