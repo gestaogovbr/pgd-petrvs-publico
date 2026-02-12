@@ -31,7 +31,7 @@
         <column title="Status" [template]="columnStatus">
             <ng-template let-row="row" #columnStatus>
                 <div class="one-per-line">
-                    <badge [color]="lookup.getColor(lookup.CONSOLIDACAO_STATUS, row.status)" [icon]="lookup.getIcon(lookup.CONSOLIDACAO_STATUS, row.status)" [label]="lookup.getValue(lookup.CONSOLIDACAO_STATUS, row.status)"></badge>
+                    <badge [color]="lookup.getColor(lookup.CONSOLIDACAO_STATUS, row.status)" [icon]="iconStatus(row)" [label]="labelStatus(row)"></badge>
                     <badge *ngIf="row.avaliacao?.recurso?.length" icon="bi bi-journal-medical" color="warning" label="Recorrido"></badge>
                     <small *ngIf="row.justificativa_conclusao?.length" class="text-danger">{{row.justificativa_conclusao}}</small>
                 </div>

@@ -544,7 +544,7 @@ class PlanoTrabalhoService extends ServiceBase
                             'data_inicio' => $dataInicio->toDateString(),
                             'data_fim' =>  Carbon::parse($intersecao->data_inicio)->subDay()->toDateString(),
                             'plano_trabalho_id' => $plano->id,
-                            'status' => StatusEnum::AGUARDANDO_REGISTRO->value
+                            'status' => StatusEnum::INCLUIDO->value
                         ]);
                         $novo->save();
                         $merged[] = $novo;
@@ -555,7 +555,7 @@ class PlanoTrabalhoService extends ServiceBase
                         'data_inicio' => $dataInicio->toDateString(),
                         'data_fim' => $dataFim->toDateString(),
                         'plano_trabalho_id' => $plano->id,
-                        'status' => StatusEnum::AGUARDANDO_REGISTRO->value
+                        'status' => StatusEnum::INCLUIDO->value
                     ]);
                     $novo->save();
                     $merged[] = $novo;
@@ -605,6 +605,10 @@ class PlanoTrabalhoService extends ServiceBase
             "tipoModalidade:id,nome",
             "consolidacoes.avaliacao.tipoAvaliacao.notas",
             "consolidacoes.avaliacoes",
+            "consolidacoes.atividades" =>
+            function ($query) {
+                $query->orderBy('data_inicio');
+            },
             "usuario:id,nome,apelido,url_foto"
         ])->where("usuario_id", $usuarioId)->orderBy('numero', 'desc');
         if (!$arquivados)
