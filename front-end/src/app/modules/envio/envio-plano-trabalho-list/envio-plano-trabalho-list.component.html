@@ -1,0 +1,72 @@
+<grid [dao]="dao"
+    [title]="isModal ? '' : title"
+    [hasAdd]="false"
+    [hasEdit]="false"
+    [selectable]="selectable"
+    [orderBy]="orderBy"
+    [join]="join"
+>
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)">
+        <div class="row">
+            <input-text [size]="1" label="#ID" controlName="numero" [form]="filter"></input-text>
+            <input-select
+                [size]="2"
+                label="Status"
+                controlName="status"
+                [items]="lookup.ENVIO_USUARIO_STATUS"
+                [control]="filter!.controls.status"
+                itemTodos="- Todos -" [valueTodos]="null"/>
+            <input-datetime
+                [size]="2"
+                date
+                label="Período do envio: início"
+                controlName="this.filter.envio_inicio"
+                [control]="filter!.controls.envio_inicio"
+            ></input-datetime>
+            <input-datetime
+                [size]="2"
+                date
+                label="Período do envio: fim"
+                controlName="this.filter.envio_fim"
+                [control]="filter!.controls.envio_fim"
+            ></input-datetime>
+        </div>
+    </filter>
+    <columns>
+        <column [title]="lex.translate('#ID')" [template]="columnNumero">
+            <ng-template let-row="row" #columnNumero>
+                <span>#{{ row.numero }} </span>
+            </ng-template>
+        </column>
+        <column [title]="lex.translate('Unidade')" [template]="columnUnidade">
+            <ng-template let-row="row" #columnUnidade>
+                <span>{{ row.unidade?.sigla || 'Não definida' }} </span>
+            </ng-template>
+        </column>
+        <column [title]="lex.translate('Programa')" [template]="columnPrograma">
+            <ng-template let-row="row" #columnPrograma>
+                <span>{{ row.programa?.nome || 'Não definido' }} </span>
+            </ng-template>
+        </column>
+        <column title="VIgência" [template]="columnVigencia">
+            <ng-template let-row="row" #columnVigencia>
+                <span> {{dao!.getDateFormatted(row.data_inicio)}} {{ " a "+dao!.getDateFormatted(row.data_fim)}}</span>
+            </ng-template>
+        </column>
+        <column title="Atualizado em" [template]="columnUpdatedAt">
+            <ng-template let-row="row" #columnUpdatedAt><span> {{row.updated_at | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
+        </column>
+        <column title="Agendamento em" [template]="columnDataAgendamentoEnvio">
+            <ng-template let-row="row" #columnDataAgendamentoEnvio><span> {{row.data_agendamento_envio | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
+        </column>
+        <column title="Tentativa de Envio" [template]="columnDataTentativaEnvio">
+            <ng-template let-row="row" #columnDataTentativaEnvio><span> {{row.data_tentativa_envio | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
+        </column>
+        <column title="Envio bem sucedido" [template]="columnDataEnvioApiPgd">
+            <ng-template let-row="row" #columnDataEnvioApiPgd><span> {{row.data_envio_api_pgd | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
+        </column>
+        <column title="Log de envio" field="log_envio"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

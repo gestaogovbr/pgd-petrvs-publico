@@ -20,7 +20,7 @@ export class EnvioPlanoEntregaListComponent extends PageListBase<PlanoEntrega, P
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
     /* Inicializações */
-    this.title = this.lex.translate('Envios de Planos de Etrega');
+    this.title = this.lex.translate('Envios de Planos de Entrega');
     this.code = "MOD_ENVIO_PE";
     this.join = ["unidade:id,sigla", "programa:id,nome"];
     this.filter = this.fh.FormBuilder({
