@@ -1,9 +1,14 @@
 ## 2.9.14 18/02/2026
+### Adicionado
+- Adição da opção para o usuário editar as ocorrências lançadas no registro de execução.
+### Modificado
+- Refatoração da sincronização individual do SIAPE com validação aprimorada.
+- Refatoração dos serviços para uso de injeção de dependência.
 ### Corrigido
 - Corrigido visualização dos regramentos por administradores master.
 - Corrigido visualização e edição dos planos de trabalho. Entregas não estavam visíveis. 
-### Adicionado
-- Adição da opção para o usuário editar as ocorrências lançadas no registro de execução.
+- Corrigido tratamento de tipo de modalidade ausente na geração de usuários.
+- Corrigido tratamento de resumo vazio na sincronização individual do SIAPE.
 ## 2.9.13 09/02/2026
 ### Corrigido
 - Corrigido bug no relacionamento de unidades com usuários, quando há unidade inativa na lista;
