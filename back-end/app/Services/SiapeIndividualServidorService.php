@@ -79,6 +79,27 @@ class SiapeIndividualServidorService extends ServiceBase
             $this->executarSincronizacaoFinal($cpfLimpo);
             
             $this->resumo = $this->gerarResumo($usuariosAntes, $cpfLimpo, self::STATUS_SUCESSO);
+
+            if (empty($this->resumo)) {
+                $nome = 'Servidor';
+                try {
+                     $dadosPessoaisArr = $this->service->getProcessaDadosSiape()->processaDadosPessoais($cpfLimpo, $respPessoais);
+                     $nome = $dadosPessoaisArr['nome'] ?? 'Servidor';
+                } catch (\Throwable $e) {
+                    // ignore
+                }
+                
+                $this->resumo[] = [
+                    'status' => self::STATUS_PARCIAL,
+                    'nome' => $nome,
+                    'usuario_existia' => false,
+                    'usuario_inserido' => false,
+                    'lotacao_associada' => false,
+                    'alteracoes' => [],
+                    'mensagem' => 'O CPF foi processado no SIAPE, porém o usuário não foi inserido no Petrvs. Verifique se os dados estão corretos ou se há restrições.'
+                ];
+            }
+
             return $this->resumo;
 
         } catch (Exception $e) {
