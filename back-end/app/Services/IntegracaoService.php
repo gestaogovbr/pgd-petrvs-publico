@@ -778,6 +778,15 @@ class IntegracaoService extends ServiceBase
 
           $tipoModalidadePgd = empty($tipoModalidadePgd)? $tipoModalidadeNaoIdentificada : $this->validarModalidadePgd($tipoModalidadePgd);
            
+          if (empty($tipoModalidadePgd)) {
+            $tipoModalidadePgd = DB::table('tipos_modalidades')->whereNull('deleted_at')->value('id');
+          }
+
+          if (empty($tipoModalidadePgd)) {
+             SiapeLog::error("Não foi possível identificar um Tipo de Modalidade para o servidor {$matriculaNova}. O registro será ignorado.");
+             continue; 
+          }
+
            $registro = new Usuario([
               'id' => Uuid::uuid4(),
               'email' => UtilService::valueOrDefault($v_isr['emailfuncional']),
@@ -994,6 +1003,12 @@ protected function validarModalidadePgd($modalidadeString)
       ->where('nome', 'Sem dados do SIAPE')
       ->whereNull('deleted_at')
       ->value('id');
+
+    if (empty($fallbackId)) {
+        $fallbackId = DB::table('tipos_modalidades')
+          ->whereNull('deleted_at')
+          ->value('id');
+    }
 
     if (empty($modalidadeString)) {
       return $fallbackId;
