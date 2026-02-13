@@ -182,7 +182,7 @@ trait Atribuicao
         $this->lotaServidor(EnumAtribuicao::GESTOR, $integranteNovoOuExistente);
     }
 
-    private function removeTodasAsGestoesDoUsuario(Usuario $usuario): void
+    protected function removeTodasAsGestoesDoUsuario(Usuario $usuario): void
     {
         $usuario->gerencias->each(function (UnidadeIntegrante $gestao) {
             $gestao->gestores->each(function (UnidadeIntegranteAtribuicao $gestor) {
@@ -191,7 +191,7 @@ trait Atribuicao
         });
     }
 
-    private function removeUsuarioDaGestaoAtual(Usuario $usuario): void
+    protected function removeUsuarioDaGestaoAtual(Usuario $usuario): void
     {
         $usuario->gerenciaTitular->gestor->delete();
     }
@@ -236,7 +236,7 @@ trait Atribuicao
         UnidadeIntegranteAtribuicao::create(["atribuicao" => $atribuicao->value, "unidade_integrante_id" => $unidadeIntegrante->id])->save();
     }
 
-    private function removeLotacao(Usuario $usuario): void
+    protected function removeLotacao(Usuario $usuario): void
     {
         $lotacoes = $usuario->lotacoes;
         foreach ($lotacoes as $lotacao) {

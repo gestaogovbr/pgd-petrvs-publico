@@ -685,6 +685,12 @@ class IntegracaoService extends ServiceBase
       ->whereNull('deleted_at')
       ->value('id');
 
+    if (empty($fallbackId)) {
+        $fallbackId = DB::table('tipos_modalidades')
+          ->whereNull('deleted_at')
+          ->value('id');
+    }
+
     if (empty($modalidadeString)) {
       return $fallbackId;
     }

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\Atribuicao;
 use App\Exceptions\ServerException;
 use App\Exceptions\LogError;
+use App\Exceptions\NotFoundException;
 use App\Facades\SiapeLog;
 use App\Models\Unidade;
 use App\Models\Usuario;
@@ -261,8 +262,12 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
                 continue;
             }
         
-            $registro = $this->usuarioService->gerarUsuario($v_isr, $tipoModalidadeNaoIdentificada, $perfilParticipanteId);
-
+            try {
+                $registro = $this->usuarioService->gerarUsuario($v_isr, $tipoModalidadeNaoIdentificada, $perfilParticipanteId);
+            } catch (NotFoundException $th) {
+                //já foi registrado no log
+                continue;
+            }
             if (empty($matriculaNova)) {
                 SiapeLog::info("O servidor não tem matrícula relacionada, não será cadastrado", $registro->toArray());
                 continue;
