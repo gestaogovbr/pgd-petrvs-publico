@@ -14,6 +14,11 @@ use App\Models\Programa;
 use App\Services\RawWhere;
 use App\Services\ServiceBase;
 use App\Exceptions\ServerException;
+<<<<<<< HEAD
+=======
+use Illuminate\Support\Facades\Log;
+use App\Facades\SiapeLog;
+>>>>>>> refactor/#1914-integracaoService-dados-servidor
 use App\Exceptions\ValidateException;
 use App\Models\PlanoTrabalhoConsolidacao;
 use Illuminate\Support\Facades\Storage;
@@ -24,8 +29,15 @@ use App\Enums\StatusEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use App\Enums\UsuarioSituacaoSiape;
+use App\Models\IntegracaoServidor;
 use App\Services\UnidadeService;
+<<<<<<< HEAD
 use Illuminate\Support\Facades\DB;
+=======
+use App\Services\IntegracaoService;
+use Illuminate\Support\Facades\DB;
+use Ramsey\Uuid\Uuid;
+>>>>>>> refactor/#1914-integracaoService-dados-servidor
 
 class UsuarioService extends ServiceBase
 {
@@ -765,5 +777,118 @@ class UsuarioService extends ServiceBase
         'planosEntregas' => $planosEntregas->get(),
       ];
     }
+    
+    public function atualizarServidor($usuario): void
+    {
+        SiapeLog::info("Atualizando dados do servidor Matricula: " . $usuario->matriculasiape);
 
+        $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($usuario->emailfuncional, $usuario->matriculasiape, $usuario->id);
+        $modalidadePgdValida = $this->integracaoService->validarModalidadePgd($usuario->modalidade_pgd);
+
+        Usuario::where('id', $usuario->id)
+        ->update([
+            'nome'               => $usuario->nome_servidor,
+            'apelido'         => $usuario->nome_guerra,
+            'email'              => $usuario->emailfuncional,
+            'cod_jornada'        => $usuario->cod_jornada,
+            'nome_jornada'       => $usuario->nome_jornada,
+            'tipo_modalidade_id' => $modalidadePgdValida,
+            'participa_pgd'      => $usuario->participa_pgd,
+            'ident_unica'        => $usuario->ident_unica,
+            'data_modificacao'   => UtilService::asDateTime($usuario->data_modificacao),
+            'data_nascimento'    => $usuario->data_nascimento,
+        ]);
+    }
+    
+    public function atualizarMatriculasUsuariosSemMatricula(): void
+    {
+        try {
+            $usuariosSemMatricula = DB::table('usuarios')
+            ->whereNull('deleted_at')
+            ->where(function ($q) {
+                $q->whereNull('matricula')
+                    ->orWhere('matricula', '');
+            })
+            ->whereNotNull('cpf')
+            ->whereRaw("cpf <> ''")
+            ->select('id', 'cpf')
+            ->get();
+
+            if ($usuariosSemMatricula->isEmpty()) {
+                return;
+            }
+
+            foreach ($usuariosSemMatricula as $usr) {
+                $matriculaSiape = IntegracaoServidor::where('cpf', $usr->cpf)
+                    ->value('matriculasiape');
+
+                if (!empty($matriculaSiape)) {
+                    Usuario::where('id', $usr->id)
+                        ->update(['matricula' => $matriculaSiape]);
+                    SiapeLog::info(sprintf("Atualizada matrícula do usuário id=%s a partir do SIAPE.", $usr->id));
+                } else {
+                    SiapeLog::warning(sprintf("Matrícula SIAPE não encontrada para usuário id=%s com CPF %s.", $usr->id, $usr->cpf));
+                }
+            }
+        } catch (Throwable $e) {
+            report($e);
+            SiapeLog::error(sprintf("Erro ao atualizar matrículas de usuários sem matrícula: %s", $e->getMessage()));
+        }
+    }
+
+    public function gerarUsuario($usuario, $tipoModalidadeNaoIdentificada, $perfilParticipanteId)
+    {
+        
+        $tipoModalidadePgd = UtilService::valueOrDefault($usuario['modalidade_pgd']);
+
+        $tipoModalidadePgd = empty($tipoModalidadePgd)? $tipoModalidadeNaoIdentificada : $this->integracaoService->validarModalidadePgd($tipoModalidadePgd);
+        return new Usuario([
+                    'id' => Uuid::uuid4(),
+                    'email' => UtilService::valueOrDefault($usuario['emailfuncional']),
+                    'nome' => UtilService::valueOrDefault($usuario['nome']),
+                    'cpf' => UtilService::valueOrDefault($usuario['cpf']),
+                    'matricula' => UtilService::valueOrDefault($usuario['matricula']),
+                    'apelido' => UtilService::valueOrDefault($usuario['apelido']),
+                    'telefone' => UtilService::valueOrDefault($usuario['telefone'], null),
+                    'data_nascimento' => UtilService::valueOrDefault($usuario['data_nascimento'], null),
+                    'sexo' => UtilService::valueOrDefault($usuario['sexo']),
+                    'situacao_funcional' => UtilService::valueOrDefault($usuario['situacao_funcional'], "DESCONHECIDO"),
+                    'perfil_id' => $perfilParticipanteId,
+                    'tipo_modalidade_id' => $tipoModalidadePgd,
+                    'exercicio' => UtilService::valueOrDefault($usuario['exercicio']),
+                    'uf' => UtilService::valueOrDefault($usuario['uf'], null),
+                    'data_modificacao' => UtilService::asDateTime($usuario['data_modificacao']),
+                    'ident_unica' => UtilService::valueOrDefault($usuario['ident_unica']),
+                ]);
+    }
+    
+    public function verificaSeUsuarioSoMudouMatricula(string $cpfCheck, ?string $unidadeExercicioIdCheck, string $matriculaNova, string $codigoExercicio): bool
+    {
+        if (!empty($cpfCheck) && !empty($unidadeExercicioIdCheck)) {
+            $usuarioLotadoMesmaUnidade = DB::table('usuarios as u')
+                ->join('unidades_integrantes as ui', 'ui.usuario_id', '=', 'u.id')
+                ->join('unidades_integrantes_atribuicoes as uia', 'uia.unidade_integrante_id', '=', 'ui.id')
+                ->where('u.cpf', $cpfCheck)
+                ->where('ui.unidade_id', $unidadeExercicioIdCheck)
+                ->where('uia.atribuicao', 'LOTADO')
+                ->whereNull('u.deleted_at')
+                ->whereNull('uia.deleted_at')
+                ->select('u.id')
+                ->orderBy('u.created_at', 'asc')
+                ->first();
+
+            if (!empty($usuarioLotadoMesmaUnidade) && isset($usuarioLotadoMesmaUnidade->id)) {
+                Usuario::where('id', $usuarioLotadoMesmaUnidade->id)
+                    ->update(['matricula' => $matriculaNova]);
+                SiapeLog::info(sprintf('Atualizada matrícula do usuário CPF %s para %s (unidade exercício código %s) sem criar novo usuário.',
+                    (string) $cpfCheck,
+                    (string) $matriculaNova,
+                    (string) $codigoExercicio
+                ));
+                return false;
+            }
+            return true;
+        }
+        return true;
+    }
 }
