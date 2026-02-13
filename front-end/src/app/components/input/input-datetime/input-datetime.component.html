@@ -2,7 +2,7 @@
     <div class="input-group">
         <span *ngIf="prefix" class="input-group-text">{{prefix}}</span>
         <span *ngIf="!isNoIcon" class="input-group-text" [id]="generatedId(controlName) + '_icon'"><i class="bi bi-calendar3"></i></span>
-        <input *ngIf="!isTime" #inputElement [type]="isDate || isFirefox || isTime24hours ? 'date' : 'datetime-local'" #dateInput class="form-control" [class.no-indicator]="isNoIndicator" [class.firefox-date]="isFirefox"
+        <input *ngIf="!isTime" #inputElement [type]="isDate || isTime24hours ? 'date' : 'datetime-local'" #dateInput class="form-control" [class.no-indicator]="isNoIndicator"
             [id]="generatedId(controlName) + '_date'"
             [class.is-invalid]="isInvalid()"
             [disabled]="isDisabled"
