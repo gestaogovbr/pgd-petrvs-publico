@@ -14,11 +14,8 @@ use App\Models\Programa;
 use App\Services\RawWhere;
 use App\Services\ServiceBase;
 use App\Exceptions\ServerException;
-<<<<<<< HEAD
-=======
 use Illuminate\Support\Facades\Log;
 use App\Facades\SiapeLog;
->>>>>>> refactor/#1914-integracaoService-dados-servidor
 use App\Exceptions\ValidateException;
 use App\Models\PlanoTrabalhoConsolidacao;
 use Illuminate\Support\Facades\Storage;
@@ -32,13 +29,9 @@ use App\Enums\UsuarioSituacaoSiape;
 use App\Exceptions\NotFoundException;
 use App\Models\IntegracaoServidor;
 use App\Services\UnidadeService;
-<<<<<<< HEAD
-use Illuminate\Support\Facades\DB;
-=======
 use App\Services\IntegracaoService;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
->>>>>>> refactor/#1914-integracaoService-dados-servidor
 
 class UsuarioService extends ServiceBase
 {
