@@ -94,7 +94,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.join = [
       "unidade.entidade", 
       "entregas.entrega", 
-      "entregas.plano_entrega_entrega:id,plano_entrega_id", 
+      "entregas.plano_entrega_entrega:id,plano_entrega_id,descricao,data_inicio,data_fim,progresso_realizado,progresso_realizado", 
       "usuario.participacoes_programas",
       "usuario.lotacao",
       "usuario.areas_trabalho.atribuicoes",
@@ -500,7 +500,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   public async loadData(entity: PlanoTrabalho, form: FormGroup, action?: string) {     
     if(action == 'clone') {
- 
       entity.id = "";
       entity.data_inicio = new Date();
       entity.data_fim = moment().add(1, 'day').toDate();
@@ -528,10 +527,15 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public entregasClonadas(entregas: PlanoTrabalhoEntrega[]) {
 
     // Se a entrega for vinculada a um plano de entrega, o plano de entrega precisa estar vigente
-    // Se a entrega tiver sido excluida do plano de entrega, o plano de entrega precisa estar vigente
+    // Se a entrega tiver sido excluida do plano de entrega, não clonar
 
     const entregasVigentes = entregas.filter((entrega: PlanoTrabalhoEntrega) => {
-      return entrega.plano_entrega_entrega !== null && entrega.plano_entrega_entrega_id !== null;
+      const planoEntrega = entrega.plano_entrega_entrega?.plano_entrega;
+      if(!planoEntrega) return false;
+      const dataInicio = this.util.asDate(planoEntrega.data_inicio);
+      const dataFim = this.util.asDate(planoEntrega.data_fim);
+      const agora = new Date();
+      return (dataInicio ? dataInicio <= agora : true) && (dataFim ? dataFim >= agora : true);
     });
 
     return entregasVigentes.map((entrega: PlanoTrabalhoEntrega) => {

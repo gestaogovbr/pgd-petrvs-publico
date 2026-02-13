@@ -322,7 +322,6 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_PTR_ENTR_EXCL"],
       ["codigo" => "MOD_PTR_ENTR_INCL"],
       ["codigo" => "MOD_PTR_INCL"],
-      ["codigo" => "MOD_PTR_INTSC_DATA"],
       ["codigo" => "MOD_PTR_USERS_INCL"],
       ["codigo" => "MOD_RELATORIOS"],
       ["codigo" => "MOD_RELATORIO_USUARIO"],

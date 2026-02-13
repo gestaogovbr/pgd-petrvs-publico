@@ -214,14 +214,8 @@ class PlanoTrabalhoService extends ServiceBase
         if(!is_null($unidade?->data_inativacao)){
             throw new ServerException("ValidatePlanoEntrega", "A unidade está inativa.");
         }
-        /* Resumo da PTR:TABELA_1 para Inclusão e Alteração:
-        Usuario do Plano          Usuario Logado
-        PT do Chefe.............: CF?,CF+,CS+
-        PT do Chefe Sub.........: CF,CS?,CF+,CS+
-        PT do Delegado..........: CF,CS,DL?
-        PT do Lotado/Colaborador: CF,CS,DL,LC? */
 
-        /* (RN_PTR_AA) Um Plano de Trabalho não pode ser incluído/alterado se apresentar período conflitante com outro Plano de Trabalho já existente para a mesma unidade/servidor, a menos que o usuário logado possua a capacidade MOD_PTR_INTSC_DATA; */
+        /* Um Plano de Trabalho não pode ser incluído/alterado se apresentar período conflitante com outro Plano de Trabalho já existente do participante. */
         $conflito = PlanoTrabalho::
             where("usuario_id", $data["usuario_id"])->
             where("data_inicio", "<=", $data["data_fim"])->
@@ -276,7 +270,7 @@ class PlanoTrabalhoService extends ServiceBase
               - o usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
                 - o usuário logado precisa ser um participante do PGD, habilitado, ou atender aos critérios da TABELA_1; [RN_PTR_B]; e
                 - o participante do plano precisa ser LOTADO/COLABORADOR na unidade do plano, ou este deve possuir a capacidade MOD_PTR_USERS_INCL (RN_PTR_Y); e
-                - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA (RN_PTR_AA)
+                - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente do participante.
             */
             /* (RN_PTR_B) O Plano de Trabalho pode ser incluído pelo próprio servidor, se ele for "participante do programa" habilitado, ou pelas condições da TABELA_1 */
             if ($usuario->participa_pgd != 'sim')
@@ -301,7 +295,7 @@ class PlanoTrabalhoService extends ServiceBase
               - estando com o status 'INCLUIDO' ou 'AGUARDANDO_ASSINATURA', o usuário logado precisa atender os critérios da ação Alterar da TABELA_1;
               - estando com o status 'ATIVO', o usuário precisa possuir a capacidade MOD_PTR_EDT_ATV e atender os critérios da ação Alterar da TABELA_1;
             Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
-            A alteração não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA (RN_PTR_AA)
+            A alteração não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante.
             */
             if (!$condicoes['planoValido'])
                 throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho não é válido, ou seja, foi apagado, cancelado ou arquivado.\n[ver RN_PTR_M]");
