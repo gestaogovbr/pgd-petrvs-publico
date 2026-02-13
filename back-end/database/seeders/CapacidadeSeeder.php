@@ -395,6 +395,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_FER_EXCL"],
       ["codigo" => "MOD_FER_INCL"],
       ["codigo" => "MOD_PRGT_EXT"],
+      ["codigo" => "MOD_PRGT_VER_TODOS"],
       ["codigo" => "MOD_TIPO_TRF"],
       ["codigo" => "MOD_TIPO_TRF_EDT"],
       ["codigo" => "MOD_TIPO_TRF_EXCL"],
