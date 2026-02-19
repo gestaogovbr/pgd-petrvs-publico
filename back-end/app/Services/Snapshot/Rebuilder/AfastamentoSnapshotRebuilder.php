@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Services\Snapshot\Rebuilder;
+
+use App\Models\Afastamento;
+use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
+
+class AfastamentoSnapshotRebuilder extends BaseRebuilder
+{
+    public function rebuildFromSnapshot($afastamento, $consolidacaoId, $consolidacaoDataConclusao)
+    {
+        if (!$afastamento instanceof Afastamento) throw new \TypeError;
+        $afastamento = $afastamento->toArray();
+        if (!empty($consolidacaoDataConclusao)) {
+            $consolidacaoAfastameto = $this->consolidacaoAfastamento($consolidacaoId, $consolidacaoDataConclusao, $afastamento["id"]);
+            if (!empty($consolidacaoAfastameto)) {
+                $snapshot = (object) $consolidacaoAfastameto->snapshot;
+                $afastamento["observacoes"] = $snapshot->observacoes;
+                $afastamento["data_inicio"] = $snapshot->data_inicio;
+                $afastamento["data_fim"] = $snapshot->data_fim;
+                $afastamento["deleted_at"] = $snapshot->deleted_at;
+            }
+        }
+        return $afastamento;
+    }
+
+    protected function consolidacaoAfastamento($consolidacaoId, $consolidacaoDataConclusao, $afastamentoId)
+    {
+        return PlanoTrabalhoConsolidacaoAfastamento::where("plano_trabalho_consolidacao_id", $consolidacaoId)
+            ->where("data_conclusao", $consolidacaoDataConclusao)
+            ->where("afastamento_id", $afastamentoId)->first();
+    }
+}
