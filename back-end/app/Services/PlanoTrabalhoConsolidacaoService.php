@@ -351,9 +351,14 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     $consolidacao->avaliacao_id = $avaliacao->id;
     $consolidacao->save();
     $this->statusService->atualizaStatus($consolidacao, StatusEnum::AVALIADO);
-    /* (RN_PTR_L) Um Plano de Trabalho adquire o status 'CONCLUIDO' quando a sua última consolidação for avaliada; */
-    if (PlanoTrabalhoConsolidacao::where("plano_trabalho_id", $consolidacao->plano_trabalho_id)->orderByDesc("data_fim")->first()->id == $consolidacao->id) {
-      $this->statusService->atualizaStatus($consolidacao->planoTrabalho, StatusEnum::CONCLUIDO);
+    /* (RN_PTR_L) Um Plano de Trabalho adquire o status 'CONCLUIDO' quando todas as suas consolidações estiverem avaliadas; */
+    $planoTrabalho = $consolidacao->planoTrabalho;
+    $todasConsolidacoesAvaliadas = $planoTrabalho->consolidacoes()
+      ->where('status', '!=', StatusEnum::AVALIADO->value)
+      ->doesntExist();
+
+    if ($todasConsolidacoesAvaliadas) {
+      $this->statusService->atualizaStatus($planoTrabalho, StatusEnum::CONCLUIDO);
     }
   }
 
