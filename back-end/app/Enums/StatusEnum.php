@@ -48,9 +48,4 @@ enum StatusEnum: string
             self::cases()
         );
     }
-
-    public static function statusEditaveisPlanoTrabalho(): array
-    {
-        return [self::INCLUIDO];
-    }
 }
