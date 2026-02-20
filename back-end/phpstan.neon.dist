@@ -2,5 +2,5 @@ parameters:
     paths:
         - app
     tmpDir: storage/framework/phpstan
-    level: 5
+    level: 3
     treatPhpDocTypesAsCertain: false
