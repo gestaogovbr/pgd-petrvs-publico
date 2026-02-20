@@ -6,6 +6,7 @@
 - Refatoração dos serviços para uso de injeção de dependência.
 ### Corrigido
 - Corrigido visualização dos regramentos por administradores master.
+- Corrigido a seleção de regramentos na criação de PT.
 - Corrigido visualização e edição dos planos de trabalho. Entregas não estavam visíveis. 
 - Corrigido tratamento de tipo de modalidade ausente na geração de usuários.
 - Corrigido tratamento de resumo vazio na sincronização individual do SIAPE.
