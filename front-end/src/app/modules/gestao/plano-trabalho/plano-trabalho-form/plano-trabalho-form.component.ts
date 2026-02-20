@@ -388,7 +388,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
         this.editableForm!.error = undefined;
         this.processarUnidadesUsuario(selected.entity);
         this.resetProgramaItems();
-        this.carregaProgramas(selected.entity.lotacao.unidade_id);
+
+        const unidadeId = this.action === 'edit' ? this.entity?.unidade_id : selected.entity.lotacao.unidade_id;
+        this.carregaProgramas(unidadeId);
 
         if (selected.entity.pedagio) {
           await this.carregaModalidades(true);
@@ -563,11 +565,13 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       }
     }
     await this.loadData(this.entity, this.form!);
-
-    let nowDate = new Date(); 
-    nowDate.setHours(0,0,0,0)
-    this.form?.controls.data_inicio.setValue(nowDate);
-    this.form?.controls.data_fim.setValue("");
+    
+    if (!this.isTermos) {
+      let nowDate = new Date(); 
+      nowDate.setHours(0,0,0,0)
+      this.form?.controls.data_inicio.setValue(nowDate);
+      this.form?.controls.data_fim.setValue(null);
+    }
   }
 
   /* Cria um objeto Plano baseado nos dados do formulário */
