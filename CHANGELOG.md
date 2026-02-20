@@ -1,6 +1,7 @@
 ## 2.9.14 18/02/2026
 ### Adicionado
 - Adição da opção para o usuário editar as ocorrências lançadas no registro de execução.
+- Opção de Arquivamento para PE cancelado.
 ### Modificado
 - Refatoração da sincronização individual do SIAPE com validação aprimorada.
 - Refatoração dos serviços para uso de injeção de dependência.
