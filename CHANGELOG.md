@@ -5,6 +5,7 @@
 - Refatoração da sincronização individual do SIAPE com validação aprimorada.
 - Refatoração dos serviços para uso de injeção de dependência.
 - Refatoração da criação e reconstrução das ocorrências, atividades e afastamentos das consolidações a partir de snapshots.
+- Página de feedback no suporte.
 ### Corrigido
 - Corrigido visualização dos regramentos por administradores master.
 - Corrigido a seleção de regramentos na criação de PT.
