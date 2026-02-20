@@ -37,6 +37,30 @@ jobs:
         working-directory: back-end
         run: composer audit --no-interaction
 
+  phpstan:
+    name: PHPStan (Laravel)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, dom, json, zip, pdo, pdo_mysql, soap, gd, sqlite3, pdo_sqlite
+          coverage: none
+
+      - name: Install dependencies
+        working-directory: back-end
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPStan
+        working-directory: back-end
+        run: ./vendor/bin/phpstan analyse --configuration=phpstan.neon.dist
+
   frontend_sca:
     name: Frontend SCA (npm audit)
     runs-on: ubuntu-latest
@@ -71,21 +95,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ['javascript', 'php']
+        language: ['javascript']
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+        uses: github/codeql-action/autobuild@v4
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
         with:
           category: '/language:${{ matrix.language }}'
 
@@ -105,4 +129,3 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
         with:
           args: detect --source=. --no-git --verbose
-
