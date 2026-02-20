@@ -111,6 +111,7 @@ jobs:
         uses: github/codeql-action/analyze@v4
         with:
           category: '/language:${{ matrix.language }}'
+          upload: false
 
   secrets_scan:
     name: Secret Scan (Gitleaks)
