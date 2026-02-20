@@ -54,6 +54,6 @@ enum StatusEnum: string
 
     public static function statusEditaveisPlanoTrabalho(): array
     {
-        return [self::AGUARDANDO_REGISTRO, self::INCLUIDO];
+        return [self::AGUARDANDO_REGISTRO->value, self::INCLUIDO->value];
     }
 }
