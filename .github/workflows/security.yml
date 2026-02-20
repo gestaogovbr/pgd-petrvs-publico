@@ -50,16 +50,15 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: mbstring, dom, json, zip, pdo, pdo_mysql, soap, gd, sqlite3, pdo_sqlite
           coverage: none
 
-      - name: Install dependencies
-        working-directory: back-end
-        run: composer install --no-interaction --prefer-dist
+      - name: Download PHPStan PHAR
+        run: |
+          curl -L https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -o phpstan.phar
 
       - name: Run PHPStan
         working-directory: back-end
-        run: ./vendor/bin/phpstan analyse --configuration=phpstan.neon.dist
+        run: php ../phpstan.phar analyse app --configuration=phpstan.neon.dist
 
   frontend_sca:
     name: Frontend SCA (npm audit)
