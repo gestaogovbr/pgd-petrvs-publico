@@ -43,7 +43,7 @@ class PlanoEntregaController extends ControllerBase
         try {
             $this->checkPermissions("AVALIAR", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
-                'id' => ['required'], 
+                'id' => ['required'],
                 'arquivar' => ['required']
             ]);
             $unidade = $this->getUnidade($request);
@@ -148,12 +148,12 @@ class PlanoEntregaController extends ControllerBase
             return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }
-    
+
     public function permissaoIncluir(Request $request)
     {
         try {
             $data = $request->validate(['unidade_id'=> ['required']]);
-      
+
             return response()->json([
                 'success' => $this->service->validaPermissaoIncluir($data, $this->getUsuario($request))
             ]);
@@ -172,7 +172,7 @@ class PlanoEntregaController extends ControllerBase
         $usuarioService = new UsuarioService();
         switch ($action) {
             case 'QUERY':
-                /*                 
+                /*
                 (RN_PENT_V) Condições para que um Plano de Entregas possa ser consultado:
                     - Possuir a capacidade "MOD_PENT"
                     - Atender as regras [RN_PENT_F] e [RN_PENT_I];
@@ -180,7 +180,7 @@ class PlanoEntregaController extends ControllerBase
                 if (!$usuario->hasPermissionTo('MOD_PENT')) throw new ServerException("CapacidadeSearchText", "O usuário logado não tem permissão para consultar planos de entregas (MOD_PENT).\n[ver RN_PENT_V]");
                 break;
             case 'GETBYID':
-                /*                 
+                /*
                 (RN_PENT_V) Condições para que um Plano de Entregas possa ser consultado:
                     - Possuir a capacidade "MOD_PENT"
                     - Atender as regras [RN_PENT_F] e [RN_PENT_I];
@@ -200,7 +200,7 @@ class PlanoEntregaController extends ControllerBase
                 }
                 break;
             case 'DESTROY':
-                /*                 
+                /*
                 (RN_PENT_X) EXCLUIR
                 - o usuário logado precisa possuir a capacidade "MOD_PENT_EXCL", o plano precisa estar com o status INCLUIDO ou HOMOLOGANDO; e
                     - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
@@ -218,13 +218,13 @@ class PlanoEntregaController extends ControllerBase
                 $data = $request->validate(['id' => ['required'], 'arquivar' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
                 if ($data['arquivar']) {
-                    /*                 
+                    /*
                     (RN_PENT_N) ARQUIVAR
                     - o plano precisa estar com o status CONCLUIDO ou AVALIADO, não ter sido arquivado, e:
                         - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
                         - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado e ele possuir a capacidade "MOD_PENT_ARQ";
                     */
-                    if (!($condicoes['planoConcluido'] || $condicoes['planoAvaliado'])) throw new ServerException("ValidatePlanoEntrega", "O plano não pode ser arquivado porque não se encontra no status CONCLUIDO ou AVALIADO.\n[ver RN_PENT_N]");
+                    if (!($condicoes['planoConcluido'] || $condicoes['planoAvaliado'] || $condicoes['planoCancelado'])) throw new ServerException("ValidatePlanoEntrega", "O plano não pode ser arquivado porque não se encontra no status CONCLUIDO, CANCELADO ou AVALIADO.\n[ver RN_PENT_N]");
                     if ($condicoes['planoArquivado']) throw new ServerException("ValidatePlanoEntrega", "O plano não pode ser arquivado porque já se encontra arquivado.\n[ver RN_PENT_N]");
                     if (!($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_ARQ")))) throw new ServerException("ValidateUsuario", "O plano de entregas não pode ser arquivado porque nenhuma das condições abaixo é atendida:\n" .
                         "1. o usuário logado precisa ser um dos gestores da unidade executora do plano; ou\n" .
@@ -233,7 +233,7 @@ class PlanoEntregaController extends ControllerBase
                     /*
                     (RN_PENT_W) DESARQUIVAR
                     - o plano precisa estar arquivado, e:
-                        - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou 
+                        - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
                         - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado e ele possuir a capacidade "MOD_PENT_ARQ";
                     */
                     if (!$condicoes['planoArquivado']) throw new ServerException("ValidatePlanoEntrega", "O plano não pode ser desarquivado porque não se encontra arquivado.\n[ver RN_PENT_W]");
@@ -243,14 +243,14 @@ class PlanoEntregaController extends ControllerBase
                 }
                 break;
             case 'AVALIAR':
-                /*                 
+                /*
                 (RN_PENT_O) AVALIAR
                 - o plano precisa estar com o status CONCLUIDO, e:
                     - o usuário logado precisa ser gestor da Unidade-pai (Unidade A) da Unidade do plano (Unidade B), ou
                     - o usuário logado precisa possuir a atribuição de AVALIADOR DE PLANOS DE ENTREGAS para a Unidade do plano (Unidade B); ou
                     - a Unidade-pai (Unidade A) precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_AVAL"; ou
                     - o usuário logado precisa ser gestor de alguma Unidade da linha hierárquica ascendente da Unidade do plano (Unidade A e superiores), e possuir a capacidade "MOD_PENT_AVAL_SUBORD";
-                    - sugerir arquivamento automático (vide RI_PENT_A);              
+                    - sugerir arquivamento automático (vide RI_PENT_A);
                 */
                 $data = $request->validate(['id' => ['required'], 'arquivar' => ['required']]);
                 $unidadePlano = PlanoEntrega::find($data["id"])->unidade;
@@ -283,7 +283,7 @@ class PlanoEntregaController extends ControllerBase
                 if (!($condition2 || $condition3)) throw new ServerException("ValidateUsuario", "O plano de entregas não pode ser cancelado porque o usuário logado não é um dos gestores da unidade executora ne, gestos da unidade superior a ela.\n[ver RN_PENT_P]");
                 break;
             case 'CANCELAR_AVALIACAO':
-                /*                 
+                /*
                 (RN_PENT_R) CANCELAR AVALIAÇÃO
                 - o plano precisa estar com o status AVALIADO, e
                 - o usuário logado precisa ser gestor da Unidade-pai (Unidade A) da Unidade do plano (Unidade B), ou
@@ -291,7 +291,7 @@ class PlanoEntregaController extends ControllerBase
                 - possuir a atribuição de AVALIADOR DE PLANOS DE ENTREGAS para a Unidade do plano (Unidade B);
                 */
                 $data = $request->validate(['id' => ['required']]);
-                $unidadePlano = PlanoEntrega::find($data["id"])->unidade; 
+                $unidadePlano = PlanoEntrega::find($data["id"])->unidade;
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
                 $condition1 = $condicoes['gestorUnidadePaiUnidadePlano'];
                 $condition2 = $condicoes['unidadePaiUnidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_CANC_AVAL");
@@ -303,7 +303,7 @@ class PlanoEntregaController extends ControllerBase
                     "3. o usuário logado precisa ser Avaliador de Planos de Entregas da unidade executora do plano.\n[ver RN_PENT_R]");
                 break;
             case 'CANCELAR_CONCLUSAO':
-                /*                 
+                /*
                 (RN_PENT_S) CANCELAR CONCLUSÃO
                 - o plano precisa estar com o status CONCLUIDO, e:
                 - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
@@ -320,7 +320,7 @@ class PlanoEntregaController extends ControllerBase
                     "2. o usuário logado precisa ser lotado na unidade executora do plano e possuir a capacidade MOD_PENT_CANC_CONCL.\n[ver RN_PENT_S]");
                 break;
             case 'CANCELAR_HOMOLOGACAO':
-                /*                 
+                /*
                 (RN_PENT_T) CANCELAR HOMOLOGAÇÃO
                 - o plano precisa estar com o status ATIVO, e
                 - o usuário logado precisa ser gestor da Unidade-pai (Unidade A) da Unidade do plano (Unidade B), ou
@@ -328,7 +328,7 @@ class PlanoEntregaController extends ControllerBase
                 - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B);
                 */
                 $data = $request->validate(['id' => ['required']]);
-                $unidadePlano = PlanoEntrega::find($data["id"])->unidade; 
+                $unidadePlano = PlanoEntrega::find($data["id"])->unidade;
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
                 $condition1 = $condicoes['planoAtivo'];
                 $condition2 = $condicoes['gestorUnidadePaiUnidadePlano'];
@@ -340,7 +340,7 @@ class PlanoEntregaController extends ControllerBase
                     "3. o usuário logado precisa ser Homologador de Planos de Entregas da unidade-pai da unidade executora do plano.\n[ver RN_PENT_T]");
                 break;
             case 'CONCLUIR':
-                /*  
+                /*
                 (RN_PENT_U) CONCLUIR
                 - o plano precisa estar com o status ATIVO, e:
                 - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
@@ -357,7 +357,7 @@ class PlanoEntregaController extends ControllerBase
                     "2. o usuário logado precisa ser lotado na unidade executora do plano e possuir a capacidade MOD_PENT_CONC.\n[ver RN_PENT_U]");
                 break;
             case 'HOMOLOGAR':
-                /*  
+                /*
                 (RN_PENT_Y) HOMOLOGAR
                 - o plano precisa estar com o status HOMOLOGANDO, e:
                     - o usuário logado precisa ser gestor da Unidade-pai (Unidade A) da Unidade do plano (Unidade B); (RN_PENT_C) (RN_PENT_E), ou
@@ -379,7 +379,7 @@ class PlanoEntregaController extends ControllerBase
                     "3. o usuário logado precisa ser Homologador de Planos de Entregas da unidade-pai da unidade executora do plano.\n[ver RN_PENT_Y]");
                 break;
             case 'LIBERAR_HOMOLOGACAO':
-                /*  
+                /*
                 (RN_PENT_AA) LIBERAR PARA HOMOLOGAÇÃO
                 - o plano precisa estar com o status INCLUIDO, conter ao menos uma entrega (RN_PENT_D), e
                     - o usuário logado precisa ser gestor da Unidade do plano (Unidade B); ou
@@ -418,7 +418,7 @@ class PlanoEntregaController extends ControllerBase
                     "3. o usuário logado precisa ser um dos gestores de alguma unidade da linha hierárquica ascendente da unidade do plano.\n[ver RN_PENT_AC]");
                 break;
             case 'RETIRAR_HOMOLOGACAO':
-                /*  
+                /*
                 (RN_PENT_AB) RETIRAR DE HOMOLOGAÇÃO
                 - o plano precisa estar com o status HOMOLOGANDO, e:
                     - o usuário logado precisa ser gestor da Unidade do plano (Unidade B); ou
@@ -435,7 +435,7 @@ class PlanoEntregaController extends ControllerBase
                     "2. o usuário logado precisa ser lotado na unidade executora do plano e possuir a capacidade MOD_PENT_RET_HOMOL.\n[ver RN_PENT_AB]");
                 break;
             case 'SUSPENDER':
-                /*                 
+                /*
                 (RN_PENT_AD) SUSPENDER
                 - o plano precisa estar com o status ATIVO, e
                     - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
@@ -504,7 +504,7 @@ class PlanoEntregaController extends ControllerBase
         try {
             $this->checkPermissions("LIBERAR_HOMOLOGACAO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
-                'id' => ['required'], 
+                'id' => ['required'],
                 'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
