@@ -842,7 +842,7 @@ class PlanoTrabalhoService extends ServiceBase
                 return "Somente é possível cancelar plano de trabalho que não tenha atividade lançada. Atividade(s): " . implode(", ", $atividades);
         }
         foreach ($planoTrabalho->consolidacoes as $consolidacao) {
-            if ($consolidacao->status == StatusEnum::INCLUIDO->value)
+            if ($consolidacao->status != StatusEnum::INCLUIDO->value)
                 return "Somente é possível cancelar plano de trabalho que não tenha período de consolidação concluído.";
         }
         return null;
@@ -856,7 +856,7 @@ class PlanoTrabalhoService extends ServiceBase
         }
 
         foreach ($plano->consolidacoes as $consolidacao) {
-            if ($consolidacao->status == StatusEnum::INCLUIDO->value)
+            if ($consolidacao->status != StatusEnum::INCLUIDO->value)
                 return false;
         }
         return true;
