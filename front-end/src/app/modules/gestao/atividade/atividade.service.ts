@@ -168,6 +168,7 @@ export class AtividadeService {
         this.dao!.delete(atividade).then(() => {
           metadata.removeId(atividade.id);
           this.dialog.topAlert("Registro excluído com sucesso!", 5000);
+          metadata.refresh();
         }).catch((error) => this.dialog.alert("Erro", "Erro ao excluir: " + (error?.message ? error?.message : error)));
       }
     });

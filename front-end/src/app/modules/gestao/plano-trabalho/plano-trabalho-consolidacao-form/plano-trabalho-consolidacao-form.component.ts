@@ -157,6 +157,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
 
   public refresh() {
     this.loadData(this.entity!, this.form);
+    this.refreshList.emit(true);
   }
 
   public bindEntity() {

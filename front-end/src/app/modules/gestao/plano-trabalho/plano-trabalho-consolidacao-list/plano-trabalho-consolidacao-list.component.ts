@@ -182,8 +182,18 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     return this.auth.hasPermissionTo("MOD_PTR_CSLD_INCL")
   }
 
-  public onRefresh(){
-    this.ngAfterViewInit()
+  public async onRefresh(consolidacao: PlanoTrabalhoConsolidacao){
+    try {
+      const freshDados = await this.dao!.dadosConsolidacao(consolidacao.id);
+      consolidacao.atividades = freshDados.atividades
+      
+      const index = this.items.findIndex(item => item.id === consolidacao.id);
+      if (index >= 0) {
+        this.items[index] = consolidacao;
+      } 
+    } catch (error) {
+      console.error('Error refreshing consolidacao:', error);
+    }
   }
   
 
