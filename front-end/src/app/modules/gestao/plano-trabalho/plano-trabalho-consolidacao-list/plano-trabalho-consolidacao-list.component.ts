@@ -182,8 +182,8 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     return this.auth.hasPermissionTo("MOD_PTR_CSLD_INCL")
   }
 
-  public onRefresh(atividade: Atividade, rowConsolidacao: PlanoTrabalhoConsolidacao){
-    // TODO: fazer a atualização do status se mudar a quantidade da atividade
+  public onRefresh(){
+    this.ngAfterViewInit()
   }
   
 
@@ -264,7 +264,6 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
   }
 
   iconStatus(consolidacao : PlanoTrabalhoConsolidacao) : string {
-    const hasRegistro = (consolidacao : PlanoTrabalhoConsolidacao) : boolean => !!consolidacao.atividades.length;
     const statusIconMap: Record<string, string | null | undefined> = {
 			'INCLUIDO': !!consolidacao.atividades.length ? "bi bi-pencil-square" : "bi bi-clock",
 		}

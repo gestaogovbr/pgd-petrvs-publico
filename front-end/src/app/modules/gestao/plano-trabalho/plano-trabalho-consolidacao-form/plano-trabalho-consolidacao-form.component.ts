@@ -70,7 +70,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   get disabled(): boolean {
     return this._disabled;
   }
-  @Output() refreshList = new EventEmitter<Atividade>();
+  @Output() refreshList = new EventEmitter<boolean>();
 
   //public consolidacaoOcorrenciaDao: PlanoTrabalhoConsolidacaoOcorrenciaDaoService;
   public ocorrenciaDao: OcorrenciaDaoService;
@@ -358,7 +358,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       try {
         result = await this.atividadeDao?.save(row, this.joinAtividade, ['etiquetas', 'checklist', 'comentarios', 'pausas', 'tarefas']);
         this.atividadeRefreshId(row.id, result);
-        if (!!result && !!result.id) this.refreshList.emit(result);
+        if (!!result && !!result.id) this.refreshList.emit(true);
       } catch (error: any) {
         result = false;
         this.gridAtividades!.error = error.message || error;
