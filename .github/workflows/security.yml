@@ -37,29 +37,6 @@ jobs:
         working-directory: back-end
         run: composer audit --no-interaction
 
-  phpstan:
-    name: PHPStan (Laravel)
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          coverage: none
-
-      - name: Download PHPStan PHAR
-        run: |
-          curl -L https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -o phpstan.phar
-
-      - name: Run PHPStan
-        working-directory: back-end
-        run: php ../phpstan.phar analyse app --configuration=phpstan.neon.dist
-
   frontend_sca:
     name: Frontend SCA (npm audit)
     runs-on: ubuntu-latest

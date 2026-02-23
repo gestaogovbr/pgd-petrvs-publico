@@ -1,0 +1,58 @@
+name: PHPStan
+
+on:
+  push:
+    branches:
+      - dataprev_dsv
+      - dataprev_hmg
+  pull_request:
+    branches:
+      - dataprev_dsv
+      - dataprev_hmg
+
+jobs:
+  phpstan:
+    name: PHPStan (Laravel + Larastan)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, dom, json, zip, pdo, pdo_mysql, soap, gd, sqlite3, pdo_sqlite, curl
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            back-end/vendor
+            ~/.composer/cache
+          key: php-8.2-composer-${{ hashFiles('back-end/composer.lock') }}
+          restore-keys: |
+            php-8.2-composer-
+
+      - name: Install dependencies
+        working-directory: back-end
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPStan
+        working-directory: back-end
+        run: |
+          vendor/bin/phpstan analyse app \
+            --configuration=phpstan.neon.dist \
+            --memory-limit=1G \
+            --error-format=checkstyle \
+            > phpstan-report.xml
+
+      - name: Upload PHPStan report
+        uses: actions/upload-artifact@v4
+        with:
+          name: phpstan-report
+          path: back-end/phpstan-report.xml
+
