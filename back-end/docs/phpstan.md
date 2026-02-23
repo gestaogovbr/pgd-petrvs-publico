@@ -43,21 +43,21 @@ Todas as execuções devem ocorrer dentro do container `petrvs_php`.
 Instale as dependências de desenvolvimento (uma única vez):
 
 ```bash
-docker exec petrvs_php sh -lc "cd /var/www/back-end && composer install --no-interaction"
-docker exec petrvs_php sh -lc "cd /var/www/back-end && composer require --dev nunomaduro/larastan:^2.9 phpstan/phpstan:^1.11"
+docker exec petrvs_php sh -lc "composer install --no-interaction"
+docker exec petrvs_php sh -lc "composer require --dev nunomaduro/larastan:^2.9 phpstan/phpstan:^1.11"
 ```
 
 Rode a análise:
 
 ```bash
-docker exec petrvs_php sh -lc "cd /var/www/back-end && vendor/bin/phpstan analyse app --configuration=phpstan.neon.dist --memory-limit=1G"
+docker exec petrvs_php sh -lc "vendor/bin/phpstan analyse app --configuration=phpstan.neon.dist --memory-limit=1G"
 ```
 
 ### Opção B: Via PHAR (alternativa quando não se deseja alterar o Composer)
 
 ```bash
-docker exec petrvs_php sh -lc "curl -L https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -o /var/www/phpstan.phar"
-docker exec petrvs_php sh -lc "cd /var/www/back-end && php ../phpstan.phar analyse app --configuration=phpstan.neon.dist --memory-limit=1G"
+docker exec petrvs_php sh -lc "curl -L https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -o phpstan.phar"
+docker exec petrvs_php sh -lc "php phpstan.phar analyse app --configuration=phpstan.neon.dist --memory-limit=1G"
 ```
 
 ## Evolução do nível
@@ -76,12 +76,11 @@ docker exec petrvs_php sh -lc "cd /var/www/back-end && php ../phpstan.phar analy
 
 ```bash
 # Executar análise completa
-docker exec petrvs_php sh -lc "cd /var/www/back-end && vendor/bin/phpstan analyse app --configuration=phpstan.neon.dist --memory-limit=1G"
+docker exec petrvs_php sh -lc "vendor/bin/phpstan analyse app --configuration=phpstan.neon.dist --memory-limit=1G"
 
 # Executar análise em arquivo/pasta específica
-docker exec petrvs_php sh -lc "cd /var/www/back-end && vendor/bin/phpstan analyse app/Models --configuration=phpstan.neon.dist --memory-limit=1G"
+docker exec petrvs_php sh -lc "vendor/bin/phpstan analyse app/Models --configuration=phpstan.neon.dist --memory-limit=1G"
 
 # Verificar versão
-docker exec petrvs_php sh -lc "cd /var/www/back-end && vendor/bin/phpstan --version"
+docker exec petrvs_php sh -lc "vendor/bin/phpstan --version"
 ```
-
