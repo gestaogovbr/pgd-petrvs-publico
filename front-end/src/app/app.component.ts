@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, Inject, Injector, ViewChild, ViewContainerRef } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { ToolbarButton } from './components/toolbar/toolbar.component';
 import { ListenerAllPagesService } from './listeners/listener-all-pages.service';
 import { AuthService } from './services/auth.service';
@@ -50,6 +51,13 @@ export type MenuContexto = {
   menu?: MenuItem[],
   petrvsModule?: string
 };
+
+declare global {
+  interface Window {
+    clarity: any;
+  }
+}
+
 
 @Component({
   selector: 'app-root',
@@ -140,6 +148,11 @@ export class AppComponent {
     if (this.auth?.usuario?.cpf) {
       this.consultarBlacklistCpf(this.auth.usuario.cpf);
     }
+
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        (window as any).clarity?.('set', 'page', event.urlAfterRedirects);
+    });
   }
 
   public setMenuVars() {
