@@ -134,11 +134,19 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
         let plano = p as PlanoTrabalho;
         plano.programa = this.programas?.find((x: Programa) => x.id == plano.programa_id);
       });
-      rows?.forEach(v => {
-        let consolidacao = v as PlanoTrabalhoConsolidacao;
-        consolidacao.plano_trabalho = this.planos_trabalhos?.find((x: PlanoTrabalho) => x.id == consolidacao.plano_trabalho_id);
-        if(consolidacao.avaliacao) consolidacao.avaliacao.tipo_avaliacao = this.extra?.tipos_avaliacoes?.find((x: TipoAvaliacao) => x.id == consolidacao.avaliacao!.tipo_avaliacao_id);
-      });
+      if (rows) {
+        for (let i = rows.length - 1; i >= 0; i--) {
+          const consolidacao = rows[i] as PlanoTrabalhoConsolidacao;
+          consolidacao.plano_trabalho = this.planos_trabalhos?.find((x: PlanoTrabalho) => x.id == consolidacao.plano_trabalho_id);
+          if (!consolidacao.plano_trabalho) {
+            rows.splice(i, 1);
+            continue;
+          }
+          if (consolidacao.avaliacao) {
+            consolidacao.avaliacao.tipo_avaliacao = this.extra?.tipos_avaliacoes?.find((x: TipoAvaliacao) => x.id == consolidacao.avaliacao!.tipo_avaliacao_id);
+          }
+        }
+      }
     }
   }
 
@@ -152,7 +160,6 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let consolidacao: PlanoTrabalhoConsolidacao = row as PlanoTrabalhoConsolidacao;
-   
     let programa: Programa = consolidacao.plano_trabalho!.programa!;
     let isAvaliador: boolean = false;
     const usuarioId = consolidacao.plano_trabalho!.usuario_id;
@@ -240,4 +247,3 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
     }[status]
   }
 }
-
