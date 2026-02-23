@@ -11,7 +11,7 @@ beforeEach(function () {
     $this->service = new PlanoTrabalhoService();
 });
 
-describe('PlanoTrabalhoService', function () {
+describe('PlanoTrabalhoService - Períodos avaliativos e Status padrão', function () {
     test('testa fluxo de mudanças de período do plano com consolidações mensais', function () {
         $programa = Programa::factory()->create([
             'periodicidade_consolidacao' => 'MENSAL',
