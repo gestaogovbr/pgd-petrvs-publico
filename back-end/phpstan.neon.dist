@@ -9,3 +9,6 @@ parameters:
     treatPhpDocTypesAsCertain: false
     bootstrapFiles:
         - vendor/autoload.php
+    parallel:
+        maximumNumberOfProcesses: 1
+        processTimeout: 1800.0

@@ -53,6 +53,19 @@ Rode a análise:
 docker exec petrvs_php sh -lc "vendor/bin/phpstan analyse app --configuration=phpstan.neon.dist --memory-limit=1G"
 ```
 
+Se ocorrerem erros de timeout ou processos mortos (exit code 137), tente:
+
+```bash
+# Reduzir paralelismo e aumentar timeout (já configurado em phpstan.neon.dist):
+# parameters.parallel.maximumNumberOfProcesses: 2
+# parameters.parallel.processTimeout: 1800
+
+# Ajustar memória de execução
+docker exec petrvs_php sh -lc "vendor/bin/phpstan analyse app --configuration=phpstan.neon.dist --memory-limit=512M --no-progress"
+
+Observação: `parameters.parallel.processTimeout` deve ser float no `phpstan.neon.dist` (ex.: `1800.0`) para evitar erro de tipo.
+```
+
 ### Opção B: Via PHAR (alternativa quando não se deseja alterar o Composer)
 
 ```bash
