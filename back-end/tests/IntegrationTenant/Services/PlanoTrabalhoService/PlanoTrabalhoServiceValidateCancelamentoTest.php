@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\IntegrationTenant\Services;
+namespace Tests\IntegrationTenant\Services\PlanoTrabalhoService;
 
 use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
