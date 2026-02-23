@@ -9,6 +9,8 @@ trait Version
     public static function version($version)
     {
         $connection = env("DB_CONNECTION");
-        DB::connection($connection)->update("UPDATE tenants set data = JSON_SET(data, '$.version', ?) WHERE id = ?", [$version, tenant()->id]);
+        if (function_exists('tenant') && tenant()) {
+            DB::connection($connection)->update("UPDATE tenants set data = JSON_SET(data, '$.version', ?) WHERE id = ?", [$version, tenant()->id]);
+        }
     }
 }

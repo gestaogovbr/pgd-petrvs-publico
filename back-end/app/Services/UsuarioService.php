@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\StatusEnum;
 use App\Enums\UsuarioSituacaoSiape;
+use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
 use App\Facades\SiapeLog;
@@ -29,7 +30,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
-use SimpleXMLElement;
 use Throwable;
 
 class UsuarioService extends ServiceBase
@@ -856,12 +856,24 @@ class UsuarioService extends ServiceBase
         }
     }
 
-    public function gerarUsuario($usuario, $tipoModalidadeNaoIdentificada, $perfilParticipanteId)
+    public function gerarUsuario($usuario, $tipoModalidadeNaoIdentificada, $perfilParticipanteId) : Usuario
     {
 
         $tipoModalidadePgd = UtilService::valueOrDefault($usuario['modalidade_pgd']);
 
         $tipoModalidadePgd = empty($tipoModalidadePgd)? $tipoModalidadeNaoIdentificada : $this->integracaoService->validarModalidadePgd($tipoModalidadePgd);
+
+        if (empty($tipoModalidadePgd)) {
+            $tipoModalidadePgd = DB::table('tipos_modalidades')->whereNull('deleted_at')->value('id');
+        }
+
+        $matriculaNova = UtilService::valueOrDefault($usuario['matricula']);
+
+        if (empty($tipoModalidadePgd)) {
+             SiapeLog::error("Não foi possível identificar um Tipo de Modalidade para o servidor {$matriculaNova}. O registro será ignorado.");
+             throw new NotFoundException("Nenhum tipo de modalidade foi encontrado para o servidor {$matriculaNova}.");
+        }
+
         return new Usuario([
                     'id' => Uuid::uuid4(),
                     'email' => UtilService::valueOrDefault($usuario['emailfuncional']),

@@ -65,12 +65,13 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
   }
 
   public async loadData(entity: Afastamento, form: FormGroup) {
+  
     let formValue = Object.assign({}, form.value);
     /* Caso venha pela chamada da consolidação do plano de trabalho */
     if(this.metadata?.consolidacao) {
       this.consolidacao = this.metadata?.consolidacao;
       entity.usuario_id = this.consolidacao!.plano_trabalho!.usuario_id;
-      entity.usuario = this.consolidacao!.plano_trabalho?.usuario;
+      entity.usuario = this.consolidacao!.plano_trabalho?.usuario;      
     }
     await Promise.all([
       this.usuario!.loadSearch(entity.usuario || formValue.usuario_id),

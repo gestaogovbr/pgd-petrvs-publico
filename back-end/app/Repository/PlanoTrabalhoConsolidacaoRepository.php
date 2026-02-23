@@ -15,7 +15,7 @@ class PlanoTrabalhoConsolidacaoRepository
   public function getConsolidacaoData($id): array
   {
     $consolidacao = $this->findConsolidacaoById($id);
-    $concluido = in_array($consolidacao->status, [StatusEnum::CONCLUIDO, StatusEnum::AVALIADO]);
+    $concluido = in_array($consolidacao->status, [StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value]);
     $planosEntregasIds = array_map(fn($pe) => $pe->planoEntregaEntrega?->plano_entrega_id, $consolidacao->planoTrabalho->entregas?->all() ?? []);
 
     return [
