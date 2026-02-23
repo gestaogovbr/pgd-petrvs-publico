@@ -5,6 +5,7 @@ import { PanelMenuModule } from 'primeng/panelmenu';
 import { HomeSuporteComponent } from './home-suporte/home-suporte.component';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { MenuSuporteComponent } from './menu-suporte/menu-suporte.component';
+import { FeedbackComponent } from './feedback/feedback.component';
 
 
 const routes: Routes = [
@@ -15,6 +16,9 @@ const routes: Routes = [
         path: '', component: MenuSuporteComponent
       }
     ]
+  },
+  {
+    path: 'feedback', component: FeedbackComponent
   }
 ]
 
@@ -22,6 +26,7 @@ const routes: Routes = [
   declarations: [
     HomeSuporteComponent,
     MenuSuporteComponent,
+    FeedbackComponent
   ],
   imports: [
     RouterModule.forRoot(routes),

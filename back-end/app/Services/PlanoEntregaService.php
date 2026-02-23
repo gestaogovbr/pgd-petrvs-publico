@@ -192,6 +192,7 @@ class PlanoEntregaService extends ServiceBase
             $result["nrEntregas"] = empty($planoEntrega['entregas']) ? 0 : count($planoEntrega['entregas']);
             $result["planoArquivado"] = empty($planoEntrega['id']) ? false : PlanoEntrega::find($planoEntrega['id'])->data_arquivamento != null;
             $result["planoSuspenso"] = $this->isPlano("SUSPENSO", $planoEntrega);
+            $result["planoCancelado"] = ($planoEntrega['status'] == "CANCELADO");
             $result["planoStatus"] = empty($planoEntrega['id']) ? null : PlanoEntrega::find($planoEntrega['id'])->status;
             $result["gestorUnidadePlano"] = $this->usuario->isGestorUnidade($planoEntrega['unidade_id']);
             $result["gestorUnidadePaiUnidadePlano"] = !empty($planoEntrega['unidade']['unidade_pai_id']) && $this->usuario->isGestorUnidade($planoEntrega['unidade']['unidade_pai_id']);
@@ -391,11 +392,11 @@ class PlanoEntregaService extends ServiceBase
 
         $data['select'][]= DB::raw(
         "(
-            select 1 
-            from planos_entregas_entregas 
-                join planos_entregas_entregas_progressos 
+            select 1
+            from planos_entregas_entregas
+                join planos_entregas_entregas_progressos
                     on planos_entregas_entregas.id = planos_entregas_entregas_progressos.plano_entrega_entrega_id
-            where planos_entregas_entregas.plano_entrega_id = planos_entregas.id and 
+            where planos_entregas_entregas.plano_entrega_id = planos_entregas.id and
                 planos_entregas_entregas_progressos.deleted_at is null
             limit 1
         ) is not null as has_progresso"
@@ -591,20 +592,20 @@ class PlanoEntregaService extends ServiceBase
         if(!is_null($unidade?->data_inativacao)){
             throw new ServerException("ValidatePlanoEntrega", "A unidade está inativa.");
         }
-       
+
         if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_EXTRPL')) {
             if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity))
                 throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");
         }
         if ($this->temSobreposicaoDeDatas($dataOrEntity))
             throw new ServerException("ValidatePlanoEntrega", "Esta unidade já possui plano de entregas cadastrado para o período.");
-        
+
         $inicioPlano = Carbon::parse($dataOrEntity["data_inicio"]);
         $fimPlano = Carbon::parse($dataOrEntity["data_fim"]);
         if ($inicioPlano < $programa->data_inicio || $fimPlano > $programa->data_fim) {
             throw new ServerException("ValidatePlanoEntrega", "As datas do plano de entregas estão fora do período vigência do regramento.");
         }
-        
+
         if ($action == ServiceBase::ACTION_EDIT) {
             /*
               (RN_PENT_L) Para ALTERAR um plano de entregas:
@@ -758,5 +759,5 @@ class PlanoEntregaService extends ServiceBase
         return true;
     }
 
-    
+
 }
