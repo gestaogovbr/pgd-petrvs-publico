@@ -855,11 +855,9 @@ class PlanoTrabalhoService extends ServiceBase
             throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não encontrado.");
         }
 
-        foreach ($plano->consolidacoes as $consolidacao) {
-            if ($consolidacao->status !== StatusEnum::INCLUIDO->value)
-                return false;
-        }
-        return true;
+        return !$plano->consolidacoes() 
+                      ->where('status', '!=', StatusEnum::INCLUIDO->value)
+                      ->exists();
     }
 
     public function proxyRows($rows)
