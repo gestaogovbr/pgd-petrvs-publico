@@ -33,6 +33,10 @@ use App\Services\IntegracaoService;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 
+/**
+ * @property-read UnidadeService $unidadeService
+ * @property-read IntegracaoService $integracaoService
+ */
 class UsuarioService extends ServiceBase
 {
 
