@@ -4,12 +4,12 @@ use App\Exceptions\ErrorDataSiapeFaultCodeException;
 use App\Models\SiapeBlackListServidor;
 use App\Services\Siape\SiapeServidorFaultProcessor;
 use Illuminate\Support\Facades\Schema;
-
-uses(Tests\TestCase::class);
+use Illuminate\Database\Schema\Blueprint;
 
 beforeEach(function () {
+    // Ensure table exists for the test, handling cases where it might be missing in tenant schema
     if (!Schema::hasTable('siape_blacklist_servidores')) {
-        Schema::create('siape_blacklist_servidores', function ($table) {
+        Schema::create('siape_blacklist_servidores', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('cpf');
             $table->text('response');

@@ -746,7 +746,7 @@ export class PlanoEntregaListComponent extends PageListBase<
             - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado e ele possuir a capacidade "MOD_PENT_ARQ";
         */
 				return (
-					["CONCLUIDO", "AVALIADO"].includes(
+					["CONCLUIDO", "AVALIADO", "CANCELADO"].includes(
 						this.planoEntregaService.situacaoPlano(planoEntrega)
 					) &&
 					(this.unidadeService.isGestorUnidade(planoEntrega.unidade) ||
