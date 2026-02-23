@@ -65,7 +65,7 @@ class SiapeIndividualServidorServiceTest extends TestCase
             });
         }
 
-        $this->service = new SiapeIndividualServidorService();
+        $this->service = app(SiapeIndividualServidorService::class);
         $this->mockSiapeService = $this->createMock(SiapeIndividualService::class);
         
         $this->mockSiapeService->config = [
@@ -103,7 +103,7 @@ class SiapeIndividualServidorServiceTest extends TestCase
         ]);
         $usuario->save(); // Works if validation doesn't block it
         
-        $resumo = $method->invokeArgs($this->service, [$usuariosAntes, $cpf]);
+        $resumo = $method->invokeArgs($this->service, [$usuariosAntes, $cpf, 'sucesso']);
 
         $this->assertCount(1, $resumo);
         $this->assertEquals('Novo Usuario', $resumo[0]['nome']);
@@ -142,7 +142,7 @@ class SiapeIndividualServidorServiceTest extends TestCase
         $method = $reflection->getMethod('gerarResumo');
         $method->setAccessible(true);
 
-        $resumo = $method->invokeArgs($this->service, [$usuariosAntes, $cpf]);
+        $resumo = $method->invokeArgs($this->service, [$usuariosAntes, $cpf, 'sucesso']);
 
         $this->assertCount(1, $resumo);
         $this->assertEquals('Usuario Existente', $resumo[0]['nome']);
@@ -181,7 +181,7 @@ class SiapeIndividualServidorServiceTest extends TestCase
          $method = $reflection->getMethod('gerarResumo');
          $method->setAccessible(true);
  
-         $resumo = $method->invokeArgs($this->service, [$usuariosAntes, $cpf]);
+         $resumo = $method->invokeArgs($this->service, [$usuariosAntes, $cpf, 'sucesso']);
  
          $this->assertTrue($resumo[0]['usuario_existia']);
          $this->assertContains('nome', $resumo[0]['alteracoes']);
@@ -218,7 +218,7 @@ class SiapeIndividualServidorServiceTest extends TestCase
         $method = $reflection->getMethod('gerarResumo');
         $method->setAccessible(true);
 
-        $resumo = $method->invokeArgs($this->service, [$usuariosAntes, $cpf]);
+        $resumo = $method->invokeArgs($this->service, [$usuariosAntes, $cpf, 'sucesso']);
 
         $this->assertTrue($resumo[0]['usuario_existia']);
         $this->assertFalse($resumo[0]['lotacao_associada']);
