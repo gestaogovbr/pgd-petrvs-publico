@@ -684,7 +684,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public afastamentoDynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     result.push(Object.assign({}, this.OPTION_INFORMACOES, { onClick: (doc: Afastamento) => this.go.navigate({ route: ["gestao", "afastamento", doc.id, "consult"] }) }));
-    //result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
+    result.push(Object.assign({}, this.OPTION_ALTERAR, { onClick: (doc: Afastamento) => this.go.navigate({ route: ["gestao", "afastamento", doc.id, "edit"] }) }));
     return result;
   }
 
