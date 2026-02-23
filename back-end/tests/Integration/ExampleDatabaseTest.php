@@ -7,7 +7,9 @@ use App\Models\User;
 use App\Models\Tenant;
 
 test('pode criar e recuperar um tenant', function () {
-    $tenant = Tenant::create(['id' => 'tenant_teste']);
+    $tenant = Tenant::withoutEvents(function () {
+        return Tenant::create(['id' => 'tenant_teste']);
+    });
     
     expect($tenant)->toBeInstanceOf(Tenant::class)
         ->and($tenant->id)->toBe('tenant_teste');
