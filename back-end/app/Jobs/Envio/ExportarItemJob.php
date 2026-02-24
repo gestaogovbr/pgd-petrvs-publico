@@ -21,7 +21,6 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     use Batchable, Dispatchable, InteractsWithQueue, Queueable;
 
     protected $timestamp = null;
-    public int $execucoes = 1;
     public bool $reagendado = false;
     protected string $api_cod_unidade_autorizadora;
     protected ?PgdService $pgdService;
@@ -31,7 +30,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
         @id: ID do item a ser exportado
         @timestamp: Timestamp do agendamento. Usado para evitar envio de itens defasados
     */
-    public function __construct(protected string $tenantId, protected string $id, protected $origem = '')
+    public function __construct(protected string $tenantId, protected string $id, protected $origem = '', protected $execucoes = 1)
     {
         $this->queue = 'pgd_queue';
         $this->connection = 'rabbitmq';
@@ -64,12 +63,10 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     public function handle(PgdService $pgdService)
     {
         $this->pgdService = $pgdService;
-        $this->execucoes += 1;
 
         if (Cache::get("api_down")) {
-            $this->logInfo("JOB adiado devido API PGD estar indisponível");
-            $this->reagendado = true;
-            $this->release(300);
+            $this->insucesso("Tentativa de envio reagendada devido API estar indisponível");
+            $this->reagendar();
             return;
         }
 
@@ -106,9 +103,8 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
             Cache::put('api_down', true, 120); // circuit breaker
             $this->insucesso($e->getmessage());
             $this->logInfo('nova tentativa em 5 minutos');
-            $this->reagendado = true;
-            $this->release(300);
-           // $this->fail($e);
+            $this->reagendar();
+            return;
         } catch(Throwable $exception) {
             $this->insucesso($exception->getmessage());
             $this->fail($exception);
@@ -144,9 +140,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     public function tags()
     {
         $tags = [
-            'Envio',
             $this->tenantId,
-            $this->tag(),
             $this->id,
             'Execução '.$this->execucoes,
         ];
@@ -160,5 +154,13 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 
     public function failed(?Throwable $exception): void {
         $this->insucesso($exception->getMessage());
+    }
+
+    public function reagendar() {
+        $this->reagendado = true;
+        dispatch(new static($this->tenantId, $this->id, $this->origem, $this->execucoes + 1))
+            ->delay(now()->addSeconds(300))
+            ->onConnection('rabbitmq')
+            ->onQueue('pgd_queue');
     }
 }

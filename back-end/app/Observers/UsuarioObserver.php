@@ -11,7 +11,7 @@ class UsuarioObserver
     public function updated(Usuario $usuario): void
     {
         if (!tenancy()->initialized) {
-            Log::warning('Tentativa de agendar envio de usuário sem tenant inicializado');
+            Log::error('Tentativa de agendar envio de usuário sem tenant inicializado');
             return;
         }
 

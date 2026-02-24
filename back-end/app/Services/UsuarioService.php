@@ -805,19 +805,23 @@ class UsuarioService extends ServiceBase
         $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($usuario->emailfuncional, $usuario->matriculasiape, $usuario->id);
         $modalidadePgdValida = $this->integracaoService->validarModalidadePgd($usuario->modalidade_pgd);
 
-        Usuario::where('id', $usuario->id)
-        ->update([
-            'nome'               => $usuario->nome_servidor,
-            'apelido'         => $usuario->nome_guerra,
-            'email'              => $usuario->emailfuncional,
-            'cod_jornada'        => $usuario->cod_jornada,
-            'nome_jornada'       => $usuario->nome_jornada,
-            'tipo_modalidade_id' => $modalidadePgdValida,
-            'participa_pgd'      => $usuario->participa_pgd,
-            'ident_unica'        => $usuario->ident_unica,
-            'data_modificacao'   => UtilService::asDateTime($usuario->data_modificacao),
-            'data_nascimento'    => $usuario->data_nascimento,
-        ]);
+        if ($usuario->id) {
+            $user = Usuario::find($usuario->id);
+            if ($user) {
+                $user->update([
+                    'nome'               => $usuario->nome_servidor,
+                    'apelido'            => $usuario->nome_guerra,
+                    'email'              => $usuario->emailfuncional,
+                    'cod_jornada'        => $usuario->cod_jornada,
+                    'nome_jornada'       => $usuario->nome_jornada,
+                    'tipo_modalidade_id' => $modalidadePgdValida,
+                    'participa_pgd'      => $usuario->participa_pgd,
+                    'ident_unica'        => $usuario->ident_unica,
+                    'data_modificacao'   => UtilService::asDateTime($usuario->data_modificacao),
+                    'data_nascimento'    => $usuario->data_nascimento,
+                ]);
+            }
+        }
     }
 
     public function atualizarMatriculasUsuariosSemMatricula(): void
@@ -843,7 +847,7 @@ class UsuarioService extends ServiceBase
                     ->value('matriculasiape');
 
                 if (!empty($matriculaSiape)) {
-                    Usuario::where('id', $usr->id)
+                    Usuario::find('id', $usr->id)
                         ->update(['matricula' => $matriculaSiape]);
                     SiapeLog::info(sprintf("Atualizada matrícula do usuário id=%s a partir do SIAPE.", $usr->id));
                 } else {
@@ -910,7 +914,7 @@ class UsuarioService extends ServiceBase
                 ->first();
 
             if (!empty($usuarioLotadoMesmaUnidade) && isset($usuarioLotadoMesmaUnidade->id)) {
-                Usuario::where('id', $usuarioLotadoMesmaUnidade->id)
+                Usuario::find('id', $usuarioLotadoMesmaUnidade->id)
                     ->update(['matricula' => $matriculaNova]);
                 SiapeLog::info(sprintf('Atualizada matrícula do usuário CPF %s para %s (unidade exercício código %s) sem criar novo usuário.',
                     (string) $cpfCheck,
