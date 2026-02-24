@@ -31,6 +31,6 @@ class IntegracaoServidorRepository
      */
     public function update(string $cpf, string $matricula, array $data): bool
     {
-        return $this->writeRepository->update($cpf, $matricula, $data);
+        return $this->writeRepository->updateByCpfAndMatricula($cpf, $matricula, $data);
     }
 }

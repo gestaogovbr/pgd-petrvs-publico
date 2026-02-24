@@ -75,7 +75,7 @@ test('update atualiza registro existente por cpf e matricula', function () {
 
     $repo = new EloquentIntegracaoServidorWriteRepository(new IntegracaoServidor());
 
-    $updated = $repo->update($cpf, $matricula, [
+    $updated = $repo->updateByCpfAndMatricula($cpf, $matricula, [
         'nome' => 'Nome Atualizado',
     ]);
 
