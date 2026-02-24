@@ -62,12 +62,56 @@
 - Contratos:
   - `App\Repository\IntegracaoServidor\Contracts\IntegracaoServidorReadRepositoryContract`
   - `App\Repository\IntegracaoServidor\Contracts\IntegracaoServidorWriteRepositoryContract`
-- Implementações:
+- Implementações Eloquent:
   - `App\Repository\IntegracaoServidor\Eloquent\EloquentIntegracaoServidorReadRepository`
   - `App\Repository\IntegracaoServidor\Eloquent\EloquentIntegracaoServidorWriteRepository`
-- Padrões:
+- Repositório de domínio (fachada):
+  - `App\Repository\IntegracaoServidorRepository`
+  - Exemplo completo:
+
+    ```php
+    <?php
+
+    declare(strict_types=1);
+
+    namespace App\Repository;
+
+    use App\Models\IntegracaoServidor;
+    use App\Repository\IntegracaoServidor\Contracts\IntegracaoServidorReadRepositoryContract;
+    use App\Repository\IntegracaoServidor\Contracts\IntegracaoServidorWriteRepositoryContract;
+
+    class IntegracaoServidorRepository
+    {
+        public function __construct(
+            private readonly IntegracaoServidorReadRepositoryContract $readRepository,
+            private readonly IntegracaoServidorWriteRepositoryContract $writeRepository,
+        ) {
+        }
+
+        public function getServidor(string $cpf, string $matricula): ?IntegracaoServidor
+        {
+            return $this->readRepository->getServidor($cpf, $matricula);
+        }
+
+        public function save(IntegracaoServidor $entidade): bool
+        {
+            return $this->writeRepository->save($entidade);
+        }
+
+        /**
+         * @param array<string, mixed> $data
+         */
+        public function update(string $cpf, string $matricula, array $data): bool
+        {
+            return $this->writeRepository->updateByCpfAndMatricula($cpf, $matricula, $data);
+        }
+    }
+    ```
+
+- Padrões aplicados:
   - Implementações de leitura estendem `AbstractEloquentReadRepository`.
   - Implementações de escrita estendem `AbstractEloquentWriteRepository`.
+  - O repositório de domínio injeta contratos de leitura/escrita no construtor (DIP).
   - Métodos de domínio específicos são nomeados de forma expressiva:
     - `updateByCpfAndMatricula(string $cpf, string $matricula, array $data): bool`
   - Contratos são registrados no `RepositoryServiceProvider` para permitir injeção por interface.
@@ -196,7 +240,10 @@
 - Para retornos complexos:
   - Criar DTO em `App\DTOs\<Modulo>\*DTO`.
   - Evitar retornar arrays associativos com múltiplas chaves sem tipagem.
-- Incluir testes:
-  - Unitário em `tests/Unit/Repository`.
+- Criar repositório de domínio (fachada) em `App\Repository\<Modulo>Repository` quando fizer sentido:
+  - Injetar os contratos de leitura/escrita no construtor.
+  - Expor apenas métodos de domínio (por exemplo: `getServidor`, `updateByCpfAndMatricula`).
+- Incluir testes (ver `docs/pest-bd.md`):
+  - Unitário em `tests/Unit/Repository` para validar a lógica específica do repositório.
   - Integração em `tests/IntegrationTenant/Repository` quando envolver regras de negócio no contexto do tenant.
-
+  - Utilizar as suites e classes base descritas em `docs/pest-bd.md` (`Integration` e `IntegrationTenant`) para configurar corretamente o contexto de banco.
