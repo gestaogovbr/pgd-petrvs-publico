@@ -1,34 +1,36 @@
 <?php
+
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Models\IntegracaoServidor;
+use App\Repository\IntegracaoServidor\Contracts\IntegracaoServidorReadRepositoryContract;
+use App\Repository\IntegracaoServidor\Contracts\IntegracaoServidorWriteRepositoryContract;
 
-class IntegracaoServidorRepository{
-
-    public function __construct(private IntegracaoServidor $integracaoServidor){
+class IntegracaoServidorRepository
+{
+    public function __construct(
+        private readonly IntegracaoServidorReadRepositoryContract $readRepository,
+        private readonly IntegracaoServidorWriteRepositoryContract $writeRepository,
+    ) {
     }
 
-    public function getServidor(string $cpf, string $matricula){
-        return $this->integracaoServidor->where('cpf', $cpf)
-        ->where('matriculasiape', $matricula)
-        ->orderBy('created_at', 'desc')
-        ->first();
+    public function getServidor(string $cpf, string $matricula): ?IntegracaoServidor
+    {
+        return $this->readRepository->getServidor($cpf, $matricula);
+    }
+
+    public function save(IntegracaoServidor $entidade): bool
+    {
+        return $this->writeRepository->save($entidade);
     }
 
     /**
-     *
-     * @param IntegracaoServidor $entidade
-     * @return bool
+     * @param array<string, mixed> $data
      */
-    public function save(IntegracaoServidor $entidade): bool{
-        return $entidade->save();
-    }
-
-    public function update(string $cpf, string $matricula ,array $data)
+    public function update(string $cpf, string $matricula, array $data): bool
     {
-        return (bool) $this->integracaoServidor->where('cpf', $cpf)
-        ->where('matriculasiape', $matricula)
-        ->update($data);
+        return $this->writeRepository->update($cpf, $matricula, $data);
     }
-   
 }
