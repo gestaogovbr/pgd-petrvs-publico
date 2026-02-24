@@ -702,9 +702,12 @@ class IntegracaoService extends ServiceBase
 
         $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($novoemail, $usuario->matricula, $usuario->id);
 
-        SiapeLog::info("IntegracaoService: Alterando email duplicado para email fake", ['matricula' => $matricula, 'email' => $email, 'usuario' => $usuario->toJson()]);
-
-        DB::table('usuarios')->where('id', $usuario->id)->update(['email' => $novoemail]);
+        $usuario = Usuario::find($usuario->id);
+        if ($usuario) {
+            SiapeLog::info("IntegracaoService: Alterando email duplicado para email fake", ['matricula' => $matricula, 'email' => $email, 'usuario' => $usuario->toJson()]);
+            $usuario->email = $novoemail;
+            $usuario->save();
+        }
       }
     }
   }
