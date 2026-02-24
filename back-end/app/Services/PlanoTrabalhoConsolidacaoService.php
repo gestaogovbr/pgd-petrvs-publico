@@ -33,6 +33,13 @@ use Throwable;
 
 class PlanoTrabalhoConsolidacaoService extends ServiceBase
 {
+  private PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository;
+
+  public function __construct($collection = null, ?PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository = null)
+  {
+    parent::__construct($collection);
+    $this->consolidacaoRepository = $consolidacaoRepository ?? app(PlanoTrabalhoConsolidacaoRepository::class);
+  }
 
   public function proxyQuery($query, &$data)
   {
@@ -87,7 +94,6 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
    */
   public function consolidacaoDados($id): array
   {
-    $repository = new PlanoTrabalhoConsolidacaoRepository();
     $snapshotRebuilders = [
       'atividades' => new AtividadeSnapshotRebuilder(new AtividadeService()),
       'afastamentos' => new AfastamentoSnapshotRebuilder(),
@@ -95,7 +101,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     ];
 
     $rebuilderService = new PlanoTrabalhoConsolidacaoRebuildService($snapshotRebuilders);
-    $consolidacaoData = $repository->getConsolidacaoData($id);
+    $consolidacaoData = $this->consolidacaoRepository->getConsolidacaoData($id);
 
     if ($consolidacaoData === null) {
       throw new \RuntimeException('Consolidação não encontrada para o ID informado');

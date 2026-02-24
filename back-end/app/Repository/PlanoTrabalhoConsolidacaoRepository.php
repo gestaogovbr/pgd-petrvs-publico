@@ -11,9 +11,8 @@ use App\Repository\PlanoTrabalhoConsolidacao\Contracts\PlanoTrabalhoConsolidacao
 class PlanoTrabalhoConsolidacaoRepository
 {
     public function __construct(
-        private ?PlanoTrabalhoConsolidacaoReadRepositoryContract $readRepository = null,
+        private readonly PlanoTrabalhoConsolidacaoReadRepositoryContract $readRepository,
     ) {
-        $this->readRepository ??= app(PlanoTrabalhoConsolidacaoReadRepositoryContract::class);
     }
 
     public function getConsolidacaoData(string $id): ?PlanoTrabalhoConsolidacaoDataDTO
