@@ -6,16 +6,31 @@ use App\Models\PlanoTrabalhoConsolidacao;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use Illuminate\Support\Facades\DB;
 
-
-uses(Tests\TestCase::class);
-
 beforeEach(function () {
-    $this->repository = new PlanoTrabalhoConsolidacaoRepository();
+    DB::statement('SET FOREIGN_KEY_CHECKS=0');
+    $this->repository = app(PlanoTrabalhoConsolidacaoRepository::class);
+});
+
+afterEach(function () {
+    DB::statement('SET FOREIGN_KEY_CHECKS=1');
 });
 
 describe('PlanoTrabalhoConsolidacaoRepository', function () {
     describe('#findConsolidacaoById - busca consolidação por ID', function () {
         test('retorna consolidação com relacionamentos', function () {
+            DB::table('planos_trabalhos')->insert([
+                'id' => 'plano-1',
+                'usuario_id' => 'user-1',
+                'programa_id' => 'programa-1',
+                'unidade_id' => 'unidade-1',
+                'tipo_modalidade_id' => 'tipo-modalidade-1',
+                'criacao_usuario_id' => 'criador-1',
+                'data_inicio' => '2024-01-01 00:00:00',
+                'data_fim' => '2024-01-31 23:59:59',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
             DB::table('planos_trabalhos_consolidacoes')->insert([
                 'id' => 'consolidacao-1',
                 'plano_trabalho_id' => 'plano-1',
@@ -24,7 +39,7 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
                 'data_conclusao' => '2024-02-01 10:00:00',
                 'status' => StatusEnum::CONCLUIDO->value,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             $resultado = $this->repository->findConsolidacaoById('consolidacao-1');
@@ -39,10 +54,23 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
 
             expect($resultado)->toBeNull();
         });
-    })->todo();
+    });
 
     describe('#getConsolidacaoData - retorna dados completos da consolidação', function () {
         test('retorna estrutura completa para consolidação concluída', function () {
+            DB::table('planos_trabalhos')->insert([
+                'id' => 'plano-1',
+                'usuario_id' => 'user-1',
+                'programa_id' => 'programa-1',
+                'unidade_id' => 'unidade-1',
+                'tipo_modalidade_id' => 'tipo-modalidade-1',
+                'criacao_usuario_id' => 'criador-1',
+                'data_inicio' => '2024-01-01 00:00:00',
+                'data_fim' => '2024-01-31 23:59:59',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
             DB::table('planos_trabalhos_consolidacoes')->insert([
                 'id' => 'consolidacao-1',
                 'plano_trabalho_id' => 'plano-1',
@@ -52,16 +80,7 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
                 'status' => StatusEnum::CONCLUIDO->value,
                 'justificativa_conclusao' => 'Concluído com sucesso',
                 'created_at' => now(),
-                'updated_at' => now()
-            ]);
-
-            DB::table('planos_trabalhos')->insert([
-                'id' => 'plano-1',
-                'usuario_id' => 'user-1',
-                'programa_id' => 'programa-1',
-                'unidade_id' => 'unidade-1',
-                'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             $resultado = $this->repository->getConsolidacaoData('consolidacao-1');
@@ -72,6 +91,19 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
         });
 
         test('filtra atividades por período quando não concluído', function () {
+            DB::table('planos_trabalhos')->insert([
+                'id' => 'plano-1',
+                'usuario_id' => 'user-1',
+                'programa_id' => 'programa-1',
+                'unidade_id' => 'unidade-1',
+                'tipo_modalidade_id' => 'tipo-modalidade-1',
+                'criacao_usuario_id' => 'criador-1',
+                'data_inicio' => '2024-01-01 00:00:00',
+                'data_fim' => '2024-01-31 23:59:59',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
             DB::table('planos_trabalhos_consolidacoes')->insert([
                 'id' => 'consolidacao-1',
                 'plano_trabalho_id' => 'plano-1',
@@ -79,16 +111,7 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
                 'data_fim' => '2024-01-31',
                 'status' => StatusEnum::INCLUIDO->value,
                 'created_at' => now(),
-                'updated_at' => now()
-            ]);
-
-            DB::table('planos_trabalhos')->insert([
-                'id' => 'plano-1',
-                'usuario_id' => 'user-1',
-                'programa_id' => 'programa-1',
-                'unidade_id' => 'unidade-1',
-                'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             DB::table('atividades')->insert([
@@ -103,7 +126,7 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
                 'demandante_id' => 'user-1',
                 'unidade_id' => 'unidade-1',
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             $resultado = $this->repository->getConsolidacaoData('consolidacao-1');
@@ -114,6 +137,19 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
         });
 
         test('filtra afastamentos por período quando não concluído', function () {
+            DB::table('planos_trabalhos')->insert([
+                'id' => 'plano-1',
+                'usuario_id' => 'user-1',
+                'programa_id' => 'programa-1',
+                'unidade_id' => 'unidade-1',
+                'tipo_modalidade_id' => 'tipo-modalidade-1',
+                'criacao_usuario_id' => 'criador-1',
+                'data_inicio' => '2024-01-01 00:00:00',
+                'data_fim' => '2024-01-31 23:59:59',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
             DB::table('planos_trabalhos_consolidacoes')->insert([
                 'id' => 'consolidacao-1',
                 'plano_trabalho_id' => 'plano-1',
@@ -121,16 +157,7 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
                 'data_fim' => '2024-01-31',
                 'status' => StatusEnum::INCLUIDO->value,
                 'created_at' => now(),
-                'updated_at' => now()
-            ]);
-
-            DB::table('planos_trabalhos')->insert([
-                'id' => 'plano-1',
-                'usuario_id' => 'user-1',
-                'programa_id' => 'programa-1',
-                'unidade_id' => 'unidade-1',
-                'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             DB::table('afastamentos')->insert([
@@ -141,7 +168,7 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
                 'data_fim' => '2024-01-15',
                 'observacoes' => 'Afastamento no período',
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             $resultado = $this->repository->getConsolidacaoData('consolidacao-1');
@@ -152,6 +179,19 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
         });
 
         test('filtra ocorrências por período quando não concluído', function () {
+            DB::table('planos_trabalhos')->insert([
+                'id' => 'plano-1',
+                'usuario_id' => 'user-1',
+                'programa_id' => 'programa-1',
+                'unidade_id' => 'unidade-1',
+                'tipo_modalidade_id' => 'tipo-modalidade-1',
+                'criacao_usuario_id' => 'criador-1',
+                'data_inicio' => '2024-01-01 00:00:00',
+                'data_fim' => '2024-01-31 23:59:59',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
             DB::table('planos_trabalhos_consolidacoes')->insert([
                 'id' => 'consolidacao-1',
                 'plano_trabalho_id' => 'plano-1',
@@ -159,16 +199,7 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
                 'data_fim' => '2024-01-31',
                 'status' => StatusEnum::INCLUIDO->value,
                 'created_at' => now(),
-                'updated_at' => now()
-            ]);
-
-            DB::table('planos_trabalhos')->insert([
-                'id' => 'plano-1',
-                'usuario_id' => 'user-1',
-                'programa_id' => 'programa-1',
-                'unidade_id' => 'unidade-1',
-                'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             DB::table('ocorrencias')->insert([
@@ -179,7 +210,7 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
                 'data_fim' => '2024-01-10 18:00:00',
                 'descricao' => 'Ocorrência no período',
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             $resultado = $this->repository->getConsolidacaoData('consolidacao-1');
@@ -194,5 +225,5 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
 
             expect($resultado)->toBeNull();
         });
-    })->todo();
+    });
 });
