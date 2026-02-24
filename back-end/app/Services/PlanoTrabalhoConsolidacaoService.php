@@ -96,18 +96,21 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
 
     $rebuilderService = new PlanoTrabalhoConsolidacaoRebuildService($snapshotRebuilders);
     $consolidacaoData = $repository->getConsolidacaoData($id);
-    $consolidacao = $repository->findConsolidacaoById($id);
+
+    if ($consolidacaoData === null) {
+      throw new \RuntimeException('Consolidação não encontrada para o ID informado');
+    }
 
     return [
-      'programa' => $consolidacao->planoTrabalho?->programa,
-      'planoTrabalho' => $consolidacao->planoTrabalho,
-      'planosEntregas' => $consolidacaoData['planosEntregas'],
-      'atividades' => $rebuilderService->rebuildCollections($consolidacaoData['atividades'], $consolidacao, 'atividades'),
-      'afastamentos' => $rebuilderService->rebuildCollections($consolidacaoData['afastamentos'], $consolidacao, 'afastamentos'),
-      'ocorrencias' => $rebuilderService->rebuildCollections($consolidacaoData['ocorrencias'], $consolidacao, 'ocorrencias'),
-      'comparecimentos' => $consolidacao->comparecimentos ?? [],
-      'status' => $consolidacao->status,
-      'justificativa_conclusao' => $consolidacao->justificativa_conclusao,
+      'programa' => $consolidacaoData->programa,
+      'planoTrabalho' => $consolidacaoData->planoTrabalho,
+      'planosEntregas' => $consolidacaoData->planosEntregas,
+      'atividades' => $rebuilderService->rebuildCollections($consolidacaoData->atividades, $consolidacaoData->consolidacao, 'atividades'),
+      'afastamentos' => $rebuilderService->rebuildCollections($consolidacaoData->afastamentos, $consolidacaoData->consolidacao, 'afastamentos'),
+      'ocorrencias' => $rebuilderService->rebuildCollections($consolidacaoData->ocorrencias, $consolidacaoData->consolidacao, 'ocorrencias'),
+      'comparecimentos' => $consolidacaoData->comparecimentos,
+      'status' => $consolidacaoData->status,
+      'justificativa_conclusao' => $consolidacaoData->justificativaConclusao,
     ];
   }
 

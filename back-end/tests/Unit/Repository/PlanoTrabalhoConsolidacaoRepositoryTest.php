@@ -1,5 +1,6 @@
 <?php
 
+use App\DTOs\PlanoTrabalho\PlanoTrabalhoConsolidacaoDataDTO;
 use App\Enums\StatusEnum;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
@@ -65,19 +66,9 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
 
             $resultado = $this->repository->getConsolidacaoData('consolidacao-1');
 
-            expect($resultado)->toHaveKeys([
-                'programa',
-                'planoTrabalho',
-                'planosEntregas',
-                'atividades',
-                'afastamentos',
-                'ocorrencias',
-                'comparecimentos',
-                'status',
-                'justificativa_conclusao'
-            ]);
-            expect($resultado['status'])->toBe(StatusEnum::CONCLUIDO->value);
-            expect($resultado['justificativa_conclusao'])->toBe('Concluído com sucesso');
+            expect($resultado)->toBeInstanceOf(PlanoTrabalhoConsolidacaoDataDTO::class);
+            expect($resultado->status)->toBe(StatusEnum::CONCLUIDO->value);
+            expect($resultado->justificativaConclusao)->toBe('Concluído com sucesso');
         });
 
         test('filtra atividades por período quando não concluído', function () {
@@ -117,8 +108,9 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
 
             $resultado = $this->repository->getConsolidacaoData('consolidacao-1');
 
-            expect($resultado['atividades'])->toHaveCount(1);
-            expect($resultado['atividades'][0]->id)->toBe('atividade-1');
+            expect($resultado)->toBeInstanceOf(PlanoTrabalhoConsolidacaoDataDTO::class);
+            expect($resultado->atividades)->toHaveCount(1);
+            expect($resultado->atividades[0]->id)->toBe('atividade-1');
         });
 
         test('filtra afastamentos por período quando não concluído', function () {
@@ -154,8 +146,9 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
 
             $resultado = $this->repository->getConsolidacaoData('consolidacao-1');
 
-            expect($resultado['afastamentos'])->toHaveCount(1);
-            expect($resultado['afastamentos'][0]->id)->toBe('afastamento-1');
+            expect($resultado)->toBeInstanceOf(PlanoTrabalhoConsolidacaoDataDTO::class);
+            expect($resultado->afastamentos)->toHaveCount(1);
+            expect($resultado->afastamentos[0]->id)->toBe('afastamento-1');
         });
 
         test('filtra ocorrências por período quando não concluído', function () {
@@ -191,8 +184,15 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
 
             $resultado = $this->repository->getConsolidacaoData('consolidacao-1');
 
-            expect($resultado['ocorrencias'])->toHaveCount(1);
-            expect($resultado['ocorrencias'][0]->id)->toBe('ocorrencia-1');
+            expect($resultado)->toBeInstanceOf(PlanoTrabalhoConsolidacaoDataDTO::class);
+            expect($resultado->ocorrencias)->toHaveCount(1);
+            expect($resultado->ocorrencias[0]->id)->toBe('ocorrencia-1');
+        });
+
+        test('retorna null quando consolidação não existe', function () {
+            $resultado = $this->repository->getConsolidacaoData('inexistente');
+
+            expect($resultado)->toBeNull();
         });
     })->todo();
 });

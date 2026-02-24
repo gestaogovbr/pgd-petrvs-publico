@@ -423,19 +423,19 @@ describe('#consolidacaoDados', function () {
 
         expect($result['programa']->id)->toBe('programa-test');
         expect($result['planoTrabalho']->id)->toBe('plano-test');
-        expect($result['planosEntregas']->contains('plano-entrega-test'))->toBe(true);
+        expect($result['planosEntregas']->pluck('id'))->toContain('plano-entrega-test');
         expect($result['atividades'][0]['id'])->toBe('atividade-test');
         expect($result['afastamentos'][0]['id'])->toBe('afastamento-test');
         expect($result['ocorrencias'][0]['id'])->toBe('ocorrencia-test');
-        expect($result['comparecimentos']->contains('comparecimento-test'))->toBe(true);
+        expect($result['comparecimentos']->pluck('id'))->toContain('comparecimento-test');
         expect($result['status'])->toBe('INCLUIDO');
         expect($result['justificativa_conclusao'])->toBe('Justificativa de teste');
     });
 
-    test('retorna dados vazios quando consolidação não existe', function () {
+    test('lança exceção quando consolidação não existe', function () {
         $service = new PlanoTrabalhoConsolidacaoService();
 
         expect(fn() => $service->consolidacaoDados('inexistente-id'))
-            ->toThrow(Exception::class);
+            ->toThrow(RuntimeException::class, 'Consolidação não encontrada para o ID informado');
     });
 })->todo();

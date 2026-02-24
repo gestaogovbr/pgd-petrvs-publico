@@ -8,6 +8,8 @@ use App\Repository\IntegracaoServidor\Contracts\IntegracaoServidorReadRepository
 use App\Repository\IntegracaoServidor\Contracts\IntegracaoServidorWriteRepositoryContract;
 use App\Repository\IntegracaoServidor\Eloquent\EloquentIntegracaoServidorReadRepository;
 use App\Repository\IntegracaoServidor\Eloquent\EloquentIntegracaoServidorWriteRepository;
+use App\Repository\PlanoTrabalhoConsolidacao\Contracts\PlanoTrabalhoConsolidacaoReadRepositoryContract;
+use App\Repository\PlanoTrabalhoConsolidacao\Eloquent\EloquentPlanoTrabalhoConsolidacaoReadRepository;
 use Illuminate\Support\ServiceProvider;
 
 final class RepositoryServiceProvider extends ServiceProvider
@@ -22,6 +24,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             IntegracaoServidorWriteRepositoryContract::class,
             EloquentIntegracaoServidorWriteRepository::class,
+        );
+
+        $this->app->bind(
+            PlanoTrabalhoConsolidacaoReadRepositoryContract::class,
+            EloquentPlanoTrabalhoConsolidacaoReadRepository::class,
         );
     }
 
