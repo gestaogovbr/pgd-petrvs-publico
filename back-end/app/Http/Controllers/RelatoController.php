@@ -83,7 +83,6 @@ class RelatoController extends ControllerBase
         /** @var Usuario|null $usuario */
         $usuario = $data['usuario_id'] ? Usuario::find($data['usuario_id']) : null;
         $relatoDto->usuario = $usuario;
-        /** @phpstan-ignore-next-line */
         $relatoDto->unidade_id    = $data['unidade_id'] ? $data['unidade_id']: ($relatoDto->usuario? $relatoDto->usuario->lotacao->unidade_id: null);
         $relatoDto->unidade       = $relatoDto->unidade_id ? Unidade::find($relatoDto->unidade_id) : null;
         
@@ -104,12 +103,10 @@ class RelatoController extends ControllerBase
             /** @var Entidade $entidade */
             $entidade = Entidade::find(Session::get('entidade_id'));
             
-            /** @phpstan-ignore-next-line */
             if (!count($entidade->emails)) {
                 abort(400, 'Emails de Responsáveis pelo SIAPE não configurados');
             }
             
-            /** @phpstan-ignore-next-line */
             $relatoDto->emails = $entidade->emails->pluck('email')->all();
             
             Mail::to($relatoDto->emails)->send(new SolicitarAjusteLotacaoMail($relatoDto));

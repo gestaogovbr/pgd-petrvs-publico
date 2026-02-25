@@ -1,205 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <checkstyle>
-<file name="app/Http/Controllers/RelatoController.php">
-  <error line="87" column="1" severity="error" message="No error to ignore is reported on line 87." source="ignore.unmatchedLine" />
-  <error line="108" column="1" severity="error" message="No error to ignore is reported on line 108." source="ignore.unmatchedLine" />
-  <error line="113" column="1" severity="error" message="No error to ignore is reported on line 113." source="ignore.unmatchedLine" />
-</file>
-<file name="app/Http/Controllers/RelatorioUnidadeController.php">
-  <error line="39" column="1" severity="error" message="Method App\Http\Controllers\RelatorioUnidadeController::query() should return Illuminate\Http\JsonResponse|Illuminate\Http\Response but returns Symfony\Component\HttpFoundation\BinaryFileResponse." source="return.type" />
-</file>
-<file name="app/Http/Controllers/RotinaDiariaController.php">
-  <error line="37" column="1" severity="error" message="Method App\Http\Controllers\RotinaDiariaController::run() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="39" column="1" severity="error" message="Method App\Http\Controllers\RotinaDiariaController::run() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="44" column="1" severity="error" message="Method App\Http\Controllers\RotinaDiariaController::run() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-</file>
-<file name="app/Jobs/ExportarTenantJob.php">
-  <error line="49" column="1" severity="error" message="No error to ignore is reported on line 49." source="ignore.unmatchedLine" />
-  <error line="51" column="1" severity="error" message="No error to ignore is reported on line 51." source="ignore.unmatchedLine" />
-</file>
-<file name="app/Logging/TenantCustomLogger.php">
-  <error line="80" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model|Stancl\Tenancy\Contracts\Tenant::$id." source="property.notFound" />
-</file>
-<file name="app/Models/PlanoEntrega.php">
-  <error line="81" column="1" severity="error" message="Property App\Models\PlanoEntrega::$avaliado_at (DateTime|null) does not accept string." source="assign.propertyType" />
-</file>
-<file name="app/Providers/AppServiceProvider.php">
-  <error line="85" column="1" severity="error" message="Static method Illuminate\Log\Logger::info() invoked with 3 parameters, 1-2 required." source="arguments.count" />
-</file>
-<file name="app/Providers/AuthServiceProvider.php">
-  <error line="20" column="1" severity="error" message="PHPDoc type array of property App\Providers\AuthServiceProvider::$policies is not covariant with PHPDoc type array&lt;class-string, class-string&gt; of overridden property Illuminate\Foundation\Support\Providers\AuthServiceProvider::$policies." source="property.phpDocType" />
-</file>
-<file name="app/Providers/EventServiceProvider.php">
-  <error line="17" column="1" severity="error" message="PHPDoc type array of property App\Providers\EventServiceProvider::$listen is not covariant with PHPDoc type array&lt;string, array&lt;int, string&gt;&gt; of overridden property Illuminate\Foundation\Support\Providers\EventServiceProvider::$listen." source="property.phpDocType" />
-</file>
-<file name="app/Providers/RouteServiceProvider.php">
-  <error line="36" column="1" severity="error" message="PHPDoc tag @var above a method has no effect." source="varTag.misplaced" />
-  <error line="36" column="1" severity="error" message="PHPDoc tag @var does not specify variable name." source="varTag.noVariable" />
-</file>
-<file name="app/Repository/IntegracaoServidor/Eloquent/EloquentIntegracaoServidorReadRepository.php">
-  <error line="20" column="1" severity="error" message="Method App\Repository\IntegracaoServidor\Eloquent\EloquentIntegracaoServidorReadRepository::getServidor() should return App\Models\IntegracaoServidor|null but returns Illuminate\Database\Eloquent\Model|null." source="return.type" />
-</file>
-<file name="app/Repository/PlanoTrabalhoConsolidacao/Eloquent/EloquentPlanoTrabalhoConsolidacaoReadRepository.php">
-  <error line="40" column="1" severity="error" message="Access to an undefined property App\Models\PlanoTrabalhoEntrega::$planoEntregaEntrega." source="property.notFound" />
-  <error line="59" column="1" severity="error" message="Access to an undefined property App\Models\PlanoTrabalhoConsolidacao::$justificativa_conclusao." source="property.notFound" />
-  <error line="66" column="1" severity="error" message="Relation 'unidade' is not found in App\Models\Comparecimento model." source="larastan.relationExistence" />
-  <error line="85" column="1" severity="error" message="Relation 'tarefas' is not found in App\Models\Atividade model." source="larastan.relationExistence" />
-  <error line="98" column="1" severity="error" message="Relation 'consolidacoes' is not found in App\Models\Atividade model." source="larastan.relationExistence" />
-  <error line="115" column="1" severity="error" message="Relation 'tipoMotivoAfastamento' is not found in App\Models\Afastamento model." source="larastan.relationExistence" />
-  <error line="118" column="1" severity="error" message="Relation 'consolidacoes' is not found in App\Models\Afastamento model." source="larastan.relationExistence" />
-  <error line="135" column="1" severity="error" message="Relation 'usuario' is not found in App\Models\Ocorrencia model." source="larastan.relationExistence" />
-  <error line="138" column="1" severity="error" message="Relation 'consolidacoes' is not found in App\Models\Ocorrencia model." source="larastan.relationExistence" />
-</file>
-<file name="app/Services/API_PGD/AuditSources/ParticipanteAuditSource.php">
-  <error line="11" column="1" severity="error" message="Constructor of class App\Services\API_PGD\AuditSources\ParticipanteAuditSource has an unused parameter $tipo." source="constructor.unusedParameter" />
-  <error line="17" column="1" severity="error" message="Method Illuminate\Database\Eloquent\Builder&lt;App\Models\ViewPgdParticipantes&gt;::chunk() invoked with 1 parameter, 2 required." source="arguments.count" />
-</file>
-<file name="app/Services/API_PGD/AuditSources/PlanoEntregaAuditSource.php">
-  <error line="9" column="1" severity="error" message="Constructor of class App\Services\API_PGD\AuditSources\PlanoEntregaAuditSource has an unused parameter $tipo." source="constructor.unusedParameter" />
-</file>
-<file name="app/Services/API_PGD/AuditSources/PlanoTrabalhoAuditSource.php">
-  <error line="9" column="1" severity="error" message="Constructor of class App\Services\API_PGD\AuditSources\PlanoTrabalhoAuditSource has an unused parameter $tipo." source="constructor.unusedParameter" />
-</file>
-<file name="app/Services/API_PGD/DataSources/ParticipanteDataSource.php">
-  <error line="16" column="1" severity="error" message="Relation 'unidadesIntegrantes' is not found in App\Models\Usuario model." source="larastan.relationExistence" />
-</file>
-<file name="app/Services/API_PGD/DataSources/PlanoEntregaDataSource.php">
-  <error line="16" column="1" severity="error" message="Relation 'programa' is not found in App\Models\PlanoEntrega model." source="larastan.relationExistence" />
-  <error line="37" column="1" severity="error" message="Access to an undefined property App\Models\Programa::$unidade." source="property.notFound" />
-</file>
-<file name="app/Services/API_PGD/DataSources/PlanoTrabalhoDataSource.php">
-  <error line="16" column="1" severity="error" message="Relation 'planoTrabalho' is not found in App\Models\PlanoTrabalhoEntrega model." source="larastan.relationExistence" />
-</file>
-<file name="app/Services/API_PGD/Resources/ModalidadeResource.php">
-  <error line="13" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\ModalidadeResource::$nome." source="property.notFound" />
-  <error line="17" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\ModalidadeResource::$nome." source="property.notFound" />
-  <error line="21" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\ModalidadeResource::$nome." source="property.notFound" />
-  <error line="25" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\ModalidadeResource::$nome." source="property.notFound" />
-  <error line="29" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\ModalidadeResource::$nome." source="property.notFound" />
-  <error line="33" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\ModalidadeResource::$nome." source="property.notFound" />
-  <error line="37" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\ModalidadeResource::$nome." source="property.notFound" />
-</file>
-<file name="app/Services/API_PGD/Resources/ParticipanteResource.php">
-  <error line="14" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\ParticipanteResource::$matricula." source="property.notFound" />
-  <error line="15" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\ParticipanteResource::$id." source="property.notFound" />
-  <error line="18" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\ParticipanteResource::$ultimoPlanoTrabalho." source="property.notFound" />
-  <error line="19" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\ParticipanteResource::$id." source="property.notFound" />
-  <error line="22" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\ParticipanteResource::$unidadesIntegrantes." source="property.notFound" />
-  <error line="25" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\ParticipanteResource::$id." source="property.notFound" />
-  <error line="31" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\ParticipanteResource::$id." source="property.notFound" />
-  <error line="35" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\ParticipanteResource::$id." source="property.notFound" />
-  <error line="41" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\ParticipanteResource::$id." source="property.notFound" />
-  <error line="47" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\ParticipanteResource::$cpf." source="property.notFound" />
-</file>
-<file name="app/Services/API_PGD/Resources/PlanoEntregaEntregaResource.php">
-  <error line="13" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaEntregaResource::$id." source="property.notFound" />
-  <error line="14" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaEntregaResource::$descricao." source="property.notFound" />
-  <error line="15" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaEntregaResource::$progresso_realizado." source="property.notFound" />
-  <error line="17" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaEntregaResource::$data_fim." source="property.notFound" />
-  <error line="20" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaEntregaResource::$unidade." source="property.notFound" />
-  <error line="21" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaEntregaResource::$destinatario." source="property.notFound" />
-  <error line="26" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaEntregaResource::$meta." source="property.notFound" />
-  <error line="27" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaEntregaResource::$meta." source="property.notFound" />
-</file>
-<file name="app/Services/API_PGD/Resources/PlanoEntregaResource.php">
-  <error line="13" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaResource::$id." source="property.notFound" />
-  <error line="15" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaResource::$id." source="property.notFound" />
-  <error line="17" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaResource::$programa." source="property.notFound" />
-  <error line="18" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaResource::$unidade." source="property.notFound" />
-  <error line="19" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaResource::$data_inicio." source="property.notFound" />
-  <error line="20" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaResource::$data_fim." source="property.notFound" />
-  <error line="23" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaResource::$avaliacao." source="property.notFound" />
-  <error line="26" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaResource::$entregas." source="property.notFound" />
-  <error line="34" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaResource::$status." source="property.notFound" />
-  <error line="42" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaResource::$status." source="property.notFound" />
-  <error line="47" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoEntregaResource::$avaliacao." source="property.notFound" />
-</file>
-<file name="app/Services/API_PGD/Resources/PlanoTrabalhoAvaliacaoResource.php">
-  <error line="13" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoAvaliacaoResource::$id." source="property.notFound" />
-  <error line="14" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoAvaliacaoResource::$data_inicio." source="property.notFound" />
-  <error line="15" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoAvaliacaoResource::$data_fim." source="property.notFound" />
-  <error line="16" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoAvaliacaoResource::$avaliacao." source="property.notFound" />
-</file>
-<file name="app/Services/API_PGD/Resources/PlanoTrabalhoContribuicaoResource.php">
-  <error line="12" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoContribuicaoResource::$id." source="property.notFound" />
-  <error line="13" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoContribuicaoResource::$planoEntregaEntrega." source="property.notFound" />
-  <error line="14" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoContribuicaoResource::$planoTrabalho." source="property.notFound" />
-</file>
-<file name="app/Services/API_PGD/Resources/PlanoTrabalhoResource.php">
-  <error line="17" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoResource::$data_fim." source="property.notFound" />
-  <error line="17" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoResource::$data_inicio." source="property.notFound" />
-  <error line="18" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoResource::$unidade_id." source="property.notFound" />
-  <error line="24" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoResource::$id." source="property.notFound" />
-  <error line="27" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoResource::$id." source="property.notFound" />
-  <error line="28" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoResource::$status." source="property.notFound" />
-  <error line="31" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoResource::$usuario." source="property.notFound" />
-  <error line="31" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoResource::$usuario." source="property.notFound" />
-  <error line="32" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoResource::$usuario." source="property.notFound" />
-  <error line="33" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoResource::$data_inicio." source="property.notFound" />
-  <error line="34" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoResource::$data_fim." source="property.notFound" />
-  <error line="35" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoResource::$carga_horaria." source="property.notFound" />
-  <error line="36" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoResource::$entregas." source="property.notFound" />
-  <error line="39" column="1" severity="error" message="Access to an undefined property App\Services\API_PGD\Resources\PlanoTrabalhoResource::$consolidacoes." source="property.notFound" />
-</file>
-<file name="app/Services/ApiService.php">
-  <error line="56" column="1" severity="error" message="Parameter $usuario of method App\Services\ApiService::fillUsuarioWithCredential() has invalid type App\Services\Usuario." source="class.notFound" />
-  <error line="57" column="1" severity="error" message="Access to property $password on an unknown class App\Services\Usuario." source="class.notFound" />
-  <error line="57" column="1" severity="error" message="Access to property $password on an unknown class App\Services\Usuario." source="class.notFound" />
-  <error line="58" column="1" severity="error" message="Access to property $email on an unknown class App\Services\Usuario." source="class.notFound" />
-  <error line="58" column="1" severity="error" message="Access to property $email on an unknown class App\Services\Usuario." source="class.notFound" />
-  <error line="59" column="1" severity="error" message="Access to property $cpf on an unknown class App\Services\Usuario." source="class.notFound" />
-  <error line="59" column="1" severity="error" message="Access to property $cpf on an unknown class App\Services\Usuario." source="class.notFound" />
-  <error line="60" column="1" severity="error" message="Access to property $nome on an unknown class App\Services\Usuario." source="class.notFound" />
-  <error line="60" column="1" severity="error" message="Access to property $nome on an unknown class App\Services\Usuario." source="class.notFound" />
-  <error line="61" column="1" severity="error" message="Access to property $id_sei on an unknown class App\Services\Usuario." source="class.notFound" />
-  <error line="61" column="1" severity="error" message="Access to property $id_sei on an unknown class App\Services\Usuario." source="class.notFound" />
-  <error line="62" column="1" severity="error" message="Access to property $apelido on an unknown class App\Services\Usuario." source="class.notFound" />
-  <error line="62" column="1" severity="error" message="Access to property $apelido on an unknown class App\Services\Usuario." source="class.notFound" />
-</file>
 <file name="app/Services/AtividadeService.php">
-  <error line="117" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeService::$usuarioService." source="property.notFound" />
-  <error line="129" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeService::$usuarioService." source="property.notFound" />
-  <error line="158" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeService::$statusService." source="property.notFound" />
-  <error line="163" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeService::$notificacoesService." source="property.notFound" />
-  <error line="165" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeService::$notificacoesService." source="property.notFound" />
-  <error line="171" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeService::$notificacoesService." source="property.notFound" />
-  <error line="192" column="1" severity="error" message="Access to an undefined property App\Models\Documento::$atividade_tarefa." source="property.notFound" />
-  <error line="300" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeService::$calendarioService." source="property.notFound" />
-  <error line="330" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeService::$unidadeService." source="property.notFound" />
-  <error line="346" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeService::$calendarioService." source="property.notFound" />
-  <error line="357" column="1" severity="error" message="Relation 'pausas' is not found in App\Models\Atividade model." source="larastan.relationExistence" />
-  <error line="414" column="1" severity="error" message="Access to an undefined property App\Models\Atividade::$metadados." source="property.notFound" />
-  <error line="422" column="1" severity="error" message="Relation 'consolidacao' is not found in App\Models\PlanoTrabalhoConsolidacaoAtividade model." source="larastan.relationExistence" />
-  <error line="465" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeService::$statusService." source="property.notFound" />
-  <error line="499" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeService::$statusService." source="property.notFound" />
-  <error line="516" column="1" severity="error" message="Relation 'planoTrabalho' is not found in App\Models\Atividade model." source="larastan.relationExistence" />
-  <error line="525" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeService::$statusService." source="property.notFound" />
-  <error line="547" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeService::$notificacoesService." source="property.notFound" />
-  <error line="564" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeService::$statusService." source="property.notFound" />
-  <error line="592" column="1" severity="error" message="Access to an undefined property App\Models\Atividade|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\Atividade&gt;::$pausas." source="property.notFound" />
-  <error line="596" column="1" severity="error" message="Access to an undefined property object::$data_inicio." source="property.notFound" />
-  <error line="610" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeService::$statusService." source="property.notFound" />
-  <error line="644" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeService::$statusService." source="property.notFound" />
-  <error line="700" column="1" severity="error" message="Access to an undefined property App\Models\Atividade|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\Atividade&gt;::$planoTrabalhoEntrega." source="property.notFound" />
-  <error line="731" column="1" severity="error" message="Access to an undefined property object::$entregaPai." source="property.notFound" />
-  <error line="732" column="1" severity="error" message="Access to an undefined property object::$entregaPai." source="property.notFound" />
-  <error line="759" column="1" severity="error" message="Access to an undefined property object::$objetivoPai." source="property.notFound" />
-  <error line="760" column="1" severity="error" message="Access to an undefined property object::$objetivoPai." source="property.notFound" />
-  <error line="768" column="1" severity="error" message="Access to an undefined property object::$processoPai." source="property.notFound" />
-  <error line="769" column="1" severity="error" message="Access to an undefined property object::$processoPai." source="property.notFound" />
+  <error line="199" column="1" severity="error" message="Access to an undefined property App\Models\Documento::$atividade_tarefa." source="property.notFound" />
+  <error line="421" column="1" severity="error" message="Access to an undefined property App\Models\Atividade::$metadados." source="property.notFound" />
+  <error line="429" column="1" severity="error" message="Relation 'consolidacao' is not found in App\Models\PlanoTrabalhoConsolidacaoAtividade model." source="larastan.relationExistence" />
+  <error line="738" column="1" severity="error" message="Access to an undefined property object::$entregaPai." source="property.notFound" />
+  <error line="739" column="1" severity="error" message="Access to an undefined property object::$entregaPai." source="property.notFound" />
+  <error line="766" column="1" severity="error" message="Access to an undefined property object::$objetivoPai." source="property.notFound" />
+  <error line="767" column="1" severity="error" message="Access to an undefined property object::$objetivoPai." source="property.notFound" />
+  <error line="775" column="1" severity="error" message="Access to an undefined property object::$processoPai." source="property.notFound" />
+  <error line="776" column="1" severity="error" message="Access to an undefined property object::$processoPai." source="property.notFound" />
 </file>
 <file name="app/Services/AtividadeTarefaService.php">
   <error line="16" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeTarefaService::$atividadeService." source="property.notFound" />
   <error line="25" column="1" severity="error" message="Access to an undefined property App\Services\AtividadeTarefaService::$atividadeService." source="property.notFound" />
-</file>
-<file name="app/Services/AvaliacaoService.php">
-  <error line="35" column="1" severity="error" message="Access to an undefined property App\Services\AvaliacaoService::$unidadeService." source="property.notFound" />
-  <error line="36" column="1" severity="error" message="Access to an undefined property App\Services\AvaliacaoService::$usuarioService." source="property.notFound" />
-  <error line="45" column="1" severity="error" message="Access to an undefined property App\Services\AvaliacaoService::$planoTrabalhoConsolidacaoService." source="property.notFound" />
-  <error line="47" column="1" severity="error" message="Access to an undefined property App\Services\AvaliacaoService::$planoEntregaService." source="property.notFound" />
-  <error line="77" column="1" severity="error" message="Access to an undefined property App\Services\AvaliacaoService::$statusService." source="property.notFound" />
-  <error line="78" column="1" severity="error" message="Access to an undefined property App\Services\AvaliacaoService::$statusService." source="property.notFound" />
-  <error line="82" column="1" severity="error" message="Access to an undefined property App\Services\AvaliacaoService::$statusService." source="property.notFound" />
 </file>
 <file name="app/Services/CadeiaValorProcessoService.php">
   <error line="8" column="1" severity="error" message="Access to an undefined property App\Services\CadeiaValorProcessoService::$cadeiaValorService." source="property.notFound" />
@@ -355,7 +169,6 @@
   <error line="194" column="1" severity="error" message="Relation 'processos' is not found in App\Models\PlanoEntregaEntrega model." source="larastan.relationExistence" />
 </file>
 <file name="app/Services/PlanoEntregaService.php">
-  <error line="31" column="1" severity="error" message="Access to an undefined property App\Models\PlanoEntregaEntrega|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\PlanoEntregaEntrega&gt;::$planoEntrega." source="property.notFound" />
   <error line="63" column="1" severity="error" message="Access to an undefined property App\Services\PlanoEntregaService::$statusService." source="property.notFound" />
   <error line="65" column="1" severity="error" message="Access to an undefined property App\Services\PlanoEntregaService::$statusService." source="property.notFound" />
   <error line="72" column="1" severity="error" message="Access to an undefined property App\Services\PlanoEntregaService::$planoTrabalhoService." source="property.notFound" />
@@ -364,7 +177,6 @@
   <error line="99" column="1" severity="error" message="Access to an undefined property object::$gestoresDelegados." source="property.notFound" />
   <error line="106" column="1" severity="error" message="Access to an undefined property App\Models\StatusJustificativa::$usuario." source="property.notFound" />
   <error line="116" column="1" severity="error" message="Access to an undefined property App\Services\PlanoEntregaService::$notificacoesService." source="property.notFound" />
-  <error line="178" column="1" severity="error" message="Relation 'entregas' is not found in App\Models\PlanoEntrega model." source="larastan.relationExistence" />
   <error line="197" column="1" severity="error" message="Access to an undefined property App\Services\PlanoEntregaService::$usuario." source="property.notFound" />
   <error line="198" column="1" severity="error" message="Access to an undefined property App\Services\PlanoEntregaService::$usuario." source="property.notFound" />
   <error line="199" column="1" severity="error" message="Access to an undefined property App\Services\PlanoEntregaService::$unidade." source="property.notFound" />
@@ -382,7 +194,7 @@
   <error line="245" column="1" severity="error" message="Access to an undefined property App\Services\PlanoEntregaService::$statusService." source="property.notFound" />
   <error line="260" column="1" severity="error" message="Access to an undefined property App\Services\PlanoEntregaService::$statusService." source="property.notFound" />
   <error line="279" column="1" severity="error" message="Access to an undefined property App\Services\PlanoEntregaService::$statusService." source="property.notFound" />
-  <error line="299" column="1" severity="error" message="Access to an undefined property App\Models\PlanoEntrega::$entregas." source="property.notFound" />
+  <error line="301" column="1" severity="error" message="Access to an undefined property App\Models\PlanoEntregaEntrega::$progressos." source="property.notFound" />
   <error line="314" column="1" severity="error" message="PHPDoc tag @param references unknown parameter: $planoEntrega" source="parameter.notFound" />
   <error line="325" column="1" severity="error" message="Access to an undefined property App\Services\PlanoEntregaService::$statusService." source="property.notFound" />
   <error line="340" column="1" severity="error" message="PHPDoc tag @param references unknown parameter: $planoEntrega" source="parameter.notFound" />
@@ -426,9 +238,7 @@
   <error line="222" column="1" severity="error" message="Access to property $data_conclusao on an unknown class App\Services\Consolidacao." source="class.notFound" />
   <error line="222" column="1" severity="error" message="Access to property $data_conclusao on an unknown class App\Services\Consolidacao." source="class.notFound" />
   <error line="273" column="1" severity="error" message="Property App\Models\PlanoTrabalhoConsolidacao::$data_conclusao (Carbon\Carbon|null) does not accept DateTime." source="assign.propertyType" />
-  <error line="275" column="1" severity="error" message="Access to an undefined property App\Models\PlanoTrabalhoConsolidacao::$justificativa_conclusao." source="property.notFound" />
   <error line="285" column="1" severity="error" message="Access to an undefined property App\Services\PlanoTrabalhoConsolidacaoService::$statusService." source="property.notFound" />
-  <error line="311" column="1" severity="error" message="Access to an undefined property App\Models\PlanoTrabalhoConsolidacao::$justificativa_conclusao." source="property.notFound" />
   <error line="316" column="1" severity="error" message="Access to an undefined property App\Services\PlanoTrabalhoConsolidacaoService::$statusService." source="property.notFound" />
   <error line="317" column="1" severity="error" message="Access to an undefined property App\Services\PlanoTrabalhoConsolidacaoService::$statusService." source="property.notFound" />
   <error line="333" column="1" severity="error" message="PHPDoc tag @param references unknown parameter: $id" source="parameter.notFound" />
@@ -499,7 +309,6 @@
   <error line="772" column="1" severity="error" message="Access to an undefined property App\Services\PlanoTrabalhoService::$atividadeService." source="property.notFound" />
   <error line="785" column="1" severity="error" message="Parameter $plano of method App\Services\PlanoTrabalhoService::isPlanoGestao() has invalid type App\Services\Plano." source="class.notFound" />
   <error line="787" column="1" severity="error" message="Access to offset 'programa' on an unknown class App\Services\Plano." source="class.notFound" />
-  <error line="830" column="1" severity="error" message="Access to an undefined property App\Models\PlanoTrabalhoEntrega::$atividades." source="property.notFound" />
   <error line="866" column="1" severity="error" message="Access to an undefined property App\Services\PlanoTrabalhoService::$usuarioService." source="property.notFound" />
   <error line="867" column="1" severity="error" message="Access to an undefined property App\Services\PlanoTrabalhoService::$usuarioService." source="property.notFound" />
   <error line="868" column="1" severity="error" message="Access to an undefined property App\Services\PlanoTrabalhoService::$usuarioService." source="property.notFound" />
@@ -522,8 +331,6 @@
   <error line="1097" column="1" severity="error" message="Access to an undefined property App\Services\PlanoTrabalhoService::$statusService." source="property.notFound" />
   <error line="1162" column="1" severity="error" message="Access to an undefined property App\Services\PlanoTrabalhoService::$unidadeService." source="property.notFound" />
   <error line="1263" column="1" severity="error" message="Access to an undefined property App\Models\Documento::$assinaturas." source="property.notFound" />
-  <error line="1284" column="1" severity="error" message="Access to an undefined property App\Models\PlanoEntregaEntrega|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\PlanoEntregaEntrega&gt;::$planoEntrega." source="property.notFound" />
-  <error line="1286" column="1" severity="error" message="Access to an undefined property App\Models\PlanoEntregaEntrega|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\PlanoEntregaEntrega&gt;::$planoEntrega." source="property.notFound" />
   <error line="1307" column="1" severity="error" message="Relation 'lotacao' is not found in App\Models\Usuario model." source="larastan.relationExistence" />
   <error line="1321" column="1" severity="error" message="Access to an undefined property App\Services\PlanoTrabalhoService::$usuarioService." source="property.notFound" />
   <error line="1351" column="1" severity="error" message="Access to an undefined property App\Services\PlanoTrabalhoService::$usuarioService." source="property.notFound" />
@@ -551,6 +358,8 @@
 <file name="app/Services/ProgramaService.php">
   <error line="62" column="1" severity="error" message="Access to an undefined property App\Services\ProgramaService::$unidadeService." source="property.notFound" />
   <error line="65" column="1" severity="error" message="Relation 'programas' is not found in App\Models\Unidade model." source="larastan.relationExistence" />
+  <error line="95" column="1" severity="error" message="Call to an undefined method App\Models\Programa::planosTrabalho()." source="method.notFound" />
+  <error line="96" column="1" severity="error" message="Call to an undefined method App\Models\Programa::planosEntrega()." source="method.notFound" />
   <error line="103" column="1" severity="error" message="Access to an undefined property App\Services\ProgramaService::$statusService." source="property.notFound" />
   <error line="105" column="1" severity="error" message="Access to an undefined property App\Services\ProgramaService::$statusService." source="property.notFound" />
   <error line="111" column="1" severity="error" message="Access to an undefined property App\Services\ProgramaService::$statusService." source="property.notFound" />
@@ -855,8 +664,6 @@
   <error line="735" column="1" severity="error" message="Relation 'planoEntrega' is not found in App\Models\PlanoEntregaEntrega model." source="larastan.relationExistence" />
   <error line="735" column="1" severity="error" message="Relation 'planoEntrega' is not found in App\Models\PlanoEntregaEntrega model." source="larastan.relationExistence" />
   <error line="735" column="1" severity="error" message="Relation 'progressos' is not found in App\Models\PlanoEntregaEntrega model." source="larastan.relationExistence" />
-  <error line="753" column="1" severity="error" message="Relation 'latestStatus' is not found in App\Models\PlanoEntrega model." source="larastan.relationExistence" />
-  <error line="753" column="1" severity="error" message="Relation 'unidade' is not found in App\Models\PlanoEntrega model." source="larastan.relationExistence" />
 </file>
 <file name="app/Traits/HasPermissions.php">
   <error line="17" column="1" severity="error" message="Relation 'tipoCapacidade' is not found in App\Models\Capacidade model." source="larastan.relationExistence" />

@@ -17,6 +17,7 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
 
     public function getServidor(string $cpf, string $matricula): ?IntegracaoServidor
     {
+        /** @var IntegracaoServidor|null */
         return $this->query()
             ->where('cpf', $cpf)
             ->where('matriculasiape', $matricula)

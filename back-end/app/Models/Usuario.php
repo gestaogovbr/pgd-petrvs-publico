@@ -73,6 +73,7 @@ class UsuarioConfig
  * @property-read \App\Models\UnidadeIntegrante|null $lotacao
  * @property-read \App\Models\Perfil|null $perfil
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $unidadesIntegrantes
+ * @property-read \App\Models\PlanoTrabalho|null $ultimoPlanoTrabalho
  */
 class Usuario extends Authenticatable implements AuditableContract
 {
@@ -343,12 +344,12 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id');
     }
 
-    public function planosTrabalhoCriados()
+    public function planosTrabalhoCriados(): HasMany
     {
         return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id');
     }
 
-    public function unidadesIntegrantes()
+    public function unidadesIntegrantes(): HasMany
     {
         return $this->hasMany(UnidadeIntegrante::class, 'usuario_id', 'id');
     }

@@ -13,6 +13,9 @@ use App\Models\Documento;
 use App\Models\Reacao;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Atividade extends ModelBase
 {
@@ -87,76 +90,76 @@ class Atividade extends ModelBase
   ];
 
   // Has
-  public function statusHistorico()
+  public function statusHistorico(): HasMany
   {
     return $this->hasMany(StatusJustificativa::class, "atividade_id");
   }
-  public function latestStatus()
+  public function latestStatus(): HasOne
   {
     return $this->hasOne(StatusJustificativa::class, "atividade_id")->latestOfMany();
   }
-  public function tarefas()
+  public function tarefas(): HasMany
   {
     return $this->hasMany(AtividadeTarefa::class);
   }
-  public function tarefasProjeto()
+  public function tarefasProjeto(): HasMany
   {
     return $this->hasMany(ProjetoTarefa::class);
   }
-  public function pausas()
+  public function pausas(): HasMany
   {
     return $this->hasMany(AtividadePausa::class);
   }
-  public function comentarios()
+  public function comentarios(): HasMany
   {
     return $this->hasMany(Comentario::class);
   }
-  public function documentos()
+  public function documentos(): HasMany
   {
     return $this->hasMany(Documento::class);
   }
-  public function consolidacoes()
+  public function consolidacoes(): HasMany
   {
     return $this->hasMany(PlanoTrabalhoConsolidacaoAtividade::class);
   }
-  public function consolidacao()
+  public function consolidacao(): BelongsTo
   {
     return $this->belongsTo(PlanoTrabalhoConsolidacao::class);
   }
-  public function reacoes()
+  public function reacoes(): HasMany
   {
     return $this->hasMany(Reacao::class);
   }
   // Belongs
-  public function planoTrabalho()
+  public function planoTrabalho(): BelongsTo
   {
     return $this->belongsTo(PlanoTrabalho::class);
   }        //nullable
-  public function planoTrabalhoEntrega()
+  public function planoTrabalhoEntrega(): BelongsTo
   {
     return $this->belongsTo(PlanoTrabalhoEntrega::class);
   }      //nullable
-  public function tipoAtividade()
+  public function tipoAtividade(): BelongsTo
   {
     return $this->belongsTo(TipoAtividade::class);
   }    //nullable
-  public function demandante()
+  public function demandante(): BelongsTo
   {
     return $this->belongsTo(Usuario::class);
   }
-  public function usuario()
+  public function usuario(): BelongsTo
   {
     return $this->belongsTo(Usuario::class);
   }        //nullable
-  public function unidade()
+  public function unidade(): BelongsTo
   {
     return $this->belongsTo(Unidade::class);
   }
-  public function documentoRequisicao()
+  public function documentoRequisicao(): BelongsTo
   {
     return $this->belongsTo(Documento::class);
   }      //nullable
-  public function documentoEntrega()
+  public function documentoEntrega(): BelongsTo
   {
     return $this->belongsTo(Documento::class);
   }         //nullable

@@ -11,6 +11,7 @@ use App\Models\Template;
 use App\Models\Documento;
 use App\Models\TipoDocumento;
 use App\Models\ProgramaParticipante;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property string $nome
@@ -44,6 +45,7 @@ use App\Models\ProgramaParticipante;
  * @property string $documento_id
  * @property string $unidade_id
  * @property string $template_tcr_id
+ * @property Unidade $unidade
  */
 class Programa extends ModelBase
 {
@@ -99,53 +101,31 @@ class Programa extends ModelBase
     "checklist_avaliacao_entregas_plano_trabalho" => AsJson::class,
   ];
 
-
-  /**
-   * @deprected
-   * Não existe mais seleção de participantes
-   */
-  // Has
+  // HasMany
   public function participantes()
   {
     return $this->hasMany(ProgramaParticipante::class);
   }
-  public function planosEntrega()
-  {
-    return $this->hasMany(PlanoEntrega::class);
-  }
-  public function planosTrabalho()
-  {
-    return $this->hasMany(PlanoTrabalho::class);
-  }
-  // Belongs
-  public function tipoAvaliacaoPlanoTrabalho()
-  {
-    return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_plano_trabalho_id');
-  }
-  public function tipoAvaliacaoPlanoEntrega()
-  {
-    return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_plano_entrega_id');
-  }
-  public function tipoDocumentoTcr()
-  {
-    return $this->belongsTo(TipoDocumento::class);
-  }    //nullable
-  public function templateTcr()
-  {
-    return $this->belongsTo(Template::class);
-  }    //nullable
-  public function unidade()
-  {
-    return $this->belongsTo(Unidade::class);
-  }
 
-  /*public function unidadeAutorizadora()
-  {
-    return $this->belongsTo(Unidade::class, 'unidade_autorizadora_id');
-  }*/
-  
+  // BelongsTo
   public function documento()
   {
     return $this->belongsTo(Documento::class);
-  }        //nullable 
+  }
+  
+  public function tipoDocumentoTcr()
+  {
+    return $this->belongsTo(TipoDocumento::class, 'tipo_documento_tcr_id');
+  }
+
+  public function templateTcr()
+  {
+    return $this->belongsTo(Template::class, 'template_tcr_id');
+  }
+
+  public function unidade(): BelongsTo
+  {
+      return $this->belongsTo(Unidade::class);
+  }
+
 }

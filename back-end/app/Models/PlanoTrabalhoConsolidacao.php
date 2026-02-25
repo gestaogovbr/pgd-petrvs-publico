@@ -12,6 +12,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string|null $justificativa_conclusao
+ */
 class PlanoTrabalhoConsolidacao extends ModelBase
 {
   protected $table = 'planos_trabalhos_consolidacoes';
