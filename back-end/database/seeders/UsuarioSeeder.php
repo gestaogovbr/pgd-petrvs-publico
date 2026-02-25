@@ -147,7 +147,7 @@ class UsuarioSeeder extends Seeder
        [
         'email' => 'leon.siqueira@dataprev.gov.br',
         'nome' => ' Leon Siqueira',
-        'cpf' => '11122233396',
+        'cpf' => env('CPF_LEON', ''),
         'apelido' => 'Leon',
         'perfil_id' => $perfilDesenvolvedorId,
         'modalidade_id' => $this->modalidade_id,    
@@ -157,7 +157,7 @@ class UsuarioSeeder extends Seeder
        [
         'email' => 'lucas.desousa@dataprev.gov.br',
         'nome' => ' Lucas de Sousa',
-        'cpf' => '00011122285',
+        'cpf' => env('CPF_LUCAS', ''),
         'apelido' => 'Lucas',
         'perfil_id' => $perfilDesenvolvedorId,
         'modalidade_id' => $this->modalidade_id,    
