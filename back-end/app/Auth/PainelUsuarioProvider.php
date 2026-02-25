@@ -48,6 +48,7 @@ class PainelUsuarioProvider implements UserProvider
     public function updateRememberToken(Authenticatable $user, $token)
     {
         $user->setRememberToken($token);
+        /** @var PainelUsuario $user */
         $user->save();
     }
 
