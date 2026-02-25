@@ -58,7 +58,6 @@ class PainelUsuarioController extends Controller
             'nome' => $user->nome,
             'email' => $user->email,
             'nivel' => $user->nivel,
-            /** @phpstan-ignore-next-line */
             'tenants' => $user->tenants->pluck('id')->toArray()
         ]);
         } else {

@@ -10,6 +10,7 @@ use App\Services\UsuarioService;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 use App\Models\PlanoTrabalho;
+use App\Models\Usuario;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 

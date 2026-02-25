@@ -47,7 +47,6 @@ class Kernel extends ConsoleKernel
             $tenants = \App\Models\Tenant::all();
             foreach ($tenants as $tenant) {
                 /** @var \App\Models\Tenant $tenant */
-                /** @phpstan-ignore-next-line */
                 \App\Jobs\InativacaoUnidadesSiape::dispatch($tenant->id);
             }
         })->dailyAt('00:15')->name('Inativação Unidades SIAPE');

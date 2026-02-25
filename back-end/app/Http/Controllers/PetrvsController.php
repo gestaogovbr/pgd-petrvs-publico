@@ -42,7 +42,7 @@ class PetrvsController extends ControllerBase
 
     if ($domain == "petrvs_php") $domain = "localhost";
 
-    /** @phpstan-ignore-line */
+    /** @phpstan-ignore-next-line */
     $tenant = Domain::where('domain', $domain)->with('tenant')->first();
 
     if (!$tenant) {

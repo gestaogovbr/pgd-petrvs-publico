@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use App\Models\Unidade;
 use App\Models\Usuario;
 
+/**
+ * @property-read \App\Models\Unidade $unidade
+ */
 class UnidadeIntegrante extends ModelBase //Pivot //ModelBase
 {
   protected $table = 'unidades_integrantes';
@@ -15,9 +18,6 @@ class UnidadeIntegrante extends ModelBase //Pivot //ModelBase
 
   protected $delete_cascade = ["atribuicoes"];
 
-  /**
-   * @property-read \App\Models\Unidade $unidade
-   */
   public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
     'unidade_id', /* char(36); NOT NULL; */
     'usuario_id', /* char(36); NOT NULL; */
@@ -93,6 +93,9 @@ class UnidadeIntegrante extends ModelBase //Pivot //ModelBase
     return $this->hasMany(UnidadeIntegranteAtribuicao::class, 'unidade_integrante_id', 'id');
   }
   // Belongs
+  /**
+   * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+   */
   public function unidade()
   {
     return $this->belongsTo(Unidade::class);

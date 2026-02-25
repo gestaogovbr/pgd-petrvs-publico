@@ -58,7 +58,6 @@ class PainelUsuarioProvider implements UserProvider
      * @param  string  $provider
      * @return \Illuminate\Contracts\Auth\UserProvider|null
      */
-    /** @phpstan-ignore-next-line */
     public function createUserProvider($provider)
     {
         if ($provider === 'painel_users') {

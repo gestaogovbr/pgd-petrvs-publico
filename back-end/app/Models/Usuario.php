@@ -348,7 +348,6 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id');
     }
 
-
     public function unidadesIntegrantes()
     {
         return $this->hasMany(UnidadeIntegrante::class, 'usuario_id', 'id');
@@ -432,6 +431,9 @@ class Usuario extends Authenticatable implements AuditableContract
     }
 
     //public function areasTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado')->orHas('colaborador'); }
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function areasTrabalho()
     {
         return $this->hasMany(UnidadeIntegrante::class)->has('atribuicoes');

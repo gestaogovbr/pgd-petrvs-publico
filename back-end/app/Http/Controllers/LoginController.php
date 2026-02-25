@@ -28,12 +28,10 @@ class LoginController extends Controller
     {
         $with = ["feriados", "gestor", "gestorSubstituto"];
         $entidadeId = $session ? $request->session()->get('entidade_id') : null;
-        /** @phpstan-ignore-next-line */
         $entidade   = $entidadeId ? Entidade::with($with)->find($entidadeId) : null;
 
         $sigla = $request->has('entidade') ? $request->input('entidade') : ($request->headers->has("X-Entidade") ? $request->headers->get("X-Entidade") : config("petrvs")["entidade"]);
         if (empty($entidade) && !empty($sigla)) {
-            /** @phpstan-ignore-next-line */
             $entidade = Entidade::with($with)->where("sigla", $sigla)->first();
             $request->session()->put("entidade_id", $entidade->id);
         }
@@ -49,7 +47,6 @@ class LoginController extends Controller
             }
             $entidadeId = $request->session()->has("entidade_id") ? $request->session()->get("entidade_id") : null;
             $usuario = Usuario::where("id", $usuario->id)->with([
-                /** @phpstan-ignore-next-line */
                 "areasTrabalho" => function ($query) use ($entidadeId) {
                     $query->with(["unidade.gestor.usuario", "unidade.gestoresSubstitutos.usuario", "unidade.gestoresDelegados.usuario", "unidade.cidade", "unidade.planosEntrega", "unidade.unidadePai.planosEntrega", "atribuicoes"])->whereHas('unidade', function ($query) use ($entidadeId) {
                         return  $query->where('entidade_id', '=', $entidadeId);
@@ -305,7 +302,7 @@ class LoginController extends Controller
             if ($usuario === null) {
                 return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
             }
-            if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
+            if (Auth::loginUsingId($usuario->id)) {
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_FIREBASE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
@@ -340,7 +337,7 @@ class LoginController extends Controller
             if ($usuario === null) {
                 return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
             }
-            if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
+            if (Auth::loginUsingId($usuario->id)) {
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
@@ -448,7 +445,7 @@ class LoginController extends Controller
      * Handle an authentication attempt.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function authenticateApiGoogleToken(Request $request, GoogleService $auth)
     {

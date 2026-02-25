@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 use App\Models\PlanoTrabalho;
+use App\Models\Usuario;
 use App\Services\UtilService;
 use Illuminate\Support\Facades\Log;
 use Throwable;

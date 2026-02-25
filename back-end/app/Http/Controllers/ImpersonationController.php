@@ -84,11 +84,9 @@ class ImpersonationController extends Controller
     private function registrarEntidade($request, $session = false)
     {
         $with = ["feriados", "gestor", "gestorSubstituto"];
-        /** @phpstan-ignore-next-line */
         $entidade = $session ? Entidade::with($with)->find($request->session()->put("entidade_id")) : null;
         $sigla = $request->has('entidade') ? $request->input('entidade') : ($request->headers->has("X-Entidade") ? $request->headers->get("X-Entidade") : config("petrvs")["entidade"]);
         if (empty($entidade) && !empty($sigla)) {
-            /** @phpstan-ignore-next-line */
             $entidade = Entidade::with($with)->where("sigla", $sigla)->first();
             $request->session()->put("entidade_id", $entidade->id);
         }
