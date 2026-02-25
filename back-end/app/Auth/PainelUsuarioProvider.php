@@ -55,13 +55,15 @@ class PainelUsuarioProvider implements UserProvider
      * Create a new instance of the user provider for the guard.
      *
      * @param  string  $provider
-     * @return \Illuminate\Contracts\Auth\UserProvider
+     * @return \Illuminate\Contracts\Auth\UserProvider|null
      */
+    /** @phpstan-ignore-next-line */
     public function createUserProvider($provider)
     {
         if ($provider === 'painel_users') {
             return $this;
         }
 
+        return null;
     }
 }

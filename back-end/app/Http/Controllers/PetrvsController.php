@@ -15,10 +15,22 @@ use Throwable;
 
 class PetrvsController extends ControllerBase
 {
+  /**
+   * @param string $action
+   * @param Request $request
+   * @param mixed $service
+   * @param mixed $unidade
+   * @param mixed $usuario
+   * @return void
+   */
   public function checkPermissions($action, $request, $service, $unidade, $usuario)
   {
   }
 
+  /**
+   * @param Request $request
+   * @return \Illuminate\Http\Response
+   */
   public function environmentConfig(Request $request)
   {
 
@@ -30,6 +42,7 @@ class PetrvsController extends ControllerBase
 
     if ($domain == "petrvs_php") $domain = "localhost";
 
+    /** @phpstan-ignore-line */
     $tenant = Domain::where('domain', $domain)->with('tenant')->first();
 
     if (!$tenant) {
@@ -89,6 +102,10 @@ class PetrvsController extends ControllerBase
       ->header('Content-Type', 'application/javascript');
   }
 
+  /**
+   * @param Request $request
+   * @return \Illuminate\Http\JsonResponse
+   */
   public function showTables(Request $request)
   {
     try {

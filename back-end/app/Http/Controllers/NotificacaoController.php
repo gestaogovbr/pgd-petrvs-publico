@@ -19,7 +19,7 @@ class NotificacaoController extends ControllerBase
      * Retorna a quantidade de mensagens não lidas do usuário
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function naoLidas(Request $request)
     {
@@ -34,7 +34,7 @@ class NotificacaoController extends ControllerBase
      * Marca os destinatários da notificação como lidas
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function marcarComoLido(Request $request)
     {
@@ -51,7 +51,7 @@ class NotificacaoController extends ControllerBase
      * Encontra usuário pelo número de telefone
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function findByPhone(Request $request)
     {
@@ -76,7 +76,7 @@ class NotificacaoController extends ControllerBase
      * Retorna sessao atual do usuário
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function findSession(Request $request)
     {

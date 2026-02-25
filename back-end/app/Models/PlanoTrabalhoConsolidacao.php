@@ -8,6 +8,9 @@ use App\Models\PlanoTrabalho;
 use App\Models\Comparecimento;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 use App\Models\StatusJustificativa;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PlanoTrabalhoConsolidacao extends ModelBase
 {
@@ -91,48 +94,48 @@ class PlanoTrabalhoConsolidacao extends ModelBase
   ];
 
   // Has
-  public function statusHistorico()
+  public function statusHistorico(): HasMany
   {
     return $this->hasMany(StatusJustificativa::class, "plano_trabalho_consolidacao_id");
   }
-  public function latestStatus()
+  public function latestStatus(): HasOne
   {
     return $this->hasOne(StatusJustificativa::class, "plano_trabalho_consolidacao_id")->latestOfMany();
   }
-  public function afastamentos()
+  public function afastamentos(): HasMany
   {
     return $this->hasMany(PlanoTrabalhoConsolidacaoAfastamento::class, 'plano_trabalho_consolidacao_id');
   }
-  public function ocorrencias()
+  public function ocorrencias(): HasMany
   {
     return $this->hasMany(PlanoTrabalhoConsolidacaoOcorrencia::class, 'plano_trabalho_consolidacao_id');
   }
-  public function comparecimentos()
+  public function comparecimentos(): HasMany
   {
     return $this->hasMany(Comparecimento::class, 'plano_trabalho_consolidacao_id');
   }
-  public function avaliacoes()
+  public function avaliacoes(): HasMany
   {
     return $this->hasMany(Avaliacao::class, 'plano_trabalho_consolidacao_id');
   }
   // Verificar se há a possibilidade de fazer um relacionamento utilizando a chave da entrega e pela data
-  public function atividades()
+  public function atividades(): HasMany
   {
     return $this->hasMany(Atividade::class);
   }
 
   // Relação com as atividades consolidadas (snapshots)
-  public function atividadesConsolidadas()
+  public function atividadesConsolidadas(): HasMany
   {
     return $this->hasMany(PlanoTrabalhoConsolidacaoAtividade::class, 'plano_trabalho_consolidacao_id');
   }
 
   // Belongs
-  public function planoTrabalho()
+  public function planoTrabalho(): BelongsTo
   {
     return $this->belongsTo(PlanoTrabalho::class);
   }
-  public function avaliacao()
+  public function avaliacao(): BelongsTo
   {
     return $this->belongsTo(Avaliacao::class);
   }  //nullable

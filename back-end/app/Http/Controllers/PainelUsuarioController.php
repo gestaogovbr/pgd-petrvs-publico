@@ -10,6 +10,7 @@ use App\Services\PainelUsuarioService;
 use App\Exceptions\LogError;
 use Illuminate\Support\Facades\Log;
 use Throwable;
+use App\Models\PainelUsuario;
 
 class PainelUsuarioController extends Controller
 {
@@ -21,6 +22,10 @@ class PainelUsuarioController extends Controller
         $this->service = $service;
     }
 
+    /**
+     * @param Request $request
+     * @return bool|\Illuminate\Http\JsonResponse
+     */
     public function login(Request $request)
     {
 
@@ -36,9 +41,14 @@ class PainelUsuarioController extends Controller
         ], 401); // Código de status 401 para não autorizado
         }
     }
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function detail(Request $request)
     {
         // Obtém o usuário autenticado com base no contexto
+        /** @var PainelUsuario|null $user */
         $user = $request->user('painel');
 
         // Verifica se o usuário está autenticado
@@ -48,6 +58,7 @@ class PainelUsuarioController extends Controller
             'nome' => $user->nome,
             'email' => $user->email,
             'nivel' => $user->nivel,
+            /** @phpstan-ignore-next-line */
             'tenants' => $user->tenants->pluck('id')->toArray()
         ]);
         } else {
@@ -98,6 +109,10 @@ class PainelUsuarioController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getById(Request $request)
     {
         try {
@@ -153,7 +168,7 @@ class PainelUsuarioController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Request $request)
     {
@@ -169,6 +184,10 @@ class PainelUsuarioController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function updatePassword(Request $request){
         try {
             $data = $request->validate([

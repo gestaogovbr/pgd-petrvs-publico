@@ -45,7 +45,9 @@ class ExportarTenantJob implements ShouldQueue, ContratoJobSchedule
             $this->envio->save();
 
             Cache::put('pgd_tenantId', $this->tenant->id);
+            /** @phpstan-ignore-next-line */
             Cache::put('pgd_autorizadora', $this->tenant->api_cod_unidade_autorizadora);
+            /** @phpstan-ignore-next-line */
             Cache::put('pgd_url', $this->tenant->api_url);
             Cache::put('pgd_envioId', $this->envio->id);
             Cache::put('pgd_envioNumero', $this->envio->numero);

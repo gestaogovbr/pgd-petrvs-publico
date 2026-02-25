@@ -56,6 +56,9 @@ class RelatoController extends ControllerBase
         return $tenant;
     }
 
+    /**
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     */
     public function store(Request $request) {
         $data = $request->validate([
             'opcao' => ['required'],
@@ -77,7 +80,10 @@ class RelatoController extends ControllerBase
         $relatoDto                = new RelatoErroLotacaoDTO();
         $relatoDto->opcao         = $opcoes[$data['opcao']];
         $relatoDto->usuario_id    = $data['usuario_id'];
-        $relatoDto->usuario       = $data['usuario_id'] ? Usuario::find($data['usuario_id']) : null;
+        /** @var Usuario|null $usuario */
+        $usuario = $data['usuario_id'] ? Usuario::find($data['usuario_id']) : null;
+        $relatoDto->usuario = $usuario;
+        /** @phpstan-ignore-next-line */
         $relatoDto->unidade_id    = $data['unidade_id'] ? $data['unidade_id']: ($relatoDto->usuario? $relatoDto->usuario->lotacao->unidade_id: null);
         $relatoDto->unidade       = $relatoDto->unidade_id ? Unidade::find($relatoDto->unidade_id) : null;
         
@@ -95,12 +101,15 @@ class RelatoController extends ControllerBase
         try {
             $this->configSmtp($request);
             
+            /** @var Entidade $entidade */
             $entidade = Entidade::find(Session::get('entidade_id'));
             
+            /** @phpstan-ignore-next-line */
             if (!count($entidade->emails)) {
                 abort(400, 'Emails de Responsáveis pelo SIAPE não configurados');
             }
             
+            /** @phpstan-ignore-next-line */
             $relatoDto->emails = $entidade->emails->pluck('email')->all();
             
             Mail::to($relatoDto->emails)->send(new SolicitarAjusteLotacaoMail($relatoDto));
@@ -117,6 +126,9 @@ class RelatoController extends ControllerBase
     }
 
 
+    /**
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     */
     public function confirmar(Request $request, $email, $nome) {
         try {
     

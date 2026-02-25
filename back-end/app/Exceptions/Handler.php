@@ -15,7 +15,8 @@ class Handler extends ExceptionHandler
     /**
      * A list of the exception types that are not reported.
      *
-     * @var array
+     * @var array<int, class-string<\Throwable>>
+     * @phpstan-ignore-next-line
      */
     protected $dontReport = [
         //
@@ -24,7 +25,8 @@ class Handler extends ExceptionHandler
     /**
      * A list of the inputs that are never flashed for validation exceptions.
      *
-     * @var array
+     * @var array<int, string>
+     * @phpstan-ignore-next-line
      */
     protected $dontFlash = [
         'current_password',

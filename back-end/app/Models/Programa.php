@@ -12,6 +12,39 @@ use App\Models\Documento;
 use App\Models\TipoDocumento;
 use App\Models\ProgramaParticipante;
 
+/**
+ * @property string $nome
+ * @property string $normativa
+ * @property string $link_normativa
+ * @property string $link_autorizacao
+ * @property array $config
+ * @property \DateTime $data_inicio
+ * @property \DateTime $data_fim
+ * @property int $prazo_max_plano_entrega
+ * @property int $termo_obrigatorio
+ * @property string $periodicidade_consolidacao
+ * @property int $periodicidade_valor
+ * @property int $dias_tolerancia_consolidacao
+ * @property int $dias_tolerancia_avaliacao
+ * @property int $dias_tolerancia_recurso_avaliacao
+ * @property array $nota_padrao_avaliacao
+ * @property array $checklist_avaliacao_entregas_plano_entrega
+ * @property array $checklist_avaliacao_entregas_plano_trabalho
+ * @property int $registra_comparecimento
+ * @property int $plano_trabalho_assinatura_participante
+ * @property int $plano_trabalho_assinatura_gestor_unidade
+ * @property int $plano_trabalho_assinatura_gestor_lotacao
+ * @property int $plano_trabalho_assinatura_gestor_entidade
+ * @property array $plano_trabalho_criterios_avaliacao
+ * @property string $tipo_documento_tcr_id
+ * @property string $tipo_justificativa_id
+ * @property string $tipo_avaliacao_plano_trabalho_id
+ * @property string $tipo_avaliacao_plano_entrega_id
+ * @property string $tipo_avaliacao_id
+ * @property string $documento_id
+ * @property string $unidade_id
+ * @property string $template_tcr_id
+ */
 class Programa extends ModelBase
 {
   protected $table = 'programas';

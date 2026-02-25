@@ -23,7 +23,7 @@ class TenantBootstrapped extends TenantListenerBase
     /**
      * Handle the event.
      *
-     * @param  \App\Events\TenancyBootstrapped  $event
+     * @param  \Stancl\Tenancy\Events\TenancyBootstrapped  $event
      * @return void
      */
     public function handle(Events\TenancyBootstrapped $event)

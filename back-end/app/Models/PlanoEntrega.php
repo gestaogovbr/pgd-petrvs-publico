@@ -13,6 +13,25 @@ use App\Models\CadeiaValor;
 use App\Models\PlanoEntregaEntrega;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @property string $nome
+ * @property string $planejamento_id
+ * @property string $cadeia_valor_id
+ * @property string $unidade_id
+ * @property string $plano_entrega_id
+ * @property string $programa_id
+ * @property string $criacao_usuario_id
+ * @property \DateTime $data_inicio
+ * @property \DateTime|null $data_fim
+ * @property \DateTime|null $data_arquivamento
+ * @property \DateTime|null $avaliado_at
+ * @property-read Unidade $unidade
+ * @property-read Programa $programa
+ * @property-read Usuario $criacaoUsuario
+ * @property-read Planejamento|null $planejamento
+ * @property-read CadeiaValor|null $cadeiaValor
+ * @property-read PlanoEntrega|null $planoEntregaPai
+ */
 class PlanoEntrega extends ModelBase
 {
     protected $table = 'planos_entregas';
@@ -96,24 +115,9 @@ class PlanoEntrega extends ModelBase
     }
 
     // Belongs
-    public function planejamento()
-    {
-        return $this->belongsTo(Planejamento::class);
-    }  //nullable
-
-    public function cadeiaValor()
-    {
-        return $this->belongsTo(CadeiaValor::class);
-    }    //nullable
-
     public function unidade()
     {
         return $this->belongsTo(Unidade::class);
-    }
-
-    public function criador()
-    {
-        return $this->belongsTo(Usuario::class, 'criacao_usuario_id');
     }
 
     public function programa()
@@ -121,15 +125,35 @@ class PlanoEntrega extends ModelBase
         return $this->belongsTo(Programa::class);
     }
 
+    public function criacaoUsuario()
+    {
+        return $this->belongsTo(Usuario::class, 'criacao_usuario_id');
+    }
+
+    public function criador()
+    {
+        return $this->belongsTo(Usuario::class, 'criacao_usuario_id');
+    }
+
+    public function planejamento()
+    {
+        return $this->belongsTo(Planejamento::class);
+    }
+
+    public function cadeiaValor()
+    {
+        return $this->belongsTo(CadeiaValor::class);
+    }
+
     public function planoEntregaSuperior()
     {
         return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id');
-    } //nullable
+    }
 
     public function avaliacao()
     {
         return $this->belongsTo(Avaliacao::class);
-    }  //nullable
+    }
 
     public function getAuditRelations(): array
     {

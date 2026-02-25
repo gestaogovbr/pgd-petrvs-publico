@@ -167,6 +167,14 @@ class PlanoEntregaController extends ControllerBase
         }
     }
 
+    /**
+     * @param string $action
+     * @param Request $request
+     * @param mixed $service
+     * @param mixed $unidade
+     * @param Usuario $usuario
+     * @return void
+     */
     public function checkPermissions($action, $request, $service, $unidade, $usuario)
     {
         $usuarioService = new UsuarioService();
@@ -253,7 +261,7 @@ class PlanoEntregaController extends ControllerBase
                     - sugerir arquivamento automático (vide RI_PENT_A);
                 */
                 $data = $request->validate(['id' => ['required'], 'arquivar' => ['required']]);
-                $unidadePlano = PlanoEntrega::find($data["id"])->unidade;
+                $unidadePlano = PlanoEntrega::findOrFail($data["id"])->unidade;
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
                 $condition1 = $condicoes['gestorUnidadePaiUnidadePlano'];
                 $condition2 = !empty($unidadePlano->id) && $usuarioService->isIntegrante('AVALIADOR_PLANO_ENTREGA', $unidadePlano->id);
@@ -291,7 +299,7 @@ class PlanoEntregaController extends ControllerBase
                 - possuir a atribuição de AVALIADOR DE PLANOS DE ENTREGAS para a Unidade do plano (Unidade B);
                 */
                 $data = $request->validate(['id' => ['required']]);
-                $unidadePlano = PlanoEntrega::find($data["id"])->unidade;
+                $unidadePlano = PlanoEntrega::findOrFail($data["id"])->unidade;
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
                 $condition1 = $condicoes['gestorUnidadePaiUnidadePlano'];
                 $condition2 = $condicoes['unidadePaiUnidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_CANC_AVAL");
@@ -328,7 +336,7 @@ class PlanoEntregaController extends ControllerBase
                 - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B);
                 */
                 $data = $request->validate(['id' => ['required']]);
-                $unidadePlano = PlanoEntrega::find($data["id"])->unidade;
+                $unidadePlano = PlanoEntrega::findOrFail($data["id"])->unidade;
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
                 $condition1 = $condicoes['planoAtivo'];
                 $condition2 = $condicoes['gestorUnidadePaiUnidadePlano'];
@@ -365,7 +373,7 @@ class PlanoEntregaController extends ControllerBase
                 - A homologação do plano de entregas não se aplica à Unidade instituidora, ou seja, os planos de entregas vinculados a unidades que sejam instituidoras não precisam ser homologados (RN_PENT_AG).
                 */
                 $data = $request->validate(['id' => ['required']]);
-                $unidadePlano = PlanoEntrega::find($data["id"])->unidade;
+                $unidadePlano = PlanoEntrega::findOrFail($data["id"])->unidade;
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
                 $condition1 = $condicoes['planoHomologando'];
                 $condition2 = $condicoes['gestorUnidadePaiUnidadePlano'];

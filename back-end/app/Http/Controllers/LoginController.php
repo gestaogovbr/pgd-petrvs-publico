@@ -28,12 +28,13 @@ class LoginController extends Controller
     {
         $with = ["feriados", "gestor", "gestorSubstituto"];
         $entidadeId = $session ? $request->session()->get('entidade_id') : null;
+        /** @phpstan-ignore-next-line */
         $entidade   = $entidadeId ? Entidade::with($with)->find($entidadeId) : null;
 
         $sigla = $request->has('entidade') ? $request->input('entidade') : ($request->headers->has("X-Entidade") ? $request->headers->get("X-Entidade") : config("petrvs")["entidade"]);
         if (empty($entidade) && !empty($sigla)) {
+            /** @phpstan-ignore-next-line */
             $entidade = Entidade::with($with)->where("sigla", $sigla)->first();
-            Log::alert("entidade ::" . $sigla, [is_null($entidade)]);
             $request->session()->put("entidade_id", $entidade->id);
         }
         return $entidade;
@@ -48,6 +49,7 @@ class LoginController extends Controller
             }
             $entidadeId = $request->session()->has("entidade_id") ? $request->session()->get("entidade_id") : null;
             $usuario = Usuario::where("id", $usuario->id)->with([
+                /** @phpstan-ignore-next-line */
                 "areasTrabalho" => function ($query) use ($entidadeId) {
                     $query->with(["unidade.gestor.usuario", "unidade.gestoresSubstitutos.usuario", "unidade.gestoresDelegados.usuario", "unidade.cidade", "unidade.planosEntrega", "unidade.unidadePai.planosEntrega", "atribuicoes"])->whereHas('unidade', function ($query) use ($entidadeId) {
                         return  $query->where('entidade_id', '=', $entidadeId);
@@ -78,7 +80,7 @@ class LoginController extends Controller
     /**
      * Retorna o usuário logado
      *
-     * @return App\Models\Usuario | null
+     * @return \App\Models\Usuario | null
      */
     public static function loggedUser(): ?Usuario
     {
@@ -99,7 +101,7 @@ class LoginController extends Controller
      * Seleciona Unidade Atual
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function selecionaUnidade(Request $request, FirebaseAuthService $auth)
     {
@@ -158,7 +160,7 @@ class LoginController extends Controller
      * Obtem horário da unidade atual do usuário logado (considerando UTC pelo código IBGE)
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function horarioUnidade(Request $request)
     {
@@ -182,7 +184,7 @@ class LoginController extends Controller
      * Logout
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function logout(Request $request, FirebaseAuthService $auth)
     {
@@ -209,7 +211,7 @@ class LoginController extends Controller
      * Handle an authentication attempt.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function authenticateSession(Request $request)
     {
@@ -258,7 +260,7 @@ class LoginController extends Controller
      * Handle an authentication attempt.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function authenticateUserPassword(Request $request, FirebaseAuthService $auth)
     {
@@ -288,7 +290,7 @@ class LoginController extends Controller
      * Handle an authentication attempt.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function authenticateFirebaseToken(Request $request, FirebaseAuthService $auth)
     {
@@ -323,7 +325,7 @@ class LoginController extends Controller
      * Handle an authentication attempt.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function authenticateGoogleToken(Request $request, GoogleService $auth)
     {
@@ -360,7 +362,7 @@ class LoginController extends Controller
      * Handle an authentication attempt.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function authenticateApiSession(Request $request)
     {
@@ -383,7 +385,7 @@ class LoginController extends Controller
      * Handle an authentication attempt.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function authenticateApiUserPassword(Request $request, FirebaseAuthService $auth)
     {
@@ -413,7 +415,7 @@ class LoginController extends Controller
      * Handle an authentication attempt.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function authenticateApiFirebaseToken(Request $request, FirebaseAuthService $auth)
     {
@@ -495,7 +497,7 @@ class LoginController extends Controller
      * Verify an Sactum token
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function validateApiToken(Request $request)
     {
@@ -592,7 +594,7 @@ class LoginController extends Controller
         return Socialite::driver('govbr');
     }
 
-    function getConfigGovBr($url_dinamica_callback = null, $dados): \SocialiteProviders\Manager\Config
+    function getConfigGovBr($url_dinamica_callback, $dados): \SocialiteProviders\Manager\Config
     {
         return new \SocialiteProviders\Manager\Config(
             config("services.govbr.client_id"),

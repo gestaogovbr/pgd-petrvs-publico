@@ -21,7 +21,7 @@ class Audit extends Model implements AuditableContract
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $fillable = [
         'user_id',       // Usuário que realizou a alteração
@@ -39,8 +39,6 @@ class Audit extends Model implements AuditableContract
     protected $appends = ['details', 'performed_by', 'table_type'];
     /**
      * The attributes that should be cast to native types.
-     *
-     * @var array
      */
     protected $casts = [
         'old_values' => 'array',
@@ -49,6 +47,7 @@ class Audit extends Model implements AuditableContract
 
     /**
      * Relationship with User model.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()
     {

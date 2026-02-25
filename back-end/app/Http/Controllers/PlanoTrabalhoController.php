@@ -187,6 +187,14 @@ class PlanoTrabalhoController extends ControllerBase {
         }
     }
 
+    /**
+     * @param string $action
+     * @param Request $request
+     * @param mixed $service
+     * @param mixed $unidade
+     * @param Usuario $usuario
+     * @return void
+     */
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'QUERY':

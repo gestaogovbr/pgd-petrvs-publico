@@ -106,7 +106,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     if ($consolidacaoData === null) {
       throw new \RuntimeException('Consolidação não encontrada para o ID informado');
     }
-
+    
     return [
       'programa' => $consolidacaoData->programa,
       'planoTrabalho' => $consolidacaoData->planoTrabalho,

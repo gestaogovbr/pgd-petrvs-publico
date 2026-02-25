@@ -30,6 +30,7 @@ final class RepositoryServiceProvider extends ServiceProvider
             PlanoTrabalhoConsolidacaoReadRepositoryContract::class,
             EloquentPlanoTrabalhoConsolidacaoReadRepository::class,
         );
+
     }
 
     public function boot(): void

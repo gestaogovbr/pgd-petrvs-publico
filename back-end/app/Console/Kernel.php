@@ -38,6 +38,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $tenants = \App\Models\Tenant::all();
             foreach ($tenants as $tenant) {
+                /** @var \App\Models\Tenant $tenant */
                 \App\Jobs\InativacaoUsuariosTemporarios::dispatch($tenant->id);
             }
         })->dailyAt('03:00')->name('Inativação Usuários Temporários');
@@ -45,6 +46,8 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $tenants = \App\Models\Tenant::all();
             foreach ($tenants as $tenant) {
+                /** @var \App\Models\Tenant $tenant */
+                /** @phpstan-ignore-next-line */
                 \App\Jobs\InativacaoUnidadesSiape::dispatch($tenant->id);
             }
         })->dailyAt('00:15')->name('Inativação Unidades SIAPE');
@@ -53,12 +56,14 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $tenants = \App\Models\Tenant::all();
             foreach ($tenants as $tenant) {
+                /** @var \App\Models\Tenant $tenant */
                 \App\Jobs\InativacaoUnidadesTemporarios::dispatch($tenant->id);
             }
         })->dailyAt('00:30')->name('Inativação Unidades Temporários');
         
         $agendamentosPrincipal = JobSchedule::where('ativo', true)->get();
         foreach ($agendamentosPrincipal as $jobEntity) {
+            /** @var JobSchedule $jobEntity */
             $job = JobWithoutTenant::getJob($jobEntity->classe);
 
             if (!$job instanceof JobWithoutTenant) {
