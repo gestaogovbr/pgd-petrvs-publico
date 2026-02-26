@@ -669,6 +669,10 @@ class UsuarioService extends ServiceBase
     }
 
     public function pendenciasChefe(){
+      //Datas de modificação de regra
+      $dataAlteracaoRegraPT = '01/10/2025';
+      $dataAlteracaoRegraPE = '12/01/2026';
+
       // usuário logado
       $diasAvaliacaoRegistroExecucao = 21;
       $diasAvaliacaoPlanosEntregas = 31;
@@ -686,9 +690,10 @@ class UsuarioService extends ServiceBase
       // Registros de execução que precisam ser avaliados após o 21º dia da conclusão
       // FIXME: Adicionar constante para os dias de avaliação
       $registrosExecucao = PlanoTrabalhoConsolidacao::where('status', StatusEnum::CONCLUIDO)
-      ->whereHas('planoTrabalho', function($q) use ($unidadesGerenciadasIds, $usuario_id) {
+      ->whereHas('planoTrabalho', function($q) use ($unidadesGerenciadasIds, $usuario_id, $dataAlteracaoRegraPT) {
         $q->whereIn('unidade_id', $unidadesGerenciadasIds)
-          ->where('usuario_id', '!=', $usuario_id);
+          ->where('usuario_id', '!=', $usuario_id)
+          ->where('created_at', '>', $dataAlteracaoRegraPT);
       })
       ->whereHas('latestStatus', function($q) use ($diasAvaliacaoRegistroExecucao) {
         $q->where('codigo', StatusEnum::CONCLUIDO->value)
@@ -731,8 +736,9 @@ class UsuarioService extends ServiceBase
       $entregasSemProgresso = PlanoEntregaEntrega::query()
         ->whereHas('planoEntrega.unidade', fn($q) => $q->whereIn('id', $unidadesGerenciadasIds))
         ->doesntHave('progressos')
-        ->whereHas('planoEntrega', function($q) use ($diasAvaliacaoPlanosEntregas) {
+        ->whereHas('planoEntrega', function($q) use ($diasAvaliacaoPlanosEntregas, $dataAlteracaoRegraPE) {
           $q->whereNotIn('status', [StatusEnum::SUSPENSO, StatusEnum::CANCELADO])
+            ->where('created_at', '>', $dataAlteracaoRegraPE)
             ->where('data_fim', '<=', now()->subDays($diasAvaliacaoPlanosEntregas));
         })
         ->selectRaw('planos_entregas_entregas.plano_entrega_id, COUNT(*) as total_sem_progresso')
@@ -750,8 +756,9 @@ class UsuarioService extends ServiceBase
       ->whereHas('unidade', function($q) use ($unidadesFilhasIds) {
         $q->whereIn('id', $unidadesFilhasIds);
       })
-      ->whereHas('latestStatus', function($q) use ($diasAvaliacaoPlanosEntregas) {
+      ->whereHas('latestStatus', function($q) use ($diasAvaliacaoPlanosEntregas, $dataAlteracaoRegraPE) {
         $q->where('codigo', StatusEnum::CONCLUIDO->value)
+          ->where('created_at', '>', $dataAlteracaoRegraPE)
           ->where('created_at', '<', now()->subDays($diasAvaliacaoPlanosEntregas));
       })
       ->select([
