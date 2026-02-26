@@ -73,6 +73,7 @@ class UsuarioConfig
 /**
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $areasTrabalho
  * @property-read \App\Models\UnidadeIntegrante|null $lotacao
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $lotacoes
  * @property-read \App\Models\Perfil|null $perfil
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $unidadesIntegrantes
  * @property-read \App\Models\PlanoTrabalho|null $ultimoPlanoTrabalho
