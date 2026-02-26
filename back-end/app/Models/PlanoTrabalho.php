@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @property string $usuario_id
@@ -33,12 +34,18 @@ use Illuminate\Database\Eloquent\Relations\HasOneThrough;
  * @property \DateTime|null $data_arquivamento
  * @property \DateTime|null $avaliado_at
  * @property array $criterios_avaliacao
+ * @property mixed $_metadata
  * @property-read Usuario $usuario
  * @property-read Programa $programa
  * @property-read Unidade $unidade
  * @property-read TipoModalidade $tipoModalidade
  * @property-read Usuario|null $criacaoUsuario
  * @property-read Documento|null $documento
+ * @property-read Collection|PlanoTrabalhoConsolidacao[] $consolidacoes
+ * @property-read Collection|PlanoTrabalhoEntrega[] $entregas
+ * @property-read Collection|Documento[] $documentos
+ * @property-read Collection|Atividade[] $atividades
+ * @property-read Collection|Ocorrencia[] $ocorrencias
  */
 class PlanoTrabalho extends ModelBase
 {

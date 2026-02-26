@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\IntegracaoServidorRepository;
 use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
@@ -29,6 +30,10 @@ use App\Facades\SiapeLog;
 /**
  * @property UtilService $UtilService
  * @property IntegracaoGestorService $integracaoGestorService
+ * @property IntegracaoSiapeService $IntegracaoSiapeService
+ * @property ProcessadorAtualizacaoDadosSiapeService $processadorAtualizacaoDadosSiapeService
+ * @property PerfilService $perfilService
+ * @property UnidadeService $unidadeService
  */
 class IntegracaoService extends ServiceBase
 {
@@ -102,6 +107,27 @@ class IntegracaoService extends ServiceBase
     return $resultado;
   }
 
+  /**
+   * @param object{
+   *   id_servo: string,
+   *   codigo_antigo: string|null,
+   *   nomeuorg: string,
+   *   nome_antigo: string|null,
+   *   siglauorg: string,
+   *   sigla_antiga: string|null,
+   *   pai_servo: string,
+   *   id_pai_antigo: string|null,
+   *   id: string|null,
+   *   path_antigo: string|null,
+   *   cidade_id: string|null,
+   *   cidade_antiga: string|null,
+   *   unidade_pai_id: string|null,
+   *   codigo_pai_antigo: string|null,
+   *   path_pai: string|null,
+   *   data_modificacao_siape: string,
+   *   data_modificacao_und: string|null
+   * } $unidade
+   */
   public function buscaOuInserePai($unidade, $entidade_id)
   {
     if (empty($unidade->pai_servo)) {
@@ -115,6 +141,27 @@ class IntegracaoService extends ServiceBase
     }
   }
 
+  /**
+   * @param object{
+   *   id_servo: string,
+   *   codigo_antigo: string|null,
+   *   nomeuorg: string,
+   *   nome_antigo: string|null,
+   *   siglauorg: string,
+   *   sigla_antiga: string|null,
+   *   pai_servo: string,
+   *   id_pai_antigo: string|null,
+   *   id: string|null,
+   *   path_antigo: string|null,
+   *   cidade_id: string|null,
+   *   cidade_antiga: string|null,
+   *   unidade_pai_id: string|null,
+   *   codigo_pai_antigo: string|null,
+   *   path_pai: string|null,
+   *   data_modificacao_siape: string,
+   *   data_modificacao_und: string|null
+   * } $unidade
+   */
   public function deepReplaceUnidades($unidade, $entidade_id)
   {
     // Prepara os principais atributos da Unidade.
@@ -183,7 +230,7 @@ class IntegracaoService extends ServiceBase
 
       // Atualiza os paths dos filhos.
       $antes = $unidade->path_antigo . "/" . $unidade->id;
-      if (DB::select("select count(*) from unidades where path = '" . $antes . "'") > 0) {
+      if (!empty(DB::select("select count(*) from unidades where path = '" . $antes . "'"))) {
         $depois = $values[':path'] . "/" . $unidade->id;
         $like = $antes . "%";
 
@@ -326,11 +373,10 @@ class IntegracaoService extends ServiceBase
     if (!empty($inputs['unidades']) && $inputs['unidades'] && !empty($entidade_id)) {
       SiapeLog::info("Iniciando sincronização de Unidades");
       try {
-        $uos = $this->IntegracaoSiapeService->retornarUorgs()["uorg"];
-        SiapeLog::info("Concluída a fase de obtenção dos dados das unidades informados pelo SIAPE!.....");
-
-        DB::transaction(function () use (&$uos, &$self) {
-          foreach ($uos as $uo) {
+        $unidades = $this->IntegracaoSiapeService->retornarUorgs()["uorg"];
+        if (count($unidades) > 0) {
+            DB::transaction(function () use (&$unidades) {
+                foreach ($unidades as $uo) {
             $uorg_codigo = UtilService::valueOrDefault($uo["id_servo"]);
             $uorg_ativa = UtilService::valueOrDefault($uo["ativa"]) == 'true';
 
@@ -426,6 +472,7 @@ class IntegracaoService extends ServiceBase
             }
           }
         });
+      }
 
         /*
         Remover uorgs que não existem mais no SIAPE/WSO2, mas ainda constam na tabela integracao_unidades.
@@ -433,9 +480,9 @@ class IntegracaoService extends ServiceBase
         */
         $unidades_siape =  array_map(function ($uorg) {
           if (!empty($uorg['id_servo'])) return $uorg['id_servo'];
-        }, $uos);
+        }, $unidades);
 
-        $unidades_integracao = DB::table("integracao_unidades")->get('id_servo')->values('id_servo')->toArray();
+        $unidades_integracao = DB::table("integracao_unidades")->pluck('id_servo')->toArray();
 
         $unidades_integracao = array_map(function ($uorg) {
           if (!empty($uorg->id_servo)) return $uorg->id_servo;
@@ -511,7 +558,7 @@ class IntegracaoService extends ServiceBase
         $DbResultAtivadas = $this->ativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NULL WHERE data_inativacao IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NULL);");
 
         $this->result['unidades']['Resultado'] = 'Sucesso';
-        array_push($this->result['unidades']['Observações'], 'Na tabela Unidades do Petrvs constam agora ' . DB::table('unidades')->get()->count() . ' unidades!');
+        array_push($this->result['unidades']['Observações'], 'Na tabela Unidades do Petrvs constam agora ' . DB::table('unidades')->count() . ' unidades!');
         $this->result['unidades']['Observações'] = [...$this->result['unidades']['Observações'], ...array_filter([
           count($this->unidadesInseridas) . (count($this->unidadesInseridas) == 1 ? ' unidade nova informada pelo SIAPE foi inserida no Petrvs!' : ' unidades novas informadas pelo SIAPE foram inseridas no Petrvs!'),
           count($this->paisAlterados) . (count($this->paisAlterados) == 1 ? ' unidade sofreu alteração na hierarquia e possivelmente em outros dados e foi atualizada!' : ' unidades sofreram alteração na hierarquia e possivelmente em outros dados e foram atualizadas!'),
@@ -539,8 +586,8 @@ class IntegracaoService extends ServiceBase
         DB::transaction(function () use (
           &$servidores,
         ) {
-
-          $integracaoServidoresRepository = new IntegracaoServidorRepository(new IntegracaoServidor);
+          $integracaoServidorProcessar = null;
+          $integracaoServidoresRepository = app(IntegracaoServidorRepository::class);
           try {
             $integracaoServidorProcessar =  new Integracao($integracaoServidoresRepository);
           } catch (Throwable $e) {
@@ -608,8 +655,11 @@ class IntegracaoService extends ServiceBase
   /**
    * Cria uma lotação para o Usuário, se seus dados já existirem na tabela integracao_servidores,
    * e se ela já constar na tabela Unidades. Salva o novo usuário, independentemente da lotação
+   * 
+   * @param Usuario $usuario
+   * @param UnidadeIntegrante $lotacao
    */
-  public function salvarUsuarioLotacao(&$usuario, &$lotacao)
+  public function salvarUsuarioLotacao(Usuario &$usuario, UnidadeIntegrante &$lotacao)
   {
     if ($this->fillUsuarioWithSiape($usuario, $lotacao)) { //se quem está logado existe na tabela integracao_servidores
       $perfil_nivel_5_id = $this->nivelAcessoService->getPerfilParticipante()->id;

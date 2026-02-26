@@ -18,11 +18,11 @@ class HistoricoAtividadeInterna extends ModelBase
   ];
 
   // Belongs
-  public function curriculumProfissional()
+  public function curriculumProfissional(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(CurriculumProfissional::class);
   }
-  public function capacidadeTecnica()
+  public function capacidadeTecnica(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(CapacidadeTecnica::class);
   }

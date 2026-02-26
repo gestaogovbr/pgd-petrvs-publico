@@ -46,6 +46,12 @@ use App\Traits\AutoUuid;
  * @property \DateTime|null $data_modificacao
  * @property \DateTime|null $data_ativacao_temporaria
  * @property string|null $justificativa_ativacao_temporaria
+ * @property string $horario_trabalho_inicio
+ * @property string $horario_trabalho_fim
+ * @property string $horario_trabalho_intervalo
+ * @property-read UnidadeIntegrante|null $gestor
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $gestoresSubstitutos
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $gestoresDelegados
  * @property-read Unidade|null $unidadePai
  * @property-read Entidade $entidade
  * @property-read Cidade|null $cidade
@@ -213,16 +219,25 @@ class Unidade extends ModelBase
     }
 
     // Others relationships
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function gestor()
     {
         return $this->hasOne(UnidadeIntegrante::class)->has('gestor');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function gestoresSubstitutos()
     {
         return $this->hasMany(UnidadeIntegrante::class)->has('gestorSubstituto');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function gestoresDelegados()
     {
         return $this->hasMany(UnidadeIntegrante::class)->has('gestorDelegado');

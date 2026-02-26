@@ -19,6 +19,7 @@ use App\Models\Favorito;
 use App\Models\Integracao;
 use App\Models\IntegracaoServidor;
 use App\Models\Notificacao;
+use App\Models\TipoModalidadeSiape;
 use App\Models\NotificacaoConfig;
 use App\Models\NotificacaoDestinatario;
 use App\Models\NotificacaoWhatsapp;
@@ -64,6 +65,7 @@ use ReflectionObject;
 
 class UsuarioConfig
 {
+    public $notificacoes;
 }
 
 
@@ -334,7 +336,7 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasOne(ProgramaParticipante::class)->latestOfMany();
     }
 
-    public function integracoes()
+    public function integracoes(): HasMany
     {
         return $this->hasMany(Integracao::class);
     }
@@ -411,6 +413,9 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasMany(UnidadeIntegrante::class)->has('gestorDelegado');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function lotacao()
     {
         return $this->hasOne(UnidadeIntegrante::class)->has('lotado');

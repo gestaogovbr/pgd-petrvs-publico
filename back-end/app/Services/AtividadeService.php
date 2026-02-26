@@ -32,20 +32,20 @@ use Carbon\Carbon;
 use Throwable;
 
 /**
- * @property \App\Services\UsuarioService $usuarioService
- * @property \App\Services\StatusService $statusService
- * @property \App\Services\NotificacoesService $notificacoesService
- * @property \App\Services\CalendarioService $calendarioService
- * @property \App\Services\UnidadeService $unidadeService
+ * @property UsuarioService $usuarioService
+ * @property StatusService $statusService
+ * @property NotificacoesService $notificacoesService
+ * @property CalendarioService $calendarioService
+ * @property UnidadeService $unidadeService
  */
 class AtividadeService extends ServiceBase
 {
     public $unidades = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
 
     public $joinable = [
-        "tipo_atividade",
-        "plano_trabalho_entrega.plano_entrega_entrega",
-        "tarefas.tipo_tarefa",
+        "tipoAtividade",
+        "planoTrabalhoEntrega.planoEntregaEntrega",
+        "tarefas.tipoTarefa",
         "demandante:id,nome,apelido,email,url_foto",
         "pausas",
         "usuario:id,nome,matricula,apelido,email,url_foto",
@@ -53,11 +53,11 @@ class AtividadeService extends ServiceBase
         "comentarios.usuario:id,nome,apelido,email,url_foto",
         "tarefas.tarefa",
         "tarefas.comentarios.usuario:id,nome,apelido,email,url_foto",
-        "plano_trabalho.tipo_modalidade",
-        "plano_trabalho.entregas.entrega:id,nome",
+        "planoTrabalho.tipoModalidade",
+        "planoTrabalho.entregas.entrega:id,nome",
         "usuario.afastamentos",
-        "usuario.planos_trabalho.entregas.entrega:id,nome",
-        "usuario.planos_trabalho.tipo_modalidade:id,nome",
+        "usuario.planosTrabalho.entregas.entrega:id,nome",
+        "usuario.planosTrabalho.tipoModalidade:id,nome",
         "reacoes.usuario:id,nome,apelido"
     ];
 
@@ -727,15 +727,20 @@ class AtividadeService extends ServiceBase
         }
     }
 
+    /**
+     * @param PlanoEntregaEntrega|null $entregaPlanoEntrega
+     */
     public function recuperarEntregasSuperiores($entregaPlanoEntrega = null)
     {
         $result = [];
         if(!empty($entregaPlanoEntrega)) {
             $entregaPlanoEntrega->entrega;
             $result = [$entregaPlanoEntrega];
+            /** @var PlanoEntregaEntrega $atual */
             $atual = $entregaPlanoEntrega;
             while(!empty($atual->entrega_pai_id)) {
                 $result[] = $atual->entregaPai;
+                /** @var PlanoEntregaEntrega $atual */
                 $atual = $atual->entregaPai;
                 $atual->entrega;
             }
@@ -744,6 +749,9 @@ class AtividadeService extends ServiceBase
 
     }
 
+    /**
+     * @param iterable<PlanoEntregaEntrega> $entregas
+     */
     public function recuperarObjetivosProcessosParaEntregas($entregas)
     {
         $objetivosIds = [];
@@ -761,18 +769,22 @@ class AtividadeService extends ServiceBase
 
        foreach ($planejamentoObjetivos as $objetivo) {
             $objetivos = [$objetivo];
+            /** @var PlanejamentoObjetivo $atual */
             $atual = $objetivo;
             while(!empty($atual->objetivo_pai_id)) {
                 $objetivos[] = $atual->objetivoPai;
+                /** @var PlanejamentoObjetivo $atual */
                 $atual = $atual->objetivoPai;
             }        
         }
 
         foreach ($planejamnetoProcessos as $processo) {
             $processos = [$processo];
+            /** @var CadeiaValorProcesso $atual */
             $atual = $processo;
             while(!empty($atual->processo_pai_id)) {
                 $processos[] = $atual->processoPai;
+                /** @var CadeiaValorProcesso $atual */
                 $atual = $atual->processoPai;
             }        
         }

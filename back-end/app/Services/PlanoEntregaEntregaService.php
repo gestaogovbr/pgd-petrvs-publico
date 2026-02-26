@@ -8,9 +8,18 @@ use App\Models\CadeiaValorProcesso;
 use App\Models\PlanejamentoObjetivo;
 use App\Models\PlanoEntregaEntrega;
 use App\Models\PlanoEntregaEntregaProgresso;
+use App\Services\PlanoEntregaService;
+use App\Services\PlanoTrabalhoService;
+use App\Services\PlanoTrabalhoEntregaService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 
+/**
+ * @property PlanoEntregaService $planoEntregaService
+ * @property PlanoTrabalhoService $planoTrabalhoService
+ * @property PlanoTrabalhoEntregaService $planoTrabalhoEntregaService
+ * @property PlanoEntregaEntregaService $planoEntregaEntregaService
+ */
 class PlanoEntregaEntregaService extends ServiceBase
 {
 

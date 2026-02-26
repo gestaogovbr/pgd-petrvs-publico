@@ -17,9 +17,25 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use DateTime;
 use Illuminate\Support\Facades\Log;
+use App\Services\NotificacoesService;
+use App\Services\PlanoTrabalhoEntregaService;
+use App\Services\PlanoTrabalhoService;
+use App\Services\StatusService;
+use App\Services\UnidadeService;
+use App\Services\UsuarioService;
 use Illuminate\Support\Carbon;
 use Throwable;
 
+/**
+ * @property StatusService $statusService
+ * @property PlanoTrabalhoService $planoTrabalhoService
+ * @property NotificacoesService $notificacoesService
+ * @property UsuarioService $usuarioService
+ * @property UsuarioService $usuario
+ * @property UnidadeService $unidadeService
+ * @property UnidadeService $unidade
+ * @property PlanoTrabalhoEntregaService $planoTrabalhoEntregaService
+ */
 class PlanoEntregaService extends ServiceBase
 {
     public $unidades = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */

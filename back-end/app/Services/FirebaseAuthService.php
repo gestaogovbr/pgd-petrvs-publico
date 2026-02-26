@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use Throwable;
+use App\Models\Usuario;
+use Illuminate\Support\Facades\Hash;
 
 class FirebaseAuthService
 {

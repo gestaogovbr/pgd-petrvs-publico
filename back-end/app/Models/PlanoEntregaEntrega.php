@@ -14,7 +14,12 @@ use App\Models\Reacao;
 
 /**
  * @property PlanoEntrega $planoEntrega
+ * @property Entrega|null $entrega
  * @property Unidade $unidade
+ * @property PlanoEntregaEntrega|null $entregaPai
+ * @property \Illuminate\Database\Eloquent\Collection|PlanoEntregaEntregaObjetivo[] $objetivos
+ * @property \Illuminate\Database\Eloquent\Collection|PlanoEntregaEntregaProcesso[] $processos
+ * @property \Illuminate\Database\Eloquent\Collection|PlanoEntregaEntregaProgresso[] $progressos
  */
 class PlanoEntregaEntrega extends ModelBase
 {

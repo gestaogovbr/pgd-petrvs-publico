@@ -118,6 +118,24 @@ class Programa extends ModelBase
     return $this->belongsTo(TipoDocumento::class, 'tipo_documento_tcr_id');
   }
 
+  /**
+   * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+   */
+  public function tipoAvaliacaoPlanoTrabalho()
+  {
+    return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_plano_trabalho_id');
+  }
+
+  public function tipoAvaliacaoPlanoEntrega()
+  {
+    return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_plano_entrega_id');
+  }
+
+  public function tipoAvaliacao()
+  {
+    return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_id');
+  }
+
   public function templateTcr()
   {
     return $this->belongsTo(Template::class, 'template_tcr_id');

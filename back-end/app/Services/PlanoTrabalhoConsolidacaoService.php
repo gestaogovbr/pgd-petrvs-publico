@@ -30,7 +30,11 @@ use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Throwable;
+use App\Services\StatusService;
 
+/**
+ * @property StatusService $statusService
+ */
 class PlanoTrabalhoConsolidacaoService extends ServiceBase
 {
   private PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository;
@@ -124,7 +128,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
    * Reconstroi o Afastameto para ter a aparência de quando a consolidação foi concluída
    * 
    * @param   array  $afastamento         Afastamento (Array) que se deseja atualizar
-   * @param   Consolidacao  $consolidacao Consolidacao
+   * @param   PlanoTrabalhoConsolidacao  $consolidacao Consolidacao
    * @return  array
    */
   public function buildAfastamentoConsolidacao($afastamento, $consolidacao)
@@ -146,7 +150,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
    * Reconstroi a Ocorrencia para ter a aparência de quando a consolidação foi concluída
    * 
    * @param   array  $ocorrencia          Ocorrencia (Array) que se deseja atualizar
-   * @param   Consolidacao  $consolidacao Consolidacao
+   * @param   PlanoTrabalhoConsolidacao  $consolidacao Consolidacao
    * @return  array
    */
   public function buildOcorrenciaConsolidacao($ocorrencia, $consolidacao)
@@ -168,7 +172,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
    * Reconstroi a Atividade para ter a aparência de quando a consolidação foi concluída
    * 
    * @param   array  $atividade          Atividade (Array) que se deseja atualizar
-   * @param   Consolidacao  $consolidacao Consolidacao
+   * @param   PlanoTrabalhoConsolidacao  $consolidacao Consolidacao
    * @return  array
    */
   public function buildAtividadeConsolidacao($atividade, $consolidacao)

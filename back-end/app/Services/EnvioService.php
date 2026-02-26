@@ -7,6 +7,9 @@ use App\Models\Error;
 use App\Services\ServiceBase;
 use DB;
 
+/**
+ * @property TenantConfigurationsService $TenantConfigurationsService
+ */
 class EnvioService extends ServiceBase {
 
     public function reiniciar() {
