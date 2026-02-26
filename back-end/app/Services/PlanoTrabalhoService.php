@@ -1013,7 +1013,7 @@ class PlanoTrabalhoService extends ServiceBase
      * Informa o status do plano de trabalho recebido como parâmetro.
      * O Plano de Trabalho precisa ser VÁLIDO.
      * @param string $status
-     * @param array $planoTrabalho
+     * @param array $plano
      */
     public function isPlano($status, $plano): bool
     {

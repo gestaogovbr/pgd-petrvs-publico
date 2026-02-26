@@ -314,6 +314,7 @@ TEXT;
         $unidadeId = $this->extractWhere($data, "unidade_id");
         $atribuicao = $this->extractWhere($data, "atribuicao");
 
+        $unidadeIds = [];
         if (isset($unidadeId[2])) {
             $unidadeIds = [$unidadeId[2]];
         }

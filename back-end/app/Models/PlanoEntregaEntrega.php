@@ -66,11 +66,11 @@ class PlanoEntregaEntrega extends ModelBase
   {
     return $this->hasMany(PlanoEntregaEntregaProgresso::class, 'plano_entrega_entrega_id');
   }
-  public function objetivos()
+  public function objetivos(): \Illuminate\Database\Eloquent\Relations\HasMany
   {
     return $this->hasMany(PlanoEntregaEntregaObjetivo::class, 'entrega_id');
   }  //ok
-  public function processos()
+  public function processos(): \Illuminate\Database\Eloquent\Relations\HasMany
   {
     return $this->hasMany(PlanoEntregaEntregaProcesso::class, 'entrega_id');
   }  //ok
@@ -95,11 +95,11 @@ class PlanoEntregaEntrega extends ModelBase
   {
     return $this->belongsTo(Entrega::class);
   }      //nullable
-  public function unidade()
+  public function unidade(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(Unidade::class, 'unidade_id');
   }
-  public function entregaPai()
+  public function entregaPai(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_pai_id');
   }        //nullable

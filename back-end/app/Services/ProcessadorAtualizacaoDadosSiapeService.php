@@ -11,10 +11,18 @@ use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
 use App\Services\UtilService;
+use App\Services\UsuarioService;
+use App\Services\UnidadeIntegranteService;
+use App\Services\IntegracaoService;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 use Throwable;
 
+/**
+ * @property UsuarioService $usuarioService
+ * @property UnidadeIntegranteService $unidadeIntegrante
+ * @property IntegracaoService $integracaoService
+ */
 class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
 {
     private int $chunkSize = 50;
@@ -188,10 +196,14 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
 
     }
 
+    /**
+     * @param \stdClass $inserirLotacao
+     * @return mixed
+     */
     private function salvarLotacaoUsuario($inserirLotacao)
     {   
         if (empty($inserirLotacao->unidade_id)) {
-            SiapeLog::info(sprintf("O servidor cpf #%s não tem unidade de exercicio ativa ou existente relacionada, não será alocado", $inserirLotacao['cpf']),[$inserirLotacao]);
+            SiapeLog::info(sprintf("O servidor cpf #%s não tem unidade de exercicio ativa ou existente relacionada, não será alocado", $inserirLotacao->cpf ?? 'N/A'),[$inserirLotacao]);
             return false;
         }
 
@@ -201,14 +213,15 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
             'atribuicoes' => [Atribuicao::LOTADO->value],
         ]);
 
+        $dbResult = null;
         try {
             $dbResult = $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
         } catch (Throwable $th) {
             report($th);
-            SiapeLog::error("IntegracaoService: Durante integração não foi possível alterar lotação!", [$dbResult, $vinculo]);
+            SiapeLog::error("IntegracaoService: Durante integração não foi possível alterar lotação!", [$vinculo]);
         }
         if (!isset($dbResult)) {
-            SiapeLog::error("IntegracaoService: Houve uma falha na tentantiva de alterar a lotação", [$dbResult, $vinculo]);
+            SiapeLog::error("IntegracaoService: Houve uma falha na tentantiva de alterar a lotação", [$vinculo]);
         } else
             return $dbResult;
             

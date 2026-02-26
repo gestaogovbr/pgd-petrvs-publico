@@ -9,6 +9,9 @@ use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\Atividade;
 
+/**
+ * @property Usuario $usuario
+ */
 class StatusJustificativa extends ModelBase
 {
   protected $table = 'status_justificativas';

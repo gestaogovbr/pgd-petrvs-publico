@@ -21,6 +21,7 @@ use App\Models\HistoricoLotacao;
 use App\Models\HistoricoFuncao;
 use App\Models\CurriculumProfissional;
 use App\Traits\AutoUuid;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property string $codigo
@@ -142,7 +143,7 @@ class Unidade extends ModelBase
         return $this->hasMany(PlanoEntregaEntrega::class);
     }
 
-    public function programas()
+    public function programas(): HasMany
     {
         return $this->hasMany(Programa::class);
     }

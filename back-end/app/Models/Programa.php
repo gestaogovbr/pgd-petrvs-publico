@@ -102,6 +102,16 @@ class Programa extends ModelBase
   ];
 
   // HasMany
+  public function planosTrabalho()
+  {
+      return $this->hasMany(PlanoTrabalho::class);
+  }
+
+  public function planosEntrega()
+  {
+      return $this->hasMany(PlanoEntrega::class);
+  }
+
   public function participantes()
   {
     return $this->hasMany(ProgramaParticipante::class);

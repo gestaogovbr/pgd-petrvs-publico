@@ -76,6 +76,11 @@ class UsuarioConfig
  * @property-read \App\Models\Perfil|null $perfil
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $unidadesIntegrantes
  * @property-read \App\Models\PlanoTrabalho|null $ultimoPlanoTrabalho
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Unidade[] $unidades
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $curadores
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $colaboracoes
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $gerenciasSubstitutas
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $gerenciasDelegadas
  */
 class Usuario extends Authenticatable implements AuditableContract
 {

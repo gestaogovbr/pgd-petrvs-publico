@@ -9,6 +9,17 @@ use App\Models\Usuario;
 
 /**
  * @property-read \App\Models\Unidade $unidade
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegranteAtribuicao[] $gestores
+ * @property-read \App\Models\UnidadeIntegranteAtribuicao|null $lotado
+ * @property-read \App\Models\UnidadeIntegranteAtribuicao|null $gestor
+ * @property-read \App\Models\UnidadeIntegranteAtribuicao|null $gestorSubstituto
+ * @property-read \App\Models\UnidadeIntegranteAtribuicao|null $gestorDelegado
+ * @property-read \App\Models\UnidadeIntegranteAtribuicao|null $curador
+ * @property-read \App\Models\UnidadeIntegranteAtribuicao|null $colaborador
+ * @property-read \App\Models\UnidadeIntegranteAtribuicao|null $avaliadorPlanoEntrega
+ * @property-read \App\Models\UnidadeIntegranteAtribuicao|null $avaliadorPlanoTrabalho
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegranteAtribuicao[] $atribuicoes
+ * @property-read \App\Models\Usuario $usuario
  */
 class UnidadeIntegrante extends ModelBase //Pivot //ModelBase
 {

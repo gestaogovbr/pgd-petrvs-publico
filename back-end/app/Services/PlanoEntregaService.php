@@ -13,6 +13,7 @@ use App\Models\PlanoEntregaEntrega;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Models\Programa;
 use App\Models\TipoAvaliacao;
+use App\Models\Avaliacao;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use DateTime;
@@ -70,6 +71,7 @@ class PlanoEntregaService extends ServiceBase
 
     public function extraStore($planoEntrega, $unidade, $action)
     {
+        /** @var \App\Models\PlanoEntrega $planoEntrega */
         $usuario = parent::loggedUser();
         switch ($action) {
             case ServiceBase::ACTION_INSERT:
@@ -217,7 +219,7 @@ class PlanoEntregaService extends ServiceBase
             $result["unidadePlanoEhLotacao"] = $this->usuario->isLotacao(null, $planoEntrega['unidade_id']);
             $result["unidadePaiUnidadePlanoEhLotacao"] = !empty($planoEntrega['unidade']['unidade_pai_id']) && $this->usuario->isLotacao(null, $planoEntrega['unidade']['unidade_pai_id']);
             $result["unidadePlanoEhAlgumaLotacaoUsuario"] = in_array($planoEntrega['unidade_id'], array_map(fn($u) => $u['id'], $this->usuario->loggedUser()->unidades->toArray()));
-            $result["unidadePlanoEhPaiAlgumaLotacaoUsuario"] = $this->usuario->loggedUser()->unidades->map(fn($u) => $u->id)->map(fn($ul) => Unidade::find($ul)->unidade_id)->contains($planoEntrega['unidade_id']);
+            $result["unidadePlanoEhPaiAlgumaLotacaoUsuario"] = $this->usuario->loggedUser()->unidades->map(fn($u) => $u->id)->map(fn($ul) => Unidade::find($ul)->unidade_pai_id)->contains($planoEntrega['unidade_id']);
             $result["unidadePlanoPossuiPlanoAtivoMesmoPeriodoPlanoPai"] = !!array_filter($planoEntrega['unidade']['planosEntrega'], fn($p) => $this->isPlano('ATIVO', $p) && !empty($planoEntrega) && !empty($planoEntregaPai) && UtilService::intersect($planoEntrega['data_inicio'], $planoEntrega['data_fim'], $planoEntregaPai->data_inicio, $planoEntregaPai->data_fim));
             $result["lotadoLinhaAscendenteUnidadePlano"] = $this->usuario->isLotadoNaLinhaAscendente($planoEntrega['unidade_id']);
             $result["unidadePlanoEstahLinhaAscendenteAlgumaLotacaoUsuario"] = in_array($planoEntrega['unidade_id'], array_values(array_unique(array_reduce(array_map(fn($ul) => $this->unidade->linhaAscendente($ul), array_map(fn($u) => $u['id'], $this->usuario->loggedUser()->unidades->toArray())), 'array_merge', array()))));
@@ -325,7 +327,7 @@ class PlanoEntregaService extends ServiceBase
     /**
      * Informa se o plano de entregas repassado como parâmetro está em curso.
      * Um Plano de Entregas está EM CURSO quando é um plano VÁLIDO e possui status ATIVO;
-     * @param PlanoEntrega $planoEntrega
+     * @param PlanoEntrega $plano
      */
     public function emCurso(PlanoEntrega $plano): bool
     {
@@ -351,7 +353,7 @@ class PlanoEntregaService extends ServiceBase
      * Informa o status do plano de entregas repassado como parâmetro.
      * O Plano de Entregas precisa ser VÁLIDO.
      * @param string $status
-     * @param array $planoEntrega
+     * @param array $plano
      */
     public function isPlano($status, $plano): bool
     {
@@ -362,7 +364,7 @@ class PlanoEntregaService extends ServiceBase
     /**
      * Informa se o plano de entregas repassado como parâmetro é um plano válido.
      * Um Plano de Entregas é válido se não foi deletado, nem arquivado e não está no status de cancelado.
-     * @param array $planoEntrega
+     * @param array $plano
      */
     public function isPlanoEntregaValido($plano): bool
     {
@@ -735,10 +737,10 @@ class PlanoEntregaService extends ServiceBase
     /**
      * Completa o processo de avaliação para o plano de entrega
      *
-     * @param Avanliacao $avaliacao Avaliacao
+     * @param Avaliacao $avaliacao Avaliacao
      * @return  void
      */
-    public function avaliar($avaliacao)
+    public function avaliar(Avaliacao $avaliacao)
     {
         $planoEntrega = $avaliacao->planoEntrega;
         $planoEntrega->avaliacao_id = $avaliacao->id;
