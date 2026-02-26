@@ -256,7 +256,7 @@ class ProcessaDadosSiapeBD
                 'dados' => $this->simpleXmlElementToArray($dadosUorg)
             ];
 
-            $dadosUnidades->processado = 1;
+            $dadosUnidades->processado = true;
             $dadosUnidades->save();
         }
 

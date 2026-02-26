@@ -1,106 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <checkstyle>
-<file name="app/Services/ServiceBase.php">
-  <error line="983" column="1" severity="error" message="PHPDoc tag @return with type App\Models\Entidade|null is not subtype of native type App\Models\Entidade." source="return.phpDocType" />
-</file>
-<file name="app/Services/Siape/BuscarDados/BuscarDadosSiapeServidor.php">
-  <error line="83" column="1" severity="error" message="Property App\Models\SiapeListaServidores::$processado (bool) does not accept int." source="assign.propertyType" />
-</file>
-<file name="app/Services/Siape/Consulta/Resources/DadosFuncionaisResource.php">
-  <error line="9" column="1" severity="error" message="Method App\Services\Siape\Consulta\Resources\DadosFuncionaisResource::__construct() with return type void returns null but should not return anything." source="return.void" />
-  <error line="9" column="1" severity="error" message="Result of method App\Services\Siape\Consulta\Resources\SiapeResource::__construct() (void) is used." source="staticMethod.void" />
-</file>
-<file name="app/Services/Siape/Consulta/Resources/DadosPessoaisResource.php">
-  <error line="9" column="1" severity="error" message="Method App\Services\Siape\Consulta\Resources\DadosPessoaisResource::__construct() with return type void returns null but should not return anything." source="return.void" />
-  <error line="9" column="1" severity="error" message="Result of method App\Services\Siape\Consulta\Resources\SiapeResource::__construct() (void) is used." source="staticMethod.void" />
-</file>
-<file name="app/Services/Siape/Consulta/Resources/UnidadeResource.php">
-  <error line="9" column="1" severity="error" message="Method App\Services\Siape\Consulta\Resources\UnidadeResource::__construct() with return type void returns null but should not return anything." source="return.void" />
-  <error line="9" column="1" severity="error" message="Result of method App\Services\Siape\Consulta\Resources\SiapeResource::__construct() (void) is used." source="staticMethod.void" />
-</file>
-<file name="app/Services/Siape/Consulta/Resources/UnidadesResource.php">
-  <error line="9" column="1" severity="error" message="Method App\Services\Siape\Consulta\Resources\UnidadesResource::__construct() with return type void returns null but should not return anything." source="return.void" />
-  <error line="9" column="1" severity="error" message="Result of method App\Services\Siape\Consulta\Resources\SiapeResource::__construct() (void) is used." source="staticMethod.void" />
-</file>
-<file name="app/Services/Siape/DadosExternosSiape.php">
-  <error line="36" column="1" severity="error" message="Call to an undefined method App\Services\Siape\BuscarDados\BuscarDadosSiape::getUorgAsXml()." source="method.notFound" />
-  <error line="61" column="1" severity="error" message="Call to an undefined method App\Services\Siape\BuscarDados\BuscarDadosSiape::consultaDadosFuncionais()." source="method.notFound" />
-  <error line="96" column="1" severity="error" message="Call to an undefined method App\Services\Siape\BuscarDados\BuscarDadosSiape::consultaDadosPessoais()." source="method.notFound" />
-  <error line="36" column="1" severity="error" message="Call to an undefined method App\Services\Siape\BuscarDados\BuscarDadosSiape::getUorgAsXml()." source="method.notFound" />
-  <error line="61" column="1" severity="error" message="Call to an undefined method App\Services\Siape\BuscarDados\BuscarDadosSiape::consultaDadosFuncionais()." source="method.notFound" />
-  <error line="96" column="1" severity="error" message="Call to an undefined method App\Services\Siape\BuscarDados\BuscarDadosSiape::consultaDadosPessoais()." source="method.notFound" />
-</file>
-<file name="app/Services/Siape/Gestor/Integracao.php">
-  <error line="174" column="1" severity="error" message="Method App\Services\Siape\Gestor\Integracao::getMessage() has invalid return type App\Services\Siape\Gestor\erro." source="class.notFound" />
-</file>
-<file name="app/Services/Siape/ProcessaDadosSiapeBD.php">
-  <error line="259" column="1" severity="error" message="Property App\Models\SiapeDadosUORG::$processado (bool) does not accept int." source="assign.propertyType" />
-</file>
 <file name="app/Services/Siape/Unidade/Atribuicao.php">
-  <error line="60" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$curadores." source="property.notFound" />
-  <error line="62" column="1" severity="error" message="Cannot access property $unidade_id on null." source="property.nonObject" />
-  <error line="63" column="1" severity="error" message="Cannot access property $usuario_id on null." source="property.nonObject" />
-  <error line="64" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="78" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$colaboracoes." source="property.notFound" />
-  <error line="81" column="1" severity="error" message="Cannot access property $unidade_id on null." source="property.nonObject" />
-  <error line="82" column="1" severity="error" message="Cannot access property $usuario_id on null." source="property.nonObject" />
-  <error line="83" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="89" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="104" column="1" severity="error" message="Argument of an invalid type App\Models\UnidadeIntegrante supplied for foreach, only iterables are supported." source="foreach.nonIterable" />
-  <error line="108" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="122" column="1" severity="error" message="Argument of an invalid type App\Models\UnidadeIntegrante supplied for foreach, only iterables are supported." source="foreach.nonIterable" />
-  <error line="126" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="188" column="1" severity="error" message="Access to an undefined property App\Models\UnidadeIntegrante::$gestores." source="property.notFound" />
-  <error line="218" column="1" severity="error" message="Access to an undefined property App\Models\UnidadeIntegrante::$usuario." source="property.notFound" />
-  <error line="241" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$lotacoes." source="property.notFound" />
-  <error line="60" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$curadores." source="property.notFound" />
-  <error line="62" column="1" severity="error" message="Cannot access property $unidade_id on null." source="property.nonObject" />
-  <error line="63" column="1" severity="error" message="Cannot access property $usuario_id on null." source="property.nonObject" />
-  <error line="64" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="78" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$colaboracoes." source="property.notFound" />
-  <error line="81" column="1" severity="error" message="Cannot access property $unidade_id on null." source="property.nonObject" />
-  <error line="82" column="1" severity="error" message="Cannot access property $usuario_id on null." source="property.nonObject" />
-  <error line="83" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="89" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="104" column="1" severity="error" message="Argument of an invalid type App\Models\UnidadeIntegrante supplied for foreach, only iterables are supported." source="foreach.nonIterable" />
-  <error line="108" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="122" column="1" severity="error" message="Argument of an invalid type App\Models\UnidadeIntegrante supplied for foreach, only iterables are supported." source="foreach.nonIterable" />
-  <error line="126" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="188" column="1" severity="error" message="Access to an undefined property App\Models\UnidadeIntegrante::$gestores." source="property.notFound" />
-  <error line="218" column="1" severity="error" message="Access to an undefined property App\Models\UnidadeIntegrante::$usuario." source="property.notFound" />
-  <error line="241" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$lotacoes." source="property.notFound" />
-  <error line="60" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$curadores." source="property.notFound" />
-  <error line="62" column="1" severity="error" message="Cannot access property $unidade_id on null." source="property.nonObject" />
-  <error line="63" column="1" severity="error" message="Cannot access property $usuario_id on null." source="property.nonObject" />
-  <error line="64" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="78" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$colaboracoes." source="property.notFound" />
-  <error line="81" column="1" severity="error" message="Cannot access property $unidade_id on null." source="property.nonObject" />
-  <error line="82" column="1" severity="error" message="Cannot access property $usuario_id on null." source="property.nonObject" />
-  <error line="83" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="89" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="104" column="1" severity="error" message="Argument of an invalid type App\Models\UnidadeIntegrante supplied for foreach, only iterables are supported." source="foreach.nonIterable" />
-  <error line="108" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="122" column="1" severity="error" message="Argument of an invalid type App\Models\UnidadeIntegrante supplied for foreach, only iterables are supported." source="foreach.nonIterable" />
-  <error line="126" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="188" column="1" severity="error" message="Access to an undefined property App\Models\UnidadeIntegrante::$gestores." source="property.notFound" />
-  <error line="218" column="1" severity="error" message="Access to an undefined property App\Models\UnidadeIntegrante::$usuario." source="property.notFound" />
-  <error line="241" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$lotacoes." source="property.notFound" />
-  <error line="60" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$curadores." source="property.notFound" />
-  <error line="62" column="1" severity="error" message="Cannot access property $unidade_id on null." source="property.nonObject" />
-  <error line="63" column="1" severity="error" message="Cannot access property $usuario_id on null." source="property.nonObject" />
-  <error line="64" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="78" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$colaboracoes." source="property.notFound" />
-  <error line="81" column="1" severity="error" message="Cannot access property $unidade_id on null." source="property.nonObject" />
-  <error line="82" column="1" severity="error" message="Cannot access property $usuario_id on null." source="property.nonObject" />
-  <error line="83" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="89" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="104" column="1" severity="error" message="Argument of an invalid type App\Models\UnidadeIntegrante supplied for foreach, only iterables are supported." source="foreach.nonIterable" />
-  <error line="108" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="122" column="1" severity="error" message="Argument of an invalid type App\Models\UnidadeIntegrante supplied for foreach, only iterables are supported." source="foreach.nonIterable" />
-  <error line="126" column="1" severity="error" message="Call to sprintf contains 0 placeholders, 2 values given." source="argument.sprintf" />
-  <error line="188" column="1" severity="error" message="Access to an undefined property App\Models\UnidadeIntegrante::$gestores." source="property.notFound" />
-  <error line="218" column="1" severity="error" message="Access to an undefined property App\Models\UnidadeIntegrante::$usuario." source="property.notFound" />
-  <error line="241" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$lotacoes." source="property.notFound" />
+  <error line="243" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$lotacoes." source="property.notFound" />
+  <error line="243" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$lotacoes." source="property.notFound" />
+  <error line="243" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$lotacoes." source="property.notFound" />
+  <error line="243" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$lotacoes." source="property.notFound" />
 </file>
 <file name="app/Services/SiapeIndividualService.php">
   <error line="35" column="1" severity="error" message="Access to an undefined property App\Services\SiapeIndividualService::$SiapeIndividualServidorService." source="property.notFound" />
@@ -192,10 +96,6 @@
   <error line="446" column="1" severity="error" message="Access to an undefined property App\Models\Tenant|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\Tenant&gt;::$tenancy_db_host." source="property.notFound" />
   <error line="447" column="1" severity="error" message="Access to an undefined property App\Models\Tenant|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\Tenant&gt;::$tenancy_db_port." source="property.notFound" />
 </file>
-<file name="app/Services/UnidadeIntegranteAtribuicaoService.php">
-  <error line="17" column="1" severity="error" message="Access to an undefined property App\Models\UnidadeIntegrante|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\UnidadeIntegrante&gt;::$usuario." source="property.notFound" />
-  <error line="19" column="1" severity="error" message="Access to an undefined property App\Models\UnidadeIntegrante|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\UnidadeIntegrante&gt;::$usuario." source="property.notFound" />
-</file>
 <file name="app/Services/UnidadeIntegranteService.php">
   <error line="25" column="1" severity="error" message="Access to an undefined property App\Models\Usuario|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\Usuario&gt;::$integracaoServidor." source="property.notFound" />
   <error line="79" column="1" severity="error" message="Access to an undefined property App\Services\UnidadeIntegranteService::$usuarioService." source="property.notFound" />
@@ -227,13 +127,7 @@
   <error line="605" column="1" severity="error" message="Relation 'planosEntrega' is not found in App\Models\Unidade model." source="larastan.relationExistence" />
   <error line="605" column="1" severity="error" message="Relation 'planosEntrega' is not found in App\Models\Unidade model." source="larastan.relationExistence" />
   <error line="630" column="1" severity="error" message="Relation 'usuario' is not found in App\Models\UnidadeIntegrante model." source="larastan.relationExistence" />
-  <error line="637" column="1" severity="error" message="Access to an undefined property App\Models\UnidadeIntegrante::$usuario." source="property.notFound" />
-  <error line="638" column="1" severity="error" message="Access to an undefined property App\Models\UnidadeIntegrante::$usuario." source="property.notFound" />
-  <error line="639" column="1" severity="error" message="Access to an undefined property App\Models\UnidadeIntegrante::$usuario." source="property.notFound" />
   <error line="649" column="1" severity="error" message="PHPDoc tag @param references unknown parameter: $unidade_id" source="parameter.notFound" />
-  <error line="657" column="1" severity="error" message="Access to an undefined property App\Models\UnidadeIntegrante::$usuario." source="property.notFound" />
-  <error line="658" column="1" severity="error" message="Access to an undefined property App\Models\UnidadeIntegrante::$usuario." source="property.notFound" />
-  <error line="659" column="1" severity="error" message="Access to an undefined property App\Models\UnidadeIntegrante::$usuario." source="property.notFound" />
   <error line="692" column="1" severity="error" message="Access to an undefined property App\Services\UnidadeService::$usuarioService." source="property.notFound" />
 </file>
 <file name="app/Services/UsuarioService.php">

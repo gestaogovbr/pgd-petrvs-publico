@@ -6,7 +6,7 @@ use App\Exceptions\Siape\SiapeRequestException;
 class DadosFuncionaisResource extends SiapeResource
 {
     public function __construct(string $xml) {
-        return parent::__construct('//tipo:DadosFuncionais', $xml);
+        parent::__construct('//tipo:DadosFuncionais', $xml);
     }
 
     public function toArray() {

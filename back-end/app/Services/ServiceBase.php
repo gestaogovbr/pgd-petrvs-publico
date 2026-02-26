@@ -980,7 +980,7 @@ class ServiceBase extends DynamicMethods
    *
    * @return \App\Models\Entidade | null
    */
-  public static function entidade(): \App\Models\Entidade
+  public static function entidade(): ?\App\Models\Entidade
   {
     return Entidade::find(Session::get('entidade_id'));
   }
