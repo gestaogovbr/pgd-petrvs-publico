@@ -8,21 +8,21 @@ use Illuminate\Support\Facades\File;
 class MakeRepository extends Command
 {
     /**
-     * The name and signature of the console command.
+     * O nome e assinatura do comando console.
      *
      * @var string
      */
     protected $signature = 'make:repository {model} {--read=true} {--write=true}';
 
     /**
-     * The console command description.
+     * A descrição do comando console.
      *
      * @var string
      */
-    protected $description = 'Create a new repository structure following the Repository Pattern';
+    protected $description = 'Cria uma nova estrutura de repositório seguindo o padrão Repository Pattern';
 
     /**
-     * Execute the console command.
+     * Executa o comando console.
      */
     public function handle()
     {
@@ -30,17 +30,21 @@ class MakeRepository extends Command
         $read = filter_var($this->option('read'), FILTER_VALIDATE_BOOLEAN);
         $write = filter_var($this->option('write'), FILTER_VALIDATE_BOOLEAN);
 
-        // 1. Validate Model Existence
+        if (!$read && !$write) {
+            $read = true;
+            $write = true;
+        }
+
         $modelPath = app_path("Models/{$model}.php");
         if (!File::exists($modelPath)) {
-            $this->error("Model {$model} not found in App\Models.");
+            $this->error("Model {$model} não encontrado em App\Models.");
             
             $models = collect(File::files(app_path('Models')))
                 ->map(fn($file) => $file->getFilenameWithoutExtension())
                 ->sort()
                 ->values();
             
-            $this->info("Available models: " . $models->implode(', '));
+            $this->info("Models disponíveis: " . $models->implode(', '));
             return 1;
         }
 
@@ -48,12 +52,10 @@ class MakeRepository extends Command
         $contractsPath = "{$repositoryPath}/Contracts";
         $eloquentPath = "{$repositoryPath}/Eloquent";
 
-        // Create Directories
         File::ensureDirectoryExists($repositoryPath);
         File::ensureDirectoryExists($contractsPath);
         File::ensureDirectoryExists($eloquentPath);
 
-        // 2. Generate Files
         if ($read) {
             $this->createReadContract($model, $contractsPath);
             $this->createReadImplementation($model, $eloquentPath);
@@ -66,10 +68,25 @@ class MakeRepository extends Command
 
         $this->createMainRepository($model, $read, $write);
 
-        // 3. Register in Provider
         $this->registerInProvider($model, $read, $write);
 
-        $this->info("Repository for {$model} created successfully!");
+        // Ajustar permissões para o usuário do sistema (1000:1000)
+        // Isso é necessário pois o comando roda como root no container
+        $pathsToChown = [
+            $repositoryPath,
+            app_path("Repository/{$model}Repository.php"),
+            app_path('Providers/RepositoryServiceProvider.php')
+        ];
+
+        foreach ($pathsToChown as $path) {
+            if (File::exists($path)) {
+                // Executa chown recursivo se for diretório
+                $cmd = is_dir($path) ? "chown -R 1000:1000 {$path}" : "chown 1000:1000 {$path}";
+                exec($cmd);
+            }
+        }
+
+        $this->info("Repositório para {$model} criado com sucesso!");
         return 0;
     }
 
@@ -91,7 +108,7 @@ interface {$model}ReadRepositoryContract
 }
 PHP;
         File::put("{$path}/{$model}ReadRepositoryContract.php", $content);
-        $this->info("Created {$model}ReadRepositoryContract.php");
+        $this->info("Criado {$model}ReadRepositoryContract.php");
     }
 
     protected function createWriteContract(string $model, string $path): void
@@ -112,7 +129,7 @@ interface {$model}WriteRepositoryContract
 }
 PHP;
         File::put("{$path}/{$model}WriteRepositoryContract.php", $content);
-        $this->info("Created {$model}WriteRepositoryContract.php");
+        $this->info("Criado {$model}WriteRepositoryContract.php");
     }
 
     protected function createReadImplementation(string $model, string $path): void
@@ -140,7 +157,7 @@ class Eloquent{$model}ReadRepository extends AbstractEloquentReadRepository impl
 }
 PHP;
         File::put("{$path}/Eloquent{$model}ReadRepository.php", $content);
-        $this->info("Created Eloquent{$model}ReadRepository.php");
+        $this->info("Criado Eloquent{$model}ReadRepository.php");
     }
 
     protected function createWriteImplementation(string $model, string $path): void
@@ -168,13 +185,12 @@ class Eloquent{$model}WriteRepository extends AbstractEloquentWriteRepository im
 }
 PHP;
         File::put("{$path}/Eloquent{$model}WriteRepository.php", $content);
-        $this->info("Created Eloquent{$model}WriteRepository.php");
+        $this->info("Criado Eloquent{$model}WriteRepository.php");
     }
 
     protected function createMainRepository(string $model, bool $read, bool $write): void
     {
         $imports = [];
-        $properties = [];
         $constructorParams = [];
 
         $imports[] = "use App\Models\\{$model};"; 
@@ -213,7 +229,7 @@ class {$model}Repository
 }
 PHP;
         File::put(app_path("Repository/{$model}Repository.php"), $content);
-        $this->info("Created {$model}Repository.php");
+        $this->info("Criado {$model}Repository.php");
     }
 
     protected function registerInProvider(string $model, bool $read, bool $write): void
@@ -221,7 +237,6 @@ PHP;
         $providerPath = app_path('Providers/RepositoryServiceProvider.php');
         $content = File::get($providerPath);
 
-        // Add imports
         $imports = [];
         if ($read) {
             $imports[] = "use App\Repository\\{$model}\Contracts\\{$model}ReadRepositoryContract;";
@@ -243,7 +258,6 @@ PHP;
             }
         }
 
-        // Add bindings
         $bindings = "";
         if ($read && !str_contains($content, "{$model}ReadRepositoryContract::class")) {
             $bindings .= <<<PHP
@@ -266,22 +280,10 @@ PHP;
         }
         
         if (empty($bindings)) {
-            File::put($providerPath, $content);
-            $this->info("RepositoryServiceProvider.php updated (imports only).");
             return;
         }
 
         if (str_contains($content, 'public function boot(): void')) {
-            // Check if there is a closing brace before boot()
-            // We want to insert before the LAST closing brace of register()
-            // Assuming register() is followed by boot()
-            
-            // Regex to match "}\s*public function boot"
-            // But we want to insert BEFORE "}"
-            
-            // Simpler: Replace "    }\n\n    public function boot(): void"
-            // This assumes standard formatting.
-            
             $search = "    }\n\n    public function boot(): void";
             if (str_contains($content, $search)) {
                 $content = str_replace(
@@ -290,18 +292,9 @@ PHP;
                     $content
                 );
             } else {
-                 // Try looser match or fallback
-                 // Maybe the user has different spacing
-                 // We can search for `public function boot(): void` and verify previous lines
-                 
-                 // Let's assume the file is well formatted as we just wrote it.
-                 // If not, we append to end of class? No, must be in register.
-                 
-                 // If we can't find the insertion point, we warn the user.
-                 $this->warn("Could not find insertion point in RepositoryServiceProvider.php. Please add bindings manually.");
+                 $this->warn("Não foi possível encontrar o ponto de inserção em RepositoryServiceProvider.php. Por favor, adicione os bindings manualmente.");
             }
         } else {
-             // Fallback: insert before the last closing brace of the class
              $pos = strrpos($content, '}');
              if ($pos !== false) {
                  $content = substr_replace($content, "{$bindings}\n    }\n", $pos, 1);
@@ -309,6 +302,6 @@ PHP;
         }
 
         File::put($providerPath, $content);
-        $this->info("Updated RepositoryServiceProvider.php");
+        $this->info("Atualizado RepositoryServiceProvider.php");
     }
 }
