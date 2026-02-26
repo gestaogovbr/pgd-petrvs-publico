@@ -1,53 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <checkstyle>
-<file name="app/Services/TemplateBuilderService.php">
-  <error line="247" column="1" severity="error" message="Comparison operation &quot;&gt;=&quot; between (array|float|int) and int&lt;0, max&gt; results in an error." source="greaterOrEqual.invalid" />
-  <error line="281" column="1" severity="error" message="Access to undefined constant TokenKind::INDEX." source="classConstant.notFound" />
-  <error line="289" column="1" severity="error" message="Access to undefined constant TokenKind::INDEX." source="classConstant.notFound" />
-  <error line="315" column="1" severity="error" message="Non-abstract class Parser contains abstract method visitEndFor() from interface Visitor." source="method.abstract" />
-  <error line="315" column="1" severity="error" message="Non-abstract class Parser contains abstract method visitEndIf() from interface Visitor." source="method.abstract" />
-  <error line="315" column="1" severity="error" message="Non-abstract class Parser contains abstract method visitExpression() from interface Visitor." source="method.abstract" />
-  <error line="315" column="1" severity="error" message="Non-abstract class Parser contains abstract method visitFor() from interface Visitor." source="method.abstract" />
-  <error line="315" column="1" severity="error" message="Non-abstract class Parser contains abstract method visitIdentifier() from interface Visitor." source="method.abstract" />
-  <error line="315" column="1" severity="error" message="Non-abstract class Parser contains abstract method visitIf() from interface Visitor." source="method.abstract" />
-  <error line="315" column="1" severity="error" message="Non-abstract class Parser contains abstract method visitIndex() from interface Visitor." source="method.abstract" />
-  <error line="315" column="1" severity="error" message="Non-abstract class Parser contains abstract method visitLiteral() from interface Visitor." source="method.abstract" />
-  <error line="315" column="1" severity="error" message="Non-abstract class Parser contains abstract method visitParam() from interface Visitor." source="method.abstract" />
-  <error line="315" column="1" severity="error" message="Non-abstract class Parser contains abstract method visitStatment() from interface Visitor." source="method.abstract" />
-  <error line="315" column="1" severity="error" message="Non-abstract class Parser contains abstract method visitTag() from interface Visitor." source="method.abstract" />
-  <error line="315" column="1" severity="error" message="Non-abstract class Parser contains abstract method visitTemplate() from interface Visitor." source="method.abstract" />
-  <error line="315" column="1" severity="error" message="Non-abstract class Parser contains abstract method visitTexto() from interface Visitor." source="method.abstract" />
-  <error line="315" column="1" severity="error" message="Non-abstract class Parser contains abstract method visitVar() from interface Visitor." source="method.abstract" />
-  <error line="321" column="1" severity="error" message="Non-abstract class Builder contains abstract method visitEndFor() from interface Visitor." source="method.abstract" />
-  <error line="321" column="1" severity="error" message="Non-abstract class Builder contains abstract method visitEndIf() from interface Visitor." source="method.abstract" />
-  <error line="321" column="1" severity="error" message="Non-abstract class Builder contains abstract method visitExpression() from interface Visitor." source="method.abstract" />
-  <error line="321" column="1" severity="error" message="Non-abstract class Builder contains abstract method visitFor() from interface Visitor." source="method.abstract" />
-  <error line="321" column="1" severity="error" message="Non-abstract class Builder contains abstract method visitIdentifier() from interface Visitor." source="method.abstract" />
-  <error line="321" column="1" severity="error" message="Non-abstract class Builder contains abstract method visitIf() from interface Visitor." source="method.abstract" />
-  <error line="321" column="1" severity="error" message="Non-abstract class Builder contains abstract method visitIndex() from interface Visitor." source="method.abstract" />
-  <error line="321" column="1" severity="error" message="Non-abstract class Builder contains abstract method visitLiteral() from interface Visitor." source="method.abstract" />
-  <error line="321" column="1" severity="error" message="Non-abstract class Builder contains abstract method visitParam() from interface Visitor." source="method.abstract" />
-  <error line="321" column="1" severity="error" message="Non-abstract class Builder contains abstract method visitStatment() from interface Visitor." source="method.abstract" />
-  <error line="321" column="1" severity="error" message="Non-abstract class Builder contains abstract method visitTag() from interface Visitor." source="method.abstract" />
-  <error line="321" column="1" severity="error" message="Non-abstract class Builder contains abstract method visitTemplate() from interface Visitor." source="method.abstract" />
-  <error line="321" column="1" severity="error" message="Non-abstract class Builder contains abstract method visitTexto() from interface Visitor." source="method.abstract" />
-  <error line="321" column="1" severity="error" message="Non-abstract class Builder contains abstract method visitVar() from interface Visitor." source="method.abstract" />
-</file>
-<file name="app/Services/TemplateDatasetService.php">
-  <error line="30" column="1" severity="error" message="Access to an undefined property App\Services\TemplateDatasetService::$planejamentoService." source="property.notFound" />
-  <error line="34" column="1" severity="error" message="Access to an undefined property App\Services\TemplateDatasetService::$planoTrabalhoService." source="property.notFound" />
-  <error line="39" column="1" severity="error" message="Access to an undefined property App\Services\TemplateDatasetService::$planoTrabalhoService." source="property.notFound" />
-  <error line="42" column="1" severity="error" message="Access to an undefined property App\Services\TemplateDatasetService::$cidadeService." source="property.notFound" />
-  <error line="50" column="1" severity="error" message="Access to an undefined property App\Services\TemplateDatasetService::$entidadeService." source="property.notFound" />
-  <error line="60" column="1" severity="error" message="Access to an undefined property App\Services\TemplateDatasetService::$planejamentoObjetivoService." source="property.notFound" />
-  <error line="68" column="1" severity="error" message="Access to an undefined property App\Services\TemplateDatasetService::$planejamentoService." source="property.notFound" />
-  <error line="81" column="1" severity="error" message="Access to an undefined property App\Services\TemplateDatasetService::$planoTrabalhoService." source="property.notFound" />
-  <error line="98" column="1" severity="error" message="Access to an undefined property App\Services\TemplateDatasetService::$planoTrabalhoEntregaService." source="property.notFound" />
-  <error line="108" column="1" severity="error" message="Access to an undefined property App\Services\TemplateDatasetService::$programaService." source="property.notFound" />
-  <error line="117" column="1" severity="error" message="Access to an undefined property App\Services\TemplateDatasetService::$planoEntregaEntregaService." source="property.notFound" />
-  <error line="142" column="1" severity="error" message="Access to an undefined property App\Services\TemplateDatasetService::$usuarioService." source="property.notFound" />
-  <error line="156" column="1" severity="error" message="Access to an undefined property App\Services\TemplateDatasetService::$planoModalidadeService." source="property.notFound" />
-</file>
 <file name="app/Services/TemplateService.php">
   <error line="45" column="1" severity="error" message="Access to an undefined property App\Services\TemplateService::$NotificacoesService." source="property.notFound" />
   <error line="47" column="1" severity="error" message="Access to an undefined property App\Services\TemplateService::$NotificacoesService." source="property.notFound" />
