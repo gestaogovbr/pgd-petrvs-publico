@@ -7,11 +7,34 @@ use Illuminate\Support\Facades\File;
 
 class MakeRepository extends Command
 {
+    /**
+     * Código de saída para sucesso.
+     */
     private const EXIT_SUCCESS = 0;
+
+    /**
+     * Código de saída para falha.
+     */
     private const EXIT_FAILURE = 1;
+
+    /**
+     * Permissão padrão para usuário/grupo.
+     */
     private const PERMISSION_USER = '1000:1000';
+
+    /**
+     * Caminho para o ServiceProvider.
+     */
     private const PROVIDER_PATH = 'Providers/RepositoryServiceProvider.php';
+
+    /**
+     * Diretório dos Models.
+     */
     private const MODEL_DIR = 'Models';
+
+    /**
+     * Diretório dos Repositórios.
+     */
     private const REPOSITORY_DIR = 'Repository';
 
     /**
