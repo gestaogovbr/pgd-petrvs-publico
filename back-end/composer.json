@@ -37,7 +37,7 @@
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^7.0",
-        "nunomaduro/larastan": "^2.9",
+        "larastan/larastan": "^2.9",
         "pestphp/pest": "^2.0",
         "pestphp/pest-plugin-laravel": "^2.0",
         "phpstan/phpstan": "^1.11",
@@ -89,6 +89,9 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "pestphp/pest-plugin-laravel": true
+        },
+        "platform": {
+            "php": "8.2.30"
         }
     },
     "minimum-stability": "dev",
