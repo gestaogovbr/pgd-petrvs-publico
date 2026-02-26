@@ -662,12 +662,15 @@ class IntegracaoService extends ServiceBase
   public function salvarUsuarioLotacao(Usuario &$usuario, UnidadeIntegrante &$lotacao)
   {
     if ($this->fillUsuarioWithSiape($usuario, $lotacao)) { //se quem está logado existe na tabela integracao_servidores
-      $perfil_nivel_5_id = $this->nivelAcessoService->getPerfilParticipante()->id;
+      /** @var \App\Services\NivelAcessoService $nivelAcessoService */
+      $nivelAcessoService = $this->nivelAcessoService;
+      $perfil_nivel_5_id = $nivelAcessoService->getPerfilParticipante()->id;
       $usuario->perfil_id = $perfil_nivel_5_id;
       $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($usuario->email, $usuario->matricula, $usuario->id);
       $usuario->save();
       $usuario->fresh();
       if (!empty($lotacao->unidade_id)) { // se sua Unidade estiver cadastrada, insere-se uma lotação principal pra ele
+        /** @var \App\Models\UnidadeIntegrante $lotacao */
         $lotacao->usuario_id = $usuario->id;
         $lotacao->save();
         $lotacao->refresh();

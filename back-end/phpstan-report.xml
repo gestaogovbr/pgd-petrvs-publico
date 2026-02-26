@@ -1,20 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <checkstyle>
-<file name="app/Services/FirebaseAuthService.php">
-  <error line="38" column="1" severity="error" message="Variable $decoded in empty() always exists and is not falsy." source="empty.variable" />
-</file>
-<file name="app/Services/IntegracaoService.php">
-  <error line="671" column="1" severity="error" message="Access to an undefined property object::$usuario_id." source="property.notFound" />
-  <error line="672" column="1" severity="error" message="Call to an undefined method object::save()." source="method.notFound" />
-  <error line="673" column="1" severity="error" message="Call to an undefined method object::refresh()." source="method.notFound" />
-  <error line="674" column="1" severity="error" message="Access to an undefined property object::$id." source="property.notFound" />
-</file>
-<file name="app/Services/IntegracaoServidorService.php">
-  <error line="25" column="1" severity="error" message="Access to an undefined property App\Services\IntegracaoServidorService::$nivelAcessoService." source="property.notFound" />
-</file>
-<file name="app/Services/IntegracaoSiapeService.php">
-  <error line="174" column="1" severity="error" message="Access to an undefined property App\Services\IntegracaoSiapeService::$siapeCodUorg." source="property.notFound" />
-</file>
 <file name="app/Services/JobScheduleService.php">
   <error line="117" column="1" severity="error" message="Method Carbon\Carbon::addMinute() invoked with 1 parameter, 0 required." source="arguments.count" />
 </file>
