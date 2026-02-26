@@ -414,7 +414,12 @@ class CalendarioService
   public static function nestedExpediente(Unidade $unidade): Expediente
   {
     $expediente = $unidade->expediente ? new Expediente($unidade->expediente) : new Expediente($unidade->entidade->expediente);
-    $expediente = $expediente ? $expediente : ($unidade->entidade_id == Auth::user()->unidade->entidade_id ? new Expediente(Auth::user()->unidade->entidade->expediente) : new Expediente());
+    $unidadeUsuario = null;
+    $user = Auth::user();
+    if ($user instanceof \App\Models\Usuario) {
+        $unidadeUsuario = $user->lotacao?->unidade;
+    }
+    $expediente = $expediente ? $expediente : (($unidadeUsuario && $unidade->entidade_id == $unidadeUsuario->entidade_id) ? new Expediente($unidadeUsuario->entidade->expediente) : new Expediente());
     //transforma objetos da classe stdClass em objetos da classe Turno
     foreach (array_keys((array) $expediente) as $dia) {
       foreach (array_keys((array) $expediente->$dia) as $t) {
@@ -632,9 +637,9 @@ class CalendarioService
         $acum += UtilService::getHoursBetween(UtilService::asDateTime($item->start), UtilService::asDateTime($item->end));
         return $acum;
       }, 0);
-      $intersecao = UtilService::intersection([...$diaAtual->intervalos, ...$afastamentosDia]);
+      $intersecao = UtilService::intersection(array_map(fn($i) => (array) $i, [...$diaAtual->intervalos, ...$afastamentosDia]));
       $hIntersecao = !$intersecao ? 0 : array_reduce([$intersecao], function ($acum, $item) {
-        $acum += UtilService::getHoursBetween(UtilService::asDateTime($item->start), UtilService::asDateTime($item->end));
+        $acum += UtilService::getHoursBetween(UtilService::asDateTime($item['start']), UtilService::asDateTime($item['end']));
         return $acum;
       }, 0);
       $result->horasAfastamento += ($hAfastamentoHoje - $hIntersecao);
