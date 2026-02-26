@@ -36,6 +36,9 @@ use Ramsey\Uuid\Uuid;
 /**
  * @property-read UnidadeService $unidadeService
  * @property-read IntegracaoService $integracaoService
+ * @property UnidadeIntegranteService $UnidadeIntegranteService
+ * @property UnidadeIntegranteAtribuicaoService $unidadeIntegranteAtribuicaoService
+ * @property NivelAcessoService $nivelAcessoService
  */
 class UsuarioService extends ServiceBase
 {
@@ -73,7 +76,7 @@ class UsuarioService extends ServiceBase
   public function downloadImgProfile($url, $path)
   {
     if (!Storage::exists($path)) {
-      Storage::makeDirectory($path, 0755, true);
+      Storage::makeDirectory($path);
     }
     try {
       $contents = file_get_contents($url);
@@ -107,7 +110,7 @@ class UsuarioService extends ServiceBase
 
   /**
    * Informa quais atribuições de gestor o usuário logado possui na unidade recebida como parâmetro.
-   * @param string $unidade_id
+   * @param string|null $unidadeId
    */
   public function atribuicoesGestor(?string $unidadeId, ?string $usuarioId = null)
   {
@@ -132,7 +135,7 @@ class UsuarioService extends ServiceBase
 
   /**
    * Informa se o usuário logado é gestor(titular ou substituto) da unidade recebida como parâmetro.
-   * @param string $unidade_id
+   * @param string $unidadeId
    */
   public function isGestorUnidade(string $unidadeId, $incluiDelegado = true): bool
   {
@@ -176,7 +179,7 @@ class UsuarioService extends ServiceBase
 
   /**
    * Informa se o usuário logado é participante do plano de trabalho recebido como parâmetro.
-   * @param string $unidade_id
+   * @param mixed $planoTrabalho
    */
   public function isParticipante($planoTrabalho)
   {
@@ -186,8 +189,8 @@ class UsuarioService extends ServiceBase
   /**
    * Recebe os IDs de um usuário e de um programa, e informa se o usuário é participante habilitado do Programa.
    * Se o usuário não for informado, será utilizado o usuário logado.
-   * @param string $usuario_id
-   * @param string $pgd_id
+   * @param string|null $usuarioId
+   * @param string $programaId
    * @return bool
    * @deprecated
    */
@@ -199,6 +202,7 @@ class UsuarioService extends ServiceBase
     } else {
       $usuarioId = $usuarioId ?? parent::loggedUser()->id;
       $programa = Programa::withTrashed()->find($programaId);
+      /** @phpstan-ignore-next-line */
       $participante = $programa->participantes->where("usuario_id", $usuarioId)->first();
       return $this->setBuffer("isParticipanteHabilitado", $key, $participante ? $participante->habilitado : false);
     }
@@ -208,8 +212,8 @@ class UsuarioService extends ServiceBase
    * Informa se existe determinada atribuição entre o usuário e a unidade informados. Caso não seja informado um usuário, a
    * verificação será feita com base no usuário logado.
    * @param string $atribuicao
-   * @param string $unidade_id
-   * @param string $usuario_id
+   * @param string $unidadeId
+   * @param string|null $usuarioId
    */
   public function isIntegrante(string $atribuicao, string $unidadeId, string|null $usuarioId = null): bool
   {
@@ -219,6 +223,7 @@ class UsuarioService extends ServiceBase
       $result = $this->getBuffer("isIntegrante", $key);
     } else {
       $uid = $usuarioId ?? parent::loggedUser()->id;
+      /** @phpstan-ignore-next-line */
       $exists = UnidadeIntegranteAtribuicao::where('atribuicao', $atribuicao)
         ->whereHas('vinculo', function ($q) use ($unidadeId, $uid) {
           $q->where('unidade_id', $unidadeId)
@@ -233,6 +238,7 @@ class UsuarioService extends ServiceBase
   /**
    * Recebe os IDs de um usuário e de uma unidade, e informa se a unidade é a lotação do usuário.
    * Se o usuário não for informado, será utilizado o usuário logado.
+   * @param string|null $usuario_id
    * @param string $unidade_id
    */
     public function isLotacao(string|null $usuario_id = null, string $unidade_id): bool
@@ -250,7 +256,7 @@ class UsuarioService extends ServiceBase
   /**
    * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade
    * recebida como parâmetro.
-   * @param string $unidade_id
+   * @param string|null $unidadeId
    * @returns
    */
   public function isLotadoNaLinhaAscendente(string|null $unidadeId): bool
@@ -301,12 +307,12 @@ class UsuarioService extends ServiceBase
         });
       } else if (is_array($condition) && $condition[0] == "habilitado") {
         if ($condition[2] == true) {
-          $query->whereHas('participacoesProgramas', function (Builder $query) use ($programa) {
+          $query->whereHas('participacoesProgramas', function (Builder $query) {
             $query->where('habilitado', 1);
           });
         } else {
           if ($condition[2] != null) {
-            $query->whereHas('participacoesProgramas', function (Builder $query) use ($programa) {
+            $query->whereHas('participacoesProgramas', function (Builder $query) {
               $query->where('habilitado', 0);
             });
           }
@@ -641,7 +647,7 @@ class UsuarioService extends ServiceBase
     
     public function matriculas($cpf) : Collection
     {
-        $usuarios = Usuario::with('unidades')->where('cpf', $cpf)
+        $usuarios = Usuario::with('unidades')->where('cpf', $cpf) /** @phpstan-ignore-line */
         ->where('situacao_siape', '!=', UsuarioSituacaoSiape::INATIVO->value)
         ->get();
         
@@ -732,6 +738,7 @@ class UsuarioService extends ServiceBase
 
       // Planos de entregas que precisam ter progressos (agrupados por plano de entrega). 
       // Só devem aparecer na tela de pendência a partir do 31º dia a contar da DATA FIM da vigência
+      /** @phpstan-ignore-next-line */
       $entregasSemProgresso = PlanoEntregaEntrega::query()
         ->whereHas('planoEntrega.unidade', fn($q) => $q->whereIn('id', $unidadesGerenciadasIds))
         ->doesntHave('progressos')
