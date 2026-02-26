@@ -35,16 +35,7 @@ class MakeRepository extends Command
             $write = true;
         }
 
-        $modelPath = app_path("Models/{$model}.php");
-        if (!File::exists($modelPath)) {
-            $this->error("Model {$model} não encontrado em App\Models.");
-            
-            $models = collect(File::files(app_path('Models')))
-                ->map(fn($file) => $file->getFilenameWithoutExtension())
-                ->sort()
-                ->values();
-            
-            $this->info("Models disponíveis: " . $models->implode(', '));
+        if (!$this->validateModel($model)) {
             return 1;
         }
 
@@ -52,26 +43,80 @@ class MakeRepository extends Command
         $contractsPath = "{$repositoryPath}/Contracts";
         $eloquentPath = "{$repositoryPath}/Eloquent";
 
-        File::ensureDirectoryExists($repositoryPath);
-        File::ensureDirectoryExists($contractsPath);
-        File::ensureDirectoryExists($eloquentPath);
+        $this->ensureDirectories([$repositoryPath, $contractsPath, $eloquentPath]);
 
         if ($read) {
-            $this->createReadContract($model, $contractsPath);
-            $this->createReadImplementation($model, $eloquentPath);
+            $this->createFileIfNotExists(
+                "{$contractsPath}/{$model}ReadRepositoryContract.php",
+                $this->getReadContractContent($model)
+            );
+            $this->createFileIfNotExists(
+                "{$eloquentPath}/Eloquent{$model}ReadRepository.php",
+                $this->getReadImplementationContent($model)
+            );
         }
 
         if ($write) {
-            $this->createWriteContract($model, $contractsPath);
-            $this->createWriteImplementation($model, $eloquentPath);
+            $this->createFileIfNotExists(
+                "{$contractsPath}/{$model}WriteRepositoryContract.php",
+                $this->getWriteContractContent($model)
+            );
+            $this->createFileIfNotExists(
+                "{$eloquentPath}/Eloquent{$model}WriteRepository.php",
+                $this->getWriteImplementationContent($model)
+            );
         }
 
-        $this->createMainRepository($model, $read, $write);
+        $this->createFileIfNotExists(
+            app_path("Repository/{$model}Repository.php"),
+            $this->getMainRepositoryContent($model, $read, $write)
+        );
 
         $this->registerInProvider($model, $read, $write);
+        $this->fixPermissions($model, $repositoryPath);
 
-        // Ajustar permissões para o usuário do sistema (1000:1000)
-        // Isso é necessário pois o comando roda como root no container
+        $this->info("Processo de criação/verificação do repositório para {$model} concluído!");
+        return 0;
+    }
+
+    private function validateModel(string $model): bool
+    {
+        $modelPath = app_path("Models/{$model}.php");
+        if (File::exists($modelPath)) {
+            return true;
+        }
+
+        $this->error("Model {$model} não encontrado em App\Models.");
+        
+        $models = collect(File::files(app_path('Models')))
+            ->map(fn($file) => $file->getFilenameWithoutExtension())
+            ->sort()
+            ->values();
+        
+        $this->info("Models disponíveis: " . $models->implode(', '));
+        return false;
+    }
+
+    private function ensureDirectories(array $paths): void
+    {
+        foreach ($paths as $path) {
+            File::ensureDirectoryExists($path);
+        }
+    }
+
+    private function createFileIfNotExists(string $path, string $content): void
+    {
+        if (File::exists($path)) {
+            $this->warn("Arquivo já existe: " . basename($path));
+            return;
+        }
+
+        File::put($path, $content);
+        $this->info("Criado: " . basename($path));
+    }
+
+    private function fixPermissions(string $model, string $repositoryPath): void
+    {
         $pathsToChown = [
             $repositoryPath,
             app_path("Repository/{$model}Repository.php"),
@@ -79,20 +124,18 @@ class MakeRepository extends Command
         ];
 
         foreach ($pathsToChown as $path) {
-            if (File::exists($path)) {
-                // Executa chown recursivo se for diretório
-                $cmd = is_dir($path) ? "chown -R 1000:1000 {$path}" : "chown 1000:1000 {$path}";
-                exec($cmd);
+            if (!File::exists($path)) {
+                continue;
             }
+            
+            $cmd = is_dir($path) ? "chown -R 1000:1000 {$path}" : "chown 1000:1000 {$path}";
+            exec($cmd);
         }
-
-        $this->info("Repositório para {$model} criado com sucesso!");
-        return 0;
     }
 
-    protected function createReadContract(string $model, string $path): void
+    private function getReadContractContent(string $model): string
     {
-        $content = <<<PHP
+        return <<<PHP
 <?php
 
 declare(strict_types=1);
@@ -107,13 +150,11 @@ interface {$model}ReadRepositoryContract
     //
 }
 PHP;
-        File::put("{$path}/{$model}ReadRepositoryContract.php", $content);
-        $this->info("Criado {$model}ReadRepositoryContract.php");
     }
 
-    protected function createWriteContract(string $model, string $path): void
+    private function getWriteContractContent(string $model): string
     {
-        $content = <<<PHP
+        return <<<PHP
 <?php
 
 declare(strict_types=1);
@@ -128,13 +169,11 @@ interface {$model}WriteRepositoryContract
     //
 }
 PHP;
-        File::put("{$path}/{$model}WriteRepositoryContract.php", $content);
-        $this->info("Criado {$model}WriteRepositoryContract.php");
     }
 
-    protected function createReadImplementation(string $model, string $path): void
+    private function getReadImplementationContent(string $model): string
     {
-        $content = <<<PHP
+        return <<<PHP
 <?php
 
 declare(strict_types=1);
@@ -156,13 +195,11 @@ class Eloquent{$model}ReadRepository extends AbstractEloquentReadRepository impl
     }
 }
 PHP;
-        File::put("{$path}/Eloquent{$model}ReadRepository.php", $content);
-        $this->info("Criado Eloquent{$model}ReadRepository.php");
     }
 
-    protected function createWriteImplementation(string $model, string $path): void
+    private function getWriteImplementationContent(string $model): string
     {
-        $content = <<<PHP
+        return <<<PHP
 <?php
 
 declare(strict_types=1);
@@ -184,16 +221,12 @@ class Eloquent{$model}WriteRepository extends AbstractEloquentWriteRepository im
     }
 }
 PHP;
-        File::put("{$path}/Eloquent{$model}WriteRepository.php", $content);
-        $this->info("Criado Eloquent{$model}WriteRepository.php");
     }
 
-    protected function createMainRepository(string $model, bool $read, bool $write): void
+    private function getMainRepositoryContent(string $model, bool $read, bool $write): string
     {
-        $imports = [];
+        $imports = ["use App\Models\\{$model};"];
         $constructorParams = [];
-
-        $imports[] = "use App\Models\\{$model};"; 
 
         if ($read) {
             $imports[] = "use App\Repository\\{$model}\Contracts\\{$model}ReadRepositoryContract;";
@@ -211,7 +244,7 @@ PHP;
             $constructorParamsStr .= ",";
         }
 
-        $content = <<<PHP
+        return <<<PHP
 <?php
 
 declare(strict_types=1);
@@ -228,14 +261,19 @@ class {$model}Repository
     }
 }
 PHP;
-        File::put(app_path("Repository/{$model}Repository.php"), $content);
-        $this->info("Criado {$model}Repository.php");
     }
 
-    protected function registerInProvider(string $model, bool $read, bool $write): void
+    private function registerInProvider(string $model, bool $read, bool $write): void
     {
         $providerPath = app_path('Providers/RepositoryServiceProvider.php');
+        
+        if (!File::exists($providerPath)) {
+            $this->error("RepositoryServiceProvider não encontrado em {$providerPath}");
+            return;
+        }
+
         $content = File::get($providerPath);
+        $originalContent = $content;
 
         $imports = [];
         if ($read) {
@@ -280,6 +318,12 @@ PHP;
         }
         
         if (empty($bindings)) {
+            if ($content !== $originalContent) {
+                File::put($providerPath, $content);
+                $this->info("RepositoryServiceProvider.php atualizado (apenas imports).");
+            } else {
+                $this->info("RepositoryServiceProvider.php já contém os registros necessários.");
+            }
             return;
         }
 
@@ -292,7 +336,8 @@ PHP;
                     $content
                 );
             } else {
-                 $this->warn("Não foi possível encontrar o ponto de inserção em RepositoryServiceProvider.php. Por favor, adicione os bindings manualmente.");
+                 $this->warn("Não foi possível encontrar o ponto de inserção automático em RepositoryServiceProvider.php.");
+                 return;
             }
         } else {
              $pos = strrpos($content, '}');
@@ -302,6 +347,6 @@ PHP;
         }
 
         File::put($providerPath, $content);
-        $this->info("Atualizado RepositoryServiceProvider.php");
+        $this->info("Atualizado RepositoryServiceProvider.php com novos bindings.");
     }
 }
