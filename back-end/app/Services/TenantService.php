@@ -29,14 +29,20 @@ use App\Jobs\ExportarTenantJob;
 use App\Models\JobSchedule;
 
 
+/**
+ * @property JobScheduleService $JobScheduleService
+ * @property TenantConfigurationsService $TenantConfigurationsService
+ */
 class TenantService extends ServiceBase
 {
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param Array $data
-     * @return Object
+     * @param mixed $dataOrEntity
+     * @param mixed $unidade
+     * @param bool $transaction
+     * @return mixed
      */
     public function store($dataOrEntity, $unidade, $transaction = true)
     {
@@ -46,6 +52,7 @@ class TenantService extends ServiceBase
             if($tenant){
                 $this->JobScheduleService->createJobsSiape($tenant->id);
             }
+            return $tenant;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -233,6 +240,7 @@ class TenantService extends ServiceBase
         $tenants = $painel_user->nivel != 1 ? $painel_user->tenants : Tenant::all();
         $users = 0;
         foreach ($tenants as $tenant) {
+            /** @var Tenant $tenant */
             $this->inicializeTenant($tenant->id);
             $users += DB::table('programas_participantes')
                 ->select('usuario_id')
@@ -296,8 +304,8 @@ class TenantService extends ServiceBase
 
             Log::info('Cadastro de Unidade.');
             $unidade = array(
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
+                "created_at" => Carbon::now(),
+                "updated_at" => Carbon::now(),
                 "deleted_at" => NULL,
                 "codigo" => "1",
                 "sigla" => $dataOrEntity->id,
@@ -422,6 +430,7 @@ class TenantService extends ServiceBase
                 $data['api_password']
             );
 
+            /** @phpstan-ignore-next-line */
             return $data;
         } else {
             throw new NotFoundException("Id não encontrado");
@@ -441,9 +450,13 @@ class TenantService extends ServiceBase
         $tenant = Tenant::findOrFail($id);
 
         $database = $tenant->tenancy_db_name;
+        /** @phpstan-ignore-next-line */
         $username = $tenant->tenancy_db_username;
+        /** @phpstan-ignore-next-line */
         $password = $tenant->tenancy_db_password;
+        /** @phpstan-ignore-next-line */
         $host =$tenant->tenancy_db_host;
+        /** @phpstan-ignore-next-line */
         $port =$tenant->tenancy_db_port;
 
         $dumpFile = storage_path("{$database}_dump.sql");

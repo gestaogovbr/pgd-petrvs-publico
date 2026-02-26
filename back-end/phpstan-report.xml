@@ -1,38 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <checkstyle>
-<file name="app/Services/TemplateService.php">
-  <error line="45" column="1" severity="error" message="Access to an undefined property App\Services\TemplateService::$NotificacoesService." source="property.notFound" />
-  <error line="47" column="1" severity="error" message="Access to an undefined property App\Services\TemplateService::$NotificacoesService." source="property.notFound" />
-  <error line="67" column="1" severity="error" message="Access to an undefined property App\Services\TemplateService::$templateDatasetService." source="property.notFound" />
-  <error line="129" column="1" severity="error" message="Unary operation &quot;+&quot; on (array&lt;int, string&gt;|string) results in an error." source="unaryOp.invalid" />
-  <error line="301" column="1" severity="error" message="Access to an undefined property App\Services\TemplateService::$templateDatasetService." source="property.notFound" />
-  <error line="305" column="1" severity="error" message="Access to an undefined property App\Services\TemplateService::$templateDatasetService." source="property.notFound" />
-  <error line="309" column="1" severity="error" message="Access to an undefined property App\Services\TemplateService::$templateDatasetService." source="property.notFound" />
-  <error line="311" column="1" severity="error" message="Access to an undefined property App\Services\TemplateService::$templateDatasetService." source="property.notFound" />
-  <error line="323" column="1" severity="error" message="Variable $valor on left side of ?? always exists and is not nullable." source="nullCoalesce.variable" />
-  <error line="352" column="1" severity="error" message="Access to an undefined property App\Services\TemplateService::$lookupService." source="property.notFound" />
-  <error line="353" column="1" severity="error" message="Access to an undefined property App\Services\TemplateService::$lookupService." source="property.notFound" />
-</file>
-<file name="app/Services/TenantConfigurationsService.php">
-  <error line="19" column="1" severity="error" message="Relation 'tenant' is not found in Stancl\Tenancy\Database\Models\Domain model." source="larastan.relationExistence" />
-  <error line="24" column="1" severity="error" message="Relation 'tenant' is not found in Stancl\Tenancy\Database\Models\Domain model." source="larastan.relationExistence" />
-  <error line="31" column="1" severity="error" message="Relation 'tenant' is not found in Stancl\Tenancy\Database\Models\Domain model." source="larastan.relationExistence" />
-</file>
-<file name="app/Services/TenantService.php">
-  <error line="41" column="1" severity="error" message="PHPDoc tag @param references unknown parameter: $data" source="parameter.notFound" />
-  <error line="43" column="1" severity="error" message="Method App\Services\TenantService::store() should return object but return statement is missing." source="return.missing" />
-  <error line="47" column="1" severity="error" message="Access to an undefined property App\Services\TenantService::$JobScheduleService." source="property.notFound" />
-  <error line="123" column="1" severity="error" message="Access to an undefined property App\Services\TenantService::$TenantConfigurationsService." source="property.notFound" />
-  <error line="131" column="1" severity="error" message="Access to an undefined property App\Services\TenantService::$TenantConfigurationsService." source="property.notFound" />
-  <error line="236" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$id." source="property.notFound" />
-  <error line="299" column="1" severity="error" message="Access to an undefined property App\Services\TenantService::$timenow." source="property.notFound" />
-  <error line="300" column="1" severity="error" message="Access to an undefined property App\Services\TenantService::$timenow." source="property.notFound" />
-  <error line="425" column="1" severity="error" message="Method App\Services\TenantService::getById() should return object but returns mixed." source="return.type" />
-  <error line="444" column="1" severity="error" message="Access to an undefined property App\Models\Tenant|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\Tenant&gt;::$tenancy_db_username." source="property.notFound" />
-  <error line="445" column="1" severity="error" message="Access to an undefined property App\Models\Tenant|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\Tenant&gt;::$tenancy_db_password." source="property.notFound" />
-  <error line="446" column="1" severity="error" message="Access to an undefined property App\Models\Tenant|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\Tenant&gt;::$tenancy_db_host." source="property.notFound" />
-  <error line="447" column="1" severity="error" message="Access to an undefined property App\Models\Tenant|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\Tenant&gt;::$tenancy_db_port." source="property.notFound" />
-</file>
 <file name="app/Services/UnidadeIntegranteService.php">
   <error line="25" column="1" severity="error" message="Access to an undefined property App\Models\Usuario|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\Usuario&gt;::$integracaoServidor." source="property.notFound" />
   <error line="79" column="1" severity="error" message="Access to an undefined property App\Services\UnidadeIntegranteService::$usuarioService." source="property.notFound" />
