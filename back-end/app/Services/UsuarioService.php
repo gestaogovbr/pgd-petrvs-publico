@@ -670,8 +670,8 @@ class UsuarioService extends ServiceBase
 
     public function pendenciasChefe(){
       //Datas de modificação de regra
-      $dataAlteracaoRegraPT = '01/10/2025';
-      $dataAlteracaoRegraPE = '12/01/2026';
+      $dataAlteracaoRegraPT = UtilService::asDateTime('01/10/2025');
+      $dataAlteracaoRegraPE = UtilService::asDateTime('12/01/2026');
 
       // usuário logado
       $diasAvaliacaoRegistroExecucao = 21;
