@@ -173,34 +173,51 @@ class PgdService
         }
     }
 
-    public function enviarParticipante($tenantId, $api_cod_unidade_autorizadora, ParticipanteResource $participante) : bool
+    public function enviarParticipante($tenantId, ParticipanteResource $participante) : bool
     {
+        $tenant = $this->getTenant($tenantId);
         $body = (object) json_decode($participante->toJson(), true);
-        $body->cod_unidade_autorizadora = $api_cod_unidade_autorizadora;
+        $body->cod_unidade_autorizadora = $tenant->api_cod_unidade_autorizadora;
 
-        $url = "/organizacao/SIAPE/{$api_cod_unidade_autorizadora}/{$body->cod_unidade_lotacao}/participante/{$body->matricula_siape}";
+        $url = "/organizacao/SIAPE/{$tenant->api_cod_unidade_autorizadora}/{$body->cod_unidade_lotacao}/participante/{$body->matricula_siape}";
 
         return $this->enviarDados($tenantId, $url, $body);
     }
 
-    public function enviarPlanoEntrega($tenantId, $api_cod_unidade_autorizadora, PlanoEntregaResource $planoEntrega) : bool
+    public function enviarPlanoEntrega($tenantId, PlanoEntregaResource $planoEntrega) : bool
     {
+        $tenant = $this->getTenant($tenantId);
         $body = (object) json_decode($planoEntrega->toJson(), true);
-        $body->cod_unidade_autorizadora = $api_cod_unidade_autorizadora;
+        $body->cod_unidade_autorizadora = $tenant->api_cod_unidade_autorizadora;
 
-        $url = "/organizacao/SIAPE/{$api_cod_unidade_autorizadora}/plano_entregas/{$planoEntrega->id}";
+        $url = "/organizacao/SIAPE/{$tenant->api_cod_unidade_autorizadora}/plano_entregas/{$planoEntrega->id}";
 
         return $this->enviarDados($tenantId, $url, $body);
     }
 
-    public function enviarPlanoTrabalho($tenantId, $api_cod_unidade_autorizadora, PlanoTrabalhoResource $planoTrabalho) : bool
+    public function enviarPlanoTrabalho($tenantId, PlanoTrabalhoResource $planoTrabalho) : bool
     {
+        $tenant = $this->getTenant($tenantId);
         $body = (object) json_decode($planoTrabalho->toJson(), true);
-        $body->cod_unidade_autorizadora = $api_cod_unidade_autorizadora;
+        $body->cod_unidade_autorizadora = $tenant->api_cod_unidade_autorizadora;
 
-        $url = "/organizacao/SIAPE/{$api_cod_unidade_autorizadora}/plano_trabalho/{$planoTrabalho->id}";
+        $url = "/organizacao/SIAPE/{$tenant->api_cod_unidade_autorizadora}/plano_trabalho/{$planoTrabalho->id}";
 
         return $this->enviarDados($tenantId, $url, $body);
+    }
+
+    public function getTenant($tenantId) {
+        $tenant = Tenant::find($tenantId);
+
+        if (!$tenant) {
+            throw new ExportPgdException("Tenant inválido");
+        }
+
+        if (!$tenant->api_cod_unidade_autorizadora) {
+            throw new ExportPgdException("Unidade Autorizadora não definida no Tenant");
+        }
+
+        return $tenant;
     }
 
     public static function setToken($tenantId, $token) {

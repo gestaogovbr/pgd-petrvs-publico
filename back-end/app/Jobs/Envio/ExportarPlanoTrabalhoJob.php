@@ -53,7 +53,6 @@ class ExportarPlanoTrabalhoJob extends ExportarItemJob
     public function enviar(JsonResource $resource): bool {
         return $this->pgdService->enviarPlanoTrabalho(
                 $this->tenantId,
-                $this->api_cod_unidade_autorizadora,
                 $resource
         );
     }

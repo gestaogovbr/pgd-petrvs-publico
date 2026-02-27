@@ -42,7 +42,6 @@ class ExportarParticipanteJob extends ExportarItemJob
     public function enviar(JsonResource $resource): bool {
         return $this->pgdService->enviarParticipante(
                 $this->tenantId,
-                $this->api_cod_unidade_autorizadora,
                 $resource
         );
     }

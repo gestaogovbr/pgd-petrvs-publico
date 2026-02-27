@@ -22,7 +22,6 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 
     protected $timestamp = null;
     public bool $reagendado = false;
-    protected string $api_cod_unidade_autorizadora;
     protected ?PgdService $pgdService;
 
     /*
@@ -43,7 +42,6 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
         $model->saveQuietly();
 
         $this->timestamp = $model->data_agendamento_envio;
-        $this->api_cod_unidade_autorizadora = $tenant->api_cod_unidade_autorizadora;
     }
 
     abstract public function getModel();
