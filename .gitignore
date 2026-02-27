@@ -60,4 +60,3 @@ back-end/storage/logs/*.log
 kubectl
 .trae/diagnostics/
 .vscode/diagnostics/
-back-end/database/schema/tenant-schema.sql
