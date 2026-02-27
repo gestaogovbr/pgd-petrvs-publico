@@ -6,9 +6,10 @@ import { TipoDocumento } from 'src/app/models/tipo-documento.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-tipo-documento-list',
-  templateUrl: './tipo-documento-list.component.html',
-  styleUrls: ['./tipo-documento-list.component.scss']
+    selector: 'app-tipo-documento-list',
+    templateUrl: './tipo-documento-list.component.html',
+    styleUrls: ['./tipo-documento-list.component.scss'],
+    standalone: false
 })
 export class TipoDocumentoListComponent extends PageListBase<TipoDocumento, TipoDocumentoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

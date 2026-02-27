@@ -10,9 +10,10 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'plano-entrega-list-logs',
-  templateUrl: './plano-entrega-list-logs.component.html',
-  styleUrls: ['./plano-entrega-list-logs.component.scss']
+    selector: 'plano-entrega-list-logs',
+    templateUrl: './plano-entrega-list-logs.component.html',
+    styleUrls: ['./plano-entrega-list-logs.component.scss'],
+    standalone: false
 })
 export class PlanoEntregaListLogsComponent extends PageListBase<Change, ChangeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

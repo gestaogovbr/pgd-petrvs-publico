@@ -5,13 +5,14 @@ import { PageFrameBase } from "src/app/modules/base/page-frame-base";
 import { TemplateDataset, TemplateService } from "../../templates/template.service";
 import { HasRelatorio } from "src/app/models/relatorio.model";
 import { Template } from "src/app/models/template.model";
-import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { FormGroup } from "@angular/forms";
 
 @Component({
-  selector: 'relatorios-template',
-  templateUrl: './relatorios-template.component.html',
-  styleUrls: ['./relatorios-template.component.scss']
+    selector: 'relatorios-template',
+    templateUrl: './relatorios-template.component.html',
+    styleUrls: ['./relatorios-template.component.scss'],
+    standalone: false
 })
 export class RelatoriosTemplateComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

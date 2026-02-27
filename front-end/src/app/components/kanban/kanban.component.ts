@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ContentChildren, ElementRef, Input, OnIni
 import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
 import { delay } from 'rxjs/operators';
 import { LookupItem } from 'src/app/services/lookup.service';
-import { ToolbarButton } from '../toolbar/toolbar.component';
+import { ToolbarButton } from '../toolbar/toolbar-types';
 import { CardComponent } from './card/card.component';
 import { CardItem, DockerComponent } from './docker/docker.component';
 import { SwimlaneComponent } from './swimlane/swimlane.component';
@@ -17,9 +17,10 @@ export type KanbanDocker = {
 }
 
 @Component({
-  selector: 'kanban',
-  templateUrl: './kanban.component.html',
-  styleUrls: ['./kanban.component.scss']
+    selector: 'kanban',
+    templateUrl: './kanban.component.html',
+    styleUrls: ['./kanban.component.scss'],
+    standalone: false
 })
 export class KanbanComponent implements OnInit {
   @ContentChildren(SwimlaneComponent, { descendants: true }) swimlanes?: QueryList<SwimlaneComponent>;

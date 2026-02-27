@@ -5,7 +5,6 @@ import { IIndexable } from 'src/app/models/base.model';
 import { Atividade } from 'src/app/models/atividade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
-import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { TipoDocumentoDaoService } from 'src/app/dao/tipo-documento-dao.service';
 import { TipoTarefaDaoService } from 'src/app/dao/tipo-tarefa-dao.service';
 import { AtividadeTarefaDaoService } from 'src/app/dao/atividade-tarefa-dao.service';
@@ -14,19 +13,17 @@ import { TipoProcessoDaoService } from 'src/app/dao/tipo-processo-dao.service';
 import { NavigateResult } from 'src/app/services/navigate.service';
 import { SelectItem } from 'src/app/components/input/input-base';
 import { TipoTarefa } from 'src/app/models/tipo-tarefa.model';
-import { SeiKeys } from 'src/app/listeners/procedimento-trabalhar/procedimento-trabalhar.component';
 import { ComentarioService } from 'src/app/services/comentario.service';
 import { ComentariosComponent } from 'src/app/modules/uteis/comentarios/comentarios.component';
-import { DocumentosLinkComponent } from 'src/app/modules/uteis/documentos/documentos-link/documentos-link.component';
 
 @Component({
-  selector: 'app-atividade-form-tarefa',
-  templateUrl: './atividade-form-tarefa.component.html',
-  styleUrls: ['./atividade-form-tarefa.component.scss']
+    selector: 'app-atividade-form-tarefa',
+    templateUrl: './atividade-form-tarefa.component.html',
+    styleUrls: ['./atividade-form-tarefa.component.scss'],
+    standalone: false
 })
 export class AtividadeFormTarefaComponent extends PageFormBase<AtividadeTarefa, AtividadeTarefaDaoService> implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild('documento', { static: false }) public documento?: DocumentosLinkComponent;
   @ViewChild('comentarios', { static: false }) public comentarios?: ComentariosComponent;
   @ViewChild('tipoTarefa', { static: false }) public tipoTarefa?: InputSearchComponent;
 
@@ -34,8 +31,6 @@ export class AtividadeFormTarefaComponent extends PageFormBase<AtividadeTarefa, 
   public tipoDocumentoDao: TipoDocumentoDaoService;
   public tipoProcessoDao: TipoProcessoDaoService;
   public atividade?: Atividade;
-  public sei?: SeiKeys;
-  public allPages: ListenerAllPagesService;
   public comentario: ComentarioService;
   public form: FormGroup;
   public modalWidth: number = 800;
@@ -45,7 +40,6 @@ export class AtividadeFormTarefaComponent extends PageFormBase<AtividadeTarefa, 
     this.tipoTarefaDao = injector.get<TipoTarefaDaoService>(TipoTarefaDaoService);
     this.tipoDocumentoDao = injector.get<TipoDocumentoDaoService>(TipoDocumentoDaoService);
     this.tipoProcessoDao = injector.get<TipoProcessoDaoService>(TipoProcessoDaoService);
-    this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.comentario = injector.get<ComentarioService>(ComentarioService);
     this.title = this.lex.translate("Tarefa da atividade");
     this.form = this.fh.FormBuilder({
@@ -73,9 +67,6 @@ export class AtividadeFormTarefaComponent extends PageFormBase<AtividadeTarefa, 
     if(values.tipo_tarefa_id?.length && !this.tipoTarefa?.selectedEntity) {
       return "Aguarde o carregamento " + this.lex.translate("tipo de tarefa") + ". Caso demore, selecione novamente!";
     }
-    if(values.concluido && (this.tipoTarefa?.selectedEntity as TipoTarefa)?.documental && this.documento?.isEmpty()) {
-      return this.gb.isEmbedded ? "Obrigatório selecionar um arquivo para a tarefa selecionada!" : "Utilize o sistema como extensão para concluir!";
-    }
     return undefined;
   }
 
@@ -97,7 +88,6 @@ export class AtividadeFormTarefaComponent extends PageFormBase<AtividadeTarefa, 
   public async initializeData(form: FormGroup) {
     this.entity = this.metadata.tarefa;
     this.atividade = this.metadata.atividade;
-    this.sei = this.metadata.sei;
     await this.loadData(this.entity!, form);
   }
 

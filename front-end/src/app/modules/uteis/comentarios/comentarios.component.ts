@@ -2,7 +2,7 @@ import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputTextareaComponent } from 'src/app/components/input/input-textarea/input-textarea.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { AtividadeTarefaDaoService } from 'src/app/dao/atividade-tarefa-dao.service';
 import { Base, IIndexable } from 'src/app/models/base.model';
 import { Comentario, ComentarioOrigem, HasComentarios } from 'src/app/models/comentario';
@@ -13,9 +13,10 @@ import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 
 @Component({
-  selector: 'comentarios',
-  templateUrl: './comentarios.component.html',
-  styleUrls: ['./comentarios.component.scss']
+    selector: 'comentarios',
+    templateUrl: './comentarios.component.html',
+    styleUrls: ['./comentarios.component.scss'],
+    standalone: false
 })
 export class ComentariosComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

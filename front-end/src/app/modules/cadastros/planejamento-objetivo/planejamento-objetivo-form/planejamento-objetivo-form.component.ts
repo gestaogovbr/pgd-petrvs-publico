@@ -11,9 +11,10 @@ import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
-  selector: 'app-planejamento-objetivo-form',
-  templateUrl: './planejamento-objetivo-form.component.html',
-  styleUrls: ['./planejamento-objetivo-form.component.scss']
+    selector: 'app-planejamento-objetivo-form',
+    templateUrl: './planejamento-objetivo-form.component.html',
+    styleUrls: ['./planejamento-objetivo-form.component.scss'],
+    standalone: false
 })
 export class PlanejamentoObjetivoFormComponent extends PageFormBase<PlanejamentoObjetivo, PlanejamentoObjetivoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

@@ -10,12 +10,13 @@ import { FormGroup } from "@angular/forms";
 import { IIndexable } from "src/app/models/base.model";
 import { PlanoTrabalhoService } from "../../gestao/plano-trabalho/plano-trabalho.service";
 import { ProgramaDaoService } from "src/app/dao/programa-dao.service";
-import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 
 @Component({
-  selector: 'visualizar-avaliacao',
-  templateUrl: './visualizar-avaliacao.component.html',
-  styleUrls: ['./visualizar-avaliacao.component.scss']
+    selector: 'visualizar-avaliacao',
+    templateUrl: './visualizar-avaliacao.component.html',
+    styleUrls: ['./visualizar-avaliacao.component.scss'],
+    standalone: false
 })
 
 export class VisualizarAvaliacaoComponent extends PageBase implements OnInit {

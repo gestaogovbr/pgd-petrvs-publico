@@ -6,15 +6,16 @@ import { InputBase, LabelPosition } from '../input-base';
 export type InputTextCase = "upper" | "lower" | "";
 
 @Component({
-  selector: 'input-text',
-  templateUrl: './input-text.component.html',
-  styleUrls: ['./input-text.component.scss'],
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]
+    selector: 'input-text',
+    templateUrl: './input-text.component.html',
+    styleUrls: ['./input-text.component.scss'],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective
+        }
+    ],
+    standalone: false
 })
 export class InputTextComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';

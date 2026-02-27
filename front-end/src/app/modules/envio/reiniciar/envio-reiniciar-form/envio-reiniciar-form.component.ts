@@ -5,9 +5,10 @@ import { EnvioDaoService } from 'src/app/dao/envio-dao.service';;
 import { PageBase } from 'src/app/modules/base/page-base';
 
 @Component({
-  selector: 'envio-reiniciar-form',
-  templateUrl: './envio-reiniciar-form.component.html',
-  styleUrls: ['./envio-reiniciar-form.component.scss']
+    selector: 'envio-reiniciar-form',
+    templateUrl: './envio-reiniciar-form.component.html',
+    styleUrls: ['./envio-reiniciar-form.component.scss'],
+    standalone: false
 })
 export class EnvioReiniciarFormComponent extends PageBase implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

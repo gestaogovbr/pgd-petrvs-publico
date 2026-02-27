@@ -10,9 +10,10 @@ import { CadeiaValor } from 'src/app/models/cadeia-valor.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'cadeia-valor-list-grid',
-  templateUrl: './cadeia-valor-list-grid.component.html',
-  styleUrls: ['./cadeia-valor-list-grid.component.scss']
+    selector: 'cadeia-valor-list-grid',
+    templateUrl: './cadeia-valor-list-grid.component.html',
+    styleUrls: ['./cadeia-valor-list-grid.component.scss'],
+    standalone: false
 })
 export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, CadeiaValorDaoService>{
   // @Input() snapshot?: ActivatedRouteSnapshot;

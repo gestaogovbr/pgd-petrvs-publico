@@ -10,14 +10,15 @@ import { LoginComponent } from './modules/login/login.component';
 import { ConfigComponent } from './modules/config/config.component';
 import { DialogComponent } from './services/dialog/dialog.component';
 import { SpinnerOverlayComponent } from './services/spinner-overlay/spinner-overlay.component';
-import { ComponentsModule } from './components/components.module';
+import { SharedModule } from './shared/shared.module';
 import { TesteImpersonateComponent } from './modules/teste/teste-impersonate/teste-impersonate.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LogModule } from './modules/logs/log.module';
 import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
-import { NgScrollbarModule } from 'ngx-scrollbar';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { providePrimeNG } from 'primeng/config';
+import Lara from '@primeuix/themes/lara';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ErrorsInterceptor } from './interceptors/errors-interceptor';
 
@@ -37,18 +38,22 @@ registerLocaleData(localePt);
     BrowserAnimationsModule,
     HttpClientModule,
     ReactiveFormsModule,
-    ComponentsModule,
+    SharedModule,
     AppRoutingModule,
     UteisModule,
     LogModule,
     RotinaModule,
-    NgScrollbarModule,
     DynamicDialogModule,
     FormsModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true },
-    { provide: LOCALE_ID, useValue: 'pt-BR' }
+    { provide: LOCALE_ID, useValue: 'pt-BR' },
+    providePrimeNG({
+        theme: {
+            preset: Lara 
+        }
+    })
   ],
   bootstrap: [AppComponent]
 })

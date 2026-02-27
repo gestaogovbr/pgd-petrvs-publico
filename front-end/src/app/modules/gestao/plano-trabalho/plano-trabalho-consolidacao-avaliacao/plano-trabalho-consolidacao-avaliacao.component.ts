@@ -1,6 +1,7 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { GridComponent, GridGroupSeparator } from 'src/app/components/grid/grid.component';
+import { GridComponent } from 'src/app/components/grid/grid.component';
+import { GridGroupSeparator } from 'src/app/components/grid/grid-types';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
@@ -11,16 +12,17 @@ import { Base } from 'src/app/models/base.model';
 import { TipoAvaliacao } from 'src/app/models/tipo-avaliacao.model';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { AvaliacaoDaoService } from 'src/app/dao/avaliacao-dao.service';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { Programa } from 'src/app/models/programa.model';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { UnidadeService } from 'src/app/services/unidade.service';
 
 @Component({
-  selector: 'app-plano-trabalho-consolidacao-avaliacao',
-  templateUrl: './plano-trabalho-consolidacao-avaliacao.component.html',
-  styleUrls: ['./plano-trabalho-consolidacao-avaliacao.component.scss']
+    selector: 'app-plano-trabalho-consolidacao-avaliacao',
+    templateUrl: './plano-trabalho-consolidacao-avaliacao.component.html',
+    styleUrls: ['./plano-trabalho-consolidacao-avaliacao.component.scss'],
+    standalone: false
 })
 
 export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<PlanoTrabalhoConsolidacao, PlanoTrabalhoConsolidacaoDaoService> {

@@ -5,7 +5,7 @@ import { Base, IIndexable } from 'src/app/models/base.model';
 import { PageBase } from './page-base';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { NavigateResult } from 'src/app/services/navigate.service';
-import { GroupBy } from 'src/app/components/grid/grid.component';
+import { GroupBy } from 'src/app/components/grid/grid-types';
 
 //@Component({ template: '' })
 @Injectable()

@@ -5,7 +5,7 @@ import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
 import { FilterComponent } from 'src/app/components/grid/filter/filter.component';
 import { CardItem, DockerComponent } from 'src/app/components/kanban/docker/docker.component';
 import { KanbanComponent, KanbanDocker } from 'src/app/components/kanban/kanban.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { QueryOptions } from 'src/app/dao/query-options';
 import { Atividade } from 'src/app/models/atividade.model';
 import { LookupItem } from 'src/app/services/lookup.service';
@@ -22,9 +22,10 @@ export type StatusDockerConfig = {
 }
 
 @Component({
-  selector: 'atividade-list-kanban',
-  templateUrl: './atividade-list-kanban.component.html',
-  styleUrls: ['./atividade-list-kanban.component.scss']
+    selector: 'atividade-list-kanban',
+    templateUrl: './atividade-list-kanban.component.html',
+    styleUrls: ['./atividade-list-kanban.component.scss'],
+    standalone: false
 })
 export class AtividadeListKanbanComponent extends AtividadeListBase {
   @ViewChild("filterRef", { static: false }) filterRef?: FilterComponent;

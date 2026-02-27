@@ -6,9 +6,10 @@ import { TipoJustificativa } from 'src/app/models/tipo-justificativa.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-tipo-justificativa-list',
-  templateUrl: './tipo-justificativa-list.component.html',
-  styleUrls: ['./tipo-justificativa-list.component.scss']
+    selector: 'app-tipo-justificativa-list',
+    templateUrl: './tipo-justificativa-list.component.html',
+    styleUrls: ['./tipo-justificativa-list.component.scss'],
+    standalone: false
 })
 export class TipoJustificativaListComponent extends PageListBase<TipoJustificativa, TipoJustificativaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

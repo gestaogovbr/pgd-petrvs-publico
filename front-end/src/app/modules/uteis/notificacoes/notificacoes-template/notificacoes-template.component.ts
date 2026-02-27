@@ -5,13 +5,14 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { FormGroup } from "@angular/forms";
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { TemplateDataset, TemplateService } from '../../templates/template.service';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { HasNotificacao } from 'src/app/models/notificacao.model';
 
 @Component({
-  selector: 'notificacoes-template',
-  templateUrl: './notificacoes-template.component.html',
-  styleUrls: ['./notificacoes-template.component.scss']
+    selector: 'notificacoes-template',
+    templateUrl: './notificacoes-template.component.html',
+    styleUrls: ['./notificacoes-template.component.scss'],
+    standalone: false
 })
 export class NotificacoesTemplateComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

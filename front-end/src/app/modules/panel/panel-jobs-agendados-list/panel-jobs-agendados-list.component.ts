@@ -1,7 +1,7 @@
 import { Component, Injector, ViewChild } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
-import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { JobAgendadoDaoService } from "src/app/dao/job-agendado-dao.service";
 import { TenantDaoService } from "src/app/dao/tenant-dao.service";
 import { JobAgendado } from "src/app/models/job-agendado.model";
@@ -9,9 +9,10 @@ import { Tenant } from "src/app/models/tenant.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
 
 @Component({
-  selector: 'panel-jobs-agendados-list',
-  templateUrl: './panel-jobs-agendados-list.component.html',
-  styleUrls: ['./panel-jobs-agendados-list.component.scss']
+    selector: 'panel-jobs-agendados-list',
+    templateUrl: './panel-jobs-agendados-list.component.html',
+    styleUrls: ['./panel-jobs-agendados-list.component.scss'],
+    standalone: false
 })
 export class PanelJobAgendadosListComponent extends PageListBase<JobAgendado, JobAgendadoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

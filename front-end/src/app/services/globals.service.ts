@@ -1,8 +1,8 @@
 import { Inject, Injectable, Injector, SecurityContext } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';
-import { ToolbarButton } from '../components/toolbar/toolbar.component';
-import { AppComponent, MenuContexto } from '../app.component';
+import { ToolbarButton } from '../components/toolbar/toolbar-types';
+import { IAppComponent, MenuContexto } from '../app-types';
 import { DOCUMENT } from '@angular/common';
 import { AuthService } from './auth.service';
 import { NavigateService } from './navigate.service';
@@ -20,7 +20,7 @@ export class GlobalsService {
   public ENTIDADE = environment.entidade || "";
   public ENV = environment.env || "";
   public SUPPORT_URL = environment.suporte || "";
-  public app?: AppComponent;
+  public app?: IAppComponent;
   public set toolbarButtons(value: ToolbarButton[]) {
     this._toolbarButtons = value;
     if(this.refresh) this.refresh();

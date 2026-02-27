@@ -8,9 +8,10 @@ import {IIndexable} from "../../../../models/base.model";
 import { TemplateDataset, TemplateService } from '../template.service';
 
 @Component({
-  selector: 'app-template-form',
-  templateUrl: './template-form.component.html',
-  styleUrls: ['./template-form.component.scss']
+    selector: 'app-template-form',
+    templateUrl: './template-form.component.html',
+    styleUrls: ['./template-form.component.scss'],
+    standalone: false
 })
 export class TemplateFormComponent extends PageFormBase<Template, TemplateDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

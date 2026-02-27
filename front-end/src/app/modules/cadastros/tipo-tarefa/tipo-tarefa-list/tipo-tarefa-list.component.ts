@@ -6,9 +6,10 @@ import { TipoTarefa } from 'src/app/models/tipo-tarefa.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-tarefa-list',
-  templateUrl: './tipo-tarefa-list.component.html',
-  styleUrls: ['./tipo-tarefa-list.component.scss']
+    selector: 'app-tarefa-list',
+    templateUrl: './tipo-tarefa-list.component.html',
+    styleUrls: ['./tipo-tarefa-list.component.scss'],
+    standalone: false
 })
 export class TipoTarefaListComponent extends PageListBase<TipoTarefa, TipoTarefaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

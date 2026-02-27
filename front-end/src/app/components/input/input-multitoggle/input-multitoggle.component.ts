@@ -6,15 +6,16 @@ import { InputSearchComponent } from '../input-search/input-search.component';
 import { InputSelectComponent } from '../input-select/input-select.component';
 
 @Component({
-  selector: 'input-multitoggle',
-  templateUrl: './input-multitoggle.component.html',
-  styleUrls: ['./input-multitoggle.component.scss'],
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]
+    selector: 'input-multitoggle',
+    templateUrl: './input-multitoggle.component.html',
+    styleUrls: ['./input-multitoggle.component.scss'],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective
+        }
+    ],
+    standalone: false
 })
 export class InputMultitoggleComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
