@@ -34,9 +34,13 @@ abstract class DatabaseTenantTestCase extends TestCase
             return true;
         }
 
-        Artisan::call('schema:dump', [
-            '--database' => 'tenant',
-        ]);
+        $path = database_path('schema/tenant-schema.sql');
+
+        if (!file_exists($path)) {
+            Artisan::call('schema:dump', [
+                '--database' => 'tenant',
+            ]);
+        }
 
         self::$dumped = true;
     }
