@@ -5,7 +5,6 @@ import { UnidadeRoutingModule } from './unidade-routing.module';
 import { UnidadeFormComponent } from './unidade-form/unidade-form.component';
 import { UnidadeListComponent } from './unidade-list/unidade-list.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { OrganizationChartModule } from 'primeng/organizationchart';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UnidadeMergeComponent } from './unidade-merge/unidade-merge.component';
 import { UteisModule } from '../../uteis/uteis.module';
@@ -28,8 +27,7 @@ import { UnidadeListMapComponent } from './unidade-list-map/unidade-list-map.com
     SharedModule,
     UteisModule,
     ReactiveFormsModule,
-    UnidadeRoutingModule,
-    OrganizationChartModule
+    UnidadeRoutingModule
   ]
 })
 export class UnidadeModule { }

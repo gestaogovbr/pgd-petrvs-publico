@@ -51,7 +51,7 @@ registerLocaleData(localePt);
     { provide: LOCALE_ID, useValue: 'pt-BR' },
     providePrimeNG({
         theme: {
-            preset: Lara 
+          preset: Lara
         }
     })
   ],

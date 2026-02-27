@@ -1,9 +1,7 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Injector, ChangeDetectorRef } from '@angular/core';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { Unidade } from 'src/app/models/unidade.model';
 import { TreeNode } from 'primeng/api';
-import { QueryContext } from 'src/app/dao/query-context';
-import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 
 @Component({
@@ -44,11 +42,6 @@ export class UnidadeListMapComponent extends PageFrameBase {
       // Expande se for a unidade do usuário ou um de seus ancestrais
       let expanded = false;
       if (minhaUnidadeId) {
-          // Verifica se 'unidade' é ancestral de 'minhaUnidadeId'
-          // Para isso, precisaríamos percorrer de 'minhaUnidadeId' para cima.
-          // Como temos a lista completa, podemos verificar se 'unidade' está no caminho.
-          // Simplificação: expande tudo ou apenas o caminho.
-          // Vamos expandir apenas o caminho até a unidade do usuário.
           expanded = this.isAncestral(unidade.id, minhaUnidadeId, lista) || unidade.id === minhaUnidadeId;
       }
 
@@ -72,6 +65,11 @@ export class UnidadeListMapComponent extends PageFrameBase {
           atual = lista.find(x => x.id === atual!.unidade_pai_id);
       }
       return false;
+  }
+  
+  public toggle(event: Event, node: TreeNode) {
+      event.stopPropagation();
+      node.expanded = !node.expanded;
   }
 
 }
