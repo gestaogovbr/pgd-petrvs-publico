@@ -17,7 +17,10 @@ abstract class DatabaseTenantTestCase extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
+        // modifica driver de fila para sync, garantindo que os jobs sejam processados imediatamente durante os testes
+        config()->set('queue.connections.rabbitmq.driver', 'sync');
+
         $this->initializeTenant();
     }
 
@@ -29,7 +32,7 @@ abstract class DatabaseTenantTestCase extends TestCase
             // Verifica se o banco de dados já existe para evitar erro ao criar o tenant
             $tempTenant = new Tenant(['id' => $this->tenantId]);
             $databaseName = $tempTenant->database()->getName();
-            
+
             $dbExists = false;
             try {
                 $check = DB::select("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", [$databaseName]);
@@ -51,19 +54,19 @@ abstract class DatabaseTenantTestCase extends TestCase
         }
 
         tenancy()->initialize($this->tenant);
-        
+
         $this->loadTenantSchema();
 
         // Ensure sequences table has a row (required for stored procedures)
         if (Schema::connection('tenant')->hasTable('sequences')) {
             if (DB::connection('tenant')->table('sequences')->count() == 0) {
                  DB::connection('tenant')->table('sequences')->insert([
-                    'created_at' => now(), 
+                    'created_at' => now(),
                     'updated_at' => now()
                  ]);
             }
         }
-        
+
         DB::connection('tenant')->beginTransaction();
     }
 
@@ -71,12 +74,12 @@ abstract class DatabaseTenantTestCase extends TestCase
     {
         if (!Schema::connection('tenant')->hasTable('usuarios')) {
             $path = database_path('schema/tenant-schema.sql');
-            
+
             if (file_exists($path)) {
                 $config = config('database.connections.tenant');
-                
+
                 $host = gethostbyname($config['host']);
-                
+
                 $command = sprintf(
                     'mysql -h %s -P %s -u %s -p%s %s < %s',
                     escapeshellarg($host),
@@ -86,9 +89,9 @@ abstract class DatabaseTenantTestCase extends TestCase
                     escapeshellarg($config['database']),
                     escapeshellarg($path)
                 );
-                
+
                 exec($command, $output, $returnVar);
-                
+
                 if ($returnVar !== 0) {
                      throw new \Exception("Erro ao importar schema do tenant via mysql CLI. Exit code: $returnVar. Host resolvido: $host. Verifique credenciais e conexão.");
                 }
@@ -108,12 +111,12 @@ abstract class DatabaseTenantTestCase extends TestCase
         if (DB::connection('tenant')->transactionLevel() > 0) {
             DB::connection('tenant')->rollBack();
         }
-        
+
         // Finaliza tenância para voltar ao contexto central
         // Isso é importante para que o RefreshDatabase (que roda depois)
         // consiga limpar o banco principal corretamente se necessário
         tenancy()->end();
-        
+
         parent::tearDown();
     }
 }
