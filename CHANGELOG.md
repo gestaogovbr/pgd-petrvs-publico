@@ -1,3 +1,9 @@
+## 2.9.15 27/02/2026
+### Adicionado
+### Modificado
+### Corrigido
+- Exibição da modalidade no PT quando diferente da modalidade do Participante.
+
 ## 2.9.14 18/02/2026
 ### Adicionado
 - Adição da opção para o usuário editar as ocorrências lançadas no registro de execução.
