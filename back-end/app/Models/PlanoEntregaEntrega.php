@@ -12,6 +12,10 @@ use App\Models\Entrega;
 use App\Models\Unidade;
 use App\Models\Reacao;
 
+/**
+ * @property PlanoEntrega $planoEntrega
+ * @property Unidade $unidade
+ */
 class PlanoEntregaEntrega extends ModelBase
 {
   protected $table = 'planos_entregas_entregas';

@@ -1,0 +1,14 @@
+includes:
+    - vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+    tmpDir: storage/framework/phpstan
+    level: 3
+    treatPhpDocTypesAsCertain: false
+    bootstrapFiles:
+        - vendor/autoload.php
+    parallel:
+        maximumNumberOfProcesses: 1
+        processTimeout: 1800.0

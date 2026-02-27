@@ -29,6 +29,10 @@ class CurriculumController extends ControllerBase
     }
   }
 
+  /**
+   * @param Request $request
+   * @return \Illuminate\Http\JsonResponse
+   */
   public function lookupsCurriculum(Request $request)
   {
     try {

@@ -17,9 +17,12 @@ class ProdutoProcessoCadeiaValorValidation extends BaseValidador
             return [];
         }
         $produtoProcessoCadeiaValores = $entity['produto_processo_cadeia_valor'];
-        if(empty($produtoProcessoCadeiaValores)){
+        if (empty($produtoProcessoCadeiaValores)) {
             return [];
         }
+
+        $validated = [];
+
         foreach ($produtoProcessoCadeiaValores as $produtoProcessoCadeiaValore) {
             $validator = Validator::make($produtoProcessoCadeiaValore, [
                 'cadeia_valor_processo_id' => 'required|uuid|exists:cadeias_valores_processos,id',
@@ -28,8 +31,10 @@ class ProdutoProcessoCadeiaValorValidation extends BaseValidador
             if ($validator->fails()) {
                 throw new ValidationException($validator);
             }
+
+            $validated[] = $validator->validated();
         }
 
-        return $validator->validated();
+        return $validated;
     }
 }

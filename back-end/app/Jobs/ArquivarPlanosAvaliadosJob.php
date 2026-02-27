@@ -29,6 +29,7 @@ class ArquivarPlanosAvaliadosJob implements ShouldQueue
         $tenants = Tenant::all();
         
         foreach ($tenants as $tenant) {
+            /** @var Tenant $tenant */
             tenancy()->initialize($tenant);
             
             DB::transaction(function () use ($cutoffDate, $now, $tenant) {

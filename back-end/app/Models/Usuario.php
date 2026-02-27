@@ -43,8 +43,14 @@ use App\Traits\MergeRelations;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use App\Models\Audit;
+use App\Models\Unidade;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -60,9 +66,20 @@ class UsuarioConfig
 {
 }
 
+
+
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $areasTrabalho
+ * @property-read \App\Models\UnidadeIntegrante|null $lotacao
+ * @property-read \App\Models\Perfil|null $perfil
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $unidadesIntegrantes
+ * @property-read \App\Models\PlanoTrabalho|null $ultimoPlanoTrabalho
+ */
 class Usuario extends Authenticatable implements AuditableContract
 {
     use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable,Impersonate;
+
+    // protected $areasTrabalho; // dynamic property
 
     protected $table = "usuarios";
 
@@ -130,8 +147,6 @@ class Usuario extends Authenticatable implements AuditableContract
 
     /**
      * The attributes that should be hidden for arrays.
-     *
-     * @var array
      */
     protected $hidden = [
         'password',
@@ -141,7 +156,7 @@ class Usuario extends Authenticatable implements AuditableContract
     /**
      * The attributes that should be cast to native types.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
@@ -156,7 +171,6 @@ class Usuario extends Authenticatable implements AuditableContract
         'atividadesDemandadas',
         'comentarios',
         'documentos',
-        'favoritos',  // Note que 'favoritos' aparece duas vezes na lista original
         'favoritos',
         'historicosProjeto',
         'integracoes',
@@ -330,13 +344,12 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id');
     }
 
-    public function planosTrabalhoCriados()
+    public function planosTrabalhoCriados(): HasMany
     {
         return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id');
     }
 
-
-    public function unidadesIntegrantes()
+    public function unidadesIntegrantes(): HasMany
     {
         return $this->hasMany(UnidadeIntegrante::class, 'usuario_id', 'id');
     }
@@ -367,34 +380,33 @@ class Usuario extends Authenticatable implements AuditableContract
     }
 
     // belongsTo
-    public function perfil()
+    public function perfil(): BelongsTo
     {
         return $this->belongsTo(Perfil::class);
-    }     //nullable
+    }
 
-    // belongsToMany
     public function unidades()
     {
         return $this->belongsToMany(Unidade::class, 'unidades_integrantes', 'usuario_id', 'unidade_id');
     }
 
     // Others relationships
-    public function gerenciaTitular()
+    public function gerenciaTitular(): HasOne
     {
         return $this->hasOne(UnidadeIntegrante::class)->has('gestor');
     }
 
-    public function gerencias()
+    public function gerencias(): HasMany
     {
         return $this->hasMany(UnidadeIntegrante::class)->has('gestor');
     }
 
-    public function gerenciasSubstitutas()
+    public function gerenciasSubstitutas(): HasMany
     {
         return $this->hasMany(UnidadeIntegrante::class)->has('gestorSubstituto');
     }
 
-    public function gerenciasDelegadas()
+    public function gerenciasDelegadas(): HasMany
     {
         return $this->hasMany(UnidadeIntegrante::class)->has('gestorDelegado');
     }
@@ -420,6 +432,9 @@ class Usuario extends Authenticatable implements AuditableContract
     }
 
     //public function areasTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado')->orHas('colaborador'); }
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function areasTrabalho()
     {
         return $this->hasMany(UnidadeIntegrante::class)->has('atribuicoes');

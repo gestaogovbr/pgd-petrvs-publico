@@ -8,6 +8,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use App\Services\CalendarioService;
 use Carbon\Carbon;
 
+/**
+ * @mixin \App\Models\PlanoTrabalho
+ */
 class PlanoTrabalhoResource extends JsonResource
 {
     public function toArray($request)

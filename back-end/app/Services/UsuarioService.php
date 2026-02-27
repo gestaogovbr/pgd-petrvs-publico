@@ -32,6 +32,10 @@ use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
 use Throwable;
 
+/**
+ * @property-read UnidadeService $unidadeService
+ * @property-read IntegracaoService $integracaoService
+ */
 class UsuarioService extends ServiceBase
 {
   use DadosExternosSiape;

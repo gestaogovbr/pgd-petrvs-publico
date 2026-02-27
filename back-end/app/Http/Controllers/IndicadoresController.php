@@ -16,6 +16,10 @@ class IndicadoresController extends ControllerBase {
         return true;
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function query(Request $request) {
         try {
             $data = $request->validate([
@@ -46,6 +50,9 @@ class IndicadoresController extends ControllerBase {
         }
     }
 
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function horas(Request $request) {
         try {
             $data = $request->validate([

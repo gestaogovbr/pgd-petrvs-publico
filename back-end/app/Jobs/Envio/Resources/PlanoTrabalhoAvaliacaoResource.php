@@ -5,6 +5,9 @@ namespace App\Jobs\Envio\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
 
+/**
+ * @mixin \App\Models\PlanoTrabalhoConsolidacao
+ */
 class PlanoTrabalhoAvaliacaoResource extends JsonResource
 {
     public function toArray($request)

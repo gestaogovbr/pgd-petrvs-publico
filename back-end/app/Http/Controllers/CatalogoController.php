@@ -22,7 +22,7 @@ class CatalogoController extends ControllerBase {
 
     }
 
-    public function store(Request $request) {
+    public function store(Request $request): \Symfony\Component\HttpFoundation\Response {
         try {
             foreach ($this->validators as $validator) {
                 $validator->validar($request);

@@ -21,6 +21,10 @@ class ErrorController extends ControllerBase {
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function showResponsaveis(Request $request) {
         try {
             $this->checkPermissions("QUERY", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));

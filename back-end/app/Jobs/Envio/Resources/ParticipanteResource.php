@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
 
+/**
+ * @mixin \App\Models\Usuario
+ */
 class ParticipanteResource extends JsonResource
 {
     public function toArray(Request $request)

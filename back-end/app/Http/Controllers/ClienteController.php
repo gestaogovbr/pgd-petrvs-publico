@@ -40,7 +40,7 @@ class ClienteController extends ControllerBase
         }
     }
 
-    public function update(Request $request)
+    public function update(Request $request): \Symfony\Component\HttpFoundation\Response
     {
         try {
 

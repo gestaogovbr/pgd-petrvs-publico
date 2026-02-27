@@ -15,6 +15,13 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Throwable;
 
+/**
+ * @property \App\Services\UnidadeService $unidadeService
+ * @property \App\Services\UsuarioService $usuarioService
+ * @property \App\Services\PlanoTrabalhoConsolidacaoService $planoTrabalhoConsolidacaoService
+ * @property \App\Services\PlanoEntregaService $planoEntregaService
+ * @property \App\Services\StatusService $statusService
+ */
 class AvaliacaoService extends ServiceBase
 {
   public function validateStore($data, $unidade, $action) {

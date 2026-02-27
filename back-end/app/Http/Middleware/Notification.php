@@ -20,7 +20,7 @@ class Notification
         $config = config("notificacoes")["whatsapp"];
         $authorization = $request->header('Authorization');
         if(!isset($authorization) || $authorization != $config["authorization"]) {
-            return Response::json(array('error' => 'Erro ao autenticar endpoint de notificações'));
+            return response()->json(array('error' => 'Erro ao autenticar endpoint de notificações'));
         }
         return $next($request);          
     }

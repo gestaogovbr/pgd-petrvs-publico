@@ -19,6 +19,9 @@ class ProdutoSolucaoValidador extends BaseValidador
         if(empty($produtosSolucoes)){
             return [];
         }
+
+        $validated = [];
+
         foreach ($produtosSolucoes as $produtoSolucao) {
             $validator = Validator::make(
                 $produtoSolucao,
@@ -35,13 +38,10 @@ class ProdutoSolucaoValidador extends BaseValidador
             if ($validator->fails()) {
                 throw new ValidationException($validator);
             }
+
+            $validated[] = $validator->validated();
         }
 
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-
-        return $validator->validated();
+        return $validated;
     }
 }

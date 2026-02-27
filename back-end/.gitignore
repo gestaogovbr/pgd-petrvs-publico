@@ -17,6 +17,7 @@ yarn-error.log
 /public/index.html
 /storage/logs
 /storage/phpstan
+/storage/framework/phpstan
 .phpstan-diagnostics/
 # managed
 **.data.json

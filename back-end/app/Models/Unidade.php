@@ -22,6 +22,35 @@ use App\Models\HistoricoFuncao;
 use App\Models\CurriculumProfissional;
 use App\Traits\AutoUuid;
 
+/**
+ * @property string $codigo
+ * @property string $sigla
+ * @property string $nome
+ * @property string|null $path
+ * @property int $atividades_arquivamento_automatico
+ * @property string $distribuicao_forma_contagem_prazos
+ * @property string $entrega_forma_contagem_prazos
+ * @property array $etiquetas
+ * @property array $notificacoes
+ * @property array $expediente
+ * @property string|null $texto_complementar_plano
+ * @property \DateTime|null $data_inativacao
+ * @property \DateTime|null $data_inicio_inativacao
+ * @property int $instituidora
+ * @property bool $executora
+ * @property int $informal
+ * @property array $checklist
+ * @property string|null $unidade_pai_id
+ * @property string $entidade_id
+ * @property string|null $cidade_id
+ * @property \DateTime|null $data_modificacao
+ * @property \DateTime|null $data_ativacao_temporaria
+ * @property string|null $justificativa_ativacao_temporaria
+ * @property-read Unidade|null $unidadePai
+ * @property-read Entidade $entidade
+ * @property-read Cidade|null $cidade
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $integrantes
+ */
 class Unidade extends ModelBase
 {
     use AutoUuid;

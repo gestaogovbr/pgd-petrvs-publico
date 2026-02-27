@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\File;
 
 class SeederController extends Controller
 {
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index()
     {
         $seederPath = database_path('seeders');
@@ -29,6 +32,10 @@ class SeederController extends Controller
         return response()->json($seeders, Response::HTTP_OK);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function execute(Request $request)
     {
         $seederName = $request->input('seeder');

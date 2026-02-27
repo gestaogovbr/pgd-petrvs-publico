@@ -15,7 +15,6 @@ class CatalogoValidador extends BaseValidador
             'unidade_id' => 'required|string|exists:unidades,id',
             'curador_responsavel_id' => 'required|string|exists:usuarios,id',
             'data_inicio' => 'required|date',
-            'data_inicio' => 'required|date',
         ]);
 
         if ($validator->fails()) {

@@ -190,6 +190,7 @@ return [
         Lab404\Impersonate\ImpersonateServiceProvider::class,
         OwenIt\Auditing\AuditingServiceProvider::class,
         App\Providers\DatabaseTuningServiceProvider::class,
+        App\Providers\RepositoryServiceProvider::class,
     ],
 
     /*

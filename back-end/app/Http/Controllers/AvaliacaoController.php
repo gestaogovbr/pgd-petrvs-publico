@@ -13,6 +13,7 @@ use App\Services\UnidadeService;
 use App\Services\UsuarioService;
 use App\Services\UtilService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\JsonResponse;
 use Throwable;
 
 class AvaliacaoController extends ControllerBase {
@@ -33,6 +34,7 @@ class AvaliacaoController extends ControllerBase {
                 $data = $request->validate([
                     'id' => ['required'],
                 ]);
+                /** @var Avaliacao|null $avaliacao */
                 $avaliacao = Avaliacao::find($data["id"]);
                 if(empty($avaliacao)) throw new ServerException("ValidateAvaliacao", "Avaliação não encontrada");
                 $this->canAvaliar($avaliacao->toArray(), $usuario);
@@ -49,7 +51,9 @@ class AvaliacaoController extends ControllerBase {
                 /* (RN_AVL_2) [PT] O usuário do plano de trabalho que possuir o acesso MOD_PTR_CSLD_REC_AVAL poderá recorrer da nota atribuida dentro do limites estabelecido pelo programa; */
                 if(!$usuario->hasPermissionTo('MOD_PTR_CSLD_REC_AVAL')) throw new ServerException("ValidateAvaliacao", "Usuário não possuí o acesso MOD_PTR_CSLD_REC_AVAL.\n[ver RN_AVL_2]");
 
-                $planoTrabalho = $avaliacao->planoTrabalhoConsolidacao->planoTrabalho;
+                /** @var PlanoTrabalhoConsolidacao $planoTrabalhoConsolidacao */
+                $planoTrabalhoConsolidacao = $avaliacao->planoTrabalhoConsolidacao;
+                $planoTrabalho = $planoTrabalhoConsolidacao->planoTrabalho;
 
                 if($planoTrabalho->usuario_id != $usuario->id) throw new ServerException("ValidateAvaliacao", "Apenas o usuário do plano de trabalho poderá recorrer.\n[ver RN_AVL_2]");
 
@@ -64,7 +68,9 @@ class AvaliacaoController extends ControllerBase {
     public function canAvaliar($data, $usuario) {
         $unidadeService = new UnidadeService();
         $usuarioService = new UsuarioService();
+        /** @var PlanoTrabalhoConsolidacao|null $consolidacao */
         $consolidacao = !empty($data["plano_trabalho_consolidacao_id"]) ? PlanoTrabalhoConsolidacao::find($data["plano_trabalho_consolidacao_id"]) : null;
+        /** @var PlanoEntrega|null $planoEntrega */
         $planoEntrega = !empty($data["plano_entrega_id"]) ? PlanoEntrega::find($data["plano_entrega_id"]) : null;
         /* (RN_AVL_4) [PT] Somente será possível realizar avaliação de consolidação CONCLUIDO ou AVALIADO; */
         if(!empty($consolidacao) && !in_array($consolidacao->status, ["CONCLUIDO", "AVALIADO"])) throw new ServerException("ValidateAvaliacao", "Para avaliar é necessário estar Concluído ou já Avaliado, e para cancelar é necessário estar Avaliado.\n[ver RN_AVL_4]");
@@ -82,7 +88,7 @@ class AvaliacaoController extends ControllerBase {
         if(!empty($planoEntrega) && !$condicao2 && !$condicao3) throw new ServerException("ValidateAvaliacao", "Usuário não possui a capacidade MOD_PENT_AVAL ou MOD_PENT_AVAL_SUBORD.\n[ver RN_AVL_1]");
     }
 
-    public function recorrer(Request $request) {
+    public function recorrer(Request $request): JsonResponse {
         try {
             $this->checkPermissions("RECORRER", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
 
@@ -103,7 +109,7 @@ class AvaliacaoController extends ControllerBase {
         }
     }
 
-    public function cancelarAvaliacao(Request $request) {
+    public function cancelarAvaliacao(Request $request): JsonResponse {
         try {
             $this->checkPermissions("CANCELAR_AVALIACAO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
