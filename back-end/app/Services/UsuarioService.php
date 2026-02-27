@@ -32,6 +32,7 @@ use App\Services\IntegracaoService;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 use App\Repository\UsuarioRepository;
+use App\Repository\UnidadeRepository;
 
 /**
  * @property-read UnidadeService $unidadeService
@@ -49,10 +50,12 @@ class UsuarioService extends ServiceBase
     const LOGIN_FIREBASE = "FIREBASE";
 
     protected UsuarioRepository $usuarioRepository;
+    protected UnidadeRepository $unidadeRepository;
 
     public function __construct() {
         parent::__construct();
         $this->usuarioRepository = app(UsuarioRepository::class);
+        $this->unidadeRepository = app(UnidadeRepository::class);
     }
 
     public function atualizarFotoPerfil($tipo, &$usuario, $url)
@@ -64,7 +67,7 @@ class UsuarioService extends ServiceBase
         if (!empty($url) && !empty($usuario) && $mudou) {
             $downloaded = $this->downloadImgProfile($url, "usuarios/" . $usuario->id);
             if (!empty($downloaded)) {
-                $this->usuarioRepository->updateFotoPerfil($usuario->id, $tipo, $url);
+                $this->usuarioRepository->updateFotoPerfil($usuario->id, $tipo, $url, $downloaded);
                 
                 $usuario->foto_perfil = $downloaded;
                 switch ($tipo) {
@@ -209,7 +212,7 @@ class UsuarioService extends ServiceBase
     public function hasLotacao($id, $usuario = null, $subordinadas = true)
     {
         $usuarioId = $usuario ? $usuario->id : parent::loggedUser()->id;
-        return $this->usuarioRepository->hasLotacao($usuarioId, $id, $subordinadas);
+        return $this->unidadeRepository->hasUsuarioLotacao($id, $usuarioId, $subordinadas);
     }
 
     public function atribuicoesGestor(?string $unidadeId, ?string $usuarioId = null)
@@ -244,7 +247,7 @@ class UsuarioService extends ServiceBase
     public function isGestorUnidadeRecursivo(string $unidadeId, ?string $usuarioId = null): bool
     {
         $usuarioId = $usuarioId ?? $this->loggedUser()->id;
-        return $this->usuarioRepository->isGestorUnidadeRecursivo($usuarioId, $unidadeId);
+        return $this->unidadeRepository->isUsuarioGestorRecursivo($unidadeId, $usuarioId);
     }
 
     public function isParticipante($planoTrabalho)
@@ -299,20 +302,6 @@ class UsuarioService extends ServiceBase
             $this->setBuffer("isLotadoNaLinhaAscendente", $unidadeId, $result);
         }
         return $result;
-    }
-
-    public function areasTrabalhoWhere($subordinadas, $usuario = null, $prefix = "")
-    {
-        $where = [];
-        $prefix = empty($prefix) ? "" : $prefix . ".";
-        $usuario = $usuario ?? parent::loggedUser();
-        foreach ($usuario->areasTrabalho as $lotacao) {
-            $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
-            if ($subordinadas)
-                $where[] = $prefix . "path like '%" . $lotacao->unidade_id . "%'";
-        }
-        $result = implode(" OR ", $where);
-        return empty($result) ? "false" : "(" . $result . ")";
     }
 
     public function proxyStore(&$data, $unidade, $action)
@@ -493,7 +482,7 @@ class UsuarioService extends ServiceBase
                  if(is_array($w) && $w[0] == "subordinadas") $subordinadas = $w[2];
             }
 
-            $areasTrabalhoWhere = $this->areasTrabalhoWhere($subordinadas, null, "where_unidades");
+            $areasTrabalhoWhere = $this->unidadeRepository->getAreasTrabalhoWhereClause($usuario->id, $subordinadas, "where_unidades");
             $data['where'][] = RawWhere::raw("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($areasTrabalhoWhere))", []);
         }
 

@@ -17,10 +17,6 @@ interface UsuarioReadRepositoryContract
     
     public function findByCpfOrEmail(string $cpf, string $email, ?string $exceptId = null, bool $withTrashed = false): ?Usuario;
 
-    public function hasLotacao(string $usuarioId, string $unidadeId, bool $subordinadas = true): bool;
-
-    public function isGestorUnidadeRecursivo(string $usuarioId, string $unidadeId): bool;
-
     public function isParticipanteHabilitado(string $usuarioId, string $programaId): bool;
 
     public function isIntegrante(string $usuarioId, string $unidadeId, string $atribuicao): bool;

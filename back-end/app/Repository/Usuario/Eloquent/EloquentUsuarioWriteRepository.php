@@ -39,45 +39,28 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
         return parent::delete($id);
     }
 
-    public function updateFotoPerfil(string $usuarioId, string $tipo, string $url): bool
+    public function updateFotoPerfil(string $usuarioId, string $tipo, string $url, string $downloadedUrl): bool
     {
         $usuario = $this->model->find($usuarioId);
         if (!$usuario) {
             return false;
         }
 
-        $mudou = false;
+        $usuario->foto_perfil = $downloadedUrl;
+        
         switch ($tipo) {
             case "GOOGLE":
-                $mudou = $usuario->foto_google != $url;
+                $usuario->foto_google = $url;
                 break;
             case "AZURE":
-                $mudou = $usuario->foto_microsoft != $url;
+                $usuario->foto_microsoft = $url;
                 break;
             case "FIREBASE":
-                $mudou = $usuario->foto_firebase != $url;
+                $usuario->foto_firebase = $url;
                 break;
         }
-
-        if (!empty($url) && $mudou) {
-            $downloaded = $this->downloadImgProfile($url, "usuarios/" . $usuario->id);
-            if (!empty($downloaded)) {
-                $usuario->foto_perfil = $downloaded;
-                switch ($tipo) {
-                    case "GOOGLE":
-                        $usuario->foto_google = $url;
-                        break;
-                    case "AZURE":
-                        $usuario->foto_microsoft = $url;
-                        break;
-                    case "FIREBASE":
-                        $usuario->foto_firebase = $url;
-                        break;
-                }
-                return $usuario->save();
-            }
-        }
-        return false;
+        
+        return $usuario->save();
     }
 
     public function removerVinculos(string $usuarioId): void
@@ -100,23 +83,5 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
         }
     }
 
-    private function downloadImgProfile($url, $path)
-    {
-        if (!Storage::exists($path)) {
-            Storage::makeDirectory($path);
-        }
-        try {
-            $contents = file_get_contents($url);
-        } catch (Throwable $e) {
-            return "";
-        }
-        if (!empty($contents)) {
-            $name = $path . "/profile_" . md5($contents) . ".jpg";
-            if (!Storage::exists($name))
-                Storage::put($name, $contents);
-            return $name;
-        } else {
-            return "";
-        }
-    }
+
 }

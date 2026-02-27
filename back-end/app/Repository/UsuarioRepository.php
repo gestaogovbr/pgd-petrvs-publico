@@ -28,16 +28,6 @@ class UsuarioRepository
         return $this->readRepository->findByCpfOrEmail($cpf, $email, $exceptId, $withTrashed);
     }
 
-    public function hasLotacao(string $usuarioId, string $unidadeId, bool $subordinadas = true): bool
-    {
-        return $this->readRepository->hasLotacao($usuarioId, $unidadeId, $subordinadas);
-    }
-
-    public function isGestorUnidadeRecursivo(string $usuarioId, string $unidadeId): bool
-    {
-        return $this->readRepository->isGestorUnidadeRecursivo($usuarioId, $unidadeId);
-    }
-
     public function isParticipanteHabilitado(string $usuarioId, string $programaId): bool
     {
         return $this->readRepository->isParticipanteHabilitado($usuarioId, $programaId);
@@ -73,9 +63,9 @@ class UsuarioRepository
         return $this->writeRepository->delete($id);
     }
 
-    public function updateFotoPerfil(string $usuarioId, string $tipo, string $url): bool
+    public function updateFotoPerfil(string $usuarioId, string $tipo, string $url, string $downloadedUrl): bool
     {
-        return $this->writeRepository->updateFotoPerfil($usuarioId, $tipo, $url);
+        return $this->writeRepository->updateFotoPerfil($usuarioId, $tipo, $url, $downloadedUrl);
     }
 
     public function removerVinculos(string $usuarioId): void

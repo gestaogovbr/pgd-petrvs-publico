@@ -71,6 +71,17 @@ class UsuarioConfig
 
 
 /**
+ * @property string $id
+ * @property string $nome
+ * @property string $email
+ * @property string $cpf
+ * @property string $matricula
+ * @property string $apelido
+ * @property string $telefone
+ * @property string $sexo
+ * @property string $situacao_funcional
+ * @property string $perfil_id
+ * @property string $tipo_modalidade_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $areasTrabalho
  * @property-read \App\Models\UnidadeIntegrante|null $lotacao
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $lotacoes

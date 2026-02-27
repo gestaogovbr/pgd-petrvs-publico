@@ -51,43 +51,6 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $query->first();
     }
 
-    public function hasLotacao(string $usuarioId, string $unidadeId, bool $subordinadas = true): bool
-    {
-        $areasTrabalhoWhere = $this->areasTrabalhoWhere($usuarioId, $subordinadas);
-        // Using Unidade model here because the original query was on Unidade
-        return Unidade::where("id", $unidadeId)
-            ->whereRaw($areasTrabalhoWhere)
-            ->exists();
-    }
-
-    public function isGestorUnidadeRecursivo(string $usuarioId, string $unidadeId): bool
-    {
-        $result = DB::select("
-            WITH RECURSIVE unidade_hierarchy AS (
-                SELECT id, unidade_pai_id, 0 as level
-                FROM unidades 
-                WHERE id = ?
-                
-                UNION ALL
-                
-                SELECT u.id, u.unidade_pai_id, uh.level + 1
-                FROM unidades u
-                INNER JOIN unidade_hierarchy uh ON u.id = uh.unidade_pai_id
-                WHERE uh.level < 10
-            )
-            SELECT COUNT(*) as count
-            FROM unidade_hierarchy uh
-            INNER JOIN unidades_integrantes ui ON ui.unidade_id = uh.id
-            INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
-            WHERE ui.usuario_id = ?
-              AND uia.atribuicao IN ('GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO')
-              AND ui.deleted_at IS NULL
-              AND uia.deleted_at IS NULL
-        ", [$unidadeId, $usuarioId]);
-        
-        return $result[0]->count > 0;
-    }
-
     public function isParticipanteHabilitado(string $usuarioId, string $programaId): bool
     {
         $usuario = $this->query()->find($usuarioId);
@@ -114,26 +77,6 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
     {
         $usuario = $this->query()->find($usuarioId);
         return $usuario && $usuario->lotacao !== null && $usuario->lotacao->unidade_id == $unidadeId;
-    }
-
-    /**
-     * Helper to generate the raw where clause for areas de trabalho
-     */
-    private function areasTrabalhoWhere(string $usuarioId, bool $subordinadas, string $prefix = ""): string
-    {
-        $where = [];
-        $prefix = empty($prefix) ? "" : $prefix . ".";
-        $usuario = $this->query()->find($usuarioId);
-        
-        if (!$usuario) return "false";
-
-        foreach ($usuario->areasTrabalho as $lotacao) {
-            $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
-            if ($subordinadas)
-                $where[] = $prefix . "path like '%" . $lotacao->unidade_id . "%'";
-        }
-        $result = implode(" OR ", $where);
-        return empty($result) ? "false" : "(" . $result . ")";
     }
 
     public function search(array $params, int $limit = 0)
