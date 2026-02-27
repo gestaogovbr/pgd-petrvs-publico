@@ -6,22 +6,39 @@ use App\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Artisan;
 
 abstract class DatabaseTenantTestCase extends TestCase
 {
     use RefreshDatabase;
 
     protected $tenant;
-    protected $tenantId = 'tenant_test';
+    protected $tenantId = '_test';
+    protected static bool $dumped = false;
+
 
     protected function setUp(): void
     {
         parent::setUp();
-
-        // modifica driver de fila para sync, garantindo que os jobs sejam processados imediatamente durante os testes
-        config()->set('queue.connections.rabbitmq.driver', 'sync');
-
+        $this->disableRabbitMQ();
+        $this->dump();
         $this->initializeTenant();
+    }
+
+    public function disableRabbitMQ() {
+        config()->set('queue.connections.rabbitmq.driver', 'sync');
+    }
+
+    public function dump() {
+        if (self::$dumped) {
+            return true;
+        }
+
+        Artisan::call('schema:dump', [
+            '--database' => 'tenant',
+        ]);
+
+        self::$dumped = true;
     }
 
     protected function initializeTenant()
