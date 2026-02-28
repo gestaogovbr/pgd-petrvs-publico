@@ -33,7 +33,10 @@ trait DadosExternosSiape
         $this->inicializaSiape('buscaDadosUnidade');
         $codOrgao = strval(intval($this->configIntegracaoSiape['codOrgao']));
 
-        $xmlData =  $this->siapeClassBuscaDados->getUorgAsXml(
+        /** @var BuscarDadosSiapeUnidade $buscaDados */
+        $buscaDados = $this->siapeClassBuscaDados;
+
+        $xmlData =  $buscaDados->getUorgAsXml(
             $this->configIntegracaoSiape['siglaSistema'],
             $this->configIntegracaoSiape['nomeSistema'],
             $this->configIntegracaoSiape['senha'],
@@ -58,7 +61,9 @@ trait DadosExternosSiape
         $codOrgao = strval(intval($this->configIntegracaoSiape['codOrgao']));
 
         // Dados funcionais
-        $xmlDataFuncionais = $this->siapeClassBuscaDados->consultaDadosFuncionais(
+        /** @var BuscarDadosSiapeServidor $buscaDados */
+        $buscaDados = $this->siapeClassBuscaDados;
+        $xmlDataFuncionais = $buscaDados->consultaDadosFuncionais(
             $this->configIntegracaoSiape['siglaSistema'],
             $this->configIntegracaoSiape['nomeSistema'],
             $this->configIntegracaoSiape['senha'],
@@ -93,7 +98,9 @@ trait DadosExternosSiape
         }
 
         // Dados pessoais (manter saída mínima necessária)
-        $xmlDataPessoais = $this->siapeClassBuscaDados->consultaDadosPessoais(
+        /** @var BuscarDadosSiapeServidor $buscaDados */
+        $buscaDados = $this->siapeClassBuscaDados;
+        $xmlDataPessoais = $buscaDados->consultaDadosPessoais(
             $this->configIntegracaoSiape['siglaSistema'],
             $this->configIntegracaoSiape['nomeSistema'],
             $this->configIntegracaoSiape['senha'],

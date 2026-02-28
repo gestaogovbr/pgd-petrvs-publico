@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,7 +21,9 @@ trait MergeRelations
 {
     public static function create(array $attributes = [])
     {
+        /** @phpstan-ignore-next-line */
         list($relations, $attributes) = (new static)->extractFillableRelations($attributes);
+        /** @phpstan-ignore-next-line */
         $model = new static($attributes);
         if(count($relations) > 0) {
             $model->save();
@@ -222,7 +225,7 @@ trait MergeRelations
     }
 
     /**
-     * @param HasMany $relation
+     * @param MorphMany $relation
      * @param array $attributes
      */
     public function fillMorphManyRelation(MorphMany $relation, array $attributes, $relationName)
@@ -238,6 +241,7 @@ trait MergeRelations
             if (!$related instanceof Model) {
                 if (method_exists($relation, 'getHasCompareKey')) { // Laravel 5.3
                     $foreign_key = explode('.', $relation->getHasCompareKey());
+                    /** @phpstan-ignore-next-line */
                     $related[$foreign_key[1]] = $relation->getParent()->getKey();
                 } else {  // Laravel 5.5+
                     $related[$relation->getForeignKeyName()] = $relation->getParentKey();

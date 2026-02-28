@@ -102,6 +102,16 @@ class Programa extends ModelBase
   ];
 
   // HasMany
+  public function planosTrabalho()
+  {
+      return $this->hasMany(PlanoTrabalho::class);
+  }
+
+  public function planosEntrega()
+  {
+      return $this->hasMany(PlanoEntrega::class);
+  }
+
   public function participantes()
   {
     return $this->hasMany(ProgramaParticipante::class);
@@ -116,6 +126,24 @@ class Programa extends ModelBase
   public function tipoDocumentoTcr()
   {
     return $this->belongsTo(TipoDocumento::class, 'tipo_documento_tcr_id');
+  }
+
+  /**
+   * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+   */
+  public function tipoAvaliacaoPlanoTrabalho()
+  {
+    return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_plano_trabalho_id');
+  }
+
+  public function tipoAvaliacaoPlanoEntrega()
+  {
+    return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_plano_entrega_id');
+  }
+
+  public function tipoAvaliacao()
+  {
+    return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_id');
   }
 
   public function templateTcr()

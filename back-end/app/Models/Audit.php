@@ -49,7 +49,7 @@ class Audit extends Model implements AuditableContract
      * Relationship with User model.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Usuario::class);
     }

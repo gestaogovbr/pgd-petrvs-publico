@@ -7,12 +7,18 @@ use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Models\PlanoTrabalho;
 use App\Services\ServiceBase;
+use App\Services\UnidadeService;
+use App\Services\StatusService;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 use Carbon\Carbon;
 
+/**
+ * @property UnidadeService $unidadeService
+ * @property StatusService $statusService
+ */
 class ProgramaService extends ServiceBase
 {
   public function proxyQuery(&$query, &$data)
@@ -108,9 +114,9 @@ class ProgramaService extends ServiceBase
 
       foreach ($planosTrabalho as $planoTrabalho) {
         if (collect(['INCLUIDO', 'AGUARDANDO_ASSINATURA'])->contains($planoTrabalho->status)) {
-          $this->statusService->atualizaStatus($planoEntrega, 'CANCELADO', "Conclusão do regramento");
+          $this->statusService->atualizaStatus($planoTrabalho, 'CANCELADO', "Conclusão do regramento");
         } else if ($planoTrabalho->status == 'ATIVO'){
-          $this->statusService->atualizaStatus($planoEntrega, 'CONCLUIDO', "Conclusão do regramento");
+          $this->statusService->atualizaStatus($planoTrabalho, 'CONCLUIDO', "Conclusão do regramento");
         }
       }
 
@@ -119,7 +125,7 @@ class ProgramaService extends ServiceBase
         $participante->delete();
       }
 
-      $programa->data_fim = now()->toDateTimeString();
+      $programa->data_fim = now();
       $programa->save();
 
       DB::commit();

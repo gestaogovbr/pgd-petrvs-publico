@@ -7,7 +7,7 @@ use App\Services\ServiceBase;
 class LookupService {
 
     public function __get($name) {
-        return array_key_exists($name, $this->LOOKUPS) ? $this->LOOKUPS[$name] : null;
+        return array_key_exists($name, self::LOOKUPS) ? self::LOOKUPS[$name] : null;
     }
 
     const LOOKUPS = [

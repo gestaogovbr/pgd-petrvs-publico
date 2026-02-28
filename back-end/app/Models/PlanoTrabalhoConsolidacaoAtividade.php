@@ -5,8 +5,11 @@ namespace App\Models;
 use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\PlanoTrabalhoConsolidacao;
-use App\Models\Atividade;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property PlanoTrabalhoConsolidacao $consolidacao
+ */
 class PlanoTrabalhoConsolidacaoAtividade extends ModelBase
 {
   protected $table = 'planos_trabalhos_consolidacoes_atividades';
@@ -32,7 +35,7 @@ class PlanoTrabalhoConsolidacaoAtividade extends ModelBase
 
   // Has
   // Belongs
-  public function consolidacao()
+  public function consolidacao(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(PlanoTrabalhoConsolidacao::class, "plano_trabalho_consolidacao_id");
   }

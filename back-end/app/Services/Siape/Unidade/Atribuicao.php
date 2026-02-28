@@ -55,13 +55,14 @@ trait Atribuicao
     private function processaCurador(Unidade $unidadeDestino, Usuario $usuario, UnidadeIntegrante $integranteNovoOuExistente)
     {
          /**
-         * @var UnidadeIntegrante|null[] $curadores
+         * @var \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $curadores
          */
-        $curadores = $usuario->curadores;
+        $curadores = $usuario->curadores()->get();
         foreach ($curadores as $curador) {
+            if (!$curador) continue;
             if ($curador->unidade_id != $unidadeDestino->id) continue;
             if ($curador->usuario_id == $usuario->id) {
-                $this->alteracoes = ['info' => sprintf('O servidor já é curador da unidade!', $usuario->id, $unidadeDestino->id)];
+                $this->alteracoes = ['info' => sprintf('O servidor %s já é curador da unidade %s!', $usuario->id, $unidadeDestino->id)];
                 return;
             }
         }
@@ -73,20 +74,21 @@ trait Atribuicao
     private function processaColaborador(Unidade $unidadeDestino, Usuario $usuario, UnidadeIntegrante $integranteNovoOuExistente)
     {
         /**
-         * @var UnidadeIntegrante|null[] $colaboracoes
+         * @var \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $colaboracoes
          */
-        $colaboracoes = $usuario->colaboracoes;
+        $colaboracoes = $usuario->colaboracoes()->get();
 
         foreach ($colaboracoes as $colaboracao) {
+            if (!$colaboracao) continue;
             if ($colaboracao->unidade_id != $unidadeDestino->id) continue;
             if ($colaboracao->usuario_id == $usuario->id) {
-                $this->alteracoes = ['info' => sprintf('O servidor já é colaborador da unidade!', $usuario->id, $unidadeDestino->id)];
+                $this->alteracoes = ['info' => sprintf('O servidor %s já é colaborador da unidade %s!', $usuario->id, $unidadeDestino->id)];
                 return;
             }
         }
 
         if (!$unidadeDestino->executora && $usuario->perfil->nivel != NivelAcessoService::PERFIL_COLABORADOR) {
-            $this->alteracoes = ['info' => sprintf('Não é possível atribuir Colaborador a um usuário com perfil diferente de Colaborador em unidade não executora!', $usuario->id, $unidadeDestino->id)];
+            $this->alteracoes = ['info' => sprintf('Não é possível atribuir Colaborador a um usuário com perfil diferente de Colaborador em unidade não executora! Usuário: %s, Unidade: %s', $usuario->id, $unidadeDestino->id)];
             return;
         }
         
@@ -97,7 +99,7 @@ trait Atribuicao
     private function processaGestorSubstituto(Unidade $unidadeDestino, Usuario $usuario, UnidadeIntegrante $integranteNovoOuExistente)
     {
         /**
-         * @var UnidadeIntegrante|null $lotacoes
+         * @var \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $lotacoes
          */
         $lotacoes = $usuario->gerenciasSubstitutas;
 
@@ -105,7 +107,7 @@ trait Atribuicao
             if ($lotacao->unidade_id != $unidadeDestino->id) continue;
 
             if (!empty($integranteNovoOuExistente->gestorSubstituto) && $lotacao->gestorSubstituto->id == $integranteNovoOuExistente->gestorSubstituto->id) {
-                $this->alteracoes = ['info' => sprintf('O servidor já é gestor substituto da unidade!', $usuario->id, $unidadeDestino->id)];
+                $this->alteracoes = ['info' => sprintf('O servidor %s já é gestor substituto da unidade %s!', $usuario->id, $unidadeDestino->id)];
                 return;
             }
         }
@@ -115,7 +117,7 @@ trait Atribuicao
     private function processaGestorDelegado(Unidade $unidadeDestino, Usuario $usuario, UnidadeIntegrante $integranteNovoOuExistente)
     {
         /**
-         * @var UnidadeIntegrante|null $lotacoes
+         * @var \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $lotacoes
          */
         $lotacoes = $usuario->gerenciasDelegadas;
 
@@ -123,7 +125,7 @@ trait Atribuicao
             if ($lotacao->unidade_id != $unidadeDestino->id) continue;
 
             if (!empty($integranteNovoOuExistente->gestorDelegado) && $lotacao->gestorDelegado->id == $integranteNovoOuExistente->gestorDelegado->id) {
-                $this->alteracoes = ['info' => sprintf('O servidor já é gestor delegado da unidade!', $usuario->id, $unidadeDestino->id)];
+                $this->alteracoes = ['info' => sprintf('O servidor %s já é gestor delegado da unidade %s!', $usuario->id, $unidadeDestino->id)];
                 return;
             }
         }
@@ -184,8 +186,8 @@ trait Atribuicao
 
     protected function removeTodasAsGestoesDoUsuario(Usuario $usuario): void
     {
-        $usuario->gerencias->each(function (UnidadeIntegrante $gestao) {
-            $gestao->gestores->each(function (UnidadeIntegranteAtribuicao $gestor) {
+        $usuario->gerencias()->get()->each(function (UnidadeIntegrante $gestao) {
+            $gestao->gestores()->get()->each(function (UnidadeIntegranteAtribuicao $gestor) {
                 if ($gestor->atribuicao == EnumAtribuicao::GESTOR->value) $gestor->delete();
             });
         });

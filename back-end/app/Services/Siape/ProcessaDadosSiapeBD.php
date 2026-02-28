@@ -48,8 +48,8 @@ class ProcessaDadosSiapeBD
                 $dadosServidorArray[] = [
                     'cpf' => $servidor->cpf,
                     'data_modificacao' => $this->previneDataNula($servidor),
-                    'dadosPessoais' => $this->processaDadosPessoais($servidor->cpf, $servidor->responseDadosPessoais),
-                    'dadosFuncionais' => $this->processaDadosFuncionais($servidor->cpf, $servidor->responseDadosFuncionais),
+                    'dadosPessoais' => $this->processaDadosPessoais($servidor->cpf, (string) $servidor->responseDadosPessoais),
+                    'dadosFuncionais' => $this->processaDadosFuncionais($servidor->cpf, (string) $servidor->responseDadosFuncionais),
                 ];
                 $cpfsProcessados[] = $servidor->cpf;
             } catch (ErrorDataSiapeException $e) {
@@ -239,7 +239,7 @@ class ProcessaDadosSiapeBD
         $dadosUorgArray = [];
         foreach ($response as $dadosUnidades) {
             try {
-                $dadosUorg = $this->processaDadosUorg($dadosUnidades->codigo, $dadosUnidades->response);
+                $dadosUorg = $this->processaDadosUorg($dadosUnidades->codigo, (string) $dadosUnidades->response);
             } catch (Exception $e) {
                 report($e);
                 SiapeLog::error('Erro ao processar XML da Unidade: ' . $e->getMessage(), [$dadosUnidades->response]);
@@ -256,7 +256,7 @@ class ProcessaDadosSiapeBD
                 'dados' => $this->simpleXmlElementToArray($dadosUorg)
             ];
 
-            $dadosUnidades->processado = 1;
+            $dadosUnidades->processado = true;
             $dadosUnidades->save();
         }
 

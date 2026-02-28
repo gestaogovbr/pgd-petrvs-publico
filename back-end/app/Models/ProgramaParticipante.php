@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Usuario;
 use App\Models\Programa;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProgramaParticipante extends ModelBase
 {
@@ -22,11 +23,11 @@ class ProgramaParticipante extends ModelBase
   public $delete_cascade = [];
 
   // Belongs
-  public function programa()
+  public function programa(): BelongsTo
   {
     return $this->belongsTo(Programa::class);
   }
-  public function usuario()
+  public function usuario(): BelongsTo
   {
     return $this->belongsTo(Usuario::class);
   }

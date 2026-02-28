@@ -17,6 +17,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property mixed $metadados
+ */
 class Atividade extends ModelBase
 {
   protected $table = 'atividades';

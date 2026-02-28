@@ -17,6 +17,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 use Throwable;
 
+/**
+ * @property PlanoTrabalhoService $planoTrabalhoService
+ */
 class DocumentoService extends ServiceBase {
 
     public function proxyUpdate($data, $unidade) {
@@ -31,6 +34,11 @@ class DocumentoService extends ServiceBase {
         return $data;
     }
 
+    /**
+     * @param Documento $entity
+     * @param mixed $unidade
+     * @param string $action
+     */
     public function extraStore($entity, $unidade, $action) {
         $documento = $entity;
         if($documento->especie == "TCR" && $action == ServiceBase::ACTION_INSERT) {

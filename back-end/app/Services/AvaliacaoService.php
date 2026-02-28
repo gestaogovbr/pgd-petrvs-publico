@@ -14,13 +14,16 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Throwable;
+use App\Models\Unidade;
+use App\Models\Usuario;
+use App\Models\Status;
 
 /**
- * @property \App\Services\UnidadeService $unidadeService
- * @property \App\Services\UsuarioService $usuarioService
- * @property \App\Services\PlanoTrabalhoConsolidacaoService $planoTrabalhoConsolidacaoService
- * @property \App\Services\PlanoEntregaService $planoEntregaService
- * @property \App\Services\StatusService $statusService
+ * @property UnidadeService $unidadeService
+ * @property UsuarioService $usuarioService
+ * @property PlanoTrabalhoConsolidacaoService $planoTrabalhoConsolidacaoService
+ * @property PlanoEntregaService $planoEntregaService
+ * @property StatusService $statusService
  */
 class AvaliacaoService extends ServiceBase
 {

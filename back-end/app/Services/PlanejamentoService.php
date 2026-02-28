@@ -7,7 +7,11 @@ use App\Models\EixoTematico;
 use App\Models\PlanejamentoObjetivo;
 use App\Models\Unidade;
 use Illuminate\Support\Facades\DB;
+use App\Services\UsuarioService;
 
+/**
+ * @property UsuarioService $usuarioService
+ */
 class PlanejamentoService extends ServiceBase
 {
     /**

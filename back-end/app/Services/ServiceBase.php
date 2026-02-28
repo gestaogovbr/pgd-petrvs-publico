@@ -65,9 +65,11 @@ class DynamicMethods
  * @method proxyUpdateJson($data, $unidade)
  * @method proxyDestroy($entity)
  * @method extraDestroy($entity)
+ * @property UnidadeService $unidadeService
  */
 class ServiceBase extends DynamicMethods
 {
+  protected $joinable = [];
   const OPERATORS = ["=", "==", "like", "in", "not in", "<", ">", "<>", "!=", ">=", "<="];
   const ISO8601_VALIDATE = '/^[0-9]{4}-((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01])|(0[469]|11)-(0[1-9]|[12][0-9]|30)|(02)-(0[1-9]|[12][0-9]))((T|\s)(0[0-9]|1[0-9]|2[0-3]):(0[0-9]|[1-5][0-9])(:(0[0-9]|[1-5][0-9])(\.[0-9]{3})?)?)?Z?$/';
   const ISO8601_FORMAT = "Y-m-d\TH:i:s";
@@ -224,7 +226,7 @@ class ServiceBase extends DynamicMethods
       }
     }
     foreach ($from as $current) {
-      if (!in_array($this->getValue($current, "id"), $ids)) $result[] = gettype($current) == "array" ? (object) ["id" => $current->id, "_status" => "DEL"] : ["id" => $current->id, "_status" => "DEL"];
+      if (!in_array($this->getValue($current, "id"), $ids)) $result[] = gettype($current) == "array" ? (object) ["id" => $current['id'], "_status" => "DEL"] : ["id" => $current->id, "_status" => "DEL"];
     }
     return empty($result) ? null : $result;
   }
@@ -555,7 +557,7 @@ class ServiceBase extends DynamicMethods
    * Search for a given key
    *
    * @param  Array $data
-   * @return Array
+   * @return Array | null
    */
   public function searchKey($data)
   {
@@ -664,7 +666,7 @@ class ServiceBase extends DynamicMethods
    * Get all ids
    *
    * @param  Array $data
-   * @return Object
+   * @return array
    */
   public function getAllIds($data)
   {
@@ -782,7 +784,7 @@ class ServiceBase extends DynamicMethods
   {
     if (!empty($file)) {
       if (!Storage::exists($path)) {
-        Storage::makeDirectory($path, 0755, true);
+        Storage::makeDirectory($path);
       }
       $path = $file->storeAs($path, $name);
       return $path;
@@ -805,7 +807,7 @@ class ServiceBase extends DynamicMethods
   public function uploadBase64($path, $name, $file)
   {
     if (!Storage::exists($path)) {
-      Storage::makeDirectory($path, 0755, true);
+      Storage::makeDirectory($path);
     }
     $file = strpos($file, ';base64') ? explode(',', $file)[1] : $file;
     $path = Storage::putFileAs($path, base64_decode($file), $name);
@@ -965,9 +967,9 @@ class ServiceBase extends DynamicMethods
   /**
    * Retorna o usuário logado
    *
-   * @return App\Models\Usuario | null
+   * @return \App\Models\Usuario | null
    */
-  public static function loggedUser(): ?Usuario
+  public static function loggedUser(): ?\App\Models\Usuario
   {
     return Auth::user();
   }
@@ -976,9 +978,9 @@ class ServiceBase extends DynamicMethods
   /**
    * Retorna a entidade atual do usuário logado
    *
-   * @return App\Models\Entidade | null
+   * @return \App\Models\Entidade | null
    */
-  public static function entidade(): Entidade
+  public static function entidade(): ?\App\Models\Entidade
   {
     return Entidade::find(Session::get('entidade_id'));
   }
@@ -986,11 +988,11 @@ class ServiceBase extends DynamicMethods
   /**
    * Retorna a unidade atual do usuário logado (Área de trabalho selecionada)
    *
-   * @return App\Models\Unidade | null
+   * @return \App\Models\Unidade | null
    */
   public function unidade()
   {
-    return Entidade::find(Session::get('unidade_id'));
+    return Unidade::find(Session::get('unidade_id'));
   }
 
   /**

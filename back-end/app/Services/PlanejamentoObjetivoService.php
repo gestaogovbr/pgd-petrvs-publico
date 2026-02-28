@@ -2,6 +2,11 @@
 
 namespace App\Services;
 
+use App\Services\PlanejamentoService;
+
+/**
+ * @property PlanejamentoService $planejamentoService
+ */
 class PlanejamentoObjetivoService extends ServiceBase
 {
     public function extraStore($planejamentoObjetivo, $unidade, $action) {

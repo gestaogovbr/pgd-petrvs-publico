@@ -19,6 +19,7 @@ use App\Models\Favorito;
 use App\Models\Integracao;
 use App\Models\IntegracaoServidor;
 use App\Models\Notificacao;
+use App\Models\TipoModalidadeSiape;
 use App\Models\NotificacaoConfig;
 use App\Models\NotificacaoDestinatario;
 use App\Models\NotificacaoWhatsapp;
@@ -64,16 +65,34 @@ use ReflectionObject;
 
 class UsuarioConfig
 {
+    public $notificacoes;
 }
 
 
 
 /**
+ * @property string $id
+ * @property string $nome
+ * @property string $email
+ * @property string $cpf
+ * @property string $matricula
+ * @property string $apelido
+ * @property string $telefone
+ * @property string $sexo
+ * @property string $situacao_funcional
+ * @property string $perfil_id
+ * @property string $tipo_modalidade_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $areasTrabalho
  * @property-read \App\Models\UnidadeIntegrante|null $lotacao
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $lotacoes
  * @property-read \App\Models\Perfil|null $perfil
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $unidadesIntegrantes
  * @property-read \App\Models\PlanoTrabalho|null $ultimoPlanoTrabalho
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Unidade[] $unidades
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $curadores
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $colaboracoes
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $gerenciasSubstitutas
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $gerenciasDelegadas
  */
 class Usuario extends Authenticatable implements AuditableContract
 {
@@ -334,7 +353,7 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasOne(ProgramaParticipante::class)->latestOfMany();
     }
 
-    public function integracoes()
+    public function integracoes(): HasMany
     {
         return $this->hasMany(Integracao::class);
     }
@@ -411,6 +430,9 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasMany(UnidadeIntegrante::class)->has('gestorDelegado');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function lotacao()
     {
         return $this->hasOne(UnidadeIntegrante::class)->has('lotado');

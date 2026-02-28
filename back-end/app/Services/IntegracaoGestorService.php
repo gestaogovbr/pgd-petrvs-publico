@@ -10,6 +10,15 @@ use App\Facades\SiapeLog;
 use App\Exceptions\LogError;
 use Throwable;
 
+use App\Services\UnidadeIntegranteService;
+use App\Services\NivelAcessoService;
+use App\Services\PerfilService;
+
+/**
+ * @property UnidadeIntegranteService $unidadeIntegranteService
+ * @property NivelAcessoService $nivelAcessoService
+ * @property PerfilService $perfilService
+ */
 class IntegracaoGestorService extends ServiceBase
 {
     /**
