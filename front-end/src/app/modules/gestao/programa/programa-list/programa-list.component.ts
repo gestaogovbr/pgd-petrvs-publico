@@ -57,11 +57,19 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
   }
 
   public filterWhere = (filter: FormGroup) => {
-    let result: any[] = [];
-    let form: any = filter.value;
-    if(this.vigentesUnidadeExecutora) result.push(['vigentesUnidadeExecutora',"==",this.auth.unidade!.id]);
-    if(this.todosUnidadeExecutora || !this.util.isDeveloper()) result.push(['todosUnidadeExecutora',"==",this.auth.unidade!.id]);
-    if(form.nome?.length) {
+    const result: any[] = [];
+    const form: any = filter.value;
+    const unidadeId = this.auth.unidade?.id;
+
+    if (unidadeId) {
+      if (this.vigentesUnidadeExecutora) {
+        result.push(['vigentesUnidadeExecutora', '==', unidadeId]);
+      } else if (this.todosUnidadeExecutora || !this.auth.hasPermissionTo("MOD_PRGT_VER_TODOS")) {
+        result.push(['todosUnidadeExecutora', '==', unidadeId]);
+      }
+    }
+
+    if (form.nome?.length) {
       result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
 

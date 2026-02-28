@@ -214,14 +214,8 @@ class PlanoTrabalhoService extends ServiceBase
         if(!is_null($unidade?->data_inativacao)){
             throw new ServerException("ValidatePlanoEntrega", "A unidade está inativa.");
         }
-        /* Resumo da PTR:TABELA_1 para Inclusão e Alteração:
-        Usuario do Plano          Usuario Logado
-        PT do Chefe.............: CF?,CF+,CS+
-        PT do Chefe Sub.........: CF,CS?,CF+,CS+
-        PT do Delegado..........: CF,CS,DL?
-        PT do Lotado/Colaborador: CF,CS,DL,LC? */
 
-        /* (RN_PTR_AA) Um Plano de Trabalho não pode ser incluído/alterado se apresentar período conflitante com outro Plano de Trabalho já existente para a mesma unidade/servidor, a menos que o usuário logado possua a capacidade MOD_PTR_INTSC_DATA; */
+        /* Um Plano de Trabalho não pode ser incluído/alterado se apresentar período conflitante com outro Plano de Trabalho já existente do participante. */
         $conflito = PlanoTrabalho::
             where("usuario_id", $data["usuario_id"])->
             where("data_inicio", "<=", $data["data_fim"])->
@@ -276,7 +270,7 @@ class PlanoTrabalhoService extends ServiceBase
               - o usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
                 - o usuário logado precisa ser um participante do PGD, habilitado, ou atender aos critérios da TABELA_1; [RN_PTR_B]; e
                 - o participante do plano precisa ser LOTADO/COLABORADOR na unidade do plano, ou este deve possuir a capacidade MOD_PTR_USERS_INCL (RN_PTR_Y); e
-                - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA (RN_PTR_AA)
+                - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente do participante.
             */
             /* (RN_PTR_B) O Plano de Trabalho pode ser incluído pelo próprio servidor, se ele for "participante do programa" habilitado, ou pelas condições da TABELA_1 */
             if ($usuario->participa_pgd != 'sim')
@@ -301,7 +295,7 @@ class PlanoTrabalhoService extends ServiceBase
               - estando com o status 'INCLUIDO' ou 'AGUARDANDO_ASSINATURA', o usuário logado precisa atender os critérios da ação Alterar da TABELA_1;
               - estando com o status 'ATIVO', o usuário precisa possuir a capacidade MOD_PTR_EDT_ATV e atender os critérios da ação Alterar da TABELA_1;
             Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
-            A alteração não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA (RN_PTR_AA)
+            A alteração não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante.
             */
             if (!$condicoes['planoValido'])
                 throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho não é válido, ou seja, foi apagado, cancelado ou arquivado.\n[ver RN_PTR_M]");
@@ -458,7 +452,7 @@ class PlanoTrabalhoService extends ServiceBase
     {
         $result = UtilService::asTimestamp($novoInicio);
         foreach ($plano->consolidacoes as $consolidacao) {
-            $data = UtilService::asTimestamp($consolidacao->status != "INCLUIDO" ? $consolidacao->data_fim : $result);
+            $data = UtilService::asTimestamp(in_array($consolidacao->status, StatusEnum::statusEditaveisPlanoTrabalho()) ? $consolidacao->data_fim : $result);
             $result = max($result, $data);
         }
         return date('Y-m-d', $result);
@@ -469,7 +463,7 @@ class PlanoTrabalhoService extends ServiceBase
     {
         $result = UtilService::asTimestamp($novoFim);
         foreach ($plano->consolidacoes as $consolidacao) {
-            $data = UtilService::asTimestamp($consolidacao->status != "INCLUIDO" ? $consolidacao->data_inicio : $result);
+            $data = UtilService::asTimestamp(in_array($consolidacao->status, StatusEnum::statusEditaveisPlanoTrabalho()) ? $consolidacao->data_inicio : $result);
             $result = min($result, $data);
         }
         return date('Y-m-d', $result);
@@ -529,7 +523,8 @@ class PlanoTrabalhoService extends ServiceBase
                 $proximoFim =  Carbon::parse($this->proxDataConsolidacao($dataInicio->toDateString(), $plano->programa));
                 $dataFim = $proximoFim->greaterThan($limite) ? $limite->copy() : $proximoFim;
                 $igual = $existentes->first(fn($c) => $c->data_inicio === $dataInicio->toDateString() && $c->data_fim === $dataFim->toDateString());
-                $intersecao = $existentes->first(fn($c) => $c->status !== "INCLUIDO" && $dataInicio->lessThanOrEqualTo(Carbon::parse($c->data_fim)) && $dataFim->greaterThanOrEqualTo(Carbon::parse($c->data_inicio)));
+                $intersecao = $existentes->first(fn($c) => !in_array($c->status, StatusEnum::statusEditaveisPlanoTrabalho()) && 
+                                                            $dataInicio->lessThanOrEqualTo(Carbon::parse($c->data_fim)) && $dataFim->greaterThanOrEqualTo(Carbon::parse($c->data_inicio)));
                 if (!empty($igual)) { /* (RN_CSLD_4) Caso exista períodos iguais, o período existente será mantido (para este perído nada será feito, manterá a mesma ID) */
                     $merged[] = $igual;
                     $existentes = $existentes->reject(fn($e) => $e->id === $igual->id)->values();
@@ -837,7 +832,7 @@ class PlanoTrabalhoService extends ServiceBase
                 return "Somente é possível cancelar plano de trabalho que não tenha atividade lançada. Atividade(s): " . implode(", ", $atividades);
         }
         foreach ($planoTrabalho->consolidacoes as $consolidacao) {
-            if ($consolidacao->status != "INCLUIDO")
+            if (in_array($consolidacao->status, StatusEnum::statusEditaveisPlanoTrabalho()))
                 return "Somente é possível cancelar plano de trabalho que não tenha período de consolidação concluído.";
         }
         return null;

@@ -15,7 +15,7 @@ class ValidSnapshotCreator implements SnapshotCreatorInterface
     }
 }
 
-class InvalidSnapshotCreator
+class InvalidSnapshotCreator // não implementa SnapshotCreatorInterface
 {
     public function create(string $entityId, string $consolidacaoId, $dataConclusao): void
     {

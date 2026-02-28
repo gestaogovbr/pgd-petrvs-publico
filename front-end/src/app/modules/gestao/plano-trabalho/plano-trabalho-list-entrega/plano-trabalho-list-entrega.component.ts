@@ -91,7 +91,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     if (['forca_trabalho'].indexOf(controlName) >= 0 && (control.value < 1)) result = "Deve ser maior que 0 ";
     if (['plano_entrega_entrega_id'].indexOf(controlName) >= 0) {
       if (['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(this.form?.controls.origem.value) && !control.value) result = "Obrigatório!";
-      if (!!this.entity?.entregas?.filter(e => !!e.plano_entrega_entrega_id && e.id != this.grid?.editing?.id).find(x => x.plano_entrega_entrega_id == control.value)) result = "Esta entrega está em duplicidade!"; /* (*2) */
+      if (!!this.entity?.entregas?.filter(e => !!e.plano_entrega_entrega_id && e.id != this.grid?.editing?.id && e._status != "DELETE").find(x => x.plano_entrega_entrega_id == control.value)) result = "Esta entrega está em duplicidade!"; /* (*2) */
     }
     return result;
   }
@@ -239,7 +239,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
    * @returns 
    */
   public somaForcaTrabalho(entregas: PlanoTrabalhoEntrega[] = []): number {
-    return entregas.map(x => x.forca_trabalho * 1).reduce((a, b) => a + b, 0);
+    return entregas.filter(x => x._status != "DELETE").map(x => x.forca_trabalho * 1).reduce((a, b) => a + b, 0);
   }
 
   /**

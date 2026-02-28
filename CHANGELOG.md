@@ -1,3 +1,19 @@
+## 2.9.14 18/02/2026
+### Adicionado
+- Adição da opção para o usuário editar as ocorrências lançadas no registro de execução.
+- Opção de Arquivamento para PE cancelado.
+### Modificado
+- Refatoração da sincronização individual do SIAPE com validação aprimorada.
+- Refatoração dos serviços para uso de injeção de dependência.
+- Refatoração da criação e reconstrução das ocorrências, atividades e afastamentos das consolidações a partir de snapshots.
+- Página de feedback no suporte.
+### Corrigido
+- Corrigido visualização dos regramentos por administradores master.
+- Corrigido a seleção de regramentos na criação de PT.
+- Corrigido visualização e edição dos planos de trabalho. Entregas não estavam visíveis. 
+- Corrigido tratamento de tipo de modalidade ausente na geração de usuários.
+- Corrigido tratamento de resumo vazio na sincronização individual do SIAPE.
+- Corrigido o algoritmo de divisão dos períodos avaliativos.
 ## 2.9.13 09/02/2026
 ### Corrigido
 - Corrigido bug no relacionamento de unidades com usuários, quando há unidade inativa na lista;
