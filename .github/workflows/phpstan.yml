@@ -1,0 +1,66 @@
+name: PHPStan
+
+on:
+  push:
+    branches:
+      - dataprev_dsv
+      - dataprev_hmg
+  pull_request:
+    branches:
+      - dataprev_dsv
+      - dataprev_hmg
+
+jobs:
+  phpstan:
+    name: PHPStan (Laravel + Larastan)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, dom, json, zip, pdo, pdo_mysql, soap, gd, sqlite3, pdo_sqlite, curl
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            back-end/vendor
+            ~/.composer/cache
+          key: php-8.2-composer-${{ hashFiles('back-end/composer.lock') }}
+          restore-keys: |
+            php-8.2-composer-
+
+      - name: Install dependencies
+        working-directory: back-end
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPStan
+        id: phpstan
+        working-directory: back-end
+        run: |
+          set +e
+          vendor/bin/phpstan analyse app \
+            --configuration=phpstan.neon.dist \
+            --memory-limit=1G \
+            --error-format=checkstyle \
+            > phpstan-report.xml
+          echo "PHPSTAN_EXIT_CODE=$?" >> $GITHUB_ENV
+          exit 0
+
+      - name: Upload PHPStan report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phpstan-report
+          path: back-end/phpstan-report.xml
+
+      - name: Fail workflow if PHPStan failed
+        if: env.PHPSTAN_EXIT_CODE != '0'
+        run: exit 1

@@ -33,6 +33,13 @@ use Throwable;
 
 class PlanoTrabalhoConsolidacaoService extends ServiceBase
 {
+  private PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository;
+
+  public function __construct($collection = null, ?PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository = null)
+  {
+    parent::__construct($collection);
+    $this->consolidacaoRepository = $consolidacaoRepository ?? app(PlanoTrabalhoConsolidacaoRepository::class);
+  }
 
   public function proxyQuery($query, &$data)
   {
@@ -87,7 +94,6 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
    */
   public function consolidacaoDados($id): array
   {
-    $repository = new PlanoTrabalhoConsolidacaoRepository();
     $snapshotRebuilders = [
       'atividades' => new AtividadeSnapshotRebuilder(new AtividadeService()),
       'afastamentos' => new AfastamentoSnapshotRebuilder(),
@@ -95,19 +101,22 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     ];
 
     $rebuilderService = new PlanoTrabalhoConsolidacaoRebuildService($snapshotRebuilders);
-    $consolidacaoData = $repository->getConsolidacaoData($id);
-    $consolidacao = $repository->findConsolidacaoById($id);
+    $consolidacaoData = $this->consolidacaoRepository->getConsolidacaoData($id);
+
+    if ($consolidacaoData === null) {
+      throw new \RuntimeException('Consolidação não encontrada para o ID informado');
+    }
 
     return [
-      'programa' => $consolidacao->planoTrabalho?->programa,
-      'planoTrabalho' => $consolidacao->planoTrabalho,
-      'planosEntregas' => $consolidacaoData['planosEntregas'],
-      'atividades' => $rebuilderService->rebuildCollections($consolidacaoData['atividades'], $consolidacao, 'atividades'),
-      'afastamentos' => $rebuilderService->rebuildCollections($consolidacaoData['afastamentos'], $consolidacao, 'afastamentos'),
-      'ocorrencias' => $rebuilderService->rebuildCollections($consolidacaoData['ocorrencias'], $consolidacao, 'ocorrencias'),
-      'comparecimentos' => $consolidacao->comparecimentos ?? [],
-      'status' => $consolidacao->status,
-      'justificativa_conclusao' => $consolidacao->justificativa_conclusao,
+      'programa' => $consolidacaoData->programa,
+      'planoTrabalho' => $consolidacaoData->planoTrabalho,
+      'planosEntregas' => $consolidacaoData->planosEntregas,
+      'atividades' => $rebuilderService->rebuildCollections($consolidacaoData->atividades, $consolidacaoData->consolidacao, 'atividades'),
+      'afastamentos' => $rebuilderService->rebuildCollections($consolidacaoData->afastamentos, $consolidacaoData->consolidacao, 'afastamentos'),
+      'ocorrencias' => $rebuilderService->rebuildCollections($consolidacaoData->ocorrencias, $consolidacaoData->consolidacao, 'ocorrencias'),
+      'comparecimentos' => $consolidacaoData->comparecimentos,
+      'status' => $consolidacaoData->status,
+      'justificativa_conclusao' => $consolidacaoData->justificativaConclusao,
     ];
   }
 
