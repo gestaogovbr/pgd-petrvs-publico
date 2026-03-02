@@ -59,8 +59,6 @@ const routes: Routes = [
   { path: 'consultas', loadChildren: () => import('./modules/consultas/consultas.module').then(m => m.ConsultasModule), canActivate: [AuthGuard] },
   { path: 'relatos/lotacao', loadChildren: () => import('./modules/relatos/lotacao/relato-lotacao.module').then(m => m.RelatoLotacaoModule), canActivate: [AuthGuard] },
   { path: 'envios', loadChildren: () => import('./modules/envio/envio.module').then(m => m.EnvioModule), canActivate: [AuthGuard] },
-  { path: 'listeners', loadChildren: () => import('./listeners/listeners.module').then(m => m.ListenersModule), canActivate: [AuthGuard] },
-  { path: 'extension', loadChildren: () => import('./modules/extension/extension.module').then(m => m.ExtensionModule) },
   { path: 'logs', loadChildren: () => import('./modules/logs/log.module').then(m => m.LogModule), canActivate: [AuthGuard] },
   { path: 'rotinas', loadChildren: () => import('./modules/rotinas/rotina.module').then(m => m.RotinaModule), canActivate: [AuthGuard] },
   { path: 'relatorios', loadChildren: () => import('./modules/relatorios/relatorio.module').then(m => m.RelatorioModule), canActivate: [AuthGuard] },

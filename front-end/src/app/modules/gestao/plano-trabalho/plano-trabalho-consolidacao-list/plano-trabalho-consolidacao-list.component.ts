@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { ConsolidacaoDados, PlanoTrabalhoConsolidacaoDaoService } from 'src/app/dao/plano-trabalho-consolidacao-dao.service';
 import { PlanoTrabalhoConsolidacao, PlanoTrabalhoConsolidacaoStatus } from 'src/app/models/plano-trabalho-consolidacao.model';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
@@ -18,9 +18,10 @@ import { Atividade } from 'src/app/models/atividade.model';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 
 @Component({
-  selector: 'plano-trabalho-consolidacao-list',
-  templateUrl: './plano-trabalho-consolidacao-list.component.html',
-  styleUrls: ['./plano-trabalho-consolidacao-list.component.scss']
+    selector: 'plano-trabalho-consolidacao-list',
+    templateUrl: './plano-trabalho-consolidacao-list.component.html',
+    styleUrls: ['./plano-trabalho-consolidacao-list.component.scss'],
+    standalone: false
 })
 export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
-import { ComponentsModule } from "src/app/components/components.module";
+import { SharedModule } from "src/app/shared/shared.module";
 import { ClienteListComponent } from "./cliente-list/cliente-list.component";
 import { ClienteFormComponent } from "./cliente-form/cliente-form.component";
 import { ClienteRoutingModule } from "./cliente-rounting.module";
@@ -13,7 +13,7 @@ import { ClienteRoutingModule } from "./cliente-rounting.module";
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     ReactiveFormsModule,
     ClienteRoutingModule
   ]

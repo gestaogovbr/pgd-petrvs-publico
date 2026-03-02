@@ -128,7 +128,7 @@
             <div class="grafico-wrapper" *ngIf="totalDesempenho">
                 <canvas
                     baseChart
-                    *ngIf="barChartData.datasets[0].data?.length"
+                    *ngIf="barChartData.datasets[0].data.length"
                     [data]="barChartData"
                     [options]="barChartOptions"
                     [type]="'bar'"

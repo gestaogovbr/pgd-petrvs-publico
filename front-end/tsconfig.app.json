@@ -7,14 +7,15 @@
       "chrome",
       "firefox",
       "firefox-webext-browser",
+      "gapi",
+      "gapi.auth2",
       "google.accounts",
       "bootstrap",
       "resize-observer-browser"
     ]
   },
   "files": [
-    "src/main.ts",
-    "src/polyfills.ts"
+    "src/main.ts"
   ],
   "include": [
     "src/**/*.d.ts"

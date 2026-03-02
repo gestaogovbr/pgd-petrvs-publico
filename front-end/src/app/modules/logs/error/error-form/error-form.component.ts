@@ -7,9 +7,10 @@ import { Error } from 'src/app/models/error.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
-  selector: 'error-form',
-  templateUrl: './error-form.component.html',
-  styleUrls: ['./error-form.component.scss']
+    selector: 'error-form',
+    templateUrl: './error-form.component.html',
+    styleUrls: ['./error-form.component.scss'],
+    standalone: false
 })
 export class ErrorFormComponent extends PageFormBase<Error, ErrorDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

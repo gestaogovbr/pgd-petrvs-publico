@@ -10,9 +10,10 @@ import { Tenant } from "src/app/models/tenant.model";
 import { LookupItem } from "src/app/services/lookup.service";
 
 @Component({
-  selector: 'panel-jobs-agendados-form',
-  templateUrl: './panel-jobs-agendados-form.component.html',
-  styleUrls: ['./panel-jobs-agendados-form.component.scss']
+    selector: 'panel-jobs-agendados-form',
+    templateUrl: './panel-jobs-agendados-form.component.html',
+    styleUrls: ['./panel-jobs-agendados-form.component.scss'],
+    standalone: false
 })
 
 export class PanelJobsAgendadosFormComponent extends PageFormBase<JobAgendado, JobAgendadoDaoService> {

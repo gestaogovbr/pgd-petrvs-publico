@@ -55,7 +55,7 @@ class PlanoTrabalho extends ModelBase
 
   public $fillable_changes = ['entregas', 'documentos'];
 
-    public $delete_cascade = ['documentos'];
+    public $delete_cascade = ['documentos','consolidacoes'];
 
     protected $casts = [
         "criterios_avaliacao" => AsJson::class

@@ -7,13 +7,12 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { ProgramaDaoService, ProgramaMetadata } from 'src/app/dao/programa-dao.service';
 import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
-import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Documento } from 'src/app/models/documento.model';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
@@ -39,9 +38,10 @@ import { UnidadeIntegranteAtribuicao } from 'src/app/models/unidade-integrante-a
 import { ProgramaService } from 'src/app/services/programa.service';
 
 @Component({
-  selector: 'plano-trabalho-form',
-  templateUrl: './plano-trabalho-form.component.html',
-  styleUrls: ['./plano-trabalho-form.component.scss']
+    selector: 'plano-trabalho-form',
+    templateUrl: './plano-trabalho-form.component.html',
+    styleUrls: ['./plano-trabalho-form.component.scss'],
+    standalone: false
 })
 
 export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, PlanoTrabalhoDaoService> {
@@ -65,7 +65,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public documentoService: DocumentoService;
   public templateService: TemplateService;
   public utilService: UtilService;
-  public allPages: ListenerAllPagesService;
   public calendar: CalendarService;
   public tipoModalidadeDao: TipoModalidadeDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
@@ -115,7 +114,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.templateService = injector.get<TemplateService>(TemplateService);
     this.utilService = injector.get<UtilService>(UtilService);
     this.calendar = injector.get<CalendarService>(CalendarService);
-    this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);

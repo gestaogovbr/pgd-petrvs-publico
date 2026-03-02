@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { PlanejamentoObjetivoListComponent } from './planejamento-objetivo-list/planejamento-objetivo-list.component';
 import { PlanejamentoObjetivoFormComponent } from './planejamento-objetivo-form/planejamento-objetivo-form.component';
 import { PlanejamentoObjetivoRoutingModule } from './planejamento-objetivo-routing.module';
@@ -13,7 +13,7 @@ import { PlanejamentoObjetivoRoutingModule } from './planejamento-objetivo-routi
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     ReactiveFormsModule,
     PlanejamentoObjetivoRoutingModule
   ]

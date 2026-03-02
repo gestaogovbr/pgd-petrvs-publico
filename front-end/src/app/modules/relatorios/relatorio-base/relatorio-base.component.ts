@@ -8,9 +8,10 @@ import { Base } from 'src/app/models/base.model';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
 
 @Component({
-  selector: 'relatorio-base',
-  templateUrl: './relatorio-base.component.html',
-  styleUrls: ['./relatorio-base.component.scss']
+    selector: 'relatorio-base',
+    templateUrl: './relatorio-base.component.html',
+    styleUrls: ['./relatorio-base.component.scss'],
+    standalone: false
 })
 export abstract class RelatorioBaseComponent<M extends Base, D extends DaoBaseService<M>> extends PageListBase<M, D> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

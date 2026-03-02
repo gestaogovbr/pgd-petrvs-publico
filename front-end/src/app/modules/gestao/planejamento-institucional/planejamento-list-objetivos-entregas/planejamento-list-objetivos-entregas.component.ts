@@ -1,16 +1,17 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetivo-dao.service';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'planejamento-list-objetivos-entregas',
-  templateUrl: './planejamento-list-objetivos-entregas.component.html',
-  styleUrls: ['./planejamento-list-objetivos-entregas.component.scss']
+    selector: 'planejamento-list-objetivos-entregas',
+    templateUrl: './planejamento-list-objetivos-entregas.component.html',
+    styleUrls: ['./planejamento-list-objetivos-entregas.component.scss'],
+    standalone: false
 })
 export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<PlanejamentoObjetivo, PlanejamentoObjetivoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

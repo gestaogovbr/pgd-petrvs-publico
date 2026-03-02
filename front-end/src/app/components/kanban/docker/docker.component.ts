@@ -3,7 +3,7 @@ import { DndDraggableDirective, DndDropEvent, DropEffect } from 'ngx-drag-drop';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
-import { ToolbarButton } from '../../toolbar/toolbar.component';
+import { ToolbarButton } from '../../toolbar/toolbar-types';
 import { KanbanComponent } from '../kanban.component';
 import { SwimlaneComponent } from '../swimlane/swimlane.component';
 
@@ -19,9 +19,10 @@ export type CardItem = {
 }
 
 @Component({
-  selector: 'docker',
-  templateUrl: './docker.component.html',
-  styleUrls: ['./docker.component.scss']
+    selector: 'docker',
+    templateUrl: './docker.component.html',
+    styleUrls: ['./docker.component.scss'],
+    standalone: false
 })
 export class DockerComponent implements OnInit {
   @HostBinding('class') get class(): string { return "kanban-docker" + (this.collapse ? " kanban-docker-collapsed" : "") + (this.marginRight ? " docker-margin-right" : ""); };

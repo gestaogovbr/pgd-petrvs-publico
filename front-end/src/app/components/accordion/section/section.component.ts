@@ -3,9 +3,10 @@ import { ComponentBase } from '../../component-base';
 import { AccordionComponent, AccordionLoad } from '../accordion.component';
 
 @Component({
-  selector: 'section',
-  templateUrl: './section.component.html',
-  styleUrls: ['./section.component.scss']
+    selector: 'section',
+    templateUrl: './section.component.html',
+    styleUrls: ['./section.component.scss'],
+    standalone: false
 })
 export class SectionComponent extends ComponentBase implements OnInit {
   @Input() item: any = undefined;

@@ -10,9 +10,10 @@ import { PageBase } from 'src/app/modules/base/page-base';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 
 @Component({
-  selector: 'app-plano-trabalho-consolidacao',
-  templateUrl: './plano-trabalho-consolidacao.component.html',
-  styleUrls: ['./plano-trabalho-consolidacao.component.scss']
+    selector: 'app-plano-trabalho-consolidacao',
+    templateUrl: './plano-trabalho-consolidacao.component.html',
+    styleUrls: ['./plano-trabalho-consolidacao.component.scss'],
+    standalone: false
 })
 export class PlanoTrabalhoConsolidacaoComponent extends PageFrameBase {
   @ViewChild(TabsComponent, { static: false }) public tabs?: TabsComponent;

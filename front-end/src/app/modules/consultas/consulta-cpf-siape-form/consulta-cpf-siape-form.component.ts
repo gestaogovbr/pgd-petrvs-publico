@@ -10,9 +10,10 @@ import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.
 import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 
 @Component({
-  selector: 'consulta-cpf-siape-form',
-  templateUrl: './consulta-cpf-siape-form.component.html',
-  styleUrls: ['./consulta-cpf-siape-form.component.scss']
+    selector: 'consulta-cpf-siape-form',
+    templateUrl: './consulta-cpf-siape-form.component.html',
+    styleUrls: ['./consulta-cpf-siape-form.component.scss'],
+    standalone: false
 })
 export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, UsuarioDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent

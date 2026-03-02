@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Injector, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
@@ -13,9 +13,10 @@ import { TemplateDataset, TemplateService } from '../templates/template.service'
 import { DocumentoService } from './documento.service';
 
 @Component({
-  selector: 'documentos',
-  templateUrl: './documentos.component.html',
-  styleUrls: ['./documentos.component.scss']
+    selector: 'documentos',
+    templateUrl: './documentos.component.html',
+    styleUrls: ['./documentos.component.scss'],
+    standalone: false
 })
 export class DocumentosComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

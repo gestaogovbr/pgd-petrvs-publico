@@ -13,9 +13,10 @@ import { InputSelectComponent } from 'src/app/components/input/input-select/inpu
 import { UtilService } from "src/app/services/util.service";
 
 @Component({
-  selector: 'app-planejamento-form',
-  templateUrl: './planejamento-form.component.html',
-  styleUrls: ['./planejamento-form.component.scss']
+    selector: 'app-planejamento-form',
+    templateUrl: './planejamento-form.component.html',
+    styleUrls: ['./planejamento-form.component.scss'],
+    standalone: false
 })
 export class PlanejamentoFormComponent extends PageFormBase<Planejamento, PlanejamentoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

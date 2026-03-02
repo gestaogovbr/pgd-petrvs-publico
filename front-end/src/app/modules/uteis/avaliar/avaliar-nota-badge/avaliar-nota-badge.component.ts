@@ -6,9 +6,10 @@ import { TipoAvaliacao } from 'src/app/models/tipo-avaliacao.model';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'avaliar-nota-badge',
-  templateUrl: './avaliar-nota-badge.component.html',
-  styleUrls: ['./avaliar-nota-badge.component.scss']
+    selector: 'avaliar-nota-badge',
+    templateUrl: './avaliar-nota-badge.component.html',
+    styleUrls: ['./avaliar-nota-badge.component.scss'],
+    standalone: false
 })
 export class AvaliarNotaBadgeComponent {
   @Input() align: AlignRate = "center";

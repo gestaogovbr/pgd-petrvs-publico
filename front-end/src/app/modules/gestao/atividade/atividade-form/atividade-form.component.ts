@@ -21,17 +21,16 @@ import { TipoAtividadeDaoService } from 'src/app/dao/tipo-atividade-dao.service'
 import { Documento } from 'src/app/models/documento.model';
 import { AtividadePausa } from 'src/app/models/atividade-pausa.model';
 import { TipoAtividade } from 'src/app/models/tipo-atividade.model';
-import { SeiKeys } from 'src/app/listeners/procedimento-trabalhar/procedimento-trabalhar.component';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { AtividadeService } from '../atividade.service';
-import { DocumentosLinkComponent } from 'src/app/modules/uteis/documentos/documentos-link/documentos-link.component';
 import { UnidadeService } from 'src/app/services/unidade.service';
 
 @Component({
-  selector: 'app-atividade-form',
-  templateUrl: './atividade-form.component.html',
-  styleUrls: ['./atividade-form.component.scss']
+    selector: 'app-atividade-form',
+    templateUrl: './atividade-form.component.html',
+    styleUrls: ['./atividade-form.component.scss'],
+    standalone: false
 })
 export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDaoService> implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
@@ -41,9 +40,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
   @ViewChild('comentarios', { static: false }) public comentarios?: ComentariosComponent;
-  @ViewChild('requisicao', { static: false }) public requisicao?: DocumentosLinkComponent;
 
-  public sei?: SeiKeys;
   public form: FormGroup;
   public formChecklist: FormGroup;
   public planoTrabalhoDao: PlanoTrabalhoDaoService;
@@ -431,7 +428,6 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
         })))
       });
     } else {
-      this.sei = this.metadata?.sei;
       this.entity = new Atividade();
       this.entity.data_distribuicao = this.auth.hora;
       this.entity.data_estipulada_entrega = this.entity.data_distribuicao;
@@ -477,7 +473,6 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
           }
         }
       }
-      atividade.documento_requisicao = this.requisicao?.documento;
       atividade.comentarios = atividade.comentarios.filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.texto?.length);
       atividade.tarefas = atividade.tarefas.filter((tarefa: AtividadeTarefa) => {
         tarefa.comentarios = tarefa.comentarios.filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.texto?.length);

@@ -16,9 +16,10 @@ import { TemplateService } from 'src/app/modules/uteis/templates/template.servic
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'app-programa-form',
-  templateUrl: './programa-form.component.html',
-  styleUrls: ['./programa-form.component.scss']
+    selector: 'app-programa-form',
+    templateUrl: './programa-form.component.html',
+    styleUrls: ['./programa-form.component.scss'],
+    standalone: false
 })
 
 export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoService> {

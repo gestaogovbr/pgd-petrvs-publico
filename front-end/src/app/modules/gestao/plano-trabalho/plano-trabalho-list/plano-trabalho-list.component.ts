@@ -2,7 +2,7 @@ import {LookupItem} from "../../../../services/lookup.service";
 import {Component, Injector, ViewChild} from "@angular/core";
 import {AbstractControl, FormGroup} from "@angular/forms";
 import {GridComponent} from "src/app/components/grid/grid.component";
-import {ToolbarButton} from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import {DocumentoDaoService} from "src/app/dao/documento-dao-service";
 import {PlanoTrabalhoDaoService} from "src/app/dao/plano-trabalho-dao.service";
 import {ProgramaDaoService} from "src/app/dao/programa-dao.service";
@@ -19,9 +19,10 @@ import {UtilService} from "src/app/services/util.service";
 import {UnidadeService} from "src/app/services/unidade.service";
 import { QueryOrderBy } from "src/app/dao/dao-base.service";
 @Component({
-	selector: "plano-trabalho-list",
-	templateUrl: "./plano-trabalho-list.component.html",
-	styleUrls: ["./plano-trabalho-list.component.scss"],
+    selector: "plano-trabalho-list",
+    templateUrl: "./plano-trabalho-list.component.html",
+    styleUrls: ["./plano-trabalho-list.component.scss"],
+    standalone: false
 })
 export class PlanoTrabalhoListComponent extends PageListBase<
 	PlanoTrabalho,

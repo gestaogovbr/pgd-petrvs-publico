@@ -3,7 +3,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputLevelItem } from 'src/app/components/input/input-level/input-level.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { CadeiaValorProcessoDaoService } from 'src/app/dao/cadeia-valor-processo-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
@@ -12,9 +12,10 @@ import { CadeiaValor } from 'src/app/models/cadeia-valor.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 
 @Component({
-  selector: 'cadeia-valor-list-processos',
-  templateUrl: './cadeia-valor-list-processos.component.html',
-  styleUrls: ['./cadeia-valor-list-processos.component.scss']
+    selector: 'cadeia-valor-list-processos',
+    templateUrl: './cadeia-valor-list-processos.component.html',
+    styleUrls: ['./cadeia-valor-list-processos.component.scss'],
+    standalone: false
 })
 export class CadeiaValorListProcessosComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

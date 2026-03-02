@@ -1,7 +1,7 @@
 import { Component, Injector, QueryList, ViewChild, ViewChildren } from "@angular/core";
 import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
-import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { IndicadorEquipeDaoService } from "src/app/dao/indicador-equipe-dao.service";
 import { QueryOptions } from "src/app/dao/query-options";
 import { of } from "rxjs";
@@ -15,9 +15,10 @@ import { CHART_COLORS } from "src/app/services/chart";
 Chart.register(ChartDataLabels);
 
 @Component({
-  selector: 'indicadores-equipes',
-  templateUrl: './indicadores-equipes.component.html',
-  styleUrls: ['./indicadores-equipes.component.scss']
+    selector: 'indicadores-equipes',
+    templateUrl: './indicadores-equipes.component.html',
+    styleUrls: ['./indicadores-equipes.component.scss'],
+    standalone: false
 })
 export class IndicadorEquipeComponent extends RelatorioBaseComponent<IndicadorEquipe, IndicadorEquipeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

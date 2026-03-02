@@ -4,9 +4,10 @@ import { ComponentBase } from '../component-base';
 import { TabComponent } from './tab/tab.component';
 
 @Component({
-  selector: 'tabs',
-  templateUrl: './tabs.component.html',
-  styleUrls: ['./tabs.component.scss']
+    selector: 'tabs',
+    templateUrl: './tabs.component.html',
+    styleUrls: ['./tabs.component.scss'],
+    standalone: false
 })
 export class TabsComponent extends ComponentBase implements OnInit {
   @ContentChildren(TabComponent, { descendants: true }) tabsRef?: QueryList<TabComponent>;

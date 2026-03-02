@@ -10,9 +10,10 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'app-assinar',
-  templateUrl: './documentos-assinar.component.html',
-  styleUrls: ['./documentos-assinar.component.scss']
+    selector: 'app-assinar',
+    templateUrl: './documentos-assinar.component.html',
+    styleUrls: ['./documentos-assinar.component.scss'],
+    standalone: false
 })
 export class DocumentosAssinarComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

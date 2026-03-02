@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PlanoTrabalhoRoutingModule } from './plano-trabalho-routing.module';
 import { PlanoTrabalhoFormComponent } from './plano-trabalho-form/plano-trabalho-form.component';
 import { PlanoTrabalhoListComponent } from './plano-trabalho-list/plano-trabalho-list.component';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UteisModule } from '../../uteis/uteis.module';
 import { PlanoTrabalhoFormTermoComponent } from './plano-trabalho-form-termo/plano-trabalho-form-termo.component';
@@ -31,7 +31,7 @@ import { AtividadeListTarefaComponent } from '../atividade/atividade-list-tarefa
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     ReactiveFormsModule,
     PlanoTrabalhoRoutingModule,
     UteisModule,

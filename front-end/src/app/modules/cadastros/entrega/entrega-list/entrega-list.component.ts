@@ -7,9 +7,10 @@ import { Entrega } from 'src/app/models/entrega.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-entrega-list',
-  templateUrl: './entrega-list.component.html',
-  styleUrls: ['./entrega-list.component.scss']
+    selector: 'app-entrega-list',
+    templateUrl: './entrega-list.component.html',
+    styleUrls: ['./entrega-list.component.scss'],
+    standalone: false
 })
 export class EntregaListComponent extends PageListBase<Entrega, EntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
