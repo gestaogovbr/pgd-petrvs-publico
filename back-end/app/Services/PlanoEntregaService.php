@@ -693,6 +693,8 @@ class PlanoEntregaService extends ServiceBase
                 ->where('data_fim', '>=', $dataInicio);
         })
         ->where('id', '!=', UtilService::valueOrNull($planoEntrega, 'id'))
+        ->whereNull('deleted_at')
+        ->whereNull('data_arquivamento')
         ->get();
 
         return $planosDaUnidade->count() > 0;

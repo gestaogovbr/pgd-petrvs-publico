@@ -452,7 +452,7 @@ class PlanoTrabalhoService extends ServiceBase
     {
         $result = UtilService::asTimestamp($novoInicio);
         foreach ($plano->consolidacoes as $consolidacao) {
-            $data = UtilService::asTimestamp(in_array($consolidacao->status, StatusEnum::statusEditaveisPlanoTrabalho()) ? $consolidacao->data_fim : $result);
+            $data = UtilService::asTimestamp($consolidacao->status !== StatusEnum::INCLUIDO->value ? $consolidacao->data_fim : $result);
             $result = max($result, $data);
         }
         return date('Y-m-d', $result);
@@ -463,7 +463,7 @@ class PlanoTrabalhoService extends ServiceBase
     {
         $result = UtilService::asTimestamp($novoFim);
         foreach ($plano->consolidacoes as $consolidacao) {
-            $data = UtilService::asTimestamp(in_array($consolidacao->status, StatusEnum::statusEditaveisPlanoTrabalho()) ? $consolidacao->data_inicio : $result);
+            $data = UtilService::asTimestamp($consolidacao->status !== StatusEnum::INCLUIDO->value ? $consolidacao->data_inicio : $result);
             $result = min($result, $data);
         }
         return date('Y-m-d', $result);
@@ -523,7 +523,7 @@ class PlanoTrabalhoService extends ServiceBase
                 $proximoFim =  Carbon::parse($this->proxDataConsolidacao($dataInicio->toDateString(), $plano->programa));
                 $dataFim = $proximoFim->greaterThan($limite) ? $limite->copy() : $proximoFim;
                 $igual = $existentes->first(fn($c) => $c->data_inicio === $dataInicio->toDateString() && $c->data_fim === $dataFim->toDateString());
-                $intersecao = $existentes->first(fn($c) => !in_array($c->status, StatusEnum::statusEditaveisPlanoTrabalho()) && 
+                $intersecao = $existentes->first(fn($c) => $c->status !== StatusEnum::INCLUIDO->value && 
                                                             $dataInicio->lessThanOrEqualTo(Carbon::parse($c->data_fim)) && $dataFim->greaterThanOrEqualTo(Carbon::parse($c->data_inicio)));
                 if (!empty($igual)) { /* (RN_CSLD_4) Caso exista períodos iguais, o período existente será mantido (para este perído nada será feito, manterá a mesma ID) */
                     $merged[] = $igual;
@@ -538,7 +538,7 @@ class PlanoTrabalhoService extends ServiceBase
                             'data_inicio' => $dataInicio->toDateString(),
                             'data_fim' =>  Carbon::parse($intersecao->data_inicio)->subDay()->toDateString(),
                             'plano_trabalho_id' => $plano->id,
-                            'status' => StatusEnum::AGUARDANDO_REGISTRO->value
+                            'status' => StatusEnum::INCLUIDO->value
                         ]);
                         $novo->save();
                         $merged[] = $novo;
@@ -549,7 +549,7 @@ class PlanoTrabalhoService extends ServiceBase
                         'data_inicio' => $dataInicio->toDateString(),
                         'data_fim' => $dataFim->toDateString(),
                         'plano_trabalho_id' => $plano->id,
-                        'status' => StatusEnum::AGUARDANDO_REGISTRO->value
+                        'status' => StatusEnum::INCLUIDO->value
                     ]);
                     $novo->save();
                     $merged[] = $novo;
@@ -599,6 +599,10 @@ class PlanoTrabalhoService extends ServiceBase
             "tipoModalidade:id,nome",
             "consolidacoes.avaliacao.tipoAvaliacao.notas",
             "consolidacoes.avaliacoes",
+            "consolidacoes.atividades" =>
+            function ($query) {
+                $query->orderBy('data_inicio');
+            },
             "usuario:id,nome,apelido,url_foto"
         ])->where("usuario_id", $usuarioId)->orderBy('numero', 'desc');
         if (!$arquivados)
@@ -832,7 +836,7 @@ class PlanoTrabalhoService extends ServiceBase
                 return "Somente é possível cancelar plano de trabalho que não tenha atividade lançada. Atividade(s): " . implode(", ", $atividades);
         }
         foreach ($planoTrabalho->consolidacoes as $consolidacao) {
-            if (in_array($consolidacao->status, StatusEnum::statusEditaveisPlanoTrabalho()))
+            if ($consolidacao->status !== StatusEnum::INCLUIDO->value)
                 return "Somente é possível cancelar plano de trabalho que não tenha período de consolidação concluído.";
         }
         return null;
@@ -845,11 +849,9 @@ class PlanoTrabalhoService extends ServiceBase
             throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não encontrado.");
         }
 
-        foreach ($plano->consolidacoes as $consolidacao) {
-            if (in_array($consolidacao->status, StatusEnum::statusEditaveisPlanoTrabalho()))
-                return false;
-        }
-        return true;
+        return !$plano->consolidacoes() 
+                      ->where('status', '!=', StatusEnum::INCLUIDO->value)
+                      ->exists();
     }
 
     public function proxyRows($rows)
