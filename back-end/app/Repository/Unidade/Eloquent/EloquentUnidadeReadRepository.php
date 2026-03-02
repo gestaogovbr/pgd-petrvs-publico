@@ -66,7 +66,9 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         $prefix = empty($prefix) ? "" : $prefix . ".";
         $usuario = Usuario::find($usuarioId);
         
-        if (!$usuario) return "false";
+        if (!$usuario) {
+            return "false";
+        }
 
         foreach ($usuario->areasTrabalho as $lotacao) {
             $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
