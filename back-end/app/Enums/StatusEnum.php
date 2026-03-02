@@ -7,7 +7,6 @@ enum StatusEnum: string
     case INCLUIDO = 'INCLUIDO';
     case HOMOLOGANDO = 'HOMOLOGANDO';
     case AGUARDANDO_ASSINATURA = 'AGUARDANDO_ASSINATURA';
-    case AGUARDANDO_REGISTRO = 'AGUARDANDO_REGISTRO';
     case ATIVO = 'ATIVO';
     case CONCLUIDO = 'CONCLUIDO';
     case AVALIADO = 'AVALIADO';
@@ -20,7 +19,6 @@ enum StatusEnum: string
             self::INCLUIDO => 'Incluído',
             self::HOMOLOGANDO => 'Homologando',
             self::AGUARDANDO_ASSINATURA => 'Aguardando Assinatura',
-            self::AGUARDANDO_REGISTRO => 'Aguardando Registro',
             self::ATIVO => 'Ativo',
             self::CONCLUIDO => 'Concluído',
             self::AVALIADO => 'Avaliado',
@@ -35,7 +33,6 @@ enum StatusEnum: string
             self::INCLUIDO => 'Plano foi incluído no sistema',
             self::HOMOLOGANDO => 'Plano está sendo homologado',
             self::AGUARDANDO_ASSINATURA => 'Plano está aguardando assinatura',
-            self::AGUARDANDO_REGISTRO => 'Plano está aguardando registro',
             self::ATIVO => 'Plano está ativo',
             self::CONCLUIDO => 'Plano foi concluído',
             self::AVALIADO => 'Plano foi avaliado',
@@ -50,10 +47,5 @@ enum StatusEnum: string
             fn(self $e) => [$e->value, $e->label(), $e->description()],
             self::cases()
         );
-    }
-
-    public static function statusEditaveisPlanoTrabalho(): array
-    {
-        return [self::AGUARDANDO_REGISTRO->value, self::INCLUIDO->value];
     }
 }

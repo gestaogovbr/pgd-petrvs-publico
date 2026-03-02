@@ -94,9 +94,14 @@ class PlanoEntregaEntrega extends ModelBase
   {
     return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_pai_id');
   }        //nullable
-  
+
   public function produtos()
   {
     return $this->hasMany(PlanoEntregaEntregaProduto::class, 'entrega_id');
+  }
+
+  public function setEntregaPaiIdAttribute($value)
+  {
+    $this->attributes['entrega_pai_id'] = empty($value) ? null : $value;
   }
 }
