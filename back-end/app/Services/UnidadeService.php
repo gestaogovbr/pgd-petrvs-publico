@@ -359,7 +359,7 @@ class UnidadeService extends ServiceBase
         if (!empty($dataInativacao) || empty($inativos)) array_push($where, ["data_inativacao", $inativos ? "!=" : "==", null]);
 
         if (!$usuario->hasPermissionTo("MOD_UND_TUDO")) {
-            $areasTrabalhoWhere = $this->usuarioService->areasTrabalhoWhere($subordinadas, null, "unidades");
+            $areasTrabalhoWhere = $this->usuarioService->areasTrabalhoWhere($subordinadas, "unidades");
             $where[] = new RawWhere("($areasTrabalhoWhere)", []);
         }
         
@@ -436,7 +436,7 @@ class UnidadeService extends ServiceBase
     }
 
     /**
-     * @param string | null $unidadeId Unidade de refêrneica (caso null, então irá retornar somente a unidade raiz)
+     * Retorna todas as unidades com apenas os campos necessários para montar a árvore no front-end
      */
     public function hierarquia()
     {

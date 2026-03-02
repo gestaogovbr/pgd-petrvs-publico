@@ -174,7 +174,7 @@ class UsuarioService extends ServiceBase
                 ]);
     }
 
-    public function areasTrabalhoWhere($subordinadas, $ignorar, $tabela): string
+    public function areasTrabalhoWhere($subordinadas, $tabela = ""): string
     {
         $usuario = parent::loggedUser();
         return $this->unidadeRepository->getAreasTrabalhoWhereClause($usuario->id, $subordinadas, $tabela);

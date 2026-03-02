@@ -87,7 +87,7 @@ class PlanoEntregaEntrega extends ModelBase
     return $this->hasMany(Reacao::class);
   }
   // Belongs
-  public function planoEntrega()
+  public function planoEntrega(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(PlanoEntrega::class);
   }

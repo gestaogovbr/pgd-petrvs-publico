@@ -11,7 +11,7 @@ class EloquentPlanoTrabalhoReadRepository implements PlanoTrabalhoReadRepository
 {
     public function getPlanosTrabalhoAssinatura(array $unidadesIds, string $usuarioId): Collection
     {
-        return PlanoTrabalho::where('status', StatusEnum::AGUARDANDO_ASSINATURA_CHEFIA->value)
+        return PlanoTrabalho::where('status', StatusEnum::AGUARDANDO_ASSINATURA->value)
             ->whereIn('unidade_id', $unidadesIds)
             ->where('usuario_id', '!=', $usuarioId)
             ->with(['usuario:id,nome,apelido,url_foto'])
