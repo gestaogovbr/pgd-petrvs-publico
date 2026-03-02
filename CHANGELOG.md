@@ -2,6 +2,7 @@
 ### Adicionado
 ### Modificado
 - Status `AGUARDANDO_REGISTRO` deixa de ser processado no banco e passa a ser definido no front.
+- Removida a validação do banco que impedia a desvinculação da entrega a uma entrega de unidade superior.
 ### Corrigido
 - Exibição da modalidade no PT quando diferente da modalidade do Participante.
 - Correção dos erros advindos da adição do status `AGUARDANDO_REGISTRO`. Ex.: cálculo dos períodos avaliativos após edição do plano, cancelamento de plano, conclusão de REs, etc.
