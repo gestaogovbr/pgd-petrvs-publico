@@ -280,10 +280,6 @@ class PlanoTrabalhoService extends ServiceBase
                 throw new ServerException("ValidatePlanoTrabalho", "Participante do plano não é LOTADO ou COLABORADOR na unidade executora. (MOD_PTR_USERS_INCL)\n[ver RN_PTR_Y]");
             }
 
-            if ($this->planosUsuarioComPendencias($data['usuario_id'])) {
-                throw new ServerException("ValidatePlanoTrabalho", "Não é possível criar um novo plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores.");
-            }
-
             $entregasValidas = $this->validarClone($data);
             if ($entregasValidas) {
                 throw new ServerException("ValidatePlanoTrabalho", $entregasValidas);
@@ -431,20 +427,22 @@ class PlanoTrabalhoService extends ServiceBase
             - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, respeitando a TABELA_3, e ele não ter ainda assinado;
         - Enquanto faltar assinatura no TCR, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar o TCR, o plano vai para o status 'ATIVO';
         */
-        $condicoes = $this->buscaCondicoes(['id' => Documento::find($documentoId)->plano_trabalho_id]);
-        $condition1 = $condicoes["planoIncluido"];
-        $condition2 = $condicoes["planoAguardandoAssinatura"];
-        $condition3 = $condicoes["assinaturaUsuarioExigida"];
-        $condition4 = $condicoes["usuarioFaltaAssinar"];
-        $condition5 = $condicoes["nrEntregas"] > 0;
-        if (!$condition1 && !$condition2)
+        $documento = Documento::find($documentoId);
+        
+        $planoTrabalho = PlanoTrabalho::withTrashed()->with('entregas')->find($documento->plano_trabalho_id)->toArray();
+        $nrEntregas = empty($planoTrabalho['entregas']) ? 0 : count($planoTrabalho['entregas']);
+
+        if (!$this->isPlano("INCLUIDO", $planoTrabalho) && !$this->isPlano("AGUARDANDO_ASSINATURA", $planoTrabalho))
             throw new ServerException("ValidatePlanoTrabalho", "O TCR não pode ser assinado porque o plano de trabalho não está no status INCLUIDO nem AGUARDANDO ASSINATURA. [ver RN_PTR_O]");
-        if (!$condition3)
+        if (!$this->assinaturaUsuarioExigida(null, $planoTrabalho))
             throw new ServerException("ValidatePlanoTrabalho", "O TCR não pode ser assinado porque a assinatura do usuário logado não é exigida pelo programa, ou o usuários não atende aos critérios das [PTR:TABELA_1] e [PTR:TABELA_3]. [ver RN_PTR_O]");
-        if (!$condition4)
+        if (!$this->usuarioFaltaAssinar(null, $planoTrabalho))
             throw new ServerException("ValidatePlanoTrabalho", "O TCR não pode ser assinado porque a assinatura do usuário logado não é exigida pelo programa ou ele já assinou o Termo. [ver RN_PTR_O]");
-        if (!$condition5)
+        if (!$nrEntregas)
             throw new ServerException("ValidatePlanoTrabalho", "O TCR não pode ser assinado porque o plano precisa possuir ao menos uma entrega. [ver RN_PTR_O]");
+        if($this->hasUsuarioPendencias($planoTrabalho["usuario_id"], $documento->plano_trabalho_id, now())){
+            throw new ServerException("ValidatePlanoTrabalho", "O TCR não pode ser assinado porque existe plano de trabalho pendente de registro de execução e/ou avaliação para o usuário.");
+        }
     }
 
     /* Será a data_inicio, ou a data_fim do último período CONCLUIDO ou AVALIADO. O que for maior. */
@@ -452,7 +450,7 @@ class PlanoTrabalhoService extends ServiceBase
     {
         $result = UtilService::asTimestamp($novoInicio);
         foreach ($plano->consolidacoes as $consolidacao) {
-            $data = UtilService::asTimestamp(in_array($consolidacao->status, StatusEnum::statusEditaveisPlanoTrabalho()) ? $consolidacao->data_fim : $result);
+            $data = UtilService::asTimestamp($consolidacao->status !== StatusEnum::INCLUIDO->value ? $consolidacao->data_fim : $result);
             $result = max($result, $data);
         }
         return date('Y-m-d', $result);
@@ -463,7 +461,7 @@ class PlanoTrabalhoService extends ServiceBase
     {
         $result = UtilService::asTimestamp($novoFim);
         foreach ($plano->consolidacoes as $consolidacao) {
-            $data = UtilService::asTimestamp(in_array($consolidacao->status, StatusEnum::statusEditaveisPlanoTrabalho()) ? $consolidacao->data_inicio : $result);
+            $data = UtilService::asTimestamp($consolidacao->status !== StatusEnum::INCLUIDO->value ? $consolidacao->data_inicio : $result);
             $result = min($result, $data);
         }
         return date('Y-m-d', $result);
@@ -523,7 +521,7 @@ class PlanoTrabalhoService extends ServiceBase
                 $proximoFim =  Carbon::parse($this->proxDataConsolidacao($dataInicio->toDateString(), $plano->programa));
                 $dataFim = $proximoFim->greaterThan($limite) ? $limite->copy() : $proximoFim;
                 $igual = $existentes->first(fn($c) => $c->data_inicio === $dataInicio->toDateString() && $c->data_fim === $dataFim->toDateString());
-                $intersecao = $existentes->first(fn($c) => !in_array($c->status, StatusEnum::statusEditaveisPlanoTrabalho()) && 
+                $intersecao = $existentes->first(fn($c) => $c->status !== StatusEnum::INCLUIDO->value && 
                                                             $dataInicio->lessThanOrEqualTo(Carbon::parse($c->data_fim)) && $dataFim->greaterThanOrEqualTo(Carbon::parse($c->data_inicio)));
                 if (!empty($igual)) { /* (RN_CSLD_4) Caso exista períodos iguais, o período existente será mantido (para este perído nada será feito, manterá a mesma ID) */
                     $merged[] = $igual;
@@ -538,7 +536,7 @@ class PlanoTrabalhoService extends ServiceBase
                             'data_inicio' => $dataInicio->toDateString(),
                             'data_fim' =>  Carbon::parse($intersecao->data_inicio)->subDay()->toDateString(),
                             'plano_trabalho_id' => $plano->id,
-                            'status' => StatusEnum::AGUARDANDO_REGISTRO->value
+                            'status' => StatusEnum::INCLUIDO->value
                         ]);
                         $novo->save();
                         $merged[] = $novo;
@@ -549,7 +547,7 @@ class PlanoTrabalhoService extends ServiceBase
                         'data_inicio' => $dataInicio->toDateString(),
                         'data_fim' => $dataFim->toDateString(),
                         'plano_trabalho_id' => $plano->id,
-                        'status' => StatusEnum::AGUARDANDO_REGISTRO->value
+                        'status' => StatusEnum::INCLUIDO->value
                     ]);
                     $novo->save();
                     $merged[] = $novo;
@@ -599,6 +597,10 @@ class PlanoTrabalhoService extends ServiceBase
             "tipoModalidade:id,nome",
             "consolidacoes.avaliacao.tipoAvaliacao.notas",
             "consolidacoes.avaliacoes",
+            "consolidacoes.atividades" =>
+            function ($query) {
+                $query->orderBy('data_inicio');
+            },
             "usuario:id,nome,apelido,url_foto"
         ])->where("usuario_id", $usuarioId)->orderBy('numero', 'desc');
         if (!$arquivados)
@@ -832,7 +834,7 @@ class PlanoTrabalhoService extends ServiceBase
                 return "Somente é possível cancelar plano de trabalho que não tenha atividade lançada. Atividade(s): " . implode(", ", $atividades);
         }
         foreach ($planoTrabalho->consolidacoes as $consolidacao) {
-            if (in_array($consolidacao->status, StatusEnum::statusEditaveisPlanoTrabalho()))
+            if ($consolidacao->status !== StatusEnum::INCLUIDO->value)
                 return "Somente é possível cancelar plano de trabalho que não tenha período de consolidação concluído.";
         }
         return null;
@@ -845,11 +847,9 @@ class PlanoTrabalhoService extends ServiceBase
             throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não encontrado.");
         }
 
-        foreach ($plano->consolidacoes as $consolidacao) {
-            if (in_array($consolidacao->status, StatusEnum::statusEditaveisPlanoTrabalho()))
-                return false;
-        }
-        return true;
+        return !$plano->consolidacoes() 
+                      ->where('status', '!=', StatusEnum::INCLUIDO->value)
+                      ->exists();
     }
 
     public function proxyRows($rows)
@@ -923,6 +923,7 @@ class PlanoTrabalhoService extends ServiceBase
             $result["usuarioEhParticipanteHabilitado"] = $this->unidadeService->unidadeEhHabilitada($planoTrabalho["unidade_id"], $planoTrabalho["programa_id"]);
             $result["usuarioEhParticipantePlano"] = parent::loggedUser()->id == $planoTrabalho["usuario_id"];
             $result["usuarioJaAssinouTCR"] = !$this->usuarioFaltaAssinar(null, $planoTrabalho);
+            $result["planoTrabalhoPendente"] = $this->hasUsuarioPendencias($planoTrabalho["usuario_id"], $planoTrabalho["id"], now());
             return $this->setBuffer("buscaCondicoes", $entity["id"], $result);
         }
     }
@@ -1416,6 +1417,23 @@ class PlanoTrabalhoService extends ServiceBase
         $statusesPendentes = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO'];
 
         return in_array($planoAnterior->status, $statusesPendentes, true);
+    }
+
+    public function hasUsuarioPendencias(string $usuarioId, $planoTrabalhoId, $dataAssinatura): bool
+    {
+        $diasPendenciaDataFinalPlano = 30;
+
+        $planosPendentes = PlanoTrabalho::where('usuario_id', $usuarioId)
+            ->whereIn('status', PlanoTrabalho::STATUSES_PENDENTES)
+            ->where('id','!=', $planoTrabalhoId)
+            ->where('data_fim', '<', $dataAssinatura->subDays($diasPendenciaDataFinalPlano)->format('Y-m-d'))
+            ->get();
+
+        if ($planosPendentes->count() > 0) {
+            return true;
+        }
+
+        return false;
     }
 
 }
