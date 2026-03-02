@@ -337,8 +337,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public selecionaModalidade() {
-    //buscar por igualdade direta de tipo_modalidade_id
-    let modalidade = this.tipoModalidadeItems.find((mod: LookupItem) => (mod.data as TipoModalidade).id == this.entity?.usuario?.tipo_modalidade_id);
+    const tipo_modalidade_id = this.entity?.tipo_modalidade_id ?? this.entity?.usuario?.tipo_modalidade_id;
+    //buscar por igualdade direta de flidade_id
+    let modalidade = this.tipoModalidadeItems.find((mod: LookupItem) => (mod.data as TipoModalidade).id == tipo_modalidade_id);
     if (modalidade) {
       this.form?.controls.tipo_modalidade_id.setValue(modalidade.key);
       this.selectedModalidade = modalidade.data;
