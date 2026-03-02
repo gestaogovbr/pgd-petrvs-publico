@@ -24,6 +24,7 @@ use App\Services\PlanoTrabalhoService;
 use App\Services\StatusService;
 use App\Services\UnidadeService;
 use App\Services\UsuarioService;
+use App\Repository\UsuarioRepository;
 use Illuminate\Support\Carbon;
 use Throwable;
 
@@ -39,6 +40,13 @@ use Throwable;
  */
 class PlanoEntregaService extends ServiceBase
 {
+    protected UsuarioRepository $usuarioRepository;
+
+    public function __construct() {
+        parent::__construct();
+        $this->usuarioRepository = app(UsuarioRepository::class);
+    }
+
     public $unidades = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
 
     public function planosImpactadosPorAlteracaoEntrega($entrega)
@@ -216,8 +224,8 @@ class PlanoEntregaService extends ServiceBase
             $result["gestorUnidadePaiUnidadePlano"] = !empty($planoEntrega['unidade']['unidade_pai_id']) && $this->usuario->isGestorUnidade($planoEntrega['unidade']['unidade_pai_id']);
             $result["gestorLinhaAscendenteUnidadePlano"] = !!array_filter($this->unidade->linhaAscendente($planoEntrega['unidade_id']), fn($u) => $this->usuario->isGestorUnidade($u));
             $result["unidadePlanoPaiEhUnidadePaiUnidadePlano"] = $planoEntrega['plano_entrega_id'] ? $planoEntregaPai->unidade_id == $planoEntrega['unidade']['unidade_pai_id'] : false;
-            $result["unidadePlanoEhLotacao"] = $this->usuario->isLotacao(null, $planoEntrega['unidade_id']);
-            $result["unidadePaiUnidadePlanoEhLotacao"] = !empty($planoEntrega['unidade']['unidade_pai_id']) && $this->usuario->isLotacao(null, $planoEntrega['unidade']['unidade_pai_id']);
+            $result["unidadePlanoEhLotacao"] = $this->usuarioRepository->isLotacao(parent::loggedUser()->id, $planoEntrega['unidade_id']);
+            $result["unidadePaiUnidadePlanoEhLotacao"] = !empty($planoEntrega['unidade']['unidade_pai_id']) && $this->usuarioRepository->isLotacao(parent::loggedUser()->id, $planoEntrega['unidade']['unidade_pai_id']);
             $result["unidadePlanoEhAlgumaLotacaoUsuario"] = in_array($planoEntrega['unidade_id'], array_map(fn($u) => $u['id'], $this->usuario->loggedUser()->unidades->toArray()));
             $result["unidadePlanoEhPaiAlgumaLotacaoUsuario"] = $this->usuario->loggedUser()->unidades->map(fn($u) => $u->id)->map(fn($ul) => Unidade::find($ul)->unidade_pai_id)->contains($planoEntrega['unidade_id']);
             $result["unidadePlanoPossuiPlanoAtivoMesmoPeriodoPlanoPai"] = !!array_filter($planoEntrega['unidade']['planosEntrega'], fn($p) => $this->isPlano('ATIVO', $p) && !empty($planoEntrega) && !empty($planoEntregaPai) && UtilService::intersect($planoEntrega['data_inicio'], $planoEntrega['data_fim'], $planoEntregaPai->data_inicio, $planoEntregaPai->data_fim));

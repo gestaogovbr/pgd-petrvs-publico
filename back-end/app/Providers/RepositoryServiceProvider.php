@@ -30,6 +30,18 @@ use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\Repository\Unidade\Contracts\UnidadeWriteRepositoryContract;
 use App\Repository\Unidade\Eloquent\EloquentUnidadeReadRepository;
 use App\Repository\Unidade\Eloquent\EloquentUnidadeWriteRepository;
+use App\Repository\Perfil\Contracts\PerfilReadRepositoryContract;
+use App\Repository\Perfil\Eloquent\EloquentPerfilReadRepository;
+use App\Repository\TipoModalidade\Contracts\TipoModalidadeReadRepositoryContract;
+use App\Repository\TipoModalidade\Eloquent\EloquentTipoModalidadeReadRepository;
+use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
+use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
+use App\Repository\PlanoTrabalho\Eloquent\EloquentPlanoTrabalhoReadRepository;
+use App\Repository\PlanoTrabalho\Eloquent\EloquentPlanoTrabalhoWriteRepository;
+use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
+use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
+use App\Repository\PlanoEntrega\Eloquent\EloquentPlanoEntregaReadRepository;
+use App\Repository\PlanoEntrega\Eloquent\EloquentPlanoEntregaWriteRepository;
 use Illuminate\Support\ServiceProvider;
 
 final class RepositoryServiceProvider extends ServiceProvider
@@ -77,6 +89,34 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             IntegracaoUnidadeWriteRepositoryContract::class,
             EloquentIntegracaoUnidadeWriteRepository::class,
+        );
+
+        $this->app->bind(
+            PerfilReadRepositoryContract::class,
+            EloquentPerfilReadRepository::class,
+        );
+
+        $this->app->bind(
+            TipoModalidadeReadRepositoryContract::class,
+            EloquentTipoModalidadeReadRepository::class,
+        );
+
+        $this->app->bind(
+            PlanoTrabalhoReadRepositoryContract::class,
+            EloquentPlanoTrabalhoReadRepository::class,
+        );
+        $this->app->bind(
+            PlanoTrabalhoWriteRepositoryContract::class,
+            EloquentPlanoTrabalhoWriteRepository::class,
+        );
+
+        $this->app->bind(
+            PlanoEntregaReadRepositoryContract::class,
+            EloquentPlanoEntregaReadRepository::class,
+        );
+        $this->app->bind(
+            PlanoEntregaWriteRepositoryContract::class,
+            EloquentPlanoEntregaWriteRepository::class,
         );
     }
 

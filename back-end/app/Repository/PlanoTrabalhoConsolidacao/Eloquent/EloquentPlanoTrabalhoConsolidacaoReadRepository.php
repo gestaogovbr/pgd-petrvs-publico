@@ -80,6 +80,22 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
         ])->find($id);
     }
 
+    public function getPendentesAvaliacao(array $unidadesIds, string $usuarioId, \DateTimeInterface $dataCorte): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->query()
+            ->with(['planoTrabalho:id,unidade_id,usuario_id', 'planoTrabalho.usuario:id,nome,apelido,url_foto'])
+            ->where('status', StatusEnum::CONCLUIDO->value)
+            ->whereHas('planoTrabalho', function($q) use ($unidadesIds, $usuarioId) {
+                $q->whereIn('unidade_id', $unidadesIds)
+                  ->where('usuario_id', '!=', $usuarioId);
+            })
+            ->whereHas('latestStatus', function($q) use ($dataCorte) {
+                $q->where('codigo', StatusEnum::CONCLUIDO->value)
+                  ->where('created_at', '<', $dataCorte);
+            })
+            ->get();
+    }
+
     private function getAtividades(PlanoTrabalhoConsolidacao $consolidacao, bool $concluido): Collection
     {
         $query = Atividade::with([

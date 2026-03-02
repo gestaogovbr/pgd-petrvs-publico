@@ -29,4 +29,19 @@ class UnidadeRepository
     {
         return $this->readRepository->getAreasTrabalhoWhereClause($usuarioId, $subordinadas, $prefix);
     }
+
+    public function findByCodigo(string $codigo): ?\App\Models\Unidade
+    {
+        return $this->readRepository->findByCodigo($codigo);
+    }
+
+    public function getUnidadesGerenciadas(string $usuarioId): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->readRepository->getUnidadesGerenciadas($usuarioId);
+    }
+
+    public function getSubordinadas(array $ids): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->readRepository->getSubordinadas($ids);
+    }
 }

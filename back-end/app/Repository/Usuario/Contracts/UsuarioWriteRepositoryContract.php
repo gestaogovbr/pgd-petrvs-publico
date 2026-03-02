@@ -13,6 +13,8 @@ interface UsuarioWriteRepositoryContract
 {
     public function create(array $attributes): Usuario;
 
+    public function newUsuario(array $attributes = []): Usuario;
+
     public function update(string $id, array $attributes): ?Usuario;
 
     public function delete(string $id): bool;

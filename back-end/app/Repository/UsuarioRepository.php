@@ -38,9 +38,34 @@ class UsuarioRepository
         return $this->readRepository->isIntegrante($usuarioId, $unidadeId, $atribuicao);
     }
 
+    public function getAtribuicoes(string $usuarioId, string $unidadeId): array
+    {
+        return $this->readRepository->getAtribuicoes($usuarioId, $unidadeId);
+    }
+
     public function isLotacao(string $usuarioId, string $unidadeId): bool
     {
         return $this->readRepository->isLotacao($usuarioId, $unidadeId);
+    }
+
+    public function findAllSemMatricula(): Collection
+    {
+        return $this->readRepository->findAllSemMatricula();
+    }
+
+    public function findByCpfAndLotacao(string $cpf, string $unidadeId, string $lotacaoAtribuicao = 'LOTADO'): ?Usuario
+    {
+        return $this->readRepository->findByCpfAndLotacao($cpf, $unidadeId, $lotacaoAtribuicao);
+    }
+
+    public function findAllByCpf(string $cpf): Collection
+    {
+        return $this->readRepository->findAllByCpf($cpf);
+    }
+
+    public function getUnidadesVinculadas(string $cpf): Collection
+    {
+        return $this->readRepository->getUnidadesVinculadas($cpf);
     }
 
     public function search(array $params, int $limit = 0)
@@ -51,6 +76,11 @@ class UsuarioRepository
     public function create(array $attributes): Usuario
     {
         return $this->writeRepository->create($attributes);
+    }
+
+    public function newUsuario(array $attributes = []): Usuario
+    {
+        return $this->writeRepository->newUsuario($attributes);
     }
 
     public function update(string $id, array $attributes): ?Usuario

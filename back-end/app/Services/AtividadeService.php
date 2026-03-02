@@ -11,6 +11,7 @@ use App\Models\Afastamento;
 use App\Services\ServiceBase;
 use App\Services\UnidadeService;
 use App\Services\CalendarioService;
+use App\Repository\UnidadeRepository;
 use App\Services\ComentarioService;
 use App\Services\RawWhere;
 use App\Services\UtilService;
@@ -40,6 +41,13 @@ use Throwable;
  */
 class AtividadeService extends ServiceBase
 {
+    protected UnidadeRepository $unidadeRepository;
+
+    public function __construct() {
+        parent::__construct();
+        $this->unidadeRepository = app(UnidadeRepository::class);
+    }
+
     public $unidades = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
 
     public $joinable = [
@@ -121,7 +129,7 @@ class AtividadeService extends ServiceBase
         if($action != ServiceBase::ACTION_INSERT) {
             $this->validateBackward($data["id"], "STORE");
         }
-        if(!$this->usuarioService->hasLotacao($data["unidade_id"])) {
+        if(!$this->unidadeRepository->hasUsuarioLotacao($data["unidade_id"], parent::loggedUser()->id, true)) {
             throw new ServerException("ValidateAtividade", $unidade->sigla . " não é uma unidade do usuário logado nem subordinada a ele.");
         }
         if(!empty($data["plano_trabalho_id"])) {
@@ -133,7 +141,8 @@ class AtividadeService extends ServiceBase
         }
         if(!empty($data["usuario_id"])) {
             $usuario = Usuario::find($data["usuario_id"]);
-            if(!$this->usuarioService->hasLotacao($data["unidade_id"], $usuario, false)) {
+            $usuarioId = $usuario ? $usuario->id : parent::loggedUser()->id;
+            if(!$this->unidadeRepository->hasUsuarioLotacao($data["unidade_id"], $usuarioId, false)) {
                 if (!parent::loggedUser()->hasPermissionTo('MOD_ATV_USU_EXT')) {
                     throw new ServerException("ValidateAtividade", $unidade->sigla . " não é uma unidade (lotação) para o responsável, ou você não tem permissão para incluir atividade para usuário de outra unidade (MOD_ATV_USU_EXT)");
                 }

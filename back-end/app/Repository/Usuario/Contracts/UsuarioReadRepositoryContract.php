@@ -21,8 +21,18 @@ interface UsuarioReadRepositoryContract
 
     public function isIntegrante(string $usuarioId, string $unidadeId, string $atribuicao): bool;
 
+    public function getAtribuicoes(string $usuarioId, string $unidadeId): array;
+
     public function isLotacao(string $usuarioId, string $unidadeId): bool;
+
+    public function findAllSemMatricula(): Collection;
+
+    public function findByCpfAndLotacao(string $cpf, string $unidadeId, string $lotacaoAtribuicao = 'LOTADO'): ?Usuario;
     
+    public function findAllByCpf(string $cpf): Collection;
+
+    public function getUnidadesVinculadas(string $cpf): Collection;
+
     /**
      * @param array<string, mixed> $params
      * @return Collection|LengthAwarePaginator

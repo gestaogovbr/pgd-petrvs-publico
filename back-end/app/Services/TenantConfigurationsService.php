@@ -99,6 +99,8 @@ class TenantConfigurationsService
         config(['integracao.perfilComum'          => $settings['integracao_usuario_comum']            ?? env('INTEGRACAO_USUARIO_COMUM')]);
         config(['integracao.perfilChefe'          => $settings['integracao_usuario_chefe']            ?? env('INTEGRACAO_USUARIO_CHEFE')]);
 
+        config(['petrvs.dias-avaliacao-registro-execucao' => $settings['dias_avaliacao_registro_execucao'] ?? config('petrvs.dias-avaliacao-registro-execucao')]);
+
         // Log::info("Configs carregadas: " . json_encode(config('integracao')));
     }
 }

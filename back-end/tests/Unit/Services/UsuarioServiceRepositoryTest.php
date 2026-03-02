@@ -21,15 +21,59 @@ use App\Services\UnidadeIntegranteService;
 use App\Services\UnidadeIntegranteAtribuicaoService;
 use App\Services\NivelAcessoService;
 
+use App\Repository\PlanoTrabalhoConsolidacaoRepository;
+use App\Repository\PlanoTrabalhoRepository;
+use App\Repository\PlanoEntregaRepository;
+use App\Models\PlanoTrabalho;
+use App\Models\PlanoEntrega;
+use Carbon\Carbon;
+use App\Services\IntegracaoService;
+use App\Repository\PerfilRepository;
+use App\Repository\TipoModalidadeRepository;
+use App\Repository\IntegracaoServidorRepository;
+
 class UsuarioServiceRepositoryTest extends TestCase
 {
     protected $service;
+
+    /** @var UsuarioRepository|\Mockery\MockInterface */
     protected $usuarioRepository;
+
+    /** @var UnidadeRepository|\Mockery\MockInterface */
     protected $unidadeRepository;
+
+    /** @var PerfilRepository|\Mockery\MockInterface */
+    protected $perfilRepository;
+
+    /** @var TipoModalidadeRepository|\Mockery\MockInterface */
+    protected $tipoModalidadeRepository;
+
+    /** @var IntegracaoServidorRepository|\Mockery\MockInterface */
+    protected $integracaoServidorRepository;
+
+    /** @var UnidadeService|\Mockery\MockInterface */
     protected $unidadeService;
+
+    /** @var IntegracaoService|\Mockery\MockInterface */
+    protected $integracaoService;
+
+    /** @var UnidadeIntegranteService|\Mockery\MockInterface */
     protected $unidadeIntegranteService;
+
+    /** @var UnidadeIntegranteAtribuicaoService|\Mockery\MockInterface */
     protected $unidadeIntegranteAtribuicaoService;
+
+    /** @var NivelAcessoService|\Mockery\MockInterface */
     protected $nivelAcessoService;
+
+    /** @var PlanoTrabalhoConsolidacaoRepository|\Mockery\MockInterface */
+    protected $planoTrabalhoConsolidacaoRepository;
+
+    /** @var PlanoTrabalhoRepository|\Mockery\MockInterface */
+    protected $planoTrabalhoRepository;
+
+    /** @var PlanoEntregaRepository|\Mockery\MockInterface */
+    protected $planoEntregaRepository;
 
     protected function setUp(): void
     {
@@ -37,27 +81,43 @@ class UsuarioServiceRepositoryTest extends TestCase
         
         $this->usuarioRepository = Mockery::mock(UsuarioRepository::class);
         $this->unidadeRepository = Mockery::mock(UnidadeRepository::class);
+        $this->perfilRepository = Mockery::mock(PerfilRepository::class);
+        $this->tipoModalidadeRepository = Mockery::mock(TipoModalidadeRepository::class);
+        $this->integracaoServidorRepository = Mockery::mock(IntegracaoServidorRepository::class);
+        $this->planoTrabalhoConsolidacaoRepository = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
+        $this->planoTrabalhoRepository = Mockery::mock(PlanoTrabalhoRepository::class);
+        $this->planoEntregaRepository = Mockery::mock(PlanoEntregaRepository::class);
+        
         $this->unidadeService = Mockery::mock(UnidadeService::class);
+        $this->integracaoService = Mockery::mock(IntegracaoService::class);
         $this->unidadeIntegranteService = Mockery::mock(UnidadeIntegranteService::class);
         $this->unidadeIntegranteAtribuicaoService = Mockery::mock(UnidadeIntegranteAtribuicaoService::class);
         $this->nivelAcessoService = Mockery::mock(NivelAcessoService::class);
-        
+
         $this->app->instance(UsuarioRepository::class, $this->usuarioRepository);
         $this->app->instance(UnidadeRepository::class, $this->unidadeRepository);
+        $this->app->instance(PerfilRepository::class, $this->perfilRepository);
+        $this->app->instance(TipoModalidadeRepository::class, $this->tipoModalidadeRepository);
+        $this->app->instance(IntegracaoServidorRepository::class, $this->integracaoServidorRepository);
+        $this->app->instance(PlanoTrabalhoConsolidacaoRepository::class, $this->planoTrabalhoConsolidacaoRepository);
+        $this->app->instance(PlanoTrabalhoRepository::class, $this->planoTrabalhoRepository);
+        $this->app->instance(PlanoEntregaRepository::class, $this->planoEntregaRepository);
+        
         $this->app->instance(UnidadeService::class, $this->unidadeService);
+        $this->app->instance(IntegracaoService::class, $this->integracaoService);
         $this->app->instance(UnidadeIntegranteService::class, $this->unidadeIntegranteService);
         $this->app->instance(UnidadeIntegranteAtribuicaoService::class, $this->unidadeIntegranteAtribuicaoService);
         $this->app->instance(NivelAcessoService::class, $this->nivelAcessoService);
-        
+
         // Mock DB facade for transaction support in ServiceBase/UsuarioService
         DB::shouldReceive('beginTransaction')->byDefault();
         DB::shouldReceive('commit')->byDefault();
         DB::shouldReceive('rollback')->byDefault();
 
-        // Create a partial mock of the class (not instance) to allow interception of protected internal calls
+        // Create a partial mock of the class without constructor injection
         $this->service = Mockery::mock(UsuarioService::class)->makePartial();
         $this->service->shouldAllowMockingProtectedMethods();
-        
+
         // Inject protected repositories via Reflection since constructor is not called
         $reflection = new \ReflectionClass(UsuarioService::class);
         
@@ -68,6 +128,30 @@ class UsuarioServiceRepositoryTest extends TestCase
         $unidadeRepoProp = $reflection->getProperty('unidadeRepository');
         $unidadeRepoProp->setAccessible(true);
         $unidadeRepoProp->setValue($this->service, $this->unidadeRepository);
+
+        $perfilRepoProp = $reflection->getProperty('perfilRepository');
+        $perfilRepoProp->setAccessible(true);
+        $perfilRepoProp->setValue($this->service, $this->perfilRepository);
+
+        $tipoModalidadeRepoProp = $reflection->getProperty('tipoModalidadeRepository');
+        $tipoModalidadeRepoProp->setAccessible(true);
+        $tipoModalidadeRepoProp->setValue($this->service, $this->tipoModalidadeRepository);
+
+        $integracaoServidorRepoProp = $reflection->getProperty('integracaoServidorRepository');
+        $integracaoServidorRepoProp->setAccessible(true);
+        $integracaoServidorRepoProp->setValue($this->service, $this->integracaoServidorRepository);
+
+        $ptcRepoProp = $reflection->getProperty('planoTrabalhoConsolidacaoRepository');
+        $ptcRepoProp->setAccessible(true);
+        $ptcRepoProp->setValue($this->service, $this->planoTrabalhoConsolidacaoRepository);
+
+        $ptRepoProp = $reflection->getProperty('planoTrabalhoRepository');
+        $ptRepoProp->setAccessible(true);
+        $ptRepoProp->setValue($this->service, $this->planoTrabalhoRepository);
+
+        $peRepoProp = $reflection->getProperty('planoEntregaRepository');
+        $peRepoProp->setAccessible(true);
+        $peRepoProp->setValue($this->service, $this->planoEntregaRepository);
     }
 
     protected function tearDown(): void
@@ -220,22 +304,6 @@ class UsuarioServiceRepositoryTest extends TestCase
         $this->service->atualizarFotoPerfil($tipo, $usuarioMock, $url);
     }
 
-    public function test_has_lotacao_calls_repository()
-    {
-        $id = 'unidade-id';
-        $usuarioId = 'user-id';
-        $usuario = Mockery::mock(Usuario::class);
-        $usuario->shouldReceive('getAttribute')->with('id')->andReturn($usuarioId);
-        
-        $this->unidadeRepository->shouldReceive('hasUsuarioLotacao')
-            ->once()
-            ->with($id, $usuarioId, true)
-            ->andReturn(true);
-            
-        $result = $this->service->hasLotacao($id, $usuario);
-        $this->assertTrue($result);
-    }
-
     public function test_is_gestor_unidade_recursivo_calls_repository()
     {
         $unidadeId = 'unidade-id';
@@ -276,20 +344,6 @@ class UsuarioServiceRepositoryTest extends TestCase
             ->andReturn(true);
             
         $result = $this->service->isIntegrante($atribuicao, $unidadeId, $usuarioId);
-        $this->assertTrue($result);
-    }
-
-    public function test_is_lotacao_calls_repository()
-    {
-        $usuarioId = 'user-id';
-        $unidadeId = 'unidade-id';
-        
-        $this->usuarioRepository->shouldReceive('isLotacao')
-            ->once()
-            ->with($usuarioId, $unidadeId)
-            ->andReturn(true);
-            
-        $result = $this->service->isLotacao($usuarioId, $unidadeId);
         $this->assertTrue($result);
     }
 
@@ -352,5 +406,166 @@ class UsuarioServiceRepositoryTest extends TestCase
         $result = $this->service->update($data, $unidade);
         
         $this->assertEquals($updatedUser, $result);
+    }
+
+    public function test_atribuicoes_gestor_calls_repository()
+    {
+        $unidadeId = 'unidade-id';
+        $usuarioId = 'user-id';
+        
+        $this->usuarioRepository->shouldReceive('getAtribuicoes')
+            ->once()
+            ->with($usuarioId, $unidadeId)
+            ->andReturn(['GESTOR', 'OUTRA']);
+            
+        $result = $this->service->atribuicoesGestor($unidadeId, $usuarioId);
+        
+        $this->assertTrue($result['gestor']);
+        $this->assertFalse($result['gestorSubstituto']);
+        $this->assertFalse($result['gestorDelegado']);
+    }
+
+    public function test_pendencias_chefe_calls_repositories()
+    {
+        $usuarioId = 'user-id';
+        $unidadeId = 'unidade-id';
+        
+        $unidadeMock = Mockery::mock(Unidade::class);
+        $unidadeMock->shouldReceive('getAttribute')->with('id')->andReturn($unidadeId);
+        $unidadeMock->shouldReceive('offsetExists')->with('id')->andReturn(true);
+        $unidadeMock->shouldReceive('offsetGet')->with('id')->andReturn($unidadeId);
+        $unidadesCollection = new \Illuminate\Database\Eloquent\Collection([$unidadeMock]);
+        
+        $this->unidadeRepository->shouldReceive('getUnidadesGerenciadas')
+            ->once()
+            ->with($usuarioId)
+            ->andReturn($unidadesCollection);
+            
+        $this->unidadeRepository->shouldReceive('getSubordinadas')
+            ->once()
+            ->with([$unidadeId])
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection());
+
+        $this->planoTrabalhoConsolidacaoRepository->shouldReceive('getPendentesAvaliacao')
+            ->once()
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection());
+
+        $this->planoTrabalhoRepository->shouldReceive('getPlanosTrabalhoAssinatura')
+            ->once()
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection());
+
+        $this->planoEntregaRepository->shouldReceive('getPlanosEntregaAvaliacao')
+            ->once()
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection());
+
+        $this->planoEntregaRepository->shouldReceive('getPlanosEntregaHomologacao')
+            ->once()
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection());
+
+        $this->planoEntregaRepository->shouldReceive('getEntregasPlanoEntregaHomologacao')
+            ->once()
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection());
+
+        $result = $this->service->pendenciasChefe($usuarioId, $unidadeId);
+        
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('registrosExecucao', $result);
+        $this->assertArrayHasKey('planosTrabalhoAssinatura', $result);
+        $this->assertArrayHasKey('planosEntregaAvaliacao', $result);
+    }
+
+    public function test_gerar_usuario_calls_repository_new_usuario()
+    {
+        $dados = [
+            'modalidade_pgd' => 'mod-1',
+            'matricula' => '12345',
+            'emailfuncional' => 'email@test.com',
+            'nome' => 'Nome',
+            'cpf' => '123',
+            'apelido' => 'Apelido',
+            'sexo' => 'M',
+            'exercicio' => 'cod-exercicio',
+            'data_modificacao' => '2023-01-01',
+            'ident_unica' => 'id-unica',
+            'telefone' => '123456789',
+            'data_nascimento' => '1990-01-01',
+            'situacao_funcional' => 'ATIVO',
+            'uf' => 'DF'
+        ];
+        $modalidade = 'mod-default';
+        $perfil = 'perfil-id';
+
+        // Mock IntegracaoService expectations
+        $this->integracaoService->shouldReceive('validarModalidadePgd')->with('mod-1')->andReturn('mod-1-id');
+        
+        // Mock TipoModalidadeRepository (caso precise de default, mas aqui vai achar)
+        // Se validarModalidadePgd retornar algo, não chama getDefaultId
+
+        $novoUsuarioMock = Mockery::mock(Usuario::class);
+        
+        $this->usuarioRepository->shouldReceive('newUsuario')
+            ->once()
+            ->with(Mockery::on(function($arg) use ($perfil) {
+                return $arg['matricula'] == '12345' && 
+                       $arg['tipo_modalidade_id'] == 'mod-1-id' &&
+                       $arg['perfil_id'] == $perfil;
+            }))
+            ->andReturn($novoUsuarioMock);
+
+        $result = $this->service->gerarUsuario($dados, $modalidade, $perfil);
+        
+        $this->assertEquals($novoUsuarioMock, $result);
+    }
+
+    public function test_areas_trabalho_where_calls_repository()
+    {
+        $subordinadas = true;
+        $ignorar = [];
+        $tabela = 'unidades';
+        $usuarioId = 'user-id';
+        
+        $userMock = Mockery::mock(Usuario::class);
+        $userMock->shouldReceive('getAttribute')->with('id')->andReturn($usuarioId);
+        Auth::shouldReceive('user')->andReturn($userMock);
+        
+        $this->unidadeRepository->shouldReceive('getAreasTrabalhoWhereClause')
+            ->once()
+            ->with($usuarioId, $subordinadas, $tabela)
+            ->andReturn("clause");
+            
+        $result = $this->service->areasTrabalhoWhere($subordinadas, $ignorar, $tabela);
+        
+        $this->assertEquals("clause", $result);
+    }
+    
+    public function test_atualizar_servidor_calls_repository()
+    {
+        $usuarioObj = (object) [
+            'id' => 'user-id',
+            'matriculasiape' => '12345',
+            'emailfuncional' => 'email@test.com',
+            'nome_servidor' => 'Nome',
+            'nome_guerra' => 'Apelido',
+            'cod_jornada' => 'J1',
+            'nome_jornada' => 'Jornada 1',
+            'modalidade_pgd' => 'mod-pgd',
+            'participa_pgd' => true,
+            'ident_unica' => 'id-unica',
+            'data_modificacao' => '2023-01-01',
+            'data_nascimento' => '1990-01-01'
+        ];
+        
+        // Mock IntegracaoService expectations
+        $this->integracaoService->shouldReceive('verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake');
+        $this->integracaoService->shouldReceive('validarModalidadePgd')->with('mod-pgd')->andReturn('mod-id');
+        
+        $this->usuarioRepository->shouldReceive('update')
+            ->once()
+            ->with('user-id', Mockery::on(function($arg) {
+                return $arg['nome'] == 'Nome' && 
+                       $arg['tipo_modalidade_id'] == 'mod-id';
+            }));
+            
+        $this->service->atualizarServidor($usuarioObj);
     }
 }

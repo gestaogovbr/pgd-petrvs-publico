@@ -12,6 +12,7 @@ use App\Models\Afastamento;
 use App\Services\ServiceBase;
 use App\Services\CalendarioService;
 use App\Services\UtilService;
+use App\Repository\UsuarioRepository;
 use App\Exceptions\ServerException;
 use App\Models\Documento;
 use Illuminate\Support\Facades\DB;
@@ -37,6 +38,13 @@ use Illuminate\Database\Eloquent\Collection;
 class PlanoTrabalhoService extends ServiceBase
 {
     public $documentoId;
+    protected UsuarioRepository $usuarioRepository;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->usuarioRepository = app(UsuarioRepository::class);
+    }
 
     /**
      * Retorna todos os Planos de Trabalho de um determinado usuário, que ainda se encontram dentro da vigência
@@ -956,9 +964,9 @@ class PlanoTrabalhoService extends ServiceBase
             $result["gestoresUnidadeSuperior"] = $this->unidadeService->gestoresUnidadeSuperior($planoTrabalho['unidade_id']);
             $result["gestorUnidadeSuperior"] = $result["gestoresUnidadeSuperior"]["gestor"]?->id == $logado->id || count(array_filter($result["gestoresUnidadeSuperior"]["gestoresSubstitutos"], fn($value) => $value && $value["id"] == $logado->id)) > 0;
             $result["nrEntregas"] = empty($planoTrabalho['entregas']) ? 0 : count($planoTrabalho['entregas']);
-            $result["participanteLotadoAreaTrabalho"] = parent::loggedUser()->areasTrabalho->find(fn($at) => $this->usuarioService->isLotacao($planoTrabalho["usuario_id"], $at->unidade->id)) != null;
+            $result["participanteLotadoAreaTrabalho"] = parent::loggedUser()->areasTrabalho->find(fn($at) => $this->usuarioRepository->isLotacao($planoTrabalho["usuario_id"], $at->unidade->id)) != null;
             $result["participanteColaboradorUnidadeExecutora"] = $this->usuarioService->isIntegrante("COLABORADOR", $planoTrabalho["unidade_id"], $planoTrabalho["usuario_id"]);
-            $result["participanteLotadoUnidadeExecutora"] = $this->usuarioService->isLotacao($planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]);
+            $result["participanteLotadoUnidadeExecutora"] = $this->usuarioRepository->isLotacao($planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]);
             $result["planoAguardandoAssinatura"] = $this->isPlano("AGUARDANDO_ASSINATURA", $planoTrabalho);
             $result["planoArquivado"] = empty($planoTrabalho['id']) ? false : PlanoTrabalho::withTrashed()->find($planoTrabalho['id'])->data_arquivamento != null;
             $result["planoAtivo"] = $this->isPlano("ATIVO", $planoTrabalho);
@@ -974,7 +982,7 @@ class PlanoTrabalhoService extends ServiceBase
                     ['start' => UtilService::asDateTime($p->data_inicio), 'end' => UtilService::asDateTime($p->data_fim)],
                     ['start' => UtilService::asDateTime($planoTrabalho["data_inicio"]), 'end' => UtilService::asDateTime($planoTrabalho["data_fim"])]
                 ]) != null)) == 0;
-            $result["unidadePlanoEhLotacao"] = $this->usuarioService->isLotacao(null, $planoTrabalho['unidade_id']);
+            $result["unidadePlanoEhLotacao"] = $this->usuarioRepository->isLotacao(parent::loggedUser()->id, $planoTrabalho['unidade_id']);
             $result["usuarioEhParticipanteHabilitado"] = $this->unidadeService->unidadeEhHabilitada($planoTrabalho["unidade_id"], $planoTrabalho["programa_id"]);
             $result["usuarioEhParticipantePlano"] = parent::loggedUser()->id == $planoTrabalho["usuario_id"];
             $result["usuarioJaAssinouTCR"] = !$this->usuarioFaltaAssinar(null, $planoTrabalho);

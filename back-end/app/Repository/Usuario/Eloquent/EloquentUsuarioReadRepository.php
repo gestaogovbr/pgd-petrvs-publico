@@ -28,11 +28,14 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
 
     public function findById(string|int $id): ?Usuario
     {
-        return $this->query()->find($id);
+        /** @var Usuario|null $usuario */
+        $usuario = $this->query()->find($id);
+        return $usuario;
     }
 
     public function findByCpfOrEmail(string $cpf, string $email, ?string $exceptId = null, bool $withTrashed = false): ?Usuario
     {
+        /** @var Builder|Usuario $query */
         $query = $this->query();
         
         if ($withTrashed) {
@@ -48,14 +51,18 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
             $query->where('id', '!=', $exceptId);
         }
 
-        return $query->first();
+        /** @var Usuario|null $usuario */
+        $usuario = $query->first();
+        return $usuario;
     }
 
     public function isParticipanteHabilitado(string $usuarioId, string $programaId): bool
     {
+        /** @var Usuario|null $usuario */
         $usuario = $this->query()->find($usuarioId);
         if (!$usuario) return false;
 
+        /** @var \App\Models\ProgramaParticipante|null $participacao */
         $participacao = $usuario->participacoesProgramas()
             ->where('programa_id', $programaId)
             ->first();
@@ -73,10 +80,70 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
             ->exists();
     }
 
+    public function getAtribuicoes(string $usuarioId, string $unidadeId): array
+    {
+        return UnidadeIntegranteAtribuicao::whereHas('vinculo', function ($q) use ($unidadeId, $usuarioId) {
+                $q->where('unidade_id', $unidadeId)
+                  ->where('usuario_id', $usuarioId);
+            })
+            ->pluck('atribuicao')
+            ->toArray();
+    }
+
     public function isLotacao(string $usuarioId, string $unidadeId): bool
     {
+        /** @var Usuario|null $usuario */
         $usuario = $this->query()->find($usuarioId);
         return $usuario && $usuario->lotacao !== null && $usuario->lotacao->unidade_id == $unidadeId;
+    }
+
+    public function findAllSemMatricula(): Collection
+    {
+        return $this->query()
+            ->where(function ($q) {
+                $q->whereNull('matricula')
+                    ->orWhere('matricula', '');
+            })
+            ->whereNotNull('cpf')
+            ->whereRaw("cpf <> ''")
+            ->select('id', 'cpf')
+            ->get();
+    }
+
+    public function findByCpfAndLotacao(string $cpf, string $unidadeId, string $lotacaoAtribuicao = 'LOTADO'): ?Usuario
+    {
+        /** @var Usuario|null $usuario */
+        $usuario = $this->query()
+            ->where('cpf', $cpf)
+            ->whereHas('lotacao', function ($q) use ($unidadeId) {
+                $q->where('unidade_id', $unidadeId);
+            })
+            ->orderBy('created_at', 'asc')
+            ->first();
+            
+        return $usuario;
+    }
+
+    public function findAllByCpf(string $cpf): Collection
+    {
+        return $this->query()
+            ->with('unidades')
+            ->where('cpf', $cpf)
+            ->where('situacao_siape', '!=', \App\Enums\UsuarioSituacaoSiape::INATIVO->value)
+            ->get();
+    }
+
+    public function getUnidadesVinculadas(string $cpf): Collection
+    {
+        return Unidade::select('unidades.*')
+            ->join('unidades_integrantes as ui', 'unidades.id', '=', 'ui.unidade_id')
+            ->join('usuarios as us', 'us.id', '=', 'ui.usuario_id')
+            ->join('unidades_integrantes_atribuicoes as uia', 'ui.id', '=', 'uia.unidade_integrante_id')
+            ->where('us.cpf', $cpf)
+            ->where('us.situacao_siape', '!=', \App\Enums\UsuarioSituacaoSiape::INATIVO->value)
+            ->whereNull('uia.deleted_at')
+            ->distinct()
+            ->get();
     }
 
     public function search(array $params, int $limit = 0)
