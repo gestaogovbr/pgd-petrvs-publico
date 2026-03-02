@@ -84,8 +84,6 @@ class PlanoTrabalho extends ModelBase
     'CANCELADO' => 'Cancelado'
   ];
 
-  public const STATUSES_PENDENTES = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO'];
-
   public $fillable_changes = ['entregas', 'documentos'];
 
     public $delete_cascade = ['documentos','consolidacoes'];

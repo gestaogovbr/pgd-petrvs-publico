@@ -1478,7 +1478,7 @@ class PlanoTrabalhoService extends ServiceBase
         }
 
         $planoAnterior = $planos->get(1);
-        $statusesPendentes = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO'];
+        $statusesPendentes = StatusEnum::pendentesPlanoTrabalho();
 
         return in_array($planoAnterior->status, $statusesPendentes, true);
     }
@@ -1488,7 +1488,7 @@ class PlanoTrabalhoService extends ServiceBase
         $diasPendenciaDataFinalPlano = 30;
 
         $planosPendentes = PlanoTrabalho::where('usuario_id', $usuarioId)
-            ->whereIn('status', PlanoTrabalho::STATUSES_PENDENTES)
+            ->whereIn('status', StatusEnum::pendentesPlanoTrabalho())
             ->where('id','!=', $planoTrabalhoId)
             ->where('data_fim', '<', $dataAssinatura->subDays($diasPendenciaDataFinalPlano)->format('Y-m-d'))
             ->get();
