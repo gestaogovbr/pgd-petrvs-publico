@@ -5,15 +5,15 @@ import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { LexicalService } from 'src/app/services/lexical.service';
 import { NavigateService } from 'src/app/services/navigate.service';
-import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { GlobalsService } from 'src/app/services/globals.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UtilService } from 'src/app/services/util.service';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss'],
+    standalone: false
 })
 export class HomeComponent implements OnInit {
 
@@ -26,14 +26,10 @@ export class HomeComponent implements OnInit {
     public injector: Injector,
     public lex: LexicalService,
     public go: NavigateService,
-    public gb: GlobalsService,
-    public allPages: ListenerAllPagesService
+    public gb: GlobalsService
   ) {}
 
-  ngOnInit(): void {
-    if (this.gb.isEmbedded) {
-      this.allPages.visibilidadeMenuSei(!this.auth.usuario!.config.ocultar_menu_sei);
-    }
+  ngOnInit(): void {   
   }
 
   async ngAfterViewInit() {

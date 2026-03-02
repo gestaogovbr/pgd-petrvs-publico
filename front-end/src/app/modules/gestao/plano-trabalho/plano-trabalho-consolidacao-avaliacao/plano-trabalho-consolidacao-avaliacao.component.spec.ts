@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import 'jasmine';
 import { PlanoTrabalhoConsolidacaoAvaliacaoComponent } from './plano-trabalho-consolidacao-avaliacao.component';
 
 describe('PlanoTrabalhoConsolidacaoAvaliacaoComponent', () => {

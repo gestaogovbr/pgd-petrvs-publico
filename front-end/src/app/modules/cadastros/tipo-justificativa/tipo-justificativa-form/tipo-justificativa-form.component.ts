@@ -7,9 +7,10 @@ import { TipoJustificativa } from 'src/app/models/tipo-justificativa.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
-  selector: 'app-entidade-form',
-  templateUrl: './tipo-justificativa-form.component.html',
-  styleUrls: ['./tipo-justificativa-form.component.scss']
+    selector: 'app-entidade-form',
+    templateUrl: './tipo-justificativa-form.component.html',
+    styleUrls: ['./tipo-justificativa-form.component.scss'],
+    standalone: false
 })
 export class TipoJustificativaFormComponent extends PageFormBase<TipoJustificativa, TipoJustificativaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

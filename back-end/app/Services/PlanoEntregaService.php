@@ -382,9 +382,12 @@ class PlanoEntregaService extends ServiceBase
 
     public function liberarHomologacao($data, $unidade)
     {
+        $planoEntrega = PlanoEntrega::find($data["id"]);
+        if($this->planosUnidadeComPendenciasExecucaoAvaliacao($planoEntrega["unidade_id"], $planoEntrega["id"], now()))
+            throw new ValidateException("Não é possível liberar para homologação um plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores!");
+
         try {
             DB::beginTransaction();
-            $planoEntrega = PlanoEntrega::find($data["id"]);
             $this->statusService->atualizaStatus($planoEntrega, 'HOMOLOGANDO', $data["justificativa"]);
             DB::commit();
         } catch (Throwable $e) {
@@ -719,6 +722,8 @@ class PlanoEntregaService extends ServiceBase
                 ->where('data_fim', '>=', $dataInicio);
         })
         ->where('id', '!=', UtilService::valueOrNull($planoEntrega, 'id'))
+        ->whereNull('deleted_at')
+        ->whereNull('data_arquivamento')
         ->get();
 
         return $planosDaUnidade->count() > 0;
@@ -771,10 +776,27 @@ class PlanoEntregaService extends ServiceBase
         }
 
         $planoAnterior = $planos->get(1);
-        $statusesPendentes = ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'];
 
-        return in_array($planoAnterior->status, $statusesPendentes, true);
+        return in_array($planoAnterior->status, PlanoEntrega::STATUSES_PENDENTES, true);
     }
+
+    public function planosUnidadeComPendenciasExecucaoAvaliacao(string $unidadeId, $planoEntregaId, $dataAssinatura): bool
+    {
+        $diasPendenciaDataFinalPlano = 30;
+
+        $planosPendentes = PlanoEntrega::where('unidade_id', $unidadeId)
+            ->whereIn('status', PlanoEntrega::STATUSES_PENDENTES)
+            ->where('id','!=', $planoEntregaId)
+            ->where('data_fim', '<', $dataAssinatura->subDays($diasPendenciaDataFinalPlano))
+            ->get();
+
+        if ($planosPendentes->count() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
 
     private function validaPlanoComEntregas($planoEntrega): bool
     {

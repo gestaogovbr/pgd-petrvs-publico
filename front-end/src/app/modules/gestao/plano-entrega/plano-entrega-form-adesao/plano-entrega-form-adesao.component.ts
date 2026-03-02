@@ -13,9 +13,10 @@ import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
-  selector: 'plano-entrega-adesao',
-  templateUrl: './plano-entrega-form-adesao.component.html',
-  styleUrls: ['./plano-entrega-form-adesao.component.scss']
+    selector: 'plano-entrega-adesao',
+    templateUrl: './plano-entrega-form-adesao.component.html',
+    styleUrls: ['./plano-entrega-form-adesao.component.scss'],
+    standalone: false
 })
 
 export class PlanoEntregaFormAdesaoComponent extends PageFormBase<PlanoEntrega, PlanoEntregaDaoService> {

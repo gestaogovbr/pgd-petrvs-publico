@@ -7,9 +7,10 @@ import { TipoCapacidade } from 'src/app/models/tipo-capacidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
-  selector: 'app-tipo-capacidade-form',
-  templateUrl: './tipo-capacidade-form.component.html',
-  styleUrls: ['./tipo-capacidade-form.component.scss']
+    selector: 'app-tipo-capacidade-form',
+    templateUrl: './tipo-capacidade-form.component.html',
+    styleUrls: ['./tipo-capacidade-form.component.scss'],
+    standalone: false
 })
 export class TipoCapacidadeFormComponent extends PageFormBase<TipoCapacidade, TipoCapacidadeDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

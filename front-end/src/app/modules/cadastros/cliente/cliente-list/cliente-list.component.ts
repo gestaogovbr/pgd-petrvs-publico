@@ -7,9 +7,10 @@ import { Cliente } from 'src/app/models/cliente.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-cliente-list',
-  templateUrl: './cliente-list.component.html',
-  styleUrls: ['./cliente-list.component.scss']
+    selector: 'app-cliente-list',
+    templateUrl: './cliente-list.component.html',
+    styleUrls: ['./cliente-list.component.scss'],
+    standalone: false
 })
 export class ClienteListComponent extends PageListBase<Cliente, ClienteDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

@@ -406,15 +406,6 @@ class UnidadeService extends ServiceBase
 
     public function proxyStore($data, $unidade, $action)
     {
-        $unidade = Unidade::find($data["id"]);
-        $pai = Unidade::find($data["unidade_pai_id"]);
-        $data["path"] = empty($pai) ? null : $pai->path . "/" . $pai->id;
-        if (!empty($unidade)) { // Depois de atualizar o campo 'path' da unidade, atualiza os campos 'path' de todas suas unidades-filhas
-            $oldPath = $unidade->path . "/" . $unidade->id . "/";
-            $newPath = $data["path"] . "/" . $unidade->id . "/";
-            Unidade::where('path', 'like', $oldPath . "%")
-                ->update(['path' => DB::raw(sprintf("CONCAT('%s', SUBSTR(path, %d))", $newPath, strlen($newPath)))]);
-        }
         /* Armazena as informações que serão necessárias no extraStore */
         $this->buffer["integrantes"] = UtilService::getNested($data, "integrantes") ?? [];
         return $data;
@@ -437,37 +428,20 @@ class UnidadeService extends ServiceBase
      */
     public function unidadesFilhas($unidadeId): array
     {
-        $path = DB::table('unidades')->select('path')->where('id', $unidadeId)->first()->path . '/' . $unidadeId;
-        return array_map(fn($x) => $x->id, DB::table('unidades')->select('id')->where('path', 'like', $path)->orWhere('path', 'like', $path . '/%')->get()->toArray());
+        try {
+            return $this->subordinadas($unidadeId)->pluck('id')->toArray();
+        } catch (NotFoundException $e) {
+            return [];
+        }
     }
 
     /**
      * @param string | null $unidadeId Unidade de refêrneica (caso null, então irá retornar somente a unidade raiz)
      */
-    function hierarquia($unidadeId)
+    public function hierarquia()
     {
-        $unidades = [];
-        $unidades_irmaos = [];
-        $irmaos = [];
-        $unidade = null;
-
-        if (!empty($unidadeId)) {
-            $unidade = Unidade::query()->setEagerLoads([])->find($unidadeId);
-            if ($unidade) {
-                $unidades = Unidade::whereIn("id", array_filter(explode('/', $unidade->path), fn($x) => $x != ""))->get()->toArray();
-                $this->obterIrmaosRecursivamente($unidade, $irmaos);
-            }
-        } else {
-            $unidade = Unidade::query()->setEagerLoads([])->where('unidade_pai_id', null)->first();
-            if ($unidade) {
-                $unidades = Unidade::query()->setEagerLoads([])->whereIn("id", array_filter(explode('/', $unidade->path), fn($x) => $x != ""))->get();
-                $unidades = $unidades->toArray();
-                $unidades[] = $unidade;
-            }
-        }
-        $mergedArray = array_merge($unidades, $irmaos, $unidades_irmaos, [$unidade]);
-
-        return $mergedArray;
+        // Retorna todas as unidades com apenas os campos necessários para montar a árvore no front-end
+        return Unidade::select('id', 'sigla', 'nome', 'unidade_pai_id')->setEagerLoads([])->get()->all();
     }
 
     function filhas($unidadeId)

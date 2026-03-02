@@ -7,9 +7,10 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { TipoClienteDaoService } from "src/app/dao/tipo-cliente-dao.service";
 
 @Component({
-  selector: 'app-tipo-cliente-form',
-  templateUrl: './tipo-cliente-form.component.html',
-  styleUrls: ['./tipo-cliente-form.component.scss']
+    selector: 'app-tipo-cliente-form',
+    templateUrl: './tipo-cliente-form.component.html',
+    styleUrls: ['./tipo-cliente-form.component.scss'],
+    standalone: false
 })
 export class TipoClienteFormComponent extends PageFormBase<TipoCliente, TipoClienteDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

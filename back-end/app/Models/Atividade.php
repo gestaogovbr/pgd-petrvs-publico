@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Casts\AsJson;
-use App\Enums\StatusEnum;
 use App\Models\ModelBase;
 use App\Models\Usuario;
 use App\Models\Unidade;
@@ -67,20 +66,6 @@ class Atividade extends ModelBase
   {
     static::creating(function (Atividade $atividade) {
       $atividade->numero = DB::select("CALL sequence_atividade_numero()")[0]->number;
-
-      $consolidacao = PlanoTrabalhoConsolidacao::find($atividade->plano_trabalho_consolidacao_id);
-      if (!!$consolidacao && $consolidacao->status === StatusEnum::AGUARDANDO_REGISTRO->value) {
-        $consolidacao->status = StatusEnum::INCLUIDO->value;
-        $consolidacao->save();
-      }
-    });
-
-    static::deleting(function (Atividade $atividade) {
-      $consolidacao = PlanoTrabalhoConsolidacao::find($atividade->plano_trabalho_consolidacao_id);
-      if (!!$consolidacao && $consolidacao->status === StatusEnum::INCLUIDO->value && $consolidacao->atividades->count() === 1) {
-        $consolidacao->status = StatusEnum::AGUARDANDO_REGISTRO->value;
-        $consolidacao->save();
-      }
     });
   }
 

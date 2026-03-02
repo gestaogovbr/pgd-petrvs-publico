@@ -12,9 +12,10 @@ import { Usuario } from "src/app/models/usuario.model";
 import { PageFormBase } from "src/app/modules/base/page-form-base";
 
 @Component({
-  selector: 'app-produto-form',
-  templateUrl: './produto-form.component.html',
-  styleUrls: ['./produto-form.component.scss']
+    selector: 'app-produto-form',
+    templateUrl: './produto-form.component.html',
+    styleUrls: ['./produto-form.component.scss'],
+    standalone: false
 })
 
 export class ProdutoFormComponent extends PageFormBase<Produto, ProdutoDaoService> {

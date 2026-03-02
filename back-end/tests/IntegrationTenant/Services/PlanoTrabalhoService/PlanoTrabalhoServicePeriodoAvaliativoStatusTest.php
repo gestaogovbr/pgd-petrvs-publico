@@ -82,4 +82,4 @@ describe('PlanoTrabalhoService - Períodos avaliativos e Status padrão', functi
         expect($consolidacoes[0]->data_fim)->toBe('2026-01-31');
         expect($consolidacoes[0]->status)->toBe('INCLUIDO');
     });
-})->skip('dependente do ticket #1991');
+});

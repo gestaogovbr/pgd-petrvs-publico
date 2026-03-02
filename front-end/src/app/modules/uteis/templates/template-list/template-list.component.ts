@@ -5,13 +5,14 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { FormGroup } from "@angular/forms";
 import { PageListBase } from "src/app/modules/base/page-list-base";
 import { Base, IIndexable } from 'src/app/models/base.model';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { TemplateDataset, TemplateService } from '../template.service';
 
 @Component({
-  selector: 'app-template-list',
-  templateUrl: './template-list.component.html',
-  styleUrls: ['./template-list.component.scss']
+    selector: 'app-template-list',
+    templateUrl: './template-list.component.html',
+    styleUrls: ['./template-list.component.scss'],
+    standalone: false
 })
 export class TemplateListComponent extends PageListBase<Template, TemplateDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

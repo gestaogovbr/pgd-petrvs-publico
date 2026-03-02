@@ -6,9 +6,10 @@ import { PageFrameBase } from "src/app/modules/base/page-frame-base";
 import { PlanoEntregaService } from "../plano-entrega.service";
 
 @Component({
-  selector: 'plano-entrega-entrega-detalhes',
-  templateUrl: './plano-entrega-entrega-detalhes.component.html',
-  styleUrls: ['./plano-entrega-entrega-detalhes.component.scss']
+    selector: 'plano-entrega-entrega-detalhes',
+    templateUrl: './plano-entrega-entrega-detalhes.component.html',
+    styleUrls: ['./plano-entrega-entrega-detalhes.component.scss'],
+    standalone: false
 })
 export class PlanoEntregaEntregaDetalhesComponent extends PageFrameBase {
   public planoEntrega?: PlanoEntrega;

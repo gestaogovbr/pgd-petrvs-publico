@@ -8,9 +8,10 @@ import { TipoMotivoAfastamentoDaoService } from 'src/app/dao/tipo-motivo-afastam
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 
 @Component({
-  selector: 'app-afastamento-list',
-  templateUrl: './afastamento-list.component.html',
-  styleUrls: ['./afastamento-list.component.scss']
+    selector: 'app-afastamento-list',
+    templateUrl: './afastamento-list.component.html',
+    styleUrls: ['./afastamento-list.component.scss'],
+    standalone: false
 })
 
 export class AfastamentoListComponent extends PageListBase<Afastamento, AfastamentoDaoService> {

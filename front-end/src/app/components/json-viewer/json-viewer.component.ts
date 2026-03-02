@@ -10,9 +10,10 @@ export interface Segment {
 }
 
 @Component({
-  selector: 'json-viewer',
-  templateUrl: './json-viewer.component.html',
-  styleUrls: ['./json-viewer.component.scss']
+    selector: 'json-viewer',
+    templateUrl: './json-viewer.component.html',
+    styleUrls: ['./json-viewer.component.scss'],
+    standalone: false
 })
 export class JsonViewerComponent extends ComponentBase implements OnChanges {
   @Input() json: any;

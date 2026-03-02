@@ -1,15 +1,16 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { Perfil } from 'src/app/models/perfil.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-perfil-list',
-  templateUrl: './perfil-list.component.html',
-  styleUrls: ['./perfil-list.component.scss']
+    selector: 'app-perfil-list',
+    templateUrl: './perfil-list.component.html',
+    styleUrls: ['./perfil-list.component.scss'],
+    standalone: false
 })
 export class PerfilListComponent extends PageListBase<Perfil, PerfilDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

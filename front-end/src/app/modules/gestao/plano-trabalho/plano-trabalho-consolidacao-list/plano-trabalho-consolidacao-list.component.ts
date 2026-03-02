@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { ConsolidacaoDados, PlanoTrabalhoConsolidacaoDaoService } from 'src/app/dao/plano-trabalho-consolidacao-dao.service';
 import { PlanoTrabalhoConsolidacao, PlanoTrabalhoConsolidacaoStatus } from 'src/app/models/plano-trabalho-consolidacao.model';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
@@ -15,11 +15,13 @@ import { Programa } from 'src/app/models/programa.model';
 import { AvaliacaoDaoService } from 'src/app/dao/avaliacao-dao.service';
 import { UnidadeService } from 'src/app/services/unidade.service';
 import { Atividade } from 'src/app/models/atividade.model';
+import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 
 @Component({
-  selector: 'plano-trabalho-consolidacao-list',
-  templateUrl: './plano-trabalho-consolidacao-list.component.html',
-  styleUrls: ['./plano-trabalho-consolidacao-list.component.scss']
+    selector: 'plano-trabalho-consolidacao-list',
+    templateUrl: './plano-trabalho-consolidacao-list.component.html',
+    styleUrls: ['./plano-trabalho-consolidacao-list.component.scss'],
+    standalone: false
 })
 export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
@@ -35,6 +37,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
   public planoTrabalhoDao?: PlanoTrabalhoDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
   public unidadeService: UnidadeService;
+  public atividadeDao: AtividadeDaoService;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -44,6 +47,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
     this.unidadeService = injector.get<UnidadeService>(UnidadeService);
     this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
+    this.atividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
     this.title = this.lex.translate("Consolidações");
     this.code = "MOD_PTR_CSLD";
     this.modalWidth = 1200;
@@ -172,17 +176,25 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
   }
 
   public isDisabled(row?: PlanoTrabalhoConsolidacao): boolean {    
-    return !["INCLUIDO", "AGUARDANDO_REGISTRO"].includes(row?.status ?? "");
+    return !["INCLUIDO"].includes(row?.status ?? "");
   }
 
   podeInserir(){
     return this.auth.hasPermissionTo("MOD_PTR_CSLD_INCL")
   }
 
-  public onRefresh(atividade: Atividade, rowConsolidacao: PlanoTrabalhoConsolidacao){
-    if (!!atividade.plano_trabalho_entrega_id &&
-      rowConsolidacao.status == "AGUARDANDO_REGISTRO"
-    ) rowConsolidacao.status = "INCLUIDO"
+  public async onRefresh(consolidacao: PlanoTrabalhoConsolidacao){
+    try {
+      const freshDados = await this.dao!.dadosConsolidacao(consolidacao.id);
+      consolidacao.atividades = freshDados.atividades
+      
+      const index = this.items.findIndex(item => item.id === consolidacao.id);
+      if (index >= 0) {
+        this.items[index] = consolidacao;
+      } 
+    } catch (error) {
+      console.error('Error refreshing consolidacao:', error);
+    }
   }
   
 
@@ -220,7 +232,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
 
     //!this.isDisabled()
     if(true) {
-      if(["AGUARDANDO_REGISTRO", "INCLUIDO"].includes(consolidacao.status) && (isUsuarioDoPlano || isGestor || this.auth.hasPermissionTo("MOD_PTR_CSLD_CONCL"))) {
+      if(["INCLUIDO"].includes(consolidacao.status) && (isUsuarioDoPlano || isGestor || this.auth.hasPermissionTo("MOD_PTR_CSLD_CONCL"))) {
         result.push(BOTAO_CONCLUIR);
       }
       // this.planoTrabalhoService.diasParaConcluirConsolidacao(row, this.entity!.programa) >= 0 &&
@@ -254,4 +266,19 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     this.planoTrabalhoService.visualizarAvaliacao(row)
   }
 
+  labelStatus(consolidacao : PlanoTrabalhoConsolidacao) : string {
+    const statusLabelMap: Record<string, string | null | undefined> = {
+			'INCLUIDO': !!consolidacao.atividades.length ? "Incluido" : "Aguardando Registro",
+		}
+
+    return statusLabelMap[consolidacao.status] ?? this.lookup.getValue(this.lookup.CONSOLIDACAO_STATUS, consolidacao.status);
+  }
+
+  iconStatus(consolidacao : PlanoTrabalhoConsolidacao) : string {
+    const statusIconMap: Record<string, string | null | undefined> = {
+			'INCLUIDO': !!consolidacao.atividades.length ? "bi bi-pencil-square" : "bi bi-clock",
+		}
+
+    return statusIconMap[consolidacao.status] ?? this.lookup.getValue(this.lookup.CONSOLIDACAO_STATUS, consolidacao.status);
+  }
 }

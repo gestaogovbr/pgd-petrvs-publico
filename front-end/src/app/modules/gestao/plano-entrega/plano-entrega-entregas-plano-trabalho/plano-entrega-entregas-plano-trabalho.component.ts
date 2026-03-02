@@ -9,9 +9,10 @@ import { PlanoTrabalhoService } from '../../plano-trabalho/plano-trabalho.servic
 import { AccordionComponent } from 'src/app/components/accordion/accordion.component';
 
 @Component({
-  selector: 'plano-entrega-entregas-plano-trabalho',
-  templateUrl: './plano-entrega-entregas-plano-trabalho.component.html',
-  styleUrls: ['./plano-entrega-entregas-plano-trabalho.component.scss']
+    selector: 'plano-entrega-entregas-plano-trabalho',
+    templateUrl: './plano-entrega-entregas-plano-trabalho.component.html',
+    styleUrls: ['./plano-entrega-entregas-plano-trabalho.component.scss'],
+    standalone: false
 })
 export class PlanoEntregaEntregasPlanoTrabalhoComponent extends PageFrameBase {  
   @ViewChild('accordionUser', { static: false }) public accordionUser?: AccordionComponent;

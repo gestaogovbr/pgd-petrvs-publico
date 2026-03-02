@@ -8,9 +8,10 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'app-tipo-processo-form',
-  templateUrl: './tipo-processo-form.component.html',
-  styleUrls: ['./tipo-processo-form.component.scss']
+    selector: 'app-tipo-processo-form',
+    templateUrl: './tipo-processo-form.component.html',
+    styleUrls: ['./tipo-processo-form.component.scss'],
+    standalone: false
 })
 export class TipoProcessoFormComponent extends PageFormBase<TipoProcesso, TipoProcessoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

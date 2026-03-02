@@ -3,9 +3,10 @@ import { Component, Input, OnInit } from '@angular/core';
 export type ProgressColor = "success" | "info" | "warning" | "danger";
 
 @Component({
-  selector: 'progress-bar',
-  templateUrl: './progress-bar.component.html',
-  styleUrls: ['./progress-bar.component.scss']
+    selector: 'progress-bar',
+    templateUrl: './progress-bar.component.html',
+    styleUrls: ['./progress-bar.component.scss'],
+    standalone: false
 })
 export class ProgressBarComponent implements OnInit {
   @Input() max: number = 100;

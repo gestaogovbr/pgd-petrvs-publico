@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { PlanejamentoListComponent } from './planejamento-list/planejamento-list.component';
 import { PlanejamentoFormComponent } from './planejamento-form/planejamento-form.component';
 import { PlanejamentoRoutingModule } from './planejamento-routing.module';
@@ -10,7 +10,6 @@ import { PlanejamentoMapaComponent } from './planejamento-mapa/planejamento-mapa
 import { DndModule } from 'ngx-drag-drop';
 import { PlanejamentoListObjetivosEntregasComponent } from './planejamento-list-objetivos-entregas/planejamento-list-objetivos-entregas.component';
 import { PlanejamentoOkrComponent } from './planejamento-okr/planejamento-okr.component';
-import { NgScrollbarModule } from 'ngx-scrollbar';
 import { UteisModule } from '../../uteis/uteis.module';
 
 
@@ -26,10 +25,9 @@ import { UteisModule } from '../../uteis/uteis.module';
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     DndModule,
     PlanejamentoRoutingModule,
-    NgScrollbarModule,
     UteisModule
   ],
   exports: [

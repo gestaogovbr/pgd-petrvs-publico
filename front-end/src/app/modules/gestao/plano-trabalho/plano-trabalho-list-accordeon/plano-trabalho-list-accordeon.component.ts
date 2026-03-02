@@ -9,9 +9,10 @@ import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 
 @Component({
-  selector: 'plano-trabalho-list-accordeon',
-  templateUrl: './plano-trabalho-list-accordeon.component.html',
-  styleUrls: ['./plano-trabalho-list-accordeon.component.scss']
+    selector: 'plano-trabalho-list-accordeon',
+    templateUrl: './plano-trabalho-list-accordeon.component.html',
+    styleUrls: ['./plano-trabalho-list-accordeon.component.scss'],
+    standalone: false
 })
 export class PlanoTrabalhoListAccordeonComponent extends PageFrameBase {
   @ViewChild('accordion', { static: false }) public accordion?: AccordionComponent;

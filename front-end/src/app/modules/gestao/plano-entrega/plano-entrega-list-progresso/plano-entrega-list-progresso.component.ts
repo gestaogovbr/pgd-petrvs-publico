@@ -8,9 +8,10 @@ import { PlanoEntregaService } from "../plano-entrega.service";
 import { Base } from "src/app/models/base.model";
 
 @Component({
-  selector: 'app-plano-entrega-list-progresso',
-  templateUrl: './plano-entrega-list-progresso.component.html',
-  styleUrls: ['./plano-entrega-list-progresso.component.scss']
+    selector: 'app-plano-entrega-list-progresso',
+    templateUrl: './plano-entrega-list-progresso.component.html',
+    styleUrls: ['./plano-entrega-list-progresso.component.scss'],
+    standalone: false
 })
 export class PlanoEntregaListProgressoComponent extends PageListBase<PlanoEntregaEntregaProgresso,PlanoEntregaEntregaProgressoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

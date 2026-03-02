@@ -6,9 +6,10 @@ import { EixoTematico } from 'src/app/models/eixo-tematico.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-eixo-tematico-list',
-  templateUrl: './eixo-tematico-list.component.html',
-  styleUrls: ['./eixo-tematico-list.component.scss']
+    selector: 'app-eixo-tematico-list',
+    templateUrl: './eixo-tematico-list.component.html',
+    styleUrls: ['./eixo-tematico-list.component.scss'],
+    standalone: false
 })
 export class EixoTematicoListComponent extends PageListBase<EixoTematico, EixoTematicoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

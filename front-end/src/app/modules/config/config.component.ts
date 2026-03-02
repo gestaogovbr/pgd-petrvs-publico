@@ -2,9 +2,10 @@ import { Component, Injector, OnInit } from '@angular/core';
 import { PageBase } from '../base/page-base';
 
 @Component({
-  selector: 'app-config',
-  templateUrl: './config.component.html',
-  styleUrls: ['./config.component.scss']
+    selector: 'app-config',
+    templateUrl: './config.component.html',
+    styleUrls: ['./config.component.scss'],
+    standalone: false
 })
 export class ConfigComponent extends PageBase {
 

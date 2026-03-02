@@ -1,7 +1,7 @@
 import { Component, Injector, ViewChild } from "@angular/core";
 import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
-import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { RelatorioUnidadeDaoService } from "src/app/dao/relatorio-unidade-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { RelatorioUnidade } from "src/app/models/relatorio-unidade.model";
@@ -11,9 +11,10 @@ import { QueryOptions } from "src/app/dao/query-options";
 import { of } from "rxjs";
 import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.component";
 @Component({
-  selector: 'relatorio-unidade',
-  templateUrl: './relatorio-unidade.component.html',
-  styleUrls: ['./relatorio-unidade.component.scss']
+    selector: 'relatorio-unidade',
+    templateUrl: './relatorio-unidade.component.html',
+    styleUrls: ['./relatorio-unidade.component.scss'],
+    standalone: false
 })
 export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioUnidade, RelatorioUnidadeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

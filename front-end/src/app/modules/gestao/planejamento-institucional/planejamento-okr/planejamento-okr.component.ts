@@ -24,9 +24,10 @@ import { Entrega } from 'src/app/models/entrega.model';
 import { AtividadeService } from '../../atividade/atividade.service';
 
 @Component({
-  selector: 'planejamento-okr',
-  templateUrl: './planejamento-okr.component.html',
-  styleUrls: ['./planejamento-okr.component.scss'],
+    selector: 'planejamento-okr',
+    templateUrl: './planejamento-okr.component.html',
+    styleUrls: ['./planejamento-okr.component.scss'],
+    standalone: false
 })
 export class PlanejamentoOkrComponent extends PageFrameBase {
   @ViewChild('planejamentoInstitucional', { static: false })

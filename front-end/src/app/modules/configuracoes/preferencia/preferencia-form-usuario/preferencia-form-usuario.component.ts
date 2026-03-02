@@ -6,13 +6,14 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { Usuario, UsuarioConfig } from 'src/app/models/usuario.model';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { LookupItem } from 'src/app/services/lookup.service';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { NotificacoesConfigComponent } from 'src/app/modules/uteis/notificacoes/notificacoes-config/notificacoes-config.component';
 
 @Component({
-  selector: 'preferencia-form-usuario',
-  templateUrl: './preferencia-form-usuario.component.html',
-  styleUrls: ['./preferencia-form-usuario.component.scss']
+    selector: 'preferencia-form-usuario',
+    templateUrl: './preferencia-form-usuario.component.html',
+    styleUrls: ['./preferencia-form-usuario.component.scss'],
+    standalone: false
 })
 export class PreferenciaFormUsuarioComponent extends PageFormBase<Usuario, UsuarioDaoService> implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

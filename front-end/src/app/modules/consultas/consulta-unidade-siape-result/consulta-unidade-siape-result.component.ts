@@ -1,7 +1,7 @@
 import { Component, Inject, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { NavigateResult } from 'src/app/services/navigate.service';
@@ -13,9 +13,10 @@ import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.
 import { Unidade } from 'src/app/models/unidade.model';
 
 @Component({
-  selector: 'consulta-unidade-siape-result',
-  templateUrl: './consulta-unidade-siape-result.component.html',
-  styleUrls: ['./consulta-unidade-siape-result.component.scss']
+    selector: 'consulta-unidade-siape-result',
+    templateUrl: './consulta-unidade-siape-result.component.html',
+    styleUrls: ['./consulta-unidade-siape-result.component.scss'],
+    standalone: false
 })
 export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, UnidadeDaoService> {
 

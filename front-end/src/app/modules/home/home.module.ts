@@ -5,7 +5,7 @@ import { HomeExecucaoComponent } from './home-execucao/home-execucao.component';
 import { HomeComponent } from './home.component';
 import { HomeDevComponent } from './home-dev/home-dev.component';
 import { HomeAdministradorComponent } from './home-administrador/home-administrador.component';
-import { ComponentsModule } from "../../components/components.module";
+import { SharedModule } from "../../shared/shared.module";
 import { HomeAvaliadorComponent } from './home-avaliador/home-avaliador.component';
 import { HomeGestaoPendenciasComponent } from './home-gestao/home-gestao-pendencias.component';
 import { HomeRoutingModule } from './home-routing.module';
@@ -22,7 +22,7 @@ import { HomeRoutingModule } from './home-routing.module';
     ],
     imports: [
         CommonModule,
-        ComponentsModule,
+        SharedModule,
         HomeRoutingModule
     ]
 })

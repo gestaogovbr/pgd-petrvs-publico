@@ -21,15 +21,16 @@ import {LookupItem, LookupService} from "src/app/services/lookup.service";
 import {InputBase, LabelPosition} from "../input-base";
 
 @Component({
-	selector: "input-color",
-	templateUrl: "./input-color.component.html",
-	styleUrls: ["./input-color.component.scss"],
-	viewProviders: [
-		{
-			provide: ControlContainer,
-			useExisting: FormGroupDirective,
-		},
-	],
+    selector: "input-color",
+    templateUrl: "./input-color.component.html",
+    styleUrls: ["./input-color.component.scss"],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective,
+        },
+    ],
+    standalone: false
 })
 export class InputColorComponent extends InputBase implements OnInit {
 	@HostBinding("class") class = "form-group";
