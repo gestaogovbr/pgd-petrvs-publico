@@ -43,6 +43,10 @@ class EnvioController extends ControllerBase {
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function forcar(Request $request) {
         try {
             $data = $request->validate([

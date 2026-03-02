@@ -114,7 +114,7 @@ class JobScheduleService extends ServiceBase {
 
         if(!$jobBuscarDadosJaExiste){
 
-            $now->addMinute(30);
+            $now->addMinutes(30);
             $minute = $now->format('i');
             $hour = $now->format('H');
             $expressaoCron = "{$minute} {$hour} * * *";

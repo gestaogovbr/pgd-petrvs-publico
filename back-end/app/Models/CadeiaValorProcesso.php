@@ -6,6 +6,9 @@ use App\Models\ModelBase;
 use App\Models\CadeiaValor;
 use App\Models\PlanoEntregaEntregaProcesso;
 
+/**
+ * @property CadeiaValorProcesso|null $processoPai
+ */
 class CadeiaValorProcesso extends ModelBase
 {
   protected $table = 'cadeias_valores_processos';

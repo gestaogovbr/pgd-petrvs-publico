@@ -1,15 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <checkstyle>
-<file name="app/Auth/PainelUsuarioProvider.php">
-  <error line="62" column="1" severity="error" message="Method App\Auth\PainelUsuarioProvider::createUserProvider() should return Illuminate\Contracts\Auth\UserProvider but return statement is missing." source="return.missing" />
-</file>
-<file name="app/Console/Commands/CreateDatabaseCommand.php">
-  <error line="42" column="1" severity="error" message="Method App\Console\Commands\CreateDatabaseCommand::handle() should return int but return statement is missing." source="return.missing" />
-</file>
-<file name="app/Console/Commands/UpdateModelCommand.php">
-  <error line="74" column="1" severity="error" message="Access to an undefined property App\Models\Tenant|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\Tenant&gt;::$tenancy_db_name." source="property.notFound" />
-  <error line="106" column="1" severity="error" message="Access to an undefined property App\Models\Tenant|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\Tenant&gt;::$tenancy_db_name." source="property.notFound" />
-</file>
 <file name="app/Console/Kernel.php">
   <error line="41" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$id." source="property.notFound" />
   <error line="48" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$id." source="property.notFound" />
@@ -21,99 +11,6 @@
 <file name="app/Exceptions/Handler.php">
   <error line="20" column="1" severity="error" message="PHPDoc type array of property App\Exceptions\Handler::$dontReport is not covariant with PHPDoc type array&lt;int, class-string&lt;Throwable&gt;&gt; of overridden property Illuminate\Foundation\Exceptions\Handler::$dontReport." source="property.phpDocType" />
   <error line="29" column="1" severity="error" message="PHPDoc type array of property App\Exceptions\Handler::$dontFlash is not covariant with PHPDoc type array&lt;int, string&gt; of overridden property Illuminate\Foundation\Exceptions\Handler::$dontFlash." source="property.phpDocType" />
-</file>
-<file name="app/Http/Controllers/AvaliacaoController.php">
-  <error line="52" column="1" severity="error" message="Access to an undefined property App\Models\Avaliacao|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\Avaliacao&gt;::$planoTrabalhoConsolidacao." source="property.notFound" />
-  <error line="76" column="1" severity="error" message="Access to an undefined property App\Models\PlanoEntrega|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\PlanoEntrega&gt;::$unidade." source="property.notFound" />
-  <error line="76" column="1" severity="error" message="Access to an undefined property App\Models\PlanoEntrega|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\PlanoEntrega&gt;::$unidade." source="property.notFound" />
-  <error line="76" column="1" severity="error" message="Access to an undefined property App\Models\PlanoEntrega|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\PlanoEntrega&gt;::$unidade." source="property.notFound" />
-  <error line="76" column="1" severity="error" message="Access to an undefined property App\Models\PlanoTrabalhoConsolidacao|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\PlanoTrabalhoConsolidacao&gt;::$planoTrabalho." source="property.notFound" />
-</file>
-<file name="app/Http/Controllers/BatchController.php">
-  <error line="39" column="1" severity="error" message="Method App\Http\Controllers\BatchController::run() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="44" column="1" severity="error" message="Method App\Http\Controllers\BatchController::run() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="49" column="1" severity="error" message="Method App\Http\Controllers\BatchController::run() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-</file>
-<file name="app/Http/Controllers/CatalogoController.php">
-  <error line="32" column="1" severity="error" message="Method App\Http\Controllers\CatalogoController::store() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-</file>
-<file name="app/Http/Controllers/ClienteController.php">
-  <error line="35" column="1" severity="error" message="Method App\Http\Controllers\ClienteController::store() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="54" column="1" severity="error" message="Method App\Http\Controllers\ClienteController::update() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-</file>
-<file name="app/Http/Controllers/ControllerBase.php">
-  <error line="74" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::loggedUser() has invalid return type App\Http\Controllers\App\Models\Usuario." source="class.notFound" />
-  <error line="74" column="1" severity="error" message="PHPDoc tag @return with type App\Http\Controllers\App\Models\Usuario|null is not subtype of native type App\Models\Usuario|null." source="return.phpDocType" />
-  <error line="103" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$areasTrabalho." source="property.notFound" />
-  <error line="108" column="1" severity="error" message="Relation 'areasTrabalho' is not found in App\Models\Usuario model." source="larastan.relationExistence" />
-  <error line="119" column="1" severity="error" message="Access to an undefined property object::$unidade." source="property.notFound" />
-  <error line="131" column="1" severity="error" message="Relation 'areasTrabalho' is not found in App\Models\Usuario model." source="larastan.relationExistence" />
-  <error line="150" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::searchText() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="155" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::searchText() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="157" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::searchText() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="163" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::searchText() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="182" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::searchKey() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="187" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::searchKey() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="189" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::searchKey() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="194" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::searchKey() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="213" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::getById() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="218" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::getById() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="220" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::getById() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="225" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::getById() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="246" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::getAllIds() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="252" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::getAllIds() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="254" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::getAllIds() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="259" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::getAllIds() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="284" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::query() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="291" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::query() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="293" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::query() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="298" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::query() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="312" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::download() should return Illuminate\Http\Response but returns Symfony\Component\HttpFoundation\BinaryFileResponse." source="return.type" />
-  <error line="329" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::downloadUrl() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="331" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::downloadUrl() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="333" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::downloadUrl() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="338" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::downloadUrl() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="356" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::deleteFile() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="358" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::deleteFile() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="360" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::deleteFile() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="365" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::deleteFile() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="386" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::upload() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="388" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::upload() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="390" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::upload() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="395" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::upload() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="417" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::uploadBase64() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="419" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::uploadBase64() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="421" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::uploadBase64() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="426" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::uploadBase64() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="447" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::store() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="453" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::store() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="456" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::store() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="461" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::store() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="493" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::update() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="503" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::update() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="508" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::update() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="510" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::update() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="515" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::update() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="536" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::updateJson() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="544" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::updateJson() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="549" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::updateJson() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="551" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::updateJson() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="556" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::updateJson() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="573" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::destroy() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="575" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::destroy() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="577" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::destroy() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-  <error line="582" column="1" severity="error" message="Method App\Http\Controllers\ControllerBase::destroy() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-</file>
-<file name="app/Http/Controllers/ImpersonationController.php">
-  <error line="26" column="1" severity="error" message="Access to an undefined property Illuminate\Contracts\Auth\Authenticatable::$id." source="property.notFound" />
-  <error line="84" column="1" severity="error" message="Relation 'feriados' is not found in App\Models\Entidade model." source="larastan.relationExistence" />
-  <error line="84" column="1" severity="error" message="Relation 'gestor' is not found in App\Models\Entidade model." source="larastan.relationExistence" />
-  <error line="84" column="1" severity="error" message="Relation 'gestorSubstituto' is not found in App\Models\Entidade model." source="larastan.relationExistence" />
-  <error line="87" column="1" severity="error" message="Relation 'feriados' is not found in App\Models\Entidade model." source="larastan.relationExistence" />
-  <error line="87" column="1" severity="error" message="Relation 'gestor' is not found in App\Models\Entidade model." source="larastan.relationExistence" />
-  <error line="87" column="1" severity="error" message="Relation 'gestorSubstituto' is not found in App\Models\Entidade model." source="larastan.relationExistence" />
-  <error line="101" column="1" severity="error" message="Relation 'perfil' is not found in App\Models\Usuario model." source="larastan.relationExistence" />
-  <error line="122" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$lotacao." source="property.notFound" />
 </file>
 <file name="app/Http/Controllers/IndicadoresController.php">
   <error line="32" column="1" severity="error" message="Method App\Http\Controllers\IndicadoresController::query() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
@@ -180,17 +77,6 @@
   <error line="166" column="1" severity="error" message="Method App\Http\Controllers\PainelUsuarioController::destroy() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
   <error line="168" column="1" severity="error" message="Method App\Http\Controllers\PainelUsuarioController::destroy() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
 </file>
-<file name="app/Http/Controllers/PetrvsController.php">
-  <error line="33" column="1" severity="error" message="Relation 'tenant' is not found in Stancl\Tenancy\Database\Models\Domain model." source="larastan.relationExistence" />
-</file>
-<file name="app/Http/Controllers/PlanoEntregaController.php">
-  <error line="256" column="1" severity="error" message="Access to an undefined property App\Models\PlanoEntrega|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\PlanoEntrega&gt;::$unidade." source="property.notFound" />
-  <error line="294" column="1" severity="error" message="Access to an undefined property App\Models\PlanoEntrega|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\PlanoEntrega&gt;::$unidade." source="property.notFound" />
-  <error line="331" column="1" severity="error" message="Access to an undefined property App\Models\PlanoEntrega|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\PlanoEntrega&gt;::$unidade." source="property.notFound" />
-  <error line="368" column="1" severity="error" message="Access to an undefined property App\Models\PlanoEntrega|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\PlanoEntrega&gt;::$unidade." source="property.notFound" />
-  <error line="598" column="1" severity="error" message="Relation 'unidade' is not found in App\Models\PlanoTrabalho model." source="larastan.relationExistence" />
-  <error line="598" column="1" severity="error" message="Relation 'usuario' is not found in App\Models\PlanoTrabalho model." source="larastan.relationExistence" />
-</file>
 <file name="app/Http/Controllers/ProdutoController.php">
   <error line="39" column="1" severity="error" message="PHPDoc tag @param has invalid value ([type] $action): Unexpected token &quot;[&quot;, expected type at offset 54" source="phpDoc.parseError" />
   <error line="39" column="1" severity="error" message="PHPDoc tag @param has invalid value ([type] $request): Unexpected token &quot;[&quot;, expected type at offset 83" source="phpDoc.parseError" />
@@ -199,12 +85,6 @@
   <error line="41" column="1" severity="error" message="Method App\Http\Controllers\ProdutoController::checkPermissions() with return type void returns true but should not return anything." source="return.void" />
   <error line="57" column="1" severity="error" message="Method App\Http\Controllers\ProdutoController::checkPermissions() with return type void returns true but should not return anything." source="return.void" />
   <error line="69" column="1" severity="error" message="Method App\Http\Controllers\ProdutoController::store() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
-</file>
-<file name="app/Http/Controllers/RelatoController.php">
-  <error line="81" column="1" severity="error" message="Access to an undefined property App\Models\Usuario|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\Usuario&gt;::$lotacao." source="property.notFound" />
-  <error line="100" column="1" severity="error" message="Access to an undefined property App\Models\Entidade|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\Entidade&gt;::$emails." source="property.notFound" />
-  <error line="104" column="1" severity="error" message="Access to an undefined property App\Models\Entidade|Illuminate\Database\Eloquent\Collection&lt;int, App\Models\Entidade&gt;::$emails." source="property.notFound" />
-  <error line="108" column="1" severity="error" message="Method App\Http\Controllers\RelatoController::store() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
 </file>
 <file name="app/Http/Controllers/RelatorioAgenteController.php">
   <error line="38" column="1" severity="error" message="Method App\Http\Controllers\RelatorioAgenteController::query() should return Illuminate\Http\Response but returns Symfony\Component\HttpFoundation\BinaryFileResponse." source="return.type" />
@@ -254,16 +134,8 @@
   <error line="33" column="1" severity="error" message="Method App\Http\Controllers\TipoClienteController::store() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
   <error line="51" column="1" severity="error" message="Method App\Http\Controllers\TipoClienteController::update() should return Illuminate\Http\Response but returns Illuminate\Http\JsonResponse." source="return.type" />
 </file>
-<file name="app/Http/Kernel.php">
-  <error line="16" column="1" severity="error" message="PHPDoc type array of property App\Http\Kernel::$middleware is not covariant with PHPDoc type array&lt;int, string&gt; of overridden property Illuminate\Foundation\Http\Kernel::$middleware." source="property.phpDocType" />
-  <error line="34" column="1" severity="error" message="PHPDoc type array of property App\Http\Kernel::$middlewareGroups is not covariant with PHPDoc type array&lt;string, array&lt;int, string&gt;&gt; of overridden property Illuminate\Foundation\Http\Kernel::$middlewareGroups." source="property.phpDocType" />
-  <error line="65" column="1" severity="error" message="PHPDoc type array of property App\Http\Kernel::$routeMiddleware is not covariant with PHPDoc type array&lt;string, string&gt; of overridden property Illuminate\Foundation\Http\Kernel::$routeMiddleware." source="property.phpDocType" />
-</file>
 <file name="app/Http/Middleware/CheckCurador.php">
   <error line="13" column="1" severity="error" message="Call to an undefined method App\Models\PainelUsuario|App\Models\Usuario::isCurador()." source="method.notFound" />
-</file>
-<file name="app/Http/Middleware/EncryptCookies.php">
-  <error line="14" column="1" severity="error" message="PHPDoc type array of property App\Http\Middleware\EncryptCookies::$except is not covariant with PHPDoc type array&lt;int, string&gt; of overridden property Illuminate\Cookie\Middleware\EncryptCookies::$except." source="property.phpDocType" />
 </file>
 <file name="app/Http/Middleware/Notification.php">
   <error line="23" column="1" severity="error" message="Call to an undefined static method Illuminate\Http\Response::json()." source="staticMethod.notFound" />
@@ -271,27 +143,11 @@
 <file name="app/Http/Middleware/PreventRequestsDuringMaintenance.php">
   <error line="14" column="1" severity="error" message="PHPDoc type array of property App\Http\Middleware\PreventRequestsDuringMaintenance::$except is not covariant with PHPDoc type array&lt;int, string&gt; of overridden property Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance::$except." source="property.phpDocType" />
 </file>
-<file name="app/Http/Middleware/TrimStrings.php">
-  <error line="14" column="1" severity="error" message="PHPDoc type array of property App\Http\Middleware\TrimStrings::$except is not covariant with PHPDoc type array&lt;int, string&gt; of overridden property Illuminate\Foundation\Http\Middleware\TrimStrings::$except." source="property.phpDocType" />
-</file>
-<file name="app/Http/Middleware/TrustProxies.php">
-  <error line="15" column="1" severity="error" message="PHPDoc type array|string|null of property App\Http\Middleware\TrustProxies::$proxies is not covariant with PHPDoc type array&lt;int, string&gt;|string|null of overridden property Illuminate\Http\Middleware\TrustProxies::$proxies." source="property.phpDocType" />
-</file>
 <file name="app/Http/Middleware/ValidateRelativeSignature.php">
   <error line="22" column="1" severity="error" message="Method Illuminate\Http\Request::hasValidRelativeSignature() invoked with 1 parameter, 0 required." source="arguments.count" />
 </file>
 <file name="app/Http/Middleware/VerifyAppVersion.php">
   <error line="26" column="1" severity="error" message="Access to an undefined property App\Models\Tenant::$version." source="property.notFound" />
-</file>
-<file name="app/Http/Middleware/VerifyCsrfToken.php">
-  <error line="14" column="1" severity="error" message="PHPDoc type array of property App\Http\Middleware\VerifyCsrfToken::$except is not covariant with PHPDoc type array&lt;int, string&gt; of overridden property Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::$except." source="property.phpDocType" />
-</file>
-<file name="app/Jobs/ArquivarPlanosAvaliadosJob.php">
-  <error line="43" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$id." source="property.notFound" />
-</file>
-<file name="app/Jobs/ExportarTenantJob.php">
-  <error line="48" column="1" severity="error" message="Access to an undefined property App\Models\Tenant::$api_cod_unidade_autorizadora." source="property.notFound" />
-  <error line="49" column="1" severity="error" message="Access to an undefined property App\Models\Tenant::$api_url." source="property.notFound" />
 </file>
 <file name="app/Jobs/JobBase.php">
   <error line="24" column="1" severity="error" message="Access to an undefined property App\Models\JobSchedule::$classe." source="property.notFound" />
@@ -312,14 +168,6 @@
   <error line="66" column="1" severity="error" message="Anonymous function has an unused use $envioNumero." source="closure.unusedUse" />
   <error line="66" column="1" severity="error" message="Anonymous function has an unused use $tenant." source="closure.unusedUse" />
 </file>
-<file name="app/Listeners/TenantBootstrapped.php">
-  <error line="29" column="1" severity="error" message="PHPDoc tag @param for parameter $event with type App\Events\TenancyBootstrapped is not subtype of native type Stancl\Tenancy\Events\TenancyBootstrapped." source="parameter.phpDocType" />
-  <error line="29" column="1" severity="error" message="Parameter $event of method App\Listeners\TenantBootstrapped::handle() has invalid type App\Events\TenancyBootstrapped." source="class.notFound" />
-</file>
-<file name="app/Listeners/TenantDatabaseMigrated.php">
-  <error line="30" column="1" severity="error" message="PHPDoc tag @param for parameter $event with type App\Events\DatabaseMigrated is not subtype of native type Stancl\Tenancy\Events\DatabaseMigrated." source="parameter.phpDocType" />
-  <error line="30" column="1" severity="error" message="Parameter $event of method App\Listeners\TenantDatabaseMigrated::handle() has invalid type App\Events\DatabaseMigrated." source="class.notFound" />
-</file>
 <file name="app/Listeners/TenantListenerBase.php">
   <error line="71" column="1" severity="error" message="Access to an undefined property App\Models\Tenant::$tenancy_db_name." source="property.notFound" />
 </file>
@@ -333,9 +181,6 @@
   <error line="26" column="1" severity="error" message="PHPDoc type array of property App\Models\Audit::$fillable is not covariant with PHPDoc type array&lt;int, string&gt; of overridden property Illuminate\Database\Eloquent\Model::$fillable." source="property.phpDocType" />
   <error line="45" column="1" severity="error" message="PHPDoc type array of property App\Models\Audit::$casts is not covariant with PHPDoc type array&lt;string, string&gt; of overridden property Illuminate\Database\Eloquent\Model::$casts." source="property.phpDocType" />
   <error line="74" column="1" severity="error" message="Access to an undefined property App\Models\Audit::$user." source="property.notFound" />
-</file>
-<file name="app/Models/PlanoEntrega.php">
-  <error line="62" column="1" severity="error" message="Access to an undefined property App\Models\PlanoEntrega::$avaliado_at." source="property.notFound" />
 </file>
 <file name="app/Models/PlanoTrabalhoConsolidacao.php">
   <error line="21" column="1" severity="error" message="Access to an undefined property App\Models\PlanoTrabalhoConsolidacao::$planoTrabalho." source="property.notFound" />
@@ -353,24 +198,6 @@
   <error line="214" column="1" severity="error" message="Relation 'avaliadorPlanoEntrega' is not found in App\Models\UnidadeIntegrante model." source="larastan.relationExistence" />
   <error line="219" column="1" severity="error" message="Relation 'avaliadorPlanoTrabalho' is not found in App\Models\UnidadeIntegrante model." source="larastan.relationExistence" />
   <error line="237" column="1" severity="error" message="Access to an undefined property App\Models\Unidade::$integrantes." source="property.notFound" />
-</file>
-<file name="app/Models/Usuario.php">
-  <error line="136" column="1" severity="error" message="PHPDoc type array of property App\Models\Usuario::$hidden is not covariant with PHPDoc type array&lt;int, string&gt; of overridden property Illuminate\Database\Eloquent\Model::$hidden." source="property.phpDocType" />
-  <error line="146" column="1" severity="error" message="PHPDoc type array of property App\Models\Usuario::$casts is not covariant with PHPDoc type array&lt;string, string&gt; of overridden property Illuminate\Database\Eloquent\Model::$casts." source="property.phpDocType" />
-  <error line="186" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$perfil." source="property.notFound" />
-  <error line="384" column="1" severity="error" message="Relation 'gestor' is not found in App\Models\UnidadeIntegrante model." source="larastan.relationExistence" />
-  <error line="389" column="1" severity="error" message="Relation 'gestor' is not found in App\Models\UnidadeIntegrante model." source="larastan.relationExistence" />
-  <error line="394" column="1" severity="error" message="Relation 'gestorSubstituto' is not found in App\Models\UnidadeIntegrante model." source="larastan.relationExistence" />
-  <error line="399" column="1" severity="error" message="Relation 'gestorDelegado' is not found in App\Models\UnidadeIntegrante model." source="larastan.relationExistence" />
-  <error line="404" column="1" severity="error" message="Relation 'lotado' is not found in App\Models\UnidadeIntegrante model." source="larastan.relationExistence" />
-  <error line="409" column="1" severity="error" message="Relation 'curador' is not found in App\Models\UnidadeIntegrante model." source="larastan.relationExistence" />
-  <error line="414" column="1" severity="error" message="Relation 'curador' is not found in App\Models\UnidadeIntegrante model." source="larastan.relationExistence" />
-  <error line="419" column="1" severity="error" message="Relation 'lotado' is not found in App\Models\UnidadeIntegrante model." source="larastan.relationExistence" />
-  <error line="425" column="1" severity="error" message="Relation 'atribuicoes' is not found in App\Models\UnidadeIntegrante model." source="larastan.relationExistence" />
-  <error line="430" column="1" severity="error" message="Relation 'colaborador' is not found in App\Models\UnidadeIntegrante model." source="larastan.relationExistence" />
-  <error line="435" column="1" severity="error" message="Relation 'colaborador' is not found in App\Models\UnidadeIntegrante model." source="larastan.relationExistence" />
-  <error line="500" column="1" severity="error" message="Access to an undefined property App\Models\Usuario::$unidadesIntegrantes." source="property.notFound" />
-  <error line="512" column="1" severity="error" message="Relation 'user' is not found in App\Models\Audit model." source="larastan.relationExistence" />
 </file>
 <file name="app/Providers/AppServiceProvider.php">
   <error line="85" column="1" severity="error" message="Static method Illuminate\Log\Logger::info() invoked with 3 parameters, 1-2 required." source="arguments.count" />

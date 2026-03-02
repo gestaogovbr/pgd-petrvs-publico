@@ -14,7 +14,17 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Throwable;
+use App\Models\Unidade;
+use App\Models\Usuario;
+use App\Models\Status;
 
+/**
+ * @property UnidadeService $unidadeService
+ * @property UsuarioService $usuarioService
+ * @property PlanoTrabalhoConsolidacaoService $planoTrabalhoConsolidacaoService
+ * @property PlanoEntregaService $planoEntregaService
+ * @property StatusService $statusService
+ */
 class AvaliacaoService extends ServiceBase
 {
   public function validateStore($data, $unidade, $action) {

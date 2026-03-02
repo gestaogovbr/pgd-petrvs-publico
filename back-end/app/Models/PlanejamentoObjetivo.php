@@ -7,6 +7,9 @@ use App\Models\Planejamento;
 use App\Models\EixoTematico;
 use App\Models\PlanoEntregaEntregaObjetivo;
 
+/**
+ * @property PlanejamentoObjetivo|null $objetivoPai
+ */
 class PlanejamentoObjetivo extends ModelBase
 {
   protected $table = 'planejamentos_objetivos';

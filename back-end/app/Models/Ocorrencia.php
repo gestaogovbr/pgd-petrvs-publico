@@ -6,6 +6,8 @@ use App\Models\ModelBase;
 use App\Models\Usuario;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Ocorrencia extends ModelBase
 {
@@ -27,16 +29,16 @@ class Ocorrencia extends ModelBase
   public $delete_cascade = [];
 
   // Has
-  public function consolidacoes()
+  public function consolidacoes(): HasMany
   {
     return $this->hasMany(PlanoTrabalhoConsolidacaoOcorrencia::class);
   }
   // Belongs
-  public function usuario()
+  public function usuario(): BelongsTo
   {
     return $this->belongsTo(Usuario::class);
   }
-  public function planoTrabalho()
+  public function planoTrabalho(): BelongsTo
   {
     return $this->belongsTo(PlanoTrabalho::class);
   }

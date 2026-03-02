@@ -26,7 +26,7 @@ class DocumentoAssinatura extends ModelBase
   {
     return $this->belongsTo(Documento::class);
   }
-  public function usuario()
+  public function usuario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(Usuario::class);
   }

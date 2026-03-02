@@ -38,6 +38,12 @@ class LogsController extends ControllerBase {
     }
 
 
+    /**
+     * Query logs
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     */
     public function query(Request $request)
     {
         try {

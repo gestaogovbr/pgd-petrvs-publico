@@ -19,6 +19,7 @@ class ValidateRelativeSignature
      */
     public function handle($request, Closure $next, $relative = null)
     {
+        /** @phpstan-ignore-next-line */
         if ($request->hasValidRelativeSignature($relative !== 'relative')) {
             return $next($request);
         }

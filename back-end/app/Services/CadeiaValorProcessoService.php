@@ -2,6 +2,11 @@
 
 namespace App\Services;
 
+use App\Services\CadeiaValorService;
+
+/**
+ * @property CadeiaValorService $cadeiaValorService
+ */
 class CadeiaValorProcessoService extends ServiceBase
 {
     public function extraStore($processo, $unidade, $action) {

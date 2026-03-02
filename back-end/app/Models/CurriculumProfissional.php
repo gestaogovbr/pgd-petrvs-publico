@@ -42,57 +42,57 @@ class CurriculumProfissional extends ModelBase
   ];
 
   // Belongs
-  public function curriculum()
+  public function curriculum(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(Curriculum::class);
   }
-  public function centroTreinamento()
+  public function centroTreinamento(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(CentroTreinamento::class);
   }
-  public function cargo()
+  public function cargo(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(Cargo::class);
   }
-  public function grupoEspecializado()
+  public function grupoEspecializado(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(GrupoEspecializado::class);
   }
   // HasOne
-  public function unidadeAtual()
+  public function unidadeAtual(): \Illuminate\Database\Eloquent\Relations\HasOne
   {
     return $this->hasOne(Unidade::class);
   }
   // HasMany
-  public function historicosAtividadesInternas()
+  public function historicosAtividadesInternas(): \Illuminate\Database\Eloquent\Relations\HasMany
   {
     return $this->hasMany(HistoricoAtividadeInterna::class);
   }
-  public function historicosAtividadesExternas()
+  public function historicosAtividadesExternas(): \Illuminate\Database\Eloquent\Relations\HasMany
   {
     return $this->hasMany(HistoricoAtividadeExterna::class);
   }
-  public function historicosCursosInternos()
+  public function historicosCursosInternos(): \Illuminate\Database\Eloquent\Relations\HasMany
   {
     return $this->hasMany(HistoricoCursoInterno::class);
   }
-  public function historicosCursosExternos()
+  public function historicosCursosExternos(): \Illuminate\Database\Eloquent\Relations\HasMany
   {
     return $this->hasMany(HistoricoCursoExterno::class);
   }
-  public function historicosDocenciasInternas()
+  public function historicosDocenciasInternas(): \Illuminate\Database\Eloquent\Relations\HasMany
   {
     return $this->hasMany(HistoricoDocenciaInterna::class);
   }
-  public function historicosDocenciasExternas()
+  public function historicosDocenciasExternas(): \Illuminate\Database\Eloquent\Relations\HasMany
   {
     return $this->hasMany(HistoricoDocenciaExterna::class);
   }
-  public function historicosFuncoes()
+  public function historicosFuncoes(): \Illuminate\Database\Eloquent\Relations\HasMany
   {
     return $this->hasMany(HistoricoFuncao::class);
   }
-  public function historicosLotacoes()
+  public function historicosLotacoes(): \Illuminate\Database\Eloquent\Relations\HasMany
   {
     return $this->hasMany(HistoricoLotacao::class);
   }

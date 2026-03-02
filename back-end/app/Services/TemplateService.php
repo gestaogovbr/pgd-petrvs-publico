@@ -19,6 +19,11 @@ function is_regex($expression) {
     //return @preg_match($expression, null) !== false;
 }
 
+/**
+ * @property NotificacoesService $NotificacoesService
+ * @property TemplateDatasetService $templateDatasetService
+ * @property LookupService $lookupService
+ */
 class TemplateService extends ServiceBase
 {
     public function proxyQuery($query, &$data)
@@ -126,7 +131,7 @@ class TemplateService extends ServiceBase
         }
         if (strtolower($expression) === "true" && preg_match(TemplateService::EXPRESSION_BOOLEAN, $expression)) return true;
         if (preg_match(TemplateService::EXPRESSION_STRING, $expression)) return preg_replace(['/^\"/', '/\"$/'], '', $expression);
-        if (preg_match(TemplateService::EXPRESSION_NUMBER, $expression)) return +$expression;
+        if (preg_match(TemplateService::EXPRESSION_NUMBER, $expression)) return (float) $expression;
         if (preg_match(TemplateService::EXPRESSION_VAR, $expression)) return UtilService::getNested($context, $expression);
         return null;
     }
@@ -320,7 +325,7 @@ class TemplateService extends ServiceBase
             $valor = array_key_exists("value", $field) ? $field["value"]($context) : (array_key_exists($field["field"], $values) ? $values[$field["field"]] : null);
             if(is_array($valor) || ($valor instanceof Collection)) {
                 $list = [];
-                $items = $valor ?? [];
+                $items = $valor;
                 foreach($items as $item){
                     $list[] = $this->buildFields($item, $this->getFields($field["fields"]));
                 }

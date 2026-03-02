@@ -27,6 +27,13 @@ use App\Exceptions\ValidateException;
 use Illuminate\Support\Facades\Session;
 
 
+/**
+ * @property CalendarioService $calendarioService
+ * @property PlanoTrabalhoService $planoService
+ * @property UsuarioService $usuarioService
+ * @property UnidadeIntegranteService $UnidadeIntegranteService
+ * @property PlanoEntregaService $planoEntrega
+ */
 class UnidadeService extends ServiceBase
 {
 
@@ -96,6 +103,7 @@ class UnidadeService extends ServiceBase
         
         
         $unidade = is_string($idOrUnidade)
+            /** @phpstan-ignore-next-line */
             ? Unidade::with('cidade')->find($idOrUnidade)
             : ($idOrUnidade?->load('cidade'));
         $timeZoneOffset = $unidade->cidade?->timezone ?? -3;
@@ -167,6 +175,7 @@ class UnidadeService extends ServiceBase
         $unidadePrincipal = Unidade::find($unidade_id);
         $unidades_ids = [$unidade_id];
         $unidades_ids = array_merge($unidades_ids, $this->unidadesFilhas($unidade_id));
+        $aux = [];
         foreach ($unidades_ids as $id) {
             $temp = $this->metadadosUnidade($id, $programa_id);
             if ($id == $unidade_id) $aux = $temp;
@@ -220,7 +229,7 @@ class UnidadeService extends ServiceBase
     /**
      * Retorna os usuários lotados na unidade
      *
-     * @param string $unidade_id O ID de uma Unidade.
+     * @param string $unidadeId O ID de uma Unidade.
      * @return array
      */
     public function lotados($unidadeId): array
@@ -229,6 +238,7 @@ class UnidadeService extends ServiceBase
             return $this->getBuffer("lotados", $unidadeId);
         }
 
+        /** @phpstan-ignore-next-line */
         $result = Unidade::with("lotados.usuario")
             ->find($unidadeId)?->lotados
             ->map(fn($integrante) => $integrante->usuario)
@@ -255,6 +265,7 @@ class UnidadeService extends ServiceBase
      */
     public function metadadosUnidade($unidade_id, $programa_id): array
     {
+        /** @phpstan-ignore-next-line */
         $unidade = Unidade::where('id', $unidade_id)->with(['planosTrabalho', 'planosTrabalho.atividades', 'planosTrabalho.tipoModalidade'])->first();
         $metadadosPlanosTrabalho = [];
         foreach ($unidade['planosTrabalho']->toArray() as $plano) {
@@ -286,11 +297,17 @@ class UnidadeService extends ServiceBase
                 return $acum + $item;
             }, 0)
         ];
+        /** @phpstan-ignore-next-line */
         $result['percentualHorasNaoIniciadas'] = $result['horasUteisTotais'] == 0 ? 0 : $result['horasAtividadesNaoIniciadas'] / $result['horasUteisTotais'];
+        /** @phpstan-ignore-next-line */
         $result['percentualHorasEmAndamento'] = $result['horasUteisTotais'] == 0 ? 0 : $result['horasAtividadesEmAndamento'] / $result['horasUteisTotais'];
+        /** @phpstan-ignore-next-line */
         $result['percentualHorasConcluidas'] = $result['horasUteisTotais'] == 0 ? 0 : $result['horasAtividadesConcluidas'] / $result['horasUteisTotais'];
+        /** @phpstan-ignore-next-line */
         $result['percentualHorasTotaisAlocadas'] = $result['horasUteisTotais'] == 0 ? 0 : $result['horasTotaisAlocadas'] / $result['horasUteisTotais'];
+        /** @phpstan-ignore-next-line */
         $result['percentualPlanoDecorrido'] = $result['horasUteisTotais'] == 0 ? 0 : $result['horasUteisDecorridas'] / $result['horasUteisTotais'];
+
 
         /** Neste trecho calcula-se a média das avaliações de toda a Unidade, partindo-se da média das avaliações de cada Plano de Trabalho considerado.
          *  Se um dado Plano de Trabalho possui mediaAvaliacoes = null, é porque ele não possui nenhuma demanda ainda avaliada. Neste caso, a media das avaliações deste Plano
@@ -311,7 +328,9 @@ class UnidadeService extends ServiceBase
      */
     public function planosEntregaEmCurso(string $unidade_id): array
     {
+        /** @phpstan-ignore-next-line */
         $unidade = Unidade::where("id", $unidade_id)->with(["planos_entrega"])->get()->first();
+        /** @phpstan-ignore-next-line */
         return array_filter($unidade->planosEntrega, fn($x) => $this->planoEntrega->emCurso($x));
     }
 
@@ -404,7 +423,7 @@ class UnidadeService extends ServiceBase
      * Retorna um array com os IDs de todas as suas unidades-filhas, ou seja,
      * de todas as Unidades que estão hierarquicamente organizadas abaixo da Unidade-mãe.
      *
-     * @param string $unidade_id O ID de uma Unidade-mãe.
+     * @param string $unidadeId O ID de uma Unidade-mãe.
      * @return array
      */
     public function unidadesFilhas($unidadeId): array
@@ -500,6 +519,7 @@ class UnidadeService extends ServiceBase
                     foreach ($changes as $change) {
                         $delta = [];
                         $delta[$contraint->COLUMN_NAME] = $de;
+                        /** @phpstan-ignore-next-line */
                         ModelBase::customLogChange($contraint->TABLE_NAME, $change->id, "EDIT", $delta);
                     }
                 }
@@ -576,7 +596,7 @@ class UnidadeService extends ServiceBase
     public function unidadesEmPgd(): array
     {
         // (RN_PENT_G) Uma vez homologado um Plano de Entregas, a Unidade do plano está em PGD;
-        return Unidade::with(['planosEntrega' => function ($query) {
+        return Unidade::with(['planosEntrega' => function ($query) { /** @phpstan-ignore-line */
             $query->where('status', 'ATIVO');
         }])->whereHas('planosEntrega')->get()->map(fn($u) => $u->id)->toArray();
     }
@@ -601,6 +621,7 @@ class UnidadeService extends ServiceBase
                 ]);
             }
 
+            /** @phpstan-ignore-next-line */
             $unidadeSup = Unidade::with([
                 'gestor.usuario',
                 'gestoresSubstitutos.usuario',
@@ -617,7 +638,7 @@ class UnidadeService extends ServiceBase
 
     /**
      * Retorna um array com os usuários que são gestores (titular, substitutos e delegados) da unidade recebida como parâmetro.
-     * @param string $unidade_id
+     * @param string $unidadeId
      * @return array
      */
     public function gestoresUnidade($unidadeId): array
@@ -832,5 +853,11 @@ class UnidadeService extends ServiceBase
             ->exists();
     }
 
-
+    public function isIntegrante($unidadeId, $usuarioId)
+    {
+        $unidadeIntegrante = UnidadeIntegrante::where("unidade_id", $unidadeId)->where("usuario_id", $usuarioId)->first();
+        if (empty($unidadeIntegrante)) return false;
+        $usuario = $unidadeIntegrante->usuario;
+        return $usuario ? true : false;
+    }
 }

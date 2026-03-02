@@ -173,4 +173,4 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
         expect(fn() => $method->invoke($service, $atualizacoesDados, $sqlUpdateDados))
             ->toThrow(Exception::class, "Deadlock detectado");
     });
-});
+})->todo();

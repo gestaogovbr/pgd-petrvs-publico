@@ -14,7 +14,7 @@ class BatchController extends Controller
      * Run batch for each action
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function run(Request $request)
     {

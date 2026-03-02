@@ -64,13 +64,22 @@ class Integracao implements InterfaceIntegracao
         if (empty($dado['id_chefe'])) {
             //verificar se a unidade está inativa
             $unidade = Unidade::find($dado['id_unidade']);
-            $this->removeAtualGestorDaUnidade($unidade);
+            if ($unidade) {
+                $this->removeAtualGestorDaUnidade($unidade);
+            }
             array_push($this->message['vazio'],  $dado['id_unidade']);
             SiapeLog::warning("Chefe não informado para a unidade " . $dado['id_unidade'], $dado);
             return;
         }
         //verificar se o usuario está inativo
         $usuarioChefia = $this->userModel->find($dado['id_chefe']);
+
+        if (!$usuarioChefia) {
+             SiapeLog::error("Usuário chefe não encontrado: " . $dado['id_chefe'], $dado);
+             array_push($this->message['erro'], $dado['id_unidade']);
+             return;
+        }
+
         $atribuicoesAtuaisDaChefia = $usuarioChefia->getUnidadesAtribuicoesAttribute();
         $unidadeExercicioId = $dado['id_unidade'];
         $chefeAtribuicoes = $this->preparaChefia($atribuicoesAtuaisDaChefia, $unidadeExercicioId);
@@ -169,7 +178,7 @@ class Integracao implements InterfaceIntegracao
     /**
      * Undocumented function
      *
-     * @return array{sucesso: string, id_chefe: erro, vazio: string}[] 
+     * @return array<string, string[]>
      */
     public function getMessage(): array
     {
