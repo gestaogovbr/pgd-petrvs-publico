@@ -471,7 +471,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
 
       foreach ($consolidacao->planoTrabalho->entregas as $entrega) {
         
-        if($consolidacao->planoTrabalho["created_at"] < PlanoTrabalho::DATA_MUDANCA_REGRA_PT) continue;
+        if($consolidacao->planoTrabalho["created_at"] < UtilService::asDateTime(PlanoTrabalho::DATA_MUDANCA_REGRA_PT)) continue;
 
         $temAtividade = $entregasComAtividade->contains($entrega->id);
 

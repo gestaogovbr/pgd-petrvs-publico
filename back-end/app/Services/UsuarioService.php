@@ -670,8 +670,8 @@ class UsuarioService extends ServiceBase
 
     public function pendenciasChefe(){
       //Datas de modificação de regra
-      $dataAlteracaoRegraPT = PlanoTrabalho::DATA_MUDANCA_REGRA_PT;
-      $dataAlteracaoRegraPE = PlanoEntrega::DATA_MUDANCA_REGRA_PE;
+      $dataAlteracaoRegraPT = UtilService::asDateTime(PlanoTrabalho::DATA_MUDANCA_REGRA_PT);
+      $dataAlteracaoRegraPE = UtilService::asDateTime(PlanoEntrega::DATA_MUDANCA_REGRA_PE);
 
       // usuário logado
       $diasAvaliacaoRegistroExecucao = 21;

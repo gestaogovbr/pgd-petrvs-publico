@@ -11,7 +11,6 @@ use App\Models\Programa;
 use App\Models\Planejamento;
 use App\Models\CadeiaValor;
 use App\Models\PlanoEntregaEntrega;
-use App\Services\UtilService;
 use Illuminate\Support\Facades\DB;
 
 class PlanoEntrega extends ModelBase
@@ -48,7 +47,7 @@ class PlanoEntrega extends ModelBase
     'CANCELADO' => 'Cancelado'
   ];
   
-  public const DATA_MUDANCA_REGRA_PE = UtilService::asDateTime('12/01/2026');
+  public const DATA_MUDANCA_REGRA_PE = '12/01/2026';
 
   public $fillable_changes = ["entregas"];
 
