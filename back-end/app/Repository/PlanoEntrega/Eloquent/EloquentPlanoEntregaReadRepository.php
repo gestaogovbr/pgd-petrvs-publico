@@ -1,18 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository\PlanoEntrega\Eloquent;
 
 use App\Models\PlanoEntrega;
 use App\Models\PlanoEntregaEntrega;
 use App\Enums\StatusEnum;
+use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use Illuminate\Database\Eloquent\Collection;
 
-class EloquentPlanoEntregaReadRepository implements PlanoEntregaReadRepositoryContract
+class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository implements PlanoEntregaReadRepositoryContract
 {
+    public function __construct(PlanoEntrega $model)
+    {
+        $this->model = $model;
+    }
+
     public function getPlanosEntregaAvaliacao(array $unidadesIds): Collection
     {
-        return PlanoEntrega::where('status', StatusEnum::CONCLUIDO->value)
+        return $this->query()
+            ->where('status', StatusEnum::CONCLUIDO->value)
             ->whereIn('unidade_id', $unidadesIds)
             ->with(['unidade:id,sigla,nome'])
             ->get();
@@ -20,7 +29,8 @@ class EloquentPlanoEntregaReadRepository implements PlanoEntregaReadRepositoryCo
 
     public function getPlanosEntregaHomologacao(array $unidadesIds): Collection
     {
-        return PlanoEntrega::where('status', StatusEnum::HOMOLOGANDO->value)
+        return $this->query()
+            ->where('status', StatusEnum::HOMOLOGANDO->value)
             ->whereIn('unidade_id', $unidadesIds)
             ->with(['unidade:id,sigla,nome'])
             ->get();

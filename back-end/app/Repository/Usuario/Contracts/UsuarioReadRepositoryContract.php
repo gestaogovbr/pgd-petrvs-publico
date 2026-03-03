@@ -6,36 +6,18 @@ namespace App\Repository\Usuario\Contracts;
 
 use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
 
-/**
- * @see \App\Repository\Usuario\Eloquent\EloquentUsuarioReadRepository
- */
 interface UsuarioReadRepositoryContract
 {
-    public function findById(string $id): ?Usuario;
-    
+    public function findById(string|int $id): ?Usuario;
     public function findByCpfOrEmail(string $cpf, string $email, ?string $exceptId = null, bool $withTrashed = false): ?Usuario;
-
     public function isParticipanteHabilitado(string $usuarioId, string $programaId): bool;
-
     public function isIntegrante(string $usuarioId, string $unidadeId, string $atribuicao): bool;
-
     public function getAtribuicoes(string $usuarioId, string $unidadeId): array;
-
     public function isLotacao(string $usuarioId, string $unidadeId): bool;
-
     public function findAllSemMatricula(): Collection;
-
     public function findByCpfAndLotacao(string $cpf, string $unidadeId, string $lotacaoAtribuicao = 'LOTADO'): ?Usuario;
-    
     public function findAllByCpf(string $cpf): Collection;
-
     public function getUnidadesVinculadas(string $cpf): Collection;
-
-    /**
-     * @param array<string, mixed> $params
-     * @return Collection|LengthAwarePaginator
-     */
     public function search(array $params, int $limit = 0);
 }

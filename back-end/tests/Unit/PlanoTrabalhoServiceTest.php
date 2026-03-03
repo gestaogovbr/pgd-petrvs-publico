@@ -2,7 +2,7 @@
 
 use App\Services\PlanoTrabalhoService;
 use App\Repository\UsuarioRepository;
-use App\Models\PlanoTrabalho;
+use App\Repository\PlanoTrabalhoRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
@@ -10,12 +10,13 @@ use Tests\TestCase;
 uses(TestCase::class);
 
 beforeEach(function () {
-    // Mock do repositório para evitar BindingResolutionException
     $this->usuarioRepository = Mockery::mock(UsuarioRepository::class);
     $this->app->instance(UsuarioRepository::class, $this->usuarioRepository);
+
+    $this->planoTrabalhoRepository = Mockery::mock(PlanoTrabalhoRepository::class);
+    $this->app->instance(PlanoTrabalhoRepository::class, $this->planoTrabalhoRepository);
     
     $this->service = $this->app->make(PlanoTrabalhoService::class);
-    $this->limiteSuperiorVencimento = 30;
 });
 
 afterEach(function () {
@@ -27,27 +28,9 @@ test('deve retornar true quando existem planos pendentes com data fim vencida', 
     $planoTrabalhoId = 'plano-atual';
     $dataAssinatura = Carbon::now();
     
-    // Mock do Model PlanoTrabalho
-    $mockPlano = Mockery::mock('alias:' . PlanoTrabalho::class);
-    
-    $mockPlano->shouldReceive('where')
-        ->with('usuario_id', $usuarioId)
-        ->andReturnSelf();
-        
-    $mockPlano->shouldReceive('whereIn')
-        ->with('status', ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO'])
-        ->andReturnSelf();
-        
-    $mockPlano->shouldReceive('where')
-        ->with('id', '!=', $planoTrabalhoId)
-        ->andReturnSelf();
-        
-    $mockPlano->shouldReceive('where')
-        ->with('data_fim', '<', Mockery::type('string'))
-        ->andReturnSelf();
-        
-    // Retorna uma coleção com items para simular pendências
-    $mockPlano->shouldReceive('get')
+    $this->planoTrabalhoRepository->shouldReceive('buscarPlanosPendentes')
+        ->once()
+        ->with($usuarioId, $planoTrabalhoId, Mockery::type('string'))
         ->andReturn(new Collection([(object)['id' => 'plano-pendente']]));
 
     $resultado = $this->service->hasUsuarioPendencias(
@@ -64,27 +47,9 @@ test('deve retornar false quando nao existem planos pendentes', function () {
     $planoTrabalhoId = 'plano-atual';
     $dataAssinatura = Carbon::now();
 
-    // Mock do Model PlanoTrabalho
-    $mockPlano = Mockery::mock('alias:' . PlanoTrabalho::class);
-    
-    $mockPlano->shouldReceive('where')
-        ->with('usuario_id', $usuarioId)
-        ->andReturnSelf();
-        
-    $mockPlano->shouldReceive('whereIn')
-        ->with('status', ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO'])
-        ->andReturnSelf();
-        
-    $mockPlano->shouldReceive('where')
-        ->with('id', '!=', $planoTrabalhoId)
-        ->andReturnSelf();
-        
-    $mockPlano->shouldReceive('where')
-        ->with('data_fim', '<', Mockery::type('string'))
-        ->andReturnSelf();
-        
-    // Retorna coleção vazia
-    $mockPlano->shouldReceive('get')
+    $this->planoTrabalhoRepository->shouldReceive('buscarPlanosPendentes')
+        ->once()
+        ->with($usuarioId, $planoTrabalhoId, Mockery::type('string'))
         ->andReturn(new Collection([]));
 
     $resultado = $this->service->hasUsuarioPendencias(

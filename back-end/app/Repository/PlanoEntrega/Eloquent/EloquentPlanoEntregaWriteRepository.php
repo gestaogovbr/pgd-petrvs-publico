@@ -1,10 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository\PlanoEntrega\Eloquent;
 
+use App\Models\PlanoEntrega;
+use App\Repository\Eloquent\AbstractEloquentWriteRepository;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
 
-class EloquentPlanoEntregaWriteRepository implements PlanoEntregaWriteRepositoryContract
+/**
+ * @extends AbstractEloquentWriteRepository<PlanoEntrega>
+ */
+class EloquentPlanoEntregaWriteRepository extends AbstractEloquentWriteRepository implements PlanoEntregaWriteRepositoryContract
 {
-    // Implement write methods
+    public function __construct(PlanoEntrega $model)
+    {
+        $this->model = $model;
+    }
 }

@@ -13,6 +13,7 @@ use App\Services\ServiceBase;
 use App\Services\CalendarioService;
 use App\Services\UtilService;
 use App\Repository\UsuarioRepository;
+use App\Repository\PlanoTrabalhoRepository;
 use App\Exceptions\ServerException;
 use App\Models\Documento;
 use Illuminate\Support\Facades\DB;
@@ -39,11 +40,13 @@ class PlanoTrabalhoService extends ServiceBase
 {
     public $documentoId;
     protected UsuarioRepository $usuarioRepository;
+    protected PlanoTrabalhoRepository $planoTrabalhoRepository;
 
     public function __construct()
     {
         parent::__construct();
         $this->usuarioRepository = app(UsuarioRepository::class);
+        $this->planoTrabalhoRepository = app(PlanoTrabalhoRepository::class);
     }
 
     /**
@@ -54,7 +57,7 @@ class PlanoTrabalhoService extends ServiceBase
      */
     public function planosAtivos($usuario_id): Collection
     {
-        return PlanoTrabalho::where("usuario_id", $usuario_id)->where("data_inicio", "<=", now())->where("data_fim", ">=", now())->get();
+        return $this->planoTrabalhoRepository->planosAtivos($usuario_id);
         // adicionar no gitlab para considerar o fuso horário
     }
 
@@ -68,9 +71,7 @@ class PlanoTrabalhoService extends ServiceBase
      */
     public function planosAtivosPorData($data_inicial, $data_final, $usuario_id): Collection
     {
-        return PlanoTrabalho::where("usuario_id", $usuario_id)
-            ->where("data_inicio", "<=", $data_final)
-            ->where("data_fim", ">=", $data_inicial)->get();
+        return $this->planoTrabalhoRepository->planosAtivosPorData($data_inicial, $data_final, $usuario_id);
     }
 
     public function proxySearch($query, &$data, &$text)
@@ -1486,12 +1487,9 @@ class PlanoTrabalhoService extends ServiceBase
     public function hasUsuarioPendencias(string $usuarioId, $planoTrabalhoId, $dataAssinatura): bool
     {
         $diasPendenciaDataFinalPlano = 30;
+        $dataLimite = $dataAssinatura->copy()->subDays($diasPendenciaDataFinalPlano)->format('Y-m-d');
 
-        $planosPendentes = PlanoTrabalho::where('usuario_id', $usuarioId)
-            ->whereIn('status', StatusEnum::pendentesPlanoTrabalho())
-            ->where('id','!=', $planoTrabalhoId)
-            ->where('data_fim', '<', $dataAssinatura->subDays($diasPendenciaDataFinalPlano)->format('Y-m-d'))
-            ->get();
+        $planosPendentes = $this->planoTrabalhoRepository->buscarPlanosPendentes($usuarioId, $planoTrabalhoId, $dataLimite);
 
         if ($planosPendentes->count() > 0) {
             return true;

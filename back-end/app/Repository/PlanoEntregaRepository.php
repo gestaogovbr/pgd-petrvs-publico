@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
@@ -9,8 +11,8 @@ use Illuminate\Database\Eloquent\Collection;
 class PlanoEntregaRepository
 {
     public function __construct(
-        protected PlanoEntregaReadRepositoryContract $readRepository,
-        protected PlanoEntregaWriteRepositoryContract $writeRepository
+        private readonly PlanoEntregaReadRepositoryContract $readRepository,
+        private readonly PlanoEntregaWriteRepositoryContract $writeRepository
     ) {}
 
     public function getPlanosEntregaAvaliacao(array $unidadesIds): Collection

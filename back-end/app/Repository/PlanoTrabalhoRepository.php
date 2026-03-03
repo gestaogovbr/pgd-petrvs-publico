@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
@@ -9,12 +11,27 @@ use Illuminate\Database\Eloquent\Collection;
 class PlanoTrabalhoRepository
 {
     public function __construct(
-        protected PlanoTrabalhoReadRepositoryContract $readRepository,
-        protected PlanoTrabalhoWriteRepositoryContract $writeRepository
+        private readonly PlanoTrabalhoReadRepositoryContract $readRepository,
+        private readonly PlanoTrabalhoWriteRepositoryContract $writeRepository
     ) {}
 
     public function getPlanosTrabalhoAssinatura(array $unidadesIds, string $usuarioId): Collection
     {
         return $this->readRepository->getPlanosTrabalhoAssinatura($unidadesIds, $usuarioId);
+    }
+
+    public function planosAtivos(string $usuarioId): Collection
+    {
+        return $this->readRepository->planosAtivos($usuarioId);
+    }
+
+    public function planosAtivosPorData(string $dataInicial, string $dataFinal, string $usuarioId): Collection
+    {
+        return $this->readRepository->planosAtivosPorData($dataInicial, $dataFinal, $usuarioId);
+    }
+
+    public function buscarPlanosPendentes(string $usuarioId, string $planoTrabalhoId, string $dataLimite): Collection
+    {
+        return $this->readRepository->buscarPlanosPendentes($usuarioId, $planoTrabalhoId, $dataLimite);
     }
 }

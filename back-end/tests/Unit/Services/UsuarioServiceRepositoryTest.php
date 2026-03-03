@@ -533,7 +533,7 @@ class UsuarioServiceRepositoryTest extends TestCase
             ->with($usuarioId, $subordinadas, $tabela)
             ->andReturn("clause");
             
-        $result = $this->service->areasTrabalhoWhere($subordinadas, $ignorar, $tabela);
+        $result = $this->service->areasTrabalhoWhere($subordinadas, $tabela);
         
         $this->assertEquals("clause", $result);
     }

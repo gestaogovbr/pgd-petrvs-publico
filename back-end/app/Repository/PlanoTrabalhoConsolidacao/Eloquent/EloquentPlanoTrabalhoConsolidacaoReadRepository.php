@@ -63,7 +63,8 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
 
     public function findConsolidacaoById(string $id): ?PlanoTrabalhoConsolidacao
     {
-        return PlanoTrabalhoConsolidacao::with([
+        /** @var PlanoTrabalhoConsolidacao|null */
+        return $this->query()->with([
             'comparecimentos.unidade:id,nome,sigla',
             'avaliacao',
             'avaliacoes',

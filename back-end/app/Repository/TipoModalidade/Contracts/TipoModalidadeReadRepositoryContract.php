@@ -1,11 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository\TipoModalidade\Contracts;
 
 interface TipoModalidadeReadRepositoryContract
 {
-    /**
-     * @return string|null
-     */
     public function getDefaultId(): ?string;
 }

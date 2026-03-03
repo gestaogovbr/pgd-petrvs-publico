@@ -247,3 +247,5 @@
   - Unitário em `tests/Unit/Repository` para validar a lógica específica do repositório.
   - Integração em `tests/IntegrationTenant/Repository` quando envolver regras de negócio no contexto do tenant.
   - Utilizar as suites e classes base descritas em `docs/pest-bd.md` (`Integration` e `IntegrationTenant`) para configurar corretamente o contexto de banco.
+
+Para criar um novo repository deve usar o comando `php artisan make:repository <Modulo>Repository` dentro do container `petrvs_php`.
