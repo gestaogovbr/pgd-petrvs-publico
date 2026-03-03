@@ -736,9 +736,8 @@ class UsuarioService extends ServiceBase
       $entregasSemProgresso = PlanoEntregaEntrega::query()
         ->whereHas('planoEntrega.unidade', fn($q) => $q->whereIn('id', $unidadesGerenciadasIds))
         ->doesntHave('progressos')
-        ->whereHas('planoEntrega', function($q) use ($diasAvaliacaoPlanosEntregas, $dataAlteracaoRegraPE) {
+        ->whereHas('planoEntrega', function($q) use ($diasAvaliacaoPlanosEntregas) {
           $q->whereNotIn('status', [StatusEnum::SUSPENSO, StatusEnum::CANCELADO])
-            ->where('created_at', '>', $dataAlteracaoRegraPE)
             ->where('data_fim', '<=', now()->subDays($diasAvaliacaoPlanosEntregas));
         })
         ->selectRaw('planos_entregas_entregas.plano_entrega_id, COUNT(*) as total_sem_progresso')
@@ -756,9 +755,8 @@ class UsuarioService extends ServiceBase
       ->whereHas('unidade', function($q) use ($unidadesFilhasIds) {
         $q->whereIn('id', $unidadesFilhasIds);
       })
-      ->whereHas('latestStatus', function($q) use ($diasAvaliacaoPlanosEntregas, $dataAlteracaoRegraPE) {
+      ->whereHas('latestStatus', function($q) use ($diasAvaliacaoPlanosEntregas) {
         $q->where('codigo', StatusEnum::CONCLUIDO->value)
-          ->where('created_at', '>', $dataAlteracaoRegraPE)
           ->where('created_at', '<', now()->subDays($diasAvaliacaoPlanosEntregas));
       })
       ->select([
