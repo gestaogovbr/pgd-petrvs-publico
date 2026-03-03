@@ -12,6 +12,7 @@ use App\Models\Documento;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\TipoModalidade;
+use App\Services\UtilService;
 use Illuminate\Support\Facades\DB;
 
 class PlanoTrabalho extends ModelBase
@@ -50,6 +51,7 @@ class PlanoTrabalho extends ModelBase
     'SUSPENSO' => 'Suspenso',
     'CANCELADO' => 'Cancelado'
   ];
+  public const DATA_MUDANCA_REGRA_PT = UtilService::asDateTime('01/10/2025');
 
   public $fillable_changes = ['entregas', 'documentos'];
 
