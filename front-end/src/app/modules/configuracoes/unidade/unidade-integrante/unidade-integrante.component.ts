@@ -15,9 +15,10 @@ import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 
 @Component({
-  selector: 'unidade-integrante',
-  templateUrl: './unidade-integrante.component.html',
-  styleUrls: ['./unidade-integrante.component.scss']
+    selector: 'unidade-integrante',
+    templateUrl: './unidade-integrante.component.html',
+    styleUrls: ['./unidade-integrante.component.scss'],
+    standalone: false
 })
 export class UnidadeIntegranteComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

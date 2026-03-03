@@ -6,9 +6,10 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { UtilService } from 'src/app/services/util.service';
 
 @Component({
-  selector: 'calendar-expediente',
-  templateUrl: './calendar-expediente.component.html',
-  styleUrls: ['./calendar-expediente.component.scss']
+    selector: 'calendar-expediente',
+    templateUrl: './calendar-expediente.component.html',
+    styleUrls: ['./calendar-expediente.component.scss'],
+    standalone: false
 })
 export class CalendarExpedienteComponent implements OnInit {
   @Input() expedienteDisabled?: Expediente;

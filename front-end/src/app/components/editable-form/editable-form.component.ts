@@ -1,5 +1,5 @@
 import { NavigateService } from 'src/app/services/navigate.service';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ContentChildren, Injector, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormGroupDirective } from '@angular/forms';
 import { GridComponent } from '../grid/grid.component';
@@ -29,20 +29,21 @@ import { DialogService } from 'src/app/services/dialog.service';
 
 
 @Component({
-  selector: 'editable-form',
-  templateUrl: './editable-form.component.html',
-  styleUrls: ['./editable-form.component.scss'],
-  providers: [
-    {
-      provide: FormGroupDirective,
-      useFactory: (self: EditableFormComponent) => {
-        const fakeForm = new FormGroupDirective([], []);
-        fakeForm.form = self.form!;
-        return self.formDirective || fakeForm;
-      },
-      deps: [EditableFormComponent]
-    }
-  ]
+    selector: 'editable-form',
+    templateUrl: './editable-form.component.html',
+    styleUrls: ['./editable-form.component.scss'],
+    providers: [
+        {
+            provide: FormGroupDirective,
+            useFactory: (self: EditableFormComponent) => {
+                const fakeForm = new FormGroupDirective([], []);
+                fakeForm.form = self.form!;
+                return self.formDirective || fakeForm;
+            },
+            deps: [EditableFormComponent]
+        }
+    ],
+    standalone: false
 })
 export class EditableFormComponent extends ComponentBase implements OnInit {
   @ViewChild(FormGroupDirective) formDirective?: FormGroupDirective;

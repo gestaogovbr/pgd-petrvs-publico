@@ -4,9 +4,10 @@ import {ActivatedRoute} from "@angular/router";
 import {FullRoute} from "../../../services/navigate.service";
 
 @Component({
-  selector: 'app-login-unico',
-  templateUrl: './login-unico.component.html',
-  styleUrls: ['./login-unico.component.scss']
+    selector: 'app-login-unico',
+    templateUrl: './login-unico.component.html',
+    styleUrls: ['./login-unico.component.scss'],
+    standalone: false
 })
 export class LoginUnicoComponent implements OnInit {
 

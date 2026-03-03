@@ -4,7 +4,7 @@ import { PanelListComponent } from './panel-list/panel-list.component';
 import { PanelLoginComponent } from './panel-login/panel-login.component';
 import { PanelFormComponent } from './panel-form/panel-form.component';
 import { PanelRoutingModule } from './panel-routing.module';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { UteisModule } from '../uteis/uteis.module';
 import { PanelListLogsComponent } from './panel-list-logs/panel-list-logs.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
@@ -40,7 +40,7 @@ import { PanelJobsAgendadosFormComponent } from './panel-jobs-agendados-form/pan
     imports: [
         CommonModule,
         PanelRoutingModule,
-        ComponentsModule,
+        SharedModule,
         UteisModule,
         FormsModule,
         ReactiveFormsModule,

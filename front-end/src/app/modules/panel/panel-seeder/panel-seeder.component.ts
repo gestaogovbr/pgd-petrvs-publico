@@ -5,9 +5,10 @@ import { PageListBase } from "../../base/page-list-base";
 import { SeederDaoService } from "src/app/dao/seeder-dao.service";
 
 @Component({
-  selector: 'app-panel-seeder',
-  templateUrl: './panel-seeder.component.html',
-  styleUrls: ['./panel-seeder.component.scss']
+    selector: 'app-panel-seeder',
+    templateUrl: './panel-seeder.component.html',
+    styleUrls: ['./panel-seeder.component.scss'],
+    standalone: false
 })
 export class PanelSeederComponent extends PageListBase<Tenant, TenantDaoService> {
 

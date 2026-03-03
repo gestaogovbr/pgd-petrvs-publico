@@ -4,7 +4,7 @@
 
 <div class="consulta-unidade-siape-form">
 <editable-form [form]="form!" [disabled]="false" [title]="isModal ? '' : title">
-    <div *ngIf="erros?.length" class="alert alert-danger mt-2 break-spaces" role="alert">{{erros}}</div>
+    <div *ngIf="erros.length" class="alert alert-danger mt-2 break-spaces" role="alert">{{erros}}</div>
 
     <div class="row">
         <div class="col-md-4 intro">

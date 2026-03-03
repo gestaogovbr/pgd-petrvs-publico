@@ -1,16 +1,17 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { CadeiaValorProcessoDaoService } from 'src/app/dao/cadeia-valor-processo-dao.service';
 import { CadeiaValorProcesso } from 'src/app/models/cadeia-valor-processo.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'cadeia-valor-list-processos-entregas',
-  templateUrl: './cadeia-valor-list-processos-entregas.component.html',
-  styleUrls: ['./cadeia-valor-list-processos-entregas.component.scss']
+    selector: 'cadeia-valor-list-processos-entregas',
+    templateUrl: './cadeia-valor-list-processos-entregas.component.html',
+    styleUrls: ['./cadeia-valor-list-processos-entregas.component.scss'],
+    standalone: false
 })
 export class CadeiaValorListProcessosEntregasComponent extends PageListBase<CadeiaValorProcesso, CadeiaValorProcessoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

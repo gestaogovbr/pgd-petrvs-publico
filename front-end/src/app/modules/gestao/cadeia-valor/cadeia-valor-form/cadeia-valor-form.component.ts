@@ -10,9 +10,10 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 
 @Component({
-  selector: 'app-cadeia-valor-form',
-  templateUrl: './cadeia-valor-form.component.html',
-  styleUrls: ['./cadeia-valor-form.component.scss']
+    selector: 'app-cadeia-valor-form',
+    templateUrl: './cadeia-valor-form.component.html',
+    styleUrls: ['./cadeia-valor-form.component.scss'],
+    standalone: false
 })
 export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaValorDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

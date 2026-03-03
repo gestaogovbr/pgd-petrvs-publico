@@ -1,5 +1,4 @@
 <editable-form [form]="form!" [disabled]="formDisabled" initialFocus="tipo_atividade_id" (submit)="onSaveData()" (cancel)="onCancel()">
-  <documento-link [documento]="form!.controls.documento_entrega.value"></documento-link>
   <div class="row">
     <input-search [label]="'Tipo de' + lex.translate('Atividade')" #tipoAtividade [emptyValue]="null" [size]="5" controlName="tipo_atividade_id" [dao]="tipoAtividadeDao" (select)="onTipoAtividadeSelect($event)"></input-search>
     <input-select [label]="lex.translate('Entrega do plano')" [size]="5" controlName="plano_trabalho_entrega_id" #entrega [control]="form!.controls.plano_trabalho_entrega_id" [items]="entregas" [labelInfo]="lex.translate('Entrega do plano') + ' que a ' + lex.translate('atividade') + ' é referente'" required></input-select>
@@ -38,7 +37,6 @@
         <!--input-datetime [size]="3" label="Data de arquivamento" controlName="data_arquivamento" [control]="form!.controls.data_inicio" disabled [labelInfo]="'Data de arquivamento da '+ lex.translate('atividade')"></input-datetime-->
       </div>
     </ng-template>
-    <documento-link [documento]="form!.controls.documento_entrega.value"></documento-link>
   </separator>
   <separator *ngIf="efemerides && entity?.plano_trabalho?.tipo_modalidade?.atividade_tempo_despendido" title="Cálculos das horas" collapse>
     <calendar-efemerides [efemerides]="efemerides"></calendar-efemerides>

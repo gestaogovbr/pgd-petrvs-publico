@@ -11,6 +11,7 @@ use Tests\DatabaseTenantTestCase;
 use Illuminate\Support\Facades\DB;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
+use Illuminate\Support\Str;
 
 class UnidadeRepositoryTest extends DatabaseTenantTestCase
 {
@@ -58,17 +59,13 @@ class UnidadeRepositoryTest extends DatabaseTenantTestCase
         $ui = new UnidadeIntegrante();
         $ui->unidade_id = $unidade->id;
         $ui->usuario_id = $usuario->id;
-        $saved = $ui->save();
-        dump('Saved?', $saved);
-        dump('UI ID:', $ui->id);
-        dump('UI Connection:', $ui->getConnectionName());
-        dump('Usuario Connection:', $usuario->getConnectionName());
+        $ui->save();
         
-        UnidadeIntegranteAtribuicao::create([
-            'unidade_integrante_id' => $ui->id,
-            'atribuicao' => 'LOTADO'
-        ]);
-        
+        $uia = new UnidadeIntegranteAtribuicao();
+        $uia->unidade_integrante_id = $ui->id;
+        $uia->atribuicao = 'LOTADO';
+        $uia->save();
+            
         $this->assertTrue($this->repository->hasUsuarioLotacao($unidade->id, $usuario->id));
         $this->assertFalse($this->repository->hasUsuarioLotacao('invalid-id', $usuario->id));
     }
@@ -83,15 +80,15 @@ class UnidadeRepositoryTest extends DatabaseTenantTestCase
             'tipo_modalidade_id' => 'modalidade-test'
         ]);
         
-        $ui = UnidadeIntegrante::create([
-            'unidade_id' => $pai->id,
-            'usuario_id' => $gestor->id,
-        ]);
+        $ui = new UnidadeIntegrante();
+        $ui->unidade_id = $pai->id;
+        $ui->usuario_id = $gestor->id;
+        $ui->save();
         
-        UnidadeIntegranteAtribuicao::create([
-            'unidade_integrante_id' => $ui->id,
-            'atribuicao' => 'GESTOR'
-        ]);
+        $uia = new UnidadeIntegranteAtribuicao();
+        $uia->unidade_integrante_id = $ui->id;
+        $uia->atribuicao = 'GESTOR';
+        $uia->save();
         
         $this->assertTrue($this->repository->isUsuarioGestorRecursivo($pai->id, $gestor->id));
         $this->assertTrue($this->repository->isUsuarioGestorRecursivo($filho->id, $gestor->id));

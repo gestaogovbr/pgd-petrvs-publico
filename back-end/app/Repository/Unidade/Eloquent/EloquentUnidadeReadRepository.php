@@ -66,7 +66,9 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         $prefix = empty($prefix) ? "" : $prefix . ".";
         $usuario = Usuario::find($usuarioId);
         
-        if (!$usuario) return "false";
+        if (!$usuario) {
+            return "false";
+        }
 
         foreach ($usuario->areasTrabalho as $lotacao) {
             $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
@@ -75,5 +77,26 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         }
         $result = implode(" OR ", $where);
         return empty($result) ? "false" : "(" . $result . ")";
+    }
+
+    public function findByCodigo(string $codigo): ?Unidade
+    {
+        /** @var Unidade|null $unidade */
+        $unidade = $this->query()->where('codigo', $codigo)->first();
+        return $unidade;
+    }
+
+    public function getUnidadesGerenciadas(string $usuarioId): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->query()
+            ->whereHas('gestor', fn($q) => $q->where('usuario_id', $usuarioId))
+            ->orWhereHas('gestoresSubstitutos', fn($q) => $q->where('usuario_id', $usuarioId))
+            ->orWhereHas('gestoresDelegados', fn($q) => $q->where('usuario_id', $usuarioId))
+            ->get();
+    }
+
+    public function getSubordinadas(array $ids): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->query()->whereIn('unidade_pai_id', $ids)->get();
     }
 }

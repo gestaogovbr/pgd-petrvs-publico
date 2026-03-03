@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-siape-resumo',
-  templateUrl: './siape-resumo.component.html',
-  styleUrls: ['./siape-resumo.component.scss']
+    selector: 'app-siape-resumo',
+    templateUrl: './siape-resumo.component.html',
+    styleUrls: ['./siape-resumo.component.scss'],
+    standalone: false
 })
 export class SiapeResumoComponent implements OnInit {
 

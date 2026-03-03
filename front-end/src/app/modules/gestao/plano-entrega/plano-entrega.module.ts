@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { PlanoEntregaRoutingModule } from './plano-entrega-routing.module';
 import { PlanoEntregaListComponent } from './plano-entrega-list/plano-entrega-list.component';
 import { PlanoEntregaFormComponent } from './plano-entrega-form/plano-entrega-form.component';
@@ -46,7 +46,7 @@ import { PlanoEntregaListProdutoComponent } from './plano-entrega-list-produto/p
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     PlanoEntregaRoutingModule,
     PlanejamentoModule,
     CadeiaValorModule,

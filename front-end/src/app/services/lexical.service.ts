@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Injectable, Injector } from '@angular/core';
 import { Nomenclatura } from '../models/entidade.model';
 import { IIndexable } from '../models/base.model';
-import { AppComponent } from '../app.component';
+import { IAppComponent } from '../app-types';
 
 export type Translate = {
   [index: string]: {
@@ -18,7 +18,7 @@ export class LexicalService {
 
   public PREPOSITIONS_MALE = ["o", "os", "ao", "aos", "do", "dos", "dum", "duns", "no", "nos", "um", "num", "uns", "nuns", "pelo", "pelos"];
   public PREPOSITIONS_FEMALE = ["a", "as", "à", "às", "da", "das", "duma", "dumas", "na", "nas", "uma", "numa", "umas", "numas", "pela", "pelas"];
-  public app?: AppComponent;
+  public app?: IAppComponent;
 
   /* Colocar single e plural em minúsculo (Sempre seguir a ordem Alfabética)
   * ATENÇÃO: os campos single e plural do defaults não deverá ser mudados, pois o código faz referência a eles,

@@ -16,7 +16,7 @@ describe('EnvioConsultComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EnvioItemConsultComponent);
     component = fixture.componentInstance;
-    //fixture.detectErrors();
+    //fixture.detectChanges();
   });
 
   it('should create', () => {

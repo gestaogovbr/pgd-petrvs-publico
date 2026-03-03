@@ -1,7 +1,7 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
@@ -10,9 +10,10 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 import {AuthService} from "../../../services/auth.service";
 
 @Component({
-  selector: 'app-teste-impersonate',
-  templateUrl: './teste-impersonate.component.html',
-  styleUrls: ['./teste-impersonate.component.scss']
+    selector: 'app-teste-impersonate',
+    templateUrl: './teste-impersonate.component.html',
+    styleUrls: ['./teste-impersonate.component.scss'],
+    standalone: false
 })
 export class TesteImpersonateComponent extends PageListBase<Usuario, UsuarioDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

@@ -7,15 +7,16 @@ import { ColumnType, GridColumn } from '../grid-column';
 import { GridComponent } from '../grid.component';
 
 @Component({
-  selector: 'column-row',
-  templateUrl: './column-row.component.html',
-  styleUrls: ['./column-row.component.scss'],
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]  
+    selector: 'column-row',
+    templateUrl: './column-row.component.html',
+    styleUrls: ['./column-row.component.scss'],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective
+        }
+    ],
+    standalone: false
 })
 export class ColumnRowComponent implements OnInit {
   @Input() column: GridColumn = new GridColumn();

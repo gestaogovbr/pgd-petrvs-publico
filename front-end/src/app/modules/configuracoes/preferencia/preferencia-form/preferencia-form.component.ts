@@ -6,9 +6,10 @@ import { PreferenciaFormPetrvsComponent } from '../preferencia-form-petrvs/prefe
 import { PreferenciaFormUsuarioComponent } from '../preferencia-form-usuario/preferencia-form-usuario.component';
 
 @Component({
-  selector: 'app-preferencia-form',
-  templateUrl: './preferencia-form.component.html',
-  styleUrls: ['./preferencia-form.component.scss']
+    selector: 'app-preferencia-form',
+    templateUrl: './preferencia-form.component.html',
+    styleUrls: ['./preferencia-form.component.scss'],
+    standalone: false
 })
 export class PreferenciaFormComponent extends PageBase implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

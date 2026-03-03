@@ -4,6 +4,7 @@ use App\Services\IntegracaoService;
 use App\Services\UsuarioService;
 use App\Services\ProcessadorAtualizacaoDadosSiapeService;
 use App\Services\UtilService;
+use App\Repository\IntegracaoServidorRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Mockery\MockInterface;
@@ -52,7 +53,10 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
                 'data_nascimento' => '1990-01-01',
             ];
         }
-        DB::shouldReceive('select')
+
+        // Mock Repository
+        $integracaoServidorRepositoryMock = Mockery::mock(IntegracaoServidorRepository::class);
+        $integracaoServidorRepositoryMock->shouldReceive('buscarAtualizacoesDados')
             ->andReturn($atualizacoesDados);
 
         $sqlUpdateDados = "UPDATE usuarios SET " .
@@ -113,6 +117,11 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
             'servidores' => ['Resultado' => 'Não foi executado!', 'Observações' => [], 'Falhas' => []],
             'gestores' => ['Resultado' => '', 'Observações' => [], 'Falhas' => []]
         ]);
+        
+        // Inject Repository Mock
+        $repoProperty = $reflection->getProperty('integracaoServidorRepository');
+        $repoProperty->setAccessible(true);
+        $repoProperty->setValue($service, $integracaoServidorRepositoryMock);
 
         // Configuração de services dependentes
         $integracaoServiceMock = Mockery::mock(IntegracaoService::class);
@@ -137,7 +146,10 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
         // Arrange
         $atualizacoesDados = [];
         $sqlUpdateDados = "UPDATE ...";
-        DB::shouldReceive('select')
+        
+        // Mock Repository
+        $integracaoServidorRepositoryMock = Mockery::mock(IntegracaoServidorRepository::class);
+        $integracaoServidorRepositoryMock->shouldReceive('buscarAtualizacoesDados')
             ->andReturn($atualizacoesDados);
 
         DB::shouldReceive('transaction')->never();
@@ -147,6 +159,25 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
         $reflection = new ReflectionClass(ProcessadorAtualizacaoDadosSiapeService::class);
         $method = $reflection->getMethod('processarDadosPessoais');
         $method->setAccessible(true);
+        
+        // Inject Repository Mock
+        $repoProperty = $reflection->getProperty('integracaoServidorRepository');
+        $repoProperty->setAccessible(true);
+        $repoProperty->setValue($service, $integracaoServidorRepositoryMock);
+        
+        // Inject result property
+        $property = $reflection->getProperty('result');
+        $property->setAccessible(true);
+        $property->setValue($service, [
+            'unidades' => ['Resultado' => 'Não foi executado!', 'Observações' => [], 'Falhas' => []],
+            'servidores' => ['Resultado' => 'Não foi executado!', 'Observações' => [], 'Falhas' => []],
+            'gestores' => ['Resultado' => '', 'Observações' => [], 'Falhas' => []]
+        ]);
+
+        // Mock Log Facade para evitar erro no log
+        $loggerMock = Mockery::mock(\Psr\Log\LoggerInterface::class);
+        $loggerMock->shouldReceive('info')->times(1);
+        Log::shouldReceive('channel')->with('siape')->andReturn($loggerMock);
 
         // Act
         $method->invoke($service, $atualizacoesDados, $sqlUpdateDados);
@@ -157,7 +188,9 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
         $atualizacoesDados = [(object) ['matriculasiape' => '123']]; // Um item
         $sqlUpdateDados = "UPDATE ...";
 
-        DB::shouldReceive('select')
+        // Mock Repository
+        $integracaoServidorRepositoryMock = Mockery::mock(IntegracaoServidorRepository::class);
+        $integracaoServidorRepositoryMock->shouldReceive('buscarAtualizacoesDados')
             ->andReturn($atualizacoesDados);
 
         // Simula erro no banco
@@ -170,6 +203,20 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
         $reflection = new ReflectionClass(ProcessadorAtualizacaoDadosSiapeService::class);
         $method = $reflection->getMethod('processarDadosPessoais');
         $method->setAccessible(true);
+        
+        // Inject Repository Mock
+        $repoProperty = $reflection->getProperty('integracaoServidorRepository');
+        $repoProperty->setAccessible(true);
+        $repoProperty->setValue($service, $integracaoServidorRepositoryMock);
+        
+        // Inject result property
+        $property = $reflection->getProperty('result');
+        $property->setAccessible(true);
+        $property->setValue($service, [
+            'unidades' => ['Resultado' => 'Não foi executado!', 'Observações' => [], 'Falhas' => []],
+            'servidores' => ['Resultado' => 'Não foi executado!', 'Observações' => [], 'Falhas' => []],
+            'gestores' => ['Resultado' => '', 'Observações' => [], 'Falhas' => []]
+        ]);
 
         // Act & Assert
         expect(fn() => $method->invoke($service, $atualizacoesDados, $sqlUpdateDados))

@@ -24,6 +24,7 @@ use App\Services\PlanoTrabalhoService;
 use App\Services\StatusService;
 use App\Services\UnidadeService;
 use App\Services\UsuarioService;
+use App\Repository\UsuarioRepository;
 use Illuminate\Support\Carbon;
 use Throwable;
 
@@ -39,6 +40,13 @@ use Throwable;
  */
 class PlanoEntregaService extends ServiceBase
 {
+    protected UsuarioRepository $usuarioRepository;
+
+    public function __construct() {
+        parent::__construct();
+        $this->usuarioRepository = app(UsuarioRepository::class);
+    }
+
     public $unidades = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
 
     public function planosImpactadosPorAlteracaoEntrega($entrega)
@@ -216,8 +224,8 @@ class PlanoEntregaService extends ServiceBase
             $result["gestorUnidadePaiUnidadePlano"] = !empty($planoEntrega['unidade']['unidade_pai_id']) && $this->usuario->isGestorUnidade($planoEntrega['unidade']['unidade_pai_id']);
             $result["gestorLinhaAscendenteUnidadePlano"] = !!array_filter($this->unidade->linhaAscendente($planoEntrega['unidade_id']), fn($u) => $this->usuario->isGestorUnidade($u));
             $result["unidadePlanoPaiEhUnidadePaiUnidadePlano"] = $planoEntrega['plano_entrega_id'] ? $planoEntregaPai->unidade_id == $planoEntrega['unidade']['unidade_pai_id'] : false;
-            $result["unidadePlanoEhLotacao"] = $this->usuario->isLotacao(null, $planoEntrega['unidade_id']);
-            $result["unidadePaiUnidadePlanoEhLotacao"] = !empty($planoEntrega['unidade']['unidade_pai_id']) && $this->usuario->isLotacao(null, $planoEntrega['unidade']['unidade_pai_id']);
+            $result["unidadePlanoEhLotacao"] = $this->usuarioRepository->isLotacao(parent::loggedUser()->id, $planoEntrega['unidade_id']);
+            $result["unidadePaiUnidadePlanoEhLotacao"] = !empty($planoEntrega['unidade']['unidade_pai_id']) && $this->usuarioRepository->isLotacao(parent::loggedUser()->id, $planoEntrega['unidade']['unidade_pai_id']);
             $result["unidadePlanoEhAlgumaLotacaoUsuario"] = in_array($planoEntrega['unidade_id'], array_map(fn($u) => $u['id'], $this->usuario->loggedUser()->unidades->toArray()));
             $result["unidadePlanoEhPaiAlgumaLotacaoUsuario"] = $this->usuario->loggedUser()->unidades->map(fn($u) => $u->id)->map(fn($ul) => Unidade::find($ul)->unidade_pai_id)->contains($planoEntrega['unidade_id']);
             $result["unidadePlanoPossuiPlanoAtivoMesmoPeriodoPlanoPai"] = !!array_filter($planoEntrega['unidade']['planosEntrega'], fn($p) => $this->isPlano('ATIVO', $p) && !empty($planoEntrega) && !empty($planoEntregaPai) && UtilService::intersect($planoEntrega['data_inicio'], $planoEntrega['data_fim'], $planoEntregaPai->data_inicio, $planoEntregaPai->data_fim));
@@ -374,9 +382,12 @@ class PlanoEntregaService extends ServiceBase
 
     public function liberarHomologacao($data, $unidade)
     {
+        $planoEntrega = PlanoEntrega::find($data["id"]);
+        if($this->planosUnidadeComPendenciasExecucaoAvaliacao($planoEntrega["unidade_id"], $planoEntrega["id"], now()))
+            throw new ValidateException("Não é possível liberar para homologação um plano enquanto houver pendências de registro de execução e/ou avaliação de planos anteriores!");
+
         try {
             DB::beginTransaction();
-            $planoEntrega = PlanoEntrega::find($data["id"]);
             $this->statusService->atualizaStatus($planoEntrega, 'HOMOLOGANDO', $data["justificativa"]);
             DB::commit();
         } catch (Throwable $e) {
@@ -711,6 +722,8 @@ class PlanoEntregaService extends ServiceBase
                 ->where('data_fim', '>=', $dataInicio);
         })
         ->where('id', '!=', UtilService::valueOrNull($planoEntrega, 'id'))
+        ->whereNull('deleted_at')
+        ->whereNull('data_arquivamento')
         ->get();
 
         return $planosDaUnidade->count() > 0;
@@ -763,10 +776,27 @@ class PlanoEntregaService extends ServiceBase
         }
 
         $planoAnterior = $planos->get(1);
-        $statusesPendentes = ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'];
 
-        return in_array($planoAnterior->status, $statusesPendentes, true);
+        return in_array($planoAnterior->status, PlanoEntrega::STATUSES_PENDENTES, true);
     }
+
+    public function planosUnidadeComPendenciasExecucaoAvaliacao(string $unidadeId, $planoEntregaId, $dataAssinatura): bool
+    {
+        $diasPendenciaDataFinalPlano = 30;
+
+        $planosPendentes = PlanoEntrega::where('unidade_id', $unidadeId)
+            ->whereIn('status', PlanoEntrega::STATUSES_PENDENTES)
+            ->where('id','!=', $planoEntregaId)
+            ->where('data_fim', '<', $dataAssinatura->subDays($diasPendenciaDataFinalPlano))
+            ->get();
+
+        if ($planosPendentes->count() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
 
     private function validaPlanoComEntregas($planoEntrega): bool
     {

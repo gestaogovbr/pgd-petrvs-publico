@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-login-retorno',
-  templateUrl: './login-retorno.component.html',
-  styleUrls: ['./login-retorno.component.scss']
+    selector: 'app-login-retorno',
+    templateUrl: './login-retorno.component.html',
+    styleUrls: ['./login-retorno.component.scss'],
+    standalone: false
 })
 export class LoginRetornoComponent implements OnInit {
 

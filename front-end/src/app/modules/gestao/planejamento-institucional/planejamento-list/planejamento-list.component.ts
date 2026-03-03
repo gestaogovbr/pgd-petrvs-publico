@@ -11,9 +11,10 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 
 @Component({
-  selector: 'app-planejamento-list',
-  templateUrl: './planejamento-list.component.html',
-  styleUrls: ['./planejamento-list.component.scss']
+    selector: 'app-planejamento-list',
+    templateUrl: './planejamento-list.component.html',
+    styleUrls: ['./planejamento-list.component.scss'],
+    standalone: false
 })
 export class PlanejamentoListComponent extends PageListBase<Planejamento, PlanejamentoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

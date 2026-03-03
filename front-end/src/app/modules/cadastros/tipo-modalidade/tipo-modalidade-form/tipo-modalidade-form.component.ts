@@ -7,9 +7,10 @@ import { TipoModalidade } from 'src/app/models/tipo-modalidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
-  selector: 'app-modalidade-form',
-  templateUrl: './tipo-modalidade-form.component.html',
-  styleUrls: ['./tipo-modalidade-form.component.scss']
+    selector: 'app-modalidade-form',
+    templateUrl: './tipo-modalidade-form.component.html',
+    styleUrls: ['./tipo-modalidade-form.component.scss'],
+    standalone: false
 })
 export class TipoModalidadeFormComponent extends PageFormBase<TipoModalidade, TipoModalidadeDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

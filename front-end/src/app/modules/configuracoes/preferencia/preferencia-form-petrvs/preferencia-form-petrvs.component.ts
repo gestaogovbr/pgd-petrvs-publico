@@ -7,9 +7,10 @@ import { Entidade } from 'src/app/models/entidade.model';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 
 @Component({
-  selector: 'preferencia-form-petrvs',
-  templateUrl: './preferencia-form-petrvs.component.html',
-  styleUrls: ['./preferencia-form-petrvs.component.scss']
+    selector: 'preferencia-form-petrvs',
+    templateUrl: './preferencia-form-petrvs.component.html',
+    styleUrls: ['./preferencia-form-petrvs.component.scss'],
+    standalone: false
 })
 export class PreferenciaFormPetrvsComponent extends PageFormBase<Entidade, EntidadeDaoService> implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

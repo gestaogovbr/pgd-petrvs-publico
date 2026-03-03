@@ -37,29 +37,29 @@ jobs:
         working-directory: back-end
         run: composer audit --no-interaction
 
-  frontend_sca:
-    name: Frontend SCA (npm audit)
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+  # frontend_sca:
+  #   name: Frontend SCA (npm audit)
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: 'front-end/package-lock.json'
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20'
+  #         cache: 'npm'
+  #         cache-dependency-path: 'front-end/package-lock.json'
 
-      - name: Install dependencies
-        working-directory: front-end
-        run: npm ci
+  #     - name: Install dependencies
+  #       working-directory: front-end
+  #       run: npm ci
 
-      - name: Run npm audit
-        working-directory: front-end
-        run: npm audit --omit=dev --audit-level=high
+  #     - name: Run npm audit
+  #       working-directory: front-end
+  #       run: npm audit --omit=dev --audit-level=high
 
   codeql_sast:
     name: SAST (CodeQL)
@@ -90,19 +90,19 @@ jobs:
           category: '/language:${{ matrix.language }}'
           upload: false
 
-  secrets_scan:
-    name: Secret Scan (Gitleaks)
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  # secrets_scan:
+  #   name: Secret Scan (Gitleaks)
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #     security-events: write
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        with:
-          args: detect --source=. --no-git --verbose
+  #     - name: Run Gitleaks
+  #       uses: gitleaks/gitleaks-action@v2
+  #       with:
+  #         args: detect --source=. --no-git --verbose

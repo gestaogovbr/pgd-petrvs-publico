@@ -20,9 +20,10 @@ export type BadgeButton = {
 }
 
 @Component({
-  selector: 'badge',
-  templateUrl: './badge.component.html',
-  styleUrls: ['./badge.component.scss']
+    selector: 'badge',
+    templateUrl: './badge.component.html',
+    styleUrls: ['./badge.component.scss'],
+    standalone: false
 })
 export class BadgeComponent extends ComponentBase implements OnInit {
   @Input() set badge(value: BadgeButton) { if(this._badge != value) this._badge = value; this._badge.id = this._badge.id || this.generatedButtonId(this._badge); } get badge(): BadgeButton { return this._badge; } 

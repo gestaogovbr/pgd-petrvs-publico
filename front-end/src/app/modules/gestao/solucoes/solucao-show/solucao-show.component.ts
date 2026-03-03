@@ -6,9 +6,10 @@ import { PageBase } from "src/app/modules/base/page-base";
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'solucao-show',
-  templateUrl: './solucao-show.component.html',
-  styleUrls: ['./solucao-show.component.scss'],
+    selector: 'solucao-show',
+    templateUrl: './solucao-show.component.html',
+    styleUrls: ['./solucao-show.component.scss'],
+    standalone: false
 })
 export class SolucaoShowComponent extends PageBase {
   public solucao?: Solucao | null;

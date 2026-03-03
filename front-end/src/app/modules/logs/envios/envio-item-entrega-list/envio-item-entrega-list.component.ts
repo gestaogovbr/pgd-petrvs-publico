@@ -1,17 +1,17 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { EnvioItemDaoService } from 'src/app/dao/envio-item-dao.service';
-import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { EnvioItem } from 'src/app/models/envio-item.model';
 import { Envio } from 'src/app/models/envio.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'envio-item-entrega-list',
-  templateUrl: './envio-item-entrega-list.component.html',
-  styleUrls: ['./envio-item-entrega-list.component.scss']
+    selector: 'envio-item-entrega-list',
+    templateUrl: './envio-item-entrega-list.component.html',
+    styleUrls: ['./envio-item-entrega-list.component.scss'],
+    standalone: false
 })
 export class EnvioItemEntregaListComponent extends PageListBase<EnvioItem, EnvioItemDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

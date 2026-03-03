@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { PerfilRoutingModule } from './perfil-routing.module';
 import { PerfilFormComponent } from './perfil-form/perfil-form.component';
 import { PerfilListComponent } from './perfil-list/perfil-list.component';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
 
@@ -15,7 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     ReactiveFormsModule,
     PerfilRoutingModule
   ]

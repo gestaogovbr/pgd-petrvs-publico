@@ -1,7 +1,9 @@
 import { Component, ElementRef, Injector, Input, TemplateRef, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRouteSnapshot } from '@angular/router';
-import { GridComponent, GroupBy } from 'src/app/components/grid/grid.component';
+import { GridComponent } from 'src/app/components/grid/grid.component';
+import { GroupBy } from 'src/app/components/grid/grid-types';
+
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { Atividade } from 'src/app/models/atividade.model';
@@ -14,9 +16,10 @@ import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model'
 import { Comentario } from 'src/app/models/comentario';
 
 @Component({
-  selector: 'atividade-list-grid',
-  templateUrl: './atividade-list-grid.component.html',
-  styleUrls: ['./atividade-list-grid.component.scss']
+    selector: 'atividade-list-grid',
+    templateUrl: './atividade-list-grid.component.html',
+    styleUrls: ['./atividade-list-grid.component.scss'],
+    standalone: false
 })
 export class AtividadeListGridComponent extends AtividadeListBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

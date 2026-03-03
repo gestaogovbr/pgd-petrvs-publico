@@ -24,7 +24,8 @@ import {
 	RouteMetadata,
 } from "src/app/services/navigate.service";
 import {ComponentBase} from "../component-base";
-import {ToolbarButton, ToolbarComponent} from "../toolbar/toolbar.component";
+import {ToolbarComponent} from "../toolbar/toolbar.component";
+import {ToolbarButton} from "../toolbar/toolbar-types";
 import {ColumnsComponent} from "./columns/columns.component";
 import {FilterComponent} from "./filter/filter.component";
 import {GridColumn} from "./grid-column";
@@ -32,32 +33,26 @@ import {PaginationComponent} from "./pagination/pagination.component";
 import {SidePanelComponent} from "./side-panel/side-panel.component";
 import {LookupItem} from "src/app/services/lookup.service";
 import {TemplateDaoService} from "src/app/dao/template-dao.service";
-import {DocumentoService} from "src/app/modules/uteis/documentos/documento.service";
+import { DocumentoService } from "src/app/modules/uteis/documentos/documento.service";
 import { HeaderGroupsComponent } from "./header-groups/header-groups.component";
+import { GroupBy, GridGroupSeparator } from "./grid-types";
 
-export type GroupBy = {field: string; label: string; value?: any};
 declare var bootstrap: any;
-export class GridGroupSeparator {
-	constructor(public group: GroupBy[]) {}
-	public metadata: any = undefined;
-	public get text(): string {
-		return this.group.map((x) => x.value).join(" - ");
-	}
-}
 
 @Component({
-	selector: "grid",
-	templateUrl: "./grid.component.html",
-	styleUrls: ["./grid.component.scss"],
-	providers: [
-		{
-			provide: FormGroupDirective,
-			useFactory: (self: GridComponent) => {
-				return self.formDirective!;
-			},
-			deps: [GridComponent],
-		},
-	],
+    selector: "grid",
+    templateUrl: "./grid.component.html",
+    styleUrls: ["./grid.component.scss"],
+    providers: [
+        {
+            provide: FormGroupDirective,
+            useFactory: (self: GridComponent) => {
+                return self.formDirective!;
+            },
+            deps: [GridComponent],
+        },
+    ],
+    standalone: false
 })
 export class GridComponent extends ComponentBase implements OnInit {
 	@HostBinding("class") get class(): string {
@@ -411,22 +406,14 @@ export class GridComponent extends ComponentBase implements OnInit {
 				this.cdRef.detectChanges();
 					setTimeout(() => {
 						// Dispose existing tooltips to prevent duplicates
-					(document.querySelectorAll('[data-bs-toggle="tooltip"]') as NodeListOf<HTMLElement>).forEach(el => {
+					(document.querySelectorAll('[data-bs-toggle=\"tooltip\"]') as NodeListOf<HTMLElement>).forEach(el => {
 						const instance = bootstrap.Tooltip.getInstance(el);
 						if (instance) instance.dispose();
 					});
 
-						const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-						const tooltipList = Array.from(tooltipTriggerList).map(tooltipTriggerEl => {
-							const tooltip = new bootstrap.Tooltip(tooltipTriggerEl, {
-								trigger: 'manual'
-							});
-
-							tooltipTriggerEl.addEventListener('mouseenter', () => tooltip.show());
-							tooltipTriggerEl.addEventListener('mouseleave', () => tooltip.hide());
-							tooltipTriggerEl.addEventListener('click', () => tooltip.hide());
-
-							return tooltip;
+						const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle=\"tooltip\"]');
+						Array.from(tooltipTriggerList).forEach(tooltipTriggerEl => {
+							new bootstrap.Tooltip(tooltipTriggerEl);
 						});
 					}, 300);
 			},

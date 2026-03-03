@@ -2,7 +2,8 @@ import { ChangeDetectorRef, Component, EventEmitter, Injector, Input, Output, Vi
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton, ToolbarComponent } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarComponent } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { ConsolidacaoDados, PlanoTrabalhoConsolidacaoDaoService } from 'src/app/dao/plano-trabalho-consolidacao-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
@@ -44,9 +45,10 @@ export type ConsolidacaoEntrega = {
 };
 
 @Component({
-  selector: 'plano-trabalho-consolidacao-form',
-  templateUrl: './plano-trabalho-consolidacao-form.component.html',
-  styleUrls: ['./plano-trabalho-consolidacao-form.component.scss']
+    selector: 'plano-trabalho-consolidacao-form',
+    templateUrl: './plano-trabalho-consolidacao-form.component.html',
+    styleUrls: ['./plano-trabalho-consolidacao-form.component.scss'],
+    standalone: false
 })
 export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
@@ -70,7 +72,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   get disabled(): boolean {
     return this._disabled;
   }
-  @Output() refreshList = new EventEmitter<Atividade>();
+  @Output() refreshList = new EventEmitter<boolean>();
 
   //public consolidacaoOcorrenciaDao: PlanoTrabalhoConsolidacaoOcorrenciaDaoService;
   public ocorrenciaDao: OcorrenciaDaoService;
@@ -157,6 +159,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
 
   public refresh() {
     this.loadData(this.entity!, this.form);
+    this.refreshList.emit(true);
   }
 
   public bindEntity() {
@@ -358,7 +361,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       try {
         result = await this.atividadeDao?.save(row, this.joinAtividade, ['etiquetas', 'checklist', 'comentarios', 'pausas', 'tarefas']);
         this.atividadeRefreshId(row.id, result);
-        if (!!result && !!result.id) this.refreshList.emit(result);
+        if (!!result && !!result.id) this.refreshList.emit(true);
       } catch (error: any) {
         result = false;
         this.gridAtividades!.error = error.message || error;

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { OcorrenciaRoutingModule } from './ocorrencia-routing.module';
 import { OcorrenciaFormComponent } from './ocorrencia-form/ocorrencia-form.component';
 import { OcorrenciaListComponent } from './ocorrencia-list/ocorrencia-list.component';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
 
@@ -15,7 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     ReactiveFormsModule,
     OcorrenciaRoutingModule
   ]

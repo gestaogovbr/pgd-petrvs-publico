@@ -7,9 +7,10 @@ import { TipoMotivoAfastamento } from 'src/app/models/tipo-motivo-afastamento.mo
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
-  selector: 'app-tipo-motivo-afastamento-form',
-  templateUrl: './tipo-motivo-afastamento-form.component.html',
-  styleUrls: ['./tipo-motivo-afastamento-form.component.scss']
+    selector: 'app-tipo-motivo-afastamento-form',
+    templateUrl: './tipo-motivo-afastamento-form.component.html',
+    styleUrls: ['./tipo-motivo-afastamento-form.component.scss'],
+    standalone: false
 })
 export class TipoMotivoAfastamentoFormComponent extends PageFormBase<TipoMotivoAfastamento, TipoMotivoAfastamentoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

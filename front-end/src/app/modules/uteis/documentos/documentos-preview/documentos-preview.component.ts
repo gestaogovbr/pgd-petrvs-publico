@@ -1,16 +1,17 @@
 import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
 import { Documento } from 'src/app/models/documento.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'documentos-preview',
-  templateUrl: './documentos-preview.component.html',
-  styleUrls: ['./documentos-preview.component.scss']
+    selector: 'documentos-preview',
+    templateUrl: './documentos-preview.component.html',
+    styleUrls: ['./documentos-preview.component.scss'],
+    standalone: false
 })
 export class DocumentosPreviewComponent extends PageFrameBase {
   @Input() documentoId?: string;

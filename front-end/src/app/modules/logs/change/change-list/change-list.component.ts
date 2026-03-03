@@ -2,11 +2,10 @@ import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { ChangeDaoService } from 'src/app/dao/change-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { EntityService } from 'src/app/services/entity.service';
-import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { Change } from 'src/app/models/change.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { EntityItem } from 'src/app/services/entity.service';
@@ -18,9 +17,10 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
 import { SelectItem } from 'src/app/components/input/input-base';
 
 @Component({
-  selector: 'app-change-list',
-  templateUrl: './change-list.component.html',
-  styleUrls: ['./change-list.component.scss']
+    selector: 'app-change-list',
+    templateUrl: './change-list.component.html',
+    styleUrls: ['./change-list.component.scss'],
+    standalone: false
 })
 export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
@@ -28,7 +28,6 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   @ViewChild('relacao', { static: false }) public relacao?: InputSelectComponent;
   @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
   public toolbarButtons: ToolbarButton[] = [];
-  public allPages: ListenerAllPagesService;
   public usuarioDao: UsuarioDaoService;
   public entityService: EntityService;
   public entity?: EntityItem;
@@ -44,7 +43,6 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.entityService = injector.get<EntityService>(EntityService);
     /* Inicializações */
-    this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.title = this.lex.translate("Logs das Alterações");
     this.filter = this.fh.FormBuilder({
       relacoes: {default: []},

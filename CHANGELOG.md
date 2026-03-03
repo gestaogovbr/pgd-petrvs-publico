@@ -1,3 +1,14 @@
+## 2.9.15 27/02/2026
+### Adicionado
+- Adicionada regra para bloquear assinatura de PT quando um plano com mais de 30 dias posterior a outro não imediatamente posterior ao último com pendencia de registro de execução ou avaliação.
+- Adicionada regra para bloquear liberação para homologação de plano de entrega quando um plano mais de 30 dias posterior a outro não imediatamente posterior ao último com pendencia de registro de execução ou avaliação.
+### Modificado
+- Status `AGUARDANDO_REGISTRO` deixa de ser processado no banco e passa a ser definido no front.
+- Removida a validação do banco que impedia a desvinculação da entrega a uma entrega de unidade superior.
+### Corrigido
+- Exibição da modalidade no PT quando diferente da modalidade do Participante.
+- Correção dos erros advindos da adição do status `AGUARDANDO_REGISTRO`. Ex.: cálculo dos períodos avaliativos após edição do plano, cancelamento de plano, conclusão de REs, etc.
+
 ## 2.9.14 18/02/2026
 ### Adicionado
 - Adição da opção para o usuário editar as ocorrências lançadas no registro de execução.

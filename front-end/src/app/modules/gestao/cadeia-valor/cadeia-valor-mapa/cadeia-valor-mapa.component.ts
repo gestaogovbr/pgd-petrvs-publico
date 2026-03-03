@@ -9,7 +9,7 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { CadeiaValor } from 'src/app/models/cadeia-valor.model';
 import { CadeiaValorProcesso } from 'src/app/models/cadeia-valor-processo.model';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
 import { CadeiaValorProcessoDaoService } from 'src/app/dao/cadeia-valor-processo-dao.service';
 
@@ -21,9 +21,10 @@ export class NeastedProcesso extends CadeiaValorProcesso {
 }
 
 @Component({
-  selector: 'cadeia-valor-mapa',
-  templateUrl: './cadeia-valor-mapa.component.html',
-  styleUrls: ['./cadeia-valor-mapa.component.scss']
+    selector: 'cadeia-valor-mapa',
+    templateUrl: './cadeia-valor-mapa.component.html',
+    styleUrls: ['./cadeia-valor-mapa.component.scss'],
+    standalone: false
 })
 export class CadeiaValorMapaComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

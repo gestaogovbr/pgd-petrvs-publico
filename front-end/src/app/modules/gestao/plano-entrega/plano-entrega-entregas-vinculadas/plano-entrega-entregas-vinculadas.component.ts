@@ -5,9 +5,10 @@ import { PlanoEntregaEntrega } from "src/app/models/plano-entrega-entrega.model"
 import { PageFrameBase } from "src/app/modules/base/page-frame-base";
 
 @Component({
-  selector: 'plano-entrega-entregas-vinculadas',
-  templateUrl: './plano-entrega-entregas-vinculadas.component.html',
-  styleUrls: ['./plano-entrega-entregas-vinculadas.component.scss']
+    selector: 'plano-entrega-entregas-vinculadas',
+    templateUrl: './plano-entrega-entregas-vinculadas.component.html',
+    styleUrls: ['./plano-entrega-entregas-vinculadas.component.scss'],
+    standalone: false
 })
 export class PlanoEntregaEntregasVinculadasComponent extends PageFrameBase { 
   @Input() set entregaId(value: string) {

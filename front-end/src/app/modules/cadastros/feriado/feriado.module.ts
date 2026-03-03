@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FeriadoRoutingModule } from './feriado-routing.module';
 import { FeriadoFormComponent } from './feriado-form/feriado-form.component';
 import { FeriadoListComponent } from './feriado-list/feriado-list.component';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
 
@@ -15,7 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     ReactiveFormsModule,
     FeriadoRoutingModule
   ]

@@ -6,9 +6,10 @@ import { TipoModalidade } from 'src/app/models/tipo-modalidade.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-tipo-modalidade-list',
-  templateUrl: './tipo-modalidade-list.component.html',
-  styleUrls: ['./tipo-modalidade-list.component.scss']
+    selector: 'app-tipo-modalidade-list',
+    templateUrl: './tipo-modalidade-list.component.html',
+    styleUrls: ['./tipo-modalidade-list.component.scss'],
+    standalone: false
 })
 export class TipoModalidadeListComponent extends PageListBase<TipoModalidade, TipoModalidadeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

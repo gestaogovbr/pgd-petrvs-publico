@@ -1,0 +1,197 @@
+
+/* CSS para Organograma Hierárquico Puro (Sem Tables) */
+.tree-container {
+    width: 100%;
+    overflow: auto;
+}
+
+.tree {
+    display: table;
+    margin: 0 auto;
+    min-width: 100%;
+}
+
+.tree ul {
+    padding-top: 20px;
+    position: relative;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    
+    display: flex;
+    justify-content: center;
+    padding-left: 0;
+    margin: 0;
+}
+
+.tree li {
+    float: left;
+    text-align: center;
+    list-style-type: none;
+    position: relative;
+    padding: 20px 5px 0 5px;
+    
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+}
+
+/* Linhas conectores */
+.tree li::before, .tree li::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 50%;
+    border-top: 1px solid var(--bs-border-color);
+    width: 50%;
+    height: 20px;
+}
+
+.tree li::after {
+    right: auto;
+    left: 50%;
+    border-left: 1px solid var(--bs-border-color);
+}
+
+/* Remove conectores dos extremos */
+.tree li:only-child::after, .tree li:only-child::before {
+    display: none;
+}
+
+.tree li:only-child {
+    padding-top: 0;
+}
+
+.tree li:first-child::before, .tree li:last-child::after {
+    border: 0 none;
+}
+
+/* Adiciona linha vertical de conexão para o pai */
+.tree li:last-child::before {
+    border-right: 1px solid var(--bs-border-color);
+    border-radius: 0 5px 0 0;
+    -webkit-border-radius: 0 5px 0 0;
+    -moz-border-radius: 0 5px 0 0;
+}
+
+.tree li:first-child::after {
+    border-radius: 5px 0 0 0;
+    -webkit-border-radius: 5px 0 0 0;
+    -moz-border-radius: 5px 0 0 0;
+}
+
+/* Linha vertical descendo do nó pai para os filhos */
+.tree ul ul::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    border-left: 1px solid var(--bs-border-color);
+    width: 0;
+    height: 20px;
+}
+
+/* Estilo do Card do Nó */
+.tree .node-content {
+    border: 1px solid var(--bs-border-color);
+    padding: 10px 15px;
+    text-decoration: none;
+    color: var(--bs-body-color);
+    font-family: arial, verdana, tahoma;
+    font-size: 14px;
+    display: inline-block;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    background-color: var(--bs-body-bg); /* Default fallback */
+    min-width: 120px;
+    z-index: 10;
+    position: relative;
+}
+
+.tree .node-content:hover, .tree .node-content:hover+ul li .node-content {
+    background: var(--bs-tertiary-bg);
+    color: var(--bs-body-color);
+    border: 1px solid var(--bs-secondary-color);
+}
+
+.tree .node-content:hover+ul li::after, 
+.tree .node-content:hover+ul li::before, 
+.tree .node-content:hover+ul::before, 
+.tree .node-content:hover+ul ul::before {
+    border-color: var(--bs-secondary-color);
+}
+
+/* Estilo para Unidade Selecionada (Destaque) */
+.tree .node-content.bg-primary {
+    background-color: var(--bs-primary) !important;
+    border-color: var(--bs-primary) !important;
+    color: white !important;
+}
+
+.tree .node-content.bg-primary:hover {
+    background-color: var(--bs-primary-bg-subtle) !important;
+    border-color: var(--bs-primary-border-subtle) !important;
+    color: var(--bs-primary-text-emphasis) !important;
+}
+
+/* --- THEME OVERRIDES --- */
+
+/* Light Theme (Explicito) */
+:host-context(.petrvs[data-bs-theme="light"]) {
+    .tree .node-content {
+        background-color: #ffffff;
+        border-color: #dee2e6;
+        color: #666;
+    }
+    .tree .node-content:hover {
+        background-color: #f8f9fa;
+        color: #000;
+        border-color: #94a0b4;
+    }
+    .tree li::before, .tree li::after, .tree li:last-child::before, .tree ul ul::before {
+        border-color: #ccc;
+    }
+}
+
+/* Blue Theme */
+:host-context(.petrvs[data-bs-theme="blue"]) {
+    .tree .node-content {
+        background-color: #ffffff;
+        border-color: #cbd0dd;
+        color: #1d2143;
+    }
+    .tree .node-content:hover {
+        background-color: #eef2f7;
+        color: #13162d;
+        border-color: #13162d;
+    }
+    .tree li::before, .tree li::after, .tree li:last-child::before, .tree ul ul::before {
+        border-color: #cbd0dd;
+    }
+}
+
+/* Dark Theme */
+:host-context(.petrvs[data-bs-theme="dark"]) {
+    .tree .node-content {
+        background-color: #2b3035; /* Darker card */
+        border-color: #495057;
+        color: #dee2e6;
+    }
+    .tree .node-content:hover {
+        background-color: #343a40;
+        color: #fff;
+        border-color: #6c757d;
+    }
+    .tree li::before, .tree li::after, .tree li:last-child::before, .tree ul ul::before {
+        border-color: #495057;
+    }
+    
+    /* Ajuste para o texto mute no dark mode */
+    .text-muted {
+        color: #adb5bd !important;
+    }
+}

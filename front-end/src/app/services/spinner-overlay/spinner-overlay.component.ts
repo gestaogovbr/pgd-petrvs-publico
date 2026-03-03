@@ -1,9 +1,10 @@
 import { ChangeDetectorRef, Component, Injector, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-spinner-overlay',
-  templateUrl: './spinner-overlay.component.html',
-  styleUrls: ['./spinner-overlay.component.scss']
+    selector: 'app-spinner-overlay',
+    templateUrl: './spinner-overlay.component.html',
+    styleUrls: ['./spinner-overlay.component.scss'],
+    standalone: false
 })
 export class SpinnerOverlayComponent implements OnInit {
   @Input() message: any = "";

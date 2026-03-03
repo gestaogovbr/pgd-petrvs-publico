@@ -3,15 +3,16 @@ import { AbstractControl, ControlContainer, FormGroup, FormGroupDirective } from
 import { InputBase, InputScale, LabelPosition } from '../input-base';
  
 @Component({
-  selector: 'input-switch',
-  templateUrl: './input-switch.component.html',
-  styleUrls: ['./input-switch.component.scss'],
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]
+    selector: 'input-switch',
+    templateUrl: './input-switch.component.html',
+    styleUrls: ['./input-switch.component.scss'],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective
+        }
+    ],
+    standalone: false
 })
 export class InputSwitchComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';

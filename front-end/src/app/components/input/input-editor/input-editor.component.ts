@@ -12,15 +12,16 @@ import { TreeNodeSelectEvent } from 'primeng/tree';
 import { GlobalsService } from 'src/app/services/globals.service';
 
 @Component({
-  selector: 'input-editor',
-  templateUrl: './input-editor.component.html',
-  styleUrls: ['./input-editor.component.scss'],
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]
+    selector: 'input-editor',
+    templateUrl: './input-editor.component.html',
+    styleUrls: ['./input-editor.component.scss'],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective
+        }
+    ],
+    standalone: false
 })
 export class InputEditorComponent extends InputBase implements OnInit {
   @ViewChild('helpTemplate') helpTemplate?: TemplateRef<any>;

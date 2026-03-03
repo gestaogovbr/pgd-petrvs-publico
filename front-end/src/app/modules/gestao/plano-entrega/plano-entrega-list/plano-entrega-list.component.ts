@@ -1,7 +1,7 @@
 import {Component, Injector, ViewChild} from "@angular/core";
 import {AbstractControl, FormGroup} from "@angular/forms";
 import {GridComponent} from "src/app/components/grid/grid.component";
-import {ToolbarButton} from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import {CadeiaValorDaoService} from "src/app/dao/cadeia-valor-dao.service";
 import {PlanejamentoDaoService} from "src/app/dao/planejamento-dao.service";
 import {PlanoEntregaDaoService} from "src/app/dao/plano-entrega-dao.service";
@@ -20,9 +20,10 @@ import {UnidadeService} from "src/app/services/unidade.service";
 import {ProgramaService} from "src/app/services/programa.service";
 
 @Component({
-	selector: "plano-entrega-list",
-	templateUrl: "./plano-entrega-list.component.html",
-	styleUrls: ["./plano-entrega-list.component.scss"],
+    selector: "plano-entrega-list",
+    templateUrl: "./plano-entrega-list.component.html",
+    styleUrls: ["./plano-entrega-list.component.scss"],
+    standalone: false
 })
 export class PlanoEntregaListComponent extends PageListBase<
 	PlanoEntrega,

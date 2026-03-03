@@ -2,7 +2,7 @@ import { Component, Injector, Input, ViewChild } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { Planejamento } from 'src/app/models/planejamento.model';
@@ -12,9 +12,10 @@ import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetiv
 import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
 
 @Component({
-  selector: 'planejamento-list-objetivo',
-  templateUrl: './planejamento-list-objetivo.component.html',
-  styleUrls: ['./planejamento-list-objetivo.component.scss']
+    selector: 'planejamento-list-objetivo',
+    templateUrl: './planejamento-list-objetivo.component.html',
+    styleUrls: ['./planejamento-list-objetivo.component.scss'],
+    standalone: false
 })
 export class PlanejamentoListObjetivoComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

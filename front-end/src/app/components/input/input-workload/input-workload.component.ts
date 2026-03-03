@@ -5,15 +5,16 @@ import { InputBase, LabelPosition } from '../input-base';
 export type UnitWorkload = "hour" | "day" | "week" | "mouth";
 
 @Component({
-  selector: 'input-workload',
-  templateUrl: './input-workload.component.html',
-  styleUrls: ['./input-workload.component.scss'],
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]
+    selector: 'input-workload',
+    templateUrl: './input-workload.component.html',
+    styleUrls: ['./input-workload.component.scss'],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective
+        }
+    ],
+    standalone: false
 })
 export class InputWorkloadComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';

@@ -1,7 +1,7 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { Base } from 'src/app/models/base.model';
 import { Programa } from 'src/app/models/programa.model';
@@ -9,9 +9,10 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { ProgramaService } from 'src/app/services/programa.service';
 
 @Component({
-  selector: 'app-programa-list',
-  templateUrl: './programa-list.component.html',
-  styleUrls: ['./programa-list.component.scss']
+    selector: 'app-programa-list',
+    templateUrl: './programa-list.component.html',
+    styleUrls: ['./programa-list.component.scss'],
+    standalone: false
 })
 export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

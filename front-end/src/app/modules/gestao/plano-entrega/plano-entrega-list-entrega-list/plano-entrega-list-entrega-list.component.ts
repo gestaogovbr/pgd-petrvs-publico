@@ -1,7 +1,7 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
@@ -10,9 +10,10 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { PlanoEntregaService } from '../plano-entrega.service';
 
 @Component({
-  selector: 'app-plano-entrega-list-entrega-list',
-  templateUrl: './plano-entrega-list-entrega-list.component.html',
-  styleUrls: ['./plano-entrega-list-entrega-list.component.scss']
+    selector: 'app-plano-entrega-list-entrega-list',
+    templateUrl: './plano-entrega-list-entrega-list.component.html',
+    styleUrls: ['./plano-entrega-list-entrega-list.component.scss'],
+    standalone: false
 })
 export class PlanoEntregaListEntregaListComponent extends PageListBase<PlanoEntregaEntrega,PlanoEntregaEntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

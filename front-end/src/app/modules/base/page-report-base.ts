@@ -1,5 +1,5 @@
 import { OnInit, Injector, Injectable, Type } from '@angular/core';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { Base } from 'src/app/models/base.model';

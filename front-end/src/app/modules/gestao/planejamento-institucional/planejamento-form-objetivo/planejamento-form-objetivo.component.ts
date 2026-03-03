@@ -15,9 +15,10 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { NavigateResult } from 'src/app/services/navigate.service';
 
 @Component({
-  selector: 'app-planejamento-form-objetivo',
-  templateUrl: './planejamento-form-objetivo.component.html',
-  styleUrls: ['./planejamento-form-objetivo.component.scss']
+    selector: 'app-planejamento-form-objetivo',
+    templateUrl: './planejamento-form-objetivo.component.html',
+    styleUrls: ['./planejamento-form-objetivo.component.scss'],
+    standalone: false
 })
 export class PlanejamentoFormObjetivoComponent extends PageFormBase<PlanejamentoObjetivo, PlanejamentoObjetivoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

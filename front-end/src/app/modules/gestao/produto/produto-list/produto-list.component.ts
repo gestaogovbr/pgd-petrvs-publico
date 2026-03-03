@@ -2,7 +2,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { Component, Injector, ViewChild } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
-import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { ProdutoDaoService } from "src/app/dao/produto-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { Produto } from "src/app/models/produto.model";
@@ -10,9 +10,10 @@ import { PageListBase } from "src/app/modules/base/page-list-base";
 import { ProdutoService } from "src/app/services/produto.service";
 
 @Component({
-  selector: 'app-produto-list',
-  templateUrl: './produto-list.component.html',
-  styleUrls: ['./produto-list.component.scss']
+    selector: 'app-produto-list',
+    templateUrl: './produto-list.component.html',
+    styleUrls: ['./produto-list.component.scss'],
+    standalone: false
 })
 export class ProdutoListComponent extends PageListBase<Produto, ProdutoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

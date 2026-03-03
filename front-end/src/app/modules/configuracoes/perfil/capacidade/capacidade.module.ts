@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { CapacidadeRoutingModule } from './capacidade-routing.module';
 import { CapacidadeFormComponent } from './capacidade-form/capacidade-form.component';
 import { CapacidadeListComponent } from './capacidade-list/capacidade-list.component';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
 
@@ -15,7 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     ReactiveFormsModule,
     CapacidadeRoutingModule
   ]

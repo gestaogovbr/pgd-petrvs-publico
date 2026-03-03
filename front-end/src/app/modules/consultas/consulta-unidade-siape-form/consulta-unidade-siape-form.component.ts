@@ -12,9 +12,10 @@ import { Unidade } from 'src/app/models/unidade.model';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 
 @Component({
-  selector: 'consulta-cpf-siape-form',
-  templateUrl: './consulta-unidade-siape-form.component.html',
-  styleUrls: ['./consulta-unidade-siape-form.component.scss']
+    selector: 'consulta-cpf-siape-form',
+    templateUrl: './consulta-unidade-siape-form.component.html',
+    styleUrls: ['./consulta-unidade-siape-form.component.scss'],
+    standalone: false
 })
 export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, UnidadeDaoService> {
   

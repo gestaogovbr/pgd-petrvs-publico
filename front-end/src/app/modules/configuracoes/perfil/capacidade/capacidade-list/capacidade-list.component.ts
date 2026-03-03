@@ -8,9 +8,10 @@ import { TipoCapacidadeDaoService } from 'src/app/dao/tipo-capacidade-dao.servic
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 
 @Component({
-  selector: 'app-capacidade-list',
-  templateUrl: './capacidade-list.component.html',
-  styleUrls: ['./capacidade-list.component.scss']
+    selector: 'app-capacidade-list',
+    templateUrl: './capacidade-list.component.html',
+    styleUrls: ['./capacidade-list.component.scss'],
+    standalone: false
 })
 export class CapacidadeListComponent extends PageListBase<Capacidade, CapacidadeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, ElementRef, Injectable, Injector } from "@angular/core";
 import { IIndexable } from "../models/base.model";
 import { UtilService } from "../services/util.service";
-import { ToolbarButton } from "./toolbar/toolbar.component";
+import { ToolbarButton } from "./toolbar/toolbar-types";
 
 export type ComponentColor = "primary" | "secondary" | "success" | "danger" | "warning" | "info" | "light" | "dark" | "none" | string;
 

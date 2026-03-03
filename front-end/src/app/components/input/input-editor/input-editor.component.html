@@ -10,9 +10,9 @@
                 </div>
                 <button (click)="insertVariable()" class="btn btn-success" [disabled]="getVariableString() == ''">Inserir</button>
             </div>
-            <ng-scrollbar autoHeightDisabled="false" style="max-height: 400px;">
+            <div style="max-height: 400px; overflow-y: auto;">
                 <p-tree [value]="variaveis" class="w-full md:w-30rem" selectionMode="single" (onNodeSelect)="nodeSelect($event)" [selection]="selectedVariable"></p-tree>
-            </ng-scrollbar> 
+            </div> 
             
         </tab>
 

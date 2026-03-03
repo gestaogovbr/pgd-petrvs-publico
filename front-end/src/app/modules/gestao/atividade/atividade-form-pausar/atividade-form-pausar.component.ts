@@ -7,9 +7,10 @@ import { Atividade } from 'src/app/models/atividade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
-  selector: 'app-atividade-form-pausar',
-  templateUrl: './atividade-form-pausar.component.html',
-  styleUrls: ['./atividade-form-pausar.component.scss']
+    selector: 'app-atividade-form-pausar',
+    templateUrl: './atividade-form-pausar.component.html',
+    styleUrls: ['./atividade-form-pausar.component.scss'],
+    standalone: false
 })
 export class AtividadeFormPausarComponent extends PageFormBase<Atividade, AtividadeDaoService> implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

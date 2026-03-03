@@ -2,9 +2,10 @@ import { Component, Input, OnInit, TemplateRef } from '@angular/core';
 import { TabsComponent } from '../tabs.component';
 
 @Component({
-  selector: 'tab',
-  templateUrl: './tab.component.html',
-  styleUrls: ['./tab.component.scss']
+    selector: 'tab',
+    templateUrl: './tab.component.html',
+    styleUrls: ['./tab.component.scss'],
+    standalone: false
 })
 export class TabComponent implements OnInit {
   @Input() template?: TemplateRef<unknown>;

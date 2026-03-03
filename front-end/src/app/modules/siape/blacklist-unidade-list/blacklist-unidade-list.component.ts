@@ -1,15 +1,16 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { SiapeBlacklistUnidade } from 'src/app/models/siape-blacklist-unidade.model';
 import { SiapeBlacklistUnidadeDaoService } from 'src/app/dao/siape-blacklist-unidade-dao.service';
 
 @Component({
-  selector: 'app-blacklist-unidade-list',
-  templateUrl: './blacklist-unidade-list.component.html',
-  styleUrls: ['./blacklist-unidade-list.component.scss']
+    selector: 'app-blacklist-unidade-list',
+    templateUrl: './blacklist-unidade-list.component.html',
+    styleUrls: ['./blacklist-unidade-list.component.scss'],
+    standalone: false
 })
 export class BlacklistUnidadeListComponent extends PageListBase<SiapeBlacklistUnidade, SiapeBlacklistUnidadeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

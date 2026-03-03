@@ -8,9 +8,10 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 
 @Component({
-  selector: 'app-cadeia-valor-list',
-  templateUrl: './cadeia-valor-list.component.html',
-  styleUrls: ['./cadeia-valor-list.component.scss']
+    selector: 'app-cadeia-valor-list',
+    templateUrl: './cadeia-valor-list.component.html',
+    styleUrls: ['./cadeia-valor-list.component.scss'],
+    standalone: false
 })
 export class CadeiaValorListComponent extends PageListBase<CadeiaValor, CadeiaValorDaoService>{
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

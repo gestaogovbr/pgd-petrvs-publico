@@ -9,9 +9,10 @@ import { LookupService } from 'src/app/services/lookup.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 
 @Component({
-  selector: 'app-home-gestao-pendencias',
-  templateUrl: './home-gestao-pendencias.component.html',
-  styleUrls: ['./home-gestao-pendencias.component.scss']
+    selector: 'app-home-gestao-pendencias',
+    templateUrl: './home-gestao-pendencias.component.html',
+    styleUrls: ['./home-gestao-pendencias.component.scss'],
+    standalone: false
 })
 export class HomeGestaoPendenciasComponent extends PageBase {
 

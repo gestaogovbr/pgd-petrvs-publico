@@ -8,9 +8,10 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'app-tipo-atividade-form',
-  templateUrl: './tipo-atividade-form.component.html',
-  styleUrls: ['./tipo-atividade-form.component.scss']
+    selector: 'app-tipo-atividade-form',
+    templateUrl: './tipo-atividade-form.component.html',
+    styleUrls: ['./tipo-atividade-form.component.scss'],
+    standalone: false
 })
 export class TipoAtividadeFormComponent extends PageFormBase<TipoAtividade, TipoAtividadeDaoService> implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

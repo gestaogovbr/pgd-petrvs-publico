@@ -4,15 +4,16 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { InputBase, LabelPosition } from '../input-base';
 
 @Component({
-  selector: 'input-radio',
-  templateUrl: './input-radio.component.html',
-  styleUrls: ['./input-radio.component.scss'],
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]
+    selector: 'input-radio',
+    templateUrl: './input-radio.component.html',
+    styleUrls: ['./input-radio.component.scss'],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective
+        }
+    ],
+    standalone: false
 })
 export class InputRadioComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from "@angular/forms";
 import { DndModule } from 'ngx-drag-drop';
-import { ComponentsModule } from "../../../components/components.module";
+import { SharedModule } from "../../../shared/shared.module";
 import { CadeiaValorRoutingModule } from './cadeia-valor-routing.module';
 import { CadeiaValorListComponent } from './cadeia-valor-list/cadeia-valor-list.component';
 import { CadeiaValorFormComponent } from './cadeia-valor-form/cadeia-valor-form.component';
@@ -24,7 +24,7 @@ import { CadeiaValorListProcessosEntregasComponent } from './cadeia-valor-list-p
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     ReactiveFormsModule,
     DndModule,
     CadeiaValorRoutingModule

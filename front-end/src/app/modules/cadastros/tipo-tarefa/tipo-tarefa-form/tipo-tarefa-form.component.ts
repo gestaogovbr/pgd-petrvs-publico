@@ -7,9 +7,10 @@ import { TipoTarefa } from 'src/app/models/tipo-tarefa.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
-  selector: 'tipo-tarefa-form',
-  templateUrl: './tipo-tarefa-form.component.html',
-  styleUrls: ['./tipo-tarefa-form.component.scss']
+    selector: 'tipo-tarefa-form',
+    templateUrl: './tipo-tarefa-form.component.html',
+    styleUrls: ['./tipo-tarefa-form.component.scss'],
+    standalone: false
 })
 export class TipoTarefaFormComponent extends PageFormBase<TipoTarefa, TipoTarefaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

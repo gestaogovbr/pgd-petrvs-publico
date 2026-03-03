@@ -27,6 +27,11 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
         return $model;
     }
 
+    public function newUsuario(array $attributes = []): Usuario
+    {
+        return new Usuario($attributes);
+    }
+
     public function update(string|int $id, array $attributes): ?Usuario
     {
         /** @var Usuario|null $model */

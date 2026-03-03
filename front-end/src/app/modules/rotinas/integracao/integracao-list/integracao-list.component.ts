@@ -2,25 +2,24 @@ import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { IntegracaoDaoService } from 'src/app/dao/integracao-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
-import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { Integracao } from 'src/app/models/integracao.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'app-integracao-list',
-  templateUrl: './integracao-list.component.html',
-  styleUrls: ['./integracao-list.component.scss']
+    selector: 'app-integracao-list',
+    templateUrl: './integracao-list.component.html',
+    styleUrls: ['./integracao-list.component.scss'],
+    standalone: false
 })
 export class IntegracaoListComponent extends PageListBase<Integracao, IntegracaoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild('selectResponsaveis', { static: false }) public selectResponsaveis?: InputSelectComponent;
 
   public toolbarButtons: ToolbarButton[] = [];
-  public allPages: ListenerAllPagesService;
   public usuarioDao: UsuarioDaoService;
   public responsaveis: LookupItem[] = [];
   public labelAdd: string = "Executar";
@@ -28,7 +27,6 @@ export class IntegracaoListComponent extends PageListBase<Integracao, Integracao
   constructor(public injector: Injector, dao: IntegracaoDaoService) {
     super(injector, Integracao, IntegracaoDaoService);
     /* Inicializações */
-    this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.title = this.lex.translate("Rotinas de Integração");
     this.filter = this.fh.FormBuilder({

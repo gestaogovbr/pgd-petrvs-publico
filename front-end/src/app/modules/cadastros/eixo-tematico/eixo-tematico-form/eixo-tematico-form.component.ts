@@ -7,9 +7,10 @@ import { EixoTematico } from 'src/app/models/eixo-tematico.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
-  selector: 'app-eixo-tematico-form',
-  templateUrl: './eixo-tematico-form.component.html',
-  styleUrls: ['./eixo-tematico-form.component.scss']
+    selector: 'app-eixo-tematico-form',
+    templateUrl: './eixo-tematico-form.component.html',
+    styleUrls: ['./eixo-tematico-form.component.scss'],
+    standalone: false
 })
 export class EixoTematicoFormComponent extends PageFormBase<EixoTematico, EixoTematicoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

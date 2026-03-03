@@ -12,9 +12,10 @@ import { TipoMotivoAfastamento } from 'src/app/models/tipo-motivo-afastamento.mo
 import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
 
 @Component({
-  selector: 'app-afastamento-form',
-  templateUrl: './afastamento-form.component.html',
-  styleUrls: ['./afastamento-form.component.scss']
+    selector: 'app-afastamento-form',
+    templateUrl: './afastamento-form.component.html',
+    styleUrls: ['./afastamento-form.component.scss'],
+    standalone: false
 })
 export class AfastamentoFormComponent extends PageFormBase<Afastamento, AfastamentoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LogRoutingModule } from './log-routing.module';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ChangeListComponent } from './change/change-list/change-list.component';
 import { ErrorFormComponent } from './error/error-form/error-form.component';
@@ -29,7 +29,7 @@ import { SystemLogsListComponent } from './system-logs/system-logs-list/system-l
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     ReactiveFormsModule,
     LogRoutingModule,
   ]

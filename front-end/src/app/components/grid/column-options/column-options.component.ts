@@ -1,14 +1,15 @@
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { NavigateService } from 'src/app/services/navigate.service';
-import { ToolbarButton } from '../../toolbar/toolbar.component';
+import { ToolbarButton } from '../../toolbar/toolbar-types';
 import { GridColumn } from '../grid-column';
 import { GridComponent } from '../grid.component';
 import { ComponentBase } from '../../component-base';
 
 @Component({
-  selector: 'column-options',
-  templateUrl: './column-options.component.html',
-  styleUrls: ['./column-options.component.scss']
+    selector: 'column-options',
+    templateUrl: './column-options.component.html',
+    styleUrls: ['./column-options.component.scss'],
+    standalone: false
 })
 export class ColumnOptionsComponent extends ComponentBase implements OnInit {
   @ViewChild('optionButton', {static: false}) optionButton?: ElementRef;

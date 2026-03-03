@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TipoAtividadeRoutingModule } from './tipo-atividade-routing.module';
 import { TipoAtividadeFormComponent } from './tipo-atividade-form/tipo-atividade-form.component';
 import { TipoAtividadeListComponent } from './tipo-atividade-list/tipo-atividade-list.component';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
@@ -14,7 +14,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     ReactiveFormsModule,
     TipoAtividadeRoutingModule
   ]

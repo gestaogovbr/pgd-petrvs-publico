@@ -7,9 +7,10 @@ import { Envio } from 'src/app/models/envio.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
-  selector: 'envio-consult',
-  templateUrl: './envio-consult.component.html',
-  styleUrls: ['./envio-consult.component.scss']
+    selector: 'envio-consult',
+    templateUrl: './envio-consult.component.html',
+    styleUrls: ['./envio-consult.component.scss'],
+    standalone: false
 })
 export class EnvioConsultComponent extends PageFormBase<Envio, EnvioDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

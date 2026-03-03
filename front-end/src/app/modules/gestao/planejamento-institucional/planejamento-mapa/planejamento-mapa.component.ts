@@ -3,7 +3,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetivo-dao.service';
 import { QueryContext } from 'src/app/dao/query-context';
@@ -22,9 +22,10 @@ export type EixoPlanejamento = {
 }
 
 @Component({
-  selector: 'planejamento-mapa',
-  templateUrl: './planejamento-mapa.component.html',
-  styleUrls: ['./planejamento-mapa.component.scss']
+    selector: 'planejamento-mapa',
+    templateUrl: './planejamento-mapa.component.html',
+    styleUrls: ['./planejamento-mapa.component.scss'],
+    standalone: false
 })
 export class PlanejamentoMapaComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

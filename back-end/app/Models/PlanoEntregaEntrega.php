@@ -87,7 +87,7 @@ class PlanoEntregaEntrega extends ModelBase
     return $this->hasMany(Reacao::class);
   }
   // Belongs
-  public function planoEntrega()
+  public function planoEntrega(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(PlanoEntrega::class);
   }
@@ -103,9 +103,14 @@ class PlanoEntregaEntrega extends ModelBase
   {
     return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_pai_id');
   }        //nullable
-  
+
   public function produtos()
   {
     return $this->hasMany(PlanoEntregaEntregaProduto::class, 'entrega_id');
+  }
+
+  public function setEntregaPaiIdAttribute($value)
+  {
+    $this->attributes['entrega_pai_id'] = empty($value) ? null : $value;
   }
 }

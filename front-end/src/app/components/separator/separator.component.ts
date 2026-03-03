@@ -1,12 +1,13 @@
 import { ChangeDetectorRef, Component, EventEmitter, Injector, Input, OnInit, Output } from '@angular/core';
-import { ToolbarButton } from '../toolbar/toolbar.component';
+import { ToolbarButton } from '../toolbar/toolbar-types';
 import { AbstractControl, FormControl } from '@angular/forms';
 import { ComponentBase } from '../component-base';
 
 @Component({
-  selector: 'separator',
-  templateUrl: './separator.component.html',
-  styleUrls: ['./separator.component.scss']
+    selector: 'separator',
+    templateUrl: './separator.component.html',
+    styleUrls: ['./separator.component.scss'],
+    standalone: false
 })
 export class SeparatorComponent extends ComponentBase {
   @Output() buttonClick = new EventEmitter<any>();

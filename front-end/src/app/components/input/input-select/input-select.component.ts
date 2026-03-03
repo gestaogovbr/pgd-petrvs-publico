@@ -23,15 +23,16 @@ import {FullRoute, NavigateService} from "src/app/services/navigate.service";
 import {InputBase, LabelPosition, SelectItem} from "../input-base";
 
 @Component({
-	selector: "input-select",
-	templateUrl: "./input-select.component.html",
-	styleUrls: ["./input-select.component.scss"],
-	viewProviders: [
-		{
-			provide: ControlContainer,
-			useExisting: FormGroupDirective,
-		},
-	],
+    selector: "input-select",
+    templateUrl: "./input-select.component.html",
+    styleUrls: ["./input-select.component.scss"],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective,
+        },
+    ],
+    standalone: false
 })
 export class InputSelectComponent extends InputBase implements OnInit {
 	@HostBinding("class") class = "form-group";

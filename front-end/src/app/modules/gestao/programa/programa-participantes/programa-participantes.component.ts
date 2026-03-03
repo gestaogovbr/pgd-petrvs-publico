@@ -3,7 +3,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { now } from 'moment';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { ProgramaParticipanteDaoService } from 'src/app/dao/programa-participante-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
@@ -14,9 +14,10 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'app-programa-participantes',
-  templateUrl: './programa-participantes.component.html',
-  styleUrls: ['./programa-participantes.component.scss']
+    selector: 'app-programa-participantes',
+    templateUrl: './programa-participantes.component.html',
+    styleUrls: ['./programa-participantes.component.scss'],
+    standalone: false
 })
 export class ProgramaParticipantesComponent extends PageListBase<Usuario, UsuarioDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

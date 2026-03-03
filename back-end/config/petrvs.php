@@ -10,6 +10,7 @@ return [
     'edition' => env('PETRVS_ENTIDADE', 'MGI'),
     'logo' => env('PETRVS_LOGO', ''),
     'timezone' => env('PETRVS_SERVIDOR_TIMEZONE', -3),
+    'dias-avaliacao-registro-execucao' => env('PETRVS_DIAS_AVALIACAO_REGISTRO_EXECUCAO', 21),
     'api-max-expiration-time-token' => env('PETRVS_API_MAX_EXPIRATION_TIME_TOKEN', 60000),
     'rotinas-diarias' => [
         'token' => env('PETRVS_ROTINAS_DIARIAS_TOKEN', '')

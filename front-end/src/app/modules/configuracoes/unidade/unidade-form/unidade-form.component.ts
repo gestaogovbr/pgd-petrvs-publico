@@ -17,9 +17,10 @@ import { TemplateDataset } from 'src/app/modules/uteis/templates/template.servic
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'app-unidade-form',
-  templateUrl: './unidade-form.component.html',
-  styleUrls: ['./unidade-form.component.scss']
+    selector: 'app-unidade-form',
+    templateUrl: './unidade-form.component.html',
+    styleUrls: ['./unidade-form.component.scss'],
+    standalone: false
 })
 
 export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoService> {

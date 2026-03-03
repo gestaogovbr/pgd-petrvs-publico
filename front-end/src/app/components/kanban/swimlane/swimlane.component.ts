@@ -5,18 +5,19 @@ import { DockerComponent } from '../docker/docker.component';
 import { KanbanComponent, KanbanDocker } from '../kanban.component';
 
 @Component({
-  selector: 'swimlane',
-  templateUrl: './swimlane.component.html',
-  styleUrls: ['./swimlane.component.scss'],
-  providers: [DndDraggableDirective
-    /*{
-      provide: DndDraggableDirective,
-      useFactory: (self: SwimlaneComponent) => {
-        return self.dndDraggableRef;
-      },
-      deps: [SwimlaneComponent]
-    }*/
-  ]
+    selector: 'swimlane',
+    templateUrl: './swimlane.component.html',
+    styleUrls: ['./swimlane.component.scss'],
+    providers: [DndDraggableDirective
+        /*{
+          provide: DndDraggableDirective,
+          useFactory: (self: SwimlaneComponent) => {
+            return self.dndDraggableRef;
+          },
+          deps: [SwimlaneComponent]
+        }*/
+    ],
+    standalone: false
 })
 export class SwimlaneComponent implements OnInit {
   @ContentChildren(DockerComponent, { descendants: true }) dockers?: QueryList<DockerComponent>;

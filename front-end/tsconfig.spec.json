@@ -10,7 +10,8 @@
       "bootstrap",
       "firefox-webext-browser",
       "gapi",
-      "gapi.auth2"
+      "gapi.auth2",
+      "google.accounts"
     ]
   },
   "files": [

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { EntidadeRoutingModule } from './entidade-routing.module';
 import { EntidadeFormComponent } from './entidade-form/entidade-form.component';
 import { EntidadeListComponent } from './entidade-list/entidade-list.component';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { EntidadeConfComponent } from './entidade-conf/entidade-conf.component';
 import { UteisModule } from '../../uteis/uteis.module';
@@ -18,7 +18,7 @@ import { UteisModule } from '../../uteis/uteis.module';
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     ReactiveFormsModule,
     UteisModule,
     EntidadeRoutingModule

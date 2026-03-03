@@ -136,6 +136,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_PENT_AVAL_SUBORD"],
       ["codigo" => "MOD_PENT_CANC_AVAL"],
       ["codigo" => "MOD_PENT_CANC_HOMOL"],
+      ["codigo" => "MOD_PENT_CNC"],
       ["codigo" => "MOD_PENT_CONC"],
       ["codigo" => "MOD_PENT_EDT"],
       ["codigo" => "MOD_PENT_EDT_ATV_ATV"],

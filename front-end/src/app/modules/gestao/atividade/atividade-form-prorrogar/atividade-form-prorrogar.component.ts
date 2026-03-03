@@ -7,9 +7,10 @@ import { Atividade } from 'src/app/models/atividade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
-  selector: 'app-atividade-form-prorrogar',
-  templateUrl: './atividade-form-prorrogar.component.html',
-  styleUrls: ['./atividade-form-prorrogar.component.scss']
+    selector: 'app-atividade-form-prorrogar',
+    templateUrl: './atividade-form-prorrogar.component.html',
+    styleUrls: ['./atividade-form-prorrogar.component.scss'],
+    standalone: false
 })
 export class AtividadeFormProrrogarComponent extends PageFormBase<Atividade, AtividadeDaoService> implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

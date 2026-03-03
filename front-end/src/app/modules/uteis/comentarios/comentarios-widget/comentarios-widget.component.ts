@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Injector, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { QueryContext } from 'src/app/dao/query-context';
 import { Base } from 'src/app/models/base.model';
@@ -13,9 +13,10 @@ import { NavigateService } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
 
 @Component({
-  selector: 'comentarios-widget',
-  templateUrl: './comentarios-widget.component.html',
-  styleUrls: ['./comentarios-widget.component.scss']
+    selector: 'comentarios-widget',
+    templateUrl: './comentarios-widget.component.html',
+    styleUrls: ['./comentarios-widget.component.scss'],
+    standalone: false
 })
 export class ComentariosWidgetComponent implements OnInit {
   @Input() selectable: boolean = false;

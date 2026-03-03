@@ -8,9 +8,10 @@ import { DialogService } from 'src/app/services/dialog.service';
 import * as moment from 'moment';
 
 @Component({
-  selector: 'app-home-execucao',
-  templateUrl: './home-execucao.component.html',
-  styleUrls: ['./home-execucao.component.scss']
+    selector: 'app-home-execucao',
+    templateUrl: './home-execucao.component.html',
+    styleUrls: ['./home-execucao.component.scss'],
+    standalone: false
 })
 export class HomeExecucaoComponent implements OnInit {
   

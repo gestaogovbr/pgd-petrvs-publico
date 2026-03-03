@@ -4,20 +4,21 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { InputBase, LabelPosition, MultiselectStyle } from '../input-base';
 import { InputSearchComponent } from '../input-search/input-search.component';
 import { InputSelectComponent } from '../input-select/input-select.component';
-import { ToolbarButton } from '../../toolbar/toolbar.component';
+import { ToolbarButton } from '../../toolbar/toolbar-types';
 
 type ItemHandleResult = LookupItem | undefined;
 
 @Component({
-  selector: 'input-multiselect',
-  templateUrl: './input-multiselect.component.html',
-  styleUrls: ['./input-multiselect.component.scss'],
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]
+    selector: 'input-multiselect',
+    templateUrl: './input-multiselect.component.html',
+    styleUrls: ['./input-multiselect.component.scss'],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective
+        }
+    ],
+    standalone: false
 })
 export class InputMultiselectComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group my-2';

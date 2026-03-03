@@ -9,9 +9,10 @@ import { InputSearchComponent } from "src/app/components/input/input-search/inpu
 import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
 
 @Component({
-  selector: 'app-solucao-form',
-  templateUrl: './solucao-form.component.html',
-  styleUrls: ['./solucao-form.component.scss']
+    selector: 'app-solucao-form',
+    templateUrl: './solucao-form.component.html',
+    styleUrls: ['./solucao-form.component.scss'],
+    standalone: false
 })
 
 export class SolucaoFormComponent extends PageFormBase<Solucao, SolucaoDaoService> {

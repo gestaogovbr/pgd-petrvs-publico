@@ -8,9 +8,10 @@ import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 
 @Component({
-  selector: 'app-ocorrencia-list',
-  templateUrl: './ocorrencia-list.component.html',
-  styleUrls: ['./ocorrencia-list.component.scss']
+    selector: 'app-ocorrencia-list',
+    templateUrl: './ocorrencia-list.component.html',
+    styleUrls: ['./ocorrencia-list.component.scss'],
+    standalone: false
 })
 
 export class OcorrenciaListComponent extends PageListBase<Ocorrencia, OcorrenciaDaoService> {

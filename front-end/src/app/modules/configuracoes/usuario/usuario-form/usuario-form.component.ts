@@ -17,9 +17,10 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
 type Regramento = IIndexable & { nome: string; };
 
 @Component({
-  selector: 'app-usuario-form',
-  templateUrl: './usuario-form.component.html',
-  styleUrls: ['./usuario-form.component.scss']
+    selector: 'app-usuario-form',
+    templateUrl: './usuario-form.component.html',
+    styleUrls: ['./usuario-form.component.scss'],
+    standalone: false
 })
 export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoService> {
   canEditAtribuicoes = false;

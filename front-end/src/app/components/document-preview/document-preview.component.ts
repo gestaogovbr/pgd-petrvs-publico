@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'document-preview',
-  templateUrl: './document-preview.component.html',
-  styleUrls: ['./document-preview.component.scss']
+    selector: 'document-preview',
+    templateUrl: './document-preview.component.html',
+    styleUrls: ['./document-preview.component.scss'],
+    standalone: false
 })
 export class DocumentPreviewComponent implements OnInit {
   @Input() html?: string;
