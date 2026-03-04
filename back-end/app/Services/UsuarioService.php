@@ -7,6 +7,7 @@ use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
 use App\Facades\SiapeLog;
+use App\Models\TipoModalidade;
 use App\Models\Usuario;
 use App\Repository\IntegracaoServidorRepository;
 use App\Repository\PerfilRepository;
@@ -457,6 +458,16 @@ class UsuarioService extends ServiceBase
     {
         $data["with"] = [];
         $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
+
+        if ($action == self::ACTION_INSERT) {
+            $defaultTipoModalidade = TipoModalidade::where('nome', 'Sem dados do SIAPE')->first();
+
+            if (!$defaultTipoModalidade) {
+                throw new ValidateException("Tipo de Modalidade Padrão não definido no sistema. Consulte um administrador", 422);
+            }
+
+            $data['tipo_modalidade_id'] = $defaultTipoModalidade->id;
+        }
 
         unset($data['pedagio']);
 
