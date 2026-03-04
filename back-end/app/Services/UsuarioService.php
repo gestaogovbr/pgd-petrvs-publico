@@ -20,30 +20,16 @@ use App\Repository\UsuarioRepository;
 use App\Services\IntegracaoService;
 use App\Services\RawWhere;
 use App\Services\ServiceBase;
-use App\Exceptions\ServerException;
-use App\Facades\SiapeLog;
-use App\Exceptions\ValidateException;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Database\Eloquent\Builder;
 use App\Services\Siape\DadosExternosSiape;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
-use App\Enums\UsuarioSituacaoSiape;
-use App\Exceptions\NotFoundException;
 use App\Services\UnidadeService;
-use App\Services\IntegracaoService;
 use App\Services\UtilService;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
-use App\Repository\UsuarioRepository;
-use App\Repository\UnidadeRepository;
-use App\Repository\IntegracaoServidorRepository;
-use App\Repository\PerfilRepository;
-use App\Repository\TipoModalidadeRepository;
-use App\Repository\PlanoTrabalhoConsolidacaoRepository;
-use App\Repository\PlanoTrabalhoRepository;
-use App\Repository\PlanoEntregaRepository;
-use App\Models\Usuario;
+use Throwable;
 
 /**
  * @property-read UnidadeService $unidadeService
