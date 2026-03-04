@@ -69,7 +69,7 @@ export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaVa
 
   public async saveData(form: IIndexable): Promise<CadeiaValor> {
     return new Promise<CadeiaValor>((resolve, reject) => {
-      this.processos!.grid!.confirm();
+     // this.processos!.grid!.confirm();
       let cadeiaValor = this.util.fill(new CadeiaValor(), this.entity!);
       this.form!.value.entidade_id = this.auth.entidade?.id
       //this.form!.value.unidade_id = this.auth.unidade?.id

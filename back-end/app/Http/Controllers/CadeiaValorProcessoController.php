@@ -5,9 +5,27 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class CadeiaValorProcessoController extends ControllerBase {
+
+    public function ordenar(Request $request) {
+        try {
+            $this->checkPermissions("EDIT", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
+            $data = $request->validate([
+                'processos' => 'required|array',
+            ]);
+            return response()->json([
+                'success' => true,
+                'data' => $this->service->ordenar($data['processos'])
+            ]);
+        } catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error(json_encode($dataError));
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+        }
+    }
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {

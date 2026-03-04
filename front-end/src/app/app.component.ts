@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Inject, Injector, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectorRef, Component, Injector, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { ToolbarButton } from './components/toolbar/toolbar-types';
@@ -7,12 +7,11 @@ import { DialogService } from './services/dialog.service';
 import { DialogComponent } from './services/dialog/dialog.component';
 import { GlobalsService } from './services/globals.service';
 import { LexicalService } from './services/lexical.service';
-import { NavigateService, RouteMetadata } from './services/navigate.service';
+import { NavigateService } from './services/navigate.service';
 import { UtilService } from './services/util.service';
 import { LookupService } from './services/lookup.service';
 import { EntityService } from './services/entity.service';
 import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.service';
-import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 import { UnidadeService } from './services/unidade.service';
 import { Unidade } from './models/unidade.model';
@@ -80,8 +79,6 @@ export class AppComponent implements IAppComponent {
   public moduloDev: any;
   public moduloSiape: any;
   public unidadeService: UnidadeService;
-  private _menu: any;
-  private _menuDetectChanges: any;
   public siapeBlacklistRows: SiapeBlacklistServidor[] = [];
   public siapeBlacklistMatriculas: string[] = [];
   public tooltipWarning: string = 'Matrícula em processo de inativação';

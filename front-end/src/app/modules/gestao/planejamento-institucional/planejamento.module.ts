@@ -8,6 +8,7 @@ import { PlanejamentoListObjetivoComponent } from './planejamento-list-objetivo/
 import { PlanejamentoFormObjetivoComponent } from './planejamento-form-objetivo/planejamento-form-objetivo.component';
 import { PlanejamentoMapaComponent } from './planejamento-mapa/planejamento-mapa.component';
 import { DndModule } from 'ngx-drag-drop';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PlanejamentoListObjetivosEntregasComponent } from './planejamento-list-objetivos-entregas/planejamento-list-objetivos-entregas.component';
 import { PlanejamentoOkrComponent } from './planejamento-okr/planejamento-okr.component';
 import { UteisModule } from '../../uteis/uteis.module';
@@ -27,6 +28,7 @@ import { UteisModule } from '../../uteis/uteis.module';
     CommonModule,
     SharedModule,
     DndModule,
+    DragDropModule,
     PlanejamentoRoutingModule,
     UteisModule
   ],

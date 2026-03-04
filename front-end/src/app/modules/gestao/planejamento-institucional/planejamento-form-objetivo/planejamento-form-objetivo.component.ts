@@ -68,6 +68,12 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
   }
 
   public async loadData(entity: PlanejamentoObjetivo, form: FormGroup) {
+    this.objetivos = (this.metadata?.objetivos as PlanejamentoObjetivo[]).filter(x => !x.objetivo_pai_id).map(x => Object.assign({}, {
+      key: x.id,
+      value: x.nome,
+      data: x
+    }));
+
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
     await this.eixoTematico?.loadSearch(entity.eixo_tematico || entity.eixo_tematico_id);
@@ -80,11 +86,6 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
 
   public async initializeData(form: FormGroup) {
     this.entity = this.metadata?.objetivo as PlanejamentoObjetivo;
-    this.objetivos = (this.metadata?.objetivos as PlanejamentoObjetivo[]).map(x => Object.assign({}, {
-      key: x.id,
-      value: x.nome,
-      data: x
-    }));
     await this.loadData(this.entity!, form);
   }
 

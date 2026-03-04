@@ -1,8 +1,7 @@
-<!--  [hasAdd]="auth.hasPermissionTo('MOD_UND_INCL')"
-    [hasEdit]="auth.hasPermissionTo('MOD_UND_EDT')" -->
+
 <h3 *ngIf="!isModal" class="my-2">{{title}}</h3>
-<grid [dao]="dao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable"
-    (select)="onSelect($event)">
+<grid [dao]="dao" [add]="add" [hasAdd]="false" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable"
+    (select)="onSelect($event)" [loadList]="onGridLoad">
     <toolbar *ngIf="!selectable" [buttons]="buttons"></toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)"
         [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
@@ -12,13 +11,17 @@
         </div>
     </filter>
     <columns>
-        <column title="Nome" [template]="columnNome" orderBy="nome">
+        <column title="Nome" [template]="columnNome">
             <ng-template let-row="row" let-metadata="metadata" #columnNome>
-                <span class="d-block">{{getNome(metadata, row)}}</span>
+                <div class="d-flex align-items-start">
+                    <span [style.padding-left.px]="getNivel(row) * 20"></span>
+                    <div class="">
+                        <b class="d-block">{{getNome(row)}}</b>
+                        <small><cite>{{row.fundamentacao}}</cite></small>
+                    </div>
+                </div>
             </ng-template>
         </column>
-        <column title="Fundamentação" field="fundamentacao"></column>
-        <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

@@ -11,5 +11,9 @@ export class CadeiaValorProcessoDaoService extends DaoBaseService<CadeiaValorPro
     super("CadeiaValorProcesso", injector);
     this.inputSearchConfig.searchFields = ["nome"];
   }
-}
 
+  public async ordenar(processos: any[]): Promise<CadeiaValorProcesso[]> {
+    const result = await this.server.post('api/' + this.collection + '/ordenar', { processos }).toPromise();
+    return result?.data || [];
+  }
+}

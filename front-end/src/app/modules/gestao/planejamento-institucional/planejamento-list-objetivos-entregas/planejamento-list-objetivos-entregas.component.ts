@@ -32,6 +32,37 @@ export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<Pla
     });
     this.OPTION_INFORMACOES.onClick = (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult'] }, { modal: true });
     this.addOption(this.OPTION_INFORMACOES);
+    this.rowsLimit = 1000;
+  }
+
+  public sortObjetivos(objetivos: PlanejamentoObjetivo[]): PlanejamentoObjetivo[] {
+    const buildTree = (paiId: string | null = null): PlanejamentoObjetivo[] => {
+      const children = objetivos
+        .filter(p => (paiId === null ? !p.objetivo_pai_id : p.objetivo_pai_id === paiId))
+        .sort((a, b) => (a.sequencia || 0) - (b.sequencia || 0));
+
+      return children.flatMap(p => [p, ...buildTree(p.id)]);
+    };
+    return buildTree(null);
+  }
+
+  public allRows: PlanejamentoObjetivo[] = [];
+
+  public onGridLoad = async (rows?: any[]) => {
+    if (rows) {
+      if (rows !== this.allRows) {
+         this.allRows = [...rows];
+      }
+      
+      const sorted = this.sortObjetivos(this.allRows);
+      
+      if (rows && rows !== this.allRows) {
+          rows.splice(0, rows.length, ...sorted);
+      } else if (this.grid) {
+          this.grid.items = sorted;
+          this.grid.cdRef.detectChanges();
+      }
+    }
   }
 
   public filterClear(filter: FormGroup) {
@@ -51,24 +82,19 @@ export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<Pla
     return result;
   }
 
-  public getNome (metadata: any, row: PlanejamentoObjetivo){
-    if (!metadata.path) {
-      let paiId: string | null = row.objetivo_pai_id;
-      let niveis = "";
-      while (paiId) {
-        let atual = this.grid?.items.find(x => x.id == paiId);
-        niveis = (atual?.sequencia || "") + "." + niveis;
-        paiId = atual?.objetivo_pai_id || null;
-      }
-      metadata.path = niveis + row.sequencia;
-    }
-    this.grid?.items.sort((a, b) => {
-      const sa = (this.grid!.getMetadata(a)?.path || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
-      const sb = (this.grid!.getMetadata(b)?.path || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
-      return sa < sb ? -1 : sa > sb ? 1 : 0;
-    });
-    if (metadata.path.length > 2) return '- ' + row.nome;
-    else if (metadata.path.length > 4) return '-- ' + row.nome;
+
+  public getNome (row: PlanejamentoObjetivo){
     return row.nome;
+  }
+  
+  public getNivel(row: PlanejamentoObjetivo): number {
+    let paiId: string | null = row.objetivo_pai_id;
+    let niveis = 0;
+    while (paiId) {
+      let atual = this.allRows.find(x => x.id == paiId);
+      niveis++;
+      paiId = atual?.objetivo_pai_id || null;
+    }
+    return niveis;
   }
 }

@@ -6,7 +6,7 @@
         </div>
         <div class="row">
             <input-search [size]="6" #eixoTematico [disabled]="form?.controls?.objetivo_pai_id?.value ? 'true' : undefined" controlName="eixo_tematico_id" [dao]="eixoTematicoDao" required ></input-search>
-            <input-select [size]="6" #objetivoPai [items]="objetivos" label="Objetivo Pai" icon="fab fa-unity" controlName="objetivo_pai_id" (change)="onObjetivoPaiChange($event)"></input-select>
+            <input-select [size]="6" #objetivoPai [items]="objetivos" label="Objetivo Pai" icon="fab fa-unity" controlName="objetivo_pai_id" (change)="onObjetivoPaiChange($event)" [liveSearch]="'true'"></input-select>
         </div>
         <separator *ngIf="planejamento?.planejamento_superior_id" [margin]="2" title="Vinculo com Planejamento Superior">
             <div class="row">
