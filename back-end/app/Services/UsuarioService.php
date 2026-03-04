@@ -736,8 +736,9 @@ class UsuarioService extends ServiceBase
       $entregasSemProgresso = PlanoEntregaEntrega::query()
         ->whereHas('planoEntrega.unidade', fn($q) => $q->whereIn('id', $unidadesGerenciadasIds))
         ->doesntHave('progressos')
-        ->whereHas('planoEntrega', function($q) use ($diasAvaliacaoPlanosEntregas) {
+        ->whereHas('planoEntrega', function($q) use ($diasAvaliacaoPlanosEntregas, $dataAlteracaoRegraPE) {
           $q->whereNotIn('status', [StatusEnum::SUSPENSO, StatusEnum::CANCELADO])
+            ->where('created_at', '>', $dataAlteracaoRegraPE)
             ->where('data_fim', '<=', now()->subDays($diasAvaliacaoPlanosEntregas));
         })
         ->selectRaw('planos_entregas_entregas.plano_entrega_id, COUNT(*) as total_sem_progresso')
