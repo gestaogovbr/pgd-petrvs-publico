@@ -722,7 +722,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 						  )) && this.auth.hasPermissionTo("MOD_PENT_EDT_FLH");
 				let condicao3 = this.auth.isIntegrante(
 					"HOMOLOGADOR_PLANO_ENTREGA",
-					planoEntrega.unidade!.unidade_pai_id!
+					planoEntrega.unidade?.unidade_pai_id!
 				);
 				let condicao4 =
 					this.planoEntregaService.situacaoPlano(planoEntrega) == "ATIVO" &&
@@ -798,7 +798,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 						  ) ||
 						  this.auth.isIntegrante(
 								"AVALIADOR_PLANO_ENTREGA",
-								planoEntrega.unidade!.id!
+								planoEntrega.unidade?.id!
 						  ))
 				);
 			case this.BOTAO_CANCELAR_CONCLUSAO:
@@ -920,11 +920,11 @@ export class PlanoEntregaListComponent extends PageListBase<
 								planoEntrega.unidade?.unidade_pai_id
 						  );
 				let condition3 =
-					this.auth.isLotacaoUsuario(planoEntrega.unidade!.unidade_pai) &&
+					this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade_pai) &&
 					this.auth.hasPermissionTo("MOD_PENT_HOMOL");
 				let condition4 = this.auth.isIntegrante(
 					"HOMOLOGADOR_PLANO_ENTREGA",
-					planoEntrega.unidade!.unidade_pai_id!
+					planoEntrega.unidade?.unidade_pai_id!
 				);
 				return (
 					!this.execucao &&
