@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Injector, Input } from '@angular/core';
+import { Component, Injector, Input } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { CadeiaValorProcessoDaoService } from 'src/app/dao/cadeia-valor-processo-dao.service';
@@ -79,6 +79,7 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
     this.gridControl.value.processos.push(processo);
     this.editingId = processo.id;
     this.cdRef.detectChanges();
+    this.scrollToProcesso(processo);
   }
 
   public async addChildProcesso(pai: CadeiaValorProcesso) {
@@ -92,6 +93,18 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
     this.gridControl.value.processos.push(processo);
     this.editingId = processo.id;
     this.cdRef.detectChanges();
+    this.scrollToProcesso(processo);
+  }
+
+  public scrollToProcesso(processo: CadeiaValorProcesso) {
+    setTimeout(() => {
+      const element = document.getElementById('processo-' + processo.id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const input = element.querySelector('input');
+        if (input) (input as HTMLElement).focus();
+      }
+    }, 100);
   }
 
   public async saveProcesso(processo: CadeiaValorProcesso) {
@@ -107,9 +120,13 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
   }
 
   public cancelEdit() {
-    const processo = this.items.find(x => x.id === this.editingId);
-    if (processo && !processo.nome) {
-      this.items.splice(this.items.indexOf(processo), 1);
+    const processos = this.gridControl.value.processos;
+    const index = processos.findIndex((x: CadeiaValorProcesso) => x.id === this.editingId);
+    if (index >= 0) {
+      const processo = processos[index];
+      if (!processo.nome || !processo.nome.length) {
+        processos.splice(index, 1);
+      }
     }
     this.editingId = null;
     this.cdRef.detectChanges();

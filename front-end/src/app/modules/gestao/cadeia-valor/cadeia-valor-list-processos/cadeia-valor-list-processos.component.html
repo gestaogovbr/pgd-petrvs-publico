@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card d-block">
   <div class="card-header d-flex justify-content-between align-items-center">
     <h6 class="mb-0">Processos da Cadeia de Valor</h6>
     <button type="button" class="btn btn-sm btn-primary" (click)="addProcesso()" [disabled]="editingId">
@@ -8,6 +8,7 @@
   <div class="card-body p-0">
     <div class="list-group list-group-flush">
       <div *ngFor="let processo of items" 
+           [id]="'processo-' + processo.id"
            class="list-group-item processo-item"
            [class.editing]="editingId === processo.id"
            [class.dragging]="draggedProcesso?.id === processo.id"
@@ -26,7 +27,7 @@
           
           <i class="bi bi-grip-vertical me-2 text-muted drag-handle" *ngIf="!editingId"></i>
           
-          <span class="badge bg-secondary me-2">{{getNivel(processo)}}</span>
+          <span class="badge bg-info me-2">{{getNivel(processo)}}</span>
           
           <div class="flex-fill" *ngIf="editingId !== processo.id">
             <strong>{{processo.nome}}</strong>
@@ -37,10 +38,10 @@
           </div>
           
           <div class="btn-group btn-group-sm ms-2" *ngIf="editingId !== processo.id">
-            <button type="button" class="btn btn-outline-secondary" (click)="editingId = processo.id" title="Editar">
-              <i class="bi bi-pencil"></i>
+            <button type="button" class="btn btn-outline-info" (click)="editingId = processo.id" title="Editar">
+              <i class="bi bi-pencil-square"></i>
             </button>
-            <button type="button" class="btn btn-outline-secondary" (click)="addChildProcesso(processo)" title="Adicionar filho">
+            <button type="button" class="btn btn-outline-primary" (click)="addChildProcesso(processo)" title="Adicionar filho">
               <i class="bi bi-plus-circle"></i>
             </button>
             <button type="button" class="btn btn-outline-danger" (click)="removeProcesso(processo)" title="Excluir">

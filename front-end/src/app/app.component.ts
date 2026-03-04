@@ -557,6 +557,7 @@ export class AppComponent implements IAppComponent {
   public initTooltips(): void {
     const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]')) as HTMLElement[];
     tooltipTriggerList.forEach((el: any) => {
+      if(bootstrap.Tooltip.getInstance(el)) return;
       const t = new bootstrap.Tooltip(el, { trigger: 'manual' });
       el.addEventListener('mouseenter', () => t.show());
       el.addEventListener('mouseleave', () => t.hide());
