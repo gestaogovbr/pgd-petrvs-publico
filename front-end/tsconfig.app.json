@@ -7,8 +7,6 @@
       "chrome",
       "firefox",
       "firefox-webext-browser",
-      "gapi",
-      "gapi.auth2",
       "google.accounts",
       "bootstrap",
       "resize-observer-browser"

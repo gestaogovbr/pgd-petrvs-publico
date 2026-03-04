@@ -5,7 +5,9 @@ namespace App\Models;
 use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\DocumentoAssinatura;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Atividade;
 use App\Models\AtividadeTarefa;
 use App\Models\ProjetoTarefa;
@@ -17,6 +19,9 @@ use App\Models\Entidade;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @property AtividadeTarefa|null $atividade_tarefa
+ */
 class Documento extends ModelBase
 {
   protected $table = 'documentos';
@@ -64,7 +69,7 @@ class Documento extends ModelBase
   ];
 
   // Has
-  public function assinaturas()
+  public function assinaturas(): \Illuminate\Database\Eloquent\Relations\HasMany
   {
     return $this->hasMany(DocumentoAssinatura::class);
   }
@@ -93,37 +98,36 @@ class Documento extends ModelBase
     return $this->hasMany(Atividade::class, 'documento_entrega_id');
   }
   // Belongs
-  public function template()
-  {
-    return $this->belongsTo(Template::class);
-  }  //nullable
-  public function planoTrabalho()
-  {
-    return $this->belongsTo(PlanoTrabalho::class);
-  }    //nullable
-  public function tipoDocumento()
-  {
-    return $this->belongsTo(TipoDocumento::class);
-  }    //nullable
-  public function tipoProcesso()
-  {
-    return $this->belongsTo(TipoProcesso::class);
-  }      //nullable
-  public function entidade()
-  {
-    return $this->belongsTo(Entidade::class);
-  }      //nullable
   public function atividade()
   {
     return $this->belongsTo(Atividade::class);
-  }    //nullable  
-  public function atividadeTarefa()
+  }
+  public function atividadeTarefa(): BelongsTo
   {
     return $this->belongsTo(AtividadeTarefa::class);
-  }    //nullable  
-  public function usuario()
+  }
+  public function template(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+  {
+    return $this->belongsTo(Template::class);
+  }  //nullable
+  public function planoTrabalho(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+  {
+    return $this->belongsTo(PlanoTrabalho::class);
+  }    //nullable
+  public function tipoDocumento(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+  {
+    return $this->belongsTo(TipoDocumento::class);
+  }    //nullable
+  public function tipoProcesso(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+  {
+    return $this->belongsTo(TipoProcesso::class);
+  }      //nullable
+  public function entidade(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+  {
+    return $this->belongsTo(Entidade::class);
+  }      //nullable
+  public function usuario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(Usuario::class);
   }    //nullable  
-
 }

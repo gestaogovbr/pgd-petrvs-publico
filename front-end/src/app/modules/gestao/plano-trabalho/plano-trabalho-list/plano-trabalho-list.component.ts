@@ -535,10 +535,10 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			planoTrabalho._metadata?.jaAssinaramTCR
 		);
 		let haAssinaturasFaltantes =
-			!!assinaturasFaltantes.participante.length ||
-			!!assinaturasFaltantes.gestores_unidade_executora.length ||
-			!!assinaturasFaltantes.gestores_unidade_lotacao.length ||
-			!!assinaturasFaltantes.gestores_entidade.length;
+			!!assinaturasFaltantes.participante?.length ||
+			!!assinaturasFaltantes.gestores_unidade_executora?.length ||
+			!!assinaturasFaltantes.gestores_unidade_lotacao?.length ||
+			!!assinaturasFaltantes.gestores_entidade?.length;
 		let usuarioEhGestorUnidadeExecutora = this.unidadeService.isGestorUnidade(
 			planoTrabalho.unidade_id
 		);
@@ -569,7 +569,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 			this.planoTrabalhoService.situacaoPlano(planoTrabalho) == "ARQUIVADO";
 		let planoSuspenso =
 			this.planoTrabalhoService.situacaoPlano(planoTrabalho) == "SUSPENSO";
-		let planoPossuiEntrega = planoTrabalho.entregas.length > 0;
+		let planoPossuiEntrega = planoTrabalho.entregas?.length > 0;
 		if (
 			botao == this.BOTAO_INFORMACOES &&
 			this.auth.hasPermissionTo("MOD_PTR")

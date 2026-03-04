@@ -17,6 +17,9 @@ class RelatorioUnidadeController extends ControllerBase {
         return true;
     }
 
+    /**
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
+     */
     public function query(Request $request) {
         if (!$this->getUsuario($request)->hasPermissionTo('MOD_RELATORIO_UNIDADE')){
             throw new ServerException("RelatorioCapacidade", "Acesso negado ao relatório de Unidades.");

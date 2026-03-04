@@ -21,6 +21,11 @@ class IntegracaoServidorRepository
         return $this->readRepository->getServidor($cpf, $matricula);
     }
 
+    public function getMatriculaByCpf(string $cpf): ?string
+    {
+        return $this->readRepository->getMatriculaByCpf($cpf);
+    }
+
     public function save(IntegracaoServidor $entidade): bool
     {
         return $this->writeRepository->save($entidade);
@@ -32,5 +37,25 @@ class IntegracaoServidorRepository
     public function update(string $cpf, string $matricula, array $data): bool
     {
         return $this->writeRepository->updateByCpfAndMatricula($cpf, $matricula, $data);
+    }
+
+    public function buscarAtualizacoesDados(): array
+    {
+        return $this->readRepository->buscarAtualizacoesDados();
+    }
+
+    public function getAtualizacoesLotacoes(): array
+    {
+        return $this->readRepository->getAtualizacoesLotacoes();
+    }
+
+    public function getServidoresInseridosNaoLotados(): array
+    {
+        return $this->readRepository->getServidoresInseridosNaoLotados();
+    }
+
+    public function getUsuariosAusentes(): array
+    {
+        return $this->readRepository->getUsuariosAusentes();
     }
 }

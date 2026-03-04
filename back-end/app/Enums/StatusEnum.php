@@ -48,4 +48,13 @@ enum StatusEnum: string
             self::cases()
         );
     }
+
+    public static function pendentesPlanoTrabalho(): array
+    {
+        return [
+            self::INCLUIDO->value,
+            self::AGUARDANDO_ASSINATURA->value,
+            self::ATIVO->value
+        ];
+    }
 }

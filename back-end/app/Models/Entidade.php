@@ -16,7 +16,14 @@ use App\Models\TipoTarefa;
 use App\Models\Template;
 use App\Models\TipoModalidade;
 use App\Models\NotificacaoConfig;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Unidade[] $unidades
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Feriado[] $feriados
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\EntidadeEmail[] $emails
+ */
 class Entidade extends ModelBase
 {
   protected $table = "entidades";
@@ -78,23 +85,32 @@ class Entidade extends ModelBase
   ];
 
   // Has
-  public function feriados()
+  public function feriados(): HasMany
   {
     return $this->hasMany(Feriado::class);
   }
-  public function documentos()
+  public function documentos(): HasMany
   {
     return $this->hasMany(Documento::class);
   }
-  public function planejamentos()
+  public function planejamentos(): HasMany
   {
     return $this->hasMany(Planejamento::class);
   }
-  public function cadeiasValores()
+  public function gestor(): BelongsTo
+  {
+    return $this->belongsTo(Usuario::class, 'gestor_id');
+  }
+  public function gestorSubstituto(): BelongsTo
+  {
+    return $this->belongsTo(Usuario::class, 'gestor_substituto_id');
+  }
+  public function cadeiasValores(): HasMany
   {
     return $this->hasMany(CadeiaValor::class);
   }
-  public function integracoes()
+
+  public function integracoes(): HasMany
   {
     return $this->hasMany(Integracao::class);
   }
@@ -119,14 +135,7 @@ class Entidade extends ModelBase
   {
     return $this->belongsTo(Cidade::class);
   }      //nullable
-  public function gestor()
-  {
-    return $this->belongsTo(Usuario::class);
-  }     //nullable
-  public function gestorSubstituto()
-  {
-    return $this->belongsTo(Usuario::class);
-  }   //nullable
+
   public function tipoModalidade()
   {
     return $this->belongsTo(TipoModalidade::class);

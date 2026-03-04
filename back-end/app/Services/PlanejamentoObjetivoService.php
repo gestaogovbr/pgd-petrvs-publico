@@ -1,10 +1,14 @@
 <?php
 
 namespace App\Services;
-
 use App\Models\PlanejamentoObjetivo;
 use Illuminate\Support\Facades\DB;
+use App\Services\PlanejamentoService;
 
+
+/**
+ * @property PlanejamentoService $planejamentoService
+ */
 class PlanejamentoObjetivoService extends ServiceBase
 {
     public function ordenar($objetivos) {

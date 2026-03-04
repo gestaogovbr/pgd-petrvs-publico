@@ -190,6 +190,10 @@ enum TokenKind
     case SEMICOLON;
     case OPERATOR;
     case EOF;
+    case INDEX;
+    case LITERAL;
+    case IDENTIFIER;
+    case PARAM;
 }
 
 class Token {
@@ -243,7 +247,7 @@ class Scanner {
         $result = null;
         if (!$this->eof) {
             $result = $this->getCurrent($lenght);
-            $this->cursor = min($this->cursor + $lenght, strlen($this->source));
+            $this->cursor = (int) min($this->cursor + $lenght, strlen($this->source));
             $this->eof = $this->cursor >= strlen($this->source);
         }
         return $result;
@@ -286,7 +290,7 @@ class Scanner {
             $this->takeIt();
         }
         $buffer = $this->getCurrentSppeling();
-        return empty($buffer) ? null : new Token(TokenKind::INDEX, $buffer);
+        return empty($buffer) ? null : new Token(TokenKind::IDENTIFIER, $buffer);
     }
     /*
     <IDENTIFIER>   ::= [a-zA-Z_](a-zA-Z0-9_)*
@@ -313,13 +317,39 @@ class Scanner {
 
 #region Sintático
 class Parser implements Visitor {
-
+    public function visitTemplate($template) {}
+    public function visitTexto($text) {}
+    public function visitIndex($index) {}
+    public function visitIdentifier($identifier) {}
+    public function visitLiteral($literal) {}
+    public function visitVar($var) {}
+    public function visitTag($tag) {}
+    public function visitStatment($statment) {}
+    public function visitIf($if) {}
+    public function visitEndIf($endIf) {}
+    public function visitFor($for) {}
+    public function visitEndFor($endFor) {}
+    public function visitExpression($expression) {}
+    public function visitParam($param) {}
 }
 #endregion
 
 #region Montador
 class Builder implements Visitor {
-
+    public function visitTemplate($template) {}
+    public function visitTexto($text) {}
+    public function visitIndex($index) {}
+    public function visitIdentifier($identifier) {}
+    public function visitLiteral($literal) {}
+    public function visitVar($var) {}
+    public function visitTag($tag) {}
+    public function visitStatment($statment) {}
+    public function visitIf($if) {}
+    public function visitEndIf($endIf) {}
+    public function visitFor($for) {}
+    public function visitEndFor($endFor) {}
+    public function visitExpression($expression) {}
+    public function visitParam($param) {}
 }
 
 #endregion

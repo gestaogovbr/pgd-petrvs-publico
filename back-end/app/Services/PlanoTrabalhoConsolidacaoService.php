@@ -15,6 +15,7 @@ use App\Models\PlanoTrabalhoConsolidacaoAtividade;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 use App\Models\Programa;
 use App\Models\TipoAvaliacao;
+use App\Models\Avaliacao;
 use App\Models\Unidade;
 use App\Enums\StatusEnum;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
@@ -26,11 +27,16 @@ use App\Services\Snapshot\Rebuilder\AfastamentoSnapshotRebuilder;
 use App\Services\Snapshot\Rebuilder\AtividadeSnapshotRebuilder;
 use App\Services\Snapshot\Rebuilder\OcorrenciaSnapshotRebuilder;
 use App\Services\Snapshot\Rebuilder\PlanoTrabalhoConsolidacaoRebuildService;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Throwable;
+use App\Services\StatusService;
 
+/**
+ * @property StatusService $statusService
+ */
 class PlanoTrabalhoConsolidacaoService extends ServiceBase
 {
   private PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository;
@@ -106,7 +112,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     if ($consolidacaoData === null) {
       throw new \RuntimeException('Consolidação não encontrada para o ID informado');
     }
-
+    
     return [
       'programa' => $consolidacaoData->programa,
       'planoTrabalho' => $consolidacaoData->planoTrabalho,
@@ -124,7 +130,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
    * Reconstroi o Afastameto para ter a aparência de quando a consolidação foi concluída
    * 
    * @param   array  $afastamento         Afastamento (Array) que se deseja atualizar
-   * @param   Consolidacao  $consolidacao Consolidacao
+   * @param   PlanoTrabalhoConsolidacao  $consolidacao Consolidacao
    * @return  array
    */
   public function buildAfastamentoConsolidacao($afastamento, $consolidacao)
@@ -146,7 +152,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
    * Reconstroi a Ocorrencia para ter a aparência de quando a consolidação foi concluída
    * 
    * @param   array  $ocorrencia          Ocorrencia (Array) que se deseja atualizar
-   * @param   Consolidacao  $consolidacao Consolidacao
+   * @param   PlanoTrabalhoConsolidacao  $consolidacao Consolidacao
    * @return  array
    */
   public function buildOcorrenciaConsolidacao($ocorrencia, $consolidacao)
@@ -168,7 +174,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
    * Reconstroi a Atividade para ter a aparência de quando a consolidação foi concluída
    * 
    * @param   array  $atividade          Atividade (Array) que se deseja atualizar
-   * @param   Consolidacao  $consolidacao Consolidacao
+   * @param   PlanoTrabalhoConsolidacao  $consolidacao Consolidacao
    * @return  array
    */
   public function buildAtividadeConsolidacao($atividade, $consolidacao)
@@ -269,7 +275,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
         }
       }
 
-      $dataConclusao = new DateTime();
+      $dataConclusao = Carbon::now();
       $consolidacao->data_conclusao = $dataConclusao;
       if (!empty($justificativa_conclusao)) {
         $consolidacao->justificativa_conclusao = $justificativa_conclusao;
@@ -327,7 +333,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
   /** 
    * Consolidação imediatamente anterior a consolidação passada
    * 
-   * @param   string  $id       O ID da Consolidação
+   * @param   string  $consolidacaoId       O ID da Consolidação
    * @return  PlanoTrabalhoConsolidacao | null
    */
   public function anterior($consolidacaoId)
@@ -339,7 +345,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
   /** 
    * Consolidação imediatamente posterior a consolidação passada
    * 
-   * @param   string  $id       O ID da Consolidação
+   * @param   string  $consolidacaoId       O ID da Consolidação
    * @return  PlanoTrabalhoConsolidacao | null
    */
   public function proximo($consolidacaoId)
@@ -351,10 +357,10 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
   /** 
    * Completa o processo de avaliação para a consolidação
    * 
-   * @param   Avanliacao  $avaliacao Avaliacao
+   * @param   Avaliacao  $avaliacao Avaliacao
    * @return  void
    */
-  public function avaliar($avaliacao)
+  public function avaliar(Avaliacao $avaliacao)
   {
     $consolidacao = $avaliacao->planoTrabalhoConsolidacao;
     $consolidacao->avaliacao_id = $avaliacao->id;
@@ -485,8 +491,8 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
           $entregasSemAtividade[] = [
             'id' => $entrega->id,
             'descricao' => $entrega->descricao,
-            'data_inicio' => $entrega->data_inicio,
-            'data_fim' => $entrega->data_fim
+            'data_inicio' => $entrega->planoEntregaEntrega?->data_inicio,
+            'data_fim' => $entrega->planoEntregaEntrega?->data_fim
           ];
         }
       }

@@ -12,6 +12,8 @@ use App\Models\Afastamento;
 use App\Services\ServiceBase;
 use App\Services\CalendarioService;
 use App\Services\UtilService;
+use App\Repository\UsuarioRepository;
+use App\Repository\PlanoTrabalhoRepository;
 use App\Exceptions\ServerException;
 use App\Models\Documento;
 use Illuminate\Support\Facades\DB;
@@ -25,19 +27,37 @@ use DateTime;
 use Throwable;
 use Illuminate\Database\Eloquent\Collection;
 
+/**
+ * @property UnidadeService $unidadeService
+ * @property StatusService $statusService
+ * @property TemplateService $templateService
+ * @property TemplateDatasetService $templateDatasetService
+ * @property UnidadeIntegranteAtribuicaoService $unidadeIntegranteAtribuicaoService
+ * @property UsuarioService $usuarioService
+ * @property AtividadeService $atividadeService
+ */
 class PlanoTrabalhoService extends ServiceBase
 {
     public $documentoId;
+    protected UsuarioRepository $usuarioRepository;
+    protected PlanoTrabalhoRepository $planoTrabalhoRepository;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->usuarioRepository = app(UsuarioRepository::class);
+        $this->planoTrabalhoRepository = app(PlanoTrabalhoRepository::class);
+    }
 
     /**
      * Retorna todos os Planos de Trabalho de um determinado usuário, que ainda se encontram dentro da vigência
      *
      * @param string $usuario_id
-     * @return  Illuminate\Database\Eloquent\Collection
+     * @return  \Illuminate\Database\Eloquent\Collection
      */
     public function planosAtivos($usuario_id): Collection
     {
-        return PlanoTrabalho::where("usuario_id", $usuario_id)->where("data_inicio", "<=", now())->where("data_fim", ">=", now())->get();
+        return $this->planoTrabalhoRepository->planosAtivos($usuario_id);
         // adicionar no gitlab para considerar o fuso horário
     }
 
@@ -47,13 +67,11 @@ class PlanoTrabalhoService extends ServiceBase
      * @param string $data_inicial Data inicial do período.
      * @param string $data_final Data final do período.
      * @param string $usuario_id O ID do Usuário.
-     * @return  Illuminate\Database\Eloquent\Collection
+     * @return  \Illuminate\Database\Eloquent\Collection
      */
     public function planosAtivosPorData($data_inicial, $data_final, $usuario_id): Collection
     {
-        return PlanoTrabalho::where("usuario_id", $usuario_id)
-            ->where("data_inicio", "<=", $data_final)
-            ->where("data_fim", ">=", $data_inicial)->get();
+        return $this->planoTrabalhoRepository->planosAtivosPorData($data_inicial, $data_final, $usuario_id);
     }
 
     public function proxySearch($query, &$data, &$text)
@@ -70,12 +88,14 @@ class PlanoTrabalhoService extends ServiceBase
         $hierarquia = $this->extractWhere($data, "incluir_hierarquia");
         // (RN_PTR_I) Quando a Unidade Executora não for a unidade de lotação do servidor, seu gestor imediato e seus substitutos devem ter acesso ao seu Plano de Trabalho (e à sua execução);
         $lotadosMinhaUnidade = $this->extractWhere($data, "lotados_minha_unidade");
+        $unidades_vinculadas = $this->extractWhere($data, "unidades_vinculadas");
 
         if (empty($arquivados) || !$arquivados[2]) {
             $data["where"][] = ["data_arquivamento", "==", null];
         }
 
         $unidadeId = $this->extractWhere($data, "unidade_id");
+        $ids = [];
 
         if (is_array($unidadeId) && isset($unidadeId[2])) {
             $ids[] = $unidadeId[2];
@@ -505,10 +525,10 @@ class PlanoTrabalhoService extends ServiceBase
 
     /**
      * (RN_CSLD_1) Após criado ou alterado um plano de trabalho, os períodos de consolidação são automaticamente gerados ou recriados com base na periodicidade configurada no programa;
-     * @param string $usuario_id
-     * @return  Illuminate\Database\Eloquent\Collection
+     * @param PlanoTrabalho $plano
+     * @return  void
      */
-    public function atualizaConsolidacoes($plano)
+    public function atualizaConsolidacoes(PlanoTrabalho $plano)
     {
         DB::transaction(function () use ($plano) {
             $existentes = $plano->consolidacoes->sortBy('data_inicio')->values();
@@ -583,8 +603,9 @@ class PlanoTrabalhoService extends ServiceBase
     /**
      * Retorna os planos de trabalho de um usuário (validando se ele tem acesso a esse plano)
      *
-     * @param string $usuario_id O ID do Usuário
-     * @param string $arquivadas Se o resultado deve incluir os planos arquivados
+     * @param string $usuarioId O ID do Usuário
+     * @param bool $arquivados Se o resultado deve incluir os planos arquivados
+     * @param string $planoTrabalhoId ID do plano de trabalho (opcional)
      * @return  array
      */
     public function getByUsuario($usuarioId, $arquivados, $planoTrabalhoId)
@@ -658,6 +679,7 @@ class PlanoTrabalhoService extends ServiceBase
             "horasAtividadesNaoIniciadas" => 0,
             "horasAtividadesEmAndamento" => 0,
             "horasAtividadesConcluidas" => 0,
+            "horasAtividadesAvaliadas" => 0,
             "horasTotaisAlocadas" => 0,
             "horasUteisAfastamento" => 0,
             "horasUteisDecorridas" => 0,
@@ -676,6 +698,9 @@ class PlanoTrabalhoService extends ServiceBase
                 "tempoTotalEmAndamento" => 0,
                 "tempoPrevistoNaoIniciadasNoPeriodo" => 0,
                 "tempoPrevistoEmAndamentoNoPeriodo" => 0,
+                "tempoPrevistoSoConcluidasNoPeriodo" => 0,
+                "tempoPrevistoReprovadasNoPeriodo" => 0,
+                "tempoPrevistoAprovadasNoPeriodo" => 0,
                 "tempoTotalPrevistoNoPeriodo" => 0,
             ]
         ];
@@ -724,7 +749,7 @@ class PlanoTrabalhoService extends ServiceBase
      * Retorna um array com todas as atividades de um determinado Plano de Trabalho, cujas datas de distribuição ou de data_estipulada_entrega estejam
      * dentro do período estabelecido.
      *
-     * @param Plano $plano Plano de Trabalho a ser pesquisado.
+     * @param array $plano Plano de Trabalho a ser pesquisado.
      * @param string $inicioPeriodo Data inicial do período.
      * @param string $fimPeriodo Data final do período.
      * @return  array
@@ -743,9 +768,9 @@ class PlanoTrabalhoService extends ServiceBase
      * Retorna um array com todas as atividades de um determinado Plano de Trabalho, ainda não iniciadas pelo servidor, cujas datas de início ou de entrega estejam
      * dentro do período estabelecido. Uma atividade é considerada não iniciada se o seu campo data_inicio é nulo.
      *
-     * @param Plano $plano Plano de Trabalho a ser pesquisado.
-     * @param string $inicioPeriodo Data inicial do período.
-     * @param string $fimPeriodo Data final do período.
+     * @param array $plano Plano de Trabalho a ser pesquisado.
+     * @param string|null $inicioPeriodo Data inicial do período.
+     * @param string|null $fimPeriodo Data final do período.
      * @return  array
      */
     public function atividadesNaoIniciadas($plano, $inicioPeriodo, $fimPeriodo): array
@@ -762,9 +787,9 @@ class PlanoTrabalhoService extends ServiceBase
      * Retorna um array com todas as atividades em andamento de um determinado Plano de Trabalho, cujas data de início ou data de entrega estejam
      * dentro do período estabelecido. Uma atividade é considerada em andamento se o seu campo data_inicio não é nulo e seu campo data_entrega é nulo.
      *
-     * @param Plano $plano Plano de Trabalho a ser pesquisado.
-     * @param string $inicioPeriodo Data inicial do período.
-     * @param string $fimPeriodo Data final do período.
+     * @param array $plano Plano de Trabalho a ser pesquisado.
+     * @param string|null $inicioPeriodo Data inicial do período.
+     * @param string|null $fimPeriodo Data final do período.
      * @return  array
      */
     public function atividadesEmAndamento($plano, $inicioPeriodo, $fimPeriodo): array
@@ -778,10 +803,49 @@ class PlanoTrabalhoService extends ServiceBase
     }
 
     /**
+      * Retorna um array com todas as atividades de um determinado Plano de Trabalho, já concluídas pelo servidor, cujas data de entrega estejam
+      * dentro do período estabelecido. Uma atividade é considerada concluída se o seu progresso é 100%.
+      *
+      * @param array $plano Plano de Trabalho a ser pesquisado.
+      * @param string|null $inicioPeriodo Data inicial do período.
+      * @param string|null $fimPeriodo Data final do período.
+      * @return  array
+      */
+     public function atividadesSoConcluidas($plano, $inicioPeriodo, $fimPeriodo): array
+    {
+        $result = [];
+        foreach ($plano['atividades'] as $atividade) {
+            if ($this->atividadeService->isConcluida($atividade) && $this->atividadeService->withinPeriodo($atividade, $inicioPeriodo, $fimPeriodo))
+                array_push($result, $atividade);
+        }
+        return $result;
+    }
+
+    /**
+     * Soma o tempo pactuado das atividades.
+     *
+     * @param array $atividades Array de atividades.
+     * @param string|null $inicioPeriodo Data inicial do período (opcional).
+     * @param string|null $fimPeriodo Data final do período (opcional).
+     * @param float|null $cargaHoraria Carga horária (opcional).
+     * @param mixed|null $unidade Unidade (opcional).
+     * @param array $afastamentos Afastamentos (opcional).
+     * @return float
+     */
+    public function somaTemposPactuados($atividades, $inicioPeriodo = null, $fimPeriodo = null, $cargaHoraria = null, $unidade = null, $afastamentos = [])
+    {
+        $soma = 0;
+        foreach ($atividades as $atividade) {
+            $soma += $atividade['tempo_planejado'] ?? 0;
+        }
+        return $soma;
+    }
+
+    /**
      * Define se um Plano de Trabalho é considerado um Plano de Gestão ou não, ou seja, se existe ou não um normativo definindo como Programa de Gestão
      * o Programa ao qual ele está vinculado.
      *
-     * @param Plano $plano O ID do Plano de Trabalho.
+     * @param array|PlanoTrabalho $plano Plano de Trabalho a ser pesquisado.
      * @return  bool
      */
     public function isPlanoGestao($plano): bool
@@ -901,9 +965,9 @@ class PlanoTrabalhoService extends ServiceBase
             $result["gestoresUnidadeSuperior"] = $this->unidadeService->gestoresUnidadeSuperior($planoTrabalho['unidade_id']);
             $result["gestorUnidadeSuperior"] = $result["gestoresUnidadeSuperior"]["gestor"]?->id == $logado->id || count(array_filter($result["gestoresUnidadeSuperior"]["gestoresSubstitutos"], fn($value) => $value && $value["id"] == $logado->id)) > 0;
             $result["nrEntregas"] = empty($planoTrabalho['entregas']) ? 0 : count($planoTrabalho['entregas']);
-            $result["participanteLotadoAreaTrabalho"] = parent::loggedUser()->areasTrabalho->find(fn($at) => $this->usuarioService->isLotacao($planoTrabalho["usuario_id"], $at->unidade->id)) != null;
+            $result["participanteLotadoAreaTrabalho"] = parent::loggedUser()->areasTrabalho->find(fn($at) => $this->usuarioRepository->isLotacao($planoTrabalho["usuario_id"], $at->unidade->id)) != null;
             $result["participanteColaboradorUnidadeExecutora"] = $this->usuarioService->isIntegrante("COLABORADOR", $planoTrabalho["unidade_id"], $planoTrabalho["usuario_id"]);
-            $result["participanteLotadoUnidadeExecutora"] = $this->usuarioService->isLotacao($planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]);
+            $result["participanteLotadoUnidadeExecutora"] = $this->usuarioRepository->isLotacao($planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]);
             $result["planoAguardandoAssinatura"] = $this->isPlano("AGUARDANDO_ASSINATURA", $planoTrabalho);
             $result["planoArquivado"] = empty($planoTrabalho['id']) ? false : PlanoTrabalho::withTrashed()->find($planoTrabalho['id'])->data_arquivamento != null;
             $result["planoAtivo"] = $this->isPlano("ATIVO", $planoTrabalho);
@@ -919,7 +983,7 @@ class PlanoTrabalhoService extends ServiceBase
                     ['start' => UtilService::asDateTime($p->data_inicio), 'end' => UtilService::asDateTime($p->data_fim)],
                     ['start' => UtilService::asDateTime($planoTrabalho["data_inicio"]), 'end' => UtilService::asDateTime($planoTrabalho["data_fim"])]
                 ]) != null)) == 0;
-            $result["unidadePlanoEhLotacao"] = $this->usuarioService->isLotacao(null, $planoTrabalho['unidade_id']);
+            $result["unidadePlanoEhLotacao"] = $this->usuarioRepository->isLotacao(parent::loggedUser()->id, $planoTrabalho['unidade_id']);
             $result["usuarioEhParticipanteHabilitado"] = $this->unidadeService->unidadeEhHabilitada($planoTrabalho["unidade_id"], $planoTrabalho["programa_id"]);
             $result["usuarioEhParticipantePlano"] = parent::loggedUser()->id == $planoTrabalho["usuario_id"];
             $result["usuarioJaAssinouTCR"] = !$this->usuarioFaltaAssinar(null, $planoTrabalho);
@@ -931,7 +995,7 @@ class PlanoTrabalhoService extends ServiceBase
     /**
      * Informa se o plano de trabalho recebido como parâmetro é um plano válido.
      * Um Plano de Trabalho é válido se não foi deletado, nem arquivado e não está no status de cancelado.
-     * @param array $planoTrabalho
+     * @param array $plano
      */
     public function isPlanoTrabalhoValido($plano): bool
     {
@@ -959,7 +1023,7 @@ class PlanoTrabalhoService extends ServiceBase
      * Informa o status do plano de trabalho recebido como parâmetro.
      * O Plano de Trabalho precisa ser VÁLIDO.
      * @param string $status
-     * @param array $planoTrabalho
+     * @param array $plano
      */
     public function isPlano($status, $plano): bool
     {
@@ -1369,7 +1433,8 @@ class PlanoTrabalhoService extends ServiceBase
         $unidadeId = $planoTrabalho['unidade_id'];
 
         $usuario = Usuario::find($planoTrabalho['usuario_id']);
-        $usuario->lotacao = null;
+        if (!$usuario) return false;
+        
         return $usuario->lotacao?->unidade_id == $unidadeId;
     }
 
@@ -1414,7 +1479,7 @@ class PlanoTrabalhoService extends ServiceBase
         }
 
         $planoAnterior = $planos->get(1);
-        $statusesPendentes = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO'];
+        $statusesPendentes = StatusEnum::pendentesPlanoTrabalho();
 
         return in_array($planoAnterior->status, $statusesPendentes, true);
     }
@@ -1422,12 +1487,9 @@ class PlanoTrabalhoService extends ServiceBase
     public function hasUsuarioPendencias(string $usuarioId, $planoTrabalhoId, $dataAssinatura): bool
     {
         $diasPendenciaDataFinalPlano = 30;
+        $dataLimite = $dataAssinatura->copy()->subDays($diasPendenciaDataFinalPlano)->format('Y-m-d');
 
-        $planosPendentes = PlanoTrabalho::where('usuario_id', $usuarioId)
-            ->whereIn('status', PlanoTrabalho::STATUSES_PENDENTES)
-            ->where('id','!=', $planoTrabalhoId)
-            ->where('data_fim', '<', $dataAssinatura->subDays($diasPendenciaDataFinalPlano)->format('Y-m-d'))
-            ->get();
+        $planosPendentes = $this->planoTrabalhoRepository->buscarPlanosPendentes($usuarioId, $planoTrabalhoId, $dataLimite);
 
         if ($planosPendentes->count() > 0) {
             return true;

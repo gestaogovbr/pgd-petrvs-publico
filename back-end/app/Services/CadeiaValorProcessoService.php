@@ -4,7 +4,10 @@ namespace App\Services;
 
 use App\Models\CadeiaValorProcesso;
 use Illuminate\Support\Facades\DB;
-
+use App\Services\CadeiaValorService;
+/**
+ * @property CadeiaValorService $cadeiaValorService
+ */
 class CadeiaValorProcessoService extends ServiceBase
 {
     public function ordenar($processos) {

@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use Throwable;
+use App\Models\Usuario;
+use Illuminate\Support\Facades\Hash;
 
 class FirebaseAuthService
 {
@@ -33,19 +35,18 @@ class FirebaseAuthService
             $pkeys = json_decode($pkeys_raw, true);
             try {
                 $decoded = \Firebase\JWT\JWT::decode($token, $pkeys, ["RS256"]);
-                if (!empty($decoded)) {
-                    // do all the verifications Firebase says to do as per https://firebase.google.com/docs/auth/admin/verify-id-tokens
-                    // exp must be in the future
-                    $exp = $decoded->exp > time();
-                    // ist must be in the past
-                    $iat = $decoded->iat < time();
-                    // aud must be your Firebase project ID
-                    $aud = $decoded->aud == $this->fbProjectId;
-                    // iss must be "https://securetoken.google.com/<projectId>"
-                    $iss = $decoded->iss == "https://securetoken.google.com/$this->fbProjectId";
-                    // sub must be non-empty and is the UID of the user or device
-                    $sub = $decoded->sub;
-                    if ($exp && $iat && $aud && $iss && !empty($sub)) {
+            // do all the verifications Firebase says to do as per https://firebase.google.com/docs/auth/admin/verify-id-tokens
+            // exp must be in the future
+            $exp = $decoded->exp > time();
+            // ist must be in the past
+            $iat = $decoded->iat < time();
+            // aud must be your Firebase project ID
+            $aud = $decoded->aud == $this->fbProjectId;
+            // iss must be "https://securetoken.google.com/<projectId>"
+            $iss = $decoded->iss == "https://securetoken.google.com/$this->fbProjectId";
+            // sub must be non-empty and is the UID of the user or device
+            $sub = $decoded->sub;
+            if ($exp && $iat && $aud && $iss && !empty($sub)) {
                         // we have a confirmed Firebase user!
                         // build an array with data we need for further processing
                         $return['UID'] = $sub;
@@ -56,7 +57,6 @@ class FirebaseAuthService
                     } else {
                         $return['error'] = 'Invalid token';
                     }
-                }
             } catch (Throwable $e) {
                 $return['error'] = $e->getMessage();
             }

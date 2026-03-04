@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\ServerException;
+use App\Models\Usuario;
 use Firebase\JWT\JWT;
 use Google\Client;
 use Throwable;

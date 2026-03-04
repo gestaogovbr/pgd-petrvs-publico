@@ -8,10 +8,14 @@ use App\Models\PlanoTrabalho;
 use App\Models\ProgramaParticipante;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
+use App\Services\NotificacoesService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 use Throwable;
 
+/**
+ * @property NotificacoesService $notificacoesService
+ */
 class ProgramaParticipanteService extends ServiceBase {
 
     public function habilitar($data)    // ou desabilitar
@@ -53,8 +57,10 @@ class ProgramaParticipanteService extends ServiceBase {
 
     public function quantidadePlanosTrabalhoAtivos($programasParticipantesIds)
     {
-        return ProgramaParticipante::whereIn("usuario_id", $programasParticipantesIds)->whereHas('usuario.planosTrabalho', function ($query) {
-            return $query->where('status', 'ATIVO')->where('data_inicio', '<=', now())->where('data_fim', '>=', now());
+        return ProgramaParticipante::whereIn("usuario_id", $programasParticipantesIds)->whereHas('usuario', function ($query) {
+            $query->whereHas('planosTrabalho', function ($q) {
+                $q->where('status', 'ATIVO')->where('data_inicio', '<=', now())->where('data_fim', '>=', now());
+            });
         })->count();
     }
 

@@ -15,6 +15,9 @@ class IndicadoresGestaoController extends ControllerBase {
         return true;
     }
 
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function query(Request $request) {
         try {
             $data = $request->validate([

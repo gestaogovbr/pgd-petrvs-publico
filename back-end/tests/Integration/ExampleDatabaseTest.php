@@ -20,7 +20,8 @@ test('pode criar e recuperar um tenant', function () {
 
 test('pode criar usuario dentro do tenant', function () {
     // Cria e inicializa o tenant
-    $tenant = $this->setupTenant();
+    $tenant = Tenant::create(['id' => 'test_tenant_integration']);
+    tenancy()->initialize($tenant);
 
     // O usuário criado aqui deve estar no banco do tenant (se a config estiver correta)
     // ou no banco central dependendo da arquitetura (no Petrvs, usuarios costumam ser globais ou por tenant?)
@@ -41,4 +42,7 @@ test('pode criar usuario dentro do tenant', function () {
 
     // Para este exemplo inicial, focamos na criação do tenant que é garantida
     expect(tenancy()->tenant->id)->toBe($tenant->id);
+
+    tenancy()->end();
+    $tenant->delete();
 });

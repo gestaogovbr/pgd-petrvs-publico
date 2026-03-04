@@ -10,6 +10,6 @@ class CursoService extends ServiceBase
 
   public function idInstitucional(): string
   {
-    return Curso::where('nome', 'Curso Institucional')->id();
+    return Curso::where('nome', 'Curso Institucional')->value('id');
   }
 }
