@@ -1,16 +1,17 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { addDays } from 'date-fns';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 
 @Component({
   selector: 'envio-plano-entrega-list',
   templateUrl: './envio-plano-entrega-list.component.html',
-  styleUrls: ['./envio-plano-entrega-list.component.scss']
+  styleUrls: ['./envio-plano-entrega-list.component.scss'],
+  standalone: false
 })
 export class EnvioPlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoEntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

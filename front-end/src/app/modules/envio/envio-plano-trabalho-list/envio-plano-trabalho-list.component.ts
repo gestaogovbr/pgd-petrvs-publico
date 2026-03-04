@@ -1,16 +1,17 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { addDays } from 'date-fns';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 
 @Component({
   selector: 'envio-plano-trabalho-list',
   templateUrl: './envio-plano-trabalho-list.component.html',
-  styleUrls: ['./envio-plano-trabalho-list.component.scss']
+  styleUrls: ['./envio-plano-trabalho-list.component.scss'],
+  standalone: false
 })
 export class EnvioPlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, PlanoTrabalhoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

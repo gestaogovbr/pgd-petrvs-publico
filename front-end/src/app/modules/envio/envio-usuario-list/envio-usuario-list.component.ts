@@ -1,16 +1,17 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { addDays } from 'date-fns';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 
 @Component({
   selector: 'envio-usuario-list',
   templateUrl: './envio-usuario-list.component.html',
-  styleUrls: ['./envio-usuario-list.component.scss']
+  styleUrls: ['./envio-usuario-list.component.scss'],
+  standalone: false,
 })
 export class EnvioUsuarioListComponent extends PageListBase<Usuario, UsuarioDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
