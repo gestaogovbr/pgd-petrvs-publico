@@ -18,8 +18,8 @@ class TipoModalidadeRepository
         return $this->readRepository->getDefaultId();
     }
 
-    public function findByName(string $name): ?object
+    public function findByNome(string $name): ?object
     {
-        return $this->readRepository->findByName($name);
+        return $this->readRepository->findOneBy(['name' => $name]);
     }
 }
