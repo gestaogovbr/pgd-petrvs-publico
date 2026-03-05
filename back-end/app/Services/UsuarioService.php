@@ -460,7 +460,7 @@ class UsuarioService extends ServiceBase
         $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
 
         if ($action == self::ACTION_INSERT) {
-            $defaultTipoModalidade = TipoModalidade::where('nome', 'Sem dados do SIAPE')->first();
+            $defaultTipoModalidade = $this->tipoModalidadeRepository->findByNome('Sem dados do SIAPE');
 
             if (!$defaultTipoModalidade) {
                 throw new ValidateException("Tipo de Modalidade Padrão não definido no sistema. Consulte um administrador", 422);

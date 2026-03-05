@@ -7,4 +7,5 @@ namespace App\Repository\TipoModalidade\Contracts;
 interface TipoModalidadeReadRepositoryContract
 {
     public function getDefaultId(): ?string;
+    public function findOneBy(array $criteria);
 }
