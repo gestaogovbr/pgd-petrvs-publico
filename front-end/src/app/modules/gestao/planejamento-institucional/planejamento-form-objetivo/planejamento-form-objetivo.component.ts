@@ -2,7 +2,6 @@ import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
-import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
 import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
@@ -57,13 +56,6 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
 
   public formValidation = (form?: FormGroup) =>{
     let result = null;
-    /*  Regra está sendo discutida
-        (RN_PLAN_INST_OBJ_A)
-        Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada um dos seus objetivos a um objetivo do Planejamento Institucional superior
-    */
-/*     if(this.isPlanejamentoUNEX() && !this.form?.controls.objetivo_superior_id.value){
-      result = "Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada um dos seus objetivos a um objetivo do Planejamento Institucional superior!";
-    } */
     return result;
   }
 
@@ -76,31 +68,40 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
     this.form?.controls.planejamento_superior_nome.setValue(this.planejamento?.planejamento_superior?.nome || '');
     this.objetivos_superiores = this.planejamento?.planejamento_superior?.objetivos?.map(x => Object.assign({}, { key: x.id, value: x.nome, data: x })) || [];
     
-    // Ordena hierarquicamente os objetivos para o dropdown
     const objetivosRaw = (this.metadata?.objetivos as PlanejamentoObjetivo[]) || [];
-    let objetivosOrdenados = this.sortObjetivos(objetivosRaw);
+    let objetivosOrdenados = this.ordenarObjetivos(objetivosRaw);
     
-    // Remove o próprio item e seus descendentes da lista de seleção para evitar ciclos (se for edição)
-    if (entity.id) {
-      const index = objetivosOrdenados.findIndex(x => x.id === entity.id);
-      if (index >= 0) {
-        const nivelRemover = (objetivosOrdenados[index] as any)._nivel;
-        let count = 1;
-        while (index + count < objetivosOrdenados.length) {
-          const nextNivel = (objetivosOrdenados[index + count] as any)._nivel;
-          if (nextNivel > nivelRemover) {
-            count++;
-          } else {
-            break;
-          }
-        }
-        objetivosOrdenados.splice(index, count);
-      }
-    }
+    objetivosOrdenados = this.filtrarObjetivos(objetivosOrdenados, entity.id);
+    this.objetivos = this.montarListaObjetivos(objetivosOrdenados);
 
-    this.objetivos = objetivosOrdenados.map(x => {
+    (async () => {
+        await this.eixoTematico?.loadSearch(entity.eixo_tematico || entity.eixo_tematico_id);
+    })();
+  }
+
+  public filtrarObjetivos(objetivos: PlanejamentoObjetivo[], entityId?: string): PlanejamentoObjetivo[] {
+    if (!entityId) return objetivos;
+
+    const index = objetivos.findIndex(x => x.id === entityId);
+    if (index >= 0) {
+      const nivelRemover = (objetivos[index] as any)._nivel;
+      let count = 1;
+      while (index + count < objetivos.length) {
+        const nextNivel = (objetivos[index + count] as any)._nivel;
+        if (nextNivel > nivelRemover) {
+          count++;
+        } else {
+          break;
+        }
+      }
+      objetivos.splice(index, count);
+    }
+    return objetivos;
+  }
+
+  public montarListaObjetivos(objetivos: PlanejamentoObjetivo[]): LookupItem[] {
+    return objetivos.map(x => {
       const nivel = (x as any)._nivel || 0;
-      // Adiciona indentação visual baseada no nível
       const prefixo = nivel > 0 ? '\u00A0\u00A0'.repeat(nivel) + '↳ ' : '';
       return {
         key: x.id,
@@ -108,14 +109,9 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
         data: x
       };
     });
-
-    // Carrega Eixo Temático
-    (async () => {
-        await this.eixoTematico?.loadSearch(entity.eixo_tematico || entity.eixo_tematico_id);
-    })();
   }
 
-  public sortObjetivos(objetivos: PlanejamentoObjetivo[]): PlanejamentoObjetivo[] {
+  public ordenarObjetivos(objetivos: PlanejamentoObjetivo[]): PlanejamentoObjetivo[] {
     const ids = new Set(objetivos.map(o => o.id));
     const buildTree = (paiId: string | null = null, nivel: number = 0): PlanejamentoObjetivo[] => {
       const children = objetivos
@@ -159,7 +155,6 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
   }
 
   public onObjetivoSuperiorChange(row: any) {
-    //let objetivoSuperior = this.objetivos_superiores.find(x => x.key === this.form?.controls.objetivo_superior_id.value)?.data.eixo_tematico_id;  
     let idEixoTematicoObjetivoSuperior = this.objetivos_superiores.find(x => x.key === this.form?.controls.objetivo_superior_id.value)?.data.eixo_tematico_id;  
     if (!this.form!.controls.eixo_tematico_id.value) this.form!.controls.eixo_tematico_id.setValue(idEixoTematicoObjetivoSuperior);
     this.cdRef.detectChanges();

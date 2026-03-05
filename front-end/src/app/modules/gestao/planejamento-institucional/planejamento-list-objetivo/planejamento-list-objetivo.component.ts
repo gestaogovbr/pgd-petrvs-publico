@@ -103,9 +103,9 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
       });
 
       // Sort by sequencia
-      const sortFn = (a: PlanejamentoObjetivo, b: PlanejamentoObjetivo) => (a.sequencia || 0) - (b.sequencia || 0);
-      roots.sort(sortFn);
-      items.forEach(i => i.objetivos?.sort(sortFn));
+      const sortBySequencia = (a: PlanejamentoObjetivo, b: PlanejamentoObjetivo) => (a.sequencia || 0) - (b.sequencia || 0);
+      roots.sort(sortBySequencia);
+      items.forEach(i => i.objetivos?.sort(sortBySequencia));
 
       this.treeNodes = roots;
       this.cdRef.detectChanges();
