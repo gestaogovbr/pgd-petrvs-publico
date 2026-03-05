@@ -4,81 +4,124 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Laravel\Socialite\Facades\Socialite;
 use App\Exceptions\LogError;
 use App\Services\FirebaseAuthService;
 use App\Services\GoogleService;
-use App\Services\IntegracaoService;
-use App\Services\ApiService;
-use App\Models\Usuario;
-use App\Models\UnidadeIntegrante;
-use App\Models\Entidade;
-use App\Models\Tenant;
-use App\Models\Unidade;
-use App\Services\UnidadeService;
 use App\Services\CalendarioService;
 use App\Services\UsuarioService;
-use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Support\Facades\Http;
+use App\Services\UnidadeService;
+use App\Models\Usuario;
+use App\Models\Entidade;
+use App\Models\Unidade;
+use App\Enums\UsuarioSituacaoSiape;
 use Exception;
-use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class LoginController extends Controller
 {
-    private function registrarEntidade($request, $session = false)
-    {
-        $with = ["feriados", "gestor", "gestorSubstituto"];
-        $entidadeId = $session ? $request->session()->get('entidade_id') : null;
-        $entidade   = $entidadeId ? Entidade::with($with)->find($entidadeId) : null;
+    private const ENTIDADE_RELATIONS = ["feriados", "gestor", "gestorSubstituto"];
+    private const KIND_SESSION = "SESSION";
+    private const KIND_USERPASSWORD = "USERPASSWORD";
+    private const KIND_FIREBASE = "FIREBASE";
+    private const KIND_GOOGLE = "GOOGLE";
+    private const KIND_AZURE = "AZURE";
+    private const KIND_GOVBR = "GOVBR";
 
-        $sigla = $request->has('entidade') ? $request->input('entidade') : ($request->headers->has("X-Entidade") ? $request->headers->get("X-Entidade") : config("petrvs")["entidade"]);
-        if (empty($entidade) && !empty($sigla)) {
-            $entidade = Entidade::with($with)->where("sigla", $sigla)->first();
+    public function __construct(
+        protected UsuarioService $usuarioService,
+        protected UnidadeService $unidadeService
+    ) {
+    }
+
+    private function registrarEntidade(Request $request, bool $session = false): ?Entidade
+    {
+        if ($session && $request->hasSession() && $request->session()->has('entidade_id')) {
+            return $this->findEntidadeById($request->session()->get('entidade_id'));
+        }
+
+        $sigla = $this->getEntidadeSigla($request);
+        
+        if (empty($sigla)) {
+            return null;
+        }
+
+        $entidade = $this->findEntidadeBySigla($sigla);
+
+        if ($entidade && $request->hasSession()) {
             $request->session()->put("entidade_id", $entidade->id);
         }
+        
         return $entidade;
     }
 
-    private function registrarUsuario($request, $usuario, $update = null)
+    private function getEntidadeSigla(Request $request): ?string
     {
-        if (isset($usuario)) {
-            if (isset($update) && count($update) > 0) {
-                $usuario->update($update);
-                $usuario->fresh();
-            }
-            $entidadeId = $request->session()->has("entidade_id") ? $request->session()->get("entidade_id") : null;
-            $usuario = Usuario::where("id", $usuario->id)->with([
-                "areasTrabalho" => function ($query) use ($entidadeId) {
-                    $query->with(["unidade.gestor.usuario", "unidade.gestoresSubstitutos.usuario", "unidade.gestoresDelegados.usuario", "unidade.cidade", "unidade.planosEntrega", "unidade.unidadePai.planosEntrega", "atribuicoes"])->whereHas('unidade', function ($query) use ($entidadeId) {
-                        return  $query->where('entidade_id', '=', $entidadeId);
-                    });
-                },
-                "participacoesProgramas" => function ($query) {
-                    $query->where("habilitado", 1);
-                },
-                "perfil.capacidades:id,perfil_id,tipo_capacidade_id",
-                "perfil.capacidades.tipoCapacidade:id,codigo",
-                "gerenciaTitular.atribuicoes",
-                "gerenciaTitular.unidade",
-                "gerenciasSubstitutas.atribuicoes",
-                "gerenciasSubstitutas.unidade",
-                "gerenciasDelegadas.atribuicoes",
-                "gerenciasDelegadas.unidade",
-                "notificacoesDestinatario" => function ($query) {
-                    $query->where('data_leitura', null);
-                }
-            ])->first();
+        return $request->input('entidade') 
+            ?? $request->header("X-Entidade") 
+            ?? config("petrvs.entidade");
+    }
 
-            $config = $usuario->config ?? [];
-            $request->session()->put("unidade_id", $config['unidade_id'] ?? $usuario->lotacao?->unidade_id);
+    private function findEntidadeById($id): ?Entidade
+    {
+        return Entidade::with(self::ENTIDADE_RELATIONS)->find($id);
+    }
+
+    private function findEntidadeBySigla(string $sigla): ?Entidade
+    {
+        return Entidade::with(self::ENTIDADE_RELATIONS)->where("sigla", $sigla)->first();
+    }
+
+    private function registrarUsuario(Request $request, ?Usuario $usuario, ?array $update = null): ?Usuario
+    {
+        if (!$usuario) {
+            return null;
         }
+
+        if (!empty($update)) {
+            $usuario->update($update);
+            $usuario->fresh();
+        }
+
+        $entidadeId = $request->session()->get("entidade_id");
+        $usuario = $this->loadUserWithRelations($usuario->id, $entidadeId);
+
+        if ($usuario) {
+            $this->updateSessionUnidade($request, $usuario);
+        }
+
         return $usuario;
     }
 
-    /**
-     * Retorna o usuário logado
-     *
-     * @return \App\Models\Usuario | null
-     */
+    private function loadUserWithRelations(string $userId, $entidadeId): ?Usuario
+    {
+        return Usuario::where("id", $userId)->with([
+            "areasTrabalho" => function ($query) use ($entidadeId) {
+                $query->with(["unidade.gestor.usuario", "unidade.gestoresSubstitutos.usuario", "unidade.gestoresDelegados.usuario", "unidade.cidade", "unidade.planosEntrega", "unidade.unidadePai.planosEntrega", "atribuicoes"])
+                      ->whereHas('unidade', fn($q) => $q->where('entidade_id', $entidadeId));
+            },
+            "participacoesProgramas" => fn($q) => $q->where("habilitado", 1),
+            "perfil.capacidades:id,perfil_id,tipo_capacidade_id",
+            "perfil.capacidades.tipoCapacidade:id,codigo",
+            "gerenciaTitular.atribuicoes",
+            "gerenciaTitular.unidade",
+            "gerenciasSubstitutas.atribuicoes",
+            "gerenciasSubstitutas.unidade",
+            "gerenciasDelegadas.atribuicoes",
+            "gerenciasDelegadas.unidade",
+            "notificacoesDestinatario" => fn($q) => $q->where('data_leitura', null)
+        ])->first();
+    }
+
+    private function updateSessionUnidade(Request $request, Usuario $usuario): void
+    {
+        $config = $usuario->config ?? [];
+        $request->session()->put("unidade_id", $config['unidade_id'] ?? $usuario->lotacao?->unidade_id);
+    }
+
     public static function loggedUser(): ?Usuario
     {
         return Auth::user();
@@ -94,13 +137,7 @@ class LoginController extends Controller
         Auth::shouldUse('web');
     }
 
-    /**
-     * Seleciona Unidade Atual
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
-     */
-    public function selecionaUnidade(Request $request, FirebaseAuthService $auth)
+    public function selecionaUnidade(Request $request)
     {
         $data = $request->validate([
             'unidade_id' => ['required'],
@@ -110,41 +147,21 @@ class LoginController extends Controller
         $this->forceWebGuard();
 
         if (!Auth::guard('web')->check()) {
-            return LogError::newError('Usuário não logado', new \Exception("selecionaUnidade"));
+            return LogError::newError('Usuário não logado', new Exception("selecionaUnidade"));
         }
 
         $usuario = Auth::guard('web')->user();
-
-        if (!empty($data['matricula'])) {
-            $usuarioMatricula = Usuario::where('matricula', $data['matricula'])->first();
-
-            if ($usuarioMatricula && $usuarioMatricula->id !== $usuario->id) {
-                Auth::guard('web')->logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                Auth::guard('web')->loginUsingId($usuarioMatricula->id, remember: false);
-                $request->session()->regenerate();
-
-                $usuario = $usuarioMatricula;
-            }
-        }
+        $usuario = $this->checkSwitchUserByMatricula($request, $usuario, $data['matricula'] ?? null);
 
         $usuario = Usuario::where('id', $usuario->id)
-            ->with(['areasTrabalho' => function ($query) use ($data) {
-                $query->where('unidade_id', $data['unidade_id']);
-            }])->first();
+            ->with(['areasTrabalho' => fn($q) => $q->where('unidade_id', $data['unidade_id'])])
+            ->first();
 
-        if (!isset($usuario->areasTrabalho[0]) || empty($usuario->areasTrabalho[0]->id)) {
-            return LogError::newError('Unidade não encontrada no usuário', new \Exception("selecionaUnidade"));
+        if (empty($usuario->areasTrabalho[0]->id)) {
+            return LogError::newError('Unidade não encontrada no usuário', new Exception("selecionaUnidade"));
         }
 
-        $request->session()->put('unidade_id', $data['unidade_id']);
-
-        $config = $usuario->config ?? [];
-        $config['unidade_id'] = $data['unidade_id'];
-        $usuario->config = $config;
-        $usuario->save();
+        $this->updateUserUnidadeConfig($request, $usuario, $data['unidade_id']);
 
         return response()->json([
             'status'  => 'OK',
@@ -152,38 +169,56 @@ class LoginController extends Controller
         ]);
     }
 
-
-    /**
-     * Obtem horário da unidade atual do usuário logado (considerando UTC pelo código IBGE)
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
-     */
-    public function horarioUnidade(Request $request)
+    private function checkSwitchUserByMatricula(Request $request, Usuario $currentUser, ?string $matricula): Usuario
     {
-        if (Auth::check()) {
-            $unidade_id = $request->session()->get("unidade_id");
-            if (!empty($unidade_id)) {
-                $unidadeService = new UnidadeService();
-                return response()->json([
-                    "status" => "OK",
-                    "hora" => $unidadeService->hora($unidade_id)
-                ]);
-            } else {
-                return LogError::newError('Usuário sem unidade selecionada', new Exception("horarioUnidade"));
-            }
-        } else {
-            return LogError::newError('Usuário não logado', new Exception("horarioUnidade"));
+        if (empty($matricula)) {
+            return $currentUser;
         }
+
+        $usuarioMatricula = Usuario::where('matricula', $matricula)->first();
+
+        if ($usuarioMatricula && $usuarioMatricula->id !== $currentUser->id) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            Auth::guard('web')->loginUsingId($usuarioMatricula->id, remember: false);
+            $request->session()->regenerate();
+
+            return $usuarioMatricula;
+        }
+
+        return $currentUser;
     }
 
-    /**
-     * Logout
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
-     */
-    public function logout(Request $request, FirebaseAuthService $auth)
+    private function updateUserUnidadeConfig(Request $request, Usuario $usuario, string $unidadeId): void
+    {
+        $request->session()->put('unidade_id', $unidadeId);
+        $config = $usuario->config ?? [];
+        $config['unidade_id'] = $unidadeId;
+        $usuario->config = $config;
+        $usuario->save();
+    }
+
+    public function horarioUnidade(Request $request)
+    {
+        if (!Auth::check()) {
+            return LogError::newError('Usuário não logado', new Exception("horarioUnidade"));
+        }
+
+        $unidadeId = $request->session()->get("unidade_id");
+        
+        if (empty($unidadeId)) {
+            return LogError::newError('Usuário sem unidade selecionada', new Exception("horarioUnidade"));
+        }
+
+        return response()->json([
+            "status" => "OK",
+            "hora" => $this->unidadeService->hora($unidadeId)
+        ]);
+    }
+
+    public function logout(Request $request)
     {
         $usuario = self::loggedUser();
 
@@ -193,6 +228,7 @@ class LoginController extends Controller
         }
 
         $this->forceWebGuard();
+        
         if (Auth::guard('web')->check()) {
             Auth::guard('web')->logout();
         }
@@ -203,188 +239,203 @@ class LoginController extends Controller
         return response()->json(['status' => 'OK']);
     }
 
-
-    /**
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
-     */
-    public function authenticateSession(Request $request)
+    private function findUser(string $type, string $value): ?Usuario
     {
-         $this->forceWebGuard();
-
-        if (Auth::guard('web')->check()) {
-            $entidade = $this->registrarEntidade($request, true);
-            $usuario = $this->registrarUsuario($request, self::loggedUser());
-            if ($usuario === null) {
-                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
-            }
-            return response()->json([
-                "success" => true,
-                "kind" => $request->session()->get("kind"),
-                "usuario" => $usuario,
-                "entidade" => $entidade,
-                "horario_servidor" => CalendarioService::horarioServidor()
-            ]);
-        } else if (!empty(config("petrvs.auto-login"))) {
-            $usuario = Usuario::where('email', config("petrvs.auto-login"))->first();
-            if (isset($usuario) && Auth::guard('web')->loginUsingId($usuario->id)) {
-                $request->session()->regenerate();
-                $request->session()->put("kind", "SESSION");
-                $entidade = $this->registrarEntidade($request);
-                $usuario = $this->registrarUsuario($request, $usuario);
-                if ($usuario === null) {
-                    return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
-                }
-                return response()->json([
-                    "success" => true,
-                    "kind" => $request->session()->get("kind"),
-                    "usuario" => $usuario,
-                    "entidade" => $entidade,
-                    "horario_servidor" => CalendarioService::horarioServidor()
-                ]);
-            } else {
-                return LogError::newError('Usuário não encontrado', new Exception("authenticateSession"));
-            }
-        } else {
-            return LogError::newError('Sessão não encontrada', new Exception("authenticateSession"));
+        if ($type === 'cpf') {
+            return $this->findUserByCpf($value);
         }
+
+        if ($type === 'email') {
+            return $this->findUserByEmail($value);
+        }
+
+        return null;
     }
 
+    private function findUserByCpf(string $cpf): ?Usuario
+    {
+        $usuario = Usuario::where('cpf', $cpf)
+            ->whereIn('situacao_siape', UsuarioSituacaoSiape::ativos())
+            ->first();
 
-    /**
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
-     */
-    public function authenticateUserPassword(Request $request, FirebaseAuthService $auth)
+        if ($usuario) {
+            return $usuario;
+        }
+
+        return Usuario::where('cpf', $cpf)->first();
+    }
+
+    private function findUserByEmail(string $email): ?Usuario
+    {
+        $usuario = Usuario::where('email', $email)->first();
+
+        if (!$usuario || $usuario->situacao_siape !== UsuarioSituacaoSiape::INATIVO->value) {
+            return $usuario;
+        }
+
+        $activeUser = Usuario::where('cpf', $usuario->cpf)
+            ->whereIn('situacao_siape', UsuarioSituacaoSiape::ativos())
+            ->first();
+
+        return $activeUser ?? $usuario;
+    }
+
+    public function authenticateSession(Request $request)
+    {
+        $this->forceWebGuard();
+
+        if (Auth::guard('web')->check()) {
+            return $this->handleSessionLogin($request);
+        }
+
+        $autoLoginEmail = config("petrvs.auto-login");
+        if (!empty($autoLoginEmail)) {
+            return $this->handleAutoLogin($request, $autoLoginEmail);
+        }
+
+        return LogError::newError('Sessão não encontrada', new Exception("authenticateSession"));
+    }
+
+    private function handleSessionLogin(Request $request)
+    {
+        $entidade = $this->registrarEntidade($request, true);
+        $usuario = $this->registrarUsuario($request, self::loggedUser());
+        
+        if (!$usuario) {
+            return $this->sendInactiveUserError();
+        }
+
+        return $this->sendLoginResponse($request, $usuario, $entidade, $request->session()->get("kind"));
+    }
+
+    private function handleAutoLogin(Request $request, string $email)
+    {
+        $usuario = $this->findUser('email', $email);
+
+        if ($usuario && Auth::guard('web')->loginUsingId($usuario->id)) {
+            $request->session()->regenerate();
+            $request->session()->put("kind", self::KIND_SESSION);
+            
+            return $this->handleSuccessfulLogin($request, $usuario, self::KIND_SESSION);
+        }
+
+        return LogError::newError('Usuário não encontrado', new Exception("authenticateSession"));
+    }
+
+    public function authenticateUserPassword(Request $request)
     {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            $request->session()->put("kind", "USERPASSWORD");
-            $entidade = $this->registrarEntidade($request);
-            $usuario = $this->registrarUsuario($request, self::loggedUser());
-            if ($usuario === null) {
-                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
-            }
-            return response()->json([
-                'success' => true,
-                "entidade" => $entidade,
-                "usuario" => $usuario,
-                "horario_servidor" => CalendarioService::horarioServidor()
-            ]);
+
+        if (!Auth::attempt($credentials)) {
+            return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateUserPassword"), ["email" => $credentials["email"]]);
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateUserPassword"), ["email" => $credentials["email"]]);
+
+        $this->ensureActiveUser(Auth::user());
+
+        $request->session()->regenerate();
+        $request->session()->put("kind", self::KIND_USERPASSWORD);
+        
+        return $this->handleSuccessfulLogin($request, self::loggedUser(), self::KIND_USERPASSWORD);
     }
 
-    /**
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
-     */
+    private function ensureActiveUser(Usuario $user): void
+    {
+        if ($user->situacao_siape !== UsuarioSituacaoSiape::INATIVO->value) {
+            return;
+        }
+
+        $activeUser = $this->findUserByCpf($user->cpf);
+        
+        if ($activeUser && $activeUser->id !== $user->id) {
+            Auth::login($activeUser);
+        }
+    }
+
     public function authenticateFirebaseToken(Request $request, FirebaseAuthService $auth)
     {
         $credentials = $request->validate([
             'entidade' => ['required'],
             'token' => ['required']
         ]);
+
         $tokenData = $auth->verifyFirebaseToken($credentials['token']);
-        if (!isset($tokenData['error'])) {
-            $entidade = $this->registrarEntidade($request);
-            $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->first());
-            if ($usuario === null) {
-                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
-            }
-            if (Auth::loginUsingId($usuario->id)) {
-                $usuarioService = new UsuarioService();
-                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_FIREBASE, $usuario, $tokenData["picture"]);
-                $request->session()->regenerate();
-                $request->session()->put("kind", "FIREBASE");
-                return response()->json([
-                    'success' => true,
-                    "entidade" => $entidade,
-                    "usuario" => $usuario,
-                    "horario_servidor" => CalendarioService::horarioServidor()
-                ]);
-            }
+
+        if (isset($tokenData['error'])) {
+            return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateFirebaseToken"), $tokenData);
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateFirebaseToken"), $tokenData);
+
+        $usuario = $this->findUser('email', $tokenData['email']);
+
+        if (!$usuario) {
+            return $this->sendInactiveUserError();
+        }
+
+        if (!Auth::loginUsingId($usuario->id)) {
+             return LogError::newError('Erro ao realizar login.', new Exception("authenticateFirebaseToken"));
+        }
+
+        $this->usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_FIREBASE, $usuario, $tokenData["picture"]);
+        
+        $request->session()->regenerate();
+        $request->session()->put("kind", self::KIND_FIREBASE);
+
+        return $this->handleSuccessfulLogin($request, $usuario, self::KIND_FIREBASE);
     }
 
-    /**
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
-     */
     public function authenticateGoogleToken(Request $request, GoogleService $auth)
     {
         $credentials = $request->validate([
             'entidade' => ['required'],
             'token' => ['required']
         ]);
+
         $tokenData = $auth->verifyToken($credentials['token']);
-        if (!isset($tokenData['error'])) {
-            $entidade = $this->registrarEntidade($request);
-            $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->first());
-            if ($usuario === null) {
-                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
-            }
-            if (Auth::loginUsingId($usuario->id)) {
-                $usuarioService = new UsuarioService();
-                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
-                $request->session()->regenerate();
-                $request->session()->put("kind", "GOOGLE");
-                return response()->json([
-                    'success' => true,
-                    "entidade" => $entidade,
-                    "usuario" => $usuario,
-                    "horario_servidor" => CalendarioService::horarioServidor()
-                ]);
-            }
+
+        if (isset($tokenData['error'])) {
+            return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateGoogleToken"), $tokenData);
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateGoogleToken"), $tokenData);
+
+        $usuario = $this->findUser('email', $tokenData['email']);
+
+        if (!$usuario) {
+            return $this->sendInactiveUserError();
+        }
+
+        if (!Auth::loginUsingId($usuario->id)) {
+            return LogError::newError('Erro ao realizar login.', new Exception("authenticateGoogleToken"));
+        }
+
+        $this->usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
+        
+        $request->session()->regenerate();
+        $request->session()->put("kind", self::KIND_GOOGLE);
+
+        return $this->handleSuccessfulLogin($request, $usuario, self::KIND_GOOGLE);
     }
 
-
-
-    /**
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function authenticateApiSession(Request $request)
     {
-        if (Auth::check()) {
-            $user = self::loggedUser();
-            $entidade = $this->registrarEntidade($request, true);
-            $usuario = $this->registrarUsuario($request, $user);
-            return response()->json([
-                "token" => $user->currentAccessToken()->plainTextToken ?? $request->bearerToken(),
-                "kind" => $request->session()->get("kind"),
-                "entidade" => $entidade,
-                "usuario" => $usuario,
-                "horario_servidor" => CalendarioService::horarioServidor()
-            ]);
+        if (!Auth::check()) {
+            return LogError::newError('Sessão não encontrada', new Exception("authenticateApiSession"));
         }
-        return LogError::newError('Sessão não encontrada', new Exception("authenticateApiSession"));
+
+        $user = self::loggedUser();
+        $entidade = $this->registrarEntidade($request, true);
+        $usuario = $this->registrarUsuario($request, $user);
+
+        return response()->json([
+            "token" => $user->currentAccessToken()->plainTextToken ?? $request->bearerToken(),
+            "kind" => $request->session()->get("kind"),
+            "entidade" => $entidade,
+            "usuario" => $usuario,
+            "horario_servidor" => CalendarioService::horarioServidor()
+        ]);
     }
 
-    /**
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function authenticateApiUserPassword(Request $request, FirebaseAuthService $auth)
+    public function authenticateApiUserPassword(Request $request)
     {
         $credentials = $request->validate([
             'entidade' => ['required'],
@@ -392,28 +443,26 @@ class LoginController extends Controller
             'password' => ['required'],
             'device_name' => ['required'],
         ]);
+
         $usuario = Usuario::where('email', $credentials['email'])->first();
-        if (isset($usuario)) {
-            $request->session()->put("kind", "USERPASSWORD");
-            $user = self::loggedUser();
-            $entidade = $this->registrarEntidade($request);
-            $usuario = $this->registrarUsuario($request, $usuario);
-            return response()->json([
-                'token' => $user->createToken($credentials['device_name'])->plainTextToken,
-                'entidade' => $entidade,
-                'usuario' => $usuario,
-                "horario_servidor" => CalendarioService::horarioServidor()
-            ]);
+
+        if (!$usuario || !Hash::check($credentials['password'], $usuario->password)) {
+            return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateApiUserPassword"), ["email" => $credentials["email"]]);
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateApiSession"), ["email" => $credentials["email"]]);
+
+        $usuario = $this->findUser('email', $credentials['email']);
+        
+        $entidade = $this->registrarEntidade($request);
+        $usuario = $this->registrarUsuario($request, $usuario);
+
+        return response()->json([
+            'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
+            'entidade' => $entidade,
+            'usuario' => $usuario,
+            "horario_servidor" => CalendarioService::horarioServidor()
+        ]);
     }
 
-    /**
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function authenticateApiFirebaseToken(Request $request, FirebaseAuthService $auth)
     {
         $credentials = $request->validate([
@@ -421,32 +470,33 @@ class LoginController extends Controller
             'token' => ['required'],
             'device_name' => ['required'],
         ]);
+
         $tokenData = $auth->verifyFirebaseToken($credentials['token']);
-        if (!isset($tokenData['error'])) {
-            $usuario = Usuario::where('email', $tokenData['email'])->first();
-            if (isset($usuario)) { // && Hash::check($request->password, $user->password)
-                $usuarioService = new UsuarioService();
-                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_FIREBASE, $usuario, $tokenData["picture"]);
-                $request->session()->put("kind", "FIREBASE");
-                $entidade = $this->registrarEntidade($request);
-                $usuario = $this->registrarUsuario($request, $usuario);
-                return response()->json([
-                    'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
-                    'entidade' => $entidade,
-                    'usuario' => $usuario,
-                    "horario_servidor" => CalendarioService::horarioServidor()
-                ]);
-            }
+
+        if (isset($tokenData['error'])) {
+            return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateApiFirebaseToken"), $tokenData);
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateApiFirebaseToken"), $tokenData);
+
+        $usuario = $this->findUser('email', $tokenData['email']);
+
+        if (!$usuario) {
+            return LogError::newError('Usuário não encontrado.', new Exception("authenticateApiFirebaseToken"));
+        }
+
+        $this->usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_FIREBASE, $usuario, $tokenData["picture"]);
+        
+        $request->session()->put("kind", self::KIND_FIREBASE);
+        $entidade = $this->registrarEntidade($request);
+        $usuario = $this->registrarUsuario($request, $usuario);
+
+        return response()->json([
+            'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
+            'entidade' => $entidade,
+            'usuario' => $usuario,
+            "horario_servidor" => CalendarioService::horarioServidor()
+        ]);
     }
 
-    /**
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function authenticateApiGoogleToken(Request $request, GoogleService $auth)
     {
         $credentials = $request->validate([
@@ -454,48 +504,40 @@ class LoginController extends Controller
             'token' => ['required'],
             'device_name' => ['required'],
         ]);
+
         $tokenData = $auth->verifyToken($credentials['token']);
-        if (!isset($tokenData['error'])) {
-            $usuario = Usuario::where('email', $tokenData['email'])->first();
-            if (isset($usuario)) { // && Hash::check($request->password, $user->password)
-                $usuarioService = new UsuarioService();
-                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
-                $request->session()->regenerate();
-                $request->session()->put("kind", "GOOGLE");
-                $entidade = $this->registrarEntidade($request);
-                $usuario = $this->registrarUsuario($request, $usuario);
-                return response()->json([
-                    'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
-                    'entidade' => $entidade,
-                    'usuario' => $usuario,
-                    "horario_servidor" => CalendarioService::horarioServidor()
-                ]);
-            }
+
+        if (isset($tokenData['error'])) {
+             return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateApiGoogleToken"), $tokenData);
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.', new Exception("authenticateApiGoogleToken"), $tokenData);
+
+        $usuario = $this->findUser('email', $tokenData['email']);
+
+        if (!$usuario) {
+             return LogError::newError('Usuário não encontrado.', new Exception("authenticateApiGoogleToken"));
+        }
+
+        $this->usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
+        
+        $request->session()->regenerate();
+        $request->session()->put("kind", self::KIND_GOOGLE);
+        
+        $entidade = $this->registrarEntidade($request);
+        $usuario = $this->registrarUsuario($request, $usuario);
+
+        return response()->json([
+            'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
+            'entidade' => $entidade,
+            'usuario' => $usuario,
+            "horario_servidor" => CalendarioService::horarioServidor()
+        ]);
     }
 
-
-
-
-
-    /**
-     * Verify an firebase token
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function validateApiFirebaseToken(Request $request, FirebaseAuthService $auth, $token)
     {
         return $auth->verifyFirebaseToken($token);
     }
 
-    /**
-     * Verify an Sactum token
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
-     */
     public function validateApiToken(Request $request)
     {
         return response()->json([
@@ -520,7 +562,7 @@ class LoginController extends Controller
         return Socialite::driver('azure');
     }
 
-    function getConfigAzure($url_dinamica_callback = null): \SocialiteProviders\Manager\Config
+    private function getConfigAzure($url_dinamica_callback = null): \SocialiteProviders\Manager\Config
     {
         return new \SocialiteProviders\Manager\Config(
             config("services.azure.client_id"),
@@ -533,9 +575,10 @@ class LoginController extends Controller
     public function signInAzureRedirect(Request $request)
     {
         $entidade = $this->registrarEntidade($request);
-        $url_dinamica_callback = config("app.url") . "/api/login-azure-callback/" . $entidade->sigla;
-        $azure_select_tenancy = $this->getConfigAzure($url_dinamica_callback);
-        return $this->azureProvider($config = $azure_select_tenancy)
+        $urlCallback = config("app.url") . "/api/login-azure-callback/" . $entidade->sigla;
+        $config = $this->getConfigAzure($urlCallback);
+        
+        return $this->azureProvider($config)
             ->scopes(['openid', 'email', 'profile'])
             ->redirect();
     }
@@ -543,35 +586,33 @@ class LoginController extends Controller
     public function signInAzureCallback(Request $request)
     {
         $entidade = $this->registrarEntidade($request);
-        $url_dinamica_callback = config("app.url") . "/api/login-azure-callback/" . $entidade->sigla;
-        $azure_select_tenancy = $this->getConfigAzure($url_dinamica_callback);
-        $user = $this->azureProvider($config = $azure_select_tenancy)->user();
-        if (!empty($user)) {
-            $token = $user->token;
-            $email = $user->email;
-            $email = explode("#", $email);
-            $email = $email[0];
-            //$email = str_replace("_", "@", $email);
-            $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->first());
-            if ($usuario === null) {
-                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
-            }
-            if (($usuario)) {
-                Auth::loginUsingId($usuario->id);
-                $request->session()->regenerate();
-                $request->session()->put("kind", "AZURE");
-                return view("azure");
-            } else {
-                return LogError::newError('As credenciais fornecidas são inválidas. Email: ' . $email, new Exception("signInAzureCallback"));
-            }
-        } else {
-            return $this->azureProvider($config = $azure_select_tenancy)
+        $urlCallback = config("app.url") . "/api/login-azure-callback/" . $entidade->sigla;
+        $config = $this->getConfigAzure($urlCallback);
+        
+        $user = $this->azureProvider($config)->user();
+
+        if (empty($user)) {
+            return $this->azureProvider($config)
                 ->scopes(['openid', 'email', 'profile'])
                 ->redirect();
         }
-    }
 
-    /* LoginUnico BackEnd */
+        $email = explode("#", $user->email)[0];
+        $usuario = $this->findUser('email', $email);
+
+        if (!$usuario) {
+            return $this->sendInactiveUserError();
+        }
+
+        Auth::loginUsingId($usuario->id);
+        $request->session()->regenerate();
+        $request->session()->put("kind", self::KIND_AZURE);
+        
+        // Ensure entity and user registration in session is up to date
+        $this->handleSuccessfulLogin($request, $usuario, self::KIND_AZURE, $entidade);
+
+        return view("azure");
+    }
 
     public function loginGovBrPopup()
     {
@@ -581,7 +622,6 @@ class LoginController extends Controller
     public function govBrProvider($config = null)
     {
         if ($config) {
-            // O método setConfig existe mesmo VSCode dizendo que não.
             /**
              * @disregard P1013 Undefined method
              * @phpstan-ignore-next-line
@@ -591,7 +631,7 @@ class LoginController extends Controller
         return Socialite::driver('govbr');
     }
 
-    function getConfigGovBr($url_dinamica_callback, $dados): \SocialiteProviders\Manager\Config
+    private function getConfigGovBr($url_dinamica_callback, $dados): \SocialiteProviders\Manager\Config
     {
         return new \SocialiteProviders\Manager\Config(
             config("services.govbr.client_id"),
@@ -612,80 +652,73 @@ class LoginController extends Controller
     {
         try {
             $entidade = $this->registrarEntidade($request);
-
-            $url_dinamica_callback = config("services.govbr.redirect") . $entidade->sigla;
+            $urlCallback = config("services.govbr.redirect") . $entidade->sigla;
             $dados = [
                 "code_challenge" => config("services.govbr.code_challenge"),
                 "code_challenge_method" => config("services.govbr.code_challenge_method"),
             ];
 
-            $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback, $dados);
+            $config = $this->getConfigGovBr($urlCallback, $dados);
 
-            return $this->govBrProvider($config = $login_govbr_select_tenancy)
+            return $this->govBrProvider($config)
                 ->scopes(['openid', 'email', 'profile'])
                 ->redirect();
-        } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error("Erro ao redirecionar para o GovBr", [
-                'erro' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
 
-        } catch (\Throwable $e) {
-            Log::error("Erro ao redirecionar para o GovBr", [
-                'erro' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-
-            return redirect()->route('erro.500');
+        } catch (Throwable $e) {
+            return $this->handleLoginError($e, "Erro ao redirecionar para o GovBr");
         }
     }
-
 
     public function signInGovBrCallback(Request $request)
     {
         try {
             $entidade = $this->registrarEntidade($request);
-            $url_dinamica_callback = config("services.govbr.redirect") . $entidade->sigla;
+            $urlCallback = config("services.govbr.redirect") . $entidade->sigla;
             $dados = [
                 "code" => $request->code,
                 "state" => $request->state,
                 "code_verifier" => config("services.govbr.code_verifier")
             ];
-            $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback, $dados);
+            
+            $config = $this->getConfigGovBr($urlCallback, $dados);
             $this->stimulusRouteGovBr();
-            $user = $this->govBrProvider($config = $login_govbr_select_tenancy)->stateless()->user();
-            if (!empty($user)) {
-                $token = $user->token;
-                $cpf = $user->cpf;
-                $email = $user->email;
-                $email = explode("#", $email);
-                $email = $email[0];
-                $email = str_replace("_", "@", $email);
-                $usuario = $this->registrarUsuario($request, Usuario::where('cpf', $cpf)->first());
-            if ($usuario === null) {
-                return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
-            }
-            if (($usuario)) {
-                Auth::loginUsingId($usuario->id);
-                $request->session()->regenerate();
-                $request->session()->put("kind", "GOVBR");
-                return view("govbr");
-            } else {
-                return LogError::newError('As credenciais fornecidas são inválidas. CPF: ' . $cpf, new Exception("signInGovBrCallback"));
-            }
-            } else {
-                return $this->govBrProvider($config = $login_govbr_select_tenancy)
+            
+            $user = $this->govBrProvider($config)->stateless()->user();
+
+            if (empty($user)) {
+                return $this->govBrProvider($config)
                     ->scopes(['openid', 'email', 'profile'])
                     ->redirect();
             }
-        } catch (\Throwable $e) {
-            Log::error("Erro em callback do GovBr", [
-                'erro' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
 
-            return redirect()->route('erro.500');
+            $cpf = $user->cpf;
+            $usuario = $this->findUser('cpf', $cpf);
+
+            if (!$usuario) {
+                return $this->sendInactiveUserError();
+            }
+
+            Auth::loginUsingId($usuario->id);
+            $request->session()->regenerate();
+            $request->session()->put("kind", self::KIND_GOVBR);
+            
+            // Ensure entity and user registration in session is up to date
+            $this->handleSuccessfulLogin($request, $usuario, self::KIND_GOVBR, $entidade);
+            
+            return view("govbr");
+
+        } catch (Throwable $e) {
+            return $this->handleLoginError($e, "Erro em callback do GovBr");
         }
+    }
+
+    private function handleLoginError(Throwable $e, string $message)
+    {
+        Log::error($message, [
+            'erro' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+        return redirect()->route('erro.500');
     }
 
     private function stimulusRouteGovBr()
@@ -695,5 +728,33 @@ class LoginController extends Controller
             return LogError::newWarn('Falha de conexão ao GovBR.');
         }
         return $response;
+    }
+
+    private function sendInactiveUserError()
+    {
+        return response()->json(['error' => 'Usuário inativo no SIAPE. Acesso negado.'], 401);
+    }
+
+    private function sendLoginResponse(Request $request, Usuario $usuario, ?Entidade $entidade, ?string $kind)
+    {
+        return response()->json([
+            "success" => true,
+            "kind" => $kind,
+            "usuario" => $usuario,
+            "entidade" => $entidade,
+            "horario_servidor" => CalendarioService::horarioServidor()
+        ]);
+    }
+
+    private function handleSuccessfulLogin(Request $request, Usuario $usuario, string $kind, ?Entidade $entidade = null)
+    {
+        $entidade = $entidade ?? $this->registrarEntidade($request);
+        $usuario = $this->registrarUsuario($request, $usuario);
+        
+        if (!$usuario) {
+            return $this->sendInactiveUserError();
+        }
+
+        return $this->sendLoginResponse($request, $usuario, $entidade, $kind);
     }
 }
