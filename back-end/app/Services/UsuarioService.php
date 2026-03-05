@@ -483,7 +483,9 @@ class UsuarioService extends ServiceBase
     public function proxyUpdate($data, $unidade)
     {
         $data["with"] = [];
-        $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
+        if (isset($data['cpf'])) {
+            $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
+        }
         unset($data['pedagio']);
         $this->buffer = ["integrantes" => UtilService::getNested($data, "integrantes")];
         $this->validarPerfil($data);
