@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use App\Exceptions\Contracts\IBaseException;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -20,9 +21,12 @@ class CadeiaValorProcessoController extends ControllerBase {
                 'success' => true,
                 'data' => $this->service->ordenar($data['processos'])
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
-            Log::error(json_encode($dataError));
+            Log::error($dataError);
             return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
         }
     }

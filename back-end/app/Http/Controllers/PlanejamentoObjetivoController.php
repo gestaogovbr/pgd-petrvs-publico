@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use App\Exceptions\Contracts\IBaseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -22,7 +23,10 @@ class PlanejamentoObjetivoController extends ControllerBase {
                 'success' => true,
                 'data' => $this->service->ordenar($data['objetivos'])
             ]);
-        } catch (Throwable $e) {
+        }  catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
             $dataError = throwableToArrayLog($e);
             Log::error($dataError);
             return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
