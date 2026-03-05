@@ -17,4 +17,9 @@ class TipoModalidadeRepository
     {
         return $this->readRepository->getDefaultId();
     }
+
+    public function findByName(string $name): ?object
+    {
+        return $this->readRepository->findByName($name);
+    }
 }

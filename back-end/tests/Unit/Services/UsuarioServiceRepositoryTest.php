@@ -362,6 +362,12 @@ class UsuarioServiceRepositoryTest extends TestCase
         
         // Mock validateStore dependencies
         $this->usuarioRepository->shouldReceive('findByCpfOrEmail')->andReturn(null);
+
+        // Mock TipoModalidadeRepository for default value
+        $mockTipoModalidade = (object) ['id' => 'modalidade-default-id'];
+        $this->tipoModalidadeRepository->shouldReceive('findByName')
+            ->with('Sem dados do SIAPE')
+            ->andReturn($mockTipoModalidade);
         
         // Mock validations to avoid DB calls
         $this->service->shouldReceive('validarPerfil')->andReturn(null);

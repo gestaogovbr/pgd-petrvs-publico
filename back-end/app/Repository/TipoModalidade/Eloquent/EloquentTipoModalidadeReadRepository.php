@@ -19,4 +19,9 @@ class EloquentTipoModalidadeReadRepository extends AbstractEloquentReadRepositor
     {
         return $this->model->whereNull('deleted_at')->value('id');
     }
+
+    public function findByName(string $name): ?object
+    {
+        return $this->model->where('nome', $name)->first();
+    }
 }
