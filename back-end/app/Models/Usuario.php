@@ -486,7 +486,7 @@ class Usuario extends Authenticatable implements AuditableContract
     // Mutattors e Casts
     public function getUrlFotoAttribute($value)
     {
-        $usuarioService = new UsuarioService();
+        $usuarioService = app(UsuarioService::class);
         $url = "/assets/images/profile.png";
         try {
             $url = empty($this->foto_perfil) ? "/assets/images/profile.png" : $usuarioService->downloadUrl($this->foto_perfil);
