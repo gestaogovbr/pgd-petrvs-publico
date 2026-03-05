@@ -367,6 +367,11 @@ class UsuarioServiceRepositoryTest extends TestCase
         $this->service->shouldReceive('validarPerfil')->andReturn(null);
         $this->service->shouldReceive('validarColaborador')->andReturn(null);
         
+        // Mock default TipoModalidade lookup
+        $this->tipoModalidadeRepository->shouldReceive('findByNome')
+            ->with('Sem dados do SIAPE')
+            ->andReturn((object) ['id' => 'mod-default-id']);
+
         // Mock create
         $createdUser = Mockery::mock(Usuario::class);
         $createdUser->shouldReceive('getAttribute')->with('id')->andReturn('new-id');
@@ -498,9 +503,20 @@ class UsuarioServiceRepositoryTest extends TestCase
         // Mock IntegracaoService expectations
         $this->integracaoService->shouldReceive('validarModalidadePgd')->with('mod-1')->andReturn('mod-1-id');
         
-        // Mock TipoModalidadeRepository (caso precise de default, mas aqui vai achar)
-        // Se validarModalidadePgd retornar algo, não chama getDefaultId
-
+        // Mock TipoModalidadeRepository
+        // A lógica do service agora chama o findByNome se a modalidade_pgd não for encontrada ou se for nula, 
+        // mas no caso de 'validarModalidadePgd' retornar um ID, o fluxo de 'proxyStore' (onde é chamado o findByNome)
+        // pode não ser acionado dependendo de como gerarUsuario é implementado.
+        // Vamos olhar o gerarUsuario no service.
+        
+        // Se gerarUsuario chama create -> proxyStore -> verifica ACTION_INSERT -> busca 'Sem dados do SIAPE'
+        // ENTRETANTO, gerarUsuario parece preparar os dados antes.
+        
+        // Vamos garantir que se for chamado, retorne algo.
+        $this->tipoModalidadeRepository->shouldReceive('findByNome')
+             ->with('Sem dados do SIAPE')
+             ->andReturn((object) ['id' => 'mod-default-id']);
+        
         $novoUsuarioMock = Mockery::mock(Usuario::class);
         
         $this->usuarioRepository->shouldReceive('newUsuario')
