@@ -8,6 +8,9 @@ use App\Models\TipoModalidade;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\TipoModalidade\Contracts\TipoModalidadeReadRepositoryContract;
 
+/**
+ * @extends AbstractEloquentReadRepository<TipoModalidade>
+ */
 class EloquentTipoModalidadeReadRepository extends AbstractEloquentReadRepository implements TipoModalidadeReadRepositoryContract
 {
     public function __construct(TipoModalidade $model)
@@ -22,6 +25,8 @@ class EloquentTipoModalidadeReadRepository extends AbstractEloquentReadRepositor
 
     public function findOneBy(array $criteria): ?TipoModalidade
     {
-        return $this->model->where($criteria)->first();
+        /** @var TipoModalidade|null $result */
+        $result = $this->model->where($criteria)->first();
+        return $result;
     }
 }
