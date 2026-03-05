@@ -31,7 +31,7 @@ export class CadeiaValorListProcessosEntregasComponent extends PageListBase<Cade
     });
     this.OPTION_INFORMACOES.onClick = (processo: CadeiaValorProcesso) => this.go.navigate({ route: ['gestao', 'cadeia-valor', 'processo', processo.id, 'consult'] }, { modal: true });
     this.addOption(this.OPTION_INFORMACOES);
-    this.rowsLimit = 1000;
+    this.rowsLimit = 10000;
   }
 
   public filterClear(filter: FormGroup) {
@@ -41,7 +41,7 @@ export class CadeiaValorListProcessosEntregasComponent extends PageListBase<Cade
   public filterWhere = (filter: FormGroup) => {
     let form: any = filter.value;
     let result: any[] = [];
-    if (form.planejamento_id?.length) {
+    if (form.cadeia_valor_id?.length) {
       result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
     }
     if (form.nome?.length) {
@@ -51,9 +51,15 @@ export class CadeiaValorListProcessosEntregasComponent extends PageListBase<Cade
   }
 
   public sortProcessos(processos: CadeiaValorProcesso[]): CadeiaValorProcesso[] {
+    const ids = new Set(processos.map(o => o.id));
     const buildTree = (paiId: string | null = null, nivel: number = 0, prefixo: string = ""): CadeiaValorProcesso[] => {
       const children = processos
-        .filter(p => (paiId === null ? !p.processo_pai_id : p.processo_pai_id === paiId))
+        .filter(p => {
+          if (paiId === null) {
+            return !p.processo_pai_id || !ids.has(p.processo_pai_id);
+          }
+          return p.processo_pai_id === paiId;
+        })
         .sort((a, b) => {
           const seqA = a.sequencia || 0;
           const seqB = b.sequencia || 0;

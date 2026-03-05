@@ -67,21 +67,72 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
     return result;
   }
 
-  public async loadData(entity: PlanejamentoObjetivo, form: FormGroup) {
-    this.objetivos = (this.metadata?.objetivos as PlanejamentoObjetivo[]).filter(x => !x.objetivo_pai_id).map(x => Object.assign({}, {
-      key: x.id,
-      value: x.nome,
-      data: x
-    }));
-
+  public loadData(entity: PlanejamentoObjetivo, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
-    await this.eixoTematico?.loadSearch(entity.eixo_tematico || entity.eixo_tematico_id);
     this.title = entity._status == 'ADD' ? 'Inclusão de Objetivo' : 'Editando objetivo...';
     this.planejamento = this.metadata?.planejamento as Planejamento;
     if(this.metadata?.planejamento_superior) this.planejamento.planejamento_superior = this.metadata.planejamento_superior as Planejamento;
     this.form?.controls.planejamento_superior_nome.setValue(this.planejamento?.planejamento_superior?.nome || '');
     this.objetivos_superiores = this.planejamento?.planejamento_superior?.objetivos?.map(x => Object.assign({}, { key: x.id, value: x.nome, data: x })) || [];
+    
+    // Ordena hierarquicamente os objetivos para o dropdown
+    const objetivosRaw = (this.metadata?.objetivos as PlanejamentoObjetivo[]) || [];
+    let objetivosOrdenados = this.sortObjetivos(objetivosRaw);
+    
+    // Remove o próprio item e seus descendentes da lista de seleção para evitar ciclos (se for edição)
+    if (entity.id) {
+      const index = objetivosOrdenados.findIndex(x => x.id === entity.id);
+      if (index >= 0) {
+        const nivelRemover = (objetivosOrdenados[index] as any)._nivel;
+        let count = 1;
+        while (index + count < objetivosOrdenados.length) {
+          const nextNivel = (objetivosOrdenados[index + count] as any)._nivel;
+          if (nextNivel > nivelRemover) {
+            count++;
+          } else {
+            break;
+          }
+        }
+        objetivosOrdenados.splice(index, count);
+      }
+    }
+
+    this.objetivos = objetivosOrdenados.map(x => {
+      const nivel = (x as any)._nivel || 0;
+      // Adiciona indentação visual baseada no nível
+      const prefixo = nivel > 0 ? '\u00A0\u00A0'.repeat(nivel) + '↳ ' : '';
+      return {
+        key: x.id,
+        value: prefixo + x.nome,
+        data: x
+      };
+    });
+
+    // Carrega Eixo Temático
+    (async () => {
+        await this.eixoTematico?.loadSearch(entity.eixo_tematico || entity.eixo_tematico_id);
+    })();
+  }
+
+  public sortObjetivos(objetivos: PlanejamentoObjetivo[]): PlanejamentoObjetivo[] {
+    const ids = new Set(objetivos.map(o => o.id));
+    const buildTree = (paiId: string | null = null, nivel: number = 0): PlanejamentoObjetivo[] => {
+      const children = objetivos
+        .filter(p => {
+          if (paiId === null) {
+            return !p.objetivo_pai_id || !ids.has(p.objetivo_pai_id);
+          }
+          return p.objetivo_pai_id === paiId;
+        })
+        .sort((a, b) => (a.sequencia || 0) - (b.sequencia || 0));
+
+      return children.flatMap(p => {
+        (p as any)._nivel = nivel;
+        return [p, ...buildTree(p.id, nivel + 1)];
+      });
+    };
+    return buildTree(null);
   }
 
   public async initializeData(form: FormGroup) {

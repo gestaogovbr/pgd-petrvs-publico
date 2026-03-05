@@ -43,7 +43,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
   public get toolbarButtons(): ToolbarButton[] {
     return [
       { 
-        label: "Adicionar", 
+        label: "Adicionar Objetivo", 
         icon: "bi bi-plus", 
         onClick: () => this.addObjetivo(), 
         color: "btn-primary" 
@@ -179,7 +179,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     if (this.auth.hasPermissionTo('MOD_PLAN_INST_EDT') && !this.disabled) {
       result.push({ hint: "Alterar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: (objetivo: PlanejamentoObjetivo) => { this.editObjetivo(objetivo); } });
     }
-    result.push({ hint: "Entregas", icon: "bi bi-file-earmark-bar-graph", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'objetivos', objetivo.id]}, { modal: true })});
+    result.push({ hint: "Entregas", icon: "bi bi-file-earmark-bar-graph", color: "btn-outline-success", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'objetivos', objetivo.id]}, { modal: true })});
     return result;
   }
 

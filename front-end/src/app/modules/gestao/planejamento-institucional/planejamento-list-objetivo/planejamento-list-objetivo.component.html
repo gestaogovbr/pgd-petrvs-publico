@@ -1,6 +1,9 @@
+<!-- Add Button (Standard Toolbar) -->
+<toolbar [buttons]="toolbarButtons" *ngIf="!disabled"></toolbar>
+
+
 <div class="d-flex mb-2 fw-bold border-bottom pb-2 align-items-center">
   <div class="flex-fill ps-2">Nome</div>
-  <div class="px-2 flex-shrink-0" style="width: 200px;">Eixo Temático</div>
   <div class="px-2 flex-shrink-0" style="width: 300px;">Fundamentação</div>
   <div class="text-end pe-2 flex-shrink-0" style="width: 150px;">Ações</div>
 </div>
@@ -38,17 +41,15 @@
             </div>
             
             <!-- Sequence and Name -->
-            <span class="text-wrap flex-fill" style="min-width: 0;" [title]="item.nome">
-                <strong>{{ (parentSeq ? parentSeq + '.' : '') + (i + 1) }}</strong> - {{ item.nome }}
-            </span>
-        </div>
-        
-        <div class="px-2 flex-shrink-0" style="width: 200px;">
-            <ng-container *ngIf="item.eixo_tematico || (item.eixo_tematico_id && getEixo(item.eixo_tematico_id)) as eixo">
-                <badge [icon]="eixo.icone || 'bi bi-gear'" 
-                       [color]="eixo.cor || 'primary'" 
-                       [label]="eixo.nome"></badge>
-            </ng-container>
+            <div class="d-flex flex-column flex-fill" style="min-width: 0;">
+                <ng-container *ngIf="((level || 0) === 0) && (item.eixo_tematico || (item.eixo_tematico_id && getEixo(item.eixo_tematico_id))) as eixo">
+                    <badge [icon]="eixo.icone || 'bi bi-gear'" 
+                           [color]="eixo.cor || 'primary'" 
+                           [label]="eixo.nome"></badge>
+                </ng-container>
+                <span [title]="item.nome"><strong>{{ (parentSeq ? parentSeq + '.' : '') + (i + 1) }}</strong> - {{ item.nome }}</span>
+                
+            </div>
         </div>
         
         <div class="px-2 text-truncate flex-shrink-0" style="width: 300px;" [title]="item.fundamentacao">
@@ -98,5 +99,3 @@
   </div>
 </ng-template>
 
-<!-- Add Button (Standard Toolbar) -->
-<toolbar [buttons]="toolbarButtons" *ngIf="!disabled"></toolbar>

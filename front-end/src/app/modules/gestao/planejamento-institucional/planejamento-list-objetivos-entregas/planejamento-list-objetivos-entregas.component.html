@@ -16,6 +16,9 @@
                 <div class="d-flex align-items-start">
                     <span [style.padding-left.px]="getNivel(row) * 20"></span>
                     <div class="">
+                        <badge [icon]="row.eixo_tematico.icone || 'bi bi-gear'" 
+                               [color]="row.eixo_tematico.cor || 'primary'" 
+                               [label]="row.eixo_tematico.nome" *ngIf="row.objetivo_pai_id === null"></badge>
                         <b class="d-block">{{getNome(row)}}</b>
                         <small><cite>{{row.fundamentacao}}</cite></small>
                     </div>

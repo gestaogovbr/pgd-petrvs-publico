@@ -22,7 +22,7 @@ export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<Pla
   
   constructor(public injector: Injector) {
     super(injector, PlanejamentoObjetivo, PlanejamentoObjetivoDaoService);
-    this.join = ['objetivos']
+    this.join = ['eixo_tematico:id,nome,cor,icone']
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.title = this.lex.translate("Objetivos") + ' ' + this.lex.translate("do Planejamento Institucional");
@@ -32,13 +32,19 @@ export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<Pla
     });
     this.OPTION_INFORMACOES.onClick = (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult'] }, { modal: true });
     this.addOption(this.OPTION_INFORMACOES);
-    this.rowsLimit = 1000;
+    this.rowsLimit = 10000;
   }
 
   public sortObjetivos(objetivos: PlanejamentoObjetivo[]): PlanejamentoObjetivo[] {
+    const ids = new Set(objetivos.map(o => o.id));
     const buildTree = (paiId: string | null = null): PlanejamentoObjetivo[] => {
       const children = objetivos
-        .filter(p => (paiId === null ? !p.objetivo_pai_id : p.objetivo_pai_id === paiId))
+        .filter(p => {
+          if (paiId === null) {
+            return !p.objetivo_pai_id || !ids.has(p.objetivo_pai_id);
+          }
+          return p.objetivo_pai_id === paiId;
+        })
         .sort((a, b) => (a.sequencia || 0) - (b.sequencia || 0));
 
       return children.flatMap(p => [p, ...buildTree(p.id)]);
