@@ -9,8 +9,11 @@
 
 <div cdkDropListGroup>
   <div *ngFor="let group of groupedRoots" class="mb-3">
-      <div class="d-flex align-items-center bg-dark bg-gradient p-2 border-bottom">
-          <badge *ngIf="group.eixo" [icon]="group.eixo.icone || 'bi bi-gear'" [color]="group.eixo.cor || 'primary'" [label]="group.eixo.nome"></badge>
+      <div class="d-flex justify-content-start bg-dark bg-gradient border-bottom">
+          <div *ngIf="group.eixo" [ngStyle]="{'background-color': group.eixo.cor || '#e0e0e0', 'color': '#fff'}" class="p-2">
+              <i [class]="group.eixo.icone || 'bi bi-gear'"></i>
+              <span class="ms-2 text-black">{{group.eixo.nome}}</span>
+          </div>
           <span *ngIf="!group.eixo" class="badge bg-secondary">Sem Eixo Temático</span>
       </div>
       <ng-container *ngTemplateOutlet="recursiveList; context:{ list: group.objetivos, parentId: 'axis-' + (group.id || 'null') }"></ng-container>
