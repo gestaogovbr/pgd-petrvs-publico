@@ -5,10 +5,13 @@ on:
     branches:
       - dataprev_dsv
       - dataprev_hmg
+      - dataprev_producao
   pull_request:
     branches:
       - dataprev_dsv
       - dataprev_hmg
+      - dataprev_producaoacu
+      - dataprev_producao
   schedule:
     - cron: '0 3 * * 1'
 
@@ -62,6 +65,7 @@ jobs:
         run: npm audit --omit=dev --audit-level=high
 
   codeql_sast:
+    if: github.ref_name == 'dataprev_producao'
     name: SAST (CodeQL)
     runs-on: ubuntu-latest
     permissions:
@@ -79,6 +83,7 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
+          queries: security-extended
           languages: ${{ matrix.language }}
 
       - name: Autobuild
