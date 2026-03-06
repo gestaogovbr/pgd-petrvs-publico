@@ -38,6 +38,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
   public eixos: EixoTematico[] = [];
   
   public treeNodes: PlanejamentoObjetivo[] = [];
+  public groupedRoots: { id: string, eixo?: EixoTematico, objetivos: PlanejamentoObjetivo[] }[] = [];
   public expandedIds: Set<string> = new Set<string>();
 
   public get toolbarButtons(): ToolbarButton[] {
@@ -108,6 +109,33 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
       items.forEach(i => i.objetivos?.sort(sortBySequencia));
 
       this.treeNodes = roots;
+
+      // Group by Eixo
+      const groups = new Map<string, PlanejamentoObjetivo[]>();
+      const nullKey = "null";
+      
+      roots.forEach(root => {
+          const key = root.eixo_tematico_id || nullKey;
+          if (!groups.has(key)) groups.set(key, []);
+          groups.get(key)!.push(root);
+      });
+      
+      this.groupedRoots = Array.from(groups.entries()).map(([key, value]) => {
+          const eixo = key === nullKey ? undefined : this.eixos.find(x => x.id === key);
+          return {
+              id: key,
+              eixo: eixo,
+              objetivos: value
+          };
+      });
+      
+      // Sort groups: Eixos first (by name), then "Sem Eixo"
+      this.groupedRoots.sort((a, b) => {
+          if (a.id === nullKey) return 1;
+          if (b.id === nullKey) return -1;
+          return (a.eixo?.nome || "").localeCompare(b.eixo?.nome || "");
+      });
+
       this.cdRef.detectChanges();
   }
 
@@ -123,7 +151,17 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
       );
       const movedItem = event.container.data[event.currentIndex];
       const newParentId = event.container.id; 
-      movedItem.objetivo_pai_id = newParentId === 'root-list' ? null : newParentId;
+      
+      if (newParentId.startsWith("axis-")) {
+        movedItem.objetivo_pai_id = null;
+        const axisId = newParentId.replace("axis-", "");
+        movedItem.eixo_tematico_id = axisId === "null" ? null : axisId;
+      } else {
+        movedItem.objetivo_pai_id = newParentId;
+        // Inherit axis from parent
+        const parent = this.items.find(x => x.id === newParentId);
+        if(parent) movedItem.eixo_tematico_id = parent.eixo_tematico_id;
+      }
     }
     
     this.updateSequences(event.previousContainer.data);
@@ -300,6 +338,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
   public carregaEixos(){
     this.eixoDao?.query().getAll().then(eixos => {
       this.eixos = eixos;
+      this.buildTree();
     });
   }
 }

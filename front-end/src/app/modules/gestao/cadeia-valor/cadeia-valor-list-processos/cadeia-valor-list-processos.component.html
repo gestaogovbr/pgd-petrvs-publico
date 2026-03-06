@@ -34,7 +34,7 @@
           </div>
           
           <div *ngIf="editingId === processo.id" class="flex-fill me-2">
-            <input type="text" class="form-control form-control-sm" [(ngModel)]="processo.nome" placeholder="Nome do processo">
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="processo.nome" placeholder="Nome do processo" (keyup.enter)="saveProcesso(processo)">
           </div>
           
           <div class="btn-group btn-group-sm ms-2" *ngIf="editingId !== processo.id">

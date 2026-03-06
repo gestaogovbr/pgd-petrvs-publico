@@ -4,12 +4,17 @@
 
 <div class="d-flex mb-2 fw-bold border-bottom pb-2 align-items-center">
   <div class="flex-fill ps-2">Nome</div>
-  <div class="px-2 flex-shrink-0" style="width: 300px;">Fundamentação</div>
   <div class="text-end pe-2 flex-shrink-0" style="width: 150px;">Ações</div>
 </div>
 
 <div cdkDropListGroup>
-  <ng-container *ngTemplateOutlet="recursiveList; context:{ list: treeNodes, parentId: null }"></ng-container>
+  <div *ngFor="let group of groupedRoots" class="mb-3">
+      <div class="d-flex align-items-center bg-dark bg-gradient p-2 border-bottom">
+          <badge *ngIf="group.eixo" [icon]="group.eixo.icone || 'bi bi-gear'" [color]="group.eixo.cor || 'primary'" [label]="group.eixo.nome"></badge>
+          <span *ngIf="!group.eixo" class="badge bg-secondary">Sem Eixo Temático</span>
+      </div>
+      <ng-container *ngTemplateOutlet="recursiveList; context:{ list: group.objetivos, parentId: 'axis-' + (group.id || 'null') }"></ng-container>
+  </div>
 </div>
 
 <ng-template #recursiveList let-list="list" let-parentId="parentId" let-level="level" let-parentSeq="parentSeq">
@@ -42,18 +47,10 @@
             
             <!-- Sequence and Name -->
             <div class="d-flex flex-column flex-fill" style="min-width: 0;">
-                <ng-container *ngIf="((level || 0) === 0) && (item.eixo_tematico || (item.eixo_tematico_id && getEixo(item.eixo_tematico_id))) as eixo">
-                    <badge [icon]="eixo.icone || 'bi bi-gear'" 
-                           [color]="eixo.cor || 'primary'" 
-                           [label]="eixo.nome"></badge>
-                </ng-container>
+
                 <span [title]="item.nome"><strong>{{ (parentSeq ? parentSeq + '.' : '') + (i + 1) }}</strong> - {{ item.nome }}</span>
                 
             </div>
-        </div>
-        
-        <div class="px-2 text-truncate flex-shrink-0" style="width: 300px;" [title]="item.fundamentacao">
-            {{ item.fundamentacao }}
         </div>
         
         <div class="text-end pe-2 flex-shrink-0" style="width: 150px;">

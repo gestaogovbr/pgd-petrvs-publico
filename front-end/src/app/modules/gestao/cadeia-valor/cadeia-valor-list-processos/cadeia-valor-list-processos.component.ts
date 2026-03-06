@@ -73,7 +73,7 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
     const processo = new CadeiaValorProcesso({
       id: this.dao!.generateUuid(),
       cadeia_valor_id: this.entity?.id,
-      sequencia: this.gridControl.value.processos.filter((x: CadeiaValorProcesso) => !x.processo_pai_id).length + 1,
+      sequencia: this.items.filter(x => !x.processo_pai_id).length + 1,
       nome: ""
     });
     this.gridControl.value.processos.push(processo);
@@ -83,11 +83,17 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
   }
 
   public async addChildProcesso(pai: CadeiaValorProcesso) {
+    if (!pai.nome?.trim()) {
+      await this.dialog.alert("Atenção", "Preencha o nome do processo pai antes de adicionar um filho.");
+      return;
+    }
+    await this.saveProcesso(pai);
+
     const processo = new CadeiaValorProcesso({
       id: this.dao!.generateUuid(),
       cadeia_valor_id: this.entity?.id,
       processo_pai_id: pai.id,
-      sequencia: this.gridControl.value.processos.filter((x: CadeiaValorProcesso) => x.processo_pai_id === pai.id).length + 1,
+      sequencia: this.items.filter(x => x.processo_pai_id === pai.id).length + 1,
       nome: ""
     });
     this.gridControl.value.processos.push(processo);
@@ -113,7 +119,8 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
       return;
     }
     if (!this.isNoPersist && this.processosDao) {
-      await this.processosDao.save(processo);
+      const saved = await this.processosDao.save(processo);
+      processo.id = saved.id;
     }
     this.editingId = null;
     this.cdRef.detectChanges();
