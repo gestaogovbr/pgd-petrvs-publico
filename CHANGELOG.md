@@ -1,3 +1,8 @@
+## 2.9.16 09/03/2026
+### Modificado
+- Reestruturação do planejamento institucional para agrupar objetivos por eixo temático.
+- Reestruturação do cadastro de processos na cadeia de valor
+
 ## 2.9.15 27/02/2026
 ### Adicionado
 - Adicionada regra para bloquear assinatura de PT quando um plano com mais de 30 dias posterior a outro não imediatamente posterior ao último com pendencia de registro de execução ou avaliação.
