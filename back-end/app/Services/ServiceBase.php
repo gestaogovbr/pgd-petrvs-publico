@@ -8,7 +8,6 @@ use App\Exceptions\NotFoundException;
 use App\Models\Entidade;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
@@ -745,12 +744,7 @@ class ServiceBase extends DynamicMethods
    */
   public function downloadUrl($file)
   {
-    if (!Storage::exists($file)) {
-      throw new NotFoundException("Arquivo não encontrado");
-    }
-    $url = URL::temporarySignedRoute('download', now()->addMinutes(30), ['tenant' => tenant('id'), 'file' => $file], false);
-    $url = substr($url, strpos($url, "download/")); /* Convert to relative path from absolute */
-    return $url;
+    return UtilService::downloadUrl($file);
   }
 
   /**
