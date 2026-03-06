@@ -2,33 +2,34 @@
 
 namespace App\Services;
 
-use Throwable;
-use App\Services\RawWhere;
-use App\Services\ServiceBase;
-use App\Exceptions\ServerException;
-use App\Facades\SiapeLog;
-use App\Exceptions\ValidateException;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Database\Eloquent\Builder;
-use App\Services\Siape\DadosExternosSiape;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use App\Enums\UsuarioSituacaoSiape;
 use App\Exceptions\NotFoundException;
-use App\Services\UnidadeService;
-use App\Services\IntegracaoService;
-use App\Services\UtilService;
-use Illuminate\Support\Facades\DB;
-use Ramsey\Uuid\Uuid;
-use App\Repository\UsuarioRepository;
-use App\Repository\UnidadeRepository;
+use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
+use App\Facades\SiapeLog;
+use App\Models\TipoModalidade;
+use App\Models\Usuario;
 use App\Repository\IntegracaoServidorRepository;
 use App\Repository\PerfilRepository;
-use App\Repository\TipoModalidadeRepository;
+use App\Repository\PlanoEntregaRepository;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
-use App\Repository\PlanoEntregaRepository;
-use App\Models\Usuario;
+use App\Repository\TipoModalidadeRepository;
+use App\Repository\UnidadeRepository;
+use App\Repository\UsuarioRepository;
+use App\Services\IntegracaoService;
+use App\Services\RawWhere;
+use App\Services\ServiceBase;
+use App\Services\Siape\DadosExternosSiape;
+use App\Services\UnidadeService;
+use App\Services\UtilService;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Ramsey\Uuid\Uuid;
+use Throwable;
 
 /**
  * @property-read UnidadeService $unidadeService
@@ -124,7 +125,7 @@ class UsuarioService extends ServiceBase
 
             if (!empty($usuarioLotadoMesmaUnidade) && isset($usuarioLotadoMesmaUnidade->id)) {
                 $this->usuarioRepository->update($usuarioLotadoMesmaUnidade->id, ['matricula' => $matriculaNova]);
-                
+
                 SiapeLog::info(sprintf('Atualizada matrícula do usuário CPF %s para %s (unidade exercício código %s) sem criar novo usuário.',
                     (string) $cpfCheck,
                     (string) $matriculaNova,
@@ -182,15 +183,15 @@ class UsuarioService extends ServiceBase
 
     public function atualizarFotoPerfil($tipo, &$usuario, $url)
     {
-        $mudou = ($tipo == UsuarioService::LOGIN_GOOGLE ? $usuario->foto_google != $url : 
-                 ($tipo == UsuarioService::LOGIN_MICROSOFT ? $usuario->foto_microsoft != $url : 
+        $mudou = ($tipo == UsuarioService::LOGIN_GOOGLE ? $usuario->foto_google != $url :
+                 ($tipo == UsuarioService::LOGIN_MICROSOFT ? $usuario->foto_microsoft != $url :
                  ($tipo == UsuarioService::LOGIN_FIREBASE ? $usuario->foto_firebase != $url : false)));
-                 
+
         if (!empty($url) && !empty($usuario) && $mudou) {
             $downloaded = $this->downloadImgProfile($url, "usuarios/" . $usuario->id);
             if (!empty($downloaded)) {
                 $this->usuarioRepository->updateFotoPerfil($usuario->id, $tipo, $url, $downloaded);
-                
+
                 $usuario->foto_perfil = $downloaded;
                 switch ($tipo) {
                     case UsuarioService::LOGIN_GOOGLE:
@@ -267,9 +268,9 @@ class UsuarioService extends ServiceBase
         try {
             $id = $data['id'];
             $data = $this->proxyUpdate($data, $unidade);
-            
+
             $entity = $this->usuarioRepository->update($id, $data);
-            
+
             if (!$entity) throw new NotFoundException("Usuário não encontrado");
 
             if (method_exists($this, "extraUpdate")) $this->extraUpdate($entity, $unidade);
@@ -290,9 +291,9 @@ class UsuarioService extends ServiceBase
             if (!$entity) throw new NotFoundException("Id não encontrado");
 
             $this->removerVinculosUsuario($entity);
-            
+
             $this->usuarioRepository->delete($id);
-            
+
             if (method_exists($this, "extraDestroy")) $this->extraDestroy($entity);
             if ($transaction) DB::commit();
             return true;
@@ -325,7 +326,7 @@ class UsuarioService extends ServiceBase
         } else {
             $uid = $usuarioId ?? parent::loggedUser()->id;
             $atribuicoes = $this->usuarioRepository->getAtribuicoes($uid, $unidadeId);
-            
+
             $result = [
                 "gestor" => in_array('GESTOR', $atribuicoes),
                 "gestorSubstituto" => in_array('GESTOR_SUBSTITUTO', $atribuicoes),
@@ -458,11 +459,21 @@ class UsuarioService extends ServiceBase
         $data["with"] = [];
         $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
 
+        if ($action == self::ACTION_INSERT) {
+            $defaultTipoModalidade = $this->tipoModalidadeRepository->findByNome('Sem dados do SIAPE');
+
+            if (!$defaultTipoModalidade) {
+                throw new ValidateException("Tipo de Modalidade Padrão não definido no sistema. Consulte um administrador", 422);
+            }
+
+            $data['tipo_modalidade_id'] = $defaultTipoModalidade->id;
+        }
+
         unset($data['pedagio']);
 
         if (!empty($data['telefone']))
             $data['telefone'] = UtilService::onlyNumbers($data['telefone']);
-        
+
         $this->buffer = ["integrantes" => UtilService::getNested($data, "integrantes")];
         $this->validarPerfil($data);
         $this->validarColaborador($data);
@@ -505,7 +516,7 @@ class UsuarioService extends ServiceBase
                 throw new ValidateException("O campo de matrícula deve ter no máximo 50 caracteres", 422);
             if (empty($data["integrantes"][0]))
                 throw new ValidateException("Selecione uma unidade!", 422);
-            
+
             if (!isset($data['tipo_modalidade_id'])) {
                 $user = $this->usuarioRepository->findById($data["id"]);
                 $data['tipo_modalidade_id'] = $user?->tipo_modalidade_id;
@@ -518,11 +529,11 @@ class UsuarioService extends ServiceBase
                 throw new ValidateException("O campo de CPF é obrigatório", 422);
             if (empty($data["integrantes"][0]))
                 throw new ValidateException("Selecione uma unidade!", 422);
-            
+
             $alreadyHas = $this->usuarioRepository->findByCpfOrEmail($data['cpf'], $data['email'], $data['id'] ?? null, true);
 
             if (!empty($alreadyHas)) {
-                if ($alreadyHas->deleted_at) { 
+                if ($alreadyHas->deleted_at) {
                     $this->removerVinculosUsuario($alreadyHas);
                     $data["id"] = $alreadyHas->id;
                     $data["cpf"] = $alreadyHas->cpf;
@@ -535,7 +546,7 @@ class UsuarioService extends ServiceBase
                     $data["nome"] = $alreadyHas->nome;
                     $data["apelido"] = $alreadyHas->apelido;
                     $data["data_nascimento"] = $alreadyHas->data_nascimento;
-                    
+
                     if (isset($this->integracaoService)) {
                         $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($data['email'], $data['matricula'], $alreadyHas->id);
                     }
@@ -571,7 +582,7 @@ class UsuarioService extends ServiceBase
             return;
         }
         $perfilNovo = $this->findPerfil($data['perfil_id']);
-        
+
         $perfilAtual = !empty($data['id']) ? $this->getById($data)->perfil_id : null;
 
         $developer = $this->nivelAcessoService->getPerfilDesenvolvedor();
@@ -638,7 +649,7 @@ class UsuarioService extends ServiceBase
     {
         $id = is_array($data) ? $data['id'] : $data;
         $entity = $this->usuarioRepository->findById($id);
-        
+
         if ($entity) {
             $rows = [$entity];
             $rows = method_exists($this, 'proxyRows') ? $this->proxyRows($rows) : $rows;
@@ -656,13 +667,13 @@ class UsuarioService extends ServiceBase
     public function consultaCPFSiape(string $cpf): array
     {
         [$dadosFuncionaisArray, $dadosPessoaisArray] = $this->buscaServidor($cpf);
- 
+
         $dadosFuncionaisArray = array_map(function($item) {
             $unidade = $this->unidadeRepository->findByCodigo($item['codUorgExercicio']);
             $item['unidadeSigla'] = $unidade?->sigla;
             return $item;
         }, $dadosFuncionaisArray);
- 
+
         return [
             'pessoais'    => $dadosPessoaisArray,
             'funcionais'  => $dadosFuncionaisArray,
@@ -681,17 +692,17 @@ class UsuarioService extends ServiceBase
             'data_final_pedagio' => Carbon::parse($data['data_final_pedagio']),
             'tipo_pedagio' => $data['tipo_pedagio']
         ]);
-        
+
         return $this->usuarioRepository->findById($data['usuario_id']);
     }
 
-    public function removePedagio($data) 
+    public function removePedagio($data)
     {
         $usuario = $this->usuarioRepository->findById($data['usuario_id']);
         if (empty($usuario)) {
             throw new ValidateException("Usuário não encontrado", 422);
         }
-        
+
         $this->usuarioRepository->update($usuario->id, [
             'data_inicial_pedagio' => null,
             'data_final_pedagio' => null,
@@ -716,29 +727,29 @@ class UsuarioService extends ServiceBase
             'data_ativacao_temporaria' => Carbon::now(),
             'perfil_id' => $participanteId
         ]);
-        
+
         return $this->usuarioRepository->findById($data['usuario_id']);
     }
 
     public function matriculas($cpf) : Collection
     {
         $usuarios = $this->usuarioRepository->findAllByCpf($cpf);
-        
+
         if ($usuarios->isEmpty()) {
             throw new ValidateException("Nenhum usuário encontrado com o CPF informado.", 404);
         }
-        
+
         return $usuarios;
     }
 
     public function unidadesVinculadas($cpf) : Collection
     {
         $unidades = $this->usuarioRepository->getUnidadesVinculadas($cpf);
-        
+
         if ($unidades->isEmpty()) {
             throw new ValidateException("Nenhum usuário encontrado com o CPF informado.", 404);
         }
-        
+
         return $unidades;
     }
 
@@ -746,7 +757,7 @@ class UsuarioService extends ServiceBase
     {
         $diasAvaliacaoRegistroExecucao = config('petrvs.dias-avaliacao-registro-execucao', 21);
         $unidades = $this->unidadeRepository->getUnidadesGerenciadas($usuario_id);
-        
+
         $unidades_ids = $unidades->pluck('id')->toArray();
         if(!empty($unidade_id) && in_array($unidade_id, $unidades_ids)) {
             $unidades_ids = [$unidade_id];
