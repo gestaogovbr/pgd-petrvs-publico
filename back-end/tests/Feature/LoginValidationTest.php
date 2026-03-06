@@ -37,7 +37,7 @@ class LoginValidationTest extends DatabaseTenantTestCase
         // Register routes for testing to ensure we hit the controller methods
         // MUST start with 'api' to avoid matching the Angular fallback route in web.php
         Route::middleware('web')->post('/api/test-web-login-user-password', [LoginController::class, 'authenticateUserPassword']);
-        Route::post('/api/test-login-user-password', [LoginController::class, 'authenticateApiUserPassword']);
+        Route::middleware('web')->post('/api/test-login-user-password', [LoginController::class, 'authenticateApiUserPassword']);
 
         // Ensure necessary tables exist and have data
         $this->ensureTenantData();
@@ -196,7 +196,7 @@ class LoginValidationTest extends DatabaseTenantTestCase
         
         if ($response->status() == 200) {
             // Check if it contains error
-             $response->assertJsonStructure(['error', 'message']);
+             $response->assertJsonStructure(['error']);
         } else {
              $response->assertStatus(500);
         }

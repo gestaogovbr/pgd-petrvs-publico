@@ -32,6 +32,8 @@ class SiapeIndividualServidorServiceTest extends TestCase
                 $table->timestamps();
                 $table->softDeletes();
             });
+        } else {
+            \Illuminate\Support\Facades\DB::table('usuarios')->truncate();
         }
 
         if (!\Illuminate\Support\Facades\Schema::hasTable('unidades')) {

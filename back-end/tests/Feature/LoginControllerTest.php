@@ -48,10 +48,72 @@ class LoginControllerTest extends TestCase
             $table->string('situacao_funcional')->nullable();
             $table->json('config')->nullable();
             $table->json('notificacoes')->nullable();
+            $table->uuid('lotacao_id')->nullable();
             $table->string('tipo_modalidade_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
+
+        if (Schema::hasTable('entidades')) {
+            Schema::drop('entidades');
+        }
+
+        Schema::create('entidades', function ($table) {
+            $table->uuid('id')->primary();
+            $table->string('sigla');
+            $table->string('nome');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        // Insert default entity 'MGI' which seems to be required/default
+        \App\Models\Entidade::create([
+            'sigla' => 'MGI',
+            'nome' => 'Ministério da Gestão e da Inovação em Serviços Públicos'
+        ]);
+
+        if (Schema::hasTable('unidades')) {
+            Schema::drop('unidades');
+        }
+
+        Schema::create('unidades', function ($table) {
+            $table->uuid('id')->primary();
+            $table->string('sigla');
+            $table->string('nome');
+            $table->uuid('entidade_id')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        if (!Schema::hasTable('unidades_integrantes_atribuicoes')) {
+            Schema::create('unidades_integrantes_atribuicoes', function ($table) {
+                $table->uuid('id')->primary();
+                $table->uuid('unidade_integrante_id');
+                $table->string('atribuicao');
+                $table->timestamps();
+                $table->softDeletes();
+            });
+        }
+
+        if (!Schema::hasTable('programas_participantes')) {
+            Schema::create('programas_participantes', function ($table) {
+                $table->uuid('id')->primary();
+                $table->uuid('usuario_id');
+                $table->boolean('habilitado')->default(true);
+                $table->timestamps();
+                $table->softDeletes();
+            });
+        }
+
+        if (!Schema::hasTable('notificacoes_destinatarios')) {
+            Schema::create('notificacoes_destinatarios', function ($table) {
+                $table->uuid('id')->primary();
+                $table->uuid('usuario_id');
+                $table->dateTime('data_leitura')->nullable();
+                $table->timestamps();
+                $table->softDeletes();
+            });
+        }
 
         if (!Schema::hasTable('tipos_modalidades')) {
             Schema::create('tipos_modalidades', function ($table) {
