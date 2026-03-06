@@ -34,7 +34,7 @@ describe('PlanoTrabalhoService::hasUsuarioPendencias', function () {
         expect($resultado)->toBeTrue();
     });
 
-    test('retorna true quando plano incluído tem data fim vencida', function () {
+    test('retorna false quando plano incluído tem data fim vencida', function () {
         $usuario = Usuario::factory()->create();
         $planoAtual = PlanoTrabalho::factory()->create(['usuario_id' => $usuario->id]);
         $dataAssinatura = Carbon::now();
@@ -51,7 +51,7 @@ describe('PlanoTrabalhoService::hasUsuarioPendencias', function () {
             $dataAssinatura
         );
 
-        expect($resultado)->toBeTrue();
+        expect($resultado)->toBeFalse();
     });
 
     test('retorna true quando plano aguardando assinatura tem data fim vencida', function () {

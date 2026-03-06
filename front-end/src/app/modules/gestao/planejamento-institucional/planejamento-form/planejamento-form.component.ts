@@ -111,7 +111,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
 
   public async saveData(form: IIndexable): Promise<Planejamento> {
     return new Promise<Planejamento>((resolve, reject) => {
-      this.objetivos!.grid!.confirm();
+      //this.objetivos!.grid!.confirm();
       let planejamento = this.util.fill(new Planejamento(), this.entity!);
       planejamento = this.util.fillForm(planejamento, this.form!.value);
       planejamento.objetivos = this.objetivos!.items;
@@ -194,7 +194,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     this.entity!.planejamento_superior_id = this.form.controls.planejamento_superior_id.value;
     this.entity!.planejamento_superior = this.planejamentoSuperior!.selectedItem?.data;
     this.objetivos!.planejamento_superior_id = this.form.controls.planejamento_superior_id.value;
-    this.objetivos?.grid?.loadColumns();
+    //this.objetivos?.grid?.loadColumns();
     this.cdRef.detectChanges();
   }
 
