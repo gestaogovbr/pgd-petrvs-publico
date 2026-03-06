@@ -17,10 +17,7 @@ class PlanoTrabalhoFactory extends Factory
     {
         $usuario = Usuario::factory()->create();
         $unidade = Unidade::factory()->create();
-        $tipoModalidade = TipoModalidade::firstOrCreate(
-            ['nome' => 'Test Modalidade PT'],
-            ['id' => $this->faker->uuid()]
-        ); // TODO: criar factory
+        $tipoModalidade = TipoModalidade::factory()->create();
 
         return [
             'id' => $this->faker->uuid(),

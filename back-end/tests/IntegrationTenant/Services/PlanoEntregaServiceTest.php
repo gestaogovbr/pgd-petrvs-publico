@@ -14,10 +14,10 @@ use App\Models\TipoJustificativa;
 use Illuminate\Support\Str;
 
 describe('PlanoEntregaService - Cancelar Avaliacao (Integração)', function () {
-    
+
     it('deve cancelar a avaliação persistindo no banco de dados', function () {
         // Criar dados manualmente (Factories não disponíveis)
-        
+
         // 0. Dependências de Programa
         $tipoAvaliacao = new TipoAvaliacao();
         $tipoAvaliacao->id = Str::uuid();
@@ -104,10 +104,10 @@ describe('PlanoEntregaService - Cancelar Avaliacao (Integração)', function () 
             'tipo_modalidade_id' => $tipoModalidade->id,
         ]);
         $usuario->save();
-        
+
         // Autenticar usuário
         $this->actingAs($usuario);
-        
+
         // 6. PlanoEntrega
         $planoEntrega = PlanoEntrega::withoutEvents(function () use ($unidade, $programa, $usuario) {
             $planoEntrega = new PlanoEntrega();
@@ -127,7 +127,7 @@ describe('PlanoEntregaService - Cancelar Avaliacao (Integração)', function () 
         });
 
         $service = new PlanoEntregaService();
-        
+
         $data = [
             'id' => $planoEntrega->id,
             'justificativa' => 'Justificativa do teste de integração'

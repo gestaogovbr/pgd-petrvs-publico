@@ -2,15 +2,18 @@
 
 namespace Tests\IntegrationTenant\Observers;
 
+use App\Jobs\Envio\ExportarParticipanteJob;
 use App\Models\Usuario;
-use App\Repository\IntegracaoServidorRepository;
 use App\Repository\UsuarioRepository;
 use App\Services\API_PGD\UsuarioEnvioService;
-use App\Services\IntegracaoService;
 use App\Services\UsuarioService;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Bus;
+
 use Mockery;
 
+beforeEach(function () {
+    Bus::fake();
+});
 
 afterAll(function () {
     Mockery::close();
@@ -19,12 +22,6 @@ afterAll(function () {
 describe('UsuarioObserver', function () {
 
     test('Usuário Observer é chamado ao atualizar usuário', function () {
-
-        $serviceMock = Mockery::mock('alias:' . UsuarioEnvioService::class);
-        $serviceMock->shouldReceive('processar')
-            ->once()
-            ->with('_test', Mockery::type(Usuario::class), 'Usuario');
-
         $usuario = Usuario::factory()->create([
             'nome' => 'Usuario Teste'
         ]);
@@ -33,15 +30,10 @@ describe('UsuarioObserver', function () {
             'nome' => 'Usuario Alterado'
         ]);
 
+        Bus::assertDispatched(ExportarParticipanteJob::class);
     });
 
     test('Executa observer ao executar atualizarServidor', function () {
-        $serviceMock = Mockery::mock('alias:' . UsuarioEnvioService::class);
-
-        $serviceMock->shouldReceive('processar')
-            ->once()
-            ->with(Mockery::any(), Mockery::type(Usuario::class), 'Usuario');
-
         $usuario = Usuario::factory()->create([
             'nome' => 'Usuario Teste'
         ]);
@@ -64,13 +56,11 @@ describe('UsuarioObserver', function () {
         ];
 
         $usuarioService->atualizarServidor($dto, $usuario->unidade_id);
+
+        Bus::assertDispatched(ExportarParticipanteJob::class);
     });
 
     test('Executa observer ao atualizar pelo UsuarioRepository', function () {
-        $serviceMock = Mockery::mock('alias:' . UsuarioEnvioService::class);
-        $serviceMock->shouldReceive('processar')
-            ->once()
-            ->with(Mockery::any(), Mockery::type(Usuario::class), 'Usuario');
 
         $usuario = Usuario::factory()->create([
             'nome' => 'Usuario Teste'
@@ -80,6 +70,8 @@ describe('UsuarioObserver', function () {
 
         $usuarioRepository = app(UsuarioRepository::class);
         $usuarioRepository->update($usuario->id, ['matricula' => $matriculaSiape]);
+
+        Bus::assertDispatched(ExportarParticipanteJob::class);
     });
 
 });

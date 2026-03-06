@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Artisan;
 
 abstract class DatabaseTenantTestCase extends TestCase
 {
-    use RefreshDatabase;
+    // use RefreshDatabase;
 
     protected $tenant;
     protected $tenantId = '_test';

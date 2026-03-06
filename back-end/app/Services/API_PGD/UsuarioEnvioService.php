@@ -11,6 +11,6 @@ class UsuarioEnvioService
     public static function processar($tenantId, Usuario $usuario, string $origem = '')
     {
         $job = UsuarioEnvioJobBuilder::make($tenantId, $usuario, $origem);
-        dispatch($job)->onConnection('rabbitmq')->onQueue('pgd_queue');
+        dispatch($job);
     }
 }
