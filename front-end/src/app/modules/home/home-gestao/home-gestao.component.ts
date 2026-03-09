@@ -9,9 +9,10 @@ import { LookupService } from 'src/app/services/lookup.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 
 @Component({
-  selector: 'app-home-gestao',
-  templateUrl: './home-gestao.component.html',
-  styleUrls: ['./home-gestao.component.scss']
+    selector: 'app-home-gestao',
+    templateUrl: './home-gestao.component.html',
+    styleUrls: ['./home-gestao.component.scss'],
+    standalone: false
 })
 export class HomeGestaoComponent {
 

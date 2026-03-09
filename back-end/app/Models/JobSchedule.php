@@ -5,6 +5,13 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Traits\AutoUuid;
 
+/**
+ * @property string $nome
+ * @property string $classe
+ * @property string $expressao_cron
+ * @property bool $ativo
+ * @property string|null $tenant_id
+ */
 class JobSchedule extends ModelBase
 {
     use AutoUuid;

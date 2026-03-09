@@ -1,8 +1,8 @@
 {
-    "name": "laravel/laravel",
+    "name": "gestaogovbr/petrvs-pgd",
     "type": "project",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "description": "Petrvs PGD - MGI",
+    "keywords": ["pdg", "petrvs", "mgi"],
     "license": "MIT",
     "require": {
         "php": "^8.1",
@@ -10,8 +10,8 @@
         "barryvdh/laravel-dompdf": "^2.0",
         "brazanation/documents": "2.1.*",
         "doctrine/dbal": "^3.7",
-        "firebase/php-jwt": "^5.5",
-        "google/apiclient": "^2.11",
+        "firebase/php-jwt": "^7.0.2",
+        "google/apiclient": "^2.19",
         "guzzlehttp/guzzle": "^7.0.1",
         "lab404/laravel-impersonate": "^1.7",
         "laravel-notification-channels/microsoft-teams": "^2.1",
@@ -21,11 +21,12 @@
         "laravel/telescope": "^5.2",
         "laravel/tinker": "^2.5",
         "lawondyss/moment-php": "dev-master",
+        "league/commonmark": "^2.8",
         "maatwebsite/excel": "^3.1",
         "owen-it/laravel-auditing": "^13.6",
         "phpoffice/common": "^1.0",
         "phpoffice/phpspreadsheet": "^1.29",
-        "phpseclib/phpseclib": "~2.0",
+        "phpseclib/phpseclib": "^3.0.49",
         "ricorocks-digital-agency/soap": "^1.6",
         "socialiteproviders/govbr": "^5.0",
         "socialiteproviders/microsoft-azure": "^5.1",
@@ -33,14 +34,16 @@
         "stancl/tenancy": "^3.6"
     },
     "require-dev": {
-        "spatie/laravel-ignition": "^2.0",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^7.0",
-        "phpunit/phpunit": "^10.0",
+        "larastan/larastan": "^2.9",
         "pestphp/pest": "^2.0",
-        "pestphp/pest-plugin-laravel": "^2.0"
+        "pestphp/pest-plugin-laravel": "^2.0",
+        "phpstan/phpstan": "^1.11",
+        "phpunit/phpunit": "^10.0",
+        "spatie/laravel-ignition": "^2.0"
     },
     "autoload": {
         "psr-4": {
@@ -72,7 +75,8 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
-        ]
+        ],
+        "test": "pest --ci"
     },
     "extra": {
         "laravel": {
@@ -87,6 +91,9 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "pestphp/pest-plugin-laravel": true
+        },
+        "platform": {
+            "php": "8.2.30"
         }
     },
     "minimum-stability": "dev",

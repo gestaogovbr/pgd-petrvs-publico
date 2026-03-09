@@ -5,9 +5,10 @@ import { Atividade } from 'src/app/models/atividade.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 
 @Component({
-  selector: 'plano-trabalho-entrega-atividades',
-  templateUrl: './plano-trabalho-entrega-atividades.component.html',
-  styleUrls: ['./plano-trabalho-entrega-atividades.component.scss']
+    selector: 'plano-trabalho-entrega-atividades',
+    templateUrl: './plano-trabalho-entrega-atividades.component.html',
+    styleUrls: ['./plano-trabalho-entrega-atividades.component.scss'],
+    standalone: false
 })
 export class PlanoTrabalhoEntregaAtividadesComponent extends PageFrameBase {
   @ViewChild('listaAtividades', { static: false }) public listaAtividades?: GridComponent;

@@ -2,7 +2,7 @@
     [controlName]="controlName" [required]="required" [control]="control" [label]="isNoBox ? label : ''"
     [labelInfo]="labelInfo" [icon]="icon" [bold]="bold" errorMessageIcon="bi-info-circle">
     <div [class.card]="!isNoBox">
-        <h5 *ngIf="label?.length && !isNoBox" class="card-header">
+        <h5 *ngIf="label.length && !isNoBox" class="card-header">
             <i *ngIf="icon.length" [class]="icon"></i>
             {{label}}
         </h5>

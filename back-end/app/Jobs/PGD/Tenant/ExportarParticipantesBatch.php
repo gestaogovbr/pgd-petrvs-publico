@@ -63,7 +63,7 @@ class ExportarParticipantesBatch extends ExportarBatch
         $envioNumero = static::getEnvioNumero();
 
         $collection->chunk(50)->each(
-            function ($chunk) use (&$n, $tenant, $envioId, $envioNumero) {
+            function ($chunk) use (&$n) {
                 $jobs = [];
                 foreach($chunk as $item) {
                     $n++;

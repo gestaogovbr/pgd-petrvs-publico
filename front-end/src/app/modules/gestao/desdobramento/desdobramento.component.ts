@@ -4,9 +4,10 @@ import { TreeNode } from 'primeng/api';
 import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 
 @Component({
-  selector: 'app-desdobramento',
-  templateUrl: './desdobramento.component.html',
-  styleUrls: ['./desdobramento.component.scss']
+    selector: 'app-desdobramento',
+    templateUrl: './desdobramento.component.html',
+    styleUrls: ['./desdobramento.component.scss'],
+    standalone: false
 })
 export class DesdobramentoComponent extends PageBase implements OnInit {
 

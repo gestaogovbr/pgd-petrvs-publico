@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, Injector, Input, ViewChild } from '@angul
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
@@ -19,9 +19,10 @@ import { Unidade } from 'src/app/models/unidade.model';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 
 @Component({
-  selector: 'plano-entrega-list-entrega',
-  templateUrl: './plano-entrega-list-entrega.component.html',
-  styleUrls: ['./plano-entrega-list-entrega.component.scss']
+    selector: 'plano-entrega-list-entrega',
+    templateUrl: './plano-entrega-list-entrega.component.html',
+    styleUrls: ['./plano-entrega-list-entrega.component.scss'],
+    standalone: false
 })
 export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

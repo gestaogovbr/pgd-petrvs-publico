@@ -2,7 +2,6 @@ import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
-import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
 import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
@@ -15,9 +14,10 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { NavigateResult } from 'src/app/services/navigate.service';
 
 @Component({
-  selector: 'app-planejamento-form-objetivo',
-  templateUrl: './planejamento-form-objetivo.component.html',
-  styleUrls: ['./planejamento-form-objetivo.component.scss']
+    selector: 'app-planejamento-form-objetivo',
+    templateUrl: './planejamento-form-objetivo.component.html',
+    styleUrls: ['./planejamento-form-objetivo.component.scss'],
+    standalone: false
 })
 export class PlanejamentoFormObjetivoComponent extends PageFormBase<PlanejamentoObjetivo, PlanejamentoObjetivoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
@@ -56,34 +56,83 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
 
   public formValidation = (form?: FormGroup) =>{
     let result = null;
-    /*  Regra está sendo discutida
-        (RN_PLAN_INST_OBJ_A)
-        Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada um dos seus objetivos a um objetivo do Planejamento Institucional superior
-    */
-/*     if(this.isPlanejamentoUNEX() && !this.form?.controls.objetivo_superior_id.value){
-      result = "Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada um dos seus objetivos a um objetivo do Planejamento Institucional superior!";
-    } */
     return result;
   }
 
-  public async loadData(entity: PlanejamentoObjetivo, form: FormGroup) {
+  public loadData(entity: PlanejamentoObjetivo, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
-    await this.eixoTematico?.loadSearch(entity.eixo_tematico || entity.eixo_tematico_id);
     this.title = entity._status == 'ADD' ? 'Inclusão de Objetivo' : 'Editando objetivo...';
     this.planejamento = this.metadata?.planejamento as Planejamento;
     if(this.metadata?.planejamento_superior) this.planejamento.planejamento_superior = this.metadata.planejamento_superior as Planejamento;
     this.form?.controls.planejamento_superior_nome.setValue(this.planejamento?.planejamento_superior?.nome || '');
     this.objetivos_superiores = this.planejamento?.planejamento_superior?.objetivos?.map(x => Object.assign({}, { key: x.id, value: x.nome, data: x })) || [];
+    
+    const objetivosRaw = (this.metadata?.objetivos as PlanejamentoObjetivo[]) || [];
+    let objetivosOrdenados = this.ordenarObjetivos(objetivosRaw);
+    
+    objetivosOrdenados = this.filtrarObjetivos(objetivosOrdenados, entity.id);
+    this.objetivos = this.montarListaObjetivos(objetivosOrdenados);
+
+    (async () => {
+        await this.eixoTematico?.loadSearch(entity.eixo_tematico || entity.eixo_tematico_id);
+    })();
+  }
+
+  public filtrarObjetivos(objetivos: PlanejamentoObjetivo[], entityId?: string): PlanejamentoObjetivo[] {
+    if (!entityId) return objetivos;
+
+    const index = objetivos.findIndex(x => x.id === entityId);
+    if (index >= 0) {
+      const nivelRemover = (objetivos[index] as any)._nivel;
+      let count = 1;
+      while (index + count < objetivos.length) {
+        const nextNivel = (objetivos[index + count] as any)._nivel;
+        if (nextNivel > nivelRemover) {
+          count++;
+        } else {
+          break;
+        }
+      }
+      objetivos.splice(index, count);
+    }
+    return objetivos;
+  }
+
+  public montarListaObjetivos(objetivos: PlanejamentoObjetivo[]): LookupItem[] {
+    return objetivos.map(x => {
+      const nivel = (x as any)._nivel || 0;
+      const prefixo = nivel > 0 ? '\u00A0\u00A0'.repeat(nivel) + '↳ ' : '';
+      return {
+        key: x.id,
+        value: prefixo + x.nome,
+        data: x
+      };
+    });
+  }
+
+  public ordenarObjetivos(objetivos: PlanejamentoObjetivo[]): PlanejamentoObjetivo[] {
+    const ids = new Set(objetivos.map(o => o.id));
+    const buildTree = (paiId: string | null = null, nivel: number = 0): PlanejamentoObjetivo[] => {
+      const children = objetivos
+        .filter(p => {
+          if (paiId === null) {
+            return !p.objetivo_pai_id || !ids.has(p.objetivo_pai_id);
+          }
+          return p.objetivo_pai_id === paiId;
+        })
+        .sort((a, b) => (a.sequencia || 0) - (b.sequencia || 0));
+
+      return children.flatMap(p => {
+        (p as any)._nivel = nivel;
+        return [p, ...buildTree(p.id, nivel + 1)];
+      });
+    };
+    return buildTree(null);
   }
 
   public async initializeData(form: FormGroup) {
     this.entity = this.metadata?.objetivo as PlanejamentoObjetivo;
-    this.objetivos = (this.metadata?.objetivos as PlanejamentoObjetivo[]).map(x => Object.assign({}, {
-      key: x.id,
-      value: x.nome,
-      data: x
-    }));
     await this.loadData(this.entity!, form);
   }
 
@@ -106,7 +155,6 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
   }
 
   public onObjetivoSuperiorChange(row: any) {
-    //let objetivoSuperior = this.objetivos_superiores.find(x => x.key === this.form?.controls.objetivo_superior_id.value)?.data.eixo_tematico_id;  
     let idEixoTematicoObjetivoSuperior = this.objetivos_superiores.find(x => x.key === this.form?.controls.objetivo_superior_id.value)?.data.eixo_tematico_id;  
     if (!this.form!.controls.eixo_tematico_id.value) this.form!.controls.eixo_tematico_id.setValue(idEixoTematicoObjetivoSuperior);
     this.cdRef.detectChanges();

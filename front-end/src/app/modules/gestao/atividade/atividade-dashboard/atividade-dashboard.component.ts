@@ -9,9 +9,10 @@ import { ActivatedRouteSnapshot } from '@angular/router';
 
 
 @Component({
-  selector: 'atividade-dashboard',
-  templateUrl: './atividade-dashboard.component.html',
-  styleUrls: ['./atividade-dashboard.component.scss']
+    selector: 'atividade-dashboard',
+    templateUrl: './atividade-dashboard.component.html',
+    styleUrls: ['./atividade-dashboard.component.scss'],
+    standalone: false
 })
 export class AtividadeDashboardComponent extends AtividadeListBase implements OnInit {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

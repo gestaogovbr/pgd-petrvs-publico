@@ -5,9 +5,10 @@ import { EnvioDaoService } from 'src/app/dao/envio-dao.service';;
 import { PageBase } from 'src/app/modules/base/page-base';
 
 @Component({
-  selector: 'envio-forcar',
-  templateUrl: './envio-forcar.component.html',
-  styleUrls: ['./envio-forcar.component.scss']
+    selector: 'envio-forcar',
+    templateUrl: './envio-forcar.component.html',
+    styleUrls: ['./envio-forcar.component.scss'],
+    standalone: false
 })
 export class EnvioForcarComponent extends PageBase implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

@@ -6,9 +6,10 @@ import { TipoMotivoAfastamento } from 'src/app/models/tipo-motivo-afastamento.mo
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-tipo-motivo-afastamento-list',
-  templateUrl: './tipo-motivo-afastamento-list.component.html',
-  styleUrls: ['./tipo-motivo-afastamento-list.component.scss']
+    selector: 'app-tipo-motivo-afastamento-list',
+    templateUrl: './tipo-motivo-afastamento-list.component.html',
+    styleUrls: ['./tipo-motivo-afastamento-list.component.scss'],
+    standalone: false
 })
 export class TipoMotivoAfastamentoListComponent extends PageListBase<TipoMotivoAfastamento, TipoMotivoAfastamentoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

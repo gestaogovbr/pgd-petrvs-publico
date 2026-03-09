@@ -21,7 +21,7 @@ import {DaoBaseService} from "src/app/dao/dao-base.service";
 import {Base, IIndexable} from "src/app/models/base.model";
 import {FullRoute, NavigateService} from "src/app/services/navigate.service";
 import {UtilService} from "src/app/services/util.service";
-import {GroupBy} from "../../grid/grid.component";
+import {GroupBy} from "../../grid/grid-types";
 import {InputBase, LabelPosition, SelectItem} from "../input-base";
 import {EntityService} from "src/app/services/entity.service";
 //import * as bootstrap from 'bootstrap';
@@ -34,15 +34,16 @@ export class SearchGroupSeparator {
 }
 
 @Component({
-	selector: "input-search",
-	templateUrl: "./input-search.component.html",
-	styleUrls: ["./input-search.component.scss"],
-	viewProviders: [
-		{
-			provide: ControlContainer,
-			useExisting: FormGroupDirective,
-		},
-	],
+    selector: "input-search",
+    templateUrl: "./input-search.component.html",
+    styleUrls: ["./input-search.component.scss"],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective,
+        },
+    ],
+    standalone: false
 })
 export class InputSearchComponent extends InputBase implements OnInit {
 	@HostBinding("class") class = "form-group";

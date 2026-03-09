@@ -4,7 +4,7 @@
       [control]="form!.controls.planejamento_id" [items]="planejamentos"
       (change)="onPlanejamentoChange()"></input-select>
   </div>
-  <ng-scrollbar autoHeightDisabled="false" track="all">
+  <div style="overflow: auto;">
     <div class="d-flex justify-content-between mt-4">
       <div class="okr_header">
         <h1>O</h1>
@@ -57,8 +57,7 @@
         </div>
       </div>
     </div>
-  </ng-scrollbar>
-
+  </div>
 </editable-form>
 
 

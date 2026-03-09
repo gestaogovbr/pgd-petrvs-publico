@@ -11,9 +11,10 @@ import { PlanoEntregaEntregaDaoService } from "src/app/dao/plano-entrega-entrega
 import { PlanoEntregaEntrega } from "src/app/models/plano-entrega-entrega.model";
 
 @Component({
-  selector: 'plano-entrega-form-progresso',
-  templateUrl: './plano-entrega-form-progresso.component.html',
-  styleUrls: ['./plano-entrega-form-progresso.component.scss']
+    selector: 'plano-entrega-form-progresso',
+    templateUrl: './plano-entrega-form-progresso.component.html',
+    styleUrls: ['./plano-entrega-form-progresso.component.scss'],
+    standalone: false
 })
 export class PlanoEntregaFormProgressoComponent extends PageFormBase<PlanoEntregaEntregaProgresso, PlanoEntregaEntregaProgressoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

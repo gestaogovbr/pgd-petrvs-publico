@@ -14,8 +14,10 @@ trait HasPermissions
      */
     public function hasPermissionTo($permission) {
         $permissions = is_array($permission) ? $permission : [$permission];
+        /** @phpstan-ignore-next-line */
         $userPermissions = $this->perfil()->with("capacidades.tipoCapacidade")->get();
         $capabilities = count($userPermissions) > 0 ? $userPermissions[0]->capacidades->map(function ($item, $key) {
+            /** @phpstan-ignore-next-line */
             return $item->tipoCapacidade->codigo;
         })->all() : [];
         foreach($permissions as $item) {

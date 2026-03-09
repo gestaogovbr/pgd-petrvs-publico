@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PlanoTrabalhoAuditSource extends AuditSource
 {
-    public function __construct(string $tipo = null) {
-        $this->tipo = 'trabalho';
+    public function __construct() {
+        parent::__construct('trabalho');
     }
 
     public function getData() {

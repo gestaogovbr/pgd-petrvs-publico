@@ -107,12 +107,12 @@ class UtilService
     }
 
     public static function lessThanOrIqual($first, $secound) {
-        if(empty($fisrt) || empty($secound)) return false;
+        if(empty($first) || empty($secound)) return false;
         return static::asTimestamp($first) <= static::asTimestamp($secound);
     }
 
     public static function greaterThanOrIqual($first, $secound) {
-        if(empty($fisrt) || empty($secound)) return false;
+        if(empty($first) || empty($secound)) return false;
         return static::asTimestamp($first) >= static::asTimestamp($secound);
     }
 
@@ -161,8 +161,8 @@ class UtilService
     /**
      * getStrTimeHours
      *
-     * @param  mixed $time: tempo em formato de string ("hh:mm:ss", "hh:mm", "hh")
-     * @return: retorna um número que representa sua conversão em horas
+     * @param  string $time tempo em formato de string ("hh:mm:ss", "hh:mm", "hh")
+     * @return float número que representa a conversão em horas
      */
     public static function getStrTimeHours(string $time) {
         $aTime = array_map(fn($x) => intval($x), explode(":", $time));
@@ -172,8 +172,8 @@ class UtilService
     /**
      * getTimeHours
      *
-     * @param  mixed $dateTime: um DateTime ou um number. Caso seja numérico, deverá representar uma data em milissegundos.
-     * @return: retorna um número que equivale à sua conversão em horas.
+     * @param  DateTime|int|float $dateTime um DateTime ou número em milissegundos
+     * @return float número que equivale à conversão em horas
      */
     public static function getTimeHours($dateTime) {
         return $dateTime instanceof DateTime ? static::getStrTimeHours($dateTime->format('H:i:s')) : $dateTime / 3600000;
@@ -182,9 +182,9 @@ class UtilService
     /**
      * setStrTime
      *
-     * @param  $dateRef: um DateTime.
-     * @param  $time: uma string representando um tempo (hh:mm:ss)
-     * @return: retorna um DateTime
+     * @param  DateTime $dateRef um DateTime
+     * @param  string   $time uma string representando um tempo (hh:mm:ss)
+     * @return DateTime
      */
     public static function setStrTime(DateTime $dateRef, string $time): DateTime {
         $aTime = array_map(fn($x) => intval($x), explode(":", $time));
@@ -200,11 +200,11 @@ class UtilService
     /**
      * setTime
      *
-     * @param  $dateRef: um DateTime.
-     * @param  $hour: um inteiro representando as horas
-     * @param  $min: um inteiro representando os minutos
-     * @param  $seg: um inteiro representando os segundos
-     * @return: retorna um DateTime
+     * @param  DateTime $dateRef um DateTime
+     * @param  int      $hour horas
+     * @param  int      $min minutos
+     * @param  int      $sec segundos
+     * @return DateTime
      */
     public static function setTime(DateTime $dateRef, int $hour, int $min, int $sec): DateTime {
         $result = new DateTime(date(ServiceBase::ISO8601_FORMAT, $dateRef->getTimeStamp()));
@@ -228,10 +228,8 @@ class UtilService
     /**
      * daystamp
      *
-     * @param  mixed $dateRef: parâmetro obrigatório. Representa uma data.
-     * @return: retorna um número que representa a conversão da data recebida em quantidade de dias,
-     *          extraindo a diferença de fusos horários. Sem essa extração, poderia ocorrer o seguinte:
-     *          a data 01/01/2023 20:00 (GMT-03:00) -> dia 01/01/2023, mas a data 01/01/2023 23:00 (GMT-03:00) -> dia 02/01/2023
+     * @param  mixed $dateRef parâmetro obrigatório. Representa uma data.
+     * @return int número que representa a conversão da data recebida em quantidade de dias
      */
     public static function daystamp($dateRef) {
         $dateRef = UtilService::asDateTime($dateRef);

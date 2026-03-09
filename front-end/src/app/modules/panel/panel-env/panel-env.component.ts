@@ -5,9 +5,10 @@ import { PageListBase } from "../../base/page-list-base";
 import { FormGroup } from "@angular/forms";
 
 @Component({
-  selector: 'app-panel-env',
-  templateUrl: './panel-env.component.html',
-  styleUrls: ['./panel-env.component.scss']
+    selector: 'app-panel-env',
+    templateUrl: './panel-env.component.html',
+    styleUrls: ['./panel-env.component.scss'],
+    standalone: false
 })
 export class PanelEnvComponent extends PageListBase<Env, EnvDaoService> {
   envs: Env[] = [];

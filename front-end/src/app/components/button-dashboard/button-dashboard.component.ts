@@ -7,9 +7,10 @@ import { Observable } from 'rxjs';
 
 
 @Component({
-  selector: 'app-button-dashboard',
-  templateUrl: './button-dashboard.component.html',
-  styleUrls: ['./button-dashboard.component.scss']
+    selector: 'app-button-dashboard',
+    templateUrl: './button-dashboard.component.html',
+    styleUrls: ['./button-dashboard.component.scss'],
+    standalone: false
 })
 export class ButtonDashboardComponent  extends ComponentBase implements OnInit {
   public go: NavigateService;

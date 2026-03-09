@@ -7,9 +7,10 @@ import { TipoDocumento } from 'src/app/models/tipo-documento.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
-  selector: 'app-tipo-documento-form',
-  templateUrl: './tipo-documento-form.component.html',
-  styleUrls: ['./tipo-documento-form.component.scss']
+    selector: 'app-tipo-documento-form',
+    templateUrl: './tipo-documento-form.component.html',
+    styleUrls: ['./tipo-documento-form.component.scss'],
+    standalone: false
 })
 export class TipoDocumentoFormComponent extends PageFormBase<TipoDocumento, TipoDocumentoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

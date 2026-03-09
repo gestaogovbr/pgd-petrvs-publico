@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BlacklistServidorListComponent } from './blacklist-servidor-list.component';
 import { AuthGuard } from 'src/app/guards/auth.guard';
@@ -27,7 +27,7 @@ const routes: Routes = [
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     ReactiveFormsModule,
     RouterModule.forChild(routes)
   ]

@@ -99,6 +99,10 @@ class SolucaoController extends ControllerBase {
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function desatribuirTodos(Request $request) {
         try {
             $data = $request->validate([

@@ -9,18 +9,19 @@ import { GridComponent } from '../grid.component';
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'filter',
-  templateUrl: './filter.component.html',
-  styleUrls: ['./filter.component.scss'],
-  providers: [
-    {
-      provide: FormGroupDirective,
-      useFactory: (self: FilterComponent) => {
-        return self.formDirective!;
-      },
-      deps: [FilterComponent]
-    }
-  ]
+    selector: 'filter',
+    templateUrl: './filter.component.html',
+    styleUrls: ['./filter.component.scss'],
+    providers: [
+        {
+            provide: FormGroupDirective,
+            useFactory: (self: FilterComponent) => {
+                return self.formDirective!;
+            },
+            deps: [FilterComponent]
+        }
+    ],
+    standalone: false
 })
 export class FilterComponent extends ComponentBase implements OnInit {
   @ViewChild(FormGroupDirective) formDirective?: FormGroupDirective;

@@ -27,18 +27,18 @@ class ProdutoController extends ControllerBase
     }
 
     /**
-     * Undocumented function
+     * Check permissions
      *
-     * @param [type] $action
-     * @param [type] $request
-     * @param [type] $service
-     * @param [type] $unidade
-     * @param Usuario $usuario
+     * @param mixed $action
+     * @param mixed $request
+     * @param mixed $service
+     * @param mixed $unidade
+     * @param mixed $usuario
      * @return void
      */
     public function checkPermissions($action, $request, $service, $unidade, $usuario)
     {
-        if ($service->isLoggedUserADeveloper())  return true;
+        if ($service->isLoggedUserADeveloper())  return;
         
         switch($action) {
             case 'STORE':
@@ -53,10 +53,12 @@ class ProdutoController extends ControllerBase
                 if (!$usuario->hasPermissionTo('MOD_PROD_EXCL')) throw new ServerException("ProdutoDestroy", "Exclusão não realizada");
                 break;
         }
-
-        return true;
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     */
     public function store(Request $request)
     {
         try {
@@ -88,6 +90,10 @@ class ProdutoController extends ControllerBase
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function desatribuirTodos(Request $request) {
         try {
             $this->service->desatribuirTodos();

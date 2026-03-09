@@ -5,15 +5,16 @@ import { InputBase, LabelPosition } from '../input-base';
 export type AlignRate = "left" | "center";
 
 @Component({
-  selector: 'input-rate',
-  templateUrl: './input-rate.component.html',
-  styleUrls: ['./input-rate.component.scss'],
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]
+    selector: 'input-rate',
+    templateUrl: './input-rate.component.html',
+    styleUrls: ['./input-rate.component.scss'],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective
+        }
+    ],
+    standalone: false
 })
 export class InputRateComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';

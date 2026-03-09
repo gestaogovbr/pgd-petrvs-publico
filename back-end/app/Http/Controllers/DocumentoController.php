@@ -35,6 +35,10 @@ class DocumentoController extends ControllerBase
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function pendenteSei(Request $request) {
         try {
             $data = $request->validate([
@@ -74,6 +78,10 @@ class DocumentoController extends ControllerBase
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     */
     public function gerarPDF(Request $request) {
         try {
             $data = $request->validate([

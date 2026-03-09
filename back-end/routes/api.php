@@ -18,6 +18,10 @@ Route::get('/teste', function (Request $request) { return ["CENTRAL"]; }); */
 /*Route::middleware([OnlyLocal::class])
     ->get('/rotinas-diarias/run', [RotinasDiariasController::class, 'run']);*/
 
+Route::get('/_test-error-500', function (Request $request) {
+    throw new \RuntimeException('Teste Microsoft Teams - erro 500 forçado');
+});
+
 /*
 Rota dinâmica para login social Microsoft (Azure) e
 GovBr baseado em B2B (multi-tenancy / multi-tenant)
@@ -76,5 +80,3 @@ Route::middleware(['panel'])->prefix('Audit')->group(function () {
     Route::get('getAll', [AuditController::class, 'listar']);
     Route::post('query', [AuditController::class, 'query']);
 });
-
-

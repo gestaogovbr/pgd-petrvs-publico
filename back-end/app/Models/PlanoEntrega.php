@@ -13,6 +13,29 @@ use App\Models\CadeiaValor;
 use App\Models\PlanoEntregaEntrega;
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
+/**
+ * @property string $nome
+ * @property string $planejamento_id
+ * @property string $cadeia_valor_id
+ * @property string $unidade_id
+ * @property string $plano_entrega_id
+ * @property string $programa_id
+ * @property string $criacao_usuario_id
+ * @property \DateTime $data_inicio
+ * @property \DateTime|null $data_fim
+ * @property \DateTime|null $data_arquivamento
+ * @property \DateTime|null $avaliado_at
+ * @property-read Unidade $unidade
+ * @property-read Programa $programa
+ * @property-read Usuario $criacaoUsuario
+ * @property-read Planejamento|null $planejamento
+ * @property-read CadeiaValor|null $cadeiaValor
+ * @property-read PlanoEntrega|null $planoEntregaPai
+ */
 class PlanoEntrega extends ModelBase
 {
     protected $table = 'planos_entregas';
@@ -63,77 +86,82 @@ class PlanoEntrega extends ModelBase
 
         static::updating(function (PlanoEntrega $planoEntrega) {
             if ($planoEntrega->isDirty('status') && $planoEntrega->status === StatusEnum::AVALIADO->value) {
-                $planoEntrega->avaliado_at = date('Y-m-d');
+                $planoEntrega->avaliado_at = now();
             }
         });
     }
 
     // Has
-    public function statusHistorico()
+    public function statusHistorico(): HasMany
     {
         return $this->hasMany(StatusJustificativa::class, "plano_entrega_id");
     }
 
-    public function latestStatus()
+    public function latestStatus(): HasOne
     {
         return $this->hasOne(StatusJustificativa::class, "plano_entrega_id")->latestOfMany();
     }
 
-    public function entregas()
+    public function entregas(): HasMany
     {
         return $this->hasMany(PlanoEntregaEntrega::class);
     }
 
-    public function planosEntrega()
+    public function planosEntrega(): HasMany
     {
         return $this->hasMany(PlanoEntrega::class);
     }
 
-    public function planosTrabalho()
+    public function planosTrabalho(): HasMany
     {
         return $this->hasMany(PlanoTrabalho::class);
     }
 
-    public function avaliacoes()
+    public function avaliacoes(): HasMany
     {
         return $this->hasMany(Avaliacao::class, 'plano_entrega_id');
     }
 
     // Belongs
-    public function planejamento()
-    {
-        return $this->belongsTo(Planejamento::class);
-    }  //nullable
-
-    public function cadeiaValor()
-    {
-        return $this->belongsTo(CadeiaValor::class);
-    }    //nullable
-
-    public function unidade()
+    public function unidade(): BelongsTo
     {
         return $this->belongsTo(Unidade::class);
     }
 
-    public function criador()
-    {
-        return $this->belongsTo(Usuario::class, 'criacao_usuario_id');
-    }
-
-    public function programa()
+    public function programa(): BelongsTo
     {
         return $this->belongsTo(Programa::class);
     }
 
-    public function planoEntregaSuperior()
+    public function criacaoUsuario(): BelongsTo
+    {
+        return $this->belongsTo(Usuario::class, 'criacao_usuario_id');
+    }
+
+    public function criador(): BelongsTo
+    {
+        return $this->belongsTo(Usuario::class, 'criacao_usuario_id');
+    }
+
+    public function planejamento(): BelongsTo
+    {
+        return $this->belongsTo(Planejamento::class);
+    }
+
+    public function cadeiaValor(): BelongsTo
+    {
+        return $this->belongsTo(CadeiaValor::class);
+    }
+
+    public function planoEntregaSuperior(): BelongsTo
     {
         return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id');
-    } //nullable
+    }
 
-    public function avaliacao()
+    public function avaliacao(): BelongsTo
     {
         return $this->belongsTo(Avaliacao::class);
-    }  //nullable
+    }
 
     public function getAuditRelations(): array
     {

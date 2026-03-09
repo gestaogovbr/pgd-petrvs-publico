@@ -10,9 +10,10 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-integracao-form',
-  templateUrl: './integracao-form.component.html',
-  styleUrls: ['./integracao-form.component.scss']
+    selector: 'app-integracao-form',
+    templateUrl: './integracao-form.component.html',
+    styleUrls: ['./integracao-form.component.scss'],
+    standalone: false
 })
 export class IntegracaoFormComponent extends PageFormBase<Integracao, IntegracaoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

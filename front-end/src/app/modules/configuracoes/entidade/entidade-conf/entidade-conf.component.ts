@@ -13,9 +13,10 @@ import { NotificacaoService } from 'src/app/modules/uteis/notificacoes/notificac
 import { NotificacoesConfigComponent } from 'src/app/modules/uteis/notificacoes/notificacoes-config/notificacoes-config.component';
 
 @Component({
-  selector: 'app-entidade-conf',
-  templateUrl: './entidade-conf.component.html',
-  styleUrls: ['./entidade-conf.component.scss']
+    selector: 'app-entidade-conf',
+    templateUrl: './entidade-conf.component.html',
+    styleUrls: ['./entidade-conf.component.scss'],
+    standalone: false
 })
 export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoService> implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

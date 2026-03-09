@@ -10,9 +10,10 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { ReacaoService } from 'src/app/services/reacao.service';
 
 @Component({
-  selector: 'reaction',
-  templateUrl: './reaction.component.html',
-  styleUrls: ['./reaction.component.scss'],
+    selector: 'reaction',
+    templateUrl: './reaction.component.html',
+    styleUrls: ['./reaction.component.scss'],
+    standalone: false
 })
 export class ReactionComponent extends PageFrameBase implements OnInit {
   @Input() origem: ReacaoOrigem = undefined;

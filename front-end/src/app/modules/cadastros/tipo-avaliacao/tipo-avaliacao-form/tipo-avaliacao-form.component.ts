@@ -12,9 +12,10 @@ import { TipoAvaliacaoNota } from 'src/app/models/tipo-avaliacao-nota';
 import { TipoAvaliacaoJustificativa } from 'src/app/models/tipo-avaliacao-justificativas.model';
 
 @Component({
-  selector: 'app-tipo-avaliacao-form',
-  templateUrl: './tipo-avaliacao-form.component.html',
-  styleUrls: ['./tipo-avaliacao-form.component.scss']
+    selector: 'app-tipo-avaliacao-form',
+    templateUrl: './tipo-avaliacao-form.component.html',
+    styleUrls: ['./tipo-avaliacao-form.component.scss'],
+    standalone: false
 })
 
 export class TipoAvaliacaoFormComponent extends PageFormBase<TipoAvaliacao, TipoAvaliacaoDaoService> {

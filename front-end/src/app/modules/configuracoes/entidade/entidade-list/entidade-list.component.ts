@@ -1,15 +1,16 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { Entidade } from 'src/app/models/entidade.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-entidade-list',
-  templateUrl: './entidade-list.component.html',
-  styleUrls: ['./entidade-list.component.scss']
+    selector: 'app-entidade-list',
+    templateUrl: './entidade-list.component.html',
+    styleUrls: ['./entidade-list.component.scss'],
+    standalone: false
 })
 export class EntidadeListComponent extends PageListBase<Entidade, EntidadeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

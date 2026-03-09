@@ -320,9 +320,7 @@ class SiapeIndividualServidorService extends ServiceBase
             $this->service->config['nomeSistema'],
             $this->service->config['senha'],
             $this->service->getBuscarDadosSiapeUnidade()->getCpf(),
-            $codOrgao,
-            $this->service->config['parmExistPag'],
-            $this->service->config['parmTipoVinculo']
+            $codOrgao
         );
     }
 
@@ -557,7 +555,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     private function atualizarStatusUsuario(Usuario $usuario): void
     {
-        $usuario->usuario_externo = 0;
+        $usuario->usuario_externo = false;
         $usuario->save();
     }
 
@@ -647,6 +645,16 @@ class SiapeIndividualServidorService extends ServiceBase
             $this->service->config['parmExistPag'],
             $this->service->config['parmTipoVinculo']
         );
+    }
+
+    private function validarCpf(string $cpf): bool
+    {
+        try {
+            new Cpf($cpf);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
 

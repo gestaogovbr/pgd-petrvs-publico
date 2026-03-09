@@ -6,6 +6,7 @@ use App\Exceptions\ServerException;
 use Firebase\JWT\JWT;
 use Google\Client;
 use Throwable;
+use App\Models\Usuario;
 
 class GoogleService
 {

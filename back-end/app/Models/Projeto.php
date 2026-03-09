@@ -14,6 +14,7 @@ use App\Models\ProjetoHistorico;
 use App\Models\Comentario;
 use App\Models\ProjetoFase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Projeto extends ModelBase
 {
@@ -74,27 +75,27 @@ class Projeto extends ModelBase
   ];
 
   // Has
-  public function fases()
+  public function fases(): HasMany
   {
     return $this->hasMany(ProjetoFase::class);
   }
-  public function tarefas()
+  public function tarefas(): HasMany
   {
     return $this->hasMany(ProjetoTarefa::class);
   }
-  public function tarefasProjeto()
+  public function tarefasProjeto(): HasMany
   {
     return $this->hasMany(ProjetoTarefa::class, 'tarefa_projeto_id');
   }
-  public function regras()
+  public function regras(): HasMany
   {
     return $this->hasMany(ProjetoRegra::class);
   }
-  public function alocacoes()
+  public function alocacoes(): HasMany
   {
     return $this->hasMany(ProjetoAlocacao::class);
   }
-  public function recursos()
+  public function recursos(): HasMany
   {
     return $this->hasMany(ProjetoRecurso::class);
   }

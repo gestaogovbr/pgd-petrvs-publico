@@ -1,12 +1,13 @@
 import { Component, Injector, Input, OnInit } from '@angular/core';
 import { FullRoute, NavigateService, RouteMetadata } from 'src/app/services/navigate.service';
 import { ComponentBase } from '../component-base';
-import { ToolbarButton } from '../toolbar/toolbar.component';
+import { ToolbarButton } from '../toolbar/toolbar-types';
 
 @Component({
-  selector: 'action-button',
-  templateUrl: './action-button.component.html',
-  styleUrls: ['./action-button.component.scss']
+    selector: 'action-button',
+    templateUrl: './action-button.component.html',
+    styleUrls: ['./action-button.component.scss'],
+    standalone: false
 })
 export class ActionButtonComponent extends ComponentBase {
   @Input() public set button(value: ToolbarButton) { if(this._button != value) this._button = value; this._button.id = this.generatedButtonId(this._button); } public get button(): ToolbarButton { return this._button; } 

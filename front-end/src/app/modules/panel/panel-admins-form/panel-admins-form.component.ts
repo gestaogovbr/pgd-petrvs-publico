@@ -11,9 +11,10 @@ import { TenantDaoService } from "src/app/dao/tenant-dao.service";
 import { InputSelectComponent } from "src/app/components/input/input-select/input-select.component";
 
 @Component({
-  selector: 'panel-admins-form',
-  templateUrl: './panel-admins-form.component.html',
-  styleUrls: ['./panel-admins-form.component.scss']
+    selector: 'panel-admins-form',
+    templateUrl: './panel-admins-form.component.html',
+    styleUrls: ['./panel-admins-form.component.scss'],
+    standalone: false
 })
 export class PanelAdminsFormComponent extends PageFormBase<UserPanel, UsersPanelDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

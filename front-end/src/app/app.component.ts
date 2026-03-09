@@ -1,56 +1,26 @@
-import { ChangeDetectorRef, Component, Inject, Injector, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectorRef, Component, Injector, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { ToolbarButton } from './components/toolbar/toolbar.component';
-import { ListenerAllPagesService } from './listeners/listener-all-pages.service';
+import { ToolbarButton } from './components/toolbar/toolbar-types';
 import { AuthService } from './services/auth.service';
 import { DialogService } from './services/dialog.service';
 import { DialogComponent } from './services/dialog/dialog.component';
 import { GlobalsService } from './services/globals.service';
 import { LexicalService } from './services/lexical.service';
-import { NavigateService, RouteMetadata } from './services/navigate.service';
+import { NavigateService } from './services/navigate.service';
 import { UtilService } from './services/util.service';
 import { LookupService } from './services/lookup.service';
 import { EntityService } from './services/entity.service';
 import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.service';
-import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 import { UnidadeService } from './services/unidade.service';
 import { Unidade } from './models/unidade.model';
 import { SiapeBlacklistServidorDaoService } from './dao/siape-blacklist-servidor-dao.service';
 import { SiapeBlacklistServidor } from './models/siape-blacklist-servidor.model';
-declare var bootstrap: any;
+import { IntegranteService } from './services/integrante.service';
+import { Contexto, IAppComponent, MenuContexto, MenuSchema, MenuItem, PetrvsModule, Schema } from './app-types';
 
-export type Contexto = "EXECUCAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX" ;
-export type Schema = {
-  name: string,
-  permition?: string,
-  route?: string[],
-  metadata?: RouteMetadata,
-  params?: any,
-  icon: string;
-  onClick?: () => void;
-};
-export type MenuSchema = { [key: string]: Schema };
-export type MenuItem = {
-  name: string,
-  permition?: string,
-  id: string,
-  menu: Schema[]
-} | Schema;
-
-export type PetrvsModule = {
-  name: string,
-  icon: string
-}
-export type MenuContexto = {
-  key: Contexto,
-  permition?: string,
-  icon: string,
-  name: string,
-  menu?: MenuItem[],
-  petrvsModule?: string
-};
+export { Contexto, MenuContexto, MenuSchema, MenuItem, PetrvsModule, Schema };
 
 declare global {
   interface Window {
@@ -58,20 +28,22 @@ declare global {
   }
 }
 
+declare var bootstrap: any;
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  providers: [{
-    provide: 'ID_GENERATOR_BASE',
-    useFactory: (self: AppComponent, go: NavigateService, util: UtilService) => {
-      return util.onlyAlphanumeric(go.getRouteUrl());
-    },
-    deps: [AppComponent, NavigateService, UtilService]
-  }]
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    providers: [{
+            provide: 'ID_GENERATOR_BASE',
+            useFactory: (self: AppComponent, go: NavigateService, util: UtilService) => {
+                return util.onlyAlphanumeric(go.getRouteUrl());
+            },
+            deps: [AppComponent, NavigateService, UtilService]
+        }],
+    standalone: false
 })
-export class AppComponent {
+export class AppComponent implements IAppComponent {
   @ViewChild('dialogs', { read: ViewContainerRef }) dialogs?: ViewContainerRef;
 
   public static instance: AppComponent;
@@ -88,12 +60,12 @@ export class AppComponent {
   public router: Router;
   public route: ActivatedRoute;
   public go: NavigateService;
-  public allPages: ListenerAllPagesService;
   public utils: UtilService;
   public lookup: LookupService;
   public entity: EntityService;
   public notificacao: NotificacaoService;
   public siapeBlacklistDao: SiapeBlacklistServidorDaoService;
+  public integranteService: IntegranteService;
   public menuSchema: MenuSchema = {};
   public menuToolbar: any[] = [];
   public menuContexto: MenuContexto[] = [];
@@ -107,8 +79,6 @@ export class AppComponent {
   public moduloDev: any;
   public moduloSiape: any;
   public unidadeService: UnidadeService;
-  private _menu: any;
-  private _menuDetectChanges: any;
   public siapeBlacklistRows: SiapeBlacklistServidor[] = [];
   public siapeBlacklistMatriculas: string[] = [];
   public tooltipWarning: string = 'Matrícula em processo de inativação';
@@ -125,13 +95,13 @@ export class AppComponent {
     this.router = injector.get<Router>(Router);
     this.route = injector.get<ActivatedRoute>(ActivatedRoute);
     this.go = injector.get<NavigateService>(NavigateService);
-    this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.utils = injector.get<UtilService>(UtilService);
     this.lookup = injector.get<LookupService>(LookupService);
     this.entity = injector.get<EntityService>(EntityService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     this.unidadeService = injector.get<UnidadeService>(UnidadeService);
     this.siapeBlacklistDao = injector.get<SiapeBlacklistServidorDaoService>(SiapeBlacklistServidorDaoService);
+    this.integranteService = injector.get<IntegranteService>(IntegranteService);
     /* Inicializações */
     this.notificacao.heartbeat();
     this.auth.app = this;
@@ -574,27 +544,20 @@ export class AppComponent {
   public getMatriculaPelaUnidadeComCpf(idUnidade: string, cpf: string): string {
     let matricula = this.auth.usuario?.matriculas?.find(x => x.unidades?.find(y => y.id == idUnidade) && x.cpf == cpf);
     return matricula?.matricula || 'N/A';
-  }
+  }  
 
   public async consultarBlacklistCpf(cpf: string): Promise<void> {
-    try {
-      const response = await this.siapeBlacklistDao.queryByCpf(cpf).toPromise();
-      const rows = response?.rows || [];
-      this.siapeBlacklistRows = rows.map((r: any) => new SiapeBlacklistServidor(r));
-      this.siapeBlacklistMatriculas = this.siapeBlacklistRows
-        .map(r => r.matricula)
-        .filter((m: string | undefined) => !!m && !!(m as string).length) as string[];
-      this.cdRef.detectChanges();
-      this.initTooltips();
-    } catch (e) {
-      this.siapeBlacklistRows = [];
-      this.siapeBlacklistMatriculas = [];
-    }
+    const response = await this.integranteService.consultarBlacklistCpf(cpf);
+    this.siapeBlacklistRows = response.rows;
+    this.siapeBlacklistMatriculas = response.matriculas;
+    this.cdRef.detectChanges();
+    this.initTooltips();
   }
 
   public initTooltips(): void {
     const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]')) as HTMLElement[];
     tooltipTriggerList.forEach((el: any) => {
+      if(bootstrap.Tooltip.getInstance(el)) return;
       const t = new bootstrap.Tooltip(el, { trigger: 'manual' });
       el.addEventListener('mouseenter', () => t.show());
       el.addEventListener('mouseleave', () => t.hide());

@@ -1,7 +1,7 @@
 import { Component, Injector, QueryList, ViewChild, ViewChildren } from "@angular/core";
 import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
-import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { Chart, ChartConfiguration, ChartData } from 'chart.js';
 import { BaseChartDirective } from "ng2-charts";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -13,9 +13,10 @@ import { CHART_COLORS } from "src/app/services/chart";
 Chart.register(ChartDataLabels);
 
 @Component({
-  selector: 'indicadores-entrega',
-  templateUrl: './indicadores-entrega.component.html',
-  styleUrls: ['./indicadores-entrega.component.scss']
+    selector: 'indicadores-entrega',
+    templateUrl: './indicadores-entrega.component.html',
+    styleUrls: ['./indicadores-entrega.component.scss'],
+    standalone: false
 })
 export class IndicadorEntregaComponent extends RelatorioBaseComponent<IndicadorEntrega, IndicadorEntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

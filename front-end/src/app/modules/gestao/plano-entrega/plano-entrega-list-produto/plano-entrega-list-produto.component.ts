@@ -11,9 +11,10 @@ import { PlanoEntregaEntrega } from "src/app/models/plano-entrega-entrega.model"
 import { PageFrameBase } from "src/app/modules/base/page-frame-base";
 
 @Component({
-  selector: 'plano-entrega-list-produto',
-  templateUrl: './plano-entrega-list-produto.component.html',
-  styleUrls: ['./plano-entrega-list-produto.component.scss']
+    selector: 'plano-entrega-list-produto',
+    templateUrl: './plano-entrega-list-produto.component.html',
+    styleUrls: ['./plano-entrega-list-produto.component.scss'],
+    standalone: false
 })
 export class PlanoEntregaListProdutoComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

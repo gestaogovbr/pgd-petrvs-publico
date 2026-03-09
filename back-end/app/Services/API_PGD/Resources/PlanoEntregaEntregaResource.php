@@ -5,6 +5,9 @@ use App\Exceptions\ExportPgdException;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
 
+/**
+ * @mixin \App\Models\PlanoEntregaEntrega
+ */
 class PlanoEntregaEntregaResource extends JsonResource
 {
     public function toArray($request)

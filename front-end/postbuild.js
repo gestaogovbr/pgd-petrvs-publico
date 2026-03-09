@@ -4,7 +4,7 @@ const path = require('path');
 console.log("POST-BUILD:");
 
 // Cria o angular.blade.php e edita o app.json para colocar os arquivos com hash do build angular
-const indexHtmlPath = path.resolve(__dirname, '../back-end/public/pages/index.html');
+const indexHtmlPath = path.resolve(__dirname, '../back-end/public/index.html');
 const appJsonPath = path.resolve(__dirname, '../back-end/public/app.json');
 const angularBladePath = path.resolve(__dirname, '../back-end/resources/views/angular.blade.php');
 
@@ -16,7 +16,7 @@ if (fs.existsSync(indexHtmlPath)) {
     // Obtem lista de arquivos gerados no deploy
     let indexContent = fs.readFileSync(indexHtmlPath, { encoding: "utf8" });
     let angularFiles = [];
-    indexContent = indexContent.replace('<base href="/">', '<base href="{{ $host }}">');
+    //indexContent = indexContent.replace('<base href="/">', '<base href="{{ $host }}">');
 
     // Extrai os nomes dos arquivos JavaScript usando expressão regular
     const regex = /src="([^"]+\.js)"/gi;

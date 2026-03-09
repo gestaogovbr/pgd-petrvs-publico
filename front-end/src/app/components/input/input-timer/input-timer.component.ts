@@ -5,15 +5,16 @@ import { UtilService } from 'src/app/services/util.service';
 import { InputBase, LabelPosition } from '../input-base';
 
 @Component({
-  selector: 'input-timer',
-  templateUrl: './input-timer.component.html',
-  styleUrls: ['./input-timer.component.scss'],
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]
+    selector: 'input-timer',
+    templateUrl: './input-timer.component.html',
+    styleUrls: ['./input-timer.component.scss'],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective
+        }
+    ],
+    standalone: false
 })
 export class InputTimerComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
