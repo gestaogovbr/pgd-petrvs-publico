@@ -1,26 +1,68 @@
-<editable-form noButtons [form]="form!" [disabled]="formDisabled">
-    <div class="row">
-        <grid [items]="items" [form]="form!" [hasDelete]="true" 
-            [add]="addProcesso.bind(this)" [load]="loadProcesso.bind(this)" [remove]="removeProcesso.bind(this)" [save]="saveProcesso.bind(this)" [editEnd]="editEndProcesso.bind(this)" editable>
-            <columns>
-                <column title="Nível" [template]="nivel" [editTemplate]="editNivel">
-                    <ng-template let-row="row" let-metadata="metadata" #nivel>
-                        <small class="d-block">{{getSequencia(metadata, row)}}</small>
-                    </ng-template>
-                    <ng-template let-row="row" #editNivel>
-                        <input-level [size]="6" controlName="nivel" [validate]="validateLevel"></input-level>
-                    </ng-template>
-                </column>
-                <column title="Processos" [template]="processo" [editTemplate]="editProcesso">
-                    <ng-template let-row="row" let-metadata="metadata" #processo>
-                        <strong class="d-block text-break w-100" [style.margin-left.px]="getNivelSequencia(metadata)">{{row.nome || ""}}</strong>
-                    </ng-template>
-                    <ng-template let-row="row" #editProcesso>
-                        <input-text [size]="6" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250></input-text>
-                    </ng-template>
-                </column>
-                <column type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
-            </columns>
-        </grid>
+<div class="card d-block">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h6 class="mb-0">Processos da Cadeia de Valor</h6>
+    <button type="button" class="btn btn-sm btn-primary" (click)="addProcesso()" [disabled]="editingId">
+      <i class="bi bi-plus-circle"></i> Adicionar
+    </button>
+  </div>
+  <div class="card-body p-0">
+    <div class="list-group list-group-flush">
+      <div *ngFor="let processo of items" 
+           [id]="'processo-' + processo.id"
+           class="list-group-item processo-item"
+           [class.editing]="editingId === processo.id"
+           [class.dragging]="draggedProcesso?.id === processo.id"
+           [class.drop-target]="dropTarget?.id === processo.id"
+           [class.drop-before]="dropTarget?.id === processo.id && dropPosition === 'before'"
+           [class.drop-after]="dropTarget?.id === processo.id && dropPosition === 'after'"
+           [class.drop-child]="dropTarget?.id === processo.id && dropPosition === 'child'"
+           [draggable]="!editingId"
+           (dragstart)="onDragStart($event, processo)"
+           (dragover)="onDragOver($event, processo)"
+           (drop)="onDrop($event, processo)"
+           (dragend)="onDragEnd()"
+           (dragleave)="dropTarget = null; dropPosition = null">
+        
+        <div class="d-flex align-items-center" [style.padding-left.px]="getIndent(processo) * 30">
+          
+          <i class="bi bi-grip-vertical me-2 text-muted drag-handle" *ngIf="!editingId"></i>
+          
+          <span class="badge bg-info me-2">{{getNivel(processo)}}</span>
+          
+          <div class="flex-fill" *ngIf="editingId !== processo.id">
+            <strong>{{processo.nome}}</strong>
+          </div>
+          
+          <div *ngIf="editingId === processo.id" class="flex-fill me-2">
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="processo.nome" placeholder="Nome do processo" (keyup.enter)="saveProcesso(processo)">
+          </div>
+          
+          <div class="btn-group btn-group-sm ms-2" *ngIf="editingId !== processo.id">
+            <button type="button" class="btn btn-outline-info" (click)="editingId = processo.id" title="Editar">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary" (click)="addChildProcesso(processo)" title="Adicionar filho">
+              <i class="bi bi-plus-circle"></i>
+            </button>
+            <button type="button" class="btn btn-outline-danger" (click)="removeProcesso(processo)" title="Excluir">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+          
+          <div class="btn-group btn-group-sm ms-2" *ngIf="editingId === processo.id">
+            <button type="button" class="btn btn-success" (click)="saveProcesso(processo)" title="Salvar">
+              <i class="bi bi-check-lg"></i>
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="cancelEdit()" title="Cancelar">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="list-group-item text-center text-muted" *ngIf="items.length === 0">
+        <small>Nenhum processo cadastrado</small>
+      </div>
     </div>
-</editable-form>
+  </div>
+</div>
