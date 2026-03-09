@@ -23,6 +23,14 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "moment",
+              "chart.js",
+              "cron-validator",
+              "ts-md5",
+              "bootstrap",
+              "xlsx-js-style"
+            ],
             "outputPath": "./dist/petrvs",
             "deleteOutputPath": false,
             "index": "src/index.html",
@@ -90,7 +98,6 @@
               "./node_modules/@fortawesome/fontawesome-free/scss/solid.scss",
               "./node_modules/@fortawesome/fontawesome-free/scss/brands.scss",
               "./node_modules/@fortawesome/fontawesome-free/css/all.min.css",
-              "./node_modules/primeng/resources/primeng.min.css",
               "src/styles.scss",
               "./node_modules/bootstrap-icons/font/bootstrap-icons.css"
               
@@ -128,22 +135,22 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "petrvs:build",
-            "proxyConfig": "src/proxy.conf.json"
+            "proxyConfig": "src/proxy.conf.json",
+            "buildTarget": "petrvs:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "petrvs:build:production"
+              "buildTarget": "petrvs:build:production"
             },
             "dev": {
-              "browserTarget": "petrvs:build:dev"
+              "buildTarget": "petrvs:build:dev"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "petrvs:build"
+            "buildTarget": "petrvs:build"
           }
         },
         "test": {

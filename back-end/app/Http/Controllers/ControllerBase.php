@@ -69,9 +69,10 @@ abstract class ControllerBase extends Controller
     /**
      * Retorna o usuário logado
      *
-     * @return App\Models\Usuario | null
+     * @return \App\Models\Usuario|null
      */
-    public static function loggedUser(): ?Usuario {
+    public static function loggedUser(): ?\App\Models\Usuario {
+        /** @var \App\Models\Usuario|null */
         return Auth::user();
     }
 
@@ -135,7 +136,7 @@ abstract class ControllerBase extends Controller
      * Search for a given text
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function searchText(Request $request)
     {
@@ -168,7 +169,7 @@ abstract class ControllerBase extends Controller
      * Search for a given key
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function searchKey(Request $request)
     {
@@ -199,7 +200,7 @@ abstract class ControllerBase extends Controller
      * Get entity by id
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
 
     public function getById(Request $request)
@@ -230,7 +231,7 @@ abstract class ControllerBase extends Controller
      * Get all ids of a query
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
 
     public function getAllIds(Request $request)
@@ -264,7 +265,7 @@ abstract class ControllerBase extends Controller
      * Query
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function query(Request $request)
     {
@@ -304,7 +305,7 @@ abstract class ControllerBase extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string $file
-     * @return \Illuminate\Http\Response
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\Response
      */
     public function download(Request $request, string $tenantId, string $file)
     {
@@ -317,7 +318,7 @@ abstract class ControllerBase extends Controller
      * - file: File path
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function downloadUrl(Request $request)
     {
@@ -344,7 +345,7 @@ abstract class ControllerBase extends Controller
      * - file: File path
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function deleteFile(Request $request)
     {
@@ -373,7 +374,7 @@ abstract class ControllerBase extends Controller
      * - file: File data
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function upload(Request $request)
     {
@@ -403,7 +404,7 @@ abstract class ControllerBase extends Controller
      * - file: Base64 of file
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function uploadBase64(Request $request)
     {
@@ -431,7 +432,7 @@ abstract class ControllerBase extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function store(Request $request)
     {
@@ -481,7 +482,7 @@ abstract class ControllerBase extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function update(Request $request)
     {
@@ -520,7 +521,7 @@ abstract class ControllerBase extends Controller
      * Update the specified resource json field in storage (merge).
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function updateJson(Request $request)
     {
@@ -561,7 +562,7 @@ abstract class ControllerBase extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function destroy(Request $request)
     {

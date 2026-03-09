@@ -16,7 +16,7 @@ describe('ErrorListComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ErrorListComponent);
     component = fixture.componentInstance;
-    fixture.detectErrors();
+    fixture.detectChanges();
   });
 
   it('should create', () => {

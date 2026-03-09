@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
 import { BadgeButton } from 'src/app/components/badge/badge.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { Afastamento } from 'src/app/models/afastamento.model';
 import { Atividade, Checklist } from 'src/app/models/atividade.model';

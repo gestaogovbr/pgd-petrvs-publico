@@ -21,7 +21,43 @@ use App\Models\HistoricoLotacao;
 use App\Models\HistoricoFuncao;
 use App\Models\CurriculumProfissional;
 use App\Traits\AutoUuid;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property string $codigo
+ * @property string $sigla
+ * @property string $nome
+ * @property string|null $path
+ * @property int $atividades_arquivamento_automatico
+ * @property string $distribuicao_forma_contagem_prazos
+ * @property string $entrega_forma_contagem_prazos
+ * @property array $etiquetas
+ * @property array $notificacoes
+ * @property array $expediente
+ * @property string|null $texto_complementar_plano
+ * @property \DateTime|null $data_inativacao
+ * @property \DateTime|null $data_inicio_inativacao
+ * @property int $instituidora
+ * @property bool $executora
+ * @property int $informal
+ * @property array $checklist
+ * @property string|null $unidade_pai_id
+ * @property string $entidade_id
+ * @property string|null $cidade_id
+ * @property \DateTime|null $data_modificacao
+ * @property \DateTime|null $data_ativacao_temporaria
+ * @property string|null $justificativa_ativacao_temporaria
+ * @property string $horario_trabalho_inicio
+ * @property string $horario_trabalho_fim
+ * @property string $horario_trabalho_intervalo
+ * @property-read UnidadeIntegrante|null $gestor
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $gestoresSubstitutos
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $gestoresDelegados
+ * @property-read Unidade|null $unidadePai
+ * @property-read Entidade $entidade
+ * @property-read Cidade|null $cidade
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $integrantes
+ */
 class Unidade extends ModelBase
 {
     use AutoUuid;
@@ -107,7 +143,7 @@ class Unidade extends ModelBase
         return $this->hasMany(PlanoEntregaEntrega::class);
     }
 
-    public function programas()
+    public function programas(): HasMany
     {
         return $this->hasMany(Programa::class);
     }
@@ -184,16 +220,25 @@ class Unidade extends ModelBase
     }
 
     // Others relationships
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function gestor()
     {
         return $this->hasOne(UnidadeIntegrante::class)->has('gestor');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function gestoresSubstitutos()
     {
         return $this->hasMany(UnidadeIntegrante::class)->has('gestorSubstituto');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function gestoresDelegados()
     {
         return $this->hasMany(UnidadeIntegrante::class)->has('gestorDelegado');

@@ -4,9 +4,10 @@ import { ComponentBase } from '../../component-base';
 import { ColumnHeaderComponent } from '../column-header/column-header.component';
 
 @Component({
-  selector: 'order',
-  templateUrl: './order.component.html',
-  styleUrls: ['./order.component.scss']
+    selector: 'order',
+    templateUrl: './order.component.html',
+    styleUrls: ['./order.component.scss'],
+    standalone: false
 })
 export class OrderComponent extends ComponentBase implements OnInit {
   @Input() header?: ColumnHeaderComponent;

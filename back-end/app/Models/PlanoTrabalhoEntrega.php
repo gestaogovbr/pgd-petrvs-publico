@@ -8,6 +8,8 @@ use App\Models\Entrega;
 use App\Models\Atividade;
 use App\Models\PlanoEntregaEntrega;
 use App\Models\Reacao;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PlanoTrabalhoEntrega extends ModelBase
 {
@@ -30,24 +32,24 @@ class PlanoTrabalhoEntrega extends ModelBase
   public $delete_cascade = ['reacoes'];
 
   // Has
-  public function atividades()
+  public function atividades(): HasMany
   {
     return $this->hasMany(Atividade::class);
   }
-  public function reacoes()
+  public function reacoes(): HasMany
   {
     return $this->hasMany(Reacao::class);
   }
   // Belongs
-  public function planoTrabalho()
+  public function planoTrabalho(): BelongsTo
   {
     return $this->belongsTo(PlanoTrabalho::class);
   }
-  public function planoEntregaEntrega()
+  public function planoEntregaEntrega(): BelongsTo
   {
     return $this->belongsTo(PlanoEntregaEntrega::class);
   }    //nullable
-  public function entrega()
+  public function entrega(): BelongsTo
   {
     return $this->belongsTo(Entrega::class);
   }    //nullable

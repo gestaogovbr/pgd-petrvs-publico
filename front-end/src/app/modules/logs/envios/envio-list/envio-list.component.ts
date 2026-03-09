@@ -1,21 +1,20 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { EnvioDaoService } from 'src/app/dao/envio-dao.service';
-import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { Envio } from 'src/app/models/envio.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'envio-list',
-  templateUrl: './envio-list.component.html',
-  styleUrls: ['./envio-list.component.scss']
+    selector: 'envio-list',
+    templateUrl: './envio-list.component.html',
+    styleUrls: ['./envio-list.component.scss'],
+    standalone: false
 })
 export class EnvioListComponent extends PageListBase<Envio, EnvioDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
-  public allPages: ListenerAllPagesService;
   public BOTAO_PARTICIPANTES: ToolbarButton;
   public BOTAO_TRABALHOS: ToolbarButton;
   public BOTAO_ENTREGAS: ToolbarButton;
@@ -23,7 +22,6 @@ export class EnvioListComponent extends PageListBase<Envio, EnvioDaoService> {
   constructor(public injector: Injector, dao: EnvioDaoService) {
     super(injector, Envio, EnvioDaoService);
     /* Inicializações */
-    this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.title = this.lex.translate("Logs dos Envios à API PGD");
     this.filter = this.fh.FormBuilder({
       data_inicio: {default: null},

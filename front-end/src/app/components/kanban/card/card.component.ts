@@ -3,14 +3,15 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
 import { ComponentBase } from '../../component-base';
-import { ToolbarButton } from '../../toolbar/toolbar.component';
+import { ToolbarButton } from '../../toolbar/toolbar-types';
 import { CardItem, DockerComponent } from '../docker/docker.component';
 import { KanbanComponent } from '../kanban.component';
 
 @Component({
-  selector: 'card',
-  templateUrl: './card.component.html',
-  styleUrls: ['./card.component.scss']
+    selector: 'card',
+    templateUrl: './card.component.html',
+    styleUrls: ['./card.component.scss'],
+    standalone: false
 })
 export class CardComponent extends ComponentBase implements OnInit {
   @HostBinding('class') class = 'draggable-card';

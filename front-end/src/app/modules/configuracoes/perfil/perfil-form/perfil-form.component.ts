@@ -13,9 +13,10 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { PerfilService } from '../perfil.service';
 
 @Component({
-  selector: 'app-perfil-form',
-  templateUrl: './perfil-form.component.html',
-  styleUrls: ['./perfil-form.component.scss']
+    selector: 'app-perfil-form',
+    templateUrl: './perfil-form.component.html',
+    styleUrls: ['./perfil-form.component.scss'],
+    standalone: false
 })
 export class PerfilFormComponent extends PageFormBase<Perfil, PerfilDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

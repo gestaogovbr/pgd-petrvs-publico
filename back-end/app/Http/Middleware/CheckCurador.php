@@ -10,6 +10,7 @@ class CheckCurador
 {
     public function handle(Request $request, Closure $next): Response
     {
+        /** @phpstan-ignore-next-line */
         if (auth()->check() && auth()->user()->isCurador()) {
             return $next($request);
         }

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TipoDocumentoRoutingModule } from './tipo-documento-routing.module';
 import { TipoDocumentoFormComponent } from './tipo-documento-form/tipo-documento-form.component';
 import { TipoDocumentoListComponent } from './tipo-documento-list/tipo-documento-list.component';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
 
@@ -15,7 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     ReactiveFormsModule,
     TipoDocumentoRoutingModule
   ]

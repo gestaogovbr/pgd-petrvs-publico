@@ -6,6 +6,9 @@ use App\Models\ModelBase;
 use App\Models\Avaliacao;
 use App\Models\TipoAvaliacaoNota;
 
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\TipoAvaliacaoNota[] $notas
+ */
 class TipoAvaliacao extends ModelBase
 {
   protected $table = 'tipos_avaliacoes';
@@ -31,6 +34,10 @@ class TipoAvaliacao extends ModelBase
   {
     return $this->hasMany(Avaliacao::class);
   }
+
+  /**
+   * @return \Illuminate\Database\Eloquent\Relations\HasMany
+   */
   public function notas()
   {
     return $this->hasMany(TipoAvaliacaoNota::class);

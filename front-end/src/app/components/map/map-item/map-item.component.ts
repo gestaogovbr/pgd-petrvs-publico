@@ -2,9 +2,10 @@ import { ChangeDetectorRef, Component, Input, OnInit, TemplateRef, ViewContainer
 import { MapComponent, MapItem } from '../map.component';
 
 @Component({
-  selector: 'map-item, [map-item]',
-  templateUrl: './map-item.component.html',
-  styleUrls: ['./map-item.component.scss']
+    selector: 'map-item, [map-item]',
+    templateUrl: './map-item.component.html',
+    styleUrls: ['./map-item.component.scss'],
+    standalone: false
 })
 export class MapItemComponent implements OnInit {
   @Input() template?: TemplateRef<any>;

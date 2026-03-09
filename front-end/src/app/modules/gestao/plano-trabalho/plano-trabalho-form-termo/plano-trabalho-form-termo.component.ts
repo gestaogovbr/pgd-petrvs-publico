@@ -10,8 +10,6 @@ import { TipoDocumentoDaoService } from 'src/app/dao/tipo-documento-dao.service'
 import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
-import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
-import { SeiKeys } from 'src/app/listeners/procedimento-trabalhar/procedimento-trabalhar.component';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { TipoDocumento } from 'src/app/models/tipo-documento.model';
@@ -19,9 +17,10 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { NavigateResult } from 'src/app/services/navigate.service';
 
 @Component({
-  selector: 'plano-trabalho-form-termo',
-  templateUrl: './plano-trabalho-form-termo.component.html',
-  styleUrls: ['./plano-trabalho-form-termo.component.scss']
+    selector: 'plano-trabalho-form-termo',
+    templateUrl: './plano-trabalho-form-termo.component.html',
+    styleUrls: ['./plano-trabalho-form-termo.component.scss'],
+    standalone: false
 })
 
 export class PlanoTrabalhoFormTermoComponent extends PageFormBase<PlanoTrabalho, PlanoTrabalhoDaoService> {
@@ -37,8 +36,6 @@ export class PlanoTrabalhoFormTermoComponent extends PageFormBase<PlanoTrabalho,
   public usuarioDao: UsuarioDaoService;
   public documentoDao: DocumentoDaoService;
   public tipoDocumentoDao: TipoDocumentoDaoService;
-  public allPages: ListenerAllPagesService;
-  public processo?: SeiKeys;
   public tipoModalidadeDao: TipoModalidadeDaoService;
 
   constructor(public injector: Injector) {
@@ -48,7 +45,6 @@ export class PlanoTrabalhoFormTermoComponent extends PageFormBase<PlanoTrabalho,
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.tipoDocumentoDao = injector.get<TipoDocumentoDaoService>(TipoDocumentoDaoService);
-    this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
 
@@ -99,17 +95,13 @@ export class PlanoTrabalhoFormTermoComponent extends PageFormBase<PlanoTrabalho,
       this.programa!.loadSearch(entity.programa || entity.programa_id),
       this.tipoModalidade!.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id)
     ]);
-    if(this.processo) {
-      formValue.id_processo = this.processo.id_processo;
-      formValue.numero_processo = this.processo.numero_processo;
-    }
+   
     formValue.data_inicio = this.auth.hora;
     form.patchValue(formValue);
   }
 
   public async initializeData(form: FormGroup) {
     this.entity = (await this.dao!.getById(this.metadata.plano_trabalho.id, this.join))!;
-    this.processo = this.metadata?.processo;
     await this.loadData(this.entity!, form);
   }
 

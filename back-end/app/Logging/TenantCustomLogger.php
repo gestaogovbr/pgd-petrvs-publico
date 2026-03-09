@@ -77,7 +77,9 @@ class TenantCustomLogger
     {
         try {
             if (function_exists('tenancy') && tenancy()->initialized) {
-                return tenancy()->tenant->id;
+                /** @var \App\Models\Tenant $tenant */
+                $tenant = tenancy()->tenant;
+                return $tenant->id;
             }
         } catch (\Throwable $e) {
             // Fallback if tenancy fails or not found

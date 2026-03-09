@@ -7,6 +7,9 @@ use App\Models\NotificacaoDestinatario;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\NotificacaoDestinatario[] $destinatarios
+ */
 class Notificacao extends ModelBase
 {
   protected $table = 'notificacoes';
@@ -32,7 +35,7 @@ class Notificacao extends ModelBase
   protected $casts = [];
 
   // Has
-  public function destinatarios()
+  public function destinatarios(): \Illuminate\Database\Eloquent\Relations\HasMany
   {
     return $this->hasMany(NotificacaoDestinatario::class);
   }

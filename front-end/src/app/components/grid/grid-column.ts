@@ -3,7 +3,7 @@ import { FormGroup } from "@angular/forms";
 import { DaoBaseService } from "src/app/dao/dao-base.service";
 import { Base, IIndexable } from "src/app/models/base.model";
 import { LookupItem } from "src/app/services/lookup.service";
-import { ToolbarButton } from "../toolbar/toolbar.component";
+import { ToolbarButton } from "../toolbar/toolbar-types";
 import { ColumnAlign, ColumnVerticalAlign } from "./column/column.component";
 
 export type ColumnType = "search" | "display" | "text" | "textarea" | "number" | "date" | "datetime" | "time" | "timer" | "radio" | "select" | "switch" | "options" | "expand" | "template";

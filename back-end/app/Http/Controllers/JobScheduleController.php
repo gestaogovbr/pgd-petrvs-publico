@@ -48,6 +48,9 @@ class JobScheduleController extends ControllerBase {
         return response()->json(['message' => 'sincronizarSiape iniciado com sucesso!']);
     }
 
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function logJob()
     {
         LogJob::dispatch(true);

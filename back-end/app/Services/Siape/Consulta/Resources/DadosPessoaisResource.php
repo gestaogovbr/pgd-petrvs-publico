@@ -6,7 +6,7 @@ use App\Exceptions\Siape\SiapeRequestException;
 class DadosPessoaisResource extends SiapeResource
 {
     public function __construct(string $xml) {
-        return parent::__construct('//soap:Body/ns1:consultaDadosPessoaisResponse/out', $xml);
+        parent::__construct('//soap:Body/ns1:consultaDadosPessoaisResponse/out', $xml);
     }
 
     public function toArray() {

@@ -10,7 +10,8 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 @Component({
     selector: 'app-panel-login',
     templateUrl: './panel-login.component.html',
-    styleUrls: ['./panel-login.component.scss']
+    styleUrls: ['./panel-login.component.scss'],
+    standalone: false
 })
 export class PanelLoginComponent {
 

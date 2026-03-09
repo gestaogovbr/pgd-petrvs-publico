@@ -1,10 +1,12 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Services;
 
 use App\Models\Usuario;
 use App\Services\UsuarioService;
 use App\Services\IntegracaoService;
+use App\Repository\UsuarioRepository;
+use App\Repository\UnidadeRepository;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
@@ -111,21 +113,55 @@ class UsuarioServiceTest extends TestCase
             ->once()
             ->with($email, '22222', $id);
 
+        // Mock do UsuarioRepository
+        $usuarioRepositoryMock = Mockery::mock(UsuarioRepository::class);
+        
+        $usuario = new Usuario();
+        $usuario->forceFill([
+            'id' => $id,
+            'cpf' => $cpf,
+            'email' => $email,
+            'matricula' => $matricula,
+            'nome' => 'Antigo',
+            'apelido' => 'Antigo',
+            'data_nascimento' => '1990-01-01',
+            'deleted_at' => '2023-01-01 00:00:00'
+        ]);
+
+        $usuarioRepositoryMock->shouldReceive('findByCpfOrEmail')
+            ->once()
+            ->with($cpf, $email, Mockery::any(), true)
+            ->andReturn($usuario);
+            
+        // Mock do UnidadeRepository para evitar erros no construtor
+        $unidadeRepositoryMock = Mockery::mock(UnidadeRepository::class);
+
         // Mock para pular validações que não importam pro teste
-        // IMPORTANTE: Ao usar makePartial(), o construtor original do UsuarioService é chamado.
-        // O construtor original instancia:
-        // $this->nivelAcessoService = new NivelAcessoService();
-        // $this->integracaoService = new IntegracaoService();
-        // Isso sobrescreve nossa injeção anterior se não tomarmos cuidado.
-        // Mas estamos injetando DEPOIS de criar o partial mock.
+        // IMPORTANTE: Ao usar makePartial(), o construtor original do UsuarioService NÃO é chamado automaticamente
+        // se não instanciarmos a classe antes. Como estamos criando um mock da classe, precisamos injetar as dependências.
         
         $this->service = Mockery::mock(UsuarioService::class)->makePartial();
+        $this->service->shouldAllowMockingProtectedMethods();
+
+        // Inject repositories via Reflection
+        $reflection = new ReflectionClass(UsuarioService::class);
         
-        // Re-injeta o mock do integracaoService
-        $reflection = new ReflectionClass(ServiceBase::class);
-        $property = $reflection->getProperty('_services');
+        $usuarioRepoProp = $reflection->getProperty('usuarioRepository');
+        $usuarioRepoProp->setAccessible(true);
+        $usuarioRepoProp->setValue($this->service, $usuarioRepositoryMock);
+        
+        $unidadeRepoProp = $reflection->getProperty('unidadeRepository');
+        $unidadeRepoProp->setAccessible(true);
+        $unidadeRepoProp->setValue($this->service, $unidadeRepositoryMock);
+        
+        // Re-injeta o mock do integracaoService via Reflection pois ele é injetado via Reflection no setUp
+        // Mas como criamos uma NOVA instância (mock), precisamos injetar nela também.
+        $reflectionBase = new ReflectionClass(ServiceBase::class);
+        $property = $reflectionBase->getProperty('_services');
         $property->setAccessible(true);
         $property->setValue($this->service, ['integracaoService' => $this->integracaoServiceMock]);
+        
+        // Bypass validações complexas
         
         // Acessa o método validateStore diretamente se possível, ou via proxyStore que o chama?
         // ServiceBase usa __call para métodos mágicos?

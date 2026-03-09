@@ -213,7 +213,7 @@
       <!-- Side panel -->
       <div *ngIf="sidePanel" [class]="classColPanel">
         <toolbar
-          *ngIf="!sidePanel.isNoToolbar && (sidePanel.title?.length || this.editing)"
+          *ngIf="!sidePanel.isNoToolbar && (sidePanel.title.length || this.editing)"
           [title]="sidePanel.title"
           [buttons]="this.editing ? panelButtons : []"
         ></toolbar>

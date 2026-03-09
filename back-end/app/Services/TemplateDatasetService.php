@@ -5,11 +5,34 @@ namespace App\Services;
 use App\Services\ServiceBase;
 use App\Services\PlanoTrabalhoService;
 use App\Services\PlanoEntregaEntregaService;
+use App\Services\PlanejamentoService;
+use App\Services\CidadeService;
+use App\Services\EntidadeService;
+use App\Services\PlanejamentoObjetivoService;
+use App\Services\PlanoTrabalhoEntregaService;
+use App\Services\ProgramaService;
+use App\Services\UsuarioService;
+use App\Services\TipoModalidadeService;
+use App\Services\UnidadeService;
 
+/**
+ * @property PlanejamentoService $planejamentoService
+ * @property PlanoTrabalhoService $planoTrabalhoService
+ * @property CidadeService $cidadeService
+ * @property EntidadeService $entidadeService
+ * @property PlanejamentoObjetivoService $planejamentoObjetivoService
+ * @property PlanoTrabalhoEntregaService $planoTrabalhoEntregaService
+ * @property ProgramaService $programaService
+ * @property PlanoEntregaEntregaService $planoEntregaEntregaService
+ * @property UsuarioService $usuarioService
+ * @property TipoModalidadeService $planoModalidadeService
+ * @property UnidadeService $unidadeService
+ */
 class TemplateDatasetService extends ServiceBase
 {
 	public $dataset = [];
-	public function __construct() {
+
+    public function __construct() {
 		/*
 			Definição dos datasets do sistema, deverá seguir a seguinte estrutura:
 			[

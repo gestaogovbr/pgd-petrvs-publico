@@ -1,7 +1,7 @@
 import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Unidade } from 'src/app/models/unidade.model';
@@ -10,9 +10,10 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'app-preferencia-form-unidade',
-  templateUrl: './preferencia-form-unidade.component.html',
-  styleUrls: ['./preferencia-form-unidade.component.scss']
+    selector: 'app-preferencia-form-unidade',
+    templateUrl: './preferencia-form-unidade.component.html',
+    styleUrls: ['./preferencia-form-unidade.component.scss'],
+    standalone: false
 })
 export class PreferenciaFormUnidadeComponent extends PageFormBase<Unidade, UnidadeDaoService> implements OnInit{
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

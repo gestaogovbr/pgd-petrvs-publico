@@ -11,9 +11,10 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 
 @Component({
-  selector: 'app-planejamento-list',
-  templateUrl: './planejamento-list.component.html',
-  styleUrls: ['./planejamento-list.component.scss']
+    selector: 'app-planejamento-list',
+    templateUrl: './planejamento-list.component.html',
+    styleUrls: ['./planejamento-list.component.scss'],
+    standalone: false
 })
 export class PlanejamentoListComponent extends PageListBase<Planejamento, PlanejamentoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
@@ -40,7 +41,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     this.join = [
       'unidade:id,nome,sigla',
       'objetivos',
-      'objetivos.eixo_tematico:id,nome',
+      'objetivos.eixo_tematico:id,nome,cor,icone',
       'objetivos.objetivo_superior:id,nome',
       'planejamento_superior:id,nome',
       'planejamento_superior.objetivos'
