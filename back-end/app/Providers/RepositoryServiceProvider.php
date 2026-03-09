@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Repository\Entidade\Eloquent\EloquentEntidadeWriteRepository;
+
+use App\Repository\Entidade\Contracts\EntidadeWriteRepositoryContract;
+
+use App\Repository\Entidade\Eloquent\EloquentEntidadeReadRepository;
+
+use App\Repository\Entidade\Contracts\EntidadeReadRepositoryContract;
+
 use App\Repository\IntegracaoUnidade\Eloquent\EloquentIntegracaoUnidadeWriteRepository;
 
 use App\Repository\IntegracaoUnidade\Contracts\IntegracaoUnidadeWriteRepositoryContract;
@@ -121,6 +129,15 @@ final class RepositoryServiceProvider extends ServiceProvider
             EloquentUsuarioReadRepository::class,
         );
 
+
+        $this->app->bind(
+            EntidadeReadRepositoryContract::class,
+            EloquentEntidadeReadRepository::class,
+        );
+        $this->app->bind(
+            EntidadeWriteRepositoryContract::class,
+            EloquentEntidadeWriteRepository::class,
+        );
     }
 
     public function boot(): void

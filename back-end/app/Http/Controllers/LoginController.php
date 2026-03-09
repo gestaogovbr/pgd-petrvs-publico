@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Log;
 use App\Exceptions\LogError;
 use App\Services\LoginService;
 use App\Services\FirebaseAuthService;
-use App\Services\GoogleService;
 use Exception;
 use Throwable;
 

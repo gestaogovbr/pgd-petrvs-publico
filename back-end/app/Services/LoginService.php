@@ -16,6 +16,9 @@ use App\Models\Usuario;
 use App\Models\Entidade;
 use App\Models\Unidade;
 use App\Enums\UsuarioSituacaoSiape;
+use App\Repository\UsuarioRepository;
+use App\Repository\EntidadeRepository;
+use App\Repository\UnidadeRepository;
 use Exception;
 use Throwable;
 
@@ -33,13 +36,11 @@ class LoginService
         protected UsuarioService $usuarioService,
         protected UnidadeService $unidadeService,
         protected FirebaseAuthService $firebaseAuthService,
-        protected GoogleService $googleService
+        protected GoogleService $googleService,
+        protected UsuarioRepository $usuarioRepository,
+        protected EntidadeRepository $entidadeRepository,
+        protected UnidadeRepository $unidadeRepository
     ) {
-    }
-
-    protected function getModelInstance(string $modelClass): mixed
-    {
-        return app($modelClass);
     }
 
     public function registrarEntidade(Request $request, bool $session = false): ?Entidade
@@ -72,12 +73,12 @@ class LoginService
 
     private function findEntidadeById($id): ?Entidade
     {
-        return $this->getModelInstance(Entidade::class)->with(self::ENTIDADE_RELATIONS)->find($id);
+        return $this->entidadeRepository->findById($id, self::ENTIDADE_RELATIONS);
     }
 
     private function findEntidadeBySigla(string $sigla): ?Entidade
     {
-        return $this->getModelInstance(Entidade::class)->with(self::ENTIDADE_RELATIONS)->where("sigla", $sigla)->first();
+        return $this->entidadeRepository->findBySigla($sigla, self::ENTIDADE_RELATIONS);
     }
 
     public function registrarUsuario(Request $request, ?Usuario $usuario, ?array $update = null): ?Usuario
@@ -103,22 +104,7 @@ class LoginService
 
     private function loadUserWithRelations(string $userId, $entidadeId): ?Usuario
     {
-        return $this->getModelInstance(Usuario::class)->where("id", $userId)->with([
-            "areasTrabalho" => function ($query) use ($entidadeId) {
-                $query->with(["unidade.gestor.usuario", "unidade.gestoresSubstitutos.usuario", "unidade.gestoresDelegados.usuario", "unidade.cidade", "unidade.planosEntrega", "unidade.unidadePai.planosEntrega", "atribuicoes"])
-                      ->whereHas('unidade', fn($q) => $q->where('entidade_id', $entidadeId));
-            },
-            "participacoesProgramas" => fn($q) => $q->where("habilitado", 1),
-            "perfil.capacidades:id,perfil_id,tipo_capacidade_id",
-            "perfil.capacidades.tipoCapacidade:id,codigo",
-            "gerenciaTitular.atribuicoes",
-            "gerenciaTitular.unidade",
-            "gerenciasSubstitutas.atribuicoes",
-            "gerenciasSubstitutas.unidade",
-            "gerenciasDelegadas.atribuicoes",
-            "gerenciasDelegadas.unidade",
-            "notificacoesDestinatario" => fn($q) => $q->where('data_leitura', null)
-        ])->first();
+        return $this->usuarioRepository->loadUserWithRelations($userId, $entidadeId);
     }
 
     private function updateSessionUnidade(Request $request, Usuario $usuario): void
@@ -153,9 +139,7 @@ class LoginService
         $usuario = Auth::guard('web')->user();
         $usuario = $this->checkSwitchUserByMatricula($request, $usuario, $data['matricula'] ?? null);
 
-        $usuario = $this->getModelInstance(Usuario::class)->where('id', $usuario->id)
-            ->with(['areasTrabalho' => fn($q) => $q->where('unidade_id', $data['unidade_id'])])
-            ->first();
+        $usuario = $this->usuarioRepository->findWithAreaTrabalho($usuario->id, $data['unidade_id']);
 
         if (empty($usuario->areasTrabalho[0]->id)) {
             throw new Exception("Unidade não encontrada no usuário");
@@ -165,7 +149,7 @@ class LoginService
 
         return [
             'status'  => 'OK',
-            'unidade' => $this->getModelInstance(Unidade::class)->find($data['unidade_id']),
+            'unidade' => $this->unidadeRepository->findById($data['unidade_id']),
         ];
     }
 
@@ -175,7 +159,7 @@ class LoginService
             return $currentUser;
         }
 
-        $usuarioMatricula = $this->getModelInstance(Usuario::class)->where('matricula', $matricula)->first();
+        $usuarioMatricula = $this->usuarioRepository->findByMatricula($matricula);
 
         if ($usuarioMatricula && $usuarioMatricula->id !== $currentUser->id) {
             Auth::guard('web')->logout();
@@ -249,28 +233,24 @@ class LoginService
 
     private function findUserByCpf(string $cpf): ?Usuario
     {
-        $usuario = $this->getModelInstance(Usuario::class)->where('cpf', $cpf)
-            ->whereIn('situacao_siape', UsuarioSituacaoSiape::ativos())
-            ->first();
+        $usuario = $this->usuarioRepository->findActiveByCpf($cpf);
 
         if ($usuario) {
             return $usuario;
         }
 
-        return $this->getModelInstance(Usuario::class)->where('cpf', $cpf)->first();
+        return $this->usuarioRepository->findByCpf($cpf);
     }
 
     private function findUserByEmail(string $email): ?Usuario
     {
-        $usuario = $this->getModelInstance(Usuario::class)->where('email', $email)->first();
+        $usuario = $this->usuarioRepository->findByEmail($email);
 
         if (!$usuario || $usuario->situacao_siape !== UsuarioSituacaoSiape::INATIVO->value) {
             return $usuario;
         }
 
-        $activeUser = $this->getModelInstance(Usuario::class)->where('cpf', $usuario->cpf)
-            ->whereIn('situacao_siape', UsuarioSituacaoSiape::ativos())
-            ->first();
+        $activeUser = $this->usuarioRepository->findActiveByCpf($usuario->cpf);
 
         return $activeUser ?? $usuario;
     }
@@ -417,7 +397,7 @@ class LoginService
 
     public function authenticateApiUserPassword(array $credentials, Request $request)
     {
-        $usuario = $this->getModelInstance(Usuario::class)->where('email', $credentials['email'])->first();
+        $usuario = $this->usuarioRepository->findByEmail($credentials['email']);
 
         if (!$usuario || !Hash::check($credentials['password'], $usuario->password)) {
             throw new Exception("As credenciais fornecidas são inválidas.");

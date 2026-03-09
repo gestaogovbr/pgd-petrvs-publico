@@ -99,4 +99,11 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
     {
         return $this->query()->whereIn('unidade_pai_id', $ids)->get();
     }
+
+    public function findById(string|int $id): ?Unidade
+    {
+        /** @var Unidade|null $unidade */
+        $unidade = $this->query()->find($id);
+        return $unidade;
+    }
 }

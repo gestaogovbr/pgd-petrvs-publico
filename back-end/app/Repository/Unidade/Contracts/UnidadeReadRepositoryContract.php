@@ -20,4 +20,6 @@ interface UnidadeReadRepositoryContract
     public function getUnidadesGerenciadas(string $usuarioId): \Illuminate\Database\Eloquent\Collection;
 
     public function getSubordinadas(array $ids): \Illuminate\Database\Eloquent\Collection;
+
+    public function findById(string|int $id): ?\App\Models\Unidade;
 }
