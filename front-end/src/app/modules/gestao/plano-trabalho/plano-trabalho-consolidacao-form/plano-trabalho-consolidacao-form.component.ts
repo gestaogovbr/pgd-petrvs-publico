@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component, EventEmitter, Injector, Input, Output, Vi
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarComponent } from 'src/app/components/toolbar/toolbar.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { ConsolidacaoDados, PlanoTrabalhoConsolidacaoDaoService } from 'src/app/dao/plano-trabalho-consolidacao-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
@@ -33,9 +32,8 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
 import { Comentario } from 'src/app/models/comentario';
 import { BadgeButton } from 'src/app/components/badge/badge.component';
 import { AtividadeListTarefaComponent } from '../../atividade/atividade-list-tarefa/atividade-list-tarefa.component';
-import { AtividadeModule } from '../../atividade/atividade.module';
-import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
+import { AfastamentoDaoService } from 'src/app/dao/afastamento-dao.service';
 
 export type ConsolidacaoEntrega = {
   id: string,
@@ -75,7 +73,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   @Output() refreshList = new EventEmitter<boolean>();
 
   //public consolidacaoOcorrenciaDao: PlanoTrabalhoConsolidacaoOcorrenciaDaoService;
-  public ocorrenciaDao: OcorrenciaDaoService;
+  public afastamentoDao: AfastamentoDaoService;
   public comparecimentoDao: ComparecimentoDaoService;
   public unidadeDao: UnidadeDaoService;
   public formAtividade: FormGroup;
@@ -114,7 +112,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     this.atividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
     this.atividadeService = injector.get<AtividadeService>(AtividadeService);
     this.calendar = injector.get<CalendarService>(CalendarService);
-    this.ocorrenciaDao = injector.get<OcorrenciaDaoService>(OcorrenciaDaoService);
+    this.afastamentoDao = injector.get<AfastamentoDaoService>(AfastamentoDaoService);
     this.tipoAtividadeDao = injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
@@ -533,81 +531,6 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     });
   }
 
-
-  /***************************************************************************************
-  * Ocorrências 
-  ****************************************************************************************/
-  public async addOcorrencia() {
-    /*return new PlanoTrabalhoConsolidacaoOcorrencia({
-      plano_trabalho_consolidacao_id: this.entity!.id
-    });*/
-    this.go.navigate({ route: ['gestao', 'ocorrencia', 'new'] }, {
-      metadata: {
-        consolidacao: this.entity,
-        planoTrabalho: this.planoTrabalho
-      },
-      modalClose: (modalResult) => {
-        if (modalResult) this.refresh();
-      }
-    });
-  }
-
-  /*public async loadOcorrencia(form: FormGroup, row: any) {
-    this.formAtividade.patchValue({
-      data_inicio: row.data_inicio,
-      data_fim: row.data_fim,
-      descricao: row.descricao
-    });
-    this.cdRef.detectChanges();
-  }
-
-  public async saveOcorrencia(form: FormGroup, row: any) {
-    let result = undefined;
-    this.formOcorrencia.markAllAsTouched();
-    if (this.formOcorrencia!.valid) {
-      row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
-      row.data_inicio = form.controls.data_inicio.value;
-      row.data_fim = form.controls.data_fim.value;
-      row.descricao = form.controls.descricao.value;
-      this.submitting = true;
-      try {
-        result = await this.consolidacaoOcorrenciaDao?.save(row);
-      } finally {
-        this.submitting = false;
-      }
-    }
-    return result;
-  }*/
-
-  public async editOcorrencia(row: any) {
-    this.go.navigate({ route: ["gestao", "ocorrencia", row.id, "edit"] }, {
-      modalClose: (modalResult) => {
-        if (modalResult) this.refresh();
-      }
-    });
-  }
-
-  public async removeOcorrencia(row: any) {
-    if (await this.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?")) {
-      this.submitting = true;
-      try {
-        let ocorrencia = row as Ocorrencia;
-        await this.ocorrenciaDao?.delete(ocorrencia);
-        this.itemsOcorrencias.splice(this.itemsOcorrencias.findIndex(x => x.id == ocorrencia.id), 1);
-      } finally {
-        this.submitting = false;
-      }
-    }
-  }
-
-  public ocorrenciaDynamicButtons(row: any): ToolbarButton[] {
-    let result: ToolbarButton[] = [];
-    //result.push(Object.assign({}, this.OPTION_INFORMACOES, { onClick: (doc: Ocorrencia) => this.go.navigate({route: ["gestao", "ocorrencia", doc.id, "consult"]}) }));
-    if (!this.disabled && this.auth.hasPermissionTo("MOD_OCOR_EDT")) result.push(Object.assign({}, this.OPTION_ALTERAR, { onClick: this.editOcorrencia.bind(this) }));
-    if (!this.disabled && this.auth.hasPermissionTo("MOD_OCOR_EXCL")) result.push(Object.assign({}, this.OPTION_EXCLUIR, { onClick: this.removeOcorrencia.bind(this) }));
-    return result;
-  }
-
   /***************************************************************************************
   * Comparecimento 
   ****************************************************************************************/
@@ -683,10 +606,24 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     });
   }
 
+  public async removeAfastamento(row: any) {
+    if (await this.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?")) {
+      this.submitting = true;
+      try {
+        let afastamento = row as Afastamento;
+        await this.afastamentoDao?.delete(afastamento);
+        this.itemsAfastamentos.splice(this.itemsAfastamentos.findIndex(x => x.id == afastamento.id), 1);
+      } finally {
+        this.submitting = false;
+      }
+    }
+  }
+
   public afastamentoDynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    result.push(Object.assign({}, this.OPTION_INFORMACOES, { onClick: (doc: Afastamento) => this.go.navigate({ route: ["gestao", "afastamento", doc.id, "consult"] }) }));
-    result.push(Object.assign({}, this.OPTION_ALTERAR, { onClick: (doc: Afastamento) => this.go.navigate({ route: ["gestao", "afastamento", doc.id, "edit"] }) }));
+    result.push(Object.assign({}, this.OPTION_INFORMACOES, { onClick: (doc: Afastamento) => this.go.navigate({ route: ["gestao", "afastamento", doc.id, "consult"] }, { modal: true }) }));
+    result.push(Object.assign({}, this.OPTION_ALTERAR, { onClick: (doc: Afastamento) => this.go.navigate({ route: ["gestao", "afastamento", doc.id, "edit"] }, { modal: true, modalClose: (modalResult) => { if (modalResult) this.refresh(); } }) }));
+    result.push(Object.assign({}, this.OPTION_EXCLUIR, { onClick: this.removeAfastamento.bind(this) }));
     return result;
   }
 

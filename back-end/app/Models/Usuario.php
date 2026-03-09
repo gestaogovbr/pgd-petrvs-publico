@@ -482,7 +482,10 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasOne(IntegracaoServidor::class, 'cpf', 'cpf');
     }
 
-    // Mutattors e Casts
+   /**
+     * @deprecated
+     * Será removido essa dependência
+     */
     public function getUrlFotoAttribute($value)
     {
         $url = "/assets/images/profile.png";

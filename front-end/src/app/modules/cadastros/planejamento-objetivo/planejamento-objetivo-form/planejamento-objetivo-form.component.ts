@@ -1,12 +1,10 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
 import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetivo-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
-import { EixoTematico } from 'src/app/models/eixo-tematico.model';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
