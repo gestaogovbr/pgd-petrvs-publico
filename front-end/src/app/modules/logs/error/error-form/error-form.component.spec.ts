@@ -16,7 +16,7 @@ describe('ErrorFormComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ErrorFormComponent);
     component = fixture.componentInstance;
-    fixture.detectErrors();
+    fixture.detectChanges();
   });
 
   it('should create', () => {

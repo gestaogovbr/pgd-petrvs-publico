@@ -17,7 +17,7 @@ import { IIndexable, IntegranteAtribuicao } from '../models/base.model';
 import { Entidade } from '../models/entidade.model';
 import { UnidadeDaoService } from '../dao/unidade-dao.service';
 import { NotificacaoService } from '../modules/uteis/notificacoes/notificacao.service';
-import { AppComponent } from '../app.component';
+import { IAppComponent } from '../app-types';
 import { UnidadeService } from './unidade.service';
 
 export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "SESSION" | "SEI" | "LOGINUNICO";
@@ -35,7 +35,7 @@ export class AuthService {
   public unidade?: Unidade;
   public unidades?: Unidade[];
   public unidadesVinculadas?: Unidade[];
-  public app?: AppComponent;
+  public app?: IAppComponent;
 
   private _apiToken: string | undefined = undefined;
   private _logging: boolean = false;
@@ -557,5 +557,5 @@ export class AuthService {
         this.usuario.matriculas = [];
       }
     }
-  }
+  } 
 }

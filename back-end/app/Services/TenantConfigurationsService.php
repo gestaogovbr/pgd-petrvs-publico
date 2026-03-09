@@ -16,11 +16,13 @@ class TenantConfigurationsService
         $tenant = null;
         if ($tenantId) {
             $tenant = Cache::remember('domain:tenant_id:'.$tenantId, self::DOMAIN_CACHE_TTL_SECONDS, function () use ($tenantId) {
+                /** @phpstan-ignore-next-line */
                 return Domain::where('tenant_id', $tenantId)->with('tenant')->first();
             });
         }
         if (!$tenant && $domain) {
             $tenant = Cache::remember('domain:domain:'.$domain, self::DOMAIN_CACHE_TTL_SECONDS, function () use ($domain) {
+                /** @phpstan-ignore-next-line */
                 return Domain::where('domain', $domain)->with('tenant')->first();
             });
         }
@@ -28,6 +30,7 @@ class TenantConfigurationsService
         if (!$tenant) {
             $entidade = env('PETRVS_ENTIDADE');
             $tenant = Cache::remember('domain:tenant_id:'.$entidade, self::DOMAIN_CACHE_TTL_SECONDS, function () use ($entidade) {
+                /** @phpstan-ignore-next-line */
                 return Domain::where('tenant_id', $entidade)->with('tenant')->first();
             });
         }
@@ -95,6 +98,8 @@ class TenantConfigurationsService
 
         config(['integracao.perfilComum'          => $settings['integracao_usuario_comum']            ?? env('INTEGRACAO_USUARIO_COMUM')]);
         config(['integracao.perfilChefe'          => $settings['integracao_usuario_chefe']            ?? env('INTEGRACAO_USUARIO_CHEFE')]);
+
+        config(['petrvs.dias-avaliacao-registro-execucao' => $settings['dias_avaliacao_registro_execucao'] ?? config('petrvs.dias-avaliacao-registro-execucao')]);
 
         // Log::info("Configs carregadas: " . json_encode(config('integracao')));
     }

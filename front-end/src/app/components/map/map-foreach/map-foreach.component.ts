@@ -2,9 +2,10 @@ import { ChangeDetectorRef, Component, Input, OnInit, TemplateRef, ViewChild, Vi
 import { MapComponent, MapItem } from '../map.component';
 
 @Component({
-  selector: 'map-foreach, [map-foreach]',
-  templateUrl: './map-foreach.component.html',
-  styleUrls: ['./map-foreach.component.scss']
+    selector: 'map-foreach, [map-foreach]',
+    templateUrl: './map-foreach.component.html',
+    styleUrls: ['./map-foreach.component.scss'],
+    standalone: false
 })
 export class MapForeachComponent implements OnInit {
   @ViewChild('foreach', { static: true }) foreach?: TemplateRef<any>;  

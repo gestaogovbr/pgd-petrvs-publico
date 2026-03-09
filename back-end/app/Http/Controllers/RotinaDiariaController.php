@@ -22,7 +22,7 @@ class RotinaDiariaController extends ControllerBase
      * Search for a given key
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function run(Request $request)
     {

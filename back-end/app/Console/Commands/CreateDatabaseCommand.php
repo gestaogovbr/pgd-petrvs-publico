@@ -65,9 +65,11 @@ class CreateDatabaseCommand extends Command
             // } else {
             //     $this->info("Database $dbNameLog already exists for $connectionLog connection");
             // }
+            return 0;
         }
         catch (\Exception $e){
             $this->error($e->getMessage());
+            return 1;
         }
     }
 }

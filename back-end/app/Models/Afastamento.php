@@ -6,6 +6,8 @@ use App\Models\ModelBase;
 use App\Models\Usuario;
 use App\Models\TipoMotivoAfastamento;
 use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Afastamento extends ModelBase
 {
@@ -24,16 +26,16 @@ class Afastamento extends ModelBase
   ];
 
   // Has
-  public function consolidacoes()
+  public function consolidacoes(): HasMany
   {
     return $this->hasMany(PlanoTrabalhoConsolidacaoAfastamento::class);
   }
   // Belongs
-  public function usuario()
+  public function usuario(): BelongsTo
   {
     return $this->belongsTo(Usuario::class);
   }
-  public function tipoMotivoAfastamento()
+  public function tipoMotivoAfastamento(): BelongsTo
   {
     return $this->belongsTo(TipoMotivoAfastamento::class);
   }

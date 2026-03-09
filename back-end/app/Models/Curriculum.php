@@ -32,21 +32,21 @@ class Curriculum extends ModelBase
   public $fillable_changes = ['graduacoes'];
 
   //Has Many
-  public function graduacoes()
+  public function graduacoes(): \Illuminate\Database\Eloquent\Relations\HasMany
   {
     return $this->hasMany(CurriculumGraduacao::class);
   }
   //Has One
-  public function curriculumProfissional()
+  public function curriculumProfissional(): \Illuminate\Database\Eloquent\Relations\HasOne
   {
     return $this->hasOne(CurriculumProfissional::class);
   }
   // Belongs
-  public function usuario()
+  public function usuario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(Usuario::class);
   }
-  public function cidade()
+  public function cidade(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(Cidade::class);
   }

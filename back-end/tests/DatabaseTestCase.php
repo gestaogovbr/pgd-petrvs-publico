@@ -14,26 +14,18 @@ abstract class DatabaseTestCase extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
-        // Configurações adicionais de setup se necessário
     }
 
     /**
-     * Cria e inicializa um tenant para testes
+     * Define hooks to migrate the database before each test.
+     *
+     * @return array
      */
-    protected function setupTenant(array $attributes = []): Tenant
+    protected function migrateFreshUsing()
     {
-        $tenant = Tenant::create($attributes + [
-            'id' => 'test_tenant_' . uniqid(),
-        ]);
-        
-        tenancy()->initialize($tenant);
-        
-        $this->artisan('migrate', [
-            '--path' => 'database/migrations/tenant',
-            '--force' => true,
-        ]);
-
-        return $tenant;
+        return [
+            '--schema-path' => 'database/schema/mysql-schema.sql',
+        ];
     }
+
 }

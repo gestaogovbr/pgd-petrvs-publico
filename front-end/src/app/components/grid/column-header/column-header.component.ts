@@ -5,9 +5,10 @@ import { GridColumn } from '../grid-column';
 import { GridComponent } from '../grid.component';
 
 @Component({
-  selector: 'column-header',
-  templateUrl: './column-header.component.html',
-  styleUrls: ['./column-header.component.scss']
+    selector: 'column-header',
+    templateUrl: './column-header.component.html',
+    styleUrls: ['./column-header.component.scss'],
+    standalone: false
 })
 export class ColumnHeaderComponent implements OnInit {
   @Input() column: GridColumn = new GridColumn();
@@ -30,7 +31,7 @@ export class ColumnHeaderComponent implements OnInit {
   }
 
   public onOrderClick(event: MouseEvent) {
-    if(this.column.orderBy?.length && this.grid && this.grid.query) {
+    if(this.column.orderBy.length && this.grid && this.grid.query) {
       const index = (this.grid?.orderBy || []).findIndex(x => x[0] == this.column.orderBy);
       const order = (this.grid?.orderBy || []).find(x => x[0] == this.column.orderBy) || [this.column.orderBy, undefined]; 
       this.grid.orderBy = event.ctrlKey || event.shiftKey ? this.grid?.orderBy : (this.grid?.groupBy || []).map(x => [x.field, "asc"] as QueryOrderBy);

@@ -1,18 +1,101 @@
-<grid [items]="items" [form]="form!" #gridObjetivos editable [selectable]="false" [minHeight]="minHeight"
-    [add]="addObjetivo.bind(this)" [remove]="removeObjetivo.bind(this)"
-    [hasDelete]="false" [hasEdit]="false" [hasAdd]="!disabled" [join]="join" [groupBy]="groupBy" [orderBy]="orderBy" [groupTemplate]="groupEixoTematico">
-    <ng-template let-separator="separator" #groupEixoTematico>
-        <span class="text-wrap"><badge [icon]="getEixo(separator?.text)?.icone || 'bi bi-gear'" [color]="getEixo(separator?.text)?.cor || 'primary'" [label]="getEixo(separator?.text)?.nome || 'Desconhecido'"></badge></span>
-    </ng-template>
-    <columns>
-        <column title="Nome" [template]="columnNome">
-            <ng-template let-row="row" #columnNome>
-                <span class="text-break w-100" [style.margin-left.px]="(row._metadata?.level || 0) * 20">{{ marcador(row) + row.nome }}</span>
-            </ng-template>
-        </column>
-        <column title="Eixo Temático" [template]="columnEixoTematico"><ng-template let-row="row" #columnEixoTematico><span>{{ row.eixo_tematico?.nome }}</span></ng-template></column>
-        <column title="Fundamentação" [template]="columnFundamentacao"><ng-template let-row="row" #columnFundamentacao><span>{{ row.fundamentacao }}</span></ng-template></column>
-        <column *ngIf="planejamento_superior_id?.length" title="Objetivo Superior" [template]="columnObjetivoSuperior"><ng-template let-row="row" #columnObjetivoSuperior><span>{{ row.objetivo_superior?.nome  || '' }}</span></ng-template></column>
-        <column type="options" [dynamicButtons]="dynamicButtons.bind(this)" [options]="options"></column>
-    </columns>
-</grid>
+<!-- Add Button (Standard Toolbar) -->
+<toolbar [buttons]="toolbarButtons" *ngIf="!disabled"></toolbar>
+
+
+<div class="d-flex mb-2 fw-bold border-bottom pb-2 align-items-center">
+  <div class="flex-fill ps-2">Nome</div>
+  <div class="text-end pe-2 flex-shrink-0" style="width: 150px;">Ações</div>
+</div>
+
+<div cdkDropListGroup>
+  <div *ngFor="let group of groupedRoots" class="mb-3">
+      <div class="d-flex justify-content-start bg-dark bg-gradient border-bottom">
+          <div *ngIf="group.eixo" [ngStyle]="{'background-color': group.eixo.cor || '#e0e0e0', 'color': '#fff'}" class="p-2">
+              <i [class]="group.eixo.icone || 'bi bi-gear'"></i>
+              <span class="ms-2 text-black">{{group.eixo.nome}}</span>
+          </div>
+          <span *ngIf="!group.eixo" class="badge bg-secondary">Sem Eixo Temático</span>
+      </div>
+      <ng-container *ngTemplateOutlet="recursiveList; context:{ list: group.objetivos, parentId: 'axis-' + (group.id || 'null') }"></ng-container>
+  </div>
+</div>
+
+<ng-template #recursiveList let-list="list" let-parentId="parentId" let-level="level" let-parentSeq="parentSeq">
+  <div cdkDropList 
+       [cdkDropListData]="list" 
+       [id]="parentId || 'root-list'" 
+       (cdkDropListDropped)="drop($event)"
+       class="list-group list-group-flush">
+       
+    <div *ngFor="let item of list; let i = index" cdkDrag [cdkDragData]="item" class="list-group-item p-0 border-0 bg-transparent">
+      
+      <!-- Row Content -->
+      <div class="d-flex align-items-center py-2 border-bottom">
+        <div class="flex-fill d-flex align-items-center ps-2" style="min-width: 0;">
+            <!-- Indentation Spacer -->
+            <div [style.width.px]="(level || 0) * 30" class="flex-shrink-0"></div>
+
+            <!-- Drag Handle -->
+            <i class="bi bi-grip-vertical me-2 text-muted" cdkDragHandle style="cursor: move;"></i>
+            
+            <!-- Toggler -->
+            <div style="width: 20px;" class="me-1 text-center flex-shrink-0">
+                <i *ngIf="item.objetivos?.length" 
+                   (click)="toggle(item)" 
+                   class="bi" 
+                   [class.bi-caret-down-fill]="isExpanded(item)" 
+                   [class.bi-caret-right-fill]="!isExpanded(item)"
+                   style="cursor: pointer;"></i>
+            </div>
+            
+            <!-- Sequence and Name -->
+            <div class="d-flex flex-column flex-fill" style="min-width: 0;">
+
+                <span [title]="item.nome"><strong>{{ (parentSeq ? parentSeq + '.' : '') + (i + 1) }}</strong> - {{ item.nome }}</span>
+                
+            </div>
+        </div>
+        
+        <div class="text-end pe-2 flex-shrink-0" style="width: 150px;">
+             <!-- Options & Dynamic Buttons -->
+             <div class="btn-group btn-group-sm">
+                 <button *ngFor="let btn of dynamicButtons(item)" 
+                         type="button"
+                         class="btn btn-outline-secondary" 
+                         [class]="btn.color || 'btn-outline-secondary'" 
+                         (click)="btn.onClick && btn.onClick(item)" 
+                         [title]="btn.hint || ''">
+                   <i [class]="btn.icon"></i>
+                 </button>
+                 <button *ngFor="let opt of options"
+                         type="button"
+                         class="btn btn-outline-secondary"
+                         [class]="opt.color || 'btn-outline-secondary'"
+                         (click)="opt.onClick && opt.onClick(item)" 
+                         [title]="opt.hint || ''">
+                   <i [class]="opt.icon"></i>
+                 </button>
+             </div>
+        </div>
+      </div>
+
+      <!-- Children -->
+      <div *ngIf="isExpanded(item)">
+         <ng-container *ngTemplateOutlet="recursiveList; context:{ 
+             list: item.objetivos, 
+             parentId: item.id, 
+             level: (level || 0) + 1,
+             parentSeq: (parentSeq ? parentSeq + '.' : '') + (i + 1)
+         }"></ng-container>
+      </div>
+      
+    </div>
+    
+    <!-- Empty placeholder -->
+    <div class="list-group-item p-3 text-center text-muted fst-italic bg-transparent" *ngIf="list.length === 0">
+        <small>Arraste itens aqui</small>
+    </div>
+    
+  </div>
+</ng-template>
+

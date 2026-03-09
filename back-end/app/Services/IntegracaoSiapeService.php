@@ -169,6 +169,8 @@ class IntegracaoSiapeService extends ServiceBase
     return $funcional;
   }
 
+  public $siapeCodUorg;
+
   public function retornarUorgs($uorgInicial = 1)
   {
     $uorgInicial = $this->siapeCodUorg ? $this->siapeCodUorg : $uorgInicial;

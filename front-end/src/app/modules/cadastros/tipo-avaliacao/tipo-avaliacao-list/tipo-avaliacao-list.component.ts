@@ -7,9 +7,10 @@ import { TipoAvaliacao } from 'src/app/models/tipo-avaliacao.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-tipo-avaliacao-list',
-  templateUrl: './tipo-avaliacao-list.component.html',
-  styleUrls: ['./tipo-avaliacao-list.component.scss']
+    selector: 'app-tipo-avaliacao-list',
+    templateUrl: './tipo-avaliacao-list.component.html',
+    styleUrls: ['./tipo-avaliacao-list.component.scss'],
+    standalone: false
 })
 export class TipoAvaliacaoListComponent extends PageListBase<TipoAvaliacao, TipoAvaliacaoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

@@ -5,9 +5,10 @@ import { TipoAvaliacao } from 'src/app/models/tipo-avaliacao.model';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'avaliar-nota-input',
-  templateUrl: './avaliar-nota-input.component.html',
-  styleUrls: ['./avaliar-nota-input.component.scss']
+    selector: 'avaliar-nota-input',
+    templateUrl: './avaliar-nota-input.component.html',
+    styleUrls: ['./avaliar-nota-input.component.scss'],
+    standalone: false
 })
 export class AvaliarNotaInputComponent {
   @HostBinding('class') class = 'form-group';

@@ -4,9 +4,11 @@ import { DaoBaseService, QueryOrderBy } from 'src/app/dao/dao-base.service';
 import { Base, IIndexable } from 'src/app/models/base.model';
 import { PageBase } from './page-base';
 import { FullRoute, NavigateService, RouteMetadata } from 'src/app/services/navigate.service';
-import { GridComponent, GroupBy } from 'src/app/components/grid/grid.component';
+import { GridComponent } from 'src/app/components/grid/grid.component';
+import { GroupBy } from 'src/app/components/grid/grid-types';
+
 import { QueryContext } from 'src/app/dao/query-context';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 //import { appInjector } from 'src/app/app.component';
 import { QueryOptions } from 'src/app/dao/query-options';
 import { TreeNode } from 'primeng/api';

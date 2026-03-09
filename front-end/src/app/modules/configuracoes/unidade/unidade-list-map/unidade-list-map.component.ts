@@ -1,23 +1,22 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Injector, ChangeDetectorRef } from '@angular/core';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { Unidade } from 'src/app/models/unidade.model';
 import { TreeNode } from 'primeng/api';
-import { QueryContext } from 'src/app/dao/query-context';
-import { PageListBase } from 'src/app/modules/base/page-list-base';
-import { OrganizationChartNodeExpandEvent } from 'primeng/organizationchart';
+import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 
 @Component({
-  selector: 'unidade-mapa',
-  templateUrl: './unidade-list-map.component.html',
-  styleUrls: ['./unidade-list-map.component.scss']
+    selector: 'unidade-mapa',
+    templateUrl: './unidade-list-map.component.html',
+    styleUrls: ['./unidade-list-map.component.scss'],
+    standalone: false
 })
-export class UnidadeListMapComponent extends PageListBase<Unidade, UnidadeDaoService>{
-  public query?: QueryContext<Unidade>;
-  public data: TreeNode[] = []
+export class UnidadeListMapComponent extends PageFrameBase {
+  public data: TreeNode[] = [];
+  private unidadeDao: UnidadeDaoService;
 
   constructor(public injector: Injector) {
-    super(injector, Unidade, UnidadeDaoService);
-    this.dao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    super(injector);
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
   }
 
   ngAfterViewInit(): void {
@@ -26,61 +25,51 @@ export class UnidadeListMapComponent extends PageListBase<Unidade, UnidadeDaoSer
   }
 
   public async carregaUnidades(){
-    let minhaUnidade = this.auth.usuario?.lotacao?.unidade_id
-    let unidades = await this.dao!.hierarquiaUnidades(minhaUnidade);
+    let minhaUnidadeId = this.auth.usuario?.lotacao?.unidade_id;
+    let todasUnidades = await this.unidadeDao!.hierarquiaUnidades(minhaUnidadeId);
 
-    let caminhoAteARaiz: string[] = [];
-    let unidadeAtualId = minhaUnidade;
+    // Encontra as raízes (unidades sem pai ou cujo pai não está na lista)
+    let idsNaLista = new Set(todasUnidades.map(u => u.id));
+    let raizes = todasUnidades.filter(u => !u.unidade_pai_id || !idsNaLista.has(u.unidade_pai_id));
 
-    while (unidadeAtualId) {
-        let unidadeAtual = unidades.find(x => x.id === unidadeAtualId);
-        if (unidadeAtual) {
-            caminhoAteARaiz.unshift(unidadeAtualId);
-            unidadeAtualId = unidadeAtual.unidade_pai_id || undefined;
-        } else {
-            break;
-        }
-    }
-
-    let filhos = (unidadeId: string | null): any => {
-        return unidades
-            .filter(x => x.unidade_pai_id === unidadeId)
-            .map(x => ({
-                type: 'unidade',
-                label: x.sigla,                
-                expanded: minhaUnidade === x.id ? false : caminhoAteARaiz.includes(x.id),
-                styleClass: minhaUnidade == x.id ? 'text-bg-primary' : '',                
-                data: {
-                  hint: x.nome,
-                  unidade: x,
-                },
-                children: temFilhos(x.id) ? filhos(x.id) : [{ type: 'fake', expanded: false, label: 'Carregando...' }]
-            }));
-    };
-    let temFilhos = (unidadeId: string) => {
-      return unidades.some(x => x.unidade_pai_id === unidadeId);
-    };    
-    
-    this.data = filhos(null);
+    this.data = raizes.map(raiz => this.montaNoRecursivo(raiz, todasUnidades, minhaUnidadeId));
+    this.cdRef.detectChanges();
   }
 
-  expandeUnidade(event: OrganizationChartNodeExpandEvent){   
-    this.carregaFilhas(event.node.data.unidade.id, event.node)   
+  montaNoRecursivo(unidade: Unidade, lista: Unidade[], minhaUnidadeId?: string): TreeNode {
+      let filhos = lista.filter(x => x.unidade_pai_id === unidade.id);
+      
+      // Expande se for a unidade do usuário ou um de seus ancestrais
+      let expanded = false;
+      if (minhaUnidadeId) {
+          expanded = this.isAncestral(unidade.id, minhaUnidadeId, lista) || unidade.id === minhaUnidadeId;
+      }
+
+      return {
+          type: 'unidade',
+          label: unidade.sigla,
+          expanded: expanded, 
+          styleClass: minhaUnidadeId === unidade.id ? 'text-bg-primary' : '',
+          data: {
+              unidade: unidade,
+              hint: unidade.nome
+          },
+          children: filhos.map(f => this.montaNoRecursivo(f, lista, minhaUnidadeId))
+      };
   }
 
-
-  async carregaFilhas(unidade_id: string, node: TreeNode){
-    let unidades = await this.dao!.unidadesFilhas(unidade_id);
-    node.children = unidades.map(x => ({
-      type: 'unidade',
-      label: x.sigla,
-      expanded: false,
-      data: {
-        unidade: x,
-        hint: x.nome
-      },
-      children: [{ type: 'fake', expanded: false, label: 'Carregando...' }]
-    }));
+  isAncestral(possivelAncestralId: string, unidadeAlvoId: string, lista: Unidade[]): boolean {
+      let atual = lista.find(x => x.id === unidadeAlvoId);
+      while(atual && atual.unidade_pai_id) {
+          if (atual.unidade_pai_id === possivelAncestralId) return true;
+          atual = lista.find(x => x.id === atual!.unidade_pai_id);
+      }
+      return false;
+  }
+  
+  public toggle(event: Event, node: TreeNode) {
+      event.stopPropagation();
+      node.expanded = !node.expanded;
   }
 
 }

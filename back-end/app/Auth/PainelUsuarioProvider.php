@@ -48,6 +48,7 @@ class PainelUsuarioProvider implements UserProvider
     public function updateRememberToken(Authenticatable $user, $token)
     {
         $user->setRememberToken($token);
+        /** @var PainelUsuario $user */
         $user->save();
     }
 
@@ -55,7 +56,7 @@ class PainelUsuarioProvider implements UserProvider
      * Create a new instance of the user provider for the guard.
      *
      * @param  string  $provider
-     * @return \Illuminate\Contracts\Auth\UserProvider
+     * @return \Illuminate\Contracts\Auth\UserProvider|null
      */
     public function createUserProvider($provider)
     {
@@ -63,5 +64,6 @@ class PainelUsuarioProvider implements UserProvider
             return $this;
         }
 
+        return null;
     }
 }

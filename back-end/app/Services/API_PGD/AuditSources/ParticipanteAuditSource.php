@@ -8,14 +8,14 @@ use PDO;
 
 class ParticipanteAuditSource extends AuditSource
 {
-    public function __construct(string $tipo = null) {
-        $this->tipo = 'participante';
+    public function __construct() {
+        parent::__construct('participante');
     }
 
     public function getData() {
         DB::connection()->getPdo()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
         return ViewPgdParticipantes::withoutGlobalScope(SoftDeletingScope::class)
-                ->chunk(100);
+                ->cursor();
     }
 
     public function count() {

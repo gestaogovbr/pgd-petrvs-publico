@@ -1,9 +1,8 @@
 import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { AtividadeTarefaDaoService } from 'src/app/dao/atividade-tarefa-dao.service';
-import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { Comentario } from 'src/app/models/comentario';
 import { AtividadeTarefa } from 'src/app/models/atividade-tarefa.model';
 import { Atividade } from 'src/app/models/atividade.model';
@@ -11,9 +10,10 @@ import { PageBase } from 'src/app/modules/base/page-base';
 import { AtividadeService } from '../atividade.service';
 
 @Component({
-  selector: 'atividade-list-tarefa',
-  templateUrl: './atividade-list-tarefa.component.html',
-  styleUrls: ['./atividade-list-tarefa.component.scss']
+    selector: 'atividade-list-tarefa',
+    templateUrl: './atividade-list-tarefa.component.html',
+    styleUrls: ['./atividade-list-tarefa.component.scss'],
+    standalone: false
 })
 export class AtividadeListTarefaComponent extends PageBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
@@ -40,7 +40,6 @@ export class AtividadeListTarefaComponent extends PageBase {
   public formEdit: FormGroup;
   public dao: AtividadeTarefaDaoService;
   public atividadeService: AtividadeService;
-  public allPages: ListenerAllPagesService;
   public join: string[];
   public addComentarioButton: ToolbarButton = {
     icon: "bi bi-plus-circle",
@@ -54,7 +53,6 @@ export class AtividadeListTarefaComponent extends PageBase {
     super(injector);
     this.dao = injector.get<AtividadeTarefaDaoService>(AtividadeTarefaDaoService);
     this.atividadeService = injector.get<AtividadeService>(AtividadeService);
-    this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.formEdit = this.fh.FormBuilder({
       concluido: { default: false }
     });

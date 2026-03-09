@@ -1,4 +1,4 @@
-import { ToolbarButton } from './../../components/toolbar/toolbar.component';
+import { ToolbarButton } from './../../components/toolbar/toolbar-types';
 import { OnInit, Injector, Injectable } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { PageBase } from './page-base';

@@ -1,8 +1,9 @@
 <?php
 
 use App\Enums\StatusEnum;
+use App\Models\Avaliacao;
 use App\Services\PlanoTrabalhoConsolidacaoService;
-use Mockery;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -12,6 +13,11 @@ afterEach(function () {
 });
 
 it('não conclui o plano quando ainda existem consolidações não avaliadas', function () {
+    Log::shouldReceive('info')->withAnyArgs();
+    Log::shouldReceive('error')->withAnyArgs();
+    Log::shouldReceive('warning')->withAnyArgs();
+
+    /** @var PlanoTrabalhoConsolidacaoService|Mockery\MockInterface $service */
     $service = Mockery::mock(PlanoTrabalhoConsolidacaoService::class)->makePartial();
 
     $statusServiceMock = Mockery::mock();
@@ -43,14 +49,20 @@ it('não conclui o plano quando ainda existem consolidações não avaliadas', f
         ->never()
         ->with($planoMock, StatusEnum::CONCLUIDO);
 
-    $avaliacao = new stdClass();
-    $avaliacao->id = 'avaliacao-id';
-    $avaliacao->planoTrabalhoConsolidacao = $consolidacaoMock;
+    /** @var Avaliacao|Mockery\MockInterface $avaliacao */
+    $avaliacao = Mockery::mock(Avaliacao::class)->makePartial();
+    $avaliacao->shouldReceive('getAttribute')->with('id')->andReturn('avaliacao-id');
+    $avaliacao->shouldReceive('getAttribute')->with('planoTrabalhoConsolidacao')->andReturn($consolidacaoMock);
 
     $service->avaliar($avaliacao);
 });
 
 it('conclui o plano quando todas as consolidações estão avaliadas', function () {
+    Log::shouldReceive('info')->withAnyArgs();
+    Log::shouldReceive('error')->withAnyArgs();
+    Log::shouldReceive('warning')->withAnyArgs();
+
+    /** @var PlanoTrabalhoConsolidacaoService|Mockery\MockInterface $service */
     $service = Mockery::mock(PlanoTrabalhoConsolidacaoService::class)->makePartial();
 
     $statusServiceMock = Mockery::mock();
@@ -82,9 +94,10 @@ it('conclui o plano quando todas as consolidações estão avaliadas', function 
         ->once()
         ->with($planoMock, StatusEnum::CONCLUIDO);
 
-    $avaliacao = new stdClass();
-    $avaliacao->id = 'avaliacao-id';
-    $avaliacao->planoTrabalhoConsolidacao = $consolidacaoMock;
+    /** @var Avaliacao|Mockery\MockInterface $avaliacao */
+    $avaliacao = Mockery::mock(Avaliacao::class)->makePartial();
+    $avaliacao->shouldReceive('getAttribute')->with('id')->andReturn('avaliacao-id');
+    $avaliacao->shouldReceive('getAttribute')->with('planoTrabalhoConsolidacao')->andReturn($consolidacaoMock);
 
     $service->avaliar($avaliacao);
 });

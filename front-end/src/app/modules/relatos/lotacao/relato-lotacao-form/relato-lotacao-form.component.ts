@@ -9,9 +9,10 @@ import { PageBase } from 'src/app/modules/base/page-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'app-relato-lotacao-form',
-  templateUrl: './relato-lotacao-form.component.html',
-  styleUrls: ['./relato-lotacao-form.component.scss']
+    selector: 'app-relato-lotacao-form',
+    templateUrl: './relato-lotacao-form.component.html',
+    styleUrls: ['./relato-lotacao-form.component.scss'],
+    standalone: false
 })
 export class RelatoLotacaoFormComponent extends PageBase implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

@@ -14,14 +14,21 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+/**
+ * @property UsuarioService $usuarioService
+ * @property UnidadeService $unidadeService
+ */
 class UnidadeIntegranteService extends ServiceBase
 {
   public function carregarIntegrantes($unidadeId, $usuarioId)
   {
     $result = [];
+    /** @var Unidade|null $unidade */
     $unidade = empty($unidadeId) ? null : Unidade::find($unidadeId);
+    /** @var Usuario|null $usuario */
     $usuario = empty($usuarioId) ? null : Usuario::find($usuarioId);
 
+    /** @phpstan-ignore-next-line */
     $dataModificacao = $usuario ? ($usuario->integracaoServidor instanceof IntegracaoServidor ? $usuario->integracaoServidor->data_modificacao : '') : '';
 
     if (!empty($unidadeId) && empty($unidade)) throw new ServerException("ValidateIntegrante", "Unidade não encontrada no banco");
@@ -100,7 +107,7 @@ class UnidadeIntegranteService extends ServiceBase
   /**
    * @deprecated não utilizar essa função, será descontinuada.
    *
-   * @param [array] $atribuicoes
+   * @param array $atribuicoes
    * @param string|null $nome
    * @return void
    */

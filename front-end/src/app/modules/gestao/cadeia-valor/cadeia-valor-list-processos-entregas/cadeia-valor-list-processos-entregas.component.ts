@@ -1,16 +1,17 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { CadeiaValorProcessoDaoService } from 'src/app/dao/cadeia-valor-processo-dao.service';
 import { CadeiaValorProcesso } from 'src/app/models/cadeia-valor-processo.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'cadeia-valor-list-processos-entregas',
-  templateUrl: './cadeia-valor-list-processos-entregas.component.html',
-  styleUrls: ['./cadeia-valor-list-processos-entregas.component.scss']
+    selector: 'cadeia-valor-list-processos-entregas',
+    templateUrl: './cadeia-valor-list-processos-entregas.component.html',
+    styleUrls: ['./cadeia-valor-list-processos-entregas.component.scss'],
+    standalone: false
 })
 export class CadeiaValorListProcessosEntregasComponent extends PageListBase<CadeiaValorProcesso, CadeiaValorProcessoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
@@ -30,14 +31,8 @@ export class CadeiaValorListProcessosEntregasComponent extends PageListBase<Cade
     });
     this.OPTION_INFORMACOES.onClick = (processo: CadeiaValorProcesso) => this.go.navigate({ route: ['gestao', 'cadeia-valor', 'processo', processo.id, 'consult'] }, { modal: true });
     this.addOption(this.OPTION_INFORMACOES);
+    this.rowsLimit = 10000;
   }
-
-  /*public dynamicOptions(row: any): ToolbarButton[] {
-    let result: ToolbarButton[] = [];
-    let processo: CadeiaValorProcesso = row as CadeiaValorProcesso;
-    result.push({ label: "Informações", icon: "bi bi-info-circle", onClick: (processo: CadeiaValorProcesso) => this.go.navigate({ route: ['gestao', 'cadeia-valor', 'processo', processo.id, 'consult'] }, { modal: true }) });
-    return result;
-  }*/
 
   public filterClear(filter: FormGroup) {
     super.filterClear(filter);
@@ -46,7 +41,7 @@ export class CadeiaValorListProcessosEntregasComponent extends PageListBase<Cade
   public filterWhere = (filter: FormGroup) => {
     let form: any = filter.value;
     let result: any[] = [];
-    if (form.planejamento_id?.length) {
+    if (form.cadeia_valor_id?.length) {
       result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
     }
     if (form.nome?.length) {
@@ -55,29 +50,49 @@ export class CadeiaValorListProcessosEntregasComponent extends PageListBase<Cade
     return result;
   }
 
-  public getSequencia(metadata: any, row: CadeiaValorProcesso): string {
-    metadata.nivel = row.sequencia_completa || row.sequencia;
-    this.sortProcessos();
-    return metadata.nivel;
+  public sortProcessos(processos: CadeiaValorProcesso[]): CadeiaValorProcesso[] {
+    const ids = new Set(processos.map(o => o.id));
+    const buildTree = (paiId: string | null = null, nivel: number = 0, prefixo: string = ""): CadeiaValorProcesso[] => {
+      const children = processos
+        .filter(p => {
+          if (paiId === null) {
+            return !p.processo_pai_id || !ids.has(p.processo_pai_id);
+          }
+          return p.processo_pai_id === paiId;
+        })
+        .sort((a, b) => {
+          const seqA = a.sequencia || 0;
+          const seqB = b.sequencia || 0;
+          if (seqA !== seqB) return seqA - seqB;
+          return (a.nome || "").localeCompare(b.nome || "");
+        });
+
+      return children.flatMap(p => {
+        const numero = prefixo + (prefixo ? "." : "") + (p.sequencia || "");
+        (p as any)._nivel = nivel;
+        (p as any)._numero = numero;
+        return [p, ...buildTree(p.id, nivel + 1, numero)];
+      });
+    };
+    return buildTree(null);
   }
-  public sortProcessos(): void {
-    this.grid?.items.sort((a, b) => {
-      const metaA = this.grid!.getMetadata(a);
-      const metaB = this.grid!.getMetadata(b);
 
-      const sa = (metaA?.nivel || "").split(".").map(Number);
-      const sb = (metaB?.nivel || "").split(".").map(Number);
+  public allRows: CadeiaValorProcesso[] = [];
 
-      const len = Math.max(sa.length, sb.length);
-      for (let i = 0; i < len; i++) {
-        const va = sa[i] || 0;
-        const vb = sb[i] || 0;
-        if (va !== vb) {
-          return va - vb;
-        }
+  public onGridLoad = async (rows?: any[]) => {
+    if (rows) {
+      if (rows !== this.allRows) {
+         this.allRows = [...rows];
       }
-      return 0;
-    });
+      
+      const sorted = this.sortProcessos(this.allRows);
+      
+      if (rows && rows !== this.allRows) {
+          rows.splice(0, rows.length, ...sorted);
+      } else if (this.grid) {
+          this.grid.items = sorted;
+          this.grid.cdRef.detectChanges();
+      }
+    }
   }
-
 }

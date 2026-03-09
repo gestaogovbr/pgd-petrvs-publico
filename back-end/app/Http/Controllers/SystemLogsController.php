@@ -19,11 +19,23 @@ class SystemLogsController extends ControllerBase
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index(Request $request)
     {
         return response()->json($this->service->index($request->all()));
     }
 
+    /**
+     * Download log file
+     * 
+     * @param Request $request
+     * @param string $tenantId
+     * @param string $file
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function download(Request $request, string $tenantId, string $file)
     {
         try {

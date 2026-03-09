@@ -67,6 +67,11 @@ class UpdateModelCommand extends Command
   public function handle()
   {
     $tenant = Tenant::find(config('petrvs')['entidade']);
+    if (!$tenant) {
+        $this->error("Tenant principal não encontrado.");
+        return 1;
+    }
+    /** @var Tenant $tenant */
     tenancy()->initialize($tenant);
     DB::reconnect('tenant');
     $create = $this->option('create');

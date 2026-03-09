@@ -8,9 +8,10 @@ import { Base, IIndexable } from 'src/app/models/base.model';
 import { TemplateDataset, TemplateService } from './template.service';
 
 @Component({
-  selector: 'app-templates',
-  templateUrl: './templates.component.html',
-  styleUrls: ['./templates.component.scss']
+    selector: 'app-templates',
+    templateUrl: './templates.component.html',
+    styleUrls: ['./templates.component.scss'],
+    standalone: false
 })
 export class TemplatesComponent extends PageListBase<Template, TemplateDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

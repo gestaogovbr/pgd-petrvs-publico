@@ -12,5 +12,15 @@ export class PlanejamentoObjetivoDaoService extends DaoBaseService<PlanejamentoO
     this.inputSearchConfig.searchFields = ["nome"];
   }
 
+  public ordenar(objetivos: PlanejamentoObjetivo[]): Promise<PlanejamentoObjetivo[]> {
+    return new Promise<PlanejamentoObjetivo[]>((resolve, reject) => {
+      this.server.post('api/PlanejamentoObjetivo/ordenar', { objetivos: objetivos }).subscribe(response => {
+        resolve(response.data);
+      }, error => {
+        reject(error);
+      });
+    });
+  }
+
 }
 

@@ -21,6 +21,10 @@ class ChangeController extends ControllerBase {
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function showResponsaveis(Request $request) {
         try {
             $usuario_ids = $request->validate([
@@ -38,6 +42,9 @@ class ChangeController extends ControllerBase {
         }
     }
 
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function loadModels() {
         return response()->json([
             'success' => true,

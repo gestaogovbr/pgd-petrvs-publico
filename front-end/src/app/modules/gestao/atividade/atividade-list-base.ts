@@ -3,11 +3,10 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { Atividade, Checklist } from 'src/app/models/atividade.model';
-import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { CalendarService, Efemerides, FeriadoList } from 'src/app/services/calendar.service';
 import { Afastamento } from 'src/app/models/afastamento.model';
 import { LookupItem } from 'src/app/services/lookup.service';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { TipoProcessoDaoService } from 'src/app/dao/tipo-processo-dao.service';
 import { ComentarioService } from 'src/app/services/comentario.service';
@@ -24,7 +23,6 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
   public planoTrabalhoDao: PlanoTrabalhoDaoService;
   public tipoAtividadeDao: TipoAtividadeDaoService;
   public tipoProcessoDao: TipoProcessoDaoService;
-  public allPages: ListenerAllPagesService;
   public atividadeService: AtividadeService;
   public calendar: CalendarService;
   public comentario: ComentarioService;
@@ -50,7 +48,6 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
     this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
     this.tipoAtividadeDao = injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService);
     this.tipoProcessoDao = injector.get<TipoProcessoDaoService>(TipoProcessoDaoService);
-    this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.atividadeService = injector.get<AtividadeService>(AtividadeService);
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.comentario = injector.get<ComentarioService>(ComentarioService);

@@ -5,9 +5,10 @@ import { PageFrameBase } from "src/app/modules/base/page-frame-base";
 import { ColunaTipo } from "../colunas/colunas.component";
 
 @Component({
-  selector: 'planejamento-show',
-  templateUrl: './planejamento-show.component.html',
-  styleUrls: ['./planejamento-show.component.scss'],
+    selector: 'planejamento-show',
+    templateUrl: './planejamento-show.component.html',
+    styleUrls: ['./planejamento-show.component.scss'],
+    standalone: false
 })
 export class PlanejamentoShowComponent extends PageFrameBase {
   @Input() planejamento: Planejamento = {} as Planejamento;
