@@ -2,6 +2,8 @@
 ### Modificado
 - Reestruturação do planejamento institucional para agrupar objetivos por eixo temático.
 - Reestruturação do cadastro de processos na cadeia de valor
+### Corrigido
+- Adiciona o campo `programa.data_inicio` na chamada da API. Corrigindo a checagem de regimento vigente para permitir o cancelamento de conclusão dos PEs.
 
 ## 2.9.15 27/02/2026
 ### Adicionado
