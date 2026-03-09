@@ -10,6 +10,9 @@ use App\Services\GoogleService;
 use App\Models\Usuario;
 use App\Models\Entidade;
 use App\Models\Unidade;
+use App\Repository\UsuarioRepository;
+use App\Repository\EntidadeRepository;
+use App\Repository\UnidadeRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -23,12 +26,18 @@ beforeEach(function () {
     $this->unidadeService = Mockery::mock(UnidadeService::class);
     $this->firebaseAuthService = Mockery::mock(FirebaseAuthService::class);
     $this->googleService = Mockery::mock(GoogleService::class);
+    $this->usuarioRepository = Mockery::mock(UsuarioRepository::class);
+    $this->entidadeRepository = Mockery::mock(EntidadeRepository::class);
+    $this->unidadeRepository = Mockery::mock(UnidadeRepository::class);
 
     $this->service = Mockery::mock(LoginService::class, [
         $this->usuarioService,
         $this->unidadeService,
         $this->firebaseAuthService,
-        $this->googleService
+        $this->googleService,
+        $this->usuarioRepository,
+        $this->entidadeRepository,
+        $this->unidadeRepository
     ])->makePartial();
 
     $this->service->shouldAllowMockingProtectedMethods();
@@ -47,14 +56,9 @@ test('registrar entidade corretamente quando sigla fornecida', function () {
     $entidadeMock = Mockery::mock(Entidade::class);
     $entidadeMock->shouldReceive('getAttribute')->with('id')->andReturn('uuid-entidade');
     
-    $queryMock = Mockery::mock();
-    $queryMock->shouldReceive('with')->andReturnSelf();
-    $queryMock->shouldReceive('where')->with('sigla', 'ENTIDADE_TESTE')->andReturnSelf();
-    $queryMock->shouldReceive('first')->andReturn($entidadeMock);
-
-    $this->service->shouldReceive('getModelInstance')
-        ->with(Entidade::class)
-        ->andReturn($queryMock);
+    $this->entidadeRepository->shouldReceive('findBySigla')
+        ->with('ENTIDADE_TESTE', Mockery::any())
+        ->andReturn($entidadeMock);
 
     $result = $this->service->registrarEntidade($request);
 
@@ -93,29 +97,15 @@ test('authenticate user password corretamente via api', function () {
     // Hash check
     Hash::shouldReceive('check')->with('password', Mockery::any())->andReturn(true);
 
-    // Mock Query Builder
-    $queryUsuarioMock = Mockery::mock();
-    
-    // 1. authenticateApiUserPassword -> getModelInstance(Usuario::class)->where('email')->first()
-    $queryUsuarioMock->shouldReceive('where')
-        ->with('email', 'teste@teste.com')
-        ->andReturnSelf();
-        
-    // 2. loadUserWithRelations -> where('id')->with(...)->first()
-    $queryUsuarioMock->shouldReceive('where')
-        ->with('id', 'uuid-usuario')
-        ->andReturnSelf();
-
-    $queryUsuarioMock->shouldReceive('with')
-        ->withAnyArgs()
-        ->andReturnSelf();
-
-    $queryUsuarioMock->shouldReceive('first')
+    // 1. findUserByEmail -> UsuarioRepository::findByEmail
+    $this->usuarioRepository->shouldReceive('findByEmail')
+        ->with('teste@teste.com')
         ->andReturn($usuarioMock);
 
-    $this->service->shouldReceive('getModelInstance')
-        ->with(Usuario::class)
-        ->andReturn($queryUsuarioMock);
+    // 2. loadUserWithRelations -> UsuarioRepository::loadUserWithRelations
+    $this->usuarioRepository->shouldReceive('loadUserWithRelations')
+        ->with('uuid-usuario', '') // string vazia pois entidade_id é null e tratado no service
+        ->andReturn($usuarioMock);
 
     // Mock registrarEntidade internal call
     $this->service->shouldReceive('registrarEntidade')->andReturn(Mockery::mock(Entidade::class));
@@ -161,19 +151,15 @@ test('authenticate firebase token success', function () {
     $this->usuarioService->shouldReceive('atualizarFotoPerfil')
         ->with(UsuarioService::LOGIN_FIREBASE, $usuarioMock, 'http://picture.url');
 
-    // Mock Query Builder
-    $queryUsuarioMock = Mockery::mock();
-    // findUser call
-    $queryUsuarioMock->shouldReceive('where')->with('email', 'teste@teste.com')->andReturnSelf();
-    $queryUsuarioMock->shouldReceive('first')->andReturn($usuarioMock);
+    // findUserByEmail
+    $this->usuarioRepository->shouldReceive('findByEmail')
+        ->with('teste@teste.com')
+        ->andReturn($usuarioMock);
     
-    // For loadUserWithRelations
-    $queryUsuarioMock->shouldReceive('where')->with('id', 'uuid-usuario')->andReturnSelf();
-    $queryUsuarioMock->shouldReceive('with')->withAnyArgs()->andReturnSelf();
-
-    $this->service->shouldReceive('getModelInstance')
-        ->with(Usuario::class)
-        ->andReturn($queryUsuarioMock);
+    // loadUserWithRelations
+    $this->usuarioRepository->shouldReceive('loadUserWithRelations')
+        ->with('uuid-usuario', '')
+        ->andReturn($usuarioMock);
 
     $this->service->shouldReceive('registrarEntidade')->andReturn(Mockery::mock(Entidade::class));
 

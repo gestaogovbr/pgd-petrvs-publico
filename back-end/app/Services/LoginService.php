@@ -92,7 +92,7 @@ class LoginService
             $usuario->fresh();
         }
 
-        $entidadeId = $request->session()->get("entidade_id");
+        $entidadeId = $request->session()->get("entidade_id") ?? "";
         $usuario = $this->loadUserWithRelations($usuario->id, $entidadeId);
 
         if ($usuario) {
