@@ -218,5 +218,15 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
                  }
              });
         }
+
+        if (isset($params['orderBy']) && is_array($params['orderBy'])) {
+            foreach ($params['orderBy'] as $order) {
+                if (!is_array($order)) continue;
+                $field = $order[0] ?? null;
+                if (!is_string($field) || $field === '' || str_contains($field, '.')) continue;
+                $direction = strtolower((string) ($order[1] ?? 'asc'));
+                $query->orderBy($field, $direction === 'desc' ? 'desc' : 'asc');
+            }
+        }
     }
 }

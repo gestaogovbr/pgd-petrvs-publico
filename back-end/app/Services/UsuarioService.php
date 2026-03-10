@@ -7,7 +7,6 @@ use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
 use App\Facades\SiapeLog;
-use App\Models\TipoModalidade;
 use App\Models\Usuario;
 use App\Repository\IntegracaoServidorRepository;
 use App\Repository\PerfilRepository;
@@ -623,65 +622,61 @@ class UsuarioService extends ServiceBase
         }
     }
 
-    /* FIXME: Refatorar para usar repository. Testar os camponentes de search do front */
     public function searchText($data)
     {
-      if (!in_array('usuario_externo', $data['fields'])) {
-          $data['fields'][] = 'usuario_externo';
-      }
-      $text = "%" . str_replace(" ", "%", $data['query']) . "%";
-      $model = App($this->collection);
-      $table = $model->getTable();
+        $data = is_array($data) ? $data : [];
+        $data['query'] = $data['query'] ?? '';
+        $data['fields'] = $data['fields'] ?? [];
+        $data['where'] = $data['where'] ?? [];
+        $data['orderBy'] = $data['orderBy'] ?? [];
 
+        if (!in_array('usuario_externo', $data['fields'])) {
+            $data['fields'][] = 'usuario_externo';
+        }
 
-      // Garante que os campos tenham o nome da tabela
-      $data["select"] = array_map(fn ($field) => str_contains($field, ".") ? $field : $table . "." . $field, array_merge(['id'], $data['fields']));
+        $subordinadas = true;
+        $where = [];
+        foreach ($data['where'] as $condition) {
+            if (is_array($condition) && ($condition[0] ?? null) === 'subordinadas') {
+                $subordinadas = (bool) ($condition[2] ?? true);
+                continue;
+            }
+            $where[] = $condition;
+        }
+        $data['where'] = $where;
 
+        $condicaoDeletados = array_filter($data['where'], fn ($w) => is_array($w) && ($w[0] ?? null) === 'deleted_at');
+        if (empty($condicaoDeletados)) {
+            $data['where'][] = ['deleted_at', '==', null];
+        }
 
-      // Usa Eloquent query() em vez de DB::table()
-      $query = $model->query();
+        $usuario = parent::loggedUser();
+        if ($usuario && !$usuario->hasPermissionTo("MOD_USER_TUDO")) {
+            $areasTrabalhoWhere = $this->unidadeRepository->getAreasTrabalhoWhereClause($usuario->id, $subordinadas, "where_unidades");
+            $data['where'][] = RawWhere::raw("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($areasTrabalhoWhere))");
+        }
 
-      if (method_exists($this, 'proxySearch')) {
-          $this->proxySearch($query, $data, $text);
-      }
+        $rows = $this->usuarioRepository->search($data);
 
-      // Adiciona condição LIKE para busca nos campos informados
-      $likes = ["or"];
-      foreach ($data['fields'] as $field) {
-          array_push($likes, [$field, 'like', $text]);
-      }
+        $fieldsForOutput = array_values(array_filter($data['fields'], fn ($field) => $field !== 'usuario_externo'));
 
-      // Garante que deleted_at seja tratado corretamente
-      $condicaoDeletados = array_filter($data['where'], fn ($w) => is_array($w) && $w[0] == "deleted_at");
-      if (empty($condicaoDeletados)) {
-          array_push($data['where'], ['deleted_at', '=', null]);
-      }
+        $getFieldValue = static fn ($row, string $field) => data_get($row, $field);
 
-      $where = [$likes, $data['where']];
-      $this->applyWhere($query, $where, $data);
-      $this->applyOrderBy($query, $data);
+        $values = [];
+        foreach ($rows as $row) {
+            $orderValues = array_map(
+                fn ($order) => is_array($order) ? $getFieldValue($row, (string) ($order[0] ?? '')) : null,
+                $data['orderBy']
+            );
 
-      // Busca apenas os campos informados
-      $query->select($data["select"]);
-      // Obtém os resultados
-      $rows = $query->get();
+            $values[] = [
+                (string) $getFieldValue($row, 'id'),
+                array_map(fn ($field) => $getFieldValue($row, $field), $fieldsForOutput),
+                $orderValues
+            ];
+        }
 
-      $values = [];
-
-      $data['fields'] = array_filter($data['fields'], fn($field) => $field !== 'usuario_externo');
-
-      foreach ($rows as $row) {
-          // Ajusta os campos para ordenação
-          $orderFields = array_map(fn ($order) => str_replace(".", "_", $order[0]), $data['orderBy'] ?? []);
-          $orderValues = array_map(fn ($field) => $row->$field ?? null, $orderFields);
-
-          array_push($values, [
-              $row->id,
-              array_map(fn ($field) => $row->$field ?? null, $data['fields']),
-              $orderValues
-          ]);
-      }
-      return $values;
+        return $values;
     }
 
     public function getById($data)
