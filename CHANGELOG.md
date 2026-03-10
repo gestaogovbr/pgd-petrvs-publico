@@ -1,3 +1,8 @@
+## 2.9.17 10/03/2026
+### Corrigido
+- Correção na atualização do usuário.
+- Correção da busca de usuários.
+
 ## 2.9.16 09/03/2026
 ### Modificado
 - Reestruturação do planejamento institucional para agrupar objetivos por eixo temático.

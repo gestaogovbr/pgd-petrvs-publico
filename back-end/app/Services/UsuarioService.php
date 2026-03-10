@@ -623,26 +623,65 @@ class UsuarioService extends ServiceBase
         }
     }
 
+    /* FIXME: Refatorar para usar repository. Testar os camponentes de search do front */
     public function searchText($data)
     {
-        if (!in_array('usuario_externo', $data['fields'])) {
-            $data['fields'][] = 'usuario_externo';
-        }
+      if (!in_array('usuario_externo', $data['fields'])) {
+          $data['fields'][] = 'usuario_externo';
+      }
+      $text = "%" . str_replace(" ", "%", $data['query']) . "%";
+      $model = App($this->collection);
+      $table = $model->getTable();
 
-        $data["where"][] = ["subordinadas", "==", true];
 
-        $usuario = parent::loggedUser();
-        if (!$usuario->hasPermissionTo("MOD_USER_TUDO")) {
-            $subordinadas = true;
-            foreach($data['where'] as $w) {
-                 if(is_array($w) && $w[0] == "subordinadas") $subordinadas = $w[2];
-            }
+      // Garante que os campos tenham o nome da tabela
+      $data["select"] = array_map(fn ($field) => str_contains($field, ".") ? $field : $table . "." . $field, array_merge(['id'], $data['fields']));
 
-            $areasTrabalhoWhere = $this->unidadeRepository->getAreasTrabalhoWhereClause($usuario->id, $subordinadas, "where_unidades");
-            $data['where'][] = RawWhere::raw("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($areasTrabalhoWhere))", []);
-        }
 
-        return $this->usuarioRepository->search($data);
+      // Usa Eloquent query() em vez de DB::table()
+      $query = $model->query();
+
+      if (method_exists($this, 'proxySearch')) {
+          $this->proxySearch($query, $data, $text);
+      }
+
+      // Adiciona condição LIKE para busca nos campos informados
+      $likes = ["or"];
+      foreach ($data['fields'] as $field) {
+          array_push($likes, [$field, 'like', $text]);
+      }
+
+      // Garante que deleted_at seja tratado corretamente
+      $condicaoDeletados = array_filter($data['where'], fn ($w) => is_array($w) && $w[0] == "deleted_at");
+      if (empty($condicaoDeletados)) {
+          array_push($data['where'], ['deleted_at', '=', null]);
+      }
+
+      $where = [$likes, $data['where']];
+      $this->applyWhere($query, $where, $data);
+      $this->applyOrderBy($query, $data);
+
+      // Busca apenas os campos informados
+      $query->select($data["select"]);
+      // Obtém os resultados
+      $rows = $query->get();
+
+      $values = [];
+
+      $data['fields'] = array_filter($data['fields'], fn($field) => $field !== 'usuario_externo');
+
+      foreach ($rows as $row) {
+          // Ajusta os campos para ordenação
+          $orderFields = array_map(fn ($order) => str_replace(".", "_", $order[0]), $data['orderBy'] ?? []);
+          $orderValues = array_map(fn ($field) => $row->$field ?? null, $orderFields);
+
+          array_push($values, [
+              $row->id,
+              array_map(fn ($field) => $row->$field ?? null, $data['fields']),
+              $orderValues
+          ]);
+      }
+      return $values;
     }
 
     public function getById($data)
