@@ -132,4 +132,14 @@ class UsuarioRepository
     {
         return $this->readRepository->findByCpf($cpf);
     }
+
+    public function findByCpfWithLotacao(string $cpf): Collection
+    {
+        return $this->readRepository->findByCpfWithLotacao($cpf);
+    }
+
+    public function findAllByCpfUnfiltered(string $cpf): Collection
+    {
+        return $this->readRepository->findAllByCpfUnfiltered($cpf);
+    }
 }

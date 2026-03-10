@@ -2,7 +2,6 @@
 
 use App\Services\IntegracaoGestorService;
 use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
-use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Mockery\MockInterface;
@@ -55,7 +54,7 @@ describe('IntegracaoGestorService', function () {
 
         $service->shouldReceive('createGestorIntegracao')
             ->once()
-            ->with($chefiasMock, Mockery::type(Usuario::class), Mockery::any(), Mockery::any(), Mockery::any(), $config)
+            ->with($chefiasMock, Mockery::any(), Mockery::any(), Mockery::any(), $config)
             ->andReturn($gestorIntegracaoMock);
 
         // Act

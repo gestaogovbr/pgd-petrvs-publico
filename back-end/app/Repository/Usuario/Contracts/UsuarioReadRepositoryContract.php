@@ -26,4 +26,6 @@ interface UsuarioReadRepositoryContract
     public function loadUserWithRelations(string $userId, string $entidadeId): ?Usuario;
     public function findWithAreaTrabalho(string $userId, string $unidadeId): ?Usuario;
     public function findByCpf(string $cpf): ?Usuario;
+    public function findByCpfWithLotacao(string $cpf): Collection;
+    public function findAllByCpfUnfiltered(string $cpf): Collection;
 }

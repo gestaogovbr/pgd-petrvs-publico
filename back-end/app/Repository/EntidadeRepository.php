@@ -25,4 +25,9 @@ class EntidadeRepository
     {
         return $this->readRepository->findBySigla($sigla, $with);
     }
+
+    public function findAll(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->readRepository->findAll();
+    }
 }

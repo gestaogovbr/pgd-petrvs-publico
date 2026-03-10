@@ -49,4 +49,9 @@ class UnidadeRepository
     {
         return $this->readRepository->findById($id);
     }
+
+    public function existsByCodigo(string $codigo): bool
+    {
+        return $this->readRepository->existsByCodigo($codigo);
+    }
 }

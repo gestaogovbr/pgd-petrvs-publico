@@ -39,4 +39,9 @@ class EloquentEntidadeReadRepository extends AbstractEloquentReadRepository impl
         $result = $query->where('sigla', $sigla)->first();
         return $result;
     }
+
+    public function findAll(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->query()->get();
+    }
 }

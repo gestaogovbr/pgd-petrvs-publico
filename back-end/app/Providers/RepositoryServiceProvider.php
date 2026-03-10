@@ -4,6 +4,62 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Repository\UnidadeIntegranteAtribuicao\Eloquent\EloquentUnidadeIntegranteAtribuicaoWriteRepository;
+
+use App\Repository\UnidadeIntegranteAtribuicao\Contracts\UnidadeIntegranteAtribuicaoWriteRepositoryContract;
+
+use App\Repository\UnidadeIntegranteAtribuicao\Eloquent\EloquentUnidadeIntegranteAtribuicaoReadRepository;
+
+use App\Repository\UnidadeIntegranteAtribuicao\Contracts\UnidadeIntegranteAtribuicaoReadRepositoryContract;
+
+use App\Repository\UnidadeIntegrante\Eloquent\EloquentUnidadeIntegranteWriteRepository;
+
+use App\Repository\UnidadeIntegrante\Contracts\UnidadeIntegranteWriteRepositoryContract;
+
+use App\Repository\UnidadeIntegrante\Eloquent\EloquentUnidadeIntegranteReadRepository;
+
+use App\Repository\UnidadeIntegrante\Contracts\UnidadeIntegranteReadRepositoryContract;
+
+use App\Repository\SiapeBlackListServidor\Eloquent\EloquentSiapeBlackListServidorWriteRepository;
+
+use App\Repository\SiapeBlackListServidor\Contracts\SiapeBlackListServidorWriteRepositoryContract;
+
+use App\Repository\SiapeBlackListServidor\Eloquent\EloquentSiapeBlackListServidorReadRepository;
+
+use App\Repository\SiapeBlackListServidor\Contracts\SiapeBlackListServidorReadRepositoryContract;
+
+use App\Repository\SiapeDadosUORG\Eloquent\EloquentSiapeDadosUORGWriteRepository;
+
+use App\Repository\SiapeDadosUORG\Contracts\SiapeDadosUORGWriteRepositoryContract;
+
+use App\Repository\SiapeDadosUORG\Eloquent\EloquentSiapeDadosUORGReadRepository;
+
+use App\Repository\SiapeDadosUORG\Contracts\SiapeDadosUORGReadRepositoryContract;
+
+use App\Repository\SiapeListaUORGS\Eloquent\EloquentSiapeListaUORGSWriteRepository;
+
+use App\Repository\SiapeListaUORGS\Contracts\SiapeListaUORGSWriteRepositoryContract;
+
+use App\Repository\SiapeListaUORGS\Eloquent\EloquentSiapeListaUORGSReadRepository;
+
+use App\Repository\SiapeListaUORGS\Contracts\SiapeListaUORGSReadRepositoryContract;
+
+use App\Repository\SiapeConsultaDadosFuncionais\Eloquent\EloquentSiapeConsultaDadosFuncionaisWriteRepository;
+
+use App\Repository\SiapeConsultaDadosFuncionais\Contracts\SiapeConsultaDadosFuncionaisWriteRepositoryContract;
+
+use App\Repository\SiapeConsultaDadosFuncionais\Eloquent\EloquentSiapeConsultaDadosFuncionaisReadRepository;
+
+use App\Repository\SiapeConsultaDadosFuncionais\Contracts\SiapeConsultaDadosFuncionaisReadRepositoryContract;
+
+use App\Repository\SiapeConsultaDadosPessoais\Eloquent\EloquentSiapeConsultaDadosPessoaisWriteRepository;
+
+use App\Repository\SiapeConsultaDadosPessoais\Contracts\SiapeConsultaDadosPessoaisWriteRepositoryContract;
+
+use App\Repository\SiapeConsultaDadosPessoais\Eloquent\EloquentSiapeConsultaDadosPessoaisReadRepository;
+
+use App\Repository\SiapeConsultaDadosPessoais\Contracts\SiapeConsultaDadosPessoaisReadRepositoryContract;
+
 use App\Repository\Entidade\Eloquent\EloquentEntidadeWriteRepository;
 
 use App\Repository\Entidade\Contracts\EntidadeWriteRepositoryContract;
@@ -137,6 +193,69 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             EntidadeWriteRepositoryContract::class,
             EloquentEntidadeWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SiapeConsultaDadosPessoaisReadRepositoryContract::class,
+            EloquentSiapeConsultaDadosPessoaisReadRepository::class,
+        );
+        $this->app->bind(
+            SiapeConsultaDadosPessoaisWriteRepositoryContract::class,
+            EloquentSiapeConsultaDadosPessoaisWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SiapeConsultaDadosFuncionaisReadRepositoryContract::class,
+            EloquentSiapeConsultaDadosFuncionaisReadRepository::class,
+        );
+        $this->app->bind(
+            SiapeConsultaDadosFuncionaisWriteRepositoryContract::class,
+            EloquentSiapeConsultaDadosFuncionaisWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SiapeListaUORGSReadRepositoryContract::class,
+            EloquentSiapeListaUORGSReadRepository::class,
+        );
+        $this->app->bind(
+            SiapeListaUORGSWriteRepositoryContract::class,
+            EloquentSiapeListaUORGSWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SiapeDadosUORGReadRepositoryContract::class,
+            EloquentSiapeDadosUORGReadRepository::class,
+        );
+        $this->app->bind(
+            SiapeDadosUORGWriteRepositoryContract::class,
+            EloquentSiapeDadosUORGWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SiapeBlackListServidorReadRepositoryContract::class,
+            EloquentSiapeBlackListServidorReadRepository::class,
+        );
+        $this->app->bind(
+            SiapeBlackListServidorWriteRepositoryContract::class,
+            EloquentSiapeBlackListServidorWriteRepository::class,
+        );
+
+        $this->app->bind(
+            UnidadeIntegranteReadRepositoryContract::class,
+            EloquentUnidadeIntegranteReadRepository::class,
+        );
+        $this->app->bind(
+            UnidadeIntegranteWriteRepositoryContract::class,
+            EloquentUnidadeIntegranteWriteRepository::class,
+        );
+
+        $this->app->bind(
+            UnidadeIntegranteAtribuicaoReadRepositoryContract::class,
+            EloquentUnidadeIntegranteAtribuicaoReadRepository::class,
+        );
+        $this->app->bind(
+            UnidadeIntegranteAtribuicaoWriteRepositoryContract::class,
+            EloquentUnidadeIntegranteAtribuicaoWriteRepository::class,
         );
     }
 

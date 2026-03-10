@@ -11,4 +11,5 @@ interface EntidadeReadRepositoryContract
 {
     public function findById(string|int $id, array $with = []): ?\App\Models\Entidade;
     public function findBySigla(string $sigla, array $with = []): ?\App\Models\Entidade;
+    public function findAll(): \Illuminate\Database\Eloquent\Collection;
 }

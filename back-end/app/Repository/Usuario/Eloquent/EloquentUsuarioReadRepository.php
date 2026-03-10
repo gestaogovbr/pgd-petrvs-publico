@@ -221,6 +221,22 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $usuario;
     }
 
+    public function findByCpfWithLotacao(string $cpf): Collection
+    {
+        return $this->model->newQuery()
+            ->with(['lotacao.unidade'])
+            ->where('cpf', $cpf)
+            ->get();
+    }
+
+    public function findAllByCpfUnfiltered(string $cpf): Collection
+    {
+        return $this->model->newQuery()
+            ->with(['lotacao.unidade'])
+            ->where('cpf', $cpf)
+            ->get();
+    }
+
     /**
      * Applies filters similar to proxyQuery
      */
