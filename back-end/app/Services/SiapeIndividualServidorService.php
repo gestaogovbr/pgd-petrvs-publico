@@ -529,18 +529,52 @@ class SiapeIndividualServidorService extends ServiceBase
         $matriculasSiape = array_map(fn($dado) => $dado['matriculaSiape'] ?? null, $dadosFuncionaisArray);
 
         foreach ($usuarios as $usuario) {
-            $this->processarRemocaoVinculoUsuario($usuario, $cpf, $matriculasSiape);
+            if (in_array($usuario->matricula, $matriculasSiape)) {
+                $this->processarRemocaoVinculoUsuario($usuario, $cpf, $matriculasSiape);
+            } else {
+                $this->adicionarBlacklist($cpf, $usuario->matricula);
+            }
+        }
+    }
+
+    private function adicionarBlacklist(string $cpf, ?string $matricula): void
+    {
+        if (empty($matricula)) {
+            return;
+        }
+
+        $exists = $this->getModelInstance(SiapeBlackListServidor::class)
+            ->where('cpf', $cpf)
+            ->where('matricula', $matricula)
+            ->exists();
+
+        if (!$exists) {
+            $this->getModelInstance(SiapeBlackListServidor::class)->create([
+                'id' => Str::uuid(),
+                'cpf' => $cpf,
+                'matricula' => $matricula,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ]);
+            
+            SiapeLog::info('Usuário adicionado à blacklist por ausência no SIAPE', [
+                'cpf' => $cpf, 
+                'matricula' => $matricula
+            ]);
         }
     }
 
     private function processarRemocaoVinculoUsuario(Usuario $usuario, string $cpf, array $matriculasSiape): void
     {
-        if (!$usuario->lotacao?->unidade) return;
-        
         $this->atualizarStatusUsuario($usuario);
         $this->verificarBlacklist($cpf, $usuario);
+        
+        if (!$usuario->lotacao?->unidade) return;
+        
         $this->removeTodasAsGestoesDoUsuario($usuario);
         
+        // A verificação de matrícula já foi feita antes de chamar este método, 
+        // mas mantemos por segurança caso o método seja chamado de outro lugar
         if (!in_array($usuario->matricula, $matriculasSiape)) {
             SiapeLog::warning('Lotação não removida: Matrícula não corresponde ao SIAPE', [
                 'cpf' => $cpf,
@@ -559,15 +593,21 @@ class SiapeIndividualServidorService extends ServiceBase
         $usuario->save();
     }
 
-    protected function buscarBlacklist(string $cpf)
+    protected function buscarBlacklist(string $cpf, ?string $matricula = null)
     {
-        return $this->getModelInstance(SiapeBlackListServidor::class)->where('cpf', $cpf)->first();
+        $query = $this->getModelInstance(SiapeBlackListServidor::class)->where('cpf', $cpf);
+        
+        if ($matricula) {
+            $query->where('matricula', $matricula);
+        }
+        
+        return $query->first();
     }
 
     private function verificarBlacklist(string $cpf, Usuario $usuario): void
     {
         try {
-            $blacklistRegistro = $this->buscarBlacklist($cpf);
+            $blacklistRegistro = $this->buscarBlacklist($cpf, $usuario->matricula);
 
             if ($blacklistRegistro) {
                 $this->processarRegistroBlacklist($blacklistRegistro, $usuario, $cpf);
