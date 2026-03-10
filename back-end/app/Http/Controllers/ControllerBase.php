@@ -33,10 +33,19 @@ abstract class ControllerBase extends Controller
         if(empty($this->service)) {
             $child = str_replace("App\\Http", "App", str_replace("Controller", "Service", get_class($this)));
             try {
-                if(!empty(app($child))) {
-                    $this->service = new $child();
+                $this->service = app($child);
+            } catch (BindingResolutionException $e) {
+                if (class_exists($child)) {
+                    try {
+                        $reflection = new \ReflectionClass($child);
+                        $constructor = $reflection->getConstructor();
+                        if ($constructor === null || $constructor->getNumberOfRequiredParameters() === 0) {
+                            $this->service = $reflection->newInstance();
+                        }
+                    } catch (Throwable $e) {
+                    }
                 }
-            } catch (BindingResolutionException $e) {}
+            }
         }
     }
 
