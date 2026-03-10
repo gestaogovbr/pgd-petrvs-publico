@@ -10,9 +10,11 @@ use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\PlanoEntregaRepository;
 use App\Models\Unidade;
+use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Collection;
 use Mockery;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class UsuarioServicePendenciasTest extends TestCase
 {
@@ -76,6 +78,10 @@ class UsuarioServicePendenciasTest extends TestCase
     public function test_pendencias_chefe_sem_unidade_especifica()
     {
         $usuarioId = 'user-123';
+
+        $userMock = Mockery::mock(Usuario::class);
+        $userMock->shouldReceive('getAttribute')->with('id')->andReturn($usuarioId);
+        Auth::shouldReceive('user')->andReturn($userMock);
         
         // Mock Unidades Gerenciadas (2 unidades)
         $unidade1 = Mockery::mock(Unidade::class);
@@ -116,15 +122,18 @@ class UsuarioServicePendenciasTest extends TestCase
         $this->planoEntregaRepository->shouldReceive('getPlanosEntregaHomologacao')->andReturn(new Collection());
         $this->planoEntregaRepository->shouldReceive('getEntregasPlanoEntregaHomologacao')->andReturn(new Collection());
 
-        $result = $this->service->pendenciasChefe($usuarioId, null);
+        $result = $this->service->pendenciasChefe();
         
         $this->assertIsArray($result);
     }
 
-    public function test_pendencias_chefe_com_unidade_especifica_nao_gerenciada()
+    public function test_pendencias_chefe_com_apenas_uma_unidade_gerenciada()
     {
         $usuarioId = 'user-123';
-        $unidadeId = 'u3'; // Unidade não gerenciada pelo usuário
+
+        $userMock = Mockery::mock(Usuario::class);
+        $userMock->shouldReceive('getAttribute')->with('id')->andReturn($usuarioId);
+        Auth::shouldReceive('user')->andReturn($userMock);
         
         // Mock Unidades Gerenciadas (apenas u1)
         $unidade1 = Mockery::mock(Unidade::class);
@@ -138,13 +147,6 @@ class UsuarioServicePendenciasTest extends TestCase
             ->once()
             ->with($usuarioId)
             ->andReturn($unidadesGerenciadas);
-            
-        // Se a unidade solicitada (u3) não está nas gerenciadas (u1), 
-        // o código deve usar as gerenciadas (u1) ou filtrar?
-        // Analisando o código:
-        // $unidades_ids = $unidades->pluck('id')->toArray(); // ['u1']
-        // if(!empty($unidade_id) && in_array($unidade_id, $unidades_ids)) { ... }
-        // A condição in_array falha. $unidades_ids permanece ['u1'].
         
         $this->unidadeRepository->shouldReceive('getSubordinadas')
             ->once()
@@ -163,7 +165,7 @@ class UsuarioServicePendenciasTest extends TestCase
         $this->planoEntregaRepository->shouldReceive('getPlanosEntregaHomologacao')->andReturn(new Collection());
         $this->planoEntregaRepository->shouldReceive('getEntregasPlanoEntregaHomologacao')->andReturn(new Collection());
 
-        $result = $this->service->pendenciasChefe($usuarioId, $unidadeId);
+        $result = $this->service->pendenciasChefe();
         
         $this->assertIsArray($result);
     }

@@ -787,15 +787,13 @@ class UsuarioService extends ServiceBase
         return $unidades;
     }
 
-    public function pendenciasChefe($usuario_id, $unidade_id = null)
+    public function pendenciasChefe()
     {
+        $usuario_id = $this->loggedUser()->id;
         $diasAvaliacaoRegistroExecucao = config('petrvs.dias-avaliacao-registro-execucao', 21);
         $unidades = $this->unidadeRepository->getUnidadesGerenciadas($usuario_id);
 
-        $unidades_ids = $unidades->pluck('id')->toArray();
-        if(!empty($unidade_id) && in_array($unidade_id, $unidades_ids)) {
-            $unidades_ids = [$unidade_id];
-        }
+        $unidades_ids = $unidades->pluck('id')->toArray();      
 
         $unidadesFilhas = $this->unidadeRepository->getSubordinadas($unidades_ids);
         $unidadesFilhasIds = $unidadesFilhas->pluck('id')->toArray();
