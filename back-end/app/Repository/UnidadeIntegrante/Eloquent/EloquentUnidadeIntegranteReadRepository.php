@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @see \App\Repository\UnidadeIntegrante\Contracts\UnidadeIntegranteReadRepositoryContract
+ * @extends AbstractEloquentReadRepository<UnidadeIntegrante>
  */
 class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadRepository implements UnidadeIntegranteReadRepositoryContract
 {
@@ -75,18 +76,24 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
 
     public function findGestorByUnidade(string $unidadeId): ?UnidadeIntegrante
     {
-        return $this->model->newQuery()
+        /** @var UnidadeIntegrante|null $integrante */
+        $integrante = $this->model->newQuery()
             ->with('gestor')
             ->where('unidade_id', $unidadeId)
             ->has('gestor')
             ->first();
+
+        return $integrante;
     }
 
     public function findUnidadeIntegrante(string $usuarioId, string $unidadeId): ?UnidadeIntegrante
     {
-        return $this->model->newQuery()
+        /** @var UnidadeIntegrante|null $integrante */
+        $integrante = $this->model->newQuery()
             ->where('usuario_id', $usuarioId)
             ->where('unidade_id', $unidadeId)
             ->first();
+
+        return $integrante;
     }
 }

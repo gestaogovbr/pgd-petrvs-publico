@@ -5,10 +5,6 @@ namespace App\Services;
 use App\Services\ServiceBase;
 use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
 use App\Models\Usuario;
-use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
-use App\Repository\UnidadeIntegrante\Contracts\UnidadeIntegranteReadRepositoryContract;
-use App\Repository\UnidadeIntegranteAtribuicao\Contracts\UnidadeIntegranteAtribuicaoWriteRepositoryContract;
-use App\Repository\Usuario\Contracts\UsuarioReadRepositoryContract;
 use Illuminate\Support\Facades\DB;
 use App\Facades\SiapeLog;
 use App\Exceptions\LogError;
@@ -209,16 +205,12 @@ class IntegracaoGestorService extends ServiceBase
      */
     public function createGestorIntegracao(array $chefias, $unidadeIntegranteService, $nivelAcessoService, $perfilService, array $config): GestorIntegracao
     {
-        return new GestorIntegracao(
-            $chefias,
-            $unidadeIntegranteService,
-            $nivelAcessoService,
-            $perfilService,
-            app(UnidadeReadRepositoryContract::class),
-            app(UnidadeIntegranteReadRepositoryContract::class),
-            app(UnidadeIntegranteAtribuicaoWriteRepositoryContract::class),
-            app(UsuarioReadRepositoryContract::class),
-            $config
-        );
+        return app(GestorIntegracao::class, [
+            'dados' => $chefias,
+            'unidadeIntegranteService' => $unidadeIntegranteService,
+            'nivelAcessoService' => $nivelAcessoService,
+            'perfilService' => $perfilService,
+            'config' => $config,
+        ]);
     }
 }

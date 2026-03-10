@@ -62,8 +62,30 @@ class LoginControllerTest extends TestCase
             $table->uuid('id')->primary();
             $table->string('sigla');
             $table->string('nome');
+            $table->json('campos_ocultos_atividade')->nullable();
             $table->timestamps();
             $table->softDeletes();
+        });
+
+        if (Schema::hasTable('feriados')) {
+            Schema::drop('feriados');
+        }
+
+        Schema::create('feriados', function ($table) {
+            $table->uuid('id')->primary();
+            $table->timestamps();
+            $table->softDeletes();
+            $table->string('nome', 250)->nullable();
+            $table->integer('dia')->nullable();
+            $table->integer('mes')->nullable();
+            $table->integer('ano')->nullable();
+            $table->string('tipoDia')->nullable();
+            $table->tinyInteger('recorrente')->nullable();
+            $table->string('abrangencia')->nullable();
+            $table->string('codigo_ibge', 8)->nullable();
+            $table->string('uf', 2)->nullable();
+            $table->uuid('entidade_id')->nullable();
+            $table->uuid('cidade_id')->nullable();
         });
 
         // Insert default entity 'MGI' which seems to be required/default
@@ -137,7 +159,7 @@ class LoginControllerTest extends TestCase
                 $table->softDeletes();
             });
         }
-        }
+    }
 
     /** @test */
     public function login_via_email_switches_to_active_user_with_same_cpf()

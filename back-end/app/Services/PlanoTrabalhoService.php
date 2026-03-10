@@ -106,7 +106,7 @@ class PlanoTrabalhoService extends ServiceBase
         }
 
         if (isset($subordinadas[2]) && $subordinadas[2]) { // Verifica se o índice existe
-            $unidadeService = new UnidadeService();
+            $unidadeService = app(UnidadeService::class);
 
             // Define $uId corretamente, verificando a existência do índice
             if (empty($unidadeId)) {

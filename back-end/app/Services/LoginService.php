@@ -89,17 +89,21 @@ class LoginService
 
         if (!empty($update)) {
             $usuario->update($update);
-            $usuario->fresh();
+            $usuarioAtualizado = $usuario->fresh();
+            if ($usuarioAtualizado) {
+                $usuario = $usuarioAtualizado;
+            }
         }
 
-        $entidadeId = $request->session()->get("entidade_id") ?? "";
-        $usuario = $this->loadUserWithRelations($usuario->id, $entidadeId);
+        $entidadeId = strval($request->session()->get("entidade_id") ?? "");
+        $usuarioComRelacoes = $this->loadUserWithRelations($usuario->id, $entidadeId);
+        $usuarioComRelacoes = $usuarioComRelacoes ?? $usuario->fresh() ?? $usuario;
 
-        if ($usuario) {
-            $this->updateSessionUnidade($request, $usuario);
+        if ($usuarioComRelacoes) {
+            $this->updateSessionUnidade($request, $usuarioComRelacoes);
         }
 
-        return $usuario;
+        return $usuarioComRelacoes;
     }
 
     private function loadUserWithRelations(string $userId, $entidadeId): ?Usuario

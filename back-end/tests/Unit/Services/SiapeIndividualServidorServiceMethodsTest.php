@@ -4,6 +4,8 @@ namespace Tests\Unit\Services;
 
 use App\Models\Entidade;
 use App\Models\SiapeBlackListServidor;
+use App\Models\UnidadeIntegrante;
+use App\Models\Usuario;
 use App\Services\IntegracaoServiceFactory;
 use App\Services\SiapeIndividualServidorService;
 use Tests\TestCase;
@@ -67,18 +69,19 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
         Log::shouldReceive('debug')->withAnyArgs();
         Log::shouldReceive('notice')->withAnyArgs();
 
+        $usuario = new Usuario();
+        $usuario->id = 1;
+        $usuario->matricula = 'M123';
+        $usuario->nome = 'Teste User';
+        $usuario->email = 'teste@test.com';
+        $usuario->situacao_siape = 'ativo';
+        $lotacao = new UnidadeIntegrante();
+        $lotacao->unidade_id = 1;
+        $usuario->setRelation('lotacao', $lotacao);
+
         $usuarioRepository->shouldReceive('findByCpfWithLotacao')
             ->with($cpf)
-            ->andReturn(new Collection([
-            (object)[
-                'id' => 1,
-                'matricula' => 'M123',
-                'nome' => 'Teste User',
-                'email' => 'teste@test.com',
-                'situacao_siape' => 'ativo',
-                'lotacao' => (object)['unidade_id' => 1]
-            ]
-            ]));
+            ->andReturn(new Collection([$usuario]));
 
         $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'buscarUsuariosPorCpf');
         $method->setAccessible(true);
@@ -199,7 +202,9 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
 
         $usuarioRepository->shouldReceive('findByCpfWithLotacao')
             ->with($cpf)
-            ->andReturn(new Collection([(object)['matricula' => 'M1']]));
+            ->andReturn(new Collection([tap(new Usuario(), function (Usuario $u): void {
+                $u->matricula = 'M1';
+            })]));
 
         $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'gerarUsuariosResumo');
         $method->setAccessible(true);

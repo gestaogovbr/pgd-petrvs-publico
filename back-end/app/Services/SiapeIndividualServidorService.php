@@ -156,7 +156,7 @@ class SiapeIndividualServidorService extends ServiceBase
     protected function buscarUsuariosPorCpf(string $cpf): array
     {
         return $this->usuarioRepository->findByCpfWithLotacao($cpf)
-            ->map(fn($u) => [
+            ->map(fn(Usuario $u) => [
                 'id' => $u->id,
                 'matricula' => $u->matricula,
                 'nome' => $u->nome,
