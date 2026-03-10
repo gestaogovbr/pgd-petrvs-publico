@@ -8,6 +8,10 @@ use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
+use App\Repository\UnidadeRepository;
+use App\Repository\UnidadeIntegranteRepository;
+use App\Repository\UnidadeIntegranteAtribuicaoRepository;
+use App\Repository\UsuarioRepository;
 use App\Services\Siape\Contrato\InterfaceIntegracao;
 use Illuminate\Support\Facades\DB;
 use App\Services\Siape\Unidade\Enum\Atribuicao as EnumAtribuicao;
@@ -23,8 +27,33 @@ class Integracao implements InterfaceIntegracao
     private array $atribuicoesFinais = [];
 
 
-    public function __construct(private array $vinculos)
+    public function __construct(
+        private array $vinculos,
+        private UnidadeIntegranteRepository $unidadeIntegranteRepository,
+        private UnidadeIntegranteAtribuicaoRepository $unidadeIntegranteAtribuicaoRepository,
+        private UsuarioRepository $usuarioRepository,
+        private UnidadeRepository $unidadeRepository
+    ) {
+    }
+
+    public function getUnidadeIntegranteRepository(): UnidadeIntegranteRepository
     {
+        return $this->unidadeIntegranteRepository;
+    }
+
+    public function getUnidadeIntegranteAtribuicaoRepository(): UnidadeIntegranteAtribuicaoRepository
+    {
+        return $this->unidadeIntegranteAtribuicaoRepository;
+    }
+
+    public function getUsuarioRepository(): UsuarioRepository
+    {
+        return $this->usuarioRepository;
+    }
+
+    public function getUnidadeRepository(): UnidadeRepository
+    {
+        return $this->unidadeRepository;
     }
 
     public function processar(): void

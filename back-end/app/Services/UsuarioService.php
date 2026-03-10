@@ -67,11 +67,29 @@ class UsuarioService extends ServiceBase
     }
 
     /**
-     * @param mixed $usuario
+     * @param object{
+     *   id: string,
+     *   matriculasiape: string,
+     *   emailfuncional: string,
+     *   modalidade_pgd: mixed,
+     *   nome_servidor: string,
+     *   nome_guerra: string,
+     *   cod_jornada: mixed,
+     *   nome_jornada: mixed,
+     *   participa_pgd: mixed,
+     *   ident_unica: mixed,
+     *   data_modificacao: mixed,
+     *   data_nascimento: mixed
+     * } $usuario
      * @return void
      */
     public function atualizarServidor($usuario)
     {
+        if (empty($usuario->id)) {
+            SiapeLog::error("ID do usuário não encontrado para atualização", ['usuario' => (array) $usuario]);
+            return;
+        }
+
         SiapeLog::info("Atualizando dados do servidor Matricula: " . $usuario->matriculasiape);
 
         $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($usuario->emailfuncional, $usuario->matriculasiape, $usuario->id);
@@ -265,6 +283,10 @@ class UsuarioService extends ServiceBase
     {
         if ($transaction) DB::beginTransaction();
         try {
+            if (empty($data['id'])) {
+                throw new NotFoundException("ID do usuário não encontrado para atualização");
+            }
+
             $id = $data['id'];
             $data = $this->proxyUpdate($data, $unidade);
 

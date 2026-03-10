@@ -8,11 +8,22 @@ use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidades;
 use App\Services\Siape\ProcessaDadosSiapeBD;
+use App\Enums\UsuarioSituacaoSiape;
 use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\SiapeListaUORGS;
 use App\Models\Entidade;
 use App\Models\SiapeBlackListServidor;
+use App\Repository\EntidadeRepository;
+use App\Repository\SiapeBlackListServidorRepository;
+use App\Repository\SiapeConsultaDadosFuncionaisRepository;
+use App\Repository\SiapeConsultaDadosPessoaisRepository;
+use App\Repository\SiapeDadosUORGRepository;
+use App\Repository\SiapeListaUORGSRepository;
+use App\Repository\UnidadeRepository;
+use App\Repository\UnidadeIntegranteRepository;
+use App\Repository\UnidadeIntegranteAtribuicaoRepository;
+use App\Repository\UsuarioRepository;
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
@@ -30,7 +41,30 @@ beforeEach(function () {
     Log::shouldReceive('emergency');
 
     $this->integracaoServiceFactory = Mockery::mock(IntegracaoServiceFactory::class);
-    $this->service = Mockery::mock(SiapeIndividualServidorService::class, [$this->integracaoServiceFactory])->makePartial();
+    $this->entidadeRepository = Mockery::mock(EntidadeRepository::class);
+    $this->siapeBlackListServidorRepository = Mockery::mock(SiapeBlackListServidorRepository::class);
+    $this->siapeConsultaDadosFuncionaisRepository = Mockery::mock(SiapeConsultaDadosFuncionaisRepository::class);
+    $this->siapeConsultaDadosPessoaisRepository = Mockery::mock(SiapeConsultaDadosPessoaisRepository::class);
+    $this->siapeDadosUORGRepository = Mockery::mock(SiapeDadosUORGRepository::class);
+    $this->siapeListaUORGSRepository = Mockery::mock(SiapeListaUORGSRepository::class);
+    $this->unidadeRepository = Mockery::mock(UnidadeRepository::class);
+    $this->unidadeIntegranteRepository = Mockery::mock(UnidadeIntegranteRepository::class);
+    $this->unidadeIntegranteAtribuicaoRepository = Mockery::mock(UnidadeIntegranteAtribuicaoRepository::class);
+    $this->usuarioRepository = Mockery::mock(UsuarioRepository::class);
+
+    $this->service = Mockery::mock(SiapeIndividualServidorService::class, [
+        $this->integracaoServiceFactory,
+        $this->entidadeRepository,
+        $this->siapeBlackListServidorRepository,
+        $this->siapeConsultaDadosFuncionaisRepository,
+        $this->siapeConsultaDadosPessoaisRepository,
+        $this->siapeDadosUORGRepository,
+        $this->siapeListaUORGSRepository,
+        $this->unidadeRepository,
+        $this->unidadeIntegranteRepository,
+        $this->unidadeIntegranteAtribuicaoRepository,
+        $this->usuarioRepository,
+    ])->makePartial();
     $this->service->shouldAllowMockingProtectedMethods();
     
     $this->siapeConfig = [
@@ -280,7 +314,6 @@ describe('SiapeIndividualServidorService - Fluxo Principal', function () {
 
     it('deve remover vinculos e blacklist quando usuario existe', function () {
         $validCpf = '52998224725';
-        $cpfLimpo = $validCpf;
 
         // Mock setup for success path
         $this->service->shouldReceive('buscarUsuariosPorCpf')->andReturn([]);
@@ -296,41 +329,19 @@ describe('SiapeIndividualServidorService - Fluxo Principal', function () {
         
         // Mock user exists
         $user = Mockery::mock(Usuario::class)->makePartial();
-        $user->matricula = 'M999'; // Different matricula to trigger warning
-        $user->shouldReceive('save')->andReturn(true);
-        $user->shouldReceive('getAttribute')->with('lotacao')->andReturn((object)['unidade' => (object)['id' => 'uid']]);
-        $user->shouldReceive('getAttribute')->with('id')->andReturn('user_id');
+        $user->matricula = 'M999';
         
         $this->service->shouldReceive('buscarUsuariosSimples')->andReturn(collect([$user]));
-        $this->service->shouldReceive('atualizarStatusUsuarioDb')->with($user)->andReturnNull(); // We didn't refactor this yet? I'll check. 
-        // Wait, I missed 'atualizarStatusUsuario' refactoring in my plan?
-        // I refactored `atualizarStatusUsuario`? Let me check previous tool calls.
-        // No, I did NOT refactor 'atualizarStatusUsuario'. It is private.
-        // 'processarRemocaoVinculoUsuario' is private.
-        // 'removeVinculoParaforcarSerLotadoNovamente' calls 'processarRemocaoVinculoUsuario'.
-        
-        // I cannot mock private methods easily.
-        // However, 'processarRemocaoVinculoUsuario' calls:
-        // 1. $this->atualizarStatusUsuario($usuario) -> Private.
-        // 2. $this->verificarBlacklist($cpf, $usuario) -> Private.
-        // 3. $this->removeTodasAsGestoesDoUsuario($usuario) -> Protected (Refactored).
-        // 4. $this->removeLotacao($usuario) -> Protected (Refactored).
-        
-        // Since 'atualizarStatusUsuario' is private, it will be executed.
-        // It does: $usuario->usuario_externo = 0; $usuario->save();
-        // Since $user is a mock, we should expect save().
-        
-        // 'verificarBlacklist' calls 'buscarBlacklist' (protected).
-        $this->service->shouldReceive('buscarBlacklist')->andReturn(null);
-        
-        // 'removeTodasAsGestoesDoUsuario' (protected)
-        $this->service->shouldReceive('removeTodasAsGestoesDoUsuario')->with($user)->once();
-        
-        // 'removeLotacao' (protected)
-        // Only called if matricula matches.
-        // Case 1: matricula mismatch
-        // user matricula 'M999', siape 'M123'.
-        // Should log warning and NOT call removeLotacao.
+
+        $this->siapeBlackListServidorRepository
+            ->shouldReceive('exists')
+            ->with($validCpf, 'M999')
+            ->andReturn(false)
+            ->once();
+        $this->siapeBlackListServidorRepository
+            ->shouldReceive('create')
+            ->with(Mockery::on(fn(array $data) => ($data['cpf'] ?? null) === $validCpf && ($data['matricula'] ?? null) === 'M999'))
+            ->once();
         
         // Let's configure dependencies for this specific test
         $this->service->shouldReceive('instanciarIntegracaoService')->andReturn(Mockery::mock(IntegracaoService::class, ['sincronizar' => null]));
@@ -366,7 +377,6 @@ describe('SiapeIndividualServidorService - Fluxo Principal', function () {
 
     it('deve remover lotacao se matricula corresponde', function () {
         $validCpf = '52998224725';
-        $cpfLimpo = $validCpf;
 
         // Mock setup
         $this->service->shouldReceive('buscarUsuariosPorCpf')->andReturn([]);
@@ -382,15 +392,24 @@ describe('SiapeIndividualServidorService - Fluxo Principal', function () {
         
         // Mock user matches
         $user = Mockery::mock(Usuario::class)->makePartial();
+        $user->id = 'user_id';
         $user->matricula = 'M123'; 
-        $user->shouldReceive('save')->andReturn(true);
-        $user->shouldReceive('getAttribute')->with('lotacao')->andReturn((object)['unidade' => (object)['id' => 'uid']]);
-        $user->shouldReceive('getAttribute')->with('id')->andReturn('user_id');
+        $user->lotacao = (object)['unidade' => (object)['id' => 'uid']];
         
         $this->service->shouldReceive('buscarUsuariosSimples')->andReturn(collect([$user]));
-        $this->service->shouldReceive('buscarBlacklist')->andReturn(null);
         $this->service->shouldReceive('removeTodasAsGestoesDoUsuario')->with($user)->once();
         $this->service->shouldReceive('removeLotacao')->with($user)->once(); // This time it should be called
+
+        $this->usuarioRepository
+            ->shouldReceive('update')
+            ->with('user_id', ['usuario_externo' => false])
+            ->andReturn(null)
+            ->once();
+        $this->siapeBlackListServidorRepository
+            ->shouldReceive('findByCpfAndOptionalMatricula')
+            ->with($validCpf, 'M123')
+            ->andReturn(null)
+            ->once();
 
         // ... dependencies same as above ...
         $this->service->shouldReceive('instanciarIntegracaoService')->andReturn(Mockery::mock(IntegracaoService::class, ['sincronizar' => null]));
@@ -423,30 +442,43 @@ describe('SiapeIndividualServidorService - Fluxo Principal', function () {
 
     it('deve processar blacklist se usuario encontrado', function () {
         $validCpf = '52998224725';
-        $cpfLimpo = $validCpf;
         
         // Only focusing on blacklist logic
         $user = Mockery::mock(Usuario::class)->makePartial();
-        $user->matricula = 'M999'; 
-        $user->shouldReceive('save')->andReturn(true);
-        $user->shouldReceive('getAttribute')->with('lotacao')->andReturn((object)['unidade' => (object)['id' => 'uid']]);
-        $user->shouldReceive('getAttribute')->with('id')->andReturn('user_id');
+        $user->id = 'user_id';
+        $user->matricula = 'M123';
+        $user->lotacao = (object)['unidade' => (object)['id' => 'uid']];
 
         $this->service->shouldReceive('buscarUsuariosSimples')->andReturn(collect([$user]));
         
         // Blacklist mock
         $blacklist = Mockery::mock(SiapeBlackListServidor::class)->makePartial();
         $blacklist->inativado = 1;
-        $blacklist->shouldReceive('forceDelete')->once();
+        $blacklist->id = 'blacklist_id';
         
-        $this->service->shouldReceive('buscarBlacklist')->andReturn($blacklist);
+        $this->siapeBlackListServidorRepository
+            ->shouldReceive('findByCpfAndOptionalMatricula')
+            ->with($validCpf, 'M123')
+            ->andReturn($blacklist)
+            ->once();
+        $this->siapeBlackListServidorRepository
+            ->shouldReceive('forceDelete')
+            ->with('blacklist_id')
+            ->andReturn(true)
+            ->once();
         
-        // Expect user activation
-        // $user->situacao_siape = UsuarioSituacaoSiape::ATIVO->value; 
-        // We can't verify property set easily on mock without expectations or checking mock state, but save() is called.
-        // Since we didn't mock 'processarRegistroBlacklist' (it's private), the real code runs.
-        // It sets property and calls save(). $user mock should handle it if it's a partial mock.
-        // Note: we used makePartial() on user, so properties work.
+        $this->usuarioRepository
+            ->shouldReceive('update')
+            ->with('user_id', ['usuario_externo' => false])
+            ->andReturn(null)
+            ->once();
+        $this->usuarioRepository
+            ->shouldReceive('update')
+            ->with('user_id', ['situacao_siape' => UsuarioSituacaoSiape::ATIVO->value])
+            ->andReturn(null)
+            ->once();
+        $this->service->shouldReceive('removeTodasAsGestoesDoUsuario')->with($user)->andReturnNull()->once();
+        $this->service->shouldReceive('removeLotacao')->with($user)->andReturnNull()->once();
 
         // Mocks for the rest of flow...
         $this->service->shouldReceive('buscarUsuariosPorCpf')->andReturn([]);
@@ -459,7 +491,6 @@ describe('SiapeIndividualServidorService - Fluxo Principal', function () {
 
         $this->service->shouldReceive('salvarHistoricoUnidadeDb')->andReturnNull();
         $this->service->shouldReceive('salvarDadosConsultaDb')->andReturnNull();
-        $this->service->shouldReceive('removeTodasAsGestoesDoUsuario')->with($user)->once();
         $this->service->shouldReceive('instanciarIntegracaoService')->andReturn(Mockery::mock(IntegracaoService::class, ['sincronizar' => null]));
         $this->service->shouldReceive('buscarTodasEntidades')->andReturn(collect([]));
         $this->service->shouldReceive('gerarUsuariosResumo')->andReturn(collect([]));

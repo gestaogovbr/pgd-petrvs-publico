@@ -474,7 +474,7 @@ class AtividadeService extends ServiceBase
             $this->update($data, $unidade, false);
             $this->statusService->atualizaStatus($atividade, "INICIADO", "Iniciada nessa data manualmente");
             if($suspender) {
-                $unidadeService = new UnidadeService();
+                $unidadeService = app(UnidadeService::class);
                 $dataHora = $unidadeService->hora($unidade->id);
                 $iniciadas = $this->iniciadas($data["usuario_id"]);
                 foreach ($iniciadas as $atividade_id) {
@@ -538,7 +538,7 @@ class AtividadeService extends ServiceBase
                 $comentarioService->destroy($comentarioTecnico->id);
             }
             if(!empty($descricaoTecnica)) {
-                $unidadeService = new UnidadeService();
+                $unidadeService = app(UnidadeService::class);
                 $comentarioService->store([
                     "texto" => $descricaoTecnica,
                     "path" => null,

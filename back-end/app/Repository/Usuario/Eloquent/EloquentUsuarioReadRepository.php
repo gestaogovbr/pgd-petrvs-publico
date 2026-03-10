@@ -158,6 +158,85 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $query->get();
     }
 
+    public function findByMatricula(string $matricula): ?Usuario
+    {
+        /** @var Usuario|null $usuario */
+        $usuario = $this->query()->where('matricula', $matricula)->first();
+        return $usuario;
+    }
+
+    public function findByEmail(string $email): ?Usuario
+    {
+        /** @var Usuario|null $usuario */
+        $usuario = $this->query()->where('email', $email)->first();
+        return $usuario;
+    }
+
+    public function findActiveByCpf(string $cpf): ?Usuario
+    {
+        /** @var Usuario|null $usuario */
+        $usuario = $this->query()
+            ->where('cpf', $cpf)
+            ->whereIn('situacao_siape', \App\Enums\UsuarioSituacaoSiape::ativos())
+            ->first();
+        return $usuario;
+    }
+
+    public function loadUserWithRelations(string $userId, string $entidadeId): ?Usuario
+    {
+        /** @var Usuario|null $usuario */
+        $usuario = $this->query()->where("id", $userId)->with([
+            "areasTrabalho" => function ($query) use ($entidadeId) {
+                $query->with(["unidade.gestor.usuario", "unidade.gestoresSubstitutos.usuario", "unidade.gestoresDelegados.usuario", "unidade.cidade", "unidade.planosEntrega", "unidade.unidadePai.planosEntrega", "atribuicoes"])
+                      ->whereHas('unidade', fn($q) => $q->where('entidade_id', $entidadeId));
+            },
+            "participacoesProgramas" => fn($q) => $q->where("habilitado", 1),
+            "perfil.capacidades:id,perfil_id,tipo_capacidade_id",
+            "perfil.capacidades.tipoCapacidade:id,codigo",
+            "gerenciaTitular.atribuicoes",
+            "gerenciaTitular.unidade",
+            "gerenciasSubstitutas.atribuicoes",
+            "gerenciasSubstitutas.unidade",
+            "gerenciasDelegadas.atribuicoes",
+            "gerenciasDelegadas.unidade",
+            "notificacoesDestinatario" => fn($q) => $q->where('data_leitura', null)
+        ])->first();
+        
+        return $usuario;
+    }
+
+    public function findWithAreaTrabalho(string $userId, string $unidadeId): ?Usuario
+    {
+        /** @var Usuario|null $usuario */
+        $usuario = $this->query()->where('id', $userId)
+            ->with(['areasTrabalho' => fn($q) => $q->where('unidade_id', $unidadeId)])
+            ->first();
+        return $usuario;
+    }
+
+    public function findByCpf(string $cpf): ?Usuario
+    {
+        /** @var Usuario|null $usuario */
+        $usuario = $this->query()->where('cpf', $cpf)->first();
+        return $usuario;
+    }
+
+    public function findByCpfWithLotacao(string $cpf): Collection
+    {
+        return $this->model->newQuery()
+            ->with(['lotacao.unidade'])
+            ->where('cpf', $cpf)
+            ->get();
+    }
+
+    public function findAllByCpfUnfiltered(string $cpf): Collection
+    {
+        return $this->model->newQuery()
+            ->with(['lotacao.unidade'])
+            ->where('cpf', $cpf)
+            ->get();
+    }
+
     /**
      * Applies filters similar to proxyQuery
      */

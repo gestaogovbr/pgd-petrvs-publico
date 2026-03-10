@@ -1,0 +1,256 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Usuario;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
+use Tests\TestCase;
+use Stancl\Tenancy\Middleware\InitializeTenancyByRequestData;
+use App\Http\Middleware\TenantConfigurations;
+
+class LoginControllerTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        config(['cache.default' => 'array']);
+        $this->withoutExceptionHandling();
+        $this->withoutMiddleware([
+            InitializeTenancyByRequestData::class,
+            TenantConfigurations::class,
+            \Stancl\Tenancy\Middleware\IdentificationMiddleware::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+        ]);
+        // Create tables manually if needed, but RefreshDatabase should handle it.
+        // Copying schema creation from SiapeIndividualServidorServiceTest just in case
+        
+        // Force recreate usuarios table to ensure all columns exist (mysql-schema.sql might be incomplete for tests)
+        if (Schema::hasTable('usuarios')) {
+             Schema::drop('usuarios');
+        }
+
+        Schema::create('usuarios', function ($table) {
+            $table->uuid('id')->primary();
+            $table->string('nome');
+            $table->string('email')->nullable();
+            $table->string('cpf')->nullable();
+            $table->string('matricula')->nullable();
+            $table->string('apelido')->nullable();
+            $table->string('situacao_siape')->nullable();
+            $table->string('password')->nullable();
+            $table->string('telefone')->nullable();
+            $table->date('data_nascimento')->nullable();
+            $table->string('sexo')->nullable();
+            $table->string('situacao_funcional')->nullable();
+            $table->json('config')->nullable();
+            $table->json('notificacoes')->nullable();
+            $table->uuid('lotacao_id')->nullable();
+            $table->string('tipo_modalidade_id')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        if (Schema::hasTable('entidades')) {
+            Schema::drop('entidades');
+        }
+
+        Schema::create('entidades', function ($table) {
+            $table->uuid('id')->primary();
+            $table->string('sigla');
+            $table->string('nome');
+            $table->json('campos_ocultos_atividade')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        if (Schema::hasTable('feriados')) {
+            Schema::drop('feriados');
+        }
+
+        Schema::create('feriados', function ($table) {
+            $table->uuid('id')->primary();
+            $table->timestamps();
+            $table->softDeletes();
+            $table->string('nome', 250)->nullable();
+            $table->integer('dia')->nullable();
+            $table->integer('mes')->nullable();
+            $table->integer('ano')->nullable();
+            $table->string('tipoDia')->nullable();
+            $table->tinyInteger('recorrente')->nullable();
+            $table->string('abrangencia')->nullable();
+            $table->string('codigo_ibge', 8)->nullable();
+            $table->string('uf', 2)->nullable();
+            $table->uuid('entidade_id')->nullable();
+            $table->uuid('cidade_id')->nullable();
+        });
+
+        // Insert default entity 'MGI' which seems to be required/default
+        \App\Models\Entidade::create([
+            'sigla' => 'MGI',
+            'nome' => 'Ministério da Gestão e da Inovação em Serviços Públicos'
+        ]);
+
+        if (Schema::hasTable('unidades')) {
+            Schema::drop('unidades');
+        }
+
+        Schema::create('unidades', function ($table) {
+            $table->uuid('id')->primary();
+            $table->string('sigla');
+            $table->string('nome');
+            $table->uuid('entidade_id')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        if (!Schema::hasTable('unidades_integrantes_atribuicoes')) {
+            Schema::create('unidades_integrantes_atribuicoes', function ($table) {
+                $table->uuid('id')->primary();
+                $table->uuid('unidade_integrante_id');
+                $table->string('atribuicao');
+                $table->timestamps();
+                $table->softDeletes();
+            });
+        }
+
+        if (!Schema::hasTable('programas_participantes')) {
+            Schema::create('programas_participantes', function ($table) {
+                $table->uuid('id')->primary();
+                $table->uuid('usuario_id');
+                $table->boolean('habilitado')->default(true);
+                $table->timestamps();
+                $table->softDeletes();
+            });
+        }
+
+        if (!Schema::hasTable('notificacoes_destinatarios')) {
+            Schema::create('notificacoes_destinatarios', function ($table) {
+                $table->uuid('id')->primary();
+                $table->uuid('usuario_id');
+                $table->dateTime('data_leitura')->nullable();
+                $table->timestamps();
+                $table->softDeletes();
+            });
+        }
+
+        if (!Schema::hasTable('tipos_modalidades')) {
+            Schema::create('tipos_modalidades', function ($table) {
+                $table->uuid('id')->primary();
+                $table->string('nome');
+                $table->tinyInteger('exige_pedagio')->default(0);
+                $table->tinyInteger('plano_trabalho_calcula_horas')->default(0);
+                $table->tinyInteger('atividade_tempo_despendido')->default(0);
+                $table->tinyInteger('atividade_esforco')->default(0);
+                $table->timestamps();
+                $table->softDeletes();
+            });
+        }
+
+        if (!Schema::hasTable('unidades_integrantes')) {
+            Schema::create('unidades_integrantes', function ($table) {
+                $table->uuid('id')->primary();
+                $table->uuid('unidade_id')->nullable();
+                $table->uuid('usuario_id')->nullable();
+                $table->timestamps();
+                $table->softDeletes();
+            });
+        }
+    }
+
+    /** @test */
+    public function login_via_email_switches_to_active_user_with_same_cpf()
+    {
+        $cpf = '12345678901';
+        
+        // Inactive user
+        $inactiveUser = Usuario::factory()->create([
+            'email' => 'inactive@test.com',
+            'cpf' => $cpf,
+            'situacao_siape' => 'INATIVO',
+            'password' => bcrypt('password'),
+            'nome' => 'Inactive User',
+            'apelido' => 'Inactive',
+        ]);
+
+        // Active user with same CPF
+        $activeUser = Usuario::factory()->create([
+            'email' => 'active@test.com',
+            'cpf' => $cpf,
+            'situacao_siape' => 'ATIVO',
+            'password' => bcrypt('password'), // Password doesn't matter for the switch, but needed for factory
+            'nome' => 'Active User',
+            'apelido' => 'Active',
+        ]);
+
+        // Login with Inactive user credentials
+        $response = $this->postJson('/web/login-user-password', [
+            'email' => 'inactive@test.com',
+            'password' => 'password',
+        ]);
+
+        $response->assertStatus(200);
+        
+        // Check if the authenticated user is the Active one
+        $this->assertEquals($activeUser->id, Auth::id());
+        
+        // Check if the response returns the Active user data
+        $response->assertJsonPath('usuario.id', $activeUser->id);
+    }
+    
+    /** @test */
+    public function login_via_email_stays_on_inactive_if_no_active_found()
+    {
+        $cpf = '12345678901';
+        
+        // Inactive user
+        $inactiveUser = Usuario::factory()->create([
+            'email' => 'inactive@test.com',
+            'cpf' => $cpf,
+            'situacao_siape' => 'INATIVO',
+            'password' => bcrypt('password'),
+            'nome' => 'Inactive User',
+            'apelido' => 'Inactive',
+        ]);
+
+        // Login with Inactive user credentials
+        $response = $this->postJson('/web/login-user-password', [
+            'email' => 'inactive@test.com',
+            'password' => 'password',
+        ]);
+
+        $response->assertStatus(200);
+        
+        // Check if the authenticated user is still the Inactive one
+        $this->assertEquals($inactiveUser->id, Auth::id());
+        $response->assertJsonPath('usuario.id', $inactiveUser->id);
+    }
+
+    /** @test */
+    public function login_via_email_normal_active_user()
+    {
+        $cpf = '12345678901';
+        
+        // Active user
+        $activeUser = Usuario::factory()->create([
+            'email' => 'active@test.com',
+            'cpf' => $cpf,
+            'situacao_siape' => 'ATIVO',
+            'password' => bcrypt('password'),
+            'nome' => 'Active User',
+            'apelido' => 'Active',
+        ]);
+
+        // Login
+        $response = $this->postJson('/web/login-user-password', [
+            'email' => 'active@test.com',
+            'password' => 'password',
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertEquals($activeUser->id, Auth::id());
+    }
+}

@@ -8,6 +8,10 @@ use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\IntegracaoServidor;
 use App\Models\Usuario;
+use App\Repository\UnidadeIntegranteAtribuicaoRepository;
+use App\Repository\UnidadeIntegranteRepository;
+use App\Repository\UnidadeRepository;
+use App\Repository\UsuarioRepository;
 use App\Services\ServiceBase;
 use App\Services\Siape\Unidade\Integracao;
 use Illuminate\Support\Facades\DB;
@@ -92,7 +96,13 @@ class UnidadeIntegranteService extends ServiceBase
       }
     }
     try {
-        $integracao = new Integracao($vinculos);
+        $integracao = app(Integracao::class, [
+            'vinculos' => $vinculos,
+            'unidadeIntegranteRepository' => app(UnidadeIntegranteRepository::class),
+            'unidadeIntegranteAtribuicaoRepository' => app(UnidadeIntegranteAtribuicaoRepository::class),
+            'usuarioRepository' => app(UsuarioRepository::class),
+            'unidadeRepository' => app(UnidadeRepository::class),
+        ]);
         $integracao->setTransaction($transaction); 
         $integracao->processar();
         $alteracoesFinais = $integracao->getAtribuicoesFinais();
