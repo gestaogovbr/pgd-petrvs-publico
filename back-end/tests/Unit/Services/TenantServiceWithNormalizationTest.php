@@ -5,14 +5,10 @@ namespace Tests\Unit\Services;
 use App\Services\TenantService;
 use App\Exceptions\ServerException;
 use ReflectionMethod;
-use Tests\TestCase;
-use Mockery;
+use Tests\DatabaseTenantTestCase;
+use Illuminate\Support\Facades\DB;
 
-uses(TestCase::class);
-
-afterAll(function () {
-    Mockery::close();
-});
+uses(DatabaseTenantTestCase::class);
 
 describe('TenantService - Normalização de with', function () {
     it('remove campos, vazios e duplicados do with', function () {
@@ -55,9 +51,7 @@ describe('TenantService - Normalização de with', function () {
 
 describe('TenantService - Deploy de tenant', function () {
     it('cria TipoModalidade padrão quando não existe', function () {
-        $tipoModalidade = Mockery::mock('alias:App\\Models\\TipoModalidade');
-        $tipoModalidade->shouldReceive('first')->once()->andReturnNull();
-        $tipoModalidade->shouldReceive('create')->once()->andReturn((object) ['id' => 'tipo-modalidade-id']);
+        DB::connection('tenant')->table('tipos_modalidades')->delete();
 
         $service = new TenantService();
         $method = new ReflectionMethod(TenantService::class, 'getTipoModalidadeId');
@@ -65,7 +59,8 @@ describe('TenantService - Deploy de tenant', function () {
 
         $id = $method->invoke($service);
 
-        expect($id)->toBe('tipo-modalidade-id');
+        expect($id)->toBeString()->and($id)->not->toBe('');
+        $this->assertDatabaseHas('tipos_modalidades', ['id' => $id], 'tenant');
     });
 
     it('falha ao buscar cidade quando código IBGE é vazio', function () {
