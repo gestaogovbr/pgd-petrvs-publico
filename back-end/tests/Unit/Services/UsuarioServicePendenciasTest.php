@@ -10,9 +10,11 @@ use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\PlanoEntregaRepository;
 use App\Models\Unidade;
+use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Mockery;
+use Illuminate\Support\Facades\Auth;
 
 uses(TestCase::class);
 

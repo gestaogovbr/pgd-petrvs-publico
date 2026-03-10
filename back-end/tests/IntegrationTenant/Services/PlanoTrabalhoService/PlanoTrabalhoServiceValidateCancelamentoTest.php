@@ -5,7 +5,6 @@ namespace Tests\IntegrationTenant\Services\PlanoTrabalhoService;
 use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
 use App\Models\PlanoTrabalhoConsolidacao;
-use App\Models\PlanoEntrega;
 use App\Models\Atividade;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Services\PlanoTrabalhoService;
@@ -79,7 +78,7 @@ describe('PlanoTrabalhoService::validateCancelamento', function () {
         expect($result)->toBe("O plano de trabalho não pode ser cancelado porque o usuário logado não é um dos gestores da sua unidade executora.\n[ver RN_PTR_R]");
     });
 
-    test('retorna erro quando plano possui atividades lançadas', function () {
+    test('retorna null mesmo quando plano possui atividades lançadas', function () {
         $plano = PlanoTrabalho::factory()->create();
 
         $this->mockUser->shouldReceive('hasPermissionTo')
@@ -106,7 +105,35 @@ describe('PlanoTrabalhoService::validateCancelamento', function () {
 
         $result = $this->service->validateCancelamento($plano->id);
 
-        expect($result)->toBe("Somente é possível cancelar plano de trabalho que não tenha atividade lançada. Atividade(s): #123");
+        expect($result)->toBeNull();
+    });
+
+    test('retorna null mesmo quando plano possui consolidação concluída', function () {
+        $plano = PlanoTrabalho::factory()->create();
+
+        $this->mockUser->shouldReceive('hasPermissionTo')
+            ->with('MOD_PTR_CNC')
+            ->andReturn(true);
+
+        $this->service->shouldReceive('loggedUser')
+            ->andReturn($this->mockUser);
+
+        $this->service->shouldReceive('buscaCondicoes')
+            ->with(['id' => $plano->id])
+            ->andReturn([
+                'planoDeletado' => false,
+                'planoStatus' => 'ATIVO',
+                'gestorUnidadeExecutora' => true
+            ]);
+
+        PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => 'CONCLUIDO',
+        ]);
+
+        $result = $this->service->validateCancelamento($plano->id);
+
+        expect($result)->toBeNull();
     });
 
 

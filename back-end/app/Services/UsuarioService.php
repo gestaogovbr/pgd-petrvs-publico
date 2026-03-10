@@ -7,7 +7,6 @@ use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
 use App\Facades\SiapeLog;
-use App\Models\TipoModalidade;
 use App\Models\Usuario;
 use App\Repository\IntegracaoServidorRepository;
 use App\Repository\PerfilRepository;
@@ -327,10 +326,20 @@ class UsuarioService extends ServiceBase
 
     public function extraStore($entity, $unidade, $action)
     {
-        foreach ($this->buffer["integrantes"] as &$integrante) {
+        $integrantes = $this->buffer["integrantes"] ?? [];
+        if (!is_array($integrantes)) {
+            $integrantes = [];
+        }
+
+        foreach ($integrantes as &$integrante) {
             $integrante["usuario_id"] = $entity->id;
         }
-        $this->UnidadeIntegranteService->salvarIntegrantes($this->buffer["integrantes"]);
+
+        $this->buffer["integrantes"] = $integrantes;
+
+        if (!empty($integrantes)) {
+            $this->UnidadeIntegranteService->salvarIntegrantes($integrantes);
+        }
         if ($action != ServiceBase::ACTION_INSERT)
             $this->unidadeIntegranteAtribuicaoService->checkLotacoes($entity->id);
     }
@@ -647,24 +656,59 @@ class UsuarioService extends ServiceBase
 
     public function searchText($data)
     {
+        $data = is_array($data) ? $data : [];
+        $data['query'] = $data['query'] ?? '';
+        $data['fields'] = $data['fields'] ?? [];
+        $data['where'] = $data['where'] ?? [];
+        $data['orderBy'] = $data['orderBy'] ?? [];
+
         if (!in_array('usuario_externo', $data['fields'])) {
             $data['fields'][] = 'usuario_externo';
         }
 
-        $data["where"][] = ["subordinadas", "==", true];
-
-        $usuario = parent::loggedUser();
-        if (!$usuario->hasPermissionTo("MOD_USER_TUDO")) {
-            $subordinadas = true;
-            foreach($data['where'] as $w) {
-                 if(is_array($w) && $w[0] == "subordinadas") $subordinadas = $w[2];
+        $subordinadas = true;
+        $where = [];
+        foreach ($data['where'] as $condition) {
+            if (is_array($condition) && ($condition[0] ?? null) === 'subordinadas') {
+                $subordinadas = (bool) ($condition[2] ?? true);
+                continue;
             }
+            $where[] = $condition;
+        }
+        $data['where'] = $where;
 
-            $areasTrabalhoWhere = $this->unidadeRepository->getAreasTrabalhoWhereClause($usuario->id, $subordinadas, "where_unidades");
-            $data['where'][] = RawWhere::raw("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($areasTrabalhoWhere))", []);
+        $condicaoDeletados = array_filter($data['where'], fn ($w) => is_array($w) && ($w[0] ?? null) === 'deleted_at');
+        if (empty($condicaoDeletados)) {
+            $data['where'][] = ['deleted_at', '==', null];
         }
 
-        return $this->usuarioRepository->search($data);
+        $usuario = parent::loggedUser();
+        if ($usuario && !$usuario->hasPermissionTo("MOD_USER_TUDO")) {
+            $areasTrabalhoWhere = $this->unidadeRepository->getAreasTrabalhoWhereClause($usuario->id, $subordinadas, "where_unidades");
+            $data['where'][] = RawWhere::raw("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($areasTrabalhoWhere))");
+        }
+
+        $rows = $this->usuarioRepository->search($data);
+
+        $fieldsForOutput = array_values(array_filter($data['fields'], fn ($field) => $field !== 'usuario_externo'));
+
+        $getFieldValue = static fn ($row, string $field) => data_get($row, $field);
+
+        $values = [];
+        foreach ($rows as $row) {
+            $orderValues = array_map(
+                fn ($order) => is_array($order) ? $getFieldValue($row, (string) ($order[0] ?? '')) : null,
+                $data['orderBy']
+            );
+
+            $values[] = [
+                (string) $getFieldValue($row, 'id'),
+                array_map(fn ($field) => $getFieldValue($row, $field), $fieldsForOutput),
+                $orderValues
+            ];
+        }
+
+        return $values;
     }
 
     public function getById($data)
@@ -775,15 +819,13 @@ class UsuarioService extends ServiceBase
         return $unidades;
     }
 
-    public function pendenciasChefe($usuario_id, $unidade_id = null)
+    public function pendenciasChefe()
     {
+        $usuario_id = $this->loggedUser()->id;
         $diasAvaliacaoRegistroExecucao = config('petrvs.dias-avaliacao-registro-execucao', 21);
         $unidades = $this->unidadeRepository->getUnidadesGerenciadas($usuario_id);
 
-        $unidades_ids = $unidades->pluck('id')->toArray();
-        if(!empty($unidade_id) && in_array($unidade_id, $unidades_ids)) {
-            $unidades_ids = [$unidade_id];
-        }
+        $unidades_ids = $unidades->pluck('id')->toArray();      
 
         $unidadesFilhas = $this->unidadeRepository->getSubordinadas($unidades_ids);
         $unidadesFilhasIds = $unidadesFilhas->pluck('id')->toArray();
