@@ -440,6 +440,10 @@ class UsuarioServiceRepositoryTest extends TestCase
     {
         $usuarioId = 'user-id';
         $unidadeId = 'unidade-id';
+
+        $userMock = Mockery::mock(Usuario::class);
+        $userMock->shouldReceive('getAttribute')->with('id')->andReturn($usuarioId);
+        Auth::shouldReceive('user')->andReturn($userMock);
         
         $unidadeMock = Mockery::mock(Unidade::class);
         $unidadeMock->shouldReceive('getAttribute')->with('id')->andReturn($unidadeId);
@@ -477,7 +481,7 @@ class UsuarioServiceRepositoryTest extends TestCase
             ->once()
             ->andReturn(new \Illuminate\Database\Eloquent\Collection());
 
-        $result = $this->service->pendenciasChefe($usuarioId, $unidadeId);
+        $result = $this->service->pendenciasChefe();
         
         $this->assertIsArray($result);
         $this->assertArrayHasKey('registrosExecucao', $result);
