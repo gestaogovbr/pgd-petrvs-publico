@@ -553,6 +553,7 @@ class SiapeIndividualServidorService extends ServiceBase
                 'id' => Str::uuid(),
                 'cpf' => $cpf,
                 'matricula' => $matricula,
+                'response' => 'Adicionado automaticamente via integração',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ]);
