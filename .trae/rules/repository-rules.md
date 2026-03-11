@@ -10,3 +10,4 @@ description: Sempre que um repository for criado ou modificado
 - Utilizar DTOs para retornos complexos (evitar arrays soltos).
 - Após criar/refatorar repositórios, criar/atualizar testes conforme `back-end/docs/pest-bd.md`.
 - Valido para alterações na pasta `back-end/`	
+- Para criar um novo repository deve usar o comando `php artisan make:repository <Model>Repository` dentro do container `petrvs_php`.

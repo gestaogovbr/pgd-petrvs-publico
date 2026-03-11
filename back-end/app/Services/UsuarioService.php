@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Enums\TipoModalidadeEnum;
 use App\Enums\UsuarioSituacaoSiape;
+use App\Exceptions\DBException;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
@@ -66,12 +68,45 @@ class UsuarioService extends ServiceBase
         $this->planoEntregaRepository = app(PlanoEntregaRepository::class);
     }
 
+    private function applyDefaultTipoModalidadeId(array &$data): void
+    {
+        if (!empty($data['tipo_modalidade_id'] ?? null)) {
+            return;
+        }
+
+        $defaultTipoModalidade = $this->tipoModalidadeRepository->findByNome(TipoModalidadeEnum::SEM_DADOS_SIAPE->nome());
+
+        if (!$defaultTipoModalidade) {
+            throw new ValidateException("Tipo de Modalidade Padrão não definido no sistema. Consulte um administrador", 422);
+        }
+
+        $data['tipo_modalidade_id'] = $defaultTipoModalidade->id;
+    }
+
     /**
-     * @param mixed $usuario
+     * @param object{
+     *   id: string,
+     *   matriculasiape: string,
+     *   emailfuncional: string,
+     *   modalidade_pgd: mixed,
+     *   nome_servidor: string,
+     *   nome_guerra: string,
+     *   cod_jornada: mixed,
+     *   nome_jornada: mixed,
+     *   participa_pgd: mixed,
+     *   ident_unica: mixed,
+     *   data_modificacao: mixed,
+     *   data_nascimento: mixed
+     * } $usuario
      * @return void
      */
     public function atualizarServidor($usuario)
     {
+        if (empty($usuario->id)) {
+            SiapeLog::error("ID do usuário não encontrado para atualização", ['usuario' => (array) $usuario]);
+            return;
+        }
+
         SiapeLog::info("Atualizando dados do servidor Matricula: " . $usuario->matriculasiape);
 
         $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($usuario->emailfuncional, $usuario->matriculasiape, $usuario->id);
@@ -242,7 +277,21 @@ class UsuarioService extends ServiceBase
             $restoredEntity = $this->validateStore($data, $unidade, $action);
 
             if ($restoredEntity) {
+                if ($restoredEntity instanceof Usuario) {
+                    $restoredEntity->restore();
+                }
+                unset($data['pedagio']);
+                if (!empty($data['cpf'])) {
+                    $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
+                }
+                if (!empty($data['telefone'])) {
+                    $data['telefone'] = UtilService::onlyNumbers($data['telefone']);
+                }
+                $this->applyDefaultTipoModalidadeId($data);
                 $updated = $this->usuarioRepository->update($restoredEntity->id, $data);
+                if (!$updated) {
+                    throw new DBException("Falha ao reativar o usuário", 500);
+                }
                 $this->extraStore($updated, $unidade, $action);
                 if ($transaction) DB::commit();
                 return $updated;
@@ -250,6 +299,9 @@ class UsuarioService extends ServiceBase
 
             $data = $this->proxyStore($data, $unidade, $action);
             $entity = $this->usuarioRepository->create($data);
+            if (!$entity) {
+                throw new DBException("Falha ao inserir o usuário", 500);
+            }
             $this->extraStore($entity, $unidade, $action);
 
             if ($transaction) DB::commit();
@@ -265,6 +317,10 @@ class UsuarioService extends ServiceBase
     {
         if ($transaction) DB::beginTransaction();
         try {
+            if (empty($data['id'])) {
+                throw new NotFoundException("ID do usuário não encontrado para atualização");
+            }
+
             $id = $data['id'];
             $data = $this->proxyUpdate($data, $unidade);
 
@@ -467,16 +523,7 @@ class UsuarioService extends ServiceBase
     {
         $data["with"] = [];
         $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
-
-        if ($action == self::ACTION_INSERT) {
-            $defaultTipoModalidade = $this->tipoModalidadeRepository->findByNome('Sem dados do SIAPE');
-
-            if (!$defaultTipoModalidade) {
-                throw new ValidateException("Tipo de Modalidade Padrão não definido no sistema. Consulte um administrador", 422);
-            }
-
-            $data['tipo_modalidade_id'] = $defaultTipoModalidade->id;
-        }
+        $this->applyDefaultTipoModalidadeId($data);
 
         unset($data['pedagio']);
 
@@ -492,6 +539,7 @@ class UsuarioService extends ServiceBase
     public function proxyUpdate($data, $unidade)
     {
         $data["with"] = [];
+        $this->applyDefaultTipoModalidadeId($data);
         unset($data['pedagio']);
         $this->buffer = ["integrantes" => UtilService::getNested($data, "integrantes")];
         $this->validarPerfil($data);
@@ -797,13 +845,26 @@ class UsuarioService extends ServiceBase
         return $unidades;
     }
 
-    public function pendenciasChefe()
+    public function pendenciasChefe(?string $usuarioId = null, ?string $unidadeId = null)
     {
-        $usuario_id = $this->loggedUser()->id;
+        $usuario_id = $usuarioId ?? $this->loggedUser()?->id;
+        if (!$usuario_id) {
+            return [
+                'registrosExecucao' => new Collection(),
+                'planosTrabalhoAssinatura' => new Collection(),
+                'planosEntregaAvaliacao' => new Collection(),
+                'planosEntregaHomologacao' => new Collection(),
+                'entregasPlanoEntregaHomologacao' => new Collection()
+            ];
+        }
+
         $diasAvaliacaoRegistroExecucao = config('petrvs.dias-avaliacao-registro-execucao', 21);
         $unidades = $this->unidadeRepository->getUnidadesGerenciadas($usuario_id);
 
-        $unidades_ids = $unidades->pluck('id')->toArray();      
+        $unidades_ids = $unidades->pluck('id')->toArray();
+        if ($unidadeId && in_array($unidadeId, $unidades_ids, true)) {
+            $unidades_ids = [$unidadeId];
+        }
 
         $unidadesFilhas = $this->unidadeRepository->getSubordinadas($unidades_ids);
         $unidadesFilhasIds = $unidadesFilhas->pluck('id')->toArray();

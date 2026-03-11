@@ -10,12 +10,7 @@ class TenancySessionServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        //
-    }
-
-    public function boot()
-    {
-        Session::extend('custom-database', function ($app) {
+        $this->app['session']->extend('custom-database', function ($app) {
             return new TenantSessionHandler(
                 $app->db->connection(config('session.connection')), 
                 config('session.table'), 
@@ -23,5 +18,10 @@ class TenancySessionServiceProvider extends ServiceProvider
                 $app
             );
         });
+    }
+
+    public function boot()
+    {
+        //
     }
 }
