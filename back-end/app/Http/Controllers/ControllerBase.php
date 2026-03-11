@@ -10,6 +10,7 @@ use App\Exceptions\LogError;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
 use App\Exceptions\DataInvalidException;
+use App\Exceptions\DBException;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
@@ -450,9 +451,12 @@ abstract class ControllerBase extends Controller
             $data = $this->validateStore($request);
             $unidade = $this->getUnidade($request);
             $entity = $this->service->store($data['entity'], $unidade, !ControllerBase::$sameTransaction);
+            if (!$entity || empty($entity->id)) {
+                throw new DBException("Falha ao persistir registro", Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
             $result = $this->service->getById([
                 'id' => $entity->id,
-                'with' => $data['with']
+                'with' => $data['with'] ?? []
             ]);
             return response()->json([
                 'success' => true,
@@ -506,9 +510,12 @@ abstract class ControllerBase extends Controller
             $unidade = $this->getUnidade($request);
             $data['data']['id'] = $data['id'];
             $entity = $this->service->update($data['data'], $unidade, !ControllerBase::$sameTransaction);
+            if (!$entity || empty($entity->id)) {
+                throw new DBException("Falha ao persistir registro", Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
             $result = $this->service->getById([
                 'id' => $entity->id,
-                'with' => $data['with']
+                'with' => $data['with'] ?? []
             ]);
             return response()->json([
                 'success' => true,

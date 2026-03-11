@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\UsuarioSituacaoSiape;
+use App\Exceptions\DBException;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
@@ -260,7 +261,13 @@ class UsuarioService extends ServiceBase
             $restoredEntity = $this->validateStore($data, $unidade, $action);
 
             if ($restoredEntity) {
+                if ($restoredEntity instanceof Usuario) {
+                    $restoredEntity->restore();
+                }
                 $updated = $this->usuarioRepository->update($restoredEntity->id, $data);
+                if (!$updated) {
+                    throw new DBException("Falha ao reativar o usuário", 500);
+                }
                 $this->extraStore($updated, $unidade, $action);
                 if ($transaction) DB::commit();
                 return $updated;
@@ -268,6 +275,9 @@ class UsuarioService extends ServiceBase
 
             $data = $this->proxyStore($data, $unidade, $action);
             $entity = $this->usuarioRepository->create($data);
+            if (!$entity) {
+                throw new DBException("Falha ao inserir o usuário", 500);
+            }
             $this->extraStore($entity, $unidade, $action);
 
             if ($transaction) DB::commit();

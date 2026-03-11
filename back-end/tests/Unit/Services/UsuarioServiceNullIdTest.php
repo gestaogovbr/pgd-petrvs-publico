@@ -3,6 +3,8 @@
 namespace Tests\Unit\Services;
 
 use App\Services\UsuarioService;
+use App\Exceptions\DBException;
+use App\Models\Usuario;
 use App\Repository\UsuarioRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\IntegracaoServidorRepository;
@@ -82,5 +84,28 @@ describe('UsuarioService - Null ID Checks', function () {
 
         expect(fn() => $this->usuarioService->update($data, $unidade))
             ->toThrow(NotFoundException::class, "ID do usuário não encontrado para atualização");
+    });
+
+    it('throws exception when repository update returns null in restored store', function () {
+        $data = [
+            'id' => '',
+            'nome' => 'teste da silva',
+            'email' => 'teste@teste.com.br',
+            'cpf' => '01503922065',
+            'integrantes' => [
+                ['unidade_id' => 'unidade-1']
+            ],
+        ];
+
+        $restored = Mockery::mock(Usuario::class)->makePartial();
+        $restored->id = 'restored-id';
+        $restored->shouldReceive('restore')->once()->andReturnTrue();
+
+        $this->usuarioService->shouldReceive('validateStore')->once()->andReturn($restored);
+        $this->usuarioService->shouldReceive('extraStore')->never();
+        $this->usuarioRepository->shouldReceive('update')->once()->with('restored-id', Mockery::type('array'))->andReturnNull();
+
+        expect(fn () => $this->usuarioService->store($data, null, false))
+            ->toThrow(DBException::class, 'Falha ao reativar o usuário');
     });
 });
