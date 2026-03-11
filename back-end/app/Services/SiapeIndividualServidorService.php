@@ -611,8 +611,8 @@ class SiapeIndividualServidorService extends ServiceBase
             ]);
             return;
         }
-
-        $this->removeLotacao($usuario);
+        //FIXME Removendo essa opção até que corrija o bug de lotação
+        // $this->removeLotacao($usuario);
     }
 
     private function atualizarStatusUsuario(Usuario $usuario): void

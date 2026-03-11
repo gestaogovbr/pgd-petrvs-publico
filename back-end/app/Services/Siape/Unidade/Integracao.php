@@ -79,6 +79,7 @@ class Integracao implements InterfaceIntegracao
 
             if ($this->transaction) DB::commit();
         } catch (\Exception $e) {
+            SiapeLog::error("Erro ao processar vínculo", ['exception' => $e->getMessage()]);
             if ($this->transaction) DB::rollBack();
             throw $e;
         }
@@ -143,7 +144,9 @@ class Integracao implements InterfaceIntegracao
             $atribuicaoExistente->delete();
             $integrante->delete();
             array_push($this->atribuicoesFinais, sprintf("Atribuição %s removida do integrante %s", $atribuicao->value, $integrante->id));
+            SiapeLog::info(sprintf("Atribuição %s removida do integrante %s", $atribuicao->value, $integrante->id));
         } else {
+            SiapeLog::info(sprintf("Atribuição %s já não existe para o integrante %s", $atribuicao->value, $integrante->id));
             array_push($this->atribuicoesFinais, sprintf("Atribuição %s já não existe para o integrante %s", $atribuicao->value, $integrante->id));
         }
     }

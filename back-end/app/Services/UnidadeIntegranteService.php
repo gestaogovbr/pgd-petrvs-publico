@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\ServerException;
+use App\Facades\SiapeLog;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
@@ -74,16 +75,16 @@ class UnidadeIntegranteService extends ServiceBase
         $usuario = Usuario::find($vinculo["usuario_id"]);
         $unidade = Unidade::where('id', $vinculo["unidade_id"])->whereNull('data_inativacao')->first();
 
-        if(($vinculo['_status'] ?? null) === 'DELETE') continue;
+        // if(($vinculo['_status'] ?? null) === 'DELETE') continue;
         
         if (empty($usuario)) {
-            Log::error('Usuário não encontrado ao processar vínculo', ['vinculo' => $vinculo]);
+            SiapeLog::error('Usuário não encontrado ao processar vínculo', ['vinculo' => $vinculo]);
             throw new ServerException("ValidateIntegrante", "Usuário não encontrado no sistema");
         }
         
         if (empty($unidade)) {
-            Log::error('Unidade não encontrada ou está inativada ao processar vínculo', ['vinculo' => $vinculo]);
-            throw new ServerException("ValidateIntegrante", "Unidade {$vinculo['unidade_sigla']} não encontrada ou está inativada. Por favor, remova o vínculo.");
+            SiapeLog::error('Unidade não encontrada ou está inativada ao processar vínculo', ['vinculo' => $vinculo]);
+            throw new ServerException("ValidateIntegrante", "Unidade não encontrada ou está inativada. Por favor, remova o vínculo.");
         }
         
         //FIXME Isso aqui não deveria estar aqui.
@@ -96,6 +97,7 @@ class UnidadeIntegranteService extends ServiceBase
       }
     }
     try {
+        /** @var Integracao $integracao */
         $integracao = app(Integracao::class, [
             'vinculos' => $vinculos,
             'unidadeIntegranteRepository' => app(UnidadeIntegranteRepository::class),
