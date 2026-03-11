@@ -2,7 +2,20 @@
 
 namespace App\Services;
 
-use Throwable;
+use App\Enums\UsuarioSituacaoSiape;
+use App\Exceptions\NotFoundException;
+use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
+use App\Facades\SiapeLog;
+use App\Models\Usuario;
+use App\Repository\IntegracaoServidorRepository;
+use App\Repository\PerfilRepository;
+use App\Repository\PlanoEntregaRepository;
+use App\Repository\PlanoTrabalhoConsolidacaoRepository;
+use App\Repository\PlanoTrabalhoRepository;
+use App\Repository\TipoModalidadeRepository;
+use App\Repository\UnidadeRepository;
+use App\Repository\UsuarioRepository;
 use App\Services\RawWhere;
 use App\Services\ServiceBase;
 use App\Services\Siape\DadosExternosSiape;
