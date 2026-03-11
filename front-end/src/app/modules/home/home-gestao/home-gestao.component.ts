@@ -1,6 +1,5 @@
-import { Component , Injector } from '@angular/core';
+import { ChangeDetectorRef, Component , Injector } from '@angular/core';
 import * as moment from 'moment';
-import { filter } from 'rxjs';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { GlobalsService } from 'src/app/services/globals.service';
@@ -19,6 +18,8 @@ export class HomeGestaoComponent {
   public usuarioDao: UsuarioDaoService;
   public totalPendenciasChefe: number = 0;
   public pendenciasLoaded: boolean = false;
+  public pendenciasChefe: any = {};
+  public cdRef: ChangeDetectorRef;
 
 
   public lex: LexicalService;
@@ -34,6 +35,7 @@ export class HomeGestaoComponent {
     this.gb = injector.get<GlobalsService>(GlobalsService);
     this.auth = injector.get<AuthService>(AuthService);
     this.go = injector.get<NavigateService>(NavigateService);
+    this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
   }
 
    ngOnInit() {
@@ -41,14 +43,18 @@ export class HomeGestaoComponent {
   }
   
   public async loadPendenciasChefe() {
-    const res = await this.usuarioDao.getPendenciasChefe();
-    const pendenciasChefe = (res as any)?.pendencias || {};
-    this.totalPendenciasChefe = ((pendenciasChefe.planosEntregaEntregas || []).length)
-      + ((pendenciasChefe.planosEntregas || []).length)
-      + ((pendenciasChefe.registrosExecucao || []).length)
-      + ((pendenciasChefe.planosTrabalhos || []).length);
-    this.pendenciasLoaded = true;
-
+    try {
+      const res = await this.usuarioDao.getPendenciasChefe();
+      this.pendenciasChefe = (res as any)?.pendencias || {};
+      this.totalPendenciasChefe = ((this.pendenciasChefe.planosEntregaEntregas || []).length)
+        + ((this.pendenciasChefe.planosEntregas || []).length)
+        + ((this.pendenciasChefe.registrosExecucao || []).length)
+        + ((this.pendenciasChefe.planosTrabalhos || []).length);
+    } finally {
+      this.pendenciasChefe = this.pendenciasChefe || {};
+      this.pendenciasLoaded = true;
+      this.cdRef.detectChanges();
+    }
   }
 
   public formatDate(date: string): string {
@@ -56,7 +62,7 @@ export class HomeGestaoComponent {
   }
 
   public abrirPendenciasModal() {
-    this.go.navigate({ route: ['home','gestao','pendencias'] }, { modal: true });
+    this.go.navigate({ route: ['home','gestao','pendencias'] }, { modal: true, metadata: { pendenciasChefe: this.pendenciasChefe } });
   }
 
 }

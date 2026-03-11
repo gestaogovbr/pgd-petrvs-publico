@@ -42,12 +42,21 @@ export class HomeGestaoPendenciasComponent extends PageBase {
 
   async ngOnInit() {
     super.ngOnInit();
+    const pendenciasChefe = this.metadata?.pendenciasChefe;
+    if (pendenciasChefe) {
+      this.applyPendenciasChefe(pendenciasChefe);
+      return;
+    }
     await this.loadPendenciasChefe();
   }
 
   public async loadPendenciasChefe() {
     const res = await this.usuarioDao.getPendenciasChefe();
     const pendenciasChefe = (res as any)?.pendencias || {};
+    this.applyPendenciasChefe(pendenciasChefe);
+  }
+
+  private applyPendenciasChefe(pendenciasChefe: any) {
     this.registrosExecucao = pendenciasChefe.registrosExecucao || [];
     this.planosTrabalhos = pendenciasChefe.planosTrabalhos || [];
     this.planosEntregaEntregas = pendenciasChefe.planosEntregaEntregas || [];

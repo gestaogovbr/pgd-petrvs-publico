@@ -164,7 +164,7 @@ class LoginController extends Controller
         if (Auth::check()) {
             $unidade_id = $request->session()->get("unidade_id");
             if (!empty($unidade_id)) {
-                $unidadeService = new UnidadeService();
+                $unidadeService = app(UnidadeService::class);
                 return response()->json([
                     "status" => "OK",
                     "hora" => $unidadeService->hora($unidade_id)

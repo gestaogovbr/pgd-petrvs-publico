@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Cache;
+use Stancl\Tenancy\Facades\GlobalCache;
 
 class SiapeIndividualController extends ControllerBase
 {
@@ -18,7 +18,7 @@ class SiapeIndividualController extends ControllerBase
             'log' => null,
         ];
         $tenantId = function_exists('tenant') ? (tenant('id') ?? 'central') : 'central';
-        $lock = Cache::lock('siape:processaServidor:' . $tenantId, 600);
+        $lock = GlobalCache::lock('siape:processaServidor:' . $tenantId, 600);
         if (!$lock->get()) {
             $retorno['success'] = false;
             $retorno['message'] = 'já existe uma requisição ativa nesse tenant neste momento, por favor aguarde e tente novamente em instantes';

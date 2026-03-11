@@ -1,3 +1,10 @@
+## 2.9.17 10/03/2026
+### Corrigido
+- Correção na atualização e reativação de usuários.
+- Ajustes na busca de usuários para exibir resultados corretos.
+- Ajustes na integração com o SIAPE para evitar inconsistências de matrícula e lotação.
+- Atualização interna de segurança e melhorias de estabilidade.
+
 ## 2.9.16 09/03/2026
 ### Modificado
 - Reestruturação do planejamento institucional para agrupar objetivos por eixo temático.

@@ -1,6 +1,7 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { GroupBy } from 'src/app/components/grid/grid-types';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetivo-dao.service';
@@ -22,7 +23,8 @@ export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<Pla
   
   constructor(public injector: Injector) {
     super(injector, PlanejamentoObjetivo, PlanejamentoObjetivoDaoService);
-    this.join = ['eixo_tematico:id,nome,cor,icone']
+    this.join = ['eixo_tematico:id,nome,cor,icone', 'objetivo_superior:id,nome']
+    this.groupBy = [{ field: 'eixo_tematico_id', label: 'Eixo Temático' }] as GroupBy[];
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.title = this.lex.translate("Objetivos") + ' ' + this.lex.translate("do Planejamento Institucional");
@@ -54,13 +56,43 @@ export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<Pla
 
   public allRows: PlanejamentoObjetivo[] = [];
 
+  public getEixoTematicoById(eixoId: string | null | undefined): any {
+    if (!eixoId?.length) return null;
+    return this.allRows.find(x => x.eixo_tematico_id === eixoId)?.eixo_tematico || null;
+  }
+
+  public getEixoHeaderTextColor(bgColor: string | null | undefined): string {
+    return this.util.contrastColor(bgColor || '#e0e0e0');
+  }
+
   public onGridLoad = async (rows?: any[]) => {
     if (rows) {
       if (rows !== this.allRows) {
          this.allRows = [...rows];
       }
       
-      const sorted = this.sortObjetivos(this.allRows);
+      const nullKey = '__null__';
+      const groups = new Map<string, PlanejamentoObjetivo[]>();
+      for (const row of this.allRows) {
+        const key = row.eixo_tematico_id || nullKey;
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key)!.push(row);
+      }
+
+      const sortedGroups = Array.from(groups.entries())
+        .map(([key, objetivos]) => ({
+          id: key,
+          objetivos
+        }))
+        .sort((a, b) => {
+          if (a.id === nullKey) return 1;
+          if (b.id === nullKey) return -1;
+          const eixoA = a.objetivos[0]?.eixo_tematico?.nome || "";
+          const eixoB = b.objetivos[0]?.eixo_tematico?.nome || "";
+          return eixoA.localeCompare(eixoB);
+        });
+
+      const sorted = sortedGroups.flatMap(g => this.sortObjetivos(g.objetivos));
       
       if (rows && rows !== this.allRows) {
           rows.splice(0, rows.length, ...sorted);
@@ -98,6 +130,7 @@ export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<Pla
     let niveis = 0;
     while (paiId) {
       let atual = this.allRows.find(x => x.id == paiId);
+      if (!atual) break;
       niveis++;
       paiId = atual?.objetivo_pai_id || null;
     }

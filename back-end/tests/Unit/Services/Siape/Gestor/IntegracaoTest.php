@@ -4,7 +4,10 @@ use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
 use App\Services\UnidadeIntegranteService;
 use App\Services\NivelAcessoService;
 use App\Services\PerfilService;
-use App\Models\Usuario;
+use App\Repository\UnidadeRepository;
+use App\Repository\UnidadeIntegranteRepository;
+use App\Repository\UnidadeIntegranteAtribuicaoRepository;
+use App\Repository\UsuarioRepository;
 use App\Enums\Atribuicao as EnumsAtribuicao;
 use Tests\TestCase;
 
@@ -14,10 +17,13 @@ describe('GestorIntegracao - preparaSubstituto', function () {
     it('retorna apenas GESTOR_SUBSTITUTO quando atribuições estão vazias', function () {
         $instancia = new GestorIntegracao(
             [],
-            Mockery::mock(Usuario::class),
             Mockery::mock(UnidadeIntegranteService::class),
             Mockery::mock(NivelAcessoService::class),
             Mockery::mock(PerfilService::class),
+            Mockery::mock(UnidadeRepository::class),
+            Mockery::mock(UnidadeIntegranteRepository::class),
+            Mockery::mock(UnidadeIntegranteAtribuicaoRepository::class),
+            Mockery::mock(UsuarioRepository::class),
             []
         );
 
@@ -32,10 +38,13 @@ describe('GestorIntegracao - preparaSubstituto', function () {
     it('retorna apenas GESTOR_SUBSTITUTO quando unidade não existe na lista', function () {
         $instancia = new GestorIntegracao(
             [],
-            Mockery::mock(Usuario::class),
             Mockery::mock(UnidadeIntegranteService::class),
             Mockery::mock(NivelAcessoService::class),
             Mockery::mock(PerfilService::class),
+            Mockery::mock(UnidadeRepository::class),
+            Mockery::mock(UnidadeIntegranteRepository::class),
+            Mockery::mock(UnidadeIntegranteAtribuicaoRepository::class),
+            Mockery::mock(UsuarioRepository::class),
             []
         );
 
@@ -50,10 +59,13 @@ describe('GestorIntegracao - preparaSubstituto', function () {
     it('remove GESTOR e garante inclusão de GESTOR novamente', function () {
         $instancia = new GestorIntegracao(
             [],
-            Mockery::mock(Usuario::class),
             Mockery::mock(UnidadeIntegranteService::class),
             Mockery::mock(NivelAcessoService::class),
             Mockery::mock(PerfilService::class),
+            Mockery::mock(UnidadeRepository::class),
+            Mockery::mock(UnidadeIntegranteRepository::class),
+            Mockery::mock(UnidadeIntegranteAtribuicaoRepository::class),
+            Mockery::mock(UsuarioRepository::class),
             []
         );
 
@@ -74,10 +86,13 @@ describe('GestorIntegracao - preparaSubstituto', function () {
     it('adiciona GESTOR quando não presente', function () {
         $instancia = new GestorIntegracao(
             [],
-            Mockery::mock(Usuario::class),
             Mockery::mock(UnidadeIntegranteService::class),
             Mockery::mock(NivelAcessoService::class),
             Mockery::mock(PerfilService::class),
+            Mockery::mock(UnidadeRepository::class),
+            Mockery::mock(UnidadeIntegranteRepository::class),
+            Mockery::mock(UnidadeIntegranteAtribuicaoRepository::class),
+            Mockery::mock(UsuarioRepository::class),
             []
         );
 
@@ -98,4 +113,3 @@ describe('GestorIntegracao - preparaSubstituto', function () {
         Mockery::close();
     });
 });
-

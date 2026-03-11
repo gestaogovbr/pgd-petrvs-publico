@@ -87,6 +87,11 @@ class UsuarioServiceRepositoryTest extends TestCase
         $this->planoTrabalhoConsolidacaoRepository = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
         $this->planoTrabalhoRepository = Mockery::mock(PlanoTrabalhoRepository::class);
         $this->planoEntregaRepository = Mockery::mock(PlanoEntregaRepository::class);
+
+        $this->tipoModalidadeRepository
+            ->shouldReceive('findByNome')
+            ->andReturn((object) ['id' => 'mod-default-id'])
+            ->byDefault();
         
         $this->unidadeService = Mockery::mock(UnidadeService::class);
         $this->integracaoService = Mockery::mock(IntegracaoService::class);
@@ -440,6 +445,10 @@ class UsuarioServiceRepositoryTest extends TestCase
     {
         $usuarioId = 'user-id';
         $unidadeId = 'unidade-id';
+
+        $userMock = Mockery::mock(Usuario::class);
+        $userMock->shouldReceive('getAttribute')->with('id')->andReturn($usuarioId);
+        Auth::shouldReceive('user')->andReturn($userMock);
         
         $unidadeMock = Mockery::mock(Unidade::class);
         $unidadeMock->shouldReceive('getAttribute')->with('id')->andReturn($unidadeId);
@@ -477,7 +486,7 @@ class UsuarioServiceRepositoryTest extends TestCase
             ->once()
             ->andReturn(new \Illuminate\Database\Eloquent\Collection());
 
-        $result = $this->service->pendenciasChefe($usuarioId, $unidadeId);
+        $result = $this->service->pendenciasChefe();
         
         $this->assertIsArray($result);
         $this->assertArrayHasKey('registrosExecucao', $result);

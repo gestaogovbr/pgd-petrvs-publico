@@ -3,11 +3,16 @@
 namespace App\Services;
 
 use App\Exceptions\ServerException;
+use App\Facades\SiapeLog;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\IntegracaoServidor;
 use App\Models\Usuario;
+use App\Repository\UnidadeIntegranteAtribuicaoRepository;
+use App\Repository\UnidadeIntegranteRepository;
+use App\Repository\UnidadeRepository;
+use App\Repository\UsuarioRepository;
 use App\Services\ServiceBase;
 use App\Services\Siape\Unidade\Integracao;
 use Illuminate\Support\Facades\DB;
@@ -73,13 +78,13 @@ class UnidadeIntegranteService extends ServiceBase
         if(($vinculo['_status'] ?? null) === 'DELETE') continue;
         
         if (empty($usuario)) {
-            Log::error('Usuário não encontrado ao processar vínculo', ['vinculo' => $vinculo]);
+            SiapeLog::error('Usuário não encontrado ao processar vínculo', ['vinculo' => $vinculo]);
             throw new ServerException("ValidateIntegrante", "Usuário não encontrado no sistema");
         }
         
         if (empty($unidade)) {
-            Log::error('Unidade não encontrada ou está inativada ao processar vínculo', ['vinculo' => $vinculo]);
-            throw new ServerException("ValidateIntegrante", "Unidade {$vinculo['unidade_sigla']} não encontrada ou está inativada. Por favor, remova o vínculo.");
+            SiapeLog::error('Unidade não encontrada ou está inativada ao processar vínculo', ['vinculo' => $vinculo]);
+            throw new ServerException("ValidateIntegrante", "Unidade não encontrada ou está inativada. Por favor, remova o vínculo.");
         }
         
         //FIXME Isso aqui não deveria estar aqui.
@@ -92,7 +97,14 @@ class UnidadeIntegranteService extends ServiceBase
       }
     }
     try {
-        $integracao = new Integracao($vinculos);
+        /** @var Integracao $integracao */
+        $integracao = app(Integracao::class, [
+            'vinculos' => $vinculos,
+            'unidadeIntegranteRepository' => app(UnidadeIntegranteRepository::class),
+            'unidadeIntegranteAtribuicaoRepository' => app(UnidadeIntegranteAtribuicaoRepository::class),
+            'usuarioRepository' => app(UsuarioRepository::class),
+            'unidadeRepository' => app(UnidadeRepository::class),
+        ]);
         $integracao->setTransaction($transaction); 
         $integracao->processar();
         $alteracoesFinais = $integracao->getAtribuicoesFinais();

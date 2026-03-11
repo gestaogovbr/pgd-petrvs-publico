@@ -1,0 +1,94 @@
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<checkstyle>
+<file name="app/Http/Controllers/AvaliacaoController.php">
+<error line="43" column="1" severity="error" message="Class App\Services\UnidadeService constructor invoked with 0 parameters, 4-5 required." source="arguments.count"/>
+<error line="69" column="1" severity="error" message="Class App\Services\UnidadeService constructor invoked with 0 parameters, 4-5 required." source="arguments.count"/>
+</file>
+<file name="app/Jobs/InativacaoUnidadesTemporarios.php">
+<error line="34" column="1" severity="error" message="Class App\Services\UnidadeService constructor invoked with 0 parameters, 4-5 required." source="arguments.count"/>
+</file>
+<file name="app/Repository/UnidadeIntegrante/Eloquent/EloquentUnidadeIntegranteReadRepository.php">
+<error line="78" column="1" severity="error" message="Method App\Repository\UnidadeIntegrante\Eloquent\EloquentUnidadeIntegranteReadRepository::findGestorByUnidade() should return App\Models\UnidadeIntegrante|null but returns Illuminate\Database\Eloquent\Model|null." source="return.type"/>
+<error line="87" column="1" severity="error" message="Method App\Repository\UnidadeIntegrante\Eloquent\EloquentUnidadeIntegranteReadRepository::findUnidadeIntegrante() should return App\Models\UnidadeIntegrante|null but returns Illuminate\Database\Eloquent\Model|null." source="return.type"/>
+</file>
+<file name="app/Services/AtividadeService.php">
+<error line="477" column="1" severity="error" message="Class App\Services\UnidadeService constructor invoked with 0 parameters, 4-5 required." source="arguments.count"/>
+<error line="541" column="1" severity="error" message="Class App\Services\UnidadeService constructor invoked with 0 parameters, 4-5 required." source="arguments.count"/>
+</file>
+<file name="app/Services/IndicadoresEntregaService.php">
+<error line="15" column="1" severity="error" message="Class App\Services\UnidadeService constructor invoked with 0 parameters, 4-5 required." source="arguments.count"/>
+</file>
+<file name="app/Services/IndicadoresGestaoService.php">
+<error line="27" column="1" severity="error" message="Class App\Services\UnidadeService constructor invoked with 0 parameters, 4-5 required." source="arguments.count"/>
+</file>
+<file name="app/Services/IndicadoresService.php">
+<error line="26" column="1" severity="error" message="Class App\Services\UnidadeService constructor invoked with 0 parameters, 4-5 required." source="arguments.count"/>
+</file>
+<file name="app/Services/PlanoEntregaService.php">
+<error line="452" column="1" severity="error" message="Class App\Services\UnidadeService constructor invoked with 0 parameters, 4-5 required." source="arguments.count"/>
+</file>
+<file name="app/Services/PlanoTrabalhoService.php">
+<error line="109" column="1" severity="error" message="Class App\Services\UnidadeService constructor invoked with 0 parameters, 4-5 required." source="arguments.count"/>
+</file>
+<file name="app/Services/RelatorioAgenteService.php">
+<error line="167" column="1" severity="error" message="Class App\Services\UnidadeService constructor invoked with 0 parameters, 4-5 required." source="arguments.count"/>
+<error line="323" column="1" severity="error" message="Class App\Services\UnidadeService constructor invoked with 0 parameters, 4-5 required." source="arguments.count"/>
+</file>
+<file name="app/Services/RelatorioPlanoEntregaService.php">
+<error line="41" column="1" severity="error" message="Class App\Services\UnidadeService constructor invoked with 0 parameters, 4-5 required." source="arguments.count"/>
+</file>
+<file name="app/Services/RelatorioPlanoTrabalhoService.php">
+<error line="42" column="1" severity="error" message="Class App\Services\UnidadeService constructor invoked with 0 parameters, 4-5 required." source="arguments.count"/>
+</file>
+<file name="app/Services/RelatorioUnidadeService.php">
+<error line="34" column="1" severity="error" message="Class App\Services\UnidadeService constructor invoked with 0 parameters, 4-5 required." source="arguments.count"/>
+</file>
+<file name="app/Services/Siape/Unidade/Atribuicao.php">
+<error line="210" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$gestor." source="property.notFound"/>
+<error line="233" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$unidade." source="property.notFound"/>
+<error line="245" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$unidade." source="property.notFound"/>
+<error line="265" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$lotado." source="property.notFound"/>
+<error line="266" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$lotado." source="property.notFound"/>
+<error line="210" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$gestor." source="property.notFound"/>
+<error line="233" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$unidade." source="property.notFound"/>
+<error line="245" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$unidade." source="property.notFound"/>
+<error line="265" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$lotado." source="property.notFound"/>
+<error line="266" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$lotado." source="property.notFound"/>
+<error line="210" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$gestor." source="property.notFound"/>
+<error line="233" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$unidade." source="property.notFound"/>
+<error line="245" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$unidade." source="property.notFound"/>
+<error line="265" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$lotado." source="property.notFound"/>
+<error line="266" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$lotado." source="property.notFound"/>
+<error line="210" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$gestor." source="property.notFound"/>
+<error line="233" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$unidade." source="property.notFound"/>
+<error line="245" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$unidade." source="property.notFound"/>
+<error line="265" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$lotado." source="property.notFound"/>
+<error line="266" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$lotado." source="property.notFound"/>
+</file>
+<file name="app/Services/SiapeIndividualServidorService.php">
+<error line="160" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$id." source="property.notFound"/>
+<error line="161" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$matricula." source="property.notFound"/>
+<error line="162" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$nome." source="property.notFound"/>
+<error line="163" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$email." source="property.notFound"/>
+<error line="164" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$situacao_siape." source="property.notFound"/>
+<error line="165" column="1" severity="error" message="Access to an undefined property Illuminate\Database\Eloquent\Model::$lotacao." source="property.notFound"/>
+</file>
+<file name="app/Services/UnidadeIntegranteService.php">
+<error line="95" column="1" severity="error" message="Class App\Services\Siape\Unidade\Integracao constructor invoked with 1 parameter, 5 required." source="arguments.count"/>
+</file>
+<file name="app/Services/UsuarioService.php">
+<error line="81" column="1" severity="error" message="Access to an undefined property object::$matriculasiape." source="property.notFound"/>
+<error line="83" column="1" severity="error" message="Access to an undefined property object::$emailfuncional." source="property.notFound"/>
+<error line="83" column="1" severity="error" message="Access to an undefined property object::$matriculasiape." source="property.notFound"/>
+<error line="84" column="1" severity="error" message="Access to an undefined property object::$modalidade_pgd." source="property.notFound"/>
+<error line="87" column="1" severity="error" message="Access to an undefined property object::$nome_servidor." source="property.notFound"/>
+<error line="88" column="1" severity="error" message="Access to an undefined property object::$nome_guerra." source="property.notFound"/>
+<error line="89" column="1" severity="error" message="Access to an undefined property object::$emailfuncional." source="property.notFound"/>
+<error line="90" column="1" severity="error" message="Access to an undefined property object::$cod_jornada." source="property.notFound"/>
+<error line="91" column="1" severity="error" message="Access to an undefined property object::$nome_jornada." source="property.notFound"/>
+<error line="93" column="1" severity="error" message="Access to an undefined property object::$participa_pgd." source="property.notFound"/>
+<error line="94" column="1" severity="error" message="Access to an undefined property object::$ident_unica." source="property.notFound"/>
+<error line="95" column="1" severity="error" message="Access to an undefined property object::$data_modificacao." source="property.notFound"/>
+<error line="96" column="1" severity="error" message="Access to an undefined property object::$data_nascimento." source="property.notFound"/>
+</file>
+</checkstyle>

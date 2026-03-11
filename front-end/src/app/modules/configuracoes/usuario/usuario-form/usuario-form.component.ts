@@ -48,6 +48,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       apelido: { default: "" },
       participa_pgd: { default: ""},
       modalidade_pgd: { default: ""},
+      tipo_modalidade_id: { default: null },
       usuario_externo: { default: true },
       telefone: { default: "" },
       uf: { default: "" },

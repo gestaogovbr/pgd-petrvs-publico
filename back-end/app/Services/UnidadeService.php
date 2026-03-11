@@ -14,6 +14,10 @@ use App\Services\ServiceBase;
 use App\Services\Siape\DadosExternosSiape;
 use App\Services\Siape\Unidade\Atribuicao;
 use App\Models\UnidadeIntegrante;
+use App\Repository\UnidadeRepository;
+use App\Repository\UnidadeIntegranteRepository;
+use App\Repository\UnidadeIntegranteAtribuicaoRepository;
+use App\Repository\UsuarioRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use DateTime;
@@ -39,6 +43,36 @@ class UnidadeService extends ServiceBase
 
     use DadosExternosSiape, Atribuicao;
     public static $CACHE_LINHA_ASCENDENTE = [];
+
+    public function __construct(
+        private UnidadeIntegranteRepository $unidadeIntegranteRepository,
+        private UnidadeIntegranteAtribuicaoRepository $unidadeIntegranteAtribuicaoRepository,
+        private UsuarioRepository $usuarioRepository,
+        private UnidadeRepository $unidadeRepository,
+        $collection = null
+    ) {
+        parent::__construct($collection);
+    }
+
+    public function getUnidadeIntegranteRepository(): UnidadeIntegranteRepository
+    {
+        return $this->unidadeIntegranteRepository;
+    }
+
+    public function getUnidadeIntegranteAtribuicaoRepository(): UnidadeIntegranteAtribuicaoRepository
+    {
+        return $this->unidadeIntegranteAtribuicaoRepository;
+    }
+
+    public function getUsuarioRepository(): UsuarioRepository
+    {
+        return $this->usuarioRepository;
+    }
+
+    public function getUnidadeRepository(): UnidadeRepository
+    {
+        return $this->unidadeRepository;
+    }
 
     public function validateStore($data, $unidade, $action)
     {
