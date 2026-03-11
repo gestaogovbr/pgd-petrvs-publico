@@ -3,69 +3,54 @@
 namespace Tests\IntegrationTenant\Repository;
 
 use App\Models\Entidade;
-use App\Models\Cidade;
-use App\Models\TipoModalidade;
 use App\Models\Feriado;
 use App\Repository\EntidadeRepository;
-use Tests\DatabaseTenantTestCase;
-use Illuminate\Foundation\Testing\WithFaker;
 
-class EntidadeRepositoryTest extends DatabaseTenantTestCase
-{
-    use WithFaker;
+beforeEach(function () {
+    $this->repository = app(EntidadeRepository::class);
+});
 
-    protected EntidadeRepository $repository;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->repository = app(EntidadeRepository::class);
-    }
-
-    public function testFindById()
-    {
+describe('EntidadeRepository', function () {
+    test('findById retorna entidade', function () {
         $entidade = Entidade::factory()->create();
-        
-        $found = $this->repository->findById($entidade->id);
-        
-        $this->assertNotNull($found);
-        $this->assertEquals($entidade->id, $found->id);
-    }
 
-    public function testFindByIdWithRelations()
-    {
+        $found = $this->repository->findById($entidade->id);
+
+        expect($found)->not->toBeNull();
+        expect($found->id)->toBe($entidade->id);
+    });
+
+    test('findById carrega relações quando solicitado', function () {
         $entidade = Entidade::factory()->create();
         $feriado = Feriado::factory()->create(['entidade_id' => $entidade->id]);
-        
+
         $found = $this->repository->findById($entidade->id, ['feriados']);
-        
-        $this->assertNotNull($found);
-        $this->assertEquals($entidade->id, $found->id);
-        $this->assertTrue($found->relationLoaded('feriados'));
-        $this->assertTrue($found->feriados->contains($feriado));
-    }
 
-    public function testFindBySigla()
-    {
+        expect($found)->not->toBeNull();
+        expect($found->id)->toBe($entidade->id);
+        expect($found->relationLoaded('feriados'))->toBeTrue();
+        expect($found->feriados->contains($feriado))->toBeTrue();
+    });
+
+    test('findBySigla retorna entidade', function () {
         $entidade = Entidade::factory()->create(['sigla' => 'TEST-SIGLA']);
-        
-        $found = $this->repository->findBySigla('TEST-SIGLA');
-        
-        $this->assertNotNull($found);
-        $this->assertEquals($entidade->id, $found->id);
-        $this->assertEquals('TEST-SIGLA', $found->sigla);
-    }
 
-    public function testFindBySiglaWithRelations()
-    {
+        $found = $this->repository->findBySigla('TEST-SIGLA');
+
+        expect($found)->not->toBeNull();
+        expect($found->id)->toBe($entidade->id);
+        expect($found->sigla)->toBe('TEST-SIGLA');
+    });
+
+    test('findBySigla carrega relações quando solicitado', function () {
         $entidade = Entidade::factory()->create(['sigla' => 'TEST-SIGLA-REL']);
         $feriado = Feriado::factory()->create(['entidade_id' => $entidade->id]);
-        
+
         $found = $this->repository->findBySigla('TEST-SIGLA-REL', ['feriados']);
-        
-        $this->assertNotNull($found);
-        $this->assertEquals($entidade->id, $found->id);
-        $this->assertTrue($found->relationLoaded('feriados'));
-        $this->assertTrue($found->feriados->contains($feriado));
-    }
-}
+
+        expect($found)->not->toBeNull();
+        expect($found->id)->toBe($entidade->id);
+        expect($found->relationLoaded('feriados'))->toBeTrue();
+        expect($found->feriados->contains($feriado))->toBeTrue();
+    });
+});
