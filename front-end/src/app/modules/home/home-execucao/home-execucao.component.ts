@@ -1,4 +1,4 @@
-import { Component , Injector, OnInit } from '@angular/core';
+import { Component , Injector, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { GlobalsService } from 'src/app/services/globals.service';
 import { LexicalService } from 'src/app/services/lexical.service';
@@ -20,6 +20,7 @@ export class HomeExecucaoComponent implements OnInit {
   public consolidacaoDao: PlanoTrabalhoConsolidacaoDaoService;
   public go: NavigateService;
   public dialog: DialogService;
+  public cdr: ChangeDetectorRef;
   public pendenciasConsolidacao: any[] = [];
   public pendenciasConsolidacaoAgrupadas: { plano_trabalho: any, pendencias: any[] }[] = [];
   public inconsistenciasConsolidacao: any[] = [];
@@ -33,6 +34,7 @@ export class HomeExecucaoComponent implements OnInit {
     this.consolidacaoDao = injector.get<PlanoTrabalhoConsolidacaoDaoService>(PlanoTrabalhoConsolidacaoDaoService);
     this.go = injector.get<NavigateService>(NavigateService);
     this.dialog = injector.get<DialogService>(DialogService);
+    this.cdr = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
   }
 
   ngOnInit() {
@@ -45,10 +47,12 @@ export class HomeExecucaoComponent implements OnInit {
     try {
       this.pendenciasConsolidacao = await this.consolidacaoDao.pendenciasUsuario();
       this.pendenciasConsolidacaoAgrupadas = this.agruparPendenciasPorPlano(this.pendenciasConsolidacao);
+      this.cdr.detectChanges();
     } catch (error) {
       console.error('Erro ao carregar pendências de consolidação:', error);
     } finally {
       this.loadingPendencias = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -56,10 +60,12 @@ export class HomeExecucaoComponent implements OnInit {
     this.loadingInconsistencias = true;
     try {
       this.inconsistenciasConsolidacao = await this.consolidacaoDao.inconsistencias(this.auth.usuario?.id);
+      this.cdr.detectChanges();
     } catch (error) {
       console.error('Erro ao carregar inconsistências de consolidação:', error);
     } finally {
       this.loadingInconsistencias = false;
+      this.cdr.detectChanges();
     }
   }
 

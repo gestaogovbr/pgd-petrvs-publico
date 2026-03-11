@@ -47,7 +47,7 @@ class PlanoEntrega extends ModelBase
     'CANCELADO' => 'Cancelado'
   ];
   
-  public const DATA_MUDANCA_REGRA_PE = '12/01/2026';
+  public const DATA_MUDANCA_REGRA_PE = '2026-01-12';
 
   public $fillable_changes = ["entregas"];
 
