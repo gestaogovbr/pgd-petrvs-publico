@@ -449,7 +449,7 @@ class PlanoEntregaService extends ServiceBase
         }
 
         if (!empty($subordinadas[2])) {
-            $unidadeService = new UnidadeService();
+            $unidadeService = app(UnidadeService::class);
 
             // Define $uId corretamente, verificando a existência do índice
             if (empty($unidadeId)) {

@@ -102,4 +102,44 @@ class UsuarioRepository
     {
         $this->writeRepository->removerVinculos($usuarioId);
     }
+
+    public function findByMatricula(string $matricula): ?Usuario
+    {
+        return $this->readRepository->findByMatricula($matricula);
+    }
+
+    public function findByEmail(string $email): ?Usuario
+    {
+        return $this->readRepository->findByEmail($email);
+    }
+
+    public function findActiveByCpf(string $cpf): ?Usuario
+    {
+        return $this->readRepository->findActiveByCpf($cpf);
+    }
+
+    public function loadUserWithRelations(string $userId, string $entidadeId): ?Usuario
+    {
+        return $this->readRepository->loadUserWithRelations($userId, $entidadeId);
+    }
+
+    public function findWithAreaTrabalho(string $userId, string $unidadeId): ?Usuario
+    {
+        return $this->readRepository->findWithAreaTrabalho($userId, $unidadeId);
+    }
+
+    public function findByCpf(string $cpf): ?Usuario
+    {
+        return $this->readRepository->findByCpf($cpf);
+    }
+
+    public function findByCpfWithLotacao(string $cpf): Collection
+    {
+        return $this->readRepository->findByCpfWithLotacao($cpf);
+    }
+
+    public function findAllByCpfUnfiltered(string $cpf): Collection
+    {
+        return $this->readRepository->findAllByCpfUnfiltered($cpf);
+    }
 }

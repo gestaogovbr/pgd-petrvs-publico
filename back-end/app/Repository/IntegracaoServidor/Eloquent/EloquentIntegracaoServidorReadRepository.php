@@ -72,7 +72,8 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
                 (isr.cod_jornada != u.cod_jornada OR isr.cod_jornada IS NOT NULL AND u.cod_jornada IS NULL) OR
                 (isr.modalidade_pgd IS NOT NULL AND u.tipo_modalidade_id IS NULL) OR
                 (isr.participa_pgd != u.participa_pgd OR isr.participa_pgd IS NOT NULL AND u.participa_pgd IS NULL) OR
-                (isr.data_modificacao > u.data_modificacao OR isr.data_modificacao IS NOT NULL AND u.data_nascimento IS NULL))"
+                (isr.data_modificacao > u.data_modificacao OR isr.data_modificacao IS NOT NULL AND u.data_nascimento IS NULL))
+            AND u.id IS NOT NULL"
         );
     }
 

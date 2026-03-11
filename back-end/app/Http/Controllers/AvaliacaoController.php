@@ -40,7 +40,7 @@ class AvaliacaoController extends ControllerBase {
                 $this->canAvaliar($avaliacao->toArray(), $usuario);
                 break;
             case 'RECORRER':
-                $unidadeService = new UnidadeService();
+                $unidadeService = app(UnidadeService::class);
                 $data = $request->validate([
                     'id' => ['required'],
                     'recurso' => ['required'],
@@ -66,7 +66,7 @@ class AvaliacaoController extends ControllerBase {
     }
 
     public function canAvaliar($data, $usuario) {
-        $unidadeService = new UnidadeService();
+        $unidadeService = app(UnidadeService::class);
         $usuarioService = new UsuarioService();
         /** @var PlanoTrabalhoConsolidacao|null $consolidacao */
         $consolidacao = !empty($data["plano_trabalho_consolidacao_id"]) ? PlanoTrabalhoConsolidacao::find($data["plano_trabalho_consolidacao_id"]) : null;
