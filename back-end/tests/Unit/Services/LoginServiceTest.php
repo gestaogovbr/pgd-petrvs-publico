@@ -232,3 +232,130 @@ test('logout', function () {
     
     expect(true)->toBeTrue(); // If no exception, passed
 });
+
+test('signIn govbr callback normaliza cpf e encontra usuario ativo', function () {
+    $request = Request::create('/login-govbr-callback/ABC', 'GET', [
+        'code' => 'code-123',
+        'state' => 'state-123',
+    ]);
+
+    $session = app('session')->driver();
+    $session->start();
+    $request->setLaravelSession($session);
+
+    $entidade = new Entidade();
+    $entidade->id = 'uuid-entidade';
+    $entidade->sigla = 'ABC';
+
+    $usuario = new Usuario();
+    $usuario->id = 'uuid-usuario';
+    $usuario->cpf = '12345678901';
+    $usuario->situacao_siape = 'ATIVO_PERMANENTE';
+    $usuario->config = [];
+
+    $socialiteUser = (object) [
+        'cpf' => '123.456.789-01',
+    ];
+
+    $provider = new class ($socialiteUser) {
+        public function __construct(private object $socialiteUser)
+        {
+        }
+
+        public function stateless(): self
+        {
+            return $this;
+        }
+
+        public function user(): object
+        {
+            return $this->socialiteUser;
+        }
+    };
+
+    $config = new \SocialiteProviders\Manager\Config('client', 'secret', 'redirect', []);
+
+    $this->service->shouldReceive('registrarEntidade')->andReturn($entidade);
+    $this->service->shouldReceive('getConfigGovBr')->andReturn($config);
+    $this->service->shouldReceive('govBrProvider')->andReturn($provider);
+    $this->service->shouldReceive('registrarUsuario')->andReturn($usuario);
+
+    $this->usuarioRepository->shouldReceive('findActiveByCpf')
+        ->with('12345678901')
+        ->andReturn($usuario);
+
+    Auth::shouldReceive('loginUsingId')->with('uuid-usuario')->andReturn(true);
+
+    $result = $this->service->signInGovBrCallback($request);
+
+    expect($result)->toBeArray();
+    expect($result['kind'])->toBe(LoginService::KIND_GOVBR);
+    expect($result['usuario'])->toBe($usuario);
+    expect($result['entidade'])->toBe($entidade);
+});
+
+test('signIn govbr callback faz fallback para email quando cpf ausente', function () {
+    $request = Request::create('/login-govbr-callback/ABC', 'GET', [
+        'code' => 'code-123',
+        'state' => 'state-123',
+    ]);
+
+    $session = app('session')->driver();
+    $session->start();
+    $request->setLaravelSession($session);
+
+    $entidade = new Entidade();
+    $entidade->id = 'uuid-entidade';
+    $entidade->sigla = 'ABC';
+
+    $usuario = new Usuario();
+    $usuario->id = 'uuid-usuario';
+    $usuario->cpf = '12345678901';
+    $usuario->situacao_siape = 'ATIVO_PERMANENTE';
+    $usuario->config = [];
+
+    $socialiteUser = (object) [
+        'email' => 'teste@teste.com',
+    ];
+
+    $provider = new class ($socialiteUser) {
+        public function __construct(private object $socialiteUser)
+        {
+        }
+
+        public function stateless(): self
+        {
+            return $this;
+        }
+
+        public function user(): object
+        {
+            return $this->socialiteUser;
+        }
+    };
+
+    $config = new \SocialiteProviders\Manager\Config('client', 'secret', 'redirect', []);
+
+    $this->service->shouldReceive('registrarEntidade')->andReturn($entidade);
+    $this->service->shouldReceive('getConfigGovBr')->andReturn($config);
+    $this->service->shouldReceive('govBrProvider')->andReturn($provider);
+    $this->service->shouldReceive('registrarUsuario')->andReturn($usuario);
+
+    $this->usuarioRepository->shouldReceive('findActiveByCpf')
+        ->with('')
+        ->andReturn(null);
+    $this->usuarioRepository->shouldReceive('findByCpf')
+        ->with('')
+        ->andReturn(null);
+    $this->usuarioRepository->shouldReceive('findByEmail')
+        ->with('teste@teste.com')
+        ->andReturn($usuario);
+
+    Auth::shouldReceive('loginUsingId')->with('uuid-usuario')->andReturn(true);
+
+    $result = $this->service->signInGovBrCallback($request);
+
+    expect($result)->toBeArray();
+    expect($result['kind'])->toBe(LoginService::KIND_GOVBR);
+    expect($result['usuario'])->toBe($usuario);
+});

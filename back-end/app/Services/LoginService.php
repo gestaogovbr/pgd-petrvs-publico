@@ -237,6 +237,8 @@ class LoginService
 
     private function findUserByCpf(string $cpf): ?Usuario
     {
+        $cpf = UtilService::onlyNumbers($cpf);
+
         $usuario = $this->usuarioRepository->findActiveByCpf($cpf);
 
         if ($usuario) {
@@ -619,7 +621,6 @@ class LoginService
         ];
         
         $config = $this->getConfigGovBr($urlCallback, $dados);
-        $this->stimulusRouteGovBr();
         
         $user = $this->govBrProvider($config)->stateless()->user();
 
@@ -628,8 +629,15 @@ class LoginService
              return null;
         }
 
-        $cpf = $user->cpf;
+        $cpf = $this->extractGovBrCpf($user);
         $usuario = $this->findUser('cpf', $cpf);
+
+        if (!$usuario) {
+            $email = $this->extractGovBrEmail($user);
+            if (!empty($email)) {
+                $usuario = $this->findUser('email', $email);
+            }
+        }
 
         if (!$usuario) {
             throw new Exception("Usuário inativo no SIAPE. Acesso negado.");
@@ -640,5 +648,43 @@ class LoginService
         $request->session()->put("kind", self::KIND_GOVBR);
         
         return $this->handleSuccessfulLogin($request, $usuario, self::KIND_GOVBR, $entidade);
+    }
+
+    private function extractGovBrCpf(mixed $user): string
+    {
+        $candidates = [
+            data_get($user, 'cpf'),
+            data_get($user, 'user.cpf'),
+            data_get($user, 'user.attributes.cpf'),
+            data_get($user, 'user.data.cpf'),
+            data_get($user, 'id'),
+            method_exists($user, 'getId') ? $user->getId() : null,
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (!is_scalar($candidate) && $candidate !== null) {
+                continue;
+            }
+
+            $cpf = UtilService::onlyNumbers((string) ($candidate ?? ''));
+            if (strlen($cpf) === 11) {
+                return $cpf;
+            }
+        }
+
+        return '';
+    }
+
+    private function extractGovBrEmail(mixed $user): ?string
+    {
+        $email = data_get($user, 'email')
+            ?? data_get($user, 'user.email')
+            ?? data_get($user, 'user.attributes.email');
+
+        if (!is_string($email) || empty($email)) {
+            return null;
+        }
+
+        return explode('#', $email)[0];
     }
 }

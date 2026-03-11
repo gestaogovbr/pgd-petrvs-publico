@@ -87,6 +87,11 @@ class UsuarioServiceRepositoryTest extends TestCase
         $this->planoTrabalhoConsolidacaoRepository = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
         $this->planoTrabalhoRepository = Mockery::mock(PlanoTrabalhoRepository::class);
         $this->planoEntregaRepository = Mockery::mock(PlanoEntregaRepository::class);
+
+        $this->tipoModalidadeRepository
+            ->shouldReceive('findByNome')
+            ->andReturn((object) ['id' => 'mod-default-id'])
+            ->byDefault();
         
         $this->unidadeService = Mockery::mock(UnidadeService::class);
         $this->integracaoService = Mockery::mock(IntegracaoService::class);
