@@ -2,6 +2,7 @@
 
 use App\Services\IntegracaoService;
 use App\Services\UsuarioService;
+use App\Services\UnidadeIntegranteService;
 use App\Services\ProcessadorAtualizacaoDadosSiapeService;
 use App\Services\UtilService;
 use App\Repository\IntegracaoServidorRepository;
@@ -221,5 +222,79 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
         // Act & Assert
         expect(fn() => $method->invoke($service, $atualizacoesDados, $sqlUpdateDados))
             ->toThrow(Exception::class, "Deadlock detectado");
+    });
+});
+
+describe('ProcessadorAtualizacaoDadosSiapeService - processarLotacoes', function () {
+    afterEach(function () {
+        Mockery::close();
+    });
+
+    it('deve separar a transação de lotações do cadastro de usuários ausentes', function () {
+        $integracaoServidorRepositoryMock = Mockery::mock(IntegracaoServidorRepository::class);
+        $integracaoServidorRepositoryMock->shouldReceive('getAtualizacoesLotacoes')->andReturn([]);
+        $integracaoServidorRepositoryMock->shouldReceive('getServidoresInseridosNaoLotados')->andReturn([
+            (object) [
+                'usuario_id' => 'usuario_id',
+                'unidade_id' => 'unidade_id',
+                'matricula' => 'M123',
+                'cpf' => '52998224725',
+            ]
+        ]);
+        $integracaoServidorRepositoryMock->shouldReceive('getUsuariosAusentes')->never();
+
+        $loggerMock = Mockery::mock(\Psr\Log\LoggerInterface::class);
+        $loggerMock->shouldReceive('info')->atLeast()->once();
+        Log::shouldReceive('channel')->with('siape')->andReturn($loggerMock);
+
+        $usuarioServiceMock = Mockery::mock(UsuarioService::class);
+        $usuarioServiceMock->shouldReceive('atualizarMatriculasUsuariosSemMatricula')->once();
+
+        $unidadeIntegranteMock = Mockery::mock(UnidadeIntegranteService::class);
+        $unidadeIntegranteMock->shouldReceive('salvarIntegrantes')->once()->andReturn(['ok' => true]);
+
+        DB::shouldReceive('transaction')
+            ->once()
+            ->with(Mockery::on(function ($callback) {
+                $callback();
+                return true;
+            }), 3)
+            ->ordered();
+
+        DB::shouldReceive('transaction')
+            ->once()
+            ->with(Mockery::on(fn ($callback) => is_callable($callback)), 3)
+            ->andThrow(new \Exception('Falha no cadastro de usuários ausentes'))
+            ->ordered();
+
+        $service = Mockery::mock(ProcessadorAtualizacaoDadosSiapeService::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+
+        $reflection = new ReflectionClass(ProcessadorAtualizacaoDadosSiapeService::class);
+        $method = $reflection->getMethod('processarLotacoes');
+        $method->setAccessible(true);
+
+        $property = $reflection->getProperty('result');
+        $property->setAccessible(true);
+        $property->setValue($service, [
+            'unidades' => ['Resultado' => 'Não foi executado!', 'Observações' => [], 'Falhas' => []],
+            'servidores' => ['Resultado' => 'Não foi executado!', 'Observações' => [], 'Falhas' => []],
+            'gestores' => ['Resultado' => '', 'Observações' => [], 'Falhas' => []]
+        ]);
+
+        $repoProperty = $reflection->getProperty('integracaoServidorRepository');
+        $repoProperty->setAccessible(true);
+        $repoProperty->setValue($service, $integracaoServidorRepositoryMock);
+
+        $parentProperty = $reflection->getParentClass()->getProperty('_services');
+        $parentProperty->setAccessible(true);
+        $parentProperty->setValue($service, [
+            'usuarioService' => $usuarioServiceMock,
+            'unidadeIntegrante' => $unidadeIntegranteMock,
+        ]);
+
+        expect(fn () => $method->invoke($service))
+            ->toThrow(\Exception::class, 'Falha no cadastro de usuários ausentes');
     });
 });

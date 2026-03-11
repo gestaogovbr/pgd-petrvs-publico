@@ -398,7 +398,7 @@ describe('SiapeIndividualServidorService - Fluxo Principal', function () {
         
         $this->service->shouldReceive('buscarUsuariosSimples')->andReturn(collect([$user]));
         $this->service->shouldReceive('removeTodasAsGestoesDoUsuario')->with($user)->once();
-        $this->service->shouldReceive('removeLotacao')->with($user)->once(); // This time it should be called
+        $this->service->shouldNotReceive('removeLotacao');
 
         $this->usuarioRepository
             ->shouldReceive('update')
@@ -478,7 +478,7 @@ describe('SiapeIndividualServidorService - Fluxo Principal', function () {
             ->andReturn(null)
             ->once();
         $this->service->shouldReceive('removeTodasAsGestoesDoUsuario')->with($user)->andReturnNull()->once();
-        $this->service->shouldReceive('removeLotacao')->with($user)->andReturnNull()->once();
+        $this->service->shouldNotReceive('removeLotacao');
 
         // Mocks for the rest of flow...
         $this->service->shouldReceive('buscarUsuariosPorCpf')->andReturn([]);
