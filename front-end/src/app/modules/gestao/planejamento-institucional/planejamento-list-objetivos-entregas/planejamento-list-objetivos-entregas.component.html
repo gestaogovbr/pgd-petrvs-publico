@@ -1,7 +1,7 @@
 
 <h3 *ngIf="!isModal" class="my-2">{{title}}</h3>
 <grid [dao]="dao" [add]="add" [hasAdd]="false" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable"
-    (select)="onSelect($event)" [loadList]="onGridLoad">
+    (select)="onSelect($event)" [loadList]="onGridLoad" [groupTemplate]="groupEixo">
     <toolbar *ngIf="!selectable" [buttons]="buttons"></toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)"
         [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
@@ -10,17 +10,34 @@
                 placeholder="Nome" [attr.maxlength]=250></input-text>
         </div>
     </filter>
+
+    <ng-template #groupEixo let-group="group">
+        <div class="d-flex justify-content-start border-bottom">
+            <ng-container *ngIf="getEixoTematicoById(group?.[0]?.value) as eixo; else semEixo">
+                <div [ngStyle]="{'background-color': eixo.cor || '#e0e0e0', 'color': getEixoHeaderTextColor(eixo.cor)}" class="p-2">
+                    <i [class]="eixo.icone || 'bi bi-gear'"></i>
+                    <span class="ms-2">{{eixo.nome}}</span>
+                </div>
+            </ng-container>
+            <ng-template #semEixo>
+                <span class="badge bg-secondary">Sem Eixo Temático</span>
+            </ng-template>
+        </div>
+    </ng-template>
+
     <columns>
         <column title="Nome" [template]="columnNome">
             <ng-template let-row="row" let-metadata="metadata" #columnNome>
-                <div class="d-flex align-items-start">
+                <div class="d-flex align-items-start justify-content-start">
                     <span [style.padding-left.px]="getNivel(row) * 20"></span>
-                    <div class="">
-                        <badge [icon]="row.eixo_tematico.icone || 'bi bi-gear'" 
-                               [color]="row.eixo_tematico.cor || 'primary'" 
-                               [label]="row.eixo_tematico.nome" *ngIf="row.objetivo_pai_id === null"></badge>
-                        <b class="d-block">{{getNome(row)}}</b>
-                        <small><cite>{{row.fundamentacao}}</cite></small>
+                    <div>
+                        <div  class="d-flex flex-column justify-content-start" style="min-width: 0;">
+                            <div class="small text-muted lh-sm mb-1" *ngIf="row.objetivo_superior?.nome?.length" [attr.title]="row.objetivo_superior.nome">
+                                <i class="bi bi-arrow-return-right me-1"></i>
+                                {{row.objetivo_superior.nome}}
+                            </div>
+                            <b class="d-block">{{getNome(row)}}</b>
+                        </div>
                     </div>
                 </div>
             </ng-template>

@@ -75,7 +75,7 @@ class UnidadeIntegranteService extends ServiceBase
         $usuario = Usuario::find($vinculo["usuario_id"]);
         $unidade = Unidade::where('id', $vinculo["unidade_id"])->whereNull('data_inativacao')->first();
 
-        // if(($vinculo['_status'] ?? null) === 'DELETE') continue;
+        if(($vinculo['_status'] ?? null) === 'DELETE') continue;
         
         if (empty($usuario)) {
             SiapeLog::error('Usuário não encontrado ao processar vínculo', ['vinculo' => $vinculo]);
