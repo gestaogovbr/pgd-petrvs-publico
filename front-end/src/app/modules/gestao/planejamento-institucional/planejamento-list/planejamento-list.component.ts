@@ -41,7 +41,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     this.join = [
       'unidade:id,nome,sigla',
       'objetivos',
-      'objetivos.eixo_tematico:id,nome',
+      'objetivos.eixo_tematico:id,nome,cor,icone',
       'objetivos.objetivo_superior:id,nome',
       'planejamento_superior:id,nome',
       'planejamento_superior.objetivos'

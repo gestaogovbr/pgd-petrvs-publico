@@ -2,22 +2,7 @@
 
 namespace App\Services;
 
-use App\Enums\UsuarioSituacaoSiape;
-use App\Exceptions\NotFoundException;
-use App\Exceptions\ServerException;
-use App\Exceptions\ValidateException;
-use App\Facades\SiapeLog;
-use App\Models\TipoModalidade;
-use App\Models\Usuario;
-use App\Repository\IntegracaoServidorRepository;
-use App\Repository\PerfilRepository;
-use App\Repository\PlanoEntregaRepository;
-use App\Repository\PlanoTrabalhoConsolidacaoRepository;
-use App\Repository\PlanoTrabalhoRepository;
-use App\Repository\TipoModalidadeRepository;
-use App\Repository\UnidadeRepository;
-use App\Repository\UsuarioRepository;
-use App\Services\IntegracaoService;
+use Throwable;
 use App\Services\RawWhere;
 use App\Services\ServiceBase;
 use App\Services\Siape\DadosExternosSiape;
@@ -460,7 +445,7 @@ class UsuarioService extends ServiceBase
         $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
 
         if ($action == self::ACTION_INSERT) {
-            $defaultTipoModalidade = TipoModalidade::where('nome', 'Sem dados do SIAPE')->first();
+            $defaultTipoModalidade = $this->tipoModalidadeRepository->findByNome('Sem dados do SIAPE');
 
             if (!$defaultTipoModalidade) {
                 throw new ValidateException("Tipo de Modalidade Padrão não definido no sistema. Consulte um administrador", 422);

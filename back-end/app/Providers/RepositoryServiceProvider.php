@@ -12,11 +12,12 @@ use App\Repository\IntegracaoUnidade\Eloquent\EloquentIntegracaoUnidadeReadRepos
 
 use App\Repository\IntegracaoUnidade\Contracts\IntegracaoUnidadeReadRepositoryContract;
 
+use App\Repository\Usuario\Eloquent\EloquentUsuarioReadRepository;
+
 use App\Repository\Usuario\Eloquent\EloquentUsuarioWriteRepository;
 
 use App\Repository\Usuario\Contracts\UsuarioWriteRepositoryContract;
 
-use App\Repository\Usuario\Eloquent\EloquentUsuarioReadRepository;
 
 use App\Repository\Usuario\Contracts\UsuarioReadRepositoryContract;
 
@@ -74,10 +75,6 @@ final class RepositoryServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            UsuarioReadRepositoryContract::class,
-            EloquentUsuarioReadRepository::class,
-        );
-        $this->app->bind(
             UsuarioWriteRepositoryContract::class,
             EloquentUsuarioWriteRepository::class,
         );
@@ -118,6 +115,12 @@ final class RepositoryServiceProvider extends ServiceProvider
             PlanoEntregaWriteRepositoryContract::class,
             EloquentPlanoEntregaWriteRepository::class,
         );
+
+        $this->app->bind(
+            UsuarioReadRepositoryContract::class,
+            EloquentUsuarioReadRepository::class,
+        );
+
     }
 
     public function boot(): void

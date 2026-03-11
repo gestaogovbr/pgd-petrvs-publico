@@ -41,6 +41,8 @@ docker exec -it petrvs_php bash -lc 'chmod 777 /var/www/storage/logs/*-mysql-slo
 
 #Limpar Cache 
 echo "Limpar Cache"
+docker exec petrvs_php bash -c 'php artisan optimize:clear'
+docker exec petrvs_php bash -c 'composer dump-autoload'
 docker exec petrvs_php bash -c 'php artisan cache:clear'
 docker exec petrvs_php bash -c 'php artisan config:clear'
 

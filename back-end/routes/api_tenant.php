@@ -225,6 +225,7 @@ Route::middleware(['auth:sanctum'])->prefix('MaterialServico')->group(function (
 });
 Route::middleware(['auth:sanctum'])->prefix('PlanejamentoObjetivo')->group(function () {
   defaultRoutes(PlanejamentoObjetivoController::class);
+  Route::post('ordenar', [PlanejamentoObjetivoController::class, 'ordenar']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Programa')->group(function () {
   defaultRoutes(ProgramaController::class);
@@ -250,6 +251,7 @@ Route::middleware(['auth:sanctum'])->prefix('CadeiaValor')->group(function () {
 });
 Route::middleware(['auth:sanctum'])->prefix('CadeiaValorProcesso')->group(function () {
   defaultRoutes(CadeiaValorProcessoController::class);
+  Route::post('ordenar', [CadeiaValorProcessoController::class, 'ordenar']);
 });
 Route::middleware(['auth:sanctum'])->prefix('TipoAtividade')->group(function () {
   defaultRoutes(TipoAtividadeController::class);

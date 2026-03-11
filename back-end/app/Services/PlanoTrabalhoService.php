@@ -891,16 +891,16 @@ class PlanoTrabalhoService extends ServiceBase
         if (!$condition2)
             return "O plano de trabalho não pode ser cancelado porque o usuário logado não é um dos gestores da sua unidade executora.\n[ver RN_PTR_R]";
         /* (RN_PTR_K) O Plano de Trabalho somente poderá ser cancelado se não houver nenhuma atividade e nenhum periodo consolidado. Os afastamentos e ocorrências continuam válidas no sistema, somente removendo o vinculo com a consolidação; */
-        $planoTrabalho = PlanoTrabalho::find($planoId);
-        foreach ($planoTrabalho->entregas as $entrega) {
-            $atividades = $entrega->atividades->map(fn($x) => "#" . $x->numero)->toArray();
-            if (count($atividades) > 0)
-                return "Somente é possível cancelar plano de trabalho que não tenha atividade lançada. Atividade(s): " . implode(", ", $atividades);
-        }
-        foreach ($planoTrabalho->consolidacoes as $consolidacao) {
-            if ($consolidacao->status !== StatusEnum::INCLUIDO->value)
-                return "Somente é possível cancelar plano de trabalho que não tenha período de consolidação concluído.";
-        }
+        // $planoTrabalho = PlanoTrabalho::find($planoId);
+        // foreach ($planoTrabalho->entregas as $entrega) {
+        //     $atividades = $entrega->atividades->map(fn($x) => "#" . $x->numero)->toArray();
+        //     if (count($atividades) > 0)
+        //         return "Somente é possível cancelar plano de trabalho que não tenha atividade lançada. Atividade(s): " . implode(", ", $atividades);
+        // }
+        // foreach ($planoTrabalho->consolidacoes as $consolidacao) {
+        //     if ($consolidacao->status !== StatusEnum::INCLUIDO->value)
+        //         return "Somente é possível cancelar plano de trabalho que não tenha período de consolidação concluído.";
+        // }
         return null;
     }
 

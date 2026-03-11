@@ -49,7 +49,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
     {
         return $this->query()
             ->where('usuario_id', $usuarioId)
-            ->whereIn('status', StatusEnum::pendentesPlanoTrabalho())
+            ->whereIn('status', StatusEnum::pendentesPlanoTrabalhoSemIncluido())
             ->where('id', '!=', $planoTrabalhoId)
             ->where('data_fim', '<', $dataLimite)
             ->get();
