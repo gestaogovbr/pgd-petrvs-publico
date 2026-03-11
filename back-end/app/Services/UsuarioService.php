@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\TipoModalidadeEnum;
 use App\Enums\UsuarioSituacaoSiape;
 use App\Exceptions\DBException;
 use App\Exceptions\NotFoundException;
@@ -65,6 +66,21 @@ class UsuarioService extends ServiceBase
         $this->planoTrabalhoConsolidacaoRepository = app(PlanoTrabalhoConsolidacaoRepository::class);
         $this->planoTrabalhoRepository = app(PlanoTrabalhoRepository::class);
         $this->planoEntregaRepository = app(PlanoEntregaRepository::class);
+    }
+
+    private function applyDefaultTipoModalidadeId(array &$data): void
+    {
+        if (!empty($data['tipo_modalidade_id'] ?? null)) {
+            return;
+        }
+
+        $defaultTipoModalidade = $this->tipoModalidadeRepository->findByNome(TipoModalidadeEnum::SEM_DADOS_SIAPE->nome());
+
+        if (!$defaultTipoModalidade) {
+            throw new ValidateException("Tipo de Modalidade Padrão não definido no sistema. Consulte um administrador", 422);
+        }
+
+        $data['tipo_modalidade_id'] = $defaultTipoModalidade->id;
     }
 
     /**
@@ -271,6 +287,7 @@ class UsuarioService extends ServiceBase
                 if (!empty($data['telefone'])) {
                     $data['telefone'] = UtilService::onlyNumbers($data['telefone']);
                 }
+                $this->applyDefaultTipoModalidadeId($data);
                 $updated = $this->usuarioRepository->update($restoredEntity->id, $data);
                 if (!$updated) {
                     throw new DBException("Falha ao reativar o usuário", 500);
@@ -506,16 +523,7 @@ class UsuarioService extends ServiceBase
     {
         $data["with"] = [];
         $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
-
-        if ($action == self::ACTION_INSERT) {
-            $defaultTipoModalidade = $this->tipoModalidadeRepository->findByNome('Sem dados do SIAPE');
-
-            if (!$defaultTipoModalidade) {
-                throw new ValidateException("Tipo de Modalidade Padrão não definido no sistema. Consulte um administrador", 422);
-            }
-
-            $data['tipo_modalidade_id'] = $defaultTipoModalidade->id;
-        }
+        $this->applyDefaultTipoModalidadeId($data);
 
         unset($data['pedagio']);
 
@@ -531,6 +539,7 @@ class UsuarioService extends ServiceBase
     public function proxyUpdate($data, $unidade)
     {
         $data["with"] = [];
+        $this->applyDefaultTipoModalidadeId($data);
         unset($data['pedagio']);
         $this->buffer = ["integrantes" => UtilService::getNested($data, "integrantes")];
         $this->validarPerfil($data);
