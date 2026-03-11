@@ -31,6 +31,8 @@ class LoginService
     public const KIND_GOOGLE = "GOOGLE";
     public const KIND_AZURE = "AZURE";
     public const KIND_GOVBR = "GOVBR";
+    private const GOVBR_USER_MAX_ATTEMPTS = 3;
+    private const GOVBR_RETRY_DELAYS_US = [200000, 400000];
 
     public function __construct(
         protected UsuarioService $usuarioService,
@@ -518,7 +520,10 @@ class LoginService
             config("services.azure.client_id"),
             config("services.azure.client_secret"),
             $url_dinamica_callback,
-            ['tenant' => config("services.azure.tenant")]
+            [
+                'tenant' => config("services.azure.tenant"),
+                'guzzle' => (array) config('services.azure.guzzle', []),
+            ]
         );
     }
 
@@ -546,7 +551,8 @@ class LoginService
                 'state' => $dados['state'] ?? null,
                 'code_verifier' => $dados['code_verifier'] ?? null,
                 'code_challenge' => $dados['code_challenge'] ?? null,
-                'code_challenge_method' => $dados['code_challenge_method'] ?? null
+                'code_challenge_method' => $dados['code_challenge_method'] ?? null,
+                'guzzle' => (array) config('services.govbr.guzzle', []),
             ]
         );
     }
@@ -622,7 +628,8 @@ class LoginService
         
         $config = $this->getConfigGovBr($urlCallback, $dados);
         
-        $user = $this->govBrProvider($config)->stateless()->user();
+        $provider = $this->govBrProvider($config);
+        $user = $this->fetchGovBrUser($provider);
 
         if (empty($user)) {
              // Return null or indication to redirect
@@ -648,6 +655,46 @@ class LoginService
         $request->session()->put("kind", self::KIND_GOVBR);
         
         return $this->handleSuccessfulLogin($request, $usuario, self::KIND_GOVBR, $entidade);
+    }
+
+    private function fetchGovBrUser(mixed $provider): mixed
+    {
+        $attempt = 1;
+
+        while ($attempt <= self::GOVBR_USER_MAX_ATTEMPTS) {
+            try {
+                return $provider->stateless()->user();
+            } catch (Throwable $e) {
+                if ($attempt >= self::GOVBR_USER_MAX_ATTEMPTS) {
+                    throw $e;
+                }
+
+                if (!$this->isTransientGovBrOAuthError($e)) {
+                    throw $e;
+                }
+
+                $delayUs = self::GOVBR_RETRY_DELAYS_US[$attempt - 1] ?? end(self::GOVBR_RETRY_DELAYS_US);
+                usleep((int) $delayUs);
+                $attempt++;
+            }
+        }
+
+        return null;
+    }
+
+    private function isTransientGovBrOAuthError(Throwable $e): bool
+    {
+        $message = $e->getMessage();
+
+        if (str_contains($message, 'cURL error 35')) {
+            return true;
+        }
+
+        if (str_contains($message, 'cURL error 56')) {
+            return true;
+        }
+
+        return false;
     }
 
     private function extractGovBrCpf(mixed $user): string
