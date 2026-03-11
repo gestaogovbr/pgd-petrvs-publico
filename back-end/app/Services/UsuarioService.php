@@ -264,6 +264,13 @@ class UsuarioService extends ServiceBase
                 if ($restoredEntity instanceof Usuario) {
                     $restoredEntity->restore();
                 }
+                unset($data['pedagio']);
+                if (!empty($data['cpf'])) {
+                    $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
+                }
+                if (!empty($data['telefone'])) {
+                    $data['telefone'] = UtilService::onlyNumbers($data['telefone']);
+                }
                 $updated = $this->usuarioRepository->update($restoredEntity->id, $data);
                 if (!$updated) {
                     throw new DBException("Falha ao reativar o usuário", 500);

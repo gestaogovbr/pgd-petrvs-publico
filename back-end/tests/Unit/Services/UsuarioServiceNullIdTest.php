@@ -91,7 +91,9 @@ describe('UsuarioService - Null ID Checks', function () {
             'id' => '',
             'nome' => 'teste da silva',
             'email' => 'teste@teste.com.br',
-            'cpf' => '01503922065',
+            'cpf' => '015.039.220-65',
+            'telefone' => '(64) 9 9606-4649',
+            'pedagio' => 0,
             'integrantes' => [
                 ['unidade_id' => 'unidade-1']
             ],
@@ -103,7 +105,21 @@ describe('UsuarioService - Null ID Checks', function () {
 
         $this->usuarioService->shouldReceive('validateStore')->once()->andReturn($restored);
         $this->usuarioService->shouldReceive('extraStore')->never();
-        $this->usuarioRepository->shouldReceive('update')->once()->with('restored-id', Mockery::type('array'))->andReturnNull();
+        $this->usuarioRepository->shouldReceive('update')
+            ->once()
+            ->with('restored-id', Mockery::on(function (array $payload): bool {
+                if (array_key_exists('pedagio', $payload)) {
+                    return false;
+                }
+                if (($payload['cpf'] ?? null) !== '01503922065') {
+                    return false;
+                }
+                if (($payload['telefone'] ?? null) !== '64996064649') {
+                    return false;
+                }
+                return true;
+            }))
+            ->andReturnNull();
 
         expect(fn () => $this->usuarioService->store($data, null, false))
             ->toThrow(DBException::class, 'Falha ao reativar o usuário');
