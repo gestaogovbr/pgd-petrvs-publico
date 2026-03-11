@@ -97,6 +97,7 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
             if (!empty($sqlServidoresInseridosNaoLotados)) {
                 foreach ($sqlServidoresInseridosNaoLotados as $inserirLotacao) {
                     $dbResult = $this->salvarLotacaoUsuario($inserirLotacao);
+                    SiapeLog::info('Inserindo lotação do servidor: ' . $inserirLotacao->matricula . ' na unidade: ' . $inserirLotacao->unidade_id);
                     if($dbResult) array_push($atualizacoesLotacoesResult,$dbResult);
                 }
             }
@@ -158,7 +159,7 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
             $dbResult = $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
         } catch (Throwable $th) {
             report($th);
-            SiapeLog::error("IntegracaoService: Durante integração não foi possível alterar lotação!", [$vinculo]);
+            SiapeLog::error("IntegracaoService: Durante integração não foi possível alterar lotação!: ". $th->getMessage(), [$vinculo]);
         }
         if (!isset($dbResult)) {
             SiapeLog::error("IntegracaoService: Houve uma falha na tentantiva de alterar a lotação", [$vinculo]);

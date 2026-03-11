@@ -258,7 +258,20 @@ trait Atribuicao
 
     private function lotaServidor(EnumAtribuicao $atribuicao, UnidadeIntegrante $unidadeIntegrante)
     {
-        $this->getUnidadeIntegranteAtribuicaoRepository()->create(["atribuicao" => $atribuicao->value, "unidade_integrante_id" => $unidadeIntegrante->id]);
+
+        $created = $this->getUnidadeIntegranteAtribuicaoRepository()->create([
+            "atribuicao" => $atribuicao->value,
+            "unidade_integrante_id" => $unidadeIntegrante->id
+        ]);
+        $saved = $created->save();
+        
+        SiapeLog::info("Retorno ao criar atribuição em unidades_integrantes_atribuicoes", [
+            'id' => $created->getKey(),
+            'exists' => $created->exists,
+            'saved' => $saved,
+            'atribuicao' => $created->getAttribute('atribuicao'),
+            'unidade_integrante_id' => $created->getAttribute('unidade_integrante_id'),
+        ]);
     }
 
     protected function removeLotacao(Usuario $usuario): void
