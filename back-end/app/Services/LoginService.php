@@ -32,6 +32,12 @@ class LoginService
     public const KIND_GOVBR = "GOVBR";
     private const GOVBR_USER_MAX_ATTEMPTS = 3;
     private const GOVBR_RETRY_DELAYS_US = [200000, 400000];
+    private const GOVBR_FIRST_ATTEMPT = 1;
+    private const GOVBR_ATTEMPT_STEP = 1;
+    private const HTTP_STATUS_UNAUTHORIZED = 401;
+    private const CPF_LENGTH = 11;
+    private const GOVBR_CURL_ERROR_SSL = 'cURL error 35';
+    private const GOVBR_CURL_ERROR_CONNECTION_RESET = 'cURL error 56';
 
     public function __construct(
         protected UsuarioService $usuarioService,
@@ -88,13 +94,7 @@ class LoginService
             return null;
         }
 
-        if (!empty($update)) {
-            $usuario->update($update);
-            $usuarioAtualizado = $usuario->fresh();
-            if ($usuarioAtualizado) {
-                $usuario = $usuarioAtualizado;
-            }
-        }
+        $usuario = $this->applyUserUpdatesIfNeeded($usuario, $update);
 
         $entidadeId = strval($request->session()->get("entidade_id") ?? "");
         $usuarioComRelacoes = $this->loadUserWithRelations($usuario->id, $entidadeId);
@@ -106,6 +106,17 @@ class LoginService
         }
 
         return $usuarioComRelacoes;
+    }
+
+    private function applyUserUpdatesIfNeeded(Usuario $usuario, ?array $update): Usuario
+    {
+        if (empty($update)) {
+            return $usuario;
+        }
+
+        $usuario->update($update);
+
+        return $usuario->fresh() ?? $usuario;
     }
 
     private function loadUserWithRelations(string $userId, $entidadeId): ?Usuario
@@ -147,7 +158,11 @@ class LoginService
 
         $usuario = $this->usuarioRepository->findWithAreaTrabalho($usuario->id, $data['unidade_id']);
 
-        if (empty($usuario->areasTrabalho[0]->id)) {
+        if (!$usuario) {
+            throw new Exception("Unidade não encontrada no usuário");
+        }
+
+        if (!$this->usuarioHasAreaTrabalho($usuario)) {
             throw new Exception("Unidade não encontrada no usuário");
         }
 
@@ -157,6 +172,13 @@ class LoginService
             'status'  => 'OK',
             'unidade' => $this->unidadeRepository->findById($data['unidade_id']),
         ];
+    }
+
+    private function usuarioHasAreaTrabalho(Usuario $usuario): bool
+    {
+        $firstAreaId = $usuario->areasTrabalho?->first()?->id;
+
+        return !empty($firstAreaId);
     }
 
     private function checkSwitchUserByMatricula(Request $request, Usuario $currentUser, ?string $matricula): Usuario
@@ -243,15 +265,13 @@ class LoginService
 
         $usuarios = $this->usuarioRepository->findActivesByCpf($cpf);
 
-        if ($usuarios->isNotEmpty()) {
-            $usuario = $usuarios->first();
-            if ($usuario instanceof Usuario) {
-                return $usuario;
-            }
-            return null;
+        if ($usuarios->isEmpty()) {
+            return $this->usuarioRepository->findByCpf($cpf);
         }
 
-        return $this->usuarioRepository->findByCpf($cpf);
+        $usuario = $usuarios->first();
+
+        return $usuario instanceof Usuario ? $usuario : null;
     }
 
     private function findUserByEmail(string $email): ?Usuario
@@ -571,7 +591,7 @@ class LoginService
     public function stimulusRouteGovBr()
     {
         $response = Http::get('sso.acesso.gov.br/token');
-        if ($response->unauthorized() != 401) {
+        if ($response->status() !== self::HTTP_STATUS_UNAUTHORIZED) {
             throw new Exception('Falha de conexão ao GovBR.');
         }
         return $response;
@@ -609,11 +629,10 @@ class LoginService
         $user = $this->azureProvider($config)->user();
 
         if (empty($user)) {
-            // Return null or indication to redirect
             return null;
         }
 
-        $email = explode("#", $user->email)[0];
+        $email = $this->emailBeforeHash(data_get($user, 'email')) ?? '';
         $usuario = $this->findUser('email', $email);
 
         if (!$usuario) {
@@ -643,19 +662,10 @@ class LoginService
         $user = $this->fetchGovBrUser($provider);
 
         if (empty($user)) {
-             // Return null or indication to redirect
              return null;
         }
 
-        $cpf = $this->extractGovBrCpf($user);
-        $usuario = $this->findUser('cpf', $cpf);
-
-        if (!$usuario) {
-            $email = $this->extractGovBrEmail($user);
-            if (!empty($email)) {
-                $usuario = $this->findUser('email', $email);
-            }
-        }
+        $usuario = $this->resolveGovBrUsuario($user);
 
         if (!$usuario) {
             throw new Exception("Usuário inativo no SIAPE. Acesso negado.");
@@ -668,44 +678,63 @@ class LoginService
         return $this->handleSuccessfulLogin($request, $usuario, self::KIND_GOVBR, $entidade);
     }
 
+    private function resolveGovBrUsuario(mixed $user): ?Usuario
+    {
+        $cpf = $this->extractGovBrCpf($user);
+        $usuario = $this->findUser('cpf', $cpf);
+
+        if ($usuario) {
+            return $usuario;
+        }
+
+        $email = $this->extractGovBrEmail($user);
+        if (empty($email)) {
+            return null;
+        }
+
+        return $this->findUser('email', $email);
+    }
+
     private function fetchGovBrUser(mixed $provider): mixed
     {
-        $attempt = 1;
-
-        while ($attempt <= self::GOVBR_USER_MAX_ATTEMPTS) {
+        for ($attempt = self::GOVBR_FIRST_ATTEMPT; $attempt <= self::GOVBR_USER_MAX_ATTEMPTS; $attempt += self::GOVBR_ATTEMPT_STEP) {
             try {
                 return $provider->stateless()->user();
             } catch (Throwable $e) {
-                if ($attempt >= self::GOVBR_USER_MAX_ATTEMPTS) {
-                    throw $e;
-                }
-
-                if (!$this->isTransientGovBrOAuthError($e)) {
-                    throw $e;
-                }
-
-                $delayUs = self::GOVBR_RETRY_DELAYS_US[$attempt - 1] ?? end(self::GOVBR_RETRY_DELAYS_US);
-                usleep((int) $delayUs);
-                $attempt++;
+                $this->handleGovBrUserFetchFailure($e, $attempt);
             }
         }
 
         return null;
     }
 
+    private function handleGovBrUserFetchFailure(Throwable $e, int $attempt): void
+    {
+        if ($attempt >= self::GOVBR_USER_MAX_ATTEMPTS) {
+            throw $e;
+        }
+
+        if (!$this->isTransientGovBrOAuthError($e)) {
+            throw $e;
+        }
+
+        usleep($this->getGovBrRetryDelayUs($attempt));
+    }
+
+    private function getGovBrRetryDelayUs(int $attempt): int
+    {
+        $index = $attempt - self::GOVBR_FIRST_ATTEMPT;
+        $lastDelay = self::GOVBR_RETRY_DELAYS_US[array_key_last(self::GOVBR_RETRY_DELAYS_US)];
+
+        return (int) (self::GOVBR_RETRY_DELAYS_US[$index] ?? $lastDelay);
+    }
+
     private function isTransientGovBrOAuthError(Throwable $e): bool
     {
         $message = $e->getMessage();
 
-        if (str_contains($message, 'cURL error 35')) {
-            return true;
-        }
-
-        if (str_contains($message, 'cURL error 56')) {
-            return true;
-        }
-
-        return false;
+        return str_contains($message, self::GOVBR_CURL_ERROR_SSL)
+            || str_contains($message, self::GOVBR_CURL_ERROR_CONNECTION_RESET);
     }
 
     private function extractGovBrCpf(mixed $user): string
@@ -725,7 +754,7 @@ class LoginService
             }
 
             $cpf = UtilService::onlyNumbers((string) ($candidate ?? ''));
-            if (strlen($cpf) === 11) {
+            if (strlen($cpf) === self::CPF_LENGTH) {
                 return $cpf;
             }
         }
@@ -743,6 +772,20 @@ class LoginService
             return null;
         }
 
-        return explode('#', $email)[0];
+        return $this->emailBeforeHash($email);
+    }
+
+    private function emailBeforeHash(mixed $email): ?string
+    {
+        if (!is_string($email) || empty($email)) {
+            return null;
+        }
+
+        $beforeHash = strtok($email, '#');
+        if (!is_string($beforeHash) || empty($beforeHash)) {
+            return null;
+        }
+
+        return $beforeHash;
     }
 }
