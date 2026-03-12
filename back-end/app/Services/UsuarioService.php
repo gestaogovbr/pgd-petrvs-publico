@@ -18,6 +18,7 @@ use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\TipoModalidadeRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
+use App\Repository\SiapeBlackListServidorRepository;
 use App\Services\IntegracaoService;
 use App\Services\RawWhere;
 use App\Services\ServiceBase;
@@ -55,6 +56,7 @@ class UsuarioService extends ServiceBase
     protected PlanoTrabalhoConsolidacaoRepository $planoTrabalhoConsolidacaoRepository;
     protected PlanoTrabalhoRepository $planoTrabalhoRepository;
     protected PlanoEntregaRepository $planoEntregaRepository;
+    protected SiapeBlackListServidorRepository $siapeBlackListServidorRepository;
 
     public function __construct() {
         parent::__construct();
@@ -66,6 +68,7 @@ class UsuarioService extends ServiceBase
         $this->planoTrabalhoConsolidacaoRepository = app(PlanoTrabalhoConsolidacaoRepository::class);
         $this->planoTrabalhoRepository = app(PlanoTrabalhoRepository::class);
         $this->planoEntregaRepository = app(PlanoEntregaRepository::class);
+        $this->siapeBlackListServidorRepository = app(SiapeBlackListServidorRepository::class);
     }
 
     private function applyDefaultTipoModalidadeId(array &$data): void
@@ -269,6 +272,7 @@ class UsuarioService extends ServiceBase
             $action = empty($data['id']) ? ServiceBase::ACTION_INSERT : ServiceBase::ACTION_EDIT;
 
             if ($action == ServiceBase::ACTION_EDIT) {
+                if (!$data['usuario_externo']) unset($data['cpf']);
                 $result = $this->update($data, $unidade, $transaction);
                 if ($transaction) DB::commit();
                 return $result;
@@ -745,10 +749,69 @@ class UsuarioService extends ServiceBase
         if ($entity) {
             $rows = [$entity];
             $rows = method_exists($this, 'proxyRows') ? $this->proxyRows($rows) : $rows;
+            if ($rows[0] instanceof Usuario) {
+                $this->anexarUnidadesVinculadasPorCpf($rows[0]);
+            }
             return $rows[0];
         } else {
             throw new NotFoundException("Id não encontrado");
         }
+    }
+
+    public function anexarUnidadesVinculadasPorCpf(Usuario $usuario): void
+    {
+        $cpf = strval($usuario->getAttribute('cpf') ?? '');
+
+        if (empty($cpf)) {
+            $usuario->setAttribute('unidades_vinculadas', []);
+            return;
+        }
+
+        $usuarios = $this->usuarioRepository->findActivesByCpf($cpf);
+        if ($usuarios->isEmpty()) {
+            $usuario->setAttribute('unidades_vinculadas', []);
+            return;
+        }
+
+        $usuarios->loadMissing(['unidades:id,sigla']);
+
+        $unidadesVinculadasPayloadByKey = [];
+
+        foreach ($usuarios as $usuarioPorCpf) {
+            $matricula = $usuarioPorCpf->getAttribute('matricula') ?? null;
+            $situacaoFuncional = $usuarioPorCpf->getAttribute('situacao_funcional') ?? null;
+
+            foreach ($usuarioPorCpf->unidades ?? [] as $unidade) {
+                $key = strval($unidade->id) . '|' . strval($matricula ?? '');
+
+                if (isset($unidadesVinculadasPayloadByKey[$key])) {
+                    continue;
+                }
+
+                $unidadesVinculadasPayloadByKey[$key] = [
+                    'id' => $unidade->id,
+                    'sigla' => $unidade->sigla,
+                    'situacao_funcional' => $situacaoFuncional,
+                    'matricula' => $matricula,
+                    'emProcessoDeInativacao' => (bool) $this->siapeBlackListServidorRepository->findByCpfAndOptionalMatricula(
+                        $cpf,
+                        $matricula
+                    ),
+                ];
+            }
+        }
+
+        $unidadesVinculadasPayload = array_values($unidadesVinculadasPayloadByKey);
+
+        usort($unidadesVinculadasPayload, function (array $a, array $b): int {
+            $siglaComparison = strval($a['sigla'] ?? '') <=> strval($b['sigla'] ?? '');
+            if ($siglaComparison !== 0) {
+                return $siglaComparison;
+            }
+            return strval($a['matricula'] ?? '') <=> strval($b['matricula'] ?? '');
+        });
+
+        $usuario->setAttribute('unidades_vinculadas', $unidadesVinculadasPayload);
     }
 
     public function consultaCpfSiapeXml($cpf)

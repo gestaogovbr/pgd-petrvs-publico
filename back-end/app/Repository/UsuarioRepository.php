@@ -113,9 +113,9 @@ class UsuarioRepository
         return $this->readRepository->findByEmail($email);
     }
 
-    public function findActiveByCpf(string $cpf): ?Usuario
+    public function findActivesByCpf(string $cpf): Collection
     {
-        return $this->readRepository->findActiveByCpf($cpf);
+        return $this->readRepository->findActivesByCpf($cpf);
     }
 
     public function loadUserWithRelations(string $userId, string $entidadeId): ?Usuario

@@ -14,7 +14,6 @@ use App\Services\UsuarioService;
 use App\Services\UnidadeService;
 use App\Models\Usuario;
 use App\Models\Entidade;
-use App\Models\Unidade;
 use App\Enums\UsuarioSituacaoSiape;
 use App\Repository\UsuarioRepository;
 use App\Repository\EntidadeRepository;
@@ -41,7 +40,7 @@ class LoginService
         protected GoogleService $googleService,
         protected UsuarioRepository $usuarioRepository,
         protected EntidadeRepository $entidadeRepository,
-        protected UnidadeRepository $unidadeRepository
+        protected UnidadeRepository $unidadeRepository,
     ) {
     }
 
@@ -103,6 +102,7 @@ class LoginService
 
         if ($usuarioComRelacoes) {
             $this->updateSessionUnidade($request, $usuarioComRelacoes);
+            $this->usuarioService->anexarUnidadesVinculadasPorCpf($usuarioComRelacoes);
         }
 
         return $usuarioComRelacoes;
@@ -241,10 +241,14 @@ class LoginService
     {
         $cpf = UtilService::onlyNumbers($cpf);
 
-        $usuario = $this->usuarioRepository->findActiveByCpf($cpf);
+        $usuarios = $this->usuarioRepository->findActivesByCpf($cpf);
 
-        if ($usuario) {
-            return $usuario;
+        if ($usuarios->isNotEmpty()) {
+            $usuario = $usuarios->first();
+            if ($usuario instanceof Usuario) {
+                return $usuario;
+            }
+            return null;
         }
 
         return $this->usuarioRepository->findByCpf($cpf);
@@ -254,13 +258,20 @@ class LoginService
     {
         $usuario = $this->usuarioRepository->findByEmail($email);
 
-        if (!$usuario || $usuario->situacao_siape !== UsuarioSituacaoSiape::INATIVO->value) {
+        $situacaoSiape = $usuario?->getAttribute('situacao_siape');
+        if (!$usuario || $situacaoSiape !== UsuarioSituacaoSiape::INATIVO->value) {
             return $usuario;
         }
 
-        $activeUser = $this->usuarioRepository->findActiveByCpf($usuario->cpf);
+        $cpf = strval($usuario->getAttribute('cpf') ?? '');
+        $activeUser = $this->usuarioRepository->findActivesByCpf($cpf);
 
-        return $activeUser ?? $usuario;
+        $usuarioAtivo = $activeUser->first();
+        if ($usuarioAtivo instanceof Usuario) {
+            return $usuarioAtivo;
+        }
+
+        return $usuario;
     }
 
     public function authenticateSession(Request $request)

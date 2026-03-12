@@ -232,7 +232,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
             const unidade = await this.unidadeDao.getById(planoTrabalho.unidade_id);
             if(unidade) {
               await this.unidade?.loadSearch(unidade);
-              await this.auth.selecionaUnidade(unidade.id);
+              await this.auth.selecionaUnidade(unidade.id, undefined);
             }
           }
           const planoTrabalhoEntregaId = this.form.controls.plano_trabalho_entrega_id.value;
@@ -381,7 +381,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     form.patchValue(formValue, {emitEvent: false}); /* Carrega valores iniciais no form e previne que o plano_id seja sobrescrito */
     if(entity.usuario) this.loadUsuario(entity.usuario);
     if(entity.tipo_atividade) this.loadTipoAtividade(entity.tipo_atividade);
-    if(entity.unidade_id != this.auth.unidade!.id) await this.auth.selecionaUnidade(entity.unidade_id);
+    if(entity.unidade_id != this.auth.unidade!.id) await this.auth.selecionaUnidade(entity.unidade_id, undefined);
     entity.comentarios = this.comentario.orderComentarios(entity.comentarios || []);
     entity.pausas = this.orderPausas(entity.pausas || []);
     form.patchValue(this.util.fillForm(formValue, this.form.value)); /* Carrega os valores e dispara os eventos */

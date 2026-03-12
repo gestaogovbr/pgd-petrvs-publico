@@ -9,10 +9,8 @@ use App\Services\FirebaseAuthService;
 use App\Services\GoogleService;
 use App\Services\IntegracaoService;
 use App\Services\ApiService;
+use App\Services\LoginService;
 use App\Models\Usuario;
-use App\Models\UnidadeIntegrante;
-use App\Models\Entidade;
-use App\Models\Tenant;
 use App\Models\Unidade;
 use App\Services\UnidadeService;
 use App\Services\CalendarioService;
@@ -24,54 +22,18 @@ use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
+    public function __construct(protected LoginService $loginService)
+    {
+    }
+
     private function registrarEntidade($request, $session = false)
     {
-        $with = ["feriados", "gestor", "gestorSubstituto"];
-        $entidadeId = $session ? $request->session()->get('entidade_id') : null;
-        $entidade   = $entidadeId ? Entidade::with($with)->find($entidadeId) : null;
-
-        $sigla = $request->has('entidade') ? $request->input('entidade') : ($request->headers->has("X-Entidade") ? $request->headers->get("X-Entidade") : config("petrvs")["entidade"]);
-        if (empty($entidade) && !empty($sigla)) {
-            $entidade = Entidade::with($with)->where("sigla", $sigla)->first();
-            $request->session()->put("entidade_id", $entidade->id);
-        }
-        return $entidade;
+        return $this->loginService->registrarEntidade($request, (bool) $session);
     }
 
     private function registrarUsuario($request, $usuario, $update = null)
     {
-        if (isset($usuario)) {
-            if (isset($update) && count($update) > 0) {
-                $usuario->update($update);
-                $usuario->fresh();
-            }
-            $entidadeId = $request->session()->has("entidade_id") ? $request->session()->get("entidade_id") : null;
-            $usuario = Usuario::where("id", $usuario->id)->with([
-                "areasTrabalho" => function ($query) use ($entidadeId) {
-                    $query->with(["unidade.gestor.usuario", "unidade.gestoresSubstitutos.usuario", "unidade.gestoresDelegados.usuario", "unidade.cidade", "unidade.planosEntrega", "unidade.unidadePai.planosEntrega", "atribuicoes"])->whereHas('unidade', function ($query) use ($entidadeId) {
-                        return  $query->where('entidade_id', '=', $entidadeId);
-                    });
-                },
-                "participacoesProgramas" => function ($query) {
-                    $query->where("habilitado", 1);
-                },
-                "perfil.capacidades:id,perfil_id,tipo_capacidade_id",
-                "perfil.capacidades.tipoCapacidade:id,codigo",
-                "gerenciaTitular.atribuicoes",
-                "gerenciaTitular.unidade",
-                "gerenciasSubstitutas.atribuicoes",
-                "gerenciasSubstitutas.unidade",
-                "gerenciasDelegadas.atribuicoes",
-                "gerenciasDelegadas.unidade",
-                "notificacoesDestinatario" => function ($query) {
-                    $query->where('data_leitura', null);
-                }
-            ])->first();
-
-            $config = $usuario->config ?? [];
-            $request->session()->put("unidade_id", $config['unidade_id'] ?? $usuario->lotacao?->unidade_id);
-        }
-        return $usuario;
+        return $this->loginService->registrarUsuario($request, $usuario, $update);
     }
 
     /**
