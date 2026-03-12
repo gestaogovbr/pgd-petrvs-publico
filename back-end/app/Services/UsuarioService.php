@@ -888,10 +888,24 @@ class UsuarioService extends ServiceBase
 
     public function matriculas($cpf) : Collection
     {
+        $cpf = strval($cpf ?? '');
         $usuarios = $this->usuarioRepository->findAllByCpf($cpf);
 
         if ($usuarios->isEmpty()) {
             throw new ValidateException("Nenhum usuário encontrado com o CPF informado.", 404);
+        }
+
+        foreach ($usuarios as $usuario) {
+            if (!$usuario instanceof Usuario) {
+                continue;
+            }
+
+            $matricula = $usuario->getAttribute('matricula') ?? null;
+
+            $usuario->setAttribute(
+                'emProcessoDeInativacao',
+                (bool) $this->siapeBlackListServidorRepository->findByCpfAndOptionalMatricula($cpf, $matricula)
+            );
         }
 
         return $usuarios;
