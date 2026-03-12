@@ -174,7 +174,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
 
     public function findActivesByCpf(string $cpf): Collection
     {
-        /** @var Usuario|null $usuario */
+        /** @var Collection $usuarios */
         $usuarios = $this->query()
             ->where('cpf', $cpf)
             ->whereIn('situacao_siape', \App\Enums\UsuarioSituacaoSiape::ativos())
