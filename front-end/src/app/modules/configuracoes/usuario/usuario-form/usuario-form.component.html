@@ -65,13 +65,6 @@
                 <input-display [size]="3" label="Participante do PGD" [value]="entity?.participa_pgd?.toUpperCase()"></input-display>
                 <input-display [size]="6" label="Modalidade" [value]="entity?.tipo_modalidade_siape ? entity?.tipo_modalidade_siape?.nome?.toUpperCase() : 'Não definida'"></input-display>
             </div>
-            <separator title="Dados do Envio para a API"></separator>
-            <div class="row">
-                <input-display [size]="4" label="Data do Agendamento" [value]="entity?.data_agendamento_envio  | date:'dd/MM/yyyy HH:mm:ss'" icon="bi bi-calendar-date"></input-display>
-                <input-display [size]="4" label="Última Tentativa de Envio" [value]="entity?.data_tentativa_envio  | date:'dd/MM/yyyy HH:mm:ss'" icon="bi bi-calendar-date"></input-display>
-                <input-display [size]="4" label="Último Envio" [value]="entity?.data_envio_api_pgd  | date:'dd/MM/yyyy HH:mm:ss'" icon="bi bi-calendar-date"></input-display>
-                <input-display [size]="12" label="Log de Envio" [value]="entity?.log_envio"></input-display>
-            </div>
         </tab>
         <tab key="CONFIGURACOES" label="TCR- Particularidades do participante" *ngIf="entity?.id && !entity?.usuario_externo">
             <div class="row">
