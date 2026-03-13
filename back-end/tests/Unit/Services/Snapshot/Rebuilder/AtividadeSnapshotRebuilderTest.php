@@ -4,7 +4,6 @@ use App\Models\Atividade;
 use App\Models\PlanoTrabalhoConsolidacaoAtividade;
 use App\Services\AtividadeService;
 use App\Services\Snapshot\Rebuilder\AtividadeSnapshotRebuilder;
-use DateTime;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
