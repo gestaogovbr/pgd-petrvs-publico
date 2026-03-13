@@ -303,10 +303,14 @@ class UsuarioService extends ServiceBase
 
     public function extraStore($entity, $unidade, $action)
     {
-        foreach ($this->buffer["integrantes"] as &$integrante) {
-            $integrante["usuario_id"] = $entity->id;
+        if (isset($this->buffer["integrantes"])) {
+            foreach ($this->buffer["integrantes"] as &$integrante) {
+                $integrante["usuario_id"] = $entity->id;
+            }
+        
+            $this->UnidadeIntegranteService->salvarIntegrantes($this->buffer["integrantes"]);
         }
-        $this->UnidadeIntegranteService->salvarIntegrantes($this->buffer["integrantes"]);
+        
         if ($action != ServiceBase::ACTION_INSERT)
             $this->unidadeIntegranteAtribuicaoService->checkLotacoes($entity->id);
     }
@@ -480,10 +484,28 @@ class UsuarioService extends ServiceBase
 
     public function proxyUpdate($data, $unidade)
     {
-        $data["with"] = [];
+        if (isset($data["with"])) {
+            $data["with"] = [];
+        }
+
         if (isset($data['cpf'])) {
             $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
         }
+
+        if (!isset($data['tipo_modalidade_id'])) {
+            $user = $this->usuarioRepository->findById($data["id"]);
+
+            if(!$user?->tipo_modalidade_id) {
+                $defaultTipoModalidade = $this->tipoModalidadeRepository->findByNome('Sem dados do SIAPE');
+
+                if ($defaultTipoModalidade) {
+                    $data['tipo_modalidade_id'] = $defaultTipoModalidade->id;
+                }
+            } else {
+                $data['tipo_modalidade_id'] = $user?->tipo_modalidade_id;
+            }
+        }
+
         unset($data['pedagio']);
         $this->buffer = ["integrantes" => UtilService::getNested($data, "integrantes")];
         $this->validarPerfil($data);
@@ -520,7 +542,16 @@ class UsuarioService extends ServiceBase
 
             if (!isset($data['tipo_modalidade_id'])) {
                 $user = $this->usuarioRepository->findById($data["id"]);
-                $data['tipo_modalidade_id'] = $user?->tipo_modalidade_id;
+
+                if(!$user?->tipo_modalidade_id) {
+                    $defaultTipoModalidade = $this->tipoModalidadeRepository->findByNome('Sem dados do SIAPE');
+
+                    if ($defaultTipoModalidade) {
+                        $data['tipo_modalidade_id'] = $defaultTipoModalidade->id;
+                    }
+                } else {
+                    $data['tipo_modalidade_id'] = $user?->tipo_modalidade_id;
+                }
             }
         }
         if ($action == ServiceBase::ACTION_INSERT) {
