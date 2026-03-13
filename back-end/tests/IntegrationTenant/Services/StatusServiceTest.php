@@ -19,10 +19,10 @@ use Illuminate\Support\Facades\DB;
 // The doc says: "Todos os arquivos criados dentro de tests/IntegrationTenant usarão automaticamente a classe base Tests\DatabaseTenantTestCase"
 
 describe('StatusService Integration', function () {
-    
+
     beforeEach(function () {
         // Criar dependências básicas
-        
+
         // Ensure Entidade exists
         $this->entidade = new Entidade();
         $this->entidade->id = 'entidade-teste';
@@ -66,7 +66,7 @@ describe('StatusService Integration', function () {
             'email' => 'usuario@teste.com',
             'cpf' => '00000000000',
             'apelido' => 'UserTeste',
-            'tipo_modalidade_id' => $this->tipoModalidade->id
+            'tipo_modalidade_id' => $this->tipoModalidade->id,
         ]);
         $this->usuario->saveOrFail();
         $this->actingAs($this->usuario);
@@ -135,7 +135,7 @@ describe('StatusService Integration', function () {
         // Executar
         $novoStatus = 'ATIVO';
         $justificativa = 'Aprovação do plano';
-        
+
         // Simular usuário logado para evitar erro se o usuarioId passado for vazio (fallback)
         $this->actingAs($this->usuario);
 
@@ -148,7 +148,7 @@ describe('StatusService Integration', function () {
         $service->atualizaStatus($planoTrabalho, $novoStatus, $justificativa, $this->usuario->id);
 
         // Verificar
-        
+
         // 1. O status da entidade foi atualizado
         $this->assertDatabaseHas('planos_trabalhos', [
             'id' => $planoTrabalho->id,
@@ -158,11 +158,11 @@ describe('StatusService Integration', function () {
         // 2. O histórico foi criado
         $planoTrabalho->refresh();
         expect($planoTrabalho->status)->toBe($novoStatus);
-        
+
         // Verificar via relacionamento
         $count = $planoTrabalho->statusHistorico()->count();
         expect($count)->toBe(1);
-        
+
         $historico = $planoTrabalho->statusHistorico()->first();
         expect($historico->codigo)->toBe($novoStatus);
         expect($historico->justificativa)->toBe($justificativa);
