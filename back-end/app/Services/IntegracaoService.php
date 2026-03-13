@@ -749,7 +749,7 @@ class IntegracaoService extends ServiceBase
 
         $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($novoemail, $usuario->matricula, $usuario->id);
 
-        $usuario = Usuario::find($usuario->id);
+        $usuario = Usuario::withTrashed()->find($usuario->id);
         if ($usuario) {
             SiapeLog::info("IntegracaoService: Alterando email duplicado para email fake", ['matricula' => $matricula, 'email' => $email, 'usuario' => $usuario->toJson()]);
             $usuario->email = $novoemail;
@@ -762,7 +762,7 @@ class IntegracaoService extends ServiceBase
   /**
    * Cria uma lotação para o Usuário, se seus dados já existirem na tabela integracao_servidores,
    * e se ela já constar na tabela Unidades. Salva o novo usuário, independentemente da lotação
-   * 
+   *
    * @param Usuario $usuario
    * @param UnidadeIntegrante $lotacao
    */
