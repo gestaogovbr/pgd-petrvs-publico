@@ -22,102 +22,102 @@ use Mockery;
 
 beforeEach(function () {
     if (!Route::has('__tests.login.authenticateUserPassword')) {
-        Route::middleware(['api'])->post('/__tests/login/authenticate-user-password', [LoginController::class, 'authenticateUserPassword'])
+        Route::middleware(['api'])->post('/api/__tests/login/authenticate-user-password', [LoginController::class, 'authenticateUserPassword'])
             ->name('__tests.login.authenticateUserPassword');
     }
 
     if (!Route::has('__tests.login.authenticateSession')) {
-        Route::middleware(['api'])->post('/__tests/login/authenticate-session', [LoginController::class, 'authenticateSession'])
+        Route::middleware(['api'])->post('/api/__tests/login/authenticate-session', [LoginController::class, 'authenticateSession'])
             ->name('__tests.login.authenticateSession');
     }
 
     if (!Route::has('__tests.login.selecionaUnidade')) {
-        Route::middleware(['api'])->post('/__tests/login/seleciona-unidade', [LoginController::class, 'selecionaUnidade'])
+        Route::middleware(['api'])->post('/api/__tests/login/seleciona-unidade', [LoginController::class, 'selecionaUnidade'])
             ->name('__tests.login.selecionaUnidade');
     }
 
     if (!Route::has('__tests.login.horarioUnidade')) {
-        Route::middleware(['api'])->post('/__tests/login/horario', [LoginController::class, 'horarioUnidade'])
+        Route::middleware(['api'])->post('/api/__tests/login/horario', [LoginController::class, 'horarioUnidade'])
             ->name('__tests.login.horarioUnidade');
     }
 
     if (!Route::has('__tests.login.logoutWeb')) {
-        Route::middleware(['api'])->get('/__tests/login/logout-web', [LoginController::class, 'logout'])
+        Route::middleware(['api'])->get('/api/__tests/login/logout-web', [LoginController::class, 'logout'])
             ->name('__tests.login.logoutWeb');
     }
 
     if (!Route::has('__tests.login.logoutStateless')) {
-        Route::middleware(['api', 'auth:sanctum'])->get('/__tests/login/logout-stateless', [LoginController::class, 'logout'])
+        Route::middleware(['api', 'auth:sanctum'])->get('/api/__tests/login/logout-stateless', [LoginController::class, 'logout'])
             ->name('__tests.login.logoutStateless');
     }
 
     if (!Route::has('__tests.login.throttledAuthenticateUserPassword')) {
-        Route::middleware(['api', 'throttle:2,1'])->post('/__tests/login/throttled/authenticate-user-password', [LoginController::class, 'authenticateUserPassword'])
+        Route::middleware(['api', 'throttle:2,1'])->post('/api/__tests/login/throttled/authenticate-user-password', [LoginController::class, 'authenticateUserPassword'])
             ->name('__tests.login.throttledAuthenticateUserPassword');
     }
 
     if (!Route::has('__tests.login.authenticateFirebaseToken')) {
-        Route::middleware(['api'])->post('/__tests/login/authenticate-firebase-token', [LoginController::class, 'authenticateFirebaseToken'])
+        Route::middleware(['api'])->post('/api/__tests/login/authenticate-firebase-token', [LoginController::class, 'authenticateFirebaseToken'])
             ->name('__tests.login.authenticateFirebaseToken');
     }
 
     if (!Route::has('__tests.login.authenticateGoogleToken')) {
-        Route::middleware(['api'])->post('/__tests/login/authenticate-google-token', [LoginController::class, 'authenticateGoogleToken'])
+        Route::middleware(['api'])->post('/api/__tests/login/authenticate-google-token', [LoginController::class, 'authenticateGoogleToken'])
             ->name('__tests.login.authenticateGoogleToken');
     }
 
     if (!Route::has('__tests.login.authenticateApiSessionOpen')) {
-        Route::middleware(['api'])->post('/__tests/login/authenticate-api-session', [LoginController::class, 'authenticateApiSession'])
+        Route::middleware(['api'])->post('/api/__tests/login/authenticate-api-session', [LoginController::class, 'authenticateApiSession'])
             ->name('__tests.login.authenticateApiSessionOpen');
     }
 
     if (!Route::has('__tests.login.authenticateApiSessionAuth')) {
-        Route::middleware(['api', 'auth:sanctum'])->post('/__tests/login/authenticate-api-session-auth', [LoginController::class, 'authenticateApiSession'])
+        Route::middleware(['api', 'auth:sanctum'])->post('/api/__tests/login/authenticate-api-session-auth', [LoginController::class, 'authenticateApiSession'])
             ->name('__tests.login.authenticateApiSessionAuth');
     }
 
     if (!Route::has('__tests.login.authenticateApiUserPassword')) {
-        Route::middleware(['api'])->post('/__tests/login/authenticate-api-user-password', [LoginController::class, 'authenticateApiUserPassword'])
+        Route::middleware(['api'])->post('/api/__tests/login/authenticate-api-user-password', [LoginController::class, 'authenticateApiUserPassword'])
             ->name('__tests.login.authenticateApiUserPassword');
     }
 
     if (!Route::has('__tests.login.authenticateApiFirebaseToken')) {
-        Route::middleware(['api'])->post('/__tests/login/authenticate-api-firebase-token', [LoginController::class, 'authenticateApiFirebaseToken'])
+        Route::middleware(['api'])->post('/api/__tests/login/authenticate-api-firebase-token', [LoginController::class, 'authenticateApiFirebaseToken'])
             ->name('__tests.login.authenticateApiFirebaseToken');
     }
 
     if (!Route::has('__tests.login.authenticateApiGoogleToken')) {
-        Route::middleware(['api'])->post('/__tests/login/authenticate-api-google-token', [LoginController::class, 'authenticateApiGoogleToken'])
+        Route::middleware(['api'])->post('/api/__tests/login/authenticate-api-google-token', [LoginController::class, 'authenticateApiGoogleToken'])
             ->name('__tests.login.authenticateApiGoogleToken');
     }
 
     if (!Route::has('__tests.login.validateApiTokenOpen')) {
-        Route::middleware(['api'])->get('/__tests/login/validate-token-open', [LoginController::class, 'validateApiToken'])
+        Route::middleware(['api'])->get('/api/__tests/login/validate-token-open', [LoginController::class, 'validateApiToken'])
             ->name('__tests.login.validateApiTokenOpen');
     }
 
     if (!Route::has('__tests.login.validateApiTokenAuth')) {
-        Route::middleware(['api', 'auth:sanctum'])->get('/__tests/login/validate-token-auth', [LoginController::class, 'validateApiToken'])
+        Route::middleware(['api', 'auth:sanctum'])->get('/api/__tests/login/validate-token-auth', [LoginController::class, 'validateApiToken'])
             ->name('__tests.login.validateApiTokenAuth');
     }
 
     if (!Route::has('__tests.login.azureRedirect')) {
-        Route::middleware(['api'])->get('/__tests/login/azure-redirect', [LoginController::class, 'signInAzureRedirect'])
+        Route::middleware(['api'])->get('/api/__tests/login/azure-redirect', [LoginController::class, 'signInAzureRedirect'])
             ->name('__tests.login.azureRedirect');
     }
 
     if (!Route::has('__tests.login.azureCallback')) {
-        Route::middleware(['api'])->get('/__tests/login/azure-callback', [LoginController::class, 'signInAzureCallback'])
+        Route::middleware(['api'])->get('/api/__tests/login/azure-callback', [LoginController::class, 'signInAzureCallback'])
             ->name('__tests.login.azureCallback');
     }
 
     if (!Route::has('__tests.login.govBrRedirect')) {
-        Route::middleware(['api'])->get('/__tests/login/govbr-redirect', [LoginController::class, 'signInGovBrRedirect'])
+        Route::middleware(['api'])->get('/api/__tests/login/govbr-redirect', [LoginController::class, 'signInGovBrRedirect'])
             ->name('__tests.login.govBrRedirect');
     }
 
     if (!Route::has('__tests.login.govBrCallback')) {
-        Route::middleware(['api'])->get('/__tests/login/govbr-callback', [LoginController::class, 'signInGovBrCallback'])
+        Route::middleware(['api'])->get('/api/__tests/login/govbr-callback', [LoginController::class, 'signInGovBrCallback'])
             ->name('__tests.login.govBrCallback');
     }
 });
@@ -135,7 +135,7 @@ test('selecionaUnidade retorna 422 quando unidade_id ausente', function () {
     $usuario = Usuario::factory()->create();
     $this->actingAs($usuario, 'web');
 
-    $response = $this->postJson('/__tests/login/seleciona-unidade', []);
+    $response = $this->postJson('/api/__tests/login/seleciona-unidade', []);
 
     $response->assertStatus(422);
     $response->assertJsonValidationErrors(['unidade_id']);
@@ -157,7 +157,7 @@ test('selecionaUnidade retorna 200 e atualiza sessão e config do usuário', fun
 
     $this->actingAs($usuario, 'web');
 
-    $response = $this->postJson('/__tests/login/seleciona-unidade', [
+    $response = $this->postJson('/api/__tests/login/seleciona-unidade', [
         'unidade_id' => $unidade->id,
     ]);
 
@@ -191,7 +191,7 @@ test('selecionaUnidade troca usuário logado quando matrícula informada difere 
 
     $this->actingAs($usuarioOriginal, 'web');
 
-    $response = $this->postJson('/__tests/login/seleciona-unidade', [
+    $response = $this->postJson('/api/__tests/login/seleciona-unidade', [
         'unidade_id' => $unidade->id,
         'matricula' => $usuarioMatricula->matricula,
     ]);
@@ -203,7 +203,7 @@ test('selecionaUnidade troca usuário logado quando matrícula informada difere 
 test('selecionaUnidade retorna erro quando usuário não está logado', function () {
     $unidade = Unidade::factory()->create();
 
-    $response = $this->postJson('/__tests/login/seleciona-unidade', [
+    $response = $this->postJson('/api/__tests/login/seleciona-unidade', [
         'unidade_id' => $unidade->id,
     ]);
 
@@ -216,7 +216,7 @@ test('selecionaUnidade retorna erro quando unidade não está vinculada ao usuá
     $usuario = Usuario::factory()->create();
     $this->actingAs($usuario, 'web');
 
-    $response = $this->postJson('/__tests/login/seleciona-unidade', [
+    $response = $this->postJson('/api/__tests/login/seleciona-unidade', [
         'unidade_id' => $unidade->id,
     ]);
 
@@ -225,7 +225,7 @@ test('selecionaUnidade retorna erro quando unidade não está vinculada ao usuá
 })->group('login-controller');
 
 test('authenticateUserPassword retorna 422 quando dados obrigatórios ausentes', function () {
-    $response = $this->postJson('/__tests/login/authenticate-user-password', []);
+    $response = $this->postJson('/api/__tests/login/authenticate-user-password', []);
 
     $response->assertStatus(422);
     $response->assertJsonValidationErrors(['email', 'password']);
@@ -248,7 +248,7 @@ test('authenticateUserPassword autentica com sucesso e retorna entidade e usuár
 
     $this->app->instance(LoginService::class, $loginService);
 
-    $response = $this->postJson('/__tests/login/authenticate-user-password', [
+    $response = $this->postJson('/api/__tests/login/authenticate-user-password', [
         'email' => $usuario->email,
         'password' => 'senha-teste',
     ]);
@@ -270,7 +270,7 @@ test('authenticateUserPassword retorna 200 com erro quando credenciais são inv�
     $loginService->shouldNotReceive('registrarUsuario');
     $this->app->instance(LoginService::class, $loginService);
 
-    $response = $this->postJson('/__tests/login/authenticate-user-password', [
+    $response = $this->postJson('/api/__tests/login/authenticate-user-password', [
         'email' => $usuario->email,
         'password' => 'senha-incorreta',
     ]);
@@ -295,7 +295,7 @@ test('authenticateUserPassword retorna 401 quando usuário inativo', function ()
         ->andReturn(null);
     $this->app->instance(LoginService::class, $loginService);
 
-    $response = $this->postJson('/__tests/login/authenticate-user-password', [
+    $response = $this->postJson('/api/__tests/login/authenticate-user-password', [
         'email' => $usuario->email,
         'password' => 'senha-correta',
     ]);
@@ -315,7 +315,7 @@ test('authenticateUserPassword retorna 500 quando ocorre exceção inesperada', 
         ->andThrow(new \RuntimeException('falha'));
     $this->app->instance(LoginService::class, $loginService);
 
-    $response = $this->postJson('/__tests/login/authenticate-user-password', [
+    $response = $this->postJson('/api/__tests/login/authenticate-user-password', [
         'email' => $usuario->email,
         'password' => 'senha-correta',
     ]);
@@ -339,7 +339,7 @@ test('authenticateSession retorna 200 quando usuário já está logado e registr
         ->andReturn($usuario);
     $this->app->instance(LoginService::class, $loginService);
 
-    $response = $this->postJson('/__tests/login/authenticate-session', []);
+    $response = $this->postJson('/api/__tests/login/authenticate-session', []);
 
     $response->assertStatus(200);
     $response->assertJsonPath('success', true);
@@ -366,7 +366,7 @@ test('authenticateSession efetua auto-login e retorna 200 quando configuração 
         ->andReturn($usuario);
     $this->app->instance(LoginService::class, $loginService);
 
-    $response = $this->postJson('/__tests/login/authenticate-session', []);
+    $response = $this->postJson('/api/__tests/login/authenticate-session', []);
 
     $response->assertStatus(200);
     $response->assertJsonPath('success', true);
@@ -383,7 +383,7 @@ test('authenticateSession retorna 200 com erro quando não há sessão e auto-lo
     $loginService->shouldNotReceive('registrarUsuario');
     $this->app->instance(LoginService::class, $loginService);
 
-    $response = $this->postJson('/__tests/login/authenticate-session', []);
+    $response = $this->postJson('/api/__tests/login/authenticate-session', []);
 
     $response->assertStatus(200);
     $response->assertJsonPath('error', 'Sessão não encontrada');
@@ -397,7 +397,7 @@ test('authenticateSession retorna 200 com erro quando auto-login configurado mas
     $loginService->shouldNotReceive('registrarUsuario');
     $this->app->instance(LoginService::class, $loginService);
 
-    $response = $this->postJson('/__tests/login/authenticate-session', []);
+    $response = $this->postJson('/api/__tests/login/authenticate-session', []);
 
     $response->assertStatus(200);
     $response->assertJsonPath('error', 'Usuário não encontrado');
@@ -418,7 +418,7 @@ test('authenticateSession retorna 401 quando usuário logado é inativo', functi
         ->andReturn(null);
     $this->app->instance(LoginService::class, $loginService);
 
-    $response = $this->postJson('/__tests/login/authenticate-session', []);
+    $response = $this->postJson('/api/__tests/login/authenticate-session', []);
 
     $response->assertStatus(401);
     $response->assertJsonPath('error', 'Usuário inativo no SIAPE. Acesso negado.');
@@ -434,7 +434,7 @@ test('authenticateSession retorna 500 quando ocorre exceção inesperada', funct
         ->andThrow(new \RuntimeException('falha'));
     $this->app->instance(LoginService::class, $loginService);
 
-    $response = $this->postJson('/__tests/login/authenticate-session', []);
+    $response = $this->postJson('/api/__tests/login/authenticate-session', []);
 
     $response->assertStatus(500);
 })->group('login-controller');
@@ -455,17 +455,17 @@ test('rate limiting bloqueia requisições excedentes no endpoint de login', fun
         ->andReturn($usuario);
     $this->app->instance(LoginService::class, $loginService);
 
-    $this->postJson('/__tests/login/throttled/authenticate-user-password', [
+    $this->postJson('/api/__tests/login/throttled/authenticate-user-password', [
         'email' => $usuario->email,
         'password' => 'senha-teste',
     ])->assertStatus(200);
 
-    $this->postJson('/__tests/login/throttled/authenticate-user-password', [
+    $this->postJson('/api/__tests/login/throttled/authenticate-user-password', [
         'email' => $usuario->email,
         'password' => 'senha-teste',
     ])->assertStatus(200);
 
-    $this->postJson('/__tests/login/throttled/authenticate-user-password', [
+    $this->postJson('/api/__tests/login/throttled/authenticate-user-password', [
         'email' => $usuario->email,
         'password' => 'senha-teste',
     ])->assertStatus(429);
@@ -485,7 +485,7 @@ test('horarioUnidade retorna 200 e hora quando usuário e unidade estão definid
         ->andReturn('10:30');
     $this->app->instance(UnidadeService::class, $unidadeService);
 
-    $response = $this->postJson('/__tests/login/horario', []);
+    $response = $this->postJson('/api/__tests/login/horario', []);
 
     $response->assertStatus(200);
     $response->assertJsonPath('status', 'OK');
@@ -493,7 +493,7 @@ test('horarioUnidade retorna 200 e hora quando usuário e unidade estão definid
 })->group('login-controller');
 
 test('horarioUnidade retorna 200 com erro quando usuário não está logado', function () {
-    $response = $this->postJson('/__tests/login/horario', []);
+    $response = $this->postJson('/api/__tests/login/horario', []);
 
     $response->assertStatus(200);
     $response->assertJsonPath('error', 'Usuário não logado');
@@ -503,7 +503,7 @@ test('horarioUnidade retorna 200 com erro quando unidade não está definida na 
     $usuario = Usuario::factory()->create();
     $this->actingAs($usuario, 'web');
 
-    $response = $this->postJson('/__tests/login/horario', []);
+    $response = $this->postJson('/api/__tests/login/horario', []);
 
     $response->assertStatus(200);
     $response->assertJsonPath('error', 'Usuário sem unidade selecionada');
@@ -514,7 +514,7 @@ test('logout retorna 200 e desloga usuário do web', function () {
     $this->actingAs($usuario, 'web');
     session(['kind' => 'SESSION']);
 
-    $response = $this->getJson('/__tests/login/logout-web');
+    $response = $this->getJson('/api/__tests/login/logout-web');
 
     $response->assertStatus(200);
     $response->assertJsonPath('status', 'OK');
@@ -526,9 +526,8 @@ test('logout retorna 200 e revoga token quando autenticação é stateless via S
     $token = $usuario->createToken('device')->plainTextToken;
 
     expect($usuario->tokens()->count())->toBe(1);
-    Sanctum::actingAs($usuario);
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)->getJson('/__tests/login/logout-stateless');
+    $response = $this->withHeader('Authorization', 'Bearer ' . $token)->getJson('/api/__tests/login/logout-stateless');
 
     $response->assertStatus(200);
     $response->assertJsonPath('status', 'OK');
@@ -537,7 +536,7 @@ test('logout retorna 200 e revoga token quando autenticação é stateless via S
 })->group('login-controller');
 
 test('authenticateFirebaseToken retorna 422 quando dados obrigatórios ausentes', function () {
-    $response = $this->postJson('/__tests/login/authenticate-firebase-token', []);
+    $response = $this->postJson('/api/__tests/login/authenticate-firebase-token', []);
 
     $response->assertStatus(422);
     $response->assertJsonValidationErrors(['entidade', 'token']);
@@ -554,7 +553,7 @@ test('authenticateFirebaseToken retorna 200 com sucesso quando token válido', f
         ->once()
         ->andReturn([
             'email' => $usuario->email,
-            'picture' => 'https://example.test/avatar.jpg',
+            'picture' => '',
         ]);
     $this->app->instance(FirebaseAuthService::class, $firebase);
 
@@ -563,12 +562,7 @@ test('authenticateFirebaseToken retorna 200 com sucesso quando token válido', f
     $loginService->shouldReceive('registrarUsuario')->once()->andReturn($usuario);
     $this->app->instance(LoginService::class, $loginService);
 
-    Mockery::mock('overload:' . \App\Services\UsuarioService::class)
-        ->shouldReceive('atualizarFotoPerfil')
-        ->once()
-        ->andReturnNull();
-
-    $response = $this->postJson('/__tests/login/authenticate-firebase-token', [
+    $response = $this->postJson('/api/__tests/login/authenticate-firebase-token', [
         'entidade' => $entidade->sigla,
         'token' => 'token-valido',
     ]);
@@ -591,7 +585,7 @@ test('authenticateFirebaseToken retorna 401 quando usuário é inativo', functio
         ->once()
         ->andReturn([
             'email' => $usuario->email,
-            'picture' => 'https://example.test/avatar.jpg',
+            'picture' => '',
         ]);
     $this->app->instance(FirebaseAuthService::class, $firebase);
 
@@ -600,7 +594,7 @@ test('authenticateFirebaseToken retorna 401 quando usuário é inativo', functio
     $loginService->shouldReceive('registrarUsuario')->once()->andReturn(null);
     $this->app->instance(LoginService::class, $loginService);
 
-    $response = $this->postJson('/__tests/login/authenticate-firebase-token', [
+    $response = $this->postJson('/api/__tests/login/authenticate-firebase-token', [
         'entidade' => $entidade->sigla,
         'token' => 'token-valido',
     ]);
@@ -618,7 +612,7 @@ test('authenticateFirebaseToken retorna 200 com erro quando token é inválido',
         ->andReturn(['error' => 'invalid']);
     $this->app->instance(FirebaseAuthService::class, $firebase);
 
-    $response = $this->postJson('/__tests/login/authenticate-firebase-token', [
+    $response = $this->postJson('/api/__tests/login/authenticate-firebase-token', [
         'entidade' => $entidade->sigla,
         'token' => 'token-invalido',
     ]);
@@ -628,7 +622,7 @@ test('authenticateFirebaseToken retorna 200 com erro quando token é inválido',
 })->group('login-controller');
 
 test('authenticateGoogleToken retorna 422 quando dados obrigatórios ausentes', function () {
-    $response = $this->postJson('/__tests/login/authenticate-google-token', []);
+    $response = $this->postJson('/api/__tests/login/authenticate-google-token', []);
 
     $response->assertStatus(422);
     $response->assertJsonValidationErrors(['entidade', 'token']);
@@ -645,7 +639,7 @@ test('authenticateGoogleToken retorna 200 com sucesso quando token válido', fun
         ->once()
         ->andReturn([
             'email' => $usuario->email,
-            'picture' => 'https://example.test/avatar.jpg',
+            'picture' => '',
         ]);
     $this->app->instance(GoogleService::class, $google);
 
@@ -654,12 +648,7 @@ test('authenticateGoogleToken retorna 200 com sucesso quando token válido', fun
     $loginService->shouldReceive('registrarUsuario')->once()->andReturn($usuario);
     $this->app->instance(LoginService::class, $loginService);
 
-    Mockery::mock('overload:' . \App\Services\UsuarioService::class)
-        ->shouldReceive('atualizarFotoPerfil')
-        ->once()
-        ->andReturnNull();
-
-    $response = $this->postJson('/__tests/login/authenticate-google-token', [
+    $response = $this->postJson('/api/__tests/login/authenticate-google-token', [
         'entidade' => $entidade->sigla,
         'token' => 'token-valido',
     ]);
@@ -682,7 +671,7 @@ test('authenticateGoogleToken retorna 401 quando usuário é inativo', function 
         ->once()
         ->andReturn([
             'email' => $usuario->email,
-            'picture' => 'https://example.test/avatar.jpg',
+            'picture' => '',
         ]);
     $this->app->instance(GoogleService::class, $google);
 
@@ -691,7 +680,7 @@ test('authenticateGoogleToken retorna 401 quando usuário é inativo', function 
     $loginService->shouldReceive('registrarUsuario')->once()->andReturn(null);
     $this->app->instance(LoginService::class, $loginService);
 
-    $response = $this->postJson('/__tests/login/authenticate-google-token', [
+    $response = $this->postJson('/api/__tests/login/authenticate-google-token', [
         'entidade' => $entidade->sigla,
         'token' => 'token-valido',
     ]);
@@ -709,7 +698,7 @@ test('authenticateGoogleToken retorna 200 com erro quando token é inválido', f
         ->andReturn(['error' => 'invalid']);
     $this->app->instance(GoogleService::class, $google);
 
-    $response = $this->postJson('/__tests/login/authenticate-google-token', [
+    $response = $this->postJson('/api/__tests/login/authenticate-google-token', [
         'entidade' => $entidade->sigla,
         'token' => 'token-invalido',
     ]);
@@ -719,7 +708,7 @@ test('authenticateGoogleToken retorna 200 com erro quando token é inválido', f
 })->group('login-controller');
 
 test('authenticateApiSession retorna 200 com erro quando não há usuário autenticado', function () {
-    $response = $this->postJson('/__tests/login/authenticate-api-session', []);
+    $response = $this->postJson('/api/__tests/login/authenticate-api-session', []);
 
     $response->assertStatus(200);
     $response->assertJsonPath('error', 'Sessão não encontrada');
@@ -738,7 +727,7 @@ test('authenticateApiSession retorna token e dados quando autenticado via Sanctu
     Sanctum::actingAs($usuario);
     session(['kind' => 'SESSION']);
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)->postJson('/__tests/login/authenticate-api-session-auth', []);
+    $response = $this->withHeader('Authorization', 'Bearer ' . $token)->postJson('/api/__tests/login/authenticate-api-session-auth', []);
 
     $response->assertStatus(200);
     $response->assertJsonPath('token', $token);
@@ -748,7 +737,7 @@ test('authenticateApiSession retorna token e dados quando autenticado via Sanctu
 })->group('login-controller');
 
 test('authenticateApiUserPassword retorna 422 quando dados obrigatórios ausentes', function () {
-    $response = $this->postJson('/__tests/login/authenticate-api-user-password', []);
+    $response = $this->postJson('/api/__tests/login/authenticate-api-user-password', []);
 
     $response->assertStatus(422);
     $response->assertJsonValidationErrors(['entidade', 'email', 'password', 'device_name']);
@@ -765,7 +754,7 @@ test('authenticateApiUserPassword retorna token quando usuário existe e está a
     $loginService->shouldReceive('registrarUsuario')->once()->andReturn($usuario);
     $this->app->instance(LoginService::class, $loginService);
 
-    $response = $this->postJson('/__tests/login/authenticate-api-user-password', [
+    $response = $this->postJson('/api/__tests/login/authenticate-api-user-password', [
         'entidade' => $entidade->sigla,
         'email' => $usuario->email,
         'password' => 'nao-validado-pelo-controller',
@@ -782,7 +771,7 @@ test('authenticateApiUserPassword retorna token quando usuário existe e está a
 test('authenticateApiUserPassword retorna 200 com erro quando email não existe', function () {
     $entidade = Entidade::factory()->create();
 
-    $response = $this->postJson('/__tests/login/authenticate-api-user-password', [
+    $response = $this->postJson('/api/__tests/login/authenticate-api-user-password', [
         'entidade' => $entidade->sigla,
         'email' => 'naoexiste@teste.com',
         'password' => 'x',
@@ -794,7 +783,7 @@ test('authenticateApiUserPassword retorna 200 com erro quando email não existe'
 })->group('login-controller');
 
 test('authenticateApiFirebaseToken retorna 422 quando dados obrigatórios ausentes', function () {
-    $response = $this->postJson('/__tests/login/authenticate-api-firebase-token', []);
+    $response = $this->postJson('/api/__tests/login/authenticate-api-firebase-token', []);
 
     $response->assertStatus(422);
     $response->assertJsonValidationErrors(['entidade', 'token', 'device_name']);
@@ -811,7 +800,7 @@ test('authenticateApiFirebaseToken retorna token quando token é válido e usuá
         ->once()
         ->andReturn([
             'email' => $usuario->email,
-            'picture' => 'https://example.test/avatar.jpg',
+            'picture' => '',
         ]);
     $this->app->instance(FirebaseAuthService::class, $firebase);
 
@@ -820,12 +809,7 @@ test('authenticateApiFirebaseToken retorna token quando token é válido e usuá
     $loginService->shouldReceive('registrarUsuario')->once()->andReturn($usuario);
     $this->app->instance(LoginService::class, $loginService);
 
-    Mockery::mock('overload:' . \App\Services\UsuarioService::class)
-        ->shouldReceive('atualizarFotoPerfil')
-        ->once()
-        ->andReturnNull();
-
-    $response = $this->postJson('/__tests/login/authenticate-api-firebase-token', [
+    $response = $this->postJson('/api/__tests/login/authenticate-api-firebase-token', [
         'entidade' => $entidade->sigla,
         'token' => 'token-valido',
         'device_name' => 'device',
@@ -847,7 +831,7 @@ test('authenticateApiFirebaseToken retorna 200 com erro quando token é inválid
         ->andReturn(['error' => 'invalid']);
     $this->app->instance(FirebaseAuthService::class, $firebase);
 
-    $response = $this->postJson('/__tests/login/authenticate-api-firebase-token', [
+    $response = $this->postJson('/api/__tests/login/authenticate-api-firebase-token', [
         'entidade' => $entidade->sigla,
         'token' => 'token-invalido',
         'device_name' => 'device',
@@ -858,7 +842,7 @@ test('authenticateApiFirebaseToken retorna 200 com erro quando token é inválid
 })->group('login-controller');
 
 test('authenticateApiGoogleToken retorna 422 quando dados obrigatórios ausentes', function () {
-    $response = $this->postJson('/__tests/login/authenticate-api-google-token', []);
+    $response = $this->postJson('/api/__tests/login/authenticate-api-google-token', []);
 
     $response->assertStatus(422);
     $response->assertJsonValidationErrors(['entidade', 'token', 'device_name']);
@@ -875,7 +859,7 @@ test('authenticateApiGoogleToken retorna token quando token é válido e usuári
         ->once()
         ->andReturn([
             'email' => $usuario->email,
-            'picture' => 'https://example.test/avatar.jpg',
+            'picture' => '',
         ]);
     $this->app->instance(GoogleService::class, $google);
 
@@ -884,12 +868,7 @@ test('authenticateApiGoogleToken retorna token quando token é válido e usuári
     $loginService->shouldReceive('registrarUsuario')->once()->andReturn($usuario);
     $this->app->instance(LoginService::class, $loginService);
 
-    Mockery::mock('overload:' . \App\Services\UsuarioService::class)
-        ->shouldReceive('atualizarFotoPerfil')
-        ->once()
-        ->andReturnNull();
-
-    $response = $this->postJson('/__tests/login/authenticate-api-google-token', [
+    $response = $this->postJson('/api/__tests/login/authenticate-api-google-token', [
         'entidade' => $entidade->sigla,
         'token' => 'token-valido',
         'device_name' => 'device',
@@ -911,7 +890,7 @@ test('authenticateApiGoogleToken retorna 200 com erro quando token é inválido'
         ->andReturn(['error' => 'invalid']);
     $this->app->instance(GoogleService::class, $google);
 
-    $response = $this->postJson('/__tests/login/authenticate-api-google-token', [
+    $response = $this->postJson('/api/__tests/login/authenticate-api-google-token', [
         'entidade' => $entidade->sigla,
         'token' => 'token-invalido',
         'device_name' => 'device',
@@ -922,7 +901,7 @@ test('authenticateApiGoogleToken retorna 200 com erro quando token é inválido'
 })->group('login-controller');
 
 test('validateApiToken retorna valid=false quando não autenticado', function () {
-    $response = $this->getJson('/__tests/login/validate-token-open');
+    $response = $this->getJson('/api/__tests/login/validate-token-open');
 
     $response->assertStatus(200);
     $response->assertJsonPath('valid', false);
@@ -933,7 +912,7 @@ test('validateApiToken retorna valid=true quando autenticado via Sanctum', funct
     $token = $usuario->createToken('device')->plainTextToken;
     Sanctum::actingAs($usuario);
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)->getJson('/__tests/login/validate-token-auth');
+    $response = $this->withHeader('Authorization', 'Bearer ' . $token)->getJson('/api/__tests/login/validate-token-auth');
 
     $response->assertStatus(200);
     $response->assertJsonPath('valid', true);
@@ -958,7 +937,7 @@ test('signInAzureRedirect retorna redirect do provider', function () {
 
     Socialite::shouldReceive('driver')->once()->with('azure')->andReturn($provider);
 
-    $response = $this->get('/__tests/login/azure-redirect');
+    $response = $this->get('/api/__tests/login/azure-redirect');
 
     $response->assertRedirect('https://example.test/azure');
 })->group('login-controller');
@@ -986,7 +965,7 @@ test('signInAzureCallback retorna view e registra sessão quando login é válid
 
     Socialite::shouldReceive('driver')->once()->with('azure')->andReturn($provider);
 
-    $response = $this->get('/__tests/login/azure-callback');
+    $response = $this->get('/api/__tests/login/azure-callback');
 
     $response->assertOk();
     $response->assertViewIs('azure');
@@ -1017,7 +996,7 @@ test('signInAzureCallback retorna 401 quando usuário é inativo', function () {
 
     Socialite::shouldReceive('driver')->once()->with('azure')->andReturn($provider);
 
-    $response = $this->get('/__tests/login/azure-callback');
+    $response = $this->get('/api/__tests/login/azure-callback');
 
     $response->assertStatus(401);
     $response->assertJsonPath('error', 'Usuário inativo no SIAPE. Acesso negado.');
@@ -1044,7 +1023,7 @@ test('signInGovBrRedirect retorna redirect do provider', function () {
 
     Socialite::shouldReceive('driver')->once()->with('govbr')->andReturn($provider);
 
-    $response = $this->get('/__tests/login/govbr-redirect');
+    $response = $this->get('/api/__tests/login/govbr-redirect');
 
     $response->assertRedirect('https://example.test/govbr');
 })->group('login-controller');
@@ -1079,7 +1058,7 @@ test('signInGovBrCallback retorna view e registra sessão quando login é válid
 
     Socialite::shouldReceive('driver')->once()->with('govbr')->andReturn($provider);
 
-    $response = $this->get('/__tests/login/govbr-callback?code=abc&state=st');
+    $response = $this->get('/api/__tests/login/govbr-callback?code=abc&state=st');
 
     $response->assertOk();
     $response->assertViewIs('govbr');
