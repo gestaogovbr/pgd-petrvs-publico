@@ -52,33 +52,15 @@ describe('StatusService Integration', function () {
         $this->unidade->id = 'unidade-teste';
         $this->unidade->save();
 
-        $this->tipoModalidade = new TipoModalidade();
-        $this->tipoModalidade->fill([
-            'nome' => 'Modalidade Teste',
-        ]);
-        $this->tipoModalidade->id = 'modalidade-teste'; // Force ID
-        $this->tipoModalidade->saveOrFail();
+        $this->tipoModalidade = TipoModalidade::factory()->create();
 
-        $this->usuario = new Usuario();
-        $this->usuario->fill([
-            'id' => 'usuario-teste',
-            'nome' => 'Usuario Teste',
-            'email' => 'usuario@teste.com',
-            'cpf' => '00000000000',
-            'apelido' => 'UserTeste',
-            'tipo_modalidade_id' => $this->tipoModalidade->id,
-        ]);
-        $this->usuario->saveOrFail();
+        $this->usuario = Usuario::factory()->create();
         $this->actingAs($this->usuario);
 
         // Create dependencies for Programa
-        $this->tipoJustificativa = new TipoJustificativa();
-        $this->tipoJustificativa->fill(['nome' => 'Justificativa Teste']);
-        $this->tipoJustificativa->save();
+        $this->tipoJustificativa = TipoJustificativa::factory()->create();
 
-        $this->tipoAvaliacao = new TipoAvaliacao();
-        $this->tipoAvaliacao->fill(['nome' => 'Avaliação Teste', 'tipo' => 'QUANTITATIVO']);
-        $this->tipoAvaliacao->save();
+        $this->tipoAvaliacao = TipoAvaliacao::factory()->create();
 
         $this->programa = new Programa();
         $this->programa->fill([
