@@ -8,12 +8,12 @@ use App\Jobs\Envio\ExportarParticipanteJob;
 use App\Jobs\Envio\ExportarPlanoTrabalhoJob;
 use App\Models\PlanoTrabalho;
 use App\Services\API_PGD\PlanoTrabalhoEnvioService;
-use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Queue;
 use Mockery;
 
 
 beforeEach(function () {
-    Bus::fake();
+    Queue::fake();
 });
 
 afterAll(function () {
@@ -25,7 +25,8 @@ describe('PlanoTrabalhoObserver', function () {
     it('PlanoTrabalho Observer NÃO é chamado ao criar plano de Trabalho', function () {
         $planoTrabalho = PlanoTrabalho::factory()->create();
 
-        Bus::assertNotDispatched(ExportarPlanoTrabalhoJob::class);
+        // testa o ExportarParticipanteJob porque é o primeiro da cadeia de envio do PT, se ele não for chamado, os demais também não serão
+        Queue::assertNotPushed(ExportarParticipanteJob::class);
     });
 
     it('PlanoTrabalho Observer É chamado ao alterar plano de Trabalho ATIVO', function () {
@@ -33,9 +34,12 @@ describe('PlanoTrabalhoObserver', function () {
         $planoTrabalho->status = StatusEnum::ATIVO->value;
         $planoTrabalho->save();
 
-        Bus::assertChained([
-            ExportarParticipanteJob::class,
-        ]);
+        // testa o ExportarParticipanteJob porque é o primeiro da cadeia de envio do PT, se ele for chamado, os demais também serão
+        Queue::assertPushed(ExportarParticipanteJob::class, function ($job) {
+            return collect($job->chained)->filter(function ($payload) {
+                return strpos($payload, ExportarPlanoTrabalhoJob::class) !== false;
+            })->isNotEmpty();
+        });
     });
 
     it('PlanoTrabalho Observer É chamado ao alterar plano de Trabalho AVALIADO', function () {
@@ -43,7 +47,11 @@ describe('PlanoTrabalhoObserver', function () {
         $planoTrabalho->status = StatusEnum::AVALIADO->value;
         $planoTrabalho->save();
 
-        Bus::assertDispatched(ExportarPlanoTrabalhoJob::class);
+        Queue::assertPushed(ExportarParticipanteJob::class, function ($job) {
+            return collect($job->chained)->filter(function ($payload) {
+                return strpos($payload, ExportarPlanoTrabalhoJob::class) !== false;
+            })->isNotEmpty();
+        });
     });
 
     it('PlanoTrabalho Observer É chamado ao alterar plano de Trabalho CONCLUIDO', function () {
@@ -51,7 +59,11 @@ describe('PlanoTrabalhoObserver', function () {
         $planoTrabalho->status = StatusEnum::CONCLUIDO->value;
         $planoTrabalho->save();
 
-        Bus::assertDispatched(ExportarPlanoTrabalhoJob::class);
+        Queue::assertPushed(ExportarParticipanteJob::class, function ($job) {
+            return collect($job->chained)->filter(function ($payload) {
+                return strpos($payload, ExportarPlanoTrabalhoJob::class) !== false;
+            })->isNotEmpty();
+        });
     });
 
     it('PlanoTrabalho Observer ao cancelar plano de Trabalho o agendamento não é realizado', function () {
@@ -59,7 +71,7 @@ describe('PlanoTrabalhoObserver', function () {
         $planoTrabalho->status = StatusEnum::CANCELADO->value;
         $planoTrabalho->save();
 
-        Bus::assertNotDispatched(ExportarPlanoTrabalhoJob::class);
+        Queue::assertNotPushed(ExportarParticipanteJob::class);
     });
 
 });
