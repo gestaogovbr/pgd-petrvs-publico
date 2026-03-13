@@ -94,7 +94,7 @@ describe('PlanoEntregaService - Cancelar Avaliacao (Integração)', function () 
         // 5. Usuario
         $usuario = new Usuario();
         $usuario->id = Str::uuid();
-        $usuario->fill([
+        $usuario->forceFill([
             'email' => 'teste@petrvs.com',
             'nome' => 'Usuário Teste',
             'cpf' => '11111111111',
