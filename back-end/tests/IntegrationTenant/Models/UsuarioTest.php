@@ -24,16 +24,7 @@ test('usuario deve retornar relacionamento lotacao corretamente', function () {
     ]);
     $entidade->save();
 
-    $tipoModalidade = new TipoModalidade();
-    $tipoModalidade->id = \Illuminate\Support\Str::uuid();
-    $tipoModalidade->fill([
-        'nome' => 'Modalidade Teste',
-        'exige_pedagio' => 0,
-        'plano_trabalho_calcula_horas' => 0,
-        'atividade_tempo_despendido' => 0,
-        'atividade_esforco' => 0,
-    ]);
-    $tipoModalidade->save();
+    $tipoModalidade = TipoModalidade::factory()->create();
 
     $usuario = new Usuario();
     $usuario->id = \Illuminate\Support\Str::uuid();
@@ -43,9 +34,9 @@ test('usuario deve retornar relacionamento lotacao corretamente', function () {
         'cpf' => '99999999999',
         'apelido' => 'TesteLotacao',
         'matricula' => '1234567',
-        'sexo' => 'MASCULINO',
-        'tipo_modalidade_id' => $tipoModalidade->id,
+        'sexo' => 'MASCULINO'
     ]);
+    $usuario->tipo_modalidade_id = $tipoModalidade->id;
     $usuario->save();
 
     $unidade = new Unidade();
@@ -79,16 +70,7 @@ test('usuario deve retornar relacionamento lotacao corretamente', function () {
 });
 
 test('usuario deve retornar null para lotacao quando nao possui atribuicao LOTADO', function () {
-    $tipoModalidade = new TipoModalidade();
-    $tipoModalidade->id = \Illuminate\Support\Str::uuid();
-    $tipoModalidade->fill([
-        'nome' => 'Modalidade Teste 2',
-        'exige_pedagio' => 0,
-        'plano_trabalho_calcula_horas' => 0,
-        'atividade_tempo_despendido' => 0,
-        'atividade_esforco' => 0,
-    ]);
-    $tipoModalidade->save();
+    $tipoModalidade = TipoModalidade::factory()->create();
 
     $usuario = new Usuario();
     $usuario->id = \Illuminate\Support\Str::uuid();
@@ -97,8 +79,8 @@ test('usuario deve retornar null para lotacao quando nao possui atribuicao LOTAD
         'nome' => 'Usuário Teste Sem Lotação',
         'cpf' => '88888888888',
         'apelido' => 'TesteSemLotacao',
-        'tipo_modalidade_id' => $tipoModalidade->id,
     ]);
+    $usuario->tipo_modalidade_id = $tipoModalidade->id;
     $usuario->save();
 
     $unidade = Unidade::create([
