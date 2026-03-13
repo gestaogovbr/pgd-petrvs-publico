@@ -25,6 +25,7 @@ abstract class AbstractEloquentWriteRepository
     {
         /** @var TModel $model */
         $model = $this->model->newInstance($attributes);
+        $model->forceFill($attributes);
         $model->save();
 
         return $model;
@@ -44,7 +45,7 @@ abstract class AbstractEloquentWriteRepository
             return null;
         }
 
-        $model->fill($attributes);
+        $model->forceFill($attributes);
         $model->save();
 
         return $model;
