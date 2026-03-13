@@ -3,13 +3,14 @@
 namespace Tests\IntegrationTenant\Observers;
 
 use App\Jobs\Envio\ExportarParticipanteJob;
+use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Repository\UsuarioRepository;
-use App\Services\API_PGD\UsuarioEnvioService;
 use App\Services\UsuarioService;
-use Illuminate\Support\Facades\Bus;
 
+use Illuminate\Support\Facades\Bus;
 use Mockery;
+
 
 beforeEach(function () {
     Bus::fake();
@@ -21,7 +22,7 @@ afterAll(function () {
 
 describe('UsuarioObserver', function () {
 
-    test('Usuário Observer é chamado ao atualizar usuário', function () {
+    test('Chamado ao atualizar usuário', function () {
         $usuario = Usuario::factory()->create([
             'nome' => 'Usuario Teste'
         ]);
@@ -33,12 +34,39 @@ describe('UsuarioObserver', function () {
         Bus::assertDispatched(ExportarParticipanteJob::class);
     });
 
-    test('Executa observer ao executar atualizarServidor', function () {
+    test('Ao executar pelo Update do UsuarioService', function () {
+        $usuario = Usuario::factory()->create();
+        $this->actingAs($usuario);
+
+        $unidade = Unidade::factory()->create();
+
+        $usuarioService = app(UsuarioService::class);
+
+        $dto = [
+            'id' => $usuario->id,
+            'nome' => 'Servidor Teste',
+            'data_nascimento' => '1990-01-01',
+            'integrantes' => [
+                [
+                    'usuario_id' => $usuario->id,
+                    'unidade_id' => $unidade->id,
+                    'atribuicoes' => ['LOTADO']
+                ]
+            ]
+        ];
+
+        $usuarioService->update($dto, $usuario->unidade_id);
+
+        Bus::assertDispatched(ExportarParticipanteJob::class);
+    });
+    
+
+    test('Ao executar atualizarServidor', function () {
         $usuario = Usuario::factory()->create([
             'nome' => 'Usuario Teste'
         ]);
 
-        $usuarioService = new UsuarioService();
+        $usuarioService = app(UsuarioService::class);
 
         $dto = (object) [
             'id' => $usuario->id,
@@ -60,7 +88,7 @@ describe('UsuarioObserver', function () {
         Bus::assertDispatched(ExportarParticipanteJob::class);
     });
 
-    test('Executa observer ao atualizar pelo UsuarioRepository', function () {
+    test('Ao atualizar pelo UsuarioRepository', function () {
 
         $usuario = Usuario::factory()->create([
             'nome' => 'Usuario Teste'
