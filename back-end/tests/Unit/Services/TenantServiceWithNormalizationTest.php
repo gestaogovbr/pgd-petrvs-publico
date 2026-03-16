@@ -51,6 +51,7 @@ describe('TenantService - Normalização de with', function () {
 
 describe('TenantService - Deploy de tenant', function () {
     it('cria TipoModalidade padrão quando não existe', function () {
+        DB::connection('tenant')->table('usuarios')->delete();
         DB::connection('tenant')->table('tipos_modalidades')->delete();
 
         $service = new TenantService();

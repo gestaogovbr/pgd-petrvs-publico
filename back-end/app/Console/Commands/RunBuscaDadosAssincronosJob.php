@@ -12,7 +12,7 @@ class RunBuscaDadosAssincronosJob extends Command
      *
      * @var string
      */
-    protected $signature = 'app:run-busca-dados-assincronos-job  {tenant}';
+    protected $signature = 'siape:run-busca-dados-assincronos-job  {tenant}';
 
     /**
      * The console command description.

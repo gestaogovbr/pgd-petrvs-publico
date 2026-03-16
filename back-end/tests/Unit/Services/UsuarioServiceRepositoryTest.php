@@ -31,6 +31,7 @@ use App\Services\IntegracaoService;
 use App\Repository\PerfilRepository;
 use App\Repository\TipoModalidadeRepository;
 use App\Repository\IntegracaoServidorRepository;
+use App\Repository\SiapeBlackListServidorRepository;
 
 class UsuarioServiceRepositoryTest extends TestCase
 {
@@ -75,6 +76,9 @@ class UsuarioServiceRepositoryTest extends TestCase
     /** @var PlanoEntregaRepository|\Mockery\MockInterface */
     protected $planoEntregaRepository;
 
+    /** @var SiapeBlackListServidorRepository|\Mockery\MockInterface */
+    protected $siapeBlackListServidorRepository;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -87,6 +91,7 @@ class UsuarioServiceRepositoryTest extends TestCase
         $this->planoTrabalhoConsolidacaoRepository = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
         $this->planoTrabalhoRepository = Mockery::mock(PlanoTrabalhoRepository::class);
         $this->planoEntregaRepository = Mockery::mock(PlanoEntregaRepository::class);
+        $this->siapeBlackListServidorRepository = Mockery::mock(SiapeBlackListServidorRepository::class);
 
         $this->tipoModalidadeRepository
             ->shouldReceive('findByNome')
@@ -107,6 +112,7 @@ class UsuarioServiceRepositoryTest extends TestCase
         $this->app->instance(PlanoTrabalhoConsolidacaoRepository::class, $this->planoTrabalhoConsolidacaoRepository);
         $this->app->instance(PlanoTrabalhoRepository::class, $this->planoTrabalhoRepository);
         $this->app->instance(PlanoEntregaRepository::class, $this->planoEntregaRepository);
+        $this->app->instance(SiapeBlackListServidorRepository::class, $this->siapeBlackListServidorRepository);
         
         $this->app->instance(UnidadeService::class, $this->unidadeService);
         $this->app->instance(IntegracaoService::class, $this->integracaoService);
@@ -157,6 +163,10 @@ class UsuarioServiceRepositoryTest extends TestCase
         $peRepoProp = $reflection->getProperty('planoEntregaRepository');
         $peRepoProp->setAccessible(true);
         $peRepoProp->setValue($this->service, $this->planoEntregaRepository);
+
+        $blackListRepoProp = $reflection->getProperty('siapeBlackListServidorRepository');
+        $blackListRepoProp->setAccessible(true);
+        $blackListRepoProp->setValue($this->service, $this->siapeBlackListServidorRepository);
     }
 
     protected function tearDown(): void
@@ -242,6 +252,8 @@ class UsuarioServiceRepositoryTest extends TestCase
         $userMock = Mockery::mock(Usuario::class);
         $userMock->shouldReceive('offsetGet')->with('lotacao')->andReturn(null);
         $userMock->shouldReceive('offsetSet')->with('regramentos', []);
+        $userMock->shouldReceive('getAttribute')->with('cpf')->andReturn('');
+        $userMock->shouldReceive('setAttribute')->with('unidades_vinculadas', []);
         
         $this->usuarioRepository->shouldReceive('findById')
             ->once()
@@ -250,6 +262,77 @@ class UsuarioServiceRepositoryTest extends TestCase
             
         $result = $this->service->getById($id);
         $this->assertEquals($userMock, $result);
+    }
+
+    public function test_get_by_id_inclui_unidades_vinculadas_por_cpf()
+    {
+        $id = 'user-id';
+
+        $usuario = new Usuario();
+        $usuario->id = $id;
+        $usuario->cpf = '12345678901';
+        $usuario->config = [];
+        $usuario->setRelation('lotacao', null);
+
+        $unidade = new Unidade();
+        $unidade->id = 'unidade-1';
+        $unidade->sigla = 'U1';
+
+        $matricula1 = new Usuario();
+        $matricula1->id = 'mat-1';
+        $matricula1->cpf = '12345678901';
+        $matricula1->matricula = '0001';
+        $matricula1->situacao_funcional = 'ATIVO';
+        $matricula1->setRelation('unidades', collect([$unidade]));
+
+        $matricula2 = new Usuario();
+        $matricula2->id = 'mat-2';
+        $matricula2->cpf = '12345678901';
+        $matricula2->matricula = '0002';
+        $matricula2->situacao_funcional = 'INATIVO';
+        $matricula2->setRelation('unidades', collect([$unidade]));
+
+        $this->usuarioRepository->shouldReceive('findById')
+            ->once()
+            ->with($id)
+            ->andReturn($usuario);
+
+        $this->usuarioRepository->shouldReceive('findActivesByCpf')
+            ->once()
+            ->with('12345678901')
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection([$matricula2, $matricula1]));
+
+        $this->siapeBlackListServidorRepository->shouldReceive('findByCpfAndOptionalMatricula')
+            ->once()
+            ->with('12345678901', '0001')
+            ->andReturn(null);
+
+        $this->siapeBlackListServidorRepository->shouldReceive('findByCpfAndOptionalMatricula')
+            ->once()
+            ->with('12345678901', '0002')
+            ->andReturn(Mockery::mock(\App\Models\SiapeBlackListServidor::class));
+
+        $result = $this->service->getById($id);
+
+        $unidadesVinculadas = $result->getAttribute('unidades_vinculadas');
+        $this->assertIsArray($unidadesVinculadas);
+        $this->assertCount(2, $unidadesVinculadas);
+        $this->assertEquals([
+            [
+                'id' => 'unidade-1',
+                'sigla' => 'U1',
+                'situacao_funcional' => 'ATIVO',
+                'matricula' => '0001',
+                'emProcessoDeInativacao' => false,
+            ],
+            [
+                'id' => 'unidade-1',
+                'sigla' => 'U1',
+                'situacao_funcional' => 'INATIVO',
+                'matricula' => '0002',
+                'emProcessoDeInativacao' => true,
+            ],
+        ], $unidadesVinculadas);
     }
 
     public function test_get_by_id_throws_not_found_exception()
