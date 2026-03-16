@@ -1,3 +1,9 @@
+## 2.9.18 16/03/2026
+### Corrigido
+- Correção no campo CPF, retirado mascára do front e adição de validação no backend.
+- Correção na busca de processos da cadeia de valor no cadastro de entregas do plano de entregas
+### Modificado
+- Melhorado a lógica do componente que lista as unidades do usuário
 ## 2.9.17 10/03/2026
 ### Corrigido
 - Correção na atualização e reativação de usuários.
