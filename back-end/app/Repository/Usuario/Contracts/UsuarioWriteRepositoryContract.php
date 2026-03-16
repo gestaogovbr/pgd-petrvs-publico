@@ -14,4 +14,5 @@ interface UsuarioWriteRepositoryContract
     public function delete(string|int $id): bool;
     public function updateFotoPerfil(string $usuarioId, string $tipo, string $url, string $downloadedUrl): bool;
     public function removerVinculos(string $usuarioId): void;
+    public function restore(string|int $id): bool;
 }

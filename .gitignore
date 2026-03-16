@@ -4,6 +4,8 @@
 *.bak
 
 back-end/vendor/*
+back-end/public/
+back-end/resources/views/angular.blade.php
 front-end/node_modules/*
 front-end/.angular/*
 

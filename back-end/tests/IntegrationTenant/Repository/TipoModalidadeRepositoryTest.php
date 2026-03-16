@@ -26,6 +26,7 @@ test('pode obter o ID padrao da modalidade', function () {
 });
 
 test('retorna null se nao houver modalidades', function () {
+    DB::table('usuarios')->delete();
     DB::table('tipos_modalidades')->delete();
     
     $repository = app(TipoModalidadeRepository::class);

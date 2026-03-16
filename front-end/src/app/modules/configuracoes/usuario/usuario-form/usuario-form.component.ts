@@ -62,8 +62,6 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     this.join = [
       "auditsExterno",
       "ultimoPlanoTrabalhoAtivo.documentos",
-      "matriculas",
-      "matriculas.lotacao.unidade",
       "tipoModalidadeSiape"
     ]
   }
@@ -133,10 +131,6 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     this.canEditAtribuicoes = this.snapshot?.data['canEditAtribuicoes'] ?? false;
   }
 
-  public getMatriculas() {
-    return (this.entity?.matriculas || [])
-      .sort((a, b) => (a?.matricula || '').localeCompare(b?.matricula || ''));
-  }
 }
 
 /*
