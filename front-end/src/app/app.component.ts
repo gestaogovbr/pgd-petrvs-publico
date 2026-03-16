@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, Injector, ViewChild, ViewContainerRef } f
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { ToolbarButton } from './components/toolbar/toolbar-types';
-import { AuthService } from './services/auth.service';
+import { AuthService, UnidadeVinculada } from './services/auth.service';
 import { DialogService } from './services/dialog.service';
 import { DialogComponent } from './services/dialog/dialog.component';
 import { GlobalsService } from './services/globals.service';
@@ -113,11 +113,7 @@ export class AppComponent implements IAppComponent {
 
     this.lex.cdRef = this.cdRef;
     /* Definição do menu do sistema */
-    this.setMenuVars();
-
-    if (this.auth?.usuario?.cpf) {
-      this.consultarBlacklistCpf(this.auth.usuario.cpf);
-    }
+    this.setMenuVars();  
 
     this.router.events.pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
@@ -506,7 +502,7 @@ export class AppComponent implements IAppComponent {
     return this.auth.unidades || [];
   }
 
-  public get unidadesVinculadas(): Unidade[] {
+  public get unidadesVinculadas(): UnidadeVinculada[] {
     return this.auth.unidadesVinculadas || [];
   }
 
@@ -531,56 +527,10 @@ export class AppComponent implements IAppComponent {
     popup.restore();
   }
 
-  public async selecionaUnidade(id: string, matricula: string) {
-    const matriculaAnterior = this.auth.usuario?.matricula;
-    
+  public async selecionaUnidade(id: string, matricula?: string | null) {
+    if (!matricula) return;
     await this.auth.selecionaUnidade(id, matricula, this.cdRef);
-    
-    if (matricula && matricula !== matriculaAnterior) {
-      window.location.reload();
-    }
-  }
-
-  public getMatriculaPelaUnidadeComCpf(idUnidade: string, cpf: string): string {
-    let matricula = this.auth.usuario?.matriculas?.find(x => x.unidades?.find(y => y.id == idUnidade) && x.cpf == cpf);
-    return matricula?.matricula || 'N/A';
-  }  
-
-  public async consultarBlacklistCpf(cpf: string): Promise<void> {
-    const response = await this.integranteService.consultarBlacklistCpf(cpf);
-    this.siapeBlacklistRows = response.rows;
-    this.siapeBlacklistMatriculas = response.matriculas;
-    this.cdRef.detectChanges();
-    this.initTooltips();
-  }
-
-  public initTooltips(): void {
-    const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]')) as HTMLElement[];
-    tooltipTriggerList.forEach((el: any) => {
-      if(bootstrap.Tooltip.getInstance(el)) return;
-      const t = new bootstrap.Tooltip(el, { trigger: 'manual' });
-      el.addEventListener('mouseenter', () => t.show());
-      el.addEventListener('mouseleave', () => t.hide());
-      el.addEventListener('click', () => t.hide());
-    });
-  }
-
-  public hasBlacklistResponse(): boolean {
-    return this.siapeBlacklistRows.length > 0;
-  }
-
-  public hasSpecificMatriculas(): boolean {
-    return this.siapeBlacklistMatriculas.length > 0;
-  }
-
-  public shouldHighlightMatricula(matricula: string | null | undefined): boolean {
-    if (!this.hasBlacklistResponse()) return false;
-    if (this.hasSpecificMatriculas()) return !!matricula && this.siapeBlacklistMatriculas.includes(matricula);
-    return true;
-  }
-
-  public shouldHighlightSigla(): boolean {
-    return this.hasBlacklistResponse() && !this.hasSpecificMatriculas();
+    window.location.reload();
   }
 
   public async onToolbarButtonClick(btn: ToolbarButton) {

@@ -46,7 +46,7 @@ export class AtividadeFormProrrogarComponent extends PageFormBase<Atividade, Ati
       data_estipulada_entrega: entity.data_estipulada_entrega 
     };
     if(entity.unidade_id != this.auth.unidade!.id) {
-      await this.auth.selecionaUnidade(entity.unidade_id);
+      await this.auth.selecionaUnidade(entity.unidade_id, undefined);
     }
     form.patchValue(formValue);
   }

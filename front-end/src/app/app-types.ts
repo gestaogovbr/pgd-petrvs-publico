@@ -64,7 +64,6 @@ export interface IAppComponent {
     cdRef: ChangeDetectorRef;
     menuContexto: MenuContexto[];
     setMenuVars(): void;
-    consultarBlacklistCpf(cpf: string): Promise<void>;
     go: any; /* NavigateService */
     gb: any; /* GlobalsService */
 }
