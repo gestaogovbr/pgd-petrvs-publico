@@ -4,6 +4,7 @@
 - Correção na busca de processos da cadeia de valor no cadastro de entregas do plano de entregas
 ### Modificado
 - Melhorado a lógica do componente que lista as unidades do usuário
+- Usuarios excluídos serão restaurados pelo processo de execução do SIAPE
 ## 2.9.17 10/03/2026
 ### Corrigido
 - Correção na atualização e reativação de usuários.
