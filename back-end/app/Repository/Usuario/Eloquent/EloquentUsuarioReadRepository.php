@@ -26,10 +26,13 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         $this->model = $model;
     }
 
-    public function findById(string|int $id): ?Usuario
+    public function findById(string|int $id, $deleteTrashed = false): ?Usuario
     {
+        /** @var \Illuminate\Database\Eloquent\Builder<Usuario> $query */
+        $query = $this->query();
+        
         /** @var Usuario|null $usuario */
-        $usuario = $this->query()->find($id);
+        $usuario = $deleteTrashed ? $query->withTrashed()->find($id) : parent::findById($id);
         return $usuario;
     }
 
@@ -172,14 +175,14 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $usuario;
     }
 
-    public function findActiveByCpf(string $cpf): ?Usuario
+    public function findActivesByCpf(string $cpf): Collection
     {
-        /** @var Usuario|null $usuario */
-        $usuario = $this->query()
+        /** @var Collection $usuarios */
+        $usuarios = $this->query()
             ->where('cpf', $cpf)
             ->whereIn('situacao_siape', \App\Enums\UsuarioSituacaoSiape::ativos())
-            ->first();
-        return $usuario;
+            ->get();
+        return $usuarios;
     }
 
     public function loadUserWithRelations(string $userId, string $entidadeId): ?Usuario

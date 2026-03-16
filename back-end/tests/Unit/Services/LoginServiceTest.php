@@ -9,7 +9,6 @@ use App\Services\FirebaseAuthService;
 use App\Services\GoogleService;
 use App\Models\Usuario;
 use App\Models\Entidade;
-use App\Models\Unidade;
 use App\Repository\UsuarioRepository;
 use App\Repository\EntidadeRepository;
 use App\Repository\UnidadeRepository;
@@ -23,6 +22,10 @@ uses(TestCase::class);
 
 beforeEach(function () {
     $this->usuarioService = Mockery::mock(UsuarioService::class);
+    $this->usuarioService
+        ->shouldReceive('anexarUnidadesVinculadasPorCpf')
+        ->andReturnNull()
+        ->byDefault();
     $this->unidadeService = Mockery::mock(UnidadeService::class);
     $this->firebaseAuthService = Mockery::mock(FirebaseAuthService::class);
     $this->googleService = Mockery::mock(GoogleService::class);
@@ -93,6 +96,7 @@ test('authenticate user password corretamente via api', function () {
     $usuarioMock->shouldReceive('createToken')->andReturn((object)['plainTextToken' => 'token-123']);
     $usuarioMock->shouldReceive('update');
     $usuarioMock->shouldReceive('fresh');
+    $usuarioMock->shouldReceive('setAttribute')->with('unidades_vinculadas', Mockery::type('array'))->andReturnSelf();
 
     // Hash check
     Hash::shouldReceive('check')->with('password', Mockery::any())->andReturn(true);
@@ -106,6 +110,14 @@ test('authenticate user password corretamente via api', function () {
     $this->usuarioRepository->shouldReceive('loadUserWithRelations')
         ->with('uuid-usuario', '') // string vazia pois entidade_id é null e tratado no service
         ->andReturn($usuarioMock);
+
+    $this->usuarioRepository->shouldReceive('findActivesByCpf')
+        ->with('12345678901')
+        ->andReturn(new \Illuminate\Database\Eloquent\Collection());
+
+    $this->usuarioRepository->shouldReceive('getUnidadesVinculadas')
+        ->with('12345678901')
+        ->andReturn(new \Illuminate\Database\Eloquent\Collection());
 
     // Mock registrarEntidade internal call
     $this->service->shouldReceive('registrarEntidade')->andReturn(Mockery::mock(Entidade::class));
@@ -147,6 +159,7 @@ test('authenticate firebase token success', function () {
     $usuarioMock->shouldReceive('createToken')->andReturn((object)['plainTextToken' => 'token-123']);
     $usuarioMock->shouldReceive('update');
     $usuarioMock->shouldReceive('fresh');
+    $usuarioMock->shouldReceive('setAttribute')->with('unidades_vinculadas', Mockery::type('array'))->andReturnSelf();
     
     $this->usuarioService->shouldReceive('atualizarFotoPerfil')
         ->with(UsuarioService::LOGIN_FIREBASE, $usuarioMock, 'http://picture.url');
@@ -160,6 +173,14 @@ test('authenticate firebase token success', function () {
     $this->usuarioRepository->shouldReceive('loadUserWithRelations')
         ->with('uuid-usuario', '')
         ->andReturn($usuarioMock);
+
+    $this->usuarioRepository->shouldReceive('findActivesByCpf')
+        ->with('12345678901')
+        ->andReturn(new \Illuminate\Database\Eloquent\Collection());
+
+    $this->usuarioRepository->shouldReceive('getUnidadesVinculadas')
+        ->with('12345678901')
+        ->andReturn(new \Illuminate\Database\Eloquent\Collection());
 
     $this->service->shouldReceive('registrarEntidade')->andReturn(Mockery::mock(Entidade::class));
 
@@ -280,9 +301,9 @@ test('signIn govbr callback normaliza cpf e encontra usuario ativo', function ()
     $this->service->shouldReceive('govBrProvider')->andReturn($provider);
     $this->service->shouldReceive('registrarUsuario')->andReturn($usuario);
 
-    $this->usuarioRepository->shouldReceive('findActiveByCpf')
+    $this->usuarioRepository->shouldReceive('findActivesByCpf')
         ->with('12345678901')
-        ->andReturn($usuario);
+        ->andReturn(new \Illuminate\Database\Eloquent\Collection([$usuario]));
 
     Auth::shouldReceive('loginUsingId')->with('uuid-usuario')->andReturn(true);
 
@@ -341,9 +362,10 @@ test('signIn govbr callback faz fallback para email quando cpf ausente', functio
     $this->service->shouldReceive('govBrProvider')->andReturn($provider);
     $this->service->shouldReceive('registrarUsuario')->andReturn($usuario);
 
-    $this->usuarioRepository->shouldReceive('findActiveByCpf')
+    $this->usuarioRepository->shouldReceive('findActivesByCpf')
         ->with('')
-        ->andReturn(null);
+        ->andReturn(new \Illuminate\Database\Eloquent\Collection());
+
     $this->usuarioRepository->shouldReceive('findByCpf')
         ->with('')
         ->andReturn(null);
@@ -358,4 +380,70 @@ test('signIn govbr callback faz fallback para email quando cpf ausente', functio
     expect($result)->toBeArray();
     expect($result['kind'])->toBe(LoginService::KIND_GOVBR);
     expect($result['usuario'])->toBe($usuario);
+});
+
+test('registrarUsuario inclui unidades_vinculadas com atributos minimos', function () {
+    $sessionMock = Mockery::mock();
+    $sessionMock->shouldReceive('get')->with('entidade_id')->andReturn('entidade-1');
+    $sessionMock->shouldReceive('put')->with('unidade_id', Mockery::any());
+
+    $request = Mockery::mock(Request::class);
+    $request->shouldReceive('session')->andReturn($sessionMock);
+
+    $usuario = new Usuario();
+    $usuario->id = 'uuid-usuario';
+    $usuario->cpf = '12345678901';
+    $usuario->config = [];
+
+    $usuarioComRelacoes = new Usuario();
+    $usuarioComRelacoes->id = 'uuid-usuario';
+    $usuarioComRelacoes->cpf = '12345678901';
+    $usuarioComRelacoes->config = [];
+    $usuarioComRelacoes->setRelation('lotacao', null);
+
+    $this->usuarioRepository->shouldReceive('loadUserWithRelations')
+        ->with('uuid-usuario', 'entidade-1')
+        ->andReturn($usuarioComRelacoes);
+        
+    $this->usuarioService->shouldReceive('anexarUnidadesVinculadasPorCpf')
+        ->once()
+        ->with(Mockery::on(function ($arg) {
+            return $arg instanceof Usuario && $arg->cpf === '12345678901';
+        }))
+        ->andReturnUsing(function (Usuario $usuario) {
+            $usuario->setAttribute('unidades_vinculadas', [
+                [
+                    'id' => 'unidade-1',
+                    'sigla' => 'U1',
+                    'matricula' => '0001',
+                    'emProcessoDeInativacao' => false,
+                ],
+                [
+                    'id' => 'unidade-1',
+                    'sigla' => 'U1',
+                    'matricula' => '0002',
+                    'emProcessoDeInativacao' => true,
+                ],
+            ]);
+        });
+
+    $result = $this->service->registrarUsuario($request, $usuario);
+
+    expect($result)->toBeInstanceOf(Usuario::class);
+
+    $unidadesVinculadas = $result->getAttribute('unidades_vinculadas');
+    expect($unidadesVinculadas)->toBeArray();
+    expect($unidadesVinculadas)->toHaveCount(2);
+    expect($unidadesVinculadas[0])->toMatchArray([
+        'id' => 'unidade-1',
+        'sigla' => 'U1',
+        'matricula' => '0001',
+        'emProcessoDeInativacao' => false,
+    ]);
+    expect($unidadesVinculadas[1])->toMatchArray([
+        'id' => 'unidade-1',
+        'sigla' => 'U1',
+        'matricula' => '0002',
+        'emProcessoDeInativacao' => true,
+    ]);
 });
