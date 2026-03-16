@@ -98,6 +98,7 @@ test('pendencias chefe sem unidade especifica', function () {
     $this->planoEntregaRepository->shouldReceive('getPlanosEntregaAvaliacao')->andReturn(new Collection());
     $this->planoEntregaRepository->shouldReceive('getPlanosEntregaHomologacao')->andReturn(new Collection());
     $this->planoEntregaRepository->shouldReceive('getEntregasPlanoEntregaHomologacao')->andReturn(new Collection());
+    $this->planoEntregaRepository->shouldReceive('getEntregasPlanoEntregaExecucao')->andReturn(new Collection());
 
     $result = $this->service->pendenciasChefe($usuarioId, null);
     
@@ -137,6 +138,7 @@ test('pendencias chefe com unidade especifica nao gerenciada', function () {
     $this->planoEntregaRepository->shouldReceive('getPlanosEntregaAvaliacao')->andReturn(new Collection());
     $this->planoEntregaRepository->shouldReceive('getPlanosEntregaHomologacao')->andReturn(new Collection());
     $this->planoEntregaRepository->shouldReceive('getEntregasPlanoEntregaHomologacao')->andReturn(new Collection());
+    $this->planoEntregaRepository->shouldReceive('getEntregasPlanoEntregaExecucao')->andReturn(new Collection());
 
     $result = $this->service->pendenciasChefe($usuarioId, $unidadeId);
     

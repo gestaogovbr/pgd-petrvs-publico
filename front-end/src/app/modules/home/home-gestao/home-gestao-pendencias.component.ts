@@ -18,9 +18,9 @@ export class HomeGestaoPendenciasComponent extends PageBase {
 
   public usuarioDao: UsuarioDaoService;
   public registrosExecucao: any[] = [];
-  public planosTrabalhos: any[] = [];
-  public planosEntregaEntregas: any[] = [];
-  public planosEntregas: any[] = [];
+  public planosEntregaAvaliacao: any[] = [];
+  public planosTrabalhoAssinatura: any[] = [];
+  public entregasPlanoEntregaExecucao: any[] = [];
 
   public lex: LexicalService;
   public gb: GlobalsService;
@@ -58,9 +58,9 @@ export class HomeGestaoPendenciasComponent extends PageBase {
 
   private applyPendenciasChefe(pendenciasChefe: any) {
     this.registrosExecucao = pendenciasChefe.registrosExecucao || [];
-    this.planosTrabalhos = pendenciasChefe.planosTrabalhos || [];
-    this.planosEntregaEntregas = pendenciasChefe.planosEntregaEntregas || [];
-    this.planosEntregas = pendenciasChefe.planosEntregas || [];
+    this.planosTrabalhoAssinatura = pendenciasChefe.planosTrabalhoAssinatura || [];
+    this.planosEntregaAvaliacao = pendenciasChefe.planosEntregaAvaliacao || [];
+    this.entregasPlanoEntregaExecucao = pendenciasChefe.entregasPlanoEntregaExecucao || [];
   }
 
   public formatDate(date: string): string {

@@ -959,15 +959,15 @@ class UsuarioService extends ServiceBase
         // 4. Planos de entrega aguardando homologação
         $planosEntregaHomologacao = $this->planoEntregaRepository->getPlanosEntregaHomologacao($unidadesFilhasIds);
 
-        // 5. Entregas de planos de entrega aguardando homologação
-        $entregasPlanoEntregaHomologacao = $this->planoEntregaRepository->getEntregasPlanoEntregaHomologacao($unidadesFilhasIds);
+        // 5. Entregas de planos de entrega que precisam ter progresso
+        $entregasPlanoEntregaExecucao = $this->planoEntregaRepository->getEntregasPlanoEntregaExecucao($unidadesFilhasIds);
 
         return [
             'registrosExecucao' => $registrosExecucao,
             'planosTrabalhoAssinatura' => $planosTrabalhoAssinatura,
             'planosEntregaAvaliacao' => $planosEntregaAvaliacao,
             'planosEntregaHomologacao' => $planosEntregaHomologacao,
-            'entregasPlanoEntregaHomologacao' => $entregasPlanoEntregaHomologacao
+            'entregasPlanoEntregaExecucao' => $entregasPlanoEntregaExecucao
         ];
     }
 }

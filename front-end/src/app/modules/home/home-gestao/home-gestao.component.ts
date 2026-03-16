@@ -46,10 +46,10 @@ export class HomeGestaoComponent {
     try {
       const res = await this.usuarioDao.getPendenciasChefe();
       this.pendenciasChefe = (res as any)?.pendencias || {};
-      this.totalPendenciasChefe = ((this.pendenciasChefe.planosEntregaEntregas || []).length)
-        + ((this.pendenciasChefe.planosEntregas || []).length)
-        + ((this.pendenciasChefe.registrosExecucao || []).length)
-        + ((this.pendenciasChefe.planosTrabalhos || []).length);
+      this.totalPendenciasChefe = ((this.pendenciasChefe.entregasPlanoEntregaExecucao || []).length)
+        + ((this.pendenciasChefe.planosEntregaAvaliacao || []).length)
+        + ((this.pendenciasChefe.planosTrabalhoAssinatura || []).length)
+        + ((this.pendenciasChefe.registrosExecucao || []).length);
     } finally {
       this.pendenciasChefe = this.pendenciasChefe || {};
       this.pendenciasLoaded = true;
