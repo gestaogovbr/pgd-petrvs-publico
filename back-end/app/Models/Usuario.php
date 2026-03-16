@@ -107,7 +107,7 @@ class Usuario extends Authenticatable implements AuditableContract
         'nome', /* varchar(256); NOT NULL; */ // Nome do usuário
         'email', /* varchar(100); NOT NULL; */ // E-mail do usuário
         'email_verified_at', /* timestamp; */ // Data de verificação do e-mail do usuário
-        'cpf', /* varchar(14); NOT NULL; */ // CPF do usuário
+        'cpf', /* varchar(11); NOT NULL; */ // CPF do usuário
         'matricula', /* varchar(50); */ // Matrícula funcional do usuário
         'apelido', /* varchar(100); NOT NULL; */ // Apelido/Nome de guerra/Nome social
         'telefone', /* varchar(50); */ // Telefone do usuário

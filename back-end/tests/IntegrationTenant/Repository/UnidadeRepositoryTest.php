@@ -23,7 +23,7 @@ class UnidadeRepositoryTest extends DatabaseTenantTestCase
         $this->repository = app(UnidadeRepository::class);
         
         // Ensure constraints are satisfied
-        if (DB::table('perfis')->count() == 0) {
+        if (!DB::table('perfis')->where('id', 'perfil-test')->exists()) {
             DB::table('perfis')->insert([
                 'id' => 'perfil-test',
                 'nome' => 'Participante',
@@ -34,7 +34,7 @@ class UnidadeRepositoryTest extends DatabaseTenantTestCase
             ]);
         }
         
-        if (DB::table('tipos_modalidades')->count() == 0) {
+        if (!DB::table('tipos_modalidades')->where('id', 'modalidade-test')->exists()) {
             DB::table('tipos_modalidades')->insert([
                 'id' => 'modalidade-test',
                 'nome' => 'Presencial',

@@ -44,10 +44,10 @@ afterEach(function () {
 });
 
 test('deve identificar usuario novo no resumo', function () {
-    $cpf = '12345678901';
+    $cpf = str_pad((string) random_int(1, 99999999999), 11, '0', STR_PAD_LEFT);
     
     // Ensure user does not exist
-    $this->assertDatabaseMissing('usuarios', ['cpf' => $cpf]);
+    $this->assertDatabaseMissing('usuarios', ['cpf' => $cpf], 'tenant');
 
     $reflection = new \ReflectionClass(SiapeIndividualServidorService::class);
     $method = $reflection->getMethod('gerarResumo');
