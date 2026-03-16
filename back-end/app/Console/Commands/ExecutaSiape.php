@@ -16,7 +16,7 @@ class ExecutaSiape extends Command
      *
      * @var string
      */
-    protected $signature = 'app:executa-siape {tenant}';
+    protected $signature = 'siape:executa {tenant}';
 
     /**
      * The console command description.

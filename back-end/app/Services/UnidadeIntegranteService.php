@@ -25,6 +25,13 @@ use Throwable;
  */
 class UnidadeIntegranteService extends ServiceBase
 {
+  private UsuarioRepository $usuarioRepository;
+  public function __construct($collection = null)
+  {
+     parent::__construct($collection);
+     $this->usuarioRepository = app(UsuarioRepository::class);
+  }
+
   public function carregarIntegrantes($unidadeId, $usuarioId)
   {
     $result = [];
@@ -66,20 +73,32 @@ class UnidadeIntegranteService extends ServiceBase
     return ['rows' => array_values(array_filter($result, fn ($vinculo) => count($vinculo["atribuicoes"]) > 0))];
   }
 
+  private function trataUsuarioExcluido(string $usuarioId, Unidade $unidade)
+  {
+    $usuario = $this->usuarioRepository->findById($usuarioId, true);
+
+    if($usuario->usuario_externo == 1){
+      SiapeLog::error('Usuário externo excluído não pode ser integrante de uma unidade', ['usuario' => $usuario, 'unidade' => $unidade]);
+      throw new ServerException("ValidateIntegrante", "Usuário externo excluído não pode ser integrante de uma unidade");
+    }
+    SiapeLog::info('Usuário excluído restaurado', ['usuario' => $usuario, 'unidade' => $unidade]);
+    $this->usuarioRepository->restore($usuario->id);
+  }
+
   
   public function salvarIntegrantes(array $vinculos, $transaction = true): array
   {
     $result = [];
     foreach ($vinculos as $vinculo) {
       try {
-        $usuario = Usuario::find($vinculo["usuario_id"]);
+        /** @var Usuario|null $usuario */
+        $usuario = $this->usuarioRepository->findById($vinculo["usuario_id"]);
         $unidade = Unidade::where('id', $vinculo["unidade_id"])->whereNull('data_inativacao')->first();
 
         if(($vinculo['_status'] ?? null) === 'DELETE') continue;
         
         if (empty($usuario)) {
-            SiapeLog::error('Usuário não encontrado ao processar vínculo', ['vinculo' => $vinculo]);
-            throw new ServerException("ValidateIntegrante", "Usuário não encontrado no sistema");
+          $this->trataUsuarioExcluido($vinculo["usuario_id"], $unidade);
         }
         
         if (empty($unidade)) {

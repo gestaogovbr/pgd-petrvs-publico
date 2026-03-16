@@ -26,10 +26,13 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         $this->model = $model;
     }
 
-    public function findById(string|int $id): ?Usuario
+    public function findById(string|int $id, $deleteTrashed = false): ?Usuario
     {
+        /** @var \Illuminate\Database\Eloquent\Builder<Usuario> $query */
+        $query = $this->query();
+        
         /** @var Usuario|null $usuario */
-        $usuario = $this->query()->find($id);
+        $usuario = $deleteTrashed ? $query->withTrashed()->find($id) : parent::findById($id);
         return $usuario;
     }
 

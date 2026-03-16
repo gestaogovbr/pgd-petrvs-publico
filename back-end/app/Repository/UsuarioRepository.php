@@ -18,9 +18,9 @@ class UsuarioRepository
     ) {
     }
 
-    public function findById(string $id): ?Usuario
+    public function findById(string $id, $deleteTrashed = false): ?Usuario
     {
-        return $this->readRepository->findById($id);
+        return $this->readRepository->findById($id, $deleteTrashed);
     }
 
     public function findByCpfOrEmail(string $cpf, string $email, ?string $exceptId = null, bool $withTrashed = false): ?Usuario
@@ -141,5 +141,10 @@ class UsuarioRepository
     public function findAllByCpfUnfiltered(string $cpf): Collection
     {
         return $this->readRepository->findAllByCpfUnfiltered($cpf);
+    }
+
+    public function restore(string $id): bool
+    {
+        return $this->writeRepository->restore($id);
     }
 }
