@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\Atribuicao;
 use App\Services\ServiceBase;
 use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
 use Illuminate\Support\Facades\DB;
@@ -130,7 +131,7 @@ class IntegracaoGestorService extends ServiceBase
 
             $idUsuario = $usuario->id;
 
-            $chefiaAtual = $this->usuarioRepository->isIntegrante($idUsuario, $idUnidade, 'GESTOR');
+            $chefiaAtual = $this->usuarioRepository->isIntegrante($idUsuario, $idUnidade, Atribuicao::GESTOR->value);
 
             if ($chefiaAtual) {
                 continue;
