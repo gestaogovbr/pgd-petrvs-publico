@@ -63,7 +63,7 @@ class Handler extends ExceptionHandler
             $response = response()->make('', Response::HTTP_INTERNAL_SERVER_ERROR);
 
             (new ErrorInterceptor())->intercept($e, $request, $response);
-            return $response;
+            return null;
         });
     }
 }
