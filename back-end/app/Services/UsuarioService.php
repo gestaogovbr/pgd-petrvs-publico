@@ -922,6 +922,23 @@ class UsuarioService extends ServiceBase
         return $unidades;
     }
 
+    /**
+     * Retorna pendências de chefia para o usuário logado ou para o usuário informado.
+     *
+     * Agrupa pendências de avaliação e assinatura ligadas às unidades gerenciadas,
+     * incluindo unidades subordinadas, e permite filtrar por uma unidade específica
+     * quando ela está dentro das unidades gerenciadas pelo usuário.
+     *
+     * @param string|null $usuarioId ID do usuário alvo; se nulo usa o usuário logado.
+     * @param string|null $unidadeId ID da unidade para restringir a busca.
+     * @return array{
+     *   registrosExecucao:\Illuminate\Support\Collection,
+     *   planosTrabalhoAssinatura:\Illuminate\Support\Collection,
+     *   planosEntregaAvaliacao:\Illuminate\Support\Collection,
+     *   planosEntregaHomologacao:\Illuminate\Support\Collection,
+     *   entregasPlanoEntregaExecucao:\Illuminate\Support\Collection
+     * }
+     */
     public function pendenciasChefe(?string $usuarioId = null, ?string $unidadeId = null)
     {
         $usuario_id = $usuarioId ?? $this->loggedUser()?->id;
