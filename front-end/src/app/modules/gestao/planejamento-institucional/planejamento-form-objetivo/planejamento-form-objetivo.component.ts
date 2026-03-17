@@ -66,13 +66,15 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
     this.planejamento = this.metadata?.planejamento as Planejamento;
     if(this.metadata?.planejamento_superior) this.planejamento.planejamento_superior = this.metadata.planejamento_superior as Planejamento;
     this.form?.controls.planejamento_superior_nome.setValue(this.planejamento?.planejamento_superior?.nome || '');
-    this.objetivos_superiores = this.planejamento?.planejamento_superior?.objetivos?.map(x => Object.assign({}, { key: x.id, value: x.nome, data: x })) || [];
-    
+    const objetivosSuperioresRaw = this.planejamento?.planejamento_superior?.objetivos as PlanejamentoObjetivo[] || []; 
     const objetivosRaw = (this.metadata?.objetivos as PlanejamentoObjetivo[]) || [];
+
     let objetivosOrdenados = this.ordenarObjetivos(objetivosRaw);
+    let objetivosSuperioresOrdenados = this.ordenarObjetivos(objetivosSuperioresRaw);
     
     objetivosOrdenados = this.filtrarObjetivos(objetivosOrdenados, entity.id);
     this.objetivos = this.montarListaObjetivos(objetivosOrdenados);
+    this.objetivos_superiores = this.montarListaObjetivos(objetivosSuperioresOrdenados);
 
     (async () => {
         await this.eixoTematico?.loadSearch(entity.eixo_tematico || entity.eixo_tematico_id);

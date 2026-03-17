@@ -2,7 +2,10 @@
 
 use App\Services\IntegracaoGestorService;
 use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
-use App\Models\Usuario;
+use App\Services\NivelAcessoService;
+use App\Services\PerfilService;
+use App\Services\UnidadeIntegranteService;
+use App\Repository\UnidadeRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Mockery\MockInterface;
@@ -55,7 +58,7 @@ describe('IntegracaoGestorService', function () {
 
         $service->shouldReceive('createGestorIntegracao')
             ->once()
-            ->with($chefiasMock, Mockery::type(Usuario::class), Mockery::any(), Mockery::any(), Mockery::any(), $config)
+            ->with($chefiasMock, Mockery::any(), Mockery::any(), Mockery::any(), $config)
             ->andReturn($gestorIntegracaoMock);
 
         // Act
@@ -119,5 +122,24 @@ describe('IntegracaoGestorService', function () {
 
         // Assert
         expect($result['Resultado'])->toContain('Os gestores não foram atualizados, conforme solicitado!');
+    });
+
+    it('deve criar GestorIntegracao com UnidadeRepository via container', function () {
+        $service = new IntegracaoGestorService();
+
+        $integracao = $service->createGestorIntegracao(
+            [],
+            Mockery::mock(UnidadeIntegranteService::class),
+            Mockery::mock(NivelAcessoService::class),
+            Mockery::mock(PerfilService::class),
+            []
+        );
+
+        expect($integracao)->toBeInstanceOf(GestorIntegracao::class);
+
+        $reflection = new ReflectionClass($integracao);
+        $property = $reflection->getProperty('unidadeRepository');
+        $property->setAccessible(true);
+        expect($property->getValue($integracao))->toBeInstanceOf(UnidadeRepository::class);
     });
 });

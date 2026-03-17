@@ -106,7 +106,7 @@ class PlanoTrabalhoService extends ServiceBase
         }
 
         if (isset($subordinadas[2]) && $subordinadas[2]) { // Verifica se o índice existe
-            $unidadeService = new UnidadeService();
+            $unidadeService = app(UnidadeService::class);
 
             // Define $uId corretamente, verificando a existência do índice
             if (empty($unidadeId)) {
@@ -875,10 +875,9 @@ class PlanoTrabalhoService extends ServiceBase
     public function validateCancelamento($planoId)
     {
         /*
-        (RN_PTR_R) Condições para que um Plano de Trabalho possa ser cancelado:
+        Condições para que um Plano de Trabalho possa ser cancelado:
         - o usuário logado precisa possuir a capacidade "MOD_PTR_CNC", e
             - o plano precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO; e
-            - não possuir nenhuma atividade lançada e não possuir nenhuma consolidação CONCLUIDO/AVALIADO; [RN_PTR_K]
             - o usuário logado precisa ser gestor da Unidade Executora;
         */
         if (!$this->loggedUser()->hasPermissionTo('MOD_PTR_CNC'))
@@ -890,17 +889,7 @@ class PlanoTrabalhoService extends ServiceBase
             return "O plano de trabalho não pode ser cancelado porque foi deletado ou não está em nenhum dos seguintes status: INCLUIDO, AGUARDANDO ASSINATURA ou ATIVO.\n[ver RN_PTR_R]";
         if (!$condition2)
             return "O plano de trabalho não pode ser cancelado porque o usuário logado não é um dos gestores da sua unidade executora.\n[ver RN_PTR_R]";
-        /* (RN_PTR_K) O Plano de Trabalho somente poderá ser cancelado se não houver nenhuma atividade e nenhum periodo consolidado. Os afastamentos e ocorrências continuam válidas no sistema, somente removendo o vinculo com a consolidação; */
-        // $planoTrabalho = PlanoTrabalho::find($planoId);
-        // foreach ($planoTrabalho->entregas as $entrega) {
-        //     $atividades = $entrega->atividades->map(fn($x) => "#" . $x->numero)->toArray();
-        //     if (count($atividades) > 0)
-        //         return "Somente é possível cancelar plano de trabalho que não tenha atividade lançada. Atividade(s): " . implode(", ", $atividades);
-        // }
-        // foreach ($planoTrabalho->consolidacoes as $consolidacao) {
-        //     if ($consolidacao->status !== StatusEnum::INCLUIDO->value)
-        //         return "Somente é possível cancelar plano de trabalho que não tenha período de consolidação concluído.";
-        // }
+       
         return null;
     }
 

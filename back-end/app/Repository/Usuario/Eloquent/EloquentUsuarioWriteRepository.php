@@ -39,6 +39,11 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
         return $model;
     }
 
+    public function restore(string|int $id): bool
+    {
+        return $this->model->withTrashed()->find($id)->restore();
+    }
+
     public function delete(string|int $id): bool
     {
         return parent::delete($id);

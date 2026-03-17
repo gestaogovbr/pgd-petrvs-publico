@@ -148,7 +148,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
     await this.usuario!.loadSearch(entity.usuario || formValue.usuario_id);
     this.loadIniciadas(formValue.usuario_id);
     if(entity.unidade_id != this.auth.unidade!.id) {
-      await this.auth.selecionaUnidade(entity.unidade_id);
+      await this.auth.selecionaUnidade(entity.unidade_id, undefined);
     }
     form.patchValue(formValue);
     this.onPlanoChange(new Event('change'));

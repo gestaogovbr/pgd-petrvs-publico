@@ -5,9 +5,21 @@ namespace App\Services;
 use App\Services\CalendarioService;
 use Carbon\Carbon;
 use DateTime;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
+use App\Exceptions\NotFoundException;
 
 class UtilService
 {
+    public static function downloadUrl($file)
+    {
+        if (!Storage::exists($file)) {
+            throw new NotFoundException("Arquivo não encontrado");
+        }
+        $url = URL::temporarySignedRoute('download', now()->addMinutes(30), ['tenant' => tenant('id'), 'file' => $file], false);
+        $url = substr($url, strpos($url, "download/")); /* Convert to relative path from absolute */
+        return $url;
+    }
 
     public static function emptyEntry($data, $key) {
         $arrayRef = gettype($data) == "object" ? (method_exists($data, "toArray") ? $data->toArray() : (array) $data) : $data;

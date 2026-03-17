@@ -36,8 +36,7 @@ use App\Models\QuestionarioPreenchimento;
 use App\Models\StatusJustificativa;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
-use App\Services\UsuarioService;
-use App\Services\UnidadeService;
+use App\Services\UtilService;
 use App\Traits\AutoUuid;
 use App\Traits\HasPermissions;
 use App\Traits\MergeRelations;
@@ -108,7 +107,7 @@ class Usuario extends Authenticatable implements AuditableContract
         'nome', /* varchar(256); NOT NULL; */ // Nome do usuário
         'email', /* varchar(100); NOT NULL; */ // E-mail do usuário
         'email_verified_at', /* timestamp; */ // Data de verificação do e-mail do usuário
-        'cpf', /* varchar(14); NOT NULL; */ // CPF do usuário
+        'cpf', /* varchar(11); NOT NULL; */ // CPF do usuário
         'matricula', /* varchar(50); */ // Matrícula funcional do usuário
         'apelido', /* varchar(100); NOT NULL; */ // Apelido/Nome de guerra/Nome social
         'telefone', /* varchar(50); */ // Telefone do usuário
@@ -489,7 +488,13 @@ class Usuario extends Authenticatable implements AuditableContract
      */
     public function getUrlFotoAttribute($value)
     {
-        return "/assets/images/profile.png";;
+        $url = "/assets/images/profile.png";
+        try {
+            $url = empty($this->foto_perfil) ? "/assets/images/profile.png" : UtilService::downloadUrl($this->foto_perfil);
+        } catch (Throwable $e) {
+            $url = "/assets/images/profile.png";
+        }
+        return $url;
     }
 
     public function getPedagioAttribute(){

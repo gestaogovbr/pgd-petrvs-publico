@@ -3,7 +3,6 @@
 use App\Models\Afastamento;
 use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
 use App\Services\Snapshot\Rebuilder\AfastamentoSnapshotRebuilder;
-use DateTime;
 
 
 uses(Tests\TestCase::class);

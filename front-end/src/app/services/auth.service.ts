@@ -22,6 +22,19 @@ import { UnidadeService } from './unidade.service';
 
 export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "SESSION" | "SEI" | "LOGINUNICO";
 export type Permission = string | (string | string[])[];
+export type UnidadeVinculada = Unidade & {
+  matricula?: string | null;
+  emProcessoDeInativacao?: boolean;
+};
+
+type LoginResponse = {
+  error?: string;
+  kind?: AuthKind;
+  token?: string;
+  entidade?: any;
+  usuario?: Usuario & { unidades_vinculadas?: UnidadeVinculada[] };
+  horario_servidor?: string;
+};
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +47,7 @@ export class AuthService {
   public entidade?: Entidade;
   public unidade?: Unidade;
   public unidades?: Unidade[];
-  public unidadesVinculadas?: Unidade[];
+  public unidadesVinculadas?: UnidadeVinculada[];
   public app?: IAppComponent;
 
   private _apiToken: string | undefined = undefined;
@@ -159,6 +172,10 @@ export class AuthService {
     if (user) {
       let usuarioContextos = [];
       this.usuario = Object.assign(new Usuario(), user) as Usuario;
+
+      const unidadesVinculadas = this.mapUnidadesVinculadasFromAuth(user);
+      const unidadesVinculadasFromAuth = Array.isArray(unidadesVinculadas);
+      if (unidadesVinculadasFromAuth) this.unidadesVinculadas = unidadesVinculadas;
       this.capacidades = this.usuario?.perfil?.capacidades?.filter(x => x.deleted_at == null).map(x => x.tipo_capacidade?.codigo || "") || [];
       this.kind = this.kind;
       this.logged = true;
@@ -178,9 +195,7 @@ export class AuthService {
       if (!usuarioContextos.includes(this.usuario?.config.menu_contexto)) this.gb.contexto = this.app?.menuContexto.find(c => c.key === this.usuario?.config.menu_contexto);
       this.gb.setContexto(usuarioContextos[0]);
       this.notificacao.updateNaoLidas();
-      this.popularMatriculasUsuario();
-      this.setUnidadesVinculadas();
-      if (this.app && this.usuario?.cpf) this.app.consultarBlacklistCpf(this.usuario.cpf);
+      if (!unidadesVinculadasFromAuth) this.setUnidadesVinculadas();
     } else {
       this.usuario = undefined;
       this.kind = undefined;
@@ -188,6 +203,12 @@ export class AuthService {
       this.unidades = undefined;
     }
     this.logging = false;
+  }
+
+
+  private mapUnidadesVinculadasFromAuth(user: any): UnidadeVinculada[] | undefined {
+    if (!Array.isArray(user?.unidades_vinculadas)) return;
+    return user.unidades_vinculadas.map((item: any) => new Unidade(item) as UnidadeVinculada);
   }
 
   /*
@@ -269,15 +290,15 @@ export class AuthService {
     let deviceName = this.gb.isExtension ? "EXTENSION" : this.gb.isSeiModule ? "SEI" : "BROWSER";
     let login = (): Promise<boolean> => {
       return this.server.post((this.gb.isEmbedded ? "api/" : "web/") + route, { ...params, device_name: deviceName }).toPromise().then(response => {
-        if (response?.error)
-          throw new Error(response?.error);
-        this.kind = response?.kind || kind;
-        this.apiToken = response.token;
-        this.registerEntity(response.entidade);
-        this.registerUser(response.usuario, this.apiToken);
+        const loginResponse = response as LoginResponse;
+        if (loginResponse?.error) throw new Error(loginResponse.error);
+        this.kind = loginResponse?.kind || kind;
+        this.apiToken = loginResponse.token;
+        this.registerEntity(loginResponse.entidade);
+        this.registerUser(loginResponse.usuario, this.apiToken);
         this.app?.setMenuVars();
-        if (response.horario_servidor?.length) {
-          this.gb.horarioDelta.servidor = UtilService.iso8601ToDate(response.horario_servidor);
+        if (loginResponse.horario_servidor?.length) {
+          this.gb.horarioDelta.servidor = UtilService.iso8601ToDate(loginResponse.horario_servidor);
           this.gb.horarioDelta.local = new Date();
         }
         if (this.success && kind != "SESSION") this.success(this.usuario!, redirectTo);
@@ -328,14 +349,13 @@ export class AuthService {
   }
   
 
-  public selecionaUnidade(id: string, matricula?: string, cdRef?: ChangeDetectorRef) {
+  public selecionaUnidade(id: string, matricula?: string | null, cdRef?: ChangeDetectorRef) {
     if (this.unidadesVinculadas?.find(x => x.id == id)) {
       this.unidade = undefined;
       cdRef?.detectChanges();
-      return this.server.post("api/seleciona-unidade", { unidade_id: id, matricula: matricula }).toPromise().then(response => {
+      return this.server.post("api/seleciona-unidade", { unidade_id: id, matricula: matricula ?? undefined }).toPromise().then(response => {
         if (response?.unidade) {
           this.unidade = Object.assign(new Unidade(), response?.unidade) as Unidade;
-          //if(!this.unidades?.find(x => x.id == this.unidade!.id)) this.unidades?.push(this.unidade);
           this.calendar.loadFeriadosCadastrados(this.unidade.id);
           if (this.unidade.entidade) this.lex.loadVocabulary(this.unidade.entidade.nomenclatura || []);
         }
@@ -346,7 +366,6 @@ export class AuthService {
         return undefined;
       });
     } else {
-      console.log('inválido');
       return Promise.resolve(undefined);
     }
   }
@@ -483,15 +502,15 @@ export class AuthService {
   private impersonateUser(kind: AuthKind, route: string, user: string,redirectTo?: FullRoute): Promise<boolean> {
     let login = (): Promise<boolean> => {
       return this.server.post("api/impersonate", { user_id: user }).toPromise().then(response => {
-        if (response?.error)
-          throw new Error(response?.error);
-        this.kind = response?.kind || kind;
-        this.apiToken = response.token;
-        this.registerEntity(response.entidade);
-        this.registerUser(response.usuario, this.apiToken);
+        const loginResponse = response as LoginResponse;
+        if (loginResponse?.error) throw new Error(loginResponse.error);
+        this.kind = loginResponse?.kind || kind;
+        this.apiToken = loginResponse.token;
+        this.registerEntity(loginResponse.entidade);
+        this.registerUser(loginResponse.usuario, this.apiToken);
         this.app?.setMenuVars();
-        if (response.horario_servidor?.length) {
-          this.gb.horarioDelta.servidor = UtilService.iso8601ToDate(response.horario_servidor);
+        if (loginResponse.horario_servidor?.length) {
+          this.gb.horarioDelta.servidor = UtilService.iso8601ToDate(loginResponse.horario_servidor);
           this.gb.horarioDelta.local = new Date();
         }
         if (this.success && kind != "SESSION") this.success(this.usuario!, redirectTo);
@@ -512,11 +531,11 @@ export class AuthService {
     }
   }
 
-  public buscarUnidadesVinculadas(cpf: string): Promise<Unidade[]> {
-    return new Promise<Unidade[]>((resolve, reject) => {
+  public buscarUnidadesVinculadas(cpf: string): Promise<UnidadeVinculada[]> {
+    return new Promise<UnidadeVinculada[]>((resolve, reject) => {
       this.server.post('api/usuario/unidades-vinculadas', { cpf }).subscribe({
         next: (response) => {
-          const unidades = response?.unidades?.map((item: any) => new Unidade(item)) || [];
+          const unidades = response?.unidades?.map((item: any) => new Unidade(item) as UnidadeVinculada) || [];
           resolve(unidades);
         },
         error: (error) => reject(error)
@@ -534,28 +553,5 @@ export class AuthService {
       }
     }
   }
-
-  public buscarMatriculas(cpf: string): Promise<Usuario[]> {
-    return new Promise<Usuario[]>((resolve, reject) => {
-      this.server.post('api/usuario/matriculas', { cpf }).subscribe({
-        next: (response) => {
-          const matriculas = response?.usuarios?.map((item: any) => new Usuario(item)) || [];
-          resolve(matriculas);
-        },
-        error: (error) => reject(error)
-      });
-    });
-  }
-
-  
-  public async popularMatriculasUsuario(): Promise<void> {
-    if (this.usuario?.cpf) {
-      try {
-        this.usuario.matriculas = await this.buscarMatriculas(this.usuario.cpf);
-      } catch (error) {
-        console.error('Erro ao buscar matrículas do usuário:', error);
-        this.usuario.matriculas = [];
-      }
-    }
-  } 
+ 
 }

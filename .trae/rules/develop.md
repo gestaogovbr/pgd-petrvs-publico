@@ -1,0 +1,8 @@
+- Use boas praticas de programação.
+- respeite as regras do SOLID sempre que possível
+- Evite números magicos
+- evite if's aninhados
+- evite uso de else, prefira if exclusivos
+- metodos grandes devem ser evitados, utilize metodos pequenos.
+- Evite comentários desnecessários, isso não inclui PhpDoc, TODO, @var e comentários relevantes.
+- remover importes não usados

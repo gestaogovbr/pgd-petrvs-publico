@@ -31,7 +31,7 @@ class RelatorioUnidadeService extends ServiceBase
         $unidadeIds = [$unidadeId[2]];
 
         if (isset($subordinadas[2])) {
-            $unidadeService = new UnidadeService();
+            $unidadeService = app(UnidadeService::class);
             $subordinadasIds = $unidadeService->subordinadas($unidadeId[2])->pluck('id')->toArray();
             $unidadeIds = array_merge($unidadeIds, $subordinadasIds);
         }

@@ -61,7 +61,7 @@ export class AtividadeFormPausarComponent extends PageFormBase<Atividade, Ativid
       data: this.util.setStrTime(new Date(), this.auth.unidadeHora)
     };
     if(entity.unidade_id != this.auth.unidade!.id) {
-      await this.auth.selecionaUnidade(entity.unidade_id);
+      await this.auth.selecionaUnidade(entity.unidade_id, undefined);
     }
     form.patchValue(formValue);
   }

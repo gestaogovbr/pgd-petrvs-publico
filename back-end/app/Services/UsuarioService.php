@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Enums\TipoModalidadeEnum;
 use App\Enums\UsuarioSituacaoSiape;
+use App\Exceptions\DBException;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
@@ -16,6 +18,8 @@ use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\TipoModalidadeRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
+use App\Repository\SiapeBlackListServidorRepository;
+use App\Services\IntegracaoService;
 use App\Services\RawWhere;
 use App\Services\ServiceBase;
 use App\Services\Siape\DadosExternosSiape;
@@ -52,6 +56,7 @@ class UsuarioService extends ServiceBase
     protected PlanoTrabalhoConsolidacaoRepository $planoTrabalhoConsolidacaoRepository;
     protected PlanoTrabalhoRepository $planoTrabalhoRepository;
     protected PlanoEntregaRepository $planoEntregaRepository;
+    protected SiapeBlackListServidorRepository $siapeBlackListServidorRepository;
 
     public function __construct() {
         parent::__construct();
@@ -63,14 +68,48 @@ class UsuarioService extends ServiceBase
         $this->planoTrabalhoConsolidacaoRepository = app(PlanoTrabalhoConsolidacaoRepository::class);
         $this->planoTrabalhoRepository = app(PlanoTrabalhoRepository::class);
         $this->planoEntregaRepository = app(PlanoEntregaRepository::class);
+        $this->siapeBlackListServidorRepository = app(SiapeBlackListServidorRepository::class);
+    }
+
+    private function applyDefaultTipoModalidadeId(array &$data): void
+    {
+        if (!empty($data['tipo_modalidade_id'] ?? null)) {
+            return;
+        }
+
+        $defaultTipoModalidade = $this->tipoModalidadeRepository->findByNome(TipoModalidadeEnum::SEM_DADOS_SIAPE->nome());
+
+        if (!$defaultTipoModalidade) {
+            throw new ValidateException("Tipo de Modalidade Padrão não definido no sistema. Consulte um administrador", 422);
+        }
+
+        $data['tipo_modalidade_id'] = $defaultTipoModalidade->id;
     }
 
     /**
-     * @param mixed $usuario
+     * @param object{
+     *   id: string,
+     *   matriculasiape: string,
+     *   emailfuncional: string,
+     *   modalidade_pgd: mixed,
+     *   nome_servidor: string,
+     *   nome_guerra: string,
+     *   cod_jornada: mixed,
+     *   nome_jornada: mixed,
+     *   participa_pgd: mixed,
+     *   ident_unica: mixed,
+     *   data_modificacao: mixed,
+     *   data_nascimento: mixed
+     * } $usuario
      * @return void
      */
     public function atualizarServidor($usuario)
     {
+        if (empty($usuario->id)) {
+            SiapeLog::error("ID do usuário não encontrado para atualização", ['usuario' => (array) $usuario]);
+            return;
+        }
+
         SiapeLog::info("Atualizando dados do servidor Matricula: " . $usuario->matriculasiape);
 
         $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($usuario->emailfuncional, $usuario->matriculasiape, $usuario->id);
@@ -233,6 +272,7 @@ class UsuarioService extends ServiceBase
             $action = empty($data['id']) ? ServiceBase::ACTION_INSERT : ServiceBase::ACTION_EDIT;
 
             if ($action == ServiceBase::ACTION_EDIT) {
+                if (!$data['usuario_externo']) unset($data['cpf']);
                 $result = $this->update($data, $unidade, $transaction);
                 if ($transaction) DB::commit();
                 return $result;
@@ -241,7 +281,21 @@ class UsuarioService extends ServiceBase
             $restoredEntity = $this->validateStore($data, $unidade, $action);
 
             if ($restoredEntity) {
+                if ($restoredEntity instanceof Usuario) {
+                    $restoredEntity->restore();
+                }
+                unset($data['pedagio']);
+                if (!empty($data['cpf'])) {
+                    $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
+                }
+                if (!empty($data['telefone'])) {
+                    $data['telefone'] = UtilService::onlyNumbers($data['telefone']);
+                }
+                $this->applyDefaultTipoModalidadeId($data);
                 $updated = $this->usuarioRepository->update($restoredEntity->id, $data);
+                if (!$updated) {
+                    throw new DBException("Falha ao reativar o usuário", 500);
+                }
                 $this->extraStore($updated, $unidade, $action);
                 if ($transaction) DB::commit();
                 return $updated;
@@ -249,6 +303,9 @@ class UsuarioService extends ServiceBase
 
             $data = $this->proxyStore($data, $unidade, $action);
             $entity = $this->usuarioRepository->create($data);
+            if (!$entity) {
+                throw new DBException("Falha ao inserir o usuário", 500);
+            }
             $this->extraStore($entity, $unidade, $action);
 
             if ($transaction) DB::commit();
@@ -264,6 +321,10 @@ class UsuarioService extends ServiceBase
     {
         if ($transaction) DB::beginTransaction();
         try {
+            if (empty($data['id'])) {
+                throw new NotFoundException("ID do usuário não encontrado para atualização");
+            }
+
             $id = $data['id'];
             $data = $this->proxyUpdate($data, $unidade);
 
@@ -303,14 +364,20 @@ class UsuarioService extends ServiceBase
 
     public function extraStore($entity, $unidade, $action)
     {
-        if (isset($this->buffer["integrantes"])) {
-            foreach ($this->buffer["integrantes"] as &$integrante) {
-                $integrante["usuario_id"] = $entity->id;
-            }
-        
-            $this->UnidadeIntegranteService->salvarIntegrantes($this->buffer["integrantes"]);
+        $integrantes = $this->buffer["integrantes"] ?? [];
+        if (!is_array($integrantes)) {
+            $integrantes = [];
         }
-        
+
+        foreach ($integrantes as &$integrante) {
+            $integrante["usuario_id"] = $entity->id;
+        }
+
+        $this->buffer["integrantes"] = $integrantes;
+
+        if (!empty($integrantes)) {
+            $this->UnidadeIntegranteService->salvarIntegrantes($integrantes);
+        }
         if ($action != ServiceBase::ACTION_INSERT)
             $this->unidadeIntegranteAtribuicaoService->checkLotacoes($entity->id);
     }
@@ -460,16 +527,7 @@ class UsuarioService extends ServiceBase
     {
         $data["with"] = [];
         $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
-
-        if ($action == self::ACTION_INSERT) {
-            $defaultTipoModalidade = $this->tipoModalidadeRepository->findByNome('Sem dados do SIAPE');
-
-            if (!$defaultTipoModalidade) {
-                throw new ValidateException("Tipo de Modalidade Padrão não definido no sistema. Consulte um administrador", 422);
-            }
-
-            $data['tipo_modalidade_id'] = $defaultTipoModalidade->id;
-        }
+        $this->applyDefaultTipoModalidadeId($data);
 
         unset($data['pedagio']);
 
@@ -486,6 +544,7 @@ class UsuarioService extends ServiceBase
     {
         if (isset($data["with"])) {
             $data["with"] = [];
+        $this->applyDefaultTipoModalidadeId($data);
         }
 
         if (isset($data['cpf'])) {
@@ -657,24 +716,59 @@ class UsuarioService extends ServiceBase
 
     public function searchText($data)
     {
+        $data = is_array($data) ? $data : [];
+        $data['query'] = $data['query'] ?? '';
+        $data['fields'] = $data['fields'] ?? [];
+        $data['where'] = $data['where'] ?? [];
+        $data['orderBy'] = $data['orderBy'] ?? [];
+
         if (!in_array('usuario_externo', $data['fields'])) {
             $data['fields'][] = 'usuario_externo';
         }
 
-        $data["where"][] = ["subordinadas", "==", true];
-
-        $usuario = parent::loggedUser();
-        if (!$usuario->hasPermissionTo("MOD_USER_TUDO")) {
-            $subordinadas = true;
-            foreach($data['where'] as $w) {
-                 if(is_array($w) && $w[0] == "subordinadas") $subordinadas = $w[2];
+        $subordinadas = true;
+        $where = [];
+        foreach ($data['where'] as $condition) {
+            if (is_array($condition) && ($condition[0] ?? null) === 'subordinadas') {
+                $subordinadas = (bool) ($condition[2] ?? true);
+                continue;
             }
+            $where[] = $condition;
+        }
+        $data['where'] = $where;
 
-            $areasTrabalhoWhere = $this->unidadeRepository->getAreasTrabalhoWhereClause($usuario->id, $subordinadas, "where_unidades");
-            $data['where'][] = RawWhere::raw("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($areasTrabalhoWhere))", []);
+        $condicaoDeletados = array_filter($data['where'], fn ($w) => is_array($w) && ($w[0] ?? null) === 'deleted_at');
+        if (empty($condicaoDeletados)) {
+            $data['where'][] = ['deleted_at', '==', null];
         }
 
-        return $this->usuarioRepository->search($data);
+        $usuario = parent::loggedUser();
+        if ($usuario && !$usuario->hasPermissionTo("MOD_USER_TUDO")) {
+            $areasTrabalhoWhere = $this->unidadeRepository->getAreasTrabalhoWhereClause($usuario->id, $subordinadas, "where_unidades");
+            $data['where'][] = RawWhere::raw("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($areasTrabalhoWhere))");
+        }
+
+        $rows = $this->usuarioRepository->search($data);
+
+        $fieldsForOutput = array_values(array_filter($data['fields'], fn ($field) => $field !== 'usuario_externo'));
+
+        $getFieldValue = static fn ($row, string $field) => data_get($row, $field);
+
+        $values = [];
+        foreach ($rows as $row) {
+            $orderValues = array_map(
+                fn ($order) => is_array($order) ? $getFieldValue($row, (string) ($order[0] ?? '')) : null,
+                $data['orderBy']
+            );
+
+            $values[] = [
+                (string) $getFieldValue($row, 'id'),
+                array_map(fn ($field) => $getFieldValue($row, $field), $fieldsForOutput),
+                $orderValues
+            ];
+        }
+
+        return $values;
     }
 
     public function getById($data)
@@ -685,10 +779,69 @@ class UsuarioService extends ServiceBase
         if ($entity) {
             $rows = [$entity];
             $rows = method_exists($this, 'proxyRows') ? $this->proxyRows($rows) : $rows;
+            if ($rows[0] instanceof Usuario) {
+                $this->anexarUnidadesVinculadasPorCpf($rows[0]);
+            }
             return $rows[0];
         } else {
             throw new NotFoundException("Id não encontrado");
         }
+    }
+
+    public function anexarUnidadesVinculadasPorCpf(Usuario $usuario): void
+    {
+        $cpf = strval($usuario->getAttribute('cpf') ?? '');
+
+        if (empty($cpf)) {
+            $usuario->setAttribute('unidades_vinculadas', []);
+            return;
+        }
+
+        $usuarios = $this->usuarioRepository->findActivesByCpf($cpf);
+        if ($usuarios->isEmpty()) {
+            $usuario->setAttribute('unidades_vinculadas', []);
+            return;
+        }
+
+        $usuarios->loadMissing(['unidades:id,sigla']);
+
+        $unidadesVinculadasPayloadByKey = [];
+
+        foreach ($usuarios as $usuarioPorCpf) {
+            $matricula = $usuarioPorCpf->getAttribute('matricula') ?? null;
+            $situacaoFuncional = $usuarioPorCpf->getAttribute('situacao_funcional') ?? null;
+
+            foreach ($usuarioPorCpf->unidades ?? [] as $unidade) {
+                $key = strval($unidade->id) . '|' . strval($matricula ?? '');
+
+                if (isset($unidadesVinculadasPayloadByKey[$key])) {
+                    continue;
+                }
+
+                $unidadesVinculadasPayloadByKey[$key] = [
+                    'id' => $unidade->id,
+                    'sigla' => $unidade->sigla,
+                    'situacao_funcional' => $situacaoFuncional,
+                    'matricula' => $matricula,
+                    'emProcessoDeInativacao' => (bool) $this->siapeBlackListServidorRepository->findByCpfAndOptionalMatricula(
+                        $cpf,
+                        $matricula
+                    ),
+                ];
+            }
+        }
+
+        $unidadesVinculadasPayload = array_values($unidadesVinculadasPayloadByKey);
+
+        usort($unidadesVinculadasPayload, function (array $a, array $b): int {
+            $siglaComparison = strval($a['sigla'] ?? '') <=> strval($b['sigla'] ?? '');
+            if ($siglaComparison !== 0) {
+                return $siglaComparison;
+            }
+            return strval($a['matricula'] ?? '') <=> strval($b['matricula'] ?? '');
+        });
+
+        $usuario->setAttribute('unidades_vinculadas', $unidadesVinculadasPayload);
     }
 
     public function consultaCpfSiapeXml($cpf)
@@ -765,10 +918,24 @@ class UsuarioService extends ServiceBase
 
     public function matriculas($cpf) : Collection
     {
+        $cpf = strval($cpf ?? '');
         $usuarios = $this->usuarioRepository->findAllByCpf($cpf);
 
         if ($usuarios->isEmpty()) {
             throw new ValidateException("Nenhum usuário encontrado com o CPF informado.", 404);
+        }
+
+        foreach ($usuarios as $usuario) {
+            if (!$usuario instanceof Usuario) {
+                continue;
+            }
+
+            $matricula = $usuario->getAttribute('matricula') ?? null;
+
+            $usuario->setAttribute(
+                'emProcessoDeInativacao',
+                (bool) $this->siapeBlackListServidorRepository->findByCpfAndOptionalMatricula($cpf, $matricula)
+            );
         }
 
         return $usuarios;
@@ -785,14 +952,25 @@ class UsuarioService extends ServiceBase
         return $unidades;
     }
 
-    public function pendenciasChefe($usuario_id, $unidade_id = null)
+    public function pendenciasChefe(?string $usuarioId = null, ?string $unidadeId = null)
     {
+        $usuario_id = $usuarioId ?? $this->loggedUser()?->id;
+        if (!$usuario_id) {
+            return [
+                'registrosExecucao' => new Collection(),
+                'planosTrabalhoAssinatura' => new Collection(),
+                'planosEntregaAvaliacao' => new Collection(),
+                'planosEntregaHomologacao' => new Collection(),
+                'entregasPlanoEntregaHomologacao' => new Collection()
+            ];
+        }
+
         $diasAvaliacaoRegistroExecucao = config('petrvs.dias-avaliacao-registro-execucao', 21);
         $unidades = $this->unidadeRepository->getUnidadesGerenciadas($usuario_id);
 
         $unidades_ids = $unidades->pluck('id')->toArray();
-        if(!empty($unidade_id) && in_array($unidade_id, $unidades_ids)) {
-            $unidades_ids = [$unidade_id];
+        if ($unidadeId && in_array($unidadeId, $unidades_ids, true)) {
+            $unidades_ids = [$unidadeId];
         }
 
         $unidadesFilhas = $this->unidadeRepository->getSubordinadas($unidades_ids);
@@ -811,15 +989,15 @@ class UsuarioService extends ServiceBase
         // 4. Planos de entrega aguardando homologação
         $planosEntregaHomologacao = $this->planoEntregaRepository->getPlanosEntregaHomologacao($unidadesFilhasIds);
 
-        // 5. Entregas de planos de entrega aguardando homologação
-        $entregasPlanoEntregaHomologacao = $this->planoEntregaRepository->getEntregasPlanoEntregaHomologacao($unidadesFilhasIds);
+        // 5. Entregas de planos de entrega que precisam ter progresso
+        $entregasPlanoEntregaExecucao = $this->planoEntregaRepository->getEntregasPlanoEntregaExecucao($unidadesFilhasIds);
 
         return [
             'registrosExecucao' => $registrosExecucao,
             'planosTrabalhoAssinatura' => $planosTrabalhoAssinatura,
             'planosEntregaAvaliacao' => $planosEntregaAvaliacao,
             'planosEntregaHomologacao' => $planosEntregaHomologacao,
-            'entregasPlanoEntregaHomologacao' => $entregasPlanoEntregaHomologacao
+            'entregasPlanoEntregaExecucao' => $entregasPlanoEntregaExecucao
         ];
     }
 }

@@ -20,6 +20,6 @@ class TipoModalidadeRepository
 
     public function findByNome(string $name): ?object
     {
-        return $this->readRepository->findOneBy(['name' => $name]);
+        return $this->readRepository->findOneBy(['nome' => $name]);
     }
 }

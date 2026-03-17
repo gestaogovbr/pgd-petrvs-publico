@@ -7,9 +7,7 @@ use App\Services\UsuarioService;
 use App\Services\IntegracaoService;
 use App\Repository\UsuarioRepository;
 use App\Repository\UnidadeRepository;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
+use App\Repository\SiapeBlackListServidorRepository;
 use Tests\TestCase;
 use Mockery;
 use App\Services\ServiceBase;
@@ -26,47 +24,10 @@ class UsuarioServiceTest extends TestCase
     {
         parent::setUp();
 
-        // Configura banco em memória
-        if (!Schema::hasTable('usuarios')) {
-            Schema::create('usuarios', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->string('email')->unique();
-                $table->string('nome')->nullable();
-                $table->string('cpf')->nullable();
-                $table->string('matricula')->nullable();
-                $table->string('situacao_funcional')->nullable();
-                $table->uuid('perfil_id')->nullable();
-                $table->string('apelido')->nullable();
-                $table->date('data_nascimento')->nullable();
-                $table->softDeletes();
-                $table->timestamps();
-            });
-        }
-        
-        if (!Schema::hasTable('perfis')) {
-             Schema::create('perfis', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->string('nome');
-                $table->integer('nivel')->default(0);
-                $table->timestamps();
-                $table->softDeletes();
-            });
-        }
-
-        // Cria perfil básico
-        DB::table('perfis')->insert([
-            'id' => Str::uuid()->toString(),
-            'nome' => 'Participante',
-            'nivel' => 1
-        ]);
-
-        // Mock do IntegracaoService
         $this->integracaoServiceMock = Mockery::mock(IntegracaoService::class);
         
-        // Instancia o service e injeta o mock
-        $this->service = new UsuarioService();
+        $this->service = Mockery::mock(UsuarioService::class)->makePartial();
         
-        // Injeção via Reflection na propriedade _services da classe pai ServiceBase
         $reflection = new ReflectionClass(ServiceBase::class);
         $property = $reflection->getProperty('_services');
         $property->setAccessible(true);
@@ -86,17 +47,6 @@ class UsuarioServiceTest extends TestCase
         $cpf = '12345678900';
         $id = Str::uuid()->toString();
         $matricula = '11111';
-
-        DB::table('usuarios')->insert([
-            'id' => $id,
-            'email' => $email,
-            'cpf' => $cpf,
-            'matricula' => $matricula,
-            'nome' => 'Antigo',
-            'deleted_at' => now(),
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
 
         // Dados para reativação (tentativa de criar novo usuário com mesmos dados)
         $data = [
@@ -190,5 +140,56 @@ class UsuarioServiceTest extends TestCase
         }
         
         $this->assertTrue(true); // Se chegou aqui e o mock foi chamado, sucesso
+    }
+
+    public function test_matriculas_deve_anexar_em_processo_de_inativacao()
+    {
+        $cpf = '12345678900';
+
+        $usuarioA = new Usuario();
+        $usuarioA->cpf = $cpf;
+        $usuarioA->matricula = '0001';
+
+        $usuarioB = new Usuario();
+        $usuarioB->cpf = $cpf;
+        $usuarioB->matricula = '0002';
+
+        $usuarios = new \Illuminate\Database\Eloquent\Collection([$usuarioA, $usuarioB]);
+
+        $usuarioRepositoryMock = Mockery::mock(UsuarioRepository::class);
+        $usuarioRepositoryMock->shouldReceive('findAllByCpf')
+            ->once()
+            ->with($cpf)
+            ->andReturn($usuarios);
+
+        $siapeBlackListServidorRepositoryMock = Mockery::mock(SiapeBlackListServidorRepository::class);
+        $siapeBlackListServidorRepositoryMock->shouldReceive('findByCpfAndOptionalMatricula')
+            ->once()
+            ->with($cpf, '0001')
+            ->andReturn(Mockery::mock(\App\Models\SiapeBlackListServidor::class));
+
+        $siapeBlackListServidorRepositoryMock->shouldReceive('findByCpfAndOptionalMatricula')
+            ->once()
+            ->with($cpf, '0002')
+            ->andReturn(null);
+
+        $this->service = Mockery::mock(UsuarioService::class)->makePartial();
+        $this->service->shouldAllowMockingProtectedMethods();
+
+        $reflection = new ReflectionClass(UsuarioService::class);
+
+        $usuarioRepoProp = $reflection->getProperty('usuarioRepository');
+        $usuarioRepoProp->setAccessible(true);
+        $usuarioRepoProp->setValue($this->service, $usuarioRepositoryMock);
+
+        $blacklistRepoProp = $reflection->getProperty('siapeBlackListServidorRepository');
+        $blacklistRepoProp->setAccessible(true);
+        $blacklistRepoProp->setValue($this->service, $siapeBlackListServidorRepositoryMock);
+
+        /** @var UsuarioService $this->service */
+        $result = $this->service->matriculas($cpf);
+
+        $this->assertTrue((bool) $result[0]->getAttribute('emProcessoDeInativacao'));
+        $this->assertFalse((bool) $result[1]->getAttribute('emProcessoDeInativacao'));
     }
 }

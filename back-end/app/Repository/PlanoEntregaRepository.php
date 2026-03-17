@@ -29,4 +29,10 @@ class PlanoEntregaRepository
     {
         return $this->readRepository->getEntregasPlanoEntregaHomologacao($unidadesIds);
     }
+
+    public function getEntregasPlanoEntregaExecucao(array $unidadesIds): Collection
+    {
+        return $this->readRepository->getEntregasPlanoEntregaExecucao($unidadesIds);
+    }
+
 }

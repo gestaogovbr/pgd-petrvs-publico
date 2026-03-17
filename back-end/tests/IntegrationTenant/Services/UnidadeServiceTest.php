@@ -33,7 +33,7 @@ describe('UnidadeService (Integration)', function () {
     });
 
     test('unidadesFilhas retorna descendentes corretamente usando unidade_pai_id', function () {
-        $service = new UnidadeService();
+        $service = app(UnidadeService::class);
 
         // Helper to create unit
         $createUnit = function($name, $parentId = null) {
@@ -78,7 +78,7 @@ describe('UnidadeService (Integration)', function () {
     });
 
     test('linhaAscendente retorna caminho até a raiz', function () {
-        $service = new UnidadeService();
+        $service = app(UnidadeService::class);
 
         // Helper to create unit
         $createUnit = function($name, $parentId = null) {

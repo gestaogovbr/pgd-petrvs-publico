@@ -44,8 +44,8 @@ class UsuarioRepositoryTest extends DatabaseTenantTestCase
 
     public function testFindByCpfOrEmail()
     {
-        $cpf = '12345678901';
-        $email = 'teste@example.com';
+        $cpf = str_pad((string) random_int(1, 99999999999), 11, '0', STR_PAD_LEFT);
+        $email = 'teste-' . uniqid() . '@example.com';
         $usuario = Usuario::factory()->create([
             'cpf' => $cpf, 
             'email' => $email,

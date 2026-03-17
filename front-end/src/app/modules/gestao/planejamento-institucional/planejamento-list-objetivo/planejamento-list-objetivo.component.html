@@ -9,10 +9,10 @@
 
 <div cdkDropListGroup>
   <div *ngFor="let group of groupedRoots" class="mb-3">
-      <div class="d-flex justify-content-start bg-dark bg-gradient border-bottom">
-          <div *ngIf="group.eixo" [ngStyle]="{'background-color': group.eixo.cor || '#e0e0e0', 'color': '#fff'}" class="p-2">
+      <div class="d-flex justify-content-start border-bottom header-eixo">
+          <div *ngIf="group.eixo" [ngStyle]="{'background-color': group.eixo.cor || '#e0e0e0', 'color': getEixoHeaderTextColor(group.eixo.cor)}" class="p-2">
               <i [class]="group.eixo.icone || 'bi bi-gear'"></i>
-              <span class="ms-2 text-black">{{group.eixo.nome}}</span>
+              <span class="ms-2">{{group.eixo.nome}}</span>
           </div>
           <span *ngIf="!group.eixo" class="badge bg-secondary">Sem Eixo Temático</span>
       </div>

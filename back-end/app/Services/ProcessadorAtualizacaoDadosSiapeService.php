@@ -8,14 +8,10 @@ use App\Exceptions\NotFoundException;
 use App\Facades\SiapeLog;
 use App\Services\ServiceBase;
 use App\Services\UtilService;
-use App\Services\UsuarioService;
-use App\Services\UnidadeIntegranteService;
-use App\Services\IntegracaoService;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
 use App\Repository\IntegracaoServidorRepository;
 use Illuminate\Support\Facades\DB;
-use Ramsey\Uuid\Uuid;
 use Throwable;
 
 /**
@@ -97,6 +93,7 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
             if (!empty($sqlServidoresInseridosNaoLotados)) {
                 foreach ($sqlServidoresInseridosNaoLotados as $inserirLotacao) {
                     $dbResult = $this->salvarLotacaoUsuario($inserirLotacao);
+                    SiapeLog::info('Inserindo lotação do servidor: ' . $inserirLotacao->matricula . ' na unidade: ' . $inserirLotacao->unidade_id);
                     if($dbResult) array_push($atualizacoesLotacoesResult,$dbResult);
                 }
             }
@@ -122,17 +119,12 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
             $nLotacoes = count($atualizacoesLotacoes);
 
             if ($nLotacoes > 0) array_push($this->result['servidores']["Observações"], $nLotacoes . ($nLotacoes == 1 ? ' servidor foi atualizado porque sofreu alteração na sua lotação!' : ' servidores foram atualizados porque sofreram alterações nas lotações!'));
+        }, $this->transactionRetries);
 
-            /**
-             * Incluir todos servidores da tabela integracao_servidores que não estejam na tabela usuarios.
-             * Foi modificado a ideia original onde era uma opção o autoincluir.
-             * Obs.:: Inserção de novos servidores automaticamente.
-             */
-
+        DB::transaction(function () {
             $this->cadastrarUsuariosAusentes();
-
             SiapeLog::info('Concluída a fase de atualização das lotações dos servidores!.....');
-        });
+        }, $this->transactionRetries);
 
     }
 
@@ -158,7 +150,7 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
             $dbResult = $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
         } catch (Throwable $th) {
             report($th);
-            SiapeLog::error("IntegracaoService: Durante integração não foi possível alterar lotação!", [$vinculo]);
+            SiapeLog::error("IntegracaoService: Durante integração não foi possível alterar lotação!: ". $th->getMessage(), [$vinculo]);
         }
         if (!isset($dbResult)) {
             SiapeLog::error("IntegracaoService: Houve uma falha na tentantiva de alterar a lotação", [$vinculo]);
@@ -210,17 +202,13 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
             $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($registro->email, $registro->matricula);
 
             SiapeLog::info("Inserindo servidor na tabela Usuários", $registro->toArray());
-            // $registro is a new Usuario instance from gerarUsuario (not saved)
-            // We use repository to create it.
-            // We need to pass attributes.
             $attributes = $registro->getAttributes();
-            // Ensure ID is passed if generated
             if ($registro->id) {
                 $attributes['id'] = $registro->id;
             }
-            $this->usuarioRepository->create($attributes);
+            $usuarioCriado = $this->usuarioRepository->create($attributes);
 
-            $usuarioId = $registro->id;
+            $usuarioId = $usuarioCriado->id;
 
             $unidadeExercicioId = null;
             $unidadeExercicioObj = $this->unidadeRepository->findByCodigo($v_isr["exercicio"]);

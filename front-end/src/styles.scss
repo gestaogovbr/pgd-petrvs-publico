@@ -232,6 +232,10 @@
     .border {
         border: var(--bs-border-width) var(--bs-border-style) #13162d !important;
     }
+
+    .header-eixo {
+      background-color: #dddddd !important;
+    }
   }
 
   &[data-bs-theme="light"] {
@@ -250,6 +254,10 @@
 
     .form-control {
       background-color: var(--petrvs-form-control-background);
+    }
+
+    .header-eixo {
+      background-color: #dddddd !important;
     }
 
   }
@@ -280,6 +288,10 @@
 
     .dropdown-item {
       color: var(--bs-body-color) !important;
+    }
+
+    .header-eixo {
+      background-color: #202020 !important;
     }
 
   }

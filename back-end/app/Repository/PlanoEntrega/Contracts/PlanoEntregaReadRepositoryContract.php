@@ -11,4 +11,5 @@ interface PlanoEntregaReadRepositoryContract
     public function getPlanosEntregaAvaliacao(array $unidadesIds): Collection;
     public function getPlanosEntregaHomologacao(array $unidadesIds): Collection;
     public function getEntregasPlanoEntregaHomologacao(array $unidadesIds): Collection;
+    public function getEntregasPlanoEntregaExecucao(array $unidadesIds): Collection;
 }

@@ -1,6 +1,18 @@
 <p class="text-secondary">Você está acessando o módulo de Gestão. Matrícula: {{auth.usuario?.matricula}}. </p>
 
-<!-- Banner de pendências como chefe -->
+<div *ngIf="!pendenciasLoaded" class="alert alert-secondary d-flex justify-content-between align-items-center mt-3">
+  <div class="d-flex align-items-center gap-2 flex-wrap">
+    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    <span>Carregando pendências…</span>
+    <span class="placeholder-glow d-inline-flex align-items-center ms-2">
+      <span class="placeholder col-2"></span>
+    </span>
+  </div>
+  <div>
+    <button type="button" class="btn btn-sm btn-primary" disabled>Ver detalhes</button>
+  </div>
+</div>
+
 <div *ngIf="pendenciasLoaded && totalPendenciasChefe > 0" class="alert alert-warning d-flex justify-content-between align-items-center mt-3">
   <div>
     Você tem
@@ -11,6 +23,7 @@
     <button type="button" class="btn btn-sm btn-primary" (click)="abrirPendenciasModal()">Ver detalhes</button>
   </div>
 </div>
+
 
 <div class="row mt-5">
   <div class="col-6 col-sm-3 mb-3">

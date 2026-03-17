@@ -20,6 +20,7 @@ import { ProgramaParticipante } from './programa-participante.model';
 import { UnidadeIntegrante } from './unidade-integrante.model';
 import { Unidade } from './unidade.model';
 import { TipoModalidadeSiape } from './tipo-modalidade-siape.model';
+import { UnidadeVinculada } from '../services/auth.service';
 
 
 export type UsuarioSituacaoFuncional = "ATIVO_PERMANENTE" |
@@ -126,6 +127,7 @@ export class Usuario extends Base implements HasNotificacao {
     public ultimo_plano_trabalho_ativo?: PlanoTrabalho;
     public tarefas_atividade?: AtividadeTarefa[];
     public unidades?: Unidade[];
+    public unidades_vinculadas?: UnidadeVinculada[] = [];
     public unidades_integrantes?: UnidadeIntegrante[];
     public audits_externo?: any= [];
     public regramentos?: string[] = [];

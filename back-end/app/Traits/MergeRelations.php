@@ -25,8 +25,8 @@ trait MergeRelations
         list($relations, $attributes) = (new static)->extractFillableRelations($attributes);
         /** @phpstan-ignore-next-line */
         $model = new static($attributes);
+        $model->save();
         if(count($relations) > 0) {
-            $model->save();
             $model->refresh();
             $model->fillRelations($relations);
         }

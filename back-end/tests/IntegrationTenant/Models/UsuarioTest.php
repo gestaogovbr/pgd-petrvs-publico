@@ -70,6 +70,19 @@ test('usuario deve retornar relacionamento lotacao corretamente', function () {
 });
 
 test('usuario deve retornar null para lotacao quando nao possui atribuicao LOTADO', function () {
+    $entidade = new Entidade();
+    $entidade->id = \Illuminate\Support\Str::uuid();
+    $entidade->fill([
+        'sigla' => 'ENT_TEST_2',
+        'nome' => 'Entidade de Teste 2',
+        'abrangencia' => 'NACIONAL',
+        'carga_horaria_padrao' => 8,
+        'gravar_historico_processo' => 0,
+        'layout_formulario_atividade' => 'COMPLETO',
+        'forma_contagem_carga_horaria' => 'DIA',
+    ]);
+    $entidade->save();
+
     $tipoModalidade = TipoModalidade::factory()->create();
 
     $usuario = new Usuario();
@@ -89,6 +102,7 @@ test('usuario deve retornar null para lotacao quando nao possui atribuicao LOTAD
         'nome' => 'Unidade de Teste 2',
         'instituidora' => 1,
         'atividades_arquivamento_automatico' => 0,
+        'entidade_id' => $entidade->id,
     ]);
 
     $integrante = UnidadeIntegrante::create([

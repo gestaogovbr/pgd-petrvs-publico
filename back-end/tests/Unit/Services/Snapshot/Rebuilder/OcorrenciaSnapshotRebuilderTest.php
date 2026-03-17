@@ -3,7 +3,6 @@
 use App\Models\Ocorrencia;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 use App\Services\Snapshot\Rebuilder\OcorrenciaSnapshotRebuilder;
-use DateTime;
 
 uses(Tests\TestCase::class);
 

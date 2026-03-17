@@ -24,7 +24,7 @@ class IndicadoresGestaoService extends ServiceBase
             $unidadeIds = [$this->unidadeId[2]];
 
             if (isset($this->subordinadas[2])) {
-                $this->unidadeService = new UnidadeService();
+                $this->unidadeService = app(UnidadeService::class);
                 $subordinadasIds = $this->unidadeService->subordinadas(
                     $this->unidadeId[2]
                 )->pluck('id')->toArray();

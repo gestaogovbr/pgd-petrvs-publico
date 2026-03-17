@@ -52,6 +52,10 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     ];
   }
 
+  public getEixoHeaderTextColor(bgColor: string | null | undefined): string {
+    return this.util.contrastColor(bgColor || '#e0e0e0');
+  }
+
   constructor(public injector: Injector) {
     super(injector);
     this.dao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);

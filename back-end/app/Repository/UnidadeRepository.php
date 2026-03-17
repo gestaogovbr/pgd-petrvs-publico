@@ -44,4 +44,14 @@ class UnidadeRepository
     {
         return $this->readRepository->getSubordinadas($ids);
     }
+
+    public function findById(string $id): ?\App\Models\Unidade
+    {
+        return $this->readRepository->findById($id);
+    }
+
+    public function existsByCodigo(string $codigo): bool
+    {
+        return $this->readRepository->existsByCodigo($codigo);
+    }
 }

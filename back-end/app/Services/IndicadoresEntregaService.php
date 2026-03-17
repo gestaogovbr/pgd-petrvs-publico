@@ -12,7 +12,7 @@ class IndicadoresEntregaService extends ServiceBase
     protected $unidadeService;
 
     public function __construct() {
-        $this->unidadeService = new UnidadeService();
+        $this->unidadeService = app(UnidadeService::class);
     }
 
     public function query($data)
