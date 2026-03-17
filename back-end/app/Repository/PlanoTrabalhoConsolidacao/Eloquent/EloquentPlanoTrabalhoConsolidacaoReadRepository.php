@@ -14,6 +14,7 @@ use App\Models\PlanoTrabalhoConsolidacao;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoTrabalhoConsolidacao\Contracts\PlanoTrabalhoConsolidacaoReadRepositoryContract;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloquentReadRepository implements PlanoTrabalhoConsolidacaoReadRepositoryContract
 {
@@ -81,20 +82,84 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
         ])->find($id);
     }
 
-    public function getPendentesAvaliacao(array $unidadesIds, string $usuarioId, \DateTimeInterface $dataCorte): \Illuminate\Database\Eloquent\Collection
+    public function getPendentesAvaliacao(
+        array $unidadesGerenciadasIds,
+        array $unidadesSubordinadasIds,
+        string $usuarioId,
+        \DateTimeInterface $dataCorte
+    ): \Illuminate\Database\Eloquent\Collection {
+        $unidadesGerenciadasIds = array_values(array_unique($unidadesGerenciadasIds));
+        $unidadesSubordinadasIds = array_values(array_unique($unidadesSubordinadasIds));
+
+        $pendenciasUnidade = new Collection();
+        if ($unidadesGerenciadasIds !== []) {
+            $pendenciasUnidade = $this->basePendentesAvaliacaoQuery($dataCorte)
+                ->whereHas('planoTrabalho', function ($q) use ($unidadesGerenciadasIds, $usuarioId) {
+                    $q->whereIn('unidade_id', $unidadesGerenciadasIds)
+                        ->where('usuario_id', '!=', $usuarioId)
+                        ->whereNotExists(function ($query) use ($usuarioId) {
+                            $this->subqueryChefeSubstitutoNaoAvaliaGestorTitular($query, $usuarioId);
+                        });
+                })
+                ->get();
+        }
+
+        $pendenciasSubordinadas = new Collection();
+        if ($unidadesSubordinadasIds !== []) {
+            $pendenciasSubordinadas = $this->basePendentesAvaliacaoQuery($dataCorte)
+                ->whereHas('planoTrabalho', function ($q) use ($unidadesSubordinadasIds, $usuarioId) {
+                    $q->whereIn('unidade_id', $unidadesSubordinadasIds)
+                        ->where('usuario_id', '!=', $usuarioId)
+                        ->whereExists(function ($query) {
+                            $this->subqueryPlanoEhDoGestorTitular($query);
+                        });
+                })
+                ->get();
+        }
+
+        $merged = $pendenciasUnidade
+            ->merge($pendenciasSubordinadas)
+            ->unique('id')
+            ->values();
+
+        return new Collection($merged->all());
+    }
+
+    private function basePendentesAvaliacaoQuery(\DateTimeInterface $dataCorte): \Illuminate\Database\Eloquent\Builder
     {
         return $this->query()
-            ->with(['planoTrabalho:id,unidade_id,usuario_id', 'planoTrabalho.usuario:id,nome,apelido,url_foto'])
+            ->with(['planoTrabalho:id,unidade_id,usuario_id,numero', 'planoTrabalho.usuario:id,nome,apelido,url_foto'])
             ->where('status', StatusEnum::CONCLUIDO->value)
-            ->whereHas('planoTrabalho', function($q) use ($unidadesIds, $usuarioId) {
-                $q->whereIn('unidade_id', $unidadesIds)
-                  ->where('usuario_id', '!=', $usuarioId);
-            })
-            ->whereHas('latestStatus', function($q) use ($dataCorte) {
+            ->whereHas('latestStatus', function ($q) use ($dataCorte) {
                 $q->where('codigo', StatusEnum::CONCLUIDO->value)
-                  ->where('created_at', '<', $dataCorte);
+                    ->where('created_at', '<', $dataCorte);
+            });
+    }
+
+    private function subqueryChefeSubstitutoNaoAvaliaGestorTitular(\Illuminate\Database\Query\Builder $query, string $usuarioId): void
+    {
+        $query->select(DB::raw(1))
+            ->from('unidades_integrantes as ui_t')
+            ->join('unidades_integrantes_atribuicoes as uia_t', 'uia_t.unidade_integrante_id', '=', 'ui_t.id')
+            ->join('unidades_integrantes as ui_s', function ($join) use ($usuarioId) {
+                $join->on('ui_s.unidade_id', '=', 'ui_t.unidade_id')
+                    ->where('ui_s.usuario_id', '=', $usuarioId);
             })
-            ->get();
+            ->join('unidades_integrantes_atribuicoes as uia_s', 'uia_s.unidade_integrante_id', '=', 'ui_s.id')
+            ->where('uia_t.atribuicao', 'GESTOR')
+            ->where('uia_s.atribuicao', 'GESTOR_SUBSTITUTO')
+            ->whereColumn('ui_t.unidade_id', 'planos_trabalhos.unidade_id')
+            ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id');
+    }
+
+    private function subqueryPlanoEhDoGestorTitular(\Illuminate\Database\Query\Builder $query): void
+    {
+        $query->select(DB::raw(1))
+            ->from('unidades_integrantes as ui_t')
+            ->join('unidades_integrantes_atribuicoes as uia_t', 'uia_t.unidade_integrante_id', '=', 'ui_t.id')
+            ->where('uia_t.atribuicao', 'GESTOR')
+            ->whereColumn('ui_t.unidade_id', 'planos_trabalhos.unidade_id')
+            ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id');
     }
 
     private function getAtividades(PlanoTrabalhoConsolidacao $consolidacao, bool $concluido): Collection
@@ -170,4 +235,3 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             ->get();
     }
 }
-

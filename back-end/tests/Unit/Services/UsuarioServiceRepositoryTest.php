@@ -565,7 +565,7 @@ class UsuarioServiceRepositoryTest extends TestCase
             ->once()
             ->andReturn(new \Illuminate\Database\Eloquent\Collection());
 
-        $this->planoEntregaRepository->shouldReceive('getEntregasPlanoEntregaHomologacao')
+        $this->planoEntregaRepository->shouldReceive('getEntregasPlanoEntregaExecucao')
             ->once()
             ->andReturn(new \Illuminate\Database\Eloquent\Collection());
 

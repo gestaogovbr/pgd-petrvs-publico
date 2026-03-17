@@ -931,7 +931,7 @@ class UsuarioService extends ServiceBase
                 'planosTrabalhoAssinatura' => new Collection(),
                 'planosEntregaAvaliacao' => new Collection(),
                 'planosEntregaHomologacao' => new Collection(),
-                'entregasPlanoEntregaHomologacao' => new Collection()
+                'entregasPlanoEntregaExecucao' => new Collection()
             ];
         }
 
@@ -948,10 +948,10 @@ class UsuarioService extends ServiceBase
 
         // 1. Registros de execução aguardando avaliação
         $dataCorte = Carbon::now()->subDays($diasAvaliacaoRegistroExecucao);
-        $registrosExecucao = $this->planoTrabalhoConsolidacaoRepository->getPendentesAvaliacao($unidades_ids, $usuario_id, $dataCorte);
+        $registrosExecucao = $this->planoTrabalhoConsolidacaoRepository->getPendentesAvaliacao($unidades_ids, $unidadesFilhasIds, $usuario_id, $dataCorte);
 
         // 2. Planos de trabalho aguardando assinatura
-        $planosTrabalhoAssinatura = $this->planoTrabalhoRepository->getPlanosTrabalhoAssinatura($unidades_ids, $usuario_id);
+        $planosTrabalhoAssinatura = $this->planoTrabalhoRepository->getPlanosTrabalhoAssinatura($unidades_ids, $unidadesFilhasIds, $usuario_id);
 
         // 3. Planos de entrega aguardando avaliação
         $planosEntregaAvaliacao = $this->planoEntregaRepository->getPlanosEntregaAvaliacao($unidadesFilhasIds);
