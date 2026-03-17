@@ -82,6 +82,20 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
         ])->find($id);
     }
 
+    /**
+     * Busca consolidações concluídas pendentes de avaliação.
+     *
+     * Regras principais:
+     * - Considera apenas consolidações com status CONCLUIDO e latestStatus anterior à data de corte.
+     * - Para unidades gerenciadas, exclui a consolidação do gestor titular quando o avaliador é gestor substituto.
+     * - Para unidades subordinadas, permite apenas planos cujo titular é gestor da unidade.
+     *
+     * @param array $unidadesGerenciadasIds IDs das unidades gerenciadas pelo usuário.
+     * @param array $unidadesSubordinadasIds IDs de unidades subordinadas às gerenciadas.
+     * @param string $usuarioId ID do usuário avaliador.
+     * @param \DateTimeInterface $dataCorte Data limite para considerar pendência.
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
     public function getPendentesAvaliacao(
         array $unidadesGerenciadasIds,
         array $unidadesSubordinadasIds,
