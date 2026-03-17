@@ -1,7 +1,11 @@
 <?php
 
 use App\Services\IntegracaoGestorService;
-use Illuminate\Support\Facades\DB;
+use App\Models\Usuario;
+use App\Models\IntegracaoServidor;
+use App\Repository\IntegracaoUnidadeRepository;
+use App\Repository\IntegracaoServidorRepository;
+use App\Repository\UsuarioRepository;
 use Illuminate\Support\Facades\Log;
 use Mockery\MockInterface;
 use Tests\TestCase;
@@ -19,17 +23,6 @@ function setupSiapeLogMockChefias(): void
     Log::shouldReceive('channel')->with('siape')->andReturn($loggerMock);
 }
 
-function createDbQueryMockChefias(mixed $returnValue, string $method = 'get'): object
-{
-    $queryMock = Mockery::mock('Illuminate\Database\Query\Builder');
-    $queryMock->shouldReceive('join')->andReturnSelf();
-    $queryMock->shouldReceive('select')->andReturnSelf();
-    $queryMock->shouldReceive('where')->andReturnSelf();
-    $queryMock->shouldReceive('whereNull')->andReturnSelf();
-    $queryMock->shouldReceive($method)->andReturn($returnValue);
-    return $queryMock;
-}
-
 function invokeMontarArrayChefias(IntegracaoGestorService|MockInterface $service): array
 {
     $method = new ReflectionMethod(IntegracaoGestorService::class, 'montarArrayChefias');
@@ -37,11 +30,16 @@ function invokeMontarArrayChefias(IntegracaoGestorService|MockInterface $service
     return $method->invoke($service);
 }
 
-function createChefiasServiceMock(): MockInterface
-{
-    return Mockery::mock(IntegracaoGestorService::class)
-        ->makePartial()
-        ->shouldAllowMockingProtectedMethods();
+function createChefiasServiceWithMocks(
+    ?IntegracaoUnidadeRepository $integracaoUnidadeRepo = null,
+    ?IntegracaoServidorRepository $integracaoServidorRepo = null,
+    ?UsuarioRepository $usuarioRepo = null,
+): IntegracaoGestorService {
+    return new IntegracaoGestorService(
+        $integracaoUnidadeRepo ?? Mockery::mock(IntegracaoUnidadeRepository::class),
+        $integracaoServidorRepo ?? Mockery::mock(IntegracaoServidorRepository::class),
+        $usuarioRepo ?? Mockery::mock(UsuarioRepository::class),
+    );
 }
 
 describe('IntegracaoGestorService - montarArrayChefias', function () {
@@ -55,10 +53,12 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
             'cpf_chefe' => null,
         ];
 
-        $queryUnidades = createDbQueryMockChefias(collect([$unidade]));
-        DB::shouldReceive('table')->with('integracao_unidades as iu')->andReturn($queryUnidades);
+        $integracaoUnidadeRepo = Mockery::mock(IntegracaoUnidadeRepository::class);
+        $integracaoUnidadeRepo->shouldReceive('getUnidadesComChefias')
+            ->once()
+            ->andReturn(collect([$unidade]));
 
-        $service = createChefiasServiceMock();
+        $service = createChefiasServiceWithMocks(integracaoUnidadeRepo: $integracaoUnidadeRepo);
         $result = invokeMontarArrayChefias($service);
 
         expect($result)->toHaveCount(1)
@@ -75,17 +75,22 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
             'cpf_chefe' => '12345678901',
         ];
 
-        $queryUnidades = createDbQueryMockChefias(collect([$unidade]));
-        $queryServidores = createDbQueryMockChefias(null, 'first');
+        $integracaoUnidadeRepo = Mockery::mock(IntegracaoUnidadeRepository::class);
+        $integracaoUnidadeRepo->shouldReceive('getUnidadesComChefias')
+            ->once()
+            ->andReturn(collect([$unidade]));
 
-        DB::shouldReceive('table')->with('integracao_unidades as iu')->andReturn($queryUnidades);
-        DB::shouldReceive('table')->with('integracao_servidores')->andReturn($queryServidores);
+        $integracaoServidorRepo = Mockery::mock(IntegracaoServidorRepository::class);
+        $integracaoServidorRepo->shouldReceive('findByCpfAndCodigoExercicio')
+            ->with('12345678901', '001')
+            ->andReturn(null);
 
-        $service = createChefiasServiceMock();
-        $service->shouldReceive('findUsuarioByCpf')
+        $usuarioRepo = Mockery::mock(UsuarioRepository::class);
+        $usuarioRepo->shouldReceive('findByCpf')
             ->with('12345678901')
             ->andReturn(null);
 
+        $service = createChefiasServiceWithMocks($integracaoUnidadeRepo, $integracaoServidorRepo, $usuarioRepo);
         $result = invokeMontarArrayChefias($service);
 
         expect($result)->toBeEmpty();
@@ -100,22 +105,28 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
             'cpf_chefe' => '12345678901',
         ];
 
-        $mockUsuario = Mockery::mock(\App\Models\Usuario::class)->makePartial();
+        $mockUsuario = Mockery::mock(Usuario::class)->makePartial();
         $mockUsuario->id = 5;
 
-        $queryUnidades = createDbQueryMockChefias(collect([$unidade]));
-        $queryServidores = createDbQueryMockChefias((object) ['cpf' => '12345678901'], 'first');
-        $queryChefia = createDbQueryMockChefias(true, 'exists');
+        $integracaoUnidadeRepo = Mockery::mock(IntegracaoUnidadeRepository::class);
+        $integracaoUnidadeRepo->shouldReceive('getUnidadesComChefias')
+            ->once()
+            ->andReturn(collect([$unidade]));
 
-        DB::shouldReceive('table')->with('integracao_unidades as iu')->andReturn($queryUnidades);
-        DB::shouldReceive('table')->with('integracao_servidores')->andReturn($queryServidores);
-        DB::shouldReceive('table')->with('usuarios as u')->andReturn($queryChefia);
+        $integracaoServidorRepo = Mockery::mock(IntegracaoServidorRepository::class);
+        $integracaoServidorRepo->shouldReceive('findByCpfAndCodigoExercicio')
+            ->with('12345678901', '001')
+            ->andReturn(Mockery::mock(IntegracaoServidor::class));
 
-        $service = createChefiasServiceMock();
-        $service->shouldReceive('findUsuarioByCpf')
+        $usuarioRepo = Mockery::mock(UsuarioRepository::class);
+        $usuarioRepo->shouldReceive('findByCpf')
             ->with('12345678901')
             ->andReturn($mockUsuario);
+        $usuarioRepo->shouldReceive('isIntegrante')
+            ->with(5, 10, 'GESTOR')
+            ->andReturn(true);
 
+        $service = createChefiasServiceWithMocks($integracaoUnidadeRepo, $integracaoServidorRepo, $usuarioRepo);
         $result = invokeMontarArrayChefias($service);
 
         expect($result)->toBeEmpty();
@@ -130,22 +141,28 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
             'cpf_chefe' => '12345678901',
         ];
 
-        $mockUsuario = Mockery::mock(\App\Models\Usuario::class)->makePartial();
+        $mockUsuario = Mockery::mock(Usuario::class)->makePartial();
         $mockUsuario->id = 5;
 
-        $queryUnidades = createDbQueryMockChefias(collect([$unidade]));
-        $queryServidores = createDbQueryMockChefias((object) ['cpf' => '12345678901'], 'first');
-        $queryChefia = createDbQueryMockChefias(false, 'exists');
+        $integracaoUnidadeRepo = Mockery::mock(IntegracaoUnidadeRepository::class);
+        $integracaoUnidadeRepo->shouldReceive('getUnidadesComChefias')
+            ->once()
+            ->andReturn(collect([$unidade]));
 
-        DB::shouldReceive('table')->with('integracao_unidades as iu')->andReturn($queryUnidades);
-        DB::shouldReceive('table')->with('integracao_servidores')->andReturn($queryServidores);
-        DB::shouldReceive('table')->with('usuarios as u')->andReturn($queryChefia);
+        $integracaoServidorRepo = Mockery::mock(IntegracaoServidorRepository::class);
+        $integracaoServidorRepo->shouldReceive('findByCpfAndCodigoExercicio')
+            ->with('12345678901', '001')
+            ->andReturn(Mockery::mock(IntegracaoServidor::class));
 
-        $service = createChefiasServiceMock();
-        $service->shouldReceive('findUsuarioByCpf')
+        $usuarioRepo = Mockery::mock(UsuarioRepository::class);
+        $usuarioRepo->shouldReceive('findByCpf')
             ->with('12345678901')
             ->andReturn($mockUsuario);
+        $usuarioRepo->shouldReceive('isIntegrante')
+            ->with(5, 10, 'GESTOR')
+            ->andReturn(false);
 
+        $service = createChefiasServiceWithMocks($integracaoUnidadeRepo, $integracaoServidorRepo, $usuarioRepo);
         $result = invokeMontarArrayChefias($service);
 
         expect($result)->toHaveCount(1)
@@ -162,27 +179,28 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
             'cpf_chefe' => '99988877766',
         ];
 
-        $mockUsuario = Mockery::mock(\App\Models\Usuario::class)->makePartial();
+        $mockUsuario = Mockery::mock(Usuario::class)->makePartial();
         $mockUsuario->id = 7;
 
-        $queryUnidades = createDbQueryMockChefias(collect([$unidade]));
-        $queryServidores = createDbQueryMockChefias(null, 'first');
-        $queryChefia = createDbQueryMockChefias(false, 'exists');
+        $integracaoUnidadeRepo = Mockery::mock(IntegracaoUnidadeRepository::class);
+        $integracaoUnidadeRepo->shouldReceive('getUnidadesComChefias')
+            ->once()
+            ->andReturn(collect([$unidade]));
 
-        DB::shouldReceive('table')->with('integracao_unidades as iu')->andReturn($queryUnidades);
-        DB::shouldReceive('table')->with('integracao_servidores')->andReturn($queryServidores);
-        DB::shouldReceive('table')->with('usuarios as u')->andReturn($queryChefia);
+        $integracaoServidorRepo = Mockery::mock(IntegracaoServidorRepository::class);
+        $integracaoServidorRepo->shouldReceive('findByCpfAndCodigoExercicio')
+            ->with('99988877766', '001')
+            ->andReturn(null);
 
-        $service = createChefiasServiceMock();
-        $service->shouldReceive('findUsuarioByCpf')
+        $usuarioRepo = Mockery::mock(UsuarioRepository::class);
+        $usuarioRepo->shouldReceive('findByCpf')
             ->with('99988877766')
             ->andReturn($mockUsuario);
+        $usuarioRepo->shouldReceive('isIntegrante')
+            ->with(7, 10, 'GESTOR')
+            ->andReturn(false);
 
-        // Garante que salvarIntegrantes NÃO é chamado (regra de negócio removida)
-        $unidadeIntegranteService = Mockery::mock(\App\Services\UnidadeIntegranteService::class);
-        $unidadeIntegranteService->shouldNotReceive('salvarIntegrantes');
-        $service->unidadeIntegranteService = $unidadeIntegranteService;
-
+        $service = createChefiasServiceWithMocks($integracaoUnidadeRepo, $integracaoServidorRepo, $usuarioRepo);
         $result = invokeMontarArrayChefias($service);
 
         expect($result)->toHaveCount(1)
@@ -199,31 +217,39 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
             (object) ['id_unidade' => 3, 'codigo_unidade' => '003', 'cpf_chefe' => '55566677788'],
         ]);
 
-        $queryUnidades = createDbQueryMockChefias($unidades);
-
-        // Servidor encontrado para ambos CPFs
-        $queryServidores = createDbQueryMockChefias((object) ['cpf' => 'any'], 'first');
-
-        // Primeiro chefe já é gestor, segundo não
-        $queryChefia1 = createDbQueryMockChefias(true, 'exists');
-        $queryChefia2 = createDbQueryMockChefias(false, 'exists');
-
-        DB::shouldReceive('table')->with('integracao_unidades as iu')->once()->andReturn($queryUnidades);
-        DB::shouldReceive('table')->with('integracao_servidores')->twice()->andReturn($queryServidores);
-        DB::shouldReceive('table')->with('usuarios as u')->twice()
-            ->andReturn($queryChefia1, $queryChefia2);
-
-        $service = createChefiasServiceMock();
-        $mockUsuario2 = Mockery::mock(\App\Models\Usuario::class)->makePartial();
+        $mockUsuario2 = Mockery::mock(Usuario::class)->makePartial();
         $mockUsuario2->id = 2;
-        $mockUsuario3 = Mockery::mock(\App\Models\Usuario::class)->makePartial();
+        $mockUsuario3 = Mockery::mock(Usuario::class)->makePartial();
         $mockUsuario3->id = 3;
 
-        $service->shouldReceive('findUsuarioByCpf')
-            ->with('11122233344')->andReturn($mockUsuario2);
-        $service->shouldReceive('findUsuarioByCpf')
-            ->with('55566677788')->andReturn($mockUsuario3);
+        $integracaoUnidadeRepo = Mockery::mock(IntegracaoUnidadeRepository::class);
+        $integracaoUnidadeRepo->shouldReceive('getUnidadesComChefias')
+            ->once()
+            ->andReturn($unidades);
 
+        $integracaoServidorRepo = Mockery::mock(IntegracaoServidorRepository::class);
+        $integracaoServidorRepo->shouldReceive('findByCpfAndCodigoExercicio')
+            ->with('11122233344', '002')
+            ->andReturn(Mockery::mock(IntegracaoServidor::class));
+        $integracaoServidorRepo->shouldReceive('findByCpfAndCodigoExercicio')
+            ->with('55566677788', '003')
+            ->andReturn(Mockery::mock(IntegracaoServidor::class));
+
+        $usuarioRepo = Mockery::mock(UsuarioRepository::class);
+        $usuarioRepo->shouldReceive('findByCpf')
+            ->with('11122233344')
+            ->andReturn($mockUsuario2);
+        $usuarioRepo->shouldReceive('findByCpf')
+            ->with('55566677788')
+            ->andReturn($mockUsuario3);
+        $usuarioRepo->shouldReceive('isIntegrante')
+            ->with(2, 2, 'GESTOR')
+            ->andReturn(true);
+        $usuarioRepo->shouldReceive('isIntegrante')
+            ->with(3, 3, 'GESTOR')
+            ->andReturn(false);
+
+        $service = createChefiasServiceWithMocks($integracaoUnidadeRepo, $integracaoServidorRepo, $usuarioRepo);
         $result = invokeMontarArrayChefias($service);
 
         // Unidade 1: cpf vazio -> id_chefe null
