@@ -364,20 +364,16 @@ class UsuarioService extends ServiceBase
 
     public function extraStore($entity, $unidade, $action)
     {
-        $integrantes = $this->buffer["integrantes"] ?? [];
-        if (!is_array($integrantes)) {
-            $integrantes = [];
+        if (isset($this->buffer["integrantes"])) {
+            foreach ($this->buffer["integrantes"] as &$integrante) {
+                $integrante["usuario_id"] = $entity->id;
+            }
+
+            $this->UnidadeIntegranteService->salvarIntegrantes($this->buffer["integrantes"]);
+        } else {
+            $this->buffer["integrantes"] = [];
         }
 
-        foreach ($integrantes as &$integrante) {
-            $integrante["usuario_id"] = $entity->id;
-        }
-
-        $this->buffer["integrantes"] = $integrantes;
-
-        if (!empty($integrantes)) {
-            $this->UnidadeIntegranteService->salvarIntegrantes($integrantes);
-        }
         if ($action != ServiceBase::ACTION_INSERT)
             $this->unidadeIntegranteAtribuicaoService->checkLotacoes($entity->id);
     }
