@@ -130,7 +130,7 @@ class IntegracaoGestorService extends ServiceBase
             }
 
             // Busca o usuário na tabela usuarios
-            $usuario = Usuario::where('cpf', $cpfChefe)->first();
+            $usuario = $this->findUsuarioByCpf($cpfChefe);
 
             if (!$usuario) {
                 SiapeLog::warning("Usuário com CPF {$cpfChefe} (Chefe da unidade {$codigoUnidade}) não encontrado na tabela usuarios.");
@@ -139,41 +139,7 @@ class IntegracaoGestorService extends ServiceBase
 
             $idUsuario = $usuario->id;
 
-            // 3. Validação e Correção da Lotação
-            // Verifica a lotação atual do usuário
-            $lotacaoAtual = DB::table('usuarios as u')
-                ->join('unidades_integrantes as ui', 'u.id', '=', 'ui.usuario_id')
-                ->join('unidades_integrantes_atribuicoes as uia', 'ui.id', '=', 'uia.unidade_integrante_id')
-                ->join('unidades as un', 'ui.unidade_id', '=', 'un.id')
-                ->where('uia.atribuicao', 'LOTADO')
-                ->whereNull('uia.deleted_at')
-                ->whereNull('ui.deleted_at')
-                ->where('u.id', $idUsuario)
-                ->select('un.id as id_unidade_lotacao')
-                ->first();
-            
-            $idUnidadeLotacaoAtual = $lotacaoAtual ? $lotacaoAtual->id_unidade_lotacao : null;
-
-            // Se a lotação atual for diferente da unidade de chefia, corrige a lotação
-            if ($idUnidadeLotacaoAtual !== $idUnidade) {
-                SiapeLog::info("Usuário {$idUsuario} (CPF {$cpfChefe}) será lotado na unidade {$codigoUnidade} para assumir chefia.");
-                
-                $vinculo = [[
-                    'usuario_id' => $idUsuario,
-                    'unidade_id' => $idUnidade,
-                    'atribuicoes' => ['LOTADO']
-                ]];
-
-                try {
-                    $this->unidadeIntegranteService->salvarIntegrantes($vinculo, false);
-                } catch (Throwable $e) {
-                    SiapeLog::error("Erro ao tentar lotar usuário {$idUsuario} na unidade {$codigoUnidade}: " . $e->getMessage());
-                    // Não continua o processamento deste chefe se não conseguir lotar
-                    continue; 
-                }
-            }
-
-            // 4. Verificação de Chefia Existente
+            // 3. Verificação de Chefia Existente
             // Verifica se o usuário já é chefe nesta unidade
             $chefiaAtual = DB::table('usuarios as u')
                 ->join('unidades_integrantes as ui', 'u.id', '=', 'ui.usuario_id')
@@ -198,6 +164,14 @@ class IntegracaoGestorService extends ServiceBase
         }
 
         return $chefias;
+    }
+
+    /**
+     * Busca um usuário pelo CPF.
+     */
+    public function findUsuarioByCpf(string $cpf): ?Usuario
+    {
+        return Usuario::where('cpf', $cpf)->first();
     }
 
     /**
