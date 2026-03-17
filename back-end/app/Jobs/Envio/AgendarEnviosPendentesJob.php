@@ -2,9 +2,7 @@
 
 namespace App\Jobs\Envio;
 
-use App\Enums\StatusEnum;
 use App\Exceptions\EnvioNaoAgendadoException;
-use App\Models\PlanoTrabalho;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Services\API_PGD\PlanoTrabalhoEnvioService;
 use Illuminate\Bus\Queueable;
