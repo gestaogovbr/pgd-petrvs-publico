@@ -15,4 +15,6 @@ interface PlanoTrabalhoReadRepositoryContract
     public function planosAtivosPorData(string $dataInicial, string $dataFinal, string $usuarioId): Collection;
 
     public function buscarPlanosPendentes(string $usuarioId, string $planoTrabalhoId, string $dataLimite): Collection;
+
+    public function chunkEnviosPendentes(int $size, callable $callback): void;
 }

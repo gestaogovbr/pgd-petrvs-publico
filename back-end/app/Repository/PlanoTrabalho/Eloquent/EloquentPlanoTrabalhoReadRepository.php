@@ -17,6 +17,13 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         $this->model = $model;
     }
 
+    public function findById(string|int $id): ?PlanoTrabalho
+    {
+        /** @var PlanoTrabalho|null $planoTrabalho */
+        $planoTrabalho = $this->query()->find($id);
+        return $planoTrabalho;
+    }
+
     public function getPlanosTrabalhoAssinatura(array $unidadesIds, string $usuarioId): Collection
     {
         return $this->query()
@@ -53,5 +60,18 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->where('id', '!=', $planoTrabalhoId)
             ->where('data_fim', '<', $dataLimite)
             ->get();
+    }
+
+    public function chunkEnviosPendentes(int $size, callable $callback): void
+    {
+        PlanoTrabalho::query()
+            ->whereNull('deleted_at')
+            ->whereIn('status', StatusEnum::permitemEnvio())
+            ->whereNotNull('data_agendamento_envio')
+            ->where(function ($query) {
+                $query->whereColumn('data_agendamento_envio', '>', 'data_envio_api_pgd')
+                    ->orWhereNull('data_envio_api_pgd');
+            })
+            ->chunkById($size, $callback);
     }
 }

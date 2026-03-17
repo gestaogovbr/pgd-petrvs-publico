@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Models\PlanoTrabalho;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
 use Illuminate\Database\Eloquent\Collection;
@@ -14,6 +15,11 @@ class PlanoTrabalhoRepository
         private readonly PlanoTrabalhoReadRepositoryContract $readRepository,
         private readonly PlanoTrabalhoWriteRepositoryContract $writeRepository
     ) {}
+
+    public function findById(string $id): ?PlanoTrabalho
+    {
+        return $this->readRepository->findById($id);
+    }
 
     public function getPlanosTrabalhoAssinatura(array $unidadesIds, string $usuarioId): Collection
     {
@@ -33,5 +39,10 @@ class PlanoTrabalhoRepository
     public function buscarPlanosPendentes(string $usuarioId, string $planoTrabalhoId, string $dataLimite): Collection
     {
         return $this->readRepository->buscarPlanosPendentes($usuarioId, $planoTrabalhoId, $dataLimite);
+    }
+
+    public function chunkEnviosPendentes(int $size, callable $callback): void
+    {
+        $this->readRepository->chunkEnviosPendentes($size, $callback);
     }
 }
