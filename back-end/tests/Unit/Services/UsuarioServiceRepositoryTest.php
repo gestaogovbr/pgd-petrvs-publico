@@ -35,6 +35,7 @@ use App\Repository\SiapeBlackListServidorRepository;
 
 class UsuarioServiceRepositoryTest extends TestCase
 {
+    protected $tenancy = true;
     protected $service;
 
     /** @var UsuarioRepository|\Mockery\MockInterface */
@@ -82,7 +83,7 @@ class UsuarioServiceRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->usuarioRepository = Mockery::mock(UsuarioRepository::class);
         $this->unidadeRepository = Mockery::mock(UnidadeRepository::class);
         $this->perfilRepository = Mockery::mock(PerfilRepository::class);
@@ -97,7 +98,7 @@ class UsuarioServiceRepositoryTest extends TestCase
             ->shouldReceive('findByNome')
             ->andReturn((object) ['id' => 'mod-default-id'])
             ->byDefault();
-        
+
         $this->unidadeService = Mockery::mock(UnidadeService::class);
         $this->integracaoService = Mockery::mock(IntegracaoService::class);
         $this->unidadeIntegranteService = Mockery::mock(UnidadeIntegranteService::class);
@@ -113,7 +114,7 @@ class UsuarioServiceRepositoryTest extends TestCase
         $this->app->instance(PlanoTrabalhoRepository::class, $this->planoTrabalhoRepository);
         $this->app->instance(PlanoEntregaRepository::class, $this->planoEntregaRepository);
         $this->app->instance(SiapeBlackListServidorRepository::class, $this->siapeBlackListServidorRepository);
-        
+
         $this->app->instance(UnidadeService::class, $this->unidadeService);
         $this->app->instance(IntegracaoService::class, $this->integracaoService);
         $this->app->instance(UnidadeIntegranteService::class, $this->unidadeIntegranteService);
@@ -131,11 +132,11 @@ class UsuarioServiceRepositoryTest extends TestCase
 
         // Inject protected repositories via Reflection since constructor is not called
         $reflection = new \ReflectionClass(UsuarioService::class);
-        
+
         $usuarioRepoProp = $reflection->getProperty('usuarioRepository');
         $usuarioRepoProp->setAccessible(true);
         $usuarioRepoProp->setValue($this->service, $this->usuarioRepository);
-        
+
         $unidadeRepoProp = $reflection->getProperty('unidadeRepository');
         $unidadeRepoProp->setAccessible(true);
         $unidadeRepoProp->setValue($this->service, $this->unidadeRepository);
@@ -187,11 +188,11 @@ class UsuarioServiceRepositoryTest extends TestCase
     {
         $data = ['fields' => [], 'where' => []];
         $usuarioId = 'user-id';
-        
+
         $userMock = Mockery::mock(Usuario::class);
         $userMock->shouldReceive('getAttribute')->with('id')->andReturn($usuarioId);
         $userMock->shouldReceive('hasPermissionTo')->with('MOD_USER_TUDO')->andReturn(false);
-        
+
         Auth::shouldReceive('user')->andReturn($userMock);
 
         $this->unidadeRepository->shouldReceive('getAreasTrabalhoWhereClause')
@@ -221,11 +222,11 @@ class UsuarioServiceRepositoryTest extends TestCase
     {
         $data = ['fields' => [], 'where' => []];
         $usuarioId = 'admin-id';
-        
+
         $userMock = Mockery::mock(Usuario::class);
         $userMock->shouldReceive('getAttribute')->with('id')->andReturn($usuarioId);
         $userMock->shouldReceive('hasPermissionTo')->with('MOD_USER_TUDO')->andReturn(true);
-        
+
         Auth::shouldReceive('user')->andReturn($userMock);
 
         $this->unidadeRepository->shouldReceive('getAreasTrabalhoWhereClause')->never();
@@ -254,12 +255,12 @@ class UsuarioServiceRepositoryTest extends TestCase
         $userMock->shouldReceive('offsetSet')->with('regramentos', []);
         $userMock->shouldReceive('getAttribute')->with('cpf')->andReturn('');
         $userMock->shouldReceive('setAttribute')->with('unidades_vinculadas', []);
-        
+
         $this->usuarioRepository->shouldReceive('findById')
             ->once()
             ->with($id)
             ->andReturn($userMock);
-            
+
         $result = $this->service->getById($id);
         $this->assertEquals($userMock, $result);
     }
@@ -348,12 +349,12 @@ class UsuarioServiceRepositoryTest extends TestCase
         $id = 'user-id';
         $userMock = Mockery::mock(Usuario::class);
         $userMock->shouldReceive('getAttribute')->with('id')->andReturn($id);
-        
+
         $this->usuarioRepository->shouldReceive('findById')->once()->with($id)->andReturn($userMock);
         $this->usuarioRepository->shouldReceive('removerVinculos')->once()->with($id);
         $userMock->shouldReceive('fresh')->andReturn($userMock);
         $this->usuarioRepository->shouldReceive('delete')->once()->with($id)->andReturn(true);
-            
+
         $result = $this->service->destroy($id);
         $this->assertTrue($result);
     }
@@ -363,7 +364,7 @@ class UsuarioServiceRepositoryTest extends TestCase
         $tipo = UsuarioService::LOGIN_GOOGLE;
         $url = 'http://new-url.com/photo.jpg';
         $id = 'user-id';
-        
+
         $usuarioMock = Mockery::mock(Usuario::class);
         $usuarioMock->shouldReceive('getAttribute')->with('id')->andReturn($id);
         // Configurar acesso via propriedade mágica __get
@@ -371,24 +372,24 @@ class UsuarioServiceRepositoryTest extends TestCase
         $usuarioMock->shouldReceive('__get')->with('foto_google')->andReturn('old-url');
         $usuarioMock->shouldReceive('__get')->with('foto_microsoft')->andReturn(null);
         $usuarioMock->shouldReceive('__get')->with('foto_firebase')->andReturn(null);
-        
+
         $usuarioMock->shouldReceive('getAttribute')->with('foto_google')->andReturn('old-url');
-        
+
         // setAttribute é chamado quando fazemos $usuario->prop = val
         $usuarioMock->shouldReceive('setAttribute')->with('foto_perfil', Mockery::any());
         $usuarioMock->shouldReceive('setAttribute')->with('foto_google', $url);
         $usuarioMock->shouldReceive('__set')->with('foto_perfil', Mockery::any());
         $usuarioMock->shouldReceive('__set')->with('foto_google', $url);
-        
+
         $this->service->shouldReceive('downloadImgProfile')
             ->once()
             ->with($url, "usuarios/" . $id)
             ->andReturn("path/to/profile.jpg");
-            
+
         $this->usuarioRepository->shouldReceive('updateFotoPerfil')
             ->once()
             ->with($id, $tipo, $url, "path/to/profile.jpg");
-            
+
         $this->service->atualizarFotoPerfil($tipo, $usuarioMock, $url);
     }
 
@@ -396,12 +397,12 @@ class UsuarioServiceRepositoryTest extends TestCase
     {
         $unidadeId = 'unidade-id';
         $usuarioId = 'user-id';
-        
+
         $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
             ->once()
             ->with($unidadeId, $usuarioId)
             ->andReturn(true);
-            
+
         $result = $this->service->isGestorUnidadeRecursivo($unidadeId, $usuarioId);
         $this->assertTrue($result);
     }
@@ -410,12 +411,12 @@ class UsuarioServiceRepositoryTest extends TestCase
     {
         $usuarioId = 'user-id';
         $programaId = 'programa-id';
-        
+
         $this->usuarioRepository->shouldReceive('isParticipanteHabilitado')
             ->once()
             ->with($usuarioId, $programaId)
             ->andReturn(true);
-            
+
         $result = $this->service->isParticipanteHabilitado($usuarioId, $programaId);
         $this->assertTrue($result);
     }
@@ -425,12 +426,12 @@ class UsuarioServiceRepositoryTest extends TestCase
         $usuarioId = 'user-id';
         $unidadeId = 'unidade-id';
         $atribuicao = 'LOTADO';
-        
+
         $this->usuarioRepository->shouldReceive('isIntegrante')
             ->once()
             ->with($usuarioId, $unidadeId, $atribuicao)
             ->andReturn(true);
-            
+
         $result = $this->service->isIntegrante($atribuicao, $unidadeId, $usuarioId);
         $this->assertTrue($result);
     }
@@ -447,7 +448,7 @@ class UsuarioServiceRepositoryTest extends TestCase
             'integrantes' => [['unidade_id' => 'u1', 'atribuicao' => 'LOTADO']]
         ];
         $unidade = Mockery::mock(Unidade::class);
-        
+
         // Mock validateStore dependencies
         $this->usuarioRepository->shouldReceive('findByCpfOrEmail')->andReturn(null);
 
@@ -456,11 +457,11 @@ class UsuarioServiceRepositoryTest extends TestCase
         $this->tipoModalidadeRepository->shouldReceive('findByName')
             ->with('Sem dados do SIAPE')
             ->andReturn($mockTipoModalidade);
-        
+
         // Mock validations to avoid DB calls
         $this->service->shouldReceive('validarPerfil')->andReturn(null);
         $this->service->shouldReceive('validarColaborador')->andReturn(null);
-        
+
         // Mock default TipoModalidade lookup
         $this->tipoModalidadeRepository->shouldReceive('findByNome')
             ->with('Sem dados do SIAPE')
@@ -470,12 +471,12 @@ class UsuarioServiceRepositoryTest extends TestCase
         $createdUser = Mockery::mock(Usuario::class);
         $createdUser->shouldReceive('getAttribute')->with('id')->andReturn('new-id');
         $this->usuarioRepository->shouldReceive('create')->once()->andReturn($createdUser);
-        
+
         // Mock extraStore dependencies
         $this->unidadeIntegranteService->shouldReceive('salvarIntegrantes');
-        
+
         $result = $this->service->store($data, $unidade);
-        
+
         $this->assertEquals($createdUser, $result);
     }
 
@@ -488,22 +489,22 @@ class UsuarioServiceRepositoryTest extends TestCase
             'integrantes' => [['unidade_id' => 'u1']]
         ];
         $unidade = Mockery::mock(Unidade::class);
-        
+
         // Mock validations to avoid DB calls
         $this->service->shouldReceive('validarPerfil')->andReturn(null);
         $this->service->shouldReceive('validarColaborador')->andReturn(null);
-        
+
         // Mock update
-        $updatedUser = Mockery::mock(Usuario::class);
-        $updatedUser->shouldReceive('getAttribute')->with('id')->andReturn('user-id');
+        $updatedUser = Usuario::factory()->make();
         $this->usuarioRepository->shouldReceive('update')->once()->with('user-id', Mockery::any())->andReturn($updatedUser);
-        
+        $this->usuarioRepository->shouldReceive('findById')->once()->with('user-id')->andReturn($updatedUser);
+
         // Mock extraStore (called by extraUpdate)
         $this->unidadeIntegranteService->shouldReceive('salvarIntegrantes');
         $this->unidadeIntegranteAtribuicaoService->shouldReceive('checkLotacoes');
-        
+
         $result = $this->service->update($data, $unidade);
-        
+
         $this->assertEquals($updatedUser, $result);
     }
 
@@ -511,14 +512,14 @@ class UsuarioServiceRepositoryTest extends TestCase
     {
         $unidadeId = 'unidade-id';
         $usuarioId = 'user-id';
-        
+
         $this->usuarioRepository->shouldReceive('getAtribuicoes')
             ->once()
             ->with($usuarioId, $unidadeId)
             ->andReturn(['GESTOR', 'OUTRA']);
-            
+
         $result = $this->service->atribuicoesGestor($unidadeId, $usuarioId);
-        
+
         $this->assertTrue($result['gestor']);
         $this->assertFalse($result['gestorSubstituto']);
         $this->assertFalse($result['gestorDelegado']);
@@ -532,18 +533,18 @@ class UsuarioServiceRepositoryTest extends TestCase
         $userMock = Mockery::mock(Usuario::class);
         $userMock->shouldReceive('getAttribute')->with('id')->andReturn($usuarioId);
         Auth::shouldReceive('user')->andReturn($userMock);
-        
+
         $unidadeMock = Mockery::mock(Unidade::class);
         $unidadeMock->shouldReceive('getAttribute')->with('id')->andReturn($unidadeId);
         $unidadeMock->shouldReceive('offsetExists')->with('id')->andReturn(true);
         $unidadeMock->shouldReceive('offsetGet')->with('id')->andReturn($unidadeId);
         $unidadesCollection = new \Illuminate\Database\Eloquent\Collection([$unidadeMock]);
-        
+
         $this->unidadeRepository->shouldReceive('getUnidadesGerenciadas')
             ->once()
             ->with($usuarioId)
             ->andReturn($unidadesCollection);
-            
+
         $this->unidadeRepository->shouldReceive('getSubordinadas')
             ->once()
             ->with([$unidadeId])
@@ -565,12 +566,16 @@ class UsuarioServiceRepositoryTest extends TestCase
             ->once()
             ->andReturn(new \Illuminate\Database\Eloquent\Collection());
 
-        $this->planoEntregaRepository->shouldReceive('getEntregasPlanoEntregaHomologacao')
+        /*$this->planoEntregaRepository->shouldReceive('getEntregasPlanoEntregaHomologacao')
+            ->once()
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection());*/
+
+        $this->planoEntregaRepository->shouldReceive('getEntregasPlanoEntregaExecucao')
             ->once()
             ->andReturn(new \Illuminate\Database\Eloquent\Collection());
 
         $result = $this->service->pendenciasChefe();
-        
+
         $this->assertIsArray($result);
         $this->assertArrayHasKey('registrosExecucao', $result);
         $this->assertArrayHasKey('planosTrabalhoAssinatura', $result);
@@ -600,34 +605,34 @@ class UsuarioServiceRepositoryTest extends TestCase
 
         // Mock IntegracaoService expectations
         $this->integracaoService->shouldReceive('validarModalidadePgd')->with('mod-1')->andReturn('mod-1-id');
-        
+
         // Mock TipoModalidadeRepository
-        // A lógica do service agora chama o findByNome se a modalidade_pgd não for encontrada ou se for nula, 
+        // A lógica do service agora chama o findByNome se a modalidade_pgd não for encontrada ou se for nula,
         // mas no caso de 'validarModalidadePgd' retornar um ID, o fluxo de 'proxyStore' (onde é chamado o findByNome)
         // pode não ser acionado dependendo de como gerarUsuario é implementado.
         // Vamos olhar o gerarUsuario no service.
-        
+
         // Se gerarUsuario chama create -> proxyStore -> verifica ACTION_INSERT -> busca 'Sem dados do SIAPE'
         // ENTRETANTO, gerarUsuario parece preparar os dados antes.
-        
+
         // Vamos garantir que se for chamado, retorne algo.
         $this->tipoModalidadeRepository->shouldReceive('findByNome')
              ->with('Sem dados do SIAPE')
              ->andReturn((object) ['id' => 'mod-default-id']);
-        
+
         $novoUsuarioMock = Mockery::mock(Usuario::class);
-        
+
         $this->usuarioRepository->shouldReceive('newUsuario')
             ->once()
             ->with(Mockery::on(function($arg) use ($perfil) {
-                return $arg['matricula'] == '12345' && 
+                return $arg['matricula'] == '12345' &&
                        $arg['tipo_modalidade_id'] == 'mod-1-id' &&
                        $arg['perfil_id'] == $perfil;
             }))
             ->andReturn($novoUsuarioMock);
 
         $result = $this->service->gerarUsuario($dados, $modalidade, $perfil);
-        
+
         $this->assertEquals($novoUsuarioMock, $result);
     }
 
@@ -637,21 +642,21 @@ class UsuarioServiceRepositoryTest extends TestCase
         $ignorar = [];
         $tabela = 'unidades';
         $usuarioId = 'user-id';
-        
+
         $userMock = Mockery::mock(Usuario::class);
         $userMock->shouldReceive('getAttribute')->with('id')->andReturn($usuarioId);
         Auth::shouldReceive('user')->andReturn($userMock);
-        
+
         $this->unidadeRepository->shouldReceive('getAreasTrabalhoWhereClause')
             ->once()
             ->with($usuarioId, $subordinadas, $tabela)
             ->andReturn("clause");
-            
+
         $result = $this->service->areasTrabalhoWhere($subordinadas, $tabela);
-        
+
         $this->assertEquals("clause", $result);
     }
-    
+
     public function test_atualizar_servidor_calls_repository()
     {
         $usuarioObj = (object) [
@@ -668,18 +673,18 @@ class UsuarioServiceRepositoryTest extends TestCase
             'data_modificacao' => '2023-01-01',
             'data_nascimento' => '1990-01-01'
         ];
-        
+
         // Mock IntegracaoService expectations
         $this->integracaoService->shouldReceive('verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake');
         $this->integracaoService->shouldReceive('validarModalidadePgd')->with('mod-pgd')->andReturn('mod-id');
-        
+
         $this->usuarioRepository->shouldReceive('update')
             ->once()
             ->with('user-id', Mockery::on(function($arg) {
-                return $arg['nome'] == 'Nome' && 
+                return $arg['nome'] == 'Nome' &&
                        $arg['tipo_modalidade_id'] == 'mod-id';
             }));
-            
+
         $this->service->atualizarServidor($usuarioObj);
     }
 }

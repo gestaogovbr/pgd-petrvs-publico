@@ -27,7 +27,7 @@ beforeEach(function () {
     $this->usuarioRepository = Mockery::mock(UsuarioRepository::class);
     $this->integracaoService = Mockery::mock(IntegracaoService::class);
     $this->tipoModalidadeRepository = Mockery::mock(TipoModalidadeRepository::class);
-    
+
     // Mock other dependencies used in constructor via app()
     $this->app->instance(UsuarioRepository::class, $this->usuarioRepository);
     $this->app->instance(UnidadeRepository::class, Mockery::mock(UnidadeRepository::class));
@@ -61,7 +61,7 @@ describe('UsuarioService - Null ID Checks', function () {
         $loggerMock->shouldReceive('error')
             ->once()
             ->with("ID do usuário não encontrado para atualização", ['usuario' => ['id' => null, 'matriculasiape' => '1234567']]);
-            
+
         Log::shouldReceive('channel')
             ->with('siape')
             ->andReturn($loggerMock);
@@ -81,7 +81,7 @@ describe('UsuarioService - Null ID Checks', function () {
         $unidade = null;
 
         // Ensure Log is not called unexpectedly (optional but good practice)
-        // Log::shouldReceive('channel')->never(); 
+        // Log::shouldReceive('channel')->never();
         // Commented out because update might use log in other paths, but here it throws exception early.
 
         expect(fn() => $this->usuarioService->update($data, $unidade))
@@ -155,6 +155,8 @@ describe('UsuarioService - Null ID Checks', function () {
 
         $this->usuarioService->shouldReceive('validarPerfil')->andReturnNull();
         $this->usuarioService->shouldReceive('validarColaborador')->andReturnNull();
+
+        $this->usuarioRepository->shouldReceive('findById');
 
         $data = [
             'id' => 'user-id',
