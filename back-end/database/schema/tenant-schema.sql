@@ -746,50 +746,6 @@ CREATE TABLE `entregas` (
   CONSTRAINT `entregas_unidade_id_foreign` FOREIGN KEY (`unidade_id`) REFERENCES `unidades` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `envio_itens`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `envio_itens` (
-  `id` char(36) NOT NULL,
-  `envio_id` char(36) NOT NULL,
-  `tipo` enum('participante','trabalho','entrega') NOT NULL,
-  `uid` char(36) NOT NULL,
-  `fonte` int(11) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `sucesso` tinyint(1) NOT NULL DEFAULT 0,
-  `erros` text DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `envio_itens_envio_id_foreign` (`envio_id`),
-  CONSTRAINT `envio_itens_envio_id_foreign` FOREIGN KEY (`envio_id`) REFERENCES `envios` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `envios`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `envios` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `finished_at` timestamp NULL DEFAULT NULL,
-  `sucesso` tinyint(1) NOT NULL DEFAULT 0,
-  `erros` text DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `qtde_participantes_sucessos` int(11) NOT NULL DEFAULT 0,
-  `qtde_participantes_falhas` int(11) NOT NULL DEFAULT 0,
-  `qtde_entregas_sucessos` int(11) NOT NULL DEFAULT 0,
-  `qtde_entregas_falhas` int(11) NOT NULL DEFAULT 0,
-  `qtde_trabalhos_sucessos` int(11) NOT NULL DEFAULT 0,
-  `qtde_trabalhos_falhas` int(11) NOT NULL DEFAULT 0,
-  `numero` bigint(20) unsigned NOT NULL,
-  `qtde_participantes_aptos` int(11) NOT NULL DEFAULT 0,
-  `qtde_entregas_aptos` int(11) NOT NULL DEFAULT 0,
-  `qtde_trabalhos_aptos` int(11) NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `envios_numero_unique` (`numero`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `favoritos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1444,7 +1400,6 @@ CREATE TABLE `planos_entregas_entregas` (
   KEY `planos_entregas_entregas_entrega_pai_id_foreign` (`entrega_pai_id`),
   KEY `planos_entregas_entregas_unidade_id_foreign` (`unidade_id`),
   CONSTRAINT `planos_entregas_entregas_entrega_id_foreign` FOREIGN KEY (`entrega_id`) REFERENCES `entregas` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `planos_entregas_entregas_entrega_pai_id_foreign` FOREIGN KEY (`entrega_pai_id`) REFERENCES `planos_entregas_entregas` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planos_entregas_entregas_plano_entrega_id_foreign` FOREIGN KEY (`plano_entrega_id`) REFERENCES `planos_entregas` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planos_entregas_entregas_unidade_id_foreign` FOREIGN KEY (`unidade_id`) REFERENCES `unidades` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1600,7 +1555,7 @@ CREATE TABLE `planos_trabalhos_consolidacoes` (
   `data_inicio` date NOT NULL COMMENT 'Data inicial da consolidacão',
   `data_fim` date NOT NULL COMMENT 'Data final da consolidação',
   `data_conclusao` datetime DEFAULT NULL COMMENT 'Data da conclusão (usado como referência para o snapshot das atividades)',
-  `status` enum('AGUARDANDO_REGISTRO','INCLUIDO','CONCLUIDO','AVALIADO') NOT NULL DEFAULT 'AGUARDANDO_REGISTRO' COMMENT 'Status atual da consolidação',
+  `status` enum('INCLUIDO','CONCLUIDO','AVALIADO') NOT NULL DEFAULT 'INCLUIDO' COMMENT 'Status atual da consolidação',
   `plano_trabalho_id` char(36) NOT NULL,
   `avaliacao_id` char(36) DEFAULT NULL,
   `justificativa_conclusao` text DEFAULT NULL,
@@ -2771,7 +2726,7 @@ CREATE TABLE `usuarios` (
   `email` varchar(100) NOT NULL COMMENT 'E-mail do usuário',
   `nome` varchar(256) NOT NULL COMMENT 'Nome do usuário',
   `password` varchar(255) DEFAULT NULL COMMENT 'Senha do usuário',
-  `cpf` varchar(14) NOT NULL COMMENT 'CPF do usuário',
+  `cpf` varchar(11) NOT NULL COMMENT 'CPF do usuário',
   `matricula` varchar(50) DEFAULT NULL COMMENT 'Matrícula funcional do usuário',
   `apelido` varchar(255) DEFAULT NULL COMMENT 'Apelido/Nome de guerra/Nome social',
   `telefone` varchar(50) DEFAULT NULL COMMENT 'Telefone do usuário',
@@ -2819,16 +2774,6 @@ CREATE TABLE `usuarios` (
   CONSTRAINT `usuarios_perfil_id_foreign` FOREIGN KEY (`perfil_id`) REFERENCES `perfis` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `view_api_pgd`;
-/*!50001 DROP VIEW IF EXISTS `view_api_pgd`*/;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8mb4;
-/*!50001 CREATE VIEW `view_api_pgd` AS SELECT
- 1 AS `id`,
-  1 AS `tipo`,
-  1 AS `json_audit`,
-  1 AS `fonte` */;
-SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS `view_relatorio_plano_entrega`;
 /*!50001 DROP VIEW IF EXISTS `view_relatorio_plano_entrega`*/;
 SET @saved_cs_client     = @@character_set_client;
@@ -3311,19 +3256,6 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50001 DROP VIEW IF EXISTS `view_api_pgd`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8mb4 */;
-/*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_uca1400_ai_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_api_pgd` AS select distinct `usuarios`.`id` AS `id`,'participante' AS `tipo`,NULL AS `json_audit`,1 AS `fonte` from (`usuarios` join `programas_participantes` on(`usuarios`.`id` = `programas_participantes`.`usuario_id`)) where `usuarios`.`data_envio_api_pgd` is null and `usuarios`.`deleted_at` is null and `programas_participantes`.`deleted_at` is null and exists(select `pt`.`id` from `planos_trabalhos` `pt` where `pt`.`usuario_id` = `usuarios`.`id` and `pt`.`deleted_at` is null limit 1) and exists(select 1 from `documentos_assinaturas` `da` where `da`.`usuario_id` = `usuarios`.`id` and `da`.`deleted_at` is null limit 1) union all select distinct `planos_trabalhos`.`id` AS `id`,'trabalho' collate utf8mb4_unicode_ci AS `tipo`,NULL AS `json_audit`,2 AS `fonte` from `planos_trabalhos` where `planos_trabalhos`.`deleted_at` is null and `planos_trabalhos`.`data_envio_api_pgd` is null and `planos_trabalhos`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') union all select distinct `planos_entregas`.`id` AS `id`,'entrega' collate utf8mb4_unicode_ci AS `tipo`,NULL AS `json_audit`,3 AS `fonte` from `planos_entregas` where `planos_entregas`.`deleted_at` is null and `planos_entregas`.`data_envio_api_pgd` is null and `planos_entregas`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') union all select distinct `t1`.`id` AS `id`,`t1`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t1`.`json_audit` AS `json_audit`,4 AS `fonte` from (select `d`.`usuario_id` AS `id`,'participante' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from (`audits` `a` join `programas_participantes` `d` on(`a`.`auditable_id` = `d`.`id`)) where `a`.`auditable_type` like '%ProgramaParticipante' and (`a`.`tags` like '%ERRO%' or `a`.`tags` is null) and `d`.`deleted_at` is null and exists(select `pt`.`id` from `planos_trabalhos` `pt` where `pt`.`usuario_id` = `d`.`usuario_id` and `pt`.`deleted_at` is null limit 1) and exists(select 1 from `documentos_assinaturas` `da` where `da`.`usuario_id` = `d`.`usuario_id` and `da`.`deleted_at` is null limit 1) group by `d`.`usuario_id`) `t1` union all select distinct `t2`.`id` AS `id`,`t2`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t2`.`json_audit` AS `json_audit`,5 AS `fonte` from (select `d`.`usuario_id` AS `id`,'participante' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from (`audits` `a` join `documentos_assinaturas` `d` on(`a`.`auditable_id` = `d`.`id`)) where `a`.`auditable_type` like '%DocumentoAssinatura' and (`a`.`tags` like '%ERRO%' or `a`.`tags` is null) and `d`.`deleted_at` is null and exists(select `pt`.`id` from `planos_trabalhos` `pt` where `pt`.`usuario_id` = `d`.`usuario_id` and `pt`.`deleted_at` is null limit 1) and exists(select 1 from `documentos_assinaturas` `da` where `da`.`usuario_id` = `d`.`usuario_id` and `da`.`deleted_at` is null limit 1) group by `d`.`usuario_id`) `t2` union all select distinct `t3`.`id` AS `id`,`t3`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t3`.`json_audit` AS `json_audit`,6 AS `fonte` from (select `d`.`id` AS `id`,'participante' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from (`audits` `a` join `usuarios` `d` on(`a`.`auditable_id` = `d`.`id`)) where `a`.`auditable_type` like '%Usuario' and (`a`.`tags` like '%ERRO%' or `a`.`tags` is null) and `d`.`deleted_at` is null and exists(select `pt`.`id` from `planos_trabalhos` `pt` where `pt`.`usuario_id` = `d`.`id` and `pt`.`deleted_at` is null limit 1) and exists(select 1 from `documentos_assinaturas` `da` where `da`.`usuario_id` = `d`.`id` and `da`.`deleted_at` is null limit 1) and exists(select 1 from `programas_participantes` `part` where `part`.`usuario_id` = `d`.`id` and `part`.`deleted_at` is null limit 1) group by `d`.`id`) `t3` union all select distinct `t4`.`id` AS `id`,`t4`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t4`.`json_audit` AS `json_audit`,7 AS `fonte` from (select `d`.`id` AS `id`,'trabalho' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from (`audits` `a` join `planos_trabalhos` `d` on(`a`.`auditable_id` = `d`.`id`)) where `a`.`auditable_type` like '%PlanoTrabalho' and (`a`.`tags` like '%ERRO%' or `a`.`tags` is null) and `d`.`deleted_at` is null and `d`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') group by `d`.`id`) `t4` union all select distinct `t5`.`id` AS `id`,`t5`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t5`.`json_audit` AS `json_audit`,8 AS `fonte` from (select `d`.`plano_trabalho_id` AS `id`,'trabalho' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from ((`audits` `a` join `planos_trabalhos_consolidacoes` `d` on(`a`.`auditable_id` = `d`.`id`)) join `planos_trabalhos` `pt` on(`pt`.`id` = `d`.`plano_trabalho_id`)) where `a`.`auditable_type` like '%PlanoTrabalhoConsolidacao' and (`a`.`tags` like '%ERRO%' or `a`.`tags` is null) and `d`.`deleted_at` is null and `pt`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') and `pt`.`deleted_at` is null group by `d`.`plano_trabalho_id`) `t5` union all select distinct `t6`.`id` AS `id`,`t6`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t6`.`json_audit` AS `json_audit`,9 AS `fonte` from (select `d`.`plano_trabalho_id` AS `id`,'trabalho' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from ((`audits` `a` join `planos_trabalhos_entregas` `d` on(`a`.`auditable_id` = `d`.`id`)) join `planos_trabalhos` `pt` on(`pt`.`id` = `d`.`plano_trabalho_id`)) where `a`.`auditable_type` like '%PlanoTrabalhoEntrega' and (`a`.`tags` like '%ERRO%' or `a`.`tags` is null) and `d`.`deleted_at` is null and `pt`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') and `pt`.`deleted_at` is null group by `d`.`plano_trabalho_id`) `t6` union all select distinct `t7`.`id` AS `id`,`t7`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t7`.`json_audit` AS `json_audit`,10 AS `fonte` from (select `d`.`id` AS `id`,'entrega' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from ((`audits` `a` join `planos_entregas` `d` on(`a`.`auditable_id` = `d`.`id`)) join `programas` `p` on(`p`.`id` = `d`.`programa_id`)) where `a`.`auditable_type` like '%PlanoEntrega' and (`a`.`tags` like '%ERRO%' or `a`.`tags` is null) and `d`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') and `d`.`deleted_at` is null and `p`.`deleted_at` is null group by `d`.`id`) `t7` union all select distinct `t8`.`id` AS `id`,`t8`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t8`.`json_audit` AS `json_audit`,11 AS `fonte` from (select `d`.`plano_entrega_id` AS `id`,'entrega' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from (((`audits` `a` join `planos_entregas_entregas` `d` on(`a`.`auditable_id` = `d`.`id`)) join `planos_entregas` `pe` on(`pe`.`id` = `d`.`plano_entrega_id`)) join `programas` `p` on(`p`.`id` = `pe`.`programa_id`)) where `a`.`auditable_type` like '%PlanoEntregaEntrega' and (`a`.`tags` like '%ERRO%' or `a`.`tags` is null) and `d`.`deleted_at` is null and `pe`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') and `p`.`deleted_at` is null group by `d`.`plano_entrega_id`) `t8` */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!50001 DROP VIEW IF EXISTS `view_relatorio_plano_entrega`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
@@ -3823,4 +3755,15 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (459,'2026_02_04_14
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (460,'2026_02_06_000000_version2_9_13',57);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (463,'2026_02_11_164301_add_index_data_agendamento_envio',58);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (464,'2026_02_13_000000_version2_9_14',59);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (465,'2026_02_12_160000_alter_status_aguardando_registro',60);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (466,'2026_02_24_163221_drop-views-pgd',60);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (467,'2026_02_24_163843_drop-envios',60);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (468,'2026_02_26_085122_remove_fk_pe',60);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (469,'2026_02_27_000000_version2_9_15',60);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (470,'2026_03_06_000000_version2_9_16',60);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (471,'2026_03_06_2000_atualiza_planos_trabalhos',60);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (472,'2026_03_10_000000_version2_9_17',61);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (473,'2026_03_12_180933_normalize_cpfs_in_usuarios_table',61);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (474,'2026_03_12_182713_shrink_cpf_column_in_usuarios_table',61);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (475,'2026_03_13_000000_version2_9_18',61);
 commit;
