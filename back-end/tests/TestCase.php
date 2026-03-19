@@ -15,12 +15,6 @@ abstract class TestCase extends BaseTestCase
     protected $tenant = null;
     protected $tenantId = '_test';
 
-    public static function setUpBeforeClass(): void
-    {
-        parent::setUpBeforeClass();
-
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
