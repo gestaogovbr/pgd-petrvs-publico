@@ -54,7 +54,7 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if(['usuario_id', 'tipo_motivo_afastamento_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['usuario_id', 'tipo_motivo_afastamento_id', 'horas'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     } else if(['data_inicio', 'data_fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
