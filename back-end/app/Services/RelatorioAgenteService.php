@@ -164,7 +164,7 @@ TEXT;
             $unidadeIds = [$unidadeId[2]];
 
             if (isset($subordinadas[2])) {
-                $unidadeService = new UnidadeService();
+                $unidadeService = app(UnidadeService::class);
                 $subordinadasIds = $unidadeService->subordinadas($unidadeId[2])->pluck('id')->toArray();
                 $unidadeIds = array_merge($unidadeIds, $subordinadasIds);
             }
@@ -314,12 +314,13 @@ TEXT;
         $unidadeId = $this->extractWhere($data, "unidade_id");
         $atribuicao = $this->extractWhere($data, "atribuicao");
 
+        $unidadeIds = [];
         if (isset($unidadeId[2])) {
             $unidadeIds = [$unidadeId[2]];
         }
 
         if (isset($unidadeId[2]) && isset($subordinadas[2])) {
-            $unidadeService = new UnidadeService();
+            $unidadeService = app(UnidadeService::class);
             $subordinadasIds = $unidadeService->subordinadas($unidadeId[2])->pluck('id')->toArray();
             $unidadeIds = array_merge($unidadeIds, $subordinadasIds);
         }

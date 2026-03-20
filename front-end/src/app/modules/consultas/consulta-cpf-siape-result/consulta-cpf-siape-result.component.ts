@@ -1,7 +1,7 @@
 import { Component, Inject, Injector, ViewChild, TemplateRef } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
@@ -14,9 +14,10 @@ import { DialogService } from 'src/app/services/dialog.service';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
 
 @Component({
-  selector: 'consulta-cpf-siape-result',
-  templateUrl: './consulta-cpf-siape-result.component.html',
-  styleUrls: ['./consulta-cpf-siape-result.component.scss']
+    selector: 'consulta-cpf-siape-result',
+    templateUrl: './consulta-cpf-siape-result.component.html',
+    styleUrls: ['./consulta-cpf-siape-result.component.scss'],
+    standalone: false
 })
 export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, UsuarioDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent

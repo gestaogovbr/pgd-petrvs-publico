@@ -7,9 +7,10 @@ import { Atividade } from 'src/app/models/atividade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
-  selector: 'app-atividade-form-pausar',
-  templateUrl: './atividade-form-pausar.component.html',
-  styleUrls: ['./atividade-form-pausar.component.scss']
+    selector: 'app-atividade-form-pausar',
+    templateUrl: './atividade-form-pausar.component.html',
+    styleUrls: ['./atividade-form-pausar.component.scss'],
+    standalone: false
 })
 export class AtividadeFormPausarComponent extends PageFormBase<Atividade, AtividadeDaoService> implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
@@ -60,7 +61,7 @@ export class AtividadeFormPausarComponent extends PageFormBase<Atividade, Ativid
       data: this.util.setStrTime(new Date(), this.auth.unidadeHora)
     };
     if(entity.unidade_id != this.auth.unidade!.id) {
-      await this.auth.selecionaUnidade(entity.unidade_id);
+      await this.auth.selecionaUnidade(entity.unidade_id, undefined);
     }
     form.patchValue(formValue);
   }

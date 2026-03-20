@@ -3,25 +3,44 @@
 namespace App\Services;
 
 use App\Exceptions\ServerException;
+use App\Facades\SiapeLog;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\IntegracaoServidor;
 use App\Models\Usuario;
+use App\Repository\UnidadeIntegranteAtribuicaoRepository;
+use App\Repository\UnidadeIntegranteRepository;
+use App\Repository\UnidadeRepository;
+use App\Repository\UsuarioRepository;
 use App\Services\ServiceBase;
 use App\Services\Siape\Unidade\Integracao;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+/**
+ * @property UsuarioService $usuarioService
+ * @property UnidadeService $unidadeService
+ */
 class UnidadeIntegranteService extends ServiceBase
 {
+  private UsuarioRepository $usuarioRepository;
+  public function __construct($collection = null)
+  {
+     parent::__construct($collection);
+     $this->usuarioRepository = app(UsuarioRepository::class);
+  }
+
   public function carregarIntegrantes($unidadeId, $usuarioId)
   {
     $result = [];
+    /** @var Unidade|null $unidade */
     $unidade = empty($unidadeId) ? null : Unidade::find($unidadeId);
+    /** @var Usuario|null $usuario */
     $usuario = empty($usuarioId) ? null : Usuario::find($usuarioId);
 
+    /** @phpstan-ignore-next-line */
     $dataModificacao = $usuario ? ($usuario->integracaoServidor instanceof IntegracaoServidor ? $usuario->integracaoServidor->data_modificacao : '') : '';
 
     if (!empty($unidadeId) && empty($unidade)) throw new ServerException("ValidateIntegrante", "Unidade não encontrada no banco");
@@ -54,25 +73,37 @@ class UnidadeIntegranteService extends ServiceBase
     return ['rows' => array_values(array_filter($result, fn ($vinculo) => count($vinculo["atribuicoes"]) > 0))];
   }
 
+  private function trataUsuarioExcluido(string $usuarioId, Unidade $unidade)
+  {
+    $usuario = $this->usuarioRepository->findById($usuarioId, true);
+
+    if($usuario->usuario_externo == 1){
+      SiapeLog::error('Usuário externo excluído não pode ser integrante de uma unidade', ['usuario' => $usuario, 'unidade' => $unidade]);
+      throw new ServerException("ValidateIntegrante", "Usuário externo excluído não pode ser integrante de uma unidade");
+    }
+    SiapeLog::info('Usuário excluído restaurado', ['usuario' => $usuario, 'unidade' => $unidade]);
+    $this->usuarioRepository->restore($usuario->id);
+  }
+
   
   public function salvarIntegrantes(array $vinculos, $transaction = true): array
   {
     $result = [];
     foreach ($vinculos as $vinculo) {
       try {
-        $usuario = Usuario::find($vinculo["usuario_id"]);
+        /** @var Usuario|null $usuario */
+        $usuario = $this->usuarioRepository->findById($vinculo["usuario_id"]);
         $unidade = Unidade::where('id', $vinculo["unidade_id"])->whereNull('data_inativacao')->first();
 
         if(($vinculo['_status'] ?? null) === 'DELETE') continue;
         
         if (empty($usuario)) {
-            Log::error('Usuário não encontrado ao processar vínculo', ['vinculo' => $vinculo]);
-            throw new ServerException("ValidateIntegrante", "Usuário não encontrado no sistema");
+          $this->trataUsuarioExcluido($vinculo["usuario_id"], $unidade);
         }
         
         if (empty($unidade)) {
-            Log::error('Unidade não encontrada ou está inativada ao processar vínculo', ['vinculo' => $vinculo]);
-            throw new ServerException("ValidateIntegrante", "Unidade {$vinculo['unidade_sigla']} não encontrada ou está inativada. Por favor, remova o vínculo.");
+            SiapeLog::error('Unidade não encontrada ou está inativada ao processar vínculo', ['vinculo' => $vinculo]);
+            throw new ServerException("ValidateIntegrante", "Unidade não encontrada ou está inativada. Por favor, remova o vínculo.");
         }
         
         //FIXME Isso aqui não deveria estar aqui.
@@ -85,7 +116,14 @@ class UnidadeIntegranteService extends ServiceBase
       }
     }
     try {
-        $integracao = new Integracao($vinculos);
+        /** @var Integracao $integracao */
+        $integracao = app(Integracao::class, [
+            'vinculos' => $vinculos,
+            'unidadeIntegranteRepository' => app(UnidadeIntegranteRepository::class),
+            'unidadeIntegranteAtribuicaoRepository' => app(UnidadeIntegranteAtribuicaoRepository::class),
+            'usuarioRepository' => app(UsuarioRepository::class),
+            'unidadeRepository' => app(UnidadeRepository::class),
+        ]);
         $integracao->setTransaction($transaction); 
         $integracao->processar();
         $alteracoesFinais = $integracao->getAtribuicoesFinais();
@@ -100,7 +138,7 @@ class UnidadeIntegranteService extends ServiceBase
   /**
    * @deprecated não utilizar essa função, será descontinuada.
    *
-   * @param [array] $atribuicoes
+   * @param array $atribuicoes
    * @param string|null $nome
    * @return void
    */

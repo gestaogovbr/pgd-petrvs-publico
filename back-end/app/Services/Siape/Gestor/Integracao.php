@@ -4,9 +4,11 @@ namespace App\Services\Siape\Gestor;
 
 use App\Enums\Atribuicao as EnumsAtribuicao;
 use App\Exceptions\ServerException;
-use App\Models\UnidadeIntegrante;
-use App\Models\Unidade;
 use App\Models\Usuario;
+use App\Repository\UnidadeRepository;
+use App\Repository\UnidadeIntegranteRepository;
+use App\Repository\UnidadeIntegranteAtribuicaoRepository;
+use App\Repository\UsuarioRepository;
 use App\Services\LogTrait;
 use App\Services\NivelAcessoService;
 use App\Services\PerfilService;
@@ -25,7 +27,6 @@ class Integracao implements InterfaceIntegracao
     /**
      *
      * @param array{id_unidade: string, id_chefe: string, id_substituto: string}[] $dados
-     * @param Usuario $userModel
      * @param UnidadeIntegranteService $unidadeIntegranteService
      * @param NivelAcessoService $nivelAcessoService
      * @param PerfilService $perfilService
@@ -33,15 +34,38 @@ class Integracao implements InterfaceIntegracao
      */
     public function __construct(
         private array $dados,
-        private Usuario $userModel,
         private UnidadeIntegranteService $unidadeIntegranteService,
         private NivelAcessoService $nivelAcessoService,
         private PerfilService $perfilService,
+        private UnidadeRepository $unidadeRepository,
+        private UnidadeIntegranteRepository $unidadeIntegranteRepository,
+        private UnidadeIntegranteAtribuicaoRepository $unidadeIntegranteAtribuicaoRepository,
+        private UsuarioRepository $usuarioRepository,
         private mixed $config
     ) {
         $this->message['vazio'] = [];
         $this->message['erro'] = [];
         $this->message['sucesso'] = [];
+    }
+
+    public function getUnidadeIntegranteRepository(): UnidadeIntegranteRepository
+    {
+        return $this->unidadeIntegranteRepository;
+    }
+
+    public function getUnidadeIntegranteAtribuicaoRepository(): UnidadeIntegranteAtribuicaoRepository
+    {
+        return $this->unidadeIntegranteAtribuicaoRepository;
+    }
+
+    public function getUsuarioRepository(): UsuarioRepository
+    {
+        return $this->usuarioRepository;
+    }
+
+    public function getUnidadeRepository(): UnidadeRepository
+    {
+        return $this->unidadeRepository;
     }
 
     public function processar(): void
@@ -63,14 +87,23 @@ class Integracao implements InterfaceIntegracao
 
         if (empty($dado['id_chefe'])) {
             //verificar se a unidade está inativa
-            $unidade = Unidade::find($dado['id_unidade']);
-            $this->removeAtualGestorDaUnidade($unidade);
+            $unidade = $this->unidadeRepository->findById($dado['id_unidade']);
+            if ($unidade) {
+                $this->removeAtualGestorDaUnidade($unidade);
+            }
             array_push($this->message['vazio'],  $dado['id_unidade']);
             SiapeLog::warning("Chefe não informado para a unidade " . $dado['id_unidade'], $dado);
             return;
         }
         //verificar se o usuario está inativo
-        $usuarioChefia = $this->userModel->find($dado['id_chefe']);
+        $usuarioChefia = $this->usuarioRepository->findById($dado['id_chefe']);
+
+        if (!$usuarioChefia) {
+             SiapeLog::error("Usuário chefe não encontrado: " . $dado['id_chefe'], $dado);
+             array_push($this->message['erro'], $dado['id_unidade']);
+             return;
+        }
+
         $atribuicoesAtuaisDaChefia = $usuarioChefia->getUnidadesAtribuicoesAttribute();
         $unidadeExercicioId = $dado['id_unidade'];
         $chefeAtribuicoes = $this->preparaChefia($atribuicoesAtuaisDaChefia, $unidadeExercicioId);
@@ -94,7 +127,7 @@ class Integracao implements InterfaceIntegracao
             'usuario_id' => $idUsuario,
             'unidade_id' => $unidadeExercicioId,
             'atribuicoes' => $atribuicoes,
-        ]);;
+        ]);
     }
 
     private function preparaChefia(array|null $queryChefeAtribuicoes, string $unidadeExercicioId): array
@@ -111,9 +144,7 @@ class Integracao implements InterfaceIntegracao
 
     private function removerGestorSubstituto(string $idUsuario, string $idUnidade): void
     {
-        $integrante = UnidadeIntegrante::where('usuario_id', $idUsuario)
-            ->where('unidade_id', $idUnidade)
-            ->first();
+        $integrante = $this->unidadeIntegranteRepository->findUnidadeIntegrante($idUsuario, $idUnidade);
         if (!$integrante) return;
         $this->removeDeterminadasAtribuicoes([EnumsAtribuicao::GESTOR_SUBSTITUTO->value], $integrante);
     }
@@ -169,7 +200,7 @@ class Integracao implements InterfaceIntegracao
     /**
      * Undocumented function
      *
-     * @return array{sucesso: string, id_chefe: erro, vazio: string}[] 
+     * @return array<string, string[]>
      */
     public function getMessage(): array
     {

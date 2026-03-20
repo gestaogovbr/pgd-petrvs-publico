@@ -8,9 +8,10 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupService } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'produto-filter',
-  templateUrl: './produto-filter.component.html',
-  styleUrls: ['./produto-filter.component.scss']
+    selector: 'produto-filter',
+    templateUrl: './produto-filter.component.html',
+    styleUrls: ['./produto-filter.component.scss'],
+    standalone: false
 })
 export class ProdutoFilterComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

@@ -21,6 +21,8 @@ class ProdutoClienteValidador extends BaseValidador
         if(empty($produtosCliente)){
             return [];
         }
+        $validated = [];
+
         foreach ($produtosCliente as $produtoCliente) {
             $validator = Validator::make($produtoCliente, [
                 'cliente_id' => 'required|uuid|exists:clientes,id',
@@ -29,13 +31,10 @@ class ProdutoClienteValidador extends BaseValidador
             if ($validator->fails()) {
                 throw new ValidationException($validator);
             }
+
+            $validated[] = $validator->validated();
         }
 
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-
-        return $validator->validated();
+        return $validated;
     }
 }

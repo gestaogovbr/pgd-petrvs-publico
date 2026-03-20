@@ -6,7 +6,7 @@ use App\Exceptions\Siape\SiapeRequestException;
 class UnidadeResource extends SiapeResource
 {
     public function __construct(string $xml) {
-        return parent::__construct('//ns1:dadosUorgResponse/out', $xml);
+        parent::__construct('//ns1:dadosUorgResponse/out', $xml);
     }
 
     public function toArray() {

@@ -6,9 +6,10 @@ import { SectionComponent } from './section/section.component';
 export type AccordionLoad = ((item: any) => any | Promise<any>) | undefined;
 
 @Component({
-  selector: 'accordion',
-  templateUrl: './accordion.component.html',
-  styleUrls: ['./accordion.component.scss']
+    selector: 'accordion',
+    templateUrl: './accordion.component.html',
+    styleUrls: ['./accordion.component.scss'],
+    standalone: false
 })
 export class AccordionComponent extends ComponentBase implements OnInit {
   @ContentChildren(SectionComponent, { descendants: true }) sectionsRef?: QueryList<SectionComponent>;

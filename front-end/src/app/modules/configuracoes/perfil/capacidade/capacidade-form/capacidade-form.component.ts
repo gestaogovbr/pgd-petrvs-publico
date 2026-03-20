@@ -10,9 +10,10 @@ import { TipoCapacidadeDaoService } from 'src/app/dao/tipo-capacidade-dao.servic
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 
 @Component({
-  selector: 'app-capacidade-form',
-  templateUrl: './capacidade-form.component.html',
-  styleUrls: ['./capacidade-form.component.scss']
+    selector: 'app-capacidade-form',
+    templateUrl: './capacidade-form.component.html',
+    styleUrls: ['./capacidade-form.component.scss'],
+    standalone: false
 })
 export class CapacidadeFormComponent extends PageFormBase<Capacidade, CapacidadeDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

@@ -9,6 +9,9 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+/**
+ * @property \Illuminate\Database\Eloquent\Collection $tenants
+ */
 class PainelUsuario extends Authenticatable
 {
     use Notifiable;

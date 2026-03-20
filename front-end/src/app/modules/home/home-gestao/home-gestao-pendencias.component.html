@@ -5,7 +5,7 @@
   <div class="row">
     <div class="col-12 col-md-6 mb-4">
       <div class="card h-100">
-        <div class="card-header bg-light">
+        <div class="card-header">
           <span class=" d-flex justify-content-between align-items-center">
             Avaliações de planos de trabalho pendentes
             <div class="badge bg-warning text-dark">{{registrosExecucao.length}}</div>
@@ -32,16 +32,16 @@
 
     <div class="col-12 col-md-6 mb-4">
       <div class="card h-100">
-        <div class="card-header bg-light">
+        <div class="card-header">
           <span class=" d-flex justify-content-between align-items-center">
             Planos de Trabalho que precisam da sua assinatura
-            <div class="badge bg-warning text-dark">{{planosTrabalhos.length}}</div>
+            <div class="badge bg-warning text-dark">{{planosTrabalhoAssinatura.length}}</div>
           </span>
         </div>
         <div class="card-body with-scroll">
-          <div *ngIf="!planosTrabalhos.length" class="text-muted">Nenhum plano encontrado.</div>
-          <ul class="list-group" *ngIf="planosTrabalhos.length">
-            <li class="list-group-item" *ngFor="let p of planosTrabalhos; trackBy: trackById">
+          <div *ngIf="!planosTrabalhoAssinatura.length" class="text-muted">Nenhum plano encontrado.</div>
+          <ul class="list-group" *ngIf="planosTrabalhoAssinatura.length">
+            <li class="list-group-item" *ngFor="let p of planosTrabalhoAssinatura; trackBy: trackById">
               <div class="d-flex justify-content-between">
                 <div>
                   <div><strong>Número: </strong> {{p.numero}}</div>
@@ -60,16 +60,16 @@
 
     <div class="col-12 mb-4">
       <div class="card">
-        <div class="card-header bg-light">
+        <div class="card-header">
           <span class=" d-flex justify-content-between align-items-center">
             Registro de execução de plano de entregas pendentes
-            <div class="badge bg-warning text-dark">{{planosEntregaEntregas.length}}</div>
+            <div class="badge bg-warning text-dark">{{entregasPlanoEntregaExecucao.length}}</div>
           </span>
         </div>
         <div class="card-body with-scroll">
-          <div *ngIf="!planosEntregaEntregas.length" class="text-muted">Nenhuma entrega encontrada.</div>
-          <ul class="list-group" *ngIf="planosEntregaEntregas.length">
-            <li class="list-group-item" *ngFor="let e of planosEntregaEntregas; trackBy: trackById">
+          <div *ngIf="!entregasPlanoEntregaExecucao.length" class="text-muted">Nenhuma entrega encontrada.</div>
+          <ul class="list-group" *ngIf="entregasPlanoEntregaExecucao.length">
+            <li class="list-group-item" *ngFor="let e of entregasPlanoEntregaExecucao; trackBy: trackById">
               <div class="d-flex justify-content-between">
                 <div>
                   <div><strong>Plano Entrega:</strong> {{e.plano_entrega?.numero}} - {{e.plano_entrega?.nome}}</div>
@@ -84,16 +84,16 @@
 
     <div class="col-12 mb-4">
       <div class="card">
-        <div class="card-header bg-light">
+        <div class="card-header">
           <span class=" d-flex justify-content-between align-items-center">
             Avaliações de planos de entregas pendentes
-            <div class="badge bg-warning text-dark">{{planosEntregas.length}}</div>
+            <div class="badge bg-warning text-dark">{{planosEntregaAvaliacao.length}}</div>
           </span>
         </div>
         <div class="card-body with-scroll">
-          <div *ngIf="!planosEntregas.length" class="text-muted">Nenhum plano de entrega encontrado.</div>
-          <ul class="list-group" *ngIf="planosEntregas.length">
-            <li class="list-group-item" *ngFor="let p of planosEntregas; trackBy: trackById">
+          <div *ngIf="!planosEntregaAvaliacao.length" class="text-muted">Nenhum plano de entrega encontrado.</div>
+          <ul class="list-group" *ngIf="planosEntregaAvaliacao.length">
+            <li class="list-group-item" *ngFor="let p of planosEntregaAvaliacao; trackBy: trackById">
               <div class="d-flex justify-content-between">
                 <div>
                   <div><strong>Número:</strong> {{p.numero}}</div>

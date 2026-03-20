@@ -80,7 +80,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         $this->executarRequisicoes($servidores);
 
         foreach ($response as $siapeListaServidores) {
-            $siapeListaServidores->processado = 1;
+            $siapeListaServidores->processado = true;
             $siapeListaServidores->save();
         }
 

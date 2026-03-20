@@ -6,9 +6,10 @@ import { TipoCapacidade } from 'src/app/models/tipo-capacidade.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-tipo-capacidade-list',
-  templateUrl: './tipo-capacidade-list.component.html',
-  styleUrls: ['./tipo-capacidade-list.component.scss']
+    selector: 'app-tipo-capacidade-list',
+    templateUrl: './tipo-capacidade-list.component.html',
+    styleUrls: ['./tipo-capacidade-list.component.scss'],
+    standalone: false
 })
 export class TipoCapacidadeListComponent extends PageListBase<TipoCapacidade, TipoCapacidadeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

@@ -74,6 +74,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
         $envioItem->envio_id    = $this->envioId;
         $envioItem->tipo        = $this->source->tipo;
         $envioItem->uid         = $this->source->id;
+        /** @phpstan-ignore-next-line */
         $envioItem->fonte       = $this->source->fonte;
         $envioItem->save();
 
@@ -98,7 +99,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
             if ($success) {
                 $this->handleSucesso($envioItem);
             } else {
-                $this->handleError('Erro no envio!', $envioItem, $this->source);
+                $this->handleError('Erro no envio!', $envioItem);
                 var_dump($body);
             }
 

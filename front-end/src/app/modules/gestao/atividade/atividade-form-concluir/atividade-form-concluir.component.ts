@@ -16,9 +16,10 @@ import { TipoAtividade } from 'src/app/models/tipo-atividade.model';
 import { Documento } from 'src/app/models/documento.model';
 
 @Component({
-  selector: 'app-atividade-form-concluir',
-  templateUrl: './atividade-form-concluir.component.html',
-  styleUrls: ['./atividade-form-concluir.component.scss']
+    selector: 'app-atividade-form-concluir',
+    templateUrl: './atividade-form-concluir.component.html',
+    styleUrls: ['./atividade-form-concluir.component.scss'],
+    standalone: false
 })
 export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, AtividadeDaoService> implements OnInit {
   @ViewChild('tipoAtividade', { static: false }) public tipoAtividade?: InputSearchComponent;
@@ -75,7 +76,7 @@ export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, Ativ
     formValue.progresso = 100;
     await this.tipoAtividade!.loadSearch(entity.tipo_atividade || formValue.tipo_atividade_id);
     if(entity.unidade_id != this.auth.unidade!.id) {
-      await this.auth.selecionaUnidade(entity.unidade_id);
+      await this.auth.selecionaUnidade(entity.unidade_id, undefined);
     }
     this.entregas = entity.plano_trabalho?.entregas?.map(x => Object.assign({}, {
       key: x.id,

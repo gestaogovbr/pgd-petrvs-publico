@@ -10,6 +10,15 @@ use App\Facades\SiapeLog;
 use App\Exceptions\LogError;
 use Throwable;
 
+use App\Services\UnidadeIntegranteService;
+use App\Services\NivelAcessoService;
+use App\Services\PerfilService;
+
+/**
+ * @property UnidadeIntegranteService $unidadeIntegranteService
+ * @property NivelAcessoService $nivelAcessoService
+ * @property PerfilService $perfilService
+ */
 class IntegracaoGestorService extends ServiceBase
 {
     /**
@@ -40,7 +49,6 @@ class IntegracaoGestorService extends ServiceBase
 
             $integracaoChefia = $this->createGestorIntegracao(
                 $chefes,
-                new Usuario(),
                 $this->unidadeIntegranteService,
                 $this->nivelAcessoService,
                 $this->perfilService,
@@ -195,15 +203,14 @@ class IntegracaoGestorService extends ServiceBase
     /**
      * Factory method for GestorIntegracao to allow testing/mocking
      */
-    public function createGestorIntegracao(array $chefias, Usuario $usuario, $unidadeIntegranteService, $nivelAcessoService, $perfilService, array $config): GestorIntegracao
+    public function createGestorIntegracao(array $chefias, $unidadeIntegranteService, $nivelAcessoService, $perfilService, array $config): GestorIntegracao
     {
-        return new GestorIntegracao(
-            $chefias,
-            $usuario,
-            $unidadeIntegranteService,
-            $nivelAcessoService,
-            $perfilService,
-            $config
-        );
+        return app(GestorIntegracao::class, [
+            'dados' => $chefias,
+            'unidadeIntegranteService' => $unidadeIntegranteService,
+            'nivelAcessoService' => $nivelAcessoService,
+            'perfilService' => $perfilService,
+            'config' => $config,
+        ]);
     }
 }

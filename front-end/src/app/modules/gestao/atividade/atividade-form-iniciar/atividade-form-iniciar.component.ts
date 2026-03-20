@@ -17,9 +17,10 @@ import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 
 @Component({
-  selector: 'app-atividade-form-iniciar',
-  templateUrl: './atividade-form-iniciar.component.html',
-  styleUrls: ['./atividade-form-iniciar.component.scss']
+    selector: 'app-atividade-form-iniciar',
+    templateUrl: './atividade-form-iniciar.component.html',
+    styleUrls: ['./atividade-form-iniciar.component.scss'],
+    standalone: false
 })
 export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, AtividadeDaoService> implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
@@ -147,7 +148,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
     await this.usuario!.loadSearch(entity.usuario || formValue.usuario_id);
     this.loadIniciadas(formValue.usuario_id);
     if(entity.unidade_id != this.auth.unidade!.id) {
-      await this.auth.selecionaUnidade(entity.unidade_id);
+      await this.auth.selecionaUnidade(entity.unidade_id, undefined);
     }
     form.patchValue(formValue);
     this.onPlanoChange(new Event('change'));

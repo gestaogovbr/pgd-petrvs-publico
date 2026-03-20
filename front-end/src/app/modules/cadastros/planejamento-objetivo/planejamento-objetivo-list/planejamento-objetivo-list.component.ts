@@ -8,9 +8,10 @@ import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-planejamento-objetivo-list',
-  templateUrl: './planejamento-objetivo-list.component.html',
-  styleUrls: ['./planejamento-objetivo-list.component.scss']
+    selector: 'app-planejamento-objetivo-list',
+    templateUrl: './planejamento-objetivo-list.component.html',
+    styleUrls: ['./planejamento-objetivo-list.component.scss'],
+    standalone: false
 })
 export class PlanejamentoObjetivoListComponent extends PageListBase<PlanejamentoObjetivo, PlanejamentoObjetivoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

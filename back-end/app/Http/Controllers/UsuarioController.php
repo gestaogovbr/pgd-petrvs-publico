@@ -246,7 +246,7 @@ class UsuarioController extends ControllerBase
     {
         try {
             $data = $request->validate([
-                'cpf' => ['required', 'string', 'size:11']
+                'cpf' => ['required', 'string']
             ]);
 
             $usuarios = $this->service->matriculas($data['cpf']);
@@ -293,7 +293,7 @@ class UsuarioController extends ControllerBase
     {
         try {
             $data = $request->validate([
-                'cpf' => ['required', 'string', 'size:11']
+                'cpf' => ['required', 'string']
             ]);
 
             $unidades = $this->service->unidadesVinculadas($data['cpf']);

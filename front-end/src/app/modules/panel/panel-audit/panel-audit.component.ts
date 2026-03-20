@@ -6,9 +6,10 @@ import {Tenant} from "../../../models/tenant.model";
 import {TenantDaoService} from "../../../dao/tenant-dao.service";
 
 @Component({
-  selector: 'panel-audit',
-  templateUrl: './panel-audit.component.html',
-  styleUrls: ['./panel-audit.component.scss']
+    selector: 'panel-audit',
+    templateUrl: './panel-audit.component.html',
+    styleUrls: ['./panel-audit.component.scss'],
+    standalone: false
 })
 export class PanelAuditComponent extends PageListBase<Tenant, TenantDaoService> {
   audits: Audit[] = [];

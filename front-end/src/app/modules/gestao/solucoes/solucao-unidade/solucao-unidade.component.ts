@@ -15,9 +15,10 @@ import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
-  selector: 'solucao-unidade',
-  templateUrl: './solucao-unidade.component.html',
-  styleUrls: ['./solucao-unidade.component.scss']
+    selector: 'solucao-unidade',
+    templateUrl: './solucao-unidade.component.html',
+    styleUrls: ['./solucao-unidade.component.scss'],
+    standalone: false
 })
 export class SolucaoUnidadeComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

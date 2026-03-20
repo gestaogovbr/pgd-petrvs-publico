@@ -6,9 +6,10 @@ import { ComponentBase } from '../../component-base';
 export type PaginationType = "pages" | "infinity";
 
 @Component({
-  selector: 'pagination',
-  templateUrl: './pagination.component.html',
-  styleUrls: ['./pagination.component.scss']
+    selector: 'pagination',
+    templateUrl: './pagination.component.html',
+    styleUrls: ['./pagination.component.scss'],
+    standalone: false
 })
 export class PaginationComponent extends ComponentBase implements OnInit {
   @Input() set query(value: QueryContext<Base> | undefined) {

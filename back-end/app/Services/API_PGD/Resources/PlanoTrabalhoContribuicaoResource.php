@@ -4,6 +4,9 @@ namespace App\Services\API_PGD\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin \App\Models\PlanoTrabalhoEntrega
+ */
 class PlanoTrabalhoContribuicaoResource extends JsonResource
 {
     public function toArray($request)

@@ -3,9 +3,10 @@ import { Documento } from 'src/app/models/documento.model';
 import { DocumentoService } from '../documento.service';
 
 @Component({
-  selector: 'documentos-badge',
-  templateUrl: './documentos-badge.component.html',
-  styleUrls: ['./documentos-badge.component.scss']
+    selector: 'documentos-badge',
+    templateUrl: './documentos-badge.component.html',
+    styleUrls: ['./documentos-badge.component.scss'],
+    standalone: false
 })
 export class DocumentosBadgeComponent {
   @Input() documento?: Documento;

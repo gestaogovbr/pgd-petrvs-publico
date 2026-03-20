@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\PlanoTrabalhoConsolidacao;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Comparecimento extends ModelBase
 {
@@ -26,11 +27,11 @@ class Comparecimento extends ModelBase
   ];
 
   // Belongs
-  public function planoTrabalhoConsolidacao()
+  public function planoTrabalhoConsolidacao(): BelongsTo
   {
     return $this->belongsTo(PlanoTrabalhoConsolidacao::class);
   }
-  public function unidade()
+  public function unidade(): BelongsTo
   {
     return $this->belongsTo(Unidade::class);
   }

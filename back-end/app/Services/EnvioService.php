@@ -5,8 +5,11 @@ namespace App\Services;
 use App\Jobs\ExportarTenantJob;
 use App\Models\Error;
 use App\Services\ServiceBase;
-use DB;
+use Illuminate\Support\Facades\DB;
 
+/**
+ * @property TenantConfigurationsService $TenantConfigurationsService
+ */
 class EnvioService extends ServiceBase {
 
     public function reiniciar() {

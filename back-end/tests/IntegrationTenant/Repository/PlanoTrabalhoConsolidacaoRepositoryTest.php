@@ -1,0 +1,500 @@
+<?php
+
+use App\DTOs\PlanoTrabalho\PlanoTrabalhoConsolidacaoDataDTO;
+use App\Enums\StatusEnum;
+use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\StatusJustificativa;
+use App\Models\Unidade;
+use App\Models\UnidadeIntegrante;
+use App\Models\UnidadeIntegranteAtribuicao;
+use App\Models\Usuario;
+use App\Repository\PlanoTrabalhoConsolidacaoRepository;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+
+beforeEach(function () {
+    DB::statement('SET FOREIGN_KEY_CHECKS=0');
+    $this->repository = app(PlanoTrabalhoConsolidacaoRepository::class);
+});
+
+afterEach(function () {
+    DB::statement('SET FOREIGN_KEY_CHECKS=1');
+});
+
+describe('PlanoTrabalhoConsolidacaoRepository', function () {
+    describe('#findConsolidacaoById - busca consolidação por ID', function () {
+        test('retorna consolidação com relacionamentos', function () {
+            DB::table('planos_trabalhos')->insert([
+                'id' => 'plano-1',
+                'usuario_id' => 'user-1',
+                'programa_id' => 'programa-1',
+                'unidade_id' => 'unidade-1',
+                'tipo_modalidade_id' => 'tipo-modalidade-1',
+                'criacao_usuario_id' => 'criador-1',
+                'data_inicio' => '2024-01-01 00:00:00',
+                'data_fim' => '2024-01-31 23:59:59',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::table('planos_trabalhos_consolidacoes')->insert([
+                'id' => 'consolidacao-1',
+                'plano_trabalho_id' => 'plano-1',
+                'data_inicio' => '2024-01-01',
+                'data_fim' => '2024-01-31',
+                'data_conclusao' => '2024-02-01 10:00:00',
+                'status' => StatusEnum::CONCLUIDO->value,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $resultado = $this->repository->findConsolidacaoById('consolidacao-1');
+
+            expect($resultado)->toBeInstanceOf(PlanoTrabalhoConsolidacao::class);
+            expect($resultado->id)->toBe('consolidacao-1');
+            expect($resultado->status)->toBe(StatusEnum::CONCLUIDO->value);
+        });
+
+        test('retorna null quando não encontra', function () {
+            $resultado = $this->repository->findConsolidacaoById('inexistente');
+
+            expect($resultado)->toBeNull();
+        });
+    });
+
+    describe('#getConsolidacaoData - retorna dados completos da consolidação', function () {
+        test('retorna estrutura completa para consolidação concluída', function () {
+            DB::table('planos_trabalhos')->insert([
+                'id' => 'plano-1',
+                'usuario_id' => 'user-1',
+                'programa_id' => 'programa-1',
+                'unidade_id' => 'unidade-1',
+                'tipo_modalidade_id' => 'tipo-modalidade-1',
+                'criacao_usuario_id' => 'criador-1',
+                'data_inicio' => '2024-01-01 00:00:00',
+                'data_fim' => '2024-01-31 23:59:59',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::table('planos_trabalhos_consolidacoes')->insert([
+                'id' => 'consolidacao-1',
+                'plano_trabalho_id' => 'plano-1',
+                'data_inicio' => '2024-01-01',
+                'data_fim' => '2024-01-31',
+                'data_conclusao' => '2024-02-01 10:00:00',
+                'status' => StatusEnum::CONCLUIDO->value,
+                'justificativa_conclusao' => 'Concluído com sucesso',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $resultado = $this->repository->getConsolidacaoData('consolidacao-1');
+
+            expect($resultado)->toBeInstanceOf(PlanoTrabalhoConsolidacaoDataDTO::class);
+            expect($resultado->status)->toBe(StatusEnum::CONCLUIDO->value);
+            expect($resultado->justificativaConclusao)->toBe('Concluído com sucesso');
+        });
+
+        test('filtra atividades por período quando não concluído', function () {
+            DB::table('planos_trabalhos')->insert([
+                'id' => 'plano-1',
+                'usuario_id' => 'user-1',
+                'programa_id' => 'programa-1',
+                'unidade_id' => 'unidade-1',
+                'tipo_modalidade_id' => 'tipo-modalidade-1',
+                'criacao_usuario_id' => 'criador-1',
+                'data_inicio' => '2024-01-01 00:00:00',
+                'data_fim' => '2024-01-31 23:59:59',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::table('planos_trabalhos_consolidacoes')->insert([
+                'id' => 'consolidacao-1',
+                'plano_trabalho_id' => 'plano-1',
+                'data_inicio' => '2024-01-01',
+                'data_fim' => '2024-01-31',
+                'status' => StatusEnum::INCLUIDO->value,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::table('atividades')->insert([
+                'id' => 'atividade-1',
+                'numero' => 1,
+                'descricao' => 'Atividade no período',
+                'data_distribuicao' => '2024-01-15 08:00:00',
+                'data_estipulada_entrega' => '2024-01-20 18:00:00',
+                'tempo_planejado' => 8.0,
+                'esforco' => 6.0,
+                'usuario_id' => 'user-1',
+                'demandante_id' => 'user-1',
+                'unidade_id' => 'unidade-1',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $resultado = $this->repository->getConsolidacaoData('consolidacao-1');
+
+            expect($resultado)->toBeInstanceOf(PlanoTrabalhoConsolidacaoDataDTO::class);
+            expect($resultado->atividades)->toHaveCount(1);
+            expect($resultado->atividades[0]->id)->toBe('atividade-1');
+        });
+
+        test('filtra afastamentos por período quando não concluído', function () {
+            DB::table('planos_trabalhos')->insert([
+                'id' => 'plano-1',
+                'usuario_id' => 'user-1',
+                'programa_id' => 'programa-1',
+                'unidade_id' => 'unidade-1',
+                'tipo_modalidade_id' => 'tipo-modalidade-1',
+                'criacao_usuario_id' => 'criador-1',
+                'data_inicio' => '2024-01-01 00:00:00',
+                'data_fim' => '2024-01-31 23:59:59',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::table('planos_trabalhos_consolidacoes')->insert([
+                'id' => 'consolidacao-1',
+                'plano_trabalho_id' => 'plano-1',
+                'data_inicio' => '2024-01-01',
+                'data_fim' => '2024-01-31',
+                'status' => StatusEnum::INCLUIDO->value,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::table('afastamentos')->insert([
+                'id' => 'afastamento-1',
+                'usuario_id' => 'user-1',
+                'tipo_motivo_afastamento_id' => 'tipo-1',
+                'data_inicio' => '2024-01-10',
+                'data_fim' => '2024-01-15',
+                'observacoes' => 'Afastamento no período',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $resultado = $this->repository->getConsolidacaoData('consolidacao-1');
+
+            expect($resultado)->toBeInstanceOf(PlanoTrabalhoConsolidacaoDataDTO::class);
+            expect($resultado->afastamentos)->toHaveCount(1);
+            expect($resultado->afastamentos[0]->id)->toBe('afastamento-1');
+        });
+
+        test('filtra ocorrências por período quando não concluído', function () {
+            DB::table('planos_trabalhos')->insert([
+                'id' => 'plano-1',
+                'usuario_id' => 'user-1',
+                'programa_id' => 'programa-1',
+                'unidade_id' => 'unidade-1',
+                'tipo_modalidade_id' => 'tipo-modalidade-1',
+                'criacao_usuario_id' => 'criador-1',
+                'data_inicio' => '2024-01-01 00:00:00',
+                'data_fim' => '2024-01-31 23:59:59',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::table('planos_trabalhos_consolidacoes')->insert([
+                'id' => 'consolidacao-1',
+                'plano_trabalho_id' => 'plano-1',
+                'data_inicio' => '2024-01-01',
+                'data_fim' => '2024-01-31',
+                'status' => StatusEnum::INCLUIDO->value,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::table('ocorrencias')->insert([
+                'id' => 'ocorrencia-1',
+                'usuario_id' => 'user-1',
+                'plano_trabalho_id' => 'plano-1',
+                'data_inicio' => '2024-01-10 08:00:00',
+                'data_fim' => '2024-01-10 18:00:00',
+                'descricao' => 'Ocorrência no período',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $resultado = $this->repository->getConsolidacaoData('consolidacao-1');
+
+            expect($resultado)->toBeInstanceOf(PlanoTrabalhoConsolidacaoDataDTO::class);
+            expect($resultado->ocorrencias)->toHaveCount(1);
+            expect($resultado->ocorrencias[0]->id)->toBe('ocorrencia-1');
+        });
+
+        test('retorna null quando consolidação não existe', function () {
+            $resultado = $this->repository->getConsolidacaoData('inexistente');
+
+            expect($resultado)->toBeNull();
+        });
+    });
+
+    describe('#getPendentesAvaliacao - busca consolidações concluídas pendentes de avaliação', function () {
+        test('não inclui consolidação do gestor titular para chefe substituto', function () {
+            $unidade = Unidade::factory()->create(['id' => 'unidade-1']);
+            $titular = Usuario::factory()->create(['id' => 'user-titular']);
+            $substituto = Usuario::factory()->create(['id' => 'user-substituto']);
+            $participante = Usuario::factory()->create(['id' => 'user-participante']);
+
+            $integranteTitular = UnidadeIntegrante::query()->create([
+                'id' => (string) Str::uuid(),
+                'unidade_id' => $unidade->id,
+                'usuario_id' => $titular->id,
+            ]);
+            UnidadeIntegranteAtribuicao::query()->create([
+                'id' => (string) Str::uuid(),
+                'atribuicao' => 'GESTOR',
+                'unidade_integrante_id' => $integranteTitular->id,
+            ]);
+
+            $integranteSubstituto = UnidadeIntegrante::query()->create([
+                'id' => (string) Str::uuid(),
+                'unidade_id' => $unidade->id,
+                'usuario_id' => $substituto->id,
+            ]);
+            UnidadeIntegranteAtribuicao::query()->create([
+                'id' => (string) Str::uuid(),
+                'atribuicao' => 'GESTOR_SUBSTITUTO',
+                'unidade_integrante_id' => $integranteSubstituto->id,
+            ]);
+
+            $planoTitular = PlanoTrabalho::factory()->create([
+                'id' => 'plano-titular',
+                'numero' => 1001,
+                'usuario_id' => $titular->id,
+                'unidade_id' => $unidade->id,
+            ]);
+            $planoParticipante = PlanoTrabalho::factory()->create([
+                'id' => 'plano-participante',
+                'numero' => 1002,
+                'usuario_id' => $participante->id,
+                'unidade_id' => $unidade->id,
+            ]);
+
+            PlanoTrabalhoConsolidacao::factory()->create([
+                'id' => 'consolidacao-titular',
+                'plano_trabalho_id' => $planoTitular->id,
+                'data_inicio' => '2024-01-01',
+                'data_fim' => '2024-01-31',
+                'data_conclusao' => '2024-02-01 10:00:00',
+                'status' => StatusEnum::CONCLUIDO->value,
+            ]);
+            PlanoTrabalhoConsolidacao::factory()->create([
+                'id' => 'consolidacao-participante',
+                'plano_trabalho_id' => $planoParticipante->id,
+                'data_inicio' => '2024-01-01',
+                'data_fim' => '2024-01-31',
+                'data_conclusao' => '2024-02-01 10:00:00',
+                'status' => StatusEnum::CONCLUIDO->value,
+            ]);
+
+            $createdAt = now()->subDays(10);
+            $statusTitular = new StatusJustificativa([
+                'id' => 'status-titular-1',
+                'codigo' => StatusEnum::CONCLUIDO->value,
+                'justificativa' => 'ok',
+                'plano_trabalho_consolidacao_id' => 'consolidacao-titular',
+                'usuario_id' => $titular->id,
+            ]);
+            $statusTitular->timestamps = false;
+            $statusTitular->created_at = $createdAt;
+            $statusTitular->updated_at = $createdAt;
+            $statusTitular->save();
+
+            $statusParticipante = new StatusJustificativa([
+                'id' => 'status-participante-1',
+                'codigo' => StatusEnum::CONCLUIDO->value,
+                'justificativa' => 'ok',
+                'plano_trabalho_consolidacao_id' => 'consolidacao-participante',
+                'usuario_id' => $participante->id,
+            ]);
+            $statusParticipante->timestamps = false;
+            $statusParticipante->created_at = $createdAt;
+            $statusParticipante->updated_at = $createdAt;
+            $statusParticipante->save();
+
+            $resultado = $this->repository->getPendentesAvaliacao(
+                ['unidade-1'],
+                [],
+                'user-substituto',
+                now()->subDays(5),
+            );
+
+            expect($resultado)->toHaveCount(1);
+            expect($resultado->first()->id)->toBe('consolidacao-participante');
+            expect($resultado->first()->planoTrabalho?->usuario_id)->toBe('user-participante');
+        });
+
+        test('inclui consolidação do gestor titular quando usuário não é chefe substituto', function () {
+            $unidade = Unidade::factory()->create(['id' => 'unidade-1']);
+            $titular = Usuario::factory()->create(['id' => 'user-titular']);
+            $participante = Usuario::factory()->create(['id' => 'user-participante']);
+
+            $integranteTitular = UnidadeIntegrante::query()->create([
+                'id' => (string) Str::uuid(),
+                'unidade_id' => $unidade->id,
+                'usuario_id' => $titular->id,
+            ]);
+            UnidadeIntegranteAtribuicao::query()->create([
+                'id' => (string) Str::uuid(),
+                'atribuicao' => 'GESTOR',
+                'unidade_integrante_id' => $integranteTitular->id,
+            ]);
+
+            $planoTitular = PlanoTrabalho::factory()->create([
+                'id' => 'plano-titular',
+                'numero' => 2001,
+                'usuario_id' => $titular->id,
+                'unidade_id' => $unidade->id,
+            ]);
+            $planoParticipante = PlanoTrabalho::factory()->create([
+                'id' => 'plano-participante',
+                'numero' => 2002,
+                'usuario_id' => $participante->id,
+                'unidade_id' => $unidade->id,
+            ]);
+
+            PlanoTrabalhoConsolidacao::factory()->create([
+                'id' => 'consolidacao-titular',
+                'plano_trabalho_id' => $planoTitular->id,
+                'data_inicio' => '2024-01-01',
+                'data_fim' => '2024-01-31',
+                'data_conclusao' => '2024-02-01 10:00:00',
+                'status' => StatusEnum::CONCLUIDO->value,
+            ]);
+            PlanoTrabalhoConsolidacao::factory()->create([
+                'id' => 'consolidacao-participante',
+                'plano_trabalho_id' => $planoParticipante->id,
+                'data_inicio' => '2024-01-01',
+                'data_fim' => '2024-01-31',
+                'data_conclusao' => '2024-02-01 10:00:00',
+                'status' => StatusEnum::CONCLUIDO->value,
+            ]);
+
+            $createdAt = now()->subDays(10);
+            $statusTitular = new StatusJustificativa([
+                'id' => 'status-titular-1',
+                'codigo' => StatusEnum::CONCLUIDO->value,
+                'justificativa' => 'ok',
+                'plano_trabalho_consolidacao_id' => 'consolidacao-titular',
+                'usuario_id' => $titular->id,
+            ]);
+            $statusTitular->timestamps = false;
+            $statusTitular->created_at = $createdAt;
+            $statusTitular->updated_at = $createdAt;
+            $statusTitular->save();
+
+            $statusParticipante = new StatusJustificativa([
+                'id' => 'status-participante-1',
+                'codigo' => StatusEnum::CONCLUIDO->value,
+                'justificativa' => 'ok',
+                'plano_trabalho_consolidacao_id' => 'consolidacao-participante',
+                'usuario_id' => $participante->id,
+            ]);
+            $statusParticipante->timestamps = false;
+            $statusParticipante->created_at = $createdAt;
+            $statusParticipante->updated_at = $createdAt;
+            $statusParticipante->save();
+
+            $resultado = $this->repository->getPendentesAvaliacao(
+                ['unidade-1'],
+                [],
+                'usuario-qualquer',
+                now()->subDays(5),
+            );
+
+            expect($resultado)->toHaveCount(2);
+            expect($resultado->pluck('id')->contains('consolidacao-titular'))->toBeTrue();
+            expect($resultado->pluck('id')->contains('consolidacao-participante'))->toBeTrue();
+        });
+
+        test('inclui apenas gestor titular das unidades subordinadas imediatas', function () {
+            $unidadeSuperior = Unidade::factory()->create(['id' => 'unidade-superior']);
+            $unidadeSub = Unidade::factory()->create(['id' => 'unidade-sub', 'unidade_pai_id' => $unidadeSuperior->id]);
+
+            $titularSub = Usuario::factory()->create(['id' => 'user-titular-sub']);
+            $participanteSub = Usuario::factory()->create(['id' => 'user-participante-sub']);
+
+            $integranteTitularSub = UnidadeIntegrante::query()->create([
+                'id' => (string) Str::uuid(),
+                'unidade_id' => $unidadeSub->id,
+                'usuario_id' => $titularSub->id,
+            ]);
+            UnidadeIntegranteAtribuicao::query()->create([
+                'id' => (string) Str::uuid(),
+                'atribuicao' => 'GESTOR',
+                'unidade_integrante_id' => $integranteTitularSub->id,
+            ]);
+
+            $planoTitularSub = PlanoTrabalho::factory()->create([
+                'id' => 'plano-titular-sub',
+                'numero' => 3001,
+                'usuario_id' => $titularSub->id,
+                'unidade_id' => $unidadeSub->id,
+            ]);
+            $planoParticipanteSub = PlanoTrabalho::factory()->create([
+                'id' => 'plano-participante-sub',
+                'numero' => 3002,
+                'usuario_id' => $participanteSub->id,
+                'unidade_id' => $unidadeSub->id,
+            ]);
+
+            PlanoTrabalhoConsolidacao::factory()->create([
+                'id' => 'consolidacao-titular-sub',
+                'plano_trabalho_id' => $planoTitularSub->id,
+                'data_inicio' => '2024-01-01',
+                'data_fim' => '2024-01-31',
+                'data_conclusao' => '2024-02-01 10:00:00',
+                'status' => StatusEnum::CONCLUIDO->value,
+            ]);
+            PlanoTrabalhoConsolidacao::factory()->create([
+                'id' => 'consolidacao-participante-sub',
+                'plano_trabalho_id' => $planoParticipanteSub->id,
+                'data_inicio' => '2024-01-01',
+                'data_fim' => '2024-01-31',
+                'data_conclusao' => '2024-02-01 10:00:00',
+                'status' => StatusEnum::CONCLUIDO->value,
+            ]);
+
+            $createdAt = now()->subDays(10);
+            $statusTitularSub = new StatusJustificativa([
+                'id' => 'status-titular-sub-1',
+                'codigo' => StatusEnum::CONCLUIDO->value,
+                'justificativa' => 'ok',
+                'plano_trabalho_consolidacao_id' => 'consolidacao-titular-sub',
+                'usuario_id' => $titularSub->id,
+            ]);
+            $statusTitularSub->timestamps = false;
+            $statusTitularSub->created_at = $createdAt;
+            $statusTitularSub->updated_at = $createdAt;
+            $statusTitularSub->save();
+
+            $statusParticipanteSub = new StatusJustificativa([
+                'id' => 'status-participante-sub-1',
+                'codigo' => StatusEnum::CONCLUIDO->value,
+                'justificativa' => 'ok',
+                'plano_trabalho_consolidacao_id' => 'consolidacao-participante-sub',
+                'usuario_id' => $participanteSub->id,
+            ]);
+            $statusParticipanteSub->timestamps = false;
+            $statusParticipanteSub->created_at = $createdAt;
+            $statusParticipanteSub->updated_at = $createdAt;
+            $statusParticipanteSub->save();
+
+            $resultado = $this->repository->getPendentesAvaliacao(
+                ['unidade-superior'],
+                ['unidade-sub'],
+                'user-chefe',
+                now()->subDays(5),
+            );
+
+            expect($resultado)->toHaveCount(1);
+            expect($resultado->first()->id)->toBe('consolidacao-titular-sub');
+        });
+    });
+});

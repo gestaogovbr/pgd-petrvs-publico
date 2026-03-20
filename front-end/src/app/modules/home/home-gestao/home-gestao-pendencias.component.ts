@@ -9,17 +9,18 @@ import { LookupService } from 'src/app/services/lookup.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 
 @Component({
-  selector: 'app-home-gestao-pendencias',
-  templateUrl: './home-gestao-pendencias.component.html',
-  styleUrls: ['./home-gestao-pendencias.component.scss']
+    selector: 'app-home-gestao-pendencias',
+    templateUrl: './home-gestao-pendencias.component.html',
+    styleUrls: ['./home-gestao-pendencias.component.scss'],
+    standalone: false
 })
 export class HomeGestaoPendenciasComponent extends PageBase {
 
   public usuarioDao: UsuarioDaoService;
   public registrosExecucao: any[] = [];
-  public planosTrabalhos: any[] = [];
-  public planosEntregaEntregas: any[] = [];
-  public planosEntregas: any[] = [];
+  public planosEntregaAvaliacao: any[] = [];
+  public planosTrabalhoAssinatura: any[] = [];
+  public entregasPlanoEntregaExecucao: any[] = [];
 
   public lex: LexicalService;
   public gb: GlobalsService;
@@ -41,16 +42,25 @@ export class HomeGestaoPendenciasComponent extends PageBase {
 
   async ngOnInit() {
     super.ngOnInit();
+    const pendenciasChefe = this.metadata?.pendenciasChefe;
+    if (pendenciasChefe) {
+      this.applyPendenciasChefe(pendenciasChefe);
+      return;
+    }
     await this.loadPendenciasChefe();
   }
 
   public async loadPendenciasChefe() {
     const res = await this.usuarioDao.getPendenciasChefe();
     const pendenciasChefe = (res as any)?.pendencias || {};
+    this.applyPendenciasChefe(pendenciasChefe);
+  }
+
+  private applyPendenciasChefe(pendenciasChefe: any) {
     this.registrosExecucao = pendenciasChefe.registrosExecucao || [];
-    this.planosTrabalhos = pendenciasChefe.planosTrabalhos || [];
-    this.planosEntregaEntregas = pendenciasChefe.planosEntregaEntregas || [];
-    this.planosEntregas = pendenciasChefe.planosEntregas || [];
+    this.planosTrabalhoAssinatura = pendenciasChefe.planosTrabalhoAssinatura || [];
+    this.planosEntregaAvaliacao = pendenciasChefe.planosEntregaAvaliacao || [];
+    this.entregasPlanoEntregaExecucao = pendenciasChefe.entregasPlanoEntregaExecucao || [];
   }
 
   public formatDate(date: string): string {
@@ -65,7 +75,8 @@ export class HomeGestaoPendenciasComponent extends PageBase {
       params: {
         filter: {
           numero: numero, 
-          meus_planos: false
+          meus_planos: false,
+          unidade_id: null
         }
       }
     });

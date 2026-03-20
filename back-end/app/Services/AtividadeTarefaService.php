@@ -5,8 +5,12 @@ namespace App\Services;
 use App\Exceptions\ServerException;
 use App\Models\AtividadeTarefa;
 use App\Services\ServiceBase;
+use App\Services\AtividadeService;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @property AtividadeService $atividadeService
+ */
 class AtividadeTarefaService extends ServiceBase {
 
     public function validateStore($data, $unidade, $action) {

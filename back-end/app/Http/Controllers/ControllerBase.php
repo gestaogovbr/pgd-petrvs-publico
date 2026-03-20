@@ -10,6 +10,7 @@ use App\Exceptions\LogError;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
 use App\Exceptions\DataInvalidException;
+use App\Exceptions\DBException;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
@@ -33,10 +34,19 @@ abstract class ControllerBase extends Controller
         if(empty($this->service)) {
             $child = str_replace("App\\Http", "App", str_replace("Controller", "Service", get_class($this)));
             try {
-                if(!empty(app($child))) {
-                    $this->service = new $child();
+                $this->service = app($child);
+            } catch (BindingResolutionException $e) {
+                if (class_exists($child)) {
+                    try {
+                        $reflection = new \ReflectionClass($child);
+                        $constructor = $reflection->getConstructor();
+                        if ($constructor === null || $constructor->getNumberOfRequiredParameters() === 0) {
+                            $this->service = $reflection->newInstance();
+                        }
+                    } catch (Throwable $e) {
+                    }
                 }
-            } catch (BindingResolutionException $e) {}
+            }
         }
     }
 
@@ -69,9 +79,10 @@ abstract class ControllerBase extends Controller
     /**
      * Retorna o usuário logado
      *
-     * @return App\Models\Usuario | null
+     * @return \App\Models\Usuario|null
      */
-    public static function loggedUser(): ?Usuario {
+    public static function loggedUser(): ?\App\Models\Usuario {
+        /** @var \App\Models\Usuario|null */
         return Auth::user();
     }
 
@@ -135,7 +146,7 @@ abstract class ControllerBase extends Controller
      * Search for a given text
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function searchText(Request $request)
     {
@@ -168,7 +179,7 @@ abstract class ControllerBase extends Controller
      * Search for a given key
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function searchKey(Request $request)
     {
@@ -199,7 +210,7 @@ abstract class ControllerBase extends Controller
      * Get entity by id
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
 
     public function getById(Request $request)
@@ -230,7 +241,7 @@ abstract class ControllerBase extends Controller
      * Get all ids of a query
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
 
     public function getAllIds(Request $request)
@@ -264,7 +275,7 @@ abstract class ControllerBase extends Controller
      * Query
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function query(Request $request)
     {
@@ -304,7 +315,7 @@ abstract class ControllerBase extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string $file
-     * @return \Illuminate\Http\Response
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\Response
      */
     public function download(Request $request, string $tenantId, string $file)
     {
@@ -317,7 +328,7 @@ abstract class ControllerBase extends Controller
      * - file: File path
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function downloadUrl(Request $request)
     {
@@ -344,7 +355,7 @@ abstract class ControllerBase extends Controller
      * - file: File path
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function deleteFile(Request $request)
     {
@@ -373,7 +384,7 @@ abstract class ControllerBase extends Controller
      * - file: File data
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function upload(Request $request)
     {
@@ -403,7 +414,7 @@ abstract class ControllerBase extends Controller
      * - file: Base64 of file
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function uploadBase64(Request $request)
     {
@@ -431,7 +442,7 @@ abstract class ControllerBase extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function store(Request $request)
     {
@@ -440,9 +451,12 @@ abstract class ControllerBase extends Controller
             $data = $this->validateStore($request);
             $unidade = $this->getUnidade($request);
             $entity = $this->service->store($data['entity'], $unidade, !ControllerBase::$sameTransaction);
+            if (!$entity || empty($entity->id)) {
+                throw new DBException("Falha ao persistir registro", Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
             $result = $this->service->getById([
                 'id' => $entity->id,
-                'with' => $data['with']
+                'with' => $data['with'] ?? []
             ]);
             return response()->json([
                 'success' => true,
@@ -481,7 +495,7 @@ abstract class ControllerBase extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function update(Request $request)
     {
@@ -496,9 +510,12 @@ abstract class ControllerBase extends Controller
             $unidade = $this->getUnidade($request);
             $data['data']['id'] = $data['id'];
             $entity = $this->service->update($data['data'], $unidade, !ControllerBase::$sameTransaction);
+            if (!$entity || empty($entity->id)) {
+                throw new DBException("Falha ao persistir registro", Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
             $result = $this->service->getById([
                 'id' => $entity->id,
-                'with' => $data['with']
+                'with' => $data['with'] ?? []
             ]);
             return response()->json([
                 'success' => true,
@@ -520,7 +537,7 @@ abstract class ControllerBase extends Controller
      * Update the specified resource json field in storage (merge).
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function updateJson(Request $request)
     {
@@ -561,7 +578,7 @@ abstract class ControllerBase extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function destroy(Request $request)
     {

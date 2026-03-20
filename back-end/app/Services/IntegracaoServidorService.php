@@ -7,7 +7,11 @@ use App\Facades\SiapeLog;
 use App\Models\SiapeBlackListServidor;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
+use App\Services\NivelAcessoService;
 
+/**
+ * @property NivelAcessoService $nivelAcessoService
+ */
 class IntegracaoServidorService extends ServiceBase
 {
   const SIAPE_BLACKLIST_INATIVO = 1;

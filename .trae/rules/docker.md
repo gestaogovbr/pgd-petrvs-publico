@@ -1,0 +1,1 @@
+todos os comandos, incluindo execução de testes, artisan commands, devem ser executados dentro do container `petrvs_php`.

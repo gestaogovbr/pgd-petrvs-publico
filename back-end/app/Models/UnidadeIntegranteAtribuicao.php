@@ -19,7 +19,7 @@ class UnidadeIntegranteAtribuicao extends ModelBase
 
   // Has
   // Belongs
-  public function vinculo()
+  public function vinculo(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(UnidadeIntegrante::class, 'unidade_integrante_id');
   }

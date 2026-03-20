@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Services;
 
 use App\Models\Usuario;
 use App\Services\UsuarioService;
 use App\Services\IntegracaoService;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
+use App\Repository\UsuarioRepository;
+use App\Repository\UnidadeRepository;
+use App\Repository\SiapeBlackListServidorRepository;
 use Tests\TestCase;
 use Mockery;
 use App\Services\ServiceBase;
@@ -24,47 +24,10 @@ class UsuarioServiceTest extends TestCase
     {
         parent::setUp();
 
-        // Configura banco em memória
-        if (!Schema::hasTable('usuarios')) {
-            Schema::create('usuarios', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->string('email')->unique();
-                $table->string('nome')->nullable();
-                $table->string('cpf')->nullable();
-                $table->string('matricula')->nullable();
-                $table->string('situacao_funcional')->nullable();
-                $table->uuid('perfil_id')->nullable();
-                $table->string('apelido')->nullable();
-                $table->date('data_nascimento')->nullable();
-                $table->softDeletes();
-                $table->timestamps();
-            });
-        }
-        
-        if (!Schema::hasTable('perfis')) {
-             Schema::create('perfis', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->string('nome');
-                $table->integer('nivel')->default(0);
-                $table->timestamps();
-                $table->softDeletes();
-            });
-        }
-
-        // Cria perfil básico
-        DB::table('perfis')->insert([
-            'id' => Str::uuid()->toString(),
-            'nome' => 'Participante',
-            'nivel' => 1
-        ]);
-
-        // Mock do IntegracaoService
         $this->integracaoServiceMock = Mockery::mock(IntegracaoService::class);
         
-        // Instancia o service e injeta o mock
-        $this->service = new UsuarioService();
+        $this->service = Mockery::mock(UsuarioService::class)->makePartial();
         
-        // Injeção via Reflection na propriedade _services da classe pai ServiceBase
         $reflection = new ReflectionClass(ServiceBase::class);
         $property = $reflection->getProperty('_services');
         $property->setAccessible(true);
@@ -85,17 +48,6 @@ class UsuarioServiceTest extends TestCase
         $id = Str::uuid()->toString();
         $matricula = '11111';
 
-        DB::table('usuarios')->insert([
-            'id' => $id,
-            'email' => $email,
-            'cpf' => $cpf,
-            'matricula' => $matricula,
-            'nome' => 'Antigo',
-            'deleted_at' => now(),
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-
         // Dados para reativação (tentativa de criar novo usuário com mesmos dados)
         $data = [
             'id' => Str::uuid()->toString(), // ID novo, diferente do antigo
@@ -111,21 +63,55 @@ class UsuarioServiceTest extends TestCase
             ->once()
             ->with($email, '22222', $id);
 
+        // Mock do UsuarioRepository
+        $usuarioRepositoryMock = Mockery::mock(UsuarioRepository::class);
+        
+        $usuario = new Usuario();
+        $usuario->forceFill([
+            'id' => $id,
+            'cpf' => $cpf,
+            'email' => $email,
+            'matricula' => $matricula,
+            'nome' => 'Antigo',
+            'apelido' => 'Antigo',
+            'data_nascimento' => '1990-01-01',
+            'deleted_at' => '2023-01-01 00:00:00'
+        ]);
+
+        $usuarioRepositoryMock->shouldReceive('findByCpfOrEmail')
+            ->once()
+            ->with($cpf, $email, Mockery::any(), true)
+            ->andReturn($usuario);
+            
+        // Mock do UnidadeRepository para evitar erros no construtor
+        $unidadeRepositoryMock = Mockery::mock(UnidadeRepository::class);
+
         // Mock para pular validações que não importam pro teste
-        // IMPORTANTE: Ao usar makePartial(), o construtor original do UsuarioService é chamado.
-        // O construtor original instancia:
-        // $this->nivelAcessoService = new NivelAcessoService();
-        // $this->integracaoService = new IntegracaoService();
-        // Isso sobrescreve nossa injeção anterior se não tomarmos cuidado.
-        // Mas estamos injetando DEPOIS de criar o partial mock.
+        // IMPORTANTE: Ao usar makePartial(), o construtor original do UsuarioService NÃO é chamado automaticamente
+        // se não instanciarmos a classe antes. Como estamos criando um mock da classe, precisamos injetar as dependências.
         
         $this->service = Mockery::mock(UsuarioService::class)->makePartial();
+        $this->service->shouldAllowMockingProtectedMethods();
+
+        // Inject repositories via Reflection
+        $reflection = new ReflectionClass(UsuarioService::class);
         
-        // Re-injeta o mock do integracaoService
-        $reflection = new ReflectionClass(ServiceBase::class);
-        $property = $reflection->getProperty('_services');
+        $usuarioRepoProp = $reflection->getProperty('usuarioRepository');
+        $usuarioRepoProp->setAccessible(true);
+        $usuarioRepoProp->setValue($this->service, $usuarioRepositoryMock);
+        
+        $unidadeRepoProp = $reflection->getProperty('unidadeRepository');
+        $unidadeRepoProp->setAccessible(true);
+        $unidadeRepoProp->setValue($this->service, $unidadeRepositoryMock);
+        
+        // Re-injeta o mock do integracaoService via Reflection pois ele é injetado via Reflection no setUp
+        // Mas como criamos uma NOVA instância (mock), precisamos injetar nela também.
+        $reflectionBase = new ReflectionClass(ServiceBase::class);
+        $property = $reflectionBase->getProperty('_services');
         $property->setAccessible(true);
         $property->setValue($this->service, ['integracaoService' => $this->integracaoServiceMock]);
+        
+        // Bypass validações complexas
         
         // Acessa o método validateStore diretamente se possível, ou via proxyStore que o chama?
         // ServiceBase usa __call para métodos mágicos?
@@ -154,5 +140,56 @@ class UsuarioServiceTest extends TestCase
         }
         
         $this->assertTrue(true); // Se chegou aqui e o mock foi chamado, sucesso
+    }
+
+    public function test_matriculas_deve_anexar_em_processo_de_inativacao()
+    {
+        $cpf = '12345678900';
+
+        $usuarioA = new Usuario();
+        $usuarioA->cpf = $cpf;
+        $usuarioA->matricula = '0001';
+
+        $usuarioB = new Usuario();
+        $usuarioB->cpf = $cpf;
+        $usuarioB->matricula = '0002';
+
+        $usuarios = new \Illuminate\Database\Eloquent\Collection([$usuarioA, $usuarioB]);
+
+        $usuarioRepositoryMock = Mockery::mock(UsuarioRepository::class);
+        $usuarioRepositoryMock->shouldReceive('findAllByCpf')
+            ->once()
+            ->with($cpf)
+            ->andReturn($usuarios);
+
+        $siapeBlackListServidorRepositoryMock = Mockery::mock(SiapeBlackListServidorRepository::class);
+        $siapeBlackListServidorRepositoryMock->shouldReceive('findByCpfAndOptionalMatricula')
+            ->once()
+            ->with($cpf, '0001')
+            ->andReturn(Mockery::mock(\App\Models\SiapeBlackListServidor::class));
+
+        $siapeBlackListServidorRepositoryMock->shouldReceive('findByCpfAndOptionalMatricula')
+            ->once()
+            ->with($cpf, '0002')
+            ->andReturn(null);
+
+        $this->service = Mockery::mock(UsuarioService::class)->makePartial();
+        $this->service->shouldAllowMockingProtectedMethods();
+
+        $reflection = new ReflectionClass(UsuarioService::class);
+
+        $usuarioRepoProp = $reflection->getProperty('usuarioRepository');
+        $usuarioRepoProp->setAccessible(true);
+        $usuarioRepoProp->setValue($this->service, $usuarioRepositoryMock);
+
+        $blacklistRepoProp = $reflection->getProperty('siapeBlackListServidorRepository');
+        $blacklistRepoProp->setAccessible(true);
+        $blacklistRepoProp->setValue($this->service, $siapeBlackListServidorRepositoryMock);
+
+        /** @var UsuarioService $this->service */
+        $result = $this->service->matriculas($cpf);
+
+        $this->assertTrue((bool) $result[0]->getAttribute('emProcessoDeInativacao'));
+        $this->assertFalse((bool) $result[1]->getAttribute('emProcessoDeInativacao'));
     }
 }

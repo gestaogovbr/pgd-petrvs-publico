@@ -12,9 +12,10 @@ import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service'
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 
 @Component({
-  selector: 'app-ocorrencia-form',
-  templateUrl: './ocorrencia-form.component.html',
-  styleUrls: ['./ocorrencia-form.component.scss']
+    selector: 'app-ocorrencia-form',
+    templateUrl: './ocorrencia-form.component.html',
+    styleUrls: ['./ocorrencia-form.component.scss'],
+    standalone: false
 })
 export class OcorrenciaFormComponent extends PageFormBase<Ocorrencia, OcorrenciaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

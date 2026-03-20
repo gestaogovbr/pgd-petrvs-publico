@@ -1,8 +1,9 @@
 import { Component, Input } from "@angular/core";
 
 @Component({
-  selector: 'header-group',
-  templateUrl: './header-group.component.html'
+    selector: 'header-group',
+    templateUrl: './header-group.component.html',
+    standalone: false
 })
 export class HeaderGroupComponent {
   @Input() title: string = "";

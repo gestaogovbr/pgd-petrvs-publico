@@ -31,7 +31,7 @@ class InativacaoUnidadesTemporarios implements ShouldQueue
         }
 
         try {
-            $unidadeService = new UnidadeService();
+            $unidadeService = app(UnidadeService::class);
             $unidadeService->processarUnidadesTemporarias();
         } catch (\Exception $e) {
             Log::error("Erro ao processar inativação de unidades temporárias", [

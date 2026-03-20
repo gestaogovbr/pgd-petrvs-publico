@@ -13,7 +13,40 @@ use App\Models\PlanoTrabalhoEntrega;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\TipoModalidade;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\Collection;
 
+/**
+ * @property string $usuario_id
+ * @property string $programa_id
+ * @property string $unidade_id
+ * @property string $tipo_modalidade_id
+ * @property string $criacao_usuario_id
+ * @property string $documento_id
+ * @property float $carga_horaria
+ * @property float $tempo_total
+ * @property float $tempo_proporcional
+ * @property \DateTime $data_inicio
+ * @property \DateTime $data_fim
+ * @property \DateTime|null $data_arquivamento
+ * @property \DateTime|null $avaliado_at
+ * @property array $criterios_avaliacao
+ * @property mixed $_metadata
+ * @property-read Usuario $usuario
+ * @property-read Programa $programa
+ * @property-read Unidade $unidade
+ * @property-read TipoModalidade $tipoModalidade
+ * @property-read Usuario|null $criacaoUsuario
+ * @property-read Documento|null $documento
+ * @property-read Collection|PlanoTrabalhoConsolidacao[] $consolidacoes
+ * @property-read Collection|PlanoTrabalhoEntrega[] $entregas
+ * @property-read Collection|Documento[] $documentos
+ * @property-read Collection|Atividade[] $atividades
+ * @property-read Collection|Ocorrencia[] $ocorrencias
+ */
 class PlanoTrabalho extends ModelBase
 {
     protected $table = 'planos_trabalhos';
@@ -54,7 +87,7 @@ class PlanoTrabalho extends ModelBase
 
   public $fillable_changes = ['entregas', 'documentos'];
 
-    public $delete_cascade = ['documentos'];
+    public $delete_cascade = ['documentos','consolidacoes'];
 
     protected $casts = [
         "criterios_avaliacao" => AsJson::class
@@ -73,68 +106,73 @@ class PlanoTrabalho extends ModelBase
         return $this->hasMany(StatusJustificativa::class, "plano_trabalho_id");
     }
 
-    public function latestStatus()
+    public function latestStatus(): HasOne
     {
         return $this->hasOne(StatusJustificativa::class, "plano_trabalho_id")->latestOfMany();
     }
 
-    public function entregas()
+    public function entregas(): HasMany
     {
         return $this->hasMany(PlanoTrabalhoEntrega::class);
     }
 
-    public function documentos()
+    public function documentos(): HasMany
     {
         return $this->hasMany(Documento::class)->orderBy('numero', 'desc');
     }
 
-    public function atividades()
+    public function atividades(): HasMany
     {
         return $this->hasMany(Atividade::class);
     }
 
-    public function ocorrencias()
+    public function ocorrencias(): HasMany
     {
         return $this->hasMany(Ocorrencia::class, "plano_trabalho_id");
     }
 
-    public function consolidacoes()
+    public function consolidacoes(): HasMany
     {
         return $this->hasMany(PlanoTrabalhoConsolidacao::class)->orderBy('data_inicio');
     }
 
     // Belongs
-    public function usuario()
+    public function usuario(): BelongsTo
     {
         return $this->belongsTo(Usuario::class);
     }
 
-    public function criador()
+    public function criador(): BelongsTo
     {
         return $this->belongsTo(Usuario::class, 'criacao_usuario_id');
     }
 
-    public function programa()
+    public function criacaoUsuario(): BelongsTo
+    {
+        return $this->belongsTo(Usuario::class, 'criacao_usuario_id');
+    }
+
+    public function programa(): BelongsTo
     {
         return $this->belongsTo(Programa::class);
     }
 
-    public function unidade()
+    public function unidade(): BelongsTo
     {
         return $this->belongsTo(Unidade::class);
     }
 
-    public function tipoModalidade()
+    public function tipoModalidade(): BelongsTo
     {
         return $this->belongsTo(TipoModalidade::class);
     }
 
-    public function documento()
+    public function documento(): BelongsTo
     {
         return $this->belongsTo(Documento::class);
     }    //nullable
 
-    public function ultimaAssinatura()
+    public function ultimaAssinatura(): HasOneThrough
     {
         return $this->hasOneThrough(DocumentoAssinatura::class, Documento::class)
             ->orderBy('data_assinatura', 'desc');

@@ -82,7 +82,7 @@ class AppServiceProvider extends ServiceProvider
         URL::forceScheme('https');
         if($this->app->environment('APP_ENV') == 'local') {
             DB::listen(function ($query) {
-                Log::info($query->sql, $query->bindings, $query->time);
+                Log::info($query->sql, ['bindings' => $query->bindings, 'time' => $query->time]);
             });
         }
 

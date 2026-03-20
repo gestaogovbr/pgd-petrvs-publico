@@ -3,15 +3,16 @@ import { AbstractControl, ControlContainer, FormControl, FormGroup, FormGroupDir
 import { InputBase, LabelPosition } from '../input-base';
 
 @Component({
-  selector: 'input-number',
-  templateUrl: './input-number.component.html',
-  styleUrls: ['./input-number.component.scss'],
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]
+    selector: 'input-number',
+    templateUrl: './input-number.component.html',
+    styleUrls: ['./input-number.component.scss'],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective
+        }
+    ],
+    standalone: false
 })
 export class InputNumberComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';

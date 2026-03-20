@@ -29,14 +29,48 @@ use App\Jobs\ExportarTenantJob;
 use App\Models\JobSchedule;
 
 
+/**
+ * @property JobScheduleService $JobScheduleService
+ * @property TenantConfigurationsService $TenantConfigurationsService
+ */
 class TenantService extends ServiceBase
 {
+    public $joinable = [
+        'domains',
+        'tenantsLogs',
+        'tenants_logs',
+        'userPanels',
+        'user_panels',
+    ];
+
+    private function normalizeWith(array $with): array
+    {
+        $normalized = [];
+
+        foreach ($with as $key => $value) {
+            $relation = is_string($key) ? $key : $value;
+            if (!is_string($relation)) {
+                continue;
+            }
+
+            $relation = explode(':', $relation, 2)[0];
+            if ($relation === '') {
+                continue;
+            }
+
+            $normalized[] = $relation;
+        }
+
+        return array_values(array_unique($normalized));
+    }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param Array $data
-     * @return Object
+     * @param mixed $dataOrEntity
+     * @param mixed $unidade
+     * @param bool $transaction
+     * @return mixed
      */
     public function store($dataOrEntity, $unidade, $transaction = true)
     {
@@ -46,6 +80,7 @@ class TenantService extends ServiceBase
             if($tenant){
                 $this->JobScheduleService->createJobsSiape($tenant->id);
             }
+            return $tenant;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -233,6 +268,7 @@ class TenantService extends ServiceBase
         $tenants = $painel_user->nivel != 1 ? $painel_user->tenants : Tenant::all();
         $users = 0;
         foreach ($tenants as $tenant) {
+            /** @var Tenant $tenant */
             $this->inicializeTenant($tenant->id);
             $users += DB::table('programas_participantes')
                 ->select('usuario_id')
@@ -261,7 +297,7 @@ class TenantService extends ServiceBase
             $this->executeSeeder('CapacidadeSeeder', $dataOrEntity->id);
 
             Log::info('Busca de Cidade com o codigo IBGE');
-            $cidade_id = Cidade::where('codigo_ibge', $dataOrEntity->codigo_cidade)->first()->id;
+            $cidadeId = $this->getCidadeIdByCodigoIbge($dataOrEntity->codigo_cidade);
 
             Log::info('Busca de Entidade e cadastro caso não exista.');
             $entidade = Entidade::first() ?? new Entidade([
@@ -271,7 +307,7 @@ class TenantService extends ServiceBase
                 'layout_formulario_demanda' => 'COMPLETO',
                 'campos_ocultos_demanda' => [],
                 'nomenclatura' => [],
-                'cidade_id' => $cidade_id,
+                'cidade_id' => $cidadeId,
             ]);
             if (!$entidade->exists) {
                 $entidade->save();
@@ -280,7 +316,7 @@ class TenantService extends ServiceBase
             Log::info('Busca de Níveis de acesso.');
             $NivelAcessoService = new NivelAcessoService();
 
-            $tipoModalidadeId = TipoModalidade::first()->id;
+            $tipoModalidadeId = $this->getTipoModalidadeId();
 
             Log::info('Cadastro de Usuário.');
             $usuario = new Usuario([
@@ -296,8 +332,8 @@ class TenantService extends ServiceBase
 
             Log::info('Cadastro de Unidade.');
             $unidade = array(
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
+                "created_at" => Carbon::now(),
+                "updated_at" => Carbon::now(),
                 "deleted_at" => NULL,
                 "codigo" => "1",
                 "sigla" => $dataOrEntity->id,
@@ -317,7 +353,7 @@ class TenantService extends ServiceBase
                 "checklist" => NULL,
                 "notificacoes" => NULL,
                 "expediente" => NULL,
-                "cidade_id" => $cidade_id,
+                "cidade_id" => $cidadeId,
                 "unidade_pai_id" => NULL,
                 "entidade_id" => $entidade->id
             );
@@ -345,6 +381,32 @@ class TenantService extends ServiceBase
             Log::error('Error executing commands: ' . $e->getMessage());
             throw $e;
         }
+    }
+
+    private function getCidadeIdByCodigoIbge(?string $codigoIbge): string
+    {
+        if ($codigoIbge === null || trim($codigoIbge) === '') {
+            throw new ServerException('Tenant', 'Código IBGE da cidade é obrigatório.');
+        }
+
+        $cidade = Cidade::where('codigo_ibge', $codigoIbge)->first();
+        if ($cidade === null) {
+            throw new ServerException('Tenant', 'Cidade não encontrada para o código IBGE informado.');
+        }
+
+        return $cidade->id;
+    }
+
+    private function getTipoModalidadeId(): string
+    {
+        $tipoModalidade = TipoModalidade::first();
+        if ($tipoModalidade === null) {
+            $tipoModalidade = TipoModalidade::create([
+                'nome' => 'Teletrabalho',
+            ]);
+        }
+
+        return $tipoModalidade->id;
     }
 
     public function deleteTenant($id)
@@ -397,7 +459,8 @@ class TenantService extends ServiceBase
         $model = $this->getModel();
         $query = $model::query();
         $data["with"] = isset($data["with"]) ? $data["with"] : [];
-        $data["with"] = isset($this->joinable) ? $this->getJoinable($data["with"]) : $data["with"];
+        $data["with"] = $this->normalizeWith($data["with"]);
+        $data["with"] = $this->getJoinable($data["with"]);
         if (count($data['with']) > 0) {
             $this->applyWith($query, $data);
         }
@@ -422,6 +485,7 @@ class TenantService extends ServiceBase
                 $data['api_password']
             );
 
+            /** @phpstan-ignore-next-line */
             return $data;
         } else {
             throw new NotFoundException("Id não encontrado");
@@ -441,9 +505,13 @@ class TenantService extends ServiceBase
         $tenant = Tenant::findOrFail($id);
 
         $database = $tenant->tenancy_db_name;
+        /** @phpstan-ignore-next-line */
         $username = $tenant->tenancy_db_username;
+        /** @phpstan-ignore-next-line */
         $password = $tenant->tenancy_db_password;
+        /** @phpstan-ignore-next-line */
         $host =$tenant->tenancy_db_host;
+        /** @phpstan-ignore-next-line */
         $port =$tenant->tenancy_db_port;
 
         $dumpFile = storage_path("{$database}_dump.sql");

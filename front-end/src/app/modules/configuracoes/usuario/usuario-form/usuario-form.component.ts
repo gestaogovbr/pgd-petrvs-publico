@@ -17,9 +17,10 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
 type Regramento = IIndexable & { nome: string; };
 
 @Component({
-  selector: 'app-usuario-form',
-  templateUrl: './usuario-form.component.html',
-  styleUrls: ['./usuario-form.component.scss']
+    selector: 'app-usuario-form',
+    templateUrl: './usuario-form.component.html',
+    styleUrls: ['./usuario-form.component.scss'],
+    standalone: false
 })
 export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoService> {
   canEditAtribuicoes = false;
@@ -47,6 +48,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       apelido: { default: "" },
       participa_pgd: { default: ""},
       modalidade_pgd: { default: ""},
+      tipo_modalidade_id: { default: null },
       usuario_externo: { default: true },
       telefone: { default: "" },
       uf: { default: "" },
@@ -60,8 +62,6 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     this.join = [
       "auditsExterno",
       "ultimoPlanoTrabalhoAtivo.documentos",
-      "matriculas",
-      "matriculas.lotacao.unidade",
       "tipoModalidadeSiape"
     ]
   }
@@ -131,10 +131,6 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     this.canEditAtribuicoes = this.snapshot?.data['canEditAtribuicoes'] ?? false;
   }
 
-  public getMatriculas() {
-    return (this.entity?.matriculas || [])
-      .sort((a, b) => (a?.matricula || '').localeCompare(b?.matricula || ''));
-  }
 }
 
 /*

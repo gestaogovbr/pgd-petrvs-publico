@@ -23,8 +23,10 @@ class ProdutoInsumoValidation extends BaseValidador
         if(empty($insumos)){
             return [];
         }
+
+        $validated = [];
+
         foreach ($insumos as $insumo) {
-            
             $validator = Validator::make($insumo, [
                 'origem' => ['required', 'in:interno,externo'],
                 'unidade_id' => [
@@ -57,7 +59,7 @@ class ProdutoInsumoValidation extends BaseValidador
                     'exists:clientes,id',
                 ],
                 'descricao' => [
-                    function ($attribute, $value, $fail) use ($insumo, $id) {
+                    function ($attribute, $value, $fail) use ($insumo) {
                         if (!empty($insumo['cliente_id'])) {
                             $validator = Validator::make(['descricao' => $value], [
                                 'descricao' => ['required']
@@ -76,13 +78,10 @@ class ProdutoInsumoValidation extends BaseValidador
             if ($validator->fails()) {
                 throw new ValidationException($validator);
             }
+
+            $validated[] = $validator->validated();
         }
 
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-
-        return $validator->validated();
+        return $validated;
     }
 }

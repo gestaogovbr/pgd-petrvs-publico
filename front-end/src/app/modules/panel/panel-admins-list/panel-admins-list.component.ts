@@ -3,13 +3,14 @@ import { PageListBase } from "../../base/page-list-base";
 import { UsersPanelDaoService } from "src/app/dao/users-panel-dao.service";
 import { Component, Injector, ViewChild } from "@angular/core";
 import { GridComponent } from "src/app/components/grid/grid.component";
-import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 
 
 @Component({
-  selector: 'panel-admins-list',
-  templateUrl: './panel-admins-list.component.html',
-  styleUrls: ['./panel-admins-list.component.scss']
+    selector: 'panel-admins-list',
+    templateUrl: './panel-admins-list.component.html',
+    styleUrls: ['./panel-admins-list.component.scss'],
+    standalone: false
 })
 
 export class PanelAdminsListComponent extends PageListBase<UserPanel, UsersPanelDaoService>  {

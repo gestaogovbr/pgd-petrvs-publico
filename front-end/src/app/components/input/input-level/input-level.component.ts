@@ -14,15 +14,16 @@ export type InputLevelValue = (parents: InputLevelItem[], item: InputLevelItem, 
 export type InputLevelValid = (parents: InputLevelItem[], item: InputLevelItem, children: InputLevelItem[]) => Promise<boolean> | boolean;
 
 @Component({
-  selector: 'input-level',
-  templateUrl: './input-level.component.html',
-  styleUrls: ['./input-level.component.scss'],
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]
+    selector: 'input-level',
+    templateUrl: './input-level.component.html',
+    styleUrls: ['./input-level.component.scss'],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective
+        }
+    ],
+    standalone: false
 })
 export class InputLevelComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';

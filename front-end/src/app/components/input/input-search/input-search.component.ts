@@ -21,7 +21,7 @@ import {DaoBaseService} from "src/app/dao/dao-base.service";
 import {Base, IIndexable} from "src/app/models/base.model";
 import {FullRoute, NavigateService} from "src/app/services/navigate.service";
 import {UtilService} from "src/app/services/util.service";
-import {GroupBy} from "../../grid/grid.component";
+import {GroupBy} from "../../grid/grid-types";
 import {InputBase, LabelPosition, SelectItem} from "../input-base";
 import {EntityService} from "src/app/services/entity.service";
 //import * as bootstrap from 'bootstrap';
@@ -34,15 +34,16 @@ export class SearchGroupSeparator {
 }
 
 @Component({
-	selector: "input-search",
-	templateUrl: "./input-search.component.html",
-	styleUrls: ["./input-search.component.scss"],
-	viewProviders: [
-		{
-			provide: ControlContainer,
-			useExisting: FormGroupDirective,
-		},
-	],
+    selector: "input-search",
+    templateUrl: "./input-search.component.html",
+    styleUrls: ["./input-search.component.scss"],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective,
+        },
+    ],
+    standalone: false
 })
 export class InputSearchComponent extends InputBase implements OnInit {
 	@HostBinding("class") class = "form-group";
@@ -212,16 +213,25 @@ export class InputSearchComponent extends InputBase implements OnInit {
 			if (element) {
 				element.value = selected.text;
 			}
-			this.selectedValue = selected.value;
+			this.selectedValue = String(selected.value ?? "");
 			this.control?.setValue(this.selectedValue, {emitEvent: false});
 			this.selectedEntity = undefined;
-			if (this.selectedValue?.length) {
+			if (this.selectedValue.length) {
 				if (loadEntity) {
-					this.loading = true;
-					this.dao
-						?.getById(this.selectedValue, this.join)
-						.then(setSelect)
-						.finally(() => (this.loading = false));
+					const dao = this.dao;
+					if (!dao) {
+						setSelect(selected.entity);
+					} else {
+						this.loading = true;
+						dao
+							.getById(this.selectedValue, this.join)
+							.then(setSelect)
+							.catch(() => undefined)
+							.finally(() => {
+								this.loading = false;
+								this.cdRef.detectChanges();
+							});
+					}
 				} else {
 					setSelect(selected.entity);
 				}
@@ -295,17 +305,22 @@ export class InputSearchComponent extends InputBase implements OnInit {
 	}
 
 	public onKeyDown(event: any) {		
-		if (["Enter", "ArrowDown", "ArrowUp"].indexOf(event.key) >= 0) {
-			if (event.key == "Enter") {
+		if (event.key === "Enter") {
+			const selectableItems = this.items.filter(
+				(x) => !(x instanceof SearchGroupSeparator)
+			) as SelectItem[];
+
+			if (selectableItems.length === 1) {
+				this.onItemClick(selectableItems[0]);
+				this.dropdown?.hide();
+			} else {
 				this.onEnterKeyDown(event);
-				console.log("Enter");
-			} else if (event.key == "Esc") {
-				console.log("Esc");
-			} else if (event.key == "ArrowDown") {
-				console.log("Down");
-			} else if (event.key == "ArrowUp") {
-				console.log("Up");
 			}
+			event.preventDefault();
+			return;
+		}
+
+		if (["ArrowDown", "ArrowUp", "Escape"].includes(event.key)) {
 			event.preventDefault();
 		}
 	}
@@ -363,45 +378,52 @@ export class InputSearchComponent extends InputBase implements OnInit {
 		return items;
 	}
 
-	public search(text: string) {
+	public async search(text: string) {
 		this.searching = true;
 		if (this.control)
 			this.control!.setValue(this.emptyValue, {emitEvent: false});
 		this.clear(false, true, false);
-		this.dao
-			?.searchText(
+		const dao = this.dao;
+		if (!dao) {
+			this.searching = false;
+			this.cdRef.detectChanges();
+			return;
+		}
+
+		try {
+			const result = await dao.searchText(
 				text,
 				this.fields,
 				this.where,
 				this.groupBy?.map((x) => [x.field, "asc"])
-			)
-			.then((result) => {
-				if (this.queryText == text) {
-					this.items = this.group(result);
-					const element = document.getElementById(
-						this.generatedId(this.controlName)
-					);
-					if (element) {
-						const computedStyle = getComputedStyle(element);
-						const width =
-							element.offsetWidth +
-							parseInt(computedStyle.marginLeft) +
-							parseInt(computedStyle.marginRight);
-						this.dropdownWidth = width || 200;
-					} else {
-						this.dropdownWidth = 200;
-					}
-					this.cdRef.detectChanges();
-					if (this.items.length) {
-						this.dropdown?.show();
-					} else {
-						this.dropdown?.hide();
-					}
+			);
+
+			if (this.queryText == text) {
+				this.items = this.group(result);
+				const element = document.getElementById(
+					this.generatedId(this.controlName)
+				);
+				if (element) {
+					const computedStyle = getComputedStyle(element);
+					const width =
+						element.offsetWidth +
+						parseInt(computedStyle.marginLeft) +
+						parseInt(computedStyle.marginRight);
+					this.dropdownWidth = width || 200;
+				} else {
+					this.dropdownWidth = 200;
 				}
-			})
-			.finally(() => {
-				this.searching = false;
-			});
+				this.cdRef.detectChanges();
+				if (this.items.length) {
+					this.dropdown?.show();
+				} else {
+					this.dropdown?.hide();
+				}
+			}
+		} finally {
+			this.searching = false;
+			this.cdRef.detectChanges();
+		}
 	}
 
 	public get isDetails(): boolean {
