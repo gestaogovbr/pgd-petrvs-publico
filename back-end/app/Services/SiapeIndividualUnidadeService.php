@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Facades\SiapeLog;
-use App\Models\Entidade;
+use App\Repository\EntidadeRepository;
 use App\Repository\SiapeDadosUORGRepository;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -16,6 +16,8 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
     public function __construct(
         protected SiapeDadosUORGRepository $siapeDadosUORGRepository,
+        protected EntidadeRepository $entidadeRepository,
+        protected IntegracaoServiceFactory $integracaoServiceFactory,
         $collection = null
     ) {
         parent::__construct($collection);
@@ -33,9 +35,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
         $codigoUnidade = preg_replace('/[^0-9]/', '', $codigoUnidade);
 
-        $codOrgao = strval(intval($this->service->config['codOrgao']));
-
-        SiapeLog::info('Montando XML dos dadosda unidade');
+        SiapeLog::info('Montando XML dos dados da unidade');
 
         $xmlDadosDaUnidade = $this->montaXmlUnidade($codigoUnidade);
 
@@ -62,9 +62,9 @@ class SiapeIndividualUnidadeService extends ServiceBase
         ]);
 
 
-        $integracaoService = new IntegracaoService([]);
+        $integracaoService = $this->integracaoServiceFactory->make();
 
-        $entidades = Entidade::all(); // TODO: Seria possível utilizar o $this->entidadyRepository->findAll(); ?
+        $entidades = $this->entidadeRepository->findAll();
         $inputs = [
             'unidades' => true,
             'servidores' => true,

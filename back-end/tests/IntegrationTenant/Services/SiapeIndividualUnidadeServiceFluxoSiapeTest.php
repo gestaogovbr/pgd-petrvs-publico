@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\Entidade;
 use App\Models\SiapeDadosUORG;
+use App\Services\IntegracaoService;
+use App\Services\IntegracaoServiceFactory;
 use App\Services\SiapeIndividualService;
 use App\Services\SiapeIndividualUnidadeService;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
@@ -27,6 +30,14 @@ beforeEach(function () {
     $this->mockSiapeService->shouldReceive('getBuscarDadosSiapeUnidade')
         ->andReturn($this->mockBuscarUnidade);
 
+    $this->mockIntegracaoService = Mockery::mock(IntegracaoService::class);
+
+    $mockFactory = Mockery::mock(IntegracaoServiceFactory::class);
+    $mockFactory->shouldReceive('make')->andReturn($this->mockIntegracaoService);
+    $this->app->instance(IntegracaoServiceFactory::class, $mockFactory);
+
+    $this->entidades = Entidade::factory()->count(3)->create();
+
     $this->registroProcessado = SiapeDadosUORG::factory()->processado()->create();
 });
 
@@ -35,7 +46,7 @@ afterEach(function () {
 });
 
 describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
-    test('insere SiapeDadosUORG com codigo correto e remove processados para codUorg válido', function () {
+    test('insere SiapeDadosUORG com codigo correto, remove processados e sincroniza cada entidade', function () {
         $codigo = (string) rand(1, 999);
         $codUorg = str_pad($codigo, 6, '0', STR_PAD_LEFT);
 
@@ -51,6 +62,18 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         </soap:Envelope>
         XML;
 
+        $entidadeIdsChamados = [];
+
+        $this->mockIntegracaoService->shouldReceive('sincronizar')
+            ->times(3)
+            ->with(Mockery::on(function (array $inputs) use (&$entidadeIdsChamados): bool {
+                $entidadeIdsChamados[] = $inputs['entidade'];
+                return $inputs['unidades'] === true
+                    && $inputs['servidores'] === true
+                    && $inputs['gestores'] === true;
+            }))
+            ->andReturn([]);
+
         expect(SiapeDadosUORG::withTrashed()->find($this->registroProcessado->id))->not->toBeNull();
 
         $this->mockBuscarUnidade->shouldReceive('executaRequisicao')
@@ -59,6 +82,9 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         $service = app(SiapeIndividualUnidadeService::class);
         $service->fluxoSiape($codigo, $this->mockSiapeService);
 
+        expect($entidadeIdsChamados)->toHaveCount(3);
+        expect($entidadeIdsChamados)->toEqualCanonicalizing($this->entidades->pluck('id')->all());
+
         expect(SiapeDadosUORG::withTrashed()->find($this->registroProcessado->id))->toBeNull();
 
         $inserted = SiapeDadosUORG::where('codigo', $codigo)->first();
@@ -66,7 +92,7 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         expect($inserted->codigo)->toBe($codigo);
     });
 
-    test('insere SiapeDadosUORG com codigo null e remove processados quando SIAPE retorna fault', function () {
+    test('insere SiapeDadosUORG com codigo null, remove processados e sincroniza cada entidade quando SIAPE retorna fault', function () {
         $soapFault = <<<XML
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -80,6 +106,18 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         </soap:Envelope>
         XML;
 
+        $entidadeIdsChamados = [];
+
+        $this->mockIntegracaoService->shouldReceive('sincronizar')
+            ->times(3)
+            ->with(Mockery::on(function (array $inputs) use (&$entidadeIdsChamados): bool {
+                $entidadeIdsChamados[] = $inputs['entidade'];
+                return $inputs['unidades'] === true
+                    && $inputs['servidores'] === true
+                    && $inputs['gestores'] === true;
+            }))
+            ->andReturn([]);
+
         expect(SiapeDadosUORG::withTrashed()->find($this->registroProcessado->id))->not->toBeNull();
 
         $this->mockBuscarUnidade->shouldReceive('executaRequisicao')
@@ -87,6 +125,9 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
 
         $service = app(SiapeIndividualUnidadeService::class);
         $service->fluxoSiape('codigo invalido', $this->mockSiapeService);
+
+        expect($entidadeIdsChamados)->toHaveCount(3);
+        expect($entidadeIdsChamados)->toEqualCanonicalizing($this->entidades->pluck('id')->all());
 
         expect(SiapeDadosUORG::withTrashed()->find($this->registroProcessado->id))->toBeNull();
 
