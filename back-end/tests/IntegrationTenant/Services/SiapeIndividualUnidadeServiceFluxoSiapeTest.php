@@ -26,6 +26,8 @@ beforeEach(function () {
     ];
     $this->mockSiapeService->shouldReceive('getBuscarDadosSiapeUnidade')
         ->andReturn($this->mockBuscarUnidade);
+
+    $this->registroProcessado = SiapeDadosUORG::factory()->processado()->create();
 });
 
 afterEach(function () {
@@ -33,10 +35,10 @@ afterEach(function () {
 });
 
 describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
-    test('insere SiapeDadosUORG com codigo igual a codUorg do xml válido retornado pelo SIAPE', function () {
-    $codigo = (string)rand(1,999);    
-    $codUorg = str_pad($codigo, 6, '0', STR_PAD_LEFT);
-        
+    test('insere SiapeDadosUORG com codigo correto e remove processados para codUorg válido', function () {
+        $codigo = (string) rand(1, 999);
+        $codUorg = str_pad($codigo, 6, '0', STR_PAD_LEFT);
+
         $soapResponse = <<<XML
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
             <soap:Body>
@@ -49,17 +51,22 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         </soap:Envelope>
         XML;
 
+        expect(SiapeDadosUORG::withTrashed()->find($this->registroProcessado->id))->not->toBeNull();
+
         $this->mockBuscarUnidade->shouldReceive('executaRequisicao')
             ->andReturn($soapResponse);
 
         $service = app(SiapeIndividualUnidadeService::class);
         $service->fluxoSiape($codigo, $this->mockSiapeService);
 
-        $this->assertDatabaseHas('siape_dadosUORG', ['codigo' => $codigo], 'tenant');
-        expect(SiapeDadosUORG::where('codigo', $codigo)->count())->toBe(1);
+        expect(SiapeDadosUORG::withTrashed()->find($this->registroProcessado->id))->toBeNull();
+
+        $inserted = SiapeDadosUORG::where('codigo', $codigo)->first();
+        expect($inserted)->not->toBeNull();
+        expect($inserted->codigo)->toBe($codigo);
     });
 
-    test('insere SiapeDadosUORG com codigo null quando SIAPE retorna fault', function () {
+    test('insere SiapeDadosUORG com codigo null e remove processados quando SIAPE retorna fault', function () {
         $soapFault = <<<XML
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -73,14 +80,17 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         </soap:Envelope>
         XML;
 
+        expect(SiapeDadosUORG::withTrashed()->find($this->registroProcessado->id))->not->toBeNull();
+
         $this->mockBuscarUnidade->shouldReceive('executaRequisicao')
             ->andReturn($soapFault);
 
         $service = app(SiapeIndividualUnidadeService::class);
         $service->fluxoSiape('codigo invalido', $this->mockSiapeService);
 
-        $inserted = SiapeDadosUORG::whereNull('codigo')->first();
+        expect(SiapeDadosUORG::withTrashed()->find($this->registroProcessado->id))->toBeNull();
 
+        $inserted = SiapeDadosUORG::whereNull('codigo')->first();
         expect($inserted)->not->toBeNull();
         expect($inserted->codigo)->toBeNull();
         expect($inserted->response)->toContain('faultstring');

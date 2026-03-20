@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Facades\SiapeLog;
 use App\Models\Entidade;
-use App\Models\SiapeDadosUORG;
+use App\Repository\SiapeDadosUORGRepository;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
@@ -14,6 +14,13 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
     private SiapeIndividualService $service;
 
+    public function __construct(
+        protected SiapeDadosUORGRepository $siapeDadosUORGRepository,
+        $collection = null
+    ) {
+        parent::__construct($collection);
+    }
+
     public function fluxoSiape(string $codigoUnidade, SiapeIndividualService $service)
     {
         SiapeLog::info('Iniciando o processo de sincronização da unidade #:' . $codigoUnidade);
@@ -22,7 +29,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
         SiapeLog::info('Limpando tabelas de controle do SIAPE para a unidade');
 
-        SiapeDadosUORG::withTrashed()->where('processado', 1)->forceDelete();
+        $this->siapeDadosUORGRepository->forceDeleteProcessados();
 
         $codigoUnidade = preg_replace('/[^0-9]/', '', $codigoUnidade);
 
@@ -45,7 +52,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
         SiapeLog::info('Salvando os dados da unidade');
 
-        SiapeDadosUORG::insert([    
+        $this->siapeDadosUORGRepository->create([    
             'id' => Str::uuid(),
             'data_modificacao' => today(),
             'codigo' => $codUorg,
@@ -57,7 +64,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
         $integracaoService = new IntegracaoService([]);
 
-        $entidades = Entidade::all();
+        $entidades = Entidade::all(); // TODO: Seria possível utilizar o $this->entidadyRepository->findAll(); ?
         $inputs = [
             'unidades' => true,
             'servidores' => true,
