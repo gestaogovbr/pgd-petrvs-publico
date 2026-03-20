@@ -33,13 +33,16 @@ afterEach(function () {
 });
 
 describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
-    test('insere SiapeDadosUORG com codigo 38 para codUorg válido', function () {
+    test('insere SiapeDadosUORG com codigo igual a codUorg do xml válido retornado pelo SIAPE', function () {
+    $codigo = (string)rand(1,999);    
+    $codUorg = str_pad($codigo, 6, '0', STR_PAD_LEFT);
+        
         $soapResponse = <<<XML
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
             <soap:Body>
                 <ns1:dadosUorgResponse xmlns:ns1="http://servico.wssiapenet">
                     <out xmlns="">
-                        <codUorg xmlns="http://entidade.wssiapenet">000038</codUorg>
+                        <codUorg xmlns="http://entidade.wssiapenet">$codUorg</codUorg>
                     </out>
                 </ns1:dadosUorgResponse>
             </soap:Body>
@@ -50,10 +53,10 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
             ->andReturn($soapResponse);
 
         $service = app(SiapeIndividualUnidadeService::class);
-        $service->fluxoSiape('38', $this->mockSiapeService);
+        $service->fluxoSiape($codigo, $this->mockSiapeService);
 
-        $this->assertDatabaseHas('siape_dadosUORG', ['codigo' => '38'], 'tenant');
-        expect(SiapeDadosUORG::where('codigo', '38')->count())->toBe(1);
+        $this->assertDatabaseHas('siape_dadosUORG', ['codigo' => $codigo], 'tenant');
+        expect(SiapeDadosUORG::where('codigo', $codigo)->count())->toBe(1);
     });
 
     test('insere SiapeDadosUORG com codigo null quando SIAPE retorna fault', function () {
