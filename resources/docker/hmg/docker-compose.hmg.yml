@@ -22,16 +22,12 @@ services:
     command: ["/bin/bash", "-c", "mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf"]
     depends_on:
       - petrvs_php
-    volumes:
-      - "./.env:/var/www/.env"
     stdin_open: true
     tty: true
 
   # REDIS
   petrvs_redis:
     container_name: petrvs_redis
-    ports:
-      - "6379:6379"
     volumes:
       - redis-data:/data
 
@@ -48,7 +44,9 @@ services:
       MYSQL_DATABASE: petrvs
       MYSQL_USER: root
       MYSQL_PASSWORD: PsEeTnRhVaS
+      MYSQL_TCP_PORT: 3306  
 
 volumes:
   db_data:
+    name: root_db_data
   redis-data:
