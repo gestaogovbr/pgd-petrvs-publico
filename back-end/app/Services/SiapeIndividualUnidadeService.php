@@ -36,6 +36,8 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
         $dadosUnidadeResponseXml = $this->service->getBuscarDadosSiapeUnidade()->executaRequisicao($xmlDadosDaUnidade); //xml
 
+        $codUorg = $this->getCodigoFromXML($dadosUnidadeResponseXml);
+
         SiapeLog::info('Dados da unidade recebidos do SIAPE', ['response' => $dadosUnidadeResponseXml]);
 
         SiapeLog::info('Buscando a lista de urogs');
@@ -46,6 +48,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
         SiapeDadosUORG::insert([    
             'id' => Str::uuid(),
             'data_modificacao' => today(),
+            'codigo' => $codUorg,
             'response' => $dadosUnidadeResponseXml,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
@@ -67,6 +70,16 @@ class SiapeIndividualUnidadeService extends ServiceBase
         }
 
         return $retorno;
+    }
+
+    private function getCodigoFromXML(string $xmlResponse): ?string
+    {
+        $xml = simplexml_load_string($xmlResponse);
+        $xml->registerXPathNamespace('ent', 'http://entidade.wssiapenet');
+
+        $result = $xml->xpath('//ent:codUorg');
+
+        return $result ? ltrim((string) $result[0], '0') : null;
     }
 
 
