@@ -112,6 +112,40 @@ pipeline {
     }
         }
 
+        stage('Build Producao') {
+            when {
+                branch 'dataprev_producao'
+            }
+            environment {
+                DOCKER_HUB_IMAGE = 'segescginf/pgdpetrvs'
+                DOCKER_HUB_TAG_LATEST = 'latest'
+                DOCKER_HUB_TAG_NEW = '2.9.19'
+                DOCKER_HUB_TAG_OLD = '2.9.18'
+            }
+            steps {
+                withCredentials([
+                    string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD')
+                ]) {
+                    sh '''
+                        echo "Iniciando a construção e envio das imagens Docker..."
+                        echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+                        docker pull $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST || true
+                        if docker manifest inspect $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD >/dev/null 2>&1; then
+                          echo "A tag $DOCKER_HUB_TAG_OLD já existe, não será reetiquetada."
+                        else
+                          docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD
+                          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD
+                        fi
+                        docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW -f ./resources/deploy/Dockerfile .
+                        docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
+                        docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW
+                        docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
+                        echo "Envio das imagens Docker concluído."
+                    '''
+                }
+            }
+        }
+
         stage('Build and Deploy DSV') {
             when {
                 branch 'dataprev_dsv'
