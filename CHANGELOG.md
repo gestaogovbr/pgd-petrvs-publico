@@ -1,3 +1,7 @@
+## 2.9.19 23/03/2026
+### Modificado
+- Pendências de Plano de Trabalho sem registro de execução antes da data 01/10/2025 não serão mais consideradas.
+- Pendências de Plano de Entrega sem registro de execução antes da data 12/01/2026 não serão mais consideradas.
 ## 2.9.18 16/03/2026
 ### Corrigido
 - Correção no campo CPF, retirado mascára do front e adição de validação no backend.
