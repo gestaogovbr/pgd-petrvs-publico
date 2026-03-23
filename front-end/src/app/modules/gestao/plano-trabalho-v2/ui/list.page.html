@@ -1,0 +1,36 @@
+<div class="container-fluid py-3">
+  <h2 class="mb-3">Planos de Trabalho v2</h2>
+
+  @if (facade.loading()) {
+    <div>Carregando...</div>
+  }
+
+  <table class="table table-sm table-striped">
+    <thead>
+      <tr>
+        <th>Número</th>
+        <th>Nome</th>
+        <th>Unidade</th>
+        <th>Modalidade</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (p of facade.items(); track p.id) {
+        <tr>
+          <td>{{ p.numero }}</td>
+          <td>{{ p.nome }}</td>
+          <td>{{ p.unidade_id }}</td>
+          <td>{{ p.modalidade }}</td>
+          <td>{{ p.status }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <div class="d-flex justify-content-between align-items-center">
+    <button class="btn btn-outline-secondary btn-sm" (click)="prev()" [disabled]="facade.page() <= 1">Anterior</button>
+    <span>Página {{ facade.page() }}</span>
+    <button class="btn btn-outline-secondary btn-sm" (click)="next()">Próxima</button>
+  </div>
+</div>
