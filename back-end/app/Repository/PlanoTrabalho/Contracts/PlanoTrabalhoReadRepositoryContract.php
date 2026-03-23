@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Repository\PlanoTrabalho\Contracts;
 
+use App\Models\PlanoTrabalho;
 use Illuminate\Database\Eloquent\Collection;
 
 interface PlanoTrabalhoReadRepositoryContract
 {
-    public function findById(string|int $id, bool $deleteTrashed = false): ?Collection;
+    public function findById(string|int $id): ?PlanoTrabalho;
 
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection;
 
