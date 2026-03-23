@@ -13,6 +13,10 @@ interface PlanoTrabalhoConsolidacaoReadRepositoryContract
 
     public function findConsolidacaoById(string $id): ?PlanoTrabalhoConsolidacao;
 
-    public function getPendentesAvaliacao(array $unidadesIds, string $usuarioId, \DateTimeInterface $dataCorte): \Illuminate\Database\Eloquent\Collection;
+    public function getPendentesAvaliacao(
+        array $unidadesGerenciadasIds,
+        array $unidadesSubordinadasIds,
+        string $usuarioId,
+        \DateTimeInterface $dataCorte
+    ): \Illuminate\Database\Eloquent\Collection;
 }
-

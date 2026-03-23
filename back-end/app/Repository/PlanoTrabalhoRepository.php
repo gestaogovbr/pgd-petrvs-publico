@@ -21,9 +21,9 @@ class PlanoTrabalhoRepository
         return $this->readRepository->findById($id);
     }
 
-    public function getPlanosTrabalhoAssinatura(array $unidadesIds, string $usuarioId): Collection
+    public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection
     {
-        return $this->readRepository->getPlanosTrabalhoAssinatura($unidadesIds, $usuarioId);
+        return $this->readRepository->getPlanosTrabalhoAssinatura($unidadesGerenciadasIds, $unidadesSubordinadasIds, $usuarioId);
     }
 
     public function planosAtivos(string $usuarioId): Collection
