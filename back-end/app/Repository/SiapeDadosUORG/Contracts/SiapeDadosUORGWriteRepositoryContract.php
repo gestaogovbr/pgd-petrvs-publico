@@ -10,4 +10,5 @@ namespace App\Repository\SiapeDadosUORG\Contracts;
 interface SiapeDadosUORGWriteRepositoryContract
 {
     public function create(array $attributes): \App\Models\SiapeDadosUORG;
+    public function forceDeleteProcessados(): void;
 }
