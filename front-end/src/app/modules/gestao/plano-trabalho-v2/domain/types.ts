@@ -2,18 +2,26 @@ export type PlanoTrabalhoId = string;
 
 export type PlanoTrabalho = {
   id: PlanoTrabalhoId;
-  numero: string;
-  nome: string;
+  numero: number;
+  usuario_id: string;
+  criacao_usuario_id: string;
+  documento_id: string;
   unidade_id: string;
-  modalidade?: string;
-  status?: string;
+  programa_id: string; // Programa ou Regramento
+  tipo_modalidade_id: string;
+  data_inicio: Date;
+  data_fim: Date;
+  data_arquivamento?: Date;
+  avaliado_at?: Date;
+  status: string;
 };
 
-export type Entrega = {
+export type PlanoTrabalhoEntrega = {
   id: string;
-  nome: string;
+  descricao: string;
   plano_trabalho_id: PlanoTrabalhoId;
-  status?: string;
+  plano_entrega_entrega_id?: string;
+  forca_trabalho: number;
 };
 
 export type Page<T> = {
