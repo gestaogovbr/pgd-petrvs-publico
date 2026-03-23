@@ -96,14 +96,20 @@ pipeline {
                     branch 'dataprev_producao'
                 }
             }
-            steps {
-                dir('front-end') {
-                    sh '''
-                        ng build --configuration=production --output-path=../back-end/public
-                        node ./postbuild.js
-                    '''
-                }
+             steps {
+            dir('front-end') {
+                sh '''
+                    docker run --rm \
+                    -v "$PWD":/app \
+                    -w /app \
+                    node:20 \
+                    bash -lc "
+                        npm install --legacy-peer-deps &&
+                        npx ng build
+                    "
+                '''
             }
+    }
         }
 
         stage('Build and Deploy DSV') {
