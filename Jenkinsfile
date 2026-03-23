@@ -137,8 +137,10 @@ pipeline {
                         echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
                         docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
                         echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
-                        sudo apt-get update -y && sudo apt-get install -y sshpass || (apt-get update -y && apt-get install -y sshpass)
-                        SSHPASS=$SSH_PASSWORD sshpass -e ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "cd /home/marcocoelho/ && bash install-pgd.sh < /dev/null"
+                        docker run --rm \
+                            -e SSHPASS="$SSH_PASSWORD" \
+                            alpine:3.20 \
+                            sh -lc "apk add --no-cache openssh-client sshpass >/dev/null && sshpass -e ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST \"cd /home/marcocoelho && bash ./install-pgd.sh\""
                         echo "Implantação concluída com sucesso em DSV."
                     '''
                 }
@@ -170,8 +172,10 @@ pipeline {
                         echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
                         docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
                         echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
-                        sudo apt-get update -y && sudo apt-get install -y sshpass || (apt-get update -y && apt-get install -y sshpass)
-                        SSHPASS=$SSH_PASSWORD sshpass -e ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "sh install-pgd.sh < /dev/null"
+                        docker run --rm \
+                            -e SSHPASS="$SSH_PASSWORD" \
+                            alpine:3.20 \
+                            sh -lc "apk add --no-cache openssh-client sshpass >/dev/null && sshpass -e ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST \"sh install-pgd.sh < /dev/null\""
                         echo "Implantação concluída com sucesso em HMG."
                     '''
                 }
