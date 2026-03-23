@@ -83,6 +83,7 @@ class PlanoTrabalho extends ModelBase
     'SUSPENSO' => 'Suspenso',
     'CANCELADO' => 'Cancelado'
   ];
+  public const DATA_MUDANCA_REGRA_PT = '2025-10-01';
 
   public $fillable_changes = ['entregas', 'documentos'];
 

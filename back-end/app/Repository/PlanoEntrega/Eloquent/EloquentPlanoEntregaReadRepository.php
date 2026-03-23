@@ -13,12 +13,12 @@ use Illuminate\Database\Eloquent\Collection;
 
 class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository implements PlanoEntregaReadRepositoryContract
 {
-    private const DIAS_PENDENCIA_PROGRESO = 31;
+    private const DIAS_PENDENCIA_PROGRESSO = 31;
     private const PLANO_ENTREGA_ID_COLUMN = 'planos_entregas_entregas.plano_entrega_id';
     private const PLANO_ENTREGA_PK_COLUMN = 'planos_entregas_entregas.id';
     private const PROGRESSOS_TABLE = 'planos_entregas_entregas_progressos';
     private const PROGRESSO_FK_COLUMN = 'planos_entregas_entregas_progressos.plano_entrega_entrega_id';
-    private const TOTAL_SEM_PROGRESO_ALIAS = 'total_sem_progresso';
+    private const TOTAL_SEM_PROGRESSO_ALIAS = 'total_sem_progresso';
     private const PLANO_ENTREGA_SELECT_FIELDS = ['id', 'numero', 'nome'];
     private const STATUS_EXCLUIDOS_EXECUCAO = [
         StatusEnum::SUSPENSO->value,
@@ -73,10 +73,10 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             ->whereHas('planoEntrega', static function ($query): void {
                 $query
                     ->whereNotIn('status', self::STATUS_EXCLUIDOS_EXECUCAO)
-                    ->where('data_fim', '<=', now()->subDays(self::DIAS_PENDENCIA_PROGRESO));
+                    ->where('data_fim', '<=', now()->subDays(self::DIAS_PENDENCIA_PROGRESSO));
             })
             ->selectRaw(
-                self::PLANO_ENTREGA_ID_COLUMN . ', COUNT(*) as ' . self::TOTAL_SEM_PROGRESO_ALIAS
+                self::PLANO_ENTREGA_ID_COLUMN . ', COUNT(*) as ' . self::TOTAL_SEM_PROGRESSO_ALIAS
             )
             ->groupBy(self::PLANO_ENTREGA_ID_COLUMN)
             ->with([
