@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface PlanoTrabalhoReadRepositoryContract
 {
+    public function findById(string|int $id, bool $deleteTrashed = false): ?Collection;
+
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection;
 
     public function planosAtivos(string $usuarioId): Collection;
