@@ -179,7 +179,7 @@ pipeline {
                             -e SSH_PORT="$SSH_PORT" \
                             -e SSH_TARGET="$SSH_USER@$SSH_HOST" \
                             alpine:3.20 \
-                            sh -lc 'apk add --no-cache openssh-client sshpass >/dev/null && sshpass -e ssh -T -o StrictHostKeyChecking=no -p "$SSH_PORT" "$SSH_TARGET" "$1"' -- 'cd /home/marcocoelho && sh install-pgd.sh < /dev/null'
+                            sh -lc 'apk add --no-cache openssh-client sshpass >/dev/null && sshpass -e ssh -T -o StrictHostKeyChecking=no -p "$SSH_PORT" "$SSH_TARGET" "$1"' -- 'sh install-pgd.sh < /dev/null'
                         echo "Implantação concluída com sucesso em HMG."
                     '''
                 }
