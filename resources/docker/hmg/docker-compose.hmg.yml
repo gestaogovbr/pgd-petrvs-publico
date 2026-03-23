@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+
+  # PHP
+  petrvs_php:
+    container_name: petrvs_php_hmg
+    ports:
+      - "80:80"
+      - "443:443"
+    deploy:
+      resources:
+        limits:
+          cpus: '3.0'
+          memory: 4048M
+
+  # QUEUE
+  petrvs_queue:
+    container_name: petrvs_queue
+    environment:
+      - TZ=America/Bahia
+    command: ["/bin/bash", "-c", "mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf"]
+    depends_on:
+      - petrvs_php
+    stdin_open: true
+    tty: true
+
+  # REDIS
+  petrvs_redis:
+    container_name: petrvs_redis
+    volumes:
+      - redis-data:/data
+
+  # DB (vira petrvs_db_hmg)
+  petrvs_db:
+    container_name: petrvs_db_hmg
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/my.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
+      MYSQL_DATABASE: petrvs
+      MYSQL_USER: root
+      MYSQL_PASSWORD: PsEeTnRhVaS
+      MYSQL_TCP_PORT: 3306  
+
+volumes:
+  db_data:
+    name: root_db_data
+  redis-data:

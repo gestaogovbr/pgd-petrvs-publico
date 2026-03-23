@@ -47,6 +47,7 @@ services:
     container_name: petrvs_php
     ports:
       - "80:80"
+      - "443:443"
     dns:
       - 8.8.8.8
       - 1.1.1.1
