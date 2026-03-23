@@ -84,7 +84,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'npm install -g @angular/cli'
+                sh 'echo "Instalação global do @angular/cli desabilitada (EACCES). O build usa npx dentro do container."'
             }
         }
 
