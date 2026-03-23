@@ -9,7 +9,6 @@
     <thead>
       <tr>
         <th>Número</th>
-        <th>Nome</th>
         <th>Unidade</th>
         <th>Modalidade</th>
         <th>Status</th>
@@ -19,9 +18,8 @@
       @for (p of facade.items(); track p.id) {
         <tr>
           <td>{{ p.numero }}</td>
-          <td>{{ p.nome }}</td>
           <td>{{ p.unidade_id }}</td>
-          <td>{{ p.modalidade }}</td>
+          <td>{{ p.tipo_modalidade?.nome }}</td>
           <td>{{ p.status }}</td>
         </tr>
       }

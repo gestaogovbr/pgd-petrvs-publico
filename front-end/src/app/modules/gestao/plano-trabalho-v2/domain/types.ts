@@ -1,28 +1,9 @@
+import { PlanoTrabalho as PlanoTrabalhoModel } from 'src/app/models/plano-trabalho.model';
+import { PlanoTrabalhoEntrega as PlanoTrabalhoEntregaModel } from 'src/app/models/plano-trabalho-entrega.model';
+
 export type PlanoTrabalhoId = string;
-
-export type PlanoTrabalho = {
-  id: PlanoTrabalhoId;
-  numero: number;
-  usuario_id: string;
-  criacao_usuario_id: string;
-  documento_id: string;
-  unidade_id: string;
-  programa_id: string; // Programa ou Regramento
-  tipo_modalidade_id: string;
-  data_inicio: Date;
-  data_fim: Date;
-  data_arquivamento?: Date;
-  avaliado_at?: Date;
-  status: string;
-};
-
-export type PlanoTrabalhoEntrega = {
-  id: string;
-  descricao: string;
-  plano_trabalho_id: PlanoTrabalhoId;
-  plano_entrega_entrega_id?: string;
-  forca_trabalho: number;
-};
+export type PlanoTrabalho = PlanoTrabalhoModel;
+export type PlanoTrabalhoEntrega = PlanoTrabalhoEntregaModel;
 
 export type Page<T> = {
   items: T[];
