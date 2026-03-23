@@ -314,8 +314,7 @@ class UsuarioController extends ControllerBase
     public function pendenciasChefe(Request $request)
     {
         try {
-            $usuario_id = parent::loggedUser()->id;
-            $pendencias = $this->service->pendenciasChefe($usuario_id);
+            $pendencias = $this->service->pendenciasChefe();
 
             return response()->json([
                 'success' => true,
