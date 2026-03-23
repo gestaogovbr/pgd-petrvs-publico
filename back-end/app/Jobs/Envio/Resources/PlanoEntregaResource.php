@@ -4,6 +4,8 @@ namespace App\Jobs\Envio\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
 use App\Exceptions\ExportPgdException;
+use App\Enums\EnvioPlanoEntregaStatusEnum;
+use App\Enums\EnvioPlanoEntregaAvaliacaoEnum;
 
 /**
  * @mixin \App\Models\PlanoEntrega
@@ -36,11 +38,11 @@ class PlanoEntregaResource extends JsonResource
     {
         switch ($this->status) {
             case 'ATIVO':
-                return 3;
+                return EnvioPlanoEntregaStatusEnum::EM_EXECUCAO->value;
             case 'CONCLUIDO':
-              return 4;
+              return EnvioPlanoEntregaStatusEnum::CONCLUIDO->value;
             case 'AVALIADO':
-                return 5;
+                return EnvioPlanoEntregaStatusEnum::AVALIADO->value;
             default:
                 throw new ExportPgdException('Plano de Entrega com status inválido para Envio: '.$this->status);
         }
@@ -49,19 +51,19 @@ class PlanoEntregaResource extends JsonResource
     function getAvaliacao() {
       switch(str_replace('"', "", $this->avaliacao?->nota)) {
         case "Adequado":
-          return 3;
+          return EnvioPlanoEntregaAvaliacaoEnum::ADEQUADO->value;
         case "Superou o acordado":
         case "Alto desempenho":
-          return 2;
+          return EnvioPlanoEntregaAvaliacaoEnum::ALTO_DESEMPENHO->value;
         case "Atendeu ao acordado":
-          return 3;
+          return EnvioPlanoEntregaAvaliacaoEnum::ADEQUADO->value;
         case "Excepcional":
-          return 1;
+          return EnvioPlanoEntregaAvaliacaoEnum::EXCEPCIONAL->value;
         case "Inadequado":
         case "Não executado":
-          return 5;
+          return EnvioPlanoEntregaAvaliacaoEnum::INADEQUADO_OU_NAO_EXECUTADO->value;
         case "Atendeu parcialmente ao adequado":
-          return 4;
+          return EnvioPlanoEntregaAvaliacaoEnum::ATENDEU_PARCIALMENTE->value;
         default:
           return null;
       }

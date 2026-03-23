@@ -3,6 +3,7 @@
 namespace App\Jobs\Envio\Resources;
 
 use App\Exceptions\ExportPgdException;
+use App\Enums\EnvioPlanoTrabalhoStatusEnum;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Services\CalendarioService;
@@ -28,7 +29,7 @@ class PlanoTrabalhoResource extends JsonResource
             "tipo"                      => 'trabalho',
             "origem_unidade"            => "SIAPE",
             "id_plano_trabalho"         => $this->id,
-            "status"                    => $this->converteStatus($this->status) ?? '3',
+            "status"                    => $this->converteStatus($this->status),
             "cod_unidade_executora"     => $this->unidade->codigo ?? null,
             "cpf_participante"          => $this->usuario->cpf ?? '',
             "matricula_siape"           => $this->usuario->matricula ? str_pad($this->usuario->matricula, 7, '0', STR_PAD_LEFT): '',
@@ -50,10 +51,10 @@ class PlanoTrabalhoResource extends JsonResource
     {
         switch ($status) {
             case 'ATIVO':
-                return 3;
+                return EnvioPlanoTrabalhoStatusEnum::EM_EXECUCAO->value;
             case 'CONCLUIDO':
             case 'AVALIADO':
-                return 4;
+                return EnvioPlanoTrabalhoStatusEnum::CONCLUIDO->value;
             default:
                 // return 4; // somente para testes
                 throw new ExportPgdException('Plano de Trabalho com status inválido para Envio: '.$status);

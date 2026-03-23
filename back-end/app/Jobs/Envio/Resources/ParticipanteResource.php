@@ -3,6 +3,7 @@
 namespace App\Jobs\Envio\Resources;
 
 use App\Exceptions\ExportPgdException;
+use App\Enums\EnvioParticipanteSituacaoEnum;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
@@ -48,11 +49,18 @@ class ParticipanteResource extends JsonResource
             'cod_unidade_lotacao'       => $this->lotacao->unidade->codigo ?? null,
             'matricula_siape'           => str_pad($this->matricula, 7, '0', STR_PAD_LEFT),
             'cpf'                       => $this->cpf,
-            'situacao'                  => ($this->participa_pgd == 'sim') ? 1 : 0,
+            'situacao'                  => $this->getSituacao(),
             "modalidade_execucao"       => $modalidade->get(),
             "data_assinatura_tcr"       => $dataAssinatura ? Carbon::parse($dataAssinatura)->toDateTimeLocalString() : null
         ];
 
         return $result;
+    }
+
+    private function getSituacao(): int
+    {
+        return ($this->participa_pgd == 'sim')
+            ? EnvioParticipanteSituacaoEnum::ATIVO->value
+            : EnvioParticipanteSituacaoEnum::INATIVO->value;
     }
 }
