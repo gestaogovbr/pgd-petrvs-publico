@@ -139,8 +139,10 @@ pipeline {
                         echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
                         docker run --rm \
                             -e SSHPASS="$SSH_PASSWORD" \
+                            -e SSH_PORT="$SSH_PORT" \
+                            -e SSH_TARGET="$SSH_USER@$SSH_HOST" \
                             alpine:3.20 \
-                            sh -lc "apk add --no-cache openssh-client sshpass >/dev/null && sshpass -e ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST \"cd /home/marcocoelho && bash ./install-pgd.sh\""
+                            sh -lc 'apk add --no-cache openssh-client sshpass >/dev/null && sshpass -e ssh -T -o StrictHostKeyChecking=no -p "$SSH_PORT" "$SSH_TARGET" "$1"' -- 'cd /home/marcocoelho && bash ./install-pgd.sh'
                         echo "Implantação concluída com sucesso em DSV."
                     '''
                 }
@@ -174,8 +176,10 @@ pipeline {
                         echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
                         docker run --rm \
                             -e SSHPASS="$SSH_PASSWORD" \
+                            -e SSH_PORT="$SSH_PORT" \
+                            -e SSH_TARGET="$SSH_USER@$SSH_HOST" \
                             alpine:3.20 \
-                            sh -lc "apk add --no-cache openssh-client sshpass >/dev/null && sshpass -e ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST \"sh install-pgd.sh < /dev/null\""
+                            sh -lc 'apk add --no-cache openssh-client sshpass >/dev/null && sshpass -e ssh -T -o StrictHostKeyChecking=no -p "$SSH_PORT" "$SSH_TARGET" "$1"' -- 'cd /home/marcocoelho && sh install-pgd.sh < /dev/null'
                         echo "Implantação concluída com sucesso em HMG."
                     '''
                 }
