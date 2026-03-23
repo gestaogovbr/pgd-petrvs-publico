@@ -2,6 +2,7 @@
 ### Corrigido
 - A atualização de chefias não cria mais vínculos repetidos para o mesmo servidor.
 - Correção automática para remover lotações duplicadas do mesmo servidor, evitando inconsistências em listagens e permissões.
+- Corrigido consultas em pendências do chefe.
 ### Modificado
 - Pendências de Plano de Trabalho sem registro de execução antes da data 01/10/2025 não serão mais consideradas.
 - Pendências de Plano de Entrega sem registro de execução antes da data 12/01/2026 não serão mais consideradas.
