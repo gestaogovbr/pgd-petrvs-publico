@@ -25,8 +25,18 @@ class PlanoTrabalhoConsolidacaoRepository
         return $this->readRepository->findConsolidacaoById($id);
     }
 
-    public function getPendentesAvaliacao(array $unidadesIds, string $usuarioId, \DateTimeInterface $dataCorte): \Illuminate\Database\Eloquent\Collection
+    public function getPendentesAvaliacao(
+        array $unidadesGerenciadasIds,
+        array $unidadesSubordinadasIds,
+        string $usuarioId,
+        \DateTimeInterface $dataCorte
+    ): \Illuminate\Database\Eloquent\Collection
     {
-        return $this->readRepository->getPendentesAvaliacao($unidadesIds, $usuarioId, $dataCorte);
+        return $this->readRepository->getPendentesAvaliacao(
+            $unidadesGerenciadasIds,
+            $unidadesSubordinadasIds,
+            $usuarioId,
+            $dataCorte
+        );
     }
 }

@@ -26,6 +26,11 @@ class IntegracaoServidorRepository
         return $this->readRepository->getMatriculaByCpf($cpf);
     }
 
+    public function findByCpfAndCodigoExercicio(string $cpf, string $codigoExercicio): ?IntegracaoServidor
+    {
+        return $this->readRepository->findByCpfAndCodigoExercicio($cpf, $codigoExercicio);
+    }
+
     public function save(IntegracaoServidor $entidade): bool
     {
         return $this->writeRepository->save($entidade);

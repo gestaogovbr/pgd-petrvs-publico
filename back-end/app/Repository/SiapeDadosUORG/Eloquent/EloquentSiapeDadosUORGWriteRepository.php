@@ -24,4 +24,9 @@ class EloquentSiapeDadosUORGWriteRepository extends AbstractEloquentWriteReposit
         $model = parent::create($attributes);
         return $model;
     }
+
+    public function forceDeleteProcessados(): void
+    {
+        $this->model->newQuery()->withTrashed()->where('processado', 1)->forceDelete();
+    }
 }

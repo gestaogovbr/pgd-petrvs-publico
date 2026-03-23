@@ -23,6 +23,15 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
             ->value('matriculasiape');
     }
 
+    public function findByCpfAndCodigoExercicio(string $cpf, string $codigoExercicio): ?IntegracaoServidor
+    {
+        /** @var IntegracaoServidor|null */
+        return $this->query()
+            ->where('cpf', $cpf)
+            ->where('codigo_servo_exercicio', $codigoExercicio)
+            ->first();
+    }
+
     public function getServidor(string $cpf, string $matricula): ?IntegracaoServidor
     {
         /** @var IntegracaoServidor|null */
