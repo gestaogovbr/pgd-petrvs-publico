@@ -94,7 +94,6 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
                 var_dump($resource);
             }
 
-            unset($body);
             unset($resource);
 
         } catch(TokenPgdException $e) {

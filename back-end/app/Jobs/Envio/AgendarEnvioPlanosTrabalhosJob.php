@@ -40,7 +40,6 @@ class AgendarEnvioPlanosTrabalhosJob implements ShouldQueue
 
         DB::table('planos_trabalhos')
             ->whereNull('planos_trabalhos.deleted_at')
-            ->whereNull('planos_trabalhos.deleted_at')
             ->whereIn('planos_trabalhos.status', ['ATIVO', 'CONCLUIDO', 'AVALIADO'])
             ->select('planos_trabalhos.id')
             ->chunkById(100, function ($planosTrabalho) use (&$qtde, $tenant) {
