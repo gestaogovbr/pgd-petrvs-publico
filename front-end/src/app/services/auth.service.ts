@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Injectable, Injector } from '@angular/core';
 import { Unidade } from '../models/unidade.model';
 import { Usuario, UsuarioConfig } from '../models/usuario.model';
+import { Perfil } from '../models/perfil.model';
 
 import { DialogService } from './dialog.service';
 import { GlobalsService } from './globals.service';
@@ -424,11 +425,15 @@ export class AuthService {
   }
 
   public isUsuarioDeveloper(): boolean {
-    return this.usuario?.perfil?.nivel == 0;
+    return (this.usuario?.perfil?.nivel ?? Perfil.NIVEL.DESENVOLVEDOR) === Perfil.NIVEL.DESENVOLVEDOR;
   }
 
   public isUsuarioConsulta(): boolean {
-    return this.usuario?.perfil?.nivel == 7;
+    return (this.usuario?.perfil?.nivel ?? Perfil.NIVEL.CONSULTA) === Perfil.NIVEL.CONSULTA;
+  }
+
+  public isUsuarioParticipante(): boolean {
+    return (this.usuario?.perfil?.nivel ?? Perfil.NIVEL.PARTICIPANTE) === Perfil.NIVEL.PARTICIPANTE;
   }
 
 
