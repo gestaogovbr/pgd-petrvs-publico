@@ -14,9 +14,8 @@ export class PlanoTrabalhoApiClient {
     return this.http.get<Page<PlanoTrabalho>>(this.base, { params: this.normalize(params) as any });
     }
 
-  getById(id: PlanoTrabalhoId, includes?: string[]): Observable<PlanoTrabalho> {
-    const params = includes?.length ? { include: includes.join(',') } : undefined;
-    return this.http.get<PlanoTrabalho>(`${this.base}/${id}`, { params });
+  getById(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {
+    return this.http.get<PlanoTrabalho>(`${this.base}/${id}`);
   }
 
   create(payload: Partial<PlanoTrabalho>): Observable<PlanoTrabalho> {
@@ -36,12 +35,18 @@ export class PlanoTrabalhoApiClient {
     if (typeof params.page === 'number') out['page'] = String(params.page);
     if (typeof params.pageSize === 'number') out['pageSize'] = String(params.pageSize);
     if (params.sort?.length) out['sort'] = params.sort;
-    if (params.includes?.length) out['include'] = params.includes.join(',');
     if (params.filter) {
       Object.entries(params.filter).forEach(([k, v]) => {
-        if (v !== undefined && v !== null) out[`filter[${k}]`] = String(v as any);
+        if (v !== undefined && v !== null) out[`filter[${k}]`] = this.stringifyFilterValue(v);
       });
     }
     return out;
+  }
+
+  private stringifyFilterValue(value: unknown): string {
+    if (value instanceof Date) return value.toISOString();
+    if (typeof value === 'string') return value;
+    if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+    return JSON.stringify(value);
   }
 }
