@@ -12,15 +12,6 @@ class AvaliacaoObserver
 {
     public function created(Avaliacao $model): void
     {
-        /*if ($model->isConsolidacao() && $model->isAtivo()) {
-            if (!tenancy()->initialized) {
-                Log::warning('Tentativa de agendar envio de plano de trabalho sem tenant inicializado');
-                return;
-            }
-
-            PlanoTrabalhoEnvioService::processar(tenant('id'), $model->planoTrabalho);
-        }*/
-
         if ($model->isPlanoEntrega()) {
             if (!tenancy()->initialized) {
                 Log::warning('Tentativa de agendar envio de plano de entrega sem tenant inicializado');

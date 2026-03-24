@@ -53,17 +53,17 @@ class StatusJustificativa extends ModelBase
     return $this->belongsTo(Usuario::class, "usuario_id");
   }
 
-  public function isAtivo()
+  public function isAtivo(): bool
   {
     return $this->codigo === self::CODIGO_ATIVO;
   }
 
-  public function isPlanoTrabalho()
+  public function isPlanoTrabalho(): bool
   {
     return !empty($this->plano_trabalho_id);
   }
 
-  public function isPlanoEntrega()
+  public function isPlanoEntrega(): bool
   {
     return !empty($this->plano_entrega_id);
   }
