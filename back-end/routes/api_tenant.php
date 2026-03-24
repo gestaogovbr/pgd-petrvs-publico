@@ -601,3 +601,16 @@ Route::middleware(['auth:sanctum'])->prefix('SystemLogs')->group(function () {
     Route::get('getAll', [SystemLogsController::class, 'index']);
     Route::get('download/{tenantId}/{file}', [SystemLogsController::class, 'download'])->middleware('throttle:60,1');
 });
+
+/* ── V2 ── */
+use App\V2\PlanoTrabalho\PlanoTrabalhoController as PlanoTrabalhoV2;
+use App\V2\PlanoTrabalho\Entrega\EntregaController as EntregaV2;
+
+Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
+    Route::get('plano-trabalho', [PlanoTrabalhoV2::class, 'index']);
+    Route::post('plano-trabalho', [PlanoTrabalhoV2::class, 'store']);
+
+    Route::post('plano-trabalho/{planoTrabalhoId}/entrega', [EntregaV2::class, 'store']);
+    Route::put('plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}', [EntregaV2::class, 'update']);
+    Route::delete('plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}', [EntregaV2::class, 'destroy']);
+});
