@@ -55,9 +55,9 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
             `uni_lotacao`.`sigla` AS `unidadeNome`,
             COALESCE(`u`.`tipo_modalidade_id`, `tm_sem`.`id`) AS `tipo_modalidade_id`,
             CASE
-                WHEN `u`.`participa_pgd` = 'sim' THEN `tm`.`nome`
+                WHEN `u`.`participa_pgd` = 'sim' THEN COALESCE(`tm`.`nome`, '-')
                 WHEN `u`.`participa_pgd` = 'não' THEN '-'
-                ELSE tm_sem.nome
+                ELSE COALESCE(`tm_sem`.`nome`, '-')
             END AS `tipoModalidadeNome`,
             `u`.`data_inicial_pedagio` AS `data_inicial_pedagio`,
             `u`.`data_final_pedagio` AS `data_final_pedagio`,
