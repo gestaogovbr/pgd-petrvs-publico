@@ -15,4 +15,12 @@ class IntegracaoUnidadeRepository
         private readonly IntegracaoUnidadeWriteRepositoryContract $writeRepository,
     ) {
     }
+
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function getUnidadesComChefias(): \Illuminate\Support\Collection
+    {
+        return $this->readRepository->getUnidadesComChefias();
+    }
 }

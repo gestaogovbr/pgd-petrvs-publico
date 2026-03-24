@@ -69,6 +69,8 @@ class PlanoEntrega extends ModelBase
     'SUSPENSO' => 'Suspenso',
     'CANCELADO' => 'Cancelado'
   ];
+  
+  public const DATA_MUDANCA_REGRA_PE = '2026-01-12';
 
   public const STATUSES_PENDENTES = [
     'INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'

@@ -9,5 +9,8 @@ namespace App\Repository\IntegracaoUnidade\Contracts;
  */
 interface IntegracaoUnidadeReadRepositoryContract
 {
-    //
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function getUnidadesComChefias(): \Illuminate\Support\Collection;
 }

@@ -5,6 +5,9 @@ use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
 use App\Services\NivelAcessoService;
 use App\Services\PerfilService;
 use App\Services\UnidadeIntegranteService;
+use App\Repository\IntegracaoUnidadeRepository;
+use App\Repository\IntegracaoServidorRepository;
+use App\Repository\UsuarioRepository;
 use App\Repository\UnidadeRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -37,7 +40,7 @@ describe('IntegracaoGestorService', function () {
 
         // Mock Logging
         $loggerMock = Mockery::mock(\Psr\Log\LoggerInterface::class);
-        $loggerMock->shouldReceive('info')->times(4); // Iniciando, Montagem, Mensagens, Concluida
+        $loggerMock->shouldReceive('info')->times(4);
         Log::shouldReceive('channel')->with('siape')->andReturn($loggerMock);
 
         // Mock GestorIntegracao
@@ -51,7 +54,6 @@ describe('IntegracaoGestorService', function () {
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
-        // Mock Protected Methods
         $service->shouldReceive('montarArrayChefias')
             ->once()
             ->andReturn($chefiasMock);
@@ -83,11 +85,9 @@ describe('IntegracaoGestorService', function () {
         // Mock Logging
         $loggerMock = Mockery::mock(\Psr\Log\LoggerInterface::class);
         $loggerMock->shouldReceive('info')->atLeast()->once();
-        $loggerMock->shouldReceive('error')->once(); // Expected error log in catch block
+        $loggerMock->shouldReceive('error')->once();
 
-        // Log facade mock setup
         Log::shouldReceive('channel')->with('siape')->andReturn($loggerMock);
-        // Allow other log calls (e.g. from report($e))
         Log::shouldReceive('error')->withAnyArgs();
         Log::shouldReceive('debug')->withAnyArgs();
         Log::shouldReceive('info')->withAnyArgs();
@@ -115,7 +115,11 @@ describe('IntegracaoGestorService', function () {
         $inputs = ['gestores' => false];
         $config = [];
         
-        $service = new IntegracaoGestorService();
+        $service = new IntegracaoGestorService(
+            Mockery::mock(IntegracaoUnidadeRepository::class),
+            Mockery::mock(IntegracaoServidorRepository::class),
+            Mockery::mock(UsuarioRepository::class),
+        );
 
         // Act
         $result = $service->atualizarGestores($inputs, $config);
@@ -125,7 +129,11 @@ describe('IntegracaoGestorService', function () {
     });
 
     it('deve criar GestorIntegracao com UnidadeRepository via container', function () {
-        $service = new IntegracaoGestorService();
+        $service = new IntegracaoGestorService(
+            Mockery::mock(IntegracaoUnidadeRepository::class),
+            Mockery::mock(IntegracaoServidorRepository::class),
+            Mockery::mock(UsuarioRepository::class),
+        );
 
         $integracao = $service->createGestorIntegracao(
             [],

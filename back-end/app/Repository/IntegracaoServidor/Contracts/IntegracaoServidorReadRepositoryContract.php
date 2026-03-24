@@ -12,6 +12,8 @@ interface IntegracaoServidorReadRepositoryContract
 
     public function getMatriculaByCpf(string $cpf): ?string;
 
+    public function findByCpfAndCodigoExercicio(string $cpf, string $codigoExercicio): ?IntegracaoServidor;
+
     public function buscarAtualizacoesDados(): array;
 
     public function getAtualizacoesLotacoes(): array;
