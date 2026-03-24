@@ -44,6 +44,22 @@ Os PTs atualmente estão disposto da seguinte forma dentro do BD:
 
 </details>
 
+### Regramento `programas`
+
+#### **Cardinalidade**
+
+`progamas` N:1 `unidades`
+
+#### **Prioridade**
+
+- Se a unidade tem ao menos um regramento próprio `programas WHERE unidade_id = :unidade_id`, deve ser dada a priodade ao regramento dela
+- Se uma unidade não tem um regramento próprio, a prioridade deve ser dada ao regramento da unidade ascendente mais próxima
+
+#### **Listagem**
+
+- Todos os regramentos das unidades ascendentes devem ser listados
+- Os regramentos de unidades da hierarquia lateral ou descendente **NÃO** devem ser listados
+
 
 ## Rotas:
 
@@ -85,48 +101,53 @@ O fluxo base que estou visualizando (happy-path) para chegar até aqui da primei
 
 #### `POST /api/v2/plano-trabalho` `4.2-4.4`
 
+- Quem: qualquer perfil `4.2`
+  - Participante só pode cadastrar para si mesmo `RN18.i`
+  - Colaborador não pode ser o agente público do PT `RN18.iv`
+  - Demais perfis podem cadastrar para qualquer agente público lotado/vinculado nas suas unidades e subordinadas `RN18.ii,iii`
+  - Agente público deve estar habilitado no SIAPE `RN25`
+
 Body:
-- usuario_id`*`(uuid) `RN18`
+- usuario_id`*^[perfil!=COLABORADOR]`(uuid) `RN18`
 - unidade_id`*`(uuid) `RN19`
 - programa_id`*`(uuid) `RN20`
 - data_inicio`*`(date) `RN21,22,23`
 - data_fim`*`(date) `RN21,22,23`
-- modalidade`*`(?) `RN24`
+- modalidade_id`*`(uuid) `RN24`
 - justificativa`*^[modalidade]`(string(500)) `RN24`
 
-#### `PATCH /api/v2/plano-trabalho/:id/status` `4.10, 4.12, 4.22, 4.23`
+#### Transições de status do Plano de Trabalho
 
-Body:
-- status`*`(string) - o novo status desejado (ex.: `CANCELADO`, `SUSPENSO`, `ATIVO`)
+Cada transição é um endpoint próprio, evitando um service monolítico. Todos seguem o mesmo fluxo: validar transição (máquina de estados) -> guards -> ações em transaction.
 
-O endpoint recebe o status desejado e delega para o método correspondente à transição. O service status apenas recebe o PT, o status desejado e chama o método do status. Cada transição segue o fluxo:
+#### `PATCH /api/v2/plano-trabalho/:id/cancelar` `4.22`
 
-1. **Transição válida?** - verifica se o status atual permite ir para o status solicitado (máquina de estados). Algo do tipo:
+- Quem: participante dono do PT; chefia titular/substituta da unidade; Adm Negocial (unidade instituidora >= unidade do PT); Adm Master
+- Guard: PT `ATIVO`; nenhum período avaliativo com registro finalizado
+- Body:
+  - justificativa`*`(string(500)) `4.22`
 
-```php
-class PlanoTrabalhoStatusMachine
-{
-	# talvez possamos deixar isso daqui dentro do model, e chamar dentro de uma classe genérica Status::canTransition($entity, 'NOVO_STATUS')
-	# dentro, definir $from = $entity->status
-	# e fazer a comparação com $entity::TRANSITIONS[$from]
-    const TRANSITIONS = [ 
-        'INCLUIDO'  => ['ATIVO'],
-        'ATIVO'     => ['SUSPENSO', 'CANCELADO'],
-        'SUSPENSO'  => ['ATIVO', 'CANCELADO'],
-        'CANCELADO' => [],
-    ];
+#### `PATCH /api/v2/plano-trabalho/:id/encerrar` `4.23`
 
-    public static function canTransition(string $from, string $to): bool
-    {
-        return in_array($to, self::TRANSITIONS[$from] ?? []);
-    }
-}
-```
+- Quem: participante dono do PT; chefia titular/substituta da unidade; Adm Negocial (unidade instituidora >= unidade do PT); Adm Master
+- Guard: PT `ATIVO`
+- Body:
+  - justificativa`*`(string(500)) `4.23`
 
-2. **Guards** - validações/precondições específicas da transição (permissão do usuário, estados e demais regras de negócio associadas às dependências)
-3. **Ações** - operações no banco dentro de uma transaction (ex.: alterar status, aplicar `deleted_at` em `planos_trabalhos_consolidacoes`)
+#### `PATCH /api/v2/plano-trabalho/:id/arquivar` `4.25`
+
+- Quem: participante dono do PT; chefia titular/substituta/delegado da unidade; Adm Negocial (unidade instituidora >= unidade do PT); Adm Master; Colaborador com vinculação à unidade ou superior
+- Guard: PT `CONCLUIDO`, `CANCELADO` ou `ENCERRADO`; sem pendências de avaliação/recurso (30 dias corridos após avaliação)
+
+#### `PATCH /api/v2/plano-trabalho/:id/cancelar-assinatura` `4.12`
+
+- Quem: exclusivamente o 1º signatário
+- Guard: PT `AGUARDANDO_ASSINATURA`
 
 #### `DELETE /api/v2/plano-trabalho/:id` `4.11`
+
+- Quem: usuário que cadastrou o PT; participante dono do PT; chefia titular/substituta do participante; Adm Negocial (unidade instituidora >= unidade do PT); Adm Master
+- Guard: PT sem nenhuma assinatura
 
 ### Entregas do Plano de Trabalho
 
@@ -150,7 +171,25 @@ Body:
 - forca_trabalho(decimal)`RN29,30`
 - descricao(string(1000))
 
-#### `DELETE /api/v2/plano-trabalho/:id/entrega/:entrega_id`
+#### `DELETE /api/v2/plano-trabalho/:id/entrega/:entrega_id` `RN27`
+
+- Quem: quem está cadastrando o plano
+
+
+### Avaliação
+
+A avaliação é um contexto próprio, operando sobre um período avaliativo (consolidação) já concluído. Os registros são persistidos na tabela `avaliacoes`. Uma consolidação pode ter no máximo 2 avaliações: a avaliação original e, caso haja recurso, a reavaliação (um novo registro em `avaliacoes`).
+
+#### `POST /api/v2/plano-trabalho/:id/consolidacao/:consolidacao_id/avaliacao` `4.19, 4.21`
+
+Usado tanto para a avaliação original quanto para a reavaliação. Sempre cria um novo registro.
+
+- Quem: chefia/substituta atual da unidade onde o PT foi pactuado `4.19, 4.21`
+- Guard (avaliação): período `AGUARDANDO_AVALIACAO` `4.19`
+- Guard (reavaliação): período `AGUARDANDO_REAVALIACAO`; consolidação com exatamente 1 avaliação existente `4.21`
+- Body:
+  - nota`*`(uuid) - `tipo_avaliacao_nota_id`
+  - justificativa`*^[nota IN (I, IV, V)]`(string(500)) `4.19, 4.21`
 
 
 ## Componentes:
