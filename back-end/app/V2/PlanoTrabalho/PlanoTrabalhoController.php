@@ -45,7 +45,7 @@ class PlanoTrabalhoController extends Controller
     {
         try {
             $data = PlanoTrabalhoValidacoes::store($request);
-            $entity = $this->service->store($data, null);
+            $entity = $this->service->store($data);
             return response()->json(['success' => true, 'rows' => [$entity]], Response::HTTP_CREATED);
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
@@ -57,61 +57,6 @@ class PlanoTrabalhoController extends Controller
         }
     }
 
-    public function update(Request $request): JsonResponse
-    {
-        try {
-            $data = PlanoTrabalhoValidacoes::update($request);
-            $entity = $this->service->update($data['entity'], null);
-            $result = $this->service->getById([
-                'id' => $entity->id,
-                'with' => $data['with'] ?? [],
-            ]);
-            return response()->json(['success' => true, 'rows' => [$result]]);
-        } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        } catch (Throwable $e) {
-            Log::error(throwableToArrayLog($e));
-            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public function getById(Request $request): JsonResponse
-    {
-        try {
-            $data = PlanoTrabalhoValidacoes::getById($request);
-            return response()->json(['success' => true, 'data' => $this->service->getById($data)]);
-        } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        } catch (Throwable $e) {
-            Log::error(throwableToArrayLog($e));
-            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public function query(Request $request): JsonResponse
-    {
-        try {
-            $data = PlanoTrabalhoValidacoes::query($request);
-            $result = $this->service->query($data);
-            return response()->json([
-                'success' => true,
-                'count' => $result['count'],
-                'rows' => $result['rows'],
-                'extra' => $result['extra'],
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        } catch (Throwable $e) {
-            Log::error(throwableToArrayLog($e));
-            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
 
     public function destroy(Request $request): JsonResponse
     {

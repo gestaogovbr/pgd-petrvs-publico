@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Models\PlanoTrabalho;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoListagemFiltro;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
@@ -40,5 +41,16 @@ class PlanoTrabalhoRepository
     public function buscarPlanosListagem(PlanoTrabalhoListagemFiltro $filtro): LengthAwarePaginator
     {
         return $this->readRepository->buscarPlanosListagem($filtro);
+    }
+
+    public function create(array $attributes): PlanoTrabalho
+    {
+        /** @var PlanoTrabalho */
+        return $this->writeRepository->create($attributes);
+    }
+
+    public function existeConflitoPeriodo(string $usuarioId, string $dataInicio, string $dataFim): bool
+    {
+        return $this->readRepository->existeConflitoPeriodo($usuarioId, $dataInicio, $dataFim);
     }
 }

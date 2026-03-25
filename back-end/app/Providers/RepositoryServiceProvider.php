@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Repository\Programa\Eloquent\EloquentProgramaWriteRepository;
+
+use App\Repository\Programa\Contracts\ProgramaWriteRepositoryContract;
+
+use App\Repository\Programa\Eloquent\EloquentProgramaReadRepository;
+
+use App\Repository\Programa\Contracts\ProgramaReadRepositoryContract;
+
 use App\Repository\UnidadeIntegranteAtribuicao\Eloquent\EloquentUnidadeIntegranteAtribuicaoWriteRepository;
 
 use App\Repository\UnidadeIntegranteAtribuicao\Contracts\UnidadeIntegranteAtribuicaoWriteRepositoryContract;
@@ -256,6 +264,15 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             UnidadeIntegranteAtribuicaoWriteRepositoryContract::class,
             EloquentUnidadeIntegranteAtribuicaoWriteRepository::class,
+        );
+
+        $this->app->bind(
+            ProgramaReadRepositoryContract::class,
+            EloquentProgramaReadRepository::class,
+        );
+        $this->app->bind(
+            ProgramaWriteRepositoryContract::class,
+            EloquentProgramaWriteRepository::class,
         );
     }
 

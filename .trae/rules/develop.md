@@ -6,3 +6,8 @@
 - metodos grandes devem ser evitados, utilize metodos pequenos.
 - Evite comentários desnecessários, isso não inclui PhpDoc, TODO, @var e comentários relevantes.
 - remover importes não usados
+- Substituir arrays soltos por DTOs tipados com `fromArray()` e `toArray()`
+- DTOs de uma feature ficam em `V2/<Feature>/DTOs/`, próximos do Service que os usa
+- Classes de validação de negócio recebem repositories via construtor, NÃO chamam Model::find() diretamente
+- Service é orquestrador: DTO → Validação → Repository. Não contém regras de negócio nem queries
+- Ao quebrar dependência com ServiceBase/V1, remover completamente a referência — não manter delegação parcial

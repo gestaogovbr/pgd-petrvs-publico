@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Repository\PlanoTrabalho\Contracts;
 
 use App\Models\PlanoTrabalho;
+use Illuminate\Database\Eloquent\Model;
 
 interface PlanoTrabalhoWriteRepositoryContract
 {
-    // Define write methods as needed
+    /** @return PlanoTrabalho */
+    public function create(array $attributes): Model;
 }

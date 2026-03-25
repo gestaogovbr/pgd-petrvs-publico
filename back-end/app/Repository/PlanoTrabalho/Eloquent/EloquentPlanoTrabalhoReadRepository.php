@@ -146,4 +146,14 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
 
         return $query->paginate(perPage: $filtro->perPage, page: $filtro->page);
     }
+
+    public function existeConflitoPeriodo(string $usuarioId, string $dataInicio, string $dataFim): bool
+    {
+        return $this->query()
+            ->where('usuario_id', $usuarioId)
+            ->where('data_inicio', '<=', $dataFim)
+            ->where('data_fim', '>=', $dataInicio)
+            ->where('status', '!=', 'CANCELADO')
+            ->exists();
+    }
 }

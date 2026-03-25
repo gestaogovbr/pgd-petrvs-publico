@@ -28,8 +28,8 @@ class PlanoTrabalhoValidacoes
             'programa_id' => ['required', 'uuid'],
             'data_inicio' => ['required', 'date'],
             'data_fim' => ['required', 'date', 'after_or_equal:data_inicio'],
-            'modalidade' => ['required'],
-            'justificativa' => ['required_with:modalidade', 'nullable', 'string', 'max:500'],
+            'tipo_modalidade_id' => ['required', 'uuid'],
+            'justificativa' => ['nullable', 'string', 'max:500'],
         ], [
             'usuario_id.required' => 'O participante é obrigatório.',
             'unidade_id.required' => 'A unidade executora é obrigatória.',
@@ -37,7 +37,7 @@ class PlanoTrabalhoValidacoes
             'data_inicio.required' => 'A data de início é obrigatória.',
             'data_fim.required' => 'A data de fim é obrigatória.',
             'data_fim.after_or_equal' => 'A data de fim deve ser igual ou posterior à data de início.',
-            'modalidade.required' => 'A modalidade é obrigatória.',
+            'tipo_modalidade_id.required' => 'A modalidade é obrigatória.',
             'justificativa.max' => 'A justificativa não pode exceder 500 caracteres.',
         ]);
     }
