@@ -85,7 +85,7 @@ Body:
 - only_vigentes(bool) `RN01,06,07`
 - only_meus_planos(bool) `RN01,05`
 
-#### `GET /api/v2/plano-trabalho/:id` `4.8`
+#### `GET /api/v2/plano-trabalho/:id` `4.7`
 
 Não há nada que deixe explícito no ticket a partir da qual o PT é consequentemente consultável individualmente. No entanto, [baseado no print](screenshot-get-pt-id.png), esterei presumindo que já a partir do passo 1, contemplado no end-point `POST /api/v2/plano-trabalho`, o PT será salvo, tendo uma uuid que poderá ser passada como parâmetro deste end-pont.
 
@@ -99,7 +99,7 @@ O fluxo base que estou visualizando (happy-path) para chegar até aqui da primei
 ![Diagrama happy path](fluxo-1683.drawio.png)
 </details>
 
-#### `POST /api/v2/plano-trabalho` `4.2-4.4, 4.7`
+#### `POST /api/v2/plano-trabalho` `4.2-4.4`
 
 - Quem: qualquer perfil `4.2`
   - Participante só pode cadastrar para si mesmo `RN18.i`
@@ -116,36 +116,7 @@ Body:
 - modalidade_id`*`(uuid) `RN24`
 - justificativa`*^[modalidade]`(string(500)) `RN24`
 
-#### `PUT /api/v2/plano-trabalho/:id` `4.9`
-
-- Quem: usuário que cadastrou o PT; participante dono do PT; chefia titular/substituta do participante; Adm Negocial (unidade instituidora >= unidade do PT); Adm Master `4.9`
-- Guard: PT `INCLUIDO` ou `AGUARDANDO_ASSINATURA` `4.9`
-- Ação: apaga entregas do bloco Planejamento; se `AGUARDANDO_ASSINATURA`, reverte para `INCLUIDO` `4.9`
-
-Body: mesmo do POST
-
-#### `DELETE /api/v2/plano-trabalho/:id` `4.11`
-
-- Quem: usuário que cadastrou o PT; participante dono do PT; chefia titular/substituta do participante; Adm Negocial (unidade instituidora >= unidade do PT); Adm Master
-- Guard: PT sem nenhuma assinatura
-
-### Assinatura do Plano de Trabalho
-
-A assinatura segue o fluxo de dupla assinatura (participante + chefia). O endpoint identifica automaticamente se é o 1º ou 2º signatário.
-
-#### `POST /api/v2/plano-trabalho/:id/assinar` `4.10`
-
-- Quem: participante dono do PT (1º signatário); chefia titular/substituta da unidade (2º signatário)
-- Guard: ao menos uma entrega cadastrada com informações válidas no bloco Planejamento
-
-#### `PATCH /api/v2/plano-trabalho/:id/cancelar-assinatura` `4.12`
-
-- Quem: exclusivamente o 1º signatário
-- Guard: PT `AGUARDANDO_ASSINATURA`
-
-_(onde ficaria a lógica de buscar quantas assinaturas ainda são necessárias?)_
-
-### Transições de status do Plano de Trabalho
+#### Transições de status do Plano de Trabalho
 
 Cada transição é um endpoint próprio, evitando um service monolítico. Todos seguem o mesmo fluxo: validar transição (máquina de estados) -> guards -> ações em transaction.
 
@@ -167,6 +138,16 @@ Cada transição é um endpoint próprio, evitando um service monolítico. Todos
 
 - Quem: participante dono do PT; chefia titular/substituta/delegado da unidade; Adm Negocial (unidade instituidora >= unidade do PT); Adm Master; Colaborador com vinculação à unidade ou superior
 - Guard: PT `CONCLUIDO`, `CANCELADO` ou `ENCERRADO`; sem pendências de avaliação/recurso (30 dias corridos após avaliação)
+
+#### `PATCH /api/v2/plano-trabalho/:id/cancelar-assinatura` `4.12`
+
+- Quem: exclusivamente o 1º signatário
+- Guard: PT `AGUARDANDO_ASSINATURA`
+
+#### `DELETE /api/v2/plano-trabalho/:id` `4.11`
+
+- Quem: usuário que cadastrou o PT; participante dono do PT; chefia titular/substituta do participante; Adm Negocial (unidade instituidora >= unidade do PT); Adm Master
+- Guard: PT sem nenhuma assinatura
 
 ### Entregas do Plano de Trabalho
 

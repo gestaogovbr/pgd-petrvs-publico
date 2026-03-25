@@ -7,9 +7,14 @@ use App\V2\PlanoTrabalho\PlanoTrabalhoService;
 use App\Models\Usuario;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Mockery;
 
 beforeEach(function () {
+    if (!Route::has('__tests.v2.plano-trabalho.index')) {
+        Route::middleware(['api'])->get('/api/__tests/v2/plano-trabalho', [PlanoTrabalhoController::class, 'index'])
+            ->name('__tests.v2.plano-trabalho.index');
+    }
     if (!Route::has('__tests.v2.plano-trabalho.store')) {
         Route::middleware(['api'])->post('/api/__tests/v2/plano-trabalho/store', [PlanoTrabalhoController::class, 'store'])
             ->name('__tests.v2.plano-trabalho.store');
@@ -48,6 +53,88 @@ function validStorePayload(): array
         'justificativa' => 'Justificativa de teste',
     ];
 }
+
+// ── index: validação ────────────────────────────────────────────────
+
+test('v2 plano-trabalho index retorna 200 com service mockado', function () {
+    $usuario = Usuario::factory()->create();
+    $this->actingAs($usuario, 'web');
+
+    $this->mock(PlanoTrabalhoService::class, function ($mock) {
+        $mock->shouldReceive('index')
+            ->once()
+            ->andReturn(new LengthAwarePaginator([], 0, 15));
+    });
+
+    $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+        'size' => 15,
+        'page' => 1,
+        'filters' => ['vigentes' => true],
+    ]));
+
+    $response->assertStatus(200);
+    $response->assertJsonPath('success', true);
+})->group('v2-plano-trabalho');
+
+test('v2 plano-trabalho index retorna 400 quando size não é inteiro', function () {
+    $usuario = Usuario::factory()->create();
+    $this->actingAs($usuario, 'web');
+
+    $response = $this->getJson('/api/__tests/v2/plano-trabalho?size=abc');
+
+    $response->assertStatus(400);
+})->group('v2-plano-trabalho');
+
+test('v2 plano-trabalho index retorna 400 quando page não é inteiro', function () {
+    $usuario = Usuario::factory()->create();
+    $this->actingAs($usuario, 'web');
+
+    $response = $this->getJson('/api/__tests/v2/plano-trabalho?page=abc');
+
+    $response->assertStatus(400);
+})->group('v2-plano-trabalho');
+
+test('v2 plano-trabalho index retorna 400 quando filters.usuario_id não é uuid', function () {
+    $usuario = Usuario::factory()->create();
+    $this->actingAs($usuario, 'web');
+
+    $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+        'filters' => ['usuario_id' => 'nao-uuid'],
+    ]));
+
+    $response->assertStatus(400);
+})->group('v2-plano-trabalho');
+
+test('v2 plano-trabalho index retorna 400 quando filters.data_inicio é data inválida', function () {
+    $usuario = Usuario::factory()->create();
+    $this->actingAs($usuario, 'web');
+
+    $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+        'filters' => ['data_inicio' => 'nao-data'],
+    ]));
+
+    $response->assertStatus(400);
+})->group('v2-plano-trabalho');
+
+test('v2 plano-trabalho index retorna 400 quando service lança ServerException', function () {
+    $usuario = Usuario::factory()->create();
+    $this->actingAs($usuario, 'web');
+
+    $this->mock(PlanoTrabalhoService::class, function ($mock) {
+        $mock->shouldReceive('index')
+            ->andThrow(new ServerException('ValidateFiltros', 'Informe ao menos um filtro para a busca.'));
+    });
+
+    $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+        'page' => 1,
+        'size' => 15,
+    ]));
+
+    $response->assertStatus(400);
+    $response->assertJson(fn ($json) =>
+        $json->where('error', fn ($error) => str_contains($error, 'Informe ao menos um filtro'))
+    );
+})->group('v2-plano-trabalho');
 
 // ── store: validação ────────────────────────────────────────────────
 

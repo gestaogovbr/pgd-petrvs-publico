@@ -26,8 +26,11 @@ class PlanoTrabalhoController extends Controller
     {
         try {
             $data = PlanoTrabalhoValidacoes::index($request);
-            $result = $this->service->index($data);
-            return response()->json(['success' => true, $result]);
+            $filters = $data['filters'] ?? [];
+            $filters['page'] = $data['page'] ?? 1;
+            $filters['size'] = $data['size'] ?? 15;
+            $result = $this->service->index($filters);
+            return response()->json(['success' => true, 'data' => $result]);
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (IBaseException $e) {

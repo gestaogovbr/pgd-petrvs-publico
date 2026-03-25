@@ -9,11 +9,14 @@ class PlanoTrabalhoValidacoes
     public static function index(Request $request): array
     {
         return $request->validate([
-            'include_arquivados' => ['sometimes', 'boolean'],
-            'include_from_unidades_subordinadas' => ['sometimes', 'boolean'],
-            'unidade_id' => ['required_with:include_from_unidades_subordinadas', 'nullable', 'uuid'],
-            'only_vigentes' => ['sometimes', 'boolean'],
-            'only_meus_planos' => ['sometimes', 'boolean'],
+            'size' => ['sometimes', 'integer', 'min:1'],
+            'page' => ['sometimes', 'integer', 'min:1'],
+            'filters' => ['sometimes', 'array'],
+            'filters.data_inicio' => ['sometimes', 'nullable', 'date'],
+            'filters.data_fim' => ['sometimes', 'nullable', 'date'],
+            'filters.vigentes' => ['sometimes', 'boolean'],
+            'filters.arquivados' => ['sometimes', 'boolean'],
+            'filters.usuario_id' => ['sometimes', 'nullable', 'uuid'],
         ]);
     }
 
