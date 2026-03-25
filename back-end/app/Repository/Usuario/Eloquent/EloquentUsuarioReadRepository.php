@@ -168,6 +168,17 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $usuario;
     }
 
+    public function findByNomeMatricula(string $nomeMatricula): Collection
+    {
+        $term = '%' . $nomeMatricula . '%';
+        return $this->query()
+            ->where(function ($q) use ($nomeMatricula, $term) {
+                $q->where('nome', 'like', $term)
+                  ->orWhere('matricula','like','%'.$nomeMatricula.'%');
+            })
+            ->get();
+    }
+
     public function findByEmail(string $email): ?Usuario
     {
         /** @var Usuario|null $usuario */

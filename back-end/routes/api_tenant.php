@@ -605,6 +605,7 @@ Route::middleware(['auth:sanctum'])->prefix('SystemLogs')->group(function () {
 /* ── V2 ── */
 use App\V2\PlanoTrabalho\PlanoTrabalhoController as PlanoTrabalhoV2;
 use App\V2\PlanoTrabalho\Entrega\EntregaController as EntregaV2;
+use App\V2\Usuario\UsuarioController as UsuarioV2;
 
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('plano-trabalho', [PlanoTrabalhoV2::class, 'index']);
@@ -613,4 +614,5 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::post('plano-trabalho/{planoTrabalhoId}/entrega', [EntregaV2::class, 'store']);
     Route::put('plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}', [EntregaV2::class, 'update']);
     Route::delete('plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}', [EntregaV2::class, 'destroy']);
+    Route::get('usuario', [UsuarioV2::class, 'buscarPorNomeMatricula']);
 });

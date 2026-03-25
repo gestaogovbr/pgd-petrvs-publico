@@ -21,6 +21,7 @@ interface UsuarioReadRepositoryContract
     public function getUnidadesVinculadas(string $cpf): Collection;
     public function search(array $params, int $limit = 0);
     public function findByMatricula(string $matricula): ?Usuario;
+    public function findByNomeMatricula(string $nomeMatricula): Collection;
     public function findByEmail(string $email): ?Usuario;
     public function findActivesByCpf(string $cpf): Collection;
     public function loadUserWithRelations(string $userId, string $entidadeId): ?Usuario;
