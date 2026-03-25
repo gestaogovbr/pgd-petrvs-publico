@@ -127,6 +127,22 @@ pipeline {
                     string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD')
                 ]) {
                     sh '''
+                        echo "Buildando Angular (produção) e executando postbuild antes do Docker build..."
+                        cd "$WORKSPACE"
+                        docker run --rm \
+                          -v "$WORKSPACE":/workspace \
+                          -w /workspace/front-end \
+                          node:20 \
+                          bash -lc "
+                            set -euo pipefail
+                            npm install --legacy-peer-deps
+                            npx ng build --configuration=production --output-path=../back-end/public
+                            node ./postbuild.js
+                          "
+                        test -f back-end/resources/views/angular.blade.php
+                        test -f back-end/public/app.json
+                        test -f back-end/public/assets/build-info.json
+
                         echo "Iniciando a construção e envio das imagens Docker..."
                         echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
                         docker pull $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST || true
