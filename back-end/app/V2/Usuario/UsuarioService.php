@@ -13,11 +13,6 @@ class UsuarioService
         $this->usuarioReadRepository = $usuarioReadRepository;
     }
 
-    public function buscarPorNome(string $nome)
-    {
-        return $this->usuarioReadRepository->search(['query' => $nome, 'fields' => ['nome']]);
-    }
-
     public function buscarPorNomeOuMatricula(string $nomeMatricula)
     {
         return $this->usuarioReadRepository->findByNomeMatricula($nomeMatricula);
