@@ -63,13 +63,13 @@ pipeline {
             dir('front-end') {
                 sh '''
                     docker run --rm \
-                    -v "$PWD":/app \
-                    -w /app \
-                    node:20 \
-                    bash -lc "
-                        npm install --legacy-peer-deps &&
-                        npm run build
-                    "
+                      -v "$WORKSPACE":/workspace \
+                      -w /workspace/front-end \
+                      node:20 \
+                      bash -lc "
+                        set -euo pipefail
+                        npm install --legacy-peer-deps
+                      "
                 '''
          }
             }
@@ -93,7 +93,6 @@ pipeline {
                 anyOf {
                     branch 'dataprev_dsv'
                     branch 'dataprev_hmg'
-                    branch 'dataprev_producao'
                 }
             }
              steps {
