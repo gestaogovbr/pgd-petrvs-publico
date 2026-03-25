@@ -2,19 +2,19 @@
 
 namespace App\V2\Usuario;
 
-use App\Repository\Usuario\Contracts\UsuarioReadRepositoryContract;
+use App\Repository\UsuarioRepository;
 
 class UsuarioService
 {
-    protected UsuarioReadRepositoryContract $usuarioReadRepository;
+    protected UsuarioRepository $usuarioRepository;
 
-    public function __construct(UsuarioReadRepositoryContract $usuarioReadRepository)
+    public function __construct(UsuarioRepository $usuarioRepository)
     {
-        $this->usuarioReadRepository = $usuarioReadRepository;
+        $this->usuarioRepository = $usuarioRepository;
     }
 
     public function buscarPorNomeOuMatricula(string $nomeMatricula)
     {
-        return $this->usuarioReadRepository->findByNomeMatricula($nomeMatricula);
+        return $this->usuarioRepository->findByNomeMatricula($nomeMatricula);
     }
 }

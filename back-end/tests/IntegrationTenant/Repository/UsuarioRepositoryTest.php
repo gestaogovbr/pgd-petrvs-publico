@@ -265,6 +265,65 @@ class UsuarioRepositoryTest extends DatabaseTenantTestCase
         $this->assertCount(2, $unidades);
     }
 
+    public function testFindByNomeMatriculaByNome()
+    {
+        $usuario = Usuario::factory()->create([
+            'nome' => 'João Silva Teste',
+            'matricula' => '111111',
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId
+        ]);
+
+        $result = $this->repository->findByNomeMatricula('João Silva');
+        $this->assertTrue($result->contains('id', $usuario->id));
+    }
+
+    public function testFindByNomeMatriculaByMatricula()
+    {
+        $usuario = Usuario::factory()->create([
+            'nome' => 'Maria Oliveira',
+            'matricula' => '999888',
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId
+        ]);
+
+        $result = $this->repository->findByNomeMatricula('99988');
+        $this->assertTrue($result->contains('id', $usuario->id));
+    }
+
+    public function testFindByNomeMatriculaSemResultado()
+    {
+        Usuario::factory()->create([
+            'nome' => 'Carlos Souza',
+            'matricula' => '123456',
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId
+        ]);
+
+        $result = $this->repository->findByNomeMatricula('TermoInexistente999');
+        $this->assertCount(0, $result);
+    }
+
+    public function testFindByNomeMatriculaBuscaParcial()
+    {
+        $u1 = Usuario::factory()->create([
+            'nome' => 'Ana Paula Ferreira',
+            'matricula' => '500100',
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId
+        ]);
+        $u2 = Usuario::factory()->create([
+            'nome' => 'Pedro Henrique',
+            'matricula' => '500200',
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId
+        ]);
+
+        $result = $this->repository->findByNomeMatricula('500');
+        $this->assertTrue($result->contains('id', $u1->id));
+        $this->assertTrue($result->contains('id', $u2->id));
+    }
+
     public function testCreateAndUpdate()
     {
         $attributes = [

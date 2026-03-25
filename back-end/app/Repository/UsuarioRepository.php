@@ -108,6 +108,11 @@ class UsuarioRepository
         return $this->readRepository->findByMatricula($matricula);
     }
 
+    public function findByNomeMatricula(string $nomeMatricula): Collection
+    {
+        return $this->readRepository->findByNomeMatricula($nomeMatricula);
+    }
+
     public function findByEmail(string $email): ?Usuario
     {
         return $this->readRepository->findByEmail($email);
