@@ -115,13 +115,17 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->get();
     }
 
-    public function buscarPlanosListagem(?string $dataInicio = null, ?string $dataFim = null, bool $vigentes = false, bool $arquivados = false, ?string $usuarioId = null, int $page = 1, int $perPage = 15): LengthAwarePaginator {
+    public function buscarPlanosListagem(?string $dataInicio = null, ?string $dataFim = null, bool $vigentes = false, bool $arquivados = false, ?string $usuarioId = null, ?array $unidadesId = null, int $page = 1, int $perPage = 15): LengthAwarePaginator {
         $query = $arquivados
             ? $this->query()->withTrashed()->whereNotNull('deleted_at')
             : $this->query();
 
         $query->select('id', 'numero', 'usuario_id', 'tipo_modalidade_id', 'data_inicio', 'data_fim', 'status')
               ->with(['usuario:id,nome', 'tipoModalidade:id,nome']);
+
+        if ($unidadesId !== null) {
+            $query->whereIn('unidade_id', $unidadesId);
+        }
 
         if ($usuarioId !== null) {
             $query->where('usuario_id', $usuarioId);

@@ -100,6 +100,38 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $this->query()->whereIn('unidade_pai_id', $ids)->get();
     }
 
+    public function getSubordinadasRecursivas(array $ids): \Illuminate\Database\Eloquent\Collection
+    {
+        if (empty($ids)) {
+            return $this->model->newCollection();
+        }
+
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+        $subordinadaIds = $this->model->getConnection()->select("
+            WITH RECURSIVE subordinadas AS (
+                SELECT id, unidade_pai_id
+                FROM unidades
+                WHERE unidade_pai_id IN ($placeholders)
+
+                UNION ALL
+
+                SELECT u.id, u.unidade_pai_id
+                FROM unidades u
+                INNER JOIN subordinadas s ON u.unidade_pai_id = s.id
+            )
+            SELECT id FROM subordinadas
+        ", $ids);
+
+        $resultIds = array_map(fn($row) => $row->id, $subordinadaIds);
+
+        if (empty($resultIds)) {
+            return $this->model->newCollection();
+        }
+
+        return $this->query()->whereIn('id', $resultIds)->get();
+    }
+
     public function existsByCodigo(string $codigo): bool
     {
         return $this->query()->where('codigo', $codigo)->exists();

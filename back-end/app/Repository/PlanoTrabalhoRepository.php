@@ -36,8 +36,8 @@ class PlanoTrabalhoRepository
         return $this->readRepository->buscarPlanosPendentes($usuarioId, $planoTrabalhoId, $dataLimite);
     }
 
-    public function buscarPlanosListagem(?string $dataInicio = null, ?string $dataFim = null, bool $vigentes = false, bool $arquivados = false, ?string $usuarioId = null, int $page = 1, int $perPage = 15): LengthAwarePaginator
+    public function buscarPlanosListagem(?string $dataInicio = null, ?string $dataFim = null, bool $vigentes = false, bool $arquivados = false, ?string $usuarioId = null, ?array $unidadesId = null, int $page = 1, int $perPage = 15): LengthAwarePaginator
     {
-        return $this->readRepository->buscarPlanosListagem($dataInicio, $dataFim, $vigentes, $arquivados, $usuarioId, $page, $perPage);
+        return $this->readRepository->buscarPlanosListagem($dataInicio, $dataFim, $vigentes, $arquivados, $usuarioId, $unidadesId, $page, $perPage);
     }
 }

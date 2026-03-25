@@ -21,6 +21,8 @@ interface UnidadeReadRepositoryContract
 
     public function getSubordinadas(array $ids): \Illuminate\Database\Eloquent\Collection;
 
+    public function getSubordinadasRecursivas(array $ids): \Illuminate\Database\Eloquent\Collection;
+
     public function findById(string|int $id): ?\App\Models\Unidade;
 
     public function existsByCodigo(string $codigo): bool;

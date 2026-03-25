@@ -45,6 +45,11 @@ class UnidadeRepository
         return $this->readRepository->getSubordinadas($ids);
     }
 
+    public function getSubordinadasRecursivas(array $ids): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->readRepository->getSubordinadasRecursivas($ids);
+    }
+
     public function findById(string $id): ?\App\Models\Unidade
     {
         return $this->readRepository->findById($id);

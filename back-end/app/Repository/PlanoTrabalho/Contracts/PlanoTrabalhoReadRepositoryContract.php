@@ -23,7 +23,8 @@ interface PlanoTrabalhoReadRepositoryContract
         bool $vigentes = false,
         bool $arquivados = false,
         ?string $usuarioId = null,
+        ?array $unidadesId = null,
         int $page = 1,
-        int $perPage = 15
+        int $perPage = 15,
     ): LengthAwarePaginator;
 }

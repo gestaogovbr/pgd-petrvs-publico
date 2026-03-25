@@ -7,6 +7,7 @@ use App\Models\Unidade;
 use App\Models\Programa;
 use App\Services\PlanoTrabalhoService as PlanoTrabalhoServiceV1;
 use App\Repository\PlanoTrabalhoRepository;
+use App\Repository\UnidadeRepository;
 use App\V2\CalculadoraPeriodosAvaliativos;
 use App\Exceptions\ServerException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -16,12 +17,18 @@ class PlanoTrabalhoService
 {
     protected PlanoTrabalhoServiceV1 $v1;
     protected PlanoTrabalhoRepository $planoTrabalhoRepository;
+    protected UnidadeRepository $unidadeRepository;
     protected CalculadoraPeriodosAvaliativos $calculadora;
 
-    public function __construct(PlanoTrabalhoServiceV1 $v1, PlanoTrabalhoRepository $planoTrabalhoRepository, CalculadoraPeriodosAvaliativos $calculadora)
-    {
+    public function __construct(
+        PlanoTrabalhoServiceV1 $v1,
+        PlanoTrabalhoRepository $planoTrabalhoRepository,
+        UnidadeRepository $unidadeRepository,
+        CalculadoraPeriodosAvaliativos $calculadora
+    ) {
         $this->v1 = $v1;
         $this->planoTrabalhoRepository = $planoTrabalhoRepository;
+        $this->unidadeRepository = $unidadeRepository;
         $this->calculadora = $calculadora;
     }
 
@@ -32,6 +39,15 @@ class PlanoTrabalhoService
         $vigentes = $filters['vigentes'] ?? false;
         $arquivados = $filters['arquivados'] ?? false;
         $usuarioId = $filters['usuario_id'] ?? null;
+        $unidadesId = $filters['unidade_id'] ?? null;
+        $subordinadas = $filters['subordinadas'] ?? null;
+
+
+        if ($subordinadas && $unidadesId) {
+            $idsBase = is_array($unidadesId) ? $unidadesId : [$unidadesId];
+            $subordinadasIds = $this->unidadeRepository->getSubordinadasRecursivas($idsBase)->pluck('id')->toArray();
+            $unidadesId = array_merge($idsBase, $subordinadasIds);
+        }
 
         if (($dataInicio === null) !== ($dataFim === null)) {
             throw new ServerException("ValidateFiltros", "As datas de início e fim devem ser preenchidas juntas.");
@@ -47,6 +63,7 @@ class PlanoTrabalhoService
             $vigentes,
             $arquivados,
             $usuarioId,
+            $unidadesId,
             (int) ($filters['page'] ?? 1),
             (int) ($filters['size'] ?? 15),
         );
