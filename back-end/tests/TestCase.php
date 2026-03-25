@@ -37,13 +37,6 @@ abstract class TestCase extends BaseTestCase
         ];
     }
 
-    /*public function initializeTenancy()
-    {
-        $this->tenant = Tenant::create();
-
-        tenancy()->initialize($this->tenant);
-    }*/
-
     protected function initializeTenant()
     {
         $this->tenant = Tenant::find($this->tenantId);
