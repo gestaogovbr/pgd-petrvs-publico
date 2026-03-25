@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoListagemFiltro;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -36,8 +37,8 @@ class PlanoTrabalhoRepository
         return $this->readRepository->buscarPlanosPendentes($usuarioId, $planoTrabalhoId, $dataLimite);
     }
 
-    public function buscarPlanosListagem(?string $dataInicio = null, ?string $dataFim = null, bool $vigentes = false, bool $arquivados = false, ?string $usuarioId = null, ?array $unidadesId = null, int $page = 1, int $perPage = 15): LengthAwarePaginator
+    public function buscarPlanosListagem(PlanoTrabalhoListagemFiltro $filtro): LengthAwarePaginator
     {
-        return $this->readRepository->buscarPlanosListagem($dataInicio, $dataFim, $vigentes, $arquivados, $usuarioId, $unidadesId, $page, $perPage);
+        return $this->readRepository->buscarPlanosListagem($filtro);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository\PlanoTrabalho\Eloquent;
 
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoListagemFiltro;
 use App\Models\PlanoTrabalho;
 use App\Enums\StatusEnum;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
@@ -115,33 +116,34 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->get();
     }
 
-    public function buscarPlanosListagem(?string $dataInicio = null, ?string $dataFim = null, bool $vigentes = false, bool $arquivados = false, ?string $usuarioId = null, ?array $unidadesId = null, int $page = 1, int $perPage = 15): LengthAwarePaginator {
-        $query = $arquivados
+    public function buscarPlanosListagem(PlanoTrabalhoListagemFiltro $filtro): LengthAwarePaginator
+    {
+        $query = $filtro->arquivados
             ? $this->query()->withTrashed()->whereNotNull('deleted_at')
             : $this->query();
 
         $query->select('id', 'numero', 'usuario_id', 'tipo_modalidade_id', 'data_inicio', 'data_fim', 'status')
               ->with(['usuario:id,nome', 'tipoModalidade:id,nome']);
 
-        if ($unidadesId !== null) {
-            $query->whereIn('unidade_id', $unidadesId);
+        if ($filtro->unidadesId !== null) {
+            $query->whereIn('unidade_id', $filtro->unidadesId);
         }
 
-        if ($usuarioId !== null) {
-            $query->where('usuario_id', $usuarioId);
+        if ($filtro->usuarioId !== null) {
+            $query->where('usuario_id', $filtro->usuarioId);
         }
 
-        if ($dataInicio !== null && $dataFim !== null) {
-            $query->where('data_inicio', '<=', $dataFim)
-                  ->where('data_fim', '>=', $dataInicio);
+        if ($filtro->dataInicio !== null && $filtro->dataFim !== null) {
+            $query->where('data_inicio', '<=', $filtro->dataFim)
+                  ->where('data_fim', '>=', $filtro->dataInicio);
         }
 
-        if ($vigentes) {
+        if ($filtro->vigentes) {
             $now = now();
             $query->where('data_inicio', '<=', $now)
                   ->where('data_fim', '>=', $now);
         }
 
-        return $query->paginate(perPage: $perPage, page: $page);
+        return $query->paginate(perPage: $filtro->perPage, page: $filtro->page);
     }
 }

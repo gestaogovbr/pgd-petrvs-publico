@@ -9,6 +9,7 @@ use App\Services\PlanoTrabalhoService as PlanoTrabalhoServiceV1;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\CalculadoraPeriodosAvaliativos;
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoListagemFiltro;
 use App\Exceptions\ServerException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Carbon\Carbon;
@@ -34,39 +35,15 @@ class PlanoTrabalhoService
 
     public function index(array $filters): LengthAwarePaginator
     {
-        $dataInicio = $filters['data_inicio'] ?? null;
-        $dataFim = $filters['data_fim'] ?? null;
-        $vigentes = $filters['vigentes'] ?? false;
-        $arquivados = $filters['arquivados'] ?? false;
-        $usuarioId = $filters['usuario_id'] ?? null;
-        $unidadesId = $filters['unidade_id'] ?? null;
-        $subordinadas = $filters['subordinadas'] ?? null;
+        $filtro = PlanoTrabalhoListagemFiltro::fromArray($filters);
 
-
-        if ($subordinadas && $unidadesId) {
-            $idsBase = is_array($unidadesId) ? $unidadesId : [$unidadesId];
+        if (($filters['subordinadas'] ?? null) && $filtro->unidadesId) {
+            $idsBase = $filtro->unidadesId;
             $subordinadasIds = $this->unidadeRepository->getSubordinadasRecursivas($idsBase)->pluck('id')->toArray();
-            $unidadesId = array_merge($idsBase, $subordinadasIds);
+            $filtro = $filtro->withUnidadesId(array_merge($idsBase, $subordinadasIds));
         }
 
-        if (($dataInicio === null) !== ($dataFim === null)) {
-            throw new ServerException("ValidateFiltros", "As datas de início e fim devem ser preenchidas juntas.");
-        }
-
-        if ($dataInicio === null && !$vigentes && !$arquivados && $usuarioId === null) {
-            throw new ServerException("ValidateFiltros", "Informe ao menos um filtro para a busca.");
-        }
-
-        return $this->planoTrabalhoRepository->buscarPlanosListagem(
-            $dataInicio,
-            $dataFim,
-            $vigentes,
-            $arquivados,
-            $usuarioId,
-            $unidadesId,
-            (int) ($filters['page'] ?? 1),
-            (int) ($filters['size'] ?? 15),
-        );
+        return $this->planoTrabalhoRepository->buscarPlanosListagem($filtro);
     }
 
     public function store(array $entity, $unidade): PlanoTrabalho
