@@ -6,27 +6,50 @@ use App\Models\PlanoTrabalho;
 use App\Models\Unidade;
 use App\Models\Programa;
 use App\Services\PlanoTrabalhoService as PlanoTrabalhoServiceV1;
+use App\Repository\PlanoTrabalhoRepository;
 use App\V2\CalculadoraPeriodosAvaliativos;
 use App\Exceptions\ServerException;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Carbon\Carbon;
 
 class PlanoTrabalhoService
 {
     protected PlanoTrabalhoServiceV1 $v1;
+    protected PlanoTrabalhoRepository $planoTrabalhoRepository;
     protected CalculadoraPeriodosAvaliativos $calculadora;
 
-    public function __construct(PlanoTrabalhoServiceV1 $v1, CalculadoraPeriodosAvaliativos $calculadora)
+    public function __construct(PlanoTrabalhoServiceV1 $v1, PlanoTrabalhoRepository $planoTrabalhoRepository, CalculadoraPeriodosAvaliativos $calculadora)
     {
         $this->v1 = $v1;
+        $this->planoTrabalhoRepository = $planoTrabalhoRepository;
         $this->calculadora = $calculadora;
     }
 
-    public function index(array $filters): array
+    public function index(array $filters): LengthAwarePaginator
     {
-        return $this->v1->query(array_merge($filters, [
-            'page' => 1,
-            'limit' => 999,
-        ]));
+        $dataInicio = $filters['data_inicio'] ?? null;
+        $dataFim = $filters['data_fim'] ?? null;
+        $vigentes = $filters['vigentes'] ?? false;
+        $arquivados = $filters['arquivados'] ?? false;
+        $usuarioId = $filters['usuario_id'] ?? null;
+
+        if (($dataInicio === null) !== ($dataFim === null)) {
+            throw new ServerException("ValidateFiltros", "As datas de início e fim devem ser preenchidas juntas.");
+        }
+
+        if ($dataInicio === null && !$vigentes && !$arquivados && $usuarioId === null) {
+            throw new ServerException("ValidateFiltros", "Informe ao menos um filtro para a busca.");
+        }
+
+        return $this->planoTrabalhoRepository->buscarPlanosListagem(
+            $dataInicio,
+            $dataFim,
+            $vigentes,
+            $arquivados,
+            $usuarioId,
+            (int) ($filters['page'] ?? 1),
+            (int) ($filters['size'] ?? 15),
+        );
     }
 
     public function store(array $entity, $unidade): PlanoTrabalho

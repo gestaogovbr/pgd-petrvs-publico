@@ -8,6 +8,7 @@ use App\Models\PlanoTrabalho;
 use App\Enums\StatusEnum;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -112,5 +113,31 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->where('id', '!=', $planoTrabalhoId)
             ->where('data_fim', '<', $dataLimite)
             ->get();
+    }
+
+    public function buscarPlanosListagem(?string $dataInicio = null, ?string $dataFim = null, bool $vigentes = false, bool $arquivados = false, ?string $usuarioId = null, int $page = 1, int $perPage = 15): LengthAwarePaginator {
+        $query = $arquivados
+            ? $this->query()->withTrashed()->whereNotNull('deleted_at')
+            : $this->query();
+
+        $query->select('id', 'numero', 'usuario_id', 'tipo_modalidade_id', 'data_inicio', 'data_fim', 'status')
+              ->with(['usuario:id,nome', 'tipoModalidade:id,nome']);
+
+        if ($usuarioId !== null) {
+            $query->where('usuario_id', $usuarioId);
+        }
+
+        if ($dataInicio !== null && $dataFim !== null) {
+            $query->where('data_inicio', '<=', $dataFim)
+                  ->where('data_fim', '>=', $dataInicio);
+        }
+
+        if ($vigentes) {
+            $now = now();
+            $query->where('data_inicio', '<=', $now)
+                  ->where('data_fim', '>=', $now);
+        }
+
+        return $query->paginate(perPage: $perPage, page: $page);
     }
 }

@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
 class PlanoTrabalhoRepository
@@ -33,5 +34,10 @@ class PlanoTrabalhoRepository
     public function buscarPlanosPendentes(string $usuarioId, string $planoTrabalhoId, string $dataLimite): Collection
     {
         return $this->readRepository->buscarPlanosPendentes($usuarioId, $planoTrabalhoId, $dataLimite);
+    }
+
+    public function buscarPlanosListagem(?string $dataInicio = null, ?string $dataFim = null, bool $vigentes = false, bool $arquivados = false, ?string $usuarioId = null, int $page = 1, int $perPage = 15): LengthAwarePaginator
+    {
+        return $this->readRepository->buscarPlanosListagem($dataInicio, $dataFim, $vigentes, $arquivados, $usuarioId, $page, $perPage);
     }
 }
