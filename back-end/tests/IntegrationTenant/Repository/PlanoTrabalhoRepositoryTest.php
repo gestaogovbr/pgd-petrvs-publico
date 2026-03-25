@@ -1,95 +1,80 @@
 <?php
 
-namespace Tests\IntegrationTenant\Repository;
-
 use App\Models\PlanoTrabalho;
+use App\Models\Programa;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\PlanoTrabalhoRepository;
-use Tests\DatabaseTenantTestCase;
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoListagemFiltro;
 use App\Enums\StatusEnum;
 use App\Models\TipoModalidade;
 use App\Models\Perfil;
 
-class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
-{
-    protected PlanoTrabalhoRepository $repository;
-    protected string $tipoModalidadeId;
-    protected string $perfilId;
+beforeEach(function () {
+    $this->repository = app(PlanoTrabalhoRepository::class);
+    $this->tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial'])->id;
+    $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão'])->id;
+    $this->unidade = Unidade::factory()->create();
+    $this->usuario = Usuario::factory()->create([
+        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'perfil_id' => $this->perfilId,
+    ]);
+    $this->programa = Programa::factory()->create();
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->repository = app(PlanoTrabalhoRepository::class);
+describe('PlanoTrabalhoRepository::getPlanosTrabalhoAssinatura', function () {
 
-        // Create prerequisites
-        $this->tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial'])->id;
-        $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão'])->id;
-    }
-
-    public function testGetPlanosTrabalhoAssinatura()
-    {
-        $unidade = Unidade::factory()->create();
-        $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
-        ]);
+    test('retorna apenas planos de outros usuários aguardando assinatura', function () {
         $outroUsuario = Usuario::factory()->create([
             'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
 
-        // Plano waiting for signature, correct unit, different user
         PlanoTrabalho::factory()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $outroUsuario->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
-        // Plano waiting for signature, correct unit, same user (should be excluded)
         PlanoTrabalho::factory()->create([
-            'unidade_id' => $unidade->id,
-            'usuario_id' => $usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $this->usuario->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
-        // Plano not waiting for signature
         PlanoTrabalho::factory()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $outroUsuario->id,
             'status' => StatusEnum::ATIVO->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
-        $result = $this->repository->getPlanosTrabalhoAssinatura([$unidade->id], [], $usuario->id);
-        
-        $this->assertCount(1, $result);
-        $this->assertEquals($outroUsuario->id, $result->first()->usuario_id);
-    }
+        $result = $this->repository->getPlanosTrabalhoAssinatura([$this->unidade->id], [], $this->usuario->id);
 
-    public function testGetPlanosTrabalhoAssinaturaNaoIncluiPlanoDoGestorTitularParaChefeSubstituto()
-    {
-        $unidade = Unidade::factory()->create();
+        expect($result)->toHaveCount(1)
+            ->and($result->first()->usuario_id)->toBe($outroUsuario->id);
+    });
 
+    test('não inclui plano do gestor titular para chefe substituto', function () {
         $gestorTitular = Usuario::factory()->create([
             'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
         $gestorSubstituto = Usuario::factory()->create([
             'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
         $participante = Usuario::factory()->create([
             'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
 
         $integranteTitular = UnidadeIntegrante::query()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $gestorTitular->id,
         ]);
         UnidadeIntegranteAtribuicao::query()->create([
@@ -98,7 +83,7 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         ]);
 
         $integranteSubstituto = UnidadeIntegrante::query()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $gestorSubstituto->id,
         ]);
         UnidadeIntegranteAtribuicao::query()->create([
@@ -107,40 +92,37 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         ]);
 
         PlanoTrabalho::factory()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $gestorTitular->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         PlanoTrabalho::factory()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $participante->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
-        $result = $this->repository->getPlanosTrabalhoAssinatura([$unidade->id], [], $gestorSubstituto->id);
+        $result = $this->repository->getPlanosTrabalhoAssinatura([$this->unidade->id], [], $gestorSubstituto->id);
 
-        $this->assertCount(1, $result);
-        $this->assertEquals($participante->id, $result->first()->usuario_id);
-    }
+        expect($result)->toHaveCount(1)
+            ->and($result->first()->usuario_id)->toBe($participante->id);
+    });
 
-    public function testGetPlanosTrabalhoAssinaturaIncluiPlanoDoGestorTitularQuandoUsuarioNaoEhChefeSubstituto()
-    {
-        $unidade = Unidade::factory()->create();
-
+    test('inclui plano do gestor titular quando usuário não é chefe substituto', function () {
         $gestorTitular = Usuario::factory()->create([
             'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
         $outroUsuario = Usuario::factory()->create([
             'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
 
         $integranteTitular = UnidadeIntegrante::query()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $gestorTitular->id,
         ]);
         UnidadeIntegranteAtribuicao::query()->create([
@@ -149,46 +131,44 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         ]);
 
         PlanoTrabalho::factory()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $gestorTitular->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         PlanoTrabalho::factory()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $outroUsuario->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
-        $result = $this->repository->getPlanosTrabalhoAssinatura([$unidade->id], [], 'usuario-qualquer');
+        $result = $this->repository->getPlanosTrabalhoAssinatura([$this->unidade->id], [], 'usuario-qualquer');
 
-        $this->assertCount(2, $result);
-        $this->assertTrue($result->pluck('usuario_id')->contains($gestorTitular->id));
-        $this->assertTrue($result->pluck('usuario_id')->contains($outroUsuario->id));
-    }
+        expect($result)->toHaveCount(2)
+            ->and($result->pluck('usuario_id')->contains($gestorTitular->id))->toBeTrue()
+            ->and($result->pluck('usuario_id')->contains($outroUsuario->id))->toBeTrue();
+    });
 
-    public function testGetPlanosTrabalhoAssinaturaIncluiApenasGestorTitularDasSubordinadas()
-    {
-        $unidadeSuperior = Unidade::factory()->create();
-        $unidadeSubordinada = Unidade::factory()->create(['unidade_pai_id' => $unidadeSuperior->id]);
+    test('inclui apenas gestor titular das subordinadas', function () {
+        $unidadeSubordinada = Unidade::factory()->create(['unidade_pai_id' => $this->unidade->id]);
 
         $usuarioLogado = Usuario::factory()->create([
             'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
         $titularSubordinada = Usuario::factory()->create([
             'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
         $participanteSubordinada = Usuario::factory()->create([
             'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
         $participanteSuperior = Usuario::factory()->create([
             'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
 
         $integranteTitularSub = UnidadeIntegrante::query()->create([
@@ -201,35 +181,196 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         ]);
 
         PlanoTrabalho::factory()->create([
-            'unidade_id' => $unidadeSuperior->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $participanteSuperior->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         PlanoTrabalho::factory()->create([
             'unidade_id' => $unidadeSubordinada->id,
             'usuario_id' => $titularSubordinada->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         PlanoTrabalho::factory()->create([
             'unidade_id' => $unidadeSubordinada->id,
             'usuario_id' => $participanteSubordinada->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         $result = $this->repository->getPlanosTrabalhoAssinatura(
-            [$unidadeSuperior->id],
+            [$this->unidade->id],
             [$unidadeSubordinada->id],
             $usuarioLogado->id
         );
 
-        $this->assertCount(2, $result);
-        $this->assertTrue($result->pluck('usuario_id')->contains($participanteSuperior->id));
-        $this->assertTrue($result->pluck('usuario_id')->contains($titularSubordinada->id));
-        $this->assertFalse($result->pluck('usuario_id')->contains($participanteSubordinada->id));
-    }
-}
+        expect($result)->toHaveCount(2)
+            ->and($result->pluck('usuario_id')->contains($participanteSuperior->id))->toBeTrue()
+            ->and($result->pluck('usuario_id')->contains($titularSubordinada->id))->toBeTrue()
+            ->and($result->pluck('usuario_id')->contains($participanteSubordinada->id))->toBeFalse();
+    });
+});
+
+describe('PlanoTrabalhoRepository::create', function () {
+
+    test('persiste o plano de trabalho no banco', function () {
+        $plano = $this->repository->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-12-31',
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'criacao_usuario_id' => $this->usuario->id,
+        ]);
+
+        expect($plano)->toBeInstanceOf(PlanoTrabalho::class)
+            ->and($plano->exists)->toBeTrue()
+            ->and($plano->usuario_id)->toBe($this->usuario->id);
+
+        $this->assertDatabaseHas('planos_trabalhos', [
+            'id' => $plano->id,
+            'status' => 'INCLUIDO',
+        ]);
+    });
+
+    test('gera numero automaticamente via stored procedure', function () {
+        $plano = $this->repository->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-12-31',
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'criacao_usuario_id' => $this->usuario->id,
+        ]);
+
+        expect($plano->numero)->toBeGreaterThan(0);
+    });
+});
+
+describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
+
+    test('filtra por usuario_id', function () {
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        $outroUsuario = Usuario::factory()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $outroUsuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        $filtro = PlanoTrabalhoListagemFiltro::fromArray(['usuario_id' => $this->usuario->id]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1)
+            ->and($result->items()[0]->usuario_id)->toBe($this->usuario->id);
+    });
+
+    test('retorna apenas vigentes', function () {
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_inicio' => now()->subMonth(),
+            'data_fim' => now()->addMonth(),
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_inicio' => now()->subYear(),
+            'data_fim' => now()->subMonth(),
+        ]);
+
+        $filtro = PlanoTrabalhoListagemFiltro::fromArray(['vigentes' => true]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1);
+    });
+
+    test('filtra por intervalo de datas', function () {
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_inicio' => '2024-03-01',
+            'data_fim' => '2024-06-30',
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_inicio' => '2025-01-01',
+            'data_fim' => '2025-12-31',
+        ]);
+
+        $filtro = PlanoTrabalhoListagemFiltro::fromArray([
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-12-31',
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1);
+    });
+
+    test('filtra por unidade_id', function () {
+        $outraUnidade = Unidade::factory()->create();
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_inicio' => now()->subMonth(),
+            'data_fim' => now()->addMonth(),
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $outraUnidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_inicio' => now()->subMonth(),
+            'data_fim' => now()->addMonth(),
+        ]);
+
+        $filtro = PlanoTrabalhoListagemFiltro::fromArray([
+            'vigentes' => true,
+            'unidade_id' => [$this->unidade->id],
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1);
+    });
+
+    test('respeita paginação', function () {
+        PlanoTrabalho::factory()->count(5)->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        $filtro = PlanoTrabalhoListagemFiltro::fromArray([
+            'usuario_id' => $this->usuario->id,
+            'page' => 1,
+            'size' => 2,
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(5)
+            ->and($result->count())->toBe(2)
+            ->and($result->lastPage())->toBe(3);
+    });
+});
