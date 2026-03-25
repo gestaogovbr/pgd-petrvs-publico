@@ -147,4 +147,9 @@ class UsuarioRepository
     {
         return $this->writeRepository->restore($id);
     }
+
+    public function findAllParaEnvio(int $chunkSize, callable $onChunk): void
+    {
+        $this->readRepository->findAllParaEnvio($chunkSize, $onChunk);
+    }
 }

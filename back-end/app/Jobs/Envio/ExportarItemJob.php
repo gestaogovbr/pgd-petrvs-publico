@@ -38,10 +38,13 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
         tenancy()->initialize($tenant);
 
         $model = $this->getModel()->first();
-        $model->data_agendamento_envio = Carbon::now();
-        $model->saveQuietly();
+        $dataAgendamento = Carbon::now();
+        if ($model) {
+            $model->data_agendamento_envio = $dataAgendamento;
+            $model->saveQuietly();
+        }
 
-        $this->timestamp = $model->data_agendamento_envio;
+        $this->timestamp = $dataAgendamento;
     }
 
     abstract public function getModel();
