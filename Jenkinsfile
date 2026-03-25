@@ -100,13 +100,16 @@ pipeline {
             dir('front-end') {
                 sh '''
                     docker run --rm \
-                    -v "$PWD":/app \
-                    -w /app \
-                    node:20 \
-                    bash -lc "
-                        npm install --legacy-peer-deps &&
-                        npx ng build
-                    "
+                      -v "$WORKSPACE":/workspace \
+                      -w /workspace/front-end \
+                      node:20 \
+                      bash -lc "
+                        set -euo pipefail
+                        npm install --legacy-peer-deps
+                        mkdir -p ../back-end/resources/views ../back-end/public/pages ../back-end/public/assets
+                        npx ng build --configuration=production --output-path=../back-end/public
+                        node ./postbuild.js
+                      "
                 '''
             }
     }
@@ -136,6 +139,7 @@ pipeline {
                           bash -lc "
                             set -euo pipefail
                             npm install --legacy-peer-deps
+                            mkdir -p ../back-end/resources/views ../back-end/public/pages ../back-end/public/assets
                             npx ng build --configuration=production --output-path=../back-end/public
                             node ./postbuild.js
                           "
