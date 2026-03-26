@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Facades\SiapeLog;
+use App\Models\Entidade;
 use App\Repository\EntidadeRepository;
 use App\Repository\SiapeDadosUORGRepository;
 use Illuminate\Support\Str;
@@ -71,10 +72,10 @@ class SiapeIndividualUnidadeService extends ServiceBase
             'gestores' => true,
         ];
         $retorno = [];
-        foreach ($entidades as $entidade) {
-            $inputs['entidade'] = $entidade->id;
+        $entidades->each(function (Entidade $entidade) use (&$retorno, $integracaoService, &$inputs) {
+            $inputs['entidade'] = (string) $entidade->getKey();
             $retorno = $integracaoService->sincronizar($inputs);
-        }
+        });
 
         return $retorno;
     }
