@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Page, PlanoTrabalho, PlanoTrabalhoId, QueryParams } from '../domain/types';
 import { GlobalsService } from 'src/app/services/globals.service';
 
@@ -13,8 +13,20 @@ export class PlanoTrabalhoApiClient {
   private readonly base = '/api/v2/plano-trabalho';
 
   query(params: QueryParams): Observable<Page<PlanoTrabalho>> {
-    return this.http.get<Page<PlanoTrabalho>>(this.gb.servidorURL + this.base, { params: this.normalize(params) as any });
-    }
+    return this.http
+      .get<any>(this.gb.servidorURL + this.base, { params: this.normalize(params) as any })
+      .pipe(
+        map((response: any) => {
+          const data = response?.data || {};
+          const items = Array.isArray(data?.data) ? (data.data as PlanoTrabalho[]) : [];
+          const total = typeof data?.total === 'number' ? data.total : 0;
+          const page = typeof data?.current_page === 'number' ? data.current_page : 1;
+          const perPage = typeof data?.per_page === 'number' ? data.per_page : (typeof data?.size === 'number' ? data.size : 15);
+          const lastPage = typeof data?.last_page === 'number' ? data.last_page : Math.max(1, Math.ceil(total / Math.max(1, perPage)));
+          return { items, total, page, perPage, lastPage } as Page<PlanoTrabalho>;
+        })
+      );
+  }
 
   getById(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {
     return this.http.get<PlanoTrabalho>(`${this.gb.servidorURL}${this.base}/${id}`);
@@ -35,11 +47,11 @@ export class PlanoTrabalhoApiClient {
   private normalize(params: QueryParams): Record<string, string> {
     const out: Record<string, string> = {};
     if (typeof params.page === 'number') out['page'] = String(params.page);
-    if (typeof params.pageSize === 'number') out['pageSize'] = String(params.pageSize);
+    if (typeof params.pageSize === 'number') out['size'] = String(params.pageSize);
     if (params.sort?.length) out['sort'] = params.sort;
-    if (params.filter) {
-      Object.entries(params.filter).forEach(([k, v]) => {
-        if (v !== undefined && v !== null) out[`filter[${k}]`] = this.stringifyFilterValue(v);
+    if (params.filters) {
+      Object.entries(params.filters).forEach(([k, v]) => {
+        if (v !== undefined && v !== null) out[`filters[${k}]`] = this.stringifyFilterValue(v);
       });
     }
     return out;
@@ -48,7 +60,8 @@ export class PlanoTrabalhoApiClient {
   private stringifyFilterValue(value: unknown): string {
     if (value instanceof Date) return value.toISOString();
     if (typeof value === 'string') return value;
-    if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+    if (typeof value === 'number') return String(value);
+    if (typeof value === 'boolean') return value ? '1' : '0';
     return JSON.stringify(value);
   }
 }

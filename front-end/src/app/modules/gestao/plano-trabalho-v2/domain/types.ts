@@ -8,12 +8,14 @@ export type PlanoTrabalhoEntrega = PlanoTrabalhoEntregaModel;
 export type Page<T> = {
   items: T[];
   total: number;
+  page: number;
+  perPage: number;
+  lastPage: number;
 };
 
 export type QueryParams = {
   page?: number;
   pageSize?: number;
   sort?: string;
-  filter?: Record<string, unknown>;
-  includes?: string[];
+  filters?: Record<string, unknown>;
 };

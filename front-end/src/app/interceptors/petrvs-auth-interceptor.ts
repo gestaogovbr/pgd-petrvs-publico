@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpXsrfTokenExtractor } from '@angular/common/http';
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpXsrfTokenExtractor } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { GlobalsService } from '../services/globals.service';
@@ -31,7 +31,7 @@ export class PetrvsAuthInterceptor implements HttpInterceptor {
     headers['X-PETRVS'] = btoa(JSON.stringify(xPetrvs));
     headers['X-ENTIDADE'] = this.gb.ENTIDADE;
 
-    const cloned = req.clone({ setHeaders: headers });
+    const cloned = req.clone({ setHeaders: headers, withCredentials: true });
     return next.handle(cloned);
   }
 }

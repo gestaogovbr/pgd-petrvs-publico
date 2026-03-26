@@ -77,18 +77,39 @@
     <thead>
       <tr>
         <th>Número</th>
+        <th>Usuário</th>
         <th>Unidade</th>
         <th>Modalidade</th>
         <th>Status</th>
+        <th>Período</th>
+        <th>Ações</th>
       </tr>
     </thead>
     <tbody>
       @for (p of facade.items(); track p.id) {
         <tr>
           <td>{{ p.numero }}</td>
-          <td>{{ p.unidade_id }}</td>
-          <td>{{ p.tipo_modalidade?.nome }}</td>
+          <td>{{ p.usuario?.nome || '-' }}</td>
+          <td>{{ p.unidade?.nome || '-' }}</td>
+          <td>{{ p.tipo_modalidade?.nome || '-' }}</td>
           <td>{{ p.status }}</td>
+          <td>{{ p.data_inicio | date:'dd/MM/yyyy' }} - {{ p.data_fim | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <div class="btn-group">
+              <button type="button" class="btn btn-outline-primary btn-sm" (click)="detalhesDoPlano(p)">
+                <i class="bi bi-search me-1"></i>Consultar
+              </button>
+              <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden">Mais</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><button class="dropdown-item" (click)="editarPlano(p)"><i class="bi bi-pencil me-2"></i>Editar</button></li>
+                <li><button class="dropdown-item" (click)="assinarPlano(p)"><i class="bi bi-pen me-2"></i>Assinar</button></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><button class="dropdown-item text-danger" (click)="cancelarPlano(p)"><i class="bi bi-x-circle me-2"></i>Cancelar</button></li>
+              </ul>
+            </div>
+          </td>
         </tr>
       }
     </tbody>

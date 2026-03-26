@@ -12,17 +12,18 @@ export class PlanoTrabalhoListFacade {
   readonly page = signal(1);
   readonly pageSize = signal(20);
   readonly sort = signal<string | undefined>(undefined);
-  readonly filter = signal<Record<string, unknown>>({});
+  readonly filters = signal<Record<string, unknown>>({});
 
   readonly items = signal<PlanoTrabalho[]>([]);
   readonly total = signal(0);
   readonly loading = signal(false);
+  readonly lastPage = signal(1);
 
   readonly params = computed<QueryParams>(() => ({
     page: this.page(),
     pageSize: this.pageSize(),
     sort: this.sort(),
-    filter: this.filter()
+    filters: this.filters()
   }));
 
   load() {
@@ -30,9 +31,12 @@ export class PlanoTrabalhoListFacade {
     this.listar
       .execute(this.params())
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe((page) => {
-        this.items.set(page.items);
-        this.total.set(page.total);
+      .subscribe((result) => {
+        this.items.set(result.items);
+        this.total.set(result.total);
+        this.page.set(result.page);
+        this.pageSize.set(result.perPage);
+        this.lastPage.set(result.lastPage);
       });
   }
 }
