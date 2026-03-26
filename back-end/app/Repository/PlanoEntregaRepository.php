@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Models\PlanoEntrega;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
 use Illuminate\Database\Eloquent\Collection;
@@ -14,6 +15,16 @@ class PlanoEntregaRepository
         private readonly PlanoEntregaReadRepositoryContract $readRepository,
         private readonly PlanoEntregaWriteRepositoryContract $writeRepository
     ) {}
+
+    public function findById(string|int $id): ?PlanoEntrega
+    {
+        return $this->readRepository->findById($id);
+    }
+
+    public function findAllParaEnvio(int $chunkSize, callable $onChunk): void
+    {
+        $this->readRepository->findAllParaEnvio($chunkSize, $onChunk);
+    }
 
     public function getPlanosEntregaAvaliacao(array $unidadesIds): Collection
     {
