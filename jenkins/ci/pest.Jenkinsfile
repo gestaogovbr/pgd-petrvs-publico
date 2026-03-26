@@ -149,7 +149,7 @@ PY
         }
     }
 
-  post {
+ post {
     always {
         script {
             if (env.CI_MARIADB_CONTAINER?.trim()) {
@@ -170,12 +170,6 @@ PY
             fingerprint: true,
             allowEmptyArchive: false,
             onlyIfSuccessful: false
-        )
-
-        recordIssues(
-            enabledForFailure: true,
-            aggregatingResults: false,
-            tools: [checkStyle(pattern: 'back-end/phpstan-report.xml', id: 'phpstan', name: 'PHPStan')]
         )
     }
 
