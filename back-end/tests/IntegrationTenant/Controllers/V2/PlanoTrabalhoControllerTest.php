@@ -27,7 +27,7 @@ beforeEach(function () {
             ->name('__tests.v2.plano-trabalho.show');
     }
     if (!Route::has('__tests.v2.plano-trabalho.destroy')) {
-        Route::middleware(['api'])->post('/api/__tests/v2/plano-trabalho/destroy', [PlanoTrabalhoController::class, 'destroy'])
+        Route::middleware(['api'])->delete('/api/__tests/v2/plano-trabalho/{id}', [PlanoTrabalhoController::class, 'destroy'])
             ->name('__tests.v2.plano-trabalho.destroy');
     }
 
@@ -347,25 +347,52 @@ describe('POST /api/v2/plano-trabalho (happy path)', function () {
     });
 });
 
-// ── destroy ─────────────────────────────────────────────────────────
+// -- DELETE destroy -----------------------------------------------------------
 
-describe('POST /api/v2/plano-trabalho/destroy', function () {
+describe('DELETE /api/v2/plano-trabalho/:id (happy path)', function () {
 
-    test('retorna 400 quando id ausente', function () {
+    test('exclui PT com status INCLUIDO e retorna 200', function () {
         $this->actingAs($this->usuario, 'web');
 
-        $this->postJson('/api/__tests/v2/plano-trabalho/destroy', [])
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'criacao_usuario_id' => $this->usuario->id,
+            'status' => 'INCLUIDO',
+        ]);
+
+        $response = $this->deleteJson("/api/__tests/v2/plano-trabalho/{$plano->id}");
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $this->assertSoftDeleted('planos_trabalhos', ['id' => $plano->id]);
+    });
+});
+
+describe('DELETE /api/v2/plano-trabalho/:id (validacao)', function () {
+
+    test('retorna 400 quando PT ja possui assinatura', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'criacao_usuario_id' => $this->usuario->id,
+            'status' => 'AGUARDANDO_ASSINATURA',
+        ]);
+
+        $this->deleteJson("/api/__tests/v2/plano-trabalho/{$plano->id}")
             ->assertStatus(400);
     });
 
-    test('retorna 400 pois exclusão é proibida', function () {
+    test('retorna 400 quando PT nao encontrado', function () {
         $this->actingAs($this->usuario, 'web');
 
-        $this->postJson('/api/__tests/v2/plano-trabalho/destroy', ['id' => fake()->uuid()])
-            ->assertStatus(400)
-            ->assertJson(fn ($json) =>
-                $json->where('error', fn ($error) => str_contains($error, 'não pode ser excluído'))
-            );
+        $this->deleteJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid())
+            ->assertStatus(400);
     });
 });
 

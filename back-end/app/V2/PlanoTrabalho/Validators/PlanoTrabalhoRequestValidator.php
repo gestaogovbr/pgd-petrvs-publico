@@ -44,10 +44,4 @@ class PlanoTrabalhoRequestValidator
         ]);
     }
 
-    public static function destroy(Request $request): array
-    {
-        return $request->validate([
-            'id' => ['required', 'uuid'],
-        ]);
-    }
 }

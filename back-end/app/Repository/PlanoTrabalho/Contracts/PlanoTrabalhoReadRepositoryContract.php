@@ -25,4 +25,7 @@ interface PlanoTrabalhoReadRepositoryContract
 
     /** @return \App\Models\PlanoTrabalho|null */
     public function findByIdComRelacoes(string $id): ?Model;
+
+    /** @return \App\Models\PlanoTrabalho|null */
+    public function findById(string|int $id): ?Model;
 }

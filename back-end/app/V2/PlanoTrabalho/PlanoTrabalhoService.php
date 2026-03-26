@@ -9,6 +9,7 @@ use App\V2\CalculadoraPeriodosAvaliativos;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoStoreDTO;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
 use App\Exceptions\ServerException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -19,17 +20,20 @@ class PlanoTrabalhoService
     protected UnidadeRepository $unidadeRepository;
     protected CalculadoraPeriodosAvaliativos $calculadora;
     protected PlanoTrabalhoStoreValidator $storeValidacao;
+    protected PlanoTrabalhoDestroyValidator $destroyValidator;
 
     public function __construct(
         PlanoTrabalhoRepository $planoTrabalhoRepository,
         UnidadeRepository $unidadeRepository,
         CalculadoraPeriodosAvaliativos $calculadora,
-        PlanoTrabalhoStoreValidator $storeValidacao
+        PlanoTrabalhoStoreValidator $storeValidacao,
+        PlanoTrabalhoDestroyValidator $destroyValidator
     ) {
         $this->planoTrabalhoRepository = $planoTrabalhoRepository;
         $this->unidadeRepository = $unidadeRepository;
         $this->calculadora = $calculadora;
         $this->storeValidacao = $storeValidacao;
+        $this->destroyValidator = $destroyValidator;
     }
 
     public function index(array $data): LengthAwarePaginator
@@ -67,6 +71,8 @@ class PlanoTrabalhoService
 
     public function destroy(string $id): bool
     {
-        throw new ServerException("CapacidadeDestroy", "Um Plano de Trabalho não pode ser excluído.\n[ver RN_PTR_AB]");
+        $this->destroyValidator->validar($id, Auth::id());
+
+        return $this->planoTrabalhoRepository->delete($id);
     }
 }

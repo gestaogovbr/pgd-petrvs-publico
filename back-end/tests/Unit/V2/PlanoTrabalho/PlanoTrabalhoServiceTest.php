@@ -4,6 +4,7 @@ use App\V2\PlanoTrabalho\PlanoTrabalhoService;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoStoreDTO;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\CalculadoraPeriodosAvaliativos;
@@ -21,12 +22,14 @@ beforeEach(function () {
     $this->unidadeRepository = Mockery::mock(UnidadeRepository::class);
     $this->calculadora = Mockery::mock(CalculadoraPeriodosAvaliativos::class);
     $this->storeValidacao = Mockery::mock(PlanoTrabalhoStoreValidator::class);
+    $this->destroyValidator = Mockery::mock(PlanoTrabalhoDestroyValidator::class);
 
     $this->service = new PlanoTrabalhoService(
         $this->repository,
         $this->unidadeRepository,
         $this->calculadora,
         $this->storeValidacao,
+        $this->destroyValidator,
     );
 });
 
@@ -180,9 +183,37 @@ describe('PlanoTrabalhoService::store', function () {
 
 describe('PlanoTrabalhoService::destroy', function () {
 
-    test('sempre lança ServerException', function () {
-        $this->service->destroy('qualquer-id');
-    })->throws(ServerException::class, 'Um Plano de Trabalho não pode ser excluído.');
+    test('valida e deleta via repository', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+
+        $this->destroyValidator
+            ->shouldReceive('validar')
+            ->once()
+            ->with('plano-1', 'user-1');
+
+        $this->repository
+            ->shouldReceive('delete')
+            ->once()
+            ->with('plano-1')
+            ->andReturn(true);
+
+        $result = $this->service->destroy('plano-1');
+
+        expect($result)->toBeTrue();
+    });
+
+    test('não deleta quando validação lança exceção', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+
+        $this->destroyValidator
+            ->shouldReceive('validar')
+            ->once()
+            ->andThrow(new ServerException('ValidatePlanoTrabalho', 'PT já possui assinatura.'));
+
+        $this->repository->shouldNotReceive('delete');
+
+        $this->service->destroy('plano-1');
+    })->throws(ServerException::class, 'PT já possui assinatura.');
 });
 
 describe('PlanoTrabalhoService::show', function () {

@@ -141,6 +141,8 @@ A assinatura segue o fluxo de dupla assinatura (participante + chefia). O endpoi
 
 - Quem: participante dono do PT (1º signatário); chefia titular/substituta da unidade (2º signatário)
 - Guard: ao menos uma entrega cadastrada com informações válidas no bloco Planejamento
+- Body:
+	- justificativa_chd`^[SOMA(forca_trabalho)!=100.0]`(string(500))`RN29,30` - obrigatória quando o somatório do %CHD das entregas for diferente de 100%
 
 #### `PATCH /api/v2/plano-trabalho/:id/cancelar-assinatura` `4.12`
 
@@ -189,13 +191,10 @@ Cada transição é um endpoint próprio, evitando um service monolítico. Todos
 - Quem: quem está cadastrando o plano `4.5,4.7`
 - Guard: PT `INCLUIDO` ou `AGUARDANDO_ASSINATURA` `RN28`
 - Body:
-	- entregas(array)`RN26,29-32`
-		- array:
-			- unidade_id(uuid)
-			- plano_entrega_entrega_id(uuid)`RN31,32`
-			- forca_trabalho(decimal)`RN29,30`
-			- descricao(string(1000))	
-			- justificativa`^[SOMA(forca_trabalho!=100.0)]`(string)`RN29,30` _não encontrei nenhuma coluna que seja dedicada à explicação de divergências da %CHD, (o mais próximo seria `texto_complementar_plano`). Será que valeria a pena criar um `justificativa_carga_horaria_disponivel`?_
+	- unidade_id(uuid)
+	- plano_entrega_entrega_id(uuid)`RN31,32`
+	- forca_trabalho(decimal)`RN29,30`
+	- descricao(string(1000))
 
 #### `PUT /api/v2/plano-trabalho/:id/entrega/:entrega_id` `RN27`
 
