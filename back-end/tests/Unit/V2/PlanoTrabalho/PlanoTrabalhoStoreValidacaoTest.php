@@ -100,7 +100,7 @@ describe('PlanoTrabalhoStoreValidacao - autorização', function () {
 
         $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
 
-        $this->validacao->validarAutorizacao(buildStoreDTO(['usuario_id' => 'outro-user']), 'criador-1');
+        $this->validacao->validarAutorizacao(buildStoreDTO(['usuario_id' => 'outro-user']));
     })->throws(ServerException::class, 'Participante só pode cadastrar plano para si mesmo.');
 
     test('participante pode cadastrar para si mesmo sem erro', function () {
@@ -112,8 +112,9 @@ describe('PlanoTrabalhoStoreValidacao - autorização', function () {
         $criador->setRelation('perfil', $perfil);
 
         $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
+        $this->unidadeRepo->shouldNotReceive('hasUsuarioLotacao');
 
-        $this->validacao->validarAutorizacao(buildStoreDTO(['usuario_id' => 'criador-1']), 'criador-1');
+        $this->validacao->validarAutorizacao(buildStoreDTO(['usuario_id' => 'criador-1']));
 
         expect(true)->toBeTrue();
     });
@@ -128,7 +129,7 @@ describe('PlanoTrabalhoStoreValidacao - autorização', function () {
 
         $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
 
-        $this->validacao->validarAutorizacao(buildStoreDTO(), 'criador-1');
+        $this->validacao->validarAutorizacao(buildStoreDTO());
     })->throws(ServerException::class, 'Usuário com este perfil não pode cadastrar plano de trabalho.');
 
     test('consulta não pode cadastrar PT', function () {
@@ -141,7 +142,7 @@ describe('PlanoTrabalhoStoreValidacao - autorização', function () {
 
         $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
 
-        $this->validacao->validarAutorizacao(buildStoreDTO(), 'criador-1');
+        $this->validacao->validarAutorizacao(buildStoreDTO());
     })->throws(ServerException::class, 'Usuário com este perfil não pode cadastrar plano de trabalho.');
 
     test('agente público do PT não pode ser colaborador (RN18.iv)', function () {
@@ -162,7 +163,7 @@ describe('PlanoTrabalhoStoreValidacao - autorização', function () {
         $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
 
-        $this->validacao->validarAutorizacao(buildStoreDTO(), 'criador-1');
+        $this->validacao->validarAutorizacao(buildStoreDTO());
     })->throws(ServerException::class, 'Este usuário não pode ser agente público de um plano de trabalho.');
 
     test('agente público do PT não pode ser consulta', function () {
@@ -183,7 +184,7 @@ describe('PlanoTrabalhoStoreValidacao - autorização', function () {
         $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
 
-        $this->validacao->validarAutorizacao(buildStoreDTO(), 'criador-1');
+        $this->validacao->validarAutorizacao(buildStoreDTO());
     })->throws(ServerException::class, 'Este usuário não pode ser agente público de um plano de trabalho.');
 
     test('demais perfis só podem cadastrar para agentes lotados/vinculados nas suas unidades (RN18.ii,iii)', function () {
@@ -205,6 +206,6 @@ describe('PlanoTrabalhoStoreValidacao - autorização', function () {
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
         $this->unidadeRepo->shouldReceive('hasUsuarioLotacao')->with('unidade-1', 'user-1', true)->andReturn(false);
 
-        $this->validacao->validarAutorizacao(buildStoreDTO(), 'criador-1');
+        $this->validacao->validarAutorizacao(buildStoreDTO());
     })->throws(ServerException::class, 'O agente público não está lotado ou vinculado nas unidades do usuário logado.');
 });

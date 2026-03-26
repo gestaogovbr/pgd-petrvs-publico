@@ -11,3 +11,4 @@ Não modifique as regras do pest no sistema
 - Testes de validação: mockar repositories via construtor, não os models
 - Testes E2E (IntegrationTenant): sem mocks, factories reais, `assertDatabaseHas` para POST, verificar retorno para GET
 - Testes unitários de Service: mockar repository + validação + Auth, verificar orquestração
+- Usar `shouldNotReceive` para garantir que early returns evitam chamadas desnecessárias ao banco (ex: `$this->unidadeRepo->shouldNotReceive('hasUsuarioLotacao')`)

@@ -17,6 +17,11 @@ class PlanoTrabalhoStoreDTO
         public readonly ?string $justificativa = null,
     ) {}
 
+    public function isPlanoCriadoParaSi(): bool
+    {
+        return $this->usuarioId === $this->criacaoUsuarioId;
+    }
+
     public static function fromArray(array $data, string $criacaoUsuarioId): self
     {
         return new self(

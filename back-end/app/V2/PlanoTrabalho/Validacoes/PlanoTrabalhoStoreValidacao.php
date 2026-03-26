@@ -29,38 +29,29 @@ class PlanoTrabalhoStoreValidacao
         $this->validarConflitoPeriodo($dto);
     }
 
-    public function validarAutorizacao(PlanoTrabalhoStoreDTO $dto, string $criadorId): void
+    public function validarAutorizacao(PlanoTrabalhoStoreDTO $dto): void
     {
-        $criador = $this->usuarioRepository->findById($criadorId);
+        $criador = $this->usuarioRepository->findById($dto->criacaoUsuarioId);
         $nivelCriador = $criador->perfil->nivel;
 
         if ($nivelCriador >= PerfilEnum::COLABORADOR->value) {
             throw new ServerException("ValidatePlanoTrabalho", "Usuário com este perfil não pode cadastrar plano de trabalho.");
         }
 
-        if ($nivelCriador === PerfilEnum::PARTICIPANTE->value) {
-            $this->validarParticipanteCadastraParaSi($dto, $criadorId);
-            return;
-        }
-
-        $this->validarAgenteNaoEhColaborador($dto->usuarioId);
-        $this->validarAgenteLotadoNasUnidadesDoCriador($dto);
-    }
-
-    private function validarParticipanteCadastraParaSi(PlanoTrabalhoStoreDTO $dto, string $criadorId): void
-    {
-        if ($dto->usuarioId !== $criadorId) {
+        if ($nivelCriador === PerfilEnum::PARTICIPANTE->value && !$dto->isPlanoCriadoParaSi()) {
             throw new ServerException("ValidatePlanoTrabalho", "Participante só pode cadastrar plano para si mesmo.");
         }
-    }
 
-    private function validarAgenteNaoEhColaborador(string $usuarioId): void
-    {
-        $agente = $this->usuarioRepository->findById($usuarioId);
-        $nivelAgente = $agente->perfil->nivel;
+        $agente = $dto->isPlanoCriadoParaSi()
+            ? $criador
+            : $this->usuarioRepository->findById($dto->usuarioId);
 
-        if ($nivelAgente >= PerfilEnum::COLABORADOR->value) {
+        if ($agente->perfil->nivel >= PerfilEnum::COLABORADOR->value) {
             throw new ServerException("ValidatePlanoTrabalho", "Este usuário não pode ser agente público de um plano de trabalho.");
+        }
+
+        if (!$dto->isPlanoCriadoParaSi()) {
+            $this->validarAgenteLotadoNasUnidadesDoCriador($dto);
         }
     }
 
