@@ -174,7 +174,7 @@ export class AppComponent implements IAppComponent {
       LOGS_ERROS: { name: "Log dos Erros", permition: '', route: ['logs', 'error'], icon: this.entity.getIcon('Error') },
       LOGS_TRAFEGOS: { name: "Log do Tráfego", permition: '', route: ['logs', 'traffic'], icon: this.entity.getIcon('Traffic') },
       LOGS_SYSTEM: { name: "Logs do Sistema", permition: '', route: ['logs', 'system-logs'], icon: 'bi bi-file-earmark-text' },
-      TESTE_IMPERSONATE: { name: "Teste IMPERSONATE", permition: '', route: ['impersonate'], icon: this.entity.getIcon('Teste') },
+      TESTE_IMPERSONATE: { name: "IMPERSONATE", permition: '', route: ['impersonate'], icon: this.entity.getIcon('Teste') },
       DEV_CPF_CONSULTA_SIAPE: { name: "Consulta CPF SIAPE", permition: '', route: ['consultas', 'cpf-siape'], icon: this.entity.getIcon('ConsultaCPFSIAPE') },
       DEV_UNIDADE_CONSULTA_SIAPE: { name: "Consulta Unidade SIAPE", permition: '', route: ['consultas', 'unidade-siape'], icon: this.entity.getIcon('ConsultaUnidadeSIAPE') },
       ENVIO_LOGS: { name: "Log dos Envios", permition: '', route: ['logs', 'envios'], icon: 'bi-list-check' },
