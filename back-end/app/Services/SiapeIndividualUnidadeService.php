@@ -9,6 +9,8 @@ use App\Repository\SiapeDadosUORGRepository;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
+use function Symfony\Component\String\s;
+
 class SiapeIndividualUnidadeService extends ServiceBase
 {
     use LogTrait;
@@ -72,10 +74,11 @@ class SiapeIndividualUnidadeService extends ServiceBase
             'gestores' => true,
         ];
         $retorno = [];
-        $entidades->each(function (Entidade $entidade) use (&$retorno, $integracaoService, &$inputs) {
-            $inputs['entidade'] = (string) $entidade->getKey();
-            $retorno = $integracaoService->sincronizar($inputs);
-        });
+        foreach ($entidades as $entidade) {
+            /** @var Entidade $entidade */
+           $inputs['entidade'] = (string) $entidade->id;
+           $retorno = $integracaoService->sincronizar($inputs);
+        }
 
         return $retorno;
     }

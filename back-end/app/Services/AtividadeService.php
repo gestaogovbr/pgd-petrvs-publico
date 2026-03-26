@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Enums\ComentarioPrivacidadeEnum;
+use App\Enums\ComentarioTipoEnum;
 use App\Enums\StatusEnum;
 use App\Models\Unidade;
 use App\Models\Usuario;
@@ -541,8 +543,8 @@ class AtividadeService extends ServiceBase
                     "texto" => $descricaoTecnica,
                     "path" => null,
                     "data_comentario" => $this->unidadeService->hora($unidade->id),
-                    "tipo" => "TECNICO",
-                    "privacidade" => "PUBLICO",
+                    "tipo" => ComentarioTipoEnum::TECNICO->value,
+                    "privacidade" => ComentarioPrivacidadeEnum::PUBLICO->value,
                     "usuario_id" => parent::loggedUser()->id,
                     "atividade_id" => $conclusao["id"]
                 ], $unidade, false);
@@ -570,7 +572,9 @@ class AtividadeService extends ServiceBase
                 "documento_entrega_id" => null
             ], $unidade, false);
             $this->statusService->atualizaStatus($atividade, "INICIADO", "Cancelado conclusão nessa data");
-            $comentarioTecnico = Comentario::where("atividade_id", $atividade->id)->where("tipo", "TECNICO")->first();
+            $comentarioTecnico = Comentario::where("atividade_id", $atividade->id)
+                ->where("tipo", ComentarioTipoEnum::TECNICO->value)
+                ->first();
             if(!empty($comentarioTecnico)) {
                 $comentarioService->destroy($comentarioTecnico->id);
             }
