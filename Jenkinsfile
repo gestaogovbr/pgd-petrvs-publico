@@ -67,7 +67,7 @@ pipeline {
                       -w /workspace/front-end \
                       node:20 \
                       bash -lc "
-                        set -euo pipefail
+                        set -eu
                         npm install --legacy-peer-deps
                       "
                 '''
@@ -103,7 +103,7 @@ pipeline {
                       -w /workspace/front-end \
                       node:20 \
                       bash -lc "
-                        set -euo pipefail
+                        set -eu
                         npm install --legacy-peer-deps
                         mkdir -p ../back-end/resources/views ../back-end/public/pages ../back-end/public/assets
                         npx ng build --configuration=production --output-path=../back-end/public
@@ -129,7 +129,7 @@ pipeline {
                     string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD')
                 ]) {
                     sh '''
-                        set -euo pipefail
+                        set -eu
 
                         echo "=== INÍCIO BUILD PRODUÇÃO ==="
                         cd "$WORKSPACE"
@@ -161,7 +161,7 @@ pipeline {
                         -w /workspace/front-end \
                         node:20 \
                         bash -lc '
-                            set -euo pipefail
+                            set -eu
 
                             echo "--- node/npm ---"
                             node -v
