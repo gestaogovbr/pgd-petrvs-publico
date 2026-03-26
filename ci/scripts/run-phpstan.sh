@@ -31,6 +31,11 @@ if [ ! -x vendor/bin/phpstan ]; then
   exit 1
 fi
 
+# Garante que os artefatos existam
+: > "$REPORT_XML"
+: > "$REPORT_TXT"
+: > "$EXIT_FILE"
+
 echo "==> Executando PHPStan"
 set +e
 vendor/bin/phpstan analyse app \
@@ -44,6 +49,9 @@ set -e
 echo "$PHPSTAN_EXIT_CODE" > "$EXIT_FILE"
 
 echo "==> Exit code do PHPStan: $PHPSTAN_EXIT_CODE"
+
+echo "==> Arquivos gerados:"
+ls -lah "$REPORT_XML" "$REPORT_TXT" "$EXIT_FILE" || true
 
 echo "==> Resumo textual do PHPStan:"
 if [ -s "$REPORT_TXT" ]; then
