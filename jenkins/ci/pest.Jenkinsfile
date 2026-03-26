@@ -5,10 +5,6 @@ pipeline {
         skipDefaultCheckout(true)
         disableConcurrentBuilds()
         timestamps()
-        buildDiscarder(logRotator(numToKeepStr: '30'))
-        ansiColor('xterm')
-        timestamps()
-        disableConcurrentBuilds()
         buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))
         timeout(time: 30, unit: 'MINUTES')
     }
@@ -127,6 +123,30 @@ PY
                 sh './ci/scripts/run-pest.sh'
             }
         }
+
+        stage('Run PHPStan') {
+            when {
+                expression { env.SKIP_PIPELINE != 'true' }
+            }
+            steps {
+                sh 'chmod +x ci/scripts/run-phpstan.sh'
+                sh './ci/scripts/run-phpstan.sh'
+            }
+        }
+
+        stage('Fail if PHPStan failed') {
+            when {
+                expression { env.SKIP_PIPELINE != 'true' }
+            }
+            steps {
+                script {
+                    def exitCode = readFile('.phpstan-exit-code').trim()
+                    if (exitCode != '0') {
+                        error("PHPStan encontrou erros.")
+                    }
+                }
+            }
+        }
     }
 
     post {
@@ -139,34 +159,16 @@ PY
                     '''
                 }
             }
+
+            archiveArtifacts artifacts: 'back-end/phpstan-report.xml, back-end/phpstan-report.txt, .phpstan-exit-code', allowEmptyArchive: true
         }
 
         failure {
-            echo 'Pipeline de Pest falhou.'
+            echo 'Pipeline de CI falhou.'
         }
 
         success {
-            echo 'Pipeline de Pest concluída com sucesso.'
+            echo 'Pipeline de CI concluída com sucesso.'
         }
     }
-
-        stage('PHPStan') {
-    steps {
-        sh '''
-            chmod +x ci/scripts/run-phpstan.sh
-            ci/scripts/run-phpstan.sh
-        '''
-    }
-}
-
-stage('Fail if PHPStan failed') {
-    steps {
-        script {
-            def exitCode = readFile('.phpstan-exit-code').trim()
-            if (exitCode != '0') {
-                error("PHPStan encontrou erros.")
-            }
-        }
-    }
-}
 }
