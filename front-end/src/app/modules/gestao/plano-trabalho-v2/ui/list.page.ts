@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { Subscription } from 'rxjs';
+import { PlanoTrabalho } from '../domain/types';
 
 @Component({
   selector: 'app-plano-trabalho-v2-list-page',
@@ -37,7 +38,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     periodo_inicio: this.fb.control<string | null>(null),
     periodo_fim: this.fb.control<string | null>(null),
     incluir_subordinadas: this.fb.nonNullable.control(true),
-    vigentes: this.fb.nonNullable.control(false),
+    vigentes: this.fb.nonNullable.control(true),
     incluir_arquivados: this.fb.nonNullable.control(false),
     meus_planos: this.fb.nonNullable.control(false),
     numero: this.fb.nonNullable.control(''),
@@ -150,26 +151,22 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
 
   private applyFiltersAndLoad(resetPage: boolean) {
     if (resetPage) this.facade.page.set(1);
-    this.facade.filter.set(this.buildFilter());
+    this.facade.filters.set(this.buildFilters());
     this.facade.load();
   }
 
-  private buildFilter(): Record<string, unknown> {
+  private buildFilters(): Record<string, unknown> {
     const raw = this.filters.getRawValue();
     const result: Record<string, unknown> = {};
 
-    if (raw.periodo_inicio?.length) result['periodo_inicio'] = raw.periodo_inicio;
-    if (raw.periodo_fim?.length) result['periodo_fim'] = raw.periodo_fim;
-    if (raw.incluir_subordinadas) result['incluir_subordinadas'] = true;
+    if (raw.periodo_inicio?.length) result['data_inicio'] = raw.periodo_inicio;
+    if (raw.periodo_fim?.length) result['data_fim'] = raw.periodo_fim;
     if (raw.vigentes) result['vigentes'] = true;
-    if (raw.incluir_arquivados) result['incluir_arquivados'] = true;
+    if (raw.incluir_arquivados) result['arquivados'] = true;
     if (raw.meus_planos) result['meus_planos'] = true;
+    if (raw.incluir_subordinadas) result['incluir_subordinadas'] = true;
 
     if (raw.numero.trim().length) result['numero'] = raw.numero.trim();
-    if (raw.usuario.trim().length) result['usuario'] = raw.usuario.trim();
-    if (raw.unidade_regramento.trim().length) result['unidade_regramento'] = raw.unidade_regramento.trim();
-    if (raw.modalidade.trim().length) result['modalidade'] = raw.modalidade.trim();
-    if (raw.status.trim().length) result['status'] = raw.status.trim();
 
     return result;
   }
@@ -178,13 +175,22 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     const p = this.facade.page();
     if (p > 1) {
       this.facade.page.set(p - 1);
-      this.facade.filter.set(this.buildFilter());
+      this.facade.filters.set(this.buildFilters());
       this.facade.load();
     }
   }
   next() {
-    this.facade.page.set(this.facade.page() + 1);
-    this.facade.filter.set(this.buildFilter());
-    this.facade.load();
+    const p = this.facade.page();
+    const last = this.facade.lastPage();
+    if (p < last) {
+      this.facade.page.set(p + 1);
+      this.facade.filters.set(this.buildFilters());
+      this.facade.load();
+    }
   }
+
+  detalhesDoPlano(p: PlanoTrabalho) {}
+  editarPlano(p: PlanoTrabalho) {}
+  assinarPlano(p: PlanoTrabalho) {}
+  cancelarPlano(p: PlanoTrabalho) {}
 }
