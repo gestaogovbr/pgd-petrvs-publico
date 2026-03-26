@@ -171,6 +171,12 @@ PY
             allowEmptyArchive: false,
             onlyIfSuccessful: false
         )
+
+        recordIssues(
+            enabledForFailure: true,
+            aggregatingResults: false,
+            tools: [checkStyle(pattern: 'back-end/phpstan-report.xml', id: 'phpstan', name: 'PHPStan')]
+        )
     }
 
     failure {
