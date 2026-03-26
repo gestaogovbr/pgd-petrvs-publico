@@ -107,9 +107,7 @@ export class AppComponent implements IAppComponent {
     this.auth.app = this;
     this.lex.app = this;
     this.gb.app = this;
-    if (this.gb.isEmbedded && this.gb.initialRoute?.length) {
-      this.go.navigate({ route: this.gb.initialRoute });
-    }
+
 
     this.lex.cdRef = this.cdRef;
     /* Definição do menu do sistema */
@@ -512,15 +510,6 @@ export class AppComponent implements IAppComponent {
 
   public get usuarioFoto(): SafeUrl {
     return this.gb.getResourcePath(this.auth.usuario?.url_foto || "assets/images/profile.png");
-  }
-
-  public onCollapseContainerClick() {
-    this.auth.usuarioConfig = { ocultar_container_petrvs: !this.auth.usuario!.config.ocultar_container_petrvs };
-    this.cdRef.detectChanges();
-  }
-
-  public get collapseContainer(): boolean {
-    return this.gb.isEmbedded && this.auth.logged && !!this.auth.usuario?.config.ocultar_container_petrvs;
   }
 
   public onRestoreClick(popup: DialogComponent) {

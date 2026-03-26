@@ -21,6 +21,7 @@ import { providePrimeNG } from 'primeng/config';
 import Lara from '@primeuix/themes/lara';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ErrorsInterceptor } from './interceptors/errors-interceptor';
+import { PetrvsAuthInterceptor } from './interceptors/petrvs-auth-interceptor';
 
 registerLocaleData(localePt);
 
@@ -47,6 +48,7 @@ registerLocaleData(localePt);
     FormsModule
   ],
   providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: PetrvsAuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true },
     { provide: LOCALE_ID, useValue: 'pt-BR' },
     providePrimeNG({
