@@ -76,24 +76,22 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
 
     public function findGestorByUnidade(string $unidadeId): ?UnidadeIntegrante
     {
-        /** @var UnidadeIntegrante|null $integrante */
         $integrante = $this->model->newQuery()
             ->with('gestor')
             ->where('unidade_id', $unidadeId)
             ->has('gestor')
             ->first();
 
-        return $integrante;
+        return $integrante instanceof UnidadeIntegrante ? $integrante : null;
     }
 
     public function findUnidadeIntegrante(string $usuarioId, string $unidadeId): ?UnidadeIntegrante
     {
-        /** @var UnidadeIntegrante|null $integrante */
         $integrante = $this->model->newQuery()
             ->where('usuario_id', $usuarioId)
             ->where('unidade_id', $unidadeId)
             ->first();
 
-        return $integrante;
+        return $integrante instanceof UnidadeIntegrante ? $integrante : null;
     }
 }
