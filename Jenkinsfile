@@ -19,9 +19,9 @@ pipeline {
             }
         }
 
-      stage('Show Context') {
-        steps {
-            sh '''
+        stage('Show Context') {
+            steps {
+                sh '''
                 echo "=== USER / HOST ==="
                 whoami
                 hostname
@@ -48,7 +48,7 @@ pipeline {
                 echo "=== ALL NPMS FOUND ==="
                 find / -name npm 2>/dev/null | head -20
             '''
-        }
+            }
         }
 
         stage('Install Frontend Dependencies') {
@@ -59,9 +59,9 @@ pipeline {
                     branch 'dataprev_producao'
                 }
             }
-        steps {
-            dir('front-end') {
-                sh '''
+            steps {
+                dir('front-end') {
+                    sh '''
                     docker run --rm \
                       -v "$WORKSPACE":/workspace \
                       -w /workspace/front-end \
@@ -71,7 +71,7 @@ pipeline {
                         npm install --legacy-peer-deps
                       "
                 '''
-         }
+                }
             }
         }
 
@@ -95,9 +95,9 @@ pipeline {
                     branch 'dataprev_hmg'
                 }
             }
-             steps {
-            dir('front-end') {
-                sh '''
+            steps {
+                dir('front-end') {
+                    sh '''
                     docker run --rm \
                       -v "$WORKSPACE":/workspace \
                       -w /workspace/front-end \
@@ -110,8 +110,8 @@ pipeline {
                         node ./postbuild.js
                       "
                 '''
+                }
             }
-    }
         }
 
         stage('Build Producao') {
@@ -268,10 +268,10 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline concluída com sucesso."
+            echo 'Pipeline concluída com sucesso.'
         }
         failure {
-            echo "Pipeline falhou."
+            echo 'Pipeline falhou.'
         }
         always {
             cleanWs()

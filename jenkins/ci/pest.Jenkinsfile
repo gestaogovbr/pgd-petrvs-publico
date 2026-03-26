@@ -6,6 +6,11 @@ pipeline {
         disableConcurrentBuilds()
         timestamps()
         buildDiscarder(logRotator(numToKeepStr: '30'))
+        ansiColor('xterm')
+        timestamps()
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))
+        timeout(time: 30, unit: 'MINUTES')
     }
 
     environment {
@@ -17,6 +22,9 @@ pipeline {
         DB_HOST = '127.0.0.1'
         DB_USERNAME = 'root'
         DB_PASSWORD = 'root'
+        COMPOSER_ALLOW_SUPERUSER = '1'
+        PHPSTAN_REPORT = 'back-end/phpstan-report.xml'
+        PHPSTAN_EXIT_FILE = '.phpstan-exit-code'
     }
 
     stages {
@@ -141,4 +149,24 @@ PY
             echo 'Pipeline de Pest concluída com sucesso.'
         }
     }
+
+        stage('PHPStan') {
+    steps {
+        sh '''
+            chmod +x ci/scripts/run-phpstan.sh
+            ci/scripts/run-phpstan.sh
+        '''
+    }
+}
+
+stage('Fail if PHPStan failed') {
+    steps {
+        script {
+            def exitCode = readFile('.phpstan-exit-code').trim()
+            if (exitCode != '0') {
+                error("PHPStan encontrou erros.")
+            }
+        }
+    }
+}
 }
