@@ -86,4 +86,67 @@ describe('PlanoTrabalhoListagemFiltro', function () {
         expect($filtro->page)->toBe(5)
             ->and($filtro->perPage)->toBe(30);
     });
+
+    test('extrai filtro numero corretamente', function () {
+        $filtro = PlanoTrabalhoListagemFiltro::fromArray([
+            'vigentes' => true,
+            'numero' => 42,
+        ]);
+
+        expect($filtro->numero)->toBe(42);
+    });
+
+    test('numero é null quando não informado', function () {
+        $filtro = PlanoTrabalhoListagemFiltro::fromArray(['vigentes' => true]);
+
+        expect($filtro->numero)->toBeNull();
+    });
+
+    test('extrai filtro tipo_modalidade_id corretamente', function () {
+        $filtro = PlanoTrabalhoListagemFiltro::fromArray([
+            'vigentes' => true,
+            'tipo_modalidade_id' => 'modalidade-abc',
+        ]);
+
+        expect($filtro->tipoModalidadeId)->toBe('modalidade-abc');
+    });
+
+    test('tipo_modalidade_id é null quando não informado', function () {
+        $filtro = PlanoTrabalhoListagemFiltro::fromArray(['vigentes' => true]);
+
+        expect($filtro->tipoModalidadeId)->toBeNull();
+    });
+
+    test('extrai filtro status corretamente', function () {
+        $filtro = PlanoTrabalhoListagemFiltro::fromArray([
+            'vigentes' => true,
+            'status' => 'ATIVO',
+        ]);
+
+        expect($filtro->status)->toBe('ATIVO');
+    });
+
+    test('status é null quando não informado', function () {
+        $filtro = PlanoTrabalhoListagemFiltro::fromArray(['vigentes' => true]);
+
+        expect($filtro->status)->toBeNull();
+    });
+
+    test('aceita filtro apenas com numero', function () {
+        $filtro = PlanoTrabalhoListagemFiltro::fromArray(['numero' => 10]);
+
+        expect($filtro->numero)->toBe(10);
+    });
+
+    test('aceita filtro apenas com tipo_modalidade_id', function () {
+        $filtro = PlanoTrabalhoListagemFiltro::fromArray(['tipo_modalidade_id' => 'mod-1']);
+
+        expect($filtro->tipoModalidadeId)->toBe('mod-1');
+    });
+
+    test('aceita filtro apenas com status', function () {
+        $filtro = PlanoTrabalhoListagemFiltro::fromArray(['status' => 'CONCLUIDO']);
+
+        expect($filtro->status)->toBe('CONCLUIDO');
+    });
 });

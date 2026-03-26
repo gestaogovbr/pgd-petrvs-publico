@@ -122,8 +122,15 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ? $this->query()->withTrashed()->whereNotNull('deleted_at')
             : $this->query();
 
-        $query->select('id', 'numero', 'usuario_id', 'tipo_modalidade_id', 'data_inicio', 'data_fim', 'status')
-              ->with(['usuario:id,nome', 'tipoModalidade:id,nome']);
+        $query->select('id', 'numero', 'usuario_id', 'unidade_id', 'tipo_modalidade_id', 'data_inicio', 'data_fim', 'status')
+              ->with(['usuario:id,nome', 'tipoModalidade:id,nome', 'unidade:id,nome']);
+
+        if($filtro->hierarquia){
+            $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';
+
+            $query->addSelect(DB::raw("$queryHierarquia AS hierarquia"))
+                 ->orderBy(DB::raw($queryHierarquia));
+        }
 
         if ($filtro->unidadesId !== null) {
             $query->whereIn('unidade_id', $filtro->unidadesId);
@@ -136,6 +143,18 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         if ($filtro->dataInicio !== null && $filtro->dataFim !== null) {
             $query->where('data_inicio', '<=', $filtro->dataFim)
                   ->where('data_fim', '>=', $filtro->dataInicio);
+        }
+
+        if ($filtro->numero !== null) {
+            $query->where('numero', $filtro->numero);
+        }
+
+        if ($filtro->tipoModalidadeId !== null) {
+            $query->where('tipo_modalidade_id', $filtro->tipoModalidadeId);
+        }
+
+        if ($filtro->status !== null) {
+            $query->where('status', $filtro->status);
         }
 
         if ($filtro->vigentes) {

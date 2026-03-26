@@ -15,6 +15,10 @@ class PlanoTrabalhoListagemFiltro
         public readonly bool $arquivados,
         public readonly ?string $usuarioId,
         public readonly ?array $unidadesId,
+        public readonly ?bool $hierarquia,
+        public readonly ?int $numero,
+        public readonly ?string $tipoModalidadeId,
+        public readonly ?string $status,
         public readonly int $page,
         public readonly int $perPage,
     ) {}
@@ -28,6 +32,10 @@ class PlanoTrabalhoListagemFiltro
             arquivados: $this->arquivados,
             usuarioId: $this->usuarioId,
             unidadesId: $unidadesId,
+            hierarquia: $this->hierarquia,
+            numero: $this->numero,
+            tipoModalidadeId: $this->tipoModalidadeId,
+            status: $this->status,
             page: $this->page,
             perPage: $this->perPage,
         );
@@ -41,12 +49,16 @@ class PlanoTrabalhoListagemFiltro
         $arquivados = (bool) ($filters['arquivados'] ?? false);
         $usuarioId = $filters['usuario_id'] ?? null;
         $unidadesId = $filters['unidade_id'] ?? null;
+        $hierarquia = $filters['hierarquia'] ?? null;
+        $numero = isset($filters['numero']) ? (int) $filters['numero'] : null;
+        $tipoModalidadeId = $filters['tipo_modalidade_id'] ?? null;
+        $status = $filters['status'] ?? null;
 
         if (($dataInicio === null) !== ($dataFim === null)) {
             throw new ServerException("ValidateFiltros", "As datas de início e fim devem ser preenchidas juntas.");
         }
 
-        if ($dataInicio === null && !$vigentes && !$arquivados && $usuarioId === null) {
+        if ($dataInicio === null && !$vigentes && !$arquivados && $usuarioId === null && $numero === null && $tipoModalidadeId === null && $status === null) {
             throw new ServerException("ValidateFiltros", "Informe ao menos um filtro para a busca.");
         }
 
@@ -57,6 +69,10 @@ class PlanoTrabalhoListagemFiltro
             arquivados: $arquivados,
             usuarioId: $usuarioId,
             unidadesId: $unidadesId,
+            hierarquia: $hierarquia,
+            numero: $numero,
+            tipoModalidadeId: $tipoModalidadeId,
+            status: $status,
             page: (int) ($filters['page'] ?? 1),
             perPage: (int) ($filters['size'] ?? 15),
         );

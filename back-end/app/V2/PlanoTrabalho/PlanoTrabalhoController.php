@@ -29,6 +29,7 @@ class PlanoTrabalhoController extends Controller
             $filters = $data['filters'] ?? [];
             $filters['page'] = $data['page'] ?? 1;
             $filters['size'] = $data['size'] ?? 15;
+            $filters['hierarquia'] = $data['hierarquia'] ?? true;
             $result = $this->service->index($filters);
             return response()->json(['success' => true, 'data' => $result]);
         } catch (ValidationException $e) {
