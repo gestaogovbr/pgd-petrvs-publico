@@ -63,13 +63,13 @@ pipeline {
             dir('front-end') {
                 sh '''
                     docker run --rm \
-                    -v "$PWD":/app \
-                    -w /app \
-                    node:20 \
-                    bash -lc "
-                        npm install --legacy-peer-deps &&
-                        npm run build
-                    "
+                      -v "$WORKSPACE":/workspace \
+                      -w /workspace/front-end \
+                      node:20 \
+                      bash -lc "
+                        set -euo pipefail
+                        npm install --legacy-peer-deps
+                      "
                 '''
          }
             }
@@ -93,7 +93,6 @@ pipeline {
                 anyOf {
                     branch 'dataprev_dsv'
                     branch 'dataprev_hmg'
-                    branch 'dataprev_producao'
                 }
             }
              steps {
@@ -130,37 +129,170 @@ pipeline {
                     string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD')
                 ]) {
                     sh '''
-                        echo "Buildando Angular (produção) e executando postbuild antes do Docker build..."
+                        set -euo pipefail
+
+                        echo "=== INÍCIO BUILD PRODUÇÃO ==="
                         cd "$WORKSPACE"
+
+                        echo "=== LIMPEZA PRÉ-BUILD DO FRONT ==="
+                        rm -f back-end/resources/views/angular.blade.php
+                        rm -f back-end/public/index.html
+                        rm -f back-end/public/app.json
+                        rm -f back-end/public/assets/build-info.json
+
+                        # Remove bundles antigos do Angular sem destruir outras pastas do backend
+                        find back-end/public -maxdepth 1 -type f \\( \
+                            -name "main*.js" -o \
+                            -name "polyfills*.js" -o \
+                            -name "runtime*.js" -o \
+                            -name "scripts*.js" -o \
+                            -name "styles*.css" -o \
+                            -name "vendor*.js" -o \
+                            -name "*.map" \
+                        \\) -print -delete || true
+
+                        mkdir -p back-end/resources/views
+                        mkdir -p back-end/public/assets
+                        mkdir -p back-end/public/pages
+
+                        echo "=== BUILD ANGULAR PRODUÇÃO ==="
                         docker run --rm \
-                          -v "$WORKSPACE":/workspace \
-                          -w /workspace/front-end \
-                          node:20 \
-                          bash -lc "
+                        -v "$WORKSPACE":/workspace \
+                        -w /workspace/front-end \
+                        node:20 \
+                        bash -lc '
                             set -euo pipefail
-                            npm install --legacy-peer-deps
-                            mkdir -p ../back-end/resources/views ../back-end/public/pages ../back-end/public/assets
+
+                            echo "--- node/npm ---"
+                            node -v
+                            npm -v
+
+                            echo "--- limpeza local do front ---"
+                            rm -rf node_modules
+                            npm ci --legacy-peer-deps
+
+                            echo "--- build angular ---"
                             npx ng build --configuration=production --output-path=../back-end/public
-                            node ./postbuild.js
-                          "
+                        '
+
+                        echo "=== VALIDAÇÃO DOS ARTEFATOS GERADOS ==="
+                        test -f back-end/public/index.html
+
+                        if ! grep -Eq 'src="[^"]+\\.js"' back-end/public/index.html; then
+                        echo "ERRO: index.html não contém bundles .js esperados."
+                        exit 1
+                        fi
+
+                        echo "=== EXTRAÇÃO DOS BUNDLES DO INDEX ==="
+                        node - <<'NODE'
+        const fs = require('fs');
+
+        const indexPath = 'back-end/public/index.html';
+        const appJsonPath = 'back-end/public/app.json';
+
+        const html = fs.readFileSync(indexPath, 'utf8');
+        const matches = [...html.matchAll(/src="([^"]+\\.js)"/gi)].map(m => m[1]);
+
+        if (!matches.length) {
+        console.error('ERRO: Nenhum bundle JS encontrado no index.html');
+        process.exit(1);
+        }
+
+        const angularFiles = [...new Set(matches)];
+        for (const file of angularFiles) {
+        const normalized = file.replace(/^\\//, '');
+        const fullPath = `back-end/public/${normalized}`;
+        if (!fs.existsSync(fullPath)) {
+            console.error(`ERRO: Bundle referenciado no index.html não existe: ${fullPath}`);
+            process.exit(1);
+        }
+        }
+
+        const appJson = { angularFiles };
+        fs.writeFileSync(appJsonPath, JSON.stringify(appJson, null, 2));
+        console.log('app.json gerado com sucesso:', angularFiles);
+        NODE
+
+                        echo "=== GERANDO BUILD-INFO ==="
+                        node - <<'NODE'
+        const fs = require('fs');
+        const path = require('path');
+
+        const output = 'back-end/public/assets/build-info.json';
+        const info = {
+        build_date: new Date().toISOString(),
+        build_number: Date.now()
+        };
+
+        fs.mkdirSync(path.dirname(output), { recursive: true });
+        fs.writeFileSync(output, JSON.stringify(info, null, 2));
+        console.log('build-info.json gerado:', info);
+        NODE
+
+                        echo "=== MOVENDO INDEX PARA BLADE ==="
+                        mv back-end/public/index.html back-end/resources/views/angular.blade.php
+
+                        echo "=== VALIDAÇÕES FINAIS ==="
                         test -f back-end/resources/views/angular.blade.php
                         test -f back-end/public/app.json
                         test -f back-end/public/assets/build-info.json
 
-                        echo "Iniciando a construção e envio das imagens Docker..."
-                        echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
-                        docker pull $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST || true
-                        if docker manifest inspect $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD >/dev/null 2>&1; then
-                          echo "A tag $DOCKER_HUB_TAG_OLD já existe, não será reetiquetada."
+                        node - <<'NODE'
+        const fs = require('fs');
+
+        const appJson = JSON.parse(fs.readFileSync('back-end/public/app.json', 'utf8'));
+        if (!Array.isArray(appJson.angularFiles) || !appJson.angularFiles.length) {
+        console.error('ERRO: app.json sem angularFiles válidos');
+        process.exit(1);
+        }
+
+        console.log('Validação final do app.json OK');
+        NODE
+
+                        echo "=== DIAGNÓSTICO DOS ARTEFATOS ==="
+                        echo "--- app.json ---"
+                        cat back-end/public/app.json
+
+                        echo "--- build-info.json ---"
+                        cat back-end/public/assets/build-info.json
+
+                        echo "--- primeiros 40 linhas do angular.blade.php ---"
+                        head -40 back-end/resources/views/angular.blade.php || true
+
+                        echo "--- arquivos em back-end/public ---"
+                        find back-end/public -maxdepth 2 -type f | sort
+
+                        echo "=== LOGIN DOCKER HUB ==="
+                        echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+
+                        echo "=== PREPARANDO TAG ANTIGA ==="
+                        docker pull "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST" || true
+
+                        if docker manifest inspect "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD" >/dev/null 2>&1; then
+                        echo "A tag $DOCKER_HUB_TAG_OLD já existe, não será reetiquetada."
                         else
-                          docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD
-                          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD
+                        if docker image inspect "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST" >/dev/null 2>&1; then
+                            docker tag "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST" "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD"
+                            docker push "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD"
+                        else
+                            echo "Imagem latest não disponível localmente após pull; pulando criação da tag OLD."
                         fi
-                        docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW -f ./resources/deploy/Dockerfile .
-                        docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
-                        docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW
-                        docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
-                        echo "Envio das imagens Docker concluído."
+                        fi
+
+                        echo "=== BUILD DA IMAGEM FINAL ==="
+                        docker build \
+                        --pull \
+                        --no-cache \
+                        -t "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW" \
+                        -f ./resources/deploy/Dockerfile .
+
+                        docker tag "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW" "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST"
+
+                        echo "=== PUSH DAS IMAGENS ==="
+                        docker push "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW"
+                        docker push "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST"
+
+                        echo "=== BUILD PRODUÇÃO FINALIZADO COM SUCESSO ==="
                     '''
                 }
             }

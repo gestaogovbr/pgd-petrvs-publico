@@ -3,52 +3,83 @@ const path = require('path');
 
 console.log("POST-BUILD:");
 
-// Cria o angular.blade.php e edita o app.json para colocar os arquivos com hash do build angular
-const indexHtmlPath = path.resolve(__dirname, '../back-end/public/index.html');
-const appJsonPath = path.resolve(__dirname, '../back-end/public/app.json');
-const angularBladePath = path.resolve(__dirname, '../back-end/resources/views/angular.blade.php');
+function findRepoRoot(startDir) {
+  let currentDir = startDir;
 
+  while (true) {
+    const backEndDir = path.join(currentDir, 'back-end');
 
-if (fs.existsSync(indexHtmlPath)) {
-  try {
-
-
-    // Obtem lista de arquivos gerados no deploy
-    let indexContent = fs.readFileSync(indexHtmlPath, { encoding: "utf8" });
-    let angularFiles = [];
-    //indexContent = indexContent.replace('<base href="/">', '<base href="{{ $host }}">');
-
-    // Extrai os nomes dos arquivos JavaScript usando expressão regular
-    const regex = /src="([^"]+\.js)"/gi;
-    let match;
-    while ((match = regex.exec(indexContent)) !== null) {
-      angularFiles.push(match[1]);
+    if (fs.existsSync(backEndDir) && fs.statSync(backEndDir).isDirectory()) {
+      return currentDir;
     }
 
-    if (angularFiles.length > 0) {
-      let appJson = JSON.parse(fs.readFileSync(appJsonPath, { encoding: "utf8" }));
-      appJson.angularFiles = angularFiles;
-      fs.writeFileSync(appJsonPath, JSON.stringify(appJson, null, 2));
-      console.log("Arquivos do Angular adicionados ao app.json:", angularFiles);
-    } else {
-      console.log("Não foi possível encontrar lista de arquivos buildados do Angular");
+    const parentDir = path.dirname(currentDir);
+    if (parentDir === currentDir) {
+      return null;
     }
 
-    // Verifica se angular.blade.php já existe e o remove
-    if (fs.existsSync(angularBladePath)) {
-      fs.unlinkSync(angularBladePath);
-      console.log("Arquivo angular.blade.php existente removido.");
-    }
-
-    // Move o template modificado para carregar a aplicação no Laravel
-    fs.renameSync(indexHtmlPath, angularBladePath);
-    console.log("Arquivo index.html movido para angular.blade.php com sucesso.");
-
-  } catch (error) {
-    console.error("Erro ao processar index.html e app.json:", error);
+    currentDir = parentDir;
   }
-} else {
-  console.log("Arquivo index.html não encontrado em", indexHtmlPath);
+}
+
+const repoRoot = findRepoRoot(__dirname);
+if (!repoRoot) {
+  console.error(
+    "Diretório 'back-end' não encontrado a partir de:",
+    __dirname,
+    "\nEsse script precisa rodar com o repositório completo disponível (front-end e back-end)."
+  );
+  process.exit(1);
+}
+
+// Cria o angular.blade.php e edita o app.json para colocar os arquivos com hash do build angular
+const indexHtmlPath = path.join(repoRoot, 'back-end/public/index.html');
+const appJsonPath = path.join(repoRoot, 'back-end/public/app.json');
+const angularBladePath = path.join(repoRoot, 'back-end/resources/views/angular.blade.php');
+
+
+if (!fs.existsSync(indexHtmlPath)) {
+  console.error("Arquivo index.html não encontrado em", indexHtmlPath);
+  process.exit(1);
+}
+
+if (!fs.existsSync(appJsonPath)) {
+  console.error("Arquivo app.json não encontrado em", appJsonPath);
+  process.exit(1);
+}
+
+try {
+  fs.mkdirSync(path.dirname(angularBladePath), { recursive: true });
+
+  let indexContent = fs.readFileSync(indexHtmlPath, { encoding: "utf8" });
+  let angularFiles = [];
+
+  const regex = /src="([^"]+\.js)"/gi;
+  let match;
+  while ((match = regex.exec(indexContent)) !== null) {
+    angularFiles.push(match[1]);
+  }
+
+  if (angularFiles.length > 0) {
+    let appJson = JSON.parse(fs.readFileSync(appJsonPath, { encoding: "utf8" }));
+    appJson.angularFiles = angularFiles;
+    fs.writeFileSync(appJsonPath, JSON.stringify(appJson, null, 2));
+    console.log("Arquivos do Angular adicionados ao app.json:", angularFiles);
+  } else {
+    console.error("Não foi possível encontrar lista de arquivos buildados do Angular");
+    process.exit(1);
+  }
+
+  if (fs.existsSync(angularBladePath)) {
+    fs.unlinkSync(angularBladePath);
+    console.log("Arquivo angular.blade.php existente removido.");
+  }
+
+  fs.renameSync(indexHtmlPath, angularBladePath);
+  console.log("Arquivo index.html movido para angular.blade.php com sucesso.");
+} catch (error) {
+  console.error("Erro ao processar index.html e app.json:", error);
+  process.exit(1);
 }
 
 // Documentação
@@ -92,6 +123,7 @@ const buildInfo = {
   build_number: Date.now()
 };
 
-const buildInfoPath = path.resolve(__dirname, '../back-end/public/assets/build-info.json');
+const buildInfoPath = path.join(repoRoot, 'back-end/public/assets/build-info.json');
+fs.mkdirSync(path.dirname(buildInfoPath), { recursive: true });
 fs.writeFileSync(buildInfoPath, JSON.stringify(buildInfo, null, 2));
 console.log('Build info gerado:', buildInfo);
