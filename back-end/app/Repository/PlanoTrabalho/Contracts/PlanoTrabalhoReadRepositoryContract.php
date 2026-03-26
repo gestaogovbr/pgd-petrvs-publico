@@ -7,6 +7,7 @@ namespace App\Repository\PlanoTrabalho\Contracts;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoListagemFiltro;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 interface PlanoTrabalhoReadRepositoryContract
 {
@@ -21,4 +22,7 @@ interface PlanoTrabalhoReadRepositoryContract
     public function buscarPlanosListagem(PlanoTrabalhoListagemFiltro $filtro): LengthAwarePaginator;
 
     public function existeConflitoPeriodo(string $usuarioId, string $dataInicio, string $dataFim): bool;
+
+    /** @return \App\Models\PlanoTrabalho|null */
+    public function findByIdComRelacoes(string $id): ?Model;
 }

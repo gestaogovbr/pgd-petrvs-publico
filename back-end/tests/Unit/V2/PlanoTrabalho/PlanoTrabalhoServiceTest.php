@@ -173,3 +173,49 @@ describe('PlanoTrabalhoService::destroy', function () {
         $this->service->destroy('qualquer-id');
     })->throws(ServerException::class, 'Um Plano de Trabalho não pode ser excluído.');
 });
+
+describe('PlanoTrabalhoService::show', function () {
+
+    test('retorna plano quando sem entregas', function () {
+        /** @var PlanoTrabalho $plano */
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+
+        $this->repository
+            ->shouldReceive('findByIdComRelacoes')
+            ->once()
+            ->with('plano-1')
+            ->andReturn($plano);
+
+        $result = $this->service->show('plano-1');
+
+        expect($result)->toBe($plano);
+    });
+
+    test('retorna plano quando tem entregas', function () {
+        /** @var PlanoTrabalho $plano */
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->setRelation('entregas', new Collection([
+            (object) ['id' => 'entrega-1'],
+        ]));
+
+        $this->repository
+            ->shouldReceive('findByIdComRelacoes')
+            ->once()
+            ->with('plano-2')
+            ->andReturn($plano);
+
+        $result = $this->service->show('plano-2');
+
+        expect($result)->toBe($plano);
+    });
+
+    test('lança ServerException quando plano não encontrado', function () {
+        $this->repository
+            ->shouldReceive('findByIdComRelacoes')
+            ->once()
+            ->with('inexistente')
+            ->andReturn(null);
+
+        $this->service->show('inexistente');
+    })->throws(ServerException::class, 'Plano de Trabalho não encontrado.');
+});

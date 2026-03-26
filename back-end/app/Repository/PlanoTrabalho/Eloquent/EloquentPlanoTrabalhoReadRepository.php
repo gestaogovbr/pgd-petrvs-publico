@@ -11,6 +11,7 @@ use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository implements PlanoTrabalhoReadRepositoryContract
@@ -174,5 +175,19 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->where('data_fim', '>=', $dataInicio)
             ->where('status', '!=', 'CANCELADO')
             ->exists();
+    }
+
+    public function findByIdComRelacoes(string $id): ?Model
+    {
+        return $this->query()
+            ->with([
+                'usuario:id,nome,apelido',
+                'unidade:id,sigla,nome',
+                'programa:id,nome',
+                'tipoModalidade:id,nome',
+                'entregas',
+                'consolidacoes.atividades',
+            ])
+            ->find($id);
     }
 }

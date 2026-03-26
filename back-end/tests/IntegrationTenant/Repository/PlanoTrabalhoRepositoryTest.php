@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoEntrega;
 use App\Models\Programa;
 use App\Models\Unidade;
 use App\Models\Usuario;
@@ -372,5 +373,47 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
         expect($result->total())->toBe(5)
             ->and($result->count())->toBe(2)
             ->and($result->lastPage())->toBe(3);
+    });
+});
+
+describe('PlanoTrabalhoRepository::findByIdComRelacoes', function () {
+
+    test('retorna plano com relations carregadas', function () {
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        $result = $this->repository->findByIdComRelacoes($plano->id);
+
+        expect($result)->not->toBeNull()
+            ->and($result->id)->toBe($plano->id)
+            ->and($result->relationLoaded('usuario'))->toBeTrue()
+            ->and($result->relationLoaded('unidade'))->toBeTrue()
+            ->and($result->relationLoaded('programa'))->toBeTrue()
+            ->and($result->relationLoaded('tipoModalidade'))->toBeTrue()
+            ->and($result->relationLoaded('entregas'))->toBeTrue()
+            ->and($result->relationLoaded('consolidacoes'))->toBeTrue();
+    });
+
+    test('retorna entregas quando existem', function () {
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        PlanoTrabalhoEntrega::factory()->create(['plano_trabalho_id' => $plano->id]);
+
+        $result = $this->repository->findByIdComRelacoes($plano->id);
+
+        expect($result->entregas)->toHaveCount(1);
+    });
+
+    test('retorna null quando id nao existe', function () {
+        $result = $this->repository->findByIdComRelacoes(fake()->uuid());
+
+        expect($result)->toBeNull();
     });
 });

@@ -53,6 +53,17 @@ class PlanoTrabalhoService
         return $this->planoTrabalhoRepository->create($dto->toArray());
     }
 
+    public function show(string $id): PlanoTrabalho
+    {
+        $plano = $this->planoTrabalhoRepository->findByIdComRelacoes($id);
+
+        if ($plano === null) {
+            throw new ServerException('PlanoTrabalhoNaoEncontrado', 'Plano de Trabalho não encontrado.');
+        }
+
+        return $plano;
+    }
+
     public function destroy(string $id): bool
     {
         throw new ServerException("CapacidadeDestroy", "Um Plano de Trabalho não pode ser excluído.\n[ver RN_PTR_AB]");

@@ -53,4 +53,10 @@ class PlanoTrabalhoRepository
     {
         return $this->readRepository->existeConflitoPeriodo($usuarioId, $dataInicio, $dataFim);
     }
+
+    public function findByIdComRelacoes(string $id): ?PlanoTrabalho
+    {
+        /** @var PlanoTrabalho|null */
+        return $this->readRepository->findByIdComRelacoes($id);
+    }
 }
