@@ -3,7 +3,7 @@
 namespace App\V2\PlanoTrabalho;
 
 use App\Http\Controllers\Controller;
-use App\V2\PlanoTrabalho\PlanoTrabalhoValidacoes;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoRequestValidator;
 use App\V2\PlanoTrabalho\PlanoTrabalhoService;
 use App\Exceptions\Contracts\IBaseException;
 use Illuminate\Http\JsonResponse;
@@ -25,12 +25,8 @@ class PlanoTrabalhoController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            $data = PlanoTrabalhoValidacoes::index($request);
-            $filters = $data['filters'] ?? [];
-            $filters['page'] = $data['page'] ?? 1;
-            $filters['size'] = $data['size'] ?? 15;
-            $filters['hierarquia'] = $data['hierarquia'] ?? true;
-            $result = $this->service->index($filters);
+            $data = PlanoTrabalhoRequestValidator::index($request);
+            $result = $this->service->index($data);
             return response()->json(['success' => true, 'data' => $result]);
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
@@ -45,7 +41,7 @@ class PlanoTrabalhoController extends Controller
     public function store(Request $request): JsonResponse
     {
         try {
-            $data = PlanoTrabalhoValidacoes::store($request);
+            $data = PlanoTrabalhoRequestValidator::store($request);
             $entity = $this->service->store($data);
             return response()->json(['success' => true, 'rows' => [$entity]], Response::HTTP_CREATED);
         } catch (ValidationException $e) {
@@ -75,7 +71,7 @@ class PlanoTrabalhoController extends Controller
     public function destroy(Request $request): JsonResponse
     {
         try {
-            $data = PlanoTrabalhoValidacoes::destroy($request);
+            $data = PlanoTrabalhoRequestValidator::destroy($request);
             return response()->json(['success' => $this->service->destroy($data['id'])]);
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);

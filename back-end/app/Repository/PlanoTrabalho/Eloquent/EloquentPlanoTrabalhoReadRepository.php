@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository\PlanoTrabalho\Eloquent;
 
-use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoListagemFiltro;
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\Models\PlanoTrabalho;
 use App\Enums\StatusEnum;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
@@ -117,7 +117,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->get();
     }
 
-    public function buscarPlanosListagem(PlanoTrabalhoListagemFiltro $filtro): LengthAwarePaginator
+    public function buscarPlanosListagem(PlanoTrabalhoIndexDTO $filtro): LengthAwarePaginator
     {
         $query = $filtro->arquivados
             ? $this->query()->withTrashed()->whereNotNull('deleted_at')

@@ -1,7 +1,7 @@
 <?php
 
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoStoreDTO;
-use App\V2\PlanoTrabalho\Validacoes\PlanoTrabalhoStoreValidacao;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
 use App\Repository\UnidadeRepository;
 use App\Repository\ProgramaRepository;
 use App\Repository\PlanoTrabalhoRepository;
@@ -33,7 +33,7 @@ beforeEach(function () {
     $this->planoRepo = Mockery::mock(PlanoTrabalhoRepository::class);
     $this->usuarioRepo = Mockery::mock(UsuarioRepository::class);
 
-    $this->validacao = new PlanoTrabalhoStoreValidacao(
+    $this->validacao = new PlanoTrabalhoStoreValidator(
         $this->unidadeRepo,
         $this->programaRepo,
         $this->planoRepo,
@@ -45,7 +45,7 @@ afterEach(function () {
     Mockery::close();
 });
 
-describe('PlanoTrabalhoStoreValidacao', function () {
+describe('PlanoTrabalhoStoreValidator', function () {
 
     test('lança exceção quando unidade está inativa', function () {
         $unidade = Mockery::mock(Unidade::class)->makePartial();
@@ -88,7 +88,7 @@ describe('PlanoTrabalhoStoreValidacao', function () {
     })->throws(ServerException::class, 'Este participante já possui plano de trabalho cadastrado para o período.');
 });
 
-describe('PlanoTrabalhoStoreValidacao - autorização', function () {
+describe('PlanoTrabalhoStoreValidator - autorização', function () {
 
     test('participante só pode cadastrar para si mesmo (RN18.i)', function () {
         /** @var Usuario $criador */

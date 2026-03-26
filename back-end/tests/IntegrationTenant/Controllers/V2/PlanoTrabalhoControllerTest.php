@@ -31,7 +31,7 @@ beforeEach(function () {
             ->name('__tests.v2.plano-trabalho.destroy');
     }
 
-    $perfil = Perfil::factory()->create();
+    $perfil = Perfil::factory()->create(['nivel' => 5]);
     $tipoModalidade = TipoModalidade::factory()->create();
 
     $this->unidade = Unidade::factory()->create();

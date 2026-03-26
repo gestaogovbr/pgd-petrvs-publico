@@ -8,7 +8,7 @@ use App\Models\Usuario;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\PlanoTrabalhoRepository;
-use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoListagemFiltro;
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\Enums\StatusEnum;
 use App\Models\TipoModalidade;
 use App\Models\Perfil;
@@ -272,7 +272,7 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
             'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
-        $filtro = PlanoTrabalhoListagemFiltro::fromArray(['usuario_id' => $this->usuario->id]);
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['usuario_id' => $this->usuario->id]);
         $result = $this->repository->buscarPlanosListagem($filtro);
 
         expect($result->total())->toBe(1)
@@ -296,7 +296,7 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
             'data_fim' => now()->subMonth(),
         ]);
 
-        $filtro = PlanoTrabalhoListagemFiltro::fromArray(['vigentes' => true]);
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['vigentes' => true]);
         $result = $this->repository->buscarPlanosListagem($filtro);
 
         expect($result->total())->toBe(1);
@@ -319,7 +319,7 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
             'data_fim' => '2025-12-31',
         ]);
 
-        $filtro = PlanoTrabalhoListagemFiltro::fromArray([
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-12-31',
         ]);
@@ -347,7 +347,7 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
             'data_fim' => now()->addMonth(),
         ]);
 
-        $filtro = PlanoTrabalhoListagemFiltro::fromArray([
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
             'vigentes' => true,
             'unidade_id' => [$this->unidade->id],
         ]);
@@ -363,7 +363,7 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
             'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
-        $filtro = PlanoTrabalhoListagemFiltro::fromArray([
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
             'usuario_id' => $this->usuario->id,
             'page' => 1,
             'size' => 2,

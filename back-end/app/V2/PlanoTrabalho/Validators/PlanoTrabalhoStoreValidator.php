@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\V2\PlanoTrabalho\Validacoes;
+namespace App\V2\PlanoTrabalho\Validators;
 
 use App\Enums\PerfilEnum;
 use App\Exceptions\ServerException;
@@ -13,7 +13,7 @@ use App\Repository\UsuarioRepository;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoStoreDTO;
 use Carbon\Carbon;
 
-class PlanoTrabalhoStoreValidacao
+class PlanoTrabalhoStoreValidator
 {
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,

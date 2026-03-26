@@ -1,9 +1,9 @@
 <?php
 
 use App\V2\PlanoTrabalho\PlanoTrabalhoService;
-use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoListagemFiltro;
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoStoreDTO;
-use App\V2\PlanoTrabalho\Validacoes\PlanoTrabalhoStoreValidacao;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\CalculadoraPeriodosAvaliativos;
@@ -20,7 +20,7 @@ beforeEach(function () {
     $this->repository = Mockery::mock(PlanoTrabalhoRepository::class);
     $this->unidadeRepository = Mockery::mock(UnidadeRepository::class);
     $this->calculadora = Mockery::mock(CalculadoraPeriodosAvaliativos::class);
-    $this->storeValidacao = Mockery::mock(PlanoTrabalhoStoreValidacao::class);
+    $this->storeValidacao = Mockery::mock(PlanoTrabalhoStoreValidator::class);
 
     $this->service = new PlanoTrabalhoService(
         $this->repository,
@@ -42,10 +42,10 @@ describe('PlanoTrabalhoService::index', function () {
         $this->repository
             ->shouldReceive('buscarPlanosListagem')
             ->once()
-            ->with(Mockery::type(PlanoTrabalhoListagemFiltro::class))
+            ->with(Mockery::type(PlanoTrabalhoIndexDTO::class))
             ->andReturn($paginator);
 
-        $result = $this->service->index(['vigentes' => true]);
+        $result = $this->service->index(['filters' => ['vigentes' => true]]);
 
         expect($result)->toBe($paginator);
     });
@@ -65,15 +65,17 @@ describe('PlanoTrabalhoService::index', function () {
         $this->repository
             ->shouldReceive('buscarPlanosListagem')
             ->once()
-            ->with(Mockery::on(fn (PlanoTrabalhoListagemFiltro $f) =>
+            ->with(Mockery::on(fn (PlanoTrabalhoIndexDTO $f) =>
                 $f->unidadesId === ['unidade-1', 'unidade-2', 'unidade-3']
             ))
             ->andReturn($paginator);
 
         $this->service->index([
-            'vigentes' => true,
-            'unidade_id' => ['unidade-1'],
-            'subordinadas' => true,
+            'filters' => [
+                'vigentes' => true,
+                'unidade_id' => ['unidade-1'],
+                'subordinadas' => true,
+            ],
         ]);
     });
 
@@ -87,7 +89,7 @@ describe('PlanoTrabalhoService::index', function () {
             ->once()
             ->andReturn($paginator);
 
-        $this->service->index(['vigentes' => true]);
+        $this->service->index(['filters' => ['vigentes' => true]]);
     });
 });
 

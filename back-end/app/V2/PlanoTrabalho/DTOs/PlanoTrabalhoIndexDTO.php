@@ -6,7 +6,7 @@ namespace App\V2\PlanoTrabalho\DTOs;
 
 use App\Exceptions\ServerException;
 
-class PlanoTrabalhoListagemFiltro
+class PlanoTrabalhoIndexDTO
 {
     public function __construct(
         public readonly ?string $dataInicio,
@@ -15,6 +15,7 @@ class PlanoTrabalhoListagemFiltro
         public readonly bool $arquivados,
         public readonly ?string $usuarioId,
         public readonly ?array $unidadesId,
+        public readonly bool $subordinadas,
         public readonly ?bool $hierarquia,
         public readonly ?int $numero,
         public readonly ?string $tipoModalidadeId,
@@ -32,6 +33,7 @@ class PlanoTrabalhoListagemFiltro
             arquivados: $this->arquivados,
             usuarioId: $this->usuarioId,
             unidadesId: $unidadesId,
+            subordinadas: $this->subordinadas,
             hierarquia: $this->hierarquia,
             numero: $this->numero,
             tipoModalidadeId: $this->tipoModalidadeId,
@@ -39,6 +41,15 @@ class PlanoTrabalhoListagemFiltro
             page: $this->page,
             perPage: $this->perPage,
         );
+    }
+
+    public static function fromRequest(array $data): self
+    {
+        $filters = $data['filters'] ?? [];
+        $filters['page'] = $data['page'] ?? 1;
+        $filters['size'] = $data['size'] ?? 15;
+
+        return self::fromArray($filters);
     }
 
     public static function fromArray(array $filters): self
@@ -69,6 +80,7 @@ class PlanoTrabalhoListagemFiltro
             arquivados: $arquivados,
             usuarioId: $usuarioId,
             unidadesId: $unidadesId,
+            subordinadas: (bool) ($filters['subordinadas'] ?? false),
             hierarquia: $hierarquia,
             numero: $numero,
             tipoModalidadeId: $tipoModalidadeId,
