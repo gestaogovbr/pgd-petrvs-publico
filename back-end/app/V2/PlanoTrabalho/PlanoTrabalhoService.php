@@ -48,6 +48,7 @@ class PlanoTrabalhoService
     public function store(array $data): PlanoTrabalho
     {
         $dto = PlanoTrabalhoStoreDTO::fromArray($data, Auth::id());
+        $this->storeValidacao->validarAutorizacao($dto, Auth::id());
         $this->storeValidacao->validar($dto);
 
         return $this->planoTrabalhoRepository->create($dto->toArray());

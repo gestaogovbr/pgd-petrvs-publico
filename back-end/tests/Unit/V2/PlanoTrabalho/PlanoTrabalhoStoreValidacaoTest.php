@@ -5,8 +5,11 @@ use App\V2\PlanoTrabalho\Validacoes\PlanoTrabalhoStoreValidacao;
 use App\Repository\UnidadeRepository;
 use App\Repository\ProgramaRepository;
 use App\Repository\PlanoTrabalhoRepository;
+use App\Repository\UsuarioRepository;
 use App\Models\Unidade;
 use App\Models\Programa;
+use App\Models\Usuario;
+use App\Models\Perfil;
 use App\Exceptions\ServerException;
 use Tests\TestCase;
 
@@ -28,11 +31,13 @@ beforeEach(function () {
     $this->unidadeRepo = Mockery::mock(UnidadeRepository::class);
     $this->programaRepo = Mockery::mock(ProgramaRepository::class);
     $this->planoRepo = Mockery::mock(PlanoTrabalhoRepository::class);
+    $this->usuarioRepo = Mockery::mock(UsuarioRepository::class);
 
     $this->validacao = new PlanoTrabalhoStoreValidacao(
         $this->unidadeRepo,
         $this->programaRepo,
         $this->planoRepo,
+        $this->usuarioRepo,
     );
 });
 
@@ -81,4 +86,125 @@ describe('PlanoTrabalhoStoreValidacao', function () {
 
         $this->validacao->validar(buildStoreDTO());
     })->throws(ServerException::class, 'Este participante já possui plano de trabalho cadastrado para o período.');
+});
+
+describe('PlanoTrabalhoStoreValidacao - autorização', function () {
+
+    test('participante só pode cadastrar para si mesmo (RN18.i)', function () {
+        /** @var Usuario $criador */
+        $criador = Mockery::mock(Usuario::class)->makePartial();
+        $criador->id = 'criador-1';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = 5;
+        $criador->setRelation('perfil', $perfil);
+
+        $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
+
+        $this->validacao->validarAutorizacao(buildStoreDTO(['usuario_id' => 'outro-user']), 'criador-1');
+    })->throws(ServerException::class, 'Participante só pode cadastrar plano para si mesmo.');
+
+    test('participante pode cadastrar para si mesmo sem erro', function () {
+        /** @var Usuario $criador */
+        $criador = Mockery::mock(Usuario::class)->makePartial();
+        $criador->id = 'criador-1';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = 5;
+        $criador->setRelation('perfil', $perfil);
+
+        $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
+
+        $this->validacao->validarAutorizacao(buildStoreDTO(['usuario_id' => 'criador-1']), 'criador-1');
+
+        expect(true)->toBeTrue();
+    });
+
+    test('colaborador não pode cadastrar PT', function () {
+        /** @var Usuario $criador */
+        $criador = Mockery::mock(Usuario::class)->makePartial();
+        $criador->id = 'criador-1';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = 6;
+        $criador->setRelation('perfil', $perfil);
+
+        $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
+
+        $this->validacao->validarAutorizacao(buildStoreDTO(), 'criador-1');
+    })->throws(ServerException::class, 'Usuário com este perfil não pode cadastrar plano de trabalho.');
+
+    test('consulta não pode cadastrar PT', function () {
+        /** @var Usuario $criador */
+        $criador = Mockery::mock(Usuario::class)->makePartial();
+        $criador->id = 'criador-1';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = 7;
+        $criador->setRelation('perfil', $perfil);
+
+        $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
+
+        $this->validacao->validarAutorizacao(buildStoreDTO(), 'criador-1');
+    })->throws(ServerException::class, 'Usuário com este perfil não pode cadastrar plano de trabalho.');
+
+    test('agente público do PT não pode ser colaborador (RN18.iv)', function () {
+        /** @var Usuario $criador */
+        $criador = Mockery::mock(Usuario::class)->makePartial();
+        $criador->id = 'criador-1';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = 3;
+        $criador->setRelation('perfil', $perfil);
+
+        /** @var Usuario $agente */
+        $agente = Mockery::mock(Usuario::class)->makePartial();
+        $agente->id = 'user-1';
+        $perfilColaborador = Mockery::mock(Perfil::class)->makePartial();
+        $perfilColaborador->nivel = 6;
+        $agente->setRelation('perfil', $perfilColaborador);
+
+        $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
+        $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
+
+        $this->validacao->validarAutorizacao(buildStoreDTO(), 'criador-1');
+    })->throws(ServerException::class, 'Este usuário não pode ser agente público de um plano de trabalho.');
+
+    test('agente público do PT não pode ser consulta', function () {
+        /** @var Usuario $criador */
+        $criador = Mockery::mock(Usuario::class)->makePartial();
+        $criador->id = 'criador-1';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = 3;
+        $criador->setRelation('perfil', $perfil);
+
+        /** @var Usuario $agente */
+        $agente = Mockery::mock(Usuario::class)->makePartial();
+        $agente->id = 'user-1';
+        $perfilConsulta = Mockery::mock(Perfil::class)->makePartial();
+        $perfilConsulta->nivel = 7;
+        $agente->setRelation('perfil', $perfilConsulta);
+
+        $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
+        $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
+
+        $this->validacao->validarAutorizacao(buildStoreDTO(), 'criador-1');
+    })->throws(ServerException::class, 'Este usuário não pode ser agente público de um plano de trabalho.');
+
+    test('demais perfis só podem cadastrar para agentes lotados/vinculados nas suas unidades (RN18.ii,iii)', function () {
+        /** @var Usuario $criador */
+        $criador = Mockery::mock(Usuario::class)->makePartial();
+        $criador->id = 'criador-1';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = 3;
+        $criador->setRelation('perfil', $perfil);
+
+        /** @var Usuario $agente */
+        $agente = Mockery::mock(Usuario::class)->makePartial();
+        $agente->id = 'user-1';
+        $perfilAgente = Mockery::mock(Perfil::class)->makePartial();
+        $perfilAgente->nivel = 5;
+        $agente->setRelation('perfil', $perfilAgente);
+
+        $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
+        $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
+        $this->unidadeRepo->shouldReceive('hasUsuarioLotacao')->with('unidade-1', 'user-1', true)->andReturn(false);
+
+        $this->validacao->validarAutorizacao(buildStoreDTO(), 'criador-1');
+    })->throws(ServerException::class, 'O agente público não está lotado ou vinculado nas unidades do usuário logado.');
 });

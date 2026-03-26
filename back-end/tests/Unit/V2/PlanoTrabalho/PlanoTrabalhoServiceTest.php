@@ -99,6 +99,10 @@ describe('PlanoTrabalhoService::store', function () {
         $plano = Mockery::mock(PlanoTrabalho::class);
 
         $this->storeValidacao
+            ->shouldReceive('validarAutorizacao')
+            ->once();
+
+        $this->storeValidacao
             ->shouldReceive('validar')
             ->once()
             ->with(Mockery::type(PlanoTrabalhoStoreDTO::class));
@@ -125,6 +129,10 @@ describe('PlanoTrabalhoService::store', function () {
         Auth::shouldReceive('id')->andReturn('criador-1');
 
         $this->storeValidacao
+            ->shouldReceive('validarAutorizacao')
+            ->once();
+
+        $this->storeValidacao
             ->shouldReceive('validar')
             ->once()
             ->andThrow(new ServerException('ValidatePlanoTrabalho', 'A unidade está inativa.'));
@@ -146,6 +154,7 @@ describe('PlanoTrabalhoService::store', function () {
 
         $plano = Mockery::mock(PlanoTrabalho::class);
 
+        $this->storeValidacao->shouldReceive('validarAutorizacao')->once();
         $this->storeValidacao->shouldReceive('validar')->once();
 
         $this->repository
