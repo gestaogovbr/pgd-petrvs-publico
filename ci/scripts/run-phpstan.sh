@@ -31,7 +31,6 @@ if [ ! -x vendor/bin/phpstan ]; then
   exit 1
 fi
 
-# Garante que os artefatos existam
 : > "$REPORT_XML"
 : > "$REPORT_TXT"
 : > "$EXIT_FILE"
@@ -42,6 +41,7 @@ vendor/bin/phpstan analyse app \
   --configuration=phpstan.neon.dist \
   --memory-limit=1G \
   --error-format=checkstyle \
+  --no-progress \
   > "$REPORT_XML" 2> "$REPORT_TXT"
 PHPSTAN_EXIT_CODE=$?
 set -e
@@ -49,7 +49,6 @@ set -e
 echo "$PHPSTAN_EXIT_CODE" > "$EXIT_FILE"
 
 echo "==> Exit code do PHPStan: $PHPSTAN_EXIT_CODE"
-
 echo "==> Arquivos gerados:"
 ls -lah "$REPORT_XML" "$REPORT_TXT" "$EXIT_FILE" || true
 

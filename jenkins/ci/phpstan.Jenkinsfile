@@ -75,17 +75,37 @@ pipeline {
     }
 
     post {
-        always {
-            archiveArtifacts artifacts: 'back-end/phpstan-report.xml, back-end/phpstan-report.txt, .phpstan-exit-code', allowEmptyArchive: true
+    always {
+        script {
+            if (env.CI_MARIADB_CONTAINER?.trim()) {
+                sh '''
+                    docker logs "${CI_MARIADB_CONTAINER}" >/tmp/${CI_MARIADB_CONTAINER}.log 2>&1 || true
+                    docker rm -f "${CI_MARIADB_CONTAINER}" >/dev/null 2>&1 || true
+                '''
+            }
         }
 
-        success {
-            echo 'PHPStan executado com sucesso.'
-        }
+        sh '''
+            echo "==> Verificando artefatos antes do archive"
+            ls -lah back-end/phpstan-report.xml back-end/phpstan-report.txt .phpstan-exit-code || true
+        '''
 
-        failure {
-            echo 'Falha no PHPStan. O merge deve ser bloqueado pelo status check do GitHub.'
-        }
+        archiveArtifacts(
+            artifacts: 'back-end/phpstan-report.xml, back-end/phpstan-report.txt, .phpstan-exit-code',
+            fingerprint: true,
+            allowEmptyArchive: false,
+            onlyIfSuccessful: false
+        )
+    }
+
+    failure {
+        echo 'Pipeline de CI falhou.'
+    }
+
+    success {
+        echo 'Pipeline de CI concluída com sucesso.'
+    }
+}
 
         cleanup {
             deleteDir()
