@@ -1,13 +1,14 @@
 <?php
 
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoEntrega;
 use App\Models\Programa;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\PlanoTrabalhoRepository;
-use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoListagemFiltro;
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\Enums\StatusEnum;
 use App\Models\TipoModalidade;
 use App\Models\Perfil;
@@ -271,7 +272,7 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
             'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
-        $filtro = PlanoTrabalhoListagemFiltro::fromArray(['usuario_id' => $this->usuario->id]);
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['usuario_id' => $this->usuario->id]);
         $result = $this->repository->buscarPlanosListagem($filtro);
 
         expect($result->total())->toBe(1)
@@ -295,7 +296,7 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
             'data_fim' => now()->subMonth(),
         ]);
 
-        $filtro = PlanoTrabalhoListagemFiltro::fromArray(['vigentes' => true]);
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['vigentes' => true]);
         $result = $this->repository->buscarPlanosListagem($filtro);
 
         expect($result->total())->toBe(1);
@@ -318,7 +319,7 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
             'data_fim' => '2025-12-31',
         ]);
 
-        $filtro = PlanoTrabalhoListagemFiltro::fromArray([
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-12-31',
         ]);
@@ -346,7 +347,7 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
             'data_fim' => now()->addMonth(),
         ]);
 
-        $filtro = PlanoTrabalhoListagemFiltro::fromArray([
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
             'vigentes' => true,
             'unidade_id' => [$this->unidade->id],
         ]);
@@ -362,7 +363,7 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
             'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
-        $filtro = PlanoTrabalhoListagemFiltro::fromArray([
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
             'usuario_id' => $this->usuario->id,
             'page' => 1,
             'size' => 2,
@@ -372,5 +373,47 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
         expect($result->total())->toBe(5)
             ->and($result->count())->toBe(2)
             ->and($result->lastPage())->toBe(3);
+    });
+});
+
+describe('PlanoTrabalhoRepository::findByIdComRelacoes', function () {
+
+    test('retorna plano com relations carregadas', function () {
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        $result = $this->repository->findByIdComRelacoes($plano->id);
+
+        expect($result)->not->toBeNull()
+            ->and($result->id)->toBe($plano->id)
+            ->and($result->relationLoaded('usuario'))->toBeTrue()
+            ->and($result->relationLoaded('unidade'))->toBeTrue()
+            ->and($result->relationLoaded('programa'))->toBeTrue()
+            ->and($result->relationLoaded('tipoModalidade'))->toBeTrue()
+            ->and($result->relationLoaded('entregas'))->toBeTrue()
+            ->and($result->relationLoaded('consolidacoes'))->toBeTrue();
+    });
+
+    test('retorna entregas quando existem', function () {
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        PlanoTrabalhoEntrega::factory()->create(['plano_trabalho_id' => $plano->id]);
+
+        $result = $this->repository->findByIdComRelacoes($plano->id);
+
+        expect($result->entregas)->toHaveCount(1);
+    });
+
+    test('retorna null quando id nao existe', function () {
+        $result = $this->repository->findByIdComRelacoes(fake()->uuid());
+
+        expect($result)->toBeNull();
     });
 });

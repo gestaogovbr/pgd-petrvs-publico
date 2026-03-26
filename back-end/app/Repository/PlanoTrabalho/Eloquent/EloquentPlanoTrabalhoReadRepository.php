@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Repository\PlanoTrabalho\Eloquent;
 
-use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoListagemFiltro;
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\Models\PlanoTrabalho;
 use App\Enums\StatusEnum;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository implements PlanoTrabalhoReadRepositoryContract
@@ -116,14 +117,21 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->get();
     }
 
-    public function buscarPlanosListagem(PlanoTrabalhoListagemFiltro $filtro): LengthAwarePaginator
+    public function buscarPlanosListagem(PlanoTrabalhoIndexDTO $filtro): LengthAwarePaginator
     {
         $query = $filtro->arquivados
             ? $this->query()->withTrashed()->whereNotNull('deleted_at')
             : $this->query();
 
-        $query->select('id', 'numero', 'usuario_id', 'tipo_modalidade_id', 'data_inicio', 'data_fim', 'status')
-              ->with(['usuario:id,nome', 'tipoModalidade:id,nome']);
+        $query->select('id', 'numero', 'usuario_id', 'unidade_id', 'tipo_modalidade_id', 'data_inicio', 'data_fim', 'status')
+              ->with(['usuario:id,nome', 'tipoModalidade:id,nome', 'unidade:id,nome']);
+
+        if($filtro->hierarquia){
+            $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';
+
+            $query->addSelect(DB::raw("$queryHierarquia AS hierarquia"))
+                 ->orderBy(DB::raw($queryHierarquia));
+        }
 
         if ($filtro->unidadesId !== null) {
             $query->whereIn('unidade_id', $filtro->unidadesId);
@@ -136,6 +144,18 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         if ($filtro->dataInicio !== null && $filtro->dataFim !== null) {
             $query->where('data_inicio', '<=', $filtro->dataFim)
                   ->where('data_fim', '>=', $filtro->dataInicio);
+        }
+
+        if ($filtro->numero !== null) {
+            $query->where('numero', $filtro->numero);
+        }
+
+        if ($filtro->tipoModalidadeId !== null) {
+            $query->where('tipo_modalidade_id', $filtro->tipoModalidadeId);
+        }
+
+        if ($filtro->status !== null) {
+            $query->where('status', $filtro->status);
         }
 
         if ($filtro->vigentes) {
@@ -155,5 +175,19 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->where('data_fim', '>=', $dataInicio)
             ->where('status', '!=', 'CANCELADO')
             ->exists();
+    }
+
+    public function findByIdComRelacoes(string $id): ?Model
+    {
+        return $this->query()
+            ->with([
+                'usuario:id,nome,apelido',
+                'unidade:id,sigla,nome',
+                'programa:id,nome',
+                'tipoModalidade:id,nome',
+                'entregas',
+                'consolidacoes.atividades',
+            ])
+            ->find($id);
     }
 }

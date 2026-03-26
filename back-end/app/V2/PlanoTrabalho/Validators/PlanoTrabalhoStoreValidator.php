@@ -2,21 +2,24 @@
 
 declare(strict_types=1);
 
-namespace App\V2\PlanoTrabalho\Validacoes;
+namespace App\V2\PlanoTrabalho\Validators;
 
+use App\Enums\PerfilEnum;
 use App\Exceptions\ServerException;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\ProgramaRepository;
 use App\Repository\UnidadeRepository;
+use App\Repository\UsuarioRepository;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoStoreDTO;
 use Carbon\Carbon;
 
-class PlanoTrabalhoStoreValidacao
+class PlanoTrabalhoStoreValidator
 {
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
         private readonly ProgramaRepository $programaRepository,
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
+        private readonly UsuarioRepository $usuarioRepository,
     ) {}
 
     public function validar(PlanoTrabalhoStoreDTO $dto): void
@@ -24,6 +27,39 @@ class PlanoTrabalhoStoreValidacao
         $this->validarUnidadeAtiva($dto->unidadeId);
         $this->validarPeriodoDentroDoRegramento($dto);
         $this->validarConflitoPeriodo($dto);
+    }
+
+    public function validarAutorizacao(PlanoTrabalhoStoreDTO $dto): void
+    {
+        $criador = $this->usuarioRepository->findById($dto->criacaoUsuarioId);
+        $nivelCriador = $criador->perfil->nivel;
+
+        if ($nivelCriador >= PerfilEnum::COLABORADOR->value) {
+            throw new ServerException("ValidatePlanoTrabalho", "Usuário com este perfil não pode cadastrar plano de trabalho.");
+        }
+
+        if ($nivelCriador === PerfilEnum::PARTICIPANTE->value && !$dto->isPlanoCriadoParaSi()) {
+            throw new ServerException("ValidatePlanoTrabalho", "Participante só pode cadastrar plano para si mesmo.");
+        }
+
+        $agente = $dto->isPlanoCriadoParaSi()
+            ? $criador
+            : $this->usuarioRepository->findById($dto->usuarioId);
+
+        if ($agente->perfil->nivel >= PerfilEnum::COLABORADOR->value) {
+            throw new ServerException("ValidatePlanoTrabalho", "Este usuário não pode ser agente público de um plano de trabalho.");
+        }
+
+        if (!$dto->isPlanoCriadoParaSi()) {
+            $this->validarAgenteLotadoNasUnidadesDoCriador($dto);
+        }
+    }
+
+    private function validarAgenteLotadoNasUnidadesDoCriador(PlanoTrabalhoStoreDTO $dto): void
+    {
+        if (!$this->unidadeRepository->hasUsuarioLotacao($dto->unidadeId, $dto->usuarioId, true)) {
+            throw new ServerException("ValidatePlanoTrabalho", "O agente público não está lotado ou vinculado nas unidades do usuário logado.");
+        }
     }
 
     private function validarUnidadeAtiva(string $unidadeId): void

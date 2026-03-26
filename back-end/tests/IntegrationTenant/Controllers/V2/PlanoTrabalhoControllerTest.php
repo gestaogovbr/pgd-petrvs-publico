@@ -22,12 +22,16 @@ beforeEach(function () {
         Route::middleware(['api'])->post('/api/__tests/v2/plano-trabalho', [PlanoTrabalhoController::class, 'store'])
             ->name('__tests.v2.plano-trabalho.store');
     }
+    if (!Route::has('__tests.v2.plano-trabalho.show')) {
+        Route::middleware(['api'])->get('/api/__tests/v2/plano-trabalho/{id}', [PlanoTrabalhoController::class, 'show'])
+            ->name('__tests.v2.plano-trabalho.show');
+    }
     if (!Route::has('__tests.v2.plano-trabalho.destroy')) {
         Route::middleware(['api'])->post('/api/__tests/v2/plano-trabalho/destroy', [PlanoTrabalhoController::class, 'destroy'])
             ->name('__tests.v2.plano-trabalho.destroy');
     }
 
-    $perfil = Perfil::factory()->create();
+    $perfil = Perfil::factory()->create(['nivel' => 5]);
     $tipoModalidade = TipoModalidade::factory()->create();
 
     $this->unidade = Unidade::factory()->create();
@@ -362,5 +366,51 @@ describe('POST /api/v2/plano-trabalho/destroy', function () {
             ->assertJson(fn ($json) =>
                 $json->where('error', fn ($error) => str_contains($error, 'não pode ser excluído'))
             );
+    });
+});
+
+// ── GET show ────────────────────────────────────────────────────────
+
+describe('GET /api/v2/plano-trabalho/:id (happy path)', function () {
+
+    test('retorna plano existente com relations', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        $response = $this->getJson("/api/__tests/v2/plano-trabalho/{$plano->id}");
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.id', $plano->id);
+    });
+
+    test('retorna relations carregadas', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        $data = $this->getJson("/api/__tests/v2/plano-trabalho/{$plano->id}")
+            ->json('data');
+
+        expect($data)->toHaveKeys(['usuario', 'unidade', 'programa', 'tipo_modalidade', 'entregas', 'consolidacoes']);
+    });
+});
+
+describe('GET /api/v2/plano-trabalho/:id (validação)', function () {
+
+    test('retorna 404 quando plano não existe', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->getJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid())
+            ->assertStatus(404);
     });
 });

@@ -3,7 +3,7 @@
 namespace Tests\Unit\Services\V2;
 
 use App\V2\Usuario\UsuarioService;
-use App\Repository\Usuario\Contracts\UsuarioReadRepositoryContract;
+use App\Repository\UsuarioRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Mockery;
 
@@ -16,7 +16,7 @@ test('buscarPorNomeOuMatricula delega ao repository e retorna collection', funct
         (object) ['id' => fake()->uuid(), 'nome' => 'João Silva', 'matricula' => '12345'],
     ]);
 
-    $repo = Mockery::mock(UsuarioReadRepositoryContract::class);
+    $repo = Mockery::mock(UsuarioRepository::class);
     $repo->shouldReceive('findByNomeMatricula')
         ->once()
         ->with('João')
@@ -29,7 +29,7 @@ test('buscarPorNomeOuMatricula delega ao repository e retorna collection', funct
 })->group('v2-usuario');
 
 test('buscarPorNomeOuMatricula retorna collection vazia quando nenhum resultado', function () {
-    $repo = Mockery::mock(UsuarioReadRepositoryContract::class);
+    $repo = Mockery::mock(UsuarioRepository::class);
     $repo->shouldReceive('findByNomeMatricula')
         ->once()
         ->with('inexistente')
@@ -43,7 +43,7 @@ test('buscarPorNomeOuMatricula retorna collection vazia quando nenhum resultado'
 })->group('v2-usuario');
 
 test('buscarPorNomeOuMatricula propaga exceção do repository', function () {
-    $repo = Mockery::mock(UsuarioReadRepositoryContract::class);
+    $repo = Mockery::mock(UsuarioRepository::class);
     $repo->shouldReceive('findByNomeMatricula')
         ->once()
         ->andThrow(new \RuntimeException('Erro de conexão'));

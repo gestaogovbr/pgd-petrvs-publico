@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Models\PlanoTrabalho;
-use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoListagemFiltro;
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -38,7 +38,7 @@ class PlanoTrabalhoRepository
         return $this->readRepository->buscarPlanosPendentes($usuarioId, $planoTrabalhoId, $dataLimite);
     }
 
-    public function buscarPlanosListagem(PlanoTrabalhoListagemFiltro $filtro): LengthAwarePaginator
+    public function buscarPlanosListagem(PlanoTrabalhoIndexDTO $filtro): LengthAwarePaginator
     {
         return $this->readRepository->buscarPlanosListagem($filtro);
     }
@@ -52,5 +52,11 @@ class PlanoTrabalhoRepository
     public function existeConflitoPeriodo(string $usuarioId, string $dataInicio, string $dataFim): bool
     {
         return $this->readRepository->existeConflitoPeriodo($usuarioId, $dataInicio, $dataFim);
+    }
+
+    public function findByIdComRelacoes(string $id): ?PlanoTrabalho
+    {
+        /** @var PlanoTrabalho|null */
+        return $this->readRepository->findByIdComRelacoes($id);
     }
 }

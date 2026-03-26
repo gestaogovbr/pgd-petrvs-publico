@@ -1,3 +1,7 @@
+---
+alwaysApply: false
+description: Quando a conversa envolver o ticket #1683 ou plano de trabalho V2
+---
 # Planejamento #1683
 
 ## Princípios gerais:
