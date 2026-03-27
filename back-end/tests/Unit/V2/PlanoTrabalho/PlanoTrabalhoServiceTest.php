@@ -3,7 +3,9 @@
 use App\V2\PlanoTrabalho\PlanoTrabalhoService;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoStoreDTO;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoIndexValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\CalculadoraPeriodosAvaliativos;
@@ -20,13 +22,17 @@ beforeEach(function () {
     $this->repository = Mockery::mock(PlanoTrabalhoRepository::class);
     $this->unidadeRepository = Mockery::mock(UnidadeRepository::class);
     $this->calculadora = Mockery::mock(CalculadoraPeriodosAvaliativos::class);
+    $this->indexValidacao = Mockery::mock(PlanoTrabalhoIndexValidator::class);
     $this->storeValidacao = Mockery::mock(PlanoTrabalhoStoreValidator::class);
+    $this->destroyValidator = Mockery::mock(PlanoTrabalhoDestroyValidator::class);
 
     $this->service = new PlanoTrabalhoService(
         $this->repository,
         $this->unidadeRepository,
         $this->calculadora,
         $this->storeValidacao,
+        $this->destroyValidator,
+        $this->indexValidacao,
     );
 });
 
@@ -37,6 +43,8 @@ afterEach(function () {
 describe('PlanoTrabalhoService::index', function () {
 
     test('delega ao repository com o filtro construído', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+        $this->indexValidacao->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class));
         $paginator = Mockery::mock(LengthAwarePaginator::class);
 
         $this->repository
@@ -51,6 +59,8 @@ describe('PlanoTrabalhoService::index', function () {
     });
 
     test('expande unidades com subordinadas quando flag subordinadas=true', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+        $this->indexValidacao->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class));
         $paginator = Mockery::mock(LengthAwarePaginator::class);
 
         $this->unidadeRepository
@@ -80,6 +90,8 @@ describe('PlanoTrabalhoService::index', function () {
     });
 
     test('não expande subordinadas quando flag subordinadas está ausente', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+        $this->indexValidacao->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class));
         $paginator = Mockery::mock(LengthAwarePaginator::class);
 
         $this->unidadeRepository->shouldNotReceive('getSubordinadasRecursivas');
@@ -180,9 +192,37 @@ describe('PlanoTrabalhoService::store', function () {
 
 describe('PlanoTrabalhoService::destroy', function () {
 
-    test('sempre lança ServerException', function () {
-        $this->service->destroy('qualquer-id');
-    })->throws(ServerException::class, 'Um Plano de Trabalho não pode ser excluído.');
+    test('valida e deleta via repository', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+
+        $this->destroyValidator
+            ->shouldReceive('validar')
+            ->once()
+            ->with('plano-1', 'user-1');
+
+        $this->repository
+            ->shouldReceive('delete')
+            ->once()
+            ->with('plano-1')
+            ->andReturn(true);
+
+        $result = $this->service->destroy('plano-1');
+
+        expect($result)->toBeTrue();
+    });
+
+    test('não deleta quando validação lança exceção', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+
+        $this->destroyValidator
+            ->shouldReceive('validar')
+            ->once()
+            ->andThrow(new ServerException('ValidatePlanoTrabalho', 'Plano de Trabalho não pode ser excluído pois não é mais um rascunho.'));
+
+        $this->repository->shouldNotReceive('delete');
+
+        $this->service->destroy('plano-1');
+    })->throws(ServerException::class, 'Plano de Trabalho não pode ser excluído pois não é mais um rascunho.');
 });
 
 describe('PlanoTrabalhoService::show', function () {

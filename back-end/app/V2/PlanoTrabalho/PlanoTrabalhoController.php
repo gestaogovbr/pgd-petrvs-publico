@@ -68,13 +68,11 @@ class PlanoTrabalhoController extends Controller
     }
 
 
-    public function destroy(Request $request): JsonResponse
+    public function destroy(string $id): JsonResponse
     {
         try {
-            $data = PlanoTrabalhoRequestValidator::destroy($request);
-            return response()->json(['success' => $this->service->destroy($data['id'])]);
-        } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            $this->service->destroy($id);
+            return response()->json(['success' => true]);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (Throwable $e) {

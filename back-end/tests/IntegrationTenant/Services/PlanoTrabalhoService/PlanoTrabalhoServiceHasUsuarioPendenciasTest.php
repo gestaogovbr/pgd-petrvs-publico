@@ -167,4 +167,4 @@ describe('PlanoTrabalhoService::hasUsuarioPendencias', function () {
 
         expect($resultado)->toBeFalse();
     });
-})->skip('dependente do ticket #1757');
+});

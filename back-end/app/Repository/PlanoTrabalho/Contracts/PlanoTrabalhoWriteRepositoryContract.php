@@ -11,4 +11,6 @@ interface PlanoTrabalhoWriteRepositoryContract
 {
     /** @return PlanoTrabalho */
     public function create(array $attributes): Model;
+
+    public function delete(string|int $id): bool;
 }

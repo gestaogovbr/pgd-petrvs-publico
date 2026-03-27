@@ -8,7 +8,9 @@ use App\Repository\UnidadeRepository;
 use App\V2\CalculadoraPeriodosAvaliativos;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoStoreDTO;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoIndexValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
 use App\Exceptions\ServerException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -19,22 +21,30 @@ class PlanoTrabalhoService
     protected UnidadeRepository $unidadeRepository;
     protected CalculadoraPeriodosAvaliativos $calculadora;
     protected PlanoTrabalhoStoreValidator $storeValidacao;
+    protected PlanoTrabalhoDestroyValidator $destroyValidator;
+    protected PlanoTrabalhoIndexValidator $indexValidator;
 
     public function __construct(
         PlanoTrabalhoRepository $planoTrabalhoRepository,
         UnidadeRepository $unidadeRepository,
         CalculadoraPeriodosAvaliativos $calculadora,
-        PlanoTrabalhoStoreValidator $storeValidacao
+        PlanoTrabalhoStoreValidator $storeValidacao,
+        PlanoTrabalhoDestroyValidator $destroyValidator,
+        PlanoTrabalhoIndexValidator $indexValidator,
+
     ) {
         $this->planoTrabalhoRepository = $planoTrabalhoRepository;
         $this->unidadeRepository = $unidadeRepository;
         $this->calculadora = $calculadora;
         $this->storeValidacao = $storeValidacao;
+        $this->destroyValidator = $destroyValidator;
+        $this->indexValidator = $indexValidator;
     }
 
     public function index(array $data): LengthAwarePaginator
     {
-        $filtro = PlanoTrabalhoIndexDTO::fromRequest($data);
+        $filtro = PlanoTrabalhoIndexDTO::fromRequest($data, Auth::id());
+        $this->indexValidator->validar($filtro);
 
         if ($filtro->subordinadas && $filtro->unidadesId) {
             $idsBase = $filtro->unidadesId;
@@ -67,6 +77,8 @@ class PlanoTrabalhoService
 
     public function destroy(string $id): bool
     {
-        throw new ServerException("CapacidadeDestroy", "Um Plano de Trabalho não pode ser excluído.\n[ver RN_PTR_AB]");
+        $this->destroyValidator->validar($id, Auth::id());
+
+        return $this->planoTrabalhoRepository->delete($id);
     }
 }
