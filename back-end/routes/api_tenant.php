@@ -605,9 +605,11 @@ Route::middleware(['auth:sanctum'])->prefix('SystemLogs')->group(function () {
 /* ── V2 ── */
 use App\V2\PlanoTrabalho\PlanoTrabalhoController as PlanoTrabalhoV2;
 use App\V2\PlanoTrabalho\Entrega\EntregaController as EntregaV2;
+use App\V2\TipoModalidade\TipoModalidadeController as TipoModalidadeV2;
 use App\V2\Usuario\UsuarioController as UsuarioV2;
 
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
+    Route::get('tipo-modalidade', [TipoModalidadeV2::class, 'index']);
     Route::get('plano-trabalho', [PlanoTrabalhoV2::class, 'index']);
     Route::get('plano-trabalho/statuses', [PlanoTrabalhoV2::class, 'statuses']);
     Route::post('plano-trabalho', [PlanoTrabalhoV2::class, 'store']);

@@ -22,4 +22,9 @@ class EloquentTipoModalidadeReadRepository extends AbstractEloquentReadRepositor
     {
         return $this->model->whereNull('deleted_at')->value('id');
     }
+
+    public function getAll(): \Illuminate\Support\Collection
+    {
+        return $this->query()->whereNull('deleted_at')->get();
+    }
 }
