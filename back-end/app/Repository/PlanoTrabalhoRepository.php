@@ -41,6 +41,11 @@ class PlanoTrabalhoRepository
         return $this->readRepository->buscarPlanosPendentes($usuarioId, $planoTrabalhoId, $dataLimite);
     }
 
+    public function findAllParaEnvio(int $chunkSize, callable $onChunk): void
+    {
+        $this->readRepository->findAllParaEnvio($chunkSize, $onChunk);
+    }
+
     public function chunkEnviosPendentes(int $size, callable $callback): void
     {
         $this->readRepository->chunkEnviosPendentes($size, $callback);

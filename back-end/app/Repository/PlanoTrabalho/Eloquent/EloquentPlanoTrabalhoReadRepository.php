@@ -9,6 +9,7 @@ use App\Enums\StatusEnum;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\DB;
 
 class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository implements PlanoTrabalhoReadRepositoryContract
@@ -119,6 +120,18 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->where('id', '!=', $planoTrabalhoId)
             ->where('data_fim', '<', $dataLimite)
             ->get();
+    }
+
+    public function findAllParaEnvio(int $chunkSize, callable $onChunk): void
+    {
+        DB::table('planos_trabalhos')
+            ->whereNull('planos_trabalhos.deleted_at')
+            ->whereIn('planos_trabalhos.status', StatusEnum::permitemEnvio())
+            ->select('planos_trabalhos.id')
+            ->orderBy('planos_trabalhos.id')
+            ->chunkById($chunkSize, function (SupportCollection $planosTrabalho) use ($onChunk): void {
+                $onChunk($planosTrabalho);
+            });
     }
 
     public function chunkEnviosPendentes(int $size, callable $callback): void

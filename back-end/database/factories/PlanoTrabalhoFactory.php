@@ -15,9 +15,9 @@ class PlanoTrabalhoFactory extends Factory
 
     public function definition(): array
     {
-        $usuario = Usuario::factory()->create();
+        /*$usuario = Usuario::factory()->create();
         $unidade = Unidade::factory()->create();
-        $tipoModalidade = TipoModalidade::factory()->create();
+        $tipoModalidade = TipoModalidade::factory()->create();*/
 
         return [
             'id' => $this->faker->uuid(),
@@ -30,10 +30,10 @@ class PlanoTrabalhoFactory extends Factory
             'forma_contagem_carga_horaria' => 'DIA',
             'status' => 'INCLUIDO',
             'programa_id' => Programa::factory(),
-            'usuario_id' => $usuario->id,
-            'unidade_id' => $unidade->id,
-            'tipo_modalidade_id' => $tipoModalidade->id,
-            'criacao_usuario_id' => $usuario->id,
+            'usuario_id' => Usuario::factory(),
+            'unidade_id' => Unidade::factory(),
+            'tipo_modalidade_id' => TipoModalidade::factory(),
+            'criacao_usuario_id' => Usuario::factory(),
             'criterios_avaliacao' => [],
         ];
     }

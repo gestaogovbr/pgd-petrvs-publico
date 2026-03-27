@@ -232,4 +232,30 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         $this->assertTrue($result->pluck('usuario_id')->contains($titularSubordinada->id));
         $this->assertFalse($result->pluck('usuario_id')->contains($participanteSubordinada->id));
     }
+
+    public function testFindAllParaEnvio(): void
+    {
+        $incluido = PlanoTrabalho::factory()->create([
+            'status' => StatusEnum::INCLUIDO->value,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+        $ativo = PlanoTrabalho::factory()->ativo()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+        $deleted = PlanoTrabalho::factory()->ativo()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+        $deleted->delete();
+
+        $ids = [];
+        $this->repository->findAllParaEnvio(100, function ($chunk) use (&$ids): void {
+            foreach ($chunk as $row) {
+                $ids[] = $row->id;
+            }
+        });
+
+        $this->assertContains($ativo->id, $ids);
+        $this->assertNotContains($incluido->id, $ids);
+        $this->assertNotContains($deleted->id, $ids);
+    }
 }

@@ -25,15 +25,7 @@ class UsuarioFactory extends Factory
             'data_nascimento' => $this->faker->optional()->date(),
             'sexo' => $this->faker->randomElement(['MASCULINO', 'FEMININO']),
             'situacao_funcional' => 'APOSENTADO',
+            'tipo_modalidade_id' => TipoModalidade::factory(),
         ];
     }
-
-    public function configure()
-    {
-        return $this->afterMaking(function (Usuario $usuario) {
-            $tipoModalidade = TipoModalidade::factory()->create();
-            $usuario->tipo_modalidade_id = $tipoModalidade->id;
-        });
-    }
-
 }

@@ -19,5 +19,7 @@ interface PlanoTrabalhoReadRepositoryContract
 
     public function buscarPlanosPendentes(string $usuarioId, string $planoTrabalhoId, string $dataLimite): Collection;
 
+    public function findAllParaEnvio(int $chunkSize, callable $onChunk): void;
+
     public function chunkEnviosPendentes(int $size, callable $callback): void;
 }
