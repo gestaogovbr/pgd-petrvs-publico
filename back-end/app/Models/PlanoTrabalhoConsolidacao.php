@@ -56,7 +56,6 @@ class PlanoTrabalhoConsolidacao extends ModelBase
       if ($consolidacao->isDirty('status') && $consolidacao->status !== StatusEnum::CONCLUIDO->value && $planoTrabalho->status === StatusEnum::CONCLUIDO->value) {
         $planoTrabalho->status = 'ATIVO';
         $planoTrabalho->save();
-        \Log::info('PT salvo');
       }
     });
 
