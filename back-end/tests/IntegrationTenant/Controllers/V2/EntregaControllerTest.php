@@ -3,193 +3,192 @@
 namespace Tests\IntegrationTenant\Controllers\V2;
 
 use App\V2\PlanoTrabalho\Entrega\EntregaController;
-use App\V2\PlanoTrabalho\Entrega\PlanoTrabalhoEntregaService;
-use App\Models\PlanoTrabalhoEntrega;
+use App\Models\Entrega;
+use App\Models\Perfil;
+use App\Models\PlanoEntrega;
+use App\Models\PlanoEntregaEntrega;
+use App\Models\PlanoTrabalho;
+use App\Models\Programa;
+use App\Models\TipoModalidade;
+use App\Models\Unidade;
 use App\Models\Usuario;
-use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Route;
-use Mockery;
 
 beforeEach(function () {
     if (!Route::has('__tests.v2.plano-trabalho.entrega.store')) {
-        Route::middleware(['api'])->post('/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/entrega/store', [EntregaController::class, 'store'])
-            ->name('__tests.v2.plano-trabalho.entrega.store');
+        Route::middleware(['api'])->post(
+            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/entrega',
+            [EntregaController::class, 'store']
+        )->name('__tests.v2.plano-trabalho.entrega.store');
     }
-    if (!Route::has('__tests.v2.plano-trabalho.entrega.update')) {
-        Route::middleware(['api'])->post('/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}/update', [EntregaController::class, 'update'])
-            ->name('__tests.v2.plano-trabalho.entrega.update');
-    }
-    if (!Route::has('__tests.v2.plano-trabalho.entrega.destroy')) {
-        Route::middleware(['api'])->post('/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}/destroy', [EntregaController::class, 'destroy'])
-            ->name('__tests.v2.plano-trabalho.entrega.destroy');
-    }
+
+    $perfil = Perfil::factory()->create(['nivel' => 3]);
+    $tipoModalidade = TipoModalidade::factory()->create();
+    $this->unidade = Unidade::factory()->create();
+    $this->usuario = Usuario::factory()->create([
+        'perfil_id' => $perfil->id,
+        'tipo_modalidade_id' => $tipoModalidade->id,
+    ]);
+    $this->programa = Programa::factory()->create([
+        'data_inicio' => '2024-01-01',
+        'data_fim' => '2025-12-31',
+    ]);
+
+    $this->plano = PlanoTrabalho::factory()->create([
+        'usuario_id' => $this->usuario->id,
+        'unidade_id' => $this->unidade->id,
+        'tipo_modalidade_id' => $tipoModalidade->id,
+        'criacao_usuario_id' => $this->usuario->id,
+        'status' => 'INCLUIDO',
+    ]);
+
+    $entregaCatalogo = Entrega::factory()->create(['unidade_id' => $this->unidade->id]);
+    $planoEntrega = PlanoEntrega::factory()->create([
+        'unidade_id' => $this->unidade->id,
+        'programa_id' => $this->programa->id,
+        'criacao_usuario_id' => $this->usuario->id,
+    ]);
+    $this->planoEntregaEntrega = PlanoEntregaEntrega::factory()->create([
+        'plano_entrega_id' => $planoEntrega->id,
+        'entrega_id' => $entregaCatalogo->id,
+        'unidade_id' => $this->unidade->id,
+    ]);
 });
 
-afterEach(function () {
-    Mockery::close();
+// ── store: validação de request ─────────────────────────────────────
+
+describe('POST /api/v2/plano-trabalho/:id/entrega (validação)', function () {
+
+    test('retorna 400 quando payload vazio', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [])
+            ->assertStatus(400);
+    });
+
+    test('retorna 400 quando plano_entrega_entrega_id não é uuid', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
+            'plano_entrega_entrega_id' => 'nao-uuid',
+        ])->assertStatus(400);
+    });
+
+    test('retorna 400 quando descricao excede 1000 caracteres', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
+            'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
+            'descricao' => str_repeat('a', 1001),
+        ])->assertStatus(400);
+    });
+
+    test('retorna 400 quando forca_trabalho é negativa', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
+            'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
+            'forca_trabalho' => -1,
+        ])->assertStatus(400);
+    });
 });
 
-// ── store: validação ────────────────────────────────────────────────
+// ── store: guard de status ──────────────────────────────────────────
 
-test('v2 entrega store retorna 400 quando payload vazio', function () {
-    $usuario = Usuario::factory()->create();
-    $this->actingAs($usuario, 'web');
+describe('POST /api/v2/plano-trabalho/:id/entrega (guard)', function () {
 
-    $planoTrabalhoId = fake()->uuid();
-    $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$planoTrabalhoId}/entrega/store", []);
+    test('retorna 400 quando plano de trabalho não encontrado', function () {
+        $this->actingAs($this->usuario, 'web');
 
-    $response->assertStatus(400);
-})->group('v2-plano-trabalho-entrega');
-
-test('v2 entrega store retorna 400 quando entregas é array vazio', function () {
-    $usuario = Usuario::factory()->create();
-    $this->actingAs($usuario, 'web');
-
-    $planoTrabalhoId = fake()->uuid();
-    $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$planoTrabalhoId}/entrega/store", [
-        'entregas' => [],
-    ]);
-
-    $response->assertStatus(400);
-})->group('v2-plano-trabalho-entrega');
-
-test('v2 entrega store retorna 400 quando forca_trabalho fora do range', function () {
-    $usuario = Usuario::factory()->create();
-    $this->actingAs($usuario, 'web');
-
-    $planoTrabalhoId = fake()->uuid();
-    $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$planoTrabalhoId}/entrega/store", [
-        'entregas' => [
-            [
-                'descricao' => 'Entrega teste',
-                'forca_trabalho' => 150,
-            ],
-        ],
-    ]);
-
-    $response->assertStatus(400);
-})->group('v2-plano-trabalho-entrega');
-
-test('v2 entrega store retorna 400 quando descricao excede 1000 caracteres', function () {
-    $usuario = Usuario::factory()->create();
-    $this->actingAs($usuario, 'web');
-
-    $planoTrabalhoId = fake()->uuid();
-    $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$planoTrabalhoId}/entrega/store", [
-        'entregas' => [
-            [
-                'descricao' => str_repeat('a', 1001),
-                'forca_trabalho' => 50,
-            ],
-        ],
-    ]);
-
-    $response->assertStatus(400);
-})->group('v2-plano-trabalho-entrega');
-
-// ── store: sucesso (service mockado) ────────────────────────────────
-
-test('v2 entrega store retorna 201 quando payload válido', function () {
-    $usuario = Usuario::factory()->create();
-    $this->actingAs($usuario, 'web');
-
-    $planoTrabalhoId = fake()->uuid();
-    $entregaId = fake()->uuid();
-
-    $entregaMock = new PlanoTrabalhoEntrega([
-        'id' => $entregaId,
-        'descricao' => 'Entrega teste',
-        'plano_trabalho_id' => $planoTrabalhoId,
-    ]);
-    $entregaMock->id = $entregaId;
-
-    $this->mock(PlanoTrabalhoEntregaService::class, function ($mock) use ($entregaMock) {
-        $mock->shouldReceive('store')
-            ->once()
-            ->andReturn($entregaMock);
+        $this->postJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid() . '/entrega', [
+            'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
+        ])->assertStatus(400);
     });
 
-    $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$planoTrabalhoId}/entrega/store", [
-        'entregas' => [
-            [
-                'descricao' => 'Entrega teste',
-                'forca_trabalho' => 50,
-            ],
-        ],
-    ]);
+    test('retorna 400 quando plano de trabalho está ATIVO', function () {
+        $this->actingAs($this->usuario, 'web');
 
-    $response->assertStatus(201);
-    $response->assertJsonPath('success', true);
-})->group('v2-plano-trabalho-entrega');
+        $this->plano->status = 'ATIVO';
+        $this->plano->save();
 
-// ── update: validação ───────────────────────────────────────────────
+        $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
+            'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
+        ])->assertStatus(400);
+    });
+});
 
-test('v2 entrega update retorna 400 quando forca_trabalho fora do range', function () {
-    $usuario = Usuario::factory()->create();
-    $this->actingAs($usuario, 'web');
+// ── store: happy path ───────────────────────────────────────────────
 
-    $planoTrabalhoId = fake()->uuid();
-    $entregaId = fake()->uuid();
-    $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$planoTrabalhoId}/entrega/{$entregaId}/update", [
-        'forca_trabalho' => 150,
-    ]);
+describe('POST /api/v2/plano-trabalho/:id/entrega (happy path)', function () {
 
-    $response->assertStatus(400);
-})->group('v2-plano-trabalho-entrega');
+    test('persiste entrega com status INCLUIDO e retorna 201', function () {
+        $this->actingAs($this->usuario, 'web');
 
-test('v2 entrega update retorna 400 quando descricao excede 1000 caracteres', function () {
-    $usuario = Usuario::factory()->create();
-    $this->actingAs($usuario, 'web');
+        $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
+            'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
+            'forca_trabalho' => 50,
+            'descricao' => 'Construção da rampa',
+        ]);
 
-    $planoTrabalhoId = fake()->uuid();
-    $entregaId = fake()->uuid();
-    $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$planoTrabalhoId}/entrega/{$entregaId}/update", [
-        'descricao' => str_repeat('a', 1001),
-    ]);
+        $response->assertStatus(201)
+            ->assertJsonPath('success', true);
 
-    $response->assertStatus(400);
-})->group('v2-plano-trabalho-entrega');
-
-// ── destroy: sucesso (service mockado) ──────────────────────────────
-
-test('v2 entrega destroy retorna 200 quando service executa com sucesso', function () {
-    $usuario = Usuario::factory()->create();
-    $this->actingAs($usuario, 'web');
-
-    $planoTrabalhoId = fake()->uuid();
-    $entregaId = fake()->uuid();
-
-    $this->mock(PlanoTrabalhoEntregaService::class, function ($mock) use ($entregaId) {
-        $mock->shouldReceive('destroy')
-            ->with($entregaId)
-            ->once()
-            ->andReturn(true);
+        $this->assertDatabaseHas('planos_trabalhos_entregas', [
+            'plano_trabalho_id' => $this->plano->id,
+            'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
+            'descricao' => 'Construção da rampa',
+        ]);
     });
 
-    $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$planoTrabalhoId}/entrega/{$entregaId}/destroy", []);
+    test('persiste entrega com status AGUARDANDO_ASSINATURA', function () {
+        $this->actingAs($this->usuario, 'web');
 
-    $response->assertStatus(200);
-    $response->assertJsonPath('success', true);
-})->group('v2-plano-trabalho-entrega');
+        $this->plano->status = 'AGUARDANDO_ASSINATURA';
+        $this->plano->save();
 
-// ── destroy: erro de negócio ────────────────────────────────────────
+        $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
+            'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
+            'forca_trabalho' => 30,
+            'descricao' => 'Instalação do piso tátil',
+        ]);
 
-test('v2 entrega destroy retorna 400 quando service lança ServerException', function () {
-    $usuario = Usuario::factory()->create();
-    $this->actingAs($usuario, 'web');
+        $response->assertStatus(201);
 
-    $planoTrabalhoId = fake()->uuid();
-    $entregaId = fake()->uuid();
-
-    $this->mock(PlanoTrabalhoEntregaService::class, function ($mock) {
-        $mock->shouldReceive('destroy')
-            ->andThrow(new ServerException('CapacidadeStore', 'Exclusão não realizada'));
+        $this->assertDatabaseHas('planos_trabalhos_entregas', [
+            'plano_trabalho_id' => $this->plano->id,
+            'descricao' => 'Instalação do piso tátil',
+        ]);
     });
 
-    $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$planoTrabalhoId}/entrega/{$entregaId}/destroy", []);
+    test('retorno inclui plano_entrega_entrega com unidade', function () {
+        $this->actingAs($this->usuario, 'web');
 
-    $response->assertStatus(400);
-    $response->assertJson(fn ($json) =>
-        $json->where('error', fn ($error) => str_contains($error, 'Exclusão não realizada'))
-    );
-})->group('v2-plano-trabalho-entrega');
+        $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
+            'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
+            'forca_trabalho' => 25,
+            'descricao' => 'Teste retorno',
+        ]);
+
+        $data = $response->json('data');
+
+        expect($data['plano_entrega_entrega'])->toHaveKeys(['id', 'descricao', 'unidade']);
+        expect($data['plano_entrega_entrega']['unidade'])->toHaveKeys(['id', 'sigla', 'nome']);
+    });
+
+    test('aceita forca_trabalho acima de 100', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
+            'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
+            'forca_trabalho' => 150,
+            'descricao' => 'Entrega com CHD alto',
+        ]);
+
+        $response->assertStatus(201);
+
+        $this->assertDatabaseHas('planos_trabalhos_entregas', [
+            'plano_trabalho_id' => $this->plano->id,
+            'forca_trabalho' => 150,
+        ]);
+    });
+});

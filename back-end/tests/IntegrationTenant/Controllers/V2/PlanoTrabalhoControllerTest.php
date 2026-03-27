@@ -19,6 +19,10 @@ beforeEach(function () {
         Route::middleware(['api'])->get('/api/__tests/v2/plano-trabalho', [PlanoTrabalhoController::class, 'index'])
             ->name('__tests.v2.plano-trabalho.index');
     }
+    if (!Route::has('__tests.v2.plano-trabalho.statuses')) {
+        Route::middleware(['api'])->get('/api/__tests/v2/plano-trabalho/statuses', [PlanoTrabalhoController::class, 'statuses'])
+            ->name('__tests.v2.plano-trabalho.statuses');
+    }
     if (!Route::has('__tests.v2.plano-trabalho.store')) {
         Route::middleware(['api'])->post('/api/__tests/v2/plano-trabalho', [PlanoTrabalhoController::class, 'store'])
             ->name('__tests.v2.plano-trabalho.store');
@@ -440,5 +444,22 @@ describe('GET /api/v2/plano-trabalho/:id (validação)', function () {
 
         $this->getJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid())
             ->assertStatus(404);
+    });
+});
+
+// ── GET statuses ──────────────────────────────────────────────────────────
+
+describe('GET /api/v2/plano-trabalho/statuses', function () {
+
+    test('retorna 200 com todos os statuses', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $response = $this->getJson('/api/__tests/v2/plano-trabalho/statuses');
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $data = $response->json('data');
+        expect($data)->toBe(PlanoTrabalho::STATUSES);
     });
 });

@@ -1,40 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\V2\PlanoTrabalho\Entrega;
 
-use App\Services\PlanoTrabalhoEntregaService as EntregaServiceV1;
+use App\Models\PlanoTrabalhoEntrega;
+use App\Repository\PlanoTrabalhoEntregaRepository;
+use App\V2\PlanoTrabalho\Entrega\DTOs\PlanoTrabalhoEntregaStoreDTO;
+use App\V2\PlanoTrabalho\Entrega\Validators\PlanoTrabalhoEntregaStoreValidator;
 
 class PlanoTrabalhoEntregaService
 {
-    protected EntregaServiceV1 $v1;
+    public function __construct(
+        private readonly PlanoTrabalhoEntregaRepository $repository,
+        private readonly PlanoTrabalhoEntregaStoreValidator $storeValidator,
+    ) {}
 
-    public function __construct(EntregaServiceV1 $v1)
+    public function store(string $planoTrabalhoId, array $data): PlanoTrabalhoEntrega
     {
-        $this->v1 = $v1;
-    }
+        $this->storeValidator->validar($planoTrabalhoId);
 
-    public function store(array $entity, $unidade)
-    {
-        return $this->v1->store($entity, $unidade);
-    }
+        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray($data, $planoTrabalhoId);
 
-    public function update(array $entity, $unidade)
-    {
-        return $this->v1->store($entity, $unidade);
-    }
-
-    public function getById(array $data)
-    {
-        return $this->v1->getById($data);
-    }
-
-    public function query(array $data): array
-    {
-        return $this->v1->query($data);
-    }
-
-    public function destroy(string $id): bool
-    {
-        return $this->v1->destroy($id);
+        return $this->repository->create($dto->toArray());
     }
 }
