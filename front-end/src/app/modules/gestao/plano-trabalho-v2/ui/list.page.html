@@ -95,9 +95,9 @@
         <tr>
           <td>{{ p.numero }}</td>
           <td>{{ p.usuario?.nome || '-' }}</td>
-          <td>{{ p.unidade?.nome || '-' }}</td>
+          <td>{{ p.unidade?.sigla || '-' }}</td>
           <td>{{ p.tipo_modalidade?.nome || '-' }}</td>
-          <td>{{ p.status }}</td>
+          <td><span class="br-badge" [ngClass]="statusClass(p.status)">{{ statusLabel(p.status) }}</span></td>
           <td>{{ p.data_inicio | date:'dd/MM/yyyy' }} - {{ p.data_fim | date:'dd/MM/yyyy' }}</td>
           <td>
             <div class="btn-group">

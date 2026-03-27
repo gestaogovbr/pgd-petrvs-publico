@@ -165,7 +165,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     if (raw.periodo_fim?.length) result['data_fim'] = raw.periodo_fim;
     if (raw.vigentes) result['vigentes'] = true;
     if (raw.incluir_arquivados) result['arquivados'] = true;
-    if (raw.meus_planos) result['meus_planos'] = true;
+    if (raw.meus_planos) result['usuario_id'] = this.auth.usuario?.id;
     if (raw.incluir_subordinadas) result['incluir_subordinadas'] = true;
 
     if (raw.numero.trim().length) result['numero'] = raw.numero.trim();
@@ -189,6 +189,26 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
       this.facade.filters.set(this.buildFilters());
       this.facade.load();
     }
+  }
+
+  statusClass(value: string | undefined): string {
+    if (value === 'ATIVO') return 'success';
+    if (value === 'INCLUIDO') return 'secondary';
+    if (value === 'AGUARDANDO_ASSINATURA') return 'warning';
+    if (value === 'SUSPENSO') return 'info';
+    if (value === 'CANCELADO') return 'danger';
+    if (value == 'CONCLUIDO') return 'primary';
+    return 'secondary';
+  }
+
+  statusLabel(value: string | undefined): string {
+    if (value === 'ATIVO') return 'Ativo';
+    if (value === 'INCLUIDO') return 'Incluído';
+    if (value === 'AGUARDANDO_ASSINATURA') return 'Aguardando assinatura';
+    if (value === 'SUSPENSO') return 'Suspenso';
+    if (value === 'CANCELADO') return 'Cancelado';
+    if (value == 'CONCLUIDO') return 'Concluído'
+    return value || '-';
   }
 
   novoPlano() {

@@ -124,7 +124,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             : $this->query();
 
         $query->select('id', 'numero', 'usuario_id', 'unidade_id', 'tipo_modalidade_id', 'data_inicio', 'data_fim', 'status')
-              ->with(['usuario:id,nome', 'tipoModalidade:id,nome', 'unidade:id,nome']);
+              ->with(['usuario:id,nome', 'tipoModalidade:id,nome', 'unidade:id,nome,sigla']);
 
         if($filtro->hierarquia){
             $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';
@@ -161,7 +161,8 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         if ($filtro->vigentes) {
             $now = now();
             $query->where('data_inicio', '<=', $now)
-                  ->where('data_fim', '>=', $now);
+                  ->where('data_fim', '>=', $now)
+                  ->where('status', '==', 'ATIVO');
         }
 
         return $query->paginate(perPage: $filtro->perPage, page: $filtro->page);

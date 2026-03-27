@@ -1,48 +1,42 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { debounceTime, distinctUntilChanged, finalize, map, of, Subscription, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, of, Subscription, switchMap } from 'rxjs';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { ProgramaService } from 'src/app/services/programa.service';
-import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
-import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
-import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PlanoTrabalhoApiClient } from '../infra/api-client';
 import { TipoModalidade } from 'src/app/models/tipo-modalidade.model';
-import { GlobalsService } from 'src/app/services/globals.service';
+import { UsuarioService, UsuarioSearchItem } from 'src/app/v2/services/usuario.service';
+import { ProgramaApiService } from 'src/app/v2/services/programa-api.service';
+import { TipoModalidadeService } from 'src/app/v2/services/tipo-modalidade.service';
+import { BrButton, BrCard, BrInput, BrSelect } from '@govbr-ds/webcomponents-angular/standalone';
+import { AuthService } from 'src/app/services/auth.service';
 
-type UsuarioSearchItem = {
-  id: string;
-  nome: string;
-  matricula: string | null;
-};
 
 @Component({
   selector: 'app-plano-trabalho-v2-new-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, BrButton, BrCard, BrInput, BrSelect,],
   templateUrl: './new.page.html'
 })
 export class PlanoTrabalhoV2NewPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly go = inject(NavigateService);
   private readonly api = inject(PlanoTrabalhoApiClient);
-  private readonly http = inject(HttpClient);
-  private readonly gb = inject(GlobalsService);
-  readonly usuarioDao = inject(UsuarioDaoService);
-  private readonly programaDao = inject(ProgramaDaoService);
-  private readonly tipoModalidadeDao = inject(TipoModalidadeDaoService);
+  private readonly usuarioService = inject(UsuarioService);
+  private readonly programaApi = inject(ProgramaApiService);
+  private readonly tipoModalidadeApi = inject(TipoModalidadeService);
   private readonly programaService = inject(ProgramaService);
+  private readonly auth = inject(AuthService);
 
   saving = false;
   carregandoRegramento = false;
 
-  regramentoNome = '';
-  private regramentoId = '';
+  programaNome = '';
+  private programaId = '';
 
   readonly agentePublicoQuery = this.fb.nonNullable.control('');
   sugestoesUsuarios: UsuarioSearchItem[] = [];
@@ -68,6 +62,17 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   });
 
   ngOnInit(): void {
+    const usuarioLogadoId = this.auth.usuario?.id;
+    const usuarioLogadoNome = this.auth.usuario?.nome;
+
+    console.log(this.auth.usuario);
+    
+
+    if (usuarioLogadoId && usuarioLogadoNome) {
+      this.form.controls.usuario_id.setValue(usuarioLogadoId);
+      this.agentePublicoQuery.setValue(usuarioLogadoNome, { emitEvent: false });
+      void this.carregarUsuarioDetalhado(usuarioLogadoId);
+    }
     this.subscriptions.push(
       this.agentePublicoQuery.valueChanges
         .pipe(
@@ -97,8 +102,8 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   limparUsuarioSelecionado() {
     this.selectedUsuario = undefined;
     this.unidades = [];
-    this.regramentoId = '';
-    this.regramentoNome = '';
+    this.programaId = '';
+    this.programaNome = '';
     this.form.controls.usuario_id.setValue('');
     this.form.controls.unidade_id.setValue('');
     this.form.controls.tipo_modalidade_id.setValue('');
@@ -114,12 +119,12 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   salvar() {
     if (this.saving) return;
     if (this.form.invalid) return;
-    if (!this.regramentoId) return;
+    if (!this.programaId) return;
 
     const payload = {
       usuario_id: this.form.controls.usuario_id.value,
       unidade_id: this.form.controls.unidade_id.value,
-      programa_id: this.regramentoId,
+      programa_id: this.programaId,
       data_inicio: this.form.controls.data_inicio.value,
       data_fim: this.form.controls.data_fim.value,
       tipo_modalidade_id: this.form.controls.tipo_modalidade_id.value
@@ -136,18 +141,12 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     if (this.carregandoRegramento) return;
     this.carregandoRegramento = true;
     try {
-      const programas = await this.programaDao
-        .query({
-          where: [['todosUnidadeExecutora', '==', unidadeId]],
-          join: this.joinPrograma,
-          orderBy: [['unidade.path', 'desc']]
-        })
-        .asPromise();
+      const programas = await this.programaApi.buscarPorUnidadeExecutora(unidadeId, this.joinPrograma);
 
       const programaVigente = this.programaService.selecionaProgramaVigente(programas);
       const programa = programaVigente ?? programas[0];
-      this.regramentoId = programa?.id ?? '';
-      this.regramentoNome = programa?.nome ?? '';
+      this.programaId = programa?.id ?? '';
+      this.programaNome = programa?.nome ?? '';
     } finally {
       this.carregandoRegramento = false;
     }
@@ -156,22 +155,11 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   private buscarUsuarios(term: string) {
     const value = term.trim();
     if (value.length < 3) return of([] as UsuarioSearchItem[]);
-    return this.http
-      .get<any>(`${this.gb.servidorURL}/api/v2/usuario`, { params: { nome_matricula: value } })
-      .pipe(
-        map((response: any) => {
-          const items = Array.isArray(response?.data) ? response.data : [];
-          return items.map((u: any) => ({
-            id: String(u?.id ?? ''),
-            nome: String(u?.nome ?? ''),
-            matricula: u?.matricula ? String(u.matricula) : null
-          }));
-        })
-      );
+    return this.usuarioService.searchByNomeMatricula(value);
   }
 
   private async carregarUsuarioDetalhado(usuarioId: string) {
-    const usuario = await this.usuarioDao.getById(usuarioId, ['lotacao', 'unidades', 'areas_trabalho.atribuicoes']);
+    const usuario = await this.usuarioService.getById(usuarioId, ['lotacao', 'unidades', 'areas_trabalho.atribuicoes']);
     if (!usuario) return;
     this.selectedUsuario = usuario;
     this.unidades = usuario.unidades ?? [];
@@ -185,8 +173,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       }
     }
 
-    const where: [string, string, any][] = usuario.pedagio ? [['exige_pedagio', '==', 0]] : [];
-    this.modalidades = await this.tipoModalidadeDao.query({ where, join: ['modalidadeSiape'] }).asPromise();
+    this.modalidades = await this.tipoModalidadeApi.listar(!!usuario.pedagio);
 
     const tipoModalidadeId = usuario.tipo_modalidade_id;
     if (typeof tipoModalidadeId === 'string' && tipoModalidadeId.length) {
@@ -203,6 +190,6 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   }
 
   get podeSalvar(): boolean {
-    return !this.form.invalid && !!this.regramentoId && !this.saving;
+    return !this.form.invalid && !!this.programaId && !this.saving;
   }
 }

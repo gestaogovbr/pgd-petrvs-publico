@@ -60,3 +60,4 @@ back-end/storage/logs/*.log
 kubectl
 .trae/diagnostics/
 .vscode/diagnostics/
+back-end/public/app.json
