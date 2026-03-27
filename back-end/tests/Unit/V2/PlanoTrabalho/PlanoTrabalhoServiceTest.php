@@ -3,6 +3,7 @@
 use App\V2\PlanoTrabalho\PlanoTrabalhoService;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoStoreDTO;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoIndexValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
 use App\Repository\PlanoTrabalhoRepository;
@@ -21,6 +22,7 @@ beforeEach(function () {
     $this->repository = Mockery::mock(PlanoTrabalhoRepository::class);
     $this->unidadeRepository = Mockery::mock(UnidadeRepository::class);
     $this->calculadora = Mockery::mock(CalculadoraPeriodosAvaliativos::class);
+    $this->indexValidacao = Mockery::mock(PlanoTrabalhoIndexValidator::class);
     $this->storeValidacao = Mockery::mock(PlanoTrabalhoStoreValidator::class);
     $this->destroyValidator = Mockery::mock(PlanoTrabalhoDestroyValidator::class);
 
@@ -30,6 +32,7 @@ beforeEach(function () {
         $this->calculadora,
         $this->storeValidacao,
         $this->destroyValidator,
+        $this->indexValidacao,
     );
 });
 
@@ -40,6 +43,8 @@ afterEach(function () {
 describe('PlanoTrabalhoService::index', function () {
 
     test('delega ao repository com o filtro construído', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+        $this->indexValidacao->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class));
         $paginator = Mockery::mock(LengthAwarePaginator::class);
 
         $this->repository
@@ -54,6 +59,8 @@ describe('PlanoTrabalhoService::index', function () {
     });
 
     test('expande unidades com subordinadas quando flag subordinadas=true', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+        $this->indexValidacao->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class));
         $paginator = Mockery::mock(LengthAwarePaginator::class);
 
         $this->unidadeRepository
@@ -83,6 +90,8 @@ describe('PlanoTrabalhoService::index', function () {
     });
 
     test('não expande subordinadas quando flag subordinadas está ausente', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+        $this->indexValidacao->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class));
         $paginator = Mockery::mock(LengthAwarePaginator::class);
 
         $this->unidadeRepository->shouldNotReceive('getSubordinadasRecursivas');

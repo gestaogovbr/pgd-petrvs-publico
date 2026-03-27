@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PerfilEnum;
 use App\V2\PlanoTrabalho\PlanoTrabalhoController;
 use App\V2\PlanoTrabalho\PlanoTrabalhoService;
 use App\Models\PlanoTrabalho;
@@ -31,7 +32,7 @@ beforeEach(function () {
             ->name('__tests.v2.plano-trabalho.destroy');
     }
 
-    $perfil = Perfil::factory()->create(['nivel' => 5]);
+    $perfil = Perfil::factory()->create(['nivel' => PerfilEnum::PARTICIPANTE]);
     $tipoModalidade = TipoModalidade::factory()->create();
 
     $this->unidade = Unidade::factory()->create();

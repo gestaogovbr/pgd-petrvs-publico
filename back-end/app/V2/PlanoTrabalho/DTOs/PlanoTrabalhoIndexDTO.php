@@ -22,6 +22,7 @@ class PlanoTrabalhoIndexDTO
         public readonly ?string $status,
         public readonly int $page,
         public readonly int $perPage,
+        public readonly ?string $usuarioLogadoId = null,
     ) {}
 
     public function withUnidadesId(array $unidadesId): self
@@ -40,14 +41,17 @@ class PlanoTrabalhoIndexDTO
             status: $this->status,
             page: $this->page,
             perPage: $this->perPage,
+            usuarioLogadoId: $this->usuarioLogadoId,
         );
     }
 
-    public static function fromRequest(array $data): self
+    public static function fromRequest(array $data, ?string $usuarioLogadoId = null): self
     {
         $filters = $data['filters'] ?? [];
         $filters['page'] = $data['page'] ?? 1;
         $filters['size'] = $data['size'] ?? 15;
+        $filters['usuarioLogadoId'] = $usuarioLogadoId;
+        $filters['hierarquia'] = $data['hierarquia'] ?? true;
 
         return self::fromArray($filters);
     }
@@ -64,6 +68,7 @@ class PlanoTrabalhoIndexDTO
         $numero = isset($filters['numero']) ? (int) $filters['numero'] : null;
         $tipoModalidadeId = $filters['tipo_modalidade_id'] ?? null;
         $status = $filters['status'] ?? null;
+        $usuarioLogadoId = $filters['usuarioLogadoId'] ?? null;
 
         if (($dataInicio === null) !== ($dataFim === null)) {
             throw new ServerException("ValidateFiltros", "As datas de início e fim devem ser preenchidas juntas.");
@@ -87,6 +92,7 @@ class PlanoTrabalhoIndexDTO
             status: $status,
             page: (int) ($filters['page'] ?? 1),
             perPage: (int) ($filters['size'] ?? 15),
+            usuarioLogadoId: $usuarioLogadoId,
         );
     }
 }
