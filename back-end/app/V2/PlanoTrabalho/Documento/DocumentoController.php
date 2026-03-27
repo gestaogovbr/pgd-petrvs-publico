@@ -1,0 +1,33 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\V2\PlanoTrabalho\Documento;
+
+use App\Http\Controllers\Controller;
+use App\Exceptions\Contracts\IBaseException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
+use Throwable;
+
+class DocumentoController extends Controller
+{
+    public function __construct(
+        private readonly PlanoTrabalhoDocumentoService $service,
+    ) {}
+
+    public function store(string $planoTrabalhoId): JsonResponse
+    {
+        try {
+            $documento = $this->service->store($planoTrabalhoId);
+
+            return response()->json(['success' => true, 'data' => $documento], Response::HTTP_CREATED);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+}

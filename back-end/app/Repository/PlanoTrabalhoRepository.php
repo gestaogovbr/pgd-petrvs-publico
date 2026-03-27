@@ -71,9 +71,20 @@ class PlanoTrabalhoRepository
         return $this->writeRepository->delete($id);
     }
 
+    public function update(string $id, array $attributes): ?PlanoTrabalho
+    {
+        /** @var PlanoTrabalho|null */
+        return $this->writeRepository->update($id, $attributes);
+    }
+
     public function possuiAssinatura(string $planoId): bool
     {
         return $this->readRepository->possuiAssinatura($planoId);
+    }
+
+    public function possuiEntregas(string $planoId): bool
+    {
+        return $this->readRepository->possuiEntregas($planoId);
     }
 
     public function getStatuses(): array

@@ -31,5 +31,7 @@ interface PlanoTrabalhoReadRepositoryContract
 
     public function possuiAssinatura(string $planoId): bool;
 
+    public function possuiEntregas(string $planoId): bool;
+
     public function getStatuses(): array;
 }

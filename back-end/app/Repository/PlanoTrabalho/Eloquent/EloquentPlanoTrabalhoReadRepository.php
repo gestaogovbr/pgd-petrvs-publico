@@ -200,6 +200,14 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->exists();
     }
 
+    public function possuiEntregas(string $planoId): bool
+    {
+        return $this->query()
+            ->where('id', $planoId)
+            ->whereHas('entregas')
+            ->exists();
+    }
+
     public function getStatuses(): array
     {
         return PlanoTrabalho::STATUSES;
