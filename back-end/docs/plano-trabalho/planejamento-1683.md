@@ -186,6 +186,12 @@ Cada transição é um endpoint próprio, evitando um service monolítico. Todos
 
 ### Entregas do Plano de Trabalho
 
+<details>
+<summary>Happy path - bloco 2</summary>
+
+![diagrama de comunicação front-end/back-end bloco 2](fluxo-1638-bloco-2.png)
+</details>
+
 #### `POST /api/v2/plano-trabalho/:id/entrega` `4.5`
 
 - Quem: quem está cadastrando o plano `4.5,4.7`
