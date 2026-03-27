@@ -62,19 +62,19 @@ class PlanoTrabalhoIndexDTO
         $dataFim = $filters['data_fim'] ?? null;
         $vigentes = (bool) ($filters['vigentes'] ?? false);
         $arquivados = (bool) ($filters['arquivados'] ?? false);
-        $usuarioId = $filters['usuario_id'] ?? null;
         $unidadesId = $filters['unidade_id'] ?? null;
         $hierarquia = $filters['hierarquia'] ?? null;
         $numero = isset($filters['numero']) ? (int) $filters['numero'] : null;
         $tipoModalidadeId = $filters['tipo_modalidade_id'] ?? null;
         $status = $filters['status'] ?? null;
         $usuarioLogadoId = $filters['usuarioLogadoId'] ?? null;
+        $usuarioId = $filters['usuario_id'] ?? $usuarioLogadoId;
 
         if (($dataInicio === null) !== ($dataFim === null)) {
             throw new ServerException("ValidateFiltros", "As datas de início e fim devem ser preenchidas juntas.");
         }
 
-        if ($dataInicio === null && !$vigentes && !$arquivados && $usuarioId === null && $numero === null && $tipoModalidadeId === null && $status === null) {
+        if ($dataInicio === null && !$vigentes && !$arquivados && $usuarioId === null && $numero === null && $tipoModalidadeId === null && $status === null && $unidadesId === null) {
             throw new ServerException("ValidateFiltros", "Informe ao menos um filtro para a busca.");
         }
 
