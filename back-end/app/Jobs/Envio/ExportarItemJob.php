@@ -20,6 +20,7 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable;
 
+    protected const int CIRCUIT_BREAKER_TIMEOUT = 300; // 5 minutos
     protected $timestamp = null;
     public bool $reagendado = false;
     protected ?PgdService $pgdService;
@@ -94,13 +95,13 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
                 $this->sucesso();
             } else {
                 $this->logError('Erro no envio!');
-                var_dump($resource);
+                Log::info($resource->toArray(request()));
             }
 
             unset($resource);
 
         } catch(TokenPgdException $e) {
-            Cache::put('api_down', true, 120); // circuit breaker
+            Cache::put('api_down', true, self::CIRCUIT_BREAKER_TIMEOUT); // circuit breaker
             $this->insucesso($e->getmessage());
             $this->logInfo('nova tentativa em 5 minutos');
             $this->reagendar();

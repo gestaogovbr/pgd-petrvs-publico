@@ -42,32 +42,4 @@ class EnvioController extends ControllerBase {
             ], 400);
         }
     }
-
-    /**
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function forcar(Request $request) {
-        try {
-            $data = $request->validate([
-                'id' => ['string'],
-            ]);
-
-            Log::error($data);
-
-            $this->service->forcarEnvio($data['id']);
-
-            return response()->json([
-                'success' => true,
-            ]);
-        }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
-        }
-        catch (Throwable $e) {
-            $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            throw $e;
-            return response()->json(['error' => $e->getMessage()]);
-        }
-    }
 }

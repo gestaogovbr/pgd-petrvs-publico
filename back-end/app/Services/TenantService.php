@@ -26,7 +26,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Cache;
-use App\Jobs\ExportarTenantJob;
 use App\Models\JobSchedule;
 
 
@@ -104,7 +103,7 @@ class TenantService extends ServiceBase
 
         if (isset($dataOrEntity['id']) && str_contains($dataOrEntity['id'], ' ')) {
             throw new ServerException("Tenant", "O campo SIGLA não pode conter espaços.");
-        }   
+        }
 
         $domainExists = DB::table('domains')
             ->where('domain', $dataOrEntity['dominio_url'])
@@ -112,7 +111,7 @@ class TenantService extends ServiceBase
         if ($domainExists && $action != "EDIT" && $dataOrEntity['dominio_url'] != $entity->dominio_url) {
             throw new ServerException("Tenant", "O domínio já está cadastrado.");
         }
-   
+
 
         try {
             $entity->fill($dataOrEntity);
@@ -167,14 +166,6 @@ class TenantService extends ServiceBase
         $this->TenantConfigurationsService->handle($tenantId);
         $this->limpaTabelas();
         BuscarDadosSiapeJob::dispatch($tenantId);
-    }
-
-    public function forcarEnvio(string $tenantId)
-    {
-        $this->inicializeTenant($tenantId);
-        $this->TenantConfigurationsService->handle($tenantId);
-
-        ExportarTenantJob::dispatch($tenantId);
     }
 
     public function inicializeTenant($tenantId): void
