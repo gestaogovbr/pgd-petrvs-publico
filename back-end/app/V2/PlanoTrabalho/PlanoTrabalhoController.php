@@ -80,4 +80,9 @@ class PlanoTrabalhoController extends Controller
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function statuses(): JsonResponse
+    {
+        return response()->json(['success' => true, 'data' => $this->service->statuses()]);
+    }
 }

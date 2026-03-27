@@ -81,4 +81,9 @@ class PlanoTrabalhoService
 
         return $this->planoTrabalhoRepository->delete($id);
     }
+
+    public function statuses(): array
+    {
+        return $this->planoTrabalhoRepository->getStatuses();
+    }
 }

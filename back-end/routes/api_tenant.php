@@ -609,6 +609,7 @@ use App\V2\Usuario\UsuarioController as UsuarioV2;
 
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('plano-trabalho', [PlanoTrabalhoV2::class, 'index']);
+    Route::get('plano-trabalho/statuses', [PlanoTrabalhoV2::class, 'statuses']);
     Route::post('plano-trabalho', [PlanoTrabalhoV2::class, 'store']);
 
     Route::post('plano-trabalho/{planoTrabalhoId}/entrega', [EntregaV2::class, 'store']);

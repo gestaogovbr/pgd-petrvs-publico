@@ -270,3 +270,15 @@ describe('PlanoTrabalhoService::show', function () {
         $this->service->show('inexistente');
     })->throws(ServerException::class, 'Plano de Trabalho não encontrado.');
 });
+
+describe('PlanoTrabalhoService::statuses', function () {
+
+    test('delega ao repository e retorna statuses', function () {
+        $this->repository
+            ->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn(PlanoTrabalho::STATUSES);
+
+        expect($this->service->statuses())->toBe(PlanoTrabalho::STATUSES);
+    });
+});

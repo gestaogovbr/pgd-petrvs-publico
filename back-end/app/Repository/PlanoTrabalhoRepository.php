@@ -75,4 +75,9 @@ class PlanoTrabalhoRepository
     {
         return $this->readRepository->possuiAssinatura($planoId);
     }
+
+    public function getStatuses(): array
+    {
+        return $this->readRepository->getStatuses();
+    }
 }
