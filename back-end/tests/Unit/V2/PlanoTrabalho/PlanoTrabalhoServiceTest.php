@@ -208,12 +208,12 @@ describe('PlanoTrabalhoService::destroy', function () {
         $this->destroyValidator
             ->shouldReceive('validar')
             ->once()
-            ->andThrow(new ServerException('ValidatePlanoTrabalho', 'PT já possui assinatura.'));
+            ->andThrow(new ServerException('ValidatePlanoTrabalho', 'Plano de Trabalho não pode ser excluído pois não é mais um rascunho.'));
 
         $this->repository->shouldNotReceive('delete');
 
         $this->service->destroy('plano-1');
-    })->throws(ServerException::class, 'PT já possui assinatura.');
+    })->throws(ServerException::class, 'Plano de Trabalho não pode ser excluído pois não é mais um rascunho.');
 });
 
 describe('PlanoTrabalhoService::show', function () {

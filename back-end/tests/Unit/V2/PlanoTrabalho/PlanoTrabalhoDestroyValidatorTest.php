@@ -6,6 +6,7 @@ use App\Repository\UsuarioRepository;
 use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
 use App\Models\Perfil;
+use App\Enums\StatusEnum;
 use App\Exceptions\ServerException;
 use Tests\TestCase;
 
@@ -50,15 +51,25 @@ function fakeUsuario(string $id, int $nivel): Usuario
 
 describe('PlanoTrabalhoDestroyValidator - guard', function () {
 
-    test('lança exceção quando PT não encontrado', function () {
+    test('lança exceção quando plano de trabalho não encontrado', function () {
         $this->planoRepo->shouldReceive('findById')->with('plano-1')->andReturn(null);
 
         $this->validator->validar('plano-1', 'user-1');
     })->throws(ServerException::class, 'Plano de Trabalho não encontrado.');
 
-    test('lança exceção quando PT tem assinatura (status != INCLUIDO)', function () {
-        $plano = fakePlano('AGUARDANDO_ASSINATURA', 'user-1', 'user-1');
+    test('lança exceção quando status não é INCLUIDO', function () {
+        $plano = fakePlano(StatusEnum::AGUARDANDO_ASSINATURA->value, 'user-1', 'user-1');
         $this->planoRepo->shouldReceive('findById')->with('plano-1')->andReturn($plano);
+
+        $this->planoRepo->shouldNotReceive('possuiAssinatura');
+
+        $this->validator->validar('plano-1', 'user-1');
+    })->throws(ServerException::class, 'Plano de Trabalho não pode ser excluído pois não é mais um rascunho.');
+
+    test('lança exceção quando plano de trabalho possui assinatura', function () {
+        $plano = fakePlano(StatusEnum::INCLUIDO->value, 'user-1', 'user-1');
+        $this->planoRepo->shouldReceive('findById')->with('plano-1')->andReturn($plano);
+        $this->planoRepo->shouldReceive('possuiAssinatura')->with('plano-1')->andReturn(true);
 
         $this->validator->validar('plano-1', 'user-1');
     })->throws(ServerException::class, 'Plano de Trabalho não pode ser excluído pois já possui assinatura.');
@@ -66,9 +77,10 @@ describe('PlanoTrabalhoDestroyValidator - guard', function () {
 
 describe('PlanoTrabalhoDestroyValidator - autorização', function () {
 
-    test('criador do PT pode excluir', function () {
-        $plano = fakePlano('INCLUIDO', 'user-1', 'criador-1');
+    test('criador do plano de trabalho pode excluir', function () {
+        $plano = fakePlano(StatusEnum::INCLUIDO->value, 'user-1', 'criador-1');
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+        $this->planoRepo->shouldReceive('possuiAssinatura')->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn(fakeUsuario('criador-1', 3));
 
         $this->validator->validar('plano-1', 'criador-1');
@@ -76,9 +88,10 @@ describe('PlanoTrabalhoDestroyValidator - autorização', function () {
         expect(true)->toBeTrue();
     });
 
-    test('participante dono do PT pode excluir', function () {
-        $plano = fakePlano('INCLUIDO', 'user-1', 'criador-1');
+    test('participante dono do plano de trabalho pode excluir', function () {
+        $plano = fakePlano(StatusEnum::INCLUIDO->value, 'user-1', 'criador-1');
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+        $this->planoRepo->shouldReceive('possuiAssinatura')->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn(fakeUsuario('user-1', 5));
 
         $this->validator->validar('plano-1', 'user-1');
@@ -87,8 +100,9 @@ describe('PlanoTrabalhoDestroyValidator - autorização', function () {
     });
 
     test('adm master pode excluir', function () {
-        $plano = fakePlano('INCLUIDO', 'user-1', 'criador-1');
+        $plano = fakePlano(StatusEnum::INCLUIDO->value, 'user-1', 'criador-1');
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+        $this->planoRepo->shouldReceive('possuiAssinatura')->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('outro-user')->andReturn(fakeUsuario('outro-user', 1));
 
         $this->validator->validar('plano-1', 'outro-user');
@@ -96,9 +110,10 @@ describe('PlanoTrabalhoDestroyValidator - autorização', function () {
         expect(true)->toBeTrue();
     });
 
-    test('usuário sem relação com o PT não pode excluir', function () {
-        $plano = fakePlano('INCLUIDO', 'user-1', 'criador-1');
+    test('usuário sem relação com o plano de trabalho não pode excluir', function () {
+        $plano = fakePlano(StatusEnum::INCLUIDO->value, 'user-1', 'criador-1');
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+        $this->planoRepo->shouldReceive('possuiAssinatura')->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('intruso')->andReturn(fakeUsuario('intruso', 5));
 
         $this->validator->validar('plano-1', 'intruso');

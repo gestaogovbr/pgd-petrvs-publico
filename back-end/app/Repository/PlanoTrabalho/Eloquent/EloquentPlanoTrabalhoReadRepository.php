@@ -190,4 +190,12 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ])
             ->find($id);
     }
+
+    public function possuiAssinatura(string $planoId): bool
+    {
+        return $this->query()
+            ->where('id', $planoId)
+            ->whereHas('documentos.assinaturas')
+            ->exists();
+    }
 }

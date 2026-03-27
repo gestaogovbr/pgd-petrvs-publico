@@ -70,4 +70,9 @@ class PlanoTrabalhoRepository
     {
         return $this->writeRepository->delete($id);
     }
+
+    public function possuiAssinatura(string $planoId): bool
+    {
+        return $this->readRepository->possuiAssinatura($planoId);
+    }
 }

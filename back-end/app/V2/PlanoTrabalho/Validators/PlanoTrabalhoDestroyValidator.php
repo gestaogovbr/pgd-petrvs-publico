@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\V2\PlanoTrabalho\Validators;
 
 use App\Enums\PerfilEnum;
+use App\Enums\StatusEnum;
 use App\Exceptions\ServerException;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UsuarioRepository;
@@ -24,7 +25,11 @@ class PlanoTrabalhoDestroyValidator
             throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não encontrado.");
         }
 
-        if ($plano->status !== 'INCLUIDO') { # Talvez fosse bom procurar documento_assinaturas ao invés de buscar estritamente via status
+        if ($plano->status !== StatusEnum::INCLUIDO->value) {
+            throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não pode ser excluído pois não é mais um rascunho.");
+        }
+
+        if ($this->planoTrabalhoRepository->possuiAssinatura($planoId)) {
             throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não pode ser excluído pois já possui assinatura.");
         }
 
