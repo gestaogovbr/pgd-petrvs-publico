@@ -1,0 +1,73 @@
+<div class="container-fluid py-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Novo plano de trabalho</h2>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="voltar()" [disabled]="saving">
+        Voltar
+      </button>
+      <button type="button" class="btn btn-success btn-sm" (click)="salvar()" [disabled]="!podeSalvar">
+        Salvar
+      </button>
+    </div>
+  </div>
+
+  <form [formGroup]="form">
+    <div class="rounded p-3 mb-3 border bg-body-tertiary text-body">
+      <div class="row">
+        <div class="col-md-4 mb-3 position-relative">
+          <label class="form-label">Agente Público</label>
+          <div class="input-group">
+            <input type="text" class="form-control" [formControl]="agentePublicoQuery" placeholder="Digite nome ou matrícula (mín. 3)" />
+            <button type="button" class="btn btn-outline-secondary" (click)="limparUsuarioSelecionado()" [disabled]="saving">Limpar</button>
+          </div>
+          @if (sugestoesUsuarios.length > 0) {
+            <div class="list-group position-absolute w-100" style="z-index: 1050;">
+              @for (u of sugestoesUsuarios; track u.id) {
+                <button type="button" class="list-group-item list-group-item-action" (click)="selecionarUsuario(u)">
+                  {{ u.nome }} @if (u.matricula) { <span class="text-body-secondary">({{ u.matricula }})</span> }
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <label class="form-label">Unidade</label>
+          <select class="form-select" formControlName="unidade_id" (change)="onUnidadeChange()">
+            <option value="">Selecione...</option>
+            @for (u of unidades; track u.id) {
+              <option [value]="u.id">{{ u.nome }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <label class="form-label">Regramento de Instituição PGD</label>
+          <input type="text" class="form-control" [value]="regramentoNome" readonly [class.placeholder]="!regramentoNome.length" />
+        </div>
+      </div>
+
+      <div class="row mt-2">
+        <div class="col-md-3 mb-3">
+          <label class="form-label">Início</label>
+          <input type="date" class="form-control" formControlName="data_inicio" />
+        </div>
+
+        <div class="col-md-3 mb-3">
+          <label class="form-label">Final</label>
+          <input type="date" class="form-control" formControlName="data_fim" />
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Modalidade</label>
+          <select class="form-select" formControlName="tipo_modalidade_id">
+            <option value="">Selecione...</option>
+            @for (m of modalidades; track m.id) {
+              <option [value]="m.id">{{ m.nome }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

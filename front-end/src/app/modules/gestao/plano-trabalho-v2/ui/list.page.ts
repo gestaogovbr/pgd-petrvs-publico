@@ -4,6 +4,7 @@ import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/f
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
+import { NavigateService } from 'src/app/services/navigate.service';
 import { Subscription } from 'rxjs';
 import { PlanoTrabalho } from '../domain/types';
 
@@ -18,6 +19,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   readonly facade = inject(PlanoTrabalhoListFacade);
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
+  private readonly go = inject(NavigateService);
 
   advanced = false;
   private readonly subscriptions: Subscription[] = [];
@@ -187,6 +189,10 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
       this.facade.filters.set(this.buildFilters());
       this.facade.load();
     }
+  }
+
+  novoPlano() {
+    this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'novo'] }, { modal: true });
   }
 
   detalhesDoPlano(p: PlanoTrabalho) {}

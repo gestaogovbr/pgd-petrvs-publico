@@ -13,6 +13,11 @@ export const routes: Routes = [
         path: '',
         loadComponent: () =>
           import('./ui/list.page').then(m => m.PlanoTrabalhoV2ListPage)
+      },
+      {
+        path: 'novo',
+        loadComponent: () =>
+          import('./ui/new.page').then(m => m.PlanoTrabalhoV2NewPage)
       }
     ]
   }

@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { Page, PlanoTrabalho, PlanoTrabalhoId, QueryParams } from '../domain/types';
+import { Page, PlanoTrabalho, PlanoTrabalhoCreatePayload, PlanoTrabalhoId, QueryParams } from '../domain/types';
 import { GlobalsService } from 'src/app/services/globals.service';
 
 @Injectable({
@@ -29,11 +29,15 @@ export class PlanoTrabalhoApiClient {
   }
 
   getById(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {
-    return this.http.get<PlanoTrabalho>(`${this.gb.servidorURL}${this.base}/${id}`);
+    return this.http
+      .get<any>(`${this.gb.servidorURL}${this.base}/${id}`)
+      .pipe(map((response: any) => (response?.data as PlanoTrabalho) ?? response));
   }
 
-  create(payload: Partial<PlanoTrabalho>): Observable<PlanoTrabalho> {
-    return this.http.post<PlanoTrabalho>(this.gb.servidorURL + this.base, payload);
+  create(payload: PlanoTrabalhoCreatePayload): Observable<PlanoTrabalho> {
+    return this.http
+      .post<any>(this.gb.servidorURL + this.base, payload)
+      .pipe(map((response: any) => (response?.data as PlanoTrabalho) ?? response));
   }
 
   update(id: PlanoTrabalhoId, payload: Partial<PlanoTrabalho>): Observable<PlanoTrabalho> {

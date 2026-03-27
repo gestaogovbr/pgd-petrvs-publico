@@ -5,6 +5,15 @@ export type PlanoTrabalhoId = string;
 export type PlanoTrabalho = PlanoTrabalhoModel;
 export type PlanoTrabalhoEntrega = PlanoTrabalhoEntregaModel;
 
+export type PlanoTrabalhoCreatePayload = {
+  usuario_id: string;
+  unidade_id: string;
+  programa_id: string;
+  data_inicio: string;
+  data_fim: string;
+  tipo_modalidade_id: string;
+};
+
 export type Page<T> = {
   items: T[];
   total: number;
