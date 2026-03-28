@@ -16,11 +16,14 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable;
 
-    protected const int CIRCUIT_BREAKER_TIMEOUT = 300; // 5 minutos
+    protected const CIRCUIT_BREAKER_TIMEOUT = 300; // 5 minutos
     protected $timestamp = null;
     public bool $reagendado = false;
     protected ?PgdService $pgdService;

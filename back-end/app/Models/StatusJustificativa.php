@@ -11,6 +11,8 @@ use App\Models\Atividade;
 
 /**
  * @property Usuario $usuario
+ * @property PlanoTrabalho|null $planoTrabalho
+ * @property PlanoEntrega|null $planoEntrega
  */
 class StatusJustificativa extends ModelBase
 {

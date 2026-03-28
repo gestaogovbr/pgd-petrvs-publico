@@ -7,6 +7,8 @@ use App\Repository\EntidadeRepository;
 use App\Repository\SiapeDadosUORGRepository;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use App\Models\Entidade;
 
 class SiapeIndividualUnidadeService extends ServiceBase
 {
@@ -52,7 +54,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
         SiapeLog::info('Salvando os dados da unidade');
 
-        $this->siapeDadosUORGRepository->create([    
+        $this->siapeDadosUORGRepository->create([
             'id' => Str::uuid(),
             'data_modificacao' => today(),
             'codigo' => $codUorg,
@@ -64,6 +66,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
         $integracaoService = $this->integracaoServiceFactory->make();
 
+        /** @var Collection<int, Entidade> $entidades */
         $entidades = $this->entidadeRepository->findAll();
         $inputs = [
             'unidades' => true,
@@ -103,5 +106,5 @@ class SiapeIndividualUnidadeService extends ServiceBase
             $codigoDaUnidade
         );
     }
-    
+
 }
