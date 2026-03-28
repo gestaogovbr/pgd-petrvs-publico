@@ -5,6 +5,7 @@ use App\Exceptions\ExportPgdException;
 use App\Jobs\Envio\ExportarItemJob;
 use App\Jobs\Envio\Resources\PlanoEntregaResource;
 use App\Models\PlanoEntrega;
+use App\Repository\PlanoEntregaRepository;
 use App\Services\API_PGD\PgdService;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Log;
@@ -21,14 +22,8 @@ class ExportarPlanoEntregaJob extends ExportarItemJob
     }
 
     public function getResource(): PlanoEntregaResource {
-         $planoEntrega = PlanoEntrega::with([
-            'programa',
-            'programa.unidade',
-            'unidade',
-            'entregas',
-            'entregas.unidade'
-        ])
-        ->find($this->id);
+        $planoEntregaRepository = app(PlanoEntregaRepository::class);
+        $planoEntrega = $planoEntregaRepository->findOneParaEnvio($this->id);
 
         if (!$planoEntrega){
             throw new ExportPgdException("Plano de Entrega removido ou inválido", $this->id);

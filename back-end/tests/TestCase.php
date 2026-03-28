@@ -128,8 +128,6 @@ abstract class TestCase extends BaseTestCase
 
     public static function tearDownAfterClass(): void
     {
-        static::$tenant?->delete();
-
         parent::tearDownAfterClass();
     }
 }

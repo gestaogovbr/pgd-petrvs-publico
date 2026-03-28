@@ -5,9 +5,9 @@ use App\Exceptions\ExportPgdException;
 use App\Jobs\Envio\ExportarItemJob;
 use App\Jobs\Envio\Resources\PlanoTrabalhoResource;
 use App\Models\PlanoTrabalho;
+use App\Repository\PlanoTrabalhoRepository;
 use App\Services\API_PGD\PgdService;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Log;
 
 class ExportarPlanoTrabalhoJob extends ExportarItemJob
 {
@@ -21,23 +21,12 @@ class ExportarPlanoTrabalhoJob extends ExportarItemJob
     }
 
     public function getResource(): PlanoTrabalhoResource {
-         $planoTrabalho = PlanoTrabalho::with([
-            'programa',
-            'usuario',
-            'entregas' => function ($query) {
-                $query
-                    ->whereDoesntHave('planoEntregaEntrega')
-                    ->orWhereHas('planoEntregaEntrega.planoEntrega', function($query) {
-                        $query->whereIn('status', ['ATIVO', 'CONCLUIDO', 'AVALIADO']);
-                    });
-            },
-            'entregas.planoTrabalho',
-            'consolidacoes' => function ($query) {
-                $query->whereIn('status', ['AVALIADO']);
-            },
-            'consolidacoes.avaliacao'
-        ])
-        ->find($this->id);
+        $planoTrabalhoRepository = app(PlanoTrabalhoRepository::class);
+        $planoTrabalho = $planoTrabalhoRepository->findOneParaEnvio($this->id);
+
+        if (!$planoTrabalho) {
+            throw new ExportPgdException("Plano de Trabalho removido ou inválido", $this->id);
+        }
 
         if (!$planoTrabalho->usuario->lotacao){
             throw new ExportPgdException("Usuário do Plano de Trabalho não possui Lotação", $this->id);

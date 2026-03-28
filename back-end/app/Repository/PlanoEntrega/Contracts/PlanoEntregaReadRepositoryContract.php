@@ -11,6 +11,8 @@ interface PlanoEntregaReadRepositoryContract
 {
     public function findById(string|int $id): ?PlanoEntrega;
 
+    public function findOneParaEnvio(string|int $id): ?PlanoEntrega;
+
     public function findAllParaEnvio(int $chunkSize, callable $onChunk): void;
 
     public function getPlanosEntregaAvaliacao(array $unidadesIds): Collection;

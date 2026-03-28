@@ -11,6 +11,8 @@ interface PlanoTrabalhoReadRepositoryContract
 {
     public function findById(string|int $id): ?PlanoTrabalho;
 
+    public function findOneParaEnvio(string|int $id): ?PlanoTrabalho;
+
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection;
 
     public function planosAtivos(string $usuarioId): Collection;

@@ -21,6 +21,11 @@ class PlanoTrabalhoRepository
         return $this->readRepository->findById($id);
     }
 
+    public function findOneParaEnvio(string|int $id): ?PlanoTrabalho
+    {
+        return $this->readRepository->findOneParaEnvio($id);
+    }
+
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection
     {
         return $this->readRepository->getPlanosTrabalhoAssinatura($unidadesGerenciadasIds, $unidadesSubordinadasIds, $usuarioId);

@@ -26,6 +26,29 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         return $planoTrabalho;
     }
 
+    public function findOneParaEnvio(string|int $id): ?PlanoTrabalho
+    {
+        /** @var PlanoTrabalho|null */
+        return $this->model->newQuery()
+            ->with([
+                'programa',
+                'usuario',
+                'entregas' => function ($query) {
+                    $query
+                        ->whereDoesntHave('planoEntregaEntrega')
+                        ->orWhereHas('planoEntregaEntrega.planoEntrega', function ($query) {
+                            $query->whereIn('status', ['ATIVO', 'CONCLUIDO', 'AVALIADO']);
+                        });
+                },
+                'entregas.planoTrabalho',
+                'consolidacoes' => function ($query) {
+                    $query->whereIn('status', ['AVALIADO']);
+                },
+                'consolidacoes.avaliacao',
+            ])
+            ->find($id);
+    }
+
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection
     {
         $unidadesGerenciadasIds = array_values(array_unique($unidadesGerenciadasIds));

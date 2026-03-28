@@ -5,9 +5,9 @@ use App\Exceptions\ExportPgdException;
 use App\Jobs\Envio\ExportarItemJob;
 use App\Jobs\Envio\Resources\ParticipanteResource;
 use App\Models\Usuario;
+use App\Repository\UsuarioRepository;
 use App\Services\API_PGD\PgdService;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Log;
 
 class ExportarParticipanteJob extends ExportarItemJob
 {
@@ -20,19 +20,12 @@ class ExportarParticipanteJob extends ExportarItemJob
         return  Usuario::where('id', $this->id);
     }
 
-    public function getResource(): ParticipanteResource {
-         $model = Usuario::with([
-                'unidadesIntegrantes' => function($query) {
-                    $query->whereHas('atribuicoes', function ($query) {
-                        $query
-                            ->where('atribuicao', 'LOTADO')
-                            ->whereNull('deleted_at');
-                    });
-                }
-            ])
-            ->find($this->id);
+    public function getResource(): ParticipanteResource
+    {
+        $usuarioRepository = app(UsuarioRepository::class);
+        $model = $usuarioRepository->findOneParaEnvio($this->id);
 
-        if (!$model){
+        if (!$model) {
             throw new ExportPgdException("Usuário inválido ou sem lotação", $this->id);
         }
 

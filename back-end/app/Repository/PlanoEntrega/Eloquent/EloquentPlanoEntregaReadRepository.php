@@ -38,6 +38,20 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
         return parent::findById($id);
     }
 
+    public function findOneParaEnvio(string|int $id): ?PlanoEntrega
+    {
+        /** @var PlanoEntrega|null */
+        return $this->model->newQuery()
+            ->with([
+                'programa',
+                'programa.unidade',
+                'unidade',
+                'entregas',
+                'entregas.unidade',
+            ])
+            ->find($id);
+    }
+
     public function findAllParaEnvio(int $chunkSize, callable $onChunk): void
     {
         DB::table('planos_entregas')

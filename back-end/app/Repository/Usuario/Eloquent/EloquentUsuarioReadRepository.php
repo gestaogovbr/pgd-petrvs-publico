@@ -312,6 +312,21 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         }
     }
 
+    public function findOneParaEnvio(string $id): ?Usuario
+    {
+        return $this->model->newQuery()
+            ->with([
+                'unidadesIntegrantes' => function ($query) {
+                    $query->whereHas('atribuicoes', function ($query) {
+                        $query
+                            ->where('atribuicao', 'LOTADO')
+                            ->whereNull('deleted_at');
+                    });
+                },
+            ])
+            ->find($id);
+    }
+
     // lista os usuário para envio ao PGD
     public function findAllParaEnvio(int $chunkSize, callable $onChunk): void
     {

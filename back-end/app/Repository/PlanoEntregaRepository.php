@@ -21,6 +21,11 @@ class PlanoEntregaRepository
         return $this->readRepository->findById($id);
     }
 
+    public function findOneParaEnvio(string|int $id): ?PlanoEntrega
+    {
+        return $this->readRepository->findOneParaEnvio($id);
+    }
+
     public function findAllParaEnvio(int $chunkSize, callable $onChunk): void
     {
         $this->readRepository->findAllParaEnvio($chunkSize, $onChunk);

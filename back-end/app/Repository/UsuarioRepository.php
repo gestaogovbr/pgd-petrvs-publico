@@ -152,4 +152,9 @@ class UsuarioRepository
     {
         $this->readRepository->findAllParaEnvio($chunkSize, $onChunk);
     }
+
+    public function findOneParaEnvio(string $id): ?Usuario
+    {
+        return $this->readRepository->findOneParaEnvio($id);
+    }
 }

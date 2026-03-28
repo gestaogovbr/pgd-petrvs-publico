@@ -3,6 +3,8 @@
 namespace Tests\IntegrationTenant\Repository;
 
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\PlanoTrabalhoEntrega;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Models\UnidadeIntegrante;
@@ -12,6 +14,7 @@ use Tests\DatabaseTenantTestCase;
 use App\Enums\StatusEnum;
 use App\Models\TipoModalidade;
 use App\Models\Perfil;
+use Illuminate\Support\Str;
 
 class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
 {
@@ -257,5 +260,48 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         $this->assertContains($ativo->id, $ids);
         $this->assertNotContains($incluido->id, $ids);
         $this->assertNotContains($deleted->id, $ids);
+    }
+
+    public function testFindOneParaEnvioRetornaNullQuandoIdInexistente(): void
+    {
+        $this->assertNull($this->repository->findOneParaEnvio(Str::uuid()->toString()));
+    }
+
+    public function testFindOneParaEnvioCarregaRelacoesEFiltraConsolidacoesAvaliadas(): void
+    {
+        $usuario = Usuario::factory()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuario->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        PlanoTrabalhoEntrega::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'plano_entrega_entrega_id' => null,
+        ]);
+
+        PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => StatusEnum::INCLUIDO->value,
+        ]);
+        $consolidacaoAvaliada = PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => StatusEnum::AVALIADO->value,
+        ]);
+
+        $result = $this->repository->findOneParaEnvio($plano->id);
+
+        $this->assertNotNull($result);
+        $this->assertSame($plano->id, $result->id);
+        $this->assertTrue($result->relationLoaded('programa'));
+        $this->assertTrue($result->relationLoaded('usuario'));
+        $this->assertTrue($result->relationLoaded('entregas'));
+        $this->assertTrue($result->relationLoaded('consolidacoes'));
+        $this->assertCount(1, $result->entregas);
+        $this->assertCount(1, $result->consolidacoes);
+        $this->assertSame($consolidacaoAvaliada->id, $result->consolidacoes->first()->id);
     }
 }

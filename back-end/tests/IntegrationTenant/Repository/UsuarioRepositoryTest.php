@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Entidade;
 use App\Models\TipoModalidade;
 use App\Models\Perfil;
+use Illuminate\Support\Str;
 
 class UsuarioRepositoryTest extends DatabaseTenantTestCase
 {
@@ -281,5 +282,46 @@ class UsuarioRepositoryTest extends DatabaseTenantTestCase
 
         $updated = $this->repository->update($usuario->id, ['nome' => 'Nome Atualizado']);
         $this->assertEquals('Nome Atualizado', $updated->nome);
+    }
+
+    public function testFindOneParaEnvioRetornaNullQuandoIdInexistente(): void
+    {
+        $this->assertNull($this->repository->findOneParaEnvio(Str::uuid()->toString()));
+    }
+
+    public function testFindOneParaEnvioIncluiApenasUnidadesIntegrantesComAtribuicaoLotada(): void
+    {
+        $usuario = Usuario::factory()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+        $unidadeLotada = Unidade::factory()->create();
+        $unidadeGestor = Unidade::factory()->create();
+
+        $integranteLotado = UnidadeIntegrante::query()->create([
+            'unidade_id' => $unidadeLotada->id,
+            'usuario_id' => $usuario->id,
+        ]);
+        UnidadeIntegranteAtribuicao::query()->create([
+            'unidade_integrante_id' => $integranteLotado->id,
+            'atribuicao' => 'LOTADO',
+        ]);
+
+        $integranteGestor = UnidadeIntegrante::query()->create([
+            'unidade_id' => $unidadeGestor->id,
+            'usuario_id' => $usuario->id,
+        ]);
+        UnidadeIntegranteAtribuicao::query()->create([
+            'unidade_integrante_id' => $integranteGestor->id,
+            'atribuicao' => 'GESTOR',
+        ]);
+
+        $result = $this->repository->findOneParaEnvio($usuario->id);
+
+        $this->assertNotNull($result);
+        $this->assertSame($usuario->id, $result->id);
+        $this->assertTrue($result->relationLoaded('unidadesIntegrantes'));
+        $this->assertCount(1, $result->unidadesIntegrantes);
+        $this->assertSame($integranteLotado->id, $result->unidadesIntegrantes->first()->id);
     }
 }
