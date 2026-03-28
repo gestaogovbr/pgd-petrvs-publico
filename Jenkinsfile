@@ -63,13 +63,13 @@ pipeline {
             dir('front-end') {
                 sh '''
                     docker run --rm \
-                    -v "$PWD":/app \
-                    -w /app \
-                    node:20 \
-                    bash -lc "
-                        npm install --legacy-peer-deps &&
-                        npm run build
-                    "
+                      -v "$WORKSPACE":/workspace \
+                      -w /workspace/front-end \
+                      node:20 \
+                      bash -lc "
+                        set -eu
+                        npm install --legacy-peer-deps
+                      "
                 '''
          }
             }
@@ -93,20 +93,22 @@ pipeline {
                 anyOf {
                     branch 'dataprev_dsv'
                     branch 'dataprev_hmg'
-                    branch 'dataprev_producao'
                 }
             }
              steps {
             dir('front-end') {
                 sh '''
                     docker run --rm \
-                    -v "$PWD":/app \
-                    -w /app \
-                    node:20 \
-                    bash -lc "
-                        npm install --legacy-peer-deps &&
-                        npx ng build
-                    "
+                      -v "$WORKSPACE":/workspace \
+                      -w /workspace/front-end \
+                      node:20 \
+                      bash -lc "
+                        set -eu
+                        npm install --legacy-peer-deps
+                        mkdir -p ../back-end/resources/views ../back-end/public/pages ../back-end/public/assets
+                        npx ng build --configuration=production --output-path=../back-end/public
+                        node ./postbuild.js
+                      "
                 '''
             }
     }
@@ -127,20 +129,63 @@ pipeline {
                     string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD')
                 ]) {
                     sh '''
-                        echo "Iniciando a construção e envio das imagens Docker..."
-                        echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
-                        docker pull $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST || true
-                        if docker manifest inspect $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD >/dev/null 2>&1; then
-                          echo "A tag $DOCKER_HUB_TAG_OLD já existe, não será reetiquetada."
+                        set -eu
+
+                        echo "=== BUILD PRODUÇÃO ==="
+                        cd "$WORKSPACE"
+
+                        echo "=== LIMPEZA MÍNIMA DE ARTEFATOS ==="
+                        rm -f back-end/resources/views/angular.blade.php || true
+                        rm -f back-end/public/index.html || true
+                        rm -f back-end/public/app.json || true
+                        rm -f back-end/public/assets/build-info.json || true
+
+                        echo "=== BUILD ANGULAR + POSTBUILD (NODE 20) ==="
+                        docker run --rm \
+                        -v "$WORKSPACE":/workspace \
+                        -w /workspace/front-end \
+                        node:20 \
+                        bash -lc '
+                            set -eu
+                            npm install --legacy-peer-deps
+                            mkdir -p ../back-end/resources/views ../back-end/public/pages ../back-end/public/assets
+                            npx ng build --configuration=production --output-path=../back-end/public
+                            node ./postbuild.js
+                        '
+
+                        echo "=== VALIDAÇÃO DOS ARTEFATOS ==="
+                        test -f back-end/resources/views/angular.blade.php
+                        test -f back-end/public/app.json
+                        test -f back-end/public/assets/build-info.json
+
+                        echo "=== DIAGNÓSTICO RÁPIDO ==="
+                        ls -lah back-end/resources/views/angular.blade.php
+                        ls -lah back-end/public/app.json
+                        ls -lah back-end/public/assets/build-info.json
+
+                        echo "=== LOGIN DOCKER HUB ==="
+                        echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+
+                        echo "=== PREPARANDO TAG OLD ==="
+                        docker pull "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST" || true
+
+                        if docker manifest inspect "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD" >/dev/null 2>&1; then
+                        echo "A tag $DOCKER_HUB_TAG_OLD já existe, não será reetiquetada."
                         else
-                          docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD
-                          docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD
+                        docker tag "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST" "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD"
+                        docker push "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD"
                         fi
-                        docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW -f ./resources/deploy/Dockerfile .
-                        docker tag $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
-                        docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW
-                        docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST
-                        echo "Envio das imagens Docker concluído."
+
+                        echo "=== BUILD DA IMAGEM ==="
+                        docker build -t "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW" -f ./resources/deploy/Dockerfile .
+
+                        docker tag "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW" "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST"
+
+                        echo "=== PUSH DAS IMAGENS ==="
+                        docker push "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW"
+                        docker push "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST"
+
+                        echo "=== FIM BUILD PRODUÇÃO ==="
                     '''
                 }
             }
