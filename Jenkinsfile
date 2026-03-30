@@ -197,7 +197,7 @@ pipeline {
             }
             environment {
                 DOCKER_HUB_IMAGE = 'segescginf/pgdpetrvs-develop'
-                DOCKER_HUB_TAG = 'hmg'
+                DOCKER_HUB_TAG = 'dsv'
                 DEPLOY_PATH = './'
             }
             steps {
