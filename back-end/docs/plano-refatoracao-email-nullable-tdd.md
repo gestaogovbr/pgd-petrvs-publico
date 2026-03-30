@@ -179,4 +179,4 @@ Observação: operações serão executadas manualmente. Abaixo está o escopo a
 - [x] IntegracaoService: trecho `processar` de servidores (L586-606) extraído para `processarServidoresTransaction` sem alterar o fluxo.
 - [x] IntegracaoService: renomeado método de liberação de conflito de e-mail para `liberarEmailDuplicadoDefinindoComoNulo`.
 - [x] Testes IntegrationTenant: adicionados cenários de transferência de e-mail (usuário antigo perde e-mail → `null`, novo mantém) e idempotência.
- - Faltou a sanitização na tabela integracao_servidores, fazer posteriormente.
+- [x] Migração criada (tenant): sanitização de `integracao_servidores.emailfuncional` removendo domínios fake `@petrvs.gov.br`/`@petrvs.gob.br` (`2026_03_30_000001_sanitize_emailfuncional_integracao_servidores.php`).

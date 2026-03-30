@@ -49,20 +49,24 @@ test('migração saneia emails @petrvs definindo usuarios.email como null', func
     $tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial'])->id;
     $perfilId = Perfil::factory()->create(['nome' => 'Padrão'])->id;
 
+    $emailPetrvs1 = 'u1-' . \Illuminate\Support\Str::uuid()->toString() . '@petrvs.gov.br';
+    $emailPetrvs2 = 'u2-' . \Illuminate\Support\Str::uuid()->toString() . '@petrvs.gov.br';
+    $emailValido = 'valido-' . \Illuminate\Support\Str::uuid()->toString() . '@exemplo.com';
+
     $usuarioPetrvs1 = Usuario::factory()->create([
-        'email' => 'u1@petrvs.gov.br',
+        'email' => $emailPetrvs1,
         'tipo_modalidade_id' => $tipoModalidadeId,
         'perfil_id' => $perfilId,
     ]);
 
     $usuarioPetrvs2 = Usuario::factory()->create([
-        'email' => 'u2@petrvs.gov.br',
+        'email' => $emailPetrvs2,
         'tipo_modalidade_id' => $tipoModalidadeId,
         'perfil_id' => $perfilId,
     ]);
 
     $usuarioValido = Usuario::factory()->create([
-        'email' => 'valido@exemplo.com',
+        'email' => $emailValido,
         'tipo_modalidade_id' => $tipoModalidadeId,
         'perfil_id' => $perfilId,
     ]);
@@ -76,5 +80,40 @@ test('migração saneia emails @petrvs definindo usuarios.email como null', func
 
     expect($usuarioPetrvs1->email)->toBeNull();
     expect($usuarioPetrvs2->email)->toBeNull();
-    expect($usuarioValido->email)->toBe('valido@exemplo.com');
+    expect($usuarioValido->email)->toBe($emailValido);
+});
+
+test('migração saneia emails @petrvs definindo integracao_servidores.emailfuncional como null', function () {
+    $sanitizePath = database_path('migrations/tenant/2026_03_30_000001_sanitize_emailfuncional_integracao_servidores.php');
+
+    expect(file_exists($sanitizePath))->toBeTrue();
+
+    DB::table('integracao_servidores')->insert([
+        'id' => \Illuminate\Support\Str::uuid()->toString(),
+        'cpf' => '11111111111',
+        'matriculasiape' => '1',
+        'nome' => 'Servidor 1',
+        'emailfuncional' => 'u1@petrvs.gov.br ',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    DB::table('integracao_servidores')->insert([
+        'id' => \Illuminate\Support\Str::uuid()->toString(),
+        'cpf' => '22222222222',
+        'matriculasiape' => '2',
+        'nome' => 'Servidor 2',
+        'emailfuncional' => 'valido@exemplo.com',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    $migration = require $sanitizePath;
+    $migration->up();
+
+    $registroPetrvs = DB::table('integracao_servidores')->where('matriculasiape', '1')->first();
+    $registroValido = DB::table('integracao_servidores')->where('matriculasiape', '2')->first();
+
+    expect($registroPetrvs->emailfuncional)->toBeNull();
+    expect($registroValido->emailfuncional)->toBe('valido@exemplo.com');
 });
