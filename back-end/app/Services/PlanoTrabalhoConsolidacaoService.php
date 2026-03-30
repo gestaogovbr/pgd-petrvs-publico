@@ -485,6 +485,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       })->filter()->unique();
 
       foreach ($consolidacao->planoTrabalho->entregas as $entrega) {
+        
+        if($consolidacao->planoTrabalho["created_at"] < UtilService::asDateTime(PlanoTrabalho::DATA_MUDANCA_REGRA_PT)) continue;
+
         $temAtividade = $entregasComAtividade->contains($entrega->id);
 
         if (!$temAtividade) {

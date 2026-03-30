@@ -87,12 +87,12 @@ test('pendencias chefe sem unidade especifica', function () {
     // Mock Repositories returning empty collections
     $this->planoTrabalhoConsolidacaoRepository->shouldReceive('getPendentesAvaliacao')
         ->once()
-        ->with(['u1', 'u2'], $usuarioId, Mockery::any())
+        ->with(['u1', 'u2'], [], $usuarioId, Mockery::any())
         ->andReturn(new Collection());
 
     $this->planoTrabalhoRepository->shouldReceive('getPlanosTrabalhoAssinatura')
         ->once()
-        ->with(['u1', 'u2'], $usuarioId)
+        ->with(['u1', 'u2'], [], $usuarioId)
         ->andReturn(new Collection());
 
     $this->planoEntregaRepository->shouldReceive('getPlanosEntregaAvaliacao')->andReturn(new Collection());
@@ -128,11 +128,11 @@ test('pendencias chefe com unidade especifica nao gerenciada', function () {
         ->andReturn(new Collection());
 
     $this->planoTrabalhoConsolidacaoRepository->shouldReceive('getPendentesAvaliacao')
-        ->with(['u1'], $usuarioId, Mockery::any())
+        ->with(['u1'], [], $usuarioId, Mockery::any())
         ->andReturn(new Collection());
 
     $this->planoTrabalhoRepository->shouldReceive('getPlanosTrabalhoAssinatura')
-        ->with(['u1'], $usuarioId)
+        ->with(['u1'], [], $usuarioId)
         ->andReturn(new Collection());
 
     $this->planoEntregaRepository->shouldReceive('getPlanosEntregaAvaliacao')->andReturn(new Collection());
@@ -142,5 +142,64 @@ test('pendencias chefe com unidade especifica nao gerenciada', function () {
 
     $result = $this->service->pendenciasChefe($usuarioId, $unidadeId);
     
+    expect($result)->toBeArray();
+});
+
+test('pendencias chefe inclui subordinadas para planos de trabalho e registros de execução', function () {
+    $usuarioId = 'user-123';
+
+    $unidade1 = Mockery::mock(Unidade::class);
+    $unidade1->shouldReceive('getAttribute')->with('id')->andReturn('u1');
+    $unidade1->shouldReceive('offsetExists')->with('id')->andReturn(true);
+    $unidade1->shouldReceive('offsetGet')->with('id')->andReturn('u1');
+
+    $unidadesGerenciadas = new Collection([$unidade1]);
+
+    $this->unidadeRepository->shouldReceive('getUnidadesGerenciadas')
+        ->once()
+        ->with($usuarioId)
+        ->andReturn($unidadesGerenciadas);
+
+    $sub1 = Mockery::mock(Unidade::class);
+    $sub1->shouldReceive('getAttribute')->with('id')->andReturn('u2');
+    $sub1->shouldReceive('offsetExists')->with('id')->andReturn(true);
+    $sub1->shouldReceive('offsetGet')->with('id')->andReturn('u2');
+
+    $sub2 = Mockery::mock(Unidade::class);
+    $sub2->shouldReceive('getAttribute')->with('id')->andReturn('u3');
+    $sub2->shouldReceive('offsetExists')->with('id')->andReturn(true);
+    $sub2->shouldReceive('offsetGet')->with('id')->andReturn('u3');
+
+    $this->unidadeRepository->shouldReceive('getSubordinadas')
+        ->once()
+        ->with(['u1'])
+        ->andReturn(new Collection([$sub1, $sub2]));
+
+    $this->planoTrabalhoConsolidacaoRepository->shouldReceive('getPendentesAvaliacao')
+        ->once()
+        ->with(['u1'], ['u2', 'u3'], $usuarioId, Mockery::any())
+        ->andReturn(new Collection());
+
+    $this->planoTrabalhoRepository->shouldReceive('getPlanosTrabalhoAssinatura')
+        ->once()
+        ->with(['u1'], ['u2', 'u3'], $usuarioId)
+        ->andReturn(new Collection());
+
+    $this->planoEntregaRepository->shouldReceive('getPlanosEntregaAvaliacao')
+        ->once()
+        ->with(['u2', 'u3'])
+        ->andReturn(new Collection());
+    $this->planoEntregaRepository->shouldReceive('getPlanosEntregaHomologacao')
+        ->once()
+        ->with(['u2', 'u3'])
+        ->andReturn(new Collection());
+    $this->planoEntregaRepository->shouldReceive('getEntregasPlanoEntregaExecucao')
+        ->once()
+        ->with(['u2', 'u3'])
+        ->andReturn(new Collection());
+    $this->planoEntregaRepository->shouldReceive('getEntregasPlanoEntregaHomologacao')->andReturn(new Collection());
+
+    $result = $this->service->pendenciasChefe($usuarioId, null);
+
     expect($result)->toBeArray();
 });

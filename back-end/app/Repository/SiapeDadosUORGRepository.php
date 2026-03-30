@@ -13,8 +13,7 @@ class SiapeDadosUORGRepository
     public function __construct(
         private readonly SiapeDadosUORGReadRepositoryContract $readRepository,
         private readonly SiapeDadosUORGWriteRepositoryContract $writeRepository,
-    ) {
-    }
+    ) {}
 
     /**
      * @param array<string, mixed> $attributes
@@ -22,5 +21,10 @@ class SiapeDadosUORGRepository
     public function create(array $attributes): SiapeDadosUORG
     {
         return $this->writeRepository->create($attributes);
+    }
+
+    public function forceDeleteProcessados(): void
+    {
+        $this->writeRepository->forceDeleteProcessados();
     }
 }

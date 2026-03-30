@@ -75,7 +75,8 @@ export class HomeGestaoPendenciasComponent extends PageBase {
       params: {
         filter: {
           numero: numero, 
-          meus_planos: false
+          meus_planos: false,
+          unidade_id: null
         }
       }
     });
