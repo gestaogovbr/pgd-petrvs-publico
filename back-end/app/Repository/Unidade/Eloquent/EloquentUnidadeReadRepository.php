@@ -143,4 +143,27 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         $unidade = $this->query()->find($id);
         return $unidade;
     }
+
+    public function buscarPorNomeOuCodigoNaHierarquia(\App\V2\Unidade\DTOs\UnidadeBuscaDTO $dto, string $usuarioId): \Illuminate\Database\Eloquent\Collection
+    {
+        $query = $this->query()->select('id', 'nome', 'codigo', 'sigla');
+
+        if ($dto->hierarquia) {
+            $areasTrabalhoWhere = $this->getAreasTrabalhoWhereClause($usuarioId, true);
+            $query->whereRaw($areasTrabalhoWhere);
+        }
+
+        if ($dto->termo) {
+            $query->where(function ($q) use ($dto) {
+                $q->where('nome', 'like', "%{$dto->termo}%")
+                  ->orWhere('codigo', 'like', "%{$dto->termo}%");
+            });
+        }
+
+        if (!$dto->todos) {
+            $query->limit(50);
+        }
+
+        return $query->get();
+    }
 }
