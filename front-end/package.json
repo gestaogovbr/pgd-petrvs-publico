@@ -31,9 +31,6 @@
     "@fullcalendar/daygrid": "^6.1.8",
     "@fullcalendar/interaction": "^6.1.8",
     "@govbr-ds/core": "^3.7.0",
-    "@govbr-ds/webcomponents": "^2.0.0-next.65",
-    "@govbr-ds/webcomponents-angular": "^2.0.0-next.65",
-    "@primeuix/themes": "^2.0.3",
     "@tinymce/tinymce-angular": "^9.1.1",
     "@types/bootstrap": "^5.2.6",
     "@types/chrome": "^0.0.159",
@@ -58,7 +55,7 @@
     "ngx-drag-drop": "^21.0.0",
     "ngx-infinite-scroll": "^21.0.0",
     "ngx-mask": "^21.0.1",
-    "primeng": "^21.0.0",
+    
     "rxjs": "^7.8.0",
     "tinymce": "^7.9.2",
     "ts-md5": "1.2.11",

@@ -18,3 +18,4 @@
 - Prefer nomes positivos para métodos booleanos (ex: `isPlanoCriadoParaSi()` em vez de `isPlanoCriadoParaOutraPessoa()`), evitando dupla negação no uso
 - DTOs podem ter métodos de consulta derivados dos seus campos (ex: `isPlanoCriadoParaSi()`) para melhorar legibilidade nas validações
 - Early returns são válidos quando evitam chamadas desnecessárias ao banco, mas devem ser justificados pela otimização e não por perfil específico
+- Front-end: não rodar build a menos que solicitado explicitamente

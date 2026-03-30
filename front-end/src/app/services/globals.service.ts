@@ -48,8 +48,8 @@ export class GlobalsService {
   public refresh() {
     //this.document.getElementById("html-petrvs").setAttribute("data-bs-theme", this.theme)
     document.getElementsByTagName("html")[0].setAttribute("data-bs-theme", this.theme);
-    const ngTheme = this.document.getElementById("primeng-thme") as HTMLLinkElement;
-    if (ngTheme) ngTheme.href = this.theme + ".css";
+    const themeLink = this.document.getElementById("theme-css") as HTMLLinkElement;
+    if (themeLink) themeLink.href = this.theme + ".css";
     this.app!.cdRef.detectChanges();
   }
 

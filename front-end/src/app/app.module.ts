@@ -16,9 +16,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LogModule } from './modules/logs/log.module';
 import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
-import { DynamicDialogModule } from 'primeng/dynamicdialog';
-import { providePrimeNG } from 'primeng/config';
-import Lara from '@primeuix/themes/lara';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ErrorsInterceptor } from './interceptors/errors-interceptor';
 import { PetrvsAuthInterceptor } from './interceptors/petrvs-auth-interceptor';
@@ -44,18 +41,12 @@ registerLocaleData(localePt);
     UteisModule,
     LogModule,
     RotinaModule,
-    DynamicDialogModule,
     FormsModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: PetrvsAuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true },
-    { provide: LOCALE_ID, useValue: 'pt-BR' },
-    providePrimeNG({
-        theme: {
-          preset: Lara
-        }
-    })
+    { provide: LOCALE_ID, useValue: 'pt-BR' }
   ],
   bootstrap: [AppComponent]
 })
