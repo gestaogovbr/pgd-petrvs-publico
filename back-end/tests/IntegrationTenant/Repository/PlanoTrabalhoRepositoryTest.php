@@ -232,4 +232,31 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         $this->assertTrue($result->pluck('usuario_id')->contains($titularSubordinada->id));
         $this->assertFalse($result->pluck('usuario_id')->contains($participanteSubordinada->id));
     }
+
+    public function testFindByIdRetornaPlanoQuandoExiste()
+    {
+        $usuario = Usuario::factory()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuario->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        $found = $this->repository->findById($plano->id);
+
+        $this->assertNotNull($found);
+        $this->assertEquals($plano->id, $found->id);
+    }
+
+    public function testFindByIdRetornaNullQuandoIdVazio()
+    {
+        $this->assertNull($this->repository->findById(''));
+    }
+
+    public function testFindByIdRetornaNullQuandoNaoExiste()
+    {
+        $this->assertNull($this->repository->findById('00000000-0000-0000-0000-000000000000'));
+    }
 }

@@ -107,6 +107,8 @@ use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
 use App\Repository\PlanoEntrega\Eloquent\EloquentPlanoEntregaReadRepository;
 use App\Repository\PlanoEntrega\Eloquent\EloquentPlanoEntregaWriteRepository;
+use App\Repository\Ocorrencia\Contracts\OcorrenciaReadRepositoryContract;
+use App\Repository\Ocorrencia\Eloquent\EloquentOcorrenciaReadRepository;
 use Illuminate\Support\ServiceProvider;
 
 final class RepositoryServiceProvider extends ServiceProvider
@@ -256,6 +258,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             UnidadeIntegranteAtribuicaoWriteRepositoryContract::class,
             EloquentUnidadeIntegranteAtribuicaoWriteRepository::class,
+        );
+
+        $this->app->bind(
+            OcorrenciaReadRepositoryContract::class,
+            EloquentOcorrenciaReadRepository::class,
         );
     }
 

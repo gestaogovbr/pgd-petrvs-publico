@@ -12,9 +12,15 @@ class OcorrenciaController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':
-                if (!$usuario->hasPermissionTo('MOD_OCOR_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
+                $entity = $request->input('entity', []);
+                if (!empty($entity['id'])) {
+                    if (!$usuario->hasPermissionTo('MOD_OCOR_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
+                } else {
+                    if (!$usuario->hasPermissionTo('MOD_OCOR_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
+                }
                 break;
             case 'EDIT':
+            case 'UPDATE':
                 if (!$usuario->hasPermissionTo('MOD_OCOR_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
                 break;
             case 'DESTROY':

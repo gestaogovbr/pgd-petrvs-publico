@@ -18,6 +18,17 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         $this->model = $model;
     }
 
+    public function findById(string|int $id): ?PlanoTrabalho
+    {
+        if ($id === '' || $id === 0) {
+            return null;
+        }
+
+        $found = parent::findById($id);
+
+        return $found instanceof PlanoTrabalho ? $found : null;
+    }
+
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection
     {
         $unidadesGerenciadasIds = array_values(array_unique($unidadesGerenciadasIds));

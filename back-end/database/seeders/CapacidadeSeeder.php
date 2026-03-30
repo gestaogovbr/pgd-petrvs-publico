@@ -56,6 +56,8 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_ATV_TRF_EXCL"],
       ["codigo" => "MOD_ATV_TRF_INCL"],
       ["codigo" => "MOD_ENTD"],
+      ["codigo" => "MOD_OCOR"],
+      ["codigo" => "MOD_OCOR_INCL"],
       ["codigo" => "MOD_PTR"],
       ["codigo" => "MOD_PTR_CNC"],
       ["codigo" => "MOD_PTR_CSLD"],
