@@ -6,7 +6,7 @@ use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
 
 test('migração torna usuarios.email nullable mantendo UNIQUE', function () {
-    $migrationPath = database_path('migrations/tenant/2026_03_27_000001_make_usuarios_email_nullable.php');
+    $migrationPath = database_path('migrations/tenant/2026_03_29_000001_make_usuarios_email_nullable.php');
 
     expect(file_exists($migrationPath))->toBeTrue();
 
@@ -37,8 +37,8 @@ test('migração torna usuarios.email nullable mantendo UNIQUE', function () {
 });
 
 test('migração saneia emails @petrvs definindo usuarios.email como null', function () {
-    $makeNullablePath = database_path('migrations/tenant/2026_03_27_000001_make_usuarios_email_nullable.php');
-    $sanitizePath = database_path('migrations/tenant/2026_03_27_000002_sanitize_petrvs_emails_in_usuarios_table.php');
+    $makeNullablePath = database_path('migrations/tenant/2026_03_29_000001_make_usuarios_email_nullable.php');
+    $sanitizePath = database_path('migrations/tenant/2026_03_29_000002_sanitize_petrvs_emails_in_usuarios_table.php');
 
     expect(file_exists($makeNullablePath))->toBeTrue();
     expect(file_exists($sanitizePath))->toBeTrue();
@@ -78,4 +78,3 @@ test('migração saneia emails @petrvs definindo usuarios.email como null', func
     expect($usuarioPetrvs2->email)->toBeNull();
     expect($usuarioValido->email)->toBe('valido@exemplo.com');
 });
-

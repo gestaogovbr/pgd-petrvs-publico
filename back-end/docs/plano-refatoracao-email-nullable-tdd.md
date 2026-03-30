@@ -168,3 +168,7 @@ Observação: operações serão executadas manualmente. Abaixo está o escopo a
 - A diretriz “GovBR apenas por CPF” elimina o uso de e-mail na resolução do usuário no callback. Qualquer menção prévia a fallback por e-mail deve ser removida.
 - A regra “e-mail só é escrito quando `usuario_externo = 1`” garante fidelidade ao SIAPE para usuários internos.
 - Validação de e-mail: utilizar a regra nativa do Laravel (RFC/DNS) apenas quando o valor não for nulo; em caso de falha, registrar em `SiapeLog` e persistir `null`.
+
+## Checklist de Execução (progresso)
+- [x] Migrações criadas (tenant): `2026_03_29_000001_make_usuarios_email_nullable.php` e `2026_03_29_000002_sanitize_petrvs_emails_in_usuarios_table.php`.
+- [x] Teste IntegrationTenant ajustado para os novos nomes das migrations em `EmailNullableUsuariosMigrationsTest.php`.
