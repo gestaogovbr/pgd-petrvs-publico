@@ -34,7 +34,7 @@ test('não despacha ProcessEmails e não cria destinatário EMAIL quando email d
 
     $this->service->send('DMD_DISTRIBUICAO', $params);
 
-    Bus::assertNotDispatched(\App\Jobs\ProcessEmails::class);
+    Bus::assertNothingDispatched();
 
     $this->assertDatabaseHas('notificacao_destinatarios', [
         'tipo' => 'PETRVS',

@@ -160,7 +160,6 @@ Observação: operações serão executadas manualmente. Abaixo está o escopo a
   - [LoginService.php](file:///home/diego/projetos/petrvs-pgd/back-end/app/Services/LoginService.php#L681-L696)
 - Notificações:
   - [NotificacoesService.php](file:///home/diego/projetos/petrvs-pgd/back-end/app/Services/NotificacoesService.php#L117-L135)
-  - [ProcessEmails.php](file:///home/diego/projetos/petrvs-pgd/back-end/app/Jobs/ProcessEmails.php)
 - Repositórios/Consultas:
   - [EloquentUsuarioReadRepository.php](file:///home/diego/projetos/petrvs-pgd/back-end/app/Repository/Usuario/Eloquent/EloquentUsuarioReadRepository.php#L39-L60)
 
@@ -172,3 +171,5 @@ Observação: operações serão executadas manualmente. Abaixo está o escopo a
 ## Checklist de Execução (progresso)
 - [x] Migrações criadas (tenant): `2026_03_29_000001_make_usuarios_email_nullable.php` e `2026_03_29_000002_sanitize_petrvs_emails_in_usuarios_table.php`.
 - [x] Teste IntegrationTenant ajustado para os novos nomes das migrations em `EmailNullableUsuariosMigrationsTest.php`.
+- [x] Job `ProcessEmails` removido e envio de e-mail em background desabilitado no `NotificacoesService`.
+ - Faltou a sanitização na tabela integracao_servidores, fazer posteriormente.
