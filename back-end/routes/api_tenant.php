@@ -605,6 +605,7 @@ Route::middleware(['auth:sanctum'])->prefix('SystemLogs')->group(function () {
 /* ── V2 ── */
 use App\V2\PlanoTrabalho\PlanoTrabalhoController as PlanoTrabalhoV2;
 use App\V2\PlanoTrabalho\Entrega\EntregaController as EntregaV2;
+use App\V2\PlanoTrabalho\Documento\DocumentoController as DocumentoV2;
 use App\V2\TipoModalidade\TipoModalidadeController as TipoModalidadeV2;
 use App\V2\Usuario\UsuarioController as UsuarioV2;
 
@@ -613,11 +614,16 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('plano-trabalho', [PlanoTrabalhoV2::class, 'index']);
     Route::get('plano-trabalho/{planoTrabalhoId}', [PlanoTrabalhoV2::class, 'show'])->whereUuid('planoTrabalhoId');
     Route::get('plano-trabalho/statuses', [PlanoTrabalhoV2::class, 'statuses']);
+    Route::get('plano-trabalho/{id}', [PlanoTrabalhoV2::class, 'show']);
     Route::post('plano-trabalho', [PlanoTrabalhoV2::class, 'store']);
+    Route::delete('plano-trabalho/{id}', [PlanoTrabalhoV2::class, 'destroy']);
 
     Route::post('plano-trabalho/{planoTrabalhoId}/entrega', [EntregaV2::class, 'store']);
     Route::put('plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}', [EntregaV2::class, 'update']);
     Route::delete('plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}', [EntregaV2::class, 'destroy']);
+
+    Route::post('plano-trabalho/{planoTrabalhoId}/documento', [DocumentoV2::class, 'store']);
+
     Route::get('usuario', [UsuarioV2::class, 'buscarPorNomeMatricula']);
     Route::get('usuario/cpf/{cpf}/unidades', [UsuarioV2::class, 'buscarUnidadesVinculadasPorCpf']);
     Route::get('usuario/{usuarioId}', [UsuarioV2::class, 'buscarPorId'])->whereUuid('usuarioId');

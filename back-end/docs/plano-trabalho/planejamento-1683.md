@@ -133,6 +133,18 @@ Body: mesmo do POST
 - Quem: usuário que cadastrou o PT; participante dono do PT; chefia titular/substituta do participante; Adm Negocial (unidade instituidora >= unidade do PT); Adm Master
 - Guard: PT sem nenhuma assinatura
 
+### Geração de TCR
+
+#### POST /api/v2/plano-trabalho/:id/documento
+
+- Vai ser baseado no método `repactuar()`
+- Quem: dono do PT/chefia
+- Guard: Não ter um TCR válido (lembrar que com a edição das entregas do PT o TCR precisa ser refeito)
+
+#### GET /api/v2/plano-trabalho/:id/documento/:documento_id
+
+- Quem: dono do PT/chefia
+
 ### Assinatura do Plano de Trabalho
 
 A assinatura segue o fluxo de dupla assinatura (participante + chefia). O endpoint identifica automaticamente se é o 1º ou 2º signatário.

@@ -44,7 +44,7 @@ class PlanoTrabalhoService
     public function index(array $data): LengthAwarePaginator
     {
         $filtro = PlanoTrabalhoIndexDTO::fromRequest($data, Auth::id());
-        $this->indexValidator->validar($filtro);
+        $filtro = $this->indexValidator->validar($filtro);
 
         if ($filtro->subordinadas && $filtro->unidadesId) {
             $idsBase = $filtro->unidadesId;
