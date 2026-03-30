@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { defineCustomElements } from '@govbr-ds/webcomponents/dist/loader';
 
 @Injectable()
 export class GovBrAssetsService {
@@ -8,6 +9,9 @@ export class GovBrAssetsService {
 
   load() {
     if (this.loaded) return;
+    if (typeof window !== 'undefined') {
+      defineCustomElements(window);
+    }
     this.injectStylesheet('https://unpkg.com/@govbr-ds/core/dist/core-tokens.min.css', 'govbr-core-tokens');
     this.injectStylesheet('https://unpkg.com/@govbr-ds/core/dist/core.min.css', 'govbr-core');
     this.loaded = true;

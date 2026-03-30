@@ -10,19 +10,17 @@ export class TipoModalidadeService {
   private readonly gb = inject(GlobalsService);
 
   listar(pedagio: boolean): Promise<TipoModalidade[]> {
-
+    const params: Record<string, string> = {};
+    if (pedagio) {
+      params.exige_pedagio = '0';
+    }
     return firstValueFrom(
       this.http
-        .get<any>(`${this.gb.servidorURL}/api/v2/TipoModalidade/query`, {
-          params: {
-            exige_pedagio: pedagio ? 0 : 1
-          }
+        .get<{ data?: TipoModalidade[] }>(`${this.gb.servidorURL}/api/v2/tipo-modalidade`, {
+          params
         })
         .pipe(
-          map((response: any) => {
-            const items = Array.isArray(response?.data) ? response.data : [];
-            return items as TipoModalidade[];
-          })
+          map((response) => (Array.isArray(response?.data) ? response.data : []))
         )
     );
   }

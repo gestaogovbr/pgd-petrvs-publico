@@ -1,40 +1,53 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GlobalsService } from 'src/app/services/globals.service';
-import { firstValueFrom, map, Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Usuario } from 'src/app/models/usuario.model';
+import { Unidade } from 'src/app/models/unidade.model';
+import { UnidadeIntegrante } from 'src/app/models/unidade-integrante.model';
 
 export type UsuarioSearchItem = {
   id: string;
   nome: string;
   matricula: string | null;
+  cpf?: string | null;
+  lotacao?: UnidadeIntegrante;
+  tipo_modalidade_id?: string | null;
 };
 
 @Injectable()
 export class UsuarioService {
   private readonly http = inject(HttpClient);
   private readonly gb = inject(GlobalsService);
+   private readonly base = 'api/v2/usuario';
 
   searchByNomeMatricula(term: string): Observable<UsuarioSearchItem[]> {
     return this.http
-      .get<any>(`${this.gb.servidorURL}/api/v2/usuario`, { params: { nome_matricula: term } })
+      .get<any>(`${this.gb.servidorURL}/${this.base}`, { params: { nome_matricula: term } })  
       .pipe(
         map((response: any) => {
           const items = Array.isArray(response?.data) ? response.data : [];
           return items.map((u: any) => ({
             id: String(u?.id ?? ''),
             nome: String(u?.nome ?? ''),
-            matricula: u?.matricula ? String(u.matricula) : null
+            matricula: u?.matricula ? String(u.matricula) : null,
+            cpf: u?.cpf ? String(u.cpf) : null,
+            lotacao: u?.lotacao ? u.lotacao : null,
+            tipo_modalidade_id: u?.tipo_modalidade_id ? String(u.tipo_modalidade_id) : null,
           }));
         })
       );
   }
 
-  getById(id: string, withRelations: string[]): Promise<Usuario | null> {
-    return firstValueFrom(
-      this.http
-        .post<any>(`${this.gb.servidorURL}/api/Usuario/get-by-id`, { id, with: withRelations })
-        .pipe(map((response: any) => (response?.data as Usuario) ?? null))
-    );
+  getById(id: string): Observable<Usuario> {
+    return this.http
+        .get<any>(`${this.gb.servidorURL}/${this.base}/${id}`)
+        .pipe(map((response: any) => (response?.data as Usuario)));
+  }
+
+  getUnidadesVinculadas(cpf: string): Observable<Unidade[]> {
+    return this.http
+        .get<any>(`${this.gb.servidorURL}/${this.base}/cpf/${cpf}/unidades`)
+        .pipe(map((response: any) => (response?.data as Unidade[])));
   }
 }

@@ -1,0 +1,171 @@
+<div class="container-fluid py-3 govbr-v2">
+  
+  @if (loading()) {
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+      <span class="br-loading"></span>
+    </div>
+  } @else {
+    <br-card class="mb-4">
+      <div slot="header" class="text-weight-semi-bold text-up-02">
+        Informações gerais
+      </div>
+      <div slot="content">
+        <form [formGroup]="form">
+            <div class="row">
+              <div class="col-md-4 mb-3 position-relative">
+                <div class="d-flex align-items-end gap-2">
+                  <br-input [placeholder]="'Digite nome ou matrícula (mín. 3)'" [formControl]="agentePublicoQuery" label="Agente Público" autocomplete="on"></br-input>
+                  <br-button emphasis="secondary" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</br-button>
+                </div>
+                @if (sugestoesUsuarios().length > 0) {
+                  <br-card class="position-absolute w-100 " style="z-index: 1050;">               
+                    @for (u of sugestoesUsuarios(); track u.id) {
+                      <div class="d-flex justify-content-between align-items-center px-2 py-1" slot="content">
+                        <div class="text-truncate">
+                          {{ u.nome }} @if (u.matricula) { <span class="text-body-secondary">({{ u.matricula }})</span> }
+                        </div>
+                        <br-button emphasis="secondary" (click)="selecionarUsuario(u)">Selecionar</br-button>
+                      </div>
+                    }
+                  </br-card>
+                }
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <br-select
+                  formControlName="unidade_id"
+                  label="Unidade"
+                >
+                  @for (u of unidades(); track u.id) {
+                    <br-select-option [value]="u.id.toString()" [label]="u.sigla" [selected]="form.controls.unidade_id.value === u.id.toString()"></br-select-option>
+                  }
+                </br-select>
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <br-input label="Regramento de Instituição PGD" readonly [value]="programaNome()"></br-input>
+              </div>
+            </div>
+
+            <div class="row mt-2">
+              <div class="col-md-3 mb-3">
+                <br-input type="date" formControlName="data_inicio" label="Início"></br-input>
+              </div>
+
+              <div class="col-md-3 mb-3">
+                <br-input type="date" formControlName="data_fim" label="Final"></br-input>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <br-select
+                  formControlName="tipo_modalidade_id"
+                  label="Modalidade"
+                >
+                  @for (m of modalidades(); track m.id) {
+                    <br-select-option [value]="m.id.toString()" [label]="m.nome" [selected]="form.controls.tipo_modalidade_id.value === m.id.toString()"></br-select-option>
+                  }
+                </br-select>
+              </div>
+            </div>
+        </form>
+      </div>
+    </br-card>
+
+    <br-card class="mb-4">
+      <div slot="header" class="text-weight-semi-bold text-up-02">
+        Planejamento
+      </div>
+      <div slot="content">
+        <div class="d-flex justify-content-end mb-3">
+          <br-button emphasis="secondary" (click)="adicionarEntrega()" [disabled]="mostrandoFormEntrega()">
+            <i class="fas fa-plus mr-1"></i> Adicionar Entrega
+          </br-button>
+        </div>
+
+        @if (mostrandoFormEntrega()) {
+          <div class="p-3 mb-4 border rounded" style="background-color: var(--color-secondary-01);">
+            <h6 class="mb-3 text-weight-semi-bold">{{ entregaForm.value.id ? 'Editar Entrega' : 'Nova Entrega' }}</h6>
+            <form [formGroup]="entregaForm">
+              <div class="row">
+                <div class="col-md-9 mb-3">
+                  <br-select formControlName="plano_entrega_entrega_id" label="Contribuição para">
+                    <br-select-option value="" label="- Selecione -" [selected]="!entregaForm.controls.plano_entrega_entrega_id.value"></br-select-option>
+                    @for (eu of entregasUnidade(); track eu.id) {
+                      <br-select-option [value]="eu.id" [label]="eu.label" [selected]="entregaForm.controls.plano_entrega_entrega_id.value === eu.id"></br-select-option>
+                    }
+                  </br-select>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <br-input formControlName="forca_trabalho" type="number" label="% CHD" placeholder="Ex: 100"></br-input>
+                </div>
+                <div class="col-md-12 mb-3">
+                  <br-textarea formControlName="descricao" label="Trabalho Planejado" placeholder="Descreva o trabalho planejado..."></br-textarea>
+                </div>
+              </div>
+              <div class="d-flex justify-content-end gap-2 mt-2">
+                <br-button emphasis="secondary" (click)="cancelarEntrega()">Cancelar</br-button>
+                <br-button emphasis="primary" (click)="salvarEntrega()" [disabled]="entregaForm.invalid || salvandoEntrega()">
+                  {{ salvandoEntrega() ? 'Salvando...' : 'Salvar Entrega' }}
+                </br-button>
+              </div>
+            </form>
+          </div>
+        }
+
+        <div class="table-responsive mb-4">
+          <table class="table table-hover br-table">
+            <thead>
+              <tr>
+                <th scope="col">Contribuição para</th>
+                <th scope="col">Entrega</th>
+                <th scope="col">%CHD</th>
+                <th scope="col">Trabalho Planejado</th>
+                <th scope="col" class="text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (e of entregas(); track e.id) {
+                <tr>
+                  <td>{{ getPlanoEntregaInfo(e.plano_entrega_entrega_id).plano }}</td>
+                  <td>{{ getPlanoEntregaInfo(e.plano_entrega_entrega_id).entrega }}</td>
+                  <td>{{ e.forca_trabalho }}%</td>
+                  <td>{{ e.descricao }}</td>
+                  <td class="text-right">
+                    <br-button emphasis="tertiary" circle (click)="editarEntrega(e)" aria-label="Editar" title="Editar">
+                      <i class="fas fa-pen"></i>
+                    </br-button>
+                    <br-button emphasis="tertiary" circle class="text-danger" (click)="removerEntrega(e)" aria-label="Excluir" title="Excluir">
+                      <i class="fas fa-trash"></i>
+                    </br-button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="text-center py-4 text-muted">
+                    Nenhuma entrega cadastrada no planejamento
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <br-textarea
+              label="Justificativa para carga horária insuficiente"
+              placeholder="Descreva a justificativa"
+            ></br-textarea>
+          </div>
+        </div>
+      </div>
+    </br-card>
+
+    <div class="d-flex justify-content-center gap-2">
+      <br-button emphasis="secondary" class="text-danger border-danger">Excluir</br-button>
+      <br-button emphasis="secondary" (click)="salvar()" [disabled]="!podeSalvar() || saving()">Salvar Alterações</br-button>
+      <br-button emphasis="primary">Assinar</br-button>
+      <br-button emphasis="secondary" (click)="voltar()">Voltar</br-button>
+    </div>
+  }
+</div>

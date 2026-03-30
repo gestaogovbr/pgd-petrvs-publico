@@ -48,6 +48,30 @@ export class PlanoTrabalhoApiClient {
     return this.http.delete<void>(`${this.gb.servidorURL}${this.base}/${id}`);
   }
 
+  createEntrega(planoTrabalhoId: string, payload: any): Observable<any> {
+    return this.http.post<any>(`${this.gb.servidorURL}${this.base}/${planoTrabalhoId}/entrega`, payload)
+      .pipe(map((response: any) => response?.data ?? response));
+  }
+
+  updateEntrega(planoTrabalhoId: string, entregaId: string, payload: any): Observable<any> {
+    return this.http.put<any>(`${this.gb.servidorURL}${this.base}/${planoTrabalhoId}/entrega/${entregaId}`, payload)
+      .pipe(map((response: any) => response?.data ?? response));
+  }
+
+  deleteEntrega(planoTrabalhoId: string, entregaId: string): Observable<void> {
+    return this.http.delete<void>(`${this.gb.servidorURL}${this.base}/${planoTrabalhoId}/entrega/${entregaId}`);
+  }
+
+  queryEntregasUnidade(unidadeId: string): Observable<any[]> {
+    return this.http.post<any>(`${this.gb.servidorURL}/api/PlanoEntregaEntrega/query`, {
+      join: ['entrega', 'plano_entrega'],
+      where: [
+        ['plano_entrega.unidade_id', '==', unidadeId],
+        ['plano_entrega.status', '==', 'ATIVO']
+      ]
+    }).pipe(map(res => res?.rows ?? res?.data ?? []));
+  }
+
   private normalize(params: QueryParams): Record<string, string> {
     const out: Record<string, string> = {};
     if (typeof params.page === 'number') out['page'] = String(params.page);

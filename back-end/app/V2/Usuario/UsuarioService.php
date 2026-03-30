@@ -17,4 +17,14 @@ class UsuarioService
     {
         return $this->usuarioRepository->findByNomeMatricula($nomeMatricula);
     }
+
+    public function buscarPorId(string $usuarioId)
+    {
+        return $this->usuarioRepository->findById($usuarioId);
+    }
+
+    public function buscarUnidadesVinculadas(string $cpf)
+    {
+        return $this->usuarioRepository->getUnidadesVinculadas($cpf);
+    }
 }

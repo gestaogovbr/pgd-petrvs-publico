@@ -16,4 +16,29 @@ class UsuarioValidacoes
             'nome_matricula.min' => 'O termo deve ter ao menos 3 caracteres.',
         ]);
     }
+
+    public static function buscarPorId(Request $request, string $usuarioId): array
+    {
+        $request->merge(['id' => $usuarioId]);
+
+        return $request->validate([
+            'id' => ['required', 'uuid'],
+        ], [
+            'id.required' => 'O id do usuário é obrigatório.',
+            'id.uuid' => 'O id do usuário deve ser um UUID válido.',
+        ]);
+    }
+
+    public static function buscarUnidadesVinculadas(Request $request, string $cpf): array
+    {
+        $cpfNumerico = preg_replace('/\D/', '', $cpf);
+        $request->merge(['cpf' => $cpfNumerico]);
+
+        return $request->validate([
+            'cpf' => ['required', 'regex:/^\d{11}$/'],
+        ], [
+            'cpf.required' => 'O CPF é obrigatório.',
+            'cpf.regex' => 'O CPF deve conter 11 dígitos.',
+        ]);
+    }
 }

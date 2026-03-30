@@ -33,7 +33,13 @@ export const routes: Routes = [
         path: 'novo',
         loadComponent: () =>
           import('./ui/new.page').then(m => m.PlanoTrabalhoV2NewPage)
+      },
+      {
+        path: 'editar/:id',
+        loadComponent: () =>
+          import('./ui/edit.page').then(m => m.PlanoTrabalhoV2EditPage)
       }
     ]
   }
 ];
+

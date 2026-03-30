@@ -611,6 +611,7 @@ use App\V2\Usuario\UsuarioController as UsuarioV2;
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('tipo-modalidade', [TipoModalidadeV2::class, 'index']);
     Route::get('plano-trabalho', [PlanoTrabalhoV2::class, 'index']);
+    Route::get('plano-trabalho/{planoTrabalhoId}', [PlanoTrabalhoV2::class, 'show'])->whereUuid('planoTrabalhoId');
     Route::get('plano-trabalho/statuses', [PlanoTrabalhoV2::class, 'statuses']);
     Route::post('plano-trabalho', [PlanoTrabalhoV2::class, 'store']);
 
@@ -618,4 +619,6 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::put('plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}', [EntregaV2::class, 'update']);
     Route::delete('plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}', [EntregaV2::class, 'destroy']);
     Route::get('usuario', [UsuarioV2::class, 'buscarPorNomeMatricula']);
+    Route::get('usuario/cpf/{cpf}/unidades', [UsuarioV2::class, 'buscarUnidadesVinculadasPorCpf']);
+    Route::get('usuario/{usuarioId}', [UsuarioV2::class, 'buscarPorId'])->whereUuid('usuarioId');
 });

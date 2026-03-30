@@ -2,24 +2,25 @@
   
   
   <br-card>
-    <h5>Informações gerais</h5>
-
-    <div class="card-body">
+    <div slot="header" class="text-weight-semi-bold text-up-02">
+      Informações gerais
+    </div>
+    <div slot="content">
       <form [formGroup]="form">
           <div class="row">
             <div class="col-md-4 mb-3 position-relative">
-              <div class="d-flex align-items-center gap-2">
+              <div class="d-flex align-items-end gap-2">
                 <br-input [placeholder]="'Digite nome ou matrícula (mín. 3)'" [formControl]="agentePublicoQuery" label="Agente Público" autocomplete="on"></br-input>
-                <br-button emphasis="secondary" (clicked)="limparUsuarioSelecionado()" [disabled]="saving">Limpar</br-button>
+                <br-button emphasis="secondary" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</br-button>
               </div>
-              @if (sugestoesUsuarios.length > 0) {
-                <br-card class="position-absolute w-100" style="z-index: 1050;">
-                  @for (u of sugestoesUsuarios; track u.id) {
-                    <div class="d-flex justify-content-between align-items-center px-2 py-1">
+              @if (sugestoesUsuarios().length > 0) {
+                <br-card class="position-absolute w-100 " style="z-index: 1050;">               
+                  @for (u of sugestoesUsuarios(); track u.id) {
+                    <div class="d-flex justify-content-between align-items-center px-2 py-1" slot="content">
                       <div class="text-truncate">
                         {{ u.nome }} @if (u.matricula) { <span class="text-body-secondary">({{ u.matricula }})</span> }
                       </div>
-                      <br-button emphasis="secondary" (clicked)="selecionarUsuario(u)">Selecionar</br-button>
+                      <br-button emphasis="secondary" (click)="selecionarUsuario(u)">Selecionar</br-button>
                     </div>
                   }
                 </br-card>
@@ -27,11 +28,18 @@
             </div>
 
             <div class="col-md-4 mb-3">
-              <br-select formControlName="unidade_id" (change)="onUnidadeChange()" [options]="unidades.map(u => ({ value: u.id, label: u.nome }))" label="Unidade"></br-select>
+              <br-select
+                formControlName="unidade_id"
+                label="Unidade"
+              >
+                @for (u of unidades(); track u.id) {
+                  <br-select-option [value]="u.id.toString()" [label]="u.sigla" [selected]="form.controls.unidade_id.value === u.id.toString()"></br-select-option>
+                }
+              </br-select>
             </div>
 
             <div class="col-md-4 mb-3">
-              <br-input label="Regramento de Instituição PGD" readonly formControlName="programa_id"></br-input>
+              <br-input label="Regramento de Instituição PGD" readonly [value]="programaNome()"></br-input>
             </div>
           </div>
 
@@ -45,7 +53,14 @@
             </div>
 
             <div class="col-md-6 mb-3">
-              <br-select formControlName="tipo_modalidade_id" [options]="modalidades.map(m => ({ value: m.id, label: m.nome }))" label="Modalidade"></br-select>
+              <br-select
+                formControlName="tipo_modalidade_id"
+                label="Modalidade"
+              >
+                @for (m of modalidades(); track m.id) {
+                  <br-select-option [value]="m.id.toString()" [label]="m.nome" [selected]="form.controls.tipo_modalidade_id.value === m.id.toString()"></br-select-option>
+                }
+              </br-select>
             </div>
           </div>
       </form>
@@ -53,8 +68,8 @@
   </br-card>
 
   <div class="d-flex gap-2">
-    <br-button emphasis="secondary" (clicked)="voltar()" [disabled]="saving">Voltar</br-button>
-    <br-button emphasis="primary" (clicked)="salvar()" [disabled]="!podeSalvar">Salvar</br-button>
+    <br-button emphasis="secondary" (click)="voltar()" [disabled]="saving()">Voltar</br-button>
+    <br-button emphasis="primary" (click)="salvar()" [disabled]="!podeSalvar()">Salvar</br-button>
   </div>
 
 </div>

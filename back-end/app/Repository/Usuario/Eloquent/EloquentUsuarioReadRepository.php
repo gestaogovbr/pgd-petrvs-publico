@@ -176,6 +176,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
                 $q->where('nome', 'like', $term)
                   ->orWhere('matricula','like','%'.$nomeMatricula.'%');
             })
+             ->with(['lotacao'])
             ->get();
     }
 

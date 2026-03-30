@@ -34,4 +34,38 @@ class UsuarioController extends Controller
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function buscarPorId(Request $request, string $usuarioId): JsonResponse
+    {
+        try {
+            UsuarioValidacoes::buscarPorId($request, $usuarioId);
+
+            $result = $this->service->buscarPorId($usuarioId);
+            if ($result === null) {
+                return response()->json(['error' => 'Usuário não encontrado.'], Response::HTTP_NOT_FOUND);
+            }
+
+            return response()->json(['success' => true, 'data' => $result]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function buscarUnidadesVinculadasPorCpf(Request $request, string $cpf): JsonResponse
+    {
+        try {
+            $data = UsuarioValidacoes::buscarUnidadesVinculadas($request, $cpf);
+            $result = $this->service->buscarUnidadesVinculadas($data['cpf']);
+
+            return response()->json(['success' => true, 'data' => $result]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

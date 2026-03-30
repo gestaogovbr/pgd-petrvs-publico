@@ -212,11 +212,13 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   }
 
   novoPlano() {
-    this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'novo'] }, { modal: true });
+    this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'novo'] });
   }
 
   detalhesDoPlano(p: PlanoTrabalho) {}
-  editarPlano(p: PlanoTrabalho) {}
+  editarPlano(p: PlanoTrabalho) {
+    this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'editar', p.id] });
+  }
   assinarPlano(p: PlanoTrabalho) {}
   cancelarPlano(p: PlanoTrabalho) {}
 }
