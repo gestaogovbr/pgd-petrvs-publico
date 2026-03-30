@@ -48,6 +48,7 @@ class UsuarioService extends ServiceBase
     const LOGIN_GOOGLE = "GOOGLE";
     const LOGIN_MICROSOFT = "AZURE";
     const LOGIN_FIREBASE = "FIREBASE";
+    private const USUARIO_EXTERNO = 1;
 
     protected UsuarioRepository $usuarioRepository;
     protected UnidadeRepository $unidadeRepository;
@@ -85,6 +86,44 @@ class UsuarioService extends ServiceBase
         }
 
         $data['tipo_modalidade_id'] = $defaultTipoModalidade->id;
+    }
+
+    private function parseUsuarioExterno(mixed $value): ?bool
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if (is_int($value)) {
+            return $value === self::USUARIO_EXTERNO;
+        }
+
+        if (is_string($value)) {
+            $value = trim($value);
+            if ($value === '') {
+                return null;
+            }
+
+            if (is_numeric($value)) {
+                return ((int) $value) === self::USUARIO_EXTERNO;
+            }
+        }
+
+        return null;
+    }
+
+    private function removerEmailDaRequisicaoSeUsuarioInterno(array &$data, mixed $usuarioExterno): void
+    {
+        $isExterno = $this->parseUsuarioExterno($usuarioExterno);
+        if ($isExterno !== false) {
+            return;
+        }
+
+        unset($data['email']);
     }
 
     /**
@@ -547,6 +586,7 @@ class UsuarioService extends ServiceBase
         $data["with"] = [];
         $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
         $this->applyDefaultTipoModalidadeId($data);
+        $this->removerEmailDaRequisicaoSeUsuarioInterno($data, $data['usuario_externo'] ?? null);
 
         unset($data['pedagio']);
 
@@ -563,11 +603,32 @@ class UsuarioService extends ServiceBase
     {
         $data["with"] = [];
         $this->applyDefaultTipoModalidadeId($data);
+
+        if (array_key_exists('email', $data)) {
+            $usuario = !empty($data['id'] ?? null) ? $this->usuarioRepository->findById($data['id']) : null;
+            $this->removerEmailDaRequisicaoSeUsuarioInterno($data, $data['usuario_externo'] ?? ($usuario?->usuario_externo ?? null));
+        }
         unset($data['pedagio']);
         $this->buffer = ["integrantes" => UtilService::getNested($data, "integrantes")];
         $this->validarPerfil($data);
         $this->validarColaborador($data);
         return $data;
+    }
+
+    public function proxyUpdateJson($data, $unidade)
+    {
+        $field = $data['field'] ?? null;
+        if ($field !== 'email') {
+            return $data;
+        }
+
+        $usuario = !empty($data['id'] ?? null) ? $this->usuarioRepository->findById($data['id']) : null;
+        $isExterno = $this->parseUsuarioExterno($usuario?->usuario_externo ?? null);
+        if ($isExterno !== false) {
+            return $data;
+        }
+
+        throw new ValidateException("Apenas usuários externos podem alterar o e-mail.", 422);
     }
 
     public function extraUpdate($entity, $unidade)
@@ -592,6 +653,7 @@ class UsuarioService extends ServiceBase
     public function validateStore(&$data, $unidade, $action)
     {
         if($action == ServiceBase::ACTION_EDIT){
+            $user = null;
             if(!empty($data['matricula']) && strlen($data['matricula']) > 50)
                 throw new ValidateException("O campo de matrícula deve ter no máximo 50 caracteres", 422);
             if (empty($data["integrantes"][0]))
@@ -601,8 +663,18 @@ class UsuarioService extends ServiceBase
                 $user = $this->usuarioRepository->findById($data["id"]);
                 $data['tipo_modalidade_id'] = $user?->tipo_modalidade_id;
             }
+
+            if (array_key_exists('email', $data)) {
+                $usuario = $user ?? (!empty($data["id"] ?? null) ? $this->usuarioRepository->findById($data["id"]) : null);
+                $this->removerEmailDaRequisicaoSeUsuarioInterno($data, $data['usuario_externo'] ?? ($usuario?->usuario_externo ?? null));
+            }
         }
         if ($action == ServiceBase::ACTION_INSERT) {
+            $isExterno = $this->parseUsuarioExterno($data['usuario_externo'] ?? null);
+            if ($isExterno === false) {
+                throw new ValidateException("Usuário interno deve ser criado/atualizado via integração SIAPE.", 422);
+            }
+
             if (empty($data["email"]))
                 throw new ValidateException("O campo de e-mail é obrigatório", 422);
             if (empty($data["cpf"]))

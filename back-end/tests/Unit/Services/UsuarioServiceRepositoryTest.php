@@ -402,6 +402,10 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
         $this->service->shouldReceive('validarPerfil')->andReturnNull();
         $this->service->shouldReceive('validarColaborador')->andReturnNull();
 
+        $usuario = new Usuario();
+        $usuario->forceFill(['id' => 'user-id', 'usuario_externo' => 1]);
+        $this->usuarioRepository->shouldReceive('findById')->once()->with('user-id')->andReturn($usuario);
+
         $updatedUser = Mockery::mock(Usuario::class);
         $updatedUser->shouldReceive('getAttribute')->with('id')->andReturn('user-id');
 
@@ -426,13 +430,17 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
         $this->service->shouldReceive('validarPerfil')->andReturnNull();
         $this->service->shouldReceive('validarColaborador')->andReturnNull();
 
+        $usuario = new Usuario();
+        $usuario->forceFill(['id' => 'user-id', 'usuario_externo' => 0]);
+        $this->usuarioRepository->shouldReceive('findById')->once()->with('user-id')->andReturn($usuario);
+
         $updatedUser = Mockery::mock(Usuario::class);
         $updatedUser->shouldReceive('getAttribute')->with('id')->andReturn('user-id');
 
         $this->usuarioRepository->shouldReceive('update')
             ->once()
             ->with('user-id', Mockery::on(function (array $payload): bool {
-                return ($payload['email'] ?? null) === 'novo@example.com'
+                return !array_key_exists('email', $payload)
                     && ($payload['tipo_modalidade_id'] ?? null) === 'mod-default-id';
             }))
             ->andReturn($updatedUser);
@@ -596,4 +604,65 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
 
         $this->service->atualizarServidor($usuarioObj);
     });
+
+    it('validateStore (EDIT) deve remover email quando usuario_externo for 0 no banco', function () {
+        $data = [
+            'id' => 'user-id',
+            'email' => 'novo@email.com',
+            'integrantes' => [['unidade_id' => 'u1']],
+        ];
+
+        $usuario = new Usuario();
+        $usuario->forceFill(['id' => 'user-id', 'tipo_modalidade_id' => 'mod-default-id', 'usuario_externo' => 0]);
+
+        $this->usuarioRepository->shouldReceive('findById')
+            ->once()
+            ->with('user-id')
+            ->andReturn($usuario);
+
+        $this->service->validateStore($data, null, \App\Services\ServiceBase::ACTION_EDIT);
+
+        expect(array_key_exists('email', $data))->toBeFalse();
+    });
+
+    it('proxyUpdate deve remover email quando usuario_externo for 0 no banco', function () {
+        $data = [
+            'id' => 'user-id',
+            'email' => 'novo@email.com',
+            'integrantes' => [['unidade_id' => 'u1']],
+        ];
+
+        $this->service->shouldReceive('validarPerfil')->andReturnNull();
+        $this->service->shouldReceive('validarColaborador')->andReturnNull();
+
+        $usuario = new Usuario();
+        $usuario->forceFill(['id' => 'user-id', 'usuario_externo' => 0]);
+
+        $this->usuarioRepository->shouldReceive('findById')
+            ->once()
+            ->with('user-id')
+            ->andReturn($usuario);
+
+        $result = $this->service->proxyUpdate($data, null);
+
+        expect(array_key_exists('email', $result))->toBeFalse();
+    });
+
+    it('proxyUpdateJson deve bloquear alteracao de email para usuario interno', function () {
+        $data = [
+            'id' => 'user-id',
+            'field' => 'email',
+            'data' => 'novo@email.com',
+        ];
+
+        $usuario = new Usuario();
+        $usuario->forceFill(['id' => 'user-id', 'usuario_externo' => 0]);
+
+        $this->usuarioRepository->shouldReceive('findById')
+            ->once()
+            ->with('user-id')
+            ->andReturn($usuario);
+
+        $this->service->proxyUpdateJson($data, null);
+    })->throws(\App\Exceptions\ValidateException::class);
 });
