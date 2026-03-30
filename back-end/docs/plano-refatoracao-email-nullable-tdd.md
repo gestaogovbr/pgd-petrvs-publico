@@ -173,4 +173,5 @@ Observação: operações serão executadas manualmente. Abaixo está o escopo a
 - [x] Teste IntegrationTenant ajustado para os novos nomes das migrations em `EmailNullableUsuariosMigrationsTest.php`.
 - [x] Job `ProcessEmails` removido e envio de e-mail em background desabilitado no `NotificacoesService`.
 - [x] Login GovBR: resolução de usuário exclusivamente por CPF (sem fallback por e-mail) + testes unitários ajustados.
+- [x] Repositórios (Usuário): `findByEmail` e `findByCpfOrEmail` ignoram e-mail nulo/vazio e não consultam com `email = null`.
  - Faltou a sanitização na tabela integracao_servidores, fazer posteriormente.
