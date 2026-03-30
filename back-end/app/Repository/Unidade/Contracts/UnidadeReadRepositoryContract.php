@@ -26,4 +26,6 @@ interface UnidadeReadRepositoryContract
     public function findById(string|int $id): ?\App\Models\Unidade;
 
     public function existsByCodigo(string $codigo): bool;
+
+    public function buscarPorNomeOuCodigoNaHierarquia(\App\V2\Unidade\DTOs\UnidadeBuscaDTO $dto, string $usuarioId): \Illuminate\Database\Eloquent\Collection;
 }

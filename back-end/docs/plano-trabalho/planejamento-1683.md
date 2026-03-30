@@ -14,14 +14,15 @@ description: Quando a conversa envolver o ticket #1683 ou plano de trabalho V2
 
 	v2/
 	L plano-trabalho/
+	| L DTOs/	
 	| L entrega/
 	| 	L Controller.php
 	| 	L Service.php
-	| 	L Validacoes.php
+	| 	L Validator.php
 	L CalculadoraPeriodosAvaliativos.php
 	L Controller.php
 	L Service.php
-	L Validacoes.php
+	L Validator.php
 	```
 - Abolir o uso de `ServiceBase`
 - Coverage 100%

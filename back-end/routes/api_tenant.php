@@ -608,6 +608,8 @@ use App\V2\PlanoTrabalho\Entrega\EntregaController as EntregaV2;
 use App\V2\PlanoTrabalho\Documento\DocumentoController as DocumentoV2;
 use App\V2\TipoModalidade\TipoModalidadeController as TipoModalidadeV2;
 use App\V2\Usuario\UsuarioController as UsuarioV2;
+use App\V2\Unidade\UnidadeController as UnidadeV2;
+use App\V2\PlanoEntrega\PlanoEntregaController as PlanoEntregaV2;
 
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('tipo-modalidade', [TipoModalidadeV2::class, 'index']);
@@ -626,4 +628,8 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('usuario', [UsuarioV2::class, 'buscarPorNomeMatricula']);
     Route::get('usuario/cpf/{cpf}/unidades', [UsuarioV2::class, 'buscarUnidadesVinculadasPorCpf']);
     Route::get('usuario/{usuarioId}', [UsuarioV2::class, 'buscarPorId'])->whereUuid('usuarioId');
+
+    Route::get('unidade', [UnidadeV2::class, 'buscarPorNomeOuCodigo']);
+
+    Route::get('plano-entrega', [PlanoEntregaV2::class, 'buscarPorUnidade']);
 });

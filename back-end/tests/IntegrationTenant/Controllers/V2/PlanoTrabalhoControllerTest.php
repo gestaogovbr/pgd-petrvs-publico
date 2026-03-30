@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\PerfilEnum;
+use App\Enums\StatusEnum;
 use App\V2\PlanoTrabalho\PlanoTrabalhoController;
 use App\V2\PlanoTrabalho\PlanoTrabalhoService;
 use App\Models\PlanoTrabalho;
@@ -184,7 +185,7 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
             'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => now()->subMonth(),
             'data_fim' => now()->addMonth(),
-            'status' => 'ATIVO',
+            'status' => StatusEnum::ATIVO,
         ]);
 
         PlanoTrabalho::factory()->create([
@@ -193,7 +194,7 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
             'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => now()->subYear(),
             'data_fim' => now()->subMonths(6),
-            'status' => 'ATIVO',
+            'status' => StatusEnum::ATIVO,
         ]);
 
         $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([

@@ -59,4 +59,9 @@ class UnidadeRepository
     {
         return $this->readRepository->existsByCodigo($codigo);
     }
+
+    public function buscarPorNomeOuCodigoNaHierarquia(\App\V2\Unidade\DTOs\UnidadeBuscaDTO $dto, string $usuarioId): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->readRepository->buscarPorNomeOuCodigoNaHierarquia($dto, $usuarioId);
+    }
 }

@@ -10,6 +10,7 @@ use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Enums\PerfilEnum;
 use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoIndexValidator;
 use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
@@ -41,7 +42,7 @@ describe('PlanoTrabalhoIndexValidacao', function () {
 
         $filtro = PlanoTrabalhoIndexDTO::fromArray(['usuario_id' => 'outro-user', 'vigentes' => true, 'usuarioLogadoId' => 'user-participante']);
         $this->validacao->validar($filtro);
-    })->throws(ServerException::class, 'Usuário de perfil participante só pode consultar seus próprios planos de trabalho.');
+    })->throws(ValidateException::class, 'Usuário de perfil participante só pode consultar seus próprios planos de trabalho.');
 
     test('participante pode filtrar por seu próprio usuario_id', function () {
         /** @var Usuario $usuario */
@@ -113,7 +114,7 @@ describe('PlanoTrabalhoIndexValidacao', function () {
 
         $filtro = PlanoTrabalhoIndexDTO::fromArray(['unidade_id' => ['unidade-sem-vinculo'], 'vigentes' => true, 'usuarioLogadoId' => 'user-unidade']);
         $this->validacao->validar($filtro);
-    })->throws(ServerException::class, 'Usuário de perfil unidade só pode consultar planos de unidades onde possui atribuição.');
+    })->throws(ValidateException::class, 'Usuário de perfil unidade só pode consultar planos de unidades onde possui atribuição.');
 
     test('perfil unidade sem unidades informadas restringe às unidades do integrante e subordinadas', function () {
         /** @var Usuario $usuario */

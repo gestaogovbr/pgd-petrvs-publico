@@ -169,7 +169,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             $now = now();
             $query->where('data_inicio', '<=', $now)
                   ->where('data_fim', '>=', $now)
-                  ->where('status', '=', 'ATIVO');
+                  ->where('status', StatusEnum::ATIVO->value);
         }
 
         return $query->paginate(perPage: $filtro->perPage, page: $filtro->page);
