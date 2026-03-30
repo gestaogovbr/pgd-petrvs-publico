@@ -96,4 +96,11 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
 
         return $integrante;
     }
+
+    public function findByUsuario(string $usuarioId): Collection
+    {
+        return $this->model->newQuery()
+            ->where('usuario_id', $usuarioId)
+            ->get();
+    }
 }

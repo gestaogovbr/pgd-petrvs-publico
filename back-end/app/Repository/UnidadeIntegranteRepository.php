@@ -56,4 +56,9 @@ class UnidadeIntegranteRepository
     {
         return $this->readRepository->findUnidadeIntegrante($usuarioId, $unidadeId);
     }
+
+    public function findByUsuario(string $usuarioId): Collection
+    {
+        return $this->readRepository->findByUsuario($usuarioId);
+    }
 }
